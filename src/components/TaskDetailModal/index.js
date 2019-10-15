@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import PublicDetailModal from '@/components/PublicDetailModal'
 import MainContent from './MainContent'
 import HeaderContent from './HeaderContent'
-
+import { connect } from 'dva'
+@connect()
 export default class TaskDetailModal extends Component {
 
   onCancel = () => {

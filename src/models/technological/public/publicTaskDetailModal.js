@@ -27,8 +27,15 @@ export default {
         yield put({
           type: 'updateDatas',
           payload: {
-            drawerVisible: true,
+            // drawerVisible: true,
             drawContent: res.data,
+          }
+        })
+        // 成功后调用 projectDetailInfo, 将项目成员关联进来
+        yield put({
+          type: 'projectDetail/projectDetailInfo',
+          payload: {
+            id: res.data.board_id
           }
         })
       }

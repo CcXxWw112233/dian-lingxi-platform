@@ -995,14 +995,16 @@ class CardContent extends React.Component {
           visitControlUpdateCurrentModalData={this.visitControlUpdateCurrentModalData}
           principalList={data}
         />
-        <TaskDetailModal
-          {...this.props}
-          //修改某一个任务
-          // handleTaskDetailChange={this.handleChangeCard} 
-          task_detail_modal_visible={this.props.drawerVisible}
-          setTaskDetailModalVisible={this.setTaskDetailModalVisible}
-          handleTaskDetailChange={this.handleChangeCard}
-        />
+        {
+          CardContentType == 'RESPONSIBLE_TASK' && (
+            <TaskDetailModal
+            task_detail_modal_visible={this.props.drawerVisible}
+            setTaskDetailModalVisible={this.setTaskDetailModalVisible}
+            handleTaskDetailChange={this.handleChangeCard}
+          />
+          )
+        }
+     
         {/* addTaskModalVisible */}
         {addTaskModalVisible && (
           <AddTaskModal

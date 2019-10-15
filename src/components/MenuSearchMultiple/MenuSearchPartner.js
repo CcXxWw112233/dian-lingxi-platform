@@ -215,7 +215,7 @@ export default class MenuSearchPartner extends React.Component {
                     <div style={{ margin: '0 10px 10px 10px' }}>
                         <Input placeholder={Inputlaceholder} value={keyWord} onChange={this.onChange.bind(this)} />
                     </div>
-                    <div style={{ padding: 0, margin: 0, height: 32 }} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
+                    <div style={{ padding: 0, margin: 0, height: 32, lineHeight: '32px', cursor: 'pointer' }} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
                         <div style={{ display: 'flex', alignItems: 'center' }} >
                             <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '&#xe70b;', marginRight: 4, color: 'rgb(73, 155, 230)', }}>
                                 <Icon type={'plus-circle'} style={{ fontSize: 12, marginLeft: 10, color: 'rgb(73, 155, 230)' }} />

@@ -346,8 +346,7 @@ export default class CreateTask extends React.Component {
           dispatch={dispatch}
           visible={drawerVisible}
           setDrawerVisibleClose={this.setDrawerVisibleClose.bind(this)} /> */}
-          <TaskDetailModal 
-            dispatch={dispatch}
+          <TaskDetailModal
             task_detail_modal_visible={drawerVisible}
             setTaskDetailModalVisible={this.setDrawerVisibleClose}
             handleTaskDetailChange={this.handleTaskDetailChange}

@@ -1,9 +1,11 @@
 /* 公共hover的样式 */
+.pub_hover {
+  padding-left: 12px;
+}
 .pub_hover:hover {
   background:rgba(0,0,0,0.04);
   cursor: pointer;
   border-radius:4px;
-  // padding-left: 12px;
 }
 
 /* 公共点击完成卡片的样式 S */
@@ -106,6 +108,27 @@
 }
 /* 添加属性的下拉样式 E */
 
+/* 添加执行人下拉样式 S */
+.overlay_pricipal {
+  :global {
+    li {
+      line-height: 40px !important;
+      height: 40px !important;
+      &:hover {
+        background:rgba(0,0,0,0.04) !important;
+        cursor: pointer;
+        border-radius:4px;
+      }
+      .ant-menu-item-selected {
+        background:rgba(0,0,0,0.04);
+        border-radius:4px;
+        color:rgba(0,0,0,0.45);
+      }
+    }
+  }
+}
+/* 添加执行人下拉样式 E */
+
 /* 内容区的容器样式 S */
 .main_wrap {
   padding-top: 16px;
@@ -151,9 +174,10 @@
       flex: 1;
       font-size: 16px;
       color:rgba(0,0,0,0.45);
+      // margin-left: 12px;
       .incomplete {
         display: inline-block;
-        margin-left: 12px;
+        // margin-left: 12px;
         width:58px;
         height:26px;
         background:rgba(0,0,0,0.09);
@@ -163,7 +187,7 @@
       }
       .complete {
         display: inline-block;
-        margin-left: 12px;
+        // margin-left: 12px;
         width:58px;
         height:26px;
         background:rgba(208,239,180,1);
@@ -173,8 +197,42 @@
         color:rgba(56,158,13,1);
       }
 
+      .user_executor {
+        // margin-left: 12px;
+      }
+      // 每一个用户的样式
+      .user_item {
+        padding: 2px 8px;
+        box-sizing: border-box;
+        &:hover {
+          background:rgba(0,0,0,0.09);
+          border-radius:4px;
+        }
+        .userItemDeleBtn {
+          display: none;
+          width: 14px;
+          height: 14px;
+          border-radius: 4px;
+          position: absolute;
+          background: url(../../assets/workbench/close-circle@2x.png);
+          background-repeat: no-repeat;
+          background-size: contain;
+          transition: all 0.3s;
+        }
+        .userItemDeleBtn:hover {
+          background: url(../../assets/workbench/close-circle-active@2x.png);
+          background-repeat: no-repeat;
+          background-size: contain;
+        }
+      }
+      .user_item:hover .userItemDeleBtn {
+        display: inline-block;
+        top: -4px;
+        right: -4px;
+        transition: all 0.3s;
+      }
       .upload_file_btn{
-        margin-left: 12px;
+        // margin-left: 12px;
       }
     }
   }

@@ -12,15 +12,18 @@ import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
   PROJECT_TEAM_CARD_COMPLETE
 } from "@/globalset/js/constant";
+import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
 
   state = {
+    new_card_id: ''
   }
 
   componentDidMount() {
     const { card_id } = this.props
+    if (!card_id) return false
     this.props.dispatch({
       type: 'publicTaskDetailModal/getCardDetail',
       payload: {
@@ -144,9 +147,14 @@ export default class MainContent extends Component {
   }
   // 设置添加属性的下拉回调 E
 
+  chirldrenTaskChargeChange(data) {
+
+  }
+
   render() {
-    const { drawContent = {}, is_edit_title } = this.props
-    const { card_id, card_name, type = '0', is_realize = '0', start_time, due_time } = drawContent
+    const { drawContent = {}, is_edit_title, projectDetailInfoData = {} } = this.props
+    const { data = [] } = projectDetailInfoData
+    const { board_id, card_id, card_name, type = '0', is_realize = '0', start_time, due_time, executors = [] } = drawContent
 
     // 状态
     const filedEdit = (
@@ -227,12 +235,83 @@ export default class MainContent extends Component {
                 <span>状态</span>
               </div>
               <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_item} overlay={filedEdit} getPopupContainer={triggerNode => triggerNode.parentNode}>
-                <div className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
-                  <span className={is_realize == '0' ? mainContentStyles.incomplete : mainContentStyles.complete}>{is_realize == '0' ? '未完成' : '已完成'}</span>
+                <div className={`${mainContentStyles.field_right}`}>
+                  <div className={`${mainContentStyles.pub_hover}`}>
+                    <span className={is_realize == '0' ? mainContentStyles.incomplete : mainContentStyles.complete}>{is_realize == '0' ? '未完成' : '已完成'}</span>
+                  </div>
                 </div>
               </Dropdown>
             </div>
             {/* 这个中间放置负责人, 如果存在, 则在两者之间 */}
+            <div>
+              <div style={{position: 'relative'}} className={mainContentStyles.field_content}>
+                <div className={mainContentStyles.field_left}>
+                  <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.45)' }} className={globalStyles.authTheme}>&#xe7b2;</span>
+                  <span className={mainContentStyles.user_executor}>负责人</span>
+                </div>
+                {
+                  !executors.length ? (
+                    <div style={{flex: '1'}}>
+                      <Dropdown overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                        overlay={
+                          <MenuSearchPartner
+                            invitationType='4'
+                            invitationId={card_id}
+                            listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
+                            board_id={board_id} />
+                        }
+                      >
+                        <div className={`${mainContentStyles.field_right}`}>
+                          <div className={`${mainContentStyles.pub_hover}`}>
+                            <span>指派负责人</span>
+                          </div>
+                        </div>
+                      </Dropdown>
+                    </div>
+                  ) : (
+                    <div style={{flex: '1'}}>
+                      <Dropdown overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                        overlay={
+                          <MenuSearchPartner
+                            invitationType='4'
+                            invitationId={card_id}
+                            listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
+                            board_id={board_id} />
+                        }
+                      >
+                        <div className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
+                          {executors.map((value) => {
+                            const { avatar, name, user_name, user_id } = value
+                            return (
+                              <div style={{display: 'flex', flexWrap: 'wrap'}}>
+                                <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 0' }} key={user_id}>
+                                  {avatar ? (
+                                    <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 4 }} src={avatar} />
+                                  ) : (
+                                      <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 4, }}>
+                                        <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
+                                      </div>
+                                    )}
+                                  <div style={{ marginRight: 8 }}>{name || user_name || '佚名'}</div>
+                                  <span className={`${mainContentStyles.userItemDeleBtn}`}></span>
+                                </div>
+                                
+                              </div>
+                            )
+                          })}
+                        </div>
+                        {/* <div className={`${mainContentStyles.field_right}`}>
+                          <div className={`${mainContentStyles.pub_hover}`}>
+                            
+                          </div>
+                        </div> */}
+                      </Dropdown>
+                    </div>
+                  )
+                }
+                
+              </div>
+            </div>
             {/* 时间区域 */}
             <div className={mainContentStyles.field_content}>
               <div className={mainContentStyles.field_left}>
@@ -277,8 +356,10 @@ export default class MainContent extends Component {
                 <span>添加属性</span>
               </div>
               <Dropdown overlayClassName={mainContentStyles.overlay_attribute} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={addAttribute}>
-                <div style={{ paddingLeft: '12px' }} className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
-                  <span>选择属性</span>
+                <div className={`${mainContentStyles.field_right}`}>
+                  <div className={`${mainContentStyles.pub_hover}`}>
+                    <span>选择属性</span>
+                  </div>
                 </div>
               </Dropdown>
             </div>
@@ -311,6 +392,6 @@ export default class MainContent extends Component {
 }
 
 // 只关联public弹窗内的数据
-function mapStateToProps({ publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id } }) {
-  return { drawContent, is_edit_title, card_id }
+function mapStateToProps({ publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
+  return { drawContent, is_edit_title, card_id, projectDetailInfoData }
 }
