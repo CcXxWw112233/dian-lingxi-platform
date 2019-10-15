@@ -220,7 +220,7 @@ export default modelExtend(projectDetail, {
             id: file_id
           }
         })
-      
+
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -863,12 +863,22 @@ export default modelExtend(projectDetail, {
         }
       })
       let res = yield call(getCardCommentListAll, payload)
-      yield put({
-        type: 'updateDatas',
-        payload: {
-          cardCommentAll: res.data
+      if (isApiResponseOk) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            cardCommentAll: res.data
+          }
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+        if (res.code === 4003) {
+          yield put(routerRedux.push(`readonly_share/${payload.id}`))
+        } else {
+
         }
-      })
+      }
+
     },
 
     * getFileType({ payload }, { select, call, put }) {

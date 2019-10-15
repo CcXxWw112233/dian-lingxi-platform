@@ -1056,7 +1056,7 @@ class FileDetailContent extends React.Component {
     const that = this
     const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect = {}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode, is_edit_version_description, editVersionFileList, new_filePreviewCurrentVersionList, editValue, onlyReadingShareModalVisible, onlyReadingShareData } = this.state
     const { clientHeight, offsetTopDeviation } = this.props
-    const { bodyClientWidth, bodyClientHeight } = this.props
+    const { bodyClientWidth, bodyClientHeight, dispatch } = this.props
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
 
     let { componentHeight, componentWidth } = this.props
