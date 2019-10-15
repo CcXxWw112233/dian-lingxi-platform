@@ -29,6 +29,7 @@ export default class GetRowGantt extends Component {
       start_time: '',
       due_time: '',
       specific_example_arr: [], //任务实例列表
+      drag_holiday_count: 0, // //拖拽生成虚线框的节假日总天数
     }
     this.x1 = 0 //用于做拖拽生成一条任务
     this.y1 = 0
@@ -140,6 +141,9 @@ export default class GetRowGantt extends Component {
 
     this.setState({
       currentRect: property
+    }, () => {
+      this.handleCreateTask({ start_end: '2', top: property.y, not_create: true })
+      this.setDragDashedRectHolidayNo()
     })
   }
   dashedDragMouseup(e) {
@@ -207,7 +211,8 @@ export default class GetRowGantt extends Component {
     }
 
     this.setState({
-      currentRect: property
+      currentRect: property,
+      drag_holiday_count: 0,
     })
   }
   dashedMouseLeave(e) {
@@ -219,7 +224,7 @@ export default class GetRowGantt extends Component {
   }
 
   //记录起始时间，做创建任务工作
-  handleCreateTask({ start_end, top }) {
+  handleCreateTask({ start_end, top, not_create }) {
     const { dataAreaRealHeight } = this.props
     if (top >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
 
@@ -236,15 +241,17 @@ export default class GetRowGantt extends Component {
         break
       }
     }
-    const { timestamp } = date
+    const { timestamp, timestampEnd } = date
     const update_name = start_end == '1' ? 'create_start_time' : 'create_end_time'
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: {
-        [update_name]: timestamp
+        [update_name]: start_end == '1' ? timestamp : timestampEnd
       }
     })
-
+    if (not_create) { //不创建和查看
+      return
+    }
     if (start_end == '2') { //拖拽或点击操作完成，进行生成单条任务逻辑
       this.setSpecilTaskExample({ top }) //出现任务创建或查看任务
     }
@@ -284,7 +291,6 @@ export default class GetRowGantt extends Component {
       }
     })
   }
-
 
   //点击某个实例,或者创建任务
   setSpecilTaskExample = ({ id, board_id, top }, e) => {
@@ -327,6 +333,35 @@ export default class GetRowGantt extends Component {
     }
   }
 
+  // 设置拖拽生成任务虚线框内，节假日或者公休日的时间天数
+  setDragDashedRectHolidayNo = () => {
+    let count = 0
+
+    const { create_start_time, create_end_time, holiday_list = [] } = this.props
+    if (!create_start_time || !create_end_time) {
+      // return count
+      this.setState({
+        drag_holiday_count: count
+      })
+    }
+    const create_start_time_ = create_start_time / 1000
+    const create_end_time_ = create_end_time / 1000
+
+    const holidy_date_arr = holiday_list.filter(item => {
+      if (
+        create_start_time_ <= Number(item.timestamp) &&
+        create_end_time_ >= Number(item.timestamp) &&
+        (item.is_week)
+      ) {
+        return item
+      }
+    })
+  
+    this.setState({
+      drag_holiday_count: holidy_date_arr.length
+    })
+  }
+
   // 设置任务标签颜色
   setLableColor = (label_data) => {
     let bgColor = ''
@@ -356,7 +391,7 @@ export default class GetRowGantt extends Component {
   }
 
   render() {
-    const { currentRect = {}, dasheRectShow } = this.state
+    const { currentRect = {}, dasheRectShow, drag_holiday_count } = this.state
     const { gold_date_arr = [], list_group = [], ceilWidth, group_rows = [], ceiHeight } = this.props
 
     return (
@@ -377,7 +412,10 @@ export default class GetRowGantt extends Component {
             lineHeight: `${ceiHeight - task_item_margin_top}px`,
             paddingRight: 8,
             zIndex: this.isDragging ? 2 : 1
-          }} >{Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth)}</div>
+          }} >
+            {Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth) - drag_holiday_count}
+            {Math.ceil(currentRect.width / ceilWidth) != 1 && (drag_holiday_count > 0 ? `+${drag_holiday_count}` : '')}
+          </div>
         )}
         {list_group.map((value, key) => {
           const { list_data = [], list_id } = value
@@ -493,6 +531,9 @@ function mapStateToProps({ gantt: {
     ceiHeight,
     group_list_area = [],
     date_arr_one_level = [],
+    create_start_time,
+    create_end_time,
+    holiday_list = []
   }
 } }) {
   return {
@@ -503,6 +544,9 @@ function mapStateToProps({ gantt: {
     ceiHeight,
     group_list_area,
     date_arr_one_level,
+    create_start_time,
+    create_end_time,
+    holiday_list
   }
 }
 

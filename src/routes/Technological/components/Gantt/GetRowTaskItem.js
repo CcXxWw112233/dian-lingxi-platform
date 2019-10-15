@@ -504,12 +504,12 @@ export default class GetRowTaskItem extends Component {
                         background: this.setLableColor(label_data), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
                     }}
                     // 拖拽
-                    onMouseDown={(e) => this.onMouseDown(e)}
-                    onMouseMove={(e) => this.onMouseMove(e)}
-                    onMouseUp={() => this.setSpecilTaskExample({ id, top, board_id })}
-                // 不拖拽
-                // onMouseMove={(e) => e.stopPropagation()}
-                // onClick={() => this.setSpecilTaskExample({ id, top, board_id })}
+                    // onMouseDown={(e) => this.onMouseDown(e)}
+                    // onMouseMove={(e) => this.onMouseMove(e)}
+                    // onMouseUp={() => this.setSpecilTaskExample({ id, top, board_id })}
+                    // 不拖拽
+                    onMouseMove={(e) => e.stopPropagation()}
+                    onClick={() => this.setSpecilTaskExample({ id, top, board_id })}
                 >
                     <div
                         data-targetclassname="specific_example"

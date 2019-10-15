@@ -52,7 +52,7 @@ export default {
       about_group_boards: [], //带分组的项目列表
       about_user_boards: [], //带用户的项目列表
 
-      gantt_board_id: "1183681794634027008",//'0', //甘特图查看的项目id
+      gantt_board_id: '0', //甘特图查看的项目id
       group_view_type: '1', //分组视图1项目， 2成员
       group_view_filter_boards: [], //内容过滤项目id 列表
       group_view_filter_users: [], //内容过滤职员id 列表
@@ -73,7 +73,7 @@ export default {
             type: 'updateDatas',
             payload: {
               list_group: [],
-              group_rows: [5, 5, 5],
+              group_rows: [3, 3, 3], // [5, 5, 5]
             }
           })
         } else {
@@ -381,7 +381,7 @@ export default {
         }
         const list_height_arr = list_group[i]['list_data'].map(item => item.top)
         const list_group_item_height = Math.max.apply(null, list_height_arr) + 2 * ceiHeight - after_group_height
-        group_rows[i] = (list_group_item_height / ceiHeight) < 5 ? 5 : list_group_item_height / ceiHeight
+        group_rows[i] = (list_group_item_height / ceiHeight) < 3 ? 3 : list_group_item_height / ceiHeight // 原来是5，现在是1
         group_list_area[i] = group_rows[i] * ceiHeight
 
       }
