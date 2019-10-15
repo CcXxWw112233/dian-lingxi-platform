@@ -161,6 +161,12 @@ export default modelExtend(projectDetail, {
           }
         })
         yield put({
+          type: 'getCardCommentListAll',
+          payload: {
+            id
+          }
+        })
+        yield put({
           type: 'updateDatas',
           payload: {
             drawerVisible: true,

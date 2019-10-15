@@ -83,6 +83,7 @@ export default class Comment extends React.Component {
     const { avatar } = userInfo
 
     const { leftSpaceDivWH = 40 } = this.props
+    console.log(this.props, 'sss');
 
     return (
       <div>
