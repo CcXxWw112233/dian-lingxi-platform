@@ -16,6 +16,8 @@ import {
 // import { projectDetailInfo } from '@/services/technological/projectDetail'
 import InformRemind from '@/components/InformRemind'
 import globalStyles from '@/globalset/css/globalClassName.less'
+import ShareAndInvite from './../../../../ShareAndInvite/index'
+import { createShareLink, modifOrStopShareLink, } from './../../../../../../../services/technological/workbench'
 import { connect } from 'dva'
 
 @connect(({ workbenchDetailProcess = {}, projectDetailProcess = {} }) => ({
@@ -23,7 +25,9 @@ import { connect } from 'dva'
 }))
 export default class Header extends React.Component {
   state = {
-    controller: 0
+    controller: 0,
+    onlyReadingShareModalVisible: false, //只读分享modal
+    onlyReadingShareData: {},
   }
   componentDidMount() {
     // 判断是否有中止流程的权限
@@ -197,7 +201,7 @@ export default class Header extends React.Component {
       }
       new_ids.push(id)
     })
-    
+
     // 这里是需要做一个只添加了自己的一条提示
     if (flag && temp_ids.length == '1') { // 表示只选择了自己, 而不是全选
       message.warn('该职员已存在, 请不要重复添加', MESSAGE_DURATION_TIME)
@@ -266,6 +270,66 @@ export default class Header extends React.Component {
 
   visitControlUpdateCurrentModalData = obj => {
     this.props.visitControlUpdateCurrentModalData(obj)
+  }
+
+  handleChangeOnlyReadingShareModalVisible = () => {
+    const { onlyReadingShareModalVisible } = this.state
+    //打开之前确保获取到数据
+    if (!onlyReadingShareModalVisible) {
+      Promise.resolve(this.createOnlyReadingShareLink()).then(() => {
+        this.setState({
+          onlyReadingShareModalVisible: true
+        })
+      }).catch(err => message.error('获取分享信息失败'))
+    } else {
+      this.setState({
+        onlyReadingShareModalVisible: false
+      })
+    }
+  }
+  createOnlyReadingShareLink = () => {
+
+    const { datas: { drawContent: { board_id, card_id } } } = this.props.model
+
+    const payload = {
+      board_id,
+      rela_id: card_id,
+      rela_type: '3'
+    }
+    return createShareLink(payload).then(({ code, data }) => {
+      if (code === '0') {
+        this.setState(() => {
+          return {
+            onlyReadingShareData: data
+          }
+        })
+      } else {
+        message.error('获取分享信息失败')
+        return new Error('can not create share link.')
+      }
+    })
+  }
+  handleOnlyReadingShareExpChangeOrStopShare = (obj) => {
+    const isStopShare = obj && obj['status'] && obj['status'] === '0'
+    return modifOrStopShareLink(obj).then(res => {
+      if (res && res.code === '0') {
+        if (isStopShare) {
+          message.success('停止分享成功')
+        } else {
+          message.success('修改成功')
+        }
+        this.setState((state) => {
+          const { onlyReadingShareData } = state
+          return {
+            onlyReadingShareData: Object.assign({}, onlyReadingShareData, obj)
+          }
+        })
+      } else {
+        message.error('操作失败')
+      }
+    }).catch(err => {
+      message.error('操作失败')
+    })
   }
 
   render() {
@@ -354,6 +418,8 @@ export default class Header extends React.Component {
     } = this.getVisitControlDataFromPropsModelDatasProcessInfo();
     const principalList = this.genPrincipalListFromAssignees(nodes);
 
+    const { onlyReadingShareModalVisible, onlyReadingShareData } = this.state
+
     return (
       <div style={{
         height: '52px',
@@ -424,6 +490,11 @@ export default class Header extends React.Component {
             <Icon type="download" onClick={() => { console.log(1) }} style={{ float: 'right', fontSize: '16px', cursor: 'pointer' }} />
           </span> */}
 
+          {/* <ShareAndInvite
+            // is_shared={is_shared}
+            is_shared=''
+            onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData}
+            handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} /> */}
         </div>
       </div>
     )

@@ -27,7 +27,6 @@ export default class GanttFace extends Component {
       gantt_card_out_middle_max_height: 600,
       local_gantt_board_id: '0', //当前项目id（项目tab栏）缓存在组件内，用于判断是否改变然后重新获取数据
     }
-    this.ganttScroll = this.ganttScroll.bind(this)
     this.setGanTTCardHeight = this.setGanTTCardHeight.bind(this)
   }
 
@@ -99,7 +98,7 @@ export default class GanttFace extends Component {
       const { timestamp } = gold_date_arr[0]['date_inner'][0]
       this.setState({
         searchTimer: setTimeout(function () {
-          that.setGoldDateArr({ timestamp }) //取左边界日期来做日期更新的基准
+          that.setGoldDateArr({ timestamp, not_set_loading: true }) //取左边界日期来做日期更新的基准
           that.setScrollPosition({ delay: 300, position: 30 * ceilWidth }) //大概移动四天的位置
         }, INPUT_CHANGE_SEARCH_TIME)
       })
@@ -108,7 +107,7 @@ export default class GanttFace extends Component {
       const { timestamp } = gold_date_arr[gold_date_arr.length - 1]['date_inner'][gold_date_arr[gold_date_arr.length - 1]['date_inner'].length - 1]
       this.setState({
         searchTimer: setTimeout(function () {
-          that.setGoldDateArr({ timestamp, to_right: 'to_right' }) //取有边界日期来做更新日期的基准
+          that.setGoldDateArr({ timestamp, to_right: 'to_right', not_set_loading: true }) //取有边界日期来做更新日期的基准
           that.setScrollPosition({ delay: 300, position: scrollWidth - clientWidth - 2 * ceilWidth }) //移动到最新视觉
         }, INPUT_CHANGE_SEARCH_TIME)
       })
@@ -133,7 +132,7 @@ export default class GanttFace extends Component {
           target_scrollTop: scrollTop
         }
       })
-      if(group_view_type == '1' && gantt_board_id == '0') {
+      if (group_view_type == '1' && gantt_board_id == '0') {
         dispatch({
           type: getEffectOrReducerByName('updateDatas'),
           payload: {
@@ -146,7 +145,7 @@ export default class GanttFace extends Component {
   }
 
   //更新日期,日期更新后做相应的数据请求
-  setGoldDateArr = ({ timestamp, to_right, init }) => {
+  setGoldDateArr = ({ timestamp, to_right, init, not_set_loading }) => {
     const { dispatch } = this.props
     const { gold_date_arr = [], isDragging } = this.props
     let date_arr = []
@@ -188,15 +187,29 @@ export default class GanttFace extends Component {
       })
     }
     //更新任务位置信息
+    this.beforeHandListGroup()
     const that = this
     setTimeout(function () {
       dispatch({
         type: getEffectOrReducerByName('getGanttData'),
-        payload: {}
+        payload: {
+          not_set_loading
+        }
       })
       that.getHoliday()
     }, 300)
   }
+  //拖动日期后预先设置 处理任务排列
+  beforeHandListGroup = () => {
+    const { dispatch, list_group } = this.props
+    dispatch({
+      type: 'gantt/handleListGroup',
+      payload: {
+        data: list_group
+      }
+    })
+  }
+
 
   // 获取到实际有数据的区域总高度，为了和最后一行区分开
   getDataAreaRealHeight = () => {
@@ -230,7 +243,7 @@ export default class GanttFace extends Component {
         {
           get_gantt_data_loading && (
             <div className={indexStyles.cardDetailMask} style={{ height: gantt_card_height }}>
-              <Spin spinning={get_gantt_data_loading} tip={'甘特图数据正在加载中...'} zIndex={8} >
+              <Spin spinning={get_gantt_data_loading} tip={'甘特图数据正在加载中...'} >
               </Spin>
             </div>
           )
@@ -266,7 +279,7 @@ export default class GanttFace extends Component {
         <div className={indexStyles.cardDetail_right}></div>
         <FaceRightButton setGoldDateArr={this.setGoldDateArr} setScrollPosition={this.setScrollPosition} />
         <ShowFileSlider />
-        <BoardsFilesArea setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile} fileDetailModalDatas={this.props.fileDetailModalDatas} />
+        <BoardsFilesArea setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile} fileDetailModalDatas={this.props.fileDetailModalDatas} {...this.props} />
       </div>
     )
   }

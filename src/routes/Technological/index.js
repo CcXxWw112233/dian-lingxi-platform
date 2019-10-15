@@ -125,7 +125,6 @@ export default class Technological extends React.Component {
         path: '/technological/investmentMap',
         component: () => import('./components/InvestmentMap'),
       },
-
     ]
 
     const defaultLayout = (

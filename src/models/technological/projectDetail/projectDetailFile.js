@@ -143,7 +143,7 @@ export default modelExtend(projectDetail, {
     },
   },
   effects: {
-    
+
     //文档----------start
     * initialget({ payload }, { select, call, put }) {
       const { id } = payload
@@ -171,15 +171,15 @@ export default modelExtend(projectDetail, {
               folder_id: result.data.folder_id
             }
           })
-        } 
-        else {
-          yield put({
-            type: 'getFileList',
-            payload: {
-              folder_id: result.data.folder_id
-            }
-          })
         }
+        // else {
+        //   yield put({
+        //     type: 'getFileList',
+        //     payload: {
+        //       folder_id: result.data.folder_id
+        //     }
+        //   })
+        // }
       } else {
       }
     },
@@ -243,16 +243,16 @@ export default modelExtend(projectDetail, {
         const target_path = res.data.target_path
         // 递归添加路径
         const digui = (name, data) => {
-          if(data[name]) {
-            arr.push({file_name: data.folder_name, file_id: data.id, type: '1'})
+          if (data[name]) {
+            arr.push({ file_name: data.folder_name, file_id: data.id, type: '1' })
             digui(name, data[name])
-          }else if(data['parent_id'] == '0'){
-            arr.push({file_name: '根目录', file_id: data.id, type: '1'})
+          } else if (data['parent_id'] == '0') {
+            arr.push({ file_name: '根目录', file_id: data.id, type: '1' })
           }
         }
         digui('parent_folder', target_path)
         const newbreadcrumbList = arr.reverse()
-        newbreadcrumbList.push({file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2', folder_id: res.data.base_info.folder_id})
+        newbreadcrumbList.push({ file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2', folder_id: res.data.base_info.folder_id })
         //递归添加路径
         // const digui = (name, data) => {
         //   if (data[name] && data['parent_id'] != '0') {

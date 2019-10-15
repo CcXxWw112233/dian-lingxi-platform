@@ -10,6 +10,8 @@ import { Tooltip, Dropdown } from 'antd'
 import { date_area_height, task_item_height, task_item_margin_top } from './constants'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import QueueAnim from 'rc-queue-anim'
+import GetRowTaskItem from './GetRowTaskItem'
+import { filterDueTimeSpan } from './ganttBusiness'
 
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
@@ -77,9 +79,21 @@ export default class GetRowGantt extends Component {
 
   }
 
+  // 在任务实例上点击到特定的位置，阻断，是能够不出现创建任务弹窗
+  stopPropagationEle = (e) => {
+    if (
+      e.target.dataset.targetclassname == 'specific_example' ||
+      e.target.className.indexOf('authTheme') != -1 || 
+      e.target.className.indexOf('ant-avatar') != -1
+    ) { //不能滑动到某一个任务实例上
+      return true
+    }
+    return false
+  }
+
   //鼠标拖拽移动
   dashedMousedown(e) {
-    if (e.target.dataset.targetclassname == 'specific_example') { //不能滑动到某一个任务实例上
+    if (this.stopPropagationEle(e)) { //不能滑动到某一个任务实例上
       return false
     }
     if (this.isDragging || this.isMouseDown) { //在拖拽中，还有防止重复点击
@@ -96,12 +110,12 @@ export default class GetRowGantt extends Component {
     target.onmouseup = this.dashedDragMouseup.bind(this);
   }
   dashedDragMousemove(e) {
-    if (e.target.dataset.targetclassname == 'specific_example') { //不能滑动到某一个任务实例上
+    if (this.stopPropagationEle(e)) { //不能滑动到某一个任务实例上
       return false
     }
     this.setIsDragging(true)
 
-    const { datas: { ceiHeight, ceilWidth } } = this.props.model
+    const { ceiHeight, ceilWidth } = this.props
 
     const target_0 = document.getElementById('gantt_card_out')
     const target_1 = document.getElementById('gantt_card_out_middle')
@@ -129,7 +143,7 @@ export default class GetRowGantt extends Component {
     })
   }
   dashedDragMouseup(e) {
-    if (e.target.dataset.targetclassname == 'specific_example') { //不能滑动到某一个任务实例上
+    if (this.stopPropagationEle(e)) { //不能滑动到某一个任务实例上
       return false
     }
     const { currentRect = {} } = this.state
@@ -158,7 +172,7 @@ export default class GetRowGantt extends Component {
       })
       return false
     }
-    const { datas: { ceiHeight, ceilWidth } } = this.props.model
+    const { ceiHeight, ceilWidth } = this.props
     if (this.isMouseDown) { //按下的情况不处理
       return false
     }
@@ -210,7 +224,7 @@ export default class GetRowGantt extends Component {
     if (top >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
 
     const { dispatch } = this.props
-    const { datas: { gold_date_arr = [], ceilWidth, date_arr_one_level = [] } } = this.props.model
+    const { gold_date_arr = [], ceilWidth, date_arr_one_level = [] } = this.props
     const { currentRect = {} } = this.state
     const { x, y, width, height } = currentRect
     let counter = 0
@@ -245,7 +259,7 @@ export default class GetRowGantt extends Component {
       return total + num;
     }
     const { dispatch } = this.props
-    const { datas: { group_list_area = [], list_group = [] } } = this.props.model
+    const { group_list_area = [], list_group = [] } = this.props
     let conter_key = 0
     for (let i = 0; i < group_list_area.length; i++) {
       if (i == 0) {
@@ -271,53 +285,9 @@ export default class GetRowGantt extends Component {
     })
   }
 
-  //遍历,做排序--交叉
-  taskItemToTop() {
-    const { dispatch } = this.props
-
-    //根据所获得的分组数据转换所需要的数据
-    const { datas: { list_group = [] } } = this.props.model
-
-    const list_group_new = [...list_group]
-
-    //设置分组区域高度, 并为每一个任务新增一条
-    for (let i = 0; i < list_group_new.length; i++) {
-      const list_data = list_group_new[i]['list_data']
-      const length = list_data.length
-      for (let j = 0; j < list_data.length; j++) { //设置每一个实例的位置
-        const item = list_data[j]
-        let isoverlap = true //是否重叠，默认不重叠
-        if (j > 0) {
-          for (let k = 0; k < j; k++) {
-            if (list_data[j]['start_time'] < list_data[k]['end_time'] || list_data[k]['end_time'] < list_data[j]['start_time']) {
-
-            } else {
-              isoverlap = false
-              item.top = list_data[k].top
-              // console.log(k, j)
-              break
-            }
-          }
-        }
-        list_group_new[i]['list_data'][j] = item
-
-        if (!isoverlap) {
-          break
-        }
-
-      }
-    }
-
-    dispatch({
-      type: getEffectOrReducerByName('updateDatas'),
-      payload: {
-        list_group: list_group_new
-      }
-    })
-  }
-
+ 
   //点击某个实例,或者创建任务
-  setSpecilTaskExample({ id, board_id, top }, e) {
+  setSpecilTaskExample = ({ id, board_id, top }, e) => {
     if (e) {
       e.stopPropagation()
     }
@@ -394,7 +364,7 @@ export default class GetRowGantt extends Component {
 
   render() {
     const { currentRect = {}, dasheRectShow } = this.state
-    const { datas: { gold_date_arr = [], list_group = [], ceilWidth, group_rows = [], ceiHeight } } = this.props.model
+    const { gold_date_arr = [], list_group = [], ceilWidth, group_rows = [], ceiHeight } = this.props
 
     return (
       <div className={indexStyles.gantt_operate_top}
@@ -413,17 +383,27 @@ export default class GetRowGantt extends Component {
             textAlign: 'right',
             lineHeight: `${ceiHeight - task_item_margin_top}px`,
             paddingRight: 8,
+            zIndex: this.isDragging ? 2 : 1
           }} >{Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth)}</div>
         )}
         {list_group.map((value, key) => {
-          const { list_data = [] } = value
+          const { list_data = [], list_id } = value
           return (
             list_data.map((value2, key) => {
-              const { left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time, is_privilege } = value2
-
+              // const { id, left, width, start_time, end_time } = value2
+              const { end_time, left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time, start_time, due_time } = value2
+              const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
               return (
-                <QueueAnim type="right" key={id} duration={200}>
-                  <Dropdown placement="bottomRight" overlay={<CardDropDetail {...value2} />} key={id}>
+                <QueueAnim type="right" key={`${id}_${start_time}_${end_time}`} duration={0}>
+                  {/* <Dropdown placement="bottomRight" overlay={<CardDropDetail {...value2} />} key={id}> */}
+                  <GetRowTaskItem
+                    key={`${id}_${start_time}_${end_time}_${left}_${top}`}
+                    itemValue={value2}
+                    setSpecilTaskExample={this.setSpecilTaskExample}
+                    ganttPanelDashedDrag={this.isDragging}
+                    list_id={list_id}
+                  />
+                  {/* 
                     <div
                       className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
                       data-targetclassname="specific_example"
@@ -440,6 +420,9 @@ export default class GetRowGantt extends Component {
                     >
                       <div
                         data-targetclassname="specific_example"
+                        style={{
+                          opacity: is_realize == '1'? 0.5: 1,
+                        }}
                         className={`${indexStyles.specific_example_content} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
                         onMouseDown={(e) => e.stopPropagation()} >
                         <div data-targetclassname="specific_example"
@@ -447,6 +430,14 @@ export default class GetRowGantt extends Component {
                           <CheckItem is_realize={is_realize} />
                         </div>
                         <div data-targetclassname="specific_example"
+                          className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
+                          {name}
+                          <span className={indexStyles.due_time_description}>
+                            {
+                              is_overdue && due_description
+                            }
+                          </span>
+                        </div>
                           style={{display: 'flex'}}
                           className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
                           <div style={{display: 'flex', flex: '1'}}>
@@ -468,8 +459,8 @@ export default class GetRowGantt extends Component {
                           <AvatarList users={executors} size={'small'} />
                         </div>
                       </div>
-                    </div>
-                  </Dropdown>
+                    </div> */}
+                  {/* </Dropdown> */}
                 </QueueAnim>
 
               )
@@ -492,7 +483,25 @@ export default class GetRowGantt extends Component {
 
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ modal, gantt, loading }) {
-  return { modal, model: gantt, loading }
+function mapStateToProps({ gantt: {
+  datas: {
+    gold_date_arr = [],
+    list_group = [],
+    ceilWidth,
+    group_rows = [],
+    ceiHeight,
+    group_list_area = [],
+    date_arr_one_level = [],
+  }
+} }) {
+  return {
+    gold_date_arr,
+    list_group,
+    ceilWidth,
+    group_rows,
+    ceiHeight,
+    group_list_area,
+    date_arr_one_level,
+  }
 }
 

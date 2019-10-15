@@ -1,3 +1,19 @@
+export const handleTimeDetailReturn = (timestamp) => {
+  if (!timestamp) {
+    return {}
+  }
+  const time = new Date(timestamp);
+  const year = time.getFullYear()
+  const month = time.getMonth() + 1
+  const date = time.getDate()
+  const day = time.getDay()
+  const hours = time.getHours()
+  const minutes = time.getMinutes()
+  return {
+    year, month, date, day, hours, minutes
+  }
+}
+
 //是否同一周。以周一开始
 export const isSameWeek = (oldTimestamp, nowTimestamp) => {
   var oneDayTime = 1000 * 60 * 60 * 24;
@@ -48,7 +64,8 @@ export const timestampToTime = (timestamp, flag) => {
   }
   const timestampNew = timestamp.length === 10 ? Number(timestamp) * 1000 : Number(timestamp)
   let date = new Date(timestampNew);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-  let Y = date.getFullYear() + '年';
+  const now_year = new Date().getFullYear()
+  let Y = now_year == date.getFullYear()? '' : date.getFullYear() + '年';
   let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '月';
   let D = date.getDate() < 10 ? '0' + date.getDate() + '日 ' : date.getDate() + '日 ';
   let h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
@@ -341,4 +358,83 @@ export const timeColor = (timestamp) => {
     }
   }
   return color
+}
+
+// 时间戳转成相应的日期
+export const handleTimeStampToDate = (timeStamp) => {
+  if (!timeStamp) {
+    return false
+  }
+  const now = new Date();
+  const year_ = now.getFullYear()
+  const month_ = now.getMonth() + 1
+  const date_ = now.getDate()
+  const nowTime = now.getTime();
+  const new_now_time = new Date(`${year_}/${month_}/${date_} 0:0`).getTime()
+
+  const ob_time = new Date(timeStamp)
+  const ob_day = ob_time.getDay() !== 0 ? ob_time.getDay() : 7;
+  const ob_year = ob_time.getFullYear()
+  const ob_month = ob_time.getMonth() + 1
+  const ob_date = ob_time.getDate()
+  const ob_new_timestamp = new Date(`${ob_year}/${ob_month}/${ob_date} 23:59`).getTime()
+
+  let DateDescription
+
+  if (isSamDay(nowTime, timeStamp)) {
+    DateDescription = '今天'
+  } else {
+    if (isSameWeek(ob_new_timestamp, new_now_time)) {
+      switch (ob_day) {
+        case 1:
+          DateDescription = '本周一'
+          break
+        case 2:
+          DateDescription = '本周二'
+          break
+        case 3:
+          DateDescription = '本周三'
+          break
+        case 4:
+          DateDescription = '本周四'
+          break
+        case 5:
+          DateDescription = '本周五'
+          break
+        case 6:
+          DateDescription = '本周六'
+          break
+        case 7:
+          DateDescription = '本周日'
+          break
+        default:
+          DateDescription = timestampToTime(timeStamp)
+          break
+      }
+    } else {
+      DateDescription = timestampToTime(timeStamp)
+    }
+  }
+
+  return DateDescription
+}
+
+
+
+export const isOverdueTime = (timestamp) => {
+  if (!!!timestamp) {
+    return ''
+  }
+  const new_timestamp = timestamp.length === 10 ? Number(timestamp) * 1000 : Number(timestamp)
+  const today = new Date()
+  const today_timestamp = today.getTime()
+  const today_year = today.getFullYear()
+  const today_month = today.getMonth()
+  const today_day = today.getDate()
+  const today_last_time = (new Date(today_year, today_month, today_day, '23', '59', '59')).getTime()
+  let color = ''
+  if (new_timestamp < today_timestamp) { //逾期
+      return true;
+  }
+  return false
 }

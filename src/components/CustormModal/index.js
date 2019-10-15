@@ -80,7 +80,6 @@ class CustormModal extends React.Component {
     if (is_simple_model !== '1') {
       maskWidth = clientWidth - siderRightWidth - 16 //16是margin的值
     }
-    // let tempClientWidth = siderRightWidth == 300 ? layoutClientWidth - 300 : layoutClientWidth
 
     // console.log(overInner, 'sss')
     return (

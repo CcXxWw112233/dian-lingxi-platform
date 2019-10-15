@@ -3,6 +3,7 @@ import { connect, } from 'dva';
 import indexStyles from './index.less'
 import globalStyles from '../../../../globalset/css/globalClassName.less'
 import { Tooltip, Dropdown, Menu } from 'antd'
+import { handleTimeDetailReturn } from '@/utils/util.js'
 import DateListLCBItem from './DateListLCBItem'
 import AddLCBModal from './components/AddLCBModal'
 import { isSamDay } from './getDate'
@@ -114,6 +115,11 @@ export default class DateList extends Component {
   }
   // 设置创建里程碑的时间
   setCreateLcbTime = (timestamp) => {
+    if (!timestamp) {
+      return
+    }
+    // const { year, month, date } = handleTimeDetailReturn(timestamp)
+    // const new_tmp = new Date(`${year}/${month}/${date} 23:59`).getTime()
     this.setState({
       create_lcb_time: timestamp
     })
@@ -124,6 +130,7 @@ export default class DateList extends Component {
     let flag = false
     let current_date_miletones = []
     let is_over_duetime = false
+    let is_all_realized = '1'
     if (!timestamp) {
       return {
         flag,
@@ -137,14 +144,36 @@ export default class DateList extends Component {
       if (isSamDay(Number(timestamp), Number(key) * 1000)) {
         flag = true
         current_date_miletones = current_date_miletones.concat(milestoneMap[key])
+        for (let val of milestoneMap[key]) {
+          if (val['is_all_realized'] == '0') {
+            is_all_realized = '0'
+            break
+          }
+        }
       }
     }
 
     return {
       is_over_duetime,
       flag,
+      is_all_realized,
       current_date_miletones,
     }
+  }
+
+  // 里程碑是否过期的颜色设置
+  setMiletonesColor = ({ is_over_duetime, has_lcb, is_all_realized }) => { 
+    if(!has_lcb) {
+      return ''
+    }
+    if(is_over_duetime) {
+      if(is_all_realized == '0') { //存在未完成任务
+        return '#FFA39E'
+      } else { //全部任务已完成
+        return 'rgba(0,0,0,0.15)'
+      }
+    }
+    return ''
   }
 
   // 获取某一天的农历或者节假日
@@ -206,10 +235,11 @@ export default class DateList extends Component {
                 <div className={indexStyles.dateTitle}>{date_top}</div>
                 <div className={indexStyles.dateDetail} >
                   {date_inner.map((value2, key2) => {
-                    const { month, date_no, week_day, timestamp } = value2
-                    const has_lcb = this.isHasMiletoneList(Number(timestamp)).flag
-                    const current_date_miletones = this.isHasMiletoneList(Number(timestamp)).current_date_miletones
-                    const is_over_duetime = this.isHasMiletoneList(Number(timestamp)).is_over_duetime
+                    const { month, date_no, week_day, timestamp, timestampEnd } = value2
+                    const has_lcb = this.isHasMiletoneList(Number(timestampEnd)).flag
+                    const current_date_miletones = this.isHasMiletoneList(Number(timestampEnd)).current_date_miletones
+                    const is_over_duetime = this.isHasMiletoneList(Number(timestampEnd)).is_over_duetime
+                    const is_all_realized = this.isHasMiletoneList(Number(timestampEnd)).is_all_realized
                     // /gantt_board_id == '0' ||
                     return (
                       group_view_type != '1' ? (
@@ -225,16 +255,17 @@ export default class DateList extends Component {
                           </div>
                         </Tooltip>
                       ) : (
-                          <Dropdown overlay={this.renderLCBList(current_date_miletones, timestamp)}>
+                          <Dropdown overlay={this.renderLCBList(current_date_miletones, timestampEnd)} key={`${month}/${date_no}`}>
                             <Tooltip title={`${this.getDateNoHolidaylunar(timestamp).lunar} ${this.getDateNoHolidaylunar(timestamp).holiday || ' '}`}>
-                              <div key={`${month}/${date_no}`}>
+                              <div>
                                 <div className={`${indexStyles.dateDetailItem}`} key={key2}>
                                   <div className={`${indexStyles.dateDetailItem_date_no} 
                                     ${indexStyles.nomal_date_no}
                                     ${((week_day == 0 || week_day == 6)) && indexStyles.weekly_date_no} 
                                     ${this.getDateNoHolidaylunar(timestamp).holiday && indexStyles.holiday_date_no}
                                     ${has_lcb && indexStyles.has_moletones_date_no}`}
-                                    style={{ background: is_over_duetime && has_lcb ? '#FF7875' : '' }}
+                                    style={{background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized })}}
+                                    // style={{ background: is_over_duetime && has_lcb ? '#FF7875' : '' }}
                                   >
                                     {date_no}
                                   </div>

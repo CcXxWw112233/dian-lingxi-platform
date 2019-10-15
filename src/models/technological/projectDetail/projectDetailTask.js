@@ -15,7 +15,7 @@ import {
   removeProjectMenbers, removeTaskExecutor,
   removeTaskTag, toTopBoardTag,
   updateBoardTag, updateTask,
-  updateTaskGroup, getRelations, JoinRelation, cancelRelation, getRelationsSelectionPre, getRelationsSelectionSub, getCardCommentListAll
+  updateTaskGroup, getRelations, JoinRelation, cancelRelation, getRelationsSelectionPre, getRelationsSelectionSub, getCardCommentListAll, getShareCardDetail
 } from "../../../services/technological/task";
 import {
   selectDrawContent, selectDrawerVisible, selectGetTaskGroupListArrangeType, selectTaskGroupList,
@@ -122,6 +122,7 @@ export default modelExtend(projectDetail, {
         }
       })
       let res = yield call(getCardDetail, { id })
+
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -134,6 +135,36 @@ export default modelExtend(projectDetail, {
           type: 'getCardCommentList',
           payload: {
             id
+          }
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
+
+    //获取任务详情 ---- 解决分享出去之后的任务详情没有权限 ----暂时使用(10月14日)
+    * getShareCardDetail({ payload }, { select, call, put }) {
+      const { id } = payload
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          cardCommentList: []
+        }
+      })
+      let res = yield call(getShareCardDetail, { id })
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'getCardCommentList',
+          payload: {
+            id
+          }
+        })
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            drawerVisible: true,
+            drawContent: res.data,
           }
         })
       } else {
@@ -723,6 +754,7 @@ export default modelExtend(projectDetail, {
     },
     * JoinRelation({ payload }, { select, call, put }) { //
       let res = yield call(JoinRelation, payload)
+
       if (isApiResponseOk(res)) {
         yield put({
           type: 'getRelations',

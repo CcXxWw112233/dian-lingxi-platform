@@ -19,7 +19,7 @@ export default class BoardsFilesArea extends Component {
                             const { id, board_name } = item
                             return (
                                 <div key={id}>
-                                    <BoardsFilesItem itemValue={item} item={key} board_id={id} board_name={board_name} setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile} fileDetailModalDatas={this.props.fileDetailModalDatas} />
+                                    <BoardsFilesItem itemValue={item} item={key} board_id={id} board_name={board_name} setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile} fileDetailModalDatas={this.props.fileDetailModalDatas} {...this.props} />
                                 </div>
                             )
                         })

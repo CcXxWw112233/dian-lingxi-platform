@@ -23,6 +23,7 @@ import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
 import { handleChangeBoardViewScrollTop } from '../../../routes/Technological/components/Gantt/ganttBusiness';
 
+let dispatches = null
 export default {
   namespace: 'gantt',
   state: {
@@ -64,6 +65,7 @@ export default {
   },
   subscriptions: {
     setup({ dispatch, history }) {
+      dispatches = dispatch
       history.listen((location) => {
         if (location.pathname.indexOf('/technological') != -1) {
           dispatch({
@@ -172,12 +174,15 @@ export default {
       if (gantt_board_id != '0' && gantt_board_id) {
         params.board_id = gantt_board_id
       }
-      yield put({
-        type: 'updateDatas',
-        payload: {
-          get_gantt_data_loading: not_set_loading ? false : true,
-        }
-      })
+
+      const timer = setTimeout(() => {
+        dispatches({
+          type: 'updateDatas',
+          payload: {
+            get_gantt_data_loading: not_set_loading ? false : true,
+          }
+        })
+      }, 2000)
 
       // 查询文件列表
       yield put({
@@ -194,6 +199,7 @@ export default {
       })
 
       const res = yield call(getGanttData, params)
+      clearTimeout(timer)
       yield put({
         type: 'updateDatas',
         payload: {
@@ -213,7 +219,7 @@ export default {
       }
     },
     * handleListGroup({ payload }, { select, call, put }) {
-      const { data } = payload
+      const { data, not_set_scroll_top } = payload
       let list_group = []
       const start_date = yield select(workbench_start_date)
       const end_date = yield select(workbench_end_date)
@@ -276,11 +282,12 @@ export default {
       yield put({
         type: 'setListGroup',
         payload: {
+          not_set_scroll_top
         }
       })
     },
     * setListGroup({ payload }, { select, call, put }) {
-
+      const { not_set_scroll_top } = payload
       //根据所获得的分组数据转换所需要的数据
       // const { datas: { list_group = [], group_rows = [], ceiHeight, ceilWidth, date_arr_one_level = [] } } = this.props.model
       const list_group = yield select(workbench_list_group)
@@ -375,7 +382,7 @@ export default {
         const list_group_item_height = Math.max.apply(null, list_height_arr) + 2 * ceiHeight - after_group_height
         group_rows[i] = (list_group_item_height / ceiHeight) < 5 ? 5 : list_group_item_height / ceiHeight
         group_list_area[i] = group_rows[i] * ceiHeight
-       
+
       }
 
       yield put({
@@ -387,10 +394,12 @@ export default {
         }
       })
       // 设置滚动条的高度位置
-      const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
-      const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
-      const target_scrollTop_board_storage = yield select(getModelSelectDatasState('gantt', 'target_scrollTop_board_storage'))
-      handleChangeBoardViewScrollTop({ group_view_type, gantt_board_id, target_scrollTop_board_storage })
+      if (!not_set_scroll_top) {
+        const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
+        const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
+        const target_scrollTop_board_storage = yield select(getModelSelectDatasState('gantt', 'target_scrollTop_board_storage'))
+        handleChangeBoardViewScrollTop({ group_view_type, gantt_board_id, target_scrollTop_board_storage })
+      }
     },
     * setListGroup_copy({ payload }, { select, call, put }) {
 
