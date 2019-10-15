@@ -1541,7 +1541,7 @@ class ZoomPicture extends Component {
               key={i.key}
               overlayStyle={{ zIndex: 999999999999 }}
             >
-              <div style={{position: 'relative'}} onClick={i.onClick} className={getOperatorBarCellClass(i)}>
+              <div style={{ position: 'relative' }} onClick={i.onClick} className={getOperatorBarCellClass(i)}>
                 {/* {i.label} */}
                 <div className={`${globalStyles.authTheme} ${i.key != 'resetSize' && styles.label_icon}`}>
                   {/* {i.icon} */}
@@ -1808,7 +1808,7 @@ class ZoomPicture extends Component {
     }, 500);
   };
   renderCommentItemPopoverContent = flag => {
-    const { currentSelectedCommentItemDetail, userId } = this.props;
+    const { currentSelectedCommentItemDetail, userId, isShow_textArea } = this.props;
     const {
       commitPublishText,
       isShouldShowCommentDetail,
@@ -1892,24 +1892,25 @@ class ZoomPicture extends Component {
             );
           })}
         </div>
-        <div className={styles.commitPopoverContentWrapper}>
-          <TextArea
-            placeholder="按 Enter 发布图评"
-            onPressEnter={e => this.handleCommitPublishText(e, false)}
-            value={commitPublishText}
-            onChange={this.onCommitPublishTextChange}
-          />
-          <div className={styles.commitPublishWrapper}>
-            <Button
-              type="primary"
-              size="small"
-              onClick={e => this.handleCommitPublishText(e, false)}
-              disabled={!commitPublishText.trim()}
-            >
-              发布
+        {isShow_textArea == true ?
+          <div className={styles.commitPopoverContentWrapper}>
+            <TextArea
+              placeholder="按 Enter 发布图评"
+              onPressEnter={e => this.handleCommitPublishText(e, false)}
+              value={commitPublishText}
+              onChange={this.onCommitPublishTextChange}
+            />
+            <div className={styles.commitPublishWrapper}>
+              <Button
+                type="primary"
+                size="small"
+                onClick={e => this.handleCommitPublishText(e, false)}
+                disabled={!commitPublishText.trim()}
+              >
+                发布
             </Button>
-          </div>
-        </div>
+            </div>
+          </div> : ''}
       </div>
     );
   };

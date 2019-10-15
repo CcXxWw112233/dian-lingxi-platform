@@ -1276,6 +1276,7 @@ class FileDetailContent extends React.Component {
             filePreviewCurrentId={filePreviewCurrentId}
             projectFileType={"projectFileType"}
             zoomPictureParams={zoomPictureParams}
+            isShow_textArea={true}
           />
         )}
       </div>
@@ -1718,6 +1719,7 @@ class FileDetailContent extends React.Component {
                   filePreviewCurrentId={filePreviewCurrentId}
                   projectFileType={"projectFileType"}
                   zoomPictureParams={zoomPictureParams}
+                  isShow_textArea={true}
                 />
               )}
             </div>
