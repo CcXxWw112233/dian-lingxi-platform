@@ -67,8 +67,8 @@ export default class TaskDetailModal extends Component {
     return (
       <div>
         <PublicDetailModal
-          width={1200}
-          // style={{minWidth: '1200px'}}
+          // width={1200}
+          style={{padding: '20px 84px 0'}}
           modalVisible={task_detail_modal_visible}
           onCancel={this.onCancel}
           // commentUseParams={commentUseParams}

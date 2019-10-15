@@ -289,6 +289,8 @@
     .fileDetailContentLeft {
       flex: 1;
       min-height: 544px;
+      max-width: 568px;
+      min-width: 656px;
       .pictureEditState{
         z-index: 6;
         height: 40px;
@@ -324,6 +326,7 @@
       width: auto !important;
       //height: 100%;
       //overflow-x: hidden;
+      flex: 1;
       padding: 2px;
       border-top: 1px solid #D9D9D9;
       background-color: #FFFFFF;
@@ -401,6 +404,7 @@
     .fileDetailContentLeft {
       flex: 1;
       min-height: auto;
+      min-width: 0;
       .pictureEditState{
         z-index: 6;
         height: 40px;
@@ -433,7 +437,8 @@
       }
     }
     .fileDetailContentRight{
-      width: 420px !important;
+      // width: 420px !important;
+      flex: 1;
       //height: 100%;
       //overflow-x: hidden;
       border-left: 1px solid #D9D9D9;
@@ -513,6 +518,7 @@
     .fileDetailContentLeft {
       flex: 1;
       min-height: auto;
+      min-width: 656px;
       .pictureEditState{
         z-index: 6;
         height: 40px;
@@ -545,7 +551,8 @@
       }
     }
     .fileDetailContentRight{
-      width: 420px !important;
+      // width: 420px !important;
+      flex: 1;
       //height: 100%;
       //overflow-x: hidden;
       border-left: 1px solid #D9D9D9;
@@ -617,3 +624,350 @@
     }
   }
 }
+
+// 这里是侧边栏状态打开的监听
+@media screen and (max-width: 1159px) {
+  .isSiderRightWidthExit{
+    //height: 100%;
+    display: flex;
+    flex-direction: column;
+    .fileDetailContentLeft {
+      flex: 1;
+      min-height: 544px;
+      min-width: 580px;
+      .pictureEditState{
+        z-index: 6;
+        height: 40px;
+        line-height: 40px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        color: #ffffff;
+        width: 120px;
+        text-align: center;
+        left: 50%;
+        margin-left: -60px;
+        position: absolute;
+        bottom: 40px;
+        background: rgba(89,89,89,0.80);
+  
+      }
+      .flag{
+        height: 32px;
+        width: 32px;
+        background-color: rgba(24,144,255,1);
+        position: absolute;
+        border-radius: 32px;
+        text-align: center;
+        line-height: 32px;
+        font-size: 14px;
+        color: #ffffff;
+        top: -16px;
+        left: -16px;
+      }
+    }
+    .fileDetailContentRight{
+      width: auto !important;
+      //height: 100%;
+      //overflow-x: hidden;
+      flex: 1;
+      padding: 2px;
+      border-top: 1px solid #D9D9D9;
+      background-color: #FFFFFF;
+      position: relative;
+      .fileDetailContentRight_top{
+        padding: 40px 20px;
+        background-color: #F5F5F5;
+        max-height: 260px;
+        overflow-x: hidden;
+        color: #8c8c8c;
+        .versionInfoList{
+          margin-top: 10px;
+          .versionInfoListItem{
+            cursor: pointer;
+            margin-top: 12px;
+            color: #595959;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            overflow-x: hidden;
+            >div{
+              margin-right: 12px;
+            }
+            .point{
+              background: #1890FF;
+              width: 4px;
+              height: 4px;
+              margin-right: 4px;
+              border-radius: 4px;
+            }
+            .point2{
+              background: #F5F5F5;
+              width: 4px;
+              height: 4px;
+              margin-right: 4px;
+            }
+          }
+        }
+      }
+      .fileDetailContentRight_middle{
+        padding-bottom: 80px;
+        overflow-x: hidden;
+        max-height: 244px;
+       .lookAll {
+         display: flex;
+         font-size: 14px;
+         cursor: pointer;
+         color:rgba(0,0,0,0.65);
+         margin: 16px 0 0 12px;
+         line-height: 22px;
+       }
+        .lookAll_logo {
+          margin-left: 6px;
+          line-height: 22px;
+        }
+      }
+  
+      .fileDetailContentRight_bott{
+        position: absolute;
+        height: 70px;
+        background-color: #ffffff;
+        border-top: 1px solid #D9D9D9;
+        bottom: 0;
+        width: 100%;
+      }
+  
+    }
+  }
+}
+@media screen and (min-width: 1160px) {
+  .isSiderRightWidthExit{
+    //height: 100%;
+    display: flex;
+    flex-direction: column;
+    .fileDetailContentLeft {
+      flex: 1;
+      min-height: 544px;
+      min-width: 580px;
+      .pictureEditState{
+        z-index: 6;
+        height: 40px;
+        line-height: 40px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        color: #ffffff;
+        width: 120px;
+        text-align: center;
+        left: 50%;
+        margin-left: -60px;
+        position: absolute;
+        bottom: 40px;
+        background: rgba(89,89,89,0.80);
+  
+      }
+      .flag{
+        height: 32px;
+        width: 32px;
+        background-color: rgba(24,144,255,1);
+        position: absolute;
+        border-radius: 32px;
+        text-align: center;
+        line-height: 32px;
+        font-size: 14px;
+        color: #ffffff;
+        top: -16px;
+        left: -16px;
+      }
+    }
+    .fileDetailContentRight{
+      width: auto !important;
+      //height: 100%;
+      //overflow-x: hidden;
+      flex: 1;
+      padding: 2px;
+      border-top: 1px solid #D9D9D9;
+      background-color: #FFFFFF;
+      position: relative;
+      .fileDetailContentRight_top{
+        padding: 40px 20px;
+        background-color: #F5F5F5;
+        max-height: 260px;
+        overflow-x: hidden;
+        color: #8c8c8c;
+        .versionInfoList{
+          margin-top: 10px;
+          .versionInfoListItem{
+            cursor: pointer;
+            margin-top: 12px;
+            color: #595959;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            overflow-x: hidden;
+            >div{
+              margin-right: 12px;
+            }
+            .point{
+              background: #1890FF;
+              width: 4px;
+              height: 4px;
+              margin-right: 4px;
+              border-radius: 4px;
+            }
+            .point2{
+              background: #F5F5F5;
+              width: 4px;
+              height: 4px;
+              margin-right: 4px;
+            }
+          }
+        }
+      }
+      .fileDetailContentRight_middle{
+        padding-bottom: 80px;
+        overflow-x: hidden;
+        max-height: 244px;
+       .lookAll {
+         display: flex;
+         font-size: 14px;
+         cursor: pointer;
+         color:rgba(0,0,0,0.65);
+         margin: 16px 0 0 12px;
+         line-height: 22px;
+       }
+        .lookAll_logo {
+          margin-left: 6px;
+          line-height: 22px;
+        }
+      }
+  
+      .fileDetailContentRight_bott{
+        position: absolute;
+        height: 70px;
+        background-color: #ffffff;
+        border-top: 1px solid #D9D9D9;
+        bottom: 0;
+        width: 100%;
+      }
+  
+    }
+  }
+}
+@media screen and (min-width: 1200px) {
+  .isSiderRightWidthExit{
+    //height: 100%;
+    display: flex;
+    flex-direction: row;
+    .fileDetailContentLeft {
+      flex: 1;
+      min-height: auto;
+      // min-width: 490px;
+      min-width: 0 !important;
+      .pictureEditState{
+        z-index: 6;
+        height: 40px;
+        line-height: 40px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        color: #ffffff;
+        width: 120px;
+        text-align: center;
+        left: 50%;
+        margin-left: -60px;
+        position: absolute;
+        bottom: 40px;
+        background: rgba(89,89,89,0.80);
+  
+      }
+      .flag{
+        height: 32px;
+        width: 32px;
+        background-color: rgba(24,144,255,1);
+        position: absolute;
+        border-radius: 32px;
+        text-align: center;
+        line-height: 32px;
+        font-size: 14px;
+        color: #ffffff;
+        top: -16px;
+        left: -16px;
+      }
+    }
+    .fileDetailContentRight{
+      // width: 420px !important;
+      flex: 1;
+      //height: 100%;
+      //overflow-x: hidden;
+      border-left: 1px solid #D9D9D9;
+      border-top: 0 none;
+      background-color: #FFFFFF;
+      position: relative;
+      .fileDetailContentRight_top{
+        padding: 40px 20px;
+        background-color: #F5F5F5;
+        max-height: 260px;
+        overflow-x: hidden;
+        color: #8c8c8c;
+        .versionInfoList{
+          margin-top: 10px;
+          .versionInfoListItem{
+            cursor: pointer;
+            margin-top: 12px;
+            color: #595959;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            overflow-x: hidden;
+            >div{
+              margin-right: 12px;
+            }
+            .point{
+              background: #1890FF;
+              width: 4px;
+              height: 4px;
+              margin-right: 4px;
+              border-radius: 4px;
+            }
+            .point2{
+              background: #F5F5F5;
+              width: 4px;
+              height: 4px;
+              margin-right: 4px;
+            }
+          }
+        }
+      }
+      .fileDetailContentRight_middle{
+        padding-bottom: 80px;
+        overflow-x: hidden;
+        max-height: none;
+       .lookAll {
+         display: flex;
+         font-size: 14px;
+         cursor: pointer;
+         color:rgba(0,0,0,0.65);
+         margin: 16px 0 0 12px;
+         line-height: 22px;
+       }
+        .lookAll_logo {
+          margin-left: 6px;
+          line-height: 22px;
+        }
+      }
+  
+      .fileDetailContentRight_bott{
+        position: absolute;
+        height: 70px;
+        background-color: #ffffff;
+        border-top: 1px solid #D9D9D9;
+        bottom: 0;
+        width: 100%;
+      }
+  
+    }
+  }
+}
+
+

@@ -66,6 +66,12 @@ class SiderRight extends React.Component {
     this.setState({
       collapsed: !this.state.collapsed
     });
+    this.props.dispatch({
+      type: 'technological/updateDatas',
+      payload: {
+        siderRightCollapsed: this.state.collapsed
+      }
+    })
   }
 
   handleVideoMeetingSaveSelectChange = value => {

@@ -3,7 +3,8 @@ import indexStyles from './index.less'
 import CommentSubmit from './Comment/CommentSubmit'
 import CommentLists from './Comment/CommentLists'
 import globalStyles from '../../globalset/css/globalClassName.less'
-
+import { connect } from 'dva'
+@connect(mapStateToProps)
 export default class DetailContent extends React.Component {
   state = {
     isShowAllDynamic: false, //是否查看全部
@@ -30,7 +31,7 @@ export default class DetailContent extends React.Component {
     })
   }
   render() {
-    const { clientHeight, offsetTopDeviation, isExpandFrame, board_id, currentProcessInstanceId, } =this.props
+    const { clientHeight, offsetTopDeviation, isExpandFrame, board_id, currentProcessInstanceId, siderRightCollapsed, } =this.props
     const { isShowAllDynamic } = this.state
     const {
       mainContent = <div></div>, //主区域
@@ -44,7 +45,7 @@ export default class DetailContent extends React.Component {
 
 
     return (
-      <div className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{height: clientHeight- offsetTopDeviation - 60}}>
+      <div className={ `${ siderRightCollapsed ? indexStyles.isSiderRightWidthExit : indexStyles.fileDetailContentOut}` } ref={'fileDetailContentOut'} style={{height: clientHeight- offsetTopDeviation - 60}}>
         <div className={indexStyles.fileDetailContentLeft} style={{overflowY: 'auto'}}>
           {/*主要内容放置区*/}
           {mainContent}
@@ -97,4 +98,10 @@ export default class DetailContent extends React.Component {
       </div>
     )
   }
+}
+
+function mapStateToProps({ technological: { datas: {
+  siderRightCollapsed
+} } }) {
+  return { siderRightCollapsed }
 }

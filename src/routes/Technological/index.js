@@ -130,7 +130,7 @@ export default class Technological extends React.Component {
 
     const defaultLayout = (
       <Layout>
-        <Layout id='technologicalLayoutWrapper'>
+        <Layout id='technologicalLayoutWrapper' style={{position: 'relative'}}>
           <Sider collapsedWidth={64} theme={'light'} collapsed={true} />
           <SiderLeft />
           <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>
@@ -165,7 +165,7 @@ export default class Technological extends React.Component {
     )
 
     const simpleLayout = (
-      <Layout id='technologicalLayoutWrapper' >
+      <Layout id='technologicalLayoutWrapper' style={{position: 'relative'}}>
         <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>
           <Content style={{ height: '100vh' }} >
             <div className={globalClassNmae.page_style_3} id={'technologicalOut'} >
