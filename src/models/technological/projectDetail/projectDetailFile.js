@@ -484,6 +484,13 @@ export default modelExtend(projectDetail, {
         }
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
+        if (res.code == 4003) {  //分享链接失效,返回验证页面
+          debugger
+          setTimeout(function () {
+            window.history.back();
+          }, 3000)
+        } else {
+        }
       }
     },
     * getFilePDFInfo({ payload }, { select, call, put }) {
