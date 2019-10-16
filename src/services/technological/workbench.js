@@ -85,19 +85,21 @@ export async function associateUser(associate_param = '') {
   }, { isNotLoading: true })
 }
 
-export async function createShareLink(payload = {}) {
-  // board_id*	string 项目ID
+export async function createShareLink(data) {
   // rela_id*	string 当前对象ID,比如是任务就是任务ID，文件就是当前文件的ID
-  // rela_type*	string 当前对象type,4=任务 2=流程 3=文件
-  const { board_id = '', rela_id = '', rela_type = '' } = payload
+  // rela_type*	string 当前对象type, 4=里程碑 3=文件 2=流程 1=任务
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/share_link`,
     method: 'POST',
-    data: {
-      board_id,
-      rela_id,
-      rela_type,
-    }
+    data
+  })
+}
+
+export async function verificationShareLink(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/share_link/check`,
+    method: 'PUT',
+    data
   })
 }
 
@@ -239,7 +241,7 @@ export async function getCurrentResponsibleTask() {
   })
 }
 
-//获取当前选择的项目的职员列表
+//获取当前选择的项目的成员列表
 export async function getCurrentSelectedProjectMembersList({ projectId }) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/user/${projectId}`,

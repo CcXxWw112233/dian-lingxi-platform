@@ -337,18 +337,26 @@ export async function deleteBoardTag(data) {
 
 //查询任务详情
 export async function getCardDetail(params) {
-  // debugger
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/card/detail/${params.id}`,
     method: 'GET',
-    headers: createHeaderContentDataByCardId(params.id),
-    // params
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
+    params
+  });
+}
+
+//获取任务详情 ---- 解决分享出去之后的任务详情没有权限 ----暂时使用(10月14日)
+export async function getShareCardDetail(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/detail/share/${params.id}`,
+    method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
+    params
   });
 }
 
 //取消关联
 export async function deleteRelation(params) {
-  //debugger
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/content_link/${params.id}`,
     method: 'DELETE',
@@ -361,6 +369,7 @@ export async function getRelations(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/content_link`,
     method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.link_id),
     params
   });
 }
@@ -415,6 +424,7 @@ export async function getCardCommentListAll(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/card/comment`,
     method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
     params
   })
 }

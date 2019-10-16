@@ -1442,7 +1442,7 @@ class ZoomPicture extends Component {
     );
   };
   renderOperatorBar = () => {
-    const { hovering, isFullScreenMode, zoomPictureParams = {} } = this.props;
+    const { hovering, isFullScreenMode, zoomPictureParams = {}, isShow_textArea } = this.props;
     const { is_privilege, privileges = [], board_id } = zoomPictureParams
     const {
       currentImgZoomPercent,
@@ -1500,14 +1500,16 @@ class ZoomPicture extends Component {
         toolTipText: isShowAllCircleReview ? '显示当前版本圈评' : '显示所有版本圈评',
         onClick: () => this.handleOperator('showAllCircleReview')
       },
-      {
-        label: '添加圈点评论',
-        icon: <span>&#xe664;</span>,
-        // toolTipText: '添加圈点评论',
-        key: 'addCommit',
-        disabled: isHideCommentList,
-        onClick: () => this.handleOperator('addCommit')
-      },
+
+      isShow_textArea == true ?
+        {
+          label: '添加圈点评论',
+          icon: <span>&#xe664;</span>,
+          // toolTipText: '添加圈点评论',
+          key: 'addCommit',
+          disabled: isHideCommentList,
+          onClick: () => this.handleOperator('addCommit')
+        } : '',
     ];
     const operatorListWhenCommit = [
       {
@@ -1541,12 +1543,12 @@ class ZoomPicture extends Component {
               key={i.key}
               overlayStyle={{ zIndex: 999999999999 }}
             >
-              <div style={{position: 'relative'}} onClick={i.onClick} className={getOperatorBarCellClass(i)}>
+              <div style={{ position: 'relative' }} onClick={i.onClick} className={getOperatorBarCellClass(i)}>
                 {/* {i.label} */}
                 <div className={`${globalStyles.authTheme} ${i.key != 'resetSize' && styles.label_icon}`}>
                   {/* {i.icon} */}
                   {
-                    i && i.key && i.key == 'addCommit' ? (
+                    i && i.key && i.key == 'addCommit' && isShow_textArea == true ? (
                       <span style={{ display: 'flex' }}>{i.icon}&nbsp;&nbsp;<span style={{ fontSize: '14px', width: '56px' }}>添加圈点</span></span>
                     ) : (
                         <span>{i.icon}</span>
@@ -1808,7 +1810,7 @@ class ZoomPicture extends Component {
     }, 500);
   };
   renderCommentItemPopoverContent = flag => {
-    const { currentSelectedCommentItemDetail, userId } = this.props;
+    const { currentSelectedCommentItemDetail, userId, isShow_textArea } = this.props;
     const {
       commitPublishText,
       isShouldShowCommentDetail,
@@ -1892,24 +1894,25 @@ class ZoomPicture extends Component {
             );
           })}
         </div>
-        <div className={styles.commitPopoverContentWrapper}>
-          <TextArea
-            placeholder="按 Enter 发布图评"
-            onPressEnter={e => this.handleCommitPublishText(e, false)}
-            value={commitPublishText}
-            onChange={this.onCommitPublishTextChange}
-          />
-          <div className={styles.commitPublishWrapper}>
-            <Button
-              type="primary"
-              size="small"
-              onClick={e => this.handleCommitPublishText(e, false)}
-              disabled={!commitPublishText.trim()}
-            >
-              发布
+        {isShow_textArea == true ?
+          <div className={styles.commitPopoverContentWrapper}>
+            <TextArea
+              placeholder="按 Enter 发布图评"
+              onPressEnter={e => this.handleCommitPublishText(e, false)}
+              value={commitPublishText}
+              onChange={this.onCommitPublishTextChange}
+            />
+            <div className={styles.commitPublishWrapper}>
+              <Button
+                type="primary"
+                size="small"
+                onClick={e => this.handleCommitPublishText(e, false)}
+                disabled={!commitPublishText.trim()}
+              >
+                发布
             </Button>
-          </div>
-        </div>
+            </div>
+          </div> : ''}
       </div>
     );
   };

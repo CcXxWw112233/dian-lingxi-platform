@@ -143,7 +143,7 @@ export default modelExtend(projectDetail, {
     },
   },
   effects: {
-    
+
     //文档----------start
     * initialget({ payload }, { select, call, put }) {
       const { id } = payload
@@ -171,8 +171,7 @@ export default modelExtend(projectDetail, {
               folder_id: result.data.folder_id
             }
           })
-        } 
-        else {
+        } else { // 点击app的时候没有file_id
           yield put({
             type: 'getFileList',
             payload: {
@@ -186,7 +185,8 @@ export default modelExtend(projectDetail, {
     // 从url预览
     * previewFileByUrl({ payload }, { select, call, put }) {
       const { file_id } = payload
-      let res = yield call(filePreviewByUrl, { id: file_id })
+      let res = yield call(fileInfoByUrl, { id: file_id })
+
       yield put({
         type: 'updateDatas',
         payload: {
@@ -202,9 +202,10 @@ export default modelExtend(projectDetail, {
         yield put({
           type: 'updateDatas',
           payload: {
-            filePreviewIsUsable: res.data.is_usable,
-            filePreviewUrl: res.data.url,
-            filePreviewIsRealImage: res.data.is_real_image,
+            filePreviewIsUsable: res.data.preview_info.is_usable,
+            filePreviewUrl: res.data.preview_info.url,
+            filePreviewIsRealImage: res.data.preview_info.is_real_image,
+            filePreviewCurrentVersionList: res.data.version_list
           }
         })
         const { file_id } = payload
@@ -223,6 +224,11 @@ export default modelExtend(projectDetail, {
 
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
+        if (res.code == 4003) {  //分享链接失效,返回验证页面
+          window.history.back();
+        } else {
+
+        }
       }
     },
     * fileInfoByUrl({ payload }, { select, call, put }) {
@@ -243,16 +249,16 @@ export default modelExtend(projectDetail, {
         const target_path = res.data.target_path
         // 递归添加路径
         const digui = (name, data) => {
-          if(data[name]) {
-            arr.push({file_name: data.folder_name, file_id: data.id, type: '1'})
+          if (data[name]) {
+            arr.push({ file_name: data.folder_name, file_id: data.id, type: '1' })
             digui(name, data[name])
-          }else if(data['parent_id'] == '0'){
-            arr.push({file_name: '根目录', file_id: data.id, type: '1'})
+          } else if (data['parent_id'] == '0') {
+            arr.push({ file_name: '根目录', file_id: data.id, type: '1' })
           }
         }
         digui('parent_folder', target_path)
         const newbreadcrumbList = arr.reverse()
-        newbreadcrumbList.push({file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2', folder_id: res.data.base_info.folder_id})
+        newbreadcrumbList.push({ file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2', folder_id: res.data.base_info.folder_id })
         //递归添加路径
         // const digui = (name, data) => {
         //   if (data[name] && data['parent_id'] != '0') {
@@ -863,12 +869,22 @@ export default modelExtend(projectDetail, {
         }
       })
       let res = yield call(getCardCommentListAll, payload)
-      yield put({
-        type: 'updateDatas',
-        payload: {
-          cardCommentAll: res.data
+      if (isApiResponseOk) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            cardCommentAll: res.data
+          }
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+        if (res.code === 4003) {
+
+        } else {
+
         }
-      })
+      }
+
     },
 
     * getFileType({ payload }, { select, call, put }) {
