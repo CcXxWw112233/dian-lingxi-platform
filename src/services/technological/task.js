@@ -345,6 +345,16 @@ export async function getCardDetail(params) {
   });
 }
 
+//获取任务详情 ---- 解决分享出去之后的任务详情没有权限 ----暂时使用(10月14日)
+export async function getShareCardDetail(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/detail/share/${params.id}`,
+    method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
+    params
+  });
+}
+
 //取消关联
 export async function deleteRelation(params) {
   return request({

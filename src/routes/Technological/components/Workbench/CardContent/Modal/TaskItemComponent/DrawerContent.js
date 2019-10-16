@@ -36,7 +36,7 @@ import { createMeeting, createShareLink, modifOrStopShareLink } from './../../..
 import ShareAndInvite from './../../../../ShareAndInvite/index'
 import VisitControl from './../../../../VisitControl/index'
 import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from './../../../../../../../services/technological/project'
-import InformRemind from '@/components/InformRemind'
+import InformRemind from '../../../../../../../components/InformRemind'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 import MenuSearchPartner from '../../../../../../../components/MenuSearchMultiple/MenuSearchPartner.js'
 
@@ -829,6 +829,20 @@ class DrawContent extends React.Component {
           message.success('停止分享成功')
         } else {
           message.success('修改成功')
+          const { dispatch, } = this.props
+          const { datas: { drawContent = {} } } = this.props.model
+          console.log(drawContent, 'dddd');
+
+          const isShared = obj && obj['status'] && obj['status']
+          if (isShared) {
+            let new_drawContent = { ...drawContent, is_shared: obj['status'] }
+            dispatch({
+              type: 'workbenchTaskDetail/updateDatas',
+              payload: {
+                drawContent: new_drawContent,
+              }
+            })
+          }
         }
         this.setState((state) => {
           const { onlyReadingShareData } = state
@@ -1406,7 +1420,17 @@ class DrawContent extends React.Component {
           {/*项目挪动*/}
           <div style={{ display: 'flex', justifyContent: 'flex-end', textAlign: 'right', marginRight: '5px', marginTop: '-5px' }}>
             <span></span>
-            <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
+
+            {card_id ? <div style={{ alignItems: 'center', display: 'flex' }}>
+              <span>
+                {is_shared === '1' ? <span className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></span> : null}
+              </span>
+
+              <span style={{ marginTop: '-5px', marginRight: '10px', position: 'relative', width: '12px', height: '12px' }}>
+                <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
+              </span>
+            </div> : ''}
+
             {/*<div className={DrawerContentStyles.contain_1}>*/}
             {/*<Dropdown overlay={projectGroupMenu}>*/}
             {/*<div className={DrawerContentStyles.left}>*/}
@@ -1445,8 +1469,8 @@ class DrawContent extends React.Component {
               )}
             </span>
             {this.props.needDelete && (
-             <span style={{marginTop: '-2px', position: 'relative'}}>
-               {checkIsHasPermissionInVisitControl('edit', privileges, drawContent.is_privilege, drawContent.executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
+              <span style={{ marginTop: '-2px', position: 'relative' }}>
+                {checkIsHasPermissionInVisitControl('edit', privileges, drawContent.is_privilege, drawContent.executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
                   <div className={globalStyle.drawContent_mask} onClick={this.alarmNoEditPermission}></div>
                 )}
                 <Dropdown overlay={topRightMenu}>
@@ -1454,7 +1478,7 @@ class DrawContent extends React.Component {
                     <Icon type="ellipsis" style={{ fontSize: 20, marginTop: 2 }} />
                   </span>
                 </Dropdown>
-             </span> 
+              </span>
             )}
           </div>
           <div style={{ position: 'relative' }}>

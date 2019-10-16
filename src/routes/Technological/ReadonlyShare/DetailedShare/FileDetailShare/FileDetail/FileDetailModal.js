@@ -2,9 +2,6 @@ import React from 'react'
 import { Form, Input, } from 'antd'
 import CustormModal from '../../../../../../components/CustormModal'
 import FileDetail from './index'
-const FormItem = Form.Item
-const TextArea = Input.TextArea
-
 
 class FileDetailModal extends React.Component {
   state = {}

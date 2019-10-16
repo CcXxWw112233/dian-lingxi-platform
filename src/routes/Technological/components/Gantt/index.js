@@ -110,7 +110,7 @@ class Gantt extends Component {
           message.warn('创建任务失败')
         }
       })
-      // .catch(err => message.error(err));
+    // .catch(err => message.error(err));
   }
   // 添加完一条任务后，将某1条任务塞进去
   insertTaskToListGroup = (data) => {
@@ -123,7 +123,7 @@ class Gantt extends Component {
       type: 'gantt/handleListGroup',
       payload: {
         data: list_group_new,
-        not_set_scroll_top: true 
+        not_set_scroll_top: true
       }
     })
   }
@@ -571,9 +571,10 @@ class Gantt extends Component {
       ...FileModuleProps,
       previewFileModalVisibile,
       updateDatasTask,
-      updateDatasFile
+      updateDatasFile,
+      model,
+      modal,
     }
-
     return (
       <div>
         <GanttFace

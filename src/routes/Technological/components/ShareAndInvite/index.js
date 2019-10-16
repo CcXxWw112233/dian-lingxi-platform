@@ -85,7 +85,8 @@ class ShareAndInvite extends Component {
       day7: now + dayToSec * 7,
       forever: "0"
     };
-    return stations[key] ? stations[key] : "0";
+    //时间戳保留10位
+    return stations[key] ? JSON.stringify(stations[key]).substr(0, 10) : "0";
   };
   handleOnlyReadingShareEXPMenuClick = ({ item, key }) => {
     const { data, handleOnlyReadingShareExpChangeOrStopShare } = this.props;
@@ -147,7 +148,7 @@ class ShareAndInvite extends Component {
     );
     return (
       <div className={DrawerContentStyles.wrapper}>
-        {is_shared === "1" ? (
+        {/* {is_shared === "1" ? (
           <p
             className={DrawerContentStyles.right__shareIndicator}
             onClick={() => handleChangeOnlyReadingShareModalVisible()}
@@ -157,7 +158,7 @@ class ShareAndInvite extends Component {
               正在分享
             </span>
           </p>
-        ) : null}
+        ) : null} */}
         <Dropdown overlay={shareMenu}>
           <span className={DrawerContentStyles.right__share} />
         </Dropdown>
