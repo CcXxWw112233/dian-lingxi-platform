@@ -337,7 +337,7 @@ class DropdownMultipleSelectWithSearch extends Component {
     })
   }
   inviteOthersToBoardCalback = ({ users }) => {
-    const { dispatch, board_id, handleSelectedItemChange } = this.props
+    const { dispatch, board_id, handleSelectedItemChange, inviteOthersToBoardCalbackRequest } = this.props
     const { selectedList = [] } = this.state
     const calback = (lists) => {
       const arr = lists.filter(item => users.indexOf(item.id) != -1)
@@ -346,6 +346,10 @@ class DropdownMultipleSelectWithSearch extends Component {
         selectedList: new_selectedList
       })
       handleSelectedItemChange(new_selectedList)
+    }
+    if(typeof inviteOthersToBoardCalbackRequest == 'function') {
+      inviteOthersToBoardCalbackRequest()
+      // return
     }
     dispatch({
       type: 'workbench/fetchCurrentSelectedProjectMembersList',
