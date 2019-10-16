@@ -349,14 +349,15 @@ export default class GetRowGantt extends Component {
 
     const holidy_date_arr = holiday_list.filter(item => {
       if (
-        create_start_time_ <= Number(item.timestamp) &&
-        create_end_time_ >= Number(item.timestamp) &&
-        (item.is_week)
+        create_start_time_ <= Number(item.timestamp)
+        && create_end_time_ >= Number(item.timestamp)
+        && (item.is_week || item.festival_status == '1') //周末或者节假日
+        && (item.festival_status != '2') //不是补班（周末补班不算）
       ) {
         return item
       }
     })
-  
+
     this.setState({
       drag_holiday_count: holidy_date_arr.length
     })
