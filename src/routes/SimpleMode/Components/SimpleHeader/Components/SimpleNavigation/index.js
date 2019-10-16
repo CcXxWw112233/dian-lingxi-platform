@@ -310,6 +310,7 @@ export default class SimpleNavigation extends Component {
                     simpleDrawerTitle: '后台管理'
 
                 });
+                this.props.dropdownHandleVisibleChange(false);
 
                 break
             case '22': // 匹配邀请职员加入弹框显示
@@ -457,6 +458,7 @@ export default class SimpleNavigation extends Component {
         this.setState({
             payUpgradeModalVisible: true
         });
+        this.props.dropdownHandleVisibleChange(false);
     }
 
     setPayUpgradeModalVisible = (visible) => {
