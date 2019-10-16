@@ -21,7 +21,7 @@ class DrawContentModal extends React.Component {
         drawContent: {}
       }
     })
-    this.props.setDrawerVisibleClose()
+    // this.props.setDrawerVisibleClose()
   }
 
   render() {
@@ -34,8 +34,8 @@ class DrawContentModal extends React.Component {
         maskClosable={false}
         footer={null}
         destroyOnClose
-        onCancel={this.onCancel.bind(this)}
-        overInner={<DrawContent setDrawerVisibleClose={setDrawerVisibleClose} />}
+        // onCancel={this.onCancel.bind(this)}
+        overInner={<DrawContent />}
       />
     )
   }

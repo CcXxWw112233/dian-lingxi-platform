@@ -185,7 +185,8 @@ export default modelExtend(projectDetail, {
     // 从url预览
     * previewFileByUrl({ payload }, { select, call, put }) {
       const { file_id } = payload
-      let res = yield call(filePreviewByUrl, { id: file_id })
+      let res = yield call(fileInfoByUrl, { id: file_id })
+
       yield put({
         type: 'updateDatas',
         payload: {
@@ -201,9 +202,10 @@ export default modelExtend(projectDetail, {
         yield put({
           type: 'updateDatas',
           payload: {
-            filePreviewIsUsable: res.data.is_usable,
-            filePreviewUrl: res.data.url,
-            filePreviewIsRealImage: res.data.is_real_image,
+            filePreviewIsUsable: res.data.preview_info.is_usable,
+            filePreviewUrl: res.data.preview_info.url,
+            filePreviewIsRealImage: res.data.preview_info.is_real_image,
+            filePreviewCurrentVersionList: res.data.version_list
           }
         })
         const { file_id } = payload
@@ -222,6 +224,12 @@ export default modelExtend(projectDetail, {
 
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
+        if (res.code == 4003) {  //分享链接失效,返回验证页面
+          setTimeout(function () {
+            window.history.back();
+          }, 3000)
+        } else {
+        }
       }
     },
     * fileInfoByUrl({ payload }, { select, call, put }) {
@@ -476,6 +484,13 @@ export default modelExtend(projectDetail, {
         }
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
+        if (res.code == 4003) {  //分享链接失效,返回验证页面
+          debugger
+          setTimeout(function () {
+            window.history.back();
+          }, 3000)
+        } else {
+        }
       }
     },
     * getFilePDFInfo({ payload }, { select, call, put }) {
@@ -862,12 +877,22 @@ export default modelExtend(projectDetail, {
         }
       })
       let res = yield call(getCardCommentListAll, payload)
-      yield put({
-        type: 'updateDatas',
-        payload: {
-          cardCommentAll: res.data
+      if (isApiResponseOk) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            cardCommentAll: res.data
+          }
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+        if (res.code === 4003) {
+
+        } else {
+
         }
-      })
+      }
+
     },
 
     * getFileType({ payload }, { select, call, put }) {

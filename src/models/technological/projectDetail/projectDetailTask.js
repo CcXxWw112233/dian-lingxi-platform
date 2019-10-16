@@ -161,6 +161,12 @@ export default modelExtend(projectDetail, {
           }
         })
         yield put({
+          type: 'getCardCommentListAll',
+          payload: {
+            id
+          }
+        })
+        yield put({
           type: 'updateDatas',
           payload: {
             drawerVisible: true,
@@ -169,6 +175,13 @@ export default modelExtend(projectDetail, {
         })
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
+        if (res.code == 4003) { //分享链接失效,返回验证页面
+          setTimeout(function () {
+            window.history.back();
+          }, 3000)
+        } else {
+
+        }
       }
     },
 

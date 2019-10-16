@@ -53,6 +53,7 @@ export default class ContentRaletion extends React.Component {
     }
   }
   async addRelation(data) {
+
     const res = await JoinRelation(data)
     if (isApiResponseOk(res)) {
       this.getRelations()
@@ -92,14 +93,15 @@ export default class ContentRaletion extends React.Component {
   }
   render() {
     const { isInEditContentRelation, isInChoose, isInSearCh, relations = [] } = this.state
-    const { board_id, link_id, link_local, relations_Prefix } = this.props
+    const { board_id, link_id, link_local, relations_Prefix, is_showAdd } = this.props
     return (
       <div style={{ width: 'auto' }}>
         {!isInEditContentRelation ? (
           <div className={`${indexStyles.contain_6} ${indexStyles.contain_6_2}`} >
-            <div className={indexStyles.contain_6_add} >
-              <Icon type="plus" style={{ marginRight: 4 }} />关联内容
-            </div>
+            {is_showAdd == false ?
+              '' : <div className={indexStyles.contain_6_add} >
+                <Icon type="plus" style={{ marginRight: 4 }} />关联内容
+        </div>}
             <div className={indexStyles.contain_6_add_2}>
               <div className={indexStyles.contain_6_add_2_left} onClick={this.setIsInEditContentRelation.bind(this, true)}>
                 <span className={`${globalStyles.authTheme} ${indexStyles.iconMargin}`}>&#xe612;</span>选择内容

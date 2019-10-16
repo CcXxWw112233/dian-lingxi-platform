@@ -1282,10 +1282,11 @@ class DrawContent extends React.Component {
     //drawContent  是从taskGroupList点击出来设置当前项的数据。taskGroupList是任务列表，taskGroupListIndex表示当前点击的是哪个任务列表
     const { relations_Prefix = [], isInOpenFile, drawContent = {}, projectDetailInfoData = {}, projectGoupList = [], taskGroupList = [], taskGroupListIndex = 0, boardTagList = [], dispatch } = this.props
 
-    const { data = [], board_name, board_id } = projectDetailInfoData //任务执行人列表
+    const { data = [], board_name } = projectDetailInfoData //任务执行人列表
     const { list_name } = taskGroupList[taskGroupListIndex] || {}
 
-    let { milestone_data = {}, card_id, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], privileges = [], is_privilege = '0', is_shared } = drawContent
+    let { milestone_data = {}, card_id, card_name, child_data = [], type = '0', start_time, due_time, description, label_data = [], is_realize = '0', executors = [], privileges = [], is_privilege = '0', is_shared, board_id } = drawContent
+
     if (executors.length) {
     }
     label_data = label_data || []
@@ -1507,6 +1508,10 @@ class DrawContent extends React.Component {
           </div>
 
           <div style={{ height: 'auto', width: '100%', position: 'relative' }}>
+
+            {/* 遮罩禁止全部点击 */}
+            <div style={{ position: 'absolute', width: '100%', height: '100%', zIndex: 1006, top: 0, left: 0, }}></div>
+
             {/*没有编辑项目时才有*/}
             {/* {checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT) ? ('') : (
               <div style={{ height: '100%', width: '100%', position: 'absolute', zIndex: '3', left: 20, top: 20 }} onClick={this.alarmNoEditPermission.bind(this)}></div>
@@ -1797,16 +1802,17 @@ class DrawContent extends React.Component {
             </div>
             {/*关联*/}
             <div className={DrawerContentStyles.divContent_1} style={{ position: 'relative' }}>
-              {checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
+              {/* {checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
                 <div className={globalStyle.drawContent_mask} style={{ left: 20, bottom: '22px' }} onClick={this.alarmNoEditPermission}></div>
-              )}
-              <ContentRaletion
-                relations_Prefix={relations_Prefix}
-                board_id={board_id}
-                link_id={card_id}
-                link_local={'3'}
+              )} */}
+              {board_id ?
+                <ContentRaletion
+                  relations_Prefix={relations_Prefix}
+                  board_id={board_id}
+                  link_id={card_id}
+                  link_local={'3'}
+                /> : ''}
 
-              />
             </div>
             <div style={{ position: 'relative' }}>
               {checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
@@ -1837,50 +1843,54 @@ class DrawContent extends React.Component {
               </div>
 
               {/*标签*/}
-              <div className={DrawerContentStyles.divContent_1}>
-                <div className={DrawerContentStyles.contain_5}>
-                  {label_data.map((value, key) => {
-                    let flag = false //如果项目列表
-                    for (let i = 0; i < boardTagList.length; i++) {
-                      if (value['label_id'] == boardTagList[i]['id']) {
-                        flag = true
-                        break;
-                      }
-                    }
-                    const { label_color = '90,90,90' } = value
-                    return (
-                      flag && (
-                        <Tag closable
-                          visible={true}
-                          style={{ marginTop: 8, color: `rgba(${label_color})`, backgroundColor: `rgba(${label_color},0.1)`, border: `1px solid rgba(${label_color},1)` }}
-                          onClose={this.tagClose.bind(this, { label_id: value.label_id, label_name: value.label_name, key })}
-                          key={key} >{value.label_name}</Tag>
-                      )
-                    )
-                  })}
+              {label_data ?
+                <div className={DrawerContentStyles.divContent_1}>
+                  <div className={DrawerContentStyles.contain_5}>
+                    {label_data.map(
+                      (value, key) => {
+                        // let flag = false //如果项目列表
+                        // for (let i = 0; i < boardTagList.length; i++) {
+                        //   if (value['label_id'] == boardTagList[i]['id']) {
+                        //     flag = true
+                        //     break;
+                        //   }
+                        // }
+                        const { label_color = '90,90,90' } = value
+                        return (
+                          // flag && (
+                          <Tag
+                            // closable
+                            visible={true}
+                            style={{ marginTop: 8, color: `rgba(${label_color})`, backgroundColor: `rgba(${label_color},0.1)`, border: `1px solid rgba(${label_color},1)` }}
+                            // onClose={this.tagClose.bind(this, { label_id: value.label_id, label_name: value.label_name, key })}
+                            key={key} >{value.label_name}</Tag>
+                        )
+                        // )
+                      })}
 
-                  <div>
-                    {!isInAddTag ? (
-                      <div className={DrawerContentStyles.contain_5_add} style={{ marginTop: 8, width: 100 }} onClick={this.addTag.bind(this)}>
-                        <Icon type="plus" style={{ marginRight: 4 }} />标签
+                    {/* <div>
+                      {!isInAddTag ? (
+                        <div className={DrawerContentStyles.contain_5_add} style={{ marginTop: 8, width: 100 }} onClick={this.addTag.bind(this)}>
+                          <Icon type="plus" style={{ marginRight: 4 }} />标签
                   </div>
-                    ) : (
-                        <Dropdown visible={this.state.tagDropdownVisible}
-                          overlay={<TagDropDown tagDropItemClick={this.tagDropItemClick.bind(this)} tagInputValue={this.state.tagInputValue} />} >
-                          <div style={{ marginTop: 8, position: 'relative', width: 'auto', height: 'auto' }}>
-                            <Input autoFocus={true} placeholder={'标签'}
-                              style={{ height: 24, paddingRight: 20, fontSize: 14, color: '#8c8c8c', minWidth: 62, maxWidth: 100 }}
-                              onChange={this.setTagInputValue.bind(this)}
-                              // onBlur={this.tagAddComplete.bind(this)}
-                              maxLength={8}
-                              onPressEnter={this.tagAddComplete.bind(this)} />
-                            <Icon type={'close'} style={{ position: 'absolute', fontSize: 14, cursor: 'pointer', right: 6, top: 4 }} onClick={this.quitAddTag.bind(this)}></Icon>
-                          </div>
-                        </Dropdown>
-                      )}
+                      ) : (
+                          <Dropdown visible={this.state.tagDropdownVisible}
+                            overlay={<TagDropDown tagDropItemClick={this.tagDropItemClick.bind(this)} tagInputValue={this.state.tagInputValue} />} >
+                            <div style={{ marginTop: 8, position: 'relative', width: 'auto', height: 'auto' }}>
+                              <Input autoFocus={true} placeholder={'标签'}
+                                style={{ height: 24, paddingRight: 20, fontSize: 14, color: '#8c8c8c', minWidth: 62, maxWidth: 100 }}
+                                onChange={this.setTagInputValue.bind(this)}
+                                // onBlur={this.tagAddComplete.bind(this)}
+                                maxLength={8}
+                                onPressEnter={this.tagAddComplete.bind(this)} />
+                              <Icon type={'close'} style={{ position: 'absolute', fontSize: 14, cursor: 'pointer', right: 6, top: 4 }} onClick={this.quitAddTag.bind(this)}></Icon>
+                            </div>
+                          </Dropdown>
+                        )}
+                    </div> */}
                   </div>
-                </div>
-              </div>
+                </div> : ''}
+
               {child_data.length ? (
                 <div className={DrawerContentStyles.divContent_1}>
                   <div className={DrawerContentStyles.spaceLine}></div>
@@ -1889,7 +1899,7 @@ class DrawContent extends React.Component {
 
 
               {/*添加子任务*/}
-              <DCAddChirdrenTask />
+              {/* <DCAddChirdrenTask /> */}
 
               {/*上传任务附件*/}
               <div className={`${DrawerContentStyles.divContent_1} ${DrawerContentStyles.attach_file_list_out}`}>
@@ -1925,6 +1935,8 @@ class DrawContent extends React.Component {
               </div>
             </div>
           </div>
+
+
           {/*评论*/}
           <div className={DrawerContentStyles.divContent_2} style={{ marginTop: 20 }}>
             <Comment {...this.props} leftSpaceDivWH={26}></Comment>
@@ -1936,7 +1948,7 @@ class DrawContent extends React.Component {
           <Comment leftSpaceDivWH={26}></Comment>
         </div>
         <div style={{ height: 100 }}></div> */}
-      </div>
+      </div >
     )
   }
 
