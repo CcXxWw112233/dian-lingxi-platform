@@ -21,6 +21,7 @@ import AccountSet from '@/routes/Technological/components/AccountSet'
 import OrganizationMember from '@/routes/Technological/components/OrganizationMember'
 import Organization from '@/routes/organizationManager'
 import queryString from 'query-string';
+import PayUpgrade from '@/routes/Technological/components/PayUpgrade/index'
 const { SubMenu } = Menu;
 let timer;
 @connect(mapStateToProps)
@@ -36,6 +37,7 @@ export default class SimpleNavigation extends Component {
             NotificationSettingsModalVisible: false, // 是否显示通知设置的弹框, 默认为 false 不显示
             is_disabled: false, // 是否是禁用状态, 默认为true 表示禁用状态
             is_simplemode: is_simplemode,
+            payUpgradeModalVisible:false,
 
         }
     }
@@ -291,7 +293,17 @@ export default class SimpleNavigation extends Component {
                     type: 'organizationManager/getNounList',
                     payload: {}
                 })
-
+                dispatch({
+                    type: 'organizationManager/getNounList',
+                    payload: {}
+                })
+                const OrganizationId = localStorage.getItem('OrganizationId');
+                if (OrganizationId !== '0') {
+                  dispatch({
+                    type: 'organizationManager/getPayingStatus',
+                    payload: { orgId: OrganizationId }
+                  })
+                }
                 this.props.updateStates({
                     simpleDrawerVisible: true,
                     simpleDrawerContent: <Organization showBackBtn={false} />,
@@ -374,12 +386,12 @@ export default class SimpleNavigation extends Component {
 
                 dispatch({
                     type: 'investmentMap/getMapsQueryUser',
-                    payload: { }
+                    payload: {}
                 })
-                
+
                 dispatch({
                     type: 'xczNews/getXczNewsQueryUser',
-                    payload: { }
+                    payload: {}
                 })
                 break
             case '-1': //退出
@@ -440,7 +452,18 @@ export default class SimpleNavigation extends Component {
             }
         })
     }
+    openPayUpgradeModal = (e) => {
+        e.stopPropagation();
+        this.setState({
+            payUpgradeModalVisible: true
+        });
+    }
 
+    setPayUpgradeModalVisible = (visible) => {
+        this.setState({
+            payUpgradeModalVisible: visible
+        });
+    }
     // 退出登录的操作
     logout(e) {
         const { dispatch } = this.props
@@ -553,6 +576,7 @@ export default class SimpleNavigation extends Component {
                                     <div className={indexStyles.bank}>
                                         <div className={`${globalStyles.authTheme} ${indexStyles.bank_icon}`}>&#xe719;</div>
                                         <span className={indexStyles.middle_text}>企业管理后台</span>
+                                        <div className={indexStyles.payUpgrade} onClick={(e) => { this.openPayUpgradeModal(e) }} >升级</div>
                                     </div>
                                 </div>
                             </Menu.Item>
@@ -684,6 +708,11 @@ export default class SimpleNavigation extends Component {
                 {this.state.NotificationSettingsModalVisible && (
                     <NotificationSettingsModal notificationSettingsModalVisible={this.state.NotificationSettingsModalVisible} setNotificationSettingsModalVisible={this.setNotificationSettingsModalVisible.bind(this)} />
                 )}
+
+                {
+                    this.state.payUpgradeModalVisible && <PayUpgrade setPayUpgradeModalVisible={this.setPayUpgradeModalVisible} />
+                }
+
             </div>
         )
     }
