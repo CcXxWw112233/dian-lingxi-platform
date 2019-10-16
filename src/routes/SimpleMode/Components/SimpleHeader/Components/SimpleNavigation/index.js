@@ -37,7 +37,7 @@ export default class SimpleNavigation extends Component {
             NotificationSettingsModalVisible: false, // 是否显示通知设置的弹框, 默认为 false 不显示
             is_disabled: false, // 是否是禁用状态, 默认为true 表示禁用状态
             is_simplemode: is_simplemode,
-            payUpgradeModalVisible:false,
+            payUpgradeModalVisible: false,
 
         }
     }
@@ -299,10 +299,10 @@ export default class SimpleNavigation extends Component {
                 })
                 const OrganizationId = localStorage.getItem('OrganizationId');
                 if (OrganizationId !== '0') {
-                  dispatch({
-                    type: 'organizationManager/getPayingStatus',
-                    payload: { orgId: OrganizationId }
-                  })
+                    dispatch({
+                        type: 'organizationManager/getPayingStatus',
+                        payload: { orgId: OrganizationId }
+                    })
                 }
                 this.props.updateStates({
                     simpleDrawerVisible: true,
@@ -705,7 +705,15 @@ export default class SimpleNavigation extends Component {
                 {/** 功能组件引入 */}
                 <CreateOrganizationModal dispatch={this.props.dispatch} createOrganizationVisable={this.state.createOrganizationVisable} setCreateOrgnizationOModalVisable={this.setCreateOrgnizationOModalVisable.bind(this)} />
 
-                <ShowAddMenberModal dispatch={this.props.dispatch} addMembers={this.addMembers.bind(this)} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)} />
+                <ShowAddMenberModal
+                    invitationId={localStorage.getItem('OrganizationId')}
+                    invitationType='11'
+                    invitationOrg={localStorage.getItem('OrganizationId')}
+                    dispatch={this.props.dispatch}
+                    addMembers={this.addMembers.bind(this)}
+                    modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}
+
+                />
 
                 {this.state.NotificationSettingsModalVisible && (
                     <NotificationSettingsModal notificationSettingsModalVisible={this.state.NotificationSettingsModalVisible} setNotificationSettingsModalVisible={this.setNotificationSettingsModalVisible.bind(this)} />
