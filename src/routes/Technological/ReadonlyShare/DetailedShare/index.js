@@ -35,14 +35,6 @@ class DetailedShare extends React.Component {
                     id: rela_id
                 }
             })
-            dispatch({
-                type: 'projectDetailTask/getRelations',
-                payload: {
-                    board_id: board_id,
-                    link_id: rela_id,
-                    link_local: '3'
-                }
-            })
         } else if (rela_type === '2') {
 
         } else if (rela_type === '3') {
