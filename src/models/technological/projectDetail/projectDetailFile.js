@@ -186,6 +186,7 @@ export default modelExtend(projectDetail, {
     * previewFileByUrl({ payload }, { select, call, put }) {
       const { file_id } = payload
       let res = yield call(fileInfoByUrl, { id: file_id })
+
       yield put({
         type: 'updateDatas',
         payload: {
@@ -223,6 +224,11 @@ export default modelExtend(projectDetail, {
 
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
+        if (res.code == 4003) {  //分享链接失效,返回验证页面
+          window.history.back();
+        } else {
+
+        }
       }
     },
     * fileInfoByUrl({ payload }, { select, call, put }) {
@@ -873,7 +879,7 @@ export default modelExtend(projectDetail, {
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         if (res.code === 4003) {
-          yield put(routerRedux.push(`readonly_share/${payload.id}`))
+
         } else {
 
         }

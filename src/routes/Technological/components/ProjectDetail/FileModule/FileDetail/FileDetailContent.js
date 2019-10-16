@@ -1228,7 +1228,7 @@ class FileDetailContent extends React.Component {
       currentPreviewFileBaseInfo = {},
       fileType,
       dispatch,
-      clientWidth
+      clientWidth,
     } = this.props
     const { data = [] } = projectDetailInfoData //任务执行人列表
     const { board_id } = projectDetailInfoData
