@@ -1487,6 +1487,7 @@ class DrawContent extends React.Component {
     //任务负责人显示 点点点
     const { excutorsOut_left = {} } = this.refs
     const excutorsOut_left_width_new = excutorsOut_left.clientWidth
+    console.log(label_data, 'ssss');
 
     return (
       //
@@ -1806,15 +1807,14 @@ class DrawContent extends React.Component {
             </div>
             {/*关联*/}
             <div className={DrawerContentStyles.divContent_1} style={{ position: 'relative' }}>
-              {checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
+              {/* {checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (
                 <div className={globalStyle.drawContent_mask} style={{ left: 20, bottom: '22px' }} onClick={this.alarmNoEditPermission}></div>
-              )}
+              )} */}
               <ContentRaletion
                 relations_Prefix={relations_Prefix}
                 board_id={board_id}
                 link_id={card_id}
                 link_local={'3'}
-
               />
             </div>
             <div style={{ position: 'relative' }}>
@@ -1890,6 +1890,7 @@ class DrawContent extends React.Component {
                   </div>
                 </div>
               </div>
+
               {child_data.length ? (
                 <div className={DrawerContentStyles.divContent_1}>
                   <div className={DrawerContentStyles.spaceLine}></div>
@@ -1898,7 +1899,7 @@ class DrawContent extends React.Component {
 
 
               {/*添加子任务*/}
-              <DCAddChirdrenTask />
+              {/* <DCAddChirdrenTask /> */}
 
               {/*上传任务附件*/}
               <div className={`${DrawerContentStyles.divContent_1} ${DrawerContentStyles.attach_file_list_out}`}>

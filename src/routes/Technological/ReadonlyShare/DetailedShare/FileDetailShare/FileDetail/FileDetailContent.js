@@ -1658,14 +1658,23 @@ class FileDetailContent extends React.Component {
                 )
               } */}
 
-              <ContentRaletion
-                relations_Prefix={relations_Prefix}
-                board_id={board_id}
-                link_id={filePreviewCurrentFileId}
-                link_local={'4'}
-                visitControlParams={visitControlParams}
-                is_showAdd={false}
-              />
+              <div>
+                <div style={{
+                  position: 'absolute',
+                  width: '100%',
+                  zIndex: 100,
+                  height: '100%',
+                }}>
+                </div>
+                <ContentRaletion
+                  relations_Prefix={relations_Prefix}
+                  board_id={board_id}
+                  link_id={filePreviewCurrentFileId}
+                  link_local={'4'}
+                  visitControlParams={visitControlParams}
+                  is_showAdd={false}
+                />
+              </div>
 
               {/*{seeFileInput === 'fileModule'? (*/}
               {/*<div className={indexStyles.versionOut}>*/}
