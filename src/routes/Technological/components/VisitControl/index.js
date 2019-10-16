@@ -605,7 +605,7 @@ class VisitControl extends Component {
     const unClockEle = (
       <Tooltip title={tooltipUnClockText}>
         <i className={`${globalStyles.authTheme} ${styles.trigger__icon}`}>
-          &#xe86b;
+          &#xe7c9;
         </i>
       </Tooltip>
     );
@@ -615,7 +615,7 @@ class VisitControl extends Component {
           <i
             className={`${globalStyles.authTheme} ${styles.trigger__btn__icon}`}
           >
-            &#xe86a;
+            &#xe7ca;
           </i>
           <span className={styles.trigger__btn_text}>访问控制</span>
         </span>

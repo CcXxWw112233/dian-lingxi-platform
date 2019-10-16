@@ -123,7 +123,7 @@ class ShareAndInvite extends Component {
     /***
      * status 0=未开启 1=已开启 -1=停用
      */
-    const shareButton = data.status === ('0' || '-1') ? '开始分享' : '停止分享'
+    const shareButton = data && data.status === ('0' || '-1') ? '开始分享' : '停止分享'
     let renderOnlyReadingShareEXPMenu = (
       <Menu
         openKeys={[expMenuValue]}
