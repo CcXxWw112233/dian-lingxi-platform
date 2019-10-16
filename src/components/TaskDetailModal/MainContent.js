@@ -19,7 +19,7 @@ import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner
 export default class MainContent extends Component {
 
   state = {
-    new_card_id: ''
+    // new_executors: []
   }
 
   componentDidMount() {
@@ -149,15 +149,15 @@ export default class MainContent extends Component {
   // 设置添加属性的下拉回调 E
 
   // 添加执行人的回调 S
-  chirldrenTaskChargeChange(data) {
-    const { drawContent = {}, projectDetailInfoData = {}, dispatch } = this.props
+  chirldrenTaskChargeChange = (data) => {
+    const { drawContent = {}, projectDetailInfoData = {}, dispatch, is_selected_all } = this.props
     const { card_id } = drawContent
 
     // 多个任务执行人
-    //  多个任务执行人
     const excutorData = projectDetailInfoData['data'] //所有的人
+    // const excutorData = new_userInfo_data //所有的人
     let newExecutors = []
-    const { selectedKeys = [] } = data
+    const { selectedKeys = [], type, key } = data
     for (let i = 0; i < selectedKeys.length; i++) {
       for (let j = 0; j < excutorData.length; j++) {
         if (selectedKeys[i] === excutorData[j]['user_id']) {
@@ -174,19 +174,128 @@ export default class MainContent extends Component {
       }
     })
     this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
-    dispatch({
-      type: 'publicTaskDetailModal/addTaskExecutor',
-      payload: {
-        card_id,
-        users: selectedKeys.join(',')
+    if (type == 'add') {
+      if (selectedKeys.length == excutorData.length) { // 表示所有的成员选上了
+        dispatch({
+          type: 'publicTaskDetailModal/updateDatas',
+          payload: {
+            is_selected_all: true
+          }
+        })
       }
-    })
+      dispatch({
+        type: 'publicTaskDetailModal/addTaskExecutor',
+        payload: {
+          card_id,
+          users: selectedKeys.join(',')
+        }
+      })
+    } else if (type == 'remove') {
+      dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          is_selected_all: false
+        }
+      })
+      dispatch({
+        type: 'publicTaskDetailModal/removeTaskExecutor',
+        payload: {
+          card_id,
+          user_id: key
+        }
+      })
+    }
 
   }
   // 添加执行人的回调 E
 
+  // 移除执行人的回调 S
+  handleRemoveExecutors = (e, shouldDeleteItem) => {
+    e && e.stopPropagation()
+    const { drawContent = {}, dispatch } = this.props
+    const { card_id, executors = [] } = drawContent
+    let new_executors = [...executors]
+    let new_drawContent = {...drawContent}
+    new_executors.map((item, index) => {
+      if (item.user_id == shouldDeleteItem) {
+        new_executors.splice(index, 1)
+      }
+    })
+    new_drawContent['executors'] = new_executors
+    dispatch({
+      type: 'publicTaskDetailModal/updateDatas',
+      payload: {
+        drawContent: new_drawContent
+      }
+    })
+    dispatch({
+      type: 'publicTaskDetailModal/removeTaskExecutor',
+      payload: {
+        card_id,
+        user_id: shouldDeleteItem
+      }
+    })
+    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: new_drawContent, card_id})
+  }
+  // 移除执行人的回调 E
+
+  // 选择全体成员的回调
+  handleSelectedAllBtn = (data) => {
+    const { drawContent = {}, projectDetailInfoData = {}, dispatch } = this.props
+    const { card_id } = drawContent
+    const excutorData = projectDetailInfoData['data'] //所有的人
+    let newExecutors = []
+    let tempSelectedKeys = []
+    const { selectedKeys = [], type } = data
+    if (type == 'add') {
+      newExecutors.push(...excutorData)
+      excutorData.map(item => {
+        tempSelectedKeys.push(item.user_id)
+      })
+    }
+    drawContent['executors'] = newExecutors
+    dispatch({
+      type: 'publicTaskDetailModal/updateDatas',
+      payload: {
+        drawContent,
+      }
+    })
+    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
+    if (type == 'add') {
+      dispatch({
+        type: 'publicTaskDetailModal/addTaskExecutor',
+        payload: {
+          card_id,
+          users: tempSelectedKeys.join(',')
+        }
+      })
+    } else if (type == 'remove') {
+      // dispatch({
+      //   type: 'publicTaskDetailModal/removeTaskExecutor',
+      //   payload: {
+      //     card_id,
+      //     user_id:''
+      //   }
+      // })
+    }
+  }
+
+  // ss = () => {
+  //   return {
+  //     'vistor_visible': function() {
+  //       if(is_share) {
+  //         return false
+  //       }
+  //       return checkIsHasPermissionInBoard()
+  //     },
+  //     'attachment_visible': true,
+      
+  //   }
+  // }
+
   render() {
     const { drawContent = {}, is_edit_title, projectDetailInfoData = {} } = this.props
+    const { new_userInfo_data = [] } = this.state
     const { data = [] } = projectDetailInfoData
     const { board_id, card_id, card_name, type = '0', is_realize = '0', start_time, due_time, executors = [] } = drawContent
 
@@ -286,12 +395,13 @@ export default class MainContent extends Component {
                 {
                   !executors.length ? (
                     <div style={{flex: '1', position: 'relative'}}>
-                      <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                      <Dropdown overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
                         overlay={
                           <MenuSearchPartner
+                            handleSelectedAllBtn={this.handleSelectedAllBtn}
                             invitationType='4'
                             invitationId={card_id}
-                            listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
+                            listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
                             board_id={board_id} />
                         }
                       >
@@ -304,12 +414,13 @@ export default class MainContent extends Component {
                     </div>
                   ) : (
                     <div style={{flex: '1', position: 'relative'}}>
-                      <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                      <Dropdown overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
                         overlay={
                           <MenuSearchPartner
+                            handleSelectedAllBtn={this.handleSelectedAllBtn}
                             invitationType='4'
                             invitationId={card_id}
-                            listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
+                            listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
                             board_id={board_id} />
                         }
                       >
@@ -320,25 +431,20 @@ export default class MainContent extends Component {
                               <div style={{display: 'flex', flexWrap: 'wrap'}}>
                                 <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 0', textAlign: 'center' }} key={user_id}>
                                   {avatar ? (
-                                    <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 4 }} src={avatar} />
+                                    <img style={{ width: '24px', height: '24px', borderRadius: 20, margin: '0 2px'}} src={avatar} />
                                   ) : (
-                                      <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 4, }}>
+                                      <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
                                         <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
                                       </div>
                                     )}
-                                  <div style={{ marginRight: 8, minWidth: '60px' }}>{name || user_name || '佚名'}</div>
-                                  <span className={`${mainContentStyles.userItemDeleBtn}`}></span>
+                                  <div style={{ marginRight: 8, fontSize: '14px' }}>{name || user_name || '佚名'}</div>
+                                  <span onClick={ (e) => { this.handleRemoveExecutors(e,user_id) } } className={`${mainContentStyles.userItemDeleBtn}`}></span>
                                 </div>
                                 
                               </div>
                             )
                           })}
                         </div>
-                        {/* <div className={`${mainContentStyles.field_right}`}>
-                          <div className={`${mainContentStyles.pub_hover}`}>
-                            
-                          </div>
-                        </div> */}
                       </Dropdown>
                     </div>
                   )
@@ -429,6 +535,6 @@ export default class MainContent extends Component {
 }
 
 // 只关联public弹窗内的数据
-function mapStateToProps({ publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
-  return { drawContent, is_edit_title, card_id, projectDetailInfoData }
+function mapStateToProps({ publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id, is_selected_all }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
+  return { drawContent, is_edit_title, card_id, is_selected_all, projectDetailInfoData }
 }

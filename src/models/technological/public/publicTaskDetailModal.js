@@ -1,4 +1,4 @@
-import { getCardDetail, completeTask, updateTask, addTaskExecutor } from '../../../services/technological/task'
+import { getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor } from '../../../services/technological/task'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { currentNounPlanFilterName } from "../../../utils/businessFunction";
@@ -8,6 +8,7 @@ export default {
   state: {
     is_edit_title: false, // 是否编辑标题 默认为 false 不显示
     is_show_principal: false, // 是否显示负责人 默认为 false 不显示
+    is_selected_all: false, // 是否全选 需要后台支持
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -96,6 +97,16 @@ export default {
       let res = yield call(addTaskExecutor, payload)
       if (isApiResponseOk(res)) {
         message.success(`已成功设置执行人`, MESSAGE_DURATION_TIME)
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    // 移除任务执行人
+    * removeTaskExecutor({ payload }, { select, call, put }) { //
+      const { card_id, user_id } = payload
+      let res = yield call(removeTaskExecutor, { card_id, user_id })
+      if (isApiResponseOk(res)) {
+        message.success(`已成功删除执行人`, MESSAGE_DURATION_TIME)
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
