@@ -9,6 +9,7 @@ import {
 import Cookies from 'js-cookie'
 import PreviewFileModalRichText from './PreviewFileModalRichText'
 
+/**富文本组件 */
 export default class RichTextEditor extends React.Component {
 
     constructor(props) {
@@ -177,19 +178,19 @@ export default class RichTextEditor extends React.Component {
         })
     }
 
-      //任务附件预览黄
+    //任务附件预览黄
     setPreivewProp(data) {
         this.setState({
-        ...data,
+            ...data,
         })
     }
 
     render() {
-        const { children } = this.props;
+        const { visible, children } = this.props;
         const { isInEdit } = this.state;
         return (
             <>
-                {!isInEdit ? (
+                {!isInEdit || visible ? (
                     <div onClick={() => { this.setIsInEdit(true) }}>
                         <div className={styles.content} onClick={(e) => { this.descriptionHTML(e) }}>
                             {children}
@@ -208,12 +209,12 @@ export default class RichTextEditor extends React.Component {
                     )}
 
                 {/*查看*/}
-                <PreviewFileModalRichText 
-                    isUsable={this.state.isUsable} 
-                    setPreivewProp={this.setPreivewProp.bind(this)} 
-                    previewFileType={this.state.previewFileType} 
-                    previewFileSrc={this.state.previewFileSrc} 
-                    modalVisible={this.state.previewFileModalVisibile} 
+                <PreviewFileModalRichText
+                    isUsable={this.state.isUsable}
+                    setPreivewProp={this.setPreivewProp.bind(this)}
+                    previewFileType={this.state.previewFileType}
+                    previewFileSrc={this.state.previewFileSrc}
+                    modalVisible={this.state.previewFileModalVisibile}
                     setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />
 
             </>
