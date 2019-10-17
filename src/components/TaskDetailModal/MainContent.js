@@ -342,25 +342,7 @@ export default class MainContent extends Component {
       }
     })
   }
-  saveBrafitEdit = (brafitEditHtml) => {
-    console.log("brafitEditHtml", brafitEditHtml);
-    const { drawContent = {}, dispatch } = this.props;
-    console.log(drawContent);
-    let { card_id } = drawContent
-    this.setState({
-      isInEdit: false,
-    })
-    const updateObj = {
-      card_id,
-      description: brafitEditHtml,
-    }
-    dispatch({
-      type: 'publicTaskDetailModal/updateTask',
-      payload: {
-        updateObj
-      }
-    })
-  }
+
 
 
   render() {
@@ -530,7 +512,7 @@ export default class MainContent extends Component {
                                             </div>
                                           )}
                                         <div style={{ marginRight: 8, fontSize: '14px' }}>{name || user_name || '佚名'}</div>
-                                        <span onClick={ (e) => { this.handleRemoveExecutors(e,user_id) } } className={`${mainContentStyles.userItemDeleBtn}`}></span>
+                                        <span onClick={ (e) => { this.handleRemoveExecutors(e, user_id) } } className={`${mainContentStyles.userItemDeleBtn}`}></span>
                                       </div>
                                       
                                     </div>

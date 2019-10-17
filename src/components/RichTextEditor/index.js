@@ -78,12 +78,12 @@ export default class RichTextEditor extends React.Component {
         const { isInEdit } = this.state;
         return (
             <div>
-                {!isInEdit ?
-                    <div onClick={() => { this.setIsInEdit(true) }}>
+                {!isInEdit ? (
+<div onClick={() => { this.setIsInEdit(true) }}>
                         {children}
                     </div>
-                    :
-                    <div>
+): (
+<div>
                         <div className={styles.editor_wrapper_default}>
                             <BraftEditor {...this.getEditorProps()} />
                         </div>
@@ -92,7 +92,7 @@ export default class RichTextEditor extends React.Component {
                             <Button size={'large'} type="primary" style={{ marginLeft: '16px' }} onClick={(e) => { this.saveHandle(e) }}>保存</Button>
                         </div>
                     </div>
-                }
+)}
 
 
 
