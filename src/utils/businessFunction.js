@@ -254,6 +254,29 @@ export const setBoardIdStorage = (value) => {
   }
   setGlobalData('aboutBoardOrganizationId', org_id || '0')
 }
+// 通过board_id查询得到board_id所属的org_id
+export const getOrgIdByBoardId = (boardId) => {
+  if(!boardId) {
+    return ''
+  }
+  let userAllOrgsAllBoards = localStorage.getItem('userAllOrgsAllBoards') || '[]'
+  if(userAllOrgsAllBoards) {
+    userAllOrgsAllBoards = JSON.parse(userAllOrgsAllBoards)
+  }
+  let org_id = ''
+  for(let val of userAllOrgsAllBoards) {
+    for(let val_2 of val['board_ids']) {
+      if(boardId == val_2) {
+        org_id = val['org_id']
+        break
+      }
+    }
+    if(org_id) {
+      break
+    }
+  }
+  return org_id
+}
 
 //是否有企业职员查看权限
 

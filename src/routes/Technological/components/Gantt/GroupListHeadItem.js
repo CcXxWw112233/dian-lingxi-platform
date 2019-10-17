@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect, } from 'dva';
 import indexStyles from './index.less'
 import { Avatar, Dropdown, Menu, Input, message, Tooltip } from 'antd'
-import { getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard } from '../../../../utils/businessFunction';
+import { getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard, getOrgIdByBoardId } from '../../../../utils/businessFunction';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '@/components/avatarList'
 import CheckItem from '@/components/CheckItem'
@@ -348,11 +348,10 @@ export default class GroupListHeadItem extends Component {
       <Menu onClick={this.handleMenuSelect}>
         {
           // checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, params_board_id)
-          gantt_board_id == '0' && (
-            <Menu.Item key={'invitation'}>
-              邀请职员加入
-            </Menu.Item>
-          )}
+          <Menu.Item key={'invitation'}>
+            邀请职员加入
+          </Menu.Item>
+        }
         {
           // checkIsHasPermissionInBoard(rename_permission_code, params_board_id) &&
           <Menu.Item key={'rename'}>重命名</Menu.Item>
@@ -370,7 +369,7 @@ export default class GroupListHeadItem extends Component {
 
     const { currentUserOrganizes = [], gantt_board_id = [], ceiHeight, is_show_org_name, is_all_org, rows = 5, group_view_type, get_gantt_data_loading } = this.props
     const { itemValue = {}, itemKey } = this.props
-    const { list_name, org_id, list_no_time_data = [], list_id, lane_icon } = itemValue
+    const { list_name, org_id, list_no_time_data = [], list_id, lane_icon, board_id } = itemValue
     const { isShowBottDetail, show_edit_input, local_list_name, edit_input_value, show_add_menber_visible } = this.state
 
     // console.log('sssss',{itemKey, group_rows, row: group_rows[itemKey], list_id })
@@ -431,10 +430,10 @@ export default class GroupListHeadItem extends Component {
           show_add_menber_visible && (
             <ShowAddMenberModal
               invitationType='1'
-              invitationId={list_id}
-              invitationOrg={org_id}
+              invitationId={gantt_board_id == '0' ? list_id : gantt_board_id}
+              invitationOrg={org_id || getOrgIdByBoardId(board_id)}
               show_wechat_invite={true}
-              _organization_id={org_id}
+              _organization_id={org_id || getOrgIdByBoardId(board_id)}
               board_id={list_id}
               addMenbersInProject={this.addMenbersInProject}
               modalVisible={show_add_menber_visible}
