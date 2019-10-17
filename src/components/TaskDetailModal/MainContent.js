@@ -318,7 +318,7 @@ export default class MainContent extends Component {
   saveBrafitEdit = (brafitEditHtml) => {
     console.log("brafitEditHtml", brafitEditHtml);
     const { drawContent = {}, dispatch } = this.props;
-   
+
     let { card_id } = drawContent
     this.setState({
       isInEdit: false,
@@ -335,6 +335,25 @@ export default class MainContent extends Component {
         drawContent
       }
     })
+    dispatch({
+      type: 'publicTaskDetailModal/updateTask',
+      payload: {
+        updateObj
+      }
+    })
+  }
+  saveBrafitEdit = (brafitEditHtml) => {
+    console.log("brafitEditHtml", brafitEditHtml);
+    const { drawContent = {}, dispatch } = this.props;
+    console.log(drawContent);
+    let { card_id } = drawContent
+    this.setState({
+      isInEdit: false,
+    })
+    const updateObj = {
+      card_id,
+      description: brafitEditHtml,
+    }
     dispatch({
       type: 'publicTaskDetailModal/updateTask',
       payload: {
