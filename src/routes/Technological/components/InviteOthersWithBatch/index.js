@@ -59,8 +59,13 @@ class InviteOtherWithBatch extends Component {
         fetching: true
       },
       () => {
+        const params = {
+          associate_param: user,
+          _organization_id: localStorage.getItem('OrganizationId'),
+          type: (validateTel(user) || validateEmail(user)) ? '2' : '1'
+        }
         //发起请求
-        associateUser(user)
+        associateUser(params)
           .then(res => {
             if (res.code && res.code === '0') {
               //如果查到了用户
