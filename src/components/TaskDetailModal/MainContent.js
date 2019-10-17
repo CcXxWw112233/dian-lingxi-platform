@@ -7,6 +7,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
 import UploadAttachment from '@/components/UploadAttachment'
 import RichTextEditor from '@/components/RichTextEditor'
+import MilestoneAdd from '@/components/MilestoneAdd'
 import { timestampToTimeNormal, timeToTimestamp, compareTwoTimestamp } from '@/utils/util'
 import {
   checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
@@ -30,7 +31,7 @@ export default class MainContent extends Component {
     const { drawContent = {} } = this.props
     const { is_realize = '0', card_id, privileges = [], board_id, is_privilege, executors = [] } = drawContent
     return {
-      'visit_control': function() {
+      'visit_control': function () {
         return checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))
       }
     }
@@ -458,14 +459,14 @@ export default class MainContent extends Component {
                     </div>
                   </div>
                 ) : (
-                  <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_item} overlay={filedEdit} getPopupContainer={triggerNode => triggerNode.parentNode}>
-                    <div className={`${mainContentStyles.field_right}`}>
-                      <div className={`${mainContentStyles.pub_hover}`}>
-                        <span className={is_realize == '0' ? mainContentStyles.incomplete : mainContentStyles.complete}>{is_realize == '0' ? '未完成' : '已完成'}</span>
+                    <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_item} overlay={filedEdit} getPopupContainer={triggerNode => triggerNode.parentNode}>
+                      <div className={`${mainContentStyles.field_right}`}>
+                        <div className={`${mainContentStyles.pub_hover}`}>
+                          <span className={is_realize == '0' ? mainContentStyles.incomplete : mainContentStyles.complete}>{is_realize == '0' ? '未完成' : '已完成'}</span>
+                        </div>
                       </div>
-                    </div>
-                  </Dropdown>
-                )
+                    </Dropdown>
+                  )
               }
             </div>
             {/* 这个中间放置负责人, 如果存在, 则在两者之间 */}
@@ -482,70 +483,70 @@ export default class MainContent extends Component {
                         <span>暂无</span>
                       </div>
                     </div>
-                  ) :(
-                    <span style={{flex: '1'}}>
-                      {
-                        !executors.length ? (
-                          <div style={{flex: '1', position: 'relative'}}>
-                            <Dropdown overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
-                              overlay={
-                                <MenuSearchPartner
-                                  handleSelectedAllBtn={this.handleSelectedAllBtn}
-                                  invitationType='4'
-                                  invitationId={card_id}
-                                  listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
-                                  board_id={board_id} />
-                              }
-                            >
-                              <div className={`${mainContentStyles.field_right}`}>
-                                <div className={`${mainContentStyles.pub_hover}`}>
-                                  <span>指派负责人</span>
+                  ) : (
+                      <span style={{ flex: '1' }}>
+                        {
+                          !executors.length ? (
+                            <div style={{ flex: '1', position: 'relative' }}>
+                              <Dropdown overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                                overlay={
+                                  <MenuSearchPartner
+                                    handleSelectedAllBtn={this.handleSelectedAllBtn}
+                                    invitationType='4'
+                                    invitationId={card_id}
+                                    listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                                    board_id={board_id} />
+                                }
+                              >
+                                <div className={`${mainContentStyles.field_right}`}>
+                                  <div className={`${mainContentStyles.pub_hover}`}>
+                                    <span>指派负责人</span>
+                                  </div>
                                 </div>
+                              </Dropdown>
+                            </div>
+                          ) : (
+                              <div style={{ flex: '1', position: 'relative' }}>
+                                <Dropdown overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                                  overlay={
+                                    <MenuSearchPartner
+                                      handleSelectedAllBtn={this.handleSelectedAllBtn}
+                                      invitationType='4'
+                                      invitationId={card_id}
+                                      listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                                      board_id={board_id} />
+                                  }
+                                >
+                                  <div style={{ display: 'flex', flexWrap: 'wrap' }} className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
+                                    {executors.map((value) => {
+                                      const { avatar, name, user_name, user_id } = value
+                                      return (
+                                        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                          <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 0', textAlign: 'center' }} key={user_id}>
+                                            {avatar ? (
+                                              <img style={{ width: '24px', height: '24px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
+                                            ) : (
+                                                <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
+                                                  <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
+                                                </div>
+                                              )}
+                                            <div style={{ marginRight: 8, fontSize: '14px' }}>{name || user_name || '佚名'}</div>
+                                            <span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${mainContentStyles.userItemDeleBtn}`}></span>
+                                          </div>
+
+                                        </div>
+                                      )
+                                    })}
+                                  </div>
+                                </Dropdown>
                               </div>
-                            </Dropdown>
-                          </div>
-                        ) : (
-                          <div style={{flex: '1', position: 'relative'}}>
-                            <Dropdown overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
-                              overlay={
-                                <MenuSearchPartner
-                                  handleSelectedAllBtn={this.handleSelectedAllBtn}
-                                  invitationType='4'
-                                  invitationId={card_id}
-                                  listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
-                                  board_id={board_id} />
-                              }
-                            >
-                              <div style={{display: 'flex', flexWrap: 'wrap'}} className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
-                                {executors.map((value) => {
-                                  const { avatar, name, user_name, user_id } = value
-                                  return (
-                                    <div style={{display: 'flex', flexWrap: 'wrap'}}>
-                                      <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 0', textAlign: 'center' }} key={user_id}>
-                                        {avatar ? (
-                                          <img style={{ width: '24px', height: '24px', borderRadius: 20, margin: '0 2px'}} src={avatar} />
-                                        ) : (
-                                            <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
-                                              <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
-                                            </div>
-                                          )}
-                                        <div style={{ marginRight: 8, fontSize: '14px' }}>{name || user_name || '佚名'}</div>
-                                        <span onClick={ (e) => { this.handleRemoveExecutors(e, user_id) } } className={`${mainContentStyles.userItemDeleBtn}`}></span>
-                                      </div>
-                                      
-                                    </div>
-                                  )
-                                })}
-                              </div>
-                            </Dropdown>
-                          </div>
-                        )
-                      }
-                    </span>
-                  )
+                            )
+                        }
+                      </span>
+                    )
                 }
-                
-                
+
+
               </div>
             </div>
             {/* 时间区域 */}
@@ -555,7 +556,7 @@ export default class MainContent extends Component {
                 <span>时间</span>
               </div>
               <div className={`${mainContentStyles.field_right}`}>
-                <div style={{display: 'flex'}}>
+                <div style={{ display: 'flex' }}>
                   <div style={{ position: 'relative' }}>
                     {/* {start_time && due_time ? ('') : (<span style={{ color: '#bfbfbf' }}>设置</span>)} */}
                     <span className={`${mainContentStyles.pub_hover}`} style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
@@ -585,7 +586,7 @@ export default class MainContent extends Component {
                     </span>
                   </div>
                   <span style={{ position: 'relative' }}>
-                    <InformRemind style={{display: 'inline-block', minWidth: '72px', height: '38px', borderRadius: '4px', textAlign: 'center'}} projectExecutors={executors} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} user_remind_info={data} />
+                    <InformRemind style={{ display: 'inline-block', minWidth: '72px', height: '38px', borderRadius: '4px', textAlign: 'center' }} projectExecutors={executors} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} user_remind_info={data} />
                   </span>
                 </div>
               </div>
@@ -657,6 +658,27 @@ export default class MainContent extends Component {
 
                   </div>
                 </RichTextEditor>
+
+              </div>
+            </div>
+          </div>
+          {/* 备注字段 E*/}
+
+          {/* 备注字段 S*/}
+          <div>
+            <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
+              <div className={mainContentStyles.field_left}>
+                <span className={`${globalStyles.authTheme}`}>&#xe6b7;</span>
+                <span>里程碑</span>
+              </div>
+              <div className={`${mainContentStyles.field_right}`}>
+
+                {/*加入里程碑组件*/}
+                <MilestoneAdd>
+                  <div className={`${mainContentStyles.pub_hover}`} >
+                    加入里程碑
+                  </div>
+                </MilestoneAdd>
 
               </div>
             </div>

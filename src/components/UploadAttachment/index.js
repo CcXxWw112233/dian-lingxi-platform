@@ -3,6 +3,8 @@ import { connect } from 'dva'
 import { Modal, Button } from 'antd'
 import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
+
+/**上传附件组件 */
 @connect(mapStateToProps)
 export default class UploadAttachment extends Component {
     constructor(props) {
@@ -32,10 +34,8 @@ export default class UploadAttachment extends Component {
 
     render() {
         // 父组件传递的值
-        const { title, children } = this.props;
+        const { visible, children } = this.props;
         const { uploadFileVisible } = this.state;
-
-        console.log(uploadFileVisible);
         return (
 
             <div>
@@ -44,7 +44,7 @@ export default class UploadAttachment extends Component {
                 </span>
                 <Modal
                     title={<div style={{ textAlign: 'center', fontSize: '16px', fontWeight: 600, color: 'rgba(0,0,0,0.85)' }}>上传附件设置</div>}
-                    visible={uploadFileVisible}
+                    visible={uploadFileVisible || visible}
                     onOk={this.handleOk}
                     onCancel={this.closeUploadAttachmentModal}
                     zIndex={9999}
