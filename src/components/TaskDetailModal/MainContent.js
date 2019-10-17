@@ -342,7 +342,25 @@ export default class MainContent extends Component {
       }
     })
   }
-
+  // saveBrafitEdit = (brafitEditHtml) => {
+  //   console.log("brafitEditHtml", brafitEditHtml);
+  //   const { drawContent = {}, dispatch } = this.props;
+  //   console.log(drawContent);
+  //   let { card_id } = drawContent
+  //   this.setState({
+  //     isInEdit: false,
+  //   })
+  //   const updateObj = {
+  //     card_id,
+  //     description: brafitEditHtml,
+  //   }
+  //   dispatch({
+  //     type: 'publicTaskDetailModal/updateTask',
+  //     payload: {
+  //       updateObj
+  //     }
+  //   })
+  // }
 
 
   render() {
@@ -632,7 +650,7 @@ export default class MainContent extends Component {
                   <div className={`${mainContentStyles.pub_hover}`} >
                     {
                       description ?
-                        <div style={{ cursor: 'pointer' }} dangerouslySetInnerHTML={{ __html: description }}></div>
+                        <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: description }}></div>
                         :
                         '添加备注'
                     }
