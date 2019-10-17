@@ -1,11 +1,16 @@
 import React, { Component } from 'react'
-import { Tooltip, message } from 'antd'
+import { Tooltip, message, Modal } from 'antd'
 import { connect } from 'dva'
 import headerStyles from './HeaderContent.less'
 import VisitControl from '../../routes/Technological/components/VisitControl/index'
 import ShareAndInvite from '../../routes/Technological/components/ShareAndInvite/index'
 import { setContentPrivilege, toggleContentPrivilege, removeContentPrivilege } from '../../services/technological/project'
 import { createMeeting, createShareLink, modifOrStopShareLink } from '../../services/technological/workbench'
+import globalStyles from '@/globalset/css/globalClassName.less'
+import { currentNounPlanFilterName } from "@/utils/businessFunction";
+import {
+  MESSAGE_DURATION_TIME, TASKS,
+} from "@/globalset/js/constant";
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
 
@@ -371,6 +376,36 @@ export default class HeaderContentRightMenu extends Component {
     })
   }
   // 分享操作 E
+
+  // 删除任务的操作 S
+  handleDelCard = () => {
+    const { card_id } = this.props
+    if (!card_id) return false
+    this.confirm(card_id)
+  }
+
+  confirm(card_id) {
+    const that = this
+    const { dispatch } = that.props
+    Modal.confirm({
+      title: `确认删除该${currentNounPlanFilterName(TASKS)}吗？`,
+      okText: '确认',
+      cancelText: '取消',
+      zIndex: 2000,
+      onOk() {
+        that.props.setTaskDetailModalVisible()
+        dispatch({
+          type: 'publicTaskDetailModal/deleteTask',
+          payload: {
+            id: card_id,
+          }
+        })
+        that.props.handleDeleteCard && that.props.handleDeleteCard({ card_id: card_id })
+      }
+    });
+  }
+
+  // 删除任务的操作 E
   
 
   render() {
@@ -380,6 +415,7 @@ export default class HeaderContentRightMenu extends Component {
     return (
       <div>
         <div className={headerStyles.right_menu_content}>
+          {/* 访问控制 */}
           <span className={`${headerStyles.visit_icon} ${headerStyles.right_menu}`}>
             <VisitControl 
               board_id={board_id}
@@ -391,6 +427,7 @@ export default class HeaderContentRightMenu extends Component {
               handleAddNewMember={this.handleVisitControlAddNewMember}
             />
           </span>
+          {/* 分享协作 */}
           <span style={{display: 'flex'}}>
             <span>
               {is_shared === '1' ? 
@@ -407,6 +444,14 @@ export default class HeaderContentRightMenu extends Component {
                 handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare}
               />
             </span>
+          </span>
+          {/* 删除 */}
+          <span>
+            <Tooltip title="删除">
+              <span className={headerStyles.dele_icon} onClick={this.handleDelCard}>
+                <span className={`${globalStyles.authTheme} ${headerStyles.dele}`}>&#xe7c3;</span>
+              </span>
+            </Tooltip>
           </span>
         </div>
       </div>

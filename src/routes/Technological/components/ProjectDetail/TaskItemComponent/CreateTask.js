@@ -276,11 +276,6 @@ export default class CreateTask extends React.Component {
   }
   //右方抽屉弹窗---end
 
-  // 修改卡片详情回调
-  handleTaskDetailChange = () => {
-
-  }
-
   /**
    * 更新父级任务列表
    * @param {Object} payload 需要传递进来的参数
@@ -288,10 +283,26 @@ export default class CreateTask extends React.Component {
   handleTaskDetailChange = ({ drawContent, card_id }) => {
     // console.log('更新父级任务列表', 'sssssss_进来了')
     // const { is_realize, card_name } = payload
+    
     const { taskGroupList = [], taskGroupListIndex, taskGroupListIndex_index, dispatch } = this.props
     // taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index][name] = value
-    
     taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index] = {...drawContent}
+    dispatch({
+      type: 'projectDetailTask/updateDatas',
+      payload: {
+        taskGroupList
+      }
+    })
+  }
+
+  /**
+   * 删除某条卡片的回调
+   * @param {String} card_id 删除当前对应的card_id
+   */
+  handleDeleteCard = ({card_id}) => {
+    const { taskGroupList = [], taskGroupListIndex, taskGroupListIndex_index, dispatch } = this.props
+    const new_arr_ = [...taskGroupList]
+    new_arr_[taskGroupListIndex]['card_data'].splice(taskGroupListIndex_index, 1)
     dispatch({
       type: 'projectDetailTask/updateDatas',
       payload: {

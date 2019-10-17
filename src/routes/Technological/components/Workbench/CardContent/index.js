@@ -550,6 +550,35 @@ class CardContent extends React.Component {
     })
   }
 
+  // 删除某条卡片
+  handleDeleteCard = ({ card_id }) => {
+    const {
+      workbench: {
+        datas: {
+          responsibleTaskList = [],
+          meetingLsit = []
+        }
+      },
+      dispatch
+    } = this.props;
+
+    const new_responsibleTaskList = responsibleTaskList.filter(item => {
+      let new_item = {...item}
+      return new_item.id != card_id
+    })
+    const new_meetingLsit = meetingLsit.filter(item => {
+      let new_item = {...item}
+      return new_item.id != card_id
+    })
+    dispatch({
+      type: 'workbench/updateDatas',
+      payload: {
+        responsibleTaskList: new_responsibleTaskList,
+        meetingLsit: new_meetingLsit
+      }
+    })
+  }
+
   // 数组去重
   arrayNonRepeatfy = arr => {
     let temp_arr = []
@@ -1001,6 +1030,7 @@ class CardContent extends React.Component {
             task_detail_modal_visible={this.props.drawerVisible}
             setTaskDetailModalVisible={this.setTaskDetailModalVisible}
             handleTaskDetailChange={this.handleChangeCard}
+            handleDeleteCard={this.handleDeleteCard}
           />
           )
         }

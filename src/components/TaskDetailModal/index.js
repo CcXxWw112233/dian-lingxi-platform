@@ -56,7 +56,7 @@ export default class TaskDetailModal extends Component {
   }
 
   render() {
-    const { task_detail_modal_visible, users, handleTaskDetailChange, updateParentTaskList } = this.props
+    const { task_detail_modal_visible, users, handleTaskDetailChange, updateParentTaskList, setTaskDetailModalVisible, handleDeleteCard } = this.props
     // const siderRightWidth = document.getElementById('siderRight').clientWidth
     // const commentUseParams = { //公共评论模块所需要的参数
     //   commentSubmitPost: this.commentSubmitPost,
@@ -74,7 +74,11 @@ export default class TaskDetailModal extends Component {
           onCancel={this.onCancel}
           // commentUseParams={commentUseParams}
           mainContent={<MainContent users={users} handleTaskDetailChange={handleTaskDetailChange} />}
-          headerContent={<HeaderContent users={users} handleTaskDetailChange={handleTaskDetailChange} updateParentTaskList={updateParentTaskList} />}
+          headerContent={
+          <HeaderContent users={users}
+            handleDeleteCard={handleDeleteCard}
+            setTaskDetailModalVisible={setTaskDetailModalVisible} handleTaskDetailChange={handleTaskDetailChange} updateParentTaskList={updateParentTaskList} 
+          />}
           commonDrawerContentOutClick={this.commonDrawerContentOutClick}
         />
       </div>
@@ -88,4 +92,5 @@ TaskDetailModal.defaultProps = {
   users: [], // 用户列表
   handleTaskDetailChange: function() { }, // 外部修改内部弹窗数据的回调
   updateParentTaskList: function() { }, // 内部数据修改后用来更新外部数据的回调
+  handleDeleteCard: function() {  }, // 删除某条任务
 }

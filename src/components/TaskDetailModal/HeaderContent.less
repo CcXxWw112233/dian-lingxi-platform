@@ -48,6 +48,7 @@
 .right_menu_content {
   display: flex;
   align-items: center;
+  margin-right: 12px;
   .right_menu {
     display: inline-block;
     &:hover {
@@ -82,5 +83,20 @@
       background-size: contain;
       margin-right   : 7px;
     }
+  }
+  .dele_icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    line-height: 20px;
+    cursor: pointer;
+    &:hover {
+      background:rgba(255,241,240,1);
+      border-radius:4px;
+    }  
+  }
+  .dele_icon:hover .dele {
+    color: #FF7875;
   }
 }

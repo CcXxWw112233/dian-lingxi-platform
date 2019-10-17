@@ -402,10 +402,7 @@ export default class MainContent extends Component {
         </Menu.Item>
       </Menu>
     )
-
-    console.log(drawContent);
-
-
+    
     return (
       <div className={mainContentStyles.main_wrap}>
         <div>

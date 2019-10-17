@@ -14,7 +14,7 @@ export default class RichTextEditor extends React.Component {
     constructor(props) {
         super(props);
         const { value } = this.props;
-        console.log("value", value);
+        // console.log("value", value);
 
         this.state = {
             isInEdit: false,

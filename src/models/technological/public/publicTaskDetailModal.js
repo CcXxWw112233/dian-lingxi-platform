@@ -1,8 +1,8 @@
-import { getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor } from '../../../services/technological/task'
+import { getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor, deleteTask  } from '../../../services/technological/task'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { currentNounPlanFilterName } from "../../../utils/businessFunction";
-import { MEMBERS, MESSAGE_DURATION_TIME, PROJECTS, TASKS } from "../../../globalset/js/constant";
+import { MESSAGE_DURATION_TIME, TASKS } from "../../../globalset/js/constant";
 export default {
   namespace: 'publicTaskDetailModal',
   state: {
@@ -107,6 +107,17 @@ export default {
       let res = yield call(removeTaskExecutor, { card_id, user_id })
       if (isApiResponseOk(res)) {
         message.success(`已成功删除执行人`, MESSAGE_DURATION_TIME)
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    // 删除卡片
+    * deleteTask({ payload }, { select, call, put }) { //
+      const { id, calback } = payload
+      // calback && typeof calback === 'function' ? calback() : ''
+      let res = yield call(deleteTask, id)
+      if (isApiResponseOk(res)) {
+        message.success('删除成功', MESSAGE_DURATION_TIME)
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }

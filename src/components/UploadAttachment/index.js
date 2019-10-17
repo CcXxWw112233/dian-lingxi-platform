@@ -35,7 +35,7 @@ export default class UploadAttachment extends Component {
         const { title, children } = this.props;
         const { uploadFileVisible } = this.state;
 
-        console.log(uploadFileVisible);
+        // console.log(uploadFileVisible);
         return (
 
             <div>

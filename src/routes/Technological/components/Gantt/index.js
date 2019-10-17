@@ -626,10 +626,10 @@ class Gantt extends Component {
           handleDeleteCard={this.handleDeleteCard}
         /> */}
         <TaskDetailModal 
-          dispatch={dispatch}
           task_detail_modal_visible={drawerVisible}
           setTaskDetailModalVisible={this.setDrawerVisibleClose}
           handleTaskDetailChange={this.handleChangeCard.bind(this)}
+          handleDeleteCard={this.handleDeleteCard}
         />
 
         {addTaskModalVisible && (
