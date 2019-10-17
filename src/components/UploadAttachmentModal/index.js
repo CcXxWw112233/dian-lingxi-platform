@@ -5,6 +5,9 @@ import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 @connect(mapStateToProps)
 export default class UploadAttachmentModal extends Component {
+    constructor(props){
+        super(props);
+    }
     handleOk = e => {
         console.log(e);
         this.setState({
@@ -18,13 +21,18 @@ export default class UploadAttachmentModal extends Component {
             visible: false,
         });
     };
+
+    closeUploadAttachmentModal = () => {
+        this.props.setUploadAttachmentModalVisible(false);
+    };
+
     render() {
         return (
             <Modal
                 title={<div style={{ textAlign: 'center', fontSize: '16px', fontWeight: 600, color: 'rgba(0,0,0,0.85)' }}>上传附件设置</div>}
                 visible={true}
                 onOk={this.handleOk}
-                onCancel={this.handleCancel}
+                onCancel={this.closeUploadAttachmentModal}
                 zIndex={9999}
                 width={556}
             >

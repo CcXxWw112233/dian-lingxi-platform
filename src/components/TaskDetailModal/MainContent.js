@@ -20,6 +20,7 @@ export default class MainContent extends Component {
 
   state = {
     // new_executors: []
+    uploadFileVisible:false
   }
 
   componentDidMount() {
@@ -293,9 +294,15 @@ export default class MainContent extends Component {
   //   }
   // }
 
+  setUploadFileVisible = (visible)=>{
+    this.setState({
+      uploadFileVisible:visible
+    });
+  }
+
   render() {
     const { drawContent = {}, is_edit_title, projectDetailInfoData = {} } = this.props
-    const { new_userInfo_data = [] } = this.state
+    const { new_userInfo_data = [] ,uploadFileVisible} = this.state
     const { data = [] } = projectDetailInfoData
     const { board_id, card_id, card_name, type = '0', is_realize = '0', start_time, due_time, executors = [] } = drawContent
 
@@ -514,13 +521,13 @@ export default class MainContent extends Component {
                 <span>附件</span>
               </div>
               <div className={`${mainContentStyles.field_right}`}>
-                <div className={`${mainContentStyles.pub_hover}`}>
+                <div className={`${mainContentStyles.pub_hover}`}  onClick={()=>{this.setUploadFileVisible(true)}}>
                   <span className={mainContentStyles.upload_file_btn}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fa;</span> 上传附件</span>
                 </div>
                  {/* 上传附件组件 */}
                 {
-                  false &&
-                  <UploadAttachmentModal/>
+                  uploadFileVisible &&
+                  <UploadAttachmentModal setUploadAttachmentModalVisible={this.setUploadFileVisible}/>
                 }
               </div>
             </div>
