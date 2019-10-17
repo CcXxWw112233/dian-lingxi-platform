@@ -76,18 +76,34 @@ export default class index extends Component {
 
     render() {
         const { visible, title} =this.state;
-        const { rela_type, rela_id, user_remind_info, workbenchExecutors = [], projectExecutors = [], processEditDatas = [], milestonePrincipals = [] } = this.props
+        const { rela_type, rela_id, user_remind_info, workbenchExecutors = [], projectExecutors = [], processEditDatas = [], milestonePrincipals = [], style } = this.props
         return (
             <>
                 {/* 通知提醒的小图标 */}
-                <Tooltip placement="top" title="通知提醒" arrowPointAtCenter>
-                    <span 
-                        className={`${globalStyles.authTheme} ${globalStyles.inform_remind}`}
-                        onClick={ () => { this.handleInformRemind() } }
-                    >
-                        &#xe637;
-                    </span>
-                </Tooltip>
+                {
+									style ? (
+										<span className={infoRemindStyle.info_icon} style={{...style}} onClick={ () => { this.handleInformRemind() } }>
+											<span
+													style={{lineHeight: '16px'}} 
+													className={`${globalStyles.authTheme} ${infoRemindStyle.inform_remind}`}
+											>
+												&#xe637;
+											</span>
+											<span style={{marginLeft: '4px'}}>提醒</span>
+										</span>
+									) : (
+										<Tooltip placement="top" title="通知提醒" arrowPointAtCenter>
+											<span
+												style={{lineHeight: '16px'}} 
+												className={`${globalStyles.authTheme} ${infoRemindStyle.inform_remind}`}
+												onClick={ () => { this.handleInformRemind() } }
+											>
+												&#xe637;
+											</span>
+										</Tooltip>
+									)
+                }
+                
                 {/* 点击时候的提醒框 */}
                 <div className={infoRemindStyle.wrapperInfo}>
                     <DrawInformRemindModal

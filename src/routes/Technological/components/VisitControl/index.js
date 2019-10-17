@@ -368,7 +368,7 @@ class VisitControl extends Component {
     const { isPropVisitControl, type } = this.props;
     const unClockIcon = (
       <i className={`${globalStyles.authTheme} ${styles.title__text_icon}`}>
-        &#xe86b;
+        &#xe7ca;
       </i>
     );
     const clockIcon = (
@@ -392,7 +392,7 @@ class VisitControl extends Component {
                 </span>
                 <div className={styles.title__operator} style={{ cursor: 'pointer', position: 'relative' }}>
                   <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.toggleVisitControl()} trigger={['click']}>
-                    <span style={{ fontSize: '14px', color: 'rgba(0,0,0,0.45)' }}>
+                    <span style={{ fontSize: '14px', color: 'rgba(0,0,0,0.45)', marginRight: 0 }}>
                       <span>{!isPropVisitControl ? '开放访问' : '仅列表职员访问'}</span>
                       <span className={`${globalStyles.authTheme}`}>&#xe7ee;</span>
                     </span>
@@ -605,19 +605,19 @@ class VisitControl extends Component {
     const unClockEle = (
       <Tooltip title={tooltipUnClockText}>
         <i className={`${globalStyles.authTheme} ${styles.trigger__icon}`}>
-          &#xe7c9;
+          &#xe7ca;
         </i>
       </Tooltip>
     );
     const clockEle = (
       <Tooltip title={tooltipClockText}>
-        <span className={styles.trigger__btn__wrapper}>
+        <span className={styles.trigger__btn__wrapper} style={{marginRight:0}}>
           <i
             className={`${globalStyles.authTheme} ${styles.trigger__btn__icon}`}
           >
-            &#xe7ca;
+            &#xe86a;
           </i>
-          <span className={styles.trigger__btn_text}>访问控制</span>
+          <span className={styles.trigger__btn_text}>已限制访问</span>
         </span>
       </Tooltip>
     );
@@ -640,7 +640,7 @@ class VisitControl extends Component {
           >
             {children ? (
               <span
-                style={{ position: 'relative' }}
+                style={{ position: 'relative', marginRight: 0}}
                 className={styles.trigger__wrapper}
                 onClick={e => this.togglePopoverVisible(e)}
               >
@@ -648,6 +648,7 @@ class VisitControl extends Component {
               </span>
             ) : (
                 <span
+                  style={{marginRight: 0}}
                   className={styles.trigger__wrapper}
                   onClick={e => this.togglePopoverVisible(e)}
                 >

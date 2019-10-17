@@ -2,6 +2,7 @@
   // margin-left: 15%;
   .trigger__wrapper {
     display: inline-block;
+    min-width: 24px;
     min-height: 24px;
     text-align: center;
     .trigger__icon {
@@ -17,10 +18,13 @@
     .trigger__btn__wrapper {
       display: inline-block;
       text-align: center;
-      height: 24px;
-      width: 100px;
-      background: rgba(245, 245, 245, 1);
-      border-radius: 12px;
+      min-width:96px;
+      height:24px;
+      background:rgba(0,0,0,0.04);
+      border-radius:4px;
+      &:hover {
+        background:rgba(230,247,255,1);
+      }
       .trigger__btn__icon {
         display: inline-block;
         width: 16px;
@@ -28,12 +32,14 @@
       }
       .trigger__btn_text {
         display: inline-block;
-        width: 48px;
+        min-width: 48px;
         height: 20px;
         font-size: 12px;
         font-weight: 400;
         color: rgba(140, 140, 140, 1);
         line-height: 20px;
+        margin-right: 0;
+        margin-left: 2px;
       }
       opacity: 1;
       transition: all .3s;

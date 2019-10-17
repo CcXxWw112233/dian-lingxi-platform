@@ -36,7 +36,7 @@ class HeaderContent extends Component {
           </span>
         </div>
         {/* 这里是头部右边 */}
-        <div style={{minWidth: '130px'}}>
+        <div>
           <HeaderContentRightMenu />
         </div>
       </div>

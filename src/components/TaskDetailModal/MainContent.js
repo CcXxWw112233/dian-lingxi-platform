@@ -14,6 +14,7 @@ import {
   PROJECT_TEAM_CARD_COMPLETE
 } from "@/globalset/js/constant";
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
+import InformRemind from '@/components/InformRemind'
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -21,6 +22,17 @@ export default class MainContent extends Component {
   state = {
     // new_executors: []
     uploadFileVisible:false
+  }
+
+  // 检测不同类型的权限控制类型的是否显示
+  checkDiffCategoriesAuthoritiesIsVisible = () => {
+    const { drawContent = {} } = this.props
+    const { is_realize = '0', card_id, privileges = [], board_id, is_privilege, executors = [] } = drawContent
+    return {
+      'visit_control': function() {
+        return checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))
+      }
+    }
   }
 
   componentDidMount() {
@@ -43,6 +55,10 @@ export default class MainContent extends Component {
     //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
     //   return false
     // }
+    if (this.checkDiffCategoriesAuthoritiesIsVisible().visit_control && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control()) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const obj = {
       card_id,
       is_realize: is_realize === '1' ? '0' : '1',
@@ -72,6 +88,10 @@ export default class MainContent extends Component {
   // 设置标题textarea区域修改 S
   setTitleEdit = (e) => {
     e && e.stopPropagation();
+    if (this.checkDiffCategoriesAuthoritiesIsVisible().visit_control && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control()) {
+      // message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     // this.setState({
     //   is_edit_title: true
     // })
@@ -384,13 +404,23 @@ export default class MainContent extends Component {
                 <span className={`${globalStyles.authTheme}`}>&#xe6b6;</span>
                 <span>状态</span>
               </div>
-              <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_item} overlay={filedEdit} getPopupContainer={triggerNode => triggerNode.parentNode}>
-                <div className={`${mainContentStyles.field_right}`}>
-                  <div className={`${mainContentStyles.pub_hover}`}>
-                    <span className={is_realize == '0' ? mainContentStyles.incomplete : mainContentStyles.complete}>{is_realize == '0' ? '未完成' : '已完成'}</span>
+              {
+                this.checkDiffCategoriesAuthoritiesIsVisible().visit_control && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control() ? (
+                  <div className={`${mainContentStyles.field_right}`}>
+                    <div className={`${mainContentStyles.pub_hover}`}>
+                      <span className={is_realize == '0' ? mainContentStyles.incomplete : mainContentStyles.complete}>{is_realize == '0' ? '未完成' : '已完成'}</span>
+                    </div>
                   </div>
-                </div>
-              </Dropdown>
+                ) : (
+                  <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_item} overlay={filedEdit} getPopupContainer={triggerNode => triggerNode.parentNode}>
+                    <div className={`${mainContentStyles.field_right}`}>
+                      <div className={`${mainContentStyles.pub_hover}`}>
+                        <span className={is_realize == '0' ? mainContentStyles.incomplete : mainContentStyles.complete}>{is_realize == '0' ? '未完成' : '已完成'}</span>
+                      </div>
+                    </div>
+                  </Dropdown>
+                )
+              }
             </div>
             {/* 这个中间放置负责人, 如果存在, 则在两者之间 */}
             <div>
@@ -400,62 +430,75 @@ export default class MainContent extends Component {
                   <span className={mainContentStyles.user_executor}>负责人</span>
                 </div>
                 {
-                  !executors.length ? (
-                    <div style={{flex: '1', position: 'relative'}}>
-                      <Dropdown overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
-                        overlay={
-                          <MenuSearchPartner
-                            handleSelectedAllBtn={this.handleSelectedAllBtn}
-                            invitationType='4'
-                            invitationId={card_id}
-                            listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
-                            board_id={board_id} />
-                        }
-                      >
-                        <div className={`${mainContentStyles.field_right}`}>
-                          <div className={`${mainContentStyles.pub_hover}`}>
-                            <span>指派负责人</span>
-                          </div>
-                        </div>
-                      </Dropdown>
+                  this.checkDiffCategoriesAuthoritiesIsVisible().visit_control && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control() ? (
+                    <div className={`${mainContentStyles.field_right}`}>
+                      <div className={`${mainContentStyles.pub_hover}`}>
+                        <span>暂无</span>
+                      </div>
                     </div>
-                  ) : (
-                    <div style={{flex: '1', position: 'relative'}}>
-                      <Dropdown overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
-                        overlay={
-                          <MenuSearchPartner
-                            handleSelectedAllBtn={this.handleSelectedAllBtn}
-                            invitationType='4'
-                            invitationId={card_id}
-                            listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
-                            board_id={board_id} />
-                        }
-                      >
-                        <div style={{display: 'flex', flexWrap: 'wrap'}} className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
-                          {executors.map((value) => {
-                            const { avatar, name, user_name, user_id } = value
-                            return (
-                              <div style={{display: 'flex', flexWrap: 'wrap'}}>
-                                <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 0', textAlign: 'center' }} key={user_id}>
-                                  {avatar ? (
-                                    <img style={{ width: '24px', height: '24px', borderRadius: 20, margin: '0 2px'}} src={avatar} />
-                                  ) : (
-                                      <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
-                                        <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
-                                      </div>
-                                    )}
-                                  <div style={{ marginRight: 8, fontSize: '14px' }}>{name || user_name || '佚名'}</div>
-                                  <span onClick={ (e) => { this.handleRemoveExecutors(e,user_id) } } className={`${mainContentStyles.userItemDeleBtn}`}></span>
+                  ) :(
+                    <span style={{flex: '1'}}>
+                      {
+                        !executors.length ? (
+                          <div style={{flex: '1', position: 'relative'}}>
+                            <Dropdown overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                              overlay={
+                                <MenuSearchPartner
+                                  handleSelectedAllBtn={this.handleSelectedAllBtn}
+                                  invitationType='4'
+                                  invitationId={card_id}
+                                  listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                                  board_id={board_id} />
+                              }
+                            >
+                              <div className={`${mainContentStyles.field_right}`}>
+                                <div className={`${mainContentStyles.pub_hover}`}>
+                                  <span>指派负责人</span>
                                 </div>
-                                
                               </div>
-                            )
-                          })}
-                        </div>
-                      </Dropdown>
-                    </div>
+                            </Dropdown>
+                          </div>
+                        ) : (
+                          <div style={{flex: '1', position: 'relative'}}>
+                            <Dropdown overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                              overlay={
+                                <MenuSearchPartner
+                                  handleSelectedAllBtn={this.handleSelectedAllBtn}
+                                  invitationType='4'
+                                  invitationId={card_id}
+                                  listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                                  board_id={board_id} />
+                              }
+                            >
+                              <div style={{display: 'flex', flexWrap: 'wrap'}} className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
+                                {executors.map((value) => {
+                                  const { avatar, name, user_name, user_id } = value
+                                  return (
+                                    <div style={{display: 'flex', flexWrap: 'wrap'}}>
+                                      <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 0', textAlign: 'center' }} key={user_id}>
+                                        {avatar ? (
+                                          <img style={{ width: '24px', height: '24px', borderRadius: 20, margin: '0 2px'}} src={avatar} />
+                                        ) : (
+                                            <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
+                                              <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
+                                            </div>
+                                          )}
+                                        <div style={{ marginRight: 8, fontSize: '14px' }}>{name || user_name || '佚名'}</div>
+                                        <span onClick={ (e) => { this.handleRemoveExecutors(e,user_id) } } className={`${mainContentStyles.userItemDeleBtn}`}></span>
+                                      </div>
+                                      
+                                    </div>
+                                  )
+                                })}
+                              </div>
+                            </Dropdown>
+                          </div>
+                        )
+                      }
+                    </span>
                   )
                 }
+                
                 
               </div>
             </div>
@@ -466,32 +509,37 @@ export default class MainContent extends Component {
                 <span>时间</span>
               </div>
               <div className={`${mainContentStyles.field_right}`}>
-                <div style={{ position: 'relative' }}>
-                  {/* {start_time && due_time ? ('') : (<span style={{ color: '#bfbfbf' }}>设置</span>)} */}
-                  <span className={`${mainContentStyles.pub_hover}`} style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                    {start_time ? timestampToTimeNormal(start_time, '/', true) : '开始时间'}
-                    <DatePicker
-                      // disabledDate={this.disabledStartTime.bind(this)}
-                      // onChange={this.startDatePickerChange.bind(this)}
-                      // getCalendarContainer={triggerNode => triggerNode.parentNode}
-                      placeholder={'开始时间'}
-                      format="YYYY/MM/DD HH:mm"
-                      showTime={{ format: 'HH:mm' }}
-                      style={{ opacity: 0, background: '#000000', cursor: 'pointer', position: 'absolute', left: 0, zIndex: 1, }} />
-                  </span>
-                  &nbsp;
-                  <span style={{ color: '#bfbfbf' }}> ~ </span>
-                  &nbsp;
-                  <span className={`${mainContentStyles.pub_hover}`} style={{ position: 'relative', minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                    {due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
-                    <DatePicker
-                      // disabledDate={this.disabledDueTime.bind(this)}
-                      // getCalendarContainer={triggerNode => triggerNode.parentNode}
-                      placeholder={'截止时间'}
-                      format="YYYY/MM/DD HH:mm"
-                      showTime={{ format: 'HH:mm' }}
-                      // onChange={this.endDatePickerChange.bind(this)}
-                      style={{ opacity: 0, cursor: 'pointer', background: '#000000', position: 'absolute', left: 0, zIndex: 1, }} />
+                <div style={{display: 'flex'}}>
+                  <div style={{ position: 'relative' }}>
+                    {/* {start_time && due_time ? ('') : (<span style={{ color: '#bfbfbf' }}>设置</span>)} */}
+                    <span className={`${mainContentStyles.pub_hover}`} style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
+                      {start_time ? timestampToTimeNormal(start_time, '/', true) : '开始时间'}
+                      <DatePicker
+                        // disabledDate={this.disabledStartTime.bind(this)}
+                        // onChange={this.startDatePickerChange.bind(this)}
+                        // getCalendarContainer={triggerNode => triggerNode.parentNode}
+                        placeholder={'开始时间'}
+                        format="YYYY/MM/DD HH:mm"
+                        showTime={{ format: 'HH:mm' }}
+                        style={{ opacity: 0, background: '#000000', cursor: 'pointer', position: 'absolute', left: 0, zIndex: 1, width: 'auto' }} />
+                    </span>
+                    &nbsp;
+                    <span style={{ color: '#bfbfbf' }}> ~ </span>
+                    &nbsp;
+                    <span className={`${mainContentStyles.pub_hover}`} style={{ position: 'relative', minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
+                      {due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
+                      <DatePicker
+                        // disabledDate={this.disabledDueTime.bind(this)}
+                        // getCalendarContainer={triggerNode => triggerNode.parentNode}
+                        placeholder={'截止时间'}
+                        format="YYYY/MM/DD HH:mm"
+                        showTime={{ format: 'HH:mm' }}
+                        // onChange={this.endDatePickerChange.bind(this)}
+                        style={{ opacity: 0, cursor: 'pointer', background: '#000000', position: 'absolute', left: 0, zIndex: 1, width: 'auto' }} />
+                    </span>
+                  </div>
+                  <span style={{ position: 'relative' }}>
+                    <InformRemind style={{display: 'inline-block', minWidth: '72px', height: '38px', borderRadius: '4px', textAlign: 'center'}} projectExecutors={executors} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} user_remind_info={data} />
                   </span>
                 </div>
               </div>
