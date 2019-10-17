@@ -11,13 +11,13 @@ import { timeToTimestamp, stopPropagation } from '../../../../../utils/util'
 import {
   MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_GROUP,
   NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE,
-  ORG_UPMS_ORGANIZATION_GROUP,
 } from "../../../../../globalset/js/constant";
 import { connect } from 'dva';
-import { checkIsHasPermission, checkIsHasPermissionInBoard } from "../../../../../utils/businessFunction";
+import { checkIsHasPermissionInBoard } from "../../../../../utils/businessFunction";
 import VisitControl from './../../VisitControl/index'
 import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from './../../../../../services/technological/project'
-import { organizationInviteWebJoin, commInviteWebJoin, } from './../../../../../services/technological/index'
+import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
+import AvatarList from '@/components/avatarList'
 
 const TextArea = Input.TextArea
 const { RangePicker } = DatePicker;
@@ -87,9 +87,33 @@ export default class TaskItem extends React.Component {
       }
     })
   }
-  chirldrenTaskChargeChange(data) {
+  chirldrenTaskChargeChange = ({ selectedKeys = [] }) => {
+    const { projectDetailInfoData = {} } = this.props
+    const { data = [], } = projectDetailInfoData
+    const currentSelect = data.filter(item => selectedKeys.indexOf(item.user_id) > -1)
+    // debugger
     this.setState({
-      executor: data
+      selectedList: currentSelect
+    })
+  }
+  inviteOthersToBoardCalback = ({ users }) => {
+    const { dispatch, projectDetailInfoData = {} } = this.props
+    const { board_id, data = [] } = projectDetailInfoData
+    const { selectedList = [] } = this.state
+    const calback = (res) => {
+      const new_users = res.data
+      const arr = new_users.filter(item => users.indexOf(item.user_id) != -1)
+      const new_selectedList = [].concat(selectedList, arr)
+      this.setState({
+        selectedList: new_selectedList
+      })
+    }
+    dispatch({
+      type: 'projectDetail/projectDetailInfo',
+      payload: {
+        id: board_id,
+        calback
+      }
     })
   }
   //设置日期
@@ -110,7 +134,7 @@ export default class TaskItem extends React.Component {
     this.setState({
       isAddEdit: false,
       elseElementHeight: 342,
-      executor: {}, //任务负责人
+      selectedList: [], //任务负责人
       addNewTaskName: '', //新增任务名字
       start_time: '',
       due_time: '',
@@ -121,14 +145,14 @@ export default class TaskItem extends React.Component {
     this.reductionAddTaskOperate()
   }
   checkAddNewTask() {
-    const { addTaskType, due_time, start_time, addNewTaskName, executor } = this.state
+    const { addTaskType, due_time, start_time, addNewTaskName, selectedList = [] } = this.state
     const { projectDetailInfoData: { board_id }, getTaskGroupListArrangeType } = this.props
     const { taskItemValue: { list_id } } = this.props
     const obj = {
       board_id,
       list_id,
       name: addNewTaskName,
-      users: executor['user_id'],
+      users: selectedList.map(item => item.user_id).join(','),
       start_time,
       due_time,
       type: addTaskType,
@@ -433,7 +457,7 @@ export default class TaskItem extends React.Component {
   }
 
   render() {
-    const { isAddEdit, isInEditName, executor = {}, start_time, due_time, addTaskType, addNewTaskName, elseElementHeight, taskGroupOperatorDropdownMenuVisible, shouldHideVisitControlPopover } = this.state
+    const { selectedList = [], isAddEdit, isInEditName, executor = {}, start_time, due_time, addTaskType, addNewTaskName, elseElementHeight, taskGroupOperatorDropdownMenuVisible, shouldHideVisitControlPopover } = this.state
     const { taskItemValue = {}, clientHeight, taskGroupListIndex, setDrawerVisibleOpen } = this.props
     const { projectDetailInfoData = {} } = this.props
     const { board_id, data = [], } = projectDetailInfoData
@@ -605,21 +629,38 @@ export default class TaskItem extends React.Component {
                     </div>
                     {/*任务负责人*/}
                     <div>
-                      <Dropdown overlay={<DCMenuItemOne execusorList={data} canNotRemoveItem={true} setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+                      <Dropdown
+                        // overlay={
+                        //   <DCMenuItemOne
+                        //     execusorList={data}
+                        //     canNotRemoveItem={true}
+                        //     setList={this.setList.bind(this)}
+                        //     chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
+                        //   />}
+                        overlay={
+                          <MenuSearchPartner
+                            invitationType='1'
+                            invitationId={board_id}
+                            listData={data}
+                            keyCode={'user_id'}
+                            searchName={'name'}
+                            currentSelect={selectedList}
+                            chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                            board_id={board_id}
+                            inviteOthersToBoardCalback={this.inviteOthersToBoardCalback} />
+                        }
+                      >
                         <div style={{ display: 'flex', alignItems: 'center' }}>
-                          {executor.user_id ? (
-                            executor.avatar ? (
-                              <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 8 }} src={executor.avatar} />
-                            ) : (
-                                <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 8, lineHeight: '20px' }}>
-                                  {executor.full_name.substring(0, 1)}
-                                </div>
-                              )
+                          {selectedList.length ? (
+                            <div style={{ zoom: 0.8, marginRight: 4 }}>
+                              <AvatarList users={selectedList} size={'small'} />
+                            </div>
                           ) : (
                               <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 8, }}>
                                 <i className={globalStyle.authTheme}>&#xe70c;</i>
                               </div>
                             )}
+
                         </div>
                       </Dropdown>
                     </div>

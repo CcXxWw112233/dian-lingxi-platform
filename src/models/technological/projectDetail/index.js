@@ -86,7 +86,7 @@ export default {
       const param = QueryString.parse(location.search.replace('?', ''))
       board_id = param.board_id
       appsSelectKey = param.appsSelectKey
-      if(!board_id) {
+      if (!board_id) {
         window.history.go(-1)
         // console.log('ssss', 112)
         return
@@ -331,10 +331,10 @@ export default {
       const { id, calback } = payload
       let res = yield call(projectDetailInfo, id)
       const appsSelectKey = yield select(selectAppsSelectKey)
-      if (typeof calback === 'function') {
-        calback()
-      }
       if (isApiResponseOk(res)) {
+        if (typeof calback === 'function') {
+          calback(res.data)
+        }
         yield put({
           type: 'updateDatas',
           payload: {
