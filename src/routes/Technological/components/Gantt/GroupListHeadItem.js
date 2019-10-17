@@ -7,10 +7,12 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '@/components/avatarList'
 import CheckItem from '@/components/CheckItem'
 import { updateTaskGroup, deleteTaskGroup, } from '../../../../services/technological/task';
-import { updateProject, addMenbersInProject } from '../../../../services/technological/project';
+import { updateProject, addMenbersInProject, toggleContentPrivilege, removeContentPrivilege, setContentPrivilege } from '../../../../services/technological/project';
 import { isApiResponseOk } from '../../../../utils/handleResponseData';
 import ShowAddMenberModal from '../../../../routes/Technological/components/Project/ShowAddMenberModal'
 import { PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_CARD_GROUP, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../globalset/js/constant';
+import VisitControl from '../VisitControl/index'
+import globalStyle from '@/globalset/css/globalClassName.less'
 
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
@@ -23,6 +25,19 @@ export default class GroupListHeadItem extends Component {
       local_list_name: '',
       show_add_menber_visible: false,
     }
+    this.visitControlOtherPersonOperatorMenuItem = [
+      {
+        key: '可访问',
+        value: 'read'
+      },
+      {
+        key: '移出',
+        value: 'remove',
+        style: {
+          color: '#f73b45'
+        }
+      }
+    ]
   }
   noTimeAreaScroll(e) {
     e.stopPropagation()
@@ -244,6 +259,9 @@ export default class GroupListHeadItem extends Component {
         }
         this.requestDeleteGroup()
         break
+      case 'visitorControl':
+        this.set
+        break
       default:
         break
     }
@@ -337,20 +355,32 @@ export default class GroupListHeadItem extends Component {
       }
     })
   }
-
+  dropdwonVisibleChange = (bool) => {
+    this.setState({
+      renderVistorContorlVisible: bool
+    })
+  }
   // 操作项
   renderMenuOperateListName = () => {
     const { itemValue = {}, gantt_board_id } = this.props
+    const { renderVistorContorlVisible } = this.state
     const { list_id } = itemValue
     const params_board_id = gantt_board_id == '0' ? list_id : gantt_board_id
     const rename_permission_code = gantt_board_id == '0' ? PROJECT_TEAM_BOARD_EDIT : PROJECT_TEAM_CARD_GROUP
     return (
-      <Menu onClick={this.handleMenuSelect}>
+      <Menu onClick={this.handleMenuSelect} onOpenChange={this.onOpenChange}>
         {
           // checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, params_board_id)
           <Menu.Item key={'invitation'}>
             邀请职员加入
           </Menu.Item>
+        }
+        {
+          gantt_board_id != '0' && renderVistorContorlVisible && (
+            <Menu.Item key={'visitorControl'}>
+              {this.renderVistorContorl()}
+            </Menu.Item>
+          )
         }
         {
           // checkIsHasPermissionInBoard(rename_permission_code, params_board_id) &&
@@ -365,14 +395,193 @@ export default class GroupListHeadItem extends Component {
     )
   }
 
+  // 访问控制-----------start----------------------------------------
+  // 这是设置访问控制之后需要更新的数据
+  visitControlUpdateCurrentProjectData = (obj = {}) => {
+    // const { taskItemValue = {}, itemKey, dispatch, getTaskGroupListArrangeType, board_id } = this.props
+    // const { list_id, list_name } = taskItemValue
+    // dispatch({
+    //   type: 'projectDetailTask/getTaskGroupList',
+    //   payload: {
+    //     // type: '2',
+    //     arrange_type: getTaskGroupListArrangeType ? getTaskGroupListArrangeType : '1',
+    //     board_id: board_id
+    //   }
+    // })
+    // this.setState({
+    //   isShouldBeTaskGroupOperatorDropdownMenuVisible: false,
+    //   taskGroupOperatorDropdownMenuVisible: false,
+    //   shouldHideVisitControlPopover: true,
+    // })
+  }
+
+  // 访问控制的开关切换
+  handleVisitControlChange = flag => {
+    const { taskItemValue = {} } = this.props
+    const { list_id, is_privilege } = taskItemValue
+    const toBool = str => !!Number(str)
+    const is_privilege_bool = toBool(is_privilege)
+    if (flag === is_privilege_bool) {
+      return
+    }
+    //toggole 权限
+    const data = {
+      content_id: list_id,
+      content_type: 'lists',
+      is_open: flag ? 1 : 0
+    }
+    toggleContentPrivilege(data).then(res => {
+      if (res && res.code === '0') {
+        //更新数据
+        let temp_arr = res && res.data
+        this.visitControlUpdateCurrentProjectData({ is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr })
+      } else {
+        message.warning(res.message)
+      }
+    })
+  }
+
+  // 移除访问控制列表
+  handleVisitControlRemoveContentPrivilege = id => {
+    const { taskItemValue = {} } = this.props
+    const { list_id, privileges } = taskItemValue
+    const content_type = 'lists'
+    const content_id = list_id
+    let temp_id = []
+    temp_id.push(id)
+    removeContentPrivilege({
+      id: id
+    }).then(res => {
+      const isResOk = res => res && res.code === '0'
+      if (isResOk(res)) {
+        message.success('移出用户成功')
+        this.visitControlUpdateCurrentProjectData({ removeId: id, type: 'remove' })
+      } else {
+        message.warning(res.message)
+      }
+    })
+  }
+
+  /**
+   * 其他职员的下拉回调
+   * @param {String} id 这是用户的user_id
+   * @param {String} type 这是对应的用户字段
+   * @param {String} removeId 这是对应移除用户的id
+   */
+  handleClickedOtherPersonListOperatorItem = (id, type, removeId) => {
+    if (type === 'remove') {
+      this.handleVisitControlRemoveContentPrivilege(removeId)
+    } else {
+      // this.handleSetContentPrivilege(id, type, '更新用户控制类型失败')
+    }
+  }
+
+  /**
+   * 添加职员的回调
+   * @param {Array} users_arr 添加职员的数组
+   */
+  handleVisitControlAddNewMember = (users_arr = []) => {
+    if (!users_arr.length) return
+
+    this.handleSetContentPrivilege(users_arr, 'read')
+  }
+
+  // 访问控制添加职员
+  handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试', ) => {
+    const { taskItemValue = {} } = this.props
+    const { list_id, privileges } = taskItemValue
+    const content_type = 'lists'
+    const privilege_code = type
+    const content_id = list_id
+    let temp_ids = [] // 用来保存用户的id
+    users_arr && users_arr.map(item => {
+      temp_ids.push(item.id)
+    })
+
+    setContentPrivilege({
+      content_id,
+      content_type,
+      privilege_code,
+      user_ids: temp_ids
+    }).then(res => {
+      if (res && res.code === '0') {
+        let temp_arr = []
+        temp_arr.push(res.data)
+        this.visitControlUpdateCurrentProjectData({ privileges: temp_arr, type: 'add' })
+      } else {
+        message.error(errorText)
+      }
+    })
+  }
+
+  handleVisitControlPopoverVisible = (flag) => {
+    if (!flag) {
+      this.setState({
+        taskGroupOperatorDropdownMenuVisible: false
+      })
+    }
+    this.setState({
+      isShouldBeTaskGroupOperatorDropdownMenuVisible: flag,
+    })
+  }
+  // 执行人列表去重
+  arrayNonRepeatfy = arr => {
+    let temp_arr = []
+    let temp_id = []
+    for (let i = 0; i < arr.length; i++) {
+      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
+        temp_arr.push(arr[i]);
+        temp_id.push(arr[i]['id'])
+      }
+    }
+    return temp_arr
+  }
+  //设置访问控制人的列表
+  getProjectParticipant = () => {
+    const { itemValue: { privileges_extend = [], lane_data: { card_no_times, cards } } } = this.props
+    // 1. 这是将在每一个card_data中的存在的executors取出来,保存在一个数组中
+    const card_data = [].concat(card_no_times, cards)
+    const projectParticipant = card_data.reduce((acc, curr) =>
+      // console.log(acc, '------', curr, 'sssssss')
+      [...acc, ...(curr && curr.executors && curr.executors.length ? curr.executors.filter(i => !acc.find(e => e.user_id === i.user_id)) : [])], []
+    )
+    // 2. 如果存在extend列表中的职员也要拼接进来, 然后去重
+    const extendParticipant = privileges_extend && [...privileges_extend]
+    let temp_projectParticipant = [].concat(...projectParticipant, extendParticipant) // 用来保存新的负责人列表
+    let new_projectParticipant = this.arrayNonRepeatfy(temp_projectParticipant)
+    return new_projectParticipant
+  }
+  renderVistorContorl = () => {
+    const { itemValue = {}, } = this.props
+    const { list_id, board_id, is_privilege = '0', privileges = [], } = itemValue
+    return (
+      <VisitControl
+        invitationType='5'
+        invitationId={list_id}
+        board_id={board_id}
+        popoverPlacement={'rightTop'}
+        isPropVisitControl={is_privilege === '0' ? false : true}
+        principalList={this.getProjectParticipant()}
+        principalInfo='位任务列表负责人'
+        otherPrivilege={privileges}
+        otherPersonOperatorMenuItem={this.visitControlOtherPersonOperatorMenuItem}
+        removeMemberPromptText='移出后用户将不能访问此任务列表'
+        handleVisitControlChange={this.handleVisitControlChange}
+        handleVisitControlPopoverVisible={this.handleVisitControlPopoverVisible}
+        handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+        handleAddNewMember={this.handleVisitControlAddNewMember}
+      >
+        <span>访问控制</span>
+      </VisitControl>
+    )
+  }
+  // 访问控制 ----------------end-----------------------------
   render() {
 
     const { currentUserOrganizes = [], gantt_board_id = [], ceiHeight, is_show_org_name, is_all_org, rows = 5, group_view_type, get_gantt_data_loading } = this.props
     const { itemValue = {}, itemKey } = this.props
-    const { list_name, org_id, list_no_time_data = [], list_id, lane_icon, board_id } = itemValue
+    const { list_name, org_id, list_no_time_data = [], list_id, lane_icon, board_id, is_privilege = '0', privileges, } = itemValue
     const { isShowBottDetail, show_edit_input, local_list_name, edit_input_value, show_add_menber_visible } = this.state
-
-    // console.log('sssss',{itemKey, group_rows, row: group_rows[itemKey], list_id })
 
     return (
       <div>
@@ -409,7 +618,7 @@ export default class GroupListHeadItem extends Component {
             {
               // 只有在项目视图下，且如果在分组id == 0（未分组的情况下不能显示）
               group_view_type == '1' && list_id != '0' && (
-                <Dropdown overlay={group_view_type == '1' ? this.renderMenuOperateListName() : <span></span>}>
+                <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={group_view_type == '1' ? this.renderMenuOperateListName() : <span></span>}>
                   <span className={`${globalStyles.authTheme} ${indexStyles.operator}`}>&#xe7fd;</span>
                 </Dropdown>
               )
@@ -440,6 +649,7 @@ export default class GroupListHeadItem extends Component {
               setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile}
             />
           )}
+
       </div>
     )
   }
