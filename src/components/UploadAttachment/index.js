@@ -4,7 +4,7 @@ import { Modal, Button } from 'antd'
 import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 @connect(mapStateToProps)
-export default class UploadAttachmentModal extends Component {
+export default class UploadAttachment extends Component {
     constructor(props) {
         super(props);
         this.state = {
