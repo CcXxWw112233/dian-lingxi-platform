@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Modal, Dropdown, Menu, Button, message, Input } from "antd";
+import { Modal, Dropdown, Menu, Button, message, Input, Tooltip } from "antd";
 import DrawerContentStyles from "./index.less";
 import {
   timestampToTimeNormal2,
@@ -102,11 +102,12 @@ class ShareAndInvite extends Component {
   };
   handleShareMenuClick = ({ item, key }) => {
     const { handleChangeOnlyReadingShareModalVisible } = this.props;
-    const shareMenuMap = new Map([
-      ["onlyReadingShare", () => handleChangeOnlyReadingShareModalVisible()]
-    ]);
-    const action = shareMenuMap.get(key);
-    if (action) action();
+    this.props.handleChangeOnlyReadingShareModalVisible && handleChangeOnlyReadingShareModalVisible()
+    // const shareMenuMap = new Map([
+    //   ["onlyReadingShare", () => handleChangeOnlyReadingShareModalVisible()]
+    // ]);
+    // const action = shareMenuMap.get(key);
+    // if (action) action();
   };
   formatExp = (timestamp = "") => {
     const timeStr = timestampToTimeNormal2(timestamp);
@@ -159,9 +160,12 @@ class ShareAndInvite extends Component {
             </span>
           </p>
         ) : null} */}
-        <Dropdown overlay={shareMenu}>
+        <Tooltip title="分享协作" placement="top">
+          <span onClick={this.handleShareMenuClick} className={DrawerContentStyles.right__share}></span>
+        </Tooltip>
+        {/* <Dropdown overlay={shareMenu}>
           <span className={DrawerContentStyles.right__share} />
-        </Dropdown>
+        </Dropdown> */}
         {onlyReadingShareModalVisible && (
           <Modal
             footer={null}

@@ -28,7 +28,7 @@ export default class Header extends React.Component {
             {/*<div className={headerStyles.header_out_detail_4}>阿德</div>*/}
           </div>
         </div>
-        <div className={headerStyles.header_out_right}>
+        <div className={headerStyles.header_out_right} style={{marginRight: '12px'}}>
           <InformRemind milestonePrincipals={principals} rela_id={id} rela_type='5' user_remind_info={users} />
         </div>
       </div>

@@ -22,6 +22,7 @@
 // 这是面包屑小导航的样式
 .bread_nav {
   // cursor: pointer;
+  margin-left: 12px;
   .bread_board_name{
     font-size: 16px;
     color: rgba(0, 0, 0, 0.65)
@@ -44,6 +45,42 @@
 }
 
 // 右边导航部分的样式
-.right_menu {
-
+.right_menu_content {
+  display: flex;
+  align-items: center;
+  .right_menu {
+    display: inline-block;
+    &:hover {
+      background:rgba(230,247,255,1);
+      border-radius:4px;
+    }  
+  }
+  .visit_icon {
+    margin-right: 12px;
+  }
+  .share_icon {
+    margin-right: 12px;
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    line-height: 18px;
+  }
+  .right__shareIndicator {
+    cursor: pointer;
+    display: inline-block;
+    padding      : 2px 16px;
+    border-radius: 12px;
+    background   : rgba(245, 245, 245, 1);
+    margin-right : 8px;
+    margin-bottom: 0;
+    line-height  : 20px;
+    .right__shareIndicator_icon {
+      display        : inline-block;
+      width          : 12px;
+      height         : 12px;
+      background     : url(../../assets/project/share_fill@2x.png) center center no-repeat;
+      background-size: contain;
+      margin-right   : 7px;
+    }
+  }
 }

@@ -5,9 +5,16 @@ import headerStyles from './HeaderContent.less'
 import VisitControl from '../../routes/Technological/components/VisitControl/index'
 import ShareAndInvite from '../../routes/Technological/components/ShareAndInvite/index'
 import { setContentPrivilege, toggleContentPrivilege, removeContentPrivilege } from '../../services/technological/project'
+import { createMeeting, createShareLink, modifOrStopShareLink } from '../../services/technological/workbench'
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
 
+  state = {
+    onlyReadingShareModalVisible: false, //只读分享modal
+    onlyReadingShareData: {},
+  }
+
+  // 访问控制的操作 S
   /**
    * 访问控制的开关切换
    * @param {Boolean} flag 开关切换
@@ -74,6 +81,7 @@ export default class HeaderContentRightMenu extends Component {
           drawContent: new_drawContent
         }
       })
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
     }
     // 这是添加职员的操作
     // 这是更新弹窗中的priveleges
@@ -94,6 +102,7 @@ export default class HeaderContentRightMenu extends Component {
           drawContent: new_drawContent
         }
       })
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
     }
 
     // 这是更新type类型
@@ -116,6 +125,7 @@ export default class HeaderContentRightMenu extends Component {
           drawContent: new_drawContent
         }
       })
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
     }
 
     // 访问控制的切换
@@ -137,10 +147,13 @@ export default class HeaderContentRightMenu extends Component {
           drawContent: new_drawContent
         }
       })
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+      this.props.updateParentTaskList && this.props.updateParentTaskList()
     }
 
     // 需要调用父级的列表
-    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+    // this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+    
     // 调用更新项目列表
     dispatch({
       type: 'projectDetail/projectDetailInfo',
@@ -278,15 +291,96 @@ export default class HeaderContentRightMenu extends Component {
       this.handleVisitControlChangeContentPrivilege(id, type)
     }
   }
+
+  // 访问控制操作 E
+
+  // 分享操作 S
+  handleOnlyReadingShareExpChangeOrStopShare = (obj) => {
+    const isStopShare = obj && obj['status'] && obj['status'] === '0'
+    return modifOrStopShareLink(obj).then(res => {
+      if (res && res.code === '0') {
+        if (isStopShare) {
+          message.success('停止分享成功')
+        } else {
+          message.success('修改成功')
+          const { dispatch, drawContent = {}, drawContent: { card_id } } = this.props
+          const isShared = obj && obj['status'] && obj['status']
+          if (isShared) {
+            let new_drawContent = { ...drawContent, is_shared: obj['status'] }
+            dispatch({
+              type: 'publicTaskDetailModal/updateDatas',
+              payload: {
+                drawContent: new_drawContent,
+              }
+            })
+            this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: new_drawContent, card_id})
+          }
+        }
+        this.setState((state) => {
+          const { onlyReadingShareData } = state
+          return {
+            onlyReadingShareData: Object.assign({}, onlyReadingShareData, obj)
+          }
+        })
+      } else {
+        message.error('操作失败')
+      }
+    })
+  }
+
+  handleChangeOnlyReadingShareModalVisible = () => {
+    const { onlyReadingShareModalVisible } = this.state
+    //打开之前确保获取到数据
+    if (!onlyReadingShareModalVisible) {
+      Promise.resolve(this.createOnlyReadingShareLink()).then(() => {
+        this.setState({
+          onlyReadingShareModalVisible: true
+        })
+      }).catch(() => message.error('获取分享信息失败'))
+    } else {
+      this.setState({
+        onlyReadingShareModalVisible: false
+      })
+    }
+  }
+
+  createOnlyReadingShareLink = () => {
+    // const { location } = this.props
+    //获取参数
+    // const { board_id = '', appsSelectKey = '', card_id = '' } = this.getSearchFromLocation(location)
+
+    const { drawContent = {} } = this.props
+    const { board_id, card_id, } = drawContent
+
+    const payload = {
+      board_id,
+      rela_id: card_id,
+      rela_type: '1'
+    }
+    return createShareLink(payload).then(({ code, data }) => {
+      if (code === '0') {
+        this.setState(() => {
+          return {
+            onlyReadingShareData: data
+          }
+        })
+      } else {
+        message.error('获取分享信息失败')
+        return new Error('can not create share link.')
+      }
+    })
+  }
+  // 分享操作 E
   
 
   render() {
     const { drawContent = {} } = this.props
-    const { board_id, card_id, is_privilege, privileges = [], executors = [] } = drawContent
+    const { board_id, card_id, is_privilege, privileges = [], executors = [], is_shared } = drawContent
+    const { onlyReadingShareData, onlyReadingShareModalVisible } = this.state
     return (
       <div>
-        <div className={headerStyles.right_menu}>
-          <span className={headerStyles.visit_icon}>
+        <div className={headerStyles.right_menu_content}>
+          <span className={`${headerStyles.visit_icon} ${headerStyles.right_menu}`}>
             <VisitControl 
               board_id={board_id}
               isPropVisitControl={is_privilege === '0' ? false : true}
@@ -297,8 +391,22 @@ export default class HeaderContentRightMenu extends Component {
               handleAddNewMember={this.handleVisitControlAddNewMember}
             />
           </span>
-          <span>
-            <ShareAndInvite />
+          <span style={{display: 'flex'}}>
+            <span>
+              {is_shared === '1' ? 
+                <span className={headerStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}>
+                  <span className={headerStyles.right__shareIndicator_icon}></span>
+                  <span className={headerStyles.right__shareIndicator_text}>正在分享</span>
+                </span> : null}
+            </span>
+            <span className={`${headerStyles.right_menu} ${headerStyles.share_icon}`}>
+              <ShareAndInvite 
+                is_shared={is_shared}
+                onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible}
+                data={onlyReadingShareData}
+                handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare}
+              />
+            </span>
           </span>
         </div>
       </div>

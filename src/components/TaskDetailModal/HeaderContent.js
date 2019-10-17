@@ -9,7 +9,7 @@ import { connect } from 'dva'
 
 class HeaderContent extends Component {
   render() {
-    const { drawContent = {}, currentUserOrganizes = [], is_all_org, is_show_org_name } = this.props
+    const { drawContent = {}, currentUserOrganizes = [], is_all_org, is_show_org_name, updateParentTaskList, handleTaskDetailChange } = this.props
     const { card_id, org_id, board_id, board_name, list_name } = drawContent
 
     return (
@@ -37,7 +37,7 @@ class HeaderContent extends Component {
         </div>
         {/* 这里是头部右边 */}
         <div>
-          <HeaderContentRightMenu />
+          <HeaderContentRightMenu handleTaskDetailChange={handleTaskDetailChange} updateParentTaskList={updateParentTaskList} />
         </div>
       </div>
     )

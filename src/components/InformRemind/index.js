@@ -87,7 +87,7 @@ export default class index extends Component {
 													style={{lineHeight: '16px'}} 
 													className={`${globalStyles.authTheme} ${infoRemindStyle.inform_remind}`}
 											>
-												&#xe637;
+												&#xe6d9;
 											</span>
 											<span style={{marginLeft: '4px'}}>提醒</span>
 										</span>
@@ -98,7 +98,7 @@ export default class index extends Component {
 												className={`${globalStyles.authTheme} ${infoRemindStyle.inform_remind}`}
 												onClick={ () => { this.handleInformRemind() } }
 											>
-												&#xe637;
+												&#xe6d9;
 											</span>
 										</Tooltip>
 									)

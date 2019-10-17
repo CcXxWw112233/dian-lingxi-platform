@@ -289,11 +289,31 @@ export default class CreateTask extends React.Component {
     // console.log('更新父级任务列表', 'sssssss_进来了')
     // const { is_realize, card_name } = payload
     const { taskGroupList = [], taskGroupListIndex, taskGroupListIndex_index, dispatch } = this.props
+    // taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index][name] = value
+    
     taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index] = {...drawContent}
     dispatch({
       type: 'projectDetailTask/updateDatas',
       payload: {
         taskGroupList
+      }
+    })
+  }
+
+  /**
+   * 调用更新父级列表
+   * @param {Object} payload 需要传递的参数
+   */
+  updateParentTaskList = () => {
+    const { drawContent = {}, getTaskGroupListArrangeType, dispatch } = this.props
+    const { board_id } = drawContent
+    // 调用分组列表
+    dispatch({
+      type: 'projectDetailTask/getTaskGroupList',
+      payload: {
+        type: '2',
+        arrange_type: getTaskGroupListArrangeType ? getTaskGroupListArrangeType : '1',
+        board_id: board_id
       }
     })
   }
@@ -350,6 +370,7 @@ export default class CreateTask extends React.Component {
             task_detail_modal_visible={drawerVisible}
             setTaskDetailModalVisible={this.setDrawerVisibleClose}
             handleTaskDetailChange={this.handleTaskDetailChange}
+            updateParentTaskList={this.updateParentTaskList}
           />
       </div>
     )
@@ -370,6 +391,7 @@ function mapStateToProps({
   },
   publicTaskDetailModal: {
     drawerVisible,
+    drawContent,
     taskGroupListIndex,
     taskGroupListIndex_index
   }
@@ -377,6 +399,7 @@ function mapStateToProps({
   return {
     taskGroupList,
     drawerVisible,
+    drawContent,
     getTaskGroupListArrangeType,
     board_id,
     taskGroupListIndex,
