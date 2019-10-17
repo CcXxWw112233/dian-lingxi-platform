@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
-import { Icon, message, Dropdown, Menu, DatePicker } from 'antd'
+import { Icon, message, Dropdown, Menu, DatePicker, Button } from 'antd'
+import BraftEditor from 'braft-editor'
 import mainContentStyles from './MainContent.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
 import UploadAttachment from '@/components/UploadAttachment'
+import RichTextEditor from '@/components/RichTextEditor'
 import { timestampToTimeNormal, timeToTimestamp, compareTwoTimestamp } from '@/utils/util'
 import {
   checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
@@ -21,7 +23,6 @@ export default class MainContent extends Component {
 
   state = {
     // new_executors: []
-
   }
 
   // 检测不同类型的权限控制类型的是否显示
@@ -314,13 +315,40 @@ export default class MainContent extends Component {
   //   }
   // }
 
+  saveBrafitEdit = (brafitEditHtml) => {
+    console.log("brafitEditHtml", brafitEditHtml);
+    const { drawContent = {}, dispatch } = this.props;
+   
+    let { card_id } = drawContent
+    this.setState({
+      isInEdit: false,
+    })
+    const updateObj = {
+      card_id,
+      description: brafitEditHtml,
+    }
+
+    drawContent['description'] = brafitEditHtml;
+    dispatch({
+      type: 'publicTaskDetailModal/updateDatas',
+      payload: {
+        drawContent
+      }
+    })
+    dispatch({
+      type: 'publicTaskDetailModal/updateTask',
+      payload: {
+        updateObj
+      }
+    })
+  }
 
 
   render() {
     const { drawContent = {}, is_edit_title, projectDetailInfoData = {} } = this.props
     const { new_userInfo_data = [] } = this.state
     const { data = [] } = projectDetailInfoData
-    const { board_id, card_id, card_name, type = '0', is_realize = '0', start_time, due_time, executors = [] } = drawContent
+    const { board_id, card_id, card_name, type = '0', is_realize = '0', start_time, due_time, executors = [], description } = drawContent
 
     // 状态
     const filedEdit = (
@@ -355,6 +383,9 @@ export default class MainContent extends Component {
         </Menu.Item>
       </Menu>
     )
+
+    console.log(drawContent);
+
 
     return (
       <div className={mainContentStyles.main_wrap}>
@@ -565,19 +596,53 @@ export default class MainContent extends Component {
                 <span>附件</span>
               </div>
               <div className={`${mainContentStyles.field_right}`}>
-
-              {/* 上传附件组件 */}
-              <UploadAttachment>
-                <div className={`${mainContentStyles.pub_hover}`}>
-                  <span className={mainContentStyles.upload_file_btn}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fa;</span> 上传附件</span>
+                {/* 上传附件组件 */}
+                <UploadAttachment>
+                  <div className={`${mainContentStyles.pub_hover}`}>
+                    <span className={mainContentStyles.upload_file_btn}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fa;</span> 上传附件</span>
+                  </div>
+                </UploadAttachment>
+                <div className={mainContentStyles.filelist_wrapper}>
+                  <div className={`${mainContentStyles.pub_hover} ${mainContentStyles.file_item}`} >
+                    <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span><span>大堂平面图.cad</span></div>
+                    <div className={mainContentStyles.file_info}>严世威 上传于 09-19 05:30</div>
+                  </div>
+                  <div className={`${mainContentStyles.pub_hover} ${mainContentStyles.file_item}`} >
+                    <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span>大堂平面图.cad</div>
+                    <div className={mainContentStyles.file_info}>严世威 上传于 09-19 05:30</div>
+                  </div>
                 </div>
-              </UploadAttachment>
-
-
               </div>
             </div>
           </div>
           {/* 上传附件字段 E*/}
+
+          {/* 备注字段 S*/}
+          <div>
+            <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
+              <div className={mainContentStyles.field_left}>
+                <span className={`${globalStyles.authTheme}`}>&#xe7f6;</span>
+                <span>备注</span>
+              </div>
+              <div className={`${mainContentStyles.field_right}`}>
+
+                {/*富文本*/}
+                <RichTextEditor saveBrafitEdit={this.saveBrafitEdit} value={description}>
+                  <div className={`${mainContentStyles.pub_hover}`} >
+                    {
+                      description ?
+                        <div style={{ cursor: 'pointer' }} dangerouslySetInnerHTML={{ __html: description }}></div>
+                        :
+                        '添加备注'
+                    }
+
+                  </div>
+                </RichTextEditor>
+
+              </div>
+            </div>
+          </div>
+          {/* 备注字段 E*/}
 
 
         </div>
