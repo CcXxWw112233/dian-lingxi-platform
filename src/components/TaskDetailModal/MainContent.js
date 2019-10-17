@@ -4,7 +4,7 @@ import { Icon, message, Dropdown, Menu, DatePicker } from 'antd'
 import mainContentStyles from './MainContent.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
-import UploadAttachmentModal from '@/components/UploadAttachmentModal'
+import UploadAttachment from '@/components/UploadAttachment'
 import { timestampToTimeNormal, timeToTimestamp, compareTwoTimestamp } from '@/utils/util'
 import {
   checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
@@ -21,7 +21,7 @@ export default class MainContent extends Component {
 
   state = {
     // new_executors: []
-    uploadFileVisible:false
+
   }
 
   // 检测不同类型的权限控制类型的是否显示
@@ -186,7 +186,7 @@ export default class MainContent extends Component {
         }
       }
     }
-    let new_drawContent = {...drawContent}
+    let new_drawContent = { ...drawContent }
     new_drawContent['executors'] = newExecutors
     dispatch({
       type: 'publicTaskDetailModal/updateDatas',
@@ -236,7 +236,7 @@ export default class MainContent extends Component {
     const { drawContent = {}, dispatch } = this.props
     const { card_id, executors = [] } = drawContent
     let new_executors = [...executors]
-    let new_drawContent = {...drawContent}
+    let new_drawContent = { ...drawContent }
     new_executors.map((item, index) => {
       if (item.user_id == shouldDeleteItem) {
         new_executors.splice(index, 1)
@@ -256,7 +256,7 @@ export default class MainContent extends Component {
         user_id: shouldDeleteItem
       }
     })
-    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: new_drawContent, card_id})
+    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
   }
   // 移除执行人的回调 E
 
@@ -310,19 +310,15 @@ export default class MainContent extends Component {
   //       return checkIsHasPermissionInBoard()
   //     },
   //     'attachment_visible': true,
-      
+
   //   }
   // }
 
-  setUploadFileVisible = (visible)=>{
-    this.setState({
-      uploadFileVisible:visible
-    });
-  }
+
 
   render() {
     const { drawContent = {}, is_edit_title, projectDetailInfoData = {} } = this.props
-    const { new_userInfo_data = [] ,uploadFileVisible} = this.state
+    const { new_userInfo_data = [] } = this.state
     const { data = [] } = projectDetailInfoData
     const { board_id, card_id, card_name, type = '0', is_realize = '0', start_time, due_time, executors = [] } = drawContent
 
@@ -424,7 +420,7 @@ export default class MainContent extends Component {
             </div>
             {/* 这个中间放置负责人, 如果存在, 则在两者之间 */}
             <div>
-              <div style={{position: 'relative'}} className={mainContentStyles.field_content}>
+              <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
                 <div className={mainContentStyles.field_left}>
                   <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.45)' }} className={globalStyles.authTheme}>&#xe7b2;</span>
                   <span className={mainContentStyles.user_executor}>负责人</span>
@@ -569,14 +565,15 @@ export default class MainContent extends Component {
                 <span>附件</span>
               </div>
               <div className={`${mainContentStyles.field_right}`}>
-                <div className={`${mainContentStyles.pub_hover}`}  onClick={()=>{this.setUploadFileVisible(true)}}>
+
+              {/* 上传附件组件 */}
+              <UploadAttachment>
+                <div className={`${mainContentStyles.pub_hover}`}>
                   <span className={mainContentStyles.upload_file_btn}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fa;</span> 上传附件</span>
                 </div>
-                 {/* 上传附件组件 */}
-                {
-                  uploadFileVisible &&
-                  <UploadAttachmentModal setUploadAttachmentModalVisible={this.setUploadFileVisible}/>
-                }
+              </UploadAttachment>
+
+
               </div>
             </div>
           </div>
