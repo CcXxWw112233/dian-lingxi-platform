@@ -398,7 +398,7 @@ export default class GroupListHeadItem extends Component {
   // 访问控制-----------start----------------------------------------
   // 这是设置访问控制之后需要更新的数据
   visitControlUpdateInGanttData = (obj = {}) => {
-    const { type, is_privilege, privileges = [] } = obj
+    const { type, is_privilege, privileges = [], removeId } = obj
     const { dispatch, itemValue: { list_id } } = this.props
     const { list_group = [], gantt_board_id, board_id, group_view_type } = this.props
     console.log('sssss', privileges)
@@ -409,6 +409,8 @@ export default class GroupListHeadItem extends Component {
       list_group_new[group_index].is_privilege = is_privilege
     } else if (type == 'add') {
       list_group_new[group_index].privileges = [].concat(list_group_new[group_index].privileges, privileges[0])
+    } else if (type == 'remove') {
+      list_group_new[group_index].privileges = list_group_new[group_index].privileges.filter((item) => item.id != removeId)
     } else {
 
     }
@@ -450,13 +452,14 @@ export default class GroupListHeadItem extends Component {
   // 移除访问控制列表
   handleVisitControlRemoveContentPrivilege = id => {
     const { itemValue = {} } = this.props
-    const { list_id, privileges } = itemValue
+    const { list_id, privileges, board_id } = itemValue
     const content_type = 'lists'
     const content_id = list_id
     let temp_id = []
     temp_id.push(id)
     removeContentPrivilege({
-      id: id
+      id: id,
+      board_id
     }).then(res => {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
@@ -598,7 +601,16 @@ export default class GroupListHeadItem extends Component {
                   onBlur={this.inputOnBlur}
                 />
               ) : (
-                  <span className={indexStyles.list_name} onClick={this.listNameClick}>{local_list_name}</span>
+                  <span className={indexStyles.list_name} onClick={this.listNameClick}>
+                    {
+                      is_privilege == '1' && (
+                        <Tooltip title="已开启访问控制" placement="top">
+                        <span className={globalStyle.authTheme} style={{ marginRight: 4, fontSize: 16, color: '#8c8c8c' }}>&#xe7ca;</span>
+                      </Tooltip>
+                      )
+                    }
+                    {local_list_name}
+                  </span>
                 )
             }
             <span className={indexStyles.org_name}>

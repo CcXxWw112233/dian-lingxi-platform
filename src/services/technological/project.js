@@ -46,13 +46,18 @@ export async function setContentPrivilege(data) {
 
 //移除内容访问特权
 export async function removeContentPrivilege(data) {
-  const { id } = data
+  const { id, board_id } = data
+  const headers = !!board_id?{
+    BaseInfo: {
+      boardId: board_id
+    }} : {}
   //contend_id 内容ID（如 board_id,card_id 等）
   //content_type 内容类型（如 board , list, card, file, folder,flow等）
   //user_id 用户id
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/content_privilege/remove`,
     method: 'DELETE',
+    headers,
     data: {
       id
     }
