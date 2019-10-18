@@ -106,7 +106,7 @@ export default class DetailContent extends React.Component {
              <div style={{position: 'relative'}}>
                <Dropdown overlayClassName={indexStyles.showAllDynamics} overlay={whetherShowAllDynamic} getPopupContainer={triggerNode => triggerNode.parentNode}>
                  <div className={indexStyles.lookAll} style={{lineHeight: '54px', color: 'rgba(0,0,0,0.65)'}}>
-                    <span>所有动态</span>
+                    <span>{isShowAllDynamic ? '所有动态' : '仅评论'}</span>
                     <i style={{lineHeight: '54px'}} className={`${globalStyles.authTheme} ${indexStyles.lookAll_logo}`}>&#xe7ee;</i>
                  </div>
                </Dropdown>
@@ -116,18 +116,40 @@ export default class DetailContent extends React.Component {
 
             <div className={`${globalStyles.global_vertical_scrollbar} ${`${indexStyles.fileDetailContentRight_dynamicList}`}`}>
               {/*动态放置区*/}
-              <div style={{fontSize: '12px', color: '#595959'}}>
+              {/* <div style={{fontSize: '12px', color: '#595959'}}>
                 <div>
                   {dynamicsContent}
                 </div>
-              </div>
+              </div> */}
               {/*评论放置区*/}
               {/* <div style={{height: clientHeight - offsetTopDeviation - 60 - 70, overflow: 'hidden'}}> */}
-              <div style={{overflow: 'hidden'}}>
+              {/* <div style={{overflow: 'hidden'}}>
                 {commentListsContent || (
                   <CommentLists commentUseParams={commentUseParams} isShowAllDynamic={isShowAllDynamic}/>
                 )}
-              </div>
+              </div> */}
+              {
+                isShowAllDynamic ? (
+                  <>
+                    <div style={{fontSize: '12px', color: '#595959'}}>
+                      <div>
+                        {dynamicsContent}
+                      </div>
+                    </div>
+                    <div style={{overflow: 'hidden'}}>
+                      {commentListsContent || (
+                        <CommentLists commentUseParams={commentUseParams} isShowAllDynamic={isShowAllDynamic}/>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <div style={{overflow: 'hidden'}}>
+                    {commentListsContent || (
+                      <CommentLists commentUseParams={commentUseParams} isShowAllDynamic={isShowAllDynamic}/>
+                    )}
+                  </div>
+                )
+              }
             </div>
           </div>
           <div className={indexStyles.fileDetailContentRight_bott}>
