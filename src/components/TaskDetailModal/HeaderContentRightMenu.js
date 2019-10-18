@@ -398,9 +398,11 @@ export default class HeaderContentRightMenu extends Component {
           type: 'publicTaskDetailModal/deleteTask',
           payload: {
             id: card_id,
+            calback: function() {
+              that.props.handleDeleteCard && that.props.handleDeleteCard({ card_id: card_id })
+            }
           }
         })
-        that.props.handleDeleteCard && that.props.handleDeleteCard({ card_id: card_id })
       }
     });
   }

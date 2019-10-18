@@ -306,7 +306,7 @@ export default class CreateTask extends React.Component {
     dispatch({
       type: 'projectDetailTask/updateDatas',
       payload: {
-        taskGroupList
+        taskGroupList: new_arr_
       }
     })
   }
@@ -382,6 +382,7 @@ export default class CreateTask extends React.Component {
             setTaskDetailModalVisible={this.setDrawerVisibleClose}
             handleTaskDetailChange={this.handleTaskDetailChange}
             updateParentTaskList={this.updateParentTaskList}
+            handleDeleteCard={this.handleDeleteCard}
           />
       </div>
     )

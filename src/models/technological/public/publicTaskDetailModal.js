@@ -114,9 +114,9 @@ export default {
     // 删除卡片
     * deleteTask({ payload }, { select, call, put }) { //
       const { id, calback } = payload
-      // calback && typeof calback === 'function' ? calback() : ''
       let res = yield call(deleteTask, id)
       if (isApiResponseOk(res)) {
+        calback && typeof calback == 'function' ? calback() : ''
         message.success('删除成功', MESSAGE_DURATION_TIME)
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
