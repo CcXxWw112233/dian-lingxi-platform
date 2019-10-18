@@ -69,12 +69,14 @@
   .right__shareIndicator {
     cursor: pointer;
     display: inline-block;
-    padding      : 2px 16px;
-    border-radius: 12px;
-    background   : rgba(245, 245, 245, 1);
+    min-width:84px;
+    height:24px;
+    background:rgba(0,0,0,0.04);
+    border-radius:4px;
     margin-right : 8px;
     margin-bottom: 0;
     line-height  : 20px;
+    text-align: center;
     .right__shareIndicator_icon {
       display        : inline-block;
       width          : 12px;
@@ -82,18 +84,38 @@
       background     : url(../../assets/project/share_fill@2x.png) center center no-repeat;
       background-size: contain;
       margin-right   : 7px;
+      vertical-align: middle;
     }
+    .right__shareIndicator_text {
+      font-size: 12px;
+    }
+    &:hover {
+      background:rgba(230,247,255,1);
+      color: #40A9FF;
+    }
+  }
+  .right__shareIndicator:hover .right__shareIndicator_icon {
+    display        : inline-block;
+    width          : 12px;
+    height         : 12px;
+    background     : url(../../assets/project/share_active@2x.png) center center no-repeat;
+    background-size: contain;
+    margin-right   : 7px;
+    vertical-align: middle;
   }
   .dele_icon {
     display: inline-block;
     width: 24px;
     height: 24px;
     text-align: center;
-    line-height: 20px;
+    line-height: 24px;
     cursor: pointer;
     &:hover {
       background:rgba(255,241,240,1);
       border-radius:4px;
+    }
+    .dele {
+      font-size: 16px;
     }  
   }
   .dele_icon:hover .dele {

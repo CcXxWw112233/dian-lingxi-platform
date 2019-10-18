@@ -4,6 +4,7 @@ import CommentSubmit from './Comment/CommentSubmit'
 import CommentLists from './Comment/CommentLists'
 import globalStyles from '../../globalset/css/globalClassName.less'
 import { connect } from 'dva'
+import { Dropdown, Menu, Icon } from 'antd'
 @connect(mapStateToProps)
 export default class DetailContent extends React.Component {
   state = {
@@ -25,10 +26,17 @@ export default class DetailContent extends React.Component {
   componentWillReceiveProps(nextProps) {
     const rects = []
   }
-  setIsShowAll = () => {
-    this.setState({
-      isShowAllDynamic: !this.state.isShowAllDynamic
-    })
+  setIsShowAll = (e) => {
+    if (e.key == 'allDynamics') {
+      this.setState({
+        isShowAllDynamic: true
+      })
+    } else if (e.key == 'comment') {
+      this.setState({
+        isShowAllDynamic: false
+      })
+    }
+    
   }
   render() {
     const { clientHeight, offsetTopDeviation, isExpandFrame, board_id, currentProcessInstanceId, siderRightCollapsed, } =this.props
@@ -43,6 +51,22 @@ export default class DetailContent extends React.Component {
       commentUseParams = {}, //评论所需要参数
     } = this.props
 
+    const whetherShowAllDynamic = (
+      <Menu onClick={this.setIsShowAll} selectedKeys={isShowAllDynamic ? ['allDynamics'] : ['comment']}>
+        <Menu.Item key="allDynamics">
+          <span>所有动态</span>
+          <div style={{ display: isShowAllDynamic ? 'block' : 'none' }}>
+            <Icon type="check" />
+          </div>
+        </Menu.Item>
+        <Menu.Item key="comment">
+          <span>仅评论</span>
+          <div style={{ display: isShowAllDynamic ? 'none' : 'block' }}>
+            <Icon type="check" />
+          </div>
+        </Menu.Item>
+      </Menu>
+    )
 
     return (
       <div className={ `${ siderRightCollapsed ? indexStyles.isSiderRightWidthExit : indexStyles.fileDetailContentOut}` } ref={'fileDetailContentOut'} style={{height: clientHeight- offsetTopDeviation - 60}}>
@@ -65,30 +89,45 @@ export default class DetailContent extends React.Component {
           }
 
 
-          <div className={`${indexStyles.fileDetailContentRight_middle} ${globalStyles.global_vertical_scrollbar}`} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.relative_content_ref?this.relative_content_ref.clientHeight : 0)}}>
+          <div className={`${indexStyles.fileDetailContentRight_middle}`} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.relative_content_ref?this.relative_content_ref.clientHeight : 0)}}>
 
-            <div
+            {/* <div
+              style={{lineHeight: '54px'}}
               className={indexStyles.lookAll}
               onClick={this.setIsShowAll.bind(this)}>
               {!isShowAllDynamic? '所有动态': '部分动态'}
               {isShowAllDynamic?(
-                <i className={`${globalStyles.authTheme} ${indexStyles.lookAll_logo}`}>&#xe7ee;</i>
+                <i style={{lineHeight: '54px'}} className={`${globalStyles.authTheme} ${indexStyles.lookAll_logo}`}>&#xe7ee;</i>
               ):(
-                <i className={`${globalStyles.authTheme}  ${indexStyles.lookAll_logo}`}>&#xe7ed;</i>
+                <i style={{lineHeight: '54px'}} className={`${globalStyles.authTheme}  ${indexStyles.lookAll_logo}`}>&#xe7ed;</i>
               )}
 
-            </div>
-            {/*动态放置区*/}
-            <div style={{fontSize: '12px', color: '#595959'}}>
-              <div>
-                {dynamicsContent}
+            </div> */}
+             <div style={{position: 'relative'}}>
+               <Dropdown overlayClassName={indexStyles.showAllDynamics} overlay={whetherShowAllDynamic} getPopupContainer={triggerNode => triggerNode.parentNode}>
+                 <div className={indexStyles.lookAll} style={{lineHeight: '54px', color: 'rgba(0,0,0,0.65)'}}>
+                    <span>所有动态</span>
+                    <i style={{lineHeight: '54px'}} className={`${globalStyles.authTheme} ${indexStyles.lookAll_logo}`}>&#xe7ee;</i>
+                 </div>
+               </Dropdown>
+             </div>
+
+
+
+            <div className={`${globalStyles.global_vertical_scrollbar} ${`${indexStyles.fileDetailContentRight_dynamicList}`}`}>
+              {/*动态放置区*/}
+              <div style={{fontSize: '12px', color: '#595959'}}>
+                <div>
+                  {dynamicsContent}
+                </div>
               </div>
-            </div>
-            {/*评论放置区*/}
-            <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - offsetTopDeviation - 60 - 70}}>
-              {commentListsContent || (
-                <CommentLists commentUseParams={commentUseParams} isShowAllDynamic={isShowAllDynamic}/>
-              )}
+              {/*评论放置区*/}
+              {/* <div style={{height: clientHeight - offsetTopDeviation - 60 - 70, overflow: 'hidden'}}> */}
+              <div style={{overflow: 'hidden'}}>
+                {commentListsContent || (
+                  <CommentLists commentUseParams={commentUseParams} isShowAllDynamic={isShowAllDynamic}/>
+                )}
+              </div>
             </div>
           </div>
           <div className={indexStyles.fileDetailContentRight_bott}>

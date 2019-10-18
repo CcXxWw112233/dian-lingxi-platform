@@ -35,6 +35,41 @@
   user-select: none;
 }
 
+// 所有动态的下拉回调
+.showAllDynamics {
+  min-width: 248px !important;
+  :global {
+    .ant-dropdown-menu-item {
+      line-height    : 40px !important;
+      display        : flex;
+      align-items    : center;
+      justify-content: space-between;
+      height         : 40px;
+
+      &:hover {
+        background   : rgba(0, 0, 0, 0.04);
+        cursor       : pointer;
+        border-radius: 4px;
+      }
+      >span {
+        display      : inline-block;
+        width        : 52px;
+        height       : 24px;
+        border-radius: 4px;
+        color        : rgba(0, 0, 0, 0.65);
+        line-height  : 24px;
+        text-align   : center;
+      }
+    }
+
+    .ant-dropdown-menu-item-selected {
+      background   : rgba(0, 0, 0, 0.04);
+      border-radius: 4px;
+      color        : rgba(0, 0, 0, 0.45);
+    }
+  }
+}
+
 // .fileDetailContentOut{
 //   //height: 100%;
 //   display: flex;
@@ -252,10 +287,11 @@
         }
       }
       .fileDetailContentRight_middle{
-        padding-bottom: 80px;
+        // padding-bottom: 80px;
         overflow-x: hidden;
-        max-height: 244px;
+        // max-height: 244px;
        .lookAll {
+         height: 54px;
          display: flex;
          font-size: 14px;
          cursor: pointer;
@@ -267,10 +303,15 @@
           margin-left: 6px;
           line-height: 22px;
         }
+        .fileDetailContentRight_dynamicList {
+          padding-bottom: 48px;
+          overflow-y: auto;
+          max-height: 194px;
+        }
       }
   
       .fileDetailContentRight_bott{
-        position: absolute;
+        // position: absolute;
         height: 70px;
         background-color: #ffffff;
         border-top: 1px solid #D9D9D9;
@@ -367,10 +408,11 @@
         }
       }
       .fileDetailContentRight_middle{
-        padding-bottom: 80px;
+        // padding-bottom: 80px;
         overflow-x: hidden;
-        max-height: 244px;
+        // max-height: 244px;
        .lookAll {
+         height: 54px;
          display: flex;
          font-size: 14px;
          cursor: pointer;
@@ -381,6 +423,11 @@
         .lookAll_logo {
           margin-left: 6px;
           line-height: 22px;
+        }
+        .fileDetailContentRight_dynamicList {
+          padding-bottom: 48px;
+          overflow-y: auto;
+          max-height: 194px;
         }
       }
   
@@ -481,10 +528,11 @@
         }
       }
       .fileDetailContentRight_middle{
-        padding-bottom: 80px;
+        // padding-bottom: 80px;
         overflow-x: hidden;
-        max-height: none;
+        // max-height: 800px;
        .lookAll {
+         height: 54px;
          display: flex;
          font-size: 14px;
          cursor: pointer;
@@ -496,10 +544,15 @@
           margin-left: 6px;
           line-height: 22px;
         }
+        .fileDetailContentRight_dynamicList {
+          padding-bottom: 48px;
+          overflow-y: auto;
+          max-height: 800px;
+        }
       }
   
       .fileDetailContentRight_bott{
-        position: absolute;
+        // position: absolute;
         height: 70px;
         background-color: #ffffff;
         border-top: 1px solid #D9D9D9;
@@ -595,10 +648,11 @@
         }
       }
       .fileDetailContentRight_middle{
-        padding-bottom: 80px;
+        // padding-bottom: 80px;
         overflow-x: hidden;
-        max-height: none;
+        // max-height: 800px;
        .lookAll {
+         height: 54px;
          display: flex;
          font-size: 14px;
          cursor: pointer;
@@ -610,10 +664,15 @@
           margin-left: 6px;
           line-height: 22px;
         }
+        .fileDetailContentRight_dynamicList {
+          padding-bottom: 48px;
+          overflow-y: auto;
+          max-height: 800px;
+        }
       }
   
       .fileDetailContentRight_bott{
-        position: absolute;
+        // position: absolute;
         height: 70px;
         background-color: #ffffff;
         border-top: 1px solid #D9D9D9;
@@ -711,10 +770,11 @@
         }
       }
       .fileDetailContentRight_middle{
-        padding-bottom: 80px;
+        // padding-bottom: 80px;
         overflow-x: hidden;
-        max-height: 244px;
+        // max-height: 244px;
        .lookAll {
+         height: 54px;
          display: flex;
          font-size: 14px;
          cursor: pointer;
@@ -726,10 +786,14 @@
           margin-left: 6px;
           line-height: 22px;
         }
+        .fileDetailContentRight_dynamicList {
+          padding-bottom: 48px;
+          max-height: 194px;
+        }
       }
   
       .fileDetailContentRight_bott{
-        position: absolute;
+        // position: absolute;
         height: 70px;
         background-color: #ffffff;
         border-top: 1px solid #D9D9D9;
@@ -825,10 +889,11 @@
         }
       }
       .fileDetailContentRight_middle{
-        padding-bottom: 80px;
+        // padding-bottom: 80px;
         overflow-x: hidden;
-        max-height: 244px;
+        // max-height: 244px;
        .lookAll {
+         height: 54px;
          display: flex;
          font-size: 14px;
          cursor: pointer;
@@ -840,10 +905,15 @@
           margin-left: 6px;
           line-height: 22px;
         }
+        .fileDetailContentRight_dynamicList {
+          padding-bottom: 48px;
+          overflow-y: auto;
+          max-height: 194px;
+        }
       }
   
       .fileDetailContentRight_bott{
-        position: absolute;
+        // position: absolute;
         height: 70px;
         background-color: #ffffff;
         border-top: 1px solid #D9D9D9;
@@ -940,25 +1010,34 @@
         }
       }
       .fileDetailContentRight_middle{
-        padding-bottom: 80px;
+        // padding-bottom: 80px;
         overflow-x: hidden;
-        max-height: none;
+        // max-height: 800px;
        .lookAll {
+         height: 54px;
          display: flex;
          font-size: 14px;
          cursor: pointer;
          color:rgba(0,0,0,0.65);
          margin: 16px 0 0 12px;
          line-height: 22px;
+         height: 54px;
+         line-height: 54px;
        }
         .lookAll_logo {
           margin-left: 6px;
           line-height: 22px;
+          line-height: 54px;
+        }
+        .fileDetailContentRight_dynamicList {
+          padding-bottom: 48px;
+          overflow-y: auto;
+          max-height: 800px;
         }
       }
   
       .fileDetailContentRight_bott{
-        position: absolute;
+        // position: absolute;
         height: 70px;
         background-color: #ffffff;
         border-top: 1px solid #D9D9D9;

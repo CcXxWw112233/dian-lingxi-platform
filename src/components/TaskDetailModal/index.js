@@ -3,7 +3,9 @@ import PublicDetailModal from '@/components/PublicDetailModal'
 import MainContent from './MainContent'
 import HeaderContent from './HeaderContent'
 import { connect } from 'dva'
-@connect()
+import CommentDynamicsList from './components/CommentDynamicsList'
+
+@connect(mapStateToProps)
 export default class TaskDetailModal extends Component {
 
   onCancel = () => {
@@ -13,7 +15,7 @@ export default class TaskDetailModal extends Component {
   //评论
   commentSubmitPost = (data) => {
     let { text } = data
-    const { dispatch, task_id, metting_id } = this.props
+    const { dispatch } = this.props
     if(text) {
       text = text.replace(/\r|\n/gim, '')
     }
@@ -56,23 +58,25 @@ export default class TaskDetailModal extends Component {
   }
 
   render() {
-    const { task_detail_modal_visible, users, handleTaskDetailChange, updateParentTaskList, setTaskDetailModalVisible, handleDeleteCard } = this.props
+    const { task_detail_modal_visible, users, handleTaskDetailChange, updateParentTaskList, setTaskDetailModalVisible, handleDeleteCard, card_id } = this.props
     // const siderRightWidth = document.getElementById('siderRight').clientWidth
-    // const commentUseParams = { //公共评论模块所需要的参数
-    //   commentSubmitPost: this.commentSubmitPost,
-    //   deleteComment: this.deleteComment,
-    //   content_detail_use_id: card_id,
-    //   origin_type: '1', //	string评论来源类型 1=任务 2=流程 3=文件 4=里程碑
-    //   // flag: '1', //0或不传：评论和动态，1只显示评论，2只动态
-    // }
+    const commentUseParams = { //公共评论模块所需要的参数
+      commentSubmitPost: this.commentSubmitPost,
+      deleteComment: this.deleteComment,
+      content_detail_use_id: card_id,
+      origin_type: '1', //	string评论来源类型 1=任务 2=流程 3=文件 4=里程碑
+      // flag: '1', //0或不传：评论和动态，1只显示评论，2只动态
+    }
+    
     return (
       <div>
         <PublicDetailModal
           // width={1200}
+          dynamicsContent={<CommentDynamicsList />}
           style={{padding: '20px 84px 0'}}
           modalVisible={task_detail_modal_visible}
           onCancel={this.onCancel}
-          // commentUseParams={commentUseParams}
+          commentUseParams={commentUseParams}
           mainContent={<MainContent users={users} handleTaskDetailChange={handleTaskDetailChange} />}
           headerContent={
           <HeaderContent users={users}
@@ -93,4 +97,9 @@ TaskDetailModal.defaultProps = {
   handleTaskDetailChange: function() { }, // 外部修改内部弹窗数据的回调
   updateParentTaskList: function() { }, // 内部数据修改后用来更新外部数据的回调
   handleDeleteCard: function() {  }, // 删除某条任务
+}
+
+//  只关联public中弹窗内的数据
+function mapStateToProps({ publicTaskDetailModal: { drawContent = {}, card_id }, publicModalComment: { comment_list = [] } } ) {
+  return { drawContent, card_id, comment_list }
 }
