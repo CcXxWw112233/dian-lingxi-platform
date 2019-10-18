@@ -4,24 +4,29 @@ import { getGlobalData } from "../../utils/businessFunction";
 
 //开启关闭特权
 export async function toggleContentPrivilege(data) {
-  const { content_id, content_type, is_open } = data
+  const { content_id, content_type, is_open, board_id } = data
+  const headers = !!board_id?{
+    BaseInfo: {
+      boardId: board_id
+    }} : {}
   //content_id 内容ID（如 board_id,card_id 等）
   //content_type 内容类型（如 board , list, card, file, folder,flow等）
   //is_open  1: 开启 || 0：关闭
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/content_privilege/open`,
     method: 'POST',
+    headers,
     data: {
       content_id,
       content_type,
-      is_open
+      is_open,
     }
   })
 }
 
 //设置内容访问特权
 export async function setContentPrivilege(data) {
-  const { content_id, content_type, privilege_code, user_ids } = data
+  const { content_id, content_type, privilege_code, user_ids, board_id } = data
   //content_id 内容ID（如 board_id,card_id 等）
   //content_type 内容类型（如 board , list, card, file, folder,flow等）
   //privilege_code 内容类型（如 read comment edit等）
@@ -33,7 +38,8 @@ export async function setContentPrivilege(data) {
       content_id,
       content_type,
       privilege_code,
-      user_ids
+      user_ids,
+      board_id
     }
   })
 }

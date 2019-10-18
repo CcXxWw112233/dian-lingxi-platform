@@ -397,28 +397,33 @@ export default class GroupListHeadItem extends Component {
 
   // 访问控制-----------start----------------------------------------
   // 这是设置访问控制之后需要更新的数据
-  visitControlUpdateCurrentProjectData = (obj = {}) => {
-    // const { taskItemValue = {}, itemKey, dispatch, getTaskGroupListArrangeType, board_id } = this.props
-    // const { list_id, list_name } = taskItemValue
-    // dispatch({
-    //   type: 'projectDetailTask/getTaskGroupList',
-    //   payload: {
-    //     // type: '2',
-    //     arrange_type: getTaskGroupListArrangeType ? getTaskGroupListArrangeType : '1',
-    //     board_id: board_id
-    //   }
-    // })
-    // this.setState({
-    //   isShouldBeTaskGroupOperatorDropdownMenuVisible: false,
-    //   taskGroupOperatorDropdownMenuVisible: false,
-    //   shouldHideVisitControlPopover: true,
-    // })
+  visitControlUpdateInGanttData = (obj = {}) => {
+    const { type, is_privilege, privileges = [] } = obj
+    const { dispatch, itemValue: { list_id } } = this.props
+    const { list_group = [], gantt_board_id, board_id, group_view_type } = this.props
+    console.log('sssss', privileges)
+    const list_group_new = [...list_group]
+    const group_index = list_group_new.findIndex(item => item.lane_id == list_id)
+
+    if (type == 'privilege') {
+      list_group_new[group_index].is_privilege = is_privilege
+    } else if (type == 'add') {
+      list_group_new[group_index].privileges = [].concat(list_group_new[group_index].privileges, privileges[0])
+    } else {
+
+    }
+    dispatch({
+      type: 'gantt/handleListGroup',
+      payload: {
+        data: list_group_new
+      }
+    })
   }
 
   // 访问控制的开关切换
   handleVisitControlChange = flag => {
-    const { taskItemValue = {} } = this.props
-    const { list_id, is_privilege } = taskItemValue
+    const { itemValue = {} } = this.props
+    const { list_id, is_privilege, board_id } = itemValue
     const toBool = str => !!Number(str)
     const is_privilege_bool = toBool(is_privilege)
     if (flag === is_privilege_bool) {
@@ -428,13 +433,14 @@ export default class GroupListHeadItem extends Component {
     const data = {
       content_id: list_id,
       content_type: 'lists',
-      is_open: flag ? 1 : 0
+      is_open: flag ? 1 : 0,
+      board_id
     }
     toggleContentPrivilege(data).then(res => {
       if (res && res.code === '0') {
         //更新数据
         let temp_arr = res && res.data
-        this.visitControlUpdateCurrentProjectData({ is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr })
+        this.visitControlUpdateInGanttData({ is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr })
       } else {
         message.warning(res.message)
       }
@@ -443,8 +449,8 @@ export default class GroupListHeadItem extends Component {
 
   // 移除访问控制列表
   handleVisitControlRemoveContentPrivilege = id => {
-    const { taskItemValue = {} } = this.props
-    const { list_id, privileges } = taskItemValue
+    const { itemValue = {} } = this.props
+    const { list_id, privileges } = itemValue
     const content_type = 'lists'
     const content_id = list_id
     let temp_id = []
@@ -455,7 +461,7 @@ export default class GroupListHeadItem extends Component {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
         message.success('移出用户成功')
-        this.visitControlUpdateCurrentProjectData({ removeId: id, type: 'remove' })
+        this.visitControlUpdateInGanttData({ removeId: id, type: 'remove' })
       } else {
         message.warning(res.message)
       }
@@ -475,7 +481,6 @@ export default class GroupListHeadItem extends Component {
       // this.handleSetContentPrivilege(id, type, '更新用户控制类型失败')
     }
   }
-
   /**
    * 添加职员的回调
    * @param {Array} users_arr 添加职员的数组
@@ -488,8 +493,8 @@ export default class GroupListHeadItem extends Component {
 
   // 访问控制添加职员
   handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试', ) => {
-    const { taskItemValue = {} } = this.props
-    const { list_id, privileges } = taskItemValue
+    const { itemValue = {} } = this.props
+    const { list_id, privileges, board_id } = itemValue
     const content_type = 'lists'
     const privilege_code = type
     const content_id = list_id
@@ -497,8 +502,8 @@ export default class GroupListHeadItem extends Component {
     users_arr && users_arr.map(item => {
       temp_ids.push(item.id)
     })
-
     setContentPrivilege({
+      board_id,
       content_id,
       content_type,
       privilege_code,
@@ -507,23 +512,14 @@ export default class GroupListHeadItem extends Component {
       if (res && res.code === '0') {
         let temp_arr = []
         temp_arr.push(res.data)
-        this.visitControlUpdateCurrentProjectData({ privileges: temp_arr, type: 'add' })
+        this.visitControlUpdateInGanttData({ privileges: temp_arr, type: 'add' })
       } else {
         message.error(errorText)
       }
     })
   }
 
-  handleVisitControlPopoverVisible = (flag) => {
-    if (!flag) {
-      this.setState({
-        taskGroupOperatorDropdownMenuVisible: false
-      })
-    }
-    this.setState({
-      isShouldBeTaskGroupOperatorDropdownMenuVisible: flag,
-    })
-  }
+
   // 执行人列表去重
   arrayNonRepeatfy = arr => {
     let temp_arr = []
@@ -567,7 +563,6 @@ export default class GroupListHeadItem extends Component {
         otherPersonOperatorMenuItem={this.visitControlOtherPersonOperatorMenuItem}
         removeMemberPromptText='移出后用户将不能访问此任务列表'
         handleVisitControlChange={this.handleVisitControlChange}
-        handleVisitControlPopoverVisible={this.handleVisitControlPopoverVisible}
         handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
         handleAddNewMember={this.handleVisitControlAddNewMember}
       >
