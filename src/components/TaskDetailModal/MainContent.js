@@ -26,17 +26,6 @@ export default class MainContent extends Component {
     // new_executors: []
   }
 
-  // 检测不同类型的权限控制类型的是否显示
-  checkDiffCategoriesAuthoritiesIsVisible = () => {
-    const { drawContent = {} } = this.props
-    const { is_realize = '0', card_id, privileges = [], board_id, is_privilege, executors = [] } = drawContent
-    return {
-      'visit_control': function () {
-        return checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))
-      }
-    }
-  }
-
   componentDidMount() {
     const { card_id } = this.props
     if (!card_id) return false
@@ -57,7 +46,7 @@ export default class MainContent extends Component {
     //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
     //   return false
     // }
-    if (this.checkDiffCategoriesAuthoritiesIsVisible().visit_control && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control()) {
+    if ((this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -90,7 +79,7 @@ export default class MainContent extends Component {
   // 设置标题textarea区域修改 S
   setTitleEdit = (e) => {
     e && e.stopPropagation();
-    if (this.checkDiffCategoriesAuthoritiesIsVisible().visit_control && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control()) {
+    if ((this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()) {
       // message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -449,7 +438,7 @@ export default class MainContent extends Component {
                 <span>状态</span>
               </div>
               {
-                this.checkDiffCategoriesAuthoritiesIsVisible().visit_control && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control() ? (
+                (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
                   <div className={`${mainContentStyles.field_right}`}>
                     <div className={`${mainContentStyles.pub_hover}`}>
                       <span className={is_realize == '0' ? mainContentStyles.incomplete : mainContentStyles.complete}>{is_realize == '0' ? '未完成' : '已完成'}</span>
@@ -474,7 +463,7 @@ export default class MainContent extends Component {
                   <span className={mainContentStyles.user_executor}>负责人</span>
                 </div>
                 {
-                  this.checkDiffCategoriesAuthoritiesIsVisible().visit_control && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control() ? (
+                  (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
                     <div className={`${mainContentStyles.field_right}`}>
                       <div className={`${mainContentStyles.pub_hover}`}>
                         <span>暂无</span>

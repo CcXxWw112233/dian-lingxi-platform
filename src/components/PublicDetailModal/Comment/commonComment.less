@@ -1,0 +1,28 @@
+// 添加评论的框架样式
+.common_item {
+  display: flex;
+  line-height: 24px;
+  margin-bottom: 24px;
+  .common_left {
+    margin-right: 8px;
+  }
+  .common_right {
+    flex: 1;
+    .common_top {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      .common_name {
+        color: rgba(0, 0, 0, 0.45);
+        font-weight: 900;
+      }
+      .common_create_time {
+        color: rgba(0, 0, 0, 0.45);
+      }
+      .common_delete {
+        cursor: pointer;
+        color: #1890FF;
+      }
+    }
+  }
+}

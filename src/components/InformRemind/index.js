@@ -117,6 +117,7 @@ export default class index extends Component {
                         footer={null}
                         onCancel={this.onCancel.bind(this)}
                         overInner={<DrawerInformContent milestonePrincipals={milestonePrincipals} processEditDatas={processEditDatas} projectExecutors={projectExecutors} workbenchExecutors={workbenchExecutors} rela_type={rela_type} rela_id={rela_id} user_remind_info={user_remind_info} />}
+                        wrapClassName={infoRemindStyle.informRemindWrapper}
                     />
                 </div>
             </>

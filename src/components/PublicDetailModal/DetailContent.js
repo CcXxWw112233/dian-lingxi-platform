@@ -8,7 +8,7 @@ import { Dropdown, Menu, Icon } from 'antd'
 @connect(mapStateToProps)
 export default class DetailContent extends React.Component {
   state = {
-    isShowAllDynamic: false, //是否查看全部
+    // isShowAllDynamic: false, //是否查看全部
   }
 
   constructor() {
@@ -28,19 +28,31 @@ export default class DetailContent extends React.Component {
   }
   setIsShowAll = (e) => {
     if (e.key == 'allDynamics') {
-      this.setState({
-        isShowAllDynamic: true
+      this.props.dispatch({
+        type: 'publicModalComment/updateDatas',
+        payload: {
+          isShowAllDynamic: true
+        }
       })
+      // this.setState({
+      //   isShowAllDynamic: true
+      // })
     } else if (e.key == 'comment') {
-      this.setState({
-        isShowAllDynamic: false
+      // this.setState({
+      //   isShowAllDynamic: false
+      // })
+      this.props.dispatch({
+        type: 'publicModalComment/updateDatas',
+        payload: {
+          isShowAllDynamic: false
+        }
       })
     }
     
   }
   render() {
-    const { clientHeight, offsetTopDeviation, isExpandFrame, board_id, currentProcessInstanceId, siderRightCollapsed, } =this.props
-    const { isShowAllDynamic } = this.state
+    const { clientHeight, offsetTopDeviation, isExpandFrame, board_id, currentProcessInstanceId, siderRightCollapsed,  isShowAllDynamic} =this.props
+    // const { isShowAllDynamic } = this.state
     const {
       mainContent = <div></div>, //主区域
       viceAreaTopShow = false, //副区域的关联内容能否显示
@@ -89,7 +101,7 @@ export default class DetailContent extends React.Component {
           }
 
 
-          <div className={`${indexStyles.fileDetailContentRight_middle}`} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.relative_content_ref?this.relative_content_ref.clientHeight : 0)}}>
+          <div style={{position: 'relative'}} className={`${indexStyles.fileDetailContentRight_middle}`} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.relative_content_ref?this.relative_content_ref.clientHeight : 0)}}>
 
             {/* <div
               style={{lineHeight: '54px'}}
@@ -103,7 +115,7 @@ export default class DetailContent extends React.Component {
               )}
 
             </div> */}
-             <div style={{position: 'relative'}}>
+             <div>
                <Dropdown overlayClassName={indexStyles.showAllDynamics} overlay={whetherShowAllDynamic} getPopupContainer={triggerNode => triggerNode.parentNode}>
                  <div className={indexStyles.lookAll} style={{lineHeight: '54px', color: 'rgba(0,0,0,0.65)'}}>
                     <span>{isShowAllDynamic ? '所有动态' : '仅评论'}</span>
@@ -163,8 +175,11 @@ export default class DetailContent extends React.Component {
   }
 }
 
-function mapStateToProps({ technological: { datas: {
-  siderRightCollapsed
-} } }) {
-  return { siderRightCollapsed }
+function mapStateToProps({ 
+  technological: { datas: {
+  siderRightCollapsed } 
+  },
+  publicModalComment: { isShowAllDynamic } 
+}) {
+  return { siderRightCollapsed, isShowAllDynamic }
 }

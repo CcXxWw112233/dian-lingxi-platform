@@ -11,6 +11,7 @@ export default modelExtend(technological, {
   namespace: 'publicModalComment',
   state: {
     comment_list: [],
+    isShowAllDynamic: true, // 是否显示全部动态
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -48,13 +49,13 @@ export default modelExtend(technological, {
       }
     },
     * deletePublicModalDetailComment({ payload = {} }, { select, call, put }) {
-      const { id, flag, milestone_id } = payload
+      const { id, flag, milestone_id, common_id } = payload
       let res = yield call(deletePublicModalDetailComment, { id })
       if(isApiResponseOk(res)) {
         yield put({
           type: 'getPublicModalDetailCommentList',
           payload: {
-            id: milestone_id, flag
+            id: common_id, flag
           }
         })
       }else{

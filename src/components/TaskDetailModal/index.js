@@ -4,47 +4,80 @@ import MainContent from './MainContent'
 import HeaderContent from './HeaderContent'
 import { connect } from 'dva'
 import CommentDynamicsList from './components/CommentDynamicsList'
+import {
+  checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
+} from "@/utils/businessFunction";
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
+  PROJECT_TEAM_CARD_COMPLETE
+} from "@/globalset/js/constant";
+import { message } from 'antd'
 
 @connect(mapStateToProps)
 export default class TaskDetailModal extends Component {
 
   onCancel = () => {
+    this.props.dispatch({
+      type: 'publicModalComment/updateDatas',
+      payload: {
+        comment_list: [],
+        isShowAllDynamic: true, // 是否显示全部动态
+      }
+    })
     this.props.setTaskDetailModalVisible && this.props.setTaskDetailModalVisible()
+  }
+
+   // 检测不同类型的权限控制类型的是否显示
+   checkDiffCategoriesAuthoritiesIsVisible = () => {
+    const { drawContent = {} } = this.props
+    const { is_realize = '0', card_id, privileges = [], board_id, is_privilege, executors = [] } = drawContent
+    let flag
+    return {
+      'visit_control_edit': function () {// 是否是有编辑权限
+        return checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))
+      },
+      'visit_control_comment': function() {
+        return checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))
+      },
+    }
   }
 
   //评论
   commentSubmitPost = (data) => {
+    if (!this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() || !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_comment()) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     let { text } = data
-    const { dispatch } = this.props
+    const { dispatch, card_id, isShowAllDynamic } = this.props
     if(text) {
       text = text.replace(/\r|\n/gim, '')
     }
     if(!text) {
       return
     }
-    // dispatch({
-    //   type: 'publicModalComment/submitPublicModalDetailComment',
-    //   payload: {
-    //     origin_type: '1',
-    //     comment: text,
-    //     id: type == '0' ? task_id : metting_id,
-    //     flag: '1',
-    //   }
-    // })
+    dispatch({
+      type: 'publicModalComment/submitPublicModalDetailComment',
+      payload: {
+        origin_type: '1',
+        comment: text,
+        id: card_id,
+        flag: isShowAllDynamic ? '0' : '1'
+      }
+    })
   }
 
   deleteComment = (data) => {
     const { id } = data
-    const { dispatch, type, task_id, metting_id } = this.props
-    const del_id = type == '0' ? task_id : metting_id
-    // dispatch({
-    //   type: 'publicModalComment/deletePublicModalDetailComment',
-    //   payload: {
-    //     id,
-    //     del_id,
-    //     flag: '1',
-    //   }
-    // })
+    const { dispatch, isShowAllDynamic, card_id  } = this.props
+    dispatch({
+      type: 'publicModalComment/deletePublicModalDetailComment',
+      payload: {
+        id,
+        common_id: card_id,
+        flag: isShowAllDynamic ? '0' : '1'
+      }
+    })
   }
 
   // 外部容器的点击事件
@@ -77,7 +110,7 @@ export default class TaskDetailModal extends Component {
           modalVisible={task_detail_modal_visible}
           onCancel={this.onCancel}
           commentUseParams={commentUseParams}
-          mainContent={<MainContent users={users} handleTaskDetailChange={handleTaskDetailChange} />}
+          mainContent={<MainContent users={users} handleTaskDetailChange={handleTaskDetailChange} checkDiffCategoriesAuthoritiesIsVisible={this.checkDiffCategoriesAuthoritiesIsVisible} />}
           headerContent={
           <HeaderContent users={users}
             handleDeleteCard={handleDeleteCard}
@@ -100,6 +133,6 @@ TaskDetailModal.defaultProps = {
 }
 
 //  只关联public中弹窗内的数据
-function mapStateToProps({ publicTaskDetailModal: { drawContent = {}, card_id }, publicModalComment: { comment_list = [] } } ) {
-  return { drawContent, card_id, comment_list }
+function mapStateToProps({ publicTaskDetailModal: { drawContent = {}, card_id }, publicModalComment: { isShowAllDynamic } } ) {
+  return { drawContent, card_id, isShowAllDynamic }
 }
