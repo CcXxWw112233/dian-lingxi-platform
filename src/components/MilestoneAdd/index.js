@@ -1,12 +1,13 @@
 import React from 'react'
-// import MenuSearchStyles from './MenuSearch.less'
 import { Input, Menu, Spin, Icon, message } from 'antd'
 import indexStyles from './index.less'
 import ShowAddMenberModal from '../../routes/Technological/components/Project/ShowAddMenberModal'
 import { checkIsHasPermissionInBoard, } from "../../utils/businessFunction";
 import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_BOARD_MEMBER } from "@/globalset/js/constant";
-import { isApiResponseOk } from '../../utils/handleResponseData';
 import { organizationInviteWebJoin, commInviteWebJoin, } from '../../services/technological/index'
+import { getMilestoneList } from '@/services/technological/prjectDetail'
+import { isApiResponseOk } from "@/utils/handleResponseData"
+
 import { connect } from 'dva';
 import globalStyles from '@/globalset/css/globalClassName.less'
 /**加入里程碑组件 */
@@ -15,22 +16,40 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 }))
 export default class MilestoneAdd extends React.Component {
     state = {
+        milestoneAddVisible:false,
+        visible:false,
         resultArr: [],
         keyWord: '',
-        selectedKeys: []
+        selectedKeys: [],
+        milestoneList: []
     }
     componentWillMount() {
 
     }
     componentDidMount() {
-        const { dispatch } = this.props;
-        // dispatch({
 
-        // });
     }
 
     componentWillReceiveProps(nextProps) {
+        const { dispatch, dataId } = nextProps;
+        const { dataId: oldDataId } = this.props;
+        if (dataId && dataId != oldDataId) {
+            this.getMilestone(dataId)
+        }
+    }
 
+    //获取项目里程碑列表
+    getMilestone = (id) => {
+        getMilestoneList({ id }).then((res) => {
+            console.log("res", res);
+            if (isApiResponseOk(res)) {
+                this.setState({
+                    milestoneList: res.data
+                });
+            } else {
+                message.error(res.message)
+            }
+        })
     }
     //模糊查询
     handleMenuReallySelect = (e) => {
@@ -55,11 +74,13 @@ export default class MilestoneAdd extends React.Component {
         })
         this.props.chirldrenTaskChargeChange && this.props.chirldrenTaskChargeChange({ selectedKeys, key, type })
     }
+
     onCheck() {
         if (this.props.onCheck && typeof this.props.onCheck === 'function') {
             this.props.onCheck(this.state.selectedKeys)
         }
     }
+
     fuzzyQuery = (list, searchName, keyWord) => {
         var arr = [];
         for (var i = 0; i < list.length; i++) {
@@ -69,10 +90,10 @@ export default class MilestoneAdd extends React.Component {
         }
 
         //添加里程碑后往后放
-        const { selectedKeys } = this.state
+        const { milestoneList } = this.state
         for (let i = 0; i < arr.length; i++) {
-            if (selectedKeys.indexOf(arr[i]['user_id']) != -1) {
-                if (i > 0 && selectedKeys.indexOf(arr[i - 1]['user_id']) == -1) {
+            if (milestoneList.indexOf(arr[i]['id']) != -1) {
+                if (i > 0 && milestoneList.indexOf(arr[i - 1]['id']) == -1) {
                     const deItem = arr.splice(i, 1)
                     arr.unshift(...deItem)
                 }
@@ -80,6 +101,7 @@ export default class MilestoneAdd extends React.Component {
         }
         return arr;
     }
+
     onChange = (e) => {
         const { listData = [], searchName } = this.props
         const keyWord = e.target.value
@@ -90,18 +112,28 @@ export default class MilestoneAdd extends React.Component {
         })
     }
 
-
+    setMilestoneAddVisible = (visible) => {
+        this.setState({
+            milestoneAddVisible: visible
+        });
+    }
 
     render() {
-        const { keyWord, resultArr, selectedKeys = [] } = this.state
-        const { Inputlaceholder = '搜索', searchName, menuSearchSingleSpinning, keyCode, rela_Condition, is_selected_all } = this.props
+        const { milestoneAddVisible, keyWord, resultArr, selectedKeys = [], milestoneList } = this.state
+        const { visible, children, Inputlaceholder = '搜索', searchName, menuSearchSingleSpinning, keyCode, rela_Condition, is_selected_all } = this.props
+
+        console.log("milestoneList", milestoneList);
 
         return (
             <div>
+                <div onClick={() => this.setMilestoneAddVisible(true)}>
+                    {children}
+                </div>
                 <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: 200, }}
                     selectedKeys={selectedKeys}
                     onDeselect={this.handleMenuReallyDeselect.bind(this)}
-                    onSelect={this.handleMenuReallySelect} multiple >
+                    onSelect={this.handleMenuReallySelect} multiple={false}
+                    visible={visible || milestoneAddVisible} >
 
                     <div style={{ margin: '0 10px 10px 10px' }}>
                         <Input placeholder={Inputlaceholder} value={keyWord} onChange={this.onChange.bind(this)} />
@@ -116,20 +148,13 @@ export default class MilestoneAdd extends React.Component {
                             </div>
                         </div>
                         {
-                            resultArr.map((value, key) => {
+                            milestoneList.map((value, key) => {
                                 const { avatar, name, user_name, user_id } = value
                                 return (
-                                    <Menu.Item className={`${indexStyles.menuItem}`} style={{ height: '40px', lineHeight: '40px', margin: 0, padding: '0 12px' }} key={value[keyCode]} >
+                                    <Menu.Item className={`${indexStyles.menuItem}`} style={{ height: '40px', lineHeight: '40px', margin: 0, padding: '0 12px' }} key={value.id} >
 
                                         <div className={indexStyles.menuItemDiv}>
                                             <div style={{ display: 'flex', alignItems: 'center', textAlign: 'center' }} key={user_id}>
-                                                {avatar ? (
-                                                    <img style={{ width: '28px', height: '28px', borderRadius: '50%', marginRight: '8px' }} src={avatar} />
-                                                ) : (
-                                                        <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: '#f5f5f5', marginRight: '8px', lineHeight: '28px', }}>
-                                                            <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
-                                                        </div>
-                                                    )}
                                                 <div style={{ overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 90, marginRight: 8 }}>{name || user_name || '佚名'}</div>
                                             </div>
                                             <div style={{ display: selectedKeys.indexOf(user_id) != -1 ? 'block' : 'none' }}>

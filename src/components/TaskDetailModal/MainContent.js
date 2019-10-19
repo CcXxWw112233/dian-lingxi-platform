@@ -341,7 +341,18 @@ export default class MainContent extends Component {
     const { drawContent = {}, is_edit_title, projectDetailInfoData = {}, dispatch } = this.props
     const { new_userInfo_data = [] } = this.state
     const { data = [] } = projectDetailInfoData
-    const { board_id, card_id, card_name, type = '0', is_realize = '0', start_time, due_time, executors = [], description } = drawContent
+    const { 
+      board_id, 
+      card_id, 
+      card_name, 
+      type = '0', 
+      is_realize = '0', 
+      start_time, 
+      due_time, 
+      executors = [], 
+      description,
+      milestone_data
+    } = drawContent
 
     // 状态
     const filedEdit = (
@@ -376,7 +387,7 @@ export default class MainContent extends Component {
         </Menu.Item>
       </Menu>
     )
-    
+
     return (
       <div className={mainContentStyles.main_wrap}>
         <div>
@@ -495,7 +506,7 @@ export default class MainContent extends Component {
                                     {executors.map((value) => {
                                       const { avatar, name, user_name, user_id } = value
                                       return (
-                                        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap' }} key = {user_id}>
                                           <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 0', textAlign: 'center' }} key={user_id}>
                                             {avatar ? (
                                               <img style={{ width: '24px', height: '24px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
@@ -650,9 +661,13 @@ export default class MainContent extends Component {
               <div className={`${mainContentStyles.field_right}`}>
 
                 {/*加入里程碑组件*/}
-                <MilestoneAdd>
+                <MilestoneAdd dataId={board_id}>
                   <div className={`${mainContentStyles.pub_hover}`} >
-                    加入里程碑
+                    {milestone_data && milestone_data.id
+                      ? milestone_data.name
+                      :
+                      '加入里程碑'
+                    }
                   </div>
                 </MilestoneAdd>
 

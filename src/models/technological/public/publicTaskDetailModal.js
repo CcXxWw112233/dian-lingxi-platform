@@ -41,6 +41,9 @@ export default {
         })
       }
     },
+
+    
+
     /**
      * 设置完成任务: 需要参数 is_realize
      * @param {String} is_realize 是否完成 0 未完成 1 已完成
