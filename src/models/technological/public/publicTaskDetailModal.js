@@ -1,4 +1,4 @@
-import { getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor, deleteTask  } from '../../../services/technological/task'
+import { getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask  } from '../../../services/technological/task'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { currentNounPlanFilterName } from "../../../utils/businessFunction";
@@ -118,6 +118,16 @@ export default {
       if (isApiResponseOk(res)) {
         calback && typeof calback == 'function' ? calback() : ''
         message.success('删除成功', MESSAGE_DURATION_TIME)
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    // 添加子任务
+    * addChirldTask({ payload }, { select, call, put }) { //
+      const {  } = payload
+      let res = yield call(addChirldTask, payload)
+      if (isApiResponseOk(res)) {
+        message.success(`添加成功`, MESSAGE_DURATION_TIME)
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }

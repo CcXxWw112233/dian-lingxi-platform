@@ -72,7 +72,6 @@ export default class CommentListItem extends React.Component {
   render() {
 
     const { comment_list = [], isShowAllDynamic } = this.props
-    console.log(this.getSpeicalTime(), 'ssssssss')
     const { closeNormal } = this.state
     // const listItem = (value) => {
     //   const { full_name, avatar, text, create_time, id, flag, type } = value

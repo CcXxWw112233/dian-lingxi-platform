@@ -1,23 +1,20 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
 import { Icon, message, Dropdown, Menu, DatePicker, Button } from 'antd'
-import BraftEditor from 'braft-editor'
 import mainContentStyles from './MainContent.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
 import UploadAttachment from '@/components/UploadAttachment'
 import RichTextEditor from '@/components/RichTextEditor'
 import MilestoneAdd from '@/components/MilestoneAdd'
-import { timestampToTimeNormal, timeToTimestamp, compareTwoTimestamp } from '@/utils/util'
-import {
-  checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
-} from "@/utils/businessFunction";
-import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
-  PROJECT_TEAM_CARD_COMPLETE
-} from "@/globalset/js/constant";
+import AppendSubTask from './components/AppendSubTask'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import InformRemind from '@/components/InformRemind'
+import { timestampToTimeNormal } from '@/utils/util'
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN
+} from "@/globalset/js/constant";
+
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -292,19 +289,6 @@ export default class MainContent extends Component {
     }
   }
 
-  // ss = () => {
-  //   return {
-  //     'vistor_visible': function() {
-  //       if(is_share) {
-  //         return false
-  //       }
-  //       return checkIsHasPermissionInBoard()
-  //     },
-  //     'attachment_visible': true,
-
-  //   }
-  // }
-
   saveBrafitEdit = (brafitEditHtml) => {
     console.log("brafitEditHtml", brafitEditHtml);
     const { drawContent = {}, dispatch } = this.props;
@@ -354,7 +338,7 @@ export default class MainContent extends Component {
 
 
   render() {
-    const { drawContent = {}, is_edit_title, projectDetailInfoData = {} } = this.props
+    const { drawContent = {}, is_edit_title, projectDetailInfoData = {}, dispatch } = this.props
     const { new_userInfo_data = [] } = this.state
     const { data = [] } = projectDetailInfoData
     const { board_id, card_id, card_name, type = '0', is_realize = '0', start_time, due_time, executors = [], description } = drawContent
@@ -397,63 +381,67 @@ export default class MainContent extends Component {
       <div className={mainContentStyles.main_wrap}>
         <div>
           {/* 标题 S */}
-          <div className={mainContentStyles.title_content}>
-            {
-              type == '0' ? (
-                <div style={{ cursor: 'pointer', marginTop: '10px' }} onClick={this.setIsCheck} className={is_realize == '1' ? mainContentStyles.nomalCheckBoxActive : mainContentStyles.nomalCheckBox}>
-                  <Icon type="check" style={{ color: '#FFFFFF', fontSize: 16, fontWeight: 'bold', marginTop: 2 }} />
-                </div>
-              ) : (
-                  <div style={{ width: 20, height: 20, color: '#595959', cursor: 'pointer', marginTop: '10px' }}>
-                    <i style={{ fontSize: '20px' }} className={globalStyles.authTheme}>&#xe84d;</i>
+          <div>
+            <div className={mainContentStyles.title_content}>
+              {
+                type == '0' ? (
+                  <div style={{ cursor: 'pointer', marginTop: '10px' }} onClick={this.setIsCheck} className={is_realize == '1' ? mainContentStyles.nomalCheckBoxActive : mainContentStyles.nomalCheckBox}>
+                    <Icon type="check" style={{ color: '#FFFFFF', fontSize: 16, fontWeight: 'bold', marginTop: 2 }} />
                   </div>
-                )
-            }
-            {
-              !is_edit_title ? (
-                <div onClick={this.setTitleEdit} className={`${mainContentStyles.card_name} ${mainContentStyles.pub_hover}`}>{card_name}</div>
-              ) : (
-                  <NameChangeInput
-                    autosize
-                    onBlur={this.titleTextAreaChangeBlur}
-                    onClick={this.setTitleEdit}
-                    setIsEdit={this.setTitleEdit}
-                    autoFocus={true}
-                    goldName={card_name}
-                    maxLength={100}
-                    nodeName={'textarea'}
-                    style={{ display: 'block', fontSize: 20, color: '#262626', resize: 'none', height: '44px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none' }}
-                  />
-                )
-            }
+                ) : (
+                    <div style={{ width: 20, height: 20, color: '#595959', cursor: 'pointer', marginTop: '10px' }}>
+                      <i style={{ fontSize: '20px' }} className={globalStyles.authTheme}>&#xe84d;</i>
+                    </div>
+                  )
+              }
+              {
+                !is_edit_title ? (
+                  <div onClick={this.setTitleEdit} className={`${mainContentStyles.card_name} ${mainContentStyles.pub_hover}`}>{card_name}</div>
+                ) : (
+                    <NameChangeInput
+                      autosize
+                      onBlur={this.titleTextAreaChangeBlur}
+                      onClick={this.setTitleEdit}
+                      setIsEdit={this.setTitleEdit}
+                      autoFocus={true}
+                      goldName={card_name}
+                      maxLength={100}
+                      nodeName={'textarea'}
+                      style={{ display: 'block', fontSize: 20, color: '#262626', resize: 'none', height: '44px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none' }}
+                    />
+                  )
+              }
+            </div>
           </div>
           {/* 标题 E */}
 
           {/* 各种字段的不同状态 S */}
           <div>
             {/* 状态区域 */}
-            <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
-              <div className={mainContentStyles.field_left}>
-                <span className={`${globalStyles.authTheme}`}>&#xe6b6;</span>
-                <span>状态</span>
-              </div>
-              {
-                (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
-                  <div className={`${mainContentStyles.field_right}`}>
-                    <div className={`${mainContentStyles.pub_hover}`}>
-                      <span className={is_realize == '0' ? mainContentStyles.incomplete : mainContentStyles.complete}>{is_realize == '0' ? '未完成' : '已完成'}</span>
-                    </div>
-                  </div>
-                ) : (
-                    <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_item} overlay={filedEdit} getPopupContainer={triggerNode => triggerNode.parentNode}>
-                      <div className={`${mainContentStyles.field_right}`}>
-                        <div className={`${mainContentStyles.pub_hover}`}>
-                          <span className={is_realize == '0' ? mainContentStyles.incomplete : mainContentStyles.complete}>{is_realize == '0' ? '未完成' : '已完成'}</span>
-                        </div>
+            <div>
+              <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
+                <div className={mainContentStyles.field_left}>
+                  <span className={`${globalStyles.authTheme}`}>&#xe6b6;</span>
+                  <span>状态</span>
+                </div>
+                {
+                  (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                    <div className={`${mainContentStyles.field_right}`}>
+                      <div className={`${mainContentStyles.pub_hover}`}>
+                        <span className={is_realize == '0' ? mainContentStyles.incomplete : mainContentStyles.complete}>{is_realize == '0' ? '未完成' : '已完成'}</span>
                       </div>
-                    </Dropdown>
-                  )
-              }
+                    </div>
+                  ) : (
+                      <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_item} overlay={filedEdit} getPopupContainer={triggerNode => triggerNode.parentNode}>
+                        <div className={`${mainContentStyles.field_right}`}>
+                          <div className={`${mainContentStyles.pub_hover}`}>
+                            <span className={is_realize == '0' ? mainContentStyles.incomplete : mainContentStyles.complete}>{is_realize == '0' ? '未完成' : '已完成'}</span>
+                          </div>
+                        </div>
+                      </Dropdown>
+                    )
+                }
+              </div>
             </div>
             {/* 这个中间放置负责人, 如果存在, 则在两者之间 */}
             <div>
@@ -536,49 +524,51 @@ export default class MainContent extends Component {
               </div>
             </div>
             {/* 时间区域 */}
-            <div className={mainContentStyles.field_content}>
-              <div className={mainContentStyles.field_left}>
-                <span className={globalStyles.authTheme}>&#xe686;</span>
-                <span>时间</span>
-              </div>
-              <div className={`${mainContentStyles.field_right}`}>
-                <div style={{ display: 'flex' }}>
-                  <div style={{ position: 'relative' }}>
-                    {/* {start_time && due_time ? ('') : (<span style={{ color: '#bfbfbf' }}>设置</span>)} */}
-                    <span className={`${mainContentStyles.pub_hover}`} style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                      {start_time ? timestampToTimeNormal(start_time, '/', true) : '开始时间'}
-                      <DatePicker
-                        // disabledDate={this.disabledStartTime.bind(this)}
-                        // onChange={this.startDatePickerChange.bind(this)}
-                        // getCalendarContainer={triggerNode => triggerNode.parentNode}
-                        placeholder={'开始时间'}
-                        format="YYYY/MM/DD HH:mm"
-                        showTime={{ format: 'HH:mm' }}
-                        style={{ opacity: 0, background: '#000000', cursor: 'pointer', position: 'absolute', left: 0, zIndex: 1, width: 'auto' }} />
-                    </span>
-                    &nbsp;
-                    <span style={{ color: '#bfbfbf' }}> ~ </span>
-                    &nbsp;
-                    <span className={`${mainContentStyles.pub_hover}`} style={{ position: 'relative', minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                      {due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
-                      <DatePicker
-                        // disabledDate={this.disabledDueTime.bind(this)}
-                        // getCalendarContainer={triggerNode => triggerNode.parentNode}
-                        placeholder={'截止时间'}
-                        format="YYYY/MM/DD HH:mm"
-                        showTime={{ format: 'HH:mm' }}
-                        // onChange={this.endDatePickerChange.bind(this)}
-                        style={{ opacity: 0, cursor: 'pointer', background: '#000000', position: 'absolute', left: 0, zIndex: 1, width: 'auto' }} />
+            <div>
+              <div className={mainContentStyles.field_content}>
+                <div className={mainContentStyles.field_left}>
+                  <span className={globalStyles.authTheme}>&#xe686;</span>
+                  <span>时间</span>
+                </div>
+                <div className={`${mainContentStyles.field_right}`}>
+                  <div style={{ display: 'flex' }}>
+                    <div style={{ position: 'relative' }}>
+                      {/* {start_time && due_time ? ('') : (<span style={{ color: '#bfbfbf' }}>设置</span>)} */}
+                      <span className={`${mainContentStyles.pub_hover}`} style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
+                        {start_time ? timestampToTimeNormal(start_time, '/', true) : '开始时间'}
+                        <DatePicker
+                          // disabledDate={this.disabledStartTime.bind(this)}
+                          // onChange={this.startDatePickerChange.bind(this)}
+                          // getCalendarContainer={triggerNode => triggerNode.parentNode}
+                          placeholder={'开始时间'}
+                          format="YYYY/MM/DD HH:mm"
+                          showTime={{ format: 'HH:mm' }}
+                          style={{ opacity: 0, background: '#000000', cursor: 'pointer', position: 'absolute', left: 0, zIndex: 1, width: 'auto' }} />
+                      </span>
+                      &nbsp;
+                      <span style={{ color: '#bfbfbf' }}> ~ </span>
+                      &nbsp;
+                      <span className={`${mainContentStyles.pub_hover}`} style={{ position: 'relative', minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
+                        {due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
+                        <DatePicker
+                          // disabledDate={this.disabledDueTime.bind(this)}
+                          // getCalendarContainer={triggerNode => triggerNode.parentNode}
+                          placeholder={'截止时间'}
+                          format="YYYY/MM/DD HH:mm"
+                          showTime={{ format: 'HH:mm' }}
+                          // onChange={this.endDatePickerChange.bind(this)}
+                          style={{ opacity: 0, cursor: 'pointer', background: '#000000', position: 'absolute', left: 0, zIndex: 1, width: 'auto' }} />
+                      </span>
+                    </div>
+                    <span style={{ position: 'relative' }}>
+                      <InformRemind style={{ display: 'inline-block', minWidth: '72px', height: '38px', borderRadius: '4px', textAlign: 'center' }} projectExecutors={executors} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} user_remind_info={data} />
                     </span>
                   </div>
-                  <span style={{ position: 'relative' }}>
-                    <InformRemind style={{ display: 'inline-block', minWidth: '72px', height: '38px', borderRadius: '4px', textAlign: 'center' }} projectExecutors={executors} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} user_remind_info={data} />
-                  </span>
                 </div>
               </div>
             </div>
             {/* 添加属性区域 */}
-            <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
+            {/* <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
               <div className={mainContentStyles.field_left}>
                 <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.45)' }} className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
                 <span>添加属性</span>
@@ -590,7 +580,7 @@ export default class MainContent extends Component {
                   </div>
                 </div>
               </Dropdown>
-            </div>
+            </div> */}
           </div>
           {/* 各种字段的不同状态 E */}
 
@@ -670,7 +660,27 @@ export default class MainContent extends Component {
             </div>
           </div>
           {/* 备注字段 E*/}
-
+          
+          {/* 子任务字段 S */}
+          <div>
+            <div style={{position: 'relative'}} className={mainContentStyles.field_content}>
+              <div className={mainContentStyles.field_left}>
+                <span className={`${globalStyles.authTheme}`}>&#xe7f5;</span>
+                <span>子任务</span>
+              </div>
+              <div className={`${mainContentStyles.field_right}`}>
+                {/* 添加子任务组件 */}
+                <AppendSubTask drawContent={drawContent} dispatch={dispatch} data={data}>
+                  <div className={`${mainContentStyles.pub_hover}`}>
+                    <span className={mainContentStyles.add_sub_btn}>
+                      <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe8fe;</span> 新建子任务
+                    </span>
+                  </div>
+                </ AppendSubTask>
+              </div>
+            </div>       
+          </div>
+          {/* 子任务字段 E */}
 
         </div>
       </div>

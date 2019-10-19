@@ -24,7 +24,16 @@ export default class TaskDetailModal extends Component {
         isShowAllDynamic: true, // 是否显示全部动态
       }
     })
-    this.props.setTaskDetailModalVisible && this.props.setTaskDetailModalVisible()
+    this.props.dispatch({
+      type: 'publicTaskDetailModal/updateDatas',
+      payload: {
+        drawerVisible: false,
+        drawContent: {},
+        card_id: '',
+        is_edit_title: false, // 是否编辑标题 默认为 false 不显示
+      }
+    })
+    // this.props.setTaskDetailModalVisible && this.props.setTaskDetailModalVisible()
   }
 
    // 检测不同类型的权限控制类型的是否显示

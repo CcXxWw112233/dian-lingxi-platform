@@ -232,7 +232,7 @@ export default class MenuSearchPartner extends React.Component {
 
     render() {
         const { keyWord, resultArr, selectedKeys = [] } = this.state
-        const { Inputlaceholder = '搜索', searchName, menuSearchSingleSpinning, keyCode, invitationType, invitationId, rela_Condition, is_selected_all } = this.props
+        const { Inputlaceholder = '搜索', isInvitation, searchName, menuSearchSingleSpinning, keyCode, invitationType, invitationId, rela_Condition, is_selected_all } = this.props
 
         return (
             <div>
@@ -245,14 +245,18 @@ export default class MenuSearchPartner extends React.Component {
                         <Input placeholder={Inputlaceholder} value={keyWord} onChange={this.onChange.bind(this)} />
                     </div>
                     <Menu className={globalStyles.global_vertical_scrollbar} style={{ maxHeight: '248px', overflowY: 'auto' }}>
-                        <div style={{ padding: 0, margin: 0, height: 32, lineHeight: '32px', cursor: 'pointer' }} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
-                            <div style={{ display: 'flex', alignItems: 'center' }} >
-                                <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '&#xe70b;', marginRight: 4, color: 'rgb(73, 155, 230)', }}>
-                                    <Icon type={'plus-circle'} style={{ fontSize: 12, marginLeft: 10, color: 'rgb(73, 155, 230)' }} />
+                        {
+                            !isInvitation && (
+                                <div style={{ padding: 0, margin: 0, height: 32, lineHeight: '32px', cursor: 'pointer' }} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
+                                    <div style={{ display: 'flex', alignItems: 'center' }} >
+                                        <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '&#xe70b;', marginRight: 4, color: 'rgb(73, 155, 230)', }}>
+                                            <Icon type={'plus-circle'} style={{ fontSize: 12, marginLeft: 10, color: 'rgb(73, 155, 230)' }} />
+                                        </div>
+                                        <span style={{ color: 'rgb(73, 155, 230)' }}>邀请他人参与</span>
+                                    </div>
                                 </div>
-                                <span style={{ color: 'rgb(73, 155, 230)' }}>邀请他人参与</span>
-                            </div>
-                        </div>
+                            )
+                        }
                         {/* 项目全体成员 */}
                         {/* <div style={{ padding: 0, margin: 0, height: 40, lineHeight: '40px', cursor: 'pointer' }} onClick={this.handleSelectedAllBtn}>
                             <div style={{ display: 'flex', alignItems: 'center', padding: '6px 12px', justifyContent: 'space-between' }} >
