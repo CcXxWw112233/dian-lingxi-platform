@@ -604,9 +604,11 @@ export default class MainContent extends Component {
               </div>
               <div className={`${mainContentStyles.field_right}`}>
                 {/* 上传附件组件 */}
-                <UploadAttachment>
+                <UploadAttachment projectDetailInfoData={projectDetailInfoData} board_id={board_id} card_id={card_id}>
                   <div className={`${mainContentStyles.pub_hover}`}>
-                    <span className={mainContentStyles.upload_file_btn}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fa;</span> 上传附件</span>
+                  
+                      <span className={mainContentStyles.upload_file_btn}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fa;</span> 上传附件</span>
+                
                   </div>
                 </UploadAttachment>
                 <div className={mainContentStyles.filelist_wrapper}>
