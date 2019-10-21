@@ -2,19 +2,22 @@ import React, { Component } from 'react'
 import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import FolderItem from './FolderItem'
-import { Input, Menu, Dropdown, message, Upload } from 'antd'
+import { Input, Menu, Dropdown, message, Upload, notification } from 'antd'
 import { REQUEST_DOMAIN_FILE, PROJECT_FILES_FILE_UPLOAD, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, UPLOAD_FILE_SIZE } from '../../../../../../../globalset/js/constant';
 import { setUploadHeaderBaseInfo, checkIsHasPermissionInBoard } from '../../../../../../../utils/businessFunction';
 import Cookies from 'js-cookie'
 import { addNewFolder } from '../../../../../../../services/technological/file';
 import { isApiResponseOk } from '../../../../../../../utils/handleResponseData';
+import UploadNotification from '@/components/UploadNotification'
 export default class FolderList extends Component {
     constructor(props) {
         super(props)
         this.state = {
             file_data: [],
             is_show_add_item: false,
-            add_folder_value: ''
+            add_folder_value: '',
+            // uploading_file_list: [], //正在上传的文件
+            // show_upload_notification: false,
         }
     }
 
@@ -46,6 +49,12 @@ export default class FolderList extends Component {
         })
     }
 
+    setShowUploadNotification = (bool) => {
+        this.setState({
+            show_upload_notification: bool
+        })
+    }
+
     uploadProps = () => {
         const that = this
         const { board_id, current_folder_id } = this.props
@@ -54,6 +63,7 @@ export default class FolderList extends Component {
             withCredentials: true,
             multiple: true,
             action: `${REQUEST_DOMAIN_FILE}/file/upload`,
+            showUploadList: false,
             data: {
                 board_id,
                 folder_id: current_folder_id,
@@ -80,6 +90,12 @@ export default class FolderList extends Component {
                 let loading = message.loading('正在上传...', 0)
             },
             onChange({ file, fileList, event }) {
+                // that.setState({
+                //     uploading_file_list: fileList
+                // }, () => {
+                //     that.setShowUploadNotification(true)
+                // })
+
                 if (file.status === 'uploading') {
 
                 } else {
@@ -103,11 +119,12 @@ export default class FolderList extends Component {
         };
         return propsObj
     }
+
     renderAddItemDropMenu = () => {
         return (
             <Menu onClick={this.addItemClick}>
                 <Menu.Item key={1} style={{ width: 248 }}>
-                    <Upload {...this.uploadProps()} showUploadList={false}>
+                    <Upload {...this.uploadProps()}>
                         <div style={{ width: 220, height: 26 }}>上传文件</div>
                     </Upload>
                 </Menu.Item>
@@ -145,7 +162,7 @@ export default class FolderList extends Component {
         }
     }
     render() {
-        const { file_data = [], is_show_add_item, add_folder_value } = this.state
+        const { file_data = [], is_show_add_item, add_folder_value, show_upload_notification, uploading_file_list } = this.state
         const { board_id, current_folder_id } = this.props
         return (
             <div className={styles.folder_list}>
@@ -180,6 +197,11 @@ export default class FolderList extends Component {
                 <Dropdown overlay={this.renderAddItemDropMenu()}>
                     <div className={`${styles.folder_item} ${globalStyles.authTheme} ${styles.add_item}`}>&#xe8fe;</div>
                 </Dropdown>
+                {/* {
+                    show_upload_notification && (
+                        <UploadNotification uploading_file_list={uploading_file_list} />
+                    )
+                } */}
             </div>
         )
     }
