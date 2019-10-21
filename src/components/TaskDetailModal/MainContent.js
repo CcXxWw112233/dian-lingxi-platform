@@ -10,7 +10,11 @@ import MilestoneAdd from '@/components/MilestoneAdd'
 import AppendSubTask from './components/AppendSubTask'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import InformRemind from '@/components/InformRemind'
+<<<<<<< HEAD
 import { timestampFormat, timestampToTime } from '@/utils/util'
+=======
+import { timestampToTimeNormal, timestampFormat, compareTwoTimestamp} from '@/utils/util'
+>>>>>>> 019a58ef4aeb18c8363b411403954b9dbd637111
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN
 } from "@/globalset/js/constant";
@@ -358,10 +362,85 @@ export default class MainContent extends Component {
     })    
   }
 
-  monitorFileListChange = (data) => {
-    console.log("监听文件上传完成");
+  showMemberName = (userId) => {
+    const { projectDetailInfoData = {} } = this.props
+    const { data = [] } = projectDetailInfoData;
+    const users = data.filter((item) => item.id === userId);
+    if (users.length > 0) {
+      return <span>{users[0].name}</span>
+    }
+    return;
   }
 
+  onUploadFileListChange = (data) => {
+    let { drawContent = {}, dispatch } = this.props;
+    if (data && data.length > 0) {
+      drawContent['attachment_data'] = [...this.props.drawContent.attachment_data, ...data];
+      dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent: { ...drawContent }
+        }
+      })
+    }
+  }
+  onMilestoneSelectedChange = (data) => {
+  
+    const { dispatch,drawContent } = this.props;
+    const { card_id, type, due_time } = drawContent
+    const { key,type:actionType,selectedKeys,info} = data;
+    const id_time_arr = key.split('__')
+    const id = id_time_arr[0]
+    const deadline = id_time_arr[1]
+    if (!compareTwoTimestamp(deadline, due_time)) {
+      message.warn('关联里程碑的截止日期不能小于任务的截止日期')
+      return
+    }
+    console.log("里程碑",data);
+    
+    if(actionType ==='add'){
+      const params = {
+        rela_id: card_id,
+        id,
+        origin_type: type
+      };
+      dispatch({
+        type: 'publicTaskDetailModal/joinMilestone',
+        payload: {
+          ...params
+        }
+      });
+      drawContent['milestone_data'] = info;
+      dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent: drawContent
+        }
+      })
+    }
+    if(actionType ==='remove'){
+    
+      const params = {
+        rela_id: card_id,
+        id,
+      }
+      dispatch({
+        type: 'publicTaskDetailModal/shiftOutMilestone',
+        payload: {
+          ...params
+        }
+      });
+      drawContent['milestone_data'] = [];
+      dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent: drawContent
+        }
+      })
+    }
+  
+
+  }
 
   render() {
     const { drawContent = {}, is_edit_title, projectDetailInfoData = {}, dispatch, handleTaskDetailChange } = this.props
@@ -533,7 +612,11 @@ export default class MainContent extends Component {
                                     {executors.map((value) => {
                                       const { avatar, name, user_name, user_id } = value
                                       return (
+<<<<<<< HEAD
                                         <div style={{ display: 'flex', flexWrap: 'wrap', marginLeft: '-12px' }} key={user_id}>
+=======
+                                        <div style={{ display: 'flex', flexWrap: 'wrap' }} key={user_id}>
+>>>>>>> 019a58ef4aeb18c8363b411403954b9dbd637111
                                           <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 0', textAlign: 'center' }} key={user_id}>
                                             {avatar ? (
                                               <img style={{ width: '24px', height: '24px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
@@ -631,6 +714,7 @@ export default class MainContent extends Component {
               </div>
               <div className={`${mainContentStyles.field_right}`}>
                 {/* 上传附件组件 */}
+<<<<<<< HEAD
                 <UploadAttachment projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
                   onFileListChange={this.monitorFileListChange}
                 >
@@ -640,13 +724,30 @@ export default class MainContent extends Component {
 
                   </div>
                 </UploadAttachment>
+=======
+                <div className={`${mainContentStyles.pub_hover}`}>
+                  {
+                    card_id &&
+                    <UploadAttachment projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
+                      onFileListChange={this.onUploadFileListChange}>
+                      <div className={mainContentStyles.upload_file_btn}>
+                        <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fa;</span> 上传附件
+                    </div>
+                    </UploadAttachment>
+                  }
+                </div>
+>>>>>>> 019a58ef4aeb18c8363b411403954b9dbd637111
                 <div className={mainContentStyles.filelist_wrapper}>
                   {
                     drawContent.attachment_data && drawContent.attachment_data.map((fileInfo) => {
                       return (
                         <div className={`${mainContentStyles.pub_hover} ${mainContentStyles.file_item}`} key={fileInfo.id} >
                           <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span><span>{fileInfo.name}</span></div>
+<<<<<<< HEAD
                           <div className={mainContentStyles.file_info}>严世威 上传于 {timestampFormat(fileInfo.update_time, "MM-dd hh:mm")}</div>
+=======
+                          <div className={mainContentStyles.file_info}>{this.showMemberName(fileInfo.create_by)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
+>>>>>>> 019a58ef4aeb18c8363b411403954b9dbd637111
                         </div>
                       );
                     })
@@ -694,7 +795,7 @@ export default class MainContent extends Component {
               <div className={`${mainContentStyles.field_right}`}>
 
                 {/*加入里程碑组件*/}
-                <MilestoneAdd dataId={board_id}>
+                <MilestoneAdd onChangeMilestone={this.onMilestoneSelectedChange} dataId={board_id}>
                   <div className={`${mainContentStyles.pub_hover}`} >
                     {milestone_data && milestone_data.id
                       ? milestone_data.name
