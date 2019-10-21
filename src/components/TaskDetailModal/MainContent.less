@@ -236,18 +236,20 @@
 
       // 每一个用户的样式
       .user_item {
-        padding   : 2px 8px;
-        box-sizing: border-box;
+        padding    : 2px 8px;
+        box-sizing : border-box;
         margin-left: 24px;
 
         &:hover {
           background   : rgba(0, 0, 0, 0.09);
           border-radius: 4px;
         }
-        .usericon{
-         width:40px;
-         height:40px;
+
+        .usericon {
+          width : 40px;
+          height: 40px;
         }
+
         .userItemDeleBtn {
           display          : none;
           width            : 14px;
@@ -277,29 +279,37 @@
       .upload_file_btn {}
 
       .filelist_wrapper {
-  
+
         .file_item {
-          display  : flex;
+          display        : flex;
           justify-content: space-between;
-          font-size: 14px;
-          color    : rgba(0, 0, 0, 0.45);
-          line-height: 38px;
-          height:38px;
+          font-size      : 14px;
+          color          : rgba(0, 0, 0, 0.45);
+          line-height    : 38px;
+          height         : 38px;
+
           .file_title {
-            display: inline-flex;
-            align-items: center;
+            width     : 260px;
+            display      : inline-flex;
+            align-items  : center;
+            text-overflow: ellipsis;
+            -o-text-overflow:ellipsis;
+            white-space  : nowrap;
+            overflow: hidden;
           }
 
           .file_info {
-            width: 200px;
+            width     : 200px;
             text-align: right;
           }
         }
       }
-      .descriptionContent{
+
+      .descriptionContent {
         margin-right: 12px;
-        p{
-          word-break:break-all; 
+
+        p {
+          word-break: break-all;
         }
       }
     }

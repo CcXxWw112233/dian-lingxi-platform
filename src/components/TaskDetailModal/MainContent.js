@@ -316,9 +316,29 @@ export default class MainContent extends Component {
       }
     })
   }
-  
-  monitorFileListChange = (data)=>{
-    console.log("监听文件上传完成");
+
+  showMemberName = (userId) => {
+    const { projectDetailInfoData = {} } = this.props
+    const { data=[] } = projectDetailInfoData;
+    const users = data.filter((item)=>item.id === userId);
+    if(users.length>0){
+      return <span>{users[0].name}</span>
+    }
+    return ;
+  }
+
+  onUploadFileListChange = (data) => {
+    let  { drawContent = {}, dispatch } = this.props;
+    if (data && data.length > 0) {
+      drawContent['attachment_data'] = [...this.props.drawContent.attachment_data, ...data];
+      debugger
+      dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent:{...drawContent}
+        }
+      })
+    }
   }
 
 
@@ -328,18 +348,19 @@ export default class MainContent extends Component {
     const { data = [] } = projectDetailInfoData
     const {
       org_id,
-      board_id, 
-      card_id, 
-      card_name, 
-      type = '0', 
-      is_realize = '0', 
-      start_time, 
-      due_time, 
-      executors = [], 
+      board_id,
+      card_id,
+      card_name,
+      type = '0',
+      is_realize = '0',
+      start_time,
+      due_time,
+      executors = [],
       description,
       milestone_data
     } = drawContent
 
+    console.log("onUploadFileListChange",drawContent);
     // 状态
     const filedEdit = (
       <Menu onClick={this.handleFiledIsComplete} getPopupContainer={triggerNode => triggerNode.parentNode} selectedKeys={is_realize == '0' ? ['incomplete'] : ['complete']}>
@@ -492,7 +513,7 @@ export default class MainContent extends Component {
                                     {executors.map((value) => {
                                       const { avatar, name, user_name, user_id } = value
                                       return (
-                                        <div style={{ display: 'flex', flexWrap: 'wrap' }} key = {user_id}>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap' }} key={user_id}>
                                           <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 0', textAlign: 'center' }} key={user_id}>
                                             {avatar ? (
                                               <img style={{ width: '24px', height: '24px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
@@ -591,22 +612,22 @@ export default class MainContent extends Component {
               <div className={`${mainContentStyles.field_right}`}>
                 {/* 上传附件组件 */}
                 <UploadAttachment projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
-                  onFileListChange = {this.monitorFileListChange}
-                  >
+                  onFileListChange={this.onUploadFileListChange}
+                >
                   <div className={`${mainContentStyles.pub_hover}`}>
-                  
-                      <span className={mainContentStyles.upload_file_btn}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fa;</span> 上传附件</span>
-                
+
+                    <span className={mainContentStyles.upload_file_btn}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fa;</span> 上传附件</span>
+
                   </div>
                 </UploadAttachment>
                 <div className={mainContentStyles.filelist_wrapper}>
                   {
-                    drawContent.attachment_data && drawContent.attachment_data.map((fileInfo)=>{
+                    drawContent.attachment_data && drawContent.attachment_data.map((fileInfo) => {
                       return (
                         <div className={`${mainContentStyles.pub_hover} ${mainContentStyles.file_item}`} key={fileInfo.id} >
-                        <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span><span>{fileInfo.name}</span></div>
-                        <div className={mainContentStyles.file_info}>严世威 上传于 {timestampFormat(fileInfo.update_time,"MM-dd hh:mm")}</div>
-                      </div>
+                          <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span><span>{fileInfo.name}</span></div>
+                          <div className={mainContentStyles.file_info}>{this.showMemberName(fileInfo.create_by)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
+                        </div>
                       );
                     })
                   }
@@ -667,10 +688,10 @@ export default class MainContent extends Component {
             </div>
           </div>
           {/* 备注字段 E*/}
-          
+
           {/* 子任务字段 S */}
           <div>
-            <div style={{position: 'relative'}} className={mainContentStyles.field_content}>
+            <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
               <div className={mainContentStyles.field_left}>
                 <span className={`${globalStyles.authTheme}`}>&#xe7f5;</span>
                 <span>子任务</span>
@@ -685,7 +706,7 @@ export default class MainContent extends Component {
                   </div>
                 </ AppendSubTask>
               </div>
-            </div>       
+            </div>
           </div>
           {/* 子任务字段 E */}
 

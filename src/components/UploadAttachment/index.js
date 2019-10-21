@@ -109,24 +109,12 @@ export default class UploadAttachment extends Component {
 
       }
     }).then(res => {
-      console.log("上传结果", res);
-      // this.setState({
-      //     awaitUploadFile: {},
-      //     uploading: false,
-      // });
       const apiResult = res.data;
-
       if (isApiResponseOk(apiResult)) {
         message.destroy()
         message.success('上传成功');
-        try {
-          this.setUploadFileVisible(false);
-          this.props.onFileListChange(apiResult.data);
-         
-        }catch (err) {
-        
-        }
-      
+        this.props.onFileListChange(apiResult.data);
+        this.setUploadFileVisible(false);
       } else {
         message.warn(apiResult.message)
       }
@@ -218,8 +206,7 @@ export default class UploadAttachment extends Component {
   }
 
   renderFolderTreeNodes = data => {
-    console.log("renderFolderTreeNodes", data);
-
+  
     return data.map(item => {
       if (item.child_data && item.child_data.length > 0) {
         return (
