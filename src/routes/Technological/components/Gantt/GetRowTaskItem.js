@@ -67,12 +67,12 @@ export default class GetRowTaskItem extends Component {
     }
 
     // 标签的颜色
-    setLableColor = (label_data) => {
+    setLableColor = (label_data, is_realize) => {
         let bgColor = ''
         let b = ''
         if (label_data && label_data.length) {
             const color_arr = label_data.map(item => {
-                return `rgb(${item.label_color})`
+                return `rgb(${item.label_color}${is_realize == '1' ? ',0.5' : ''})`
             })
             const color_arr_length = color_arr.length
             const color_percent_arr = color_arr.map((item, index) => {
@@ -501,7 +501,7 @@ export default class GetRowTaskItem extends Component {
                         left: local_left, top: local_top,
                         width: (local_width || 6) - 6, height: (height || task_item_height),
                         marginTop: task_item_margin_top,
-                        background: this.setLableColor(label_data), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
+                        background: this.setLableColor(label_data, is_realize), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
                     }}
                     // 拖拽
                     // onMouseDown={(e) => this.onMouseDown(e)}
@@ -513,26 +513,23 @@ export default class GetRowTaskItem extends Component {
                 >
                     <div
                         data-targetclassname="specific_example"
-                        style={{
-                            opacity: is_realize == '1' ? 0.5 : 1
-                        }}
                         className={`${indexStyles.specific_example_content} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
                         // onMouseDown={(e) => e.stopPropagation()} 
                         onMouseMove={(e) => e.preventDefault()}
-
+                        style={{ opacity: 1 }}
                     >
                         <div data-targetclassname="specific_example"
                             className={`${indexStyles.card_item_status}`}
                             //  onMouseDown={(e) => e.stopPropagation()} 
                             onMouseMove={(e) => e.preventDefault()}
                         >
-                            <CheckItem is_realize={is_realize} />
+                            <CheckItem is_realize={is_realize} styles={{ color: is_realize == '1' ? 'rgba(0,0,0,.25)' : '' }} />
                         </div>
                         <div data-targetclassname="specific_example"
                             className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`}
                             // onMouseDown={(e) => e.stopPropagation()}
                             onMouseMove={(e) => e.preventDefault()}
-                            style={{ display: 'flex' }}
+                            style={{ display: 'flex', color: is_realize == '1' ? 'rgba(0,0,0,.25)' : '' }}
                         >
                             {name}
                             {
@@ -556,6 +553,9 @@ export default class GetRowTaskItem extends Component {
                         <div data-targetclassname="specific_example"
                             // onMouseDown={(e) => e.stopPropagation()} 
                             onMouseMove={(e) => e.preventDefault()}
+                            style={{
+                                opacity: is_realize == '1' ? 0.5 : 1
+                            }}
                         >
                             <AvatarList users={executors} size={'small'} />
                         </div>
