@@ -15,6 +15,7 @@ export default class AppendSubTask extends Component {
     sub_executors: [], // 子任务的执行人
     saveDisabled: true, // 是否可以点击确定按钮
     inputValue: '', // 用来保存子任务的名称
+    due_time: '', // 时间选择
   }
 
   // 是否是有效的头像
@@ -33,7 +34,8 @@ export default class AppendSubTask extends Component {
   handleCancel(e) {
     e && e.stopPropagation();
     this.setState({
-      is_add_sub_task: false
+      is_add_sub_task: false,
+      sub_executors: []
     })
   }
 
@@ -41,43 +43,81 @@ export default class AppendSubTask extends Component {
   handleSave(e) {
     e && e.stopPropagation();
     const { drawContent, dispatch } = this.props
-    const { board_id, card_id } = drawContent
-    const { inputValue } = this.state
+    const { board_id, card_id, list_id } = drawContent
+    const { inputValue, sub_executors, due_time } = this.state
+    let temp_subExecutors = [...sub_executors]
+    let user_ids = []
+    temp_subExecutors.map(item => {
+      user_ids.push(item.user_id)
+    })
+    const obj = {
+      card_id,
+      board_id,
+      list_id,
+      name: inputValue,
+      executors: sub_executors,
+      users: sub_executors.length ? user_ids.join(',') : '',
+      due_time: due_time,
+      card_name: inputValue,
+    }
+    drawContent['child_data'] && drawContent['child_data'].unshift(obj)
+    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent, card_id})
     dispatch({
       type: 'publicTaskDetailModal/addChirldTask',
       payload: {
-        card_id,
-        name: inputValue,
-        board_id
+        ...obj
       }
     })
     this.setState({
-      is_add_sub_task: false
+      is_add_sub_task: false,
+      sub_executors: []
     })
+  }
+
+  // 执行人列表去重
+  arrayNonRepeatfy = arr => {
+    let temp_arr = []
+    let temp_id = []
+    for (let i = 0; i < arr.length; i++) {
+      if (!temp_id.includes(arr[i]['user_id'])) {//includes 检测数组是否有某个值
+        temp_arr.push(arr[i]);
+        temp_id.push(arr[i]['user_id'])
+      }
+    }
+    return temp_arr
   }
 
   // 子 执行人的下拉回调
   chirldrenTaskChargeChange = (dataInfo) => {
     let sub_executors = []
-    const { data } = this.props
+    const { data, drawContent =  {}, dispatch } = this.props
+    const { executors = [], card_id } = drawContent
     const { selectedKeys = [] } = dataInfo
     let new_data = [...data]
+    let new_executors = [...executors]
     new_data.map(item => {
       if (selectedKeys.indexOf(item.user_id) != -1) {
         sub_executors.push(item)
+        new_executors.push(item)
       }
     })
+    let new_drawContent = {...drawContent}
+    new_drawContent['executors'] = this.arrayNonRepeatfy(new_executors)
+    dispatch({
+      type: 'publicTaskDetailModal/updateDatas',
+      payload: {
+        drawContent:new_drawContent
+      }
+    })
+    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent:drawContent, card_id})
     this.setState({
       sub_executors
     })
   }
 
-  // 子 任务的文本框失去焦点回调
-  setchirldTaskNameBlur = (e) => {
-  }
 
   //子任务名称设置
-  setchirldTaskNameChange = (e) => {
+  setchildTaskNameChange = (e) => {
     this.setState({
       inputValue: e.target.value,
       saveDisabled: e.target.value ? false : true
@@ -86,7 +126,7 @@ export default class AppendSubTask extends Component {
 
 
   render() {
-    const { children, drawContent = {}, data, dispatch } = this.props
+    const { children, drawContent = {}, data, dispatch, handleTaskDetailChange } = this.props
     const { card_id, board_id, child_data = [] } = drawContent
     const { is_add_sub_task, sub_executors = [], saveDisabled } = this.state
     let executor = [{//任务执行人信息
@@ -110,8 +150,8 @@ export default class AppendSubTask extends Component {
                   <span style={{flex: '1', marginRight: '16px'}}>
                     <input 
                     autosize={true}
-                    onBlur={this.setchirldTaskNameBlur}
-                    onChange={this.setchirldTaskNameChange}
+                    onBlur={this.setchildTaskNameBlur}
+                    onChange={this.setchildTaskNameChange}
                     autoFocus={true}
                     // goldName={card_name}
                     maxLength={100}
@@ -133,7 +173,7 @@ export default class AppendSubTask extends Component {
                           board_id={board_id} />
                       }>
                       {
-                        sub_executors.length ? (
+                        sub_executors && sub_executors.length ? (
                           <div>
                             <AvatarList
                               size="mini"
@@ -143,13 +183,17 @@ export default class AppendSubTask extends Component {
                                 backgroundColor: '#fde3cf'
                               }}
                             >
-                              {sub_executors && sub_executors.map(({ name, avatar }, index) => (
+                              {sub_executors && sub_executors.length ? sub_executors.map(({ name, avatar }, index) => (
                                 <AvatarList.Item
                                   key={index}
                                   tips={name}
                                   src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
                                 />
-                              ))}
+                              )) :(
+                                <Tooltip title="执行人">
+                                  <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_icon}`}>&#xe7b2;</span>
+                                </Tooltip>
+                              )}
                             </AvatarList>
                           </div>
                         ) : (
@@ -177,7 +221,7 @@ export default class AppendSubTask extends Component {
             const { card_id, card_name, due_time, executors = [] } = value
             const { user_id } = executors[0] || {}
             return (
-              <AppendSubTaskItem board_id={board_id} dispatch={dispatch} data={data} drawContent={drawContent} chirldTaskItemValue={value} key={`${card_id}-${card_name}-${user_id}-${due_time}`} chirldDataIndex={key} />
+              <AppendSubTaskItem handleTaskDetailChange={handleTaskDetailChange} board_id={board_id} dispatch={dispatch} data={data} drawContent={drawContent} childTaskItemValue={value} key={`${card_id}-${card_name}-${user_id}-${due_time}`} childDataIndex={key} />
             )
           })}
         </div>

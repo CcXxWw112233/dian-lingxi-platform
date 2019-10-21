@@ -33,6 +33,7 @@ export default class MenuSearchPartner extends React.Component {
         const { keyWord } = this.state
         let selectedKeys = []
         const { listData = [], searchName, currentSelect = [] } = this.props
+        if (!Array.isArray(currentSelect)) return false
         for (let val of currentSelect) {
             selectedKeys.push(val['user_id'])
         }

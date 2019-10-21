@@ -54,7 +54,7 @@ export default class TaskItem extends React.Component {
 
   itemClick(data, e) {
     const { dispatch } = this.props
-    const { id, board_id, org_id } = data;
+    const { id, board_id, org_id, parent_id } = data;
     setBoardIdStorage(board_id)
     // 这里查看卡片弹窗不需要权限控制,是因为,既然都能看见这条任务,就说明你已经在访问控制的权限列表中了,因为不在的话, 不会返回该任务
     // if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW)) {
@@ -79,7 +79,7 @@ export default class TaskItem extends React.Component {
       type: 'publicTaskDetailModal/updateDatas',
       payload: {
         drawerVisible: true,
-        card_id: id
+        card_id: parent_id ? parent_id : id
       }
     })
 
@@ -99,7 +99,7 @@ export default class TaskItem extends React.Component {
 
   render() {
     const { itemValue = {}, isUsedInWorkbench, currentUserOrganizes = [], is_show_org_name, projectTabCurrentSelectedProject, is_all_org } = this.props;
-    const { org_id, is_realize, board_id, board_name, name, id, due_time, is_privilege } = itemValue;
+    const { org_id, is_realize, board_id, board_name, name, id, due_time, is_privilege, parent_id } = itemValue;
 
     //父级任务
     let parentCards = [];
@@ -148,7 +148,7 @@ export default class TaskItem extends React.Component {
                 maxWidth: 100,
                 textDecoration: is_realize === "1" ? "line-through" : "none"
               }}
-              onClick={this.itemClick.bind(this, { id, board_id, org_id })}
+              onClick={this.itemClick.bind(this, { id, board_id, org_id, parent_id })}
             >
               {name}
             </div>
@@ -170,7 +170,7 @@ export default class TaskItem extends React.Component {
                 <span
                   style={{ marginLeft: 6, color: "#8c8c8c", cursor: "pointer" }}
                   key={key}
-                  onClick={this.itemClick.bind(this, { id, board_id, org_id })}
+                  onClick={this.itemClick.bind(this, { id, board_id, org_id, parent_id })}
                 >{`< ${name}`}</span>
               );
             })}
@@ -240,7 +240,7 @@ export default class TaskItem extends React.Component {
             style={{
               textDecoration: is_realize === "1" ? "line-through" : "none"
             }}
-            onClick={this.itemClick.bind(this, { id, board_id, org_id })}
+            onClick={this.itemClick.bind(this, { id, board_id, org_id, parent_id })}
           >
             {name}
           </span>
@@ -250,7 +250,7 @@ export default class TaskItem extends React.Component {
               <span
                 style={{ marginLeft: 6, color: "#8c8c8c", cursor: "pointer" }}
                 key={key}
-                onClick={this.itemClick.bind(this, { id, board_id, org_id })}
+                onClick={this.itemClick.bind(this, { id, board_id, org_id, parent_id })}
               >{`< ${name}`}</span>
             );
           })}

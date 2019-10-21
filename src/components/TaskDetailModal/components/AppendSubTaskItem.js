@@ -8,6 +8,10 @@ import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 
 export default class AppendSubTaskItem extends Component {
 
+  state = {
+    is_edit_sub_name: false, // 是否修改子任务名称, 默认为 false
+  }
+
   componentWillMount() {
     //设置默认项目名称
     this.initSet(this.props)
@@ -19,13 +23,14 @@ export default class AppendSubTaskItem extends Component {
 
   //初始化根据props设置state
   initSet(props) {
-    const { chirldTaskItemValue } = props
-    const { due_time, executors = [], card_name } = chirldTaskItemValue
-    let local_executor = [{//任务执行人信息
-      user_id: '',
-      user_name: '',
-      avatar: '',
-    }]
+    const { childTaskItemValue } = props
+    const { due_time, executors = [], card_name } = childTaskItemValue
+    // let local_executor = [{//任务执行人信息
+    //   user_id: '',
+    //   user_name: '',
+    //   avatar: '',
+    // }]
+    let local_executor
     if (executors.length) {
       local_executor = executors
     }
@@ -37,25 +42,173 @@ export default class AppendSubTaskItem extends Component {
     })
   }
 
+  // 执行人列表去重
+  arrayNonRepeatfy = arr => {
+    let temp_arr = []
+    let temp_id = []
+    for (let i = 0; i < arr.length; i++) {
+      if (!temp_id.includes(arr[i]['user_id'])) {//includes 检测数组是否有某个值
+        temp_arr.push(arr[i]);
+        temp_id.push(arr[i]['user_id'])
+      }
+    }
+    return temp_arr
+  }
+
+  // 执行人下拉回调
   chirldrenTaskChargeChange = (dataInfo) => {
     let sub_executors = []
-    const { data } = this.props
-    const { selectedKeys = [] } = dataInfo
+    const { data = [], drawContent = {}, dispatch } = this.props
+    const { executors = [], card_id } = drawContent
+    const { selectedKeys = [], type, key } = dataInfo
     let new_data = [...data]
+    let new_executors = [...executors]
+    let user_ids = []
+    // 这里是将选中的人添加进子任务执行人以及更新父级任务执行人
     new_data.map(item => {
       if (selectedKeys.indexOf(item.user_id) != -1) {
         sub_executors.push(item)
+        new_executors.push(item)
       }
     })
+    let temp_subExecutors = [...sub_executors]
+    temp_subExecutors.map(item => {
+      user_ids.push(item.user_id)
+    })
+    // 这是设置子执行人需要的数据
+    const obj = {
+      card_id,
+      users: sub_executors.length ? user_ids.join(',') : '',
+    }
+    let new_drawContent = {...drawContent}
+    new_drawContent['executors'] = this.arrayNonRepeatfy(new_executors)
+    this.setChildTaskIndrawContent({ name: 'executors', value: sub_executors })// 先弹窗中子任务执行人中的数据
+    dispatch({
+      type: 'publicTaskDetailModal/updateDatas',
+      payload: {
+        drawContent:new_drawContent
+      }
+    })
+    if (type == 'add') {
+      dispatch({
+        type: 'publicTaskDetailModal/addTaskExecutor',
+        payload: {
+          ...obj
+        }
+      })
+    } else if (type == 'remove') {
+      dispatch({
+        type: 'publicTaskDetailModal/removeTaskExecutor',
+        payload: {
+          card_id,
+          user_id: key
+        }
+      })
+    }
     this.setState({
       local_executor: sub_executors
     })
   }
 
+  // 子任务点击完成回调
+  itemOneClick = () => {
+    const { childTaskItemValue, childDataIndex, drawContent = {}, dispatch, board_id } = this.props
+    const { card_id, is_realize = '0' } = childTaskItemValue
+    const obj = {
+      card_id,
+      is_realize: is_realize === '1' ? '0' : '1',
+      board_id
+    }
+
+    this.setChildTaskIndrawContent({ name: 'is_realize', value: is_realize === '1' ? '0' : '1' })
+    dispatch({
+      type: 'publicTaskDetailModal/completeTask',
+      payload: {
+        ...obj
+      }
+    })
+  }
+
+  // 修改子任务名称
+  handleSubTaskName = () => {
+    this.setState({
+      is_edit_sub_name: true
+    })
+  }
+
+  // 失去焦点事件
+  setchildTaskNameBlur = () => {
+    const { dispatch, childTaskItemValue } = this.props
+    const { card_id } = childTaskItemValue
+    const { local_card_name } = this.state
+    if (childTaskItemValue['card_name'] == local_card_name) { // 表示名称没有变化
+      this.setState({
+        is_edit_sub_name: false
+      })
+      return false
+    }
+    // if (!local_card_name) {
+    //   this.setState({
+    //     local_card_name: childTaskItemValue['card_name']
+    //   })
+    //   return false
+    // }
+    if (local_card_name && local_card_name != '') {
+      childTaskItemValue['card_name'] = local_card_name
+      const updateObj = {
+        card_id,
+        name: local_card_name
+      }
+      dispatch({
+        type: 'publicTaskDetailModal/updateTask',
+        payload: {
+          updateObj
+        }
+      })
+      this.setChildTaskIndrawContent({ name: 'card_name', value: local_card_name }, card_id)
+    } else {
+      this.setState({
+        local_card_name: childTaskItemValue['card_name']
+      })
+    }
+    this.setState({
+      is_edit_sub_name: false
+    })
+  }
+
+  // 文本框onChange事件
+  setchildTaskNameChange = (e) => {
+    this.setState({
+      local_card_name: e.target.value
+    })
+  }
+
+  // 子任务更新弹窗数据
+  setChildTaskIndrawContent = ({ name, value }, card_id) => {
+    const { childDataIndex } = this.props
+    const { drawContent = {}, dispatch } = this.props
+    drawContent['child_data'][childDataIndex][name] = value
+
+    dispatch({
+      type: 'projectDetailTask/updateDatas',
+      payload: {
+        drawContent
+      }
+    })
+    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
+  }
+
+  // 按下回车事件
+  handlePressEnter = (e) => {
+    if (e.keyCode == 13) {
+      this.setchildTaskNameBlur()
+    }
+  }
+
   render() {
-    const { chirldTaskItemValue, chirldDataIndex, dispatch, data = {}, drawContent = {}, board_id } = this.props
-    const { card_id, is_realize = '0' } = chirldTaskItemValue
-    const { local_card_name, isInEditTaskName, local_executor = [], local_due_time } = this.state
+    const { childTaskItemValue, childDataIndex, dispatch, data = {}, drawContent = {}, board_id } = this.props
+    const { card_id, is_realize = '0' } = childTaskItemValue
+    const { local_card_name, local_executor = [], local_due_time, is_edit_sub_name } = this.state
 
     return (
       <div className={appendSubTaskStyles.subTaskItemWrapper}>
@@ -64,8 +217,28 @@ export default class AppendSubTaskItem extends Component {
           <Icon type="check" style={{ color: '#FFFFFF', fontSize: 10, fontWeight: 'bold', position: 'absolute', top: '0', right: '0', left: '0', bottom: '0', margin: '1px auto' }} />
         </div>
         {/* 名字 */}
-        <div className={appendSubTaskStyles.card_name}>
-          <span>{local_card_name}</span>
+        <div style={{flex: '1', cursor: 'pointer'}}>
+          {
+            !is_edit_sub_name ? (
+              <div onClick={this.handleSubTaskName} className={appendSubTaskStyles.card_name}>
+                <span>{local_card_name}</span>
+              </div>
+            ) : (
+              <div>
+                <input
+                  autosize={true}
+                  onBlur={this.setchildTaskNameBlur}
+                  onChange={this.setchildTaskNameChange}
+                  onKeyDown={this.handlePressEnter}
+                  autoFocus={true}
+                  // goldName={card_name}
+                  maxLength={100}
+                  nodeName={'input'}
+                  style={{ width: '100%', display: 'block', fontSize: 14, color: '#262626', resize: 'none', height: '38px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none', outline: 'none', paddingLeft: '12px' }}
+                />
+              </div>
+            )
+          }
         </div>
         {/* 时间 */}
         <div className={appendSubTaskStyles.due_time}>
@@ -93,13 +266,17 @@ export default class AppendSubTaskItem extends Component {
                         backgroundColor: '#fde3cf'
                       }}
                     >
-                      {local_executor && local_executor.map(({ name, avatar }, index) => (
+                      {local_executor && local_executor.length ? local_executor.map(({ name, avatar }, index) => (
                         <AvatarList.Item
                           key={index}
                           tips={name}
                           src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
                         />
-                      ))}
+                      )) :(
+                        <Tooltip title="执行人">
+                          <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_icon}`}>&#xe7b2;</span>
+                        </Tooltip>
+                      )}
                     </AvatarList>
                   </div>
                 ) : (

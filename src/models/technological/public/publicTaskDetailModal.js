@@ -127,8 +127,9 @@ export default {
     },
     // 添加子任务
     * addChirldTask({ payload }, { select, call, put }) { //
-      const {  } = payload
-      let res = yield call(addChirldTask, payload)
+      let newPayload = { ...payload }
+      newPayload.executors ? delete newPayload.executors : '' //去掉不需要的数据
+      let res = yield call(addChirldTask, newPayload)
       if (isApiResponseOk(res)) {
         message.success(`添加成功`, MESSAGE_DURATION_TIME)
       } else {

@@ -338,7 +338,7 @@ export default class MainContent extends Component {
 
 
   render() {
-    const { drawContent = {}, is_edit_title, projectDetailInfoData = {}, dispatch } = this.props
+    const { drawContent = {}, is_edit_title, projectDetailInfoData = {}, dispatch, handleTaskDetailChange } = this.props
     const { new_userInfo_data = [] } = this.state
     const { data = [] } = projectDetailInfoData
     const { 
@@ -687,7 +687,7 @@ export default class MainContent extends Component {
               </div>
               <div className={`${mainContentStyles.field_right}`}>
                 {/* 添加子任务组件 */}
-                <AppendSubTask drawContent={drawContent} dispatch={dispatch} data={data}>
+                <AppendSubTask drawContent={drawContent} dispatch={dispatch} data={data} handleTaskDetailChange={handleTaskDetailChange}>
                   <div className={`${mainContentStyles.pub_hover}`}>
                     <span className={mainContentStyles.add_sub_btn}>
                       <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe8fe;</span> 新建子任务
