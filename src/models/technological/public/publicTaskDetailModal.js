@@ -1,4 +1,4 @@
-import { getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask  } from '../../../services/technological/task'
+import { getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask,boardAppRelaMiletones,boardAppCancelRelaMiletones } from '../../../services/technological/task'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { currentNounPlanFilterName } from "../../../utils/businessFunction";
@@ -23,7 +23,7 @@ export default {
      */
     * getCardDetail({ payload }, { call, put }) {
       const { id } = payload
-      let res = yield call(getCardDetail,{ id })
+      let res = yield call(getCardDetail, { id })
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -42,7 +42,7 @@ export default {
       }
     },
 
-    
+
 
     /**
      * 设置完成任务: 需要参数 is_realize
@@ -136,6 +136,27 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
+ 
+    // 加入里程碑
+    * joinMilestone({ payload }, { select, call, put }) {
+      let res = yield call(boardAppRelaMiletones, payload)
+      if (isApiResponseOk(res)) {
+        message.success(`更新成功`, MESSAGE_DURATION_TIME)
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    //移除里程碑
+    * shiftOutMilestone({ payload }, { select, call, put }) {
+      let res = yield call(boardAppCancelRelaMiletones, payload)
+      if (isApiResponseOk(res)) {
+        message.success(`更新成功`, MESSAGE_DURATION_TIME)
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
+
   },
   reducers: {
     updateDatas(state, action) {

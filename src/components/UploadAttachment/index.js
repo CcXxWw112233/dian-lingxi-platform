@@ -40,7 +40,6 @@ export default class UploadAttachment extends Component {
   //获取项目里文件夹列表
   getProjectFolderList = (board_id) => {
     getFolderList({ board_id }).then((res) => {
-      console.log("获取项目里文件夹列表", res);
       if (isApiResponseOk(res)) {
 
         this.setState({
@@ -69,7 +68,6 @@ export default class UploadAttachment extends Component {
 
 
   setUploadFileVisible = (visible) => {
-    console.log(visible);
     this.setState({
       uploadFileVisible: visible,
     });
@@ -149,7 +147,6 @@ export default class UploadAttachment extends Component {
       }
 
     }).catch((error, e) => {
-      // console.log(error);
       message.destroy()
       message.error('上传失败');
       
@@ -161,7 +158,6 @@ export default class UploadAttachment extends Component {
     this.setState(state => ({
       fileList: [...state.fileList, file],
     }));
-    console.log("onBeforeUpload:上传附件设置");
     this.setUploadFileVisible(true)
     return false;
   }
@@ -202,7 +198,6 @@ export default class UploadAttachment extends Component {
 
   // 移除执行人的回调 S
   handleRemoveExecutors = (e, shouldDeleteItem) => {
-    console.log("移除", shouldDeleteItem);
   }
   // 移除执行人的回调 E
 
@@ -233,7 +228,6 @@ export default class UploadAttachment extends Component {
   renderSelectBoardFileTreeList = () => {
     const { is_file_tree_loading } = this.props;
     const { boardFolderTreeData } = this.state;
-    console.log('is_selectFolder', boardFolderTreeData);
     if (is_file_tree_loading) {
       return (
         <div style={{ backgroundColor: '#FFFFFF', textAlign: 'center', height: '50px', lineHeight: '48px', overflow: 'hidden', color: 'rgba(0, 0, 0, 0.25)' }} className={`${globalStyles.page_card_Normal} ${indexStyles.directoryTreeWapper}`}>
@@ -246,7 +240,6 @@ export default class UploadAttachment extends Component {
   }
 
   onChangeFileSavePath = (value) => {
-    //console.log("onChangeFileSavePath",value);
     this.setState({
       fileSavePath: value
     });
@@ -257,9 +250,9 @@ export default class UploadAttachment extends Component {
     // 父组件传递的值
     const { visible, children, board_id, card_id, projectDetailInfoData = {} } = this.props;
     const { uploadFileVisible, uploadFilePreviewList = [], toNoticeList = [], fileSavePath } = this.state;
-    //console.log("toNoticeList",toNoticeList);
+
     const { data: projectMemberData } = projectDetailInfoData;
-    console.log("fileSavePath", fileSavePath);
+
     return (
 
       <div>

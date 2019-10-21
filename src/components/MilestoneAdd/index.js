@@ -59,7 +59,7 @@ export default class MilestoneAdd extends React.Component {
         this.setSelectKey(e, 'remove')
     }
     setSelectKey(e, type) {
-        const { key, selectedKeys } = e
+        const { key, selectedKeys ,item={}} = e
         if (!key) {
             return false
         }
@@ -72,7 +72,10 @@ export default class MilestoneAdd extends React.Component {
                 resultArr: this.fuzzyQuery(listData, searchName, keyWord),
             })
         })
-        this.props.chirldrenTaskChargeChange && this.props.chirldrenTaskChargeChange({ selectedKeys, key, type })
+        console.log(item);
+        const {props} = item;
+        const {info} = props;
+        this.props.onChangeMilestone && this.props.onChangeMilestone({ selectedKeys, key, type,info })
     }
 
     onCheck() {
@@ -122,8 +125,6 @@ export default class MilestoneAdd extends React.Component {
         const { milestoneAddVisible, keyWord, resultArr, selectedKeys = [], milestoneList } = this.state
         const { visible, children, Inputlaceholder = '搜索', searchName, menuSearchSingleSpinning, keyCode, rela_Condition, is_selected_all } = this.props
 
-        console.log("milestoneList", milestoneList);
-
         return (
             <div>
                 <div onClick={() => this.setMilestoneAddVisible(true)}>
@@ -149,15 +150,15 @@ export default class MilestoneAdd extends React.Component {
                         </div>
                         {
                             milestoneList.map((value, key) => {
-                                const { avatar, name, user_name, user_id } = value
+                                const {id,name,deadline } = value
                                 return (
-                                    <Menu.Item className={`${indexStyles.menuItem}`} style={{ height: '40px', lineHeight: '40px', margin: 0, padding: '0 12px' }} key={value.id} >
+                                    <Menu.Item className={`${indexStyles.menuItem}`} style={{ height: '40px', lineHeight: '40px', margin: 0, padding: '0 12px' }}  key={id}  info={value}>
 
                                         <div className={indexStyles.menuItemDiv}>
-                                            <div style={{ display: 'flex', alignItems: 'center', textAlign: 'center' }} key={user_id}>
-                                                <div style={{ overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 90, marginRight: 8 }}>{name || user_name || '佚名'}</div>
+                                            <div style={{ display: 'flex', alignItems: 'center', textAlign: 'center' }} key={id}>
+                                                <div style={{ overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 90, marginRight: 8 }}>{name}</div>
                                             </div>
-                                            <div style={{ display: selectedKeys.indexOf(user_id) != -1 ? 'block' : 'none' }}>
+                                            <div style={{ display: selectedKeys.indexOf(id) != -1 ? 'block' : 'none' }}>
                                                 <Icon type="check" />
                                             </div>
                                         </div>

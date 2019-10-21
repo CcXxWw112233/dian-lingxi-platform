@@ -10,7 +10,7 @@ import MilestoneAdd from '@/components/MilestoneAdd'
 import AppendSubTask from './components/AppendSubTask'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import InformRemind from '@/components/InformRemind'
-import { timestampToTimeNormal,timestampFormat } from '@/utils/util'
+import { timestampToTimeNormal, timestampFormat, compareTwoTimestamp} from '@/utils/util'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN
 } from "@/globalset/js/constant";
@@ -331,7 +331,6 @@ export default class MainContent extends Component {
     let { drawContent = {}, dispatch } = this.props;
     if (data && data.length > 0) {
       drawContent['attachment_data'] = [...this.props.drawContent.attachment_data, ...data];
-
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
@@ -340,7 +339,63 @@ export default class MainContent extends Component {
       })
     }
   }
+  onMilestoneSelectedChange = (data) => {
+  
+    const { dispatch,drawContent } = this.props;
+    const { card_id, type, due_time } = drawContent
+    const { key,type:actionType,selectedKeys,info} = data;
+    const id_time_arr = key.split('__')
+    const id = id_time_arr[0]
+    const deadline = id_time_arr[1]
+    if (!compareTwoTimestamp(deadline, due_time)) {
+      message.warn('关联里程碑的截止日期不能小于任务的截止日期')
+      return
+    }
+    console.log("里程碑",data);
+    
+    if(actionType ==='add'){
+      const params = {
+        rela_id: card_id,
+        id,
+        origin_type: type
+      };
+      dispatch({
+        type: 'publicTaskDetailModal/joinMilestone',
+        payload: {
+          ...params
+        }
+      });
+      drawContent['milestone_data'] = info;
+      dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent: drawContent
+        }
+      })
+    }
+    if(actionType ==='remove'){
+    
+      const params = {
+        rela_id: card_id,
+        id,
+      }
+      dispatch({
+        type: 'publicTaskDetailModal/shiftOutMilestone',
+        payload: {
+          ...params
+        }
+      });
+      drawContent['milestone_data'] = [];
+      dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent: drawContent
+        }
+      })
+    }
+  
 
+  }
 
   render() {
     const { drawContent = {}, is_edit_title, projectDetailInfoData = {}, dispatch, handleTaskDetailChange } = this.props
@@ -360,7 +415,6 @@ export default class MainContent extends Component {
       milestone_data
     } = drawContent
 
-    console.log("onUploadFileListChange", drawContent);
     // 状态
     const filedEdit = (
       <Menu onClick={this.handleFiledIsComplete} getPopupContainer={triggerNode => triggerNode.parentNode} selectedKeys={is_realize == '0' ? ['incomplete'] : ['complete']}>
@@ -613,7 +667,7 @@ export default class MainContent extends Component {
                 {/* 上传附件组件 */}
                 <div className={`${mainContentStyles.pub_hover}`}>
                   {
-                    card_id && 
+                    card_id &&
                     <UploadAttachment projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
                       onFileListChange={this.onUploadFileListChange}>
                       <div className={mainContentStyles.upload_file_btn}>
@@ -676,7 +730,7 @@ export default class MainContent extends Component {
               <div className={`${mainContentStyles.field_right}`}>
 
                 {/*加入里程碑组件*/}
-                <MilestoneAdd dataId={board_id}>
+                <MilestoneAdd onChangeMilestone={this.onMilestoneSelectedChange} dataId={board_id}>
                   <div className={`${mainContentStyles.pub_hover}`} >
                     {milestone_data && milestone_data.id
                       ? milestone_data.name
