@@ -20,7 +20,7 @@ export default class UploadAttachment extends Component {
     this.state = {
       uploadFileVisible: false,
       fileList: [],
-      uploadFileList: [],
+      uploadFilePreviewList: [],
       toNoticeList: [],
       isOnlyNoticePersonsVisit: false,
       boardFolderTreeData: [],
@@ -57,31 +57,60 @@ export default class UploadAttachment extends Component {
     this.handleUpload();
   };
 
-  closeUploadAttachmentModal = (e) => {
-    e.stopPropagation()
+  closeUploadAttachmentModal = () => {
     this.setState({
-      uploadFileList: []
+      uploadFilePreviewList: [],
+      fileList: []
     }, () => {
       this.setUploadFileVisible(false);
 
     });
-
   };
+
 
   setUploadFileVisible = (visible) => {
     console.log(visible);
     this.setState({
-      uploadFileVisible: visible
+      uploadFileVisible: visible,
     });
+    
   }
 
+
+  getUploadProps = () => {
+    let $that = this;
+    const {fileList} = this.state;
+    return {
+      name: 'file',
+      headers: {
+        authorization: 'authorization-text',
+      },
+      fileList: fileList,
+      withCredentials: true,
+      multiple: true,
+      showUploadList: false,
+      beforeUpload: this.onBeforeUpload,
+      onChange(info) {
+        if (info.file.status !== 'uploading') {
+          $that.onCustomPreviewFile(info);
+        } else if (info.file.status === 'done') {
+          message.success(`${info.file.name} file uploaded successfully`);
+        } else if (info.file.status === 'error') {
+          message.error(`${info.file.name} file upload failed.`);
+        }
+      },
+    };
+  }
   handleUpload = () => {
 
     const { org_id, board_id, card_id } = this.props;
     const { fileSavePath = 0, fileList = [], toNoticeList, isOnlyNoticePersonsVisit } = this.state;
 
     const formData = new FormData();
-    formData.append("file", fileList[0]);
+    fileList.forEach(file => {
+      formData.append('file', file);
+    });
+
 
     let loading = message.loading('文件正在上传中...', 0);
     let notify_user_ids = new Array;
@@ -114,7 +143,7 @@ export default class UploadAttachment extends Component {
         message.destroy()
         message.success('上传成功');
         this.props.onFileListChange(apiResult.data);
-        this.setUploadFileVisible(false);
+        this.closeUploadAttachmentModal();
       } else {
         message.warn(apiResult.message)
       }
@@ -123,32 +152,10 @@ export default class UploadAttachment extends Component {
       // console.log(error);
       message.destroy()
       message.error('上传失败');
+      
     });
   }
 
-  getUploadProps = () => {
-    let $that = this;
-    return {
-      name: 'file',
-      action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-      headers: {
-        authorization: 'authorization-text',
-      },
-      withCredentials: true,
-      multiple: true,
-      showUploadList: false,
-      beforeUpload: this.onBeforeUpload,
-      onChange(info) {
-        if (info.file.status !== 'uploading') {
-          $that.onCustomPreviewFile(info);
-        } else if (info.file.status === 'done') {
-          message.success(`${info.file.name} file uploaded successfully`);
-        } else if (info.file.status === 'error') {
-          message.error(`${info.file.name} file upload failed.`);
-        }
-      },
-    };
-  }
 
   onBeforeUpload = (file) => {
     this.setState(state => ({
@@ -160,7 +167,7 @@ export default class UploadAttachment extends Component {
   }
   onCustomPreviewFile = (info) => {
     this.setState({
-      uploadFileList: info.fileList
+      uploadFilePreviewList: info.fileList
     });
   }
 
@@ -206,7 +213,7 @@ export default class UploadAttachment extends Component {
   }
 
   renderFolderTreeNodes = data => {
-  
+
     return data.map(item => {
       if (item.child_data && item.child_data.length > 0) {
         return (
@@ -249,14 +256,14 @@ export default class UploadAttachment extends Component {
   render() {
     // 父组件传递的值
     const { visible, children, board_id, card_id, projectDetailInfoData = {} } = this.props;
-    const { uploadFileVisible, uploadFileList = [], toNoticeList = [], fileSavePath } = this.state;
+    const { uploadFileVisible, uploadFilePreviewList = [], toNoticeList = [], fileSavePath } = this.state;
     //console.log("toNoticeList",toNoticeList);
     const { data: projectMemberData } = projectDetailInfoData;
     console.log("fileSavePath", fileSavePath);
     return (
 
       <div>
-        <Upload {...this.getUploadProps()} className={styles.uploadBtn} key={Math.random()}>
+        <Upload {...this.getUploadProps()}  className={styles.uploadWrapper}>
           {children}
         </Upload>
 
@@ -273,8 +280,8 @@ export default class UploadAttachment extends Component {
                 </div>
           <div className={styles.fileListWrapper}>
             {
-              uploadFileList.length > 0 ?
-                uploadFileList.map((file) => {
+              uploadFilePreviewList.length > 0 ?
+                uploadFilePreviewList.map((file) => {
                   return (<div key={file.uid} className={styles.fileItem}>{file.name}</div>)
                 })
                 : ''

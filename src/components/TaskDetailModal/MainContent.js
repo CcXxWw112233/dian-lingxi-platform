@@ -10,7 +10,7 @@ import MilestoneAdd from '@/components/MilestoneAdd'
 import AppendSubTask from './components/AppendSubTask'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import InformRemind from '@/components/InformRemind'
-import { timestampFormat } from '@/utils/util'
+import { timestampToTimeNormal,timestampFormat } from '@/utils/util'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN
 } from "@/globalset/js/constant";
@@ -319,23 +319,23 @@ export default class MainContent extends Component {
 
   showMemberName = (userId) => {
     const { projectDetailInfoData = {} } = this.props
-    const { data=[] } = projectDetailInfoData;
-    const users = data.filter((item)=>item.id === userId);
-    if(users.length>0){
+    const { data = [] } = projectDetailInfoData;
+    const users = data.filter((item) => item.id === userId);
+    if (users.length > 0) {
       return <span>{users[0].name}</span>
     }
-    return ;
+    return;
   }
 
   onUploadFileListChange = (data) => {
-    let  { drawContent = {}, dispatch } = this.props;
+    let { drawContent = {}, dispatch } = this.props;
     if (data && data.length > 0) {
       drawContent['attachment_data'] = [...this.props.drawContent.attachment_data, ...data];
-      debugger
+
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
-          drawContent:{...drawContent}
+          drawContent: { ...drawContent }
         }
       })
     }
@@ -360,7 +360,7 @@ export default class MainContent extends Component {
       milestone_data
     } = drawContent
 
-    console.log("onUploadFileListChange",drawContent);
+    console.log("onUploadFileListChange", drawContent);
     // 状态
     const filedEdit = (
       <Menu onClick={this.handleFiledIsComplete} getPopupContainer={triggerNode => triggerNode.parentNode} selectedKeys={is_realize == '0' ? ['incomplete'] : ['complete']}>
@@ -611,15 +611,17 @@ export default class MainContent extends Component {
               </div>
               <div className={`${mainContentStyles.field_right}`}>
                 {/* 上传附件组件 */}
-                <UploadAttachment projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
-                  onFileListChange={this.onUploadFileListChange}
-                >
-                  <div className={`${mainContentStyles.pub_hover}`}>
-
-                    <span className={mainContentStyles.upload_file_btn}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fa;</span> 上传附件</span>
-
-                  </div>
-                </UploadAttachment>
+                <div className={`${mainContentStyles.pub_hover}`}>
+                  {
+                    card_id && 
+                    <UploadAttachment projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
+                      onFileListChange={this.onUploadFileListChange}>
+                      <div className={mainContentStyles.upload_file_btn}>
+                        <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fa;</span> 上传附件
+                    </div>
+                    </UploadAttachment>
+                  }
+                </div>
                 <div className={mainContentStyles.filelist_wrapper}>
                   {
                     drawContent.attachment_data && drawContent.attachment_data.map((fileInfo) => {
