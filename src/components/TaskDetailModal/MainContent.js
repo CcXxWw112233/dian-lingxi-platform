@@ -10,7 +10,7 @@ import MilestoneAdd from '@/components/MilestoneAdd'
 import AppendSubTask from './components/AppendSubTask'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import InformRemind from '@/components/InformRemind'
-import { timestampToTimeNormal } from '@/utils/util'
+import { timestampFormat } from '@/utils/util'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN
 } from "@/globalset/js/constant";
@@ -605,7 +605,7 @@ export default class MainContent extends Component {
                       return (
                         <div className={`${mainContentStyles.pub_hover} ${mainContentStyles.file_item}`} key={fileInfo.id} >
                         <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span><span>{fileInfo.name}</span></div>
-                        <div className={mainContentStyles.file_info}>严世威 上传于 09-19 05:30</div>
+                        <div className={mainContentStyles.file_info}>严世威 上传于 {timestampFormat(fileInfo.update_time,"MM-dd hh:mm")}</div>
                       </div>
                       );
                     })
