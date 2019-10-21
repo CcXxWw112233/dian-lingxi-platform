@@ -712,7 +712,6 @@ export default class SimpleNavigation extends Component {
                     dispatch={this.props.dispatch}
                     addMembers={this.addMembers.bind(this)}
                     modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}
-
                 />
 
                 {this.state.NotificationSettingsModalVisible && (
