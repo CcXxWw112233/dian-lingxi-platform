@@ -10,7 +10,7 @@ import MilestoneAdd from '@/components/MilestoneAdd'
 import AppendSubTask from './components/AppendSubTask'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import InformRemind from '@/components/InformRemind'
-import { timestampToTimeNormal } from '@/utils/util'
+import { timestampFormat } from '@/utils/util'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN
 } from "@/globalset/js/constant";
@@ -316,32 +316,18 @@ export default class MainContent extends Component {
       }
     })
   }
-  // saveBrafitEdit = (brafitEditHtml) => {
-  //   console.log("brafitEditHtml", brafitEditHtml);
-  //   const { drawContent = {}, dispatch } = this.props;
-  //   console.log(drawContent);
-  //   let { card_id } = drawContent
-  //   this.setState({
-  //     isInEdit: false,
-  //   })
-  //   const updateObj = {
-  //     card_id,
-  //     description: brafitEditHtml,
-  //   }
-  //   dispatch({
-  //     type: 'publicTaskDetailModal/updateTask',
-  //     payload: {
-  //       updateObj
-  //     }
-  //   })
-  // }
+  
+  monitorFileListChange = (data)=>{
+    console.log("监听文件上传完成");
+  }
 
 
   render() {
     const { drawContent = {}, is_edit_title, projectDetailInfoData = {}, dispatch, handleTaskDetailChange } = this.props
     const { new_userInfo_data = [] } = this.state
     const { data = [] } = projectDetailInfoData
-    const { 
+    const {
+      org_id,
       board_id, 
       card_id, 
       card_name, 
@@ -604,7 +590,9 @@ export default class MainContent extends Component {
               </div>
               <div className={`${mainContentStyles.field_right}`}>
                 {/* 上传附件组件 */}
-                <UploadAttachment projectDetailInfoData={projectDetailInfoData} board_id={board_id} card_id={card_id}>
+                <UploadAttachment projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
+                  onFileListChange = {this.monitorFileListChange}
+                  >
                   <div className={`${mainContentStyles.pub_hover}`}>
                   
                       <span className={mainContentStyles.upload_file_btn}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fa;</span> 上传附件</span>
@@ -612,14 +600,16 @@ export default class MainContent extends Component {
                   </div>
                 </UploadAttachment>
                 <div className={mainContentStyles.filelist_wrapper}>
-                  <div className={`${mainContentStyles.pub_hover} ${mainContentStyles.file_item}`} >
-                    <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span><span>大堂平面图.cad</span></div>
-                    <div className={mainContentStyles.file_info}>严世威 上传于 09-19 05:30</div>
-                  </div>
-                  <div className={`${mainContentStyles.pub_hover} ${mainContentStyles.file_item}`} >
-                    <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span>大堂平面图.cad</div>
-                    <div className={mainContentStyles.file_info}>严世威 上传于 09-19 05:30</div>
-                  </div>
+                  {
+                    drawContent.attachment_data && drawContent.attachment_data.map((fileInfo)=>{
+                      return (
+                        <div className={`${mainContentStyles.pub_hover} ${mainContentStyles.file_item}`} key={fileInfo.id} >
+                        <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span><span>{fileInfo.name}</span></div>
+                        <div className={mainContentStyles.file_info}>严世威 上传于 {timestampFormat(fileInfo.update_time,"MM-dd hh:mm")}</div>
+                      </div>
+                      );
+                    })
+                  }
                 </div>
               </div>
             </div>
