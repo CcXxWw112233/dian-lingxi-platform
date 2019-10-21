@@ -14,6 +14,7 @@ import ShowFileSlider from './components/boardFile/ShowFileSlider'
 import BoardsFilesArea from './components/boardFile/BoardsFilesArea'
 import FaceRightButton from './components/gattFaceCardItem/FaceRightButton'
 import { Spin } from 'antd'
+import MiletoneGuide from './components/MiletonesGuide/index'
 
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -248,8 +249,7 @@ export default class GanttFace extends Component {
             </div>
           )
         }
-
-
+        <MiletoneGuide />
         <div className={indexStyles.cardDetail_left}></div>
         <div className={indexStyles.cardDetail_middle}
           id={'gantt_card_out_middle'}
