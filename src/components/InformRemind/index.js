@@ -6,8 +6,8 @@ import DrawInformRemindModal from './DrawInformRemindModal'
 import DrawerInformContent from './DrawerInformContent'
 import infoRemindStyle from './index.less'
 
-@connect(({informRemind = {}}) => ({
-    informRemind
+@connect(({informRemind: { informRemindUsers = [] } }) => ({
+    informRemindUsers
 }))
 export default class index extends Component {
 
@@ -23,6 +23,13 @@ export default class index extends Component {
      */
     handleInformRemind() {
         const { dispatch, rela_type, rela_id } = this.props;
+        dispatch({
+            type: 'informRemind/getUserInfoRemind',
+            payload: {
+                id: rela_id,
+                type: rela_type
+            }
+        })
         // 1. 获取事件列表 需要传递是哪一个类型
         dispatch({
             type: "informRemind/getTriggerList",
@@ -52,6 +59,7 @@ export default class index extends Component {
         dispatch({
             type: 'informRemind/updateDatas',
             payload: {
+                informRemindUsers: [],
                 is_add_remind: false,
                 setInfoRemindList: [
                     {
@@ -76,7 +84,7 @@ export default class index extends Component {
 
     render() {
         const { visible, title} =this.state;
-        const { rela_type, rela_id, user_remind_info, workbenchExecutors = [], projectExecutors = [], processEditDatas = [], milestonePrincipals = [], style } = this.props
+        const { rela_type, rela_id, user_remind_info, informRemindUsers, workbenchExecutors = [], projectExecutors = [], processEditDatas = [], milestonePrincipals = [], style } = this.props
         return (
             <>
                 {/* 通知提醒的小图标 */}
@@ -116,7 +124,7 @@ export default class index extends Component {
                         mask={true}
                         footer={null}
                         onCancel={this.onCancel.bind(this)}
-                        overInner={<DrawerInformContent milestonePrincipals={milestonePrincipals} processEditDatas={processEditDatas} projectExecutors={projectExecutors} workbenchExecutors={workbenchExecutors} rela_type={rela_type} rela_id={rela_id} user_remind_info={user_remind_info} />}
+                        overInner={<DrawerInformContent milestonePrincipals={milestonePrincipals} processEditDatas={processEditDatas} projectExecutors={projectExecutors} workbenchExecutors={workbenchExecutors} rela_type={rela_type} rela_id={rela_id} user_remind_info={informRemindUsers} />}
                         wrapClassName={infoRemindStyle.informRemindWrapper}
                     />
                 </div>

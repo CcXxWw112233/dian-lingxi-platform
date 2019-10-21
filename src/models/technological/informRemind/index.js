@@ -1,5 +1,5 @@
 // 通知提醒的数据
-import { getTriggerList, getTriggerHistory, setRemindInformation, updateRemindInformation, delRemindInformation } from '@/services/technological/informRemind'
+import { getUserInfoRemind, getTriggerList, getTriggerHistory, setRemindInformation, updateRemindInformation, delRemindInformation } from '@/services/technological/informRemind'
 import { isApiResponseOk } from '@/utils/handleResponseData'
 import { message } from 'antd';
 import { getModelSelectState } from '@/models/utils'
@@ -103,6 +103,7 @@ export default {
          dispatch({
            type: 'updateDatas', 
            payload: {
+            informRemindUsers: [],
             triggerList: [],
             historyList: [],
             setInfoRemindList: [
@@ -123,6 +124,21 @@ export default {
     },
 
     effects: {
+      // 获取通知提醒用户列表
+      * getUserInfoRemind({ payload = {} }, { call, put }) {
+        const { id, type } = payload
+        const res = yield call(getUserInfoRemind, { id, type })
+        if(!isApiResponseOk(res)) {
+          message.error(res.message)
+          return
+        }
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            informRemindUsers: res.data
+          }
+        })
+      },
 
       // 获取事件类型列表的方法
       * getTriggerList({ payload = {} }, { select, call, put }) {

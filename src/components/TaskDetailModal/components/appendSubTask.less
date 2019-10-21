@@ -52,10 +52,37 @@
   }
 }
 
+.del_icon {
+  width:20px;
+  height:20px;
+  border-radius:4px;
+  text-align: center;
+  line-height: 20px;
+  cursor: pointer;
+  display: none;
+  &:hover {
+    background:rgba(255,241,240,1);
+    color: #FF7875;
+  }
+}
+
+.active_icon {
+  margin-left: -32px;
+}
+
+.active_icon:hover .del_icon {
+  display: block;
+}
+
+.active_icon:hover .subTaskItemWrapper_active {
+  padding-left: 26px !important;
+}
 
 .subTaskItemWrapper {
   display: flex;
   align-items: center;
+  padding-left: 46px;
+  flex: 1;
   /* 公共点击完成卡片的样式 S */
   .nomalCheckBox {
     height       : 16px;
@@ -86,9 +113,17 @@
   /* 公共点击完成卡片的样式 E */
   .card_name {
     flex: 1;
-    padding: 8px 12px;
+    // padding: 8px 12px;
+    height: 38px;
+    line-height: 38px;
+    padding-left: 12px;
     font-weight: 600;
-    font-size: 14px
+    font-size: 14px;
+    &:hover {
+      background   : rgba(0, 0, 0, 0.04);
+      cursor       : pointer;
+      border-radius: 4px;
+    }
   }
   .due_time {
     min-width:106px;
@@ -104,3 +139,4 @@
     }
   }
 }
+

@@ -1,4 +1,4 @@
-import { getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask  } from '../../../services/technological/task'
+import { getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask, deleteChirldTask } from '../../../services/technological/task'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { currentNounPlanFilterName } from "../../../utils/businessFunction";
@@ -23,7 +23,7 @@ export default {
      */
     * getCardDetail({ payload }, { call, put }) {
       const { id } = payload
-      let res = yield call(getCardDetail,{ id })
+      let res = yield call(getCardDetail, { id })
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -42,7 +42,7 @@ export default {
       }
     },
 
-    
+
 
     /**
      * 设置完成任务: 需要参数 is_realize
@@ -73,6 +73,7 @@ export default {
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
+      return res || {}
     },
     /**
      * 更新任务:
@@ -106,8 +107,8 @@ export default {
     },
     // 移除任务执行人
     * removeTaskExecutor({ payload }, { select, call, put }) { //
-      const { card_id, user_id } = payload
-      let res = yield call(removeTaskExecutor, { card_id, user_id })
+      const { card_id, executor } = payload
+      let res = yield call(removeTaskExecutor, { card_id, executor })
       if (isApiResponseOk(res)) {
         message.success(`已成功删除执行人`, MESSAGE_DURATION_TIME)
       } else {
@@ -132,6 +133,16 @@ export default {
       let res = yield call(addChirldTask, newPayload)
       if (isApiResponseOk(res)) {
         message.success(`添加成功`, MESSAGE_DURATION_TIME)
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    // 删除子任务
+    * deleteChirldTask({ payload }, { select, call, put }) { //
+      const { card_id } = payload
+      let res = yield call(deleteTask, card_id)
+      if (isApiResponseOk(res)) {
+        message.success('删除成功', MESSAGE_DURATION_TIME)
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }

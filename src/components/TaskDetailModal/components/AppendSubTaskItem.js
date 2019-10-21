@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Icon, Dropdown, Tooltip } from 'antd'
+import { Icon, Dropdown, Tooltip, Popconfirm } from 'antd'
 import appendSubTaskStyles from './appendSubTask.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
@@ -71,15 +71,6 @@ export default class AppendSubTaskItem extends Component {
         new_executors.push(item)
       }
     })
-    let temp_subExecutors = [...sub_executors]
-    temp_subExecutors.map(item => {
-      user_ids.push(item.user_id)
-    })
-    // 这是设置子执行人需要的数据
-    const obj = {
-      card_id,
-      users: sub_executors.length ? user_ids.join(',') : '',
-    }
     let new_drawContent = {...drawContent}
     new_drawContent['executors'] = this.arrayNonRepeatfy(new_executors)
     this.setChildTaskIndrawContent({ name: 'executors', value: sub_executors })// 先弹窗中子任务执行人中的数据
@@ -93,7 +84,8 @@ export default class AppendSubTaskItem extends Component {
       dispatch({
         type: 'publicTaskDetailModal/addTaskExecutor',
         payload: {
-          ...obj
+          card_id,
+          executor: key
         }
       })
     } else if (type == 'remove') {
@@ -101,7 +93,7 @@ export default class AppendSubTaskItem extends Component {
         type: 'publicTaskDetailModal/removeTaskExecutor',
         payload: {
           card_id,
-          user_id: key
+          executor: key
         }
       })
     }
@@ -205,88 +197,132 @@ export default class AppendSubTaskItem extends Component {
     }
   }
 
+  // 删除子任务回调
+  deleteConfirm({ card_id,  childDataIndex }) {
+    const { drawContent = {}, dispatch } = this.props
+    const { child_data = [] } = drawContent
+    let newChildData = [...child_data]
+    let new_drawContent = {...drawContent}
+    newChildData.map((item, index) => {
+      if (item.card_id == card_id) {
+        newChildData.splice(index, 1)
+      }
+    })
+    new_drawContent['child_data'] = newChildData
+    dispatch({
+      type: 'publicTaskDetailModal/updateDatas',
+      payload: {
+        drawContent: new_drawContent
+      }
+    })
+    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent:new_drawContent, card_id: drawContent.card_id})
+    dispatch({
+      type: 'publicTaskDetailModal/deleteChirldTask',
+      payload: {
+        card_id
+      }
+    })
+  }
+
   render() {
     const { childTaskItemValue, childDataIndex, dispatch, data = {}, drawContent = {}, board_id } = this.props
     const { card_id, is_realize = '0' } = childTaskItemValue
     const { local_card_name, local_executor = [], local_due_time, is_edit_sub_name } = this.state
+    // const filedDel = (
+    //   <Menu>
+    //     <Menu.Item key="delete">删除</Menu.Item>
+    //   </Menu>
+    // )
 
     return (
-      <div className={appendSubTaskStyles.subTaskItemWrapper}>
-        {/*完成*/}
-        <div className={is_realize === '1' ? appendSubTaskStyles.nomalCheckBoxActive : appendSubTaskStyles.nomalCheckBox} onClick={this.itemOneClick}>
-          <Icon type="check" style={{ color: '#FFFFFF', fontSize: 10, fontWeight: 'bold', position: 'absolute', top: '0', right: '0', left: '0', bottom: '0', margin: '1px auto' }} />
-        </div>
-        {/* 名字 */}
-        <div style={{flex: '1', cursor: 'pointer'}}>
-          {
-            !is_edit_sub_name ? (
-              <div onClick={this.handleSubTaskName} className={appendSubTaskStyles.card_name}>
-                <span>{local_card_name}</span>
-              </div>
-            ) : (
-              <div>
-                <input
-                  autosize={true}
-                  onBlur={this.setchildTaskNameBlur}
-                  onChange={this.setchildTaskNameChange}
-                  onKeyDown={this.handlePressEnter}
-                  autoFocus={true}
-                  // goldName={card_name}
-                  maxLength={100}
-                  nodeName={'input'}
-                  style={{ width: '100%', display: 'block', fontSize: 14, color: '#262626', resize: 'none', height: '38px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none', outline: 'none', paddingLeft: '12px' }}
-                />
-              </div>
-            )
-          }
-        </div>
-        {/* 时间 */}
-        <div className={appendSubTaskStyles.due_time}>
-          <span>{local_due_time || `09-19 05:30`}</span>
-        </div>
-        {/* 执行人 */}
-        <div>
-          <span style={{ position: 'relative' }}>
-            <Dropdown overlayClassName={appendSubTaskStyles.overlay_sub_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
-              overlay={
-                <MenuSearchPartner
-                  handleSelectedAllBtn={this.handleSelectedAllBtn}
-                  isInvitation={true}
-                  listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={local_executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
-                  board_id={board_id} />
-              }>
-              {
-                local_executor.length ? (
-                  <div>
-                    <AvatarList
-                      size="mini"
-                      maxLength={3}
-                      excessItemsStyle={{
-                        color: '#f56a00',
-                        backgroundColor: '#fde3cf'
-                      }}
-                    >
-                      {local_executor && local_executor.length ? local_executor.map(({ name, avatar }, index) => (
-                        <AvatarList.Item
-                          key={index}
-                          tips={name}
-                          src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
-                        />
-                      )) :(
-                        <Tooltip title="执行人">
-                          <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_icon}`}>&#xe7b2;</span>
-                        </Tooltip>
-                      )}
-                    </AvatarList>
-                  </div>
-                ) : (
-                    <Tooltip title="执行人">
-                      <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_icon}`}>&#xe7b2;</span>
-                    </Tooltip>
-                  )
-              }
-            </Dropdown>
-          </span>
+      <div style={{display: 'flex', alignItems: 'center', position: 'relative'}} className={appendSubTaskStyles.active_icon}>
+        {/* <Tooltip title="删除">
+          <div className={`${appendSubTaskStyles.del_icon}`}>
+            <span className={`${globalStyles.authTheme}`}>&#xe7c3;</span>
+          </div>
+        </Tooltip> */}
+        <Popconfirm getPopupContainer={triggerNode => triggerNode.parentNode} onConfirm={() => { this.deleteConfirm({card_id, childDataIndex}) }} title={'删除该子任务？'}>
+          <div className={`${appendSubTaskStyles.del_icon}`}>
+            <span className={`${globalStyles.authTheme}`}>&#xe7c3;</span>
+          </div>
+        </Popconfirm>
+        <div className={`${appendSubTaskStyles.subTaskItemWrapper} ${appendSubTaskStyles.subTaskItemWrapper_active}`} key={childDataIndex}>
+          {/*完成*/}
+          <div className={is_realize === '1' ? appendSubTaskStyles.nomalCheckBoxActive : appendSubTaskStyles.nomalCheckBox} onClick={this.itemOneClick}>
+            <Icon type="check" style={{ color: '#FFFFFF', fontSize: 10, fontWeight: 'bold', position: 'absolute', top: '0', right: '0', left: '0', bottom: '0', margin: '1px auto' }} />
+          </div>
+          {/* 名字 */}
+          <div style={{flex: '1', cursor: 'pointer'}}>
+            {
+              !is_edit_sub_name ? (
+                <div onClick={this.handleSubTaskName} className={appendSubTaskStyles.card_name}>
+                  <span>{local_card_name}</span>
+                </div>
+              ) : (
+                <div>
+                  <input
+                    autosize={true}
+                    onBlur={this.setchildTaskNameBlur}
+                    onChange={this.setchildTaskNameChange}
+                    onKeyDown={this.handlePressEnter}
+                    autoFocus={true}
+                    // goldName={card_name}
+                    maxLength={100}
+                    nodeName={'input'}
+                    style={{ width: '100%', display: 'block', fontSize: 14, color: '#262626', resize: 'none', height: '38px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none', outline: 'none', paddingLeft: '12px' }}
+                  />
+                </div>
+              )
+            }
+          </div>
+          {/* 时间 */}
+          <div className={appendSubTaskStyles.due_time}>
+            <span>{local_due_time || `09-19 05:30`}</span>
+          </div>
+          {/* 执行人 */}
+          <div>
+            <span style={{ position: 'relative' }}>
+              <Dropdown overlayClassName={appendSubTaskStyles.overlay_sub_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                overlay={
+                  <MenuSearchPartner
+                    handleSelectedAllBtn={this.handleSelectedAllBtn}
+                    isInvitation={true}
+                    listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={local_executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                    board_id={board_id} />
+                }>
+                {
+                  local_executor.length ? (
+                    <div>
+                      <AvatarList
+                        size="mini"
+                        maxLength={3}
+                        excessItemsStyle={{
+                          color: '#f56a00',
+                          backgroundColor: '#fde3cf'
+                        }}
+                      >
+                        {local_executor && local_executor.length ? local_executor.map(({ name, avatar }, index) => (
+                          <AvatarList.Item
+                            key={index}
+                            tips={name}
+                            src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                          />
+                        )) :(
+                          <Tooltip title="执行人">
+                            <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_icon}`}>&#xe7b2;</span>
+                          </Tooltip>
+                        )}
+                      </AvatarList>
+                    </div>
+                  ) : (
+                      <Tooltip title="执行人">
+                        <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_icon}`}>&#xe7b2;</span>
+                      </Tooltip>
+                    )
+                }
+              </Dropdown>
+            </span>
+          </div>
         </div>
       </div>
     )
