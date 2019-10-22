@@ -471,6 +471,7 @@ export default class MainContent extends Component {
     const {
       org_id,
       board_id,
+      board_name,
       card_id,
       card_name,
       type = '0',
@@ -803,7 +804,7 @@ export default class MainContent extends Component {
               <div className={`${mainContentStyles.field_right}`}>
 
                 {/*加入里程碑组件*/}
-                <MilestoneAdd onChangeMilestone={this.onMilestoneSelectedChange}  dataInfo={{board_id,due_time,org_id,data}} selectedValue={milestone_data &&milestone_data.id}>
+                <MilestoneAdd onChangeMilestone={this.onMilestoneSelectedChange}  dataInfo={{board_id,board_name,due_time,org_id,data}} selectedValue={milestone_data &&milestone_data.id}>
                   <div className={`${mainContentStyles.pub_hover}`} >
                     {milestone_data && milestone_data.id
                       ? milestone_data.name
