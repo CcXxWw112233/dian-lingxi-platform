@@ -1,18 +1,50 @@
 import React from 'react'
-import { Icon, Modal, message } from 'antd'
+import { Menu, Modal, message, Dropdown } from 'antd'
 import globalStyles from '../../../../../../globalset/css/globalClassName.less'
 import headerStyles from './headerContent.less'
 import { connect } from 'dva'
 import InformRemind from '@/components/InformRemind'
+
+const MenuItem = Menu.Item
 
 @connect(mapStateToProps)
 export default class Header extends React.Component {
   state = {
   }
 
+  handelOperateMenu = ({ key }) => {
+    if ('delete' == key) {
+      this.confrimDelete()
+    }
+  }
+
+  confrimDelete = () => {
+    const { milestone_detail: { id }, deleteMiletone = function () { } } = this.props
+    const that = this
+    Modal.confirm({
+      title: '提示',
+      content: '确认删除该里程碑？',
+      zIndex: 1007,
+      onOk() {
+        if (typeof deleteMiletone == 'function') {
+          deleteMiletone({ id })
+        }
+        that.props.onCancel()
+      },
+    })
+  }
+
+  renderOperateMenu = () => {
+    return (
+      <Menu onClick={this.handelOperateMenu}>
+        <MenuItem key={'delete'} style={{ color: '#FF4D4F' }}>删除</MenuItem>
+      </Menu>
+    )
+  }
+
   render() {
     // console.log(this.props, 'sssss_milestone')
-   const { milestone_detail = {}, users = [] } = this.props
+    const { milestone_detail = {}, users = [] } = this.props
     const { board_name, id, principals = [] } = milestone_detail
     return (
       <div className={headerStyles.header_out}>
@@ -29,6 +61,9 @@ export default class Header extends React.Component {
           </div>
         </div>
         <div className={headerStyles.header_out_right}>
+          <Dropdown overlay={this.renderOperateMenu()}>
+            <div className={globalStyles.authTheme} style={{ fontSize: 18, marginRight: 10 }}>&#xe7fd;</div>
+          </Dropdown>
           <InformRemind milestonePrincipals={principals} rela_id={id} rela_type='5' user_remind_info={users} />
         </div>
       </div>

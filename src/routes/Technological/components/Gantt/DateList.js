@@ -162,12 +162,12 @@ export default class DateList extends Component {
   }
 
   // 里程碑是否过期的颜色设置
-  setMiletonesColor = ({ is_over_duetime, has_lcb, is_all_realized }) => { 
-    if(!has_lcb) {
+  setMiletonesColor = ({ is_over_duetime, has_lcb, is_all_realized }) => {
+    if (!has_lcb) {
       return ''
     }
-    if(is_over_duetime) {
-      if(is_all_realized == '0') { //存在未完成任务
+    if (is_over_duetime) {
+      if (is_all_realized == '0') { //存在未完成任务
         return '#FFA39E'
       } else { //全部任务已完成
         return 'rgba(0,0,0,0.15)'
@@ -212,7 +212,21 @@ export default class DateList extends Component {
       }
     })
   }
-
+  deleteMiletone = ({ id }) => {
+    const { milestoneMap = {}, dispatch } = this.props
+    let flag = false
+    for(let key in milestoneMap) {
+      for(let val of list) {
+        if(val.id == id) {
+          flag = true
+          break
+        }
+      }
+      if(flag) {
+        break
+      }
+    }
+  }
   render() {
     const {
       gold_date_arr = [],
@@ -264,8 +278,8 @@ export default class DateList extends Component {
                                     ${((week_day == 0 || week_day == 6)) && indexStyles.weekly_date_no} 
                                     ${this.getDateNoHolidaylunar(timestamp).holiday && indexStyles.holiday_date_no}
                                     ${has_lcb && indexStyles.has_moletones_date_no}`}
-                                    style={{background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized })}}
-                                    // style={{ background: is_over_duetime && has_lcb ? '#FF7875' : '' }}
+                                    style={{ background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized }) }}
+                                  // style={{ background: is_over_duetime && has_lcb ? '#FF7875' : '' }}
                                   >
                                     {date_no}
                                   </div>
@@ -297,6 +311,7 @@ export default class DateList extends Component {
           users={currentSelectedProjectMembersList}
           miletone_detail_modal_visible={this.state.miletone_detail_modal_visible}
           set_miletone_detail_modal_visible={this.set_miletone_detail_modal_visible}
+          deleteMiletone={this.deleteMiletone}
         />
       </div>
     )
