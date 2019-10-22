@@ -1,12 +1,10 @@
 import React from 'react'
-import { Input, Menu, Spin, Icon, message } from 'antd'
+import { Input, Menu, Spin, Icon, message, Dropdown, Tooltip } from 'antd'
 import indexStyles from './index.less'
-import ShowAddMenberModal from '../../routes/Technological/components/Project/ShowAddMenberModal'
-import { checkIsHasPermissionInBoard, } from "../../utils/businessFunction";
-import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_BOARD_MEMBER } from "@/globalset/js/constant";
-import { organizationInviteWebJoin, commInviteWebJoin, } from '../../services/technological/index'
-import { getMilestoneList } from '@/services/technological/prjectDetail'
+import { createMilestone, getMilestoneList } from '@/services/technological/prjectDetail'
 import { isApiResponseOk } from "@/utils/handleResponseData"
+import { compareTwoTimestamp } from '@/utils/util'
+import AddLCBModal from '@/routes/Technological/components/Gantt/components/AddLCBModal'
 
 import { connect } from 'dva';
 import globalStyles from '@/globalset/css/globalClassName.less'
@@ -16,72 +14,75 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 }))
 export default class MilestoneAdd extends React.Component {
     state = {
-        milestoneAddVisible:false,
-        visible:false,
+        milestoneAddVisible: false,
+        visible: false,
         resultArr: [],
         keyWord: '',
-        selectedKeys: [],
-        milestoneList: []
-    }
-    componentWillMount() {
-
-    }
-    componentDidMount() {
-
+        milestoneList: [],
+        add_lcb_modal_visible: false
     }
 
     componentWillReceiveProps(nextProps) {
-        const { dispatch, dataId } = nextProps;
-        const { dataId: oldDataId } = this.props;
-        if (dataId && dataId != oldDataId) {
-            this.getMilestone(dataId)
+        const { dispatch, dataInfo } = nextProps;
+        const { dataInfo: oldDataInfo = {} } = this.props;
+        if (dataInfo.board_id && dataInfo.board_id != oldDataInfo.board_id) {
+            this.getMilestone(dataInfo.board_id)
         }
     }
 
     //获取项目里程碑列表
-    getMilestone = (id) => {
+    getMilestone = (id, callBackObject, milestoneId) => {
         getMilestoneList({ id }).then((res) => {
             console.log("res", res);
             if (isApiResponseOk(res)) {
                 this.setState({
                     milestoneList: res.data
+                }, () => {
+                    callBackObject && callBackObject.callBackFun(res.data, callBackObject.param);
                 });
+
             } else {
                 message.error(res.message)
             }
         })
     }
     //模糊查询
-    handleMenuReallySelect = (e) => {
-        this.setSelectKey(e, 'add')
+
+
+    handleMenuClick = (e) => {
+        const { selectedValue } = this.props;
+        const { key } = e;
+        if (selectedValue) {
+            if (selectedValue == key) {
+                this.setSelectKey(e, 'remove')
+            } else {
+                this.setSelectKey(e, 'update')
+            }
+
+        } else {
+            this.setSelectKey(e, 'add')
+        }
     }
-    handleMenuReallyDeselect(e) {
-        this.setSelectKey(e, 'remove')
-    }
+
     setSelectKey(e, type) {
-        const { key, selectedKeys ,item={}} = e
+        let { key, item = {} } = e;
         if (!key) {
             return false
         }
-        this.setState({
-            selectedKeys
-        }, () => {
-            const { listData = [], searchName } = this.props
-            const { keyWord } = this.state
-            this.setState({
-                resultArr: this.fuzzyQuery(listData, searchName, keyWord),
-            })
-        })
-        console.log(item);
-        const {props} = item;
-        const {info} = props;
-        this.props.onChangeMilestone && this.props.onChangeMilestone({ selectedKeys, key, type,info })
-    }
+        // this.setState({
+        //     selectedValue
+        // }, () => {
+        //     const { listData = [], searchName } = this.props
+        //     const { keyWord } = this.state
+        //     this.setState({
+        //         resultArr: this.fuzzyQuery(listData, searchName, keyWord),
+        //     })
+        // })
+        //console.log(item);
+        const { props } = item;
+        const { info } = props;
 
-    onCheck() {
-        if (this.props.onCheck && typeof this.props.onCheck === 'function') {
-            this.props.onCheck(this.state.selectedKeys)
-        }
+        this.props.onChangeMilestone && this.props.onChangeMilestone({ key, type, info })
     }
 
     fuzzyQuery = (list, searchName, keyWord) => {
@@ -121,55 +122,124 @@ export default class MilestoneAdd extends React.Component {
         });
     }
 
-    render() {
-        const { milestoneAddVisible, keyWord, resultArr, selectedKeys = [], milestoneList } = this.state
-        const { visible, children, Inputlaceholder = '搜索', searchName, menuSearchSingleSpinning, keyCode, rela_Condition, is_selected_all } = this.props
+    setAddLCBModalVisibile = (visible) => {
+        this.setState({
+            add_lcb_modal_visible: visible
+        });
+    }
 
+    // 创建里程碑
+    submitCreatMilestone = (data) => {
+        const { dispatch } = this.props
+        const { users, currentSelectedProject, due_time, add_name } = data
+        const params = {
+            board_id: currentSelectedProject,
+            deadline: due_time,
+            name: add_name,
+            users
+        }
+        createMilestone(params).then((res) => {
+            if (isApiResponseOk(res)) {
+                this.getMilestone(params.board_id, { callBackFun: this.getMilestoneListCallbackFun, param: res.data });
+                message.success("新建里程碑成功")
+            } else {
+                message.error(res.message)
+            }
+        });
+    }
+
+    getMilestoneListCallbackFun = (milestoneList, param) => {
+        const { selectedValue } = this.props;
+        const key = param;
+        let actionType = '';
+        if (selectedValue) {
+            if (selectedValue == key) {
+                actionType = 'remove';
+            } else {
+                actionType = 'update';
+            }
+        } else {
+            actionType = 'add';
+        }
+
+        const info = milestoneList.filter((item) => item.id == key)[0];
+        this.props.onChangeMilestone && this.props.onChangeMilestone({ key, type: actionType, info })
+    }
+
+    render() {
+        const { milestoneList, add_lcb_modal_visible = false } = this.state
+        const { visible, children, selectedValue, dataInfo = {} } = this.props
+        console.log(dataInfo);
         return (
             <div>
-                <div onClick={() => this.setMilestoneAddVisible(true)}>
-                    {children}
-                </div>
-                <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: 200, }}
-                    selectedKeys={selectedKeys}
-                    onDeselect={this.handleMenuReallyDeselect.bind(this)}
-                    onSelect={this.handleMenuReallySelect} multiple={false}
-                    visible={visible || milestoneAddVisible} >
 
-                    <div style={{ margin: '0 10px 10px 10px' }}>
-                        <Input placeholder={Inputlaceholder} value={keyWord} onChange={this.onChange.bind(this)} />
-                    </div>
-                    <Menu className={globalStyles.global_vertical_scrollbar} style={{ maxHeight: '248px', overflowY: 'auto' }}>
-                        <div style={{ padding: 0, margin: 0, height: 32, lineHeight: '32px', cursor: 'pointer' }}>
-                            <div style={{ display: 'flex', alignItems: 'center' }} >
-                                <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '&#xe70b;', marginRight: 4, color: 'rgb(73, 155, 230)', }}>
-                                    <Icon type={'plus-circle'} style={{ fontSize: 12, marginLeft: 10, color: 'rgb(73, 155, 230)' }} />
-                                </div>
-                                <span style={{ color: 'rgb(73, 155, 230)' }}>新建里程碑</span>
-                            </div>
-                        </div>
-                        {
-                            milestoneList.map((value, key) => {
-                                const {id,name,deadline } = value
-                                return (
-                                    <Menu.Item className={`${indexStyles.menuItem}`} style={{ height: '40px', lineHeight: '40px', margin: 0, padding: '0 12px' }}  key={id}  info={value}>
+                <Dropdown
+                    overlay={
+                        <div>
+                            <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: 200, }}
+                                selectedKeys={[selectedValue]}
+                                onClick={this.handleMenuClick}
+                                multiple={false}
+                                visible={true} >
 
-                                        <div className={indexStyles.menuItemDiv}>
-                                            <div style={{ display: 'flex', alignItems: 'center', textAlign: 'center' }} key={id}>
-                                                <div style={{ overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 90, marginRight: 8 }}>{name}</div>
+                                {/* <div style={{ margin: '0 10px 10px 10px' }}>
+                                    <Input placeholder={Inputlaceholder} value={keyWord} onChange={this.onChange.bind(this)} />
+                                </div> */}
+                                <Menu className={globalStyles.global_vertical_scrollbar} style={{ maxHeight: '248px', overflowY: 'auto' }}>
+                                    <div style={{ padding: 0, margin: 0, height: 32, lineHeight: '32px', cursor: 'pointer' }} onClick={() => this.setAddLCBModalVisibile(true)}>
+                                        <div style={{ display: 'flex', alignItems: 'center' }} >
+                                            <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, marginRight: 4, color: 'rgb(73, 155, 230)', }}>
+                                                <Icon type={'plus-circle'} style={{ fontSize: 12, marginLeft: 10, color: 'rgb(73, 155, 230)' }} />
                                             </div>
-                                            <div style={{ display: selectedKeys.indexOf(id) != -1 ? 'block' : 'none' }}>
-                                                <Icon type="check" />
-                                            </div>
+                                            <span style={{ color: 'rgb(73, 155, 230)' }}>新建里程碑</span>
                                         </div>
-                                    </Menu.Item>
-                                )
-                            })
-                        }
-                    </Menu>
-                </Menu>
+                                    </div>
+                                    {
+                                        milestoneList.map((value, key) => {
+                                            const { id, name, deadline } = value
+                                            return (
+                                                <Menu.Item className={!compareTwoTimestamp(deadline, dataInfo.due_time) ? `${indexStyles.menuItem} ${indexStyles.disabled} ` : `${indexStyles.menuItem}`}
+                                                    style={{ height: '40px', lineHeight: '40px', margin: 0, padding: '0 12px' }}
+                                                    key={id} info={value}
+                                                    disabled={!compareTwoTimestamp(deadline, dataInfo.due_time)}>
 
+                                                    <div className={indexStyles.menuItemDiv}>
+                                                        <div style={{ display: 'flex', alignItems: 'center', textAlign: 'center' }} key={id}>
+                                                            <div style={{ overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 90, marginRight: 8 }}>{name}</div>
+                                                        </div>
 
+                                                        <div style={{ display: selectedValue == id ? 'block' : 'none' }}>
+                                                            <Icon type="check" />
+                                                        </div>
+                                                        {!compareTwoTimestamp(deadline, dataInfo.due_time) &&
+                                                            <Tooltip title="当前任务的截止时间无法超出里程碑截止时间">
+                                                                <div className={indexStyles.menuItemTip}><Icon type="question-circle" /></div>
+                                                            </Tooltip>
+                                                        }
+
+                                                    </div>
+                                                </Menu.Item>
+                                            )
+                                        })
+                                    }
+                                </Menu>
+                            </Menu>
+                        </div>
+                    }
+                >
+                    <div >
+                        {children}
+                    </div>
+                </Dropdown>
+
+                <AddLCBModal
+                    current_selected_board={{ ...dataInfo, users: dataInfo.data }}
+                    board_id={dataInfo.board_id}
+                    add_lcb_modal_visible={add_lcb_modal_visible}
+                    setAddLCBModalVisibile={this.setAddLCBModalVisibile}
+                    submitCreatMilestone={this.submitCreatMilestone}
+                    zIndex={1007}
+                />
             </div>
 
         )
