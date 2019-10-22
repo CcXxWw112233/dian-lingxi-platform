@@ -384,7 +384,7 @@ export default class MainContent extends Component {
   
     const { dispatch,drawContent } = this.props;
     const { card_id, type, due_time } = drawContent
-    const { key,type:actionType,selectedKeys,info} = data;
+    const { key,type:actionType,info} = data;
     const id_time_arr = key.split('__')
     const id = id_time_arr[0]
     const deadline = id_time_arr[1]
@@ -406,16 +406,16 @@ export default class MainContent extends Component {
           ...params
         }
       });
+      
       drawContent['milestone_data'] = info;
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
-          drawContent: drawContent
+          drawContent: {...drawContent}
         }
       })
     }
     if(actionType ==='remove'){
-    
       const params = {
         rela_id: card_id,
         id,
@@ -430,12 +430,38 @@ export default class MainContent extends Component {
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
-          drawContent: drawContent
+          drawContent: {...drawContent}
         }
       })
     }
-  
 
+    if(actionType ==='update'){
+      const removeParams = {
+        rela_id: card_id,
+        id:drawContent['milestone_data'].id,
+      }
+
+      const addParams = {
+        rela_id: card_id,
+        id,
+        origin_type: type
+      }
+     
+      dispatch({
+        type: 'publicTaskDetailModal/updateMilestone',
+        payload: {
+          addParams,
+          removeParams
+        }
+      });
+      drawContent['milestone_data'] = info;
+      dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent: {...drawContent}
+        }
+      })
+    }
   }
 
   render() {
@@ -777,7 +803,7 @@ export default class MainContent extends Component {
               <div className={`${mainContentStyles.field_right}`}>
 
                 {/*加入里程碑组件*/}
-                <MilestoneAdd onChangeMilestone={this.onMilestoneSelectedChange} dataId={board_id}>
+                <MilestoneAdd onChangeMilestone={this.onMilestoneSelectedChange}  dataInfo={{board_id,due_time,org_id,data}} selectedValue={milestone_data &&milestone_data.id}>
                   <div className={`${mainContentStyles.pub_hover}`} >
                     {milestone_data && milestone_data.id
                       ? milestone_data.name

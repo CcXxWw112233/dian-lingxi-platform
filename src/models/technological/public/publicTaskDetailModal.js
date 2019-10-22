@@ -1,4 +1,4 @@
-import { getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask, deleteChirldTask,boardAppRelaMiletones,boardAppCancelRelaMiletones } from '../../../services/technological/task'
+import { getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask, deleteChirldTask, boardAppRelaMiletones, boardAppCancelRelaMiletones } from '../../../services/technological/task'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { currentNounPlanFilterName } from "../../../utils/businessFunction";
@@ -161,6 +161,21 @@ export default {
       let res = yield call(boardAppCancelRelaMiletones, payload)
       if (isApiResponseOk(res)) {
         message.success(`更新成功`, MESSAGE_DURATION_TIME)
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    //更新里程本
+    * updateMilestone({ payload }, { select, call, put }) {
+      const {removeParams,addParams} = payload;
+      let res = yield call(boardAppCancelRelaMiletones, removeParams)
+      if (isApiResponseOk(res)) {
+        let res2 = yield call(boardAppRelaMiletones, addParams)
+        if (isApiResponseOk(res2)) {
+          message.success(`更新成功`, MESSAGE_DURATION_TIME)
+        } else {
+          message.warn(res2.message, MESSAGE_DURATION_TIME)
+        }
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
