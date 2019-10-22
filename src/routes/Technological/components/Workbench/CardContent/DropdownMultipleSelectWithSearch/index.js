@@ -373,20 +373,20 @@ class DropdownMultipleSelectWithSearch extends Component {
           </div>
           <Dropdown
             // overlay={this.renderDropdownContent()}
-            // overlay={
-            //   !!board_id ? (
-            //     <MenuSearchPartner
-            //       invitationType='1'
-            //       invitationId={board_id}
-            //       listData={list}
-            //       keyCode={'user_id'}
-            //       searchName={'name'}
-            //       currentSelect={selectedList}
-            //       chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
-            //       board_id={board_id}
-            //       inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
-            //     />) : (<div></div>)
-            // }
+            overlay={
+              !!board_id ? (
+                <MenuSearchPartner
+                  invitationType='1'
+                  invitationId={board_id}
+                  listData={list}
+                  keyCode={'user_id'}
+                  searchName={'name'}
+                  currentSelect={selectedList}
+                  chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                  board_id={board_id}
+                  inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
+                />) : (<div></div>)
+            }
             visible={dropdownOptionVisible}
             onVisibleChange={this.handleDropdownVisibleChange}
           >
