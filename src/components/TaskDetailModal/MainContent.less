@@ -276,6 +276,41 @@
         transition: all 0.3s;
       }
 
+      .start_time, .due_time {
+        display: inline-block;
+        position: relative;
+        cursor: pointer;
+        &:hover {
+          background:rgba(0,0,0,0.04);
+          border-radius: 4px;
+        }
+        .userItemDeleBtn {
+          display          : none;
+          width            : 14px;
+          height           : 14px;
+          border-radius    : 4px;
+          position         : absolute;
+          background       : url(../../assets/workbench/close-circle@2x.png);
+          background-repeat: no-repeat;
+          background-size  : contain;
+          transition       : all 0.3s;
+          cursor: pointer;
+        }
+
+        .userItemDeleBtn:hover {
+          background       : url(../../assets/workbench/close-circle-active@2x.png);
+          background-repeat: no-repeat;
+          background-size  : contain;
+        }
+      }
+
+      .start_time:hover .timeDeleBtn, .due_time:hover .timeDeleBtn {
+        display   : inline-block;
+        top       : -4px;
+        right     : -4px;
+        transition: all 0.3s;
+      }
+
       .upload_file_btn {}
 
       .filelist_wrapper {

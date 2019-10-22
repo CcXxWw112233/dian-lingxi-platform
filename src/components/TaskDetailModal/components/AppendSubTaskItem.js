@@ -58,8 +58,9 @@ export default class AppendSubTaskItem extends Component {
   // 执行人下拉回调
   chirldrenTaskChargeChange = (dataInfo) => {
     let sub_executors = []
-    const { data = [], drawContent = {}, dispatch } = this.props
-    const { executors = [], card_id } = drawContent
+    const { data = [], drawContent = {}, dispatch, childTaskItemValue } = this.props
+    const { executors = [] } = drawContent
+    const { card_id } = childTaskItemValue
     const { selectedKeys = [], type, key } = dataInfo
     let new_data = [...data]
     let new_executors = [...executors]
@@ -278,6 +279,7 @@ export default class AppendSubTaskItem extends Component {
           {/* 时间 */}
           <div className={appendSubTaskStyles.due_time}>
             <span>{local_due_time || `09-19 05:30`}</span>
+            <span className={`${appendSubTaskStyles.userItemDeleBtn} ${appendSubTaskStyles.timeDeleBtn}`}></span>
           </div>
           {/* 执行人 */}
           <div>

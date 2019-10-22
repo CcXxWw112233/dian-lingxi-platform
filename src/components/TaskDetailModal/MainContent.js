@@ -609,7 +609,7 @@ export default class MainContent extends Component {
                                       const { avatar, name, user_name, user_id } = value
                                       return (
                                         <div style={{ display: 'flex', flexWrap: 'wrap', marginLeft: '-12px' }} key={user_id}>
-                                          <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 0', textAlign: 'center' }} key={user_id}>
+                                          <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 10px', textAlign: 'center' }} key={user_id}>
                                             {avatar ? (
                                               <img style={{ width: '24px', height: '24px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
                                             ) : (
@@ -647,31 +647,37 @@ export default class MainContent extends Component {
                   <div style={{ display: 'flex' }}>
                     <div style={{ position: 'relative' }}>
                       {/* {start_time && due_time ? ('') : (<span style={{ color: '#bfbfbf' }}>设置</span>)} */}
-                      <span className={`${mainContentStyles.pub_hover}`} style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                        {start_time ? timestampToTime(start_time, true) : '开始时间'}
-                        <DatePicker
-                          // disabledDate={this.disabledStartTime.bind(this)}
-                          // onChange={this.startDatePickerChange.bind(this)}
-                          // getCalendarContainer={triggerNode => triggerNode.parentNode}
-                          placeholder={'开始时间'}
-                          format="YYYY/MM/DD HH:mm"
-                          showTime={{ format: 'HH:mm' }}
-                          style={{ opacity: 0, background: '#000000', cursor: 'pointer', position: 'absolute', left: 0, zIndex: 1, width: 'auto' }} />
-                      </span>
+                      <div className={`${mainContentStyles.start_time}`}>
+                        <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
+                          {start_time ? timestampToTime(start_time, true) : '开始时间'}
+                          <DatePicker
+                            // disabledDate={this.disabledStartTime.bind(this)}
+                            // onChange={this.startDatePickerChange.bind(this)}
+                            // getCalendarContainer={triggerNode => triggerNode.parentNode}
+                            placeholder={'开始时间'}
+                            format="YYYY/MM/DD HH:mm"
+                            showTime={{ format: 'HH:mm' }}
+                            style={{ opacity: 0, background: '#000000', position: 'absolute', left: 0, width: 'auto' }} />
+                        </span>
+                        <span className={`${mainContentStyles.userItemDeleBtn} ${mainContentStyles.timeDeleBtn}`}></span>
+                      </div>
                       &nbsp;
                       <span style={{ color: '#bfbfbf' }}> ~ </span>
                       &nbsp;
-                      <span className={`${mainContentStyles.pub_hover}`} style={{ position: 'relative', minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                        {due_time ? timestampToTime(due_time, true) : '截止时间'}
-                        <DatePicker
-                          // disabledDate={this.disabledDueTime.bind(this)}
-                          // getCalendarContainer={triggerNode => triggerNode.parentNode}
-                          placeholder={'截止时间'}
-                          format="YYYY/MM/DD HH:mm"
-                          showTime={{ format: 'HH:mm' }}
-                          // onChange={this.endDatePickerChange.bind(this)}
-                          style={{ opacity: 0, cursor: 'pointer', background: '#000000', position: 'absolute', left: 0, zIndex: 1, width: 'auto' }} />
-                      </span>
+                      <div className={`${mainContentStyles.due_time}`}>
+                        <span style={{ position: 'relative', minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
+                          {due_time ? timestampToTime(due_time, true) : '截止时间'}
+                          <DatePicker
+                            // disabledDate={this.disabledDueTime.bind(this)}
+                            // getCalendarContainer={triggerNode => triggerNode.parentNode}
+                            placeholder={'截止时间'}
+                            format="YYYY/MM/DD HH:mm"
+                            showTime={{ format: 'HH:mm' }}
+                            // onChange={this.endDatePickerChange.bind(this)}
+                            style={{ opacity: 0, background: '#000000', position: 'absolute', left: 0, width: 'auto' }} />
+                        </span>
+                        <span className={`${mainContentStyles.userItemDeleBtn} ${mainContentStyles.timeDeleBtn}`}></span>
+                      </div>
                     </div>
                     <span style={{ position: 'relative' }}>
                       <InformRemind projectExecutors={executors} style={{ display: 'inline-block', minWidth: '72px', height: '38px', borderRadius: '4px', textAlign: 'center' }} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} />
