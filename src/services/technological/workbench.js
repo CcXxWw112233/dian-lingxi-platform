@@ -74,15 +74,15 @@ export async function updateUpdateLogStatus(id) {
   })
 }
 
-export async function associateUser(associate_param = '') {
-  const params = {
-    associate_param
-  }
+export async function associateUser(params) {
+  // const params = {
+  //   associate_param
+  // }
   return request({
     url: `${REQUEST_DOMAIN}/user/associate`,
     method: 'GET',
     params
-  })
+  }, { isNotLoading: true })
 }
 
 export async function createShareLink(data) {

@@ -2,7 +2,7 @@ import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 
 const Index = (props) => {
-    const { is_realize } = props
+    const { is_realize, styles = {} } = props
     const checkClick = (e) => {
         // e.stopPropagation()
     }
@@ -12,6 +12,7 @@ const Index = (props) => {
             onMouseDown={(e) => e.preventDefault()}
             onMouseMove={(e) => e.preventDefault()}
             onMouseOver={(e) => e.preventDefault()}
+            style={{...styles}}
             onClick={checkClick}>
                {
                    is_realize == '1'? (

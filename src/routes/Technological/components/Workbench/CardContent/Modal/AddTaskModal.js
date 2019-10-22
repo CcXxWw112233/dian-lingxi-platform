@@ -859,12 +859,14 @@ class AddTaskModal extends Component {
                     itemTitle={
                       taskType === 'RESPONSIBLE_TASK' ? '执行人' : '参与人'
                     }
+                    board_id={currentSelectedProject.board_id}
                     list={
                       currentSelectedProject.board_id && !isUseInGantt
                         ? currentSelectedProjectMembersList : isUseInGantt && projectMemberListWhenUseInGantt ? projectMemberListWhenUseInGantt : []
                     }
                     handleSelectedItemChange={this.handleSelectedItemChange}
                     currentSelectedProjectMember={currentSelectedProjectMember}
+                    dispatch={this.props.dispatch}
                   />
                 </div>
                 <div className={styles.confirmBtn}>

@@ -158,13 +158,13 @@ export async function archivedTask(data) {
 }
 
 // 改变任务类型
-export async function changeTaskType(data) {
+export async function changeTaskType(data, isNotLoading) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/card/change`,
     method: 'PUT',
     headers: createHeaderContentDataByCardId(data.card_id),
     data,
-  });
+  }, { isNotLoading });
 }
 
 // 新增子任务

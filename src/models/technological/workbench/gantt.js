@@ -40,6 +40,7 @@ export default {
       date_total: 0, //总天数
       group_rows: [], //每一个分组默认行数 [7, 7, 7]
       group_list_area: [], //分组高度区域 [组一行数 * ceiHeight，组二行数 * ceiHeight]
+      group_list_area_section_height: [], //分组高度区域总高度 [组一行数 * ceiHeight，(组一行数 + 组二行数) * ceiHeight， ...]
       isDragging: false, //甘特图是否在拖拽中
       target_scrollLeft: 0, //总体滚动条向左滑动位置
       target_scrollTop: 0, //总体滚动条偏离顶部滑动位置
@@ -72,7 +73,7 @@ export default {
             type: 'updateDatas',
             payload: {
               list_group: [],
-              group_rows: [5, 5, 5],
+              group_rows: [3, 3, 3], // [5, 5, 5]
             }
           })
         } else {
@@ -380,17 +381,24 @@ export default {
         }
         const list_height_arr = list_group[i]['list_data'].map(item => item.top)
         const list_group_item_height = Math.max.apply(null, list_height_arr) + 2 * ceiHeight - after_group_height
-        group_rows[i] = (list_group_item_height / ceiHeight) < 5 ? 5 : list_group_item_height / ceiHeight
+        group_rows[i] = (list_group_item_height / ceiHeight) < 3 ? 3 : list_group_item_height / ceiHeight // 原来是5，现在是1
         group_list_area[i] = group_rows[i] * ceiHeight
 
       }
+
+      const group_list_area_section_height = group_list_area.map((item, index) => {
+        return group_list_area.slice(0, index).reduce((a, b) => {
+          return a + b
+        }, group_list_area[0])
+      })
 
       yield put({
         type: 'updateDatas',
         payload: {
           group_list_area,
           group_rows,
-          list_group
+          list_group,
+          group_list_area_section_height
         }
       })
       // 设置滚动条的高度位置

@@ -136,7 +136,8 @@ export default {
           // }
 
         } else {
-          yield put(routerRedux.push('/noviceGuide'))
+          // yield put(routerRedux.push('/noviceGuide'))
+          yield put(routerRedux.push('/technological/simplemode/home')) //首次登录跳转极简模式
         }
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
