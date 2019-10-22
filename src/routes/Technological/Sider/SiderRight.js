@@ -19,7 +19,7 @@ import { NODE_ENV, IM_HTTP_PATH } from '../../../globalset/js/constant'
 // import GroupChat from './comonent/GroupChat'
 // import InitialChat from './comonent/InitialChat'
 import VideoMeetingPopoverContent from './comonent/videoMeetingPopoverContent/index'
-import LingxiIm from 'lingxi-im'
+// import LingxiIm from 'lingxi-im'
 
 let cx = classNames.bind(indexStyles);
 
