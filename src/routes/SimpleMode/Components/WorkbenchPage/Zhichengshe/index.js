@@ -27,7 +27,7 @@ export default class index extends React.Component {
     render() {
 
         const src_url = 'https://www.di-an.com/zhichengshe?simplemode?simplemode=true'
-        // const src_url = 'http://192.168.1.50:8002/zhichengshe?simplemode=true'
+        // const src_url = 'http://192.168.1.50:8001/zhichengshe?simplemode=true'
 
         const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
         let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : 0;

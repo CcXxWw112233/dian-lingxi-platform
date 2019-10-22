@@ -630,25 +630,25 @@ export default class TaskItem extends React.Component {
                     {/*任务负责人*/}
                     <div>
                       <Dropdown
-                        // overlay={
-                        //   <DCMenuItemOne
-                        //     execusorList={data}
-                        //     canNotRemoveItem={true}
-                        //     setList={this.setList.bind(this)}
-                        //     chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
-                        //   />}
                         overlay={
-                          <MenuSearchPartner
-                            invitationType='1'
-                            invitationId={board_id}
-                            listData={data}
-                            keyCode={'user_id'}
-                            searchName={'name'}
-                            currentSelect={selectedList}
-                            chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
-                            board_id={board_id}
-                            inviteOthersToBoardCalback={this.inviteOthersToBoardCalback} />
-                        }
+                          <DCMenuItemOne
+                            execusorList={data}
+                            canNotRemoveItem={true}
+                            setList={this.setList.bind(this)}
+                            chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
+                          />}
+                      // overlay={
+                      //   <MenuSearchPartner
+                      //     invitationType='1'
+                      //     invitationId={board_id}
+                      //     listData={data}
+                      //     keyCode={'user_id'}
+                      //     searchName={'name'}
+                      //     currentSelect={selectedList}
+                      //     chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                      //     board_id={board_id}
+                      //     inviteOthersToBoardCalback={this.inviteOthersToBoardCalback} />
+                      // }
                       >
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                           {selectedList.length ? (
