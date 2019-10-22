@@ -1,5 +1,5 @@
 import React from 'react'
-import { Input, Menu, Spin, Icon, message, Dropdown } from 'antd'
+import { Input, Menu, Spin, Icon, message, Dropdown, Tooltip } from 'antd'
 import indexStyles from './index.less'
 import { createMilestone, getMilestoneList } from '@/services/technological/prjectDetail'
 import { isApiResponseOk } from "@/utils/handleResponseData"
@@ -150,7 +150,7 @@ export default class MilestoneAdd extends React.Component {
 
     getMilestoneListCallbackFun = (milestoneList, param) => {
         const { selectedValue } = this.props;
-        const  key  = param;
+        const key = param;
         let actionType = '';
         if (selectedValue) {
             if (selectedValue == key) {
@@ -163,7 +163,7 @@ export default class MilestoneAdd extends React.Component {
         }
 
         const info = milestoneList.filter((item) => item.id == key)[0];
-        this.props.onChangeMilestone && this.props.onChangeMilestone({ key, type:actionType, info })
+        this.props.onChangeMilestone && this.props.onChangeMilestone({ key, type: actionType, info })
     }
 
     render() {
@@ -198,18 +198,25 @@ export default class MilestoneAdd extends React.Component {
                                         milestoneList.map((value, key) => {
                                             const { id, name, deadline } = value
                                             return (
-                                                <Menu.Item className={`${indexStyles.menuItem}`}
+                                                <Menu.Item className={!compareTwoTimestamp(deadline, dataInfo.due_time) ? `${indexStyles.menuItem} ${indexStyles.disabled} ` : `${indexStyles.menuItem}`}
                                                     style={{ height: '40px', lineHeight: '40px', margin: 0, padding: '0 12px' }}
                                                     key={id} info={value}
-                                                    selectable={compareTwoTimestamp(deadline, dataInfo.due_time)}>
+                                                    disabled={!compareTwoTimestamp(deadline, dataInfo.due_time)}>
 
                                                     <div className={indexStyles.menuItemDiv}>
                                                         <div style={{ display: 'flex', alignItems: 'center', textAlign: 'center' }} key={id}>
                                                             <div style={{ overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 90, marginRight: 8 }}>{name}</div>
                                                         </div>
+
                                                         <div style={{ display: selectedValue == id ? 'block' : 'none' }}>
                                                             <Icon type="check" />
                                                         </div>
+                                                        {!compareTwoTimestamp(deadline, dataInfo.due_time) &&
+                                                            <Tooltip title="当前任务的截止时间无法超出里程碑截止时间">
+                                                                <div className={indexStyles.menuItemTip}><Icon type="question-circle" /></div>
+                                                            </Tooltip>
+                                                        }
+
                                                     </div>
                                                 </Menu.Item>
                                             )
