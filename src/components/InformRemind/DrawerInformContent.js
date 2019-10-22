@@ -84,7 +84,7 @@ class DrawerInformContent extends Component {
         // 默认点击添加之后, 修改仓库的关联id`rela_id`以及事件类型, 并提供默认的选中提醒的触发器
         new_setInfoRemindList = new_setInfoRemindList.map(item => {
             let new_item = item
-            new_item = { ...new_item, rela_id: rela_id, rela_type: rela_type, remind_trigger: triggerList[0].type_code, remind_time_type: 'm', remind_time_value: '1' }
+            new_item = { ...new_item, rela_id: rela_id, rela_type: rela_type, remind_trigger: triggerList[0].type_code, remind_time_type: 'd', remind_time_value: '1' }
             return new_item
         })
 

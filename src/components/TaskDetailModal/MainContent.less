@@ -234,6 +234,11 @@
         // margin-left: 12px;
       }
 
+      // 第一个执行人样式
+      .first_pric .user_item:nth-child(1){
+        margin-left: 0 !important;
+      }
+
       // 每一个用户的样式
       .user_item {
         padding    : 2px 8px;
@@ -280,6 +285,9 @@
         display: inline-block;
         position: relative;
         cursor: pointer;
+        input {
+          cursor: pointer;
+        }
         &:hover {
           background:rgba(0,0,0,0.04);
           border-radius: 4px;

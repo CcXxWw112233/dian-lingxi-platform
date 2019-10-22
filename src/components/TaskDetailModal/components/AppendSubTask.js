@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Tooltip, Button, Dropdown } from 'antd'
+import { Tooltip, Button, Dropdown, DatePicker } from 'antd'
 // import NameChangeInput from '@/components/NameChangeInput'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import globalStyles from '@/globalset/css/globalClassName.less'
@@ -7,6 +7,8 @@ import appendSubTaskStyles from './appendSubTask.less'
 import AvatarList from '../AvatarList'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import AppendSubTaskItem from './AppendSubTaskItem'
+import { isApiResponseOk } from '../../../utils/handleResponseData'
+import { timestampToTimeNormal3, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal } from '@/utils/util'
 
 export default class AppendSubTask extends Component {
 
@@ -60,17 +62,25 @@ export default class AppendSubTask extends Component {
       due_time: due_time,
       card_name: inputValue,
     }
-    drawContent['child_data'] && drawContent['child_data'].unshift(obj)
-    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent, card_id})
-    dispatch({
-      type: 'publicTaskDetailModal/addChirldTask',
-      payload: {
-        ...obj
+    Promise.resolve(
+      dispatch({
+        type: 'publicTaskDetailModal/addChirldTask',
+        payload: {
+          ...obj
+        }
+      })
+    ).then(res => {
+      if (!isApiResponseOk(res)) {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+        return
       }
-    })
-    this.setState({
-      is_add_sub_task: false,
-      sub_executors: []
+      drawContent['child_data'] && drawContent['child_data'].unshift({...obj, card_id: res.data.id})
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent, card_id})
+      this.setState({
+        is_add_sub_task: false,
+        sub_executors: [],
+        due_time: null
+      })
     })
   }
 
@@ -115,7 +125,6 @@ export default class AppendSubTask extends Component {
     })
   }
 
-
   //子任务名称设置
   setchildTaskNameChange = (e) => {
     this.setState({
@@ -124,11 +133,41 @@ export default class AppendSubTask extends Component {
     })
   }
 
+  //截止时间
+  endDatePickerChange(timeString) {
+    const { drawContent = {}, childTaskItemValue, dispatch } = this.props
+    const { milestone_data = {}, card_id, board_id, list_id } = drawContent
+    const { milestone_deadline } = milestone_data
+    // const { card_id } = childTaskItemValue
+    // const milestone_deadline = (milestoneList.find((item => item.id == milestone_data.id)) || {}).deadline//关联里程碑的时间
+    const due_timeStamp = timeToTimestamp(timeString)
+
+    if (!compareTwoTimestamp(milestone_deadline, due_timeStamp)) {
+      message.warn('任务的截止日期不能大于关联里程碑的截止日期')
+      return
+    }
+    setTimeout(() => {
+      this.setState({
+        due_time: due_timeStamp
+      })
+    }, 500)
+  }
+
+  // 删除结束时间
+  handleDelDueTime = (e) => {
+    e && e.stopPropagation()
+    setTimeout(() => {
+      this.setState({
+        due_time: null
+      })
+    }, 500)
+  }
+
 
   render() {
     const { children, drawContent = {}, data, dispatch, handleTaskDetailChange } = this.props
     const { card_id, board_id, child_data = [] } = drawContent
-    const { is_add_sub_task, sub_executors = [], saveDisabled } = this.state
+    const { is_add_sub_task, sub_executors = [], saveDisabled, due_time } = this.state
     let executor = [{//任务执行人信息
       user_id: '',
       full_name: '',
@@ -137,7 +176,7 @@ export default class AppendSubTask extends Component {
 
     return (
       <div>
-        <div>
+        <div style={{marginBottom: '12px'}}>
           {
             !is_add_sub_task ? (
               <span onClick={ (e) => { this.addSubTask(e) } }>
@@ -159,11 +198,40 @@ export default class AppendSubTask extends Component {
                     style={{ width: '100%', display: 'block', fontSize: 14, color: '#262626', resize: 'none', height: '38px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none', outline: 'none', paddingLeft: '12px' }}
                     />
                   </span>
-                  <Tooltip title="截止时间">
-                    <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_icon}`}>&#xe686;</span>
-                  </Tooltip>
+                  <span>
+                    {
+                      due_time ? (
+                        <div className={appendSubTaskStyles.due_time}>
+                          <div>
+                            <span>{timestampToTimeNormal3(due_time, true)}</span>
+                            <span onClick={this.handleDelDueTime} className={`${ due_time && appendSubTaskStyles.timeDeleBtn}`}></span>
+                          </div>
+                          <DatePicker
+                            onChange={this.endDatePickerChange.bind(this)}
+                            placeholder={due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
+                            format="YYYY/MM/DD HH:mm"
+                            showTime={{ format: 'HH:mm' }}
+                            style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '12px', zIndex: 2 }} />
+                        </div>
+                      ) : (
+                        <Tooltip title="截止时间">
+                          <div className={`${appendSubTaskStyles.add_due_time}`}>
+                            <div>
+                              <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_icon}`}>&#xe686;</span>
+                            </div>
+                            <DatePicker
+                              onChange={this.endDatePickerChange.bind(this)}
+                              placeholder={due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
+                              format="YYYY/MM/DD HH:mm"
+                              showTime={{ format: 'HH:mm' }}
+                              style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '12px', zIndex: 2 }} />
+                          </div>
+                        </Tooltip>
+                      )
+                    }
+                  </span>
                   {/* 执行人部分 */}
-                  <span style={{position: 'relative'}}>
+                  <span style={{position: 'relative'}} className={appendSubTaskStyles.user_pr}>
                     <Dropdown overlayClassName={appendSubTaskStyles.overlay_sub_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
                       overlay={
                         <MenuSearchPartner
@@ -191,14 +259,14 @@ export default class AppendSubTask extends Component {
                                 />
                               )) :(
                                 <Tooltip title="执行人">
-                                  <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_icon}`}>&#xe7b2;</span>
+                                  <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_executor}`}>&#xe7b2;</span>
                                 </Tooltip>
                               )}
                             </AvatarList>
                           </div>
                         ) : (
                           <Tooltip title="执行人">
-                            <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_icon}`}>&#xe7b2;</span>
+                            <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_executor}`}>&#xe7b2;</span>
                           </Tooltip>
                         )
                       }

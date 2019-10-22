@@ -66,7 +66,7 @@ export default class index extends Component {
                       rela_id: '',
                       rela_type: '',
                       remind_trigger: '',
-                      remind_time_type: 'm',
+                      remind_time_type: 'd',
                       remind_time_value: '1',
                       message_consumers: [], 
                     }
@@ -75,7 +75,7 @@ export default class index extends Component {
                 triggerList: [], // 每个对应的选项的类型列表
                 is_add_remind: false, // 是否点击了添加操作 默认为false 没有点击
                 remind_trigger: '', // 提醒触发器类型
-                remind_time_type: 'm', // 提醒时间类型 m=分钟 h=小时 d=天 datetime=时间日期
+                remind_time_type: 'd', // 提醒时间类型 m=分钟 h=小时 d=天 datetime=时间日期
                 remind_time_value: '1', // 提醒时间值 如果是自定义时间传时间戳11位
                 remind_edit_type: 1, // 可编辑的类型
             }

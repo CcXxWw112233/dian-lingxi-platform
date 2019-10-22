@@ -10,7 +10,7 @@ import MilestoneAdd from '@/components/MilestoneAdd'
 import AppendSubTask from './components/AppendSubTask'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import InformRemind from '@/components/InformRemind'
-import { timestampFormat, timestampToTime, compareTwoTimestamp } from '@/utils/util'
+import { timestampFormat, timestampToTime, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal } from '@/utils/util'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN
 } from "@/globalset/js/constant";
@@ -63,18 +63,20 @@ export default class MainContent extends Component {
         }
       })
     ).then(res => {
-      if (isApiResponseOk(res)) {
-        let new_drawContent = { ...drawContent }
-        new_drawContent['is_realize'] = is_realize === '1' ? '0' : '1'
-        dispatch({
-          type: 'publicTaskDetailModal/updateDatas',
-          payload: {
-            drawContent: new_drawContent
-          }
-        })
-        // 需要调用父级的列表
-        this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+      if (!isApiResponseOk(res)) {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+        return
       }
+      let new_drawContent = { ...drawContent }
+      new_drawContent['is_realize'] = is_realize === '1' ? '0' : '1'
+      dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent: new_drawContent
+        }
+      })
+      // 需要调用父级的列表
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
     })
   }
   // 设置卡片是否完成 E
@@ -105,15 +107,17 @@ export default class MainContent extends Component {
       card_name: val,
       name: val
     }
-    updateTask({...updateObj}).then(res => {
+    Promise.resolve(
+      dispatch({
+        type: 'publicTaskDetailModal/updateTask',
+        payload: {
+          updateObj
+        }
+      })
+    ).then(res => {
       if (!isApiResponseOk(res)) {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
-      }
-      if (res.data && res.data.remind_code != '0') { //通知提醒专用
-        message.warn(`更新成功，${res.data.error_msg}`, MESSAGE_DURATION_TIME)
-      } else {
-        message.success('更新成功', MESSAGE_DURATION_TIME)
       }
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
@@ -124,7 +128,7 @@ export default class MainContent extends Component {
       })
       // 需要调用父级的列表
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
-    })    
+    })
   }
   // 设置标题文本失去焦点回调 E
 
@@ -338,24 +342,27 @@ export default class MainContent extends Component {
     //     updateObj
     //   }
     // })
-    updateTask({...updateObj}).then(res => {
+    Promise.resolve(
+      dispatch({
+        type: 'publicTaskDetailModal/updateTask',
+        payload: {
+          updateObj
+        }
+      })
+    ).then(res => {
       if (!isApiResponseOk(res)) {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      if (res.data && res.data.remind_code != '0') { //通知提醒专用
-        message.warn(`更新成功，${res.data.error_msg}`, MESSAGE_DURATION_TIME)
-      } else {
-        message.success('更新成功', MESSAGE_DURATION_TIME)
-      }
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
-          is_edit_title: false,
           drawContent,
         }
       })
-    })    
+      // 需要调用父级的列表
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
+    })  
   }
 
   showMemberName = (userId) => {
@@ -438,6 +445,190 @@ export default class MainContent extends Component {
 
   }
 
+  // 比较开始和结束时间
+  compareStartDueTime = (start_time, due_time) => {
+    if (!start_time || !due_time) {
+      return true
+    }
+    const newStartTime = start_time.toString().length > 10 ? Number(start_time) / 1000 : Number(start_time)
+    const newDueTime = due_time.toString().length > 10 ? Number(due_time) / 1000 : Number(due_time)
+    if (newStartTime >= newDueTime) {
+      return false
+    }
+    return true
+  }
+
+  // 禁用截止时间
+  disabledDueTime = (due_time) => {
+    const { drawContent = {} } = this.props
+    const { start_time } = drawContent
+    if (!start_time || !due_time) {
+      return false;
+    }
+    const newStartTime = start_time.toString().length > 10 ? Number(start_time).valueOf() / 1000 : Number(start_time).valueOf()
+    return Number(due_time.valueOf()) / 1000 < newStartTime;
+  }
+
+  // 禁用开始时间
+  disabledStartTime = (start_time) => {
+    const { drawContent = {} } = this.props
+    const { due_time } = drawContent
+    if (!start_time || !due_time) {
+      return false;
+    }
+    const newDueTime = due_time.toString().length > 10 ? Number(due_time).valueOf() / 1000 : Number(due_time).valueOf()
+    return Number(start_time.valueOf()) / 1000 >= newDueTime//Number(due_time).valueOf();
+  }
+
+  // 开始时间
+  startDatePickerChange(timeString) {
+    const { drawContent = {}, dispatch } = this.props
+    const start_timeStamp = timeToTimestamp(timeString)
+    const { card_id, due_time } = drawContent
+    const updateObj = {
+      card_id, start_time: start_timeStamp
+    }
+    if (!this.compareStartDueTime(start_timeStamp, due_time)) {
+      message.warn('开始时间不能大于结束时间')
+      return false
+    }
+    let new_drawContent = {...drawContent}
+    new_drawContent['start_time'] = start_timeStamp
+    Promise.resolve(
+      dispatch({
+        type: 'publicTaskDetailModal/updateTask',
+        payload: {
+          updateObj
+        }
+      })
+    ).then(res => {
+      if (!isApiResponseOk(res)) {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+        return
+      }
+      dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent: new_drawContent
+        }
+      })
+      // 需要调用父级的列表
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
+    })   
+  }
+
+  //截止时间
+  endDatePickerChange(timeString) {
+    const { drawContent = {}, milestoneList = [], dispatch } = this.props
+    const { card_id, start_time, milestone_data = {} } = drawContent
+    const { milestone_deadline } = milestone_data
+    // const milestone_deadline = (milestoneList.find((item => item.id == milestone_data.id)) || {}).deadline//关联里程碑的时间
+    const due_timeStamp = timeToTimestamp(timeString)
+    const updateObj = {
+      card_id, due_time: due_timeStamp
+    }
+    if (!this.compareStartDueTime(start_time, due_timeStamp)) {
+      message.warn('开始时间不能大于结束时间')
+      return false
+    }
+    if (!compareTwoTimestamp(milestone_deadline, due_timeStamp)) {
+      message.warn('任务的截止日期不能大于关联里程碑的截止日期')
+      return
+    }
+    let new_drawContent = {...drawContent}
+    new_drawContent['due_time'] = due_timeStamp
+    Promise.resolve(
+      dispatch({
+        type: 'publicTaskDetailModal/updateTask',
+        payload: {
+          updateObj
+        }
+      })
+    ).then(res => {
+      if (!isApiResponseOk(res)) {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+        return
+      }
+      dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent: new_drawContent
+        }
+      })
+      // 需要调用父级的列表
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
+    })
+  }
+
+  // 删除开始时间
+  handleDelStartTime = (e) => {
+    e && e.stopPropagation()
+    const { dispatch, drawContent = {} } = this.props
+    const { card_id, start_time } = drawContent
+    const updateObj = {
+      card_id, start_time: '0'
+    }
+    let new_drawContent = {...drawContent}
+    new_drawContent['start_time'] = null
+    Promise.resolve(
+      dispatch({
+        type: 'publicTaskDetailModal/updateTask',
+        payload: {
+          updateObj
+        }
+      })
+    ).then(res => {
+      if (!isApiResponseOk(res)) {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+        return
+      }
+      dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent: new_drawContent
+        }
+      })
+      // 需要调用父级的列表
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+    })
+
+  }
+
+  // 删除结束时间
+  handleDelDueTime = (e) => {
+    e && e.stopPropagation()
+    const { dispatch, drawContent = {} } = this.props
+    const { card_id, due_time } = drawContent
+    const updateObj = {
+      card_id, due_time: '0'
+    }
+    let new_drawContent = {...drawContent}
+    new_drawContent['due_time'] = null
+    if (!card_id) return false
+    Promise.resolve(
+      dispatch({
+        type: 'publicTaskDetailModal/updateTask',
+        payload: {
+          updateObj
+        }
+      })
+    ).then(res => {
+      if (!isApiResponseOk(res)) {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+        return
+      }
+      dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent: new_drawContent
+        }
+      })
+      // 需要调用父级的列表
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+    })
+
+  }
+
   render() {
     const { drawContent = {}, is_edit_title, projectDetailInfoData = {}, dispatch, handleTaskDetailChange } = this.props
     const { new_userInfo_data = [] } = this.state
@@ -455,7 +646,7 @@ export default class MainContent extends Component {
       description,
       milestone_data
     } = drawContent
-
+    
     // 状态
     const filedEdit = (
       <Menu onClick={this.handleFiledIsComplete} getPopupContainer={triggerNode => triggerNode.parentNode} selectedKeys={is_realize == '0' ? ['incomplete'] : ['complete']}>
@@ -608,7 +799,7 @@ export default class MainContent extends Component {
                                     {executors.map((value) => {
                                       const { avatar, name, user_name, user_id } = value
                                       return (
-                                        <div style={{ display: 'flex', flexWrap: 'wrap', marginLeft: '-12px' }} key={user_id}>
+                                        <div className={`${mainContentStyles.first_pric}`} style={{ display: 'flex', flexWrap: 'wrap', marginLeft: '-12px' }} key={user_id}>
                                           <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 10px', textAlign: 'center' }} key={user_id}>
                                             {avatar ? (
                                               <img style={{ width: '24px', height: '24px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
@@ -651,15 +842,16 @@ export default class MainContent extends Component {
                         <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
                           {start_time ? timestampToTime(start_time, true) : '开始时间'}
                           <DatePicker
-                            // disabledDate={this.disabledStartTime.bind(this)}
-                            // onChange={this.startDatePickerChange.bind(this)}
+                            disabledDate={this.disabledStartTime.bind(this)}
+                            // onOk={this.startDatePickerChange.bind(this)}
+                            onChange={this.startDatePickerChange.bind(this)}
                             // getCalendarContainer={triggerNode => triggerNode.parentNode}
-                            placeholder={'开始时间'}
+                            placeholder={start_time ? timestampToTimeNormal(start_time, '/', true) : '开始时间'}
                             format="YYYY/MM/DD HH:mm"
                             showTime={{ format: 'HH:mm' }}
                             style={{ opacity: 0, background: '#000000', position: 'absolute', left: 0, width: 'auto' }} />
                         </span>
-                        <span className={`${mainContentStyles.userItemDeleBtn} ${mainContentStyles.timeDeleBtn}`}></span>
+                        <span onClick={this.handleDelStartTime} className={`${mainContentStyles.userItemDeleBtn} ${ start_time && mainContentStyles.timeDeleBtn}`}></span>
                       </div>
                       &nbsp;
                       <span style={{ color: '#bfbfbf' }}> ~ </span>
@@ -668,15 +860,16 @@ export default class MainContent extends Component {
                         <span style={{ position: 'relative', minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
                           {due_time ? timestampToTime(due_time, true) : '截止时间'}
                           <DatePicker
-                            // disabledDate={this.disabledDueTime.bind(this)}
+                            disabledDate={this.disabledDueTime.bind(this)}
                             // getCalendarContainer={triggerNode => triggerNode.parentNode}
-                            placeholder={'截止时间'}
+                            placeholder={due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
                             format="YYYY/MM/DD HH:mm"
                             showTime={{ format: 'HH:mm' }}
-                            // onChange={this.endDatePickerChange.bind(this)}
+                            // onOk={this.endDatePickerChange.bind(this)}
+                            onChange={this.endDatePickerChange.bind(this)}
                             style={{ opacity: 0, background: '#000000', position: 'absolute', left: 0, width: 'auto' }} />
                         </span>
-                        <span className={`${mainContentStyles.userItemDeleBtn} ${mainContentStyles.timeDeleBtn}`}></span>
+                        <span onClick={this.handleDelDueTime} className={`${mainContentStyles.userItemDeleBtn} ${ due_time && mainContentStyles.timeDeleBtn}`}></span>
                       </div>
                     </div>
                     <span style={{ position: 'relative' }}>

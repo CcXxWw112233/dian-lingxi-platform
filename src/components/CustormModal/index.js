@@ -61,7 +61,7 @@ class CustormModal extends React.Component {
     const { siderRightWidth } = this.state
     const clientHeight = document.documentElement.clientHeight//获取页面可见高度
     const clientWidth = document.documentElement.clientWidth + 16 - siderRightWidth//获取页面可见高度
-    const layoutClientWidth = document.getElementById('technologicalLayoutWrapper').clientWidth + 16
+    const layoutClientWidth = document.getElementById('technologicalLayoutWrapper') && document.getElementById('technologicalLayoutWrapper').clientWidth + 16
     this.setState({
       clientHeight,
       clientWidth,

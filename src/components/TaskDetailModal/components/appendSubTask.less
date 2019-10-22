@@ -1,19 +1,43 @@
-.sub_icon {
-  font-size: 16px;
-  font-weight: 900;
-  color: rgba(0, 0, 0, 0.45);
+// 添加时间的样式
+.add_due_time {
+  position: relative;
+  cursor: pointer;
+  .sub_icon {
+    font-size: 16px;
+    font-weight: 900;
+    color: rgba(0, 0, 0, 0.45);
+    cursor: pointer;
+    display: inline-block;
+    min-width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    margin-left: 4px;
+  }
+  input {
+    cursor: pointer;
+  }
+}
+
+.add_due_time:hover .sub_icon {
+  color: #40A9FF;
+  background:rgba(230,247,255,1);
+  border-radius:4px;
+}
+
+.user_pr {
+  position: relative;
   cursor: pointer;
   display: inline-block;
-  min-width: 20px;
-  height: 20px;
-  line-height: 20px;
-  text-align: center;
-  margin-left: 4px;
-  &:hover {
-    background:rgba(230,247,255,1);
-    border-radius:4px;
-    color: #40A9FF;
-  }
+  // vertical-align: middle;
+  line-height: 16px;
+  border-radius:4px;
+  margin-left: 12px;
+}
+
+.user_pr:hover .sub_executor {
+  color: #40A9FF;
+  background:rgba(230,247,255,1);
 }
 
 .cancel {
@@ -125,18 +149,50 @@
       border-radius: 4px;
     }
   }
-  .due_time {
-    min-width:106px;
-    // height:38px;
-    border-radius:4px;
-    text-align: center;
-    // padding: 8px 12px;
-    box-sizing: border-box;
-    margin-right: 12px;
-    color: rgba(0,0,0,0.45);
-    &:hover {
-      background:rgba(0,0,0,0.04);
-    }
+}
+
+// 设置时间的样式
+.due_time {
+  min-width:80px;
+  position: relative;
+  padding: 0 12px;
+  box-sizing: border-box;
+  // height:38px;
+  border-radius:4px;
+  text-align: center;
+  // padding: 8px 12px;
+  box-sizing: border-box;
+  margin-right: 12px;
+  color: rgba(0,0,0,0.45);
+  &:hover {
+    background:rgba(0,0,0,0.04);
   }
+  .timeDeleBtn {
+    display          : none;
+    width            : 14px;
+    height           : 14px;
+    border-radius    : 4px;
+    position         : absolute;
+    background       : url(../../../assets/workbench/close-circle@2x.png);
+    background-repeat: no-repeat;
+    background-size  : contain;
+    transition       : all 0.3s;
+    cursor: pointer;
+  }
+
+  .timeDeleBtn:hover {
+    background       : url(../../../assets/workbench/close-circle-active@2x.png);
+    background-repeat: no-repeat;
+    background-size  : contain;
+  }
+  input {
+    cursor: pointer;
+  }
+}
+.due_time:hover .timeDeleBtn {
+  display   : inline-block;
+  top       : -4px;
+  right     : -4px;
+  transition: all 0.3s;
 }
 

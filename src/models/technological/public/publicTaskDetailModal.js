@@ -95,6 +95,7 @@ export default {
       } else {
         message.error(res.message, MESSAGE_DURATION_TIME)
       }
+      return res || {}
     },
     // 添加任务执行人
     * addTaskExecutor({ payload }, { call, put }) {
@@ -136,6 +137,7 @@ export default {
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
+      return res || {}
     },
     // 删除子任务
     * deleteChirldTask({ payload }, { select, call, put }) { //
@@ -146,6 +148,7 @@ export default {
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
+      return res || {}
     },
     // 加入里程碑
     * joinMilestone({ payload }, { select, call, put }) {

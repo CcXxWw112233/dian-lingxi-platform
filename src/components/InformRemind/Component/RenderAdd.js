@@ -231,7 +231,7 @@ export default class RenderAdd extends Component {
         setInfoRemindList: new_info_list,
         is_add_remind: false,
         remind_trigger: triggerList[0].type_code,
-        remind_time_type: 'm',
+        remind_time_type: 'd',
         remind_time_value: '1',
         remind_edit_type: triggerList[0].remind_edit_type
       }
@@ -250,7 +250,7 @@ export default class RenderAdd extends Component {
     var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
     var Y, M, D, H, MIN;
     Y = date.getFullYear();
-    M = date.getMonth() < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
+    M = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
     D = date.getDate() + 1 < 10 ? '0' + date.getDate() : date.getDate();
     H = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
     MIN = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
@@ -419,7 +419,7 @@ export default class RenderAdd extends Component {
           {
             remind_edit_type == 1 && (
               <Select
-                defaultValue={remind_time_type == 'datetime' ? 'm' : remind_time_type}
+                defaultValue={remind_time_type == 'datetime' ? 'd' : remind_time_type}
                 style={{ width: 122, height: 32, marginRight: 16 }}>
                 {
                   diff_text_term.map(childItem => {
