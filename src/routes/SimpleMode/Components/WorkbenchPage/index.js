@@ -7,6 +7,7 @@ import BoardFiles from './BoardFiles/index'
 import BoardPlan from './BoardPlan/index'
 import InvestmentMaps from './InvestmentMaps/index'
 import XczNews from './XczNews/index'
+import Zhichengshe from './Zhichengshe/index'
 
 class WorkbenchPage extends Component {
     constructor(props) {
@@ -18,6 +19,7 @@ class WorkbenchPage extends Component {
             BoardFilesVisible: false,
             InvestmentMapsVisible: false,
             XczNewsVisible: false,
+            ZhichengsheVisible: false,
         }
     }
     componentWillMount() {
@@ -80,6 +82,7 @@ class WorkbenchPage extends Component {
                         BoardPlanVisible: false,
                         InvestmentMapsVisible: false,
                         XczNewsVisible: false,
+                        ZhichengsheVisible: false,
                     });
                 }
                     break;
@@ -90,6 +93,7 @@ class WorkbenchPage extends Component {
                         BoardPlanVisible: true,
                         InvestmentMapsVisible: false,
                         XczNewsVisible: false,
+                        ZhichengsheVisible: false,
                     });
                 }
                     break;
@@ -100,6 +104,7 @@ class WorkbenchPage extends Component {
                         BoardPlanVisible: false,
                         InvestmentMapsVisible: false,
                         XczNewsVisible: false,
+                        ZhichengsheVisible: false,
                     });
                     const width = document.body.scrollWidth;
                     let workbenchBoxContentWapperModalStyle = { width: (width - 372) + 'px' }
@@ -119,6 +124,7 @@ class WorkbenchPage extends Component {
                         BoardPlanVisible: false,
                         InvestmentMapsVisible: false,
                         XczNewsVisible: false,
+                        ZhichengsheVisible: false,
                     });
                 }
                     break;
@@ -129,6 +135,7 @@ class WorkbenchPage extends Component {
                         BoardPlanVisible: false,
                         InvestmentMapsVisible: true,
                         XczNewsVisible: false,
+                        ZhichengsheVisible: false,
                     })
                 }
                     break;
@@ -139,6 +146,18 @@ class WorkbenchPage extends Component {
                         BoardPlanVisible: false,
                         InvestmentMapsVisible: false,
                         XczNewsVisible: true,
+                        ZhichengsheVisible: false,
+                    });
+                }
+                    break;
+                case 'cases': {
+                    this.setState({
+                        BoardCommunicationVisible: false,
+                        BoardFilesVisible: false,
+                        BoardPlanVisible: false,
+                        InvestmentMapsVisible: false,
+                        XczNewsVisible: false,
+                        ZhichengsheVisible: true,
                     });
                 }
                     break;
@@ -149,6 +168,7 @@ class WorkbenchPage extends Component {
                         BoardPlanVisible: false,
                         InvestmentMapsVisible: false,
                         XczNewsVisible: false,
+                        ZhichengsheVisible: false,
                     });
                 }
 
@@ -190,7 +210,10 @@ class WorkbenchPage extends Component {
 
                         {
                             this.state.XczNewsVisible &&
-                            <XczNews {...this.props}/>
+                            <XczNews {...this.props} />
+                        }
+                        {
+                            this.state.ZhichengsheVisible && <Zhichengshe {...this.props} />
                         }
 
                     </div>
