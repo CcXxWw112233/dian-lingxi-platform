@@ -655,6 +655,35 @@ export default class MainContent extends Component {
 
   }
 
+  // 会议的状态值, 比较当前时间和开始时间结束时间的对比
+  getMeetingStatus = () => {
+    let meetingField
+    meetingField = (<span></span>)
+    const { drawContent = {} } = this.props
+    const { start_time, due_time, type } = drawContent
+    if (type == '0' || !start_time || !due_time) return
+    let timeString
+    timeString = new Date().getTime().toString()
+    if (timeString.length == 13) { // 表示是13位的时间戳
+      timeString = parseInt(timeString / 1000)
+    }
+    if (compareTwoTimestamp(timeString, start_time)) { // 如果说当前时间大于开始时间表示进行中
+      meetingField = (
+        <span style={{display: 'inline-block', width: '58px', height: '26px', background: '#FFE7BA', borderRadius: '4px', lineHeight: '26px', textAlign: 'center', color: '#FA8C16'}}>{'进行中'}</span>
+      )
+      if (compareTwoTimestamp(timeString, due_time)) { // 如果说当前时间大于截止时间表示已完成
+        meetingField = (
+          <span style={{display: 'inline-block', width: '58px', height: '26px', background: '#D0EFB4', borderRadius: '4px', lineHeight: '26px', textAlign: 'center', color: '#389E0D'}}>{'已完成'}</span>
+        )
+      }
+    } else { // 表示未开始
+      meetingField = (
+        <span style={{display: 'inline-block', width: '58px', height: '26px', background: '#D4F1FF', borderRadius: '4px', lineHeight: '26px', textAlign: 'center', color: '#1890FF'}}>{'未开始'}</span>
+      )
+    }
+    return meetingField
+  }
+
   render() {
     const { drawContent = {}, is_edit_title, projectDetailInfoData = {}, dispatch, handleTaskDetailChange } = this.props
     const { new_userInfo_data = [] } = this.state
@@ -727,7 +756,9 @@ export default class MainContent extends Component {
               }
               {
                 !is_edit_title ? (
-                  <div onClick={this.setTitleEdit} className={`${mainContentStyles.card_name} ${mainContentStyles.pub_hover}`}>{card_name}</div>
+                  <div onClick={this.setTitleEdit} className={`${mainContentStyles.card_name} ${mainContentStyles.pub_hover}`}>
+                    <span style={{wordBreak: 'break-all'}}>{card_name}</span>
+                  </div>
                 ) : (
                     <NameChangeInput
                       autosize
@@ -756,22 +787,38 @@ export default class MainContent extends Component {
                   <span>状态</span>
                 </div>
                 {
-                  (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                  type == '0' ? (
+                    <>
+                      {
+                        (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                          <div className={`${mainContentStyles.field_right}`}>
+                            <div className={`${mainContentStyles.pub_hover}`}>
+                              <span className={is_realize == '0' ? mainContentStyles.incomplete : mainContentStyles.complete}>{is_realize == '0' ? '未完成' : '已完成'}</span>
+                            </div>
+                          </div>
+                        ) : (
+                            <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_item} overlay={filedEdit} getPopupContainer={triggerNode => triggerNode.parentNode}>
+                              <div className={`${mainContentStyles.field_right}`}>
+                                <div className={`${mainContentStyles.pub_hover}`}>
+                                  <span className={is_realize == '0' ? mainContentStyles.incomplete : mainContentStyles.complete}>{is_realize == '0' ? '未完成' : '已完成'}</span>
+                                </div>
+                              </div>
+                            </Dropdown>
+                          )
+                      }
+                    </>
+                  ) : (
                     <div className={`${mainContentStyles.field_right}`}>
                       <div className={`${mainContentStyles.pub_hover}`}>
-                        <span className={is_realize == '0' ? mainContentStyles.incomplete : mainContentStyles.complete}>{is_realize == '0' ? '未完成' : '已完成'}</span>
+                        {
+                          this.getMeetingStatus && this.getMeetingStatus()
+                        }
+                        {/* <span className={mainContentStyles.incomplete}>{'未完成'}</span> */}
                       </div>
                     </div>
-                  ) : (
-                      <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_item} overlay={filedEdit} getPopupContainer={triggerNode => triggerNode.parentNode}>
-                        <div className={`${mainContentStyles.field_right}`}>
-                          <div className={`${mainContentStyles.pub_hover}`}>
-                            <span className={is_realize == '0' ? mainContentStyles.incomplete : mainContentStyles.complete}>{is_realize == '0' ? '未完成' : '已完成'}</span>
-                          </div>
-                        </div>
-                      </Dropdown>
-                    )
+                  )
                 }
+                
               </div>
             </div>
             {/* 这个中间放置负责人, 如果存在, 则在两者之间 */}
@@ -783,11 +830,37 @@ export default class MainContent extends Component {
                 </div>
                 {
                   (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
-                    <div className={`${mainContentStyles.field_right}`}>
-                      <div className={`${mainContentStyles.pub_hover}`}>
-                        <span>暂无</span>
-                      </div>
-                    </div>
+                    (
+                      !executors.length ? (
+                        <div className={`${mainContentStyles.field_right}`}>
+                          <div className={`${mainContentStyles.pub_hover}`}>
+                            <span>暂无</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div style={{ display: 'flex', flexWrap: 'wrap' }} className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
+                          {executors.map((value) => {
+                            const { avatar, name, user_name, user_id } = value
+                            return (
+                              <div className={`${mainContentStyles.first_pric}`} style={{ display: 'flex', flexWrap: 'wrap', marginLeft: '-12px' }} key={user_id}>
+                                <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 10px', textAlign: 'center' }} key={user_id}>
+                                  {avatar ? (
+                                    <img style={{ width: '24px', height: '24px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
+                                  ) : (
+                                      <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
+                                        <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
+                                      </div>
+                                    )}
+                                  <div style={{ marginRight: 8, fontSize: '14px' }}>{name || user_name || '佚名'}</div>
+                                  {/* <span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${mainContentStyles.userItemDeleBtn}`}></span> */}
+                                </div>
+
+                              </div>
+                            )
+                          })}
+                        </div>
+                      )
+                    )
                   ) : (
                       <span style={{ flex: '1' }}>
                         {
@@ -864,44 +937,77 @@ export default class MainContent extends Component {
                 <div className={`${mainContentStyles.field_right}`}>
                   <div style={{ display: 'flex' }}>
                     <div style={{ position: 'relative' }}>
-                      {/* {start_time && due_time ? ('') : (<span style={{ color: '#bfbfbf' }}>设置</span>)} */}
-                      <div className={`${mainContentStyles.start_time}`}>
-                        <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                          {start_time ? timestampToTime(start_time, true) : '开始时间'}
-                          <DatePicker
-                            disabledDate={this.disabledStartTime.bind(this)}
-                            // onOk={this.startDatePickerChange.bind(this)}
-                            onChange={this.startDatePickerChange.bind(this)}
-                            // getCalendarContainer={triggerNode => triggerNode.parentNode}
-                            placeholder={start_time ? timestampToTimeNormal(start_time, '/', true) : '开始时间'}
-                            format="YYYY/MM/DD HH:mm"
-                            showTime={{ format: 'HH:mm' }}
-                            style={{ opacity: 0, background: '#000000', position: 'absolute', left: 0, width: 'auto' }} />
-                        </span>
-                        <span onClick={this.handleDelStartTime} className={`${mainContentStyles.userItemDeleBtn} ${ start_time && mainContentStyles.timeDeleBtn}`}></span>
-                      </div>
+                      {/* 开始时间 */}
+                      {
+                        (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                          (
+                            <div className={`${mainContentStyles.start_time}`}>
+                              <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
+                                {start_time ? timestampToTime(start_time, true) : '暂无'}
+                              </span>
+                            </div>
+                          )
+                        ) : (
+                          <div className={`${mainContentStyles.start_time}`}>
+                            <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
+                              {start_time ? timestampToTime(start_time, true) : '开始时间'}
+                              <DatePicker
+                                disabledDate={this.disabledStartTime.bind(this)}
+                                // onOk={this.startDatePickerChange.bind(this)}
+                                onChange={this.startDatePickerChange.bind(this)}
+                                // getCalendarContainer={triggerNode => triggerNode.parentNode}
+                                placeholder={start_time ? timestampToTimeNormal(start_time, '/', true) : '开始时间'}
+                                format="YYYY/MM/DD HH:mm"
+                                showTime={{ format: 'HH:mm' }}
+                                style={{ opacity: 0, background: '#000000', position: 'absolute', left: 0, width: 'auto' }} />
+                            </span>
+                            <span onClick={this.handleDelStartTime} className={`${mainContentStyles.userItemDeleBtn} ${ start_time && mainContentStyles.timeDeleBtn}`}></span>
+                          </div>
+                        )
+                      }
                       &nbsp;
                       <span style={{ color: '#bfbfbf' }}> ~ </span>
                       &nbsp;
-                      <div className={`${mainContentStyles.due_time}`}>
-                        <span style={{ position: 'relative', minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                          {due_time ? timestampToTime(due_time, true) : '截止时间'}
-                          <DatePicker
-                            disabledDate={this.disabledDueTime.bind(this)}
-                            // getCalendarContainer={triggerNode => triggerNode.parentNode}
-                            placeholder={due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
-                            format="YYYY/MM/DD HH:mm"
-                            showTime={{ format: 'HH:mm' }}
-                            // onOk={this.endDatePickerChange.bind(this)}
-                            onChange={this.endDatePickerChange.bind(this)}
-                            style={{ opacity: 0, background: '#000000', position: 'absolute', left: 0, width: 'auto' }} />
-                        </span>
-                        <span onClick={this.handleDelDueTime} className={`${mainContentStyles.userItemDeleBtn} ${ due_time && mainContentStyles.timeDeleBtn}`}></span>
-                      </div>
+                      {/* 截止时间 */}
+                      {
+                        (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                          (
+                            <div className={`${mainContentStyles.due_time}`}>
+                              <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
+                                {due_time ? timestampToTime(due_time, true) : '暂无'}
+                              </span>
+                            </div>
+                          )
+                        ) : (
+                          <div className={`${mainContentStyles.due_time}`}>
+                            <span style={{ position: 'relative', minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
+                              {due_time ? timestampToTime(due_time, true) : '截止时间'}
+                              <DatePicker
+                                disabledDate={this.disabledDueTime.bind(this)}
+                                // getCalendarContainer={triggerNode => triggerNode.parentNode}
+                                placeholder={due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
+                                format="YYYY/MM/DD HH:mm"
+                                showTime={{ format: 'HH:mm' }}
+                                // onOk={this.endDatePickerChange.bind(this)}
+                                onChange={this.endDatePickerChange.bind(this)}
+                                style={{ opacity: 0, background: '#000000', position: 'absolute', left: 0, width: 'auto' }} />
+                            </span>
+                            <span onClick={this.handleDelDueTime} className={`${mainContentStyles.userItemDeleBtn} ${ due_time && mainContentStyles.timeDeleBtn}`}></span>
+                          </div>
+                        )
+                      }
                     </div>
-                    <span style={{ position: 'relative' }}>
-                      <InformRemind projectExecutors={executors} style={{ display: 'inline-block', minWidth: '72px', height: '38px', borderRadius: '4px', textAlign: 'center' }} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} />
-                    </span>
+                    {/* 通知提醒 */}
+                    {
+                      (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                        ''
+                      ) : (
+                        <span style={{ position: 'relative' }}>
+                          <InformRemind projectExecutors={executors} style={{ display: 'inline-block', minWidth: '72px', height: '38px', borderRadius: '4px', textAlign: 'center' }} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} />
+                        </span>
+                      )
+                    }
+                    
                   </div>
                 </div>
               </div>
@@ -932,17 +1038,25 @@ export default class MainContent extends Component {
               </div>
               <div className={`${mainContentStyles.field_right}`}>
                 {/* 上传附件组件 */}
-                <div className={`${mainContentStyles.pub_hover}`}>
-                  {
-                    card_id &&
-                    <UploadAttachment projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
-                      onFileListChange={this.onUploadFileListChange}>
-                      <div className={mainContentStyles.upload_file_btn}>
-                        <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fa;</span> 上传附件
+                {
+                  (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                    <div className={`${mainContentStyles.pub_hover}`}>
+                      <span>暂无</span>
                     </div>
-                    </UploadAttachment>
-                  }
-                </div>
+                  ) : (
+                    <div className={`${mainContentStyles.pub_hover}`}>
+                      {
+                        card_id &&
+                        <UploadAttachment projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
+                          onFileListChange={this.onUploadFileListChange}>
+                          <div className={mainContentStyles.upload_file_btn}>
+                            <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fa;</span> 上传附件
+                        </div>
+                        </UploadAttachment>
+                      }
+                    </div>
+                  )
+                }
                 <div className={mainContentStyles.filelist_wrapper}>
                   {
                     drawContent.attachment_data && drawContent.attachment_data.map((fileInfo) => {
@@ -968,20 +1082,35 @@ export default class MainContent extends Component {
                 <span>备注</span>
               </div>
               <div className={`${mainContentStyles.field_right}`}>
-
-                {/*富文本*/}
-                <RichTextEditor saveBrafitEdit={this.saveBrafitEdit} value={description}>
-                  <div className={`${mainContentStyles.pub_hover}`} >
-                    {
-                      description ?
-                        <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: description }}></div>
-                        :
-                        '添加备注'
-                    }
-
-                  </div>
-                </RichTextEditor>
-
+                {
+                  (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                    (
+                      !description ? (
+                        <div className={`${mainContentStyles.pub_hover}`}>
+                          <span>暂无</span>
+                        </div>
+                      ) : (
+                        <div className={`${mainContentStyles.pub_hover}`} >
+                         <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: description }}></div>
+                        </div>
+                      )
+                    )
+                  ) : (
+                    // 富文本组件
+                    <>
+                      <RichTextEditor saveBrafitEdit={this.saveBrafitEdit} value={description}>
+                        <div className={`${mainContentStyles.pub_hover}`} >
+                          {
+                            description ?
+                              <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: description }}></div>
+                              :
+                              '添加备注'
+                          }
+                        </div>
+                      </RichTextEditor>
+                    </>
+                  )
+                }
               </div>
             </div>
           </div>
@@ -995,17 +1124,34 @@ export default class MainContent extends Component {
                 <span>里程碑</span>
               </div>
               <div className={`${mainContentStyles.field_right}`}>
-
+                {
+                  (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                    (
+                      !milestone_data && !(milestone_data && milestone_data.id) ? (
+                        <div className={`${mainContentStyles.pub_hover}`}>
+                          <span>暂无</span>
+                        </div>
+                      ) : (
+                        <div className={`${mainContentStyles.pub_hover}`} >
+                          {milestone_data.name}
+                        </div>
+                      )
+                    )
+                  ) : (
+                    // 加入里程碑组件
+                    <MilestoneAdd onChangeMilestone={this.onMilestoneSelectedChange}  dataInfo={{board_id,board_name,due_time,org_id,data}} selectedValue={milestone_data &&milestone_data.id}>
+                      <div className={`${mainContentStyles.pub_hover}`} >
+                        {milestone_data && milestone_data.id
+                          ? milestone_data.name
+                          :
+                          '加入里程碑'
+                        }
+                      </div>
+                    </MilestoneAdd>
+                  )
+                }
                 {/*加入里程碑组件*/}
-                <MilestoneAdd onChangeMilestone={this.onMilestoneSelectedChange}  dataInfo={{board_id,board_name,due_time,org_id,data}} selectedValue={milestone_data &&milestone_data.id}>
-                  <div className={`${mainContentStyles.pub_hover}`} >
-                    {milestone_data && milestone_data.id
-                      ? milestone_data.name
-                      :
-                      '加入里程碑'
-                    }
-                  </div>
-                </MilestoneAdd>
+                
 
               </div>
             </div>
