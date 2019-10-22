@@ -126,7 +126,7 @@ export default class MenuSearchPartner extends React.Component {
                     rela_condition: rela_Condition,
                 }).then(res => {
                     if (isApiResponseOk(res)) {
-                        this.props.inviteOthersToBoardCalback({ users })
+                        this.props.inviteOthersToBoardCalback && this.props.inviteOthersToBoardCalback({ users })
                         if (invitationType === '4') {
                             dispatch({
                                 type: 'projectDetail/projectDetailInfo',
@@ -208,7 +208,7 @@ export default class MenuSearchPartner extends React.Component {
     }
     render() {
         const { keyWord, resultArr, selectedKeys = [] } = this.state
-        const { Inputlaceholder = '搜索', searchName, menuSearchSingleSpinning, keyCode, invitationType, invitationId, rela_Condition, } = this.props
+        const { Inputlaceholder = '搜索', searchName, menuSearchSingleSpinning, keyCode, invitationType, invitationId, rela_Condition, invitationOrg } = this.props
 
         return (
             <div>
@@ -263,7 +263,7 @@ export default class MenuSearchPartner extends React.Component {
                     invitationType={invitationType}
                     invitationId={invitationId}
                     rela_Condition={rela_Condition}
-                    invitationOrg={localStorage.getItem('OrganizationId')}
+                    invitationOrg={invitationOrg}
                     modalVisible={this.state.ShowAddMenberModalVisibile}
                     setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}
                 />
@@ -277,6 +277,7 @@ export default class MenuSearchPartner extends React.Component {
 MenuSearchPartner.deafultProps = {
     invitationType: '', //
     invitationId: '',
+    invitationOrg: '',
     listData: [],
     keyCode: '', //关键的属性（user_id）
     searchName: '', //检索的名称

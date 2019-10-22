@@ -1818,7 +1818,6 @@ class ZoomPicture extends Component {
     } = this.state;
     if (!isShouldShowCommentDetail || shouldShowCommentDetailFlag !== flag)
       return null;
-
     return (
       <div className={styles.commentItemPopoverContentWrapper}>
         <div className={styles.commentItemPopoverContentCommentList}>
@@ -1833,7 +1832,7 @@ class ZoomPicture extends Component {
                     styles.commentItemPopoverContentCommentListItemAvatar
                   }
                 >
-                  <Avatar icon="user" />
+                  <Avatar icon="user" src={i.avatar} />
                 </div>
                 <div
                   className={

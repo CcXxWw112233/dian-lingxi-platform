@@ -1636,6 +1636,7 @@ class DrawContent extends React.Component {
                             // addMenbersInProject={this.addMenbersInProject}
                             invitationType='4'
                             invitationId={card_id}
+                            invitationOrg={drawContent.org_id}
                             listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
                             board_id={board_id} />}
                         >
@@ -1648,6 +1649,7 @@ class DrawContent extends React.Component {
                             <MenuSearchPartner
                               invitationType='4'
                               invitationId={card_id}
+                              invitationOrg={drawContent.org_id}
                               listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
                               board_id={board_id} />}
                           >
