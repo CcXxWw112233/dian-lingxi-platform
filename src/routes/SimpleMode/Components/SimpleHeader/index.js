@@ -85,7 +85,7 @@ class SimpleHeader extends Component {
                     leftMainNavIconVisible && (
 <Dropdown
                         placement="bottomLeft"
-                        overlay={<SimpleNavigation updateStates={this.updateStates} />}
+                        overlay={<SimpleNavigation updateStates={this.updateStates} dropdownHandleVisibleChange={this.handleVisibleChange}/>}
                         onVisibleChange={this.handleVisibleChange}
                         visible={leftNavigationVisible}
                     >

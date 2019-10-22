@@ -1544,11 +1544,11 @@ class FileDetailContent extends React.Component {
               <span className={`${globalStyles.authTheme} ${indexStyles.fileTitle}`}>&#xe691;</span>
               文件
             </div>
-            <div className={indexStyles.fileDetailHeadLeft}>
+            {/* <div className={indexStyles.fileDetailHeadLeft}>
               {seeFileInput === 'fileModule' ? (
                 <FileDerailBreadCrumbFileNav />
               ) : ('')}
-            </div>
+            </div> */}
           </div>
 
           <div className={indexStyles.fileDetailHeadRight}>
@@ -1658,14 +1658,24 @@ class FileDetailContent extends React.Component {
                 )
               } */}
 
-              <ContentRaletion
-                relations_Prefix={relations_Prefix}
-                board_id={board_id}
-                link_id={filePreviewCurrentFileId}
-                link_local={'4'}
-                visitControlParams={visitControlParams}
-                is_showAdd={false}
-              />
+              <div>
+                <div style={{
+                  position: 'absolute',
+                  width: '100%',
+                  zIndex: 100,
+                  height: '100%',
+                }}>
+                </div>
+                {filePreviewCurrentFileId ?
+                  <ContentRaletion
+                    relations_Prefix={relations_Prefix}
+                    board_id={board_id}
+                    link_id={filePreviewCurrentFileId}
+                    link_local={'4'}
+                    visitControlParams={visitControlParams}
+                    is_showAdd={false}
+                  /> : ''}
+              </div>
 
               {/*{seeFileInput === 'fileModule'? (*/}
               {/*<div className={indexStyles.versionOut}>*/}

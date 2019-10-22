@@ -900,7 +900,6 @@ class DrawContent extends React.Component {
 
     const { drawContent = {} } = this.props
     const { board_id, card_id, } = drawContent
-    console.log(drawContent, 'ssss111');
 
     const payload = {
       board_id,
@@ -1535,18 +1534,21 @@ class DrawContent extends React.Component {
                   </Dropdown>
                 </span>
 
-                <div className={DrawerContentStyles.right}>
-                  <span>
-                    {is_shared === '1' ? <p className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p> : null}
-                  </span>
 
-                  <span style={{ marginTop: '-5px', marginRight: '10px', position: 'relative', width: '12px', height: '12px' }}>
-                    <ShareAndInvite
-                      is_shared={is_shared}
-                      onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible}
-                      data={onlyReadingShareData}
-                      handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
-                  </span>
+                <div className={DrawerContentStyles.right}>
+                  {card_id ? <div style={{ alignItems: 'center', display: 'flex' }}>
+                    <span>
+                      {is_shared === '1' ? <p className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p> : null}
+                    </span>
+
+                    <span style={{ marginTop: '-5px', marginRight: '10px', position: 'relative', width: '12px', height: '12px' }}>
+                      <ShareAndInvite
+                        is_shared={is_shared}
+                        onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible}
+                        data={onlyReadingShareData}
+                        handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
+                    </span>
+                  </div> : ''}
 
                   <span style={{ position: 'relative' }}>
                     {checkIsHasPermissionInVisitControl('edit', privileges, drawContent.is_privilege, drawContent.executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (

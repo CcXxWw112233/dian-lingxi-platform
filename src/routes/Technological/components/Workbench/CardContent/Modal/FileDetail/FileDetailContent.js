@@ -1364,7 +1364,7 @@ class FileDetailContent extends React.Component {
 
     const { datas = {} } = this.props.model
     const { currentPreviewFileData = {} } = datas
-    const { is_shared } = currentPreviewFileData //is_shared = 是否分享状态
+    const { is_shared, file_id } = currentPreviewFileData //is_shared = 是否分享状态
 
     return (
       <div>
@@ -1412,16 +1412,18 @@ class FileDetailContent extends React.Component {
             <span style={{ marginLeft: '10px' }}></span>
             {/* <div style={{position: 'relative', display: 'flex'}}> */}
 
-            <span>
-              {is_shared === '1' ? <p className={indexStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={indexStyles.right__shareIndicator_icon}></span><span className={indexStyles.right__shareIndicator_text}>正在分享</span></p> : null}
-            </span>
+            {file_id ? <div style={{ alignItems: 'center', display: 'flex' }}>
+              <span>
+                {is_shared === '1' ? <p className={indexStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={indexStyles.right__shareIndicator_icon}></span><span className={indexStyles.right__shareIndicator_text}>正在分享</span></p> : null}
+              </span>
 
-            <span style={{ marginBottom: '4px', marginRight: '10px', width: '12px', height: '12px' }}>
-              <ShareAndInvite
-                is_shared={is_shared}
-                onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData}
-                handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
-            </span>
+              <span style={{ marginBottom: '4px', marginRight: '10px', width: '12px', height: '12px' }}>
+                <ShareAndInvite
+                  is_shared={is_shared}
+                  onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData}
+                  handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
+              </span>
+            </div> : ''}
 
             <div style={{ position: 'relative' }}>
               <span>
