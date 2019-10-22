@@ -7,7 +7,7 @@ import { connect } from 'dva'
 @connect()
 class DetailedShare extends React.Component {
     state = {
-        rela_type: '',  //当前对象弹框类型type, 4=里程碑 3=文件 2=流程 1=任务
+        rela_type: '', //当前对象弹框类型type, 4=里程碑 3=文件 2=流程 1=任务
         board_id: '',
     }
 
@@ -92,22 +92,24 @@ class DetailedShare extends React.Component {
             <div>
                 <div>
                     {
-                        rela_type === '1' ?
-                            <div>
+                        rela_type === '1' ? (
+<div>
                                 <DrawContentModal
                                     dispatch={dispatch}
                                     visible={drawerVisible}
                                 />
-                            </div> : ''
+                            </div>
+): ''
                     }
                     {/* {
                     rela_type === '2' ? <div><ProccessDetailShare /></div> : ''
                 } */}
                     {
-                        rela_type === '3' ?
-                            <div>
+                        rela_type === '3' ? (
+<div>
                                 <FileDetailModal {...this.props} board_id={board_id} visible={drawerVisible} dispatch={dispatch} />
-                            </div> : ''
+                            </div>
+): ''
                     }
                 </div>
             </div>

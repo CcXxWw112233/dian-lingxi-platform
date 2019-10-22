@@ -1666,15 +1666,16 @@ class FileDetailContent extends React.Component {
                   height: '100%',
                 }}>
                 </div>
-                {filePreviewCurrentFileId ?
-                  <ContentRaletion
+                {filePreviewCurrentFileId ? (
+<ContentRaletion
                     relations_Prefix={relations_Prefix}
                     board_id={board_id}
                     link_id={filePreviewCurrentFileId}
                     link_local={'4'}
                     visitControlParams={visitControlParams}
                     is_showAdd={false}
-                  /> : ''}
+                  />
+): ''}
               </div>
 
               {/*{seeFileInput === 'fileModule'? (*/}

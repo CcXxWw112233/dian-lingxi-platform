@@ -1412,7 +1412,8 @@ class FileDetailContent extends React.Component {
             <span style={{ marginLeft: '10px' }}></span>
             {/* <div style={{position: 'relative', display: 'flex'}}> */}
 
-            {file_id ? <div style={{ alignItems: 'center', display: 'flex' }}>
+            {file_id ? (
+<div style={{ alignItems: 'center', display: 'flex' }}>
               <span>
                 {is_shared === '1' ? <p className={indexStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={indexStyles.right__shareIndicator_icon}></span><span className={indexStyles.right__shareIndicator_text}>正在分享</span></p> : null}
               </span>
@@ -1423,7 +1424,8 @@ class FileDetailContent extends React.Component {
                   onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData}
                   handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
               </span>
-            </div> : ''}
+            </div>
+) : ''}
 
             <div style={{ position: 'relative' }}>
               <span>

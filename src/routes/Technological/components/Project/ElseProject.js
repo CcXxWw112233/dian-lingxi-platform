@@ -459,7 +459,8 @@ export default class ElseProject extends React.Component {
             </div>
           </div>
         </Card>
-        {ShowAddMenberModalVisibile && <ShowAddMenberModal
+        {ShowAddMenberModalVisibile && (
+<ShowAddMenberModal
           {...this.props}
           show_wechat_invite={true}
           board_id={board_id}
@@ -467,7 +468,8 @@ export default class ElseProject extends React.Component {
           invitationId={board_id}
           invitationType='1'
           invitationOrg={localStorage.getItem('OrganizationId')}
-        />}
+        />
+)}
         {removePojectToGroupModalVisible && (
           <SearchTreeModal
             visible={removePojectToGroupModalVisible}
