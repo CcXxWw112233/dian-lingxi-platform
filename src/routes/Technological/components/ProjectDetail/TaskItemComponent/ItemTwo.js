@@ -127,14 +127,14 @@ export default class ItemTwo extends React.Component {
 
           <div className={CreateTaskStyle.executor}>
             {executor.user_id ? (
-              executor.avatar ? (
-                //   <AvatarList users={executors} size={'small'} />
-                <img src={executor.avatar} style={{ width: 24, height: 24 }} />
-              ) : (
-                  <div style={{ height: 24, width: 24, borderRadius: 16, paddingTop: 4, backgroundColor: '#e8e8e8', textAlign: 'center', margin: '0 12px', }}>
-                    <Icon type={'user'} style={{ fontSize: 14, color: '#8c8c8c', display: 'block', marginTop: 2 }} />
-                  </div>
-                )
+              // executor.avatar ? (
+              <AvatarList users={executors} size={'small'} />
+              // <img src={executor.avatar} style={{ width: 24, height: 24 }} />
+              // ) : (
+              //     <div style={{ height: 24, width: 24, borderRadius: 16, paddingTop: 4, backgroundColor: '#e8e8e8', textAlign: 'center', margin: '0 12px', }}>
+              //       <Icon type={'user'} style={{ fontSize: 14, color: '#8c8c8c', display: 'block', marginTop: 2 }} />
+              //     </div>
+              //   )
             ) : ('')}
 
           </div>
