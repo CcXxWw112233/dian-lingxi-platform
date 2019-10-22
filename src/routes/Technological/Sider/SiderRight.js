@@ -255,10 +255,10 @@ class SiderRight extends React.Component {
     });
   };
   getInfoFromLocalStorage = item => {
-    try{
+    try {
       const userInfo = localStorage.getItem(item)
       return JSON.parse(userInfo)
-    }catch(e) {
+    } catch (e) {
       message.error('从 Cookie 中获取用户信息失败, 当发起视频会议的时候')
     }
   }
@@ -280,7 +280,7 @@ class SiderRight extends React.Component {
       if (isHasRepeatedNameItem) {
         const item = `${curr.full_name}(${
           curr.mobile ? curr.mobile : curr.email
-        })`;
+          })`;
         return [...acc, item];
       }
       return [...acc, curr.full_name];
@@ -409,16 +409,16 @@ class SiderRight extends React.Component {
   };
   getProjectPermission = (permissionType, board_id) => {
     const userBoardPermissions = this.getInfoFromLocalStorage('userBoardPermissions')
-    if(!userBoardPermissions || !userBoardPermissions.length) {
+    if (!userBoardPermissions || !userBoardPermissions.length) {
       return false
     }
     const isFindedBoard = userBoardPermissions.find(board => board.board_id === board_id)
-    if(!isFindedBoard) return false
-    const {permissions = []} = isFindedBoard
+    if (!isFindedBoard) return false
+    const { permissions = [] } = isFindedBoard
     return !!permissions.find(permission => permission.code === permissionType && permission.type === '1')
   }
   filterProjectWhichCurrentUserHasEditPermission = (projectList = []) => {
-    return projectList.filter(({board_id}) => this.getProjectPermission('project:team:board:edit', board_id))
+    return projectList.filter(({ board_id }) => this.getProjectPermission('project:team:board:edit', board_id))
   }
   handleVideoMeetingValueChange = value => {
     this.filterHasDeletedMentionSelectedMember(toString(value));
@@ -542,8 +542,8 @@ class SiderRight extends React.Component {
       </div>
     );
     return (
-      <div style={{flex:"none"}}>
-        <LingxiIm token={Cookies.get('Authorization')} width='400px'/>
+      <div style={{ flex: "none" }}>
+        <LingxiIm token={Cookies.get('Authorization')} width='400px' />
       </div>
 
       // <div id={"siderRight"} className={indexStyles.siderRight}>
