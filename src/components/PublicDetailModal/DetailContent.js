@@ -9,6 +9,7 @@ import { Dropdown, Menu, Icon } from 'antd'
 export default class DetailContent extends React.Component {
   state = {
     // isShowAllDynamic: false, //是否查看全部
+
   }
 
   constructor() {
@@ -48,10 +49,10 @@ export default class DetailContent extends React.Component {
         }
       })
     }
-    
+
   }
   render() {
-    const { clientHeight, offsetTopDeviation, isExpandFrame, board_id, currentProcessInstanceId, siderRightCollapsed,  isShowAllDynamic} =this.props
+    const { clientWidth,clientHeight, offsetTopDeviation, isExpandFrame, board_id, currentProcessInstanceId, siderRightCollapsed, isShowAllDynamic } = this.props
     // const { isShowAllDynamic } = this.state
     const {
       mainContent = <div></div>, //主区域
@@ -79,29 +80,21 @@ export default class DetailContent extends React.Component {
         </Menu.Item>
       </Menu>
     )
-
+    let styleSelect = indexStyles.fileDetailContentOut;
+ 
     return (
-      <div className={ `${ siderRightCollapsed ? indexStyles.isSiderRightWidthExit : indexStyles.fileDetailContentOut}` } ref={'fileDetailContentOut'} style={{height: clientHeight- offsetTopDeviation - 60}}>
-        <div className={indexStyles.fileDetailContentLeft} 
-          // style={{overflowY: 'auto'}}
-          >
+      <div className={styleSelect} ref={'fileDetailContentOut'} style={{ height: clientHeight - offsetTopDeviation - 54 }}>
+        <div className={indexStyles.fileDetailContentLeft}
+        // style={{overflowY: 'auto'}}
+        >
           {/*主要内容放置区*/}
           {mainContent}
         </div>
 
-        <div className={indexStyles.fileDetailContentRight} style={{width: isExpandFrame?0:420}}>
-
-          {
-            viceAreaTopShow && (
-              <div className={indexStyles.fileDetailContentRight_top} ref={this.relative_content_ref}>
-                {/*关联内容放置区*/}
-                {viceAreaTopContent}
-              </div>
-            )
-          }
+        <div className={indexStyles.fileDetailContentRight} style={{ width: 368 }}>
 
 
-          <div style={{position: 'relative'}} className={`${indexStyles.fileDetailContentRight_middle}`} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.relative_content_ref?this.relative_content_ref.clientHeight : 0)}}>
+          <div style={{ position: 'relative' }} className={`${indexStyles.fileDetailContentRight_middle}`} style={{ height: clientHeight - offsetTopDeviation - 54 - 70 }}>
 
             {/* <div
               style={{lineHeight: '54px'}}
@@ -115,14 +108,14 @@ export default class DetailContent extends React.Component {
               )}
 
             </div> */}
-             <div>
-               <Dropdown overlayClassName={indexStyles.showAllDynamics} overlay={whetherShowAllDynamic} getPopupContainer={triggerNode => triggerNode.parentNode}>
-                 <div className={indexStyles.lookAll} style={{lineHeight: '54px', color: 'rgba(0,0,0,0.65)'}}>
-                    <span>{isShowAllDynamic ? '所有动态' : '仅评论'}</span>
-                    <i style={{lineHeight: '54px'}} className={`${globalStyles.authTheme} ${indexStyles.lookAll_logo}`}>&#xe7ee;</i>
-                 </div>
-               </Dropdown>
-             </div>
+            <div>
+              <Dropdown overlayClassName={indexStyles.showAllDynamics} overlay={whetherShowAllDynamic} getPopupContainer={triggerNode => triggerNode.parentNode}>
+                <div className={indexStyles.lookAll}>
+                  <span>{isShowAllDynamic ? '所有动态' : '仅评论'}</span>
+                  <i style={{ lineHeight: '54px' }} className={`${globalStyles.authTheme} ${indexStyles.lookAll_logo}`}>&#xe7ee;</i>
+                </div>
+              </Dropdown>
+            </div>
 
 
 
@@ -143,29 +136,29 @@ export default class DetailContent extends React.Component {
               {
                 isShowAllDynamic ? (
                   <>
-                    <div style={{fontSize: '12px', color: '#595959'}}>
+                    <div style={{ fontSize: '12px', color: '#595959' }}>
                       <div>
                         {dynamicsContent}
                       </div>
                     </div>
-                    <div style={{overflow: 'hidden'}}>
+                    <div style={{ overflow: 'hidden' }}>
                       {commentListsContent || (
-                        <CommentLists commentUseParams={commentUseParams} isShowAllDynamic={isShowAllDynamic}/>
+                        <CommentLists commentUseParams={commentUseParams} isShowAllDynamic={isShowAllDynamic} />
                       )}
                     </div>
                   </>
                 ) : (
-                  <div style={{overflow: 'hidden'}}>
-                    {commentListsContent || (
-                      <CommentLists commentUseParams={commentUseParams} isShowAllDynamic={isShowAllDynamic}/>
-                    )}
-                  </div>
-                )
+                    <div style={{ overflow: 'hidden' }}>
+                      {commentListsContent || (
+                        <CommentLists commentUseParams={commentUseParams} isShowAllDynamic={isShowAllDynamic} />
+                      )}
+                    </div>
+                  )
               }
             </div>
           </div>
           <div className={indexStyles.fileDetailContentRight_bott}>
-            {commentSubmitContent || <CommentSubmit commentUseParams={commentUseParams}/>}
+            {commentSubmitContent || <CommentSubmit commentUseParams={commentUseParams} />}
           </div>
 
         </div>
@@ -175,11 +168,11 @@ export default class DetailContent extends React.Component {
   }
 }
 
-function mapStateToProps({ 
+function mapStateToProps({
   technological: { datas: {
-  siderRightCollapsed } 
+    siderRightCollapsed }
   },
-  publicModalComment: { isShowAllDynamic } 
+  publicModalComment: { isShowAllDynamic }
 }) {
   return { siderRightCollapsed, isShowAllDynamic }
 }

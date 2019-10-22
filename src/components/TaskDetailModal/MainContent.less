@@ -24,8 +24,8 @@
 }
 
 .nomalCheckBoxActive {
-  height          : 20px;
-  width           : 20px;
+  height       : 20px;
+  width        : 20px;
   text-align      : center;
   line-height     : 12px;
   border          : 2px solid #1890ff;
@@ -155,26 +155,30 @@
 
 /* 内容区的容器样式 S */
 .main_wrap {
-  padding-top  : 16px;
-  padding-right: 20px;
+  padding: 16px 20px;
 
-  /* 标题部分 S */
-  .title_content {
-    display       : flex;
-    // align-items: center;
-    margin-bottom : 12px;
+  .main_content {
+    padding-left: 12px;
 
-    .card_name {
-      font-size   : 20px;
-      font-family : PingFangSC-Medium, PingFangSC;
-      font-weight : 500;
-      color       : rgba(0, 0, 0, 0.85);
-      line-height : 28px;
-      flex        : 1;
-      padding-left: 12px;
-      min-height  : 44px;
-      line-height : 44px;
+    /* 标题部分 S */
+    .title_content {
+      display      : flex;
+      align-items  : center;
+      margin-bottom: 12px;
+
+      .card_name {
+        font-size   : 20px;
+        font-family : PingFangSC-Medium, PingFangSC;
+        font-weight : 500;
+        color       : rgba(0, 0, 0, 0.85);
+        line-height : 28px;
+        flex        : 1;
+        padding-left: 12px;
+        min-height  : 44px;
+        line-height : 44px;
+      }
     }
+
   }
 
   /* 标题部分 E */
@@ -281,17 +285,21 @@
         transition: all 0.3s;
       }
 
-      .start_time, .due_time {
-        display: inline-block;
+      .start_time,
+      .due_time {
+        display : inline-block;
         position: relative;
         cursor: pointer;
         input {
           cursor: pointer;
         }
+
+
         &:hover {
-          background:rgba(0,0,0,0.04);
+          background   : rgba(0, 0, 0, 0.04);
           border-radius: 4px;
         }
+
         .userItemDeleBtn {
           display          : none;
           width            : 14px;
@@ -302,7 +310,7 @@
           background-repeat: no-repeat;
           background-size  : contain;
           transition       : all 0.3s;
-          cursor: pointer;
+          cursor           : pointer;
         }
 
         .userItemDeleBtn:hover {
@@ -312,7 +320,8 @@
         }
       }
 
-      .start_time:hover .timeDeleBtn, .due_time:hover .timeDeleBtn {
+      .start_time:hover .timeDeleBtn,
+      .due_time:hover .timeDeleBtn {
         display   : inline-block;
         top       : -4px;
         right     : -4px;
@@ -332,13 +341,13 @@
           height         : 38px;
 
           .file_title {
-            width     : 260px;
-            display      : inline-flex;
-            align-items  : center;
-            text-overflow: ellipsis;
-            -o-text-overflow:ellipsis;
-            white-space  : nowrap;
-            overflow: hidden;
+            width           : 260px;
+            display         : inline-flex;
+            align-items     : center;
+            text-overflow   : ellipsis;
+            -o-text-overflow: ellipsis;
+            white-space     : nowrap;
+            overflow        : hidden;
           }
 
           .file_info {
