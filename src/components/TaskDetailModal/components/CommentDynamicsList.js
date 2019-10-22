@@ -116,7 +116,7 @@ export default class CommentDynamicsList extends Component {
       return messageContainer
     }
     return (
-      <div style={{marginTop: '12px'}}>
+      <div>
         {
           comment_list.map((item, key) => {
             return <div key={key}>{filterIssues(item)}</div>

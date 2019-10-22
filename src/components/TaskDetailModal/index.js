@@ -115,7 +115,7 @@ export default class TaskDetailModal extends Component {
         <PublicDetailModal
           // width={1200}
           dynamicsContent={<CommentDynamicsList />}
-          style={{padding: '20px 84px 0'}}
+          //style={{padding: '20px 84px 0'}}
           modalVisible={task_detail_modal_visible}
           onCancel={this.onCancel}
           commentUseParams={commentUseParams}

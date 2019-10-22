@@ -26,6 +26,7 @@ export default class MainContent extends Component {
   }
 
   componentDidMount() {
+  
     const { card_id } = this.props
     if (!card_id) return false
     this.props.dispatch({
@@ -710,17 +711,17 @@ export default class MainContent extends Component {
 
     return (
       <div className={mainContentStyles.main_wrap}>
-        <div>
+        <div className={mainContentStyles.main_content}>
           {/* 标题 S */}
           <div>
             <div className={mainContentStyles.title_content}>
               {
                 type == '0' ? (
-                  <div style={{ cursor: 'pointer', marginTop: '10px' }} onClick={this.setIsCheck} className={is_realize == '1' ? mainContentStyles.nomalCheckBoxActive : mainContentStyles.nomalCheckBox}>
-                    <Icon type="check" style={{ color: '#FFFFFF', fontSize: 16, fontWeight: 'bold', marginTop: 2 }} />
+                  <div style={{ cursor: 'pointer', }} onClick={this.setIsCheck} className={is_realize == '1' ? mainContentStyles.nomalCheckBoxActive : mainContentStyles.nomalCheckBox}>
+                    <Icon type="check" style={{ color: '#FFFFFF', fontSize: 16, fontWeight: 'bold'}} />
                   </div>
                 ) : (
-                    <div style={{ width: 20, height: 20, color: '#595959', cursor: 'pointer', marginTop: '10px' }}>
+                    <div style={{ width: 20, height: 20, color: '#595959', cursor: 'pointer' }}>
                       <i style={{ fontSize: '20px' }} className={globalStyles.authTheme}>&#xe84d;</i>
                     </div>
                   )
