@@ -4,6 +4,8 @@ import globalStyles from '../../../../../../globalset/css/globalClassName.less'
 import headerStyles from './headerContent.less'
 import { connect } from 'dva'
 import InformRemind from '@/components/InformRemind'
+import { requestDeleteMiletone } from '../../../../../../services/technological/task'
+import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 
 const MenuItem = Menu.Item
 
@@ -26,10 +28,17 @@ export default class Header extends React.Component {
       content: '确认删除该里程碑？',
       zIndex: 1007,
       onOk() {
-        if (typeof deleteMiletone == 'function') {
-          deleteMiletone({ id })
-        }
-        that.props.onCancel()
+        requestDeleteMiletone({ id }).then(res => {
+          if (isApiResponseOk(res)) {
+            if (typeof deleteMiletone == 'function') {
+              deleteMiletone({ id })
+            }
+            that.props.onCancel()
+          } else {
+            message.error(res.message)
+          }
+        })
+
       },
     })
   }

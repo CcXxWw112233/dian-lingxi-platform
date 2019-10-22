@@ -214,18 +214,28 @@ export default class DateList extends Component {
   }
   deleteMiletone = ({ id }) => {
     const { milestoneMap = {}, dispatch } = this.props
+    const new_milestoneMap = { ...milestoneMap }
     let flag = false
-    for(let key in milestoneMap) {
-      for(let val of list) {
-        if(val.id == id) {
+    for (let key in new_milestoneMap) {
+      const item = new_milestoneMap[key]
+      const length = item.length
+      for (let i = 0; i < length; i++) {
+        if (item[i].id == id) {
           flag = true
+          new_milestoneMap[key].splice(i, 1)
           break
         }
       }
-      if(flag) {
+      if (flag) {
         break
       }
     }
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        milestoneMap: new_milestoneMap
+      }
+    })
   }
   render() {
     const {
