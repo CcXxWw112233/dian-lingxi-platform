@@ -1,7 +1,7 @@
 import React from 'react'
 import {connect} from 'dva'
 import { min_page_width } from "../../globalset/js/styles";
-import StandardModal from '../../components/StandardModal'
+import CustormModal from '../../components/CustormModal'
 import DetailDom from './DetailDom'
 
 @connect(mapStateToProps)
@@ -39,7 +39,7 @@ export default class DetailModal extends React.Component {
     const { modalVisible, width, style, siderRightCollapsed} = this.props;
     const { clientWidth, clientHeight } = this.state;
 
-    const modalTop = 20
+    //const modalTop = 20
     let enableDisplayWidth = (siderRightCollapsed ? clientWidth - 300 : clientWidth - 56) * 0.9;
     let modalWidht = '';
     if (enableDisplayWidth> 1200) {
@@ -50,16 +50,16 @@ export default class DetailModal extends React.Component {
     }
 
     return (
-      <StandardModal
+      <CustormModal
         visible={modalVisible}
-        width={modalWidht || '90%'}
+        width={1200}
         close={this.props.close}
         closable={false}
         maskClosable={false}
         footer={null}
         destroyOnClose
-        bodyStyle={{ top: 0 }}
-        style={{ top: modalTop, ...style }}
+        bodyStyle={{ padding: '0px' }}
+        style={{...style }}
         onCancel={this.onCancel.bind(this)}
         overInner={<DetailDom {...this.props} />}
       />

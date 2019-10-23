@@ -1,62 +1,10 @@
-.ant-modal-wrap{
-  position: absolute !important;
-  width: 80% !important;
-  top: 0 !important;
-  left: 10% !important;
-}
-.custormOut{
 
-}
 .wrapNormalModal {
-  :global {
-    .ant-modal-content {
-      position: absolute;
-      left: 80px;
-      right: 80px;
-      top: 0;
-      max-width: 1200px;
-      min-width: 472px;
-    }
-  }
-}
-.wrapActiveModal {
-  :global {
-    .ant-modal-content {
-      position: absolute;
-      left: 80px;
-      right: 380px;
-      top: 0;
-      max-width: 1200px;
-      min-width: 586px;
-    }
-  }
-}
-@media screen and (max-width: 1159px) {
-  .wrapActiveModal {
-    :global {
-      .ant-modal-content {
-        min-width: 656px;
-        // transform: scale(0.9);
-      }
-    }
-  }
-}
-@media screen and (max-width: 767px) {
-  .wrapActiveModal {
-    :global {
-      .ant-modal-content {
-        width: 656px;
-      }
-    }
-  }
-  .wrapNormalModal {
-    :global {
-      .ant-modal-content {
-        width: 656px;
-        right: 80px;
-        // transform: scale(0.9);
-      }
-    }
-  }
+  overflow: hidden;
+  margin-right: 54px;
 }
 
+.wrapActiveModal {
+  overflow: hidden;
+  margin-right: 300px;
+}

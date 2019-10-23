@@ -99,7 +99,7 @@ class CustormModal extends React.Component {
           ...maskStyle 
         }}
         style={{ ...style }}
-        bodyStyle={{ ...bodyStyle }}
+        bodyStyle={{ ...bodyStyle}}
         onCancel={onCancel}
         onOk={onOk}
         wrapClassName={`${ siderRightCollapsed ? indexStyles.wrapActiveModal : indexStyles.wrapNormalModal}`}
