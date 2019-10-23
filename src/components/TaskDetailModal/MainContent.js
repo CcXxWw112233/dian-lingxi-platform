@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
-import { Icon, message, Dropdown, Menu, DatePicker, Button } from 'antd'
+import { Icon, message, Dropdown, Menu, DatePicker, Button,Modal} from 'antd'
 import mainContentStyles from './MainContent.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
@@ -9,21 +9,25 @@ import RichTextEditor from '@/components/RichTextEditor'
 import MilestoneAdd from '@/components/MilestoneAdd'
 import LabelDataComponent from '@/components/LabelDataComponent'
 import AppendSubTask from './components/AppendSubTask'
+import PreviewFileModal from '@/routes/Technological/components/ProjectDetail/TaskItemComponent/PreviewFileModal'
+import PreviewFileModalRichText from '@/routes/Technological/components/ProjectDetail/TaskItemComponent/PreviewFileModalRichText'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import InformRemind from '@/components/InformRemind'
 import { timestampFormat, timestampToTime, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal } from '@/utils/util'
+import { getSubfixName } from "@/utils/businessFunction";
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN
 } from "@/globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
-import { updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask, deleteChirldTask } from '../../services/technological/task'
+import { updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask, deleteChirldTask,deleteTaskFile} from '../../services/technological/task'
+import { get } from 'https'
 
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
 
   state = {
-    // new_executors: []
+    previewFileModalVisibile: false,
   }
 
   componentDidMount() {
@@ -370,7 +374,8 @@ export default class MainContent extends Component {
   showMemberName = (userId) => {
     const { projectDetailInfoData = {} } = this.props
     const { data = [] } = projectDetailInfoData;
-    const users = data.filter((item) => item.id === userId);
+    const users = data.filter((item) => item.user_id == userId);
+
     if (users.length > 0) {
       return <span>{users[0].name}</span>
     }
@@ -686,8 +691,150 @@ export default class MainContent extends Component {
     return meetingField
   }
 
+  /**附件预览 */
+  openFileDetailModal = (fileInfo) => {
+    console.log("文件详情", fileInfo);
+
+    const file_name = fileInfo.name
+    const file_resource_id = fileInfo.file_resource_id
+    const file_id = fileInfo.file_id;
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        isInOpenFile: true,
+        seeFileInput: 'taskModule',
+        filePreviewCurrentId: file_resource_id,
+        filePreviewCurrentFileId: file_id,
+        pdfDownLoadSrc: '',
+      }
+    })
+
+    if (getSubfixName(file_name) == '.pdf') {
+      dispatch({
+        type: 'projectDetailFile/getFilePDFInfo',
+        payload: {
+          id: file_id
+        }
+      })
+    } else {
+      dispatch({
+        type: 'projectDetailFile/filePreview',
+        payload: {
+          file_id
+        }
+      })
+      dispatch({
+        type: 'projectDetailFile/fileInfoByUrl',
+        payload: {
+          file_id
+        }
+      })
+    }
+
+  }
+  /**附件下载、删除等操作 */
+  attachmentItemOpera({ type, data = {}, card_id }, e) {
+    e.stopPropagation()
+    //debugger
+    const { dispatch } = this.props
+    const attachment_id = data.id || (data.response && data.response.data && data.response.data.attachment_id)
+    const file_resource_id = data.file_resource_id || (data.response && data.response.data.file_resource_id)
+    if (!attachment_id) {
+      message.warn('上传中，请稍后...')
+      return
+    }
+    if (type == 'remove') {
+      this.deleteAttachmentFile({ attachment_id, card_id })
+    } else if (type == 'download') {
+      dispatch({
+        type: 'projectDetailFile/fileDownload',
+        payload: {
+          ids: file_resource_id,
+          card_id
+        }
+      })
+    }
+  }
+   /**附件删除 */
+  deleteAttachmentFile(data) {
+    const { attachment_id } = data;
+    const that = this
+    const { drawContent = {}, dispatch } = this.props
+
+    Modal.confirm({
+      title: `确认要删除这个附件吗？`,
+      zIndex: 1007,
+      content: <div style={{ color: 'rgba(0,0,0, .8)', fontSize: 14 }}>
+        <span >删除后不可恢复</span>
+      </div>,
+      okText: '确认',
+      cancelText: '取消',
+      onOk() {
+        return new Promise((resolve) => {
+          deleteTaskFile(data).then((value) => {
+
+            if (value.code !== '0') {
+              message.warn('删除失败，请重新删除。1')
+              resolve()
+            } else {
+              let atta_arr = drawContent['attachment_data'];
+              for (let i = 0; i < atta_arr.length; i++) {
+                if (attachment_id == atta_arr[i]['id'] || (atta_arr[i].response && atta_arr[i].response.data && atta_arr[i].response.data.attachment_id == attachment_id)) {
+                  atta_arr.splice(i, 1)
+                }
+              }
+              that.setState({
+                attachment_fileList: atta_arr
+              })
+              const drawContentNew = { ...drawContent }
+              drawContentNew['attachment_data'] = atta_arr
+              dispatch({
+                type: 'projectDetailTask/updateDatas',
+                payload: {
+                  drawContent: drawContentNew
+                }
+              })
+              resolve()
+            }
+          }).catch((e) => {
+            console.log(e);
+            
+            message.warn('删除出了点问题，请重新删除。')
+            resolve()
+          })
+        })
+
+      }
+    });
+  }
+
+
+  setPreviewFileModalVisibile() {
+    this.setState({
+      previewFileModalVisibile: !this.state.previewFileModalVisibile
+    })
+  }
+
+  getAttachmentActionMenus = (fileInfo,card_id) => {
+    return (
+      <Menu>
+        <Menu.Item>
+          <a onClick={this.attachmentItemOpera.bind(this, { type: 'download', data: fileInfo, card_id })}>
+            下载到本地
+        </a>
+        </Menu.Item>
+        <Menu.Item>
+          <a onClick={this.attachmentItemOpera.bind(this, { type: 'remove', data: fileInfo, card_id })}>
+            删除该附件
+        </a>
+        </Menu.Item>
+      </Menu>
+    );
+  }
+
   render() {
-    const { drawContent = {}, is_edit_title, projectDetailInfoData = {}, dispatch, handleTaskDetailChange } = this.props
+    const { drawContent = {}, is_edit_title, projectDetailInfoData = {}, dispatch, handleTaskDetailChange, isInOpenFile } = this.props
     const { new_userInfo_data = [] } = this.state
     const { data = [] } = projectDetailInfoData
     const {
@@ -1114,9 +1261,17 @@ export default class MainContent extends Component {
                   {
                     drawContent.attachment_data && drawContent.attachment_data.map((fileInfo) => {
                       return (
-                        <div className={`${mainContentStyles.pub_hover} ${mainContentStyles.file_item}`} key={fileInfo.id} >
-                          <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span><span>{fileInfo.name}</span></div>
-                          <div className={mainContentStyles.file_info}>{this.showMemberName(fileInfo.create_by)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
+                        <div className={`${mainContentStyles.file_item_wrapper}`} key={fileInfo.id}>
+
+                          <Dropdown overlay={this.getAttachmentActionMenus(fileInfo,card_id)}>
+                            <div className={mainContentStyles.file_action}>
+                              <i className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fd;</i>
+                            </div>
+                          </Dropdown>
+                          <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={() => this.openFileDetailModal(fileInfo)} >
+                            <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span><span>{fileInfo.name}</span></div>
+                            <div className={mainContentStyles.file_info}>{this.showMemberName(fileInfo.create_by)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
+                          </div>
                         </div>
                       );
                     })
@@ -1244,12 +1399,25 @@ export default class MainContent extends Component {
           {/* 子任务字段 E */}
 
         </div>
+
+        {/*外部附件引入开始 */}
+        {/*查看任务附件*/}
+        <PreviewFileModal modalVisible={isInOpenFile} />
+        {/*外部附件引入结束 */}
       </div>
     )
   }
 }
 
 // 只关联public弹窗内的数据
-function mapStateToProps({ publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id, is_selected_all }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
-  return { drawContent, is_edit_title, card_id, is_selected_all, projectDetailInfoData }
+function mapStateToProps({
+  publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id, is_selected_all },
+  projectDetail: { datas: { projectDetailInfoData = {} } },
+  projectDetailFile: {
+    datas: {
+      isInOpenFile
+    }
+  }
+}) {
+  return { drawContent, is_edit_title, card_id, is_selected_all, projectDetailInfoData, isInOpenFile }
 }
