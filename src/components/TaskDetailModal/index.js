@@ -66,11 +66,11 @@ export default class TaskDetailModal extends Component {
       return
     }
     dispatch({
-      type: 'publicModalComment/submitPublicModalDetailComment',
+      type: 'publicModalComment/addCardNewComment',
       payload: {
         origin_type: '1',
         comment: text,
-        id: card_id,
+        card_id,
         flag: isShowAllDynamic ? '0' : '1'
       }
     })
@@ -80,11 +80,12 @@ export default class TaskDetailModal extends Component {
     const { id } = data
     const { dispatch, isShowAllDynamic, card_id } = this.props
     dispatch({
-      type: 'publicModalComment/deletePublicModalDetailComment',
+      type: 'publicModalComment/deleteCardNewComment',
       payload: {
         id,
         common_id: card_id,
-        flag: isShowAllDynamic ? '0' : '1'
+        flag: isShowAllDynamic ? '0' : '1',
+        origin_type: '1'
       }
     })
   }
@@ -108,14 +109,13 @@ export default class TaskDetailModal extends Component {
       content_detail_use_id: card_id,
       origin_type: '1', //	string评论来源类型 1=任务 2=流程 3=文件 4=里程碑
       // flag: '1', //0或不传：评论和动态，1只显示评论，2只动态
-      type: '1'
     }
     
     return (
       <div>
         <PublicDetailModal
           // width={1200}
-          dynamicsContent={<CommentDynamicsList />}
+          // dynamicsContent={<CommentDynamicsList />}
           //style={{padding: '20px 84px 0'}}
           modalVisible={task_detail_modal_visible}
           onCancel={this.onCancel}

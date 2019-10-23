@@ -1218,9 +1218,9 @@ export default class MainContent extends Component {
                 <span className={`${globalStyles.authTheme}`}>&#xe6b8;</span>
                 <span>标签</span>
               </div>
-              <div className={mainContentStyles.field_right}>
+              <div style={{position: 'relative'}} className={mainContentStyles.field_right}>
                 <div className={mainContentStyles.pub_hover}>
-                  <LabelDataComponent>
+                  <LabelDataComponent board_id={board_id}>
                     <span>添加标签</span>
                   </LabelDataComponent>
                 </div>

@@ -1,4 +1,5 @@
-import { getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask, deleteChirldTask, boardAppRelaMiletones, boardAppCancelRelaMiletones } from '../../../services/technological/task'
+import { getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask, deleteChirldTask, boardAppRelaMiletones, 
+  boardAppCancelRelaMiletones, getBoardTagList, addTaskTag, removeTaskTag } from '../../../services/technological/task'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { currentNounPlanFilterName } from "../../../utils/businessFunction";
@@ -39,9 +40,30 @@ export default {
             id: res.data.board_id
           }
         })
+        // 调用查询标签列表
+        // yield put({
+        //   type: 'getBoardTagList',
+        //   payload: {
+        //     board_id: res.data.board_id
+        //   }
+        // })
       }
     },
-
+    // 获取项目标签
+    * getBoardTagList({ payload }, { call, put }) {
+      const { board_id } = payload
+      let res = yield call(getBoardTagList, { board_id })
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            boardTagList: res.data
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+    },
 
 
     /**
