@@ -8,6 +8,7 @@ import QueryString from 'querystring'
 import { getUSerInfo } from "../../services/technological";
 import { selectLoginCaptchaKey } from './selects'
 import { getModelIsImport } from '../utils';
+import { createDefaultOrg } from '../../services/technological/noviceGuide';
 let redirectLocation
 export default {
   namespace: 'login',
@@ -137,10 +138,15 @@ export default {
 
         } else {
           // yield put(routerRedux.push('/noviceGuide'))
-          yield put(routerRedux.push('/technological/simplemode/home')) //首次登录跳转极简模式
+          const res2 = yield call(createDefaultOrg)
+          if (isApiResponseOk(res2)) {
+            yield put(routerRedux.push('/technological/simplemode/home')) //首次登录跳转极简模式
+          } else {
+            message.error(res2.message, MESSAGE_DURATION_TIME)
+          }
         }
       } else {
-        message.warn(res.message, MESSAGE_DURATION_TIME)
+        message.error(res.message, MESSAGE_DURATION_TIME)
       }
     },
     // 登录成功设置token
