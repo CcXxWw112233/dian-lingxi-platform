@@ -8,9 +8,12 @@ import UploadAttachment from '@/components/UploadAttachment'
 import RichTextEditor from '@/components/RichTextEditor'
 import MilestoneAdd from '@/components/MilestoneAdd'
 import AppendSubTask from './components/AppendSubTask'
+import PreviewFileModal from '@/routes/Technological/components/ProjectDetail/TaskItemComponent/PreviewFileModal'
+import PreviewFileModalRichText from '@/routes/Technological/components/ProjectDetail/TaskItemComponent/PreviewFileModalRichText'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import InformRemind from '@/components/InformRemind'
 import { timestampFormat, timestampToTime, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal } from '@/utils/util'
+import { getSubfixName } from "@/utils/businessFunction";
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN
 } from "@/globalset/js/constant";
@@ -22,7 +25,7 @@ import { updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldT
 export default class MainContent extends Component {
 
   state = {
-    // new_executors: []
+    previewFileModalVisibile:false,
   }
 
   componentDidMount() {
@@ -685,8 +688,57 @@ export default class MainContent extends Component {
     return meetingField
   }
 
+  /**附件预览 */
+  openFileDetailModal = (fileInfo) => {
+    console.log("文件详情", fileInfo);
+
+    const file_name = fileInfo.name
+    const file_resource_id = fileInfo.file_resource_id
+    const file_id = fileInfo.file_id;
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        isInOpenFile:true,
+        seeFileInput: 'taskModule',
+        filePreviewCurrentId: file_resource_id,
+        filePreviewCurrentFileId: file_id,
+        pdfDownLoadSrc: '',
+      }
+    })
+
+    if (getSubfixName(file_name) == '.pdf') {
+      dispatch({
+        type: 'projectDetailFile/getFilePDFInfo',
+        payload: {
+          id: file_id
+        }
+      })
+    } else {
+      dispatch({
+        type: 'projectDetailFile/filePreview',
+        payload: {
+          file_id
+        }
+      })
+      dispatch({
+        type: 'projectDetailFile/fileInfoByUrl',
+        payload: {
+          file_id
+        }
+      })
+    }
+
+  }
+
+  setPreviewFileModalVisibile() {
+    this.setState({
+      previewFileModalVisibile: !this.state.previewFileModalVisibile
+    })
+  }
+
   render() {
-    const { drawContent = {}, is_edit_title, projectDetailInfoData = {}, dispatch, handleTaskDetailChange } = this.props
+    const { drawContent = {}, is_edit_title, projectDetailInfoData = {}, dispatch, handleTaskDetailChange,isInOpenFile} = this.props
     const { new_userInfo_data = [] } = this.state
     const { data = [] } = projectDetailInfoData
     const {
@@ -1095,7 +1147,7 @@ export default class MainContent extends Component {
                   {
                     drawContent.attachment_data && drawContent.attachment_data.map((fileInfo) => {
                       return (
-                        <div className={`${mainContentStyles.pub_hover} ${mainContentStyles.file_item}`} key={fileInfo.id} >
+                        <div className={`${mainContentStyles.pub_hover} ${mainContentStyles.file_item}`} key={fileInfo.id} onClick={() => this.openFileDetailModal(fileInfo)} >
                           <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span><span>{fileInfo.name}</span></div>
                           <div className={mainContentStyles.file_info}>{this.showMemberName(fileInfo.create_by)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
                         </div>
@@ -1225,12 +1277,25 @@ export default class MainContent extends Component {
           {/* 子任务字段 E */}
 
         </div>
+        
+       {/*外部附件引入开始 */}
+        {/*查看任务附件*/}
+        <PreviewFileModal modalVisible={isInOpenFile} />
+        {/*外部附件引入结束 */}
       </div>
     )
   }
 }
 
 // 只关联public弹窗内的数据
-function mapStateToProps({ publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id, is_selected_all }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
-  return { drawContent, is_edit_title, card_id, is_selected_all, projectDetailInfoData }
+function mapStateToProps({ 
+  publicTaskDetailModal: { drawContent = {},is_edit_title,card_id,is_selected_all },
+  projectDetail: { datas: { projectDetailInfoData = {} } },
+  projectDetailFile: {
+    datas: {
+      isInOpenFile
+    }
+  }
+     }) {
+  return { drawContent, is_edit_title, card_id, is_selected_all, projectDetailInfoData,isInOpenFile}
 }
