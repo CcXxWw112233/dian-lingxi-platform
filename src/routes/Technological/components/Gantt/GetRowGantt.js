@@ -6,12 +6,14 @@ import GetRowGanttItemElse from './GetRowGanttItemElse'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
 import AvatarList from '@/components/avatarList'
-import { Tooltip, Dropdown } from 'antd'
+import { Tooltip, Dropdown, message } from 'antd'
 import { date_area_height, task_item_height, task_item_margin_top } from './constants'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import QueueAnim from 'rc-queue-anim'
 import GetRowTaskItem from './GetRowTaskItem'
 import { filterDueTimeSpan } from './ganttBusiness'
+import { checkIsHasPermissionInBoard } from '../../../../utils/businessFunction';
+import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE } from '../../../../globalset/js/constant';
 
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
@@ -290,47 +292,63 @@ export default class GetRowGantt extends Component {
         current_list_group_id
       }
     })
+
+    return Promise.resolve({ current_list_group_id })
   }
 
   //点击某个实例,或者创建任务
   setSpecilTaskExample = ({ id, board_id, top }, e) => {
+    const { dispatch, gantt_board_id } = this.props
     if (e) {
       e.stopPropagation()
     }
-    this.getCurrentGroup({ top })
-    const { dispatch } = this.props
-    if (id) { //如果有id 则是修改任务，否则是创建任务
-      this.props.setTaskDetailModalVisibile && this.props.setTaskDetailModalVisibile()
-      dispatch({
-        type: 'workbenchTaskDetail/getCardDetail',
-        payload: {
-          id,
-          board_id,
-          calback: function (data) {
-            dispatch({
-              type: 'workbenchPublicDatas/getRelationsSelectionPre',
-              payload: {
-                _organization_id: data.org_id
-              }
-            })
+    this.getCurrentGroup({ top }).then(res => {
+      if (id) { //如果有id 则是修改任务，否则是创建任务
+        this.props.setTaskDetailModalVisibile && this.props.setTaskDetailModalVisibile()
+        dispatch({
+          type: 'workbenchTaskDetail/getCardDetail',
+          payload: {
+            id,
+            board_id,
+            calback: function (data) {
+              dispatch({
+                type: 'workbenchPublicDatas/getRelationsSelectionPre',
+                payload: {
+                  _organization_id: data.org_id
+                }
+              })
+            }
+          }
+        })
+        dispatch({
+          type: 'workbenchTaskDetail/getCardCommentListAll',
+          payload: {
+            id: id
+          }
+        })
+        dispatch({
+          type: 'workbenchPublicDatas/updateDatas',
+          payload: {
+            board_id
+          }
+        })
+      } else {
+        const { current_list_group_id } = res
+        if (gantt_board_id == 0) {
+          if (checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, current_list_group_id)) {
+            message.warn(NOT_HAS_PERMISION_COMFIRN)
+            return
+          }
+        } else {
+          if (checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id)) {
+            message.warn(NOT_HAS_PERMISION_COMFIRN)
+            return
           }
         }
-      })
-      dispatch({
-        type: 'workbenchTaskDetail/getCardCommentListAll',
-        payload: {
-          id: id
-        }
-      })
-      dispatch({
-        type: 'workbenchPublicDatas/updateDatas',
-        payload: {
-          board_id
-        }
-      })
-    } else {
-      this.props.addTaskModalVisibleChange && this.props.addTaskModalVisibleChange(true)
-    }
+        this.props.addTaskModalVisibleChange && this.props.addTaskModalVisibleChange(true)
+      }
+    })
+
   }
 
   // 设置拖拽生成任务虚线框内，节假日或者公休日的时间天数
@@ -534,7 +552,8 @@ function mapStateToProps({ gantt: {
     date_arr_one_level = [],
     create_start_time,
     create_end_time,
-    holiday_list = []
+    holiday_list = [],
+    gantt_board_id
   }
 } }) {
   return {
@@ -547,7 +566,8 @@ function mapStateToProps({ gantt: {
     date_arr_one_level,
     create_start_time,
     create_end_time,
-    holiday_list
+    holiday_list,
+    gantt_board_id
   }
 }
 
