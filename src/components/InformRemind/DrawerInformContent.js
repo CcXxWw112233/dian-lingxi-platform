@@ -100,7 +100,7 @@ class DrawerInformContent extends Component {
     }
 
     render() {
-        const { rela_id, user_remind_info, rela_type, commonExecutors = [], processEditDatas=[], milestonePrincipals = [] } = this.props;
+        const { rela_id, user_remind_info, rela_type, commonExecutors = [], processPrincipalList=[], milestonePrincipals = [] } = this.props;
         // const { new_user_info_list = [] } = this.state
         return (
             <>
@@ -110,7 +110,7 @@ class DrawerInformContent extends Component {
                     <Icon className={infoRemindStyle.icon} type="plus-circle" />
                     <span className={infoRemindStyle.text}>添加提醒</span>
                 </div>
-                <RenderContent commonExecutors={commonExecutors} processEditDatas={processEditDatas} milestonePrincipals={milestonePrincipals} rela_id={rela_id} rela_type={rela_type} user_remind_info={user_remind_info} />
+                <RenderContent commonExecutors={commonExecutors} processPrincipalList={processPrincipalList} milestonePrincipals={milestonePrincipals} rela_id={rela_id} rela_type={rela_type} user_remind_info={user_remind_info} />
             </>
         )
     }

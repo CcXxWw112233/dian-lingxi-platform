@@ -86,7 +86,8 @@ export default class Header extends React.Component {
                 ? user.name
                 : user.user_id
                   ? user.user_id
-                  : ''
+                  : '',
+              user_id: user.user_id
           }));
         };
         // 数组去重
@@ -335,7 +336,7 @@ export default class Header extends React.Component {
   render() {
     const disabled = this.props.model.datas.isProcessEnd
     const id = this.props.model.datas.totalId.flow
-    const { board_id, processDoingList = [], processStopedList = [], processComepletedList = [], projectDetailInfoData = {}, processEditDatas = [] } = this.props.model.datas
+    const { board_id, processDoingList = [], processStopedList = [], processComepletedList = [], projectDetailInfoData = {}, processEditDatas = [], processInfo = {} } = this.props.model.datas
     const { data = [] } = projectDetailInfoData //任务执行人列表
     const ellipsis = <Icon type="ellipsis" style={{ float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer' }} />
     const processDelete = async () => {
@@ -479,7 +480,7 @@ export default class Header extends React.Component {
                 <div onClick={this.alarmNoEditPermission} style={{ height: '50px' }} className={globalStyles.drawContent_mask}></div>
               )
             }
-            <InformRemind processEditDatas={processEditDatas} rela_id={id} rela_type={'3'} user_remind_info={data} />
+            <InformRemind processPrincipalList={principalList} rela_id={id} rela_type={'3'} user_remind_info={data} />
           </span>
           {/* <span style={{position: 'relative'}}>
             {

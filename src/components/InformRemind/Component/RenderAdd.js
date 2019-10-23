@@ -24,7 +24,7 @@ export default class RenderAdd extends Component {
   // 更新执行人还有创建人的操作
   componentDidMount() {
     const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
-    const { dispatch, rela_type, user_remind_info = [], commonExecutors = [], processEditDatas = [], milestonePrincipals = [] } = this.props
+    const { dispatch, rela_type, user_remind_info = [], commonExecutors = [], processPrincipalList = [], milestonePrincipals = [] } = this.props
     let temp_message = [] // 定义一个空数组
     if (rela_type == '1' || rela_type == '2') { // 表示在工作台或者项目详情中的任务或者日程弹窗中--才会进来
       if (commonExecutors && commonExecutors.length) { // 存在执行人
@@ -38,8 +38,8 @@ export default class RenderAdd extends Component {
         temp_message.push(...new_userRemindInfo)
       }
     } else if (rela_type == '3') { // 表示在流程中才会进来
-      const { assignees } = processEditDatas && processEditDatas.length && processEditDatas[0]
-      if (assignees && assignees.length) { // 存在推进人
+      const new_assignees = [...processPrincipalList]
+      if (new_assignees && new_assignees.length) { // 存在推进人
         let new_userRemindInfo = [...user_remind_info]
         new_userRemindInfo = new_userRemindInfo.filter(item => {
           let new_item = item
