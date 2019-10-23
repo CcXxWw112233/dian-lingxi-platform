@@ -29,10 +29,9 @@ export default class UploadAttachment extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { dispatch, board_id } = nextProps;
-    const { board_id: old_board_id } = this.props;
-    if (board_id && board_id != old_board_id) {
+  componentDidMount() {
+    const { board_id } = this.props;
+    if (board_id) {
       this.getProjectFolderList(board_id)
     }
   }
@@ -309,6 +308,7 @@ export default class UploadAttachment extends Component {
                 !toNoticeList.length ? (
                   <div style={{ flex: '1', position: 'relative' }}>
                     <Dropdown overlayClassName={styles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                      overlayStyle={{ maxWidth: '200px' }}
                       overlay={
                         <MenuSearchPartner
                           handleSelectedAllBtn={this.handleSelectedAllBtn}
