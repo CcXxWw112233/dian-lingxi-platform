@@ -373,8 +373,8 @@ export default class MainContent extends Component {
   showMemberName = (userId) => {
     const { projectDetailInfoData = {} } = this.props
     const { data = [] } = projectDetailInfoData;
-    const users = data.filter((item) => item.id == userId);
-    debugger
+    const users = data.filter((item) => item.user_id == userId);
+
     if (users.length > 0) {
       return <span>{users[0].name}</span>
     }
