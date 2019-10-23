@@ -211,11 +211,11 @@ export default class MilestoneAdd extends React.Component {
                                                         <div style={{ display: selectedValue == id ? 'block' : 'none' }}>
                                                             <Icon type="check" />
                                                         </div>
-                                                        {!compareTwoTimestamp(deadline, dataInfo.due_time) &&
-                                                            <Tooltip title="当前任务的截止时间无法超出里程碑截止时间">
+                                                        {!compareTwoTimestamp(deadline, dataInfo.due_time) && (
+<Tooltip title="当前任务的截止时间无法超出里程碑截止时间">
                                                                 <div className={indexStyles.menuItemTip}><Icon type="question-circle" /></div>
                                                             </Tooltip>
-                                                        }
+)}
 
                                                     </div>
                                                 </Menu.Item>

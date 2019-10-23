@@ -83,7 +83,7 @@ export default class AppendSubTaskItem extends Component {
     dispatch({
       type: 'publicTaskDetailModal/updateDatas',
       payload: {
-        drawContent:new_drawContent
+        drawContent: new_drawContent
       }
     })
     if (type == 'add') {
@@ -213,7 +213,7 @@ export default class AppendSubTaskItem extends Component {
   }
 
   // 删除子任务回调
-  deleteConfirm({ card_id,  childDataIndex }) {
+  deleteConfirm({ card_id, childDataIndex }) {
     const { drawContent = {}, dispatch } = this.props
     const { child_data = [] } = drawContent
     let newChildData = [...child_data]
@@ -242,7 +242,7 @@ export default class AppendSubTaskItem extends Component {
           drawContent: new_drawContent
         }
       })
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent:new_drawContent, card_id: drawContent.card_id})
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: new_drawContent, card_id: drawContent.card_id})
     })
   }
 

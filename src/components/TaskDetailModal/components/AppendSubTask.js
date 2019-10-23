@@ -100,7 +100,7 @@ export default class AppendSubTask extends Component {
   // 子 执行人的下拉回调
   chirldrenTaskChargeChange = (dataInfo) => {
     let sub_executors = []
-    const { data, drawContent =  {}, dispatch } = this.props
+    const { data, drawContent = {}, dispatch } = this.props
     const { executors = [], card_id } = drawContent
     const { selectedKeys = [] } = dataInfo
     let new_data = [...data]
@@ -116,10 +116,10 @@ export default class AppendSubTask extends Component {
     dispatch({
       type: 'publicTaskDetailModal/updateDatas',
       payload: {
-        drawContent:new_drawContent
+        drawContent: new_drawContent
       }
     })
-    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent:drawContent, card_id})
+    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: drawContent, card_id})
     this.setState({
       sub_executors
     })

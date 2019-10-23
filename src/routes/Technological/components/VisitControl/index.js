@@ -611,7 +611,7 @@ class VisitControl extends Component {
     );
     const clockEle = (
       <Tooltip title={tooltipClockText}>
-        <span className={styles.trigger__btn__wrapper} style={{marginRight:0}}>
+        <span className={styles.trigger__btn__wrapper} style={{marginRight: 0}}>
           <i
             className={`${globalStyles.authTheme} ${styles.trigger__btn__icon}`}
           >

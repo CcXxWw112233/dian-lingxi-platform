@@ -473,7 +473,7 @@ Date.prototype.Format = function (fmt) { //author: meizz
   return fmt;
 }
 /*处理时间格式方法 liuyj*/
-export const timestampFormat = (millisecond,format) => {
+export const timestampFormat = (millisecond, format) => {
   millisecond = millisecond.length === 10 ? Number(millisecond) * 1000 : Number(millisecond)
   if(millisecond){
       var date = new Date();

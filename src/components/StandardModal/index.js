@@ -86,11 +86,11 @@ class StandardModal extends React.Component {
 
     let customModalWrapStyle = {};
     if(visible){
-        console.log("撑开siderRightCollapsed",siderRightCollapsed);
+        console.log("撑开siderRightCollapsed", siderRightCollapsed);
         if(siderRightCollapsed){
-          customModalWrapStyle = { marginRight:'300px' }
+          customModalWrapStyle = { marginRight: '300px' }
         }else{
-          customModalWrapStyle =  { marginRight:'54px' }
+          customModalWrapStyle = { marginRight: '54px' }
         }
     }else{
       customModalWrapStyle = { display: 'none' }
@@ -101,15 +101,15 @@ class StandardModal extends React.Component {
         <div className={visible ? `${indexStyles.customModalMask}` : `${indexStyles.customModalMask} ${indexStyles.custommodalMaskHidden}`}></div>
         <div className={indexStyles.customModalWrap} style={customModalWrapStyle}>
           {
-            visible && 
-            <div className={indexStyles.customModal} style={{ zIndex: zIndex - 1, width: width || 1200 }}>
+            visible && (
+<div className={indexStyles.customModal} style={{ zIndex: zIndex - 1, width: width || 1200 }}>
               <div className={indexStyles.customModalContent} >
                 <div className={indexStyles.customModalBody}>
                   {overInner}
                 </div>
               </div>
             </div>
-          }
+)}
 
         </div>
       </div>

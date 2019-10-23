@@ -78,7 +78,7 @@ export default class TaskDetailModal extends Component {
 
   deleteComment = (data) => {
     const { id } = data
-    const { dispatch, isShowAllDynamic, card_id  } = this.props
+    const { dispatch, isShowAllDynamic, card_id } = this.props
     dispatch({
       type: 'publicModalComment/deletePublicModalDetailComment',
       payload: {
@@ -138,7 +138,7 @@ TaskDetailModal.defaultProps = {
   users: [], // 用户列表
   handleTaskDetailChange: function() { }, // 外部修改内部弹窗数据的回调
   updateParentTaskList: function() { }, // 内部数据修改后用来更新外部数据的回调
-  handleDeleteCard: function() {  }, // 删除某条任务
+  handleDeleteCard: function() { }, // 删除某条任务
 }
 
 //  只关联public中弹窗内的数据

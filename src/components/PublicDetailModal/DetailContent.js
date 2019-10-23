@@ -52,7 +52,7 @@ export default class DetailContent extends React.Component {
 
   }
   render() {
-    const { clientWidth,clientHeight, offsetTopDeviation, isExpandFrame, board_id, currentProcessInstanceId, siderRightCollapsed, isShowAllDynamic } = this.props
+    const { clientWidth, clientHeight, offsetTopDeviation, isExpandFrame, board_id, currentProcessInstanceId, siderRightCollapsed, isShowAllDynamic } = this.props
     // const { isShowAllDynamic } = this.state
     const {
       mainContent = <div></div>, //主区域

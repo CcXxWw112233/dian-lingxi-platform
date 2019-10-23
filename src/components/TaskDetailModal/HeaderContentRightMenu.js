@@ -432,11 +432,12 @@ export default class HeaderContentRightMenu extends Component {
           {/* 分享协作 */}
           <span style={{display: 'flex'}}>
             <span>
-              {is_shared === '1' ? 
-                <span className={headerStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}>
+              {is_shared === '1' ? (
+<span className={headerStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}>
                   <span className={headerStyles.right__shareIndicator_icon}></span>
                   <span className={headerStyles.right__shareIndicator_text}>正在分享</span>
-                </span> : null}
+                </span>
+): null}
             </span>
             <span className={`${headerStyles.right_menu} ${headerStyles.share_icon}`}>
               <ShareAndInvite 

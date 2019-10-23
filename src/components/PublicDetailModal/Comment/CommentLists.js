@@ -134,7 +134,7 @@ export default class CommentListItem extends React.Component {
                         {judgeTimeDiffer(create_time)}
                       </div>
                     ) : (
-                      <div className={commonCommentStyles.common_delete} onClick={this.deleteComment.bind(this,id)}>
+                      <div className={commonCommentStyles.common_delete} onClick={this.deleteComment.bind(this, id)}>
                         撤回
                       </div> 
                     )

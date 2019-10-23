@@ -37,7 +37,7 @@ export default class SimpleNavigation extends Component {
             NotificationSettingsModalVisible: false, // 是否显示通知设置的弹框, 默认为 false 不显示
             is_disabled: false, // 是否是禁用状态, 默认为true 表示禁用状态
             is_simplemode: is_simplemode,
-            payUpgradeModalVisible:false,
+            payUpgradeModalVisible: false,
 
         }
     }

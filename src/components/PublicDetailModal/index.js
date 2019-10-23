@@ -36,7 +36,7 @@ export default class DetailModal extends React.Component {
   }
 
   render() {
-    const { modalVisible, width, style ,siderRightCollapsed} = this.props;
+    const { modalVisible, width, style, siderRightCollapsed} = this.props;
     const { clientWidth, clientHeight } = this.state;
 
     const modalTop = 20

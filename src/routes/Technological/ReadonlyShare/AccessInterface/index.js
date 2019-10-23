@@ -14,7 +14,7 @@ import { Base64 } from 'js-base64';
 @connect()
 export default class AccessInterface extends React.Component {
     state = {
-        verificationCode: '',  //输入的验证码
+        verificationCode: '', //输入的验证码
     }
     componentDidMount() {
         const params = {
@@ -49,7 +49,7 @@ export default class AccessInterface extends React.Component {
         verificationShareLink(payload).then(({ code, message, data }) => {
 
             if (code === '0') {
-                if (check_type === '2') {  //2=验证密码 才跳转详情页
+                if (check_type === '2') { //2=验证密码 才跳转详情页
 
                     const hash = data.hash
                     //生成10位数的随机码
@@ -58,7 +58,7 @@ export default class AccessInterface extends React.Component {
                     // 动态1~5的整数随机数(用于未来分钟数)
                     // const futureMin = Math.floor(Math.random() * 5 + 1);
                     //未来时间 = 当前时间 + 未来分钟数, 转成字符串, 截取10位(秒级)
-                    var newDate = new Date;                                    //8小时
+                    var newDate = new Date(); //8小时
                     const futureDate = newDate.setMinutes(newDate.getMinutes() + 1).toString();
                     const futureTimestamp = futureDate.substr(0, 10);
 
@@ -123,7 +123,7 @@ export default class AccessInterface extends React.Component {
     }
 
     checkPassWord = (nubmer) => {
-        var re = /^[0-9a-zA-Z]*$/;  //判断字符串是否为数字和字母组合     
+        var re = /^[0-9a-zA-Z]*$/; //判断字符串是否为数字和字母组合     
         if (!re.test(nubmer)) {
             return false
         } else {

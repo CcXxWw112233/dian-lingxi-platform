@@ -1536,7 +1536,8 @@ class DrawContent extends React.Component {
 
 
                 <div className={DrawerContentStyles.right}>
-                  {card_id ? <div style={{ alignItems: 'center', display: 'flex' }}>
+                  {card_id ? (
+<div style={{ alignItems: 'center', display: 'flex' }}>
                     <span>
                       {is_shared === '1' ? <p className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></p> : null}
                     </span>
@@ -1548,7 +1549,8 @@ class DrawContent extends React.Component {
                         data={onlyReadingShareData}
                         handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
                     </span>
-                  </div> : ''}
+                  </div>
+) : ''}
 
                   <span style={{ position: 'relative' }}>
                     {checkIsHasPermissionInVisitControl('edit', privileges, drawContent.is_privilege, drawContent.executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, board_id)) ? ('') : (

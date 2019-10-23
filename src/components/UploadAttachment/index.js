@@ -59,7 +59,7 @@ export default class UploadAttachment extends Component {
 
   closeUploadAttachmentModal = () => {
     if(this.state.uploading){
-      return  message.error('上传中：暂不能操作');
+      return message.error('上传中：暂不能操作');
     }
     this.setState({
       uploadFilePreviewList: [],
@@ -117,7 +117,7 @@ export default class UploadAttachment extends Component {
 
 
     let loading = message.loading('文件正在上传中...', 0);
-    let notify_user_ids = new Array;
+    let notify_user_ids = new Array();
     for (var i = 0; i < toNoticeList.length; i++) {
       notify_user_ids.push(toNoticeList[i].user_id);
     }

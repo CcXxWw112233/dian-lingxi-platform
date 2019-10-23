@@ -170,7 +170,7 @@ export default {
     },
     //更新里程本
     * updateMilestone({ payload }, { select, call, put }) {
-      const {removeParams,addParams} = payload;
+      const {removeParams, addParams} = payload;
       let res = yield call(boardAppCancelRelaMiletones, removeParams)
       if (isApiResponseOk(res)) {
         let res2 = yield call(boardAppRelaMiletones, addParams)
