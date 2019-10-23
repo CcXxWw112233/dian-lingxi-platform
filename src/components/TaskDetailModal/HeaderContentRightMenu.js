@@ -393,12 +393,20 @@ export default class HeaderContentRightMenu extends Component {
       cancelText: '取消',
       zIndex: 2000,
       onOk() {
-        that.props.setTaskDetailModalVisible && that.props.setTaskDetailModalVisible()
         dispatch({
           type: 'publicTaskDetailModal/deleteTask',
           payload: {
             id: card_id,
             calback: function() {
+              dispatch({
+                type: 'publicTaskDetailModal/updateDatas',
+                payload: {
+                  drawerVisible: false,
+                  drawContent: {},
+                  card_id: '',
+                  is_edit_title: false,
+                }
+              })
               that.props.handleDeleteCard && that.props.handleDeleteCard({ card_id: card_id })
             }
           }
