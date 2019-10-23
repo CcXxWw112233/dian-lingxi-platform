@@ -2,6 +2,8 @@ import '@babel/polyfill'
 import 'raf/polyfill';
 // import 'react-dom'
 import dva from 'dva';
+// 防止样式冲突lingxiIm的样式要比全局配置样式先引入，降低优先级
+import 'lingxi-im/dist/main.min.css'
 import './index.css';
 import { Modal } from 'antd'
 //兼容ie10及以下
@@ -44,7 +46,7 @@ window.addEventListener("storage", function (e) {
           window.location.reload()
         }
       })
-      
+
     }
   }
 });

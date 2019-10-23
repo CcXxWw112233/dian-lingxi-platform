@@ -18,7 +18,7 @@ export default class MenuSearchPartner extends React.Component {
         keyWord: '',
         selectedKeys: []
     }
-    componentWillMount() {
+    initSet = (props) => {
         // const { keyWord } = this.state
         // const { listData, searchName, selectedKeys = [] } = this.props
         // this.setState({
@@ -31,7 +31,7 @@ export default class MenuSearchPartner extends React.Component {
         // })
         const { keyWord } = this.state
         let selectedKeys = []
-        const { listData = [], searchName, currentSelect = [] } = this.props
+        const { listData = [], searchName, currentSelect = [] } = props
         for (let val of currentSelect) {
             selectedKeys.push(val['user_id'])
         }
@@ -43,8 +43,11 @@ export default class MenuSearchPartner extends React.Component {
             })
         })
     }
+    componentDidMount() {
+        this.initSet(this.props)
+    }
     componentWillReceiveProps(nextProps) {
-
+        this.initSet(nextProps)
     }
     //模糊查询
     handleMenuReallySelect = (e) => {
@@ -114,14 +117,16 @@ export default class MenuSearchPartner extends React.Component {
             users: temp_ids
         }).then(res => {
             if (res && res.code === '0') {
+                const { users, role_id } = res.data
                 commInviteWebJoin({
                     id: invitationId,
-                    role_id: res.data.role_id,
+                    role_id: role_id,
                     type: invitationType,
-                    users: res.data.users,
+                    users: users,
                     rela_condition: rela_Condition,
                 }).then(res => {
                     if (isApiResponseOk(res)) {
+                        this.props.inviteOthersToBoardCalback && this.props.inviteOthersToBoardCalback({ users })
                         if (invitationType === '4') {
                             dispatch({
                                 type: 'projectDetail/projectDetailInfo',
@@ -203,7 +208,7 @@ export default class MenuSearchPartner extends React.Component {
     }
     render() {
         const { keyWord, resultArr, selectedKeys = [] } = this.state
-        const { Inputlaceholder = '搜索', searchName, menuSearchSingleSpinning, keyCode, invitationType, invitationId, rela_Condition, } = this.props
+        const { Inputlaceholder = '搜索', searchName, menuSearchSingleSpinning, keyCode, invitationType, invitationId, rela_Condition, invitationOrg } = this.props
 
         return (
             <div>
@@ -254,11 +259,11 @@ export default class MenuSearchPartner extends React.Component {
                     // title={titleText}
                     addMenbersInProject={this.addMenbersInProject}
                     show_wechat_invite={true}
-                    {...this.props}
+                    // {...this.props}
                     invitationType={invitationType}
                     invitationId={invitationId}
                     rela_Condition={rela_Condition}
-                    invitationOrg={localStorage.getItem('OrganizationId')}
+                    invitationOrg={invitationOrg}
                     modalVisible={this.state.ShowAddMenberModalVisibile}
                     setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}
                 />
@@ -270,5 +275,19 @@ export default class MenuSearchPartner extends React.Component {
 }
 
 MenuSearchPartner.deafultProps = {
+    invitationType: '', //
+    invitationId: '',
+    invitationOrg: '',
+    listData: [],
+    keyCode: '', //关键的属性（user_id）
+    searchName: '', //检索的名称
+    currentSelect: [], //当前选择的人
+    board_id: [],
+    chirldrenTaskChargeChange: function () {
 
+    },
+    is_create_inivite: false, //是在创建的过程中邀请，还是在某一条实例上邀请（默认）
+    inviteOthersToBoardCalback: function () { //邀请进项目后的回调
+
+    },
 }

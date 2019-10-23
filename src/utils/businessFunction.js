@@ -22,7 +22,7 @@ import { Base64 } from 'js-base64';
 //设置 和 获取全局属性里面的数据
 global.globalData = {}
 export const setGlobalData = (name, value) => {
-    global.globalData[name] = value
+  global.globalData[name] = value
 }
 export const getGlobalData = (name) => {
   return global.globalData[name]
@@ -31,19 +31,19 @@ export const getGlobalData = (name) => {
 export const checkIsHasPermission = (code, param_org_id) => {
   const OrganizationId = localStorage.getItem('OrganizationId')
   const organizationMemberPermissions = JSON.parse(localStorage.getItem('userOrgPermissions')) || []
-  if(OrganizationId == '0') {
-    if(!param_org_id) {
+  if (OrganizationId == '0') {
+    if (!param_org_id) {
       return true
     } else {
       let currentOrgPermission = []
-      for(let val of organizationMemberPermissions) {
-        if(param_org_id == val['org_id']) {
+      for (let val of organizationMemberPermissions) {
+        if (param_org_id == val['org_id']) {
           currentOrgPermission = val['permissions']
           break
         }
       }
       let flag = false
-      for(let i = 0; i < currentOrgPermission.length; i ++) {
+      for (let i = 0; i < currentOrgPermission.length; i++) {
         if (code === currentOrgPermission[i]['code']) {
           flag = true
           break
@@ -52,11 +52,11 @@ export const checkIsHasPermission = (code, param_org_id) => {
       return flag
     }
   }
-  if(!Array.isArray(organizationMemberPermissions)) {
+  if (!Array.isArray(organizationMemberPermissions)) {
     return false
   }
   let flag = false
-  for(let i = 0; i < organizationMemberPermissions.length; i ++) {
+  for (let i = 0; i < organizationMemberPermissions.length; i++) {
     if (code === organizationMemberPermissions[i]['code']) {
       flag = true
       break
@@ -153,21 +153,21 @@ export const checkIsHasPermissionInVisitControl = (code, privileges, is_privileg
 export const checkIsHasPermissionInBoard = (code, params_board_id) => {
   const userBoardPermissions = JSON.parse(localStorage.getItem('userBoardPermissions')) || []
   const board_id = params_board_id || getGlobalData('storageCurrentOperateBoardId')
-  if(!Array.isArray(userBoardPermissions)) {
+  if (!Array.isArray(userBoardPermissions)) {
     return false
   }
-  if(!board_id || board_id == '0') {
+  if (!board_id || board_id == '0') {
     return true
   }
   let currentBoardPermission = []
-  for(let val of userBoardPermissions) {
-    if(board_id == val['board_id']) {
+  for (let val of userBoardPermissions) {
+    if (board_id == val['board_id']) {
       currentBoardPermission = val['permissions']
       break
     }
   }
   let flag = false
-  for(let i = 0; i < currentBoardPermission.length; i ++) {
+  for (let i = 0; i < currentBoardPermission.length; i++) {
     if (code === currentBoardPermission[i]['code']) {
       flag = true
       break
@@ -179,14 +179,14 @@ export const checkIsHasPermissionInBoard = (code, params_board_id) => {
 //返回当前名词定义对应名称
 export const currentNounPlanFilterName = (code) => {
   let currentNounPlan = localStorage.getItem('currentNounPlan') ///|| NORMAL_NOUN_PLAN
-  if(currentNounPlan) {
+  if (currentNounPlan) {
     currentNounPlan = JSON.parse(currentNounPlan)
   } else {
     currentNounPlan = NORMAL_NOUN_PLAN
   }
   let name = ''
-  for(let i in currentNounPlan) {
-    if(code === i) {
+  for (let i in currentNounPlan) {
+    if (code === i) {
       name = currentNounPlan[i]
       break
     }
@@ -197,12 +197,12 @@ export const currentNounPlanFilterName = (code) => {
 // 返回全企业（各个企业下）或某个确认企业下对应的org_name
 export const getOrgNameWithOrgIdFilter = (org_id, organizations = []) => {
   const OrganizationId = localStorage.getItem('OrganizationId')
-  if(OrganizationId != '0') { //确认企业
+  if (OrganizationId != '0') { //确认企业
     let currentSelectOrganize = localStorage.getItem('currentSelectOrganize') || '{}'
     currentSelectOrganize = JSON.parse(currentSelectOrganize)
     return currentSelectOrganize['name']
   } else { //全企业
-    const name = (organizations.find(item => org_id == item.id) || {} ).name
+    const name = (organizations.find(item => org_id == item.id) || {}).name
     return name
   }
 }
@@ -231,28 +231,51 @@ export const setBoardIdStorage = (value) => {
   // 从缓存中拿到相应的board_id对应上org_id，存储当前项目的org_id => aboutBoardOrganizationId,
   // 如果当前企业确定（非全部企业），则返回当前企业
   const OrganizationId = localStorage.getItem('OrganizationId', value)
-  if(OrganizationId && OrganizationId != '0') {
+  if (OrganizationId && OrganizationId != '0') {
     setGlobalData('aboutBoardOrganizationId', OrganizationId)
     return
   }
 
   let userAllOrgsAllBoards = localStorage.getItem('userAllOrgsAllBoards') || '[]'
-  if(userAllOrgsAllBoards) {
+  if (userAllOrgsAllBoards) {
     userAllOrgsAllBoards = JSON.parse(userAllOrgsAllBoards)
   }
   let org_id = ''
-  for(let val of userAllOrgsAllBoards) {
-    for(let val_2 of val['board_ids']) {
-      if(value == val_2) {
+  for (let val of userAllOrgsAllBoards) {
+    for (let val_2 of val['board_ids']) {
+      if (value == val_2) {
         org_id = val['org_id']
         break
       }
     }
-    if(org_id) {
+    if (org_id) {
       break
     }
   }
   setGlobalData('aboutBoardOrganizationId', org_id || '0')
+}
+// 通过board_id查询得到board_id所属的org_id
+export const getOrgIdByBoardId = (boardId) => {
+  if (!boardId) {
+    return ''
+  }
+  let userAllOrgsAllBoards = localStorage.getItem('userAllOrgsAllBoards') || '[]'
+  if (userAllOrgsAllBoards) {
+    userAllOrgsAllBoards = JSON.parse(userAllOrgsAllBoards)
+  }
+  let org_id = ''
+  for (let val of userAllOrgsAllBoards) {
+    for (let val_2 of val['board_ids']) {
+      if (boardId == val_2) {
+        org_id = val['org_id']
+        break
+      }
+    }
+    if (org_id) {
+      break
+    }
+  }
+  return org_id
 }
 
 //是否有企业职员查看权限
@@ -263,23 +286,23 @@ export const isHasOrgTeamBoardEditPermission = () => checkIsHasPermission('org:t
 
 
 // 返回通用接口设置header里的baseinfo(访问控制后台需要)
-export const setRequestHeaderBaseInfo = ({ data, params, headers}) => {
+export const setRequestHeaderBaseInfo = ({ data, params, headers }) => {
 
-  let header_base_info_orgid = localStorage.getItem('OrganizationId') || '0'
-  let header_base_info_board_id = getGlobalData('storageCurrentOperateBoardId') || '0'
+  let header_base_info_orgid = (headers['BaseInfo'] || {}).orgId || localStorage.getItem('OrganizationId') || '0'
+  let header_base_info_board_id = (headers['BaseInfo'] || {}).boardId || getGlobalData('storageCurrentOperateBoardId') || '0'
 
-  if(data['_organization_id'] || params['_organization_id']) {
+  if (data['_organization_id'] || params['_organization_id']) {
     header_base_info_orgid = data['_organization_id'] || params['_organization_id']
   }
 
-  if(data['boardId'] || params['boardId'] || data['board_id'] || params['board_id']) {
+  if (data['boardId'] || params['boardId'] || data['board_id'] || params['board_id']) {
     header_base_info_board_id = data['boardId'] || params['boardId'] || data['board_id'] || params['board_id']
   }
 
   const header_base_info = Object.assign({
-      orgId: header_base_info_orgid,
-      boardId: header_base_info_board_id,
-      aboutBoardOrganizationId: getGlobalData('aboutBoardOrganizationId') || '0',
+    orgId: header_base_info_orgid,
+    boardId: header_base_info_board_id,
+    aboutBoardOrganizationId: getGlobalData('aboutBoardOrganizationId') || '0',
   }, headers['BaseInfo'] || {})
   const header_base_info_str = JSON.stringify(header_base_info)
   const header_base_info_str_base64 = Base64.encode(header_base_info_str)
@@ -291,7 +314,7 @@ export const setRequestHeaderBaseInfo = ({ data, params, headers}) => {
 }
 
 // 返回设置上传接口设置header里的baseinfo(访问控制后台需要)
-export const setUploadHeaderBaseInfo = ({ orgId, boardId, aboutBoardOrganizationId, contentDataId, contentDataType}) => {
+export const setUploadHeaderBaseInfo = ({ orgId, boardId, aboutBoardOrganizationId, contentDataId, contentDataType }) => {
 
   let header_base_info_orgid = orgId || localStorage.getItem('OrganizationId') || '0'
   let header_base_info_board_id = boardId || getGlobalData('storageCurrentOperateBoardId') || '0'
@@ -308,6 +331,6 @@ export const setUploadHeaderBaseInfo = ({ orgId, boardId, aboutBoardOrganization
   const new_herders = {
     BaseInfo: header_base_info_str_base64
   }
-  
+
   return new_herders
 }

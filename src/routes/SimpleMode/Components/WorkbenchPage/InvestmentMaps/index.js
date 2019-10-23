@@ -50,17 +50,24 @@ export default class index extends React.Component {
     }
 
     render() {
+        const { mapOrganizationList = [] } = this.props
         const { orgId } = this.state
         const accessToken = Cookies.get('Authorization')
-        const src_url = `${MAP_URL}?token=${accessToken}&orgId=${orgId}`
+
+        //全组织情况下, 如果只有一个组织有开通该功能, 则直接进入地图, 不需要选择组织页面
+        const orgItem = mapOrganizationList && mapOrganizationList[0]
+        const id = orgItem && orgItem.id
+        const org_Id = mapOrganizationList.length > 1 ? { orgId } : id
+
+        const src_url = `${MAP_URL}?token=${accessToken}&orgId=${org_Id}`
         const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
-        const { mapOrganizationList = [] } = this.props
         const { selectOrganizationVisible } = this.state
         const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
         let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : 0;
+
         return (
             <div className={indexStyles.mapsContainer} style={{ height: contentHeight + 'px' }}>
-                {user_set.current_org === '0' && selectOrganizationVisible === false ? (
+                {user_set.current_org === '0' && selectOrganizationVisible === false && mapOrganizationList.length > 1 ? (
                     <div className={indexStyles.boardSelectWapper}>
                         <div className={indexStyles.groupName}>请选择一个企业进行查看地图</div>
                         <div className={indexStyles.boardItemWapper}>

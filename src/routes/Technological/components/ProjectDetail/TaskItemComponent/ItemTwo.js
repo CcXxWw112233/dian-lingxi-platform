@@ -12,6 +12,7 @@ import {
 import globalStyle from '../../../../../globalset/css/globalClassName.less'
 import { timestampToTimeNormal } from "../../../../../utils/util";
 import { connect } from 'dva'
+import AvatarList from '../../../../../components/avatarList'
 
 const Panel = Collapse.Panel
 
@@ -71,6 +72,7 @@ export default class ItemTwo extends React.Component {
   render() {
     const { itemValue = {}, isPropVisitControl, taskGroupListIndex_index, taskGroupListIndex, taskGroupList } = this.props
     const { card_id, card_name, child_data = [], is_realize = '0', executors = [], type = '0', start_time, due_time, label_data = [] } = itemValue
+
     let executor = {//任务执行人信息
       user_id: '',
       user_name: '',
@@ -125,13 +127,14 @@ export default class ItemTwo extends React.Component {
 
           <div className={CreateTaskStyle.executor}>
             {executor.user_id ? (
-              executor.avatar ? (
-                <img src={executor.avatar} style={{ width: 24, height: 24 }} />
-              ) : (
-                  <div style={{ height: 24, width: 24, borderRadius: 16, paddingTop: 4, backgroundColor: '#e8e8e8', textAlign: 'center', margin: '0 12px', }}>
-                    <Icon type={'user'} style={{ fontSize: 14, color: '#8c8c8c', display: 'block', marginTop: 2 }} />
-                  </div>
-                )
+              // executor.avatar ? (
+              <AvatarList users={executors} size={'small'} />
+              // <img src={executor.avatar} style={{ width: 24, height: 24 }} />
+              // ) : (
+              //     <div style={{ height: 24, width: 24, borderRadius: 16, paddingTop: 4, backgroundColor: '#e8e8e8', textAlign: 'center', margin: '0 12px', }}>
+              //       <Icon type={'user'} style={{ fontSize: 14, color: '#8c8c8c', display: 'block', marginTop: 2 }} />
+              //     </div>
+              //   )
             ) : ('')}
 
           </div>
@@ -148,7 +151,7 @@ export default class ItemTwo extends React.Component {
                     return (
                       <ItemTwoChirldren
                         ItemTwoChirldrenVaue={value}
-                        ItemTwoChirldrenIndex={key} 
+                        ItemTwoChirldrenIndex={key}
                         taskGroupListIndex={taskGroupListIndex}
                         taskGroupListIndex_index={taskGroupListIndex_index}
                         key={key}>

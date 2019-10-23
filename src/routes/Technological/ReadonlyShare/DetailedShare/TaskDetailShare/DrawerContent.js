@@ -1901,7 +1901,7 @@ class DrawContent extends React.Component {
 
 
               {/*添加子任务*/}
-              {/* <DCAddChirdrenTask /> */}
+              <DCAddChirdrenTask />
 
               {/*上传任务附件*/}
               <div className={`${DrawerContentStyles.divContent_1} ${DrawerContentStyles.attach_file_list_out}`}>

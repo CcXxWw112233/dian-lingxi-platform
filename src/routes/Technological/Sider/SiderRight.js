@@ -19,6 +19,8 @@ import { NODE_ENV, IM_HTTP_PATH } from '../../../globalset/js/constant'
 // import GroupChat from './comonent/GroupChat'
 // import InitialChat from './comonent/InitialChat'
 import VideoMeetingPopoverContent from './comonent/videoMeetingPopoverContent/index'
+import LingxiIm from 'lingxi-im'
+
 let cx = classNames.bind(indexStyles);
 
 const { Sider } = Layout;
@@ -253,10 +255,10 @@ class SiderRight extends React.Component {
     });
   };
   getInfoFromLocalStorage = item => {
-    try{
+    try {
       const userInfo = localStorage.getItem(item)
       return JSON.parse(userInfo)
-    }catch(e) {
+    } catch (e) {
       message.error('从 Cookie 中获取用户信息失败, 当发起视频会议的时候')
     }
   }
@@ -278,7 +280,7 @@ class SiderRight extends React.Component {
       if (isHasRepeatedNameItem) {
         const item = `${curr.full_name}(${
           curr.mobile ? curr.mobile : curr.email
-        })`;
+          })`;
         return [...acc, item];
       }
       return [...acc, curr.full_name];
@@ -407,16 +409,16 @@ class SiderRight extends React.Component {
   };
   getProjectPermission = (permissionType, board_id) => {
     const userBoardPermissions = this.getInfoFromLocalStorage('userBoardPermissions')
-    if(!userBoardPermissions || !userBoardPermissions.length) {
+    if (!userBoardPermissions || !userBoardPermissions.length) {
       return false
     }
     const isFindedBoard = userBoardPermissions.find(board => board.board_id === board_id)
-    if(!isFindedBoard) return false
-    const {permissions = []} = isFindedBoard
+    if (!isFindedBoard) return false
+    const { permissions = [] } = isFindedBoard
     return !!permissions.find(permission => permission.code === permissionType && permission.type === '1')
   }
   filterProjectWhichCurrentUserHasEditPermission = (projectList = []) => {
-    return projectList.filter(({board_id}) => this.getProjectPermission('project:team:board:edit', board_id))
+    return projectList.filter(({ board_id }) => this.getProjectPermission('project:team:board:edit', board_id))
   }
   handleVideoMeetingValueChange = value => {
     this.filterHasDeletedMentionSelectedMember(toString(value));
@@ -540,106 +542,113 @@ class SiderRight extends React.Component {
       </div>
     );
     return (
-      <div id={"siderRight"} className={indexStyles.siderRight}>
-        <Sider
-          collapsible
-          onCollapse={this.onCollapse.bind(this)}
-          className={indexStyles.siderRight}
-          defaultCollapsed={true}
-          collapsed={collapsed}
-          trigger={null}
-          collapsedWidth={56}
-          width={300}
-          theme={"light"}
-        >
-          <div
-            className={indexStyles.siderRightInner}
-            style={{ width: collapsed ? 56 : 300 }}
-          >
-            <div
-              className={indexStyles.handleBar}
-              onClick={this.setCollapsed.bind(this)}
-            >
-              <p className={collapsed ? "" : indexStyles.rotate180} />
-            </div>
-            <div
-              className={indexStyles.contain_1}
-              onClick={this.setCollapsed.bind(this)}
-            >
-              <div className={`${glabalStyles.authTheme} ${indexStyles.left}`}>
-                &#xe795;
-              </div>
-              <div className={indexStyles.right}>通知</div>
-            </div>
-            <div
-              style={{
-                height: document.documentElement.clientHeight - 58,
-                padding: "20px 12px",
-                paddingBottom: "40px",
-                position: "relative"
-              }}
-              onClick={this.setCollapsed.bind(this)}
-            >
-              <div
-                style={{ height: document.documentElement.clientHeight - 108 }}
-                className={ImMaskWhencollapsed}
-              />
-              {NODE_ENV != 'development' && (
-                <iframe
-                title="im"
-                src={IM_HTTP_PATH}
-                frameBorder="0"
-                width="100%"
-                height="100%"
-                id={"iframImCircle"}/>
-              ) }
-
-            </div>
-            <div className={indexStyles.videoMeetingWapper}>
-              <VideoMeetingPopoverContent />
-            </div>
-            {/* <Popover
-              visible={videoMeetingPopoverVisible}
-              placement="leftBottom"
-              content={videoMeetingPopoverContent}
-              onVisibleChange={this.handleVideoMeetingPopoverVisibleChange}
-              trigger="click"
-            >
-              <div
-                className={indexStyles.videoMeeting__icon}
-                onMouseEnter={this.handleShowVideoMeeting}
-                onClick={this.handleToggleVideoMeetingPopover}
-              />
-            </Popover> */}
-            {/*<div className={indexStyles.contain_2} style={{display:collapsed?'none':'flex'}}>*/}
-            {/*<div className={`${glabalStyles.authTheme} ${indexStyles.left}`}>*/}
-            {/*&#xe710;*/}
-            {/*</div>*/}
-            {/*<div className={indexStyles.right}>*/}
-            {/*<input className={indexStyles.input} placeholder={'查找团队职员或项目'} />*/}
-            {/*</div>*/}
-            {/*</div>*/}
-            {/*<div className={`${indexStyles.contain_3}`} style={{display: collapsed?'block': 'none'}}>*/}
-            {/*{data.map((value, key) => {*/}
-            {/*return (*/}
-            {/*<div key={key}>*/}
-            {/*<InitialChat itemValue={value} />*/}
-            {/*</div>*/}
-            {/*)*/}
-            {/*})}*/}
-            {/*</div>*/}
-            {/*<div className={`${indexStyles.contain_3}`} style={{display: !collapsed?'block': 'none'}}>*/}
-            {/*{data.map((value, key) => {*/}
-            {/*return (*/}
-            {/*<div key={key}>*/}
-            {/*<GroupChat collapsed={collapsed} itemValue={value} />*/}
-            {/*</div>*/}
-            {/*)*/}
-            {/*})}*/}
-            {/*</div>*/}
-          </div>
-        </Sider>
+      <div style={{ flex: "none", paddingBottom: '50px', position: 'relative', backgroundColor: '#fff'}}>
+        <LingxiIm token={Cookies.get('Authorization')} width='400px' />
+        <div className={indexStyles.videoMeetingWapper} style={{ position: 'absolute', bottom: '10px'}}>
+          <VideoMeetingPopoverContent />
+        </div>
       </div>
+
+      // <div id={"siderRight"} className={indexStyles.siderRight}>
+      //   <Sider
+      //     collapsible
+      //     onCollapse={this.onCollapse.bind(this)}
+      //     className={indexStyles.siderRight}
+      //     defaultCollapsed={true}
+      //     collapsed={collapsed}
+      //     trigger={null}
+      //     collapsedWidth={56}
+      //     width={300}
+      //     theme={"light"}
+      //   >
+      //     <div
+      //       className={indexStyles.siderRightInner}
+      //       style={{ width: collapsed ? 56 : 300 }}>
+      //       <div
+      //         className={indexStyles.handleBar}
+      //         onClick={this.setCollapsed.bind(this)}
+      //       >
+      //         <p className={collapsed ? "" : indexStyles.rotate180} />
+      //       </div>
+      //       <div
+      //         className={indexStyles.contain_1}
+      //         onClick={this.setCollapsed.bind(this)}
+      //       >
+      //         <div className={`${glabalStyles.authTheme} ${indexStyles.left}`}>
+      //           &#xe795;
+      //         </div>
+      //         <div className={indexStyles.right}>通知</div>
+      //       </div>
+      //       <div
+      //         style={{
+      //           height: document.documentElement.clientHeight - 58,
+      //           padding: "20px 12px",
+      //           paddingBottom: "40px",
+      //           position: "relative"
+      //         }}
+      //         onClick={this.setCollapsed.bind(this)}
+      //       >
+      //         <div
+      //           style={{ height: document.documentElement.clientHeight - 108 }}
+      //           className={ImMaskWhencollapsed}
+      //         />
+      //         {NODE_ENV != 'development' && (
+      //           <iframe
+      //           title="im"
+      //           src={IM_HTTP_PATH}
+      //           frameBorder="0"
+      //           width="100%"
+      //           height="100%"
+      //           id={"iframImCircle"}/>
+
+      //         ) }
+
+      //       </div>
+      //       <div className={indexStyles.videoMeetingWapper}>
+      //         <VideoMeetingPopoverContent />
+      //       </div>
+      //       {/* <Popover
+      //         visible={videoMeetingPopoverVisible}
+      //         placement="leftBottom"
+      //         content={videoMeetingPopoverContent}
+      //         onVisibleChange={this.handleVideoMeetingPopoverVisibleChange}
+      //         trigger="click"
+      //       >
+      //         <div
+      //           className={indexStyles.videoMeeting__icon}
+      //           onMouseEnter={this.handleShowVideoMeeting}
+      //           onClick={this.handleToggleVideoMeetingPopover}
+      //         />
+      //       </Popover> */}
+      //       {/*<div className={indexStyles.contain_2} style={{display:collapsed?'none':'flex'}}>*/}
+      //       {/*<div className={`${glabalStyles.authTheme} ${indexStyles.left}`}>*/}
+      //       {/*&#xe710;*/}
+      //       {/*</div>*/}
+      //       {/*<div className={indexStyles.right}>*/}
+      //       {/*<input className={indexStyles.input} placeholder={'查找团队职员或项目'} />*/}
+      //       {/*</div>*/}
+      //       {/*</div>*/}
+      //       {/*<div className={`${indexStyles.contain_3}`} style={{display: collapsed?'block': 'none'}}>*/}
+      //       {/*{data.map((value, key) => {*/}
+      //       {/*return (*/}
+      //       {/*<div key={key}>*/}
+      //       {/*<InitialChat itemValue={value} />*/}
+      //       {/*</div>*/}
+      //       {/*)*/}
+      //       {/*})}*/}
+      //       {/*</div>*/}
+      //       {/*<div className={`${indexStyles.contain_3}`} style={{display: !collapsed?'block': 'none'}}>*/}
+      //       {/*{data.map((value, key) => {*/}
+      //       {/*return (*/}
+      //       {/*<div key={key}>*/}
+      //       {/*<GroupChat collapsed={collapsed} itemValue={value} />*/}
+      //       {/*</div>*/}
+      //       {/*)*/}
+      //       {/*})}*/}
+      //       {/*</div>*/}
+      //     </div>
+      //   </Sider>
+      // </div>
     );
   }
 }

@@ -30,7 +30,7 @@ class ProjectItems extends Component {
   setAddProjectModalVisible = (data) => {
     const { addProjectModalVisible } = this.state
     const { visible } = data || {}
-    if(data) {
+    if (data) {
       this.setState({
         addProjectModalVisible: visible
       })
@@ -39,11 +39,11 @@ class ProjectItems extends Component {
         addProjectModalVisible: !addProjectModalVisible
       })
     }
-    
+
   }
 
   addItem = (e) => {
-    if(e) e.preventDefault()
+    if (e) e.preventDefault()
     if (!checkIsHasPermission(ORG_TEAM_BOARD_CREATE)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
       return false;
@@ -55,7 +55,7 @@ class ProjectItems extends Component {
     return (
       <a
         className={indexStyle.addListItem}
-        style={{ marginTop: 0, width: '770px', display: 'inline-block'}}
+        style={{ marginTop: 0, width: '770px', display: 'inline-block' }}
         onClick={(e) => this.addItem(e)}
       >
         <Icon type="plus-circle-o" style={{ fontSize: 18, color: '#8c8c8c' }} />
@@ -76,8 +76,8 @@ class ProjectItems extends Component {
   };
   render() {
     const { addProjectModalVisible } = this.state
-    const { model = { }, currentProjectGroupProjectList } = this.props;
-    const { datas: { appsList = [] }} = model
+    const { model = {}, currentProjectGroupProjectList } = this.props;
+    const { datas: { appsList = [] } } = model
 
     return (
       <div className={styles.wrapper}>

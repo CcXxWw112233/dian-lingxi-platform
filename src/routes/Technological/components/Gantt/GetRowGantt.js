@@ -6,12 +6,14 @@ import GetRowGanttItemElse from './GetRowGanttItemElse'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
 import AvatarList from '@/components/avatarList'
-import { Tooltip, Dropdown } from 'antd'
+import { Tooltip, Dropdown, message } from 'antd'
 import { date_area_height, task_item_height, task_item_margin_top } from './constants'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import QueueAnim from 'rc-queue-anim'
 import GetRowTaskItem from './GetRowTaskItem'
 import { filterDueTimeSpan } from './ganttBusiness'
+import { checkIsHasPermissionInBoard } from '../../../../utils/businessFunction';
+import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE } from '../../../../globalset/js/constant';
 
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
@@ -29,6 +31,7 @@ export default class GetRowGantt extends Component {
       start_time: '',
       due_time: '',
       specific_example_arr: [], //任务实例列表
+      drag_holiday_count: 0, // //拖拽生成虚线框的节假日总天数
     }
     this.x1 = 0 //用于做拖拽生成一条任务
     this.y1 = 0
@@ -83,7 +86,7 @@ export default class GetRowGantt extends Component {
   stopPropagationEle = (e) => {
     if (
       e.target.dataset.targetclassname == 'specific_example' ||
-      e.target.className.indexOf('authTheme') != -1 || 
+      e.target.className.indexOf('authTheme') != -1 ||
       e.target.className.indexOf('ant-avatar') != -1
     ) { //不能滑动到某一个任务实例上
       return true
@@ -140,6 +143,9 @@ export default class GetRowGantt extends Component {
 
     this.setState({
       currentRect: property
+    }, () => {
+      this.handleCreateTask({ start_end: '2', top: property.y, not_create: true })
+      this.setDragDashedRectHolidayNo()
     })
   }
   dashedDragMouseup(e) {
@@ -207,7 +213,8 @@ export default class GetRowGantt extends Component {
     }
 
     this.setState({
-      currentRect: property
+      currentRect: property,
+      drag_holiday_count: 0,
     })
   }
   dashedMouseLeave(e) {
@@ -219,7 +226,7 @@ export default class GetRowGantt extends Component {
   }
 
   //记录起始时间，做创建任务工作
-  handleCreateTask({ start_end, top }) {
+  handleCreateTask({ start_end, top, not_create }) {
     const { dataAreaRealHeight } = this.props
     if (top >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
 
@@ -236,22 +243,24 @@ export default class GetRowGantt extends Component {
         break
       }
     }
-    const { timestamp } = date
+    const { timestamp, timestampEnd } = date
     const update_name = start_end == '1' ? 'create_start_time' : 'create_end_time'
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: {
-        [update_name]: timestamp
+        [update_name]: start_end == '1' ? timestamp : timestampEnd
       }
     })
-
+    if (not_create) { //不创建和查看
+      return
+    }
     if (start_end == '2') { //拖拽或点击操作完成，进行生成单条任务逻辑
       this.setSpecilTaskExample({ top }) //出现任务创建或查看任务
     }
   }
 
   //获取当前所在的分组, 根据创建或者查看任务时的高度
-  getCurrentGroup({ top }) {
+  getCurrentGroup = ({ top }) => {
     if (top == undefined || top == null) {
       return
     }
@@ -283,48 +292,93 @@ export default class GetRowGantt extends Component {
         current_list_group_id
       }
     })
+
+    return Promise.resolve({ current_list_group_id })
   }
 
- 
   //点击某个实例,或者创建任务
   setSpecilTaskExample = ({ id, board_id, top }, e) => {
+    const { dispatch, gantt_board_id } = this.props
     if (e) {
       e.stopPropagation()
     }
-    this.getCurrentGroup({ top })
-    const { dispatch } = this.props
-    if (id) { //如果有id 则是修改任务，否则是创建任务
-      this.props.setTaskDetailModalVisibile && this.props.setTaskDetailModalVisibile()
-      dispatch({
-        type: 'workbenchTaskDetail/getCardDetail',
-        payload: {
-          id,
-          board_id,
-          calback: function (data) {
-            dispatch({
-              type: 'workbenchPublicDatas/getRelationsSelectionPre',
-              payload: {
-                _organization_id: data.org_id
-              }
-            })
+    this.getCurrentGroup({ top }).then(res => {
+      if (id) { //如果有id 则是修改任务，否则是创建任务
+        this.props.setTaskDetailModalVisibile && this.props.setTaskDetailModalVisibile()
+        dispatch({
+          type: 'workbenchTaskDetail/getCardDetail',
+          payload: {
+            id,
+            board_id,
+            calback: function (data) {
+              dispatch({
+                type: 'workbenchPublicDatas/getRelationsSelectionPre',
+                payload: {
+                  _organization_id: data.org_id
+                }
+              })
+            }
+          }
+        })
+        dispatch({
+          type: 'workbenchTaskDetail/getCardCommentListAll',
+          payload: {
+            id: id
+          }
+        })
+        dispatch({
+          type: 'workbenchPublicDatas/updateDatas',
+          payload: {
+            board_id
+          }
+        })
+      } else {
+        const { current_list_group_id } = res
+        if (gantt_board_id == 0) {
+          if (checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, current_list_group_id)) {
+            message.warn(NOT_HAS_PERMISION_COMFIRN)
+            return
+          }
+        } else {
+          if (checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id)) {
+            message.warn(NOT_HAS_PERMISION_COMFIRN)
+            return
           }
         }
+        this.props.addTaskModalVisibleChange && this.props.addTaskModalVisibleChange(true)
+      }
+    })
+
+  }
+
+  // 设置拖拽生成任务虚线框内，节假日或者公休日的时间天数
+  setDragDashedRectHolidayNo = () => {
+    let count = 0
+
+    const { create_start_time, create_end_time, holiday_list = [] } = this.props
+    if (!create_start_time || !create_end_time) {
+      // return count
+      this.setState({
+        drag_holiday_count: count
       })
-      dispatch({
-        type: 'workbenchTaskDetail/getCardCommentListAll',
-        payload: {
-          id: id
-        }
-      })
-      dispatch({
-        type: 'workbenchPublicDatas/updateDatas',
-        payload: {
-          board_id
-        }
-      })
-    } else {
-      this.props.addTaskModalVisibleChange && this.props.addTaskModalVisibleChange(true)
     }
+    const create_start_time_ = create_start_time / 1000
+    const create_end_time_ = create_end_time / 1000
+
+    const holidy_date_arr = holiday_list.filter(item => {
+      if (
+        create_start_time_ <= Number(item.timestamp)
+        && create_end_time_ >= Number(item.timestamp)
+        && (item.is_week || item.festival_status == '1') //周末或者节假日
+        && (item.festival_status != '2') //不是补班（周末补班不算）
+      ) {
+        return item
+      }
+    })
+
+    this.setState({
+      drag_holiday_count: holidy_date_arr.length
+    })
   }
 
   // 设置任务标签颜色
@@ -356,7 +410,7 @@ export default class GetRowGantt extends Component {
   }
 
   render() {
-    const { currentRect = {}, dasheRectShow } = this.state
+    const { currentRect = {}, dasheRectShow, drag_holiday_count } = this.state
     const { gold_date_arr = [], list_group = [], ceilWidth, group_rows = [], ceiHeight } = this.props
 
     return (
@@ -377,7 +431,10 @@ export default class GetRowGantt extends Component {
             lineHeight: `${ceiHeight - task_item_margin_top}px`,
             paddingRight: 8,
             zIndex: this.isDragging ? 2 : 1
-          }} >{Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth)}</div>
+          }} >
+            {Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth) - drag_holiday_count}
+            {Math.ceil(currentRect.width / ceilWidth) != 1 && (drag_holiday_count > 0 ? `+${drag_holiday_count}` : '')}
+          </div>
         )}
         {list_group.map((value, key) => {
           const { list_data = [], list_id } = value
@@ -387,74 +444,82 @@ export default class GetRowGantt extends Component {
               const { end_time, left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time, start_time, due_time } = value2
               const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
               return (
-                <QueueAnim type="right" key={`${id}_${start_time}_${end_time}`} duration={0}>
-                  {/* <Dropdown placement="bottomRight" overlay={<CardDropDetail {...value2} />} key={id}> */}
-                  <GetRowTaskItem
-                    key={`${id}_${start_time}_${end_time}_${left}_${top}`}
-                    itemValue={value2}
-                    setSpecilTaskExample={this.setSpecilTaskExample}
-                    ganttPanelDashedDrag={this.isDragging}
-                    list_id={list_id}
-                  />
-                  {/* 
-                    <div
-                      className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
-                      data-targetclassname="specific_example"
-                      // onDrag={this.onCardItemDrag}
-                      style={{
-                        left: left, top: top,
-                        width: (width || 6) - 6, height: (height || task_item_height),
-                        marginTop: task_item_margin_top,
-                        background: this.setLableColor(label_data), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
-                      }}
-                      onMouseDown={(e) => e.stopPropagation()}
-                      onMouseMove={(e) => e.stopPropagation()}
-                      onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id })}
-                    >
-                      <div
-                        data-targetclassname="specific_example"
-                        style={{
-                          opacity: is_realize == '1'? 0.5: 1,
-                        }}
-                        className={`${indexStyles.specific_example_content} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
-                        onMouseDown={(e) => e.stopPropagation()} >
-                        <div data-targetclassname="specific_example"
-                          className={`${indexStyles.card_item_status}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
-                          <CheckItem is_realize={is_realize} />
-                        </div>
-                        <div data-targetclassname="specific_example"
-                          className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
-                          {name}
-                          <span className={indexStyles.due_time_description}>
-                            {
-                              is_overdue && due_description
-                            }
-                          </span>
-                        </div>
-                          style={{display: 'flex'}}
-                          className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
-                          <div style={{display: 'flex', flex: '1'}}>
-                            <span>{name}</span>
-                            {
-                              !(is_privilege == '0') && (
-                                <Tooltip title="已开启访问控制" placement="top">
-                                    <span style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', marginLeft: '5px'}}>
-                                    <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
-                                    </span>
-                                </Tooltip>
-                              )
-                            }
-                          </div>
-                        </div>
-                        
-                        <div data-targetclassname="specific_example"
-                          onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
-                          <AvatarList users={executors} size={'small'} />
-                        </div>
-                      </div>
-                    </div> */}
-                  {/* </Dropdown> */}
-                </QueueAnim>
+                <GetRowTaskItem
+                  key={`${id}_${start_time}_${end_time}_${left}_${top}`}
+                  itemValue={value2}
+                  setSpecilTaskExample={this.setSpecilTaskExample}
+                  ganttPanelDashedDrag={this.isDragging}
+                  getCurrentGroup={this.getCurrentGroup}
+                  list_id={list_id}
+                />
+                // <QueueAnim type="right" key={`${id}_${start_time}_${end_time}`} duration={0}>
+                //   {/* <Dropdown placement="bottomRight" overlay={<CardDropDetail {...value2} />} key={id}> */}
+                //   <GetRowTaskItem
+                //     key={`${id}_${start_time}_${end_time}_${left}_${top}`}
+                //     itemValue={value2}
+                //     setSpecilTaskExample={this.setSpecilTaskExample}
+                //     ganttPanelDashedDrag={this.isDragging}
+                //     list_id={list_id}
+                //   />
+                //   {/* 
+                //     <div
+                //       className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
+                //       data-targetclassname="specific_example"
+                //       // onDrag={this.onCardItemDrag}
+                //       style={{
+                //         left: left, top: top,
+                //         width: (width || 6) - 6, height: (height || task_item_height),
+                //         marginTop: task_item_margin_top,
+                //         background: this.setLableColor(label_data), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
+                //       }}
+                //       onMouseDown={(e) => e.stopPropagation()}
+                //       onMouseMove={(e) => e.stopPropagation()}
+                //       onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id })}
+                //     >
+                //       <div
+                //         data-targetclassname="specific_example"
+                //         style={{
+                //           opacity: is_realize == '1'? 0.5: 1,
+                //         }}
+                //         className={`${indexStyles.specific_example_content} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
+                //         onMouseDown={(e) => e.stopPropagation()} >
+                //         <div data-targetclassname="specific_example"
+                //           className={`${indexStyles.card_item_status}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
+                //           <CheckItem is_realize={is_realize} />
+                //         </div>
+                //         <div data-targetclassname="specific_example"
+                //           className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
+                //           {name}
+                //           <span className={indexStyles.due_time_description}>
+                //             {
+                //               is_overdue && due_description
+                //             }
+                //           </span>
+                //         </div>
+                //           style={{display: 'flex'}}
+                //           className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
+                //           <div style={{display: 'flex', flex: '1'}}>
+                //             <span>{name}</span>
+                //             {
+                //               !(is_privilege == '0') && (
+                //                 <Tooltip title="已开启访问控制" placement="top">
+                //                     <span style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', marginLeft: '5px'}}>
+                //                     <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
+                //                     </span>
+                //                 </Tooltip>
+                //               )
+                //             }
+                //           </div>
+                //         </div>
+
+                //         <div data-targetclassname="specific_example"
+                //           onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
+                //           <AvatarList users={executors} size={'small'} />
+                //         </div>
+                //       </div>
+                //     </div> */}
+                //   {/* </Dropdown> */}
+                // // </QueueAnim>
 
               )
             })
@@ -485,6 +550,10 @@ function mapStateToProps({ gantt: {
     ceiHeight,
     group_list_area = [],
     date_arr_one_level = [],
+    create_start_time,
+    create_end_time,
+    holiday_list = [],
+    gantt_board_id
   }
 } }) {
   return {
@@ -495,6 +564,10 @@ function mapStateToProps({ gantt: {
     ceiHeight,
     group_list_area,
     date_arr_one_level,
+    create_start_time,
+    create_end_time,
+    holiday_list,
+    gantt_board_id
   }
 }
 

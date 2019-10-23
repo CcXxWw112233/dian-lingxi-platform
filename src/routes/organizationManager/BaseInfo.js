@@ -324,7 +324,7 @@ export default class BaseInfo extends React.Component {
                   <Row className={indexStyles.item}>
                     <Col span={4} className={indexStyles.itemLabel}>成员数量</Col>
                     <Col span={20} className={indexStyles.itemInfo}>
-                      {paymentInfo.member_number == paymentInfo.member_number_limit ?
+                      {paymentInfo.member_number >= paymentInfo.member_number_limit ?
                         <span style={{ color: '#F5222D' }}>{paymentInfo.member_number}/{paymentInfo.member_number_limit}</span>
                         :
                         <span>{paymentInfo.member_number}/{paymentInfo.member_number_limit}</span>
