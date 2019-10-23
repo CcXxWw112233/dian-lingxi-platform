@@ -1421,7 +1421,8 @@ class DrawContent extends React.Component {
           <div style={{ display: 'flex', justifyContent: 'flex-end', textAlign: 'right', marginRight: '5px', marginTop: '-5px' }}>
             <span></span>
 
-            {card_id ? <div style={{ alignItems: 'center', display: 'flex' }}>
+            {card_id ? (
+<div style={{ alignItems: 'center', display: 'flex' }}>
               <span>
                 {is_shared === '1' ? <span className={DrawerContentStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={DrawerContentStyles.right__shareIndicator_icon}></span><span className={DrawerContentStyles.right__shareIndicator_text}>正在分享</span></span> : null}
               </span>
@@ -1429,7 +1430,8 @@ class DrawContent extends React.Component {
               <span style={{ marginTop: '-5px', marginRight: '10px', position: 'relative', width: '12px', height: '12px' }}>
                 <ShareAndInvite is_shared={is_shared} onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData} handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
               </span>
-            </div> : ''}
+            </div>
+) : ''}
 
             {/*<div className={DrawerContentStyles.contain_1}>*/}
             {/*<Dropdown overlay={projectGroupMenu}>*/}

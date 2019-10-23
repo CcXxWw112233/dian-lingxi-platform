@@ -1894,8 +1894,8 @@ class ZoomPicture extends Component {
             );
           })}
         </div>
-        {isShow_textArea == true ?
-          <div className={styles.commitPopoverContentWrapper}>
+        {isShow_textArea == true ? (
+<div className={styles.commitPopoverContentWrapper}>
             <TextArea
               placeholder="按 Enter 发布图评"
               onPressEnter={e => this.handleCommitPublishText(e, false)}
@@ -1912,7 +1912,8 @@ class ZoomPicture extends Component {
                 发布
             </Button>
             </div>
-          </div> : ''}
+          </div>
+): ''}
       </div>
     );
   };
