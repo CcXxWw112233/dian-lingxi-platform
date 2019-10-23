@@ -1185,7 +1185,7 @@ export default class MainContent extends Component {
                         ''
                       ) : (
                           <span style={{ position: 'relative' }}>
-                            <InformRemind projectExecutors={executors} style={{ display: 'inline-block', minWidth: '72px', height: '38px', borderRadius: '4px', textAlign: 'center' }} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} />
+                            <InformRemind commonExecutors={executors} style={{ display: 'inline-block', minWidth: '72px', height: '38px', borderRadius: '4px', textAlign: 'center' }} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} />
                           </span>
                         )
                     }

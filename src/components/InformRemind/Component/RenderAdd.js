@@ -24,10 +24,10 @@ export default class RenderAdd extends Component {
   // 更新执行人还有创建人的操作
   componentDidMount() {
     const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
-    const { dispatch, rela_type, user_remind_info = [], workbenchExecutors = [], projectExecutors = [], processEditDatas = [], milestonePrincipals = [] } = this.props
+    const { dispatch, rela_type, user_remind_info = [], commonExecutors = [], processEditDatas = [], milestonePrincipals = [] } = this.props
     let temp_message = [] // 定义一个空数组
     if (rela_type == '1' || rela_type == '2') { // 表示在工作台或者项目详情中的任务或者日程弹窗中--才会进来
-      if ((workbenchExecutors && workbenchExecutors.length) || (projectExecutors && projectExecutors.length)) { // 存在执行人
+      if (commonExecutors && commonExecutors.length) { // 存在执行人
         let new_userRemindInfo = [...user_remind_info]
         new_userRemindInfo = new_userRemindInfo.filter(item => {
           let new_item = item
@@ -78,51 +78,6 @@ export default class RenderAdd extends Component {
         message_consumers: temp_message
       }
     })
-
-    // const { dispatch, rela_type, workbenchExecutors = [], projectExecutors = [], processEditDatas = [], milestonePrincipals = [] } = this.props
-    // if (rela_type == '1' || rela_type == '2') { // 表示在工作台或者项目详情中=中的任务或者日程弹窗的执行人
-    //   if ((workbenchExecutors && workbenchExecutors.length) || (projectExecutors && projectExecutors.length)) {
-    //     let new_workbenchExecutors = [...workbenchExecutors]
-    //     let new_projectExecutors = [...projectExecutors]
-    //     dispatch({
-    //       type: 'informRemind/updateDatas',
-    //       payload: {
-    //         message_consumers: (new_workbenchExecutors.length && new_workbenchExecutors) || (new_projectExecutors.length && new_projectExecutors)
-    //       }
-    //     })
-    //   }
-    // } else if (rela_type == '3') { // 表示实在流程中才会触发
-    //   if (processEditDatas && processEditDatas.length) {
-    //     const { assignees } = processEditDatas[0]
-    //     let new_assignees = [...assignees]
-    //     new_assignees = new_assignees.map(item => {
-    //       let new_item = item
-    //       new_item = {...item, avatar: ''}
-    //       return new_item
-    //     })
-    //     dispatch({
-    //       type: 'informRemind/updateDatas',
-    //       payload: {
-    //         message_consumers: new_assignees
-    //       }
-    //     })
-    //   }
-    // } else if (rela_type == '5') { // 表示是在里程碑的弹窗中
-    //   if (milestonePrincipals && milestonePrincipals.length) {
-    //       let new_milestonePrincipals = [...milestonePrincipals]
-    //       new_milestonePrincipals = new_milestonePrincipals.map(item => {
-    //       let new_item = item
-    //       new_item = {...item, avatar: ''}
-    //       return new_item
-    //     })
-    //     dispatch({
-    //       type: 'informRemind/updateDatas',
-    //       payload: {
-    //         message_consumers: new_milestonePrincipals
-    //       }
-    //     })
-    //   }
-    // }
   }
 
   /**

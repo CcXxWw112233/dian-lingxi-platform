@@ -84,7 +84,7 @@ export default class index extends Component {
 
     render() {
         const { visible, title} =this.state;
-        const { rela_type, rela_id, user_remind_info, informRemindUsers, workbenchExecutors = [], projectExecutors = [], processEditDatas = [], milestonePrincipals = [], style } = this.props
+        const { rela_type, rela_id, user_remind_info, informRemindUsers, commonExecutors = [], processEditDatas = [], milestonePrincipals = [], style } = this.props
         return (
             <>
                 {/* 通知提醒的小图标 */}
@@ -124,7 +124,7 @@ export default class index extends Component {
                         mask={true}
                         footer={null}
                         onCancel={this.onCancel.bind(this)}
-                        overInner={<DrawerInformContent milestonePrincipals={milestonePrincipals} processEditDatas={processEditDatas} projectExecutors={projectExecutors} workbenchExecutors={workbenchExecutors} rela_type={rela_type} rela_id={rela_id} user_remind_info={informRemindUsers} />}
+                        overInner={<DrawerInformContent milestonePrincipals={milestonePrincipals} processEditDatas={processEditDatas} commonExecutors={commonExecutors} rela_type={rela_type} rela_id={rela_id} user_remind_info={informRemindUsers} />}
                         wrapClassName={infoRemindStyle.informRemindWrapper}
                     />
                 </div>
