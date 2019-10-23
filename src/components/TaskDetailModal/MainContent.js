@@ -1293,7 +1293,7 @@ export default class MainContent extends Component {
                 {
                   (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
                     (
-                      !description ? (
+                      !description && description != '<p></p>' ? (
                         <div className={`${mainContentStyles.pub_hover}`}>
                           <span>暂无</span>
                         </div>
@@ -1309,7 +1309,7 @@ export default class MainContent extends Component {
                         <RichTextEditor saveBrafitEdit={this.saveBrafitEdit} value={description}>
                           <div className={`${mainContentStyles.pub_hover}`} >
                             {
-                              description ?
+                              description && description != '<p></p>'?
                                 <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: description }}></div>
                                 :
                                 '添加备注'

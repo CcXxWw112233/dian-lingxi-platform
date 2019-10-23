@@ -158,7 +158,7 @@ export default class HeaderContentRightMenu extends Component {
 
     // 需要调用父级的列表
     // this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
-    
+
     // 调用更新项目列表
     dispatch({
       type: 'projectDetail/projectDetailInfo',
@@ -318,7 +318,7 @@ export default class HeaderContentRightMenu extends Component {
                 drawContent: new_drawContent,
               }
             })
-            this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: new_drawContent, card_id})
+            this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
           }
         }
         this.setState((state) => {
@@ -397,7 +397,7 @@ export default class HeaderContentRightMenu extends Component {
           type: 'publicTaskDetailModal/deleteTask',
           payload: {
             id: card_id,
-            calback: function() {
+            calback: function () {
               dispatch({
                 type: 'publicTaskDetailModal/updateDatas',
                 payload: {
@@ -416,7 +416,7 @@ export default class HeaderContentRightMenu extends Component {
   }
 
   // 删除任务的操作 E
-  
+
 
   render() {
     const { drawContent = {} } = this.props
@@ -427,7 +427,7 @@ export default class HeaderContentRightMenu extends Component {
         <div className={headerStyles.right_menu_content}>
           {/* 访问控制 */}
           <span className={`${headerStyles.visit_icon} ${headerStyles.right_menu}`}>
-            <VisitControl 
+            <VisitControl
               board_id={board_id}
               isPropVisitControl={is_privilege === '0' ? false : true}
               handleVisitControlChange={this.handleVisitControlChange}
@@ -438,17 +438,17 @@ export default class HeaderContentRightMenu extends Component {
             />
           </span>
           {/* 分享协作 */}
-          <span style={{display: 'flex'}}>
+          <span style={{ display: 'flex' }}>
             <span>
               {is_shared === '1' ? (
-<span className={headerStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}>
+                <span className={headerStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}>
                   <span className={headerStyles.right__shareIndicator_icon}></span>
                   <span className={headerStyles.right__shareIndicator_text}>正在分享</span>
                 </span>
-): null}
+              ) : null}
             </span>
             <span className={`${headerStyles.right_menu} ${headerStyles.share_icon}`}>
-              <ShareAndInvite 
+              <ShareAndInvite
                 is_shared={is_shared}
                 onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible}
                 data={onlyReadingShareData}

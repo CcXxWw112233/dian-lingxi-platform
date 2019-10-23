@@ -208,13 +208,13 @@
       }
 
       >span:nth-child(2) {
-        font-size: 16px;
+        font-size: 14px;
       }
     }
 
     .field_right {
       flex     : 1;
-      font-size: 16px;
+      font-size: 14px;
       color    : rgba(0, 0, 0, 0.45);
 
       // margin-left: 12px;
@@ -336,7 +336,10 @@
         transition: all 0.3s;
       }
 
-      .upload_file_btn {}
+      .upload_file_btn {
+        font-size  : 14px;
+        color      : rgba(0, 0, 0, 0.45);
+      }
 
       .filelist_wrapper {
         margin-left: -16px;
@@ -344,9 +347,11 @@
         .file_item_wrapper {
           display    : flex;
           align-items: center;
-          cursor: pointer;
+          cursor     : pointer;
+
           .file_action {
             width: 16px;
+
             i {
               display: none;
             }
