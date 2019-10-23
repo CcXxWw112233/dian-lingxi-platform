@@ -453,6 +453,14 @@ export async function getMilestoneDetail(params) {
     params
   })
 }
+//获取里程碑详情
+export async function requestDeleteMiletone(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone/${data.id}`,
+    method: 'DELETE',
+    data,
+  })
+}
 //更新里程碑详情
 export async function updateMilestone(data) {
   return request({

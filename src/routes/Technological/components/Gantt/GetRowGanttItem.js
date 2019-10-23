@@ -79,7 +79,7 @@ export default class GetRowGanttItem extends Component {
       }
     }
     for (let val of current_date_board_miletones) {
-      if(val['is_all_realized'] == '0') {
+      if (val['is_all_realized'] == '0') {
         is_all_realized = '0'
         break
       }
@@ -170,7 +170,31 @@ export default class GetRowGanttItem extends Component {
       }
     })
   }
-
+  deleteMiletone = ({ id }) => {
+    const { milestoneMap = {}, dispatch } = this.props
+    const new_milestoneMap = { ...milestoneMap }
+    let flag = false
+    for (let key in new_milestoneMap) {
+      const item = new_milestoneMap[key]
+      const length = item.length
+      for (let i = 0; i < length; i++) {
+        if (item[i].id == id) {
+          flag = true
+          new_milestoneMap[key].splice(i, 1)
+          break
+        }
+      }
+      if (flag) {
+        break
+      }
+    }
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        milestoneMap: new_milestoneMap
+      }
+    })
+  }
   render() {
     const { rows = 7 } = this.props
     const { gold_date_arr = [], ceiHeight, gantt_board_id, group_view_type } = this.props
@@ -240,6 +264,7 @@ export default class GetRowGanttItem extends Component {
           })}
         </div>
         <MilestoneDetail
+          deleteMiletone={this.deleteMiletone}
           handleMiletonesChange={this.handleMiletonsChangeMountInGantt}
           users={currentSelectedProjectMembersList}
           miletone_detail_modal_visible={this.state.miletone_detail_modal_visible}

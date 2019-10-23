@@ -101,7 +101,23 @@ export default class LcbInHeader extends Component {
       }
     })
   }
-
+  deleteMiletone = ({ id }) => {
+    const { milestoneList = [], dispatch } = this.props
+    let new_milestoneList = [...milestoneList]
+    const length = new_milestoneList.length
+    for (let i = 0; i < length; i++) {
+      if (new_milestoneList[i].id == id) {
+        new_milestoneList.splice(i, 1)
+        break
+      }
+    }
+    dispatch({
+      type: 'projectDetail/updateDatas',
+      payload: {
+        milestoneList: new_milestoneList
+      }
+    })
+  }
   render() {
     const { data, board_id, board_name, milestoneList, org_id } = this.props
     const { add_lcb_modal_visible, miletone_detail_modal_visible } = this.state
@@ -141,6 +157,7 @@ export default class LcbInHeader extends Component {
           submitCreatMilestone={this.submitCreatMilestone}
         />
         <MilestoneDetail
+          deleteMiletone={this.deleteMiletone}
           users={data}
           miletone_detail_modal_visible={this.state.miletone_detail_modal_visible}
           set_miletone_detail_modal_visible={this.set_miletone_detail_modal_visible}
