@@ -26,7 +26,7 @@ export default class MainContent extends Component {
   }
 
   componentDidMount() {
-  
+
     const { card_id } = this.props
     if (!card_id) return false
     this.props.dispatch({
@@ -146,7 +146,7 @@ export default class MainContent extends Component {
       temp_realize = '1'
       new_drawContent['is_realize'] = temp_realize
     }
-    
+
     // 阻止重复点击
     if (!temp_realize) return false
     Promise.resolve(
@@ -170,8 +170,8 @@ export default class MainContent extends Component {
       // 需要调用父级的列表
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
     })
-    
-    
+
+
   }
   // 设置是否完成状态的下拉回调 E
 
@@ -200,7 +200,7 @@ export default class MainContent extends Component {
     }
     let new_drawContent = { ...drawContent }
     new_drawContent['executors'] = newExecutors
-    
+
     if (type == 'add') {
       if (selectedKeys.length == excutorData.length) { // 表示所有的成员选上了
         dispatch({
@@ -210,7 +210,7 @@ export default class MainContent extends Component {
           }
         })
       }
-      addTaskExecutor({card_id, executor: key}).then(res => {
+      addTaskExecutor({ card_id, executor: key }).then(res => {
         if (isApiResponseOk(res)) {
           message.success(`已成功设置执行人`, MESSAGE_DURATION_TIME)
           dispatch({
@@ -231,7 +231,7 @@ export default class MainContent extends Component {
           is_selected_all: false
         }
       })
-      removeTaskExecutor({card_id, executor:key}).then(res => {
+      removeTaskExecutor({ card_id, executor: key }).then(res => {
         if (isApiResponseOk(res)) {
           message.success(`已成功删除执行人`, MESSAGE_DURATION_TIME)
           dispatch({
@@ -263,7 +263,7 @@ export default class MainContent extends Component {
       }
     })
     new_drawContent['executors'] = new_executors
-    removeTaskExecutor({card_id, executor:shouldDeleteItem}).then(res => {
+    removeTaskExecutor({ card_id, executor: shouldDeleteItem }).then(res => {
       if (isApiResponseOk(res)) {
         message.success(`已成功删除执行人`, MESSAGE_DURATION_TIME)
         dispatch({
@@ -363,7 +363,7 @@ export default class MainContent extends Component {
       })
       // 需要调用父级的列表
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
-    })  
+    })
   }
 
   showMemberName = (userId) => {
@@ -389,10 +389,10 @@ export default class MainContent extends Component {
     }
   }
   onMilestoneSelectedChange = (data) => {
-  
-    const { dispatch,drawContent } = this.props;
+
+    const { dispatch, drawContent } = this.props;
     const { card_id, type, due_time } = drawContent
-    const { key,type:actionType,info} = data;
+    const { key, type: actionType, info } = data;
     const id_time_arr = key.split('__')
     const id = id_time_arr[0]
     const deadline = id_time_arr[1]
@@ -400,9 +400,9 @@ export default class MainContent extends Component {
       message.warn('关联里程碑的截止日期不能小于任务的截止日期')
       return
     }
-    console.log("里程碑",data);
-    
-    if(actionType ==='add'){
+    console.log("里程碑", data);
+
+    if (actionType === 'add') {
       const params = {
         rela_id: card_id,
         id,
@@ -414,16 +414,16 @@ export default class MainContent extends Component {
           ...params
         }
       });
-      
+
       drawContent['milestone_data'] = info;
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
-          drawContent: {...drawContent}
+          drawContent: { ...drawContent }
         }
       })
     }
-    if(actionType ==='remove'){
+    if (actionType === 'remove') {
       const params = {
         rela_id: card_id,
         id,
@@ -438,15 +438,15 @@ export default class MainContent extends Component {
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
-          drawContent: {...drawContent}
+          drawContent: { ...drawContent }
         }
       })
     }
 
-    if(actionType ==='update'){
+    if (actionType === 'update') {
       const removeParams = {
         rela_id: card_id,
-        id:drawContent['milestone_data'].id,
+        id: drawContent['milestone_data'].id,
       }
 
       const addParams = {
@@ -454,7 +454,7 @@ export default class MainContent extends Component {
         id,
         origin_type: type
       }
-     
+
       dispatch({
         type: 'publicTaskDetailModal/updateMilestone',
         payload: {
@@ -466,7 +466,7 @@ export default class MainContent extends Component {
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
-          drawContent: {...drawContent}
+          drawContent: { ...drawContent }
         }
       })
     }
@@ -519,7 +519,7 @@ export default class MainContent extends Component {
       message.warn('开始时间不能大于结束时间')
       return false
     }
-    let new_drawContent = {...drawContent}
+    let new_drawContent = { ...drawContent }
     new_drawContent['start_time'] = start_timeStamp
     Promise.resolve(
       dispatch({
@@ -541,7 +541,7 @@ export default class MainContent extends Component {
       })
       // 需要调用父级的列表
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
-    })   
+    })
   }
 
   //截止时间
@@ -562,7 +562,7 @@ export default class MainContent extends Component {
       message.warn('任务的截止日期不能大于关联里程碑的截止日期')
       return
     }
-    let new_drawContent = {...drawContent}
+    let new_drawContent = { ...drawContent }
     new_drawContent['due_time'] = due_timeStamp
     Promise.resolve(
       dispatch({
@@ -595,7 +595,7 @@ export default class MainContent extends Component {
     const updateObj = {
       card_id, start_time: '0'
     }
-    let new_drawContent = {...drawContent}
+    let new_drawContent = { ...drawContent }
     new_drawContent['start_time'] = null
     Promise.resolve(
       dispatch({
@@ -629,7 +629,7 @@ export default class MainContent extends Component {
     const updateObj = {
       card_id, due_time: '0'
     }
-    let new_drawContent = {...drawContent}
+    let new_drawContent = { ...drawContent }
     new_drawContent['due_time'] = null
     if (!card_id) return false
     Promise.resolve(
@@ -674,7 +674,7 @@ export default class MainContent extends Component {
       description,
       milestone_data
     } = drawContent
-    
+
     // 状态
     const filedEdit = (
       <Menu onClick={this.handleFiledIsComplete} getPopupContainer={triggerNode => triggerNode.parentNode} selectedKeys={is_realize == '0' ? ['incomplete'] : ['complete']}>
@@ -715,17 +715,19 @@ export default class MainContent extends Component {
           {/* 标题 S */}
           <div>
             <div className={mainContentStyles.title_content}>
-              {
-                type == '0' ? (
-                  <div style={{ cursor: 'pointer', }} onClick={this.setIsCheck} className={is_realize == '1' ? mainContentStyles.nomalCheckBoxActive : mainContentStyles.nomalCheckBox}>
-                    <Icon type="check" style={{ color: '#FFFFFF', fontSize: 16, fontWeight: 'bold'}} />
-                  </div>
-                ) : (
-                    <div style={{ width: 20, height: 20, color: '#595959', cursor: 'pointer' }}>
-                      <i style={{ fontSize: '20px' }} className={globalStyles.authTheme}>&#xe84d;</i>
+              <div className={mainContentStyles.title_icon}>
+                {
+                  type == '0' ? (
+                    <div style={{ cursor: 'pointer', }} onClick={this.setIsCheck} className={is_realize == '1' ? mainContentStyles.nomalCheckBoxActive : mainContentStyles.nomalCheckBox}>
+                      <Icon type="check" style={{ color: '#FFFFFF', fontSize: 16, fontWeight: 'bold' }} />
                     </div>
-                  )
-              }
+                  ) : (
+                      <div style={{ width: 20, height: 20, color: '#595959', cursor: 'pointer' }}>
+                        <i style={{ fontSize: '20px' }} className={globalStyles.authTheme}>&#xe84d;</i>
+                      </div>
+                    )
+                }
+              </div>
               {
                 !is_edit_title ? (
                   <div onClick={this.setTitleEdit} className={`${mainContentStyles.card_name} ${mainContentStyles.pub_hover}`}>{card_name}</div>
@@ -879,7 +881,7 @@ export default class MainContent extends Component {
                             showTime={{ format: 'HH:mm' }}
                             style={{ opacity: 0, background: '#000000', position: 'absolute', left: 0, width: 'auto' }} />
                         </span>
-                        <span onClick={this.handleDelStartTime} className={`${mainContentStyles.userItemDeleBtn} ${ start_time && mainContentStyles.timeDeleBtn}`}></span>
+                        <span onClick={this.handleDelStartTime} className={`${mainContentStyles.userItemDeleBtn} ${start_time && mainContentStyles.timeDeleBtn}`}></span>
                       </div>
                       &nbsp;
                       <span style={{ color: '#bfbfbf' }}> ~ </span>
@@ -897,7 +899,7 @@ export default class MainContent extends Component {
                             onChange={this.endDatePickerChange.bind(this)}
                             style={{ opacity: 0, background: '#000000', position: 'absolute', left: 0, width: 'auto' }} />
                         </span>
-                        <span onClick={this.handleDelDueTime} className={`${mainContentStyles.userItemDeleBtn} ${ due_time && mainContentStyles.timeDeleBtn}`}></span>
+                        <span onClick={this.handleDelDueTime} className={`${mainContentStyles.userItemDeleBtn} ${due_time && mainContentStyles.timeDeleBtn}`}></span>
                       </div>
                     </div>
                     <span style={{ position: 'relative' }}>
@@ -998,7 +1000,7 @@ export default class MainContent extends Component {
               <div className={`${mainContentStyles.field_right}`}>
 
                 {/*加入里程碑组件*/}
-                <MilestoneAdd onChangeMilestone={this.onMilestoneSelectedChange}  dataInfo={{board_id,board_name,due_time,org_id,data}} selectedValue={milestone_data &&milestone_data.id}>
+                <MilestoneAdd onChangeMilestone={this.onMilestoneSelectedChange} dataInfo={{ board_id, board_name, due_time, org_id, data }} selectedValue={milestone_data && milestone_data.id}>
                   <div className={`${mainContentStyles.pub_hover}`} >
                     {milestone_data && milestone_data.id
                       ? milestone_data.name
