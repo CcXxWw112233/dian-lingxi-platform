@@ -1,4 +1,5 @@
 import { getPublicModalDetailCommentList, submitPublicModalDetailComment, deletePublicModalDetailComment } from '../../../services/technological/public'
+import { getCardCommentListAll } from '../../../services/technological/task'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../../globalset/js/constant";
@@ -20,6 +21,18 @@ export default modelExtend(technological, {
     },
   },
   effects: {
+    // 针对任务的评论动态列表
+    * getCardCommentListAll({ payload = {} }, { select, call, put }) {
+      let res = yield call(getCardCommentListAll, payload) 
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            comment_list: res.data
+          }
+        })
+      }
+    },
     * getPublicModalDetailCommentList({ payload = {} }, { select, call, put }) {
       let res = yield call(getPublicModalDetailCommentList, payload)
       if(isApiResponseOk(res)) {
@@ -37,13 +50,15 @@ export default modelExtend(technological, {
       const { comment, id, origin_type, flag } = payload
       let res = yield call(submitPublicModalDetailComment, { comment, id, origin_type })
       if(isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('评论已发送')
+        }, 500)
         yield put({
           type: 'getPublicModalDetailCommentList',
           payload: {
             id, flag
           }
         })
-        message.success('评论已发送')
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -52,6 +67,9 @@ export default modelExtend(technological, {
       const { id, flag, milestone_id, common_id } = payload
       let res = yield call(deletePublicModalDetailComment, { id })
       if(isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('撤回成功')
+        }, 500)
         yield put({
           type: 'getPublicModalDetailCommentList',
           payload: {

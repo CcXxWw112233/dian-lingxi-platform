@@ -25,9 +25,22 @@ export default class CommentListItem extends React.Component {
   //获取评论列表
   getCommentList = (props) => {
     const { dispatch, commentUseParams = {}, isShowAllDynamic } = props
-    const { content_detail_use_id, flag } = commentUseParams
+    const { content_detail_use_id, flag, type } = commentUseParams
     const { content_detail_use_id_local } = this.state
     if(!content_detail_use_id || content_detail_use_id == content_detail_use_id_local) {
+      return
+    }
+    this.setState({
+      content_detail_use_id_local: content_detail_use_id
+    })
+    if (type && type == '1') { // 表示是任务
+      dispatch({
+        type: 'publicModalComment/getCardCommentListAll',
+        payload: {
+          id: content_detail_use_id,
+          flag: isShowAllDynamic ? '0' : '1'
+        }
+      })
       return
     }
     dispatch({
@@ -36,9 +49,6 @@ export default class CommentListItem extends React.Component {
         id: content_detail_use_id,
         flag: isShowAllDynamic ? '0' : '1'
       }
-    })
-    this.setState({
-      content_detail_use_id_local: content_detail_use_id
     })
   }
 

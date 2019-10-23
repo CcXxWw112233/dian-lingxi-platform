@@ -7,6 +7,7 @@ import NameChangeInput from '@/components/NameChangeInput'
 import UploadAttachment from '@/components/UploadAttachment'
 import RichTextEditor from '@/components/RichTextEditor'
 import MilestoneAdd from '@/components/MilestoneAdd'
+import LabelDataComponent from '@/components/LabelDataComponent'
 import AppendSubTask from './components/AppendSubTask'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import InformRemind from '@/components/InformRemind'
@@ -941,7 +942,7 @@ export default class MainContent extends Component {
                   <div style={{ display: 'flex' }}>
                     <div style={{ position: 'relative' }}>
                       {/* {start_time && due_time ? ('') : (<span style={{ color: '#bfbfbf' }}>设置</span>)} */}
-                      <div className={`${mainContentStyles.start_time}`}>
+                      {/* <div className={`${mainContentStyles.start_time}`}>
                         <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
                           {start_time ? timestampToTime(start_time, true) : '开始时间'}
                           <DatePicker
@@ -955,7 +956,7 @@ export default class MainContent extends Component {
                             style={{ opacity: 0, background: '#000000', position: 'absolute', left: 0, width: 'auto' }} />
                         </span>
                         <span onClick={this.handleDelStartTime} className={`${mainContentStyles.userItemDeleBtn} ${start_time && mainContentStyles.timeDeleBtn}`}></span>
-                      </div>
+                      </div> */}
                       {/* 开始时间 */}
                       {
                         (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
@@ -987,7 +988,7 @@ export default class MainContent extends Component {
                       &nbsp;
                       <span style={{ color: '#bfbfbf' }}> ~ </span>
                       &nbsp;
-                      <div className={`${mainContentStyles.due_time}`}>
+                      {/* <div className={`${mainContentStyles.due_time}`}>
                         <span style={{ position: 'relative', minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
                           {due_time ? timestampToTime(due_time, true) : '截止时间'}
                           <DatePicker
@@ -1001,7 +1002,7 @@ export default class MainContent extends Component {
                             style={{ opacity: 0, background: '#000000', position: 'absolute', left: 0, width: 'auto' }} />
                         </span>
                         <span onClick={this.handleDelDueTime} className={`${mainContentStyles.userItemDeleBtn} ${due_time && mainContentStyles.timeDeleBtn}`}></span>
-                      </div>
+                      </div> */}
                       {/* 截止时间 */}
                       {
                         (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
@@ -1062,6 +1063,24 @@ export default class MainContent extends Component {
             </div> */}
           </div>
           {/* 各种字段的不同状态 E */}
+
+          {/* 添加标签字段 S */}
+          <div>
+            <div className={mainContentStyles.field_content}>
+              <div className={mainContentStyles.field_left}>
+                <span className={`${globalStyles.authTheme}`}>&#xe6b8;</span>
+                <span>标签</span>
+              </div>
+              <div className={mainContentStyles.field_right}>
+                <div className={mainContentStyles.pub_hover}>
+                  <LabelDataComponent>
+                    <span>添加标签</span>
+                  </LabelDataComponent>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* 添加标签字段 E */}
 
           {/* 上传附件字段 S*/}
           <div>

@@ -393,7 +393,7 @@ export default class HeaderContentRightMenu extends Component {
       cancelText: '取消',
       zIndex: 2000,
       onOk() {
-        that.props.setTaskDetailModalVisible()
+        that.props.setTaskDetailModalVisible && that.props.setTaskDetailModalVisible()
         dispatch({
           type: 'publicTaskDetailModal/deleteTask',
           payload: {

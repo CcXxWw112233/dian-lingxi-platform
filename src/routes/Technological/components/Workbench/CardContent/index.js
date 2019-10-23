@@ -740,7 +740,7 @@ class CardContent extends React.Component {
                     key={key}
                     itemValue={value}
                     itemKey={key}
-                    setTaskDetailModalVisible={this.setTaskDetailModalVisible}
+                    // setTaskDetailModalVisible={this.setTaskDetailModalVisible}
                     isUsedInWorkbench={true}
                   />
                 ))}
@@ -790,7 +790,7 @@ class CardContent extends React.Component {
                       key={key2}
                       itemKey={key2}
                       itemValue={value2}
-                      setTaskDetailModalVisible={this.setTaskDetailModalVisible}
+                      // setTaskDetailModalVisible={this.setTaskDetailModalVisible}
                     />
                   );
                 })}
@@ -1028,7 +1028,7 @@ class CardContent extends React.Component {
           CardContentType == 'RESPONSIBLE_TASK' && (
             <TaskDetailModal
             task_detail_modal_visible={this.props.drawerVisible}
-            setTaskDetailModalVisible={this.setTaskDetailModalVisible}
+            // setTaskDetailModalVisible={this.setTaskDetailModalVisible}
             handleTaskDetailChange={this.handleChangeCard}
             handleDeleteCard={this.handleDeleteCard}
           />
