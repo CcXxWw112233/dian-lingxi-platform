@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Modal, Dropdown, Menu, Button, message, Input, Tooltip } from "antd";
 import DrawerContentStyles from "./index.less";
+import globalStyles from './../../../../globalset/css/globalClassName.less';
 import {
   timestampToTimeNormal2,
 } from "./../../../../utils/util";
@@ -161,7 +162,7 @@ class ShareAndInvite extends Component {
           </p>
         ) : null} */}
         <Tooltip title="分享协作" placement="top">
-          <span onClick={this.handleShareMenuClick} className={DrawerContentStyles.right__share}></span>
+          <span onClick={this.handleShareMenuClick} className={`${globalStyles.authTheme} ${DrawerContentStyles.right__share}`} style={{fontSize:'20px'}}>&#xe7e7;</span>
         </Tooltip>
         {/* <Dropdown overlay={shareMenu}>
           <span className={DrawerContentStyles.right__share} />
