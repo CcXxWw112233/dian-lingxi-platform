@@ -15,19 +15,11 @@ class BoardDropdownSelect extends Component {
     };
   }
 
-  // 项目变化时，项目交流文件处理
-  handleCommunicationFileList = (board_id) => {
+  handelBoardChangeCalback = (board_id) => {
     const { currentSelectedWorkbenchBox: { code }, dispatch } = this.props
-    if ('board:chat' == code){
+    if ('board:chat' == code) {
       beforeChangeCommunicationUpdateFileList({ board_id, dispatch });
-    }
-    
-  }
-
-  // 项目变化时，甘特图处理
-  handleBoardChangeMappingGantt = (board_id) => {
-    const { currentSelectedWorkbenchBox: { code }, dispatch } = this.props
-    if ('board:plans' == code) {
+    } else if ('board:plans' == code) {
       beforeChangeBoardUpdateGantt({ board_id, dispatch })
     }
   }
@@ -76,10 +68,9 @@ class BoardDropdownSelect extends Component {
             current_board: data.key
           }
         });
-        
+
       }
-      this.handleBoardChangeMappingGantt(data.key);
-      this.handleCommunicationFileList(data.key);
+      this.handelBoardChangeCalback(data.key)
     }
 
   }
