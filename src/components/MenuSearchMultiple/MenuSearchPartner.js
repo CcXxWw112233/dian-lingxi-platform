@@ -3,7 +3,7 @@ import React from 'react'
 import { Input, Menu, Spin, Icon, message } from 'antd'
 import indexStyles from './MenuSearchPartner.less'
 import ShowAddMenberModal from '../../routes/Technological/components/Project/ShowAddMenberModal'
-import { checkIsHasPermissionInBoard, } from "../../utils/businessFunction";
+import { checkIsHasPermissionInBoard, getOrgIdByBoardId, } from "../../utils/businessFunction";
 import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_BOARD_MEMBER } from "@/globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData';
 import { organizationInviteWebJoin, commInviteWebJoin, } from '../../services/technological/index'
@@ -111,7 +111,7 @@ export default class MenuSearchPartner extends React.Component {
     addMenbersInProject = (data) => {
         const { invitationType, invitationId, rela_Condition, dispatch, board_id, } = this.props
         const temp_ids = data.users.split(",")
-        const invitation_org = localStorage.getItem('OrganizationId')
+        const invitation_org = getOrgIdByBoardId(board_id) || localStorage.getItem('OrganizationId')
 
         organizationInviteWebJoin({
             _organization_id: invitation_org,
@@ -212,20 +212,33 @@ export default class MenuSearchPartner extends React.Component {
     // 点击全体成员的回调
     handleSelectedAllBtn = () => {
         const { is_selected_all } = this.props
-				const { selectedKeys = [] } = this.state
-				let type = !is_selected_all ? 'add' : 'remove'
+        const { selectedKeys = [] } = this.state
+        let type = !is_selected_all ? 'add' : 'remove'
         this.props.dispatch({
             type: 'publicTaskDetailModal/updateDatas',
             payload: {
                 is_selected_all: !is_selected_all
             }
         })
-        this.props.handleSelectedAllBtn && this.props.handleSelectedAllBtn({selectedKeys, type})
+        this.props.handleSelectedAllBtn && this.props.handleSelectedAllBtn({ selectedKeys, type })
     }
 
     render() {
         const { keyWord, resultArr, selectedKeys = [] } = this.state
-        const { Inputlaceholder = '搜索', isInvitation, searchName, menuSearchSingleSpinning, keyCode, invitationType, invitationOrg, invitationId, rela_Condition, is_selected_all, board_id } = this.props
+        const {
+            Inputlaceholder = '搜索',
+            isInvitation,
+            searchName,
+            menuSearchSingleSpinning,
+            keyCode,
+            invitationType,
+            invitationOrg,
+            invitationId,
+            rela_Condition,
+            is_selected_all,
+            not_show_wechat_invite,
+            board_id
+        } = this.props
         // const { Inputlaceholder = '搜索', searchName, menuSearchSingleSpinning, keyCode, invitationType, invitationId, rela_Condition, invitationOrg, board_id } = this.props
 
         return (
@@ -299,7 +312,7 @@ export default class MenuSearchPartner extends React.Component {
                     // title={titleText}
                     board_id={board_id}
                     addMenbersInProject={this.addMenbersInProject}
-                    show_wechat_invite={true}
+                    show_wechat_invite={not_show_wechat_invite ? false : true}
                     board_id={board_id}
                     invitationType={invitationType}
                     invitationId={invitationId}
@@ -324,6 +337,7 @@ MenuSearchPartner.deafultProps = {
     searchName: '', //检索的名称
     currentSelect: [], //当前选择的人
     board_id: '',
+    not_show_wechat_invite: false, //不显示微信邀请
     chirldrenTaskChargeChange: function () {
 
     },
