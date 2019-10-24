@@ -326,6 +326,7 @@ export default class UploadAttachment extends Component {
                       overlay={
                         <MenuSearchPartner
                           handleSelectedAllBtn={this.handleSelectedAllBtn}
+                          isInvitation={true}
                           invitationType='4'
                           invitationId={card_id}
                           listData={projectMemberData} keyCode={'user_id'} searchName={'name'} currentSelect={toNoticeList}
