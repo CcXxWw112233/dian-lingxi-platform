@@ -128,43 +128,39 @@ export default class Technological extends React.Component {
     ]
 
     const defaultLayout = (
-      <Layout>
-        <Layout id='technologicalLayoutWrapper' style={{position: 'relative'}}>
-          <Sider collapsedWidth={64} theme={'light'} collapsed={true} />
-          <SiderLeft />
-          <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>
-            <Content style={{
-              margin: '0 16px',
-            }}
-            >
-              <div className={globalClassNmae.page_style_3} id={'technologicalOut'} >
-                {
-                  routes.map(({ path, ...dynamics }, key) => {
-                    return (
-                      <Route key={key}
-                        //exact
-                        path={path}
-                        component={dynamic({
-                          app,
-                          ...dynamics,
-                        })}
-                      />
-                    )
-                  })
-                }
-              </div>
-            </Content>
-          </Layout>
+      <Layout id='technologicalLayoutWrapper' >
+        <Sider collapsedWidth={64} theme={'light'} collapsed={true} />
+        <SiderLeft />
+        <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>
+          <Content style={{
+            margin: '0 16px',
+          }}
+          >
+            <div className={globalClassNmae.page_style_3} id={'technologicalOut'} >
+              {
+                routes.map(({ path, ...dynamics }, key) => {
+                  return (
+                    <Route key={key}
+                      //exact
+                      path={path}
+                      component={dynamic({
+                        app,
+                        ...dynamics,
+                      })}
+                    />
+                  )
+                })
+              }
+            </div>
+          </Content>
         </Layout>
-
         <SiderRight />
         <GlobalSearch />
       </Layout>
-
     )
 
     const simpleLayout = (
-      <Layout id='technologicalLayoutWrapper' style={{position: 'relative'}}>
+      <Layout id='technologicalLayoutWrapper' >
         <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>
           <Content style={{ height: '100vh' }} >
             <div className={globalClassNmae.page_style_3} id={'technologicalOut'} >
