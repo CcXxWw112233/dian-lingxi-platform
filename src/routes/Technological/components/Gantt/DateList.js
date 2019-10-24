@@ -142,8 +142,10 @@ export default class DateList extends Component {
     }
     for (let key in milestoneMap) {
       if (isSamDay(Number(timestamp), Number(key) * 1000)) {
-        flag = true
         current_date_miletones = current_date_miletones.concat(milestoneMap[key])
+        if (milestoneMap[key].length) {
+          flag = true
+        }
         for (let val of milestoneMap[key]) {
           if (val['is_all_realized'] == '0') {
             is_all_realized = '0'

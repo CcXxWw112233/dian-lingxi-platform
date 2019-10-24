@@ -82,8 +82,11 @@ export default class ContentFilter extends Component {
                 treeCheckable={true}
                 showCheckedStrategy= {SHOW_PARENT}
                 size={'large'}
-                dropdownStyle={{ maxHeight: 300, 
+                maxTagCount={1}
+                dropdownStyle={{ 
+                    maxHeight: 120, 
                     overflowX: 'hidden',
+                    width: 217,
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap'}}
                 dropdownClassName={`${indexStyles.treeSelectDropDown} ${globalStyles.global_vertical_scrollbar}`}
