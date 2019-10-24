@@ -46,8 +46,8 @@ export default class AccessInterface extends React.Component {
             password: password,
             token: token,
         }
-        verificationShareLink(payload).then(({ code, message, data }) => {
-
+        verificationShareLink(payload).then((res) => {
+            const { code, data } = res
             if (code === '0') {
                 if (check_type === '2') { //2=验证密码 才跳转详情页
 
@@ -97,7 +97,7 @@ export default class AccessInterface extends React.Component {
                     )
                 }
             } else {
-                message.error(message, MESSAGE_DURATION_TIME)
+                message.error(res.message, MESSAGE_DURATION_TIME)
             }
         })
     }
