@@ -423,49 +423,50 @@ export default class HeaderContentRightMenu extends Component {
     const { board_id, card_id, is_privilege, privileges = [], executors = [], is_shared } = drawContent
     const { onlyReadingShareData, onlyReadingShareModalVisible } = this.state
     return (
-      <div>
-        <div className={headerStyles.right_menu_content}>
-          {/* 访问控制 */}
-          <span className={`${headerStyles.visit_icon} ${headerStyles.right_menu}`}>
-            <VisitControl
-              board_id={board_id}
-              isPropVisitControl={is_privilege === '0' ? false : true}
-              handleVisitControlChange={this.handleVisitControlChange}
-              principalList={executors}
-              otherPrivilege={privileges}
-              handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
-              handleAddNewMember={this.handleVisitControlAddNewMember}
-            />
-          </span>
-          {/* 分享协作 */}
-          <span style={{ display: 'flex' }}>
-            <span>
-              {is_shared === '1' ? (
-                <span className={headerStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}>
-                  <span className={headerStyles.right__shareIndicator_icon}></span>
-                  <span className={headerStyles.right__shareIndicator_text}>正在分享</span>
-                </span>
-              ) : null}
+
+      <div className={headerStyles.detail_action_list}>
+
+        {/* 访问控制 */}
+        <span className={`${headerStyles.action} ${headerStyles.visit_wrap}`}>
+          <VisitControl
+            board_id={board_id}
+            isPropVisitControl={is_privilege === '0' ? false : true}
+            handleVisitControlChange={this.handleVisitControlChange}
+            principalList={executors}
+            otherPrivilege={privileges}
+            handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+            handleAddNewMember={this.handleVisitControlAddNewMember}
+          />
+        </span>
+        {/* 分享协作 */}
+        <span className={`${headerStyles.action} `}>
+
+          {is_shared === '1' ? (
+            <span className={headerStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}>
+              <span className={`${globalStyles.authTheme} ${headerStyles.right__shareIndicator_icon}`}>&#xe7e7;</span>
+              <span className={headerStyles.right__shareIndicator_text}>正在分享</span>
             </span>
-            <span className={`${headerStyles.right_menu} ${headerStyles.share_icon}`}>
+          ) : <span className={`${headerStyles.right_menu} ${headerStyles.share_icon}`}>
               <ShareAndInvite
                 is_shared={is_shared}
                 onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible}
                 data={onlyReadingShareData}
                 handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare}
               />
+            </span>}
+
+
+        </span>
+        {/* 删除 */}
+        <span className={`${headerStyles.action}`}>
+          <Tooltip title="删除">
+            <span className={headerStyles.dele_icon} onClick={this.handleDelCard}>
+              <span className={`${globalStyles.authTheme} ${headerStyles.dele}`}>&#xe7c3;</span>
             </span>
-          </span>
-          {/* 删除 */}
-          <span>
-            <Tooltip title="删除">
-              <span className={headerStyles.dele_icon} onClick={this.handleDelCard}>
-                <span className={`${globalStyles.authTheme} ${headerStyles.dele}`}>&#xe7c3;</span>
-              </span>
-            </Tooltip>
-          </span>
-        </div>
+          </Tooltip>
+        </span>
       </div>
+
     )
   }
 }
