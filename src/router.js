@@ -213,6 +213,7 @@ const Routers = function ({ history, app }) {
     }, {
       path: '/share_detailed',
       models: () => [
+        import('./models/technological'),
         import('./models/technological/projectDetail/projectDetailTask'),
         import('./models/technological/projectDetail/projectDetailFile'),
         import('./models/technological/projectDetail'),

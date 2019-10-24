@@ -93,7 +93,8 @@ export default class Comment extends React.Component {
             <CommentListItem />
           </div>
         </div>
-        {(checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH, board_id))) && (
+
+        {/* {(checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH, board_id))) && (
           <div className={CommentStyles.out}>
             <div>
               {avatar ? (
@@ -108,7 +109,8 @@ export default class Comment extends React.Component {
               <CommentMention users={data} submitComment={this.submitComment.bind(this)} commentToDynamics={this.commentToDynamics.bind(this)} />
             </div>
           </div>
-        )}
+        )} */}
+
       </div>
     )
   }

@@ -1806,13 +1806,13 @@ class DrawContent extends React.Component {
                 <div className={globalStyle.drawContent_mask} style={{ left: 20, bottom: '22px' }} onClick={this.alarmNoEditPermission}></div>
               )} */}
               {board_id ? (
-<ContentRaletion
+                <ContentRaletion
                   relations_Prefix={relations_Prefix}
                   board_id={board_id}
                   link_id={card_id}
                   link_local={'3'}
                 />
-): ''}
+              ) : ''}
 
             </div>
             <div style={{ position: 'relative' }}>
@@ -1845,7 +1845,7 @@ class DrawContent extends React.Component {
 
               {/*标签*/}
               {label_data ? (
-<div className={DrawerContentStyles.divContent_1}>
+                <div className={DrawerContentStyles.divContent_1}>
                   <div className={DrawerContentStyles.contain_5}>
                     {label_data.map(
                       (value, key) => {
@@ -1891,7 +1891,7 @@ class DrawContent extends React.Component {
                     </div> */}
                   </div>
                 </div>
-): ''}
+              ) : ''}
 
               {child_data.length ? (
                 <div className={DrawerContentStyles.divContent_1}>

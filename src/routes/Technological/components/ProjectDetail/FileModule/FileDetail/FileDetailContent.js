@@ -1591,21 +1591,35 @@ class FileDetailContent extends React.Component {
               } */}
 
             {file_id ? (
-<div style={{ alignItems: 'center', display: 'flex' }}>
-              <span>
-                {is_shared === '1' ? <p className={indexStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={indexStyles.right__shareIndicator_icon}></span><span className={indexStyles.right__shareIndicator_text}>正在分享</span></p> : null}
-              </span>
+              <div style={{ alignItems: 'center', display: 'flex', marginRight: '10px' }}>
+            
 
-              <span style={{ marginTop: '-4px', marginRight: '10px', position: 'relative', width: '12px', height: '12px' }}>
-                <ShareAndInvite
-                  is_shared={is_shared}
-                  onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData}
-                  handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
-              </span>
-            </div>
-) : ''}
+                  {/* 分享协作 */}
+                  <span className={`${indexStyles.action} `}>
 
-            <div style={{ position: 'relative' }}>
+                    {is_shared === '1' ? (
+                      <span className={indexStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}>
+                        <span className={`${globalStyles.authTheme} ${indexStyles.right__shareIndicator_icon}`}>&#xe7e7;</span>
+                        <span className={indexStyles.right__shareIndicator_text}>正在分享</span>
+                      </span>
+                    ) : <span className={`${indexStyles.right_menu} ${indexStyles.share_icon}`} >
+                        <Tooltip title="分享协作" placement="top">
+                          <span onClick={this.handleChangeOnlyReadingShareModalVisible} className={`${globalStyles.authTheme} ${indexStyles.right__share}`} style={{ fontSize: '20px' }}>&#xe7e7;</span>
+                        </Tooltip>
+                      </span>}
+
+                    <ShareAndInvite
+
+                      onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible}
+                      data={onlyReadingShareData}
+                      handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare}
+                    />
+                  </span>
+           
+              </div>
+            ) : ''}
+
+            <div style={{ position: 'relative',marginRight: '10px' }}>
               <span>
                 {
                   checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) ? ('') : (
@@ -1617,6 +1631,7 @@ class FileDetailContent extends React.Component {
 
             </div>
             {/* <div style={{position:'relative'}}> */}
+    
             <span style={{ marginRight: is_privilege === '1' ? '36px' : '10px' }}>
               <VisitControl
                 board_id={board_id}
@@ -1631,6 +1646,8 @@ class FileDetailContent extends React.Component {
                 handleAddNewMember={this.handleVisitControlAddNewMember}
               />
             </span>
+
+            
             {/* </div> */}
             {/* </div> */}
             <div style={{ cursor: 'pointer' }}>
