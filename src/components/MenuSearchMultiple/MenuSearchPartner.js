@@ -225,7 +225,7 @@ export default class MenuSearchPartner extends React.Component {
 
     render() {
         const { keyWord, resultArr, selectedKeys = [] } = this.state
-        const { Inputlaceholder = '搜索', isInvitation, searchName, menuSearchSingleSpinning, keyCode, invitationType, invitationId, rela_Condition, is_selected_all } = this.props
+        const { Inputlaceholder = '搜索', isInvitation, searchName, menuSearchSingleSpinning, keyCode, invitationType, invitationOrg, invitationId, rela_Condition, is_selected_all } = this.props
 
         return (
             <div>

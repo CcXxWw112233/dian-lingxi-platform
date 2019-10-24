@@ -19,8 +19,7 @@ import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN
 } from "@/globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
-import { updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask, deleteChirldTask,deleteTaskFile} from '../../services/technological/task'
-import { get } from 'https'
+import { addTaskExecutor, removeTaskExecutor,deleteTaskFile} from '../../services/technological/task'
 
 
 @connect(mapStateToProps)
@@ -1212,7 +1211,7 @@ export default class MainContent extends Component {
           {/* 各种字段的不同状态 E */}
 
           {/* 添加标签字段 S */}
-          <div>
+          {/* <div>
             <div className={mainContentStyles.field_content}>
               <div className={mainContentStyles.field_left}>
                 <span className={`${globalStyles.authTheme}`}>&#xe6b8;</span>
@@ -1226,7 +1225,7 @@ export default class MainContent extends Component {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
           {/* 添加标签字段 E */}
 
           {/* 上传附件字段 S*/}

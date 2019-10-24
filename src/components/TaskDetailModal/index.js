@@ -53,7 +53,7 @@ export default class TaskDetailModal extends Component {
 
   //评论
   commentSubmitPost = (data) => {
-    if (!this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() || !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_comment()) {
+    if (!(this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_comment() || this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit())) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }

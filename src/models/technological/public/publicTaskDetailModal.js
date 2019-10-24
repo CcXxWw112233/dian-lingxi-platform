@@ -23,9 +23,10 @@ export default {
      * @param {String} id 当前任务的id 
      */
     * getCardDetail({ payload }, { call, put }) {
-      const { id } = payload
+      const { id, calback } = payload
       let res = yield call(getCardDetail, { id })
       if (isApiResponseOk(res)) {
+        calback && typeof calback == 'function' ? calback() : ''
         yield put({
           type: 'updateDatas',
           payload: {
