@@ -191,6 +191,7 @@ export default class MilestoneAdd extends React.Component {
             <div>
 
                 <Dropdown
+                    trigger={['click']}
                     overlay={
                         <div>
                             <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: 200, }}
