@@ -275,6 +275,7 @@ class FolderItem extends Component {
                 // getSubFileData(current_folder_id, board_id);
                 queryCommunicationFileData()
             }
+            this.props.hideUpdatedFileDetail();
         } else {
             message.error(res.message)
         }

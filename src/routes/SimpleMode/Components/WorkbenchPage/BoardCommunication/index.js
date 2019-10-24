@@ -1186,7 +1186,8 @@ class BoardCommunication extends Component {
                 <CommunicationFileList
                     queryCommunicationFileData={this.queryCommunicationFileData}
                     showUpdatedFileDetail={this.showUpdatedFileDetail}
-                    setPreviewFileModalVisibile={this.hideUpdatedFileDetail}
+                    // setPreviewFileModalVisibile={this.hideUpdatedFileDetail}
+                    hideUpdatedFileDetail={this.hideUpdatedFileDetail}
                     changeIsRightBarShowFileList={this.changeIsRightBarShowFileList}
                     {...this.props}
                 />
