@@ -917,7 +917,7 @@ export default class MainContent extends Component {
                       setIsEdit={this.setTitleEdit}
                       autoFocus={true}
                       goldName={card_name}
-                      maxLength={100}
+                      maxLength={101}
                       nodeName={'textarea'}
                       style={{ display: 'block', fontSize: 20, color: '#262626', resize: 'none', height: '44px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none' }}
                     />
