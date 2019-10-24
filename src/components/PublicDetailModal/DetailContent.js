@@ -121,40 +121,17 @@ export default class DetailContent extends React.Component {
 
             <div className={`${globalStyles.global_vertical_scrollbar} ${`${indexStyles.fileDetailContentRight_dynamicList}`}`}>
               {/*动态放置区*/}
-              {/* <div style={{fontSize: '12px', color: '#595959'}}>
+              <div style={{fontSize: '12px', color: '#595959'}}>
                 <div>
                   {dynamicsContent}
                 </div>
-              </div> */}
+              </div>
               {/*评论放置区*/}
-              {/* <div style={{height: clientHeight - offsetTopDeviation - 60 - 70, overflow: 'hidden'}}> */}
-              {/* <div style={{overflow: 'hidden'}}>
+              <div style={{ overflow: 'hidden' }}>
                 {commentListsContent || (
-                  <CommentLists commentUseParams={commentUseParams} isShowAllDynamic={isShowAllDynamic}/>
+                  <CommentLists commentUseParams={commentUseParams} isShowAllDynamic={isShowAllDynamic} />
                 )}
-              </div> */}
-              {
-                isShowAllDynamic ? (
-                  <>
-                    <div style={{ fontSize: '12px', color: '#595959' }}>
-                      <div>
-                        {dynamicsContent}
-                      </div>
-                    </div>
-                    <div style={{ overflow: 'hidden' }}>
-                      {commentListsContent || (
-                        <CommentLists commentUseParams={commentUseParams} isShowAllDynamic={isShowAllDynamic} />
-                      )}
-                    </div>
-                  </>
-                ) : (
-                    <div style={{ overflow: 'hidden' }}>
-                      {commentListsContent || (
-                        <CommentLists commentUseParams={commentUseParams} isShowAllDynamic={isShowAllDynamic} />
-                      )}
-                    </div>
-                  )
-              }
+              </div>
             </div>
           </div>
           <div className={indexStyles.fileDetailContentRight_bott}>

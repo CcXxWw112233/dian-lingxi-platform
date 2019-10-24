@@ -405,14 +405,14 @@ class Gantt extends Component {
           payload: data
         })
       },
-      getCardCommentList(id) {
-        dispatch({
-          type: getEffectOrReducerByName_4('getCardCommentList'),
-          payload: {
-            id
-          }
-        })
-      },
+      // getCardCommentList(id) {
+      //   dispatch({
+      //     type: getEffectOrReducerByName_4('getCardCommentList'),
+      //     payload: {
+      //       id
+      //     }
+      //   })
+      // },
       addCardNewComment(data) {
         dispatch({
           type: getEffectOrReducerByName_4('addCardNewComment'),

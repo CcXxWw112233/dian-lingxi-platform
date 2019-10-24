@@ -19,8 +19,7 @@ import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN
 } from "@/globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
-import { updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask, deleteChirldTask,deleteTaskFile} from '../../services/technological/task'
-import { get } from 'https'
+import { addTaskExecutor, removeTaskExecutor,deleteTaskFile} from '../../services/technological/task'
 
 
 @connect(mapStateToProps)
@@ -554,7 +553,7 @@ export default class MainContent extends Component {
   endDatePickerChange(timeString) {
     const { drawContent = {}, milestoneList = [], dispatch } = this.props
     const { card_id, start_time, milestone_data = {} } = drawContent
-    const { milestone_deadline } = milestone_data
+    const { deadline } = milestone_data
     // const milestone_deadline = (milestoneList.find((item => item.id == milestone_data.id)) || {}).deadline//关联里程碑的时间
     const due_timeStamp = timeToTimestamp(timeString)
     const updateObj = {
@@ -564,7 +563,7 @@ export default class MainContent extends Component {
       message.warn('开始时间不能大于结束时间')
       return false
     }
-    if (!compareTwoTimestamp(milestone_deadline, due_timeStamp)) {
+    if (!compareTwoTimestamp(deadline, due_timeStamp)) {
       message.warn('任务的截止日期不能大于关联里程碑的截止日期')
       return
     }
@@ -1212,7 +1211,7 @@ export default class MainContent extends Component {
           {/* 各种字段的不同状态 E */}
 
           {/* 添加标签字段 S */}
-          <div>
+          {/* <div>
             <div className={mainContentStyles.field_content}>
               <div className={mainContentStyles.field_left}>
                 <span className={`${globalStyles.authTheme}`}>&#xe6b8;</span>
@@ -1226,7 +1225,7 @@ export default class MainContent extends Component {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
           {/* 添加标签字段 E */}
 
           {/* 上传附件字段 S*/}

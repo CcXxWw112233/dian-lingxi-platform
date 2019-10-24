@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, Icon, Input, Button, Mention, Upload, Tooltip, Avatar } from 'antd'
 import CommentStyles from './Comment2.less'
 import commonCommentStyles from './commonComment.less'
-import { judgeTimeDiffer, judgeTimeDiffer_ten } from "../../../utils/util";
+import { judgeTimeDiffer, judgeTimeDiffer_ten, newsDynamicHandleTime, timestampToHM } from "../../../utils/util";
 import { currentNounPlanFilterName } from "@/utils/businessFunction";
 import { TASKS } from '@/globalset/js/constant'
 import { connect } from 'dva'
@@ -95,7 +95,7 @@ export default class CommentListItem extends React.Component {
               <span>{data.content && data.content.card_type && data.content.card_type == '0' ? currentNounPlanFilterName(TASKS) : '会议'}</span>
               <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.card && data.content.card.name) && data.content.card.name}</span>
             </span>
-            <span>{judgeTimeDiffer(create_time)}</span>
+            <span>{newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}</span>
           </div>
         )
         break
@@ -108,7 +108,7 @@ export default class CommentListItem extends React.Component {
               <span>{data.content && data.content.card_type && data.content.card_type == '0' ? currentNounPlanFilterName(TASKS) : '会议'}</span>
               <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.card && data.content.card.name) && data.content.card.name}</span>
             </span>
-            <span>{judgeTimeDiffer(create_time)}</span>
+            <span>{newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}</span>
           </div>
         )
         break
@@ -122,7 +122,7 @@ export default class CommentListItem extends React.Component {
               <span>的{currentNounPlanFilterName(TASKS)}的名称修改为</span>
               <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.card && data.content.card.name) && data.content.card.name}</span>
             </span>
-            <span>{judgeTimeDiffer(create_time)}</span>
+            <span>{newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}</span>
           </div>
         )
         break
@@ -137,7 +137,7 @@ export default class CommentListItem extends React.Component {
               <span>指派给</span>
               <span className={commonCommentStyles.news_creator}>{(data.content && data.content.rela_data && data.content.rela_data.name) && data.content.rela_data.name}</span>
             </span>
-            <span>{judgeTimeDiffer(create_time)}</span>
+            <span>{newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}</span>
           </div>
         )
         break
@@ -152,7 +152,7 @@ export default class CommentListItem extends React.Component {
               <span>中移除了执行人</span>
               <span className={commonCommentStyles.news_creator}>{(data.content && data.content.rela_data && data.content.rela_data.name) && data.content.rela_data.name}</span>
             </span>
-            <span>{judgeTimeDiffer(create_time)}</span>
+            <span>{newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}</span>
           </div>
         )
         break
@@ -165,7 +165,7 @@ export default class CommentListItem extends React.Component {
               <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.card && data.content.card.name) && data.content.card.name}</span>
               <span>{data.content && data.content.card_type && data.content.card_type == '0' ? currentNounPlanFilterName(TASKS) : '会议'}</span>
             </span>
-            <span>{judgeTimeDiffer(create_time)}</span>
+            <span>{newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}</span>
           </div>
         )
         break
@@ -178,7 +178,46 @@ export default class CommentListItem extends React.Component {
               <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.card && data.content.card.name) && data.content.card.name}</span>
               <span>{data.content && data.content.card_type && data.content.card_type == '0' ? currentNounPlanFilterName(TASKS) : '会议'}</span>
             </span>
-            <span>{judgeTimeDiffer(create_time)}</span>
+            <span>{newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}</span>
+          </div>
+        )
+        break
+      case 'board.card.update.description':// 更新任务描述
+        messageContainer = (
+          <div className={commonCommentStyles.news_item}>
+            <span className={commonCommentStyles.news_text}>
+              <span className={commonCommentStyles.news_creator}>{data.creator && data.creator.name}</span>
+              <span>修改了</span>
+              <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.card && data.content.card.name) && data.content.card.name}</span>
+              <span>的{data.content && data.content.card_type && data.content.card_type == '0' ? currentNounPlanFilterName(TASKS) : '会议'}描述</span>
+            </span>
+            <span>{newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}</span>
+          </div>
+        )
+      break
+      case 'board.card.update.startTime':// 修改开始时间
+        messageContainer = (
+          <div className={commonCommentStyles.news_item}>
+            <span className={commonCommentStyles.news_text}>
+              <span className={commonCommentStyles.news_creator}>{data.creator && data.creator.name}</span>
+              <span>修改了</span>
+              <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.card && data.content.card.name) && data.content.card.name}</span>
+              <span>的{data.content && data.content.card_type && data.content.card_type == '0' ? currentNounPlanFilterName(TASKS) : '会议'}开始时间</span>
+            </span>
+            <span>{newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}</span>
+          </div>
+        )
+        break
+      case 'board.card.update.dutTime':// 修改开始时间
+        messageContainer = (
+          <div className={commonCommentStyles.news_item}>
+            <span className={commonCommentStyles.news_text}>
+              <span className={commonCommentStyles.news_creator}>{data.creator && data.creator.name}</span>
+              <span>修改了{data.content && data.content.card_type && data.content.card_type == '0' ? currentNounPlanFilterName(TASKS) : '会议'}</span>
+              <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.card && data.content.card.name) && data.content.card.name}</span>
+              <span>的截止时间</span>
+            </span>
+            <span>{newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}</span>
           </div>
         )
         break
@@ -190,13 +229,100 @@ export default class CommentListItem extends React.Component {
               <span>在</span>
               <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.rela_card && data.content.rela_card.name) && data.content.rela_card.name}</span>
               <span>中添加了一条</span>
+              <span>子{currentNounPlanFilterName(TASKS)}:</span>
               <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.card && data.content.card.name) && data.content.card.name}</span>
-              <span>子{currentNounPlanFilterName(TASKS)}</span>
             </span>
-            <span>{judgeTimeDiffer(create_time)}</span>
+            <span>{newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}</span>
           </div>
         )
         break
+      case 'board.card.delete.child': // 删除子任务
+        messageContainer = (
+          <div className={commonCommentStyles.news_item}>
+            <span className={commonCommentStyles.news_text}>
+              <span className={commonCommentStyles.news_creator}>{data.creator && data.creator.name}</span>
+              <span>删除了</span>
+              <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.rela_card && data.content.rela_card.name) && data.content.rela_card.name}</span>
+              <span>中的一条</span>
+              <span>子{currentNounPlanFilterName(TASKS)}:</span>
+              <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.card && data.content.card.name) && data.content.card.name}</span>
+            </span>
+            <span>{newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}</span>
+          </div>
+        )
+        break
+      case 'board.card.update.finish.child': // 完成子任务
+        messageContainer = (
+          <div className={commonCommentStyles.news_item}>
+            <span className={commonCommentStyles.news_text}>
+              <span className={commonCommentStyles.news_creator}>{data.creator && data.creator.name}</span>
+              <span>完成了</span>
+              <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.rela_card && data.content.rela_card.name) && data.content.rela_card.name}</span>
+              <span>的子{currentNounPlanFilterName(TASKS)}:</span>
+              <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.card && data.content.card.name) && data.content.card.name}</span>
+            </span>
+            <span>{newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}</span>
+          </div>
+        )
+        break
+      case 'board.card.update.cancel.finish.child': // 取消完成子任务
+        messageContainer = (
+          <div className={commonCommentStyles.news_item}>
+            <span className={commonCommentStyles.news_text}>
+              <span className={commonCommentStyles.news_creator}>{data.creator && data.creator.name}</span>
+              <span>重做了</span>
+              <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.rela_card && data.content.rela_card.name) && data.content.rela_card.name}</span>
+              <span>的子{currentNounPlanFilterName(TASKS)}:</span>
+              <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.card && data.content.card.name) && data.content.card.name}</span>
+            </span>
+            <span>{newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}</span>
+          </div>
+        )
+        break
+      case 'board.card.update.name.child': // 更新子任务名称
+        messageContainer = (
+          <div className={commonCommentStyles.news_item}>
+            <span className={commonCommentStyles.news_text}>
+              <span className={commonCommentStyles.news_creator}>{data.creator && data.creator.name}</span>
+              <span>将</span>
+              <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.rela_card && data.content.rela_card.name) && data.content.rela_card.name}</span>
+              <span>的子{currentNounPlanFilterName(TASKS)}:</span>
+              <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.rela_data && data.content.rela_data.name) && data.content.rela_data.name}</span>
+              <span>的名称修改为</span>
+              <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.card && data.content.card.name) && data.content.card.name}</span>
+            </span>
+            <span>{newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}</span>
+          </div>
+        )
+        break
+      case 'board.card.update.file.add': // 添加附件
+        messageContainer = (
+          <div className={commonCommentStyles.news_item}>
+            <span className={commonCommentStyles.news_text}>
+              <span className={commonCommentStyles.news_creator}>{data.creator && data.creator.name}</span>
+              <span>在</span>
+              <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.card && data.content.card.name) && data.content.card.name}</span>
+              <span>中上传了附件:</span>
+              <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.rela_data && data.content.rela_data.name) && data.content.rela_data.name}</span>
+            </span>
+            <span>{newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}</span>
+          </div>
+        )
+        break
+      case 'board.card.update.file.remove': // 移除附件
+        messageContainer = (
+          <div className={commonCommentStyles.news_item}>
+            <span className={commonCommentStyles.news_text}>
+              <span className={commonCommentStyles.news_creator}>{data.creator && data.creator.name}</span>
+              <span>移除了</span>
+              <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.card && data.content.card.name) && data.content.card.name}</span>
+              <span>的附件:</span>
+              <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.rela_data && data.content.rela_data.name) && data.content.rela_data.name}</span>
+            </span>
+            <span>{newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}</span>
+          </div>
+        )
+      break
       default:
         break
     }
@@ -225,7 +351,7 @@ export default class CommentListItem extends React.Component {
                 {
                   judgeTimeDiffer_ten(create_time) ? (
                     <div className={commonCommentStyles.common_create_time}>
-                      {judgeTimeDiffer(create_time)}
+                      {newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}
                     </div>
                   ) : (
                       <div className={commonCommentStyles.common_delete} onClick={this.deleteComment.bind(this, id)}>
@@ -348,7 +474,7 @@ export default class CommentListItem extends React.Component {
     //               {
     //                 judgeTimeDiffer_ten(create_time) ? (
     //                   <div className={commonCommentStyles.common_create_time}>
-    //                     {judgeTimeDiffer(create_time)}
+    //                     {newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}
     //                   </div>
     //                 ) : (
     //                     <div className={commonCommentStyles.common_delete} onClick={this.deleteComment.bind(this, id)}>

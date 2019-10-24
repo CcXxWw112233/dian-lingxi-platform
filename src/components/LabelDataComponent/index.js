@@ -12,8 +12,7 @@ export default class LabelDataComponent extends React.Component {
     isAddLabel: false, // 是否新建标签
   }
 
-  componentDidMount() {
-    const { board_id } = this.props
+  getInitBoardTag = (board_id) => {
     getBoardTagList({board_id}).then(res => {
       if (isApiResponseOk(res)) {
         this.setState({
@@ -26,7 +25,9 @@ export default class LabelDataComponent extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-
+    if (nextProps.board_id != this.props.board_id) {
+      this.getInitBoardTag(nextProps.board_id)
+    }
   }
 
   handleMenuClick = (e) => {
