@@ -281,7 +281,7 @@ class MyWorkbenchBoxs extends Component {
   renderBoxItem = (item) => {
     const isDisableds = this.getIsDisabled(item)
     return (
-      <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item)} disabled={isDisableds}>
+      <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item)} disabled={item.status == 0||isDisableds}>
         <i dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} ></i><br />
         <span className={indexStyles.myWorkbenchBox_title}>{item.name}</span>
       </div>
@@ -313,11 +313,11 @@ class MyWorkbenchBoxs extends Component {
             myWorkbenchBoxList.map((item, key) => {
               return (
                 item.status == 0 ? (
-                  <Tooltip title="功能开发中，请耐心等待" key={key}>
+                  <Tooltip title="功能开发中，敬请期待" key={key}>
                     {this.renderBoxItem(item)}
                   </Tooltip>
                 ) :
-                  this.renderBoxItem(item)
+                this.renderBoxItem(item)
               )
             })
           }

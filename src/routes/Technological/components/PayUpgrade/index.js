@@ -115,8 +115,8 @@ export class PayUpgrade extends Component {
 
                         <div className={indexStyles.upgradeBtnWrapper}>
                             {
-                                paymentInfo.is_free_trial == 0 &&
-                                    <>
+                                paymentInfo.is_free_trial == 0 && (
+<>
                                         <Tooltip title="续费功能即将开通">
                                             <Button type="primary" size={'default'} onClick={() => this.toPay()} disabled={true} >续费</Button>
                                         </Tooltip>
@@ -125,7 +125,7 @@ export class PayUpgrade extends Component {
                                             <Button type="primary" size={'default'} onClick={() => this.toPay()} disabled={true}>成员扩容</Button>
                                         </Tooltip>
                                     </>
-                            }
+)}
                             {
                                 paymentInfo.is_free_trial == 1 &&
                                 <Button type="primary" size={'default'} onClick={() => this.toPay()} > 付费升级</Button>

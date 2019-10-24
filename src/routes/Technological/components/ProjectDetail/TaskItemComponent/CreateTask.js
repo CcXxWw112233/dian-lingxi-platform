@@ -8,6 +8,7 @@ import QueryString from 'querystring'
 import { checkIsHasPermissionInBoard } from "../../../../../utils/businessFunction";
 import { PROJECT_TEAM_CARD_GROUP } from "../../../../../globalset/js/constant";
 import { connect } from 'dva';
+import TaskDetailModal from '@/components/TaskDetailModal'
 
 const documentWidth = document.querySelector('body').offsetWidth
 let defaultScrollLeft = 0;
@@ -196,55 +197,138 @@ export default class CreateTask extends React.Component {
   fnScroll(e) {
     this.scrollLeft = e.target.scrollLeft
   }
+
   // 右方抽屉弹窗---start
+  // 点击弹窗的回调
   setDrawerVisibleOpen(data) {
 
     const { drawContent: { card_id }, taskGroupListIndex_index, taskGroupListIndex } = data
     //不需要及时更新drawcontent
     const { dispatch } = this.props
+    // dispatch({
+    //   type: 'projectDetailTask/updateDatas',
+    //   payload: {
+    //     taskGroupListIndex, 
+    //     taskGroupListIndex_index, 
+    //     drawerVisible: true,
+    //     card_id 
+    //   }
+    // })
+    
+    // 这是点击的时候提前去更新model中的数据, 然后在加载
     dispatch({
-      type: 'projectDetailTask/getCardDetail',
+      type: 'publicTaskDetailModal/updateDatas',
       payload: {
-        id: card_id,
-      }
-    })
-    dispatch({
-      type: 'projectDetailTask/updateDatas',
-      payload: {
+        drawerVisible: true,
+        card_id, // 在这个model中外部保存一个card_id
         taskGroupListIndex,
         taskGroupListIndex_index,
-        // drawerVisible: true,
-        card_id
       }
     })
-    dispatch({
-      type: 'projectDetailTask/getCardCommentList',
-      payload: {
-        id: card_id
-      }
-    })
-    dispatch({
-      type: 'projectDetailTask/getCardCommentListAll',
-      payload: {
-        id: card_id
-      }
-    })
+
+    // dispatch({
+    //   type: 'publicTaskDetailModal/getCardDetail',
+    //   payload: {
+    //     id: card_id
+    //   }
+    // })
+    // dispatch({
+    //   type: 'projectDetailTask/getCardCommentList',
+    //   payload: {
+    //     id: card_id
+    //   }
+    // })
+    // dispatch({
+    //   type: 'projectDetailTask/getCardDetail',
+    //   payload: {
+    //     id: card_id
+    //   }
+    // })
+    // dispatch({
+    //   type: 'projectDetailTask/getCardCommentListAll',
+    //   payload: {
+    //     id: card_id
+    //   }
+    // })
     //添加url
   }
 
-  setDrawerVisibleClose() {
+  // 关闭弹窗的回调
+  setDrawerVisibleClose = () => {
     // this.setState({
     //   drawerVisible: false,
     // })
     const { dispatch } = this.props
     dispatch({
-      type: 'projectDetailTask/updateDatas',
+      type: 'publicTaskDetailModal/updateDatas',
       payload: {
         drawerVisible: false,
+        drawContent: {}, // 将弹窗中的数据清除
+        card_id: ''
+      }
+    })
+    // dispatch({
+    //   type: 'projectDetailTask/updateDatas',
+    //   payload: {
+    //     drawerVisible: false,
+    //   }
+    // })
+  }
+  //右方抽屉弹窗---end
+
+  /**
+   * 更新父级任务列表
+   * @param {Object} payload 需要传递进来的参数
+   */
+  handleTaskDetailChange = ({ drawContent, card_id }) => {
+    // console.log('更新父级任务列表', 'sssssss_进来了')
+    // const { is_realize, card_name } = payload
+    
+    const { taskGroupList = [], taskGroupListIndex, taskGroupListIndex_index, dispatch } = this.props
+    // taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index][name] = value
+    taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index] = {...drawContent}
+    dispatch({
+      type: 'projectDetailTask/updateDatas',
+      payload: {
+        taskGroupList
       }
     })
   }
-  //右方抽屉弹窗---end
+
+  /**
+   * 删除某条卡片的回调
+   * @param {String} card_id 删除当前对应的card_id
+   */
+  handleDeleteCard = ({card_id}) => {
+    const { taskGroupList = [], taskGroupListIndex, taskGroupListIndex_index, dispatch } = this.props
+    const new_arr_ = [...taskGroupList]
+    new_arr_[taskGroupListIndex]['card_data'].splice(taskGroupListIndex_index, 1)
+    dispatch({
+      type: 'projectDetailTask/updateDatas',
+      payload: {
+        taskGroupList: new_arr_
+      }
+    })
+  }
+
+  /**
+   * 调用更新父级列表
+   * @param {Object} payload 需要传递的参数
+   */
+  updateParentTaskList = () => {
+    const { drawContent = {}, getTaskGroupListArrangeType, dispatch } = this.props
+    const { board_id } = drawContent
+    // 调用分组列表
+    dispatch({
+      type: 'projectDetailTask/getTaskGroupList',
+      payload: {
+        type: '2',
+        arrange_type: getTaskGroupListArrangeType ? getTaskGroupListArrangeType : '1',
+        board_id: board_id
+      }
+    })
+  }
+
   render() {
     const { clientHeight = changeClientHeight(), isScrolling } = this.state
     const { taskGroupList = [], drawerVisible = false, getTaskGroupListArrangeType = '1', board_id, dispatch } = this.props
@@ -289,10 +373,17 @@ export default class CreateTask extends React.Component {
         </div>
 
         {/*任务详细弹窗*/}
-        <DrawContentModal
+        {/* <DrawContentModal
           dispatch={dispatch}
           visible={drawerVisible}
-          setDrawerVisibleClose={this.setDrawerVisibleClose.bind(this)} />
+          setDrawerVisibleClose={this.setDrawerVisibleClose.bind(this)} /> */}
+          <TaskDetailModal
+            task_detail_modal_visible={drawerVisible}
+            // setTaskDetailModalVisible={this.setDrawerVisibleClose}
+            handleTaskDetailChange={this.handleTaskDetailChange}
+            updateParentTaskList={this.updateParentTaskList}
+            handleDeleteCard={this.handleDeleteCard}
+          />
       </div>
     )
   }
@@ -301,7 +392,7 @@ function mapStateToProps({
   projectDetailTask: {
     datas: {
       taskGroupList = [],
-      drawerVisible = false,
+      // drawerVisible = false,
       getTaskGroupListArrangeType = '1',
     }
   },
@@ -309,12 +400,21 @@ function mapStateToProps({
     datas: {
       board_id
     }
+  },
+  publicTaskDetailModal: {
+    drawerVisible,
+    drawContent,
+    taskGroupListIndex,
+    taskGroupListIndex_index
   }
 }) {
   return {
     taskGroupList,
     drawerVisible,
+    drawContent,
     getTaskGroupListArrangeType,
-    board_id
+    board_id,
+    taskGroupListIndex,
+    taskGroupListIndex_index
   }
 }

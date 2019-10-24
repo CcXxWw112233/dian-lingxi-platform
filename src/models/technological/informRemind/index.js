@@ -1,5 +1,5 @@
 // 通知提醒的数据
-import { getTriggerList, getTriggerHistory, setRemindInformation, updateRemindInformation, delRemindInformation } from '@/services/technological/informRemind'
+import { getUserInfoRemind, getTriggerList, getTriggerHistory, setRemindInformation, updateRemindInformation, delRemindInformation } from '@/services/technological/informRemind'
 import { isApiResponseOk } from '@/utils/handleResponseData'
 import { message } from 'antd';
 import { getModelSelectState } from '@/models/utils'
@@ -72,9 +72,9 @@ export default {
         { remind_time_value: 60 },
       ], // 1-60不同的时间段
       diff_text_term: [
+        { remind_time_type: 'd', txtVal: '天数' },
         { remind_time_type: 'm', txtVal: '分钟' },
         { remind_time_type: 'h', txtVal: '小时' },
-        { remind_time_type: 'd', txtVal: '天数' },
       ], // 匹配不同的字段类型
       historyList: [], // 保存设置的历史记录提醒
       setInfoRemindList: [
@@ -82,7 +82,7 @@ export default {
           rela_id: '',
           rela_type: '',
           remind_trigger: '',
-          remind_time_type: 'm',
+          remind_time_type: 'd',
           remind_time_value: '1',
           message_consumers: [],
           
@@ -91,7 +91,7 @@ export default {
       triggerList: [], // 每个对应的选项的类型列表
       is_add_remind: false, // 是否点击了添加操作 默认为false 没有点击
       remind_trigger: '', // 提醒触发器类型
-      remind_time_type: 'm', // 提醒时间类型 m=分钟 h=小时 d=天 datetime=时间日期
+      remind_time_type: 'd', // 提醒时间类型 m=分钟 h=小时 d=天 datetime=时间日期
       remind_time_value: '1', // 提醒时间值 如果是自定义时间传时间戳11位
       remind_edit_type: 1, // 可编辑的类型
       message_consumers: [],
@@ -103,6 +103,7 @@ export default {
          dispatch({
            type: 'updateDatas', 
            payload: {
+            informRemindUsers: [],
             triggerList: [],
             historyList: [],
             setInfoRemindList: [
@@ -110,7 +111,7 @@ export default {
                 rela_id: '',
                 rela_type: '',
                 remind_trigger: '',
-                remind_time_type: 'm',
+                remind_time_type: 'd',
                 remind_time_value: '1',
                 message_consumers: [], 
               }
@@ -123,6 +124,21 @@ export default {
     },
 
     effects: {
+      // 获取通知提醒用户列表
+      * getUserInfoRemind({ payload = {} }, { call, put }) {
+        const { id, type } = payload
+        const res = yield call(getUserInfoRemind, { id, type })
+        if(!isApiResponseOk(res)) {
+          message.error(res.message)
+          return
+        }
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            informRemindUsers: res.data
+          }
+        })
+      },
 
       // 获取事件类型列表的方法
       * getTriggerList({ payload = {} }, { select, call, put }) {

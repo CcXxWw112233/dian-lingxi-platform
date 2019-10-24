@@ -68,6 +68,12 @@ class SiderRight extends React.Component {
     this.setState({
       collapsed: !this.state.collapsed
     });
+    this.props.dispatch({
+      type: 'technological/updateDatas',
+      payload: {
+        siderRightCollapsed: this.state.collapsed
+      }
+    })
   }
 
   handleVideoMeetingSaveSelectChange = value => {
@@ -444,6 +450,16 @@ class SiderRight extends React.Component {
       };
     });
   };
+  handleImToggle = (toggle) => {
+    console.log(toggle);
+    
+    this.props.dispatch({
+      type: 'technological/updateDatas',
+      payload: {
+        siderRightCollapsed: toggle
+      }
+    })
+  }
   render() {
     const {
       collapsed,
@@ -542,8 +558,8 @@ class SiderRight extends React.Component {
       </div>
     );
     return (
-      <div style={{ flex: "none", paddingBottom: '50px', position: 'relative', backgroundColor: '#fff'}}>
-        <LingxiIm token={Cookies.get('Authorization')} width='400px' />
+      <div style={{ flex: "none", paddingBottom: '50px', position: 'relative', backgroundColor: '#fff',zIndex:'1010'}}>
+        <LingxiIm token={Cookies.get('Authorization')} width='400px' onToggle={this.handleImToggle} />
         <div className={indexStyles.videoMeetingWapper} style={{ position: 'absolute', bottom: '10px'}}>
           <VideoMeetingPopoverContent />
         </div>

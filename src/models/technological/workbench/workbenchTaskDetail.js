@@ -83,12 +83,12 @@ export default {
       })
       let res = yield call(getCardDetail, { id })
       if (isApiResponseOk(res)) {
-        yield put({
-          type: 'getCardCommentList',
-          payload: {
-            id
-          }
-        })
+        // yield put({
+        //   type: 'getCardCommentList',
+        //   payload: {
+        //     id
+        //   }
+        // })
         yield put({
           type: 'updateDatas',
           payload: {

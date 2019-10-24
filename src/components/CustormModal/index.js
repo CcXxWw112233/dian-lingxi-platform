@@ -1,12 +1,13 @@
 import React from 'react'
 import { Modal, Form, Button, Input, message } from 'antd'
 import { min_page_width } from "./../../globalset/js/styles";
-import indexstyles from './index.less'
-import { userInfo } from 'os';
+import indexStyles from './index.less'
+import { connect } from 'dva'
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 
 //此弹窗应用于各个业务弹窗，和右边圈子适配
+@connect(mapStateToProps)
 class CustormModal extends React.Component {
   state = {
     siderRightWidth: 56, //右边栏宽度
@@ -57,19 +58,22 @@ class CustormModal extends React.Component {
   }
 
   resizeTTY(type) {
+    const { siderRightWidth } = this.state
     const clientHeight = document.documentElement.clientHeight//获取页面可见高度
-    const clientWidth = document.documentElement.clientWidth + 16//获取页面可见高度
+    const clientWidth = document.documentElement.clientWidth + 16 - siderRightWidth//获取页面可见高度
+    const layoutClientWidth = document.getElementById('technologicalLayoutWrapper') && document.getElementById('technologicalLayoutWrapper').clientWidth + 16
     this.setState({
       clientHeight,
-      clientWidth
+      clientWidth,
+      layoutClientWidth
     })
   }
 
 
   render() {
-    const { visible, overInner, width, zIndex = 1006, maskClosable, footer, destroyOnClose, keyboard = true, maskStyle = {}, style = {}, onOk, onCancel, bodyStyle = {}, closable = true, title } = this.props;
+    const { siderRightCollapsed, visible, overInner, width, zIndex = 1006, maskClosable, footer, destroyOnClose, keyboard = true, maskStyle = {}, style = {}, onOk, onCancel, bodyStyle = {}, closable = true, title } = this.props;
     const { clientWidth, clientHeight } = this.state
-    const { siderRightWidth } = this.state;
+    const { siderRightWidth, layoutClientWidth } = this.state;
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     const { is_simple_model } = user_set;
     let maskWidth = clientWidth;
@@ -82,22 +86,33 @@ class CustormModal extends React.Component {
       <Modal
         title={title}
         visible={visible}
-        width={width}
+        width={width && width}
         closable={closable}
         zIndex={zIndex}
         maskClosable={maskClosable}
         footer={footer}
         destroyOnClose={destroyOnClose}
         keyboard={keyboard}
-        maskStyle={{ height: clientHeight, width: maskWidth, ...maskStyle }}
-        style={{ width: maskWidth, ...style }}
-        bodyStyle={{ ...bodyStyle }}
+        getContainer={() => document.getElementById('technologicalLayoutWrapper')}
+        maskStyle={{
+          height: clientHeight,
+          ...maskStyle 
+        }}
+        style={{ ...style }}
+        bodyStyle={{ ...bodyStyle}}
         onCancel={onCancel}
         onOk={onOk}
+        wrapClassName={`${ siderRightCollapsed ? indexStyles.wrapActiveModal : indexStyles.wrapNormalModal}`}
       >
         {overInner}
       </Modal>
     )
   }
+}
+
+function mapStateToProps({ technological: { datas: {
+  siderRightCollapsed
+} } }) {
+  return { siderRightCollapsed }
 }
 export default Form.create()(CustormModal)

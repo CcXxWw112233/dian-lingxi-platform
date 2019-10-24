@@ -24,10 +24,10 @@ export default class RenderAdd extends Component {
   // 更新执行人还有创建人的操作
   componentDidMount() {
     const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
-    const { dispatch, rela_type, user_remind_info = [], workbenchExecutors = [], projectExecutors = [], processEditDatas = [], milestonePrincipals = [] } = this.props
+    const { dispatch, rela_type, user_remind_info = [], commonExecutors = [], processPrincipalList = [], milestonePrincipals = [] } = this.props
     let temp_message = [] // 定义一个空数组
     if (rela_type == '1' || rela_type == '2') { // 表示在工作台或者项目详情中的任务或者日程弹窗中--才会进来
-      if ((workbenchExecutors && workbenchExecutors.length) || (projectExecutors && projectExecutors.length)) { // 存在执行人
+      if (commonExecutors && commonExecutors.length) { // 存在执行人
         let new_userRemindInfo = [...user_remind_info]
         new_userRemindInfo = new_userRemindInfo.filter(item => {
           let new_item = item
@@ -38,8 +38,8 @@ export default class RenderAdd extends Component {
         temp_message.push(...new_userRemindInfo)
       }
     } else if (rela_type == '3') { // 表示在流程中才会进来
-      const { assignees } = processEditDatas && processEditDatas.length && processEditDatas[0]
-      if (assignees && assignees.length) { // 存在推进人
+      const new_assignees = [...processPrincipalList]
+      if (new_assignees && new_assignees.length) { // 存在推进人
         let new_userRemindInfo = [...user_remind_info]
         new_userRemindInfo = new_userRemindInfo.filter(item => {
           let new_item = item
@@ -78,51 +78,6 @@ export default class RenderAdd extends Component {
         message_consumers: temp_message
       }
     })
-
-    // const { dispatch, rela_type, workbenchExecutors = [], projectExecutors = [], processEditDatas = [], milestonePrincipals = [] } = this.props
-    // if (rela_type == '1' || rela_type == '2') { // 表示在工作台或者项目详情中=中的任务或者日程弹窗的执行人
-    //   if ((workbenchExecutors && workbenchExecutors.length) || (projectExecutors && projectExecutors.length)) {
-    //     let new_workbenchExecutors = [...workbenchExecutors]
-    //     let new_projectExecutors = [...projectExecutors]
-    //     dispatch({
-    //       type: 'informRemind/updateDatas',
-    //       payload: {
-    //         message_consumers: (new_workbenchExecutors.length && new_workbenchExecutors) || (new_projectExecutors.length && new_projectExecutors)
-    //       }
-    //     })
-    //   }
-    // } else if (rela_type == '3') { // 表示实在流程中才会触发
-    //   if (processEditDatas && processEditDatas.length) {
-    //     const { assignees } = processEditDatas[0]
-    //     let new_assignees = [...assignees]
-    //     new_assignees = new_assignees.map(item => {
-    //       let new_item = item
-    //       new_item = {...item, avatar: ''}
-    //       return new_item
-    //     })
-    //     dispatch({
-    //       type: 'informRemind/updateDatas',
-    //       payload: {
-    //         message_consumers: new_assignees
-    //       }
-    //     })
-    //   }
-    // } else if (rela_type == '5') { // 表示是在里程碑的弹窗中
-    //   if (milestonePrincipals && milestonePrincipals.length) {
-    //       let new_milestonePrincipals = [...milestonePrincipals]
-    //       new_milestonePrincipals = new_milestonePrincipals.map(item => {
-    //       let new_item = item
-    //       new_item = {...item, avatar: ''}
-    //       return new_item
-    //     })
-    //     dispatch({
-    //       type: 'informRemind/updateDatas',
-    //       payload: {
-    //         message_consumers: new_milestonePrincipals
-    //       }
-    //     })
-    //   }
-    // }
   }
 
   /**
@@ -231,7 +186,7 @@ export default class RenderAdd extends Component {
         setInfoRemindList: new_info_list,
         is_add_remind: false,
         remind_trigger: triggerList[0].type_code,
-        remind_time_type: 'm',
+        remind_time_type: 'd',
         remind_time_value: '1',
         remind_edit_type: triggerList[0].remind_edit_type
       }
@@ -250,7 +205,7 @@ export default class RenderAdd extends Component {
     var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
     var Y, M, D, H, MIN;
     Y = date.getFullYear();
-    M = date.getMonth() < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
+    M = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
     D = date.getDate() + 1 < 10 ? '0' + date.getDate() : date.getDate();
     H = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
     MIN = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
@@ -419,7 +374,7 @@ export default class RenderAdd extends Component {
           {
             remind_edit_type == 1 && (
               <Select
-                defaultValue={remind_time_type == 'datetime' ? 'm' : remind_time_type}
+                defaultValue={remind_time_type == 'datetime' ? 'd' : remind_time_type}
                 style={{ width: 122, height: 32, marginRight: 16 }}>
                 {
                   diff_text_term.map(childItem => {

@@ -99,10 +99,10 @@ export default class GroupListHeadItem extends Component {
       }
     })
     dispatch({
-      type: 'workbenchTaskDetail/getCardDetail',
+      type: 'publicTaskDetailModal/updateDatas',
       payload: {
-        id,
-        board_id,
+        drawerVisible: true,
+        card_id: id,
         calback: function (data) {
           dispatch({
             type: 'workbenchPublicDatas/getRelationsSelectionPre',
@@ -113,12 +113,27 @@ export default class GroupListHeadItem extends Component {
         }
       }
     })
-    dispatch({
-      type: 'workbenchTaskDetail/getCardCommentListAll',
-      payload: {
-        id: id
-      }
-    })
+    // dispatch({
+    //   type: 'workbenchTaskDetail/getCardDetail',
+    //   payload: {
+    //     id,
+    //     board_id,
+    //     calback: function (data) {
+    //       dispatch({
+    //         type: 'workbenchPublicDatas/getRelationsSelectionPre',
+    //         payload: {
+    //           _organization_id: data.org_id
+    //         }
+    //       })
+    //     }
+    //   }
+    // })
+    // dispatch({
+    //   type: 'workbenchTaskDetail/getCardCommentListAll',
+    //   payload: {
+    //     id: id
+    //   }
+    // })
     dispatch({
       type: 'workbenchPublicDatas/updateDatas',
       payload: {
@@ -639,7 +654,7 @@ export default class GroupListHeadItem extends Component {
           </div>
           <div className={indexStyles.list_head_footer} onClick={this.setIsShowBottDetail}>
             <div className={`${globalStyles.authTheme} ${indexStyles.list_head_footer_tip} ${isShowBottDetail == '2' && indexStyles.spin_hide} ${isShowBottDetail == '1' && indexStyles.spin_show}`}>&#xe61f;</div>
-            <div>{list_no_time_data.length}个未排期事项</div>
+            <div className={indexStyles.list_head_footer_dec}>{list_no_time_data.length}个未排期事项</div>
           </div>
         </div>
         {

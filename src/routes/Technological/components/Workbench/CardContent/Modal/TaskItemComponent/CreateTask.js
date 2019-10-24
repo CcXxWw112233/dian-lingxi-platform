@@ -149,7 +149,7 @@ export default class CreateTask extends React.Component {
       drawerVisible: true,
     })
     const { drawContent: { card_id } } = data
-    this.props.getCardCommentList(card_id)
+    // this.props.getCardCommentList(card_id)
 
     this.props.updateDatas(data)
   }
