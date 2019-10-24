@@ -45,7 +45,9 @@ class BoardCommunication extends Component {
         dragEnterCaptureFlag: false,
         showFileSelectDropdown: false,
         // 左侧目录上传文件/选择文件是否打开圈图
-        showFileListisOpenFileDetailModal: false
+        showFileListisOpenFileDetailModal: false,
+        // 左侧目录如果显示，则中间上传文件会新增className调整样式
+        isRightBarShowFileList: true,
     };
 
     constructor(props) {
@@ -821,6 +823,12 @@ class BoardCommunication extends Component {
         this.initModalSelect()
     };
 
+    // 左侧目录如果显示，则中间上传文件会新增className调整样式,用isRightBarShowFileList控制
+    changeIsRightBarShowFileList = (visible)=>{
+        // 这里根据子组件的state 控制
+        this.setState({ isRightBarShowFileList: !visible });
+    }
+
 
     // 是否需要更新文件列表, 当访问控制设置时
     whetherUpdateFolderListData = (folder_id) => {
@@ -845,7 +853,7 @@ class BoardCommunication extends Component {
     render() {
         const { currentBoardDetail = {}, dispatch, model = {}, modal } = this.props;
         const {selectBoardFileModalVisible, showFileListisOpenFileDetailModal } = this.state;
-        const { currentfile = {}, is_selectFolder, dragEnterCaptureFlag, showFileSelectDropdown } = this.state;
+        const { currentfile = {}, is_selectFolder, dragEnterCaptureFlag, showFileSelectDropdown, isRightBarShowFileList } = this.state;
         const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
         const zommPictureComponentHeight = container_workbenchBoxContent ? container_workbenchBoxContent.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding
         // const zommPictureComponentWidth = container_workbenchBoxContent ? container_workbenchBoxContent.offsetWidth - 419 - 50 - 5 : 600; //60为文件内容组件评论等区域宽带   50为容器padding  
@@ -1179,6 +1187,7 @@ class BoardCommunication extends Component {
                     queryCommunicationFileData={this.queryCommunicationFileData}
                     showUpdatedFileDetail={this.showUpdatedFileDetail}
                     setPreviewFileModalVisibile={this.hideUpdatedFileDetail}
+                    changeIsRightBarShowFileList={this.changeIsRightBarShowFileList}
                     {...this.props}
                 />
 
@@ -1213,32 +1222,33 @@ class BoardCommunication extends Component {
                     )}
                 {
                     !this.state.previewFileModalVisibile && (
-                        <Dragger multiple={false} {...this.getDraggerProps()} className={indexStyles.dragStyle}
-                            beforeUpload={this.onBeforeUpload}>
-                            <div className={`${indexStyles.indexCoverWapper} ${dragEnterCaptureFlag ? indexStyles.draging : ''}`}>
+                        <div className={`${indexStyles.draggerContainerStyle} ${isRightBarShowFileList ? indexStyles.changeDraggerWidth : null}`}>
+                            <Dragger multiple={false} {...this.getDraggerProps()} beforeUpload={this.onBeforeUpload}>
+                                <div className={`${indexStyles.indexCoverWapper} ${dragEnterCaptureFlag ? indexStyles.draging : ''}`}>
 
-                                {
-                                    dragEnterCaptureFlag ? (
-                                        <div className={indexStyles.iconDescription}>
-                                            <img src={uploadIconSrc} style={{ width: '48px', height: '48px' }} />
-                                            <span className={indexStyles.iconDescription}>松开鼠标左键即可上传文件</span>
-                                        </div>
-                                    ) : (
-                                            <>
-                                                <div className={indexStyles.icon}>
-                                                    <img src={coverIconSrc} style={{ width: '80px', height: '84px' }} />
-                                                </div>
-                                                <div className={indexStyles.descriptionWapper}>
-                                                    <div className={indexStyles.linkTitle}>
-                                                        {/* 选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或  */}
-                                                        <a className={indexStyles.alink}>点击上传</a> 文件</div>
-                                                    <div className={indexStyles.detailDescription}>选择或上传图片格式文件、PDF格式文件即可开启圈点交流</div>
-                                                </div>
-                                            </>
-                                        )}
+                                    {
+                                        dragEnterCaptureFlag ? (
+                                            <div className={indexStyles.iconDescription}>
+                                                <img src={uploadIconSrc} style={{ width: '48px', height: '48px' }} />
+                                                <span className={indexStyles.iconDescription}>松开鼠标左键即可上传文件</span>
+                                            </div>
+                                        ) : (
+                                                <>
+                                                    <div className={indexStyles.icon}>
+                                                        <img src={coverIconSrc} style={{ width: '80px', height: '84px' }} />
+                                                    </div>
+                                                    <div className={indexStyles.descriptionWapper}>
+                                                        <div className={indexStyles.linkTitle}>
+                                                            {/* 选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或  */}
+                                                            <a className={indexStyles.alink}>点击上传</a> 文件</div>
+                                                        <div className={indexStyles.detailDescription}>选择或上传图片格式文件、PDF格式文件即可开启圈点交流</div>
+                                                    </div>
+                                                </>
+                                            )}
 
-                            </div>
-                        </Dragger>
+                                </div>
+                            </Dragger>
+                        </div>
                     )}
 
                 <Modal
