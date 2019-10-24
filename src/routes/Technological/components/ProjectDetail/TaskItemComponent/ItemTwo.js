@@ -148,7 +148,7 @@ export default class ItemTwo extends React.Component {
                     return (
                       <ItemTwoChirldren
                         ItemTwoChirldrenVaue={value}
-                        ItemTwoChirldrenIndex={key} 
+                        ItemTwoChirldrenIndex={key}
                         taskGroupListIndex={taskGroupListIndex}
                         taskGroupListIndex_index={taskGroupListIndex_index}
                         key={key}>
