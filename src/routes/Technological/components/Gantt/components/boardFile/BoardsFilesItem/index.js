@@ -9,7 +9,7 @@ import { message, Upload } from 'antd';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { REQUEST_DOMAIN_FILE, PROJECT_FILES_FILE_UPLOAD, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, UPLOAD_FILE_SIZE } from '../../../../../../../globalset/js/constant';
 import Cookies from 'js-cookie'
-import { setUploadHeaderBaseInfo, checkIsHasPermissionInBoard } from '../../../../../../../utils/businessFunction';
+import { setUploadHeaderBaseInfo, checkIsHasPermissionInBoard, getGlobalData } from '../../../../../../../utils/businessFunction';
 import FileDetailModal from '../../../../Workbench/CardContent/Modal/FileDetailModal'
 const { Dragger } = Upload
 export default class Index extends Component {
@@ -233,7 +233,7 @@ export default class Index extends Component {
                     {...this.props}
                     {...this.props.fileDetailModalDatas}
                     setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
-                    modalVisible={this.props.fileDetailModalDatas.previewFileModalVisibile}
+                    modalVisible={this.props.fileDetailModalDatas.previewFileModalVisibile && getGlobalData('storageCurrentOperateBoardId') == board_id}
                     setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
                     updateDatasTask={this.props.fileDetailModalDatas.updateDatasTask}
                     updateDatasFile={this.props.fileDetailModalDatas.updateDatasFile}
