@@ -25,6 +25,7 @@ class CheckMain extends React.Component {
         this.setState({
           timer: null
         })
+        window.clearInterval(TimeC)
         routingJump('/login')
         return
       }

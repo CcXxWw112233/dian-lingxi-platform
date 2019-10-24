@@ -130,7 +130,7 @@ export default class FolderItem extends Component {
         const { type } = itemValue
 
         if (type == '1') {
-            const new_item_value = {...itemValue, name: local_name}
+            const new_item_value = { ...itemValue, name: local_name }
             this.props.setBreadPaths && this.props.setBreadPaths({ path_item: new_item_value })
         } else if (type == '2') {
             this.previewFile(itemValue)
@@ -142,6 +142,7 @@ export default class FolderItem extends Component {
         const { board_id } = this.props
         const {
             file_name,
+            name,
             file_resource_id,
             file_id,
             id,
@@ -165,11 +166,11 @@ export default class FolderItem extends Component {
             type: 'workbenchFileDetail/getFileType',
             payload: {
                 file_id: id,
-                calback: function(data) {
+                calback: function (data) {
                     dispatch({
                         type: 'workbenchPublicDatas/getRelationsSelectionPre',
                         payload: {
-                          _organization_id: data.base_info.org_id
+                            _organization_id: data.base_info.org_id
                         }
                     })
                 }
@@ -190,7 +191,7 @@ export default class FolderItem extends Component {
         })
 
 
-        if (getSubfixName(file_name) == '.pdf') {
+        if (getSubfixName(name) == '.pdf') {
             this.props.dispatch({
                 type: 'workbenchFileDetail/getFilePDFInfo',
                 payload: {
@@ -257,7 +258,7 @@ export default class FolderItem extends Component {
             folder_name: input_folder_value
         }
         const res = await updateFolder(params)
-        if(isApiResponseOk(res)) {
+        if (isApiResponseOk(res)) {
             this.setState({
                 local_name: input_folder_value
             })
@@ -286,11 +287,11 @@ export default class FolderItem extends Component {
                                 <div className={`${globalStyles.global_ellipsis} ${styles.file_name}`}>{local_name}</div>
                                 {
                                     !(is_privilege == '0') && (
-                                    <Tooltip title="已开启访问控制" placement="top">
-                                        <div style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px' }}>
-                                        <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
-                                        </div>
-                                    </Tooltip>
+                                        <Tooltip title="已开启访问控制" placement="top">
+                                            <div style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px' }}>
+                                                <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
+                                            </div>
+                                        </Tooltip>
                                     )
                                 }
                                 <Dropdown overlay={this.renderOperateItemDropMenu()}>
