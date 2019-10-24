@@ -35,104 +35,95 @@ class FolderItem extends Component {
 
     // 预览文件/文件圈图显示
     previewFile = (data, e) => {
-        const { dispatch } = this.props;
-        console.log(data);
-        const currentBoardDetail = {org_id: "1184383014088609792", board_id: "1184383015095242752", board_name: "lily的项目"};
+        const { board_id } = this.props
+        const {
+            file_name,
+            file_resource_id,
+            file_id,
+            id,
+            folder_id,
+            version_id
+        } = data;
+        const { dispatch } = this.props
+        setBoardIdStorage(board_id)
+        // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)) {
+        //     message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
+        //     return false;
+        // }
+
         dispatch({
-            type: 'simpleWorkbenchbox/updateDatas',
+            type: 'workbenchFileDetail/getCardCommentListAll',
             payload: {
-                currentBoardDetail: currentBoardDetail
+                id: id
             }
         });
-        this.props.showUpdatedFileDetail();
-        
-        // const { board_id } = this.props
-        // const {
-        //     file_name,
-        //     file_resource_id,
-        //     file_id,
-        //     id,
-        //     folder_id,
-        //     version_id
-        // } = data;
-        // const { dispatch } = this.props
-        // setBoardIdStorage(board_id)
-        // // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)) {
-        // //     message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
-        // //     return false;
-        // // }
-
-        // dispatch({
-        //     type: 'workbenchFileDetail/getCardCommentListAll',
-        //     payload: {
-        //         id: id
-        //     }
-        // });
-        // dispatch({
-        //     type: 'workbenchFileDetail/getFileType',
-        //     payload: {
-        //         file_id: id,
-        //         calback: function(data) {
-        //             dispatch({
-        //                 type: 'workbenchPublicDatas/getRelationsSelectionPre',
-        //                 payload: {
-        //                   _organization_id: data.base_info.org_id
-        //                 }
-        //             })
-        //         }
-        //     }
-        // });
+        dispatch({
+            type: 'workbenchFileDetail/getFileType',
+            payload: {
+                file_id: id,
+                calback: function(data) {
+                    dispatch({
+                        type: 'workbenchPublicDatas/getRelationsSelectionPre',
+                        payload: {
+                          _organization_id: data.base_info.org_id
+                        }
+                    })
+                }
+            }
+        });
         // this.props.setPreviewFileModalVisibile();
-        // dispatch({
-        //     type: 'workbenchFileDetail/updateDatas',
-        //     payload: {
-        //         seeFileInput: 'fileModule',
-        //         board_id,
-        //         filePreviewCurrentId: file_resource_id,
-        //         currentParrentDirectoryId: folder_id,
-        //         filePreviewCurrentFileId: id,
-        //         filePreviewCurrentVersionId: version_id, //file_id,
-        //         pdfDownLoadSrc: '',
-        //     }
-        // })
+        this.props.showUpdatedFileDetail();
+        dispatch({
+            type: 'workbenchFileDetail/updateDatas',
+            payload: {
+                seeFileInput: 'fileModule',
+                board_id,
+                filePreviewCurrentId: file_resource_id,
+                currentParrentDirectoryId: folder_id,
+                filePreviewCurrentFileId: id,
+                filePreviewCurrentVersionId: version_id, //file_id,
+                pdfDownLoadSrc: '',
+            }
+        })
 
 
-        // if (getSubfixName(file_name) == '.pdf') {
-        //     this.props.dispatch({
-        //         type: 'workbenchFileDetail/getFilePDFInfo',
-        //         payload: {
-        //             id
-        //         }
-        //     })
-        // } else {
-        //     dispatch({
-        //         type: 'workbenchFileDetail/filePreview',
-        //         payload: {
-        //             id: file_resource_id, file_id: id
-        //         }
-        //     })
-        // }
-        // dispatch({
-        //     type: 'workbenchFileDetail/fileVersionist',
-        //     payload: {
-        //         version_id: version_id, //file_id,
-        //         isNeedPreviewFile: false,
-        //     }
-        // })
-        // dispatch({
-        //     type: 'workbenchTaskDetail/getBoardMembers',
-        //     payload: {
-        //         id: board_id
-        //     }
-        // })
-        // dispatch({
-        //     type: 'workbenchPublicDatas/updateDatas',
-        //     payload: {
-        //         board_id
-        //     }
-        // })
+        if (getSubfixName(file_name) == '.pdf') {
+            this.props.dispatch({
+                type: 'workbenchFileDetail/getFilePDFInfo',
+                payload: {
+                    id
+                }
+            })
+        } else {
+            dispatch({
+                type: 'workbenchFileDetail/filePreview',
+                payload: {
+                    id: file_resource_id, file_id: id
+                }
+            })
+        }
+        dispatch({
+            type: 'workbenchFileDetail/fileVersionist',
+            payload: {
+                version_id: version_id, //file_id,
+                isNeedPreviewFile: false,
+            }
+        })
+        dispatch({
+            type: 'workbenchTaskDetail/getBoardMembers',
+            payload: {
+                id: board_id
+            }
+        })
+        dispatch({
+            type: 'workbenchPublicDatas/updateDatas',
+            payload: {
+                board_id
+            }
+        })
 
     }
+
 
     // 过滤名字logo
     judgeFileType({ type, name }) {

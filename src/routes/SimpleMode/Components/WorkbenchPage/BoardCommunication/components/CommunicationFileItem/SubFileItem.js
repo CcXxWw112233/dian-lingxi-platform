@@ -37,14 +37,14 @@ export default class SubFileItem extends Component{
                     </div>
                     <div className={styles.boardName}>
                         <div className={styles.name}>{boardName}</div>
-                        {
+                        {/* {
                             isShowCompanyName &&
                             (
                                 <div className={styles.org_name}>
                                     #{getOrgNameWithOrgIdFilter(currentOrg_id, currentUserOrganizes)}
                                 </div>
                             )
-                        }
+                        } */}
                     </div>
                 </div>
                 <FolderList
@@ -57,6 +57,7 @@ export default class SubFileItem extends Component{
                     showWhatComponent={this.props.showWhatComponent}
                     queryCommunicationFileData={this.props.queryCommunicationFileData}
                     showUpdatedFileDetail={this.props.showUpdatedFileDetail}
+                    hideUpdatedFileDetail={this.props.hideUpdatedFileDetail}
                     // setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
                 />
             </div>

@@ -19,7 +19,7 @@ import { NODE_ENV, IM_HTTP_PATH } from '../../../globalset/js/constant'
 // import GroupChat from './comonent/GroupChat'
 // import InitialChat from './comonent/InitialChat'
 import VideoMeetingPopoverContent from './comonent/videoMeetingPopoverContent/index'
-import LingxiIm from 'lingxi-im'
+import LingxiIm,{Im} from 'lingxi-im'
 
 let cx = classNames.bind(indexStyles);
 
@@ -58,6 +58,16 @@ class SiderRight extends React.Component {
     selectedMemberTextAreaValue: "",
     videoMeetingPopoverVisible: false
   };
+
+  componentDidMount(){
+    //console.log("ImImImImImIm",Im);
+    if(Im){
+      Im.addEventListener('visible',(visible)=>{
+        this.handleImToggle(visible);
+      });
+    }
+  
+  }
   onCollapse(bool) {
     this.setState({
       collapsed: bool
@@ -450,9 +460,8 @@ class SiderRight extends React.Component {
       };
     });
   };
+  
   handleImToggle = (toggle) => {
-    console.log(toggle);
-    
     this.props.dispatch({
       type: 'technological/updateDatas',
       payload: {
@@ -559,7 +568,7 @@ class SiderRight extends React.Component {
     );
     return (
       <div style={{ flex: "none", paddingBottom: '50px', position: 'relative', backgroundColor: '#fff',zIndex:'1010'}}>
-        <LingxiIm token={Cookies.get('Authorization')} width='400px' onToggle={this.handleImToggle} />
+        <LingxiIm token={Cookies.get('Authorization')} width='400px'/>
         <div className={indexStyles.videoMeetingWapper} style={{ position: 'absolute', bottom: '10px'}}>
           <VideoMeetingPopoverContent />
         </div>
