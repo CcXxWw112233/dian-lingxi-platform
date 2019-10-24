@@ -165,9 +165,27 @@ export default class MilestoneAdd extends React.Component {
         this.props.onChangeMilestone && this.props.onChangeMilestone({ key, type: actionType, info })
     }
 
+    getSortLilestoneList = (milestoneList,dataInfo) => {
+        let sortMilestoneList = new Array;
+        let selectableArray = milestoneList.filter((item)=>{
+            return compareTwoTimestamp(item.deadline, dataInfo.due_time);
+        });
+
+        sortMilestoneList = sortMilestoneList.concat(selectableArray);
+        for(var i=0 ;i < milestoneList.length; i++){
+            if(selectableArray.filter((item)=>item.id == milestoneList[i].id).length==0){
+                sortMilestoneList.push(milestoneList[i]);
+            }
+        }
+        console.log("milestoneList",milestoneList);
+        console.log("sortMilestoneList",sortMilestoneList);
+        return sortMilestoneList;
+    }
+
     render() {
         const { milestoneList, add_lcb_modal_visible = false } = this.state
         const { visible, children, selectedValue, dataInfo = {} } = this.props
+        const sortLilestoneList = this.getSortLilestoneList(milestoneList,dataInfo);
         // console.log(dataInfo);
         return (
             <div>
@@ -194,7 +212,7 @@ export default class MilestoneAdd extends React.Component {
                                         </div>
                                     </div>
                                     {
-                                        milestoneList.map((value, key) => {
+                                        sortLilestoneList.map((value, key) => {
                                             const { id, name, deadline } = value
                                             return (
                                                 <Menu.Item className={!compareTwoTimestamp(deadline, dataInfo.due_time) ? `${indexStyles.menuItem} ${indexStyles.disabled} ` : `${indexStyles.menuItem}`}
