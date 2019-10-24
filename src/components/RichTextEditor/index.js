@@ -1,7 +1,9 @@
 
 import React from 'react'
 import BraftEditor from 'braft-editor'
+import 'braft-editor/dist/index.css'
 import styles from './index.less'
+
 import { Button } from 'antd'
 import {
     REQUEST_DOMAIN_FILE
