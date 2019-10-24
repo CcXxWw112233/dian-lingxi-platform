@@ -100,7 +100,12 @@ class MyWorkbenchBoxs extends Component {
           }
         });
       }
-
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          gantt_board_id: data.key,
+        }
+      })
 
     }
 

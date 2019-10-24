@@ -16,7 +16,9 @@ class BoardDropdownSelect extends Component {
   }
 
   handelBoardChangeCalback = (board_id) => {
+    
     const { currentSelectedWorkbenchBox: { code }, dispatch } = this.props
+
     if ('board:chat' == code) {
       beforeChangeCommunicationUpdateFileList({ board_id, dispatch });
     } else if ('board:plans' == code) {

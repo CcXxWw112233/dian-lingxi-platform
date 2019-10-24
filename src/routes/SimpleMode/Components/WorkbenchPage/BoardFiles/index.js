@@ -10,6 +10,7 @@ import {
 } from "../../../../../utils/businessFunction";
 import { height } from 'window-size';
 import BoarderfilesHeader from '@/routes/Technological/components/ProjectDetail/BoarderfilesHeader'
+import { setShowSimpleModel } from '../../../../../services/technological/organizationMember';
 
 const { Option } = Select;
 const { TreeNode, DirectoryTree } = Tree;
@@ -51,6 +52,28 @@ class BoardFiles extends Component {
 
 
   componentWillReceiveProps(nextProps) {
+    console.log("simplemodeCurrentProject", nextProps && nextProps.simplemodeCurrentProject);
+    const { dispatch, simplemodeCurrentProject} = nextProps;
+    const { simplemodeCurrentProject: old_simplemodeCurrentProject } = this.props;
+    let currentBoardDetail = {}
+    if (simplemodeCurrentProject && simplemodeCurrentProject.board_id && old_simplemodeCurrentProject.board_id != simplemodeCurrentProject.board_id) {
+      currentBoardDetail = { ...simplemodeCurrentProject }
+      dispatch({
+        type: 'simpleWorkbenchbox/updateDatas',
+        payload: {
+          currentBoardDetail: currentBoardDetail
+        }
+      });
+      this.openBoardFiles(currentBoardDetail);
+    }else{
+      if(!simplemodeCurrentProject||(simplemodeCurrentProject&&!simplemodeCurrentProject.board_id)){
+          this.setState({
+            boardSelectVisible:true,
+            boardFileContentVisible:false,
+          });
+      }
+      
+    }
 
   }
 
