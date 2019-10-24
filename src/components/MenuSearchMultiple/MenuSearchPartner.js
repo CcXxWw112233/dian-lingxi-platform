@@ -225,8 +225,7 @@ export default class MenuSearchPartner extends React.Component {
 
     render() {
         const { keyWord, resultArr, selectedKeys = [] } = this.state
-        const { Inputlaceholder = '搜索', isInvitation, searchName, menuSearchSingleSpinning, keyCode, invitationType, invitationOrg, invitationId, rela_Condition, is_selected_all } = this.props
-
+        const { board_id, Inputlaceholder = '搜索', isInvitation, searchName, menuSearchSingleSpinning, keyCode, invitationType, invitationOrg, invitationId, rela_Condition, is_selected_all } = this.props
         return (
             <div>
                 <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: 200, }}
@@ -296,6 +295,7 @@ export default class MenuSearchPartner extends React.Component {
 
                 <ShowAddMenberModal
                     // title={titleText}
+                    board_id={board_id}
                     addMenbersInProject={this.addMenbersInProject}
                     show_wechat_invite={true}
                     // {...this.props}

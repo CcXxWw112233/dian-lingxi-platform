@@ -169,7 +169,7 @@ export default class MilestoneAdd extends React.Component {
     render() {
         const { milestoneList, add_lcb_modal_visible = false } = this.state
         const { visible, children, selectedValue, dataInfo = {} } = this.props
-        console.log(dataInfo);
+        // console.log(dataInfo);
         return (
             <div>
 
@@ -204,19 +204,19 @@ export default class MilestoneAdd extends React.Component {
                                                     disabled={!compareTwoTimestamp(deadline, dataInfo.due_time)}>
 
                                                     <div className={indexStyles.menuItemDiv}>
-                                                        <div style={{ display: 'flex', alignItems: 'center', textAlign: 'center' }} key={id}>
+                                                        <div key={id}>
                                                             <div style={{ overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 90, marginRight: 8 }}>{name}</div>
                                                         </div>
-
-                                                        <div style={{ display: selectedValue == id ? 'block' : 'none' }}>
-                                                            <Icon type="check" />
+                                                        <div>
+                                                            <div style={{ display: selectedValue == id ? 'inline-block' : 'none' }}>
+                                                                <Icon type="check" />
+                                                            </div>
+                                                            {!compareTwoTimestamp(deadline, dataInfo.due_time) && (
+                                                                <Tooltip title="当前任务的截止时间无法超出里程碑截止时间">
+                                                                    <div className={indexStyles.menuItemTip}><Icon type="question-circle" /></div>
+                                                                </Tooltip>
+                                                            )}
                                                         </div>
-                                                        {!compareTwoTimestamp(deadline, dataInfo.due_time) && (
-<Tooltip title="当前任务的截止时间无法超出里程碑截止时间">
-                                                                <div className={indexStyles.menuItemTip}><Icon type="question-circle" /></div>
-                                                            </Tooltip>
-)}
-
                                                     </div>
                                                 </Menu.Item>
                                             )
