@@ -456,7 +456,7 @@ export default class HeaderContentRightMenu extends Component {
             </span>}
 
           <ShareAndInvite
-            is_shared={is_shared}
+           
             onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible}
             data={onlyReadingShareData}
             handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare}
