@@ -553,7 +553,7 @@ export default class MainContent extends Component {
   endDatePickerChange(timeString) {
     const { drawContent = {}, milestoneList = [], dispatch } = this.props
     const { card_id, start_time, milestone_data = {} } = drawContent
-    const { milestone_deadline } = milestone_data
+    const { deadline } = milestone_data
     // const milestone_deadline = (milestoneList.find((item => item.id == milestone_data.id)) || {}).deadline//关联里程碑的时间
     const due_timeStamp = timeToTimestamp(timeString)
     const updateObj = {
@@ -563,7 +563,7 @@ export default class MainContent extends Component {
       message.warn('开始时间不能大于结束时间')
       return false
     }
-    if (!compareTwoTimestamp(milestone_deadline, due_timeStamp)) {
+    if (!compareTwoTimestamp(deadline, due_timeStamp)) {
       message.warn('任务的截止日期不能大于关联里程碑的截止日期')
       return
     }

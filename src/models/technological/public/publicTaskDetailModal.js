@@ -4,6 +4,11 @@ import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { currentNounPlanFilterName } from "../../../utils/businessFunction";
 import { MESSAGE_DURATION_TIME, TASKS } from "../../../globalset/js/constant";
+import QueryString from 'querystring'
+
+let board_id = null
+let appsSelectKey = null
+let card_id = null
 export default {
   namespace: 'publicTaskDetailModal',
   state: {
@@ -14,6 +19,51 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
+        if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
+          const param = QueryString.parse(location.search.replace('?', ''))
+          board_id = param.board_id
+          appsSelectKey = param.appsSelectKey
+          card_id = param.card_id
+          if (appsSelectKey == '3') {
+            dispatch({
+              type: 'updateDatas',
+              payload: {
+                card_id
+              }
+            })
+            // 调用分组列表
+            dispatch({
+              type: 'projectDetailTask/getProjectGoupList',
+              payload: {
+              }
+            })
+            if (card_id) {
+              dispatch({
+                type: 'projectDetailTask/getTaskGroupListByUrl', //'getTaskGroupList',
+                payload: {
+                  type: '2',
+                  board_id: board_id,
+                  arrange_type: '1'
+                }
+              })
+              dispatch({
+                type: 'updateDatas',
+                payload: {
+                  drawerVisible: true
+                }
+              })
+            } else {
+              dispatch({
+                type: 'projectDetailTask/getTaskGroupList',
+                payload: {
+                  type: '2',
+                  board_id: board_id,
+                  arrange_type: '1'
+                }
+              })
+            }
+          }
+        }
       })
     },
   },
