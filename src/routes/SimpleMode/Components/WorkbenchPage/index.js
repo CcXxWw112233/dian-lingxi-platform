@@ -8,6 +8,7 @@ import BoardPlan from './BoardPlan/index'
 import InvestmentMaps from './InvestmentMaps/index'
 import XczNews from './XczNews/index'
 import Zhichengshe from './Zhichengshe/index'
+import LingxiIm, {Im} from 'lingxi-im'
 
 class WorkbenchPage extends Component {
     constructor(props) {
@@ -65,7 +66,7 @@ class WorkbenchPage extends Component {
         if (currentSelectedWorkbenchBox.id && currentSelectedWorkbenchBox.code) {
             if (currentSelectedWorkbenchBox.code != 'board:chat') {
                 const width = document.body.scrollWidth;
-                let workbenchBoxContentWapperModalStyle = chatImVisiable ? { width: (width - 372) + 'px' } : { width: '100%' }
+                let workbenchBoxContentWapperModalStyle = chatImVisiable ? { width: (width - 400) + 'px' } : { width: '100%' }
                 dispatch({
                     type: 'simplemode/updateDatas',
                     payload: {
@@ -107,7 +108,7 @@ class WorkbenchPage extends Component {
                         ZhichengsheVisible: false,
                     });
                     const width = document.body.scrollWidth;
-                    let workbenchBoxContentWapperModalStyle = { width: (width - 372) + 'px' }
+                    let workbenchBoxContentWapperModalStyle = { width: (width - 400) + 'px' }
                     dispatch({
                         type: 'simplemode/updateDatas',
                         payload: {
@@ -115,6 +116,8 @@ class WorkbenchPage extends Component {
                             workbenchBoxContentWapperModalStyle: workbenchBoxContentWapperModalStyle
                         }
                     });
+                    LingxiIm.show();
+
                 }
                     break;
                 case 'board:files': {
