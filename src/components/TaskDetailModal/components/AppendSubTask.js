@@ -75,7 +75,7 @@ export default class AppendSubTask extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      drawContent['child_data'] && drawContent['child_data'].unshift({...obj, card_id: res.data.id})
+      drawContent['child_data'] && drawContent['child_data'].unshift({...obj, card_id: res.data.card_id})
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent, card_id})
       this.setState({
         is_add_sub_task: false,
