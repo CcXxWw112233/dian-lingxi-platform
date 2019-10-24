@@ -335,7 +335,8 @@ export default class CommentListItem extends React.Component {
     let container = ''
     let messageContainer = (<div></div>)
     switch (action) {
-      case 'board.card.update.comment.add': // 添加评论
+      case 'board.card.update.comment.add': // 任务添加评论
+      case 'board.common.comment.add':// 里程碑评论
         messageContainer = (
           <div className={commonCommentStyles.common_item}>
             {/* 头像 */}
@@ -405,6 +406,9 @@ export default class CommentListItem extends React.Component {
         break
       case '20': // 创建会议
         // containner = (value.map((val, key) => (<div key={key}>{meetingNews(val)}</div>)))
+        break
+      case '18':
+        containner = (this.commentNews(value))
         break
       default:
         break
