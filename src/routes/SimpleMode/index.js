@@ -43,7 +43,7 @@ class SimpleMode extends Component {
     const width = document.body.scrollWidth;
     let rightWidth = 0;
     if (chatImVisiable) {
-      rightWidth = 372;
+      rightWidth = 400;
     }
     let workbenchBoxContentWapperModalStyle = { width: (width - rightWidth) + 'px' }
     dispatch({

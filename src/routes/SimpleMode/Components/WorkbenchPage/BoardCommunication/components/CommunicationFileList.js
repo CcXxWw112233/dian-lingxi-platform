@@ -58,7 +58,9 @@ export default class CommunicationFileList extends Component{
     // 显示隐藏文件列表
     isVisible = () => {
         const { visible } = this.state;
-        this.setState({ visible: !this.state.visible});
+        this.setState({ visible: !this.state.visible}, ()=> {
+            this.props.changeIsRightBarShowFileList(visible);
+        });
     }
 
     // 显示项目目录名（一级）
@@ -185,6 +187,16 @@ export default class CommunicationFileList extends Component{
         this.setState({ collapseActiveKeys: keys });
     }
 
+    // ss = (id) => {
+    //     debugger;
+    //     const arr = boards_flies.map(item => {
+    //         return `${item.id}_${item.file_data.length}`
+    //     })
+ 
+    //     const fag = arr.find(item => item.indexOf(id) != -1)
+    //     return fag
+    //  }
+
     render(){
         const {
             collapseActiveKeys,
@@ -221,11 +233,10 @@ export default class CommunicationFileList extends Component{
                                         <Collapse
                                             bordered={false}
                                             // defaultActiveKey={boards_flies && boards_flies[0] && [boards_flies[0].id]}
-                                            // defaultActiveKey={collapseActiveKeys}
-                                            activeKey={collapseActiveKeys}
-                                            // activeKey={["1184383015095242752_7"]}
+                                            defaultActiveKey={collapseActiveKeys}
+                                            // activeKey={this.ss(collapseActiveKeys)}
                                             expandIcon={({ isActive }) => <Icon type="caret-right" rotate={isActive ? 90 : 0} />}
-                                            onChange={this.collapseOnchange.bind(this)}
+                                            onChange={this.collapseOnchange}
                                         >
                                             {
                                                 boards_flies && boards_flies.map((item, key) => {
@@ -289,7 +300,7 @@ export default class CommunicationFileList extends Component{
                     style={{ left: visible ? '299px' : '0'}}
                     onClick={this.isVisible}
                 >
-                    <Icon type="left" />
+                    <Icon type={visible ? 'left' : 'right'} />
                 </div>
 
             </div>

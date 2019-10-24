@@ -38,6 +38,7 @@ class FolderItem extends Component {
         const { board_id } = this.props
         const {
             file_name,
+            name,
             file_resource_id,
             file_id,
             id,
@@ -87,7 +88,7 @@ class FolderItem extends Component {
         })
 
 
-        if (getSubfixName(file_name) == '.pdf') {
+        if (getSubfixName(file_name || name) == '.pdf') {
             this.props.dispatch({
                 type: 'workbenchFileDetail/getFilePDFInfo',
                 payload: {
@@ -275,6 +276,7 @@ class FolderItem extends Component {
                 // getSubFileData(current_folder_id, board_id);
                 queryCommunicationFileData()
             }
+            this.props.hideUpdatedFileDetail();
         } else {
             message.error(res.message)
         }

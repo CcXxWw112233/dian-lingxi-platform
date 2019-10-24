@@ -18,11 +18,15 @@ class SimpleHeader extends Component {
     }
 
     openOrCloseImChatModal = (val) => {
+      console.log(val)
         const { dispatch, chatImVisiable } = this.props;
-        const width = document.body.scrollWidth;
-        let workbenchBoxContentWapperModalStyle = !chatImVisiable ? { width: (width - 400) + 'px' } : { width: '100%' }
         let flag = val !== undefined ? val : !chatImVisiable ;
-        LingxiIm.show();
+        const width = document.body.scrollWidth;
+        let workbenchBoxContentWapperModalStyle = flag ? { width: (width - 400) + 'px' } : { width: '100%' }
+        console.log(workbenchBoxContentWapperModalStyle)
+        if(flag){
+          LingxiIm.show();
+        }
         dispatch({
             type: 'simplemode/updateDatas',
             payload: {
@@ -77,12 +81,13 @@ class SimpleHeader extends Component {
     //   // }
     // }
     componentDidMount(){
-      LingxiIm.show();
-      Im.addEventListener('visible', (val)=>{
-          if(!val){
-              this.openOrCloseImChatModal(false)
-          }
-      })
+      let func = (val)=>{
+        if(!val){
+            this.openOrCloseImChatModal(false)
+        }
+      }
+      Im.removeEventListener('visible', func)
+      Im.addEventListener('visible', func)
     }
 
     render() {

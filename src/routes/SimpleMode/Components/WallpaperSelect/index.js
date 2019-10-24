@@ -14,16 +14,16 @@ class WallpaperSelect extends Component {
         }
     }
     componentDidMount() {
-        window.addEventListener('keydown', this.handleLeftOrRightKeypress.bind(this))
+        window.addEventListener('keydown', this.handleLeftOrRightKeypress,false)
 
     }
 
-
     componentWillUnmount() {
-        window.removeEventListener('keydown', this.handleLeftOrRightKeypress.bind(this))
+        window.removeEventListener('keydown', this.handleLeftOrRightKeypress,false)
     }
 
     handleLeftOrRightKeypress = (e) => {
+        console.log("handleLeftOrRightKeypress");
         if (e.which == 37) {
             this.selectPreviousWallpaper();
         } else if (e.which == 39) {
