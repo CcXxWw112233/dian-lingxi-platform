@@ -254,6 +254,8 @@ class FolderItem extends Component {
             this.setState({
                 local_name: input_folder_value
             })
+        } else {
+            message.warn(res.message);
         }
     }
 

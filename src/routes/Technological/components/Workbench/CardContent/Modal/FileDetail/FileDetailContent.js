@@ -1053,8 +1053,8 @@ class FileDetailContent extends React.Component {
 
 
   // 是否显示圈图的右侧上传详情
-  isVisibleContentRight =() =>{
-    this.setState({ isVisibleContentRightDetail: !this.state.isVisibleContentRightDetail});
+  isVisibleContentRight = () => {
+    this.setState({ isVisibleContentRightDetail: !this.state.isVisibleContentRightDetail });
   }
 
 
@@ -1421,21 +1421,32 @@ class FileDetailContent extends React.Component {
             {/* <div style={{position: 'relative', display: 'flex'}}> */}
 
             {file_id ? (
-<div style={{ alignItems: 'center', display: 'flex' }}>
-              <span>
-                {is_shared === '1' ? <p className={indexStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}><span className={indexStyles.right__shareIndicator_icon}></span><span className={indexStyles.right__shareIndicator_text}>正在分享</span></p> : null}
-              </span>
+              <div style={{ alignItems: 'center', display: 'flex',marginRight:'10px' }}>
+                {/* 分享协作 */}
+                <span className={`${indexStyles.action} `}>
 
-              <span style={{ marginBottom: '4px', marginRight: '10px', width: '12px', height: '12px' }}>
-                <ShareAndInvite
-                  is_shared={is_shared}
-                  onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible} data={onlyReadingShareData}
-                  handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare} />
-              </span>
-            </div>
-) : ''}
+                  {is_shared === '1' ? (
+                    <span className={indexStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}>
+                      <span className={`${globalStyles.authTheme} ${indexStyles.right__shareIndicator_icon}`}>&#xe7e7;</span>
+                      <span className={indexStyles.right__shareIndicator_text}>正在分享</span>
+                    </span>
+                  ) : <span className={`${indexStyles.right_menu} ${indexStyles.share_icon}`} >
+                      <Tooltip title="分享协作" placement="top">
+                        <span onClick={this.handleChangeOnlyReadingShareModalVisible} className={`${globalStyles.authTheme} ${indexStyles.right__share}`} style={{ fontSize: '20px' }}>&#xe7e7;</span>
+                      </Tooltip>
+                    </span>}
 
-            <div style={{ position: 'relative' }}>
+                  <ShareAndInvite
+
+                    onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible}
+                    data={onlyReadingShareData}
+                    handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare}
+                  />
+                </span>
+              </div>
+            ) : ''}
+
+            <div style={{ position: 'relative' ,marginRight:'10px'}}>
               <span>
                 {
                   checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) ? ('') : (
@@ -1492,7 +1503,7 @@ class FileDetailContent extends React.Component {
 
 
           {/* <div className={indexStyles.fileDetailContentRightBox}> */}
-              {/* <div
+          {/* <div
                   className={indexStyles.operationContentRightBtn}
                   style={{ right: (isVisibleContentRightDetail || isExpandFrame) ? '420px' : '0'}}
                   onClick={this.isVisibleContentRight}
@@ -1500,48 +1511,48 @@ class FileDetailContent extends React.Component {
                   <Icon type="right" />
               </div> */}
 
-              {
-                (isVisibleContentRightDetail || isExpandFrame) && (
-                <div className={indexStyles.fileDetailContentRight} style={{ width: !isExpandFrame ? 0 : 420 }}>
-                  {/* <div className={indexStyles.fileDetailContentRight} style={{ width: isExpandFrame ? 0 : 420 }}> */}
-                  {/*width: isExpandFrame?0:420*/}
-                  {/*从文件卡片查看的时候才有*/}
-                  <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'} style={{ position: 'relative' }}>
-                    {
-                      checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) ? ('') : (
-                        <div style={{ bottom: '62px' }} onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
-                      )
-                    }
-                    <ContentRaletion
-                      {...this.props}
-                      board_id={board_id}
-                      link_id={filePreviewCurrentFileId}
-                      link_local={'4'}
-                    />
-                    {/*{seeFileInput === 'file'? (*/}
-                    {/*<div>*/}
-                    {/*<div>版本信息</div>*/}
-                    {/*<div className={indexStyles.versionInfoList}>*/}
-                    {/*{filePreviewCurrentVersionList.map((value, key ) => {*/}
-                    {/*return (<div key={key}>{getVersionItem(value, key )}</div>)*/}
-                    {/*})}*/}
-                    {/*</div>*/}
-                    {/*</div>*/}
-                    {/*): ('')}*/}
-                  </div>
-                  {(
-                    <div className={indexStyles.fileDetailContentRight_middle} style={{ height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea ? this.refs.versionInfoArea.clientHeight : 0) }}>
-                      <CommentListItem2 {...this.props} commitClicShowEdit={this.commitClicShowEdit.bind(this)} deleteCommitSet={this.deleteCommitSet.bind(this)} />
-                    </div>
-                  )}
-
-                  {(checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id))) && (
-                    <div className={indexStyles.fileDetailContentRight_bott}>
-                      <Comment2 {...this.props} ></Comment2>
-                    </div>
-                  )}
+          {
+            (isVisibleContentRightDetail || isExpandFrame) && (
+              <div className={indexStyles.fileDetailContentRight} style={{ width: !isExpandFrame ? 0 : 420 }}>
+                {/* <div className={indexStyles.fileDetailContentRight} style={{ width: isExpandFrame ? 0 : 420 }}> */}
+                {/*width: isExpandFrame?0:420*/}
+                {/*从文件卡片查看的时候才有*/}
+                <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'} style={{ position: 'relative' }}>
+                  {
+                    checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) ? ('') : (
+                      <div style={{ bottom: '62px' }} onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
+                    )
+                  }
+                  <ContentRaletion
+                    {...this.props}
+                    board_id={board_id}
+                    link_id={filePreviewCurrentFileId}
+                    link_local={'4'}
+                  />
+                  {/*{seeFileInput === 'file'? (*/}
+                  {/*<div>*/}
+                  {/*<div>版本信息</div>*/}
+                  {/*<div className={indexStyles.versionInfoList}>*/}
+                  {/*{filePreviewCurrentVersionList.map((value, key ) => {*/}
+                  {/*return (<div key={key}>{getVersionItem(value, key )}</div>)*/}
+                  {/*})}*/}
+                  {/*</div>*/}
+                  {/*</div>*/}
+                  {/*): ('')}*/}
                 </div>
-)}
+                {(
+                  <div className={indexStyles.fileDetailContentRight_middle} style={{ height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea ? this.refs.versionInfoArea.clientHeight : 0) }}>
+                    <CommentListItem2 {...this.props} commitClicShowEdit={this.commitClicShowEdit.bind(this)} deleteCommitSet={this.deleteCommitSet.bind(this)} />
+                  </div>
+                )}
+
+                {(checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id))) && (
+                  <div className={indexStyles.fileDetailContentRight_bott}>
+                    <Comment2 {...this.props} ></Comment2>
+                  </div>
+                )}
+              </div>
+            )}
 
           {/* </div> */}
 
