@@ -25,7 +25,8 @@ class BoardFiles extends Component {
   state = {
     boardSelectVisible: true,
     boardFileContentVisible: false,
-    currentBoardId: 0
+    currentBoardId: 0,
+    userSelectBoard: false
   };
 
   constructor(props) {
@@ -53,7 +54,7 @@ class BoardFiles extends Component {
 
   componentWillReceiveProps(nextProps) {
     console.log("simplemodeCurrentProject", nextProps && nextProps.simplemodeCurrentProject);
-    const { dispatch, simplemodeCurrentProject} = nextProps;
+    const { dispatch, simplemodeCurrentProject } = nextProps;
     const { simplemodeCurrentProject: old_simplemodeCurrentProject } = this.props;
     let currentBoardDetail = {}
     if (simplemodeCurrentProject && simplemodeCurrentProject.board_id && old_simplemodeCurrentProject.board_id != simplemodeCurrentProject.board_id) {
@@ -64,15 +65,21 @@ class BoardFiles extends Component {
           currentBoardDetail: currentBoardDetail
         }
       });
+      this.setState({
+        userSelectBoard: false,
+      });
       this.openBoardFiles(currentBoardDetail);
-    }else{
-      if(!simplemodeCurrentProject||(simplemodeCurrentProject&&!simplemodeCurrentProject.board_id)){
+    } else {
+      if (!simplemodeCurrentProject || (simplemodeCurrentProject && !simplemodeCurrentProject.board_id)) {
+        if (!this.state.userSelectBoard) {
           this.setState({
-            boardSelectVisible:true,
-            boardFileContentVisible:false,
+            boardSelectVisible: true,
+            boardFileContentVisible: false,
           });
+        }
+
       }
-      
+
     }
 
   }
@@ -83,8 +90,10 @@ class BoardFiles extends Component {
       boardSelectVisible: false,
       boardFileContentVisible: true,
       currentBoardId: board.board_id
+    },()=>{
+      this.initialget(board.board_id)
     });
-    this.initialget(board.board_id);
+    
   }
 
   initialget(id) {
@@ -95,7 +104,7 @@ class BoardFiles extends Component {
         id
       }
     });
-
+  
   }
 
 
@@ -295,7 +304,12 @@ class BoardFiles extends Component {
                             {
                               org.board_list.map((board, key) => {
                                 return (
-                                  <div key={board.board_id} className={indexStyles.boardItem} onClick={e => this.openBoardFiles(board)}>
+                                  <div key={board.board_id} className={indexStyles.boardItem} onClick={e => {
+                                    this.setState({
+                                      userSelectBoard:true
+                                    });
+                                    this.openBoardFiles(board);
+                                  }}>
                                     <i className={`${globalStyles.authTheme} ${indexStyles.boardIcon}`}>&#xe67d;</i>
                                     <span className={indexStyles.boardName}>{board.board_name}</span>
                                   </div>
