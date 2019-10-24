@@ -55,8 +55,9 @@ class AddTaskModal extends Component {
   }
   componentWillReceiveProps(nextProps) {
     const { create_lcb_time, board_id, about_user_boards = [], current_selected_board } = nextProps
+    
     const { due_time } = this.state
-    if (due_time != create_lcb_time) {
+    if (create_lcb_time && due_time != create_lcb_time) {
       this.setState({
         due_time: create_lcb_time
       })
@@ -94,7 +95,7 @@ class AddTaskModal extends Component {
   };
 
   isShouldNotDisableSubmitBtn = () => {
-    const { current_selected_board = {}} = this.state
+    const { current_selected_board = {} } = this.state
     const { board_id } = current_selected_board
     // console.log('sssssssssss', {current_selected_board})
     const {
@@ -157,6 +158,11 @@ class AddTaskModal extends Component {
       zIndex
     } = this.props;
 
+    // console.log('sssss_0', {
+    //   current_selected_board,
+    //   current_selected_users
+    // } )
+
     return (
       <Modal
         visible={add_lcb_modal_visible}
@@ -166,7 +172,7 @@ class AddTaskModal extends Component {
         onCancel={this.handleAddTaskModalCancel}
         footer={null}
         destroyOnClose={true}
-        zIndex={zIndex||1000}
+        zIndex={zIndex || 1000}
       >
         <div className={styles.addTaskModalContent}>
           <div className={styles.addTaskModalSelectProject}>
@@ -215,6 +221,7 @@ class AddTaskModal extends Component {
             <div className={styles.addTaskModalOperator}>
               <DropdownMultipleSelectWithSearch
                 itemTitle={'参与人'}
+                board_id={current_selected_board.board_id}
                 list={current_selected_board.users || []}
                 handleSelectedItemChange={this.handleSelectedItemChange}
                 current_selected_users={current_selected_users}

@@ -57,7 +57,7 @@ export default class GanttDetail extends React.Component {
   //评论
   commentSubmitPost = (data) => {
     let { text } = data
-    const { dispatch, milestone_id } = this.props
+    const { dispatch, milestone_id,isShowAllDynamic} = this.props
     if(text) {
       text = text.replace(/\r|\n/gim, '')
     }
@@ -76,7 +76,7 @@ export default class GanttDetail extends React.Component {
   }
   deleteComment = (data) => {
     const { id } = data
-    const { dispatch, milestone_id } = this.props
+    const { dispatch, milestone_id,isShowAllDynamic} = this.props
     dispatch({
       type: 'publicModalComment/deletePublicModalDetailComment',
       payload: {

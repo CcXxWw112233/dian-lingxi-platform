@@ -33,7 +33,6 @@ export default class MilestoneAdd extends React.Component {
     //获取项目里程碑列表
     getMilestone = (id, callBackObject, milestoneId) => {
         getMilestoneList({ id }).then((res) => {
-            console.log("res", res);
             if (isApiResponseOk(res)) {
                 this.setState({
                     milestoneList: res.data
@@ -166,14 +165,33 @@ export default class MilestoneAdd extends React.Component {
         this.props.onChangeMilestone && this.props.onChangeMilestone({ key, type: actionType, info })
     }
 
+    getSortLilestoneList = (milestoneList,dataInfo) => {
+        let sortMilestoneList = new Array;
+        let selectableArray = milestoneList.filter((item)=>{
+            return compareTwoTimestamp(item.deadline, dataInfo.due_time);
+        });
+
+        sortMilestoneList = sortMilestoneList.concat(selectableArray);
+        for(var i=0 ;i < milestoneList.length; i++){
+            if(selectableArray.filter((item)=>item.id == milestoneList[i].id).length==0){
+                sortMilestoneList.push(milestoneList[i]);
+            }
+        }
+        console.log("milestoneList",milestoneList);
+        console.log("sortMilestoneList",sortMilestoneList);
+        return sortMilestoneList;
+    }
+
     render() {
         const { milestoneList, add_lcb_modal_visible = false } = this.state
         const { visible, children, selectedValue, dataInfo = {} } = this.props
-        console.log(dataInfo);
+        const sortLilestoneList = this.getSortLilestoneList(milestoneList,dataInfo);
+        // console.log(dataInfo);
         return (
             <div>
 
                 <Dropdown
+                    trigger={['click']}
                     overlay={
                         <div>
                             <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: 200, }}
@@ -195,7 +213,7 @@ export default class MilestoneAdd extends React.Component {
                                         </div>
                                     </div>
                                     {
-                                        milestoneList.map((value, key) => {
+                                        sortLilestoneList.map((value, key) => {
                                             const { id, name, deadline } = value
                                             return (
                                                 <Menu.Item className={!compareTwoTimestamp(deadline, dataInfo.due_time) ? `${indexStyles.menuItem} ${indexStyles.disabled} ` : `${indexStyles.menuItem}`}
@@ -204,19 +222,19 @@ export default class MilestoneAdd extends React.Component {
                                                     disabled={!compareTwoTimestamp(deadline, dataInfo.due_time)}>
 
                                                     <div className={indexStyles.menuItemDiv}>
-                                                        <div style={{ display: 'flex', alignItems: 'center', textAlign: 'center' }} key={id}>
+                                                        <div key={id}>
                                                             <div style={{ overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 90, marginRight: 8 }}>{name}</div>
                                                         </div>
-
-                                                        <div style={{ display: selectedValue == id ? 'block' : 'none' }}>
-                                                            <Icon type="check" />
+                                                        <div>
+                                                            <div style={{ display: selectedValue == id ? 'inline-block' : 'none' }}>
+                                                                <Icon type="check" />
+                                                            </div>
+                                                            {!compareTwoTimestamp(deadline, dataInfo.due_time) && (
+                                                                <Tooltip title="当前任务的截止时间无法超出里程碑截止时间">
+                                                                    <div className={indexStyles.menuItemTip}><Icon type="question-circle" /></div>
+                                                                </Tooltip>
+                                                            )}
                                                         </div>
-                                                        {!compareTwoTimestamp(deadline, dataInfo.due_time) && (
-<Tooltip title="当前任务的截止时间无法超出里程碑截止时间">
-                                                                <div className={indexStyles.menuItemTip}><Icon type="question-circle" /></div>
-                                                            </Tooltip>
-)}
-
                                                     </div>
                                                 </Menu.Item>
                                             )

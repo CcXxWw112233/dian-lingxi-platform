@@ -57,8 +57,7 @@ export default class index extends React.Component {
         //全组织情况下, 如果只有一个组织有开通该功能, 则直接进入地图, 不需要选择组织页面
         const orgItem = mapOrganizationList && mapOrganizationList[0]
         const id = orgItem && orgItem.id
-        const org_Id = mapOrganizationList.length > 1 ? { orgId } : id
-
+        const org_Id = mapOrganizationList.length > 1 ? orgId : id
         const src_url = `${MAP_URL}?token=${accessToken}&orgId=${org_Id}`
         const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
         const { selectOrganizationVisible } = this.state

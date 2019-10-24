@@ -1020,6 +1020,7 @@ export default class MainContent extends Component {
                                 overlay={
                                   <MenuSearchPartner
                                     // handleSelectedAllBtn={this.handleSelectedAllBtn}
+                                    invitationOrg={drawContent.org_id}
                                     invitationType='4'
                                     invitationId={card_id}
                                     listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
@@ -1039,6 +1040,7 @@ export default class MainContent extends Component {
                                   overlay={
                                     <MenuSearchPartner
                                       // handleSelectedAllBtn={this.handleSelectedAllBtn}
+                                      invitationOrg={drawContent.org_id}
                                       invitationType='4'
                                       invitationId={card_id}
                                       listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}

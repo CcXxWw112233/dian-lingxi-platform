@@ -213,6 +213,17 @@ export default class UploadAttachment extends Component {
 
   // 移除执行人的回调 S
   handleRemoveExecutors = (e, shouldDeleteItem) => {
+    e && e.stopPropagation()
+    const { toNoticeList = [] } = this.state
+    let new_toNoticeList = [...toNoticeList]
+    new_toNoticeList.map((item, index) => {
+      if (item.user_id == shouldDeleteItem) {
+        new_toNoticeList.splice(index, 1)
+      }
+    })
+    this.setState({
+      toNoticeList: new_toNoticeList
+    })
   }
   // 移除执行人的回调 E
 
@@ -245,7 +256,7 @@ export default class UploadAttachment extends Component {
     const { boardFolderTreeData } = this.state;
     if (is_file_tree_loading) {
       return (
-        <div style={{ backgroundColor: '#FFFFFF', textAlign: 'center', height: '50px', lineHeight: '48px', overflow: 'hidden', color: 'rgba(0, 0, 0, 0.25)' }} className={`${globalStyles.page_card_Normal} ${indexStyles.directoryTreeWapper}`}>
+        <div style={{ backgroundColor: '#FFFFFF', textAlign: 'center', height: '50px', lineHeight: '48px', overflow: 'hidden', color: 'rgba(0, 0, 0, 0.25)' }} className={`${styles.page_card_Normal} ${styles.directoryTreeWapper}`}>
           数据加载中
         </div>
       )
@@ -310,11 +321,12 @@ export default class UploadAttachment extends Component {
               {
                 !toNoticeList.length ? (
                   <div style={{ flex: '1', position: 'relative' }}>
-                    <Dropdown overlayClassName={styles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                    <Dropdown trigger={['click']} overlayClassName={styles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
                       overlayStyle={{ maxWidth: '200px' }}
                       overlay={
                         <MenuSearchPartner
                           handleSelectedAllBtn={this.handleSelectedAllBtn}
+                          isInvitation={true}
                           invitationType='4'
                           invitationId={card_id}
                           listData={projectMemberData} keyCode={'user_id'} searchName={'name'} currentSelect={toNoticeList}
@@ -331,7 +343,7 @@ export default class UploadAttachment extends Component {
                   </div>
                 ) : (
                     <div style={{ flex: '1', position: 'relative' }}>
-                      <Dropdown overlayClassName={styles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                      <Dropdown trigger={['click']} overlayClassName={styles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
                         overlay={
                           <MenuSearchPartner
                             handleSelectedAllBtn={this.handleSelectedAllBtn}

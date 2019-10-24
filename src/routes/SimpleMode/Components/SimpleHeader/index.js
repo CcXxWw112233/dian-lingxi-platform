@@ -8,7 +8,7 @@ import { Tooltip, Dropdown } from 'antd'
 import Cookies from "js-cookie";
 import SimpleNavigation from "./Components/SimpleNavigation/index"
 import SimpleDrawer from './Components/SimpleDrawer/index'
-import LingxiIm from 'lingxi-im'
+import LingxiIm, {Im} from 'lingxi-im'
 class SimpleHeader extends Component {
     state = {
         leftNavigationVisible: false,
@@ -22,6 +22,7 @@ class SimpleHeader extends Component {
         const width = document.body.scrollWidth;
         let workbenchBoxContentWapperModalStyle = !chatImVisiable ? { width: (width - 400) + 'px' } : { width: '100%' }
         let flag = val !== undefined ? val : !chatImVisiable ;
+        LingxiIm.show();
         dispatch({
             type: 'simplemode/updateDatas',
             payload: {
@@ -69,19 +70,19 @@ class SimpleHeader extends Component {
             simpleDrawerTitle: ''
         });
     }
-    ImToggle = (val) =>{
-      if(!val){
-        this.openOrCloseImChatModal(false);
-      }
-    }
 
-    componentWillReceiveProps(props, nextProps){
-      // if(nextProps.chatImVisiable){
-        LingxiIm.show();
-      // }
-    }
+    // componentWillReceiveProps(props, nextProps){
+    //   // if(nextProps.chatImVisiable){
+    //     LingxiIm.show();
+    //   // }
+    // }
     componentDidMount(){
       LingxiIm.show();
+      Im.addEventListener('visible', (val)=>{
+          if(!val){
+              this.openOrCloseImChatModal(false)
+          }
+      })
     }
 
     render() {
@@ -132,7 +133,7 @@ class SimpleHeader extends Component {
                     <div className={indexStyles.videoMeetingWapper}>
                         <VideoMeeting />
                     </div> */}
-                    <LingxiIm token={Cookies.get('Authorization')} width='400px' onToggle={this.ImToggle}/>
+                    <LingxiIm token={Cookies.get('Authorization')} width='400px'/>
 
                     <div className={indexStyles.videoMeetingWapper}>
                         <VideoMeeting />

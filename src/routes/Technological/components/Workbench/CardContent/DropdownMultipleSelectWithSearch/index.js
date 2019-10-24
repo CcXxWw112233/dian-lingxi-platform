@@ -376,6 +376,7 @@ class DropdownMultipleSelectWithSearch extends Component {
             overlay={
               !!board_id ? (
                 <MenuSearchPartner
+                  not_show_wechat_invite={true}
                   invitationType='1'
                   invitationId={board_id}
                   listData={list}

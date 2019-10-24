@@ -344,7 +344,7 @@ export default class RenderAdd extends Component {
           {
             remind_edit_type == 3 && (
               <DatePicker
-                showTime={true}
+                showTime={{ format: 'HH:mm' }}
                 defaultValue={remind_time_value.length <= 2 ? '' : moment(this.getdate(remind_time_value))}
                 placeholder="请选择日期"
                 format="YYYY-MM-DD HH:mm"
