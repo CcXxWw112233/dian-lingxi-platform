@@ -55,8 +55,9 @@ class AddTaskModal extends Component {
   }
   componentWillReceiveProps(nextProps) {
     const { create_lcb_time, board_id, about_user_boards = [], current_selected_board } = nextProps
+    
     const { due_time } = this.state
-    if (due_time != create_lcb_time) {
+    if (create_lcb_time && due_time != create_lcb_time) {
       this.setState({
         due_time: create_lcb_time
       })
