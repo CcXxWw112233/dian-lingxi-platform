@@ -71,7 +71,7 @@ class CustormModal extends React.Component {
 
 
   render() {
-    const { siderRightCollapsed, visible, overInner, width, zIndex = 1006, maskClosable, footer, destroyOnClose, keyboard = true, maskStyle = {}, style = {}, onOk, onCancel, bodyStyle = {}, closable = true, title } = this.props;
+    const { siderRightCollapsed = false, visible, overInner, width, zIndex = 1006, maskClosable, footer, destroyOnClose, keyboard = true, maskStyle = {}, style = {}, onOk, onCancel, bodyStyle = {}, closable = true, title } = this.props;
     const { clientWidth, clientHeight } = this.state
     const { siderRightWidth, layoutClientWidth } = this.state;
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
@@ -93,16 +93,16 @@ class CustormModal extends React.Component {
         footer={footer}
         destroyOnClose={destroyOnClose}
         keyboard={keyboard}
-        getContainer={() => document.getElementById('technologicalLayoutWrapper')}
+        getContainer={() => document.getElementById('technologicalLayoutWrapper') || document.querySelector('body')}
         maskStyle={{
           height: clientHeight,
-          ...maskStyle 
+          ...maskStyle
         }}
         style={{ ...style }}
-        bodyStyle={{ ...bodyStyle}}
+        bodyStyle={{ ...bodyStyle }}
         onCancel={onCancel}
         onOk={onOk}
-        wrapClassName={`${ siderRightCollapsed ? indexStyles.wrapActiveModal : indexStyles.wrapNormalModal}`}
+        wrapClassName={`${siderRightCollapsed ? indexStyles.wrapActiveModal : indexStyles.wrapNormalModal}`}
       >
         {overInner}
       </Modal>

@@ -17,6 +17,7 @@ import {
 import { isApiResponseOk } from "@/utils/handleResponseData";
 import { getFileList, getBoardFileList, fileInfoByUrl } from '@/services/technological/file'
 import coverIconSrc from '@/assets/simplemode/communication_cover_icon@2x.png'
+import { Im } from 'lingxi-im';
 import uploadIconSrc from '@/assets/simplemode/cloud-upload_icon@2x.png'
 import { UPLOAD_FILE_SIZE, FILE_TYPE_UPLOAD_WHITELISTED } from "@/globalset/js/constant";
 
@@ -53,11 +54,15 @@ class BoardCommunication extends Component {
     constructor(props) {
         super(props)
         const { dispatch } = this.props;
+        Im.addEventListener('visible',(val)=>{ // 获取圈子显示隐藏状态
+            // this.setState({ isShowlingxiIm: val});
+        })
     }
 
     componentDidMount() {
         this.queryCommunicationFileData();
     }
+
     // 获取项目交流文件列表数据
     queryCommunicationFileData = () => {
         const { dispatch, gantt_board_id } = this.props;
@@ -71,6 +76,7 @@ class BoardCommunication extends Component {
           }
         })
     }
+    
 
     initModalSelect = () => {
         const { dispatch } = this.props
