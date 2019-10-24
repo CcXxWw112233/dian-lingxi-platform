@@ -1956,7 +1956,7 @@ class DrawContent extends React.Component {
 
 }
 
-export default withRouter(DrawContent)
+export default DrawContent
 
 function mapStateToProps({
   projectDetailTask: {
