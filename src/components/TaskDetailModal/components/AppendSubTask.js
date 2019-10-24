@@ -9,6 +9,7 @@ import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import AppendSubTaskItem from './AppendSubTaskItem'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { timestampToTimeNormal3, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal } from '@/utils/util'
+import { MESSAGE_DURATION_TIME } from '@/globalset/js/constant'
 
 export default class AppendSubTask extends Component {
 
