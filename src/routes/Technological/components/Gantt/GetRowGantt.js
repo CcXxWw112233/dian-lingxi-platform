@@ -335,12 +335,12 @@ export default class GetRowGantt extends Component {
       } else {
         const { current_list_group_id } = res
         if (gantt_board_id == 0) {
-          if (checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, current_list_group_id)) {
+          if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, current_list_group_id)) {
             message.warn(NOT_HAS_PERMISION_COMFIRN)
             return
           }
         } else {
-          if (checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id)) {
+          if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id)) {
             message.warn(NOT_HAS_PERMISION_COMFIRN)
             return
           }

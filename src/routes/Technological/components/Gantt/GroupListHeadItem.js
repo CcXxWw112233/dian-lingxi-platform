@@ -639,7 +639,7 @@ export default class GroupListHeadItem extends Component {
           </div>
           <div className={indexStyles.list_head_footer} onClick={this.setIsShowBottDetail}>
             <div className={`${globalStyles.authTheme} ${indexStyles.list_head_footer_tip} ${isShowBottDetail == '2' && indexStyles.spin_hide} ${isShowBottDetail == '1' && indexStyles.spin_show}`}>&#xe61f;</div>
-            <div>{list_no_time_data.length}个未排期事项</div>
+            <div className={indexStyles.list_head_footer_dec}>{list_no_time_data.length}个未排期事项</div>
           </div>
         </div>
         {
