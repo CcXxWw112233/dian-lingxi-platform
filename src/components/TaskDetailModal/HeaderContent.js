@@ -13,14 +13,19 @@ class HeaderContent extends Component {
     const { card_id, org_id, board_id, board_name, list_name } = drawContent
 
     return (
-      <div style={{display: 'flex', alignItems: 'center'}}>
+      <div className={headerStyles.detail_head}>
         {/* 这里是头部左边 */}
-        <div style={{flex: '1', minWidth: '376px'}}>
+        <div  className={headerStyles.detail_head_left}>
           {/* 这里是头部图标样式 */}
-          <span className={headerStyles.header_icon}>
-            <i className={`${globalStyles.authTheme} ${headerStyles.title_icon}`}>&#xe66a;</i>
-            <i>{currentNounPlanFilterName(TASKS)}</i>
-          </span>
+          <div className={headerStyles.header_icon}>
+            <span>
+              <i className={`${globalStyles.authTheme} ${headerStyles.title_icon}`}>&#xe66a;</i>
+            </span>
+            <span style={{fontSize:'14px'}}>
+              {currentNounPlanFilterName(TASKS)}
+            </span>
+          </div>
+         
           {/* 这里是小导航 */}
           <span className={headerStyles.bread_nav}>
             <span className={headerStyles.bread_board_name}>{board_name}</span>
@@ -36,13 +41,14 @@ class HeaderContent extends Component {
           </span>
         </div>
         {/* 这里是头部右边 */}
-        <div>
+        <div className={headerStyles.detail_head_right}>
           <HeaderContentRightMenu 
             handleTaskDetailChange={handleTaskDetailChange} 
             updateParentTaskList={updateParentTaskList} 
             handleDeleteCard={handleDeleteCard} 
             setTaskDetailModalVisible={setTaskDetailModalVisible} />
         </div>
+        
       </div>
     )
   }

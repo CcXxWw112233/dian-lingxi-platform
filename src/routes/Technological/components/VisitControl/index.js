@@ -611,8 +611,8 @@ class VisitControl extends Component {
     );
     const clockEle = (
       <Tooltip title={tooltipClockText}>
-        <span className={styles.trigger__btn__wrapper} style={{marginRight: 0}}>
-          <i className={`${globalStyles.authTheme} ${styles.trigger__btn__icon}`} style={{fontSize:'20px'}}>
+        <span className={styles.trigger__btn__wrapper}>
+          <i className={`${globalStyles.authTheme} ${styles.trigger__btn__icon}`} style={{fontSize:'16px'}}>
             &#xe86a;
           </i>
           <span className={styles.trigger__btn_text}>已限制访问</span>
