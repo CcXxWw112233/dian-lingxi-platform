@@ -99,10 +99,10 @@ export default class GroupListHeadItem extends Component {
       }
     })
     dispatch({
-      type: 'workbenchTaskDetail/getCardDetail',
+      type: 'publicTaskDetailModal/updateDatas',
       payload: {
-        id,
-        board_id,
+        drawerVisible: true,
+        card_id: id,
         calback: function (data) {
           dispatch({
             type: 'workbenchPublicDatas/getRelationsSelectionPre',
@@ -113,12 +113,27 @@ export default class GroupListHeadItem extends Component {
         }
       }
     })
-    dispatch({
-      type: 'workbenchTaskDetail/getCardCommentListAll',
-      payload: {
-        id: id
-      }
-    })
+    // dispatch({
+    //   type: 'workbenchTaskDetail/getCardDetail',
+    //   payload: {
+    //     id,
+    //     board_id,
+    //     calback: function (data) {
+    //       dispatch({
+    //         type: 'workbenchPublicDatas/getRelationsSelectionPre',
+    //         payload: {
+    //           _organization_id: data.org_id
+    //         }
+    //       })
+    //     }
+    //   }
+    // })
+    // dispatch({
+    //   type: 'workbenchTaskDetail/getCardCommentListAll',
+    //   payload: {
+    //     id: id
+    //   }
+    // })
     dispatch({
       type: 'workbenchPublicDatas/updateDatas',
       payload: {
