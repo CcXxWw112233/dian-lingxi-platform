@@ -300,7 +300,7 @@ export default class CommunicationFileList extends Component{
                     style={{ left: visible ? '299px' : '0'}}
                     onClick={this.isVisible}
                 >
-                    <Icon type="left" />
+                    <Icon type={visible ? 'left' : 'right'} />
                 </div>
 
             </div>
