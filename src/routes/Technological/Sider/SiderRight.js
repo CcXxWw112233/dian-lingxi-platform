@@ -19,7 +19,7 @@ import { NODE_ENV, IM_HTTP_PATH } from '../../../globalset/js/constant'
 // import GroupChat from './comonent/GroupChat'
 // import InitialChat from './comonent/InitialChat'
 import VideoMeetingPopoverContent from './comonent/videoMeetingPopoverContent/index'
-import LingxiIm, {Im} from 'lingxi-im'
+import LingxiIm, { Im } from 'lingxi-im'
 
 let cx = classNames.bind(indexStyles);
 
@@ -59,16 +59,22 @@ class SiderRight extends React.Component {
     videoMeetingPopoverVisible: false
   };
 
-  componentDidMount(){
+  componentDidMount() {
+    this.imInitOption()
+  }
+
+  imInitOption = () => {
     LingxiIm.hide();
-    if(Im){
-      Im.addEventListener('visible', (visible)=>{
+    const { protocol, host } = window.location
+    Im.option({ baseUrl: `${protocol}//${host}/` })
+    if (Im) {
+      Im.addEventListener('visible', (visible) => {
         console.log(visible)
         this.handleImToggle(visible);
       });
     }
-
   }
+
   onCollapse(bool) {
     this.setState({
       collapsed: bool
@@ -568,9 +574,9 @@ class SiderRight extends React.Component {
       </div>
     );
     return (
-      <div style={{ flex: "none", paddingBottom: '50px', position: 'relative', backgroundColor: '#fff', zIndex: '1010'}}>
-        <LingxiIm token={Cookies.get('Authorization')} width='400px'/>
-        <div className={indexStyles.videoMeetingWapper} style={{ position: 'absolute', bottom: '10px'}}>
+      <div style={{ flex: "none", paddingBottom: '50px', position: 'relative', backgroundColor: '#fff', zIndex: '1010' }}>
+        <LingxiIm token={Cookies.get('Authorization')} width='400px' />
+        <div className={indexStyles.videoMeetingWapper} style={{ position: 'absolute', bottom: '10px' }}>
           <VideoMeetingPopoverContent />
         </div>
       </div>

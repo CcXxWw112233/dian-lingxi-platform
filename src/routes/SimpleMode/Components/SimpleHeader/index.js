@@ -8,7 +8,7 @@ import { Tooltip, Dropdown } from 'antd'
 import Cookies from "js-cookie";
 import SimpleNavigation from "./Components/SimpleNavigation/index"
 import SimpleDrawer from './Components/SimpleDrawer/index'
-import LingxiIm, {Im} from 'lingxi-im'
+import LingxiIm, { Im } from 'lingxi-im'
 class SimpleHeader extends Component {
     state = {
         leftNavigationVisible: false,
@@ -18,14 +18,14 @@ class SimpleHeader extends Component {
     }
 
     openOrCloseImChatModal = (val) => {
-      console.log(val)
+        console.log(val)
         const { dispatch, chatImVisiable } = this.props;
-        let flag = val !== undefined ? val : !chatImVisiable ;
+        let flag = val !== undefined ? val : !chatImVisiable;
         const width = document.body.scrollWidth;
         let workbenchBoxContentWapperModalStyle = flag ? { width: (width - 400) + 'px' } : { width: '100%' }
         console.log(workbenchBoxContentWapperModalStyle)
-        if(flag){
-          LingxiIm.show();
+        if (flag) {
+            LingxiIm.show();
         }
         dispatch({
             type: 'simplemode/updateDatas',
@@ -80,14 +80,21 @@ class SimpleHeader extends Component {
     //     LingxiIm.show();
     //   // }
     // }
-    componentDidMount(){
-      let func = (val)=>{
-        if(!val){
-            this.openOrCloseImChatModal(false)
+    componentDidMount() {
+        let func = (val) => {
+            if (!val) {
+                this.openOrCloseImChatModal(false)
+            }
         }
-      }
-      Im.removeEventListener('visible', func)
-      Im.addEventListener('visible', func)
+        Im.removeEventListener('visible', func)
+        Im.addEventListener('visible', func)
+        this.imInitOption()
+    }
+
+
+    imInitOption = () => {
+        const { protocol, host } = window.location
+        Im.option({ baseUrl: `${protocol}//${host}/` })
     }
 
     render() {
@@ -97,26 +104,26 @@ class SimpleHeader extends Component {
             <div className={indexStyles.headerWapper}>
                 {
                     false && (
-<Tooltip placement="bottom" title={'退出极简模式'}>
-                        <div className={indexStyles.miniNavigation} onClick={this.openOrCloseMainNav}>
-                            <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe69d;</i>
-                        </div>
-                    </Tooltip>
-)
+                        <Tooltip placement="bottom" title={'退出极简模式'}>
+                            <div className={indexStyles.miniNavigation} onClick={this.openOrCloseMainNav}>
+                                <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe69d;</i>
+                            </div>
+                        </Tooltip>
+                    )
                 }
                 {
                     leftMainNavIconVisible && (
-<Dropdown
-                        placement="bottomLeft"
-                        overlay={<SimpleNavigation updateStates={this.updateStates} dropdownHandleVisibleChange={this.handleVisibleChange}/>}
-                        onVisibleChange={this.handleVisibleChange}
-                        visible={leftNavigationVisible}
-                    >
-                        <div className={indexStyles.miniNavigation}>
-                            <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe69f;</i>
-                        </div>
-                    </Dropdown>
-)}
+                        <Dropdown
+                            placement="bottomLeft"
+                            overlay={<SimpleNavigation updateStates={this.updateStates} dropdownHandleVisibleChange={this.handleVisibleChange} />}
+                            onVisibleChange={this.handleVisibleChange}
+                            visible={leftNavigationVisible}
+                        >
+                            <div className={indexStyles.miniNavigation}>
+                                <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe69f;</i>
+                            </div>
+                        </Dropdown>
+                    )}
 
                 <div className={indexStyles.miniImMessage} onClick={this.openOrCloseImChatModal}>
                     <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe8e8;</i>
@@ -138,7 +145,7 @@ class SimpleHeader extends Component {
                     <div className={indexStyles.videoMeetingWapper}>
                         <VideoMeeting />
                     </div> */}
-                    <LingxiIm token={Cookies.get('Authorization')} width='400px'/>
+                    <LingxiIm token={Cookies.get('Authorization')} width='400px' />
 
                     <div className={indexStyles.videoMeetingWapper}>
                         <VideoMeeting />
