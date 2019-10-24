@@ -142,7 +142,7 @@ class MyWorkbenchBoxs extends Component {
   }
 
   componentDidMount() {
-    
+
     const { dispatch } = this.props;
     dispatch({
       type: 'workbench/getProjectList',
@@ -181,7 +181,7 @@ class MyWorkbenchBoxs extends Component {
   }
 
   goWorkbenchBox = (item) => {
-
+    console.log(item)
     const { id, code, status } = item
     const { dispatch } = this.props;
     const isDisableds = this.getIsDisabled(item)
