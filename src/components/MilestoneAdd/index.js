@@ -33,7 +33,6 @@ export default class MilestoneAdd extends React.Component {
     //获取项目里程碑列表
     getMilestone = (id, callBackObject, milestoneId) => {
         getMilestoneList({ id }).then((res) => {
-            console.log("res", res);
             if (isApiResponseOk(res)) {
                 this.setState({
                     milestoneList: res.data

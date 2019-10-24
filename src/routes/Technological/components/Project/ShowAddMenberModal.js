@@ -87,9 +87,7 @@ class ShowAddMenberModal extends React.Component {
     const { modalVisible, show_wechat_invite, board_id, invitationType, invitationId, rela_Condition, invitationOrg } = this.props;
     const { wechat_invite_visible } = this.state
 
-    console.log('ssssss', {
-      board_id
-    })
+  
 
     return (
       <div>

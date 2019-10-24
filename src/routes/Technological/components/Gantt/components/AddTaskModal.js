@@ -71,7 +71,7 @@ class AddTaskModal extends Component {
   };
   // 选择项目
   handleSelectedItem = item => {
-    console.log('ssssss', { item })
+   
     this.setState(
       {
         currentSelectedProject: item,
