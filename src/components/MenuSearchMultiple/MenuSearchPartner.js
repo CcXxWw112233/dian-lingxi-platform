@@ -297,6 +297,7 @@ export default class MenuSearchPartner extends React.Component {
 
                 <ShowAddMenberModal
                     // title={titleText}
+                    board_id={board_id}
                     addMenbersInProject={this.addMenbersInProject}
                     show_wechat_invite={true}
                     board_id={board_id}

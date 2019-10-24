@@ -212,72 +212,78 @@ export default class CommunicationFileList extends Component{
                 {/* 这里是左侧的项目交流列表 */}
                 {
                     visible && (
-<div className={styles.fileList}>
-                        <div className={styles.listHeaderName}>文件列表</div>
-                        {/* 文件列表 */}
-                        <div className={`${styles.fileListContent} ${isShowCompanyName && styles.arrowPosition}`}>
-                            {
-                                !isShowSub ? (
-<Collapse
-                                    bordered={false}
-                                    // defaultActiveKey={boards_flies && boards_flies[0] && [boards_flies[0].id]}
-                                    // defaultActiveKey={collapseActiveKeys}
-                                    activeKey={collapseActiveKeys}
-                                    // activeKey={["1184383015095242752_7"]}
-                                    expandIcon={({ isActive }) => <Icon type="caret-right" rotate={isActive ? 90 : 0} />}
-                                    onChange={this.collapseOnchange.bind(this)}
-                                >
-                                    {
-                                        boards_flies && boards_flies.map((item, key) => {
-                                            const { board_name, id, type, file_data = [] } = item;
-                                            return(
-                                                // <Panel header={this.showHeader(item,isShowCompanyName)} key={item.id} onClick={()=>this.panelOnClick(item)}>
-                                                <Panel header={this.showHeader(item, isShowCompanyName)} key={`${item.id}_${item.file_data.length}`} onClick={()=>this.panelOnClick(item)}>
-                                                    <CommunicationFileItem
-                                                        isShowSub={isShowSub}
-                                                        changeIsShowSub={this.changeIsShowSub}
-                                                        itemValue={item}
-                                                        item={key}
-                                                        board_id={id}
-                                                        board_name={board_name}
-                                                        showWhatComponent={this.showWhatComponent}
-                                                        setFirstPaths={this.setFirstPaths}
-                                                        getSubFileData={this.getSubFileData}
-                                                        queryCommunicationFileData={this.props.queryCommunicationFileData}
-                                                        showUpdatedFileDetail={this.props.showUpdatedFileDetail}
-                                                        // setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
-                                                        // fileDetailModalDatas={this.props.fileDetailModalDatas}
-                                                        {...this.props}
-                                                    />
-                                                </Panel>
-                                            )
-                                        })
-                                    }
-                                </Collapse>
-): (
-<div className={styles.fileListContent}>
-                                    <SubFileItem
-                                        isShowSub={isShowSub}
-                                        fileData={fileData}
-                                        folderId={currentSubId}
-                                        boardId={first_paths_item.id}
-                                        boardName={currentBoardName}
-                                        currentOrg_id={currentOrg_id}
-                                        bread_paths={bread_paths}
-                                        currentUserOrganizes={currentUserOrganizes}
-                                        isShowCompanyName={isShowCompanyName}
-                                        getSubFileData={this.getSubFileData}
-                                        showHeader={this.showHeader}
-                                        showWhatComponent={this.showWhatComponent}
-                                        goBackPrev={this.goBackPrev}
-                                        queryCommunicationFileData={this.props.queryCommunicationFileData}
-                                        showUpdatedFileDetail={this.props.showUpdatedFileDetail}
-                                    />
-                                </div>
-)}
+                        <div className={styles.fileList}>
+                            <div className={styles.listHeaderName}>文件列表</div>
+                            {/* 文件列表 */}
+                            <div className={`${styles.fileListContent} ${isShowCompanyName && styles.arrowPosition}`}>
+                                {
+                                    !isShowSub ? (
+                                        <Collapse
+                                            bordered={false}
+                                            // defaultActiveKey={boards_flies && boards_flies[0] && [boards_flies[0].id]}
+                                            // defaultActiveKey={collapseActiveKeys}
+                                            activeKey={collapseActiveKeys}
+                                            // activeKey={["1184383015095242752_7"]}
+                                            expandIcon={({ isActive }) => <Icon type="caret-right" rotate={isActive ? 90 : 0} />}
+                                            onChange={this.collapseOnchange.bind(this)}
+                                        >
+                                            {
+                                                boards_flies && boards_flies.map((item, key) => {
+                                                    const { board_name, id, type, file_data = [] } = item;
+                                                    return(
+                                                        // <Panel header={this.showHeader(item,isShowCompanyName)} key={item.id} onClick={()=>this.panelOnClick(item)}>
+                                                        <Panel header={this.showHeader(item, isShowCompanyName)} key={`${item.id}_${item.file_data.length}`} onClick={()=>this.panelOnClick(item)}>
+                                                            <CommunicationFileItem
+                                                                isShowSub={isShowSub}
+                                                                changeIsShowSub={this.changeIsShowSub}
+                                                                itemValue={item}
+                                                                item={key}
+                                                                board_id={id}
+                                                                board_name={board_name}
+                                                                showWhatComponent={this.showWhatComponent}
+                                                                setFirstPaths={this.setFirstPaths}
+                                                                getSubFileData={this.getSubFileData}
+                                                                queryCommunicationFileData={this.props.queryCommunicationFileData}
+                                                                showUpdatedFileDetail={this.props.showUpdatedFileDetail}
+                                                                hideUpdatedFileDetail={this.props.hideUpdatedFileDetail}
+                                                                // setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
+                                                                // fileDetailModalDatas={this.props.fileDetailModalDatas}
+                                                                {...this.props}
+                                                            />
+                                                        </Panel>
+                                                    )
+                                                })
+                                            }
+                                        </Collapse>
+                                    ): (
+                                        <div className={styles.fileListContent}>
+                                            <SubFileItem
+                                                isShowSub={isShowSub}
+                                                fileData={fileData}
+                                                folderId={currentSubId}
+                                                boardId={first_paths_item.id}
+                                                boardName={currentBoardName}
+                                                currentOrg_id={currentOrg_id}
+                                                bread_paths={bread_paths}
+                                                currentUserOrganizes={currentUserOrganizes}
+                                                isShowCompanyName={isShowCompanyName}
+                                                getSubFileData={this.getSubFileData}
+                                                showHeader={this.showHeader}
+                                                showWhatComponent={this.showWhatComponent}
+                                                goBackPrev={this.goBackPrev}
+                                                queryCommunicationFileData={this.props.queryCommunicationFileData}
+                                                showUpdatedFileDetail={this.props.showUpdatedFileDetail}
+                                                hideUpdatedFileDetail={this.props.hideUpdatedFileDetail}
+                                            />
+                                        </div>
+                                    )
+                                }
+                            </div>
                         </div>
-                    </div>
-)}
+                    )
+                }
+
+                {/* 控制列表是否显示按钮 */}
                 <div
                     className={styles.operationBtn}
                     style={{ left: visible ? '299px' : '0'}}
@@ -285,6 +291,7 @@ export default class CommunicationFileList extends Component{
                 >
                     <Icon type="left" />
                 </div>
+
             </div>
         );
     }
