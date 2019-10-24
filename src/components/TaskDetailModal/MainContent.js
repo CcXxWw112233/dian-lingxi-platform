@@ -16,10 +16,13 @@ import InformRemind from '@/components/InformRemind'
 import { timestampFormat, timestampToTime, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal } from '@/utils/util'
 import { getSubfixName } from "@/utils/businessFunction";
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE
 } from "@/globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { addTaskExecutor, removeTaskExecutor,deleteTaskFile} from '../../services/technological/task'
+import {
+  checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
+} from "@/utils/businessFunction";
 
 
 @connect(mapStateToProps)
@@ -41,6 +44,21 @@ export default class MainContent extends Component {
     })
   }
 
+    // 检测不同类型的权限控制类型的是否显示
+  checkDiffCategoriesAuthoritiesIsVisible = () => {
+    const { drawContent = {} } = this.props
+    const { is_realize = '0', card_id, privileges = [], board_id, is_privilege, executors = [] } = drawContent
+    let flag
+    return {
+      'visit_control_edit': function () {// 是否是有编辑权限
+        return checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))
+      },
+      'visit_control_comment': function() {
+        return checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))
+      },
+    }
+  }
+
   // 设置卡片是否完成 S
   setIsCheck = () => {
     const { drawContent = {}, } = this.props
@@ -50,7 +68,7 @@ export default class MainContent extends Component {
     //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
     //   return false
     // }
-    if ((this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()) {
+    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -89,7 +107,7 @@ export default class MainContent extends Component {
   // 设置标题textarea区域修改 S
   setTitleEdit = (e) => {
     e && e.stopPropagation();
-    if ((this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()) {
+    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()) {
       return false
     }
     this.props.dispatch({
@@ -735,6 +753,10 @@ export default class MainContent extends Component {
   /**附件下载、删除等操作 */
   attachmentItemOpera({ type, data = {}, card_id }, e) {
     e.stopPropagation()
+    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     //debugger
     const { dispatch } = this.props
     const attachment_id = data.id || (data.response && data.response.data && data.response.data.attachment_id)
@@ -757,6 +779,10 @@ export default class MainContent extends Component {
   }
    /**附件删除 */
   deleteAttachmentFile(data) {
+    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { attachment_id } = data;
     const that = this
     const { drawContent = {}, dispatch } = this.props
@@ -940,7 +966,7 @@ export default class MainContent extends Component {
                   type == '0' ? (
                     <>
                       {
-                        (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                        (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
                           <div className={`${mainContentStyles.field_right}`}>
                             <div className={`${mainContentStyles.pub_hover}`}>
                               <span className={is_realize == '0' ? mainContentStyles.incomplete : mainContentStyles.complete}>{is_realize == '0' ? '未完成' : '已完成'}</span>
@@ -979,7 +1005,7 @@ export default class MainContent extends Component {
                   <span className={mainContentStyles.user_executor}>负责人</span>
                 </div>
                 {
-                  (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                  (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
                     (
                       !executors.length ? (
                         <div className={`${mainContentStyles.field_right}`}>
@@ -1107,7 +1133,7 @@ export default class MainContent extends Component {
                       </div> */}
                       {/* 开始时间 */}
                       {
-                        (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                        (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
                           (
                             <div className={`${mainContentStyles.start_time}`}>
                               <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
@@ -1153,7 +1179,7 @@ export default class MainContent extends Component {
                       </div> */}
                       {/* 截止时间 */}
                       {
-                        (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                        (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
                           (
                             <div className={`${mainContentStyles.due_time}`}>
                               <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
@@ -1182,7 +1208,7 @@ export default class MainContent extends Component {
                     </div>
                     {/* 通知提醒 */}
                     {
-                      (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                      (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
                         ''
                       ) : (
                           <span style={{ position: 'relative' }}>
@@ -1240,7 +1266,7 @@ export default class MainContent extends Component {
               <div className={`${mainContentStyles.field_right}`}>
                 {/* 上传附件组件 */}
                 {
-                  (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                  (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
                     <div className={`${mainContentStyles.pub_hover}`}>
                       <span>暂无</span>
                     </div>
@@ -1292,7 +1318,7 @@ export default class MainContent extends Component {
               </div>
               <div className={`${mainContentStyles.field_right}`}>
                 {
-                  (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                  (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
                     (
                       !description && description != '<p></p>' ? (
                         <div className={`${mainContentStyles.pub_hover}`}>
@@ -1345,7 +1371,7 @@ export default class MainContent extends Component {
                   </div>
                 </MilestoneAdd> */}
                 {
-                  (this.props.checkDiffCategoriesAuthoritiesIsVisible && this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.props.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                  (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
                     (
                       !milestone_data && !(milestone_data && milestone_data.id) ? (
                         <div className={`${mainContentStyles.pub_hover}`}>

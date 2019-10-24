@@ -336,7 +336,6 @@ export default class CommentListItem extends React.Component {
     let messageContainer = (<div></div>)
     switch (action) {
       case 'board.card.update.comment.add': // 任务添加评论
-      case 'board.common.comment.add':// 里程碑评论
         messageContainer = (
           <div className={commonCommentStyles.common_item}>
             {/* 头像 */}
@@ -368,6 +367,38 @@ export default class CommentListItem extends React.Component {
           </div>
         )
         break;
+      case 'board.common.comment.add':// 里程碑评论
+        messageContainer = (
+          <div className={commonCommentStyles.common_item}>
+            {/* 头像 */}
+            <div className={commonCommentStyles.common_left}>
+              <Avatar src={(data.creator && data.creator.avatar) && data.creator.avatar} icon="user" style={{ color: '#8c8c8c' }}></Avatar>
+            </div>
+            {/* 右边内容 */}
+            <div className={commonCommentStyles.common_right}>
+              <div className={commonCommentStyles.common_top}>
+                <div className={commonCommentStyles.common_name}>
+                  {data.creator && data.creator.name}
+                </div>
+                {
+                  judgeTimeDiffer_ten(create_time) ? (
+                    <div className={commonCommentStyles.common_create_time}>
+                      {newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}
+                    </div>
+                  ) : (
+                      <div className={commonCommentStyles.common_delete} onClick={this.deleteComment.bind(this, id)}>
+                        撤回
+                    </div>
+                    )
+                }
+              </div>
+              <div className={commonCommentStyles.common_bott} >
+                <span className={commonCommentStyles.common_text}>{text}</span>
+              </div>
+            </div>
+          </div>
+        )
+        break
       default:
         break;
     }

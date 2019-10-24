@@ -120,7 +120,7 @@ export default class TaskDetailModal extends Component {
           modalVisible={task_detail_modal_visible}
           onCancel={this.onCancel}
           commentUseParams={commentUseParams}
-          mainContent={<MainContent users={users} handleTaskDetailChange={handleTaskDetailChange} checkDiffCategoriesAuthoritiesIsVisible={this.checkDiffCategoriesAuthoritiesIsVisible} />}
+          mainContent={<MainContent users={users} handleTaskDetailChange={handleTaskDetailChange} />}
           headerContent={
           <HeaderContent users={users}
             handleDeleteCard={handleDeleteCard}
