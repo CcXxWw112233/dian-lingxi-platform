@@ -127,12 +127,12 @@ export default class FolderItem extends Component {
     // 点击一整个item
     itemClick = (itemValue) => {
         const { local_name } = this.state
-        const { type } = itemValue
-
+        const { type, board_id } = itemValue
         if (type == '1') {
             const new_item_value = { ...itemValue, name: local_name }
             this.props.setBreadPaths && this.props.setBreadPaths({ path_item: new_item_value })
         } else if (type == '2') {
+            setBoardIdStorage(board_id)
             this.previewFile(itemValue)
         }
     }
