@@ -154,6 +154,9 @@ export default class UploadAttachment extends Component {
 
       } else {
         message.warn(apiResult.message)
+        this.setState({
+          uploading: false,
+        });
       }
 
     }).catch((error, e) => {

@@ -225,7 +225,9 @@ export default class MenuSearchPartner extends React.Component {
 
     render() {
         const { keyWord, resultArr, selectedKeys = [] } = this.state
-        const { board_id, Inputlaceholder = '搜索', isInvitation, searchName, menuSearchSingleSpinning, keyCode, invitationType, invitationOrg, invitationId, rela_Condition, is_selected_all } = this.props
+        const { Inputlaceholder = '搜索', isInvitation, searchName, menuSearchSingleSpinning, keyCode, invitationType, invitationOrg, invitationId, rela_Condition, is_selected_all, board_id } = this.props
+        // const { Inputlaceholder = '搜索', searchName, menuSearchSingleSpinning, keyCode, invitationType, invitationId, rela_Condition, invitationOrg, board_id } = this.props
+
         return (
             <div>
                 <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: 200, }}
@@ -298,7 +300,7 @@ export default class MenuSearchPartner extends React.Component {
                     board_id={board_id}
                     addMenbersInProject={this.addMenbersInProject}
                     show_wechat_invite={true}
-                    // {...this.props}
+                    board_id={board_id}
                     invitationType={invitationType}
                     invitationId={invitationId}
                     rela_Condition={rela_Condition}
@@ -321,7 +323,7 @@ MenuSearchPartner.deafultProps = {
     keyCode: '', //关键的属性（user_id）
     searchName: '', //检索的名称
     currentSelect: [], //当前选择的人
-    board_id: [],
+    board_id: '',
     chirldrenTaskChargeChange: function () {
 
     },

@@ -127,7 +127,7 @@ export default class DetailContent extends React.Component {
                 </div>
               </div>
               {/*评论放置区*/}
-              <div style={{ overflow: 'hidden' }}>
+              <div style={{ overflow: 'hidden' }} key={isShowAllDynamic}>
                 {commentListsContent || (
                   <CommentLists commentUseParams={commentUseParams} isShowAllDynamic={isShowAllDynamic} />
                 )}
