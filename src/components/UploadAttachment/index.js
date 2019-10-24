@@ -256,7 +256,7 @@ export default class UploadAttachment extends Component {
     const { boardFolderTreeData } = this.state;
     if (is_file_tree_loading) {
       return (
-        <div style={{ backgroundColor: '#FFFFFF', textAlign: 'center', height: '50px', lineHeight: '48px', overflow: 'hidden', color: 'rgba(0, 0, 0, 0.25)' }} className={`${styles.page_card_Normal} ${indexStyles.directoryTreeWapper}`}>
+        <div style={{ backgroundColor: '#FFFFFF', textAlign: 'center', height: '50px', lineHeight: '48px', overflow: 'hidden', color: 'rgba(0, 0, 0, 0.25)' }} className={`${styles.page_card_Normal} ${styles.directoryTreeWapper}`}>
           数据加载中
         </div>
       )
