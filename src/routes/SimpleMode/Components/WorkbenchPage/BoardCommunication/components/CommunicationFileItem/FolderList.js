@@ -191,6 +191,7 @@ export default class FolderList extends Component{
                                     queryCommunicationFileData={this.props.queryCommunicationFileData}
                                     showWhatComponent={this.props.showWhatComponent}
                                     showUpdatedFileDetail={this.props.showUpdatedFileDetail}
+                                    hideUpdatedFileDetail={this.props.hideUpdatedFileDetail}
                                     // setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
                                 />
                             </div>

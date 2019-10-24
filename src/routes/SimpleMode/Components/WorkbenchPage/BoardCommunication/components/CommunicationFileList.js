@@ -245,6 +245,7 @@ export default class CommunicationFileList extends Component{
                                                                 getSubFileData={this.getSubFileData}
                                                                 queryCommunicationFileData={this.props.queryCommunicationFileData}
                                                                 showUpdatedFileDetail={this.props.showUpdatedFileDetail}
+                                                                hideUpdatedFileDetail={this.props.hideUpdatedFileDetail}
                                                                 // setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
                                                                 // fileDetailModalDatas={this.props.fileDetailModalDatas}
                                                                 {...this.props}
@@ -272,6 +273,7 @@ export default class CommunicationFileList extends Component{
                                                 goBackPrev={this.goBackPrev}
                                                 queryCommunicationFileData={this.props.queryCommunicationFileData}
                                                 showUpdatedFileDetail={this.props.showUpdatedFileDetail}
+                                                hideUpdatedFileDetail={this.props.hideUpdatedFileDetail}
                                             />
                                         </div>
                                     )

@@ -3,6 +3,7 @@ import { connect } from "dva/index"
 import indexStyles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import FileDetail from '@/routes/Technological/components/Workbench/CardContent/Modal/FileDetail/index'
+import FileListRightBarFileDetailModal from '@/routes/Technological/components/Workbench/CardContent/Modal/FileListRightBarFileDetailModal';
 import CommunicationFileList from './components/CommunicationFileList'
 // import FileDetailModal from '@/routes/Technological/components/Workbench/CardContent/Modal/FileDetailModal'
 import { Modal, Dropdown, Button, Select, Icon, Tree, Upload, message } from 'antd';
@@ -43,6 +44,8 @@ class BoardCommunication extends Component {
         awaitUploadFile: {},
         dragEnterCaptureFlag: false,
         showFileSelectDropdown: false,
+        // 左侧目录上传文件/选择文件是否打开圈图
+        showFileListisOpenFileDetailModal: false
     };
 
     constructor(props) {
@@ -818,22 +821,353 @@ class BoardCommunication extends Component {
         this.initModalSelect()
     };
 
-    // 显示圈图组件
-    showUpdatedFileDetail=()=>{
-        // const { previewFileModalVisibile } = this.state;
-        this.setState({ previewFileModalVisibile: true});
-        this.setState({ previewFileModalVisibile: true});
-        
+
+    // 是否需要更新文件列表, 当访问控制设置时
+    whetherUpdateFolderListData = (folder_id) => {
+        // this.queryCommunicationFileData();
+        // if (folder_id) {
+        //     this.getFolderFileList({ id: folder_id })
+        // }
     }
 
+    // 显示圈图组件
+    showUpdatedFileDetail=()=>{
+        // this.setState({ previewFileModalVisibile: true});
+        this.setState({ showFileListisOpenFileDetailModal: true });
+    }
+
+    // 关闭圈图组件
+    hideUpdatedFileDetail=()=>{
+        this.setState({ showFileListisOpenFileDetailModal: false });
+    }
+
+
     render() {
-        const { currentBoardDetail = {} } = this.props;
-        const {selectBoardFileModalVisible } = this.state;
+        const { currentBoardDetail = {}, dispatch, model = {}, modal } = this.props;
+        const {selectBoardFileModalVisible, showFileListisOpenFileDetailModal } = this.state;
         const { currentfile = {}, is_selectFolder, dragEnterCaptureFlag, showFileSelectDropdown } = this.state;
         const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
         const zommPictureComponentHeight = container_workbenchBoxContent ? container_workbenchBoxContent.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding
         // const zommPictureComponentWidth = container_workbenchBoxContent ? container_workbenchBoxContent.offsetWidth - 419 - 50 - 5 : 600; //60为文件内容组件评论等区域宽带   50为容器padding  
         const zommPictureComponentWidth = container_workbenchBoxContent ? container_workbenchBoxContent.offsetWidth - 50 - 5 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding  
+
+        const CreateTaskProps = {
+            modal,
+            model,
+            getBoardMembers(payload) {
+              dispatch({
+                type: getEffectOrReducerByName_4('getBoardMembers'),
+                payload: payload
+              })
+            },
+            getCardDetail(payload) {
+              dispatch({
+                type: getEffectOrReducerByName_4('getCardDetail'),
+                payload: payload
+              })
+            },
+            updateTaskDatas(payload) {
+              dispatch({
+                type: getEffectOrReducerByName_4('updateDatas'),
+                payload: payload
+              })
+            },
+            deleteTaskFile(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('deleteTaskFile'),
+                payload: data,
+              })
+            },
+            addTaskGroup(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('addTaskGroup'),
+                payload: data,
+              })
+            },
+            deleteTaskGroup(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('deleteTaskGroup'),
+                payload: data,
+              })
+            },
+            updateTaskGroup(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('updateTaskGroup'),
+                payload: data,
+              })
+            },
+            getTaskGroupList(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('getTaskGroupList'),
+                payload: data
+              })
+            },
+            addTask(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('addTask'),
+                payload: data
+              })
+            },
+            updateTask(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('updateTask'),
+                payload: data
+              })
+            },
+            deleteTask(id) {
+              dispatch({
+                type: getEffectOrReducerByName_4('deleteTask'),
+                payload: {
+                  id
+                }
+              })
+            },
+            updateChirldTask(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('updateChirldTask'),
+                payload: data
+              })
+            },
+            deleteChirldTask(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('deleteChirldTask'),
+                payload: data
+              })
+            },
+      
+            archivedTask(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('archivedTask'),
+                payload: data
+              })
+            },
+            changeTaskType(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('changeTaskType'),
+                payload: data
+              })
+            },
+            addChirldTask(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('addChirldTask'),
+                payload: data
+              })
+            },
+            addTaskExecutor(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('addTaskExecutor'),
+                payload: data
+              })
+            },
+            removeTaskExecutor(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('removeTaskExecutor'),
+                payload: data
+              })
+            },
+            completeTask(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('completeTask'),
+                payload: data
+              })
+            },
+            addTaskTag(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('addTaskTag'),
+                payload: data
+              })
+            },
+            removeTaskTag(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('removeTaskTag'),
+                payload: data
+              })
+            },
+            removeProjectMenbers(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('removeProjectMenbers'),
+                payload: data
+              })
+            },
+            getCardCommentList(id) {
+              dispatch({
+                type: getEffectOrReducerByName_4('getCardCommentList'),
+                payload: {
+                  id
+                }
+              })
+            },
+            addCardNewComment(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('addCardNewComment'),
+                payload: data
+              })
+            },
+            deleteCardNewComment(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('deleteCardNewComment'),
+                payload: data
+              })
+            },
+            getBoardTagList(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('getBoardTagList'),
+                payload: data
+              })
+            },
+            updateBoardTag(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('updateBoardTag'),
+                payload: data
+              })
+            },
+            toTopBoardTag(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('toTopBoardTag'),
+                payload: data
+              })
+            },
+            deleteBoardTag(data) {
+              dispatch({
+                type: getEffectOrReducerByName_4('deleteBoardTag'),
+                payload: data
+              })
+            }
+        }
+        const FileModuleProps = {
+            modal,
+            model,
+            updateFileDatas(payload) {
+              dispatch({
+                type: getEffectOrReducerByName_5('updateDatas'),
+                payload: payload
+              })
+            },
+            getFileList(params) {
+              dispatch({
+                type: getEffectOrReducerByName('getFileList'),
+                payload: params
+              })
+            },
+            fileCopy(data) {
+              dispatch({
+                type: getEffectOrReducerByName_5('fileCopy'),
+                payload: data
+              })
+            },
+            fileDownload(params) {
+              dispatch({
+                type: getEffectOrReducerByName_5('fileDownload'),
+                payload: params
+              })
+            },
+            fileRemove(data) {
+              dispatch({
+                type: getEffectOrReducerByName_5('fileRemove'),
+                payload: data
+              })
+            },
+            fileMove(data) {
+              dispatch({
+                type: getEffectOrReducerByName_5('fileMove'),
+                payload: data
+              })
+            },
+            fileUpload(data) {
+              dispatch({
+                type: getEffectOrReducerByName_5('fileUpload'),
+                payload: data
+              })
+            },
+            fileVersionist(params) {
+              dispatch({
+                type: getEffectOrReducerByName_5('fileVersionist'),
+                payload: params
+              })
+            },
+            recycleBinList(params) {
+              dispatch({
+                type: getEffectOrReducerByName_5('recycleBinList'),
+                payload: params
+              })
+            },
+            deleteFile(data) {
+              dispatch({
+                type: getEffectOrReducerByName_5('deleteFile'),
+                payload: data
+              })
+            },
+            restoreFile(data) {
+              dispatch({
+                type: getEffectOrReducerByName_5('restoreFile'),
+                payload: data
+              })
+            },
+            getFolderList(params) {
+              dispatch({
+                type: getEffectOrReducerByName_5('getFolderList'),
+                payload: params
+              })
+            },
+            addNewFolder(data) {
+              dispatch({
+                type: getEffectOrReducerByName_5('addNewFolder'),
+                payload: data
+              })
+            },
+            updateFolder(data) {
+              dispatch({
+                type: getEffectOrReducerByName_5('updateFolder'),
+                payload: data
+              })
+            },
+            filePreview(params) {
+              dispatch({
+                type: getEffectOrReducerByName_5('filePreview'),
+                payload: params
+              })
+            },
+            getPreviewFileCommits(params) {
+              dispatch({
+                type: getEffectOrReducerByName_5('getPreviewFileCommits'),
+                payload: params
+              })
+            },
+            addFileCommit(params) {
+              dispatch({
+                type: getEffectOrReducerByName_5('addFileCommit'),
+                payload: params
+              })
+            },
+            deleteCommit(params) {
+              dispatch({
+                type: getEffectOrReducerByName_5('deleteCommit'),
+                payload: params
+              })
+            },
+        }
+        const updateDatasTask = (payload) => {
+            dispatch({
+              type: getEffectOrReducerByName_4('updateDatas'),
+              payload: payload
+            })
+        }
+        const updateDatasFile = (payload) => {
+            dispatch({
+              type: getEffectOrReducerByName_5('updateDatas'),
+              payload: payload
+            })
+        }
+        const fileDetailModalDatas = {
+            ...this.props,
+            ...CreateTaskProps,
+            ...FileModuleProps,
+            showFileListisOpenFileDetailModal,
+            updateDatasTask,
+            updateDatasFile,
+            model,
+            modal,
+        }
 
         return (
             <div className={`${indexStyles.boardCommunicationWapper}`}
@@ -844,9 +1178,25 @@ class BoardCommunication extends Component {
                 <CommunicationFileList
                     queryCommunicationFileData={this.queryCommunicationFileData}
                     showUpdatedFileDetail={this.showUpdatedFileDetail}
+                    setPreviewFileModalVisibile={this.hideUpdatedFileDetail}
                     {...this.props}
                 />
 
+                {
+                    showFileListisOpenFileDetailModal && (
+                        <FileListRightBarFileDetailModal
+                            {...this.props}
+                            {...fileDetailModalDatas}
+                            showFileListisOpenFileDetailModal={showFileListisOpenFileDetailModal}
+                            setPreviewFileModalVisibile={this.hideUpdatedFileDetail}
+                            modalVisible={fileDetailModalDatas.previewFileModalVisibile}
+                            // setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
+                            updateDatasTask={fileDetailModalDatas.updateDatasTask}
+                            updateDatasFile={fileDetailModalDatas.updateDatasFile}
+                            whetherUpdateFolderListData={this.whetherUpdateFolderListData}
+                        />
+                    )
+                }
 
                 {
                     this.state.previewFileModalVisibile && (
@@ -879,7 +1229,9 @@ class BoardCommunication extends Component {
                                                     <img src={coverIconSrc} style={{ width: '80px', height: '84px' }} />
                                                 </div>
                                                 <div className={indexStyles.descriptionWapper}>
-                                                    <div className={indexStyles.linkTitle}>选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或 <a className={indexStyles.alink}>点击上传</a> 文件</div>
+                                                    <div className={indexStyles.linkTitle}>
+                                                        {/* 选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或  */}
+                                                        <a className={indexStyles.alink}>点击上传</a> 文件</div>
                                                     <div className={indexStyles.detailDescription}>选择或上传图片格式文件、PDF格式文件即可开启圈点交流</div>
                                                 </div>
                                             </>
@@ -965,6 +1317,8 @@ class BoardCommunication extends Component {
 
 function mapStateToProps({
     workbenchFileDetail,
+    workbenchTaskDetail,
+    workbenchDetailProcess,
     simpleWorkbenchbox: {
         boardListData,
         currentBoardDetail,
@@ -984,9 +1338,18 @@ function mapStateToProps({
             gantt_board_id
         }
     },
+    gantt,
 }) {
     const modelObj = {
-        datas: { ...workbenchFileDetail['datas'], ...workbenchPublicDatas['datas'] }
+        datas: { 
+            // ...workbenchFileDetail['datas'],
+            // ...workbenchPublicDatas['datas'],
+            ...workbenchTaskDetail['datas'],
+            ...workbenchFileDetail['datas'],
+            ...workbenchDetailProcess['datas'],
+            ...workbenchPublicDatas['datas'],
+            ...gantt['datas']
+        }
     }
     return {
         model: modelObj,

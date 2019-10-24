@@ -375,7 +375,7 @@ class FileDetailContent extends React.Component {
   closeFile() {
     const { datas: { breadcrumbList = [] } } = this.props.model
     breadcrumbList.splice(breadcrumbList.length - 1, 1)
-    this.props.setPreviewFileModalVisibile()
+    this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile()
     this.props.updateDatasFile({ isInOpenFile: false, filePreviewUrl: '', breadcrumbList: [] })
   }
   zoomFrame() {
@@ -1492,17 +1492,18 @@ class FileDetailContent extends React.Component {
 
 
           {/* <div className={indexStyles.fileDetailContentRightBox}> */}
-              <div
+              {/* <div
                   className={indexStyles.operationContentRightBtn}
-                  style={{ right: isVisibleContentRightDetail ? '420px' : '0'}}
+                  style={{ right: (isVisibleContentRightDetail || isExpandFrame) ? '420px' : '0'}}
                   onClick={this.isVisibleContentRight}
               >
                   <Icon type="right" />
-              </div>
+              </div> */}
 
               {
-                isVisibleContentRightDetail && (
-<div className={indexStyles.fileDetailContentRight} style={{ width: isExpandFrame ? 0 : 420 }}>
+                (isVisibleContentRightDetail || isExpandFrame) && (
+                <div className={indexStyles.fileDetailContentRight} style={{ width: !isExpandFrame ? 0 : 420 }}>
+                  {/* <div className={indexStyles.fileDetailContentRight} style={{ width: isExpandFrame ? 0 : 420 }}> */}
                   {/*width: isExpandFrame?0:420*/}
                   {/*从文件卡片查看的时候才有*/}
                   <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'} style={{ position: 'relative' }}>
