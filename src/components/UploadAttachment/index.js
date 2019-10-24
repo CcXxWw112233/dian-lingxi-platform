@@ -213,6 +213,17 @@ export default class UploadAttachment extends Component {
 
   // 移除执行人的回调 S
   handleRemoveExecutors = (e, shouldDeleteItem) => {
+    e && e.stopPropagation()
+    const { toNoticeList = [] } = this.state
+    let new_toNoticeList = [...toNoticeList]
+    new_toNoticeList.map((item, index) => {
+      if (item.user_id == shouldDeleteItem) {
+        new_toNoticeList.splice(index, 1)
+      }
+    })
+    this.setState({
+      toNoticeList: new_toNoticeList
+    })
   }
   // 移除执行人的回调 E
 
@@ -310,7 +321,7 @@ export default class UploadAttachment extends Component {
               {
                 !toNoticeList.length ? (
                   <div style={{ flex: '1', position: 'relative' }}>
-                    <Dropdown overlayClassName={styles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                    <Dropdown trigger={['click']} overlayClassName={styles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
                       overlayStyle={{ maxWidth: '200px' }}
                       overlay={
                         <MenuSearchPartner
@@ -331,7 +342,7 @@ export default class UploadAttachment extends Component {
                   </div>
                 ) : (
                     <div style={{ flex: '1', position: 'relative' }}>
-                      <Dropdown overlayClassName={styles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                      <Dropdown trigger={['click']} overlayClassName={styles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
                         overlay={
                           <MenuSearchPartner
                             handleSelectedAllBtn={this.handleSelectedAllBtn}
