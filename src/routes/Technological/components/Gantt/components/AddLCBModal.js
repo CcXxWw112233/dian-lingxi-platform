@@ -202,7 +202,7 @@ class AddTaskModal extends Component {
                   {timestampToTimeNormal(due_time, '/', true) || '设置截止时间'}
                   <DatePicker onChange={this.datePickerChange.bind(this)}
                     placeholder={'选择截止时间'}
-                    showTime
+                    showTime={{ format: 'HH:mm' }}
                     format="YYYY-MM-DD HH:mm"
                     style={{ opacity: 0, height: 16, minWidth: 0, maxWidth: '100px', background: '#000000', position: 'absolute', right: 0, zIndex: 2, cursor: 'pointer' }} />
                 </div>
