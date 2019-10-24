@@ -161,9 +161,7 @@ class ShareAndInvite extends Component {
             </span>
           </p>
         ) : null} */}
-        <Tooltip title="分享协作" placement="top">
-          <span onClick={this.handleShareMenuClick} className={`${globalStyles.authTheme} ${DrawerContentStyles.right__share}`} style={{fontSize:'20px'}}>&#xe7e7;</span>
-        </Tooltip>
+        
         {/* <Dropdown overlay={shareMenu}>
           <span className={DrawerContentStyles.right__share} />
         </Dropdown> */}

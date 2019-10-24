@@ -446,16 +446,18 @@ export default class HeaderContentRightMenu extends Component {
               <span className={`${globalStyles.authTheme} ${headerStyles.right__shareIndicator_icon}`}>&#xe7e7;</span>
               <span className={headerStyles.right__shareIndicator_text}>正在分享</span>
             </span>
-          ) : <span className={`${headerStyles.right_menu} ${headerStyles.share_icon}`}>
-              <ShareAndInvite
-                is_shared={is_shared}
-                onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible}
-                data={onlyReadingShareData}
-                handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare}
-              />
+          ) : <span className={`${headerStyles.right_menu} ${headerStyles.share_icon}`} >
+              <Tooltip title="分享协作" placement="top">
+                <span onClick={this.handleChangeOnlyReadingShareModalVisible} className={`${globalStyles.authTheme} ${headerStyles.right__share}`} style={{ fontSize: '20px' }}>&#xe7e7;</span>
+              </Tooltip>
             </span>}
 
-
+          <ShareAndInvite
+            is_shared={is_shared}
+            onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible}
+            data={onlyReadingShareData}
+            handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare}
+          />
         </span>
         {/* 删除 */}
         <span className={`${headerStyles.action}`}>
@@ -465,6 +467,8 @@ export default class HeaderContentRightMenu extends Component {
             </span>
           </Tooltip>
         </span>
+
+
       </div>
 
     )
