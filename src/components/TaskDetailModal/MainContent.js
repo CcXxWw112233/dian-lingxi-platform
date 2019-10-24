@@ -1002,7 +1002,7 @@ export default class MainContent extends Component {
                                           <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
                                         </div>
                                       )}
-                                    <div style={{ marginRight: 8, fontSize: '14px' }}>{name || user_name || '佚名'}</div>
+                                    <div style={{ marginRight: 8, fontSize: '14px' }} className={mainContentStyles.value_text}>{name || user_name || '佚名'}</div>
                                     {/* <span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${mainContentStyles.userItemDeleBtn}`}></span> */}
                                   </div>
 
@@ -1059,7 +1059,7 @@ export default class MainContent extends Component {
                                                   <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
                                                 </div>
                                               )}
-                                            <div style={{ marginRight: 8, fontSize: '14px' }}>{name || user_name || '佚名'}</div>
+                                            <div style={{ marginRight: 8, fontSize: '14px' }} className={mainContentStyles.value_text}>{name || user_name || '佚名'}</div>
                                             <span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${mainContentStyles.userItemDeleBtn}`}></span>
                                           </div>
 
@@ -1110,14 +1110,14 @@ export default class MainContent extends Component {
                           (
                             <div className={`${mainContentStyles.start_time}`}>
                               <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                                {start_time ? timestampToTime(start_time, true) : '暂无'}
+                                {start_time ? <span className={mainContentStyles.value_text}>{timestampToTime(start_time, true)}</span> : '暂无'}
                               </span>
                             </div>
                           )
                         ) : (
                             <div className={`${mainContentStyles.start_time}`}>
                               <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                                {start_time ? timestampToTime(start_time, true) : '开始时间'}
+                                {start_time ?  <span className={mainContentStyles.value_text}>{timestampToTime(start_time, true)}</span> : '开始时间'}
                                 <DatePicker
                                   disabledDate={this.disabledStartTime.bind(this)}
                                   // onOk={this.startDatePickerChange.bind(this)}
@@ -1156,14 +1156,14 @@ export default class MainContent extends Component {
                           (
                             <div className={`${mainContentStyles.due_time}`}>
                               <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                                {due_time ? timestampToTime(due_time, true) : '暂无'}
+                                {due_time ? <span className={mainContentStyles.value_text}>{timestampToTime(due_time, true)}</span> : '暂无'}
                               </span>
                             </div>
                           )
                         ) : (
                             <div className={`${mainContentStyles.due_time}`}>
                               <span style={{ position: 'relative', minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                                {due_time ? timestampToTime(due_time, true) : '截止时间'}
+                                {due_time ? <span className={mainContentStyles.value_text}>{timestampToTime(due_time, true)}</span> : '截止时间'}
                                 <DatePicker
                                   disabledDate={this.disabledDueTime.bind(this)}
                                   // getCalendarContainer={triggerNode => triggerNode.parentNode}
@@ -1351,7 +1351,7 @@ export default class MainContent extends Component {
                           <span>暂无</span>
                         </div>
                       ) : (
-                          <div className={`${mainContentStyles.pub_hover}`} >
+                          <div className={`${mainContentStyles.pub_hover} ${mainContentStyles.value_text}`}  >
                             {milestone_data.name}
                           </div>
                         )
@@ -1361,7 +1361,7 @@ export default class MainContent extends Component {
                       <MilestoneAdd onChangeMilestone={this.onMilestoneSelectedChange} dataInfo={{ board_id, board_name, due_time, org_id, data }} selectedValue={milestone_data && milestone_data.id}>
                         <div className={`${mainContentStyles.pub_hover}`} >
                           {milestone_data && milestone_data.id
-                            ? milestone_data.name
+                            ? <span className={mainContentStyles.value_text}>{milestone_data.name}</span>
                             :
                             '加入里程碑'
                           }
