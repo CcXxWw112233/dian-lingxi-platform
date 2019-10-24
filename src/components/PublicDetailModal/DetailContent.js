@@ -84,7 +84,7 @@ export default class DetailContent extends React.Component {
  
     return (
       <div className={styleSelect} ref={'fileDetailContentOut'} style={{ height: clientHeight - offsetTopDeviation - 54 }}>
-        <div className={indexStyles.fileDetailContentLeft}
+        <div className={`${indexStyles.fileDetailContentLeft} ${globalStyles.global_vertical_scrollbar}`}
         // style={{overflowY: 'auto'}}
         >
           {/*主要内容放置区*/}
