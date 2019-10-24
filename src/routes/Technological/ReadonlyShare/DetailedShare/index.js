@@ -93,23 +93,23 @@ class DetailedShare extends React.Component {
                 <div>
                     {
                         rela_type === '1' ? (
-<div>
+                            <div>
                                 <DrawContentModal
                                     dispatch={dispatch}
                                     visible={drawerVisible}
                                 />
                             </div>
-): ''
+                        ) : ''
                     }
                     {/* {
                     rela_type === '2' ? <div><ProccessDetailShare /></div> : ''
                 } */}
                     {
                         rela_type === '3' ? (
-<div>
+                            <div>
                                 <FileDetailModal {...this.props} board_id={board_id} visible={drawerVisible} dispatch={dispatch} />
                             </div>
-): ''
+                        ) : ''
                     }
                 </div>
             </div>
