@@ -316,7 +316,7 @@ export default class AppendSubTaskItem extends Component {
 
 
     return (
-      <div style={{display: 'flex', alignItems: 'center', position: 'relative'}} className={appendSubTaskStyles.active_icon}>
+      <div style={{display: 'flex', position: 'relative'}} className={appendSubTaskStyles.active_icon}>
         {/* <Tooltip title="删除">
           <div className={`${appendSubTaskStyles.del_icon}`}>
             <span className={`${globalStyles.authTheme}`}>&#xe7c3;</span>

@@ -322,7 +322,7 @@ export default class MainContent extends Component {
   // }
 
   saveBrafitEdit = (brafitEditHtml) => {
-    console.log("brafitEditHtml", brafitEditHtml);
+    // console.log("brafitEditHtml", brafitEditHtml);
     const { drawContent = {}, dispatch } = this.props;
 
     let { card_id } = drawContent
@@ -405,7 +405,7 @@ export default class MainContent extends Component {
       message.warn('关联里程碑的截止日期不能小于任务的截止日期')
       return
     }
-    console.log("里程碑", data);
+    // console.log("里程碑", data);
 
     if (actionType === 'add') {
       const params = {
@@ -692,7 +692,7 @@ export default class MainContent extends Component {
 
   /**附件预览 */
   openFileDetailModal = (fileInfo) => {
-    console.log("文件详情", fileInfo);
+    // console.log("文件详情", fileInfo);
 
     const file_name = fileInfo.name
     const file_resource_id = fileInfo.file_resource_id
@@ -797,7 +797,7 @@ export default class MainContent extends Component {
               resolve()
             }
           }).catch((e) => {
-            console.log(e);
+            // console.log(e);
             
             message.warn('删除出了点问题，请重新删除。')
             resolve()

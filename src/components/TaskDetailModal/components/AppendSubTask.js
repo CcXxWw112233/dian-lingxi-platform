@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Tooltip, Button, Dropdown, DatePicker } from 'antd'
+import { Tooltip, Button, Dropdown, DatePicker, message } from 'antd'
 // import NameChangeInput from '@/components/NameChangeInput'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import globalStyles from '@/globalset/css/globalClassName.less'
