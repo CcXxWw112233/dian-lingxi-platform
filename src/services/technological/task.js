@@ -158,13 +158,13 @@ export async function archivedTask(data) {
 }
 
 // 改变任务类型
-export async function changeTaskType(data) {
+export async function changeTaskType(data, isNotLoading) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/card/change`,
     method: 'PUT',
     headers: createHeaderContentDataByCardId(data.card_id),
     data,
-  });
+  }, { isNotLoading });
 }
 
 // 新增子任务
@@ -451,6 +451,14 @@ export async function getMilestoneDetail(params) {
     url: `${REQUEST_DOMAIN_BOARD}/milestone/detail/${params.id}`,
     method: 'GET',
     params
+  })
+}
+//获取里程碑详情
+export async function requestDeleteMiletone(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone/${data.id}`,
+    method: 'DELETE',
+    data,
   })
 }
 //更新里程碑详情

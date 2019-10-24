@@ -3,6 +3,8 @@ import { connect } from "dva/index"
 import indexStyles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import FileDetail from '@/routes/Technological/components/Workbench/CardContent/Modal/FileDetail/index'
+import CommunicationFileList from './components/CommunicationFileList'
+// import FileDetailModal from '@/routes/Technological/components/Workbench/CardContent/Modal/FileDetailModal'
 import { Modal, Dropdown, Button, Select, Icon, Tree, Upload, message } from 'antd';
 import { REQUEST_DOMAIN_FILE } from "@/globalset/js/constant";
 import axios from 'axios'
@@ -26,6 +28,7 @@ const getEffectOrReducerByName = name => `technological/${name}`
 const getEffectOrReducerByName_4 = name => `workbenchTaskDetail/${name}`
 const getEffectOrReducerByName_5 = name => `workbenchFileDetail/${name}`
 const getEffectOrReducerByName_6 = name => `workbenchPublicDatas/${name}`
+const getEffectOrReducerByName_7 = name => `gantt/${name}`
 
 class BoardCommunication extends Component {
     state = {
@@ -45,6 +48,23 @@ class BoardCommunication extends Component {
     constructor(props) {
         super(props)
         const { dispatch } = this.props;
+    }
+
+    componentDidMount() {
+        this.queryCommunicationFileData();
+    }
+    // 获取项目交流文件列表数据
+    queryCommunicationFileData = () => {
+        const { dispatch, gantt_board_id } = this.props;
+        dispatch({
+          type: getEffectOrReducerByName_7('getGanttBoardsFiles'),
+          payload: {
+            // query_board_ids: content_filter_params.query_board_ids,
+            // board_id: gantt_board_id == '0' ? '' : gantt_board_id
+            board_id: gantt_board_id == '0' ? '' : gantt_board_id,
+            query_board_ids: [],
+          }
+        })
     }
 
     initModalSelect = () => {
@@ -354,7 +374,6 @@ class BoardCommunication extends Component {
                 upload_type: '1'
             }
         }).then(res => {
-            //console.log(res);
             this.setState({
                 awaitUploadFile: {},
                 uploading: false,
@@ -799,18 +818,36 @@ class BoardCommunication extends Component {
         this.initModalSelect()
     };
 
+    // 显示圈图组件
+    showUpdatedFileDetail=()=>{
+        // const { previewFileModalVisibile } = this.state;
+        this.setState({ previewFileModalVisibile: true});
+        this.setState({ previewFileModalVisibile: true});
+        
+    }
+
     render() {
         const { currentBoardDetail = {} } = this.props;
+        const {selectBoardFileModalVisible } = this.state;
         const { currentfile = {}, is_selectFolder, dragEnterCaptureFlag, showFileSelectDropdown } = this.state;
         const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
         const zommPictureComponentHeight = container_workbenchBoxContent ? container_workbenchBoxContent.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding
-        const zommPictureComponentWidth = container_workbenchBoxContent ? container_workbenchBoxContent.offsetWidth - 419 - 50 - 5 : 600; //60为文件内容组件评论等区域宽带   50为容器padding  
+        // const zommPictureComponentWidth = container_workbenchBoxContent ? container_workbenchBoxContent.offsetWidth - 419 - 50 - 5 : 600; //60为文件内容组件评论等区域宽带   50为容器padding  
+        const zommPictureComponentWidth = container_workbenchBoxContent ? container_workbenchBoxContent.offsetWidth - 50 - 5 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding  
 
         return (
             <div className={`${indexStyles.boardCommunicationWapper}`}
                 onDragOverCapture={this.onDragEnterCapture.bind(this)}
                 onDragLeaveCapture={this.onDragLeaveCapture.bind(this)}
                 onDragEndCapture={this.onDragLeaveCapture.bind(this)}>
+                {/* 项目交流列表 */}
+                <CommunicationFileList
+                    queryCommunicationFileData={this.queryCommunicationFileData}
+                    showUpdatedFileDetail={this.showUpdatedFileDetail}
+                    {...this.props}
+                />
+
+
                 {
                     this.state.previewFileModalVisibile && (
                         <FileDetail
@@ -941,7 +978,12 @@ function mapStateToProps({
     workbench: {
         datas: { projectList }
     },
-    workbenchPublicDatas
+    workbenchPublicDatas,
+    gantt: {
+        datas: {
+            gantt_board_id
+        }
+    },
 }) {
     const modelObj = {
         datas: { ...workbenchFileDetail['datas'], ...workbenchPublicDatas['datas'] }
@@ -954,7 +996,8 @@ function mapStateToProps({
         currentBoardDetail,
         boardFileListData,
         simpleBoardCommunication,
-        simplemodeCurrentProject
+        simplemodeCurrentProject,
+        gantt_board_id
     }
 }
 export default connect(mapStateToProps)(BoardCommunication)

@@ -1,7 +1,7 @@
 import React from 'react'
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { Table, Button, Menu, Dropdown, Icon, Input, Drawer, message } from 'antd';
+import { Table, Button, Menu, Dropdown, Icon, Input, Drawer, message, Avatar } from 'antd';
 import FileDerailBreadCrumbFileNav from './FileDerailBreadCrumbFileNav'
 import { stopPropagation } from "../../../../../../../utils/util";
 import Comment from './Comment/Comment'
@@ -420,7 +420,10 @@ export default class FileDetailContent extends React.Component {
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
                 <div>
-                  <img style={{ width: '30px', height: '30px', borderRadius: '15px', margin: '0 12px 0 12px', float: 'left' }} src={messageValue.creator.avatar}></img>
+
+                  {/* <img style={{ width: '30px', height: '30px', borderRadius: '15px', margin: '0 12px 0 12px', float: 'left' }} src={messageValue.creator.avatar}></img> */}
+                  <Avatar style={{ width: '30px', height: '30px', borderRadius: '15px', margin: '0 12px 0 12px', float: 'left' }} src={messageValue.creator.avatar} icon='user' alt='user'></Avatar>
+
                   <div style={{
                     height: '30px',
                     fontSize: '12px',

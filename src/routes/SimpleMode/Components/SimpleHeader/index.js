@@ -5,8 +5,10 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import SiderLeft from '@/routes/Technological/Sider/SiderLeft'
 import VideoMeeting from '@/routes/Technological/Sider/comonent/videoMeetingPopoverContent/index'
 import { Tooltip, Dropdown } from 'antd'
+import Cookies from "js-cookie";
 import SimpleNavigation from "./Components/SimpleNavigation/index"
 import SimpleDrawer from './Components/SimpleDrawer/index'
+import LingxiIm from 'lingxi-im'
 class SimpleHeader extends Component {
     state = {
         leftNavigationVisible: false,
@@ -15,14 +17,15 @@ class SimpleHeader extends Component {
         simpleDrawerTitle: ''
     }
 
-    openOrCloseImChatModal = () => {
+    openOrCloseImChatModal = (val) => {
         const { dispatch, chatImVisiable } = this.props;
         const width = document.body.scrollWidth;
-        let workbenchBoxContentWapperModalStyle = !chatImVisiable ? { width: (width - 372) + 'px' } : { width: '100%' }
+        let workbenchBoxContentWapperModalStyle = !chatImVisiable ? { width: (width - 400) + 'px' } : { width: '100%' }
+        let flag = val !== undefined ? val : !chatImVisiable ;
         dispatch({
             type: 'simplemode/updateDatas',
             payload: {
-                chatImVisiable: !chatImVisiable,
+                chatImVisiable: flag,
                 workbenchBoxContentWapperModalStyle: workbenchBoxContentWapperModalStyle
             }
         });
@@ -66,6 +69,20 @@ class SimpleHeader extends Component {
             simpleDrawerTitle: ''
         });
     }
+    ImToggle = (val) =>{
+      if(!val){
+        this.openOrCloseImChatModal(false);
+      }
+    }
+
+    componentWillReceiveProps(props, nextProps){
+      // if(nextProps.chatImVisiable){
+        LingxiIm.show();
+      // }
+    }
+    componentDidMount(){
+      LingxiIm.show();
+    }
 
     render() {
         const { chatImVisiable = false, leftMainNavVisible = false, leftMainNavIconVisible } = this.props;
@@ -104,15 +121,19 @@ class SimpleHeader extends Component {
                     } */}
 
                 <div className={indexStyles.chatWapper} style={{ display: `${chatImVisiable ? '' : 'none'}` }}>
-                    <div className={indexStyles.chatHeader}>
+                    {/* <div className={indexStyles.chatHeader}>
                         <div className={indexStyles.menu} onClick={this.openOrCloseImChatModal}>
                             <i className={`${globalStyles.authTheme}`} style={{ color: '#1890FF', fontSize: '24px' }}>&#xe7f4;</i>
                         </div>
                     </div>
-                    {/* <SiderRight outInputSiderRightStyle={{ position: "absolute", top: 0, right: 0 }} collapsed={true} /> */}
                     <div className={indexStyles.imWapper}>
                         <iframe src='/im/index.html'></iframe>
                     </div>
+                    <div className={indexStyles.videoMeetingWapper}>
+                        <VideoMeeting />
+                    </div> */}
+                    <LingxiIm token={Cookies.get('Authorization')} width='400px' onToggle={this.ImToggle}/>
+
                     <div className={indexStyles.videoMeetingWapper}>
                         <VideoMeeting />
                     </div>

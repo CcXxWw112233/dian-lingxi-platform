@@ -87,7 +87,7 @@ export default class GanttDetail extends React.Component {
     })
   }
   render() {
-    const { miletone_detail_modal_visible, milestone_id, handleMiletonesChange } = this.props
+    const { miletone_detail_modal_visible, milestone_id, handleMiletonesChange, deleteMiletone } = this.props
     const { users } = this.props
     const commentUseParams = { //公共评论模块所需要的参数
       commentSubmitPost: this.commentSubmitPost,
@@ -103,7 +103,7 @@ export default class GanttDetail extends React.Component {
           onCancel={this.onCancel}
           commentUseParams={commentUseParams}
           mainContent={<MainContent users={users} handleMiletonesChange={handleMiletonesChange} />}
-          headerContent={<HeaderContent users={users}/>}
+          headerContent={<HeaderContent onCancel={this.onCancel} deleteMiletone={deleteMiletone} users={users}/>}
         />
       </div>
     )

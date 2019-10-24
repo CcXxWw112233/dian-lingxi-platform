@@ -131,10 +131,14 @@ class InviteOthers extends Component {
     const trimStr = (str) => {
       return str.replace(/(^\s+)|(\s+$)/g, '')
     }
+    const { _organization_id } = this.props
     let new_user = trimStr(user)
+    const params = {
+      associate_param: new_user,
+      _organization_id,
+      type: (validateTel(new_user) || validateEmail(new_user)) ? '2' : '1'
+    }
     if (!new_user || new_user == '' || new_user == ' ') return
-    // console.log(new_user, 'sssssss')
-    // return
     this.setState(
       {
         inputRet: [],
@@ -142,7 +146,7 @@ class InviteOthers extends Component {
       },
       () => {
         //发起请求
-        associateUser(new_user)
+        associateUser(params)
           .then(res => {
             // console.log('res = 发起', res)
             if (res.code && res.code === '0') {

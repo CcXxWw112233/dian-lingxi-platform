@@ -18,10 +18,10 @@ const WorkbenchBoxSelect = (props) => {
   }
   const selectOrCancelCurrWorkbenchBox = (e, data) => {
     e.stopPropagation();
-    if (data.status == 0 && !data.isSelected) {
-      message.warn("功能开发中，请耐心等待");
-      return;
-    }
+    // if (data.status == 0 && !data.isSelected) {
+    //   message.warn("功能开发中，请耐心等待");
+    //   return;
+    // }
     const { id } = data;
     if (!data.isSelected) {
       dispatch({

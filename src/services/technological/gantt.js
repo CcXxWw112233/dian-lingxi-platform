@@ -70,3 +70,12 @@ export async function getGanttBoardsFiles(data) {
     }
   })
 }
+
+//获取甘特图带根目录文件的项目列表
+export async function miletonesUserGuide(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/user/guide/gantt_char`,
+    method: 'POST',
+    data
+  })
+}

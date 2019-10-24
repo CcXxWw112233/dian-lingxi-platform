@@ -209,7 +209,8 @@ export default modelExtend(technological, {
         message.warn('切换项目失败，请稍后再试')
       }
     },
-    * fetchCurrentSelectedProjectMembersList({ payload: { projectId } }, { call, put }) {
+    * fetchCurrentSelectedProjectMembersList({ payload }, { call, put }) {
+      const { calback, projectId } = payload
       let res = yield call(getCurrentSelectedProjectMembersList, { projectId })
       if (isApiResponseOk(res)) {
         yield put({
@@ -218,6 +219,9 @@ export default modelExtend(technological, {
             currentSelectedProjectMembersList: res.data
           }
         })
+        if(typeof calback == 'function') {
+          calback(res.data)
+        }
       }
     },
     * getUserImToken({ payload }, { select, call, put }) {
@@ -337,7 +341,7 @@ export default modelExtend(technological, {
             board_id: projectId
           }
         })
-        if(init_load) {
+        if (init_load) {
           yield put({
             type: 'handleCurrentSelectedProjectChange',
             payload: {
@@ -845,7 +849,7 @@ export default modelExtend(technological, {
       }
     },
     setProjectTabCurrentSelectedProject(state, action) {
-      const { projectId = '0'} = action.payload
+      const { projectId = '0' } = action.payload
       return {
         ...state,
         datas: { ...state.datas, projectTabCurrentSelectedProject: projectId }

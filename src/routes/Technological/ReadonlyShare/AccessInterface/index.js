@@ -59,7 +59,7 @@ export default class AccessInterface extends React.Component {
                     // const futureMin = Math.floor(Math.random() * 5 + 1);
                     //未来时间 = 当前时间 + 未来分钟数, 转成字符串, 截取10位(秒级)
                     var newDate = new Date(); //8小时
-                    const futureDate = newDate.setMinutes(newDate.getMinutes() + 1).toString();
+                    const futureDate = newDate.setMinutes(newDate.getMinutes() + 60 * 8).toString();
                     const futureTimestamp = futureDate.substr(0, 10);
 
                     // hash randomCode timestamp 按照顺序拼接

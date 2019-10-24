@@ -12,7 +12,7 @@ const BottomContent = (props) => {
   return (
     <div className={indexStyles.bottomWhole}>
       <div className={indexStyles.bottomWholeLeft} style={{marginTop: -8}}>
-        <Tooltip placement="top" title={'即将上线'}>
+        {/* <Tooltip placement="top" title={'即将上线'}>
            <i className={globalStyles.authTheme} style={{fontStyle: 'normal', fontSize: 24, color: '#bfbfbf', cursor: 'pointer', }}>&#xe6be;</i>
         </Tooltip>
         <Tooltip placement="top" title={'即将上线'}>
@@ -20,7 +20,7 @@ const BottomContent = (props) => {
         </Tooltip>
         <Tooltip placement="top" title={'即将上线'}>
           <i className={globalStyles.authTheme} style={{fontStyle: 'normal', fontSize: 24, color: '#bfbfbf', cursor: 'pointer', marginLeft: 6, marginTop: -6 }}>&#xe6c1;</i>
-        </Tooltip>
+        </Tooltip> */}
 
         {/*<Icon type="wechat"  style={{ fontSize: 20, color: '#BFBFBF',cursor: 'pointer' }} />*/}
         {/*<Icon type="qq"   style={{ fontSize: 20, color: '#BFBFBF', marginLeft: 8 ,cursor: 'pointer'}}/>*/}

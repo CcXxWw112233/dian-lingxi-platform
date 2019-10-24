@@ -6,12 +6,22 @@ import DropdownSelect from '../DropdownSelect'
 import CreateProject from '@/routes/Technological/components/Project/components/CreateProject/index';
 import { getOrgNameWithOrgIdFilter, setBoardIdStorage } from "@/utils/businessFunction"
 import { beforeChangeBoardUpdateGantt } from "../../../Technological/components/Gantt/ganttBusiness";
+import { beforeChangeCommunicationUpdateFileList } from "../WorkbenchPage/BoardCommunication/components/getCommunicationFileListFn";
 class BoardDropdownSelect extends Component {
   constructor(props) {
     super(props);
     this.state = {
       addProjectModalVisible: false
     };
+  }
+
+  // 项目变化时，项目交流文件处理
+  handleCommunicationFileList = (board_id) => {
+    const { currentSelectedWorkbenchBox: { code }, dispatch } = this.props
+    if ('board:chat' == code){
+      beforeChangeCommunicationUpdateFileList({ board_id, dispatch });
+    }
+    
   }
 
   // 项目变化时，甘特图处理
@@ -68,7 +78,8 @@ class BoardDropdownSelect extends Component {
         });
         
       }
-      this.handleBoardChangeMappingGantt(data.key)
+      this.handleBoardChangeMappingGantt(data.key);
+      this.handleCommunicationFileList(data.key);
     }
 
   }
