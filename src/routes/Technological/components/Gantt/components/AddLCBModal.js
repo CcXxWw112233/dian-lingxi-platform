@@ -153,7 +153,8 @@ class AddTaskModal extends Component {
       add_lcb_modal_visible,
       create_lcb_time,
       board_id,
-      about_user_boards
+      about_user_boards,
+      zIndex
     } = this.props;
 
     return (
@@ -165,6 +166,7 @@ class AddTaskModal extends Component {
         onCancel={this.handleAddTaskModalCancel}
         footer={null}
         destroyOnClose={true}
+        zIndex={zIndex||1000}
       >
         <div className={styles.addTaskModalContent}>
           <div className={styles.addTaskModalSelectProject}>

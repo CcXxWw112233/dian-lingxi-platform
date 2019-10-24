@@ -54,7 +54,7 @@ export default class ItemTwo extends React.Component {
       },
     })
     dispatch({
-      type: 'projectDetailTask/completeTask',
+      type: 'publicTaskDetailModal/completeTask',
       payload: {
         ...obj
       },
@@ -94,7 +94,7 @@ export default class ItemTwo extends React.Component {
               </div>
             )}
           <div className={CreateTaskStyle.card_name} style={{ textDecoration: is_realize === '1' ? 'line-through' : 'none', lineHeight: '24px', marginRight: '8px' }}>
-            <div style={{ margin: 0, height: 'auto', marginTop: '2px' }}>
+            <div style={{ margin: 0, height: 'auto', marginTop: '2px', wordBreak: 'break-all' }}>
               {/*`${type==='1'? '4px':'4px'}`*/}
               {card_name}
             </div>

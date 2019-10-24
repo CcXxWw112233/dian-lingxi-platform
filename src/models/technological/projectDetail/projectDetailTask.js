@@ -131,12 +131,12 @@ export default modelExtend(projectDetail, {
             drawContent: res.data,
           }
         })
-        yield put({
-          type: 'getCardCommentList',
-          payload: {
-            id
-          }
-        })
+        // yield put({
+        //   type: 'getCardCommentList',
+        //   payload: {
+        //     id
+        //   }
+        // })
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -154,12 +154,12 @@ export default modelExtend(projectDetail, {
       })
       let res = yield call(getShareCardDetail, { id })
       if (isApiResponseOk(res)) {
-        yield put({
-          type: 'getCardCommentList',
-          payload: {
-            id
-          }
-        })
+        // yield put({
+        //   type: 'getCardCommentList',
+        //   payload: {
+        //     id
+        //   }
+        // })
         yield put({
           type: 'getCardCommentListAll',
           payload: {

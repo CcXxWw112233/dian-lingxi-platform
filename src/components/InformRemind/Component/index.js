@@ -12,7 +12,7 @@ import RenderAdd from './RenderAdd';
 export default class RenderContent extends Component {
 
     render() {
-      const { historyList = [], rela_type, rela_id, is_add_remind, user_remind_info, workbenchExecutors = [], projectExecutors = [], processEditDatas = [], milestonePrincipals = [] } = this.props;
+      const { historyList = [], rela_type, rela_id, is_add_remind, user_remind_info, commonExecutors = [], processPrincipalList = [], milestonePrincipals = [] } = this.props;
     
       {
         return (
@@ -23,7 +23,7 @@ export default class RenderContent extends Component {
                 }) 
               }
               {
-                is_add_remind && <RenderAdd rela_type={rela_type} workbenchExecutors={workbenchExecutors} projectExecutors={projectExecutors} processEditDatas={processEditDatas} milestonePrincipals={milestonePrincipals} rela_id={rela_id} user_remind_info={user_remind_info} />
+                is_add_remind && <RenderAdd rela_type={rela_type} commonExecutors={commonExecutors} processPrincipalList={processPrincipalList} milestonePrincipals={milestonePrincipals} rela_id={rela_id} user_remind_info={user_remind_info} />
               }
           </div>
         ) 

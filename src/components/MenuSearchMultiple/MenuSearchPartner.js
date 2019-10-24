@@ -8,9 +8,10 @@ import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_BOARD_ME
 import { isApiResponseOk } from '../../utils/handleResponseData';
 import { organizationInviteWebJoin, commInviteWebJoin, } from '../../services/technological/index'
 import { connect } from 'dva';
+import globalStyles from '@/globalset/css/globalClassName.less'
 
-@connect(({ technological, }) => ({
-    technological
+@connect(({ technological, publicTaskDetailModal: { is_selected_all } }) => ({
+    technological, is_selected_all
 }))
 export default class MenuSearchPartner extends React.Component {
     state = {
@@ -32,6 +33,7 @@ export default class MenuSearchPartner extends React.Component {
         const { keyWord } = this.state
         let selectedKeys = []
         const { listData = [], searchName, currentSelect = [] } = props
+        if (!Array.isArray(currentSelect)) return false
         for (let val of currentSelect) {
             selectedKeys.push(val['user_id'])
         }
@@ -51,12 +53,12 @@ export default class MenuSearchPartner extends React.Component {
     }
     //模糊查询
     handleMenuReallySelect = (e) => {
-        this.setSelectKey(e)
+        this.setSelectKey(e, 'add')
     }
     handleMenuReallyDeselect(e) {
-        this.setSelectKey(e)
+        this.setSelectKey(e, 'remove')
     }
-    setSelectKey(e) {
+    setSelectKey(e, type) {
         const { key, selectedKeys } = e
         if (!key) {
             return false
@@ -70,7 +72,7 @@ export default class MenuSearchPartner extends React.Component {
                 resultArr: this.fuzzyQuery(listData, searchName, keyWord),
             })
         })
-        this.props.chirldrenTaskChargeChange({ selectedKeys })
+        this.props.chirldrenTaskChargeChange && this.props.chirldrenTaskChargeChange({ selectedKeys, key, type })
     }
     onCheck() {
         if (this.props.onCheck && typeof this.props.onCheck === 'function') {
@@ -206,9 +208,25 @@ export default class MenuSearchPartner extends React.Component {
             ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
         })
     }
+
+    // 点击全体成员的回调
+    handleSelectedAllBtn = () => {
+        const { is_selected_all } = this.props
+				const { selectedKeys = [] } = this.state
+				let type = !is_selected_all ? 'add' : 'remove'
+        this.props.dispatch({
+            type: 'publicTaskDetailModal/updateDatas',
+            payload: {
+                is_selected_all: !is_selected_all
+            }
+        })
+        this.props.handleSelectedAllBtn && this.props.handleSelectedAllBtn({selectedKeys, type})
+    }
+
     render() {
         const { keyWord, resultArr, selectedKeys = [] } = this.state
-        const { Inputlaceholder = '搜索', searchName, menuSearchSingleSpinning, keyCode, invitationType, invitationId, rela_Condition, invitationOrg } = this.props
+        const { Inputlaceholder = '搜索', isInvitation, searchName, menuSearchSingleSpinning, keyCode, invitationType, invitationOrg, invitationId, rela_Condition, is_selected_all, board_id } = this.props
+        // const { Inputlaceholder = '搜索', searchName, menuSearchSingleSpinning, keyCode, invitationType, invitationId, rela_Condition, invitationOrg, board_id } = this.props
 
         return (
             <div>
@@ -220,46 +238,68 @@ export default class MenuSearchPartner extends React.Component {
                     <div style={{ margin: '0 10px 10px 10px' }}>
                         <Input placeholder={Inputlaceholder} value={keyWord} onChange={this.onChange.bind(this)} />
                     </div>
-                    <div style={{ padding: 0, margin: 0, height: 32 }} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
-                        <div style={{ display: 'flex', alignItems: 'center' }} >
-                            <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '&#xe70b;', marginRight: 4, color: 'rgb(73, 155, 230)', }}>
-                                <Icon type={'plus-circle'} style={{ fontSize: 12, marginLeft: 10, color: 'rgb(73, 155, 230)' }} />
-                            </div>
-                            <span style={{ color: 'rgb(73, 155, 230)' }}>邀请他人参与</span>
-                        </div>
-                    </div>
-                    {
-                        resultArr.map((value, key) => {
-                            const { avatar, name, user_name, user_id } = value
-                            return (
-                                <Menu.Item className={indexStyles.menuItem} style={{ height: 32, lineHeight: '32px', margin: 0, padding: '0 10px', }} key={value[keyCode]} >
-
-                                    <div className={indexStyles.menuItemDiv}>
-                                        <div style={{ display: 'flex', alignItems: 'center' }} key={user_id}>
-                                            {avatar ? (
-                                                <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 4 }} src={avatar} />
-                                            ) : (
-                                                    <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 4, }}>
-                                                        <Icon type={'user'} style={{ fontSize: 12, marginLeft: 10, color: '#8c8c8c' }} />
-                                                    </div>
-                                                )}
-                                            <div style={{ overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 90, marginRight: 8 }}>{name || user_name || '佚名'}</div>
+                    <Menu className={globalStyles.global_vertical_scrollbar} style={{ maxHeight: '248px', overflowY: 'auto' }}>
+                        {
+                            !isInvitation && (
+                                <div style={{ padding: 0, margin: 0, height: 32, lineHeight: '32px', cursor: 'pointer' }} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
+                                    <div style={{ display: 'flex', alignItems: 'center' }} >
+                                        <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '&#xe70b;', marginRight: 4, color: 'rgb(73, 155, 230)', }}>
+                                            <Icon type={'plus-circle'} style={{ fontSize: 12, marginLeft: 10, color: 'rgb(73, 155, 230)' }} />
                                         </div>
-                                        <div style={{ display: selectedKeys.indexOf(user_id) != -1 ? 'block' : 'none' }}>
-                                            <Icon type="check" />
-                                        </div>
+                                        <span style={{ color: 'rgb(73, 155, 230)' }}>邀请他人参与</span>
                                     </div>
-                                </Menu.Item>
+                                </div>
                             )
-                        })
-                    }
+                        }
+                        {/* 项目全体成员 */}
+                        {/* <div style={{ padding: 0, margin: 0, height: 40, lineHeight: '40px', cursor: 'pointer' }} onClick={this.handleSelectedAllBtn}>
+                            <div style={{ display: 'flex', alignItems: 'center', padding: '6px 12px', justifyContent: 'space-between' }} >
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <div style={{ width: '28px', height: '28px', backgroundColor: 'rgba(230,247,255,1)', borderRadius: '50%', textAlign: 'center', marginRight: '8px' }}>
+                                        <span style={{ fontSize: '14px', color: '#1890FF', lineHeight: '28px', display: 'block' }} className={`${globalStyles.authTheme}`}>&#xe7af;</span>
+                                    </div>
+                                    <span>项目全体成员</span>
+                                </div>
+                                <div
+																	style={{ display: is_selected_all ? 'block' : 'none' }}
+																	>
+                                    <Icon type="check" />
+                                </div>
+                            </div>
+                        </div> */}
+                        {
+                            resultArr.map((value, key) => {
+                                const { avatar, name, user_name, user_id } = value
+                                return (
+                                    <Menu.Item className={`${indexStyles.menuItem}`} style={{ height: '40px', lineHeight: '40px', margin: 0, padding: '0 12px' }} key={value[keyCode]} >
+
+                                        <div className={indexStyles.menuItemDiv}>
+                                            <div style={{ display: 'flex', alignItems: 'center', textAlign: 'center' }} key={user_id}>
+                                                {avatar ? (
+                                                    <img style={{ width: '28px', height: '28px', borderRadius: '50%', marginRight: '8px' }} src={avatar} />
+                                                ) : (
+                                                        <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: '#f5f5f5', marginRight: '8px', lineHeight: '28px', }}>
+                                                            <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
+                                                        </div>
+                                                    )}
+                                                <div style={{ overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 90, marginRight: 8 }}>{name || user_name || '佚名'}</div>
+                                            </div>
+                                            <div style={{ display: selectedKeys.indexOf(user_id) != -1 ? 'block' : 'none' }}>
+                                                <Icon type="check" />
+                                            </div>
+                                        </div>
+                                    </Menu.Item>
+                                )
+                            })
+                        }
+                    </Menu>
                 </Menu>
 
                 <ShowAddMenberModal
                     // title={titleText}
                     addMenbersInProject={this.addMenbersInProject}
                     show_wechat_invite={true}
-                    // {...this.props}
+                    board_id={board_id}
                     invitationType={invitationType}
                     invitationId={invitationId}
                     rela_Condition={rela_Condition}
@@ -282,7 +322,7 @@ MenuSearchPartner.deafultProps = {
     keyCode: '', //关键的属性（user_id）
     searchName: '', //检索的名称
     currentSelect: [], //当前选择的人
-    board_id: [],
+    board_id: '',
     chirldrenTaskChargeChange: function () {
 
     },

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Form, Input } from 'antd'
 import { PROJECTS } from "../../../../globalset/js/constant";
-import { currentNounPlanFilterName, getGlobalData } from "../../../../utils/businessFunction";
+import { currentNounPlanFilterName, getGlobalData, getOrgIdByBoardId } from "../../../../utils/businessFunction";
 import CustormModal from '../../../../components/CustormModal'
 import InviteOthers from './../InviteOthers/index'
 import globalStyles from '@/globalset/css/globalClassName.less'
@@ -62,13 +62,13 @@ class ShowAddMenberModal extends React.Component {
   }
 
   renderUsersList = () => {
-    const { _organization_id, show_wechat_invite, title, submitText, } = this.props
+    const { _organization_id, show_wechat_invite, title, submitText, board_id } = this.props
     const container = (
       <Form style={{ margin: '0 auto', width: 336 }}>
         {/* <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}> {title ? title : `邀请他人一起参加${currentNounPlanFilterName(PROJECTS)}`} </div> */}
         <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}> {title ? title : `邀请他人一起参加`} </div>
         <div>
-          <InviteOthers submitText={submitText ? submitText : '邀请加入'} isShowTitle={false} _organization_id={_organization_id || getGlobalData('aboutBoardOrganizationId')} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} isDisableSubmitWhenNoSelectItem={true}></InviteOthers>
+          <InviteOthers submitText={submitText ? submitText : '邀请加入'} isShowTitle={false} _organization_id={_organization_id || getOrgIdByBoardId(board_id) || getGlobalData('aboutBoardOrganizationId')} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} isDisableSubmitWhenNoSelectItem={true}></InviteOthers>
         </div>
         {
           show_wechat_invite && (
@@ -86,6 +86,10 @@ class ShowAddMenberModal extends React.Component {
   render() {
     const { modalVisible, show_wechat_invite, board_id, invitationType, invitationId, rela_Condition, invitationOrg } = this.props;
     const { wechat_invite_visible } = this.state
+
+    console.log('ssssss', {
+      board_id
+    })
 
     return (
       <div>

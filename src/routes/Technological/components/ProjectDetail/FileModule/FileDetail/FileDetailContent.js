@@ -1612,7 +1612,7 @@ class FileDetailContent extends React.Component {
                     <div style={{ height: '50px' }} onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
                   )
                 }
-                <InformRemind rela_id={filePreviewCurrentVersionId} rela_type={'4'} user_remind_info={data} />
+                <InformRemind rela_id={filePreviewCurrentFileId} rela_type={'4'} user_remind_info={data} />
               </span>
 
             </div>

@@ -72,6 +72,23 @@ export const timestampToTime = (timestamp, flag) => {
   let m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
   return flag ? Y + M + D + h + m : Y + M + D;
 }
+
+//时间戳转日期
+export const timestampToTimeNormal3 = (timestamp, flag) => {
+  if (!timestamp) {
+    return false
+  }
+  const timestampNew = timestamp.length === 10 ? Number(timestamp) * 1000 : Number(timestamp)
+  let date = new Date(timestampNew);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+  const now_year = new Date().getFullYear()
+  let Y = now_year == date.getFullYear()? '' : date.getFullYear() + '-';
+  let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+  let D = date.getDate() < 10 ? '0' + date.getDate() + '-' : date.getDate() + '- ';
+  let h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
+  let m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
+  return flag ? Y + M + D + h + m : Y + M + D;
+}
+
 //时间戳转换为时分
 export const timestampToHM = (timestamp) => {
   if (!timestamp) {
@@ -437,4 +454,32 @@ export const isOverdueTime = (timestamp) => {
       return true;
   }
   return false
+}
+
+/*处理时间格式 liuyj*/
+Date.prototype.Format = function (fmt) { //author: meizz
+  var o = {
+      "M+": this.getMonth() + 1, //月份
+      "d+": this.getDate(), //日
+      "h+": this.getHours(), //小时
+      "m+": this.getMinutes(), //分
+      "s+": this.getSeconds(), //秒
+      "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+      "S": this.getMilliseconds() //毫秒
+  };
+  if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+  for (var k in o)
+      if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+  return fmt;
+}
+/*处理时间格式方法 liuyj*/
+export const timestampFormat = (millisecond, format) => {
+  millisecond = millisecond.length === 10 ? Number(millisecond) * 1000 : Number(millisecond)
+  if(millisecond){
+      var date = new Date();
+      date.setTime(millisecond);
+      return date.Format(format||"yyyy-MM-dd hh:mm:ss");
+  }else{
+      return null
+  }
 }

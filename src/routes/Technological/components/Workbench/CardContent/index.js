@@ -28,7 +28,8 @@ import TeachingEffect from './School/TeachingEffect';
 import PreviewFileModal from '../PreviewFileModal.js';
 import CollectionProjectItem from './CollectionProjectItem';
 import MyCircleItem from './MyCircleItem';
-import TaskDetailModal from './Modal/TaskDetailModal';
+// import TaskDetailModal from './Modal/TaskDetailModal';
+import TaskDetailModal from '@/components/TaskDetailModal'
 import FileDetailModal from './Modal/FileDetailModal';
 import ProccessDetailModal from './Modal/ProccessDetailModal';
 import AddTaskModal from './Modal/AddTaskModal';
@@ -59,9 +60,13 @@ const MenuItemGroup = Menu.ItemGroup;
   }},
    workbenchTaskDetail: {
      datas: { projectDetailInfoData = {} }
+   },
+   publicTaskDetailModal: {
+     drawContent = {},
+     drawerVisible
    }
 }) => ({
-  workbench, processInfo, projectDetailInfoData
+  workbench, processInfo, projectDetailInfoData, drawerVisible, drawContent
 }))
 class CardContent extends React.Component {
   state = {
@@ -259,11 +264,27 @@ class CardContent extends React.Component {
       previewProccessModalVisibile: !this.state.previewProccessModalVisibile
     });
   }
+
+  
   setTaskDetailModalVisibile() {
     this.setState({
       TaskDetailModalVisibile: !this.state.TaskDetailModalVisibile
     });
   }
+
+  // 这是新的设置弹窗的回调
+  setTaskDetailModalVisible = () => {
+    this.props.dispatch({
+      type: 'publicTaskDetailModal/updateDatas',
+      payload: {
+        drawerVisible: false,
+        drawContent: {},
+        card_id: ''
+      }
+    })
+    
+  }
+
   handleAddTask = type => {
     this.handleAddATask(type);
   };
@@ -529,6 +550,35 @@ class CardContent extends React.Component {
     })
   }
 
+  // 删除某条卡片
+  handleDeleteCard = ({ card_id }) => {
+    const {
+      workbench: {
+        datas: {
+          responsibleTaskList = [],
+          meetingLsit = []
+        }
+      },
+      dispatch
+    } = this.props;
+
+    const new_responsibleTaskList = responsibleTaskList.filter(item => {
+      let new_item = {...item}
+      return new_item.id != card_id
+    })
+    const new_meetingLsit = meetingLsit.filter(item => {
+      let new_item = {...item}
+      return new_item.id != card_id
+    })
+    dispatch({
+      type: 'workbench/updateDatas',
+      payload: {
+        responsibleTaskList: new_responsibleTaskList,
+        meetingLsit: new_meetingLsit
+      }
+    })
+  }
+
   // 数组去重
   arrayNonRepeatfy = arr => {
     let temp_arr = []
@@ -690,9 +740,7 @@ class CardContent extends React.Component {
                     key={key}
                     itemValue={value}
                     itemKey={key}
-                    setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(
-                      this
-                    )}
+                    // setTaskDetailModalVisible={this.setTaskDetailModalVisible}
                     isUsedInWorkbench={true}
                   />
                 ))}
@@ -742,9 +790,7 @@ class CardContent extends React.Component {
                       key={key2}
                       itemKey={key2}
                       itemValue={value2}
-                      setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(
-                        this
-                      )}
+                      // setTaskDetailModalVisible={this.setTaskDetailModalVisible}
                     />
                   );
                 })}
@@ -978,18 +1024,17 @@ class CardContent extends React.Component {
           visitControlUpdateCurrentModalData={this.visitControlUpdateCurrentModalData}
           principalList={data}
         />
-        <TaskDetailModal
-          {...this.props}
-          //修改某一个任务
-          handleChangeCard={this.handleChangeCard} 
-          modalVisible={this.state.TaskDetailModalVisibile}
-          setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(
-            this
-          )}
-          setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(
-            this
-          )}
-        />
+        {
+          CardContentType == 'RESPONSIBLE_TASK' && (
+            <TaskDetailModal
+            task_detail_modal_visible={this.props.drawerVisible}
+            // setTaskDetailModalVisible={this.setTaskDetailModalVisible}
+            handleTaskDetailChange={this.handleChangeCard}
+            handleDeleteCard={this.handleDeleteCard}
+          />
+          )
+        }
+     
         {/* addTaskModalVisible */}
         {addTaskModalVisible && (
           <AddTaskModal

@@ -30,12 +30,17 @@ export default class DetailDom extends React.Component {
     })
   }
 
+  // 定义一个外部容器的点击事件
+  commonDrawerContentOutClick = () => {
+    this.props.commonDrawerContentOutClick && this.props.commonDrawerContentOutClick()
+  }
+
   render() {
     const { clientHeight, clientWidth } = this.state
     const { modalTop } = this.props
     const offsetTopDeviation = 100 //用来计算偏移量偏差
     return (
-      <div className={indexStyles.fileDetailOut} style={{height: clientHeight - offsetTopDeviation, top: 0}}>
+      <div onClick={this.commonDrawerContentOutClick} className={indexStyles.fileDetailOut} style={{height: clientHeight - offsetTopDeviation, top: 0}}>
         <Header {...this.props} setModalVisibile/>
         <DetailContent {...this.props} clientHeight={clientHeight} clientWidth={clientWidth} offsetTopDeviation = {offsetTopDeviation} modalTop={modalTop} />
       </div>

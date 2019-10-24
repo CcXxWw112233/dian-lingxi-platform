@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { Modal, Dropdown, Menu, Button, message, Input } from "antd";
+import { Modal, Dropdown, Menu, Button, message, Input, Tooltip } from "antd";
 import DrawerContentStyles from "./index.less";
+import globalStyles from './../../../../globalset/css/globalClassName.less';
 import {
   timestampToTimeNormal2,
 } from "./../../../../utils/util";
@@ -102,11 +103,12 @@ class ShareAndInvite extends Component {
   };
   handleShareMenuClick = ({ item, key }) => {
     const { handleChangeOnlyReadingShareModalVisible } = this.props;
-    const shareMenuMap = new Map([
-      ["onlyReadingShare", () => handleChangeOnlyReadingShareModalVisible()]
-    ]);
-    const action = shareMenuMap.get(key);
-    if (action) action();
+    this.props.handleChangeOnlyReadingShareModalVisible && handleChangeOnlyReadingShareModalVisible()
+    // const shareMenuMap = new Map([
+    //   ["onlyReadingShare", () => handleChangeOnlyReadingShareModalVisible()]
+    // ]);
+    // const action = shareMenuMap.get(key);
+    // if (action) action();
   };
   formatExp = (timestamp = "") => {
     const timeStr = timestampToTimeNormal2(timestamp);
@@ -123,7 +125,7 @@ class ShareAndInvite extends Component {
     /***
      * status 0=未开启 1=已开启 -1=停用
      */
-    const shareButton = data.status === ('0' || '-1') ? '开始分享' : '停止分享'
+    const shareButton = data && data.status === ('0' || '-1') ? '开始分享' : '停止分享'
     let renderOnlyReadingShareEXPMenu = (
       <Menu
         openKeys={[expMenuValue]}
@@ -148,20 +150,7 @@ class ShareAndInvite extends Component {
     );
     return (
       <div className={DrawerContentStyles.wrapper}>
-        {/* {is_shared === "1" ? (
-          <p
-            className={DrawerContentStyles.right__shareIndicator}
-            onClick={() => handleChangeOnlyReadingShareModalVisible()}
-          >
-            <span className={DrawerContentStyles.right__shareIndicator_icon} />
-            <span className={DrawerContentStyles.right__shareIndicator_text}>
-              正在分享
-            </span>
-          </p>
-        ) : null} */}
-        <Dropdown overlay={shareMenu}>
-          <span className={DrawerContentStyles.right__share} />
-        </Dropdown>
+    
         {onlyReadingShareModalVisible && (
           <Modal
             footer={null}

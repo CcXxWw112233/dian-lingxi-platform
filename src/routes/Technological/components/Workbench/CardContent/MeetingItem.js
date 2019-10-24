@@ -42,13 +42,20 @@ export default class MeetingItem extends React.Component {
     })
     this.props.updatePublicDatas({ board_id })
     this.props.getCardDetail({id, board_id})
-    this.props.setTaskDetailModalVisibile()
-    this.props.dispatch({
-      type: 'workbenchTaskDetail/getCardCommentListAll',
+    
+    dispatch({
+      type: 'publicTaskDetailModal/updateDatas',
       payload: {
-        id: id
+        drawerVisible: true,
+        card_id: id
       }
     })
+    // this.props.dispatch({
+    //   type: 'workbenchTaskDetail/getCardCommentListAll',
+    //   payload: {
+    //     id: id
+    //   }
+    // })
   }
 
   // 去到列表的详情页信息
