@@ -428,15 +428,18 @@ export default class HeaderContentRightMenu extends Component {
 
         {/* 访问控制 */}
         <span className={`${headerStyles.action} ${headerStyles.visit_wrap}`}>
-          <VisitControl
-            board_id={board_id}
-            isPropVisitControl={is_privilege === '0' ? false : true}
-            handleVisitControlChange={this.handleVisitControlChange}
-            principalList={executors}
-            otherPrivilege={privileges}
-            handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
-            handleAddNewMember={this.handleVisitControlAddNewMember}
-          />
+          {
+            board_id && <VisitControl
+              board_id={board_id}
+              isPropVisitControl={is_privilege === '0' ? false : true}
+              handleVisitControlChange={this.handleVisitControlChange}
+              principalList={executors}
+              otherPrivilege={privileges}
+              handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+              handleAddNewMember={this.handleVisitControlAddNewMember}
+            />
+          }
+
         </span>
         {/* 分享协作 */}
         <span className={`${headerStyles.action} `}>
