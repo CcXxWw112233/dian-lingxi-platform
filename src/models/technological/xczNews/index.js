@@ -309,6 +309,7 @@ export default {
 
     // 获取地区的城市列表
     * getAreas({ payload = {} }, { select, call, put }) {
+      
       const provinceData = yield select((state) => getSelectState(state, 'provinceData'))
       const cityData = yield select((state) => getSelectState(state, 'cityData'))
       const res = yield call(getAreas, { ...payload });
@@ -319,7 +320,7 @@ export default {
       // 地区数据结构的处理
       let newCityObj = res.data[0] && res.data[0].child
       // console.log(newCityObj)
-      for (let key in newCityObj) {
+      for (let key=0; key < newCityObj.length;key++) {
         // console.log(newCityObj[key])
         // {id: "110000", name: "北京市", deep: "1", parent_id: "0", child: Array(2)}
         // 这里遍历的key是第一层数据的key 有: id, name, child
