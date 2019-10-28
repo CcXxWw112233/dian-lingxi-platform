@@ -115,8 +115,16 @@ export default {
         message.warn(res.message)
       }
     },
-
-
+    // 添加标签
+    * addTaskTag({ payload }, { select, call, put }) { //
+      const { board_id, card_id, name, color } = payload
+      let res = yield call(addTaskTag, payload)
+      if (isApiResponseOk(res)) {
+        message.success('添加任务标签成功', MESSAGE_DURATION_TIME)
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
     /**
      * 设置完成任务: 需要参数 is_realize
      * @param {String} is_realize 是否完成 0 未完成 1 已完成

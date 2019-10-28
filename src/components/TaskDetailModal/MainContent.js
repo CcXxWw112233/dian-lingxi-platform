@@ -10,7 +10,6 @@ import MilestoneAdd from '@/components/MilestoneAdd'
 import LabelDataComponent from '@/components/LabelDataComponent'
 import AppendSubTask from './components/AppendSubTask'
 import PreviewFileModal from '@/routes/Technological/components/ProjectDetail/TaskItemComponent/PreviewFileModal'
-import PreviewFileModalRichText from '@/routes/Technological/components/ProjectDetail/TaskItemComponent/PreviewFileModalRichText'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import InformRemind from '@/components/InformRemind'
 import { timestampFormat, timestampToTime, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal } from '@/utils/util'
@@ -708,6 +707,24 @@ export default class MainContent extends Component {
     return meetingField
   }
 
+  // 添加标签的回调
+  handleAddLabel = ({name, color}) => {
+    const { drawContent = {}, dispatch } = this.props
+    const { card_id, board_id } = drawContent
+    dispatch({
+      type: 'publicTaskDetailModal/addTaskTag',
+      payload: {
+        card_id, board_id, name, color
+      }
+    })
+  }
+
+  // 下拉标签的回调
+  handleChgSelectedLabel = (data) => {
+    console.log(data, 'sssssss')
+    console.log('parent_sssssss')
+  }
+
   /**附件预览 */
   openFileDetailModal = (fileInfo) => {
     // console.log("文件详情", fileInfo);
@@ -874,7 +891,8 @@ export default class MainContent extends Component {
       due_time,
       executors = [],
       description,
-      milestone_data
+      milestone_data,
+      label_data = []
     } = drawContent
 
     // 状态
@@ -1239,7 +1257,7 @@ export default class MainContent extends Component {
           {/* 各种字段的不同状态 E */}
 
           {/* 添加标签字段 S */}
-          {/* <div>
+          <div>
             <div className={mainContentStyles.field_content}>
               <div className={mainContentStyles.field_left}>
                 <span className={`${globalStyles.authTheme}`}>&#xe6b8;</span>
@@ -1247,13 +1265,25 @@ export default class MainContent extends Component {
               </div>
               <div style={{position: 'relative'}} className={mainContentStyles.field_right}>
                 <div className={mainContentStyles.pub_hover}>
-                  <LabelDataComponent board_id={board_id}>
-                    <span>添加标签</span>
+                  <LabelDataComponent searchName="name" currentSelect={label_data} handleChgSelectedLabel={this.handleChgSelectedLabel} handleAddLabel={this.handleAddLabel} board_id={board_id}>
+                    {
+                      label_data && label_data.length ? (
+                        <span>
+                          {
+                            label_data.map(item => {
+                              return <span style={{background: `rgba(${item.label_color}, 1)`}} className={mainContentStyles.normal_label}><span>{item.label_name}</span></span>
+                              })
+                          }
+                        </span>
+                      ) : (
+                        <span>添加标签</span>
+                      )
+                    }
                   </LabelDataComponent>
                 </div>
               </div>
             </div>
-          </div> */}
+          </div>
           {/* 添加标签字段 E */}
 
           {/* 上传附件字段 S*/}
