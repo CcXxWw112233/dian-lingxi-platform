@@ -1,5 +1,5 @@
 import { getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask, deleteChirldTask, boardAppRelaMiletones, 
-  boardAppCancelRelaMiletones, getBoardTagList, addTaskTag, removeTaskTag } from '../../../services/technological/task'
+  boardAppCancelRelaMiletones, getBoardTagList, addBoardTag, deleteBoardTag, updateBoardTag, addTaskTag, removeTaskTag } from '../../../services/technological/task'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { currentNounPlanFilterName } from "../../../utils/businessFunction";
@@ -102,9 +102,10 @@ export default {
     },
     // 获取项目标签
     * getBoardTagList({ payload }, { call, put }) {
-      const { board_id } = payload
+      const { board_id, calback } = payload
       let res = yield call(getBoardTagList, { board_id })
       if (isApiResponseOk(res)) {
+        calback && typeof calback == 'function' ? calback() : ''
         yield put({
           type: 'updateDatas',
           payload: {
@@ -115,15 +116,82 @@ export default {
         message.warn(res.message)
       }
     },
+    // 添加项目标签
+    * addBoardTag({ payload }, { call, put }) {
+      const { board_id } = payload
+      let res = yield call(addBoardTag, payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id,
+            calback: function () {
+              message.success('添加标签成功', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
+    },
+    // 更新标签
+    * updateBoardTag({ payload }, { select, call, put }) { //
+      const { board_id } = payload
+      let res = yield call(updateBoardTag, payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id,
+            calback: function () {
+              message.success('更新标签成功', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+      return res || {}
+    },
+    // 删除项目标签
+    * deleteBoardTag({ payload }, { select, call, put }) { //
+      let res = yield call(deleteBoardTag, payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id,
+            calback: function () {
+              message.success('已成功删除该项目标签', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+      return res || {}
+    },
     // 添加标签
     * addTaskTag({ payload }, { select, call, put }) { //
-      const { board_id, card_id, name, color } = payload
-      let res = yield call(addTaskTag, payload)
+      const { card_id, board_id, label_id } = payload
+      let res = yield call(addTaskTag, {card_id, label_id})
       if (isApiResponseOk(res)) {
         message.success('添加任务标签成功', MESSAGE_DURATION_TIME)
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
+      return res || {}
+    },
+    // 移除标签
+    * removeTaskTag({ payload }, { select, call, put }) { //
+      let res = yield call(removeTaskTag, payload)
+      if (isApiResponseOk(res)) {
+        message.success('已删除标签', MESSAGE_DURATION_TIME)
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+      return res || {}
     },
     /**
      * 设置完成任务: 需要参数 is_realize

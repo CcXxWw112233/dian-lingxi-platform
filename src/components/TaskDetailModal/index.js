@@ -31,6 +31,7 @@ export default class TaskDetailModal extends Component {
         drawContent: {},
         card_id: '',
         is_edit_title: false, // 是否编辑标题 默认为 false 不显示
+        boardTagList: []
       }
     })
     this.props.setTaskDetailModalVisible && this.props.setTaskDetailModalVisible()

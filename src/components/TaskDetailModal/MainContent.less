@@ -163,6 +163,33 @@
   }
 }
 
+/* 标签属性的下拉样式 S */
+.labelDataWrapper {
+  min-width: 248px !important;
+  :global {
+    li {
+      line-height: 40px !important;
+      height     : 40px !important;
+      color:rgba(0,0,0,0.65);
+      &:hover {
+        background   : rgba(0, 0, 0, 0.04) !important;
+        cursor       : pointer;
+        border-radius: 4px;
+        color:rgba(0,0,0,0.65);
+      }
+      .anticon {
+        margin-right: 0;
+      }
+    }
+    .ant-menu-item-selected {
+      background-color   : transparent !important;
+      border-radius: 4px;
+      color        : rgba(0, 0, 0, 0.45);
+    }
+  }
+}
+/* 标签属性的下拉样式 E */
+
 /* 添加执行人下拉样式 E */
 
 /* 内容区的容器样式 S */
@@ -341,6 +368,34 @@
         display   : inline-block;
         top       : -4px;
         right     : -4px;
+        transition: all 0.3s;
+      }
+
+      .labelDelItem {
+        position: relative;
+        .labelDelIcon {
+          display          : none;
+          top: -8px;
+          right: 6px;
+          width            : 14px;
+          height           : 14px;
+          border-radius    : 4px;
+          position         : absolute;
+          background       : url(../../assets/workbench/close-circle@2x.png);
+          background-repeat: no-repeat;
+          background-size  : contain;
+          transition       : all 0.3s;
+          &:hover {
+            background       : url(../../assets/workbench/close-circle-active@2x.png);
+            background-repeat: no-repeat;
+            background-size  : contain;
+          }
+        }
+      }
+      .labelDelItem:hover .labelDelIcon {
+        display   : inline-block;
+        top: -8px;
+        right: 6px;
         transition: all 0.3s;
       }
 

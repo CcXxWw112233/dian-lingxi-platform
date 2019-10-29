@@ -18,7 +18,7 @@ import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE
 } from "@/globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
-import { addTaskExecutor, removeTaskExecutor,deleteTaskFile} from '../../services/technological/task'
+import { addTaskExecutor, removeTaskExecutor,deleteTaskFile, getBoardTagList, addTaskTag, removeTaskTag } from '../../services/technological/task'
 import {
   checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
 } from "@/utils/businessFunction";
@@ -31,14 +31,34 @@ export default class MainContent extends Component {
     previewFileModalVisibile: false,
   }
 
-  componentDidMount() {
+  getInitBoardTag = (board_id) => {
+    getBoardTagList({ board_id }).then(res => {
+      if (isApiResponseOk(res)) {
+        // this.setState({
+        //   boardTagList: res.data
+        // })
+        this.props.dispatch({
+          type: 'publicTaskDetailModal/updateDatas',
+          payload: {
+            boardTagList: res.data
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+    })
+  }
 
-    const { card_id } = this.props
+  componentDidMount() {
+    const { card_id, projectDetailInfoData: { board_id } } = this.props
     if (!card_id) return false
     this.props.dispatch({
       type: 'publicTaskDetailModal/getCardDetail',
       payload: {
-        id: card_id
+        id: card_id,
+        calback: () => {
+          this.getInitBoardTag(board_id)
+        }
       }
     })
   }
@@ -707,22 +727,208 @@ export default class MainContent extends Component {
     return meetingField
   }
 
+  // 控制显示隐藏的回调
+  handleVisibleChange = (visible) => {
+    // console.log(visible, 'sssss_visible')
+    this.setState({
+      visible: visible
+    })
+  }
+
+  // 关闭回调
+  handleClose = (e) => {
+    this.setState({
+      visible: false,
+    })
+  }
+
   // 添加标签的回调
   handleAddLabel = ({name, color}) => {
     const { drawContent = {}, dispatch } = this.props
     const { card_id, board_id } = drawContent
-    dispatch({
-      type: 'publicTaskDetailModal/addTaskTag',
-      payload: {
-        card_id, board_id, name, color
+    let new_drawContent = {...drawContent}
+    Promise.resolve(
+      dispatch({
+        type: 'publicTaskDetailModal/addBoardTag',
+        payload: {
+          board_id, name, color
+        }
+      })
+    ).then(res => {
+      if (isApiResponseOk(res)) {
+        new_drawContent['label_data'].push(res.data)
+        dispatch({
+          type: 'publicTaskDetailModal/updateDatas',
+          payload: {
+            drawContent: new_drawContent
+          }
+        })
+        this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: new_drawContent, card_id})
+      }
+    })
+  }
+
+  // 更新标签的回调
+  handleUpdateTag = ({label_id, name, color}) => {
+    const { drawContent = {}, dispatch } = this.props
+    const { card_id, board_id, label_data = [] } = drawContent
+    let new_labelData = [...label_data]
+    new_labelData = new_labelData.map(item => {
+      if (item.label_id == label_id) {
+        let new_item = item
+        new_item = {...item, label_name: name ? name : item.label_name, label_color: color}
+        return new_item
+      } else {
+        let new_item = item
+        return new_item
+      }
+    })
+    let new_drawContent = {...drawContent}
+    new_drawContent['label_data'] = new_labelData
+    Promise.resolve(
+      dispatch({
+        type: 'publicTaskDetailModal/updateBoardTag',
+        payload: {
+          board_id, id: label_id, color, name: name && name
+        }
+      })
+    ).then(res => {
+      if (isApiResponseOk(res)) {
+        dispatch({
+          type: 'publicTaskDetailModal/updateDatas',
+          payload: {
+            drawContent: new_drawContent
+          }
+        })
+        this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: new_drawContent, card_id})
+      }
+    })
+  }
+
+  // 删除标签的回到
+  handleRemoveBoardTag = ({label_id}) => {
+    const { drawContent = {}, dispatch } = this.props
+    const { card_id, board_id, label_data = [] } = drawContent
+    let new_labelData = [...label_data]
+    new_labelData = new_labelData.filter(item => {
+      if (item.label_id != label_id) {
+        let new_item = item
+        return new_item
+      }
+    })
+    let new_drawContent = {...drawContent}
+    new_drawContent['label_data'] = new_labelData
+    Promise.resolve(
+      dispatch({
+        type: 'publicTaskDetailModal/deleteBoardTag',
+        payload: {
+          id: label_id
+        }
+      })
+    ).then(res => {
+      if (isApiResponseOk(res)) {
+        dispatch({
+          type: 'publicTaskDetailModal/updateDatas',
+          payload: {
+            drawContent: new_drawContent
+          }
+        })
+        this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: new_drawContent, card_id})
       }
     })
   }
 
   // 下拉标签的回调
   handleChgSelectedLabel = (data) => {
-    console.log(data, 'sssssss')
-    console.log('parent_sssssss')
+    const { drawContent, boardTagList = [], dispatch } = this.props
+    const { board_id, card_id, label_data = [] } = drawContent
+    let newLabelData = []
+    const { selectedKeys = [], type, key } = data
+    for (let i = 0; i < selectedKeys.length; i++) {
+      for (let j = 0; j < boardTagList.length; j++) {
+        if (selectedKeys[i] === boardTagList[j]['id']) {
+          let obj = {
+            label_id: boardTagList[j]['id'],
+            label_name: boardTagList[j]['name'],
+            label_color: boardTagList[j]['color']
+          }
+          newLabelData.push(obj)
+        }
+      }
+    }
+    let new_drawContent = { ...drawContent }
+    new_drawContent['label_data'] = newLabelData
+    if (type == 'add') {
+      Promise.resolve(
+        dispatch({
+          type: 'publicTaskDetailModal/addTaskTag',
+          payload: {
+            board_id, card_id, label_id: key
+          }
+        })
+      ).then(res => {
+        if (isApiResponseOk(res)) {
+          dispatch({
+            type: 'publicTaskDetailModal/updateDatas',
+            payload: {
+              drawContent: new_drawContent
+            }
+          })
+          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: new_drawContent, card_id})
+        }
+      })
+    } else if (type == 'remove') {
+      Promise.resolve(
+        dispatch({
+          type: 'publicTaskDetailModal/removeTaskTag',
+          payload: {
+            card_id, label_id: key
+          }
+        })
+      ).then(res => {
+        if (isApiResponseOk(res)) {
+          dispatch({
+            type: 'publicTaskDetailModal/updateDatas',
+            payload: {
+              drawContent: new_drawContent
+            }
+          })
+          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: new_drawContent, card_id})
+        }
+      })
+    }
+  }
+
+  // 删除标签 icon 回调
+  handleRemoveTaskTag = (e, shouldDeleteId) => {
+    e && e.stopPropagation()
+    const { dispatch, drawContent, drawContent: { label_data = [], card_id } } = this.props
+    let new_drawContent = {...drawContent}
+    let new_labelData = [...label_data]
+    new_labelData = new_labelData.filter(item => {
+      if (item.label_id != shouldDeleteId) {
+        return item
+      }
+    })
+    new_drawContent['label_data'] = new_labelData
+    Promise.resolve(
+      dispatch({
+        type: 'publicTaskDetailModal/removeTaskTag',
+        payload: {
+          card_id, label_id: shouldDeleteId
+        }
+      })
+    ).then(res => {
+      if (isApiResponseOk(res)) {
+        dispatch({
+          type: 'publicTaskDetailModal/updateDatas',
+          payload: {
+            drawContent: new_drawContent
+          }
+        })
+        this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: new_drawContent, card_id})
+      }
+    })
   }
 
   /**附件预览 */
@@ -876,8 +1082,8 @@ export default class MainContent extends Component {
   }
 
   render() {
-    const { drawContent = {}, is_edit_title, projectDetailInfoData = {}, dispatch, handleTaskDetailChange, isInOpenFile } = this.props
-    const { new_userInfo_data = [] } = this.state
+    const { drawContent = {}, is_edit_title, projectDetailInfoData = {}, dispatch, handleTaskDetailChange, isInOpenFile, boardTagList = [] } = this.props
+    const { new_userInfo_data = [], visible = false  } = this.state
     const { data = [] } = projectDetailInfoData
     const {
       org_id,
@@ -1265,7 +1471,73 @@ export default class MainContent extends Component {
               </div>
               <div style={{position: 'relative'}} className={mainContentStyles.field_right}>
                 <div className={mainContentStyles.pub_hover}>
-                  <LabelDataComponent searchName="name" currentSelect={label_data} handleChgSelectedLabel={this.handleChgSelectedLabel} handleAddLabel={this.handleAddLabel} board_id={board_id}>
+                  {
+                    label_data && label_data.length ? (
+                      <div style={{position: 'relative'}}>
+                        <Dropdown
+                          visible={visible}
+                          getPopupContainer={triggerNode => triggerNode.parentNode}
+                          trigger={['click']}
+                          onVisibleChange={(visible) => { this.handleVisibleChange(visible) }}
+                          overlayClassName={mainContentStyles.labelDataWrapper}
+                          overlay={
+                            <LabelDataComponent
+                              handleClose={this.handleClose}
+                              listData={boardTagList} 
+                              searchName={'name'} currentSelect={label_data}
+                              handleAddLabel={this.handleAddLabel}
+                              handleUpdateTag={this.handleUpdateTag}
+                              handleChgSelectedLabel={this.handleChgSelectedLabel}
+                              handleRemoveBoardTag={this.handleRemoveBoardTag}
+                              board_id={board_id}
+                            />
+                          }
+                        >
+                          <div>
+                            {
+                              label_data.map(item => {
+                                return (
+                                  <span className={`${mainContentStyles.labelDelItem}`}>
+                                    <span key={`${item.label_id}`} style={{background: `rgba(${item.label_color}, 1)`}} className={`${mainContentStyles.normal_label}`}>
+                                      <span>{item.label_name}</span>
+                                      <span onClick={(e) => { this.handleRemoveTaskTag(e, item.label_id) }} className={mainContentStyles.labelDelIcon}></span>
+                                    </span>
+                                  </span>
+                                )
+                              })
+                            }
+                          </div>
+                        </Dropdown>
+                      </div>
+                    ) : (
+                      <div style={{position: 'relative'}}>
+                        <Dropdown 
+                          visible={visible}
+                          getPopupContainer={triggerNode => triggerNode.parentNode}
+                          trigger={['click']}
+                          onVisibleChange={(visible) => { this.handleVisibleChange(visible) }}
+                          overlayClassName={mainContentStyles.labelDataWrapper}
+                          overlay={
+                            <LabelDataComponent
+                              handleClose={this.handleClose} 
+                              listData={boardTagList} 
+                              searchName={'name'} currentSelect={label_data}
+                              handleAddLabel={this.handleAddLabel}
+                              handleUpdateTag={this.handleUpdateTag}
+                              handleChgSelectedLabel={this.handleChgSelectedLabel}
+                              handleRemoveBoardTag={this.handleRemoveBoardTag}
+                              board_id={board_id}
+                            />
+                          }
+                        >
+                          <div>
+                            <span>添加标签</span>
+                          </div>
+                        </Dropdown>
+                      </div>
+                    )
+                  }
+                  {/* <LabelDataComponent searchName="name" currentSelect={label_data} handleChgSelectedLabel={this.handleChgSelectedLabel} handleAddLabel={this.handleAddLabel} board_id={board_id}>
                     {
                       label_data && label_data.length ? (
                         <span>
@@ -1279,7 +1551,7 @@ export default class MainContent extends Component {
                         <span>添加标签</span>
                       )
                     }
-                  </LabelDataComponent>
+                  </LabelDataComponent> */}
                 </div>
               </div>
             </div>
@@ -1468,7 +1740,7 @@ export default class MainContent extends Component {
 
 // 只关联public弹窗内的数据
 function mapStateToProps({
-  publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id, is_selected_all },
+  publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id, is_selected_all, boardTagList = [] },
   projectDetail: { datas: { projectDetailInfoData = {} } },
   projectDetailFile: {
     datas: {
@@ -1476,5 +1748,5 @@ function mapStateToProps({
     }
   }
 }) {
-  return { drawContent, is_edit_title, card_id, is_selected_all, projectDetailInfoData, isInOpenFile }
+  return { drawContent, is_edit_title, card_id, is_selected_all, boardTagList, projectDetailInfoData, isInOpenFile }
 }

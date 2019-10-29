@@ -308,6 +308,15 @@ export async function getBoardTagList(params) {
     params
   });
 }
+// 新增项目标签
+export async function addBoardTag(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/label`,
+    method: 'POST',
+    data
+  })
+}
+
 //更新项目标签
 export async function updateBoardTag(data) {
   return request({
