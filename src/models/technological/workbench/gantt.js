@@ -360,64 +360,57 @@ export default {
               }
             }
           }
-          if (ganttIsFold({ gantt_board_id, group_view_type })) { // 全项目视图下，为收缩状态
-            item.top = after_group_height + j * ceiHeight + 24 //上下居中 (92-40)/2
-          } else {
-            item.top = after_group_height + j * ceiHeight
-            // {满足在时间区间外的，定义before_start_time_arr先记录符合项。
-            // 该比较项和之前项存在交集，将交集项存入top_arr
-            // 筛选before_start_time_arr，如果top_arr中含有top与某一遍历项相等，则过滤。最终高度取剩余的第一项
-            let before_start_time_arr = []
-            let top_arr = []
-            let all_top = []
-            for (let k = 0; k < j; k++) {
-              all_top.push(list_data[k].top)
-              if (item.start_time > list_data[k].end_time) {
-                before_start_time_arr.push(list_data[k])
-              }
-              if (item.start_time <= list_data[k].end_time) {
-                top_arr.push(list_data[k])
-              }
+
+          item.top = after_group_height + j * ceiHeight
+
+          // {满足在时间区间外的，定义before_start_time_arr先记录符合项。
+          // 该比较项和之前项存在交集，将交集项存入top_arr
+          // 筛选before_start_time_arr，如果top_arr中含有top与某一遍历项相等，则过滤。最终高度取剩余的第一项
+          let before_start_time_arr = []
+          let top_arr = []
+          let all_top = []
+          for (let k = 0; k < j; k++) {
+            all_top.push(list_data[k].top)
+            if (item.start_time > list_data[k].end_time) {
+              before_start_time_arr.push(list_data[k])
             }
-
-            before_start_time_arr = before_start_time_arr.filter(item => {
-              let flag = true
-              for (let val of top_arr) {
-                if (item.top == val.top) {
-                  flag = false
-                  break
-                }
-              }
-              return flag && item
-            })
-
-            all_top = Array.from(new Set(all_top)).sort((a, b) => a - b)
-            const all_top_max = Math.max.apply(null, all_top) == -Infinity ? after_group_height : Math.max.apply(null, all_top)
-
-            if (before_start_time_arr[0]) {
-              item.top = before_start_time_arr[0].top
-            } else {
-              if (item.top > all_top_max) {
-                item.top = all_top_max + ceiHeight
-              }
+            if (item.start_time <= list_data[k].end_time) {
+              top_arr.push(list_data[k])
             }
-            list_group[i]['list_data'][j] = item
           }
+          before_start_time_arr = before_start_time_arr.filter(item => {
+            let flag = true
+            for (let val of top_arr) {
+              if (item.top == val.top) {
+                flag = false
+                break
+              }
+            }
+            return flag && item
+          })
+
+          all_top = Array.from(new Set(all_top)).sort((a, b) => a - b)
+          const all_top_max = Math.max.apply(null, all_top) == -Infinity ? after_group_height : Math.max.apply(null, all_top)
+
+          if (before_start_time_arr[0]) {
+            item.top = before_start_time_arr[0].top
+          } else {
+            if (item.top > all_top_max) {
+              item.top = all_top_max + ceiHeight
+            }
+          }
+          list_group[i]['list_data'][j] = item
         }
         const list_height_arr = list_group[i]['list_data'].map(item => item.top)
         const list_group_item_height = Math.max.apply(null, list_height_arr) + 2 * ceiHeight - after_group_height
 
-        // 全项目视图下，为收缩状态
-        if (ganttIsFold({ gantt_board_id, group_view_type })) {
-          group_rows[i] = 2
-        } else {
-          group_rows[i] = (list_group_item_height / ceiHeight) < 3 ? 3 : list_group_item_height / ceiHeight // 原来是5，现在是1
-        }
+        group_rows[i] = (list_group_item_height / ceiHeight) < 3 ? 3 : list_group_item_height / ceiHeight // 原来是5，现在是1
 
         // 设置项目汇总的top和left,width
         if (ganttIsFold({ gantt_board_id, group_view_type })) { // 全项目视图下，为收缩状态
+          group_rows[i] = 2
           list_group[i].board_fold_data.width = list_group[i].board_fold_data.time_span * ceilWidth
-          list_group[i].board_fold_data.top = after_group_height + 24 //上下居中 (92-40)/2
+          list_group[i].board_fold_data.top = after_group_height + 26 //上下居中 (92-40)/2
           for (let k = 0; k < date_arr_one_level.length; k++) {
             if (isSamDay(list_group[i].board_fold_data['start_time'], date_arr_one_level[k]['timestamp'])) { //是同一天
               list_group[i].board_fold_data.left = k * ceilWidth
