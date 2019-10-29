@@ -17,6 +17,7 @@ class FileListRightBarFileDetailModal extends React.Component {
                     componentHeight={zommPictureComponentHeight}
                     componentWidth={zommPictureComponentWidth}
                     setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
+                    updateCommunicationFolderListData={this.props.updateCommunicationFolderListData}
                     modalTop={20}
                 />
             </div>

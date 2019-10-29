@@ -4,7 +4,8 @@ import indexStyles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import FileDetail from '@/routes/Technological/components/Workbench/CardContent/Modal/FileDetail/index'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/Workbench/CardContent/Modal/FileListRightBarFileDetailModal';
-import CommunicationFileList from './components/CommunicationFileList'
+import CommunicationFileList from './components/CommunicationFileList';
+import UploadTemporaryFile from './components/UploadTemporaryFile';
 // import FileDetailModal from '@/routes/Technological/components/Workbench/CardContent/Modal/FileDetailModal'
 import { Modal, Dropdown, Button, Select, Icon, Tree, Upload, message } from 'antd';
 import { REQUEST_DOMAIN_FILE } from "@/globalset/js/constant";
@@ -838,11 +839,13 @@ class BoardCommunication extends Component {
 
     // 是否需要更新文件列表, 当访问控制设置时
     whetherUpdateFolderListData = (folder_id) => {
-        // this.queryCommunicationFileData();
+        this.queryCommunicationFileData();
         // if (folder_id) {
         //     this.getFolderFileList({ id: folder_id })
         // }
     }
+
+    // 
 
     // 显示圈图组件
     showUpdatedFileDetail=()=>{
@@ -857,7 +860,7 @@ class BoardCommunication extends Component {
 
 
     render() {
-        const { currentBoardDetail = {}, dispatch, model = {}, modal } = this.props;
+        const { currentBoardDetail = {}, dispatch, model = {}, modal, simplemodeCurrentProject } = this.props;
         const {selectBoardFileModalVisible, showFileListisOpenFileDetailModal } = this.state;
         const { currentfile = {}, is_selectFolder, dragEnterCaptureFlag, showFileSelectDropdown, isRightBarShowFileList } = this.state;
         const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
@@ -1198,6 +1201,8 @@ class BoardCommunication extends Component {
                     {...this.props}
                 />
 
+
+                {/* 左侧列表点击文件圈图显示 */}
                 {
                     showFileListisOpenFileDetailModal && (
                         <FileListRightBarFileDetailModal
@@ -1210,10 +1215,12 @@ class BoardCommunication extends Component {
                             updateDatasTask={fileDetailModalDatas.updateDatasTask}
                             updateDatasFile={fileDetailModalDatas.updateDatasFile}
                             whetherUpdateFolderListData={this.whetherUpdateFolderListData}
+                            updateCommunicationFolderListData={this.updateCommunicationFolderListData}
                         />
                     )
                 }
 
+                {/* 右侧上传文件的圈图详情 */}
                 {
                     this.state.previewFileModalVisibile && (
                         <FileDetail
@@ -1226,7 +1233,23 @@ class BoardCommunication extends Component {
                             setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}
                             componentHeight={zommPictureComponentHeight}
                             componentWidth={zommPictureComponentWidth} />
-                    )}
+                    )
+                }
+
+                {/* 右侧上传/临时文件 */}
+                {/* {
+                    !this.state.previewFileModalVisibile && (
+                        <UploadTemporaryFile
+                            isRightBarShowFileList={isRightBarShowFileList}
+                            // getDraggerProps={this.getDraggerProps}
+                            // onBeforeUpload={this.onBeforeUpload}
+                            // dragEnterCaptureFlag={dragEnterCaptureFlag}
+                            simplemodeCurrentProject={simplemodeCurrentProject}
+                        />
+                    )
+                } */}
+                
+
                 {
                     !this.state.previewFileModalVisibile && (
                         <div className={`${indexStyles.draggerContainerStyle} ${isRightBarShowFileList ? indexStyles.changeDraggerWidth : null}`}>
@@ -1246,7 +1269,7 @@ class BoardCommunication extends Component {
                                                     </div>
                                                     <div className={indexStyles.descriptionWapper}>
                                                         <div className={indexStyles.linkTitle}>
-                                                            {/* 选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或  */}
+                                                            {/* // 选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或  // */}
                                                             <a className={indexStyles.alink}>点击上传</a> 文件</div>
                                                         <div className={indexStyles.detailDescription}>选择或上传图片格式文件、PDF格式文件即可开启圈点交流</div>
                                                     </div>
@@ -1257,6 +1280,7 @@ class BoardCommunication extends Component {
                             </Dragger>
                         </div>
                     )}
+
 
                 <Modal
                     width={248}
@@ -1377,7 +1401,7 @@ function mapStateToProps({
         boardFileListData,
         simpleBoardCommunication,
         simplemodeCurrentProject,
-        gantt_board_id
+        gantt_board_id,
     }
 }
 export default connect(mapStateToProps)(BoardCommunication)

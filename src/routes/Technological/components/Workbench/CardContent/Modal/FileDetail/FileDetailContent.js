@@ -809,6 +809,8 @@ class FileDetailContent extends React.Component {
       })
       // 这里是用来更新甘特图中的文件列表
       this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData(folder_id)
+      // 更新项目交流左侧文件列表
+      this.props.updateCommunicationFolderListData && this.props.updateCommunicationFolderListData(folder_id);
     }
 
     // 添加职员

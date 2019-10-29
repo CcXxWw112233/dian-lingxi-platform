@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Collapse, Icon, message } from 'antd';
+import { Collapse, Icon, message, Button } from 'antd';
 import { getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard } from '../../../../../../utils/businessFunction';
 // import FileListContent from './FileListContent';
 import { getFileList } from '@/services/technological/file.js'
@@ -196,6 +196,15 @@ export default class CommunicationFileList extends Component{
         return newIds;
      }
 
+     // 测试
+    //  onClickBtn=(key)=>{
+    //     const { dispatch } = this.props;
+    //     const typeKey = `projectCommunication/${key}`;
+    //     dispatch({
+    //         type: typeKey,
+    //     })
+    //  }
+
     render(){
         const {
             collapseActiveKeys,
@@ -299,6 +308,26 @@ export default class CommunicationFileList extends Component{
                     <Icon type={visible ? 'left' : 'right'} />
                 </div>
 
+                {/* <div
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        right: 0,
+                        width: '200px',
+                        height: '200px',
+                        border: '1px solid red',
+                        ZIndex: '999',
+                        zIndex: '999',
+                        backgroundColor: '#fff',
+                    }}
+                >
+                    这个是测试models
+                    <Button key="add" onClick={()=>this.onClickBtn("add")}>加</Button>
+                    <Button key="minus" onClick={()=>this.onClickBtn('minus')}>减</Button>
+                    count:{this.props.count}
+
+                </div> */}
+
             </div>
         );
     }
@@ -318,12 +347,16 @@ function mapStateToProps({
             is_all_org
         }
     },
+    // projectCommunication:{
+    //     count,
+    // }
 }) {
     return {
         is_show_board_file_area,
         boards_flies,
         currentUserOrganizes,
         is_show_org_name,
-        is_all_org
+        is_all_org,
+        // count
     }
 }
