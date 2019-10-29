@@ -449,12 +449,13 @@ export default class GetRowGantt extends Component {
     )
   }
 
-  renderFoldTaskSummary = ({ list_id, list_data, board_fold_data = {} }) => {
+  renderFoldTaskSummary = ({ list_id, list_data, board_fold_data = {}, group_index }) => {
     return (
       <GetRowSummary
         list_data={list_data}
         itemValue={board_fold_data}
         list_id={list_id}
+        group_index={group_index}
       />
     )
   }
@@ -497,7 +498,7 @@ export default class GetRowGantt extends Component {
         {list_group.map((value, key) => {
           const { list_data = [], list_id, board_fold_data } = value
           if (ganttIsFold({ gantt_board_id, group_view_type })) {
-            return (this.renderFoldTaskSummary({ list_id, list_data, board_fold_data }))
+            return (this.renderFoldTaskSummary({ list_id, list_data, board_fold_data, group_index: key }))
           } else {
             return (
               this.renderNormalTaskList({ list_id, list_data })

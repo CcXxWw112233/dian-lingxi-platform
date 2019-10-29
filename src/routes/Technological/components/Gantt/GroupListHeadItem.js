@@ -201,7 +201,8 @@ export default class GroupListHeadItem extends Component {
     dispatch({
       type: 'gantt/updateDatas',
       payload: {
-        gantt_board_id: list_id
+        gantt_board_id: list_id,
+        list_group: [],
       }
     })
     // dispatch({
@@ -620,8 +621,8 @@ export default class GroupListHeadItem extends Component {
                     {
                       is_privilege == '1' && (
                         <Tooltip title="已开启访问控制" placement="top">
-                        <span className={globalStyle.authTheme} style={{ marginRight: 4, fontSize: 16, color: '#8c8c8c' }}>&#xe7ca;</span>
-                      </Tooltip>
+                          <span className={globalStyle.authTheme} style={{ marginRight: 4, fontSize: 16, color: '#8c8c8c' }}>&#xe7ca;</span>
+                        </Tooltip>
                       )
                     }
                     {local_list_name}
