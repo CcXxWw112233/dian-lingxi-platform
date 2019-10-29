@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
+import { connect } from 'dva'
 import indexStyles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { Modal, Button, Progress, Tooltip, Divider} from 'antd';
 
-export class PayUpgrade extends Component {
+class PayUpgrade extends Component {
 
-    componentWillMount() {
+    componentDidMount() {
         const { dispatch } = this.props;
         const OrganizationId = localStorage.getItem('OrganizationId');
         if (OrganizationId !== '0') {
@@ -116,7 +116,7 @@ export class PayUpgrade extends Component {
                         <div className={indexStyles.upgradeBtnWrapper}>
                             {
                                 paymentInfo.is_free_trial == 0 && (
-<>
+                                    <div>
                                         <Tooltip title="续费功能即将开通">
                                             <Button type="primary" size={'default'} onClick={() => this.toPay()} disabled={true} >续费</Button>
                                         </Tooltip>
@@ -124,7 +124,7 @@ export class PayUpgrade extends Component {
                                         <Tooltip title="成员扩容功能即将开通"> 
                                             <Button type="primary" size={'default'} onClick={() => this.toPay()} disabled={true}>成员扩容</Button>
                                         </Tooltip>
-                                    </>
+                                    </div>
 )}
                             {
                                 paymentInfo.is_free_trial == 1 &&
