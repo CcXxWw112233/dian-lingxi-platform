@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import indexStyles from './index.less'
+import indexStyles from '../../index.less'
 
 export default class GetRowSummary extends Component {
     render() {
@@ -17,14 +17,14 @@ export default class GetRowSummary extends Component {
 
         return (
             <div
-                className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
+                className={`${indexStyles.specific_example}`}
                 style={{
                     left: left, top: top,
                     width: (width || 6) - 6, height: 40,
-                    background: 'red'
-                }}
-
-            >
+                    background: 'red',
+                    padding: 0
+                }}>
+                <div style={{ width: '30%', height: 40, background: '#ffffff' }}></div>
 
             </div>
         )

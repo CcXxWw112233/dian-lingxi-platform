@@ -14,7 +14,7 @@ import GetRowTaskItem from './GetRowTaskItem'
 import { filterDueTimeSpan } from './ganttBusiness'
 import { checkIsHasPermissionInBoard } from '../../../../utils/businessFunction';
 import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE } from '../../../../globalset/js/constant';
-import GetRowSummary from './GetRowSummary.js'
+import GetRowSummary from './components/gattFaceCardItem/GetRowSummary.js'
 
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
@@ -449,22 +449,14 @@ export default class GetRowGantt extends Component {
     )
   }
 
-  renderFoldTaskSummary = ({ list_id, list_data }) => {
+  renderFoldTaskSummary = ({ list_id, list_data, board_fold_data = {} }) => {
     return (
-      list_data.map((value2, key) => {
-        // const { id, left, width, start_time, end_time } = value2
-        const { end_time, left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time, start_time, due_time } = value2
-        const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
-        return (
-          <GetRowSummary
-            key={`${id}_${start_time}_${end_time}_${left}_${top}`}
-            itemValue={value2}
-            list_id={list_id}
-          />
-        )
-      })
+      <GetRowSummary
+        list_data={list_data}
+        itemValue={board_fold_data}
+        list_id={list_id}
+      />
     )
-    
   }
 
   render() {
@@ -503,9 +495,9 @@ export default class GetRowGantt extends Component {
           </div>
         )}
         {list_group.map((value, key) => {
-          const { list_data = [], list_id } = value
-          if(ganttIsFold({ gantt_board_id, group_view_type })) {
-            return (this.renderFoldTaskSummary({ list_id, list_data }))
+          const { list_data = [], list_id, board_fold_data } = value
+          if (ganttIsFold({ gantt_board_id, group_view_type })) {
+            return (this.renderFoldTaskSummary({ list_id, list_data, board_fold_data }))
           } else {
             return (
               this.renderNormalTaskList({ list_id, list_data })
