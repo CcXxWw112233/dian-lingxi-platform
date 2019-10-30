@@ -60,12 +60,12 @@ export default class GetRowSummary extends Component {
 
     hanldListGroupMap = () => {
         const { list_data = [], ceilWidth } = this.props
-        let left_arr = list_data.map(item => item.left)
+        let left_arr = list_data.map(item => (item.left + (item.time_span - 1) * ceilWidth)) //取到截止日期应该处的位置
         left_arr = Array.from(new Set(left_arr))
         const left_map = left_arr.map(item => {
             let list = []
             for (let val of list_data) {
-                if (val.left == item) {
+                if ((val.left + (val.time_span - 1) * ceilWidth) == item) {
                     list.push(val)
                 }
             }
