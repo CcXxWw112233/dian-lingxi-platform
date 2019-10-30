@@ -536,7 +536,12 @@ class FileDetailContent extends React.Component {
   getVersionItemMenuClick = ({ list, file_id, file_name }, e) => {
     e && e.domEvent && e.domEvent.stopPropagation()
     // console.log(list, 'sssss')
-    const { dispatch } = this.props
+    const { dispatch, currentPreviewFileBaseInfo = {}, projectDetailInfoData: { board_id } } = this.props
+    const { privileges, is_privilege } = currentPreviewFileBaseInfo
+    if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
 
     const key = e.key
     switch (key) {
@@ -1455,7 +1460,7 @@ class FileDetailContent extends React.Component {
       },
       beforeUpload(e) {
         if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
-          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          // message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
         if (e.size == 0) {
@@ -1468,6 +1473,10 @@ class FileDetailContent extends React.Component {
         let loading = message.loading('正在上传...', 0)
       },
       onChange({ file, fileList, event }) {
+        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         if (file.status === 'uploading') {
 
         } else {
@@ -1556,11 +1565,11 @@ class FileDetailContent extends React.Component {
 
           <div className={indexStyles.fileDetailHeadRight}>
             <div style={{ position: 'relative' }}>
-              {
+              {/* {
                 checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) ? ('') : (
                   <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
-                )
-              }
+                ) */}
+              
               {seeFileInput === 'fileModule' && (
                 <VersionSwitching {...params}
                   is_show={true}

@@ -113,7 +113,7 @@ export const PROJECT_TEAM_CARD_COMPLETE = 'project:team:card:complete' //完成/
 export const PROJECT_TEAM_CARD_DELETE = 'project:team:card:delete' //删除任务 permission_type=2
 export const PROJECT_TEAM_CARD_GROUP = 'project:team:card:group' //管理任务分组 permission_type=2
 export const PROJECT_TEAM_CARD_COMMENT_PUBLISH = 'project:team:card:comment:publish' //发表评论 permission_type=2
-export const PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD = 'project:team:card:attachment:upload ' // 上传附件 premission_type = 2
+export const PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD = 'project:team:card:attachment:upload' // 上传附件 premission_type = 2
 export const PROJECT_FILES_FILE_INTERVIEW = 'project:files:file:interview' //访问文件 permission_type=2
 export const PROJECT_FILES_FILE_UPLOAD = 'project:files:file:upload' //上传文件 permission_type=2
 export const PROJECT_FILES_FILE_DOWNLOAD = 'project:files:file:download' //下载文件 permission_type=2

@@ -458,6 +458,12 @@ class FileDetailContent extends React.Component {
 
   getVersionItemMenuClick = ({ list, file_id, file_name }, e) => {
     e && e.domEvent && e.domEvent.stopPropagation()
+    const { datas: {board_id} } = this.props.model
+    const { is_privilege, privileges = [] } = this.getFieldFromPropsCurrentPreviewFileData('is_privilege', 'privileges')
+    if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const key = e.key
     switch (key) {
       case '1': // 设置为主版本
@@ -1307,7 +1313,10 @@ class FileDetailContent extends React.Component {
         ...setUploadHeaderBaseInfo({}),
       },
       beforeUpload(e) {
-        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+          // message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)) {
         //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
         //   return false
@@ -1320,10 +1329,11 @@ class FileDetailContent extends React.Component {
           return false
         }
         // console.log('sssss', 2222)
-        let loading = message.loading('正在上传...', 0)
+        // let loading = message.loading('正在上传...', 0)
       },
       onChange({ file, fileList, event }) {
         if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
         if (file.status === 'uploading') {
@@ -1394,11 +1404,11 @@ class FileDetailContent extends React.Component {
 
           <div className={indexStyles.fileDetailHeadRight}>
             <div style={{ position: 'relative' }}>
-              {
+              {/* {
                 checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) ? ('') : (
                   <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
                 )
-              }
+              } */}
               {seeFileInput === 'fileModule' && (
                 <VersionSwitching {...params}
                   is_show={true}
