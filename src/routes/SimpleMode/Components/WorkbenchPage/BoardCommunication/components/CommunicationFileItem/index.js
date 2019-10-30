@@ -1,14 +1,6 @@
 import React, { Component } from 'react';
-import { getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard } from '../../../../../../../utils/businessFunction';
-import { isApiResponseOk } from '../../../../../../../utils/handleResponseData';
-import { getFileList } from '@/services/technological/file.js'
-import globalStyles from '@/globalset/css/globalClassName.less';
 import FolderList from './FolderList';
 import styles from './index.less';
-
-import { Menu, Dropdown, Upload, message } from 'antd';
-import { log } from 'util';
-
 
 export default class CommunicationFileItem extends Component {
     constructor(props) {
@@ -48,13 +40,12 @@ export default class CommunicationFileItem extends Component {
             bread_paths = [],
             file_data = [],
             current_folder_id,
-            show_drag
+            show_drag,
         } = this.state;
         const {
             board_id,
             isShowSub,
         } = this.props;
-        // console.log('ssss', {file_data})
 
         return(
             <div className={styles.CommunicationFileItem}>
@@ -69,7 +60,6 @@ export default class CommunicationFileItem extends Component {
                     queryCommunicationFileData={this.props.queryCommunicationFileData}
                     showUpdatedFileDetail={this.props.showUpdatedFileDetail}
                     hideUpdatedFileDetail={this.props.hideUpdatedFileDetail}
-                    // setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile} />
                 />
 
                 {/* 项目文件 */}

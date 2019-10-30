@@ -1,0 +1,78 @@
+.temporaryFile.changeContentWidth{
+    width: calc(~"100% - 297px");
+    height: 100%;
+    margin-left: 298px;
+}
+.temporaryFile{ /* 临时文件列表 */
+    // .draggerContainerStyle.changeDraggerWidth{
+    //     width: calc(~"100% - 297px");
+    //     height: 100%;
+    //     margin-left: 298px;
+    // }
+    .draggerContainerStyle{
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        .indexCoverWapper {
+            width          : 100%;
+            height         : 100%;
+            display        : flex;
+            flex-direction : column;
+            justify-content: center;
+            text-align     : center;
+
+            .icon {
+                height: 80px;
+            }
+
+            .descriptionWapper {
+                margin: 28px auto;
+                height: 50px;
+
+                .linkTitle {
+                    display    : block;
+                    height     : 26px;
+                    font-size  : 18px;
+                    font-weight: 500;
+                    color      : rgba(0, 0, 0, 0.65);
+                    line-height: 26px;
+
+                    .alink {
+                        color: #1890FF;
+
+                    }
+
+                    .alink:hover {
+                        color: #40A9FF;
+
+                    }
+                }
+
+
+                .detailDescription {
+                    margin-top : 8px;
+                    display    : block;
+                    height     : 24px;
+                    font-size  : 15px;
+                    font-weight: 500;
+                    color      : rgba(0, 0, 0, 0.45);
+                    line-height: 24px;
+                }
+            }
+
+            .iconDescription {
+                margin-left: 12px;
+                font-size  : 20px;
+                font-family: PingFangSC-Medium;
+                font-weight: 500;
+                color      : rgba(24, 144, 255, 1);
+            }
+        }
+
+        .draging {
+            background   : rgba(230, 247, 255, 0.8);
+            border-radius: 8px 8px 0px 0px;
+            border       : 1px dashed rgba(24, 144, 255, 1);
+        }
+    }
+}

@@ -136,6 +136,7 @@ const Routers = function ({ history, app }) {
       import('./models/technological/cooperationPush'),
       import('./models/technological/globalSearch'),
       import('./models/technological/workbench/gantt'),
+      import('./models/technological/workbench/projectCommunication'),
       import('./models/technological/public/milestoneDetail'),
       import('./models/technological/public/publicModalComment'),
       import('./models/technological/public/publicTaskDetailModal'),

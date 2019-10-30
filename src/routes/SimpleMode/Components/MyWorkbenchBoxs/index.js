@@ -78,6 +78,12 @@ class MyWorkbenchBoxs extends Component {
             current_board: {}
           }
         });
+        dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            gantt_board_id: 0,
+          }
+        });
       } else {
         const selectBoard = projectList.filter(item => item.board_id === data.key);
         if (!selectBoard && selectBoard.length == 0) {
@@ -99,13 +105,20 @@ class MyWorkbenchBoxs extends Component {
             current_board: data.key
           }
         });
+
+        dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            gantt_board_id: data.key,
+          }
+        });
       }
-      dispatch({
-        type: 'gantt/updateDatas',
-        payload: {
-          gantt_board_id: data.key,
-        }
-      })
+      // dispatch({
+      //   type: 'gantt/updateDatas',
+      //   payload: {
+      //     gantt_board_id: data.key,
+      //   }
+      // })
 
     }
 

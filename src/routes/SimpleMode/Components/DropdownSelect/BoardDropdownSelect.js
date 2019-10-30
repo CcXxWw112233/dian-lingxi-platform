@@ -15,16 +15,16 @@ class BoardDropdownSelect extends Component {
     };
   }
 
-  handelBoardChangeCalback = (board_id) => {
+  // handelBoardChangeCalback = (board_id) => {
     
-    const { currentSelectedWorkbenchBox: { code }, dispatch } = this.props
+  //   const { currentSelectedWorkbenchBox: { code }, dispatch } = this.props
 
-    if ('board:chat' == code) {
-      beforeChangeCommunicationUpdateFileList({ board_id, dispatch });
-    } else if ('board:plans' == code) {
-      beforeChangeBoardUpdateGantt({ board_id, dispatch })
-    }
-  }
+  //   if ('board:chat' == code) {
+  //     beforeChangeCommunicationUpdateFileList({ board_id, dispatch });
+  //   } else if ('board:plans' == code) {
+  //     beforeChangeBoardUpdateGantt({ board_id, dispatch })
+  //   }
+  // }
 
   onSelectBoard = (data) => {
     // console.log(data, 'bbbbb');
@@ -49,6 +49,12 @@ class BoardDropdownSelect extends Component {
             current_board: {}
           }
         });
+        dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            gantt_board_id: 0,
+          }
+        });
       } else {
         const selectBoard = projectList.filter(item => item.board_id === data.key);
         if (!selectBoard && selectBoard.length == 0) {
@@ -70,9 +76,15 @@ class BoardDropdownSelect extends Component {
             current_board: data.key
           }
         });
+        dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            gantt_board_id: data.key,
+          }
+        });
 
       }
-      this.handelBoardChangeCalback(data.key)
+      // this.handelBoardChangeCalback(data.key)
     }
 
   }

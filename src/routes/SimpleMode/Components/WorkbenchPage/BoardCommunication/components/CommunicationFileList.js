@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Collapse, Icon, message } from 'antd';
+import { Collapse, Icon, message, Button } from 'antd';
 import { getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard } from '../../../../../../utils/businessFunction';
 // import FileListContent from './FileListContent';
 import { getFileList } from '@/services/technological/file.js'
@@ -17,12 +17,6 @@ const { Panel } = Collapse;
 export default class CommunicationFileList extends Component{
     constructor(props){
         super(props);
-        // const first_paths_item = {
-        //     name: board_name,
-        //     id: board_id,
-        //     type: 'board',
-        //     folder_id
-        // }
         this.state = {
             collapseActiveKeys: [], // 折叠面板展示列keys
             visible: true, // 是否显示/隐藏文件列表，默认显示
@@ -158,7 +152,6 @@ export default class CommunicationFileList extends Component{
 
     panelOnClick=(item)=>{
         this.setState({currentOrg_id: item.org_id});
-        // debugger;
     }
 
     // 返回上一个
@@ -182,19 +175,34 @@ export default class CommunicationFileList extends Component{
         }
     }
 
-    collapseOnchange=(keys)=>{
-        console.log('eee', keys);
+    collapseOnchange=(keys,)=>{
         this.setState({ collapseActiveKeys: keys });
     }
 
-    // ss = (id) => {
-    //     debugger;
-    //     const arr = boards_flies.map(item => {
-    //         return `${item.id}_${item.file_data.length}`
+    // 处理数据更新后，折叠面板的ActiveKeys 保持当前，不折叠
+     setNewActiveKeys = (id) => {
+        const { boards_flies } = this.props;
+        var ids = id.map((item)=>{
+            return item.split("_")[0];
+        })
+        const newIds= [];
+        ids.forEach((item)=>{
+            boards_flies.forEach((boardItem)=>{
+                if(boardItem.id === item){
+                    newIds.push(`${boardItem.id}_${boardItem.file_data.length}`);
+                }
+            })
+        })
+        return newIds;
+     }
+
+     // 测试
+    //  onClickBtn=(key)=>{
+    //     const { dispatch } = this.props;
+    //     const typeKey = `projectCommunication/${key}`;
+    //     dispatch({
+    //         type: typeKey,
     //     })
- 
-    //     const fag = arr.find(item => item.indexOf(id) != -1)
-    //     return fag
     //  }
 
     render(){
@@ -217,7 +225,6 @@ export default class CommunicationFileList extends Component{
             currentUserOrganizes,
             selectBoardFileModalVisible,
         } = this.props;
-        // console.log('新的数据', {boards_flies})
         const isShowCompanyName = is_show_org_name && is_all_org; // 是否显示归属组织
         return(
             <div className={styles.communicationFileList}>
@@ -232,9 +239,8 @@ export default class CommunicationFileList extends Component{
                                     !isShowSub ? (
                                         <Collapse
                                             bordered={false}
-                                            // defaultActiveKey={boards_flies && boards_flies[0] && [boards_flies[0].id]}
                                             defaultActiveKey={collapseActiveKeys}
-                                            // activeKey={this.ss(collapseActiveKeys)}
+                                            activeKey={this.setNewActiveKeys(collapseActiveKeys)}
                                             expandIcon={({ isActive }) => <Icon type="caret-right" rotate={isActive ? 90 : 0} />}
                                             onChange={this.collapseOnchange}
                                         >
@@ -242,7 +248,6 @@ export default class CommunicationFileList extends Component{
                                                 boards_flies && boards_flies.map((item, key) => {
                                                     const { board_name, id, type, file_data = [] } = item;
                                                     return(
-                                                        // <Panel header={this.showHeader(item,isShowCompanyName)} key={item.id} onClick={()=>this.panelOnClick(item)}>
                                                         <Panel header={this.showHeader(item, isShowCompanyName)} key={`${item.id}_${item.file_data.length}`} onClick={()=>this.panelOnClick(item)}>
                                                             <CommunicationFileItem
                                                                 isShowSub={isShowSub}
@@ -294,7 +299,7 @@ export default class CommunicationFileList extends Component{
                     )
                 }
 
-                {/* 控制列表是否显示按钮 */}
+                {/* 控制列表是否显示的控制按钮 */}
                 <div
                     className={styles.operationBtn}
                     style={{ left: visible ? '299px' : '0'}}
@@ -302,6 +307,26 @@ export default class CommunicationFileList extends Component{
                 >
                     <Icon type={visible ? 'left' : 'right'} />
                 </div>
+
+                {/* <div
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        right: 0,
+                        width: '200px',
+                        height: '200px',
+                        border: '1px solid red',
+                        ZIndex: '999',
+                        zIndex: '999',
+                        backgroundColor: '#fff',
+                    }}
+                >
+                    这个是测试models
+                    <Button key="add" onClick={()=>this.onClickBtn("add")}>加</Button>
+                    <Button key="minus" onClick={()=>this.onClickBtn('minus')}>减</Button>
+                    count:{this.props.count}
+
+                </div> */}
 
             </div>
         );
@@ -322,12 +347,16 @@ function mapStateToProps({
             is_all_org
         }
     },
+    // projectCommunication:{
+    //     count,
+    // }
 }) {
     return {
         is_show_board_file_area,
         boards_flies,
         currentUserOrganizes,
         is_show_org_name,
-        is_all_org
+        is_all_org,
+        // count
     }
 }
