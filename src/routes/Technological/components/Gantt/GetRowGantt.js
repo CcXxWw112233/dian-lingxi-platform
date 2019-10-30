@@ -455,6 +455,7 @@ export default class GetRowGantt extends Component {
         list_data={list_data}
         itemValue={board_fold_data}
         list_id={list_id}
+        key={list_id}
         group_index={group_index}
       />
     )

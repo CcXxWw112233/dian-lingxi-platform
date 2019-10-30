@@ -2,12 +2,17 @@ import React, { Component } from 'react'
 import indexStyles from '../../index.less'
 import styles from './index.less'
 import { connect } from 'dva'
+import CardDropDetail from './CardDropDetail.js'
+import { Popover } from 'antd'
+import globalStyles from '@/globalset/css/globalClassName.less'
+
 @connect(mapStateToProps)
 export default class GetRowSummary extends Component {
 
     setBgSpecific = () => {
         let time_bg_color = ''
         let percent_class = ''
+        let is_due = false
         const { itemValue: { end_time }, list_data = [] } = this.props
         const now = new Date().getTime()
         const total = list_data.length
@@ -17,12 +22,13 @@ export default class GetRowSummary extends Component {
             time_bg_color = '#BFBFBF'
             percent_class = styles.board_fold_complete
         } else {
-            if (end_time <= now) { //项目汇总时间在当前之前
-                time_bg_color = '#91D5FF'
-                percent_class = styles.board_fold_ding
-            } else {
+            if (end_time <= now) { //项目汇总时间在当前之前, 逾期
                 time_bg_color = '#FFCCC7'
                 percent_class = styles.board_fold_due
+                is_due = true
+            } else {
+                time_bg_color = '#91D5FF'
+                percent_class = styles.board_fold_ding
             }
         }
 
@@ -30,6 +36,7 @@ export default class GetRowSummary extends Component {
             percent: `${(realize_count / total) * 100}%`,
             time_bg_color,
             percent_class,
+            is_due
         }
     }
 
@@ -76,25 +83,33 @@ export default class GetRowSummary extends Component {
         const { itemValue: { top } } = this.props
 
         const left_map = this.hanldListGroupMap()
-        console.log('sssss', left_map)
+
+        if (!this.setBgSpecific().is_due) {
+            return <React.Fragment></React.Fragment>
+        }
 
         return (
-            left_map.map(item => {
+            left_map.map((item, key) => {
                 const { list = [], left } = item
+                const realize_arr = list.filter(item => item.is_realize != '1')
                 return (
-                    <div
-                        key={left}
-                        style={{
-                            width: 14,
-                            height: 14,
-                            borderRadius: 14,
-                            background: '#FF7875',
-                            position: 'absolute',
-                            cursor: 'pointer',
-                            left: left + (ceilWidth - 14) / 2,
-                            top: top - 18,
-                            zIndex: 2
-                        }}>{list.length}</div>
+                    <Popover placement="bottom" content={<CardDropDetail list={realize_arr} />} key={key} >
+                        <div
+                            key={left}
+                            className={globalStyles.authTheme}
+                            style={{
+                                width: 14,
+                                height: 14,
+                                borderRadius: 14,
+                                // background: '#FF7875',
+                                color: '#FF7875',
+                                position: 'absolute',
+                                cursor: 'pointer',
+                                left: left + (ceilWidth - 14) / 2,
+                                top: top - 20,
+                                zIndex: 1
+                            }}>&#xe848;</div>
+                    </Popover>
                 )
             })
         )
