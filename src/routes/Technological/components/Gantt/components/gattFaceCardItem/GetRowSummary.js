@@ -131,6 +131,7 @@ export default class GetRowSummary extends Component {
                         width: (width || 6) - 6, height: 40,
                         background: this.setBgSpecific().time_bg_color,
                         padding: 0,
+                        zIndex: 0,
                     }}>
                     <div
                         data-targetclassname="specific_example"
