@@ -1282,27 +1282,9 @@ export default class MainContent extends Component {
               <div style={{position: 'relative'}} className={mainContentStyles.field_right}>
                 <div className={mainContentStyles.pub_hover}>
                   {
-                    label_data && label_data.length ? (
-                      <div style={{position: 'relative'}}>
-                        <Dropdown
-                          visible={visible}
-                          getPopupContainer={triggerNode => triggerNode.parentNode}
-                          trigger={['click']}
-                          onVisibleChange={(visible) => { this.handleVisibleChange(visible) }}
-                          overlayClassName={mainContentStyles.labelDataWrapper}
-                          overlay={
-                            <LabelDataComponent
-                              board_id={board_id}
-                              listData={boardTagList} 
-                              searchName={'name'} currentSelect={label_data}
-                              handleAddBoardTag={this.handleAddBoardTag}
-                              handleUpdateBoardTag={this.handleUpdateBoardTag}
-                              handleRemoveBoardTag={this.handleRemoveBoardTag}
-                              handleChgSelectedLabel={this.handleChgSelectedLabel}
-                              handleClose={this.handleClose}
-                            />
-                          }
-                        >
+                    (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                      (
+                        label_data && label_data.length ? (
                           <div>
                             {
                               label_data.map(item => {
@@ -1310,43 +1292,87 @@ export default class MainContent extends Component {
                                   <span className={`${mainContentStyles.labelDelItem}`}>
                                     <span key={`${item.label_id}`} style={{background: `rgba(${item.label_color}, 1)`}} className={`${mainContentStyles.normal_label}`}>
                                       <span>{item.label_name}</span>
-                                      <span onClick={(e) => { this.handleRemoveTaskTag(e, item.label_id) }} className={mainContentStyles.labelDelIcon}></span>
+                                      {/* <span onClick={(e) => { this.handleRemoveTaskTag(e, item.label_id) }} className={mainContentStyles.labelDelIcon}></span> */}
                                     </span>
                                   </span>
                                 )
                               })
                             }
                           </div>
-                        </Dropdown>
-                      </div>
+                        ) : (
+                          <div>暂无</div>
+                        )
+                      )
                     ) : (
-                      <div style={{position: 'relative'}}>
-                        <Dropdown 
-                          visible={visible}
-                          getPopupContainer={triggerNode => triggerNode.parentNode}
-                          trigger={['click']}
-                          onVisibleChange={(visible) => { this.handleVisibleChange(visible) }}
-                          overlayClassName={mainContentStyles.labelDataWrapper}
-                          overlay={
-                            <LabelDataComponent
-                              board_id={board_id}
-                              listData={boardTagList} 
-                              searchName={'name'} currentSelect={label_data}
-                              handleAddBoardTag={this.handleAddBoardTag}
-                              handleUpdateBoardTag={this.handleUpdateBoardTag}
-                              handleRemoveBoardTag={this.handleRemoveBoardTag}
-                              handleChgSelectedLabel={this.handleChgSelectedLabel}
-                              handleClose={this.handleClose}
-                            />
-                          }
-                        >
-                          <div>
-                            <span>添加标签</span>
+                      
+                        label_data && label_data.length ? (
+                          <div style={{position: 'relative'}}>
+                            <Dropdown
+                              visible={visible}
+                              getPopupContainer={triggerNode => triggerNode.parentNode}
+                              trigger={['click']}
+                              onVisibleChange={(visible) => { this.handleVisibleChange(visible) }}
+                              overlayClassName={mainContentStyles.labelDataWrapper}
+                              overlay={
+                                <LabelDataComponent
+                                  board_id={board_id}
+                                  listData={boardTagList} 
+                                  searchName={'name'} currentSelect={label_data}
+                                  handleAddBoardTag={this.handleAddBoardTag}
+                                  handleUpdateBoardTag={this.handleUpdateBoardTag}
+                                  handleRemoveBoardTag={this.handleRemoveBoardTag}
+                                  handleChgSelectedLabel={this.handleChgSelectedLabel}
+                                  handleClose={this.handleClose}
+                                />
+                              }
+                            >
+                              <div>
+                                {
+                                  label_data.map(item => {
+                                    return (
+                                      <span className={`${mainContentStyles.labelDelItem}`}>
+                                        <span key={`${item.label_id}`} style={{background: `rgba(${item.label_color}, 1)`}} className={`${mainContentStyles.normal_label}`}>
+                                          <span>{item.label_name}</span>
+                                          <span onClick={(e) => { this.handleRemoveTaskTag(e, item.label_id) }} className={mainContentStyles.labelDelIcon}></span>
+                                        </span>
+                                      </span>
+                                    )
+                                  })
+                                }
+                              </div>
+                            </Dropdown>
                           </div>
-                        </Dropdown>
-                      </div>
+                        ) : (
+                          <div style={{position: 'relative'}}>
+                            <Dropdown 
+                              visible={visible}
+                              getPopupContainer={triggerNode => triggerNode.parentNode}
+                              trigger={['click']}
+                              onVisibleChange={(visible) => { this.handleVisibleChange(visible) }}
+                              overlayClassName={mainContentStyles.labelDataWrapper}
+                              overlay={
+                                <LabelDataComponent
+                                  board_id={board_id}
+                                  listData={boardTagList} 
+                                  searchName={'name'} currentSelect={label_data}
+                                  handleAddBoardTag={this.handleAddBoardTag}
+                                  handleUpdateBoardTag={this.handleUpdateBoardTag}
+                                  handleRemoveBoardTag={this.handleRemoveBoardTag}
+                                  handleChgSelectedLabel={this.handleChgSelectedLabel}
+                                  handleClose={this.handleClose}
+                                />
+                              }
+                            >
+                              <div>
+                                <span>添加标签</span>
+                              </div>
+                            </Dropdown>
+                          </div>
+                        )
+                      
                     )
                   }
+
                 </div>
               </div>
             </div>

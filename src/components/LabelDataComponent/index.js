@@ -29,7 +29,7 @@ export default class LabelDataComponent extends React.Component {
       selectedKeys
     }, () => {
       this.setState({
-        resultArr: keyWord ? this.fuzzyQuery(listData, searchName, keyWord) : listData,
+        resultArr: this.fuzzyQuery(listData, searchName, keyWord),
       })
     })
   }
@@ -68,12 +68,17 @@ export default class LabelDataComponent extends React.Component {
 
   // 模糊查询
   fuzzyQuery = (list, searchName, keyWord) => {
-    var arr = [];
-    for (var i = 0; i < list.length; i++) {
-      if (list[i][searchName].indexOf(keyWord) !== -1) {
-        arr.push(list[i]);
-      }
+    let arr = []
+    if (!!keyWord) {
+      arr = list.filter((item, index) => list[index][searchName].indexOf(keyWord) !== -1)
+    } else {
+      arr = list
     }
+    // for (var i = 0; i < list.length; i++) {
+    //   if (list[i][searchName].indexOf(keyWord) !== -1) {
+    //     arr.push(list[i]);
+    //   }
+    // }
     //添加任务执行人后往前插入
     const { selectedKeys } = this.state
     for (let i = 0; i < arr.length; i++) {
