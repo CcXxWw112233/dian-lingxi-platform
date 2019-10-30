@@ -1,4 +1,4 @@
-import { getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask, deleteChirldTask, boardAppRelaMiletones, 
+import { getCardWithAttributesDetail, setCardAttributes, getCardAttributesList, getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask, deleteChirldTask, boardAppRelaMiletones, 
   boardAppCancelRelaMiletones, getBoardTagList, addBoardTag, deleteBoardTag, updateBoardTag, addTaskTag, removeTaskTag } from '../../../services/technological/task'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
@@ -67,6 +67,40 @@ export default {
     },
   },
   effects: {
+    // 获取任务详情 new
+    * getCardWithAttributesDetail({ payload }, { call, put }) {
+      const { id } = payload
+      let res = yield call(getCardWithAttributesDetail, { id })
+      if (isApiResponseOk(res)) {
+        // console.log(res)
+      } else {
+        message.warn(res.message)
+      }
+    },
+    // 获取默认属性列表字段
+    * getCardAttributesList({ payload }, { call, put }) {
+      let res = yield call(getCardAttributesList)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            attributesList: res.data
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+    },
+    // 设置卡片属性
+    * setCardAttributes({ payload }, { call, put }) {
+      const { property_id, card_id } = payload
+      let res = yield call(setCardAttributes,{ card_id, property_id })
+      if (isApiResponseOk(res)) {
+        // console.log(res, 'ssssss')
+      } else {
+        message.warn(res.message)
+      }
+    },
     /**
      * 获取任务详情: 需要参数当前任务id
      * @param {String} id 当前任务的id 

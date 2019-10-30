@@ -354,6 +354,34 @@ export async function getCardDetail(params) {
   });
 }
 
+// 获取新的任务详情
+export async function getCardWithAttributesDetail(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/card/detail`,
+    method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
+    params
+  })
+}
+
+// 获取任务详情中属性字段默认列表
+export async function getCardAttributesList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/properties`,
+    method: 'GET',
+    params
+  })
+}
+
+// 任务详细添加属性字段
+export async function setCardAttributes(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/property`,
+    method: 'POST',
+    data
+  })
+}
+
 //获取任务详情 ---- 解决分享出去之后的任务详情没有权限 ----暂时使用(10月14日)
 export async function getShareCardDetail(params) {
   return request({

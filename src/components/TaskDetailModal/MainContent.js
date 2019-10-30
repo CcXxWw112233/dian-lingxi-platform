@@ -12,6 +12,7 @@ import AppendSubTask from './components/AppendSubTask'
 import PreviewFileModal from '@/routes/Technological/components/ProjectDetail/TaskItemComponent/PreviewFileModal'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import InformRemind from '@/components/InformRemind'
+import DiffCategoriesAttributeComponent from './components/DiffCategoriesAttributeComponent'
 import { timestampFormat, timestampToTime, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal } from '@/utils/util'
 import { getSubfixName } from "@/utils/businessFunction";
 import {
@@ -35,20 +36,20 @@ export default class MainContent extends Component {
    * 异步获取项目标签列表
    * @param {String} board_id 当前的项目ID
    */
-  getInitBoardTag = (board_id) => {
-    getBoardTagList({ board_id }).then(res => {
-      if (isApiResponseOk(res)) {
-        this.props.dispatch({
-          type: 'publicTaskDetailModal/updateDatas',
-          payload: {
-            boardTagList: res.data
-          }
-        })
-      } else {
-        message.warn(res.message)
-      }
-    })
-  }
+  // getInitBoardTag = (board_id) => {
+  //   getBoardTagList({ board_id }).then(res => {
+  //     if (isApiResponseOk(res)) {
+  //       this.props.dispatch({
+  //         type: 'publicTaskDetailModal/updateDatas',
+  //         payload: {
+  //           boardTagList: res.data
+  //         }
+  //       })
+  //     } else {
+  //       message.warn(res.message)
+  //     }
+  //   })
+  // }
 
   componentDidMount() {
     const { card_id } = this.props
@@ -57,6 +58,17 @@ export default class MainContent extends Component {
       type: 'publicTaskDetailModal/getCardDetail',
       payload: {
         id: card_id
+      }
+    })
+    this.props.dispatch({
+      type: 'publicTaskDetailModal/getCardWithAttributesDetail',
+      payload: {
+        id: card_id
+      }
+    })
+    this.props.dispatch({
+      type: 'publicTaskDetailModal/getCardAttributesList',
+      payload: {
       }
     })
   }
@@ -951,7 +963,7 @@ export default class MainContent extends Component {
   }
 
   render() {
-    const { drawContent = {}, is_edit_title, projectDetailInfoData = {}, dispatch, handleTaskDetailChange, isInOpenFile, boardTagList = [] } = this.props
+    const { drawContent = {}, attributesList = [], is_edit_title, projectDetailInfoData = {}, dispatch, handleTaskDetailChange, isInOpenFile, boardTagList = [] } = this.props
     const { new_userInfo_data = [], visible = false  } = this.state
     const { data = [] } = projectDetailInfoData
     const {
@@ -1547,7 +1559,30 @@ export default class MainContent extends Component {
             </div>
           </div>
           {/* 子任务字段 E */}
-
+          {/* 添加字段 S */}
+          <div>
+            <div className={mainContentStyles.field_content}>
+                <div className={mainContentStyles.field_left}>
+                  <span className={globalStyles.authTheme}>&#xe8fe;</span>
+                  <span>添加属性</span>
+                </div>
+                <div className={mainContentStyles.field_right}>
+                  <div style={{position: 'relative'}} className={mainContentStyles.pub_hover}>
+                    <Dropdown overlayClassName={mainContentStyles.overlay_attribute} trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} 
+                      overlay={
+                        <DiffCategoriesAttributeComponent
+                          card_id={card_id} 
+                          attributesList={attributesList}
+                        />
+                      }
+                    >
+                      <div><span>选择属性</span></div>
+                    </Dropdown>
+                  </div>
+                </div>
+            </div>
+          </div>
+          {/* 添加字段 E */}
         </div>
 
         {/*外部附件引入开始 */}
@@ -1561,7 +1596,7 @@ export default class MainContent extends Component {
 
 // 只关联public弹窗内的数据
 function mapStateToProps({
-  publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id, boardTagList = [] },
+  publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id, boardTagList = [], attributesList = [] },
   projectDetail: { datas: { projectDetailInfoData = {} } },
   projectDetailFile: {
     datas: {
@@ -1569,5 +1604,5 @@ function mapStateToProps({
     }
   }
 }) {
-  return { drawContent, is_edit_title, card_id, boardTagList, projectDetailInfoData, isInOpenFile }
+  return { drawContent, is_edit_title, card_id, boardTagList, attributesList, projectDetailInfoData, isInOpenFile }
 }
