@@ -10,7 +10,7 @@ import {
 } from "@/utils/businessFunction";
 import Cookies from 'js-cookie'
 import coverIconSrc from '@/assets/simplemode/communication_cover_icon@2x.png';
-import { Upload, Button, Icon } from 'antd';
+import { Upload, Button, Icon, message } from 'antd';
 import indexStyles from './index.less';
 
 const { Dragger } = Upload;
