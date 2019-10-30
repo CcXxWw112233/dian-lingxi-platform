@@ -14,7 +14,6 @@ export default {
   state: {
     is_edit_title: false, // 是否编辑标题 默认为 false 不显示
     is_show_principal: false, // 是否显示负责人 默认为 false 不显示
-    is_selected_all: false, // 是否全选 需要后台支持
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -91,13 +90,6 @@ export default {
             id: res.data.board_id
           }
         })
-        // 调用查询标签列表
-        // yield put({
-        //   type: 'getBoardTagList',
-        //   payload: {
-        //     board_id: res.data.board_id
-        //   }
-        // })
       }
     },
     // 获取项目标签

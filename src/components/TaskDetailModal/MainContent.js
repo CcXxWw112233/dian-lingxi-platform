@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
-import { Icon, message, Dropdown, Menu, DatePicker, Button,Modal} from 'antd'
+import { Icon, message, Dropdown, Menu, DatePicker,Modal} from 'antd'
 import mainContentStyles from './MainContent.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
@@ -31,12 +31,13 @@ export default class MainContent extends Component {
     previewFileModalVisibile: false,
   }
 
+  /**
+   * 异步获取项目标签列表
+   * @param {String} board_id 当前的项目ID
+   */
   getInitBoardTag = (board_id) => {
     getBoardTagList({ board_id }).then(res => {
       if (isApiResponseOk(res)) {
-        // this.setState({
-        //   boardTagList: res.data
-        // })
         this.props.dispatch({
           type: 'publicTaskDetailModal/updateDatas',
           payload: {
@@ -50,24 +51,28 @@ export default class MainContent extends Component {
   }
 
   componentDidMount() {
-    const { card_id, projectDetailInfoData: { board_id } } = this.props
+    const { card_id } = this.props
     if (!card_id) return false
     this.props.dispatch({
       type: 'publicTaskDetailModal/getCardDetail',
       payload: {
-        id: card_id,
-        calback: () => {
-          this.getInitBoardTag(board_id)
-        }
+        id: card_id
       }
     })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { projectDetailInfoData = {} } = nextProps
+    const { projectDetailInfoData: oldInfoData = {} } = this.props
+    if (projectDetailInfoData.board_id != oldInfoData.board_id) {
+      this.getInitBoardTag(projectDetailInfoData.board_id)
+    }
   }
 
     // 检测不同类型的权限控制类型的是否显示
   checkDiffCategoriesAuthoritiesIsVisible = () => {
     const { drawContent = {} } = this.props
-    const { is_realize = '0', card_id, privileges = [], board_id, is_privilege, executors = [] } = drawContent
-    let flag
+    const { privileges = [], board_id, is_privilege, executors = [] } = drawContent
     return {
       'visit_control_edit': function () {// 是否是有编辑权限
         return checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))
@@ -78,15 +83,22 @@ export default class MainContent extends Component {
     }
   }
 
+  // 更新drawContent中的数据以及调用父级列表更新数据
+  updateDrawContentWithUpdateParentListDatas = ({ drawContent, card_id }) => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'publicTaskDetailModal/updateDatas',
+      payload: {
+        drawContent
+      }
+    })
+    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent, card_id})
+  }
+
   // 设置卡片是否完成 S
   setIsCheck = () => {
     const { drawContent = {}, } = this.props
     const { is_realize = '0', card_id, privileges = [], board_id, is_privilege, executors = [] } = drawContent
-    // 这是加上访问控制权限, 判断是否可完成
-    // if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))) {
-    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-    //   return false
-    // }
     if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -202,29 +214,14 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent: new_drawContent
-        }
-      })
-      // 需要调用父级的列表
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+      this.updateDrawContentWithUpdateParentListDatas({drawContent: new_drawContent, card_id})
     })
-
-
   }
   // 设置是否完成状态的下拉回调 E
 
-  // 设置添加属性的下拉回调 S
-  handleIsAddAtribute = (e) => {
-
-  }
-  // 设置添加属性的下拉回调 E
-
   // 添加执行人的回调 S
   chirldrenTaskChargeChange = (data) => {
-    const { drawContent = {}, projectDetailInfoData = {}, dispatch, is_selected_all } = this.props
+    const { drawContent = {}, projectDetailInfoData = {}, dispatch } = this.props
     const { card_id } = drawContent
 
     // 多个任务执行人
@@ -243,51 +240,24 @@ export default class MainContent extends Component {
     new_drawContent['executors'] = newExecutors
 
     if (type == 'add') {
-      if (selectedKeys.length == excutorData.length) { // 表示所有的成员选上了
-        dispatch({
-          type: 'publicTaskDetailModal/updateDatas',
-          payload: {
-            is_selected_all: true
-          }
-        })
-      }
       addTaskExecutor({ card_id, executor: key }).then(res => {
         if (isApiResponseOk(res)) {
           message.success(`已成功设置执行人`, MESSAGE_DURATION_TIME)
-          dispatch({
-            type: 'publicTaskDetailModal/updateDatas',
-            payload: {
-              drawContent: new_drawContent
-            }
-          })
-          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+          this.updateDrawContentWithUpdateParentListDatas({drawContent: new_drawContent, card_id})
         } else {
           message.warn(res.message, MESSAGE_DURATION_TIME)
         }
       })
     } else if (type == 'remove') {
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          is_selected_all: false
-        }
-      })
       removeTaskExecutor({ card_id, executor: key }).then(res => {
         if (isApiResponseOk(res)) {
           message.success(`已成功删除执行人`, MESSAGE_DURATION_TIME)
-          dispatch({
-            type: 'publicTaskDetailModal/updateDatas',
-            payload: {
-              drawContent: new_drawContent
-            }
-          })
-          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+          this.updateDrawContentWithUpdateParentListDatas({drawContent: new_drawContent, card_id})
         } else {
           message.warn(res.message, MESSAGE_DURATION_TIME)
         }
       })
     }
-
   }
   // 添加执行人的回调 E
 
@@ -307,13 +277,7 @@ export default class MainContent extends Component {
     removeTaskExecutor({ card_id, executor: shouldDeleteItem }).then(res => {
       if (isApiResponseOk(res)) {
         message.success(`已成功删除执行人`, MESSAGE_DURATION_TIME)
-        dispatch({
-          type: 'publicTaskDetailModal/updateDatas',
-          payload: {
-            drawContent: new_drawContent
-          }
-        })
-        this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+        this.updateDrawContentWithUpdateParentListDatas({drawContent: new_drawContent, card_id})
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -321,45 +285,8 @@ export default class MainContent extends Component {
   }
   // 移除执行人的回调 E
 
-  // 选择全体成员的回调
-  // handleSelectedAllBtn = (data) => {
-  //   const { drawContent = {}, projectDetailInfoData = {}, dispatch } = this.props
-  //   const { card_id } = drawContent
-  //   const excutorData = projectDetailInfoData['data'] //所有的人
-  //   let newExecutors = []
-  //   const { selectedKeys = [], type, key } = data
-  //   if (type == 'add') {
-  //     newExecutors.push(...excutorData)
-  //   }
-  //   drawContent['executors'] = newExecutors
-  //   dispatch({
-  //     type: 'publicTaskDetailModal/updateDatas',
-  //     payload: {
-  //       drawContent,
-  //     }
-  //   })
-  //   this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
-  //   if (type == 'add') {
-  //     dispatch({
-  //       type: 'publicTaskDetailModal/addTaskExecutor',
-  //       payload: {
-  //         card_id,
-  //         executor: key
-  //       }
-  //     })
-  //   } else if (type == 'remove') {
-  //     // dispatch({
-  //     //   type: 'publicTaskDetailModal/removeTaskExecutor',
-  //     //   payload: {
-  //     //     card_id,
-  //     //     user_id:''
-  //     //   }
-  //     // })
-  //   }
-  // }
-
+  // 编辑富文本事件 S
   saveBrafitEdit = (brafitEditHtml) => {
-    // console.log("brafitEditHtml", brafitEditHtml);
     const { drawContent = {}, dispatch } = this.props;
 
     let { card_id } = drawContent
@@ -372,18 +299,6 @@ export default class MainContent extends Component {
     }
 
     drawContent['description'] = brafitEditHtml;
-    // dispatch({
-    //   type: 'publicTaskDetailModal/updateDatas',
-    //   payload: {
-    //     drawContent
-    //   }
-    // })
-    // dispatch({
-    //   type: 'publicTaskDetailModal/updateTask',
-    //   payload: {
-    //     updateObj
-    //   }
-    // })
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/updateTask',
@@ -396,17 +311,12 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent,
-        }
-      })
-      // 需要调用父级的列表
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
+      this.updateDrawContentWithUpdateParentListDatas({drawContent, card_id})
     })
   }
+  // 编辑富文本事件 E
 
+  // 获取上传文件时, 当前操作人 S
   showMemberName = (userId) => {
     const { projectDetailInfoData = {} } = this.props
     const { data = [] } = projectDetailInfoData;
@@ -417,7 +327,9 @@ export default class MainContent extends Component {
     }
     return;
   }
+  // 获取上传文件时, 当前操作人 E
 
+  // 上传文件 事件 S
   onUploadFileListChange = (data) => {
     let { drawContent = {}, dispatch } = this.props;
     if (data && data.length > 0) {
@@ -430,8 +342,10 @@ export default class MainContent extends Component {
       })
     }
   }
-  onMilestoneSelectedChange = (data) => {
+  // 上传文件 事件 E
 
+  // 里程碑选择回调 S
+  onMilestoneSelectedChange = (data) => {
     const { dispatch, drawContent } = this.props;
     const { card_id, type, due_time } = drawContent
     const { key, type: actionType, info } = data;
@@ -442,7 +356,6 @@ export default class MainContent extends Component {
       message.warn('关联里程碑的截止日期不能小于任务的截止日期')
       return
     }
-    // console.log("里程碑", data);
 
     if (actionType === 'add') {
       const params = {
@@ -513,6 +426,7 @@ export default class MainContent extends Component {
       })
     }
   }
+  // 里程碑选择回调 E
 
   // 比较开始和结束时间
   compareStartDueTime = (start_time, due_time) => {
@@ -549,7 +463,7 @@ export default class MainContent extends Component {
     return Number(start_time.valueOf()) / 1000 >= newDueTime//Number(due_time).valueOf();
   }
 
-  // 开始时间
+  // 开始时间 chg事件 S
   startDatePickerChange(timeString) {
     const { drawContent = {}, dispatch } = this.props
     const start_timeStamp = timeToTimestamp(timeString)
@@ -575,18 +489,12 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent: new_drawContent
-        }
-      })
-      // 需要调用父级的列表
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
+      this.updateDrawContentWithUpdateParentListDatas({drawContent:new_drawContent, card_id})
     })
   }
+  // 开始时间 chg事件 E
 
-  //截止时间
+  // 截止时间 chg事件 S
   endDatePickerChange(timeString) {
     const { drawContent = {}, milestoneList = [], dispatch } = this.props
     const { card_id, start_time, milestone_data = {} } = drawContent
@@ -618,18 +526,12 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent: new_drawContent
-        }
-      })
-      // 需要调用父级的列表
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
+      this.updateDrawContentWithUpdateParentListDatas({drawContent: new_drawContent, card_id})
     })
   }
+  // 截止时间 chg事件 E
 
-  // 删除开始时间
+  // 删除开始时间 S
   handleDelStartTime = (e) => {
     e && e.stopPropagation()
     const { dispatch, drawContent = {} } = this.props
@@ -651,19 +553,13 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent: new_drawContent
-        }
-      })
-      // 需要调用父级的列表
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+      this.updateDrawContentWithUpdateParentListDatas({drawContent: new_drawContent, card_id})
     })
 
   }
+  // 删除开始时间 E
 
-  // 删除结束时间
+  // 删除结束时间 S
   handleDelDueTime = (e) => {
     e && e.stopPropagation()
     const { dispatch, drawContent = {} } = this.props
@@ -686,19 +582,13 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent: new_drawContent
-        }
-      })
-      // 需要调用父级的列表
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+      this.updateDrawContentWithUpdateParentListDatas({drawContent: new_drawContent, card_id})
     })
 
   }
+  // 删除结束时间 E
 
-  // 会议的状态值, 比较当前时间和开始时间结束时间的对比
+  // 会议的状态值, 比较当前时间和开始时间结束时间的对比 S
   getMeetingStatus = () => {
     let meetingField
     meetingField = (<span></span>)
@@ -726,24 +616,30 @@ export default class MainContent extends Component {
     }
     return meetingField
   }
+  // 会议的状态值, 比较当前时间和开始时间结束时间的对比 E
 
-  // 控制显示隐藏的回调
+  // 控制标签的显示隐藏的回调 S
   handleVisibleChange = (visible) => {
-    // console.log(visible, 'sssss_visible')
     this.setState({
       visible: visible
     })
   }
+  // 控制标签的显示隐藏的回调 E
 
-  // 关闭回调
+  // 标签关闭回调 S
   handleClose = (e) => {
     this.setState({
       visible: false,
     })
   }
+  // // 标签关闭回调 E
 
-  // 添加标签的回调
-  handleAddLabel = ({name, color}) => {
+  /**
+   *  添加项目标签事件 S
+   * @param {String} name 当前添加标签的名称
+   * @param {String} color 当前添加标签的颜色
+   */
+  handleAddBoardTag = ({name, color}) => {
     const { drawContent = {}, dispatch } = this.props
     const { card_id, board_id } = drawContent
     let new_drawContent = {...drawContent}
@@ -757,19 +653,19 @@ export default class MainContent extends Component {
     ).then(res => {
       if (isApiResponseOk(res)) {
         new_drawContent['label_data'].push(res.data)
-        dispatch({
-          type: 'publicTaskDetailModal/updateDatas',
-          payload: {
-            drawContent: new_drawContent
-          }
-        })
-        this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: new_drawContent, card_id})
+        this.updateDrawContentWithUpdateParentListDatas({drawContent: new_drawContent, card_id})
       }
     })
   }
+  // 添加项目标签事件 E
 
-  // 更新标签的回调
-  handleUpdateTag = ({label_id, name, color}) => {
+  /**
+   * 更新项目标签的回调 S
+   * @param {String} label_id 当前需要修改的标签ID
+   * @param {String} name 当前修改后的标签名称
+   * @param {String} color 当前修改后的标签颜色
+   */
+  handleUpdateBoardTag = ({label_id, name, color}) => {
     const { drawContent = {}, dispatch } = this.props
     const { card_id, board_id, label_data = [] } = drawContent
     let new_labelData = [...label_data]
@@ -794,18 +690,16 @@ export default class MainContent extends Component {
       })
     ).then(res => {
       if (isApiResponseOk(res)) {
-        dispatch({
-          type: 'publicTaskDetailModal/updateDatas',
-          payload: {
-            drawContent: new_drawContent
-          }
-        })
-        this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: new_drawContent, card_id})
+        this.updateDrawContentWithUpdateParentListDatas({drawContent: new_drawContent, card_id})
       }
     })
   }
+  // 更新项目标签的回调 E
 
-  // 删除标签的回到
+  /**
+   * 删除项目标签的回调 S
+   * @param {String} label_id 当前需要删除的标签ID
+   */
   handleRemoveBoardTag = ({label_id}) => {
     const { drawContent = {}, dispatch } = this.props
     const { card_id, board_id, label_data = [] } = drawContent
@@ -827,27 +721,23 @@ export default class MainContent extends Component {
       })
     ).then(res => {
       if (isApiResponseOk(res)) {
-        dispatch({
-          type: 'publicTaskDetailModal/updateDatas',
-          payload: {
-            drawContent: new_drawContent
-          }
-        })
-        this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: new_drawContent, card_id})
+        this.updateDrawContentWithUpdateParentListDatas({drawContent:new_drawContent, card_id})
       }
     })
   }
+  // 删除项目标签的回调 E
 
-  // 下拉标签的回调
+  // 下拉标签的回调 S
   handleChgSelectedLabel = (data) => {
     const { drawContent, boardTagList = [], dispatch } = this.props
     const { board_id, card_id, label_data = [] } = drawContent
     let newLabelData = []
     const { selectedKeys = [], type, key } = data
+    // 将选中的ID在标签列表中查询, 找到后push一个新的数组中保存
     for (let i = 0; i < selectedKeys.length; i++) {
       for (let j = 0; j < boardTagList.length; j++) {
         if (selectedKeys[i] === boardTagList[j]['id']) {
-          let obj = {
+          let obj = {// 这个obj是label_data需要的数据结构
             label_id: boardTagList[j]['id'],
             label_name: boardTagList[j]['name'],
             label_color: boardTagList[j]['color']
@@ -868,13 +758,7 @@ export default class MainContent extends Component {
         })
       ).then(res => {
         if (isApiResponseOk(res)) {
-          dispatch({
-            type: 'publicTaskDetailModal/updateDatas',
-            payload: {
-              drawContent: new_drawContent
-            }
-          })
-          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: new_drawContent, card_id})
+          this.updateDrawContentWithUpdateParentListDatas({drawContent: new_drawContent, card_id})
         }
       })
     } else if (type == 'remove') {
@@ -887,25 +771,24 @@ export default class MainContent extends Component {
         })
       ).then(res => {
         if (isApiResponseOk(res)) {
-          dispatch({
-            type: 'publicTaskDetailModal/updateDatas',
-            payload: {
-              drawContent: new_drawContent
-            }
-          })
-          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: new_drawContent, card_id})
+          this.updateDrawContentWithUpdateParentListDatas({drawContent: new_drawContent, card_id})
         }
       })
     }
   }
+  // 下拉标签的回调 E
 
-  // 删除标签 icon 回调
+  /**
+   * 删除标签 icon 回调 S
+   * @param {Object} e 当前的事件对象
+   * @param {String} shouldDeleteId 当前需要删除的标签ID
+   */
   handleRemoveTaskTag = (e, shouldDeleteId) => {
     e && e.stopPropagation()
     const { dispatch, drawContent, drawContent: { label_data = [], card_id } } = this.props
     let new_drawContent = {...drawContent}
     let new_labelData = [...label_data]
-    new_labelData = new_labelData.filter(item => {
+    new_labelData = new_labelData.filter(item => {// 过滤掉删除的那一条item
       if (item.label_id != shouldDeleteId) {
         return item
       }
@@ -920,21 +803,14 @@ export default class MainContent extends Component {
       })
     ).then(res => {
       if (isApiResponseOk(res)) {
-        dispatch({
-          type: 'publicTaskDetailModal/updateDatas',
-          payload: {
-            drawContent: new_drawContent
-          }
-        })
-        this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: new_drawContent, card_id})
+        this.updateDrawContentWithUpdateParentListDatas({drawContent: new_drawContent, card_id})
       }
     })
   }
+  // 删除标签 icon 回调 E
 
   /**附件预览 */
   openFileDetailModal = (fileInfo) => {
-    // console.log("文件详情", fileInfo);
-
     const file_name = fileInfo.name
     const file_resource_id = fileInfo.file_resource_id
     const file_id = fileInfo.file_id;
@@ -1118,20 +994,6 @@ export default class MainContent extends Component {
           </div>
         </Menu.Item>
 
-      </Menu>
-    )
-
-    // 添加属性
-    const addAttribute = (
-      <Menu onClick={this.handleIsAddAtribute} getPopupContainer={triggerNode => triggerNode.parentNode}>
-        <Menu.Item key="principal">
-          <span className={`${globalStyles.authTheme}`}>&#xe7b2;</span>
-          <span>负责人</span>
-        </Menu.Item>
-        <Menu.Item key="milestone">
-          <span className={`${globalStyles.authTheme}`}>&#xe6b7;</span>
-          <span>里程碑</span>
-        </Menu.Item>
       </Menu>
     )
 
@@ -1339,22 +1201,6 @@ export default class MainContent extends Component {
                 <div className={`${mainContentStyles.field_right}`}>
                   <div style={{ display: 'flex' }}>
                     <div style={{ position: 'relative' }}>
-                      {/* {start_time && due_time ? ('') : (<span style={{ color: '#bfbfbf' }}>设置</span>)} */}
-                      {/* <div className={`${mainContentStyles.start_time}`}>
-                        <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                          {start_time ? timestampToTime(start_time, true) : '开始时间'}
-                          <DatePicker
-                            disabledDate={this.disabledStartTime.bind(this)}
-                            // onOk={this.startDatePickerChange.bind(this)}
-                            onChange={this.startDatePickerChange.bind(this)}
-                            // getCalendarContainer={triggerNode => triggerNode.parentNode}
-                            placeholder={start_time ? timestampToTimeNormal(start_time, '/', true) : '开始时间'}
-                            format="YYYY/MM/DD HH:mm"
-                            showTime={{ format: 'HH:mm' }}
-                            style={{ opacity: 0, background: '#000000', position: 'absolute', left: 0, width: 'auto' }} />
-                        </span>
-                        <span onClick={this.handleDelStartTime} className={`${mainContentStyles.userItemDeleBtn} ${start_time && mainContentStyles.timeDeleBtn}`}></span>
-                      </div> */}
                       {/* 开始时间 */}
                       {
                         (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
@@ -1386,21 +1232,6 @@ export default class MainContent extends Component {
                       &nbsp;
                       <span style={{ color: '#bfbfbf' }}> ~ </span>
                       &nbsp;
-                      {/* <div className={`${mainContentStyles.due_time}`}>
-                        <span style={{ position: 'relative', minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                          {due_time ? timestampToTime(due_time, true) : '截止时间'}
-                          <DatePicker
-                            disabledDate={this.disabledDueTime.bind(this)}
-                            // getCalendarContainer={triggerNode => triggerNode.parentNode}
-                            placeholder={due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
-                            format="YYYY/MM/DD HH:mm"
-                            showTime={{ format: 'HH:mm' }}
-                            // onOk={this.endDatePickerChange.bind(this)}
-                            onChange={this.endDatePickerChange.bind(this)}
-                            style={{ opacity: 0, background: '#000000', position: 'absolute', left: 0, width: 'auto' }} />
-                        </span>
-                        <span onClick={this.handleDelDueTime} className={`${mainContentStyles.userItemDeleBtn} ${due_time && mainContentStyles.timeDeleBtn}`}></span>
-                      </div> */}
                       {/* 截止时间 */}
                       {
                         (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
@@ -1445,20 +1276,6 @@ export default class MainContent extends Component {
                 </div>
               </div>
             </div>
-            {/* 添加属性区域 */}
-            {/* <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
-              <div className={mainContentStyles.field_left}>
-                <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.45)' }} className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
-                <span>添加属性</span>
-              </div>
-              <Dropdown overlayClassName={mainContentStyles.overlay_attribute} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={addAttribute}>
-                <div className={`${mainContentStyles.field_right}`}>
-                  <div className={`${mainContentStyles.pub_hover}`}>
-                    <span>选择属性</span>
-                  </div>
-                </div>
-              </Dropdown>
-            </div> */}
           </div>
           {/* 各种字段的不同状态 E */}
 
@@ -1482,14 +1299,14 @@ export default class MainContent extends Component {
                           overlayClassName={mainContentStyles.labelDataWrapper}
                           overlay={
                             <LabelDataComponent
-                              handleClose={this.handleClose}
+                              board_id={board_id}
                               listData={boardTagList} 
                               searchName={'name'} currentSelect={label_data}
-                              handleAddLabel={this.handleAddLabel}
-                              handleUpdateTag={this.handleUpdateTag}
-                              handleChgSelectedLabel={this.handleChgSelectedLabel}
+                              handleAddBoardTag={this.handleAddBoardTag}
+                              handleUpdateBoardTag={this.handleUpdateBoardTag}
                               handleRemoveBoardTag={this.handleRemoveBoardTag}
-                              board_id={board_id}
+                              handleChgSelectedLabel={this.handleChgSelectedLabel}
+                              handleClose={this.handleClose}
                             />
                           }
                         >
@@ -1519,14 +1336,14 @@ export default class MainContent extends Component {
                           overlayClassName={mainContentStyles.labelDataWrapper}
                           overlay={
                             <LabelDataComponent
-                              handleClose={this.handleClose} 
+                              board_id={board_id}
                               listData={boardTagList} 
                               searchName={'name'} currentSelect={label_data}
-                              handleAddLabel={this.handleAddLabel}
-                              handleUpdateTag={this.handleUpdateTag}
-                              handleChgSelectedLabel={this.handleChgSelectedLabel}
+                              handleAddBoardTag={this.handleAddBoardTag}
+                              handleUpdateBoardTag={this.handleUpdateBoardTag}
                               handleRemoveBoardTag={this.handleRemoveBoardTag}
-                              board_id={board_id}
+                              handleChgSelectedLabel={this.handleChgSelectedLabel}
+                              handleClose={this.handleClose}
                             />
                           }
                         >
@@ -1537,7 +1354,7 @@ export default class MainContent extends Component {
                       </div>
                     )
                   }
-                  {/* <LabelDataComponent searchName="name" currentSelect={label_data} handleChgSelectedLabel={this.handleChgSelectedLabel} handleAddLabel={this.handleAddLabel} board_id={board_id}>
+                  {/* <LabelDataComponent searchName="name" currentSelect={label_data} handleChgSelectedLabel={this.handleChgSelectedLabel} handleAddBoardTag={this.handleAddBoardTag} board_id={board_id}>
                     {
                       label_data && label_data.length ? (
                         <span>
@@ -1740,7 +1557,7 @@ export default class MainContent extends Component {
 
 // 只关联public弹窗内的数据
 function mapStateToProps({
-  publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id, is_selected_all, boardTagList = [] },
+  publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id, boardTagList = [] },
   projectDetail: { datas: { projectDetailInfoData = {} } },
   projectDetailFile: {
     datas: {
@@ -1748,5 +1565,5 @@ function mapStateToProps({
     }
   }
 }) {
-  return { drawContent, is_edit_title, card_id, is_selected_all, boardTagList, projectDetailInfoData, isInOpenFile }
+  return { drawContent, is_edit_title, card_id, boardTagList, projectDetailInfoData, isInOpenFile }
 }

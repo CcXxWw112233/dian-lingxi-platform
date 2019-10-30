@@ -1,17 +1,13 @@
 import React from 'react'
-import { Input, Menu, Spin, Icon, message, Dropdown, Tooltip, Button } from 'antd'
+import { Input, Menu, Tooltip, Icon, Button } from 'antd'
 import indexStyles from './index.less'
-import { isApiResponseOk } from "@/utils/handleResponseData"
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { getBoardTagList } from '@/services/technological/task'
-import { connect } from 'dva'
 
-@connect()
 export default class LabelDataComponent extends React.Component {
   state = {
-    visible: false, // 控制下拉列表是否显示
-    is_add_label: false, // 是否新建标签
-    labelColorArr: [
+    // visible: false, // 控制下拉列表是否显示
+    is_add_label: false, // 是否新建标签, 默认为 false, 不显示
+    labelColorArr: [ // 默认的标签颜色列表
       { label_color: '255,163,158' },
       { label_color: '255,213,145' },
       { label_color: '145,213,255' },
@@ -20,18 +16,7 @@ export default class LabelDataComponent extends React.Component {
     ]
   }
 
-  // getInitBoardTag = (board_id) => {
-  //   getBoardTagList({ board_id }).then(res => {
-  //     if (isApiResponseOk(res)) {
-  //       this.setState({
-  //         boardTagList: res.data
-  //       })
-  //     } else {
-  //       message.warn(res.message)
-  //     }
-  //   })
-  // }
-
+  // 初始化数据
   initSet = (props) => {
     const { keyWord } = this.state
     let selectedKeys = []
@@ -45,23 +30,17 @@ export default class LabelDataComponent extends React.Component {
     }, () => {
       this.setState({
         resultArr: keyWord ? this.fuzzyQuery(listData, searchName, keyWord) : listData,
-        // resultArr: listData
       })
     })
   }
   componentDidMount() {
     this.initSet(this.props)
-    // this.getInitBoardTag(this.props.board_id)
   }
   componentWillReceiveProps(nextProps) {
     this.initSet(nextProps)
-    // if (nextProps.board_id != this.props.board_id) {
-    //   this.getInitBoardTag(nextProps.board_id)
-    // }
   }
   // 选中的回调
   handleMenuReallySelect = (e) => {
-    // e && e.stropPropagation()
     this.setSelectKey(e, 'add')
   }
 
@@ -82,12 +61,12 @@ export default class LabelDataComponent extends React.Component {
       const { keyWord } = this.state
       this.setState({
         resultArr: this.fuzzyQuery(listData, searchName, keyWord),
-        // resultArr: listData
       })
     })
     this.props.handleChgSelectedLabel && this.props.handleChgSelectedLabel({ selectedKeys, key, type })
   }
 
+  // 模糊查询
   fuzzyQuery = (list, searchName, keyWord) => {
     var arr = [];
     for (var i = 0; i < list.length; i++) {
@@ -98,16 +77,17 @@ export default class LabelDataComponent extends React.Component {
     //添加任务执行人后往前插入
     const { selectedKeys } = this.state
     for (let i = 0; i < arr.length; i++) {
-        if (selectedKeys.indexOf(arr[i]['id']) != -1) {
-            if (i > 0 && selectedKeys.indexOf(arr[i - 1]['id']) == -1) {
-                const deItem = arr.splice(i, 1)
-                arr.unshift(...deItem)
-            }
+      if (selectedKeys.indexOf(arr[i]['id']) != -1) {
+        if (i > 0 && selectedKeys.indexOf(arr[i - 1]['id']) == -1) {
+          const deItem = arr.splice(i, 1)
+          arr.unshift(...deItem)
         }
+      }
     }
     return arr
   }
 
+  // 搜索框chg事件
   onChange = (e) => {
     const { listData = [], searchName } = this.props
     const keyWord = e.target.value
@@ -118,8 +98,8 @@ export default class LabelDataComponent extends React.Component {
     })
   }
 
-  // 返回 回调
-  handleBack = () => {
+  // 更新state中的数据
+  updateStateDatas = () => {
     this.setState({
       is_add_label: false,
       labelColorArr: [
@@ -128,85 +108,50 @@ export default class LabelDataComponent extends React.Component {
         { label_color: '145,213,255' },
         { label_color: '211,173,247' },
         { label_color: '183,235,143' },
-      ]
+      ],
+      inputValueL: ''
     })
+  }
+
+  // 返回 事件, 需要清空默认数据
+  handleBack = () => {
+    this.updateStateDatas()
   }
 
   // 关闭回调
   handleClose = (e) => {
-    // console.log('进来了', e, 'ssssss')
-    // e && e.stropPropagation()
-    this.props.handleClose && this.props.handleClose()
     // 延时清空数据
     setTimeout(() => {
-      this.setState({
-        is_add_label: false,
-        labelColorArr: [
-          { label_color: '255,163,158' },
-          { label_color: '255,213,145' },
-          { label_color: '145,213,255' },
-          { label_color: '211,173,247' },
-          { label_color: '183,235,143' },
-        ]
-      })
+      this.updateStateDatas()
     }, 500)
+    this.props.handleClose && this.props.handleClose()
   }
 
   // 点击确定
-  handleSave = () => {
+  handleAddBoardTag = () => {
     const { inputValue, labelColorArr = [] } = this.state
     let tempItem = labelColorArr.find(item => item.is_selected_label == true)
     if (!tempItem) return false
     const color = tempItem.label_color
-    this.props.handleAddLabel && this.props.handleAddLabel({ name: inputValue, color: color })
-    this.setState({
-      is_add_label: false,
-      labelColorArr: [
-        { label_color: '255,163,158' },
-        { label_color: '255,213,145' },
-        { label_color: '145,213,255' },
-        { label_color: '211,173,247' },
-        { label_color: '183,235,143' },
-      ],
-      inputValue: ''
-    })
+    this.props.handleAddBoardTag && this.props.handleAddBoardTag({ name: inputValue, color: color })
+    this.updateStateDatas()
   }
 
   // 更新标签
-  handleUpdate = () => {
+  handleUpdateBoardTag = () => {
     const { inputValue, labelColorArr = [], selectedId } = this.state
     let tempItem = labelColorArr.find(item => item.is_selected_label == true)
     if (!tempItem) return false
     const color = tempItem.label_color
-    this.props.handleUpdateTag && this.props.handleUpdateTag({ name: inputValue, color, label_id: selectedId })
-    this.setState({
-      is_add_label: false,
-      labelColorArr: [
-        { label_color: '255,163,158' },
-        { label_color: '255,213,145' },
-        { label_color: '145,213,255' },
-        { label_color: '211,173,247' },
-        { label_color: '183,235,143' },
-      ],
-      inputValue: ''
-    })
+    this.props.handleUpdateBoardTag && this.props.handleUpdateBoardTag({ name: inputValue, color, label_id: selectedId })
+    this.updateStateDatas()
   }
 
   // 删除标签
   handleRemoveBoardTag = () => {
     const { selectedId } = this.state
     this.props.handleRemoveBoardTag && this.props.handleRemoveBoardTag({ label_id: selectedId })
-    this.setState({
-      is_add_label: false,
-      labelColorArr: [
-        { label_color: '255,163,158' },
-        { label_color: '255,213,145' },
-        { label_color: '145,213,255' },
-        { label_color: '211,173,247' },
-        { label_color: '183,235,143' },
-      ],
-      inputValue: ''
-    })
+    this.updateStateDatas()
   }
 
   // 新建标签回调
@@ -256,7 +201,7 @@ export default class LabelDataComponent extends React.Component {
     e.nativeEvent.stopImmediatePropagation();
     const { name, color, id } = value
     this.handleLabelCheck(color)
-    
+
     this.setState({
       is_add_label: true,
       is_edit_label: true,
@@ -306,7 +251,9 @@ export default class LabelDataComponent extends React.Component {
                 return (
                   <Menu.Item key={id}>
                     <div className={indexStyles.label_item}>
-                      <span style={{ background: `rgba(${color}, 1)` }} className={`${indexStyles.label_name}`}>{name}</span>
+                      <Tooltip title={name} placement="top">
+                        <span style={{ background: `rgba(${color}, 1)` }} className={`${indexStyles.label_name}`}>{name}</span>
+                      </Tooltip>
                       <span>
                         <span onClick={(e) => { this.handleEditLabel(e, value) }} className={`${globalStyles.authTheme} ${indexStyles.edit_icon}`}>&#xe791;</span>
                         <span style={{ display: selectedKeys.indexOf(id) != -1 ? 'inline-block' : 'none' }}>
@@ -331,7 +278,7 @@ export default class LabelDataComponent extends React.Component {
     const is_selected_label = (labelColorArr && labelColorArr.length) && labelColorArr.find(item => item.is_selected_label == true) && inputValue && inputValue != ''
 
     return (
-      <div style={{position: 'relative', maxWidth: '248px'}}>
+      <div style={{ position: 'relative', maxWidth: '248px' }}>
         <Menu getPopupContainer={triggerNode => triggerNode.parentNode} style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', width: '248px', }}
           // selectedKeys={[selectedValue]}
           // onClick={this.handleMenuClick}
@@ -365,14 +312,14 @@ export default class LabelDataComponent extends React.Component {
             {
               is_edit_label ? (
                 <div style={{ textAlign: 'center', height: '58px', padding: '12px', display: 'flex', justifyContent: 'space-around' }}>
-                  <Button style={{border: `1px solid rgba(255,120,117,1)`, color: '#FF7875', width: '106px'}} onClick={this.handleRemoveBoardTag}>删除</Button>
-                  <Button style={{width: '106px'}} disabled={is_selected_label ? false : true} onClick={this.handleUpdate} type="primary">确认</Button>
+                  <Button style={{ border: `1px solid rgba(255,120,117,1)`, color: '#FF7875', width: '106px' }} onClick={this.handleRemoveBoardTag}>删除</Button>
+                  <Button style={{ width: '106px' }} disabled={is_selected_label ? false : true} onClick={this.handleUpdateBoardTag} type="primary">确认</Button>
                 </div>
               ) : (
-                <div style={{ textAlign: 'center', height: '58px', padding: '12px' }}>
-                  <Button disabled={is_selected_label ? false : true} onClick={this.handleSave} style={{ width: '100%' }} type="primary">确认</Button>
-                </div>
-              )
+                  <div style={{ textAlign: 'center', height: '58px', padding: '12px' }}>
+                    <Button disabled={is_selected_label ? false : true} onClick={this.handleAddBoardTag} style={{ width: '100%' }} type="primary">确认</Button>
+                  </div>
+                )
             }
           </Menu>
         </Menu>
@@ -387,7 +334,7 @@ export default class LabelDataComponent extends React.Component {
     const { is_add_label, visible } = this.state
 
     return (
-      <div style={{position: 'relative'}}>
+      <div style={{ position: 'relative' }}>
         {is_add_label ? this.randerAddLabelsMenu() : this.randerNormalMenu()}
       </div>
       // <div style={{ position: 'relative' }} 
@@ -411,4 +358,16 @@ export default class LabelDataComponent extends React.Component {
     )
   }
 
+}
+
+LabelDataComponent.defaultProps = {
+  board_id: '', // 当前的项目ID
+  searchName: '', // 当前需要搜索的名字
+  currentSelect: [], // 当前的选择对象
+  listData: [], // 当前列表数据
+  handleAddBoardTag: function () { }, // 添加项目标签的回调
+  handleUpdateBoardTag: function () { }, // 更新项目标签的回调
+  handleRemoveBoardTag: function () { }, // 移除项目标签的回调
+  handleChgSelectedLabel: function () { }, // 暴露的下拉选择的回调
+  handleClose: function () { }, // 关闭回调
 }
