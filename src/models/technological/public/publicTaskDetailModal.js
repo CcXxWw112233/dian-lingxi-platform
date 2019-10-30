@@ -90,6 +90,12 @@ export default {
             id: res.data.board_id
           }
         })
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id: res.data.board_id
+          }
+        })
       }
     },
     // 获取项目标签

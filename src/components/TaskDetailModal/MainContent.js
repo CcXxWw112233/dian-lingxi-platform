@@ -18,7 +18,7 @@ import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE
 } from "@/globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
-import { addTaskExecutor, removeTaskExecutor,deleteTaskFile, getBoardTagList, addTaskTag, removeTaskTag } from '../../services/technological/task'
+import { addTaskExecutor, removeTaskExecutor,deleteTaskFile, getBoardTagList } from '../../services/technological/task'
 import {
   checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
 } from "@/utils/businessFunction";
@@ -61,13 +61,13 @@ export default class MainContent extends Component {
     })
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { projectDetailInfoData = {} } = nextProps
-    const { projectDetailInfoData: oldInfoData = {} } = this.props
-    if (projectDetailInfoData.board_id != oldInfoData.board_id) {
-      this.getInitBoardTag(projectDetailInfoData.board_id)
-    }
-  }
+  // componentWillReceiveProps(nextProps) {
+  //   const { projectDetailInfoData = {} } = nextProps
+  //   const { projectDetailInfoData: oldInfoData = {} } = this.props
+  //   if (projectDetailInfoData.board_id != oldInfoData.board_id) {
+  //     this.getInitBoardTag(projectDetailInfoData.board_id)
+  //   }
+  // }
 
     // 检测不同类型的权限控制类型的是否显示
   checkDiffCategoriesAuthoritiesIsVisible = () => {
@@ -98,7 +98,7 @@ export default class MainContent extends Component {
   // 设置卡片是否完成 S
   setIsCheck = () => {
     const { drawContent = {}, } = this.props
-    const { is_realize = '0', card_id, privileges = [], board_id, is_privilege, executors = [] } = drawContent
+    const { is_realize = '0', card_id, board_id } = drawContent
     if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -123,14 +123,7 @@ export default class MainContent extends Component {
       }
       let new_drawContent = { ...drawContent }
       new_drawContent['is_realize'] = is_realize === '1' ? '0' : '1'
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent: new_drawContent
-        }
-      })
-      // 需要调用父级的列表
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+      this.updateDrawContentWithUpdateParentListDatas({drawContent: new_drawContent, card_id})
     })
   }
   // 设置卡片是否完成 E
@@ -1354,21 +1347,6 @@ export default class MainContent extends Component {
                       </div>
                     )
                   }
-                  {/* <LabelDataComponent searchName="name" currentSelect={label_data} handleChgSelectedLabel={this.handleChgSelectedLabel} handleAddBoardTag={this.handleAddBoardTag} board_id={board_id}>
-                    {
-                      label_data && label_data.length ? (
-                        <span>
-                          {
-                            label_data.map(item => {
-                              return <span style={{background: `rgba(${item.label_color}, 1)`}} className={mainContentStyles.normal_label}><span>{item.label_name}</span></span>
-                              })
-                          }
-                        </span>
-                      ) : (
-                        <span>添加标签</span>
-                      )
-                    }
-                  </LabelDataComponent> */}
                 </div>
               </div>
             </div>

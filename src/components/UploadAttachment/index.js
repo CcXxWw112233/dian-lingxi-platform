@@ -9,8 +9,11 @@ import { isApiResponseOk } from "@/utils/handleResponseData"
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import {
-  getSubfixName, setUploadHeaderBaseInfo
+  getSubfixName, setUploadHeaderBaseInfo, checkIsHasPermissionInBoard
 } from "@/utils/businessFunction";
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE
+} from "@/globalset/js/constant";
 const { TreeNode } = TreeSelect;
 /**上传附件组件 */
 @connect(mapStateToProps)
@@ -170,6 +173,11 @@ export default class UploadAttachment extends Component {
 
 
   onBeforeUpload = (file) => {
+    const { board_id } = this.props
+    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD, board_id)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.setState(state => ({
       fileList: [...state.fileList, file],
     }));
@@ -228,6 +236,11 @@ export default class UploadAttachment extends Component {
   // 移除执行人的回调 E
 
   onChangeOnlyNoticePersonsVisit = (e) => {
+    const { board_id } = this.props
+    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.setState({
       isOnlyNoticePersonsVisit: e.target.checked
     });
