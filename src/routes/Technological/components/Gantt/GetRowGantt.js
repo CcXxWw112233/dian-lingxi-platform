@@ -400,34 +400,6 @@ export default class GetRowGantt extends Component {
     })
   }
 
-  // 设置任务标签颜色
-  setLableColor = (label_data) => {
-    let bgColor = ''
-    let b = ''
-    if (label_data && label_data.length) {
-      const color_arr = label_data.map(item => {
-        return `rgb(${item.label_color})`
-      })
-      const color_arr_length = color_arr.length
-      const color_percent_arr = color_arr.map((item, index) => {
-        return (index + 1) / color_arr_length * 100
-      })
-      bgColor = color_arr.reduce((total, color_item, current_index) => {
-        return `${total},  ${color_item} ${color_percent_arr[current_index - 1] || 0}%, ${color_item} ${color_percent_arr[current_index]}%`
-      }, '')
-
-      b = `linear-gradient(to right${bgColor})`
-    } else {
-      b = '#ffffff'
-    }
-    return b
-  }
-
-  // 任务单项拖拽
-  onCardItemDrag = (e) => {
-    // console.log('sssss', e)
-  }
-
   // 渲染普通任务列表
   renderNormalTaskList = ({ list_id, list_data }) => {
     return (

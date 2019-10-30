@@ -62,10 +62,10 @@ export default class GetRowSummary extends Component {
         const { list_data = [], ceilWidth } = this.props
         let left_arr = list_data.map(item => (item.left + (item.time_span - 1) * ceilWidth)) //取到截止日期应该处的位置
         left_arr = Array.from(new Set(left_arr))
-        const left_map = left_arr.map(item => {
+        let left_map = left_arr.map(item => {
             let list = []
             for (let val of list_data) {
-                if ((val.left + (val.time_span - 1) * ceilWidth) == item) {
+                if ((val.left + (val.time_span - 1) * ceilWidth) == item && val.is_realize != '1') {
                     list.push(val)
                 }
             }
@@ -74,6 +74,7 @@ export default class GetRowSummary extends Component {
                 list
             }
         })
+        left_map = left_map.filter(item => item.list.length > 0)
         return left_map
     }
 
