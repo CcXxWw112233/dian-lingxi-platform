@@ -17,12 +17,13 @@ export default class GetRowSummary extends Component {
         const now = new Date().getTime()
         const total = list_data.length
         const realize_count = list_data.filter(item => item.is_realize == '1').length
+        const due_not_realize_count = list_data.filter(item => item.is_realize == '0' && item.end_time < end_time).length //逾期未完成个数
 
         if (realize_count == total) { //完成
             time_bg_color = '#BFBFBF'
             percent_class = styles.board_fold_complete
         } else {
-            if (end_time <= now) { //项目汇总时间在当前之前, 逾期
+            if (due_not_realize_count > 0) { //项目汇总时间在当前之前, 逾期
                 time_bg_color = '#FFCCC7'
                 percent_class = styles.board_fold_due
                 is_due = true
@@ -62,10 +63,15 @@ export default class GetRowSummary extends Component {
         const { list_data = [], ceilWidth } = this.props
         let left_arr = list_data.map(item => (item.left + (item.time_span - 1) * ceilWidth)) //取到截止日期应该处的位置
         left_arr = Array.from(new Set(left_arr))
+        const now = new Date().getTime()
         let left_map = left_arr.map(item => {
             let list = []
             for (let val of list_data) {
-                if ((val.left + (val.time_span - 1) * ceilWidth) == item && val.is_realize != '1') {
+                if (
+                    (val.left + (val.time_span - 1) * ceilWidth) == item //位置对应上
+                    && val.is_realize != '1' //未完成
+                    && val.end_time < now //过期
+                ) {
                     list.push(val)
                 }
             }
