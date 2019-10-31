@@ -28,7 +28,8 @@ export default class GroupListHeadSet extends Component {
             type: 'gantt/updateDatas',
             payload: {
                 gantt_board_id: '0',
-                group_view_type: group_view_type_new
+                group_view_type: group_view_type_new,
+                list_group: [],
             }
         })
         dispatch({
@@ -50,7 +51,8 @@ export default class GroupListHeadSet extends Component {
         dispatch({
             type: 'gantt/updateDatas',
             payload: {
-                gantt_board_id: '0'
+                gantt_board_id: '0',
+                list_group: [],
             }
         })
         dispatch({

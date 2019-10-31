@@ -286,26 +286,30 @@
       flex-direction: column;
      
       .list_head_top {
-        .list_name {
-          color: rgba(0, 0, 0, .65);
-          font-size: 16px;
-          font-weight: 600;
+        display: flex;
+        .list_head_top_left {
+          .list_name {
+            color: rgba(0, 0, 0, .65);
+            font-size: 16px;
+            font-weight: 600;
+            max-width: 130px;
+          }
+          flex: 1;
+          width:26px;
+          display: flex;
         }
-        .org_name {
-          color: rgba(0, 0, 0, .45);
-          font-size: 12px;
-          margin-left: 4px;
-        }
-        .operator {
-          font-size: 14px;
-          margin-left: 6px;
-          width:20px;
-          height:20px;
-          line-height: 20px;
-          text-align: center;
-          border-radius:4px;
-          display: none;
-        }
+        .list_head_top_right{
+          .operator {
+            font-size: 14px;
+            margin-left: 6px;
+            width:20px;
+            height:20px;
+            line-height: 20px;
+            text-align: center;
+            border-radius:4px;
+            display: none;
+          }
+        } 
       }
      
       // .listHeadItem:hover{
@@ -476,6 +480,21 @@
         }
         position: relative;
         z-index: 2;
+        .list_head_footer_contain {
+          display: flex;
+          flex: 1;
+          font-size: 14px;
+          color: rgba(0, 0, 0, .45);
+          .list_head_footer_contain_lt{
+            width: 20px;
+          }
+          .list_head_footer_contain_rt {
+            width: 70px;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap
+          }
+        }
 
 
       }
@@ -484,9 +503,11 @@
       // *{
       //   color: #40A9FF;
       // }
-      .operator {
-        color: #40A9FF;
-        display: inline-block;
+      .list_head_top_right {
+        .operator {
+          color: #40A9FF;
+          display: inline-block;
+        }
       }
       .operator:hover {
         background:rgba(230,247,255,1);

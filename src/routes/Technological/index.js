@@ -36,7 +36,7 @@ export default class Technological extends React.Component {
         if (Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')) {
           const calback = function (event) {
             dispatch({
-              type: 'connectWsToModel',
+              type: 'cooperationPush/connectWsToModel',
               payload: {
                 event
               }
