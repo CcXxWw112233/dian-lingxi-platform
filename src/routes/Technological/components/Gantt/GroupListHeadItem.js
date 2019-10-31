@@ -632,11 +632,11 @@ export default class GroupListHeadItem extends Component {
                 )
               }
               {/* 置顶 */}
-              {
+              {/* {
                 (gantt_board_id == '0' && group_view_type == '1' && !show_edit_input) && (
                   <div className={globalStyle.authTheme} style={{ marginLeft: 10, fontSize: 16, color: '#FFA940' }}>&#xe7e3;</div>
                 )
-              }
+              } */}
             </div>
             <div className={`${indexStyles.list_head_top_right}`}>
               {

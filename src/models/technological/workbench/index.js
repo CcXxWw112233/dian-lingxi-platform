@@ -22,7 +22,7 @@ export default modelExtend(technological, {
     datas: {
       projectList: [],
       boxList: [],
-      workbench_show_gantt_card: '1', //工作台是否显示甘特图卡片，0默认不显示，1显示
+      workbench_show_gantt_card: '0', //工作台是否显示甘特图卡片，0默认不显示，1显示
     }
   },
   subscriptions: {
@@ -219,7 +219,7 @@ export default modelExtend(technological, {
             currentSelectedProjectMembersList: res.data
           }
         })
-        if(typeof calback == 'function') {
+        if (typeof calback == 'function') {
           calback(res.data)
         }
       }
