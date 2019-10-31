@@ -429,7 +429,8 @@ export default class HeaderContentRightMenu extends Component {
         {/* 访问控制 */}
         <span className={`${headerStyles.action} ${headerStyles.visit_wrap}`}>
           {
-            board_id && <VisitControl
+            board_id && (
+<VisitControl
               board_id={board_id}
               isPropVisitControl={is_privilege === '0' ? false : true}
               handleVisitControlChange={this.handleVisitControlChange}
@@ -438,6 +439,7 @@ export default class HeaderContentRightMenu extends Component {
               handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
               handleAddNewMember={this.handleVisitControlAddNewMember}
             />
+)
           }
 
         </span>
@@ -449,11 +451,13 @@ export default class HeaderContentRightMenu extends Component {
               <span className={`${globalStyles.authTheme} ${headerStyles.right__shareIndicator_icon}`}>&#xe7e7;</span>
               <span className={headerStyles.right__shareIndicator_text}>正在分享</span>
             </span>
-          ) : <span className={`${headerStyles.right_menu} ${headerStyles.share_icon}`} >
+          ) : (
+<span className={`${headerStyles.right_menu} ${headerStyles.share_icon}`} >
               <Tooltip title="分享协作" placement="top">
                 <span onClick={this.handleChangeOnlyReadingShareModalVisible} className={`${globalStyles.authTheme} ${headerStyles.right__share}`} style={{ fontSize: '20px' }}>&#xe7e7;</span>
               </Tooltip>
-            </span>}
+            </span>
+)}
 
           <ShareAndInvite
            

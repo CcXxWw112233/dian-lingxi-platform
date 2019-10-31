@@ -55,7 +55,7 @@ class BoardCommunication extends Component {
     constructor(props) {
         super(props)
         const { dispatch } = this.props;
-        Im.addEventListener('visible',(val)=>{ // 获取圈子显示隐藏状态
+        Im.addEventListener('visible', (val)=>{ // 获取圈子显示隐藏状态
             // this.setState({ isShowlingxiIm: val});
         })
     }

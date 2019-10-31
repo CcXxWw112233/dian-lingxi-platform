@@ -604,7 +604,7 @@ class VisitControl extends Component {
     } = this.state;
     const unClockEle = (
       <Tooltip title={tooltipUnClockText}>
-        <i className={`${globalStyles.authTheme} ${styles.trigger__icon}`} style={{fontSize:'20px'}}>
+        <i className={`${globalStyles.authTheme} ${styles.trigger__icon}`} style={{fontSize: '20px'}}>
           &#xe7ca;
         </i>
       </Tooltip>
@@ -612,7 +612,7 @@ class VisitControl extends Component {
     const clockEle = (
       <Tooltip title={tooltipClockText}>
         <span className={styles.trigger__btn__wrapper}>
-          <i className={`${globalStyles.authTheme} ${styles.trigger__btn__icon}`} style={{fontSize:'16px'}}>
+          <i className={`${globalStyles.authTheme} ${styles.trigger__btn__icon}`} style={{fontSize: '16px'}}>
             &#xe86a;
           </i>
           <span className={styles.trigger__btn_text}>已限制访问</span>

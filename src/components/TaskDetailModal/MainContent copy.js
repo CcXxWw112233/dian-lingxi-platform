@@ -1725,7 +1725,7 @@ export default class MainContent extends Component {
                           <span>暂无</span>
                         </div>
                       ) : (
-                          <div className={`${mainContentStyles.pub_hover} ${mainContentStyles.value_text}`}  >
+                          <div className={`${mainContentStyles.pub_hover} ${mainContentStyles.value_text}`} >
                             {milestone_data.name}
                           </div>
                         )

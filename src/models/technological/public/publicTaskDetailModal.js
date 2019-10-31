@@ -124,7 +124,7 @@ export default {
     // 设置卡片属性
     * setCardAttributes({ payload }, { call, put }) {
       const { property_id, card_id } = payload
-      let res = yield call(setCardAttributes,{ card_id, property_id })
+      let res = yield call(setCardAttributes, { card_id, property_id })
       if (isApiResponseOk(res)) {
         setTimeout(() => {
           message.success('添加字段成功', MESSAGE_DURATION_TIME)

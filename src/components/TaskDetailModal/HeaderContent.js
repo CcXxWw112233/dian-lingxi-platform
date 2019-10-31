@@ -15,13 +15,13 @@ class HeaderContent extends Component {
     return (
       <div className={headerStyles.detail_head}>
         {/* 这里是头部左边 */}
-        <div  className={headerStyles.detail_head_left}>
+        <div className={headerStyles.detail_head_left}>
           {/* 这里是头部图标样式 */}
           <div className={headerStyles.header_icon}>
             <span>
               <i className={`${globalStyles.authTheme} ${headerStyles.title_icon}`}>&#xe66a;</i>
             </span>
-            <span style={{fontSize:'14px'}}>
+            <span style={{fontSize: '14px'}}>
               {currentNounPlanFilterName(TASKS)}
             </span>
           </div>

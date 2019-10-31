@@ -90,7 +90,7 @@ class BoardFiles extends Component {
       boardSelectVisible: false,
       boardFileContentVisible: true,
       currentBoardId: board.board_id
-    },()=>{
+    }, ()=>{
       this.initialget(board.board_id)
     });
     
@@ -306,7 +306,7 @@ class BoardFiles extends Component {
                                 return (
                                   <div key={board.board_id} className={indexStyles.boardItem} onClick={e => {
                                     this.setState({
-                                      userSelectBoard:true
+                                      userSelectBoard: true
                                     });
                                     this.openBoardFiles(board);
                                   }}>
