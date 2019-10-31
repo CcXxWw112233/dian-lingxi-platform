@@ -517,7 +517,7 @@ class CardContent extends React.Component {
   }
 
   // 修改任务或会议回调
-  handleChangeCard = ({drawContent, card_id}) => {
+  handleChangeCard = ({drawContent, card_id, name, value}) => {
     const {
       workbench: {
         datas: {
@@ -529,18 +529,38 @@ class CardContent extends React.Component {
     } = this.props;
     const new_responsibleTaskList = responsibleTaskList.map(item => {
       let new_item = {...item}
-      if(item.id == card_id) {
-        new_item = {...item, ...drawContent, name: drawContent.card_name}
+      if (item.id == card_id) {
+        new_item = {...item, name: drawContent.card_name}
+        if (name && value) new_item[name] = value
+        return new_item
+      } else {
+        return new_item
       }
-      return new_item
     })
     const new_meetingLsit = meetingLsit.map(item => {
       let new_item = {...item}
-      if(item.id == card_id) {
-        new_item = {...item, ...drawContent, name: drawContent.card_name}
+      if (item.id == card_id) {
+        new_item = {...item, name: drawContent.card_name}
+        if (name && value) new_item[name] = value
+        return new_item
+      } else {
+        return new_item
       }
-      return new_item
     })
+    // const new_responsibleTaskList = responsibleTaskList.map(item => {
+    //   let new_item = {...item}
+    //   if(item.id == card_id) {
+    //     new_item = {...item, ...drawContent, name: drawContent.card_name}
+    //   }
+    //   return new_item
+    // })
+    // const new_meetingLsit = meetingLsit.map(item => {
+    //   let new_item = {...item}
+    //   if(item.id == card_id) {
+    //     new_item = {...item, ...drawContent, name: drawContent.card_name}
+    //   }
+    //   return new_item
+    // })
     dispatch({
       type: 'workbench/updateDatas',
       payload: {

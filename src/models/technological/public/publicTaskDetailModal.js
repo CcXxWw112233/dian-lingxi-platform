@@ -69,10 +69,39 @@ export default {
   effects: {
     // 获取任务详情 new
     * getCardWithAttributesDetail({ payload }, { call, put }) {
-      const { id } = payload
+      const { id, calback } = payload
+      calback && typeof calback == 'function' ? calback() : ''
       let res = yield call(getCardWithAttributesDetail, { id })
       if (isApiResponseOk(res)) {
         // console.log(res)
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            // drawerVisible: true,
+            drawContent: res.data,
+          }
+        })
+        // 成功后调用 projectDetailInfo, 将项目成员关联进来
+        yield put({
+          type: 'projectDetail/projectDetailInfo',
+          payload: {
+            id: res.data.board_id
+          }
+        })
+        // // 获取项目标签列表
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id: res.data.board_id
+          }
+        })
+        // // 获取关联数据
+        yield put({
+          type: 'projectDetail/getRelationsSelectionPre',
+          payload: {
+            _organization_id: res.data.org_id
+          }
+        })
       } else {
         message.warn(res.message)
       }
@@ -90,48 +119,58 @@ export default {
       } else {
         message.warn(res.message)
       }
+      return res || {}
     },
     // 设置卡片属性
     * setCardAttributes({ payload }, { call, put }) {
       const { property_id, card_id } = payload
       let res = yield call(setCardAttributes,{ card_id, property_id })
       if (isApiResponseOk(res)) {
-        // console.log(res, 'ssssss')
+        setTimeout(() => {
+          message.success('添加字段成功', MESSAGE_DURATION_TIME)
+        }, 500)
+        yield put({
+          type: 'getCardWithAttributesDetail',
+          payload: {
+            id: card_id,
+          }
+        })
       } else {
         message.warn(res.message)
       }
+      return res || {}
     },
     /**
      * 获取任务详情: 需要参数当前任务id
      * @param {String} id 当前任务的id 
      */
-    * getCardDetail({ payload }, { call, put }) {
-      const { id, calback } = payload
-      let res = yield call(getCardDetail, { id })
-      if (isApiResponseOk(res)) {
-        calback && typeof calback == 'function' ? calback() : ''
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            // drawerVisible: true,
-            drawContent: res.data,
-          }
-        })
-        // 成功后调用 projectDetailInfo, 将项目成员关联进来
-        yield put({
-          type: 'projectDetail/projectDetailInfo',
-          payload: {
-            id: res.data.board_id
-          }
-        })
-        yield put({
-          type: 'getBoardTagList',
-          payload: {
-            board_id: res.data.board_id
-          }
-        })
-      }
-    },
+    // * getCardDetail({ payload }, { call, put }) {
+    //   const { id, calback } = payload
+    //   let res = yield call(getCardDetail, { id })
+    //   if (isApiResponseOk(res)) {
+    //     calback && typeof calback == 'function' ? calback() : ''
+    //     yield put({
+    //       type: 'updateDatas',
+    //       payload: {
+    //         // drawerVisible: true,
+    //         drawContent: res.data,
+    //       }
+    //     })
+    //     // 成功后调用 projectDetailInfo, 将项目成员关联进来
+    //     yield put({
+    //       type: 'projectDetail/projectDetailInfo',
+    //       payload: {
+    //         id: res.data.board_id
+    //       }
+    //     })
+    //     yield put({
+    //       type: 'getBoardTagList',
+    //       payload: {
+    //         board_id: res.data.board_id
+    //       }
+    //     })
+    //   }
+    // },
     // 获取项目标签
     * getBoardTagList({ payload }, { call, put }) {
       const { board_id, calback } = payload

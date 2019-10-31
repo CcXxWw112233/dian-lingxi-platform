@@ -354,7 +354,7 @@ export async function getCardDetail(params) {
   });
 }
 
-// 获取新的任务详情
+// 获取新的携带属性的任务详情
 export async function getCardWithAttributesDetail(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/card/detail`,

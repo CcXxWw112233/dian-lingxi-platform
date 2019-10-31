@@ -103,14 +103,6 @@ export default class GroupListHeadItem extends Component {
       payload: {
         drawerVisible: true,
         card_id: id,
-        calback: function (data) {
-          dispatch({
-            type: 'workbenchPublicDatas/getRelationsSelectionPre',
-            payload: {
-              _organization_id: data.org_id
-            }
-          })
-        }
       }
     })
     // dispatch({
