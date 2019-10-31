@@ -78,7 +78,7 @@ export default class MainContent extends Component {
   checkDiffCategoriesAuthoritiesIsVisible = () => {
     const { drawContent = {} } = this.props
     const { data } = this.getCurrentDrawerContentPropsModelDatasExecutors()
-    
+
     const { privileges = [], board_id, is_privilege } = drawContent
     return {
       'visit_control_edit': function () {// 是否是有编辑权限
@@ -226,7 +226,7 @@ export default class MainContent extends Component {
     new_properties = new_properties.map(item => {
       if (item.code == code) {
         let new_item = item
-        new_item = {...item, data: value}
+        new_item = { ...item, data: value }
         return new_item
       } else {
         let new_item = item
@@ -462,6 +462,121 @@ export default class MainContent extends Component {
 
   }
   // 删除结束时间 E
+
+  // 里程碑选择回调 S
+  onMilestoneSelectedChange = (data) => {
+    // const { dispatch, drawContent } = this.props;
+    // const { card_id, type, due_time } = drawContent
+    // const { key, type: actionType, info } = data;
+    // const id_time_arr = key.split('__')
+    // const id = id_time_arr[0]
+    // const deadline = id_time_arr[1]
+    // if (!compareTwoTimestamp(deadline, due_time)) {
+    //   message.warn('关联里程碑的截止日期不能小于任务的截止日期')
+    //   return
+    // }
+
+    // if (actionType === 'add') {
+    //   const params = {
+    //     rela_id: card_id,
+    //     id,
+    //     origin_type: type
+    //   };
+    //   dispatch({
+    //     type: 'publicTaskDetailModal/joinMilestone',
+    //     payload: {
+    //       ...params
+    //     }
+    //   });
+
+    //   drawContent['milestone_data'] = info;
+    //   dispatch({
+    //     type: 'publicTaskDetailModal/updateDatas',
+    //     payload: {
+    //       drawContent: { ...drawContent }
+    //     }
+    //   })
+    // }
+    // if (actionType === 'remove') {
+    //   const params = {
+    //     rela_id: card_id,
+    //     id,
+    //   }
+    //   dispatch({
+    //     type: 'publicTaskDetailModal/shiftOutMilestone',
+    //     payload: {
+    //       ...params
+    //     }
+    //   });
+    //   drawContent['milestone_data'] = [];
+    //   dispatch({
+    //     type: 'publicTaskDetailModal/updateDatas',
+    //     payload: {
+    //       drawContent: { ...drawContent }
+    //     }
+    //   })
+    // }
+
+    // if (actionType === 'update') {
+    //   const removeParams = {
+    //     rela_id: card_id,
+    //     id: drawContent['milestone_data'].id,
+    //   }
+
+    //   const addParams = {
+    //     rela_id: card_id,
+    //     id,
+    //     origin_type: type
+    //   }
+
+    //   dispatch({
+    //     type: 'publicTaskDetailModal/updateMilestone',
+    //     payload: {
+    //       addParams,
+    //       removeParams
+    //     }
+    //   });
+    //   drawContent['milestone_data'] = info;
+    //   dispatch({
+    //     type: 'publicTaskDetailModal/updateDatas',
+    //     payload: {
+    //       drawContent: { ...drawContent }
+    //     }
+    //   })
+    // }
+  }
+  // 里程碑选择回调 E
+
+  // 编辑富文本事件 S
+  saveBrafitEdit = (brafitEditHtml) => {
+    // const { drawContent = {}, dispatch } = this.props;
+
+    // let { card_id } = drawContent
+    // this.setState({
+    //   isInEdit: false,
+    // })
+    // const updateObj = {
+    //   card_id,
+    //   description: brafitEditHtml,
+    // }
+
+    // drawContent['properties'] = this.filterCurrentUpdateDatasField('REMARK', brafitEditHtml)
+    // Promise.resolve(
+    //   dispatch({
+    //     type: 'publicTaskDetailModal/updateTask',
+    //     payload: {
+    //       updateObj
+    //     }
+    //   })
+    // ).then(res => {
+    //   if (!isApiResponseOk(res)) {
+    //     message.warn(res.message, MESSAGE_DURATION_TIME)
+    //     return
+    //   }
+    //   this.updateDrawContentWithUpdateParentListDatas({ drawContent, card_id, name: 'description', value: brafitEditHtml })
+    // })
+  }
+  // 编辑富文本事件 E
 
   // 会议的状态值, 比较当前时间和开始时间结束时间的对比 S
   getMeetingStatus = () => {
@@ -717,12 +832,94 @@ export default class MainContent extends Component {
 
   // 对应字段的内容渲染
   filterDiffPropertiesField = (currentItem) => {
-    const { drawContent = {}, projectDetailInfoData } = this.props
-    const { card_id, board_id } = drawContent
-    const { code, data } = currentItem
+    const { drawContent = {}, projectDetailInfoData: { data = [] } } = this.props
+    const { org_id, card_id, board_id, board_name, due_time } = drawContent
+    const { code } = currentItem
     let messageValue = (<div></div>)
     switch (code) {
-
+      case 'MILESTONE':
+        messageValue = (
+          <div>
+            <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
+              <div className={mainContentStyles.field_left}>
+                <span className={`${globalStyles.authTheme}`}>&#xe6b7;</span>
+                <span>里程碑</span>
+              </div>
+              <div className={`${mainContentStyles.field_right}`}>
+                {
+                  (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                    (
+                      !currentItem.data && !(currentItem.data && currentItem.data.id) ? (
+                        <div className={`${mainContentStyles.pub_hover}`}>
+                          <span>暂无</span>
+                        </div>
+                      ) : (
+                          <div className={`${mainContentStyles.pub_hover} ${mainContentStyles.value_text}`} >
+                            {currentItem.data.name}
+                          </div>
+                        )
+                    )
+                  ) : (
+                      // 加入里程碑组件
+                      <MilestoneAdd onChangeMilestone={this.onMilestoneSelectedChange} dataInfo={{ board_id, board_name, due_time, org_id, data }} selectedValue={currentItem.data && currentItem.data.id}>
+                        <div className={`${mainContentStyles.pub_hover}`} >
+                          {currentItem.data && currentItem.data.id
+                            ? <span className={mainContentStyles.value_text}>{currentItem.data.name}</span>
+                            :
+                            '加入里程碑'
+                          }
+                        </div>
+                      </MilestoneAdd>
+                    )
+                }
+              </div>
+            </div>
+          </div>
+        )
+        break
+      case 'REMARK':
+        messageValue = (
+          <div>
+            <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
+              <div className={mainContentStyles.field_left}>
+                <span className={`${globalStyles.authTheme}`}>&#xe7f6;</span>
+                <span>备注</span>
+              </div>
+              <div className={`${mainContentStyles.field_right}`}>
+                {
+                  (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                    (
+                      currentItem.data && !currentItem.data.description && currentItem.data.description != '<p></p>' ? (
+                        <div className={`${mainContentStyles.pub_hover}`}>
+                          <span>暂无</span>
+                        </div>
+                      ) : (
+                          <div className={`${mainContentStyles.pub_hover}`} >
+                            <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: currentItem.data.description }}></div>
+                          </div>
+                        )
+                    )
+                  ) : (
+                      // 富文本组件
+                      <>
+                        <RichTextEditor saveBrafitEdit={this.saveBrafitEdit} value={(currentItem.data && currentItem.data.description) && currentItem.data.description}>
+                          <div className={`${mainContentStyles.pub_hover}`} >
+                            {
+                              currentItem.data && !currentItem.data.description && currentItem.data.description != '<p></p>' ?
+                                <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: currentItem.data.description }}></div>
+                                :
+                                '添加备注'
+                            }
+                          </div>
+                        </RichTextEditor>
+                      </>
+                    )
+                }
+              </div>
+            </div>
+          </div>
+        )
+        break
       default:
         break;
     }
@@ -946,6 +1143,15 @@ export default class MainContent extends Component {
             </div>
           </div>
           {/* 各种字段的不同状态 E */}
+          {/* 不同字段的渲染 S */}
+          <div>
+            {
+              properties && properties.map(item => {
+                return this.filterDiffPropertiesField(item)
+              })
+            }
+          </div>
+          {/* 不同字段的渲染 E */}
 
           {/* 添加字段 S */}
           <div>
@@ -966,15 +1172,6 @@ export default class MainContent extends Component {
             </div>
           </div>
           {/* 添加字段 E */}
-          {/* 不同字段的渲染 S */}
-          <div>
-            {
-              properties && properties.map(item => {
-                return this.filterDiffPropertiesField(item)
-              })
-            }
-          </div>
-          {/* 不同字段的渲染 E */}
         </div>
       </div>
     )

@@ -326,7 +326,7 @@ export default class UploadAttachment extends Component {
 
           </div>
           <div style={{ marginTop: '14px' }}>
-            <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.45)' }} className={`${globalStyles.authTheme}`}>&#xe7b2;</span>通知人:
+            <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.45)' }} className={`${globalStyles.authTheme}`}>&#xe7b2;</span>提醒谁查看:
                     </div>
           <div className={styles.noticeUsersWrapper}>
             {/* 通知人添加与显示区域 */}
@@ -402,10 +402,10 @@ export default class UploadAttachment extends Component {
 
           </div>
           <div style={{ marginTop: '16px' }}>
-            <Checkbox checked={this.state.isOnlyNoticePersonsVisit} onChange={this.onChangeOnlyNoticePersonsVisit}>仅通知人可访问</Checkbox>
+            <Checkbox checked={this.state.isOnlyNoticePersonsVisit} onChange={this.onChangeOnlyNoticePersonsVisit}>仅被提醒的人可访问该文件</Checkbox>
           </div>
           <div style={{ marginTop: '32px' }}>
-            任务附件临时目录
+            附件存放路径
                     </div>
           <div style={{ marginTop: '16px' }}>
             <div className={styles.selectFolderWapper}>
@@ -415,7 +415,7 @@ export default class UploadAttachment extends Component {
                 showSearch={false}
                 style={{ width: 508 }}
                 dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                placeholder="任务附件临时目录"
+                placeholder="附件存放路径"
                 allowClear
                 treeDefaultExpandAll
                 onChange={this.onChangeFileSavePath}
