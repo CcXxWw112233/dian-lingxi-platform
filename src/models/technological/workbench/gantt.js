@@ -247,30 +247,32 @@ export default {
           list_data: [],
           list_no_time_data: val['lane_data']['card_no_times'] || []
         }
-        for (let val_1 of val['lane_data']['cards']) {
-          const due_time = getDigit(val_1['due_time'])
-          const start_time = getDigit(val_1['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
-          const create_time = getDigit(val_1['create_time'])
-          let time_span = (!due_time || !start_time) ? 1 : (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1 //正常区间内
-          if (due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
-            time_span = (Math.floor((end_date.timestamp - start_time) / (24 * 3600 * 1000))) + 1
-          } else if (start_time < start_date.timestamp && due_time < end_date.timestamp) { //左区间
-            time_span = (Math.floor((due_time - start_date.timestamp) / (24 * 3600 * 1000))) + 1
-          } else if (due_time > end_date.timestamp && start_time < start_date.timestamp) { //超过左右区间
-            time_span = (Math.floor((end_date.timestamp - start_date.timestamp) / (24 * 3600 * 1000))) + 1
+        if (val['lane_data']['cards']) {
+          for (let val_1 of val['lane_data']['cards']) {
+            const due_time = getDigit(val_1['due_time'])
+            const start_time = getDigit(val_1['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
+            const create_time = getDigit(val_1['create_time'])
+            let time_span = (!due_time || !start_time) ? 1 : (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1 //正常区间内
+            if (due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
+              time_span = (Math.floor((end_date.timestamp - start_time) / (24 * 3600 * 1000))) + 1
+            } else if (start_time < start_date.timestamp && due_time < end_date.timestamp) { //左区间
+              time_span = (Math.floor((due_time - start_date.timestamp) / (24 * 3600 * 1000))) + 1
+            } else if (due_time > end_date.timestamp && start_time < start_date.timestamp) { //超过左右区间
+              time_span = (Math.floor((end_date.timestamp - start_date.timestamp) / (24 * 3600 * 1000))) + 1
+            }
+            // console.log('sssssss', val_1.name, time_span)
+            // time_span = time_span > date_arr_one_level.length?  date_arr_one_level.length: time_span
+            let list_data_item = {
+              ...val_1,
+              start_time,
+              end_time: due_time,
+              create_time,
+              time_span,
+              is_has_start_time: !!getDigit(val_1['start_time']),
+              is_has_end_time: !!getDigit(val_1['due_time'])
+            }
+            list_group_item.list_data.push(list_data_item)
           }
-          // console.log('sssssss', val_1.name, time_span)
-          // time_span = time_span > date_arr_one_level.length?  date_arr_one_level.length: time_span
-          let list_data_item = {
-            ...val_1,
-            start_time,
-            end_time: due_time,
-            create_time,
-            time_span,
-            is_has_start_time: !!getDigit(val_1['start_time']),
-            is_has_end_time: !!getDigit(val_1['due_time'])
-          }
-          list_group_item.list_data.push(list_data_item)
         }
         if (ganttIsFold({ gantt_board_id, group_view_type })) { //全项目视图下，收缩，取特定某一条做基准，再进行时间汇总
           const start_time_arr = list_group_item.list_data.map(item => item.start_time)
