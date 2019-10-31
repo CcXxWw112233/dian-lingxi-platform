@@ -7,13 +7,14 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
 import AvatarList from '@/components/avatarList'
 import { Tooltip, Dropdown, message } from 'antd'
-import { date_area_height, task_item_height, task_item_margin_top } from './constants'
+import { date_area_height, task_item_height, task_item_margin_top, ganttIsFold, ceil_height_fold } from './constants'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import QueueAnim from 'rc-queue-anim'
 import GetRowTaskItem from './GetRowTaskItem'
 import { filterDueTimeSpan } from './ganttBusiness'
 import { checkIsHasPermissionInBoard } from '../../../../utils/businessFunction';
 import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE } from '../../../../globalset/js/constant';
+import GetRowSummary from './components/gattFaceCardItem/GetRowSummary.js'
 
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
@@ -96,7 +97,10 @@ export default class GetRowGantt extends Component {
 
   //鼠标拖拽移动
   dashedMousedown(e) {
-    if (this.stopPropagationEle(e)) { //不能滑动到某一个任务实例上
+    if (
+      this.stopPropagationEle(e) || //不能滑动到某一个任务实例上
+      this.areaCanNotOperate(e)
+    ) {
       return false
     }
     if (this.isDragging || this.isMouseDown) { //在拖拽中，还有防止重复点击
@@ -113,7 +117,10 @@ export default class GetRowGantt extends Component {
     target.onmouseup = this.dashedDragMouseup.bind(this);
   }
   dashedDragMousemove(e) {
-    if (this.stopPropagationEle(e)) { //不能滑动到某一个任务实例上
+    if (
+      this.stopPropagationEle(e) ||
+      this.areaCanNotOperate(e)
+    ) { //不能滑动到某一个任务实例上
       return false
     }
     this.setIsDragging(true)
@@ -149,7 +156,10 @@ export default class GetRowGantt extends Component {
     })
   }
   dashedDragMouseup(e) {
-    if (this.stopPropagationEle(e)) { //不能滑动到某一个任务实例上
+    if (
+      this.stopPropagationEle(e) ||
+      this.areaCanNotOperate(e)
+    ) { //不能滑动到某一个任务实例上
       return false
     }
     const { currentRect = {} } = this.state
@@ -169,10 +179,12 @@ export default class GetRowGantt extends Component {
 
   //鼠标移动
   dashedMouseMove(e) {
-    const { dataAreaRealHeight } = this.props
+    const { dataAreaRealHeight, gantt_board_id, group_view_type } = this.props
     if (e.target.offsetTop >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
-
-    if (e.target.dataset.targetclassname == 'specific_example') { //不能滑动到某一个任务实例上
+    if (
+      (e.target.dataset.targetclassname == 'specific_example') ||  //不能滑动到某一个任务实例上
+      (this.areaCanNotOperate(e)) //折叠情况下，如果鼠标位置所在分组具有list_data,则不能操作
+    ) {
       this.setState({
         dasheRectShow: false
       })
@@ -196,7 +208,7 @@ export default class GetRowGantt extends Component {
     let py = e.pageY - target_0.offsetTop + target_1.scrollTop - dateAreaHeight
 
     const molX = px % ceilWidth
-    const molY = py % ceiHeight
+    const molY = py % (ganttIsFold({ gantt_board_id, group_view_type }) ? ceiHeight * 2 : ceiHeight) //2为折叠的总行
     const mulX = Math.floor(px / ceilWidth)
     const mulY = Math.floor(py / ceiHeight)
     const delX = Number((molX / ceilWidth).toFixed(1))
@@ -223,6 +235,28 @@ export default class GetRowGantt extends Component {
         dasheRectShow: false
       })
     }
+  }
+  // 在该区间内不能操作
+  areaCanNotOperate = (e) => {
+    const { group_list_area_section_height = [], list_group = [], gantt_board_id, group_view_type } = this.props
+    if (!ganttIsFold({ gantt_board_id, group_view_type })) { //非折叠情况下不考虑
+      return false
+    }
+    const target_0 = document.getElementById('gantt_card_out')
+    const target_1 = document.getElementById('gantt_card_out_middle')
+    // 取得鼠标位置
+    const py = e.pageY - target_0.offsetTop + target_1.scrollTop - dateAreaHeight
+    //取得现在鼠标所在分组
+    const height_length = group_list_area_section_height.length
+    let index = 0
+    for (let i = 0; i < height_length; i++) {
+      if (py < group_list_area_section_height[i]) {
+        index = i
+        break
+      }
+    }
+    const current_hover_group_has_data = list_group[index].list_data.length > 0
+    return current_hover_group_has_data
   }
 
   //记录起始时间，做创建任务工作
@@ -391,37 +425,50 @@ export default class GetRowGantt extends Component {
     })
   }
 
-  // 设置任务标签颜色
-  setLableColor = (label_data) => {
-    let bgColor = ''
-    let b = ''
-    if (label_data && label_data.length) {
-      const color_arr = label_data.map(item => {
-        return `rgb(${item.label_color})`
+  // 渲染普通任务列表
+  renderNormalTaskList = ({ list_id, list_data }) => {
+    return (
+      list_data.map((value2, key) => {
+        // const { id, left, width, start_time, end_time } = value2
+        const { end_time, left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time, start_time, due_time } = value2
+        const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
+        return (
+          <GetRowTaskItem
+            key={`${id}_${start_time}_${end_time}_${left}_${top}`}
+            itemValue={value2}
+            setSpecilTaskExample={this.setSpecilTaskExample}
+            ganttPanelDashedDrag={this.isDragging}
+            getCurrentGroup={this.getCurrentGroup}
+            list_id={list_id}
+          />
+        )
       })
-      const color_arr_length = color_arr.length
-      const color_percent_arr = color_arr.map((item, index) => {
-        return (index + 1) / color_arr_length * 100
-      })
-      bgColor = color_arr.reduce((total, color_item, current_index) => {
-        return `${total},  ${color_item} ${color_percent_arr[current_index - 1] || 0}%, ${color_item} ${color_percent_arr[current_index]}%`
-      }, '')
-
-      b = `linear-gradient(to right${bgColor})`
-    } else {
-      b = '#ffffff'
-    }
-    return b
+    )
   }
 
-  // 任务单项拖拽
-  onCardItemDrag = (e) => {
-    // console.log('sssss', e)
+  renderFoldTaskSummary = ({ list_id, list_data, board_fold_data = {}, group_index }) => {
+    return (
+      <GetRowSummary
+        list_data={list_data}
+        itemValue={board_fold_data}
+        list_id={list_id}
+        key={list_id}
+        group_index={group_index}
+      />
+    )
   }
 
   render() {
     const { currentRect = {}, dasheRectShow, drag_holiday_count } = this.state
-    const { gold_date_arr = [], list_group = [], ceilWidth, group_rows = [], ceiHeight } = this.props
+    const {
+      gold_date_arr = [],
+      list_group = [],
+      ceilWidth,
+      group_rows = [],
+      ceiHeight,
+      gantt_board_id,
+      group_view_type
+    } = this.props
 
     return (
       <div className={indexStyles.gantt_operate_top}
@@ -435,7 +482,7 @@ export default class GetRowGantt extends Component {
             left: currentRect.x + 1, top: currentRect.y,
             width: currentRect.width, height: currentRect.height,
             boxSizing: 'border-box',
-            marginTop: task_item_margin_top,
+            marginTop: !ganttIsFold({ gantt_board_id, group_view_type }) ? task_item_margin_top : (ceil_height_fold * 2 - task_item_height) / 2, //task_item_margin_top,//
             color: 'rgba(0,0,0,0.45)',
             textAlign: 'right',
             lineHeight: `${ceiHeight - task_item_margin_top}px`,
@@ -447,95 +494,15 @@ export default class GetRowGantt extends Component {
           </div>
         )}
         {list_group.map((value, key) => {
-          const { list_data = [], list_id } = value
-          return (
-            list_data.map((value2, key) => {
-              // const { id, left, width, start_time, end_time } = value2
-              const { end_time, left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time, start_time, due_time } = value2
-              const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
-              return (
-                <GetRowTaskItem
-                  key={`${id}_${start_time}_${end_time}_${left}_${top}`}
-                  itemValue={value2}
-                  setSpecilTaskExample={this.setSpecilTaskExample}
-                  ganttPanelDashedDrag={this.isDragging}
-                  getCurrentGroup={this.getCurrentGroup}
-                  list_id={list_id}
-                />
-                // <QueueAnim type="right" key={`${id}_${start_time}_${end_time}`} duration={0}>
-                //   {/* <Dropdown placement="bottomRight" overlay={<CardDropDetail {...value2} />} key={id}> */}
-                //   <GetRowTaskItem
-                //     key={`${id}_${start_time}_${end_time}_${left}_${top}`}
-                //     itemValue={value2}
-                //     setSpecilTaskExample={this.setSpecilTaskExample}
-                //     ganttPanelDashedDrag={this.isDragging}
-                //     list_id={list_id}
-                //   />
-                //   {/* 
-                //     <div
-                //       className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
-                //       data-targetclassname="specific_example"
-                //       // onDrag={this.onCardItemDrag}
-                //       style={{
-                //         left: left, top: top,
-                //         width: (width || 6) - 6, height: (height || task_item_height),
-                //         marginTop: task_item_margin_top,
-                //         background: this.setLableColor(label_data), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
-                //       }}
-                //       onMouseDown={(e) => e.stopPropagation()}
-                //       onMouseMove={(e) => e.stopPropagation()}
-                //       onClick={this.setSpecilTaskExample.bind(this, { id, top, board_id })}
-                //     >
-                //       <div
-                //         data-targetclassname="specific_example"
-                //         style={{
-                //           opacity: is_realize == '1'? 0.5: 1,
-                //         }}
-                //         className={`${indexStyles.specific_example_content} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
-                //         onMouseDown={(e) => e.stopPropagation()} >
-                //         <div data-targetclassname="specific_example"
-                //           className={`${indexStyles.card_item_status}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
-                //           <CheckItem is_realize={is_realize} />
-                //         </div>
-                //         <div data-targetclassname="specific_example"
-                //           className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
-                //           {name}
-                //           <span className={indexStyles.due_time_description}>
-                //             {
-                //               is_overdue && due_description
-                //             }
-                //           </span>
-                //         </div>
-                //           style={{display: 'flex'}}
-                //           className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`} onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
-                //           <div style={{display: 'flex', flex: '1'}}>
-                //             <span>{name}</span>
-                //             {
-                //               !(is_privilege == '0') && (
-                //                 <Tooltip title="已开启访问控制" placement="top">
-                //                     <span style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', marginLeft: '5px'}}>
-                //                     <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
-                //                     </span>
-                //                 </Tooltip>
-                //               )
-                //             }
-                //           </div>
-                //         </div>
-
-                //         <div data-targetclassname="specific_example"
-                //           onMouseDown={(e) => e.stopPropagation()} onMouseMove={(e) => e.stopPropagation()}>
-                //           <AvatarList users={executors} size={'small'} />
-                //         </div>
-                //       </div>
-                //     </div> */}
-                //   {/* </Dropdown> */}
-                // // </QueueAnim>
-
-              )
-            })
-          )
+          const { list_data = [], list_id, board_fold_data } = value
+          if (ganttIsFold({ gantt_board_id, group_view_type })) {
+            return (this.renderFoldTaskSummary({ list_id, list_data, board_fold_data, group_index: key }))
+          } else {
+            return (
+              this.renderNormalTaskList({ list_id, list_data })
+            )
+          }
         })}
-
 
         {list_group.map((value, key) => {
           const { lane_data, list_id, list_data = [] } = value
@@ -564,7 +531,8 @@ function mapStateToProps({ gantt: {
     create_end_time,
     holiday_list = [],
     gantt_board_id,
-    group_view_type
+    group_view_type,
+    group_list_area_section_height,
   }
 } }) {
   return {
@@ -579,7 +547,8 @@ function mapStateToProps({ gantt: {
     create_end_time,
     holiday_list,
     gantt_board_id,
-    group_view_type
+    group_view_type,
+    group_list_area_section_height,
   }
 }
 

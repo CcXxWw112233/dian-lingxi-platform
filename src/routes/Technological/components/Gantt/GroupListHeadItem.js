@@ -13,6 +13,7 @@ import ShowAddMenberModal from '../../../../routes/Technological/components/Proj
 import { PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_CARD_GROUP, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../globalset/js/constant';
 import VisitControl from '../VisitControl/index'
 import globalStyle from '@/globalset/css/globalClassName.less'
+import { ganttIsFold } from './constants';
 
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
@@ -193,7 +194,8 @@ export default class GroupListHeadItem extends Component {
     dispatch({
       type: 'gantt/updateDatas',
       payload: {
-        gantt_board_id: list_id
+        gantt_board_id: list_id,
+        list_group: [],
       }
     })
     // dispatch({
@@ -585,69 +587,90 @@ export default class GroupListHeadItem extends Component {
 
     const { currentUserOrganizes = [], gantt_board_id = [], ceiHeight, is_show_org_name, is_all_org, rows = 5, group_view_type, get_gantt_data_loading } = this.props
     const { itemValue = {}, itemKey } = this.props
-    const { list_name, org_id, list_no_time_data = [], list_id, lane_icon, board_id, is_privilege = '0', privileges, } = itemValue
+    const { list_name, org_id, list_no_time_data = [], list_id, lane_icon, board_id, is_privilege = '0', privileges, create_by = {} } = itemValue
     const { isShowBottDetail, show_edit_input, local_list_name, edit_input_value, show_add_menber_visible } = this.state
-
+    const board_create_user = create_by.name
     return (
       <div>
         <div className={indexStyles.listHeadItem} style={{ height: rows * ceiHeight }}>
           <div className={`${indexStyles.list_head_top}`}>
-            {
-              group_view_type == '2' && !get_gantt_data_loading && (
-                <Avatar src={lane_icon} icon="user" style={{ marginTop: '-4px', marginRight: 8 }}></Avatar>
-              )
-            }
-            {
-              show_edit_input ? (
-                <Input
-                  style={{ marginBottom: 6 }}
-                  autoFocus
-                  value={edit_input_value}
-                  onChange={this.inputOnchange}
-                  onPressEnter={this.inputOnPressEnter}
-                  onBlur={this.inputOnBlur}
-                />
-              ) : (
-                  <span className={indexStyles.list_name} onClick={this.listNameClick}>
-                    {
-                      is_privilege == '1' && (
-                        <Tooltip title="已开启访问控制" placement="top">
-                        <span className={globalStyle.authTheme} style={{ marginRight: 4, fontSize: 16, color: '#8c8c8c' }}>&#xe7ca;</span>
-                      </Tooltip>
-                      )
-                    }
-                    {local_list_name}
-                  </span>
-                )
-            }
-            <span className={indexStyles.org_name}>
+            <div className={`${indexStyles.list_head_top_left}`}>
               {
-                is_show_org_name && is_all_org && group_view_type == '1' && !get_gantt_data_loading && gantt_board_id == '0' && (
-                  <span className={indexStyles.org_name}>
-                    #{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
-                  </span>
+                group_view_type == '2' && !get_gantt_data_loading && (
+                  <Avatar src={lane_icon} icon="user" style={{ marginTop: '-4px', marginRight: 8 }}></Avatar>
                 )
               }
-            </span>
-            {
-              // 只有在项目视图下，且如果在分组id == 0（未分组的情况下不能显示）
-              group_view_type == '1' && list_id != '0' && (
-                <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={group_view_type == '1' ? this.renderMenuOperateListName() : <span></span>}>
-                  <span className={`${globalStyles.authTheme} ${indexStyles.operator}`}>&#xe7fd;</span>
-                </Dropdown>
-              )
-            }
+              {
+                show_edit_input ? (
+                  <Input
+                    style={{ marginBottom: 6 }}
+                    autoFocus
+                    value={edit_input_value}
+                    onChange={this.inputOnchange}
+                    onPressEnter={this.inputOnPressEnter}
+                    onBlur={this.inputOnBlur}
+                  />
+                ) : (
+                    <div title={local_list_name} className={`${indexStyles.list_name} ${globalStyle.global_ellipsis}`} onClick={this.listNameClick}>
+                      {local_list_name}
+                    </div>
+                  )
+              }
+              {
+                is_privilege == '1' && (
+                  <Tooltip title="已开启访问控制" placement="top">
+                    <span className={globalStyle.authTheme} style={{ marginLeft: 10, fontSize: 16, color: '#8c8c8c' }}>&#xe7ca;</span>
+                  </Tooltip>
+                )
+              }
+              {/* 置顶 */}
+              {/* {
+                (gantt_board_id == '0' && group_view_type == '1' && !show_edit_input) && (
+                  <div className={globalStyle.authTheme} style={{ marginLeft: 10, fontSize: 16, color: '#FFA940' }}>&#xe7e3;</div>
+                )
+              } */}
+            </div>
+            <div className={`${indexStyles.list_head_top_right}`}>
+              {
+                // 只有在项目视图下，且如果在分组id == 0（未分组的情况下不能显示）
+                group_view_type == '1' && list_id != '0' && (
+                  <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={group_view_type == '1' ? this.renderMenuOperateListName() : <span></span>}>
+                    <span className={`${globalStyles.authTheme} ${indexStyles.operator}`}>&#xe7fd;</span>
+                  </Dropdown>
+                )
+              }
+            </div>
           </div>
-          {/* {this.renderNoTimeCard()} */}
+          {/* 没有排期任务列表 */}
           <div className={`${indexStyles.list_head_body}`}>
             <div className={`${indexStyles.list_head_body_inner} ${isShowBottDetail == '0' && indexStyles.list_head_body_inner_init} ${isShowBottDetail == '2' && indexStyles.animate_hide} ${isShowBottDetail == '1' && indexStyles.animate_show}`} >
               {this.renderTaskItem()}
             </div>
           </div>
-          <div className={indexStyles.list_head_footer} onClick={this.setIsShowBottDetail}>
-            <div className={`${globalStyles.authTheme} ${indexStyles.list_head_footer_tip} ${isShowBottDetail == '2' && indexStyles.spin_hide} ${isShowBottDetail == '1' && indexStyles.spin_show}`}>&#xe61f;</div>
-            <div className={indexStyles.list_head_footer_dec}>{list_no_time_data.length}个未排期事项</div>
-          </div>
+          {/* 底部ui，是否折叠情况 */}
+          {
+            ganttIsFold({ gantt_board_id, group_view_type }) ? (
+              <div className={`${indexStyles.list_head_footer}`} onClick={this.setIsShowBottDetail}>
+                {
+                  is_show_org_name && is_all_org && group_view_type == '1' && !get_gantt_data_loading && gantt_board_id == '0' && (
+                    <div className={indexStyles.list_head_footer_contain}>
+                      <div className={`${indexStyles.list_head_footer_contain_lt} ${globalStyle.authTheme}`}>&#xe6da;</div>
+                      <div className={`${indexStyles.list_head_footer_contain_rt} ${globalStyle.global_ellipsis}`}>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</div>
+                    </div>
+                  )
+                }
+                <div className={indexStyles.list_head_footer_contain}>
+                  <div className={`${indexStyles.list_head_footer_contain_lt} ${globalStyle.authTheme}`}>&#xe6db;</div>
+                  <div className={`${indexStyles.list_head_footer_contain_rt} ${globalStyle.global_ellipsis}`}>{board_create_user}</div>
+                </div>
+              </div>
+            ) : (
+                <div className={indexStyles.list_head_footer} onClick={this.setIsShowBottDetail}>
+                  <div className={`${globalStyles.authTheme} ${indexStyles.list_head_footer_tip} ${isShowBottDetail == '2' && indexStyles.spin_hide} ${isShowBottDetail == '1' && indexStyles.spin_show}`}>&#xe61f;</div>
+                  <div className={indexStyles.list_head_footer_dec}>{list_no_time_data.length}个未排期事项</div>
+                </div>
+              )
+          }
         </div>
         {
           show_add_menber_visible && (
