@@ -232,7 +232,7 @@ export default class CommunicationFileList extends Component{
                 {
                     visible && (
                         <div className={styles.fileList}>
-                            <div className={styles.listHeaderName}>文件列表</div>
+                            <div className={styles.listHeaderName}>项目文件</div>
                             {/* 文件列表 */}
                             <div className={`${styles.fileListContent} ${isShowCompanyName && styles.arrowPosition}`}>
                                 {

@@ -1241,10 +1241,13 @@ class BoardCommunication extends Component {
                     !this.state.previewFileModalVisibile && (
                         <UploadTemporaryFile
                             isRightBarShowFileList={isRightBarShowFileList}
-                            // getDraggerProps={this.getDraggerProps}
-                            // onBeforeUpload={this.onBeforeUpload}
-                            // dragEnterCaptureFlag={dragEnterCaptureFlag}
+                            // 
+                            getDraggerProps={this.getDraggerProps}
+                            onBeforeUpload={this.onBeforeUpload}
+                            dragEnterCaptureFlag={dragEnterCaptureFlag}
+                            // 
                             simplemodeCurrentProject={simplemodeCurrentProject}
+                            currentBoardId = {this.props.gantt_board_id}
                         />
                     )
                 } */}

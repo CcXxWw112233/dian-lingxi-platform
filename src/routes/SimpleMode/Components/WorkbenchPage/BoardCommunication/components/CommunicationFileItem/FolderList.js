@@ -127,6 +127,7 @@ export default class FolderList extends Component{
                 let loading = message.loading('正在上传...', 0)
             },
             onChange({ file, fileList, event }) {
+                // debugger;
                 if (file.status === 'uploading') {
 
                 } else {
@@ -157,22 +158,6 @@ export default class FolderList extends Component{
         const { board_id, current_folder_id, isShowSub } = this.props
         return(
             <div className={styles.folderList}>
-                <Dropdown overlay={this.renderAddItemDropMenu()}>
-                    <div className={`${styles.folder_item} ${globalStyles.authTheme} ${styles.add_item}`}>&#xe8fe;</div>
-                </Dropdown>
-                {
-                    is_show_add_item && (
-                        <div className={`${styles.folder_item} ${styles.add_item}`} style={{ height: 38, marginTop: 16 }}>
-                            <Input style={{ height: 38 }}
-                                autoFocus
-                                value={add_folder_value}
-                                onChange={this.inputOnchange}
-                                onPressEnter={this.inputOnPressEnter}
-                                onBlur={this.inputOnBlur}
-                            />
-                        </div>
-                    )
-                }
                 {
                     file_data && file_data.map((item, key)=>{
                         const { id, is_privilege } = item
@@ -198,6 +183,24 @@ export default class FolderList extends Component{
                         )
                     })
                 }
+
+                {
+                    is_show_add_item && (
+                        <div className={`${styles.folder_item} ${styles.add_item}`} style={{ height: 38, marginTop: 16 }}>
+                            <Input style={{ height: 38 }}
+                                autoFocus
+                                value={add_folder_value}
+                                onChange={this.inputOnchange}
+                                onPressEnter={this.inputOnPressEnter}
+                                onBlur={this.inputOnBlur}
+                            />
+                        </div>
+                    )
+                }
+
+                <Dropdown overlay={this.renderAddItemDropMenu()} placement="topCenter">
+                    <div className={`${styles.folder_item} ${globalStyles.authTheme} ${styles.add_item}`}>&#xe8fe;</div>
+                </Dropdown>
             </div>
         );
     }
