@@ -82,10 +82,10 @@ export default class MainContent extends Component {
     const { privileges = [], board_id, is_privilege } = drawContent
     return {
       'visit_control_edit': function () {// 是否是有编辑权限
-        return checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, data, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))
+        return checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, data ? data : [], checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))
       },
       'visit_control_comment': function () {
-        return checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, data, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))
+        return checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, data ? data : [], checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))
       },
     }
   }
@@ -130,7 +130,7 @@ export default class MainContent extends Component {
       }
       let new_drawContent = { ...drawContent }
       new_drawContent['is_realize'] = is_realize === '1' ? '0' : '1'
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'is_realize', value: is_realize === '1' ? '0' : '1' })
     })
   }
   // 设置卡片是否完成 E
@@ -181,7 +181,7 @@ export default class MainContent extends Component {
         }
       })
       // 需要调用父级的列表
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, name: 'card_name', value: val })
     })
   }
   // 设置标题文本失去焦点回调 E
@@ -595,7 +595,7 @@ export default class MainContent extends Component {
   renderPriciple = () => {
     const { drawContent = {}, projectDetailInfoData } = this.props
     const { card_id, board_id, org_id } = drawContent
-    const { data } = this.getCurrentDrawerContentPropsModelDatasExecutors()
+    const { data = [] } = this.getCurrentDrawerContentPropsModelDatasExecutors()
     return (
       <div>
         <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
@@ -708,8 +708,10 @@ export default class MainContent extends Component {
   // 判断是否存在执行人
   whetherExistencePriciple = () => {
     const { drawContent: { properties = [] } } = this.props
+    let flag
     if (!properties.length) return false
-    const flag = properties.filter(item => item.code == 'EXECUTOR')
+    flag = properties.filter(item => item.code == 'EXECUTOR')
+    if (flag.length == '0') return flag = false
     return flag
   }
 
