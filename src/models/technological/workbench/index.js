@@ -219,7 +219,7 @@ export default modelExtend(technological, {
             currentSelectedProjectMembersList: res.data
           }
         })
-        if(typeof calback == 'function') {
+        if (typeof calback == 'function') {
           calback(res.data)
         }
       }

@@ -490,7 +490,7 @@ export default class GetRowTaskItem extends Component {
         const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
 
         return (
-            <Popover placement="bottom" content={<CardDropDetail {...itemValue} />} key={id}>
+            <Popover placement="bottom" content={<CardDropDetail list={[{ ...itemValue }]} />} key={id}>
                 <div
                     className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
                     data-targetclassname="specific_example"
