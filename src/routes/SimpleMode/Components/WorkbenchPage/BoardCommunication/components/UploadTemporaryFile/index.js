@@ -10,7 +10,7 @@ import {
 } from "@/utils/businessFunction";
 import Cookies from 'js-cookie'
 import coverIconSrc from '@/assets/simplemode/communication_cover_icon@2x.png';
-import { Upload, Button, Icon } from 'antd';
+import { Upload, Button, Icon, message } from 'antd';
 import indexStyles from './index.less';
 
 const { Dragger } = Upload;
@@ -55,67 +55,8 @@ class UploadTemporaryFile extends Component{
                 }
                 let loading = message.loading('正在上传...', 0)
             },
-            // beforeUpload(file, fileList) {
-            //     if (fileList.length > 1) {
-            //         message.error("项目交流一次只能上传一个文件");
-            //         //console.log(fileList);
-            //         return false;
-        
-            //     }
-        
-            //     const { dispatch, simplemodeCurrentProject = {} } = this.props;
-            //     if (file.size == 0) {
-            //         message.error(`不能上传空文件`)
-            //         return false
-            //     } else if (file.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
-            //         message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
-            //         return false
-            //     }
-            //     const lastIndex = file.name.lastIndexOf('.');
-            //     //console.log(file.name.substr(lastIndex) + 1);
-            //     if (!file.name || FILE_TYPE_UPLOAD_WHITELISTED.indexOf(file.name.substr(lastIndex + 1)) == -1) {
-            //         message.error('暂不支持该文件格式上传')
-            //         return false
-            //     }
-            //     this.setState(state => ({
-            //         awaitUploadFile: file,
-            //         selectBoardFileModalVisible: true,
-            //         is_selectFolder: true,
-            //         dragEnterCaptureFlag: false,
-            //         currentfile: {}
-            //     }));
-        
-            //     let currentBoardDetail = {}
-            //     if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
-            //         currentBoardDetail = { ...simplemodeCurrentProject };
-            //         dispatch({
-            //             type: 'simpleWorkbenchbox/updateDatas',
-            //             payload: {
-            //                 currentBoardDetail: currentBoardDetail
-            //             }
-            //         });
-            //     }
-        
-            //     dispatch({
-            //         type: 'simpleBoardCommunication/updateDatas',
-            //         payload: {
-            //             is_file_tree_loading: true
-            //         }
-            //     });
-        
-        
-            //     if (currentBoardDetail.board_id) {
-            //         dispatch({
-            //             type: 'simpleWorkbenchbox/getFolderList',
-            //             payload: {
-            //                 board_id: currentBoardDetail.board_id
-            //             }
-            //         });
-        
-            //     }
-            //     return false;
-            // },
             onChange({ file, fileList, event }) {
+                debugger;
                 if (file.status === 'uploading') {
 
                 } else {
@@ -209,57 +150,33 @@ class UploadTemporaryFile extends Component{
 
         return(
             <div className={`${indexStyles.temporaryFile} ${isRightBarShowFileList ? indexStyles.changeContentWidth : null}`}>
-                <div className={indexStyles.keepMiddleBox}>
+
                     {/* 上传本地文件 */}
-                    {/* <div className={indexStyles.draggerContainerStyle}>
-                        <Dragger multiple={false} {...this.props.getDraggerProps()} beforeUpload={this.props.onBeforeUpload}>
-                            <div className={`${indexStyles.indexCoverWapper} ${dragEnterCaptureFlag ? indexStyles.draging : ''}`}>
-
-                                {
-                                    dragEnterCaptureFlag ? (
-                                        <div className={indexStyles.iconDescription}>
-                                            <img src={uploadIconSrc} style={{ width: '48px', height: '48px' }} />
-                                            <span className={indexStyles.iconDescription}>松开鼠标左键即可上传文件</span>
-                                        </div>
-                                    ) : (
-                                            <>
-                                                <div className={indexStyles.icon}>
-                                                    <img src={coverIconSrc} style={{ width: '80px', height: '84px' }} />
-                                                </div>
-                                                <div className={indexStyles.descriptionWapper}>
-                                                    <div className={indexStyles.linkTitle}>
-                                                        // 选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或  // 
-                                                        <a className={indexStyles.alink}>点击上传</a> 文件</div>
-                                                    <div className={indexStyles.detailDescription}>选择或上传图片格式文件、PDF格式文件即可开启圈点交流</div>
-                                                </div>
-                                            </>
-                                        )}
-
-                            </div>
-                        </Dragger>
-                    </div> */}
-
                     <div className={indexStyles.draggerContainerStyle}>
-                        <div className={indexStyles.icon}>
-                            <img src={coverIconSrc} style={{ width: '80px', height: '84px' }} />
-                        </div>
-                        <div className={indexStyles.descriptionWapper}>
-                            <div className={indexStyles.detailDescription}>选择或上传图片格式文件、PDF格式文件即可开启圈点交流</div>
-                            <div className={indexStyles.linkTitle}>
-                                {/* <a className={indexStyles.alink}>点击上传</a> 文件 */}
-                                <Upload {...this.uploadProps()} showUploadList={false}>
-                                    <Button>
-                                    <Icon type="upload" />上传本地文件
-                                    </Button>
-                                </Upload>
+                        <div className={`${indexStyles.indexCoverWapper} ${dragEnterCaptureFlag ? indexStyles.draging : ''}`}>
+                            <div className={indexStyles.icon}>
+                                <img src={coverIconSrc} style={{ width: '80px', height: '84px' }} />
                             </div>
+                            <div className={indexStyles.descriptionWapper}>
+                                <div className={indexStyles.detailDescription}>选择或上传图片格式文件、PDF格式文件即可开启圈点交流</div>
+                                {/* <div className={indexStyles.linkTitle}>
+                                    // 选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或  //
+                                    // <a className={indexStyles.alink}>点击上传</a> 文件</div> //
+                                </div> */}
+                                <div className={indexStyles.uploadBtnBox}>
+                                    <Upload {...this.uploadProps()} showUploadList={false}>
+                                        {/* <Button>
+                                        <Icon type="upload" />上传本地文件
+                                        </Button> */}
+                                        上传本地文件
+                                    </Upload>
+                                </div>
+                            </div>
+
+                            {/* 临时文件保存组件 */}
+                            {/* <TemporaryFilePart /> */}
                         </div>
                     </div>
-
-                    {/* 临时文件保存组件 */}
-                    {/* <TemporaryFilePart /> */}
-
-                </div>
                 
 
                 {/* {
