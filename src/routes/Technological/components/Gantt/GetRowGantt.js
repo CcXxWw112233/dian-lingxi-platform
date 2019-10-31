@@ -97,7 +97,10 @@ export default class GetRowGantt extends Component {
 
   //鼠标拖拽移动
   dashedMousedown(e) {
-    if (this.stopPropagationEle(e)) { //不能滑动到某一个任务实例上
+    if (
+      this.stopPropagationEle(e) || //不能滑动到某一个任务实例上
+      this.areaCanNotOperate(e)
+    ) {
       return false
     }
     if (this.isDragging || this.isMouseDown) { //在拖拽中，还有防止重复点击
@@ -114,7 +117,10 @@ export default class GetRowGantt extends Component {
     target.onmouseup = this.dashedDragMouseup.bind(this);
   }
   dashedDragMousemove(e) {
-    if (this.stopPropagationEle(e)) { //不能滑动到某一个任务实例上
+    if (
+      this.stopPropagationEle(e) ||
+      this.areaCanNotOperate(e)
+    ) { //不能滑动到某一个任务实例上
       return false
     }
     this.setIsDragging(true)
@@ -150,7 +156,10 @@ export default class GetRowGantt extends Component {
     })
   }
   dashedDragMouseup(e) {
-    if (this.stopPropagationEle(e)) { //不能滑动到某一个任务实例上
+    if (
+      this.stopPropagationEle(e) ||
+      this.areaCanNotOperate(e)
+    ) { //不能滑动到某一个任务实例上
       return false
     }
     const { currentRect = {} } = this.state
@@ -172,8 +181,10 @@ export default class GetRowGantt extends Component {
   dashedMouseMove(e) {
     const { dataAreaRealHeight, gantt_board_id, group_view_type } = this.props
     if (e.target.offsetTop >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
-
-    if (e.target.dataset.targetclassname == 'specific_example') { //不能滑动到某一个任务实例上
+    if (
+      (e.target.dataset.targetclassname == 'specific_example') ||  //不能滑动到某一个任务实例上
+      (this.areaCanNotOperate(e)) //折叠情况下，如果鼠标位置所在分组具有list_data,则不能操作
+    ) {
       this.setState({
         dasheRectShow: false
       })
@@ -226,8 +237,26 @@ export default class GetRowGantt extends Component {
     }
   }
   // 在该区间内不能操作
-  areaCantOperate = () => {
-    
+  areaCanNotOperate = (e) => {
+    const { group_list_area_section_height = [], list_group = [], gantt_board_id, group_view_type } = this.props
+    if (!ganttIsFold({ gantt_board_id, group_view_type })) { //非折叠情况下不考虑
+      return false
+    }
+    const target_0 = document.getElementById('gantt_card_out')
+    const target_1 = document.getElementById('gantt_card_out_middle')
+    // 取得鼠标位置
+    const py = e.pageY - target_0.offsetTop + target_1.scrollTop - dateAreaHeight
+    //取得现在鼠标所在分组
+    const height_length = group_list_area_section_height.length
+    let index = 0
+    for (let i = 0; i < height_length; i++) {
+      if (py < group_list_area_section_height[i]) {
+        index = i
+        break
+      }
+    }
+    const current_hover_group_has_data = list_group[index].list_data.length > 0
+    return current_hover_group_has_data
   }
 
   //记录起始时间，做创建任务工作
@@ -510,7 +539,8 @@ function mapStateToProps({ gantt: {
     create_end_time,
     holiday_list = [],
     gantt_board_id,
-    group_view_type
+    group_view_type,
+    group_list_area_section_height,
   }
 } }) {
   return {
@@ -525,7 +555,8 @@ function mapStateToProps({ gantt: {
     create_end_time,
     holiday_list,
     gantt_board_id,
-    group_view_type
+    group_view_type,
+    group_list_area_section_height,
   }
 }
 
