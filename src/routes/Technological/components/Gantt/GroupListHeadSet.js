@@ -80,6 +80,7 @@ export default class GroupListHeadSet extends Component {
                 type: 'gantt/updateDatas',
                 payload: {
                     gantt_board_id: id,
+                    list_group: [],
                 }
             })
         }
