@@ -97,6 +97,7 @@ export default class GetRowSummary extends Component {
                     (val.left + (val.time_span - 1) * ceilWidth) == item //位置对应上
                     && val.is_realize != '1' //未完成
                     && val.end_time < now //过期
+                    && val.is_has_end_time //存在实际的截止时间
                 ) {
                     list.push(val)
                 }
