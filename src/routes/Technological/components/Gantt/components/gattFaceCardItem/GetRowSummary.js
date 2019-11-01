@@ -149,10 +149,15 @@ export default class GetRowSummary extends Component {
     }
 
     render() {
-        const { itemValue = {} } = this.props
-        const { left, top, width, } = itemValue
+        const { itemValue = {}, ceilWidth } = this.props
+        const { left, top, width, time_span } = itemValue
         return (
-            <div data-targetclassname="specific_example" onMouseMove={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex' }} data-targetclassname="specific_example" onMouseMove={(e) => e.stopPropagation()}>
+                <div
+                    data-targetclassname="specific_example"
+                    onMouseMove={(e) => e.stopPropagation()}
+                    style={{ width: 10, position: 'absolute', zIndex: 1, height: 40, left: left - 10, top: top, }}
+                ></div>
                 <div
                     onMouseMove={(e) => e.stopPropagation()}
                     onClick={this.gotoBoard}
@@ -172,6 +177,11 @@ export default class GetRowSummary extends Component {
                         style={{ width: this.setBgSpecific().percent, height: 40, borderRadius: 4 }} >
                     </div> */}
                 </div>
+                <div
+                    data-targetclassname="specific_example"
+                    onMouseMove={(e) => e.stopPropagation()}
+                    style={{ width: 16, height: 40, position: 'absolute', zIndex: 1, left: left + time_span * ceilWidth - 6, top: top, }}
+                ></div>
                 {
                     this.renderDueList()
                 }
