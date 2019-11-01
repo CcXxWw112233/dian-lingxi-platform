@@ -127,8 +127,9 @@ export default class GetRowSummary extends Component {
         const { left, top, width, } = itemValue
 
         return (
-            <div>
+            <div data-targetclassname="specific_example" onMouseMove={(e) => e.stopPropagation()}>
                 <div
+                    onMouseMove={(e) => e.stopPropagation()}
                     onClick={this.gotoBoard}
                     className={`${indexStyles.specific_example}`}
                     data-targetclassname="specific_example"
