@@ -138,7 +138,9 @@ class Gantt extends Component {
         list_group_new[group_index].lane_status = '3' //创建的任务在当前时间之前，那就是逾期未完成
         list_group_new[group_index].lane_overdue_count = (Number(list_group_new[group_index].lane_overdue_count) || 0) + 1 //逾期未完成任务 +1
       } else {
-        list_group_new[group_index].lane_status = '2' //创建的任务在当前时间之后，那就是正常进行未完成
+        if(list_group_new[group_index].lane_status == '1') {
+          list_group_new[group_index].lane_status = '2' //创建的任务在当前时间之后，那就是正常进行未完成
+        }
       }
     }
 

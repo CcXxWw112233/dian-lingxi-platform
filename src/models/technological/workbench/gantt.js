@@ -280,8 +280,11 @@ export default {
           const { lane_start_time, lane_end_time } = list_group_item
 
           const due_time = Math.max.call(null, getDigit(lane_end_time), Math.max.apply(null, due_time_arr)) //与后台返回值计算取最大作为结束
-          const start_time = Math.min.call(null, getDigit(lane_start_time), Math.min.apply(null, start_time_arr)) || due_time //与后台返回值计算取最小作为开始
-
+          const start_time = Math.min.call(null, getDigit(lane_start_time), Math.min.apply(null, start_time_arr)) || Math.min.apply(null, start_time_arr) || due_time //与后台返回值计算取最小作为开始
+          // console.log('sssss',
+          //   getDigit(lane_start_time),
+          //   Math.min.apply(null, start_time_arr),
+          //   Math.min.call(null, getDigit(lane_start_time), Math.min.apply(null, start_time_arr)))
           let time_span = (!due_time || !start_time) ? 1 : (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1 //正常区间内
           if (due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
             time_span = (Math.floor((end_date.timestamp - start_time) / (24 * 3600 * 1000))) + 1
