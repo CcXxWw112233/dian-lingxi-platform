@@ -13,33 +13,59 @@ export default class GetRowSummary extends Component {
         let time_bg_color = ''
         let percent_class = ''
         let is_due = false
-        const { itemValue: { end_time }, list_data = [] } = this.props
-        const now = new Date().getTime()
-        const total = list_data.length
-        const realize_count = list_data.filter(item => item.is_realize == '1').length
-        const due_not_realize_count = list_data.filter(item => item.is_realize == '0' && item.end_time < end_time).length //逾期未完成个数
-
-        if (realize_count == total) { //完成
+        const { itemValue: { lane_status, lane_overdue_count, lane_schedule_count }, list_data = [] } = this.props
+        const percent = `${((lane_schedule_count - lane_overdue_count) / lane_schedule_count) * 100}%`
+        if (lane_status == '1') { //完成
             time_bg_color = '#BFBFBF'
             percent_class = styles.board_fold_complete
+        } else if (lane_status == '2') { //正在进行的项目（任务按期完成）
+            time_bg_color = '#91D5FF'
+            percent_class = styles.board_fold_ding
+        } else if (lane_status == '3') { //正在进行的项目(存在逾期任务)
+            time_bg_color = '#FFCCC7'
+            percent_class = styles.board_fold_due
+            is_due = true
         } else {
-            if (due_not_realize_count > 0) { //项目汇总时间在当前之前, 逾期
-                time_bg_color = '#FFCCC7'
-                percent_class = styles.board_fold_due
-                is_due = true
-            } else {
-                time_bg_color = '#91D5FF'
-                percent_class = styles.board_fold_ding
-            }
-        }
 
+        }
         return {
-            percent: `${(realize_count / total) * 100}%`,
+            percent,
             time_bg_color,
             percent_class,
             is_due
         }
     }
+    // setBgSpecific = () => {
+    //     let time_bg_color = ''
+    //     let percent_class = ''
+    //     let is_due = false
+    //     const { itemValue: { end_time }, list_data = [] } = this.props
+    //     const now = new Date().getTime()
+    //     const total = list_data.length
+    //     const realize_count = list_data.filter(item => item.is_realize == '1').length
+    //     const due_not_realize_count = list_data.filter(item => item.is_realize == '0' && item.end_time < end_time).length //逾期未完成个数
+
+    //     if (realize_count == total) { //完成
+    //         time_bg_color = '#BFBFBF'
+    //         percent_class = styles.board_fold_complete
+    //     } else {
+    //         if (due_not_realize_count > 0) { //项目汇总时间在当前之前, 逾期
+    //             time_bg_color = '#FFCCC7'
+    //             percent_class = styles.board_fold_due
+    //             is_due = true
+    //         } else {
+    //             time_bg_color = '#91D5FF'
+    //             percent_class = styles.board_fold_ding
+    //         }
+    //     }
+
+    //     return {
+    //         percent: `${(realize_count / total) * 100}%`,
+    //         time_bg_color,
+    //         percent_class,
+    //         is_due
+    //     }
+    // }
 
     gotoBoard = (e) => {
         e.stopPropagation()
@@ -125,7 +151,6 @@ export default class GetRowSummary extends Component {
     render() {
         const { itemValue = {} } = this.props
         const { left, top, width, } = itemValue
-
         return (
             <div data-targetclassname="specific_example" onMouseMove={(e) => e.stopPropagation()}>
                 <div
@@ -140,12 +165,12 @@ export default class GetRowSummary extends Component {
                         padding: 0,
                         zIndex: 0,
                     }}>
-                    <div
+                    {/* 进度填充 */}
+                    {/* <div
                         data-targetclassname="specific_example"
                         className={this.setBgSpecific().percent_class}
                         style={{ width: this.setBgSpecific().percent, height: 40, borderRadius: 4 }} >
-                        {/* {this.setBgSpecific().percent} */}
-                    </div>
+                    </div> */}
                 </div>
                 {
                     this.renderDueList()

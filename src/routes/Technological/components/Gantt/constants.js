@@ -11,3 +11,16 @@ export const ganttIsFold = ({ group_view_type, gantt_board_id }) => { //gantt是
         return false
     }
 }
+// 转义时间
+export const getDigitTime = (timestamp) => {
+    if (!timestamp) {
+        return 0
+    }
+    let new_timestamp = timestamp.toString()
+    if (new_timestamp.length == 10) {
+        new_timestamp = Number(new_timestamp) * 1000
+    } else {
+        new_timestamp = Number(new_timestamp)
+    }
+    return new_timestamp
+}
