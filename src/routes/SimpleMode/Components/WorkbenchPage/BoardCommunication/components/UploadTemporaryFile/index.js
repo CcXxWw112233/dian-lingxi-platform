@@ -183,7 +183,7 @@ class UploadTemporaryFile extends Component{
 
     render(){
         const {
-            isRightBarShowFileList,
+            isVisibleFileList,
             dragEnterCaptureFlag,
         } = this.props;
 
@@ -193,12 +193,12 @@ class UploadTemporaryFile extends Component{
         } = this.state;
 
         return(
-            <div className={`${indexStyles.temporaryFile} ${isRightBarShowFileList ? indexStyles.changeContentWidth : null}`}>
+            <div className={`${indexStyles.temporaryFile} ${isVisibleFileList ? indexStyles.changeContentWidth : null}`}>
                 {/* 上传本地文件 */}
                 
                 {
                     !this.state.previewFileModalVisibile && (
-                        <div className={`${indexStyles.draggerContainerStyle} ${isRightBarShowFileList ? indexStyles.changeDraggerWidth : null}`}>
+                        <div className={`${indexStyles.draggerContainerStyle} ${isVisibleFileList ? indexStyles.changeDraggerWidth : null}`}>
                             {/* <Dragger multiple={false} {...this.props.getDraggerProps()} beforeUpload={this.props.onBeforeUpload}> */}
                             <Dragger multiple={false} {...this.uploadProps()} openFileDialogOnClick={false}>
                                 <div className={`${indexStyles.indexCoverWapper} ${dragEnterCaptureFlag ? indexStyles.draging : ''}`}>

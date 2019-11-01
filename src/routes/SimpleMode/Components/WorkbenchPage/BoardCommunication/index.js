@@ -48,8 +48,8 @@ class BoardCommunication extends Component {
         showFileSelectDropdown: false,
         // 左侧目录上传文件/选择文件是否打开圈图
         showFileListisOpenFileDetailModal: false,
-        // 左侧目录如果显示，则中间上传文件会新增className调整样式
-        isRightBarShowFileList: true,
+        // 是否显示/隐藏文件列表，默认显示
+        isVisibleFileList: true,
     };
 
     constructor(props) {
@@ -830,12 +830,10 @@ class BoardCommunication extends Component {
         this.initModalSelect()
     };
 
-    // 左侧目录如果显示，则中间上传文件会新增className调整样式,用isRightBarShowFileList控制
-    changeIsRightBarShowFileList = (visible)=>{
-        // 这里根据子组件的state 控制
-        this.setState({ isRightBarShowFileList: !visible });
+    // 显示/隐藏项目文件列表
+    isShowFileList = () => {
+        this.setState({ isVisibleFileList: !this.state.isVisibleFileList});
     }
-
 
     // 是否需要更新文件列表, 当访问控制设置时
     whetherUpdateFolderListData = (folder_id) => {
@@ -848,21 +846,21 @@ class BoardCommunication extends Component {
     // 
 
     // 显示圈图组件
-    showUpdatedFileDetail=()=>{
+    showUpdatedFileDetail = () => {
         // this.setState({ previewFileModalVisibile: true});
         this.setState({ showFileListisOpenFileDetailModal: true });
     }
 
     // 关闭圈图组件
-    hideUpdatedFileDetail=()=>{
+    hideUpdatedFileDetail = () => {
         this.setState({ showFileListisOpenFileDetailModal: false });
     }
 
 
     render() {
         const { currentBoardDetail = {}, dispatch, model = {}, modal, simplemodeCurrentProject } = this.props;
-        const {selectBoardFileModalVisible, showFileListisOpenFileDetailModal } = this.state;
-        const { currentfile = {}, is_selectFolder, dragEnterCaptureFlag, showFileSelectDropdown, isRightBarShowFileList } = this.state;
+        const {selectBoardFileModalVisible, showFileListisOpenFileDetailModal, isVisibleFileList } = this.state;
+        const { currentfile = {}, is_selectFolder, dragEnterCaptureFlag, showFileSelectDropdown } = this.state;
         const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
         const zommPictureComponentHeight = container_workbenchBoxContent ? container_workbenchBoxContent.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding
         // const zommPictureComponentWidth = container_workbenchBoxContent ? container_workbenchBoxContent.offsetWidth - 419 - 50 - 5 : 600; //60为文件内容组件评论等区域宽带   50为容器padding  
@@ -1197,7 +1195,8 @@ class BoardCommunication extends Component {
                     showUpdatedFileDetail={this.showUpdatedFileDetail}
                     // setPreviewFileModalVisibile={this.hideUpdatedFileDetail}
                     hideUpdatedFileDetail={this.hideUpdatedFileDetail}
-                    changeIsRightBarShowFileList={this.changeIsRightBarShowFileList}
+                    isVisibleFileList={isVisibleFileList}
+                    isShowFileList={this.isShowFileList}
                     {...this.props}
                 />
 
@@ -1240,7 +1239,7 @@ class BoardCommunication extends Component {
                 {/* {
                     !this.state.previewFileModalVisibile && (
                         <UploadTemporaryFile
-                            isRightBarShowFileList={isRightBarShowFileList}
+                            isVisibleFileList={isVisibleFileList}
                             // 
                             getDraggerProps={this.getDraggerProps}
                             onBeforeUpload={this.onBeforeUpload}
@@ -1255,7 +1254,7 @@ class BoardCommunication extends Component {
 
                 {
                     !this.state.previewFileModalVisibile && (
-                        <div className={`${indexStyles.draggerContainerStyle} ${isRightBarShowFileList ? indexStyles.changeDraggerWidth : null}`}>
+                        <div className={`${indexStyles.draggerContainerStyle} ${isVisibleFileList ? indexStyles.changeDraggerWidth : null}`}>
                             <Dragger multiple={false} {...this.getDraggerProps()} beforeUpload={this.onBeforeUpload}>
                                 <div className={`${indexStyles.indexCoverWapper} ${dragEnterCaptureFlag ? indexStyles.draging : ''}`}>
 
