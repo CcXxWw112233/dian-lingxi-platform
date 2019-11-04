@@ -775,6 +775,8 @@ class InviteOthers extends Component {
             mode="multiple"
             value={inputValue}
             labelInValue
+            size={'large'}
+            disabled={this.props.selectDisabled}
             maxTagCount={1}
             placeholder="请输入被邀请人的手机号或邮箱"
             notFoundContent={fetching ? <Spin size="small" /> : null}
