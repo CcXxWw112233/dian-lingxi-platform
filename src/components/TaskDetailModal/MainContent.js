@@ -22,6 +22,7 @@ import { addTaskExecutor, removeTaskExecutor, deleteTaskFile, getBoardTagList } 
 import {
   checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
 } from "@/utils/businessFunction";
+import Text from './text'
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -1810,7 +1811,7 @@ export default class MainContent extends Component {
             {
               !(properties && properties.length == 6) && (
                   <div className={mainContentStyles.field_content}>
-                    <div className={mainContentStyles.field_left} style={{paddingLeft: '15px'}}>
+                    <div className={mainContentStyles.field_left} style={{paddingLeft: '10px'}}>
                       <span className={globalStyles.authTheme}>&#xe8fe;</span>
                       <span>添加属性</span>
                     </div>
@@ -1828,6 +1829,7 @@ export default class MainContent extends Component {
             }
           </div>
           {/* 添加字段 E */}
+          <div><Text /></div>
         </div>
         {/*查看任务附件*/}
         <PreviewFileModal modalVisible={isInOpenFile} />
