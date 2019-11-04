@@ -587,7 +587,7 @@ export default class GroupListHeadItem extends Component {
 
     const { currentUserOrganizes = [], gantt_board_id = [], ceiHeight, is_show_org_name, is_all_org, rows = 5, group_view_type, get_gantt_data_loading } = this.props
     const { itemValue = {}, itemKey } = this.props
-    const { list_name, org_id, list_no_time_data = [], list_id, lane_icon, board_id, is_privilege = '0', privileges, create_by = {} } = itemValue
+    const { list_name, org_id, list_no_time_data = [], list_id, lane_icon, board_id, is_privilege = '0', privileges, create_by = {}, lane_overdue_count } = itemValue
     const { isShowBottDetail, show_edit_input, local_list_name, edit_input_value, show_add_menber_visible } = this.state
     const board_create_user = create_by.name
     return (
@@ -621,6 +621,12 @@ export default class GroupListHeadItem extends Component {
                   <Tooltip title="已开启访问控制" placement="top">
                     <span className={globalStyle.authTheme} style={{ marginLeft: 10, fontSize: 16, color: '#8c8c8c' }}>&#xe7ca;</span>
                   </Tooltip>
+                )
+              }
+              {/* 逾期任务 */}
+              {
+                ganttIsFold({ gantt_board_id, group_view_type }) && Number(lane_overdue_count) > 0 && (
+                  <div className={indexStyles.due_time_card_total} title={`存在${lane_overdue_count}条逾期未完成任务`} >{lane_overdue_count}</div>
                 )
               }
               {/* 置顶 */}

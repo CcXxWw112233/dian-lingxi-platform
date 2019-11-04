@@ -98,8 +98,7 @@ export default class GetRowGantt extends Component {
   //鼠标拖拽移动
   dashedMousedown(e) {
     if (
-      this.stopPropagationEle(e) || //不能滑动到某一个任务实例上
-      this.areaCanNotOperate(e)
+      this.stopPropagationEle(e) //不能滑动到某一个任务实例上
     ) {
       return false
     }
@@ -118,8 +117,7 @@ export default class GetRowGantt extends Component {
   }
   dashedDragMousemove(e) {
     if (
-      this.stopPropagationEle(e) ||
-      this.areaCanNotOperate(e)
+      this.stopPropagationEle(e)
     ) { //不能滑动到某一个任务实例上
       return false
     }
@@ -157,8 +155,7 @@ export default class GetRowGantt extends Component {
   }
   dashedDragMouseup(e) {
     if (
-      this.stopPropagationEle(e) ||
-      this.areaCanNotOperate(e)
+      this.stopPropagationEle(e)
     ) { //不能滑动到某一个任务实例上
       return false
     }
@@ -182,8 +179,7 @@ export default class GetRowGantt extends Component {
     const { dataAreaRealHeight, gantt_board_id, group_view_type } = this.props
     if (e.target.offsetTop >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
     if (
-      (e.target.dataset.targetclassname == 'specific_example') ||  //不能滑动到某一个任务实例上
-      (this.areaCanNotOperate(e)) //折叠情况下，如果鼠标位置所在分组具有list_data,则不能操作
+      (e.target.dataset.targetclassname == 'specific_example') //不能滑动到某一个任务实例上
     ) {
       this.setState({
         dasheRectShow: false
