@@ -382,6 +382,15 @@ export async function setCardAttributes(data) {
   })
 }
 
+// 删除任务动态属性
+export async function removeCardAttributes(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/property`,
+    method: 'DELETE',
+    params
+  })
+}
+
 //获取任务详情 ---- 解决分享出去之后的任务详情没有权限 ----暂时使用(10月14日)
 export async function getShareCardDetail(params) {
   return request({

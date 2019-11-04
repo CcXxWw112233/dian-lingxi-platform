@@ -22,13 +22,18 @@ export default class MilestoneAdd extends React.Component {
         add_lcb_modal_visible: false
     }
 
-    componentWillReceiveProps(nextProps) {
-        const { dispatch, dataInfo } = nextProps;
-        const { dataInfo: oldDataInfo = {} } = this.props;
-        if (dataInfo.board_id && dataInfo.board_id != oldDataInfo.board_id) {
-            this.getMilestone(dataInfo.board_id)
-        }
+    componentDidMount() {
+        const { dataInfo } = this.props
+        this.getMilestone(dataInfo.board_id)
     }
+
+    // componentWillReceiveProps(nextProps) {
+    //     const { dispatch, dataInfo } = nextProps;
+    //     const { dataInfo: oldDataInfo = {} } = this.props;
+    //     if (dataInfo.board_id && dataInfo.board_id != oldDataInfo.board_id) {
+    //         this.getMilestone(dataInfo.board_id)
+    //     }
+    // }
 
     //获取项目里程碑列表
     getMilestone = (id, callBackObject, milestoneId) => {
@@ -177,8 +182,8 @@ export default class MilestoneAdd extends React.Component {
                 sortMilestoneList.push(milestoneList[i]);
             }
         }
-        console.log("milestoneList", milestoneList);
-        console.log("sortMilestoneList", sortMilestoneList);
+        // console.log("milestoneList", milestoneList);
+        // console.log("sortMilestoneList", sortMilestoneList);
         return sortMilestoneList;
     }
 
@@ -186,7 +191,6 @@ export default class MilestoneAdd extends React.Component {
         const { milestoneList, add_lcb_modal_visible = false } = this.state
         const { visible, children, selectedValue, dataInfo = {} } = this.props
         const sortLilestoneList = this.getSortLilestoneList(milestoneList, dataInfo);
-        // console.log(dataInfo);
         return (
             <div>
 

@@ -162,13 +162,14 @@ export default class UploadAttachment extends Component {
         });
       }
 
-    }).catch((error, e) => {
-      message.destroy()
-      message.error('上传失败');
-      this.setState({
-        uploading: false,
-      });
-    });
+    })
+    // .catch((error, e) => {
+    //   message.destroy()
+    //   message.error('上传失败');
+    //   this.setState({
+    //     uploading: false,
+    //   });
+    // });
   }
 
 

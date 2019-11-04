@@ -1,4 +1,4 @@
-import { getCardWithAttributesDetail, setCardAttributes, getCardAttributesList, getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask, deleteChirldTask, boardAppRelaMiletones, 
+import { getCardWithAttributesDetail, setCardAttributes, getCardAttributesList, removeCardAttributes, getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask, deleteChirldTask, boardAppRelaMiletones, 
   boardAppCancelRelaMiletones, getBoardTagList, addBoardTag, deleteBoardTag, updateBoardTag, addTaskTag, removeTaskTag } from '../../../services/technological/task'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
@@ -135,6 +135,18 @@ export default {
             id: card_id,
           }
         })
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
+    },
+    // 移除任务属性
+    * removeCardAttributes({ payload }, { call, put }) {
+      let res = yield call(removeCardAttributes, payload)
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('成功删除该字段', MESSAGE_DURATION_TIME)
+        }, 500)
       } else {
         message.warn(res.message)
       }
