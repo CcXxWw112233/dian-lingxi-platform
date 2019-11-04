@@ -136,7 +136,6 @@ const Routers = function ({ history, app }) {
       import('./models/technological/cooperationPush'),
       import('./models/technological/globalSearch'),
       import('./models/technological/workbench/gantt'),
-      import('./models/technological/workbench/projectCommunication'),
       import('./models/technological/public/milestoneDetail'),
       import('./models/technological/public/publicModalComment'),
       import('./models/technological/public/publicTaskDetailModal'),
@@ -169,6 +168,7 @@ const Routers = function ({ history, app }) {
       import('./models/simpleMode'),
       import('./models/simpleMode/simpleWorkbenchbox'),
       import('./models/simpleMode/simpleBoardCommunication'),
+      import('./models/simpleMode/projectCommunication'),
       import('./models/organizationManager'),
 
       import('./models/technological/informRemind'),
