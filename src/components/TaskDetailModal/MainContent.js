@@ -1237,7 +1237,7 @@ export default class MainContent extends Component {
     const flag = (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()
     return (
       <div>
-        <div className={`${mainContentStyles.field_content} ${showDelColor && id == currentDelId && mainContentStyles.showDelColor}`}>
+        <div style={{cursor: 'pointer'}} className={`${mainContentStyles.field_content} ${showDelColor && id == currentDelId && mainContentStyles.showDelColor}`}>
           <div className={mainContentStyles.field_left}>
             {
               !flag && (
