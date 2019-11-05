@@ -261,7 +261,9 @@ export async function collectionProject({ org_id, board_id }) {
     data: {
       id: board_id
     }
-  }, { isNotLoading: true });
+  }, 
+  // { isNotLoading: true }
+  );
 }
 
 // 添加项目app
