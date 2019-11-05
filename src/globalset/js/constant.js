@@ -84,8 +84,8 @@ export const APP_KEY = {
 export const ORG_TEAM_BOARD_CREATE = 'org:team:board:create' //创建项目 permission_type=1
 export const ORG_TEAM_BOARD_JOIN = 'org:team:board:join' //加入项目 permission_type=1
 export const ORG_UPMS_ORGANIZATION_MEMBER_ADD = 'org:upms:organization:member:add' //添加成员 permission_type=1
-export const ORG_UPMS_ORGANIZATION_MEMBER_EDIT = 'org:upms:organization:member:edit' //编辑职员 permission_type=1
-export const ORG_UPMS_ORGANIZATION_MEMBER_REMOVE = 'org:upms:organization:member:remove' //移除职员 permission_type=1
+export const ORG_UPMS_ORGANIZATION_MEMBER_EDIT = 'org:upms:organization:member:edit' //编辑成员 permission_type=1
+export const ORG_UPMS_ORGANIZATION_MEMBER_REMOVE = 'org:upms:organization:member:remove' //移除成员 permission_type=1
 export const ORG_UPMS_ORGANIZATION_GROUP = 'org:upms:organization:group' //管理分组 permission_type=1
 export const ORG_UPMS_ORGANIZATION_EDIT = 'org:upms:organization:edit' //编辑基本信息 permission_type=1
 export const ORG_UPMS_ORGANIZATION_DELETE = 'org:upms:organization:delete' //删除组织 permission_type=1
@@ -94,8 +94,8 @@ export const ORG_UPMS_ORGANIZATION_ROLE_EDIT = 'org:upms:organization:role:edit'
 export const ORG_UPMS_ORGANIZATION_ROLE_DELETE = 'org:upms:organization:role:delete' //删除角色 permission_type=1
 export const ORG_TEAM_BOARD_QUERY = 'org:team:board:query' //查看项目 permission_type=1
 export const ORG_TEAM_BOARD_EDIT = 'org:team:board:edit' //编辑项目 permission_type=1
-export const ORG_UPMS_ORGANIZATION_MEMBER_QUERY = 'org:upms:organization:member:query' //查看职员 permission_type=1
-export const PROJECT_TEAM_BOARD_MEMBER = 'project:team:board:member' //职员管理 permission_type=2
+export const ORG_UPMS_ORGANIZATION_MEMBER_QUERY = 'org:upms:organization:member:query' //查看成员 permission_type=1
+export const PROJECT_TEAM_BOARD_MEMBER = 'project:team:board:member' //成员管理 permission_type=2
 export const PROJECT_TEAM_BOARD_EDIT = 'project:team:board:edit' //编辑项目 permission_type=2
 export const PROJECT_TEAM_BOARD_ARCHIVE = 'project:team:board:archive' //归档项目 permission_type=2
 export const PROJECT_TEAM_BOARD_DELETE = 'project:team:board:delete' //删除项目 permission_type=2
@@ -124,7 +124,7 @@ export const PROJECT_FILES_COMMENT_PUBLISH = 'project:files:comment:publish' //�
 export const PROJECT_FILES_COMMENT_VIEW = 'project:files:comment:view' //查看评论 permission_type=2
 
 //名词定义
-export const NORMAL_NOUN_PLAN = { "Organization": "企业", "Tasks": "任务", "Flows": "流程", "Dashboard": "工作台", "Projects": "项目", "Files": "文件", "Members": "职员", "Catch_Up": "动态", "Map_Admin": "地图管理", }
+export const NORMAL_NOUN_PLAN = { "Organization": "组织", "Tasks": "任务", "Flows": "流程", "Dashboard": "工作台", "Projects": "项目", "Files": "文件", "Members": "成员", "Catch_Up": "动态", "Map_Admin": "地图管理", }
 export const ORGANIZATION = 'Organization'
 export const TASKS = 'Tasks'
 export const FLOWS = 'Flows'

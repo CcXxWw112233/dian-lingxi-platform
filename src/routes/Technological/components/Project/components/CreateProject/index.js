@@ -33,7 +33,7 @@ class CreateProject extends React.Component {
     project_apps: [], //选择board后的app列表
     copy_value: {}, //复制的值
     OrganizationId: localStorage.getItem('OrganizationId'),
-    _organization_id: this.props._organization_id || '', //选择的企业id
+    _organization_id: this.props._organization_id || '', //选择的组织id
     appsList: [], //app列表
   }
   initData = () => {
@@ -52,7 +52,7 @@ class CreateProject extends React.Component {
       project_apps: [], //选择board后的app列表
       copy_value: {}, //复制的值
       OrganizationId: localStorage.getItem('OrganizationId'),
-      _organization_id: this.props._organization_id || '', //选择的企业id
+      _organization_id: this.props._organization_id || '', //选择的组织id
       // appsList: [], //app列表
     })
   }
@@ -80,7 +80,7 @@ class CreateProject extends React.Component {
     })
   }
 
-  // 全企业，在只有一个企业情况下，默认选中该企业.查询企业项目列表和app列表
+  // 全组织，在只有一个组织情况下，默认选中该组织.查询组织项目列表和app列表
   handleOrgSetInit = () => {
     const { currentUserOrganizes = [], _organization_id } = this.props
     if (currentUserOrganizes.length == 1 && !!!_organization_id) {
@@ -103,7 +103,7 @@ class CreateProject extends React.Component {
     let params = {
       type: '2'
     }
-    if (OrganizationId != '0') { //如果是初始化和非全企业状态时才调用
+    if (OrganizationId != '0') { //如果是初始化和非全组织状态时才调用
       params = Object.assign(params, { _organization_id: OrganizationId })
     } else {
       params = Object.assign(params, { _organization_id })
@@ -123,7 +123,7 @@ class CreateProject extends React.Component {
   //表单输入时记录值
   orgOnChange = (id) => {
     if (!checkIsHasPermission(ORG_TEAM_BOARD_CREATE, id)) {
-      message.warn('您在该企业没有创建项目权限')
+      message.warn('您在该组织没有创建项目权限')
       return false
     }
     this.setState({
@@ -291,7 +291,7 @@ class CreateProject extends React.Component {
     const that = this
     const { OrganizationId, _organization_id } = this.state
     let params = {}
-    if (OrganizationId != '0' && init) { //如果是初始化和非全企业状态时才调用
+    if (OrganizationId != '0' && init) { //如果是初始化和非全组织状态时才调用
 
     } else {
       params['_organization_id'] = _organization_id
@@ -337,7 +337,7 @@ class CreateProject extends React.Component {
         <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}>步骤一：给你的{currentNounPlanFilterName(PROJECTS)}起个名称</div>
         <div className={indexStyles.operateAreaOut}>
           <div className={indexStyles.operateArea}>
-            {/* 企业 */}
+            {/* 组织 */}
             {
               OrganizationId == '0' && (
                 // <FormItem style={{width: 336}}>
@@ -347,7 +347,7 @@ class CreateProject extends React.Component {
                   size={'large'}
                   value={_organization_id == '0' || !_organization_id ? undefined : _organization_id}
                   style={{ height: 40, marginBottom: 24 }}
-                  placeholder={"请选择企业（单位）"}
+                  placeholder={"请选择组织（单位）"}
                   onChange={this.orgOnChange}
                 >
                   {
@@ -534,14 +534,14 @@ class CreateProject extends React.Component {
         <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}>新建{currentNounPlanFilterName(PROJECTS)}</div>
         <div className={indexStyles.operateAreaOut}>
           <div className={indexStyles.operateArea}>
-            {/* 企业 */}
+            {/* 组织 */}
             {
               OrganizationId == '0' && (
                 <Select
                   size={'large'}
                   value={_organization_id == '0' || !_organization_id ? undefined : _organization_id}
                   style={{ height: 40, marginBottom: 20, width: 346 }}
-                  placeholder={"请选择企业（单位）"}
+                  placeholder={"请选择组织（单位）"}
                   onChange={this.orgOnChange}
                 >
                   {

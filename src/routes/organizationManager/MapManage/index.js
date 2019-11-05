@@ -154,7 +154,7 @@ export default class MapManage extends React.Component {
               <div>{role_name}</div>
             </div>
             {/*<div className={DrawDetailInfoStyle.detailItem}>*/}
-              {/*<div>企业：</div>*/}
+              {/*<div>组织：</div>*/}
               {/*<div>{organization}</div>*/}
             {/*</div>*/}
             <div className={indexStyles.detailItem}>

@@ -49,7 +49,7 @@ class AddTaskModal extends Component {
       selectedOrg: {
         org_name: '',
         org_id: '',
-      }, //选择的企业
+      }, //选择的组织
       currentSelectedProject: getCurrentSelectedProject(
         current_operate_board_id,
       ),
@@ -83,7 +83,7 @@ class AddTaskModal extends Component {
       }
     );
   };
-  // 获取项目职员
+  // 获取项目成员
   getCurrentSelectedProjectMembersList = (data) => {
     getCurrentSelectedProjectMembersList(data).then(res => {
       if (isApiResponseOk(res)) {
@@ -141,7 +141,7 @@ class AddTaskModal extends Component {
     }
   }
 
-  // 如果是职员视图，则默认设置已选用户
+  // 如果是成员视图，则默认设置已选用户
   setDefaultExcuser = () => {
     const { list_group, group_view_type, current_list_group_id } = this.props
     if (group_view_type == '2') {
@@ -337,7 +337,7 @@ AddTaskModal.defaultProps = {
   handleGetNewTaskParams: function () { //返回当前新建 modal 用户提交的所有参数
 
   },
-  projectMemberListWhenUseInGantt: [], //当在甘特图使用的时候，需要将当前选中的项目职员列表传入
+  projectMemberListWhenUseInGantt: [], //当在甘特图使用的时候，需要将当前选中的项目成员列表传入
 };
 
 export default AddTaskModal;

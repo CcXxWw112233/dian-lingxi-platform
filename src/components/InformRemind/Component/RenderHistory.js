@@ -225,7 +225,7 @@ export default class RenderHistory extends Component {
       return arr;
     };
 
-    if (key == '0' && type == 'add') { // 如果是全体职员并且是添加的操作
+    if (key == '0' && type == 'add') { // 如果是全体成员并且是添加的操作
       new_message = new_user_remind_info.filter(item => {
         if (item['user_id'] == '0') {
           return item
@@ -240,7 +240,7 @@ export default class RenderHistory extends Component {
         }
       })
     }
-    // 更新职员的信息
+    // 更新成员的信息
     let new_history_list = [...historyList]
     new_history_list = new_history_list.map(item => {
       let new_item = item

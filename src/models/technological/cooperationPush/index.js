@@ -1321,7 +1321,7 @@ export default {
           break
       }
 
-      //跨企业不推送消息
+      //跨组织不推送消息
       const news_d = JSON.parse(news['d'] || '{}')
       const { org_id } = news_d
       const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}
@@ -1360,7 +1360,7 @@ export default {
           const { current_org = {} } = userInfo
           const current_org_id = current_org['id']
           if (current_org_id == remove_org_id && remove_user_id == user_id) {
-            message.error('您已被当前企业移除访客身份，即将跳转到登陆界面。', MESSAGE_DURATION_TIME)
+            message.error('您已被当前组织移除访客身份，即将跳转到登陆界面。', MESSAGE_DURATION_TIME)
             const delay = (ms) => new Promise(resolve => {
               setTimeout(resolve, ms)
             })
@@ -1454,7 +1454,7 @@ export default {
           const { current_org = {} } = userInfo
           const current_org_id = current_org['id']
           if (current_org_id == remove_org_id && remove_user_id == user_id) {
-            message.error('您已被当前企业移除访客身份，即将跳转到登陆界面。', MESSAGE_DURATION_TIME)
+            message.error('您已被当前组织移除访客身份，即将跳转到登陆界面。', MESSAGE_DURATION_TIME)
             const delay = (ms) => new Promise(resolve => {
               setTimeout(resolve, ms)
             })

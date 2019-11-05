@@ -24,7 +24,7 @@ export default class TaskItem extends React.Component {
     inputValue: '',
     ShowAddMenberModalVisibile: false,
   }
-  //添加职员
+  //添加成员
   gotoAddItem() {
     if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)

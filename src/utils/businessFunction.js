@@ -5,19 +5,19 @@ import { Base64 } from 'js-base64';
 
 // 权限的过滤和存储在technological下
 // 权限分为全组织和确定组织下
-// 确定企业下的数据为[{code: 'xxx'}]
-// 全企业下的数据格式为
+// 确定组织下的数据为[{code: 'xxx'}]
+// 全组织下的数据格式为
 // const ss = [{
 //   org_id: 'sss',
 //   permissions: [
 //     { code: 'xxx'}
 //   ]
 // }]
-// 两者区别是通过确认的企业id过滤出permisions的列表
+// 两者区别是通过确认的组织id过滤出permisions的列表
 //》
-//检查是否有操作权限(企业)
-// 当全企业状态下，如果调用方法不传确认的企业id则默认有权限。如果传递了企业id那就遍历相应的权限code来获取有无权限
-// 确认企业下，只需要传递code就可以遍历得到有无权限
+//检查是否有操作权限(组织)
+// 当全组织状态下，如果调用方法不传确认的组织id则默认有权限。如果传递了组织id那就遍历相应的权限code来获取有无权限
+// 确认组织下，只需要传递code就可以遍历得到有无权限
 
 //设置 和 获取全局属性里面的数据
 global.globalData = {}
@@ -141,7 +141,7 @@ export const checkIsHasPermissionInVisitControl = (code, privileges, is_privileg
       } else { // 返回false,表示没有权利
         flag = false
       }
-    } else { // 找不到该职员, 那么就在对应的该项目中查找对应的权限列表
+    } else { // 找不到该成员, 那么就在对应的该项目中查找对应的权限列表
       flag = permissionsValue // 返回对应项目权限列表中的状态
     }
     return flag
@@ -194,14 +194,14 @@ export const currentNounPlanFilterName = (code) => {
   return name
 }
 
-// 返回全企业（各个企业下）或某个确认企业下对应的org_name
+// 返回全组织（各个组织下）或某个确认组织下对应的org_name
 export const getOrgNameWithOrgIdFilter = (org_id, organizations = []) => {
   const OrganizationId = localStorage.getItem('OrganizationId')
-  if (OrganizationId != '0') { //确认企业
+  if (OrganizationId != '0') { //确认组织
     let currentSelectOrganize = localStorage.getItem('currentSelectOrganize') || '{}'
     currentSelectOrganize = JSON.parse(currentSelectOrganize)
     return currentSelectOrganize['name']
-  } else { //全企业
+  } else { //全组织
     const name = (organizations.find(item => org_id == item.id) || {}).name
     return name
   }
@@ -221,7 +221,7 @@ export const getSubfixName = (file_name) => {
 export const setStorage = (key, value) => {
   localStorage.setItem(key, value)
 }
-//设置企业id localstorage缓存
+//设置组织id localstorage缓存
 export const setOrganizationIdStorage = (value) => {
   localStorage.setItem('OrganizationId', value)
 }
@@ -229,7 +229,7 @@ export const setOrganizationIdStorage = (value) => {
 export const setBoardIdStorage = (value) => {
   setGlobalData('storageCurrentOperateBoardId', value)
   // 从缓存中拿到相应的board_id对应上org_id，存储当前项目的org_id => aboutBoardOrganizationId,
-  // 如果当前企业确定（非全部企业），则返回当前企业
+  // 如果当前组织确定（非全部组织），则返回当前组织
   const OrganizationId = localStorage.getItem('OrganizationId', value)
   if (OrganizationId && OrganizationId != '0') {
     setGlobalData('aboutBoardOrganizationId', OrganizationId)
@@ -278,7 +278,7 @@ export const getOrgIdByBoardId = (boardId) => {
   return org_id
 }
 
-//是否有企业职员查看权限
+//是否有组织成员查看权限
 
 export const isHasOrgMemberQueryPermission = () => checkIsHasPermission('org:upms:organization:member:query')
 

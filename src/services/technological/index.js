@@ -78,7 +78,7 @@ export async function getFixedConditions(params) {
   }, { isNotLoading: true });
 }
 
-//获取和存储全企业的全部项目ID
+//获取和存储全组织的全部项目ID
 export async function getUserAllOrgsAllBoards(params) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/list/id`,
@@ -87,7 +87,7 @@ export async function getUserAllOrgsAllBoards(params) {
   });
 }
 
-//获取全企业的全部项目列表
+//获取全组织的全部项目列表
 export async function getUserAllOrgsBoardList(params) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/board/list`,
@@ -105,7 +105,7 @@ export async function scanQrCodeJoin(data) {
   });
 }
 
-//web端各种入口邀请人员加入企业===1
+//web端各种入口邀请人员加入组织===1
 export async function organizationInviteWebJoin(data) {
   const { _organization_id } = data
   return request({
@@ -117,7 +117,7 @@ export async function organizationInviteWebJoin(data) {
     }
   });
 }
-//web端各种入口邀请人员加入企业===2
+//web端各种入口邀请人员加入组织===2
 export async function commInviteWebJoin(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/comm/invite/web/join`,

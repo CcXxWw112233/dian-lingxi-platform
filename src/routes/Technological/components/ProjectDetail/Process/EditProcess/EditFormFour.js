@@ -263,7 +263,7 @@ export default class EditFormFour extends React.Component {
           <div className={indexStyles.editBottItem}>
             <div className={indexStyles.editBottItem_left}>
               <span>抄送人</span><br />
-              <span style={{ fontSize: 12, color: '#8c8c8c' }}>支持系统内职员与电子邮件地址</span>
+              <span style={{ fontSize: 12, color: '#8c8c8c' }}>支持系统内成员与电子邮件地址</span>
             </div>
             <div className={indexStyles.editBottItem_right}>
               <RadioGroup onChange={this.ccTypeChange.bind(this)} value={cc_type} >
