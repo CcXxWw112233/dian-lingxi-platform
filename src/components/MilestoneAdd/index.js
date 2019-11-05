@@ -23,8 +23,11 @@ export default class MilestoneAdd extends React.Component {
     }
 
     componentDidMount() {
-        const { dataInfo } = this.props
-        this.getMilestone(dataInfo.board_id)
+        const { dataInfo, milestoneList = [] } = this.props
+        this.setState({
+            milestoneList
+        })
+        // this.getMilestone(dataInfo.board_id)
     }
 
     // componentWillReceiveProps(nextProps) {
@@ -36,20 +39,20 @@ export default class MilestoneAdd extends React.Component {
     // }
 
     //获取项目里程碑列表
-    getMilestone = (id, callBackObject, milestoneId) => {
-        getMilestoneList({ id }).then((res) => {
-            if (isApiResponseOk(res)) {
-                this.setState({
-                    milestoneList: res.data
-                }, () => {
-                    callBackObject && callBackObject.callBackFun(res.data, callBackObject.param);
-                });
+    // getMilestone = (id, callBackObject, milestoneId) => {
+    //     getMilestoneList({ id }).then((res) => {
+    //         if (isApiResponseOk(res)) {
+    //             this.setState({
+    //                 milestoneList: res.data
+    //             }, () => {
+    //                 callBackObject && callBackObject.callBackFun(res.data, callBackObject.param);
+    //             });
 
-            } else {
-                message.error(res.message)
-            }
-        })
-    }
+    //         } else {
+    //             message.error(res.message)
+    //         }
+    //     })
+    // }
     //模糊查询
 
 

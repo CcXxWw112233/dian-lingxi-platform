@@ -237,12 +237,18 @@
   }
   .clearfix {display: inline-block;}
 
+  // .moveWrapper {
+  //   opacity: 1 !important;
+  //   visibility: visible !important;
+  // }
+
   /* 各种不同字段部分 S */
   .field_content {
     display      : flex;
     line-height  : 38px;
     margin-bottom: 12px;
-    margin-left: -32px;
+    margin-left: -26px;
+    cursor: move;
     //align-items : center;
     // line-height: 55px;
     .field_left {
@@ -256,7 +262,7 @@
         padding-left: 10px;
         padding-right: 10px;
         display: inline-block;
-        cursor: pointer;
+        // cursor: move;
         >span:nth-child(1) {
           font-size   : 14px;
           margin-right: 9px;
@@ -270,21 +276,20 @@
           background:rgba(0,0,0,0.04);
         }
       }
+      >span:nth-child(1) {
+        font-size   : 14px;
+        margin-right: 9px;
+        color       : rgba(0, 0, 0, 0.65)
+      }
+      >span:nth-child(2) {
+        font-size: 14px;
+      }
       .field_delIcon {
         cursor: pointer;
         display: none;
         &:hover {
           color: rgba(0, 0, 0, 0.65);
         }
-      }
-      >span:nth-child(1) {
-        font-size   : 14px;
-        margin-right: 9px;
-        color       : rgba(0, 0, 0, 0.65)
-      }
-
-      >span:nth-child(2) {
-        font-size: 14px;
       }
     }
     .field_left:hover .field_delIcon{
@@ -533,6 +538,9 @@
         margin-top: -1px;
       }
     }
+  }
+  .showDelColor {
+    background: rgba(144,19,254,0.15);
   }
 
   /* 各种不同字段部分 E */

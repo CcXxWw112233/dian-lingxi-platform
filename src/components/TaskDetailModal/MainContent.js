@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
 import { Icon, message, Dropdown, Menu, DatePicker, Modal } from 'antd'
+import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import arrayMove from 'array-move';
 import mainContentStyles from './MainContent.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
@@ -22,7 +24,8 @@ import { addTaskExecutor, removeTaskExecutor, deleteTaskFile, getBoardTagList } 
 import {
   checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
 } from "@/utils/businessFunction";
-import Text from './text'
+import { getFolderList } from '@/services/technological/file'
+import { getMilestoneList } from '@/services/technological/prjectDetail'
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -33,6 +36,34 @@ export default class MainContent extends Component {
       previewFileModalVisibile: false,
       selectedKeys: [], // 选择字段的选项
     }
+  }
+
+  //获取项目里文件夹列表
+  getProjectFolderList = (board_id) => {
+    getFolderList({ board_id }).then((res) => {
+      if (isApiResponseOk(res)) {
+        this.setState({
+          boardFolderTreeData: res.data
+        });
+      } else {
+        message.error(res.message)
+      }
+    })
+  }
+
+  //获取项目里程碑列表
+  getMilestone = (id, callBackObject, milestoneId) => {
+    getMilestoneList({ id }).then((res) => {
+      if (isApiResponseOk(res)) {
+        this.setState({
+            milestoneList: res.data
+        }, () => {
+            callBackObject && callBackObject.callBackFun(res.data, callBackObject.param);
+        });
+      } else {
+        message.error(res.message)
+      }
+    })
   }
 
   componentWillMount() {
@@ -54,16 +85,21 @@ export default class MainContent extends Component {
   componentDidMount() {
     const { card_id } = this.props
     if (!card_id) return false
-    this.props.dispatch({
-      type: 'publicTaskDetailModal/getCardDetail',
-      payload: {
-        id: card_id
-      }
-    })
+    // this.props.dispatch({
+    //   type: 'publicTaskDetailModal/getCardDetail',
+    //   payload: {
+    //     id: card_id
+    //   }
+    // })
+    const  that = this
     this.props.dispatch({
       type: 'publicTaskDetailModal/getCardWithAttributesDetail',
       payload: {
-        id: card_id
+        id: card_id,
+        calback: function(board_id) {
+          that.getProjectFolderList(board_id)
+          that.getMilestone(board_id)
+        }
       }
     })
   }
@@ -1032,50 +1068,90 @@ export default class MainContent extends Component {
       return false
     }
     const that = this
+    this.setState({
+      showDelColor: true,
+      currentDelId: shouldDeleteId
+    })
+    let flag = false
     const { dispatch, drawContent = {}, drawContent: { card_id } } = that.props
     const { selectedKeys = [] } = that.state
     let new_drawContent = {...drawContent}
+    let filter_drawContent = {...drawContent}
     let new_selectedKeys = [...selectedKeys]
-    new_selectedKeys = new_selectedKeys.filter(item => item != shouldDeleteId)
-    new_drawContent['properties'] = new_drawContent['properties'].filter(item => item.id != shouldDeleteId)
-    Modal.confirm({
-      title: `确认要删除这条字段吗？`,
-      zIndex: 1007,
-      content: <div style={{ color: 'rgba(0,0,0, .65)', fontSize: 14 }}>
-        <span >删除包括删除这条字段已填写的内容。</span>
-      </div>,
-      okText: '确认',
-      cancelText: '取消',
-      onOk() {
-        Promise.resolve(
-          dispatch({
-            type: 'publicTaskDetailModal/removeCardAttributes',
-            payload: {
-              card_id, property_id: shouldDeleteId
-            }
-          })
-        ).then(res => {
-          if (isApiResponseOk(res)) {
-            that.setState({
-              selectedKeys: new_selectedKeys
-            })
-            // dispatch({
-            //   type: 'publicTaskDetailModal/getCardAttributesList',
-            //   payload: {
-                
-            //   }
-            // })
-            dispatch({
-              type: 'publicTaskDetailModal/updateDatas',
-              payload: {
-                drawContent: new_drawContent
-              }
-            })
-          }
-        })
+    filter_drawContent['properties'].find(item => {
+      if (item.id == shouldDeleteId) { // 表示找到当前item
+        if (Array.isArray(item.data)) {
+          flag = item.data.length
+        } else if (item.data instanceof Object) {
+          let arr = Object.keys(item.data);
+          flag = !(arr.length == '0')
+        } else if (item.data) {
+          flag = true
+        }
       }
     })
-
+    new_selectedKeys = new_selectedKeys.filter(item => item != shouldDeleteId)
+    new_drawContent['properties'] = new_drawContent['properties'].filter(item => item.id != shouldDeleteId)
+    if (flag) {
+      Modal.confirm({
+        title: `确认要删除这条字段吗？`,
+        zIndex: 1007,
+        content: <div style={{ color: 'rgba(0,0,0, .65)', fontSize: 14 }}>
+          <span >删除包括删除这条字段已填写的内容。</span>
+        </div>,
+        okText: '确认',
+        cancelText: '取消',
+        onOk() {
+          Promise.resolve(
+            dispatch({
+              type: 'publicTaskDetailModal/removeCardAttributes',
+              payload: {
+                card_id, property_id: shouldDeleteId
+              }
+            })
+          ).then(res => {
+            if (isApiResponseOk(res)) {
+              that.setState({
+                selectedKeys: new_selectedKeys
+              })
+              dispatch({
+                type: 'publicTaskDetailModal/updateDatas',
+                payload: {
+                  drawContent: new_drawContent
+                }
+              })
+            }
+          })
+        },
+        onCancel() {
+          that.setState({
+            shouldDeleteId: '',
+            showDelColor: ''
+          })
+        }
+      })
+    } else {
+      Promise.resolve(
+        dispatch({
+          type: 'publicTaskDetailModal/removeCardAttributes',
+          payload: {
+            card_id, property_id: shouldDeleteId
+          }
+        })
+      ).then(res => {
+        if (isApiResponseOk(res)) {
+          that.setState({
+            selectedKeys: new_selectedKeys
+          })
+          dispatch({
+            type: 'publicTaskDetailModal/updateDatas',
+            payload: {
+              drawContent: new_drawContent
+            }
+          })
+        }
+      })
+    }
   }
   // 对应字段的删除 E
 
@@ -1155,13 +1231,19 @@ export default class MainContent extends Component {
   // 执行人渲染需要特殊处理
   renderPriciple = () => {
     const { drawContent = {}, projectDetailInfoData } = this.props
+    const { showDelColor, currentDelId } = this.state
     const { card_id, board_id, org_id } = drawContent
     const { data = [], id } = this.getCurrentDrawerContentPropsModelDatasExecutors()
+    const flag = (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()
     return (
       <div>
-        <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
+        <div className={`${mainContentStyles.field_content} ${showDelColor && id == currentDelId && mainContentStyles.showDelColor}`}>
           <div className={mainContentStyles.field_left}>
-            <span onClick={() => { this.handleDelCurrentField(id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+            {
+              !flag && (
+                <span onClick={() => { this.handleDelCurrentField(id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+              )
+            }
             <div className={mainContentStyles.field_hover}>
               <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.65)' }} className={globalStyles.authTheme}>&#xe7b2;</span>
               <span className={mainContentStyles.user_executor}>负责人</span>
@@ -1281,18 +1363,23 @@ export default class MainContent extends Component {
 
   // 对应字段的内容渲染
   filterDiffPropertiesField = (currentItem) => {
-    const { visible = false } = this.state
+    const { visible = false, showDelColor, currentDelId, boardFolderTreeData = [], milestoneList = [] } = this.state
     const { drawContent = {}, projectDetailInfoData = {}, projectDetailInfoData: { data = [] }, boardTagList = [], handleTaskDetailChange } = this.props
     const { org_id, card_id, board_id, board_name, due_time } = drawContent
     const { code } = currentItem
+    const flag = (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()
     let messageValue = (<div></div>)
     switch (code) {
       case 'MILESTONE': // 里程碑
         messageValue = (
-          <div>
-            <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
+          // <div className={mainContentStyles.moveWrapper}>
+            <div style={{ position: 'relative' }} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
               <div className={mainContentStyles.field_left}>
-                <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                {
+                  !flag && (
+                    <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                  )
+                }
                 <div className={mainContentStyles.field_hover}>
                   <span className={`${globalStyles.authTheme}`}>&#xe6b7;</span>
                   <span>里程碑</span>
@@ -1314,7 +1401,7 @@ export default class MainContent extends Component {
                     )
                   ) : (
                       // 加入里程碑组件
-                      <MilestoneAdd onChangeMilestone={this.onMilestoneSelectedChange} dataInfo={{ board_id, board_name, due_time, org_id, data }} selectedValue={currentItem.data && currentItem.data.id}>
+                      <MilestoneAdd milestoneList={milestoneList} onChangeMilestone={this.onMilestoneSelectedChange} dataInfo={{ board_id, board_name, due_time, org_id, data }} selectedValue={currentItem.data && currentItem.data.id}>
                         <div className={`${mainContentStyles.pub_hover}`} >
                           {currentItem.data && currentItem.data.id
                             ? <span className={mainContentStyles.value_text}>{currentItem.data.name}</span>
@@ -1327,15 +1414,18 @@ export default class MainContent extends Component {
                 }
               </div>
             </div>
-          </div>
         )
         break
       case 'REMARK': // 备注
         messageValue = (
-          <div>
-            <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
+          // <div className={mainContentStyles.moveWrapper}>
+            <div style={{ position: 'relative' }} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
               <div className={mainContentStyles.field_left}>
-                <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                {
+                  !flag && (
+                    <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                  )
+                }
                 <div className={mainContentStyles.field_hover}>
                   <span className={`${globalStyles.authTheme}`}>&#xe7f6;</span>
                   <span>备注</span>
@@ -1372,16 +1462,21 @@ export default class MainContent extends Component {
                     )
                 }
               </div>
-            </div>
+            {/* </div> */}
           </div>
         )
         break
       case 'LABEL': // 标签
         messageValue = (
-          <div>
-            <div className={mainContentStyles.field_content}>
+          // <div className={mainContentStyles.moveWrapper}>
+            // <>
+            <div className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
               <div className={mainContentStyles.field_left}>
-                <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                {
+                  !flag && (
+                    <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                  )
+                }
                 <div className={mainContentStyles.field_hover}>
                   <span className={`${globalStyles.authTheme}`}>&#xe6b8;</span>
                   <span>标签</span>
@@ -1484,16 +1579,20 @@ export default class MainContent extends Component {
                 </div>
               </div>
             </div>
-          </div>
+            // {/* </> */}
         )
         break
       case 'ATTACHMENT': // 上传附件
         messageValue = (
-          <div>
-            {/* <div style={{marginLeft: '-32px'}}> */}
-              <div className={mainContentStyles.field_content}>
+          // <div className={mainContentStyles.moveWrapper}>
+              // <>
+              <div className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
                 <div className={mainContentStyles.field_left}>
-                  <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                  {
+                    !flag && (
+                      <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                    )
+                  }
                   <div className={mainContentStyles.field_hover}>
                     <span className={`${globalStyles.authTheme}`}>&#xe6b9;</span>
                     <span>附件</span>
@@ -1510,7 +1609,7 @@ export default class MainContent extends Component {
                         <div className={`${mainContentStyles.pub_hover}`}>
                           {
                             card_id && (
-                              <UploadAttachment projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
+                              <UploadAttachment boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
                                 onFileListChange={this.onUploadFileListChange}>
                                 <div className={mainContentStyles.upload_file_btn}>
                                   <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fa;</span> 上传附件
@@ -1542,17 +1641,21 @@ export default class MainContent extends Component {
                   </div>
                 </div>
               </div>
-            {/* </div> */}
-          </div>
+            //  </>
+          // </div>
         )
         break
       case 'SUBTASK':
         messageValue = (
-          <div>
-            {/* <div style={{marginLeft: '-32px'}}> */}
-              <div className={mainContentStyles.field_content}>
+          // <div className={mainContentStyles.moveWrapper}>
+            // <>
+              <div className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
                 <div className={mainContentStyles.field_left}>
-                  <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                  {
+                  !flag && (
+                      <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                    )
+                  }
                   <div className={mainContentStyles.field_hover}>
                     <span className={`${globalStyles.authTheme}`}>&#xe7f5;</span>
                     <span>子任务</span>
@@ -1569,8 +1672,8 @@ export default class MainContent extends Component {
                   </ AppendSubTask>
                 </div>
               </div>
-            {/* </div> */}
-          </div>
+              // </>
+          // </div>
         )
         break
       default:
@@ -1579,15 +1682,41 @@ export default class MainContent extends Component {
     return messageValue
   }
 
+  onSortEnd = ({oldIndex, newIndex}) => {
+    const { dispatch, drawContent = {}, drawContent: { card_id } } = this.props
+    let new_drawContent = {...drawContent}
+    const property_item = new_drawContent['properties'].find((item, index) => index == oldIndex)
+    const target_property_item = new_drawContent['properties'].find((item, index) => index == newIndex)
+    for(let val in new_drawContent) {
+      if (val == 'properties') {
+        new_drawContent[val] = arrayMove(new_drawContent[val],oldIndex,newIndex)
+      }
+    }
+    Promise.resolve(
+      dispatch({
+        type: 'publicTaskDetailModal/sortCardAttribute',
+        payload: {
+          card_id,
+          property_id: property_item.id,
+          target_property_id: target_property_item.id
+        }
+      })
+    ).then(res => {
+      if (isApiResponseOk(res)) {
+        dispatch({
+          type: 'publicTaskDetailModal/updateDatas',
+          payload: {
+            drawContent: new_drawContent
+          }
+        })
+      }
+    })
+    return false
+  }
 
   render() {
-    const { drawContent = {}, attributesList = [], is_edit_title, projectDetailInfoData = {}, dispatch, handleTaskDetailChange, isInOpenFile, boardTagList = [] } = this.props
-    const { new_userInfo_data = [], visible = false, propertiesList = [] } = this.state
-    const { data = [] } = projectDetailInfoData
+    const { drawContent = {}, is_edit_title, isInOpenFile} = this.props
     const {
-      org_id,
-      board_id,
-      board_name,
       card_id,
       card_name,
       type = '0',
@@ -1617,6 +1746,22 @@ export default class MainContent extends Component {
 
       </Menu>
     )
+
+    const SortableItem = SortableElement(({ value }) => this.filterDiffPropertiesField(value))
+
+    const SortableList = SortableContainer(({ items }) => {
+      return (
+        <div>
+          {items.map((value, index) => <SortableItem key={value.id} index={index} value={value} />)}
+          {/* {items.map((value, index) => (
+            <div key={value.id} style={{ position: 'relative' }} className={`${mainContentStyles.field_content} ${showDelColor && value.id == currentDelId && mainContentStyles.showDelColor}`}>
+              <span onClick={() => { this.handleDelCurrentField(value.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+              <SortableItem key={value.id} index={index} value={value} />
+            </div>
+          ))} */}
+        </div>
+      );
+    })
 
     return (
       <div className={mainContentStyles.main_wrap}>
@@ -1799,37 +1944,59 @@ export default class MainContent extends Component {
           {/* 不同字段的渲染 S */}
           <div>
             {
+              (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                <>
+                  {
+                    properties && properties.map(item => {
+                      return this.filterDiffPropertiesField(item)
+                    })
+                  } 
+                </>
+              ) :(
+                <SortableList helperContainer={() => document.getElementsByClassName(`${mainContentStyles.field_content}`)[0]} distance={1} items={properties} onSortEnd={this.onSortEnd} />
+              )
+            }
+
+            {/* {
               properties && properties.map(item => {
                 return this.filterDiffPropertiesField(item)
               })
-            }
+            } */}
           </div>
           {/* 不同字段的渲染 E */}
 
           {/* 添加字段 S */}
           <div>
             {
-              !(properties && properties.length == 6) && (
-                  <div className={mainContentStyles.field_content}>
-                    <div className={mainContentStyles.field_left} style={{paddingLeft: '10px'}}>
-                      <span className={globalStyles.authTheme}>&#xe8fe;</span>
-                      <span>添加属性</span>
-                    </div>
-                    <div className={mainContentStyles.field_right}>
-                      <div style={{ position: 'relative' }} className={mainContentStyles.pub_hover}>
-                        <Dropdown overlayClassName={mainContentStyles.overlay_attribute} trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode}
-                          overlay={this.getDiffAttributies()}
-                        >
-                          <div><span>选择属性</span></div>
-                        </Dropdown>
-                      </div>
-                    </div>
-                  </div>
-                )
+              (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                ''
+              ) : (
+                <>
+                  {
+                    !(properties && properties.length == 6) && (
+                        <div className={mainContentStyles.field_content}>
+                          <div className={mainContentStyles.field_left} style={{paddingLeft: '10px'}}>
+                            <span className={globalStyles.authTheme}>&#xe8fe;</span>
+                            <span>添加属性</span>
+                          </div>
+                          <div className={mainContentStyles.field_right}>
+                            <div style={{ position: 'relative' }} className={mainContentStyles.pub_hover}>
+                              <Dropdown overlayClassName={mainContentStyles.overlay_attribute} trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode}
+                                overlay={this.getDiffAttributies()}
+                              >
+                                <div><span>选择属性</span></div>
+                              </Dropdown>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                  }
+                </>
+              )
             }
+            
           </div>
           {/* 添加字段 E */}
-          <div><Text /></div>
         </div>
         {/*查看任务附件*/}
         <PreviewFileModal modalVisible={isInOpenFile} />

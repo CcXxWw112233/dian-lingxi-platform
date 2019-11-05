@@ -33,26 +33,29 @@ export default class UploadAttachment extends Component {
   }
 
   componentDidMount() {
-    const { board_id } = this.props;
+    const { board_id, boardFolderTreeData = [] } = this.props;
     if (board_id) {
-      this.getProjectFolderList(board_id)
+      // this.getProjectFolderList(board_id)
+      this.setState({
+        boardFolderTreeData,
+      })
     }
   }
 
 
   //获取项目里文件夹列表
-  getProjectFolderList = (board_id) => {
-    getFolderList({ board_id }).then((res) => {
-      if (isApiResponseOk(res)) {
+  // getProjectFolderList = (board_id) => {
+  //   getFolderList({ board_id }).then((res) => {
+  //     if (isApiResponseOk(res)) {
 
-        this.setState({
-          boardFolderTreeData: res.data
-        });
-      } else {
-        message.error(res.message)
-      }
-    })
-  }
+  //       this.setState({
+  //         boardFolderTreeData: res.data
+  //       });
+  //     } else {
+  //       message.error(res.message)
+  //     }
+  //   })
+  // }
 
   //确定，上传开始
   handleOk = e => {

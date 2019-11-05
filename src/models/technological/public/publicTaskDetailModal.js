@@ -1,4 +1,4 @@
-import { getCardWithAttributesDetail, setCardAttributes, getCardAttributesList, removeCardAttributes, getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask, deleteChirldTask, boardAppRelaMiletones, 
+import { getCardWithAttributesDetail, setCardAttributes, getCardAttributesList, removeCardAttributes, sortCardAttribute, getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask, deleteChirldTask, boardAppRelaMiletones, 
   boardAppCancelRelaMiletones, getBoardTagList, addBoardTag, deleteBoardTag, updateBoardTag, addTaskTag, removeTaskTag } from '../../../services/technological/task'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
@@ -70,7 +70,6 @@ export default {
     // 获取任务详情 new
     * getCardWithAttributesDetail({ payload }, { call, put }) {
       const { id, calback } = payload
-      calback && typeof calback == 'function' ? calback() : ''
       let res = yield call(getCardWithAttributesDetail, { id })
       if (isApiResponseOk(res)) {
         // console.log(res)
@@ -102,6 +101,7 @@ export default {
             _organization_id: res.data.org_id
           }
         })
+        calback && typeof calback == 'function' ? calback(res.data.board_id) : ''
       } else {
         message.warn(res.message)
       }
@@ -146,6 +146,18 @@ export default {
       if (isApiResponseOk(res)) {
         setTimeout(() => {
           message.success('成功删除该字段', MESSAGE_DURATION_TIME)
+        }, 500)
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
+    },
+    * sortCardAttribute({ payload}, { call, put }) {
+
+      let res = yield call(sortCardAttribute, payload)
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('移动成功', MESSAGE_DURATION_TIME)
         }, 500)
       } else {
         message.warn(res.message)
