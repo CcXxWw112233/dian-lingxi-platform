@@ -251,7 +251,8 @@ export default {
     },
     // 删除项目标签
     * deleteBoardTag({ payload }, { select, call, put }) { //
-      let res = yield call(deleteBoardTag, payload)
+      const { id, board_id } = payload
+      let res = yield call(deleteBoardTag, { id })
       if (isApiResponseOk(res)) {
         yield put({
           type: 'getBoardTagList',

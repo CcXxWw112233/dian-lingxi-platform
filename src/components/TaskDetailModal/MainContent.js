@@ -421,9 +421,13 @@ export default class MainContent extends Component {
       message.warn('开始时间不能大于结束时间')
       return false
     }
-    if (!compareTwoTimestamp(data.deadline, due_timeStamp)) {
-      message.warn('任务的截止日期不能大于关联里程碑的截止日期')
-      return
+    if (data && data instanceof Object) {
+      let arr = Object.keys(item.data)
+      if (arr.length == '0') return
+      if (!compareTwoTimestamp(data.deadline, due_timeStamp)) {
+        message.warn('任务的截止日期不能大于关联里程碑的截止日期')
+        return
+      }
     }
     let new_drawContent = { ...drawContent }
     new_drawContent['due_time'] = due_timeStamp
@@ -726,7 +730,8 @@ export default class MainContent extends Component {
       dispatch({
         type: 'publicTaskDetailModal/deleteBoardTag',
         payload: {
-          id: label_id
+          id: label_id,
+          board_id
         }
       })
     ).then(res => {
@@ -1365,6 +1370,17 @@ export default class MainContent extends Component {
     return flag
   }
 
+  getSortableList = () => {
+    const SortableItem = SortableElement(({ value }) => this.filterDiffPropertiesField(value))
+    return SortableContainer(({ items }) => {
+      return (
+        <div>
+          {items.map((value, index) => <SortableItem key={value.id} index={index} value={value} />)}
+        </div>
+      );
+    })
+  }
+
   // 对应字段的内容渲染
   filterDiffPropertiesField = (currentItem) => {
     const { visible = false, showDelColor, currentDelId, boardFolderTreeData = [], milestoneList = [] } = this.state
@@ -1730,7 +1746,16 @@ export default class MainContent extends Component {
     } = drawContent
     const { properties = [] } = drawContent
     const executors = this.getCurrentDrawerContentPropsModelDatasExecutors()
+    // const SortableItem = SortableElement(({ value }) => this.filterDiffPropertiesField(value))
 
+    // const SortableList = SortableContainer(({ items }) => {
+    //   return (
+    //     <div>
+    //       {items.map((value, index) => <SortableItem key={value.id} index={index} value={value} />)}
+    //     </div>
+    //   );
+    // })
+    const SortableList = this.getSortableList()
     // 状态
     const filedEdit = (
       <Menu onClick={this.handleFiledIsComplete} getPopupContainer={triggerNode => triggerNode.parentNode} selectedKeys={is_realize == '0' ? ['incomplete'] : ['complete']}>
@@ -1751,21 +1776,7 @@ export default class MainContent extends Component {
       </Menu>
     )
 
-    const SortableItem = SortableElement(({ value }) => this.filterDiffPropertiesField(value))
 
-    const SortableList = SortableContainer(({ items }) => {
-      return (
-        <div>
-          {items.map((value, index) => <SortableItem key={value.id} index={index} value={value} />)}
-          {/* {items.map((value, index) => (
-            <div key={value.id} style={{ position: 'relative' }} className={`${mainContentStyles.field_content} ${showDelColor && value.id == currentDelId && mainContentStyles.showDelColor}`}>
-              <span onClick={() => { this.handleDelCurrentField(value.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
-              <SortableItem key={value.id} index={index} value={value} />
-            </div>
-          ))} */}
-        </div>
-      );
-    })
 
     return (
       <div className={mainContentStyles.main_wrap}>
@@ -1813,7 +1824,7 @@ export default class MainContent extends Component {
           <div>
             {/* 状态区域 */}
             <div>
-              <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
+              <div style={{ position: 'relative' }} className={mainContentStyles.field_content} style={{cursor: 'pointer'}}>
                 <div className={mainContentStyles.field_left} style={{paddingLeft: '10px'}}>
                   <span className={`${globalStyles.authTheme}`}>&#xe6b6;</span>
                   <span>状态</span>
@@ -1860,7 +1871,7 @@ export default class MainContent extends Component {
             {/* 负责人区域 E */}
             {/* 时间区域 */}
             <div>
-              <div className={mainContentStyles.field_content}>
+              <div className={mainContentStyles.field_content} style={{cursor: 'pointer'}}>
                 <div className={mainContentStyles.field_left} style={{paddingLeft: '10px'}}>
                   <span className={globalStyles.authTheme}>&#xe686;</span>
                   <span>时间</span>
@@ -1957,7 +1968,7 @@ export default class MainContent extends Component {
                   } 
                 </>
               ) :(
-                <SortableList helperContainer={() => document.getElementsByClassName(`${mainContentStyles.field_content}`)[0]} distance={1} items={properties} onSortEnd={this.onSortEnd} />
+                <SortableList helperContainer={() => document.getElementsByClassName(`${mainContentStyles.field_content}`)[0]} distance={2} items={properties} onSortEnd={this.onSortEnd} />
               )
             }
 

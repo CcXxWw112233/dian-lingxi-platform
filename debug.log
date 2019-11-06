@@ -3,3 +3,4 @@
 [1018/140729.516:ERROR:process_reader_win.cc(151)] SuspendThread: ¾Ü¾ø·ÃÎÊ¡£ (0x5)
 [1018/140729.516:ERROR:process_reader_win.cc(151)] SuspendThread: ¾Ü¾ø·ÃÎÊ¡£ (0x5)
 [1018/140729.516:ERROR:exception_snapshot_win.cc(98)] thread ID 10080 not found in process
+[1106/142441.998:ERROR:file_io.cc(89)] ReadExactly: expected 36, observed 0

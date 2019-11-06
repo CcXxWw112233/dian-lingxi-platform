@@ -94,6 +94,7 @@ export default class LabelDataComponent extends React.Component {
 
   // 搜索框chg事件
   onChange = (e) => {
+    e && e.stopPropagation()
     const { listData = [], searchName } = this.props
     const keyWord = e.target.value
     const resultArr = this.fuzzyQuery(listData, searchName, keyWord)
@@ -143,7 +144,8 @@ export default class LabelDataComponent extends React.Component {
   }
 
   // 更新标签
-  handleUpdateBoardTag = () => {
+  handleUpdateBoardTag = (e) => {
+    e && e.stopPropagation()
     const { inputValue, labelColorArr = [], selectedId } = this.state
     let tempItem = labelColorArr.find(item => item.is_selected_label == true)
     if (!tempItem) return false
@@ -153,7 +155,8 @@ export default class LabelDataComponent extends React.Component {
   }
 
   // 删除标签
-  handleRemoveBoardTag = () => {
+  handleRemoveBoardTag = (e) => {
+    e && e.stopPropagation()
     const { selectedId } = this.state
     this.props.handleRemoveBoardTag && this.props.handleRemoveBoardTag({ label_id: selectedId })
     this.updateStateDatas()
@@ -161,8 +164,7 @@ export default class LabelDataComponent extends React.Component {
 
   // 新建标签回调
   handleAddLabel = (e) => {
-    // console.log(e, 'ssssssss')
-    // e && e.stropPropagation()
+    e && e.stopPropagation()
     this.setState({
       is_add_label: true
     })
@@ -172,9 +174,9 @@ export default class LabelDataComponent extends React.Component {
    * 标签的点击事件
    * @param {String} selectedColor 当前点击的对象选中的颜色
    */
-  handleLabelCheck(selectedColor) {
+  handleLabelCheck(selectedColor, e) {
     // console.log(e, 'ssssss')
-    // e && e.stropPropagation()
+    e && e.stopPropagation()
     const { labelColorArr = [] } = this.state
     let new_labelColorArr = [...labelColorArr]
     new_labelColorArr = new_labelColorArr.map(item => {
@@ -217,6 +219,7 @@ export default class LabelDataComponent extends React.Component {
 
   // 输入框的chg事件
   handleChgValue = (e) => {
+    e && e.stopPropagation()
     let val = e.target.value
     this.setState({
       inputValue: val
@@ -237,7 +240,7 @@ export default class LabelDataComponent extends React.Component {
         >
 
           <div style={{ padding: '12px', paddingTop: '6px', boxSizing: 'border-box', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
-            <Input placeholder={Inputlaceholder} value={keyWord} onChange={this.onChange.bind(this)} />
+            <Input placeholder={Inputlaceholder} value={keyWord} onChange={this.onChange.bind(this)} autoFocus={true} />
           </div>
           <Menu className={globalStyles.global_vertical_scrollbar} style={{ maxHeight: '248px', overflowY: 'auto', borderRight: 'none' }}>
             <Menu key="addLabel">
@@ -298,14 +301,14 @@ export default class LabelDataComponent extends React.Component {
 
           <Menu style={{ minHeight: '134px', borderTop: '1px solid rgba(0,0,0,0.09)', borderBottom: '1px solid rgba(0,0,0,0.09)', padding: '12px 24px' }}>
             <div className={indexStyles.input}>
-              <input placeholder="标签名称" value={inputValue} onChange={this.handleChgValue} maxLength={30} />
+              <input placeholder="标签名称" value={inputValue} onChange={this.handleChgValue} maxLength={30} autoFocus={true} />
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               {
                 labelColorArr.map((item) => {
                   const { label_color } = item
                   return (
-                    <span onClick={() => { this.handleLabelCheck(label_color) }} key={label_color} className={indexStyles.circle} style={{ background: `rgba(${label_color},1)` }}>
+                    <span onClick={(e) => { this.handleLabelCheck(label_color, e) }} key={label_color} className={indexStyles.circle} style={{ background: `rgba(${label_color},1)` }}>
                       <span style={{ display: item.is_selected_label ? 'block' : 'none' }} className={`${globalStyles.authTheme} ${indexStyles.check_icon}`}>&#xe7fc;</span>
                     </span>
                   )
