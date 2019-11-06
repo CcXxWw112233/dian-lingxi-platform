@@ -6,6 +6,9 @@ import FileDetail from '@/routes/Technological/components/Workbench/CardContent/
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/Workbench/CardContent/Modal/FileListRightBarFileDetailModal';
 import CommunicationFileList from './components/CommunicationFileList';
 // import UploadTemporaryFile from './components/UploadTemporaryFile';
+import CommunicationFirstScreenHeader from './components/FirstScreen/CommunicationFirstScreenHeader';
+import CommunicationTreeList from './components/CommunicationTreeList';
+import CommunicationThumbnailFiles from './components/FirstScreen/CommunicationThumbnailFiles';
 // import FileDetailModal from '@/routes/Technological/components/Workbench/CardContent/Modal/FileDetailModal'
 import { Modal, Dropdown, Button, Select, Icon, Tree, Upload, message } from 'antd';
 import { REQUEST_DOMAIN_FILE } from "@/globalset/js/constant";
@@ -32,6 +35,7 @@ const getEffectOrReducerByName_4 = name => `workbenchTaskDetail/${name}`
 const getEffectOrReducerByName_5 = name => `workbenchFileDetail/${name}`
 const getEffectOrReducerByName_6 = name => `workbenchPublicDatas/${name}`
 const getEffectOrReducerByName_7 = name => `gantt/${name}`
+const getEffectOrReducerByName_8 = name => `projectCommunication/${name}`
 
 class BoardCommunication extends Component {
     state = {
@@ -62,20 +66,74 @@ class BoardCommunication extends Component {
 
     componentDidMount() {
         this.queryCommunicationFileData();
+        // this.getCommunicationProjectList();
     }
 
-    // 获取项目交流文件列表数据
+    // componentWillReceiveProps(nextProps,oldProps) {
+    //     // console.log("simplemodeCurrentProject-next", nextProps && nextProps.simplemodeCurrentProject);
+    //     const { dispatch, simplemodeCurrentProject } = nextProps;
+    //     const { simplemodeCurrentProject: old_simplemodeCurrentProject } = this.props;
+    //     let currentBoardDetail = {}
+    //     if (simplemodeCurrentProject && simplemodeCurrentProject.board_id && old_simplemodeCurrentProject.board_id != simplemodeCurrentProject.board_id) {
+    //       currentBoardDetail = { ...simplemodeCurrentProject }
+    //       this.initData(currentBoardDetail);
+    //       this.getCommunicationProjectList(currentBoardDetail);
+    //     }
+    
+    // }
+
+    // // 初始化数据-处理顶部切换项目
+    // initData = (currentBoardDetail) => {
+    //     const { dispatch } = this.props;
+    //     dispatch({
+    //         type: 'projectCommunication/updateDatas',
+    //         payload: {
+    //             currentBoardDetail: currentBoardDetail,
+    //             currentBoardId: currentBoardDetail.board_id,
+    //         }
+    //     });
+    // }
+
+
+    // // 获取项目交流-项目文件目录数据
+    // getCommunicationProjectList = (currentBoardDetail) => {
+    //     const { dispatch } = this.props;
+    //     const board_id = (currentBoardDetail && currentBoardDetail.board_id) ? currentBoardDetail.board_id : '0';
+    //     // console.log('board_id1101', board_id);
+    //     dispatch({
+    //         type: getEffectOrReducerByName_8('getProjectList'),
+    //         payload: {
+    //             board_id: board_id == '0' ? '' : board_id,
+    //         }
+    //     })
+    //     this.getCommunicationFolderList();
+    // }
+
+    // 获取项目交流目录下子集数据
+    getCommunicationFolderList = (boardId) => {
+        const { dispatch } = this.props;
+        dispatch({
+            type: getEffectOrReducerByName_8('getFolderList'),
+            payload: {
+                board_id: boardId,
+            }
+        })
+    }
+
+    // 获取项目交流文件列表数据1025版本
     queryCommunicationFileData = () => {
         const { dispatch, gantt_board_id } = this.props;
+        const boardId = gantt_board_id == '0' ? '' : gantt_board_id
         dispatch({
           type: getEffectOrReducerByName_7('getGanttBoardsFiles'),
           payload: {
             // query_board_ids: content_filter_params.query_board_ids,
             // board_id: gantt_board_id == '0' ? '' : gantt_board_id
-            board_id: gantt_board_id == '0' ? '' : gantt_board_id,
+            board_id: boardId,
             query_board_ids: [],
           }
-        })
+        });
+        this.getCommunicationFolderList(boardId);
     }
     
 
@@ -858,7 +916,7 @@ class BoardCommunication extends Component {
 
 
     render() {
-        const { currentBoardDetail = {}, dispatch, model = {}, modal, simplemodeCurrentProject } = this.props;
+        const { currentBoardDetail = {}, dispatch, model = {}, modal, simplemodeCurrentProject, communicationProjectListData, communicationSubFolderData } = this.props;
         const {selectBoardFileModalVisible, showFileListisOpenFileDetailModal, isVisibleFileList } = this.state;
         const { currentfile = {}, is_selectFolder, dragEnterCaptureFlag, showFileSelectDropdown } = this.state;
         const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
@@ -1189,8 +1247,51 @@ class BoardCommunication extends Component {
                 onDragOverCapture={this.onDragEnterCapture.bind(this)}
                 onDragLeaveCapture={this.onDragLeaveCapture.bind(this)}
                 onDragEndCapture={this.onDragLeaveCapture.bind(this)}>
-                {/* 项目交流列表 */}
-                <CommunicationFileList
+
+            {/* 2019.11.04 start */}
+
+                {/* 首屏-文件路径面包屑/搜索 */}
+                <CommunicationFirstScreenHeader />
+
+                
+                {/* 控制列表是否显示的控制按钮 */}
+                <div
+                    className={indexStyles.operationBtn}
+                    style={{ left: isVisibleFileList ? '299px' : '0'}}
+                    onClick={this.isShowFileList}
+                >
+                    <Icon type={isVisibleFileList ? 'left' : 'right'} />
+                </div>
+
+                {/* 首屏-项目交流Tree目录列表 */}
+                {
+                    isVisibleFileList &&
+                    <CommunicationTreeList
+                        // communicationProjectListData={communicationProjectListData}
+                        // communicationSubFolderData={communicationSubFolderData}
+                        getCommunicationFolderList={this.getCommunicationFolderList}
+                        queryCommunicationFileData={this.queryCommunicationFileData}
+                        showUpdatedFileDetail={this.showUpdatedFileDetail}
+                        hideUpdatedFileDetail={this.hideUpdatedFileDetail}
+                        isVisibleFileList={isVisibleFileList}
+                        isShowFileList={this.isShowFileList}
+                        {...this.props}
+                    />
+                }
+
+                {/* 首屏-右侧展示文件区域 */}
+                {
+                    !this.state.previewFileModalVisibile &&
+                    <CommunicationThumbnailFiles
+                        isVisibleFileList={isVisibleFileList}
+                    />
+                }
+
+            {/* 2019.11.04 start */}
+
+
+                {/* 项目交流列表(1025版本) */}
+                {/* <CommunicationFileList
                     queryCommunicationFileData={this.queryCommunicationFileData}
                     showUpdatedFileDetail={this.showUpdatedFileDetail}
                     // setPreviewFileModalVisibile={this.hideUpdatedFileDetail}
@@ -1198,7 +1299,7 @@ class BoardCommunication extends Component {
                     isVisibleFileList={isVisibleFileList}
                     isShowFileList={this.isShowFileList}
                     {...this.props}
-                />
+                /> */}
 
 
                 {/* 左侧列表点击文件圈图显示 */}
@@ -1219,8 +1320,8 @@ class BoardCommunication extends Component {
                     )
                 }
 
-                {/* 右侧上传文件的圈图详情 */}
-                {
+                {/* 右侧上传文件的圈图详情（1025前版本功能） */}
+                {/* {
                     this.state.previewFileModalVisibile && (
                         <FileDetail
                             {...this.props}
@@ -1233,9 +1334,9 @@ class BoardCommunication extends Component {
                             componentHeight={zommPictureComponentHeight}
                             componentWidth={zommPictureComponentWidth} />
                     )
-                }
+                } */}
 
-                {/* 右侧上传/临时文件 */}
+                {/* 右侧上传/临时文件（暂时保留，后期版本可能会做） */}
                 {/* {
                     !this.state.previewFileModalVisibile && (
                         <UploadTemporaryFile
@@ -1252,7 +1353,8 @@ class BoardCommunication extends Component {
                 } */}
                 
 
-                {
+                {/* 拖拽上传文件（1025前版本） */}
+                {/* {
                     !this.state.previewFileModalVisibile && (
                         <div className={`${indexStyles.draggerContainerStyle} ${isVisibleFileList ? indexStyles.changeDraggerWidth : null}`}>
                             <Dragger multiple={false} {...this.getDraggerProps()} beforeUpload={this.onBeforeUpload}>
@@ -1271,7 +1373,7 @@ class BoardCommunication extends Component {
                                                     </div>
                                                     <div className={indexStyles.descriptionWapper}>
                                                         <div className={indexStyles.linkTitle}>
-                                                            {/* // 选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或  // */}
+                                                            // 选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或  //
                                                             <a className={indexStyles.alink}>点击上传</a> 文件</div>
                                                         <div className={indexStyles.detailDescription}>选择或上传图片格式文件、PDF格式文件即可开启圈点交流</div>
                                                     </div>
@@ -1281,7 +1383,7 @@ class BoardCommunication extends Component {
                                 </div>
                             </Dragger>
                         </div>
-                    )}
+                    )} */}
 
 
                 <Modal
@@ -1382,6 +1484,11 @@ function mapStateToProps({
         }
     },
     gantt,
+    projectCommunication:{
+        currentBoardId,
+        communicationProjectListData,
+        // communicationSubFolderData,
+    }
 }) {
     const modelObj = {
         datas: { 
@@ -1404,6 +1511,9 @@ function mapStateToProps({
         simpleBoardCommunication,
         simplemodeCurrentProject,
         gantt_board_id,
+        currentBoardId,
+        communicationProjectListData,
+        // communicationSubFolderData
     }
 }
 export default connect(mapStateToProps)(BoardCommunication)
