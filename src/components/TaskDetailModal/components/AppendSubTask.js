@@ -168,7 +168,7 @@ export default class AppendSubTask extends Component {
     const due_timeStamp = timeToTimestamp(timeString)
 
     if (data && data instanceof Object) {
-      let arr = Object.keys(item.data)
+      let arr = Object.keys(data)
       if (arr.length == '0') return
       if (!compareTwoTimestamp(data.deadline, due_timeStamp)) {
         message.warn('任务的截止日期不能大于关联里程碑的截止日期')

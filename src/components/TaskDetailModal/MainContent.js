@@ -422,7 +422,7 @@ export default class MainContent extends Component {
       return false
     }
     if (data && data instanceof Object) {
-      let arr = Object.keys(item.data)
+      let arr = Object.keys(data)
       if (arr.length == '0') return
       if (!compareTwoTimestamp(data.deadline, due_timeStamp)) {
         message.warn('任务的截止日期不能大于关联里程碑的截止日期')
@@ -1171,37 +1171,37 @@ export default class MainContent extends Component {
     switch (code) {
       case 'EXECUTOR':// 表示是负责人
         messageValue = (
-          <sapn>&#xe7b2;</sapn>
+          <span>&#xe7b2;</span>
         )
         break;
       case 'MILESTONE':// 表示是里程碑
         messageValue = (
-          <sapn>&#xe6b7;</sapn>
+          <span>&#xe6b7;</span>
         )
         break;
       case 'REMARK':// 表示是备注
         messageValue = (
-          <sapn>&#xe7f6;</sapn>
+          <span>&#xe7f6;</span>
         )
         break;
       case 'LABEL':// 标签
         messageValue = (
-          <sapn>&#xe6b8;</sapn>
+          <span>&#xe6b8;</span>
         )
         break;
       case 'ATTACHMENT':// 表示是上传附件
         messageValue = (
-          <sapn>&#xe6b9;</sapn>
+          <span>&#xe6b9;</span>
         )
         break;
       case 'SUBTASK':// 表示是子任务
         messageValue = (
-          <sapn>&#xe7f5;</sapn>
+          <span>&#xe7f5;</span>
         )
         break;
       // case 'CONTENTLINK':// 表示是关联内容
       //   messageValue = (
-      //     <sapn>&#xe6ba;</sapn>
+      //     <span>&#xe6ba;</span>
       //   )
       //   break;
       default:
@@ -1227,7 +1227,7 @@ export default class MainContent extends Component {
               new_propertiesList.map(item => (
                 <Menu.Item key={item.id}>
                   <span className={`${globalStyles.authTheme} ${mainContentStyles.attr_icon}`}>{this.getCurrentFieldIcon(item)}</span>
-                  <sapn className={mainContentStyles.attr_name}>{item.name}</sapn>
+                  <span className={mainContentStyles.attr_name}>{item.name}</span>
                 </Menu.Item>
               ))
             }
