@@ -336,10 +336,15 @@ class MyWorkbenchBoxs extends Component {
     const menuItemList = this.getMenuItemList(projectList);
     const fuctionMenuItemList = [{ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }];
     let selectedKeys = ['0'];
+    let isPaymentUser = false;
     if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
-      selectedKeys = [simplemodeCurrentProject.board_id]
+      selectedKeys = [simplemodeCurrentProject.board_id];
+      isPaymentUser = isPaymentOrgUser(simplemodeCurrentProject.org_id);
+    }else{
+      isPaymentUser = isPaymentOrgUser();
     }
-    const isPaymentUser = isPaymentOrgUser();
+
+    
     return (
 
       <div className={indexStyles.mainContentWapper}>

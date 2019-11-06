@@ -7,6 +7,7 @@ import CreateProject from '@/routes/Technological/components/Project/components/
 import { getOrgNameWithOrgIdFilter, setBoardIdStorage } from "@/utils/businessFunction"
 import { beforeChangeBoardUpdateGantt } from "../../../Technological/components/Gantt/ganttBusiness";
 import { beforeChangeCommunicationUpdateFileList } from "../WorkbenchPage/BoardCommunication/components/getCommunicationFileListFn";
+import { isPaymentOrgUser } from "@/utils/businessFunction"
 class BoardDropdownSelect extends Component {
   constructor(props) {
     super(props);
@@ -16,7 +17,7 @@ class BoardDropdownSelect extends Component {
   }
 
   handelBoardChangeCalback = (board_id) => {
-    
+
     const { currentSelectedWorkbenchBox: { code }, dispatch } = this.props
 
     if ('board:chat' == code) {
@@ -132,11 +133,17 @@ class BoardDropdownSelect extends Component {
   }
 
   getMenuItemList(projectList) {
-    const { currentUserOrganizes } = this.props;
+    const { currentUserOrganizes, currentSelectedWorkbenchBox = {} } = this.props;
     let menuItemList = [{ id: '0', name: '我参与的项目' }];
     projectList.map((board, index) => {
-      const { board_id: id, board_name: name, org_id } = board
-      menuItemList.push({ id, name, parentName: getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes) });
+      const { board_id: id, board_name: name, org_id } = board;
+      //根据当前模块是付费非付费模块 去设置项目列表中的项目是否可以选择
+      if (currentSelectedWorkbenchBox.code !== 'board:plans' && !isPaymentOrgUser(org_id)) {
+        menuItemList.push({ id, name, parentName: getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes),disabled:true});
+      }else{
+        menuItemList.push({ id, name, parentName: getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes) });
+      }
+    
     });
 
     return menuItemList;
@@ -155,6 +162,7 @@ class BoardDropdownSelect extends Component {
     if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
       selectedKeys = [simplemodeCurrentProject.board_id]
     }
+
     return (
       <div>
         <DropdownSelect selectedKeys={selectedKeys} iconVisible={iconVisible} simplemodeCurrentProject={simplemodeCurrentProject} itemList={menuItemList} fuctionMenuItemList={fuctionMenuItemList} menuItemClick={this.onSelectBoard}></DropdownSelect>

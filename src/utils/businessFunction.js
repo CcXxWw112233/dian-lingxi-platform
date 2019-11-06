@@ -336,8 +336,13 @@ export const setUploadHeaderBaseInfo = ({ orgId, boardId, aboutBoardOrganization
   return new_herders
 }
 
-export const isPaymentOrgUser = () => {
-  const OrganizationId = localStorage.getItem('OrganizationId')
+export const isPaymentOrgUser = (_org_id) => {
+  let OrganizationId;
+  if(_org_id){
+    OrganizationId = _org_id;
+  }else{
+    OrganizationId = localStorage.getItem('OrganizationId')
+  }
   const currentUserOrganizes = JSON.parse(localStorage.getItem('currentUserOrganizes')) || [];
   console.log("OrganizationId", OrganizationId);
   console.log("currentUserOrganizes", currentUserOrganizes);

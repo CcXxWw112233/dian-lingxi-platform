@@ -8,7 +8,8 @@ import BoardPlan from './BoardPlan/index'
 import InvestmentMaps from './InvestmentMaps/index'
 import XczNews from './XczNews/index'
 import Zhichengshe from './Zhichengshe/index'
-import LingxiIm, {Im} from 'lingxi-im'
+import LingxiIm, { Im } from 'lingxi-im'
+import { isPaymentOrgUser } from "@/utils/businessFunction"
 
 class WorkbenchPage extends Component {
     constructor(props) {
@@ -182,8 +183,17 @@ class WorkbenchPage extends Component {
 
 
     render() {
-        const { workbenchBoxContentWapperModalStyle } = this.props;
-        const { currentSelectedWorkbenchBox } = this.props;
+        const { workbenchBoxContentWapperModalStyle, currentSelectedWorkbenchBox, simplemodeCurrentProject } = this.props;
+        let isPaymentUser = false;
+        console.log("simplemodeCurrentProject",simplemodeCurrentProject);
+        if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
+         
+            isPaymentUser = isPaymentOrgUser(simplemodeCurrentProject.org_id);
+        } else {
+            isPaymentUser = isPaymentOrgUser();
+        }
+
+        console.log("isPaymentUser1",isPaymentUser);
         return (
             <div className={indexStyles.workbenchBoxContentModalContainer}>
                 <MiniBoxNavigations currentSelectedWorkbenchBox={currentSelectedWorkbenchBox} />
@@ -197,26 +207,26 @@ class WorkbenchPage extends Component {
 
 
                         {
-                            this.state.BoardCommunicationVisible &&
+                            isPaymentUser && this.state.BoardCommunicationVisible &&
                             <BoardCommunication />
                         }
 
                         {
-                            this.state.BoardFilesVisible &&
+                            isPaymentUser && this.state.BoardFilesVisible &&
                             <BoardFiles />
                         }
 
                         {
-                            this.state.InvestmentMapsVisible &&
+                            isPaymentUser && this.state.InvestmentMapsVisible &&
                             <InvestmentMaps />
                         }
 
                         {
-                            this.state.XczNewsVisible &&
+                            isPaymentUser && this.state.XczNewsVisible &&
                             <XczNews {...this.props} />
                         }
                         {
-                            this.state.ZhichengsheVisible && <Zhichengshe {...this.props} />
+                            isPaymentUser && this.state.ZhichengsheVisible && <Zhichengshe {...this.props} />
                         }
 
                     </div>
@@ -233,7 +243,8 @@ function mapStateToProps({
         myWorkbenchBoxList,
         currentSelectedWorkbenchBox,
         chatImVisiable,
-        leftMainNavIconVisible
+        leftMainNavIconVisible,
+        simplemodeCurrentProject
     }
 }) {
 
@@ -242,7 +253,8 @@ function mapStateToProps({
         myWorkbenchBoxList,
         currentSelectedWorkbenchBox,
         chatImVisiable,
-        leftMainNavIconVisible
+        leftMainNavIconVisible,
+        simplemodeCurrentProject
     }
 }
 export default connect(mapStateToProps)(WorkbenchPage)
