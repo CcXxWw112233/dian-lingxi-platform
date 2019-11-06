@@ -66,11 +66,13 @@ class SiderRight extends React.Component {
   imInitOption = () => {
     LingxiIm.hide();
     const { protocol, host } = window.location
-    Im.option({ baseUrl: `${protocol}//${host}/` })
+    Im.option({ baseUrl: `${protocol}//${host}/`, APPKEY: "c3abea191b7838ff65f9a6a44ff5e45f" })
     if (Im) {
       Im.addEventListener('visible', (visible) => {
-        console.log(visible)
         this.handleImToggle(visible);
+      });
+      Im.addEventListener('clickDynamic', (data) => {
+        this.imClickDynamic(data);
       });
     }
   }
@@ -473,6 +475,41 @@ class SiderRight extends React.Component {
       type: 'technological/updateDatas',
       payload: {
         siderRightCollapsed: toggle
+      }
+    })
+  }
+  // 圈子点击
+  imClickDynamic = (data = {}) => {
+    const { dispatch } = this.props
+    const { orgId, boardId, type, relaDataId, cardId } = data
+    let else_params = ''
+    switch (type) {
+      case 'board':
+        break
+      case 'folder':
+        break;
+      case 'file':
+        else_params = `&appsSelectKey=4&file_id=${relaDataId}`
+        break
+      case 'card':
+        else_params = `&appsSelectKey=3&card_id=${cardId}`
+        break;
+      case 'flow':
+        else_params = `&appsSelectKey=2&flow_id=${relaDataId}`
+        break
+      default:
+        break
+    }
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        isInOpenFile: false
+      }
+    })
+    dispatch({
+      type: 'technological/routingReplace',
+      payload: {
+        route: `/technological/projectDetail?board_id=${boardId}${else_params}`
       }
     })
   }
