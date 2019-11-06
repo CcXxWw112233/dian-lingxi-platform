@@ -1112,7 +1112,9 @@ export default class MainContent extends Component {
           ).then(res => {
             if (isApiResponseOk(res)) {
               that.setState({
-                selectedKeys: new_selectedKeys
+                selectedKeys: new_selectedKeys,
+                shouldDeleteId: '',
+                showDelColor: ''
               })
               dispatch({
                 type: 'publicTaskDetailModal/updateDatas',
@@ -1141,7 +1143,9 @@ export default class MainContent extends Component {
       ).then(res => {
         if (isApiResponseOk(res)) {
           that.setState({
-            selectedKeys: new_selectedKeys
+            selectedKeys: new_selectedKeys,
+            shouldDeleteId: '',
+            showDelColor: ''
           })
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',

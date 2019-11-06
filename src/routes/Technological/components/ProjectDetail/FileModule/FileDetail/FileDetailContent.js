@@ -1051,8 +1051,8 @@ class FileDetailContent extends React.Component {
     const { coordinates, comment, point_number } = obj
     const {
       filePreviewCurrentFileId,
-      board_id,
-      dispatch
+      dispatch,
+      projectDetailInfoData: { board_id }
     } = this.props
     dispatch({
       type: 'projectDetailFile/addFileCommit',
@@ -1694,7 +1694,7 @@ class FileDetailContent extends React.Component {
 
           <div className={indexStyles.fileDetailContentRight} style={{ minWidth: isExpandFrame ? 0 : 420, height: '100vh' }}>
 
-            <div style={{ position: 'relative' }} className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'}>
+            <div style={{ position: 'relative', zIndex: 0 }} className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'}>
               {
                 checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) ? ('') : (
                   <div style={{ bottom: '62px' }} onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
@@ -1726,7 +1726,8 @@ class FileDetailContent extends React.Component {
               </div>
             )}
 
-            {(checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH)) || checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH))) && (
+            {
+              (checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id))) && (
               <div className={indexStyles.fileDetailContentRight_bott}>
                 <Comment2 currentRect={currentRect}></Comment2>
               </div>
