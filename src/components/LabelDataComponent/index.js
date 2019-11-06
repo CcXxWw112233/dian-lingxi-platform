@@ -115,7 +115,7 @@ export default class LabelDataComponent extends React.Component {
         { label_color: '211,173,247' },
         { label_color: '183,235,143' },
       ],
-      inputValueL: ''
+      inputValue: ''
     })
   }
 
