@@ -73,7 +73,7 @@ class PayUpgrade extends Component {
                 width={903}
                 onCancel={this.handleCancel}
             >
-                <div className={indexStyles.infoTitle}>协作人数与项目数统计{paymentInfo.is_free_trial && paymentInfo.is_free_trial=='0' && <span style={{color: '#1890FF'}}>(已付费企业)</span>}</div>
+                <div className={indexStyles.infoTitle}>协作人数与项目数统计{paymentInfo.is_free_trial && paymentInfo.is_free_trial=='0' && <span style={{color: '#1890FF'}}>(已付费组织)</span>}</div>
                 <div className={indexStyles.infoBox}>
 
                     <div className={indexStyles.organizationInfoWrapper}>

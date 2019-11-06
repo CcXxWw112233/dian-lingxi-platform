@@ -39,7 +39,7 @@ export default {
       }
     },
 
-    * changeCurrentOrg({ payload }, { select, call, put }) { //切换企业
+    * changeCurrentOrg({ payload }, { select, call, put }) { //切换组织
       let res = yield call(changeCurrentOrg, payload)
       if(isApiResponseOk(res)) {
         const tokenArray = res.data.split('__')
@@ -82,7 +82,7 @@ export default {
       let res = yield call(createOrganization, payload)
       if(isApiResponseOk(res)) {
         //查询一遍
-        message.success(`创建企业成功`, MESSAGE_DURATION_TIME)
+        message.success(`创建组织成功`, MESSAGE_DURATION_TIME)
         const delay = (ms) => new Promise(resolve => {
           setTimeout(resolve, ms)
         })

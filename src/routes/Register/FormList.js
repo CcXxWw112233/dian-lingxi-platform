@@ -57,7 +57,7 @@ class FormList extends React.Component {
         //   return false
         // }
         // if(values['email'] && !validateEmail(values['email'])) {
-        //   message.warn('请输入正确格式的邮箱地址，推荐使用企业邮箱注册。', MESSAGE_DURATION_TIME)
+        //   message.warn('请输入正确格式的邮箱地址，推荐使用组织邮箱注册。', MESSAGE_DURATION_TIME)
         //   return false
         // }
         if (!values['mobile']) {
@@ -117,7 +117,7 @@ class FormList extends React.Component {
         }
       } else if (name === 'email') {
         if (!validateEmail(values[name])) {
-          message.warn('请输入正确格式的邮箱地址，推荐使用企业邮箱注册。', MESSAGE_DURATION_TIME)
+          message.warn('请输入正确格式的邮箱地址，推荐使用组织邮箱注册。', MESSAGE_DURATION_TIME)
           this.setState({
             emailBlurCheck: false
           })

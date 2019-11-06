@@ -7,7 +7,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '@/components/avatarList'
 import CheckItem from '@/components/CheckItem'
 import { updateTaskGroup, deleteTaskGroup, } from '../../../../services/technological/task';
-import { updateProject, addMenbersInProject, toggleContentPrivilege, removeContentPrivilege, setContentPrivilege } from '../../../../services/technological/project';
+import { updateProject, addMenbersInProject, toggleContentPrivilege, removeContentPrivilege, setContentPrivilege, collectionProject, cancelCollection } from '../../../../services/technological/project';
 import { isApiResponseOk } from '../../../../utils/handleResponseData';
 import ShowAddMenberModal from '../../../../routes/Technological/components/Project/ShowAddMenberModal'
 import { PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_CARD_GROUP, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../globalset/js/constant';
@@ -211,7 +211,7 @@ export default class GroupListHeadItem extends Component {
       }
     })
   }
-  //添加项目组职员操作
+  //添加项目组成员操作
   setShowAddMenberModalVisibile = () => {
     this.setState({
       show_add_menber_visible: !this.state.show_add_menber_visible
@@ -222,7 +222,7 @@ export default class GroupListHeadItem extends Component {
     const { dispatch } = this.props
     addMenbersInProject({ ...values }).then(res => {
       if (isApiResponseOk(res)) {
-        message.success('已成功添加项目职员')
+        message.success('已成功添加项目成员')
         setTimeout(() => {
           dispatch({
             type: 'gantt/getAboutUsersBoards',
@@ -381,7 +381,7 @@ export default class GroupListHeadItem extends Component {
         {
           // checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, params_board_id)
           <Menu.Item key={'invitation'}>
-            邀请职员加入
+            邀请成员加入
           </Menu.Item>
         }
         {
@@ -481,7 +481,7 @@ export default class GroupListHeadItem extends Component {
   }
 
   /**
-   * 其他职员的下拉回调
+   * 其他成员的下拉回调
    * @param {String} id 这是用户的user_id
    * @param {String} type 这是对应的用户字段
    * @param {String} removeId 这是对应移除用户的id
@@ -494,8 +494,8 @@ export default class GroupListHeadItem extends Component {
     }
   }
   /**
-   * 添加职员的回调
-   * @param {Array} users_arr 添加职员的数组
+   * 添加成员的回调
+   * @param {Array} users_arr 添加成员的数组
    */
   handleVisitControlAddNewMember = (users_arr = []) => {
     if (!users_arr.length) return
@@ -503,7 +503,7 @@ export default class GroupListHeadItem extends Component {
     this.handleSetContentPrivilege(users_arr, 'read')
   }
 
-  // 访问控制添加职员
+  // 访问控制添加成员
   handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试', ) => {
     const { itemValue = {} } = this.props
     const { list_id, privileges, board_id } = itemValue
@@ -553,7 +553,7 @@ export default class GroupListHeadItem extends Component {
       // console.log(acc, '------', curr, 'sssssss')
       [...acc, ...(curr && curr.executors && curr.executors.length ? curr.executors.filter(i => !acc.find(e => e.user_id === i.user_id)) : [])], []
     )
-    // 2. 如果存在extend列表中的职员也要拼接进来, 然后去重
+    // 2. 如果存在extend列表中的成员也要拼接进来, 然后去重
     const extendParticipant = privileges_extend && [...privileges_extend]
     let temp_projectParticipant = [].concat(...projectParticipant, extendParticipant) // 用来保存新的负责人列表
     let new_projectParticipant = this.arrayNonRepeatfy(temp_projectParticipant)
@@ -583,11 +583,52 @@ export default class GroupListHeadItem extends Component {
     )
   }
   // 访问控制 ----------------end-----------------------------
+
+  // 置顶
+  roofTop = (type) => {
+    const { dispatch, itemValue: { list_id, org_id } } = this.props
+    const { list_group = [] } = this.props
+    const list_group_new = [...list_group]
+    const group_index = list_group_new.findIndex(item => item.lane_id == list_id)
+    if (type == '0') { //取消置顶
+      cancelCollection({ org_id, board_id: list_id }).then(res => {
+        if (isApiResponseOk(res)) {
+          list_group_new[group_index].is_star = '0'
+          list_group_new.push(list_group_new[group_index]) //将该项往最后插入
+          list_group_new.splice(group_index, 1) //删除掉该项
+          dispatch({
+            type: 'gantt/handleListGroup',
+            payload: {
+              data: list_group_new
+            }
+          })
+        } else {
+          message.error(res.message)
+        }
+      })
+    } else {
+      collectionProject({ org_id, board_id: list_id }).then(res => {
+        if (isApiResponseOk(res)) {
+          list_group_new[group_index].is_star = '1'
+          list_group_new.unshift(list_group_new[group_index]) //将该项往第一插入
+          list_group_new.splice(group_index + 1, 1) //删除掉该项
+          dispatch({
+            type: 'gantt/handleListGroup',
+            payload: {
+              data: list_group_new
+            }
+          })
+        } else {
+          message.error(res.message)
+        }
+      })
+    }
+  }
   render() {
 
     const { currentUserOrganizes = [], gantt_board_id = [], ceiHeight, is_show_org_name, is_all_org, rows = 5, group_view_type, get_gantt_data_loading } = this.props
     const { itemValue = {}, itemKey } = this.props
-    const { list_name, org_id, list_no_time_data = [], list_id, lane_icon, board_id, is_privilege = '0', privileges, create_by = {}, lane_overdue_count } = itemValue
+    const { is_star, list_name, org_id, list_no_time_data = [], list_id, lane_icon, board_id, is_privilege = '0', privileges, create_by = {}, lane_overdue_count } = itemValue
     const { isShowBottDetail, show_edit_input, local_list_name, edit_input_value, show_add_menber_visible } = this.state
     const board_create_user = create_by.name
     return (
@@ -630,11 +671,15 @@ export default class GroupListHeadItem extends Component {
                 )
               }
               {/* 置顶 */}
-              {/* {
+              {
                 (gantt_board_id == '0' && group_view_type == '1' && !show_edit_input) && (
-                  <div className={globalStyle.authTheme} style={{ marginLeft: 10, fontSize: 16, color: '#FFA940' }}>&#xe7e3;</div>
+                  is_star == '0' ? (
+                    <div className={globalStyle.authTheme} title={'置顶该项目'} onClick={() => this.roofTop('1')} style={{ marginLeft: 10, fontSize: 16, color: '#FFA940' }}>&#xe7e3;</div>
+                  ) : (
+                      <div className={globalStyle.authTheme} title={'取消置顶'} onClick={() => this.roofTop('0')} style={{ marginLeft: 10, fontSize: 16, color: '#FFA940' }}>&#xe86e;</div>
+                    )
                 )
-              } */}
+              }
             </div>
             <div className={`${indexStyles.list_head_top_right}`}>
               {
@@ -691,9 +736,10 @@ export default class GroupListHeadItem extends Component {
               modalVisible={show_add_menber_visible}
               setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile}
             />
-          )}
+          )
+        }
 
-      </div>
+      </div >
     )
   }
 

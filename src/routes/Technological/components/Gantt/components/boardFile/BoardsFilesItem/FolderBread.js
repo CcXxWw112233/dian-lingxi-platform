@@ -31,7 +31,7 @@ export default class FolderBread extends Component {
                             const { name, id, type } = item
                             return (
                                 <BreadcrumbItem key={id} onClick={() => this.chooseBreadItem(item)}>
-                                   <span style={{color: 'rgba(0,0,0,.65)'}}>{name}</span>
+                                   <span className={styles.foder_name_bread}>{name}</span>
                                 </BreadcrumbItem>
                             )
                         })

@@ -4,13 +4,8 @@ import { connect } from "dva/index";
 import GanttFace from './GanttFace'
 // import TaskDetailModal from '../Workbench/CardContent/Modal/TaskDetailModal';
 import TaskDetailModal from '@/components/TaskDetailModal'
-import FileDetailModal from '../Workbench/CardContent/Modal/FileDetailModal';
 import AddTaskModal from './components/AddTaskModal';
 import { ganttIsFold, getDigitTime } from './constants';
-
-const getEffectOrReducerByName = name => `workbench/${name}`
-const getEffectOrReducerByName_4 = name => `workbenchTaskDetail/${name}`
-const getEffectOrReducerByName_5 = name => `workbenchFileDetail/${name}`
 
 class Gantt extends Component {
 
@@ -30,30 +25,6 @@ class Gantt extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-  }
-
-  //弹窗
-  setPreviewFileModalVisibile = () => {
-    this.setState({
-      previewFileModalVisibile: !this.state.previewFileModalVisibile
-    });
-  }
-  setTaskDetailModalVisibile(card_time_type) {
-    //card_time_type为是否排期卡片
-    this.card_time_type = card_time_type
-    this.setState({
-      TaskDetailModalVisibile: !this.state.TaskDetailModalVisibile
-    });
-  }
-
-  // 关闭任务弹窗的回调
-  setDrawerVisibleClose = () => {
-    this.props.dispatch({
-      type: 'publicTaskDetailModal/updateDatas',
-      payload: {
-        drawerVisible: false
-      }
-    })
   }
 
   //用来实现创建任务弹窗方法
@@ -97,7 +68,7 @@ class Gantt extends Component {
       addTaskModalVisible: flag
     });
   }
-  addNewTask(data) {
+  addNewTask = (data) => {
     const { dispatch } = this.props
     Promise.resolve(
       dispatch({
@@ -125,7 +96,7 @@ class Gantt extends Component {
   // 添加完一条任务后，将某1条任务塞进去
   insertTaskToListGroup = (data) => {
     const { dispatch, } = this.props
-    const { datas: { list_group = [], current_list_group_id, gantt_board_id, group_view_type } } = this.props.model
+    const { list_group = [], current_list_group_id, gantt_board_id, group_view_type } = this.props
     const list_group_new = [...list_group]
     const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
     list_group_new[group_index].lane_data.cards.push(data)
@@ -138,7 +109,7 @@ class Gantt extends Component {
         list_group_new[group_index].lane_status = '3' //创建的任务在当前时间之前，那就是逾期未完成
         list_group_new[group_index].lane_overdue_count = (Number(list_group_new[group_index].lane_overdue_count) || 0) + 1 //逾期未完成任务 +1
       } else {
-        if(list_group_new[group_index].lane_status == '1') {
+        if (list_group_new[group_index].lane_status == '1') {
           list_group_new[group_index].lane_status = '2' //创建的任务在当前时间之后，那就是正常进行未完成
         }
       }
@@ -152,8 +123,8 @@ class Gantt extends Component {
       }
     })
   }
-  handleGetNewTaskParams(data) {
-    const { datas: { create_start_time, create_end_time, current_list_group_id, gantt_board_id, group_view_type } } = this.props.model
+  handleGetNewTaskParams = (data) => {
+    const { create_start_time, create_end_time, current_list_group_id, gantt_board_id, group_view_type } = this.props
 
     //设置截止日期最后一秒
     const create_end_time_date = new Date(create_end_time)
@@ -195,7 +166,7 @@ class Gantt extends Component {
   handleNoHasScheduleCard = ({ card_id, drawContent = {} }) => {
     const { dispatch } = this.props
     const { start_time, due_time } = drawContent
-    const { datas: { list_group = [], current_list_group_id } } = this.props.model
+    const { list_group = [], current_list_group_id } = this.props
     const list_group_new = [...list_group]
 
     const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
@@ -232,7 +203,7 @@ class Gantt extends Component {
   handleHasScheduleCard = ({ card_id, drawContent }) => {
     const { dispatch } = this.props
 
-    const { datas: { list_group = [], gantt_board_id, current_list_group_id, board_id, group_view_type } } = this.props.model
+    const { list_group = [], current_list_group_id } = this.props
     const list_group_new = [...list_group]
     const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
     const group_index_cards_index = list_group_new[group_index].lane_data.cards.findIndex(item => item.id == card_id)
@@ -250,7 +221,7 @@ class Gantt extends Component {
   // 删除某一条任务
   handleDeleteCard = ({ card_id }) => {
     const { dispatch } = this.props
-    const { datas: { list_group = [], current_list_group_id } } = this.props.model
+    const { list_group = [], current_list_group_id } = this.props
     const list_group_new = [...list_group]
     let belong_group_name = ''
     if (this.card_time_type == 'no_schedule') {
@@ -270,9 +241,7 @@ class Gantt extends Component {
   }
 
   render() {
-    const { dispatch, model = {}, modal } = this.props
-    const { previewFileModalVisibile, TaskDetailModalVisibile, addTaskModalVisible, } = this.state
-    const { datas = {} } = model;
+    const { addTaskModalVisible, } = this.state
     const {
       about_apps_boards = [],
       gantt_board_id,
@@ -281,377 +250,27 @@ class Gantt extends Component {
       about_group_boards = [],
       about_user_boards = [],
       drawerVisible,
-    } = datas;
+    } = this.props;
 
-    const CreateTaskProps = {
-      modal,
-      model,
-      getBoardMembers(payload) {
-        dispatch({
-          type: getEffectOrReducerByName_4('getBoardMembers'),
-          payload: payload
-        })
-      },
-      getCardDetail(payload) {
-        dispatch({
-          type: getEffectOrReducerByName_4('getCardDetail'),
-          payload: payload
-        })
-      },
-      updateTaskDatas(payload) {
-        dispatch({
-          type: getEffectOrReducerByName_4('updateDatas'),
-          payload: payload
-        })
-      },
-      deleteTaskFile(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('deleteTaskFile'),
-          payload: data,
-        })
-      },
-      addTaskGroup(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('addTaskGroup'),
-          payload: data,
-        })
-      },
-      deleteTaskGroup(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('deleteTaskGroup'),
-          payload: data,
-        })
-      },
-      updateTaskGroup(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('updateTaskGroup'),
-          payload: data,
-        })
-      },
-      getTaskGroupList(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('getTaskGroupList'),
-          payload: data
-        })
-      },
-      addTask(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('addTask'),
-          payload: data
-        })
-      },
-      updateTask(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('updateTask'),
-          payload: data
-        })
-      },
-      deleteTask(id) {
-        dispatch({
-          type: getEffectOrReducerByName_4('deleteTask'),
-          payload: {
-            id
-          }
-        })
-      },
-      updateChirldTask(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('updateChirldTask'),
-          payload: data
-        })
-      },
-      deleteChirldTask(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('deleteChirldTask'),
-          payload: data
-        })
-      },
-
-      archivedTask(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('archivedTask'),
-          payload: data
-        })
-      },
-      changeTaskType(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('changeTaskType'),
-          payload: data
-        })
-      },
-      addChirldTask(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('addChirldTask'),
-          payload: data
-        })
-      },
-      addTaskExecutor(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('addTaskExecutor'),
-          payload: data
-        })
-      },
-      removeTaskExecutor(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('removeTaskExecutor'),
-          payload: data
-        })
-      },
-      completeTask(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('completeTask'),
-          payload: data
-        })
-      },
-      addTaskTag(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('addTaskTag'),
-          payload: data
-        })
-      },
-      removeTaskTag(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('removeTaskTag'),
-          payload: data
-        })
-      },
-      removeProjectMenbers(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('removeProjectMenbers'),
-          payload: data
-        })
-      },
-      // getCardCommentList(id) {
-      //   dispatch({
-      //     type: getEffectOrReducerByName_4('getCardCommentList'),
-      //     payload: {
-      //       id
-      //     }
-      //   })
-      // },
-      addCardNewComment(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('addCardNewComment'),
-          payload: data
-        })
-      },
-      deleteCardNewComment(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('deleteCardNewComment'),
-          payload: data
-        })
-      },
-      getBoardTagList(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('getBoardTagList'),
-          payload: data
-        })
-      },
-      updateBoardTag(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('updateBoardTag'),
-          payload: data
-        })
-      },
-      toTopBoardTag(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('toTopBoardTag'),
-          payload: data
-        })
-      },
-      deleteBoardTag(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('deleteBoardTag'),
-          payload: data
-        })
-      }
-    }
-    const FileModuleProps = {
-      modal,
-      model,
-      updateFileDatas(payload) {
-        dispatch({
-          type: getEffectOrReducerByName_5('updateDatas'),
-          payload: payload
-        })
-      },
-      getFileList(params) {
-        dispatch({
-          type: getEffectOrReducerByName('getFileList'),
-          payload: params
-        })
-      },
-      fileCopy(data) {
-        dispatch({
-          type: getEffectOrReducerByName_5('fileCopy'),
-          payload: data
-        })
-      },
-      fileDownload(params) {
-        dispatch({
-          type: getEffectOrReducerByName_5('fileDownload'),
-          payload: params
-        })
-      },
-      fileRemove(data) {
-        dispatch({
-          type: getEffectOrReducerByName_5('fileRemove'),
-          payload: data
-        })
-      },
-      fileMove(data) {
-        dispatch({
-          type: getEffectOrReducerByName_5('fileMove'),
-          payload: data
-        })
-      },
-      fileUpload(data) {
-        dispatch({
-          type: getEffectOrReducerByName_5('fileUpload'),
-          payload: data
-        })
-      },
-      fileVersionist(params) {
-        dispatch({
-          type: getEffectOrReducerByName_5('fileVersionist'),
-          payload: params
-        })
-      },
-      recycleBinList(params) {
-        dispatch({
-          type: getEffectOrReducerByName_5('recycleBinList'),
-          payload: params
-        })
-      },
-      deleteFile(data) {
-        dispatch({
-          type: getEffectOrReducerByName_5('deleteFile'),
-          payload: data
-        })
-      },
-      restoreFile(data) {
-        dispatch({
-          type: getEffectOrReducerByName_5('restoreFile'),
-          payload: data
-        })
-      },
-      getFolderList(params) {
-        dispatch({
-          type: getEffectOrReducerByName_5('getFolderList'),
-          payload: params
-        })
-      },
-      addNewFolder(data) {
-        dispatch({
-          type: getEffectOrReducerByName_5('addNewFolder'),
-          payload: data
-        })
-      },
-      updateFolder(data) {
-        dispatch({
-          type: getEffectOrReducerByName_5('updateFolder'),
-          payload: data
-        })
-      },
-      filePreview(params) {
-        dispatch({
-          type: getEffectOrReducerByName_5('filePreview'),
-          payload: params
-        })
-      },
-      getPreviewFileCommits(params) {
-        dispatch({
-          type: getEffectOrReducerByName_5('getPreviewFileCommits'),
-          payload: params
-        })
-      },
-      addFileCommit(params) {
-        dispatch({
-          type: getEffectOrReducerByName_5('addFileCommit'),
-          payload: params
-        })
-      },
-      deleteCommit(params) {
-        dispatch({
-          type: getEffectOrReducerByName_5('deleteCommit'),
-          payload: params
-        })
-      },
-    }
-    const updateDatasTask = (payload) => {
-      dispatch({
-        type: getEffectOrReducerByName_4('updateDatas'),
-        payload: payload
-      })
-    }
-    const updateDatasFile = (payload) => {
-      dispatch({
-        type: getEffectOrReducerByName_5('updateDatas'),
-        payload: payload
-      })
-    }
-
-    const fileDetailModalDatas = {
-      ...this.props,
-      ...CreateTaskProps,
-      ...FileModuleProps,
-      previewFileModalVisibile,
-      updateDatasTask,
-      updateDatasFile,
-      model,
-      modal,
-    }
     return (
       <div>
         <GanttFace
-          setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)}
-          addTaskModalVisibleChange={this.addTaskModalVisibleChange.bind(this)}
-          setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}
+          addTaskModalVisibleChange={this.addTaskModalVisibleChange}
           gantt_board_id={gantt_board_id}
           gantt_card_height={this.props.gantt_card_height || 600} //引用组件的地方传递进来的甘特图高度
           is_need_calculate_left_dx={this.props.is_need_calculate_left_dx}
-          fileDetailModalDatas={fileDetailModalDatas}
         />
-        {/* <FileDetailModal
-          {...this.props}
-          {...CreateTaskProps}
-          {...FileModuleProps}
-          setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)}
-          modalVisible={previewFileModalVisibile}
-          setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}
-          updateDatasTask={updateDatasTask}
-          updateDatasFile={updateDatasFile}
-          updateTaskDatas={updateDatasTask}
-          updateFileDatas={updateDatasFile}
-        /> */}
-
-        {/* <TaskDetailModal
-          {...this.props}
-          {...CreateTaskProps}
-          {...FileModuleProps}
-          modalVisible={TaskDetailModalVisibile}
-          setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)}
-          setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}
-          updateDatasTask={updateDatasTask}
-          updateDatasFile={updateDatasFile}
-          updateTaskDatas={updateDatasTask}
-          updateFileDatas={updateDatasFile}
-          handleChangeCard={this.handleChangeCard.bind(this)}
-          updateDatas={updateDatasTask}
-          needDelete={true}
-          handleDeleteCard={this.handleDeleteCard}
-        /> */}
         <TaskDetailModal
           task_detail_modal_visible={drawerVisible}
-          // setTaskDetailModalVisible={this.setDrawerVisibleClose}
-          handleTaskDetailChange={this.handleChangeCard.bind(this)}
+          // setTaskDetailModalVisible={this.setDrawerVisibleClose} //关闭任务弹窗回调
+          handleTaskDetailChange={this.handleChangeCard}
           handleDeleteCard={this.handleDeleteCard}
         />
 
         {addTaskModalVisible && (
           <AddTaskModal
             board_card_group_id={gantt_board_id == '0' ? '' : current_list_group_id}
-            handleGetNewTaskParams={this.handleGetNewTaskParams.bind(this)}
+            handleGetNewTaskParams={this.handleGetNewTaskParams}
             current_operate_board_id={gantt_board_id == '0' ? current_list_group_id : gantt_board_id}
             current_list_group_id={current_list_group_id}
             group_view_type={group_view_type}
@@ -670,11 +289,34 @@ class Gantt extends Component {
 }
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ gantt, workbench, workbenchTaskDetail, workbenchFileDetail, workbenchDetailProcess, workbenchPublicDatas, publicTaskDetailModal }) {
-  const modelObj = {
-    datas: { ...workbenchTaskDetail['datas'], ...workbenchFileDetail['datas'], ...workbenchDetailProcess['datas'], ...workbenchPublicDatas['datas'], ...gantt['datas'], ...publicTaskDetailModal }
+function mapStateToProps({
+  gantt: {
+    datas: {
+      list_group = [],
+      current_list_group_id,
+      gantt_board_id,
+      group_view_type,
+      create_start_time,
+      create_end_time,
+      about_apps_boards = [],
+      about_group_boards = [],
+      about_user_boards = [],
+    }
+  },
+  publicTaskDetailModal: { drawerVisible }
+}) {
+  return {
+    list_group,
+    current_list_group_id,
+    gantt_board_id,
+    group_view_type,
+    create_start_time,
+    create_end_time,
+    drawerVisible,
+    about_apps_boards,
+    about_group_boards,
+    about_user_boards,
   }
-  return { model: modelObj }
 }
 
 Gantt.defaultProps = {

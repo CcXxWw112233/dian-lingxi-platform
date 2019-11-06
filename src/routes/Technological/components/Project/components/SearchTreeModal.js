@@ -28,7 +28,7 @@ class SearchTreeModal extends Component {
       return
     }
     const isSelectedOrg = (str = '') => str.startsWith('org-')
-    //如果是移动到企业根目录，那么就ground_id为空
+    //如果是移动到组织根目录，那么就ground_id为空
     const selectedKey = isSelectedOrg(selectedKeys[0]) ? '' : selectedKeys[0]
     onOk(selectedKey);
   };
@@ -120,7 +120,7 @@ class SearchTreeModal extends Component {
         children: genTreeTopDataWithArchivedNode()
       };
     });
-    //生成企业根目录
+    //生成组织根目录
     const org = {
       title: org_name,
       key: `org-${org_id}`,

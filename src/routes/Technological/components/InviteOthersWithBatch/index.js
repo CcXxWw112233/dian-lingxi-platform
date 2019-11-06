@@ -20,7 +20,7 @@ class InviteOtherWithBatch extends Component {
       textAreaValue: '',
       inputRet: [],
       fetching: false,
-      selectedMember: [], //已经选择的职员
+      selectedMember: [], //已经选择的成员
       multipleMode: false, //是否批量模式
       wechat_invite_visible: false,
     };

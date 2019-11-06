@@ -206,7 +206,7 @@ export default class Header extends React.Component {
   }
 
   //出现confirm-------------end
-  //添加项目组职员操作
+  //添加项目组成员操作
   setShowAddMenberModalVisibile() {
     this.setState({
       ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
@@ -906,7 +906,7 @@ export default class Header extends React.Component {
         {checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) && (
           <Menu.Item key={'1'} style={{ textAlign: 'center', padding: 0, margin: 0 }}>
             <div className={indexStyle.elseProjectMemu}>
-              邀请职员加入
+              邀请成员加入
             </div>
           </Menu.Item>
         )}

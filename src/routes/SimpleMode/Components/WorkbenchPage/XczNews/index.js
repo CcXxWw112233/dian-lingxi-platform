@@ -111,7 +111,7 @@ export default class index extends Component {
 			<div className={indexStyles.xczNewContainer} >
 				{user_set.current_org === '0' && selectOrganizationVisible === false && isRegulations === 'yes' && XczNewsOrganizationList.length > 1 ? (
 					<div className={indexStyles.boardSelectWapper} style={{ height: contentHeight + 'px' }}>
-						<div className={indexStyles.groupName}>请选择一个企业进行查看政策法规</div>
+						<div className={indexStyles.groupName}>请选择一个组织进行查看政策法规</div>
 						<div className={indexStyles.boardItemWapper}>
 							{
 								XczNewsOrganizationList && XczNewsOrganizationList.map((value, key) => {

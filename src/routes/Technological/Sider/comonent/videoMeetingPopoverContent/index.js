@@ -45,7 +45,7 @@ class VideoMeetingPopoverContent extends React.Component {
         selectedMemberTextAreaValue: "",
         videoMeetingPopoverVisible: false,
         currentSelectedProjectMembersList: [], //当前选择项目的项目成员
-        currentOrgAllMembers: [], //当前企业的职员
+        currentOrgAllMembers: [], //当前组织的职员
         org_id: '0'
     }
 
@@ -193,7 +193,7 @@ class VideoMeetingPopoverContent extends React.Component {
         const mentionSelectedMembersMobileOrEmailString = this.handleTransMentionSelectedMember();
         const mentionSelectedOtherMembersMobileString = this.handleTransMentionSelectedOtherMembersMobileString();
         if (mentionSelectedOtherMembersMobileString === "error") {
-            message.error("企业外职员手机号格式有误，请检查");
+            message.error("组织外成员手机号格式有误，请检查");
             return;
         }
         const mergedMeetingMemberStr = [
@@ -293,7 +293,7 @@ class VideoMeetingPopoverContent extends React.Component {
         return orgList.reduce((acc, curr) => {
             const isHasRepeatedNameItem =
                 orgList.filter(item => item.name === curr.name).length >= 2;
-            //如果列表中有重复的名称职员存在，那么附加手机号或者邮箱
+            //如果列表中有重复的名称成员存在，那么附加手机号或者邮箱
             //形式： name(mobile|email)
             if (isHasRepeatedNameItem) {
                 const item = `${curr.name}(${
@@ -520,7 +520,7 @@ class VideoMeetingPopoverContent extends React.Component {
                                     {saveToProject && (
                                         <Mention
                                             style={{ width: "100%", height: "56px" }}
-                                            placeholder="使用@符号查找该项目内职员"
+                                            placeholder="使用@符号查找该项目内成员"
                                             suggestions={selectedSuggestions}
                                             multiLines
                                             onSearchChange={this.handleVideoMeetingMemberChange}

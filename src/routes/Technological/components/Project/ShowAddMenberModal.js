@@ -113,7 +113,7 @@ class ShowAddMenberModal extends React.Component {
 export default Form.create()(ShowAddMenberModal)
 
 ShowAddMenberModal.defaultProps = {
-  _organization_id: undefined, //传递进来的企业id
+  _organization_id: undefined, //传递进来的组织id
   board_id: '', //传递进来的项目id
   show_wechat_invite: false, //显示微信邀请
   addMenbersInProject: function () { //提交回调

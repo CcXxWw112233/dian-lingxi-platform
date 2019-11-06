@@ -199,7 +199,7 @@ class SiderRight extends React.Component {
     const mentionSelectedMembersMobileOrEmailString = this.handleTransMentionSelectedMember();
     const mentionSelectedOtherMembersMobileString = this.handleTransMentionSelectedOtherMembersMobileString();
     if (mentionSelectedOtherMembersMobileString === "error") {
-      message.error("企业外成员手机号格式有误，请检查");
+      message.error("组织外成员手机号格式有误，请检查");
       return;
     }
     const mergedMeetingMemberStr = [
@@ -537,7 +537,7 @@ class SiderRight extends React.Component {
                 >
                   <Mention
                     style={{ width: "100%", height: "56px" }}
-                    placeholder="使用@符号查找加入同一企业内的职员"
+                    placeholder="使用@符号查找加入同一组织内的成员"
                     suggestions={selectedSuggestions}
                     multiLines
                     onSearchChange={this.handleVideoMeetingMemberChange}
@@ -657,7 +657,7 @@ class SiderRight extends React.Component {
       //       {/*&#xe710;*/}
       //       {/*</div>*/}
       //       {/*<div className={indexStyles.right}>*/}
-      //       {/*<input className={indexStyles.input} placeholder={'查找团队职员或项目'} />*/}
+      //       {/*<input className={indexStyles.input} placeholder={'查找团队成员或项目'} />*/}
       //       {/*</div>*/}
       //       {/*</div>*/}
       //       {/*<div className={`${indexStyles.contain_3}`} style={{display: collapsed?'block': 'none'}}>*/}

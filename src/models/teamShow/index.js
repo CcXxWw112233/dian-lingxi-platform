@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 import QueryString from 'querystring'
 
 let naviHeadTabIndex //导航栏naviTab选项
-let locallocation //保存location在企业切换
+let locallocation //保存location在组织切换
 export default {
   namespace: 'teamShow',
   state: [],

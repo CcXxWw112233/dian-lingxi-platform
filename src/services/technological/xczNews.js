@@ -102,7 +102,7 @@ export async function getCommonArticlesList(params) {
     })
 }
 
-//获取有权限查看的企业列表
+//获取有权限查看的组织列表
 export async function getXczNewsQueryUser(params) {
     return request({
         url: `${REQUEST_DOMAIN}/organization/regulation`,

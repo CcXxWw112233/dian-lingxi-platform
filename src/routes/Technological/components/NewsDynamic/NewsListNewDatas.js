@@ -140,8 +140,8 @@ export default class NewsListNewDatas extends React.Component {
 
 
       switch (activity_type) {
-        // 企业
-        case 'organization.member.apply': // 申请加入企业
+        // 组织
+        case 'organization.member.apply': // 申请加入组织
           contain = `申请加入${currentNounPlanFilterName(ORGANIZATION)}`
           messageContain = (
             <div className={NewsListStyle.news_3}>
@@ -271,7 +271,7 @@ export default class NewsListNewDatas extends React.Component {
           )
           break
         case 'board.update.user.add': // 项目中添加成员
-          contain = `添加${currentNounPlanFilterName(PROJECTS)}职员`
+          contain = `添加${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 邀请「{messageValue.content.rela_users && Array.isArray(messageValue.content.rela_users) && messageValue.content.rela_users}」加入了「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}</div>
@@ -388,10 +388,10 @@ export default class NewsListNewDatas extends React.Component {
           )
           break
         case 'board.update.user.role': // 设置用户在项目中的角色
-          contain = `在${currentNounPlanFilterName(PROJECTS)}中设置职员角色`
+          contain = `在${currentNounPlanFilterName(PROJECTS)}中设置成员角色`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在{currentNounPlanFilterName(PROJECTS)}「{jumpToBoard}」中设置了职员「{messageValue.content.rela_users && messageValue.content.rela_users}」的角色为「{messageValue.content.rela_data && messageValue.content.rela_data}」</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}在{currentNounPlanFilterName(PROJECTS)}「{jumpToBoard}」中设置了成员「{messageValue.content.rela_users && messageValue.content.rela_users}」的角色为「{messageValue.content.rela_data && messageValue.content.rela_data}」</div>
               <div className={NewsListStyle.news_3_time}>{timestampToHM(messageValue.created)}</div>
             </div>
           )
@@ -606,7 +606,7 @@ export default class NewsListNewDatas extends React.Component {
           break
         case 'board.card.update.executor.remove':
           // console.log({messageValue})
-          contain = `移除${currentNounPlanFilterName(PROJECTS)}职员`
+          contain = `移除${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 将 「{messageValue.content.rela_data && messageValue.content.rela_data.name}」 移出了「{jumpToTask}」{currentNounPlanFilterName(PROJECTS)}</div>
@@ -729,7 +729,7 @@ export default class NewsListNewDatas extends React.Component {
           )
           break
         case 'board.update.user.remove':
-          contain = `移除${currentNounPlanFilterName(PROJECTS)}职员`
+          contain = `移除${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 将「{messageValue.content.rela_users}」移出了「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}</div>
@@ -1003,7 +1003,7 @@ export default class NewsListNewDatas extends React.Component {
                   {
                     is_show_org_name && (
                       <div className={NewsListStyle.news_orgName}>
-                        {/* <span>企业:</span> */}
+                        {/* <span>组织:</span> */}
                         <span style={{ marginRight: 5 }}> {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</span>
                         <Icon type="caret-right" style={{ fontSize: 8 }} />
                       </div>
@@ -1051,7 +1051,7 @@ export default class NewsListNewDatas extends React.Component {
                   {
                     is_show_org_name && (
                       <div className={NewsListStyle.news_orgName}>
-                        {/* <span>企业:</span> */}
+                        {/* <span>组织:</span> */}
                         <span style={{ marginRight: 5 }}> {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</span>
                         <Icon type="caret-right" style={{ fontSize: 8 }} />
                       </div>
@@ -1096,7 +1096,7 @@ export default class NewsListNewDatas extends React.Component {
                   {
                     is_show_org_name && (
                       <div className={NewsListStyle.news_orgName}>
-                        {/* <span>企业:</span> */}
+                        {/* <span>组织:</span> */}
                         <span style={{ marginRight: 5 }}> {getOrgNameWithOrgIdFilter(common_data.org_id, currentUserOrganizes)}</span>
                         <Icon type="caret-right" style={{ fontSize: 8 }} />
                       </div>
@@ -1252,7 +1252,7 @@ export default class NewsListNewDatas extends React.Component {
                   {
                     is_show_org_name && (
                       <div className={NewsListStyle.news_orgName}>
-                        {/* <span>企业:</span> */}
+                        {/* <span>组织:</span> */}
                         <span style={{ marginRight: 5 }}> {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</span>
                         <Icon type="caret-right" style={{ fontSize: 8 }} />
                       </div>
@@ -1294,7 +1294,7 @@ export default class NewsListNewDatas extends React.Component {
                   {
                     is_show_org_name && (
                       <div className={NewsListStyle.news_orgName}>
-                        {/* <span>企业:</span> */}
+                        {/* <span>组织:</span> */}
                         <span style={{ marginRight: 5 }}> {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</span>
                         <Icon type="caret-right" style={{ fontSize: 8 }} />
                       </div>
@@ -1341,7 +1341,7 @@ export default class NewsListNewDatas extends React.Component {
                         {
                           is_show_org_name && (
                             <div className={NewsListStyle.news_orgName}>
-                              {/* <span>企业:</span> */}
+                              {/* <span>组织:</span> */}
                               <span style={{ marginRight: 5 }}> {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</span>
                               <Icon type="caret-right" style={{ fontSize: 8 }} />
                             </div>
@@ -1368,7 +1368,7 @@ export default class NewsListNewDatas extends React.Component {
       )
     }
 
-    // 申请加入企业
+    // 申请加入组织
     const applyOrg = (value, key) => {
       // console.log(value, 'sssss')
       const { action } = value
@@ -1430,7 +1430,7 @@ export default class NewsListNewDatas extends React.Component {
         case '17': // 文件评论 @ 通知
           // containner = (value.map((val, key) => (<div key={key}>{fileNews(val)}</div>)))
           break
-        case '30': // 申请加入企业
+        case '30': // 申请加入组织
           containner = (value.map((val, key) => (<div key={key}>{applyOrg(val)}</div>)))
           break
         case '20': // 创建会议

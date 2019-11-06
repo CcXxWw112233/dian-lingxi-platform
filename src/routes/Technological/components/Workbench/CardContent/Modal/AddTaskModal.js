@@ -109,7 +109,7 @@ class AddTaskModal extends Component {
       selectedOrg: {
         org_name: '',
         org_id: '',
-      }, //选择的企业
+      }, //选择的组织
       currentSelectedProject: getCurrentSelectedProject(
         isUseInGantt,
         projectIdWhenUseInGantt,
@@ -499,7 +499,7 @@ class AddTaskModal extends Component {
       }
     }
   }
-  // 选择企业
+  // 选择组织
   renderSelectOrg = () => {
     const { selectedOrg = {} } = this.state
     return (
@@ -507,7 +507,7 @@ class AddTaskModal extends Component {
         overlay={<OrgSearchAndSelect orgSelectedChange={this.orgSelectedChange} />}>
         <div className={styles.org_selected_out}>
           <div className={`${globalStyles.authTheme} ${styles.type_logo}`}>&#xe7c6;</div>
-          <div>{selectedOrg.org_name || `选择企业`}</div>
+          <div>{selectedOrg.org_name || `选择组织`}</div>
           <div className={`${globalStyles.authTheme} ${styles.down_logo}`}>&#xe7ee;</div>
         </div>
       </Dropdown>
@@ -747,7 +747,7 @@ class AddTaskModal extends Component {
         <div className={styles.addTaskModalContent}>
           <div className={styles.addTaskModalSelectProject}>
             <div className={styles.addTaskModalSelectProject_and_groupList}>
-              {/* 选择企业 */}
+              {/* 选择组织 */}
               {
                 localStorage.getItem('OrganizationId') == '0' && (
                   <div>

@@ -233,7 +233,7 @@ export async function removeTaskTag(data) {
   });
 }
 
-// 移出项目职员
+// 移出项目成员
 export async function removeProjectMenbers(data) {
 
   return request({
