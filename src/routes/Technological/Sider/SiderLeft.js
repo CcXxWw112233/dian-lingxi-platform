@@ -237,7 +237,7 @@ export default class SiderLeft extends React.Component {
 
         break
       case 'subShowSimple':
-        this.handleMode
+        this.handleMode(1);
         break
       case '10': // 创建或加入新组织
         this.setCreateOrgnizationOModalVisable()
@@ -372,16 +372,12 @@ export default class SiderLeft extends React.Component {
   }
 
   // 是否显示极简模式
-  handleMode(checked) {
-    // console.log(checked, 'sssss')
-    const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
-    const { is_simple_model } = user_set
+  handleMode(model) {
     const { dispatch } = this.props
     dispatch({
       type: 'technological/setShowSimpleModel',
       payload: {
-        is_simple_model: checked ? '1' : '0',
-        checked
+        is_simple_model: model
       }
     })
 
@@ -581,13 +577,7 @@ export default class SiderLeft extends React.Component {
             </Menu.Item>
             <Menu.Item key="subShowSimple">
               <span>
-                极简模式
-                    <Switch
-                  style={{ display: 'inline-block', marginLeft: 36 }}
-                  // defaultChecked={false}
-                  checked={is_simple_model == '1' ? true : false}
-                  onClick={(checked) => { this.handleMode(checked) }}
-                ></Switch>
+                切换极简模式
               </span>
             </Menu.Item>
           </SubMenu>

@@ -6,7 +6,7 @@ import { Icon, message, Tooltip } from 'antd';
 import DropdownSelect from '../../Components/DropdownSelect/index'
 import CreateProject from '@/routes/Technological/components/Project/components/CreateProject/index';
 import simpleMode from "../../../../models/simpleMode";
-import { getOrgNameWithOrgIdFilter, setBoardIdStorage } from "@/utils/businessFunction"
+import { getOrgNameWithOrgIdFilter, setBoardIdStorage, isPaymentOrgUser } from "@/utils/businessFunction"
 
 class MyWorkbenchBoxs extends Component {
   constructor(props) {
@@ -198,24 +198,20 @@ class MyWorkbenchBoxs extends Component {
     return menuItemList;
   }
 
-  goWorkbenchBox = (item) => {
-    console.log(item)
+  goWorkbenchBox = (item, isDisabled,tipTitle) => {
+
+    if (isDisabled) {
+      message.warn(tipTitle);
+      return
+    }
     const { id, code, status } = item
     const { dispatch } = this.props;
-    const isDisableds = this.getIsDisabled(item)
-
-    if (code === 'maps') {
-      if ( isDisableds ) {
-        message.warn("暂无可查看的数据");
-        return
-      }
-    }
-
+   
     if (code === 'regulations') {
-      if ( isDisableds ) {
+      if (isDisabled) {
         message.warn("暂无可查看的数据");
         return
-      }else if (code === 'regulations') {
+      } else if (code === 'regulations') {
         if (localStorage.getItem('OrganizationId') === "0") {
           localStorage.setItem('isRegulations', 'yes');
         }
@@ -228,10 +224,6 @@ class MyWorkbenchBoxs extends Component {
       }
     }
 
-    if (status == 0) {
-      message.warn("功能开发中，请耐心等待");
-      return;
-    }
     dispatch({
       type: 'simplemode/updateDatas',
       payload: {
@@ -249,42 +241,42 @@ class MyWorkbenchBoxs extends Component {
     }
   }
 
-   /**
-      * 投资地图是否禁用
-      * 1.单企业没权限 - 投资地图灰掉
-      * 2.单企业没开启地图 - 投资地图不展示|灰掉
-      * 3.单企业有权限 - 投资地图可显示
-      * 4.全企业都没开启 - 投资地图不展示
-      * 5.全企业一个开启 - 进入展示企业-项目列表
-      * 综上所述：
-      * 1.地图图标的显示与否取决于用户是否自行将该功能添加到极简桌面上，只要用户所选的企业中含有可用的地图功能于访问权限，用户便可*以将地图的功能图标添加到桌面上。
-      * 2.用户当下所选的企业不包含可用的地图功能或权限时，投资地图图标为禁用状态（图标本身不做消失处理）；
-      * （所有功能图标都如此）
-     */
+  /**
+     * 投资地图是否禁用
+     * 1.单企业没权限 - 投资地图灰掉
+     * 2.单企业没开启地图 - 投资地图不展示|灰掉
+     * 3.单企业有权限 - 投资地图可显示
+     * 4.全企业都没开启 - 投资地图不展示
+     * 5.全企业一个开启 - 进入展示企业-项目列表
+     * 综上所述：
+     * 1.地图图标的显示与否取决于用户是否自行将该功能添加到极简桌面上，只要用户所选的企业中含有可用的地图功能于访问权限，用户便可*以将地图的功能图标添加到桌面上。
+     * 2.用户当下所选的企业不包含可用的地图功能或权限时，投资地图图标为禁用状态（图标本身不做消失处理）；
+     * （所有功能图标都如此）
+    */
   getIsDisabled = (item) => {
     const { rela_app_id, code } = item
     const { currentUserOrganizes = [] } = this.props
     let isDisabled = true
-    if("regulations" == code || "maps" == code) {
-      if(localStorage.getItem('OrganizationId') == '0') {
-          let flag = false
-          for(let val of currentUserOrganizes) {
-            for(let val2 of val['enabled_app_list']) {
-              if(rela_app_id == val2['app_id'] && val2['status'] == '1') {
-                flag = true
-                isDisabled = false
-                break
-              }
-            }
-            if(flag) {
+    if ("regulations" == code || "maps" == code) {
+      if (localStorage.getItem('OrganizationId') == '0') {
+        let flag = false
+        for (let val of currentUserOrganizes) {
+          for (let val2 of val['enabled_app_list']) {
+            if (rela_app_id == val2['app_id'] && val2['status'] == '1') {
+              flag = true
+              isDisabled = false
               break
             }
           }
+          if (flag) {
+            break
+          }
+        }
       } else {
         const org = currentUserOrganizes.find(item => item.id == localStorage.getItem('OrganizationId')) || {}
         const enabled_app_list = org.enabled_app_list || []
-        for(let val2 of enabled_app_list) {
-          if(rela_app_id == val2['app_id'] && val2['status'] == '1') {
+        for (let val2 of enabled_app_list) {
+          if (rela_app_id == val2['app_id'] && val2['status'] == '1') {
             isDisabled = false
             break
           }
@@ -296,14 +288,44 @@ class MyWorkbenchBoxs extends Component {
     return isDisabled
   }
 
-  renderBoxItem = (item) => {
-    const isDisableds = this.getIsDisabled(item)
+  renderBoxItem = (item, isPaymentUser) => {
+    let tipTitle;
+    let isDisabled = this.getIsDisabled(item);
+    if(isDisabled){
+      tipTitle = '暂无可查看的数据'
+    }
+   
+    if (!isPaymentUser) {
+      if(item.code != 'board:plans'){
+        tipTitle = '付费功能，请升级灵犀企业版';
+        isDisabled = true;
+      }
+   
+    } else {
+      if (item.status == 0) {
+        tipTitle = '功能开发中，敬请期待';
+        isDisabled = true;
+      }
+    }
+
     return (
-      <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item)} disabled={item.status == 0||isDisableds}>
-        <i dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} ></i><br />
-        <span className={indexStyles.myWorkbenchBox_title}>{item.name}</span>
-      </div>
-    );
+      <>
+        {tipTitle ?
+          <Tooltip title={tipTitle} key={item.id}>
+            <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item, isDisabled,tipTitle)} disabled={isDisabled}>
+              <i dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} ></i><br />
+              <span className={indexStyles.myWorkbenchBox_title}>{item.name}</span>
+            </div>
+          </Tooltip>
+          :
+          <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item, isDisabled,tipTitle)} disabled={isDisabled}>
+            <i dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} ></i><br />
+            <span className={indexStyles.myWorkbenchBox_title}>{item.name}</span>
+          </div>
+        }
+      </>
+    )
+
   }
 
   render() {
@@ -317,7 +339,7 @@ class MyWorkbenchBoxs extends Component {
     if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
       selectedKeys = [simplemodeCurrentProject.board_id]
     }
-
+    const isPaymentUser = isPaymentOrgUser();
     return (
 
       <div className={indexStyles.mainContentWapper}>
@@ -329,14 +351,7 @@ class MyWorkbenchBoxs extends Component {
         <div className={indexStyles.myWorkbenchBoxWapper}>
           {
             myWorkbenchBoxList.map((item, key) => {
-              return (
-                item.status == 0 ? (
-                  <Tooltip title="功能开发中，敬请期待" key={key}>
-                    {this.renderBoxItem(item)}
-                  </Tooltip>
-                ) :
-                this.renderBoxItem(item)
-              )
+              return this.renderBoxItem(item, isPaymentUser);
             })
           }
           <div className={indexStyles.myWorkbenchBox} onClick={this.addMyWorkBoxs}>
@@ -373,8 +388,8 @@ export default connect(
         mapOrganizationList
       } },
     xczNews: {
-        XczNewsOrganizationList
-      },
+      XczNewsOrganizationList
+    },
     project }) => ({
       project,
       projectList,

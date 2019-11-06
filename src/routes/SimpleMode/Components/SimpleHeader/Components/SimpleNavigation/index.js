@@ -4,7 +4,7 @@ import { Tooltip, Modal, Menu, Switch, Icon } from 'antd';
 import linxiLogo from '@/assets/library/lingxi_logo.png'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva';
-import { checkIsHasPermission, currentNounPlanFilterName } from "@/utils/businessFunction";
+import { checkIsHasPermission, currentNounPlanFilterName, isPaymentOrgUser } from "@/utils/businessFunction";
 import {
     DASHBOARD, MEMBERS, ORG_UPMS_ORGANIZATION_EDIT, ORG_UPMS_ORGANIZATION_ROLE_CREATE,
     ORG_UPMS_ORGANIZATION_ROLE_EDIT, ORG_UPMS_ORGANIZATION_ROLE_DELETE, ORG_UPMS_ORGANIZATION_MEMBER_ADD,
@@ -350,7 +350,7 @@ export default class SimpleNavigation extends Component {
 
                 break
             case 'subShowSimple':
-                this.handleMode
+                this.handleMode(0)
                 break
             case '10': // 创建或加入新企业
                 this.setCreateOrgnizationOModalVisable()
@@ -505,19 +505,14 @@ export default class SimpleNavigation extends Component {
     }
 
     // 是否显示极简模式
-    handleMode(checked) {
-        // console.log(checked, 'sssss')
-        const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
-        const { is_simple_model } = user_set
+    handleMode(model) {
         const { dispatch } = this.props
         dispatch({
             type: 'technological/setShowSimpleModel',
             payload: {
-                is_simple_model: checked ? '1' : '0',
-                checked
+                is_simple_model: model
             }
         })
-
     }
     render() {
         //currentUserOrganizes currentSelectOrganize企业列表和当前企业
@@ -638,17 +633,15 @@ export default class SimpleNavigation extends Component {
                         <Menu.Item key="subInfoSet">
                             <span>通知设置</span>
                         </Menu.Item>
-                        <Menu.Item key="subShowSimple">
-                            <span>
-                                极简模式
-                        <Switch
-                                    style={{ display: 'inline-block', marginLeft: 36 }}
-                                    // defaultChecked={false}
-                                    checked={is_simple_model == '1' ? true : false}
-                                    onClick={(checked) => { this.handleMode(checked) }}
-                                ></Switch>
-                            </span>
-                        </Menu.Item>
+                        {
+                            isPaymentOrgUser() &&
+                            <Menu.Item key="subShowSimple">
+                                <span>
+                                    切换普通模式
+                                </span>
+                            </Menu.Item>
+                        }
+
                     </SubMenu>
 
                     <Menu.Item key="10" >
