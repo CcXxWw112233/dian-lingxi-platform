@@ -1086,7 +1086,7 @@ class FileDetailContent extends React.Component {
 
     const { datas: { board_id, filePreviewCurrentFileId, projectDetailInfoData = {}, pdfDownLoadSrc, currentParrentDirectoryId, filePreviewCurrentVersionId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList = [], filePreviewCurrentVersionKey = 0, filePreviewIsRealImage = false } } = this.props.model
     const { data = [] } = projectDetailInfoData //任务执行人列表
-    const { is_privilege, privileges = [] } = this.getFieldFromPropsCurrentPreviewFileData('is_privilege', 'privileges')
+    const { is_privilege = '0', privileges = [] } = this.getFieldFromPropsCurrentPreviewFileData('is_privilege', 'privileges')
     const getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="' + src + '"></iframe>'
       return iframe
@@ -1462,27 +1462,36 @@ class FileDetailContent extends React.Component {
 
             <div style={{ position: 'relative', marginRight: '10px'}}>
               <span>
-                {
+                {/* {
                   checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) ? ('') : (
                     <div style={{ height: '50px' }} onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
                   )
+                } */}
+                {
+                  checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) && (
+                    <InformRemind rela_id={filePreviewCurrentFileId} rela_type={'4'} user_remind_info={data} />
+                  )
                 }
-                <InformRemind rela_id={filePreviewCurrentFileId} rela_type={'4'} user_remind_info={data} />
+                
               </span>
             </div>
 
 
             {/* <div> */}
             <span style={{ marginRight: is_privilege === '1' ? '36px' : '10px' }}>
-              <VisitControl
-                board_id={board_id}
-                isPropVisitControl={is_privilege === '0' ? false : true}
-                handleVisitControlChange={this.handleVisitControlChange}
-                otherPrivilege={privileges}
-                notShowPrincipal={true}
-                handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
-                handleAddNewMember={this.handleVisitControlAddNewMember}
-              />
+              {
+                board_id && (
+                  <VisitControl
+                    board_id={board_id}
+                    isPropVisitControl={is_privilege === '0' ? false : true}
+                    handleVisitControlChange={this.handleVisitControlChange}
+                    otherPrivilege={privileges}
+                    notShowPrincipal={true}
+                    handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+                    handleAddNewMember={this.handleVisitControlAddNewMember}
+                  />
+                )
+              }
             </span>
             {/* </div> */}
             {/* </div> */}

@@ -119,7 +119,7 @@ export default class DetailContent extends React.Component {
 
 
 
-            <div className={`${globalStyles.global_vertical_scrollbar} ${`${indexStyles.fileDetailContentRight_dynamicList}`}`}>
+            <div className={`${globalStyles.global_vertical_scrollbar} ${`${indexStyles.fileDetailContentRight_dynamicList}`}`} style={{ height: clientHeight - offsetTopDeviation - 54 - 70 - 50 }}>
               {/*动态放置区*/}
               <div style={{fontSize: '12px', color: '#595959'}}>
                 <div>

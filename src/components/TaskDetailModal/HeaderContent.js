@@ -3,7 +3,6 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import headerStyles from './HeaderContent.less'
 import { currentNounPlanFilterName, getOrgNameWithOrgIdFilter, checkIsHasPermissionInVisitControl } from '@/utils/businessFunction.js'
 import { TASKS } from '../../globalset/js/constant'
-import VisitControl from '@/routes/Technological/components/VisitControl/index'
 import HeaderContentRightMenu from './HeaderContentRightMenu'
 import { connect } from 'dva'
 

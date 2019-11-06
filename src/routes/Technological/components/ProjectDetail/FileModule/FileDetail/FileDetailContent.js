@@ -1237,7 +1237,7 @@ class FileDetailContent extends React.Component {
     } = this.props
     const { data = [] } = projectDetailInfoData //任务执行人列表
     const { board_id } = projectDetailInfoData
-    const { is_privilege, privileges = [] } = currentPreviewFileBaseInfo
+    const { is_privilege = '0', privileges = [] } = currentPreviewFileBaseInfo
     const zoomPictureParams = {
       board_id,
       is_privilege,
@@ -1632,30 +1632,39 @@ class FileDetailContent extends React.Component {
 
             <div style={{ position: 'relative', marginRight: '10px' }}>
               <span>
-                {
+                {/* {
                   checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) ? ('') : (
                     <div style={{ height: '50px' }} onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
                   )
+                } */}
+                {
+                  checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) && (
+                    <InformRemind rela_id={filePreviewCurrentFileId} rela_type={'4'} user_remind_info={data} />
+                  )
                 }
-                <InformRemind rela_id={filePreviewCurrentFileId} rela_type={'4'} user_remind_info={data} />
+                
               </span>
 
             </div>
             {/* <div style={{position:'relative'}}> */}
     
             <span style={{ marginRight: is_privilege === '1' ? '36px' : '10px' }}>
-              <VisitControl
-                board_id={board_id}
-                isPropVisitControl={is_privilege === '0' ? false : true}
-                handleVisitControlChange={this.handleVisitControlChange}
-                otherPrivilege={privileges}
-                notShowPrincipal={true}
-                invitationType='9'
-                invitationId={filePreviewCurrentFileId}
-                invitationOrg={localStorage.getItem('OrganizationId')}
-                handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
-                handleAddNewMember={this.handleVisitControlAddNewMember}
-              />
+              {
+                board_id && (
+                  <VisitControl
+                    board_id={board_id}
+                    isPropVisitControl={is_privilege === '0' ? false : true}
+                    handleVisitControlChange={this.handleVisitControlChange}
+                    otherPrivilege={privileges}
+                    notShowPrincipal={true}
+                    invitationType='9'
+                    invitationId={filePreviewCurrentFileId}
+                    invitationOrg={localStorage.getItem('OrganizationId')}
+                    handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+                    handleAddNewMember={this.handleVisitControlAddNewMember}
+                  />
+                )
+              }
             </span>
 
             
