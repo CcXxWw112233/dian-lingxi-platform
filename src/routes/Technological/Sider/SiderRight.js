@@ -46,7 +46,10 @@ class SiderRight extends React.Component {
   imInitOption = () => {
     LingxiIm.hide();
     const { protocol, host } = window.location
-    Im.option({ baseUrl: `${protocol}//${host}/`, APPKEY: "c3abea191b7838ff65f9a6a44ff5e45f" })
+    Im.option({
+      baseUrl: `${protocol}//${host}/`,
+      // APPKEY: "c3abea191b7838ff65f9a6a44ff5e45f"
+    })
     const clickDynamicFunc = (data) => {
       this.imClickDynamic(data);
     }
