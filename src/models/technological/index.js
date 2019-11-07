@@ -38,6 +38,7 @@ export default {
       page_load_type: 0,
       currentUserWallpaperContent: null,
       currentSelectOrganize: {}, //用户当前组织
+      userInfo: {}, //用户信息
     }
   },
   subscriptions: {
