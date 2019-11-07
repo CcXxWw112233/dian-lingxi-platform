@@ -3,7 +3,7 @@ import { Icon, Layout, Menu, Dropdown, Tooltip, Switch, Modal } from 'antd';
 import indexStyles from './index.less'
 import glabalStyles from '../../../globalset/css/globalClassName.less'
 import linxiLogo from '../../../assets/library/lingxi_logo.png'
-import { checkIsHasPermission, currentNounPlanFilterName } from "../../../utils/businessFunction";
+import { checkIsHasPermission, currentNounPlanFilterName,isPaymentOrgUser} from "../../../utils/businessFunction";
 import {
   DASHBOARD, MEMBERS, ORG_UPMS_ORGANIZATION_EDIT, ORG_UPMS_ORGANIZATION_ROLE_CREATE,
   ORG_UPMS_ORGANIZATION_ROLE_EDIT, ORG_UPMS_ORGANIZATION_ROLE_DELETE, ORG_UPMS_ORGANIZATION_MEMBER_ADD,
@@ -602,9 +602,10 @@ export default class SiderLeft extends React.Component {
             </div>
           </Menu.Item>
           {currentUserOrganizes.map((value, key) => {
-            const { name, id, identity_type, logo } = value
+            const { name, id, identity_type, logo } = value;
+            let disabled = !isPaymentOrgUser(id);//是否付费组织
             return (
-              <Menu.Item key={id} className={indexStyles.org_name} >
+              <Menu.Item key={id} className={indexStyles.org_name} disabled={disabled}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <img src={logo || linxiLogo} className={indexStyles.org_img} />
                   <span style={{ maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{name}</span>
