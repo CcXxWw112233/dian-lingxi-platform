@@ -15,7 +15,7 @@ class Gantt extends Component {
       TaskDetailModalVisibile: false,
       previewFileModalVisibile: false,
     }
-    this.card_time_type = undefined
+    this.card_time_type = undefined //card_time_type为是否排期卡片
   }
 
   componentDidMount() {
@@ -59,6 +59,10 @@ class Gantt extends Component {
     })
   }
 
+  // 点击设置卡片类型（未排期/已排期)
+  setTaskDetailModalVisibile = (card_time_type) => {
+    this.card_time_type = card_time_type
+  }
   // 添加任务 -----------start
   addTaskModalVisibleChange = flag => {
     this.setAddTaskModalVisible(flag)
@@ -155,17 +159,34 @@ class Gantt extends Component {
   // 添加任务 -----------end
 
   //修改某一个任务
-  handleChangeCard = ({ card_id, drawContent }) => {
+  handleChangeCard = ({ card_id, drawContent, operate_properties_code }) => {
+    // operate_properties_code为新任务接口下properties数组的操作code,用来判断执行人和标签更新
     if (this.card_time_type == 'no_schedule') {
-      this.handleNoHasScheduleCard({ card_id, drawContent })
+      this.handleNoHasScheduleCard({ card_id, drawContent, operate_properties_code })
     } else {
-      this.handleHasScheduleCard({ card_id, drawContent })
+      this.handleHasScheduleCard({ card_id, drawContent, operate_properties_code })
     }
   }
+  // 修改某一任务针对项目详情接口结构的数据变化处理
+  cardPropertiesPromote = ({ operate_properties_code, drawContent = {} }) => {
+    if (!!!operate_properties_code) {
+      return drawContent
+    }
+    const { properties = [] } = drawContent
+    const gold_data = properties.find(item => item.code === operate_properties_code)
+    let gold_key = 'nothing'
+    if ('EXECUTOR' == operate_properties_code) {
+      gold_key = 'executors'
+    } else if ('LABEL' == operate_properties_code) {
+      gold_key = 'label_data'
+    }
+    return { ...drawContent, [gold_key]: gold_data }
+  }
   // 修改没有排期的任务
-  handleNoHasScheduleCard = ({ card_id, drawContent = {} }) => {
+  handleNoHasScheduleCard = ({ card_id, drawContent = {}, operate_properties_code }) => {
     const { dispatch } = this.props
-    const { start_time, due_time } = drawContent
+    const new_drawContent = this.cardPropertiesPromote({ drawContent, operate_properties_code })
+    const { start_time, due_time } = new_drawContent
     const { list_group = [], current_list_group_id } = this.props
     const list_group_new = [...list_group]
 
@@ -177,18 +198,18 @@ class Gantt extends Component {
     // console.log('ssss', schedule_cards_has_this, !!start_time, !!due_time)
 
     if (schedule_cards_has_this) {
-      this.handleHasScheduleCard({ card_id, drawContent })
+      this.handleHasScheduleCard({ card_id, new_drawContent })
       return
     }
 
     if ((!!start_time || !!due_time)) { //如果有截至时间或者开始时间 (!!start_time || !!due_time)
       // 排期了则过滤掉当前
       list_group_new[group_index].lane_data.cards.push(
-        { ...list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index], ...drawContent }
+        { ...list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index], ...new_drawContent }
       )
-      list_group_new[group_index].lane_data.card_no_times.splice(group_index_card_no_times_index, 1) //[group_index_card_no_times_index] = { ...list_group_new[group_index].lane_data.card_no_times[group_index_cards_index], ...drawContent }
+      list_group_new[group_index].lane_data.card_no_times.splice(group_index_card_no_times_index, 1) //[group_index_card_no_times_index] = { ...list_group_new[group_index].lane_data.card_no_times[group_index_cards_index], ...new_drawContent }
     } else {
-      list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index] = { ...list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index], ...drawContent }
+      list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index] = { ...list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index], ...new_drawContent }
       list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index]['name'] = list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index]['card_name']
     }
     dispatch({
@@ -200,14 +221,15 @@ class Gantt extends Component {
   }
 
   // 修改有排期的任务
-  handleHasScheduleCard = ({ card_id, drawContent }) => {
+  handleHasScheduleCard = ({ card_id, drawContent, operate_properties_code }) => {
     const { dispatch } = this.props
+    const new_drawContent = this.cardPropertiesPromote({ drawContent, operate_properties_code })
 
     const { list_group = [], current_list_group_id } = this.props
     const list_group_new = [...list_group]
     const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
     const group_index_cards_index = list_group_new[group_index].lane_data.cards.findIndex(item => item.id == card_id)
-    list_group_new[group_index].lane_data.cards[group_index_cards_index] = { ...list_group_new[group_index].lane_data.cards[group_index_cards_index], ...drawContent }
+    list_group_new[group_index].lane_data.cards[group_index_cards_index] = { ...list_group_new[group_index].lane_data.cards[group_index_cards_index], ...new_drawContent }
     list_group_new[group_index].lane_data.cards[group_index_cards_index]['name'] = list_group_new[group_index].lane_data.cards[group_index_cards_index]['card_name']
 
     dispatch({
@@ -255,6 +277,7 @@ class Gantt extends Component {
     return (
       <div>
         <GanttFace
+          setTaskDetailModalVisibile={this.setTaskDetailModalVisibile}
           addTaskModalVisibleChange={this.addTaskModalVisibleChange}
           gantt_board_id={gantt_board_id}
           gantt_card_height={this.props.gantt_card_height || 600} //引用组件的地方传递进来的甘特图高度
