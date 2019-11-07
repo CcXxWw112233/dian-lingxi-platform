@@ -1,37 +1,42 @@
-.labelDataWrapper {
-  min-width: 248px !important;
-  :global {
-    li {
-      line-height: 40px !important;
-      height     : 40px !important;
-      color:rgba(0,0,0,0.65);
-      &:hover {
-        background   : rgba(0, 0, 0, 0.04) !important;
-        cursor       : pointer;
-        border-radius: 4px;
-        color:rgba(0,0,0,0.65);
-      }
-      .ant-menu-item-selected {
-        background-color   : rgba(0, 0, 0, 0.04) !important;
-        border-radius: 4px;
-        color        : rgba(0, 0, 0, 0.45);
-      }
-      .anticon {
-        margin-right: 0;
-      }
-    }
-  }
-}
+// .labelDataWrapper {
+//   min-width: 248px !important;
+//   :global {
+//     li {
+//       line-height: 40px !important;
+//       height     : 40px !important;
+//       color:rgba(0,0,0,0.65);
+//       &:hover {
+//         background   : rgba(0, 0, 0, 0.04) !important;
+//         cursor       : pointer;
+//         border-radius: 4px;
+//         color:rgba(0,0,0,0.65);
+//       }
+//       .anticon {
+//         margin-right: 0;
+//       }
+//     }
+//     .ant-menu-item-selected {
+//       background-color   : transparent !important;
+//       border-radius: 4px;
+//       color        : rgba(0, 0, 0, 0.45);
+//     }
+//   }
+// }
 
 .label_item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  // line-height: 28px;
+  line-height: 40px;
+  height: 40px;
+}
+.label_item:hover .edit_icon {
+  display: inline-block;
 }
 // 标签名称样式
 .label_name {
   min-width:48px;
+  max-width: 154px;
   height:24px;
   background:rgba(255,163,158,1);
   border-radius:4px;
@@ -40,12 +45,17 @@
   font-size: 12px;
   padding: 2px 12px;
   box-sizing: border-box;
+  color: rgba(0,0,0,0.65);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 // 编辑标签的icon样式
 .edit_icon {
   font-size: 14px;
   color: #1890FF;
   margin-right: 12px;
+  display: none;
 }
 .back_icon {
   cursor: pointer;
@@ -69,7 +79,7 @@
   outline: none;
   padding: 12px 6px;
   box-sizing: border-box;
-  margin-bottom: 12px;
+  margin-bottom: 20px;
 }
 .input input::-webkit-input-placeholder {
   color: rgba(0,0,0,0.25);
@@ -78,7 +88,22 @@
 .circle {
   width:32px;
   height:32px;
-  background:rgba(255,163,158,1);
+  // background:rgba(255,163,158,1);
   display: inline-block;
   border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  .check_icon {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    color: #fff;
+    font-size: 12px;
+    z-index: 1;
+    text-align: center;
+    line-height: 32px;
+  }
 }

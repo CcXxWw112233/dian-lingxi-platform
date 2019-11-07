@@ -22,7 +22,7 @@ export async function updateProject(data) {
   });
 }
 
-// 移出项目职员
+// 移出项目成员
 export async function removeMenbers(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/remove`,
@@ -44,7 +44,7 @@ export async function getProjectRoles(params) {
 }
 
 
-// 给职员设置项目角色
+// 给成员设置项目角色
 export async function setMemberRoleInProject(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/user/set`,
@@ -53,7 +53,7 @@ export async function setMemberRoleInProject(data) {
   });
 }
 
-// 获取项目职员列表
+// 获取项目成员列表
 export async function getBoardMembers(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/user/${params.id}`,

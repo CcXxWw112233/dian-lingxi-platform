@@ -236,7 +236,7 @@ const Workbench = (props) => {
         payload: payload
       })
     },
-    //企业
+    //组织
     getSearchOrganizationList(data) {
       dispatch({
         type: getEffectOrReducerByName_2('getSearchOrganizationList'),

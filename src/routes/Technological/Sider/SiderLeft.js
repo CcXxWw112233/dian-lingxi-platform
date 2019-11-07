@@ -353,7 +353,7 @@ export default class SiderLeft extends React.Component {
     });
    }
 
-  // 是否显示全部企业
+  // 是否显示全部组织
   handleShowAllOrg(checked) {
     const { dispatch, is_show_org_name, is_all_org } = this.props
     const { is_disabled } = this.state
@@ -493,7 +493,7 @@ export default class SiderLeft extends React.Component {
                 <div className={indexStyles.default_select_setting}>
                   <div className={indexStyles.bank}>
                     <div className={`${glabalStyles.authTheme} ${indexStyles.bank_icon}`}>&#xe719;</div>
-                    <span className={indexStyles.middle_text}>企业管理后台</span>
+                    <span className={indexStyles.middle_text}>组织管理后台</span>
                     <div className={indexStyles.payUpgrade} onClick={(e)=>{this.openPayUpgradeModal(e)}} >升级</div>
                   </div>
                 </div>

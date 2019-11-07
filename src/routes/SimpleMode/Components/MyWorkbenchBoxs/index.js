@@ -206,7 +206,7 @@ class MyWorkbenchBoxs extends Component {
     }
     const { id, code, status } = item
     const { dispatch } = this.props;
-   
+
     if (code === 'regulations') {
       if (isDisabled) {
         message.warn("暂无可查看的数据");
@@ -241,18 +241,18 @@ class MyWorkbenchBoxs extends Component {
     }
   }
 
-  /**
-     * 投资地图是否禁用
-     * 1.单企业没权限 - 投资地图灰掉
-     * 2.单企业没开启地图 - 投资地图不展示|灰掉
-     * 3.单企业有权限 - 投资地图可显示
-     * 4.全企业都没开启 - 投资地图不展示
-     * 5.全企业一个开启 - 进入展示企业-项目列表
-     * 综上所述：
-     * 1.地图图标的显示与否取决于用户是否自行将该功能添加到极简桌面上，只要用户所选的企业中含有可用的地图功能于访问权限，用户便可*以将地图的功能图标添加到桌面上。
-     * 2.用户当下所选的企业不包含可用的地图功能或权限时，投资地图图标为禁用状态（图标本身不做消失处理）；
-     * （所有功能图标都如此）
-    */
+   /**
+      * 投资地图是否禁用
+      * 1.单组织没权限 - 投资地图灰掉
+      * 2.单组织没开启地图 - 投资地图不展示|灰掉
+      * 3.单组织有权限 - 投资地图可显示
+      * 4.全组织都没开启 - 投资地图不展示
+      * 5.全组织一个开启 - 进入展示组织-项目列表
+      * 综上所述：
+      * 1.地图图标的显示与否取决于用户是否自行将该功能添加到极简桌面上，只要用户所选的组织中含有可用的地图功能于访问权限，用户便可*以将地图的功能图标添加到桌面上。
+      * 2.用户当下所选的组织不包含可用的地图功能或权限时，投资地图图标为禁用状态（图标本身不做消失处理）；
+      * （所有功能图标都如此）
+     */
   getIsDisabled = (item) => {
     const { rela_app_id, code } = item
     const { currentUserOrganizes = [] } = this.props
@@ -294,13 +294,13 @@ class MyWorkbenchBoxs extends Component {
     if(isDisabled){
       tipTitle = '暂无可查看的数据'
     }
-   
+
     if (!isPaymentUser) {
       if(item.code != 'board:plans'){
         tipTitle = '付费功能，请升级灵犀企业版';
         isDisabled = true;
       }
-   
+
     } else {
       if (item.status == 0) {
         tipTitle = '功能开发中，敬请期待';
@@ -344,7 +344,7 @@ class MyWorkbenchBoxs extends Component {
       isPaymentUser = isPaymentOrgUser();
     }
 
-    
+
     return (
 
       <div className={indexStyles.mainContentWapper}>

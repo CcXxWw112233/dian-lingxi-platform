@@ -66,7 +66,7 @@ class DropdownSelect extends Component {
         const { board_id } = values
         addMenbersInProject({ ...values }).then(res => {
             if (isApiResponseOk(res)) {
-                message.success('已成功添加项目职员')
+                message.success('已成功添加项目成员')
                 setTimeout(() => {
                     this.handleAddMenberCalback({ board_id })
                 }, 1000)

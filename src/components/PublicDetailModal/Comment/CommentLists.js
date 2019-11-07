@@ -221,6 +221,34 @@ export default class CommentListItem extends React.Component {
           </div>
         )
         break
+      case 'board.card.update.label.add':// 添加标签
+        messageContainer = (
+          <div className={commonCommentStyles.news_item}>
+            <span className={commonCommentStyles.news_text}>
+              <span className={commonCommentStyles.news_creator}>{data.creator && data.creator.name}</span>
+              <span>在{data.content && data.content.card_type && data.content.card_type == '0' ? currentNounPlanFilterName(TASKS) : '会议'}:</span>
+              <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.card && data.content.card.name) && data.content.card.name}</span>
+              <span>中添加了标签:</span>
+              <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.rela_data && data.content.rela_data.name) && data.content.rela_data.name}</span>
+            </span>
+            <span>{newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}</span>
+          </div>
+        )
+        break
+      case 'board.card.update.label.remove':// 移除标签
+        messageContainer = (
+          <div className={commonCommentStyles.news_item}>
+            <span className={commonCommentStyles.news_text}>
+              <span className={commonCommentStyles.news_creator}>{data.creator && data.creator.name}</span>
+              <span>在{data.content && data.content.card_type && data.content.card_type == '0' ? currentNounPlanFilterName(TASKS) : '会议'}:</span>
+              <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.card && data.content.card.name) && data.content.card.name}</span>
+              <span>中移除了标签:</span>
+              <span className={commonCommentStyles.news_card_name}>{(data.content && data.content.rela_data && data.content.rela_data.name) && data.content.rela_data.name}</span>
+            </span>
+            <span>{newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}</span>
+          </div>
+        )
+        break
       case 'board.card.create.child': // 创建子任务
         messageContainer = (
           <div className={commonCommentStyles.news_item}>

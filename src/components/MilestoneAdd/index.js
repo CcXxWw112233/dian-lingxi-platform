@@ -22,29 +22,37 @@ export default class MilestoneAdd extends React.Component {
         add_lcb_modal_visible: false
     }
 
-    componentWillReceiveProps(nextProps) {
-        const { dispatch, dataInfo } = nextProps;
-        const { dataInfo: oldDataInfo = {} } = this.props;
-        if (dataInfo.board_id && dataInfo.board_id != oldDataInfo.board_id) {
-            this.getMilestone(dataInfo.board_id)
-        }
-    }
+    // componentDidMount() {
+    //     const { dataInfo, milestoneList = [] } = this.props
+    //     this.setState({
+    //         milestoneList
+    //     })
+    //     // this.getMilestone(dataInfo.board_id)
+    // }
+
+    // componentWillReceiveProps(nextProps) {
+    //     const { dispatch, dataInfo } = nextProps;
+    //     const { dataInfo: oldDataInfo = {} } = this.props;
+    //     if (dataInfo.board_id && dataInfo.board_id != oldDataInfo.board_id) {
+    //         this.getMilestone(dataInfo.board_id)
+    //     }
+    // }
 
     //获取项目里程碑列表
-    getMilestone = (id, callBackObject, milestoneId) => {
-        getMilestoneList({ id }).then((res) => {
-            if (isApiResponseOk(res)) {
-                this.setState({
-                    milestoneList: res.data
-                }, () => {
-                    callBackObject && callBackObject.callBackFun(res.data, callBackObject.param);
-                });
+    // getMilestone = (id, callBackObject, milestoneId) => {
+    //     getMilestoneList({ id }).then((res) => {
+    //         if (isApiResponseOk(res)) {
+    //             this.setState({
+    //                 milestoneList: res.data
+    //             }, () => {
+    //                 callBackObject && callBackObject.callBackFun(res.data, callBackObject.param);
+    //             });
 
-            } else {
-                message.error(res.message)
-            }
-        })
-    }
+    //         } else {
+    //             message.error(res.message)
+    //         }
+    //     })
+    // }
     //模糊查询
 
 
@@ -93,7 +101,8 @@ export default class MilestoneAdd extends React.Component {
         }
 
         //添加里程碑后往后放
-        const { milestoneList } = this.state
+        // const { milestoneList } = this.state
+        const { milestoneList = [] } = this.props
         for (let i = 0; i < arr.length; i++) {
             if (milestoneList.indexOf(arr[i]['id']) != -1) {
                 if (i > 0 && milestoneList.indexOf(arr[i - 1]['id']) == -1) {
@@ -165,28 +174,26 @@ export default class MilestoneAdd extends React.Component {
         this.props.onChangeMilestone && this.props.onChangeMilestone({ key, type: actionType, info })
     }
 
-    getSortLilestoneList = (milestoneList,dataInfo) => {
-        let sortMilestoneList = new Array;
+    getSortLilestoneList = (milestoneList, dataInfo) => {
+        let sortMilestoneList = new Array();
         let selectableArray = milestoneList.filter((item)=>{
-            return compareTwoTimestamp(item.deadline, dataInfo.due_time);
+            return compareTwoTimestamp(item.deadline, dataInfo.due_time) && compareTwoTimestamp(item.deadline, dataInfo.start_time);
         });
-
         sortMilestoneList = sortMilestoneList.concat(selectableArray);
         for(var i=0 ;i < milestoneList.length; i++){
             if(selectableArray.filter((item)=>item.id == milestoneList[i].id).length==0){
                 sortMilestoneList.push(milestoneList[i]);
             }
         }
-        console.log("milestoneList",milestoneList);
-        console.log("sortMilestoneList",sortMilestoneList);
+        // console.log("milestoneList", milestoneList);
+        // console.log("sortMilestoneList", sortMilestoneList);
         return sortMilestoneList;
     }
 
     render() {
-        const { milestoneList, add_lcb_modal_visible = false } = this.state
-        const { visible, children, selectedValue, dataInfo = {} } = this.props
-        const sortLilestoneList = this.getSortLilestoneList(milestoneList,dataInfo);
-        // console.log(dataInfo);
+        const { add_lcb_modal_visible = false } = this.state
+        const { visible, children, selectedValue, dataInfo = {}, milestoneList = [] } = this.props
+        const sortLilestoneList = this.getSortLilestoneList(milestoneList, dataInfo);
         return (
             <div>
 
@@ -215,11 +222,12 @@ export default class MilestoneAdd extends React.Component {
                                     {
                                         sortLilestoneList.map((value, key) => {
                                             const { id, name, deadline } = value
+                                            const timeName = (!compareTwoTimestamp(deadline, dataInfo.due_time) || !compareTwoTimestamp(deadline, dataInfo.start_time))
                                             return (
-                                                <Menu.Item className={!compareTwoTimestamp(deadline, dataInfo.due_time) ? `${indexStyles.menuItem} ${indexStyles.disabled} ` : `${indexStyles.menuItem}`}
+                                                <Menu.Item className={ timeName ? `${indexStyles.menuItem} ${indexStyles.disabled}` : `${indexStyles.menuItem}`}
                                                     style={{ height: '40px', lineHeight: '40px', margin: 0, padding: '0 12px' }}
                                                     key={id} info={value}
-                                                    disabled={!compareTwoTimestamp(deadline, dataInfo.due_time)}>
+                                                    disabled={timeName}>
 
                                                     <div className={indexStyles.menuItemDiv}>
                                                         <div key={id}>
@@ -229,8 +237,8 @@ export default class MilestoneAdd extends React.Component {
                                                             <div style={{ display: selectedValue == id ? 'inline-block' : 'none' }}>
                                                                 <Icon type="check" />
                                                             </div>
-                                                            {!compareTwoTimestamp(deadline, dataInfo.due_time) && (
-                                                                <Tooltip title="当前任务的截止时间无法超出里程碑截止时间">
+                                                            {timeName && (
+                                                                <Tooltip title="当前任务的开始或截止时间无法超出里程碑截止时间">
                                                                     <div className={indexStyles.menuItemTip}><Icon type="question-circle" /></div>
                                                                 </Tooltip>
                                                             )}

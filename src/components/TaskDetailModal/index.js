@@ -3,7 +3,6 @@ import PublicDetailModal from '@/components/PublicDetailModal'
 import MainContent from './MainContent'
 import HeaderContent from './HeaderContent'
 import { connect } from 'dva'
-import CommentDynamicsList from './components/CommentDynamicsList'
 import {
   checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
 } from "@/utils/businessFunction";
@@ -31,6 +30,7 @@ export default class TaskDetailModal extends Component {
         drawContent: {},
         card_id: '',
         is_edit_title: false, // 是否编辑标题 默认为 false 不显示
+        boardTagList: []
       }
     })
     this.props.setTaskDetailModalVisible && this.props.setTaskDetailModalVisible()

@@ -175,7 +175,7 @@ export default class CommunicationFileList extends Component{
         }
     }
 
-    collapseOnchange=(keys,)=>{
+    collapseOnchange=(keys, )=>{
         this.setState({ collapseActiveKeys: keys });
     }
 

@@ -73,10 +73,10 @@ export default class HeaderNav extends React.Component{
       case '9':
         break
       case '10':
-        //创建企业的弹窗打开
+        //创建组织的弹窗打开
         this.setCreateOrgnizationOModalVisable()
         break
-      //这里是选择企业
+      //这里是选择组织
       default:
         const { datas: {currentUserOrganizes = []}} = this.props.model
         for(let val of currentUserOrganizes) {
@@ -139,13 +139,13 @@ export default class HeaderNav extends React.Component{
 
   }
 
-  //创建或加入企业
+  //创建或加入组织
   setCreateOrgnizationOModalVisable() {
     this.setState({
       createOrganizationVisable: !this.state.createOrganizationVisable
     })
   }
-  //添加企业成员操作
+  //添加组织成员操作
   setShowAddMenberModalVisibile() {
     this.setState({
       ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
@@ -179,7 +179,7 @@ export default class HeaderNav extends React.Component{
   }
   render() {
     const { datas = {} } = this.props.model
-    const { userInfo = {}, currentUserOrganizes = [], currentSelectOrganize = {} } = datas //currentUserOrganizes currentSelectOrganize企业列表和当前企业
+    const { userInfo = {}, currentUserOrganizes = [], currentSelectOrganize = {} } = datas //currentUserOrganizes currentSelectOrganize组织列表和当前组织
     const { aboutMe, avatar, createTime, email, full_name, id, lastLoginTime, mobile, current_org={}, phone, qq, status, updateTime, username, wechat, } = localStorage.getItem('userInfo')? JSON.parse(localStorage.getItem('userInfo')): {}
     const { identity_type } = current_org //是否访客 1不是 0是
     const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)

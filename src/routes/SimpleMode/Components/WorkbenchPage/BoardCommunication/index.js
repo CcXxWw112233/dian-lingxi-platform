@@ -55,7 +55,7 @@ class BoardCommunication extends Component {
     constructor(props) {
         super(props)
         const { dispatch } = this.props;
-        Im.addEventListener('visible',(val)=>{ // 获取圈子显示隐藏状态
+        Im.addEventListener('visible', (val)=>{ // 获取圈子显示隐藏状态
             // this.setState({ isShowlingxiIm: val});
         })
     }
@@ -484,7 +484,7 @@ class BoardCommunication extends Component {
         const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
         let list = []
         allOrgBoardTreeList.map((org, orgKey) => {
-            //全企业或者当前企业
+            //全组织或者当前组织
             if (user_set.current_org === '0' || user_set.current_org === org.org_id) {
                 //children
                 //isLeaf: true

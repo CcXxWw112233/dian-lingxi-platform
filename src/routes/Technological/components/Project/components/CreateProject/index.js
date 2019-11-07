@@ -4,12 +4,12 @@ import DragValidation from '../../../../../../components/DragValidation'
 import indexStyles from './index.less'
 import StepTwoListItem from './StepTwoListItem'
 import { validateTel, validateEmail } from '../../../../../../utils/verify'
-import {MESSAGE_DURATION_TIME, PROJECTS, ORG_TEAM_BOARD_CREATE, NOT_HAS_PERMISION_COMFIRN} from "../../../../../../globalset/js/constant";
-import {currentNounPlanFilterName, checkIsHasPermission} from "../../../../../../utils/businessFunction";
+import { MESSAGE_DURATION_TIME, PROJECTS, ORG_TEAM_BOARD_CREATE, NOT_HAS_PERMISION_COMFIRN } from "../../../../../../globalset/js/constant";
+import { currentNounPlanFilterName, checkIsHasPermission } from "../../../../../../utils/businessFunction";
 import CustormModal from '../../../../../../components/CustormModal'
 import InviteOthers from './../../../InviteOthers/index'
 import { getProjectList } from '../../../../../../services/technological/workbench'
-import {isApiResponseOk} from "../../../../../../utils/handleResponseData";
+import { isApiResponseOk } from "../../../../../../utils/handleResponseData";
 import { connect } from 'dva'
 import { getAppsList } from "../../../../../../services/technological/project";
 const FormItem = Form.Item
@@ -33,7 +33,7 @@ class CreateProject extends React.Component {
     project_apps: [], //选择board后的app列表
     copy_value: {}, //复制的值
     OrganizationId: localStorage.getItem('OrganizationId'),
-    _organization_id: this.props._organization_id ||'', //选择的企业id
+    _organization_id: this.props._organization_id || '', //选择的组织id
     appsList: [], //app列表
   }
   initData = () => {
@@ -52,14 +52,14 @@ class CreateProject extends React.Component {
       project_apps: [], //选择board后的app列表
       copy_value: {}, //复制的值
       OrganizationId: localStorage.getItem('OrganizationId'),
-      _organization_id: this.props._organization_id ||'', //选择的企业id
+      _organization_id: this.props._organization_id || '', //选择的组织id
       // appsList: [], //app列表
     })
   }
   componentWillReceiveProps(nextProps) {
     const { addProjectModalVisible } = nextProps
     const { addProjectModalVisibleLocal } = this.state
-    if(addProjectModalVisible && !addProjectModalVisibleLocal) {
+    if (addProjectModalVisible && !addProjectModalVisibleLocal) {
       // this.getProjectList()
       this.handleOrgSetInit()
     }
@@ -80,18 +80,18 @@ class CreateProject extends React.Component {
     })
   }
 
-  // 全企业，在只有一个企业情况下，默认选中该企业.查询企业项目列表和app列表
+  // 全组织，在只有一个组织情况下，默认选中该组织.查询组织项目列表和app列表
   handleOrgSetInit = () => {
     const { currentUserOrganizes = [], _organization_id } = this.props
-    if(currentUserOrganizes.length == 1 && !!!_organization_id) {
+    if (currentUserOrganizes.length == 1 && !!!_organization_id) {
       this.setState({
         _organization_id: currentUserOrganizes[0].id
       }, () => {
         this.getProjectList(true)
         this.getAppList(true)
       })
-     
-    } else{
+
+    } else {
       this.getProjectList(true)
       this.getAppList(true)
     }
@@ -103,15 +103,15 @@ class CreateProject extends React.Component {
     let params = {
       type: '2'
     }
-    if(OrganizationId != '0') { //如果是初始化和非全企业状态时才调用
+    if (OrganizationId != '0') { //如果是初始化和非全组织状态时才调用
       params = Object.assign(params, { _organization_id: OrganizationId })
     } else {
       params = Object.assign(params, { _organization_id })
-      if(!_organization_id || _organization_id == '0') return
+      if (!_organization_id || _organization_id == '0') return
     }
-   
+
     getAppsList(params).then(res => {
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         this.setState({
           appsList: res.data
         })
@@ -122,8 +122,8 @@ class CreateProject extends React.Component {
   }
   //表单输入时记录值
   orgOnChange = (id) => {
-    if(!checkIsHasPermission(ORG_TEAM_BOARD_CREATE, id)){
-      message.warn('您在该企业没有创建项目权限')
+    if (!checkIsHasPermission(ORG_TEAM_BOARD_CREATE, id)) {
+      message.warn('您在该组织没有创建项目权限')
       return false
     }
     this.setState({
@@ -133,14 +133,14 @@ class CreateProject extends React.Component {
       this.getProjectList()
     })
   }
-  boardNameChange(e){
+  boardNameChange(e) {
     const value = e.target.value
     this.setState({
       board_name: value,
       stepOneContinueDisabled: !e.target.value
     })
   }
-  descriptionChange(e){
+  descriptionChange(e) {
     this.setState({
       description: e.target.value
     })
@@ -183,9 +183,9 @@ class CreateProject extends React.Component {
   stepTwoButtonClick(data) {
     const { isAdd, id, itemKey } = data
     const appsArray = this.state.appsArray
-    if(isAdd) {
+    if (isAdd) {
       appsArray[itemKey] = id
-    }else{
+    } else {
       appsArray[itemKey] = 'itemIsNull'
     }
     this.setState({
@@ -193,8 +193,8 @@ class CreateProject extends React.Component {
     }, function () {
       let stepTwoContinueDisabled = true
       // console.log(this.state.appsArray)
-      for(let val of this.state.appsArray) {
-        if(val && val !== 'itemIsNull') {
+      for (let val of this.state.appsArray) {
+        if (val && val !== 'itemIsNull') {
           stepTwoContinueDisabled = false
           break
         }
@@ -213,13 +213,13 @@ class CreateProject extends React.Component {
         values['board_name'] = this.state.board_name
         values['description'] = this.state.description
         let appsString = ''
-        for(let val of this.state.appsArray) {
-          if(val && val !== 'itemIsNull') {
-            appsString += val+','
+        for (let val of this.state.appsArray) {
+          if (val && val !== 'itemIsNull') {
+            appsString += val + ','
           }
         }
         values['apps'] = appsString
-        if(step_2_type == 'copy') {
+        if (step_2_type == 'copy') {
           const copy_obj = {
             board_id: select_project_id,
             ...copy_value
@@ -246,29 +246,29 @@ class CreateProject extends React.Component {
         //   }
         //   values['users'] = users
         // }
-        const {users} = this.state
+        const { users } = this.state
         values['users'] = this.handleUsersToUsersStr(users)
         values['_organization_id'] = _organization_id || OrganizationId
         this.props.addNewProject ? this.props.addNewProject(values) : false
-        this.props.setAddProjectModalVisible && this.props.setAddProjectModalVisible({visible: false})
+        this.props.setAddProjectModalVisible && this.props.setAddProjectModalVisible({ visible: false })
         this.initData()
       }
     });
   }
   handleUsersToUsersStr = (users = []) => {
     return users.reduce((acc, curr) => {
-    const isCurrentUserFromPlatform = () => curr.type === 'platform' && curr.id
-    if(isCurrentUserFromPlatform()) {
-      if(acc) {
-        return acc + "," + curr.id
+      const isCurrentUserFromPlatform = () => curr.type === 'platform' && curr.id
+      if (isCurrentUserFromPlatform()) {
+        if (acc) {
+          return acc + "," + curr.id
+        }
+        return curr.id
+      } else {
+        if (acc) {
+          return acc + ',' + curr.user
+        }
+        return curr.user
       }
-      return curr.id
-    } else {
-      if(acc) {
-        return acc + ',' + curr.user
-      }
-      return curr.user
-    }
     }, '')
   }
   handleInviteMemberReturnResult = selectedMember => {
@@ -291,17 +291,17 @@ class CreateProject extends React.Component {
     const that = this
     const { OrganizationId, _organization_id } = this.state
     let params = {}
-    if(OrganizationId != '0' && init) { //如果是初始化和非全企业状态时才调用
-      
+    if (OrganizationId != '0' && init) { //如果是初始化和非全组织状态时才调用
+
     } else {
       params['_organization_id'] = _organization_id
     }
     getProjectList(params).then(res => {
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         that.setState({
           projects: res.data
         })
-      }else {
+      } else {
         message.warn(res.massage)
       }
     })
@@ -309,7 +309,7 @@ class CreateProject extends React.Component {
   setStepTwotype = () => {
     const { step_2_type } = this.state
     this.setState({
-      step_2_type: step_2_type == 'normal'? 'copy': 'normal',
+      step_2_type: step_2_type == 'normal' ? 'copy' : 'normal',
       project_apps: [],
       select_project_id: undefined,
       appsArray: [],
@@ -324,74 +324,63 @@ class CreateProject extends React.Component {
     })
   }
 
-  render() {
-    const { 
-      step,
-      stepOneContinueDisabled, 
-      stepTwoContinueDisabled, 
-      stepThreeContinueDisabled, 
-      step_2_type, 
-      projects = [],
-      project_apps = [], 
-      select_project_id,
+  //编辑第一步
+  renderStepFirst = () => {
+    const {
+      stepOneContinueDisabled,
       _organization_id,
-      appsList = [],
       OrganizationId
     } = this.state
-    const { addProjectModalVisible, currentUserOrganizes = [] } = this.props;
-    const { getFieldDecorator } = this.props.form;
-
-  
-    //编辑第一步
+    const { currentUserOrganizes = [], form: { getFieldDecorator } } = this.props;
     const step_1 = (
-      <Form style={{margin: '0 auto', width: 336}}>
-        <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>步骤一：给你的{currentNounPlanFilterName(PROJECTS)}起个名称</div>
+      <Form style={{ margin: '0 auto', width: 336 }}>
+        <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}>步骤一：给你的{currentNounPlanFilterName(PROJECTS)}起个名称</div>
         <div className={indexStyles.operateAreaOut}>
           <div className={indexStyles.operateArea}>
-            {/* 企业 */}
+            {/* 组织 */}
             {
               OrganizationId == '0' && (
                 // <FormItem style={{width: 336}}>
                 // {getFieldDecorator('', {
                 // })(
-                  <Select
-                    size={'large'}
-                    value={_organization_id == '0' || !_organization_id?undefined:_organization_id}
-                    style={{height: 40, marginBottom: 24}}
-                    placeholder={"请选择企业（单位）"}
-                    onChange={this.orgOnChange}
-                  >
-                    {
-                      currentUserOrganizes.map( item => {
-                        const { name, id } = item
-                        return (
-                          <Option value={id}>{name}</Option> 
-                        )
-                      })
-                    }
-                  </Select>
-              //   )}
-              // {/* </FormItem> */}
+                <Select
+                  size={'large'}
+                  value={_organization_id == '0' || !_organization_id ? undefined : _organization_id}
+                  style={{ height: 40, marginBottom: 24 }}
+                  placeholder={"请选择组织（单位）"}
+                  onChange={this.orgOnChange}
+                >
+                  {
+                    currentUserOrganizes.map(item => {
+                      const { name, id } = item
+                      return (
+                        <Option value={id}>{name}</Option>
+                      )
+                    })
+                  }
+                </Select>
+                //   )}
+                // {/* </FormItem> */}
               )
             }
-           
+
             {/* 项目名称 */}
-            <FormItem style={{width: 336}}>
+            <FormItem style={{ width: 336 }}>
               {getFieldDecorator('board_name', {
                 // initialValue:
               })(
                 <Input placeholder={`输入${currentNounPlanFilterName(PROJECTS)}名称`}
-                       onChange={this.boardNameChange.bind(this)}
-                       style={{height: 40}}/>
+                  onChange={this.boardNameChange.bind(this)}
+                  style={{ height: 40 }} />
               )}
             </FormItem>
             {/* 项目描述 */}
-            <FormItem style={{width: 336}}>
+            <FormItem style={{ width: 336 }}>
               {getFieldDecorator('description', {
                 // rules: [{ required: false, message: '请输入姓名', whitespace: true }],
               })(
-                <TextArea style={{height: 208, resize: 'none'}} placeholder={`${currentNounPlanFilterName(PROJECTS)}描述（选填)`}
-                          onChange={this.descriptionChange.bind(this)}/>
+                <TextArea style={{ height: 208, resize: 'none' }} placeholder={`${currentNounPlanFilterName(PROJECTS)}描述（选填)`}
+                  onChange={this.descriptionChange.bind(this)} />
               )}
             </FormItem>
           </div>
@@ -399,40 +388,57 @@ class CreateProject extends React.Component {
         {/* 确认 */}
         <FormItem
         >
-          <Button type="primary" disabled={stepOneContinueDisabled || (OrganizationId == '0' && (!_organization_id || !checkIsHasPermission(ORG_TEAM_BOARD_CREATE, _organization_id)))} onClick={this.nextStep} style={{width: 208, height: 40}}>下一步</Button>
+          <Button type="primary" disabled={stepOneContinueDisabled || (OrganizationId == '0' && (!_organization_id || !checkIsHasPermission(ORG_TEAM_BOARD_CREATE, _organization_id)))} onClick={this.nextStep} style={{ width: 208, height: 40 }}>下一步</Button>
         </FormItem>
       </Form>
     )
-
-    //打开应用
+    return step_1
+  }
+  // 设置应用
+  renderStepSecond = () => {
+    const {
+      stepTwoContinueDisabled,
+      step_2_type,
+      appsList = [],
+    } = this.state
     const step_2 = (
-      <div style={{margin: '0 auto', width: 392, height: 'auto'}}>
-        <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>步骤二：选择本{currentNounPlanFilterName(PROJECTS)}具备的功能</div>
-        <div className={indexStyles.operateAreaOut} style={{height: '300px'}}>
-          <div className={indexStyles.operateArea} style={{height: '300px'}}>
-            <div style={{margin: '0 auto', width: 392}}>
+      <div style={{ margin: '0 auto', width: 392, height: 'auto' }}>
+        <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}>步骤二：选择本{currentNounPlanFilterName(PROJECTS)}具备的功能</div>
+        <div className={indexStyles.operateAreaOut} style={{ height: '300px' }}>
+          <div className={indexStyles.operateArea} style={{ height: '300px' }}>
+            <div style={{ margin: '0 auto', width: 392 }}>
               {appsList.map((value, key) => {
                 return (
-                  <StepTwoListItem step_2_type={step_2_type} itemValue={{...value, itemKey: key}} key={value.id} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)}/>
+                  <StepTwoListItem step_2_type={step_2_type} itemValue={{ ...value, itemKey: key }} key={value.id} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)} />
                 )
               })}
             </div>
-            <div style={{color: '#1890ff', textDecoration: 'underline', marginTop: 28, textAlign: 'left', cursor: 'pointer'}} onClick={this.setStepTwotype}>从现有项目复制</div>
+            <div style={{ color: '#1890ff', textDecoration: 'underline', marginTop: 28, textAlign: 'left', cursor: 'pointer' }} onClick={this.setStepTwotype}>从现有项目复制</div>
           </div>
         </div>
 
-        <div style={{marginTop: 20, marginBottom: 40, }}>
-          <Button onClick={this.lastStep.bind(this, 1)} style={{width: 100, height: 40, marginRight: 20}}>上一步</Button>
-          <Button type="primary" disabled={stepTwoContinueDisabled} onClick={this.nextStep} style={{width: 100, height: 40}}>下一步</Button>
+        <div style={{ marginTop: 20, marginBottom: 40, }}>
+          <Button onClick={this.lastStep.bind(this, 1)} style={{ width: 100, height: 40, marginRight: 20 }}>上一步</Button>
+          <Button type="primary" disabled={stepTwoContinueDisabled} onClick={this.nextStep} style={{ width: 100, height: 40 }}>下一步</Button>
         </div>
       </div>
     )
-   //复制应用
+    return step_2
+  }
+  // 复制应用
+  renderStepSecondCopy = () => {
+    const {
+      stepTwoContinueDisabled,
+      step_2_type,
+      projects = [],
+      project_apps = [],
+      select_project_id,
+    } = this.state
     const step_2_copy = (
-      <div style={{margin: '0 auto', width: 392, height: 'auto'}}>
-        <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>复制现有项目</div>
-        <div className={indexStyles.operateAreaOut} style={{height: '300px'}}>
-          <div className={indexStyles.operateArea} style={{height: '300px'}}>
+      <div style={{ margin: '0 auto', width: 392, height: 'auto' }}>
+        <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}>复制现有项目</div>
+        <div className={indexStyles.operateAreaOut} style={{ height: '300px' }}>
+          <div className={indexStyles.operateArea} style={{ height: '300px' }}>
             <Select
               value={select_project_id}
               style={{ width: '100%' }}
@@ -448,44 +454,140 @@ class CreateProject extends React.Component {
                 )
               })}
             </Select>
-            {select_project_id? (
-              <div style={{margin: '0 auto', width: 392}}>
+            {select_project_id ? (
+              <div style={{ margin: '0 auto', width: 392 }}>
                 {project_apps.map((value, key) => {
                   return (
-                    <StepTwoListItem setCopyValue={this.setCopyValue} step_2_type={step_2_type} itemValue={{...value, itemKey: key}} key={`${select_project_id}_${value.id}`} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)}/>
+                    <StepTwoListItem setCopyValue={this.setCopyValue} step_2_type={step_2_type} itemValue={{ ...value, itemKey: key }} key={`${select_project_id}_${value.id}`} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)} />
                   )
                 })}
               </div>
-            ):(
-              <div className={indexStyles.no_select_board}>选择项目后进行下一步操作</div>
-            )}
+            ) : (
+                <div className={indexStyles.no_select_board}>选择项目后进行下一步操作</div>
+              )}
 
-            <div style={{color: '#1890ff', textDecoration: 'underline', marginTop: 28, textAlign: 'left', cursor: 'pointer'}} onClick={this.setStepTwotype}>返回基础功能选择</div>
+            <div style={{ color: '#1890ff', textDecoration: 'underline', marginTop: 28, textAlign: 'left', cursor: 'pointer' }} onClick={this.setStepTwotype}>返回基础功能选择</div>
           </div>
         </div>
 
-        <div style={{marginTop: 20, marginBottom: 40, }}>
-          <Button onClick={this.lastStep.bind(this, 1)} style={{width: 100, height: 40, marginRight: 20}}>上一步</Button>
-          <Button type="primary" disabled={stepTwoContinueDisabled} onClick={this.nextStep} style={{width: 100, height: 40}}>下一步</Button>
+        <div style={{ marginTop: 20, marginBottom: 40, }}>
+          <Button onClick={this.lastStep.bind(this, 1)} style={{ width: 100, height: 40, marginRight: 20 }}>上一步</Button>
+          <Button type="primary" disabled={stepTwoContinueDisabled} onClick={this.nextStep} style={{ width: 100, height: 40 }}>下一步</Button>
         </div>
       </div>
     )
+    return step_2_copy
+  }
+  //邀请他人信息
+  renderInviteOthers = () => {
+    const {
+      _organization_id,
+    } = this.state
+    const { currentUserOrganizes = [], form: { getFieldDecorator } } = this.props;
 
-    //邀请他人信息
     const step_3 = (
-      <Form onSubmit={this.handleSubmit} style={{margin: '0 auto', width: 336}}>
-        <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>步骤三：邀请他人一起参加{currentNounPlanFilterName(PROJECTS)}</div>
+      <Form onSubmit={this.handleSubmit} style={{ margin: '0 auto', width: 336 }}>
+        <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}>步骤三：邀请他人一起参加{currentNounPlanFilterName(PROJECTS)}</div>
         {/* 他人信息 */}
         <InviteOthers _organization_id={_organization_id || localStorage.getItem('OrganizationId')} isShowTitle={false} isShowSubmitBtn={false} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} />
         {/* 确认 */}
-        <div style={{marginTop: 20, marginBottom: 20, }}>
-          <Button onClick={this.lastStep.bind(this, 2)} style={{width: 100, height: 40, marginRight: 20}}>上一步</Button>
-          <Button type="primary" htmlType={'submit'} onClick={this.nextStep} style={{width: 100, height: 40}}>完成创建</Button>
+        <div style={{ marginTop: 20, marginBottom: 20, }}>
+          <Button onClick={this.lastStep.bind(this, 2)} style={{ width: 100, height: 40, marginRight: 20 }}>上一步</Button>
+          <Button type="primary" htmlType={'submit'} onClick={this.nextStep} style={{ width: 100, height: 40 }}>完成创建</Button>
         </div>
       </Form>
     )
+    return step_3
+  }
 
-    return(
+  // 几个步骤的处理
+  renderOperateStep = () => {
+    const { step_2_type, step } = this.state
+    const contain = (
+      <div style={{ height: step === 2 ? 440 : 'auto' }}>
+        <div style={{ display: step === 1 ? 'block' : 'none' }}>
+          {this.renderStepFirst()}
+        </div>
+        <div style={{ display: step === 2 ? 'block' : 'none' }}>
+          {step_2_type == 'normal' ? this.renderStepSecond() : this.renderStepSecondCopy()}
+        </div>
+        <div style={{ display: step === 3 ? 'block' : 'none' }}>
+          {this.renderInviteOthers()}
+        </div>
+        <div className={indexStyles.circleOut}>
+          <div className={step === 1 ? indexStyles.chooseCircle : ''}></div>
+          <div className={step === 2 ? indexStyles.chooseCircle : ''}></div>
+          <div className={step === 3 ? indexStyles.chooseCircle : ''}></div>
+        </div>
+      </div>
+    )
+    return contain
+  }
+
+  // 以上几步合成一步
+  renderCreateStep = () => {
+    const { _organization_id, OrganizationId, stepOneContinueDisabled } = this.state
+    const { currentUserOrganizes = [], form: { getFieldDecorator } } = this.props;
+
+    const step = (
+      <div style={{ margin: '0 auto', width: 346 }}>
+        <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}>新建{currentNounPlanFilterName(PROJECTS)}</div>
+        <div className={indexStyles.operateAreaOut}>
+          <div className={indexStyles.operateArea}>
+            {/* 组织 */}
+            {
+              OrganizationId == '0' && (
+                <Select
+                  size={'large'}
+                  value={_organization_id == '0' || !_organization_id ? undefined : _organization_id}
+                  style={{ height: 40, marginBottom: 20, width: 346 }}
+                  placeholder={"请选择组织（单位）"}
+                  onChange={this.orgOnChange}
+                >
+                  {
+                    currentUserOrganizes.map(item => {
+                      const { name, id } = item
+                      return (
+                        <Option value={id}>{name}</Option>
+                      )
+                    })
+                  }
+                </Select>
+              )
+            }
+
+            {/* 项目名称 */}
+            <Input placeholder={`输入${currentNounPlanFilterName(PROJECTS)}名称`}
+              onChange={this.boardNameChange.bind(this)}
+              style={{ height: 40 }} />
+            {/* 邀请他人 */}
+            {/* <div style={{ marginTop: -10, width: 344,}} > */}
+            <InviteOthers selectDisabled={OrganizationId == '0' && !!!_organization_id} _organization_id={_organization_id || localStorage.getItem('OrganizationId')} isShowTitle={false} isShowSubmitBtn={false} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} />
+            {/* </div> */}
+          </div>
+        </div>
+        <Button type="primary" disabled={stepOneContinueDisabled || (OrganizationId == '0' && (!_organization_id || !checkIsHasPermission(ORG_TEAM_BOARD_CREATE, _organization_id)))} onClick={this.createBoard} style={{ width: 208, height: 40, marginBottom: 40 }}>确认</Button>
+      </div>
+    )
+    return step
+  }
+  createBoard = () => {
+    const { _organization_id, OrganizationId, board_name, users, appsList = [] } = this.state
+    const apps = appsList.filter(item => 'Tasks' == item.code || 'Files' == item.code).map(item => item.id).join(',')
+    const params = {
+      apps,
+      users: this.handleUsersToUsersStr(users),
+      _organization_id: _organization_id || OrganizationId,
+      board_name,
+    }
+    this.props.addNewProject ? this.props.addNewProject(params) : false
+    this.props.setAddProjectModalVisible && this.props.setAddProjectModalVisible({ visible: false })
+    this.initData()
+  }
+  render() {
+    const { addProjectModalVisible } = this.props;
+
+    return (
       <div>
         <CustormModal
           visible={addProjectModalVisible} //addProjectModalVisible
@@ -493,24 +595,11 @@ class CreateProject extends React.Component {
           width={472}
           footer={null}
           destroyOnClose
-          style={{textAlign: 'center'}}
+          style={{ textAlign: 'center' }}
           onCancel={this.onCancel}
-          overInner={( <div style={{height: step=== 2 ? 440: 'auto' }}>
-            <div style={{display: step === 1?'block': 'none'}}>
-              {step_1}
-            </div>
-            <div style={{display: step === 2?'block': 'none'}}>
-              {step_2_type == 'normal'? step_2 : step_2_copy}
-            </div>
-            <div style={{display: step === 3?'block': 'none'}}>
-              {step_3}
-            </div>
-            <div className={indexStyles.circleOut}>
-              <div className={step===1 ? indexStyles.chooseCircle : ''}></div>
-              <div className={step===2 ? indexStyles.chooseCircle : ''}></div>
-              <div className={step===3 ? indexStyles.chooseCircle : ''}></div>
-            </div>
-          </div>)}
+          overInner={
+            this.renderCreateStep()
+          }
         >
         </CustormModal>
       </div>
@@ -520,6 +609,6 @@ class CreateProject extends React.Component {
 export default Form.create()(CreateProject)
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ technological: { datas: {currentUserOrganizes = [] }} }) {
+function mapStateToProps({ technological: { datas: { currentUserOrganizes = [] } } }) {
   return { currentUserOrganizes };
 }

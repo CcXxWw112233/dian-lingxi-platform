@@ -31,7 +31,7 @@ export default modelExtend(technological, {
               TreeGroupModalVisiblie: false, //树状分组是否可见
               groupTreeList: [], //树状分组数据
               currentBeOperateMemberId: '', //当前被操作的成员id
-              roleList: [], //当前企业角色列表
+              roleList: [], //当前组织角色列表
               menuSearchSingleSpinning: false, //获取分组负责人转转转
             }
           })
@@ -69,7 +69,7 @@ export default modelExtend(technological, {
         notification.open({
           message: '提示',
           description:
-            '您所在当前企业没有查看企业团队职员权限。',
+            '您所在当前组织没有查看组织团队职员权限。',
           onClick: () => {
             // console.log('Notification Clicked!');
           },
@@ -190,7 +190,7 @@ export default modelExtend(technological, {
           type: 'getGroupList',
           payload: {
             calback: function () {
-              message.success(`已将${currentNounPlanFilterName(MEMBERS)}加入企业`, MESSAGE_DURATION_TIME)
+              message.success(`已将${currentNounPlanFilterName(MEMBERS)}加入组织`, MESSAGE_DURATION_TIME)
             }
           }
         })

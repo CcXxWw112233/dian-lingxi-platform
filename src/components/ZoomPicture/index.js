@@ -11,6 +11,7 @@ import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN,
   PROJECT_FILES_FILE_EDIT,
+  PROJECT_FILES_COMMENT_PUBLISH
 } from "@/globalset/js/constant";
 
 const rdom = require('react-dom');
@@ -158,7 +159,7 @@ class ZoomPicture extends Component {
       magnify: () => this.handleClickedImg(undefined, 'sup'),
       shrink: () => this.handleClickedImg(undefined, 'sub'),
       addCommit: () => {
-        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id))) {
+        if ( !(checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) )) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }

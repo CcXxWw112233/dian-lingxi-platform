@@ -10,7 +10,7 @@ import { getPinyin } from './../../../../utils/pinyin'
 import classNames from 'classnames/bind'
 import { getAccessibleGroupList, getGroupList } from './../../../../services/technological/organizationMember'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
-
+import noDataImg from './asset/no_data_select.png'
 let cx = classNames.bind(styles)
 
 const Option = Select.Option
@@ -38,8 +38,8 @@ class InviteOthers extends Component {
       membersListToSelect: [], //人员选择列表
       projectList: [], //我参与的项目列表
       projectUserList: [],
-      groupList: [], //企业职员分组
-      currentSyncSetsMemberList: {}, //原生的已经被同步的集合的所有职员，此处不能保存成数组，更不能过滤重复的人员，因为如果取消同步的时候，会移除已同步的集合的交集处的人员，引发意外的bug      isInSelectedList: false,
+      groupList: [], //组织职员分组
+      currentSyncSetsMemberList: {}, //原生的已经被同步的集合的所有成员，此处不能保存成数组，更不能过滤重复的人员，因为如果取消同步的时候，会移除已同步的集合的交集处的人员，引发意外的bug      isInSelectedList: false,
       currentMemberListSet: 'org', //当前显示的集合 org || group-id || project-id
       isInSelectedList: false, //是否仅显示列表的
       step: 'home' //当前的步进 home || group-list || group-id || project-list ||project-id
@@ -86,7 +86,7 @@ class InviteOthers extends Component {
       }`
   }
 
-  // 给一个职员默认的结构
+  // 给一个成员默认的结构
   genUserToDefinedMember = user => {
     // console.log('sssss', { user })
     if (!user || !(user.id || user.user_id)) return
@@ -741,17 +741,18 @@ class InviteOthers extends Component {
       fetching,
       inputRet,
       inputValue,
-      selectedMember,
+      selectedMember = [],
       membersListToSelect,
       isInSelectedList,
       currentOrgAllMembersList,
       step
     } = this.state
-
-    // console.log('ssss', {
-    //   selectedMember
-    // })
-
+    let seize_a_seat_arr_length = 11 - selectedMember.length // 11为最多的占位符
+    let seize_a_seat_arr = []
+    for (let i = 0; i < seize_a_seat_arr_length; i++) {
+      seize_a_seat_arr.push(i)
+    }
+  
     const isGetData = () => currentSelectOrganize && currentOrgAllMembersList
     if (!isGetData()) {
       return this.renderWhenNoData()
@@ -775,6 +776,8 @@ class InviteOthers extends Component {
             mode="multiple"
             value={inputValue}
             labelInValue
+            size={'large'}
+            disabled={this.props.selectDisabled}
             maxTagCount={1}
             placeholder="请输入被邀请人的手机号或邮箱"
             notFoundContent={fetching ? <Spin size="small" /> : null}
@@ -792,90 +795,100 @@ class InviteOthers extends Component {
             ))}
           </Select>
         </div>
-        <div className={styles.invite__select_wrapper}>
-          {step !== 'home' && (
-            <div
-              className={styles.invite__select_back_wrapper}
-              onClick={this.handleBack}
-            >
-              <span className={styles.invite__select_back_icon} />
-              <span className={styles.invite__select_back_text}>
-                返回上一级
-              </span>
+
+        {
+          this.props.selectDisabled ? (
+            <div className={styles.invite__select_wrapper} >
+              <img src={noDataImg} style={{ height: 114, width: 112, margin: '0 auto', marginTop: 43 }} />
             </div>
-          )}
-          <div className={inviteSelectWrapper} >
-            {this.renderSelectList()}
-            {!isInSelectedList && (
-              <div className={styles.invite__select_member_wrapper}>
-                <div
-                  className={styles.invite__select_member_All}
-                  onClick={this.handleToggleSelectCurrentListAll}
-                >
-                  <span className={styles.invite__select_member_All_text}>
-                    全选
-                  </span>
-                  {this.isSelectedAll() ? (
-                    <span
-                      className={
-                        styles.invite__select_member_item_operator_selected
-                      }
-                    />
-                  ) : (
-                      <span
-                        className={
-                          styles.invite__select_member_item_operator_unselected
-                        }
-                      />
-                    )}
-                </div>
-                {sortedMembersListToSelect.map(item => (
+          ) : (
+              <div className={styles.invite__select_wrapper}>
+                {step !== 'home' && (
                   <div
-                    key={item.id}
-                    className={styles.invite__select_member_item}
-                    onClick={e =>
-                      this.handleToggleMemberInSelectedMember(item, e)
-                    }
+                    className={styles.invite__select_back_wrapper}
+                    onClick={this.handleBack}
                   >
-                    <span className={styles.invite__select_member_item_info}>
-                      <img
-                        className={styles.invite__select_member_item_avatar}
-                        width="20"
-                        height="20"
-                        src={
-                          this.isAvatarValid(item.avatar)
-                            ? item.avatar
-                            : defaultUserAvatar
-                        }
-                        alt=""
-                      />
-                      <span className={styles.invite__select_member_item_title}>
-                        {item.full_name || item.name}
-                      </span>
+                    <span className={styles.invite__select_back_icon} />
+                    <span className={styles.invite__select_back_text}>
+                      返回上一级
+                </span>
+                  </div>
+                )}
+                <div className={inviteSelectWrapper} >
+                  {this.renderSelectList()}
+                  {!isInSelectedList && (
+                    <div className={styles.invite__select_member_wrapper}>
+                      <div
+                        className={styles.invite__select_member_All}
+                        onClick={this.handleToggleSelectCurrentListAll}
+                      >
+                        <span className={styles.invite__select_member_All_text}>
+                          全选
                     </span>
-                    <span
-                      className={styles.invite__select_member_item_operator}
-                    >
-                      {this.checkMemberInSelectedMember(item) ? (
-                        <span
-                          className={
-                            styles.invite__select_member_item_operator_selected
-                          }
-                        />
-                      ) : (
+                        {this.isSelectedAll() ? (
                           <span
                             className={
-                              styles.invite__select_member_item_operator_unselected
+                              styles.invite__select_member_item_operator_selected
                             }
                           />
-                        )}
-                    </span>
-                  </div>
-                ))}
+                        ) : (
+                            <span
+                              className={
+                                styles.invite__select_member_item_operator_unselected
+                              }
+                            />
+                          )}
+                      </div>
+                      {sortedMembersListToSelect.map(item => (
+                        <div
+                          key={item.id}
+                          className={styles.invite__select_member_item}
+                          onClick={e =>
+                            this.handleToggleMemberInSelectedMember(item, e)
+                          }
+                        >
+                          <span className={styles.invite__select_member_item_info}>
+                            <img
+                              className={styles.invite__select_member_item_avatar}
+                              width="20"
+                              height="20"
+                              src={
+                                this.isAvatarValid(item.avatar)
+                                  ? item.avatar
+                                  : defaultUserAvatar
+                              }
+                              alt=""
+                            />
+                            <span className={styles.invite__select_member_item_title}>
+                              {item.full_name || item.name}
+                            </span>
+                          </span>
+                          <span
+                            className={styles.invite__select_member_item_operator}
+                          >
+                            {this.checkMemberInSelectedMember(item) ? (
+                              <span
+                                className={
+                                  styles.invite__select_member_item_operator_selected
+                                }
+                              />
+                            ) : (
+                                <span
+                                  className={
+                                    styles.invite__select_member_item_operator_unselected
+                                  }
+                                />
+                              )}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
-          </div>
-        </div>
+            )
+        }
+
         <div className={styles.invite__result_wrapper}>
           <div className={styles.invite__result_list}>
             {selectedMember.map(item => (
@@ -903,8 +916,20 @@ class InviteOthers extends Component {
                 </Tooltip>
               </div>
             ))}
+            {/* 占位符 */}
+            {
+              seize_a_seat_arr.length < 11 && seize_a_seat_arr.map((item, key) => {
+                return (
+                  <div key={key} className={styles.invite__result_list_item}>
+                    <div className={styles.invite__result_list_item_img_wrapper} style={{ backgroundColor: 'rgba(0,0,0,.04)', borderRadius: 20 }}>
+                    </div>
+                  </div>
+                )
+              })
+            }
           </div>
         </div>
+
         {isShowSubmitBtn && (
           <div className={styles.invite__submit_wrapper}>
             <Button disabled={isDisableSubmitWhenNoSelectItem && !isHasSelectedItem} onClick={this.handleSubmitSeletedMember} type="primary">
@@ -927,7 +952,7 @@ InviteOthers.defaultProps = {
   handleInviteMemberReturnResult: function () {
     message.info('邀请他人组件， 需要被提供一个回调函数')
   },
-  _organization_id: '', //getGlobalData('aboutBoardOrganizationId'), //传递进来的企业，默认取当前操作项目的对应的企业id
+  _organization_id: '', //getGlobalData('aboutBoardOrganizationId'), //传递进来的组织，默认取当前操作项目的对应的组织id
   shouldNotGetGroupInDidMount: false, //false默认，true的时候在componentDidMount 里面做getGroupList请求
 }
 

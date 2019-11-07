@@ -274,7 +274,7 @@ export default class BaseInfo extends React.Component {
         <div className={indexStyles.baseInfo_title_2}>
           {currentNounPlanFilterName(ORGANIZATION)}LOGO
         </div>
-        <div className={indexStyles.baseInfo_des}>你的企业标识会一直显示在协作平台的左上方，为了达到更好的显示效果，上传尺寸请保持在64像素以上的正方形。</div>
+        <div className={indexStyles.baseInfo_des}>你的组织标识会一直显示在协作平台的左上方，为了达到更好的显示效果，上传尺寸请保持在64像素以上的正方形。</div>
         <div className={indexStyles.UploadOut}>
           {logo ? (
             <img src={logo} />
@@ -314,7 +314,7 @@ export default class BaseInfo extends React.Component {
               <div className={indexStyles.paymemtInfo}>
                 <div className={indexStyles.info}>
                   <Row className={indexStyles.item}>
-                    <Col span={4} className={indexStyles.itemLabel}>企业ID</Col>
+                    <Col span={4} className={indexStyles.itemLabel}>组织ID</Col>
                     <Col span={20} className={indexStyles.itemInfo}>{paymentInfo.org_id}</Col>
                   </Row>
                   <Row className={indexStyles.item}>

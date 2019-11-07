@@ -33,7 +33,7 @@ export default class NewsListNewDatas extends React.Component {
 <div className={NewsListStyle.news_2}>
       欢迎使用ProductName，为了帮助你更好的上手使用好ProductName，我们为你提前预置了这个项目并放置一些帮助你理解每项功能特性的任务卡片。
       不会耽误你特别多时间，只需要抽空点开卡片并跟随里面的内容提示进行简单操作，即可上手使用。
-      此处显示的文字为项目的介绍信息，旨在帮助参与项目的职员快速了解项目的基本概况，点击可编辑。
+      此处显示的文字为项目的介绍信息，旨在帮助参与项目的成员快速了解项目的基本概况，点击可编辑。
       如果使用中需要问题，可以随时联系我们进行交流或反馈：app.di-an.com
     </div>
 )
@@ -80,7 +80,7 @@ export default class NewsListNewDatas extends React.Component {
           <div className={NewsListStyle.news_5_time}>17:00</div>
         </div>
         <div className={NewsListStyle.news_5_desctiption}>
-          欢迎使用ProductName，为了帮助你更好的上手使用好ProductName，我们为你提前预置了这个项目并放置一些帮助你理解每项功能特性的任务卡片。 不会耽误你特别多时间，只需要抽空点开卡片并跟随里面的内容提示进行简单操作，即可上手使用。 此处显示的文字为项目的介绍信息，旨在帮助参与项目的职员快速了解项目的基本概况，点击可编辑。 如果使用中需要问题，可以随时联系我们进行交流或反馈：app.di-an.com
+          欢迎使用ProductName，为了帮助你更好的上手使用好ProductName，我们为你提前预置了这个项目并放置一些帮助你理解每项功能特性的任务卡片。 不会耽误你特别多时间，只需要抽空点开卡片并跟随里面的内容提示进行简单操作，即可上手使用。 此处显示的文字为项目的介绍信息，旨在帮助参与项目的成员快速了解项目的基本概况，点击可编辑。 如果使用中需要问题，可以随时联系我们进行交流或反馈：app.di-an.com
         </div>
       </div>
     )
@@ -111,11 +111,11 @@ export default class NewsListNewDatas extends React.Component {
           messageContain = (<div>{messageValue.user_name} 删除了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.board_name}</span>」{currentNounPlanFilterName(PROJECTS)}。</div>)
           break
         case 'addBoardUser':
-          contain = `添加${currentNounPlanFilterName(PROJECTS)}职员`
+          contain = `添加${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (<div>{messageValue.user_name} 邀请{messageValue.member}加入了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.board_name}</span>」{currentNounPlanFilterName(PROJECTS)}。</div>)
           break
         case 'removeBoardUser':
-          contain = `移除${currentNounPlanFilterName(PROJECTS)}职员`
+          contain = `移除${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (<div>{messageValue.user_name} 将{messageValue.removed_user_name}移出了「<span style={{color: '#1890FF', cursor: 'pointer'}}>{messageValue.board_name}</span>」{currentNounPlanFilterName(PROJECTS)}。</div>)
           break
         //任务

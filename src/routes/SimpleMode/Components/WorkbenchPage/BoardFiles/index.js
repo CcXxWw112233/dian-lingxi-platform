@@ -294,10 +294,32 @@ class BoardFiles extends Component {
               <div className={indexStyles.boardSelectWapper}>
                 {
                   allOrgBoardTreeList.map((org, orgkey) => {
-                    //全企业或者当前企业
+                    //全组织或者当前组织
                     if (user_set.current_org === '0' || user_set.current_org === org.org_id) {
                       if (isPaymentOrgUser(org.org_id)) {
 
+                      return org.board_list && org.board_list.length > 0 && (
+                        <div key={org.org_id}>
+                          <div className={indexStyles.groupName}>{org.org_name}</div>
+                          <div className={indexStyles.boardItemWapper}>
+                            {
+                              org.board_list.map((board, key) => {
+                                return (
+                                  <div key={board.board_id} className={indexStyles.boardItem} onClick={e => {
+                                    this.setState({
+                                      userSelectBoard: true
+                                    });
+                                    this.openBoardFiles(board);
+                                  }}>
+                                    <i className={`${globalStyles.authTheme} ${indexStyles.boardIcon}`}>&#xe67d;</i>
+                                    <span className={indexStyles.boardName}>{board.board_name}</span>
+                                  </div>
+                                );
+                              })
+                            }
+                          </div>
+                        </div>
+                      )
                         return org.board_list && org.board_list.length > 0 && (
                           <div key={org.org_id}>
                             <div className={indexStyles.groupName}>{org.org_name}</div>
@@ -322,7 +344,7 @@ class BoardFiles extends Component {
                             </div>
                           </div>
                         )
-                        
+
                       } else {
                         return;
                       }

@@ -83,7 +83,7 @@ export default {
             area_ids: '', // 地区对应的id 
             defaultCityValue: 'cityTown',
             defaultProvinceValue: 'province',
-            XczNewsOrganizationList: [], //有权限查看晓策志的企业
+            XczNewsOrganizationList: [], //有权限查看晓策志的组织
           }
         })
         if (location.pathname.indexOf('/xczNews') != -1) {
@@ -515,7 +515,7 @@ export default {
         },
       })
     },
-    // 获取有权限查看的企业列表
+    // 获取有权限查看的组织列表
     * getXczNewsQueryUser({ payload = {} }, { select, call, put }) {
       let res = yield call(getXczNewsQueryUser, payload)
 

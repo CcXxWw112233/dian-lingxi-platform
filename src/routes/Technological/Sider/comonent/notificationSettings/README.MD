@@ -12,7 +12,7 @@ data: [
       child_data: [
         {id: "2", type: "1", parent_id: "1", name: "新建项目"},
         {id: "3", type: "1", parent_id: "1", name: "编辑项目信息"},
-        {id: "4", type: "1", parent_id: "1", name: "项目职员变更"},
+        {id: "4", type: "1", parent_id: "1", name: "项目成员变更"},
         {id: "5", type: "1", parent_id: "1", name: "项目结束"},
         {id: "6", type: "1", parent_id: "1", name: "制定里程碑"},
       ],
