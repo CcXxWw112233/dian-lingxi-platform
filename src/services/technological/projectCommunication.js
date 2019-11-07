@@ -39,3 +39,15 @@ export async function getFolderList(params) {
   });
 }
 
+// 查询文件列表-（只有文件）
+export async function getOnlyThumbnailFileList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/page`,
+    method: 'GET',
+    params: {
+      _organization_id: params._organization_id || localStorage.getItem('OrganizationId'),
+      ...params,
+    }
+  });
+}
+

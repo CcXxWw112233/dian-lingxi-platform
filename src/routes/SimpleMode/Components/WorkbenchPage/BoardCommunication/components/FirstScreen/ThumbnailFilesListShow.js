@@ -20,31 +20,54 @@ export default class ThumbnailFilesListShow extends Component {
             columns: [
                 {
                     title: '文件名',
-                    dataIndex: 'fileName',
-                    key: 'fileName',
+                    dataIndex: 'file_name',
+                    key: 'file_name',
                 },
                 {
                     title: '大小',
-                    dataIndex: 'size',
-                    key: 'size',
+                    dataIndex: 'file_size',
+                    key: 'file_size',
                 },
                 {
                     title: '修改日期',
-                    dataIndex: 'changeData',
-                    key: 'changeData',
+                    dataIndex: 'update_time',
+                    key: 'update_time',
                 },
-            ]
+            ],
         }
     }
 
+    componentDidMount(){
+        this.initData();
+    }
+
+    // 初始化table数据
+    initData = () => {
+        const { columns } = this.state;
+        const newColumns = [];
+        columns.map((item) => {
+            // console.log(item);
+            return this.renderItem(item);
+        })
+    }
+
+    // 处理缩略图
+    renderItem = (item) => {
+        // console.log('renderItem', item);
+    }
 
     render(){
-        const { thumbnailFilesList } = this.props;
-        const { columns } = this.state;
+        const { thumbnailFilesList, onlyFileTableLoading } = this.props;
+        const { columns} = this.state;
         return(
             <div className={styles.thumbnailFilesList}>
-                <Table dataSource={thumbnailFilesList} columns={columns} />
-                
+                <Table
+                    dataSource={thumbnailFilesList}
+                    columns={columns}
+                    pagination={{ pageSize: 10 }}
+                    loading={onlyFileTableLoading}
+                    rowKey={record => record.file_id}
+                />
             </div>
         )
     }

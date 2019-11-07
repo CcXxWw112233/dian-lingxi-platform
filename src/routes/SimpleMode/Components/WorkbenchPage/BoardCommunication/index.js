@@ -54,6 +54,11 @@ class BoardCommunication extends Component {
         showFileListisOpenFileDetailModal: false,
         // 是否显示/隐藏文件列表，默认显示
         isVisibleFileList: true,
+        bread_paths: [], // 面包屑路径
+        currentItemIayerData: [], // 当前层数据
+        currentItemIayerId: '', // 当前层级ID
+        currentSelectBoardId: '', // 当前选择的项目ID
+        isSearchDetailOnfocusOrOnblur: false, // 搜索框聚焦显示当前搜索条件详情
     };
 
     constructor(props) {
@@ -66,61 +71,45 @@ class BoardCommunication extends Component {
 
     componentDidMount() {
         this.queryCommunicationFileData();
-        // this.getCommunicationProjectList();
+        this.getThumbnailFilesData();
     }
 
-    // componentWillReceiveProps(nextProps,oldProps) {
-    //     // console.log("simplemodeCurrentProject-next", nextProps && nextProps.simplemodeCurrentProject);
-    //     const { dispatch, simplemodeCurrentProject } = nextProps;
-    //     const { simplemodeCurrentProject: old_simplemodeCurrentProject } = this.props;
-    //     let currentBoardDetail = {}
-    //     if (simplemodeCurrentProject && simplemodeCurrentProject.board_id && old_simplemodeCurrentProject.board_id != simplemodeCurrentProject.board_id) {
-    //       currentBoardDetail = { ...simplemodeCurrentProject }
-    //       this.initData(currentBoardDetail);
-    //       this.getCommunicationProjectList(currentBoardDetail);
-    //     }
-    
-    // }
-
-    // // 初始化数据-处理顶部切换项目
-    // initData = (currentBoardDetail) => {
-    //     const { dispatch } = this.props;
-    //     dispatch({
-    //         type: 'projectCommunication/updateDatas',
-    //         payload: {
-    //             currentBoardDetail: currentBoardDetail,
-    //             currentBoardId: currentBoardDetail.board_id,
-    //         }
-    //     });
-    // }
-
-
-    // // 获取项目交流-项目文件目录数据
-    // getCommunicationProjectList = (currentBoardDetail) => {
-    //     const { dispatch } = this.props;
-    //     const board_id = (currentBoardDetail && currentBoardDetail.board_id) ? currentBoardDetail.board_id : '0';
-    //     // console.log('board_id1101', board_id);
-    //     dispatch({
-    //         type: getEffectOrReducerByName_8('getProjectList'),
-    //         payload: {
-    //             board_id: board_id == '0' ? '' : board_id,
-    //         }
-    //     })
-    //     this.getCommunicationFolderList();
-    // }
-
-    // 获取项目交流目录下子集数据
-    getCommunicationFolderList = (boardId) => {
+    // 获取右侧缩略图显示
+    getThumbnailFilesData = (type) => {
+        // type 0 全部（包括项目） 1 项目全部（包括文件夹内） 2 文件Tree的文件夹内
+        // console.log('获取右侧缩略图显示');
         const { dispatch } = this.props;
+        const { currentSelectBoardId, currentItemIayerId } = this.state;
+        let boardId = '';
+        let folderId = '';
+        switch(type){
+        case '0':
+            boardId = ''
+            folderId = ''
+            break
+        case '1': 
+            boardId = currentSelectBoardId
+            folderId = ''
+            break
+        case '2': 
+            boardId = currentSelectBoardId
+            folderId = currentItemIayerId
+            break
+        default:
+            boardId = ''
+            folderId = ''
+            break
+        }
         dispatch({
-            type: getEffectOrReducerByName_8('getFolderList'),
+            type: getEffectOrReducerByName_8('getOnlyFileList'),
             payload: {
-                board_id: boardId,
+              board_id: boardId,
+              folder_id: folderId,
             }
-        })
+        });
     }
 
-    // 获取项目交流文件列表数据1025版本
+    // 获取项目交流项目文件列表数据
     queryCommunicationFileData = () => {
         const { dispatch, gantt_board_id } = this.props;
         const boardId = gantt_board_id == '0' ? '' : gantt_board_id
@@ -133,9 +122,114 @@ class BoardCommunication extends Component {
             query_board_ids: [],
           }
         });
-        this.getCommunicationFolderList(boardId);
+    }
+
+    // 获取项目交流目录下子集tree数据
+    getCommunicationFolderList = (boardId) => {
+        const { dispatch } = this.props;
+        if(boardId){
+            dispatch({
+                type: getEffectOrReducerByName_8('getFolderList'),
+                payload: {
+                    board_id: boardId,
+                }
+            });
+        }
+        this.setCurrentItemIayerId(boardId);
+        
+    }
+
+    // 设置当前所在的tree层级ID
+    setCurrentItemIayerId = (id) => {
+        this.setState({
+            currentSelectBoardId: id,
+            currentItemIayerId: id
+        },()=>{
+            this.changeFirstBreadPaths(); // 改变第一层面包屑路径
+            this.getThumbnailFilesData('1'); // 更新右侧缩略图列表
+        });
     }
     
+    // 改变第一层面包屑路径
+    changeFirstBreadPaths = () => {
+        // console.log('点击了当前层');
+        const { currentItemIayerId } = this.state;
+        const { boards_flies } = this.props;
+        const firstIayerData = boards_flies.filter(item=>item.id == currentItemIayerId);
+        this.setState({ bread_paths: firstIayerData });
+    }
+
+
+    // 改变当前项目tree层级-处理面包屑路径
+
+    onSelectTree = (currentfloor) => {
+        const { bread_paths = [] } = this.state;
+        const { folder_id, parent_id } = currentfloor;
+        const index = bread_paths.findIndex(item => item.folder_id == folder_id);
+        let lastPath = bread_paths[bread_paths.length-1];
+        if(lastPath.parent_id == parent_id){ // 如果是同层,则替换
+            // console.log('是同一层');
+            bread_paths.pop();
+            bread_paths.push(currentfloor);
+        } else {
+            // console.log('不是同一层');
+            // if(index == -1){ // 如果没有
+            //     let lastPath = bread_paths[bread_paths.length-1];
+            //     if(lastPath.parent_id == parent_id){
+            //         // 如果最后一个路径和当前的路径，在同一个父级下
+            //         console.log('有同一个父亲');
+            //         bread_paths.pop();
+            //         bread_paths.push(currentfloor);
+            //     } else {
+            //         console.log('祖父内不在同一层');
+            //         bread_paths.push(currentfloor);
+            //     }
+            // } else {
+            //     const index = bread_paths.findIndex(item => item.folder_id == folder_id);
+            //     bread_paths.splice(index,bread_paths.length-1);
+            //     bread_paths.push(currentfloor);
+            // }
+            const index = bread_paths.findIndex(item => item.folder_id == folder_id);
+            bread_paths.splice(index,bread_paths.length-1);
+            bread_paths.push(currentfloor);
+        }
+
+        // if(index == -1){ // 如果不存在
+        //     let lastPath = bread_paths[bread_paths.length-1];
+        //     if(lastPath.parent_id == parent_id){ // 如果是同层,则替换
+        //         console.log('是同一层');
+        //         // bread_paths.slice(0, index + 1);
+        //         // bread_paths.push(currentfloor);
+        //         bread_paths.pop();
+        //         bread_paths.push(currentfloor);
+        //         // bread_paths.fill( currentfloor, bread_paths.length-1 );
+        //     } else {
+        //         console.log('不是同一层');
+        //         console.log(bread_paths);
+        //         const index = bread_paths.findIndex(item => item.name == folder_id);
+        //         bread_paths.splice(index,bread_paths.length-1);
+        //         bread_paths.push(currentfloor);
+        //     }
+        // } else { // 如果存在就截取
+        //     console.log('已经存在id了');
+        //     const index = bread_paths.findIndex(item => item.name == folder_id);
+        //     bread_paths.splice(index,bread_paths.length-1);
+        //     bread_paths.push(currentfloor);
+        // }
+        
+        this.setState({
+            bread_paths,
+            currentItemIayerId: folder_id
+        },()=>{
+            this.getThumbnailFilesData('2');
+        });
+        
+    }
+
+    // 触发搜索框，是否选择搜索详情
+    isShowSearchOperationDetail = (value) => {
+        this.setState({ isSearchDetailOnfocusOrOnblur: value });
+    }
 
     initModalSelect = () => {
         const { dispatch } = this.props
@@ -916,9 +1010,27 @@ class BoardCommunication extends Component {
 
 
     render() {
-        const { currentBoardDetail = {}, dispatch, model = {}, modal, simplemodeCurrentProject, communicationProjectListData, communicationSubFolderData } = this.props;
-        const {selectBoardFileModalVisible, showFileListisOpenFileDetailModal, isVisibleFileList } = this.state;
-        const { currentfile = {}, is_selectFolder, dragEnterCaptureFlag, showFileSelectDropdown } = this.state;
+        const {
+            currentBoardDetail = {},
+            dispatch, model = {},
+            modal,
+            simplemodeCurrentProject,
+            communicationProjectListData,
+            communicationSubFolderData,
+        } = this.props;
+        const {
+            currentfile = {},
+            is_selectFolder,
+            dragEnterCaptureFlag,
+            showFileSelectDropdown,
+            selectBoardFileModalVisible,
+            showFileListisOpenFileDetailModal,
+            isVisibleFileList,
+            bread_paths,
+            currentSelectBoardId,
+            currentItemIayerId,
+            isSearchDetailOnfocusOrOnblur,
+        } = this.state;
         const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
         const zommPictureComponentHeight = container_workbenchBoxContent ? container_workbenchBoxContent.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding
         // const zommPictureComponentWidth = container_workbenchBoxContent ? container_workbenchBoxContent.offsetWidth - 419 - 50 - 5 : 600; //60为文件内容组件评论等区域宽带   50为容器padding  
@@ -1251,8 +1363,14 @@ class BoardCommunication extends Component {
             {/* 2019.11.04 start */}
 
                 {/* 首屏-文件路径面包屑/搜索 */}
-                <CommunicationFirstScreenHeader />
-
+                <CommunicationFirstScreenHeader
+                    bread_paths={bread_paths}
+                    currentSelectBoardId={currentSelectBoardId}
+                    currentItemIayerId={currentItemIayerId}
+                    isShowSearchOperationDetail={this.isShowSearchOperationDetail}
+                    // setBreadPaths={this.setBreadPaths}
+                    {...this.props}
+                />
                 
                 {/* 控制列表是否显示的控制按钮 */}
                 <div
@@ -1269,6 +1387,7 @@ class BoardCommunication extends Component {
                     <CommunicationTreeList
                         // communicationProjectListData={communicationProjectListData}
                         // communicationSubFolderData={communicationSubFolderData}
+                        onSelectTree={this.onSelectTree}
                         getCommunicationFolderList={this.getCommunicationFolderList}
                         queryCommunicationFileData={this.queryCommunicationFileData}
                         showUpdatedFileDetail={this.showUpdatedFileDetail}
@@ -1284,6 +1403,11 @@ class BoardCommunication extends Component {
                     !this.state.previewFileModalVisibile &&
                     <CommunicationThumbnailFiles
                         isVisibleFileList={isVisibleFileList}
+                        currentSelectBoardId={currentSelectBoardId}
+                        currentItemIayerId={currentItemIayerId}
+                        bread_paths={bread_paths}
+                        isSearchDetailOnfocusOrOnblur={isSearchDetailOnfocusOrOnblur}
+                        {...this.props}
                     />
                 }
 
@@ -1480,14 +1604,15 @@ function mapStateToProps({
     workbenchPublicDatas,
     gantt: {
         datas: {
-            gantt_board_id
+            gantt_board_id,
+            boards_flies = []
         }
     },
     gantt,
     projectCommunication:{
         currentBoardId,
         communicationProjectListData,
-        // communicationSubFolderData,
+        communicationSubFolderData,
     }
 }) {
     const modelObj = {
@@ -1513,7 +1638,8 @@ function mapStateToProps({
         gantt_board_id,
         currentBoardId,
         communicationProjectListData,
-        // communicationSubFolderData
+        communicationSubFolderData,
+        boards_flies,
     }
 }
 export default connect(mapStateToProps)(BoardCommunication)

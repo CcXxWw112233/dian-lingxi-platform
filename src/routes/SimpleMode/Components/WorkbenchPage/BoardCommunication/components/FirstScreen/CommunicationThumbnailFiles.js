@@ -9,22 +9,16 @@ import { Upload, Icon, message } from 'antd';
 import styles from './CommunicationThumbnailFiles.less';
 
 
-// @connect(mapStateToProps)
-// @connect()
-const thumbnailFilesList = [
-    { id: '001', type: 'jpg', fileName: '结构施工一改.jpg', size: '14.4K', changeData: '2019/08/21 08:31' },
-    { id: '002', type: 'dwg', fileName: '水专施工一改.dwg', size: '14.4K', changeData: '2019/08/21 08:31' },
-    { id: '003', type: 'png', fileName: '建筑方案.png', size: '14.4K', changeData: '2019/08/21 08:31' },
-]
-
+@connect(mapStateToProps)
 export default class CommunicationThumbnailFiles extends Component {
     constructor(props){
         super(props);
         this.state = {
             currentFileschoiceType: 0, // "0 搜索全部文件 1 搜索子集文件
-            thumbnailFilesList: thumbnailFilesList, // 缩略图数据
+            // thumbnailFilesList: thumbnailFilesList, // 缩略图数据
         }
     }
+
 
     // 上传文件
     uploadProps = () => {
@@ -94,8 +88,18 @@ export default class CommunicationThumbnailFiles extends Component {
     }
 
     render(){
-        const { isVisibleFileList } = this.props;
-        const { currentFileschoiceType, thumbnailFilesList } = this.state;
+        const {
+            isVisibleFileList,
+            onlyFileList,
+            onlyFileTableLoading,
+            isSearchDetailOnfocusOrOnblur,
+            currentItemIayerId,
+            currentSelectBoardId,
+            bread_paths
+        } = this.props;
+        const { currentFileschoiceType } = this.state;
+        const currentIayerFolderName = bread_paths && bread_paths.length && (bread_paths[bread_paths.length-1].board_name || bread_paths[bread_paths.length-1].folder_name);
+        // console.log('bread_paths',bread_paths);
         return(
             <div className={`${styles.communicationThumbnailFiles} ${isVisibleFileList ? styles.changeContentWidth : null}`}>
                 {/* 上传文件和切换列表显示操作 */}
@@ -111,28 +115,53 @@ export default class CommunicationThumbnailFiles extends Component {
                 </div>
 
                 {/* 搜索input触发-显示样式 */}
-                <div className={styles.searchTypeBox}>
-                    搜索：
-                    <span
-                        className={currentFileschoiceType === 0 ? styles.currentFile : ''}
-                        onClick={()=>this.changeChooseType('0')}
-                    >
-                        “全部文件”
-                    </span>
-                    <span
-                        className={currentFileschoiceType === 1 ? styles.currentFile : ''}
-                        onClick={()=>this.changeChooseType('1')}
-                    >
-                        基础资料
-                    </span>
-                </div>
+                {
+                    isSearchDetailOnfocusOrOnblur && (
+                        <div className={styles.searchTypeBox}>
+                            搜索：
+                            <span
+                                className={currentFileschoiceType === 0 ? styles.currentFile : ''}
+                                onClick={()=>this.changeChooseType('0')}
+                            >
+                                “全部文件”
+                            </span>
+                            {
+                                currentIayerFolderName ? (
+                                    <span
+                                        className={currentFileschoiceType === 1 ? styles.currentFile : ''}
+                                        onClick={()=>this.changeChooseType('1')}
+                                    >
+                                        { currentIayerFolderName }
+                                    </span>
+                                ) :
+                                ''
+                            }
+                            
+                        </div>
+                    )
+                }
+                
 
                 {/* 首屏-右侧缩略图列表 */}
                 <ThumbnailFilesListShow
-                    thumbnailFilesList={thumbnailFilesList}
+                    // thumbnailFilesList={thumbnailFilesList}
+                    thumbnailFilesList={onlyFileList}
+                    onlyFileTableLoading={onlyFileTableLoading}
                 />
                 
             </div>
         )
+    }
+}
+
+function mapStateToProps({
+    projectCommunication:{
+        onlyFileList,
+        onlyFileTableLoading
+    }
+}) {
+    return {
+        onlyFileList,
+        onlyFileTableLoading
     }
 }

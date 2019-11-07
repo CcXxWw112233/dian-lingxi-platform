@@ -18,14 +18,17 @@ export default class CommunicationTreeList extends Component{
         this.state = {
             collapseActiveKeys: [], // 折叠面板展示列keys
             // isVisibleFileList: true, // 是否显示/隐藏文件列表，默认显示
-            isShowSub: false, // 当前组件显示，false 第一级组件 true 子集组件
-            fileData: null, // 子组件数据
-            currentSubId: '', // 当前子集文件id
-            currentBoardId: '', // 当前子集文件所属项目id
-            currentBoardName: '', // 当前子集文件名
-            bread_paths: {}, // 面包屑路径
-            first_paths_item: {}, // 默认一级路径
-            currentOrg_id: '', // 当前组织id
+            // isShowSub: false, // 当前组件显示，false 第一级组件 true 子集组件
+            // fileData: null, // 子组件数据
+            // currentSubId: '', // 当前子集文件id
+            // currentBoardId: '', // 当前子集文件所属项目id
+            // currentBoardName: '', // 当前子集文件名
+            // bread_paths: {}, // 面包屑路径
+            // first_paths_item: {}, // 默认一级路径
+            // currentOrg_id: '', // 当前组织id
+            expandedKeys: [], // （受控）展开指定的树节点
+            // autoExpandParent: false, // 是否自动展开父节点
+            selectedKeys: [], // 设置选中的树节点
         }
     }
 
@@ -35,15 +38,6 @@ export default class CommunicationTreeList extends Component{
             // is_show_board_file_area,
             boards_flies = [],
         } = this.props;
-    }
-
-    // 设置第一个路径
-    setFirstPaths=(first_paths_item, bread_paths)=>{
-        this.setState({
-            first_paths_item: first_paths_item,
-            bread_paths: bread_paths,
-            isShowSub: false,
-        });
     }
 
 
@@ -66,150 +60,12 @@ export default class CommunicationTreeList extends Component{
         
     }
 
-
-    // 显示一级目录组件还是子集组件
-    showWhatComponent =(type, {path_item = {}})=>{
-        const { id, board_id, name} = path_item;
-        if(type="2"){
-            this.setState({
-                isShowSub: true,
-                currentSubId: id,
-                // currentBoardId: first_paths_item.id,
-                currentBoardName: name,
-            }, ()=>{
-                // this.getSubFileData(id,board_id);
-                this.changeBreadPath(path_item);
-            });
-        }
-    }
-
-
-    // 更新路径
-    // changeBreadPath=({path_item = {}})=>{
-    changeBreadPath=(path_item)=>{
-        const { bread_paths = [], first_paths_item } = this.state;
-        const { id, type } = path_item;
-        let new_bread_paths = [...bread_paths]
-        if (type == 'board') { //项目
-            new_bread_paths = [first_paths_item]
-            this.getBoardFileList()
-        } else { //文件夹
-            const index = bread_paths.findIndex(item => item.id == id)
-            if (index == -1) { //如果不存在就加上
-                new_bread_paths.push(path_item)
-            } else { //如果存在就截取
-                new_bread_paths = bread_paths.slice(0, index + 1)
-            }
-            // debugger;
-            this.getSubFileData(id, first_paths_item.id);
-        }
-        this.setState({
-            bread_paths: new_bread_paths
-        })
-    }
-
-    getBoardFileList = () => { // 获取项目根目录文件列表
-        const { first_paths_item: { folder_id = ' ' } } = this.state
-        this.getSubFileData({ id: folder_id })
-    }
-
-    // 获取子集组件数据
-    getSubFileData = async (folderId, boardId)=>{
-        const res = await getFileList({ folder_id: folderId, board_id: boardId });
-        if (isApiResponseOk(res)) {
-            const data = res.data;
-            const files = data.file_data.map(item => {
-                let new_item = { ...item }
-                new_item['name'] = item['file_name']
-                new_item['id'] = item['file_id']
-                return new_item
-            });
-            const folders = data.folder_data.map(item => {
-                let new_item = { ...item }
-                new_item['name'] = item['folder_name']
-                new_item['id'] = item['folder_id']
-                return new_item
-            });
-            const file_data = [].concat(folders, files);
-            this.setState({
-                fileData: file_data
-            });
-
-        } else {
-            message.error('获取数据失败');
-        }
-    }
-
-    panelOnClick=(item)=>{
-        console.log('item',item);
-        this.setState({currentOrg_id: item.org_id});
-    }
-
-    // 返回上一个
-    goBackPrev=(folderId)=>{
-        const { bread_paths = [], first_paths_item } = this.state;
-        const index = bread_paths.findIndex(item => item.id === folderId);
-        let currentPath = bread_paths[index-1];
-        if(currentPath.firstType && currentPath.firstType == 'first'){
-            // console.log('回去第一层');
-            this.setState({
-                isShowSub: false,
-            }, ()=>{
-                this.props.queryCommunicationFileData();
-            });
-        } else{
-            this.setState({
-                currentBoardName: currentPath.name,
-                currentSubId: currentPath.id,
-            });
-            this.getSubFileData(currentPath.id, first_paths_item.id);
-        }
-    }
-
-    collapseOnchange=(keys,)=>{
+    // 点击折叠面板
+    collapseOnchange=(keys,data)=>{
         this.setState({ collapseActiveKeys: keys });
-        // const clickId = keys;
-        // const clickKey = clickId.split("_")[0];
-        this.props.getCommunicationFolderList(keys);
-        
+        this.props.getCommunicationFolderList(keys); // 获取项目交流目录下子集数据
     }
 
-    // 处理数据更新后，折叠面板的ActiveKeys 保持当前，不折叠
-    setNewActiveKeys = (id) => {
-        const { boards_flies } = this.props;
-        console.log('id',id);
-        // const newIds= [];
-        // boards_flies.forEach((boardItem)=>{
-        //     if(boardItem.id === clickKey){
-        //         newIds.push(`${boardItem.id}_${boardItem.file_data.length}`);
-        //     }
-        // })
-        // return newIds;
-     }
-    //  setNewActiveKeys = (id) => {
-    //     const { boards_flies } = this.props;
-    //     var ids = id.map((item)=>{
-    //         return item.split("_")[0];
-    //     })
-    //     const newIds= [];
-    //     ids.forEach((item)=>{
-    //         boards_flies.forEach((boardItem)=>{
-    //             if(boardItem.id === item){
-    //                 newIds.push(`${boardItem.id}_${boardItem.file_data.length}`);
-    //             }
-    //         })
-    //     })
-    //     return newIds;
-    //  }
-
-     // 测试
-    //  onClickBtn=(key)=>{
-    //     const { dispatch } = this.props;
-    //     const typeKey = `projectCommunication/${key}`;
-    //     dispatch({
-    //         type: typeKey,
-    //     })
-    //  }
 
     // 渲染当前项目子节点树
     renderTreeNodes = communicationSubFolderData =>
@@ -224,30 +80,49 @@ export default class CommunicationTreeList extends Component{
       return <TreeNode title={item.folder_name} key={item.folder_id} {...item} />;
     });
 
+    // 展开/收起节点时触发
+    onExpand = expandedKeys => {
+        console.log('onExpand', expandedKeys);
+        // if not set autoExpandParent to false, if children expanded, parent can not collapse.
+        // or, you can remove all expanded children keys.
+        this.setState({
+          expandedKeys,
+          autoExpandParent: false,
+        });
+    };
+
+    // 点击树节点触发
+    onSelect = (selectedKeys, info) => {
+        const currentInfo = info.selectedNodes[0].props.dataRef;
+        // this.props.changeSubBreadPaths(currentInfo);
+        this.setState({ selectedKeys });
+        this.props.onSelectTree(currentInfo);
+    };
+
     render(){
         const {
             collapseActiveKeys,
             // isVisibleFileList,
-            isShowSub,
-            fileData,
-            currentSubId,
-            currentBoardId,
-            currentBoardName,
-            currentOrg_id,
-            bread_paths,
-            first_paths_item,
+            // isShowSub,
+            // fileData,
+            // currentSubId,
+            // currentBoardId,
+            // currentBoardName,
+            // currentOrg_id,
+            // bread_paths,
+            // first_paths_item,
         } = this.state;
         const {
             boards_flies = [],
             is_show_org_name,
             is_all_org,
-            currentUserOrganizes,
-            selectBoardFileModalVisible,
+            // currentUserOrganizes,
+            // selectBoardFileModalVisible,
             isVisibleFileList,
             communicationSubFolderData=[],
         } = this.props;
         const isShowCompanyName = is_show_org_name && is_all_org; // 是否显示归属组织
-        console.log('subcom...',communicationSubFolderData);
+        // console.log('subcom...',communicationSubFolderData);
         const { child_data = [] } = communicationSubFolderData;
         return(
             <div className={styles.communicationTreeList}>
@@ -273,9 +148,12 @@ export default class CommunicationTreeList extends Component{
                                                 <Panel header={this.showHeader(item, isShowCompanyName)} key={`${item.id}`} onClick={()=>this.panelOnClick(item)}>
                                                     <DirectoryTree
                                                         multiple
-                                                        defaultExpandAll
+                                                        defaultExpandAll ={false}
                                                         onSelect={this.onSelect}
                                                         onExpand={this.onExpand}
+                                                        expandedKeys={this.state.expandedKeys}
+                                                        // autoExpandParent={this.state.autoExpandParent}
+                                                        selectedKeys={this.state.selectedKeys}
                                                     >
                                                         { this.renderTreeNodes(child_data) }
                                                     </DirectoryTree>
@@ -288,15 +166,6 @@ export default class CommunicationTreeList extends Component{
                         </div>
                     )
                 }
-
-                {/* 控制列表是否显示的控制按钮 */}
-                {/* <div
-                    className={styles.operationBtn}
-                    style={{ left: isVisibleFileList ? '299px' : '0'}}
-                    onClick={this.props.isShowFileList}
-                >
-                    <Icon type={isVisibleFileList ? 'left' : 'right'} />
-                </div> */}
 
             </div>
         );
