@@ -101,10 +101,8 @@ class SimpleHeader extends Component {
             }
         }
         if (Im) {
-            Im.removeEventListener('visible', visibleFunc)
-            Im.addEventListener('visible', visibleFunc)
-            Im.removeEventListener('clickDynamic', clickDynamicFunc, false)
-            Im.addEventListener('clickDynamic', clickDynamicFunc, false);
+            Im.on('visible', visibleFunc)
+            Im.on('clickDynamic', clickDynamicFunc);
         }
     }
     // 圈子点击
