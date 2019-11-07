@@ -123,11 +123,19 @@ export default class AppendSubTask extends Component {
     return temp_arr
   }
 
+   // 获取 currentDrawerContent 数据
+   getCurrentDrawerContentPropsModelDatasExecutors = () => {
+    const { drawContent: { properties = [] } } = this.props
+    const pricipleInfo = properties.filter(item => item.code == 'EXECUTOR')[0]
+    return pricipleInfo || {}
+  }
+
   // 子 执行人的下拉回调
   chirldrenTaskChargeChange = (dataInfo) => {
     let sub_executors = []
     const { data, drawContent = {}, dispatch } = this.props
-    const { executors = [], card_id } = drawContent
+    const { card_id } = drawContent
+    const { data: executors = [] } = this.getCurrentDrawerContentPropsModelDatasExecutors()
     const { selectedKeys = [] } = dataInfo
     let new_data = [...data]
     let new_executors = [...executors]
@@ -146,7 +154,7 @@ export default class AppendSubTask extends Component {
         drawContent: new_drawContent
       }
     })
-    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: drawContent, card_id})
+    // this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: drawContent, card_id})
     this.setState({
       sub_executors
     })

@@ -81,16 +81,23 @@ export default class AppendSubTaskItem extends Component {
     return temp_arr
   }
 
+   // 获取 currentDrawerContent 数据
+   getCurrentDrawerContentPropsModelDatasExecutors = () => {
+    const { drawContent: { properties = [] } } = this.props
+    const pricipleInfo = properties.filter(item => item.code == 'EXECUTOR')[0]
+    return pricipleInfo || {}
+  }
+
   // 执行人下拉回调
   chirldrenTaskChargeChange = (dataInfo) => {
     let sub_executors = []
     const { data = [], drawContent = {}, dispatch, childTaskItemValue } = this.props
-    const { executors = [] } = drawContent
+    // const { executors = [] } = drawContent
+    const { data: executors = [] } = this.getCurrentDrawerContentPropsModelDatasExecutors()
     const { card_id } = childTaskItemValue
     const { selectedKeys = [], type, key } = dataInfo
     let new_data = [...data]
     let new_executors = [...executors]
-    let user_ids = []
     // 这里是将选中的人添加进子任务执行人以及更新父级任务执行人
     new_data.map(item => {
       if (selectedKeys.indexOf(item.user_id) != -1) {
@@ -99,21 +106,26 @@ export default class AppendSubTaskItem extends Component {
       }
     })
     let new_drawContent = {...drawContent}
-    // new_drawContent['executors'] = this.arrayNonRepeatfy(new_executors)
-    new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', this.arrayNonRepeatfy(new_executors))
-    this.setChildTaskIndrawContent({ name: 'executors', value: sub_executors }, card_id)// 先弹窗中子任务执行人中的数据
-    dispatch({
-      type: 'publicTaskDetailModal/updateDatas',
-      payload: {
-        drawContent: new_drawContent
-      }
-    })
+    
     if (type == 'add') {
-      dispatch({
-        type: 'publicTaskDetailModal/addTaskExecutor',
-        payload: {
-          card_id,
-          executor: key
+      Promise.resolve(
+        dispatch({
+          type: 'publicTaskDetailModal/addTaskExecutor',
+          payload: {
+            card_id,
+            executor: key
+          }
+        })
+      ).then(res => {
+        if (isApiResponseOk(res)) {
+          new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', this.arrayNonRepeatfy(new_executors))
+          this.setChildTaskIndrawContent({ name: 'executors', value: sub_executors }, card_id)// 先弹窗中子任务执行人中的数据
+          dispatch({
+            type: 'publicTaskDetailModal/updateDatas',
+            payload: {
+              drawContent: new_drawContent
+            }
+          })
         }
       })
     } else if (type == 'remove') {
@@ -227,7 +239,9 @@ export default class AppendSubTaskItem extends Component {
         drawContent: new_drawContent
       }
     })
-    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id: drawContent.card_id, name: 'card_data', value: new_data })
+    if (name && value) {
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id: drawContent.card_id, name: 'card_data', value: new_data })
+    }
   }
 
   // 按下回车事件
