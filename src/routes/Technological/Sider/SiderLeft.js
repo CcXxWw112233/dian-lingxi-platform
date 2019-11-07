@@ -3,7 +3,7 @@ import { Icon, Layout, Menu, Dropdown, Tooltip, Switch, Modal } from 'antd';
 import indexStyles from './index.less'
 import glabalStyles from '../../../globalset/css/globalClassName.less'
 import linxiLogo from '../../../assets/library/lingxi_logo.png'
-import { checkIsHasPermission, currentNounPlanFilterName,isPaymentOrgUser} from "../../../utils/businessFunction";
+import { checkIsHasPermission, currentNounPlanFilterName, isPaymentOrgUser} from "../../../utils/businessFunction";
 import {
   DASHBOARD, MEMBERS, ORG_UPMS_ORGANIZATION_EDIT, ORG_UPMS_ORGANIZATION_ROLE_CREATE,
   ORG_UPMS_ORGANIZATION_ROLE_EDIT, ORG_UPMS_ORGANIZATION_ROLE_DELETE, ORG_UPMS_ORGANIZATION_MEMBER_ADD,

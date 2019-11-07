@@ -139,7 +139,7 @@ class BoardDropdownSelect extends Component {
       const { board_id: id, board_name: name, org_id } = board;
       //根据当前模块是付费非付费模块 去设置项目列表中的项目是否可以选择
       if (currentSelectedWorkbenchBox.code !== 'board:plans' && !isPaymentOrgUser(org_id)) {
-        menuItemList.push({ id, name, parentName: getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes),disabled:true});
+        menuItemList.push({ id, name, parentName: getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes), disabled: true});
       }else{
         menuItemList.push({ id, name, parentName: getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes) });
       }

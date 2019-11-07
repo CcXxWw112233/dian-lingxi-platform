@@ -360,7 +360,7 @@ export const isPaymentOrgUser = (_org_id) => {
     // console.log("curentOrgs", curentOrgs);
     if (curentOrgs && curentOrgs.length > 0) {
       let curentOrg = curentOrgs[0] || {};
-      if (curentOrg.payment_status == 1 && moment(parseInt(curentOrg.payment_end_date.length == 10 ? curentOrg.payment_end_date + "000" : curentOrg.payment_end_date)).isAfter(new Date)) {
+      if (curentOrg.payment_status == 1 && moment(parseInt(curentOrg.payment_end_date.length == 10 ? curentOrg.payment_end_date + "000" : curentOrg.payment_end_date)).isAfter(new Date())) {
         return true;
       } else {
         return false;

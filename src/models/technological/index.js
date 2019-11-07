@@ -111,7 +111,6 @@ export default {
       })
       yield call(getUSerInfoSync);
 
-      yield put({ //  获取当前成员在企业中的权限列表
       yield put({ //  获取当前成员在组织中的权限列表
         type: 'getUserOrgPermissions',
         payload: {}
@@ -374,8 +373,6 @@ export default {
 
       if (is_simple_model == 1) {
         //极简模式只能是全企业
-      if (checked) {
-        //极简模式只能是全组织
 
         localStorage.setItem('currentSelectOrganize', JSON.stringify({}))
         localStorage.setItem('OrganizationId', 0)

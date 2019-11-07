@@ -634,13 +634,13 @@ export default class SimpleNavigation extends Component {
                             <span>通知设置</span>
                         </Menu.Item>
                         {
-                            isPaymentOrgUser() &&
+                            isPaymentOrgUser() && (
                             <Menu.Item key="subShowSimple">
                                 <span>
                                     切换普通模式
                                 </span>
                             </Menu.Item>
-                        }
+                          )}
 
                     </SubMenu>
 

@@ -198,7 +198,7 @@ class MyWorkbenchBoxs extends Component {
     return menuItemList;
   }
 
-  goWorkbenchBox = (item, isDisabled,tipTitle) => {
+  goWorkbenchBox = (item, isDisabled, tipTitle) => {
 
     if (isDisabled) {
       message.warn(tipTitle);
@@ -310,19 +310,20 @@ class MyWorkbenchBoxs extends Component {
 
     return (
       <>
-        {tipTitle ?
+        {tipTitle ? (
           <Tooltip title={tipTitle} key={item.id}>
-            <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item, isDisabled,tipTitle)} disabled={isDisabled}>
+            <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item, isDisabled, tipTitle)} disabled={isDisabled}>
               <i dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} ></i><br />
               <span className={indexStyles.myWorkbenchBox_title}>{item.name}</span>
             </div>
           </Tooltip>
-          :
-          <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item, isDisabled,tipTitle)} disabled={isDisabled}>
+        )
+          : (
+          <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item, isDisabled, tipTitle)} disabled={isDisabled}>
             <i dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} ></i><br />
             <span className={indexStyles.myWorkbenchBox_title}>{item.name}</span>
           </div>
-        }
+        )}
       </>
     )
 

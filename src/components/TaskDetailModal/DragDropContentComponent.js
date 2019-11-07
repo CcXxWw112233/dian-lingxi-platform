@@ -588,7 +588,7 @@ export default class DragDropContentComponent extends Component {
   }
 
   // 递归获取附件路径 S
-  getFolderPathName = (fileList,fileItem) => {
+  getFolderPathName = (fileList, fileItem) => {
     let new_fileList = [...fileList]
     let arr = []
     const target_path = fileItem.folder_path

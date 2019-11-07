@@ -185,7 +185,7 @@ class WorkbenchPage extends Component {
     render() {
         const { workbenchBoxContentWapperModalStyle, currentSelectedWorkbenchBox, simplemodeCurrentProject } = this.props;
         let isPaymentUser = false;
-        console.log("simplemodeCurrentProject",simplemodeCurrentProject);
+        console.log("simplemodeCurrentProject", simplemodeCurrentProject);
         if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
          
             isPaymentUser = isPaymentOrgUser(simplemodeCurrentProject.org_id);
@@ -193,7 +193,7 @@ class WorkbenchPage extends Component {
             isPaymentUser = isPaymentOrgUser();
         }
 
-        console.log("isPaymentUser1",isPaymentUser);
+        console.log("isPaymentUser1", isPaymentUser);
         return (
             <div className={indexStyles.workbenchBoxContentModalContainer}>
                 <MiniBoxNavigations currentSelectedWorkbenchBox={currentSelectedWorkbenchBox} />

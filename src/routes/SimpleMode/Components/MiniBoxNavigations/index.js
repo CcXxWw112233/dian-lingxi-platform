@@ -10,7 +10,7 @@ import { isPaymentOrgUser } from "@/utils/businessFunction"
 
 
 const MiniBoxNavigations = (props) => {
-    const { dispatch, myWorkbenchBoxList = [], workbenchBoxContentWapperModalStyle, currentSelectedWorkbenchBox = {},simplemodeCurrentProject } = props;
+    const { dispatch, myWorkbenchBoxList = [], workbenchBoxContentWapperModalStyle, currentSelectedWorkbenchBox = {}, simplemodeCurrentProject } = props;
 
     const getIsDisabled = (item) => {
         const { rela_app_id, code } = item

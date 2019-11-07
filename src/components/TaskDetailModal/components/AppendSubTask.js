@@ -171,7 +171,7 @@ export default class AppendSubTask extends Component {
   //截止时间
   endDatePickerChange(timeString) {
     const { drawContent = {}, } = this.props
-    const { data = [] } =  drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
+    const { data = [] } = drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
     const due_timeStamp = timeToTimestamp(timeString)
     if (!compareTwoTimestamp(data.deadline, due_timeStamp)) {
       message.warn('任务的截止日期不能大于关联里程碑的截止日期')
