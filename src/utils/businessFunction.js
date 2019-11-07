@@ -344,8 +344,8 @@ export const isPaymentOrgUser = (_org_id) => {
     OrganizationId = localStorage.getItem('OrganizationId')
   }
   const currentUserOrganizes = JSON.parse(localStorage.getItem('currentUserOrganizes')) || [];
-  console.log("OrganizationId", OrganizationId);
-  console.log("currentUserOrganizes", currentUserOrganizes);
+  // console.log("OrganizationId", OrganizationId);
+  // console.log("currentUserOrganizes", currentUserOrganizes);
 
   if (OrganizationId == '0') {
     //全组织
@@ -357,7 +357,7 @@ export const isPaymentOrgUser = (_org_id) => {
   } else {
     //单组织
     let curentOrgs = currentUserOrganizes.filter(item => item.id == OrganizationId);
-    console.log("curentOrgs", curentOrgs);
+    // console.log("curentOrgs", curentOrgs);
     if (curentOrgs && curentOrgs.length > 0) {
       let curentOrg = curentOrgs[0] || {};
       if (curentOrg.payment_status == 1 && moment(parseInt(curentOrg.payment_end_date.length == 10 ? curentOrg.payment_end_date + "000" : curentOrg.payment_end_date)).isAfter(new Date)) {

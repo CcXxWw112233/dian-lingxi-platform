@@ -123,9 +123,16 @@ const MiniBoxNavigations = (props) => {
                                         <div className={indexStyles.text}>{item.name}</div>
     
                                     </Tooltip>
-                                )
+                                );
                             }else{
-                                return
+                                return (
+                                    <Tooltip key={item.id} placement="bottom" title={'付费功能：该项目所在企业尚未升级企业版'} className={`${indexStyles.nav} ${indexStyles.menu} ${indexStyles.disabled}`} key={key}>
+    
+                                        <div dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '24px', textShadow: '1px 2px 0px rgba(0,0,0,0.15)' }}></div>
+                                        <div className={indexStyles.text}>{item.name}</div>
+    
+                                    </Tooltip>
+                                );
                             }
                            
                         })
