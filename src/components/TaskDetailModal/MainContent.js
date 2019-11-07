@@ -494,6 +494,104 @@ export default class MainContent extends Component {
   }
   // 删除结束时间 E
 
+  // 对应字段的删除 S
+  handleDelCurrentField = (shouldDeleteId) => {
+    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    const that = this
+    this.setState({
+      showDelColor: true,
+      currentDelId: shouldDeleteId
+    })
+    let flag = false
+    const { dispatch, drawContent = {}, drawContent: { card_id } } = that.props
+    const { selectedKeys = [] } = that.state
+    let new_drawContent = { ...drawContent }
+    let filter_drawContent = { ...drawContent }
+    let new_selectedKeys = [...selectedKeys]
+    filter_drawContent['properties'].find(item => {
+      if (item.id == shouldDeleteId) { // 表示找到当前item
+        if (Array.isArray(item.data)) {
+          flag = item.data.length
+        } else if (item.data instanceof Object) {
+          let arr = Object.keys(item.data);
+          flag = !(arr.length == '0')
+        } else if (item.data) {
+          flag = true
+        }
+      }
+    })
+    new_selectedKeys = new_selectedKeys.filter(item => item != shouldDeleteId)
+    new_drawContent['properties'] = new_drawContent['properties'].filter(item => item.id != shouldDeleteId)
+    if (flag) {
+      Modal.confirm({
+        title: `确认要删除这条字段吗？`,
+        zIndex: 1007,
+        content: <div style={{ color: 'rgba(0,0,0, .65)', fontSize: 14 }}>
+          <span >删除包括删除这条字段已填写的内容。</span>
+        </div>,
+        okText: '确认',
+        cancelText: '取消',
+        onOk() {
+          Promise.resolve(
+            dispatch({
+              type: 'publicTaskDetailModal/removeCardAttributes',
+              payload: {
+                card_id, property_id: shouldDeleteId
+              }
+            })
+          ).then(res => {
+            if (isApiResponseOk(res)) {
+              that.setState({
+                selectedKeys: new_selectedKeys,
+                shouldDeleteId: '',
+                showDelColor: ''
+              })
+              dispatch({
+                type: 'publicTaskDetailModal/updateDatas',
+                payload: {
+                  drawContent: new_drawContent
+                }
+              })
+            }
+          })
+        },
+        onCancel() {
+          that.setState({
+            shouldDeleteId: '',
+            showDelColor: ''
+          })
+        }
+      })
+    } else {
+      Promise.resolve(
+        dispatch({
+          type: 'publicTaskDetailModal/removeCardAttributes',
+          payload: {
+            card_id, property_id: shouldDeleteId
+          }
+        })
+      ).then(res => {
+        if (isApiResponseOk(res)) {
+          that.setState({
+            selectedKeys: new_selectedKeys,
+            shouldDeleteId: '',
+            showDelColor: ''
+          })
+          dispatch({
+            type: 'publicTaskDetailModal/updateDatas',
+            payload: {
+              drawContent: new_drawContent
+            }
+          })
+        }
+      })
+    }
+  }
+  // 对应字段的删除 E
+
 
   // 会议的状态值, 比较当前时间和开始时间结束时间的对比 S
   getMeetingStatus = () => {
