@@ -132,7 +132,7 @@ export default class DetailInfo extends React.Component {
               <div>{full_name}</div>
             </div>
             <div className={detailInfoStyle.detailItem}>
-              <div>企业：</div>
+              <div>组织：</div>
               <div>无</div>
             </div>
             <div className={detailInfoStyle.detailItem}>

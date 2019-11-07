@@ -9,6 +9,10 @@ import Cookies from "js-cookie";
 import SimpleNavigation from "./Components/SimpleNavigation/index"
 import SimpleDrawer from './Components/SimpleDrawer/index'
 import LingxiIm, { Im } from 'lingxi-im'
+import TaskDetailModal from '@/components/TaskDetailModal'
+import { setBoardIdStorage, getSubfixName } from "../../../../utils/businessFunction";
+import FileDetailModal from '../../../Technological/components/ProjectDetail/FileModule/FileDetail/FileDetailModal'
+
 class SimpleHeader extends Component {
     state = {
         leftNavigationVisible: false,
@@ -81,24 +85,120 @@ class SimpleHeader extends Component {
     //   // }
     // }
     componentDidMount() {
-        let func = (val) => {
+        this.imInitOption()
+    }
+
+    //圈子
+    imInitOption = () => {
+        const { protocol, host } = window.location
+        Im.option({
+            baseUrl: `${protocol}//${host}/`,
+            // APPKEY: "c3abea191b7838ff65f9a6a44ff5e45f"
+        })
+        const clickDynamicFunc = (data) => {
+            this.imClickDynamic(data);
+        }
+        const visibleFunc = (val) => {
             if (!val) {
                 this.openOrCloseImChatModal(false)
             }
         }
-        Im.removeEventListener('visible', func)
-        Im.addEventListener('visible', func)
-        this.imInitOption()
+        if (Im) {
+            Im.on('visible', visibleFunc)
+            Im.on('clickDynamic', clickDynamicFunc);
+        }
     }
-
-
-    imInitOption = () => {
-        const { protocol, host } = window.location
-        Im.option({ baseUrl: `${protocol}//${host}/` })
+    // 圈子点击
+    imClickDynamic = (data = {}) => {
+        const { dispatch } = this.props
+        const { orgId, boardId, type, relaDataId, cardId, relaDataName } = data
+        // console.log('ssss', data)
+        dispatch({
+            type: 'projectDetail/updateDatas',
+            payload: {
+                board_id: boardId
+            }
+        })
+        setBoardIdStorage(boardId)
+        switch (type) {
+            case 'board':
+                break
+            case 'folder':
+                break;
+            case 'file':
+                dispatch({
+                    type: 'projectDetail/updateDatas',
+                    payload: {
+                        projectDetailInfoData: { board_id: boardId }
+                    }
+                })
+                dispatch({
+                    type: 'projectDetail/getRelationsSelectionPre',
+                    payload: {
+                        _organization_id: orgId
+                    }
+                })
+                dispatch({
+                    type: 'projectDetailFile/getCardCommentListAll',
+                    payload: {
+                        id: relaDataId
+                    }
+                })
+                dispatch({
+                    type: 'projectDetailFile/updateDatas',
+                    payload: {
+                        isInOpenFile: true,
+                        seeFileInput: 'fileModule',
+                        // currentPreviewFileData: data,
+                        filePreviewCurrentFileId: relaDataId,
+                        // filePreviewCurrentId: file_resource_id,
+                        // filePreviewCurrentVersionId: version_id,
+                        pdfDownLoadSrc: '',
+                        fileType: getSubfixName(relaDataName)
+                    }
+                })
+                if (getSubfixName(relaDataName) == '.pdf') {
+                    dispatch({
+                        type: 'projectDetailFile/getFilePDFInfo',
+                        payload: {
+                            id: relaDataId
+                        }
+                    })
+                } else {
+                    dispatch({
+                        type: 'projectDetailFile/filePreview',
+                        payload: {
+                            file_id: relaDataId
+                        }
+                    })
+                    // 这里调用是用来获取以及更新访问控制文件弹窗详情中的数据, 一开始没有的
+                    // 但是这样会影响 文件路径, 所以传递一个参数来阻止更新
+                    dispatch({
+                        type: 'projectDetailFile/fileInfoByUrl',
+                        payload: {
+                            file_id: relaDataId,
+                            isNotNecessaryUpdateBread: true
+                        }
+                    })
+                }
+                break
+            case 'card':
+                dispatch({
+                    type: 'publicTaskDetailModal/updateDatas',
+                    payload: {
+                        drawerVisible: true,
+                        card_id: cardId
+                    }
+                })
+                break;
+            case 'flow':
+                break
+            default:
+                break
+        }
     }
-
     render() {
-        const { chatImVisiable = false, leftMainNavVisible = false, leftMainNavIconVisible } = this.props;
+        const { chatImVisiable = false, leftMainNavVisible = false, leftMainNavIconVisible, drawerVisible, isInOpenFile, dispatch } = this.props;
         const { simpleDrawerVisible, simpleDrawerContent, leftNavigationVisible, simpleDrawerTitle } = this.state;
         return (
             <div className={indexStyles.headerWapper}>
@@ -155,14 +255,30 @@ class SimpleHeader extends Component {
                 {simpleDrawerVisible &&
                     <SimpleDrawer updateState={this.updateStates} closeDrawer={this.closeDrawer} simpleDrawerContent={simpleDrawerContent} drawerTitle={simpleDrawerTitle} />
                 }
-
+                <TaskDetailModal
+                    task_detail_modal_visible={drawerVisible}
+                // setTaskDetailModalVisible={this.setTaskDetailModalVisible}
+                // handleTaskDetailChange={this.handleChangeCard}
+                // handleDeleteCard={this.handleDeleteCard}
+                />
+                <FileDetailModal visible={isInOpenFile} dispatch={dispatch} />
             </div>
         );
     }
 
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ simplemode: { chatImVisiable, leftMainNavVisible, leftMainNavIconVisible }, modal, technological, loading }) {
-    return { chatImVisiable, leftMainNavVisible, leftMainNavIconVisible, modal, model: technological, loading }
+function mapStateToProps({
+    simplemode: { chatImVisiable, leftMainNavVisible, leftMainNavIconVisible }, modal, technological, loading,
+    publicTaskDetailModal: {
+        drawerVisible
+    },
+    projectDetailFile: {
+        datas: {
+            isInOpenFile
+        }
+    },
+}) {
+    return { chatImVisiable, leftMainNavVisible, leftMainNavIconVisible, modal, model: technological, loading, drawerVisible, isInOpenFile }
 }
 export default connect(mapStateToProps)(SimpleHeader)

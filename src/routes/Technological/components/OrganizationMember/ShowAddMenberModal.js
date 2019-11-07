@@ -60,7 +60,7 @@ class ShowAddMenberModal extends React.Component {
           this.props.addMembers ? this.props.addMembers(values) : false
         }
         this.props.setShowAddMenberModalVisibile()
-        //  此处为邀请加入企业
+        //  此处为邀请加入组织
       }
     });
   }

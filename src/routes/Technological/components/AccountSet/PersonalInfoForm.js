@@ -165,18 +165,18 @@ class PersonalInfoForm extends React.Component {
             {/*<Input placeholder="" className={indexStyle.personInfoInput}/>*/}
           {/*)}*/}
         {/*</FormItem>*/}
-        {/* 企业 */}
+        {/* 组织 */}
         <FormItem
           {...formItemLayout}
           label={(
             <span style={{fontSize: 16}}>
-              企业
+              组织
             </span>
           )}
         >
           {getFieldDecorator('orgnization', {
             initialValue: orgnization || undefined,
-            rules: [{ required: false, message: '请输入企业', whitespace: true }],
+            rules: [{ required: false, message: '请输入组织', whitespace: true }],
           })(
             <div className={indexStyle.personInfoInput} style={{color: 'rgb(38, 38, 38)'}}>{current_org_name}</div>
           )}
@@ -226,7 +226,7 @@ class PersonalInfoForm extends React.Component {
         >
           {getFieldDecorator('email', {
             initialValue: email || undefined,
-            rules: [{ required: false, message: '请输入企业', whitespace: true }],
+            rules: [{ required: false, message: '请输入组织', whitespace: true }],
           })(
             <div style={{marginLeft: 12, fontSize: 16, color: '#262626' }}>{ email || '未绑定' } <Button style={{fontSize: 14, color: 'rgba(0,0,0,.65)', marginLeft: 12 }} onClick={this.gotoMemuSecond.bind(this)}>修改</Button></div>
           )}

@@ -47,7 +47,7 @@ export async function getContentFiterBoardTree(params) {
     }
   })
 }
-//获取内容过滤职员分组树
+//获取内容过滤成员分组树
 export async function getContentFiterUserTree(params) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/user/list`,

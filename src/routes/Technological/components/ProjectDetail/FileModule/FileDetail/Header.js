@@ -303,11 +303,13 @@ class Header extends React.Component {
                   <span className={`${globalStyles.authTheme} ${indexStyles.right__shareIndicator_icon}`}>&#xe7e7;</span>
                   <span className={indexStyles.right__shareIndicator_text}>正在分享</span>
                 </span>
-              ) : <span className={`${indexStyles.right_menu} ${indexStyles.share_icon}`} >
+              ) : (
+<span className={`${indexStyles.right_menu} ${indexStyles.share_icon}`} >
                   <Tooltip title="分享协作" placement="top">
                     <span onClick={this.handleChangeOnlyReadingShareModalVisible} className={`${globalStyles.authTheme} ${indexStyles.right__share}`} style={{ fontSize: '20px' }}>&#xe7e7;</span>
                   </Tooltip>
-                </span>}
+                </span>
+)}
 
               <ShareAndInvite
 

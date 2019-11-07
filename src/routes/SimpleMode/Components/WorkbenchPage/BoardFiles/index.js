@@ -90,7 +90,7 @@ class BoardFiles extends Component {
       boardSelectVisible: false,
       boardFileContentVisible: true,
       currentBoardId: board.board_id
-    },()=>{
+    }, ()=>{
       this.initialget(board.board_id)
     });
     
@@ -294,7 +294,7 @@ class BoardFiles extends Component {
               <div className={indexStyles.boardSelectWapper}>
                 {
                   allOrgBoardTreeList.map((org, orgkey) => {
-                    //全企业或者当前企业
+                    //全组织或者当前组织
                     if (user_set.current_org === '0' || user_set.current_org === org.org_id) {
 
                       return org.board_list && org.board_list.length > 0 && (
@@ -306,7 +306,7 @@ class BoardFiles extends Component {
                                 return (
                                   <div key={board.board_id} className={indexStyles.boardItem} onClick={e => {
                                     this.setState({
-                                      userSelectBoard:true
+                                      userSelectBoard: true
                                     });
                                     this.openBoardFiles(board);
                                   }}>

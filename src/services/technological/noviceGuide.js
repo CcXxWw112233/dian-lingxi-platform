@@ -1,7 +1,7 @@
 import {REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD} from "@/globalset/js/constant";
 import request from "@/utils/requestAxios";
 
-// 新用户默认创建企业和用户的接口
+// 新用户默认创建组织和用户的接口
 export async function createDefaultOrg(data) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/default`,
@@ -19,7 +19,7 @@ export async function generateBoardCode(params) {
   })
 }
 
-//邀请成员加入企业
+//邀请成员加入组织
 export async function inviteMemberJoinOrg(data) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/invite`,

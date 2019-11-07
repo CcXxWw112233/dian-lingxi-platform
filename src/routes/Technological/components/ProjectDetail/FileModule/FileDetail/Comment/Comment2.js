@@ -50,7 +50,7 @@ export default class Comment extends React.Component {
       // return;
     }
     if (code == '13' && !ctrl && !shift && !alt) {
-      const { filePreviewCurrentFileId, board_id, currentRect, dispatch } = this.props
+      const { filePreviewCurrentFileId, currentRect, dispatch, projectDetailInfoData: { board_id } } = this.props
       const { text } = this.state
       if (!text) {
         return

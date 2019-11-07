@@ -61,7 +61,8 @@ export default class RichTextEditor extends React.Component {
         };
     }
 
-    setIsInEdit = (isInEdit) => {
+    setIsInEdit = (isInEdit, e) => {
+        e && e.stopPropagation()
         this.setState({
             isInEdit: isInEdit
         });
@@ -193,7 +194,7 @@ export default class RichTextEditor extends React.Component {
         return (
             <>
                 {!isInEdit || visible ? (
-                    <div onClick={() => { this.setIsInEdit(true) }}>
+                    <div onClick={(e) => { this.setIsInEdit(true, e) }}>
                         <div className={styles.content} onClick={(e) => { this.descriptionHTML(e) }}>
                             {children}
                         </div>

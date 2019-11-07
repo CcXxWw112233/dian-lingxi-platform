@@ -10,7 +10,11 @@ import { isApiResponseOk } from '@/utils/handleResponseData'
 import {
   MESSAGE_DURATION_TIME
 } from "@/globalset/js/constant";
+import { connect } from 'dva'
 
+@connect(({ publicTaskDetailModal: { drawContent = {} } }) => ({
+  drawContent
+}))
 export default class AppendSubTaskItem extends Component {
 
   state = {
@@ -20,6 +24,23 @@ export default class AppendSubTaskItem extends Component {
   componentWillMount() {
     //设置默认项目名称
     this.initSet(this.props)
+  }
+
+  // 过滤那些需要更新的字段
+  filterCurrentUpdateDatasField = (code, value) => {
+    const { drawContent: { properties = [] } } = this.props
+    let new_properties = [...properties]
+    new_properties = new_properties.map(item => {
+      if (item.code == code) {
+        let new_item = item
+        new_item = { ...item, data: value }
+        return new_item
+      } else {
+        let new_item = item
+        return new_item
+      }
+    })
+    return new_properties
   }
 
   // 是否是有效的头像
@@ -60,16 +81,23 @@ export default class AppendSubTaskItem extends Component {
     return temp_arr
   }
 
+   // 获取 currentDrawerContent 数据
+   getCurrentDrawerContentPropsModelDatasExecutors = () => {
+    const { drawContent: { properties = [] } } = this.props
+    const pricipleInfo = properties.filter(item => item.code == 'EXECUTOR')[0]
+    return pricipleInfo || {}
+  }
+
   // 执行人下拉回调
   chirldrenTaskChargeChange = (dataInfo) => {
     let sub_executors = []
     const { data = [], drawContent = {}, dispatch, childTaskItemValue } = this.props
-    const { executors = [] } = drawContent
+    // const { executors = [] } = drawContent
+    const { data: executors = [] } = this.getCurrentDrawerContentPropsModelDatasExecutors()
     const { card_id } = childTaskItemValue
     const { selectedKeys = [], type, key } = dataInfo
     let new_data = [...data]
     let new_executors = [...executors]
-    let user_ids = []
     // 这里是将选中的人添加进子任务执行人以及更新父级任务执行人
     new_data.map(item => {
       if (selectedKeys.indexOf(item.user_id) != -1) {
@@ -78,20 +106,27 @@ export default class AppendSubTaskItem extends Component {
       }
     })
     let new_drawContent = {...drawContent}
-    new_drawContent['executors'] = this.arrayNonRepeatfy(new_executors)
-    this.setChildTaskIndrawContent({ name: 'executors', value: sub_executors }, card_id)// 先弹窗中子任务执行人中的数据
-    dispatch({
-      type: 'publicTaskDetailModal/updateDatas',
-      payload: {
-        drawContent: new_drawContent
-      }
-    })
+    
     if (type == 'add') {
-      dispatch({
-        type: 'publicTaskDetailModal/addTaskExecutor',
-        payload: {
-          card_id,
-          executor: key
+      Promise.resolve(
+        dispatch({
+          type: 'publicTaskDetailModal/addTaskExecutor',
+          payload: {
+            card_id,
+            executor: key
+          }
+        })
+      ).then(res => {
+        if (isApiResponseOk(res)) {
+          new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', this.arrayNonRepeatfy(new_executors))
+          this.setChildTaskIndrawContent({ name: 'executors', value: sub_executors }, card_id)// 先弹窗中子任务执行人中的数据
+          dispatch({
+            type: 'publicTaskDetailModal/updateDatas',
+            payload: {
+              drawContent: new_drawContent
+            }
+          })
+          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: drawContent, card_id, name: 'executors', value: new_executors, overlay_sub_pricipal: 'EXECUTOR'})
         }
       })
     } else if (type == 'remove') {
@@ -102,6 +137,7 @@ export default class AppendSubTaskItem extends Component {
           executor: key
         }
       })
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: drawContent, card_id, name: 'executors', value: new_executors, overlay_sub_pricipal: 'EXECUTOR'})
     }
     this.setState({
       local_executor: sub_executors
@@ -194,15 +230,20 @@ export default class AppendSubTaskItem extends Component {
     const { childDataIndex } = this.props
     const { drawContent = {}, dispatch } = this.props
     let new_drawContent = {...drawContent}
-    new_drawContent['child_data'][childDataIndex][name] = value
-
+    const { data = [] } = drawContent['properties'].filter(item => item.code == 'SUBTASK')[0]
+    let new_data = [...data]
+    // new_drawContent['child_data'][childDataIndex][name] = value
+    new_data[childDataIndex][name] = value
+    new_drawContent['properties'] = this.filterCurrentUpdateDatasField('SUBTASK', new_data)
     dispatch({
       type: 'projectDetailTask/updateDatas',
       payload: {
         drawContent: new_drawContent
       }
     })
-    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id: drawContent.card_id })
+    if (name && value) {
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id: drawContent.card_id, name: 'card_data', value: new_data })
+    }
   }
 
   // 按下回车事件
@@ -215,7 +256,8 @@ export default class AppendSubTaskItem extends Component {
   // 删除子任务回调
   deleteConfirm({ card_id, childDataIndex }) {
     const { drawContent = {}, dispatch } = this.props
-    const { child_data = [] } = drawContent
+    // const { child_data = [] } = drawContent
+    const { data: child_data = [] } = drawContent['properties'].filter(item => item.code == 'SUBTASK')[0]
     let newChildData = [...child_data]
     let new_drawContent = {...drawContent}
     newChildData.map((item, index) => {
@@ -223,7 +265,8 @@ export default class AppendSubTaskItem extends Component {
         newChildData.splice(index, 1)
       }
     })
-    new_drawContent['child_data'] = newChildData
+    // new_drawContent['child_data'] = newChildData
+    new_drawContent['properties'] = this.filterCurrentUpdateDatasField('SUBTASK', newChildData)
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/deleteChirldTask',
@@ -242,7 +285,7 @@ export default class AppendSubTaskItem extends Component {
           drawContent: new_drawContent
         }
       })
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: new_drawContent, card_id: drawContent.card_id})
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: new_drawContent, card_id: drawContent.card_id, name: 'card_data', value: newChildData})
     })
   }
 
@@ -250,16 +293,15 @@ export default class AppendSubTaskItem extends Component {
   endDatePickerChange(timeString) {
     const { drawContent = {}, childTaskItemValue, dispatch } = this.props
     const { milestone_data = {} } = drawContent
-    const { milestone_deadline } = milestone_data
+    const { data = [] } =  drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
     const { card_id } = childTaskItemValue
-    // const milestone_deadline = (milestoneList.find((item => item.id == milestone_data.id)) || {}).deadline//关联里程碑的时间
     const due_timeStamp = timeToTimestamp(timeString)
     const updateObj = {
       card_id, due_time: due_timeStamp
     }
-    if (!compareTwoTimestamp(milestone_deadline, due_timeStamp)) {
+    if (!compareTwoTimestamp(data.deadline, due_timeStamp)) {
       message.warn('任务的截止日期不能大于关联里程碑的截止日期')
-      return
+      return false
     }
     Promise.resolve(
       dispatch({
@@ -373,7 +415,7 @@ export default class AppendSubTaskItem extends Component {
                     style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '12px', zIndex: 2 }} />
                 </div>
               ) : (
-                <Tooltip title="截止时间">
+                <Tooltip title="截止时间" getPopupContainer={triggerNode => triggerNode.parentNode}>
                   <div className={`${appendSubTaskStyles.add_due_time}`}>
                     <div>
                       <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_icon}`}>&#xe686;</span>

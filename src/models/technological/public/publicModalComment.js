@@ -36,7 +36,7 @@ export default modelExtend(technological, {
     // 针对任务发表评论
     * addCardNewComment({ payload = {} }, { select, call, put }) {
       const { card_id, comment, flag } = payload
-      let res = yield call(addCardNewComment,{ card_id, comment })
+      let res = yield call(addCardNewComment, { card_id, comment })
       if (isApiResponseOk(res)) {
         setTimeout(() => {
           message.success('评论已发送')

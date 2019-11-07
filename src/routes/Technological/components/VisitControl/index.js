@@ -39,7 +39,7 @@ class VisitControl extends Component {
       othersPersonList: [], //外部邀请人员的list
       transPrincipalList: [], //外部已有权限人的list
       ShowAddMenberModalVisibile: false,
-      removerOtherPersonId: '', // 当前需要删除的职员id
+      removerOtherPersonId: '', // 当前需要删除的成员id
     };
     this.inputRef = React.createRef();
   }
@@ -59,7 +59,7 @@ class VisitControl extends Component {
   isValidAvatar = (avatarUrl = '') =>
     avatarUrl.includes('http://') || avatarUrl.includes('https://');
 
-  // 获取添加职员的回调
+  // 获取添加成员的回调
   handleGetAddNewMember = members => {
 
     const { handleAddNewMember, invitationType,
@@ -176,7 +176,7 @@ class VisitControl extends Component {
   };
 
   /**
-   * 点击移除职员弹窗的确定回调
+   * 点击移除成员弹窗的确定回调
    * @param {Object} e 当前的事件对象
    */
   handleComfirmRemoveModalOk = e => {
@@ -197,7 +197,7 @@ class VisitControl extends Component {
     );
   };
 
-  // 关闭移除职员的弹窗回调
+  // 关闭移除成员的弹窗回调
   handleCloseComfirmRemoveModal = e => {
     if (e) e.stopPropagation();
     this.setState({
@@ -205,7 +205,7 @@ class VisitControl extends Component {
     });
   };
 
-  // 关闭添加职员弹窗的回调
+  // 关闭添加成员弹窗的回调
   handleCloseAddMemberModal = e => {
     if (e) e.stopPropagation();
     this.setState({
@@ -214,7 +214,7 @@ class VisitControl extends Component {
     });
   };
 
-  // 点击添加职员的回调
+  // 点击添加成员的回调
   handleAddNewMember = () => {
     this.setState({
       addMemberModalVisible: true
@@ -222,7 +222,7 @@ class VisitControl extends Component {
     this.togglePopoverVisible
   };
 
-  //点击添加职员操作
+  //点击添加成员操作
   setShowAddMenberModalVisibile = () => {
     if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -251,7 +251,7 @@ class VisitControl extends Component {
         return currentOrgAllMembersList.find(each => each.id === item.user_info.id)
       });
     }
-    //如果现有的企业职员列表，不包括所有的人，那么就更新企业职员列表
+    //如果现有的组织成员列表，不包括所有的人，那么就更新组织成员列表
     let allMember = [...currentOrgAllMembersList];
     const getOthersPersonList = (arr) => {
       if (!(otherPrivilege instanceof Array)) {
@@ -274,7 +274,7 @@ class VisitControl extends Component {
       }, []);
     }
     if (!isEachMemberInOtherPrivilegeCanFoundInCurrentOrgAllMembersList(currentOrgAllMembersList)) {
-      // 过滤那些不在企业中的人
+      // 过滤那些不在组织中的人
       if (!(otherPrivilege instanceof Array)) {
         return
       }
@@ -317,7 +317,7 @@ class VisitControl extends Component {
       }
       return false;
     };
-    // 如果说两次其他职员的列表不同, 那么就更新它
+    // 如果说两次其他成员的列表不同, 那么就更新它
     if (!isTheSameOtherPrivilege(otherPrivilege, nextOtherPrivilege)) {
       this.parseOtherPrivileges(nextOtherPrivilege);
     }
@@ -393,7 +393,7 @@ class VisitControl extends Component {
                 <div className={styles.title__operator} style={{ cursor: 'pointer', position: 'relative' }}>
                   <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.toggleVisitControl()} trigger={['click']}>
                     <span style={{ fontSize: '14px', color: 'rgba(0,0,0,0.45)', marginRight: 0 }}>
-                      <span>{!isPropVisitControl ? '开放访问' : '仅列表职员访问'}</span>
+                      <span>{!isPropVisitControl ? '开放访问' : '仅列表成员访问'}</span>
                       <span className={`${globalStyles.authTheme}`}>&#xe7ee;</span>
                     </span>
                   </Dropdown>
@@ -530,7 +530,7 @@ class VisitControl extends Component {
     );
   };
 
-  // 渲染popover组件中的底部 添加职员按钮
+  // 渲染popover组件中的底部 添加成员按钮
   renderPopoverContentAddMemberBtn = () => {
     return (
       <div className={styles.content__addMemberBtn_wrapper}>
@@ -539,7 +539,7 @@ class VisitControl extends Component {
           block
           onClick={this.setShowAddMenberModalVisibile}
         >
-          添加职员
+          添加成员
         </Button>
       </div>
     );
@@ -555,7 +555,7 @@ class VisitControl extends Component {
     );
   };
 
-  // 当前是否没有职员
+  // 当前是否没有成员
   isCurrentHasNoMember = () => {
     const { principalList } = this.props;
     const { othersPersonList } = this.state;
@@ -604,7 +604,7 @@ class VisitControl extends Component {
     } = this.state;
     const unClockEle = (
       <Tooltip title={tooltipUnClockText}>
-        <i className={`${globalStyles.authTheme} ${styles.trigger__icon}`} style={{fontSize:'20px'}}>
+        <i className={`${globalStyles.authTheme} ${styles.trigger__icon}`} style={{fontSize: '20px'}}>
           &#xe7ca;
         </i>
       </Tooltip>
@@ -612,7 +612,7 @@ class VisitControl extends Component {
     const clockEle = (
       <Tooltip title={tooltipClockText}>
         <span className={styles.trigger__btn__wrapper}>
-          <i className={`${globalStyles.authTheme} ${styles.trigger__btn__icon}`} style={{fontSize:'16px'}}>
+          <i className={`${globalStyles.authTheme} ${styles.trigger__btn__icon}`} style={{fontSize: '16px'}}>
             &#xe86a;
           </i>
           <span className={styles.trigger__btn_text}>已限制访问</span>
@@ -751,7 +751,7 @@ VisitControl.defaultProps = {
     //点击选中邀请进来的外部人员的下拉菜单项目的回调函数
   },
   handleAddNewMember: function () {
-    //...          //添加职员返回的 职员id 数组
+    //...          //添加成员返回的 成员id 数组
   },
   removeMemberPromptText: '移出后用户将不能访问此内容',
   handleVisitControlPopoverVisible: function () { } //单击本组件，或者是本组件visible改变的时候，将popover组件的visible状态传达到父组件。

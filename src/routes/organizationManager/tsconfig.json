@@ -79,14 +79,14 @@
           "update_time": "1542614955",
           "create_time": "1542614954",
           "scheme_id": "1064448671292198912",
-          "field_value": "企业"
+          "field_value": "组织"
         },
           {
             "field_id": "1064450030108282880",
             "update_time": "1542614971",
             "create_time": "1542614970",
             "scheme_id": "1064448671292198912",
-            "field_value": "职员"
+            "field_value": "成员"
           },
           {
             "field_id": "1064450113558155264",
@@ -140,7 +140,7 @@
           "update_time": "1542615058",
           "create_time": "1542615057",
           "scheme_id": "1064448923466338304",
-          "field_value": "企业"
+          "field_value": "组织"
         },
           {
             "field_id": "1064450030108282880",
@@ -201,7 +201,7 @@
           "update_time": "1542615288",
           "create_time": "1542615286",
           "scheme_id": "1064449081260249088",
-          "field_value": "企业"
+          "field_value": "组织"
         },
           {
             "field_id": "1064450030108282880",

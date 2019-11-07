@@ -233,7 +233,7 @@ export async function removeTaskTag(data) {
   });
 }
 
-// 移出项目职员
+// 移出项目成员
 export async function removeProjectMenbers(data) {
 
   return request({
@@ -308,6 +308,15 @@ export async function getBoardTagList(params) {
     params
   });
 }
+// 新增项目标签
+export async function addBoardTag(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/label`,
+    method: 'POST',
+    data
+  })
+}
+
 //更新项目标签
 export async function updateBoardTag(data) {
   return request({
@@ -343,6 +352,52 @@ export async function getCardDetail(params) {
     headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
     params
   });
+}
+
+// 获取新的携带属性的任务详情
+export async function getCardWithAttributesDetail(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/card/detail`,
+    method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
+    params
+  })
+}
+
+// 获取任务详情中属性字段默认列表
+export async function getCardAttributesList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/properties`,
+    method: 'GET',
+    params
+  })
+}
+
+// 任务详细添加属性字段
+export async function setCardAttributes(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/property`,
+    method: 'POST',
+    data
+  })
+}
+
+// 删除任务动态属性
+export async function removeCardAttributes(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/property`,
+    method: 'DELETE',
+    params
+  })
+}
+
+// 移动任务属性排序
+export async function sortCardAttribute(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/property/move`,
+    method: 'POST',
+    data
+  })
 }
 
 //获取任务详情 ---- 解决分享出去之后的任务详情没有权限 ----暂时使用(10月14日)

@@ -207,8 +207,8 @@ export default class InitialNews extends React.Component {
       //   <span style={{color: '#1890FF', cursor: 'pointer'}} onClick={() => window.location.href = `http://localhost/#/technological/projectDetail?board_id=${messageValue.content.board.id}&appsSelectKey=3&card_id=${messageValue.content.card.id}`}>{messageValue.content && messageValue.content.card && messageValue.content.card.name}</span>
       // )
       switch (activity_type) {
-        // 企业
-        case 'organization.member.apply': // 申请加入企业
+        // 组织
+        case 'organization.member.apply': // 申请加入组织
           contain = `申请加入${currentNounPlanFilterName(ORGANIZATION)}`
           messageContain = (
             <div className={NewsListStyle.news_3}>
@@ -420,7 +420,7 @@ export default class InitialNews extends React.Component {
           )
           break
         case 'board.update.user.add': // 项目中添加成员
-          contain = `添加${currentNounPlanFilterName(PROJECTS)}职员`
+          contain = `添加${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 邀请「{messageValue.content.rela_users && Array.isArray(messageValue.content.rela_users) && messageValue.content.rela_users.join(',')}」加入了「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}</div>
@@ -586,7 +586,7 @@ export default class InitialNews extends React.Component {
           break
         case 'board.card.update.executor.remove': // 移除执行人
           // console.log({messageValue})
-          contain = `移除${currentNounPlanFilterName(PROJECTS)}职员`
+          contain = `移除${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 将 「{messageValue.content.rela_data && messageValue.content.rela_data.name}」 移出了「{jumpToTask}」</div>
@@ -1215,7 +1215,7 @@ export default class InitialNews extends React.Component {
           )
           break
         case 'board.update.user.remove': // 移除了项目
-          contain = `移除${currentNounPlanFilterName(PROJECTS)}职员`
+          contain = `移除${currentNounPlanFilterName(PROJECTS)}成员`
           messageContain = (
             <div className={NewsListStyle.news_3}>
               <div className={NewsListStyle.news_3_text}>{messageValue.creator.name} 将「{messageValue.content.rela_users && messageValue.content.rela_users}」移出了「{jumpToBoard}」{currentNounPlanFilterName(PROJECTS)}</div>
@@ -1278,10 +1278,10 @@ export default class InitialNews extends React.Component {
           )
           break
         case 'board.update.user.role': // 设置用户在项目中的角色
-          contain = `设置了${currentNounPlanFilterName(PROJECTS)}职员角色`
+          contain = `设置了${currentNounPlanFilterName(PROJECTS)}成员角色`
           messageContain = (
             <div className={NewsListStyle.news_3}>
-              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}  在{currentNounPlanFilterName(PROJECTS)}「{jumpToBoard}」中设置了职员「{messageValue.content.rela_users && messageValue.content.rela_users}」的角色为「{messageValue.content.rela_data && messageValue.content.rela_data}」</div>
+              <div className={NewsListStyle.news_3_text}>{messageValue.creator.name}  在{currentNounPlanFilterName(PROJECTS)}「{jumpToBoard}」中设置了成员「{messageValue.content.rela_users && messageValue.content.rela_users}」的角色为「{messageValue.content.rela_data && messageValue.content.rela_data}」</div>
               <div className={NewsListStyle.news_3_project}>
                 <span style={{ marginRight: 2, color: '#8C8C8C' }}>#</span>
                 {
@@ -2038,7 +2038,7 @@ export default class InitialNews extends React.Component {
     }
 
 
-    // 申请加入企业
+    // 申请加入组织
     const applyOrg = (value, key) => {
       // console.log(value, 'sssss')
       const { action } = value
@@ -2083,7 +2083,7 @@ export default class InitialNews extends React.Component {
         //   break
         case '18':
         // containner = (milestoneNews(value))
-        case '30': // 申请加入企业
+        case '30': // 申请加入组织
           containner = (value.map((val, key) => (<div key={key}>{applyOrg(val)}</div>)))
           break
         case '20': // 创建会议
