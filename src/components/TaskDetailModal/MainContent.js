@@ -113,7 +113,7 @@ export default class MainContent extends Component {
   }
 
   // 更新drawContent中的数据以及调用父级列表更新数据
-  updateDrawContentWithUpdateParentListDatas = ({ drawContent, card_id, name, value }) => {
+  updateDrawContentWithUpdateParentListDatas = ({ drawContent, card_id, name, value, operate_properties_code }) => {
     const { dispatch } = this.props
     dispatch({
       type: 'publicTaskDetailModal/updateDatas',
@@ -122,7 +122,7 @@ export default class MainContent extends Component {
       }
     })
     if (name && value) {
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, name, value })
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, name, value, operate_properties_code })
     }
   }
 
@@ -284,7 +284,7 @@ export default class MainContent extends Component {
       addTaskExecutor({ card_id, executor: key }).then(res => {
         if (isApiResponseOk(res)) {
           message.success(`已成功设置执行人`, MESSAGE_DURATION_TIME)
-          this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'executors', value: newExecutors })
+          this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'executors', value: newExecutors, operate_properties_code: 'EXECUTOR' })
         } else {
           message.warn(res.message, MESSAGE_DURATION_TIME)
         }
@@ -293,7 +293,7 @@ export default class MainContent extends Component {
       removeTaskExecutor({ card_id, executor: key }).then(res => {
         if (isApiResponseOk(res)) {
           message.success(`已成功删除执行人`, MESSAGE_DURATION_TIME)
-          this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'executors', value: newExecutors })
+          this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'executors', value: newExecutors, operate_properties_code: 'EXECUTOR' })
         } else {
           message.warn(res.message, MESSAGE_DURATION_TIME)
         }
