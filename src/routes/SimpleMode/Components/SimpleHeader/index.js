@@ -85,13 +85,6 @@ class SimpleHeader extends Component {
     //   // }
     // }
     componentDidMount() {
-        let func = (val) => {
-            if (!val) {
-                this.openOrCloseImChatModal(false)
-            }
-        }
-        Im.removeEventListener('visible', func)
-        Im.addEventListener('visible', func)
         this.imInitOption()
     }
 
@@ -99,10 +92,19 @@ class SimpleHeader extends Component {
     imInitOption = () => {
         const { protocol, host } = window.location
         Im.option({ baseUrl: `${protocol}//${host}/`, APPKEY: "c3abea191b7838ff65f9a6a44ff5e45f" })
+        const clickDynamicFunc = (data) => {
+            this.imClickDynamic(data);
+        }
+        const visibleFunc = (val) => {
+            if (!val) {
+                this.openOrCloseImChatModal(false)
+            }
+        }
         if (Im) {
-            Im.addEventListener('clickDynamic', (data) => {
-                this.imClickDynamic(data);
-            });
+            Im.removeEventListener('visible', visibleFunc)
+            Im.addEventListener('visible', visibleFunc)
+            Im.removeEventListener('clickDynamic', clickDynamicFunc, false)
+            Im.addEventListener('clickDynamic', clickDynamicFunc, false);
         }
     }
     // 圈子点击
