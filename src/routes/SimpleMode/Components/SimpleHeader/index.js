@@ -91,7 +91,10 @@ class SimpleHeader extends Component {
     //圈子
     imInitOption = () => {
         const { protocol, host } = window.location
-        Im.option({ baseUrl: `${protocol}//${host}/`, APPKEY: "c3abea191b7838ff65f9a6a44ff5e45f" })
+        Im.option({
+            baseUrl: `${protocol}//${host}/`,
+            // APPKEY: "c3abea191b7838ff65f9a6a44ff5e45f"
+        })
         const clickDynamicFunc = (data) => {
             this.imClickDynamic(data);
         }
@@ -158,7 +161,7 @@ class SimpleHeader extends Component {
                     dispatch({
                         type: 'projectDetailFile/getFilePDFInfo',
                         payload: {
-                            id: file_id
+                            id: relaDataId
                         }
                     })
                 } else {
