@@ -64,7 +64,9 @@ export default class DragDropContentComponent extends Component {
         drawContent
       }
     })
-    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, name, value })
+    if (name && value) {
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, name, value })
+    }
   }
 
   // 过滤那些需要更新的字段
@@ -353,7 +355,7 @@ export default class DragDropContentComponent extends Component {
         })
       ).then(res => {
         if (isApiResponseOk(res)) {
-          this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id })
+          this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'label_data', value: newLabelData })
         }
       })
     } else if (type == 'remove') {
@@ -366,7 +368,7 @@ export default class DragDropContentComponent extends Component {
         })
       ).then(res => {
         if (isApiResponseOk(res)) {
-          this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id })
+          this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'label_data', value: newLabelData })
         }
       })
     }
@@ -400,7 +402,7 @@ export default class DragDropContentComponent extends Component {
       })
     ).then(res => {
       if (isApiResponseOk(res)) {
-        this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id })
+        this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'label_data', value: new_labelData })
       }
     })
   }
@@ -584,6 +586,43 @@ export default class DragDropContentComponent extends Component {
       </Menu>
     );
   }
+
+  // 递归获取附件路径 S
+  getFolderPathName = (fileList,fileItem) => {
+    const { drawContent = {}, dispatch } = this.props
+    let new_fileList = [...fileList]
+    let arr = []
+    if (!fileItem.folder_path) { // 表示是根目录
+      // 递归添加路径
+      arr.push({ file_name: '根目录', file_id: fileItem.file_id, type: '1' })
+    } else {
+      const target_path = fileItem.folder_path
+      // 递归添加路径
+      const digui = (name, data) => {
+        if (data[name]) {
+          arr.push({ file_name: data.folder_name, file_id: data.id, type: '1' })
+          digui(name, data[name])
+        }
+      }
+      digui('parent_folder', target_path)
+      const newbreadcrumbList = arr.reverse()
+      newbreadcrumbList.push({ file_name: fileItem.name, file_id: fileItem.file_id, type: '2' })
+    }
+    new_fileList.map(item => {
+      let new_item = item
+      new_item = {...item, breadcrumbList: arr}
+      return new_item
+    })
+    // console.log(new_fileList, 'ssssss')
+    // drawContent['properties'] = this.filterCurrentUpdateDatasField('ATTACHMENT', new_fileList)
+    // dispatch({
+    //   type: 'publicTaskDetailModal/updateDatas',
+    //   payload: {
+    //     drawContent
+    //   }
+    // })
+  }
+  // 递归获取附件路径 E
 
   // 对应字段的删除 S
   handleDelCurrentField = (shouldDeleteId) => {
@@ -955,6 +994,7 @@ export default class DragDropContentComponent extends Component {
                         <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={() => this.openFileDetailModal(fileInfo)} >
                           <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span><span>{fileInfo.name}</span></div>
                           <div className={mainContentStyles.file_info}>{this.showMemberName(fileInfo.create_by)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
+                          {/* <div>{this.getFolderPathName(currentItem.data, fileInfo)}</div> */}
                         </div>
                       </div>
                     );

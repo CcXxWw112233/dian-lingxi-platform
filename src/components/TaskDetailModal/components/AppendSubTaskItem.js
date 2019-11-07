@@ -277,22 +277,23 @@ export default class AppendSubTaskItem extends Component {
   endDatePickerChange(timeString) {
     const { drawContent = {}, childTaskItemValue, dispatch } = this.props
     const { milestone_data = {} } = drawContent
-    // const { milestone_deadline } = milestone_data
-    const { data } = drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
+    if (drawContent['properties'].filter(item => item.code == 'MILESTONE') && drawContent['properties'].filter(item => item.code == 'MILESTONE').length) {
+      const { data } = drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
+      if (data && data instanceof Object) {
+        let arr = Object.keys(data)
+        if (arr.length == '0') return
+        if (!compareTwoTimestamp(data.deadline, due_timeStamp)) {
+          message.warn('任务的截止日期不能大于关联里程碑的截止日期')
+          return
+        }
+      }
+    }
     const { card_id } = childTaskItemValue
-    // const milestone_deadline = (milestoneList.find((item => item.id == milestone_data.id)) || {}).deadline//关联里程碑的时间
     const due_timeStamp = timeToTimestamp(timeString)
     const updateObj = {
       card_id, due_time: due_timeStamp
     }
-    if (data && data instanceof Object) {
-      let arr = Object.keys(data)
-      if (arr.length == '0') return
-      if (!compareTwoTimestamp(data.deadline, due_timeStamp)) {
-        message.warn('任务的截止日期不能大于关联里程碑的截止日期')
-        return
-      }
-    }
+    
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/updateTask',
