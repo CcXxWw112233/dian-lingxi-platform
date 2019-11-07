@@ -126,6 +126,7 @@ export default class AppendSubTaskItem extends Component {
               drawContent: new_drawContent
             }
           })
+          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: drawContent, card_id, name: 'executors', value: new_executors, overlay_sub_pricipal: 'EXECUTOR'})
         }
       })
     } else if (type == 'remove') {
@@ -136,6 +137,7 @@ export default class AppendSubTaskItem extends Component {
           executor: key
         }
       })
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: drawContent, card_id, name: 'executors', value: new_executors, overlay_sub_pricipal: 'EXECUTOR'})
     }
     this.setState({
       local_executor: sub_executors
