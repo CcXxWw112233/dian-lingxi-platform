@@ -367,11 +367,16 @@ export default class MainContent extends Component {
     const { drawContent = {}, dispatch } = this.props
     const start_timeStamp = timeToTimestamp(timeString)
     const { card_id, due_time } = drawContent
+    const { data = [] } =  drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
     const updateObj = {
       card_id, start_time: start_timeStamp
     }
     if (!this.compareStartDueTime(start_timeStamp, due_time)) {
       message.warn('开始时间不能大于结束时间')
+      return false
+    }
+    if (!compareTwoTimestamp(data.deadline, start_timeStamp)) {
+      message.warn('任务的开始时间不能大于关联里程碑的截止日期')
       return false
     }
     let new_drawContent = { ...drawContent }
@@ -397,27 +402,22 @@ export default class MainContent extends Component {
   endDatePickerChange(timeString) {
     const { drawContent = {}, dispatch } = this.props
     const { card_id, start_time, milestone_data = {} } = drawContent
+    const { data = [] } =  drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
     const due_timeStamp = timeToTimestamp(timeString)
     const updateObj = {
       card_id, due_time: due_timeStamp
     }
 
-    if (drawContent['properties'].filter(item => item.code == 'MILESTONE') && drawContent['properties'].filter(item => item.code == 'MILESTONE').length) {
-      const { data = [] } =  drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
-      if (data && data instanceof Object) {
-        let arr = Object.keys(data)
-        if (arr.length == '0') return
-        if (!compareTwoTimestamp(data.deadline, due_timeStamp)) {
-          message.warn('任务的截止日期不能大于关联里程碑的截止日期')
-          return
-        }
-      }
-    }
     if (!this.compareStartDueTime(start_time, due_timeStamp)) {
       message.warn('开始时间不能大于结束时间')
       return false
     }
-    
+
+    if (!compareTwoTimestamp(data.deadline, due_timeStamp)) {
+      message.warn('任务的截止日期不能大于关联里程碑的截止日期')
+      return false
+    }
+
     let new_drawContent = { ...drawContent }
     new_drawContent['due_time'] = due_timeStamp
     Promise.resolve(

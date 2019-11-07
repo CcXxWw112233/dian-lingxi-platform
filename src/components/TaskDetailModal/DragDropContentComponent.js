@@ -726,7 +726,7 @@ export default class DragDropContentComponent extends Component {
   filterDiffPropertiesField = (currentItem) => {
     const { visible = false, showDelColor, currentDelId } = this.state
     const { drawContent = {}, projectDetailInfoData = {}, projectDetailInfoData: { data = [] }, boardTagList = [], handleTaskDetailChange, boardFolderTreeData = [], milestoneList = [] } = this.props
-    const { org_id, card_id, board_id, board_name, due_time } = drawContent
+    const { org_id, card_id, board_id, board_name, due_time, start_time } = drawContent
     const { code } = currentItem
     const flag = (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()
     let messageValue = (<div></div>)
@@ -762,7 +762,7 @@ export default class DragDropContentComponent extends Component {
                   )
                 ) : (
                     // 加入里程碑组件
-                    <MilestoneAdd milestoneList={milestoneList} onChangeMilestone={this.onMilestoneSelectedChange} dataInfo={{ board_id, board_name, due_time, org_id, data }} selectedValue={currentItem.data && currentItem.data.id}>
+                    <MilestoneAdd milestoneList={milestoneList} onChangeMilestone={this.onMilestoneSelectedChange} dataInfo={{ board_id, board_name, due_time, org_id, data, start_time }} selectedValue={currentItem.data && currentItem.data.id}>
                       <div className={`${mainContentStyles.pub_hover}`} >
                         {currentItem.data && currentItem.data.id
                           ? <span className={mainContentStyles.value_text}>{currentItem.data.name}</span>

@@ -177,9 +177,8 @@ export default class MilestoneAdd extends React.Component {
     getSortLilestoneList = (milestoneList, dataInfo) => {
         let sortMilestoneList = new Array();
         let selectableArray = milestoneList.filter((item)=>{
-            return compareTwoTimestamp(item.deadline, dataInfo.due_time);
+            return compareTwoTimestamp(item.deadline, dataInfo.due_time) && compareTwoTimestamp(item.deadline, dataInfo.start_time);
         });
-
         sortMilestoneList = sortMilestoneList.concat(selectableArray);
         for(var i=0 ;i < milestoneList.length; i++){
             if(selectableArray.filter((item)=>item.id == milestoneList[i].id).length==0){
@@ -223,11 +222,12 @@ export default class MilestoneAdd extends React.Component {
                                     {
                                         sortLilestoneList.map((value, key) => {
                                             const { id, name, deadline } = value
+                                            const timeName = (!compareTwoTimestamp(deadline, dataInfo.due_time) || !compareTwoTimestamp(deadline, dataInfo.start_time))
                                             return (
-                                                <Menu.Item className={!compareTwoTimestamp(deadline, dataInfo.due_time) ? `${indexStyles.menuItem} ${indexStyles.disabled} ` : `${indexStyles.menuItem}`}
+                                                <Menu.Item className={ timeName ? `${indexStyles.menuItem} ${indexStyles.disabled}` : `${indexStyles.menuItem}`}
                                                     style={{ height: '40px', lineHeight: '40px', margin: 0, padding: '0 12px' }}
                                                     key={id} info={value}
-                                                    disabled={!compareTwoTimestamp(deadline, dataInfo.due_time)}>
+                                                    disabled={timeName}>
 
                                                     <div className={indexStyles.menuItemDiv}>
                                                         <div key={id}>
@@ -237,8 +237,8 @@ export default class MilestoneAdd extends React.Component {
                                                             <div style={{ display: selectedValue == id ? 'inline-block' : 'none' }}>
                                                                 <Icon type="check" />
                                                             </div>
-                                                            {!compareTwoTimestamp(deadline, dataInfo.due_time) && (
-                                                                <Tooltip title="当前任务的截止时间无法超出里程碑截止时间">
+                                                            {timeName && (
+                                                                <Tooltip title="当前任务的开始或截止时间无法超出里程碑截止时间">
                                                                     <div className={indexStyles.menuItemTip}><Icon type="question-circle" /></div>
                                                                 </Tooltip>
                                                             )}

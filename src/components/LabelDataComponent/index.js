@@ -1,5 +1,5 @@
 import React from 'react'
-import { Input, Menu, Tooltip, Icon, Button } from 'antd'
+import { Input, Menu, Tooltip, Icon, Button, Popconfirm } from 'antd'
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 
@@ -320,7 +320,9 @@ export default class LabelDataComponent extends React.Component {
             {
               is_edit_label ? (
                 <div style={{ textAlign: 'center', height: '58px', padding: '12px', display: 'flex', justifyContent: 'space-around' }}>
-                  <Button style={{ border: `1px solid rgba(255,120,117,1)`, color: '#FF7875', width: '106px' }} onClick={this.handleRemoveBoardTag}>删除</Button>
+                  <Popconfirm getPopupContainer={triggerNode => triggerNode.parentNode} onConfirm={this.handleRemoveBoardTag} title={'确认在所有事项中删除该标签吗?'}>
+                    <Button style={{ border: `1px solid rgba(255,120,117,1)`, color: '#FF7875', width: '106px' }}>删除</Button>
+                  </Popconfirm>
                   <Button style={{ width: '106px' }} disabled={is_selected_label ? false : true} onClick={this.handleUpdateBoardTag} type="primary">确认</Button>
                 </div>
               ) : (
