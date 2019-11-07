@@ -113,7 +113,7 @@ export default class MainContent extends Component {
   }
 
   // 更新drawContent中的数据以及调用父级列表更新数据
-  updateDrawContentWithUpdateParentListDatas = ({ drawContent, card_id, name, value }) => {
+  updateDrawContentWithUpdateParentListDatas = ({ drawContent, card_id, name, value, operate_properties_code }) => {
     const { dispatch } = this.props
     dispatch({
       type: 'publicTaskDetailModal/updateDatas',
@@ -121,7 +121,9 @@ export default class MainContent extends Component {
         drawContent
       }
     })
-    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, name, value })
+    if (name && value) {
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, name, value, operate_properties_code })
+    }
   }
 
   // 设置卡片是否完成 S
@@ -236,7 +238,7 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'is_realize', value: temp_realize })
     })
   }
   // 设置是否完成状态的下拉回调 E
@@ -282,7 +284,7 @@ export default class MainContent extends Component {
       addTaskExecutor({ card_id, executor: key }).then(res => {
         if (isApiResponseOk(res)) {
           message.success(`已成功设置执行人`, MESSAGE_DURATION_TIME)
-          this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'executors', value: newExecutors })
+          this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'executors', value: newExecutors, operate_properties_code: 'EXECUTOR' })
         } else {
           message.warn(res.message, MESSAGE_DURATION_TIME)
         }
@@ -291,7 +293,7 @@ export default class MainContent extends Component {
       removeTaskExecutor({ card_id, executor: key }).then(res => {
         if (isApiResponseOk(res)) {
           message.success(`已成功删除执行人`, MESSAGE_DURATION_TIME)
-          this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'executors', value: newExecutors })
+          this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'executors', value: newExecutors, operate_properties_code: 'EXECUTOR' })
         } else {
           message.warn(res.message, MESSAGE_DURATION_TIME)
         }
@@ -317,7 +319,7 @@ export default class MainContent extends Component {
     removeTaskExecutor({ card_id, executor: shouldDeleteItem }).then(res => {
       if (isApiResponseOk(res)) {
         message.success(`已成功删除执行人`, MESSAGE_DURATION_TIME)
-        this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'executors', value: new_executors })
+        this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'executors', value: new_executors, operate_properties_code: 'EXECUTOR' })
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -386,7 +388,7 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: start_timeStamp })
     })
   }
   // 开始时间 chg事件 E
@@ -395,24 +397,27 @@ export default class MainContent extends Component {
   endDatePickerChange(timeString) {
     const { drawContent = {}, dispatch } = this.props
     const { card_id, start_time, milestone_data = {} } = drawContent
-    // const { deadline } = milestone_data
-    const { data } = drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
     const due_timeStamp = timeToTimestamp(timeString)
     const updateObj = {
       card_id, due_time: due_timeStamp
+    }
+
+    if (drawContent['properties'].filter(item => item.code == 'MILESTONE') && drawContent['properties'].filter(item => item.code == 'MILESTONE').length) {
+      const { data = [] } =  drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
+      if (data && data instanceof Object) {
+        let arr = Object.keys(data)
+        if (arr.length == '0') return
+        if (!compareTwoTimestamp(data.deadline, due_timeStamp)) {
+          message.warn('任务的截止日期不能大于关联里程碑的截止日期')
+          return
+        }
+      }
     }
     if (!this.compareStartDueTime(start_time, due_timeStamp)) {
       message.warn('开始时间不能大于结束时间')
       return false
     }
-    if (data && data instanceof Object) {
-      let arr = Object.keys(data)
-      if (arr.length == '0') return
-      if (!compareTwoTimestamp(data.deadline, due_timeStamp)) {
-        message.warn('任务的截止日期不能大于关联里程碑的截止日期')
-        return
-      }
-    }
+    
     let new_drawContent = { ...drawContent }
     new_drawContent['due_time'] = due_timeStamp
     Promise.resolve(
@@ -427,7 +432,7 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: due_timeStamp })
     })
   }
   // 截止时间 chg事件 E
@@ -454,7 +459,7 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: '0' })
     })
 
   }
@@ -483,11 +488,109 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: '0' })
     })
 
   }
   // 删除结束时间 E
+
+  // 对应字段的删除 S
+  handleDelCurrentField = (shouldDeleteId) => {
+    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    const that = this
+    this.setState({
+      showDelColor: true,
+      currentDelId: shouldDeleteId
+    })
+    let flag = false
+    const { dispatch, drawContent = {}, drawContent: { card_id } } = that.props
+    const { selectedKeys = [] } = that.state
+    let new_drawContent = { ...drawContent }
+    let filter_drawContent = { ...drawContent }
+    let new_selectedKeys = [...selectedKeys]
+    filter_drawContent['properties'].find(item => {
+      if (item.id == shouldDeleteId) { // 表示找到当前item
+        if (Array.isArray(item.data)) {
+          flag = item.data.length
+        } else if (item.data instanceof Object) {
+          let arr = Object.keys(item.data);
+          flag = !(arr.length == '0')
+        } else if (item.data) {
+          flag = true
+        }
+      }
+    })
+    new_selectedKeys = new_selectedKeys.filter(item => item != shouldDeleteId)
+    new_drawContent['properties'] = new_drawContent['properties'].filter(item => item.id != shouldDeleteId)
+    if (flag) {
+      Modal.confirm({
+        title: `确认要删除这条字段吗？`,
+        zIndex: 1007,
+        content: <div style={{ color: 'rgba(0,0,0, .65)', fontSize: 14 }}>
+          <span >删除包括删除这条字段已填写的内容。</span>
+        </div>,
+        okText: '确认',
+        cancelText: '取消',
+        onOk() {
+          Promise.resolve(
+            dispatch({
+              type: 'publicTaskDetailModal/removeCardAttributes',
+              payload: {
+                card_id, property_id: shouldDeleteId
+              }
+            })
+          ).then(res => {
+            if (isApiResponseOk(res)) {
+              that.setState({
+                selectedKeys: new_selectedKeys,
+                shouldDeleteId: '',
+                showDelColor: ''
+              })
+              dispatch({
+                type: 'publicTaskDetailModal/updateDatas',
+                payload: {
+                  drawContent: new_drawContent
+                }
+              })
+            }
+          })
+        },
+        onCancel() {
+          that.setState({
+            shouldDeleteId: '',
+            showDelColor: ''
+          })
+        }
+      })
+    } else {
+      Promise.resolve(
+        dispatch({
+          type: 'publicTaskDetailModal/removeCardAttributes',
+          payload: {
+            card_id, property_id: shouldDeleteId
+          }
+        })
+      ).then(res => {
+        if (isApiResponseOk(res)) {
+          that.setState({
+            selectedKeys: new_selectedKeys,
+            shouldDeleteId: '',
+            showDelColor: ''
+          })
+          dispatch({
+            type: 'publicTaskDetailModal/updateDatas',
+            payload: {
+              drawContent: new_drawContent
+            }
+          })
+        }
+      })
+    }
+  }
+  // 对应字段的删除 E
 
 
   // 会议的状态值, 比较当前时间和开始时间结束时间的对比 S

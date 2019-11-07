@@ -350,6 +350,7 @@ export default {
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
+      return res || {}
     },
     // 移除任务执行人
     * removeTaskExecutor({ payload }, { select, call, put }) { //
@@ -360,6 +361,7 @@ export default {
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
+      return res || {}
     },
     // 删除卡片
     * deleteTask({ payload }, { select, call, put }) { //
