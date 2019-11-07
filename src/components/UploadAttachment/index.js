@@ -32,15 +32,15 @@ export default class UploadAttachment extends Component {
     }
   }
 
-  componentDidMount() {
-    const { board_id, boardFolderTreeData = [] } = this.props;
-    if (board_id) {
-      // this.getProjectFolderList(board_id)
-      this.setState({
-        boardFolderTreeData,
-      })
-    }
-  }
+  // componentDidMount() {
+  //   const { board_id, boardFolderTreeData = [] } = this.props;
+  //   if (board_id) {
+  //     // this.getProjectFolderList(board_id)
+  //     this.setState({
+  //       boardFolderTreeData,
+  //     })
+  //   }
+  // }
 
 
   //获取项目里文件夹列表
@@ -269,8 +269,8 @@ export default class UploadAttachment extends Component {
 
 
   renderSelectBoardFileTreeList = () => {
-    const { is_file_tree_loading } = this.props;
-    const { boardFolderTreeData } = this.state;
+    const { is_file_tree_loading, boardFolderTreeData = [] } = this.props;
+    // const { boardFolderTreeData } = this.state;
     if (is_file_tree_loading) {
       return (
         <div style={{ backgroundColor: '#FFFFFF', textAlign: 'center', height: '50px', lineHeight: '48px', overflow: 'hidden', color: 'rgba(0, 0, 0, 0.25)' }} className={`${styles.page_card_Normal} ${styles.directoryTreeWapper}`}>

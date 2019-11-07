@@ -22,13 +22,13 @@ export default class MilestoneAdd extends React.Component {
         add_lcb_modal_visible: false
     }
 
-    componentDidMount() {
-        const { dataInfo, milestoneList = [] } = this.props
-        this.setState({
-            milestoneList
-        })
-        // this.getMilestone(dataInfo.board_id)
-    }
+    // componentDidMount() {
+    //     const { dataInfo, milestoneList = [] } = this.props
+    //     this.setState({
+    //         milestoneList
+    //     })
+    //     // this.getMilestone(dataInfo.board_id)
+    // }
 
     // componentWillReceiveProps(nextProps) {
     //     const { dispatch, dataInfo } = nextProps;
@@ -101,7 +101,8 @@ export default class MilestoneAdd extends React.Component {
         }
 
         //添加里程碑后往后放
-        const { milestoneList } = this.state
+        // const { milestoneList } = this.state
+        const { milestoneList = [] } = this.props
         for (let i = 0; i < arr.length; i++) {
             if (milestoneList.indexOf(arr[i]['id']) != -1) {
                 if (i > 0 && milestoneList.indexOf(arr[i - 1]['id']) == -1) {
@@ -191,8 +192,8 @@ export default class MilestoneAdd extends React.Component {
     }
 
     render() {
-        const { milestoneList, add_lcb_modal_visible = false } = this.state
-        const { visible, children, selectedValue, dataInfo = {} } = this.props
+        const { add_lcb_modal_visible = false } = this.state
+        const { visible, children, selectedValue, dataInfo = {}, milestoneList = [] } = this.props
         const sortLilestoneList = this.getSortLilestoneList(milestoneList, dataInfo);
         return (
             <div>
