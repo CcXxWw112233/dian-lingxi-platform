@@ -173,7 +173,7 @@ class Gantt extends Component {
       return drawContent
     }
     const { properties = [] } = drawContent
-    const gold_data = properties.find(item => item.code === operate_properties_code)
+    const gold_data = (properties.find(item => item.code === operate_properties_code) || {}).data
     let gold_key = 'nothing'
     if ('EXECUTOR' == operate_properties_code) {
       gold_key = 'executors'
