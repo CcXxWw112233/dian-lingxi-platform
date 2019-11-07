@@ -280,13 +280,17 @@ export default class CreateTask extends React.Component {
    * 更新父级任务列表
    * @param {Object} payload 需要传递进来的参数
    */
-  handleTaskDetailChange = ({ drawContent, card_id }) => {
+  handleTaskDetailChange = ({ drawContent, card_id, name, value }) => {
     // console.log('更新父级任务列表', 'sssssss_进来了')
     // const { is_realize, card_name } = payload
     
     const { taskGroupList = [], taskGroupListIndex, taskGroupListIndex_index, dispatch } = this.props
     // taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index][name] = value
-    taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index] = {...drawContent}
+    if (name && value) {
+      taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index][name] = value
+    } else {
+      taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index] = {...drawContent}
+    }
     dispatch({
       type: 'projectDetailTask/updateDatas',
       payload: {

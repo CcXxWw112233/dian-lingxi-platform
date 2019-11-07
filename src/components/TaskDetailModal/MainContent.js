@@ -1,73 +1,133 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
-import { Icon, message, Dropdown, Menu, DatePicker, Button,Modal} from 'antd'
+import { Icon, message, Dropdown, Menu, DatePicker, Modal } from 'antd'
 import mainContentStyles from './MainContent.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
-import UploadAttachment from '@/components/UploadAttachment'
-import RichTextEditor from '@/components/RichTextEditor'
-import MilestoneAdd from '@/components/MilestoneAdd'
-import LabelDataComponent from '@/components/LabelDataComponent'
-import AppendSubTask from './components/AppendSubTask'
-import PreviewFileModal from '@/routes/Technological/components/ProjectDetail/TaskItemComponent/PreviewFileModal'
-import PreviewFileModalRichText from '@/routes/Technological/components/ProjectDetail/TaskItemComponent/PreviewFileModalRichText'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import InformRemind from '@/components/InformRemind'
-import { timestampFormat, timestampToTime, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal } from '@/utils/util'
-import { getSubfixName } from "@/utils/businessFunction";
+import { timestampToTime, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal } from '@/utils/util'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE
 } from "@/globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
-import { addTaskExecutor, removeTaskExecutor,deleteTaskFile} from '../../services/technological/task'
+import { addTaskExecutor, removeTaskExecutor, deleteTaskFile, getBoardTagList } from '../../services/technological/task'
 import {
   checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
 } from "@/utils/businessFunction";
-
+import { getFolderList } from '@/services/technological/file'
+import { getMilestoneList } from '@/services/technological/prjectDetail'
+import DragDropContentComponent from './DragDropContentComponent'
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
 
-  state = {
-    previewFileModalVisibile: false,
+  constructor(props) {
+    super(props)
+    this.state = {
+      propertiesList: []
+    }
   }
 
-  componentDidMount() {
-
-    const { card_id } = this.props
-    if (!card_id) return false
-    this.props.dispatch({
-      type: 'publicTaskDetailModal/getCardDetail',
-      payload: {
-        id: card_id
+  //获取项目里文件夹列表
+  getProjectFolderList = (board_id) => {
+    getFolderList({ board_id }).then((res) => {
+      if (isApiResponseOk(res)) {
+        this.setState({
+          boardFolderTreeData: res.data
+        });
+      } else {
+        message.error(res.message)
       }
     })
   }
 
-    // 检测不同类型的权限控制类型的是否显示
+  //获取项目里程碑列表
+  getMilestone = (id, callBackObject, milestoneId) => {
+    getMilestoneList({ id }).then((res) => {
+      if (isApiResponseOk(res)) {
+        this.setState({
+          milestoneList: res.data
+        }, () => {
+          callBackObject && callBackObject.callBackFun(res.data, callBackObject.param);
+        });
+      } else {
+        message.error(res.message)
+      }
+    })
+  }
+
+  componentWillMount() {
+    Promise.resolve(
+      this.props.dispatch({
+        type: 'publicTaskDetailModal/getCardAttributesList',
+        payload: {
+        }
+      })
+    ).then(res => {
+      if (isApiResponseOk(res)) {
+        this.setState({
+          propertiesList: res.data
+        })
+      }
+    })
+  }
+
+  componentDidMount() {
+    const { card_id } = this.props
+    if (!card_id) return false
+    const  that = this
+    this.props.dispatch({
+      type: 'publicTaskDetailModal/getCardWithAttributesDetail',
+      payload: {
+        id: card_id,
+        calback: function(board_id) {
+          that.getProjectFolderList(board_id)
+          that.getMilestone(board_id)
+        }
+      }
+    })
+  }
+
+  // 获取 currentDrawerContent 数据
+  getCurrentDrawerContentPropsModelDatasExecutors = () => {
+    const { drawContent: { properties = [] } } = this.props
+    const pricipleInfo = properties.filter(item => item.code == 'EXECUTOR')[0]
+    return pricipleInfo || {}
+  }
+
+  // 检测不同类型的权限控制类型的是否显示
   checkDiffCategoriesAuthoritiesIsVisible = () => {
     const { drawContent = {} } = this.props
-    const { is_realize = '0', card_id, privileges = [], board_id, is_privilege, executors = [] } = drawContent
-    let flag
+    const { data } = this.getCurrentDrawerContentPropsModelDatasExecutors()
+
+    const { privileges = [], board_id, is_privilege } = drawContent
     return {
       'visit_control_edit': function () {// 是否是有编辑权限
-        return checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))
+        return checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, data ? data : [], checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))
       },
-      'visit_control_comment': function() {
-        return checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))
+      'visit_control_comment': function () {
+        return checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, data ? data : [], checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))
       },
     }
+  }
+
+  // 更新drawContent中的数据以及调用父级列表更新数据
+  updateDrawContentWithUpdateParentListDatas = ({ drawContent, card_id, name, value }) => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'publicTaskDetailModal/updateDatas',
+      payload: {
+        drawContent
+      }
+    })
+    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, name, value })
   }
 
   // 设置卡片是否完成 S
   setIsCheck = () => {
     const { drawContent = {}, } = this.props
-    const { is_realize = '0', card_id, privileges = [], board_id, is_privilege, executors = [] } = drawContent
-    // 这是加上访问控制权限, 判断是否可完成
-    // if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))) {
-    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-    //   return false
-    // }
+    const { is_realize = '0', card_id, board_id } = drawContent
     if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -92,14 +152,7 @@ export default class MainContent extends Component {
       }
       let new_drawContent = { ...drawContent }
       new_drawContent['is_realize'] = is_realize === '1' ? '0' : '1'
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent: new_drawContent
-        }
-      })
-      // 需要调用父级的列表
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'is_realize', value: is_realize === '1' ? '0' : '1' })
     })
   }
   // 设置卡片是否完成 E
@@ -150,7 +203,7 @@ export default class MainContent extends Component {
         }
       })
       // 需要调用父级的列表
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, name: 'card_name', value: val })
     })
   }
   // 设置标题文本失去焦点回调 E
@@ -183,36 +236,38 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent: new_drawContent
-        }
-      })
-      // 需要调用父级的列表
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id })
     })
-
-
   }
   // 设置是否完成状态的下拉回调 E
 
-  // 设置添加属性的下拉回调 S
-  handleIsAddAtribute = (e) => {
-
+  // 过滤那些需要更新的字段
+  filterCurrentUpdateDatasField = (code, value) => {
+    const { drawContent: { properties = [] } } = this.props
+    let new_properties = [...properties]
+    new_properties = new_properties.map(item => {
+      if (item.code == code) {
+        let new_item = item
+        new_item = { ...item, data: value }
+        return new_item
+      } else {
+        let new_item = item
+        return new_item
+      }
+    })
+    return new_properties
   }
-  // 设置添加属性的下拉回调 E
 
   // 添加执行人的回调 S
-  chirldrenTaskChargeChange = (data) => {
-    const { drawContent = {}, projectDetailInfoData = {}, dispatch, is_selected_all } = this.props
+  chirldrenTaskChargeChange = (dataInfo) => {
+    const { drawContent = {}, projectDetailInfoData = {}, dispatch } = this.props
     const { card_id } = drawContent
 
     // 多个任务执行人
     const excutorData = projectDetailInfoData['data'] //所有的人
     // const excutorData = new_userInfo_data //所有的人
     let newExecutors = []
-    const { selectedKeys = [], type, key } = data
+    const { selectedKeys = [], type, key } = dataInfo
     for (let i = 0; i < selectedKeys.length; i++) {
       for (let j = 0; j < excutorData.length; j++) {
         if (selectedKeys[i] === excutorData[j]['user_id']) {
@@ -221,54 +276,27 @@ export default class MainContent extends Component {
       }
     }
     let new_drawContent = { ...drawContent }
-    new_drawContent['executors'] = newExecutors
-
+    // new_drawContent['executors'] = newExecutors
+    new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', newExecutors)
     if (type == 'add') {
-      if (selectedKeys.length == excutorData.length) { // 表示所有的成员选上了
-        dispatch({
-          type: 'publicTaskDetailModal/updateDatas',
-          payload: {
-            is_selected_all: true
-          }
-        })
-      }
       addTaskExecutor({ card_id, executor: key }).then(res => {
         if (isApiResponseOk(res)) {
           message.success(`已成功设置执行人`, MESSAGE_DURATION_TIME)
-          dispatch({
-            type: 'publicTaskDetailModal/updateDatas',
-            payload: {
-              drawContent: new_drawContent
-            }
-          })
-          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+          this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'executors', value: newExecutors })
         } else {
           message.warn(res.message, MESSAGE_DURATION_TIME)
         }
       })
     } else if (type == 'remove') {
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          is_selected_all: false
-        }
-      })
       removeTaskExecutor({ card_id, executor: key }).then(res => {
         if (isApiResponseOk(res)) {
           message.success(`已成功删除执行人`, MESSAGE_DURATION_TIME)
-          dispatch({
-            type: 'publicTaskDetailModal/updateDatas',
-            payload: {
-              drawContent: new_drawContent
-            }
-          })
-          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+          this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'executors', value: newExecutors })
         } else {
           message.warn(res.message, MESSAGE_DURATION_TIME)
         }
       })
     }
-
   }
   // 添加执行人的回调 E
 
@@ -276,224 +304,26 @@ export default class MainContent extends Component {
   handleRemoveExecutors = (e, shouldDeleteItem) => {
     e && e.stopPropagation()
     const { drawContent = {}, dispatch } = this.props
-    const { card_id, executors = [] } = drawContent
-    let new_executors = [...executors]
+    const { card_id } = drawContent
+    const { data } = this.getCurrentDrawerContentPropsModelDatasExecutors()
+    let new_executors = [...data]
     let new_drawContent = { ...drawContent }
     new_executors.map((item, index) => {
       if (item.user_id == shouldDeleteItem) {
         new_executors.splice(index, 1)
       }
     })
-    new_drawContent['executors'] = new_executors
+    new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', new_executors)
     removeTaskExecutor({ card_id, executor: shouldDeleteItem }).then(res => {
       if (isApiResponseOk(res)) {
         message.success(`已成功删除执行人`, MESSAGE_DURATION_TIME)
-        dispatch({
-          type: 'publicTaskDetailModal/updateDatas',
-          payload: {
-            drawContent: new_drawContent
-          }
-        })
-        this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+        this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'executors', value: new_executors })
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     })
   }
   // 移除执行人的回调 E
-
-  // 选择全体成员的回调
-  // handleSelectedAllBtn = (data) => {
-  //   const { drawContent = {}, projectDetailInfoData = {}, dispatch } = this.props
-  //   const { card_id } = drawContent
-  //   const excutorData = projectDetailInfoData['data'] //所有的人
-  //   let newExecutors = []
-  //   const { selectedKeys = [], type, key } = data
-  //   if (type == 'add') {
-  //     newExecutors.push(...excutorData)
-  //   }
-  //   drawContent['executors'] = newExecutors
-  //   dispatch({
-  //     type: 'publicTaskDetailModal/updateDatas',
-  //     payload: {
-  //       drawContent,
-  //     }
-  //   })
-  //   this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
-  //   if (type == 'add') {
-  //     dispatch({
-  //       type: 'publicTaskDetailModal/addTaskExecutor',
-  //       payload: {
-  //         card_id,
-  //         executor: key
-  //       }
-  //     })
-  //   } else if (type == 'remove') {
-  //     // dispatch({
-  //     //   type: 'publicTaskDetailModal/removeTaskExecutor',
-  //     //   payload: {
-  //     //     card_id,
-  //     //     user_id:''
-  //     //   }
-  //     // })
-  //   }
-  // }
-
-  saveBrafitEdit = (brafitEditHtml) => {
-    // console.log("brafitEditHtml", brafitEditHtml);
-    const { drawContent = {}, dispatch } = this.props;
-
-    let { card_id } = drawContent
-    this.setState({
-      isInEdit: false,
-    })
-    const updateObj = {
-      card_id,
-      description: brafitEditHtml,
-    }
-
-    drawContent['description'] = brafitEditHtml;
-    // dispatch({
-    //   type: 'publicTaskDetailModal/updateDatas',
-    //   payload: {
-    //     drawContent
-    //   }
-    // })
-    // dispatch({
-    //   type: 'publicTaskDetailModal/updateTask',
-    //   payload: {
-    //     updateObj
-    //   }
-    // })
-    Promise.resolve(
-      dispatch({
-        type: 'publicTaskDetailModal/updateTask',
-        payload: {
-          updateObj
-        }
-      })
-    ).then(res => {
-      if (!isApiResponseOk(res)) {
-        message.warn(res.message, MESSAGE_DURATION_TIME)
-        return
-      }
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent,
-        }
-      })
-      // 需要调用父级的列表
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
-    })
-  }
-
-  showMemberName = (userId) => {
-    const { projectDetailInfoData = {} } = this.props
-    const { data = [] } = projectDetailInfoData;
-    const users = data.filter((item) => item.user_id == userId);
-
-    if (users.length > 0) {
-      return <span>{users[0].name}</span>
-    }
-    return;
-  }
-
-  onUploadFileListChange = (data) => {
-    let { drawContent = {}, dispatch } = this.props;
-    if (data && data.length > 0) {
-      drawContent['attachment_data'] = [...this.props.drawContent.attachment_data, ...data];
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent: { ...drawContent }
-        }
-      })
-    }
-  }
-  onMilestoneSelectedChange = (data) => {
-
-    const { dispatch, drawContent } = this.props;
-    const { card_id, type, due_time } = drawContent
-    const { key, type: actionType, info } = data;
-    const id_time_arr = key.split('__')
-    const id = id_time_arr[0]
-    const deadline = id_time_arr[1]
-    if (!compareTwoTimestamp(deadline, due_time)) {
-      message.warn('关联里程碑的截止日期不能小于任务的截止日期')
-      return
-    }
-    // console.log("里程碑", data);
-
-    if (actionType === 'add') {
-      const params = {
-        rela_id: card_id,
-        id,
-        origin_type: type
-      };
-      dispatch({
-        type: 'publicTaskDetailModal/joinMilestone',
-        payload: {
-          ...params
-        }
-      });
-
-      drawContent['milestone_data'] = info;
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent: { ...drawContent }
-        }
-      })
-    }
-    if (actionType === 'remove') {
-      const params = {
-        rela_id: card_id,
-        id,
-      }
-      dispatch({
-        type: 'publicTaskDetailModal/shiftOutMilestone',
-        payload: {
-          ...params
-        }
-      });
-      drawContent['milestone_data'] = [];
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent: { ...drawContent }
-        }
-      })
-    }
-
-    if (actionType === 'update') {
-      const removeParams = {
-        rela_id: card_id,
-        id: drawContent['milestone_data'].id,
-      }
-
-      const addParams = {
-        rela_id: card_id,
-        id,
-        origin_type: type
-      }
-
-      dispatch({
-        type: 'publicTaskDetailModal/updateMilestone',
-        payload: {
-          addParams,
-          removeParams
-        }
-      });
-      drawContent['milestone_data'] = info;
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent: { ...drawContent }
-        }
-      })
-    }
-  }
 
   // 比较开始和结束时间
   compareStartDueTime = (start_time, due_time) => {
@@ -530,7 +360,7 @@ export default class MainContent extends Component {
     return Number(start_time.valueOf()) / 1000 >= newDueTime//Number(due_time).valueOf();
   }
 
-  // 开始时间
+  // 开始时间 chg事件 S
   startDatePickerChange(timeString) {
     const { drawContent = {}, dispatch } = this.props
     const start_timeStamp = timeToTimestamp(timeString)
@@ -556,23 +386,17 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent: new_drawContent
-        }
-      })
-      // 需要调用父级的列表
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id })
     })
   }
+  // 开始时间 chg事件 E
 
-  //截止时间
+  // 截止时间 chg事件 S
   endDatePickerChange(timeString) {
-    const { drawContent = {}, milestoneList = [], dispatch } = this.props
+    const { drawContent = {}, dispatch } = this.props
     const { card_id, start_time, milestone_data = {} } = drawContent
-    const { deadline } = milestone_data
-    // const milestone_deadline = (milestoneList.find((item => item.id == milestone_data.id)) || {}).deadline//关联里程碑的时间
+    // const { deadline } = milestone_data
+    const { data } = drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
     const due_timeStamp = timeToTimestamp(timeString)
     const updateObj = {
       card_id, due_time: due_timeStamp
@@ -581,9 +405,13 @@ export default class MainContent extends Component {
       message.warn('开始时间不能大于结束时间')
       return false
     }
-    if (!compareTwoTimestamp(deadline, due_timeStamp)) {
-      message.warn('任务的截止日期不能大于关联里程碑的截止日期')
-      return
+    if (data && data instanceof Object) {
+      let arr = Object.keys(data)
+      if (arr.length == '0') return
+      if (!compareTwoTimestamp(data.deadline, due_timeStamp)) {
+        message.warn('任务的截止日期不能大于关联里程碑的截止日期')
+        return
+      }
     }
     let new_drawContent = { ...drawContent }
     new_drawContent['due_time'] = due_timeStamp
@@ -599,18 +427,12 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent: new_drawContent
-        }
-      })
-      // 需要调用父级的列表
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id })
     })
   }
+  // 截止时间 chg事件 E
 
-  // 删除开始时间
+  // 删除开始时间 S
   handleDelStartTime = (e) => {
     e && e.stopPropagation()
     const { dispatch, drawContent = {} } = this.props
@@ -632,19 +454,13 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent: new_drawContent
-        }
-      })
-      // 需要调用父级的列表
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id })
     })
 
   }
+  // 删除开始时间 E
 
-  // 删除结束时间
+  // 删除结束时间 S
   handleDelDueTime = (e) => {
     e && e.stopPropagation()
     const { dispatch, drawContent = {} } = this.props
@@ -667,19 +483,14 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent: new_drawContent
-        }
-      })
-      // 需要调用父级的列表
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id })
     })
 
   }
+  // 删除结束时间 E
 
-  // 会议的状态值, 比较当前时间和开始时间结束时间的对比
+
+  // 会议的状态值, 比较当前时间和开始时间结束时间的对比 S
   getMeetingStatus = () => {
     let meetingField
     meetingField = (<span></span>)
@@ -707,176 +518,259 @@ export default class MainContent extends Component {
     }
     return meetingField
   }
+  // 会议的状态值, 比较当前时间和开始时间结束时间的对比 E
 
-  /**附件预览 */
-  openFileDetailModal = (fileInfo) => {
-    // console.log("文件详情", fileInfo);
-
-    const file_name = fileInfo.name
-    const file_resource_id = fileInfo.file_resource_id
-    const file_id = fileInfo.file_id;
-    const { dispatch } = this.props
-    dispatch({
-      type: 'projectDetailFile/updateDatas',
-      payload: {
-        isInOpenFile: true,
-        seeFileInput: 'taskModule',
-        filePreviewCurrentId: file_resource_id,
-        filePreviewCurrentFileId: file_id,
-        pdfDownLoadSrc: '',
-      }
-    })
-
-    if (getSubfixName(file_name) == '.pdf') {
+  // 属性选择的下拉回调 S
+  handleMenuReallySelect = (e) => {
+    const { dispatch, card_id } = this.props
+    const { propertiesList = [], selectedKeys = [] } = this.state
+    const { key } = e
+    // let new_propertiesList = [...propertiesList]
+    // new_propertiesList = new_propertiesList.filter(item => {
+    //   if (item.id != e.key) {
+    //     return item
+    //   }
+    // })
+    selectedKeys.push(key)
+    Promise.resolve(
       dispatch({
-        type: 'projectDetailFile/getFilePDFInfo',
+        type: 'publicTaskDetailModal/setCardAttributes',
         payload: {
-          id: file_id
+          card_id, property_id: key
         }
       })
-    } else {
-      dispatch({
-        type: 'projectDetailFile/filePreview',
-        payload: {
-          file_id
-        }
-      })
-      dispatch({
-        type: 'projectDetailFile/fileInfoByUrl',
-        payload: {
-          file_id
-        }
-      })
-    }
-
-  }
-  /**附件下载、删除等操作 */
-  attachmentItemOpera({ type, data = {}, card_id }, e) {
-    e.stopPropagation()
-    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
-    //debugger
-    const { dispatch } = this.props
-    const attachment_id = data.id || (data.response && data.response.data && data.response.data.attachment_id)
-    const file_resource_id = data.file_resource_id || (data.response && data.response.data.file_resource_id)
-    if (!attachment_id) {
-      message.warn('上传中，请稍后...')
-      return
-    }
-    if (type == 'remove') {
-      this.deleteAttachmentFile({ attachment_id, card_id })
-    } else if (type == 'download') {
-      dispatch({
-        type: 'projectDetailFile/fileDownload',
-        payload: {
-          ids: file_resource_id,
-          card_id
-        }
-      })
-    }
-  }
-   /**附件删除 */
-  deleteAttachmentFile(data) {
-    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
-    const { attachment_id } = data;
-    const that = this
-    const { drawContent = {}, dispatch } = this.props
-
-    Modal.confirm({
-      title: `确认要删除这个附件吗？`,
-      zIndex: 1007,
-      content: <div style={{ color: 'rgba(0,0,0, .8)', fontSize: 14 }}>
-        <span >删除后不可恢复</span>
-      </div>,
-      okText: '确认',
-      cancelText: '取消',
-      onOk() {
-        return new Promise((resolve) => {
-          deleteTaskFile(data).then((value) => {
-
-            if (value.code !== '0') {
-              message.warn('删除失败，请重新删除。1')
-              resolve()
-            } else {
-              let atta_arr = drawContent['attachment_data'];
-              for (let i = 0; i < atta_arr.length; i++) {
-                if (attachment_id == atta_arr[i]['id'] || (atta_arr[i].response && atta_arr[i].response.data && atta_arr[i].response.data.attachment_id == attachment_id)) {
-                  atta_arr.splice(i, 1)
-                }
-              }
-              that.setState({
-                attachment_fileList: atta_arr
-              })
-              const drawContentNew = { ...drawContent }
-              drawContentNew['attachment_data'] = atta_arr
-              dispatch({
-                type: 'projectDetailTask/updateDatas',
-                payload: {
-                  drawContent: drawContentNew
-                }
-              })
-              resolve()
-            }
-          }).catch((e) => {
-            // console.log(e);
-            
-            message.warn('删除出了点问题，请重新删除。')
-            resolve()
-          })
+    )
+    .then(res => {
+      if (isApiResponseOk(res)) {
+        this.setState({
+          selectedKeys: selectedKeys
         })
-
       }
-    });
-  }
-
-
-  setPreviewFileModalVisibile() {
-    this.setState({
-      previewFileModalVisibile: !this.state.previewFileModalVisibile
     })
   }
+  // 属性选择的下拉回调 E
 
-  getAttachmentActionMenus = (fileInfo,card_id) => {
+
+  // 获取对应字段的Icon
+  getCurrentFieldIcon = (value) => {
+    const { code } = value
+    let messageValue = (<span></span>)
+    switch (code) {
+      case 'EXECUTOR':// 表示是负责人
+        messageValue = (
+          <span>&#xe7b2;</span>
+        )
+        break;
+      case 'MILESTONE':// 表示是里程碑
+        messageValue = (
+          <span>&#xe6b7;</span>
+        )
+        break;
+      case 'REMARK':// 表示是备注
+        messageValue = (
+          <span>&#xe7f6;</span>
+        )
+        break;
+      case 'LABEL':// 标签
+        messageValue = (
+          <span>&#xe6b8;</span>
+        )
+        break;
+      case 'ATTACHMENT':// 表示是上传附件
+        messageValue = (
+          <span>&#xe6b9;</span>
+        )
+        break;
+      case 'SUBTASK':// 表示是子任务
+        messageValue = (
+          <span>&#xe7f5;</span>
+        )
+        break;
+      // case 'CONTENTLINK':// 表示是关联内容
+      //   messageValue = (
+      //     <span>&#xe6ba;</span>
+      //   )
+      //   break;
+      default:
+        break;
+    }
+    return messageValue
+  }
+
+  // 获取添加属性中的不同字段
+  getDiffAttributies = () => {
+    const { propertiesList = [], selectedKeys = [] } = this.state
+    if (!(propertiesList && propertiesList.length)) return
+    let new_propertiesList = [...propertiesList]
+    new_propertiesList = new_propertiesList.filter(item => item.code != 'CONTENTLINK')
     return (
-      <Menu>
-        <Menu.Item>
-          <a onClick={this.attachmentItemOpera.bind(this, { type: 'download', data: fileInfo, card_id })}>
-            下载到本地
-        </a>
-        </Menu.Item>
-        <Menu.Item>
-          <a onClick={this.attachmentItemOpera.bind(this, { type: 'remove', data: fileInfo, card_id })}>
-            删除该附件
-        </a>
-        </Menu.Item>
-      </Menu>
-    );
+      <div>
+        <div className={mainContentStyles.attrWrapper}>
+          <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: '248px' }}
+            // onDeselect={this.handleMenuReallyDeselect.bind(this)}
+            selectedKeys={selectedKeys}
+            onSelect={this.handleMenuReallySelect.bind(this)}
+          >
+            {
+              new_propertiesList && new_propertiesList.map(item => (
+                <Menu.Item key={item.id}>
+                  <span className={`${globalStyles.authTheme} ${mainContentStyles.attr_icon}`}>{this.getCurrentFieldIcon(item)}</span>
+                  <span className={mainContentStyles.attr_name}>{item.name}</span>
+                </Menu.Item>
+              ))
+            }
+          </Menu>
+        </div>
+      </div>
+    )
+  }
+
+  // 执行人渲染需要特殊处理
+  renderPriciple = () => {
+    const { drawContent = {}, projectDetailInfoData } = this.props
+    const { showDelColor, currentDelId } = this.state
+    const { card_id, board_id, org_id } = drawContent
+    const { data = [], id } = this.getCurrentDrawerContentPropsModelDatasExecutors()
+    const flag = (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()
+    return (
+      <div>
+        <div style={{cursor: 'pointer'}} className={`${mainContentStyles.field_content} ${showDelColor && id == currentDelId && mainContentStyles.showDelColor}`}>
+          <div className={mainContentStyles.field_left}>
+            {
+              !flag && (
+                <span onClick={() => { this.handleDelCurrentField(id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+              )
+            }
+            <div className={mainContentStyles.field_hover}>
+              <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.65)' }} className={globalStyles.authTheme}>&#xe7b2;</span>
+              <span className={mainContentStyles.user_executor}>负责人</span>
+            </div>
+          </div>
+          {
+            (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+              (
+                !data.length ? (
+                  <div className={`${mainContentStyles.field_right}`}>
+                    <div className={`${mainContentStyles.pub_hover}`}>
+                      <span>暂无</span>
+                    </div>
+                  </div>
+                ) : (
+                    <div style={{ display: 'flex', flexWrap: 'wrap' }} className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
+                      {data.map((value) => {
+                        const { avatar, name, user_name, user_id } = value
+                        return (
+                          <div className={`${mainContentStyles.first_pric}`} style={{ display: 'flex', flexWrap: 'wrap', marginLeft: '-12px' }} key={user_id}>
+                            <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 10px', textAlign: 'center' }} key={user_id}>
+                              {avatar ? (
+                                <img style={{ width: '24px', height: '24px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
+                              ) : (
+                                  <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
+                                    <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
+                                  </div>
+                                )}
+                              <div style={{ marginRight: 8, fontSize: '14px' }} className={mainContentStyles.value_text}>{name || user_name || '佚名'}</div>
+                              {/* <span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${mainContentStyles.userItemDeleBtn}`}></span> */}
+                            </div>
+
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )
+              )
+            ) : (
+                <span style={{ flex: '1' }}>
+                  {
+                    !data.length ? (
+                      <div style={{ flex: '1', position: 'relative' }}>
+                        <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                          overlay={
+                            <MenuSearchPartner
+                              // handleSelectedAllBtn={this.handleSelectedAllBtn}
+                              invitationOrg={org_id}
+                              invitationType='4'
+                              invitationId={card_id}
+                              listData={projectDetailInfoData.data} keyCode={'user_id'} searchName={'name'} currentSelect={data} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                              board_id={board_id} />
+                          }
+                        >
+                          <div className={`${mainContentStyles.field_right}`}>
+                            <div className={`${mainContentStyles.pub_hover}`}>
+                              <span>指派负责人</span>
+                            </div>
+                          </div>
+                        </Dropdown>
+                      </div>
+                    ) : (
+                        <div style={{ flex: '1', position: 'relative' }}>
+                          <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                            overlay={
+                              <MenuSearchPartner
+                                // handleSelectedAllBtn={this.handleSelectedAllBtn}
+                                invitationOrg={org_id}
+                                invitationType='4'
+                                invitationId={card_id}
+                                listData={projectDetailInfoData.data} keyCode={'user_id'} searchName={'name'} currentSelect={data} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                                board_id={board_id} />
+                            }
+                          >
+                            <div style={{ display: 'flex', flexWrap: 'wrap' }} className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
+                              {data.map((value) => {
+                                const { avatar, name, user_name, user_id } = value
+                                return (
+                                  <div className={`${mainContentStyles.first_pric}`} style={{ display: 'flex', flexWrap: 'wrap', marginLeft: '-12px' }} key={user_id}>
+                                    <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 10px', textAlign: 'center' }} key={user_id}>
+                                      {avatar ? (
+                                        <img style={{ width: '24px', height: '24px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
+                                      ) : (
+                                          <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
+                                            <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
+                                          </div>
+                                        )}
+                                      <div style={{ marginRight: 8, fontSize: '14px' }} className={mainContentStyles.value_text}>{name || user_name || '佚名'}</div>
+                                      <span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${mainContentStyles.userItemDeleBtn}`}></span>
+                                    </div>
+
+                                  </div>
+                                )
+                              })}
+                            </div>
+                          </Dropdown>
+                        </div>
+                      )
+                  }
+                </span>
+              )
+          }
+        </div>
+      </div>
+    )
+  }
+
+  // 判断是否存在执行人
+  whetherExistencePriciple = () => {
+    const { drawContent: { properties = [] } } = this.props
+    let flag
+    if (!properties.length) return false
+    flag = properties.filter(item => item.code == 'EXECUTOR')
+    if (flag.length == '0') return flag = false
+    return flag
   }
 
   render() {
-    const { drawContent = {}, is_edit_title, projectDetailInfoData = {}, dispatch, handleTaskDetailChange, isInOpenFile } = this.props
-    const { new_userInfo_data = [] } = this.state
-    const { data = [] } = projectDetailInfoData
+    const { drawContent = {}, is_edit_title, isInOpenFile, handleTaskDetailChange} = this.props
     const {
-      org_id,
-      board_id,
-      board_name,
       card_id,
       card_name,
       type = '0',
       is_realize = '0',
       start_time,
       due_time,
-      executors = [],
-      description,
-      milestone_data
     } = drawContent
-
+    const { properties = [] } = drawContent
+    const executors = this.getCurrentDrawerContentPropsModelDatasExecutors()
+    const { boardFolderTreeData = [], milestoneList = []} = this.state
     // 状态
     const filedEdit = (
       <Menu onClick={this.handleFiledIsComplete} getPopupContainer={triggerNode => triggerNode.parentNode} selectedKeys={is_realize == '0' ? ['incomplete'] : ['complete']}>
@@ -894,20 +788,6 @@ export default class MainContent extends Component {
           </div>
         </Menu.Item>
 
-      </Menu>
-    )
-
-    // 添加属性
-    const addAttribute = (
-      <Menu onClick={this.handleIsAddAtribute} getPopupContainer={triggerNode => triggerNode.parentNode}>
-        <Menu.Item key="principal">
-          <span className={`${globalStyles.authTheme}`}>&#xe7b2;</span>
-          <span>负责人</span>
-        </Menu.Item>
-        <Menu.Item key="milestone">
-          <span className={`${globalStyles.authTheme}`}>&#xe6b7;</span>
-          <span>里程碑</span>
-        </Menu.Item>
       </Menu>
     )
 
@@ -957,8 +837,8 @@ export default class MainContent extends Component {
           <div>
             {/* 状态区域 */}
             <div>
-              <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
-                <div className={mainContentStyles.field_left}>
+              <div style={{ position: 'relative' }} className={mainContentStyles.field_content} style={{cursor: 'pointer'}}>
+                <div className={mainContentStyles.field_left} style={{paddingLeft: '10px'}}>
                   <span className={`${globalStyles.authTheme}`}>&#xe6b6;</span>
                   <span>状态</span>
                 </div>
@@ -997,140 +877,19 @@ export default class MainContent extends Component {
 
               </div>
             </div>
-            {/* 这个中间放置负责人, 如果存在, 则在两者之间 */}
-            <div>
-              <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
-                <div className={mainContentStyles.field_left}>
-                  <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.45)' }} className={globalStyles.authTheme}>&#xe7b2;</span>
-                  <span className={mainContentStyles.user_executor}>负责人</span>
-                </div>
-                {
-                  (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
-                    (
-                      !executors.length ? (
-                        <div className={`${mainContentStyles.field_right}`}>
-                          <div className={`${mainContentStyles.pub_hover}`}>
-                            <span>暂无</span>
-                          </div>
-                        </div>
-                      ) : (
-                          <div style={{ display: 'flex', flexWrap: 'wrap' }} className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
-                            {executors.map((value) => {
-                              const { avatar, name, user_name, user_id } = value
-                              return (
-                                <div className={`${mainContentStyles.first_pric}`} style={{ display: 'flex', flexWrap: 'wrap', marginLeft: '-12px' }} key={user_id}>
-                                  <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 10px', textAlign: 'center' }} key={user_id}>
-                                    {avatar ? (
-                                      <img style={{ width: '24px', height: '24px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
-                                    ) : (
-                                        <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
-                                          <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
-                                        </div>
-                                      )}
-                                    <div style={{ marginRight: 8, fontSize: '14px' }} className={mainContentStyles.value_text}>{name || user_name || '佚名'}</div>
-                                    {/* <span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${mainContentStyles.userItemDeleBtn}`}></span> */}
-                                  </div>
-
-                                </div>
-                              )
-                            })}
-                          </div>
-                        )
-                    )
-                  ) : (
-                      <span style={{ flex: '1' }}>
-                        {
-                          !executors.length ? (
-                            <div style={{ flex: '1', position: 'relative' }}>
-                              <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
-                                overlay={
-                                  <MenuSearchPartner
-                                    // handleSelectedAllBtn={this.handleSelectedAllBtn}
-                                    invitationOrg={drawContent.org_id}
-                                    invitationType='4'
-                                    invitationId={card_id}
-                                    listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
-                                    board_id={board_id} />
-                                }
-                              >
-                                <div className={`${mainContentStyles.field_right}`}>
-                                  <div className={`${mainContentStyles.pub_hover}`}>
-                                    <span>指派负责人</span>
-                                  </div>
-                                </div>
-                              </Dropdown>
-                            </div>
-                          ) : (
-                              <div style={{ flex: '1', position: 'relative' }}>
-                                <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
-                                  overlay={
-                                    <MenuSearchPartner
-                                      // handleSelectedAllBtn={this.handleSelectedAllBtn}
-                                      invitationOrg={drawContent.org_id}
-                                      invitationType='4'
-                                      invitationId={card_id}
-                                      listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
-                                      board_id={board_id} />
-                                  }
-                                >
-                                  <div style={{ display: 'flex', flexWrap: 'wrap' }} className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
-                                    {executors.map((value) => {
-                                      const { avatar, name, user_name, user_id } = value
-                                      return (
-                                        <div className={`${mainContentStyles.first_pric}`} style={{ display: 'flex', flexWrap: 'wrap', marginLeft: '-12px' }} key={user_id}>
-                                          <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 10px', textAlign: 'center' }} key={user_id}>
-                                            {avatar ? (
-                                              <img style={{ width: '24px', height: '24px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
-                                            ) : (
-                                                <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
-                                                  <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
-                                                </div>
-                                              )}
-                                            <div style={{ marginRight: 8, fontSize: '14px' }} className={mainContentStyles.value_text}>{name || user_name || '佚名'}</div>
-                                            <span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${mainContentStyles.userItemDeleBtn}`}></span>
-                                          </div>
-
-                                        </div>
-                                      )
-                                    })}
-                                  </div>
-                                </Dropdown>
-                              </div>
-                            )
-                        }
-                      </span>
-                    )
-                }
-
-
-              </div>
-            </div>
+            {/* 负责人区域 S */}
+            { this.whetherExistencePriciple() && this.renderPriciple() }
+            {/* 负责人区域 E */}
             {/* 时间区域 */}
             <div>
-              <div className={mainContentStyles.field_content}>
-                <div className={mainContentStyles.field_left}>
+              <div className={mainContentStyles.field_content} style={{cursor: 'pointer'}}>
+                <div className={mainContentStyles.field_left} style={{paddingLeft: '10px'}}>
                   <span className={globalStyles.authTheme}>&#xe686;</span>
                   <span>时间</span>
                 </div>
                 <div className={`${mainContentStyles.field_right}`}>
                   <div style={{ display: 'flex' }}>
                     <div style={{ position: 'relative' }}>
-                      {/* {start_time && due_time ? ('') : (<span style={{ color: '#bfbfbf' }}>设置</span>)} */}
-                      {/* <div className={`${mainContentStyles.start_time}`}>
-                        <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                          {start_time ? timestampToTime(start_time, true) : '开始时间'}
-                          <DatePicker
-                            disabledDate={this.disabledStartTime.bind(this)}
-                            // onOk={this.startDatePickerChange.bind(this)}
-                            onChange={this.startDatePickerChange.bind(this)}
-                            // getCalendarContainer={triggerNode => triggerNode.parentNode}
-                            placeholder={start_time ? timestampToTimeNormal(start_time, '/', true) : '开始时间'}
-                            format="YYYY/MM/DD HH:mm"
-                            showTime={{ format: 'HH:mm' }}
-                            style={{ opacity: 0, background: '#000000', position: 'absolute', left: 0, width: 'auto' }} />
-                        </span>
-                        <span onClick={this.handleDelStartTime} className={`${mainContentStyles.userItemDeleBtn} ${start_time && mainContentStyles.timeDeleBtn}`}></span>
-                      </div> */}
                       {/* 开始时间 */}
                       {
                         (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
@@ -1144,7 +903,7 @@ export default class MainContent extends Component {
                         ) : (
                             <div className={`${mainContentStyles.start_time}`}>
                               <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                                {start_time ?  <span className={mainContentStyles.value_text}>{timestampToTime(start_time, true)}</span> : '开始时间'}
+                                {start_time ? <span className={mainContentStyles.value_text}>{timestampToTime(start_time, true)}</span> : '开始时间'}
                                 <DatePicker
                                   disabledDate={this.disabledStartTime.bind(this)}
                                   // onOk={this.startDatePickerChange.bind(this)}
@@ -1162,21 +921,6 @@ export default class MainContent extends Component {
                       &nbsp;
                       <span style={{ color: '#bfbfbf' }}> ~ </span>
                       &nbsp;
-                      {/* <div className={`${mainContentStyles.due_time}`}>
-                        <span style={{ position: 'relative', minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                          {due_time ? timestampToTime(due_time, true) : '截止时间'}
-                          <DatePicker
-                            disabledDate={this.disabledDueTime.bind(this)}
-                            // getCalendarContainer={triggerNode => triggerNode.parentNode}
-                            placeholder={due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
-                            format="YYYY/MM/DD HH:mm"
-                            showTime={{ format: 'HH:mm' }}
-                            // onOk={this.endDatePickerChange.bind(this)}
-                            onChange={this.endDatePickerChange.bind(this)}
-                            style={{ opacity: 0, background: '#000000', position: 'absolute', left: 0, width: 'auto' }} />
-                        </span>
-                        <span onClick={this.handleDelDueTime} className={`${mainContentStyles.userItemDeleBtn} ${due_time && mainContentStyles.timeDeleBtn}`}></span>
-                      </div> */}
                       {/* 截止时间 */}
                       {
                         (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
@@ -1212,7 +956,7 @@ export default class MainContent extends Component {
                         ''
                       ) : (
                           <span style={{ position: 'relative' }}>
-                            <InformRemind commonExecutors={executors} style={{ display: 'inline-block', minWidth: '72px', height: '38px', borderRadius: '4px', textAlign: 'center' }} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} />
+                            <InformRemind commonExecutors={executors.data} style={{ display: 'inline-block', minWidth: '72px', height: '38px', borderRadius: '4px', textAlign: 'center' }} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} />
                           </span>
                         )
                     }
@@ -1221,216 +965,47 @@ export default class MainContent extends Component {
                 </div>
               </div>
             </div>
-            {/* 添加属性区域 */}
-            {/* <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
-              <div className={mainContentStyles.field_left}>
-                <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.45)' }} className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
-                <span>添加属性</span>
-              </div>
-              <Dropdown overlayClassName={mainContentStyles.overlay_attribute} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={addAttribute}>
-                <div className={`${mainContentStyles.field_right}`}>
-                  <div className={`${mainContentStyles.pub_hover}`}>
-                    <span>选择属性</span>
-                  </div>
-                </div>
-              </Dropdown>
-            </div> */}
           </div>
           {/* 各种字段的不同状态 E */}
-
-          {/* 添加标签字段 S */}
-          {/* <div>
-            <div className={mainContentStyles.field_content}>
-              <div className={mainContentStyles.field_left}>
-                <span className={`${globalStyles.authTheme}`}>&#xe6b8;</span>
-                <span>标签</span>
-              </div>
-              <div style={{position: 'relative'}} className={mainContentStyles.field_right}>
-                <div className={mainContentStyles.pub_hover}>
-                  <LabelDataComponent board_id={board_id}>
-                    <span>添加标签</span>
-                  </LabelDataComponent>
-                </div>
-              </div>
-            </div>
-          </div> */}
-          {/* 添加标签字段 E */}
-
-          {/* 上传附件字段 S*/}
+          {/* 不同字段的渲染 S */}
           <div>
-            <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
-              <div className={mainContentStyles.field_left}>
-                <span className={`${globalStyles.authTheme}`}>&#xe6b9;</span>
-                <span>附件</span>
-              </div>
-              <div className={`${mainContentStyles.field_right}`}>
-                {/* 上传附件组件 */}
-                {
-                  (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
-                    <div className={`${mainContentStyles.pub_hover}`}>
-                      <span>暂无</span>
-                    </div>
-                  ) : (
-                      <div className={`${mainContentStyles.pub_hover}`}>
-                        {
-                          card_id && (
-                            <UploadAttachment projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
-                              onFileListChange={this.onUploadFileListChange}>
-                              <div className={mainContentStyles.upload_file_btn}>
-                                <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fa;</span> 上传附件
-                        </div>
-                            </UploadAttachment>
-                          )}
-                      </div>
-                    )
-                }
-                <div className={mainContentStyles.filelist_wrapper}>
+            <DragDropContentComponent handleTaskDetailChange={handleTaskDetailChange} boardFolderTreeData={boardFolderTreeData} milestoneList={milestoneList} />
+          </div>
+          {/* 不同字段的渲染 E */}
+
+          {/* 添加字段 S */}
+          <div>
+            {
+              (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                ''
+              ) : (
+                <>
                   {
-                    drawContent.attachment_data && drawContent.attachment_data.map((fileInfo) => {
-                      return (
-                        <div className={`${mainContentStyles.file_item_wrapper}`} key={fileInfo.id}>
-
-                          <Dropdown overlay={this.getAttachmentActionMenus(fileInfo,card_id)}>
-                            <div className={mainContentStyles.file_action}>
-                              <i className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fd;</i>
+                    !(properties && properties.length == 6) && (
+                        <div className={mainContentStyles.field_content}>
+                          <div className={mainContentStyles.field_left} style={{paddingLeft: '10px'}}>
+                            <span className={globalStyles.authTheme}>&#xe8fe;</span>
+                            <span>添加属性</span>
+                          </div>
+                          <div className={mainContentStyles.field_right}>
+                            <div style={{ position: 'relative' }} className={mainContentStyles.pub_hover}>
+                              <Dropdown overlayClassName={mainContentStyles.overlay_attribute} trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode}
+                                overlay={this.getDiffAttributies()}
+                              >
+                                <div><span>选择属性</span></div>
+                              </Dropdown>
                             </div>
-                          </Dropdown>
-                          <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={() => this.openFileDetailModal(fileInfo)} >
-                            <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span><span>{fileInfo.name}</span></div>
-                            <div className={mainContentStyles.file_info}>{this.showMemberName(fileInfo.create_by)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
                           </div>
                         </div>
-                      );
-                    })
+                      )
                   }
-                </div>
-              </div>
-            </div>
+                </>
+              )
+            }
+            
           </div>
-          {/* 上传附件字段 E*/}
-
-          {/* 备注字段 S*/}
-          <div>
-            <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
-              <div className={mainContentStyles.field_left}>
-                <span className={`${globalStyles.authTheme}`}>&#xe7f6;</span>
-                <span>备注</span>
-              </div>
-              <div className={`${mainContentStyles.field_right}`}>
-                {
-                  (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
-                    (
-                      !description && description != '<p></p>' ? (
-                        <div className={`${mainContentStyles.pub_hover}`}>
-                          <span>暂无</span>
-                        </div>
-                      ) : (
-                          <div className={`${mainContentStyles.pub_hover}`} >
-                            <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: description }}></div>
-                          </div>
-                        )
-                    )
-                  ) : (
-                      // 富文本组件
-                      <>
-                        <RichTextEditor saveBrafitEdit={this.saveBrafitEdit} value={description}>
-                          <div className={`${mainContentStyles.pub_hover}`} >
-                            {
-                              description && description != '<p></p>'?
-                                <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: description }}></div>
-                                :
-                                '添加备注'
-                            }
-                          </div>
-                        </RichTextEditor>
-                      </>
-                    )
-                }
-              </div>
-            </div>
-          </div>
-          {/* 备注字段 E*/}
-
-          {/* 备注字段 S*/}
-          <div>
-            <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
-              <div className={mainContentStyles.field_left}>
-                <span className={`${globalStyles.authTheme}`}>&#xe6b7;</span>
-                <span>里程碑</span>
-              </div>
-              <div className={`${mainContentStyles.field_right}`}>
-
-                {/*加入里程碑组件*/}
-                {/* <MilestoneAdd onChangeMilestone={this.onMilestoneSelectedChange} dataInfo={{ board_id, board_name, due_time, org_id, data }} selectedValue={milestone_data && milestone_data.id}>
-                  <div className={`${mainContentStyles.pub_hover}`} >
-                    {milestone_data && milestone_data.id
-                      ? milestone_data.name
-                      :
-                      '加入里程碑'
-                    }
-                  </div>
-                </MilestoneAdd> */}
-                {
-                  (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
-                    (
-                      !milestone_data && !(milestone_data && milestone_data.id) ? (
-                        <div className={`${mainContentStyles.pub_hover}`}>
-                          <span>暂无</span>
-                        </div>
-                      ) : (
-                          <div className={`${mainContentStyles.pub_hover} ${mainContentStyles.value_text}`}  >
-                            {milestone_data.name}
-                          </div>
-                        )
-                    )
-                  ) : (
-                      // 加入里程碑组件
-                      <MilestoneAdd onChangeMilestone={this.onMilestoneSelectedChange} dataInfo={{ board_id, board_name, due_time, org_id, data }} selectedValue={milestone_data && milestone_data.id}>
-                        <div className={`${mainContentStyles.pub_hover}`} >
-                          {milestone_data && milestone_data.id
-                            ? <span className={mainContentStyles.value_text}>{milestone_data.name}</span>
-                            :
-                            '加入里程碑'
-                          }
-                        </div>
-                      </MilestoneAdd>
-                    )
-                }
-                {/*加入里程碑组件*/}
-
-
-              </div>
-            </div>
-          </div>
-          {/* 备注字段 E*/}
-
-          {/* 子任务字段 S */}
-          <div>
-            <div style={{ position: 'relative' }} className={mainContentStyles.field_content}>
-              <div className={mainContentStyles.field_left}>
-                <span className={`${globalStyles.authTheme}`}>&#xe7f5;</span>
-                <span>子任务</span>
-              </div>
-              <div className={`${mainContentStyles.field_right}`}>
-                {/* 添加子任务组件 */}
-                <AppendSubTask drawContent={drawContent} dispatch={dispatch} data={data} handleTaskDetailChange={handleTaskDetailChange}>
-                  <div className={`${mainContentStyles.pub_hover}`}>
-                    <span className={mainContentStyles.add_sub_btn}>
-                      <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe8fe;</span> 新建子任务
-                    </span>
-                  </div>
-                </ AppendSubTask>
-              </div>
-            </div>
-          </div>
-          {/* 子任务字段 E */}
-
+          {/* 添加字段 E */}
         </div>
-
-        {/*外部附件引入开始 */}
-        {/*查看任务附件*/}
-        <PreviewFileModal modalVisible={isInOpenFile} />
-        {/*外部附件引入结束 */}
       </div>
     )
   }
@@ -1438,7 +1013,7 @@ export default class MainContent extends Component {
 
 // 只关联public弹窗内的数据
 function mapStateToProps({
-  publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id, is_selected_all },
+  publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id, boardTagList = [] },
   projectDetail: { datas: { projectDetailInfoData = {} } },
   projectDetailFile: {
     datas: {
@@ -1446,5 +1021,5 @@ function mapStateToProps({
     }
   }
 }) {
-  return { drawContent, is_edit_title, card_id, is_selected_all, projectDetailInfoData, isInOpenFile }
+  return { drawContent, is_edit_title, card_id, boardTagList, projectDetailInfoData, isInOpenFile }
 }

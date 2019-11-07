@@ -31,7 +31,7 @@ export default class BoardsFilesArea extends Component {
             },
             getFileList(params) {
                 dispatch({
-                    type: getEffectOrReducerByName('getFileList'),
+                    type: getEffectOrReducerByName_5('getFileList'),
                     payload: params
                 })
             },

@@ -22,29 +22,37 @@ export default class MilestoneAdd extends React.Component {
         add_lcb_modal_visible: false
     }
 
-    componentWillReceiveProps(nextProps) {
-        const { dispatch, dataInfo } = nextProps;
-        const { dataInfo: oldDataInfo = {} } = this.props;
-        if (dataInfo.board_id && dataInfo.board_id != oldDataInfo.board_id) {
-            this.getMilestone(dataInfo.board_id)
-        }
-    }
+    // componentDidMount() {
+    //     const { dataInfo, milestoneList = [] } = this.props
+    //     this.setState({
+    //         milestoneList
+    //     })
+    //     // this.getMilestone(dataInfo.board_id)
+    // }
+
+    // componentWillReceiveProps(nextProps) {
+    //     const { dispatch, dataInfo } = nextProps;
+    //     const { dataInfo: oldDataInfo = {} } = this.props;
+    //     if (dataInfo.board_id && dataInfo.board_id != oldDataInfo.board_id) {
+    //         this.getMilestone(dataInfo.board_id)
+    //     }
+    // }
 
     //获取项目里程碑列表
-    getMilestone = (id, callBackObject, milestoneId) => {
-        getMilestoneList({ id }).then((res) => {
-            if (isApiResponseOk(res)) {
-                this.setState({
-                    milestoneList: res.data
-                }, () => {
-                    callBackObject && callBackObject.callBackFun(res.data, callBackObject.param);
-                });
+    // getMilestone = (id, callBackObject, milestoneId) => {
+    //     getMilestoneList({ id }).then((res) => {
+    //         if (isApiResponseOk(res)) {
+    //             this.setState({
+    //                 milestoneList: res.data
+    //             }, () => {
+    //                 callBackObject && callBackObject.callBackFun(res.data, callBackObject.param);
+    //             });
 
-            } else {
-                message.error(res.message)
-            }
-        })
-    }
+    //         } else {
+    //             message.error(res.message)
+    //         }
+    //     })
+    // }
     //模糊查询
 
 
@@ -93,7 +101,8 @@ export default class MilestoneAdd extends React.Component {
         }
 
         //添加里程碑后往后放
-        const { milestoneList } = this.state
+        // const { milestoneList } = this.state
+        const { milestoneList = [] } = this.props
         for (let i = 0; i < arr.length; i++) {
             if (milestoneList.indexOf(arr[i]['id']) != -1) {
                 if (i > 0 && milestoneList.indexOf(arr[i - 1]['id']) == -1) {
@@ -165,8 +174,8 @@ export default class MilestoneAdd extends React.Component {
         this.props.onChangeMilestone && this.props.onChangeMilestone({ key, type: actionType, info })
     }
 
-    getSortLilestoneList = (milestoneList,dataInfo) => {
-        let sortMilestoneList = new Array;
+    getSortLilestoneList = (milestoneList, dataInfo) => {
+        let sortMilestoneList = new Array();
         let selectableArray = milestoneList.filter((item)=>{
             return compareTwoTimestamp(item.deadline, dataInfo.due_time);
         });
@@ -177,16 +186,15 @@ export default class MilestoneAdd extends React.Component {
                 sortMilestoneList.push(milestoneList[i]);
             }
         }
-        console.log("milestoneList",milestoneList);
-        console.log("sortMilestoneList",sortMilestoneList);
+        // console.log("milestoneList", milestoneList);
+        // console.log("sortMilestoneList", sortMilestoneList);
         return sortMilestoneList;
     }
 
     render() {
-        const { milestoneList, add_lcb_modal_visible = false } = this.state
-        const { visible, children, selectedValue, dataInfo = {} } = this.props
-        const sortLilestoneList = this.getSortLilestoneList(milestoneList,dataInfo);
-        // console.log(dataInfo);
+        const { add_lcb_modal_visible = false } = this.state
+        const { visible, children, selectedValue, dataInfo = {}, milestoneList = [] } = this.props
+        const sortLilestoneList = this.getSortLilestoneList(milestoneList, dataInfo);
         return (
             <div>
 

@@ -676,6 +676,11 @@ export default class Header extends React.Component {
       }
     })
   }
+  
+  /**
+   * 访问控制移除职员
+   * @param {String} id 移除职员对应的id
+   */
   handleVisitControlRemoveContentPrivilege = id => {
     const { board_id, board_id: content_id } = this.getFieldFromProjectDetailInfoData('board_id')
     removeContentPrivilege({
@@ -684,15 +689,28 @@ export default class Header extends React.Component {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
         message.success('移出用户成功')
-        this.visitControlUpdateCurrentProjectData(board_id)
+        this.visitControlUpdateCurrentProjectData({ removeId: id, type: 'remove', board_id })
       } else {
         message.error('移出用户失败')
       }
     })
   }
-  handleVisitControlChangeContentPrivilege = (id, type) => {
-    this.handleSetContentPrivilege(id, type)
-  }
+
+  /**
+   * 访问控制设置更新职员
+   * @param {String} id 设置职员对应的id
+   * @param {String} type 设置职员对应的字段
+   */
+  // handleVisitControlChangeContentPrivilege = (id, type) => {
+  //   this.handleSetContentPrivilege(id, type)
+  // }
+
+  /**
+   * 其他职员的下拉回调
+   * @param {String} id 这是用户的user_id
+   * @param {String} type 这是对应的用户字段
+   * @param {String} removeId 这是对应移除用户的id
+   */
   handleClickedOtherPersonListOperatorItem = (id, type, removeId) => {
     if (type === 'remove') {
       this.handleVisitControlRemoveContentPrivilege(removeId)
@@ -700,15 +718,49 @@ export default class Header extends React.Component {
       this.handleSetContentPrivilege(id, type, '更新用户控制类型失败')
     }
   }
-  handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试') => {
 
+  /**
+   * 添加职员的回调
+   * @param {Array} users_arr 添加职员的数组
+   */
+  handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试') => {
     const { board_id, board_id: content_id } = this.getFieldFromProjectDetailInfoData('board_id')
+    const { projectDetailInfoData: { privileges = [], is_privilege } } = this.props
+    const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    const { user_id } = user_set
     const content_type = 'board'
     const privilege_code = type
     let temp_ids = [] // 用来保存用户的id
+    let new_ids = [] // 用来保存权限列表中用户id
+    let new_privileges = [...privileges]
     users_arr && users_arr.map(item => {
       temp_ids.push(item.id)
     })
+
+    let flag
+    // 权限列表中的id
+    new_privileges = new_privileges && new_privileges.map(item => {
+      let { id } = (item && item.user_info) && item.user_info
+      if (user_id == id) { // 从权限列表中找到自己
+        if (temp_ids.indexOf(id) != -1) { // 判断自己是否在添加的列表中
+          flag = true
+        }
+      }
+      new_ids.push(id)
+    })
+
+     // 这里是需要做一个只添加了自己的一条提示
+     if (flag && temp_ids.length == '1') { // 表示只选择了自己, 而不是全选
+        message.warn('该职员已存在, 请不要重复添加', MESSAGE_DURATION_TIME)
+        return false
+      } else { // 否则表示进行了全选, 那么就过滤
+        temp_ids = temp_ids && temp_ids.filter(item => {
+          if (new_ids.indexOf(item) == -1) {
+            return item
+          }
+        })
+      }
+
     setContentPrivilege({
       content_id,
       content_type,
@@ -716,7 +768,12 @@ export default class Header extends React.Component {
       user_ids: temp_ids
     }).then(res => {
       if (res && res.code === '0') {
-        this.visitControlUpdateCurrentProjectData(board_id)
+        setTimeout(() => {
+          message.success('添加用户成功')
+        }, 500)
+        let temp_arr = []
+        temp_arr.push(res.data)
+        this.visitControlUpdateCurrentProjectData({ privileges: [...temp_arr], type: 'add', board_id })
       } else {
         message.error(errorText)
       }
@@ -730,9 +787,48 @@ export default class Header extends React.Component {
     // }, '')
     this.handleSetContentPrivilege(users_arr, 'read')
   }
-  async visitControlUpdateCurrentProjectData(board_id) {
-    const { dispatch } = this.props
-    await dispatch({
+
+  visitControlUpdateCurrentProjectData(obj = {}) {
+    const { dispatch, projectDetailInfoData = {}, projectDetailInfoData: { privileges = [], is_privilege } } = this.props
+    const { board_id } = obj
+    // 这是更新弹窗中的priveleges
+    if (obj && obj.type && obj.type == 'add') {
+      let new_privileges = []
+      for (let item in obj) {
+        if (item == 'privileges') {
+          obj[item].map(val => {
+            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            return new_privileges = [...temp_arr]
+          })
+        }
+      }
+      let new_projectDetailInfoData = { ...projectDetailInfoData, privileges: new_privileges }
+      dispatch({
+        type: 'projectDetail/updateDatas',
+        payload: {
+          projectDetailInfoData: new_projectDetailInfoData
+        }
+      })
+    }
+
+    // 这是移除的操作
+    if (obj && obj.type && obj.type == 'remove') {
+      let new_privileges = [...privileges]
+      new_privileges.map((item, index) => {
+        if (item.id == obj.removeId) {
+          new_privileges.splice(index, 1)
+        }
+      })
+      let new_projectDetailInfoData = { ...projectDetailInfoData, privileges: new_privileges }
+      dispatch({
+        type: 'projectDetail/updateDatas',
+        payload: {
+          projectDetailInfoData: new_projectDetailInfoData
+        }
+      })
+    }
+
+    dispatch({
       type: 'projectDetail/updateDatas',
       payload: {
         board_id
@@ -745,9 +841,9 @@ export default class Header extends React.Component {
     let temp_arr = []
     let temp_id = []
     for (let i = 0; i < arr.length; i++) {
-      if (!temp_id.includes(arr[i]['user_id'])) {//includes 检测数组是否有某个值
+      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
         temp_arr.push(arr[i]);
-        temp_id.push(arr[i]['user_id'])
+        temp_id.push(arr[i]['id'])
       }
     }
     return temp_arr

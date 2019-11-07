@@ -9,8 +9,11 @@ import { isApiResponseOk } from "@/utils/handleResponseData"
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import {
-  getSubfixName, setUploadHeaderBaseInfo
+  getSubfixName, setUploadHeaderBaseInfo, checkIsHasPermissionInBoard
 } from "@/utils/businessFunction";
+import {
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE
+} from "@/globalset/js/constant";
 const { TreeNode } = TreeSelect;
 /**上传附件组件 */
 @connect(mapStateToProps)
@@ -29,27 +32,30 @@ export default class UploadAttachment extends Component {
     }
   }
 
-  componentDidMount() {
-    const { board_id } = this.props;
-    if (board_id) {
-      this.getProjectFolderList(board_id)
-    }
-  }
+  // componentDidMount() {
+  //   const { board_id, boardFolderTreeData = [] } = this.props;
+  //   if (board_id) {
+  //     // this.getProjectFolderList(board_id)
+  //     this.setState({
+  //       boardFolderTreeData,
+  //     })
+  //   }
+  // }
 
 
   //获取项目里文件夹列表
-  getProjectFolderList = (board_id) => {
-    getFolderList({ board_id }).then((res) => {
-      if (isApiResponseOk(res)) {
+  // getProjectFolderList = (board_id) => {
+  //   getFolderList({ board_id }).then((res) => {
+  //     if (isApiResponseOk(res)) {
 
-        this.setState({
-          boardFolderTreeData: res.data
-        });
-      } else {
-        message.error(res.message)
-      }
-    })
-  }
+  //       this.setState({
+  //         boardFolderTreeData: res.data
+  //       });
+  //     } else {
+  //       message.error(res.message)
+  //     }
+  //   })
+  // }
 
   //确定，上传开始
   handleOk = e => {
@@ -159,17 +165,23 @@ export default class UploadAttachment extends Component {
         });
       }
 
-    }).catch((error, e) => {
-      message.destroy()
-      message.error('上传失败');
-      this.setState({
-        uploading: false,
-      });
-    });
+    })
+    // .catch((error, e) => {
+    //   message.destroy()
+    //   message.error('上传失败');
+    //   this.setState({
+    //     uploading: false,
+    //   });
+    // });
   }
 
 
   onBeforeUpload = (file) => {
+    const { board_id } = this.props
+    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD, board_id)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.setState(state => ({
       fileList: [...state.fileList, file],
     }));
@@ -228,6 +240,11 @@ export default class UploadAttachment extends Component {
   // 移除执行人的回调 E
 
   onChangeOnlyNoticePersonsVisit = (e) => {
+    const { board_id } = this.props
+    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.setState({
       isOnlyNoticePersonsVisit: e.target.checked
     });
@@ -252,8 +269,8 @@ export default class UploadAttachment extends Component {
 
 
   renderSelectBoardFileTreeList = () => {
-    const { is_file_tree_loading } = this.props;
-    const { boardFolderTreeData } = this.state;
+    const { is_file_tree_loading, boardFolderTreeData = [] } = this.props;
+    // const { boardFolderTreeData } = this.state;
     if (is_file_tree_loading) {
       return (
         <div style={{ backgroundColor: '#FFFFFF', textAlign: 'center', height: '50px', lineHeight: '48px', overflow: 'hidden', color: 'rgba(0, 0, 0, 0.25)' }} className={`${styles.page_card_Normal} ${styles.directoryTreeWapper}`}>
@@ -313,7 +330,7 @@ export default class UploadAttachment extends Component {
 
           </div>
           <div style={{ marginTop: '14px' }}>
-            <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.45)' }} className={`${globalStyles.authTheme}`}>&#xe7b2;</span>通知人:
+            <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.45)' }} className={`${globalStyles.authTheme}`}>&#xe7b2;</span>提醒谁查看:
                     </div>
           <div className={styles.noticeUsersWrapper}>
             {/* 通知人添加与显示区域 */}
@@ -389,10 +406,10 @@ export default class UploadAttachment extends Component {
 
           </div>
           <div style={{ marginTop: '16px' }}>
-            <Checkbox checked={this.state.isOnlyNoticePersonsVisit} onChange={this.onChangeOnlyNoticePersonsVisit}>仅通知人可访问</Checkbox>
+            <Checkbox checked={this.state.isOnlyNoticePersonsVisit} onChange={this.onChangeOnlyNoticePersonsVisit}>仅被提醒的人可访问该文件</Checkbox>
           </div>
           <div style={{ marginTop: '32px' }}>
-            任务附件临时目录
+            附件存放路径
                     </div>
           <div style={{ marginTop: '16px' }}>
             <div className={styles.selectFolderWapper}>
@@ -402,7 +419,7 @@ export default class UploadAttachment extends Component {
                 showSearch={false}
                 style={{ width: 508 }}
                 dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                placeholder="任务附件临时目录"
+                placeholder="附件存放路径"
                 allowClear
                 treeDefaultExpandAll
                 onChange={this.onChangeFileSavePath}

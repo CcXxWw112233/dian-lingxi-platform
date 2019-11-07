@@ -58,7 +58,7 @@ class PreviewFileModal extends React.Component {
           footer={null}
           destroyOnClose
           maskClosable={false}
-          bodyStyle={{padding:0}}
+          bodyStyle={{padding: 0}}
           style={{top: modalTop}}
           onCancel={this.onCancel}
           overInner={<FileDetail {...this.props} modalTop={modalTop}/>}

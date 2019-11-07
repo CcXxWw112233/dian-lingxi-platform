@@ -1,5 +1,5 @@
-import { getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask, deleteChirldTask, boardAppRelaMiletones, 
-  boardAppCancelRelaMiletones, getBoardTagList, addTaskTag, removeTaskTag } from '../../../services/technological/task'
+import { getCardWithAttributesDetail, setCardAttributes, getCardAttributesList, removeCardAttributes, sortCardAttribute, getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask, deleteChirldTask, boardAppRelaMiletones, 
+  boardAppCancelRelaMiletones, getBoardTagList, addBoardTag, deleteBoardTag, updateBoardTag, addTaskTag, removeTaskTag } from '../../../services/technological/task'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { currentNounPlanFilterName } from "../../../utils/businessFunction";
@@ -14,7 +14,6 @@ export default {
   state: {
     is_edit_title: false, // 是否编辑标题 默认为 false 不显示
     is_show_principal: false, // 是否显示负责人 默认为 false 不显示
-    is_selected_all: false, // 是否全选 需要后台支持
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -68,15 +67,12 @@ export default {
     },
   },
   effects: {
-    /**
-     * 获取任务详情: 需要参数当前任务id
-     * @param {String} id 当前任务的id 
-     */
-    * getCardDetail({ payload }, { call, put }) {
+    // 获取任务详情 new
+    * getCardWithAttributesDetail({ payload }, { call, put }) {
       const { id, calback } = payload
-      let res = yield call(getCardDetail, { id })
+      let res = yield call(getCardWithAttributesDetail, { id })
       if (isApiResponseOk(res)) {
-        calback && typeof calback == 'function' ? calback() : ''
+        // console.log(res)
         yield put({
           type: 'updateDatas',
           payload: {
@@ -91,20 +87,120 @@ export default {
             id: res.data.board_id
           }
         })
-        // 调用查询标签列表
-        // yield put({
-        //   type: 'getBoardTagList',
-        //   payload: {
-        //     board_id: res.data.board_id
-        //   }
-        // })
+        // // 获取项目标签列表
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id: res.data.board_id
+          }
+        })
+        // // 获取关联数据
+        yield put({
+          type: 'projectDetail/getRelationsSelectionPre',
+          payload: {
+            _organization_id: res.data.org_id
+          }
+        })
+        calback && typeof calback == 'function' ? calback(res.data.board_id) : ''
+      } else {
+        message.warn(res.message)
       }
     },
+    // 获取默认属性列表字段
+    * getCardAttributesList({ payload }, { call, put }) {
+      let res = yield call(getCardAttributesList)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            attributesList: res.data
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
+    },
+    // 设置卡片属性
+    * setCardAttributes({ payload }, { call, put }) {
+      const { property_id, card_id } = payload
+      let res = yield call(setCardAttributes, { card_id, property_id })
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('添加字段成功', MESSAGE_DURATION_TIME)
+        }, 500)
+        yield put({
+          type: 'getCardWithAttributesDetail',
+          payload: {
+            id: card_id,
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
+    },
+    // 移除任务属性
+    * removeCardAttributes({ payload }, { call, put }) {
+      let res = yield call(removeCardAttributes, payload)
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('成功删除该字段', MESSAGE_DURATION_TIME)
+        }, 500)
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
+    },
+    * sortCardAttribute({ payload}, { call, put }) {
+
+      let res = yield call(sortCardAttribute, payload)
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('移动成功', MESSAGE_DURATION_TIME)
+        }, 500)
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
+    },
+    /**
+     * 获取任务详情: 需要参数当前任务id
+     * @param {String} id 当前任务的id 
+     */
+    // * getCardDetail({ payload }, { call, put }) {
+    //   const { id, calback } = payload
+    //   let res = yield call(getCardDetail, { id })
+    //   if (isApiResponseOk(res)) {
+    //     calback && typeof calback == 'function' ? calback() : ''
+    //     yield put({
+    //       type: 'updateDatas',
+    //       payload: {
+    //         // drawerVisible: true,
+    //         drawContent: res.data,
+    //       }
+    //     })
+    //     // 成功后调用 projectDetailInfo, 将项目成员关联进来
+    //     yield put({
+    //       type: 'projectDetail/projectDetailInfo',
+    //       payload: {
+    //         id: res.data.board_id
+    //       }
+    //     })
+    //     yield put({
+    //       type: 'getBoardTagList',
+    //       payload: {
+    //         board_id: res.data.board_id
+    //       }
+    //     })
+    //   }
+    // },
     // 获取项目标签
     * getBoardTagList({ payload }, { call, put }) {
-      const { board_id } = payload
+      const { board_id, calback } = payload
       let res = yield call(getBoardTagList, { board_id })
       if (isApiResponseOk(res)) {
+        calback && typeof calback == 'function' ? calback() : ''
         yield put({
           type: 'updateDatas',
           payload: {
@@ -115,8 +211,84 @@ export default {
         message.warn(res.message)
       }
     },
-
-
+    // 添加项目标签
+    * addBoardTag({ payload }, { call, put }) {
+      const { board_id } = payload
+      let res = yield call(addBoardTag, payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id,
+            calback: function () {
+              message.success('添加标签成功', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
+    },
+    // 更新标签
+    * updateBoardTag({ payload }, { select, call, put }) { //
+      const { board_id } = payload
+      let res = yield call(updateBoardTag, payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id,
+            calback: function () {
+              message.success('更新标签成功', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+      return res || {}
+    },
+    // 删除项目标签
+    * deleteBoardTag({ payload }, { select, call, put }) { //
+      const { id, board_id } = payload
+      let res = yield call(deleteBoardTag, { id })
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'getBoardTagList',
+          payload: {
+            board_id,
+            calback: function () {
+              message.success('已成功删除该项目标签', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+      return res || {}
+    },
+    // 添加标签
+    * addTaskTag({ payload }, { select, call, put }) { //
+      const { card_id, board_id, label_id } = payload
+      let res = yield call(addTaskTag, {card_id, label_id})
+      if (isApiResponseOk(res)) {
+        message.success('添加任务标签成功', MESSAGE_DURATION_TIME)
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+      return res || {}
+    },
+    // 移除标签
+    * removeTaskTag({ payload }, { select, call, put }) { //
+      let res = yield call(removeTaskTag, payload)
+      if (isApiResponseOk(res)) {
+        message.success('已删除标签', MESSAGE_DURATION_TIME)
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+      return res || {}
+    },
     /**
      * 设置完成任务: 需要参数 is_realize
      * @param {String} is_realize 是否完成 0 未完成 1 已完成

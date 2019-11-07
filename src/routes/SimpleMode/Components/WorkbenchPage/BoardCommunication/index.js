@@ -55,7 +55,7 @@ class BoardCommunication extends Component {
     constructor(props) {
         super(props)
         const { dispatch } = this.props;
-        Im.addEventListener('visible',(val)=>{ // 获取圈子显示隐藏状态
+        Im.addEventListener('visible', (val)=>{ // 获取圈子显示隐藏状态
             // this.setState({ isShowlingxiIm: val});
         })
     }
@@ -1241,10 +1241,13 @@ class BoardCommunication extends Component {
                     !this.state.previewFileModalVisibile && (
                         <UploadTemporaryFile
                             isRightBarShowFileList={isRightBarShowFileList}
-                            // getDraggerProps={this.getDraggerProps}
-                            // onBeforeUpload={this.onBeforeUpload}
-                            // dragEnterCaptureFlag={dragEnterCaptureFlag}
+                            // 
+                            getDraggerProps={this.getDraggerProps}
+                            onBeforeUpload={this.onBeforeUpload}
+                            dragEnterCaptureFlag={dragEnterCaptureFlag}
+                            // 
                             simplemodeCurrentProject={simplemodeCurrentProject}
+                            currentBoardId = {this.props.gantt_board_id}
                         />
                     )
                 } */}

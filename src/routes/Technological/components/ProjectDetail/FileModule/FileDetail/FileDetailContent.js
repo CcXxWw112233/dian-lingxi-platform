@@ -536,7 +536,12 @@ class FileDetailContent extends React.Component {
   getVersionItemMenuClick = ({ list, file_id, file_name }, e) => {
     e && e.domEvent && e.domEvent.stopPropagation()
     // console.log(list, 'sssss')
-    const { dispatch } = this.props
+    const { dispatch, currentPreviewFileBaseInfo = {}, projectDetailInfoData: { board_id } } = this.props
+    const { privileges, is_privilege } = currentPreviewFileBaseInfo
+    if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
 
     const key = e.key
     switch (key) {
@@ -1046,8 +1051,8 @@ class FileDetailContent extends React.Component {
     const { coordinates, comment, point_number } = obj
     const {
       filePreviewCurrentFileId,
-      board_id,
-      dispatch
+      dispatch,
+      projectDetailInfoData: { board_id }
     } = this.props
     dispatch({
       type: 'projectDetailFile/addFileCommit',
@@ -1232,7 +1237,7 @@ class FileDetailContent extends React.Component {
     } = this.props
     const { data = [] } = projectDetailInfoData //任务执行人列表
     const { board_id } = projectDetailInfoData
-    const { is_privilege, privileges = [] } = currentPreviewFileBaseInfo
+    const { is_privilege = '0', privileges = [] } = currentPreviewFileBaseInfo
     const zoomPictureParams = {
       board_id,
       is_privilege,
@@ -1455,7 +1460,7 @@ class FileDetailContent extends React.Component {
       },
       beforeUpload(e) {
         if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
-          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          // message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
         if (e.size == 0) {
@@ -1468,6 +1473,10 @@ class FileDetailContent extends React.Component {
         let loading = message.loading('正在上传...', 0)
       },
       onChange({ file, fileList, event }) {
+        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         if (file.status === 'uploading') {
 
         } else {
@@ -1556,11 +1565,11 @@ class FileDetailContent extends React.Component {
 
           <div className={indexStyles.fileDetailHeadRight}>
             <div style={{ position: 'relative' }}>
-              {
+              {/* {
                 checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) ? ('') : (
                   <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
-                )
-              }
+                ) */}
+              
               {seeFileInput === 'fileModule' && (
                 <VersionSwitching {...params}
                   is_show={true}
@@ -1602,11 +1611,13 @@ class FileDetailContent extends React.Component {
                         <span className={`${globalStyles.authTheme} ${indexStyles.right__shareIndicator_icon}`}>&#xe7e7;</span>
                         <span className={indexStyles.right__shareIndicator_text}>正在分享</span>
                       </span>
-                    ) : <span className={`${indexStyles.right_menu} ${indexStyles.share_icon}`} >
+                    ) : (
+<span className={`${indexStyles.right_menu} ${indexStyles.share_icon}`} >
                         <Tooltip title="分享协作" placement="top">
                           <span onClick={this.handleChangeOnlyReadingShareModalVisible} className={`${globalStyles.authTheme} ${indexStyles.right__share}`} style={{ fontSize: '20px' }}>&#xe7e7;</span>
                         </Tooltip>
-                      </span>}
+                      </span>
+)}
 
                     <ShareAndInvite
 
@@ -1619,32 +1630,41 @@ class FileDetailContent extends React.Component {
               </div>
             ) : ''}
 
-            <div style={{ position: 'relative',marginRight: '10px' }}>
+            <div style={{ position: 'relative', marginRight: '10px' }}>
               <span>
-                {
+                {/* {
                   checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) ? ('') : (
                     <div style={{ height: '50px' }} onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
                   )
+                } */}
+                {
+                  checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) && (
+                    <InformRemind rela_id={filePreviewCurrentFileId} rela_type={'4'} user_remind_info={data} />
+                  )
                 }
-                <InformRemind rela_id={filePreviewCurrentFileId} rela_type={'4'} user_remind_info={data} />
+                
               </span>
 
             </div>
             {/* <div style={{position:'relative'}}> */}
     
             <span style={{ marginRight: is_privilege === '1' ? '36px' : '10px' }}>
-              <VisitControl
-                board_id={board_id}
-                isPropVisitControl={is_privilege === '0' ? false : true}
-                handleVisitControlChange={this.handleVisitControlChange}
-                otherPrivilege={privileges}
-                notShowPrincipal={true}
-                invitationType='9'
-                invitationId={filePreviewCurrentFileId}
-                invitationOrg={localStorage.getItem('OrganizationId')}
-                handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
-                handleAddNewMember={this.handleVisitControlAddNewMember}
-              />
+              {
+                board_id && (
+                  <VisitControl
+                    board_id={board_id}
+                    isPropVisitControl={is_privilege === '0' ? false : true}
+                    handleVisitControlChange={this.handleVisitControlChange}
+                    otherPrivilege={privileges}
+                    notShowPrincipal={true}
+                    invitationType='9'
+                    invitationId={filePreviewCurrentFileId}
+                    invitationOrg={localStorage.getItem('OrganizationId')}
+                    handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+                    handleAddNewMember={this.handleVisitControlAddNewMember}
+                  />
+                )
+              }
             </span>
 
             
@@ -1683,7 +1703,7 @@ class FileDetailContent extends React.Component {
 
           <div className={indexStyles.fileDetailContentRight} style={{ minWidth: isExpandFrame ? 0 : 420, height: '100vh' }}>
 
-            <div style={{ position: 'relative' }} className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'}>
+            <div style={{ position: 'relative', zIndex: 0 }} className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'}>
               {
                 checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) ? ('') : (
                   <div style={{ bottom: '62px' }} onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
@@ -1715,7 +1735,8 @@ class FileDetailContent extends React.Component {
               </div>
             )}
 
-            {(checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH)) || checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH))) && (
+            {
+              (checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id))) && (
               <div className={indexStyles.fileDetailContentRight_bott}>
                 <Comment2 currentRect={currentRect}></Comment2>
               </div>

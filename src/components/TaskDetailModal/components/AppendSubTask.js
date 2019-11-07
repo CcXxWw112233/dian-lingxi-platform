@@ -10,7 +10,11 @@ import AppendSubTaskItem from './AppendSubTaskItem'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { timestampToTimeNormal3, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal } from '@/utils/util'
 import { MESSAGE_DURATION_TIME } from '@/globalset/js/constant'
+import { connect } from 'dva'
 
+@connect(({ publicTaskDetailModal: { drawContent = {} } }) => ({
+  drawContent
+}))
 export default class AppendSubTask extends Component {
 
   state = {
@@ -19,6 +23,23 @@ export default class AppendSubTask extends Component {
     saveDisabled: true, // 是否可以点击确定按钮
     inputValue: '', // 用来保存子任务的名称
     due_time: '', // 时间选择
+  }
+
+  // 过滤那些需要更新的字段
+  filterCurrentUpdateDatasField = (code, value) => {
+    const { drawContent: { properties = [] } } = this.props
+    let new_properties = [...properties]
+    new_properties = new_properties.map(item => {
+      if (item.code == code) {
+        let new_item = item
+        new_item = { ...item, data: value }
+        return new_item
+      } else {
+        let new_item = item
+        return new_item
+      }
+    })
+    return new_properties
   }
 
   // 是否是有效的头像
@@ -48,8 +69,10 @@ export default class AppendSubTask extends Component {
     const { drawContent, dispatch } = this.props
     const { board_id, card_id, list_id } = drawContent
     const { inputValue, sub_executors, due_time } = this.state
+    const { data = [] } = drawContent['properties'].filter(item => item.code == 'SUBTASK')[0]
     let temp_subExecutors = [...sub_executors]
     let user_ids = []
+    let tempData = [...data]
     temp_subExecutors.map(item => {
       user_ids.push(item.user_id)
     })
@@ -75,7 +98,9 @@ export default class AppendSubTask extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      drawContent['child_data'] && drawContent['child_data'].unshift({...obj, card_id: res.data.card_id})
+      // drawContent['child_data'] && drawContent['child_data'].unshift({...obj, card_id: res.data.card_id})
+      tempData.unshift({...obj, card_id: res.data.card_id})
+      drawContent['properties'] = this.filterCurrentUpdateDatasField('SUBTASK', tempData)
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent, card_id})
       this.setState({
         is_add_sub_task: false,
@@ -113,7 +138,8 @@ export default class AppendSubTask extends Component {
       }
     })
     let new_drawContent = {...drawContent}
-    new_drawContent['executors'] = this.arrayNonRepeatfy(new_executors)
+    // new_drawContent['executors'] = this.arrayNonRepeatfy(new_executors)
+    new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', this.arrayNonRepeatfy(new_executors))
     dispatch({
       type: 'publicTaskDetailModal/updateDatas',
       payload: {
@@ -136,16 +162,18 @@ export default class AppendSubTask extends Component {
 
   //截止时间
   endDatePickerChange(timeString) {
-    const { drawContent = {}, childTaskItemValue, dispatch } = this.props
-    const { milestone_data = {}, card_id, board_id, list_id } = drawContent
-    const { milestone_deadline } = milestone_data
-    // const { card_id } = childTaskItemValue
-    // const milestone_deadline = (milestoneList.find((item => item.id == milestone_data.id)) || {}).deadline//关联里程碑的时间
+    const { drawContent = {}, } = this.props
+    const { data } = drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
+    // const { milestone_deadline } = milestone_data
     const due_timeStamp = timeToTimestamp(timeString)
 
-    if (!compareTwoTimestamp(milestone_deadline, due_timeStamp)) {
-      message.warn('任务的截止日期不能大于关联里程碑的截止日期')
-      return
+    if (data && data instanceof Object) {
+      let arr = Object.keys(data)
+      if (arr.length == '0') return
+      if (!compareTwoTimestamp(data.deadline, due_timeStamp)) {
+        message.warn('任务的截止日期不能大于关联里程碑的截止日期')
+        return
+      }
     }
     setTimeout(() => {
       this.setState({
@@ -166,8 +194,9 @@ export default class AppendSubTask extends Component {
 
 
   render() {
-    const { children, drawContent = {}, data, dispatch, handleTaskDetailChange } = this.props
-    const { card_id, board_id, child_data = [] } = drawContent
+    const { children, drawContent = {}, data: dataInfo, dispatch, handleTaskDetailChange } = this.props
+    const { card_id, board_id } = drawContent
+    const { data: child_data = [] } = drawContent['properties'].filter(item => item.code == 'SUBTASK')[0]
     const { is_add_sub_task, sub_executors = [], saveDisabled, due_time } = this.state
     let executor = [{//任务执行人信息
       user_id: '',
@@ -215,7 +244,7 @@ export default class AppendSubTask extends Component {
                             style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '12px', zIndex: 2 }} />
                         </div>
                       ) : (
-                        <Tooltip title="截止时间">
+                        <Tooltip title="截止时间" getPopupContainer={triggerNode => triggerNode.parentNode}>
                           <div className={`${appendSubTaskStyles.add_due_time}`}>
                             <div>
                               <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_icon}`}>&#xe686;</span>
@@ -238,7 +267,7 @@ export default class AppendSubTask extends Component {
                         <MenuSearchPartner
                           handleSelectedAllBtn={this.handleSelectedAllBtn}
                           isInvitation={true}
-                          listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={ sub_executors.length ? sub_executors : executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                          listData={dataInfo} keyCode={'user_id'} searchName={'name'} currentSelect={ sub_executors.length ? sub_executors : executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
                           board_id={board_id} />
                       }>
                       {
@@ -290,7 +319,7 @@ export default class AppendSubTask extends Component {
             const { card_id, card_name, due_time, executors = [] } = value
             const { user_id } = executors[0] || {}
             return (
-              <AppendSubTaskItem handleTaskDetailChange={handleTaskDetailChange} board_id={board_id} dispatch={dispatch} data={data} drawContent={drawContent} childTaskItemValue={value} key={`${card_id}-${card_name}-${user_id}-${due_time}`} childDataIndex={key} />
+              <AppendSubTaskItem handleTaskDetailChange={handleTaskDetailChange} board_id={board_id} data={dataInfo} childTaskItemValue={value} key={`${card_id}-${card_name}-${user_id}-${due_time}`} childDataIndex={key} />
             )
           })}
         </div>

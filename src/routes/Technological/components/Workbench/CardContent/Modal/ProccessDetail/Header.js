@@ -475,12 +475,17 @@ export default class Header extends React.Component {
             />
           </span>
           <span style={{ marginTop: '-4px', float: 'right', marginLeft: '18px', position: 'relative' }}>
-            {
+            {/* {
               checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, principalList, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
                 <div onClick={this.alarmNoEditPermission} style={{ height: '50px' }} className={globalStyles.drawContent_mask}></div>
               )
+            } */}
+            {
+              checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, principalList, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) && (
+                <InformRemind processPrincipalList={principalList} rela_id={id} rela_type={'3'} user_remind_info={data} />
+              )
             }
-            <InformRemind processPrincipalList={principalList} rela_id={id} rela_type={'3'} user_remind_info={data} />
+            
           </span>
           {/* <span style={{position: 'relative'}}>
             {

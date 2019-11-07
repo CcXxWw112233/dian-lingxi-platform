@@ -99,36 +99,41 @@
 /* 添加属性的下拉样式 S */
 .overlay_attribute {
   min-width: 248px !important;
-
-  :global {
-    .ant-dropdown-menu-item {
-      line-height: 40px;
-      display    : flex;
-      align-items: center;
-      height     : 40px;
-      padding    : 9px 12px;
-
-      >span {
-        font-size   : 16px;
-        margin-right: 8px;
+  .attrWrapper {
+    :global {
+      li {
+        line-height: 40px;
+        display    : flex;
+        align-items: center;
+        height     : 40px;
+        padding    : 9px 12px;
+        &:hover {
+          background   : rgba(0, 0, 0, 0.04) !important;
+          cursor       : pointer;
+          border-radius: 4px;
+        }
       }
-
-      span:nth-child(2) {
-        font-size: 16px;
-        color    : rgba(0, 0, 0, 0.65);
-      }
-
-      &:hover {
-        background   : rgba(0, 0, 0, 0.04);
-        cursor       : pointer;
+      .ant-menu-item-selected {
+        background   : rgba(0, 0, 0, 0.04) !important;
         border-radius: 4px;
+        color        : rgba(0, 0, 0, 0.45);
       }
     }
-
-    .ant-dropdown-menu-item-selected {
-      background   : rgba(0, 0, 0, 0.04);
-      border-radius: 4px;
-      color        : rgba(0, 0, 0, 0.45);
+    .attr_icon {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      color: rgba(0,0,0,0.45);
+      line-height: 16px;
+      margin-right: 6px;
+    }
+    .attr_name {
+      display: inline-block;
+      min-width: 42px;
+      height: 22px;
+      font-size: 14px;
+      color: rgba(0,0,0,0.65);
+      line-height: 22px;
     }
   }
 }
@@ -138,7 +143,8 @@
 /* 添加执行人下拉样式 S */
 .overlay_pricipal {
   left: 0px !important;
-
+  min-width: 248px !important;
+  max-width: 248px;
   :global {
     li {
       line-height: 40px !important;
@@ -162,6 +168,33 @@
     }
   }
 }
+
+/* 标签属性的下拉样式 S */
+.labelDataWrapper {
+  min-width: 248px !important;
+  :global {
+    li {
+      line-height: 40px !important;
+      height     : 40px !important;
+      color:rgba(0,0,0,0.65);
+      &:hover {
+        background   : rgba(0, 0, 0, 0.04) !important;
+        cursor       : pointer;
+        border-radius: 4px;
+        color:rgba(0,0,0,0.65);
+      }
+      .anticon {
+        margin-right: 0;
+      }
+    }
+    .ant-menu-item-selected {
+      background-color   : transparent !important;
+      border-radius: 4px;
+      color        : rgba(0, 0, 0, 0.45);
+    }
+  }
+}
+/* 标签属性的下拉样式 E */
 
 /* 添加执行人下拉样式 E */
 
@@ -195,26 +228,73 @@
 
   /* 标题部分 E */
 
+  .clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+  }
+  .clearfix {display: inline-block;}
+
+  // .moveWrapper {
+  //   opacity: 1 !important;
+  //   visibility: visible !important;
+  // }
+
   /* 各种不同字段部分 S */
   .field_content {
     display      : flex;
     line-height  : 38px;
     margin-bottom: 12px;
-
+    margin-left: -26px;
+    cursor: pointer;
     //align-items : center;
     // line-height: 55px;
     .field_left {
       min-width: 128px;
-
+      margin-left: 22px;
+      // cursor: move;
+      .field_hover {
+        min-width:68px;
+        max-width: 96px;
+        height:38px;
+        border-radius:4px;
+        padding-left: 10px;
+        padding-right: 10px;
+        display: inline-block;
+        // cursor: move;
+        >span:nth-child(1) {
+          font-size   : 14px;
+          margin-right: 9px;
+          color       : rgba(0, 0, 0, 0.65)
+        }
+  
+        >span:nth-child(2) {
+          font-size: 14px;
+        }
+        &:hover {
+          background:rgba(0,0,0,0.04);
+        }
+      }
       >span:nth-child(1) {
         font-size   : 14px;
         margin-right: 9px;
         color       : rgba(0, 0, 0, 0.65)
       }
-
       >span:nth-child(2) {
         font-size: 14px;
       }
+      .field_delIcon {
+        cursor: pointer;
+        display: none;
+        &:hover {
+          color: rgba(0, 0, 0, 0.65);
+        }
+      }
+    }
+    .field_left:hover .field_delIcon{
+      display: inline-block;
     }
 
     .field_right {
@@ -344,6 +424,34 @@
         transition: all 0.3s;
       }
 
+      .labelDelItem {
+        position: relative;
+        .labelDelIcon {
+          display          : none;
+          top: -8px;
+          right: 6px;
+          width            : 14px;
+          height           : 14px;
+          border-radius    : 4px;
+          position         : absolute;
+          background       : url(../../assets/workbench/close-circle@2x.png);
+          background-repeat: no-repeat;
+          background-size  : contain;
+          transition       : all 0.3s;
+          &:hover {
+            background       : url(../../assets/workbench/close-circle-active@2x.png);
+            background-repeat: no-repeat;
+            background-size  : contain;
+          }
+        }
+      }
+      .labelDelItem:hover .labelDelIcon {
+        display   : inline-block;
+        top: -8px;
+        right: 6px;
+        transition: all 0.3s;
+      }
+
       .upload_file_btn {
         font-size  : 14px;
         color      : rgba(0, 0, 0, 0.45);
@@ -412,7 +520,28 @@
           margin-bottom: 0px;
         }
       }
+      .normal_label {
+        min-width: 48px;
+        // max-width: 172px;
+        height: 24px;
+        border-radius: 4px;
+        display: inline-block;
+        color: rgba(0,0,0,0.65);
+        text-align: center;
+        line-height: 22px;
+        margin-right: 12px;
+        // white-space: nowrap;
+        // overflow: hidden;
+        // text-overflow: ellipsis;
+        vertical-align: middle;
+        padding: 2px 12px;
+        box-sizing: border-box;
+        margin-top: -1px;
+      }
     }
+  }
+  .showDelColor {
+    background: rgba(144,19,254,0.15);
   }
 
   /* 各种不同字段部分 E */
