@@ -790,10 +790,7 @@ export default class MainContent extends Component {
                         <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
                           overlay={
                             <MenuSearchPartner
-                              // handleSelectedAllBtn={this.handleSelectedAllBtn}
-                              invitationOrg={org_id}
-                              invitationType='4'
-                              invitationId={card_id}
+                              isInvitation={true}
                               listData={projectDetailInfoData.data} keyCode={'user_id'} searchName={'name'} currentSelect={data} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
                               board_id={board_id} />
                           }
@@ -810,10 +807,7 @@ export default class MainContent extends Component {
                           <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
                             overlay={
                               <MenuSearchPartner
-                                // handleSelectedAllBtn={this.handleSelectedAllBtn}
-                                invitationOrg={org_id}
-                                invitationType='4'
-                                invitationId={card_id}
+                                isInvitation={true}
                                 listData={projectDetailInfoData.data} keyCode={'user_id'} searchName={'name'} currentSelect={data} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
                                 board_id={board_id} />
                             }

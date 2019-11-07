@@ -181,7 +181,17 @@ export default {
         const updateInfoRemind = {...payload.result}
         // console.log(updateInfoRemind, 'ss')
         const { id, remind_trigger, remind_time_type, remind_time_value, message_consumers} = updateInfoRemind
-        // console.log(message_consumers, 'pppp')
+        // 去除空数组
+        const removeEmptyArrayEle = (arr) => {
+          for (var i = 0; i < arr.length; i++) {
+            if (arr[i] == undefined) {
+              arr.splice(i, 1);
+              i = i - 1; // i - 1 ,因为空元素在数组下标 2 位置，删除空之后，后面的元素要向前补位，
+              // 这样才能真正去掉空元素,觉得这句可以删掉的连续为空试试，然后思考其中逻辑
+            }
+          }
+          return arr;
+        };
         let temp_user = [] // 存放用户的id
         for(var i in message_consumers) {
           temp_user.push(message_consumers[i].user_id)
@@ -191,7 +201,7 @@ export default {
           remind_trigger,
           remind_time_type,
           remind_time_value,
-          users: temp_user
+          users: removeEmptyArrayEle(temp_user)
         }
         const res = yield call(updateRemindInformation, data)
         if(!isApiResponseOk(res)) {

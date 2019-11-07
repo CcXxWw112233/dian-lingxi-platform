@@ -338,14 +338,10 @@ export default class UploadAttachment extends Component {
               {
                 !toNoticeList.length ? (
                   <div style={{ flex: '1', position: 'relative' }}>
-                    <Dropdown trigger={['click']} overlayClassName={styles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                    <Dropdown overlayClassName={styles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
                       overlayStyle={{ maxWidth: '200px' }}
                       overlay={
                         <MenuSearchPartner
-                          handleSelectedAllBtn={this.handleSelectedAllBtn}
-                          isInvitation={true}
-                          invitationType='4'
-                          invitationId={card_id}
                           listData={projectMemberData} keyCode={'user_id'} searchName={'name'} currentSelect={toNoticeList}
                           board_id={board_id}
                           chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
@@ -360,12 +356,9 @@ export default class UploadAttachment extends Component {
                   </div>
                 ) : (
                     <div style={{ flex: '1', position: 'relative' }}>
-                      <Dropdown trigger={['click']} overlayClassName={styles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                      <Dropdown overlayClassName={styles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
                         overlay={
                           <MenuSearchPartner
-                            handleSelectedAllBtn={this.handleSelectedAllBtn}
-                            invitationType='4'
-                            invitationId={card_id}
                             listData={projectMemberData} keyCode={'user_id'} searchName={'name'} currentSelect={toNoticeList} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
                             board_id={board_id} />
                         }
