@@ -82,7 +82,7 @@ export default class CommunicationTreeList extends Component{
 
     // 展开/收起节点时触发
     onExpand = expandedKeys => {
-        console.log('onExpand', expandedKeys);
+        // console.log('onExpand', expandedKeys);
         // if not set autoExpandParent to false, if children expanded, parent can not collapse.
         // or, you can remove all expanded children keys.
         this.setState({
