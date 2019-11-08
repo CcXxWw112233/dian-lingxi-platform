@@ -1596,6 +1596,7 @@ class ZoomPicture extends Component {
           placeholder={commitInputPlaceholder}
           onPressEnter={e => this.handleCommitPublishText(e, true)}
           onFocus={e => this.handleFocusCommitInput(e)}
+          autoFocus={true}
           value={commitPublishText}
           onChange={this.onCommitPublishTextChange}
         />
@@ -1900,6 +1901,7 @@ class ZoomPicture extends Component {
               placeholder="按 Enter 发布图评"
               onPressEnter={e => this.handleCommitPublishText(e, false)}
               value={commitPublishText}
+              autoFocus={true}
               onChange={this.onCommitPublishTextChange}
             />
             <div className={styles.commitPublishWrapper}>
