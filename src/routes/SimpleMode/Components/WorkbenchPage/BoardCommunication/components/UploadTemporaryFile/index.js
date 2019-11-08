@@ -19,7 +19,7 @@ class UploadTemporaryFile extends Component{
         this.state={
             allListId: [],
             currentCheckedList: [],
-            temporaryData:[
+            temporaryData: [
                 { id: 'ss1', fileName: '这是文件.pdf' },
                 { id: 'ss2', fileName: '这是文件.pdf' },
                 { id: 'ss3', fileName: '这是文件文件名过长，文件名过长.pdf' },
@@ -56,7 +56,7 @@ class UploadTemporaryFile extends Component{
     getAllId = () =>{
         const { temporaryData } = this.state;
         const ids = temporaryData.map(item=>item.id);
-        this.setState({ allListId:ids });
+        this.setState({ allListId: ids });
 
     }
 
@@ -143,7 +143,7 @@ class UploadTemporaryFile extends Component{
                 item.checked = !item.checked;
             }
         })
-        this.setState({temporaryData},()=>{
+        this.setState({temporaryData}, ()=>{
             this.getCurrentIds();
         });
     };
@@ -154,7 +154,7 @@ class UploadTemporaryFile extends Component{
         const currentCheckList = temporaryData.filter(item=>item.checked);
         const ids = currentCheckList.map(item=>item.id);
         this.setState({currentCheckedList: ids});
-        console.log('当前选中ids:',ids);
+        console.log('当前选中ids:', ids);
         // return ids;
     }
 

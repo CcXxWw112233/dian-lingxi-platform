@@ -105,20 +105,13 @@ class DropdownSelect extends Component {
 
     renderMenuItem = (itemList) => {
         return itemList.map((item, index) => (
-            <Menu.Item key={item.id} style={{
-                lineHeight: '30px',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#000000',
-                boxShadow: 'none',
-                borderRadius: '0',
-                border: '0',
-                borderRight: '0px!important',
-            }}>
+            <Menu.Item key={item.id}
+                disabled={item.disabled||false}
+                className={item.disabled===true?styles.menuItemDisabled:styles.menuItemNormal}>
                 <div style={{ display: 'flex' }}>
                     <div style={{ flex: 1 }} className={globalStyles.global_ellipsis} >
                         {item.name}
-                        {item.parentName && <span style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }}>#{item.parentName}</span>}
+                        {item.parentName && <span className={styles.parentTitle}>#{item.parentName}</span>}
                     </div>
                     {
                         item.id != '0' && (

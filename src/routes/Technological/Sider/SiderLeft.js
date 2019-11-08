@@ -3,7 +3,7 @@ import { Icon, Layout, Menu, Dropdown, Tooltip, Switch, Modal } from 'antd';
 import indexStyles from './index.less'
 import glabalStyles from '../../../globalset/css/globalClassName.less'
 import linxiLogo from '../../../assets/library/lingxi_logo.png'
-import { checkIsHasPermission, currentNounPlanFilterName } from "../../../utils/businessFunction";
+import { checkIsHasPermission, currentNounPlanFilterName, isPaymentOrgUser} from "../../../utils/businessFunction";
 import {
   DASHBOARD, MEMBERS, ORG_UPMS_ORGANIZATION_EDIT, ORG_UPMS_ORGANIZATION_ROLE_CREATE,
   ORG_UPMS_ORGANIZATION_ROLE_EDIT, ORG_UPMS_ORGANIZATION_ROLE_DELETE, ORG_UPMS_ORGANIZATION_MEMBER_ADD,
@@ -237,7 +237,7 @@ export default class SiderLeft extends React.Component {
 
         break
       case 'subShowSimple':
-        this.handleMode
+        this.handleMode(1);
         break
       case '10': // 创建或加入新组织
         this.setCreateOrgnizationOModalVisable()
@@ -372,16 +372,12 @@ export default class SiderLeft extends React.Component {
   }
 
   // 是否显示极简模式
-  handleMode(checked) {
-    // console.log(checked, 'sssss')
-    const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
-    const { is_simple_model } = user_set
+  handleMode(model) {
     const { dispatch } = this.props
     dispatch({
       type: 'technological/setShowSimpleModel',
       payload: {
-        is_simple_model: checked ? '1' : '0',
-        checked
+        is_simple_model: model
       }
     })
 
@@ -581,13 +577,7 @@ export default class SiderLeft extends React.Component {
             </Menu.Item>
             <Menu.Item key="subShowSimple">
               <span>
-                极简模式
-                    <Switch
-                  style={{ display: 'inline-block', marginLeft: 36 }}
-                  // defaultChecked={false}
-                  checked={is_simple_model == '1' ? true : false}
-                  onClick={(checked) => { this.handleMode(checked) }}
-                ></Switch>
+                切换极简模式
               </span>
             </Menu.Item>
           </SubMenu>
@@ -612,9 +602,10 @@ export default class SiderLeft extends React.Component {
             </div>
           </Menu.Item>
           {currentUserOrganizes.map((value, key) => {
-            const { name, id, identity_type, logo } = value
+            const { name, id, identity_type, logo } = value;
+            let disabled = !isPaymentOrgUser(id);//是否付费组织
             return (
-              <Menu.Item key={id} className={indexStyles.org_name} >
+              <Menu.Item key={id} className={indexStyles.org_name} disabled={disabled}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <img src={logo || linxiLogo} className={indexStyles.org_img} />
                   <span style={{ maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{name}</span>

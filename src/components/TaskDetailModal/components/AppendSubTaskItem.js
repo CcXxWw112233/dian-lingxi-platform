@@ -293,7 +293,7 @@ export default class AppendSubTaskItem extends Component {
   endDatePickerChange(timeString) {
     const { drawContent = {}, childTaskItemValue, dispatch } = this.props
     const { milestone_data = {} } = drawContent
-    const { data = [] } =  drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
+    const { data = [] } = drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
     const { card_id } = childTaskItemValue
     const due_timeStamp = timeToTimestamp(timeString)
     const updateObj = {

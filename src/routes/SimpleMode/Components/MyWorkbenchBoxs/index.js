@@ -6,7 +6,7 @@ import { Icon, message, Tooltip } from 'antd';
 import DropdownSelect from '../../Components/DropdownSelect/index'
 import CreateProject from '@/routes/Technological/components/Project/components/CreateProject/index';
 import simpleMode from "../../../../models/simpleMode";
-import { getOrgNameWithOrgIdFilter, setBoardIdStorage } from "@/utils/businessFunction"
+import { getOrgNameWithOrgIdFilter, setBoardIdStorage, isPaymentOrgUser } from "@/utils/businessFunction"
 
 class MyWorkbenchBoxs extends Component {
   constructor(props) {
@@ -198,24 +198,20 @@ class MyWorkbenchBoxs extends Component {
     return menuItemList;
   }
 
-  goWorkbenchBox = (item) => {
-    console.log(item)
+  goWorkbenchBox = (item, isDisabled, tipTitle) => {
+
+    if (isDisabled) {
+      message.warn(tipTitle);
+      return
+    }
     const { id, code, status } = item
     const { dispatch } = this.props;
-    const isDisableds = this.getIsDisabled(item)
-
-    if (code === 'maps') {
-      if ( isDisableds ) {
-        message.warn("暂无可查看的数据");
-        return
-      }
-    }
 
     if (code === 'regulations') {
-      if ( isDisableds ) {
+      if (isDisabled) {
         message.warn("暂无可查看的数据");
         return
-      }else if (code === 'regulations') {
+      } else if (code === 'regulations') {
         if (localStorage.getItem('OrganizationId') === "0") {
           localStorage.setItem('isRegulations', 'yes');
         }
@@ -228,10 +224,6 @@ class MyWorkbenchBoxs extends Component {
       }
     }
 
-    if (status == 0) {
-      message.warn("功能开发中，请耐心等待");
-      return;
-    }
     dispatch({
       type: 'simplemode/updateDatas',
       payload: {
@@ -265,26 +257,26 @@ class MyWorkbenchBoxs extends Component {
     const { rela_app_id, code } = item
     const { currentUserOrganizes = [] } = this.props
     let isDisabled = true
-    if("regulations" == code || "maps" == code) {
-      if(localStorage.getItem('OrganizationId') == '0') {
-          let flag = false
-          for(let val of currentUserOrganizes) {
-            for(let val2 of val['enabled_app_list']) {
-              if(rela_app_id == val2['app_id'] && val2['status'] == '1') {
-                flag = true
-                isDisabled = false
-                break
-              }
-            }
-            if(flag) {
+    if ("regulations" == code || "maps" == code) {
+      if (localStorage.getItem('OrganizationId') == '0') {
+        let flag = false
+        for (let val of currentUserOrganizes) {
+          for (let val2 of val['enabled_app_list']) {
+            if (rela_app_id == val2['app_id'] && val2['status'] == '1') {
+              flag = true
+              isDisabled = false
               break
             }
           }
+          if (flag) {
+            break
+          }
+        }
       } else {
         const org = currentUserOrganizes.find(item => item.id == localStorage.getItem('OrganizationId')) || {}
         const enabled_app_list = org.enabled_app_list || []
-        for(let val2 of enabled_app_list) {
-          if(rela_app_id == val2['app_id'] && val2['status'] == '1') {
+        for (let val2 of enabled_app_list) {
+          if (rela_app_id == val2['app_id'] && val2['status'] == '1') {
             isDisabled = false
             break
           }
@@ -296,14 +288,45 @@ class MyWorkbenchBoxs extends Component {
     return isDisabled
   }
 
-  renderBoxItem = (item) => {
-    const isDisableds = this.getIsDisabled(item)
+  renderBoxItem = (item, isPaymentUser) => {
+    let tipTitle;
+    let isDisabled = this.getIsDisabled(item);
+    if(isDisabled){
+      tipTitle = '暂无可查看的数据'
+    }
+
+    if (!isPaymentUser) {
+      if(item.code != 'board:plans'){
+        tipTitle = '付费功能，请升级灵犀企业版';
+        isDisabled = true;
+      }
+
+    } else {
+      if (item.status == 0) {
+        tipTitle = '功能开发中，敬请期待';
+        isDisabled = true;
+      }
+    }
+
     return (
-      <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item)} disabled={item.status == 0||isDisableds}>
-        <i dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} ></i><br />
-        <span className={indexStyles.myWorkbenchBox_title}>{item.name}</span>
-      </div>
-    );
+      <>
+        {tipTitle ? (
+          <Tooltip title={tipTitle} key={item.id}>
+            <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item, isDisabled, tipTitle)} disabled={isDisabled}>
+              <i dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} ></i><br />
+              <span className={indexStyles.myWorkbenchBox_title}>{item.name}</span>
+            </div>
+          </Tooltip>
+        )
+          : (
+          <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item, isDisabled, tipTitle)} disabled={isDisabled}>
+            <i dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} ></i><br />
+            <span className={indexStyles.myWorkbenchBox_title}>{item.name}</span>
+          </div>
+        )}
+      </>
+    )
+
   }
 
   render() {
@@ -314,9 +337,14 @@ class MyWorkbenchBoxs extends Component {
     const menuItemList = this.getMenuItemList(projectList);
     const fuctionMenuItemList = [{ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }];
     let selectedKeys = ['0'];
+    let isPaymentUser = false;
     if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
-      selectedKeys = [simplemodeCurrentProject.board_id]
+      selectedKeys = [simplemodeCurrentProject.board_id];
+      isPaymentUser = isPaymentOrgUser(simplemodeCurrentProject.org_id);
+    }else{
+      isPaymentUser = isPaymentOrgUser();
     }
+
 
     return (
 
@@ -329,14 +357,7 @@ class MyWorkbenchBoxs extends Component {
         <div className={indexStyles.myWorkbenchBoxWapper}>
           {
             myWorkbenchBoxList.map((item, key) => {
-              return (
-                item.status == 0 ? (
-                  <Tooltip title="功能开发中，敬请期待" key={key}>
-                    {this.renderBoxItem(item)}
-                  </Tooltip>
-                ) :
-                this.renderBoxItem(item)
-              )
+              return this.renderBoxItem(item, isPaymentUser);
             })
           }
           <div className={indexStyles.myWorkbenchBox} onClick={this.addMyWorkBoxs}>
@@ -373,8 +394,8 @@ export default connect(
         mapOrganizationList
       } },
     xczNews: {
-        XczNewsOrganizationList
-      },
+      XczNewsOrganizationList
+    },
     project }) => ({
       project,
       projectList,

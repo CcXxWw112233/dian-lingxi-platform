@@ -76,7 +76,7 @@ export default class MainContent extends Component {
   componentDidMount() {
     const { card_id } = this.props
     if (!card_id) return false
-    const  that = this
+    const that = this
     this.props.dispatch({
       type: 'publicTaskDetailModal/getCardWithAttributesDetail',
       payload: {
@@ -367,7 +367,7 @@ export default class MainContent extends Component {
     const { drawContent = {}, dispatch } = this.props
     const start_timeStamp = timeToTimestamp(timeString)
     const { card_id, due_time } = drawContent
-    const { data = [] } =  drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
+    const { data = [] } = drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
     const updateObj = {
       card_id, start_time: start_timeStamp
     }
@@ -402,7 +402,7 @@ export default class MainContent extends Component {
   endDatePickerChange(timeString) {
     const { drawContent = {}, dispatch } = this.props
     const { card_id, start_time, milestone_data = {} } = drawContent
-    const { data = [] } =  drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
+    const { data = [] } = drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
     const due_timeStamp = timeToTimestamp(timeString)
     const updateObj = {
       card_id, due_time: due_timeStamp
