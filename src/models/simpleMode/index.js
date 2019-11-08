@@ -71,9 +71,9 @@ export default {
             const { route } = payload
             yield put(routerRedux.push(route));
         },
-        * getMyBoxs({ payload }, { call, put }) {
+        * getMyBoxs({ payload }, { call, put, select }) {
             let res = yield call(getUserBoxs, {});
-
+            const currentSelectedWorkbenchBox = yield select(getModelSelectState('simplemode', 'currentSelectedWorkbenchBox')) || {}
             if (isApiResponseOk(res)) {
                 let { data: myWorkbenchBoxList } = res;
                 yield put({
@@ -82,6 +82,14 @@ export default {
                         myWorkbenchBoxList: myWorkbenchBoxList
                     }
                 })
+                if (!currentSelectedWorkbenchBox.id) { //当workbench界面刷新的时候，设置默认
+                    yield put({
+                        type: 'updateDatas',
+                        payload: {
+                            currentSelectedWorkbenchBox: myWorkbenchBoxList[0]
+                        }
+                    })
+                }
             } else {
                 message.warn(res.message, MESSAGE_DURATION_TIME)
             }

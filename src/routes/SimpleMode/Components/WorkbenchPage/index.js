@@ -26,12 +26,12 @@ class WorkbenchPage extends Component {
     componentWillMount() {
         const { dispatch, currentSelectedWorkbenchBox = {} } = this.props;
         if (!currentSelectedWorkbenchBox.id) {
-            dispatch({
-                type: 'simplemode/routingJump',
-                payload: {
-                    route: '/technological/simplemode/home'
-                }
-            });
+            // dispatch({
+            //     type: 'simplemode/routingJump',
+            //     payload: {
+            //         route: '/technological/simplemode/home'
+            //     }
+            // });
         }
 
         dispatch({
