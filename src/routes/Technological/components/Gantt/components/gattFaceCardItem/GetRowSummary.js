@@ -5,6 +5,7 @@ import { connect } from 'dva'
 import CardDropDetail from './CardDropDetail.js'
 import { Popover } from 'antd'
 import globalStyles from '@/globalset/css/globalClassName.less'
+import { task_item_height_fold } from '../../constants'
 
 @connect(mapStateToProps)
 export default class GetRowSummary extends Component {
@@ -166,17 +167,17 @@ export default class GetRowSummary extends Component {
                     data-targetclassname="specific_example"
                     style={{
                         left: left, top: top,
-                        width: (width || 6) - 6, height: 40,
+                        width: (width || 6) - 6, height: task_item_height_fold,
                         background: this.setBgSpecific().time_bg_color,
                         padding: 0,
                         zIndex: 0,
                     }}>
                     {/* 进度填充 */}
-                    {/* <div
+                    <div
                         data-targetclassname="specific_example"
                         className={this.setBgSpecific().percent_class}
-                        style={{ width: this.setBgSpecific().percent, height: 40, borderRadius: 4 }} >
-                    </div> */}
+                        style={{ width: '100%', height: task_item_height_fold, }} >
+                    </div>
                 </div>
                 <div
                     data-targetclassname="specific_example"
