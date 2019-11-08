@@ -183,16 +183,19 @@ export default class DateList extends Component {
     const { holiday_list = [] } = this.props
     let holiday = ''
     let lunar = ''
+    let festival_status = ''
     for (let val of holiday_list) {
       if (isSamDay(timestamp, Number(val['timestamp'] * 1000))) {
         holiday = val['holiday']
         lunar = val['lunar']
+        festival_status = val['festival_status']
         break
       }
     }
     return {
       holiday,
-      lunar: lunar || ' '
+      lunar: lunar || ' ',
+      festival_status
     }
   }
 
@@ -274,7 +277,14 @@ export default class DateList extends Component {
                             <div className={`${indexStyles.dateDetailItem}`} key={key2}>
                               <div className={`${indexStyles.dateDetailItem_date_no} 
                                     ${((week_day == 0 || week_day == 6)) && indexStyles.weekly_date_no} 
-                                    ${this.getDateNoHolidaylunar(timestamp).holiday && indexStyles.holiday_date_no}`}>
+                                    ${this.getDateNoHolidaylunar(timestamp).festival_status == '1' && indexStyles.holiday_date_no}`}>
+                                {
+                                  this.getDateNoHolidaylunar(timestamp).holiday && (
+                                    <div style={{ position: 'absolute', zIndex: 2, top: -24, left: -18, width: 60, height: 20 }} >
+                                      {this.getDateNoHolidaylunar(timestamp).holiday}
+                                    </div>
+                                  )
+                                }
                                 {date_no}
                               </div>
                             </div>
@@ -288,11 +298,18 @@ export default class DateList extends Component {
                                   <div className={`${indexStyles.dateDetailItem_date_no} 
                                     ${indexStyles.nomal_date_no}
                                     ${((week_day == 0 || week_day == 6)) && indexStyles.weekly_date_no} 
-                                    ${this.getDateNoHolidaylunar(timestamp).holiday && indexStyles.holiday_date_no}
+                                    ${this.getDateNoHolidaylunar(timestamp).festival_status == '1' && indexStyles.holiday_date_no}
                                     ${has_lcb && indexStyles.has_moletones_date_no}`}
                                     style={{ background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized }) }}
                                   // style={{ background: is_over_duetime && has_lcb ? '#FF7875' : '' }}
                                   >
+                                    {
+                                      this.getDateNoHolidaylunar(timestamp).holiday && (
+                                        <div style={{ position: 'absolute', zIndex: 2, top: -24, left: -18, width: 60, height: 20 }} >
+                                          {this.getDateNoHolidaylunar(timestamp).holiday}
+                                        </div>
+                                      )
+                                    }
                                     {date_no}
                                   </div>
                                 </div>
