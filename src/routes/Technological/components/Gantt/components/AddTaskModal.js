@@ -71,7 +71,7 @@ class AddTaskModal extends Component {
   };
   // 选择项目
   handleSelectedItem = item => {
-   
+
     this.setState(
       {
         currentSelectedProject: item,
@@ -141,9 +141,9 @@ class AddTaskModal extends Component {
     }
   }
 
-  // 如果是成员视图，则默认设置已选用户
+  // 如果是成员视图，则默认设置已选用户,同时设置已选项目为‘个人事务’
   setDefaultExcuser = () => {
-    const { list_group, group_view_type, current_list_group_id } = this.props
+    const { list_group, group_view_type, current_list_group_id, about_apps_boards = [] } = this.props
     if (group_view_type == '2') {
       const group = list_group.find(item => current_list_group_id == item.lane_id)
       const user = {
@@ -153,6 +153,17 @@ class AddTaskModal extends Component {
         avatar: group['lane_icon']
       }
       this.handleSelectedItemChange([user])
+
+      // 设置已选项目为‘个人事务’
+      const default_board = about_apps_boards.find(item => item.is_my_private == '1') || {}
+      if (default_board.board_id) {
+        this.setState({
+          currentSelectedProject: default_board
+        }, () => {
+          this.getCurrentSelectedProjectMembersList({ projectId: default_board.board_id })
+        })
+      }
+
     }
   }
 

@@ -243,7 +243,7 @@ export default class GetRowGanttItem extends Component {
                                 data-targetclassname="specific_example"
                                 className={`${indexStyles.board_miletiones_flagpole}`}
                                 style={{
-                                  height: item_height - 12,
+                                  height: 29,//item_height - 12,
                                   //  backgroundColor: is_over_duetime ? '#FFA39E' : '#FFC069' ,
                                   background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized })
                                 }}

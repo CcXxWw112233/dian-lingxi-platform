@@ -7,7 +7,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
 import AvatarList from '@/components/avatarList'
 import { Tooltip, Dropdown, message } from 'antd'
-import { date_area_height, task_item_height, task_item_margin_top, ganttIsFold, ceil_height_fold } from './constants'
+import { date_area_height, task_item_height, task_item_margin_top, ganttIsFold, ceil_height_fold, task_item_height_fold, group_rows_fold } from './constants'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import QueueAnim from 'rc-queue-anim'
 import GetRowTaskItem from './GetRowTaskItem'
@@ -204,7 +204,7 @@ export default class GetRowGantt extends Component {
     let py = e.pageY - target_0.offsetTop + target_1.scrollTop - dateAreaHeight
 
     const molX = px % ceilWidth
-    const molY = py % (ganttIsFold({ gantt_board_id, group_view_type }) ? ceiHeight * 2 : ceiHeight) //2为折叠的总行
+    const molY = py % (ganttIsFold({ gantt_board_id, group_view_type }) ? ceiHeight * group_rows_fold : ceiHeight) //2为折叠的总行
     const mulX = Math.floor(px / ceilWidth)
     const mulY = Math.floor(py / ceiHeight)
     const delX = Number((molX / ceilWidth).toFixed(1))
@@ -476,12 +476,12 @@ export default class GetRowGantt extends Component {
         {dasheRectShow && (
           <div className={indexStyles.dasheRect} style={{
             left: currentRect.x + 1, top: currentRect.y,
-            width: currentRect.width, height: currentRect.height,
+            width: currentRect.width, height: ganttIsFold({ gantt_board_id, group_view_type }) ? task_item_height_fold : task_item_height,//currentRect.height,
             boxSizing: 'border-box',
-            marginTop: !ganttIsFold({ gantt_board_id, group_view_type }) ? task_item_margin_top : (ceil_height_fold * 2 - task_item_height) / 2, //task_item_margin_top,//
+            marginTop: !ganttIsFold({ gantt_board_id, group_view_type }) ? task_item_margin_top : (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2, //task_item_margin_top,//
             color: 'rgba(0,0,0,0.45)',
             textAlign: 'right',
-            lineHeight: `${ceiHeight - task_item_margin_top}px`,
+            lineHeight: ganttIsFold({ gantt_board_id, group_view_type }) ? `${task_item_height_fold}px` : `${ceiHeight - task_item_margin_top}px`,
             paddingRight: 8,
             zIndex: this.isDragging ? 2 : 1
           }} >
