@@ -73,6 +73,22 @@ export default class MainContent extends Component {
     })
   }
 
+  // 初始化过滤当前已经存在的字段
+  filterCurrentExistenceField = (currentData) => {
+    const { propertiesList = [] } = this.state
+    let newCurrentData = {...currentData}
+    let newPropertiesList = [...propertiesList]
+    newPropertiesList = newPropertiesList.filter((value, index) => {
+      const gold_code = (newCurrentData['properties'].find(item => item.code === value.code) || {}).code
+      if (value.code != gold_code) {
+        return value
+      }
+    })
+    this.setState({
+      propertiesList: newPropertiesList
+    })
+  }
+
   componentDidMount() {
     const { card_id } = this.props
     if (!card_id) return false
@@ -81,12 +97,14 @@ export default class MainContent extends Component {
       type: 'publicTaskDetailModal/getCardWithAttributesDetail',
       payload: {
         id: card_id,
-        calback: function(board_id) {
-          that.getProjectFolderList(board_id)
-          that.getMilestone(board_id)
+        calback: function(data) {
+          that.getProjectFolderList(data.board_id)
+          that.getMilestone(data.board_id)
+          that.filterCurrentExistenceField(data)// 初始化获取字段信息
         }
       }
     })
+    
   }
 
   // 获取 currentDrawerContent 数据
@@ -506,6 +524,18 @@ export default class MainContent extends Component {
   }
   // 删除结束时间 E
 
+  updateParentPropertiesList = (shouldDeleteId) => {
+    const { attributesList = [] } = this.props
+    const { propertiesList = [] } = this.state
+    let new_attributesList = [...attributesList]
+    let new_propertiesList = [...propertiesList]
+    const currentDataItem = new_attributesList.filter(item => item.id == shouldDeleteId)[0]
+    new_propertiesList.push(currentDataItem)
+    this.setState({
+      propertiesList: new_propertiesList
+    })
+  }
+
   // 对应字段的删除 S
   handleDelCurrentField = (shouldDeleteId) => {
     if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()) {
@@ -517,12 +547,13 @@ export default class MainContent extends Component {
       showDelColor: true,
       currentDelId: shouldDeleteId
     })
-    let flag = false
+    let flag = false // 判断删除的时候当前是否有数据, 默认为false 表示没有数据直接删除
     const { dispatch, drawContent = {}, drawContent: { card_id } } = that.props
     const { selectedKeys = [] } = that.state
     let new_drawContent = { ...drawContent }
     let filter_drawContent = { ...drawContent }
     let new_selectedKeys = [...selectedKeys]
+    // 删除的时候判断data类型以及是否有数据
     filter_drawContent['properties'].find(item => {
       if (item.id == shouldDeleteId) { // 表示找到当前item
         if (Array.isArray(item.data)) {
@@ -557,10 +588,11 @@ export default class MainContent extends Component {
           ).then(res => {
             if (isApiResponseOk(res)) {
               that.setState({
-                selectedKeys: new_selectedKeys,
+                // selectedKeys: new_selectedKeys,
                 shouldDeleteId: '',
                 showDelColor: ''
               })
+              that.updateParentPropertiesList(shouldDeleteId)
               dispatch({
                 type: 'publicTaskDetailModal/updateDatas',
                 payload: {
@@ -588,10 +620,11 @@ export default class MainContent extends Component {
       ).then(res => {
         if (isApiResponseOk(res)) {
           that.setState({
-            selectedKeys: new_selectedKeys,
+            // selectedKeys: new_selectedKeys,
             shouldDeleteId: '',
             showDelColor: ''
           })
+          that.updateParentPropertiesList(shouldDeleteId)
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',
             payload: {
@@ -640,12 +673,12 @@ export default class MainContent extends Component {
     const { dispatch, card_id } = this.props
     const { propertiesList = [], selectedKeys = [] } = this.state
     const { key } = e
-    // let new_propertiesList = [...propertiesList]
-    // new_propertiesList = new_propertiesList.filter(item => {
-    //   if (item.id != e.key) {
-    //     return item
-    //   }
-    // })
+    let new_propertiesList = [...propertiesList]
+    new_propertiesList = new_propertiesList.filter(item => {
+      if (item.id != e.key) {
+        return item
+      }
+    })
     selectedKeys.push(key)
     Promise.resolve(
       dispatch({
@@ -658,7 +691,8 @@ export default class MainContent extends Component {
     .then(res => {
       if (isApiResponseOk(res)) {
         this.setState({
-          selectedKeys: selectedKeys
+          selectedKeys: selectedKeys,
+          propertiesList: new_propertiesList
         })
       }
     })
@@ -723,7 +757,7 @@ export default class MainContent extends Component {
         <div className={mainContentStyles.attrWrapper}>
           <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: '248px' }}
             // onDeselect={this.handleMenuReallyDeselect.bind(this)}
-            selectedKeys={selectedKeys}
+            // selectedKeys={selectedKeys}
             onSelect={this.handleMenuReallySelect.bind(this)}
           >
             {
@@ -802,7 +836,10 @@ export default class MainContent extends Component {
                         <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
                           overlay={
                             <MenuSearchPartner
-                              isInvitation={true}
+                              // isInvitation={true}
+                              invitationType='4'
+                              invitationId={card_id}
+                              invitationOrg={org_id}
                               listData={projectDetailInfoData.data} keyCode={'user_id'} searchName={'name'} currentSelect={data} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
                               board_id={board_id} />
                           }
@@ -819,7 +856,10 @@ export default class MainContent extends Component {
                           <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
                             overlay={
                               <MenuSearchPartner
-                                isInvitation={true}
+                                // isInvitation={true}
+                                invitationType='4'
+                                invitationId={card_id}
+                                invitationOrg={org_id}
                                 listData={projectDetailInfoData.data} keyCode={'user_id'} searchName={'name'} currentSelect={data} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
                                 board_id={board_id} />
                             }
@@ -1078,7 +1118,7 @@ export default class MainContent extends Component {
           {/* 各种字段的不同状态 E */}
           {/* 不同字段的渲染 S */}
           <div>
-            <DragDropContentComponent handleTaskDetailChange={handleTaskDetailChange} boardFolderTreeData={boardFolderTreeData} milestoneList={milestoneList} />
+            <DragDropContentComponent updateParentPropertiesList={this.updateParentPropertiesList} handleTaskDetailChange={handleTaskDetailChange} boardFolderTreeData={boardFolderTreeData} milestoneList={milestoneList} />
           </div>
           {/* 不同字段的渲染 E */}
 
@@ -1122,7 +1162,7 @@ export default class MainContent extends Component {
 
 // 只关联public弹窗内的数据
 function mapStateToProps({
-  publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id, boardTagList = [] },
+  publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id, boardTagList = [], attributesList = [] },
   projectDetail: { datas: { projectDetailInfoData = {} } },
   projectDetailFile: {
     datas: {
@@ -1130,5 +1170,5 @@ function mapStateToProps({
     }
   }
 }) {
-  return { drawContent, is_edit_title, card_id, boardTagList, projectDetailInfoData, isInOpenFile }
+  return { drawContent, is_edit_title, card_id, boardTagList, attributesList, projectDetailInfoData, isInOpenFile }
 }

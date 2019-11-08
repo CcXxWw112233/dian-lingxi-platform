@@ -665,6 +665,7 @@ export default class DragDropContentComponent extends Component {
                 shouldDeleteId: '',
                 showDelColor: ''
               })
+              that.props.updateParentPropertiesList && that.props.updateParentPropertiesList(shouldDeleteId)
               dispatch({
                 type: 'publicTaskDetailModal/updateDatas',
                 payload: {
@@ -696,6 +697,7 @@ export default class DragDropContentComponent extends Component {
             shouldDeleteId: '',
             showDelColor: ''
           })
+          that.props.updateParentPropertiesList && that.props.updateParentPropertiesList(shouldDeleteId)
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',
             payload: {
