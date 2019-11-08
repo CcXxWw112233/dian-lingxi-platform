@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
-import { message, Dropdown, Menu, Modal } from 'antd'
+import { message, Dropdown, Menu, Modal, Breadcrumb, Tooltip } from 'antd'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import mainContentStyles from './MainContent.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
@@ -588,39 +588,25 @@ export default class DragDropContentComponent extends Component {
   }
 
   // 递归获取附件路径 S
-  getFolderPathName = (fileList,fileItem) => {
-    const { drawContent = {}, dispatch } = this.props
+  getFolderPathName = (fileList, fileItem) => {
     let new_fileList = [...fileList]
     let arr = []
-    if (!fileItem.folder_path) { // 表示是根目录
-      // 递归添加路径
-      arr.push({ file_name: '根目录', file_id: fileItem.file_id, type: '1' })
-    } else {
-      const target_path = fileItem.folder_path
-      // 递归添加路径
-      const digui = (name, data) => {
-        if (data[name]) {
-          arr.push({ file_name: data.folder_name, file_id: data.id, type: '1' })
-          digui(name, data[name])
-        }
+    const target_path = fileItem.folder_path
+    // 递归添加路径
+    const digui = (name, data) => {
+      if (data[name]) {
+        arr.push({ file_name: data.folder_name, file_id: data.id, type: '1' })
+        digui(name, data[name])
+      } else if (data['parent_id'] == '0') {
+        arr.push({ file_name: '根目录', type: '0' })
+      } else if (data['parent_id'] == '2') {// 表示临时目录
+        arr.push({ file_name: data.folder_name, file_id: data.id, type: '2' })
       }
-      digui('parent_folder', target_path)
-      const newbreadcrumbList = arr.reverse()
-      newbreadcrumbList.push({ file_name: fileItem.name, file_id: fileItem.file_id, type: '2' })
     }
-    new_fileList.map(item => {
-      let new_item = item
-      new_item = {...item, breadcrumbList: arr}
-      return new_item
-    })
-    // console.log(new_fileList, 'ssssss')
-    // drawContent['properties'] = this.filterCurrentUpdateDatasField('ATTACHMENT', new_fileList)
-    // dispatch({
-    //   type: 'publicTaskDetailModal/updateDatas',
-    //   payload: {
-    //     drawContent
-    //   }
-    // })
+    digui('parent_folder', target_path)
+    const newbreadcrumbList = arr.reverse()
+    // newbreadcrumbList.push({ file_name: fileItem.name, file_id: fileItem.file_id, type: '1' })
+    return newbreadcrumbList
   }
   // 递归获取附件路径 E
 
@@ -983,6 +969,7 @@ export default class DragDropContentComponent extends Component {
               <div className={mainContentStyles.filelist_wrapper}>
                 {
                   currentItem.data && currentItem.data.map((fileInfo) => {
+                    const breadcrumbList = this.getFolderPathName(currentItem.data, fileInfo)
                     return (
                       <div className={`${mainContentStyles.file_item_wrapper}`} key={fileInfo.id}>
 
@@ -994,7 +981,19 @@ export default class DragDropContentComponent extends Component {
                         <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={() => this.openFileDetailModal(fileInfo)} >
                           <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span><span>{fileInfo.name}</span></div>
                           <div className={mainContentStyles.file_info}>{this.showMemberName(fileInfo.create_by)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
-                          {/* <div>{this.getFolderPathName(currentItem.data, fileInfo)}</div> */}
+                          <div className={mainContentStyles.breadNav} style={{position: 'relative'}}>
+                            <Breadcrumb className={mainContentStyles.Breadcrumb} separator=">">
+                              {breadcrumbList.map((value, key) => {
+                                return (
+                                  <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} title={(value && value.file_name) && value.file_name} placement="top">
+                                    <Breadcrumb.Item key={key}>
+                                      <span className={key == breadcrumbList.length - 1 && mainContentStyles.breadItem}>{(value && value.file_name) && value.file_name}</span>
+                                    </Breadcrumb.Item>
+                                  </Tooltip>
+                                )
+                              })}
+                            </Breadcrumb>
+                          </div>
                         </div>
                       </div>
                     );

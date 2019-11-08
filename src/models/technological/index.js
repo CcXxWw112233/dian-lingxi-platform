@@ -96,10 +96,21 @@ export default {
         type: 'getUserAllOrgsAllBoards',
         payload: {}
       })
-      yield put({
+      // yield put({
+      //   type: 'getUSerInfo',
+      //   payload: {}
+      // })
+
+      //仅仅为了阻塞
+      const Aa = yield put({
         type: 'getUSerInfo',
         payload: {}
       })
+      const getUSerInfoSync = () => new Promise(resolve => {
+        resolve(Aa.then())
+      })
+      yield call(getUSerInfoSync);
+
       yield put({ //  获取当前成员在组织中的权限列表
         type: 'getUserOrgPermissions',
         payload: {}
@@ -195,6 +206,7 @@ export default {
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
+      return {}
     },
 
     // 获取和存储全组织的全部项目
@@ -212,6 +224,7 @@ export default {
       let res = yield call(getCurrentUserOrganizes, {})
       // console.log(res, 'get current use organization list.+++++++++++++++++++++++++++++++++++')
       if (isApiResponseOk(res)) {
+        localStorage.setItem('currentUserOrganizes', JSON.stringify(res.data))
         yield put({
           type: 'updateDatas',
           payload: {
@@ -345,7 +358,7 @@ export default {
     },
     // 获取显示是否是极简模式
     * setShowSimpleModel({ payload }, { select, call, put }) {
-      const { checked, is_simple_model, redirectLocation = '/technological/workbench' } = payload
+      const { is_simple_model, redirectLocation = '/technological/workbench' } = payload
       let res = yield call(setShowSimpleModel, is_simple_model)
       if (!isApiResponseOk(res)) {
         message.error(res.message)
@@ -358,8 +371,8 @@ export default {
         payload: {}
       })
 
-      if (checked) {
-        //极简模式只能是全组织
+      if (is_simple_model == 1) {
+        //极简模式只能是全企业
 
         localStorage.setItem('currentSelectOrganize', JSON.stringify({}))
         localStorage.setItem('OrganizationId', 0)
@@ -400,6 +413,11 @@ export default {
     //权限---start获取用户的全部组织和全部项目权限
     * getUserOrgPermissions({ payload }, { select, call, put }) {
       const res = yield call(getUserOrgPermissions, payload)
+      localStorage.setItem('userOrgPermissions', JSON.stringify({}))
+      const delay = (ms) => new Promise(resolve => {
+        setTimeout(resolve, ms)
+      })
+      yield call(delay, 300)
       // debugger
       if (isApiResponseOk(res)) {
         const OrganizationId = localStorage.getItem('OrganizationId')

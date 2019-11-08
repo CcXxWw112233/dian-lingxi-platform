@@ -2,6 +2,7 @@
 import { NORMAL_NOUN_PLAN, CONTENT_DATA_TYPE_FILE } from '../globalset/js/constant'
 import { get } from 'https';
 import { Base64 } from 'js-base64';
+import moment from 'moment';
 
 // 权限的过滤和存储在technological下
 // 权限分为全组织和确定组织下
@@ -333,4 +334,40 @@ export const setUploadHeaderBaseInfo = ({ orgId, boardId, aboutBoardOrganization
   }
 
   return new_herders
+}
+
+export const isPaymentOrgUser = (_org_id) => {
+  let OrganizationId;
+  if(_org_id){
+    OrganizationId = _org_id;
+  }else{
+    OrganizationId = localStorage.getItem('OrganizationId')
+  }
+  const currentUserOrganizes = JSON.parse(localStorage.getItem('currentUserOrganizes')) || [];
+  // console.log("OrganizationId", OrganizationId);
+  // console.log("currentUserOrganizes", currentUserOrganizes);
+
+  if (OrganizationId == '0') {
+    //全组织
+    for (let org of currentUserOrganizes) {
+      if(org.payment_status==1){
+          return true
+      }
+    };
+  } else {
+    //单组织
+    let curentOrgs = currentUserOrganizes.filter(item => item.id == OrganizationId);
+    // console.log("curentOrgs", curentOrgs);
+    if (curentOrgs && curentOrgs.length > 0) {
+      let curentOrg = curentOrgs[0] || {};
+      if (curentOrg.payment_status == 1 && moment(parseInt(curentOrg.payment_end_date.length == 10 ? curentOrg.payment_end_date + "000" : curentOrg.payment_end_date)).isAfter(new Date())) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
 }
