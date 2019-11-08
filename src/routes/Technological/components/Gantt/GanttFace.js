@@ -15,6 +15,7 @@ import BoardsFilesArea from './components/boardFile/BoardsFilesArea'
 import FaceRightButton from './components/gattFaceCardItem/FaceRightButton'
 import { Spin } from 'antd'
 import MiletoneGuide from './components/MiletonesGuide/index'
+import { isPaymentOrgUser } from '../../../../utils/businessFunction';
 
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -278,7 +279,9 @@ export default class GanttFace extends Component {
         </div>
         <div className={indexStyles.cardDetail_right}></div>
         <FaceRightButton setGoldDateArr={this.setGoldDateArr} setScrollPosition={this.setScrollPosition} />
-        <ShowFileSlider />
+        {
+          isPaymentOrgUser() && <ShowFileSlider />
+        }
         <BoardsFilesArea />
       </div>
     )
