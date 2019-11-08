@@ -83,12 +83,18 @@ export default {
                     }
                 })
                 if (!currentSelectedWorkbenchBox.id) { //当workbench界面刷新的时候，设置默认
+                    //当前的box存储在会话中，如果有就取，没有取列表第一个
+                    const sessionStorage_item = window.sessionStorage.getItem('session_currentSelectedWorkbenchBox')
+                    const session_currentSelectedWorkbenchBox = JSON.parse(sessionStorage_item || '{}')
+                    const is_has_this_box = !!myWorkbenchBoxList.findIndex(item => item.id == session_currentSelectedWorkbenchBox.id) //存在该盒子
+                    const will_set_data = session_currentSelectedWorkbenchBox.id && is_has_this_box ? session_currentSelectedWorkbenchBox : myWorkbenchBoxList[0]
                     yield put({
                         type: 'updateDatas',
                         payload: {
-                            currentSelectedWorkbenchBox: myWorkbenchBoxList[0]
+                            currentSelectedWorkbenchBox: will_set_data
                         }
                     })
+                    window.sessionStorage.setItem('session_currentSelectedWorkbenchBox', JSON.stringify(will_set_data))
                 }
             } else {
                 message.warn(res.message, MESSAGE_DURATION_TIME)

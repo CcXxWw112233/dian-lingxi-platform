@@ -329,7 +329,7 @@ class DropdownMultipleSelectWithSearch extends Component {
 
   chirldrenTaskChargeChange = ({ selectedKeys = [] }) => {
     const { list = [], handleSelectedItemChange } = this.props
-    const selectedList = list.filter(item => selectedKeys.indexOf(item.id) != -1)
+    const selectedList = list.filter(item => selectedKeys.indexOf(item.id) != -1 || selectedKeys.indexOf(item.user_id) != -1)
     this.setState({
       selectedList
     }, () => {

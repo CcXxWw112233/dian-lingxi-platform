@@ -77,6 +77,9 @@ const MiniBoxNavigations = (props) => {
 
             }
         })
+        // 存储当前会话盒子
+        window.sessionStorage.setItem('session_currentSelectedWorkbenchBox', JSON.stringify({ ...box }))
+
         dispatch({
             type: 'simpleWorkbenchbox/updateDatas',
             payload: {
@@ -94,9 +97,9 @@ const MiniBoxNavigations = (props) => {
     }
     let isPaymentUser = false;
     if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
-      isPaymentUser = isPaymentOrgUser(simplemodeCurrentProject.org_id);
-    }else{
-      isPaymentUser = isPaymentOrgUser();
+        isPaymentUser = isPaymentOrgUser(simplemodeCurrentProject.org_id);
+    } else {
+        isPaymentUser = isPaymentOrgUser();
     }
 
     return (
@@ -115,26 +118,26 @@ const MiniBoxNavigations = (props) => {
                         myWorkbenchBoxList.map((item, key) => {
                             const { rela_app_id, id, code } = item
                             const isDisableds = getIsDisabled(item)
-                            if(isPaymentUser || item.code ==='board:plans'){
+                            if (isPaymentUser || item.code === 'board:plans') {
                                 return (
                                     <Tooltip key={item.id} onClick={e => setWorkbenchPage({ rela_app_id, id, code })} placement="bottom" title={item.name} className={`${indexStyles.nav} ${indexStyles.menu} ${currentSelectedWorkbenchBox.code == item.code ? indexStyles.selected : ''}`} disabled={isDisableds} key={key}>
-    
+
                                         <div dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '24px', textShadow: '1px 2px 0px rgba(0,0,0,0.15)' }}></div>
                                         <div className={indexStyles.text}>{item.name}</div>
-    
+
                                     </Tooltip>
                                 );
-                            }else{
+                            } else {
                                 return (
                                     <Tooltip key={item.id} placement="bottom" title={'付费功能：该项目所在企业尚未升级企业版'} className={`${indexStyles.nav} ${indexStyles.menu} ${indexStyles.disabled}`} key={key}>
-    
+
                                         <div dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '24px', textShadow: '1px 2px 0px rgba(0,0,0,0.15)' }}></div>
                                         <div className={indexStyles.text}>{item.name}</div>
-    
+
                                     </Tooltip>
                                 );
                             }
-                           
+
                         })
                     }
                 </div>
@@ -148,7 +151,7 @@ export default connect(({ simplemode: {
     myWorkbenchBoxList,
     currentSelectedWorkbenchBox,
     simplemodeCurrentProject,
-    
+
 },
     technological: {
         datas: { currentUserOrganizes }
