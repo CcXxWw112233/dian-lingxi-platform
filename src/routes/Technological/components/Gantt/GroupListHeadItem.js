@@ -731,7 +731,7 @@ export default class GroupListHeadItem extends Component {
               invitationOrg={org_id || getOrgIdByBoardId(board_id)}
               show_wechat_invite={true}
               _organization_id={org_id || getOrgIdByBoardId(board_id)}
-              board_id={list_id}
+              board_id={gantt_board_id == '0' ? list_id : gantt_board_id}
               addMenbersInProject={this.addMenbersInProject}
               modalVisible={show_add_menber_visible}
               setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile}
