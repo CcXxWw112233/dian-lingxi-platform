@@ -18,7 +18,7 @@ import {
 } from './selects'
 import { createMilestone } from "../../../services/technological/prjectDetail";
 import { getGlobalData } from '../../../utils/businessFunction';
-import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold } from '../../../routes/Technological/components/Gantt/constants';
+import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold } from '../../../routes/Technological/components/Gantt/constants';
 import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
 import { handleChangeBoardViewScrollTop } from '../../../routes/Technological/components/Gantt/ganttBusiness';
@@ -417,9 +417,9 @@ export default {
 
         // 设置项目汇总的top和left,width
         if (ganttIsFold({ gantt_board_id, group_view_type })) { // 全项目视图下，为收缩状态
-          group_rows[i] = 2
+          group_rows[i] = group_rows_fold
           list_group[i].board_fold_data.width = list_group[i].board_fold_data.time_span * ceilWidth
-          list_group[i].board_fold_data.top = after_group_height + 26 //上下居中 (92-40)/2
+          list_group[i].board_fold_data.top = after_group_height + (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2 //上下居中 (96-24)/2
           for (let k = 0; k < date_arr_one_level.length; k++) {
             if (isSamDay(list_group[i].board_fold_data['start_time'], date_arr_one_level[k]['timestamp'])) { //是同一天
               list_group[i].board_fold_data.left = k * ceilWidth

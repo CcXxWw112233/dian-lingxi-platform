@@ -594,8 +594,8 @@ export default class GroupListHeadItem extends Component {
       cancelCollection({ org_id, board_id: list_id }).then(res => {
         if (isApiResponseOk(res)) {
           list_group_new[group_index].is_star = '0'
-          list_group_new.push(list_group_new[group_index]) //将该项往最后插入
-          list_group_new.splice(group_index, 1) //删除掉该项
+          // list_group_new.push(list_group_new[group_index]) //将该项往最后插入
+          // list_group_new.splice(group_index, 1) //删除掉该项
           dispatch({
             type: 'gantt/handleListGroup',
             payload: {
