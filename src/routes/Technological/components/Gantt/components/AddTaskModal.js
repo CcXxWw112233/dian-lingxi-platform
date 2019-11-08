@@ -150,13 +150,15 @@ class AddTaskModal extends Component {
         full_name: group['lane_name'],
         name: group['lane_name'],
         id: group['lane_id'],
+        user_id: group['lane_id'],
         avatar: group['lane_icon']
       }
       this.handleSelectedItemChange([user])
 
-      // 设置已选项目为‘个人事务’
+      // 设置已选项目为‘个人事务’,给当前用户创建任务
+      const current_user_id = (localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}).id
       const default_board = about_apps_boards.find(item => item.is_my_private == '1') || {}
-      if (default_board.board_id) {
+      if (default_board.board_id && current_list_group_id == current_user_id) {
         this.setState({
           currentSelectedProject: default_board
         }, () => {
