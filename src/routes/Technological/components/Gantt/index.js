@@ -27,6 +27,16 @@ class Gantt extends Component {
   componentWillReceiveProps(nextProps) {
   }
 
+  componentWillUnmount() {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        is_show_board_file_area: '0'
+      }
+    })
+  }
+
   //用来实现创建任务弹窗方法
   // 获取带app的项目列表
   getProjectAppsLists = () => {
