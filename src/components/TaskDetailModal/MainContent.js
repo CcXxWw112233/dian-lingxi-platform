@@ -6,7 +6,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import InformRemind from '@/components/InformRemind'
-import { timestampToTime, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal } from '@/utils/util'
+import { timestampToTime, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal, isSamDay } from '@/utils/util'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE
 } from "@/globalset/js/constant";
@@ -365,6 +365,7 @@ export default class MainContent extends Component {
   // 开始时间 chg事件 S
   startDatePickerChange(timeString) {
     const { drawContent = {}, dispatch } = this.props
+    const nowTime = timeToTimestamp(new Date())
     const start_timeStamp = timeToTimestamp(timeString)
     const { card_id, due_time } = drawContent
     const { data = [] } = drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
@@ -393,6 +394,11 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
+      if (!compareTwoTimestamp(start_timeStamp, nowTime)) {
+        setTimeout(() => {
+          message.warn(`您设置了一个今天之前的日期: ${timestampToTime(timeString, true)}`)
+        }, 500)
+      }
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: start_timeStamp })
     })
   }
@@ -403,6 +409,7 @@ export default class MainContent extends Component {
     const { drawContent = {}, dispatch } = this.props
     const { card_id, start_time, milestone_data = {} } = drawContent
     const { data = [] } = drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
+    const nowTime = timeToTimestamp(new Date())
     const due_timeStamp = timeToTimestamp(timeString)
     const updateObj = {
       card_id, due_time: due_timeStamp
@@ -431,6 +438,11 @@ export default class MainContent extends Component {
       if (!isApiResponseOk(res)) {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
+      }
+      if (!compareTwoTimestamp(due_timeStamp, nowTime)) {
+        setTimeout(() => {
+          message.warn(`您设置了一个今天之前的日期: ${timestampToTime(timeString, true)}`, MESSAGE_DURATION_TIME)
+        }, 500)
       }
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: due_timeStamp })
     })

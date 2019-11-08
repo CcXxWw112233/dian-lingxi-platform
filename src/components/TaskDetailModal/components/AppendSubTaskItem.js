@@ -5,7 +5,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import AvatarList from '../AvatarList'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
-import { timestampToTimeNormal3, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal } from '@/utils/util'
+import { timestampToTimeNormal3, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal, timestampToTime } from '@/utils/util'
 import { isApiResponseOk } from '@/utils/handleResponseData'
 import {
   MESSAGE_DURATION_TIME
@@ -295,6 +295,7 @@ export default class AppendSubTaskItem extends Component {
     const { milestone_data = {} } = drawContent
     const { data = [] } = drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
     const { card_id } = childTaskItemValue
+    const nowTime = timeToTimestamp(new Date())
     const due_timeStamp = timeToTimestamp(timeString)
     const updateObj = {
       card_id, due_time: due_timeStamp
@@ -314,6 +315,11 @@ export default class AppendSubTaskItem extends Component {
       if (!isApiResponseOk(res)) {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
+      }
+      if (!compareTwoTimestamp(due_timeStamp, nowTime)) {
+        setTimeout(() => {
+          message.warn(`您设置了一个今天之前的日期: ${timestampToTime(timeString, true)}`)
+        }, 500)
       }
       this.setState({
         local_due_time: due_timeStamp

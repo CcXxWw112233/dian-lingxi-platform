@@ -8,7 +8,7 @@ import AvatarList from '../AvatarList'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import AppendSubTaskItem from './AppendSubTaskItem'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
-import { timestampToTimeNormal3, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal } from '@/utils/util'
+import { timestampToTimeNormal3, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal, timestampToTime } from '@/utils/util'
 import { MESSAGE_DURATION_TIME } from '@/globalset/js/constant'
 import { connect } from 'dva'
 
@@ -172,10 +172,16 @@ export default class AppendSubTask extends Component {
   endDatePickerChange(timeString) {
     const { drawContent = {}, } = this.props
     const { data = [] } = drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
+    const nowTime = timeToTimestamp(new Date())
     const due_timeStamp = timeToTimestamp(timeString)
     if (!compareTwoTimestamp(data.deadline, due_timeStamp)) {
       message.warn('任务的截止日期不能大于关联里程碑的截止日期')
       return false
+    }
+    if (!compareTwoTimestamp(due_timeStamp, nowTime)) {
+      setTimeout(() => {
+        message.warn(`您设置了一个今天之前的日期: ${timestampToTime(timeString, true)}`)
+      }, 500)
     }
     setTimeout(() => {
       this.setState({
