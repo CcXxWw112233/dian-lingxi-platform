@@ -594,8 +594,8 @@ export default class GroupListHeadItem extends Component {
       cancelCollection({ org_id, board_id: list_id }).then(res => {
         if (isApiResponseOk(res)) {
           list_group_new[group_index].is_star = '0'
-          list_group_new.push(list_group_new[group_index]) //将该项往最后插入
-          list_group_new.splice(group_index, 1) //删除掉该项
+          // list_group_new.push(list_group_new[group_index]) //将该项往最后插入
+          // list_group_new.splice(group_index, 1) //删除掉该项
           dispatch({
             type: 'gantt/handleListGroup',
             payload: {
@@ -731,7 +731,7 @@ export default class GroupListHeadItem extends Component {
               invitationOrg={org_id || getOrgIdByBoardId(board_id)}
               show_wechat_invite={true}
               _organization_id={org_id || getOrgIdByBoardId(board_id)}
-              board_id={list_id}
+              board_id={gantt_board_id == '0' ? list_id : gantt_board_id}
               addMenbersInProject={this.addMenbersInProject}
               modalVisible={show_add_menber_visible}
               setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile}

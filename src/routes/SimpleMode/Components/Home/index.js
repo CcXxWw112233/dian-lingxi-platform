@@ -24,14 +24,14 @@ class Home extends Component {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    dispatch({
-      type: 'simplemode/getMyBoxs',
-      payload: {}
-    });
-    dispatch({
-      type: 'simplemode/getAllBoxs',
-      payload: {}
-    });
+    // dispatch({
+    //   type: 'simplemode/getMyBoxs',
+    //   payload: {}
+    // });
+    // dispatch({
+    //   type: 'simplemode/getAllBoxs',
+    //   payload: {}
+    // });
     dispatch({
       type: 'simplemode/updateDatas',
       payload: {

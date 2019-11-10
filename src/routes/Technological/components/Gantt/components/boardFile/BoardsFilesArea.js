@@ -3,6 +3,7 @@ import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
 import BoardsFilesItem from './BoardsFilesItem'
+import { isPaymentOrgUser } from '../../../../../../utils/businessFunction'
 
 @connect(mapStateToProps)
 export default class BoardsFilesArea extends Component {
@@ -161,16 +162,19 @@ export default class BoardsFilesArea extends Component {
                 <div>
                     {
                         boards_flies.map((item, key) => {
-                            const { id, board_name } = item
+                            const { id, board_name, org_id } = item
                             return (
                                 <div key={id}>
-                                    <BoardsFilesItem
-                                        itemValue={item}
-                                        item={key}
-                                        board_id={id}
-                                        board_name={board_name}
-                                        setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
-                                        fileDetailModalDatas={this.setFileModalProps()} />
+                                    {
+                                        isPaymentOrgUser(org_id) &&
+                                        <BoardsFilesItem
+                                            itemValue={item}
+                                            item={key}
+                                            board_id={id}
+                                            board_name={board_name}
+                                            setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
+                                            fileDetailModalDatas={this.setFileModalProps()} />
+                                    }
                                 </div>
                             )
                         })

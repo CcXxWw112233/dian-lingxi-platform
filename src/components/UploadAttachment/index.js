@@ -69,7 +69,9 @@ export default class UploadAttachment extends Component {
     this.setState({
       uploadFilePreviewList: [],
       fileList: [],
-      toNoticeList: []
+      toNoticeList: [],
+      isOnlyNoticePersonsVisit: false,
+      fileSavePath: 0
     }, () => {
       this.setUploadFileVisible(false);
 

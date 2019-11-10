@@ -101,7 +101,7 @@ export default {
             _organization_id: res.data.org_id
           }
         })
-        calback && typeof calback == 'function' ? calback(res.data.board_id) : ''
+        calback && typeof calback == 'function' ? calback(res.data) : ''
       } else {
         message.warn(res.message)
       }

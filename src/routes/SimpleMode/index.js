@@ -17,7 +17,21 @@ class SimpleMode extends Component {
     this.state = {}
   }
 
+  // 初始化极简模式数据
+  initGetSimpleModeData = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'simplemode/getMyBoxs',
+      payload: {}
+    });
+    dispatch({
+      type: 'simplemode/getAllBoxs',
+      payload: {}
+    });
+  }
+
   componentDidMount() {
+    this.initGetSimpleModeData()
     window.addEventListener('scroll', this.handleScroll, false) //监听滚动
     window.addEventListener('resize', this.handleResize, false) //监听窗口大小改变
   }
@@ -84,7 +98,7 @@ class SimpleMode extends Component {
     const wallpaperContent = currentUserWallpaperContent ? currentUserWallpaperContent : wallpaper;
     let bgStyle = {}
     if (isColor(wallpaperContent)) {
-      bgStyle = { backgroundColor: wallpaperContent};
+      bgStyle = { backgroundColor: wallpaperContent };
     } else {
       bgStyle = { backgroundImage: `url(${wallpaperContent})` };
     }
