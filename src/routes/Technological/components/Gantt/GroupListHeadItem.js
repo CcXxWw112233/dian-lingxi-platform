@@ -700,7 +700,8 @@ export default class GroupListHeadItem extends Component {
           </div>
           {/* 底部ui，是否折叠情况 */}
           {
-            ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? (
+            // ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) 
+            gantt_board_id == '0' && group_view_type == '1' ? (
               <div className={`${indexStyles.list_head_footer}`} onClick={this.setIsShowBottDetail}>
                 {
                   is_show_org_name && is_all_org && group_view_type == '1' && !get_gantt_data_loading && gantt_board_id == '0' && (
