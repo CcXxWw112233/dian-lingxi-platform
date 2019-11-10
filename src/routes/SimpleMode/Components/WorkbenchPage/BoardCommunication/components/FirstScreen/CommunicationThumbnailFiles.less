@@ -14,7 +14,7 @@
         border-bottom: 1px solid #e5e5e5;
         :global{
             .ant-upload{
-                color: rgba(24, 144, 255, 1);
+                color: #40A9FF;
                 font-size: 14px;
                 font-weight: 600;
                 cursor: pointer;
@@ -24,7 +24,23 @@
             flex: 1;
         }
         .changeTypeOperation{
-            width: 30px;
+            // width: 60px;
+            width: inherit;
+            .listShow,.tilingShow{
+                width: 20px;
+                display: inline-block;
+                text-align: center;
+                line-height: 20px;
+                margin-right: 15px;
+            }
+            .tilingShow{
+                cursor: not-allowed;
+            }
+            .currentFilesShowType{
+                color: #fff;
+                background-color: #40A9FF;
+                border-radius: 4px;
+            }
         }
     }
 
@@ -76,6 +92,7 @@
             // line-height: 35px;
             display: flex;
             align-items: center;
+            cursor: pointer;
             .imgBox, .otherFile{
                 width:56px;
                 height:40px;

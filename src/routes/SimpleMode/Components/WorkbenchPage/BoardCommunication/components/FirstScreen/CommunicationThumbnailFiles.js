@@ -16,6 +16,7 @@ export default class CommunicationThumbnailFiles extends Component {
         this.state = {
             currentFileschoiceType: 0, // "0 搜索全部文件 1 搜索子集文件
             // thumbnailFilesList: thumbnailFilesList, // 缩略图数据
+            filesShowType: 0, // 缩略图呈现方式： 0 缩略图table呈现 1 缩略图平铺呈现
         }
     }
 
@@ -82,9 +83,6 @@ export default class CommunicationThumbnailFiles extends Component {
     }
 
     // 预览文件/文件圈图显示
-    // previewFile = (data, e) => {
-    //     this.props.previewFile(data);
-    // }
     previewFile = (data, e) => {
         const { currentSelectBoardId, current_folder_id } = this.props;
         const {
@@ -197,7 +195,7 @@ export default class CommunicationThumbnailFiles extends Component {
             isSearchDetailOnfocusOrOnblur,
             bread_paths
         } = this.props;
-        const { currentFileschoiceType } = this.state;
+        const { currentFileschoiceType, filesShowType } = this.state;
         const currentIayerFolderName = bread_paths && bread_paths.length && (bread_paths[bread_paths.length-1].board_name || bread_paths[bread_paths.length-1].folder_name);
         // console.log('bread_paths',bread_paths);
         return(
@@ -215,12 +213,16 @@ export default class CommunicationThumbnailFiles extends Component {
                         
                     </div>
                     <div className={styles.changeTypeOperation}>
-                        <Icon type="bars" />
-                        {/* <Icon type="appstore" /> */}
+                        <div className={`${styles.listShow} ${filesShowType == 0 ? styles.currentFilesShowType : ''}`}>
+                            <Icon type="bars" />
+                        </div>
+                        <div className={styles.tilingShow}>
+                            <Icon type="appstore" />
+                        </div>
                     </div>
                 </div>
 
-                {/* 搜索input触发-显示样式 */}
+                {/* 搜索input触发-显示组件 */}
                 {
                     isSearchDetailOnfocusOrOnblur && (
                         <div className={styles.searchTypeBox}>
