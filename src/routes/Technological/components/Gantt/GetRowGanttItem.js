@@ -6,6 +6,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import MilestoneDetail from './components/milestoneDetail'
 import { isSamDay } from './getDate'
 import { Dropdown, Menu } from 'antd'
+import { ganttIsFold } from './constants';
 const MenuItem = Menu.Item
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -197,7 +198,7 @@ export default class GetRowGanttItem extends Component {
   }
   render() {
     const { rows = 7 } = this.props
-    const { gold_date_arr = [], ceiHeight, gantt_board_id, group_view_type } = this.props
+    const { gold_date_arr = [], ceiHeight, gantt_board_id, group_view_type, show_board_fold } = this.props
     const { currentSelectedProjectMembersList } = this.state
     const item_height = rows * ceiHeight
     return (
@@ -243,7 +244,7 @@ export default class GetRowGanttItem extends Component {
                                 data-targetclassname="specific_example"
                                 className={`${indexStyles.board_miletiones_flagpole}`}
                                 style={{
-                                  height: 29,//item_height - 12,
+                                  height: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? 29 : item_height - 12,//,
                                   //  backgroundColor: is_over_duetime ? '#FFA39E' : '#FFC069' ,
                                   background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized })
                                 }}
@@ -276,6 +277,6 @@ export default class GetRowGanttItem extends Component {
 
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ gantt: { datas: { gold_date_arr = [], ceiHeight, gantt_board_id, about_user_boards, milestoneMap, group_view_type } } }) {
-  return { gold_date_arr, ceiHeight, gantt_board_id, about_user_boards, milestoneMap, group_view_type }
+function mapStateToProps({ gantt: { datas: { gold_date_arr = [], ceiHeight, gantt_board_id, about_user_boards, milestoneMap, group_view_type, show_board_fold } } }) {
+  return { gold_date_arr, ceiHeight, gantt_board_id, about_user_boards, milestoneMap, group_view_type, show_board_fold }
 }

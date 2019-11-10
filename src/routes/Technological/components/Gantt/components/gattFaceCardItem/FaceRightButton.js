@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import styles from './index.less'
 import { connect, } from 'dva';
 import { isSamDay } from '../../getDate';
+import { ceil_height_fold, ceil_height } from '../../constants';
 
 @connect(mapStateToProps)
 export default class FaceRightButton extends Component {
@@ -28,7 +29,7 @@ export default class FaceRightButton extends Component {
         if (toDayIndex != -1) { //如果今天在当前日期面板内 
             const nomal_position = toDayIndex * ceilWidth - 248 + 16 //248为左边面板宽度,16为左边header的宽度和withCeil * n的 %值
             const max_position = target.scrollWidth - target.clientWidth - 2 * ceilWidth//最大值,保持在这个值的范围内，滚动条才能不滚动到触发更新的区域
-            const position = max_position > nomal_position? nomal_position: max_position
+            const position = max_position > nomal_position ? nomal_position : max_position
 
             this.setScrollPosition({
                 position
@@ -61,15 +62,49 @@ export default class FaceRightButton extends Component {
         // console.log('sssss', { width, now_position, isInViewArea, scrollLeft })
         return isInViewArea
     }
+
+    // 设置项目汇总视图
+    setShowBoardFold = () => {
+        const { show_board_fold, dispatch, list_group = [] } = this.props
+        let new_list_group = [...list_group]
+        new_list_group = new_list_group.map(item => {
+            delete item.list_data
+            delete item.list_no_time_data
+            return item
+        })
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                show_board_fold: !show_board_fold,
+                ceiHeight: show_board_fold ? ceil_height_fold : ceil_height,
+            }
+        })
+        dispatch({
+            type: 'gantt/handleListGroup',
+            payload: {
+                data: new_list_group
+            }
+        })
+    }
     render() {
+        const { gantt_board_id, group_view_type, show_board_fold } = this.props
         return (
-            !this.filterIsInViewArea()? (
-                <div className={styles.card_button} onClick={this.checkToday}>
-                 今天
-                </div>
-            ): (
-                <div></div>
-            )
+            <div>
+                {
+                    !this.filterIsInViewArea() && (
+                        <div className={styles.card_button} onClick={this.checkToday}>
+                            今天
+                         </div>
+                    )
+                }
+                {
+                    gantt_board_id == '0' && group_view_type == '1' && (
+                        <div className={styles.card_button} style={{ right: !this.filterIsInViewArea() ? 106 : 30 }} onClick={this.setShowBoardFold} >
+                            {show_board_fold ? '计划明细' : '进度汇总'}
+                        </div>
+                    )
+                }
+            </div>
         )
     }
 }
@@ -77,11 +112,19 @@ export default class FaceRightButton extends Component {
 function mapStateToProps({ gantt: { datas: {
     date_arr_one_level = [],
     ceilWidth,
-    target_scrollLeft
+    target_scrollLeft,
+    show_board_fold,
+    gantt_board_id,
+    group_view_type,
+    list_group = [],
 } } }) {
     return {
         date_arr_one_level,
         ceilWidth,
-        target_scrollLeft
+        target_scrollLeft,
+        show_board_fold,
+        gantt_board_id,
+        group_view_type,
+        list_group
     }
 }

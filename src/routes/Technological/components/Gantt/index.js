@@ -110,12 +110,12 @@ class Gantt extends Component {
   // 添加完一条任务后，将某1条任务塞进去
   insertTaskToListGroup = (data) => {
     const { dispatch, } = this.props
-    const { list_group = [], current_list_group_id, gantt_board_id, group_view_type } = this.props
+    const { list_group = [], current_list_group_id, gantt_board_id, group_view_type, show_board_fold } = this.props
     const list_group_new = [...list_group]
     const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
     list_group_new[group_index].lane_data.cards.push(data)
 
-    if (ganttIsFold({ gantt_board_id, group_view_type })) {
+    if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) {
       const current_card_due_time = getDigitTime(data.due_time)
       const now = new Date().getTime()
       list_group_new[group_index].lane_schedule_count = (Number(list_group_new[group_index].lane_schedule_count) || 0) + 1
@@ -334,6 +334,7 @@ function mapStateToProps({
       about_apps_boards = [],
       about_group_boards = [],
       about_user_boards = [],
+      show_board_fold,
     }
   },
   publicTaskDetailModal: { drawerVisible }
@@ -349,6 +350,7 @@ function mapStateToProps({
     about_apps_boards,
     about_group_boards,
     about_user_boards,
+    show_board_fold
   }
 }
 
