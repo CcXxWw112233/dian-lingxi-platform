@@ -92,12 +92,21 @@ export default class CommunicationTreeList extends Component{
     };
 
     // 点击树节点触发
-    onSelect = (selectedKeys, info) => {
+    // onSelect = (selectedKeys, info) => {
+    //     const currentInfo = info.selectedNodes[0].props.dataRef;
+    //     // this.props.changeSubBreadPaths(currentInfo);
+    //     this.setState({ selectedKeys });
+    //     this.props.onSelectTree(currentInfo);
+    // };
+
+    onSelect =(first_item, selectedKeys, info)=> {
+        // console.log('selectedKeys',selectedKeys);
+        // console.log('info',info);
+        // console.log('this',this);
         const currentInfo = info.selectedNodes[0].props.dataRef;
-        // this.props.changeSubBreadPaths(currentInfo);
         this.setState({ selectedKeys });
-        this.props.onSelectTree(currentInfo);
-    };
+        this.props.onSelectTree(currentInfo,first_item);
+    }
 
     render(){
         const {
@@ -111,6 +120,7 @@ export default class CommunicationTreeList extends Component{
             // currentOrg_id,
             // bread_paths,
             // first_paths_item,
+            selectedKeys
         } = this.state;
         const {
             boards_flies = [],
@@ -134,7 +144,7 @@ export default class CommunicationTreeList extends Component{
                                 <Collapse
                                     bordered={false}
                                     accordion
-                                    defaultActiveKey={collapseActiveKeys}
+                                    // defaultActiveKey={collapseActiveKeys}
                                     // activeKey={this.setNewActiveKeys(collapseActiveKeys)}
                                     // activeKey={collapseActiveKeys}
                                     expandIcon={({ isActive }) => <Icon type="caret-right" rotate={isActive ? 90 : 0} />}
@@ -148,12 +158,13 @@ export default class CommunicationTreeList extends Component{
                                                 <Panel header={this.showHeader(item, isShowCompanyName)} key={`${item.id}`} onClick={()=>this.panelOnClick(item)}>
                                                     <DirectoryTree
                                                         multiple
-                                                        defaultExpandAll ={false}
-                                                        onSelect={this.onSelect}
+                                                        defaultExpandAll
+                                                        // onSelect={()=>this.onSelect(first_item)}
+                                                        onSelect={this.onSelect.bind(this,item)}
                                                         onExpand={this.onExpand}
-                                                        expandedKeys={this.state.expandedKeys}
+                                                        // expandedKeys={this.state.expandedKeys}
                                                         // autoExpandParent={this.state.autoExpandParent}
-                                                        selectedKeys={this.state.selectedKeys}
+                                                        // selectedKeys={this.state.selectedKeys}
                                                     >
                                                         { this.renderTreeNodes(child_data) }
                                                     </DirectoryTree>

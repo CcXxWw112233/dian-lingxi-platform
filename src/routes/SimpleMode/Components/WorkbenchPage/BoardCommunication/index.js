@@ -4,6 +4,7 @@ import indexStyles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import FileDetail from '@/routes/Technological/components/Workbench/CardContent/Modal/FileDetail/index'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/Workbench/CardContent/Modal/FileListRightBarFileDetailModal';
+import { getParent } from "./components/getCommunicationFileListFn";
 import CommunicationFileList from './components/CommunicationFileList';
 // import UploadTemporaryFile from './components/UploadTemporaryFile';
 import CommunicationFirstScreenHeader from './components/FirstScreen/CommunicationFirstScreenHeader';
@@ -109,6 +110,7 @@ class BoardCommunication extends Component {
         });
     }
 
+
     // 获取项目交流项目文件列表数据
     queryCommunicationFileData = () => {
         const { dispatch, gantt_board_id } = this.props;
@@ -135,6 +137,10 @@ class BoardCommunication extends Component {
                 }
             });
         }
+        this.setState({
+            showFileListisOpenFileDetailModal: false, // 关闭圈屏组件
+            previewFileModalVisibile: false // 显示首屏展示组件（头部面包屑,右侧文件按列表）
+        });
         this.setCurrentItemIayerId(boardId);
         
     }
@@ -162,64 +168,17 @@ class BoardCommunication extends Component {
 
     // 改变当前项目tree层级-处理面包屑路径
 
-    onSelectTree = (currentfloor) => {
-        const { bread_paths = [] } = this.state;
+    onSelectTree = (currentfloor,first_item) => {
+        const { communicationSubFolderData } = this.props;
+        const { child_data = [] } = communicationSubFolderData;
         const { folder_id, parent_id } = currentfloor;
-        const index = bread_paths.findIndex(item => item.folder_id == folder_id);
-        let lastPath = bread_paths[bread_paths.length-1];
-        if(lastPath.parent_id == parent_id){ // 如果是同层,则替换
-            // console.log('是同一层');
-            bread_paths.pop();
-            bread_paths.push(currentfloor);
-        } else {
-            // console.log('不是同一层');
-            // if(index == -1){ // 如果没有
-            //     let lastPath = bread_paths[bread_paths.length-1];
-            //     if(lastPath.parent_id == parent_id){
-            //         // 如果最后一个路径和当前的路径，在同一个父级下
-            //         console.log('有同一个父亲');
-            //         bread_paths.pop();
-            //         bread_paths.push(currentfloor);
-            //     } else {
-            //         console.log('祖父内不在同一层');
-            //         bread_paths.push(currentfloor);
-            //     }
-            // } else {
-            //     const index = bread_paths.findIndex(item => item.folder_id == folder_id);
-            //     bread_paths.splice(index,bread_paths.length-1);
-            //     bread_paths.push(currentfloor);
-            // }
-            const index = bread_paths.findIndex(item => item.folder_id == folder_id);
-            bread_paths.splice(index,bread_paths.length-1);
-            bread_paths.push(currentfloor);
-        }
-
-        // if(index == -1){ // 如果不存在
-        //     let lastPath = bread_paths[bread_paths.length-1];
-        //     if(lastPath.parent_id == parent_id){ // 如果是同层,则替换
-        //         console.log('是同一层');
-        //         // bread_paths.slice(0, index + 1);
-        //         // bread_paths.push(currentfloor);
-        //         bread_paths.pop();
-        //         bread_paths.push(currentfloor);
-        //         // bread_paths.fill( currentfloor, bread_paths.length-1 );
-        //     } else {
-        //         console.log('不是同一层');
-        //         console.log(bread_paths);
-        //         const index = bread_paths.findIndex(item => item.name == folder_id);
-        //         bread_paths.splice(index,bread_paths.length-1);
-        //         bread_paths.push(currentfloor);
-        //     }
-        // } else { // 如果存在就截取
-        //     console.log('已经存在id了');
-        //     const index = bread_paths.findIndex(item => item.name == folder_id);
-        //     bread_paths.splice(index,bread_paths.length-1);
-        //     bread_paths.push(currentfloor);
-        // }
-        
+        let newLevel = getParent(child_data, folder_id);
+        newLevel.unshift(first_item);
         this.setState({
-            bread_paths,
-            currentItemIayerId: folder_id
+            bread_paths: newLevel,
+            currentItemIayerId: folder_id,
+            showFileListisOpenFileDetailModal: false, // 关闭圈屏组件
+            previewFileModalVisibile: false // 显示首屏展示组件（头部面包屑,右侧文件按列表）
         },()=>{
             this.getThumbnailFilesData('2');
         });
@@ -230,6 +189,14 @@ class BoardCommunication extends Component {
     isShowSearchOperationDetail = (value) => {
         this.setState({ isSearchDetailOnfocusOrOnblur: value });
     }
+
+    // 更新数据
+    updataApiData = (type) => {
+        // this.queryCommunicationFileData();
+        // this.getCommunicationFolderList();
+        this.getThumbnailFilesData(type);
+    }
+
 
     initModalSelect = () => {
         const { dispatch } = this.props
@@ -249,7 +216,6 @@ class BoardCommunication extends Component {
         const { dispatch } = this.props;
         const { currentBoardDetail = {} } = this.props;
         const { currentfile = {} } = this.state;
-        //console.log(currentfile);
         const { fileId, versionId, fileResourceId, folderId, fileName } = currentfile;
         const id = fileId;
         const { board_id } = currentBoardDetail;
@@ -452,7 +418,6 @@ class BoardCommunication extends Component {
     onBeforeUpload = (file, fileList) => {
         if (fileList.length > 1) {
             message.error("项目交流一次只能上传一个文件");
-            //console.log(fileList);
             return false;
 
         }
@@ -513,7 +478,6 @@ class BoardCommunication extends Component {
     handleUpload = () => {
         const { awaitUploadFile, currentfile = {} } = this.state;
         const { currentBoardDetail = {} } = this.props;
-        //console.log(currentfile);
         const formData = new FormData();
         formData.append("file", awaitUploadFile);
         this.setState({
@@ -1001,11 +965,13 @@ class BoardCommunication extends Component {
     showUpdatedFileDetail = () => {
         // this.setState({ previewFileModalVisibile: true});
         this.setState({ showFileListisOpenFileDetailModal: true });
+        this.setPreviewFileModalVisibile();
     }
 
     // 关闭圈图组件
     hideUpdatedFileDetail = () => {
         this.setState({ showFileListisOpenFileDetailModal: false });
+        this.setPreviewFileModalVisibile();
     }
 
 
@@ -1363,14 +1329,18 @@ class BoardCommunication extends Component {
             {/* 2019.11.04 start */}
 
                 {/* 首屏-文件路径面包屑/搜索 */}
-                <CommunicationFirstScreenHeader
-                    bread_paths={bread_paths}
-                    currentSelectBoardId={currentSelectBoardId}
-                    currentItemIayerId={currentItemIayerId}
-                    isShowSearchOperationDetail={this.isShowSearchOperationDetail}
-                    // setBreadPaths={this.setBreadPaths}
-                    {...this.props}
-                />
+                {
+                    !this.state.previewFileModalVisibile &&
+                    <CommunicationFirstScreenHeader
+                        bread_paths={bread_paths}
+                        currentSelectBoardId={currentSelectBoardId}
+                        currentItemIayerId={currentItemIayerId}
+                        isShowSearchOperationDetail={this.isShowSearchOperationDetail}
+                        // setBreadPaths={this.setBreadPaths}
+                        {...this.props}
+                    />
+                }
+                
                 
                 {/* 控制列表是否显示的控制按钮 */}
                 <div
@@ -1404,9 +1374,14 @@ class BoardCommunication extends Component {
                     <CommunicationThumbnailFiles
                         isVisibleFileList={isVisibleFileList}
                         currentSelectBoardId={currentSelectBoardId}
-                        currentItemIayerId={currentItemIayerId}
+                        current_folder_id={currentItemIayerId}
                         bread_paths={bread_paths}
                         isSearchDetailOnfocusOrOnblur={isSearchDetailOnfocusOrOnblur}
+                        getThumbnailFilesData={this.getThumbnailFilesData}
+                        updataApiData={this.updataApiData}
+                        showUpdatedFileDetail={this.showUpdatedFileDetail}
+                        previewFile={this.previewFile}
+                        setPreviewFileModalVisibile={this.showUpdatedFileDetail}
                         {...this.props}
                     />
                 }

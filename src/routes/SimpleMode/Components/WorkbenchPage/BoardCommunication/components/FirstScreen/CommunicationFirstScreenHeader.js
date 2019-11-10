@@ -55,7 +55,6 @@ export default class CommunicationFirstScreenHeader extends Component {
             currentItemIayerId
         } = this.props;
         const { searchValue } = this.state;
-        // console.log('bread_paths ssssssssss',bread_paths);
         return(
             <div className={styles.communicationFirstScreenHeader}>
                 {/* 面包屑 */}

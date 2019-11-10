@@ -13,3 +13,34 @@ export const beforeChangeCommunicationUpdateFileList = ({ dispatch, board_id }) 
         }
       })
 }
+
+
+// 公用处理-通过传入当前节点的ID，查询出所有的父级节点
+export function getParent(data2, nodeId2) {
+  // debugger;
+  var arrRes = [];
+  if (data2.length == 0) {
+      if (!!nodeId2) {
+          arrRes.unshift(data2)
+      }
+      return arrRes;
+  }
+  let rev = (data, nodeId) => {
+      for (var i = 0, length = data.length; i < length; i++) {
+          let node = data[i];
+          if (node.folder_id == nodeId) {
+              arrRes.unshift(node)
+              rev(data2, node.parent_id);
+              break;
+          }
+          else {
+              if (!!node.child_data) {
+                  rev(node.child_data, nodeId);
+              }
+          }
+      }
+      return arrRes;
+  };
+  arrRes = rev(data2, nodeId2);
+  return arrRes;
+}

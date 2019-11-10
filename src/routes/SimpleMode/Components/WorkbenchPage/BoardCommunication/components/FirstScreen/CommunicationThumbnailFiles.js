@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { setUploadHeaderBaseInfo } from '@/utils/businessFunction';
+import { setUploadHeaderBaseInfo, getSubfixName, setBoardIdStorage } from '@/utils/businessFunction';
 import { REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE } from '@/globalset/js/constant';
 import Cookies from 'js-cookie';
 import ThumbnailFilesListShow from './ThumbnailFilesListShow';
@@ -23,14 +23,14 @@ export default class CommunicationThumbnailFiles extends Component {
     // 上传文件
     uploadProps = () => {
         const that = this
-        const { board_id, current_folder_id, getSubFileData, queryCommunicationFileData, isShowSub } = this.props
+        const { currentSelectBoardId, board_id, current_folder_id, updataApiData, getThumbnailFilesData, getSubFileData, queryCommunicationFileData, isShowSub } = this.props
         const propsObj = {
             name: 'file',
             withCredentials: true,
             multiple: true,
             action: `${REQUEST_DOMAIN_FILE}/file/upload`,
             data: {
-                board_id,
+                board_id: currentSelectBoardId,
                 folder_id: current_folder_id,
                 type: '1',
                 upload_type: '1'
@@ -38,7 +38,7 @@ export default class CommunicationThumbnailFiles extends Component {
             headers: {
                 Authorization: Cookies.get('Authorization'),
                 refreshToken: Cookies.get('refreshToken'),
-                ...setUploadHeaderBaseInfo({ boardId: board_id }),
+                ...setUploadHeaderBaseInfo({ boardId: currentSelectBoardId }),
             },
             beforeUpload(e) {
                 // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id)) {
@@ -65,8 +65,8 @@ export default class CommunicationThumbnailFiles extends Component {
 
                     if (file.response && file.response.code == '0') {
                         message.success(`上传成功。`);
-                        // that.props.getFolderFileList({ id: current_folder_id })
-                        // isShowSub ? getSubFileData(current_folder_id, board_id) : queryCommunicationFileData();
+                        getThumbnailFilesData('2');
+                        // updataApiData('1');
                     } else {
                         message.error(file.response && file.response.message || '上传失败');
                     }
@@ -81,6 +81,108 @@ export default class CommunicationThumbnailFiles extends Component {
         return propsObj
     }
 
+    // 预览文件/文件圈图显示
+    // previewFile = (data, e) => {
+    //     this.props.previewFile(data);
+    // }
+    previewFile = (data, e) => {
+        const { currentSelectBoardId, current_folder_id } = this.props;
+        const {
+            file_name,
+            name,
+            file_resource_id,
+            file_id,
+            // id,
+            // folder_id,
+            version_id
+        } = data;
+        const id = file_id;
+        const board_id = currentSelectBoardId;
+        const folder_id = current_folder_id;
+        const { dispatch } = this.props
+        if(!board_id || !folder_id){
+            message.info('board_id或folder_id为空');
+            return;
+        }
+        setBoardIdStorage(board_id)
+        // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)) {
+        //     message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
+        //     return false;
+        // }
+
+        dispatch({
+            type: 'workbenchFileDetail/getCardCommentListAll',
+            payload: {
+                id: id
+            }
+        });
+        dispatch({
+            type: 'workbenchFileDetail/getFileType',
+            payload: {
+                file_id: id,
+                // calback: function (data) {
+                //     dispatch({
+                //         type: 'workbenchPublicDatas/getRelationsSelectionPre',
+                //         payload: {
+                //             _organization_id: data.base_info.org_id
+                //         }
+                //     })
+                // }
+            }
+        });
+        this.props.setPreviewFileModalVisibile();
+        dispatch({
+            type: 'workbenchFileDetail/updateDatas',
+            payload: {
+                seeFileInput: 'fileModule',
+                board_id,
+                filePreviewCurrentId: file_resource_id,
+                currentParrentDirectoryId: folder_id,
+                filePreviewCurrentFileId: id,
+                filePreviewCurrentVersionId: version_id, //file_id,
+                pdfDownLoadSrc: '',
+            }
+        })
+
+
+        if (getSubfixName(name) == '.pdf') {
+            this.props.dispatch({
+                type: 'workbenchFileDetail/getFilePDFInfo',
+                payload: {
+                    id
+                }
+            })
+        } else {
+            dispatch({
+                type: 'workbenchFileDetail/filePreview',
+                payload: {
+                    id: file_resource_id, file_id: id
+                }
+            })
+        }
+        dispatch({
+            type: 'workbenchFileDetail/fileVersionist',
+            payload: {
+                version_id: version_id, //file_id,
+                isNeedPreviewFile: false,
+            }
+        })
+        dispatch({
+            type: 'workbenchTaskDetail/getBoardMembers',
+            payload: {
+                id: board_id
+            }
+        })
+        dispatch({
+            type: 'workbenchPublicDatas/updateDatas',
+            payload: {
+                board_id
+            }
+        })
+
+
+    }
+
     // 改变搜索状态-全局搜索/局部搜索
     changeChooseType = (type) => {
         const currentType = parseInt(type);
@@ -93,8 +195,6 @@ export default class CommunicationThumbnailFiles extends Component {
             onlyFileList,
             onlyFileTableLoading,
             isSearchDetailOnfocusOrOnblur,
-            currentItemIayerId,
-            currentSelectBoardId,
             bread_paths
         } = this.props;
         const { currentFileschoiceType } = this.state;
@@ -105,12 +205,18 @@ export default class CommunicationThumbnailFiles extends Component {
                 {/* 上传文件和切换列表显示操作 */}
                 <div className={styles.thumbnailFilesHeader}>
                     <div className={styles.uploadFile}>
-                        <Upload {...this.uploadProps()} showUploadList={false}>
-                            上传文件
-                        </Upload>
+                        {
+                            bread_paths && bread_paths.length ?(
+                                <Upload {...this.uploadProps()} showUploadList={false}>
+                                    <Icon type="upload" /> 上传文件
+                                </Upload>
+                            ): ''
+                        }
+                        
                     </div>
                     <div className={styles.changeTypeOperation}>
-                        <Icon type="appstore" />
+                        <Icon type="bars" />
+                        {/* <Icon type="appstore" /> */}
                     </div>
                 </div>
 
@@ -128,8 +234,8 @@ export default class CommunicationThumbnailFiles extends Component {
                             {
                                 currentIayerFolderName ? (
                                     <span
-                                        className={currentFileschoiceType === 1 ? styles.currentFile : ''}
-                                        onClick={()=>this.changeChooseType('1')}
+                                        className={currentFileschoiceType === 2 ? styles.currentFile : ''}
+                                        onClick={()=>this.changeChooseType('2')}
                                     >
                                         { currentIayerFolderName }
                                     </span>
@@ -147,6 +253,8 @@ export default class CommunicationThumbnailFiles extends Component {
                     // thumbnailFilesList={thumbnailFilesList}
                     thumbnailFilesList={onlyFileList}
                     onlyFileTableLoading={onlyFileTableLoading}
+                    isSearchDetailOnfocusOrOnblur={isSearchDetailOnfocusOrOnblur}
+                    previewFile={this.previewFile}
                 />
                 
             </div>
