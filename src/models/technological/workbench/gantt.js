@@ -435,11 +435,14 @@ export default {
       }
 
       const group_list_area_section_height = group_list_area.map((item, index) => {
-        return group_list_area.slice(0, index).reduce((a, b) => {
-          return a + b
-        }, group_list_area[0])
+        const list_arr = group_list_area.slice(0, index + 1)
+        let height = 0
+        for (let val of list_arr) {
+          height += val
+        }
+        return height
       })
-
+      // console.log('sssss', 's3', group_list_area_section_height)
       yield put({
         type: 'updateDatas',
         payload: {

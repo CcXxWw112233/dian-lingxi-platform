@@ -505,7 +505,7 @@ export default class GetRowGantt extends Component {
           const { lane_data, list_id, list_data = [] } = value
           const { milestones = {} } = lane_data
           return (
-            <GetRowGanttItem key={list_id} list_id={list_id} list_data={list_data} rows={group_rows[key]} milestones={milestones} />
+            <GetRowGanttItem key={list_id} itemKey={key} list_id={list_id} list_data={list_data} rows={group_rows[key]} milestones={milestones} />
           )
         })}
         <GetRowGanttItemElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />

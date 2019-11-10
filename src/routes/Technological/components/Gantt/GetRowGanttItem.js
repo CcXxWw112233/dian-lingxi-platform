@@ -55,7 +55,7 @@ export default class GetRowGanttItem extends Component {
     let current_date_board_miletones = [] //当前日期对应的项目的所有里程碑列表
     let is_over_duetime = false
     let is_all_realized = '1'
-    if (!timestamp || group_view_type != '1' || gantt_board_id != '0') { //只有在全部项目下的项目视图才可以看
+    if (!timestamp || group_view_type != '1') { //只有在项目视图才可以看
       return {
         flag,
         current_date_board_miletones
@@ -67,18 +67,28 @@ export default class GetRowGanttItem extends Component {
       if (isSamDay(Number(timestamp), Number(key) * 1000)) {
         current_date_miletones = current_date_miletones.concat(milestoneMap[key])
       }
+
     }
 
     if (Number(timestamp) < new Date().getTime()) { //小于今天算逾期
       is_over_duetime = true
     }
 
-    for (let val of current_date_miletones) {
-      if (val['board_id'] == list_id) {
-        flag = true
-        current_date_board_miletones.push(val)
+    if (gantt_board_id == '0') {
+      for (let val of current_date_miletones) {
+        if (val['board_id'] == list_id) {
+          flag = true
+          current_date_board_miletones.push(val)
+        }
       }
+    } else {
+      if (current_date_miletones.length) {
+        flag = true
+      }
+      current_date_board_miletones = current_date_miletones
     }
+
+
     for (let val of current_date_board_miletones) {
       if (val['is_all_realized'] == '0') {
         is_all_realized = '0'
@@ -197,8 +207,8 @@ export default class GetRowGanttItem extends Component {
     })
   }
   render() {
-    const { rows = 7 } = this.props
-    const { gold_date_arr = [], ceiHeight, gantt_board_id, group_view_type, show_board_fold } = this.props
+    const { rows = 7, itemKey } = this.props
+    const { gold_date_arr = [], ceiHeight, gantt_board_id, group_view_type, show_board_fold, group_list_area_section_height } = this.props
     const { currentSelectedProjectMembersList } = this.state
     const item_height = rows * ceiHeight
     return (
@@ -223,7 +233,9 @@ export default class GetRowGanttItem extends Component {
                       >
                         {/* 12为上下margin的总和 */}
                         {
-                          gantt_board_id == '0' && has_lcb && group_view_type == '1' && (
+                          group_view_type == '1' &&
+                          (gantt_board_id == '0' || (gantt_board_id != '0' && itemKey == 0)) &&
+                          has_lcb && (
                             <Dropdown overlay={this.renderLCBList(current_date_board_miletones, timestamp)}>
                               <div className={`${indexStyles.board_miletiones_flag} ${globalStyles.authTheme}`}
                                 data-targetclassname="specific_example"
@@ -238,13 +250,16 @@ export default class GetRowGanttItem extends Component {
                           )
                         }
                         {
-                          gantt_board_id == '0' && has_lcb && group_view_type == '1' && (
+                          group_view_type == '1' &&
+                          (gantt_board_id == '0' || (gantt_board_id != '0' && itemKey == 0)) &&
+                          has_lcb && (
                             <Dropdown placement={'topRight'} overlay={this.renderLCBList(current_date_board_miletones, timestamp)}>
                               <div
                                 data-targetclassname="specific_example"
                                 className={`${indexStyles.board_miletiones_flagpole}`}
                                 style={{
-                                  height: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? 29 : item_height - 12,//,
+                                  height: gantt_board_id != '0' ? group_list_area_section_height[group_list_area_section_height.length - 1] - 11 : //在任务分组视图下
+                                    (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? 29 : item_height - 12),//,
                                   //  backgroundColor: is_over_duetime ? '#FFA39E' : '#FFC069' ,
                                   background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized })
                                 }}
@@ -277,6 +292,6 @@ export default class GetRowGanttItem extends Component {
 
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ gantt: { datas: { gold_date_arr = [], ceiHeight, gantt_board_id, about_user_boards, milestoneMap, group_view_type, show_board_fold } } }) {
-  return { gold_date_arr, ceiHeight, gantt_board_id, about_user_boards, milestoneMap, group_view_type, show_board_fold }
+function mapStateToProps({ gantt: { datas: { gold_date_arr = [], group_list_area_section_height, ceiHeight, gantt_board_id, about_user_boards, milestoneMap, group_view_type, show_board_fold } } }) {
+  return { gold_date_arr, ceiHeight, gantt_board_id, about_user_boards, milestoneMap, group_view_type, show_board_fold, group_list_area_section_height }
 }
