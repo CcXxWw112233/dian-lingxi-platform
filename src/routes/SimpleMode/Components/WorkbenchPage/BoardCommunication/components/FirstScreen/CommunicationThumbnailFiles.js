@@ -66,7 +66,7 @@ export default class CommunicationThumbnailFiles extends Component {
 
                     if (file.response && file.response.code == '0') {
                         message.success(`上传成功。`);
-                        getThumbnailFilesData('2');
+                        getThumbnailFilesData();
                         // updataApiData('1');
                     } else {
                         message.error(file.response && file.response.message || '上传失败');

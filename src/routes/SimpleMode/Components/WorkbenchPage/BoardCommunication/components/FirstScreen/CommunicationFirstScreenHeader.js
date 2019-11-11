@@ -29,12 +29,10 @@ export default class CommunicationFirstScreenHeader extends Component {
     selectOnblur = () => {
         
     }
-    // isShowSearchOperationDetail={this.isShowSearchOperationDetail}
-    // isSearchDetailOnfocusOrOnblur={isSearchDetailOnfocusOrOnblur}
 
     // onChange
     inputOnChange = (e) => {
-        // console.log('value', e.target.value);
+        console.log('value', e.target.value);
         this.setState({ searchValue: e.target.value },()=>{
             this.isShowSearchComponent();
         });
@@ -44,7 +42,8 @@ export default class CommunicationFirstScreenHeader extends Component {
     isShowSearchComponent = ()=> {
         const { searchValue } = this.state;
         const isShow = searchValue !== '' ? true : false;
-        this.props.isShowSearchOperationDetail(isShow);
+        this.props.isShowSearchOperationDetail(isShow, searchValue);
+        this.props.getThumbnailFilesData();
     }
 
     // 获取input search焦点
@@ -61,8 +60,7 @@ export default class CommunicationFirstScreenHeader extends Component {
 
     // 搜索
     onSearch = () => {
-        const { searchValue } = this.state;
-        // console.log('searchValue',searchValue);
+        this.props.getThumbnailFilesData();
     }
 
     render(){
