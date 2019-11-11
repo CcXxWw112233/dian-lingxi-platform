@@ -23,7 +23,7 @@ export default class ThumbnailFilesListShow extends Component {
                         return (
                             <div className={styles.fileNameRow} onClick={()=>this.props.previewFile(record)}>
                                 {
-                                    record.thumbnail_url ? (
+                                    record && record.thumbnail_url ? (
                                         <div className={styles.imgBox}>
                                             <img src={record.thumbnail_url || ''} width="100px" alt=""/>
                                         </div>
@@ -84,7 +84,7 @@ export default class ThumbnailFilesListShow extends Component {
     // }
 
     render(){
-        const { thumbnailFilesList, onlyFileTableLoading,isSearchDetailOnfocusOrOnblur } = this.props;
+        const { thumbnailFilesList=[], onlyFileTableLoading,isSearchDetailOnfocusOrOnblur } = this.props;
         const { columns} = this.state;
         // console.log('isSearchDetailOnfocusOrOnblur',isSearchDetailOnfocusOrOnblur);
         const isShow = isSearchDetailOnfocusOrOnblur;

@@ -16,7 +16,7 @@ export default class CommunicationTreeList extends Component{
     constructor(props){
         super(props);
         this.state = {
-            collapseActiveKeys: [], // 折叠面板展示列keys
+            // collapseActiveKeys: [], // 折叠面板展示列keys
             // isVisibleFileList: true, // 是否显示/隐藏文件列表，默认显示
             // isShowSub: false, // 当前组件显示，false 第一级组件 true 子集组件
             // fileData: null, // 子组件数据
@@ -61,10 +61,11 @@ export default class CommunicationTreeList extends Component{
     }
 
     // 点击折叠面板
-    collapseOnchange=(keys,data)=>{
-        this.setState({ collapseActiveKeys: keys });
-        this.props.getCommunicationFolderList(keys); // 获取项目交流目录下子集数据
-    }
+    // collapseOnchange=(keys,data)=>{
+    //     // this.setState({ collapseActiveKeys: keys });
+    //     this.props.setCollapseActiveKeys(keys);
+    //     // this.props.getCommunicationFolderList(keys); // 获取项目交流目录下子集数据
+    // }
 
 
     // 渲染当前项目子节点树
@@ -92,17 +93,7 @@ export default class CommunicationTreeList extends Component{
     };
 
     // 点击树节点触发
-    // onSelect = (selectedKeys, info) => {
-    //     const currentInfo = info.selectedNodes[0].props.dataRef;
-    //     // this.props.changeSubBreadPaths(currentInfo);
-    //     this.setState({ selectedKeys });
-    //     this.props.onSelectTree(currentInfo);
-    // };
-
     onSelect =(first_item, selectedKeys, info)=> {
-        // console.log('selectedKeys',selectedKeys);
-        // console.log('info',info);
-        // console.log('this',this);
         const currentInfo = info.selectedNodes[0].props.dataRef;
         this.setState({ selectedKeys });
         this.props.onSelectTree(currentInfo,first_item);
@@ -110,7 +101,7 @@ export default class CommunicationTreeList extends Component{
 
     render(){
         const {
-            collapseActiveKeys,
+            // collapseActiveKeys,
             // isVisibleFileList,
             // isShowSub,
             // fileData,
@@ -130,6 +121,7 @@ export default class CommunicationTreeList extends Component{
             // selectBoardFileModalVisible,
             isVisibleFileList,
             communicationSubFolderData=[],
+            collapseActiveKeys,
         } = this.props;
         const isShowCompanyName = is_show_org_name && is_all_org; // 是否显示归属组织
         // console.log('subcom...',communicationSubFolderData);
@@ -144,11 +136,11 @@ export default class CommunicationTreeList extends Component{
                                 <Collapse
                                     bordered={false}
                                     accordion
-                                    // defaultActiveKey={collapseActiveKeys}
+                                    defaultActiveKey={collapseActiveKeys}
                                     // activeKey={this.setNewActiveKeys(collapseActiveKeys)}
                                     // activeKey={collapseActiveKeys}
                                     expandIcon={({ isActive }) => <Icon type="caret-right" rotate={isActive ? 90 : 0} />}
-                                    onChange={this.collapseOnchange}
+                                    onChange={this.props.setCollapseActiveKeys}
                                 >
                                     {
                                         boards_flies && boards_flies.map((item, key) => {

@@ -53,15 +53,17 @@ class BoardCommunication extends Component {
         showFileSelectDropdown: false,
         // 左侧目录上传文件/选择文件是否打开圈图
         showFileListisOpenFileDetailModal: false,
+        collapseActiveKeys: [], // 折叠面板展示列keys
         // 是否显示/隐藏文件列表，默认显示
         isVisibleFileList: true,
         bread_paths: [], // 面包屑路径
         currentItemIayerData: [], // 当前层数据
-        currentItemIayerId: '', // 当前层级ID
+        currentItemLayerId: '', // 当前层级ID
         currentSelectBoardId: '', // 当前选择的项目ID
         isSearchDetailOnfocusOrOnblur: false, // 搜索框聚焦显示当前搜索条件详情
         currentFileDataType: '0', // 当前文件数据类型 '0' 全部文件 '1' 项目下全部文件 '2' 文件夹下全部文件
         currentSearchValue: '', // 搜索框输入值
+        currentFileschoiceTab: '0', // tab切换 "0 搜索全部文件 1 搜索子集文件
     };
 
     constructor(props) {
@@ -109,14 +111,14 @@ class BoardCommunication extends Component {
             previewFileModalVisibile: false, // 显示首屏展示组件（头部面包屑,右侧文件按列表）
             currentFileDataType: '1', // 当前文件数据所属层：0全部文件/1项目内文件/2文件夹内文件
         });
-        this.setCurrentItemIayerId(boardId);
+        this.setcurrentItemLayerId(boardId);
         
     }
 
-    setCurrentItemIayerId = (id) => { // 设置当前所在的项目/层级ID
+    setcurrentItemLayerId = (id) => { // 设置当前所在的项目/层级ID
         this.setState({
             currentSelectBoardId: id,
-            currentItemIayerId: id,
+            currentItemLayerId: id,
         },()=>{
             this.changeFirstBreadPaths(); // 改变第一层面包屑路径
             this.getThumbnailFilesData(); // 更新右侧缩略图列表
@@ -125,10 +127,12 @@ class BoardCommunication extends Component {
 
     changeFirstBreadPaths = () => { // 改变第一层（项目层）面包屑路径
         // console.log('点击了当前层');
-        const { currentItemIayerId } = this.state;
+        const { currentItemLayerId } = this.state;
         const { boards_flies } = this.props;
-        const firstIayerData = boards_flies.filter(item=>item.id == currentItemIayerId);
-        this.setState({ bread_paths: firstIayerData });
+        const firstLayerData = boards_flies.filter(item=>item.id == currentItemLayerId);
+        console.log('firstLayerData',firstLayerData);
+        // firstLayerData[0].layerType = 'firstLayer';
+        this.setState({ bread_paths: firstLayerData });
     }
 
     // 改变当前文件夹tree层级-处理当前层【文件夹层面包屑路径】
@@ -140,7 +144,7 @@ class BoardCommunication extends Component {
         newLevel.unshift(first_item);
         this.setState({
             bread_paths: newLevel,
-            currentItemIayerId: folder_id,
+            currentItemLayerId: folder_id,
             showFileListisOpenFileDetailModal: false, // 关闭圈屏组件
             previewFileModalVisibile: false, // 显示首屏展示组件（头部面包屑,右侧文件按列表）
             currentFileDataType: '2', // 当前文件数据所属层：0全部文件/1项目内文件/2文件夹内文件
@@ -157,7 +161,47 @@ class BoardCommunication extends Component {
         const {
             currentFileDataType, // currentFileDataType 0 全部（包括项目） 1 项目全部（包括文件夹内） 2 文件Tree的文件夹内
             currentSelectBoardId,
-            currentItemIayerId,
+            currentItemLayerId,
+            currentSearchValue,
+        } = this.state;
+        let boardId = '';
+        let folderId = '';
+        switch(currentFileDataType){
+        case '0':
+            boardId = '';
+            folderId = '';
+            break
+        case '1': 
+            boardId = currentSelectBoardId;
+            folderId = '';
+            break
+        case '2': 
+            boardId = currentSelectBoardId;
+            folderId = currentItemLayerId;
+            break
+        default:
+            boardId = '';
+            folderId = '';
+            queryConditions = "";
+            break
+        }
+
+        dispatch({
+            type: getEffectOrReducerByName_8('getOnlyFileList'),
+            payload: {
+              board_id: boardId,
+              folder_id: folderId,
+            }
+        });
+    }
+
+    searchCommunicationFilelist = () => {
+        console.log('搜索');
+        const { dispatch } = this.props;
+        const {
+            currentFileDataType, // currentFileDataType 0 全部（包括项目） 1 项目全部（包括文件夹内） 2 文件Tree的文件夹内
+            currentSelectBoardId,
+            currentItemLayerId,
             currentSearchValue,
         } = this.state;
         let boardId = '';
@@ -176,10 +220,10 @@ class BoardCommunication extends Component {
             break
         case '2': 
             boardId = currentSelectBoardId;
-            folderId = currentItemIayerId;
+            folderId = currentItemLayerId;
             queryConditions = [
-                {id:'1135447108158099464', value: currentSelectBoardId},
-                {id:'1192646538984296448', value: currentItemIayerId},
+                {id:'1135447108158099461', value: currentSelectBoardId},
+                {id:'1192646538984296448', value: currentItemLayerId},
             ];
             break
         default:
@@ -189,33 +233,20 @@ class BoardCommunication extends Component {
             break
         }
 
-        const params = {
-            board_id: boardId,
-            folder_id: folderId,
-        }
-        let currentParams = {};
-        if( currentSearchValue ){
-            currentParams={
-                ...params,
-                search_term: currentSearchValue, // 搜索关键字
+        dispatch({
+            type: getEffectOrReducerByName_8('getSearchCommunicationFilelist'),
+            payload: {
+              board_id: boardId,
+              folder_id: folderId,
+              search_term: currentSearchValue, // 搜索关键字
                 search_type: '6', // 搜索类型 '6' 文件类型（目前这里固定'6'，按文件类型搜索）
                 query_conditions: queryConditions ? JSON.stringify(queryConditions): null, // 原详细搜索附带条件
                 // page_size: 10,
                 // page_number: 1,
             }
-        } else {
-            currentParams = params;
-        }
-
-        dispatch({
-            type: getEffectOrReducerByName_8('getOnlyFileList'),
-            payload: {
-            //   board_id: boardId,
-            //   folder_id: folderId,
-              ...currentParams
-            }
         });
     }
+
 
     // 触发搜索框，是否选择搜索详情
     isShowSearchOperationDetail = (value, searchValue) => {
@@ -223,7 +254,10 @@ class BoardCommunication extends Component {
             isSearchDetailOnfocusOrOnblur: value,
             currentSearchValue: searchValue,
         },()=>{
-            this.getThumbnailFilesData();
+            // if(searchValue !== ''){
+            //     this.searchCommunicationFilelist();
+            // }
+            
         });
     }
 
@@ -237,6 +271,31 @@ class BoardCommunication extends Component {
         this.getThumbnailFilesData();
     }
 
+    // 回到项目文件-全部文件展示状态
+    goAllFileStatus = () => {
+        console.log('回到全部文件状态');
+        // bread_paths: [], // 面包屑路径
+        // currentItemIayerData: [], // 当前层数据
+        // currentItemLayerId: '', // 当前层级ID
+        // currentSelectBoardId: '', // 当前选择的项目ID
+        // isSearchDetailOnfocusOrOnblur: false, // 搜索框聚焦显示当前搜索条件详情
+        // currentFileDataType: '0', // 当前文件数据类型 '0' 全部文件 '1' 项目下全部文件 '2' 文件夹下全部文件
+        // currentSearchValue: '', // 搜索框输入值
+        
+        // 待处理 
+
+        // this.setState({
+        //     bread_paths: [],
+        //     currentItemIayerData: [],
+        //     currentItemLayerId: '',
+        //     currentSelectBoardId: '',
+        //     currentFileDataType: '0',
+        //     currentSearchValue: '',
+        // },()=>{
+        //     this.queryCommunicationFileData();
+        //     this.getThumbnailFilesData();
+        // });
+    }
 
     initModalSelect = () => {
         const { dispatch } = this.props
@@ -1014,6 +1073,21 @@ class BoardCommunication extends Component {
         this.setPreviewFileModalVisibile();
     }
 
+    // 设置折叠面板keys
+    setCollapseActiveKeys=(keys)=>{
+        this.setState({ collapseActiveKeys: keys },()=>{
+            this.getCommunicationFolderList(keys); // 获取项目交流目录下子集数据
+        });
+    }
+
+    // 改变搜索状态tab-全局搜索/局部搜索
+    changeChooseType = (type) => {
+        // const { bread_paths } = this.state;
+        // const currentIayerData = bread_paths[bread_paths.length-1];
+        // console.log('currentIayerData', currentIayerData);
+        this.setState({currentFileschoiceTab: type});
+    }
+
 
     render() {
         const {
@@ -1034,8 +1108,10 @@ class BoardCommunication extends Component {
             isVisibleFileList,
             bread_paths,
             currentSelectBoardId,
-            currentItemIayerId,
+            currentItemLayerId,
             isSearchDetailOnfocusOrOnblur,
+            collapseActiveKeys,
+            currentFileschoiceTab
         } = this.state;
         const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
         const zommPictureComponentHeight = container_workbenchBoxContent ? container_workbenchBoxContent.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding
@@ -1374,9 +1450,11 @@ class BoardCommunication extends Component {
                     <CommunicationFirstScreenHeader
                         bread_paths={bread_paths}
                         currentSelectBoardId={currentSelectBoardId}
-                        currentItemIayerId={currentItemIayerId}
+                        currentItemLayerId={currentItemLayerId}
                         isShowSearchOperationDetail={this.isShowSearchOperationDetail}
                         getThumbnailFilesData={this.getThumbnailFilesData}
+                        searchCommunicationFilelist={this.searchCommunicationFilelist}
+                        goAllFileStatus={this.goAllFileStatus}
                         // setBreadPaths={this.setBreadPaths}
                         {...this.props}
                     />
@@ -1405,6 +1483,8 @@ class BoardCommunication extends Component {
                         hideUpdatedFileDetail={this.hideUpdatedFileDetail}
                         isVisibleFileList={isVisibleFileList}
                         isShowFileList={this.isShowFileList}
+                        collapseActiveKeys={collapseActiveKeys}
+                        setCollapseActiveKeys={this.setCollapseActiveKeys}
                         {...this.props}
                     />
                 }
@@ -1415,7 +1495,7 @@ class BoardCommunication extends Component {
                     <CommunicationThumbnailFiles
                         isVisibleFileList={isVisibleFileList}
                         currentSelectBoardId={currentSelectBoardId}
-                        current_folder_id={currentItemIayerId}
+                        current_folder_id={currentItemLayerId}
                         bread_paths={bread_paths}
                         isSearchDetailOnfocusOrOnblur={isSearchDetailOnfocusOrOnblur}
                         getThumbnailFilesData={this.getThumbnailFilesData}
@@ -1423,6 +1503,9 @@ class BoardCommunication extends Component {
                         showUpdatedFileDetail={this.showUpdatedFileDetail}
                         previewFile={this.previewFile}
                         setPreviewFileModalVisibile={this.showUpdatedFileDetail}
+                        goAllFileStatus={this.goAllFileStatus}
+                        currentFileschoiceTab={currentFileschoiceTab}
+                        changeChooseType={this.changeChooseType}
                         {...this.props}
                     />
                 }

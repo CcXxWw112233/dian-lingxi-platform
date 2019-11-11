@@ -14,7 +14,7 @@ export default class CommunicationThumbnailFiles extends Component {
     constructor(props){
         super(props);
         this.state = {
-            currentFileschoiceType: 0, // "0 搜索全部文件 1 搜索子集文件
+            currentFileschoiceTab: 0, // "0 搜索全部文件 1 搜索子集文件
             // thumbnailFilesList: thumbnailFilesList, // 缩略图数据
             filesShowType: 0, // 缩略图呈现方式： 0 缩略图table呈现 1 缩略图平铺呈现
         }
@@ -185,21 +185,16 @@ export default class CommunicationThumbnailFiles extends Component {
 
     }
 
-    // 改变搜索状态-全局搜索/局部搜索
-    changeChooseType = (type) => {
-        const currentType = parseInt(type);
-        this.setState({currentFileschoiceType: currentType});
-    }
-
     render(){
         const {
             isVisibleFileList,
             onlyFileList,
             onlyFileTableLoading,
             isSearchDetailOnfocusOrOnblur,
-            bread_paths
+            bread_paths,
+            currentFileschoiceTab
         } = this.props;
-        const { currentFileschoiceType, filesShowType } = this.state;
+        const { filesShowType } = this.state;
         const currentIayerFolderName = bread_paths && bread_paths.length && (bread_paths[bread_paths.length-1].board_name || bread_paths[bread_paths.length-1].folder_name);
         // console.log('bread_paths',bread_paths);
         return(
@@ -232,16 +227,16 @@ export default class CommunicationThumbnailFiles extends Component {
                         <div className={styles.searchTypeBox}>
                             搜索：
                             <span
-                                className={currentFileschoiceType === 0 ? styles.currentFile : ''}
-                                onClick={()=>this.changeChooseType('0')}
+                                className={ bread_paths && bread_paths.length ? styles.currentFile : ''}
+                                onClick={()=>this.props.changeChooseType('0')}
                             >
                                 “全部文件”
                             </span>
                             {
                                 currentIayerFolderName ? (
                                     <span
-                                        className={currentFileschoiceType === 2 ? styles.currentFile : ''}
-                                        onClick={()=>this.changeChooseType('2')}
+                                        className={bread_paths && bread_paths.length ? '' : styles.currentFile}
+                                        onClick={()=>this.props.changeChooseType('2')}
                                     >
                                         { currentIayerFolderName }
                                     </span>

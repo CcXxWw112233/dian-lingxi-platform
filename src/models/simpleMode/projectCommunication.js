@@ -1,3 +1,4 @@
+import { getGlobalSearchResultList } from '@/services/technological'
 import { getCommunicationTreeListData, getProjectList, getOnlyThumbnailFileList } from '@/services/technological/projectCommunication';
 // import { getProjectList } from '@/services/technological/workbench'
 import { getFolderList } from '@/services/technological/file';
@@ -97,6 +98,39 @@ export default {
                 // boards_flies: res.data,
                 onlyFileList: res.data,
                 onlyFileTableLoading: false,
+              }
+            })
+          } else {
+    
+          }
+      },
+
+      // 搜索
+      * getSearchCommunicationFilelist({ payload }, { select, call, put }) {
+          const res = yield call(getGlobalSearchResultList, payload);
+          if (isApiResponseOk(res)) {
+            // debugger;
+            console.log('res',res);
+            console.log('resisTrue',JSON.stringify(res.data) === '{}');
+            // let arr = []
+            // for(let i in data) {
+            //   const obj = {
+            //     listType: i,
+            //     lists: data[i]['records'],
+            //   }
+            //   arr.push(obj)
+            // }
+            // yield put({
+            //   type: 'updateDatas',
+            //   payload: {
+            //     allTypeResultList: arr
+            //   }
+            // })
+            yield put({
+              type: 'updateDatas',
+              payload: {
+                // boards_flies: res.data,
+                onlyFileList: (JSON.stringify(res.data) === '{}') ? [] : res.data.results.files.records,
               }
             })
           } else {

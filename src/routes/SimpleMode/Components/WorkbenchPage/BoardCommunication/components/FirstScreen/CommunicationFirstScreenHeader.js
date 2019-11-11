@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Input, Breadcrumb, Icon } from 'antd';
 import styles from './CommunicationFirstScreenHeader.less';
+import { setTimeout } from 'core-js';
 
 
 const { Search } = Input;
@@ -32,7 +33,7 @@ export default class CommunicationFirstScreenHeader extends Component {
 
     // onChange
     inputOnChange = (e) => {
-        console.log('value', e.target.value);
+        // console.log('value', e.target.value);
         this.setState({ searchValue: e.target.value },()=>{
             this.isShowSearchComponent();
         });
@@ -43,7 +44,11 @@ export default class CommunicationFirstScreenHeader extends Component {
         const { searchValue } = this.state;
         const isShow = searchValue !== '' ? true : false;
         this.props.isShowSearchOperationDetail(isShow, searchValue);
-        this.props.getThumbnailFilesData();
+        // setTimeout(() => {
+        //     console.log('setTimeout');
+        // }, 2);
+        this.props.searchCommunicationFilelist();
+        // this.props.getThumbnailFilesData();
     }
 
     // 获取input search焦点
@@ -60,14 +65,16 @@ export default class CommunicationFirstScreenHeader extends Component {
 
     // 搜索
     onSearch = () => {
-        this.props.getThumbnailFilesData();
+        // this.props.getThumbnailFilesData();
+        const { searchValue } = this.props;
+        this.props.searchCommunicationFilelist();
     }
 
     render(){
         const {
             bread_paths,
             currentSelectBoardId,
-            currentItemIayerId
+            currentItemLayerId
         } = this.props;
         const { searchValue } = this.state;
         return(
@@ -78,7 +85,7 @@ export default class CommunicationFirstScreenHeader extends Component {
                         bread_paths && bread_paths.length ?
                         (
                             <Breadcrumb separator={this.showSeparator()}>
-                                <BreadcrumbItem key={'allFiles'}>
+                                <BreadcrumbItem key={'allFiles'} onClick={()=>this.props.goAllFileStatus()}>
                                     全部文件
                                 </BreadcrumbItem>
                                 {
