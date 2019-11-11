@@ -60,11 +60,11 @@ export default class DetailModal extends React.Component {
       modalWidht = enableDisplayWidth;
     }
 
-    let showActiveStyles = false;
-    if (modalWidht >= 656 + 367) {
+    let showActiveStyles = false; // 是否显示动态弹窗样式
+    if (modalWidht >= 656 + 367) { // fileDetailContentLeft最大宽度为656, 如果说还大于加上评论的宽度, 那么就是正常的
       showActiveStyles = false
     } else {
-      showActiveStyles = true
+      showActiveStyles = true // 否则显示动态样式
     }
 
     return (

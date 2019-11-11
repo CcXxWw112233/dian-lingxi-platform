@@ -84,7 +84,7 @@ export default class DetailContent extends React.Component {
     let styleSelect = indexStyles.fileDetailContentOut;
  
     return (
-      <div className={`${styleSelect} ${showActiveStyles && indexStyles.active_fileDetailContentOut}`} ref={'fileDetailContentOut'} style={{ height: !showActiveStyles && (clientHeight - offsetTopDeviation - 54) }}>
+      <div className={`${styleSelect} ${showActiveStyles && indexStyles.active_fileDetailContentOut}`} ref={'fileDetailContentOut'} style={{ height: (clientHeight - offsetTopDeviation - 54) }}>
         <div className={`${indexStyles.fileDetailContentLeft} ${globalStyles.global_vertical_scrollbar} ${ showActiveStyles && indexStyles.active_fileDetailContentLeft}`}
         // style={{overflowY: 'auto'}}
         >
