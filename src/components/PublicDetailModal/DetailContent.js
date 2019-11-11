@@ -62,7 +62,7 @@ export default class DetailContent extends React.Component {
       commentListsContent = '', //评论列表区块
       dynamicsContent = '', //动态列表区块
       commentUseParams = {}, //评论所需要参数
-      showActiveStyles = true,
+      showActiveStyles = false,
     } = this.props
 
     const whetherShowAllDynamic = (

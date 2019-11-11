@@ -1,5 +1,5 @@
 import React from 'react'
-import {connect} from 'dva'
+import { connect } from 'dva'
 import { min_page_width } from "../../globalset/js/styles";
 import CustormModal from '../../components/CustormModal'
 import DetailDom from './DetailDom'
@@ -36,32 +36,52 @@ export default class DetailModal extends React.Component {
   }
 
   render() {
-    const { modalVisible, width, style, siderRightCollapsed} = this.props;
+    const { modalVisible, width, style, siderRightCollapsed, page_load_type } = this.props;
     const { clientWidth, clientHeight } = this.state;
 
     //const modalTop = 20
-    let enableDisplayWidth = (siderRightCollapsed ? clientWidth - 300 : clientWidth - 56) * 0.9;
-    let modalWidht = '';
-    if (enableDisplayWidth> 1200) {
-
-      modalWidht = '1200px';
-    }else{
+    //console.log("page_load_type", page_load_type);
+    let offset = 0
+    if (page_load_type == '1') {
+      offset = 0;
+    } else {
+      if (siderRightCollapsed) {
+        offset = 400;
+      } else {
+        offset = 65
+      }
+    }
+    //console.log("offset", offset);
+    let enableDisplayWidth = (clientWidth - offset ) * 0.9;
+    let modalWidht = 1200;
+    if (enableDisplayWidth > 1200) {
+      modalWidht = 1200;
+    } else {
       modalWidht = enableDisplayWidth;
+    }
+
+    let showActiveStyles = false;
+    if (modalWidht >= 656 + 367) {
+      showActiveStyles = false
+    } else {
+      showActiveStyles = true
     }
 
     return (
       <CustormModal
         visible={modalVisible}
-        width={1200}
+        width={modalWidht}
         close={this.props.close}
         closable={false}
         maskClosable={false}
         footer={null}
         destroyOnClose
+        siderRightCollapsed={siderRightCollapsed}
+        page_load_type={page_load_type}
         bodyStyle={{ padding: '0px' }}
-        style={{...style }}
+        style={{ ...style }}
         onCancel={this.onCancel.bind(this)}
-        overInner={<DetailDom {...this.props} />}
+        overInner={<DetailDom {...this.props} showActiveStyles={showActiveStyles} />}
       />
     )
   }
@@ -70,9 +90,9 @@ export default class DetailModal extends React.Component {
 
 function mapStateToProps({
   technological: { datas: {
-    siderRightCollapsed }
+    siderRightCollapsed, page_load_type }
   },
 
 }) {
-  return { siderRightCollapsed }
+  return { siderRightCollapsed, page_load_type }
 }
