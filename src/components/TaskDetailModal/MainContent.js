@@ -675,6 +675,7 @@ export default class MainContent extends Component {
     const { dispatch, card_id } = this.props
     const { propertiesList = [] } = this.state
     const { key, selectedKeys = [] } = e
+    const that = this
     let new_propertiesList = [...propertiesList]
     new_propertiesList = new_propertiesList.filter(item => {
       if (item.id != e.key) {
@@ -686,8 +687,8 @@ export default class MainContent extends Component {
       type: 'publicTaskDetailModal/setCardAttributes',
       payload: {
         card_id, property_id: key,
-        calback: function() {
-          this.setState({
+        calback: () => {
+          that.setState({
             selectedKeys: selectedKeys,
             propertiesList: new_propertiesList
           })
