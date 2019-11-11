@@ -53,15 +53,15 @@ export default class DetailModal extends React.Component {
     }
     //console.log("offset", offset);
     let enableDisplayWidth = (clientWidth - offset ) * 0.9;
-    let modalWidht = 1200;
+    let modalWidth = 1200;
     if (enableDisplayWidth > 1200) {
-      modalWidht = 1200;
+      modalWidth = 1200;
     } else {
-      modalWidht = enableDisplayWidth;
+      modalWidth = enableDisplayWidth;
     }
 
     let showActiveStyles = false; // 是否显示动态弹窗样式
-    if (modalWidht >= 656 + 367) { // fileDetailContentLeft最大宽度为656, 如果说还大于加上评论的宽度, 那么就是正常的
+    if (modalWidth >= 656 + 367) { // fileDetailContentLeft最大宽度为656, 如果说还大于加上评论的宽度, 那么就是正常的
       showActiveStyles = false
     } else {
       showActiveStyles = true // 否则显示动态样式
@@ -70,7 +70,7 @@ export default class DetailModal extends React.Component {
     return (
       <CustormModal
         visible={modalVisible}
-        width={modalWidht}
+        width={modalWidth}
         close={this.props.close}
         closable={false}
         maskClosable={false}
