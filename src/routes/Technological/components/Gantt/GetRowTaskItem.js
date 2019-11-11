@@ -501,7 +501,7 @@ export default class GetRowTaskItem extends Component {
         } = itemValue
         const { local_left, local_top, local_width } = this.state
         const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
-
+        console.log('sssss', { id, im_all_latest_unread_messages })
         return (
             <Popover placement="bottom" content={<CardDropDetail list={[{ ...itemValue }]} />} key={id}>
                 <div

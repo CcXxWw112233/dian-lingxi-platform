@@ -132,7 +132,7 @@ export const filterDueTimeSpan = ({ start_time, due_time, is_has_end_time, is_ha
 
 // 当前某一项任务是否拥有未读, type: card/file
 export const cardItemIsHasUnRead = ({ relaDataId, im_all_latest_unread_messages = [] }) => {
-    const flag = im_all_latest_unread_messages.findIndex(item => item.relaDataId == relaDataId) != -1
+    const flag = im_all_latest_unread_messages.findIndex(item => (item.relaDataId == relaDataId || item.cardId == relaDataId)) != -1
     if (flag) {
         return true
     }
@@ -171,7 +171,7 @@ export const fileItemIsHasUnRead = ({ relaDataId, im_all_latest_unread_messages 
         }
     }
     const current_item = im_all_latest_unread_messages.find(item => relaDataId == item.relaDataId)
-    if(!current_item) {
+    if (!current_item) {
         return false
     }
     const { folder_path = {} } = handleNewsItem(current_item)
