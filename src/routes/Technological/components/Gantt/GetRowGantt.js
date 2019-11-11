@@ -97,12 +97,16 @@ export default class GetRowGantt extends Component {
 
   //鼠标拖拽移动
   dashedMousedown(e) {
+    const { gantt_board_id, group_view_type, show_board_fold } = this.props
     if (
       this.stopPropagationEle(e) //不能滑动到某一个任务实例上
     ) {
       return false
     }
     if (this.isDragging || this.isMouseDown) { //在拖拽中，还有防止重复点击
+      return
+    }
+    if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) {
       return
     }
     const { currentRect = {} } = this.state
@@ -186,6 +190,10 @@ export default class GetRowGantt extends Component {
       })
       return false
     }
+    if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) {
+      return
+    }
+
     const { ceiHeight, ceilWidth } = this.props
     if (this.isMouseDown) { //按下的情况不处理
       return false

@@ -85,6 +85,12 @@ export default class FaceRightButton extends Component {
                 data: new_list_group
             }
         })
+        dispatch({
+            type: 'gantt/getGanttData',
+            payload: {
+                not_set_loading: true
+            }
+        })
     }
     render() {
         const { gantt_board_id, group_view_type, show_board_fold } = this.props
