@@ -28,9 +28,9 @@ export default {
     },
     effects: {
         * getImUnReadAllMessages({ payload }, { call, put }) { //获取和设置全部未读消息
-            const { messages = [], message_item = {} } = payload
+            const { messages = [] } = payload
             const wil_handle_types = yield select(getModelSelectState('imCooperation', 'wil_handle_types'))
-            let im_all_latest_unread_messages = messages.filter(item => {
+            const im_all_latest_unread_messages = messages.filter(item => {
                 if (wil_handle_types.indexOf(item.action) != -1) {
                     return item
                 }

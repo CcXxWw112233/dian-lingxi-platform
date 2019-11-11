@@ -8,7 +8,7 @@ import { Tooltip, Dropdown } from 'antd'
 import Cookies from "js-cookie";
 import SimpleNavigation from "./Components/SimpleNavigation/index"
 import SimpleDrawer from './Components/SimpleDrawer/index'
-import LingxiIm, { Im } from 'lingxi-im'
+import LingxiIm, { Im, getUnreadList } from 'lingxi-im'
 import TaskDetailModal from '@/components/TaskDetailModal'
 import { setBoardIdStorage, getSubfixName } from "../../../../utils/businessFunction";
 import FileDetailModal from '../../../Technological/components/ProjectDetail/FileModule/FileDetail/FileDetailModal'
@@ -108,7 +108,10 @@ class SimpleHeader extends Component {
         if (Im) {
             Im.on('visible', visibleFunc)
             Im.on('clickDynamic', clickDynamicFunc);
-            Im.on('hasNewImMsg', (data) => { //最新一条未读消息推送过来
+            Im.on('hasNewImMsg', (data, e) => { //最新一条未读消息推送过来
+                if (!data.hasOwnProperty('action')) { //首次进入不处理
+                    return
+                }
                 debugger
                 dispatch({
                     type: 'imCooperation/listenImUnReadLatestMessage',
@@ -125,6 +128,16 @@ class SimpleHeader extends Component {
                     }
                 })
             })
+            if (typeof getUnreadList == 'function') {
+                const messages = getUnreadList()
+                dispatch({
+                    type: 'imCooperation/getImUnReadAllMessages',
+                    payload: {
+                        messages
+                    }
+                })
+            }
+
         }
     }
     // 圈子点击
