@@ -53,15 +53,16 @@ export default class DetailModal extends React.Component {
     }
     //console.log("offset", offset);
     let enableDisplayWidth = (clientWidth - offset ) * 0.9;
-    let modalWidht = 1200;
+    let modalWidth = 1200;
     if (enableDisplayWidth > 1200) {
-      modalWidht = 1200;
+      modalWidth = 1200;
     } else {
-      modalWidht = enableDisplayWidth;
+      modalWidth = enableDisplayWidth;
     }
 
     let showActiveStyles = false;
-    if (modalWidht >= 656 + 367) {
+    const modalMinWidth = 1023;
+    if (modalWidth >= modalMinWidth) {
       showActiveStyles = false
     } else {
       showActiveStyles = true
@@ -70,7 +71,7 @@ export default class DetailModal extends React.Component {
     return (
       <CustormModal
         visible={modalVisible}
-        width={modalWidht}
+        width={modalWidth}
         close={this.props.close}
         closable={false}
         maskClosable={false}
