@@ -4,6 +4,7 @@ import { MESSAGE_DURATION_TIME } from "../../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import queryString from 'query-string';
 import { getModelSelectDatasState, getModelSelectState } from '../../utils'
+import { getGanttBoardsFiles } from '../../../services/technological/gantt'
 
 export default {
     namespace: 'imCooperation',
