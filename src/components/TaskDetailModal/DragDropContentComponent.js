@@ -13,7 +13,7 @@ import PreviewFileModal from '@/routes/Technological/components/ProjectDetail/Ta
 import { timestampFormat, compareTwoTimestamp } from '@/utils/util'
 import { getSubfixName } from "@/utils/businessFunction";
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD
 } from "@/globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { deleteTaskFile } from '../../services/technological/task'
@@ -40,17 +40,17 @@ export default class DragDropContentComponent extends Component {
   }
 
   // 检测不同类型的权限控制类型的是否显示
-  checkDiffCategoriesAuthoritiesIsVisible = () => {
+  checkDiffCategoriesAuthoritiesIsVisible = (code) => {
     const { drawContent = {} } = this.props
     const { data } = this.getCurrentDrawerContentPropsModelDatasExecutors()
 
     const { privileges = [], board_id, is_privilege } = drawContent
     return {
       'visit_control_edit': function () {// 是否是有编辑权限
-        return checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, data ? data : [], checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))
+        return checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, data ? data : [], checkIsHasPermissionInBoard(code, board_id))
       },
       'visit_control_comment': function () {
-        return checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, data ? data : [], checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))
+        return checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, data ? data : [], checkIsHasPermissionInBoard(code, board_id))
       },
     }
   }
@@ -480,7 +480,7 @@ export default class DragDropContentComponent extends Component {
   /**附件下载、删除等操作 */
   attachmentItemOpera({ type, data = {}, card_id }, e) {
     e.stopPropagation()
-    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()) {
+    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -506,7 +506,7 @@ export default class DragDropContentComponent extends Component {
   }
   /**附件删除 */
   deleteAttachmentFile(data) {
-    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()) {
+    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -612,7 +612,7 @@ export default class DragDropContentComponent extends Component {
 
   // 对应字段的删除 S
   handleDelCurrentField = (shouldDeleteId) => {
-    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()) {
+    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -622,8 +622,8 @@ export default class DragDropContentComponent extends Component {
       currentDelId: shouldDeleteId
     })
     let flag = false
-    const { dispatch, drawContent = {}, drawContent: { card_id } } = that.props
-    const { selectedKeys = [] } = that.state
+    const { dispatch, drawContent = {}, drawContent: { card_id }, selectedKeys = [] } = that.props
+    // const { selectedKeys = [] } = that.state
     let new_drawContent = { ...drawContent }
     let filter_drawContent = { ...drawContent }
     let new_selectedKeys = [...selectedKeys]
@@ -661,11 +661,10 @@ export default class DragDropContentComponent extends Component {
           ).then(res => {
             if (isApiResponseOk(res)) {
               that.setState({
-                selectedKeys: new_selectedKeys,
                 shouldDeleteId: '',
                 showDelColor: ''
               })
-              that.props.updateParentPropertiesList && that.props.updateParentPropertiesList(shouldDeleteId)
+              that.props.updateParentPropertiesList && that.props.updateParentPropertiesList({shouldDeleteId, new_selectedKeys})
               dispatch({
                 type: 'publicTaskDetailModal/updateDatas',
                 payload: {
@@ -693,11 +692,10 @@ export default class DragDropContentComponent extends Component {
       ).then(res => {
         if (isApiResponseOk(res)) {
           that.setState({
-            selectedKeys: new_selectedKeys,
             shouldDeleteId: '',
             showDelColor: ''
           })
-          that.props.updateParentPropertiesList && that.props.updateParentPropertiesList(shouldDeleteId)
+          that.props.updateParentPropertiesList && that.props.updateParentPropertiesList({shouldDeleteId, new_selectedKeys})
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',
             payload: {
@@ -716,7 +714,7 @@ export default class DragDropContentComponent extends Component {
     const { drawContent = {}, projectDetailInfoData = {}, projectDetailInfoData: { data = [] }, boardTagList = [], handleTaskDetailChange, boardFolderTreeData = [], milestoneList = [] } = this.props
     const { org_id, card_id, board_id, board_name, due_time, start_time } = drawContent
     const { code } = currentItem
-    const flag = (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()
+    const flag = (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()
     let messageValue = (<div></div>)
     switch (code) {
       case 'MILESTONE': // 里程碑
@@ -736,7 +734,7 @@ export default class DragDropContentComponent extends Component {
             </div>
             <div className={`${mainContentStyles.field_right}`}>
               {
-                (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
                   (
                     !currentItem.data && !(currentItem.data && currentItem.data.id) ? (
                       <div className={`${mainContentStyles.pub_hover}`}>
@@ -782,7 +780,7 @@ export default class DragDropContentComponent extends Component {
             </div>
             <div className={`${mainContentStyles.field_right}`}>
               {
-                (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
                   (
                     currentItem.data && currentItem.data != '<p></p>' ? (
                       <div className={`${mainContentStyles.pub_hover}`}>
@@ -834,7 +832,7 @@ export default class DragDropContentComponent extends Component {
             <div style={{ position: 'relative' }} className={mainContentStyles.field_right}>
               <div className={mainContentStyles.pub_hover}>
                 {
-                  (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                  (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
                     (
                       currentItem.data && currentItem.data.length ? (
                         <div>
@@ -950,7 +948,7 @@ export default class DragDropContentComponent extends Component {
             <div className={`${mainContentStyles.field_right}`}>
               {/* 上传附件组件 */}
               {
-                (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD).visit_control_edit() ? (
                   <div className={`${mainContentStyles.pub_hover}`}>
                     <span>暂无</span>
                   </div>

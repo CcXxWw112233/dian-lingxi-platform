@@ -8,7 +8,7 @@ import {
 } from "@/utils/businessFunction";
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
-  PROJECT_TEAM_CARD_COMPLETE
+  PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_COMMENT_PUBLISH
 } from "@/globalset/js/constant";
 import { message } from 'antd'
 
@@ -37,23 +37,23 @@ export default class TaskDetailModal extends Component {
   }
 
    // 检测不同类型的权限控制类型的是否显示
-   checkDiffCategoriesAuthoritiesIsVisible = () => {
+   checkDiffCategoriesAuthoritiesIsVisible = (code) => {
     const { drawContent = {} } = this.props
     const { is_realize = '0', card_id, privileges = [], board_id, is_privilege, executors = [] } = drawContent
     let flag
     return {
       'visit_control_edit': function () {// 是否是有编辑权限
-        return checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))
+        return checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(code, board_id))
       },
       'visit_control_comment': function() {
-        return checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))
+        return checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, executors, checkIsHasPermissionInBoard(code, board_id))
       },
     }
   }
 
   //评论
   commentSubmitPost = (data) => {
-    if (!(this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_comment() || this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit())) {
+    if (!(this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_COMMENT_PUBLISH).visit_control_comment() || this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_COMMENT_PUBLISH).visit_control_edit())) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
