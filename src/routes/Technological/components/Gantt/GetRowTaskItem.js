@@ -97,6 +97,19 @@ export default class GetRowTaskItem extends Component {
         }
         const { setSpecilTaskExample } = this.props
         setSpecilTaskExample(data)
+
+        // 设置已读
+        const { dispatch, im_all_latest_unread_messages } = this.props
+        const { id } = data
+        if (cardItemIsHasUnRead({ relaDataId: id, im_all_latest_unread_messages })) {
+            dispatch({
+                type: 'imCooperation/imUnReadMessageItemClear',
+                payload: {
+                    relaDataId: id
+                }
+            })
+        }
+
     }
 
     onMouseDown = (e) => {

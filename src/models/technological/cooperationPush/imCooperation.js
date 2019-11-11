@@ -27,7 +27,7 @@ export default {
         },
     },
     effects: {
-        * listenImUnReadAllMessages({ payload }, { call, put }) { //获取和设置全部未读消息
+        * getImUnReadAllMessages({ payload }, { call, put }) { //获取和设置全部未读消息
             const { messages = [], message_item = {} } = payload
             let im_all_latest_unread_messages = messages.filter(item => {
                 if (wil_handle_types.indexOf(item.action) != -1) {
@@ -41,10 +41,10 @@ export default {
                 }
             })
         },
-        * listenImUnReadClear({ payload }, { call, put, select }) { //未读消息清除,场景（当用户点开某一条具有红点的消息后，会清除该条消息）
+        * imUnReadMessageItemClear({ payload }, { call, put, select }) { //未读消息清除,场景（当用户点开某一条具有红点的消息后，会清除该条消息）
             const { relaDataId } = payload
-            let im_all_latest_unread_messages = yield select(getModelSelectState('imCooperation', im_all_latest_unread_messages))
-            const idServer = (im_all_latest_unread_messages.find(item.relaDataId == relaDataId) || {}).idServer
+            let im_all_latest_unread_messages = yield select(getModelSelectState('imCooperation', 'im_all_latest_unread_messages'))
+            const idServer = (im_all_latest_unread_messages.find((item) => item.relaDataId == relaDataId) || {}).idServer
             im_all_latest_unread_messages = im_all_latest_unread_messages.filter(item => item.relaDataId != relaDataId)
             yield ({
                 type: 'updateDatas',
@@ -54,6 +54,9 @@ export default {
             })
 
             // 告知im消息已读
+            if (!!!idServer) {
+                return
+            }
             yield ({
                 type: 'imMessageToRead',
                 payload: {
@@ -61,9 +64,10 @@ export default {
                 }
             })
         },
-        * listenImAreadyReadPush({ payload }, { call, put }) { //在触发的已读推送,已读后更新未读列表
+        * listenImLatestAreadyReadMessages({ payload }, { select, call, put }) { //在触发的已读推送,已读后更新未读列表
             const { messages = [] } = payload
-            let im_all_latest_unread_messages = yield select(getModelSelectState('imCooperation', im_all_latest_unread_messages))
+            console.log('ssss_已读列表', messages)
+            let im_all_latest_unread_messages = yield select(getModelSelectState('imCooperation', 'im_all_latest_unread_messages'))
             im_all_latest_unread_messages = im_all_latest_unread_messages.filter(item => {
                 if (messages.findIndex(item2 => item2.idServer == item.idServer) == -1) { //传递进来的已读列表不包含该条未读消息
                     return item
@@ -76,10 +80,12 @@ export default {
                 }
             })
         },
-        * listenImUnReadLatestMessage({ payload }, { call, put }) { //获取最新的一条消息推送
+        * listenImUnReadLatestMessage({ payload }, { select, call, put }) { //获取最新的一条未读消息推送
             const { message_item = {} } = payload
-            let im_all_latest_unread_messages = yield select(getModelSelectState('imCooperation', im_all_latest_unread_messages))
+            console.log('ssss_最新未读', message_item)
+            let im_all_latest_unread_messages = yield select(getModelSelectState('imCooperation', 'im_all_latest_unread_messages'))
             im_all_latest_unread_messages.push(message_item)
+            debugger
             yield put({
                 type: 'updateDatas',
                 payload: {
@@ -90,7 +96,7 @@ export default {
         * imMessageToRead({ payload }, { call, put }) { //im的某一条消息设置已读
             const { idServer } = payload
             if (Im) {
-                Im.fireEvent('imMessageToRead', { idServer })
+                Im.fireEvent('readMsg', { id: idServer })
             }
         },
 

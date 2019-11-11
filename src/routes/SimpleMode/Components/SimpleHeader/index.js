@@ -91,8 +91,10 @@ class SimpleHeader extends Component {
     //圈子
     imInitOption = () => {
         const { protocol, host } = window.location
+        const { dispatch } = this.props
         Im.option({
             baseUrl: `${protocol}//${host}/`,
+            APPKEY: "6b5d044ca33c559b9b91f02e29573f79"
             // APPKEY: "c3abea191b7838ff65f9a6a44ff5e45f"
         })
         const clickDynamicFunc = (data) => {
@@ -106,6 +108,23 @@ class SimpleHeader extends Component {
         if (Im) {
             Im.on('visible', visibleFunc)
             Im.on('clickDynamic', clickDynamicFunc);
+            Im.on('hasNewImMsg', (data) => { //最新一条未读消息推送过来
+                debugger
+                dispatch({
+                    type: 'imCooperation/listenImUnReadLatestMessage',
+                    payload: {
+                        message_item: data
+                    }
+                })
+            })
+            Im.on('readImMsg', (data) => { //最新已读消息推送过来
+                dispatch({
+                    type: 'imCooperation/listenImLatestAreadyReadMessages',
+                    payload: {
+                        messages: data
+                    }
+                })
+            })
         }
     }
     // 圈子点击
