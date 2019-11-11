@@ -8,7 +8,7 @@ import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner
 import InformRemind from '@/components/InformRemind'
 import { timestampToTime, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal, isSamDay } from '@/utils/util'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_EDIT
 } from "@/globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { addTaskExecutor, removeTaskExecutor, deleteTaskFile, getBoardTagList } from '../../services/technological/task'
@@ -115,17 +115,17 @@ export default class MainContent extends Component {
   }
 
   // 检测不同类型的权限控制类型的是否显示
-  checkDiffCategoriesAuthoritiesIsVisible = () => {
+  checkDiffCategoriesAuthoritiesIsVisible = (code) => {
     const { drawContent = {} } = this.props
     const { data } = this.getCurrentDrawerContentPropsModelDatasExecutors()
 
     const { privileges = [], board_id, is_privilege } = drawContent
     return {
       'visit_control_edit': function () {// 是否是有编辑权限
-        return checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, data ? data : [], checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))
+        return checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, data ? data : [], checkIsHasPermissionInBoard(code, board_id))
       },
       'visit_control_comment': function () {
-        return checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, data ? data : [], checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id))
+        return checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, data ? data : [], checkIsHasPermissionInBoard(code, board_id))
       },
     }
   }
@@ -148,7 +148,7 @@ export default class MainContent extends Component {
   setIsCheck = () => {
     const { drawContent = {}, } = this.props
     const { is_realize = '0', card_id, board_id } = drawContent
-    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()) {
+    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_COMPLETE).visit_control_edit()) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -180,7 +180,7 @@ export default class MainContent extends Component {
   // 设置标题textarea区域修改 S
   setTitleEdit = (e) => {
     e && e.stopPropagation();
-    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()) {
+    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) {
       return false
     }
     this.props.dispatch({
@@ -524,7 +524,7 @@ export default class MainContent extends Component {
   }
   // 删除结束时间 E
 
-  updateParentPropertiesList = (shouldDeleteId) => {
+  updateParentPropertiesList = ({shouldDeleteId, new_selectedKeys = []}) => {
     const { attributesList = [] } = this.props
     const { propertiesList = [] } = this.state
     let new_attributesList = [...attributesList]
@@ -532,13 +532,15 @@ export default class MainContent extends Component {
     const currentDataItem = new_attributesList.filter(item => item.id == shouldDeleteId)[0]
     new_propertiesList.push(currentDataItem)
     this.setState({
-      propertiesList: new_propertiesList
+      propertiesList: new_propertiesList,
+      selectedKeys: new_selectedKeys
     })
+
   }
 
   // 对应字段的删除 S
   handleDelCurrentField = (shouldDeleteId) => {
-    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()) {
+    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -592,7 +594,7 @@ export default class MainContent extends Component {
                 shouldDeleteId: '',
                 showDelColor: ''
               })
-              that.updateParentPropertiesList(shouldDeleteId)
+              that.updateParentPropertiesList({shouldDeleteId, new_selectedKeys})
               dispatch({
                 type: 'publicTaskDetailModal/updateDatas',
                 payload: {
@@ -624,7 +626,7 @@ export default class MainContent extends Component {
             shouldDeleteId: '',
             showDelColor: ''
           })
-          that.updateParentPropertiesList(shouldDeleteId)
+          that.updateParentPropertiesList({shouldDeleteId, new_selectedKeys})
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',
             payload: {
@@ -671,29 +673,25 @@ export default class MainContent extends Component {
   // 属性选择的下拉回调 S
   handleMenuReallySelect = (e) => {
     const { dispatch, card_id } = this.props
-    const { propertiesList = [], selectedKeys = [] } = this.state
-    const { key } = e
+    const { propertiesList = [] } = this.state
+    const { key, selectedKeys = [] } = e
     let new_propertiesList = [...propertiesList]
     new_propertiesList = new_propertiesList.filter(item => {
       if (item.id != e.key) {
         return item
       }
     })
-    selectedKeys.push(key)
-    Promise.resolve(
-      dispatch({
-        type: 'publicTaskDetailModal/setCardAttributes',
-        payload: {
-          card_id, property_id: key
+    // selectedKeys.push(key)
+    dispatch({
+      type: 'publicTaskDetailModal/setCardAttributes',
+      payload: {
+        card_id, property_id: key,
+        calback: function() {
+          this.setState({
+            selectedKeys: selectedKeys,
+            propertiesList: new_propertiesList
+          })
         }
-      })
-    )
-    .then(res => {
-      if (isApiResponseOk(res)) {
-        this.setState({
-          selectedKeys: selectedKeys,
-          propertiesList: new_propertiesList
-        })
       }
     })
   }
@@ -757,12 +755,12 @@ export default class MainContent extends Component {
         <div className={mainContentStyles.attrWrapper}>
           <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: '248px' }}
             // onDeselect={this.handleMenuReallyDeselect.bind(this)}
-            // selectedKeys={selectedKeys}
+            selectedKeys={selectedKeys}
             onSelect={this.handleMenuReallySelect.bind(this)}
           >
             {
-              new_propertiesList && new_propertiesList.map(item => (
-                <Menu.Item key={item.id}>
+              new_propertiesList && new_propertiesList.map((item, index) => (
+                <Menu.Item key={`${item.id}`}>
                   <span className={`${globalStyles.authTheme} ${mainContentStyles.attr_icon}`}>{this.getCurrentFieldIcon(item)}</span>
                   <span className={mainContentStyles.attr_name}>{item.name}</span>
                 </Menu.Item>
@@ -780,7 +778,7 @@ export default class MainContent extends Component {
     const { showDelColor, currentDelId } = this.state
     const { card_id, board_id, org_id } = drawContent
     const { data = [], id } = this.getCurrentDrawerContentPropsModelDatasExecutors()
-    const flag = (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit()
+    const flag = (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()
     return (
       <div>
         <div style={{cursor: 'pointer'}} className={`${mainContentStyles.field_content} ${showDelColor && id == currentDelId && mainContentStyles.showDelColor}`}>
@@ -796,7 +794,7 @@ export default class MainContent extends Component {
             </div>
           </div>
           {
-            (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+            (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
               (
                 !data.length ? (
                   <div className={`${mainContentStyles.field_right}`}>
@@ -919,7 +917,7 @@ export default class MainContent extends Component {
     } = drawContent
     const { properties = [] } = drawContent
     const executors = this.getCurrentDrawerContentPropsModelDatasExecutors()
-    const { boardFolderTreeData = [], milestoneList = []} = this.state
+    const { boardFolderTreeData = [], milestoneList = [], selectedKeys = [] } = this.state
     // 状态
     const filedEdit = (
       <Menu onClick={this.handleFiledIsComplete} getPopupContainer={triggerNode => triggerNode.parentNode} selectedKeys={is_realize == '0' ? ['incomplete'] : ['complete']}>
@@ -995,7 +993,7 @@ export default class MainContent extends Component {
                   type == '0' ? (
                     <>
                       {
-                        (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                        (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
                           <div className={`${mainContentStyles.field_right}`}>
                             <div className={`${mainContentStyles.pub_hover}`}>
                               <span className={is_realize == '0' ? mainContentStyles.incomplete : mainContentStyles.complete}>{is_realize == '0' ? '未完成' : '已完成'}</span>
@@ -1041,7 +1039,7 @@ export default class MainContent extends Component {
                     <div style={{ position: 'relative' }}>
                       {/* 开始时间 */}
                       {
-                        (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                        (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
                           (
                             <div className={`${mainContentStyles.start_time}`}>
                               <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
@@ -1072,7 +1070,7 @@ export default class MainContent extends Component {
                       &nbsp;
                       {/* 截止时间 */}
                       {
-                        (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                        (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
                           (
                             <div className={`${mainContentStyles.due_time}`}>
                               <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
@@ -1101,7 +1099,7 @@ export default class MainContent extends Component {
                     </div>
                     {/* 通知提醒 */}
                     {
-                      (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+                      (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
                         ''
                       ) : (
                           <span style={{ position: 'relative' }}>
@@ -1118,14 +1116,14 @@ export default class MainContent extends Component {
           {/* 各种字段的不同状态 E */}
           {/* 不同字段的渲染 S */}
           <div>
-            <DragDropContentComponent updateParentPropertiesList={this.updateParentPropertiesList} handleTaskDetailChange={handleTaskDetailChange} boardFolderTreeData={boardFolderTreeData} milestoneList={milestoneList} />
+            <DragDropContentComponent selectedKeys={selectedKeys} updateParentPropertiesList={this.updateParentPropertiesList} handleTaskDetailChange={handleTaskDetailChange} boardFolderTreeData={boardFolderTreeData} milestoneList={milestoneList} />
           </div>
           {/* 不同字段的渲染 E */}
 
           {/* 添加字段 S */}
           <div>
             {
-              (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+              (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
                 ''
               ) : (
                 <>
