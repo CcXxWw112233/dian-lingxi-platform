@@ -134,6 +134,8 @@ const Routers = function ({ history, app }) {
       path: '/technological',
       models: () => [import('./models/technological'),
       import('./models/technological/cooperationPush'),
+      import('./models/technological/cooperationPush/imCooperation'),
+
       import('./models/technological/globalSearch'),
       import('./models/technological/workbench/gantt'),
       import('./models/technological/workbench/projectCommunication'),
