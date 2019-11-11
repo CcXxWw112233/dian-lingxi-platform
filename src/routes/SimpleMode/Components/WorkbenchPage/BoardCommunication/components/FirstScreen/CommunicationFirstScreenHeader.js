@@ -34,18 +34,35 @@ export default class CommunicationFirstScreenHeader extends Component {
 
     // onChange
     inputOnChange = (e) => {
-        console.log('value', e.target.value);
-        this.setState({ searchValue: e.target.value });
+        // console.log('value', e.target.value);
+        this.setState({ searchValue: e.target.value },()=>{
+            this.isShowSearchComponent();
+        });
     }
 
+    // 根据input 输入值判断是否显示搜索详情组件
+    isShowSearchComponent = ()=> {
+        const { searchValue } = this.state;
+        const isShow = searchValue !== '' ? true : false;
+        this.props.isShowSearchOperationDetail(isShow);
+    }
+
+    // 获取input search焦点
     inputOnFocus = () => {
-        console.log('获取焦点了');
-        this.props.isShowSearchOperationDetail(true);
+        // console.log('获取焦点了');
+        // this.isShowSearchComponent();
     }
 
+
+    // 失去input search焦点
     inputOnBlur= () => {
-        console.log('失去焦点了');
-        this.props.isShowSearchOperationDetail(false);
+        // console.log('失去焦点了');
+    }
+
+    // 搜索
+    onSearch = () => {
+        const { searchValue } = this.state;
+        // console.log('searchValue',searchValue);
     }
 
     render(){
@@ -93,6 +110,7 @@ export default class CommunicationFirstScreenHeader extends Component {
                         // onClick={(e) => { this.handleStopPro(e) }}
                         // onKeyDown={(e) => { this.handleKeyDown(list, file_id, e) }}
                         // maxLength={50}
+                        onSearch={()=>this.onSearch()}
                         value={searchValue}
                         allowClear={true}
                         // onSearch={(inputValue) => this.onSearch(inputValue, onSearchButton)}

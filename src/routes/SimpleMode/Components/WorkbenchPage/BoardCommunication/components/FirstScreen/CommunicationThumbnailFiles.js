@@ -90,16 +90,20 @@ export default class CommunicationThumbnailFiles extends Component {
             name,
             file_resource_id,
             file_id,
-            // id,
-            // folder_id,
+            id,
+            board_id="",
+            folder_id="",
             version_id
         } = data;
-        const id = file_id;
-        const board_id = currentSelectBoardId;
-        const folder_id = current_folder_id;
+        // const id = file_id;
+        // const board_id = board_id || currentSelectBoardId;
+        // const folder_id = folder_id || current_folder_id;
         const { dispatch } = this.props
         if(!board_id || !folder_id){
             message.info('board_id或folder_id为空');
+            return;
+        }
+        if(!id){
             return;
         }
         setBoardIdStorage(board_id)
