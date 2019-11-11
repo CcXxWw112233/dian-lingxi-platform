@@ -1,22 +1,16 @@
 import React, { Component } from 'react'
 import indexStyles from './index.less'
-import globalStyles from "@/globalset/css/globalClassName.less";
 import {
     Popover,
     Select,
     Input,
     Mention,
     Button,
-		message,
-		DatePicker, Dropdown, Menu, Icon
+    message,
 } from 'antd'
 import { connect } from 'dva'
 import { validateTel } from "@/utils/verify";
 import { getCurrentSelectedProjectMembersList } from '@/services/technological/workbench' 
-import { timestampToTime, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal, isSamDay } from '@/utils/util'
-import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
-import zoom_logo from '@/assets/sider_right/zoom_logo.png'
-import xiaoyuyilian_logo from '@/assets/sider_right/xiaoyuyilian_logo.png'
 const Option = Select.Option;
 const { TextArea } = Input;
 const { getMentions, toString, toContentState } = Mention;
@@ -42,8 +36,8 @@ const Nav = Mention.Nav;
 })
 class VideoMeetingPopoverContent extends React.Component {
     state = {
-        saveToProject: null, // 用来保存存入的项目
-        meetingTitle: "", // 会议名称
+        saveToProject: null,
+        meetingTitle: "",
         videoMeetingDefaultSuggesstions: [], //mention 原始数据
         selectedSuggestions: [], //自定义的mention选择列表
         suggestionValue: toContentState(""), //mention的值
@@ -89,7 +83,6 @@ class VideoMeetingPopoverContent extends React.Component {
         })
     }
 
-		// 选择项目的下拉回调
     handleVideoMeetingSaveSelectChange = value => {
         const { projectList = [] } = this.props
         // console.log('ssssssss__',{ value,  projectList})
@@ -100,7 +93,6 @@ class VideoMeetingPopoverContent extends React.Component {
         });
     };
 
-		// 修改创建会话的名称回调
     handleVideoMeetingTopicChange = e => {
         this.setState({
             meetingTitle: e.target.value
@@ -121,8 +113,7 @@ class VideoMeetingPopoverContent extends React.Component {
         this.setState({
             selectedSuggestions: suggestions
         });
-		};
-		
+    };
     handleTransMentionSelectedMember = () => {
         const { currentOrgAllMembers } = this.state;
         const { mentionSelectedMember } = this.state;
@@ -470,17 +461,7 @@ class VideoMeetingPopoverContent extends React.Component {
                 videoMeetingPopoverVisible: !videoMeetingPopoverVisible
             };
         });
-		};
-		
-		renderSelectedTime = () => {
-			return (
-				<div>
-					<Menu>
-						<Menu.Item>30分钟</Menu.Item>
-					</Menu>
-				</div>
-			)
-		}
+    };
 
     renderPopover = () => {
         const {
@@ -491,7 +472,7 @@ class VideoMeetingPopoverContent extends React.Component {
             selectedMemberTextAreaValue,
             videoMeetingPopoverVisible,
         } = this.state;
-        let { projectList, start_time, data, board_id } = this.props;
+        let { projectList } = this.props;
 
         //过滤出来当前用户有编辑权限的项目
         projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
@@ -500,139 +481,97 @@ class VideoMeetingPopoverContent extends React.Component {
             <div>
                 {videoMeetingPopoverVisible && (
                     <div className={indexStyles.videoMeeting__wrapper}>
-											<div className={indexStyles.videoMeeting__topic}>
-													<div className={indexStyles.videoMeeting__topic_content}>
-															<span className={indexStyles.videoMeeting__topic_content_save}>
-																	<Select
-																			defaultValue={saveToProject}
-																			onChange={this.handleVideoMeetingSaveSelectChange}
-																			style={{ width: "100%" }}
-																	>
-																			<Option value={null}>不存入项目</Option>
-																			{projectList.length !== 0 &&
-																					projectList.map(project => (
-																							<Option value={project.board_id} key={project.board_id}>
-																									{project.board_name}
-																							</Option>
-																					))}
-																	</Select>
-															</span>
-															<span className={indexStyles.videoMeeting__topic_content_title}>
-																	<Input
-																			value={meetingTitle}
-																			onChange={this.handleVideoMeetingTopicChange}
-																	/>
-															</span>
-															<span className={indexStyles.videoMeeting__topic_content_time}>
-																<span className={indexStyles.videoMeeting__topic_content_datePicker} style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', display: 'inline-block', textAlign: 'center' }}>
-																	<span><Input /></span>
-																	<DatePicker
-																		// disabledDate={this.disabledStartTime.bind(this)}
-																		// onOk={this.startDatePickerChange.bind(this)}
-																		// onChange={this.startDatePickerChange.bind(this)}
-																		// getCalendarContainer={triggerNode => triggerNode.parentNode}
-																		placeholder={start_time ? timestampToTimeNormal(start_time, '/', true) : '开始时间'}
-																		format="YYYY/MM/DD HH:mm"
-																		showTime={{ format: 'HH:mm' }}
-																		style={{ opacity: 0, background: '#000000', position: 'absolute', left: 0, width: 'auto' }} />
-																</span>
-																<span>
-																	<Select style={{width: '136px'}} defaultValue={['1']}>
-																		<Option value="1">持续1小时</Option>
-																	</Select>
-																</span>
-															</span>
-													</div>
-											</div>
-											<div className={indexStyles.videoMeeting__remind}>
-												<div style={{position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
-													<span style={{color: 'rgba(0,0,0,0.45)'}}>提醒谁参与?</span>
-													<span>
-														<Dropdown overlay={this.renderSelectedTime()}>
-															<span className={`${globalStyles.authTheme}`}>开始前5分钟提醒 &#xe7ee;</span>
-														</Dropdown>
-													</span>
-												</div>
-												<div>
-													<div style={{ flex: '1', position: 'relative' }}>
-														<Dropdown overlayClassName={indexStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
-															overlayStyle={{ maxWidth: '200px' }}
-															overlay={
-																<MenuSearchPartner
-																	isInvitation={true}
-																	listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={[]}
-																	board_id={board_id}
-																	chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
-															}
-														>
-															{/* 添加通知人按钮 */}
+                        <div className={indexStyles.videoMeeting__topic}>
+                            <p className={indexStyles.videoMeeting__topic_title}>会议主题:</p>
+                            <div className={indexStyles.videoMeeting__topic_content}>
+                                <span className={indexStyles.videoMeeting__topic_content_save}>
+                                    <Select
+                                        defaultValue={saveToProject}
+                                        onChange={this.handleVideoMeetingSaveSelectChange}
+                                        style={{ width: "140px" }}
+                                    >
+                                        <Option value={null}>不存入项目</Option>
+                                        {projectList.length !== 0 &&
+                                            projectList.map(project => (
+                                                <Option value={project.board_id} key={project.board_id}>
+                                                    {project.board_name}
+                                                </Option>
+                                            ))}
+                                    </Select>
+                                </span>
+                                <span className={indexStyles.videoMeeting__topic_content_title}>
+                                    <Input
+                                        value={meetingTitle}
+                                        onChange={this.handleVideoMeetingTopicChange}
+                                    />
+                                </span>
+                            </div>
+                        </div>
+                        <div className={indexStyles.videoMeeting__memberNote}>
+                            <p className={indexStyles.videoMeeting__memberNote_title}>
+                                通知参会人：
+                            </p>
+                            <div className={indexStyles.videoMeeting__memberNote_content}>
+                                <div
+                                    className={
+                                        indexStyles.videoMeeting__memberNote_content_mention
+                                    }
+                                >
+                                    {saveToProject && (
+                                        <Mention
+                                            style={{ width: "100%", height: "56px" }}
+                                            placeholder="使用@符号查找该项目内成员"
+                                            suggestions={selectedSuggestions}
+                                            multiLines
+                                            onSearchChange={this.handleVideoMeetingMemberChange}
+                                            placement="top"
+                                            onSelect={this.handleVideoMeetingMemberSelect}
+                                            value={suggestionValue}
+                                            onChange={this.handleVideoMeetingValueChange}
+                                        />
+                                    )}
 
-															<div className={indexStyles.addNoticePerson}>
-																<Icon type="plus-circle" style={{ fontSize: '40px', color: '#40A9FF' }} />
-															</div>
-														</Dropdown>
-													</div>
-												</div>
-											</div>
-											<div className={indexStyles.videoMeeting__submitBtn}>
-												<Button type="primary" onClick={this.handleVideoMeetingSubmit}>
-														发起预约
-												</Button>
-											</div>
-											<div className={indexStyles.videoMeeting__remarks}>
-												<span>灵犀推荐使用以下方式开展远程会议: (点击前往下载）</span>
-												<span>
-													<img src={zoom_logo} alt="" />
-													<img src={xiaoyuyilian_logo} alt="" />
-												</span>
-											</div>
+                                </div>
+                                <div
+                                    className={
+                                        indexStyles.videoMeeting__memberNote_content_textarea
+                                    }
+                                >
+                                    <TextArea
+                                        placeholder="直接列举外部参会人的手机号，多号码请用“;”区分"
+                                        autosize={{ minRows: 2, maxRows: 4 }}
+                                        value={selectedMemberTextAreaValue}
+                                        onChange={this.selectedMemberTextAreaValueChange}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <p className={indexStyles.videoMeeting__prompt}>
+                            点击发起会议后即自动发送通知
+                        </p>
+                        <div className={indexStyles.videoMeeting__submitBtn}>
+                            <Button type="primary" onClick={this.handleVideoMeetingSubmit}>
+                                发起会议
+                            </Button>
+                        </div>
                     </div>
                 )}
             </div>
         );
         return videoMeetingPopoverContent_
-		}
-		
-		renderPopoverHeader = () => {
-			const {
-				saveToProject,
-				meetingTitle,
-				selectedSuggestions,
-				suggestionValue,
-				selectedMemberTextAreaValue,
-				videoMeetingPopoverVisible,
-			} = this.state;
-			let { projectList } = this.props;
-
-			//过滤出来当前用户有编辑权限的项目
-			projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
-
-			const videoMeetingPopoverContent_ = (
-					<div>
-							{videoMeetingPopoverVisible && (
-									<div className={indexStyles.videoMeeting__header}>
-										<div className={`${globalStyles.authTheme} ${indexStyles.videoMeeting__mark}`}>&#xe6de;</div>
-										<div className={indexStyles.videoMeeting__title}>预约在线会议</div>
-									</div>
-							)}
-					</div>
-			);
-			return videoMeetingPopoverContent_
-		}
+    }
 
     render() {
         const { videoMeetingPopoverVisible } = this.state
         return (
             <Popover
                 visible={videoMeetingPopoverVisible}
-								placement="leftBottom"
-								title={this.renderPopoverHeader()}
+                placement="leftBottom"
                 content={
                     this.renderPopover()
                 }
                 onVisibleChange={this.handleVideoMeetingPopoverVisibleChange}
-								trigger="click"
-								getPopupContainer={triggerNode => triggerNode.parentNode}
+                trigger="click"
             >
                 <div
                     className={indexStyles.videoMeeting__icon}

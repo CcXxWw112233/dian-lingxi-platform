@@ -25,7 +25,7 @@
         margin-bottom: 8px;
       }
       .videoMeeting__topic_content {
-        display: flex;
+        // display: flex;
         .videoMeeting__topic_content_save {
           margin-right: 5px;
         }
@@ -56,7 +56,68 @@
       line-height: 17px;
     }
     .videoMeeting__submitBtn {
-      text-align: right;
+      // text-align: right;
+    }
+  }
+
+  .videoMeeting__wrapper {
+    width: 400px;
+    // height: 587px;
+    max-height: 450px;
+    padding: 16px;
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(89, 89, 89, 1);
+    line-height: 20px;
+    .videoMeeting__topic {
+      margin-bottom: 24px;
+    }
+    .videoMeeting__topic_content {
+      display: block;
+      .videoMeeting__topic_content_save, .videoMeeting__topic_content_title, .videoMeeting__topic_content_time {
+        margin-bottom: 24px;
+        display: block;
+      }
+      .videoMeeting__topic_content_datePicker {
+        margin-right: 16px;
+      }
+    }
+    .videoMeeting__submitBtn {
+      margin-top: 24px;
+      margin-bottom: 24px;
+      width: 100%;
+      button {
+        width: 100%;
+      }
+    }
+    .videoMeeting__remarks {
+      text-align: center;
+      color: rgba(0,0,0,0.45);
+      span {
+        display: block;
+      }
+      img {
+        cursor: pointer;
+      }
+    }
+  }
+  
+  .videoMeeting__header {
+    width:376px;
+    height:137px;
+    background:rgba(255,255,255,1);
+    border-radius:4px 4px 0px 0px;
+    .videoMeeting__mark {
+      font-size: 40px;
+      color: #40A9FF;
+    }
+    .videoMeeting__title {
+      font-size:24px;
+      font-family:PingFangSC-Medium,PingFang SC;
+      font-weight:500;
+      color:rgba(0,0,0,0.85);
+      line-height:33px;
+      margin-top: 24px;
     }
   }
   
