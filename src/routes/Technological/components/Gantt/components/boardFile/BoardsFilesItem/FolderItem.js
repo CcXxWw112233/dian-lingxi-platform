@@ -7,8 +7,9 @@ import { PROJECT_FILES_FILE_INTERVIEW, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATI
 import { connect } from 'dva';
 import { fileRemove, updateFolder } from '../../../../../../../services/technological/file';
 import { isApiResponseOk } from '../../../../../../../utils/handleResponseData';
+import { fileItemIsHasUnRead } from '../../../ganttBusiness';
 
-@connect()
+@connect(mapStateToProps)
 export default class FolderItem extends Component {
 
     constructor(props) {
@@ -262,17 +263,17 @@ export default class FolderItem extends Component {
             this.setState({
                 local_name: input_folder_value
             })
-        } else{
+        } else {
             message.warn(res.message);
         }
     }
 
     render() {
-        const { itemValue = {} } = this.props
+        const { itemValue = {}, im_all_latest_unread_messages } = this.props
         const { name, id, type, is_privilege } = itemValue
         const { is_show_change, input_folder_value, local_name } = this.state
         return (
-            <div>
+            <div className={`${styles.folder_item_out}`}>
                 {
                     is_show_change ? (
                         <div className={`${styles.folder_item} ${styles.add_item}`} style={{ height: 38 }}>
@@ -299,10 +300,24 @@ export default class FolderItem extends Component {
                                 <Dropdown overlay={this.renderOperateItemDropMenu()}>
                                     <div className={`${globalStyles.authTheme} ${styles.operator}`}>&#xe7fd;</div>
                                 </Dropdown>
+                                {/* 未读 */}
+                                {
+                                    fileItemIsHasUnRead({ relaDataId: id, im_all_latest_unread_messages }) && (
+                                        <div className={styles.has_no_read}></div>
+                                    )
+                                }
                             </div>
                         )
                 }
             </div>
         )
     }
+}
+
+function mapStateToProps({
+    imCooperation: {
+        im_all_latest_unread_messages = [], wil_handle_types = []
+    }
+}) {
+    return { im_all_latest_unread_messages, wil_handle_types }
 }

@@ -129,3 +129,56 @@ export const filterDueTimeSpan = ({ start_time, due_time, is_has_end_time, is_ha
         }
     }
 }
+
+// 当前某一项任务是否拥有未读, type: card/file
+export const cardItemIsHasUnRead = ({ relaDataId, im_all_latest_unread_messages = [] }) => {
+    const flag = im_all_latest_unread_messages.findIndex(item => item.relaDataId == relaDataId) != -1
+    if (flag) {
+        return true
+    }
+    return false
+}
+
+// 结构消息的实例
+const handleNewsItem = (val) => {
+    const { content_data } = val
+    const contentJson = JSON.parse(content_data)
+    return {
+        ...contentJson
+    }
+}
+
+// 文件模块是否存在未读数
+export const fileModuleIsHasUnRead = ({ im_all_latest_unread_messages = [], wil_handle_types = [] }) => {
+    let count = 0
+    for (let val of im_all_latest_unread_messages) {
+        if (wil_handle_types.indexOf(handleNewsItem(val).action) != -1) {
+            count++
+        }
+    }
+    return count
+}
+// 当前某一项文件item是否拥有未读, 
+export const fileItemIsHasUnRead = ({ relaDataId, im_all_latest_unread_messages = [] }) => {
+    // 递归查询父级id最终push到一个数组，然后在数组下检索传递进来的relaDataId，如果存在就是存在未读
+    const arr = []
+    const folderPathRecursion = ({ parent_folder }) => {
+        const { id, parent_id, } = parent_folder
+        const parent_folder_ = parent_folder['parent_folder']
+        if (parent_id != '0') {
+            arr.push(id)
+            folderPathRecursion({ parent_folder: parent_folder_ })
+        }
+    }
+    const current_item = im_all_latest_unread_messages.find(item => relaDataId == item.relaDataId)
+    if(!current_item) {
+        return false
+    }
+    const { folder_path = {} } = handleNewsItem(current_item)
+    const { parent_folder } = folder_path
+    folderPathRecursion({ parent_folder })
+    if (arr.indexOf(relaDataId) != -1) {
+        return true
+    }
+    return false
+}

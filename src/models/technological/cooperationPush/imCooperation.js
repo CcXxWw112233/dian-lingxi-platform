@@ -4,35 +4,96 @@ import { MESSAGE_DURATION_TIME } from "../../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import queryString from 'query-string';
 import { getModelSelectDatasState, getModelSelectState } from '../../utils'
+import { Im } from 'lingxi-im'
 
+// 该model是圈子推送已读未读的内容
 export default {
     namespace: 'imCooperation',
     state: {
-        im_all_unread_message: [], //全部未读消息
-        im_latest_unread: {}, //最新未读
+        im_all_latest_unread_messages: [], //最新未读消息列表
+        // im_latest_unread_message: {}, //最新未读
+        im_all_latest_readed_messages: [], //最新已读列表
+        wil_handle_types: [
+            'board.card.create',
+            'board.card.update.file.add',
+            'board.file.upload',
+            'board.file.version.upload'
+        ]
     },
     subscriptions: {
         setup({ dispatch, history }) {
             history.listen((location) => {
-
             })
         },
     },
     effects: {
-        * getGanttBoardsFiles({ payload }, { select, call, put }) {
-            const res = yield call(getGanttBoardsFiles, payload)
-            // console.log('sssssssss', { boards_flies: res.data })
-            if (isApiResponseOk(res)) {
-                yield put({
-                    type: 'updateDatas',
-                    payload: {
-                        boards_flies: res.data
-                    }
-                })
-            } else {
+        * listenImUnReadAllMessages({ payload }, { call, put }) { //获取和设置全部未读消息
+            const { messages = [], message_item = {} } = payload
+            let im_all_latest_unread_messages = messages.filter(item => {
+                if (wil_handle_types.indexOf(item.action) != -1) {
+                    return item
+                }
+            })
+            yield put({
+                type: 'updateDatas',
+                payload: {
+                    im_all_latest_unread_messages
+                }
+            })
+        },
+        * listenImUnReadClear({ payload }, { call, put, select }) { //未读消息清除,场景（当用户点开某一条具有红点的消息后，会清除该条消息）
+            const { relaDataId } = payload
+            let im_all_latest_unread_messages = yield select(getModelSelectState('imCooperation', im_all_latest_unread_messages))
+            const idServer = (im_all_latest_unread_messages.find(item.relaDataId == relaDataId) || {}).idServer
+            im_all_latest_unread_messages = im_all_latest_unread_messages.filter(item => item.relaDataId != relaDataId)
+            yield ({
+                type: 'updateDatas',
+                payload: {
+                    im_all_latest_unread_messages
+                }
+            })
 
+            // 告知im消息已读
+            yield ({
+                type: 'imMessageToRead',
+                payload: {
+                    idServer,
+                }
+            })
+        },
+        * listenImAreadyReadPush({ payload }, { call, put }) { //在触发的已读推送,已读后更新未读列表
+            const { messages = [] } = payload
+            let im_all_latest_unread_messages = yield select(getModelSelectState('imCooperation', im_all_latest_unread_messages))
+            im_all_latest_unread_messages = im_all_latest_unread_messages.filter(item => {
+                if (messages.findIndex(item2 => item2.idServer == item.idServer) == -1) { //传递进来的已读列表不包含该条未读消息
+                    return item
+                }
+            })
+            yield put({
+                type: 'updateDatas',
+                payload: {
+                    im_all_latest_unread_messages
+                }
+            })
+        },
+        * listenImUnReadLatestMessage({ payload }, { call, put }) { //获取最新的一条消息推送
+            const { message_item = {} } = payload
+            let im_all_latest_unread_messages = yield select(getModelSelectState('imCooperation', im_all_latest_unread_messages))
+            im_all_latest_unread_messages.push(message_item)
+            yield put({
+                type: 'updateDatas',
+                payload: {
+                    im_all_latest_unread_messages
+                }
+            })
+        },
+        * imMessageToRead({ payload }, { call, put }) { //im的某一条消息设置已读
+            const { idServer } = payload
+            if (Im) {
+                Im.fireEvent('imMessageToRead', { idServer })
             }
-        }
+        },
+
     },
 
     reducers: {

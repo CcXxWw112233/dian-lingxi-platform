@@ -10,7 +10,7 @@ import { updateTask, changeTaskType } from '../../../../services/technological/t
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import { message, Dropdown, Popover, Tooltip } from 'antd'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
-import { filterDueTimeSpan } from './ganttBusiness'
+import { filterDueTimeSpan, cardIsHasUnRead, cardItemIsHasUnRead } from './ganttBusiness'
 
 // 参考自http://www.jq22.com/webqd1348
 
@@ -475,7 +475,7 @@ export default class GetRowTaskItem extends Component {
     }
 
     render() {
-        const { itemValue = {} } = this.props
+        const { itemValue = {}, im_all_latest_unread_messages } = this.props
         const {
             left,
             top, width,
@@ -484,7 +484,7 @@ export default class GetRowTaskItem extends Component {
             board_id, is_realize,
             executors = [], label_data = [],
             is_has_start_time, is_has_end_time,
-            start_time, due_time, is_privilege
+            start_time, due_time, is_privilege,
         } = itemValue
         const { local_left, local_top, local_width } = this.state
         const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
@@ -560,6 +560,16 @@ export default class GetRowTaskItem extends Component {
                             <AvatarList users={executors} size={'small'} />
                         </div>
                     </div>
+                    {/* 存在未读 */}
+                    {
+                        cardItemIsHasUnRead({ relaDataId: id, im_all_latest_unread_messages }) && (
+                            <div
+                                className={indexStyles.has_unread_news}
+                                data-targetclassname="specific_example"
+                                style={{}}
+                            ></div>
+                        )
+                    }
                 </div>
             </Popover>
         )
@@ -576,7 +586,11 @@ function mapStateToProps({ gantt: {
         current_list_group_id,
         group_list_area_section_height = [],
     }
-} }) {
+},
+    imCooperation: {
+        im_all_latest_unread_messages = []
+    }
+}) {
     return {
         list_group,
         date_arr_one_level,
@@ -585,6 +599,7 @@ function mapStateToProps({ gantt: {
         gantt_board_id,
         group_list_area,
         current_list_group_id,
-        group_list_area_section_height
+        group_list_area_section_height,
+        im_all_latest_unread_messages
     }
 }
