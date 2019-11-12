@@ -71,7 +71,7 @@ class CustormModal extends React.Component {
 
 
   render() {
-    const { siderRightCollapsed = false, visible, overInner, width, zIndex = 1006, maskClosable, footer, destroyOnClose, keyboard = true, maskStyle = {}, style = {}, onOk, onCancel, bodyStyle = {}, closable = true, title } = this.props;
+    const { siderRightCollapsed = false, visible, overInner, width, zIndex = 1006, maskClosable, footer, destroyOnClose, keyboard = true, maskStyle = {}, style = {}, onOk, onCancel, bodyStyle = {}, closable = true, title,page_load_type} = this.props;
     const { clientWidth, clientHeight } = this.state
     const { siderRightWidth, layoutClientWidth } = this.state;
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
@@ -102,7 +102,7 @@ class CustormModal extends React.Component {
         bodyStyle={{ ...bodyStyle }}
         onCancel={onCancel}
         onOk={onOk}
-        wrapClassName={`${siderRightCollapsed ? indexStyles.wrapActiveModal : indexStyles.wrapNormalModal}`}
+        wrapClassName={`${ page_load_type == '2' ? (siderRightCollapsed ? indexStyles.wrapActiveModal : indexStyles.wrapNormalModal) : indexStyles.wrapModal}`}
       >
         {overInner}
       </Modal>
@@ -110,9 +110,7 @@ class CustormModal extends React.Component {
   }
 }
 
-function mapStateToProps({ technological: { datas: {
-  siderRightCollapsed
-} } }) {
-  return { siderRightCollapsed }
+function mapStateToProps({ }) {
+  return { }
 }
 export default Form.create()(CustormModal)

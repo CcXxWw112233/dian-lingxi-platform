@@ -97,12 +97,16 @@ export default class GetRowGantt extends Component {
 
   //鼠标拖拽移动
   dashedMousedown(e) {
+    const { gantt_board_id, group_view_type, show_board_fold } = this.props
     if (
       this.stopPropagationEle(e) //不能滑动到某一个任务实例上
     ) {
       return false
     }
     if (this.isDragging || this.isMouseDown) { //在拖拽中，还有防止重复点击
+      return
+    }
+    if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) {
       return
     }
     const { currentRect = {} } = this.state
@@ -176,7 +180,7 @@ export default class GetRowGantt extends Component {
 
   //鼠标移动
   dashedMouseMove(e) {
-    const { dataAreaRealHeight, gantt_board_id, group_view_type } = this.props
+    const { dataAreaRealHeight, gantt_board_id, group_view_type, show_board_fold } = this.props
     if (e.target.offsetTop >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
     if (
       (e.target.dataset.targetclassname == 'specific_example') //不能滑动到某一个任务实例上
@@ -186,6 +190,10 @@ export default class GetRowGantt extends Component {
       })
       return false
     }
+    if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) {
+      return
+    }
+
     const { ceiHeight, ceilWidth } = this.props
     if (this.isMouseDown) { //按下的情况不处理
       return false
@@ -204,7 +212,7 @@ export default class GetRowGantt extends Component {
     let py = e.pageY - target_0.offsetTop + target_1.scrollTop - dateAreaHeight
 
     const molX = px % ceilWidth
-    const molY = py % (ganttIsFold({ gantt_board_id, group_view_type }) ? ceiHeight * group_rows_fold : ceiHeight) //2为折叠的总行
+    const molY = py % (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? ceiHeight * group_rows_fold : ceiHeight) //2为折叠的总行
     const mulX = Math.floor(px / ceilWidth)
     const mulY = Math.floor(py / ceiHeight)
     const delX = Number((molX / ceilWidth).toFixed(1))
@@ -234,8 +242,8 @@ export default class GetRowGantt extends Component {
   }
   // 在该区间内不能操作
   areaCanNotOperate = (e) => {
-    const { group_list_area_section_height = [], list_group = [], gantt_board_id, group_view_type } = this.props
-    if (!ganttIsFold({ gantt_board_id, group_view_type })) { //非折叠情况下不考虑
+    const { group_list_area_section_height = [], list_group = [], gantt_board_id, group_view_type, show_board_fold } = this.props
+    if (!ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) { //非折叠情况下不考虑
       return false
     }
     const target_0 = document.getElementById('gantt_card_out')
@@ -463,7 +471,8 @@ export default class GetRowGantt extends Component {
       group_rows = [],
       ceiHeight,
       gantt_board_id,
-      group_view_type
+      group_view_type,
+      show_board_fold
     } = this.props
 
     return (
@@ -476,12 +485,12 @@ export default class GetRowGantt extends Component {
         {dasheRectShow && (
           <div className={indexStyles.dasheRect} style={{
             left: currentRect.x + 1, top: currentRect.y,
-            width: currentRect.width, height: ganttIsFold({ gantt_board_id, group_view_type }) ? task_item_height_fold : task_item_height,//currentRect.height,
+            width: currentRect.width, height: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? task_item_height_fold : task_item_height,//currentRect.height,
             boxSizing: 'border-box',
-            marginTop: !ganttIsFold({ gantt_board_id, group_view_type }) ? task_item_margin_top : (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2, //task_item_margin_top,//
+            marginTop: !ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? task_item_margin_top : (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2, //task_item_margin_top,//
             color: 'rgba(0,0,0,0.45)',
             textAlign: 'right',
-            lineHeight: ganttIsFold({ gantt_board_id, group_view_type }) ? `${task_item_height_fold}px` : `${ceiHeight - task_item_margin_top}px`,
+            lineHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? `${task_item_height_fold}px` : `${ceiHeight - task_item_margin_top}px`,
             paddingRight: 8,
             zIndex: this.isDragging ? 2 : 1
           }} >
@@ -491,7 +500,7 @@ export default class GetRowGantt extends Component {
         )}
         {list_group.map((value, key) => {
           const { list_data = [], list_id, board_fold_data } = value
-          if (ganttIsFold({ gantt_board_id, group_view_type })) {
+          if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) {
             return (this.renderFoldTaskSummary({ list_id, list_data, board_fold_data, group_index: key }))
           } else {
             return (
@@ -504,7 +513,7 @@ export default class GetRowGantt extends Component {
           const { lane_data, list_id, list_data = [] } = value
           const { milestones = {} } = lane_data
           return (
-            <GetRowGanttItem key={list_id} list_id={list_id} list_data={list_data} rows={group_rows[key]} milestones={milestones} />
+            <GetRowGanttItem key={list_id} itemKey={key} list_id={list_id} list_data={list_data} rows={group_rows[key]} milestones={milestones} />
           )
         })}
         <GetRowGanttItemElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
@@ -529,6 +538,7 @@ function mapStateToProps({ gantt: {
     gantt_board_id,
     group_view_type,
     group_list_area_section_height,
+    show_board_fold,
   }
 } }) {
   return {
@@ -545,6 +555,7 @@ function mapStateToProps({ gantt: {
     gantt_board_id,
     group_view_type,
     group_list_area_section_height,
+    show_board_fold,
   }
 }
 

@@ -62,6 +62,7 @@ export default {
       get_gantt_data_loading: false, //是否在请求甘特图数据状态
       is_show_board_file_area: '0', //显示文件区域 0默认不显示 1滑入 2滑出
       boards_flies: [], //带根目录文件列表的项目列表
+      show_board_fold: false, //是否显示项目汇总视图 
     },
   },
   subscriptions: {
@@ -226,6 +227,7 @@ export default {
       const end_date = yield select(workbench_end_date)
       const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
       const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
+      const show_board_fold = yield select(getModelSelectDatasState('gantt', 'show_board_fold'))
 
       const getDigit = (timestamp) => {
         if (!timestamp) {
@@ -274,7 +276,7 @@ export default {
             list_group_item.list_data.push(list_data_item)
           }
         }
-        if (ganttIsFold({ gantt_board_id, group_view_type })) { //全项目视图下，收缩，取特定某一条做基准，再进行时间汇总
+        if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) { //全项目视图下，收缩，取特定某一条做基准，再进行时间汇总
           const start_time_arr = list_group_item.list_data.map(item => item.start_time) //取视窗任务的最开始时间
           const due_time_arr = list_group_item.list_data.map(item => item.end_time) //取视窗任务的最后截止时间
           const { lane_start_time, lane_end_time } = list_group_item
@@ -307,7 +309,7 @@ export default {
         type: 'updateDatas',
         payload: {
           list_group,
-          ceiHeight: ganttIsFold({ gantt_board_id, group_view_type }) ? ceil_height_fold : ceil_height
+          ceiHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? ceil_height_fold : ceil_height
         }
       })
       yield put({
@@ -328,6 +330,7 @@ export default {
       const date_arr_one_level = yield select(workbench_date_arr_one_level)
       const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
       const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
+      const show_board_fold = yield select(getModelSelectDatasState('gantt', 'show_board_fold'))
 
       const group_list_area = [] //分组高度区域
 
@@ -416,7 +419,7 @@ export default {
         group_rows[i] = (list_group_item_height / ceiHeight) < 3 ? 3 : list_group_item_height / ceiHeight // 原来是5，现在是1
 
         // 设置项目汇总的top和left,width
-        if (ganttIsFold({ gantt_board_id, group_view_type })) { // 全项目视图下，为收缩状态
+        if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) { // 全项目视图下，为收缩状态
           group_rows[i] = group_rows_fold
           list_group[i].board_fold_data.width = list_group[i].board_fold_data.time_span * ceilWidth
           list_group[i].board_fold_data.top = after_group_height + (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2 //上下居中 (96-24)/2
@@ -432,11 +435,14 @@ export default {
       }
 
       const group_list_area_section_height = group_list_area.map((item, index) => {
-        return group_list_area.slice(0, index).reduce((a, b) => {
-          return a + b
-        }, group_list_area[0])
+        const list_arr = group_list_area.slice(0, index + 1)
+        let height = 0
+        for (let val of list_arr) {
+          height += val
+        }
+        return height
       })
-
+      // console.log('sssss', 's3', group_list_area_section_height)
       yield put({
         type: 'updateDatas',
         payload: {

@@ -62,6 +62,7 @@ export default class DetailContent extends React.Component {
       commentListsContent = '', //评论列表区块
       dynamicsContent = '', //动态列表区块
       commentUseParams = {}, //评论所需要参数
+      showActiveStyles = false,
     } = this.props
 
     const whetherShowAllDynamic = (
@@ -83,18 +84,18 @@ export default class DetailContent extends React.Component {
     let styleSelect = indexStyles.fileDetailContentOut;
  
     return (
-      <div className={styleSelect} ref={'fileDetailContentOut'} style={{ height: clientHeight - offsetTopDeviation - 54 }}>
-        <div className={`${indexStyles.fileDetailContentLeft} ${globalStyles.global_vertical_scrollbar}`}
+      <div className={`${styleSelect} ${showActiveStyles && indexStyles.active_fileDetailContentOut}`} ref={'fileDetailContentOut'} style={{ height: (clientHeight - offsetTopDeviation - 54) }}>
+        <div className={`${indexStyles.fileDetailContentLeft} ${globalStyles.global_vertical_scrollbar} ${ showActiveStyles && indexStyles.active_fileDetailContentLeft}`}
         // style={{overflowY: 'auto'}}
         >
           {/*主要内容放置区*/}
           {mainContent}
         </div>
 
-        <div className={indexStyles.fileDetailContentRight} style={{ width: 368 }}>
+        <div className={`${indexStyles.fileDetailContentRight} ${showActiveStyles && indexStyles.active_fileDetailContentRight}`}>
 
 
-          <div style={{ position: 'relative' }} className={`${indexStyles.fileDetailContentRight_middle}`} style={{ height: clientHeight - offsetTopDeviation - 54 - 70 }}>
+          <div style={{ position: 'relative' }} className={`${indexStyles.fileDetailContentRight_middle}`} style={{ height: !showActiveStyles && (clientHeight - offsetTopDeviation - 54 - 70)}}>
 
             {/* <div
               style={{lineHeight: '54px'}}
@@ -119,7 +120,7 @@ export default class DetailContent extends React.Component {
 
 
 
-            <div className={`${globalStyles.global_vertical_scrollbar} ${`${indexStyles.fileDetailContentRight_dynamicList}`}`} style={{ height: clientHeight - offsetTopDeviation - 54 - 70 - 50 }}>
+            <div className={`${globalStyles.global_vertical_scrollbar} ${indexStyles.fileDetailContentRight_dynamicList} ${ showActiveStyles && indexStyles.active_fileDetailContentRight_dynamicList}`} style={{ height: !showActiveStyles && (clientHeight - offsetTopDeviation - 54 - 70 - 50) }}>
               {/*动态放置区*/}
               <div style={{fontSize: '12px', color: '#595959'}}>
                 <div>
@@ -134,7 +135,7 @@ export default class DetailContent extends React.Component {
               </div>
             </div>
           </div>
-          <div className={indexStyles.fileDetailContentRight_bott}>
+          <div className={`${indexStyles.fileDetailContentRight_bott} ${ showActiveStyles && indexStyles.active_fileDetailContentRight_bott}`}>
             {commentSubmitContent || <CommentSubmit commentUseParams={commentUseParams} />}
           </div>
 

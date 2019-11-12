@@ -110,24 +110,24 @@ class Gantt extends Component {
   // 添加完一条任务后，将某1条任务塞进去
   insertTaskToListGroup = (data) => {
     const { dispatch, } = this.props
-    const { list_group = [], current_list_group_id, gantt_board_id, group_view_type } = this.props
+    const { list_group = [], current_list_group_id, gantt_board_id, group_view_type, show_board_fold } = this.props
     const list_group_new = [...list_group]
     const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
     list_group_new[group_index].lane_data.cards.push(data)
 
-    if (ganttIsFold({ gantt_board_id, group_view_type })) {
-      const current_card_due_time = getDigitTime(data.due_time)
-      const now = new Date().getTime()
-      list_group_new[group_index].lane_schedule_count = (Number(list_group_new[group_index].lane_schedule_count) || 0) + 1
-      if (current_card_due_time < now) { //截止时间在当前时间之前
-        list_group_new[group_index].lane_status = '3' //创建的任务在当前时间之前，那就是逾期未完成
-        list_group_new[group_index].lane_overdue_count = (Number(list_group_new[group_index].lane_overdue_count) || 0) + 1 //逾期未完成任务 +1
-      } else {
-        if (list_group_new[group_index].lane_status == '1') {
-          list_group_new[group_index].lane_status = '2' //创建的任务在当前时间之后，那就是正常进行未完成
-        }
+    // if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) {
+    const current_card_due_time = getDigitTime(data.due_time)
+    const now = new Date().getTime()
+    list_group_new[group_index].lane_schedule_count = (Number(list_group_new[group_index].lane_schedule_count) || 0) + 1
+    if (current_card_due_time < now) { //截止时间在当前时间之前
+      list_group_new[group_index].lane_status = '3' //创建的任务在当前时间之前，那就是逾期未完成
+      list_group_new[group_index].lane_overdue_count = (Number(list_group_new[group_index].lane_overdue_count) || 0) + 1 //逾期未完成任务 +1
+    } else {
+      if (list_group_new[group_index].lane_status == '1') {
+        list_group_new[group_index].lane_status = '2' //创建的任务在当前时间之后，那就是正常进行未完成
       }
     }
+    // }
 
     dispatch({
       type: 'gantt/handleListGroup',
@@ -334,6 +334,7 @@ function mapStateToProps({
       about_apps_boards = [],
       about_group_boards = [],
       about_user_boards = [],
+      show_board_fold,
     }
   },
   publicTaskDetailModal: { drawerVisible }
@@ -349,6 +350,7 @@ function mapStateToProps({
     about_apps_boards,
     about_group_boards,
     about_user_boards,
+    show_board_fold
   }
 }
 

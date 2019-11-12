@@ -55,7 +55,7 @@ class AddTaskModal extends Component {
   }
   componentWillReceiveProps(nextProps) {
     const { create_lcb_time, board_id, about_user_boards = [], current_selected_board } = nextProps
-    
+
     const { due_time } = this.state
     if (create_lcb_time && due_time != create_lcb_time) {
       this.setState({
@@ -119,7 +119,7 @@ class AddTaskModal extends Component {
     const { board_id } = current_selected_board
     let users = []
     for (let val of current_selected_users) {
-      users.push(val['id'])
+      users.push(val['id'] || val['user_id'])
     }
     const param = {
       currentSelectedProject: board_id, add_name, due_time, users

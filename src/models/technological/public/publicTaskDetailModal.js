@@ -105,6 +105,7 @@ export default {
       } else {
         message.warn(res.message)
       }
+      return res || {}
     },
     // 获取默认属性列表字段
     * getCardAttributesList({ payload }, { call, put }) {
@@ -123,16 +124,19 @@ export default {
     },
     // 设置卡片属性
     * setCardAttributes({ payload }, { call, put }) {
-      const { property_id, card_id } = payload
+      const { property_id, card_id, calback } = payload
       let res = yield call(setCardAttributes, { card_id, property_id })
       if (isApiResponseOk(res)) {
-        setTimeout(() => {
-          message.success('添加字段成功', MESSAGE_DURATION_TIME)
-        }, 500)
         yield put({
           type: 'getCardWithAttributesDetail',
           payload: {
             id: card_id,
+            calback: function() {
+              setTimeout(() => {
+                message.success('添加字段成功', MESSAGE_DURATION_TIME)
+              }, 500),
+              calback && typeof calback == 'function' ? calback() : ''
+            }
           }
         })
       } else {

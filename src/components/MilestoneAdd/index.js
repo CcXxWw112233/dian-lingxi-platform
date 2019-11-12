@@ -148,7 +148,7 @@ export default class MilestoneAdd extends React.Component {
         }
         createMilestone(params).then((res) => {
             if (isApiResponseOk(res)) {
-                this.getMilestone(params.board_id, { callBackFun: this.getMilestoneListCallbackFun, param: res.data });
+                this.props.getMilestone && this.props.getMilestone(params.board_id, { callBackFun: this.getMilestoneListCallbackFun, param: res.data });
                 message.success("新建里程碑成功")
             } else {
                 message.error(res.message)
