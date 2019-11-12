@@ -148,18 +148,23 @@ export default class CommunicationTreeList extends Component{
                                             return(
                                                 // <Panel header={this.showHeader(item, isShowCompanyName)} key={`${item.id}_${item.file_data.length}`} onClick={()=>this.panelOnClick(item)}>
                                                 <Panel header={this.showHeader(item, isShowCompanyName)} key={`${item.id}`} onClick={()=>this.panelOnClick(item)}>
-                                                    <DirectoryTree
-                                                        multiple
-                                                        defaultExpandAll
-                                                        // onSelect={()=>this.onSelect(first_item)}
-                                                        onSelect={this.onSelect.bind(this,item)}
-                                                        onExpand={this.onExpand}
-                                                        // expandedKeys={this.state.expandedKeys}
-                                                        // autoExpandParent={this.state.autoExpandParent}
-                                                        // selectedKeys={this.state.selectedKeys}
-                                                    >
-                                                        { this.renderTreeNodes(child_data) }
-                                                    </DirectoryTree>
+                                                    {
+                                                        child_data && (
+                                                            <DirectoryTree
+                                                                multiple
+                                                                defaultExpandAll
+                                                                // onSelect={()=>this.onSelect(first_item)}
+                                                                onSelect={this.onSelect.bind(this,item)}
+                                                                onExpand={this.onExpand}
+                                                                // expandedKeys={this.state.expandedKeys}
+                                                                // autoExpandParent={this.state.autoExpandParent}
+                                                                // selectedKeys={this.state.selectedKeys}
+                                                            >
+                                                                { this.renderTreeNodes(child_data) }
+                                                            </DirectoryTree>
+                                                        )
+                                                    }
+                                                    
                                                 </Panel>
                                             )
                                         })
