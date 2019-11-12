@@ -78,6 +78,11 @@
         margin-bottom: 24px;
         display: block;
       }
+      .videoMeeting__topic_content_time {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
       .videoMeeting__topic_content_datePicker {
         margin-right: 16px;
       }
@@ -110,7 +115,7 @@
   
   .videoMeeting__header {
     width:376px;
-    height:137px;
+    min-height:137px;
     background:rgba(255,255,255,1);
     border-radius:4px 4px 0px 0px;
     .videoMeeting__mark {
@@ -124,6 +129,17 @@
       color:rgba(0,0,0,0.85);
       line-height:33px;
       margin-top: 24px;
+    }
+  }
+
+  .select_overlay {
+    overflow-y: auto;
+    max-height: 200px;
+    :global {
+      .ant-select-dropdown-menu {
+        overflow: inherit;
+        max-height: inherit;
+      }
     }
   }
   
