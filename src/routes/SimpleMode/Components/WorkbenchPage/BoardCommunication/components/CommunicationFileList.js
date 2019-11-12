@@ -19,7 +19,7 @@ export default class CommunicationFileList extends Component{
         super(props);
         this.state = {
             collapseActiveKeys: [], // 折叠面板展示列keys
-            visible: true, // 是否显示/隐藏文件列表，默认显示
+            // isVisibleFileList: true, // 是否显示/隐藏文件列表，默认显示
             isShowSub: false, // 当前组件显示，false 第一级组件 true 子集组件
             fileData: null, // 子组件数据
             currentSubId: '', // 当前子集文件id
@@ -32,7 +32,7 @@ export default class CommunicationFileList extends Component{
     }
 
     componentDidMount(){
-        const { visible } = this.props;
+        const { isVisibleFileList } = this.props;
         const {
             // is_show_board_file_area,
             boards_flies = [],
@@ -48,14 +48,6 @@ export default class CommunicationFileList extends Component{
         });
     }
 
-
-    // 显示隐藏文件列表
-    isVisible = () => {
-        const { visible } = this.state;
-        this.setState({ visible: !this.state.visible}, ()=> {
-            this.props.changeIsRightBarShowFileList(visible);
-        });
-    }
 
     // 显示项目目录名（一级）
     showHeader=(item, isShowCompanyName)=>{
@@ -208,7 +200,7 @@ export default class CommunicationFileList extends Component{
     render(){
         const {
             collapseActiveKeys,
-            visible,
+            // isVisibleFileList,
             isShowSub,
             fileData,
             currentSubId,
@@ -224,13 +216,14 @@ export default class CommunicationFileList extends Component{
             is_all_org,
             currentUserOrganizes,
             selectBoardFileModalVisible,
+            isVisibleFileList,
         } = this.props;
         const isShowCompanyName = is_show_org_name && is_all_org; // 是否显示归属组织
         return(
             <div className={styles.communicationFileList}>
                 {/* 这里是左侧的项目交流列表 */}
                 {
-                    visible && (
+                    isVisibleFileList && (
                         <div className={styles.fileList}>
                             <div className={styles.listHeaderName}>项目文件</div>
                             {/* 文件列表 */}
@@ -302,10 +295,10 @@ export default class CommunicationFileList extends Component{
                 {/* 控制列表是否显示的控制按钮 */}
                 <div
                     className={styles.operationBtn}
-                    style={{ left: visible ? '299px' : '0'}}
-                    onClick={this.isVisible}
+                    style={{ left: isVisibleFileList ? '299px' : '0'}}
+                    onClick={this.props.isShowFileList}
                 >
-                    <Icon type={visible ? 'left' : 'right'} />
+                    <Icon type={isVisibleFileList ? 'left' : 'right'} />
                 </div>
 
                 {/* <div

@@ -483,3 +483,96 @@ export const timestampFormat = (millisecond, format) => {
       return null
   }
 }
+
+/* 过滤文件格式 (缩略图显示) */
+export const filterFileFormatType = (fileName) => {
+    let themeCode = '';
+    const type = fileName.substr(fileName.lastIndexOf(".")).toLowerCase();
+    switch (type) {
+      case '.3dm':
+        themeCode = '&#xe6e0;';
+        break
+      case '.iges':
+        themeCode = '&#xe658;';
+        break
+      case '.obj':
+        themeCode = '&#xe65b;';
+        break
+      case '.ma':
+        themeCode = '&#xe65f;';
+        break
+      case '.mb':
+        themeCode = '&#xe64f;';
+        break
+      case '.skp':
+        themeCode = '&#xe6e8;';
+        break
+      case '.dwg':
+        themeCode = '&#xe64c;';
+        break
+      case '.psd':
+        themeCode = '&#xe65d;';
+        break
+      case '.pdf':
+        themeCode = '&#xe651;';
+        break
+      case '.doc':
+        themeCode = '&#xe64d;';
+        break
+      case '.xls':
+        themeCode = '&#xe65e;';
+        break
+      case '.ppt':
+        themeCode = '&#xe655;';
+        break
+      case '.docx':
+        themeCode = '&#xe64a;';
+        break
+      case '.xlsx':
+        themeCode = '&#xe65c;';
+        break
+      case '.pptx':
+        themeCode = '&#xe650;';
+        break
+      case '.key':
+        themeCode = '&#xe64e;';
+        break
+      case '.jpg':
+        themeCode = '&#xe653;';
+        break
+      case '.jpeg':
+        themeCode = '&#xe659;';
+        break
+      case '.png':
+        themeCode = '&#xe69a;';
+        break
+      case '.gif':
+        themeCode = '&#xe657;';
+        break
+      case '.mp4':
+        themeCode = '&#xe6e1;';
+        break
+      case '.mp3':
+        themeCode = '&#xe6e2;';
+        break
+      case '.txt':
+        themeCode = '&#xe654;';
+        break
+      case '.rar':
+        themeCode = '&#xe6e4;';
+        break
+      case '.zip':
+        themeCode = '&#xe6e5;';
+        break
+      case '.7z':
+        themeCode = '&#xe6e6;';
+        break
+      case '.gz':
+        themeCode = '&#xe6e7;';
+        break
+      default:
+        themeCode = '&#xe660;'; // 未识别类型显示
+        break
+    }
+    return themeCode;
+}

@@ -81,8 +81,6 @@ class FileDetailContent extends React.Component {
     // 定义一个数组来保存编辑状态的数组
     // editVersionFileList: [],
     editValue: '', // 编辑时候的文本信息
-
-    isVisibleContentRightDetail: false, // 是否显示上传图片后圈图详情右侧内容 false 不显示 true 显示
   }
   constructor() {
     super();
@@ -378,12 +376,20 @@ class FileDetailContent extends React.Component {
     this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile()
     this.props.updateDatasFile({ isInOpenFile: false, filePreviewUrl: '', breadcrumbList: [] })
   }
+
+  /* 点击圈屏右上脚icon-是否全屏显示 */
   zoomFrame() {
+    this.setState({ isZoomPictureFullScreenMode: !this.state.isZoomPictureFullScreenMode });
+  }
+
+  // 显示/隐藏右侧实时圈图信息
+  isShowRightRealTimeMsg() {
     const { datas: { isExpandFrame = false } } = this.props.model
     this.props.updateDatasFile({
       isExpandFrame: !isExpandFrame,
     })
   }
+
   fileDownload({ filePreviewCurrentId, pdfDownLoadSrc }) {
     if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -1060,12 +1066,6 @@ class FileDetailContent extends React.Component {
   }
 
 
-  // 是否显示圈图的右侧上传详情
-  isVisibleContentRight = () => {
-    this.setState({ isVisibleContentRightDetail: !this.state.isVisibleContentRightDetail });
-  }
-
-
   render() {
 
     const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
@@ -1525,19 +1525,23 @@ class FileDetailContent extends React.Component {
             )}
 
 
+
           {/* <div className={indexStyles.fileDetailContentRightBox}> */}
-          {/* <div
-                  className={indexStyles.operationContentRightBtn}
-                  style={{ right: (isVisibleContentRightDetail || isExpandFrame) ? '420px' : '0'}}
-                  onClick={this.isVisibleContentRight}
-              >
-                  <Icon type="right" />
-              </div> */}
+
+          {/* 控制显示隐藏按钮 */}
+          <div
+              className={indexStyles.operationContentRightBtn}
+              style={{ right: isExpandFrame ? '420px' : '0'}}
+              onClick={()=>this.isShowRightRealTimeMsg()}
+          >
+              <Icon type="right" />
+          </div>
 
           {
-            (isVisibleContentRightDetail || isExpandFrame) && (
-              <div className={indexStyles.fileDetailContentRight} style={{ width: !isExpandFrame ? 0 : 420 }}>
-                {/* <div className={indexStyles.fileDetailContentRight} style={{ width: isExpandFrame ? 0 : 420 }}> */}
+            isExpandFrame && (
+            // (isVisibleContentRightDetail || isExpandFrame) && (
+              // <div className={indexStyles.fileDetailContentRight} style={{ width: !isVisibleContentRightDetail ? 0 : 420 }}>
+              <div className={indexStyles.fileDetailContentRight} style={{ width: isExpandFrame ? 420 : 0 }}>
                 {/*width: isExpandFrame?0:420*/}
                 {/*从文件卡片查看的时候才有*/}
                 <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'} style={{ position: 'relative' }}>
