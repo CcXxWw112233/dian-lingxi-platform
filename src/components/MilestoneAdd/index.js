@@ -39,20 +39,20 @@ export default class MilestoneAdd extends React.Component {
     // }
 
     //获取项目里程碑列表
-    getMilestone = (id, callBackObject, milestoneId) => {
-        getMilestoneList({ id }).then((res) => {
-            if (isApiResponseOk(res)) {
-                this.setState({
-                    milestoneList: res.data
-                }, () => {
-                    callBackObject && callBackObject.callBackFun(res.data, callBackObject.param);
-                });
+    // getMilestone = (id, callBackObject, milestoneId) => {
+    //     getMilestoneList({ id }).then((res) => {
+    //         if (isApiResponseOk(res)) {
+    //             this.setState({
+    //                 milestoneList: res.data
+    //             }, () => {
+    //                 callBackObject && callBackObject.callBackFun(res.data, callBackObject.param);
+    //             });
 
-            } else {
-                message.error(res.message)
-            }
-        })
-    }
+    //         } else {
+    //             message.error(res.message)
+    //         }
+    //     })
+    // }
     //模糊查询
 
 
@@ -148,7 +148,7 @@ export default class MilestoneAdd extends React.Component {
         }
         createMilestone(params).then((res) => {
             if (isApiResponseOk(res)) {
-                this.getMilestone(params.board_id, { callBackFun: this.getMilestoneListCallbackFun, param: res.data });
+                this.props.getMilestone && this.props.getMilestone(params.board_id, { callBackFun: this.getMilestoneListCallbackFun, param: res.data });
                 message.success("新建里程碑成功")
             } else {
                 message.error(res.message)

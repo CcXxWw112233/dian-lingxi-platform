@@ -86,7 +86,7 @@ export default class DragDropContentComponent extends Component {
     return new_properties
   }
 
-  // 里程碑选择回调 S
+   // 里程碑选择回调 S
   onMilestoneSelectedChange = (data) => {
     const { dispatch, drawContent } = this.props;
     const { card_id, type, due_time } = drawContent
@@ -143,10 +143,11 @@ export default class DragDropContentComponent extends Component {
     }
 
     if (actionType === 'update') {
-      const { data } = drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
+      // const { data } = drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
+      const gold_data = (drawContent['properties'].find(item => item.code == 'MILESTONE') || {}).data
       const removeParams = {
         rela_id: card_id,
-        id: data.id,
+        id: gold_data.id,
       }
 
       const addParams = {
@@ -748,7 +749,7 @@ export default class DragDropContentComponent extends Component {
                   )
                 ) : (
                     // 加入里程碑组件
-                    <MilestoneAdd milestoneList={milestoneList} onChangeMilestone={this.onMilestoneSelectedChange} dataInfo={{ board_id, board_name, due_time, org_id, data, start_time }} selectedValue={currentItem.data && currentItem.data.id}>
+                    <MilestoneAdd milestoneList={milestoneList} getMilestone={this.props.getMilestone} onChangeMilestone={this.onMilestoneSelectedChange} dataInfo={{ board_id, board_name, due_time, org_id, data, start_time }} selectedValue={currentItem.data && currentItem.data.id}>
                       <div className={`${mainContentStyles.pub_hover}`} >
                         {currentItem.data && currentItem.data.id
                           ? <span className={mainContentStyles.value_text}>{currentItem.data.name}</span>
