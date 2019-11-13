@@ -674,11 +674,11 @@ class VideoMeetingPopoverContent extends React.Component {
 																	<div className={`${indexStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '0 12px 16px', textAlign: 'center' }} key={user_id}>
 																		{avatar ? (
 																			<Tooltip placement="top" title={name || user_name || '佚名'}>
-																				<img style={{ width: '40px', height: '40px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
+																				<img className={indexStyles.img_hover} style={{ width: '40px', height: '40px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
 																			</Tooltip>
 																		) : (
 																				<Tooltip placement="top" title={name || user_name || '佚名'}>
-																					<div style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
+																					<div className={indexStyles.default_user_hover} style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
 																						<Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
 																					</div>
 																				</Tooltip>
@@ -708,8 +708,8 @@ class VideoMeetingPopoverContent extends React.Component {
 						<div className={indexStyles.videoMeeting__remarks}>
 							<span>灵犀推荐使用以下方式开展远程会议: (点击前往下载）</span>
 							<span>
-								<img src={zoom_logo} alt="" />
-								<img src={xiaoyuyilian_logo} alt="" />
+								<a href="https://zoom.com.cn/download" target="_blank"><img src={zoom_logo} alt="Zoom" title="Zoom视频会议"/></a>
+								<a href="https://www.xylink.com/download" target="_blank"><img src={xiaoyuyilian_logo} alt="小鱼易连" title="小鱼易连视频会议"/></a>
 							</span>
 						</div>
 					</div>
