@@ -222,6 +222,7 @@ export default {
 
       // 设置提醒的方法
       * setRemindInformation({ payload = {} }, { select, call, put }) {
+        const { calback } = payload
         const [{ rela_id, rela_type, remind_time_type, remind_time_value, remind_trigger, message_consumers }] = yield select(getModelSelectState('informRemind', 'setInfoRemindList'))
         let tempId = []
         for(var i in message_consumers) {
@@ -229,13 +230,17 @@ export default {
             tempId.push(message_consumers[i].user_id)
           }
         }
-        const data = {
+        let data = {
           rela_id,
           rela_type,
           remind_time_type,
           remind_time_value,
           remind_trigger,
           users: tempId
+        }
+        let tempKey = Object.keys(payload)
+        if (tempKey && tempKey.length) {
+          data = payload
         }
         const res = yield call(setRemindInformation, data)
         if(!isApiResponseOk(res)) {
@@ -245,9 +250,11 @@ export default {
         yield put({
           type: 'getTriggerHistory',
           payload: {
-            rela_id
+            rela_id: tempKey && tempKey.length ? payload.rela_id : rela_id
           }
         })
+        calback && typeof calback == 'function' ? calback() : ''
+        return res || {}
       },
 
       // 删除提醒的方法
