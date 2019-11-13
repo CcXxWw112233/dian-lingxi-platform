@@ -109,6 +109,13 @@ class SimpleHeader extends Component {
             Im.on('visible', visibleFunc)
             Im.on('clickDynamic', clickDynamicFunc);
             Im.on('hasNewImMsg', ({ data, unread }) => { //最新一条未读消息推送过来
+                console.log('ssss_初始化', unread)
+                dispatch({
+                    type: 'imCooperation/getImUnReadAllMessages',
+                    payload: {
+                        messages: unread
+                    }
+                })
                 if (!data.hasOwnProperty('action')) { //首次进入不处理
                     return
                 }
@@ -127,11 +134,11 @@ class SimpleHeader extends Component {
                         messages: data
                     }
                 })
-                console.log('ssss_最新已读', data)
+                // console.log('ssss_最新已读', data)
             })
             if (typeof getUnreadList == 'function') {
                 const messages = getUnreadList()
-                console.log('ssss_初始化', messages)
+                // console.log('ssss_初始化', messages)
                 dispatch({
                     type: 'imCooperation/getImUnReadAllMessages',
                     payload: {

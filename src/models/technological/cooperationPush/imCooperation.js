@@ -54,11 +54,12 @@ export default {
                     im_all_latest_unread_messages
                 }
             })
+            debugger
             // 告知im消息已读
             if (!!!idServer) {
                 return
             }
-            yield ({
+            yield put({
                 type: 'imMessageToRead',
                 payload: {
                     idServer,
@@ -81,6 +82,17 @@ export default {
                     im_all_latest_unread_messages
                 }
             })
+            const reads = im_all_latest_unread_messages.filter(item => {
+                if (messages.findIndex(item2 => item2.idServer == item.idServer) != -1) { //传递进来的已读列表不包含该条未读消息
+                    return { idServer: item.idServer, target: item.idServer }
+                }
+            })
+            yield put({
+                type: 'imMessageToRead',
+                payload: {
+                    reads
+                }
+            })
         },
         * listenImUnReadLatestMessage({ payload }, { select, call, put }) { //获取最新的一条未读消息推送
             const { message_item = {} } = payload
@@ -101,9 +113,11 @@ export default {
             })
         },
         * imMessageToRead({ payload }, { call, put }) { //im的某一条消息设置已读
-            const { idServer, target } = payload
+            const { idServer, target, reads = [] } = payload
+            debugger
             if (Im) {
-                Im.fireEvent('readMsg', { id: idServer, target })
+                const params = reads || { idServer, target }
+                Im.fireEvent('readMsg', params)
             }
         },
 

@@ -7,7 +7,7 @@ import { PROJECT_FILES_FILE_INTERVIEW, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATI
 import { connect } from 'dva';
 import { fileRemove, updateFolder } from '../../../../../../../services/technological/file';
 import { isApiResponseOk } from '../../../../../../../utils/handleResponseData';
-import { fileItemIsHasUnRead } from '../../../ganttBusiness';
+import { fileItemIsHasUnRead, cardItemIsHasUnRead, folderItemHasUnReadNo } from '../../../ganttBusiness';
 
 @connect(mapStateToProps)
 export default class FolderItem extends Component {
@@ -227,6 +227,16 @@ export default class FolderItem extends Component {
             }
         })
 
+        // 设置已读
+        const { im_all_latest_unread_messages } = this.props
+        if (cardItemIsHasUnRead({ relaDataId: id, im_all_latest_unread_messages })) {
+            dispatch({
+                type: 'imCooperation/imUnReadMessageItemClear',
+                payload: {
+                    relaDataId: id
+                }
+            })
+        }
     }
 
     // 更改名称
@@ -269,7 +279,7 @@ export default class FolderItem extends Component {
     }
 
     render() {
-        const { itemValue = {}, im_all_latest_unread_messages } = this.props
+        const { itemValue = {}, im_all_latest_unread_messages = [], wil_handle_types = [] } = this.props
         const { name, id, type, is_privilege } = itemValue
         const { is_show_change, input_folder_value, local_name } = this.state
         return (
@@ -302,8 +312,10 @@ export default class FolderItem extends Component {
                                 </Dropdown>
                                 {/* 未读 */}
                                 {
-                                    fileItemIsHasUnRead({ relaDataId: id, im_all_latest_unread_messages }) && (
-                                        <div className={styles.has_no_read}></div>
+                                    folderItemHasUnReadNo({ type, relaDataId: id, im_all_latest_unread_messages, wil_handle_types }) > 0 &&
+                                    // true &&
+                                    (
+                                        <div className={styles.has_no_read}>{folderItemHasUnReadNo({ type, relaDataId: id, im_all_latest_unread_messages, wil_handle_types })}</div>
                                     )
                                 }
                             </div>
@@ -316,7 +328,7 @@ export default class FolderItem extends Component {
 
 function mapStateToProps({
     imCooperation: {
-        im_all_latest_unread_messages = [], wil_handle_types = []
+        im_all_latest_unread_messages = [], wil_handle_types = [],
     }
 }) {
     return { im_all_latest_unread_messages, wil_handle_types }

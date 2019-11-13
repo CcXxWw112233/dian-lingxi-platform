@@ -12,6 +12,10 @@ import Cookies from 'js-cookie'
 import { setUploadHeaderBaseInfo, checkIsHasPermissionInBoard, getGlobalData } from '../../../../../../../utils/businessFunction';
 import FileDetailModal from '../../../../Workbench/CardContent/Modal/FileDetailModal'
 const { Dragger } = Upload
+import { connect } from 'dva'
+import { currentFolderJudegeFileUpload } from '../../../ganttBusiness'
+
+@connect(mapStateToProps)
 export default class Index extends Component {
     constructor(props) {
         super(props)
@@ -60,6 +64,7 @@ export default class Index extends Component {
         this.setState({
             current_folder_id: id
         })
+        // debugger
         const { board_id } = this.props
         const res = await getFileList({ folder_id: id, board_id })
         if (isApiResponseOk(res)) {
@@ -191,6 +196,22 @@ export default class Index extends Component {
         return props
     }
 
+    // 监听到最新未读消息推送过来
+    componentWillReceiveProps(nextProps) {
+        const { im_all_latest_unread_messages = [], wil_handle_types = [] } = this.props
+        const that = this
+        const { current_folder_id } = this.state
+        const im_all_latest_unread_messages_new = nextProps.im_all_latest_unread_messages
+        const length_1 = im_all_latest_unread_messages.length
+        const length_2 = im_all_latest_unread_messages_new.length
+        // console.log('sssss_length', length_1, length_2)
+        if (currentFolderJudegeFileUpload({ folder_id: current_folder_id, im_all_latest_unread_messages: im_all_latest_unread_messages_new }) && (length_1 != length_2)) {
+            setTimeout(() => {
+                that.getFolderFileList({ id: current_folder_id })
+            }, 500)
+            // debugger
+        }
+    }
     render() {
         const { bread_paths = [], file_data = [], current_folder_id, show_drag } = this.state
         const { board_id } = this.props
@@ -244,3 +265,10 @@ export default class Index extends Component {
     }
 }
 
+function mapStateToProps({
+    imCooperation: {
+        im_all_latest_unread_messages = [], wil_handle_types = []
+    }
+}) {
+    return { im_all_latest_unread_messages, wil_handle_types }
+}
