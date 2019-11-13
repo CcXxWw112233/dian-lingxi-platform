@@ -142,17 +142,18 @@ export const cardItemIsHasUnRead = ({ relaDataId, im_all_latest_unread_messages 
 // 结构消息的实例
 const handleNewsItem = (val) => {
     const { content_data } = val
-    const contentJson = JSON.parse(content_data)
-    return {
-        ...contentJson
-    }
+    const contentJson = JSON.parse(content_data) || {}
+    const { data = {} } = contentJson
+    const { d = "{}" } = data
+    const gold_data = JSON.parse(d) || {}
+    return gold_data
 }
 
 // 文件模块是否存在未读数
 export const fileModuleIsHasUnRead = ({ im_all_latest_unread_messages = [], wil_handle_types = [] }) => {
     let count = 0
     for (let val of im_all_latest_unread_messages) {
-        if (wil_handle_types.indexOf(handleNewsItem(val).action) != -1) {
+        if (wil_handle_types.indexOf(val.action) != -1) {
             count++
         }
     }
@@ -164,7 +165,10 @@ export const fileItemIsHasUnRead = ({ relaDataId, im_all_latest_unread_messages 
     const arr = []
     const folderPathRecursion = ({ parent_folder }) => {
         const { id, parent_id, } = parent_folder
-        const parent_folder_ = parent_folder['parent_folder']
+        if (!id) {
+            return
+        }
+        const parent_folder_ = parent_folder['parent_folder'] || {}
         if (parent_id != '0') {
             arr.push(id)
             folderPathRecursion({ parent_folder: parent_folder_ })
@@ -175,7 +179,7 @@ export const fileItemIsHasUnRead = ({ relaDataId, im_all_latest_unread_messages 
         return false
     }
     const { folder_path = {} } = handleNewsItem(current_item)
-    const { parent_folder } = folder_path
+    const { parent_folder = {} } = folder_path
     folderPathRecursion({ parent_folder })
     if (arr.indexOf(relaDataId) != -1) {
         return true

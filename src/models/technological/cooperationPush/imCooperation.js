@@ -27,7 +27,7 @@ export default {
         },
     },
     effects: {
-        * getImUnReadAllMessages({ payload }, { call, put }) { //获取和设置全部未读消息
+        * getImUnReadAllMessages({ payload }, { select, call, put }) { //获取和设置全部未读消息
             const { messages = [] } = payload
             const wil_handle_types = yield select(getModelSelectState('imCooperation', 'wil_handle_types'))
             const im_all_latest_unread_messages = messages.filter(item => {
@@ -68,7 +68,7 @@ export default {
         },
         * listenImLatestAreadyReadMessages({ payload }, { select, call, put }) { //在触发的已读推送,已读后更新未读列表
             const { messages = [] } = payload
-            console.log('ssss_已读列表', messages)
+            console.log('ssss_已读列表_model', messages)
             let im_all_latest_unread_messages = yield select(getModelSelectState('imCooperation', 'im_all_latest_unread_messages'))
             im_all_latest_unread_messages = im_all_latest_unread_messages.filter(item => {
                 if (messages.findIndex(item2 => item2.idServer == item.idServer) == -1) { //传递进来的已读列表不包含该条未读消息
@@ -84,19 +84,19 @@ export default {
         },
         * listenImUnReadLatestMessage({ payload }, { select, call, put }) { //获取最新的一条未读消息推送
             const { message_item = {} } = payload
+            console.log('ssss_最新未读_model', message_item)
             const wil_handle_types = yield select(getModelSelectState('imCooperation', 'wil_handle_types'))
-            const { action } = messages
+            const { action } = message_item
             if (wil_handle_types.indexOf(action) == -1) {
                 return
             }
-            console.log('ssss_最新未读', message_item)
             let im_all_latest_unread_messages = yield select(getModelSelectState('imCooperation', 'im_all_latest_unread_messages'))
             let arr = [...im_all_latest_unread_messages]
             arr.push(message_item)
             yield put({
-                type: 'updateDatas',
+                type: 'getImUnReadAllMessages',
                 payload: {
-                    im_all_latest_unread_messages: arr
+                    messages: arr
                 }
             })
         },
