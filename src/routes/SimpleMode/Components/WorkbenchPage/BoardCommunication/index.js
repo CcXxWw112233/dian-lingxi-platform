@@ -174,7 +174,7 @@ class BoardCommunication extends Component {
             case '1': 
                 boardId = currentSelectBoardId;
                 folderId = '';
-                queryConditions = currentSelectBoardId ? [{id:'1135447108158099464', value: currentSelectBoardId}]: null;
+                queryConditions = currentSelectBoardId ? [{id:'1135447108158099461', value: currentSelectBoardId}]: null;
                 break
             case '2': 
                 boardId = currentSelectBoardId;
@@ -205,7 +205,7 @@ class BoardCommunication extends Component {
         const { dispatch } = this.props;
         const params = this.getParams();
         const { boardId, folderId } = params;
-        console.log('params......',params);
+        // console.log('params......',params);
 
         dispatch({
             type: getEffectOrReducerByName_8('getOnlyFileList'),
@@ -265,7 +265,7 @@ class BoardCommunication extends Component {
               search_term: currentSearchValue, // 搜索关键字
               search_type: '6', // 搜索类型 '6' 文件类型（目前这里固定'6'，按文件类型搜索）
               query_conditions: queryConditions ? JSON.stringify(queryConditions): null, // 原详细搜索附带条件
-              // page_size: 10,
+              page_size: 100,
               // page_number: 1,
             }
         });
@@ -278,10 +278,7 @@ class BoardCommunication extends Component {
             isSearchDetailOnfocusOrOnblur: value,
             currentSearchValue: searchValue,
         },()=>{
-            // if(searchValue !== ''){
-            //     this.searchCommunicationFilelist();
-            // }
-            
+            this.searchCommunicationFilelist();
         });
     }
 
@@ -297,7 +294,7 @@ class BoardCommunication extends Component {
 
     // 回到项目文件-全部文件展示状态
     goAllFileStatus = () => {
-        console.log('回到全部文件状态');
+        // console.log('回到全部文件状态');
         // bread_paths: [], // 面包屑路径
         // currentItemIayerData: [], // 当前层数据
         // currentItemLayerId: '', // 当前层级ID
@@ -1141,7 +1138,8 @@ class BoardCommunication extends Component {
             currentItemLayerId,
             isSearchDetailOnfocusOrOnblur,
             collapseActiveKeys,
-            currentFileschoiceTab
+            currentFileschoiceTab,
+            currentSearchValue
         } = this.state;
         const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
         const zommPictureComponentHeight = container_workbenchBoxContent ? container_workbenchBoxContent.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding
@@ -1480,6 +1478,7 @@ class BoardCommunication extends Component {
                     <CommunicationFirstScreenHeader
                         bread_paths={bread_paths}
                         currentSelectBoardId={currentSelectBoardId}
+                        currentSearchValue={currentSearchValue}
                         currentItemLayerId={currentItemLayerId}
                         isShowSearchOperationDetail={this.isShowSearchOperationDetail}
                         getThumbnailFilesData={this.getThumbnailFilesData}
