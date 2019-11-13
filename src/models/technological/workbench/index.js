@@ -213,6 +213,9 @@ export default modelExtend(technological, {
       const { calback, projectId } = payload
       let res = yield call(getCurrentSelectedProjectMembersList, { projectId })
       if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('添加成功', MESSAGE_DURATION_TIME)
+        }, 200)
         yield put({
           type: 'updateDatas',
           payload: {
