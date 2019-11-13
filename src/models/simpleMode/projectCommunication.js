@@ -14,9 +14,10 @@ export default {
         currentBoardDetail: undefined, // 当前板块项目详情
         communicationProjectListData: [], // 项目交流-项目文件目录数据
         communicationSubFolderData: [], // 当前目录下树结构数据
-        currentBoardId: '0', // 当前项目id
+        // currentBoardId: '0', // 当前项目id
         onlyFileList: [], // 文件列表（只有文件）
         onlyFileTableLoading: false, // 文件列表table loading
+        filesShowType: '0', // 缩略图呈现方式： 0 缩略图table呈现 1 缩略图平铺呈现
     },
   
     subscriptions: {

@@ -60,6 +60,7 @@ class BoardCommunication extends Component {
         currentItemIayerData: [], // 当前层数据
         currentItemLayerId: '', // 当前层级ID
         currentSelectBoardId: '', // 当前选择的项目ID
+        currentBorderId: '', // 当前border_id
         isSearchDetailOnfocusOrOnblur: false, // 搜索框聚焦显示当前搜索条件详情
         currentFileDataType: '0', // 当前文件数据类型 '0' 全部文件 '1' 项目下全部文件 '2' 文件夹下全部文件
         currentSearchValue: '', // 搜索框输入值
@@ -132,7 +133,10 @@ class BoardCommunication extends Component {
         const firstLayerData = boards_flies.filter(item=>item.id == currentItemLayerId);
         console.log('firstLayerData',firstLayerData);
         // firstLayerData[0].layerType = 'firstLayer';
-        this.setState({ bread_paths: firstLayerData });
+        this.setState({ 
+            bread_paths: firstLayerData,
+            currentBorderId: firstLayerData[0].folder_id,
+        });
     }
 
     // 改变当前文件夹tree层级-处理当前层【文件夹层面包屑路径】
@@ -148,6 +152,7 @@ class BoardCommunication extends Component {
             showFileListisOpenFileDetailModal: false, // 关闭圈屏组件
             previewFileModalVisibile: false, // 显示首屏展示组件（头部面包屑,右侧文件按列表）
             currentFileDataType: '2', // 当前文件数据所属层：0全部文件/1项目内文件/2文件夹内文件
+            currentBorderId: folder_id,
         },()=>{
             this.getThumbnailFilesData();
         });
@@ -222,40 +227,6 @@ class BoardCommunication extends Component {
         const { dispatch } = this.props;
         const params = this.getParams();
         const { boardId, folderId, queryConditions, currentSearchValue } = params;
-        // const {
-        //     currentFileDataType, // currentFileDataType 0 全部（包括项目） 1 项目全部（包括文件夹内） 2 文件Tree的文件夹内
-        //     currentSelectBoardId,
-        //     currentItemLayerId,
-        //     currentSearchValue,
-        // } = this.state;
-        // let boardId = '';
-        // let folderId = '';
-        // let queryConditions = "";
-        // switch(currentFileDataType){
-        // case '0':
-        //     boardId = '';
-        //     folderId = '';
-        //     queryConditions = "";
-        //     break
-        // case '1': 
-        //     boardId = currentSelectBoardId;
-        //     folderId = '';
-        //     queryConditions = currentSelectBoardId ? [{id:'1135447108158099464', value: currentSelectBoardId}]: null;
-        //     break
-        // case '2': 
-        //     boardId = currentSelectBoardId;
-        //     folderId = currentItemLayerId;
-        //     queryConditions = [
-        //         {id:'1135447108158099461', value: currentSelectBoardId},
-        //         {id:'1192646538984296448', value: currentItemLayerId},
-        //     ];
-        //     break
-        // default:
-        //     boardId = '';
-        //     folderId = '';
-        //     queryConditions = "";
-        //     break
-        // }
 
         dispatch({
             type: getEffectOrReducerByName_8('getSearchCommunicationFilelist'),
@@ -1139,7 +1110,9 @@ class BoardCommunication extends Component {
             isSearchDetailOnfocusOrOnblur,
             collapseActiveKeys,
             currentFileschoiceTab,
-            currentSearchValue
+            currentSearchValue,
+            currentFileDataType,
+            currentBorderId
         } = this.state;
         const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
         const zommPictureComponentHeight = container_workbenchBoxContent ? container_workbenchBoxContent.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding
@@ -1514,6 +1487,8 @@ class BoardCommunication extends Component {
                         isShowFileList={this.isShowFileList}
                         collapseActiveKeys={collapseActiveKeys}
                         setCollapseActiveKeys={this.setCollapseActiveKeys}
+                        currentItemLayerId={currentItemLayerId}
+                        currentFileDataType={currentFileDataType}
                         {...this.props}
                     />
                 }
@@ -1524,7 +1499,8 @@ class BoardCommunication extends Component {
                     <CommunicationThumbnailFiles
                         isVisibleFileList={isVisibleFileList}
                         currentSelectBoardId={currentSelectBoardId}
-                        current_folder_id={currentItemLayerId}
+                        currentItemLayerId={currentItemLayerId}
+                        current_folder_id={currentBorderId}
                         bread_paths={bread_paths}
                         isSearchDetailOnfocusOrOnblur={isSearchDetailOnfocusOrOnblur}
                         getThumbnailFilesData={this.getThumbnailFilesData}
@@ -1741,6 +1717,7 @@ function mapStateToProps({
         currentBoardId,
         communicationProjectListData,
         communicationSubFolderData,
+        rootDirectoryFolder_id,
     }
 }) {
     const modelObj = {
@@ -1768,6 +1745,7 @@ function mapStateToProps({
         communicationProjectListData,
         communicationSubFolderData,
         boards_flies,
+        rootDirectoryFolder_id
     }
 }
 export default connect(mapStateToProps)(BoardCommunication)

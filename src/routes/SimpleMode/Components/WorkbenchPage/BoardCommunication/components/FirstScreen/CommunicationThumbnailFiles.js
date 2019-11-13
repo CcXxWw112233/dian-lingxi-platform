@@ -4,6 +4,7 @@ import { setUploadHeaderBaseInfo, getSubfixName, setBoardIdStorage } from '@/uti
 import { REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE } from '@/globalset/js/constant';
 import Cookies from 'js-cookie';
 import ThumbnailFilesListShow from './ThumbnailFilesListShow';
+import ThumbnailFilesTilingShow from './ThumbnailFilesTilingShow';
 import defaultTypeImg from '@/assets/invite/user_default_avatar@2x.png';
 import { Upload, Icon, message } from 'antd';
 import styles from './CommunicationThumbnailFiles.less';
@@ -16,7 +17,7 @@ export default class CommunicationThumbnailFiles extends Component {
         this.state = {
             currentFileschoiceTab: 0, // "0 搜索全部文件 1 搜索子集文件
             // thumbnailFilesList: thumbnailFilesList, // 缩略图数据
-            filesShowType: 0, // 缩略图呈现方式： 0 缩略图table呈现 1 缩略图平铺呈现
+            // defaultFilesShowType: '0', // 缩略图呈现方式： 0 缩略图table呈现 1 缩略图平铺呈现
         }
     }
 
@@ -90,12 +91,12 @@ export default class CommunicationThumbnailFiles extends Component {
             name,
             file_resource_id,
             file_id,
-            id,
+            // id,
             board_id="",
             folder_id="",
             version_id
         } = data;
-        // const id = file_id;
+        const id = file_id;
         // const board_id = board_id || currentSelectBoardId;
         // const folder_id = folder_id || current_folder_id;
         const { dispatch } = this.props
@@ -185,6 +186,21 @@ export default class CommunicationThumbnailFiles extends Component {
 
     }
 
+    // 切换tab
+    changeShowTab = (tab) => {
+        // this.setState({ filesShowType: tab},()=>{
+        //     this.props.getThumbnailFilesData();
+        // });
+        const { dispatch } = this.props;
+        dispatch({
+            type: 'projectCommunication/updateDatas',
+            payload: {
+                filesShowType: tab,
+            }
+        })
+        this.props.getThumbnailFilesData();
+    }
+
     render(){
         const {
             isVisibleFileList,
@@ -192,9 +208,9 @@ export default class CommunicationThumbnailFiles extends Component {
             onlyFileTableLoading,
             isSearchDetailOnfocusOrOnblur,
             bread_paths,
-            currentFileschoiceTab
+            currentFileschoiceTab,
+            filesShowType
         } = this.props;
-        const { filesShowType } = this.state;
         const currentIayerFolderName = bread_paths && bread_paths.length && (bread_paths[bread_paths.length-1].board_name || bread_paths[bread_paths.length-1].folder_name);
         // console.log('bread_paths',bread_paths);
         return(
@@ -212,10 +228,17 @@ export default class CommunicationThumbnailFiles extends Component {
                         
                     </div>
                     <div className={styles.changeTypeOperation}>
-                        <div className={`${styles.listShow} ${filesShowType == 0 ? styles.currentFilesShowType : ''}`}>
+                        <div
+                            className={`${styles.listShow} ${filesShowType == '0' ? styles.currentFilesShowType : ''}`}
+                            onClick={()=>this.changeShowTab('0')}
+                        >
                             <Icon type="bars" />
                         </div>
-                        <div className={styles.tilingShow}>
+                        {/* <div className={styles.tilingShow}> */}
+                        <div
+                            className={`${styles.tilingShow} ${filesShowType == '1' ? styles.currentFilesShowType : ''}`}
+                            onClick={()=>this.changeShowTab('1')}
+                        >
                             <Icon type="appstore" />
                         </div>
                     </div>
@@ -250,13 +273,30 @@ export default class CommunicationThumbnailFiles extends Component {
                 
 
                 {/* 首屏-右侧缩略图列表 */}
-                <ThumbnailFilesListShow
+                {/* <ThumbnailFilesListShow
                     // thumbnailFilesList={thumbnailFilesList}
                     thumbnailFilesList={onlyFileList}
                     onlyFileTableLoading={onlyFileTableLoading}
                     isSearchDetailOnfocusOrOnblur={isSearchDetailOnfocusOrOnblur}
                     previewFile={this.previewFile}
-                />
+                /> */}
+
+                {
+                    filesShowType == '0' ? (
+                        <ThumbnailFilesListShow
+                            // thumbnailFilesList={thumbnailFilesList}
+                            thumbnailFilesList={onlyFileList}
+                            onlyFileTableLoading={onlyFileTableLoading}
+                            isSearchDetailOnfocusOrOnblur={isSearchDetailOnfocusOrOnblur}
+                            previewFile={this.previewFile}
+                        />
+                    ) : (
+                        <ThumbnailFilesTilingShow
+                            thumbnailFilesList={onlyFileList}
+                            previewFile={this.previewFile}
+                        />
+                    )
+                }
                 
             </div>
         )
@@ -266,11 +306,13 @@ export default class CommunicationThumbnailFiles extends Component {
 function mapStateToProps({
     projectCommunication:{
         onlyFileList,
-        onlyFileTableLoading
+        onlyFileTableLoading,
+        filesShowType
     }
 }) {
     return {
         onlyFileList,
-        onlyFileTableLoading
+        onlyFileTableLoading,
+        filesShowType
     }
 }
