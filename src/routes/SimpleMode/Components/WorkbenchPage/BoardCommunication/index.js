@@ -4,8 +4,12 @@ import indexStyles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import FileDetail from '@/routes/Technological/components/Workbench/CardContent/Modal/FileDetail/index'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/Workbench/CardContent/Modal/FileListRightBarFileDetailModal';
+import { getParent } from "./components/getCommunicationFileListFn";
 import CommunicationFileList from './components/CommunicationFileList';
 // import UploadTemporaryFile from './components/UploadTemporaryFile';
+import CommunicationFirstScreenHeader from './components/FirstScreen/CommunicationFirstScreenHeader';
+import CommunicationTreeList from './components/CommunicationTreeList';
+import CommunicationThumbnailFiles from './components/FirstScreen/CommunicationThumbnailFiles';
 // import FileDetailModal from '@/routes/Technological/components/Workbench/CardContent/Modal/FileDetailModal'
 import { Modal, Dropdown, Button, Select, Icon, Tree, Upload, message } from 'antd';
 import { REQUEST_DOMAIN_FILE } from "@/globalset/js/constant";
@@ -32,6 +36,7 @@ const getEffectOrReducerByName_4 = name => `workbenchTaskDetail/${name}`
 const getEffectOrReducerByName_5 = name => `workbenchFileDetail/${name}`
 const getEffectOrReducerByName_6 = name => `workbenchPublicDatas/${name}`
 const getEffectOrReducerByName_7 = name => `gantt/${name}`
+const getEffectOrReducerByName_8 = name => `projectCommunication/${name}`
 
 class BoardCommunication extends Component {
     state = {
@@ -48,8 +53,17 @@ class BoardCommunication extends Component {
         showFileSelectDropdown: false,
         // 左侧目录上传文件/选择文件是否打开圈图
         showFileListisOpenFileDetailModal: false,
-        // 左侧目录如果显示，则中间上传文件会新增className调整样式
-        isRightBarShowFileList: true,
+        collapseActiveKeys: [], // 折叠面板展示列keys
+        // 是否显示/隐藏文件列表，默认显示
+        isVisibleFileList: true,
+        bread_paths: [], // 面包屑路径
+        currentItemIayerData: [], // 当前层数据
+        currentItemLayerId: '', // 当前层级ID
+        currentSelectBoardId: '', // 当前选择的项目ID
+        isSearchDetailOnfocusOrOnblur: false, // 搜索框聚焦显示当前搜索条件详情
+        currentFileDataType: '0', // 当前文件数据类型 '0' 全部文件 '1' 项目下全部文件 '2' 文件夹下全部文件
+        currentSearchValue: '', // 搜索框输入值
+        currentFileschoiceTab: '0', // tab切换 "0 搜索全部文件 1 搜索子集文件
     };
 
     constructor(props) {
@@ -62,22 +76,250 @@ class BoardCommunication extends Component {
 
     componentDidMount() {
         this.queryCommunicationFileData();
+        this.getThumbnailFilesData();
     }
 
-    // 获取项目交流文件列表数据
+    // 获取项目交流项目文件列表数据'0'
     queryCommunicationFileData = () => {
         const { dispatch, gantt_board_id } = this.props;
+        const boardId = gantt_board_id == '0' ? '' : gantt_board_id
         dispatch({
           type: getEffectOrReducerByName_7('getGanttBoardsFiles'),
           payload: {
             // query_board_ids: content_filter_params.query_board_ids,
             // board_id: gantt_board_id == '0' ? '' : gantt_board_id
-            board_id: gantt_board_id == '0' ? '' : gantt_board_id,
+            board_id: boardId,
             query_board_ids: [],
           }
-        })
+        });
+        this.setState({ currentFileDataType: '0' });
     }
+
+    // 获取项目交流目录下项目数据'1'
+    getCommunicationFolderList = (boardId) => {
+        const { dispatch } = this.props;
+        if(boardId){
+            dispatch({
+                type: getEffectOrReducerByName_8('getFolderList'),
+                payload: {
+                    board_id: boardId,
+                }
+            });
+        }
+        this.setState({
+            showFileListisOpenFileDetailModal: false, // 关闭圈屏组件
+            previewFileModalVisibile: false, // 显示首屏展示组件（头部面包屑,右侧文件按列表）
+            currentFileDataType: '1', // 当前文件数据所属层：0全部文件/1项目内文件/2文件夹内文件
+        });
+        this.setcurrentItemLayerId(boardId);
+        
+    }
+
+    setcurrentItemLayerId = (id) => { // 设置当前所在的项目/层级ID
+        this.setState({
+            currentSelectBoardId: id,
+            currentItemLayerId: id,
+        },()=>{
+            this.changeFirstBreadPaths(); // 改变第一层面包屑路径
+            this.getThumbnailFilesData(); // 更新右侧缩略图列表
+        });
+    }
+
+    changeFirstBreadPaths = () => { // 改变第一层（项目层）面包屑路径
+        // console.log('点击了当前层');
+        const { currentItemLayerId } = this.state;
+        const { boards_flies } = this.props;
+        const firstLayerData = boards_flies.filter(item=>item.id == currentItemLayerId);
+        console.log('firstLayerData',firstLayerData);
+        // firstLayerData[0].layerType = 'firstLayer';
+        this.setState({ bread_paths: firstLayerData });
+    }
+
+    // 改变当前文件夹tree层级-处理当前层【文件夹层面包屑路径】
+    onSelectTree = (currentfloor,first_item) => {
+        const { communicationSubFolderData } = this.props;
+        const { child_data = [] } = communicationSubFolderData;
+        const { folder_id, parent_id } = currentfloor;
+        let newLevel = getParent(child_data, folder_id);
+        newLevel.unshift(first_item);
+        this.setState({
+            bread_paths: newLevel,
+            currentItemLayerId: folder_id,
+            showFileListisOpenFileDetailModal: false, // 关闭圈屏组件
+            previewFileModalVisibile: false, // 显示首屏展示组件（头部面包屑,右侧文件按列表）
+            currentFileDataType: '2', // 当前文件数据所属层：0全部文件/1项目内文件/2文件夹内文件
+        },()=>{
+            this.getThumbnailFilesData();
+        });
+        
+    }
+
+    // 处理传值
+    getParams = () => {
+        const {
+            currentFileDataType, // currentFileDataType 0 全部（包括项目） 1 项目全部（包括文件夹内） 2 文件Tree的文件夹内
+            currentSelectBoardId,
+            currentItemLayerId,
+            currentSearchValue, // 搜索关键字
+        } = this.state;
+        let boardId = '';
+        let folderId = '';
+        let queryConditions = "";
+        switch(currentFileDataType){
+            case '0':
+                boardId = '';
+                folderId = '';
+                queryConditions = "";
+                break
+            case '1': 
+                boardId = currentSelectBoardId;
+                folderId = '';
+                queryConditions = currentSelectBoardId ? [{id:'1135447108158099464', value: currentSelectBoardId}]: null;
+                break
+            case '2': 
+                boardId = currentSelectBoardId;
+                folderId = currentItemLayerId;
+                queryConditions = [
+                    {id:'1135447108158099461', value: currentSelectBoardId},
+                    {id:'1192646538984296448', value: currentItemLayerId},
+                ];
+                break
+            default:
+                boardId = '';
+                folderId = '';
+                queryConditions = "";
+                break
+        }
+        const params = {
+            boardId,
+            folderId,
+            queryConditions,
+            currentSearchValue,
+        }
+        return params;
+    }
+
+    // 获取右侧缩略图展示列表显示
+    getThumbnailFilesData = () => {
+        // console.log('获取右侧缩略图显示');
+        const { dispatch } = this.props;
+        const params = this.getParams();
+        const { boardId, folderId } = params;
+        console.log('params......',params);
+
+        dispatch({
+            type: getEffectOrReducerByName_8('getOnlyFileList'),
+            payload: {
+              board_id: boardId,
+              folder_id: folderId,
+            }
+        });
+    }
+
+    // 搜索
+    searchCommunicationFilelist = () => {
+        console.log('搜索');
+        const { dispatch } = this.props;
+        const params = this.getParams();
+        const { boardId, folderId, queryConditions, currentSearchValue } = params;
+        // const {
+        //     currentFileDataType, // currentFileDataType 0 全部（包括项目） 1 项目全部（包括文件夹内） 2 文件Tree的文件夹内
+        //     currentSelectBoardId,
+        //     currentItemLayerId,
+        //     currentSearchValue,
+        // } = this.state;
+        // let boardId = '';
+        // let folderId = '';
+        // let queryConditions = "";
+        // switch(currentFileDataType){
+        // case '0':
+        //     boardId = '';
+        //     folderId = '';
+        //     queryConditions = "";
+        //     break
+        // case '1': 
+        //     boardId = currentSelectBoardId;
+        //     folderId = '';
+        //     queryConditions = currentSelectBoardId ? [{id:'1135447108158099464', value: currentSelectBoardId}]: null;
+        //     break
+        // case '2': 
+        //     boardId = currentSelectBoardId;
+        //     folderId = currentItemLayerId;
+        //     queryConditions = [
+        //         {id:'1135447108158099461', value: currentSelectBoardId},
+        //         {id:'1192646538984296448', value: currentItemLayerId},
+        //     ];
+        //     break
+        // default:
+        //     boardId = '';
+        //     folderId = '';
+        //     queryConditions = "";
+        //     break
+        // }
+
+        dispatch({
+            type: getEffectOrReducerByName_8('getSearchCommunicationFilelist'),
+            payload: {
+              board_id: boardId,
+              folder_id: folderId,
+              search_term: currentSearchValue, // 搜索关键字
+              search_type: '6', // 搜索类型 '6' 文件类型（目前这里固定'6'，按文件类型搜索）
+              query_conditions: queryConditions ? JSON.stringify(queryConditions): null, // 原详细搜索附带条件
+              // page_size: 10,
+              // page_number: 1,
+            }
+        });
+    }
+
+
+    // 触发搜索框，是否选择搜索详情
+    isShowSearchOperationDetail = (value, searchValue) => {
+        this.setState({
+            isSearchDetailOnfocusOrOnblur: value,
+            currentSearchValue: searchValue,
+        },()=>{
+            // if(searchValue !== ''){
+            //     this.searchCommunicationFilelist();
+            // }
+            
+        });
+    }
+
     
+
+    // 更新数据
+    updataApiData = (type) => {
+        // this.queryCommunicationFileData();
+        // this.getCommunicationFolderList();
+        // this.getThumbnailFilesData(type);
+        this.getThumbnailFilesData();
+    }
+
+    // 回到项目文件-全部文件展示状态
+    goAllFileStatus = () => {
+        console.log('回到全部文件状态');
+        // bread_paths: [], // 面包屑路径
+        // currentItemIayerData: [], // 当前层数据
+        // currentItemLayerId: '', // 当前层级ID
+        // currentSelectBoardId: '', // 当前选择的项目ID
+        // isSearchDetailOnfocusOrOnblur: false, // 搜索框聚焦显示当前搜索条件详情
+        // currentFileDataType: '0', // 当前文件数据类型 '0' 全部文件 '1' 项目下全部文件 '2' 文件夹下全部文件
+        // currentSearchValue: '', // 搜索框输入值
+        
+        // 待处理 
+
+        // this.setState({
+        //     bread_paths: [],
+        //     currentItemIayerData: [],
+        //     currentItemLayerId: '',
+        //     currentSelectBoardId: '',
+        //     currentFileDataType: '0',
+        //     currentSearchValue: '',
+        // },()=>{
+        //     this.queryCommunicationFileData();
+        //     this.getThumbnailFilesData();
+        // });
+    }
 
     initModalSelect = () => {
         const { dispatch } = this.props
@@ -97,7 +339,6 @@ class BoardCommunication extends Component {
         const { dispatch } = this.props;
         const { currentBoardDetail = {} } = this.props;
         const { currentfile = {} } = this.state;
-        //console.log(currentfile);
         const { fileId, versionId, fileResourceId, folderId, fileName } = currentfile;
         const id = fileId;
         const { board_id } = currentBoardDetail;
@@ -300,7 +541,6 @@ class BoardCommunication extends Component {
     onBeforeUpload = (file, fileList) => {
         if (fileList.length > 1) {
             message.error("项目交流一次只能上传一个文件");
-            //console.log(fileList);
             return false;
 
         }
@@ -361,7 +601,6 @@ class BoardCommunication extends Component {
     handleUpload = () => {
         const { awaitUploadFile, currentfile = {} } = this.state;
         const { currentBoardDetail = {} } = this.props;
-        //console.log(currentfile);
         const formData = new FormData();
         formData.append("file", awaitUploadFile);
         this.setState({
@@ -830,12 +1069,10 @@ class BoardCommunication extends Component {
         this.initModalSelect()
     };
 
-    // 左侧目录如果显示，则中间上传文件会新增className调整样式,用isRightBarShowFileList控制
-    changeIsRightBarShowFileList = (visible)=>{
-        // 这里根据子组件的state 控制
-        this.setState({ isRightBarShowFileList: !visible });
+    // 显示/隐藏项目文件列表
+    isShowFileList = () => {
+        this.setState({ isVisibleFileList: !this.state.isVisibleFileList});
     }
-
 
     // 是否需要更新文件列表, 当访问控制设置时
     whetherUpdateFolderListData = (folder_id) => {
@@ -848,21 +1085,64 @@ class BoardCommunication extends Component {
     // 
 
     // 显示圈图组件
-    showUpdatedFileDetail=()=>{
+    showUpdatedFileDetail = () => {
         // this.setState({ previewFileModalVisibile: true});
-        this.setState({ showFileListisOpenFileDetailModal: true });
+        this.setState({
+            isVisibleFileList: false,
+            showFileListisOpenFileDetailModal: true
+        });
+        this.setPreviewFileModalVisibile();
     }
 
     // 关闭圈图组件
-    hideUpdatedFileDetail=()=>{
-        this.setState({ showFileListisOpenFileDetailModal: false });
+    hideUpdatedFileDetail = () => {
+        this.setState({
+            isVisibleFileList: true,
+            showFileListisOpenFileDetailModal: false,
+        });
+        this.setPreviewFileModalVisibile();
+    }
+
+    // 设置折叠面板keys
+    setCollapseActiveKeys=(keys)=>{
+        this.setState({ collapseActiveKeys: keys },()=>{
+            this.getCommunicationFolderList(keys); // 获取项目交流目录下子集数据
+        });
+    }
+
+    // 改变搜索状态tab-全局搜索/局部搜索
+    changeChooseType = (type) => {
+        // const { bread_paths } = this.state;
+        // const currentIayerData = bread_paths[bread_paths.length-1];
+        // console.log('currentIayerData', currentIayerData);
+        this.setState({currentFileschoiceTab: type});
     }
 
 
     render() {
-        const { currentBoardDetail = {}, dispatch, model = {}, modal, simplemodeCurrentProject } = this.props;
-        const {selectBoardFileModalVisible, showFileListisOpenFileDetailModal } = this.state;
-        const { currentfile = {}, is_selectFolder, dragEnterCaptureFlag, showFileSelectDropdown, isRightBarShowFileList } = this.state;
+        const {
+            currentBoardDetail = {},
+            dispatch, model = {},
+            modal,
+            simplemodeCurrentProject,
+            communicationProjectListData,
+            communicationSubFolderData,
+        } = this.props;
+        const {
+            currentfile = {},
+            is_selectFolder,
+            dragEnterCaptureFlag,
+            showFileSelectDropdown,
+            selectBoardFileModalVisible,
+            showFileListisOpenFileDetailModal,
+            isVisibleFileList,
+            bread_paths,
+            currentSelectBoardId,
+            currentItemLayerId,
+            isSearchDetailOnfocusOrOnblur,
+            collapseActiveKeys,
+            currentFileschoiceTab
+        } = this.state;
         const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
         const zommPictureComponentHeight = container_workbenchBoxContent ? container_workbenchBoxContent.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding
         // const zommPictureComponentWidth = container_workbenchBoxContent ? container_workbenchBoxContent.offsetWidth - 419 - 50 - 5 : 600; //60为文件内容组件评论等区域宽带   50为容器padding  
@@ -1191,15 +1471,88 @@ class BoardCommunication extends Component {
                 onDragOverCapture={this.onDragEnterCapture.bind(this)}
                 onDragLeaveCapture={this.onDragLeaveCapture.bind(this)}
                 onDragEndCapture={this.onDragLeaveCapture.bind(this)}>
-                {/* 项目交流列表 */}
-                <CommunicationFileList
+
+            {/* 2019.11.04 start */}
+
+                {/* 首屏-文件路径面包屑/搜索 */}
+                {
+                    !this.state.previewFileModalVisibile &&
+                    <CommunicationFirstScreenHeader
+                        bread_paths={bread_paths}
+                        currentSelectBoardId={currentSelectBoardId}
+                        currentItemLayerId={currentItemLayerId}
+                        isShowSearchOperationDetail={this.isShowSearchOperationDetail}
+                        getThumbnailFilesData={this.getThumbnailFilesData}
+                        searchCommunicationFilelist={this.searchCommunicationFilelist}
+                        goAllFileStatus={this.goAllFileStatus}
+                        // setBreadPaths={this.setBreadPaths}
+                        {...this.props}
+                    />
+                }
+                
+                
+                {/* 控制列表是否显示的控制按钮 */}
+                <div
+                    className={indexStyles.operationBtn}
+                    style={{ left: isVisibleFileList ? '299px' : '0'}}
+                    onClick={this.isShowFileList}
+                >
+                    <Icon type={isVisibleFileList ? 'left' : 'right'} />
+                </div>
+
+                {/* 首屏-项目交流Tree目录列表 */}
+                {
+                    isVisibleFileList &&
+                    <CommunicationTreeList
+                        // communicationProjectListData={communicationProjectListData}
+                        // communicationSubFolderData={communicationSubFolderData}
+                        onSelectTree={this.onSelectTree}
+                        getCommunicationFolderList={this.getCommunicationFolderList}
+                        queryCommunicationFileData={this.queryCommunicationFileData}
+                        showUpdatedFileDetail={this.showUpdatedFileDetail}
+                        hideUpdatedFileDetail={this.hideUpdatedFileDetail}
+                        isVisibleFileList={isVisibleFileList}
+                        isShowFileList={this.isShowFileList}
+                        collapseActiveKeys={collapseActiveKeys}
+                        setCollapseActiveKeys={this.setCollapseActiveKeys}
+                        {...this.props}
+                    />
+                }
+
+                {/* 首屏-右侧展示文件区域 */}
+                {
+                    !this.state.previewFileModalVisibile &&
+                    <CommunicationThumbnailFiles
+                        isVisibleFileList={isVisibleFileList}
+                        currentSelectBoardId={currentSelectBoardId}
+                        current_folder_id={currentItemLayerId}
+                        bread_paths={bread_paths}
+                        isSearchDetailOnfocusOrOnblur={isSearchDetailOnfocusOrOnblur}
+                        getThumbnailFilesData={this.getThumbnailFilesData}
+                        updataApiData={this.updataApiData}
+                        showUpdatedFileDetail={this.showUpdatedFileDetail}
+                        previewFile={this.previewFile}
+                        setPreviewFileModalVisibile={this.showUpdatedFileDetail}
+                        goAllFileStatus={this.goAllFileStatus}
+                        currentFileschoiceTab={currentFileschoiceTab}
+                        changeChooseType={this.changeChooseType}
+                        {...this.props}
+                    />
+                }
+
+            {/* 2019.11.04 start */}
+
+
+                {/* 项目交流列表(1025版本) */}
+                {/* <CommunicationFileList
                     queryCommunicationFileData={this.queryCommunicationFileData}
                     showUpdatedFileDetail={this.showUpdatedFileDetail}
                     // setPreviewFileModalVisibile={this.hideUpdatedFileDetail}
                     hideUpdatedFileDetail={this.hideUpdatedFileDetail}
-                    changeIsRightBarShowFileList={this.changeIsRightBarShowFileList}
+                    isVisibleFileList={isVisibleFileList}
+                    isShowFileList={this.isShowFileList}
                     {...this.props}
-                />
+                /> */}
 
 
                 {/* 左侧列表点击文件圈图显示 */}
@@ -1220,8 +1573,8 @@ class BoardCommunication extends Component {
                     )
                 }
 
-                {/* 右侧上传文件的圈图详情 */}
-                {
+                {/* 右侧上传文件的圈图详情（1025前版本功能） */}
+                {/* {
                     this.state.previewFileModalVisibile && (
                         <FileDetail
                             {...this.props}
@@ -1234,13 +1587,13 @@ class BoardCommunication extends Component {
                             componentHeight={zommPictureComponentHeight}
                             componentWidth={zommPictureComponentWidth} />
                     )
-                }
+                } */}
 
-                {/* 右侧上传/临时文件 */}
+                {/* 右侧上传/临时文件（暂时保留，后期版本可能会做） */}
                 {/* {
                     !this.state.previewFileModalVisibile && (
                         <UploadTemporaryFile
-                            isRightBarShowFileList={isRightBarShowFileList}
+                            isVisibleFileList={isVisibleFileList}
                             // 
                             getDraggerProps={this.getDraggerProps}
                             onBeforeUpload={this.onBeforeUpload}
@@ -1253,9 +1606,10 @@ class BoardCommunication extends Component {
                 } */}
                 
 
-                {
+                {/* 拖拽上传文件（1025前版本） */}
+                {/* {
                     !this.state.previewFileModalVisibile && (
-                        <div className={`${indexStyles.draggerContainerStyle} ${isRightBarShowFileList ? indexStyles.changeDraggerWidth : null}`}>
+                        <div className={`${indexStyles.draggerContainerStyle} ${isVisibleFileList ? indexStyles.changeDraggerWidth : null}`}>
                             <Dragger multiple={false} {...this.getDraggerProps()} beforeUpload={this.onBeforeUpload}>
                                 <div className={`${indexStyles.indexCoverWapper} ${dragEnterCaptureFlag ? indexStyles.draging : ''}`}>
 
@@ -1272,7 +1626,7 @@ class BoardCommunication extends Component {
                                                     </div>
                                                     <div className={indexStyles.descriptionWapper}>
                                                         <div className={indexStyles.linkTitle}>
-                                                            {/* // 选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或  // */}
+                                                            // 选择 <a className={indexStyles.alink} onClick={this.selectBoardFile}>项目文件</a> 或  //
                                                             <a className={indexStyles.alink}>点击上传</a> 文件</div>
                                                         <div className={indexStyles.detailDescription}>选择或上传图片格式文件、PDF格式文件即可开启圈点交流</div>
                                                     </div>
@@ -1282,7 +1636,7 @@ class BoardCommunication extends Component {
                                 </div>
                             </Dragger>
                         </div>
-                    )}
+                    )} */}
 
 
                 <Modal
@@ -1379,10 +1733,16 @@ function mapStateToProps({
     workbenchPublicDatas,
     gantt: {
         datas: {
-            gantt_board_id
+            gantt_board_id,
+            boards_flies = []
         }
     },
     gantt,
+    projectCommunication:{
+        currentBoardId,
+        communicationProjectListData,
+        communicationSubFolderData,
+    }
 }) {
     const modelObj = {
         datas: { 
@@ -1405,6 +1765,10 @@ function mapStateToProps({
         simpleBoardCommunication,
         simplemodeCurrentProject,
         gantt_board_id,
+        currentBoardId,
+        communicationProjectListData,
+        communicationSubFolderData,
+        boards_flies,
     }
 }
 export default connect(mapStateToProps)(BoardCommunication)
