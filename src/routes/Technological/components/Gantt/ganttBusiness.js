@@ -150,10 +150,10 @@ const handleNewsItem = (val) => {
     return gold_data
 }
 // 文件模块是否存在未读数
-export const fileModuleIsHasUnRead = ({ im_all_latest_unread_messages = [], wil_handle_types = [] }) => {
+export const fileModuleIsHasUnRead = ({ board_id, im_all_latest_unread_messages = [], wil_handle_types = [] }) => {
     let count = 0
     for (let val of im_all_latest_unread_messages) {
-        if (wil_handle_types.indexOf(val.action) != -1) {
+        if (val.action == 'board.file.upload' || val.action == 'board.file.version.upload') {
             count++
         }
     }
@@ -189,7 +189,7 @@ export const fileItemIsHasUnRead = ({ relaDataId, im_all_latest_unread_messages 
 // 某一项文件夹拥有未读数, relaDataId: 当前文件夹id
 export const folderItemHasUnReadNo = ({ type, relaDataId, im_all_latest_unread_messages = [], wil_handle_types = [] }) => {
     // 递归查询父级id最终push到一个数组，然后在数组下检索传递进来的relaDataId，如果存在就是存在未读
-    if (!im_all_latest_unread_messages.length) {
+    if (!im_all_latest_unread_messages.length || typeof im_all_latest_unread_messages) {
         return 0
     }
     const arr = []
@@ -204,9 +204,9 @@ export const folderItemHasUnReadNo = ({ type, relaDataId, im_all_latest_unread_m
             folderPathRecursion({ parent_folder: parent_folder_ })
         }
     }
-    if(type == '2') { //1文件2文件夹
+    if (type == '2') { //1文件2文件夹
         const file_has_unread = !!im_all_latest_unread_messages.find(item => relaDataId == item.relaDataId)
-        if(file_has_unread) {
+        if (file_has_unread) {
             return 1
         }
     }
@@ -242,9 +242,12 @@ export const currentFolderJudegeFileUpload = ({ folder_id, im_all_latest_unread_
     if (!latest_item) {
         return false
     }
-    const { content: { folder_path: { id } }, action } = handleNewsItem(latest_item)
-    if (action == 'board.file.upload' && id == folder_id) {
-        return true
+    const { action } = handleNewsItem(latest_item)
+    if (action == 'board.file.upload') {
+        const { content: { folder_path: { id } }, } = handleNewsItem(latest_item)
+        if (id == folder_id) {
+            return true
+        }
     }
     return false
 }

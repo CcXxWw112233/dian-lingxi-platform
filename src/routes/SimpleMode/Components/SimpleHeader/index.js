@@ -125,7 +125,7 @@ class SimpleHeader extends Component {
                         message_item: data
                     }
                 })
-                console.log('ssss_最新未读', data)
+                // console.log('ssss_最新未读', data)
             })
             Im.on('readImMsg', (data) => { //最新已读消息推送过来
                 dispatch({

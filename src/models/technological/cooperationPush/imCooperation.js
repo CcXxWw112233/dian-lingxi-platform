@@ -17,7 +17,8 @@ export default {
             'board.card.create',
             'board.card.update.file.add',
             'board.file.upload',
-            'board.file.version.upload'
+            'board.file.version.upload',
+            'board.card.update.finish'
         ]
     },
     subscriptions: {
@@ -54,7 +55,7 @@ export default {
                     im_all_latest_unread_messages
                 }
             })
-            debugger
+            // debugger
             // 告知im消息已读
             if (!!!idServer) {
                 return
@@ -72,7 +73,7 @@ export default {
             console.log('ssss_已读列表_model', messages)
             let im_all_latest_unread_messages = yield select(getModelSelectState('imCooperation', 'im_all_latest_unread_messages'))
             im_all_latest_unread_messages = im_all_latest_unread_messages.filter(item => {
-                if (messages.findIndex(item2 => item2.idServer == item.idServer) == -1) { //传递进来的已读列表不包含该条未读消息
+                if (messages.findIndex((item2 = {}) => item2.idServer == item.idServer) == -1) { //传递进来的已读列表不包含该条未读消息
                     return item
                 }
             })
@@ -82,13 +83,14 @@ export default {
                     im_all_latest_unread_messages
                 }
             })
-            const reads = im_all_latest_unread_messages.filter(item => {
-                if (messages.findIndex(item2 => item2.idServer == item.idServer) != -1) { //传递进来的已读列表不包含该条未读消息
-                    return { idServer: item.idServer, target: item.idServer }
+            const arr = im_all_latest_unread_messages.filter(item => {
+                if (messages.findIndex((item2 = {}) => item2.idServer == item.idServer) != -1) { //传递进来的已读列表不包含该条未读消息
+                    return item
                 }
             })
+            const reads = arr.map(item => ({ idServer: item.idServer, target: item.target }))
             yield put({
-                type: 'imMessageToRead',
+                type: 'imMessageToRead',  //sad
                 payload: {
                     reads
                 }
@@ -111,16 +113,36 @@ export default {
                     messages: arr
                 }
             })
+            // yield put({
+            //     type: 'handelGanttCardCreate',
+            //     payload: {
+            //         message_item
+            //     }
+            // })
         },
         * imMessageToRead({ payload }, { call, put }) { //im的某一条消息设置已读
             const { idServer, target, reads = [] } = payload
-            debugger
+            console.log('sssss_read', reads)
+            // debugger
             if (Im) {
-                const params = reads || { idServer, target }
+                const params = idServer ? { idServer, target } : reads
                 Im.fireEvent('readMsg', params)
             }
         },
+        // 处理甘特图
+        * handelGanttCardCreate({ payload }, { call, put }) { //im的某一条消息设置已读
+            const { message_item = {} } = payload
+            const { content_data, action } = message_item
+            const contentJson = JSON.parse(content_data) || {}
+            const { data = {} } = contentJson
+            const { d = "{}" } = data
+            const gold_data = JSON.parse(d) || {}
+            console.log('sssss_gold_data', gold_data)
+            if (action == 'board.card.create') {
 
+            }
+            debugger
+        },
     },
 
     reducers: {
