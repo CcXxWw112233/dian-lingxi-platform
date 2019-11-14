@@ -74,6 +74,17 @@ export async function fileDownload(params) {
   });
 }
 
+// 保存为新版本
+export async function saveAsNewVersion(data) {
+  // debugger
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/save_as/new_version`,
+    method: 'POST',
+    // headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, data.id),
+    data,
+  });
+}
+
 //文件预览
 export async function filePreview(params) {
   return request({

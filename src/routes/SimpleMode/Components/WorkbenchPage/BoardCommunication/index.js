@@ -1069,6 +1069,7 @@ class BoardCommunication extends Component {
             showFileListisOpenFileDetailModal: false,
         });
         this.setPreviewFileModalVisibile();
+        this.getThumbnailFilesData();
     }
 
     // 设置折叠面板keys

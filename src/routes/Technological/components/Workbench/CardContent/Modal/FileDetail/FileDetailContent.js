@@ -402,6 +402,42 @@ class FileDetailContent extends React.Component {
       this.props.fileDownload({ ids: filePreviewCurrentId })
     }
   }
+
+  // 保存为新版本
+  saveAsNewVersion=({ filePreviewCurrentId, pdfDownLoadSrc })=>{
+    console.log('filePreviewCurrentId',filePreviewCurrentId);
+    console.log('pdfDownLoadSrc',pdfDownLoadSrc);
+    // const { datas: { currentPreviewFileData: { id, file_id, board_id, } } } = this.props.model
+    const { datas = {} } = this.props.model;
+    const { currentPreviewFileData = {} } = datas
+    const { id } = currentPreviewFileData;
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'workbenchFileDetail/saveAsNewVersion',
+      payload: {
+        id,
+      }
+    })
+    // let res = dispatch({
+    //   type: 'workbenchFileDetail/saveAsNewVersion',
+    //   payload: {
+    //     id,
+    //   }
+    // })
+    // res.then(data => {
+    //   console.log('data...',data)
+    //   // const { fileId, fileName } = data;
+    //   // const list = [data];
+    //   // const file_id = fileId;
+    //   // const file_name = fileName;
+    //   // const e = {
+    //   //   key: '1'
+    //   // }
+    //   // this.getVersionItemMenuClick({ list, file_id, file_name }, e);
+    // })
+  }
+
+
   //item操作
   operationMenuClick(data, e) {
     const { file_id, type, file_resource_id } = data
@@ -1355,6 +1391,7 @@ class FileDetailContent extends React.Component {
         }
       },
     };
+
     const operationMenu = (data) => {
       return (
         <Menu onClick={this.operationMenuClick.bind(this, data)}>
@@ -1369,6 +1406,20 @@ class FileDetailContent extends React.Component {
           {/*{checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE) && (*/}
           {/*<Menu.Item key="5" >移到回收站</Menu.Item>*/}
           {/*)}*/}
+        </Menu>
+      )
+    }
+
+    const saveAsMenu = (data) => {
+      return (
+        // <Menu onClick={this.operationMenuClick.bind(this, data)}>
+        <Menu>
+          <Menu.Item key="1" onClick={this.fileDownload.bind(this, { filePreviewCurrentId, filePreviewCurrentFileId, pdfDownLoadSrc })}>
+            下载到本地
+          </Menu.Item>
+          <Menu.Item key="2" onClick={()=>this.saveAsNewVersion({ filePreviewCurrentId, filePreviewCurrentFileId, pdfDownLoadSrc })}>
+            保存为新版本
+          </Menu.Item>
         </Menu>
       )
     }
@@ -1425,9 +1476,15 @@ class FileDetailContent extends React.Component {
                   <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
                 )
               }
-              <Button style={{ height: 24, marginLeft: 14 }} onClick={this.fileDownload.bind(this, { filePreviewCurrentId, filePreviewCurrentFileId, pdfDownLoadSrc })}>
+              <Dropdown overlay={saveAsMenu}>
+                <Button style={{ height: 24, marginLeft: 14 }} >
+                  <span className={`${globalStyles.authTheme} ${indexStyles.right__shareIndicator_icon}`}>&#xe6dd;</span>
+                   另存为
+                </Button>
+              </Dropdown>
+              {/* <Button style={{ height: 24, marginLeft: 14 }} onClick={this.fileDownload.bind(this, { filePreviewCurrentId, filePreviewCurrentFileId, pdfDownLoadSrc })}>
                 <Icon type="download" />下载
-              </Button>
+              </Button> */}
             </div>
             <span style={{ marginLeft: '10px' }}></span>
             {/* <div style={{position: 'relative', display: 'flex'}}> */}
