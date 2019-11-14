@@ -12,6 +12,19 @@
     line-height  : 32px;
     cursor       : pointer;
     z-index      : 2;
+    .has_no_read{
+        background: #F5222D;
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        color: #ffffff;
+        font-size: 12px;
+        border-radius: 20px;
+        text-align: center;
+        line-height: 18px;
+        right: -10px;
+        top: -10px;
+    }
 }
 .show_file_button_show {
     animation: button_show 300ms ease;
@@ -35,6 +48,14 @@
     overflow     : hidden;
     box-sizing: border-box;
     padding: 0 18px 0 18px;
+    .all_set_read {
+        margin-top: 18px;
+        cursor: pointer;
+        width: 100px;
+    }
+   .all_set_read:hover {
+        color: #1890FF;
+   }
 }
 
 
