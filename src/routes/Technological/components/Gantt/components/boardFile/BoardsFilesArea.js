@@ -151,6 +151,23 @@ export default class BoardsFilesArea extends Component {
         return fileDetailModalDatas
     }
 
+    setBoardFileMessagesRead = () => {
+        const { dispatch } = this.props
+        const { im_all_latest_unread_messages = [] } = this.props
+        const arr = im_all_latest_unread_messages.filter(item => {
+            if (item.action == 'board.file.upload' || item.action == 'board.file.version.upload') {
+                return item
+            }
+        })
+        const reads = arr.map(item => (item.idServer))
+        console.log('ssss_全部设置已读', reads)
+        dispatch({
+            type: 'imCooperation/listenImLatestAreadyReadMessages',
+            payload: {
+                messages: reads
+            }
+        })
+    }
     render() {
         const { is_show_board_file_area, boards_flies = [] } = this.props
 
@@ -159,6 +176,7 @@ export default class BoardsFilesArea extends Component {
             ${is_show_board_file_area == '1' && styles.boards_files_area_show}
             ${is_show_board_file_area == '2' && styles.boards_files_area_hide}
             `}>
+                <div onClick={this.setBoardFileMessagesRead} className={styles.all_set_read}>全部标为已读</div>
                 <div>
                     {
                         boards_flies.map((item, key) => {
@@ -186,12 +204,15 @@ export default class BoardsFilesArea extends Component {
 }
 function mapStateToProps({
     gantt: { datas: { is_show_board_file_area, boards_flies = [] } },
+    imCooperation: {
+        im_all_latest_unread_messages = [], wil_handle_types = []
+    },
     workbenchTaskDetail, workbenchFileDetail, workbenchDetailProcess, workbenchPublicDatas, publicTaskDetailModal
 }) {
     const modelObj = {
         datas: { ...workbenchFileDetail['datas'], ...workbenchPublicDatas['datas'], ...publicTaskDetailModal }
     }
-    return { is_show_board_file_area, boards_flies, model: modelObj }
+    return { is_show_board_file_area, boards_flies, model: modelObj, im_all_latest_unread_messages }
 }
 
 

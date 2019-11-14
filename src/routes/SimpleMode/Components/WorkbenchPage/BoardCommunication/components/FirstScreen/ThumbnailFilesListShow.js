@@ -84,7 +84,7 @@ export default class ThumbnailFilesListShow extends Component {
     // }
 
     render(){
-        const { thumbnailFilesList=[], onlyFileTableLoading,isSearchDetailOnfocusOrOnblur } = this.props;
+        const { thumbnailFilesList=[], onlyFileTableLoading, isSearchDetailOnfocusOrOnblur } = this.props;
         const { columns} = this.state;
         // console.log('isSearchDetailOnfocusOrOnblur',isSearchDetailOnfocusOrOnblur);
         const isShow = isSearchDetailOnfocusOrOnblur;
