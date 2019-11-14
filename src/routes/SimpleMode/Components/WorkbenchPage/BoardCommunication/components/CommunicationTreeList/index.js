@@ -152,7 +152,7 @@ export default class CommunicationTreeList extends Component{
                                                 isPaymentOrgUser(org_id) && 
                                                 <Panel header={this.showHeader(item, isShowCompanyName)} key={`${item.id}`} onClick={()=>this.panelOnClick(item)}>
                                                     {
-                                                        child_data && (
+                                                        child_data && child_data.length ? (
                                                             <DirectoryTree
                                                                 multiple
                                                                 defaultExpandAll
@@ -165,7 +165,7 @@ export default class CommunicationTreeList extends Component{
                                                             >
                                                                 { this.renderTreeNodes(child_data) }
                                                             </DirectoryTree>
-                                                        )
+                                                        ): ''
                                                     }
                                                     
                                                 </Panel>
