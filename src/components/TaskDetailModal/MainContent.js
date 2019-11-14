@@ -8,7 +8,7 @@ import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner
 import InformRemind from '@/components/InformRemind'
 import { timestampToTime, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal, isSamDay } from '@/utils/util'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_EDIT
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_EDIT,PROJECT_FILES_FILE_INTERVIEW
 } from "@/globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { addTaskExecutor, removeTaskExecutor, deleteTaskFile, getBoardTagList } from '../../services/technological/task'
@@ -98,7 +98,9 @@ export default class MainContent extends Component {
       payload: {
         id: card_id,
         calback: function(data) {
-          that.getProjectFolderList(data.board_id)
+          if (checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW, data.board_id)) {
+            that.getProjectFolderList(data.board_id)
+          }
           that.getMilestone(data.board_id)
           that.filterCurrentExistenceField(data)// 初始化获取字段信息
         }
