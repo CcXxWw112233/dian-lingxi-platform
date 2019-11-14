@@ -22,12 +22,12 @@ class SimpleHeader extends Component {
     }
 
     openOrCloseImChatModal = (val) => {
-        console.log(val)
+        // console.log(val)
         const { dispatch, chatImVisiable } = this.props;
         let flag = val !== undefined ? val : !chatImVisiable;
         const width = document.body.scrollWidth;
         let workbenchBoxContentWapperModalStyle = flag ? { width: (width - 400) + 'px' } : { width: '100%' }
-        console.log(workbenchBoxContentWapperModalStyle)
+        // console.log(workbenchBoxContentWapperModalStyle)
         if (flag) {
             LingxiIm.show();
         }
@@ -94,7 +94,7 @@ class SimpleHeader extends Component {
         const { dispatch } = this.props
         Im.option({
             baseUrl: `${protocol}//${host}/`,
-            APPKEY: '6b5d044ca33c559b9b91f02e29573f79'//"ab3db8f71133efc21085a278db04e7e7", //
+            // APPKEY: '6b5d044ca33c559b9b91f02e29573f79'//"ab3db8f71133efc21085a278db04e7e7", //
             // APPKEY: "c3abea191b7838ff65f9a6a44ff5e45f"
         })
         const clickDynamicFunc = (data) => {
@@ -136,16 +136,16 @@ class SimpleHeader extends Component {
                 })
                 // console.log('ssss_最新已读', data)
             })
-            if (typeof getUnreadList == 'function') {
-                const messages = getUnreadList()
-                // console.log('ssss_初始化', messages)
-                dispatch({
-                    type: 'imCooperation/getImUnReadAllMessages',
-                    payload: {
-                        messages
-                    }
-                })
-            }
+            // if (typeof getUnreadList == 'function') {
+            //     const messages = getUnreadList()
+            //     // console.log('ssss_初始化', messages)
+            //     dispatch({
+            //         type: 'imCooperation/getImUnReadAllMessages',
+            //         payload: {
+            //             messages
+            //         }
+            //     })
+            // }
 
         }
     }

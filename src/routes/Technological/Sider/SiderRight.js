@@ -56,9 +56,38 @@ class SiderRight extends React.Component {
     const visibleFunc = (visible) => {
       this.handleImToggle(visible)
     }
+    const { dispatch } = this.props
     if (Im) {
       Im.on('visible', visibleFunc)
       Im.on('clickDynamic', clickDynamicFunc);
+      Im.on('hasNewImMsg', ({ data, unread }) => { //最新一条未读消息推送过来                
+        if (!data.hasOwnProperty('action')) { //首次进入不处理
+          console.log('ssss_初始化首次', unread)
+          dispatch({
+            type: 'imCooperation/getImUnReadAllMessages',
+            payload: {
+              messages: unread
+            }
+          })
+          return
+        }
+        dispatch({
+          type: 'imCooperation/listenImUnReadLatestMessage',
+          payload: {
+            message_item: data
+          }
+        })
+        // console.log('ssss_最新未读', data)
+      })
+      Im.on('readImMsg', (data) => { //最新已读消息推送过来
+        dispatch({
+          type: 'imCooperation/listenImLatestAreadyReadMessages',
+          payload: {
+            messages: data
+          }
+        })
+        // console.log('ssss_最新已读', data)
+      })
     }
   }
 
