@@ -8,7 +8,7 @@ import { Tooltip, Dropdown } from 'antd'
 import Cookies from "js-cookie";
 import SimpleNavigation from "./Components/SimpleNavigation/index"
 import SimpleDrawer from './Components/SimpleDrawer/index'
-import LingxiIm, { Im } from 'lingxi-im'
+import LingxiIm, { Im, getUnreadList } from 'lingxi-im'
 import TaskDetailModal from '@/components/TaskDetailModal'
 import { setBoardIdStorage, getSubfixName } from "../../../../utils/businessFunction";
 import FileDetailModal from '../../../Technological/components/ProjectDetail/FileModule/FileDetail/FileDetailModal'
@@ -91,8 +91,10 @@ class SimpleHeader extends Component {
     //圈子
     imInitOption = () => {
         const { protocol, host } = window.location
+        const { dispatch } = this.props
         Im.option({
             baseUrl: `${protocol}//${host}/`,
+            APPKEY: '6b5d044ca33c559b9b91f02e29573f79'//"ab3db8f71133efc21085a278db04e7e7", //
             // APPKEY: "c3abea191b7838ff65f9a6a44ff5e45f"
         })
         const clickDynamicFunc = (data) => {
@@ -106,6 +108,45 @@ class SimpleHeader extends Component {
         if (Im) {
             Im.on('visible', visibleFunc)
             Im.on('clickDynamic', clickDynamicFunc);
+            Im.on('hasNewImMsg', ({ data, unread }) => { //最新一条未读消息推送过来                
+                if (!data.hasOwnProperty('action')) { //首次进入不处理
+                    console.log('ssss_初始化首次', unread)
+                    dispatch({
+                        type: 'imCooperation/getImUnReadAllMessages',
+                        payload: {
+                            messages: unread
+                        }
+                    })
+                    return
+                }
+                dispatch({
+                    type: 'imCooperation/listenImUnReadLatestMessage',
+                    payload: {
+                        message_item: data
+                    }
+                })
+                // console.log('ssss_最新未读', data)
+            })
+            Im.on('readImMsg', (data) => { //最新已读消息推送过来
+                dispatch({
+                    type: 'imCooperation/listenImLatestAreadyReadMessages',
+                    payload: {
+                        messages: data
+                    }
+                })
+                // console.log('ssss_最新已读', data)
+            })
+            if (typeof getUnreadList == 'function') {
+                const messages = getUnreadList()
+                // console.log('ssss_初始化', messages)
+                dispatch({
+                    type: 'imCooperation/getImUnReadAllMessages',
+                    payload: {
+                        messages
+                    }
+                })
+            }
+
         }
     }
     // 圈子点击

@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
+import { fileModuleIsHasUnRead } from '../../ganttBusiness'
 
 @connect(mapStateToProps)
 export default class ShowFileSlider extends Component {
@@ -38,7 +39,7 @@ export default class ShowFileSlider extends Component {
         })
     }
     render() {
-        const { is_show_board_file_area } = this.props
+        const { is_show_board_file_area, im_all_latest_unread_messages = [], wil_handle_types = [] } = this.props
         // console.log('sssss', { is_show_board_file_area })
         return (
             <div className={`${styles.show_file_button}
@@ -48,11 +49,22 @@ export default class ShowFileSlider extends Component {
                 <span style={{ display: 'inline-block' }} className={`${globalStyles.authTheme}  ${is_show_board_file_area == '1' && styles.spin_show}
             ${is_show_board_file_area == '2' && styles.spin_hide}`}>&#xe7ed;</span>
                 项目文件
+                {/* 未读消息数 */}
+                {
+                    fileModuleIsHasUnRead({ im_all_latest_unread_messages, wil_handle_types }) > 0 && (
+                        <div className={styles.has_no_read}>{fileModuleIsHasUnRead({ im_all_latest_unread_messages, wil_handle_types })}</div>
+                    )
+                }
             </div>
         )
     }
 }
 
-function mapStateToProps({ gantt: { datas: { is_show_board_file_area } } }) {
-    return { is_show_board_file_area }
+function mapStateToProps({
+    gantt: { datas: { is_show_board_file_area } },
+    imCooperation: {
+        im_all_latest_unread_messages = [], wil_handle_types = []
+    }
+}) {
+    return { is_show_board_file_area, im_all_latest_unread_messages, wil_handle_types }
 }
