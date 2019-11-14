@@ -108,15 +108,15 @@ class SimpleHeader extends Component {
         if (Im) {
             Im.on('visible', visibleFunc)
             Im.on('clickDynamic', clickDynamicFunc);
-            Im.on('hasNewImMsg', ({ data, unread }) => { //最新一条未读消息推送过来
-                console.log('ssss_初始化', unread)
-                dispatch({
-                    type: 'imCooperation/getImUnReadAllMessages',
-                    payload: {
-                        messages: unread
-                    }
-                })
+            Im.on('hasNewImMsg', ({ data, unread }) => { //最新一条未读消息推送过来                
                 if (!data.hasOwnProperty('action')) { //首次进入不处理
+                    console.log('ssss_初始化首次', unread)
+                    dispatch({
+                        type: 'imCooperation/getImUnReadAllMessages',
+                        payload: {
+                            messages: unread
+                        }
+                    })
                     return
                 }
                 dispatch({

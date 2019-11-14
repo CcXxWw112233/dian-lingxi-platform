@@ -189,7 +189,7 @@ export const fileItemIsHasUnRead = ({ relaDataId, im_all_latest_unread_messages 
 // 某一项文件夹拥有未读数, relaDataId: 当前文件夹id
 export const folderItemHasUnReadNo = ({ type, relaDataId, im_all_latest_unread_messages = [], wil_handle_types = [] }) => {
     // 递归查询父级id最终push到一个数组，然后在数组下检索传递进来的relaDataId，如果存在就是存在未读
-    if (!im_all_latest_unread_messages.length || typeof im_all_latest_unread_messages) {
+    if (!im_all_latest_unread_messages.length) {
         return 0
     }
     const arr = []
@@ -211,20 +211,24 @@ export const folderItemHasUnReadNo = ({ type, relaDataId, im_all_latest_unread_m
         }
     }
     const current_item = im_all_latest_unread_messages.find(item => {
-        const { content: { folder_path: { id } } } = handleNewsItem(item)
-        if (id == relaDataId) {
-            return item
+        const gold_item = handleNewsItem(item)
+        const { action } = item
+        if (action == 'board.file.upload' || action == 'board.file.version.upload') {
+            const { content: { folder_path = {} } } = gold_item
+            const { id } = folder_path
+            if (id == relaDataId) {
+                return item
+            }
         }
     })
     if (!current_item) {
         return false
     }
-    console.log('sssss_ddd', current_item)
     const { content: { folder_path = {} } } = handleNewsItem(current_item)
     const { parent_folder = {}, id } = folder_path
     arr.push(id)
     folderPathRecursion({ parent_folder })
-    console.log('sssss', { relaDataId, folder_path, arr })
+    // console.log('sssss', { relaDataId, folder_path, arr })
 
     // 这里arr已经更新
     let count = 0
@@ -242,9 +246,10 @@ export const currentFolderJudegeFileUpload = ({ folder_id, im_all_latest_unread_
     if (!latest_item) {
         return false
     }
-    const { action } = handleNewsItem(latest_item)
+    const { action, content: { folder_path = {} } } = handleNewsItem(latest_item)
+
     if (action == 'board.file.upload') {
-        const { content: { folder_path: { id } }, } = handleNewsItem(latest_item)
+        const { id } = folder_path
         if (id == folder_id) {
             return true
         }

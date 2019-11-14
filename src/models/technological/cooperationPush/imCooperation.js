@@ -18,7 +18,6 @@ export default {
             'board.card.update.file.add',
             'board.file.upload',
             'board.file.version.upload',
-            'board.card.update.finish'
         ]
     },
     subscriptions: {
