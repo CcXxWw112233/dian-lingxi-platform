@@ -192,19 +192,7 @@ export const folderItemHasUnReadNo = ({ type, relaDataId, im_all_latest_unread_m
     if (!im_all_latest_unread_messages.length) {
         return 0
     }
-    const arr = []
-    const folderPathRecursion = ({ parent_folder }) => {
-        const { id, parent_id, } = parent_folder
-        if (!id) {
-            return
-        }
-        const parent_folder_ = parent_folder['parent_folder'] || {}
-        if (parent_id != '0') {
-            arr.push(id)
-            folderPathRecursion({ parent_folder: parent_folder_ })
-        }
-        console.log('sssss_diArr', arr)
-    }
+  
     if (type == '2') { //1文件2文件夹
         const file_has_unread = !!im_all_latest_unread_messages.find(item => relaDataId == item.relaDataId)
         if (file_has_unread) {
@@ -225,17 +213,29 @@ export const folderItemHasUnReadNo = ({ type, relaDataId, im_all_latest_unread_m
     if (!current_item) {
         return false
     }
-    const { content: { folder_path = {} } } = handleNewsItem(current_item)
-    const { parent_folder = {}, id } = folder_path
-    arr.push(id)
-    folderPathRecursion({ parent_folder })
-    // console.log('sssss', { relaDataId, folder_path, arr })
-
+   
     // 这里arr已经更新
     let count = 0
     for (let val of im_all_latest_unread_messages) {
-        if ((val.action == 'board.file.upload' || val.action == 'board.file.version.upload') && arr.indexOf(relaDataId) != -1) {
-            count++
+        if ((val.action == 'board.file.upload' || val.action == 'board.file.version.upload')) {
+            const { content: { folder_path = {} } } = handleNewsItem(val)
+            const { parent_folder = {}, id } = folder_path
+            let arr = [id]
+            const folderPathRecursion = ({ parent_folder }) => {
+                const { id, parent_id, } = parent_folder
+                if (!id) {
+                    return arr
+                }
+                const parent_folder_ = parent_folder['parent_folder'] || {}
+                if (parent_id != '0') {
+                    arr.push(id)
+                    folderPathRecursion({ parent_folder: parent_folder_, })
+                }
+            }
+            folderPathRecursion({ parent_folder })
+            if (arr.indexOf(relaDataId) != -1) {
+                count++
+            }
         }
     }
     return count
