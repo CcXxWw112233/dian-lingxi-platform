@@ -154,6 +154,7 @@ class VideoMeetingPopoverContent extends React.Component {
 			meeting_start_time: '',
 			selectedKeys: null,
 			toNoticeList: [],
+			othersPeople: [],
 			userIds: [],
 		});
 	};
@@ -509,12 +510,12 @@ class VideoMeetingPopoverContent extends React.Component {
 	}
 
 	chgUserDefinedIcon = ({obj}) => {
-		const { toNoticeList = [], user_phone = [] } = this.state
-		let new_toNoticeList = [...toNoticeList]
-		new_toNoticeList.push(obj)
+		const { othersPeople = [], user_phone = [] } = this.state
+		let new_othersPeople = [...othersPeople]
+		new_othersPeople.push(obj)
 		user_phone.push(obj.mobile)
 		this.setState({
-			toNoticeList: new_toNoticeList,
+			othersPeople: new_othersPeople,
 			user_phone,
 		})
 	}
@@ -601,6 +602,7 @@ class VideoMeetingPopoverContent extends React.Component {
 			selectedKeys,
 			currentSelectedProjectMembersList = [],
 			toNoticeList = [],
+			othersPeople = [],
 			card_id,
 			org_id,
 			meetingTitle = '',
@@ -609,7 +611,7 @@ class VideoMeetingPopoverContent extends React.Component {
 		let { projectList, board_id } = this.props;
 		//过滤出来当前用户有编辑权限的项目
 		projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
-
+		let newToNoticeList = [].concat(...toNoticeList, ...othersPeople)
 		const { defaultSaveToProject, defaultMeetingTitle, currentDelayStartTime } = this.getVideoMeetingPopoverContentNoramlDatas()
 
 		const videoMeetingPopoverContent_ = (
@@ -692,14 +694,14 @@ class VideoMeetingPopoverContent extends React.Component {
 							</div>
 							<div className={indexStyles.noticeUsersWrapper}>
 								{
-									!(toNoticeList && toNoticeList.length) ? (
+									!(newToNoticeList && newToNoticeList.length) ? (
 										<div style={{ flex: '1', position: 'relative' }}>
 											<Dropdown trigger={['click']} overlayClassName={indexStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
 												overlayStyle={{ maxWidth: '200px' }}
 												overlay={
 													<MenuSearchPartner
 														isInvitation={true}
-														listData={currentSelectedProjectMembersList} keyCode={'user_id'} searchName={'name'} currentSelect={toNoticeList}
+														listData={currentSelectedProjectMembersList} keyCode={'user_id'} searchName={'name'} currentSelect={newToNoticeList}
 														board_id={board_id}
 														user_defined_icon={<span>&#xe846;</span>}
 														chgUserDefinedIcon={this.chgUserDefinedIcon}
@@ -719,7 +721,7 @@ class VideoMeetingPopoverContent extends React.Component {
 														<MenuSearchPartner
 															isInvitation={true}
 															Inputlaceholder="输入手机号"
-															listData={currentSelectedProjectMembersList} keyCode={'user_id'} searchName={'name'} currentSelect={toNoticeList}
+															listData={currentSelectedProjectMembersList} keyCode={'user_id'} searchName={'name'} currentSelect={newToNoticeList}
 															board_id={board_id}
 															user_defined_icon={<span>&#xe846;</span>}
 															chgUserDefinedIcon={this.chgUserDefinedIcon}
@@ -731,12 +733,12 @@ class VideoMeetingPopoverContent extends React.Component {
 															<Icon type="plus-circle" style={{ fontSize: '40px', color: '#40A9FF', margin: '0 12px 16px' }} />
 														</div>
 
-														{toNoticeList.map((value) => {
+														{newToNoticeList.map((value) => {
 															const { avatar, name, user_name, user_id } = value
 															return (
 																<div style={{ display: 'flex', flexWrap: 'wrap' }} key={user_id}>
 
-																	<div className={`${indexStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '0 12px 16px', textAlign: 'center' }} key={user_id}>
+																	<div className={`${indexStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', marginRight: '12px', marginBottom: '16px', textAlign: 'center' }} key={user_id}>
 																		{avatar ? (
 																			<Tooltip placement="top" title={name || user_name || '佚名'}>
 																				<img className={indexStyles.img_hover} style={{ width: '40px', height: '40px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
