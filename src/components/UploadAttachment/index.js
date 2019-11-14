@@ -12,7 +12,7 @@ import {
   getSubfixName, setUploadHeaderBaseInfo, checkIsHasPermissionInBoard
 } from "@/utils/businessFunction";
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, PROJECT_FILES_FILE_INTERVIEW
 } from "@/globalset/js/constant";
 const { TreeNode } = TreeSelect;
 /**上传附件组件 */
@@ -286,9 +286,14 @@ export default class UploadAttachment extends Component {
   }
 
   onChangeFileSavePath = (value) => {
-    this.setState({
-      fileSavePath: value
-    });
+    if (!value && value != '0') {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }  else {
+      this.setState({
+        fileSavePath: value
+      });
+    }
   }
 
 
@@ -296,7 +301,7 @@ export default class UploadAttachment extends Component {
     // 父组件传递的值
     const { visible, children, board_id, card_id, projectDetailInfoData = {} } = this.props;
     const { uploadFileVisible, uploadFilePreviewList = [], toNoticeList = [], fileSavePath, uploading } = this.state;
-
+    
     const { data: projectMemberData } = projectDetailInfoData;
 
     return (
@@ -404,9 +409,9 @@ export default class UploadAttachment extends Component {
           <div style={{ marginTop: '16px' }}>
             <Checkbox checked={this.state.isOnlyNoticePersonsVisit} onChange={this.onChangeOnlyNoticePersonsVisit}>仅被提醒的人可访问该文件</Checkbox>
           </div>
-          <div style={{ marginTop: '32px' }}>
+          {/* <div style={{ marginTop: '32px' }}>
             附件存放路径
-                    </div>
+                    </div> */}
           <div style={{ marginTop: '16px' }}>
             <div className={styles.selectFolderWapper}>
               <TreeSelect

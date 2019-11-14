@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Collapse, Icon, message, Tree, Button } from 'antd';
-import { getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard } from '@/utils/businessFunction';
+import { getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard, isPaymentOrgUser} from '@/utils/businessFunction';
 import { getFileList } from '@/services/technological/file.js'
 import { isApiResponseOk } from '@/utils/handleResponseData';
 import styles from './index.less';
@@ -144,9 +144,12 @@ export default class CommunicationTreeList extends Component{
                                 >
                                     {
                                         boards_flies && boards_flies.map((item, key) => {
-                                            const { board_name, id, type, file_data = [] } = item;
+                                            const { board_name, id, type, org_id, file_data = [] } = item;
+                                            console.log("boards_flies",item);
                                             return(
                                                 // <Panel header={this.showHeader(item, isShowCompanyName)} key={`${item.id}_${item.file_data.length}`} onClick={()=>this.panelOnClick(item)}>
+                                                //添加付费过滤 liuyingj 2019-11-13
+                                                isPaymentOrgUser(org_id) && 
                                                 <Panel header={this.showHeader(item, isShowCompanyName)} key={`${item.id}`} onClick={()=>this.panelOnClick(item)}>
                                                     {
                                                         child_data && child_data.length ? (

@@ -5,8 +5,10 @@ import chackImg from "./../../../../../../assets/workbench/check@2x.png";
 import personGroupImg from "./../../../../../../assets/workbench/person_group@2x.png";
 import Cookies from "js-cookie";
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
+import { connect } from 'dva'
 
 /*eslint-disable*/
+@connect()
 class DropdownMultipleSelectWithSearch extends Component {
   constructor(props) {
     super(props)

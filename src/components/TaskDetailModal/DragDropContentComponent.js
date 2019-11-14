@@ -231,8 +231,8 @@ export default class DragDropContentComponent extends Component {
     const { drawContent = {}, dispatch } = this.props
     const { card_id, board_id } = drawContent
     let new_drawContent = { ...drawContent }
-    const { data } = drawContent['properties'].filter(item => item.code == 'LABEL')[0]
-    let temp = [...data]
+    const glod_data = (drawContent['properties'].find(item => item.code == 'LABEL') || {}).data
+    let temp = [...glod_data]
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/addBoardTag',
@@ -242,10 +242,15 @@ export default class DragDropContentComponent extends Component {
       })
     ).then(res => {
       if (isApiResponseOk(res)) {
-        // new_drawContent['label_data'].push(res.data)
         temp.push(res.data)
         new_drawContent['properties'] = this.filterCurrentUpdateDatasField('LABEL', temp)
-        this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id })
+        this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'label_data', value: temp, operate_properties_code: 'LABEL' })
+        dispatch({
+          type: 'publicTaskDetailModal/addTaskTag',
+          payload: {
+            board_id, card_id, label_id: res.data.label_id
+          }
+        })
       }
     })
   }
@@ -284,7 +289,7 @@ export default class DragDropContentComponent extends Component {
       })
     ).then(res => {
       if (isApiResponseOk(res)) {
-        this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id })
+        this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'label_data', value: new_labelData, operate_properties_code: 'LABEL' })
       }
     })
   }
@@ -318,7 +323,7 @@ export default class DragDropContentComponent extends Component {
       })
     ).then(res => {
       if (isApiResponseOk(res)) {
-        this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id })
+        this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'label_data', value: new_labelData, operate_properties_code: 'LABEL' })
       }
     })
   }
