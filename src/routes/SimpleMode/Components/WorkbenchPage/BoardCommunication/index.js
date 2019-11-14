@@ -135,7 +135,7 @@ class BoardCommunication extends Component {
         // firstLayerData[0].layerType = 'firstLayer';
         this.setState({ 
             bread_paths: firstLayerData,
-            currentBorderId: firstLayerData[0].folder_id,
+            currentBorderId: firstLayerData && firstLayerData[0] && firstLayerData[0].folder_id,
         });
     }
 
