@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { filterFileFormatType } from '@/utils/util'
+import { filterFileFormatType, timestampToTime, timestampToTimeNormal } from '@/utils/util'
 import globalStyles from '@/globalset/css/globalClassName.less';
 import { Table } from 'antd';
 import styles from './CommunicationThumbnailFiles.less';
@@ -49,6 +49,14 @@ export default class ThumbnailFilesListShow extends Component {
                     title: '修改日期',
                     dataIndex: 'update_time',
                     key: 'update_time',
+                    render: (text, record, index) => {
+                        return(
+                            <div>
+                                {/* { timestampToTime(text, true)} */}
+                                {timestampToTimeNormal(text, '/', true)}
+                            </div>
+                        )
+                    }
                 },
             ],
         }
