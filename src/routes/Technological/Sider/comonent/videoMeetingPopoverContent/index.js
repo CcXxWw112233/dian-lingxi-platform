@@ -20,6 +20,7 @@ import xiaoyuyilian_logo from '@/assets/sider_right/xiaoyuyilian_logo.png'
 import { currentNounPlanFilterName } from "@/utils/businessFunction";
 import { PROJECTS } from '@/globalset/js/constant'
 import { isApiResponseOk } from '@/utils/handleResponseData'
+import { organizationInviteWebJoin, commInviteWebJoin } from '@/services/technological'
 const Option = Select.Option;
 const { TextArea } = Input;
 const { getMentions, toString, toContentState } = Mention;
@@ -391,7 +392,6 @@ class VideoMeetingPopoverContent extends React.Component {
 			toNoticeList: nonRepeatArr,
 			userIds: [gold_item.user_id]
 		})
-
 	}
 
 	// 通知提醒下拉选择
@@ -428,20 +428,45 @@ class VideoMeetingPopoverContent extends React.Component {
 		})
 	}
 
+	// 邀请人加入的回调
+	inviteMemberJoin = ({card_id, userIds = [], user_phone = []}) => {
+		const { org_id } = this.state
+		let data = {
+			type: '4',
+			users: user_phone,
+			_organization_id: org_id
+		}
+		organizationInviteWebJoin({...data}).then(res => {
+			if (isApiResponseOk(res)) {
+				let data = {
+					id: card_id,
+					role_id: res.data.role_id,
+					users: res.data.users,
+					type: '4'
+				}
+				commInviteWebJoin(data).then(res => {
+					if (isApiResponseOk(res)) {
+						this.setRemindInfo({card_id, userIds, user_phone: data.users})
+					}
+				})
+			}
+		})
+	}
+ 
 	// 发起会议成功之后调用通知提醒
-	setRemindInfo = (card_id, userIds) => {
+	setRemindInfo = ({card_id, userIds = [], user_phone = []}) => {
 		const { dispatch } = this.props
-		const { } = this.state
+		const temp_user = [].concat(userIds,user_phone)
 		const data = {
 			rela_id: card_id,
 			remind_time_value,
 			rela_type: '2',
 			remind_time_type: 'm',
 			remind_trigger: 'schedule:start:before',
-			users: userIds
+			users: temp_user
 		}
 
-		if (!(userIds && userIds.length)) {
+		if (!(temp_user && temp_user.length)) {
 			setTimeout(() => {
 				message.success("发起会议成功");
 			}, 500)
@@ -483,13 +508,22 @@ class VideoMeetingPopoverContent extends React.Component {
 		}
 	}
 
+	chgUserDefinedIcon = ({obj}) => {
+		const { toNoticeList = [], user_phone = [] } = this.state
+		let new_toNoticeList = [...toNoticeList]
+		new_toNoticeList.push(obj)
+		user_phone.push(obj.mobile)
+		this.setState({
+			toNoticeList: new_toNoticeList,
+			user_phone,
+		})
+	}
+
 	// 发起会议
 	handleVideoMeetingSubmit = () => {
 		const { dispatch } = this.props;
-		const { saveToProject, org_id, meetingTitle, meeting_start_time, userIds = [] } = this.state;
+		const { saveToProject, org_id, meetingTitle, meeting_start_time, userIds = [], user_phone = [] } = this.state;
 		const { defaultMeetingTitle, defaultSaveToProject, defaultAppointStartTime, defaultDelayDueTime } = this.getVideoMeetingPopoverContentNoramlDatas()
-		console.log({currentDelayDueTime, defaultAppointStartTime, defaultDelayDueTime}, 'ssssssss')
-
 		const time2 = currentDelayDueTime ? (meeting_start_time ? (meeting_start_time + currentDelayDueTime) : (defaultAppointStartTime + currentDelayDueTime)) : (defaultDelayDueTime)
 
 		const data = {
@@ -500,7 +534,7 @@ class VideoMeetingPopoverContent extends React.Component {
 			topic: meetingTitle ? meetingTitle : defaultMeetingTitle,
 			start_time: meeting_start_time ? meeting_start_time : defaultAppointStartTime,
 			end_time: time2,
-			user_for: '',
+			user_for: user_phone && user_phone.join(',') || '',
 			user_ids: (userIds && userIds.join(',')) || ''
 		};
 
@@ -513,7 +547,8 @@ class VideoMeetingPopoverContent extends React.Component {
 			if (res.code === "0") {
 				const { start_url, card_id } = res.data;
 				// this.openWinNiNewTabWithATag(start_url);
-				this.setRemindInfo(card_id, userIds)
+				// this.setRemindInfo({card_id, userIds, user_phone})
+				this.inviteMemberJoin({card_id, userIds, user_phone})
 			} else if (res.code === "1") {
 				message.error(res.message);
 				this.setState(
@@ -568,7 +603,8 @@ class VideoMeetingPopoverContent extends React.Component {
 			toNoticeList = [],
 			card_id,
 			org_id,
-			meetingTitle = ''
+			meetingTitle = '',
+			showUserDefinedIconVisible
 		} = this.state;
 		let { projectList, board_id } = this.props;
 		//过滤出来当前用户有编辑权限的项目
@@ -658,13 +694,15 @@ class VideoMeetingPopoverContent extends React.Component {
 								{
 									!(toNoticeList && toNoticeList.length) ? (
 										<div style={{ flex: '1', position: 'relative' }}>
-											<Dropdown overlayClassName={indexStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+											<Dropdown trigger={['click']} overlayClassName={indexStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
 												overlayStyle={{ maxWidth: '200px' }}
 												overlay={
 													<MenuSearchPartner
 														isInvitation={true}
 														listData={currentSelectedProjectMembersList} keyCode={'user_id'} searchName={'name'} currentSelect={toNoticeList}
 														board_id={board_id}
+														user_defined_icon={<span>&#xe846;</span>}
+														chgUserDefinedIcon={this.chgUserDefinedIcon}
 														chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
 												}
 											>
@@ -675,13 +713,16 @@ class VideoMeetingPopoverContent extends React.Component {
 										</div>
 									) : (
 											<div style={{ flex: '1', position: 'relative' }}>
-												<Dropdown overlayClassName={indexStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+												<Dropdown trigger={['click']} overlayClassName={indexStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
 													overlayStyle={{ maxWidth: '200px' }}
 													overlay={
 														<MenuSearchPartner
 															isInvitation={true}
+															Inputlaceholder="输入手机号"
 															listData={currentSelectedProjectMembersList} keyCode={'user_id'} searchName={'name'} currentSelect={toNoticeList}
 															board_id={board_id}
+															user_defined_icon={<span>&#xe846;</span>}
+															chgUserDefinedIcon={this.chgUserDefinedIcon}
 															chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
 													}
 												>
