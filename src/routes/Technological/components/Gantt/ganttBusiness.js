@@ -203,6 +203,7 @@ export const folderItemHasUnReadNo = ({ type, relaDataId, im_all_latest_unread_m
             arr.push(id)
             folderPathRecursion({ parent_folder: parent_folder_ })
         }
+        console.log('sssss_diArr', arr)
     }
     if (type == '2') { //1文件2文件夹
         const file_has_unread = !!im_all_latest_unread_messages.find(item => relaDataId == item.relaDataId)
@@ -233,7 +234,7 @@ export const folderItemHasUnReadNo = ({ type, relaDataId, im_all_latest_unread_m
     // 这里arr已经更新
     let count = 0
     for (let val of im_all_latest_unread_messages) {
-        if (wil_handle_types.indexOf(val.action) != -1 && arr.indexOf(relaDataId) != -1) {
+        if ((val.action == 'board.file.upload' || val.action == 'board.file.version.upload') && arr.indexOf(relaDataId) != -1) {
             count++
         }
     }

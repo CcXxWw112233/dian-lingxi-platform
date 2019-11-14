@@ -72,7 +72,7 @@ export default {
             console.log('ssss_已读列表_model', messages)
             let im_all_latest_unread_messages = yield select(getModelSelectState('imCooperation', 'im_all_latest_unread_messages'))
             im_all_latest_unread_messages = im_all_latest_unread_messages.filter(item => {
-                if (messages.findIndex((item2 = {}) => item2.idServer == item.idServer) == -1) { //传递进来的已读列表不包含该条未读消息
+                if (messages.findIndex((item2) => item2 == item.idServer) == -1) { //传递进来的已读列表不包含该条未读消息
                     return item
                 }
             })
@@ -83,7 +83,7 @@ export default {
                 }
             })
             const arr = im_all_latest_unread_messages.filter(item => {
-                if (messages.findIndex((item2 = {}) => item2.idServer == item.idServer) != -1) { //传递进来的已读列表不包含该条未读消息
+                if (messages.findIndex((item2) => item2 == item.idServer) != -1) { //传递进来的已读列表不包含该条未读消息
                     return item
                 }
             })

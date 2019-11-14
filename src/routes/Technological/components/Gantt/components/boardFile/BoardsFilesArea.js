@@ -159,11 +159,12 @@ export default class BoardsFilesArea extends Component {
                 return item
             }
         })
-        const reads = arr.map(item => ({ idServer: item.idServer, target: item.target }))
+        const reads = arr.map(item => (item.idServer))
+        console.log('ssss_全部设置已读', reads)
         dispatch({
-            type: 'imCooperation/imMessageToRead',
+            type: 'imCooperation/listenImLatestAreadyReadMessages',
             payload: {
-                reads
+                messages: reads
             }
         })
     }
