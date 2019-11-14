@@ -344,21 +344,26 @@ class VideoMeetingPopoverContent extends React.Component {
 		// console.log(e, type, 'ssssssss')
 		e && e.domEvent && e.domEvent.stopPropagation()
 		const { key } = e
-		const { meeting_start_time } = this.state
-		const { defaultAppointStartTime } = this.getVideoMeetingPopoverContentNoramlDatas()
-		if (meeting_start_time) { // 如果选择了时间
-			if (type == 'm') {
-				currentDelayDueTime = meeting_start_time + key * 60000
-			} else if (type == 'h') {
-				currentDelayDueTime = meeting_start_time + key * 3600000
-			}
-		} else { // 否则在默认的基础上
-			if (type == 'm') {
-				currentDelayDueTime = defaultAppointStartTime + key * 60000
-			} else if (type == 'h') {
-				currentDelayDueTime = defaultAppointStartTime + key * 3600000
-			}
+		if (type == 'm') {
+			currentDelayDueTime = key * 60000
+		} else {
+			currentDelayDueTime = key * 3600000
 		}
+		// const { meeting_start_time } = this.state
+		// const { defaultAppointStartTime } = this.getVideoMeetingPopoverContentNoramlDatas()
+		// if (meeting_start_time) { // 如果选择了时间
+		// 	if (type == 'm') {
+		// 		currentDelayDueTime = meeting_start_time + key * 60000
+		// 	} else if (type == 'h') {
+		// 		currentDelayDueTime = meeting_start_time + key * 3600000
+		// 	}
+		// } else { // 否则在默认的基础上
+		// 	if (type == 'm') {
+		// 		currentDelayDueTime = defaultAppointStartTime + key * 60000
+		// 	} else if (type == 'h') {
+		// 		currentDelayDueTime = defaultAppointStartTime + key * 3600000
+		// 	}
+		// }
 	}
 
 	// 执行人列表去重
@@ -435,32 +440,47 @@ class VideoMeetingPopoverContent extends React.Component {
 			remind_trigger: 'schedule:start:before',
 			users: userIds
 		}
-		Promise.resolve(
-			dispatch({
-				type: 'informRemind/setRemindInformation',
-				payload: {
-					...data,
-					calback: () => {
-						setTimeout(() => {
-							message.success("发起会议成功");
-						}, 500)
+
+		if (!(userIds && userIds.length)) {
+			setTimeout(() => {
+				message.success("发起会议成功");
+			}, 500)
+			this.setState(
+				{
+					videoMeetingPopoverVisible: false,
+				},
+				() => {
+					this.initVideoMeetingPopover();
+					this.getCurrentRemindUser()
+				}
+			)
+		} else {
+			Promise.resolve(
+				dispatch({
+					type: 'informRemind/setRemindInformation',
+					payload: {
+						...data,
+						calback: () => {
+							setTimeout(() => {
+								message.success("发起会议成功");
+							}, 500)
+						}
 					}
+				})
+			).then(res => {
+				if (isApiResponseOk(res)) {
+					this.setState(
+						{
+							videoMeetingPopoverVisible: false,
+						},
+						() => {
+							this.initVideoMeetingPopover();
+							this.getCurrentRemindUser()
+						}
+					)
 				}
 			})
-		).then(res => {
-			if (isApiResponseOk(res)) {
-				this.setState(
-					{
-						videoMeetingPopoverVisible: false,
-					},
-					() => {
-						this.initVideoMeetingPopover();
-						this.getCurrentRemindUser()
-					}
-				)
-			}
-		})
-
+		}
 	}
 
 	// 发起会议
@@ -468,6 +488,9 @@ class VideoMeetingPopoverContent extends React.Component {
 		const { dispatch } = this.props;
 		const { saveToProject, org_id, meetingTitle, meeting_start_time, userIds = [] } = this.state;
 		const { defaultMeetingTitle, defaultSaveToProject, defaultAppointStartTime, defaultDelayDueTime } = this.getVideoMeetingPopoverContentNoramlDatas()
+		console.log({currentDelayDueTime, defaultAppointStartTime, defaultDelayDueTime}, 'ssssssss')
+
+		const time2 = currentDelayDueTime ? (meeting_start_time ? (meeting_start_time + currentDelayDueTime) : (defaultAppointStartTime + currentDelayDueTime)) : (defaultDelayDueTime)
 
 		const data = {
 			_organization_id: org_id,
@@ -476,9 +499,9 @@ class VideoMeetingPopoverContent extends React.Component {
 			rela_id: defaultSaveToProject ? defaultSaveToProject : saveToProject,
 			topic: meetingTitle ? meetingTitle : defaultMeetingTitle,
 			start_time: meeting_start_time ? meeting_start_time : defaultAppointStartTime,
-			end_time: currentDelayDueTime ? currentDelayDueTime : defaultDelayDueTime,
+			end_time: time2,
 			user_for: '',
-			user_ids: userIds.join(',')
+			user_ids: (userIds && userIds.join(',')) || ''
 		};
 
 		Promise.resolve(
@@ -544,7 +567,8 @@ class VideoMeetingPopoverContent extends React.Component {
 			currentSelectedProjectMembersList = [],
 			toNoticeList = [],
 			card_id,
-			org_id
+			org_id,
+			meetingTitle = ''
 		} = this.state;
 		let { projectList, board_id } = this.props;
 		//过滤出来当前用户有编辑权限的项目
@@ -579,7 +603,7 @@ class VideoMeetingPopoverContent extends React.Component {
 								{/* 会议名称 S */}
 								<span className={indexStyles.videoMeeting__topic_content_title}>
 									<Input
-										value={defaultMeetingTitle ? defaultMeetingTitle : meetingTitle}
+										value={meetingTitle ? meetingTitle : defaultMeetingTitle}
 										onChange={this.handleVideoMeetingTopicChange}
 									/>
 								</span>
