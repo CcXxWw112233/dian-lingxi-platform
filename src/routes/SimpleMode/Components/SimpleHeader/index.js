@@ -226,7 +226,7 @@ class SimpleHeader extends Component {
                     )}
 
                 <div className={indexStyles.miniImMessage} onClick={this.openOrCloseImChatModal}>
-                    <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe8e8;</i>
+                    <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe6df;</i>
                 </div>
 
                 {/* {leftMainNavVisible &&
