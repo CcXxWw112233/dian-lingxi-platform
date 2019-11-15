@@ -206,7 +206,17 @@ export default class CommunicationThumbnailFiles extends Component {
         const { bread_paths } = this.props;
         console.log('currentIayerSearch', item);
         console.log('bread_paths', bread_paths);
-        // this.props.changeChooseType();
+        let tabType = '';
+        if(type == 'all_files'){
+            tabType = '0';
+        } else if(type ="sub_files"){
+            if(item.layerType == "projectLayer"){
+                tabType = '1';
+            } else {
+                tabType = '2';
+            }
+        }
+        this.props.changeChooseType(tabType);
     }
 
     render(){

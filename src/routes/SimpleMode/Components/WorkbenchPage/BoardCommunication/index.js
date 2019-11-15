@@ -107,6 +107,7 @@ class BoardCommunication extends Component {
                 }
             });
         }
+        
         this.setState({
             showFileListisOpenFileDetailModal: false, // 关闭圈屏组件
             previewFileModalVisibile: false, // 显示首屏展示组件（头部面包屑,右侧文件按列表）
@@ -279,17 +280,17 @@ class BoardCommunication extends Component {
         
         // 待处理 
 
-        // this.setState({
-        //     bread_paths: [],
-        //     currentItemIayerData: [],
-        //     currentItemLayerId: '',
-        //     currentSelectBoardId: '',
-        //     currentFileDataType: '0',
-        //     currentSearchValue: '',
-        // },()=>{
-        //     this.queryCommunicationFileData();
-        //     this.getThumbnailFilesData();
-        // });
+        this.setState({
+            bread_paths: [],
+            currentItemIayerData: [],
+            currentItemLayerId: '',
+            currentSelectBoardId: '',
+            currentFileDataType: '0',
+            currentSearchValue: '',
+        },()=>{
+            this.queryCommunicationFileData();
+            this.getThumbnailFilesData();
+        });
     }
 
     initModalSelect = () => {
@@ -1083,12 +1084,20 @@ class BoardCommunication extends Component {
         });
     }
 
+
     // 改变搜索状态tab-全局搜索/局部搜索
     changeChooseType = (type) => {
-        // const { bread_paths } = this.state;
-        // const currentIayerData = bread_paths[bread_paths.length-1];
-        // console.log('currentIayerData', currentIayerData);
-        this.setState({currentFileschoiceTab: type});
+        console.log('点击的层:', type);
+        this.setState({
+            currentFileDataType: type,
+        },()=>{
+            const { currentSearchValue } = this.props;
+            if(type == '0'){
+                this.goAllFileStatus();
+            } else {
+                this.searchCommunicationFilelist();
+            }
+        });
     }
 
 
