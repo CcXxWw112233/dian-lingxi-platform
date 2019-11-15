@@ -1591,7 +1591,7 @@ class FileDetailContent extends React.Component {
               style={{ right: isExpandFrame ? '420px' : '0'}}
               onClick={()=>this.isShowRightRealTimeMsg()}
           >
-              <Icon type="right" />
+              <Icon type={isExpandFrame ? 'right' : 'left'} />
           </div>
 
           {

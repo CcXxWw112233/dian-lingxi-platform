@@ -495,6 +495,7 @@ export default class GetRowTaskItem extends Component {
             height,
             name, id,
             board_id, is_realize,
+            type,
             executors = [], label_data = [],
             is_has_start_time, is_has_end_time,
             start_time, due_time, is_privilege,
@@ -536,7 +537,7 @@ export default class GetRowTaskItem extends Component {
                             //  onMouseDown={(e) => e.stopPropagation()} 
                             onMouseMove={(e) => e.preventDefault()}
                         >
-                            <CheckItem is_realize={is_realize} styles={{ color: is_realize == '1' ? 'rgba(0,0,0,.25)' : '' }} />
+                            <CheckItem is_realize={is_realize} card_type={type} styles={{ color: is_realize == '1' ? 'rgba(0,0,0,.25)' : '' }} />
                         </div>
                         <div data-targetclassname="specific_example"
                             className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`}
