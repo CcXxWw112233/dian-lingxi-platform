@@ -111,6 +111,7 @@ class BoardCommunication extends Component {
             showFileListisOpenFileDetailModal: false, // 关闭圈屏组件
             previewFileModalVisibile: false, // 显示首屏展示组件（头部面包屑,右侧文件按列表）
             currentFileDataType: '1', // 当前文件数据所属层：0全部文件/1项目内文件/2文件夹内文件
+            currentSearchValue: '', // 清空搜索关键字
         });
         this.setcurrentItemLayerId(boardId);
         
@@ -131,7 +132,7 @@ class BoardCommunication extends Component {
         const { currentItemLayerId } = this.state;
         const { boards_flies } = this.props;
         const firstLayerData = boards_flies.filter(item=>item.id == currentItemLayerId);
-        console.log('firstLayerData',firstLayerData);
+        firstLayerData.map(item=>item.layerType = 'projectLayer');
         // firstLayerData[0].layerType = 'firstLayer';
         this.setState({ 
             bread_paths: firstLayerData,
@@ -141,6 +142,7 @@ class BoardCommunication extends Component {
 
     // 改变当前文件夹tree层级-处理当前层【文件夹层面包屑路径】
     onSelectTree = (currentfloor,first_item) => {
+        first_item.layerType = 'projectLayer';
         const { communicationSubFolderData } = this.props;
         const { child_data = [] } = communicationSubFolderData;
         const { folder_id, parent_id } = currentfloor;
@@ -153,6 +155,7 @@ class BoardCommunication extends Component {
             previewFileModalVisibile: false, // 显示首屏展示组件（头部面包屑,右侧文件按列表）
             currentFileDataType: '2', // 当前文件数据所属层：0全部文件/1项目内文件/2文件夹内文件
             currentBorderId: folder_id,
+            currentSearchValue: '', // 清空搜索关键字
         },()=>{
             this.getThumbnailFilesData();
         });
@@ -223,7 +226,7 @@ class BoardCommunication extends Component {
 
     // 搜索
     searchCommunicationFilelist = () => {
-        console.log('搜索');
+        // console.log('搜索');
         const { dispatch } = this.props;
         const params = this.getParams();
         const { boardId, folderId, queryConditions, currentSearchValue } = params;
@@ -1446,8 +1449,6 @@ class BoardCommunication extends Component {
                 onDragLeaveCapture={this.onDragLeaveCapture.bind(this)}
                 onDragEndCapture={this.onDragLeaveCapture.bind(this)}>
 
-            {/* 2019.11.04 start */}
-
                 {/* 首屏-文件路径面包屑/搜索 */}
                 {
                     !this.state.previewFileModalVisibile &&
@@ -1466,7 +1467,7 @@ class BoardCommunication extends Component {
                 }
                 
                 
-                {/* 控制列表是否显示的控制按钮 */}
+                {/* 控制列表是否显示隐藏的控制按钮 */}
                 <div
                     className={indexStyles.operationBtn}
                     style={{ left: isVisibleFileList ? '299px' : '0'}}
@@ -1515,12 +1516,11 @@ class BoardCommunication extends Component {
                         setPreviewFileModalVisibile={this.showUpdatedFileDetail}
                         goAllFileStatus={this.goAllFileStatus}
                         currentFileschoiceTab={currentFileschoiceTab}
+                        currentFileDataType={currentFileDataType}
                         changeChooseType={this.changeChooseType}
                         {...this.props}
                     />
                 }
-
-            {/* 2019.11.04 start */}
 
 
                 {/* 项目交流列表(1025版本) */}
@@ -1619,7 +1619,8 @@ class BoardCommunication extends Component {
                     )} */}
 
 
-                <Modal
+                {/* 选择项目列表弹出框（1025前版本） */}
+                {/* <Modal
                     width={248}
                     bodyStyle={{ padding: '0px' }}
                     footer={
@@ -1683,7 +1684,7 @@ class BoardCommunication extends Component {
                         )
                     }
 
-                </Modal>
+                </Modal> */}
 
 
             </div >

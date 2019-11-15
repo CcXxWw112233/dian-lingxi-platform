@@ -91,12 +91,12 @@ export default class CommunicationThumbnailFiles extends Component {
             name,
             file_resource_id,
             file_id,
-            // id,
+            id,
             board_id="",
             folder_id="",
             version_id
         } = data;
-        const id = file_id;
+        // const id = file_id;
         // const board_id = board_id || currentSelectBoardId;
         // const folder_id = folder_id || current_folder_id;
         const { dispatch } = this.props
@@ -201,6 +201,14 @@ export default class CommunicationThumbnailFiles extends Component {
         this.props.getThumbnailFilesData();
     }
 
+    // 搜索-全部文件/当前文件点击
+    changeChooseType = (type, item) => {
+        const { bread_paths } = this.props;
+        console.log('currentIayerSearch', item);
+        console.log('bread_paths', bread_paths);
+        // this.props.changeChooseType();
+    }
+
     render(){
         const {
             isVisibleFileList,
@@ -209,8 +217,10 @@ export default class CommunicationThumbnailFiles extends Component {
             isSearchDetailOnfocusOrOnblur,
             bread_paths,
             currentFileschoiceTab,
-            filesShowType
+            filesShowType,
+            currentFileDataType
         } = this.props;
+        const currentIayerSearch = bread_paths && bread_paths.length && bread_paths[bread_paths.length-1];
         const currentIayerFolderName = bread_paths && bread_paths.length && (bread_paths[bread_paths.length-1].board_name || bread_paths[bread_paths.length-1].folder_name);
         // console.log('bread_paths',bread_paths);
         return(
@@ -250,16 +260,16 @@ export default class CommunicationThumbnailFiles extends Component {
                         <div className={styles.searchTypeBox}>
                             搜索：
                             <span
-                                className={ bread_paths && bread_paths.length ? styles.currentFile : ''}
-                                onClick={()=>this.props.changeChooseType('0')}
+                                className={ currentFileDataType == '0' ? styles.currentFile : ''}
+                                onClick={()=>this.changeChooseType('all_files')}
                             >
                                 “全部文件”
                             </span>
                             {
                                 currentIayerFolderName ? (
                                     <span
-                                        className={bread_paths && bread_paths.length ? '' : styles.currentFile}
-                                        onClick={()=>this.props.changeChooseType('2')}
+                                        className={ currentFileDataType !== '0' ? styles.currentFile : '' }
+                                        onClick={()=>this.changeChooseType('sub_files', currentIayerSearch)}
                                     >
                                         { currentIayerFolderName }
                                     </span>

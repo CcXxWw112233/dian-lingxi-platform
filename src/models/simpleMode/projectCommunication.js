@@ -112,22 +112,8 @@ export default {
           const res = yield call(getGlobalSearchResultList, payload);
           if (isApiResponseOk(res)) {
             // debugger;
-            console.log('res',res);
-            console.log('resisTrue',JSON.stringify(res.data) === '{}');
-            // let arr = []
-            // for(let i in data) {
-            //   const obj = {
-            //     listType: i,
-            //     lists: data[i]['records'],
-            //   }
-            //   arr.push(obj)
-            // }
-            // yield put({
-            //   type: 'updateDatas',
-            //   payload: {
-            //     allTypeResultList: arr
-            //   }
-            // })
+            // console.log('res',res);
+            // console.log('resisTrue',JSON.stringify(res.data) === '{}');
             yield put({
               type: 'updateDatas',
               payload: {

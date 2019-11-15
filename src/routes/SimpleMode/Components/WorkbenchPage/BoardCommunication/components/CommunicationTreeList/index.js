@@ -149,7 +149,7 @@ export default class CommunicationTreeList extends Component{
                                     {
                                         boards_flies && boards_flies.map((item, key) => {
                                             const { board_name, id, type, org_id, file_data = [] } = item;
-                                            console.log("boards_flies",item);
+                                            // console.log("boards_flies",item);
                                             return(
                                                 // <Panel header={this.showHeader(item, isShowCompanyName)} key={`${item.id}_${item.file_data.length}`} onClick={()=>this.panelOnClick(item)}>
                                                 //添加付费过滤 liuyingj 2019-11-13
