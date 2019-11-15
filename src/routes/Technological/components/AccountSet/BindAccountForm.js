@@ -83,6 +83,7 @@ class BindAccountForm extends React.Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form;
+    debugger
     const { model = {} } = this.props
     const { datas = {} } = model
     const { userInfo = {} } = datas

@@ -89,6 +89,9 @@ export default class GroupListHeadElse extends Component {
   requestAddNewGroup = async () => {
     const { add_new_board_group_value } = this.state
     const { gantt_board_id, dispatch } = this.props
+    if (!!!add_new_board_group_value) {
+      return
+    }
     const params = {
       board_id: gantt_board_id,
       name: add_new_board_group_value,
@@ -106,6 +109,8 @@ export default class GroupListHeadElse extends Component {
           payload: {}
         })
       }, 1000)
+    } else {
+      message.error(res.message)
     }
   }
   render() {

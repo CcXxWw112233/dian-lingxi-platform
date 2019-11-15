@@ -52,7 +52,12 @@ export default class ShowFileSlider extends Component {
                 {/* 未读消息数 */}
                 {
                     fileModuleIsHasUnRead({ im_all_latest_unread_messages, wil_handle_types }) > 0 && (
-                        <div className={styles.has_no_read}>{fileModuleIsHasUnRead({ im_all_latest_unread_messages, wil_handle_types })}</div>
+                        <div className={styles.has_no_read}>
+                            {
+                                fileModuleIsHasUnRead({ im_all_latest_unread_messages, wil_handle_types }) > 99 ?
+                                    '99+' : fileModuleIsHasUnRead({ im_all_latest_unread_messages, wil_handle_types })
+                            }
+                        </div>
                     )
                 }
             </div>

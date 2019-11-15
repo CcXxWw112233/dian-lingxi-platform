@@ -19,6 +19,9 @@ export default {
         onlyFileTableLoading: false, // 文件列表table loading
         filesShowType: '0', // 缩略图呈现方式： 0 缩略图table呈现 1 缩略图平铺呈现
         currentLayerSelectedStyle: false, // 当前层选中样式
+        firstLayerTreeFolder_id: '', // tree根目录folder_id
+        expandedKeys: '', // （受控）展开指定的树节点
+        autoExpandParent: false,
     },
   
     subscriptions: {
@@ -76,6 +79,9 @@ export default {
               payload: {
                 // boards_flies: res.data,
                 communicationSubFolderData: res.data,
+                firstLayerTreeFolder_id: res.data && res.data.folder_id,
+                // expandedKeys: res.data && [res.data.folder_id],
+                // expandedKeys: ['1187320332416061443','1187320332416061444','1187320332416061445','1187320332416061446'],
               }
             })
           } else {
@@ -112,22 +118,8 @@ export default {
           const res = yield call(getGlobalSearchResultList, payload);
           if (isApiResponseOk(res)) {
             // debugger;
-            console.log('res',res);
-            console.log('resisTrue',JSON.stringify(res.data) === '{}');
-            // let arr = []
-            // for(let i in data) {
-            //   const obj = {
-            //     listType: i,
-            //     lists: data[i]['records'],
-            //   }
-            //   arr.push(obj)
-            // }
-            // yield put({
-            //   type: 'updateDatas',
-            //   payload: {
-            //     allTypeResultList: arr
-            //   }
-            // })
+            // console.log('res',res);
+            // console.log('resisTrue',JSON.stringify(res.data) === '{}');
             yield put({
               type: 'updateDatas',
               payload: {
