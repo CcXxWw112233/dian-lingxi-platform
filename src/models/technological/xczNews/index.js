@@ -103,10 +103,14 @@ export default {
 
             }
           }),
+          dispatch({
+            type: 'getHotArticles',
+            payload: {}
+          })
             dispatch({
               type: "updateDatas",
               payload: {
-                articlesList: [],
+                // articlesList: [],
                 defaultArr: [],
                 onSearchButton: false, // 判断是否点击搜索
                 hotFlag: true, // 热点的开关
@@ -465,7 +469,7 @@ export default {
       const params = {
         category_ids, keywords, page_size, page_no
       }
-      if (path.indexOf('/technological/xczNews/hot') != -1) {
+      if (path.indexOf('/xczNews/hot') != -1) {
         params.hotspot_id = hotspot_id
       }
       if (searchList && searchList.length) return
