@@ -48,6 +48,7 @@ export default {
         * imUnReadMessageItemClear({ payload }, { call, put, select }) { //未读消息清除,场景（当用户点开某一条具有红点的消息后，会清除该条消息）
             const { relaDataId } = payload
             let im_all_latest_unread_messages = yield select(getModelSelectState('imCooperation', 'im_all_latest_unread_messages'))
+            im_all_latest_unread_messages = im_all_latest_unread_messages.filter(item => !!item)
             const idServer = (im_all_latest_unread_messages.find((item) => item.relaDataId == relaDataId || item.cardId == relaDataId) || {}).idServer
             const target = (im_all_latest_unread_messages.find((item) => item.relaDataId == relaDataId || item.cardId == relaDataId) || {}).target
             im_all_latest_unread_messages = im_all_latest_unread_messages.filter(item => item.relaDataId != relaDataId && item.cardId != relaDataId)
