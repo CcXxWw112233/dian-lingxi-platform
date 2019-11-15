@@ -14,7 +14,7 @@ const CardDropDetail = ({ list }) => {
             {/* <div className={styles.triangle}></div> */}
             {
                 list.map(value => {
-                    const { is_privilege, id, name, is_realize, executors = [], start_time, due_time, time_span, width, is_has_start_time, is_has_end_time } = value
+                    const { is_privilege, id, type, name, is_realize, executors = [], start_time, due_time, time_span, width, is_has_start_time, is_has_end_time } = value
 
                     const cal_time_span_params = {
                         start_time, due_time, is_has_start_time, is_has_end_time, is_realize
@@ -26,7 +26,7 @@ const CardDropDetail = ({ list }) => {
                         <div key={id} className={styles.specific_example_content_out}>
                             <div className={`${styles.specific_example_content}`}>
                                 <div className={`${styles.card_item_status}`} style={{ marginTop: is_realize == '1' ? -2 : 2 }}>
-                                    <CheckItem is_realize={is_realize} />
+                                    <CheckItem is_realize={is_realize} card_type={type} />
                                 </div>
                                 <div className={`${styles.card_item_name}`}>
                                     {`${name}`}
