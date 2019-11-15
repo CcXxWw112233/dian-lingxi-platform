@@ -83,6 +83,7 @@ class BindAccountForm extends React.Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form;
+    debugger
     const { model = {} } = this.props
     const { datas = {} } = model
     const { userInfo = {} } = datas
@@ -204,7 +205,7 @@ class BindAccountForm extends React.Component {
           >
             {
               is_bind === '1'? (
-<Popconfirm onConfirm={this.formButtonSubmit.bind(this, 'wechat')} title="Are you sure？" icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}>
+<Popconfirm overlayStyle={{zIndex:1050}} onConfirm={this.formButtonSubmit.bind(this, 'wechat')} title="Are you sure？" icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}>
                   <Button type="primary" style={{height: 40, marginLeft: 48}} disabled={isWechat}>解除绑定</Button>
                 </Popconfirm>
 ):<div></div>
