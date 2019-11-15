@@ -122,6 +122,8 @@ export default class CommunicationTreeList extends Component{
             isVisibleFileList,
             communicationSubFolderData=[],
             collapseActiveKeys,
+            currentSelectBoardId,
+            currentLayerSelectedStyle,
         } = this.props;
         const isShowCompanyName = is_show_org_name && is_all_org; // 是否显示归属组织
         // console.log('subcom...',communicationSubFolderData);
@@ -136,11 +138,13 @@ export default class CommunicationTreeList extends Component{
                                 <Collapse
                                     bordered={false}
                                     accordion
-                                    defaultActiveKey={collapseActiveKeys}
+                                    // defaultActiveKey={collapseActiveKeys}
+                                    defaultActiveKey={currentSelectBoardId}
                                     // activeKey={this.setNewActiveKeys(collapseActiveKeys)}
                                     // activeKey={collapseActiveKeys}
                                     expandIcon={({ isActive }) => <Icon type="caret-right" rotate={isActive ? 90 : 0} />}
                                     onChange={this.props.setCollapseActiveKeys}
+                                    // style={{ backgroundColor: '#f60'}}
                                 >
                                     {
                                         boards_flies && boards_flies.map((item, key) => {

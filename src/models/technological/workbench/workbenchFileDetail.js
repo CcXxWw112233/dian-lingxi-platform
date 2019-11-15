@@ -5,7 +5,7 @@ import {MESSAGE_DURATION_TIME, TASKS, PROJECTS, MEMBERS} from "../../../globalse
 import { routerRedux } from "dva/router";
 import {
   getFileCommitPoints, getPreviewFileCommits, addFileCommit, deleteCommit, getFileList, filePreview, fileCopy,
-  fileDownload, fileRemove, fileMove, fileUpload, fileVersionist, recycleBinList, deleteFile, restoreFile,
+  fileDownload, saveAsNewVersion, fileRemove, fileMove, fileUpload, fileVersionist, recycleBinList, deleteFile, restoreFile,
   getFolderList, addNewFolder, updateFolder, getCardCommentListAll, fileInfoByUrl, getFilePDFInfo, setCurrentVersionFile,
   updateVersionFileDescription,
 } from '../../../services/technological/file'
@@ -178,6 +178,34 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
+    
+    // 另存为 - 保存为新版本
+    *saveAsNewVersion({ payload }, { select, call, put }){
+        let res = yield call(saveAsNewVersion, payload)
+        if(isApiResponseOk(res)) {
+          const data = res.data
+            // console.log('保存为新版本啦啦啦啦啦啊');
+            // const version_id = data.fileId;
+            const version_id = data.fileId;
+            yield put({
+              type: 'workbenchFileDetail/fileVersionist',
+              payload: {
+                version_id: version_id, //file_id,
+                isNeedPreviewFile: false,
+              }
+            })
+            yield put({
+              type: 'updateDatas',
+              payload: {
+                filePreviewCurrentFileId: data.id
+              }
+            })
+            // return data;
+        }else{
+          message.warn(res.message, MESSAGE_DURATION_TIME)
+        }
+    },
+
     * fileVersionist({ payload }, { select, call, put }) {
       let res = yield call(fileVersionist, payload)
       const { isNeedPreviewFile, isPDF, file_id } = payload //是否需要重新读取文档

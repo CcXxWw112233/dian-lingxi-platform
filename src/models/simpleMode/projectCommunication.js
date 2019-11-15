@@ -18,6 +18,7 @@ export default {
         onlyFileList: [], // 文件列表（只有文件）
         onlyFileTableLoading: false, // 文件列表table loading
         filesShowType: '0', // 缩略图呈现方式： 0 缩略图table呈现 1 缩略图平铺呈现
+        currentLayerSelectedStyle: false, // 当前层选中样式
     },
   
     subscriptions: {

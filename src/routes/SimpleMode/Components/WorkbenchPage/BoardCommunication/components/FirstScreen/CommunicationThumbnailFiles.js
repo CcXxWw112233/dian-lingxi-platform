@@ -148,7 +148,7 @@ export default class CommunicationThumbnailFiles extends Component {
         })
 
 
-        if (getSubfixName(name) == '.pdf') {
+        if (getSubfixName(file_name || name) == '.pdf') {
             this.props.dispatch({
                 type: 'workbenchFileDetail/getFilePDFInfo',
                 payload: {

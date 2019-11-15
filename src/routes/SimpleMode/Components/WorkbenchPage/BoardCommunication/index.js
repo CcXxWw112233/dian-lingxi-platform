@@ -1069,11 +1069,13 @@ class BoardCommunication extends Component {
             showFileListisOpenFileDetailModal: false,
         });
         this.setPreviewFileModalVisibile();
+        this.getThumbnailFilesData();
     }
 
     // 设置折叠面板keys
     setCollapseActiveKeys=(keys)=>{
-        this.setState({ collapseActiveKeys: keys },()=>{
+        // this.setState({ collapseActiveKeys: keys },()=>{
+        this.setState({ currentSelectBoardId: keys },()=>{
             this.getCommunicationFolderList(keys); // 获取项目交流目录下子集数据
         });
     }
@@ -1095,6 +1097,7 @@ class BoardCommunication extends Component {
             simplemodeCurrentProject,
             communicationProjectListData,
             communicationSubFolderData,
+            currentLayerSelectedStyle,
         } = this.props;
         const {
             currentfile = {},
@@ -1489,6 +1492,8 @@ class BoardCommunication extends Component {
                         setCollapseActiveKeys={this.setCollapseActiveKeys}
                         currentItemLayerId={currentItemLayerId}
                         currentFileDataType={currentFileDataType}
+                        currentSelectBoardId={currentSelectBoardId}
+                        currentLayerSelectedStyle={currentLayerSelectedStyle}
                         {...this.props}
                     />
                 }
@@ -1718,6 +1723,7 @@ function mapStateToProps({
         communicationProjectListData,
         communicationSubFolderData,
         rootDirectoryFolder_id,
+        currentLayerSelectedStyle,
     }
 }) {
     const modelObj = {
@@ -1745,7 +1751,8 @@ function mapStateToProps({
         communicationProjectListData,
         communicationSubFolderData,
         boards_flies,
-        rootDirectoryFolder_id
+        rootDirectoryFolder_id,
+        currentLayerSelectedStyle
     }
 }
 export default connect(mapStateToProps)(BoardCommunication)
