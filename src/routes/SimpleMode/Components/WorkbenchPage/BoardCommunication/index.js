@@ -287,6 +287,7 @@ class BoardCommunication extends Component {
             currentSelectBoardId: '',
             currentFileDataType: '0',
             currentSearchValue: '',
+            isSearchDetailOnfocusOrOnblur: false,
         },()=>{
             this.queryCommunicationFileData();
             this.getThumbnailFilesData();
