@@ -11,9 +11,9 @@ import { REQUEST_DOMAIN_FILE, PROJECT_FILES_FILE_UPLOAD, NOT_HAS_PERMISION_COMFI
 import Cookies from 'js-cookie'
 import { setUploadHeaderBaseInfo, checkIsHasPermissionInBoard, getGlobalData } from '../../../../../../../utils/businessFunction';
 import FileDetailModal from '../../../../Workbench/CardContent/Modal/FileDetailModal'
-const { Dragger } = Upload
 import { connect } from 'dva'
 import { currentFolderJudegeFileUpload } from '../../../ganttBusiness'
+const { Dragger } = Upload
 
 @connect(mapStateToProps)
 export default class Index extends Component {
