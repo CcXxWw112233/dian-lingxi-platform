@@ -405,8 +405,6 @@ class FileDetailContent extends React.Component {
 
   // 保存为新版本
   saveAsNewVersion=({ filePreviewCurrentId, pdfDownLoadSrc })=>{
-    console.log('filePreviewCurrentId',filePreviewCurrentId);
-    console.log('pdfDownLoadSrc',pdfDownLoadSrc);
     // const { datas: { currentPreviewFileData: { id, file_id, board_id, } } } = this.props.model
     const { datas = {} } = this.props.model;
     const { currentPreviewFileData = {} } = datas

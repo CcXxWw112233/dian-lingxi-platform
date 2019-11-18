@@ -289,7 +289,7 @@ export default class UploadAttachment extends Component {
     if (!value && value != '0') {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
-    }  else {
+    } else {
       this.setState({
         fileSavePath: value
       });
@@ -301,7 +301,7 @@ export default class UploadAttachment extends Component {
     // 父组件传递的值
     const { visible, children, board_id, card_id, projectDetailInfoData = {} } = this.props;
     const { uploadFileVisible, uploadFilePreviewList = [], toNoticeList = [], fileSavePath, uploading } = this.state;
-    
+
     const { data: projectMemberData } = projectDetailInfoData;
 
     return (
@@ -352,6 +352,8 @@ export default class UploadAttachment extends Component {
                         <MenuSearchPartner
                           listData={projectMemberData} keyCode={'user_id'} searchName={'name'} currentSelect={toNoticeList}
                           board_id={board_id}
+                          invitationType='1'
+                          invitationId={board_id}
                           chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
                       }
                     >
@@ -367,6 +369,8 @@ export default class UploadAttachment extends Component {
                       <Dropdown overlayClassName={styles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
                         overlay={
                           <MenuSearchPartner
+                            invitationType='1'
+                            invitationId={board_id}
                             listData={projectMemberData} keyCode={'user_id'} searchName={'name'} currentSelect={toNoticeList} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
                             board_id={board_id} />
                         }

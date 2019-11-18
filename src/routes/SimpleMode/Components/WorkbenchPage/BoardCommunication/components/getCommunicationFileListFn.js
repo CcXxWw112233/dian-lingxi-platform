@@ -46,3 +46,16 @@ export function getParent(data2, nodeId2) {
 }
 
 // 公用处理-通过传入当前节点的ID，查询出所有的子级节点
+export function getChildIds(data){
+	var ids = [];
+	var rev = (data)=> {
+		for(var i=0; i<data.length; i++){
+			ids.push( data[i].folder_id );
+			if(data[i].child_data){
+				rev(data[i].child_data);
+			}
+		}
+	}
+	rev(data);
+	return ids;
+}
