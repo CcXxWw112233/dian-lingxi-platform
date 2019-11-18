@@ -77,26 +77,48 @@ class VideoMeetingPopoverContent extends React.Component {
 			{ remind_time_value: '45' },
 		],// 设置的提醒时间
 		toNoticeList: [], // 当前通知的用户
+		defaultValue: '1', // 当前选择的持续时间
 	}
 
 	// 获取项目用户
 	getProjectUsers = ({ projectId }) => {
 		if (!projectId) return
 		this.setVideoMeetingDefaultSuggesstionsByBoardUser({ board_users: [] })
-		getCurrentSelectedProjectMembersList({ projectId }).then(res => {
-			if (res.code == '0') {
-				const board_users = res.data
-				this.setState({
-					currentSelectedProjectMembersList: board_users, // 当前选择项目成员列表
-					currentOrgAllMembers: board_users// 当前组织所有成员?
-				}, () => {
-					this.setVideoMeetingDefaultSuggesstionsByBoardUser({ board_users })
-					this.getCurrentRemindUser()
-				})
-			} else {
-				message.error(res.message)
-			}
-		})
+		getCurrentSelectedProjectMembersList({ projectId })
+			.then(res => {
+				if (res.code == '0') {
+					const board_users = res.data
+					currentDelayDueTime = null
+					defaultDelayDueTime = this.getNormalCurrentDueTime()
+					this.setState({
+						currentSelectedProjectMembersList: board_users, // 当前选择项目成员列表
+						currentOrgAllMembers: board_users,// 当前组织所有成员?
+						othersPeople: [],
+						meetingTitle: '',
+						meeting_start_time: '', 
+						start_time: '',
+						user_phone: [],
+						selectedKeys: null,
+						defaultValue: '1',
+					}, () => {
+						this.setVideoMeetingDefaultSuggesstionsByBoardUser({ board_users })
+						this.getCurrentRemindUser()
+					})
+				} else {
+					message.error(res.message)
+				}
+			})
+	}
+
+	componentDidMount() {
+		let { projectList = [] } = this.props
+		if (projectList && projectList.length) {
+			//过滤出来当前用户有编辑权限的项目
+			projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
+			let new_projectList = [...projectList]
+			let gold_id = (new_projectList.find(item => item.is_my_private == '1') || {}).board_id
+			this.getProjectUsers({ projectId: gold_id })
+		}
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -351,6 +373,9 @@ class VideoMeetingPopoverContent extends React.Component {
 		} else {
 			currentDelayDueTime = key * 3600000
 		}
+		this.setState({
+			defaultValue: key
+		})
 		// const { meeting_start_time } = this.state
 		// const { defaultAppointStartTime } = this.getVideoMeetingPopoverContentNoramlDatas()
 		// if (meeting_start_time) { // 如果选择了时间
@@ -606,14 +631,14 @@ class VideoMeetingPopoverContent extends React.Component {
 			card_id,
 			org_id,
 			meetingTitle = '',
-			showUserDefinedIconVisible
+			showUserDefinedIconVisible,
+			defaultValue
 		} = this.state;
 		let { projectList, board_id } = this.props;
 		//过滤出来当前用户有编辑权限的项目
 		projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
 		let newToNoticeList = [].concat(...toNoticeList, ...othersPeople)
 		const { defaultSaveToProject, defaultMeetingTitle, currentDelayStartTime } = this.getVideoMeetingPopoverContentNoramlDatas()
-
 		const videoMeetingPopoverContent_ = (
 			<div>
 				{videoMeetingPopoverVisible && (
@@ -666,13 +691,15 @@ class VideoMeetingPopoverContent extends React.Component {
 									</span>
 									<span style={{ position: 'relative' }}>
 										<Select
-											// onChange={this.handleEndDateChange} 
+											// onChange={(e) => { this.endDatePickerChange(e) }} 
 
-											getPopupContainer={triggerNode => triggerNode.parentNode} dropdownClassName={`${indexStyles.select_overlay} ${globalStyles.global_vertical_scrollbar}`} style={{ width: '136px' }} defaultValue={['1']}>
+											getPopupContainer={triggerNode => triggerNode.parentNode} dropdownClassName={`${indexStyles.select_overlay} ${globalStyles.global_vertical_scrollbar}`} style={{ width: '136px' }} value={[defaultValue]}>
 											{/* <Option value="1">持续1小时</Option> */}
 											{
 												dueTimeList && dueTimeList.map((item, index) => (
-													<Option onClick={(e) => { this.endDatePickerChange(e, item.remind_time_type) }} value={item.txtVal}>{`持续 ${item.txtVal} ${item.remind_time_type == 'm' ? '分钟' : '小时'}`}</Option>
+													<Option 
+														onClick={(e) => { this.endDatePickerChange(e, item.remind_time_type) }} 
+														value={item.txtVal}>{`持续 ${item.txtVal} ${item.remind_time_type == 'm' ? '分钟' : '小时'}`}</Option>
 												))
 											}
 										</Select>

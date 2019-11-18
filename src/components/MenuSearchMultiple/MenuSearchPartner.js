@@ -81,12 +81,18 @@ export default class MenuSearchPartner extends React.Component {
 		}
 	}
 	fuzzyQuery = (list, searchName, keyWord) => {
-		var arr = [];
-		for (var i = 0; i < list.length; i++) {
-			if (list[i][searchName].indexOf(keyWord) !== -1) {
-				arr.push(list[i]);
-			}
-		}
+		// var arr = [];
+		// for (var i = 0; i < list.length; i++) {
+		// 	if (list[i][searchName].indexOf(keyWord) !== -1) {
+		// 		arr.push(list[i]);
+		// 	}
+		// }
+		let arr = []
+    if (!!keyWord) {
+      arr = list.filter((item, index) => list[index][searchName].indexOf(keyWord) !== -1)
+    } else {
+      arr = list
+    }
 
 		//添加任务执行人后往前插入
 		const { selectedKeys } = this.state
@@ -236,6 +242,8 @@ export default class MenuSearchPartner extends React.Component {
 	// 当自定义图标显示的时候的回调
 	chgUserDefinedIcon = () => {
 		const { keyWord } = this.state
+		const { listData = [], searchName } = this.props
+		let new_listData = [...listData]
 		const obj = {
 			avatar: "",
 			id: keyWord,
@@ -244,11 +252,29 @@ export default class MenuSearchPartner extends React.Component {
 			user_id: keyWord,
 			type: 'phone'
 		}
-		this.props.chgUserDefinedIcon && this.props.chgUserDefinedIcon({ obj })
+		new_listData = new_listData.find(item => item.mobile == obj.mobile)
 		this.setState({
 			keyWord: '',
-			showUserDefinedIconVisible: false
+			showUserDefinedIconVisible: false,
+		}, () => {
+			this.setState({
+				resultArr: this.fuzzyQuery(listData, searchName, ''),
+			})
 		})
+		if (new_listData) {
+			message.warn('该用户已存在', MESSAGE_DURATION_TIME)
+			return false
+		}
+
+		this.props.chgUserDefinedIcon && this.props.chgUserDefinedIcon({ obj })
+		// this.setState({
+		// 	keyWord: '',
+		// 	showUserDefinedIconVisible: false,
+		// }, () => {
+		// 	this.setState({
+		// 		resultArr: this.fuzzyQuery(listData, searchName, ''),
+		// 	})
+		// })
 	}
 
 	render() {
