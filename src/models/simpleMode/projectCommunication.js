@@ -3,6 +3,7 @@ import { getCommunicationTreeListData, getProjectList, getOnlyThumbnailFileList 
 // import { getProjectList } from '@/services/technological/workbench'
 import { getFolderList } from '@/services/technological/file';
 import { isApiResponseOk } from '@/utils/handleResponseData';
+import { getChildIds } from "../../routes/SimpleMode/Components/WorkbenchPage/BoardCommunication/components/getCommunicationFileListFn";
 import { message } from 'antd';
 
 export default {
@@ -75,18 +76,35 @@ export default {
           const res = yield call(getFolderList, payload);
           if (isApiResponseOk(res)) {
             yield put({
+              type: 'projectCommunication/getTreeDataIds',
+              payload: {
+                treeData: [res.data],
+                folder_id: res.data.folder_id,
+              }
+            })
+            yield put({
               type: 'updateDatas',
               payload: {
                 // boards_flies: res.data,
                 communicationSubFolderData: res.data,
                 firstLayerTreeFolder_id: res.data && res.data.folder_id,
-                // expandedKeys: res.data && [res.data.folder_id],
-                // expandedKeys: ['1187320332416061443','1187320332416061444','1187320332416061445','1187320332416061446'],
               }
             })
           } else {
     
           }
+      },
+
+      * getTreeDataIds({ payload },{select, call,put}){
+          const { treeData, folder_id } = payload;
+          const allChildIds = getChildIds(treeData);
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              expandedKeys: allChildIds,
+            }
+          })
+          console.log('allChildIds',allChildIds);
       },
 
       // 查询文件列表-（只有文件）

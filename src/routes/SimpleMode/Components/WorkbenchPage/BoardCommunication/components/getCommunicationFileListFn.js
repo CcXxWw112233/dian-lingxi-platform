@@ -46,3 +46,41 @@ export function getParent(data2, nodeId2) {
 }
 
 // 公用处理-通过传入当前节点的ID，查询出所有的子级节点
+export function getChildIds(data){
+	var ids = [];
+	var rev = (data)=> {
+		for(var i=0; i<data.length; i++){
+			ids.push( data[i].folder_id );
+			if(data[i].child_data){
+				rev(data[i].child_data);
+			}
+		}
+	}
+	rev(data);
+	return ids;
+}
+
+// export function getChildIds(arr,id){
+//     var childIds=[]
+//      function a(arr){
+//          for(var i=0;i<arr.length;i++){
+//              console.log('arr[i]',arr[i]);
+//                if(id.length >=arr[i].folder_id.length){
+//                     //console.log(id,arr[i].folder_id,id.startsWith(arr[i].folder_id))
+//                     if(id.startsWith(arr[i].folder_id)){
+//                          if(arr[i].folder_id ==id){
+//                               childIds.push(arr[i].folder_id)
+//                          }
+//                          a(arr[i].child_data)
+//                     }
+//                }else{
+//                     if(arr[i].folder_id.startsWith(id)){
+//                          childIds.push(arr[i].folder_id)
+//                          a(arr[i].child_data)
+//                     }
+//                }
+//          }
+//      }
+//      a(arr);
+//      return childIds;
+// }

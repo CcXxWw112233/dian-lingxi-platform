@@ -107,7 +107,7 @@ export default class CommunicationTreeList extends Component{
         console.log('onSelect-selectedKeys',selectedKeys);
         console.log('onSelect-info',info);
         const currentInfo = info.selectedNodes[0].props.dataRef;
-        this.setState({ selectedKeys });
+        // this.setState({ selectedKeys });
         this.props.onSelectTree(currentInfo,first_item);
     }
 
@@ -123,7 +123,7 @@ export default class CommunicationTreeList extends Component{
             // currentOrg_id,
             // bread_paths,
             // first_paths_item,
-            selectedKeys,
+            // selectedKeys,
         } = this.state;
         const {
             boards_flies = [],
@@ -137,10 +137,14 @@ export default class CommunicationTreeList extends Component{
             currentSelectBoardId,
             currentLayerSelectedStyle,
             expandedKeys,
+            selectedKeys,
+            currentFolderId,
         } = this.props;
         const isShowCompanyName = is_show_org_name && is_all_org; // 是否显示归属组织
         // console.log('subcom...',communicationSubFolderData);
         const { child_data = [] } = communicationSubFolderData;
+        // console.log('expandedKeys...', expandedKeys);
+        console.log('currentfloor_folder_id',currentFolderId);
         return(
             <div className={styles.communicationTreeList}>
                 {/* 这里是左侧的项目交流列表 */}
@@ -153,7 +157,6 @@ export default class CommunicationTreeList extends Component{
                                     accordion
                                     // defaultActiveKey={collapseActiveKeys}
                                     defaultActiveKey={currentSelectBoardId}
-                                    // activeKey={this.setNewActiveKeys(collapseActiveKeys)}
                                     activeKey={currentSelectBoardId}
                                     expandIcon={({ isActive }) => <Icon type="caret-right" rotate={isActive ? 90 : 0} />}
                                     onChange={this.props.setCollapseActiveKeys}
@@ -176,9 +179,9 @@ export default class CommunicationTreeList extends Component{
                                                                 // onSelect={()=>this.onSelect(first_item)}
                                                                 onSelect={this.onSelect.bind(this,item)}
                                                                 onExpand={this.onExpand}
-                                                                // expandedKeys={expandedKeys}
-                                                                // autoExpandParent={this.state.autoExpandParent}
-                                                                // selectedKeys={this.state.selectedKeys}
+                                                                expandedKeys={expandedKeys}
+                                                                autoExpandParent={this.state.autoExpandParent}
+                                                                selectedKeys={[currentFolderId]}
                                                             >
                                                                 { this.renderTreeNodes(child_data) }
                                                             </DirectoryTree>

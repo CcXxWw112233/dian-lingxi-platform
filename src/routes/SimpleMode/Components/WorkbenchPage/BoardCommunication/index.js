@@ -60,7 +60,7 @@ class BoardCommunication extends Component {
         currentItemIayerData: [], // 当前层数据
         currentItemLayerId: '', // 当前层级ID
         currentSelectBoardId: '', // 当前选择的项目ID
-        currentBorderId: '', // 当前border_id
+        currentFolderId: '', // 当前选择文件folder_id
         isSearchDetailOnfocusOrOnblur: false, // 搜索框聚焦显示当前搜索条件详情
         currentFileDataType: '0', // 当前文件数据类型 '0' 全部文件 '1' 项目下全部文件 '2' 文件夹下全部文件
         currentSearchValue: '', // 搜索框输入值
@@ -137,7 +137,7 @@ class BoardCommunication extends Component {
         // firstLayerData[0].layerType = 'firstLayer';
         this.setState({ 
             bread_paths: firstLayerData,
-            currentBorderId: firstLayerData && firstLayerData[0] && firstLayerData[0].folder_id,
+            currentFolderId: firstLayerData && firstLayerData[0] && firstLayerData[0].folder_id,
         });
     }
 
@@ -155,7 +155,7 @@ class BoardCommunication extends Component {
             showFileListisOpenFileDetailModal: false, // 关闭圈屏组件
             previewFileModalVisibile: false, // 显示首屏展示组件（头部面包屑,右侧文件按列表）
             currentFileDataType: '2', // 当前文件数据所属层：0全部文件/1项目内文件/2文件夹内文件
-            currentBorderId: folder_id,
+            currentFolderId: folder_id,
             currentSearchValue: '', // 清空搜索关键字
         },()=>{
             this.getThumbnailFilesData();
@@ -1080,15 +1080,29 @@ class BoardCommunication extends Component {
     // 设置折叠面板keys
     setCollapseActiveKeys=(keys)=>{
         // this.setState({ collapseActiveKeys: keys },()=>{
+        const { dispatch, expandedKeys } = this.props;
+        // if(expandedKeys && expandedKeys.length){
+        //     dispatch({
+        //         type: getEffectOrReducerByName_8('updateDatas'),
+        //         payload: {
+        //             expandedKeys: null,
+        //         }
+        //     })
+        // }
+        
         this.setState({ currentSelectBoardId: keys },()=>{
-            this.getCommunicationFolderList(keys); // 获取项目交流目录下子集数据
+            console.log('keys_lalala',keys);
+            // if(keys){
+                this.getCommunicationFolderList(keys); // 获取项目交流目录下子集数据
+            // }
+            
         });
     }
 
 
     // 改变搜索状态tab-全局搜索/局部搜索
     changeChooseType = (type) => {
-        console.log('点击的层:', type);
+        // console.log('点击的层:', type);
         this.setState({
             currentFileDataType: type,
         },()=>{
@@ -1128,7 +1142,7 @@ class BoardCommunication extends Component {
             currentFileschoiceTab,
             currentSearchValue,
             currentFileDataType,
-            currentBorderId
+            currentFolderId
         } = this.state;
         const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
         const zommPictureComponentHeight = container_workbenchBoxContent ? container_workbenchBoxContent.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding
@@ -1504,6 +1518,7 @@ class BoardCommunication extends Component {
                         currentItemLayerId={currentItemLayerId}
                         currentFileDataType={currentFileDataType}
                         currentSelectBoardId={currentSelectBoardId}
+                        currentFolderId={currentFolderId}
                         currentLayerSelectedStyle={currentLayerSelectedStyle}
                         {...this.props}
                     />
@@ -1516,7 +1531,7 @@ class BoardCommunication extends Component {
                         isVisibleFileList={isVisibleFileList}
                         currentSelectBoardId={currentSelectBoardId}
                         currentItemLayerId={currentItemLayerId}
-                        current_folder_id={currentBorderId}
+                        current_folder_id={currentFolderId}
                         bread_paths={bread_paths}
                         isSearchDetailOnfocusOrOnblur={isSearchDetailOnfocusOrOnblur}
                         getThumbnailFilesData={this.getThumbnailFilesData}
