@@ -54,6 +54,12 @@ const MiniBoxNavigations = (props) => {
                 route: '/technological/simplemode/home'
             }
         })
+        dispatch({ //解决组织切换时，由于调用了甘特图查看具体id而报错
+            type: 'gantt/updateDatas',
+            payload: {
+                gantt_board_id: '0'
+            }
+        })
     };
 
     const setWorkbenchPage = (box) => {

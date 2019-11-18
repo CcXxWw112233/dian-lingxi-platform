@@ -44,3 +44,5 @@ export function getParent(data2, nodeId2) {
   arrRes = rev(data2, nodeId2);
   return arrRes;
 }
+
+// 公用处理-通过传入当前节点的ID，查询出所有的子级节点

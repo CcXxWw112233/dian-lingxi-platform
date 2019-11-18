@@ -86,14 +86,26 @@ export default class CommunicationTreeList extends Component{
         // console.log('onExpand', expandedKeys);
         // if not set autoExpandParent to false, if children expanded, parent can not collapse.
         // or, you can remove all expanded children keys.
-        this.setState({
-          expandedKeys,
-          autoExpandParent: false,
+        console.log('onExpand', expandedKeys);
+        // this.setState({
+        //   expandedKeys,
+        //   autoExpandParent: false,
+        // });
+        const { dispatch } = this.props;
+        dispatch({
+            type: 'projectCommunication/updateDatas',
+            payload: {
+                expandedKeys,
+                autoExpandParent: false,
+            }
         });
     };
 
     // 点击树节点触发
     onSelect =(first_item, selectedKeys, info)=> {
+        console.log('onSelect-first_item',first_item);
+        console.log('onSelect-selectedKeys',selectedKeys);
+        console.log('onSelect-info',info);
         const currentInfo = info.selectedNodes[0].props.dataRef;
         this.setState({ selectedKeys });
         this.props.onSelectTree(currentInfo,first_item);
@@ -111,7 +123,7 @@ export default class CommunicationTreeList extends Component{
             // currentOrg_id,
             // bread_paths,
             // first_paths_item,
-            selectedKeys
+            selectedKeys,
         } = this.state;
         const {
             boards_flies = [],
@@ -124,6 +136,7 @@ export default class CommunicationTreeList extends Component{
             collapseActiveKeys,
             currentSelectBoardId,
             currentLayerSelectedStyle,
+            expandedKeys,
         } = this.props;
         const isShowCompanyName = is_show_org_name && is_all_org; // 是否显示归属组织
         // console.log('subcom...',communicationSubFolderData);
@@ -141,7 +154,7 @@ export default class CommunicationTreeList extends Component{
                                     // defaultActiveKey={collapseActiveKeys}
                                     defaultActiveKey={currentSelectBoardId}
                                     // activeKey={this.setNewActiveKeys(collapseActiveKeys)}
-                                    // activeKey={collapseActiveKeys}
+                                    activeKey={currentSelectBoardId}
                                     expandIcon={({ isActive }) => <Icon type="caret-right" rotate={isActive ? 90 : 0} />}
                                     onChange={this.props.setCollapseActiveKeys}
                                     // style={{ backgroundColor: '#f60'}}
@@ -149,7 +162,7 @@ export default class CommunicationTreeList extends Component{
                                     {
                                         boards_flies && boards_flies.map((item, key) => {
                                             const { board_name, id, type, org_id, file_data = [] } = item;
-                                            console.log("boards_flies",item);
+                                            // console.log("boards_flies",item);
                                             return(
                                                 // <Panel header={this.showHeader(item, isShowCompanyName)} key={`${item.id}_${item.file_data.length}`} onClick={()=>this.panelOnClick(item)}>
                                                 //添加付费过滤 liuyingj 2019-11-13
@@ -163,7 +176,7 @@ export default class CommunicationTreeList extends Component{
                                                                 // onSelect={()=>this.onSelect(first_item)}
                                                                 onSelect={this.onSelect.bind(this,item)}
                                                                 onExpand={this.onExpand}
-                                                                // expandedKeys={this.state.expandedKeys}
+                                                                // expandedKeys={expandedKeys}
                                                                 // autoExpandParent={this.state.autoExpandParent}
                                                                 // selectedKeys={this.state.selectedKeys}
                                                             >
@@ -208,6 +221,7 @@ function mapStateToProps({
         currentBoardId,
         communicationProjectListData,
         communicationSubFolderData,
+        expandedKeys,
     }
 }) {
     return {
@@ -218,5 +232,6 @@ function mapStateToProps({
         is_all_org,
         // count
         communicationSubFolderData,
+        expandedKeys,
     }
 }

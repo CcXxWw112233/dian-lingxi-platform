@@ -30,12 +30,14 @@ export default {
     effects: {
         * getImUnReadAllMessages({ payload }, { select, call, put }) { //获取和设置全部未读消息
             const { messages = [] } = payload
+            console.log('ssss_初始化首次传递', messages)
             const wil_handle_types = yield select(getModelSelectState('imCooperation', 'wil_handle_types'))
             const im_all_latest_unread_messages = messages.filter(item => {
-                if (wil_handle_types.indexOf(item.action) != -1) {
+                if (item && wil_handle_types.indexOf(item.action) != -1) {
                     return item
                 }
             })
+            console.log('ssss_初始化首次传递过滤类型', im_all_latest_unread_messages)
             yield put({
                 type: 'updateDatas',
                 payload: {
@@ -46,6 +48,7 @@ export default {
         * imUnReadMessageItemClear({ payload }, { call, put, select }) { //未读消息清除,场景（当用户点开某一条具有红点的消息后，会清除该条消息）
             const { relaDataId } = payload
             let im_all_latest_unread_messages = yield select(getModelSelectState('imCooperation', 'im_all_latest_unread_messages'))
+            im_all_latest_unread_messages = im_all_latest_unread_messages.filter(item => !!item)
             const idServer = (im_all_latest_unread_messages.find((item) => item.relaDataId == relaDataId || item.cardId == relaDataId) || {}).idServer
             const target = (im_all_latest_unread_messages.find((item) => item.relaDataId == relaDataId || item.cardId == relaDataId) || {}).target
             im_all_latest_unread_messages = im_all_latest_unread_messages.filter(item => item.relaDataId != relaDataId && item.cardId != relaDataId)
@@ -122,10 +125,10 @@ export default {
         },
         * imMessageToRead({ payload }, { call, put }) { //im的某一条消息设置已读
             const { idServer, target, reads = [] } = payload
-            console.log('sssss_read', reads)
             // debugger
             if (Im) {
                 const params = idServer ? { idServer, target } : reads
+                console.log('sssss_read_params', params)
                 Im.fireEvent('readMsg', params)
             }
         },
@@ -141,7 +144,7 @@ export default {
             if (action == 'board.card.create') {
 
             }
-            debugger
+            // debugger
         },
     },
 
