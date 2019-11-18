@@ -83,6 +83,7 @@ class VideoMeetingPopoverContent extends React.Component {
 	// 获取项目用户
 	getProjectUsers = ({ projectId }) => {
 		if (!projectId) return
+		
 		this.setVideoMeetingDefaultSuggesstionsByBoardUser({ board_users: [] })
 		getCurrentSelectedProjectMembersList({ projectId })
 			.then(res => {
@@ -100,6 +101,7 @@ class VideoMeetingPopoverContent extends React.Component {
 						user_phone: [],
 						selectedKeys: null,
 						defaultValue: '1',
+						toNoticeList: this.getCurrentRemindUser()
 					}, () => {
 						this.setVideoMeetingDefaultSuggesstionsByBoardUser({ board_users })
 						this.getCurrentRemindUser()
@@ -112,12 +114,15 @@ class VideoMeetingPopoverContent extends React.Component {
 
 	componentDidMount() {
 		let { projectList = [] } = this.props
+		const {user_set: { current_board }} = this.getInfoFromLocalStorage("userInfo")
 		if (projectList && projectList.length) {
 			//过滤出来当前用户有编辑权限的项目
 			projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
 			let new_projectList = [...projectList]
 			let gold_id = (new_projectList.find(item => item.is_my_private == '1') || {}).board_id
 			this.getProjectUsers({ projectId: gold_id })
+		} else {
+			this.getProjectUsers({ projectId: current_board })
 		}
 	}
 
@@ -175,7 +180,6 @@ class VideoMeetingPopoverContent extends React.Component {
 			start_time: '',
 			meeting_start_time: '',
 			selectedKeys: null,
-			toNoticeList: [],
 			othersPeople: [],
 			userIds: [],
 		});
@@ -210,11 +214,18 @@ class VideoMeetingPopoverContent extends React.Component {
 	// 获取当前默认的项目名称
 	filterCurrentDefaultSaveProjectValue = () => {
 		let { projectList = [] } = this.props
+		const {user_set: { current_board }} = this.getInfoFromLocalStorage("userInfo")
 		//过滤出来当前用户有编辑权限的项目
 		projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
-		let new_projectList = [...projectList]
-		let gold_id = (new_projectList.find(item => item.is_my_private == '1') || {}).board_id
-		return gold_id
+		if (projectList && projectList.length) {
+			let new_projectList = [...projectList]
+			let gold_id = (new_projectList.find(item => item.is_my_private == '1') || {}).board_id
+			return gold_id
+		} else {
+			let gold_id = current_board
+			return gold_id
+		}
+		
 	}
 
 	// 获取当前用户的会议名称
@@ -506,7 +517,7 @@ class VideoMeetingPopoverContent extends React.Component {
 				},
 				() => {
 					this.initVideoMeetingPopover();
-					this.getCurrentRemindUser()
+					this.getCurrentRemindUser()				
 				}
 			)
 		} else {
@@ -652,7 +663,7 @@ class VideoMeetingPopoverContent extends React.Component {
 								{/* 项目选择 S */}
 								<span className={indexStyles.videoMeeting__topic_content_save}>
 									<Select
-										defaultValue={defaultSaveToProject ? defaultSaveToProject : saveToProject}
+										defaultValue={saveToProject ? saveToProject : defaultSaveToProject}
 										onChange={this.handleVideoMeetingSaveSelectChange}
 										style={{ width: "100%" }}
 									>
