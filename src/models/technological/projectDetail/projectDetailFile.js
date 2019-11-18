@@ -730,8 +730,8 @@ export default modelExtend(projectDetail, {
       }
     },
     * addNewFolder({ payload }, { select, call, put }) {
+      const { parent_id, boardId } = payload
       let res = yield call(addNewFolder, payload)
-      const { parent_id } = payload
       if (isApiResponseOk(res)) {
         yield put({
           type: 'getFileList',
@@ -742,7 +742,7 @@ export default modelExtend(projectDetail, {
         yield put({
           type: 'getFolderList',
           payload: {
-            board_id: board_id,
+            board_id: boardId || board_id,
             calback: function () {
               message.success('已成功添加文件夹', MESSAGE_DURATION_TIME)
             }

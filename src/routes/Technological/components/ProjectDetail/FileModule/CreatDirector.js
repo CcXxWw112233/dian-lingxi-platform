@@ -29,6 +29,7 @@ export default class CreatDirector extends React.Component {
       type: 'projectDetailFile/addNewFolder',
       payload: {
         board_id,
+        boardId: board_id,
         folder_name: this.state.file_name,
         parent_id: currentParrentDirectoryId
       }
