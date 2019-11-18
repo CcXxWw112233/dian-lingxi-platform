@@ -462,21 +462,25 @@ class VideoMeetingPopoverContent extends React.Component {
 			users: user_phone,
 			_organization_id: org_id
 		}
-		organizationInviteWebJoin({...data}).then(res => {
-			if (isApiResponseOk(res)) {
-				let data = {
-					id: card_id,
-					role_id: res.data.role_id,
-					users: res.data.users,
-					type: '4'
-				}
-				commInviteWebJoin(data).then(res => {
-					if (isApiResponseOk(res)) {
-						this.setRemindInfo({card_id, userIds, user_phone: data.users})
+		if (user_phone && user_phone.length) {
+			organizationInviteWebJoin({...data}).then(res => {
+				if (isApiResponseOk(res)) {
+					let data = {
+						id: card_id,
+						role_id: res.data.role_id,
+						users: res.data.users,
+						type: '4'
 					}
-				})
-			}
-		})
+					commInviteWebJoin(data).then(res => {
+						if (isApiResponseOk(res)) {
+							this.setRemindInfo({card_id, userIds, user_phone: data.users})
+						}
+					})
+				}
+			})
+		} else {
+			this.setRemindInfo({card_id, userIds, user_phone: []})
+		}
 	}
  
 	// 发起会议成功之后调用通知提醒
@@ -554,9 +558,9 @@ class VideoMeetingPopoverContent extends React.Component {
 
 		const data = {
 			_organization_id: org_id,
-			board_id: defaultSaveToProject ? defaultSaveToProject : saveToProject,
+			board_id: saveToProject ? saveToProject : defaultSaveToProject,
 			flag: 2,
-			rela_id: defaultSaveToProject ? defaultSaveToProject : saveToProject,
+			rela_id: saveToProject ? saveToProject : defaultSaveToProject,
 			topic: meetingTitle ? meetingTitle : defaultMeetingTitle,
 			start_time: meeting_start_time ? meeting_start_time : defaultAppointStartTime,
 			end_time: time2,
