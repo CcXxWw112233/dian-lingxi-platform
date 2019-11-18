@@ -168,7 +168,8 @@ class BoardCommunication extends Component {
         const {
             currentFileDataType, // currentFileDataType 0 全部（包括项目） 1 项目全部（包括文件夹内） 2 文件Tree的文件夹内
             currentSelectBoardId,
-            currentItemLayerId,
+            // currentItemLayerId,
+            currentFolderId,
             currentSearchValue, // 搜索关键字
         } = this.state;
         let boardId = '';
@@ -187,10 +188,10 @@ class BoardCommunication extends Component {
                 break
             case '2': 
                 boardId = currentSelectBoardId;
-                folderId = currentItemLayerId;
+                folderId = currentFolderId;
                 queryConditions = [
                     {id:'1135447108158099461', value: currentSelectBoardId},
-                    {id:'1192646538984296448', value: currentItemLayerId},
+                    {id:'1192646538984296448', value: currentFolderId},
                 ];
                 break
             default:
