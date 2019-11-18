@@ -315,7 +315,12 @@ export default class FolderItem extends Component {
                                     folderItemHasUnReadNo({ type, relaDataId: id, im_all_latest_unread_messages, wil_handle_types }) > 0 &&
                                     // true &&
                                     (
-                                        <div className={styles.has_no_read}>{folderItemHasUnReadNo({ type, relaDataId: id, im_all_latest_unread_messages, wil_handle_types })}</div>
+                                        <div className={styles.has_no_read}>
+                                            {
+                                                folderItemHasUnReadNo({ type, relaDataId: id, im_all_latest_unread_messages, wil_handle_types }) > 99 ?
+                                                    '99+' : folderItemHasUnReadNo({ type, relaDataId: id, im_all_latest_unread_messages, wil_handle_types })
+                                            }
+                                        </div>
                                     )
                                 }
                             </div>

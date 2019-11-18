@@ -58,6 +58,18 @@ const AccountSet = (options) => {
         type: getEffectOrReducerByName('getUserInfo'),
         payload: data
       })
+    },
+    formSubmit(data) {
+      dispatch({
+        type: getEffectOrReducerByName('formSubmit'),
+        payload: data
+      })
+    },
+    unBindWechat(data) {
+      dispatch({
+        type: getEffectOrReducerByName('unBindWechat'),
+        payload: data
+      })
     }
   }
   const updateDatas = (payload) => {
