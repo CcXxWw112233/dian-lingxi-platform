@@ -59,28 +59,3 @@ export function getChildIds(data){
 	rev(data);
 	return ids;
 }
-
-// export function getChildIds(arr,id){
-//     var childIds=[]
-//      function a(arr){
-//          for(var i=0;i<arr.length;i++){
-//              console.log('arr[i]',arr[i]);
-//                if(id.length >=arr[i].folder_id.length){
-//                     //console.log(id,arr[i].folder_id,id.startsWith(arr[i].folder_id))
-//                     if(id.startsWith(arr[i].folder_id)){
-//                          if(arr[i].folder_id ==id){
-//                               childIds.push(arr[i].folder_id)
-//                          }
-//                          a(arr[i].child_data)
-//                     }
-//                }else{
-//                     if(arr[i].folder_id.startsWith(id)){
-//                          childIds.push(arr[i].folder_id)
-//                          a(arr[i].child_data)
-//                     }
-//                }
-//          }
-//      }
-//      a(arr);
-//      return childIds;
-// }
