@@ -162,8 +162,8 @@ export default class FolderList extends Component {
         }
     }
     render() {
-        const { file_data = [], is_show_add_item, add_folder_value, show_upload_notification, uploading_file_list } = this.state
-        const { board_id, current_folder_id } = this.props
+        const { is_show_add_item, add_folder_value, show_upload_notification, uploading_file_list } = this.state
+        const { board_id, current_folder_id, file_data } = this.props
         return (
             <div className={styles.folder_list}>
                 {
