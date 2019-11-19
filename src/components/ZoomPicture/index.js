@@ -139,7 +139,7 @@ class ZoomPicture extends Component {
       offsetTop,
       isShowAllCircleReview
     } = this.state;
-    const { isFullScreenMode, zoomPictureParams } = this.props;
+    const { isFullScreenMode, zoomPictureParams = {} } = this.props;
     const { is_privilege, privileges = [], board_id } = zoomPictureParams
     const cond = {
       resetSize: () => {
@@ -991,7 +991,8 @@ class ZoomPicture extends Component {
   handleShowCircleReview = () => {
     // console.log('ssss_1111')
     const { isShowAllCircleReview } = this.state
-    const { dispatch, filePreviewCurrentFileId, filePreviewCurrentId, workbenchType, projectFileType } = this.props
+    const { dispatch, workbenchType, projectFileType, zoomPictureParams = {} } = this.props
+    const { file_id: filePreviewCurrentFileId } = zoomPictureParams
     // console.log(this.props, 'ssssss')
     this.setState({
       isShowAllCircleReview: !isShowAllCircleReview

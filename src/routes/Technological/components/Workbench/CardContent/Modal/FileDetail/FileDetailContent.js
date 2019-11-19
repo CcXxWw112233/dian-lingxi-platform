@@ -500,7 +500,11 @@ class FileDetailContent extends React.Component {
     e && e.domEvent && e.domEvent.stopPropagation()
     const { datas: {board_id} } = this.props.model
     const { is_privilege, privileges = [] } = this.getFieldFromPropsCurrentPreviewFileData('is_privilege', 'privileges')
-    if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+    // if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
+    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -1126,12 +1130,6 @@ class FileDetailContent extends React.Component {
       return iframe
     }
 
-    const zoomPictureParams = {
-      board_id,
-      is_privilege,
-      privileges,
-    }
-
     const getVersionItem = (value, key) => {
       const { file_name, creator, update_time, file_size } = value
 
@@ -1347,14 +1345,14 @@ class FileDetailContent extends React.Component {
         ...setUploadHeaderBaseInfo({}),
       },
       beforeUpload(e) {
-        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+        // if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+        //   // message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        //   return false
+        // }
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
           // message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
-        // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)) {
-        //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-        //   return false
-        // }
         if (e.size == 0) {
           message.error(`不能上传空文件`)
           return false
@@ -1366,7 +1364,12 @@ class FileDetailContent extends React.Component {
         // let loading = message.loading('正在上传...', 0)
       },
       onChange({ file, fileList, event }) {
-        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+        // if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+        //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        //   return false
+        // }
+        console.log(checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id), 'ssssssssssssss')
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -1434,6 +1437,12 @@ class FileDetailContent extends React.Component {
     const { datas = {} } = this.props.model
     const { currentPreviewFileData = {} } = datas
     const { is_shared, file_id } = currentPreviewFileData //is_shared = 是否分享状态
+    const zoomPictureParams = {
+      board_id,
+      is_privilege,
+      privileges,
+      file_id
+    }
 
     return (
       <div>
