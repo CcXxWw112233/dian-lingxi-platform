@@ -163,7 +163,21 @@ export default class MenuSearchPartner extends React.Component {
                             //         }
                             //     }
                             // })
-                        } else if (invitationType === '7') {
+                        } else if (invitationType === '1') {// 邀请成员直接加入项目
+                            dispatch({
+                                type: 'projectDetail/projectDetailInfo',
+                                payload: {
+                                    id: board_id
+                                }
+                            })
+                            dispatch({
+                                type: 'workbenchTaskDetail/projectDetailInfo',
+                                payload: {
+                                    id: board_id
+                                }
+                            })
+                        } 
+                        else if (invitationType === '7') {
                             dispatch({
                                 type: 'projectDetail/projectDetailInfo',
                                 payload: {

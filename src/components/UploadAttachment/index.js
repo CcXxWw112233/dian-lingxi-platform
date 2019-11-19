@@ -299,7 +299,7 @@ export default class UploadAttachment extends Component {
 
   render() {
     // 父组件传递的值
-    const { visible, children, board_id, card_id, projectDetailInfoData = {} } = this.props;
+    const { visible, children, board_id, card_id, projectDetailInfoData = {}, org_id } = this.props;
     const { uploadFileVisible, uploadFilePreviewList = [], toNoticeList = [], fileSavePath, uploading } = this.state;
 
     const { data: projectMemberData } = projectDetailInfoData;
@@ -354,6 +354,7 @@ export default class UploadAttachment extends Component {
                           board_id={board_id}
                           invitationType='1'
                           invitationId={board_id}
+                          invitationOrg={org_id}
                           chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
                       }
                     >
@@ -371,6 +372,7 @@ export default class UploadAttachment extends Component {
                           <MenuSearchPartner
                             invitationType='1'
                             invitationId={board_id}
+                            invitationOrg={org_id}
                             listData={projectMemberData} keyCode={'user_id'} searchName={'name'} currentSelect={toNoticeList} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
                             board_id={board_id} />
                         }
