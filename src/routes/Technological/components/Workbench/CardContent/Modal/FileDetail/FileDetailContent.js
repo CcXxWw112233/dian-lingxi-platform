@@ -1330,6 +1330,44 @@ class FileDetailContent extends React.Component {
       return content
     }
 
+    // 点击全屏之后的图片
+    const punctuateBigDom = (
+      <Modal zIndex={9999999999} style={{ top: 0, left: 0, height: bodyClientHeight - 200 + 'px' }} footer={null} title={null} width={bodyClientWidth} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
+      <div>
+        {filePreviewUrl && (
+          <ZoomPicture
+            {...this.props}
+            imgInfo={{ url: filePreviewUrl }}
+            componentInfo={{ width: bodyClientWidth - 100, height: bodyClientHeight - 60 }}
+            commentList={rects && rects.length ? rects.map(i => (Object.assign({}, { flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates) }))) : []}
+            handleClickedCommentItem={this.handleClickedCommentItem.bind(this)}
+            currentSelectedCommentItemDetail={filePreviewPointNumCommits}
+            handleDeleteCommentItem={this.handleDeleteCommentItem}
+            userId={this.getCurrentUserId()}
+            handleGetNewComment={this.handleGetNewComment}
+            isFullScreenMode={isZoomPictureFullScreenMode}
+            handleFullScreen={this.handleZoomPictureFullScreen}
+            filePreviewCurrentFileId={filePreviewCurrentFileId}
+            filePreviewCurrentId={filePreviewCurrentId}
+            workbenchType={"workbenchType"}
+            zoomPictureParams={zoomPictureParams}
+            isShow_textArea={true}
+            dispatch={dispatch}
+          />
+        )}
+      </div>
+    </Modal>
+    )
+    
+    // 其他格式点击全屏时候的展示
+    const iframeBigDom = (
+      <Modal zIndex={9999999999} style={{ top: 0, left: 0, height: componentHeight + 'px', width: componentWidth + 'px', minWidth: componentWidth + 'px', minHeight: componentHeight + 'px'  }} footer={null} title={null} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
+          <div
+            style={{height: componentHeight + 'px', marginTop: '20px'}}
+            dangerouslySetInnerHTML={{ __html: getIframe(filePreviewUrl) }}></div>
+      </Modal>
+    )
+
     //header
     const uploadProps = {
       name: 'file',
@@ -1650,32 +1688,24 @@ class FileDetailContent extends React.Component {
 
         </div>
 
+
+
         {isZoomPictureFullScreenMode && (
-          <Modal zIndex={9999999999} style={{ top: 0, left: 0, height: bodyClientHeight - 200 + 'px' }} footer={null} title={null} width={bodyClientWidth} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
-            <div>
-              {filePreviewUrl && (
-                <ZoomPicture
-                  {...this.props}
-                  imgInfo={{ url: filePreviewUrl }}
-                  componentInfo={{ width: bodyClientWidth - 100, height: bodyClientHeight - 60 }}
-                  commentList={rects && rects.length ? rects.map(i => (Object.assign({}, { flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates) }))) : []}
-                  handleClickedCommentItem={this.handleClickedCommentItem.bind(this)}
-                  currentSelectedCommentItemDetail={filePreviewPointNumCommits}
-                  handleDeleteCommentItem={this.handleDeleteCommentItem}
-                  userId={this.getCurrentUserId()}
-                  handleGetNewComment={this.handleGetNewComment}
-                  isFullScreenMode={isZoomPictureFullScreenMode}
-                  handleFullScreen={this.handleZoomPictureFullScreen}
-                  filePreviewCurrentFileId={filePreviewCurrentFileId}
-                  filePreviewCurrentId={filePreviewCurrentId}
-                  workbenchType={"workbenchType"}
-                  zoomPictureParams={zoomPictureParams}
-                  isShow_textArea={true}
-                  dispatch={dispatch}
-                />
-              )}
-            </div>
-          </Modal>
+          <div>
+            {filePreviewIsUsable ? (
+            filePreviewIsRealImage ? (
+              punctuateBigDom
+            ) : (
+              iframeBigDom
+              )
+          ) : (
+              <div className={indexStyles.fileDetailContentLeft} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 16, color: '#595959' }}>
+                <div>
+                  {notSupport(this.props.model.datas.fileType)}
+                </div>
+              </div>
+            )}
+          </div>
         )}
       </div>
     )

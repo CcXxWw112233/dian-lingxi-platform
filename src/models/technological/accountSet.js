@@ -144,10 +144,17 @@ export default modelExtend(technological, {
     //解绑微信
     * unBindWechat({payload}, {select, call, put}){
       let res = yield call(unBindWechat, payload)
-      yield put({
-        type: 'getUserInfo',
-        payload: {}
-      })
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('解除微信绑定成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getUserInfo',
+          payload: {}
+        })
+      } else {
+        message.warn(res.message)
+      }
     },
     //用户设置 /user/set
     * updateUserSet({payload}, {select, call, put}){
