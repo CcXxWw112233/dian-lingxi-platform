@@ -16,8 +16,8 @@ export default class FolderList extends Component {
             file_data: [],
             is_show_add_item: false,
             add_folder_value: '',
-            // uploading_file_list: [], //正在上传的文件
-            // show_upload_notification: false,
+            uploading_file_list: [], //正在上传的文件
+            show_upload_notification: false,
         }
     }
 
@@ -63,7 +63,9 @@ export default class FolderList extends Component {
             withCredentials: true,
             multiple: true,
             action: `${REQUEST_DOMAIN_FILE}/file/upload`,
-            showUploadList: false,
+            showUploadList: true,
+            onRemove: () => false,
+            onDownload: () => false,
             data: {
                 board_id,
                 folder_id: current_folder_id,
@@ -87,34 +89,51 @@ export default class FolderList extends Component {
                     message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
                     return false
                 }
-                let loading = message.loading('正在上传...', 0)
+                // let loading = message.loading('正在上传...', 0)
             },
             onChange({ file, fileList, event }) {
-                // that.setState({
-                //     uploading_file_list: fileList
-                // }, () => {
-                //     that.setShowUploadNotification(true)
-                // })
+                let fileList_will = [...fileList]
+                fileList_will = fileList_will.filter(item => {
+                    if (item.status == 'done') {
+                        if (item.response && item.response.code == '0') {
 
-                if (file.status === 'uploading') {
-
-                } else {
-                    // message.destroy()
-                }
-                if (file.status === 'done') {
-
-                    if (file.response && file.response.code == '0') {
-                        message.success(`上传成功。`);
-                        that.props.getFolderFileList({ id: current_folder_id })
-                    } else {
-                        message.error(file.response && file.response.message || '上传失败');
+                        } else {
+                            item.status = 'error'
+                        }
                     }
-                } else if (file.status === 'error') {
-                    message.error(`上传失败。`);
-                    setTimeout(function () {
-                        message.destroy()
-                    }, 2000)
+                    return item
+                })
+                that.setState({
+                    uploading_file_list: fileList_will
+                }, () => {
+                    that.setShowUploadNotification(true)
+                })
+                const is_has_uploading = fileList_will.length && (fileList_will.findIndex(item => item.status == 'uploading') != -1)
+                console.log('sssss_is_has_uploading', {
+                    is_has_uploading,
+                    length: fileList_will.length,
+                    bool: (fileList_will.findIndex(item => item.status == 'uploading'))
+                })
+                if (!is_has_uploading) { //没有上传状态了
+                    that.props.getFolderFileList({ id: current_folder_id })
                 }
+                // if (file.status === 'uploading') {
+                // } else {
+                //     // message.destroy()
+                // }
+                // if (file.status === 'done') {
+                //     if (file.response && file.response.code == '0') {
+                //         message.success(`上传成功。`);
+                //         that.props.getFolderFileList({ id: current_folder_id })
+                //     } else {
+                //         message.error(file.response && file.response.message || '上传失败');
+                //     }
+                // } else if (file.status === 'error') {
+                //     message.error(`上传失败。`);
+                //     setTimeout(function () {
+                //         message.destroy()
+                //     }, 2000)
+                // }
             },
         };
         return propsObj
@@ -161,6 +180,16 @@ export default class FolderList extends Component {
             message.error(res.message)
         }
     }
+
+    // 设置右边弹窗出现
+    setUploadNotiVisible = () => {
+        const { show_upload_notification } = this.state
+        this.setState({
+            show_upload_notification: !show_upload_notification,
+            uploading_file_list: []
+        })
+    }
+
     render() {
         const { is_show_add_item, add_folder_value, show_upload_notification, uploading_file_list } = this.state
         const { board_id, current_folder_id, file_data } = this.props
@@ -197,11 +226,11 @@ export default class FolderList extends Component {
                 <Dropdown overlay={this.renderAddItemDropMenu()}>
                     <div className={`${styles.folder_item} ${globalStyles.authTheme} ${styles.add_item}`}>&#xe8fe;</div>
                 </Dropdown>
-                {/* {
+                {
                     show_upload_notification && (
-                        <UploadNotification uploading_file_list={uploading_file_list} />
+                        <UploadNotification uploading_file_list={uploading_file_list} setUploadNotiVisible={this.setUploadNotiVisible} />
                     )
-                } */}
+                }
             </div>
         )
     }
