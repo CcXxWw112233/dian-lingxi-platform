@@ -1118,7 +1118,9 @@ export default class DragDropContentComponent extends Component {
   getDragDropContext = () => {
     const { drawContent = {} } = this.props
     const { properties = [] } = drawContent
-    return (
+    let messageValue = (<div></div>)
+    messageValue = (
+      <div>
       <DragDropContext onDragEnd={this.onDragEnd}>
         <Droppable droppableId="droppable">
           {(provided, snapshot) => (
@@ -1131,12 +1133,14 @@ export default class DragDropContentComponent extends Component {
                   )}
                 </Draggable>
               ))}
-              {provided.placeholder}
+              {/* {provided.placeholder} */}
             </div>
           )}
         </Droppable>
       </DragDropContext>
+      </div>
     )
+    return messageValue
   }
 
   render() {
@@ -1146,7 +1150,7 @@ export default class DragDropContentComponent extends Component {
       <div>
         <div>
           {
-            (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+            (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
               <>
                 {
                   properties && properties.map(item => {
