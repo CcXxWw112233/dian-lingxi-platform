@@ -1460,7 +1460,7 @@ class FileDetailContent extends React.Component {
           </div>
 
 
-          <div className={indexStyles.fileDetailHeadRight}>
+          <div className={indexStyles.fileDetailHeadRight} style={{flexShrink: 0}}>
             <div style={{ position: 'relative' }}>
               {/* {
                 checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) ? ('') : (
