@@ -23,15 +23,35 @@ export default class UploadNotification extends Component {
             onRemove: () => false,
             onDownload: () => false,
         }
-        // console.log('sssss', {
-        //     uploading_file_list
-        // })
         return (
             <Upload {...upload_props}>
             </Upload>
         )
     }
-
+    renderUploadState = () => {
+        const { uploading_file_list = [] } = this.props
+        const is_has_uploading = uploading_file_list.length && (uploading_file_list.findIndex(item => item.status == 'uploading') != -1)
+        const icon_loading = (
+            <i className={globalStyles.authTheme} style={{ color: '#52C41A' }}>&#xe7fa;</i>
+        )
+        const icon_upload = (
+            <i className={globalStyles.authTheme} style={{ color: '#1890FF' }}>&#xe77d;</i>
+        )
+        let message = ''
+        let icon = ''
+        if (is_has_uploading) {
+            icon = icon_loading
+            message = '正在上传...'
+        } else {
+            icon = icon_upload
+            message = '上传完成'
+        }
+        const data = {
+            icon,
+            message
+        }
+        return data
+    }
     close = () => {
         const { setUploadNotiVisible } = this.props
         setUploadNotiVisible()
@@ -41,8 +61,11 @@ export default class UploadNotification extends Component {
         return (
             <div className={`${globalStyles.global_card} ${styles.notice_out}`} >
                 <div className={styles.top}>
-                    <div className={`${globalStyles.authTheme} ${styles.info_icon}`}>&#xe847;</div>
-                    <div className={styles.message}>上传成功</div>
+                    <div className={`${globalStyles.authTheme} ${styles.info_icon}`}>
+                        {/* &#xe847; */}
+                        {this.renderUploadState().icon}
+                    </div>
+                    <div className={styles.message}> {this.renderUploadState().message}</div>
                     <div className={`${globalStyles.authTheme} ${styles.close}`} onClick={this.close}>&#xe7fe;</div>
                 </div>
                 <div className={`${styles.picture_list} ${globalStyles.global_vertical_scrollbar}`}>

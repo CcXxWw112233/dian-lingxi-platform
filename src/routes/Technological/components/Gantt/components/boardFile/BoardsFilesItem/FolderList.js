@@ -63,7 +63,7 @@ export default class FolderList extends Component {
             withCredentials: true,
             multiple: true,
             action: `${REQUEST_DOMAIN_FILE}/file/upload`,
-            showUploadList: true,
+            showUploadList: false,
             onRemove: () => false,
             onDownload: () => false,
             data: {
@@ -109,11 +109,11 @@ export default class FolderList extends Component {
                     that.setShowUploadNotification(true)
                 })
                 const is_has_uploading = fileList_will.length && (fileList_will.findIndex(item => item.status == 'uploading') != -1)
-                console.log('sssss_is_has_uploading', {
-                    is_has_uploading,
-                    length: fileList_will.length,
-                    bool: (fileList_will.findIndex(item => item.status == 'uploading'))
-                })
+                // console.log('sssss_is_has_uploading', {
+                //     is_has_uploading,
+                //     length: fileList_will.length,
+                //     bool: (fileList_will.findIndex(item => item.status == 'uploading'))
+                // })
                 if (!is_has_uploading) { //没有上传状态了
                     that.props.getFolderFileList({ id: current_folder_id })
                 }

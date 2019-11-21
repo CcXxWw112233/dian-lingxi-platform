@@ -16,21 +16,28 @@
         // overflow-y: scroll;
         overflow-x: hidden;
         padding-bottom: 16px;
+        :global {
+            .ant-upload-list-item-card-actions {
+                a {
+                    display: none;
+                }
+            }
+        }
     }
     .top{
         display: flex;
         justify-content: space-between;
         .info_icon {
-            font-size: 18px;
+            font-size: 20px;
         }
         .message {
             flex: 1;
             color:rgba(0,0,0,0.85);
             padding-left: 10px;
-            line-height: 27px;
+            line-height: 30px;
         }
         .close {
-            font-size: 18px;
+            font-size: 20px;
         }
     }
 }
