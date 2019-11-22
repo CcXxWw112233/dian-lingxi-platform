@@ -1361,9 +1361,9 @@ class FileDetailContent extends React.Component {
     
     // 其他格式点击全屏时候的展示
     const iframeBigDom = (
-      <Modal zIndex={9999999999} style={{ top: 0, left: 0, height: componentHeight + 'px', width: componentWidth + 'px', minWidth: componentWidth + 'px', minHeight: componentHeight + 'px'  }} footer={null} title={null} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
+      <Modal zIndex={9999999999} style={{ top: 0, left: 0, minWidth: componentWidth + 'px', minHeight: componentHeight + 'px'  }} width={bodyClientWidth} height={bodyClientHeight} footer={null} title={null} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
           <div
-            style={{height: componentHeight + 'px', marginTop: '20px'}}
+            style={{height: bodyClientHeight, marginTop: '20px'}}
             dangerouslySetInnerHTML={{ __html: getIframe(filePreviewUrl) }}></div>
       </Modal>
     )

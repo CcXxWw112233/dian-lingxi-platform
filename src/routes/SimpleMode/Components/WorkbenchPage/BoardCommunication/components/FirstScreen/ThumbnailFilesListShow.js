@@ -97,7 +97,7 @@ export default class ThumbnailFilesListShow extends Component {
         // console.log('isSearchDetailOnfocusOrOnblur',isSearchDetailOnfocusOrOnblur);
         const isShow = isSearchDetailOnfocusOrOnblur;
         return(
-            <div className={`${styles.thumbnailFilesList} ${isShow ? styles.changeHeight : ''}`}>
+            <div className={`${styles.thumbnailFilesList} ${globalStyles.global_vertical_scrollbar} ${isShow ? styles.changeHeight : ''}`}>
                 <Table
                     // style={{height:500}}
                     // scroll={{ y: tableHeight}}
