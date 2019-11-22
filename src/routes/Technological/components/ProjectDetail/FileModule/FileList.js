@@ -15,6 +15,7 @@ import { currentNounPlanFilterName, getSubfixName } from "../../../../../utils/b
 import VisitControl from './../../VisitControl/index'
 import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from './../../../../../services/technological/project'
 import { connect } from 'dva';
+import { timestampToTimeNormal } from '@/utils/util'
 
 const bodyOffsetHeight = document.querySelector('body').offsetHeight
 
@@ -1013,6 +1014,16 @@ export default class FileList extends React.Component {
         title: '更新时间',
         dataIndex: 'update_time',
         key: 'update_time',
+        render: (text, record, index) => {
+          const { type } = record
+          // console.log({text, record}, 'ssssssss')
+          return(
+              <div>
+                  {/* { timestampToTime(text, true)} */}
+                  {type == '2' ? timestampToTimeNormal(text, '/', true) : text}
+              </div>
+          )
+        }
       }, {
         title: <div style={{ color: '#8c8c8c', cursor: 'pointer' }} onClick={this.listSort.bind(this, '3')}>创建人<Icon type={creatorSort ? "caret-down" : "caret-up"} theme="outlined" style={{ fontSize: 10, marginLeft: 6, color: '#595959' }} /></div>,
         dataIndex: 'creator',

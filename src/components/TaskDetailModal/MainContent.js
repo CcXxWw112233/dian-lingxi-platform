@@ -199,12 +199,15 @@ export default class MainContent extends Component {
     let val = e.target.value
     const { dispatch, drawContent = {} } = this.props
     const { card_id } = drawContent
-    drawContent['card_name'] = val
+    let reStr = val.trim()
+    if (reStr == "" || reStr == " " || !reStr) return
+    drawContent['card_name'] = reStr
     const updateObj = {
       card_id,
       card_name: val,
       name: val
     }
+    
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/updateTask',
