@@ -647,6 +647,7 @@ export default class DragDropContentComponent extends Component {
     })
     new_selectedKeys = new_selectedKeys.filter(item => item != shouldDeleteId)
     new_drawContent['properties'] = new_drawContent['properties'].filter(item => item.id != shouldDeleteId)
+    let gold_label = (new_drawContent['properties'].find(item => item.code == 'LABEL') || {}).data
     if (flag) {
       Modal.confirm({
         title: `确认要删除这条字段吗？`,
@@ -677,6 +678,9 @@ export default class DragDropContentComponent extends Component {
                   drawContent: new_drawContent
                 }
               })
+              if (!(gold_label && gold_label.length)) {
+                that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({card_id, drawContent: new_drawContent, operate_properties_code: 'LABEL'})
+              }
             }
           })
         },
@@ -708,6 +712,9 @@ export default class DragDropContentComponent extends Component {
               drawContent: new_drawContent
             }
           })
+          if (!(gold_label && gold_label.length)) {
+            that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({card_id, drawContent: new_drawContent, operate_properties_code: 'LABEL'})
+          }
         }
       })
     }

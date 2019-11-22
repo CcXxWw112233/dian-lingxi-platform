@@ -575,6 +575,7 @@ export default class MainContent extends Component {
     })
     new_selectedKeys = new_selectedKeys.filter(item => item != shouldDeleteId)
     new_drawContent['properties'] = new_drawContent['properties'].filter(item => item.id != shouldDeleteId)
+    let gold_executor = (new_drawContent['properties'].find(item => item.code == 'EXECUTOR') || {}).data
     if (flag) {
       Modal.confirm({
         title: `确认要删除这条字段吗？`,
@@ -606,6 +607,9 @@ export default class MainContent extends Component {
                   drawContent: new_drawContent
                 }
               })
+              if (!(gold_executor && gold_executor.length)) {
+                that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({card_id, drawContent: new_drawContent, operate_properties_code: 'EXECUTOR'})
+              }
             }
           })
         },
@@ -638,6 +642,9 @@ export default class MainContent extends Component {
               drawContent: new_drawContent
             }
           })
+          if (!(gold_executor && gold_executor.length)) {
+            that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({card_id, drawContent: new_drawContent, operate_properties_code: 'EXECUTOR'})
+          }
         }
       })
     }
