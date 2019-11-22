@@ -187,6 +187,9 @@ export default {
             // console.log('保存为新版本啦啦啦啦啦啊');
             // const version_id = data.fileId;
             const version_id = data.fileId;
+            setTimeout(() => {
+              message.success('保存为新版本成功', MESSAGE_DURATION_TIME)
+            }, 200)
             yield put({
               type: 'workbenchFileDetail/fileVersionist',
               payload: {

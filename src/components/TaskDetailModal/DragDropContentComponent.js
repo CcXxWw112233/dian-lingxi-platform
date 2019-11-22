@@ -647,6 +647,7 @@ export default class DragDropContentComponent extends Component {
     })
     new_selectedKeys = new_selectedKeys.filter(item => item != shouldDeleteId)
     new_drawContent['properties'] = new_drawContent['properties'].filter(item => item.id != shouldDeleteId)
+    let gold_label = (new_drawContent['properties'].find(item => item.code == 'LABEL') || {}).data
     if (flag) {
       Modal.confirm({
         title: `确认要删除这条字段吗？`,
@@ -677,6 +678,9 @@ export default class DragDropContentComponent extends Component {
                   drawContent: new_drawContent
                 }
               })
+              if (!(gold_label && gold_label.length)) {
+                that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({card_id, drawContent: new_drawContent, operate_properties_code: 'LABEL'})
+              }
             }
           })
         },
@@ -708,6 +712,9 @@ export default class DragDropContentComponent extends Component {
               drawContent: new_drawContent
             }
           })
+          if (!(gold_label && gold_label.length)) {
+            that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({card_id, drawContent: new_drawContent, operate_properties_code: 'LABEL'})
+          }
         }
       })
     }
@@ -1118,7 +1125,9 @@ export default class DragDropContentComponent extends Component {
   getDragDropContext = () => {
     const { drawContent = {} } = this.props
     const { properties = [] } = drawContent
-    return (
+    let messageValue = (<div></div>)
+    messageValue = (
+      <div>
       <DragDropContext onDragEnd={this.onDragEnd}>
         <Droppable droppableId="droppable">
           {(provided, snapshot) => (
@@ -1131,12 +1140,14 @@ export default class DragDropContentComponent extends Component {
                   )}
                 </Draggable>
               ))}
-              {provided.placeholder}
+              {/* {provided.placeholder} */}
             </div>
           )}
         </Droppable>
       </DragDropContext>
+      </div>
     )
+    return messageValue
   }
 
   render() {
@@ -1146,7 +1157,7 @@ export default class DragDropContentComponent extends Component {
       <div>
         <div>
           {
-            (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit() ? (
+            (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
               <>
                 {
                   properties && properties.map(item => {

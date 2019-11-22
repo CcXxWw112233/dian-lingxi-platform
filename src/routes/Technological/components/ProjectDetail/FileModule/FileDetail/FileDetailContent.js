@@ -538,7 +538,11 @@ class FileDetailContent extends React.Component {
     // console.log(list, 'sssss')
     const { dispatch, currentPreviewFileBaseInfo = {}, projectDetailInfoData: { board_id } } = this.props
     const { privileges, is_privilege } = currentPreviewFileBaseInfo
-    if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+    // if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
+    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -1050,10 +1054,12 @@ class FileDetailContent extends React.Component {
   handleGetNewComment = obj => {
     const { coordinates, comment, point_number } = obj
     const {
-      filePreviewCurrentFileId,
+      // filePreviewCurrentFileId,
       dispatch,
-      projectDetailInfoData: { board_id }
+      projectDetailInfoData: { board_id },
+      currentPreviewFileBaseInfo
     } = this.props
+    const { id: filePreviewCurrentFileId } = currentPreviewFileBaseInfo
     dispatch({
       type: 'projectDetailFile/addFileCommit',
       payload: {
@@ -1237,11 +1243,12 @@ class FileDetailContent extends React.Component {
     } = this.props
     const { data = [] } = projectDetailInfoData //任务执行人列表
     const { board_id } = projectDetailInfoData
-    const { is_privilege = '0', privileges = [] } = currentPreviewFileBaseInfo
+    const { is_privilege = '0', privileges = [], file_id, id, is_shared } = currentPreviewFileBaseInfo
     const zoomPictureParams = {
       board_id,
       is_privilege,
       privileges,
+      id
     }
 
     const getIframe = (src) => {
@@ -1459,7 +1466,11 @@ class FileDetailContent extends React.Component {
         ...setUploadHeaderBaseInfo({}),
       },
       beforeUpload(e) {
-        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+        // if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+        //   // message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        //   return false
+        // }
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
           // message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -1473,7 +1484,11 @@ class FileDetailContent extends React.Component {
         let loading = message.loading('正在上传...', 0)
       },
       onChange({ file, fileList, event }) {
-        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+        // if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+        //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        //   return false
+        // }
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -1547,7 +1562,7 @@ class FileDetailContent extends React.Component {
     const visitControlParams = {
       privileges, is_privilege
     }
-    const { currentPreviewFileBaseInfo: { is_shared, file_id }, } = this.props
+
     return (
       <div>
         <div className={indexStyles.fileDetailHead}>

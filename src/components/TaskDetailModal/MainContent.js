@@ -199,12 +199,15 @@ export default class MainContent extends Component {
     let val = e.target.value
     const { dispatch, drawContent = {} } = this.props
     const { card_id } = drawContent
-    drawContent['card_name'] = val
+    let reStr = val.trim()
+    if (reStr == "" || reStr == " " || !reStr) return
+    drawContent['card_name'] = reStr
     const updateObj = {
       card_id,
       card_name: val,
       name: val
     }
+    
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/updateTask',
@@ -572,6 +575,7 @@ export default class MainContent extends Component {
     })
     new_selectedKeys = new_selectedKeys.filter(item => item != shouldDeleteId)
     new_drawContent['properties'] = new_drawContent['properties'].filter(item => item.id != shouldDeleteId)
+    let gold_executor = (new_drawContent['properties'].find(item => item.code == 'EXECUTOR') || {}).data
     if (flag) {
       Modal.confirm({
         title: `确认要删除这条字段吗？`,
@@ -603,6 +607,9 @@ export default class MainContent extends Component {
                   drawContent: new_drawContent
                 }
               })
+              if (!(gold_executor && gold_executor.length)) {
+                that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({card_id, drawContent: new_drawContent, operate_properties_code: 'EXECUTOR'})
+              }
             }
           })
         },
@@ -635,6 +642,9 @@ export default class MainContent extends Component {
               drawContent: new_drawContent
             }
           })
+          if (!(gold_executor && gold_executor.length)) {
+            that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({card_id, drawContent: new_drawContent, operate_properties_code: 'EXECUTOR'})
+          }
         }
       })
     }

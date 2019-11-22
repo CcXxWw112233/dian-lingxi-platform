@@ -406,14 +406,15 @@ class FileDetailContent extends React.Component {
   // 保存为新版本
   saveAsNewVersion=({ filePreviewCurrentId, pdfDownLoadSrc })=>{
     // const { datas: { currentPreviewFileData: { id, file_id, board_id, } } } = this.props.model
-    const { datas = {} } = this.props.model;
-    const { currentPreviewFileData = {} } = datas
-    const { id } = currentPreviewFileData;
+    const { datas: { filePreviewCurrentFileId } } = this.props.model
+    // const { datas = {} } = this.props.model;
+    // const { currentPreviewFileData = {} } = datas
+    // const { id } = currentPreviewFileData;
     const { dispatch } = this.props;
     dispatch({
       type: 'workbenchFileDetail/saveAsNewVersion',
       payload: {
-        id,
+        id: filePreviewCurrentFileId,
       }
     })
     // let res = dispatch({
@@ -500,7 +501,11 @@ class FileDetailContent extends React.Component {
     e && e.domEvent && e.domEvent.stopPropagation()
     const { datas: {board_id} } = this.props.model
     const { is_privilege, privileges = [] } = this.getFieldFromPropsCurrentPreviewFileData('is_privilege', 'privileges')
-    if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+    // if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
+    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -960,9 +965,10 @@ class FileDetailContent extends React.Component {
   handleGetNewComment = obj => {
     const { coordinates, comment, point_number } = obj
     const { datas: {
-      filePreviewCurrentFileId,
-      board_id }
+      
+      board_id, currentPreviewFileData = {} }
     } = this.props.model
+    const { id: filePreviewCurrentFileId } = currentPreviewFileData
     this.props.addFileCommit({
       board_id,
       point_number,
@@ -1118,18 +1124,19 @@ class FileDetailContent extends React.Component {
       componentHeight = fileDetailContentOutHeight - 20;
     }
 
-    const { datas: { board_id, filePreviewCurrentFileId, projectDetailInfoData = {}, pdfDownLoadSrc, currentParrentDirectoryId, filePreviewCurrentVersionId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList = [], filePreviewCurrentVersionKey = 0, filePreviewIsRealImage = false } } = this.props.model
+    const { datas: { board_id, filePreviewCurrentFileId, projectDetailInfoData = {}, currentPreviewFileData = {}, pdfDownLoadSrc, currentParrentDirectoryId, filePreviewCurrentVersionId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList = [], filePreviewCurrentVersionKey = 0, filePreviewIsRealImage = false } } = this.props.model
     const { data = [] } = projectDetailInfoData //任务执行人列表
     const { is_privilege = '0', privileges = [] } = this.getFieldFromPropsCurrentPreviewFileData('is_privilege', 'privileges')
-    const getIframe = (src) => {
-      const iframe = '<iframe style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="' + src + '"></iframe>'
-      return iframe
-    }
-
+    const { is_shared, file_id, id } = currentPreviewFileData //is_shared = 是否分享状态
     const zoomPictureParams = {
       board_id,
       is_privilege,
       privileges,
+      id
+    }
+    const getIframe = (src) => {
+      const iframe = '<iframe style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="' + src + '"></iframe>'
+      return iframe
     }
 
     const getVersionItem = (value, key) => {
@@ -1331,6 +1338,44 @@ class FileDetailContent extends React.Component {
       return content
     }
 
+    // 点击全屏之后的图片
+    const punctuateBigDom = (
+      <Modal zIndex={9999999999} style={{ top: 0, left: 0, height: bodyClientHeight - 200 + 'px' }} footer={null} title={null} width={bodyClientWidth} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
+      <div>
+        {filePreviewUrl && (
+          <ZoomPicture
+            {...this.props}
+            imgInfo={{ url: filePreviewUrl }}
+            componentInfo={{ width: bodyClientWidth - 100, height: bodyClientHeight - 60 }}
+            commentList={rects && rects.length ? rects.map(i => (Object.assign({}, { flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates) }))) : []}
+            handleClickedCommentItem={this.handleClickedCommentItem.bind(this)}
+            currentSelectedCommentItemDetail={filePreviewPointNumCommits}
+            handleDeleteCommentItem={this.handleDeleteCommentItem}
+            userId={this.getCurrentUserId()}
+            handleGetNewComment={this.handleGetNewComment}
+            isFullScreenMode={isZoomPictureFullScreenMode}
+            handleFullScreen={this.handleZoomPictureFullScreen}
+            filePreviewCurrentFileId={filePreviewCurrentFileId}
+            filePreviewCurrentId={filePreviewCurrentId}
+            workbenchType={"workbenchType"}
+            zoomPictureParams={zoomPictureParams}
+            isShow_textArea={true}
+            dispatch={dispatch}
+          />
+        )}
+      </div>
+    </Modal>
+    )
+    
+    // 其他格式点击全屏时候的展示
+    const iframeBigDom = (
+      <Modal zIndex={9999999999} style={{ top: 0, left: 0, minWidth: componentWidth + 'px', minHeight: componentHeight + 'px'  }} width={bodyClientWidth} height={bodyClientHeight} footer={null} title={null} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
+          <div
+            style={{height: bodyClientHeight, marginTop: '20px'}}
+            dangerouslySetInnerHTML={{ __html: getIframe(filePreviewUrl) }}></div>
+      </Modal>
+    )
+
     //header
     const uploadProps = {
       name: 'file',
@@ -1347,14 +1392,14 @@ class FileDetailContent extends React.Component {
         ...setUploadHeaderBaseInfo({}),
       },
       beforeUpload(e) {
-        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+        // if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+        //   // message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        //   return false
+        // }
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
           // message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
-        // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)) {
-        //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-        //   return false
-        // }
         if (e.size == 0) {
           message.error(`不能上传空文件`)
           return false
@@ -1366,7 +1411,12 @@ class FileDetailContent extends React.Component {
         // let loading = message.loading('正在上传...', 0)
       },
       onChange({ file, fileList, event }) {
-        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+        // if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+        //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        //   return false
+        // }
+        console.log(checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id), 'ssssssssssssss')
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -1431,9 +1481,7 @@ class FileDetailContent extends React.Component {
       editValue,
     }
 
-    const { datas = {} } = this.props.model
-    const { currentPreviewFileData = {} } = datas
-    const { is_shared, file_id } = currentPreviewFileData //is_shared = 是否分享状态
+
 
     return (
       <div>
@@ -1451,7 +1499,7 @@ class FileDetailContent extends React.Component {
           </div>
 
 
-          <div className={indexStyles.fileDetailHeadRight}>
+          <div className={indexStyles.fileDetailHeadRight} style={{flexShrink: 0}}>
             <div style={{ position: 'relative' }}>
               {/* {
                 checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) ? ('') : (
@@ -1640,32 +1688,24 @@ class FileDetailContent extends React.Component {
 
         </div>
 
+
+
         {isZoomPictureFullScreenMode && (
-          <Modal zIndex={9999999999} style={{ top: 0, left: 0, height: bodyClientHeight - 200 + 'px' }} footer={null} title={null} width={bodyClientWidth} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
-            <div>
-              {filePreviewUrl && (
-                <ZoomPicture
-                  {...this.props}
-                  imgInfo={{ url: filePreviewUrl }}
-                  componentInfo={{ width: bodyClientWidth - 100, height: bodyClientHeight - 60 }}
-                  commentList={rects && rects.length ? rects.map(i => (Object.assign({}, { flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates) }))) : []}
-                  handleClickedCommentItem={this.handleClickedCommentItem.bind(this)}
-                  currentSelectedCommentItemDetail={filePreviewPointNumCommits}
-                  handleDeleteCommentItem={this.handleDeleteCommentItem}
-                  userId={this.getCurrentUserId()}
-                  handleGetNewComment={this.handleGetNewComment}
-                  isFullScreenMode={isZoomPictureFullScreenMode}
-                  handleFullScreen={this.handleZoomPictureFullScreen}
-                  filePreviewCurrentFileId={filePreviewCurrentFileId}
-                  filePreviewCurrentId={filePreviewCurrentId}
-                  workbenchType={"workbenchType"}
-                  zoomPictureParams={zoomPictureParams}
-                  isShow_textArea={true}
-                  dispatch={dispatch}
-                />
-              )}
-            </div>
-          </Modal>
+          <div>
+            {filePreviewIsUsable ? (
+            filePreviewIsRealImage ? (
+              punctuateBigDom
+            ) : (
+              iframeBigDom
+              )
+          ) : (
+              <div className={indexStyles.fileDetailContentLeft} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 16, color: '#595959' }}>
+                <div>
+                  {notSupport(this.props.model.datas.fileType)}
+                </div>
+              </div>
+            )}
+          </div>
         )}
       </div>
     )

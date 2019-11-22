@@ -129,101 +129,115 @@ export default class MenuSearchPartner extends React.Component {
 		const temp_ids = data.users.split(",")
 		const invitation_org = getOrgIdByBoardId(board_id) || localStorage.getItem('OrganizationId')
 
-		organizationInviteWebJoin({
-			_organization_id: invitation_org,
-			type: invitationType,
-			users: temp_ids
-		}).then(res => {
-			if (res && res.code === '0') {
-				const { users, role_id } = res.data
-				commInviteWebJoin({
-					id: invitationId,
-					role_id: role_id,
-					type: invitationType,
-					users: users,
-					rela_condition: rela_Condition,
-				}).then(res => {
-					if (isApiResponseOk(res)) {
-						this.props.inviteOthersToBoardCalback && this.props.inviteOthersToBoardCalback({ users })
-						if (invitationType === '4') {
-							dispatch({
-								type: 'projectDetail/projectDetailInfo',
-								payload: {
-									id: board_id
-								}
-							})
-							// dispatch({
-							//     type: 'projectDetailTask/getCardDetail',
-							//     payload: {
-							//         id: invitationId
-							//     }
-							// })
-							dispatch({
-								type: 'workbenchTaskDetail/projectDetailInfo',
-								payload: {
-									id: board_id
-								}
-							})
-							// dispatch({
-							//     type: 'workbenchTaskDetail/getCardDetail',
-							//     payload: {
-							//         id: board_id,
-							//         board_id: board_id,
-							//         calback: function (data) {
-							//             dispatch({
-							//                 type: 'workbenchPublicDatas/getRelationsSelectionPre',
-							//                 payload: {
-							//                     _organization_id: invitation_org
-							//                 }
-							//             })
-							//         }
-							//     }
-							// })
-						} else if (invitationType === '7') {
-							dispatch({
-								type: 'projectDetail/projectDetailInfo',
-								payload: {
-									id: invitationId
-								}
-							})
-						} else if (invitationType === '8') {
-							dispatch({
-								type: 'projectDetail/projectDetailInfo',
-								payload: {
-									id: board_id
-								}
-							})
-							dispatch({
-								type: 'projectDetailProcess/getProcessInfo',
-								payload: {
-									id: invitationId
-								}
-							})
-							dispatch({
-								type: 'workbenchDetailProcess/getProcessInfo',
-								payload: {
-									id: board_id
-								}
-							})
-						}
-					} else {
-						message.warn(res.message, MESSAGE_DURATION_TIME)
-					}
-				})
-			} else {
-				message.warn(res.message, MESSAGE_DURATION_TIME)
-			}
-		})
-	}
-	setShowAddMenberModalVisibile() {
-		if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)) {
-			message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-			return false
-		}
-		this.setState({
-			ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
-		})
-	}
+        organizationInviteWebJoin({
+            _organization_id: invitation_org,
+            type: invitationType,
+            users: temp_ids
+        }).then(res => {
+            if (res && res.code === '0') {
+                const { users, role_id } = res.data
+                commInviteWebJoin({
+                    id: invitationId,
+                    role_id: role_id,
+                    type: invitationType,
+                    users: users,
+                    rela_condition: rela_Condition,
+                }).then(res => {
+                    if (isApiResponseOk(res)) {
+                        this.props.inviteOthersToBoardCalback && this.props.inviteOthersToBoardCalback({ users })
+                        if (invitationType === '4') {
+                            dispatch({
+                                type: 'projectDetail/projectDetailInfo',
+                                payload: {
+                                    id: board_id
+                                }
+                            })
+                            // dispatch({
+                            //     type: 'projectDetailTask/getCardDetail',
+                            //     payload: {
+                            //         id: invitationId
+                            //     }
+                            // })
+                            dispatch({
+                                type: 'workbenchTaskDetail/projectDetailInfo',
+                                payload: {
+                                    id: board_id
+                                }
+                            })
+                            // dispatch({
+                            //     type: 'workbenchTaskDetail/getCardDetail',
+                            //     payload: {
+                            //         id: board_id,
+                            //         board_id: board_id,
+                            //         calback: function (data) {
+                            //             dispatch({
+                            //                 type: 'workbenchPublicDatas/getRelationsSelectionPre',
+                            //                 payload: {
+                            //                     _organization_id: invitation_org
+                            //                 }
+                            //             })
+                            //         }
+                            //     }
+                            // })
+                        } else if (invitationType === '1') {// 邀请成员直接加入项目
+                            dispatch({
+                                type: 'projectDetail/projectDetailInfo',
+                                payload: {
+                                    id: board_id
+                                }
+                            })
+                            dispatch({
+                                type: 'workbenchTaskDetail/projectDetailInfo',
+                                payload: {
+                                    id: board_id
+                                }
+                            })
+                        } 
+                        else if (invitationType === '7') {
+                            dispatch({
+                                type: 'projectDetail/projectDetailInfo',
+                                payload: {
+                                    id: invitationId
+                                }
+                            })
+                        } else if (invitationType === '8') {
+                            dispatch({
+                                type: 'projectDetail/projectDetailInfo',
+                                payload: {
+                                    id: board_id
+                                }
+                            })
+                            dispatch({
+                                type: 'projectDetailProcess/getProcessInfo',
+                                payload: {
+                                    id: invitationId
+                                }
+                            })
+                            dispatch({
+                                type: 'workbenchDetailProcess/getProcessInfo',
+                                payload: {
+                                    id: board_id
+                                }
+                            })
+                        }
+                    } else {
+                        message.warn(res.message, MESSAGE_DURATION_TIME)
+                    }
+                })
+            } else {
+                message.warn(res.message, MESSAGE_DURATION_TIME)
+            }
+        })
+    }
+    setShowAddMenberModalVisibile() {
+        if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)) {
+            message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+            return false
+        }
+        this.setState({
+            ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
+        })
+    }
 
 	// 点击全体成员的回调
 	handleSelectedAllBtn = () => {

@@ -1,25 +1,10 @@
-/**
- * 该组件需要接收的参数有
- * <VersionSwitching {...params}
-      handleVersionItem={this.handleVersionItem}
-      getVersionItemMenuClick={this.getVersionItemMenuClick}
-      handleFileVersionDecription={this.handleFileVersionDecription}
-      handleFileVersionValue={this.handleFileVersionValue}
-      uploadProps={uploadProps} />
-    需要文件相关的id字段 具体情况传入具体id 以及是否编辑描述信息的状态 is_edit_version_description
-    四个方法: 1. 每一个menuItem切换的回调
-              2. 设置为主版本的切换 
-              3. 编辑描述的回调
-              4. 编辑之后修改value的回调
-		以及一个上传文件的事件
- */
-
 import React, { Component } from 'react'
 import { Table, Button, Menu, Dropdown, Icon, Input, Drawer, Tooltip, Upload, Modal } from 'antd';
+import { timestampToTimeNormal3 } from '@/utils/util.js'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import indexStyles from './index.less'
 
-export default class index extends Component {
+export default class VersionSwitchingComponent extends Component {
 
   state = {
     is_close: null, // 是否关闭状态, 默认为 null
@@ -98,123 +83,117 @@ export default class index extends Component {
     }
   }
 
-  render() {
-
-    const { is_close } = this.state
-    const { editValue, new_filePreviewVersionList = [], new_filePreviewCurrentVersionList = [], filePreviewCurrentFileId, filePreviewCurrentId, uploadProps, is_edit_version_description, is_show } = this.props //is_show = 是否显示'上传新版本'
-    // console.log(is_edit_version_description, 'ssssss')
-    // console.log(new_filePreviewCurrentVersionList, 'ssss')
-    // let temp_arr = new_filePreviewCurrentVersionList && new_filePreviewCurrentVersionList.length ? new_filePreviewCurrentVersionList : [...new_filePreviewVersionList]
-    // console.log(this.props, 'sssss')
-    // 点击版本信息的显示列表
-    const getVersionItemMenu = (list) => {
-      return (
-        // onClick={this.getVersionItemMenuClick.bind(this, list)}
-        <div style={{ position: 'relative' }} id="versionPanePosition">
-          <Menu getPopupContainer={triggerNode => triggerNode.parentNode} selectable={true} style={{ width: 400, maxHeight: '314px' }}>
-            <div key="versionTitle" style={{ borderBottom: '1px solid rgba(0,0,0,0.09)', height: '56px', lineHeight: '56px', padding: '0 16px' }}>
-              <div className={indexStyles.title_wrapper} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span className={indexStyles.version_title}>版本信息</span>
-                <span onClick={() => { this.handleCloseChg() }} className={indexStyles.version_close}>x</span>
-              </div>
+  // 每一个切换版本的item结构
+  getVersionItemMenu = (list) => {
+    const { editValue, filePreviewCurrentFileId, uploadProps, is_edit_version_description, is_show } = this.props //is_show = 是否显示'上传新版本'
+    return (
+      <div style={{ position: 'relative' }} id="versionPanePosition">
+        <Menu getPopupContainer={triggerNode => triggerNode.parentNode} selectable={true} style={{ width: 400, maxHeight: '314px' }}>
+          <div key="versionTitle" style={{ borderBottom: '1px solid rgba(0,0,0,0.09)', height: '56px', lineHeight: '56px', padding: '0 16px' }}>
+            <div className={indexStyles.title_wrapper} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span className={indexStyles.version_title}>版本信息</span>
+              <span onClick={() => { this.handleCloseChg() }} className={indexStyles.version_close}>x</span>
             </div>
-            <Menu getPopupContainer={triggerNode => triggerNode.parentNode} onClick={(e) => { this.handleVersionItem(e) }} className={`${globalStyles.global_vertical_scrollbar}`} style={{ maxHeight: '200px', overflowY: 'auto' }}>
-              {list.map((value, key) => {
-                const { file_name, creator, create_time, file_size, file_id, is_edit, remarks, file_resource_id } = value
-                // console.log(remarks, 'sssssss')
-                return (
-                  <Menu.Item style={{ height: 'auto' }} className={indexStyles.version_menuItem} key={file_id}>
-                    {
-                      is_edit_version_description && is_edit ? (
-                        <div style={{ marginBottom: '5px' }} >
-                          <Input.TextArea
-                            id="edit_description"
-                            style={{ resize: 'none' }}
-                            autoFocus={true}
-                            autosize={true}
-                            onChange={(e) => { this.handleChgEditVal(list, e) }}
-                            onBlur={() => { this.handleFileDecription(list, file_id) }}
-                            onClick={(e) => { this.handleStopPro(e) }}
-                            onKeyDown={(e) => { this.handleKeyDown(list, file_id, e) }}
-                            maxLength={50}
-                            value={editValue}
-                          />
-                        </div>
-                      ) : (
-                          <div style={{ position: 'relative' }} className={`${indexStyles.versionItemMenu} ${filePreviewCurrentFileId == file_id && indexStyles.current_version_color}`}>
-                            <div className={`${globalStyles.authTheme} ${indexStyles.circle_icon} ${indexStyles.hover_color}`}>{filePreviewCurrentFileId == file_id ? (<span style={{ fontSize: '14px' }}>&#xe696;</span>) : (<span> &#xe697;</span>)}</div>
-                            {
-                              remarks && remarks != '' ? (
-                                <div style={{ lineHeight: '30px' }}>
-                                  <span style={{ fontWeight: 400, fontSize: 14, marginRight: '5px' }} className={`${indexStyles.creator} ${indexStyles.hover_color}`} >
-                                    {remarks}&nbsp;&nbsp;&nbsp;&nbsp;
-                              </span>
+          </div>
+          <Menu getPopupContainer={triggerNode => triggerNode.parentNode} onClick={(e) => { this.handleVersionItem(e) }} className={`${globalStyles.global_vertical_scrollbar}`} style={{ maxHeight: '200px', overflowY: 'auto' }}>
+            {list.map((value, key) => {
+              const { file_name, creator, create_time, file_size, file_id, is_edit, remarks, file_resource_id } = value
+              return (
+                <Menu.Item style={{ height: 'auto' }} className={indexStyles.version_menuItem} key={file_id}>
+                  {
+                    is_edit_version_description && is_edit ? (
+                      <div style={{ marginBottom: '5px' }} >
+                        <Input.TextArea
+                          id="edit_description"
+                          style={{ resize: 'none' }}
+                          autoFocus={true}
+                          autosize={true}
+                          onChange={(e) => { this.handleChgEditVal(list, e) }}
+                          onBlur={() => { this.handleFileDecription(list, file_id) }}
+                          onClick={(e) => { this.handleStopPro(e) }}
+                          onKeyDown={(e) => { this.handleKeyDown(list, file_id, e) }}
+                          maxLength={50}
+                          value={editValue}
+                        />
+                      </div>
+                    ) : (
+                        <div style={{ position: 'relative' }} className={`${indexStyles.versionItemMenu} ${filePreviewCurrentFileId == file_id && indexStyles.current_version_color}`}>
+                          <div className={`${globalStyles.authTheme} ${indexStyles.circle_icon} ${indexStyles.hover_color}`}>{filePreviewCurrentFileId == file_id ? (<span style={{ fontSize: '14px' }}>&#xe696;</span>) : (<span> &#xe697;</span>)}</div>
+                          {
+                            remarks && remarks != '' ? (
+                              <div style={{ lineHeight: '30px' }}>
+                                <span style={{ fontWeight: 400, fontSize: 14, marginRight: '5px' }} className={`${indexStyles.creator} ${indexStyles.hover_color}`} >
+                                  {remarks}&nbsp;&nbsp;&nbsp;&nbsp;
+                            </span>
+                                {filePreviewCurrentFileId == file_id && (
+                                  <span className={`${indexStyles.status}`}>主版本</span>)}
+                              </div>
+                            ) : (
+                                <div
+                                  style={{ lineHeight: '30px' }}
+                                >
+                                  <span style={{ fontWeight: 400, fontSize: 14 }} className={`${indexStyles.creator} ${indexStyles.hover_color}`}>{creator}&nbsp;&nbsp;</span>
+                                  <span className={indexStyles.hover_color}>上传于&nbsp;&nbsp;</span>
+                                  <span className={indexStyles.hover_color}>{timestampToTimeNormal3(create_time, true, '/')}&nbsp;&nbsp;</span>
                                   {filePreviewCurrentFileId == file_id && (
                                     <span className={`${indexStyles.status}`}>主版本</span>)}
                                 </div>
-                              ) : (
-                                  <div
-                                    style={{ lineHeight: '30px' }}
-                                  >
-                                    <span style={{ fontWeight: 400, fontSize: 14 }} className={`${indexStyles.creator} ${indexStyles.hover_color}`}>{creator}&nbsp;&nbsp;</span>
-                                    <span className={indexStyles.hover_color}>上传于&nbsp;&nbsp;</span>
-                                    <span className={indexStyles.hover_color}>{create_time}&nbsp;&nbsp;</span>
-                                    {filePreviewCurrentFileId == file_id && (
-                                      <span className={`${indexStyles.status}`}>主版本</span>)}
-                                  </div>
-                                )
-                            }
-                            <span className={`${indexStyles.file_size} ${indexStyles.initalShow}`}>{file_size}</span>
-                            <div className={`${indexStyles.file_size} ${indexStyles.initalHide} ${globalStyles.authTheme} ${indexStyles.operate}`}>
+                              )
+                          }
+                          <span className={`${indexStyles.file_size} ${indexStyles.initalShow}`}>{file_size}</span>
+                          <div className={`${indexStyles.file_size} ${indexStyles.initalHide} ${globalStyles.authTheme} ${indexStyles.operate}`}>
 
-                              {is_show === true ? (
-<Dropdown getPopupContainer={() => document.getElementById("versionPanePosition")} overlay={versionItemMenu({ list, file_id, file_name })}
-                                  // getPopupContainer={triggerNode => triggerNode.parentNode}
-                                  onClick={(e) => { this.handleStopPro(e) }}
-                                  trigger={['click']}
-                                >
-                                  <span>&#xe7fd;</span>
-                                </Dropdown>
-): ''}
+                            {is_show === true ? (
+                              <Dropdown getPopupContainer={() => document.getElementById("versionPanePosition")} overlay={this.ellipsisVersionItemMenu({ list, file_id, file_name })}
+                                // getPopupContainer={triggerNode => triggerNode.parentNode}
+                                onClick={(e) => { this.handleStopPro(e) }}
+                                trigger={['click']}
+                              >
+                                <span>&#xe7fd;</span>
+                              </Dropdown>
+                            ) : ''}
 
-                            </div>
                           </div>
-                        )
-                    }
-                  </Menu.Item>
-                )
-              })}
-            </Menu>
-
-
-            <div key="updateVersion" style={{ height: '58px', lineHeight: '28px', borderTop: '1px solid rgba(0,0,0,0.09)' }} >
-              <Upload className={indexStyles.upload_file} {...uploadProps} showUploadList={false}>
-                {is_show === true ? (
-<Button type="primary" style={{ color: '#fff', textAlign: 'center', width: 368, }}>
-                    <Icon type="upload" theme="outlined" style={{ margin: 0, fontSize: 16 }} /> 上传新版本
-                  </Button>
-): ''}
-              </Upload>
-            </div>
-
+                        </div>
+                      )
+                  }
+                </Menu.Item>
+              )
+            })}
           </Menu>
-        </div>
-      )
-    }
-    // 显示点点点的下拉菜单
-    const versionItemMenu = ({ list, file_id, file_name }) => {
-      return (
-        <Menu getPopupContainer={() => document.getElementById("versionPanePosition")} onClick={(e) => { this.handleVersionChg({ list, file_id, file_name }, e) }}>
-          <Menu.Item key="1">设为主版本</Menu.Item>
-          <Menu.Item key="3">编辑版本信息</Menu.Item>
-          <Menu.Item key="2" disabled>移到回收站</Menu.Item>
-        </Menu>
-      )
-    }
+          <div key="updateVersion" style={{ height: '58px', lineHeight: '28px', borderTop: '1px solid rgba(0,0,0,0.09)' }} >
+            <Upload className={indexStyles.upload_file} {...uploadProps} showUploadList={false}>
+              {is_show === true ? (
+                <Button type="primary" style={{ color: '#fff', textAlign: 'center', width: 368, }}>
+                  <Icon type="upload" theme="outlined" style={{ margin: 0, fontSize: 16 }} /> 上传新版本
+                </Button>
+              ) : ''}
+            </Upload>
+          </div>
 
+        </Menu>
+      </div>
+    )
+  }
+
+  // 显示点点点的下拉菜单
+  ellipsisVersionItemMenu = ({ list, file_id, file_name }) => {
+    return (
+      <Menu getPopupContainer={() => document.getElementById("versionPanePosition")} onClick={(e) => { this.handleVersionChg({ list, file_id, file_name }, e) }}>
+        <Menu.Item key="1">设为主版本</Menu.Item>
+        <Menu.Item key="3">编辑版本信息</Menu.Item>
+        <Menu.Item key="2" disabled>移到回收站</Menu.Item>
+      </Menu>
+    )
+  }
+
+  render() {
+
+    const { is_close } = this.state
+    const { new_filePreviewCurrentVersionList = [] } = this.props //is_show = 是否显示'上传新版本'
     return (
       <div style={{ position: 'relative' }}>
-        <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} visible={is_close} onVisibleChange={(visible) => { this.handleVisibleChg(visible) }} overlay={getVersionItemMenu(new_filePreviewCurrentVersionList)} trigger={['click']}>
+        <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} visible={is_close} onVisibleChange={(visible) => { this.handleVisibleChg(visible) }} overlay={this.getVersionItemMenu(new_filePreviewCurrentVersionList)} trigger={['click']}>
           <Button className={indexStyles.version} style={{ height: 24, marginLeft: 14, display: 'flex', lineHeight: '24px' }}>
             <div className={`${globalStyles.authTheme}`}>&#xe785;</div>&nbsp;&nbsp;版本信息
                 </Button>
@@ -222,4 +201,21 @@ export default class index extends Component {
       </div>
     )
   }
+}
+
+VersionSwitchingComponent.defaultProps = {
+  params: {
+    board_id: '', // 当前的项目Id
+    filePreviewCurrentFileId: '', // 当前预览文件ID
+    filePreviewUrl: '',// 当前预览文件的路径
+    filePreviewCurrentId: '',
+    new_filePreviewCurrentVersionList: [], // 版本信息列表
+    is_edit_version_description: '', // 是否正在编辑版本的信息描述
+    editValue: '', // 编辑的内容
+  },
+  handleVersionItem: function () { }, // 每一个menu菜单的item选项的切换 即点击切换预览文件版本
+  getVersionItemMenuClick: function () { }, // 点点点的下拉事件
+  handleFileVersionDecription: function () { }, // 失去焦点 的版本修改描述信息
+  handleFileVersionValue: function () { }, // 改变编辑描述的value onChange事件
+  uploadProps: {}, // 上传版本的回调
 }

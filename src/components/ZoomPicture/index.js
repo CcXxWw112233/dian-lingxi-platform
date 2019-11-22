@@ -100,6 +100,8 @@ class ZoomPicture extends Component {
     //commentListItem zindex
     this.commentListItemZIndex = 10;
   }
+
+  // 加载图片
   loadImage = url => {
     return new Promise((resolve, reject) => {
       const image = new Image();
@@ -108,9 +110,16 @@ class ZoomPicture extends Component {
       image.src = url;
     });
   };
+
+  // 设置当前图片的尺寸
   setCurrentImgSize = (opts = {}) => {
     this.setState({ ...opts });
   };
+
+  /**
+   * 获取当前图片的尺寸的百分比
+   * @param {String} type
+   */
   genCurrentImgZoomPercent = (type = 'reset') => {
     const { currentImgZoomPercent } = this.state;
     const { zoomStep } = this.props;
@@ -130,6 +139,8 @@ class ZoomPicture extends Component {
     };
     return cond[type];
   };
+
+  // 对图片进行操作的事件
   handleOperator = key => {
     const {
       imgRealWidth,
@@ -139,10 +150,10 @@ class ZoomPicture extends Component {
       offsetTop,
       isShowAllCircleReview
     } = this.state;
-    const { isFullScreenMode, zoomPictureParams } = this.props;
+    const { isFullScreenMode, zoomPictureParams = {} } = this.props;
     const { is_privilege, privileges = [], board_id } = zoomPictureParams
     const cond = {
-      resetSize: () => {
+      resetSize: () => { // 重置
         const isCurrentHasOnResetState =
           currentImgZoomPercent === '100%' &&
           offsetLeft === 0 &&
@@ -156,9 +167,9 @@ class ZoomPicture extends Component {
           offsetTop: 0
         });
       },
-      magnify: () => this.handleClickedImg(undefined, 'sup'),
-      shrink: () => this.handleClickedImg(undefined, 'sub'),
-      addCommit: () => {
+      magnify: () => this.handleClickedImg(undefined, 'sup'), // 放大
+      shrink: () => this.handleClickedImg(undefined, 'sub'), // 缩小
+      addCommit: () => { // 添加圈评
         if ( !(checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) )) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
@@ -184,21 +195,21 @@ class ZoomPicture extends Component {
           isLongClick: false
         });
       },
-      hideCommit: () => {
+      hideCommit: () => { // 退出圈评
         const { isHideCommentList } = this.state;
         this.setState({
           isHideCommentList: !isHideCommentList,
           isShouldShowCommentDetail: false
         });
       },
-      exitCommitMode: () =>
+      exitCommitMode: () => // 编辑圈评
         this.setState({
           isCommentMode: false,
           isShowCommitBlock: false,
           commitBlockPopoverVisible: false,
           commitPublishText: ''
         }),
-      fullScreen: () => {
+      fullScreen: () => { // 是否全屏
         // this.setState(
         //   {
         //     isFullScreenMode: true
@@ -210,11 +221,13 @@ class ZoomPicture extends Component {
         const { handleFullScreen } = this.props;
         handleFullScreen(!isFullScreenMode);
       },
-      showAllCircleReview: () => this.handleShowCircleReview(),
-      rotate: () => this.handleImgRoate(),
+      showAllCircleReview: () => this.handleShowCircleReview(), // 是否显示所有圈评
+      rotate: () => this.handleImgRoate(), // 旋转
     };
     cond[key]();
   };
+
+  // 获取图片信息
   getMoreImgInfo = () => {
     const {
       imgInfo: { url }
@@ -248,6 +261,8 @@ class ZoomPicture extends Component {
       .then(image => getImgWidthAndHeight(image))
       .catch(err => message.error('加载预览图片失败'));
   };
+
+  // 更新图片尺寸
   updateImgSize = (imgWidth, imgHeight, zoomStep, type = 'sup') => {
     const { imgRealWidth, imgRealHeight } = this.state;
     //捕获缩放步进单位
@@ -373,6 +388,8 @@ class ZoomPicture extends Component {
       })
     };
   };
+
+  // 鼠标离开
   handleImgOnMouseLeave = e => {
     if (e) e.stopPropagation();
     const { isLongClick } = this.state;
@@ -814,6 +831,8 @@ class ZoomPicture extends Component {
       commitBlockPopoverVisible: true
     });
   };
+
+  // 更新当前图片的尺寸比例
   handleUpdataImgSize = type => {
     const { zoomStep, zoomMax } = this.props;
     const { imgWidth, imgHeight, currentImgZoomPercent } = this.state;
@@ -877,6 +896,8 @@ class ZoomPicture extends Component {
       currentImgZoomPercent: this.genCurrentImgZoomPercent(type)
     });
   };
+
+
   handleClickedImg = (e, type = 'sup') => {
     if (e) e.stopPropagation();
     const { isCommentMode } = this.state;
@@ -991,8 +1012,8 @@ class ZoomPicture extends Component {
   handleShowCircleReview = () => {
     // console.log('ssss_1111')
     const { isShowAllCircleReview } = this.state
-    const { dispatch, filePreviewCurrentFileId, filePreviewCurrentId, workbenchType, projectFileType } = this.props
-    // console.log(this.props, 'ssssss')
+    const { dispatch, workbenchType, projectFileType, zoomPictureParams = {} } = this.props
+    const { id: filePreviewCurrentFileId } = zoomPictureParams
     this.setState({
       isShowAllCircleReview: !isShowAllCircleReview
     })

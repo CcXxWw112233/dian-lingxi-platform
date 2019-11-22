@@ -24,7 +24,7 @@ class SimpleHeader extends Component {
     openOrCloseImChatModal = (val) => {
         // console.log(val)
         const { dispatch, chatImVisiable } = this.props;
-        let flag = val !== undefined ? val : !chatImVisiable;
+        let flag = val !== undefined ? !!val : !chatImVisiable;
         const width = document.body.scrollWidth;
         let workbenchBoxContentWapperModalStyle = flag ? { width: (width - 400) + 'px' } : { width: '100%' }
         // console.log(workbenchBoxContentWapperModalStyle)
