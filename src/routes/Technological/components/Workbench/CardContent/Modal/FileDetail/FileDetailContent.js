@@ -965,9 +965,10 @@ class FileDetailContent extends React.Component {
   handleGetNewComment = obj => {
     const { coordinates, comment, point_number } = obj
     const { datas: {
-      filePreviewCurrentFileId,
-      board_id }
+      
+      board_id, currentPreviewFileData = {} }
     } = this.props.model
+    const { id: filePreviewCurrentFileId } = currentPreviewFileData
     this.props.addFileCommit({
       board_id,
       point_number,
@@ -1123,9 +1124,16 @@ class FileDetailContent extends React.Component {
       componentHeight = fileDetailContentOutHeight - 20;
     }
 
-    const { datas: { board_id, filePreviewCurrentFileId, projectDetailInfoData = {}, pdfDownLoadSrc, currentParrentDirectoryId, filePreviewCurrentVersionId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList = [], filePreviewCurrentVersionKey = 0, filePreviewIsRealImage = false } } = this.props.model
+    const { datas: { board_id, filePreviewCurrentFileId, projectDetailInfoData = {}, currentPreviewFileData = {}, pdfDownLoadSrc, currentParrentDirectoryId, filePreviewCurrentVersionId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList = [], filePreviewCurrentVersionKey = 0, filePreviewIsRealImage = false } } = this.props.model
     const { data = [] } = projectDetailInfoData //任务执行人列表
     const { is_privilege = '0', privileges = [] } = this.getFieldFromPropsCurrentPreviewFileData('is_privilege', 'privileges')
+    const { is_shared, file_id, id } = currentPreviewFileData //is_shared = 是否分享状态
+    const zoomPictureParams = {
+      board_id,
+      is_privilege,
+      privileges,
+      id
+    }
     const getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="' + src + '"></iframe>'
       return iframe
@@ -1473,15 +1481,7 @@ class FileDetailContent extends React.Component {
       editValue,
     }
 
-    const { datas = {} } = this.props.model
-    const { currentPreviewFileData = {} } = datas
-    const { is_shared, file_id } = currentPreviewFileData //is_shared = 是否分享状态
-    const zoomPictureParams = {
-      board_id,
-      is_privilege,
-      privileges,
-      file_id
-    }
+
 
     return (
       <div>

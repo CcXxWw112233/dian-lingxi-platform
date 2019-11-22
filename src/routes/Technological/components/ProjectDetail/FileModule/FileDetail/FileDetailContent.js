@@ -1054,10 +1054,12 @@ class FileDetailContent extends React.Component {
   handleGetNewComment = obj => {
     const { coordinates, comment, point_number } = obj
     const {
-      filePreviewCurrentFileId,
+      // filePreviewCurrentFileId,
       dispatch,
-      projectDetailInfoData: { board_id }
+      projectDetailInfoData: { board_id },
+      currentPreviewFileBaseInfo
     } = this.props
+    const { id: filePreviewCurrentFileId } = currentPreviewFileBaseInfo
     dispatch({
       type: 'projectDetailFile/addFileCommit',
       payload: {
@@ -1241,12 +1243,12 @@ class FileDetailContent extends React.Component {
     } = this.props
     const { data = [] } = projectDetailInfoData //任务执行人列表
     const { board_id } = projectDetailInfoData
-    const { is_privilege = '0', privileges = [], file_id, is_shared } = currentPreviewFileBaseInfo
+    const { is_privilege = '0', privileges = [], file_id, id, is_shared } = currentPreviewFileBaseInfo
     const zoomPictureParams = {
       board_id,
       is_privilege,
       privileges,
-      file_id
+      id
     }
 
     const getIframe = (src) => {

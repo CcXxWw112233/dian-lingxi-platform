@@ -1013,8 +1013,7 @@ class ZoomPicture extends Component {
     // console.log('ssss_1111')
     const { isShowAllCircleReview } = this.state
     const { dispatch, workbenchType, projectFileType, zoomPictureParams = {} } = this.props
-    const { file_id: filePreviewCurrentFileId } = zoomPictureParams
-    // console.log(this.props, 'ssssss')
+    const { id: filePreviewCurrentFileId } = zoomPictureParams
     this.setState({
       isShowAllCircleReview: !isShowAllCircleReview
     })
