@@ -60,7 +60,7 @@ export default {
       group_view_users_tree: [], //内容过滤成员分组树
       holiday_list: [], //日历列表（包含节假日农历）
       get_gantt_data_loading: false, //是否在请求甘特图数据状态
-      is_show_board_file_area: '0', //显示文件区域 0默认不显示 1滑入 2滑出
+      is_show_board_file_area: '1', //显示文件区域 0默认不显示 1滑入 2滑出
       boards_flies: [], //带根目录文件列表的项目列表
       show_board_fold: false, //是否显示项目汇总视图 
       folder_seeing_board_id: '0', //查看文件夹所属的项目id

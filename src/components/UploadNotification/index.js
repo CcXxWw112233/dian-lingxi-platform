@@ -8,12 +8,17 @@ export default class UploadNotification extends Component {
         super(props)
         this.state = {
         }
+        this.scroll_ref = React.createRef()
     }
     componentDidMount() {
 
     }
     componentWillReceiveProps() {
-
+        this.setScrollTop()
+    }
+    setScrollTop = () => {
+        const ele = this.scroll_ref.current
+        ele.scrollTop = ele.scrollHeight
     }
     renderUploadDec = () => {
         const { uploading_file_list = [] } = this.props
@@ -68,7 +73,7 @@ export default class UploadNotification extends Component {
                     <div className={styles.message}> {this.renderUploadState().message}</div>
                     <div className={`${globalStyles.authTheme} ${styles.close}`} onClick={this.close}>&#xe7fe;</div>
                 </div>
-                <div className={`${styles.picture_list} ${globalStyles.global_vertical_scrollbar}`}>
+                <div className={`${styles.picture_list} ${globalStyles.global_vertical_scrollbar}`} ref={this.scroll_ref}>
                     {this.renderUploadDec()}
                 </div>
             </div>
