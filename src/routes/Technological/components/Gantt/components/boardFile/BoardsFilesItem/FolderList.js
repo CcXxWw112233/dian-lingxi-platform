@@ -185,6 +185,14 @@ export default class FolderList extends Component {
 
     setBreadPaths = (data) => {
         this.props.setBreadPaths(data)
+        this.setState({
+            swich_render_upload: false
+        })
+        setTimeout(() => {
+            this.setState({
+                swich_render_upload: true
+            })
+        }, 1000)
     }
 
     // 文件上传
