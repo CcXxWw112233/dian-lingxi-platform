@@ -9,7 +9,8 @@ export default class UploadNormal extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            uploading_file_list: []
+            uploading_file_list: [],
+            swich_render_upload: true
         }
     }
     normalUploadProps = () => {
@@ -66,6 +67,7 @@ export default class UploadNormal extends Component {
                     if (typeof uploadCompleteCalback == 'function') {
                         uploadCompleteCalback()
                     }
+                    that.uploadCompleted()
                 }
             },
             ...uploadProps
@@ -85,15 +87,38 @@ export default class UploadNormal extends Component {
             show_upload_notification: bool
         })
     }
+
+    uploadCompleted = () => {
+        const { is_need_parent_notification, setShowUploadNotification, setUploadingFileList } = this.props
+
+        this.setState({
+            swich_render_upload: false
+        })
+        setTimeout(() => {
+            this.setState({
+                swich_render_upload: true
+            })
+        }, 1000)
+
+        if (is_need_parent_notification) {
+            setShowUploadNotification(false)
+            setUploadingFileList([])
+        }
+    }
     render() {
         const { children, is_need_parent_notification } = this.props
-        const { show_upload_notification, uploading_file_list = [] } = this.state
+        const { show_upload_notification, uploading_file_list = [], swich_render_upload } = this.state
 
         return (
             <>
-                <Upload {...this.normalUploadProps()}>
-                    {children}
-                </Upload>
+                {
+                    swich_render_upload ?
+                        (<Upload {...this.normalUploadProps()}>
+                            {children}
+                        </Upload>) : (
+                            children
+                        )
+                }
                 {
                     !is_need_parent_notification && show_upload_notification && (
                         <UploadNotification uploading_file_list={uploading_file_list} setUploadNotiVisible={this.setUploadNotiVisible} />

@@ -20,6 +20,7 @@ export default class FolderList extends Component {
             add_folder_value: '',
             uploading_file_list: [], //正在上传的文件
             show_upload_notification: false,
+            swich_render_upload: true, //是否显示加号
         }
     }
 
@@ -182,28 +183,41 @@ export default class FolderList extends Component {
         }
     }
 
+    setBreadPaths = (data) => {
+        this.props.setBreadPaths(data)
+    }
+
     // 文件上传
     renderUpload = () => {
-        const { uploading_file_list = [] } = this.state
+        const { uploading_file_list = [], swich_render_upload } = this.state
         const props = {
             uploadProps: this.uploadNormalProps(),
             uploadCompleteCalback: this.getFolderFileList,
             is_need_parent_notification: true,  //是需要在父组件种做回调还是在子组件内自完成
             setShowUploadNotification: this.setShowUploadNotification,
-            setUploadingFileList: this.setUploadingFileList
+            setUploadingFileList: this.setUploadingFileList,
+            setUploadNotiVisible: this.setUploadNotiVisible
         }
         return (
-            <UploadNormal {...props}>
-                <div style={{ width: 220, height: 26 }}>上传文件</div>
-            </UploadNormal>
+            swich_render_upload && (
+                <UploadNormal {...props}>
+                    <div style={{ width: 220, height: 26 }}>上传文件</div>
+                </UploadNormal>
+            )
         )
     }
     // 设置右边弹窗出现
     setUploadNotiVisible = () => {
-        const { show_upload_notification } = this.state
+        this.setShowUploadNotification(false)
+        this.setUploadingFileList([])
         this.setState({
-            show_upload_notification: !show_upload_notification,
+            swich_render_upload: false
         })
+        setTimeout(() => {
+            this.setState({
+                swich_render_upload: true
+            })
+        }, 1000)
     }
     setUploadingFileList = (uploading_file_list) => {
         this.setState({
@@ -245,7 +259,7 @@ export default class FolderList extends Component {
                                     getFolderFileList={this.props.getFolderFileList}
                                     itemValue={item}
                                     board_id={board_id}
-                                    setBreadPaths={this.props.setBreadPaths}
+                                    setBreadPaths={this.setBreadPaths}
                                     setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile} />
                             </div>
                         )
