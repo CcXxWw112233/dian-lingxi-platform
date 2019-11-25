@@ -20,6 +20,8 @@ export default class ThumbnailFilesListShow extends Component {
                     dataIndex: 'file_name',
                     key: 'file_name',
                     render: (text, record, index) => {
+                        if (!text) return
+                        // console.log(text, 'ssssssss')
                         return (
                             <div className={styles.fileNameRow} onClick={()=>this.props.previewFile(record)}>
                                 {
@@ -50,6 +52,7 @@ export default class ThumbnailFilesListShow extends Component {
                     dataIndex: 'update_time',
                     key: 'update_time',
                     render: (text, record, index) => {
+                        if (!text) return
                         return(
                             <div>
                                 {/* { timestampToTime(text, true)} */}

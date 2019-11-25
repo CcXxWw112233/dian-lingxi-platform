@@ -1508,20 +1508,20 @@ class ZoomPicture extends Component {
         toolTipText: isFullScreenMode ? '退出全屏' : '全屏',
         onClick: () => this.handleOperator('fullScreen')
       },
-      // {
-      //   label: isHideCommentList ? '显示圈点' : '隐藏圈点',
-      //   key: 'hideCommit',
-      //   icon: isHideCommentList ? <span>&#xe668;</span> : <span>&#xe66c;</span>,
-      //   toolTipText: isHideCommentList ? '显示圈点' : '隐藏圈点',
-      //   onClick: () => this.handleOperator('hideCommit')
-      // },
-      // {
-      //   label: isShowAllCircleReview ? '显示当前版本圈评' : '显示所有版本圈评',
-      //   key: 'showAllCircleReview',
-      //   icon: isShowAllCircleReview ? <span>&#xe699;</span> : <span>&#xe698;</span>,
-      //   toolTipText: isShowAllCircleReview ? '显示当前版本圈评' : '显示所有版本圈评',
-      //   onClick: () => this.handleOperator('showAllCircleReview')
-      // },
+      {
+        label: isHideCommentList ? '显示圈点' : '隐藏圈点',
+        key: 'hideCommit',
+        icon: isHideCommentList ? <span>&#xe668;</span> : <span>&#xe66c;</span>,
+        toolTipText: isHideCommentList ? '显示圈点' : '隐藏圈点',
+        onClick: () => this.handleOperator('hideCommit')
+      },
+      {
+        label: isShowAllCircleReview ? '显示当前版本圈评' : '显示所有版本圈评',
+        key: 'showAllCircleReview',
+        icon: isShowAllCircleReview ? <span>&#xe699;</span> : <span>&#xe698;</span>,
+        toolTipText: isShowAllCircleReview ? '显示当前版本圈评' : '显示所有版本圈评',
+        onClick: () => this.handleOperator('showAllCircleReview')
+      },
 
       isShow_textArea == true ?
         {
@@ -1844,7 +1844,7 @@ class ZoomPicture extends Component {
     return (
       <div className={styles.commentItemPopoverContentWrapper}>
         <div className={styles.commentItemPopoverContentCommentList}>
-          {(currentSelectedCommentItemDetail && currentSelectedCommentItemDetail.length) && currentSelectedCommentItemDetail.map(i => {
+          {currentSelectedCommentItemDetail.map(i => {
             return (
               <div
                 key={i.id}
