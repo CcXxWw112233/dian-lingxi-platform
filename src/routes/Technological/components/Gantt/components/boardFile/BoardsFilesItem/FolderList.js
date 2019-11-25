@@ -9,6 +9,8 @@ import Cookies from 'js-cookie'
 import { addNewFolder } from '../../../../../../../services/technological/file';
 import { isApiResponseOk } from '../../../../../../../utils/handleResponseData';
 import UploadNotification from '@/components/UploadNotification'
+import UploadNormal from '@/components/UploadNormal'
+
 export default class FolderList extends Component {
     constructor(props) {
         super(props)
@@ -48,13 +50,6 @@ export default class FolderList extends Component {
             add_folder_value: '',
         })
     }
-
-    setShowUploadNotification = (bool) => {
-        this.setState({
-            show_upload_notification: bool
-        })
-    }
-
     uploadProps = () => {
         const that = this
         const { board_id, current_folder_id } = this.props
@@ -63,7 +58,7 @@ export default class FolderList extends Component {
             withCredentials: true,
             multiple: true,
             action: `${REQUEST_DOMAIN_FILE}/file/upload`,
-            showUploadList: false,
+            showUploadList: true,
             onRemove: () => false,
             onDownload: () => false,
             data: {
@@ -138,14 +133,20 @@ export default class FolderList extends Component {
         };
         return propsObj
     }
-
+    getFolderFileList = () => {
+        const { current_folder_id, getFolderFileList } = this.props
+        if (typeof getFolderFileList == 'function') {
+            getFolderFileList({ id: current_folder_id })
+        }
+    }
     renderAddItemDropMenu = () => {
         return (
-            <Menu onClick={this.addItemClick}>
-                <Menu.Item key={1} style={{ width: 248 }}>
-                    <Upload {...this.uploadProps()}>
+            <Menu onClick={this.addItemClick} style={{ transform: 'none' }}>
+                <Menu.Item key={1} style={{ width: 248, transform: 'none' }}>
+                    {/* <Upload {...this.uploadProps()}>
                         <div style={{ width: 220, height: 26 }}>上传文件</div>
-                    </Upload>
+                    </Upload> */}
+                    {this.renderUpload()}
                 </Menu.Item>
                 <Menu.Item key={2}>
                     <div>新建文件夹</div>
@@ -181,13 +182,52 @@ export default class FolderList extends Component {
         }
     }
 
+    // 文件上传
+    renderUpload = () => {
+        const { uploading_file_list = [] } = this.state
+        const props = {
+            uploadProps: this.uploadNormalProps(),
+            uploadCompleteCalback: this.getFolderFileList,
+            is_need_parent_notification: true,  //是需要在父组件种做回调还是在子组件内自完成
+            setShowUploadNotification: this.setShowUploadNotification,
+            setUploadingFileList: this.setUploadingFileList
+        }
+        return (
+            <UploadNormal {...props}>
+                <div style={{ width: 220, height: 26 }}>上传文件</div>
+            </UploadNormal>
+        )
+    }
     // 设置右边弹窗出现
     setUploadNotiVisible = () => {
         const { show_upload_notification } = this.state
         this.setState({
             show_upload_notification: !show_upload_notification,
-            uploading_file_list: []
         })
+    }
+    setUploadingFileList = (uploading_file_list) => {
+        this.setState({
+            uploading_file_list
+        })
+    }
+    // 设置出现右边弹窗
+    setShowUploadNotification = (bool) => {
+        this.setState({
+            show_upload_notification: bool
+        })
+    }
+    //文件上传参数传递
+    uploadNormalProps = () => {
+        const { board_id, current_folder_id } = this.props
+        return {
+            action: `${REQUEST_DOMAIN_FILE}/file/upload`,
+            data: {
+                board_id,
+                folder_id: current_folder_id,
+                type: '1',
+                upload_type: '1'
+            },
+        }
     }
 
     render() {
@@ -223,7 +263,7 @@ export default class FolderList extends Component {
                         </div>
                     )
                 }
-                <Dropdown overlay={this.renderAddItemDropMenu()}>
+                <Dropdown overlay={this.renderAddItemDropMenu()} >
                     <div className={`${styles.folder_item} ${globalStyles.authTheme} ${styles.add_item}`}>&#xe8fe;</div>
                 </Dropdown>
                 {

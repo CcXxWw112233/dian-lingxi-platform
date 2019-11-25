@@ -4,29 +4,27 @@ import { Upload, message } from 'antd'
 import { REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE } from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 import { setUploadHeaderBaseInfo } from '../../utils/businessFunction'
-export default class index extends Component {
+export default class UploadNormal extends Component {
 
     constructor(props) {
         super(props)
         this.state = {
-            upload_file_list: []
+            uploading_file_list: []
         }
     }
-    uploadProps = () => {
+    normalUploadProps = () => {
         const that = this
-        const { upload_file_list } = this.state
-        const { upload_data = {} } = this.props
-        const { board_id } = upload_data
+        const { uploading_file_list } = this.state
+        const { uploadProps = {}, uploadCompleteCalback, setShowUploadNotification, is_need_parent_notification, setUploadingFileList } = this.props
+        const { data: { board_id } } = uploadProps
         const propsObj = {
             name: 'file',
             withCredentials: true,
             multiple: true,
-            fileList: upload_file_list,
-            action: `${REQUEST_DOMAIN_FILE}/file/upload`,
+            // fileList: uploading_file_list,
             showUploadList: false,
             onRemove: () => false,
             onDownload: () => false,
-            data: upload_data,
             headers: {
                 Authorization: Cookies.get('Authorization'),
                 refreshToken: Cookies.get('refreshToken'),
@@ -41,7 +39,7 @@ export default class index extends Component {
                     return false
                 }
             },
-            onChange({ file, fileList, event }) {
+            onChange({ file, fileList }) {
                 let fileList_will = [...fileList]
                 fileList_will = fileList_will.filter(item => {
                     if (item.status == 'done') {
@@ -53,21 +51,24 @@ export default class index extends Component {
                     }
                     return item
                 })
-                that.setState({
-                    upload_file_list: fileList_will
-                }, () => {
-                    that.setShowUploadNotification(true)
-                })
+                if (is_need_parent_notification) { //由父组件渲染进度弹窗
+                    setUploadingFileList(fileList_will)
+                    setShowUploadNotification(true)
+                } else {
+                    that.setState({
+                        uploading_file_list: fileList
+                    }, () => {
+                        that.setShowUploadNotification(true)
+                    })
+                }
                 const is_has_uploading = fileList_will.length && (fileList_will.findIndex(item => item.status == 'uploading') != -1)
-                // console.log('sssss_is_has_uploading', {
-                //     is_has_uploading,
-                //     length: fileList_will.length,
-                //     bool: (fileList_will.findIndex(item => item.status == 'uploading'))
-                // })
-                // if (!is_has_uploading) { //没有上传状态了
-                //     that.props.getFolderFileList({ id: current_folder_id })
-                // }
+                if (!is_has_uploading) { //没有上传状态了
+                    if (typeof uploadCompleteCalback == 'function') {
+                        uploadCompleteCalback()
+                    }
+                }
             },
+            ...uploadProps
         };
         return propsObj
     }
@@ -76,7 +77,7 @@ export default class index extends Component {
         const { show_upload_notification } = this.state
         this.setState({
             show_upload_notification: !show_upload_notification,
-            upload_file_list: []
+            uploading_file_list: []
         })
     }
     setShowUploadNotification = (bool) => {
@@ -85,16 +86,17 @@ export default class index extends Component {
         })
     }
     render() {
-        const { children } = this.props
-        const { show_upload_notification, upload_file_list = [] } = this.state
+        const { children, is_need_parent_notification } = this.props
+        const { show_upload_notification, uploading_file_list = [] } = this.state
+
         return (
             <>
-                <Upload {...this.uploadProps()}>
+                <Upload {...this.normalUploadProps()}>
                     {children}
                 </Upload>
                 {
-                    show_upload_notification && (
-                        <UploadNotification upload_file_list={upload_file_list} setUploadNotiVisible={this.setUploadNotiVisible} />
+                    !is_need_parent_notification && show_upload_notification && (
+                        <UploadNotification uploading_file_list={uploading_file_list} setUploadNotiVisible={this.setUploadNotiVisible} />
                     )
                 }
             </>
