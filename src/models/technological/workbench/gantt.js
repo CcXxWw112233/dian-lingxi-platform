@@ -63,6 +63,7 @@ export default {
       is_show_board_file_area: '0', //显示文件区域 0默认不显示 1滑入 2滑出
       boards_flies: [], //带根目录文件列表的项目列表
       show_board_fold: false, //是否显示项目汇总视图 
+      folder_seeing_board_id: '0', //查看文件夹所属的项目id
     },
   },
   subscriptions: {
@@ -206,6 +207,7 @@ export default {
         type: 'updateDatas',
         payload: {
           get_gantt_data_loading: false,
+          folder_seeing_board_id: '0'
         }
       })
       // console.log('sssss', {res})
