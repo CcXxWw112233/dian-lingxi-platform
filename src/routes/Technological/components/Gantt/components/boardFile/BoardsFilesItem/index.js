@@ -55,6 +55,25 @@ export default class Index extends Component {
         this.setState({
             bread_paths: new_bread_paths
         })
+
+        // 设置当前正在查看的文件夹所属项目id
+        const board_id = new_bread_paths[0].id
+        const { dispatch } = this.props
+        if (new_bread_paths.length == 1) {
+            dispatch({
+                type: 'gantt/updateDatas',
+                payload: {
+                    folder_seeing_board_id: '0'
+                }
+            })
+        } else {
+            dispatch({
+                type: 'gantt/updateDatas',
+                payload: {
+                    folder_seeing_board_id: board_id
+                }
+            })
+        }
     }
     getBoardFileList = () => { // 获取项目根目录文件列表
         const { first_paths_item: { folder_id = ' ' } } = this.state
