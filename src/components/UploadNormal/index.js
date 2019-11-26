@@ -4,6 +4,7 @@ import { Upload, message } from 'antd'
 import { REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE } from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 import { setUploadHeaderBaseInfo } from '../../utils/businessFunction'
+import axios from 'axios'
 export default class UploadNormal extends Component {
 
     constructor(props) {
@@ -49,22 +50,18 @@ export default class UploadNormal extends Component {
         const { uploading_file_list } = this.state
         const { uploadProps = {}, uploadCompleteCalback, setShowUploadNotification, is_need_parent_notification, setUploadingFileList } = this.props
         const { data: { board_id } } = uploadProps
-        let is_large_file = false
         const propsObj = {
             name: 'file',
             withCredentials: true,
             multiple: true,
             // fileList: uploading_file_list,
             showUploadList: false,
-            onRemove: () => false,
-            onDownload: () => false,
             headers: {
                 Authorization: Cookies.get('Authorization'),
                 refreshToken: Cookies.get('refreshToken'),
                 ...setUploadHeaderBaseInfo({ boardId: board_id }),
             },
             ...uploadProps,
-            action: this.state.action,
             transformFile: this.transformFile,
             beforeUpload: (e) => {
                 if (e.size == 0) {
@@ -74,16 +71,13 @@ export default class UploadNormal extends Component {
                     message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
                     return false
                 }
-                if (e.size > 50 * 1024 * 1024) {
-                    this.setState({
-                        action: this.state.OSSData.host
-                    })
-                    propsObj.action = this.state.OSSData.host
-                    propsObj.data = this.getExtraData
-                    console.log('sssss', propsObj)
+                if (is_need_parent_notification) {
+                    setShowUploadNotification(true)
+                } else {
+                    that.setShowUploadNotification(true)
                 }
             },
-            onChange({ file, fileList }) {
+            onChange: ({ file, fileList }) => {
                 let fileList_will = [...fileList]
                 fileList_will = fileList_will.filter(item => {
                     if (item.status == 'done') {
@@ -97,12 +91,9 @@ export default class UploadNormal extends Component {
                 })
                 if (is_need_parent_notification) { //由父组件渲染进度弹窗
                     setUploadingFileList(fileList_will)
-                    setShowUploadNotification(true)
                 } else {
                     that.setState({
                         uploading_file_list: fileList
-                    }, () => {
-                        that.setShowUploadNotification(true)
                     })
                 }
                 const is_has_uploading = fileList_will.length && (fileList_will.findIndex(item => item.status == 'uploading') != -1)
@@ -113,11 +104,58 @@ export default class UploadNormal extends Component {
                     that.uploadCompleted()
                 }
             },
-
+            customRequest: this.customRequest
         };
         return propsObj
     }
+    customRequest = (e) => {
+        let {
+            action,
+            data,
+            file,
+            filename,
+            headers,
+            onError,
+            onProgress,
+            onSuccess,
+            withCredentials,
+        } = e
+        const { OSSData } = this.state
+        const formData = new FormData();
+        if (file.size >= 50 * 1024 * 1024) {
+            action = OSSData.host
+            data = {
+                ...data,
+                ...this.getExtraData(file)
+            }
+        }
+        if (data) {
+            Object.keys(data).forEach(key => {
+                formData.append(key, data[key]);
+            });
+        }
+        formData.append(filename, file);
+        console.log('sssss_customRequest', e)
 
+        axios
+            .post(action, formData, {
+                withCredentials,
+                headers,
+                onUploadProgress: ({ total, loaded }) => {
+                    onProgress({ percent: Math.round(loaded / total * 100).toFixed(2) }, file);
+                },
+            })
+            .then(({ data: response }) => {
+                onSuccess(response, file);
+            })
+            .catch(onError);
+
+        return {
+            abort() {
+                console.log('upload progress is aborted.');
+            },
+        };
+    }
 
     // oss上传
     async componentDidMount() {
