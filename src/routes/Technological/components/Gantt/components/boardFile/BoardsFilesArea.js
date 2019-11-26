@@ -168,6 +168,20 @@ export default class BoardsFilesArea extends Component {
             }
         })
     }
+
+    // 仅出现当前查看的文件夹所属项目
+    filterSeeingBoard = (board_id) => {
+        const { folder_seeing_board_id = '0' } = this.props
+        if (folder_seeing_board_id == '0') {
+            return true
+        } else {
+            if (folder_seeing_board_id == board_id) {
+                return true
+            } else {
+                return false
+            }
+        }
+    }
     render() {
         const { is_show_board_file_area, boards_flies = [] } = this.props
 
@@ -185,6 +199,7 @@ export default class BoardsFilesArea extends Component {
                                 <div key={id}>
                                     {
                                         isPaymentOrgUser(org_id) &&
+                                        this.filterSeeingBoard(id) &&
                                         <BoardsFilesItem
                                             itemValue={item}
                                             item={key}
@@ -203,7 +218,7 @@ export default class BoardsFilesArea extends Component {
     }
 }
 function mapStateToProps({
-    gantt: { datas: { is_show_board_file_area, boards_flies = [] } },
+    gantt: { datas: { is_show_board_file_area, boards_flies = [], folder_seeing_board_id } },
     imCooperation: {
         im_all_latest_unread_messages = [], wil_handle_types = []
     },
@@ -212,7 +227,7 @@ function mapStateToProps({
     const modelObj = {
         datas: { ...workbenchFileDetail['datas'], ...workbenchPublicDatas['datas'], ...publicTaskDetailModal }
     }
-    return { is_show_board_file_area, boards_flies, model: modelObj, im_all_latest_unread_messages }
+    return { is_show_board_file_area, boards_flies, folder_seeing_board_id, model: modelObj, im_all_latest_unread_messages }
 }
 
 
