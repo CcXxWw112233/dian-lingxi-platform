@@ -22,13 +22,24 @@ export default class UploadNormal extends Component {
     setUploadNotiVisible = () => {
         const { show_upload_notification } = this.state
         this.setState({
-            show_upload_notification: !show_upload_notification,
-            uploading_file_list: []
+            swich_render_upload: false
         })
+        setTimeout(() => {
+            this.setState({
+                swich_render_upload: true
+            })
+        }, 1000)
+        this.setShowUploadNotification(false)
+        this.setUploadingFileList([])
     }
     setShowUploadNotification = (bool) => {
         this.setState({
             show_upload_notification: bool
+        })
+    }
+    setUploadingFileList = (uploading_file_list) => {
+        this.setState({
+            uploading_file_list
         })
     }
     uploadCompleted = () => {
@@ -46,6 +57,8 @@ export default class UploadNormal extends Component {
         if (is_need_parent_notification) {
             setShowUploadNotification(false)
             setUploadingFileList([])
+        } else {
+            this.setShowUploadNotification(false)
         }
     }
     normalUploadProps = () => {
@@ -95,9 +108,7 @@ export default class UploadNormal extends Component {
                 if (is_need_parent_notification) { //由父组件渲染进度弹窗
                     setUploadingFileList(fileList_will)
                 } else {
-                    that.setState({
-                        uploading_file_list: fileList
-                    })
+                    that.setUploadingFileList(fileList_will)
                 }
                 // console.log('sssss_fileList', fileList)
                 const is_has_uploading = fileList_will.length && (fileList_will.findIndex(item => item.status == 'uploading') != -1)
@@ -228,8 +239,7 @@ export default class UploadNormal extends Component {
         return p
     }
 
-
-    // oss上传
+    // oss数据获取
     async componentDidMount() {
         await this.init();
     }
@@ -291,5 +301,22 @@ export default class UploadNormal extends Component {
                 }
             </>
         )
+    }
+}
+
+// 该组件为支持上传大文件的组件
+UploadNormal.defaultProps = {
+    uploadProps: { //上传文件的基本数据, 必传
+        action: '',
+        data: {
+
+        }
+    },
+    is_need_parent_notification: false, //进度条弹窗是否在父组件内引用
+    setUploadingFileList: function () { //设置上传文件的列表(is_need_parent_notification == true时传入)
+
+    },
+    setUploadNotiVisible: function () { //关闭弹窗（is_need_parent_notification == true时传入)
+
     }
 }

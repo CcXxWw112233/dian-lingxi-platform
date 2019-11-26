@@ -8,6 +8,7 @@ import ThumbnailFilesTilingShow from './ThumbnailFilesTilingShow';
 import defaultTypeImg from '@/assets/invite/user_default_avatar@2x.png';
 import { Upload, Icon, message } from 'antd';
 import styles from './CommunicationThumbnailFiles.less';
+import UploadNormal from '../../../../../../../components/UploadNormal';
 
 
 @connect(mapStateToProps)
@@ -219,6 +220,28 @@ export default class CommunicationThumbnailFiles extends Component {
         this.props.changeChooseType(tabType);
     }
 
+    // 公用上传组件
+    renderUpload = () => {
+        const { currentSelectBoardId, current_folder_id, getThumbnailFilesData } = this.props
+        const props = {
+            uploadProps: {
+                action: `${REQUEST_DOMAIN_FILE}/file/upload`,
+                data: {
+                    board_id: currentSelectBoardId,
+                    folder_id: current_folder_id,
+                    type: '1',
+                    upload_type: '1'
+                },
+            },
+            uploadCompleteCalback: getThumbnailFilesData,
+        }
+        return (
+            <UploadNormal {...props}>
+                <><Icon type="upload" /> 上传文件</>
+            </UploadNormal>
+        )
+    }
+
     render(){
         const {
             isVisibleFileList,
@@ -240,9 +263,10 @@ export default class CommunicationThumbnailFiles extends Component {
                     <div className={styles.uploadFile}>
                         {
                             bread_paths && bread_paths.length ?(
-                                <Upload {...this.uploadProps()} showUploadList={false}>
-                                    <Icon type="upload" /> 上传文件
-                                </Upload>
+                                this.renderUpload()
+                                // <Upload {...this.uploadProps()} showUploadList={false}>
+                                //     <Icon type="upload" /> 上传文件
+                                // </Upload>
                             ): ''
                         }
                         
