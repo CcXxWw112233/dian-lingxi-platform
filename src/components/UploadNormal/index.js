@@ -5,6 +5,9 @@ import { REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE } from '../../globalset/js/consta
 import Cookies from 'js-cookie'
 import { setUploadHeaderBaseInfo } from '../../utils/businessFunction'
 import axios from 'axios'
+import BMF from 'browser-md5-file';
+import { resolve, reject } from '_any-promise@1.3.0@any-promise'
+import { getUSerInfo } from '../../services/technological'
 export default class UploadNormal extends Component {
 
     constructor(props) {
@@ -96,6 +99,7 @@ export default class UploadNormal extends Component {
                         uploading_file_list: fileList
                     })
                 }
+                // console.log('sssss_fileList', fileList)
                 const is_has_uploading = fileList_will.length && (fileList_will.findIndex(item => item.status == 'uploading') != -1)
                 if (!is_has_uploading) { //没有上传状态了
                     if (typeof uploadCompleteCalback == 'function') {
@@ -108,7 +112,9 @@ export default class UploadNormal extends Component {
         };
         return propsObj
     }
-    customRequest = (e) => {
+
+    // 自定义上传
+    customRequest = async (e) => {
         let {
             action,
             data,
@@ -122,25 +128,48 @@ export default class UploadNormal extends Component {
         } = e
         const { OSSData } = this.state
         const formData = new FormData();
+        formData.append(filename, file);
+
+        /*
+        1.是大文件
+        2.解码生成md5
+        3.生成的md5与后端校验，如果存在相同md5格式的文件，仅需关联。否则上传到阿里云oss
+        */
         if (file.size >= 50 * 1024 * 1024) {
-            action = OSSData.host
-            data = {
-                ...data,
-                ...this.getExtraData(file)
+            const md5_str = await this.handleBMF(file) //解码md5文件
+            const is_has_md5 = await this.checkFileMD5() //检查后台是否存在相同md5的文件
+            console.log('sssss_is_has_md5', is_has_md5)
+            console.log('sssss_md5_str', md5_str)
+            if (is_has_md5) { //如果后端已经存在了该文件，只需调用接口将文件关联
+                const relation_res = await this.relationFile()
+                if (relation_res) {
+                    onProgress({ percent: 100 }, file);
+                    setTimeout(() => {
+                        onSuccess(relation_res, file);
+                    }, 500)
+                }
+                return
+            } else {
+                data = {
+                    ...data,
+                    ...this.getExtraData(file)
+                }
+                action = OSSData.host
             }
         }
+
         if (data) {
             Object.keys(data).forEach(key => {
                 formData.append(key, data[key]);
             });
         }
-        formData.append(filename, file);
-        console.log('sssss_customRequest', e)
 
+        // 进行文件上传
         axios
             .post(action, formData, {
                 withCredentials,
                 headers,
+                timeout: 0,
                 onUploadProgress: ({ total, loaded }) => {
                     onProgress({ percent: Math.round(loaded / total * 100).toFixed(2) }, file);
                 },
@@ -156,6 +185,49 @@ export default class UploadNormal extends Component {
             },
         };
     }
+    // 检查文件md5是否保存在后台
+    checkFileMD5 = () => {
+        const p = new Promise((resolve, reject) => {
+            getUSerInfo().then(res => {
+                resolve(res)
+            }).catch(err => {
+                resolve('error')
+            })
+        })
+        return p
+    }
+    // 处理md5
+    handleBMF = (file) => {
+        const bmf = new BMF()
+        const p = new Promise((resolve, reject) => {
+            bmf.md5(
+                file,
+                (err, md5) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        resolve(md5)
+                    }
+                },
+                progress => {
+                    // console.log('progress number:', progress);
+                },
+            );
+        })
+        return p
+    }
+    // 关联文件到后端
+    relationFile = () => {
+        const p = new Promise((resolve, reject) => {
+            getUSerInfo().then(res => {
+                resolve(res)
+            }).catch(err => {
+                resolve('error')
+            })
+        })
+        return p
+    }
+
 
     // oss上传
     async componentDidMount() {
