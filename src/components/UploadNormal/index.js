@@ -58,7 +58,8 @@ export default class UploadNormal extends Component {
             setShowUploadNotification(false)
             setUploadingFileList([])
         } else {
-            this.setShowUploadNotification(false)
+            // this.setShowUploadNotification(false)
+            this.setUploadNotiVisible()
         }
     }
     normalUploadProps = () => {
@@ -317,6 +318,9 @@ UploadNormal.defaultProps = {
 
     },
     setUploadNotiVisible: function () { //关闭弹窗（is_need_parent_notification == true时传入)
+
+    },
+    uploadCompleteCalback: function () { //上传完成的回调，（比如查询列表）
 
     }
 }
