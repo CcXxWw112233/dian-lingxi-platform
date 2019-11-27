@@ -5,11 +5,12 @@ import { REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE } from '../../globalset/js/consta
 import Cookies from 'js-cookie'
 import { setUploadHeaderBaseInfo } from '../../utils/businessFunction'
 import axios from 'axios'
-import BMF from 'browser-md5-file';
+// import BMF from 'browser-md5-file';
 import { resolve, reject } from '_any-promise@1.3.0@any-promise'
 import { getUSerInfo } from '../../services/technological'
 import { checkFileMD5WithBack, uploadToOssCalback } from '../../services/technological/file'
 import oss from 'ali-oss';
+import SparkMD5 from 'spark-md5'
 export default class UploadNormal extends Component {
 
     constructor(props) {
@@ -234,23 +235,37 @@ export default class UploadNormal extends Component {
     }
     // 处理md5
     handleBMF = (file) => {
-        const bmf = new BMF()
-        const p = new Promise((resolve, reject) => {
-            bmf.md5(
-                file,
-                (err, md5) => {
-                    if (err) {
-                        reject(err)
-                    } else {
-                        resolve(md5)
-                    }
-                },
-                progress => {
-                    // console.log('progress number:', progress);
-                },
-            );
+        // const bmf = new BMF()
+        // const p = new Promise((resolve, reject) => {
+        //     bmf.md5(
+        //         file,
+        //         (err, md5) => {
+        //             if (err) {
+        //                 reject(err)
+        //             } else {
+        //                 console.log('ssss_bmf', md5)
+        //                 resolve(md5)
+        //             }
+        //         },
+        //         progress => {
+        //             // console.log('progress number:', progress);
+        //         },
+        //     );
+        // })
+        // return p
+        const fileReader = new FileReader();
+        const dataFile = file
+        const _this = this
+        const spark = new SparkMD5(); //创建md5对象（基于SparkMD5）
+        return new Promise((resolve) => {
+            fileReader.readAsBinaryString(dataFile);
+            //文件读取完毕之后的处理
+            fileReader.onload = function (e) {
+                spark.appendBinary(e.target.result);
+                const md5 = spark.end()
+                resolve(md5)
+            };
         })
-        return p
     }
     // 关联文件到后端
     checkRelationFile = ({ md5_str, file_name, is_live, file_size }) => {
