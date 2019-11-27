@@ -13,6 +13,7 @@ import { REQUEST_DOMAIN_FILE } from "@/globalset/js/constant";
 import Cookies from 'js-cookie'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 import indexStyle from './index.less'
+import UploadNormal from '../../../../components/UploadNormal';
 
 @connect(mapStateToProps)
 export default class BoarderfilesHeader extends Component {
@@ -241,6 +242,38 @@ export default class BoarderfilesHeader extends Component {
     }
     //文档操作 ---end
 
+    // 通用上传
+    // 公用上传组件
+    renderUpload = () => {
+        const { currentParrentDirectoryId, board_id, dispatch } = this.props
+        const props = {
+            uploadProps: {
+                action: `${REQUEST_DOMAIN_FILE}/file/upload`,
+                data: {
+                    board_id: board_id,
+                    folder_id: currentParrentDirectoryId,
+                    type: '1',
+                    upload_type: '1'
+                },
+            },
+            uploadCompleteCalback: () => {
+                dispatch({
+                    type: 'projectDetailFile/getFileList',
+                    payload: {
+                        folder_id: currentParrentDirectoryId
+                    }
+                })
+            },
+        }
+        return (
+            <UploadNormal {...props}>
+                <Button style={{ height: 24, marginTop: 16, }} type={'primary'}>
+                    <Icon type="upload" />上传
+                </Button>
+            </UploadNormal>
+        )
+    }
+
     renderHeader = () => {
         const { selectedRowKeys, dispatch } = this.props;
         let operatorConent = '';
@@ -284,11 +317,12 @@ export default class BoarderfilesHeader extends Component {
             operatorConent = checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW) && (
                 <div style={{ display: 'flex', alignItems: 'center', }}>
                     {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD) && (
-                        <Upload {...this.getUploadProps()} showUploadList={false}>
-                            <Button style={{ height: 24, marginTop: 16, }} type={'primary'}>
-                                <Icon type="upload" />上传
-                    </Button>
-                        </Upload>
+                        //     <Upload {...this.getUploadProps()} showUploadList={false}>
+                        //         <Button style={{ height: 24, marginTop: 16, }} type={'primary'}>
+                        //             <Icon type="upload" />上传
+                        // </Button>
+                        //     </Upload>
+                        this.renderUpload()
                     )}
 
                     {checkIsHasPermissionInBoard(PROJECT_FILES_FOLDER) && (

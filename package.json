@@ -8,11 +8,13 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.3",
+    "ali-oss": "^6.2.1",
     "antd": "^3.11.0",
     "axios": "^0.18.1",
     "babel-plugin-import": "^1.11.0",
     "babel-polyfill": "^6.26.0",
     "braft-editor": "^2.1.26",
+    "browser-md5-file": "^1.1.1",
     "classnames": "^2.2.6",
     "core-js": "^2.6.0",
     "cross-env": "^5.2.0",
