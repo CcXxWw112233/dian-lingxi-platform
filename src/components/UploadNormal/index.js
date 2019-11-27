@@ -8,6 +8,8 @@ import axios from 'axios'
 import BMF from 'browser-md5-file';
 import { resolve, reject } from '_any-promise@1.3.0@any-promise'
 import { getUSerInfo } from '../../services/technological'
+import { checkFileMD5WithBack } from '../../services/technological/file'
+import oss from 'ali-oss';
 export default class UploadNormal extends Component {
 
     constructor(props) {
@@ -149,27 +151,33 @@ export default class UploadNormal extends Component {
         */
         if (file.size >= 50 * 1024 * 1024) {
             const md5_str = await this.handleBMF(file) //解码md5文件
-            const is_has_md5 = await this.checkFileMD5() //检查后台是否存在相同md5的文件
-            console.log('sssss_is_has_md5', is_has_md5)
-            console.log('sssss_md5_str', md5_str)
-            if (is_has_md5) { //如果后端已经存在了该文件，只需调用接口将文件关联
-                const relation_res = await this.relationFile()
+            const { data: { is_live, access = {} } } = await this.checkFileMD5({ md5_str, file_name: file.name }) //检查后台是否存在相同md5的文件
+            if (is_live) { //如果后端已经存在了该文件，只需调用接口将文件关联
+                const relation_res = await this.checkRelationFile()
                 if (relation_res) {
                     onProgress({ percent: 100 }, file);
                     setTimeout(() => {
                         onSuccess(relation_res, file);
                     }, 500)
                 }
-                return
             } else {
-                data = {
-                    ...data,
-                    ...this.getExtraData(file)
-                }
-                action = OSSData.host
+                // 直传（废弃）
+                // data = {
+                //     ...data,
+                //     ...this.getExtraData(file)
+                // }
+                // action = OSSData.host
+
+                // 对象上传
+                const params = { access, file, hash: md5_str, file_name: file.name }
+                this.UploadToOss(params).then(res => {
+                }).catch(err => {
+                })
             }
+            return
         }
 
+        // 小文件上传
         if (data) {
             Object.keys(data).forEach(key => {
                 formData.append(key, data[key]);
@@ -198,12 +206,24 @@ export default class UploadNormal extends Component {
         };
     }
     // 检查文件md5是否保存在后台
-    checkFileMD5 = () => {
-        const p = new Promise((resolve, reject) => {
-            getUSerInfo().then(res => {
+    checkFileMD5 = ({ md5_str, file_name }) => {
+        const { uploadProps = {}, source_type = '1' } = this.props
+        const { data: { board_id, folder_id, upload_type, file_version_id } } = uploadProps
+        const params = {
+            // board_id,
+            // folder_id,
+            file_hash: md5_str,
+            file_name,
+            // upload_type, // 1 / 2新文件上传 / 版本更新
+        }
+        if (upload_type == '2') {
+            param.file_version_id = file_version_id
+        }
+        const p = new Promise(async (resolve, reject) => {
+            checkFileMD5WithBack(params).then(res => {
                 resolve(res)
             }).catch(err => {
-                resolve('error')
+                resolve({})
             })
         })
         return p
@@ -229,7 +249,7 @@ export default class UploadNormal extends Component {
         return p
     }
     // 关联文件到后端
-    relationFile = () => {
+    checkRelationFile = () => {
         const p = new Promise((resolve, reject) => {
             getUSerInfo().then(res => {
                 resolve(res)
@@ -240,7 +260,50 @@ export default class UploadNormal extends Component {
         return p
     }
 
-    // oss数据获取
+    // 新建阿里云oss客户端 --设置参数
+    ossClient = (access = {}) => {
+        const { access_key_id, access_key_secret, bucket, security_token } = access
+        // ali-oss v6.x版本的写法
+        const params = {
+            accessKeyId: access_key_id,
+            accessKeySecret: access_key_secret,
+            region: 'cn-beijing', //
+            bucket,
+            stsToken: security_token,
+            endpoint: 'http://oss-cn-beijing.aliyuncs.com',
+            secure: true
+        }
+        console.log('sssss_client', params)
+        return new oss(params);
+    }
+    UploadToOss = ({ access, file, hash, file_name }) => {
+        const url = this.uploadPath({ hash, file_name })
+        console.log('sssss_multipart_param', {
+            url,
+            file
+        })
+        return new Promise((resolve, reject) => {
+            this.ossClient(access).multipartUpload(url, file).then(res => {
+                console.log('sssss_multipart_success', error)
+                resolve(data);
+            }).catch(error => {
+                console.log('sssss_multipart_error', error)
+                reject(error)
+            })
+        })
+    }
+    uploadPath = ({ hash, file_name }) => {
+        // 上传文件的路径，使用日期命名文件目录
+        const subfix = file_name.substr(file_name.lastIndexOf('.'))
+        const date = new Date()
+        const year = date.getFullYear()
+        const month = date.getMonth() + 1
+        const day = date.getDate()
+        return `${year}-${month}-${day}/${hash}${subfix}`
+    }
+    // 新建阿里云oss客户端 ---end
+
+    // oss数据获取 ---------直传方式（废弃）
     async componentDidMount() {
         await this.init();
     }
@@ -280,6 +343,7 @@ export default class UploadNormal extends Component {
             Signature: OSSData.signature,
         };
     };
+    // ----------直传方式end
 
     render() {
         const { children, is_need_parent_notification } = this.props
@@ -310,9 +374,13 @@ UploadNormal.defaultProps = {
     uploadProps: { //上传文件的基本数据, 必传
         action: '',
         data: {
-
+            board_id: '',
+            folder_id: '',
+            upload_type: '1', //1/2  新文件上传，版本更新  
+            type: '1'
         }
     },
+    source_type: '1', // 1/2/3 网盘文件/流程文件/任务附件
     is_need_parent_notification: false, //进度条弹窗是否在父组件内引用
     setUploadingFileList: function () { //设置上传文件的列表(is_need_parent_notification == true时传入)
 

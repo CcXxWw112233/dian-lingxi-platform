@@ -302,3 +302,11 @@ export async function getCardCommentListAll(params) {
   })
 }
 
+// 检查大文件是否在后台存在，需要通过md5
+export async function checkFileMD5WithBack(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/upload/check`,
+    method: 'POST',
+    data
+  })
+}
