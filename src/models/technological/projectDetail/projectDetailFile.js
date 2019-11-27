@@ -22,6 +22,7 @@ import {
   getFilePDFInfo,
   setCurrentVersionFile,
   updateVersionFileDescription,
+  fileConvertPdfAlsoUpdateVersion
 } from "../../../services/technological/file";
 import {
   selectAppsSelectKey,
@@ -36,6 +37,7 @@ import { MESSAGE_DURATION_TIME } from "../../../globalset/js/constant";
 import { isApiResponseOk } from "../../../utils/handleResponseData";
 import QueryString from 'querystring'
 import { projectDetailInfo } from "../../../services/technological/prjectDetail";
+import { project_selectFilePreviewIsEntryCirclePreviewLoading, project_selectFilePreviewCurrentPreviewFileName} from './select'
 
 let board_id = null
 let appsSelectKey = null
@@ -76,6 +78,8 @@ export default modelExtend(projectDetail, {
       cardCommentAll: [], //文件动态列表
       pdfDownLoadSrc: '', //pdf下载路径，如果有则open如果不是pdf则没有该路径，调用普通下载
       currentPreviewFileData: {}, // 当前操作的文件数据
+      isEntryCirclePreviewLoading: false,
+      isExpandFrame: false
     }
   },
   subscriptions: {
@@ -243,6 +247,7 @@ export default modelExtend(projectDetail, {
             filePreviewCurrentVersionId: res.data.version_list.length ? res.data.version_list[0]['version_id'] : '',
             filePreviewCurrentId: res.data.base_info.file_resource_id,
             currentPreviewFileBaseInfo: res.data.base_info,
+            currentPreviewFileName: res.data.base_info.file_name
           }
         })
         let breadcrumbList = yield select(selectBreadcrumbList) || []
@@ -485,7 +490,7 @@ export default modelExtend(projectDetail, {
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         if (res.code == 4003) { //分享链接失效,返回验证页面
-          debugger
+          // debugger
           setTimeout(function () {
             window.history.back();
           }, 3000)
@@ -896,7 +901,7 @@ export default modelExtend(projectDetail, {
     },
 
     * getFileType({ payload }, { select, call, put }) {
-      let { fileList, file_id } = payload
+      let { fileList = [], file_id } = payload
       let fileId = yield select(selectFilePreviewCurrentFileId)
       let res
       if (fileId) {
@@ -929,6 +934,79 @@ export default modelExtend(projectDetail, {
             fileType: res[0].file_name ? getSubfixName(res[0].file_name) : ''
           }
         })
+      }
+    },
+
+    // 圈评转换pdf并且设置为新版本
+    * fileConvertPdfAlsoUpdateVersion({payload}, {select, call, put}) {
+      // const timer = setTimeout(() => {
+      //   actionReducer({
+      //     type: 'updateDatas',
+      //     payload: {
+      //       isEntryCirclePreviewLoading: true
+      //     }
+      //   })
+      // }, 2000)
+      const { id } = payload
+      let fileName = getSubfixName(yield select(project_selectFilePreviewCurrentPreviewFileName))
+      let is_loading = yield select(project_selectFilePreviewIsEntryCirclePreviewLoading)
+      const supportFileTypeArray = ['.xlsx', '.xls', '.doc', '.docx', '.ppt', '.pptx', '.png', '.txt']
+      // [png,gif,jpg,jpeg,tif,bmp,ico]
+      const supportPictureFileTypeArray = ['.png', '.gif', '.jpg', '.jpeg', '.tif', '.bmp', '.ico']
+      if (is_loading) return
+      if (supportFileTypeArray.indexOf(fileName) != -1 || supportPictureFileTypeArray.indexOf(fileName) != -1) { // 表示存在
+        let res = yield call(fileConvertPdfAlsoUpdateVersion, {id})
+        if (isApiResponseOk(res)) {
+          yield put({
+            type: 'setCurrentVersionFile',
+            payload: {
+              set_major_version: '1',
+              id: res.data.id,
+              version_id: res.data.version_id,
+              isNeedPreviewFile: false,
+            }
+          })
+          let isPDF = getSubfixName(res.data.file_name) == '.pdf'
+          if (isPDF) {
+            yield put({
+              type: 'getFilePDFInfo',
+              payload: {
+                id: res.data.id
+              }
+            })
+            yield put({
+              type: 'updateDatas',
+              payload: {
+                fileType: getSubfixName(res.data.file_name)
+              }
+            })
+            setTimeout(() => {
+              message.success('进入圈评成功')
+            }, 500);
+          } else {
+            yield put({
+              type: 'fileInfoByUrl',
+              payload: {
+                file_id: res.data.id
+              }
+            })
+          }
+          // clearTimeout(timer)
+          // yield put({
+          //   type: 'updateDatas',
+          //   payload: {
+          //     isEntryCirclePreviewLoading: false
+          //   }
+          // })
+        } else {
+          message.warn(res.message, MESSAGE_DURATION_TIME)
+          if (res.code == 4047) { // 表示转换失败
+            message.error(res.message, MESSAGE_DURATION_TIME)
+          }
+        }
+        return res || {}
+      } else {
+        message.warn('暂不支持该格式转换', MESSAGE_DURATION_TIME)
       }
     }
     //文档----------end

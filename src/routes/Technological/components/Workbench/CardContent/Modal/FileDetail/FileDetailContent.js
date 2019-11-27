@@ -376,10 +376,10 @@ class FileDetailContent extends React.Component {
 
   //header
   closeFile() {
-    const { datas: { breadcrumbList = [] } } = this.props.model
+    const { datas: { breadcrumbList = [], isExpandFrame } } = this.props.model
     breadcrumbList.splice(breadcrumbList.length - 1, 1)
     this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile()
-    this.props.updateDatasFile({ isInOpenFile: false, filePreviewUrl: '', breadcrumbList: [] })
+    this.props.updateDatasFile({ isInOpenFile: false, filePreviewUrl: '', breadcrumbList: [], isExpandFrame: !isExpandFrame })
   }
 
   /* 点击圈屏右上脚icon-是否全屏显示 */
@@ -986,6 +986,7 @@ class FileDetailContent extends React.Component {
   handleZoomPictureFullScreen = (flag) => {
     this.setState({
       isZoomPictureFullScreenMode: flag,
+      percent: 0
     })
   }
 
@@ -1243,7 +1244,7 @@ class FileDetailContent extends React.Component {
             <CirclePreviewLoadingComponent
               percent={percent}
               is_loading={is_petty_loading}
-              style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)' }} />
+              style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)', display: 'block', opacity: 1 }} />
           ) : (
               <div style={{ minWidth: componentWidth + 'px', minHeight: componentHeight + 'px', overflow: 'auto', textAlign: 'center', position: 'relative' }}>
                 {/* {
@@ -1326,7 +1327,7 @@ class FileDetailContent extends React.Component {
             <CirclePreviewLoadingComponent
               percent={percent}
               is_loading={is_petty_loading}
-              style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)' }} />
+              style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)', display: 'block', opacity: 1 }} />
           ) : (
               <>
                 <div className={indexStyles.fileDetailContentLeft}
@@ -1467,7 +1468,7 @@ class FileDetailContent extends React.Component {
               <CirclePreviewLoadingComponent
                 percent={percent}
                 is_loading={is_large_loading}
-                style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)' }} />
+                style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)', display: 'block', opacity: 1 }} />
             </div>
 
           ) : (
@@ -1514,7 +1515,7 @@ class FileDetailContent extends React.Component {
               <CirclePreviewLoadingComponent
                 percent={percent}
                 is_loading={is_large_loading}
-                style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)' }} />
+                style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)', display: 'block', opacity: 1 }} />
             </div>
 
           ) : (

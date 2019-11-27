@@ -5,7 +5,8 @@ import FileList from './FileList'
 import MoveToDirectory from './MoveToDirectory'
 import BreadCrumbFileNav from './BreadCrumbFileNav'
 import FileDetail from './FileDetail'
-import FileDetailModal from './FileDetail/FileDetailModal'
+// import FileDetailModal from './FileDetail/FileDetailModal'
+import FileListRightBarFileDetailModal from './FileListRightBarFileDetailModal'
 import { connect } from 'dva';
 
 @connect(mapStateToProps)
@@ -21,7 +22,7 @@ export default class FileIndex extends React.Component {
           <FileList />
           <MoveToDirectory />
         </div>
-        <FileDetailModal {...this.props} visible={isInOpenFile} dispatch={dispatch} />
+        <FileListRightBarFileDetailModal {...this.props} visible={isInOpenFile} dispatch={dispatch} />
       </div>
     )
   }

@@ -14,7 +14,6 @@ import { workbench_selectFilePreviewCommitPointNumber, workbench_selectFilePrevi
   workbench_selectFilePreviewCurrentVersionList, workbench_selectrUploadedFileList, workbench_selectBreadcrumbList,
   workbench_selectFilePreviewCurrentPreviewFileName, workbench_selectFilePreviewIsEntryCirclePreviewLoading
  } from './selects'
-import { set } from '_immutable@4.0.0-rc.12@immutable';
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
 
@@ -534,7 +533,6 @@ export default {
       const supportFileTypeArray = ['.xlsx', '.xls', '.doc', '.docx', '.ppt', '.pptx', '.png', '.txt']
       // [png,gif,jpg,jpeg,tif,bmp,ico]
       const supportPictureFileTypeArray = ['.png', '.gif', '.jpg', '.jpeg', '.tif', '.bmp', '.ico']
-      console.log(supportPictureFileTypeArray.indexOf(fileName) != -1, 'sssssssss')
       if (is_loading) return
       if (supportFileTypeArray.indexOf(fileName) != -1 || supportPictureFileTypeArray.indexOf(fileName) != -1) { // 表示存在
         let res = yield call(fileConvertPdfAlsoUpdateVersion, {id})
@@ -587,6 +585,8 @@ export default {
           }
         }
         return res || {}
+      } else {
+        message.warn('暂不支持该格式转换', MESSAGE_DURATION_TIME)
       }
     }
   },
