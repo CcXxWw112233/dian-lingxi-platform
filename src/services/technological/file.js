@@ -310,3 +310,12 @@ export async function checkFileMD5WithBack(data) {
     data
   })
 }
+
+// 上传大文件到oss，或者检验后端已经存在该文件，则需要调用该接口进行关联
+export async function uploadToOssCalback(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/upload/callback`,
+    method: 'POST',
+    data
+  })
+}
