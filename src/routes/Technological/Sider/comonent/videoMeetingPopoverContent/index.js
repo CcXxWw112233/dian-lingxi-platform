@@ -108,7 +108,8 @@ class VideoMeetingPopoverContent extends React.Component {
 						selectedKeys: null,
 						defaultValue: '30',
 						toNoticeList: this.getCurrentRemindUser(),
-						isShowNowTime: true
+						isShowNowTime: true,
+						changeValue: false, // 保存一个正在修改文本框的状态
 					}, () => {
 						this.setVideoMeetingDefaultSuggesstionsByBoardUser({ board_users })
 						this.getCurrentRemindUser()
@@ -121,13 +122,16 @@ class VideoMeetingPopoverContent extends React.Component {
 
 	componentDidMount() {
 		let { projectList = [] } = this.props
-		const { user_set: { current_board } } = this.getInfoFromLocalStorage("userInfo")
+		const { user_set: { current_board } } = this.getInfoFromLocalStorage("userInfo") || {}
 		if (projectList && projectList.length) {
 			//过滤出来当前用户有编辑权限的项目
 			projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
 			let new_projectList = [...projectList]
-			let gold_id = (new_projectList.find(item => item.is_my_private == '1') || {}).board_id
-			this.getProjectUsers({ projectId: gold_id })
+			let {board_id, org_id} = (new_projectList.find(item => item.is_my_private == '1') || {})
+			this.setState({
+				org_id
+			})
+			this.getProjectUsers({ projectId: board_id })
 		} else {
 			this.getProjectUsers({ projectId: current_board })
 		}
@@ -143,8 +147,11 @@ class VideoMeetingPopoverContent extends React.Component {
 			//过滤出来当前用户有编辑权限的项目
 			projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
 			let new_projectList = [...projectList]
-			let gold_id = (new_projectList.find(item => item.is_my_private == '1') || {}).board_id
-			this.getProjectUsers({ projectId: gold_id })
+			let {board_id, org_id} = (new_projectList.find(item => item.is_my_private == '1') || {})
+			this.setState({
+				org_id
+			})
+			this.getProjectUsers({ projectId: board_id })
 		}
 	}
 
@@ -209,6 +216,7 @@ class VideoMeetingPopoverContent extends React.Component {
 			userIds: [],
 			isShowNowTime: true,
 			defaultValue: '30', // 当前选择的持续时间
+			changeValue: false
 		});
 		// clearTimeout(timer)
 	};
@@ -259,9 +267,14 @@ class VideoMeetingPopoverContent extends React.Component {
 	// 获取当前用户的会议名称
 	getCurrentUserNameThenSetMeetingTitle = () => {
 		const currentUser = this.getInfoFromLocalStorage("userInfo");
+		const {changeValue, meetingTitle } = this.state
 		if (currentUser) {
-			const meetingTitle = `${currentUser.name}发起的会议`;
-			return meetingTitle
+			if (changeValue) {
+				let temp_title = meetingTitle
+				return temp_title
+			} 
+			let temp_title = `${currentUser.name}发起的会议`;
+			return temp_title
 		}
 	};
 
@@ -365,7 +378,8 @@ class VideoMeetingPopoverContent extends React.Component {
 	// 修改创建会话的名称回调
 	handleVideoMeetingTopicChange = e => {
 		this.setState({
-			meetingTitle: e.target.value
+			meetingTitle: e.target.value,
+			changeValue: true
 		});
 	};
 
