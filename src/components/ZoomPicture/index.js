@@ -170,6 +170,9 @@ class ZoomPicture extends Component {
       magnify: () => this.handleClickedImg(undefined, 'sup'), // 放大
       shrink: () => this.handleClickedImg(undefined, 'sub'), // 缩小
       addCommit: () => { // 添加圈评
+        // 显示进入圈评转换pdf
+        this.props.handleEnterCirclePointComment && this.props.handleEnterCirclePointComment()
+        return
         if ( !(checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) )) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
@@ -1571,7 +1574,7 @@ class ZoomPicture extends Component {
                   {/* {i.icon} */}
                   {
                     i && i.key && i.key == 'addCommit' && isShow_textArea == true ? (
-                      <span style={{ display: 'flex' }}>{i.icon}&nbsp;&nbsp;<span style={{ fontSize: '14px', width: '56px' }}>添加圈点</span></span>
+                      <span style={{ display: 'flex' }}>{i.icon}&nbsp;&nbsp;<span style={{ fontSize: '14px', width: '56px' }}>圈点评论</span></span>
                     ) : (
                         <span>{i.icon}</span>
                       )
@@ -1580,7 +1583,7 @@ class ZoomPicture extends Component {
               </div>
             </Tooltip>
           ))}
-        {isCommentMode &&
+        {/* {isCommentMode &&
           operatorListWhenCommit.map(i => (
             <Tooltip
               title={i.toolTipText}
@@ -1595,7 +1598,7 @@ class ZoomPicture extends Component {
                 <div className={`${globalStyles.authTheme} ${i.key != 'resetSize' && styles.label_icon}`}><span style={{ display: 'flex' }}>{i.icon}&nbsp;&nbsp;<span style={{ fontSize: '14px' }}>退出圈点</span></span></div>
               </div>
             </Tooltip>
-          ))}
+          ))} */}
         {
           !isCommentMode && (
             <div className={styles.commentMode_line}>|</div>

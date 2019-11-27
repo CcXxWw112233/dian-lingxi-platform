@@ -33,6 +33,7 @@ import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 import { createShareLink, modifOrStopShareLink } from '@/services/technological/workbench'
 import ShareAndInvite from './../../../../ShareAndInvite/index'
 import CirclePreviewLoadingComponent from '@/components/CirclePreviewLoadingComponent'
+let timer
 
 class FileDetailContent extends React.Component {
 
@@ -82,6 +83,9 @@ class FileDetailContent extends React.Component {
     // 定义一个数组来保存编辑状态的数组
     // editVersionFileList: [],
     editValue: '', // 编辑时候的文本信息
+
+    // 进度条的百分比
+    percent: 0
   }
   constructor() {
     super();
@@ -1044,6 +1048,12 @@ class FileDetailContent extends React.Component {
         file_resource_id
       }
     })
+    dispatch({
+      type: 'workbenchFileDetail/getFileType',
+      payload: {
+        file_id,
+      }
+    })
   }
 
   // 改变编辑描述的value onChange事件
@@ -1106,13 +1116,69 @@ class FileDetailContent extends React.Component {
     }
   }
 
+  // 加载进度条
+  updateProcessPercent = () => {
+    const { dispatch } = this.props
+    const { datas: { board_id, filePreviewCurrentFileId } } = this.props.model
+    const { isZoomPictureFullScreenMode } = this.state
+    let percent = this.state.percent + 10;
+    // return
+    if (percent > 100) {
+      if (timer) clearTimeout(timer)
+      this.setState({
+        percent: 100
+      })
+      dispatch({
+        type: 'workbenchFileDetail/updateDatas',
+        payload: {
+          isEntryCirclePreviewLoading: false
+        }
+      })
+      Promise.resolve(
+        dispatch({
+          type: 'workbenchFileDetail/fileConvertPdfAlsoUpdateVersion',
+          payload: {
+            id: filePreviewCurrentFileId,
+          }
+        })
+      ).then(res => {
+        if (isApiResponseOk(res)) {
+          this.setState({
+            is_petty_loading: !isZoomPictureFullScreenMode && false,
+            is_large_loading: isZoomPictureFullScreenMode && false
+          })
+
+        } else {
+          this.setState({
+            is_petty_loading: !isZoomPictureFullScreenMode && false,
+            is_large_loading: isZoomPictureFullScreenMode && false,
+            percent: 0
+          })
+        }
+      })
+      return
+    }
+    this.setState({
+      percent
+    })
+    dispatch({
+      type: 'workbenchFileDetail/updateDatas',
+      payload: {
+        isEntryCirclePreviewLoading: true
+      }
+    })
+    timer = setTimeout(() => {
+      this.updateProcessPercent()
+    }, 500)
+  }
+
   // 除pdf外的其他文件进入圈评
   handleEnterCirclePointComment = () => {
-    // console.log('进来了', 'ssssssssss')
     const { isZoomPictureFullScreenMode } = this.state
+    this.updateProcessPercent()
     this.setState({
       is_petty_loading: !isZoomPictureFullScreenMode,
-      is_large_loading: isZoomPictureFullScreenMode
+      is_large_loading: isZoomPictureFullScreenMode,
     })
   }
 
@@ -1125,7 +1191,7 @@ class FileDetailContent extends React.Component {
       isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations,
       isZoomPictureFullScreenMode, is_edit_version_description, editVersionFileList,
       new_filePreviewCurrentVersionList, editValue, onlyReadingShareModalVisible, onlyReadingShareData, isVisibleContentRightDetail,
-      is_petty_loading, is_large_loading } = this.state
+      is_petty_loading, is_large_loading, percent } = this.state
     // state 数据 E
 
     const { clientHeight, offsetTopDeviation } = this.props
@@ -1171,33 +1237,46 @@ class FileDetailContent extends React.Component {
     }
 
     const punctuateDom = (
-      <div style={{ minWidth: componentWidth + 'px', minHeight: componentHeight + 'px', overflow: 'auto', textAlign: 'center', position: 'relative' }}>
-        {/* {
-          checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) ? ('') : (
-            <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
-          )
-        } */}
-        {filePreviewUrl && (
-          <ZoomPicture
-            {...this.props}
-            imgInfo={{ url: filePreviewUrl }}
-            componentInfo={{ width: componentWidth + 'px', height: componentHeight + 'px' }}
-            commentList={rects && rects.length ? rects.map(i => (Object.assign({}, { flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates) }))) : []}
-            handleClickedCommentItem={this.handleClickedCommentItem.bind(this)}
-            currentSelectedCommentItemDetail={filePreviewPointNumCommits}
-            handleDeleteCommentItem={this.handleDeleteCommentItem}
-            userId={this.getCurrentUserId()}
-            handleGetNewComment={this.handleGetNewComment}
-            handleFullScreen={this.handleZoomPictureFullScreen}
-            filePreviewCurrentFileId={filePreviewCurrentFileId}
-            filePreviewCurrentId={filePreviewCurrentId}
-            workbenchType={"workbenchType"}
-            zoomPictureParams={zoomPictureParams}
-            isShow_textArea={true}
-            dispatch={dispatch}
-          />
-        )}
-      </div>
+      <>
+        {
+          is_petty_loading ? (
+            <CirclePreviewLoadingComponent
+              percent={percent}
+              is_loading={is_petty_loading}
+              style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)' }} />
+          ) : (
+              <div style={{ minWidth: componentWidth + 'px', minHeight: componentHeight + 'px', overflow: 'auto', textAlign: 'center', position: 'relative' }}>
+                {/* {
+            checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) ? ('') : (
+              <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
+            )
+          } */}
+                {filePreviewUrl && (
+                  <ZoomPicture
+                    {...this.props}
+                    imgInfo={{ url: filePreviewUrl }}
+                    componentInfo={{ width: componentWidth + 'px', height: componentHeight + 'px' }}
+                    commentList={rects && rects.length ? rects.map(i => (Object.assign({}, { flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates) }))) : []}
+                    handleClickedCommentItem={this.handleClickedCommentItem.bind(this)}
+                    currentSelectedCommentItemDetail={filePreviewPointNumCommits}
+                    handleDeleteCommentItem={this.handleDeleteCommentItem}
+                    userId={this.getCurrentUserId()}
+                    handleGetNewComment={this.handleGetNewComment}
+                    handleFullScreen={this.handleZoomPictureFullScreen}
+                    filePreviewCurrentFileId={filePreviewCurrentFileId}
+                    filePreviewCurrentId={filePreviewCurrentId}
+                    workbenchType={"workbenchType"}
+                    zoomPictureParams={zoomPictureParams}
+                    isShow_textArea={true}
+                    dispatch={dispatch}
+                    handleEnterCirclePointComment={this.handleEnterCirclePointComment}
+                  />
+                )}
+              </div>
+            )
+        }
+
+      </>
     )
 
     const punctuateDom_old = (
@@ -1245,6 +1324,7 @@ class FileDetailContent extends React.Component {
         {
           is_petty_loading ? (
             <CirclePreviewLoadingComponent
+              percent={percent}
               is_loading={is_petty_loading}
               style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)' }} />
           ) : (
@@ -1380,36 +1460,50 @@ class FileDetailContent extends React.Component {
 
     // 点击全屏之后的图片
     const punctuateBigDom = (
-      <Modal zIndex={9999999999} style={{ top: 0, left: 0, height: bodyClientHeight - 200 + 'px' }} footer={null} title={null} width={bodyClientWidth} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
-        <div>
-          {filePreviewUrl && (
-            <ZoomPicture
-              {...this.props}
-              imgInfo={{ url: filePreviewUrl }}
-              componentInfo={{ width: bodyClientWidth - 100, height: bodyClientHeight - 60 }}
-              commentList={rects && rects.length ? rects.map(i => (Object.assign({}, { flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates) }))) : []}
-              handleClickedCommentItem={this.handleClickedCommentItem.bind(this)}
-              currentSelectedCommentItemDetail={filePreviewPointNumCommits}
-              handleDeleteCommentItem={this.handleDeleteCommentItem}
-              userId={this.getCurrentUserId()}
-              handleGetNewComment={this.handleGetNewComment}
-              isFullScreenMode={isZoomPictureFullScreenMode}
-              handleFullScreen={this.handleZoomPictureFullScreen}
-              filePreviewCurrentFileId={filePreviewCurrentFileId}
-              filePreviewCurrentId={filePreviewCurrentId}
-              workbenchType={"workbenchType"}
-              zoomPictureParams={zoomPictureParams}
-              isShow_textArea={true}
-              dispatch={dispatch}
-            />
-          )}
-        </div>
+      <Modal zIndex={1100} style={{ top: 0, left: 0, height: bodyClientHeight - 200 + 'px' }} footer={null} title={null} width={bodyClientWidth} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
+        {
+          is_large_loading ? (
+            <div style={{ height: bodyClientHeight, marginTop: '20px', background: 'rgba(0,0,0,0.15)' }}>
+              <CirclePreviewLoadingComponent
+                percent={percent}
+                is_loading={is_large_loading}
+                style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)' }} />
+            </div>
+
+          ) : (
+              <div>
+                {filePreviewUrl && (
+                  <ZoomPicture
+                    {...this.props}
+                    imgInfo={{ url: filePreviewUrl }}
+                    componentInfo={{ width: bodyClientWidth - 100, height: bodyClientHeight - 60 }}
+                    commentList={rects && rects.length ? rects.map(i => (Object.assign({}, { flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates) }))) : []}
+                    handleClickedCommentItem={this.handleClickedCommentItem.bind(this)}
+                    currentSelectedCommentItemDetail={filePreviewPointNumCommits}
+                    handleDeleteCommentItem={this.handleDeleteCommentItem}
+                    userId={this.getCurrentUserId()}
+                    handleGetNewComment={this.handleGetNewComment}
+                    isFullScreenMode={isZoomPictureFullScreenMode}
+                    handleFullScreen={this.handleZoomPictureFullScreen}
+                    filePreviewCurrentFileId={filePreviewCurrentFileId}
+                    filePreviewCurrentId={filePreviewCurrentId}
+                    workbenchType={"workbenchType"}
+                    zoomPictureParams={zoomPictureParams}
+                    isShow_textArea={true}
+                    dispatch={dispatch}
+                    handleEnterCirclePointComment={this.handleEnterCirclePointComment}
+                  />
+                )}
+              </div>
+            )
+        }
+
       </Modal>
     )
 
     // 其他格式点击全屏时候的展示
     const iframeBigDom = (
-      <Modal wrapClassName={indexStyles.overlay_iframBigDom} zIndex={9999999999} style={{ top: 0, left: 0, minWidth: componentWidth + 'px', minHeight: componentHeight + 'px' }} width={bodyClientWidth} height={bodyClientHeight} footer={null} title={null} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
+      <Modal wrapClassName={indexStyles.overlay_iframBigDom} zIndex={1000} style={{ top: 0, left: 0, minWidth: componentWidth + 'px', minHeight: componentHeight + 'px' }} width={bodyClientWidth} height={bodyClientHeight} footer={null} title={null} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
         {/* <div
           style={{ height: bodyClientHeight, marginTop: '20px' }}
           dangerouslySetInnerHTML={{ __html: getIframe(filePreviewUrl) }}></div>
@@ -1418,6 +1512,7 @@ class FileDetailContent extends React.Component {
           is_large_loading ? (
             <div style={{ height: bodyClientHeight, marginTop: '20px', background: 'rgba(0,0,0,0.15)' }}>
               <CirclePreviewLoadingComponent
+                percent={percent}
                 is_loading={is_large_loading}
                 style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)' }} />
             </div>
@@ -1777,3 +1872,4 @@ class FileDetailContent extends React.Component {
 }
 
 export default withBodyClientDimens(FileDetailContent)
+

@@ -7,20 +7,26 @@ import {
   getFileCommitPoints, getPreviewFileCommits, addFileCommit, deleteCommit, getFileList, filePreview, fileCopy,
   fileDownload, saveAsNewVersion, fileRemove, fileMove, fileUpload, fileVersionist, recycleBinList, deleteFile, restoreFile,
   getFolderList, addNewFolder, updateFolder, getCardCommentListAll, fileInfoByUrl, getFilePDFInfo, setCurrentVersionFile,
-  updateVersionFileDescription,
+  updateVersionFileDescription, fileConvertPdfAlsoUpdateVersion
 } from '../../../services/technological/file'
 import Cookies from "js-cookie";
-import { workbench_selectFilePreviewCommitPointNumber, workbench_selectFilePreviewCurrentFileId, workbench_selectFilePreviewCurrentVersionList, workbench_selectrUploadedFileList, workbench_selectBreadcrumbList } from './selects'
+import { workbench_selectFilePreviewCommitPointNumber, workbench_selectFilePreviewCurrentFileId, 
+  workbench_selectFilePreviewCurrentVersionList, workbench_selectrUploadedFileList, workbench_selectBreadcrumbList,
+  workbench_selectFilePreviewCurrentPreviewFileName, workbench_selectFilePreviewIsEntryCirclePreviewLoading
+ } from './selects'
+import { set } from '_immutable@4.0.0-rc.12@immutable';
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
 
 // appsSelectKey 项目详情里面应用的app标志
+let actionReducer
 export default {
   namespace: 'workbenchFileDetail',
   state: [{
   }],
   subscriptions: {
     setup({ dispatch, history }) {
+      actionReducer = dispatch
       history.listen((location) => {
         if (location.pathname === '/technological/workbench' || location.pathname === '/technological/simplemode') {
           const initialData = () => {
@@ -46,6 +52,8 @@ export default {
                 pdfDownLoadSrc: '', //pdf下载路径，如果有则open如果不是pdf则没有该路径，调用普通下载
 
                 breadcrumbList: [],
+                isEntryCirclePreviewLoading: false
+
 
               }
             })
@@ -61,28 +69,30 @@ export default {
       const { file_id, file_resource_id } = payload
       const res = yield call(filePreview, {id: file_id})
       if(isApiResponseOk(res)) {
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            filePreviewIsUsable: res.data.is_usable,
-            filePreviewUrl: res.data.url,
-            filePreviewIsRealImage: res.data.is_real_image,
-            // filePreviewCurrentId: file_resource_id
-            // filePreviewCurrentFileId: file_id
-          }
-        })
-        yield put({
-          type: 'getPreviewFileCommits',
-          payload: {
-            id: file_id
-          }
-        })
-        yield put({
-          type: 'getFileCommitPoints',
-          payload: {
-            id: file_id
-          }
-        })
+        // console.log(res, 'ssssssss')
+        // return
+        // yield put({
+        //   type: 'updateDatas',
+        //   payload: {
+        //     filePreviewIsUsable: res.data.is_usable,
+        //     filePreviewUrl: res.data.url,
+        //     filePreviewIsRealImage: res.data.is_real_image,
+        //     // filePreviewCurrentId: file_resource_id
+        //     // filePreviewCurrentFileId: file_id
+        //   }
+        // })
+        // yield put({
+        //   type: 'getPreviewFileCommits',
+        //   payload: {
+        //     id: file_id
+        //   }
+        // })
+        // yield put({
+        //   type: 'getFileCommitPoints',
+        //   payload: {
+        //     id: file_id
+        //   }
+        // })
         yield put({
           type: 'fileInfoByUrl',
           payload: {
@@ -97,6 +107,8 @@ export default {
       const { file_id } = payload
       let res = yield call(fileInfoByUrl, {id: file_id})
       if(isApiResponseOk(res)) {
+        // console.log(res, 'ssssssss_1111')
+        // return
         let breadcrumbList = []
         let arr = []
         const target_path = res.data.target_path
@@ -116,7 +128,23 @@ export default {
           type: 'updateDatas',
           payload: {
             breadcrumbList: newbreadcrumbList,
-            currentPreviewFileData: res.data.base_info
+            currentPreviewFileData: res.data.base_info,
+            filePreviewIsUsable: res.data.preview_info.is_usable,
+            filePreviewUrl: res.data.preview_info.url,
+            filePreviewIsRealImage: res.data.preview_info.is_real_image,
+            currentPreviewFileName: res.data.base_info.file_name
+          }
+        })
+        yield put({
+          type: 'getPreviewFileCommits',
+          payload: {
+            id: file_id
+          }
+        })
+        yield put({
+          type: 'getFileCommitPoints',
+          payload: {
+            id: file_id
           }
         })
       }else{
@@ -210,8 +238,8 @@ export default {
     },
 
     * fileVersionist({ payload }, { select, call, put }) {
-      let res = yield call(fileVersionist, payload)
-      const { isNeedPreviewFile, isPDF, file_id } = payload //是否需要重新读取文档
+      const { isNeedPreviewFile, isPDF, file_id, calback, version_id } = payload //是否需要重新读取文档
+      let res = yield call(fileVersionist, {file_id, version_id})
       // console.log(payload, 'sss_worek')
       let new_breadcrumbList = yield select(workbench_selectBreadcrumbList)
       new_breadcrumbList = new_breadcrumbList || []
@@ -266,6 +294,7 @@ export default {
 
           }
         })
+        
       }else{
 
       }
@@ -382,28 +411,29 @@ export default {
     // 设为当前版本
     * setCurrentVersionFile({ payload }, { select, call, put }) {
       // console.log(payload, 'ssssss')
-      const { id, set_major_version, version_id, file_name } = payload
+      const { id, set_major_version, version_id, file_name, isNeedPreviewFile } = payload
       let res = yield call(setCurrentVersionFile, { id, set_major_version })
-      const new_fileList = yield select(workbench_selectrUploadedFileList)
-      const new_filePreviewId= yield select(workbench_selectFilePreviewCurrentFileId)
-      const new_filePreviewCurrentVersionList = yield select(workbench_selectFilePreviewCurrentVersionList)
+      // const new_fileList = yield select(workbench_selectrUploadedFileList)
+      // const new_filePreviewId= yield select(workbench_selectFilePreviewCurrentFileId)
+      // const new_filePreviewCurrentVersionList = yield select(workbench_selectFilePreviewCurrentVersionList)
       if (isApiResponseOk(res)) {
         // console.log(res, 'ssssss')
         yield put({
           type: 'fileVersionist',
           payload: {
             version_id: version_id,
-            file_id: id
+            file_id: id,
+            isNeedPreviewFile: isNeedPreviewFile, 
           }
         })
        
-        let temp_arr = [] // 用来保存当前要替换的版本列表的一条信息
-        for(let val of new_filePreviewCurrentVersionList) {
-          if (val['file_id'] == new_filePreviewId) {
-            temp_arr.push(val)
-          }
-        }
-        let temp_obj = temp_arr[0] // 这个是用来保存得到当前的元素对象
+        // let temp_arr = [] // 用来保存当前要替换的版本列表的一条信息
+        // for(let val of new_filePreviewCurrentVersionList) {
+        //   if (val['file_id'] == new_filePreviewId) {
+        //     temp_arr.push(val)
+        //   }
+        // }
+        // let temp_obj = temp_arr[0] // 这个是用来保存得到当前的元素对象
         // 需要做的操作是在 new_fileList 里面去查询到这条元素然后替换
         // 需要根据工作台的条件来进行切换
         
@@ -486,6 +516,78 @@ export default {
       //     }
       //   })
       // }
+    },
+
+    // 圈评转换pdf并且设置为新版本
+    * fileConvertPdfAlsoUpdateVersion({payload}, {select, call, put}) {
+      // const timer = setTimeout(() => {
+      //   actionReducer({
+      //     type: 'updateDatas',
+      //     payload: {
+      //       isEntryCirclePreviewLoading: true
+      //     }
+      //   })
+      // }, 2000)
+      const { id } = payload
+      let fileName = getSubfixName(yield select(workbench_selectFilePreviewCurrentPreviewFileName))
+      let is_loading = yield select(workbench_selectFilePreviewIsEntryCirclePreviewLoading)
+      const supportFileTypeArray = ['.xlsx', '.xls', '.doc', '.docx', '.ppt', '.pptx', '.png', '.txt']
+      // [png,gif,jpg,jpeg,tif,bmp,ico]
+      const supportPictureFileTypeArray = ['.png', '.gif', '.jpg', '.jpeg', '.tif', '.bmp', '.ico']
+      console.log(supportPictureFileTypeArray.indexOf(fileName) != -1, 'sssssssss')
+      if (is_loading) return
+      if (supportFileTypeArray.indexOf(fileName) != -1 || supportPictureFileTypeArray.indexOf(fileName) != -1) { // 表示存在
+        let res = yield call(fileConvertPdfAlsoUpdateVersion, {id})
+        if (isApiResponseOk(res)) {
+          yield put({
+            type: 'setCurrentVersionFile',
+            payload: {
+              set_major_version: '1',
+              id: res.data.id,
+              version_id: res.data.version_id,
+              isNeedPreviewFile: false,
+            }
+          })
+          let isPDF = getSubfixName(res.data.file_name) == '.pdf'
+          if (isPDF) {
+            yield put({
+              type: 'getFilePDFInfo',
+              payload: {
+                id: res.data.id
+              }
+            })
+            yield put({
+              type: 'getFileType',
+              payload: {
+                file_id: res.data.id
+              }
+            })
+            setTimeout(() => {
+              message.success('进入圈评成功')
+            }, 500);
+          } else {
+            yield put({
+              type: 'fileInfoByUrl',
+              payload: {
+                file_id: res.data.id
+              }
+            })
+          }
+          // clearTimeout(timer)
+          // yield put({
+          //   type: 'updateDatas',
+          //   payload: {
+          //     isEntryCirclePreviewLoading: false
+          //   }
+          // })
+        } else {
+          message.warn(res.message, MESSAGE_DURATION_TIME)
+          if (res.code == 4047) { // 表示转换失败
+            message.error(res.message, MESSAGE_DURATION_TIME)
+          }
+        }
+        return res || {}
+      }
     }
   },
 
