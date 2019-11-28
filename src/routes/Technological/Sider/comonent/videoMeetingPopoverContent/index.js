@@ -133,7 +133,9 @@ class VideoMeetingPopoverContent extends React.Component {
 
 	componentDidMount() {
 		let { projectList = [] } = this.props
-		const { user_set: { current_board } } = this.getInfoFromLocalStorage("userInfo") || {}
+		const { user_set } = this.getInfoFromLocalStorage("userInfo") || {}
+		if (!user_set) return
+		const { current_board } = user_set
 		if (projectList && projectList.length) {
 			//过滤出来当前用户有编辑权限的项目
 			projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
@@ -265,7 +267,9 @@ class VideoMeetingPopoverContent extends React.Component {
 	// 获取当前默认的项目名称
 	filterCurrentDefaultSaveProjectValue = () => {
 		let { projectList = [] } = this.props
-		const { user_set: { current_board } } = this.getInfoFromLocalStorage("userInfo") || {}
+		const { user_set } = this.getInfoFromLocalStorage("userInfo") || {}
+		if (!user_set) return
+		const { current_board } = user_set
 		//过滤出来当前用户有编辑权限的项目
 		projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
 		if (projectList && projectList.length) {
