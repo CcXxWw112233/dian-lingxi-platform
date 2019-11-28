@@ -424,15 +424,15 @@ class FileDetailContent extends React.Component {
         isExpandFrame: false,
       }
     })
-    dispatch({
-      type: 'workbenchFileDetail/updateDatas',
-      payload: {
-        isInOpenFile: false,
-        filePreviewUrl: '',
-        breadcrumbList: new_arr_,
-        isExpandFrame: false,
-      }
-    })
+    // dispatch({
+    //   type: 'workbenchFileDetail/updateDatas',
+    //   payload: {
+    //     isInOpenFile: false,
+    //     filePreviewUrl: '',
+    //     breadcrumbList: new_arr_,
+    //     isExpandFrame: false,
+    //   }
+    // })
     this.setState({
       percent: 0
     })
