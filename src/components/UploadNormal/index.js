@@ -86,7 +86,7 @@ export default class UploadNormal extends Component {
                 if (e.size == 0) {
                     message.error(`不能上传空文件`)
                     return false
-                } else if (e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+                } else if (e.size > 2048 * 1024 * 1024) {
                     message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
                     return false
                 }
@@ -298,15 +298,15 @@ export default class UploadNormal extends Component {
 
     // 新建阿里云oss客户端 --设置参数
     ossClient = (access = {}) => {
-        const { access_key_id, access_key_secret, bucket, security_token } = access
+        const { access_key_id, access_key_secret, bucket, security_token, region, endpoint } = access
         // ali-oss v6.x版本的写法
         const params = {
             accessKeyId: access_key_id,
             accessKeySecret: access_key_secret,
-            region: 'cn-beijing', //
+            region: region,//'cn-beijing', //
             bucket,
             stsToken: security_token,
-            endpoint: 'http://oss-cn-beijing.aliyuncs.com',
+            endpoint: `http://${endpoint}`,
             secure: true
         }
         return new oss(params);
