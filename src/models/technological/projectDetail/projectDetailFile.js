@@ -377,13 +377,11 @@ export default modelExtend(projectDetail, {
     * setCurrentVersionFile({ payload }, { select, call, put }) {
       // console.log(payload, 'ssssss')
       const { id, set_major_version, version_id, file_name, isNeedPreviewFile, isPDF } = payload
-      // console.log(version_id, 'sssssss')
       let res = yield call(setCurrentVersionFile, { id, set_major_version })
-      const new_fileList = yield select(selectFileList)
-      const new_filePreviewId = yield select(selectFilePreviewCurrentFileId)
-      const new_filePreviewCurrentVersionList = yield select(selectFilePreviewCurrentVersionList)
+      // const new_fileList = yield select(selectFileList)
+      // const new_filePreviewId = yield select(selectFilePreviewCurrentFileId)
+      // const new_filePreviewCurrentVersionList = yield select(selectFilePreviewCurrentVersionList)
       if (isApiResponseOk(res)) {
-        // console.log(res, 'ssssss')
         yield put({
           type: 'fileVersionist',
           payload: {
@@ -393,29 +391,29 @@ export default modelExtend(projectDetail, {
             isPDF
           }
         })
-        let temp_arr = [] // 用来保存当前要替换的版本列表的一条信息
-        for (let val of new_filePreviewCurrentVersionList) {
-          if (val['file_id'] == new_filePreviewId) {
-            temp_arr.push(val)
-          }
-        }
-        let temp_obj = temp_arr[0]
-        let temp_list = [...new_fileList]
-        temp_list = temp_list.map(item => {
-          let new_item = item
-          if (new_item.version_id == temp_obj.version_id) {
-            new_item = { ...temp_obj }
-            return new_item
-          } else {
-            return new_item
-          }
-        })
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            fileList: temp_list
-          }
-        })
+        // let temp_arr = [] // 用来保存当前要替换的版本列表的一条信息
+        // for (let val of new_filePreviewCurrentVersionList) {
+        //   if (val['file_id'] == new_filePreviewId) {
+        //     temp_arr.push(val)
+        //   }
+        // }
+        // let temp_obj = temp_arr[0]
+        // let temp_list = [...new_fileList]
+        // temp_list = temp_list.map(item => {
+        //   let new_item = item
+        //   if (new_item.version_id == temp_obj.version_id) {
+        //     new_item = { ...temp_obj }
+        //     return new_item
+        //   } else {
+        //     return new_item
+        //   }
+        // })
+        // yield put({
+        //   type: 'updateDatas',
+        //   payload: {
+        //     fileList: temp_list
+        //   }
+        // })
 
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
@@ -515,7 +513,7 @@ export default modelExtend(projectDetail, {
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         if (res.code == 4003) { //分享链接失效,返回验证页面
-          // debugger
+
           setTimeout(function () {
             window.history.back();
           }, 3000)
@@ -982,7 +980,6 @@ export default modelExtend(projectDetail, {
       if (supportFileTypeArray.indexOf(fileName) != -1 || supportPictureFileTypeArray.indexOf(fileName) != -1) { // 表示存在
         let res = yield call(fileConvertPdfAlsoUpdateVersion, {id})
         if (isApiResponseOk(res)) {
-          // console.log(res.data.version_id, 'ssssssss_version_id')
           let isPDF = getSubfixName(res.data.file_name) == '.pdf'
           
           if (isPDF) {
