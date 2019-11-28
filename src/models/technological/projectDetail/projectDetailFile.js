@@ -614,6 +614,7 @@ export default modelExtend(projectDetail, {
       }
     },
     * fileRemove({ payload }, { select, call, put }) {
+      const { board_id } = payload
       let res = yield call(fileRemove, payload)
       const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
       if (isApiResponseOk(res)) {
