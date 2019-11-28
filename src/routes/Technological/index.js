@@ -59,29 +59,29 @@ export default class Technological extends React.Component {
 
 
   }
-  shouldComponentUpdate(newProps, newState) {
-    const { currentUserOrganizes, dispatch } = newProps;
-    const { page_load_type: old_page_load_type } = this.props;
-    //只有page_load_type变化了才渲染
-    if (old_page_load_type == newProps.page_load_type) {
-      return false;
-    } else {
-      if (currentUserOrganizes && currentUserOrganizes.length > 0) {
-        let isPayment = isPaymentOrgUser();
-        if (!isPayment && newProps.page_load_type == 2) {
+  // shouldComponentUpdate(newProps, newState) {
+  //   const { currentUserOrganizes, dispatch } = newProps;
+  //   const { page_load_type: old_page_load_type } = this.props;
+  //   //只有page_load_type变化了才渲染
+  //   if (old_page_load_type == newProps.page_load_type) {
+  //     return false;
+  //   } else {
+  //     if (currentUserOrganizes && currentUserOrganizes.length > 0) {
+  //       let isPayment = isPaymentOrgUser();
+  //       if (!isPayment && newProps.page_load_type == 2) {
           
-          dispatch({
-            type: 'technological/setShowSimpleModel',
-            payload: {
-              is_simple_model: 1
-            }
-          })
-          return false;
-        }
-      }
-      return true;
-    }
-  }
+  //         dispatch({
+  //           type: 'technological/setShowSimpleModel',
+  //           payload: {
+  //             is_simple_model: 1
+  //           }
+  //         })
+  //         return false;
+  //       }
+  //     }
+  //     return true;
+  //   }
+  // }
 
   getRouterParams = () => {
     // 解析参数
@@ -244,13 +244,13 @@ export default class Technological extends React.Component {
 function mapStateToProps({ technological: {
   datas: {
     page_load_type,
-    currentUserOrganizes = [],
+    // currentUserOrganizes = [],
   }
 }
 }) {
   return {
     page_load_type,
-    currentUserOrganizes,
+    // currentUserOrganizes,
 
   }
 }

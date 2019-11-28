@@ -27,6 +27,7 @@ export default class UploadNotification extends Component {
             listType: 'picture',
             onRemove: () => false,
             onDownload: () => false,
+            onPreview: () => false
         }
         return (
             <Upload {...upload_props}>

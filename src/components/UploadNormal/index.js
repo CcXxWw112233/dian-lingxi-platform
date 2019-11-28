@@ -86,7 +86,7 @@ export default class UploadNormal extends Component {
                 if (e.size == 0) {
                     message.error(`不能上传空文件`)
                     return false
-                } else if (e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+                } else if (e.size > 2048 * 1024 * 1024) {
                     message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
                     return false
                 }
