@@ -306,7 +306,7 @@ export default class UploadNormal extends Component {
             region: region,//'cn-beijing', //
             bucket,
             stsToken: security_token,
-            endpoint: endpoint, //'http://oss-cn-beijing.aliyuncs.com',
+            endpoint: `http://${endpoint}`,
             secure: true
         }
         return new oss(params);
