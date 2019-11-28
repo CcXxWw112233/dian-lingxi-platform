@@ -29,6 +29,20 @@ export default class DrawDetailInfo extends React.Component {
     ShowAddMenberModalVisibile: false
   }
 
+  // 检测当前成员是否是自己, 如果是, 那么不能移除自己
+  checkCurrentOperatorMemberWhetherSelf = (shouldDelItem) => {
+    const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
+    // console.log(id, shouldDelItem, 'ssssss')
+    let flag
+    if (shouldDelItem == id) {
+      flag = true
+      return flag
+    } else {
+      flag = false
+      return flag
+    }
+  }
+
   handleSetRoleMenuClick(props, { key }) {
     if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -51,6 +65,11 @@ export default class DrawDetailInfo extends React.Component {
     }
     switch (key) {
       case 'removeMember':
+        // console.log(this.checkCurrentOperatorMemberWhetherSelf(user_id), 'ssssss')
+        if (this.checkCurrentOperatorMemberWhetherSelf(user_id)) {
+          message.warn('请不要移除自己哦~', MESSAGE_DURATION_TIME)
+          return false
+        }
         this.confirm({ board_id, user_id })
         break
       default:
