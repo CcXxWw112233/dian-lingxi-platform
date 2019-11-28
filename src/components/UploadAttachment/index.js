@@ -12,7 +12,7 @@ import {
   getSubfixName, setUploadHeaderBaseInfo, checkIsHasPermissionInBoard
 } from "@/utils/businessFunction";
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, PROJECT_FILES_FILE_INTERVIEW
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, PROJECT_FILES_FILE_INTERVIEW, UPLOAD_FILE_SIZE
 } from "@/globalset/js/constant";
 const { TreeNode } = TreeSelect;
 /**上传附件组件 */
@@ -185,11 +185,21 @@ export default class UploadAttachment extends Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    this.setState(state => ({
-      fileList: [...state.fileList, file],
-    }));
-    this.setUploadFileVisible(true)
-    return false;
+    const { size } = file
+    if (size == 0) {
+      message.error(`不能上传空文件`)
+      return false
+    } else if (size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+      message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
+      return false
+    } else {
+      this.setState(state => ({
+        fileList: [...state.fileList, file],
+      }));
+      this.setUploadFileVisible(true)
+      return false;
+    }
+    
   }
   onCustomPreviewFile = (info) => {
     this.setState({
