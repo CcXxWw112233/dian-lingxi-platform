@@ -110,6 +110,7 @@ class VideoMeetingPopoverContent extends React.Component {
 						toNoticeList: this.getCurrentRemindUser(),
 						isShowNowTime: true,
 						changeValue: false, // 保存一个正在修改文本框的状态
+						remindDropdownVisible: false
 					}, () => {
 						this.setVideoMeetingDefaultSuggesstionsByBoardUser({ board_users })
 						this.getCurrentRemindUser()
@@ -118,6 +119,16 @@ class VideoMeetingPopoverContent extends React.Component {
 					message.error(res.message)
 				}
 			})
+	}
+
+	componentWillMount() {
+		const { dispatch } = this.props
+		dispatch({
+			type: 'technological/getCurrentOrgProjectList',
+			payload: {
+
+			}
+		})
 	}
 
 	componentDidMount() {
@@ -216,7 +227,10 @@ class VideoMeetingPopoverContent extends React.Component {
 			userIds: [],
 			isShowNowTime: true,
 			defaultValue: '30', // 当前选择的持续时间
-			changeValue: false
+			changeValue: false,
+			toNoticeList: this.getCurrentRemindUser(),
+			remindDropdownVisible: false
+			
 		});
 		remind_time_value = '5'
 		// clearTimeout(timer)
@@ -504,16 +518,39 @@ class VideoMeetingPopoverContent extends React.Component {
 	// 移除执行人的回调 S
 	handleRemoveExecutors = (e, shouldDeleteItem) => {
 		e && e.stopPropagation()
-		const { toNoticeList = [] } = this.state
+		const { toNoticeList = [], othersPeople = [] } = this.state
 		let new_toNoticeList = [...toNoticeList]
+		let new_othersPeople = [...othersPeople]
 		new_toNoticeList.map((item, index) => {
 			if (item.user_id == shouldDeleteItem) {
 				new_toNoticeList.splice(index, 1)
 			}
 		})
+		if (new_othersPeople && new_othersPeople.length) {
+			new_othersPeople.map((item, index) => {
+				if (item.user_id == shouldDeleteItem) {
+					new_othersPeople.splice(index, 1)
+				}
+			})
+			this.setState({
+				othersPeople: new_othersPeople
+			})
+		}
+	
 		this.setState({
 			toNoticeList: new_toNoticeList
 		})
+	}
+
+	// 手机号
+	arrayNonRepeatPhone = arr => {
+		let temp_arr = []
+		for (let i = 0; i < arr.length; i++) {
+			if (!temp_arr.includes(arr[i])) {//includes 检测数组是否有某个值
+				temp_arr.push(arr[i]);
+			}
+		}
+		return temp_arr
 	}
 
 	// 自定义图标的点击事件
@@ -523,8 +560,8 @@ class VideoMeetingPopoverContent extends React.Component {
 		new_othersPeople.push(obj)
 		user_phone.push(obj.mobile)
 		this.setState({
-			othersPeople: new_othersPeople,
-			user_phone,
+			othersPeople: this.arrayNonRepeatfy(new_othersPeople),
+			user_phone: this.arrayNonRepeatPhone(user_phone),
 		})
 	}
 
@@ -543,6 +580,14 @@ class VideoMeetingPopoverContent extends React.Component {
 			isShowNowTime: true, // 显示当前时间
 			// start_time: nowDate,
 			// meeting_start_time: timestamp
+		})
+	}
+
+	// 提醒的下拉回调
+	handleVisibleChange = (visible) => {
+		// console.log(visible, 'ssssss')
+		this.setState({
+			remindDropdownVisible: visible
 		})
 	}
 
@@ -713,6 +758,7 @@ class VideoMeetingPopoverContent extends React.Component {
 
 	// popoverContent chg 事件
 	handleVideoMeetingPopoverVisibleChange = flag => {
+		const { dispatch } = this.props
 		this.setState(
 			{
 				videoMeetingPopoverVisible: flag
@@ -720,6 +766,13 @@ class VideoMeetingPopoverContent extends React.Component {
 			() => {
 				if (flag === false) {
 					this.initVideoMeetingPopover();
+				} else { // 为true的时候调用设置当前通知对象
+					dispatch({
+						type: 'technological/getCurrentOrgProjectList',
+						payload: {
+			
+						}
+					})
 				}
 			}
 		);
@@ -753,7 +806,8 @@ class VideoMeetingPopoverContent extends React.Component {
 			meetingTitle = '',
 			showUserDefinedIconVisible,
 			defaultValue,
-			isShowNowTime
+			isShowNowTime,
+			remindDropdownVisible
 		} = this.state;
 		let { projectList, board_id } = this.props;
 
@@ -849,7 +903,7 @@ class VideoMeetingPopoverContent extends React.Component {
 								{
 									!(newToNoticeList && newToNoticeList.length) ? (
 										<div style={{ flex: '1', position: 'relative' }}>
-											<Dropdown trigger={['click']} overlayClassName={indexStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+											<Dropdown trigger={['click']} visible={remindDropdownVisible} onVisibleChange={this.handleVisibleChange} overlayClassName={indexStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
 												overlayStyle={{ maxWidth: '200px' }}
 												overlay={
 													<MenuSearchPartner
@@ -868,7 +922,7 @@ class VideoMeetingPopoverContent extends React.Component {
 										</div>
 									) : (
 											<div style={{ flex: '1', position: 'relative' }}>
-												<Dropdown trigger={['click']} overlayClassName={indexStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+												<Dropdown trigger={['click']} visible={remindDropdownVisible} onVisibleChange={this.handleVisibleChange} overlayClassName={indexStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
 													overlayStyle={{ maxWidth: '200px' }}
 													overlay={
 														<MenuSearchPartner
@@ -887,6 +941,7 @@ class VideoMeetingPopoverContent extends React.Component {
 														</div>
 
 														{newToNoticeList.map((value) => {
+															// console.log(value, 'ssssss_value')
 															const { avatar, name, user_name, user_id } = value
 															return (
 																<div style={{ display: 'flex', flexWrap: 'wrap' }} key={user_id}>
