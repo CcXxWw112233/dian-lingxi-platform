@@ -1242,7 +1242,8 @@ class FileDetailContent extends React.Component {
   // 加载进度条
   updateProcessPercent = () => {
     const { dispatch } = this.props
-    const { board_id, filePreviewCurrentFileId } = this.props
+    const { board_id, filePreviewCurrentFileId, currentPreviewFileBaseInfo = {} } = this.props
+    const { id } = currentPreviewFileBaseInfo
     const { isZoomPictureFullScreenMode } = this.state
     let percent = this.state.percent + 10;
     // return
@@ -1261,7 +1262,8 @@ class FileDetailContent extends React.Component {
         dispatch({
           type: 'projectDetailFile/fileConvertPdfAlsoUpdateVersion',
           payload: {
-            id: filePreviewCurrentFileId,
+            // id: filePreviewCurrentFileId,
+            id: id,
           }
         })
       ).then(res => {
