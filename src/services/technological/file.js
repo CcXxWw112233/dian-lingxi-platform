@@ -302,7 +302,6 @@ export async function getCardCommentListAll(params) {
   })
 }
 
-// 圈评转pdf
 export async function fileConvertPdfAlsoUpdateVersion(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/pdf/convert`,
@@ -312,3 +311,20 @@ export async function fileConvertPdfAlsoUpdateVersion(params) {
   })
 }
 
+// 检查大文件是否在后台存在，需要通过md5
+export async function checkFileMD5WithBack(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/upload/check`,
+    method: 'POST',
+    data
+  })
+}
+
+// 上传大文件到oss，或者检验后端已经存在该文件，则需要调用该接口进行关联
+export async function uploadToOssCalback(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/upload/callback`,
+    method: 'POST',
+    data
+  })
+}

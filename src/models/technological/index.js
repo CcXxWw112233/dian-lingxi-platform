@@ -508,7 +508,7 @@ export default {
     // 视频会议集成---start
     * initiateVideoMeeting({ payload }, { call }) {
       const res = yield call(createMeeting, payload)
-      return res
+      return res || {}
     },
     * getCurrentOrgProjectList({ payload }, { select, call, put }) {
 
