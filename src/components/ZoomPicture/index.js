@@ -114,7 +114,24 @@ class ZoomPicture extends Component {
   // 设置当前图片的尺寸
   setCurrentImgSize = (opts = {}) => {
     this.setState({ ...opts });
+    // console.log('ssssss_size', {
+    //   ...opts
+    // })
+    // this.handleMinImageSize(opts.currentImgZoomPercent)
   };
+  handleMinImageSize = (currentImgZoomPercent) => { //设置最小值边界
+    if(!currentImgZoomPercent) {
+      return '3%'
+    }
+    let percent = Number(currentImgZoomPercent.replace('%', ''))
+    if(percent < 3) {
+      percent = 3
+    }
+    // console.log(percent, 'sssss_percent')
+    this.setState({
+      currentImgZoomPercent: `${percent}%`
+    })
+  }
 
   /**
    * 获取当前图片的尺寸的百分比
@@ -2141,7 +2158,7 @@ class ZoomPicture extends Component {
           </div>
           {isShowCommitBlock && this.renderCommitBlock()}
         </div>
-        <>{this.renderOperatorBar()}</>
+        <div>{this.renderOperatorBar()}</div>
         {/* 有时间可以实现一个全局模式 */}
         {/* {isFullScreenMode && (
           <Modal zIndex={9999999999} style={{top: 0, left: 0, height: bodyClientHeight - 300 + 'px'}} footer={null} title={null} width={bodyClientWidth} visible={isFullScreenMode} onCancel={() => this.setState({isFullScreenMode: false})}>

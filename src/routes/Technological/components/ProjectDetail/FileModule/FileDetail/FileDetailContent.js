@@ -47,7 +47,8 @@ class FileDetailContent extends React.Component {
     dispatch({
       type: 'projectDetailFile/updateDatas',
       payload: {
-        filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id
+        filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id,
+        isExpandFrame: false
       }
     })
     dispatch({
@@ -420,7 +421,7 @@ class FileDetailContent extends React.Component {
         isInOpenFile: false,
         filePreviewUrl: '',
         breadcrumbList: new_arr_,
-        isExpandFrame: !isExpandFrame,
+        isExpandFrame: false,
       }
     })
     dispatch({
@@ -429,13 +430,17 @@ class FileDetailContent extends React.Component {
         isInOpenFile: false,
         filePreviewUrl: '',
         breadcrumbList: new_arr_,
-        isExpandFrame: !isExpandFrame,
+        isExpandFrame: false,
       }
     })
+    this.setState({
+      percent: 0
+    })
+    clearTimeout(timer)
   }
   zoomFrame() {
     const { isExpandFrame, dispatch } = this.props
-    this.setState({ isZoomPictureFullScreenMode: !this.state.isZoomPictureFullScreenMode });
+    this.setState({ isZoomPictureFullScreenMode: !this.state.isZoomPictureFullScreenMode, percent: 0 });
     // dispatch({
     //   type: 'projectDetailFile/updateDatas',
     //   payload: {
@@ -1087,6 +1092,7 @@ class FileDetailContent extends React.Component {
       isZoomPictureFullScreenMode: flag,
       percent: 0
     })
+    clearTimeout(timer)
   }
 
   //pdf文件和普通文件区别时做不同地处理预览
@@ -1107,6 +1113,12 @@ class FileDetailContent extends React.Component {
         }
       })
     }
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        isExpandFrame: false
+      }
+    })
   }
 
   // 修改编辑版本描述的方法
@@ -1147,6 +1159,7 @@ class FileDetailContent extends React.Component {
     })
     // console.log(temp_filePreviewCurrentVersionList, 'sssss')
     const { file_id, file_resource_id, version_id, file_name } = temp_filePreviewCurrentVersionList[0]
+    // console.log(file_name, 'ssssssss')
     dispatch({
       type: 'projectDetailFile/filePreview',
       payload: {
@@ -1232,7 +1245,6 @@ class FileDetailContent extends React.Component {
     const { board_id, filePreviewCurrentFileId } = this.props
     const { isZoomPictureFullScreenMode } = this.state
     let percent = this.state.percent + 10;
-    console.log(percent, 'sssssssssss')
     // return
     if (percent > 100) {
       if (timer) clearTimeout(timer)
@@ -1256,7 +1268,8 @@ class FileDetailContent extends React.Component {
         if (isApiResponseOk(res)) {
           this.setState({
             is_petty_loading: !isZoomPictureFullScreenMode && false,
-            is_large_loading: isZoomPictureFullScreenMode && false
+            is_large_loading: isZoomPictureFullScreenMode && false,
+            percent: 0
           })
 
         } else {
@@ -1290,6 +1303,7 @@ class FileDetailContent extends React.Component {
     this.setState({
       is_petty_loading: !isZoomPictureFullScreenMode,
       is_large_loading: isZoomPictureFullScreenMode,
+      percent: 0
     })
   }
 
@@ -1990,7 +2004,7 @@ class FileDetailContent extends React.Component {
             ) : (
                 <div className={indexStyles.fileDetailContentLeft} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 16, color: '#595959' }}>
                   <div>
-                    {notSupport(this.props.model.datas.fileType)}
+                    {notSupport(this.props.fileType)}
                   </div>
                 </div>
               )}

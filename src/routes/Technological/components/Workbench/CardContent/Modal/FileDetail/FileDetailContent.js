@@ -42,7 +42,7 @@ class FileDetailContent extends React.Component {
     this.setState({
       imgLoaded: false
     })
-    this.props.updateFileDatas({ filePreviewCurrentVersionKey: key, filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id })
+    this.props.updateFileDatas({ filePreviewCurrentVersionKey: key, filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id, isExpandFrame: false })
     this.props.filePreview({ id: file_resource_id, file_id })
     this.setState({
       imgLoaded: false,
@@ -378,8 +378,12 @@ class FileDetailContent extends React.Component {
   closeFile() {
     const { datas: { breadcrumbList = [], isExpandFrame } } = this.props.model
     breadcrumbList.splice(breadcrumbList.length - 1, 1)
+    clearTimeout(timer)
+    this.setState({
+      percent: 0
+    })
     this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile()
-    this.props.updateDatasFile({ isInOpenFile: false, filePreviewUrl: '', breadcrumbList: [], isExpandFrame: !isExpandFrame })
+    this.props.updateDatasFile({ isInOpenFile: false, filePreviewUrl: '', breadcrumbList: [], isExpandFrame: false })
   }
 
   /* 点击圈屏右上脚icon-是否全屏显示 */
@@ -988,6 +992,7 @@ class FileDetailContent extends React.Component {
       isZoomPictureFullScreenMode: flag,
       percent: 0
     })
+    clearTimeout(timer)
   }
 
   //pdf文件和普通文件区别时做不同地处理预览
@@ -1002,6 +1007,12 @@ class FileDetailContent extends React.Component {
     } else {
       this.props.filePreview({ id: file_resource_id, file_id: id })
     }
+    this.props.dispatch({
+      type: 'workbenchFileDetail/updateDatas',
+      payload: {
+        isExpandFrame: false
+      }
+    })
   }
 
   // 修改编辑版本描述的方法
@@ -1146,7 +1157,8 @@ class FileDetailContent extends React.Component {
         if (isApiResponseOk(res)) {
           this.setState({
             is_petty_loading: !isZoomPictureFullScreenMode && false,
-            is_large_loading: isZoomPictureFullScreenMode && false
+            is_large_loading: isZoomPictureFullScreenMode && false,
+            percent: 0
           })
 
         } else {
@@ -1180,6 +1192,7 @@ class FileDetailContent extends React.Component {
     this.setState({
       is_petty_loading: !isZoomPictureFullScreenMode,
       is_large_loading: isZoomPictureFullScreenMode,
+      percent: 0
     })
   }
 

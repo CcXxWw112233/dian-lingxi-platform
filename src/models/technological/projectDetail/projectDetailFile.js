@@ -247,7 +247,23 @@ export default modelExtend(projectDetail, {
             filePreviewCurrentVersionId: res.data.version_list.length ? res.data.version_list[0]['version_id'] : '',
             filePreviewCurrentId: res.data.base_info.file_resource_id,
             currentPreviewFileBaseInfo: res.data.base_info,
-            currentPreviewFileName: res.data.base_info.file_name
+            currentPreviewFileName: res.data.base_info.file_name,
+            filePreviewIsUsable: res.data.preview_info.is_usable,
+            filePreviewUrl: res.data.preview_info.url,
+            filePreviewIsRealImage: res.data.preview_info.is_real_image,
+            isExpandFrame: false
+          }
+        })
+        yield put({
+          type: 'getPreviewFileCommits',
+          payload: {
+            id: file_id
+          }
+        })
+        yield put({
+          type: 'getFileCommitPoints',
+          payload: {
+            id: file_id
           }
         })
         let breadcrumbList = yield select(selectBreadcrumbList) || []
@@ -360,7 +376,8 @@ export default modelExtend(projectDetail, {
     // 设为当前版本
     * setCurrentVersionFile({ payload }, { select, call, put }) {
       // console.log(payload, 'ssssss')
-      const { id, set_major_version, version_id, file_name } = payload
+      const { id, set_major_version, version_id, file_name, isNeedPreviewFile, isPDF } = payload
+      // console.log(version_id, 'sssssss')
       let res = yield call(setCurrentVersionFile, { id, set_major_version })
       const new_fileList = yield select(selectFileList)
       const new_filePreviewId = yield select(selectFilePreviewCurrentFileId)
@@ -371,7 +388,9 @@ export default modelExtend(projectDetail, {
           type: 'fileVersionist',
           payload: {
             version_id: version_id,
-            file_id: id
+            file_id: id,
+            isNeedPreviewFile: isNeedPreviewFile,
+            isPDF
           }
         })
         let temp_arr = [] // 用来保存当前要替换的版本列表的一条信息
@@ -456,37 +475,43 @@ export default modelExtend(projectDetail, {
       const { file_id, file_resource_id, version_id, whetherToggleFilePriview } = payload
       const res = yield call(filePreview, { id: file_id })
       if (isApiResponseOk(res)) {
+        // yield put({
+        //   type: 'updateDatas',
+        //   payload: {
+        //     filePreviewIsUsable: res.data.is_usable,
+        //     filePreviewUrl: res.data.url,
+        //     filePreviewIsRealImage: res.data.is_real_image,
+        //     // filePreviewCurrentId: file_resource_id,
+        //     // filePreviewCurrentFileId: file_id
+        //   }
+        // })
+        // yield put({
+        //   type: 'getPreviewFileCommits',
+        //   payload: {
+        //     id: file_id
+        //   }
+        // })
+        // yield put({
+        //   type: 'getFileCommitPoints',
+        //   payload: {
+        //     id: file_id
+        //   }
+        // })
+        // // 表示只有版本切换预览的时候才会更新
+        // if (whetherToggleFilePriview) {
+        //   yield put({
+        //     type: 'fileInfoByUrl',
+        //     payload: {
+        //       file_id
+        //     }
+        //   })
+        // }
         yield put({
-          type: 'updateDatas',
+          type: 'fileInfoByUrl',
           payload: {
-            filePreviewIsUsable: res.data.is_usable,
-            filePreviewUrl: res.data.url,
-            filePreviewIsRealImage: res.data.is_real_image,
-            // filePreviewCurrentId: file_resource_id,
-            // filePreviewCurrentFileId: file_id
+            file_id
           }
         })
-        yield put({
-          type: 'getPreviewFileCommits',
-          payload: {
-            id: file_id
-          }
-        })
-        yield put({
-          type: 'getFileCommitPoints',
-          payload: {
-            id: file_id
-          }
-        })
-        // 表示只有版本切换预览的时候才会更新
-        if (whetherToggleFilePriview) {
-          yield put({
-            type: 'fileInfoByUrl',
-            payload: {
-              file_id
-            }
-          })
-        }
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         if (res.code == 4003) { //分享链接失效,返回验证页面
@@ -957,32 +982,36 @@ export default modelExtend(projectDetail, {
       if (supportFileTypeArray.indexOf(fileName) != -1 || supportPictureFileTypeArray.indexOf(fileName) != -1) { // 表示存在
         let res = yield call(fileConvertPdfAlsoUpdateVersion, {id})
         if (isApiResponseOk(res)) {
-          yield put({
-            type: 'setCurrentVersionFile',
-            payload: {
-              set_major_version: '1',
-              id: res.data.id,
-              version_id: res.data.version_id,
-              isNeedPreviewFile: false,
-            }
-          })
+          // console.log(res.data.version_id, 'ssssssss_version_id')
           let isPDF = getSubfixName(res.data.file_name) == '.pdf'
+          
           if (isPDF) {
+            // yield put({
+            //   type: 'getFilePDFInfo',
+            //   payload: {
+            //     id: res.data.id
+            //   }
+            // })
             yield put({
-              type: 'getFilePDFInfo',
+              type: 'setCurrentVersionFile',
               payload: {
-                id: res.data.id
+                set_major_version: '1',
+                id: res.data.id,
+                version_id: res.data.version_id,
+                isNeedPreviewFile: true,
+                isPDF
               }
             })
             yield put({
               type: 'updateDatas',
               payload: {
-                fileType: getSubfixName(res.data.file_name)
+                fileType: isPDF,
+                filePreviewCurrentFileId: res.data.id
               }
             })
-            setTimeout(() => {
-              message.success('进入圈评成功')
-            }, 500);
+            // setTimeout(() => {
+            //   message.success('进入圈评成功')
+            // }, 500);
           } else {
             yield put({
               type: 'fileInfoByUrl',

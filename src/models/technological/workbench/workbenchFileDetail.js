@@ -262,6 +262,7 @@ export default {
         if(new_breadcrumbList.length) {
           new_breadcrumbList[new_breadcrumbList.length - 1] = temp_arr && temp_arr.length ? temp_arr[0] : default_arr[0]
         }
+        // console.log(res.data, 'sssssssss')
         yield put({
           type: 'updateDatas',
           payload: {
@@ -537,15 +538,6 @@ export default {
       if (supportFileTypeArray.indexOf(fileName) != -1 || supportPictureFileTypeArray.indexOf(fileName) != -1) { // 表示存在
         let res = yield call(fileConvertPdfAlsoUpdateVersion, {id})
         if (isApiResponseOk(res)) {
-          yield put({
-            type: 'setCurrentVersionFile',
-            payload: {
-              set_major_version: '1',
-              id: res.data.id,
-              version_id: res.data.version_id,
-              isNeedPreviewFile: false,
-            }
-          })
           let isPDF = getSubfixName(res.data.file_name) == '.pdf'
           if (isPDF) {
             yield put({
@@ -555,14 +547,29 @@ export default {
               }
             })
             yield put({
+              type: 'setCurrentVersionFile',
+              payload: {
+                set_major_version: '1',
+                id: res.data.id,
+                version_id: res.data.version_id,
+                isNeedPreviewFile: false,
+              }
+            })
+            yield put({
               type: 'getFileType',
               payload: {
                 file_id: res.data.id
               }
             })
-            setTimeout(() => {
-              message.success('进入圈评成功')
-            }, 500);
+            yield put({
+              type: 'updateDatas',
+              payload: {
+                filePreviewCurrentFileId: res.data.id
+              }
+            })
+            // setTimeout(() => {
+            //   message.success('进入圈评成功')
+            // }, 500);
           } else {
             yield put({
               type: 'fileInfoByUrl',
