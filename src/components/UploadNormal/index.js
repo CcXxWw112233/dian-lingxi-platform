@@ -298,15 +298,15 @@ export default class UploadNormal extends Component {
 
     // 新建阿里云oss客户端 --设置参数
     ossClient = (access = {}) => {
-        const { access_key_id, access_key_secret, bucket, security_token } = access
+        const { access_key_id, access_key_secret, bucket, security_token, region, endpoint } = access
         // ali-oss v6.x版本的写法
         const params = {
             accessKeyId: access_key_id,
             accessKeySecret: access_key_secret,
-            region: 'cn-beijing', //
+            region: region,//'cn-beijing', //
             bucket,
             stsToken: security_token,
-            endpoint: 'http://oss-cn-beijing.aliyuncs.com',
+            endpoint: endpoint, //'http://oss-cn-beijing.aliyuncs.com',
             secure: true
         }
         return new oss(params);
