@@ -1232,6 +1232,10 @@ class FileDetailContent extends React.Component {
       id
     }
 
+    const supportFileTypeArray = ['.xlsx', '.xls', '.doc', '.docx', '.ppt', '.pptx', '.png', '.txt']
+    // [png,gif,jpg,jpeg,tif,bmp,ico]
+    const supportPictureFileTypeArray = ['.png', '.gif', '.jpg', '.jpeg', '.tif', '.bmp', '.ico']
+
     const getIframe = (src) => {
       const iframe = '<iframe style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="' + src + '"></iframe>'
       return iframe
@@ -1347,7 +1351,7 @@ class FileDetailContent extends React.Component {
                   dangerouslySetInnerHTML={{ __html: getIframe(filePreviewUrl) }}>
                 </div>
                 {
-                  this.props.model.datas.fileType != '.pdf' && (
+                  this.props.model.datas.fileType != '.pdf' && (supportFileTypeArray.indexOf(this.props.model.datas.fileType) != -1 || supportPictureFileTypeArray.indexOf(this.props.model.datas.fileType) != -1) && (
                     <div className={indexStyles.otherFilesOperator}>
                       <span onClick={this.handleEnterCirclePointComment} className={indexStyles.operator_bar}><span className={`${globalStyles.authTheme} ${indexStyles.circle_icon}`}>&#xe664;</span>圈点评论</span>
                     </div>
@@ -1474,7 +1478,7 @@ class FileDetailContent extends React.Component {
 
     // 点击全屏之后的图片
     const punctuateBigDom = (
-      <Modal zIndex={1100} style={{ top: 0, left: 0, height: bodyClientHeight - 200 + 'px' }} footer={null} title={null} width={bodyClientWidth} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
+      <Modal zIndex={1010} style={{ top: 0, left: 0, height: bodyClientHeight - 200 + 'px' }} footer={null} title={null} width={bodyClientWidth} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
         {
           is_large_loading ? (
             <div style={{ height: bodyClientHeight, marginTop: '20px', background: 'rgba(0,0,0,0.15)' }}>
@@ -1517,7 +1521,7 @@ class FileDetailContent extends React.Component {
 
     // 其他格式点击全屏时候的展示
     const iframeBigDom = (
-      <Modal wrapClassName={indexStyles.overlay_iframBigDom} zIndex={1000} style={{ top: 0, left: 0, minWidth: componentWidth + 'px', minHeight: componentHeight + 'px' }} width={bodyClientWidth} height={bodyClientHeight} footer={null} title={null} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
+      <Modal wrapClassName={indexStyles.overlay_iframBigDom} zIndex={1010} style={{ top: 0, left: 0, minWidth: componentWidth + 'px', minHeight: componentHeight + 'px' }} width={bodyClientWidth} height={bodyClientHeight} footer={null} title={null} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
         {/* <div
           style={{ height: bodyClientHeight, marginTop: '20px' }}
           dangerouslySetInnerHTML={{ __html: getIframe(filePreviewUrl) }}></div>
@@ -1537,7 +1541,7 @@ class FileDetailContent extends React.Component {
                   style={{ height: bodyClientHeight, marginTop: '20px' }}
                   dangerouslySetInnerHTML={{ __html: getIframe(filePreviewUrl) }}></div>
                 {
-                  this.props.model.datas.fileType != '.pdf' && (
+                  this.props.model.datas.fileType != '.pdf' && (supportFileTypeArray.indexOf(this.props.model.datas.fileType) != -1 || supportPictureFileTypeArray.indexOf(this.props.model.datas.fileType) != -1) && (
                     <div className={indexStyles.otherFilesOperator} style={{ bottom: '100px' }}>
                       <span onClick={this.handleEnterCirclePointComment} className={indexStyles.operator_bar}><span className={`${globalStyles.authTheme} ${indexStyles.circle_icon}`}>&#xe664;</span>圈点评论</span>
                     </div>
