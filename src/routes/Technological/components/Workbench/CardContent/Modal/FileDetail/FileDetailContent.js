@@ -415,7 +415,7 @@ class FileDetailContent extends React.Component {
   // 保存为新版本
   saveAsNewVersion = ({ filePreviewCurrentId, pdfDownLoadSrc }) => {
     // const { datas: { currentPreviewFileData: { id, file_id, board_id, } } } = this.props.model
-    const { datas: { filePreviewCurrentFileId } } = this.props.model
+    const { datas: { filePreviewCurrentFileId, currentPreviewFileData: { id } } } = this.props.model
     // const { datas = {} } = this.props.model;
     // const { currentPreviewFileData = {} } = datas
     // const { id } = currentPreviewFileData;
@@ -423,7 +423,7 @@ class FileDetailContent extends React.Component {
     dispatch({
       type: 'workbenchFileDetail/saveAsNewVersion',
       payload: {
-        id: filePreviewCurrentFileId,
+        id: id,
       }
     })
     // let res = dispatch({
