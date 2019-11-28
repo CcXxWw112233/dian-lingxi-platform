@@ -89,7 +89,7 @@ class VideoMeetingPopoverContent extends React.Component {
 	// 获取项目用户
 	getProjectUsers = ({ projectId }) => {
 		if (!projectId) return
-
+		if (projectId == 0) return
 		this.setVideoMeetingDefaultSuggesstionsByBoardUser({ board_users: [] })
 		getCurrentSelectedProjectMembersList({ projectId })
 			.then(res => {
