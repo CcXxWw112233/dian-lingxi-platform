@@ -218,7 +218,7 @@ class VideoMeetingPopoverContent extends React.Component {
 			defaultValue: '30', // 当前选择的持续时间
 			changeValue: false
 		});
-		remind_time_type = '5'
+		remind_time_value = '5'
 		// clearTimeout(timer)
 	};
 
