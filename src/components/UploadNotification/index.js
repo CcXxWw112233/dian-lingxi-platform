@@ -7,6 +7,7 @@ export default class UploadNotification extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            minify: false,
         }
         this.scroll_ref = React.createRef()
     }
@@ -18,7 +19,8 @@ export default class UploadNotification extends Component {
     }
     setScrollTop = () => {
         const ele = this.scroll_ref.current
-        ele.scrollTop = ele.scrollHeight
+        if (ele)
+            ele.scrollTop = ele.scrollHeight
     }
     renderUploadDec = () => {
         const { uploading_file_list = [] } = this.props
@@ -62,21 +64,55 @@ export default class UploadNotification extends Component {
         const { setUploadNotiVisible } = this.props
         setUploadNotiVisible()
     }
+    setMinify = () => {
+        const { minify } = this.state
+        this.setState({
+            minify: !minify
+        })
+    }
+    renderFilePercent = () => {
+        const { uploading_file_list = [] } = this.props
+        const total = uploading_file_list.length
+        let count = 0
+        for (let val of uploading_file_list) {
+            if (val.status == 'uploading') {
+                count++
+            }
+        }
+        return `(${count}/${total})`
+    }
     render() {
         const { uploading_file_list = [] } = this.props
+        const { minify } = this.state
         return (
-            <div className={`${globalStyles.global_card} ${styles.notice_out}`} >
-                <div className={styles.top}>
-                    <div className={`${globalStyles.authTheme} ${styles.info_icon}`}>
-                        {/* &#xe847; */}
-                        {this.renderUploadState().icon}
-                    </div>
-                    <div className={styles.message}> {this.renderUploadState().message}</div>
-                    <div className={`${globalStyles.authTheme} ${styles.close}`} onClick={this.close}>&#xe7fe;</div>
-                </div>
-                <div className={`${styles.picture_list} ${globalStyles.global_vertical_scrollbar}`} ref={this.scroll_ref}>
-                    {this.renderUploadDec()}
-                </div>
+            <div className={`${globalStyles.global_card} ${styles.notice_out} ${minify ? styles.notice_out_mini : styles.notice_out_normal}`} >
+                {
+                    minify ? (
+                        <>
+                            <div className={styles.top}>
+                                <div className={`${globalStyles.authTheme} ${styles.info_icon}`}>
+                                    {this.renderUploadState().icon}
+                                </div>
+                                <div className={styles.message}>{this.renderFilePercent()}</div>
+                                <div className={`${globalStyles.authTheme} ${styles.close}`} onClick={this.setMinify}>&#xe7f3;</div>
+                            </div>
+                        </>
+                    ) : (
+                            <>
+                                <div className={styles.top}>
+                                    <div className={`${globalStyles.authTheme} ${styles.info_icon}`}>
+                                        {/* &#xe847; */}
+                                        {this.renderUploadState().icon}
+                                    </div>
+                                    <div className={styles.message}> {this.renderUploadState().message}</div>
+                                    <div className={`${globalStyles.authTheme} ${styles.close}`} onClick={this.setMinify}>&#xe7f7;</div>
+                                </div>
+                                <div className={`${styles.picture_list} ${globalStyles.global_vertical_scrollbar}`} ref={this.scroll_ref}>
+                                    {this.renderUploadDec()}
+                                </div>
+                            </>
+                        )
+                }
             </div>
         )
     }
