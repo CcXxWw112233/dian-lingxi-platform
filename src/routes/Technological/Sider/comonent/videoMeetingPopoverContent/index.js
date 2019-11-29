@@ -136,10 +136,18 @@ class VideoMeetingPopoverContent extends React.Component {
 		const { user_set } = this.getInfoFromLocalStorage("userInfo") || {}
 		if (!user_set) return
 		const { current_board } = user_set
+		projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
+		let new_projectList = [...projectList]
 		if (projectList && projectList.length) {
 			//过滤出来当前用户有编辑权限的项目
-			projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
-			let new_projectList = [...projectList]
+			if (projectList.length == 1) {
+				let {board_id, org_id} = (new_projectList.find((item, index) => index == '0') || {})
+				this.setState({
+					org_id
+				})
+				this.getProjectUsers({ projectId: board_id })
+				return
+			}
 			let {board_id, org_id} = (new_projectList.find(item => item.is_my_private == '1') || {})
 			this.setState({
 				org_id
@@ -156,10 +164,19 @@ class VideoMeetingPopoverContent extends React.Component {
 
 	componentWillReceiveProps(nextProps) {
 		let { projectList = [] } = nextProps
+		projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
+		let new_projectList = [...projectList]
 		if (projectList && projectList.length) {
+			if (projectList.length == 1) {
+				let {board_id, org_id} = (new_projectList.find((item, index) => index == '0') || {})
+				this.setState({
+					org_id
+				})
+				this.getProjectUsers({ projectId: board_id })
+				return
+			}
 			//过滤出来当前用户有编辑权限的项目
-			projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
-			let new_projectList = [...projectList]
+			
 			let {board_id, org_id} = (new_projectList.find(item => item.is_my_private == '1') || {})
 			this.setState({
 				org_id
@@ -274,6 +291,10 @@ class VideoMeetingPopoverContent extends React.Component {
 		projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
 		if (projectList && projectList.length) {
 			let new_projectList = [...projectList]
+			if (projectList.length == '1') {
+				let gold_id = (new_projectList.find((item, index) => index == '0' ) || {}).board_id
+				return gold_id
+			}
 			let gold_id = (new_projectList.find(item => item.is_my_private == '1') || {}).board_id
 			return gold_id
 		} else {
