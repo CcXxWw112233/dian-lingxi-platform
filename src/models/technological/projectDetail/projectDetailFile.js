@@ -38,7 +38,7 @@ import { isApiResponseOk } from "../../../utils/handleResponseData";
 import QueryString from 'querystring'
 import { projectDetailInfo } from "../../../services/technological/prjectDetail";
 import { project_selectFilePreviewIsEntryCirclePreviewLoading, project_selectFilePreviewCurrentPreviewFileName} from './select'
-
+import { getModelSelectDatasState } from '../../utils'
 let board_id = null
 let appsSelectKey = null
 let file_id = null
@@ -600,6 +600,9 @@ export default modelExtend(projectDetail, {
     * fileCopy({ payload }, { select, call, put }) {
       let res = yield call(fileCopy, payload)
       const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
+      let projectDetailInfoData = yield select(getModelSelectDatasState('projectDetail','projectDetailInfoData'))
+      projectDetailInfoData = projectDetailInfoData || {}
+      const BOARD_ID = projectDetailInfoData.board_id
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -617,7 +620,7 @@ export default modelExtend(projectDetail, {
         yield put({
           type: 'getFolderList',
           payload: {
-            board_id: board_id,
+            board_id: board_id || BOARD_ID,
             calback: function () {
               message.success('复制成功', MESSAGE_DURATION_TIME)
             }
@@ -683,6 +686,10 @@ export default modelExtend(projectDetail, {
     * fileMove({ payload }, { select, call, put }) {
       let res = yield call(fileMove, payload)
       const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
+      let projectDetailInfoData = yield select(getModelSelectDatasState('projectDetail','projectDetailInfoData'))
+      projectDetailInfoData = projectDetailInfoData || {}
+      const BOARD_ID = projectDetailInfoData.board_id
+
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -702,7 +709,7 @@ export default modelExtend(projectDetail, {
         yield put({
           type: 'getFolderList',
           payload: {
-            board_id: board_id,
+            board_id: board_id || BOARD_ID,
             calback: function () {
               message.success('移动成功', MESSAGE_DURATION_TIME)
             }
