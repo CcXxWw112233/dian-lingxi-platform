@@ -691,12 +691,14 @@ export default modelExtend(projectDetail, {
             selectedRows: []
           }
         })
-        yield put({
-          type: 'getFileList',
-          payload: {
-            folder_id: currentParrentDirectoryId
-          }
-        })
+        if (currentParrentDirectoryId) {
+          yield put({
+            type: 'getFileList',
+            payload: {
+              folder_id: currentParrentDirectoryId
+            }
+          })
+        }
         yield put({
           type: 'getFolderList',
           payload: {
