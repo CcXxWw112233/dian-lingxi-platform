@@ -2,7 +2,9 @@ import React, { Component } from 'react'
 import { Upload, notification } from 'antd'
 import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
+import { connect } from 'dva'
 {/* 该组件用于上传文件时，从右侧弹出提醒框，带上传进度条 */ }
+@connect(mapStateToProps)
 export default class UploadNotification extends Component {
     constructor(props) {
         super(props)
@@ -19,8 +21,8 @@ export default class UploadNotification extends Component {
     }
     setScrollTop = () => {
         const ele = this.scroll_ref.current
-        if (ele)
-            ele.scrollTop = ele.scrollHeight
+        // if (ele)
+        //     ele.scrollTop = ele.scrollHeight
     }
     renderUploadDec = () => {
         const { uploading_file_list = [] } = this.props
@@ -82,38 +84,54 @@ export default class UploadNotification extends Component {
         return `(${count}/${total})`
     }
     render() {
-        const { uploading_file_list = [] } = this.props
+        const { show_upload_notification } = this.props
         const { minify } = this.state
         return (
-            <div className={`${globalStyles.global_card} ${styles.notice_out} ${minify ? styles.notice_out_mini : styles.notice_out_normal}`} >
-                {
-                    minify ? (
-                        <>
-                            <div className={styles.top}>
-                                <div className={`${globalStyles.authTheme} ${styles.info_icon}`}>
-                                    {this.renderUploadState().icon}
-                                </div>
-                                <div className={styles.message}>{this.renderFilePercent()}</div>
-                                <div className={`${globalStyles.authTheme} ${styles.close}`} onClick={this.setMinify}>&#xe7f3;</div>
-                            </div>
-                        </>
-                    ) : (
+            show_upload_notification ? (
+                <div className={`${globalStyles.global_card} ${styles.notice_out} ${minify ? styles.notice_out_mini : styles.notice_out_normal}`} >
+                    {
+                        minify ? (
                             <>
                                 <div className={styles.top}>
                                     <div className={`${globalStyles.authTheme} ${styles.info_icon}`}>
-                                        {/* &#xe847; */}
                                         {this.renderUploadState().icon}
                                     </div>
-                                    <div className={styles.message}> {this.renderUploadState().message}</div>
-                                    <div className={`${globalStyles.authTheme} ${styles.close}`} onClick={this.setMinify}>&#xe7f7;</div>
-                                </div>
-                                <div className={`${styles.picture_list} ${globalStyles.global_vertical_scrollbar}`} ref={this.scroll_ref}>
-                                    {this.renderUploadDec()}
+                                    <div className={styles.message}>{this.renderFilePercent()}</div>
+                                    <div className={`${globalStyles.authTheme} ${styles.close}`} onClick={this.setMinify}>&#xe7f3;</div>
                                 </div>
                             </>
-                        )
-                }
-            </div>
+                        ) : (
+                                <>
+                                    <div className={styles.top}>
+                                        <div className={`${globalStyles.authTheme} ${styles.info_icon}`}>
+                                            {/* &#xe847; */}
+                                            {this.renderUploadState().icon}
+                                        </div>
+                                        <div className={styles.message}> {this.renderUploadState().message}</div>
+                                        <div className={`${globalStyles.authTheme} ${styles.close}`} onClick={this.setMinify}>&#xe7f7;</div>
+                                    </div>
+                                    <div className={`${styles.picture_list} ${globalStyles.global_vertical_scrollbar}`} ref={this.scroll_ref}>
+                                        {this.renderUploadDec()}
+                                    </div>
+                                </>
+                            )
+                    }
+                </div>
+            ) : (
+                    <i />
+                )
         )
+    }
+}
+function mapStateToProps({ uploadNormal: {
+    uploading_file_list,
+    swich_render_upload, //是否显示上传开关
+    show_upload_notification,
+}
+}) {
+    return {
+        uploading_file_list,
+        swich_render_upload, //是否显示上传开关
+        show_upload_notification,
     }
 }

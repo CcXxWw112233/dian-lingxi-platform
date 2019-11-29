@@ -11,6 +11,8 @@ import { getUSerInfo } from '../../services/technological'
 import { checkFileMD5WithBack, uploadToOssCalback } from '../../services/technological/file'
 import oss from 'ali-oss';
 import SparkMD5 from 'spark-md5'
+import { connect } from 'dva'
+@connect(mapStateToProps)
 export default class UploadNormal extends Component {
 
     constructor(props) {
@@ -20,14 +22,22 @@ export default class UploadNormal extends Component {
             swich_render_upload: true, //是否显示上传开关
         }
     }
+    updateDatasUpload = (data = {}) => {
+        const { dispatch } = this.props
+        dispatch({
+            type: 'uploadNormal/updateDatas',
+            payload: {
+                ...data
+            }
+        })
+    }
     // 设置右边弹窗出现
     setUploadNotiVisible = () => {
-        const { show_upload_notification } = this.state
-        this.setState({
+        this.updateDatasUpload({
             swich_render_upload: false
         })
         setTimeout(() => {
-            this.setState({
+            this.updateDatasUpload({
                 swich_render_upload: true
             })
         }, 1000)
@@ -35,23 +45,42 @@ export default class UploadNormal extends Component {
         this.setUploadingFileList([])
     }
     setShowUploadNotification = (bool) => {
-        this.setState({
+        this.updateDatasUpload({
             show_upload_notification: bool
         })
     }
-    setUploadingFileList = (uploading_file_list) => {
-        this.setState({
-            uploading_file_list
+    setUploadingFileList = (list = []) => {
+        if (!list.length) {
+            this.updateDatasUpload({
+                uploading_file_list: []
+            })
+            return
+        }
+        const { uploading_file_list = [] } = this.props
+        let list_ = [...list]
+        let uploading_file_list_ = [...uploading_file_list]
+        const uid_arr = uploading_file_list_.map(item => item.uid) //已存在的上传列表
+        const new_list = list_.filter(item => uid_arr.indexOf(item.uid) == -1)  //新上传的文件
+        const old_list = list_.filter(item => uid_arr.indexOf(item.uid) != -1)  //已经上传的（进行中或已完成）
+        let gold_arr = [].concat(uploading_file_list_, new_list)
+        gold_arr = gold_arr.map(item => { //目标覆盖
+            let new_item = { ...item }
+            new_item = old_list.find(val => val.uid == new_item.uid) || new_item
+            return new_item
+        })
+        // console.log('ssssss', gold_arr)
+        this.updateDatasUpload({
+            uploading_file_list: gold_arr
         })
     }
     uploadCompleted = () => {
         const { is_need_parent_notification, setShowUploadNotification, setUploadingFileList } = this.props
 
-        this.setState({
+        this.updateDatasUpload({
             swich_render_upload: false
         })
         setTimeout(() => {
-            this.setState({
+            this.updateDatasUpload({
                 swich_render_upload: true
             })
         }, 1000)
@@ -337,9 +366,9 @@ export default class UploadNormal extends Component {
     // 新建阿里云oss客户端 ---end
 
     render() {
-        const { children, is_need_parent_notification } = this.props
-        const { show_upload_notification, uploading_file_list = [], swich_render_upload } = this.state
-
+        const { children, is_need_parent_notification, swich_render_upload } = this.props
+        const { show_upload_notification, uploading_file_list = [], } = this.state
+        // console.log('ssssss_swich_render_upload', swich_render_upload)
         return (
             <>
                 {
@@ -350,11 +379,11 @@ export default class UploadNormal extends Component {
                             children
                         )
                 }
-                {
+                {/* {
                     !is_need_parent_notification && show_upload_notification && (
                         <UploadNotification uploading_file_list={uploading_file_list} setUploadNotiVisible={this.setUploadNotiVisible} />
                     )
-                }
+                } */}
             </>
         )
     }
@@ -382,5 +411,18 @@ UploadNormal.defaultProps = {
     },
     uploadCompleteCalback: function () { //上传完成的回调，（比如查询列表）
 
+    }
+}
+
+function mapStateToProps({ uploadNormal: {
+    uploading_file_list,
+    swich_render_upload, //是否显示上传开关
+    show_upload_notification,
+}
+}) {
+    return {
+        uploading_file_list,
+        swich_render_upload, //是否显示上传开关
+        show_upload_notification,
     }
 }

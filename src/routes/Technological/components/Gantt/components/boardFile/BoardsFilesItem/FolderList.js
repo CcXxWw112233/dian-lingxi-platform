@@ -201,17 +201,18 @@ export default class FolderList extends Component {
         const props = {
             uploadProps: this.uploadNormalProps(),
             uploadCompleteCalback: this.getFolderFileList,
-            is_need_parent_notification: true,  //是需要在父组件种做回调还是在子组件内自完成
-            setShowUploadNotification: this.setShowUploadNotification,
-            setUploadingFileList: this.setUploadingFileList,
-            setUploadNotiVisible: this.setUploadNotiVisible
+            // is_need_parent_notification: true,  //是需要在父组件种做回调还是在子组件内自完成
+            // setShowUploadNotification: this.setShowUploadNotification,
+            // setUploadingFileList: this.setUploadingFileList,
+            // setUploadNotiVisible: this.setUploadNotiVisible
         }
         return (
-            swich_render_upload && (
-                <UploadNormal {...props}>
-                    <div style={{ width: 220, height: 26 }}>上传文件</div>
-                </UploadNormal>
-            )
+            // swich_render_upload && 
+            // (
+            <UploadNormal {...props}>
+                <div style={{ width: 220, height: 26 }}>上传文件</div>
+            </UploadNormal>
+            // )
         )
     }
     // 设置右边弹窗出现
@@ -288,11 +289,11 @@ export default class FolderList extends Component {
                 <Dropdown overlay={this.renderAddItemDropMenu()} >
                     <div className={`${styles.folder_item} ${globalStyles.authTheme} ${styles.add_item}`}>&#xe8fe;</div>
                 </Dropdown>
-                {
+                {/* {
                     show_upload_notification && (
                         <UploadNotification uploading_file_list={uploading_file_list} setUploadNotiVisible={this.setUploadNotiVisible} />
                     )
-                }
+                } */}
             </div>
         )
     }
