@@ -617,14 +617,14 @@ class VideoMeetingPopoverContent extends React.Component {
 	}
 
 	// 打开会议窗口链接
-	// openWinNiNewTabWithATag = (url) => {
-	// 	const aTag = document.createElement("a");
-	// 	aTag.href = `#/videoMeeting/target/url`;
-	// 	aTag.target = "_blank";
-	// 	document.querySelector("body").appendChild(aTag);
-	// 	aTag.click();
-	// 	aTag.parentNode.removeChild(aTag);
-	// }
+	openWinNiNewTabWithATag = (url) => {
+		const aTag = document.createElement("a");
+		aTag.href = url;
+		aTag.target = "_blank";
+		document.querySelector("body").appendChild(aTag);
+		aTag.click();
+		aTag.parentNode.removeChild(aTag);
+	}
 
 	// 邀请人加入的回调
 	inviteMemberJoin = ({ card_id, userIds = [], user_phone = [], start_url }) => {
@@ -684,9 +684,9 @@ class VideoMeetingPopoverContent extends React.Component {
 					this.getCurrentRemindUser()
 				}
 			)
-			// this.openWinNiNewTabWithATag(start_url)
+			this.openWinNiNewTabWithATag(start_url)
 			// window.open(`#/videoMeeting/target?url=${start_url}`)
-			window.open(start_url)
+			// window.open(start_url)
 			dispatch({
 				type: 'workbench/getMeetingList',
 				payload: {
@@ -717,9 +717,9 @@ class VideoMeetingPopoverContent extends React.Component {
 							this.getCurrentRemindUser()
 						}
 					)
-					// this.openWinNiNewTabWithATag(start_url)
+					this.openWinNiNewTabWithATag(start_url)
 					// window.open(`#/videoMeeting/target?url=${start_url}`)
-					window.open(start_url)
+					// window.open(start_url)
 					dispatch({
 						type: 'workbench/getMeetingList',
 						payload: {
