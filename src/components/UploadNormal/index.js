@@ -343,7 +343,7 @@ export default class UploadNormal extends Component {
             region: region,//'cn-beijing', //
             bucket,
             stsToken: security_token,
-            endpoint: `http://${endpoint}`,
+            endpoint: `${endpoint}`,
             secure: true
         }
         return new oss(params);
