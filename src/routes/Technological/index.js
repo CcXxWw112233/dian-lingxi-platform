@@ -16,6 +16,8 @@ import { initWs } from '../../components/WsNewsDynamic'
 import Cookies from 'js-cookie'
 import { isPaymentOrgUser } from "@/utils/businessFunction"
 import { routerRedux } from "dva/router";
+import UploadNotification from '@/components/UploadNotification'
+
 const { Sider, Content } = Layout;
 
 @connect(mapStateToProps)
@@ -54,7 +56,7 @@ export default class Technological extends React.Component {
     const { currentUserOrganizes, dispatch } = nextProps;
     const { page_load_type: old_page_load_type } = this.props;
     if (old_page_load_type != nextProps.page_load_type) {
-     
+
     }
 
 
@@ -69,7 +71,7 @@ export default class Technological extends React.Component {
   //     if (currentUserOrganizes && currentUserOrganizes.length > 0) {
   //       let isPayment = isPaymentOrgUser();
   //       if (!isPayment && newProps.page_load_type == 2) {
-          
+
   //         dispatch({
   //           type: 'technological/setShowSimpleModel',
   //           payload: {
@@ -233,7 +235,10 @@ export default class Technological extends React.Component {
     return (
       <LocaleProvider locale={zh_CN}>
         {/*minWidth:1440, */}
-        {layout}
+        <>
+          {layout}
+          <UploadNotification />
+        </>
       </LocaleProvider>
     );
   }
