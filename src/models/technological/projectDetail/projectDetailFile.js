@@ -499,6 +499,13 @@ export default modelExtend(projectDetail, {
     },
     * filePreview({ payload }, { select, call, put }) {
       const { file_id, file_resource_id, version_id, whetherToggleFilePriview } = payload
+      yield put({
+        type: 'fileInfoByUrl',
+        payload: {
+          file_id
+        }
+      })
+      return
       const res = yield call(filePreview, { id: file_id })
       if (isApiResponseOk(res)) {
         // yield put({
@@ -532,12 +539,7 @@ export default modelExtend(projectDetail, {
         //     }
         //   })
         // }
-        yield put({
-          type: 'fileInfoByUrl',
-          payload: {
-            file_id
-          }
-        })
+        
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         if (res.code == 4003) { //分享链接失效,返回验证页面
@@ -757,13 +759,13 @@ export default modelExtend(projectDetail, {
               }
             })
           }
-          yield put({
-            type: 'getFileList',
-            payload: {
-              folder_id: currentParrentDirectoryId,
-            }
-          })
         }
+        yield put({
+          type: 'getFileList',
+          payload: {
+            folder_id: currentParrentDirectoryId,
+          }
+        })
       } else {
 
       }
