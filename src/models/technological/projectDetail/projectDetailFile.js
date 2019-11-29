@@ -236,6 +236,34 @@ export default modelExtend(projectDetail, {
         }
       }
     },
+    // 更新面包屑路径
+    * updateBreadcrumbList({ payload }, { select, call, put }) {
+      const { file_id } = payload
+      let res = yield call(fileInfoByUrl, {id: file_id})
+      if (isApiResponseOk(res)) {
+        let arr = []
+        const target_path = res.data.target_path
+        // 递归添加路径
+        const digui = (name, data) => {
+          if (data[name]) {
+            arr.push({ file_name: data.folder_name, file_id: data.id, type: '1' })
+            digui(name, data[name])
+          } else if (data['parent_id'] == '0') {
+            arr.push({ file_name: '根目录', file_id: data.id, type: '1' })
+          }
+        }
+        digui('parent_folder', target_path)
+        const newbreadcrumbList = arr.reverse()
+        newbreadcrumbList.push({ file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2', folder_id: res.data.base_info.folder_id })
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            breadcrumbList: newbreadcrumbList
+          }
+        })
+      }
+      
+    },
     * fileInfoByUrl({ payload }, { select, call, put }) {
       const { file_id, isNotNecessaryUpdateBread, whetherUpdateFileList } = payload
       let res = yield call(fileInfoByUrl, { id: file_id })
@@ -523,6 +551,7 @@ export default modelExtend(projectDetail, {
     },
     * getFilePDFInfo({ payload }, { select, call, put }) {
       //pdf做了特殊处理
+      const { id } = payload // id = file_id
       let res = yield call(getFilePDFInfo, payload)
       if (isApiResponseOk(res)) {
         yield put({
@@ -534,7 +563,12 @@ export default modelExtend(projectDetail, {
             filePreviewIsRealImage: false,
           }
         })
-        const { id } = payload // id = file_id
+        yield put({
+          type: 'updateBreadcrumbList',
+          payload: {
+            file_id: id
+          }
+        })
         yield put({
           type: 'getPreviewFileCommits',
           payload: {

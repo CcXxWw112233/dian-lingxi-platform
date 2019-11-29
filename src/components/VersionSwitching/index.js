@@ -87,7 +87,7 @@ export default class VersionSwitchingComponent extends Component {
   getVersionItemMenu = (list) => {
     const { editValue, filePreviewCurrentFileId, uploadProps, is_edit_version_description, is_show } = this.props //is_show = 是否显示'上传新版本'
     return (
-      <div style={{ position: 'relative' }} id="versionPanePosition">
+      <div style={{ position: 'relative' }} id="versionPanePosition" className={indexStyles.versionPanePosition}>
         <Menu getPopupContainer={triggerNode => triggerNode.parentNode} selectable={true} style={{ width: 400, maxHeight: '314px' }}>
           <div key="versionTitle" style={{ borderBottom: '1px solid rgba(0,0,0,0.09)', height: '56px', lineHeight: '56px', padding: '0 16px' }}>
             <div className={indexStyles.title_wrapper} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

@@ -7,6 +7,9 @@
   line-height:40px;
   display: flex;
   position: relative;
+  &:hover {
+    // color: #1890FF;
+  }
   // align-items: center;
   div{
     margin-right: 12px;
@@ -51,6 +54,23 @@
   }
 }
 
+.versionItemMenu:hover .creator{
+  // color: #1890FF;
+}
+
+.versionPanePosition {
+  :global {
+    .ant-menu-item-selected {
+      background: rgba(0,0,0,0.04) !important;
+      &:hover {
+        background: rgba(0,0,0,0.04) !important;
+        // color: #1890FF;
+      }
+    }
+    
+  }
+}
+
 
 .title_wrapper {
   .version_title {
@@ -77,6 +97,7 @@
 .version_menuItem {
   &:hover {
     background: rgba(0,0,0,0.04);
+    color: #1890FF;
   }
 }
 .versionItemMenu:hover {

@@ -1052,14 +1052,9 @@ class FileDetailContent extends React.Component {
       }
     })
     // console.log(new_filePreviewCurrentVersionList, 'sssss')
-    const { file_id, file_resource_id } = temp_filePreviewCurrentVersionList[0]
-    dispatch({
-      type: 'workbenchFileDetail/filePreview',
-      payload: {
-        file_id,
-        file_resource_id
-      }
-    })
+    const { file_id, file_resource_id, file_name } = temp_filePreviewCurrentVersionList[0]
+    this.handleUploadPDForElesFilePreview({ file_name, id: file_id, file_resource_id })
+    
     dispatch({
       type: 'workbenchFileDetail/getFileType',
       payload: {

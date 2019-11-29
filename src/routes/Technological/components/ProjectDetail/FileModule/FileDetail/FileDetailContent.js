@@ -1160,15 +1160,8 @@ class FileDetailContent extends React.Component {
     // console.log(temp_filePreviewCurrentVersionList, 'sssss')
     const { file_id, file_resource_id, version_id, file_name } = temp_filePreviewCurrentVersionList[0]
     // console.log(file_name, 'ssssssss')
-    dispatch({
-      type: 'projectDetailFile/filePreview',
-      payload: {
-        file_id,
-        file_resource_id,
-        version_id,
-        whetherToggleFilePriview: true
-      }
-    })
+    this.handleUploadPDForElesFilePreview({ file_name, id: file_id, file_resource_id })
+
     dispatch({
       type: 'projectDetailFile/updateDatas',
       payload: {
