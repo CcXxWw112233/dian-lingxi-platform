@@ -760,6 +760,7 @@ export default modelExtend(projectDetail, {
             })
           }
         }
+        if (!currentParrentDirectoryId) return
         yield put({
           type: 'getFileList',
           payload: {
