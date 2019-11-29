@@ -12,6 +12,7 @@ import { checkFileMD5WithBack, uploadToOssCalback } from '../../services/technol
 import oss from 'ali-oss';
 import SparkMD5 from 'spark-md5'
 import { connect } from 'dva'
+const max_size = 2 * 1024 * 1024 * 1024 //2GB
 @connect(mapStateToProps)
 export default class UploadNormal extends Component {
 
@@ -115,7 +116,7 @@ export default class UploadNormal extends Component {
                 if (e.size == 0) {
                     message.error(`不能上传空文件`)
                     return false
-                } else if (e.size > 2 * 1024 * 1024 * 1024) {
+                } else if (e.size > max_size) {
                     message.error(`上传文件不能文件超过2GB`)
                     return false
                 }
@@ -126,6 +127,9 @@ export default class UploadNormal extends Component {
                 }
             },
             onChange: ({ file, fileList }) => {
+                if (file.size > max_size) {
+                    return false
+                }
                 let fileList_will = [...fileList]
                 fileList_will = fileList_will.filter(item => {
                     if (item.status == 'done') {
@@ -135,7 +139,9 @@ export default class UploadNormal extends Component {
                             item.status = 'error'
                         }
                     }
-                    return item
+                    if (item.size <= max_size) {
+                        return item
+                    }
                 })
                 if (is_need_parent_notification) { //由父组件渲染进度弹窗
                     setUploadingFileList(fileList_will)
@@ -172,7 +178,9 @@ export default class UploadNormal extends Component {
         } = e
         const formData = new FormData();
         formData.append(filename, file);
-
+        if (file.size > max_size) {
+            return false
+        }
         /*
         1.是大文件
         2.解码生成md5
