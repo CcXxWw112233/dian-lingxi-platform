@@ -2,12 +2,12 @@ import React from 'react'
 import { Modal, Form, Button, Input, message } from 'antd'
 import {min_page_width} from "../../../../../../globalset/js/styles";
 import CustormModal from '../../../../../../components/CustormModal'
-import FileDetail from './ProccessDetail/index'
+import ProccessDetail from './ProccessDetail/index'
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 
 
-class FileDetailModal extends React.Component {
+class ProcessDetailModal extends React.Component {
   state = {}
 
   componentDidMount() {}
@@ -37,9 +37,9 @@ class FileDetailModal extends React.Component {
         bodyStyle={{top: 0}}
         style={{top: modalTop}}
         onCancel={this.onCancel.bind(this)}
-        overInner={<FileDetail {...this.props} status = {this.props.status} modalTop={modalTop}/>}
+        overInner={<ProccessDetail principalList={this.props.principalList} visitControlUpdateCurrentModalData={this.props.visitControlUpdateCurrentModalData} {...this.props} status = {this.props.status} modalTop={modalTop}/>}
       />
     )
   }
 }
-export default Form.create()(FileDetailModal)
+export default Form.create()(ProcessDetailModal)

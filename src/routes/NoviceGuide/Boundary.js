@@ -9,8 +9,9 @@ import manager from '@/assets/noviceGuide/undraw_file_manager.png'
 import organizer from '@/assets/noviceGuide/undraw_online_organizer.png'
 import InputExport from './component/InputExport';
 import { validateTel, validateEmail } from '@/utils/verify.js'
-import { createDefaultOrg, generateBoardCode, inviteMemberJoinOrg, inviteMemberJoinBoard} from '@/services/technological/noviceGuide'
-import {isApiResponseOk} from "@/utils/handleResponseData";
+import { createDefaultOrg, generateBoardCode, inviteMemberJoinOrg, inviteMemberJoinBoard } from '@/services/technological/noviceGuide'
+import { scanQrCodeJoin, organizationInviteWebJoin, commInviteWebJoin, } from '@/services/technological/index'
+import { isApiResponseOk } from "@/utils/handleResponseData";
 
 
 export default class Boundary extends Component {
@@ -38,7 +39,7 @@ export default class Boundary extends Component {
 
 
 	// 点击ok
-	 handleNext = async() => {
+	handleNext = async () => {
 		// 获取新用户默认创建组织和项目
 		const res = await createDefaultOrg()
 		if (isApiResponseOk(res)) {
@@ -47,7 +48,7 @@ export default class Boundary extends Component {
 				new_user_board_id: res.data.data.board_id,
 				new_user_org_id: res.data.data.org_id
 			}, () => {
-				this.getRoutineCode({boardId: res.data.data.board_id})
+				this.getRoutineCode({ boardId: res.data.data.board_id, orgId: res.data.data.org_id, })
 			})
 		} else {
 			message.error(res.message)
@@ -56,15 +57,27 @@ export default class Boundary extends Component {
 
 	// 获取小程序生成二维码
 	getRoutineCode = (data) => {
-		generateBoardCode(data).then((res) => {
+
+		const userId = JSON.parse(localStorage.getItem('userInfo')).id
+		scanQrCodeJoin({ type: '12', id: data.boardId, _organization_id: data.orgId, user_id: userId }).then(res => {
 			if (isApiResponseOk(res)) {
 				this.setState({
-					img_src: res.message
+					img_src: res.data.code_url
 				})
 			} else {
 				message.error(res.message)
 			}
 		})
+
+		// generateBoardCode(data).then((res) => {
+		// 	if (isApiResponseOk(res)) {
+		// 		this.setState({
+		// 			img_src: res.message
+		// 		})
+		// 	} else {
+		// 		message.error(res.message)
+		// 	}
+		// })
 	}
 
 	// 子组件需调用该方法: 获取焦点追加一条输入框
@@ -79,26 +92,26 @@ export default class Boundary extends Component {
 	}
 
 	// 定义一个方法修改父组件中的状态
-  updateParentState = (value, index, phone, email) => {
+	updateParentState = (value, index, phone, email) => {
 		const { inputList } = this.state
 		// console.log(all_input_val, 'sssss')
-    let new_list = [...inputList]
-    // console.log(value, inputList, index, 'sss')
-    new_list = new_list.map((item, i) => {
-      let new_item = item
-      if (index == i) {
-        new_item = {...new_item, value: value}
-      }
-      return new_item
+		let new_list = [...inputList]
+		// console.log(value, inputList, index, 'sss')
+		new_list = new_list.map((item, i) => {
+			let new_item = item
+			if (index == i) {
+				new_item = { ...new_item, value: value }
+			}
+			return new_item
 		})
-    if (value) { // 如果value存在, 就更新它
-      this.setState({
+		if (value) { // 如果value存在, 就更新它
+			this.setState({
 				inputList: new_list,
 				inputVal: value,
 				pVerify: phone,
 				eVerify: email,
 			})
-    } else { // 不存在, 就保存为原来的状态
+		} else { // 不存在, 就保存为原来的状态
 			this.setState({
 				inputVal: '',
 				inputList: new_list,
@@ -109,7 +122,7 @@ export default class Boundary extends Component {
 		this.setState({
 			all_input_val: value
 		})
-  }
+	}
 
 	// 点击添加更多
 	handleAddMore = () => {
@@ -136,17 +149,15 @@ export default class Boundary extends Component {
 	handleSubmit(all_val) {
 		const { dispatch } = this.props
 		if (!all_val) {
-			//dispatch(routerRedux.push('/technological/simplemode/home'))
-			dispatch(routerRedux.push('/technological/workbench'))
+			dispatch(routerRedux.push('/technological/simplemode/home'))
+			// dispatch(routerRedux.push('/technological/workbench'))
 			return
 		}
-
 		const { inputList, new_user_board_id, new_user_org_id } = this.state
 		let new_input_list = [...inputList]
 		// let phoneTemp = [] // 定义一个手机号的空数组
 		// let emailTemp = [] // 定义一个邮箱的空数组
 		let allTemp = new Array(); // 所有的数组列表
-		// console.log(allTemp, 'ssss')
 		for (const val of new_input_list) {
 			const result = val['value']
 			if (val['value'] != '') {
@@ -158,20 +169,29 @@ export default class Boundary extends Component {
 			// 	emailTemp.push(result)
 			// }
 		}
-		// console.log(allTemp, 'ssss')
-		const allTempStr = allTemp.join(',')
-		// console.log(allTempStr, 'ssss')
+		// console.log(allTemp, 'ssss===allTemp')
+		// const allTempStr = allTemp.join(',')
 		const data = {
 			board_id: new_user_board_id,
 			users: allTemp
 		}
-		// allTemp = [].concat(phoneTemp, emailTemp)
-		inviteMemberJoinOrg({members: allTempStr, _organization_id: new_user_org_id}).then((res) => {
-			if (isApiResponseOk(res)) {
-				inviteMemberJoinBoard({...data}).then((res) => {
+
+		organizationInviteWebJoin({
+			_organization_id: new_user_org_id,
+			type: '12',
+			users: allTemp,
+		}).then(res => {
+			if (res && res.code === '0') {
+				commInviteWebJoin({
+					id: new_user_board_id,
+					role_id: res.data.role_id,
+					type: '12',
+					users: res.data.users,
+					rela_condition: '',
+				}).then(res => {
 					if (isApiResponseOk(res)) {
-						//dispatch(routerRedux.push('/technological/simplemode/home'))
-						dispatch(routerRedux.push('/technological/workbench'))
+						dispatch(routerRedux.push('/technological/simplemode/home'))
+						// dispatch(routerRedux.push('/technological/workbench'))
 					} else {
 						message.error(res.message)
 					}
@@ -180,103 +200,120 @@ export default class Boundary extends Component {
 				message.error(res.message)
 			}
 		})
+
+
+		// allTemp = [].concat(phoneTemp, emailTemp)
+		// inviteMemberJoinOrg({ members: allTempStr, _organization_id: new_user_org_id }).then((res) => {
+		// 	if (isApiResponseOk(res)) {
+		// 		inviteMemberJoinBoard({ ...data }).then((res) => {
+		// 			if (isApiResponseOk(res)) {
+		// 				dispatch(routerRedux.push('/technological/simplemode/home'))
+		// 				// dispatch(routerRedux.push('/technological/workbench'))
+		// 			} else {
+		// 				message.error(res.message)
+		// 			}
+		// 		})
+		// 	} else {
+		// 		message.error(res.message)
+		// 	}
+		// })
 	}
 
 	// 显示初始指引页面
 	renderInit() {
 		return (
-				<div className={styles.introduce}>
-					<h1>欢迎使用灵犀，我们准备了以下功能以便你能更好地管理项目</h1>
-					<div className={styles.middle}>
-						<div className={styles.left}>
-							<h3>项目功能</h3>
-							<div className={`${styles.list}`}>
-								<div className={`${styles.cloumn}`}>
-									<span className={`${styles.circle} ${styles.calendar}`}>
-										<i className={`${glabalStyles.authTheme}`}>&#xe671;</i>
-									</span>
-									<span>行程安排</span>
-								</div>
-								<div className={`${styles.cloumn}`}>
-									<span className={`${styles.circle} ${styles.check}`}>
-										<i className={`${glabalStyles.authTheme}`}>&#xe674;</i>
-									</span>
-									<span>代办事项</span>
-								</div>
-								<div className={`${styles.cloumn}`}>
-									<span className={`${styles.circle} ${styles.folder}`}>
-										<i className={`${glabalStyles.authTheme}`}>&#xe673;</i>
-									</span>
-									<span>文件托管</span>
-								</div>
-								<div className={`${styles.cloumn}`}>
-									<span className={`${styles.circle} ${styles.chat}`}>
-										<i className={`${glabalStyles.authTheme}`}>&#xe683;</i>
-									</span>
-									<span>项目交流</span>
-								</div>
-								<div className={`${styles.cloumn}`}>
-									<span className={`${styles.circle} ${styles.process}`}>
-										<i className={`${glabalStyles.authTheme}`}>&#xe682;</i>
-									</span>
-									<span>工作流程</span>
-								</div>
+			<div className={styles.introduce}>
+				<h1>欢迎使用灵犀，我们准备了以下功能以便你能更好地管理项目</h1>
+				<div className={styles.middle}>
+					<div className={styles.left}>
+						<h3>项目功能</h3>
+						<div className={`${styles.list}`}>
+							<div className={`${styles.cloumn}`}>
+								<span className={`${styles.circle} ${styles.calendar}`}>
+									<i className={`${glabalStyles.authTheme}`}>&#xe671;</i>
+								</span>
+								<span>行程安排</span>
 							</div>
-							<div className={`${styles.organizer} ${styles.border}`}>
-								<img src={organizer} />
-								<p>
-									<span>轻松管理工作项目</span>
-									<span>简单直接的项目管理</span>
-								</p>
+							<div className={`${styles.cloumn}`}>
+								<span className={`${styles.circle} ${styles.check}`}>
+									<i className={`${glabalStyles.authTheme}`}>&#xe674;</i>
+								</span>
+								<span>代办事项</span>
+							</div>
+							<div className={`${styles.cloumn}`}>
+								<span className={`${styles.circle} ${styles.folder}`}>
+									<i className={`${glabalStyles.authTheme}`}>&#xe673;</i>
+								</span>
+								<span>文件托管</span>
+							</div>
+							<div className={`${styles.cloumn}`}>
+								<span className={`${styles.circle} ${styles.chat}`}>
+									<i className={`${glabalStyles.authTheme}`}>&#xe683;</i>
+								</span>
+								<span>项目交流</span>
+							</div>
+							<div className={`${styles.cloumn}`}>
+								<span className={`${styles.circle} ${styles.process}`}>
+									<i className={`${glabalStyles.authTheme}`}>&#xe682;</i>
+								</span>
+								<span>工作流程</span>
 							</div>
 						</div>
-						<div className={styles.right}>
-							<h3>辅助功能</h3>
-							<div className={`${styles.list}`}>
-								<div className={`${styles.cloumn}`}>
-									<span className={`${styles.circle} ${styles.case}`}>
-										<i className={`${glabalStyles.authTheme}`}>&#xe65a;</i>
-									</span>
-									<span>行程安排</span>
-								</div>
-								<div className={`${styles.cloumn}`}>
-									<span className={`${styles.circle} ${styles.policy}`}>
-										<i className={`${glabalStyles.authTheme}`}>&#xe6c9;</i>
-									</span>
-									<span>代办事项</span>
-								</div>
-								<div className={`${styles.cloumn}`}>
-									<span className={`${styles.circle} ${styles.maps}`}>
-										<i className={`${glabalStyles.authTheme}`}>&#xe677;</i>
-									</span>
-									<span>文件托管</span>
-								</div>
-								<div className={`${styles.cloumn}`}>
-									<span className={`${styles.circle} ${styles.read}`}>
-										<i className={`${glabalStyles.authTheme}`}>&#xe670;</i>
-									</span>
-									<span>项目交流</span>
-								</div>
-								<div className={`${styles.cloumn}`}>
-									<span className={`${styles.circle} ${styles.meeting}`}>
-										<i className={`${glabalStyles.authTheme}`}>&#xe675;</i>
-									</span>
-									<span>工作流程</span>
-								</div>
-							</div>
-							<div className={`${styles.manager} ${styles.border}`}>
-								<img src={manager} />
-								<p>
-									<span>个性化定制专属使用场景</span>
-									<span>全方位服务你的工作场景</span>
-								</p>
-							</div>
+						<div className={`${styles.organizer} ${styles.border}`}>
+							<img src={organizer} />
+							<p>
+								<span>轻松管理工作项目</span>
+								<span>简单直接的项目管理</span>
+							</p>
 						</div>
 					</div>
-					<div className={styles.button}>
-						<Button onClick={this.handleNext} type="primary">好的,我知道了</Button>
+					<div className={styles.right}>
+						<h3>辅助功能</h3>
+						<div className={`${styles.list}`}>
+							<div className={`${styles.cloumn}`}>
+								<span className={`${styles.circle} ${styles.case}`}>
+									<i className={`${glabalStyles.authTheme}`}>&#xe65a;</i>
+								</span>
+								<span>行程安排</span>
+							</div>
+							<div className={`${styles.cloumn}`}>
+								<span className={`${styles.circle} ${styles.policy}`}>
+									<i className={`${glabalStyles.authTheme}`}>&#xe6c9;</i>
+								</span>
+								<span>代办事项</span>
+							</div>
+							<div className={`${styles.cloumn}`}>
+								<span className={`${styles.circle} ${styles.maps}`}>
+									<i className={`${glabalStyles.authTheme}`}>&#xe677;</i>
+								</span>
+								<span>文件托管</span>
+							</div>
+							<div className={`${styles.cloumn}`}>
+								<span className={`${styles.circle} ${styles.read}`}>
+									<i className={`${glabalStyles.authTheme}`}>&#xe670;</i>
+								</span>
+								<span>项目交流</span>
+							</div>
+							<div className={`${styles.cloumn}`}>
+								<span className={`${styles.circle} ${styles.meeting}`}>
+									<i className={`${glabalStyles.authTheme}`}>&#xe675;</i>
+								</span>
+								<span>工作流程</span>
+							</div>
+						</div>
+						<div className={`${styles.manager} ${styles.border}`}>
+							<img src={manager} />
+							<p>
+								<span>个性化定制专属使用场景</span>
+								<span>全方位服务你的工作场景</span>
+							</p>
+						</div>
 					</div>
 				</div>
+				<div className={styles.button}>
+					<Button onClick={this.handleNext} type="primary">好的,我知道了</Button>
+				</div>
+			</div>
 		)
 	}
 
@@ -288,9 +325,9 @@ export default class Boundary extends Component {
 		// console.log(new_input_list, 'sssss')
 		let disabled = false
 		let all_val = false
-		for(let val of new_input_list) {
+		for (let val of new_input_list) {
 			const value = val['value']
-      if(value) {
+			if (value) {
 				all_val = true
 				if (!validateEmail(value) && !validateTel(value)) {
 					disabled = true
@@ -301,18 +338,18 @@ export default class Boundary extends Component {
 
 		return (
 			<div className={styles.introduce}>
-        <h1 style={{textAlign: 'center', marginBottom: 88}}>是否现在就邀请其他人共同使用灵犀</h1>
-        <div className={styles.form}>
-          <h3 style={{marginBottom: 12}}>输入被邀请人手机号/邮箱</h3>
+				<h1 style={{ textAlign: 'center', marginBottom: 88 }}>是否现在就邀请其他人共同使用灵犀</h1>
+				<div className={styles.form}>
+					<h3 style={{ marginBottom: 12 }}>输入被邀请人手机号/邮箱</h3>
 					{
 						new_input_list.map((item, index) => {
 							return <InputExport key={index} inputList={inputList} all_input_val={all_input_val} itemVal={item} index={index} handleAddOneTips={this.handleAddOneTips} updateParentState={this.updateParentState} />
 						})
 					}
-					<span onClick={ this.handleAddMore } className={styles.add_more}>+  添加更多...</span>
+					<span onClick={this.handleAddMore} className={styles.add_more}>+  添加更多...</span>
 					<div className={styles.code_wechat}>
 						<span>
-							{ img_src && <img src={img_src} />}
+							{img_src && <img src={img_src} />}
 						</span>
 						<p>
 							<b className={styles.line}></b>
@@ -324,11 +361,11 @@ export default class Boundary extends Component {
 					{
 						all_val ? (
 							<div className={`${styles.btn}  ${disabled ? styles.disabled : ''}`}>
-								<Button disabled={disabled} type="primary" onClick={ () => { this.handleSubmit(all_val) } }>发送邀请</Button>
+								<Button disabled={disabled} type="primary" onClick={() => { this.handleSubmit(all_val) }}>发送邀请</Button>
 							</div>
 						) : (
-							<div className={styles.btn}><Button onClick={ () => { this.handleSubmit(all_val) } } type="primary">开始协作</Button></div>
-						)
+								<div className={styles.btn}><Button onClick={() => { this.handleSubmit(all_val) }} type="primary">开始协作</Button></div>
+							)
 					}
 				</div>
 			</div>
@@ -352,7 +389,7 @@ export default class Boundary extends Component {
 					<div className={styles.logo}>
 						<img src={logo} />
 					</div>
-					{ this.renderContent() }
+					{this.renderContent()}
 				</div>
 			</div>
 		)

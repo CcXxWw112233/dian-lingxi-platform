@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import { Modal, Dropdown, Menu, Button, message, Input } from "antd";
+import { Modal, Dropdown, Menu, Button, message, Input, Tooltip } from "antd";
 import DrawerContentStyles from "./index.less";
+import globalStyles from './../../../../globalset/css/globalClassName.less';
 import {
   timestampToTimeNormal2,
-  timeToTimestamp
 } from "./../../../../utils/util";
 
 class ShareAndInvite extends Component {
@@ -30,6 +30,7 @@ class ShareAndInvite extends Component {
     handleChangeOnlyReadingShareModalVisible();
   };
   copyContentToClipBoard = content => {
+
     if (!content) {
       message.error("没有可复制内容");
     }
@@ -51,8 +52,8 @@ class ShareAndInvite extends Component {
     if (!data.short_link || !data.password) return "";
     const link = data.short_link;
     const password = data.password;
-    const format = `${link}
-    ${password}`;
+    const format = `链接: ${link}
+    密码: ${password}`;
     return format;
   };
   handleOnlyReadingShareCopyLinkAndPwd = () => {
@@ -62,9 +63,10 @@ class ShareAndInvite extends Component {
   };
   handleOnlyReadingShareStopShare = () => {
     const { data, handleOnlyReadingShareExpChangeOrStopShare } = this.props;
+    const status = data.status === ('0' || '-1') ? '1' : '-1'
     const obj = {
       id: data.id,
-      status: "0"
+      status: status,
     };
     this.setShareStop();
     handleOnlyReadingShareExpChangeOrStopShare(obj);
@@ -84,7 +86,8 @@ class ShareAndInvite extends Component {
       day7: now + dayToSec * 7,
       forever: "0"
     };
-    return stations[key] ? stations[key] : "0";
+    //时间戳保留10位
+    return stations[key] ? JSON.stringify(stations[key]).substr(0, 10) : "0";
   };
   handleOnlyReadingShareEXPMenuClick = ({ item, key }) => {
     const { data, handleOnlyReadingShareExpChangeOrStopShare } = this.props;
@@ -100,11 +103,12 @@ class ShareAndInvite extends Component {
   };
   handleShareMenuClick = ({ item, key }) => {
     const { handleChangeOnlyReadingShareModalVisible } = this.props;
-    const shareMenuMap = new Map([
-      ["onlyReadingShare", () => handleChangeOnlyReadingShareModalVisible()]
-    ]);
-    const action = shareMenuMap.get(key);
-    if (action) action();
+    this.props.handleChangeOnlyReadingShareModalVisible && handleChangeOnlyReadingShareModalVisible()
+    // const shareMenuMap = new Map([
+    //   ["onlyReadingShare", () => handleChangeOnlyReadingShareModalVisible()]
+    // ]);
+    // const action = shareMenuMap.get(key);
+    // if (action) action();
   };
   formatExp = (timestamp = "") => {
     const timeStr = timestampToTimeNormal2(timestamp);
@@ -118,7 +122,10 @@ class ShareAndInvite extends Component {
       handleChangeOnlyReadingShareModalVisible
     } = this.props;
     const { expMenuValue, is_shared } = this.state;
-
+    /***
+     * status 0=未开启 1=已开启 -1=停用
+     */
+    const shareButton = data && data.status === ('0' || '-1') ? '开始分享' : '停止分享'
     let renderOnlyReadingShareEXPMenu = (
       <Menu
         openKeys={[expMenuValue]}
@@ -136,27 +143,14 @@ class ShareAndInvite extends Component {
         <Menu.Item key="onlyReadingShare">
           <span>只读分享</span>
         </Menu.Item>
-        <Menu.Item key="inviteNewMember">
+        {/* <Menu.Item key="inviteNewMember">
           <span>邀请新成员</span>
-        </Menu.Item>
+        </Menu.Item> */}
       </Menu>
     );
     return (
       <div className={DrawerContentStyles.wrapper}>
-        {is_shared === "1" ? (
-          <p
-            className={DrawerContentStyles.right__shareIndicator}
-            onClick={() => handleChangeOnlyReadingShareModalVisible()}
-          >
-            <span className={DrawerContentStyles.right__shareIndicator_icon} />
-            <span className={DrawerContentStyles.right__shareIndicator_text}>
-              正在分享
-            </span>
-          </p>
-        ) : null}
-        <Dropdown overlay={shareMenu}>
-          <span className={DrawerContentStyles.right__share} />
-        </Dropdown>
+    
         {onlyReadingShareModalVisible && (
           <Modal
             footer={null}
@@ -264,9 +258,9 @@ class ShareAndInvite extends Component {
                   }
                   onClick={this.handleOnlyReadingShareStopShare}
                 >
-                  停止分享
+                  {shareButton}
                 </span>
-                <Button onClick={this.handleOnlyReadingShareCopyLinkAndPwd}>
+                <Button onClick={this.handleOnlyReadingShareCopyLinkAndPwd} className={DrawerContentStyles.onlyReadingShareModal__copyButton}>
                   复制链接和密码
                 </Button>
               </p>

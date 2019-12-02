@@ -3,6 +3,9 @@ body,
 :global(#root) {
   height: 100%;
 }
+:global(#root > .ant-layout){
+  height: 100%;
+}
 
 body {
   background-color: rgba(245, 245, 245, 1);

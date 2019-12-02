@@ -6,9 +6,12 @@ import FileModule from '@/routes/Technological/components/ProjectDetail/FileModu
 import { Modal, Dropdown, Button, Select, Icon, TreeSelect, Tree } from 'antd';
 import {
   checkIsHasPermission, checkIsHasPermissionInBoard, getSubfixName,
-  openPDF, setBoardIdStorage, getOrgNameWithOrgIdFilter
+  openPDF, setBoardIdStorage, getOrgNameWithOrgIdFilter,
+  isPaymentOrgUser
 } from "../../../../../utils/businessFunction";
 import { height } from 'window-size';
+import BoarderfilesHeader from '@/routes/Technological/components/ProjectDetail/BoarderfilesHeader'
+import { setShowSimpleModel } from '../../../../../services/technological/organizationMember';
 
 const { Option } = Select;
 const { TreeNode, DirectoryTree } = Tree;
@@ -18,12 +21,12 @@ const getEffectOrReducerByNameTask = name => `projectDetailTask/${name}`
 const getEffectOrReducerByNameFile = name => `projectDetailFile/${name}`
 const getEffectOrReducerByNameProcess = name => `projectDetailProcess/${name}`
 
-
 class BoardFiles extends Component {
   state = {
     boardSelectVisible: true,
     boardFileContentVisible: false,
-
+    currentBoardId: 0,
+    userSelectBoard: false
   };
 
   constructor(props) {
@@ -32,11 +35,52 @@ class BoardFiles extends Component {
 
 
   componentDidMount() {
-    console.log('sssss', 112)
+    const { dispatch, simplemodeCurrentProject = {} } = this.props;
+    let currentBoardDetail = {}
+    if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
+      currentBoardDetail = { ...simplemodeCurrentProject }
+      dispatch({
+        type: 'simpleWorkbenchbox/updateDatas',
+        payload: {
+          currentBoardDetail: currentBoardDetail
+        }
+      });
+      this.openBoardFiles(currentBoardDetail);
+
+    }
+
   }
 
 
   componentWillReceiveProps(nextProps) {
+    console.log("simplemodeCurrentProject", nextProps && nextProps.simplemodeCurrentProject);
+    const { dispatch, simplemodeCurrentProject } = nextProps;
+    const { simplemodeCurrentProject: old_simplemodeCurrentProject } = this.props;
+    let currentBoardDetail = {}
+    if (simplemodeCurrentProject && simplemodeCurrentProject.board_id && old_simplemodeCurrentProject.board_id != simplemodeCurrentProject.board_id) {
+      currentBoardDetail = { ...simplemodeCurrentProject }
+      dispatch({
+        type: 'simpleWorkbenchbox/updateDatas',
+        payload: {
+          currentBoardDetail: currentBoardDetail
+        }
+      });
+      this.setState({
+        userSelectBoard: false,
+      });
+      this.openBoardFiles(currentBoardDetail);
+    } else {
+      if (!simplemodeCurrentProject || (simplemodeCurrentProject && !simplemodeCurrentProject.board_id)) {
+        if (!this.state.userSelectBoard) {
+          this.setState({
+            boardSelectVisible: true,
+            boardFileContentVisible: false,
+          });
+        }
+
+      }
+
+    }
 
   }
 
@@ -44,9 +88,12 @@ class BoardFiles extends Component {
     //console.log(board);
     this.setState({
       boardSelectVisible: false,
-      boardFileContentVisible: true
+      boardFileContentVisible: true,
+      currentBoardId: board.board_id
+    }, () => {
+      this.initialget(board.board_id)
     });
-    this.initialget(board.board_id);
+
   }
 
   initialget(id) {
@@ -170,7 +217,7 @@ class BoardFiles extends Component {
         })
       },
       addFileCommit(params) {
-        console.log("addFileCommit", params);
+        // console.log("addFileCommit", params);
         dispatch({
           type: getEffectOrReducerByNameFile('addFileCommit'),
           payload: params
@@ -224,18 +271,21 @@ class BoardFiles extends Component {
   }
   render() {
     const { dispatch } = this.props
+    const { selectedRowKeys = [] } = this.props
     const updateDatasFile = (payload) => {
       dispatch({
         type: 'projectDetailFile/updateDatas',
         payload
       })
     }
-    const { boardSelectVisible, boardFileContentVisible } = this.state;
+    const { boardSelectVisible, boardFileContentVisible, currentBoardId } = this.state;
     // console.log(boardSelectVisible,boardFileContentVisible,"sssss");
+    const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
 
     const { allOrgBoardTreeList = [] } = this.props;
     const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
     let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : 0;
+
     return (
       <div className={indexStyles.boardFilesContainer}>
         {
@@ -244,24 +294,64 @@ class BoardFiles extends Component {
               <div className={indexStyles.boardSelectWapper}>
                 {
                   allOrgBoardTreeList.map((org, orgkey) => {
+                    //全组织或者当前组织
+                    if (user_set.current_org === '0' || user_set.current_org === org.org_id) {
+                      if (isPaymentOrgUser(org.org_id)) {
 
-                    return org.board_list && org.board_list.length > 0 && (
-                      <div key={org.org_id}>
-                        <div className={indexStyles.groupName}>{org.org_name}</div>
-                        <div className={indexStyles.boardItemWapper}>
-                          {
-                            org.board_list.map((board, key) => {
-                              return (
-                                <div key={board.board_id} className={indexStyles.boardItem} onClick={e => this.openBoardFiles(board)}>
-                                  <i className={`${globalStyles.authTheme} ${indexStyles.boardIcon}`}>&#xe67d;</i>
-                                  <span className={indexStyles.boardName}>{board.board_name}</span>
-                                </div>
-                              );
-                            })
-                          }
+                      return org.board_list && org.board_list.length > 0 && (
+                        <div key={org.org_id}>
+                          <div className={indexStyles.groupName}>{org.org_name}</div>
+                          <div className={indexStyles.boardItemWapper}>
+                            {
+                              org.board_list.map((board, key) => {
+                                return (
+                                  <div key={board.board_id} className={indexStyles.boardItem} onClick={e => {
+                                    this.setState({
+                                      userSelectBoard: true
+                                    });
+                                    this.openBoardFiles(board);
+                                  }}>
+                                    <i className={`${globalStyles.authTheme} ${indexStyles.boardIcon}`}>&#xe67d;</i>
+                                    <span className={indexStyles.boardName}>{board.board_name}</span>
+                                  </div>
+                                );
+                              })
+                            }
+                          </div>
                         </div>
-                      </div>
-                    )
+                      )
+                        return org.board_list && org.board_list.length > 0 && (
+                          <div key={org.org_id}>
+                            <div className={indexStyles.groupName}>{org.org_name}</div>
+                            <div className={indexStyles.boardItemWapper}>
+                              {
+                                org.board_list.map((board, key) => {
+
+                                  return (
+                                    <div key={board.board_id} className={indexStyles.boardItem} onClick={e => {
+                                      this.setState({
+                                        userSelectBoard: true
+                                      });
+                                      this.openBoardFiles(board);
+                                    }}>
+                                      <i className={`${globalStyles.authTheme} ${indexStyles.boardIcon}`}>&#xe67d;</i>
+                                      <span className={indexStyles.boardName}>{board.board_name}</span>
+                                    </div>
+                                  );
+
+                                })
+                              }
+                            </div>
+                          </div>
+                        )
+
+                      } else {
+                        return;
+                      }
+
+
+                    }
+
                   })
                 }
 
@@ -272,8 +362,16 @@ class BoardFiles extends Component {
         {
           boardFileContentVisible && (
             <div className={indexStyles.boardFileContentWapper} style={contentHeight > 0 ? { maxHeight: contentHeight + 'px' } : {}}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '16px' }}>
+                <BoarderfilesHeader
+                  board_id={currentBoardId}
+                  updateDatasFile={updateDatasFile}
+                  //  {...this.getFileModuleProps()} 
+                  selectedRowKeys={selectedRowKeys} />
+              </div>
+
               <FileModule
-                {...this.getFileModuleProps()}
+                // {...this.getFileModuleProps()}
                 marginTop={'0px'}
                 fileModuleBack={this.fileModuleBack}
                 showBackBtn={true}
@@ -292,27 +390,35 @@ class BoardFiles extends Component {
 
 
 function mapStateToProps({
-  modal, projectDetail, projectDetailTask, projectDetailFile, projectDetailProcess, loading,
+  // modal, projectDetail, projectDetailTask, projectDetailFile, projectDetailProcess, loading,
   simpleWorkbenchbox: {
     boardListData,
     currentBoardDetail,
     boardFileListData
   },
   simplemode: {
-    allOrgBoardTreeList
+    allOrgBoardTreeList,
+    simplemodeCurrentProject
+  },
+  projectDetailFile: {
+    datas: {
+      selectedRowKeys
+    }
   }
 }) {
 
-  const modelObj = {
-    datas: { ...projectDetail['datas'], ...projectDetailTask['datas'], ...projectDetailFile['datas'], ...projectDetailProcess['datas'], }
-  }
+  // const modelObj = {
+  //   datas: { ...projectDetail['datas'], ...projectDetailTask['datas'], ...projectDetailFile['datas'], ...projectDetailProcess['datas'], }
+  // }
 
   return {
-    modal, model: modelObj, loading,
+    // modal, model: modelObj, loading,
+    selectedRowKeys,
     boardListData,
     currentBoardDetail,
     boardFileListData,
-    allOrgBoardTreeList
+    allOrgBoardTreeList,
+    simplemodeCurrentProject
   }
 }
 export default connect(mapStateToProps)(BoardFiles)

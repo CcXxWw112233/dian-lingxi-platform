@@ -1,44 +1,49 @@
 import React from 'react'
 import indexStyles from './index.less'
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
-import { Table, Button, Menu, Dropdown, Icon, Input, Drawer, Tooltip, Upload, Modal } from 'antd';
+import { Table, Button, Menu, Dropdown, Icon, Input, Drawer, Tooltip, Upload, Modal, Spin, Progress } from 'antd';
 import FileDerailBreadCrumbFileNav from './FileDerailBreadCrumbFileNav'
-import {stopPropagation} from "../../../../../../../utils/util";
+import { stopPropagation } from "../../../../../../../utils/util";
 import Comment from './Comment/Comment'
 import Comment2 from './Comment/Comment2'
 import CommentListItem2 from './Comment/CommentListItem2'
-import {getRelations, JoinRelation} from "../../../../../../../services/technological/task";
-import {isApiResponseOk} from "../../../../../../../utils/handleResponseData";
+import { getRelations, JoinRelation } from "../../../../../../../services/technological/task";
+import { isApiResponseOk } from "../../../../../../../utils/handleResponseData";
 import ContentRaletion from '../../../../../../../components/ContentRaletion'
-import {checkIsHasPermissionInBoard, getSubfixName} from "../../../../../../../utils/businessFunction";
+import { checkIsHasPermissionInBoard, getSubfixName, checkIsHasPermissionInVisitControl } from "../../../../../../../utils/businessFunction";
 import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_COMMENT_PUBLISH, PROJECT_FILES_COMMENT_VIEW, PROJECT_FILES_FILE_DELETE,
   PROJECT_FILES_FILE_DOWNLOAD,
   PROJECT_FILES_FILE_EDIT, PROJECT_FILES_FILE_UPDATE, PROJECT_FILES_FILE_UPLOAD, REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE
 } from "../../../../../../../globalset/js/constant";
-import {message} from "antd/lib/index";
-import {color_4} from "../../../../../../../globalset/js/styles";
+import { message } from "antd/lib/index";
+import { color_4 } from "../../../../../../../globalset/js/styles";
 import Cookies from "js-cookie";
 
 import VisitControl from './../../../../VisitControl/index'
-import {toggleContentPrivilege, setContentPrivilege, removeContentPrivilege} from './../../../../../../../services/technological/project'
+import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from './../../../../../../../services/technological/project'
 
 import ZoomPicture from './../../../../../../../components/ZoomPicture/index'
 import withBodyClientDimens from './../../../../../../../components/HOC/withBodyClientDimens'
 
 import InformRemind from '@/components/InformRemind'
+import VersionSwitching from '@/components/VersionSwitching'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
+import { createShareLink, modifOrStopShareLink } from '@/services/technological/workbench'
+import ShareAndInvite from './../../../../ShareAndInvite/index'
+import CirclePreviewLoadingComponent from '@/components/CirclePreviewLoadingComponent'
+let timer
 
 class FileDetailContent extends React.Component {
 
-  versionItemClick({value, key}){
+  versionItemClick({ value, key }) {
     const { file_resource_id, file_id } = value
     this.setState({
       imgLoaded: false
     })
-    this.props.updateFileDatas({filePreviewCurrentVersionKey: key, filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id})
-    this.props.filePreview({id: file_resource_id, file_id})
+    this.props.updateFileDatas({ filePreviewCurrentVersionKey: key, filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id, isExpandFrame: false })
+    this.props.filePreview({ id: file_resource_id, file_id })
     this.setState({
       imgLoaded: false,
       editMode: true,
@@ -63,25 +68,54 @@ class FileDetailContent extends React.Component {
     imgLoaded: false,
     editMode: checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT),
     isZoomPictureFullScreenMode: false, //图评全屏模式
+    onlyReadingShareModalVisible: false, //只读分享model
+    onlyReadingShareData: {},
+
+    // 是否显示点击时候的样式颜色
+    is_show_active_color: true,
+
+    // 更新版本信息列表,将其保存一个状态
+    new_filePreviewCurrentVersionList: [],
+
+    // 是否显示编辑版本信息的描述
+    is_edit_version_description: false,
+
+    // 定义一个数组来保存编辑状态的数组
+    // editVersionFileList: [],
+    editValue: '', // 编辑时候的文本信息
+
+    // 进度条的百分比
+    percent: 0
   }
   constructor() {
     super();
     this.x1 = 0
     this.y1 = 0
     this.isDragging = false
-    this.SelectedRect = {x: 0, y: 0 }
+    this.SelectedRect = { x: 0, y: 0 }
   }
 
   componentWillMount() {
-    const { datas: { filePreviewCommitPoints=[]} }= this.props.model
+    const { datas: { filePreviewCommitPoints = [] } } = this.props.model
     this.setState({
       rects: filePreviewCommitPoints
     })
   }
 
   componentWillReceiveProps(nextProps) {
+    // console.log(nextProps, 'sssss')
     const rects = []
-    const { datas: { filePreviewCommitPoints=[]} }= nextProps.model
+    const { datas: { filePreviewCommitPoints = [], filePreviewCurrentVersionList = [] } } = nextProps.model
+    let new_filePreviewCurrentVersionList = [...filePreviewCurrentVersionList]
+    new_filePreviewCurrentVersionList = new_filePreviewCurrentVersionList.map(item => {
+      let new_item = item
+      new_item = { ...item, is_edit: false }
+      return new_item
+    })
+
+    this.setState({
+      new_filePreviewCurrentVersionList,
+    })
     this.setState({
       rects: filePreviewCommitPoints
     })
@@ -91,7 +125,7 @@ class FileDetailContent extends React.Component {
   previewImgLoad(e) {
     const { maxImageWidth } = this.state
     this.setState({
-      imgWidth: e.target.width >= maxImageWidth? maxImageWidth : e.target.width,
+      imgWidth: e.target.width >= maxImageWidth ? maxImageWidth : e.target.width,
       imgHeight: e.target.height,
       imgLoaded: true
     })
@@ -138,7 +172,7 @@ class FileDetailContent extends React.Component {
     })
   }
   isObj(obj) {
-    if(!obj || typeof obj !=='object') {
+    if (!obj || typeof obj !== 'object') {
       return false
     } else {
       return true
@@ -150,26 +184,26 @@ class FileDetailContent extends React.Component {
     const offsetDe = clientWidth * 0.1
     this.x1 = e.clientX - target.offsetLeft - offsetDe;
     this.y1 = e.clientY - target.offsetTop - modalTop;
-    this.SelectedRect = {x: 0, y: 0 }
-    if(!this.isDragging) {
+    this.SelectedRect = { x: 0, y: 0 }
+    if (!this.isDragging) {
       const { punctuateArea, imgHeight, imgWidth } = this.state
 
       let x = this.x1
       let y = this.y1
 
-      if(imgWidth - x < punctuateArea/2) { //右边界
+      if (imgWidth - x < punctuateArea / 2) { //右边界
         x = imgWidth - punctuateArea
-      } else if(x < punctuateArea/2) { //左边界
+      } else if (x < punctuateArea / 2) { //左边界
         x = 0
       } else {
-        x = x - punctuateArea/2
+        x = x - punctuateArea / 2
       }
-      if(imgHeight - y < punctuateArea/2) { //下边界
+      if (imgHeight - y < punctuateArea / 2) { //下边界
         y = imgHeight - punctuateArea
-      } else if(y < punctuateArea/2) { //上边界
+      } else if (y < punctuateArea / 2) { //上边界
         y = 0
       } else {
-        y = y - punctuateArea/2
+        y = y - punctuateArea / 2
       }
       const property = {
         x: x,
@@ -194,7 +228,7 @@ class FileDetailContent extends React.Component {
   operateAreaBlur(e) {
     const that = this
     setTimeout(function () {
-      if(that.state.mentionFocus) {
+      if (that.state.mentionFocus) {
         return false
       }
       that.setState({
@@ -237,7 +271,7 @@ class FileDetailContent extends React.Component {
     const offsetDe = clientWidth * 0.1
     this.x1 = e.clientX - target.offsetLeft - offsetDe;
     this.y1 = e.clientY - target.offsetTop - modalTop;
-    this.SelectedRect = {x: 0, y: 0 }
+    this.SelectedRect = { x: 0, y: 0 }
     this.isDragging = false
 
     /*定义鼠标移动事件*/
@@ -247,7 +281,7 @@ class FileDetailContent extends React.Component {
   }
   onmousemove(e) {
     //mousedown 后开始拖拽时添加
-    if(!this.isDragging) {
+    if (!this.isDragging) {
       const property = {
         x: this.x1,
         y: this.y1,
@@ -279,8 +313,8 @@ class FileDetailContent extends React.Component {
       const y = e.clientY - target.offsetTop - modalTop;
       //------------------------
       //设置高度
-      this.SelectedRect.x= x-this.x1;
-      this.SelectedRect.y= y-this.y1;
+      this.SelectedRect.x = x - this.x1;
+      this.SelectedRect.y = y - this.y1;
 
       const { imgWidth, imgHeight, punctuateArea } = this.state
 
@@ -290,21 +324,21 @@ class FileDetailContent extends React.Component {
       let width = Math.abs(this.SelectedRect.x)
       let height = Math.abs(this.SelectedRect.y)
 
-      if(imgWidth - px - width< 0) { //右边界
+      if (imgWidth - px - width < 0) { //右边界
         width = imgWidth - px
-      } else if(x < punctuateArea/2) { //左边界
+      } else if (x < punctuateArea / 2) { //左边界
         width = 0
       } else {
-        width = x - punctuateArea/2
+        width = x - punctuateArea / 2
       }
-      if(imgHeight - py - height < 0) { //下边界
+      if (imgHeight - py - height < 0) { //下边界
         height = imgHeight - py
-      } else if(y < punctuateArea/2) { //上边界
+      } else if (y < punctuateArea / 2) { //上边界
         height = 0
       } else {
-        height = y - punctuateArea/2
+        height = y - punctuateArea / 2
       }
-      const property ={
+      const property = {
         x: px,
         y: py,
         width: Math.abs(this.SelectedRect.x),
@@ -324,8 +358,8 @@ class FileDetailContent extends React.Component {
     this.stopDragging()
   }
 
-  setEditMode(){
-    if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
+  setEditMode() {
+    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -334,55 +368,107 @@ class FileDetailContent extends React.Component {
     })
   }
 
+  // 访问控制权限弹窗
+  alarmNoEditPermission = () => {
+    message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+  }
+
 
   //header
   closeFile() {
-    const { datas: { breadcrumbList = [] } }= this.props.model
+    const { datas: { breadcrumbList = [], isExpandFrame } } = this.props.model
     breadcrumbList.splice(breadcrumbList.length - 1, 1)
-    this.props.setPreviewFileModalVisibile()
-    this.props.updateDatasFile({isInOpenFile: false, filePreviewUrl: '', breadcrumbList: [] })
+    clearTimeout(timer)
+    this.setState({
+      percent: 0
+    })
+    this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile()
+    this.props.updateDatasFile({ isInOpenFile: false, filePreviewUrl: '', breadcrumbList: [], isExpandFrame: false })
   }
+
+  /* 点击圈屏右上脚icon-是否全屏显示 */
   zoomFrame() {
-    const { datas: { isExpandFrame = false } }= this.props.model
+    this.setState({ isZoomPictureFullScreenMode: !this.state.isZoomPictureFullScreenMode });
+  }
+
+  // 显示/隐藏右侧实时圈图信息
+  isShowRightRealTimeMsg() {
+    const { datas: { isExpandFrame = false } } = this.props.model
     this.props.updateDatasFile({
       isExpandFrame: !isExpandFrame,
     })
   }
-  fileDownload({filePreviewCurrentId, pdfDownLoadSrc}) {
-    if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
+
+  fileDownload({ filePreviewCurrentId, pdfDownLoadSrc }) {
+    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
     //如果时pdf
-    if(pdfDownLoadSrc) {
+    if (pdfDownLoadSrc) {
       window.open(pdfDownLoadSrc)
-    }else {
-      this.props.fileDownload({ids: filePreviewCurrentId})
+    } else {
+      this.props.fileDownload({ ids: filePreviewCurrentId })
     }
   }
+
+  // 保存为新版本
+  saveAsNewVersion = ({ filePreviewCurrentId, pdfDownLoadSrc }) => {
+    // const { datas: { currentPreviewFileData: { id, file_id, board_id, } } } = this.props.model
+    const { datas: { filePreviewCurrentFileId, currentPreviewFileData: { id } } } = this.props.model
+    // const { datas = {} } = this.props.model;
+    // const { currentPreviewFileData = {} } = datas
+    // const { id } = currentPreviewFileData;
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'workbenchFileDetail/saveAsNewVersion',
+      payload: {
+        id: id,
+      }
+    })
+    // let res = dispatch({
+    //   type: 'workbenchFileDetail/saveAsNewVersion',
+    //   payload: {
+    //     id,
+    //   }
+    // })
+    // res.then(data => {
+    //   console.log('data...',data)
+    //   // const { fileId, fileName } = data;
+    //   // const list = [data];
+    //   // const file_id = fileId;
+    //   // const file_name = fileName;
+    //   // const e = {
+    //   //   key: '1'
+    //   // }
+    //   // this.getVersionItemMenuClick({ list, file_id, file_name }, e);
+    // })
+  }
+
+
   //item操作
   operationMenuClick(data, e) {
     const { file_id, type, file_resource_id } = data
-    const { datas: { projectDetailInfoData= {}, breadcrumbList = [], pdfDownLoadSrc } } = this.props.model
+    const { datas: { projectDetailInfoData = {}, breadcrumbList = [], pdfDownLoadSrc } } = this.props.model
     const { board_id } = projectDetailInfoData
     const { key } = e
     switch (key) {
       case '1':
         break
       case '2':
-        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
         //如果时pdf
-        if(pdfDownLoadSrc) {
+        if (pdfDownLoadSrc) {
           window.open(pdfDownLoadSrc)
-        }else {
-          this.props.fileDownload({ids: file_resource_id})
+        } else {
+          this.props.fileDownload({ ids: file_resource_id })
         }
         break
       case '3':
-        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)){
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -393,7 +479,7 @@ class FileDetailContent extends React.Component {
         })
         break
       case '4':
-        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)){
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -404,39 +490,66 @@ class FileDetailContent extends React.Component {
         })
         break
       case '5':
-        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE)){
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE)) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
         this.props.fileRemove({
           board_id,
-          arrays: JSON.stringify([{type, id: file_id}])
+          arrays: JSON.stringify([{ type, id: file_id }])
         })
         breadcrumbList.splice(breadcrumbList.length - 1, 1)
-        this.props.updateDatasFile({isInOpenFile: false})
+        this.props.updateDatasFile({ isInOpenFile: false })
         break
       default:
         break
     }
   }
-  getVersionItemMenuClick({list, file_id, file_name }, e) {
+
+  getVersionItemMenuClick = ({ list, file_id, file_name }, e) => {
+    e && e.domEvent && e.domEvent.stopPropagation()
+    const { datas: { board_id } } = this.props.model
+    const { is_privilege, privileges = [] } = this.getFieldFromPropsCurrentPreviewFileData('is_privilege', 'privileges')
+    // if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
+    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const key = e.key
     switch (key) {
-      case '1':
+      case '1': // 设置为主版本
+        const { dispatch } = this.props
         let file_resource_id = ''
-        for(let val of list) {
-          if(file_id == val['file_id']) {
+        let file_version_id = ''
+        let file_name = ''
+        for (let val of list) {
+          if (file_id == val['file_id']) {
             file_resource_id = val['file_resource_id']
+            file_version_id = val['version_id']
+            file_name = val['file_name']
             break
           }
         }
+        // console.log({file_resource_id, file_id}, 'sssss')
         this.setState({
           imgLoaded: false
         })
-        this.props.updateDatasFile({ filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id})
+        this.props.updateDatasFile({ filePreviewCurrentId: file_resource_id, filePreviewCurrentFileId: file_id })
         //版本改变预览
         // this.props.filePreview({id: file_resource_id, file_id})
-        this.handleUploadPDForElesFilePreview({file_name, id: file_id, file_resource_id})
+        this.handleUploadPDForElesFilePreview({ file_name, id: file_id, file_resource_id })
+        dispatch({
+          type: "workbenchFileDetail/setCurrentVersionFile",
+          payload: {
+            id: file_id,
+            set_major_version: '1',
+            version_id: file_version_id,
+            file_name: file_name,
+          }
+        })
 
         this.setState({
           imgLoaded: false,
@@ -449,22 +562,399 @@ class FileDetailContent extends React.Component {
         break
       case '2':
         break
+      // 编辑版本信息
+      case '3':
+        this.setState({
+          is_edit_version_description: true
+        })
+        this.chgVersionFileEdit({ list, file_id, file_name })
+        break
       default:
         break
     }
   }
+
+  handleChangeOnlyReadingShareModalVisible = () => {
+    const { onlyReadingShareModalVisible } = this.state
+    //打开之前确保获取到数据
+    if (!onlyReadingShareModalVisible) {
+      Promise.resolve(this.createOnlyReadingShareLink()).then(() => {
+        this.setState({
+          onlyReadingShareModalVisible: true
+        })
+      }).catch(err => message.error('获取分享信息失败'))
+    } else {
+      this.setState({
+        onlyReadingShareModalVisible: false
+      })
+    }
+  }
+  getSearchFromLocation = location => {
+    if (!location.search) {
+      return {}
+    }
+    return location.search.substring(1).split('&').reduce((acc, curr) => {
+      const [key, value] = curr.split('=')
+      return Object.assign({}, acc, { [key]: value })
+    }, {})
+  }
+  createOnlyReadingShareLink = () => {
+    // const { location } = this.props
+    // //获取参数
+    // const { board_id = '', appsSelectKey = '', file_id = '' } = this.getSearchFromLocation(location)
+
+    const { datas: { currentPreviewFileData: { file_id, board_id, } } } = this.props.model
+
+    const payload = {
+      board_id: board_id,
+      rela_type: '3',
+      rela_id: file_id,
+    }
+    return createShareLink(payload).then(({ code, data }) => {
+      if (code === '0') {
+        this.setState(() => {
+          return {
+            onlyReadingShareData: data
+          }
+        })
+      } else {
+        message.error('获取分享信息失败')
+        return new Error('can not create share link.')
+      }
+    })
+  }
+  handleOnlyReadingShareExpChangeOrStopShare = (obj) => {
+    const isStopShare = obj && obj['status'] && obj['status'] === '0'
+    return modifOrStopShareLink(obj).then(res => {
+      if (res && res.code === '0') {
+        if (isStopShare) {
+          message.success('停止分享成功')
+        } else {
+          message.success('修改成功')
+          const { dispatch, } = this.props
+          const { datas: { currentPreviewFileData = {} } } = this.props.model
+          const isShared = obj && obj['status'] && obj['status']
+          if (isShared) {
+            let new_currentPreviewFileData = { ...currentPreviewFileData, is_shared: obj['status'] }
+            dispatch({
+              type: 'workbenchFileDetail/updateDatas',
+              payload: {
+                currentPreviewFileData: new_currentPreviewFileData,
+              }
+            })
+          }
+        }
+        this.setState((state) => {
+          const { onlyReadingShareData } = state
+          return {
+            onlyReadingShareData: Object.assign({}, onlyReadingShareData, obj)
+          }
+        })
+      } else {
+        message.error('操作失败')
+      }
+    }).catch(err => {
+      message.error('操作失败')
+    })
+  }
+
+  // 执行人列表去重
+  arrayNonRepeatfy = arr => {
+    let temp_arr = []
+    let temp_id = []
+    for (let i = 0; i < arr.length; i++) {
+      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
+        temp_arr.push(arr[i]);
+        temp_id.push(arr[i]['id'])
+      }
+    }
+    return temp_arr
+  }
+
+  /**
+    * 访问控制移除成员
+    * @param {String} id 移除成员对应的id
+    */
+  handleVisitControlRemoveContentPrivilege = id => {
+    removeContentPrivilege({
+      id: id
+    }).then(res => {
+      const isResOk = res => res && res.code === '0'
+      if (isResOk(res)) {
+        setTimeout(() => {
+          message.success('移除用户成功')
+        }, 500)
+        this.visitControlUpdateCurrentModalData({ removeId: id, type: 'remove' })
+      } else {
+        message.warning(res.message)
+      }
+    })
+  }
+
+  /**
+   * 其他成员的下拉回调
+   * @param {String} id 这是用户的user_id
+   * @param {String} type 这是对应的用户字段
+   * @param {String} removeId 这是对应移除用户的id
+   */
+  handleClickedOtherPersonListOperatorItem = (id, type, removeId) => {
+    if (type === 'remove') {
+      this.handleVisitControlRemoveContentPrivilege(removeId)
+    } else {
+      this.handleVisitControlChangeContentPrivilege(id, type, '更新用户控制类型失败')
+    }
+  }
+
+  /**
+   * 访问控制设置更新成员
+   * @param {String} id 设置成员对应的id
+   * @param {String} type 设置成员对应的字段
+   */
+  handleVisitControlChangeContentPrivilege = (id, type, errorText) => {
+    const { version_id, privileges } = this.getFieldFromPropsCurrentPreviewFileData('version_id', 'privileges')
+    const content_id = version_id
+    const content_type = 'file'
+    const privilege_code = type
+    let temp_id = []
+    temp_id.push(id)
+    setContentPrivilege({
+      content_id,
+      content_type,
+      privilege_code,
+      user_ids: temp_id
+    }).then(res => {
+      if (res && res.code === '0') {
+        setTimeout(() => {
+          message.success('设置成功')
+        }, 500)
+        let temp_arr = []
+        temp_arr = res && res.data[0]
+        this.visitControlUpdateCurrentModalData({ temp_arr: temp_arr, type: 'change', code: type })
+      } else {
+        message.warning(res.message)
+      }
+    })
+  }
+
+  /**
+  * 添加成员的回调
+  * @param {Array} users_arr 添加成员的数组
+  */
+  handleVisitControlAddNewMember = (users_arr = []) => {
+    if (!users_arr.length) return
+    this.handleSetContentPrivilege(users_arr, 'read')
+  }
+
+  // 访问控制设置回调
+  handleSetContentPrivilege = (users_arr = [], type, errorText = '访问控制添加人员失败，请稍后再试') => {
+    //debugger
+    const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    const { user_id } = user_set
+    const { version_id, privileges = [] } = this.getFieldFromPropsCurrentPreviewFileData('version_id', 'privileges')
+    const content_id = version_id
+    const content_type = 'file'
+    const privilege_code = type
+    let temp_ids = [] // 用来保存添加用户的id
+    let new_ids = [] // 用来保存权限列表中用户id
+    let new_privileges = [...privileges]
+    if (!Array.isArray(users_arr)) return false
+    // 这是所有添加成员的id列表
+    users_arr && users_arr.map(item => {
+      temp_ids.push(item.id)
+    })
+
+    let flag
+    // 权限列表中的id
+    new_privileges = new_privileges && new_privileges.map(item => {
+      let { id } = (item && item.user_info) && item.user_info
+      if (user_id == id) { // 从权限列表中找到自己
+        if (temp_ids.indexOf(id) != -1) { // 判断自己是否在添加的列表中
+          flag = true
+        }
+      }
+      new_ids.push(id)
+    })
+
+    // 这里是需要做一个只添加了自己的一条提示
+    if (flag && temp_ids.length == '1') { // 表示只选择了自己, 而不是全选
+      message.warn('该成员已存在, 请不要重复添加', MESSAGE_DURATION_TIME)
+      return false
+    } else { // 否则表示进行了全选, 那么就过滤
+      temp_ids = temp_ids && temp_ids.filter(item => {
+        if (new_ids.indexOf(item) == -1) {
+          return item
+        }
+      })
+    }
+
+    setContentPrivilege({
+      content_id,
+      content_type,
+      privilege_code,
+      user_ids: temp_ids
+    }).then(res => {
+      if (res && res.code === '0') {
+        setTimeout(() => {
+          message.success('添加用户成功')
+        }, 500)
+        let temp_arr = []
+        temp_arr.push(res.data)
+        if (!Array.isArray(temp_arr)) return false
+        this.visitControlUpdateCurrentModalData({ privileges: temp_arr, type: 'add' })
+      } else {
+        message.warning(res.message)
+      }
+    })
+  }
+
+  /**
+   * 访问控制的开关切换
+   * @param {Boolean} flag 开关切换
+   */
+  handleVisitControlChange = (flag) => {
+    const { is_privilege = '0', version_id } = this.getFieldFromPropsCurrentPreviewFileData('is_privilege', 'version_id')
+    const toBool = str => !!Number(str)
+    const is_privilege_bool = toBool(is_privilege)
+    if (flag === is_privilege_bool) {
+      return
+    }
+    //toggle权限
+    const data = {
+      content_id: version_id,
+      content_type: 'file',
+      is_open: flag ? 1 : 0
+    }
+    toggleContentPrivilege(data).then(res => {
+      if (res && res.code === '0') {
+        setTimeout(() => {
+          message.success('设置成功')
+        }, 500)
+        let temp_arr = res && res.data
+        this.visitControlUpdateCurrentModalData({ is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr }, flag)
+      } else {
+        message.warning(res.message)
+      }
+    })
+    // console.log(flag, 'get visitcontrol change')
+  }
+
+  // 访问控制更新数据
+  visitControlUpdateCurrentModalData = obj => {
+    const { datas: { currentPreviewFileData, currentPreviewFileData: { folder_id, privileges = [] } }, board_id } = this.props.model
+    const { dispatch } = this.props
+    // 设置访问控制开关
+    if (obj && obj.type && obj.type == 'privilege') {
+      let new_privileges = [...privileges]
+      for (let item in obj) {
+        if (item == 'privileges') {
+          obj[item].map(val => {
+            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            if (temp_arr && !temp_arr.length) return false
+            return new_privileges = [...temp_arr]
+          })
+        }
+      }
+      let newCurrentPreviewFileData = { ...currentPreviewFileData, is_privilege: obj.is_privilege, privileges: new_privileges }
+      dispatch({
+        type: 'workbenchFileDetail/updateDatas',
+        payload: {
+          currentPreviewFileData: newCurrentPreviewFileData
+        }
+      })
+      dispatch({
+        type: 'workbench/getUploadedFileList',
+        payload: {
+
+        }
+      })
+      // 这里是用来更新甘特图中的文件列表
+      this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData(folder_id)
+      // 更新项目交流左侧文件列表
+      this.props.updateCommunicationFolderListData && this.props.updateCommunicationFolderListData(folder_id);
+    }
+
+    // 添加成员
+    if (obj && obj.type && obj.type == 'add') {
+      let new_privileges = []
+      for (let item in obj) {
+        if (item == 'privileges') {
+          obj[item].map(val => {
+            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            if (!Array.isArray(temp_arr)) return false
+            return new_privileges = [...temp_arr]
+          })
+        }
+      }
+      let newCurrentPreviewFileData = { ...currentPreviewFileData, privileges: new_privileges }
+
+      dispatch({
+        type: 'workbenchFileDetail/updateDatas',
+        payload: {
+          currentPreviewFileData: newCurrentPreviewFileData
+        }
+      })
+    }
+
+    // 移除成员
+    if (obj && obj.type && obj.type == 'remove') {
+      let new_privileges = [...privileges]
+      new_privileges.map((item, index) => {
+        if (item.id == obj.removeId) {
+          new_privileges.splice(index, 1)
+        }
+      })
+      let newCurrentPreviewFileData = { ...currentPreviewFileData, privileges: new_privileges }
+
+      dispatch({
+        type: 'workbenchFileDetail/updateDatas',
+        payload: {
+          currentPreviewFileData: newCurrentPreviewFileData
+        }
+      })
+    }
+
+    // 修改成员
+    if (obj && obj.type && obj.type == 'change') {
+      let { id } = obj.temp_arr
+      let new_privileges = [...privileges]
+      new_privileges = new_privileges.map((item) => {
+        let new_item = item
+        if (item.id == id) {
+          new_item = { ...item, content_privilege_code: obj.code }
+        } else {
+          new_item = { ...item }
+        }
+        return new_item
+      })
+      let newCurrentPreviewFileData = { ...currentPreviewFileData, privileges: new_privileges }
+
+      dispatch({
+        type: 'workbenchFileDetail/updateDatas',
+        payload: {
+          currentPreviewFileData: newCurrentPreviewFileData
+        }
+      })
+    }
+
+  }
+
+  getFieldFromPropsCurrentPreviewFileData = (...fields) => {
+    const { datas: { currentPreviewFileData = {} } } = this.props.model
+    return fields.reduce((acc, curr) => Object.assign({}, acc, { [curr]: currentPreviewFileData[curr] }), {})
+  }
+
   handleDeleteCommentItem = obj => {
-    const {id} = obj
-    const { datas: { filePreviewCurrentFileId, filePreviewPointNumCommits }} = this.props.model
-    this.props.deleteCommit({id, file_id: filePreviewCurrentFileId})
+    const { id } = obj
+    const { datas: { filePreviewCurrentFileId, filePreviewPointNumCommits } } = this.props.model
+    this.props.deleteCommit({ id, file_id: filePreviewCurrentFileId })
     this.props.updateDatasFile({
       filePreviewPointNumCommits: filePreviewPointNumCommits.filter(i => i.id !== id)
     })
   }
   async handleClickedCommentItem(flag) {
     const { datas: {
-                filePreviewCurrentFileId,
-              } }= this.props.model
+      filePreviewCurrentFileId,
+    } } = this.props.model
     await this.props.updateDatasFile({
       filePreviewCommitPointNumber: flag
     })
@@ -475,18 +965,19 @@ class FileDetailContent extends React.Component {
   }
   getCurrentUserId = () => {
     try {
-      const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')): {}
+      const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
       return id
     } catch (e) {
       return ''
     }
   }
   handleGetNewComment = obj => {
-    const {coordinates, comment, point_number} = obj
+    const { coordinates, comment, point_number } = obj
     const { datas: {
-                filePreviewCurrentFileId,
-                board_id }
-              } = this.props.model
+
+      board_id, currentPreviewFileData = {} }
+    } = this.props.model
+    const { id: filePreviewCurrentFileId } = currentPreviewFileData
     this.props.addFileCommit({
       board_id,
       point_number,
@@ -499,12 +990,14 @@ class FileDetailContent extends React.Component {
   handleZoomPictureFullScreen = (flag) => {
     this.setState({
       isZoomPictureFullScreenMode: flag,
+      percent: 0
     })
+    clearTimeout(timer)
   }
 
   //pdf文件和普通文件区别时做不同地处理预览
   handleUploadPDForElesFilePreview = ({ file_name, id, file_resource_id }) => {
-    if(getSubfixName(file_name) == '.pdf') {
+    if (getSubfixName(file_name) == '.pdf') {
       this.props.dispatch({
         type: 'workbenchFileDetail/getFilePDFInfo',
         payload: {
@@ -512,40 +1005,244 @@ class FileDetailContent extends React.Component {
         }
       })
     } else {
-      this.props.filePreview({id: file_resource_id, file_id: id})
+      this.props.filePreview({ id: file_resource_id, file_id: id })
+    }
+    this.props.dispatch({
+      type: 'workbenchFileDetail/updateDatas',
+      payload: {
+        isExpandFrame: false
+      }
+    })
+  }
+
+  // 修改编辑版本描述的方法
+  chgVersionFileEdit({ list, file_id, file_name }) {
+    // console.log(file_id, 'ssssss')
+    // console.log(list, 'ssss')
+    const { new_filePreviewCurrentVersionList, editValue } = this.state
+    // console.log(new_filePreviewCurrentVersionList, 'ssssss')
+    let temp_val
+    let temp_filePreviewCurrentVersionList = [...new_filePreviewCurrentVersionList]
+    temp_filePreviewCurrentVersionList = temp_filePreviewCurrentVersionList.map(item => {
+      let new_item = item
+      if (new_item.file_id == file_id) {
+        temp_val = new_item.remarks
+        new_item = { ...item, is_edit: !item.is_edit }
+      }
+      return new_item
+    })
+    // console.log(temp_filePreviewCurrentVersionList, 'sssss')
+    this.setState({
+      new_filePreviewCurrentVersionList: temp_filePreviewCurrentVersionList,
+      editValue: temp_val
+    })
+  }
+
+  // 每一个menu菜单的item选项的切换 即点击切换预览文件版本
+  handleVersionItem = (e) => {
+    // console.log(e, 'ssss_22222')
+    const { key } = e
+    const { dispatch } = this.props
+    const { new_filePreviewCurrentVersionList } = this.state
+    // const { datas: { filePreviewCurrentVersionList = [] } } = this.props.model
+    let temp_filePreviewCurrentVersionList = [...new_filePreviewCurrentVersionList]
+    temp_filePreviewCurrentVersionList = temp_filePreviewCurrentVersionList.filter(item => {
+      if (item.file_id == key) {
+        return item
+      }
+    })
+    // console.log(new_filePreviewCurrentVersionList, 'sssss')
+    const { file_id, file_resource_id, file_name } = temp_filePreviewCurrentVersionList[0]
+    this.handleUploadPDForElesFilePreview({ file_name, id: file_id, file_resource_id })
+    
+    dispatch({
+      type: 'workbenchFileDetail/getFileType',
+      payload: {
+        file_id,
+      }
+    })
+  }
+
+  // 改变编辑描述的value onChange事件
+  handleFileVersionValue = (list, e) => {
+    let val = e.target.value
+    this.setState({
+      editValue: val
+    })
+  }
+
+  // 失去焦点 的版本修改描述信息
+  handleFileVersionDecription = (list, key) => {
+    // let val = e.target.value
+    const { dispatch, } = this.props
+    const { editValue, is_edit_version_description } = this.state
+    // console.log(is_edit_version_description, 'ssssss'
+    let new_list = [...list]
+    // console.log(new_list, 'sssss')
+    // let temp_id = [] // 定义一个空数组,用来保存正在编辑的版本文件的id
+    let temp_list = [] // 定义一个空的数组列表用来保存之前编辑状态的哪一个元素
+    temp_list = new_list && new_list.filter(item => {
+      let new_item = item
+      if (new_item.is_edit) {
+        return new_item
+      }
+    })
+    new_list = new_list.map(item => {
+      let new_item = item
+      if (new_item.is_edit) {
+        new_item = { ...item, is_edit: false, remarks: editValue }
+        return new_item
+      } else {
+        return new_item
+      }
+    })
+    const { file_id, remarks } = temp_list[0]
+    this.setState({
+      is_edit_version_description: false,
+      new_filePreviewCurrentVersionList: new_list
+    })
+
+    if (editValue != remarks) {
+      dispatch({
+        type: 'workbenchFileDetail/updateVersionFileDescription',
+        payload: {
+          id: file_id,
+          version_info: editValue
+        }
+      })
+      dispatch({
+        type: 'workbenchFileDetail/updateDatas',
+        payload: {
+          filePreviewCurrentVersionList: new_list,
+        }
+      })
+      this.setState({
+        editValue: ''
+      })
+
     }
   }
 
+  // 加载进度条
+  updateProcessPercent = () => {
+    const { dispatch } = this.props
+    const { datas: { board_id, filePreviewCurrentFileId, currentPreviewFileData = {} } } = this.props.model
+    const { id } = currentPreviewFileData
+    const { isZoomPictureFullScreenMode } = this.state
+    let percent = this.state.percent + 10;
+    // return
+    if (percent > 100) {
+      if (timer) clearTimeout(timer)
+      this.setState({
+        percent: 100
+      })
+      dispatch({
+        type: 'workbenchFileDetail/updateDatas',
+        payload: {
+          isEntryCirclePreviewLoading: false
+        }
+      })
+      Promise.resolve(
+        dispatch({
+          type: 'workbenchFileDetail/fileConvertPdfAlsoUpdateVersion',
+          payload: {
+            id: id,
+          }
+        })
+      ).then(res => {
+        if (isApiResponseOk(res)) {
+          this.setState({
+            is_petty_loading: !isZoomPictureFullScreenMode && false,
+            is_large_loading: isZoomPictureFullScreenMode && false,
+            percent: 0
+          })
+
+        } else {
+          this.setState({
+            is_petty_loading: !isZoomPictureFullScreenMode && false,
+            is_large_loading: isZoomPictureFullScreenMode && false,
+            percent: 0
+          })
+        }
+      })
+      return
+    }
+    this.setState({
+      percent
+    })
+    dispatch({
+      type: 'workbenchFileDetail/updateDatas',
+      payload: {
+        isEntryCirclePreviewLoading: true
+      }
+    })
+    timer = setTimeout(() => {
+      this.updateProcessPercent()
+    }, 500)
+  }
+
+  // 除pdf外的其他文件进入圈评
+  handleEnterCirclePointComment = () => {
+    const { isZoomPictureFullScreenMode } = this.state
+    this.updateProcessPercent()
+    this.setState({
+      is_petty_loading: !isZoomPictureFullScreenMode,
+      is_large_loading: isZoomPictureFullScreenMode,
+      percent: 0
+    })
+  }
+
   render() {
-     
+
     const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
     const that = this
-    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect={}, isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations, isZoomPictureFullScreenMode } = this.state
-    const { clientHeight, offsetTopDeviation } =this.props
-    const { bodyClientWidth, bodyClientHeight } = this.props
+    // state 数据 S
+    const { rects, imgHeight = 0, imgWidth = 0, maxImageWidth, currentRect = {},
+      isInAdding = false, isInEdditOperate = false, imgLoaded, editMode, relations,
+      isZoomPictureFullScreenMode, is_edit_version_description, editVersionFileList,
+      new_filePreviewCurrentVersionList, editValue, onlyReadingShareModalVisible, onlyReadingShareData, isVisibleContentRightDetail,
+      is_petty_loading, is_large_loading, percent } = this.state
+    // state 数据 E
+
+    const { clientHeight, offsetTopDeviation } = this.props
+    const { bodyClientWidth, bodyClientHeight, dispatch } = this.props
     const fileDetailContentOutHeight = clientHeight - 60 - offsetTopDeviation
 
-    let {componentHeight, componentWidth } = this.props
+    let { componentHeight, componentWidth } = this.props
 
-    if(!componentHeight && !componentWidth){
+    if (!componentHeight && !componentWidth) {
       const container_fileDetailOut = document.getElementById('container_fileDetailOut');
       const fileDetailOutWidth = container_fileDetailOut ? container_fileDetailOut.offsetWidth : 800;
       componentWidth = fileDetailOutWidth - 419;
       componentHeight = fileDetailContentOutHeight - 20;
     }
 
-    const { datas: { board_id, filePreviewCurrentFileId, projectDetailInfoData = {}, pdfDownLoadSrc, currentParrentDirectoryId, filePreviewCurrentVersionId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList=[], filePreviewCurrentVersionKey=0, filePreviewIsRealImage=false } }= this.props.model
+    const { datas: { board_id, filePreviewCurrentFileId, projectDetailInfoData = {}, currentPreviewFileData = {}, pdfDownLoadSrc, currentParrentDirectoryId, filePreviewCurrentVersionId, seeFileInput, filePreviewCommitPoints, filePreviewCommits, filePreviewPointNumCommits, isExpandFrame = false, filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId, filePreviewCurrentVersionList = [], filePreviewCurrentVersionKey = 0, filePreviewIsRealImage = false } } = this.props.model
     const { data = [] } = projectDetailInfoData //任务执行人列表
+    const { is_privilege = '0', privileges = [] } = this.getFieldFromPropsCurrentPreviewFileData('is_privilege', 'privileges')
+    const { is_shared, file_id, id } = currentPreviewFileData //is_shared = 是否分享状态
+    const zoomPictureParams = {
+      board_id,
+      is_privilege,
+      privileges,
+      id
+    }
+
+    const supportFileTypeArray = ['.xlsx', '.xls', '.doc', '.docx', '.ppt', '.pptx', '.png', '.txt']
+    // [png,gif,jpg,jpeg,tif,bmp,ico]
+    const supportPictureFileTypeArray = ['.png', '.gif', '.jpg', '.jpeg', '.tif', '.bmp', '.ico']
+
     const getIframe = (src) => {
-      const iframe = '<iframe style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="'+src+'"></iframe>'
+      const iframe = '<iframe style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="' + src + '"></iframe>'
       return iframe
     }
 
-    const getVersionItem = (value, key ) => {
+    const getVersionItem = (value, key) => {
       const { file_name, creator, update_time, file_size } = value
+
       return (
-        <div className={indexStyles.versionInfoListItem} onClick={this.versionItemClick.bind(this, {value, key})}>
-          <div className={filePreviewCurrentVersionKey === key ?indexStyles.point : indexStyles.point2}></div>
+        <div className={indexStyles.versionInfoListItem} onClick={this.versionItemClick.bind(this, { value, key })}>
+          <div className={filePreviewCurrentVersionKey === key ? indexStyles.point : indexStyles.point2}></div>
           <div className={indexStyles.name}>{creator}</div>
           <div className={indexStyles.info}>上传于{update_time}</div>
           <div className={indexStyles.size}>{file_size}</div>
@@ -554,47 +1251,72 @@ class FileDetailContent extends React.Component {
     }
 
     const punctuateDom = (
-      <div style={{minWidth: componentWidth+'px', minHeight: componentHeight+'px', overflow: 'auto', textAlign: 'center'}}>
-      {filePreviewUrl && (
-            <ZoomPicture
-                imgInfo={{url: filePreviewUrl}}
-                componentInfo={{width: componentWidth+'px', height: componentHeight+'px'}}
-                commentList={rects&& rects.length ? rects.map(i => (Object.assign({}, {flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates)}))) : [] }
-                handleClickedCommentItem={this.handleClickedCommentItem.bind(this)}
-                currentSelectedCommentItemDetail={filePreviewPointNumCommits}
-                handleDeleteCommentItem={this.handleDeleteCommentItem}
-                userId={this.getCurrentUserId()}
-                handleGetNewComment={this.handleGetNewComment}
-                handleFullScreen={this.handleZoomPictureFullScreen}
-              />
-        )}
-      </div>
-)
+      <>
+        {
+          is_petty_loading ? (
+            <CirclePreviewLoadingComponent
+              percent={percent}
+              is_loading={is_petty_loading}
+              style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)', display: 'block', opacity: 1 }} />
+          ) : (
+              <div style={{ minWidth: componentWidth + 'px', minHeight: componentHeight + 'px', overflow: 'auto', textAlign: 'center', position: 'relative' }}>
+                {/* {
+            checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) ? ('') : (
+              <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
+            )
+          } */}
+                {filePreviewUrl && (
+                  <ZoomPicture
+                    {...this.props}
+                    imgInfo={{ url: filePreviewUrl }}
+                    componentInfo={{ width: componentWidth + 'px', height: componentHeight + 'px' }}
+                    commentList={rects && rects.length ? rects.map(i => (Object.assign({}, { flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates) }))) : []}
+                    handleClickedCommentItem={this.handleClickedCommentItem.bind(this)}
+                    currentSelectedCommentItemDetail={filePreviewPointNumCommits}
+                    handleDeleteCommentItem={this.handleDeleteCommentItem}
+                    userId={this.getCurrentUserId()}
+                    handleGetNewComment={this.handleGetNewComment}
+                    handleFullScreen={this.handleZoomPictureFullScreen}
+                    filePreviewCurrentFileId={filePreviewCurrentFileId}
+                    filePreviewCurrentId={filePreviewCurrentId}
+                    workbenchType={"workbenchType"}
+                    zoomPictureParams={zoomPictureParams}
+                    isShow_textArea={true}
+                    dispatch={dispatch}
+                    handleEnterCirclePointComment={this.handleEnterCirclePointComment}
+                  />
+                )}
+              </div>
+            )
+        }
+
+      </>
+    )
 
     const punctuateDom_old = (
-      <div style={{height: '100%', width: '100%'}} className={`${indexStyles.fileDetailContentLeft} ${indexStyles.noselect}`} >
-        <div style={{margin: '0 auto', marginTop: (fileDetailContentOutHeight - imgHeight) / 2, width: imgWidth, height: imgHeight, overflow: 'hide' }} ref={'operateArea'}>
-          <img src={filePreviewUrl} onLoad={this.previewImgLoad.bind(this)} style={{ maxWidth: maxImageWidth}} />
-          {imgLoaded && editMode? (
-            <div tabIndex="0" hideFocus="true" id={'punctuateArea'} onClick={this.operateAreaClick.bind(this)} onBlur={this.operateAreaBlur.bind(this)} onMouseDown={this.onmousedown.bind(this)} style={{height: imgHeight, top: -imgHeight, left: 0, width: imgWidth, position: 'relative', zIndex: 3, outline: 0}}>
+      <div style={{ height: '100%', width: '100%' }} className={`${indexStyles.fileDetailContentLeft} ${indexStyles.noselect}`} >
+        <div style={{ margin: '0 auto', marginTop: (fileDetailContentOutHeight - imgHeight) / 2, width: imgWidth, height: imgHeight, overflow: 'hide' }} ref={'operateArea'}>
+          <img src={filePreviewUrl} onLoad={this.previewImgLoad.bind(this)} style={{ maxWidth: maxImageWidth }} />
+          {imgLoaded && editMode ? (
+            <div tabIndex="0" hideFocus="true" id={'punctuateArea'} onClick={this.operateAreaClick.bind(this)} onBlur={this.operateAreaBlur.bind(this)} onMouseDown={this.onmousedown.bind(this)} style={{ height: imgHeight, top: -imgHeight, left: 0, width: imgWidth, position: 'relative', zIndex: 3, outline: 0 }}>
               {rects.map((value, key) => {
                 const { flag, coordinates } = value
                 const { x, y, width, height } = JSON.parse(coordinates)
                 return (
-                  <div onClick={this.commitReactArea.bind(this, {currentRect: JSON.parse(coordinates), point_number: flag})} onMouseDown={this.commitReactArea2.bind(this)} key={key} style={{position: 'absolute', left: x, top: y, width: width, height: height, border: '1px solid rgba(24,144,255,.5)', backgroundColor: 'rgba(24,144,255,.2)'}}>
+                  <div onClick={this.commitReactArea.bind(this, { currentRect: JSON.parse(coordinates), point_number: flag })} onMouseDown={this.commitReactArea2.bind(this)} key={key} style={{ position: 'absolute', left: x, top: y, width: width, height: height, border: '1px solid rgba(24,144,255,.5)', backgroundColor: 'rgba(24,144,255,.2)' }}>
                     <div className={indexStyles.flag}>
                       {flag}
                     </div>
                   </div>
                 )
               })}
-              {isInEdditOperate?(
+              {isInEdditOperate ? (
                 <div onClick={this.commitReactArea2.bind(this)} onMouseDown={this.commitReactArea2.bind(this)}
-                     style={{position: 'absolute', left: currentRect.x, top: currentRect.y, width: currentRect.width, height: currentRect.height, border: '1px solid rgba(24,144,255,.5)', backgroundColor: 'rgba(24,144,255,.2)'}} />
-              ):('')}
+                  style={{ position: 'absolute', left: currentRect.x, top: currentRect.y, width: currentRect.width, height: currentRect.height, border: '1px solid rgba(24,144,255,.5)', backgroundColor: 'rgba(24,144,255,.2)' }} />
+              ) : ('')}
 
-              {isInAdding? (
-                <div style={{position: 'absolute', zIndex: 6, left: currentRect.x, top: currentRect.y+ currentRect.height + 10}}>
+              {isInAdding ? (
+                <div style={{ position: 'absolute', zIndex: 6, left: currentRect.x, top: currentRect.y + currentRect.height + 10 }}>
                   <Comment {...this.props} currentRect={currentRect} setMentionFocus={this.setMentionFocus.bind(this)} ></Comment>
                 </div>
               ) : ('')}
@@ -603,121 +1325,144 @@ class FileDetailContent extends React.Component {
           ) : ('')}
 
         </div>
-        {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT) && (
-          <div className={indexStyles.pictureEditState} style={{left: (this.props.clientWidth - (isExpandFrame? 0:420)) / 2 }} onClick={this.setEditMode.bind(this)}>
-            {!editMode?('添加圈点评论'):('退出圈点模式')}
+        {(
+          <div className={indexStyles.pictureEditState} style={{ left: (this.props.clientWidth - (isExpandFrame ? 0 : 420)) / 2 }} onClick={this.setEditMode.bind(this)}>
+            {!editMode ? ('添加圈点评论') : ('退出圈点模式')}
           </div>
         )}
       </div>
     )
     const iframeDom = (
-      <div className={indexStyles.fileDetailContentLeft}
-      dangerouslySetInnerHTML={{__html: getIframe(filePreviewUrl)}}></div>
+      // <div style={{position: 'relative'}}>
+      <>
+        {
+          is_petty_loading ? (
+            <CirclePreviewLoadingComponent
+              percent={percent}
+              is_loading={is_petty_loading}
+              style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)', display: 'block', opacity: 1 }} />
+          ) : (
+              <>
+                <div className={indexStyles.fileDetailContentLeft}
+                  dangerouslySetInnerHTML={{ __html: getIframe(filePreviewUrl) }}>
+                </div>
+                {
+                  this.props.model.datas.fileType != '.pdf' && (supportFileTypeArray.indexOf(this.props.model.datas.fileType) != -1 || supportPictureFileTypeArray.indexOf(this.props.model.datas.fileType) != -1) && (
+                    <div className={indexStyles.otherFilesOperator}>
+                      <span onClick={this.handleEnterCirclePointComment} className={indexStyles.operator_bar}><span className={`${globalStyles.authTheme} ${indexStyles.circle_icon}`}>&#xe664;</span>圈点评论</span>
+                    </div>
+                  )
+                }
+              </>
+            )
+        }
+      </>
+      // </div>
     )
     const notSupport = (type) => {
       let content
       switch (type) {
         case '.obj':
           content = (
-            <div style={{textAlign: 'center'}}>
-              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe62f;</i>
-              <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe62f;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+            <div style={{ textAlign: 'center' }}>
+              <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe62f;</i>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe62f;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
             </div>
           )
           break;
         case '.3dm':
           content = (
-            <div style={{textAlign: 'center'}}>
-              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe626;</i>
-              <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe626;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+            <div style={{ textAlign: 'center' }}>
+              <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe626;</i>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe626;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
             </div>
           )
           break;
         case '.iges':
           content = (
-            <div style={{textAlign: 'center'}}>
-              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe62b;</i>
-              <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe62b;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+            <div style={{ textAlign: 'center' }}>
+              <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe62b;</i>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe62b;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
             </div>
           )
           break;
         case '.ma':
           content = (
-            <div style={{textAlign: 'center'}}>
-              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe630;</i>
-              <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe630;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+            <div style={{ textAlign: 'center' }}>
+              <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe630;</i>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe630;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
             </div>
           )
           break;
         case '.mb':
           content = (
-            <div style={{textAlign: 'center'}}>
-              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe628;</i>
-              <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe628;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+            <div style={{ textAlign: 'center' }}>
+              <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe628;</i>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe628;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
             </div>
           )
           break;
         case '.skp':
           content = (
-            <div style={{textAlign: 'center'}}>
-              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe62e;</i>
-              <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe62e;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+            <div style={{ textAlign: 'center' }}>
+              <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe62e;</i>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe62e;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
             </div>
           )
           break;
         case '.dwg':
           content = (
-            <div style={{textAlign: 'center'}}>
-              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe62a;</i>
-              <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe62a;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+            <div style={{ textAlign: 'center' }}>
+              <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe62a;</i>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe62a;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
             </div>
           )
           break;
         case '.psd':
           content = (
-            <div style={{textAlign: 'center'}}>
-              <i className={globalStyles.authTheme} style={{fontSize: '80px', color: '#5CA8F8' }}>&#xe627;</i>
-              <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe627;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe61e;</i>
-                <i className={globalStyles.authTheme} style={{fontSize: '58px'}}>&#xe6cf;</i>
+            <div style={{ textAlign: 'center' }}>
+              <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe627;</i>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe627;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{color: 'gray', fontSize: '12px'}}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
             </div>
           )
           break;
@@ -726,6 +1471,83 @@ class FileDetailContent extends React.Component {
       }
       return content
     }
+
+    // 点击全屏之后的图片
+    const punctuateBigDom = (
+      <Modal zIndex={1010} style={{ top: 0, left: 0, height: bodyClientHeight - 200 + 'px' }} footer={null} title={null} width={bodyClientWidth} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
+        {
+          is_large_loading ? (
+            <div style={{ height: bodyClientHeight, marginTop: '20px', background: 'rgba(0,0,0,0.15)' }}>
+              <CirclePreviewLoadingComponent
+                percent={percent}
+                is_loading={is_large_loading}
+                style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)', display: 'block', opacity: 1 }} />
+            </div>
+
+          ) : (
+              <div>
+                {filePreviewUrl && (
+                  <ZoomPicture
+                    {...this.props}
+                    imgInfo={{ url: filePreviewUrl }}
+                    componentInfo={{ width: bodyClientWidth - 100, height: bodyClientHeight - 60 }}
+                    commentList={rects && rects.length ? rects.map(i => (Object.assign({}, { flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates) }))) : []}
+                    handleClickedCommentItem={this.handleClickedCommentItem.bind(this)}
+                    currentSelectedCommentItemDetail={filePreviewPointNumCommits}
+                    handleDeleteCommentItem={this.handleDeleteCommentItem}
+                    userId={this.getCurrentUserId()}
+                    handleGetNewComment={this.handleGetNewComment}
+                    isFullScreenMode={isZoomPictureFullScreenMode}
+                    handleFullScreen={this.handleZoomPictureFullScreen}
+                    filePreviewCurrentFileId={filePreviewCurrentFileId}
+                    filePreviewCurrentId={filePreviewCurrentId}
+                    workbenchType={"workbenchType"}
+                    zoomPictureParams={zoomPictureParams}
+                    isShow_textArea={true}
+                    dispatch={dispatch}
+                    handleEnterCirclePointComment={this.handleEnterCirclePointComment}
+                  />
+                )}
+              </div>
+            )
+        }
+
+      </Modal>
+    )
+
+    // 其他格式点击全屏时候的展示
+    const iframeBigDom = (
+      <Modal wrapClassName={indexStyles.overlay_iframBigDom} zIndex={1010} style={{ top: 0, left: 0, minWidth: componentWidth + 'px', minHeight: componentHeight + 'px' }} width={bodyClientWidth} height={bodyClientHeight} footer={null} title={null} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
+        {/* <div
+          style={{ height: bodyClientHeight, marginTop: '20px' }}
+          dangerouslySetInnerHTML={{ __html: getIframe(filePreviewUrl) }}></div>
+          <> */}
+        {
+          is_large_loading ? (
+            <div style={{ height: bodyClientHeight, marginTop: '20px', background: 'rgba(0,0,0,0.15)' }}>
+              <CirclePreviewLoadingComponent
+                percent={percent}
+                is_loading={is_large_loading}
+                style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)', display: 'block', opacity: 1 }} />
+            </div>
+
+          ) : (
+              <>
+                <div
+                  style={{ height: bodyClientHeight, marginTop: '20px' }}
+                  dangerouslySetInnerHTML={{ __html: getIframe(filePreviewUrl) }}></div>
+                {
+                  this.props.model.datas.fileType != '.pdf' && (supportFileTypeArray.indexOf(this.props.model.datas.fileType) != -1 || supportPictureFileTypeArray.indexOf(this.props.model.datas.fileType) != -1) && (
+                    <div className={indexStyles.otherFilesOperator} style={{ bottom: '100px' }}>
+                      <span onClick={this.handleEnterCirclePointComment} className={indexStyles.operator_bar}><span className={`${globalStyles.authTheme} ${indexStyles.circle_icon}`}>&#xe664;</span>圈点评论</span>
+                    </div>
+                  )
+                }
+              </>
+            )
+        }
+      </Modal >
+    )
 
     //header
     const uploadProps = {
@@ -743,220 +1565,320 @@ class FileDetailContent extends React.Component {
         ...setUploadHeaderBaseInfo({}),
       },
       beforeUpload(e) {
-        if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)){
-          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        // if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+        //   // message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        //   return false
+        // }
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
+          // message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
-        if(e.size == 0) {
+        if (e.size == 0) {
           message.error(`不能上传空文件`)
           return false
-        }else if(e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+        } else if (e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
           message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
           return false
         }
-        let loading = message.loading('正在上传...', 0)
+        // console.log('sssss', 2222)
+        // let loading = message.loading('正在上传...', 0)
       },
       onChange({ file, fileList, event }) {
+        // if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+        //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        //   return false
+        // }
+        // console.log(checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id), 'ssssssssssssss')
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         if (file.status === 'uploading') {
 
-        }else{
+        } else {
           message.destroy()
         }
-        if (file.status === 'done') {
+        if (file.status === 'done' && file.response.code === '0') {
           message.success(`上传成功。`);
-          if(file.response && file.response.code == '0') {
-            that.props.updateDatasFile({filePreviewCurrentFileId: file.response.data.id})
-            that.props.fileVersionist({version_id: filePreviewCurrentVersionId, isNeedPreviewFile: true, isPDF: getSubfixName(file.name) == '.pdf'})
+          if (file.response && file.response.code == '0') {
+            that.props.updateDatasFile({ filePreviewCurrentFileId: file.response.data.id, filePreviewCurrentId: file.response.data.file_resource_id })
+            that.props.fileVersionist({ version_id: filePreviewCurrentVersionId, isNeedPreviewFile: true, isPDF: getSubfixName(file.name) == '.pdf' })
           }
-        } else if (file.status === 'error') {
-          message.error(`上传失败。`);
+        } else if (file.status === 'error' || (file.response && file.response.code !== '0')) {
+          message.error(file.response && file.response.message || '上传失败');
           setTimeout(function () {
             message.destroy()
           }, 2000)
         }
       },
     };
+
     const operationMenu = (data) => {
       return (
         <Menu onClick={this.operationMenuClick.bind(this, data)}>
           {/*<Menu.Item key="1">收藏</Menu.Item>*/}
-          {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) && (
+          {checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD, board_id)) && (
             <Menu.Item key="2">下载</Menu.Item>
           )}
           {/*<Menu.Item key="3">移动</Menu.Item>*/}
           {/*{checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD) && (*/}
-            {/*<Menu.Item key="4">复制</Menu.Item>*/}
+          {/*<Menu.Item key="4">复制</Menu.Item>*/}
           {/*)}*/}
           {/*{checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE) && (*/}
-            {/*<Menu.Item key="5" >移到回收站</Menu.Item>*/}
+          {/*<Menu.Item key="5" >移到回收站</Menu.Item>*/}
           {/*)}*/}
         </Menu>
       )
     }
-    //版本信息列表
-    const getVersionItemMenu = (list) => {
-      return (
-        // onClick={this.getVersionItemMenuClick.bind(this, list)}
-        <Menu selectable={true} style={{ width: 400}}>
-          {list.map((value, key) => {
-            const { file_name, creator, create_time, file_size, file_id } = value
-            return (
-              <Menu.Item key={file_id} >
-                <div className={indexStyles.versionItemMenu}>
-                  <div style={{fontWeight: 400, fontSize: 14}} className={`${indexStyles.creator} ${indexStyles.eplise}`}>{creator}</div>
-                  <div>上传于</div>
-                  <div>{create_time}</div>
-                  {filePreviewCurrentFileId == file_id && (
-                    <div className={`${indexStyles.status}`}>当前</div>)}
-                  <div className={`${indexStyles.file_size} ${indexStyles.initalShow}`}>{file_size}</div>
-                  <div className={`${indexStyles.file_size} ${indexStyles.initalHide} ${globalStyles.authTheme} ${indexStyles.operate}`}>
-                    <Dropdown overlay={versionItemMenu({list, file_id, file_name})}>
-                      <span>&#xe7fd;</span>
-                    </Dropdown>
-                  </div>
 
-                </div>
-              </Menu.Item>
-            )
-          })}
-          <Menu.Item key="updateVersion" >
-            <Upload {...uploadProps} showUploadList={false}>
-              <div style={{ color: color_4, textAlign: 'center', width: 368, }}>
-                <Icon type="upload" theme="outlined" style={{margin: 0, fontSize: 16}}/> 更新版本
-              </div>
-            </Upload>
+    const saveAsMenu = (data) => {
+      return (
+        // <Menu onClick={this.operationMenuClick.bind(this, data)}>
+        <Menu>
+          <Menu.Item key="1" onClick={this.fileDownload.bind(this, { filePreviewCurrentId, filePreviewCurrentFileId, pdfDownLoadSrc })}>
+            下载到本地
+          </Menu.Item>
+          <Menu.Item key="2" onClick={() => this.saveAsNewVersion({ filePreviewCurrentId, filePreviewCurrentFileId, pdfDownLoadSrc })}>
+            保存为新版本
           </Menu.Item>
         </Menu>
       )
     }
-    const versionItemMenu = ({list, file_id, file_name}) => {
-      return (
-        <Menu onClick={this.getVersionItemMenuClick.bind(this, {list, file_id, file_name})}>
-          <Menu.Item key="1">设为当前</Menu.Item>
-          <Menu.Item key="2" disabled>移到回收站</Menu.Item>
-        </Menu>
-      )
+
+    const params = {
+      board_id,
+      filePreviewCurrentFileId,
+      filePreviewUrl, filePreviewIsUsable, filePreviewCurrentId,
+      new_filePreviewCurrentVersionList,
+      is_edit_version_description,
+      editValue,
     }
+
+
 
     return (
       <div>
         <div className={indexStyles.fileDetailHead}>
-          <div className={indexStyles.fileDetailHeadLeft}>
-            {seeFileInput === 'fileModule'? (
-              <FileDerailBreadCrumbFileNav {...this.props}/>
-            ):('')}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className={indexStyles.fileIcon}>
+              <span className={`${globalStyles.authTheme} ${indexStyles.fileTitle}`}>&#xe691;</span>
+              文件
+            </div>
+            <div className={indexStyles.fileDetailHeadLeft}>
+              {seeFileInput === 'fileModule' ? (
+                <FileDerailBreadCrumbFileNav {...this.props} />
+              ) : ('')}
+            </div>
           </div>
 
-          <div className={indexStyles.fileDetailHeadRight}>
-            {seeFileInput === 'fileModule' && (
-              <Dropdown overlay={getVersionItemMenu(filePreviewCurrentVersionList)}>
-                <Button style={{height: 24, marginLeft: 14}}>
-                  <Icon type="upload" />版本信息
+
+          <div className={indexStyles.fileDetailHeadRight} style={{ flexShrink: 0 }}>
+            <div style={{ position: 'relative' }}>
+              {/* {
+                checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) ? ('') : (
+                  <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
+                )
+              } */}
+              {seeFileInput === 'fileModule' && (
+                <VersionSwitching {...params}
+                  is_show={true}
+                  handleVersionItem={this.handleVersionItem}
+                  getVersionItemMenuClick={this.getVersionItemMenuClick}
+                  handleFileVersionDecription={this.handleFileVersionDecription}
+                  handleFileVersionValue={this.handleFileVersionValue}
+                  uploadProps={uploadProps} />
+              )}
+            </div>
+            <div style={{ position: 'relative' }}>
+              {
+                checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD, board_id)) ? ('') : (
+                  <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
+                )
+              }
+              <Dropdown overlay={saveAsMenu}>
+                <Button style={{ height: 24, marginLeft: 14 }} >
+                  <span className={`${globalStyles.authTheme} ${indexStyles.right__shareIndicator_icon}`}>&#xe6dd;</span>
+                  另存为
                 </Button>
               </Dropdown>
-            )}
-            {checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD) && (
-              <Button style={{height: 24, marginLeft: 14}} onClick={this.fileDownload.bind(this, {filePreviewCurrentId, pdfDownLoadSrc})}>
+              {/* <Button style={{ height: 24, marginLeft: 14 }} onClick={this.fileDownload.bind(this, { filePreviewCurrentId, filePreviewCurrentFileId, pdfDownLoadSrc })}>
                 <Icon type="download" />下载
-              </Button>
-            )}
+              </Button> */}
+            </div>
+            <span style={{ marginLeft: '10px' }}></span>
+            {/* <div style={{position: 'relative', display: 'flex'}}> */}
 
-            <span style={{marginLeft: '10px'}}></span>
-            <InformRemind rela_id={filePreviewCurrentVersionId} rela_type={'4'} user_remind_info={data} />
-             {/* <span style={{marginRight: is_privilege === '1' ? '36px' : '10px'}}>
-            <VisitControl
-                isPropVisitControl={is_privilege === '0' ? false : true}
-                handleVisitControlChange={this.handleVisitControlChange}
-                otherPrivilege={privileges}
-                notShowPrincipal={true}
-                handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
-                handleAddNewMember={this.handleVisitControlAddNewMember}
-                />
-            </span> */}
-            <div style={{cursor: 'pointer'}}>
-              {seeFileInput === 'fileModule'? (
-                <Dropdown overlay={operationMenu({ file_resource_id: filePreviewCurrentId, file_id: filePreviewCurrentFileId, type: '2' } )}>
-                  <Icon type="ellipsis" style={{fontSize: 20, marginLeft: 14}}/>
+            {file_id ? (
+              <div style={{ alignItems: 'center', display: 'flex', marginRight: '10px' }}>
+                {/* 分享协作 */}
+                <span className={`${indexStyles.action} `}>
+
+                  {is_shared === '1' ? (
+                    <span className={indexStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}>
+                      <span className={`${globalStyles.authTheme} ${indexStyles.right__shareIndicator_icon}`}>&#xe7e7;</span>
+                      <span className={indexStyles.right__shareIndicator_text}>正在分享</span>
+                    </span>
+                  ) : (
+                      <span className={`${indexStyles.right_menu} ${indexStyles.share_icon}`} >
+                        <Tooltip title="分享协作" placement="top">
+                          <span onClick={this.handleChangeOnlyReadingShareModalVisible} className={`${globalStyles.authTheme} ${indexStyles.right__share}`} style={{ fontSize: '20px' }}>&#xe7e7;</span>
+                        </Tooltip>
+                      </span>
+                    )}
+
+                  <ShareAndInvite
+
+                    onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible}
+                    data={onlyReadingShareData}
+                    handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare}
+                  />
+                </span>
+              </div>
+            ) : ''}
+
+            <div style={{ position: 'relative', marginRight: '10px' }}>
+              <span>
+                {/* {
+                  checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) ? ('') : (
+                    <div style={{ height: '50px' }} onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
+                  )
+                } */}
+                {
+                  checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) && (
+                    <InformRemind rela_id={filePreviewCurrentFileId} rela_type={'4'} user_remind_info={data} />
+                  )
+                }
+
+              </span>
+            </div>
+
+
+            {/* <div> */}
+            <span style={{ marginRight: is_privilege === '1' ? '36px' : '10px' }}>
+              {
+                board_id && (
+                  <VisitControl
+                    board_id={board_id}
+                    isPropVisitControl={is_privilege === '0' ? false : true}
+                    handleVisitControlChange={this.handleVisitControlChange}
+                    otherPrivilege={privileges}
+                    notShowPrincipal={true}
+                    handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+                    handleAddNewMember={this.handleVisitControlAddNewMember}
+                  />
+                )
+              }
+            </span>
+            {/* </div> */}
+            {/* </div> */}
+            <div style={{ cursor: 'pointer' }}>
+              {seeFileInput === 'fileModule' ? (
+                <Dropdown overlay={operationMenu({ file_resource_id: filePreviewCurrentId, file_id: filePreviewCurrentFileId, type: '2' })}>
+                  <Icon type="ellipsis" style={{ fontSize: 20, marginLeft: 14 }} />
                 </Dropdown>
-              ):('')}
-              <Icon type={!isExpandFrame? 'fullscreen':'fullscreen-exit'} style={{fontSize: 20, marginLeft: 14}} theme="outlined" onClick={this.zoomFrame.bind(this)} />
+              ) : ('')}
+              <Icon type={!isExpandFrame ? 'fullscreen' : 'fullscreen-exit'} style={{ fontSize: 20, marginLeft: 14 }} theme="outlined" onClick={this.zoomFrame.bind(this)} />
               <Tooltip title={'关闭预览'} placement={'left'}>
-                <Icon type="close" onClick={this.closeFile.bind(this)} style={{fontSize: 20, marginLeft: 16}}/>
+                <Icon type="close" onClick={this.closeFile.bind(this)} style={{ fontSize: 20, marginLeft: 16 }} />
               </Tooltip>
             </div>
           </div>
         </div>
-        <div className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{height: clientHeight- offsetTopDeviation - 60}}>
-          {filePreviewIsUsable? (
-            filePreviewIsRealImage?(
+
+        <div className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{ height: clientHeight - offsetTopDeviation - 60 }}>
+          {filePreviewIsUsable ? (
+            filePreviewIsRealImage ? (
               punctuateDom
             ) : (
-              iframeDom
-            )
-          ):(
-            <div className={indexStyles.fileDetailContentLeft} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 16, color: '#595959'}}>
-              <div>
-                {notSupport(this.props.model.datas.fileType)}
-              </div>
-            </div>
-          )}
-
-
-          <div className={indexStyles.fileDetailContentRight} style={{width: isExpandFrame?0:420}}>
-
-            {/*width: isExpandFrame?0:420*/}
-            {/*从文件卡片查看的时候才有*/}
-            <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'}>
-              <ContentRaletion
-                {...this.props}
-                board_id ={board_id}
-                link_id={filePreviewCurrentFileId}
-                link_local={'4'}
-              />
-              {/*{seeFileInput === 'file'? (*/}
-              {/*<div>*/}
-              {/*<div>版本信息</div>*/}
-              {/*<div className={indexStyles.versionInfoList}>*/}
-              {/*{filePreviewCurrentVersionList.map((value, key ) => {*/}
-              {/*return (<div key={key}>{getVersionItem(value, key )}</div>)*/}
-              {/*})}*/}
-              {/*</div>*/}
-              {/*</div>*/}
-              {/*): ('')}*/}
-            </div>
-            {checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_VIEW) && (
-              <div className={indexStyles.fileDetailContentRight_middle} style={{height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea?this.refs.versionInfoArea.clientHeight : 0)}}>
-                <CommentListItem2 {...this.props} commitClicShowEdit={this.commitClicShowEdit.bind(this)} deleteCommitSet={this.deleteCommitSet.bind(this)}/>
+                iframeDom
+              )
+          ) : (
+              <div className={indexStyles.fileDetailContentLeft} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 16, color: '#595959' }}>
+                <div>
+                  {notSupport(this.props.model.datas.fileType)}
+                </div>
               </div>
             )}
 
-            {checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH) && (
-              <div className={indexStyles.fileDetailContentRight_bott}>
-                <Comment2 {...this.props} ></Comment2>
-              </div>
-            )}
+
+
+          {/* <div className={indexStyles.fileDetailContentRightBox}> */}
+
+          {/* 控制显示隐藏按钮 */}
+          <div
+            className={indexStyles.operationContentRightBtn}
+            style={{ right: isExpandFrame ? '420px' : '0' }}
+            onClick={() => this.isShowRightRealTimeMsg()}
+          >
+            <Icon type={isExpandFrame ? 'right' : 'left'} />
           </div>
 
+          {
+            isExpandFrame && (
+              // (isVisibleContentRightDetail || isExpandFrame) && (
+              // <div className={indexStyles.fileDetailContentRight} style={{ width: !isVisibleContentRightDetail ? 0 : 420 }}>
+              <div className={indexStyles.fileDetailContentRight} style={{ width: isExpandFrame ? 420 : 0 }}>
+                {/*width: isExpandFrame?0:420*/}
+                {/*从文件卡片查看的时候才有*/}
+                <div className={indexStyles.fileDetailContentRight_top} ref={'versionInfoArea'} style={{ position: 'relative' }}>
+                  {
+                    checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) ? ('') : (
+                      <div style={{ bottom: '62px' }} onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
+                    )
+                  }
+                  <ContentRaletion
+                    {...this.props}
+                    board_id={board_id}
+                    link_id={filePreviewCurrentFileId}
+                    link_local={'4'}
+                  />
+                  {/*{seeFileInput === 'file'? (*/}
+                  {/*<div>*/}
+                  {/*<div>版本信息</div>*/}
+                  {/*<div className={indexStyles.versionInfoList}>*/}
+                  {/*{filePreviewCurrentVersionList.map((value, key ) => {*/}
+                  {/*return (<div key={key}>{getVersionItem(value, key )}</div>)*/}
+                  {/*})}*/}
+                  {/*</div>*/}
+                  {/*</div>*/}
+                  {/*): ('')}*/}
+                </div>
+                {(
+                  <div className={indexStyles.fileDetailContentRight_middle} style={{ height: clientHeight - offsetTopDeviation - 60 - 70 - (this.refs.versionInfoArea ? this.refs.versionInfoArea.clientHeight : 0) }}>
+                    <CommentListItem2 {...this.props} commitClicShowEdit={this.commitClicShowEdit.bind(this)} deleteCommitSet={this.deleteCommitSet.bind(this)} />
+                  </div>
+                )}
+
+                {(checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id))) && (
+                  <div className={indexStyles.fileDetailContentRight_bott}>
+                    <Comment2 {...this.props} ></Comment2>
+                  </div>
+                )}
+              </div>
+            )}
+
+          {/* </div> */}
+
         </div>
+
+
+
         {isZoomPictureFullScreenMode && (
-          <Modal zIndex={9999999999} style={{top: 0, left: 0, height: bodyClientHeight - 200 + 'px'}} footer={null} title={null} width={bodyClientWidth} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({isZoomPictureFullScreenMode: false})}>
           <div>
-          {filePreviewUrl && (
-            <ZoomPicture
-                imgInfo={{url: filePreviewUrl}}
-                componentInfo={{width: bodyClientWidth - 100, height: bodyClientHeight - 60}}
-                commentList={rects&& rects.length ? rects.map(i => (Object.assign({}, {flag: i.flag, id: i.file_id, coordinates: JSON.parse(i.coordinates)}))) : [] }
-                handleClickedCommentItem={this.handleClickedCommentItem.bind(this)}
-                currentSelectedCommentItemDetail={filePreviewPointNumCommits}
-                handleDeleteCommentItem={this.handleDeleteCommentItem}
-                userId={this.getCurrentUserId()}
-                handleGetNewComment={this.handleGetNewComment}
-                isFullScreenMode={isZoomPictureFullScreenMode}
-                handleFullScreen={this.handleZoomPictureFullScreen}
-              />
-        )}
-        </div>
-          </Modal>
+            {filePreviewIsUsable ? (
+              filePreviewIsRealImage ? (
+                punctuateBigDom
+              ) : (
+                  iframeBigDom
+                )
+            ) : (
+                <div className={indexStyles.fileDetailContentLeft} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 16, color: '#595959' }}>
+                  <div>
+                    {notSupport(this.props.model.datas.fileType)}
+                  </div>
+                </div>
+              )}
+          </div>
         )}
       </div>
     )
@@ -964,3 +1886,4 @@ class FileDetailContent extends React.Component {
 }
 
 export default withBodyClientDimens(FileDetailContent)
+

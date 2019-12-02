@@ -154,12 +154,16 @@ export async function getCurrentNounPlan(params) {
 
 //获取功能管理列表
 export async function getFnManagementList(params) {
+  
+  const _organization_id = localStorage.getItem('OrganizationId') === "0" ? (localStorage.getItem('OrganizationId')) : (!params ? params.organization_id : localStorage.getItem('OrganizationId') ) 
+  
   return request({
     url: `${REQUEST_DOMAIN}/organization_app`,
     method: 'GET',
     params: {
       ...params,
-      _organization_id: localStorage.getItem('OrganizationId'),
+      // _organization_id: localStorage.getItem('OrganizationId'),
+      _organization_id: _organization_id,
     }      
   })
 }
@@ -171,4 +175,52 @@ export async function setFnManagementStatus(data) {
     method: 'PUT',
     data
   })
+}
+
+//投资地图权限功能-新增管理员
+export async function investmentMapAddAdministrators(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization_app/map_admin`,
+    method: 'POST',
+    data: {
+      ...data,
+    }
+  });
+}
+
+//投资地图权限功能-删除管理员
+export async function investmentMapDeleteAdministrators(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization_app/map_admin`,
+    method: 'DELETE',
+    data
+  });
+}
+
+//投资地图权限功能-查看管理员列表
+export async function investmentMapQueryAdministrators(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization_app/map_admin`,
+    method: 'GET',
+    params: {
+      ...params,
+    }   
+  });
+}
+
+export async function getPayingStatus(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization/paying_status`,
+    method: 'GET',
+    params: {
+      ...params,
+    }   
+  });
+}
+
+export async function getOrderList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization/${params.orgId}/order/list`,
+    method: 'GET'
+  });
 }

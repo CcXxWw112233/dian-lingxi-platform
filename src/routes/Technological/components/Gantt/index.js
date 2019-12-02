@@ -1,98 +1,88 @@
 import React, { Component } from 'react';
 import { message } from 'antd'
-import {connect} from "dva/index";
+import { connect } from "dva/index";
 import GanttFace from './GanttFace'
-import TaskDetailModal from '../Workbench/CardContent/Modal/TaskDetailModal';
-import FileDetailModal from '../Workbench/CardContent/Modal/FileDetailModal';
-import AddTaskModal from '../Workbench/CardContent/Modal/AddTaskModal';
-import {getProjectGoupList} from "../../../../services/technological/task";
+// import TaskDetailModal from '../Workbench/CardContent/Modal/TaskDetailModal';
+import TaskDetailModal from '@/components/TaskDetailModal'
+import AddTaskModal from './components/AddTaskModal';
+import { ganttIsFold, getDigitTime } from './constants';
 
-const getEffectOrReducerByName = name => `workbench/${name}`
-const getEffectOrReducerByName_4 = name => `workbenchTaskDetail/${name}`
-const getEffectOrReducerByName_5 = name => `workbenchFileDetail/${name}`
+class Gantt extends Component {
 
-class Gantt extends Component{
-  state = {
-    TaskDetailModalVisibile: false,
-    previewFileModalVisibile: false,
-    projectGroupLists: [],
-    board_users: [],
-    projectGroupListsIsRequest: false
+  constructor(props) {
+    super(props)
+    this.state = {
+      TaskDetailModalVisibile: false,
+      previewFileModalVisibile: false,
+    }
+    this.card_time_type = undefined //card_time_type为是否排期卡片
   }
 
   componentDidMount() {
     this.getProjectGoupLists()
-    // this.setBoardUsers()
+    this.getProjectAppsLists()
+    this.getAboutUsersBoards()
   }
 
   componentWillReceiveProps(nextProps) {
-
   }
 
-  setBoardUsers(projectId) {
+  componentWillUnmount() {
     const { dispatch } = this.props
     dispatch({
-      type: 'workbench/fetchCurrentSelectedProjectMembersList',
+      type: 'gantt/updateDatas',
       payload: {
-        projectId
+        is_show_board_file_area: '0'
       }
-    });
-  }
-
-  //弹窗
-  setPreviewFileModalVisibile() {
-    this.setState({
-      previewFileModalVisibile: !this.state.previewFileModalVisibile
-    });
-  }
-  setTaskDetailModalVisibile() {
-    this.setState({
-      TaskDetailModalVisibile: !this.state.TaskDetailModalVisibile
-    });
+    })
   }
 
   //用来实现创建任务弹窗方法
-  handleShouldUpdateProjectGroupList = () => {
-    this.getProjectGoupLists()
-  }
-  async getProjectGoupLists() {
-    const res = await getProjectGoupList()
-    const isResOk = res => res && res.code === '0'
-    if(!isResOk(res)) {
-      message.error('获取项目分组信息失败')
-      return
-    }
-    return await this.setState({
-      projectGroupLists: res.data,
-      projectGroupListsIsRequest: true
+  // 获取带app的项目列表
+  getProjectAppsLists = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/getAboutAppsBoards',
+      payload: {
+
+      }
     })
   }
-  getNewTaskInfo = obj => {
-    this.setState({
-      newTask: obj
-    });
-  };
-  addTaskModalVisibleChange = flag => {
-    const { projectGroupListsIsRequest } = this.state
-    const { datas: { projectTabCurrentSelectedProject, current_list_group_id } } = this.props.model
-    if(projectTabCurrentSelectedProject !== '0') {
-      this.setBoardUsers(projectTabCurrentSelectedProject)
-    } else {
-      this.setBoardUsers(current_list_group_id)
-    }
+  // 获取带分组的项目列表
+  getProjectGoupLists = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/getAboutGroupBoards',
+      payload: {
 
-    if(!projectGroupListsIsRequest) {
-      const that = this
-      message.info('您所需要的数据正在赶来的路上，请稍候...', 2, function () {
-        that.getProjectGoupLists()
-      })
-      return false
-    }
+      }
+    })
+  }
+  // 获取带用户的项目列表
+  getAboutUsersBoards = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/getAboutUsersBoards',
+      payload: {
+
+      }
+    })
+  }
+
+  // 点击设置卡片类型（未排期/已排期)
+  setTaskDetailModalVisibile = (card_time_type) => {
+    this.card_time_type = card_time_type
+  }
+  // 添加任务 -----------start
+  addTaskModalVisibleChange = flag => {
+    this.setAddTaskModalVisible(flag)
+  };
+  setAddTaskModalVisible = (flag) => {
     this.setState({
       addTaskModalVisible: flag
     });
-  };
-  addNewTask(data) {
+  }
+  addNewTask = (data) => {
     const { dispatch } = this.props
     Promise.resolve(
       dispatch({
@@ -103,19 +93,52 @@ class Gantt extends Component{
       })
     )
       .then(res => {
-        if(res) {
-          dispatch({
-            type: 'gantt/getGanttData',
-            payload: {}
-          })
+        if (res) {
+          // dispatch({
+          //   type: 'gantt/getGanttData',
+          //   payload: {
+          //     not_set_loading: true
+          //   }
+          // })
+          this.insertTaskToListGroup(res)
         } else {
           message.warn('创建任务失败')
         }
       })
-      .catch(err => console.log(err));
+    // .catch(err => message.error(err));
   }
-  handleGetNewTaskParams(data) {
-    const { datas: { create_start_time, create_end_time, projectTabCurrentSelectedProject, current_list_group_id } } = this.props.model
+  // 添加完一条任务后，将某1条任务塞进去
+  insertTaskToListGroup = (data) => {
+    const { dispatch, } = this.props
+    const { list_group = [], current_list_group_id, gantt_board_id, group_view_type, show_board_fold } = this.props
+    const list_group_new = [...list_group]
+    const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
+    list_group_new[group_index].lane_data.cards.push(data)
+
+    // if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) {
+    const current_card_due_time = getDigitTime(data.due_time)
+    const now = new Date().getTime()
+    list_group_new[group_index].lane_schedule_count = (Number(list_group_new[group_index].lane_schedule_count) || 0) + 1
+    if (current_card_due_time < now) { //截止时间在当前时间之前
+      list_group_new[group_index].lane_status = '3' //创建的任务在当前时间之前，那就是逾期未完成
+      list_group_new[group_index].lane_overdue_count = (Number(list_group_new[group_index].lane_overdue_count) || 0) + 1 //逾期未完成任务 +1
+    } else {
+      if (list_group_new[group_index].lane_status == '1') {
+        list_group_new[group_index].lane_status = '2' //创建的任务在当前时间之后，那就是正常进行未完成
+      }
+    }
+    // }
+
+    dispatch({
+      type: 'gantt/handleListGroup',
+      payload: {
+        data: list_group_new,
+        not_set_scroll_top: true
+      }
+    })
+  }
+  handleGetNewTaskParams = (data) => {
+    const { create_start_time, create_end_time, current_list_group_id, gantt_board_id, group_view_type } = this.props
 
     //设置截止日期最后一秒
     const create_end_time_date = new Date(create_end_time)
@@ -128,54 +151,76 @@ class Gantt extends Component{
       users: data['users'],
       name: data['name'],
       type: data['type'],
+      board_id: data['board_id']
     }
-    if(projectTabCurrentSelectedProject == '0') {
-      param.board_id = current_list_group_id
-      param.list_id = data['list_id']
-    } else {
-      param.board_id = projectTabCurrentSelectedProject
-      param.list_id = current_list_group_id
+    if (group_view_type == '1') {
+      if (gantt_board_id == '0') {
+        param.board_id = current_list_group_id
+        param.list_id = data['list_id']
+      } else {
+        param.board_id = gantt_board_id
+        param.list_id = current_list_group_id == '0' ? '' : current_list_group_id
+      }
     }
+
     this.addNewTask(param)
-    this.setState({
-      addTaskModalVisible: false
-    })
+    this.setAddTaskModalVisible(false)
   }
+  // 添加任务 -----------end
 
   //修改某一个任务
-  handleChangeCard({card_id, drawContent}) {
-    const { dispatch } = this.props
-    const { datas: { list_group = [], projectTabCurrentSelectedProject, current_list_group_id, board_id }} = this.props.model
-    const list_group_new = [...list_group]
-    if(projectTabCurrentSelectedProject == '0') {
-      for(let i = 0; i < list_group_new.length; i++ ) {
-        if(board_id == list_group_new[i].list_id) {
-          for(let j = 0; j < list_group_new[i].lane_data.card.length; j++) {
-            if(card_id == list_group_new[i].lane_data.card[j].id) {
-              list_group_new[i].lane_data.card[j] = {...list_group_new[i].lane_data.card[j], ...drawContent}
-              list_group_new[i].lane_data.card[j]['name'] = list_group_new[i].lane_data.card[j]['card_name']
-              break
-            }
-          }
-          break
-        }
-      }
-
+  handleChangeCard = ({ card_id, drawContent, operate_properties_code }) => {
+    // operate_properties_code为新任务接口下properties数组的操作code,用来判断执行人和标签更新
+    if (this.card_time_type == 'no_schedule') {
+      this.handleNoHasScheduleCard({ card_id, drawContent, operate_properties_code })
     } else {
-      for(let i = 0; i < list_group_new.length; i++ ) {
-        let flag = false
-        for(let j = 0; j < list_group_new[i].lane_data.card.length; j++) {
-          if(card_id == list_group_new[i].lane_data.card[j].id) {
-            list_group_new[i].lane_data.card[j] = {...list_group_new[i].lane_data.card[j], ...drawContent}
-            list_group_new[i].lane_data.card[j]['name'] = list_group_new[i].lane_data.card[j]['card_name']
-            break
-          }
-        }
-        if(flag) {
-          break
-        }
-      }
+      this.handleHasScheduleCard({ card_id, drawContent, operate_properties_code })
+    }
+  }
+  // 修改某一任务针对项目详情接口结构的数据变化处理
+  cardPropertiesPromote = ({ operate_properties_code, drawContent = {} }) => {
+    if (!!!operate_properties_code) {
+      return drawContent
+    }
+    const { properties = [] } = drawContent
+    const gold_data = (properties.find(item => item.code === operate_properties_code) || {}).data
+    let gold_key = 'nothing'
+    if ('EXECUTOR' == operate_properties_code) {
+      gold_key = 'executors'
+    } else if ('LABEL' == operate_properties_code) {
+      gold_key = 'label_data'
+    }
+    return { ...drawContent, [gold_key]: gold_data }
+  }
+  // 修改没有排期的任务
+  handleNoHasScheduleCard = ({ card_id, drawContent = {}, operate_properties_code }) => {
+    const { dispatch } = this.props
+    const new_drawContent = this.cardPropertiesPromote({ drawContent, operate_properties_code })
+    const { start_time, due_time } = new_drawContent
+    const { list_group = [], current_list_group_id } = this.props
+    const list_group_new = [...list_group]
 
+    const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
+    const group_index_cards_index = list_group_new[group_index].lane_data.cards.findIndex(item => item.id == card_id)
+    const group_index_card_no_times_index = list_group_new[group_index].lane_data.card_no_times.findIndex(item => item.id == card_id)
+    const schedule_cards_has_this = group_index_cards_index != -1 //排期任务是否含有该条
+
+    // console.log('ssss', schedule_cards_has_this, !!start_time, !!due_time)
+
+    if (schedule_cards_has_this) {
+      this.handleHasScheduleCard({ card_id, new_drawContent })
+      return
+    }
+
+    if ((!!start_time || !!due_time)) { //如果有截至时间或者开始时间 (!!start_time || !!due_time)
+      // 排期了则过滤掉当前
+      list_group_new[group_index].lane_data.cards.push(
+        { ...list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index], ...new_drawContent }
+      )
+      list_group_new[group_index].lane_data.card_no_times.splice(group_index_card_no_times_index, 1) //[group_index_card_no_times_index] = { ...list_group_new[group_index].lane_data.card_no_times[group_index_cards_index], ...new_drawContent }
+    } else {
+      list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index] = { ...list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index], ...new_drawContent }
+      list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index]['name'] = list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index]['card_name']
     }
     dispatch({
       type: 'gantt/handleListGroup',
@@ -185,381 +230,89 @@ class Gantt extends Component{
     })
   }
 
-  render() {
-    const { dispatch, model = {}, modal } = this.props
-    const { previewFileModalVisibile, TaskDetailModalVisibile, addTaskModalVisible, projectGroupLists = [], board_users = [] } = this.state
-    const { datas = {} } = model;
-    const {
-      projectList = [],
-      projectTabCurrentSelectedProject,
-      current_list_group_id,
-      currentSelectedProjectMembersList = []
-    } = datas;
+  // 修改有排期的任务
+  handleHasScheduleCard = ({ card_id, drawContent, operate_properties_code }) => {
+    const { dispatch } = this.props
+    const new_drawContent = this.cardPropertiesPromote({ drawContent, operate_properties_code })
 
-    const CreateTaskProps = {
-      modal,
-      model,
-      getBoardMembers(payload) {
-        dispatch({
-          type: getEffectOrReducerByName_4('getBoardMembers'),
-          payload: payload
-        })
-      },
-      getCardDetail(payload){
-        dispatch({
-          type: getEffectOrReducerByName_4('getCardDetail'),
-          payload: payload
-        })
-      },
-      updateTaskDatas(payload) {
-        dispatch({
-          type: getEffectOrReducerByName_4('updateDatas'),
-          payload: payload
-        })
-      },
-      deleteTaskFile(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('deleteTaskFile'),
-          payload: data,
-        })
-      },
-      addTaskGroup(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('addTaskGroup'),
-          payload: data,
-        })
-      },
-      deleteTaskGroup(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('deleteTaskGroup'),
-          payload: data,
-        })
-      },
-      updateTaskGroup(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('updateTaskGroup'),
-          payload: data,
-        })
-      },
-      getTaskGroupList(data){
-        dispatch({
-          type: getEffectOrReducerByName_4('getTaskGroupList'),
-          payload: data
-        })
-      },
-      addTask(data){
-        dispatch({
-          type: getEffectOrReducerByName_4('addTask'),
-          payload: data
-        })
-      },
-      updateTask(data){
-        dispatch({
-          type: getEffectOrReducerByName_4('updateTask'),
-          payload: data
-        })
-      },
-      deleteTask(id){
-        dispatch({
-          type: getEffectOrReducerByName_4('deleteTask'),
-          payload: {
-            id
-          }
-        })
-      },
-      updateChirldTask(data){
-        dispatch({
-          type: getEffectOrReducerByName_4('updateChirldTask'),
-          payload: data
-        })
-      },
-      deleteChirldTask(data){
-        dispatch({
-          type: getEffectOrReducerByName_4('deleteChirldTask'),
-          payload: data
-        })
-      },
+    const { list_group = [], current_list_group_id } = this.props
+    const list_group_new = [...list_group]
+    const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
+    const group_index_cards_index = list_group_new[group_index].lane_data.cards.findIndex(item => item.id == card_id)
+    list_group_new[group_index].lane_data.cards[group_index_cards_index] = { ...list_group_new[group_index].lane_data.cards[group_index_cards_index], ...new_drawContent }
+    list_group_new[group_index].lane_data.cards[group_index_cards_index]['name'] = list_group_new[group_index].lane_data.cards[group_index_cards_index]['card_name']
 
-      archivedTask(data){
-        dispatch({
-          type: getEffectOrReducerByName_4('archivedTask'),
-          payload: data
-        })
-      },
-      changeTaskType(data){
-        dispatch({
-          type: getEffectOrReducerByName_4('changeTaskType'),
-          payload: data
-        })
-      },
-      addChirldTask(data){
-        dispatch({
-          type: getEffectOrReducerByName_4('addChirldTask'),
-          payload: data
-        })
-      },
-      addTaskExecutor(data){
-        dispatch({
-          type: getEffectOrReducerByName_4('addTaskExecutor'),
-          payload: data
-        })
-      },
-      removeTaskExecutor(data){
-        dispatch({
-          type: getEffectOrReducerByName_4('removeTaskExecutor'),
-          payload: data
-        })
-      },
-      completeTask(data){
-        dispatch({
-          type: getEffectOrReducerByName_4('completeTask'),
-          payload: data
-        })
-      },
-      addTaskTag(data){
-        dispatch({
-          type: getEffectOrReducerByName_4('addTaskTag'),
-          payload: data
-        })
-      },
-      removeTaskTag(data){
-        dispatch({
-          type: getEffectOrReducerByName_4('removeTaskTag'),
-          payload: data
-        })
-      },
-      removeProjectMenbers(data){
-        dispatch({
-          type: getEffectOrReducerByName_4('removeProjectMenbers'),
-          payload: data
-        })
-      },
-      getCardCommentList(id) {
-        dispatch({
-          type: getEffectOrReducerByName_4('getCardCommentList'),
-          payload: {
-            id
-          }
-        })
-      },
-      addCardNewComment(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('addCardNewComment'),
-          payload: data
-        })
-      },
-      deleteCardNewComment(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('deleteCardNewComment'),
-          payload: data
-        })
-      },
-      getBoardTagList(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('getBoardTagList'),
-          payload: data
-        })
-      },
-      updateBoardTag(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('updateBoardTag'),
-          payload: data
-        })
-      },
-      toTopBoardTag(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('toTopBoardTag'),
-          payload: data
-        })
-      },
-      deleteBoardTag(data) {
-        dispatch({
-          type: getEffectOrReducerByName_4('deleteBoardTag'),
-          payload: data
-        })
+    dispatch({
+      type: 'gantt/handleListGroup',
+      payload: {
+        data: list_group_new
       }
+    })
+  }
+
+  // 删除某一条任务
+  handleDeleteCard = ({ card_id }) => {
+    const { dispatch } = this.props
+    const { list_group = [], current_list_group_id } = this.props
+    const list_group_new = [...list_group]
+    let belong_group_name = ''
+    if (this.card_time_type == 'no_schedule') {
+      belong_group_name = 'card_no_times'
+    } else {
+      belong_group_name = 'cards'
     }
-    const FileModuleProps = {
-      modal,
-      model,
-      updateFileDatas(payload) {
-        dispatch({
-          type: getEffectOrReducerByName_5('updateDatas'),
-          payload: payload
-        })
-      },
-      getFileList(params){
-        dispatch({
-          type: getEffectOrReducerByName('getFileList'),
-          payload: params
-        })
-      },
-      fileCopy(data){
-        dispatch({
-          type: getEffectOrReducerByName_5('fileCopy'),
-          payload: data
-        })
-      },
-      fileDownload(params){
-        dispatch({
-          type: getEffectOrReducerByName_5('fileDownload'),
-          payload: params
-        })
-      },
-      fileRemove(data){
-        dispatch({
-          type: getEffectOrReducerByName_5('fileRemove'),
-          payload: data
-        })
-      },
-      fileMove(data){
-        dispatch({
-          type: getEffectOrReducerByName_5('fileMove'),
-          payload: data
-        })
-      },
-      fileUpload(data){
-        dispatch({
-          type: getEffectOrReducerByName_5('fileUpload'),
-          payload: data
-        })
-      },
-      fileVersionist(params){
-        dispatch({
-          type: getEffectOrReducerByName_5('fileVersionist'),
-          payload: params
-        })
-      },
-      recycleBinList(params){
-        dispatch({
-          type: getEffectOrReducerByName_5('recycleBinList'),
-          payload: params
-        })
-      },
-      deleteFile(data){
-        dispatch({
-          type: getEffectOrReducerByName_5('deleteFile'),
-          payload: data
-        })
-      },
-      restoreFile(data){
-        dispatch({
-          type: getEffectOrReducerByName_5('restoreFile'),
-          payload: data
-        })
-      },
-      getFolderList(params){
-        dispatch({
-          type: getEffectOrReducerByName_5('getFolderList'),
-          payload: params
-        })
-      },
-      addNewFolder(data){
-        dispatch({
-          type: getEffectOrReducerByName_5('addNewFolder'),
-          payload: data
-        })
-      },
-      updateFolder(data){
-        dispatch({
-          type: getEffectOrReducerByName_5('updateFolder'),
-          payload: data
-        })
-      },
-      filePreview(params) {
-        dispatch({
-          type: getEffectOrReducerByName_5('filePreview'),
-          payload: params
-        })
-      },
-      getPreviewFileCommits(params) {
-        dispatch({
-          type: getEffectOrReducerByName_5('getPreviewFileCommits'),
-          payload: params
-        })
-      },
-      addFileCommit(params) {
-        dispatch({
-          type: getEffectOrReducerByName_5('addFileCommit'),
-          payload: params
-        })
-      },
-      deleteCommit(params) {
-        dispatch({
-          type: getEffectOrReducerByName_5('deleteCommit'),
-          payload: params
-        })
-      },
-    }
-    const updateDatasTask = (payload) => {
-      dispatch({
-        type: getEffectOrReducerByName_4('updateDatas'),
-        payload: payload
-      })
-    }
-    const updateDatasFile = (payload) => {
-      dispatch({
-        type: getEffectOrReducerByName_5('updateDatas'),
-        payload: payload
-      })
-    }
+    const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
+    const group_index_cards_index = list_group_new[group_index].lane_data[belong_group_name].findIndex(item => item.id == card_id)
+    list_group_new[group_index].lane_data[belong_group_name].splice(group_index_cards_index, 1)
+    dispatch({
+      type: 'gantt/handleListGroup',
+      payload: {
+        data: list_group_new
+      }
+    })
+  }
+
+  render() {
+    const { addTaskModalVisible, } = this.state
+    const {
+      about_apps_boards = [],
+      gantt_board_id,
+      group_view_type,
+      current_list_group_id,
+      about_group_boards = [],
+      about_user_boards = [],
+      drawerVisible,
+    } = this.props;
 
     return (
       <div>
         <GanttFace
-          setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)}
-          addTaskModalVisibleChange={this.addTaskModalVisibleChange.bind(this)}
-          projectTabCurrentSelectedProject={projectTabCurrentSelectedProject}
+          setTaskDetailModalVisibile={this.setTaskDetailModalVisibile}
+          addTaskModalVisibleChange={this.addTaskModalVisibleChange}
+          gantt_board_id={gantt_board_id}
+          gantt_card_height={this.props.gantt_card_height || 600} //引用组件的地方传递进来的甘特图高度
+          is_need_calculate_left_dx={this.props.is_need_calculate_left_dx}
         />
-        <FileDetailModal
-          {...this.props}
-          {...CreateTaskProps}
-          {...FileModuleProps}
-          setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)}
-          modalVisible={previewFileModalVisibile}
-          setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}
-          updateDatasTask={updateDatasTask}
-          updateDatasFile={updateDatasFile}
-          updateTaskDatas={updateDatasTask}
-          updateFileDatas={updateDatasFile}
-        />
-
         <TaskDetailModal
-          {...this.props}
-          {...CreateTaskProps}
-          {...FileModuleProps}
-          modalVisible={TaskDetailModalVisibile}
-          setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(this)}
-          setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}
-          updateDatasTask={updateDatasTask}
-          updateDatasFile={updateDatasFile}
-          updateTaskDatas={updateDatasTask}
-          updateFileDatas={updateDatasFile}
-          handleChangeCard={this.handleChangeCard.bind(this)}
-          updateDatas={updateDatasTask}
+          task_detail_modal_visible={drawerVisible}
+          // setTaskDetailModalVisible={this.setDrawerVisibleClose} //关闭任务弹窗回调
+          handleTaskDetailChange={this.handleChangeCard}
+          handleDeleteCard={this.handleDeleteCard}
         />
 
         {addTaskModalVisible && (
           <AddTaskModal
-            {...this.props}
-            setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(
-              this
-            )}
-            isUseInGantt
-            projectIdWhenUseInGantt={projectTabCurrentSelectedProject=='0'?current_list_group_id:projectTabCurrentSelectedProject}
-            projectMemberListWhenUseInGantt={currentSelectedProjectMembersList}
-            projectGroupListId={projectTabCurrentSelectedProject=='0'?'':current_list_group_id}
-
-            handleGetNewTaskParams={this.handleGetNewTaskParams.bind(this)}
-            modalTitle="添加任务"
-            taskType="RESPONSIBLE_TASK"
-            getNewTaskInfo={this.getNewTaskInfo}
-            projectTabCurrentSelectedProject={projectTabCurrentSelectedProject}
-            projectList={projectList}
+            board_card_group_id={gantt_board_id == '0' ? '' : current_list_group_id}
+            handleGetNewTaskParams={this.handleGetNewTaskParams}
+            current_operate_board_id={gantt_board_id == '0' ? current_list_group_id : gantt_board_id}
+            current_list_group_id={current_list_group_id}
+            group_view_type={group_view_type}
+            gantt_board_id={gantt_board_id}
+            about_apps_boards={about_apps_boards}
             addTaskModalVisible={addTaskModalVisible}
-            addTaskModalVisibleChange={this.addTaskModalVisibleChange.bind(this)}
-            projectGroupLists={projectGroupLists}
-            handleShouldUpdateProjectGroupList={this.handleShouldUpdateProjectGroupList}
+            setAddTaskModalVisible={this.setAddTaskModalVisible}
+            about_group_boards={about_group_boards}
+            about_user_boards={about_user_boards}
           />
         )}
       </div>
@@ -569,11 +322,42 @@ class Gantt extends Component{
 }
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ gantt, workbench, workbenchTaskDetail, workbenchFileDetail, workbenchDetailProcess, workbenchPublicDatas }) {
-  const modelObj = {
-    datas: { ...workbench['datas'], ...workbenchTaskDetail['datas'], ...workbenchFileDetail['datas'], ...workbenchDetailProcess['datas'], ...workbenchPublicDatas['datas'], ...gantt['datas']}
+function mapStateToProps({
+  gantt: {
+    datas: {
+      list_group = [],
+      current_list_group_id,
+      gantt_board_id,
+      group_view_type,
+      create_start_time,
+      create_end_time,
+      about_apps_boards = [],
+      about_group_boards = [],
+      about_user_boards = [],
+      show_board_fold,
+    }
+  },
+  publicTaskDetailModal: { drawerVisible }
+}) {
+  return {
+    list_group,
+    current_list_group_id,
+    gantt_board_id,
+    group_view_type,
+    create_start_time,
+    create_end_time,
+    drawerVisible,
+    about_apps_boards,
+    about_group_boards,
+    about_user_boards,
+    show_board_fold
   }
-  return { model: modelObj }
 }
+
+Gantt.defaultProps = {
+  gantt_card_height: 600, //甘特图卡片默认高度
+  is_need_calculate_left_dx: false, //是否需要计算甘特图左边距
+}
+
 export default connect(mapStateToProps)(Gantt)
 

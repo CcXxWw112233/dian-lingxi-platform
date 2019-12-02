@@ -85,17 +85,24 @@ class FileItem extends React.Component {
       create_time,
       file_resource_id,
       file_id,
+      org_id,
       id,
       folder_id,
       version_id
     } = data;
+    const { dispatch} = this.props
 
     setBoardIdStorage(board_id)
-    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
-      return false;
-    }
-
+    // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
+    //   return false;
+    // }
+    dispatch({
+      type: 'workbenchPublicDatas/getRelationsSelectionPre',
+      payload: {
+        _organization_id: org_id
+      }
+    })
     this.props.dispatch({
       type: 'workbenchFileDetail/getCardCommentListAll',
       payload: {
@@ -117,7 +124,14 @@ class FileItem extends React.Component {
       filePreviewCurrentFileId: id,
       filePreviewCurrentVersionId: version_id, //file_id,
       pdfDownLoadSrc: '',
+      currentPreviewFileData: data
     })
+    // this.props.dispatch({
+    //   type: 'workbenchFileDetail/updateDatas',
+    //   payload: {
+    //     currentPreviewFileData: data
+    //   }
+    // })
 
     if(getSubfixName(file_name) == '.pdf') {
       this.props.dispatch({
@@ -218,7 +232,10 @@ class FileItem extends React.Component {
       file_resource_id,
       file_id,
       id,
+      is_privilege,
+      privileges = []
     } = itemValue;
+
     return (
       <div
         className={indexstyles.fileItem}
@@ -238,6 +255,15 @@ class FileItem extends React.Component {
         </div>
         <div className={indexstyles.file_text}>
           <span className={indexstyles.hoverUnderline}>{file_name}</span>
+          {
+            !(is_privilege == '0') && (
+              <Tooltip title="已开启访问控制" placement="top">
+                <span style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', marginLeft: '5px' }}>
+                  <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
+                </span>
+              </Tooltip>
+            )
+          }
           {
             projectTabCurrentSelectedProject == '0' && (
               <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>

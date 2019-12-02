@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Radio, Checkbox, Row, Col, message } from 'antd'
+import { Radio, Checkbox, Row, Col, message, Switch } from 'antd'
 import CustormModal from '@/components/CustormModal'
 import styles from './NotificationSettingsModal.less'
 import glabalStyles from '@/globalset/css/globalClassName.less'
@@ -31,6 +31,9 @@ export default class NotificationSettingsModal extends Component {
 						default_copy_options: [], // 用来做比较的列表
 						default_detail_options: [], // 默认详细列表的选项
 						default_simple_options: [], // 默认简要列表的选项
+
+						// 用户的每日代办推送
+						is_daily_agent: true,
            
         }
     }
@@ -53,7 +56,8 @@ export default class NotificationSettingsModal extends Component {
                     user_setting_options: res.data.notice_list_ids,
                     user_detail_setting_options: res.data.notice_model == '1' ? res.data.notice_list_ids : [],
                     user_simple_setting_options: res.data.notice_model == '2' ? res.data.notice_list_ids : [],
-                    compare_options: [...res.data.notice_list_ids]
+										compare_options: [...res.data.notice_list_ids],
+										notice_daily: res.data.notice_daily && res.data.notice_daily,
                 })
             } else {
                 message.error(res.message)
@@ -125,7 +129,8 @@ export default class NotificationSettingsModal extends Component {
     // 点击确定的回调
     hideOkModal = () => {
         // console.log('进来了' , 'ssss')
-				const { is_way_status, radio_checked_val, default_detail_options, default_simple_options, user_detail_setting_options, user_simple_setting_options, notice_model } = this.state
+				const { is_way_status, radio_checked_val, default_detail_options, default_simple_options, user_detail_setting_options, user_simple_setting_options, notice_model, notice_daily } = this.state
+				// console.log(notice_daily, 'sssss')
 				let new_notice_list_ids;
 				if (notice_model == '1' && radio_checked_val != '2') {
 					new_notice_list_ids = [...user_detail_setting_options]
@@ -137,7 +142,7 @@ export default class NotificationSettingsModal extends Component {
 				} else if (radio_checked_val == '2') {
 					new_notice_list_ids = [...default_simple_options]
 				}
-        const data = { notice_way_data: is_way_status, notice_model: radio_checked_val, notice_list_ids: new_notice_list_ids}
+        const data = { notice_way_data: is_way_status, notice_model: radio_checked_val, notice_list_ids: new_notice_list_ids, notice_daily: notice_daily}
         // console.log(data, 'sssss')
         setNoticeSettingList(data).then((res) => {
             // console.log(res, 'ssss')
@@ -374,6 +379,19 @@ export default class NotificationSettingsModal extends Component {
 			})  
 		}
 
+		// 每日代办的切换事件
+		handelDailyAgent(checked) {
+			if (checked) {
+				this.setState({
+					notice_daily: '1'
+				})
+			} else {
+				this.setState({
+					notice_daily: '0'
+				})
+			}
+		}
+
     // 展示设置的内容
     renderSetOptions() {
         const { radio_checked_val, is_detail_none, is_simple_none, default_options, default_detail_options, default_simple_options, notice_setting_list, user_detail_setting_options, user_simple_setting_options, notice_model} = this.state
@@ -411,7 +429,7 @@ export default class NotificationSettingsModal extends Component {
 
     render() {
         const { notificationSettingsModalVisible } = this.props
-				const { notice_way_data, is_way_status, radio_checked_val, is_detail_none, is_simple_none} = this.state
+				const { notice_way_data, is_way_status, radio_checked_val, is_detail_none, is_simple_none, notice_daily} = this.state
 				let status_val = []
 				for(let val in is_way_status) {
 					if (is_way_status[val] == '1') {
@@ -431,7 +449,7 @@ export default class NotificationSettingsModal extends Component {
 														{
 															notice_way_data && notice_way_data.map(item => {
 																return (
-																	<Col span={8}>
+																	<Col span={8} style={{marginBottom: '8px'}}>
 																		<Checkbox disabled={item.disabled} onChange={this.chgMovemenet} value={item.key}>
 																			{item.name}
 																		</Checkbox>
@@ -457,9 +475,18 @@ export default class NotificationSettingsModal extends Component {
                             </Radio>
                         </Radio.Group>
                     </div>
-                    <div className={styles.set_options}>
+                    <div className={` ${glabalStyles.global_vertical_scrollbar} ${styles.set_options}`}>
                         { this.renderSetOptions() }
                     </div>
+										<div className={styles.daily_agent}>
+											<span>每日工作提醒</span>
+											<div>
+												每天推送一则包含当日工作内容的通知&nbsp;&nbsp;
+												<Switch 
+													checked={notice_daily == '1' ? true : false}
+													onChange={ (checked) => { this.handelDailyAgent(checked) } } />
+											</div>
+										</div>
                 </div>
             </div>
         )

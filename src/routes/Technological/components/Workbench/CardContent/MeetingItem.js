@@ -2,7 +2,7 @@ import React from 'react'
 import indexstyles from '../index.less'
 import { Icon, Tooltip } from 'antd'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
-import { timestampToTimeNormal } from '../../../../../utils/util'
+import { timestampToTimeNormal, timeColor } from '../../../../../utils/util'
 import Cookies from 'js-cookie'
 import {checkIsHasPermissionInBoard, setBoardIdStorage, getOrgNameWithOrgIdFilter, checkIsHasPermission} from "../../../../../utils/businessFunction";
 import {message} from "antd/lib/index";
@@ -25,23 +25,37 @@ export default class MeetingItem extends React.Component {
 
   itemClick(e) {
     const { itemValue = {} } = this.props
-    const { id, board_id } = itemValue
+    const { id, board_id, org_id } = itemValue
+    const { dispatch} = this.props
 
     setBoardIdStorage(board_id)
 
-    if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW)){
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
-    this.props.updatePublicDatas({ board_id })
-    this.props.getCardDetail({id, board_id})
-    this.props.setTaskDetailModalVisibile()
-    this.props.dispatch({
-      type: 'workbenchTaskDetail/getCardCommentListAll',
+    // if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW)){
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
+    dispatch({
+      type: 'workbenchPublicDatas/getRelationsSelectionPre',
       payload: {
-        id: id
+        _organization_id: org_id
       }
     })
+    this.props.updatePublicDatas({ board_id })
+    this.props.getCardDetail({id, board_id})
+    
+    dispatch({
+      type: 'publicTaskDetailModal/updateDatas',
+      payload: {
+        drawerVisible: true,
+        card_id: id
+      }
+    })
+    // this.props.dispatch({
+    //   type: 'workbenchTaskDetail/getCardCommentListAll',
+    //   payload: {
+    //     id: id
+    //   }
+    // })
   }
 
   // 去到列表的详情页信息
@@ -60,9 +74,9 @@ export default class MeetingItem extends React.Component {
 
   render() {
     const { itemValue = {}, itemKey, currentUserOrganizes = [], is_show_org_name, projectTabCurrentSelectedProject, is_all_org } = this.props
-    const { id, board_id } = itemValue
+    const { id, board_id, is_privilege } = itemValue
 
-    const { name, start_time, due_time, org_id } = itemValue
+    const { name, start_time, due_time, org_id, board_name } = itemValue
     // console.log(itemValue, 'sss')
     return (
       <div className={indexstyles.meetingItem}>
@@ -75,14 +89,24 @@ export default class MeetingItem extends React.Component {
               onClick={this.itemClick.bind(this)}
               style={{maxWidth: 100, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{name}</span>
           </Tooltip>
+          {/* 添加访问控制小锁 */}
+          {
+            !(is_privilege == '0') && (
+              <Tooltip title="已开启访问控制" placement="top">
+                <span style={{ color: 'rgba(0,0,0,0.50)', cursor: 'pointer', marginRight: '5px', marginLeft: '5px' }}>
+                  <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
+                </span>
+              </Tooltip>
+            )
+          }
           {
             projectTabCurrentSelectedProject == '0' && (
               <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>
             )
           }
           <Tooltip placement="topLeft" title={
-           is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org ? (<span>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)} <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/> {name}</span>)
-            : (<span>{name}</span>)
+           is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org ? (<span>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)} <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/> {board_name}</span>)
+            : (<span>{board_name}</span>)
           }>
             <div
                 style={{ color: "#8c8c8c", cursor: "pointer", display: 'flex', alignItems: 'center' }}
@@ -104,13 +128,13 @@ export default class MeetingItem extends React.Component {
                 }
                 {
                   projectTabCurrentSelectedProject == '0' && (
-                    <span className={indexstyles.ellipsis}>{name}</span>
+                    <span className={indexstyles.ellipsis}>{board_name}</span>
                   )
                 }
               </div>
             </Tooltip>
         </div>
-        <span style={{marginLeft: 6, color: '#8c8c8c', cursor: 'pointer', justifySelf: 'end'}}>{`${timestampToTimeNormal(start_time, '', true)}~${timestampToTimeNormal(due_time, '', true)}`}</span>
+        <span style={{marginLeft: 6, color: timeColor(due_time), cursor: 'pointer', fontSize: 12, justifySelf: 'end'}}>{`${timestampToTimeNormal(start_time, '', true)}~${timestampToTimeNormal(due_time, '', true)}`}</span>
       </div>
     )
   }

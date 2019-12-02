@@ -14,14 +14,17 @@ class DetailInfoModal extends React.Component {
     is_show_all_member: false, // 是否显示全部成员, 默认为 false, 不显示
   }
 
-  componentDidMount() {}
+  componentDidMount() { }
 
-  componentWillReceiveProps(nextProps) {}
+  componentWillReceiveProps(nextProps) { }
 
-  // 点击取消的事件
-  onCancel(){
-    this.props.updateDatas({
-      projectInfoDisplay: false
+  onCancel() {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetail/updateDatas',
+      payload: {
+        projectInfoDisplay: false
+      }
     })
     this.setState({
       is_show_all_member: false,
@@ -43,7 +46,7 @@ class DetailInfoModal extends React.Component {
   }
 
   render() {
-    const { modalVisible } = this.props;
+    const { modalVisible, invitationType, invitationId, } = this.props;
     const { is_show_all_member } = this.state
     return(
       <CustormModal
@@ -64,9 +67,9 @@ class DetailInfoModal extends React.Component {
         onCancel={this.onCancel.bind(this)}
         overInner={
           is_show_all_member ? (
-            <DetailMember {...this.props} is_show_all_member={is_show_all_member} />
+            <DetailMember invitationType={invitationType} invitationId={invitationId} {...this.props} is_show_all_member={is_show_all_member} />
           ) : (
-            <DrawDetailInfo {...this.props} is_show_all_member={is_show_all_member} handleTriggetModalTitle={this.handleTriggetModalTitle} />
+            <DrawDetailInfo invitationType={invitationType} invitationId={invitationId} {...this.props} is_show_all_member={is_show_all_member} handleTriggetModalTitle={this.handleTriggetModalTitle} />
           )
         }
       />

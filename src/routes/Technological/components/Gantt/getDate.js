@@ -57,10 +57,11 @@ function getNeedDate(timestring) {
   return {
     year,
     month,
-    date_no: date_no < 10 ? `0${date_no}`: date_no,
+    date_no, //: date_no < 10 ? `0${date_no}`: date_no,
     week_day,
     date_string,
     timestamp: new Date(date_string).getTime(),
+    timestampEnd: new Date(`${date_string} 23:59`).getTime(),
     week_day_name: getWeekDay(week_day),
   }
 }
@@ -136,5 +137,10 @@ export const isToday = (timestamp) => {
 }
 
 export const isSamDay = (timestamp, timestamp2) => {
-  return new Date(timestamp).toDateString() === new Date(timestamp2).toDateString()
+  if(!!!timestamp || !!!timestamp2) {
+    return false
+  }
+  const new_time_a = timestamp.toString().length < 13? Number(timestamp) * 1000: Number(timestamp)
+  const new_time_b = timestamp2.toString().length < 13? Number(timestamp2) * 1000: Number(timestamp2)
+  return new Date(new_time_a).toDateString() == new Date(new_time_b).toDateString()
 }

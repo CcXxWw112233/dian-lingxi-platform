@@ -81,7 +81,7 @@ export default class DetailInfo extends React.Component {
   }
   //点击区域描述可编辑区域-----------end
 
-  //点击添加成员操作
+  //点击添加职员操作
   setShowAddMenberModalVisibile() {
     this.setState({
       ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
@@ -90,7 +90,6 @@ export default class DetailInfo extends React.Component {
 
 
   render() {
-
     const { editDetaiDescription, detaiDescriptionValue } = this.state
     const {datas: { projectInfoDisplay, isInitEntry, projectDetailInfoData = {} } } = this.props.model
     let { board_id, board_name, data = [], description } = projectDetailInfoData //data是参与人列表

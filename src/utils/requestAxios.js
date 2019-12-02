@@ -1,12 +1,10 @@
-import { message } from 'antd';
+import { message, notification } from 'antd';
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import _ from "lodash";
-import {REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ABOUT_PROJECT} from "../globalset/js/constant";
-import { Base64 } from 'js-base64';
 import { reRefreshToken } from './oauth'
 import { setRequestHeaderBaseInfo } from './businessFunction'
-function messageLoading(url) {
+function messageLoading() {
   return (
     message.loading('加载中...', 0)
   )
@@ -37,40 +35,28 @@ export default function request(options = {}, elseSet = {}) {
 
   header['Authorization'] = Authorization//refreshToken
   header['refreshToken'] = refreshToken
-  
-  // header['OrganizationId'] = localStorage.getItem('OrganizationId') || '0'
-  // header['BoardId'] = localStorage.getItem('storageCurrentOperateBoardId') || '0'//当前操作项目的项目id
-  // if(data['_organization_id'] || params['_organization_id']) {
-  //   header['OrganizationId'] = data['_organization_id'] || params['_organization_id']
-  // }
 
-  // 请求头BaseInfo base64加密(后台权限拦截)，最终输出
-  //BaseInfo: { organizationId，boardId, contentDataType, contentDataId,  aboutBoardOrganizationId, }
-  // let header_baseInfo_orgid = localStorage.getItem('OrganizationId') || '0'
-  // if(data['_organization_id'] || params['_organization_id']) {
-  //   header_baseInfo_orgid = data['_organization_id'] || params['_organization_id']
-  // }
-  // const header_BaseInfo = Object.assign({
-  //     orgId: header_baseInfo_orgid,
-  //     boardId: localStorage.getItem('storageCurrentOperateBoardId') || '0',
-  //     aboutBoardOrganizationId: localStorage.getItem('aboutBoardOrganizationId') || '0' ,
-  // }, headers['BaseInfo'] || {})
-  // const header_baseInfo_str = JSON.stringify(header_BaseInfo)
-  // const header_baseInfo_str_base64 = Base64.encode(header_baseInfo_str)
-  // const header_base_info = {
-  //   BaseInfo:  header_baseInfo_str_base64
-  // }
+  const header_base_info = setRequestHeaderBaseInfo({ data, params, headers })
 
-  const header_base_info = setRequestHeaderBaseInfo({ data, params, headers})
+  /***
+   * 用于打开分享的任务,文件,流程等详情的接口加上请求头
+   */
+  let headers_share = {}
+  if (window.location.hash.indexOf('/share_detailed') != -1) {
+    headers_share = {
+      ShareLinkInfo: localStorage.getItem('shareLinkInfo')
+    }
+  }
 
   return new Promise((resolve, reject) => {
     axios({
       ...{
         url,
-        headers: {...header, ...headers, ...header_base_info, },
+        // headers: { ...header, ...headers, ...header_base_info, },
+        headers: { ...header, ...headers, ...header_base_info, ...headers_share },
         method,
         params: {
-          ...params, 
+          ...params,
           // ...new_param
         },
         data: {
@@ -90,6 +76,8 @@ export default function request(options = {}, elseSet = {}) {
 
         if (_.has(error, "response.status")) {
           switch (error.response.status) {
+            case '200':
+              break
             case 401:
               reRefreshToken({
                 refreshToken: Cookies.get('refreshToken'),
@@ -97,6 +85,16 @@ export default function request(options = {}, elseSet = {}) {
               })
               break
             default:
+              const { data = {} } = error.response || {}
+              const { message } = data
+              const openNotification = () => {
+                notification.error({
+                  message: '提示',
+                  description: message,
+                });
+              };
+              openNotification()
+              resolve(data)
               break
           }
         } else {

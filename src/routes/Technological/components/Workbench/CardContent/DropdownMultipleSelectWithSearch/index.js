@@ -4,27 +4,30 @@ import styles from "./index.less";
 import chackImg from "./../../../../../../assets/workbench/check@2x.png";
 import personGroupImg from "./../../../../../../assets/workbench/person_group@2x.png";
 import Cookies from "js-cookie";
+import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
+import { connect } from 'dva'
 
 /*eslint-disable*/
+@connect()
 class DropdownMultipleSelectWithSearch extends Component {
   constructor(props) {
     super(props)
     const currentUser = this.getCurrentUserFromLocalStorage('userInfo')
-    const { list, handleSelectedItemChange } = props;
+    const { list, handleSelectedItemChange, currentSelectedProjectMember } = props;
     const findUserInList = list.find(item => item.id === currentUser.id)
-    if(findUserInList) {
+    if (findUserInList) {
       handleSelectedItemChange([findUserInList])
     }
     this.state = {
-      selectedList: findUserInList ? [findUserInList] : [],
+      selectedList: currentSelectedProjectMember ? currentSelectedProjectMember : (findUserInList ? [findUserInList] : []),
       searchValue: "",
-     dropdownOptionVisible: false
+      dropdownOptionVisible: false
     }
   }
   getCurrentUserFromLocalStorage = key => {
     try {
       const currentUserFromLocalStorage = localStorage.getItem(key)
-      if(currentUserFromLocalStorage) {
+      if (currentUserFromLocalStorage) {
         return JSON.parse(currentUserFromLocalStorage)
       }
       message.error(`从localStorage 获取 ${key} 失败`)
@@ -33,14 +36,14 @@ class DropdownMultipleSelectWithSearch extends Component {
     }
   }
   getCurrentUserFromCookie = key => {
-    try{
+    try {
       const currentUserFromCookie = JSON.parse(Cookies.get(key));
-        if (currentUserFromCookie) {
-          return currentUserFromCookie
-        } else {
-          message.error(`从Cookie中获取 ${key} 失败`)
-        }
-    }catch(e) {
+      if (currentUserFromCookie) {
+        return currentUserFromCookie
+      } else {
+        message.error(`从Cookie中获取 ${key} 失败`)
+      }
+    } catch (e) {
       message.error(`从Cookie中获取 ${key} 失败`)
     }
   }
@@ -55,7 +58,7 @@ class DropdownMultipleSelectWithSearch extends Component {
     });
   };
   handleDeleteSelectedItem = shouldDeleteItem => {
-    const {handleSelectedItemChange} = this.props
+    const { handleSelectedItemChange } = this.props
     this.setState(state => {
       return {
         selectedList: state.selectedList.filter(
@@ -63,7 +66,7 @@ class DropdownMultipleSelectWithSearch extends Component {
         )
       };
     }, () => {
-      const {selectedList} = this.state
+      const { selectedList } = this.state
       handleSelectedItemChange(selectedList)
     });
   };
@@ -73,7 +76,7 @@ class DropdownMultipleSelectWithSearch extends Component {
         selectedList: []
       };
     }, () => {
-      const {handleSelectedItemChange} = this.props
+      const { handleSelectedItemChange } = this.props
       handleSelectedItemChange([])
     });
   };
@@ -140,8 +143,8 @@ class DropdownMultipleSelectWithSearch extends Component {
         filteredList:
           list && list.length
             ? list.filter(item =>
-                item.full_name.toLowerCase().includes(searchValue.toLowerCase())
-              )
+              item.name.toLowerCase().includes(searchValue.toLowerCase())
+            )
             : [],
         isSelectedAll:
           list && list.length && selectedList.length === list.length
@@ -159,7 +162,7 @@ class DropdownMultipleSelectWithSearch extends Component {
     const { filteredList } = this.handleList();
     return filteredList.map(item => {
       const isSelectCurrItem = selectedList.find(
-        selected => selected.full_name === item.full_name
+        selected => selected.name === item.name
       );
       return (
         <Menu.Item key={item.id}>
@@ -173,13 +176,13 @@ class DropdownMultipleSelectWithSearch extends Component {
                 style={{ borderRadius: "50%" }}
               />
             ) : (
-              <Icon
-                type="user"
-                style={{ width: "20", height: "20", borderRadius: "50%" }}
-              />
-            )}
+                <Icon
+                  type="user"
+                  style={{ width: "20", height: "20", borderRadius: "50%" }}
+                />
+              )}
             <span style={{ marginLeft: "5px", userSelect: "none" }}>
-              {item.full_name}
+              {item.name}
             </span>
             <span style={{ position: "absolute", width: "20px", right: "0" }}>
               {isSelectCurrItem && <img src={chackImg} alt="" width="16" />}
@@ -253,7 +256,7 @@ class DropdownMultipleSelectWithSearch extends Component {
     }
     return selectedItem.map(item => (
       <div className={styles.contentListItemWrapper} key={item.id}>
-        <span className={styles.contentListItemContent} title={item.full_name}>
+        <span className={styles.contentListItemContent} title={item.name}>
           {item.avatar ? (
             <img
               className={styles.contentListItemImg}
@@ -263,18 +266,18 @@ class DropdownMultipleSelectWithSearch extends Component {
               alt=""
             />
           ) : (
-            <Icon
-              type="user"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "24px",
-                height: "24px"
-              }}
-              className={styles.contentListItemImg}
-            />
-          )}
+              <Icon
+                type="user"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "24px",
+                  height: "24px"
+                }}
+                className={styles.contentListItemImg}
+              />
+            )}
           <span
             className={styles.contentListItemDeleBtn}
             onClick={() => this.handleDeleteSelectedItem(item)}
@@ -295,26 +298,28 @@ class DropdownMultipleSelectWithSearch extends Component {
     return true;
   };
   componentWillReceiveProps(nextProps) {
-    const { list, handleSelectedItemChange } = this.props;
+    const { list, handleSelectedItemChange, currentSelectedProjectMember = [] } = this.props;
     const isReceiveSameListFromProps = this.comparePropsList(
       nextProps.list,
       list
     );
     if (!isReceiveSameListFromProps) {
       const currentUserFromCookie = this.getCurrentUserFromLocalStorage('userInfo')
-      if(currentUserFromCookie) {
+      if (currentUserFromCookie) {
         const currentUserId = currentUserFromCookie.id;
-          const currentUserInList = nextProps.list.find(
-            item => item.id === currentUserId
-          );
-          this.setState({
-            selectedList: currentUserInList ? [currentUserInList] : [],
-            searchValue: ""
-          }, () => {
-            if(currentUserInList) {
-              handleSelectedItemChange([currentUserInList])
-            }
-          });
+        const currentUserInList = nextProps.list.find(
+          item => item.id === currentUserId
+        );
+        let new_new_selectedList = currentUserInList ? [currentUserInList] : []
+        let new_selectedList = currentSelectedProjectMember.length ? currentSelectedProjectMember : new_new_selectedList
+        this.setState({
+          selectedList: new_selectedList,//currentUserInList ? [currentUserInList] : [],
+          searchValue: ""
+        }, () => {
+          if (currentUserInList) {
+            handleSelectedItemChange(new_selectedList)
+          }
+        });
       } else {
         this.setState({
           selectedList: [],
@@ -323,9 +328,44 @@ class DropdownMultipleSelectWithSearch extends Component {
       }
     }
   }
+
+  chirldrenTaskChargeChange = ({ selectedKeys = [] }) => {
+    const { list = [], handleSelectedItemChange } = this.props
+    const selectedList = list.filter(item => selectedKeys.indexOf(item.id) != -1 || selectedKeys.indexOf(item.user_id) != -1)
+    this.setState({
+      selectedList
+    }, () => {
+      handleSelectedItemChange(selectedList)
+    })
+  }
+  inviteOthersToBoardCalback = ({ users }) => {
+    const { dispatch, board_id, handleSelectedItemChange, inviteOthersToBoardCalbackRequest } = this.props
+    const { selectedList = [] } = this.state
+    const calback = (lists) => {
+      const arr = lists.filter(item => users.indexOf(item.id) != -1)
+      const new_selectedList = [].concat(selectedList, arr)
+      this.setState({
+        selectedList: new_selectedList
+      })
+      handleSelectedItemChange(new_selectedList)
+    }
+    if (typeof inviteOthersToBoardCalbackRequest == 'function') {
+      inviteOthersToBoardCalbackRequest()
+      // return
+    }
+    dispatch({
+      type: 'workbench/fetchCurrentSelectedProjectMembersList',
+      payload: {
+        projectId: board_id,
+        calback
+      }
+    })
+  }
+
   render() {
     const { dropdownOptionVisible, selectedList } = this.state;
     const { itemTitle } = this.props;
+    const { board_id, list } = this.props
     return (
       <div className={styles.wrapper}>
         <div className={styles.content}>
@@ -334,7 +374,22 @@ class DropdownMultipleSelectWithSearch extends Component {
             {this.renderSelectedItem(selectedList)}
           </div>
           <Dropdown
-            overlay={this.renderDropdownContent()}
+            // overlay={this.renderDropdownContent()}
+            overlay={
+              !!board_id ? (
+                <MenuSearchPartner
+                  not_show_wechat_invite={true}
+                  invitationType='1'
+                  invitationId={board_id}
+                  listData={list}
+                  keyCode={'user_id'}
+                  searchName={'name'}
+                  currentSelect={selectedList}
+                  chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                  board_id={board_id}
+                  inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
+                />) : (<div></div>)
+            }
             visible={dropdownOptionVisible}
             onVisibleChange={this.handleDropdownVisibleChange}
           >

@@ -6,7 +6,7 @@ import { Tooltip } from 'antd'
 const Copyright = () => {
   return (
     <div className={styles.CopyrightOuter}>
-      <Tooltip placement="top" title={'即将上线'}>
+      {/* <Tooltip placement="top" title={'即将上线'}>
         <span style={{color: '#bfbfbf', cursor: 'pointer'}}>产品</span>
       </Tooltip>
       &nbsp;&nbsp;
@@ -16,8 +16,9 @@ const Copyright = () => {
         &nbsp;&nbsp;
       <Tooltip placement="top" title={'即将上线'}>
         <span style={{color: '#bfbfbf', cursor: 'pointer'}}>价格</span>
-      </Tooltip>
-      &nbsp;&nbsp;|&nbsp;&nbsp;©&nbsp;&nbsp;2018&nbsp;&nbsp;灵犀&nbsp;&nbsp;粤ICP备17146321号
+      </Tooltip> */}
+      {/* &nbsp;&nbsp;| */}
+      &nbsp;&nbsp;©&nbsp;&nbsp;2018&nbsp;&nbsp;灵犀&nbsp;&nbsp;粤ICP备17146321号
     </div>
   );
 };

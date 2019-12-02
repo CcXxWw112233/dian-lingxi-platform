@@ -370,8 +370,8 @@ export default {
     },
 
     * addCardNewComment({ payload }, { select, call, put }) { //
-      const { card_id, comment, parentKey, childrenKey, valueItem } = payload
-      let res = yield call(addCardNewComment, { card_id, comment })
+      const { card_id, comment, parentKey, childrenKey, valueItem, board_id } = payload
+      let res = yield call(addCardNewComment, { card_id, comment, board_id })
       if(isApiResponseOk(res)) {
         // 将评论的内容添加到前面
         const newsDynamicList = yield select(selectNewsDynamicList)
@@ -398,6 +398,7 @@ export default {
           }
         })
       }else{
+        message.error(res.message)
       }
     },
 

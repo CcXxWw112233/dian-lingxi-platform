@@ -149,6 +149,9 @@ export default class CommentListItem extends React.Component {
       <div className={CommentStyles.commentListItemBox}>
         <div>
           {
+            this.props.model &&
+            this.props.model.datas &&
+            this.props.model.datas.cardCommentAll &&
             this.props.model.datas.cardCommentAll.map((item, key) => {
               return filterIssues(item)
             })

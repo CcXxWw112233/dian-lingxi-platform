@@ -4,13 +4,13 @@ import Cookies from 'js-cookie'
 import { getGlobalData } from '../../utils/businessFunction';
 
 //获取工作台甘特图数据
-export async function getGanttData(params) {
+export async function getGanttData(data) {
   return request({
-    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt`,
-    method: 'GET',
-    params: {
-      ...params,
-      _organization_id: getGlobalData('aboutBoardOrganizationId')
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart`,
+    method: 'POST',
+    data: {
+      _organization_id: localStorage.getItem('OrganizationId'),
+      ...data,
     }
   })
 }
@@ -18,22 +18,64 @@ export async function getGanttData(params) {
 //获取节假日
 export async function getHoliday(params) {
   return request({
-    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt/calendar/holiday`,
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/calendar`,
     method: 'GET',
     params
   })
 }
 
 //获取甘特图里程碑列表
-export async function getGttMilestoneList(params) {
+export async function getGttMilestoneList(data) {
   return request({
-    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt/milestone`,
-    method: 'GET',
-    params: {
-      ...params,
-      _organization_id: getGlobalData('aboutBoardOrganizationId')
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/milestone`,
+    method: 'POST',
+    data: {
+      ...data,
+      // _organization_id: getGlobalData('aboutBoardOrganizationId')
     }
   }, { isNotLoading: true});
 }
 
+//获取内容过滤项目分组树
+export async function getContentFiterBoardTree(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization/board/list`,
+    method: 'GET',
+    params: {
+      _organization_id: localStorage.getItem('OrganizationId'),
+      ...params,
+    }
+  })
+}
+//获取内容过滤成员分组树
+export async function getContentFiterUserTree(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization/user/list`,
+    method: 'GET',
+    params: {
+      _organization_id: localStorage.getItem('OrganizationId'),
+      ...params,
+    }
+  })
+}
 
+//获取甘特图带根目录文件的项目列表
+export async function getGanttBoardsFiles(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/file`,
+    method: 'POST',
+    data: {
+      _organization_id: localStorage.getItem('OrganizationId'),
+      ...data,
+    }
+  })
+}
+
+//获取甘特图带根目录文件的项目列表
+export async function miletonesUserGuide(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/user/guide/gantt_char`,
+    method: 'POST',
+    data
+  })
+}

@@ -1,20 +1,12 @@
 import React from 'react';
-import { Card, Icon, Input, Button, Mention, Upload, Tooltip, message } from 'antd'
+import { Icon, Mention, } from 'antd'
 import CommentStyles from './Comment2.less'
 import 'emoji-mart/css/emoji-mart.css'
-import { Picker } from 'emoji-mart'
-import CommentListItem from './CommentListItem2'
-import Cookies from 'js-cookie'
-import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMMENT_PUBLISH,
-  PROJECT_FILES_FILE_EDIT
-} from "../../../../../../../globalset/js/constant";
-import {checkIsHasPermissionInBoard} from "../../../../../../../utils/businessFunction";
+import { connect } from 'dva'
 const { toString, toContentState } = Mention;
 
 // const TextArea = Input.TextArea
-const Dragger = Upload.Dragger
-
+@connect(mapStateToProps)
 export default class Comment extends React.Component {
   state = {
     editText: toContentState(''),
@@ -22,9 +14,7 @@ export default class Comment extends React.Component {
     submitButtonDisabled: true
   }
   componentDidMount() {
-    // this.props.getWorkFlowComment({
-    //   flow_instance_id: this.props.model.datas.totalId.flow
-    // })
+
   }
   MentionSpacerClick() {
   }
@@ -37,19 +27,7 @@ export default class Comment extends React.Component {
       })
     })
   }
-  submitComment() {
 
-    const { datas: { drawContent = {} } } = this.props.model
-    const { card_id } = drawContent
-    this.props.addCardNewComment({
-      card_id,
-      comment: toString(this.state.editText)
-    })
-    this.setState({
-      editText: toContentState(''),
-      submitButtonDisabled: true
-    })
-  }
   stopUp(e) {
     e.stopPropagation()
   }
@@ -63,27 +41,30 @@ export default class Comment extends React.Component {
     let ctrl = e.ctrlKey;
     let shift = e.shiftKey;
     let alt = e.altKey;
-    if(code == '10' && ctrl && !shift && !alt) {
+    if (code == '10' && ctrl && !shift && !alt) {
       //ctrl + enter
       // return;
     }
-    if(code == '13' && !ctrl && shift && !alt) {
+    if (code == '13' && !ctrl && shift && !alt) {
       //shift + enter
       // return;
     }
-    if(code == '13' && !ctrl && !shift && !alt) {
-      const { datas: { projectDetailInfoData = {}, filePreviewCurrentFileId, board_id } } = this.props.model
+    if (code == '13' && !ctrl && !shift && !alt) {
+      const { filePreviewCurrentFileId, currentRect, dispatch, projectDetailInfoData: { board_id } } = this.props
       const { text } = this.state
-      if(!text) {
+      if (!text) {
         return
       }
       //只按了enter
-      this.props.addFileCommit({
-        board_id,
-        comment: text,
-        file_id: filePreviewCurrentFileId,
-        type: '0',
-        coordinates: JSON.stringify(this.props.currentRect)
+      dispatch({
+        type: 'projectDetailFile/addFileCommit',
+        payload: {
+          board_id,
+          comment: text,
+          file_id: filePreviewCurrentFileId,
+          type: '0',
+          coordinates: JSON.stringify(currentRect)
+        }
       })
       this.setState({
         text: ''
@@ -95,11 +76,11 @@ export default class Comment extends React.Component {
   render() {
 
     const { editText } = this.state
-    const { datas: { drawContent = {}, cardCommentList = [], projectDetailInfoData = {} } } = this.props.model
+    const { projectDetailInfoData = {} } = this.props
     const { data = [] } = projectDetailInfoData
     let suggestions = []
-    for(let val of data) {
-      if(val['full_name']) {
+    for (let val of data) {
+      if (val['full_name']) {
         suggestions.push(val['full_name'])
       }
     }
@@ -123,20 +104,20 @@ export default class Comment extends React.Component {
       },
     };
     return (
-      <div className={CommentStyles.out} tabIndex="0" hideFocus={true} style={{outline: 0, }} onClick={this.stopUp.bind(this)} onMouseDown={this.stopUp.bind(this)}>
+      <div className={CommentStyles.out} tabIndex="0" hideFocus={true} style={{ outline: 0, }} onClick={this.stopUp.bind(this)} onMouseDown={this.stopUp.bind(this)}>
         <div>
-          {avatar?(
-            <img src={avatar} className={CommentStyles.avartarImg} style={{width: leftSpaceDivWH, height: leftSpaceDivWH}} />
-          ): (
-            <div style={{width: 26, height: 26, borderRadius: 26, backgroundColor: '#f5f5f5', textAlign: 'center'}}>
-              <Icon type={'user'} style={{fontSize: 16, marginTop: 4, color: '#8c8c8c'}}/>
-            </div>
-          )}
+          {avatar ? (
+            <img src={avatar} className={CommentStyles.avartarImg} style={{ width: leftSpaceDivWH, height: leftSpaceDivWH }} />
+          ) : (
+              <div style={{ width: 26, height: 26, borderRadius: 26, backgroundColor: '#f5f5f5', textAlign: 'center' }}>
+                <Icon type={'user'} style={{ fontSize: 16, marginTop: 4, color: '#8c8c8c' }} />
+              </div>
+            )}
         </div>
         {/*<Dragger {...props} >*/}
         <div className={CommentStyles.right}>
           <div className={CommentStyles.comment}>
-            <textarea value={this.state.text} onChange={this.texAreaChange.bind(this)} minRows = {1} onKeyDown={this.handlerMultiEnter.bind(this)} maxRows = {1} className={CommentStyles.textArea}></textarea>
+            <textarea value={this.state.text} onChange={this.texAreaChange.bind(this)} minRows={1} onKeyDown={this.handlerMultiEnter.bind(this)} maxRows={1} className={CommentStyles.textArea}></textarea>
           </div>
         </div>
         {/*</Dragger>*/}
@@ -147,3 +128,22 @@ export default class Comment extends React.Component {
 }
 
 
+function mapStateToProps({
+  projectDetailFile: {
+    datas: {
+      filePreviewCurrentFileId,
+    }
+  },
+  projectDetail: {
+    datas: {
+      projectDetailInfoData = {},
+      board_id
+    }
+  }
+}) {
+  return {
+    projectDetailInfoData,
+    filePreviewCurrentFileId,
+    board_id
+  }
+}

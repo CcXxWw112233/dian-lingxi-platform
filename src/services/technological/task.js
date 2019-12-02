@@ -9,7 +9,7 @@ import {
   CONTENT_DATA_TYPE_LIST
 } from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
-import { func } from "prop-types";
+import { getGlobalData } from "../../utils/businessFunction";
 
 const createHeaderContentData = (contentType, contentId) => {
   if (contentType && contentId) {
@@ -58,14 +58,14 @@ const getContentTypeByLinkLocal = (linkLocalCode) => {
       contentType = CONTENT_DATA_TYPE_FLOW;
       break
     case '21':
-        contentType = CONTENT_DATA_TYPE_FLOW;
-        break
+      contentType = CONTENT_DATA_TYPE_FLOW;
+      break
     case '22':
-    contentType = 'flowtpl';
-    break
+      contentType = 'flowtpl';
+      break
     case '3':
-        contentType = CONTENT_DATA_TYPE_CARD;
-        break
+      contentType = CONTENT_DATA_TYPE_CARD;
+      break
     case '4':
       contentType = CONTENT_DATA_TYPE_FILE;
       break
@@ -101,7 +101,7 @@ export async function deleteTaskGroup(data) {
 // 任务列表
 export async function getTaskGroupList(params) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/card`,
+    url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/card`,
     method: 'GET',
     params,
   });
@@ -126,13 +126,13 @@ export async function addTask(data) {
 }
 
 // 更新任务
-export async function updateTask(data) {
+export async function updateTask(data, isNotLoading) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/card`,
     method: 'PUT',
     headers: createHeaderContentDataByCardId(data.card_id),
     data,
-  });
+  }, { isNotLoading });
 }
 
 // 删除任务
@@ -158,13 +158,13 @@ export async function archivedTask(data) {
 }
 
 // 改变任务类型
-export async function changeTaskType(data) {
+export async function changeTaskType(data, isNotLoading) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/card/change`,
     method: 'PUT',
     headers: createHeaderContentDataByCardId(data.card_id),
     data,
-  });
+  }, { isNotLoading });
 }
 
 // 新增子任务
@@ -308,6 +308,15 @@ export async function getBoardTagList(params) {
     params
   });
 }
+// 新增项目标签
+export async function addBoardTag(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/label`,
+    method: 'POST',
+    data
+  })
+}
+
 //更新项目标签
 export async function updateBoardTag(data) {
   return request({
@@ -340,14 +349,69 @@ export async function getCardDetail(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/card/detail/${params.id}`,
     method: 'GET',
-    headers: createHeaderContentDataByCardId(params.id),
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
+    params
+  });
+}
+
+// 获取新的携带属性的任务详情
+export async function getCardWithAttributesDetail(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/card/detail`,
+    method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
+    params
+  })
+}
+
+// 获取任务详情中属性字段默认列表
+export async function getCardAttributesList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/properties`,
+    method: 'GET',
+    params
+  })
+}
+
+// 任务详细添加属性字段
+export async function setCardAttributes(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/property`,
+    method: 'POST',
+    data
+  })
+}
+
+// 删除任务动态属性
+export async function removeCardAttributes(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/property`,
+    method: 'DELETE',
+    params
+  })
+}
+
+// 移动任务属性排序
+export async function sortCardAttribute(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/property/move`,
+    method: 'POST',
+    data
+  })
+}
+
+//获取任务详情 ---- 解决分享出去之后的任务详情没有权限 ----暂时使用(10月14日)
+export async function getShareCardDetail(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/detail/share/${params.id}`,
+    method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
     params
   });
 }
 
 //取消关联
 export async function deleteRelation(params) {
-  //debugger
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/content_link/${params.id}`,
     method: 'DELETE',
@@ -360,6 +424,7 @@ export async function getRelations(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/content_link`,
     method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.link_id),
     params
   });
 }
@@ -394,7 +459,10 @@ export async function getRelationsSelectionPre(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/content_link/prefix`,
     method: 'GET',
-    params
+    params: {
+      _organization_id: localStorage.getItem('OrganizationId') == '0' ? getGlobalData('aboutBoardOrganizationId') : localStorage.getItem('OrganizationId'),
+      ...params,
+    }
   }, { isNotLoading: true });
 }
 //加载关联内容（后）
@@ -411,6 +479,7 @@ export async function getCardCommentListAll(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/card/comment`,
     method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
     params
   })
 }
@@ -437,6 +506,14 @@ export async function getMilestoneDetail(params) {
     url: `${REQUEST_DOMAIN_BOARD}/milestone/detail/${params.id}`,
     method: 'GET',
     params
+  })
+}
+//获取里程碑详情
+export async function requestDeleteMiletone(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone/${data.id}`,
+    method: 'DELETE',
+    data,
   })
 }
 //更新里程碑详情

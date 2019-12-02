@@ -69,7 +69,7 @@ export default modelExtend(technological, {
         notification.open({
           message: '提示',
           description:
-            '您所在当前组织没有查看组织团队成员权限。',
+            '您所在当前组织没有查看组织团队职员权限。',
           onClick: () => {
             // console.log('Notification Clicked!');
           },
@@ -84,7 +84,7 @@ export default modelExtend(technological, {
     },
 
     * getGroupList({ payload }, { select, call, put }) {
-      let res = yield call(getGroupList, {_organization_id: localStorage.getItem('OrganizationId'),...payload,})
+      let res = yield call(getGroupList, {_organization_id: localStorage.getItem('OrganizationId'), ...payload, })
       if(isApiResponseOk(res)) {
         const groupList = res.data.data
         //将角色信息数据包裹

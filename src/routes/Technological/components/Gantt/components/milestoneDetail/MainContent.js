@@ -1,14 +1,14 @@
 import React from 'react'
 import indexStyles from './index.less'
 import NameChangeInput from '../../../../../../components/NameChangeInput'
-import { Dropdown, Icon, Progress, Avatar, DatePicker, Button } from 'antd'
+import { Dropdown, Icon, Progress, Avatar, DatePicker, Button, message } from 'antd'
 import MeusearMutiple from '../../../Workbench/CardContent/Modal/TaskItemComponent/components/MeusearMutiple'
 import ExcutorList from '../../../Workbench/CardContent/Modal/TaskItemComponent/components/ExcutorList'
 import BraftEditor from 'braft-editor'
 import Cookies from 'js-cookie'
 import TaskItem from './components/TaskItem'
 import globalStyle from '../../../../../../globalset/css/globalClassName.less'
-import {timestampToTimeNormal, timeToTimestamp} from "../../../../../../utils/util";
+import {timestampToTimeNormal, timeToTimestamp, compareTwoTimestamp} from "../../../../../../utils/util";
 import {REQUEST_DOMAIN_FILE} from "../../../../../../globalset/js/constant";
 import { connect, } from 'dva';
 
@@ -40,6 +40,14 @@ export default class MainContent extends React.Component {
     })
   }
 
+  // 父组件相对对应该里程碑变化的操作
+  handleMiletonesChange = (data = {}) => {
+    const { handleMiletonesChange, milestone_detail = { } } = this.props
+    const { id } = milestone_detail
+
+    if(typeof handleMiletonesChange == 'function') handleMiletonesChange(id, { ...data })
+  }
+
   //更新详情
   updateMilestone = (params) => {
     const { dispatch, milestone_detail = {} } = this.props
@@ -57,6 +65,7 @@ export default class MainContent extends React.Component {
   titleChangeBlur(e) {
     const value = e.target.value
     this.updateMilestone({name: value})
+    this.handleMiletonesChange({ name: value })
   }
   setTitleIsEdit = (titleIsEdit) => {
     this.setState({
@@ -103,7 +112,26 @@ export default class MainContent extends React.Component {
   //截止时间
   endDatePickerChange(e, timeString) {
     const due_timeStamp = timeToTimestamp(timeString)
+    // 和关联任务的时间限制---
+    const { milestone_detail = {} } = this.props
+    const { content_list = [] } = milestone_detail
+    let flag = true
+    for(let val of content_list) {
+      if(!compareTwoTimestamp(due_timeStamp, Number(val.deadline))) {
+        flag = false
+        break
+      }
+    }
+    if(!flag) {
+      message.warn('关联里程碑的截止日期不能小于任务的截止日期')
+      return
+    }
+
+    // 和关联任务的时间限制---
+
     this.updateMilestone({ deadline: due_timeStamp })
+    // 父组件的操作
+    this.handleMiletonesChange({ deadline: due_timeStamp })
   }
   disabledDueTime = (deadline) => {
     const now_time = new Date().getTime()

@@ -15,8 +15,8 @@ import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_U
 import {newsDynamicHandleTime, timestampToTime, timestampToHM, timestampToTimeNormal2} from '@/utils/util'
 
 
-@connect(({projectDetail: { datas: { projectDynamicsList = [], p_next_id } } }) => ({
-  projectDynamicsList, p_next_id
+@connect(({projectDetail: { datas: { projectDynamicsList = [], p_next_id, projectDetailInfoData = {} } } }) => ({
+  projectDynamicsList, p_next_id, projectDetailInfoData
 }))
 export default class DynamicContain extends Component {
 
@@ -294,7 +294,7 @@ export default class DynamicContain extends Component {
 
   render() {
     const { projectDynamicsList } = this.props
-    const { datas: { projectDetailInfoData = [], } } = this.props.model
+    const { projectDetailInfoData = [] } = this.props
     const { data } = projectDetailInfoData
     // console.log(this.props.model.datas.processDetailModalVisible, 'sssss')
     //过滤消息内容

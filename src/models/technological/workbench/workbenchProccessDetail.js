@@ -498,6 +498,10 @@ export default modelExtend(workbench, {
     * addWorkFlowComment({payload}, {select, call, put}) {
       let res1 = yield select(selectProcessCommentList)
       let res2 = yield call(addWorkFlowComment, payload)
+      if (!isApiResponseOk(res2)) {
+        message.warn(res2.message)
+        return false
+      }
       yield put({
         type: 'updateDatas',
         payload: {
@@ -540,12 +544,17 @@ export default modelExtend(workbench, {
     * workflowDelete({payload}, {select, call, put}) {
       let res = yield call(workflowDelete, payload)
       // console.log('this is workflowDelete:', res)
-      yield put({
-        type: 'updateDatas',
-        payload: {
-          isProcessEnd: ''
-        }
-      })
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            isProcessEnd: ''
+          }
+        })
+      } else {
+        message.warning(res.message)
+      }
+      
     },
 
     * workflowEnd({payload}, {select, call, put}) {

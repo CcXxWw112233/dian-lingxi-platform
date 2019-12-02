@@ -97,7 +97,7 @@
   background: #8c8c8c;
 }
 .global_vertical_scrollbar::-webkit-scrollbar {/*滚动条整体样式*/
-  width: 8px;     /*高宽分别对应横竖滚动条的尺寸*/
+  width: 4px;     /*高宽分别对应横竖滚动条的尺寸*/
   height: 8px;
   border-radius: 4px;
 }
@@ -112,18 +112,20 @@
   background: #E8E8E8;
 }
 
-// 通知提醒的样式
-.inform_remind {
-  display: inline-block;
-  font-style: normal;
-  width:16px;
-  height:16px;
-  font-size: 12px;
-  cursor: pointer;
-  &:hover {
+// 设置hover子元素颜色变化
+.dom_hover_child_color:hover{
+  *{
     color: #40A9FF;
   }
-  &:focus {
-    color: #40A9FF;
-  }
+}
+
+// 访问控制弹窗页面的蒙层
+.drawContent_mask {
+  position: absolute;
+  z-index: 1005;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
 }

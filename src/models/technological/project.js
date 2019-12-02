@@ -10,6 +10,7 @@ export default {
     datas: {
       projectGroupTree: {}, //项目分组
       projectGroupSearchTree: [], //项目分组搜索树
+      currentSelectedProjectMenuItem: '', //当前选择的item
     }
   },
   subscriptions: {
@@ -23,18 +24,6 @@ export default {
               collapseActiveKeyArray: ['1', '2', '3'], //折叠面板打开的key
             }
           })
-          // dispatch({
-          //   type: 'getProjectList',
-          //   payload: {
-          //     type: '1'
-          //   }
-          // })
-          // dispatch({
-          //   type: 'getAppsList',
-          //   payload: {
-          //     type: '2'
-          //   }
-          // })
           dispatch({
             type: 'setCurrentSelectedProjectMenuItem',
             payload: {
@@ -142,7 +131,7 @@ export default {
         })
         return 'success'
       }
-      return 'error'
+      return res.message
     },
     * editProjectGroupTreeNodeName({payload}, {call, put}) {
       let res = yield call(updateProjectGroupTreeNodeName, payload)
@@ -152,7 +141,7 @@ export default {
         })
         return 'success'
       }
-      return 'error'
+      return res.message
     },
     * deleteProjectGroupTreeNode({payload}, {call, put}) {
       const {id} = payload
@@ -206,21 +195,27 @@ export default {
       }
     },
     * addNewProject({ payload }, { select, call, put }) {
-      let res = yield call(addNewProject, payload)
+      const { calback } = payload
+      const params = {...payload}
+      delete params.calback
+      let res = yield call(addNewProject, params)
       if(isApiResponseOk(res)) {
-        // yield put({
-        //   type: 'getProjectList',
-        //   payload: {
-        //     type: '1',
-        //     calback: function () {
-        //       message.success('添加项目成功', MESSAGE_DURATION_TIME)
-        //     },
-        //   }
-        // })
         message.success('添加项目成功', MESSAGE_DURATION_TIME)
-        yield put({ //获取全部组织的全部项目
+        if(typeof calback == 'function') {
+          calback(res.data.id)
+        }
+        yield put({
           type: 'technological/getUserAllOrgsAllBoards',
-        })
+          payload: {}
+        });
+        yield put({
+          type: 'technological/getUserOrgPermissions',
+          payload: {}
+        });
+        yield put({
+          type: 'technological/getUserBoardPermissions',
+          payload: {}
+        });
         return yield put({
           type: 'fetchProjectListAndUpdateProjectGroupTree'
         })
@@ -272,17 +267,25 @@ export default {
     },
 
     * quitProject({ payload }, { select, call, put }) {
-      let res = yield call(quitProject, payload)
+      const { board_id, currentSelectedProjectMenuItem } = payload
+      let res = yield call(quitProject, {board_id})
       if(isApiResponseOk(res)) {
         yield put({
-          type: 'getProjectList',
+          type: 'fetchCurrentProjectGroupProjectList',
           payload: {
+            keyword: currentSelectedProjectMenuItem,
             calback: function () {
               message.success('已退出项目', MESSAGE_DURATION_TIME)
             },
             type: '1'
           }
         })
+        yield put({
+          type: 'fetchProjectGroupTree',
+          payload: {
+
+          }
+        })   
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -306,6 +309,7 @@ export default {
     },
 
     * addMenbersInProject({ payload }, { select, call, put }) {
+      const currentSelectedProjectMenuItem = yield select(state => state['project'].datas.currentSelectedProjectMenuItem)
       let res = yield call(addMenbersInProject, payload)
       if(isApiResponseOk(res)) {
         yield put({
@@ -314,6 +318,13 @@ export default {
             calback: function () {
               message.success('成功添加项目成员', MESSAGE_DURATION_TIME)
             },
+            type: '1'
+          }
+        })
+        yield put({
+          type: 'fetchCurrentProjectGroupProjectList',
+          payload: {
+            keyword: currentSelectedProjectMenuItem,
             type: '1'
           }
         })
@@ -327,7 +338,7 @@ export default {
       let res = yield call(deleteProject, id)
       if(isApiResponseOk(res)) {
         yield put({
-          type: 'getProjectList',
+          type: 'fetchCurrentProjectGroupProjectList',
           payload: {
             calback: function () {
               message.success('已删除项目', MESSAGE_DURATION_TIME)
@@ -335,6 +346,13 @@ export default {
             type: '1'
           }
         })
+        yield put({
+          type: 'fetchProjectGroupTree',
+          payload: {
+
+          }
+        })    
+      
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }

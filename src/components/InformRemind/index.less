@@ -1,5 +1,36 @@
+// 通知提醒的样式
+.informRemindWrapper {
+    min-width: 595px !important;
+}
+.inform_remind {
+	display: inline-block;
+	font-style: normal;
+	width:16px;
+	height:16px;
+	font-size: 16px;
+	cursor: pointer;
+	&:hover {
+		color: #40A9FF;
+	}
+	&:focus {
+		color: #40A9FF;
+	}
+}
+
+.info_icon {
+	&:hover {
+		background:rgba(0,0,0,0.04);
+		cursor: pointer;
+	}
+	.inform_remind {
+		&:hover {
+			color: rgba(0,0,0,0.45);
+		}
+	}
+}
+
 .wrapperInfo{
-    min-height: 175px;
+    // min-height: 175px;
     position: relative;
     z-index: 1100;
 }
@@ -22,6 +53,9 @@
 .content {
     position: relative; 
     cursor: pointer;
+    .trigger_select {
+        min-width: 135px;
+    }
     .slip{
         display: flex;
         justify-content: space-between;
@@ -47,7 +81,7 @@
         }
         .user_info {
             position: absolute;
-            right: 85px;
+            right: 74px;
             top: 12px;
             .plus {
                 font-size: 20px;

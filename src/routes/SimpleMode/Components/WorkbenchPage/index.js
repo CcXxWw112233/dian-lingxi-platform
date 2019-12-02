@@ -4,29 +4,43 @@ import indexStyles from './index.less'
 import MiniBoxNavigations from '../MiniBoxNavigations/index'
 import BoardCommunication from './BoardCommunication/index'
 import BoardFiles from './BoardFiles/index'
-
-
-
+import BoardPlan from './BoardPlan/index'
+import InvestmentMaps from './InvestmentMaps/index'
+import XczNews from './XczNews/index'
+import Zhichengshe from './Zhichengshe/index'
+import LingxiIm, { Im } from 'lingxi-im'
+import { isPaymentOrgUser } from "@/utils/businessFunction"
 
 class WorkbenchPage extends Component {
     constructor(props) {
-        console.log("WorkbenchPage组件初始化");
+        // console.log("WorkbenchPage组件初始化");
         super(props);
         this.state = {
+            BoardPlanVisible: false,
             BoardCommunicationVisible: false,
-            BoardFilesVisible: false
+            BoardFilesVisible: false,
+            InvestmentMapsVisible: false,
+            XczNewsVisible: false,
+            ZhichengsheVisible: false,
         }
     }
     componentWillMount() {
         const { dispatch, currentSelectedWorkbenchBox = {} } = this.props;
         if (!currentSelectedWorkbenchBox.id) {
-            dispatch({
-                type: 'simplemode/routingJump',
-                payload: {
-                    route: '/technological/simplemode/home'
-                }
-            });
+            // dispatch({
+            //     type: 'simplemode/routingJump',
+            //     payload: {
+            //         route: '/technological/simplemode/home'
+            //     }
+            // });
         }
+
+        dispatch({
+            type: 'simplemode/updateDatas',
+            payload: {
+                leftMainNavIconVisible: false
+            }
+        });
     }
 
     componentDidMount() {
@@ -51,9 +65,9 @@ class WorkbenchPage extends Component {
     setWorkbenchVisible(currentSelectedWorkbenchBox) {
         const { dispatch, chatImVisiable } = this.props;
         if (currentSelectedWorkbenchBox.id && currentSelectedWorkbenchBox.code) {
-            if(currentSelectedWorkbenchBox.code != 'board:chat'){
+            if (currentSelectedWorkbenchBox.code != 'board:chat') {
                 const width = document.body.scrollWidth;
-                let workbenchBoxContentWapperModalStyle = chatImVisiable ? { width: (width - 372) + 'px' } : { width: '100%' }
+                let workbenchBoxContentWapperModalStyle = chatImVisiable ? { width: (width - 400) + 'px' } : { width: '100%' }
                 dispatch({
                     type: 'simplemode/updateDatas',
                     payload: {
@@ -66,24 +80,36 @@ class WorkbenchPage extends Component {
                 case 'board:archives': {
                     this.setState({
                         BoardCommunicationVisible: false,
-                        BoardFilesVisible: false
+                        BoardFilesVisible: false,
+                        BoardPlanVisible: false,
+                        InvestmentMapsVisible: false,
+                        XczNewsVisible: false,
+                        ZhichengsheVisible: false,
                     });
                 }
                     break;
                 case 'board:plans': {
                     this.setState({
                         BoardCommunicationVisible: false,
-                        BoardFilesVisible: false
+                        BoardFilesVisible: false,
+                        BoardPlanVisible: true,
+                        InvestmentMapsVisible: false,
+                        XczNewsVisible: false,
+                        ZhichengsheVisible: false,
                     });
                 }
                     break;
                 case 'board:chat': {
                     this.setState({
                         BoardCommunicationVisible: true,
-                        BoardFilesVisible: false
+                        BoardFilesVisible: false,
+                        BoardPlanVisible: false,
+                        InvestmentMapsVisible: false,
+                        XczNewsVisible: false,
+                        ZhichengsheVisible: false,
                     });
                     const width = document.body.scrollWidth;
-                    let workbenchBoxContentWapperModalStyle = { width: (width - 372) + 'px' }
+                    let workbenchBoxContentWapperModalStyle = { width: (width - 400) + 'px' }
                     dispatch({
                         type: 'simplemode/updateDatas',
                         payload: {
@@ -91,19 +117,62 @@ class WorkbenchPage extends Component {
                             workbenchBoxContentWapperModalStyle: workbenchBoxContentWapperModalStyle
                         }
                     });
+                    LingxiIm.show();
+
                 }
                     break;
                 case 'board:files': {
                     this.setState({
                         BoardCommunicationVisible: false,
-                        BoardFilesVisible: true
+                        BoardFilesVisible: true,
+                        BoardPlanVisible: false,
+                        InvestmentMapsVisible: false,
+                        XczNewsVisible: false,
+                        ZhichengsheVisible: false,
+                    });
+                }
+                    break;
+                case 'maps': {
+                    this.setState({
+                        BoardCommunicationVisible: false,
+                        BoardFilesVisible: false,
+                        BoardPlanVisible: false,
+                        InvestmentMapsVisible: true,
+                        XczNewsVisible: false,
+                        ZhichengsheVisible: false,
+                    })
+                }
+                    break;
+                case 'regulations': {
+                    this.setState({
+                        BoardCommunicationVisible: false,
+                        BoardFilesVisible: false,
+                        BoardPlanVisible: false,
+                        InvestmentMapsVisible: false,
+                        XczNewsVisible: true,
+                        ZhichengsheVisible: false,
+                    });
+                }
+                    break;
+                case 'cases': {
+                    this.setState({
+                        BoardCommunicationVisible: false,
+                        BoardFilesVisible: false,
+                        BoardPlanVisible: false,
+                        InvestmentMapsVisible: false,
+                        XczNewsVisible: false,
+                        ZhichengsheVisible: true,
                     });
                 }
                     break;
                 default: {
                     this.setState({
                         BoardCommunicationVisible: false,
-                        BoardFilesVisible: false
+                        BoardFilesVisible: false,
+                        BoardPlanVisible: false,
+                        InvestmentMapsVisible: false,
+                        XczNewsVisible: false,
+                        ZhichengsheVisible: false,
                     });
                 }
 
@@ -114,8 +183,17 @@ class WorkbenchPage extends Component {
 
 
     render() {
-        const { workbenchBoxContentWapperModalStyle } = this.props;
-        const { currentSelectedWorkbenchBox } = this.props;
+        const { workbenchBoxContentWapperModalStyle, currentSelectedWorkbenchBox, simplemodeCurrentProject } = this.props;
+        let isPaymentUser = false;
+        console.log("simplemodeCurrentProject", simplemodeCurrentProject);
+        if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
+         
+            isPaymentUser = isPaymentOrgUser(simplemodeCurrentProject.org_id);
+        } else {
+            isPaymentUser = isPaymentOrgUser();
+        }
+
+        console.log("isPaymentUser1", isPaymentUser);
         return (
             <div className={indexStyles.workbenchBoxContentModalContainer}>
                 <MiniBoxNavigations currentSelectedWorkbenchBox={currentSelectedWorkbenchBox} />
@@ -123,13 +201,32 @@ class WorkbenchPage extends Component {
                     <div className={indexStyles.workbenchBoxContentWapper}>
 
                         {
-                            this.state.BoardCommunicationVisible &&
-                            <BoardCommunication/>
+                            this.state.BoardPlanVisible &&
+                            <BoardPlan />
+                        }
+
+
+                        {
+                            isPaymentUser && this.state.BoardCommunicationVisible &&
+                            <BoardCommunication />
                         }
 
                         {
-                            this.state.BoardFilesVisible &&
-                            <BoardFiles/>
+                            isPaymentUser && this.state.BoardFilesVisible &&
+                            <BoardFiles />
+                        }
+
+                        {
+                            isPaymentUser && this.state.InvestmentMapsVisible &&
+                            <InvestmentMaps />
+                        }
+
+                        {
+                            isPaymentUser && this.state.XczNewsVisible &&
+                            <XczNews {...this.props} />
+                        }
+                        {
+                            isPaymentUser && this.state.ZhichengsheVisible && <Zhichengshe {...this.props} />
                         }
 
                     </div>
@@ -145,7 +242,9 @@ function mapStateToProps({
         workbenchBoxContentWapperModalStyle,
         myWorkbenchBoxList,
         currentSelectedWorkbenchBox,
-        chatImVisiable
+        chatImVisiable,
+        leftMainNavIconVisible,
+        simplemodeCurrentProject
     }
 }) {
 
@@ -153,7 +252,9 @@ function mapStateToProps({
         workbenchBoxContentWapperModalStyle,
         myWorkbenchBoxList,
         currentSelectedWorkbenchBox,
-        chatImVisiable
+        chatImVisiable,
+        leftMainNavIconVisible,
+        simplemodeCurrentProject
     }
 }
 export default connect(mapStateToProps)(WorkbenchPage)

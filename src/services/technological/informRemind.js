@@ -3,6 +3,17 @@ import request from '@/utils/requestAxios'
 import { REQUEST_DOMAIN_ABOUT_PROJECT } from '@/globalset/js/constant'
 
 /**
+ * 获取通知提醒的成员列表
+ */
+export async function getUserInfoRemind(params) {
+    return request({
+        url: `${REQUEST_DOMAIN_ABOUT_PROJECT}/comm/remind/user/list`,
+        method: "GET",
+        params
+    })
+}
+
+/**
  * 获取事件列表
  * @param {String} rela_type 获取事件列表的类型 1: 任务 2: 日程 3: 节点 4: 文件
  */

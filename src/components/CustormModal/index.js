@@ -1,11 +1,13 @@
 import React from 'react'
 import { Modal, Form, Button, Input, message } from 'antd'
-import {min_page_width} from "./../../globalset/js/styles";
-import indexstyles from './index.less'
+import { min_page_width } from "./../../globalset/js/styles";
+import indexStyles from './index.less'
+import { connect } from 'dva'
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 
 //此弹窗应用于各个业务弹窗，和右边圈子适配
+@connect(mapStateToProps)
 class CustormModal extends React.Component {
   state = {
     siderRightWidth: 56, //右边栏宽度
@@ -30,14 +32,14 @@ class CustormModal extends React.Component {
     // 选择目标节点
 
     const target = document.getElementById('siderRight');
-    if(!target) {
+    if (!target) {
       return
     }
     // 创建观察者对象
     const observer = new MutationObserver(function (mutations) {
       mutations.forEach(function (mutation) {
         that.setState({
-          siderRightWidth: RegExp(/videoMeeting__icon/).test(mutation.target.className) ? document.getElementById('siderRight').clientWidth : (document.getElementById('siderRight').clientWidth === 56 ? 300: 56)
+          siderRightWidth: RegExp(/videoMeeting__icon/).test(mutation.target.className) ? document.getElementById('siderRight').clientWidth : (document.getElementById('siderRight').clientWidth === 56 ? 300 : 56)
         })
       });
     });
@@ -56,40 +58,59 @@ class CustormModal extends React.Component {
   }
 
   resizeTTY(type) {
+    const { siderRightWidth } = this.state
     const clientHeight = document.documentElement.clientHeight//获取页面可见高度
-    const clientWidth = document.documentElement.clientWidth + 16//获取页面可见高度
+    const clientWidth = document.documentElement.clientWidth + 16 - siderRightWidth//获取页面可见高度
+    const layoutClientWidth = document.getElementById('technologicalLayoutWrapper') && document.getElementById('technologicalLayoutWrapper').clientWidth + 16
     this.setState({
       clientHeight,
-      clientWidth
+      clientWidth,
+      layoutClientWidth
     })
   }
 
 
   render() {
-    const { visible, overInner, width, zIndex = 1006, maskClosable, footer, destroyOnClose, keyboard = true, maskStyle={}, style={}, onOk, onCancel, bodyStyle={}, closable = true, title} = this.props;
-    const { clientWidth, siderRightWidth, clientHeight }= this.state
-    const maskWidth = clientWidth - siderRightWidth - 16 //16是margin的值
+    const { siderRightCollapsed = false, visible, overInner, width, zIndex = 1006, maskClosable, footer, destroyOnClose, keyboard = true, maskStyle = {}, style = {}, onOk, onCancel, bodyStyle = {}, closable = true, title,page_load_type} = this.props;
+    const { clientWidth, clientHeight } = this.state
+    const { siderRightWidth, layoutClientWidth } = this.state;
+    const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    const { is_simple_model } = user_set;
+    let maskWidth = clientWidth;
+    if (is_simple_model !== '1') {
+      maskWidth = clientWidth - siderRightWidth - 16 //16是margin的值
+    }
+
     // console.log(overInner, 'sss')
-    return(
+    return (
       <Modal
         title={title}
         visible={visible}
-        width={width}
+        width={width && width}
         closable={closable}
         zIndex={zIndex}
         maskClosable={maskClosable}
         footer={footer}
         destroyOnClose={destroyOnClose}
         keyboard={keyboard}
-        maskStyle={{height: clientHeight, width: maskWidth, ...maskStyle}}
-        style={{width: maskWidth, ...style}}
-        bodyStyle={{...bodyStyle}}
+        getContainer={() => document.getElementById('technologicalLayoutWrapper') || document.querySelector('body')}
+        maskStyle={{
+          height: clientHeight,
+          ...maskStyle
+        }}
+        style={{ ...style }}
+        bodyStyle={{ ...bodyStyle }}
         onCancel={onCancel}
         onOk={onOk}
+        wrapClassName={`${ page_load_type == '2' ? (siderRightCollapsed ? indexStyles.wrapActiveModal : indexStyles.wrapNormalModal) : indexStyles.wrapModal}`}
       >
         {overInner}
       </Modal>
     )
   }
+}
+
+function mapStateToProps({ }) {
+  return { }
 }
 export default Form.create()(CustormModal)

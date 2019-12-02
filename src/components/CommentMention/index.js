@@ -40,16 +40,16 @@ export default class CommentMention extends React.Component {
   onSelect(value) {
     const { users } = this.props
     let { selectUserIds = [], selectUsers = [] } = this.state
-    for(let i = 0; i < users.length; i ++) {
-      if(value.indexOf('~') != -1) { //如果存在同名的情况下，value 为name~mobile || name~email
+    for (let i = 0; i < users.length; i++) {
+      if (value.indexOf('~') != -1) { //如果存在同名的情况下，value 为name~mobile || name~email
         const nameArr = value.split('~')
         const name = nameArr[0]
         const mobileEmail = nameArr[1]
-        if(users[i].name == name && (users[i].mobile == mobileEmail || users[i].email == mobileEmail )) {
+        if (users[i].name == name && (users[i].mobile == mobileEmail || users[i].email == mobileEmail)) {
           selectUserIds.push(users[i].user_id)
         }
-      }else {
-        if(users[i].name == value) {
+      } else {
+        if (users[i].name == value) {
           selectUserIds.push(users[i].user_id)
         }
       }
@@ -64,15 +64,15 @@ export default class CommentMention extends React.Component {
     })
 
   }
-  mentionGetUsersToDo(editText){
+  mentionGetUsersToDo(editText) {
     const str = toString(editText)
-    const { users} = this.props
+    const { users } = this.props
     const reg = /\@.*?\s/gim
     let arr = str.match(reg) // =>  ["@严世威 ", "@王馨潼 ", "@董凯颖~13763053607 "]
     let arr_2 = [] // 目标输出=>  ["严世威", "王馨潼", "董凯颖~13763053607"]
-    if(arr) {
-      for(let val of arr) {
-        if(val) {
+    if (arr) {
+      for (let val of arr) {
+        if (val) {
           arr_2.push(val.replace(/(^\s*)|(\s*$)/g, "").replace('@', ''))
         }
       }
@@ -80,17 +80,17 @@ export default class CommentMention extends React.Component {
 
     //根据名字和手机号||email去匹配id
     let selectUserIds = []
-    for(let val of arr_2) {
-      for(let i = 0; i < users.length; i ++) {
-        if(val.indexOf('~') != -1) { //如果存在同名的情况下，value 为name~mobile || name~email
+    for (let val of arr_2) {
+      for (let i = 0; i < users.length; i++) {
+        if (val.indexOf('~') != -1) { //如果存在同名的情况下，value 为name~mobile || name~email
           const nameArr = val.split('~')
           const name = nameArr[0]
           const mobileEmail = nameArr[1]
-          if(users[i].name == name && (users[i].mobile == mobileEmail || users[i].email == mobileEmail )) {
+          if (users[i].name == name && (users[i].mobile == mobileEmail || users[i].email == mobileEmail)) {
             selectUserIds.push(users[i].user_id)
           }
-        }else {
-          if(users[i].name == val) {
+        } else {
+          if (users[i].name == val) {
             selectUserIds.push(users[i].user_id)
           }
         }
@@ -124,12 +124,12 @@ export default class CommentMention extends React.Component {
     //将名字添加进数组， 如果有相同的名称则用手机号或者email区分
     let suggestions = []
 
-    if(users.length) {
-       suggestions = new Array(users.length)
-      for(let i = 0; i <users.length; i++) {
+    if (users.length) {
+      suggestions = new Array(users.length)
+      for (let i = 0; i < users.length; i++) {
         let value = users[i].name
-        for(let j = 0; j < users.length; j ++ ) {
-          if(users[i].name == users[j].name && users[i].user_id !== users[j].user_id) {
+        for (let j = 0; j < users.length; j++) {
+          if (users[i].name == users[j].name && users[i].user_id !== users[j].user_id) {
             value = `${users[i].name}~${users[i].mobile || users[i].email}`
             break
           }
@@ -146,10 +146,10 @@ export default class CommentMention extends React.Component {
           onFocus={this.mentionFocus.bind(this)}
           onBlur={this.mentionBlur.bind(this)}
           multiLines={true}
-          onChange ={this.MentionEditorChange.bind(this)}
+          onChange={this.MentionEditorChange.bind(this)}
           // onSelect = {this.onSelect.bind(this)}
           className={indexStyles.mention}
-          style={{ width: '100%', border: ' none', outline: 'none', height: 48}}
+          style={{ width: '100%', border: ' none', outline: 'none', height: 48 }}
           value={editText}
           suggestions={suggestions}
         />
@@ -157,15 +157,15 @@ export default class CommentMention extends React.Component {
           <div className={indexStyles.functionBar_left}>
             {/*<Icon type="copyright"  onClick={this.MentionSpacerClick.bind(this)}/>*/}
             <Tooltip title="该功能尚未上线，敬请期待">
-              <span style={{fontSize: 16, color: '#8c8c8c'}}>@</span>
+              <span style={{ fontSize: 16, color: '#8c8c8c' }}>@</span>
             </Tooltip>
             <Tooltip title="该功能尚未上线，敬请期待">
-              <span><Icon type="smile-o" style={{marginTop: 10, color: '#8c8c8c'}}/></span>
+              <span><Icon type="smile-o" style={{ marginTop: 10, color: '#8c8c8c' }} /></span>
             </Tooltip>
             <span></span>
           </div>
           <div className={indexStyles.functionBar_right}>
-            <Button disabled={this.state.submitButtonDisabled} type={'primary'} style={{height: 24, width: 58, marginRight: 12}} onClick={this.submitComment.bind(this)}>发布</Button>
+            <Button disabled={this.state.submitButtonDisabled} type={'primary'} style={{ height: 24, width: 58, marginRight: 12 }} onClick={this.submitComment.bind(this)}>发布</Button>
           </div>
         </div>
       </div>

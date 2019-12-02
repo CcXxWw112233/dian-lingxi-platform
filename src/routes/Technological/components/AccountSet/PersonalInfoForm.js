@@ -55,6 +55,7 @@ class PersonalInfoForm extends React.Component {
       email,
       job,
       full_name,
+      name,
       id,
       last_login_time,
       mobile,
@@ -142,8 +143,8 @@ class PersonalInfoForm extends React.Component {
             </span>
           )}
         >
-          {getFieldDecorator('full_name', {
-            initialValue: full_name || undefined,
+          {getFieldDecorator('name', {
+            initialValue: name || undefined,
             rules: [{ required: false, message: '请输入姓名', whitespace: true }],
           })(
             <Input placeholder="" className={indexStyle.personInfoInput}/>

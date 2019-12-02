@@ -3,7 +3,7 @@ import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
-import { getUserInfo, updateUserInfo, changePassWord, checkEmailIsRegisted, changeEmail, changeMobile, checkMobileIsRegisted, unBindWechat } from "../../services/technological/accountSet";
+import { getUserInfo, updateUserInfo, changePassWord, checkEmailIsRegisted, changeEmail, changeMobile, checkMobileIsRegisted, unBindWechat, updateUserSet } from "../../services/technological/accountSet";
 import queryString from 'query-string';
 import modelExtend from 'dva-model-extend'
 import technological from './index'
@@ -47,6 +47,7 @@ export default modelExtend(technological, {
             userInfo: res.data
           }
         })
+        
       }else{
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -143,10 +144,21 @@ export default modelExtend(technological, {
     //解绑微信
     * unBindWechat({payload}, {select, call, put}){
       let res = yield call(unBindWechat, payload)
-      yield put({
-        type: 'getUserInfo',
-        payload: {}
-      })
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('解除微信绑定成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getUserInfo',
+          payload: {}
+        })
+      } else {
+        message.warn(res.message)
+      }
+    },
+    //用户设置 /user/set
+    * updateUserSet({payload}, {select, call, put}){
+      let res = yield call(updateUserSet, payload)
     }
   },
 

@@ -5,6 +5,8 @@ import { validateTel, validateEmail } from './../../../../utils/verify';
 import { debounce } from './../../../../utils/util';
 import { associateUser } from './../../../../services/technological/workbench';
 import defaultUserAvatar from './../../../../assets/invite/user_default_avatar@2x.png';
+import globalStyles from '@/globalset/css/globalClassName.less'
+import WechatInviteToboard from '../Project/components/WechatInviteToboard'
 
 const Option = Select.Option;
 const { TextArea } = Input;
@@ -19,7 +21,8 @@ class InviteOtherWithBatch extends Component {
       inputRet: [],
       fetching: false,
       selectedMember: [], //已经选择的成员
-      multipleMode: false //是否批量模式
+      multipleMode: false, //是否批量模式
+      wechat_invite_visible: false,
     };
   }
   isValidMobileOrValidEmail = user => {
@@ -33,7 +36,7 @@ class InviteOtherWithBatch extends Component {
     const splitSymbol = this.genSplitSymbol();
     return `${icon}${splitSymbol}${name}${splitSymbol}${user}${splitSymbol}${isFromPlatForm}${
       id ? `${splitSymbol}${id}` : ''
-    }`;
+      }`;
   };
   parseUserValueStr = userValueStr => {
     if (!userValueStr) return;
@@ -56,8 +59,13 @@ class InviteOtherWithBatch extends Component {
         fetching: true
       },
       () => {
+        const params = {
+          associate_param: user,
+          _organization_id: localStorage.getItem('OrganizationId'),
+          type: (validateTel(user) || validateEmail(user)) ? '2' : '1'
+        }
         //发起请求
-        associateUser(user)
+        associateUser(params)
           .then(res => {
             if (res.code && res.code === '0') {
               //如果查到了用户
@@ -96,7 +104,7 @@ class InviteOtherWithBatch extends Component {
                 })
               } else {
                 const isValidUser = this.isValidMobileOrValidEmail(user)
-                if(!isValidUser) {
+                if (!isValidUser) {
                   this.setState({
                     fetching: false,
                   })
@@ -155,7 +163,7 @@ class InviteOtherWithBatch extends Component {
       state => {
         const { selectedMember } = state;
         return {
-          selectedMember: selectedMember.filter(i => i.user !== item.user)
+          selectedMember: selectedMember.filter(i => i.id !== item.id)
         };
       },
       () => {
@@ -170,8 +178,8 @@ class InviteOtherWithBatch extends Component {
   handleInputSelected = value => {
     const { selectedMember } = this.state;
     const selectedUser = this.parseUserValueStr(value.key);
-    const isHasSameMemberInSelectedMember = () =>
-      selectedMember.find(item => item.user === selectedUser.user);
+    const isHasSameMemberInSelectedMember = () => selectedMember.find(item => item.id === selectedUser.id);
+    // console.log('ssss', {selectedMember, selectedUser })  
     //如果该用户已经在被选择的列表中了
     if (isHasSameMemberInSelectedMember()) {
       message.destroy();
@@ -233,7 +241,7 @@ class InviteOtherWithBatch extends Component {
     const {
       handleInviteMemberReturnResult,
       isShowSubmitBtn,
-      directReturnStr
+      directReturnStr,
     } = this.props;
     //如果有提交按钮, 则点击提交按钮的时候统一处理数据
     if (isShowSubmitBtn) return;
@@ -355,11 +363,17 @@ class InviteOtherWithBatch extends Component {
     );
   };
   getAName = (item = {}) => {
-    const {name, mobile, email} = item
+    const { name, mobile, email } = item
     const defaultName = 'unknown'
     //返回发现的第一个真值
     const gotName = [name, mobile, email].find(Boolean)
     return gotName ? gotName : defaultName
+  }
+  setWechatInviteVisible = () => {
+    const { wechat_invite_visible } = this.state
+    this.setState({
+      wechat_invite_visible: !wechat_invite_visible
+    })
   }
   render() {
     const {
@@ -368,14 +382,20 @@ class InviteOtherWithBatch extends Component {
       inputRet,
       selectedMember,
       multipleMode,
-      textAreaValue
+      textAreaValue,
+      wechat_invite_visible,
     } = this.state;
     const {
       isShowSubmitBtn,
       isDisableSubmitWhenNoSelectItem,
       submitText,
       isShowBatchInvite,
-      children
+      children,
+      show_wechat_invite,
+      type,
+      invitationType,
+      invitationId,
+      invitationOrg,
     } = this.props;
     const transedTextAreaValue = this.handleTransMentionSelectedOtherMembersMobileString();
     const isValidTextAreaValueMobileOrEmail =
@@ -425,8 +445,8 @@ class InviteOtherWithBatch extends Component {
                             item.type === 'other'
                               ? defaultUserAvatar
                               : this.isAvatarValid(item.icon)
-                              ? item.icon
-                              : defaultUserAvatar
+                                ? item.icon
+                                : defaultUserAvatar
                           }
                           alt=""
                           width="36"
@@ -513,16 +533,32 @@ class InviteOtherWithBatch extends Component {
                 返回
               </a>
             ) : (
-              <a
-                className={styles.invite__batch_btn}
-                onClick={e => this.handleToggleBatchInviteBtn(e)}
-              >
-                批量邀请
+                <a
+                  className={styles.invite__batch_btn}
+                  onClick={e => this.handleToggleBatchInviteBtn(e)}
+                >
+                  批量邀请
               </a>
-            )}
+              )}
           </div>
         )}
         {children}
+
+        {
+          show_wechat_invite && (
+            <div style={{ marginTop: 16, marginBottom: 16, color: '#1890FF', cursor: 'pointer' }} onClick={this.setWechatInviteVisible}>
+              <i className={globalStyles.authTheme} style={{ color: '#46A318', marginRight: 4 }}>&#xe634;</i>
+              微信扫码邀请参与人
+            </div>
+          )
+        }
+
+        {
+          show_wechat_invite && (
+            <WechatInviteToboard invitationId={invitationId} invitationOrg={invitationOrg} invitationType={invitationType} modalVisible={wechat_invite_visible} setModalVisibile={this.setWechatInviteVisible} />
+          )
+        }
+
       </div>
     );
   }
@@ -535,7 +571,8 @@ InviteOtherWithBatch.defaultProps = {
   isShowBatchInvite: true, //是否显示批量邀请按钮
   directReturnStr: false, //单选模式直接返回以逗号隔开的字符串
   returnStrSplitSymbol: ',', //单选模式返回的字符串的分隔符
-  handleInviteMemberReturnResult: function() {
+  show_wechat_invite: false, //显示微信邀请
+  handleInviteMemberReturnResult: function () {
     message.info('邀请他人组件， 需要被提供一个回调函数');
   }
 };

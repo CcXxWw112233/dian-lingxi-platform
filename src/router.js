@@ -134,10 +134,15 @@ const Routers = function ({ history, app }) {
       path: '/technological',
       models: () => [import('./models/technological'),
       import('./models/technological/cooperationPush'),
+      import('./models/technological/cooperationPush/imCooperation'),
+      import('./models/technological/uploadNormal'),
+
       import('./models/technological/globalSearch'),
       import('./models/technological/workbench/gantt'),
       import('./models/technological/public/milestoneDetail'),
       import('./models/technological/public/publicModalComment'),
+      import('./models/technological/public/publicTaskDetailModal'),
+      import('./models/technological/workbench/investmentMap'),
 
       import('./models/technological/accountSet'),
       import('./models/technological/project'),
@@ -166,7 +171,9 @@ const Routers = function ({ history, app }) {
       import('./models/simpleMode'),
       import('./models/simpleMode/simpleWorkbenchbox'),
       import('./models/simpleMode/simpleBoardCommunication'),
-      
+      import('./models/simpleMode/projectCommunication'),
+      import('./models/organizationManager'),
+
       import('./models/technological/informRemind'),
 
 
@@ -204,8 +211,21 @@ const Routers = function ({ history, app }) {
     }, {
       path: '/iframeOut',
       component: () => import('./routes/IframeOut'),
+    }, {
+      path: '/readonly_share/:id',
+      component: () => import('./routes/Technological/ReadonlyShare/AccessInterface/index'),
+    }, {
+      path: '/share_detailed',
+      models: () => [
+        import('./models/technological'),
+        import('./models/technological/projectDetail/projectDetailTask'),
+        import('./models/technological/projectDetail/projectDetailFile'),
+        import('./models/technological/projectDetail'),
+      ],
+      component: () => import('./routes/Technological/ReadonlyShare/DetailedShare/index'),
     },
   ]
+
   //去掉exact
   return (
     <Router history={history}>

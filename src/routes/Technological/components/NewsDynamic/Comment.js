@@ -29,22 +29,40 @@ export default class Comment extends React.Component {
   }
 
   submitComment() {
-    const { card_id, parentKey, childrenKey } = this.props
-    this.props.addCardNewComment({
-      card_id,
-      comment: toString(this.state.editText),
-      parentKey,
-      childrenKey,
-    })
-    this.setState({
-      editText: toContentState('')
-    })
+    const { common_id, parentKey, childrenKey, board_id, file_id, comment_type } = this.props
+    // if (comment_type == '15') { // 表示文件评论
+    //   this.props.addFileCommit({
+    //     board_id,
+    //     file_id,
+    //     comment: toString(this.state.editText),
+    //     parentKey,
+    //     childrenKey,
+    //   })
+    //   this.setState({
+    //     editText: toContentState('')
+    //   })
+    // }
+
+    if (comment_type == '14') { // 发表卡片评论
+      this.props.addCardNewComment({
+        board_id,
+        card_id: common_id,
+        comment: toString(this.state.editText),
+        parentKey,
+        childrenKey,
+      })
+      this.setState({
+        editText: toContentState('')
+      })
+    }
+    
   }
 
 
   render() {
     const { datas: { projectDetailInfoData = {} } } = this.props.model
     const { data = [] } = projectDetailInfoData
+    const { comment_type } = this.props
     let suggestions = []
     for(let val of data) {
       if(val['full_name']) {
@@ -117,7 +135,7 @@ export default class Comment extends React.Component {
                       {/*</Dragger>*/}
                     </div>
                   <div className={CommentStyles.functionBar_right}>
-                    <Button disabled={this.state.submitButtonDisabled} type={'primary'} style={{height: 24, width: 58, marginRight: 12}} onClick={this.submitComment.bind(this)}>发布</Button>
+                    <Button disabled={this.state.submitButtonDisabled} type={'primary'} style={{height: 24, width: 58, marginRight: 12}} onClick={this.submitComment.bind(this, comment_type)}>发布</Button>
                   </div>
                 </div>
               </div>

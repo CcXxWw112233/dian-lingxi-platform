@@ -2,7 +2,7 @@ import request from '../../utils/requestAxios'
 import { REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID, REQUEST_DOMAIN_FLOWS, REQUEST_DOMAIN_TEAM_SHOW, REQUEST_INTERGFACE_VERSIONN } from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 
-export async function getTaskList_new({id}) {
+export async function getTaskList_new({ id }) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/card`,
     method: 'GET',
@@ -13,7 +13,7 @@ export async function getTaskList_new({id}) {
   })
 }
 
-export async function getMeetingList_new({id}) {
+export async function getMeetingList_new({ id }) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/card/meeting`,
     method: 'GET',
@@ -24,7 +24,7 @@ export async function getMeetingList_new({id}) {
   })
 }
 
-export async function getProcessList_new({id}) {
+export async function getProcessList_new({ id }) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/node`,
     method: 'GET',
@@ -35,7 +35,7 @@ export async function getProcessList_new({id}) {
   })
 }
 
-export async function getFileList_new({id}) {
+export async function getFileList_new({ id }) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/file/curr/uploading`,
     method: 'GET',
@@ -46,7 +46,7 @@ export async function getFileList_new({id}) {
   })
 }
 
-export async function setBoxFilterCon({id, rela_ids}) {
+export async function setBoxFilterCon({ id, rela_ids }) {
   //id 盒子id
   //rela_ids  当前所有选中的id, 多个以逗号隔开
 
@@ -54,8 +54,8 @@ export async function setBoxFilterCon({id, rela_ids}) {
     url: `${REQUEST_DOMAIN_WORK_BENCH}/box/set`,
     method: 'PUT',
     data: {
-        id,
-        rela_ids
+      id,
+      rela_ids
     }
   })
 }
@@ -74,36 +74,38 @@ export async function updateUpdateLogStatus(id) {
   })
 }
 
-export async function associateUser(associate_param = '') {
-  const params = {
-    associate_param
-  }
+export async function associateUser(params) {
+  // const params = {
+  //   associate_param
+  // }
   return request({
     url: `${REQUEST_DOMAIN}/user/associate`,
     method: 'GET',
     params
-  })
+  }, { isNotLoading: true })
 }
 
-export async function createShareLink(payload = {}) {
-// board_id*	string 项目ID
-// rela_id*	string 当前对象ID,比如是任务就是任务ID，文件就是当前文件的ID
-// rela_type*	string 当前对象type,4=任务 2=流程 3=文件
-  const { board_id = '', rela_id = '', rela_type = ''} = payload
+export async function createShareLink(data) {
+  // rela_id*	string 当前对象ID,比如是任务就是任务ID，文件就是当前文件的ID
+  // rela_type*	string 当前对象type, 4=里程碑 3=文件 2=流程 1=任务
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/share_link`,
     method: 'POST',
-    data: {
-      board_id,
-      rela_id,
-      rela_type,
-    }
+    data
+  })
+}
+
+export async function verificationShareLink(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/share_link/check`,
+    method: 'PUT',
+    data
   })
 }
 
 export async function modifOrStopShareLink(payload = {}) {
-  const {expiretime = '', id = '', status = ''} = payload
-  const putData = {id}
+  const { expiretime = '', id = '', status = '' } = payload
+  const putData = { id }
   expiretime ? putData['expiretime'] = expiretime : ''
   status ? putData['status'] = status : ''
 
@@ -115,16 +117,19 @@ export async function modifOrStopShareLink(payload = {}) {
 }
 
 export async function createMeeting(payload) {
-  const {board_id, flag, topic, user_for = null, user_ids = null } = payload
+  const { board_id, flag, topic, user_for = null, user_ids = null, _organization_id, start_time = '', end_time = '' } = payload
   return request({
     url: `${REQUEST_DOMAIN_TEAM_SHOW}/meeting`,
     method: 'POST',
     data: {
+      _organization_id,
       board_id,
       flag,
       topic,
       user_for,
-      user_ids
+      user_ids,
+      start_time,
+      end_time
     }
   })
 
@@ -142,8 +147,21 @@ export async function createMeeting(payload) {
 
 //获取当前组织的所有成员信息
 export async function getCurrentOrgAllMembers(params = {}) {
+
   return request({
     url: `${REQUEST_DOMAIN}/member/userlist`,
+    method: 'GET',
+    params: {
+      ...params,
+      _organization_id: params._organization_id || localStorage.getItem('OrganizationId')
+    }
+  })
+}
+
+//获取当前组织的所有职员信息（经过访问控制）
+export async function getCurrentOrgAccessibleAllMembers(params = {}) {
+  return request({
+    url: `${REQUEST_DOMAIN}/member/accessible/list`,
     method: 'GET',
     params: {
       ...params,
@@ -171,7 +189,7 @@ export async function deleteUploadFile(data) {
 }
 
 //每次点击选区project的时候， 发送 board_id (project id) 给后台， -_- ..
-export async function setCurrentProjectIdToServer({payload: {id}}) {
+export async function setCurrentProjectIdToServer({ payload: { id } }) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/set`,
     method: 'PUT',
@@ -226,7 +244,7 @@ export async function getCurrentResponsibleTask() {
 }
 
 //获取当前选择的项目的成员列表
-export async function getCurrentSelectedProjectMembersList({projectId}) {
+export async function getCurrentSelectedProjectMembersList({ projectId }) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/user/${projectId}`,
     method: 'GET'
@@ -401,7 +419,7 @@ export async function getArticleList(params) {
     headers: {
       appid: WE_APP_ID(params['appType']),
     }
-  }, {isNotLoading: true});
+  }, { isNotLoading: true });
 }
 //获取文章内容
 export async function getArticleDetail(params) {
@@ -415,7 +433,7 @@ export async function getArticleDetail(params) {
     headers: {
       appid: WE_APP_ID(params['appType']),
     }
-  }, {isNotLoading: true});
+  }, { isNotLoading: true });
 }
 //更新阅读量
 export async function updateViewCounter(data) {
@@ -429,7 +447,7 @@ export async function updateViewCounter(data) {
     headers: {
       appid: WE_APP_ID(data['appType']),
     },
-  }, {isNotLoading: true});
+  }, { isNotLoading: true });
 }
 
 

@@ -2,7 +2,7 @@ import React from 'react'
 // import indexStyles from '../../../../ProjectDetail/Process/ProcessDetail/index.less'
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
 import styles from './index.css'
-import { Icon } from 'antd'
+import { Icon, message } from 'antd'
 import DetailConfirmInfoTwo from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoTwo'
 import DetailConfirmInfoOne from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoOne'
 import DetailConfirmInfoThree from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoThree'
@@ -11,8 +11,9 @@ import DetailConfirmInfoFive from '../../../../ProjectDetail/Process/ProcessDeta
 import user from '../../../../../../../assets/workbench/person_group@2x.png'
 import sssimg from '../../../../../../../assets/workbench/processIcon.png'
 import { timestampToHM } from '../../../../../../../utils/util'
-import { currentNounPlanFilterName } from '../../../../../../../utils/businessFunction'
-import { FLOWS } from '../../../../../../../globalset/js/constant'
+import { currentNounPlanFilterName, checkIsHasPermission } from '../../../../../../../utils/businessFunction'
+import { FLOWS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_FLOW_FLOW_ACCESS } from '@/globalset/js/constant'
+import { checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl } from '@/utils/businessFunction'
 
 const bodyHeight = document.querySelector('body').clientHeight
 export default class ProccessContent extends React.Component {
@@ -35,6 +36,11 @@ export default class ProccessContent extends React.Component {
  }
  componentDidUpdate() {
    this.initCanvas()
+ }
+
+ // 访问控制蒙层的点击回调
+ alarmNoEditPermission = () => {
+  message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
  }
 
  setIsShowAll() {
@@ -94,8 +100,8 @@ export default class ProccessContent extends React.Component {
 
  render() {
    const { isShowAll } = this.state
-   const { datas: { processInfo = {}, processEditDatas=[], processDynamics = [] }} = this.props.model
-   const { name, description, status } = processInfo //status 1 正在进行 2,暂停 3完成
+   const { datas: { processInfo = {}, processEditDatas=[], processDynamics = [], board_id }} = this.props.model
+   const { name, description, status, privileges = [], is_privilege} = processInfo //status 1 正在进行 2,暂停 3完成
    const data = this.props.model.datas &&
    this.props.model.datas.projectDetailInfoData &&
    this.props.model.datas.projectDetailInfoData.data?this.props.model.datas.projectDetailInfoData.data:[]
@@ -165,7 +171,13 @@ export default class ProccessContent extends React.Component {
         fontWeight: '400',
         color: 'rgba(89,89,89,1)'}}>{this.props.model.datas.processInfo.description?delHtmlTag(this.props.model.datas.processInfo.description):'暂无描述'}</div>
       </div>
-      <div style={{padding: '36px 34px 0 36px'}}>
+      {/* 这里将会有一个蒙层 */}
+      <div style={{padding: '36px 34px 0 36px', position: 'relative'}}>
+        {/* {
+          checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, data, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
+            <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
+          )
+        } */}
         {processEditDatas.map((value, key) => {
           return (
             <div key={key}>

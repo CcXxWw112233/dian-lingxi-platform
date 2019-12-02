@@ -1,5 +1,5 @@
 //项目归档
-import {REQUEST_DOMAIN_FILE, CONTENT_DATA_TYPE_FILE, CONTENT_DATA_TYPE_FOLDER, CONTENT_DATA_TYPE_CARD} from "../../globalset/js/constant";
+import { REQUEST_DOMAIN_FILE, CONTENT_DATA_TYPE_FILE, CONTENT_DATA_TYPE_FOLDER, CONTENT_DATA_TYPE_CARD, REQUEST_INTERGFACE_VERSIONN } from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
 import { getGlobalData } from "../../utils/businessFunction";
 
@@ -33,7 +33,7 @@ const createHeaderContentDataByFileId = (cardId) => {
 //文件列表包括文件夹
 export async function getFileList(params) {
   return request({
-    url: `${REQUEST_DOMAIN_FILE}/file`,
+    url: `${REQUEST_DOMAIN_FILE}${REQUEST_INTERGFACE_VERSIONN}/file`,
     method: 'GET',
     headers: params.folder_id ? createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.folder_id) : {},
     params,
@@ -62,11 +62,11 @@ export async function fileCopy(data) {
 
 //文件下载
 export async function fileDownload(params) {
-  //debugger
+  // debugger
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/download`,
     method: 'GET',
-    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.fileIds),
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.ids),
     params: {
       ...params,
       _organization_id: getGlobalData('aboutBoardOrganizationId')
@@ -74,15 +74,45 @@ export async function fileDownload(params) {
   });
 }
 
+// 保存为新版本
+export async function saveAsNewVersion(data) {
+  // debugger
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/save_as/new_version`,
+    method: 'POST',
+    // headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, data.id),
+    data,
+  });
+}
+
 //文件预览
 export async function filePreview(params) {
-
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/preview/${params.id}`,
     method: 'GET',
-    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.fileIds),
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.id),
     params,
   });
+}
+
+// 设为当前版本文件
+export async function setCurrentVersionFile(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file`,
+    method: 'PUT',
+    // headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.fileIds),
+    data,
+  })
+}
+
+// 更新文件版本描述
+export async function updateVersionFileDescription(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file`,
+    method: 'PUT',
+    // headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.fileIds),
+    data,
+  })
 }
 
 // 把文件文件夹 放入回收站
@@ -116,6 +146,7 @@ export async function fileVersionist(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/version_list`,
     method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.version_id),
     params,
   });
 }
@@ -176,6 +207,7 @@ export async function updateFolder(data) {
 export async function getPreviewFileCommits(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/comment/list`,
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.id),
     method: 'GET',
     params,
   });
@@ -186,6 +218,7 @@ export async function addFileCommit(data) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/comment`,
     method: 'POST',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, data.file_id),
     data,
   });
 }
@@ -202,8 +235,9 @@ export async function deleteCommit(params) {
 //获取图评点的列表
 export async function getFileCommitPoints(params) {
   return request({
-    url: `${REQUEST_DOMAIN_FILE}/file/comment/point/${params.id}`,
+    url: `${REQUEST_DOMAIN_FILE}/file/comment/point`,
     method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
     params,
   });
 }
@@ -214,6 +248,7 @@ export async function filePreviewByUrl(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/preview/${params.id}`,
     method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
     params,
   });
 }
@@ -222,17 +257,18 @@ export async function fileInfoByUrl(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/info/${params.id}`,
     method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
     params,
   });
 }
-//文件信息-通过file_id, 从分享url里面获取, 查询文件信息，包括预览信息、版本列表和路径(fileId)
-export async function fileInfoByUrl_2(params) {
-  return request({
-    url: `${REQUEST_DOMAIN_FILE}/file/info`,
-    method: 'GET',
-    params,
-  });
-}
+//文件信息-通过file_id, 从分享url里面获取, 查询文件信息，包括预览信息、版本列表和路径(fileId)(废弃)
+// export async function fileInfoByUrl_2(params) {
+//   return request({
+//     url: `${REQUEST_DOMAIN_FILE}/file/info`,
+//     method: 'GET',
+//     params,
+//   });
+// }
 
 //获取pdf信息
 export async function getFilePDFInfo(params) {
@@ -251,6 +287,7 @@ export async function getFileDetailIssue(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/comment`,
     method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
     params
   })
 }
@@ -260,6 +297,34 @@ export async function getCardCommentListAll(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/comment`,
     method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
     params
+  })
+}
+
+export async function fileConvertPdfAlsoUpdateVersion(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/pdf/convert`,
+    method: 'GET',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
+    params
+  })
+}
+
+// 检查大文件是否在后台存在，需要通过md5
+export async function checkFileMD5WithBack(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/upload/check`,
+    method: 'POST',
+    data
+  })
+}
+
+// 上传大文件到oss，或者检验后端已经存在该文件，则需要调用该接口进行关联
+export async function uploadToOssCalback(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/upload/callback`,
+    method: 'POST',
+    data
   })
 }

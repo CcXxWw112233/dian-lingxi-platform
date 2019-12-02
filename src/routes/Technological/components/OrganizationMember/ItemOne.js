@@ -160,7 +160,7 @@ export default class ItemOne extends React.Component {
     this.setState({
       isShowBottDetail: !this.state.isShowBottDetail
     }, function () {
-      if(this.state.isShowBottDetail){ //点击打开的时候，如果成员信息未存在就请求
+      if(this.state.isShowBottDetail){ //点击打开的时候，如果职员信息未存在就请求
         const role_detailInfo = groupList[parentKey]['members'][itemKey]['role_detailInfo'] || {}
         let role_detailInfo_is_has = false
         for(let val in role_detailInfo) {

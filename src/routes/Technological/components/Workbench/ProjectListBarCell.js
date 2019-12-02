@@ -41,10 +41,10 @@ const ProjectListBarCell = ({
 
   }
   const handleJumpToProject = (e, board_id, apps, org_id) => {
-    if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+    // if(!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)){
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     if(e) e.stopPropagation()
     const isAppsItem = arr => Array.isArray(arr) && arr.length
     if(!isAppsItem(apps)) {

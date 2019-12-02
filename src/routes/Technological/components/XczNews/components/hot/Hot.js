@@ -5,11 +5,11 @@ import mainStyles from './hot.less'
 import { connect } from 'dva'
 import CommonArticlesList from '../../common/CommonArticlesList'
 import SearchArticlesList from '../../common/SearchArticlesList'
-import { Row, Col, Radio, Icon} from 'antd';
+import { Row, Col, Radio, Icon } from 'antd';
 
 const RadioGroup = Radio.Group;
 
-@connect(({xczNews = []}) => ({
+@connect(({ xczNews = [] }) => ({
     xczNews,
 }))
 export default class Hot extends Component {
@@ -18,7 +18,13 @@ export default class Hot extends Component {
         selected_tab_id: 0, //热点Tabs的选项切换高亮效果
         expandForm: false, // 展开更多
     }
-
+    componentDidMount() {
+        const { dispatch } = this.props
+        dispatch({
+            type: 'xczNews/getHotArticles',
+            payload: {}
+        })
+    }
     // 热点点击的显示对应的内容
     handleHotContent = ({ id }) => {
         this.setState({
@@ -33,11 +39,11 @@ export default class Hot extends Component {
             }
         })
         dispatch({
-          type: 'xczNews/getHotArticles',
-          payload: {
-            hotspot_id: id,
-            default_page_size: 5,
-          }
+            type: 'xczNews/getHotArticles',
+            payload: {
+                hotspot_id: id,
+                default_page_size: 5,
+            }
         })
     }
 
@@ -73,25 +79,25 @@ export default class Hot extends Component {
                                                 <Radio.Button
                                                     // className={`${item.id == selected_tab_id || selected_tab_id == index  ? mainStyles.current : ''}`}
                                                     value={item.id}
-                                                    onClick={ () => { this.handleHotContent({ id: item.id }) } }
-                                                    onChange={ () => { this.handleHotContent({ id: item.id }) } }
-                                                >{ item.name }</Radio.Button>
+                                                    onClick={() => { this.handleHotContent({ id: item.id }) }}
+                                                    onChange={() => { this.handleHotContent({ id: item.id }) }}
+                                                >{item.name}</Radio.Button>
                                                 <Radio.Button
-                                                    onChange={ () => { this.handleClickMore() } }
-                                                    onClick={ () => { this.handleClickMore() } }
+                                                    onChange={() => { this.handleClickMore() }}
+                                                    onClick={() => { this.handleClickMore() }}
                                                     value="more">
                                                     更多
                                                     <Icon type="down" />
                                                 </Radio.Button>
                                             </>
                                         ) : (
-                                            <Radio.Button
-                                                // className={`${item.id == selected_tab_id || selected_tab_id == index  ? mainStyles.current : ''}`}
-                                                value={item.id}
-                                                onClick={ () => { this.handleHotContent({ id: item.id }) } }
-                                                onChange={ () => { this.handleHotContent({ id: item.id }) } }
-                                            >{ item.name }</Radio.Button>
-                                        )
+                                                <Radio.Button
+                                                    // className={`${item.id == selected_tab_id || selected_tab_id == index  ? mainStyles.current : ''}`}
+                                                    value={item.id}
+                                                    onClick={() => { this.handleHotContent({ id: item.id }) }}
+                                                    onChange={() => { this.handleHotContent({ id: item.id }) }}
+                                                >{item.name}</Radio.Button>
+                                            )
                                     })
                                 }
                             </RadioGroup>
@@ -108,7 +114,7 @@ export default class Hot extends Component {
         const { hotTabs = [] } = xczNews;
         return (
             <div className={mainStyles.tabsWrapper}>
-                <div className={mainStyles.list} style={{maxHeight: 125}}>
+                <div className={mainStyles.list} style={{ maxHeight: 125 }}>
                     <Row style={{ width: '100%' }}>
                         <Col span={12}>
                             <RadioGroup>
@@ -118,9 +124,9 @@ export default class Hot extends Component {
                                             <Radio.Button
                                                 // className={`${item.id == selected_tab_id || selected_tab_id == index  ? mainStyles.current : ''}`}
                                                 value={item.id}
-                                                onClick={ () => { this.handleHotContent({ id: item.id }) } }
-                                                onChange={ () => { this.handleHotContent({ id: item.id }) } }
-                                            >{ item.name }</Radio.Button>
+                                                onClick={() => { this.handleHotContent({ id: item.id }) }}
+                                                onChange={() => { this.handleHotContent({ id: item.id }) }}
+                                            >{item.name}</Radio.Button>
                                         )
                                     })
                                 }
@@ -138,18 +144,18 @@ export default class Hot extends Component {
         const { articlesList = [], hotFlag = true, inputValue } = xczNews;
         if (hotFlag) {
             return (
-                <div style={{ minHeight: 100, backgroundColor: 'rgba(255,255,255)', width: 740, margin: `0 auto`}}>
+                <div style={{ minHeight: 100, backgroundColor: 'rgba(255,255,255)', width: 740, margin: `0 auto` }}>
                     {/* <div className={mainStyles.mainContainer}> */}
 
-                        { this.renderForm() }
+                    {this.renderForm()}
 
-                        <CommonArticlesList { ...{articlesList} } { ...{location} } />
+                    <CommonArticlesList {...{ articlesList }} {...{ location }} />
                     {/* </div> */}
                 </div>
             )
         } else {
             return (
-                <SearchArticlesList {...{location}} />
+                <SearchArticlesList {...{ location }} />
             )
         }
 

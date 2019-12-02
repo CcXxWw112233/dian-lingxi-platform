@@ -9,7 +9,6 @@ import {
   createProcess,
   fillFormComplete,
   getProcessInfo,
-  getProcessList,
   getProcessTemplateList,
   getProessDynamics,
   getTemplateInfo,
@@ -27,7 +26,7 @@ import {
   setDueTimeInFlowsNode,
   setDueTimeInFlowsInstance,
 } from "../../../services/technological/process";
-import {MESSAGE_DURATION_TIME} from "../../../globalset/js/constant";
+import { MESSAGE_DURATION_TIME } from "../../../globalset/js/constant";
 import {
   selectCurrentProcessInstanceId,
   selectProcessDoingList,
@@ -42,7 +41,7 @@ import {
   selectProjectDetailProcessCommentList,
   selectProkectDetailProcessId
 } from "../select";
-import {isApiResponseOk} from "../../../utils/handleResponseData";
+import { isApiResponseOk } from "../../../utils/handleResponseData";
 import {
   processEditDatasConstant,
   processEditDatasRecordsConstant
@@ -76,85 +75,81 @@ export default modelExtend(projectDetail, {
   },
   subscriptions: {
     setup({ dispatch, history }) {
-      history.listen(async (location) => {
-        const param = QueryString.parse(location.search.replace('?', ''))
-        board_id = param.board_id
-        appsSelectKey = param.appsSelectKey
-        flow_id = param.flow_id
-        if (location.pathname.indexOf('/technological/projectDetail') !== -1 && appsSelectKey == '2') {
-          dispatch({
-            type: 'updateDatas',
-            payload: {
-              //流程
-              processPageFlagStep: '1', //"1""2""3""4"分别对应欢迎，编辑，确认，详情界面,默认1
-              node_type: '1', //节点类型， 默认1
-              processCurrentEditStep: 0, //编辑第几步，默认 0
-              processEditDatas: JSON.parse(JSON.stringify(processEditDatasConstant)), //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
-              processEditDatasRecords: JSON.parse(JSON.stringify(processEditDatasRecordsConstant)), //每一步的每一个类型，记录，数组的全部数据step * type
-              templateInfo: {}, //所选择的流程模板的信息数据
-              processInfo: {}, //所选中的流程的信息
-              workFlowComments: [],
-              processCurrentCompleteStep: 0
-            }
-          })
-          dispatch({
-            type: 'getProcessTemplateList',
-            payload: {
-              id: board_id
-            }
-          })
-          dispatch({
-            type: 'getProcessList',
-            payload: {
-              board_id: board_id,
-              type: '1'
-            }
-          })
-          dispatch({
-            type: 'getProcessInfoByUrl',
-            payload: {
-              currentProcessInstanceId: flow_id
-            }
-          })
-          if(flow_id) {
+      history.listen((location) => {
+        if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
+          const param = QueryString.parse(location.search.replace('?', ''))
+          board_id = param.board_id
+          appsSelectKey = param.appsSelectKey
+          flow_id = param.flow_id
+          if (appsSelectKey == '2') {
             dispatch({
-              type: 'getProcessInfoByUrl',
+              type: 'updateDatas',
               payload: {
-                currentProcessInstanceId: flow_id
+                //流程
+                processPageFlagStep: '1', //"1""2""3""4"分别对应欢迎，编辑，确认，详情界面,默认1
+                node_type: '1', //节点类型， 默认1
+                processCurrentEditStep: 0, //编辑第几步，默认 0
+                processEditDatas: JSON.parse(JSON.stringify(processEditDatasConstant)), //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
+                processEditDatasRecords: JSON.parse(JSON.stringify(processEditDatasRecordsConstant)), //每一步的每一个类型，记录，数组的全部数据step * type
+                templateInfo: {}, //所选择的流程模板的信息数据
+                processInfo: {}, //所选中的流程的信息
+                workFlowComments: [],
+                processCurrentCompleteStep: 0
               }
             })
-
             dispatch({
-              type: 'projectDetailInfo',
+              type: 'getProcessTemplateList',
               payload: {
                 id: board_id
               }
             })
 
-            dispatch({
-              type: 'getWorkFlowComment',
-              payload: {
-                flow_instance_id: flow_id
-              }
-            })
-
-            dispatch({
-              type: 'updateDatas',
-              payload: {
-                processDetailModalVisible: true,
-                totalId: {
-                  flow: flow_id,
-                  board: board_id
+            // dispatch({
+            //   type: 'getProcessInfoByUrl',
+            //   payload: {
+            //     currentProcessInstanceId: flow_id
+            //   }
+            // })
+            if (flow_id) {
+              dispatch({
+                type: 'getProcessInfoByUrl',
+                payload: {
+                  currentProcessInstanceId: flow_id
                 }
-              }
-            })
-          } else {
-            dispatch({
-              type: 'updateDatas',
-              payload: {
-                processDetailModalVisible: false
-              }
-            })
+              })
+
+              dispatch({
+                type: 'projectDetailInfo',
+                payload: {
+                  id: board_id
+                }
+              })
+
+              dispatch({
+                type: 'getWorkFlowComment',
+                payload: {
+                  flow_instance_id: flow_id
+                }
+              })
+
+              dispatch({
+                type: 'updateDatas',
+                payload: {
+                  processDetailModalVisible: true,
+                  totalId: {
+                    flow: flow_id,
+                    board: board_id
+                  }
+                }
+              })
+            } else {
+              dispatch({
+                type: 'updateDatas',
+                payload: {
+                  processDetailModalVisible: false
+                }
+              })
+            }
           }
 
         }
@@ -165,25 +160,25 @@ export default modelExtend(projectDetail, {
     //流程
     * getProcessTemplateList({ payload }, { select, call, put }) {
       const { id, calback } = payload
-      let res = yield call(getProcessTemplateList, {id})
-      if(isApiResponseOk(res)) {
+      let res = yield call(getProcessTemplateList, { id })
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload: {
             processTemplateList: res.data || []
           }
         })
-        if(typeof calback === 'function') {
+        if (typeof calback === 'function') {
           calback()
         }
-      }else{
+      } else {
 
       }
     },
     //保存流程模板
     * saveProcessTemplate({ payload }, { select, call, put }) {
       let res = yield call(saveProcessTemplate, payload)
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'getProcessTemplateList',
           payload: {
@@ -193,13 +188,13 @@ export default modelExtend(projectDetail, {
             }
           }
         })
-      }else{
+      } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * deleteProcessTemplate({ payload }, { select, call, put }) {
       let res = yield call(deleteProcessTemplate, payload)
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'getProcessTemplateList',
           payload: {
@@ -209,7 +204,7 @@ export default modelExtend(projectDetail, {
             }
           }
         })
-      }else{
+      } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
@@ -217,18 +212,21 @@ export default modelExtend(projectDetail, {
     // 直接启动时保存模板但不保留，查询该模板，将数据保留用于启动流程
     * directStartSaveTemplate({ payload }, { select, call, put }) {
       let res = yield call(saveProcessTemplate, payload)
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'getTemplateInfo',
-          payload: res.data.flow_template_id
+          payload: {
+            id: res.data.flow_template_id
+          }
         })
-      }else{
+      } else {
 
       }
     },
     * getTemplateInfo({ payload }, { select, call, put }) {
-      let res = yield call(getTemplateInfo, payload)
-      if(isApiResponseOk(res)) {
+      const { id } = payload
+      let res = yield call(getTemplateInfo, id)
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload: {
@@ -237,40 +235,21 @@ export default modelExtend(projectDetail, {
             processPageFlagStep: '3'
           }
         })
-      }else{
+      } else {
 
       }
     },
-    * getProcessList({ payload }, { select, call, put }) {
-      let res = yield call(getProcessList, payload)
-      if(isApiResponseOk(res)) {
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            processList: res.data
-          }
-        })
-      }else{
 
-      }
-    },
     * createProcess({ payload }, { select, call, put }) {
       const res = yield call(createProcess, payload)
-      if(isApiResponseOk(res)) {
-        yield put({
-          type: 'getProcessList',
-          payload: {
-            board_id: board_id,
-            type: '1'
-          }
-        })
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'getProcessInfo',
           payload: {
             id: res.data.id
           }
         })
-      }else{
+      } else {
         message.warn(res.message)
       }
     },
@@ -294,12 +273,12 @@ export default modelExtend(projectDetail, {
         }
       })
       let res = yield call(getProcessInfo, currentProcessInstanceId)
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         //设置当前节点排行,数据返回只返回当前节点id,要根据id来确认当前走到哪一步
         const curr_node_id = res.data.curr_node_id
         let curr_node_sort
-        for (let i=0; i<res.data.nodes.length; i++ ) {
-          if(curr_node_id === res.data.nodes[i].id) {
+        for (let i = 0; i < res.data.nodes.length; i++) {
+          if (curr_node_id === res.data.nodes[i].id) {
             curr_node_sort = res.data.nodes[i].sort
             break
           }
@@ -308,24 +287,24 @@ export default modelExtend(projectDetail, {
         yield put({
           type: 'updateDatas',
           payload: {
-            processInfo: {...res.data, curr_node_sort},
+            processInfo: { ...res.data, curr_node_sort },
             processEditDatas: res.data.nodes || [],
             processPageFlagStep: '4'
           }
         })
         //查询流程动态
-        const res2 = yield call(getProessDynamics, {currentProcessInstanceId})
-        if(isApiResponseOk(res2)) {
+        const res2 = yield call(getProessDynamics, { currentProcessInstanceId })
+        if (isApiResponseOk(res2)) {
           yield put({
             type: 'updateDatas',
             payload: {
               processDynamics: res2.data
             }
           })
-        }else{
+        } else {
 
         }
-      }else{
+      } else {
 
       }
     },
@@ -336,12 +315,12 @@ export default modelExtend(projectDetail, {
       })
       const { id, calback } = payload
       let res = yield call(getProcessInfo, id)
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         //设置当前节点排行,数据返回只返回当前节点id,要根据id来确认当前走到哪一步
         const curr_node_id = res.data.curr_node_id
         let curr_node_sort
-        for (let i=0; i<res.data.nodes.length; i++ ) {
-          if(curr_node_id === res.data.nodes[i].id) {
+        for (let i = 0; i < res.data.nodes.length; i++) {
+          if (curr_node_id === res.data.nodes[i].id) {
             curr_node_sort = res.data.nodes[i].sort
             break
           }
@@ -350,27 +329,27 @@ export default modelExtend(projectDetail, {
         yield put({
           type: 'updateDatas',
           payload: {
-            processInfo: {...res.data, curr_node_sort},
+            processInfo: { ...res.data, curr_node_sort },
             processEditDatas: res.data.nodes || [],
             processPageFlagStep: '4'
           }
         })
         //查询流程动态
-        const res2 = yield call(getProessDynamics, {currentProcessInstanceId: id})
-        if(isApiResponseOk(res2)) {
+        const res2 = yield call(getProessDynamics, { currentProcessInstanceId: id })
+        if (isApiResponseOk(res2)) {
           yield put({
             type: 'updateDatas',
             payload: {
               processDynamics: res2.data
             }
           })
-        }else{
+        } else {
 
         }
-        if(typeof calback === 'function') {
+        if (typeof calback === 'function') {
           calback()
         }
-      }else{
+      } else {
 
       }
     },
@@ -384,10 +363,10 @@ export default modelExtend(projectDetail, {
       // console.log('进入查询状态之前', id, currentProcessInstanceId, newsUserId, currentUserId)
 
       // 当且仅当发送消息的用户不是当前用户， 当前查看的流程id和推送的id一样
-      if(id === currentProcessInstanceId && newsUserId !== currentUserId) {
+      if (id === currentProcessInstanceId && newsUserId !== currentUserId) {
         // console.log('进入查询状态')
-        const res = yield call(getProessDynamics, {flow_instance_id: id})
-        if(isApiResponseOk(res)) {
+        const res = yield call(getProessDynamics, { flow_instance_id: id })
+        if (isApiResponseOk(res)) {
           yield put({
             type: 'updateDatas',
             payload: {
@@ -403,23 +382,23 @@ export default modelExtend(projectDetail, {
       const { id, calback } = payload
       let res = yield call(projectDetailInfo, id)
       // console.log('projectDetailProcess:', res)
-      if(typeof calback === 'function') {
+      if (typeof calback === 'function') {
         calback()
       }
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload: {
             projectDetailInfoData: res.data,
           }
         })
-      }else{
+      } else {
       }
     },
-    * getCurrentCompleteStep({payload}, { select, call, put}) {
+    * getCurrentCompleteStep({ payload }, { select, call, put }) {
       let processInfo = yield select(selectProcessInfo)
       // console.log('我是所有列表', processInfo)
-      if(processInfo) {
+      if (processInfo) {
         yield put({
           type: 'updateDatas',
           payload: {
@@ -432,7 +411,7 @@ export default modelExtend(projectDetail, {
     * completeProcessTask({ payload }, { select, call, put }) {
       const { instance_id } = payload
       let res = yield call(completeProcessTask, payload)
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'getProcessInfo',
           payload: {
@@ -446,11 +425,11 @@ export default modelExtend(projectDetail, {
         yield put({
           type: 'updateDatas',
           payload: {
-            processCurrentCompleteStep: parseInt(currentStep)+1
+            processCurrentCompleteStep: parseInt(currentStep) + 1
           }
         })
         // let id = select(selectProkectDetailProcessId)
-        let r = yield call(getWorkFlowComment, {flow_instance_id: instance_id})
+        let r = yield call(getWorkFlowComment, { flow_instance_id: instance_id })
         yield put({
           type: 'updateDatas',
           payload: {
@@ -460,14 +439,14 @@ export default modelExtend(projectDetail, {
 
         let node_amount = yield select(selectNode_amount)
         let curr_node_sort = yield select(selectCurr_node_sort)
-        if(node_amount === curr_node_sort) {
+        if (node_amount === curr_node_sort) {
           let processDoingList = yield select(selectProcessDoingList),
-          processComepletedList = yield select(selectProcessComepletedList),
-          // totalId = yield select(selectProcessTotalId),
-          processDoingLists = [],
-          processComepletedLists = []
+            processComepletedList = yield select(selectProcessComepletedList),
+            // totalId = yield select(selectProcessTotalId),
+            processDoingLists = [],
+            processComepletedLists = []
           processDoingList.forEach((c) => {
-            if(c.id === instance_id) {
+            if (c.id === instance_id) {
               processComepletedLists.push(c)
             } else {
               processDoingLists.push(c)
@@ -482,14 +461,14 @@ export default modelExtend(projectDetail, {
           })
 
         }
-      }else{
+      } else {
         message.warn(res.message)
       }
     },
     * fillFormComplete({ payload }, { select, call, put }) {
       let res = yield call(fillFormComplete, payload)
       const { instance_id } = payload
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'getProcessInfo',
           payload: {
@@ -500,7 +479,7 @@ export default modelExtend(projectDetail, {
           }
         })
 
-        let r = yield call(getWorkFlowComment, {flow_instance_id: instance_id})
+        let r = yield call(getWorkFlowComment, { flow_instance_id: instance_id })
         yield put({
           type: 'updateDatas',
           payload: {
@@ -512,17 +491,17 @@ export default modelExtend(projectDetail, {
         yield put({
           type: 'updateDatas',
           payload: {
-            processCurrentCompleteStep: parseInt(currentStep)+1
+            processCurrentCompleteStep: parseInt(currentStep) + 1
           }
         })
-      }else{
+      } else {
         message.warn(res.message)
       }
     },
     * rebackProcessTask({ payload }, { select, call, put }) {
       let res = yield call(rebackProcessTask, payload)
       const { instance_id } = payload
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'getProcessInfo',
           payload: {
@@ -533,7 +512,7 @@ export default modelExtend(projectDetail, {
           }
         })
 
-        let r = yield call(getWorkFlowComment, {flow_instance_id: instance_id})
+        let r = yield call(getWorkFlowComment, { flow_instance_id: instance_id })
         yield put({
           type: 'updateDatas',
           payload: {
@@ -545,17 +524,17 @@ export default modelExtend(projectDetail, {
         yield put({
           type: 'updateDatas',
           payload: {
-            processCurrentCompleteStep: parseInt(currentStep)-1
+            processCurrentCompleteStep: parseInt(currentStep) - 1
           }
         })
-      }else{
+      } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * rejectProcessTask({ payload }, { select, call, put }) {
       let res = yield call(rejectProcessTask, payload)
       const { instance_id } = payload
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'getProcessInfo',
           payload: {
@@ -566,7 +545,7 @@ export default modelExtend(projectDetail, {
           }
         })
 
-        let r = yield call(getWorkFlowComment, {flow_instance_id: instance_id})
+        let r = yield call(getWorkFlowComment, { flow_instance_id: instance_id })
         yield put({
           type: 'updateDatas',
           payload: {
@@ -581,14 +560,14 @@ export default modelExtend(projectDetail, {
         //     processCurrentCompleteStep: parseInt(currentStep)-1
         //   }
         // })
-      }else{
+      } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * resetAsignees({ payload }, { select, call, put }) {
       let res = yield call(resetAsignees, payload)
       const { instance_id } = payload
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'getProcessInfo',
           payload: {
@@ -598,20 +577,18 @@ export default modelExtend(projectDetail, {
             }
           }
         })
-      }else{
+      } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
 
       }
     },
     //获取流程列表，类型进行中 已终止 已完成
     * getProcessListByType({ payload }, { select, call, put }) {
-      const { status = '1' } = payload
-      const res = yield call(getProcessListByType, payload)
-
-
+      const { status = '1', board_id } = payload
+      const res = yield call(getProcessListByType, { status, board_id })
       let listName
       let selectList = []
-      switch (status ) {
+      switch (status) {
         case '1':
           listName = 'processDoingList'
           selectList = yield select(selectProcessDoingList)
@@ -629,20 +606,25 @@ export default modelExtend(projectDetail, {
           selectList = yield select(selectProcessDoingList)
           break
       }
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload: {
-            [listName]: [].concat(selectList, res.data),
+            // [listName]: [].concat(selectList, res.data),
+            [listName]: res.data
           }
         })
-      }else{
+      } else {
       }
     },
-    * addWorkFlowComment({payload}, {select, call, put}) {
+    * addWorkFlowComment({ payload }, { select, call, put }) {
       let res1 = yield select(selectProjectProcessCommentList)
       let res2 = yield call(addWorkFlowComment, payload)
       // console.log('this is addWorkFlowComment', res1, res2)
+      if (!isApiResponseOk(res2)) {
+        message.warn(res2.message)
+        return false
+      }
       yield put({
         type: 'updateDatas',
         payload: {
@@ -654,24 +636,24 @@ export default modelExtend(projectDetail, {
       })
     },
 
-    * getWorkFlowComment({payload}, {select, call, put}) {
-        let res = yield call(getWorkFlowComment, payload)
-        // console.log('this is project_getWorkFlowComment', res)
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            workFlowComments: res.data
-          }
-        })
-      },
-    * deleteWorkFlowComment({payload}, {select, call, put}) {
+    * getWorkFlowComment({ payload }, { select, call, put }) {
+      let res = yield call(getWorkFlowComment, payload)
+      // console.log('this is project_getWorkFlowComment', res)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          workFlowComments: res.data
+        }
+      })
+    },
+    * deleteWorkFlowComment({ payload }, { select, call, put }) {
       const { id } = payload
       let res = yield call(deleteWorkFlowComment, payload)
       let commentList = yield select(selectProjectDetailProcessCommentList)
       let r = commentList.reduce((r, c) => {
         return [
           ...r,
-          ...(c.id === id?[]:[c])
+          ...(c.id === id ? [] : [c])
         ]
       }, [])
       yield put({
@@ -681,18 +663,23 @@ export default modelExtend(projectDetail, {
         }
       })
     },
-    * workflowDelete({payload}, {select, call, put}) {
+    * workflowDelete({ payload }, { select, call, put }) {
       let res = yield call(workflowDelete, payload)
       // console.log('this is workflowDelete:', res)
-      yield put({
-        type: 'updateDatas',
-        payload: {
-          isProcessEnd: ''
-        }
-      })
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            isProcessEnd: ''
+          }
+        })
+      } else {
+        message.warning(res.message)
+      }
+
     },
 
-    * workflowEnd({payload}, {select, call, put}) {
+    * workflowEnd({ payload }, { select, call, put }) {
       let res = yield call(workflowEnd, payload)
       // console.log('this is workflowEnd:', res)
       yield put({
@@ -703,25 +690,25 @@ export default modelExtend(projectDetail, {
       })
     },
 
-    * setDueTimeInFlowsNode({payload}, {select, call, put}) {
+    * setDueTimeInFlowsNode({ payload }, { select, call, put }) {
       const res = yield call(setDueTimeInFlowsNode, payload)
       // console.log('this is workflowEnd:', res)
       if (isApiResponseOk(res)) {
         message.success('设置截止日期成功')
-      }else {
+      } else {
         message.success(res.message)
       }
     },
-    * setDueTimeInFlowsInstance({payload}, {select, call, put}) {
+    * setDueTimeInFlowsInstance({ payload }, { select, call, put }) {
       const res = yield call(setDueTimeInFlowsInstance, payload)
       // console.log('this is workflowEnd:', res)
       if (isApiResponseOk(res)) {
-        if(res.data && res.data.remind_code != '0') { //通知提醒专用
+        if (res.data && res.data.remind_code != '0') { //通知提醒专用
           message.warn(`设置截止日期成功，${res.data.error_msg}`, MESSAGE_DURATION_TIME)
         } else {
           message.success('设置截止日期成功', MESSAGE_DURATION_TIME)
         }
-      }else {
+      } else {
         message.success(res.message)
       }
     },

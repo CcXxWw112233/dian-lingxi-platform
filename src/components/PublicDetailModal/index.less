@@ -35,11 +35,58 @@
   user-select: none;
 }
 
+.lookAll {
+  &:hover {
+    color: #40A9FF !important;
+  }
+}
+.lookAll:hover .lookAll_logo{
+  color: #40A9FF !important;
+}
+
+// 所有动态的下拉回调
+.showAllDynamics {
+  min-width: 248px !important;
+  :global {
+    .ant-dropdown-menu-item {
+      line-height    : 40px !important;
+      display        : flex;
+      align-items    : center;
+      justify-content: space-between;
+      height         : 40px;
+
+      &:hover {
+        background   : rgba(0, 0, 0, 0.04);
+        cursor       : pointer;
+        border-radius: 4px;
+      }
+      >span {
+        display      : inline-block;
+        width        : 52px;
+        height       : 24px;
+        border-radius: 4px;
+        color        : rgba(0, 0, 0, 0.65);
+        line-height  : 24px;
+        text-align   : center;
+      }
+    }
+
+    .ant-dropdown-menu-item-selected {
+      background   : rgba(0, 0, 0, 0.04);
+      border-radius: 4px;
+      color        : rgba(0, 0, 0, 0.45);
+    }
+  }
+}
+
 .fileDetailContentOut{
   //height: 100%;
   display: flex;
+  
   .fileDetailContentLeft {
     flex: 1;
+    overflow-y: auto;
+    padding-bottom: 48px;
     .pictureEditState{
       z-index: 6;
       height: 40px;
@@ -75,7 +122,10 @@
     //width: 420px;
     //height: 100%;
     //overflow-x: hidden;
-    border-left: 1px solid #D9D9D9;
+    //border-left: 1px solid #D9D9D9;
+    //boxshadow1{ box-shadow:inset 0px 0px 5px 1px #000; }
+    width: 368px;
+    border-left: 1px solid rgba(0,0,0,.09);
     background-color: #FFFFFF;
     position: relative;
     .fileDetailContentRight_top{
@@ -115,18 +165,23 @@
     }
     .fileDetailContentRight_middle{
       padding-bottom: 80px;
-      overflow-x: hidden;
+      overflow: hidden;
      .lookAll {
        display: flex;
        font-size: 14px;
        cursor: pointer;
        color:rgba(0,0,0,0.65);
-       margin: 16px 0 0 12px;
-       line-height: 22px;
+       padding: 0px 12px;
+       line-height: 54px;
      }
       .lookAll_logo {
         margin-left: 6px;
         line-height: 22px;
+      }
+      .fileDetailContentRight_dynamicList {
+        overflow-y: auto;
+        // height: 779px;
+        padding-bottom: 48px;
       }
     }
 
@@ -141,22 +196,61 @@
 
   }
 }
+.fileDetailContentOut.colunmStyle{
+  flex-direction: column;
+}
 
 .header_out {
-  height: 40px;
-  line-height: 40px;
+  padding: 12px 24px;
+  height: 54px;
+  // line-height: 40px;
   background: rgba(255,255,255,1);
-  border-bottom: 1px solid rgba(0,0,0,.04);
-  // borderBottom: 1px solid #E8E8E8,
+  border-bottom: 1px solid rgba(0,0,0,.09);
+  //box-shadow:0px -1px 0px 0px rgba(0,0,0,0.09);
   border-radius: 4px 4px 0px 0px;
   display: flex;
+  align-items: center;
   .header_out_left {
     flex: 1;
   }
   .header_out_right {
     width: 20px;
-    font-size: 16px;
+    font-size: 20px;
     cursor: pointer;
     line-height: 0px;
+    color: rgba(0, 0, 0, 0.45);
+  }
+  .header_out_right:hover{
+    color: rgba(0, 0, 0, 0.65);
+  }
+  span {
+    // display: inline-block;
+    // margin-right: 10px;
   }
 }
+
+.active_fileDetailContentOut {
+  display: flex;
+  flex-direction: column;
+  .active_fileDetailContentLeft {
+    max-height: 490px;
+  }
+  
+  .active_fileDetailContentRight {
+    width: auto;
+    border-top: 1px solid rgba(0,0,0,.09);
+    padding: 16px 20px;
+    box-sizing: border-box;
+  }
+  
+  .active_fileDetailContentRight_dynamicList {
+    max-height: 244px;
+  }
+  .active_fileDetailContentRight_bott {
+    left: 0;
+  }
+}
+
+
+
+

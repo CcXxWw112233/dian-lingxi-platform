@@ -19,20 +19,22 @@ export const REQUEST_DOMAIN_ARTICLE = 'https://knowapi.new-di.com' //微信小�
 export const WE_APP_TYPE_KNOW_CITY = '1' //知城社
 export const WE_APP_TYPE_KNOW_POLICY = '2' //晓策志
 export const WE_APP_ID = (appType) => { //返回小程序后台appid
-  return appType === '1'? '1029567653519429632' : '1029565930193162240'
+  return appType === '1' ? '1029567653519429632' : '1029565930193162240'
 }
 
 // 晓策志接口
 export const REQUEST_COMMON = (function (NODE_ENV, location) {
   let api = ''
-  if(NODE_ENV == 'development') {
-
+  if (NODE_ENV == 'development') {
+    // api = 'http://192.168.1.39:8092'
+    api = REQUEST_DOMAIN_ARTICLE
   } else {
-    if(location.href.indexOf('lingxi.di-an.com') != -1){ //生产环境
-      api = REQUEST_DOMAIN_ARTICLE
-    }else {
-      api = 'http://47.93.4.48'
-    }
+    // if(location.href.indexOf('lingxi.di-an.com') != -1){ //生产环境
+    //   api = REQUEST_DOMAIN_ARTICLE
+    // }else {
+    //   api = REQUEST_DOMAIN_ARTICLE
+    // }
+    api = REQUEST_DOMAIN_ARTICLE;
   }
   return `${api}/api`
 })(NODE_ENV, window.location)
@@ -41,15 +43,22 @@ export const REQUEST_COMMON = (function (NODE_ENV, location) {
 // export const WEBSOCKET_URL = 'ws://www.new-di.com/websocket'
 // export const WEBSOCKET_URL = NODE_ENV == 'development'?'ws://192.168.1.16:9326': window.location.host.indexOf('lingxi') != -1 ? 'wss://lingxi.di-an.com/websocket' : 'ws://www.new-di.com/websocket'//'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
 export const WEBSOCKET_URL = (function (NODE_ENV, location) {
-  if(NODE_ENV == 'development') {
-    return 'ws://test.lingxi.new-di.com/websocket' //'ws://prerelease.lingxi.new-di.com/websocket'  'ws://192.168.1.68:9326'
+  if (NODE_ENV == 'development') {
+    return 'ws://test.lingxi.new-di.com/websocket'
+    // return 'ws://https://knowapi.new-di.com/api/common/hotspot'
+    //'ws://prerelease.lingxi.new-di.com/websocket'  
+    // return 'ws://192.168.1.68/websocket'
   } else {
-    const protocol = location.protocol == 'http:'? 'ws:' : 'wss:'
+    const protocol = location.protocol == 'http:' ? 'ws:' : 'wss:'
     return `${protocol}//${location.host}/websocket`
   }
 })(NODE_ENV, window.location)
+
+// export const MAP_URL = 'https://map.di-an.com' //投资地图-正式环境
+export const MAP_URL = window.location.host.indexOf('lingxi.di-an') != -1 ? 'https://map.di-an.com/' : 'http://maptest.new-di.com/' //投资地图-测试环境
+
 export const WEBSOCKET_PATH = '192.168.1.16' //'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
-export const WEBSOCKET_PORT= '9326' //WS链接地址
+export const WEBSOCKET_PORT = '9326' //WS链接地址
 // export const IM_HTTP_PATH = window.location.host.indexOf('lingxi') != -1 ? 'https://lingxi.di-an.com/im':'http://www.new-di.com/im'
 export const IM_HTTP_PATH = '/im/index.html'//`${window.location.protocol}//${window.location.host}/im`
 
@@ -90,6 +99,7 @@ export const PROJECT_TEAM_BOARD_MEMBER = 'project:team:board:member' //成员管
 export const PROJECT_TEAM_BOARD_EDIT = 'project:team:board:edit' //编辑项目 permission_type=2
 export const PROJECT_TEAM_BOARD_ARCHIVE = 'project:team:board:archive' //归档项目 permission_type=2
 export const PROJECT_TEAM_BOARD_DELETE = 'project:team:board:delete' //删除项目 permission_type=2
+export const PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE = 'project:team:board:content:privilege' // 访问控制 permission_type=2
 export const PROJECT_FLOWS_FLOW_TEMPLATE = 'project:flows:flow:template' //管理流程模板 permission_type=2
 export const PROJECT_FLOWS_FLOW_CREATE = 'project:flows:flow:create' //新增流程 permission_type=2
 export const PROJECT_FLOWS_FLOW_DELETE = 'project:flows:flow:delete' //删除流程 permission_type=2
@@ -103,6 +113,7 @@ export const PROJECT_TEAM_CARD_COMPLETE = 'project:team:card:complete' //完成/
 export const PROJECT_TEAM_CARD_DELETE = 'project:team:card:delete' //删除任务 permission_type=2
 export const PROJECT_TEAM_CARD_GROUP = 'project:team:card:group' //管理任务分组 permission_type=2
 export const PROJECT_TEAM_CARD_COMMENT_PUBLISH = 'project:team:card:comment:publish' //发表评论 permission_type=2
+export const PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD = 'project:team:card:attachment:upload' // 上传附件 premission_type = 2
 export const PROJECT_FILES_FILE_INTERVIEW = 'project:files:file:interview' //访问文件 permission_type=2
 export const PROJECT_FILES_FILE_UPLOAD = 'project:files:file:upload' //上传文件 permission_type=2
 export const PROJECT_FILES_FILE_DOWNLOAD = 'project:files:file:download' //下载文件 permission_type=2
@@ -115,7 +126,7 @@ export const PROJECT_FILES_COMMENT_VIEW = 'project:files:comment:view' //查看�
 export const PROJECT_TEAM_BOARD_MILESTONE = 'project:team:board:milestone' // 查看项目里程碑 
 
 //名词定义
-export const NORMAL_NOUN_PLAN = {"Organization": "组织", "Tasks": "卡片", "Flows": "流程", "Dashboard": "与我相关", "Projects": "看板", "Files": "文件", "Members": "成员", "Catch_Up": "动态"}
+export const NORMAL_NOUN_PLAN = { "Organization": "组织", "Tasks": "任务", "Flows": "流程", "Dashboard": "工作台", "Projects": "项目", "Files": "文件", "Members": "成员", "Catch_Up": "动态", "Map_Admin": "地图管理", }
 export const ORGANIZATION = 'Organization'
 export const TASKS = 'Tasks'
 export const FLOWS = 'Flows'
@@ -124,6 +135,7 @@ export const PROJECTS = 'Projects'
 export const FILES = 'Files'
 export const MEMBERS = 'Members'
 export const CATCH_UP = 'Catch_Up'
+export const MAP_ADMIN = 'Map_Admin'
 
 
 //内容类型 board , list, card, file, folder,flow
@@ -134,3 +146,5 @@ export const CONTENT_DATA_TYPE_CARD = 'card'
 export const CONTENT_DATA_TYPE_FILE = 'file'
 export const CONTENT_DATA_TYPE_FOLDER = 'folder'
 export const CONTENT_DATA_TYPE_FLOW = 'flow'
+
+export const FILE_TYPE_UPLOAD_WHITELISTED = '3dm,iges,obj,ma,mb,skp,dwg,psd,pdf,doc,xls,ppt,docx,xlsx,pptx,key,jpg,png,gif,mp4,mp3,txt'

@@ -11,19 +11,117 @@ import 'moment/locale/zh-cn';
 import SiderLeft from './Sider/SiderLeft'
 import SiderRight from './Sider/SiderRight'
 import GlobalSearch from './GlobalSearch'
+import QueryString from 'querystring'
+import { initWs } from '../../components/WsNewsDynamic'
+import Cookies from 'js-cookie'
+import { isPaymentOrgUser } from "@/utils/businessFunction"
+import { routerRedux } from "dva/router";
+import UploadNotification from '@/components/UploadNotification'
 
-const { Header, Sider, Content } = Layout;
+const { Sider, Content } = Layout;
 
 @connect(mapStateToProps)
 export default class Technological extends React.Component {
 
+  constructor(props) {
+    super(props)
+  }
+
+  componentDidMount() {
+    this.historyListenSet()
+    this.connectWsToModel()
+  }
+
+  connectWsToModel = () => {
+    const { dispatch } = this.props
+    const calback = function (event) {
+      setTimeout(function () {
+        if (Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')) {
+          const calback = function (event) {
+            dispatch({
+              type: 'cooperationPush/connectWsToModel',
+              payload: {
+                event
+              }
+            })
+          }
+          initWs(calback)
+        }
+      }, 3000)
+    }
+    initWs(calback)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { currentUserOrganizes, dispatch } = nextProps;
+    const { page_load_type: old_page_load_type } = this.props;
+    if (old_page_load_type != nextProps.page_load_type) {
+
+    }
+
+
+  }
+  // shouldComponentUpdate(newProps, newState) {
+  //   const { currentUserOrganizes, dispatch } = newProps;
+  //   const { page_load_type: old_page_load_type } = this.props;
+  //   //只有page_load_type变化了才渲染
+  //   if (old_page_load_type == newProps.page_load_type) {
+  //     return false;
+  //   } else {
+  //     if (currentUserOrganizes && currentUserOrganizes.length > 0) {
+  //       let isPayment = isPaymentOrgUser();
+  //       if (!isPayment && newProps.page_load_type == 2) {
+
+  //         dispatch({
+  //           type: 'technological/setShowSimpleModel',
+  //           payload: {
+  //             is_simple_model: 1
+  //           }
+  //         })
+  //         return false;
+  //       }
+  //     }
+  //     return true;
+  //   }
+  // }
+
+  getRouterParams = () => {
+    // 解析参数
+    const hash = window.location.hash
+    let path_name_arr
+    let path_name = '' //路由
+    let params_str = ''
+    let params = {} //路由携带的参数
+    if (hash.indexOf('?') != -1) {
+      path_name_arr = hash.match(/#([\S\/]*)\?/) //==>technological/projectDetail
+      params_str = hash.replace(/^#\/[\w\/]+\?/, '')
+      params = QueryString.parse(params_str) // 
+    } else {
+      path_name_arr = hash.match(/#([\S\/]*)/) //==>technological/projectDetail
+    }
+    path_name = path_name_arr[1]
+
+    return {
+      path_name,
+      params
+    }
+
+  }
+
+  // 获取technological层面的数据
+  historyListenSet = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'technological/initGetTechnologicalDatas',
+      payload: {}
+    })
+  }
+
+
 
   render() {
-
     const { page_load_type } = this.props;
-
     const app = dva();
-
     const routes = [
       {
         path: '/technological/accoutSet',
@@ -55,11 +153,14 @@ export default class Technological extends React.Component {
       }, {
         path: '/technological/simplemode',
         component: () => import('../SimpleMode/index'),
+      }, {
+        path: '/technological/investmentMap',
+        component: () => import('./components/InvestmentMap'),
       },
     ]
 
     const defaultLayout = (
-      <Layout >
+      <Layout id='technologicalLayoutWrapper' >
         <Sider collapsedWidth={64} theme={'light'} collapsed={true} />
         <SiderLeft />
         <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>
@@ -88,12 +189,11 @@ export default class Technological extends React.Component {
         <SiderRight />
         <GlobalSearch />
       </Layout>
-
     )
 
     const simpleLayout = (
-      <Layout >
-        <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>        
+      <Layout id='technologicalLayoutWrapper' >
+        <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>
           <Content style={{ height: '100vh' }} >
             <div className={globalClassNmae.page_style_3} id={'technologicalOut'} >
               {
@@ -120,7 +220,7 @@ export default class Technological extends React.Component {
     let layout = <div></div>
     switch (page_load_type) {
       case 0:
-        layout = '<div>page_load_type:0</div>'
+        layout = '<div></div>'
         break;
       case 1:
         layout = simpleLayout
@@ -135,7 +235,10 @@ export default class Technological extends React.Component {
     return (
       <LocaleProvider locale={zh_CN}>
         {/*minWidth:1440, */}
-        {layout}
+        <>
+          {layout}
+          <UploadNotification />
+        </>
       </LocaleProvider>
     );
   }
@@ -145,10 +248,15 @@ export default class Technological extends React.Component {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({ technological: {
   datas: {
-    page_load_type
+    page_load_type,
+    // currentUserOrganizes = [],
   }
 }
 }) {
-  return { page_load_type }
+  return {
+    page_load_type,
+    // currentUserOrganizes,
+
+  }
 }
 

@@ -11,6 +11,7 @@ import PersonNews from './PersonNews'
 import technological from "../../../../models/technological";
 import GroupContent from './GropContent'
 import ProjectListBar from './ProjectListBar'
+
 import VisitControl from './../VisitControl/index'
 import UpdateLog from './UpdateLog/index'
 import ChangeCardView from './ChangeCardView'
@@ -445,14 +446,14 @@ const Workbench = (props) => {
         payload: data
       })
     },
-    getCardCommentList(id) {
-      dispatch({
-        type: getEffectOrReducerByName_4('getCardCommentList'),
-        payload: {
-          id
-        }
-      })
-    },
+    // getCardCommentList(id) {
+    //   dispatch({
+    //     type: getEffectOrReducerByName_4('getCardCommentList'),
+    //     payload: {
+    //       id
+    //     }
+    //   })
+    // },
     addCardNewComment(data) {
       dispatch({
         type: getEffectOrReducerByName_4('addCardNewComment'),
@@ -737,14 +738,14 @@ const Workbench = (props) => {
   }
 
   let isPropVisitControl = false
-  const handleVisitControlChange = flag => console.log(flag, 'ffffffffffffffflag')
+  // const handleVisitControlChange = flag => console.log(flag, 'ffffffffffffffflag')
   return(
     <div className={indexStyles.wrapper}>
       <UpdateLog />
       < PersonNews {...PersonNewsProps} {...NewsListProps}/>
       {/* <Header {...cardContentListProps} /> */}
       <div className={indexStyles.projectListBarWrapper_index}>
-      <div className={indexStyles.projectListBar}><ProjectListBar /></div>
+      <div className={indexStyles.projectListBar} style={{marginRight: 20}} ><ProjectListBar /></div>
       <div className={indexStyles.toggleView} >
         <ChangeCardView />
       </div>

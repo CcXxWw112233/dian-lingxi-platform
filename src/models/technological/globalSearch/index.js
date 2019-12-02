@@ -44,14 +44,14 @@ export default {
             hash = hash.split('?')[0]
           }
           const fiterTargetArray = ['input', 'textarea']
-          if (e && e.keyCode == 83 && fiterTargetArray.indexOf(target.nodeName.toLowerCase()) == -1 && target.getAttribute('role') != 'textbox' && hash.indexOf('/technological') != -1) {
-            dispatch({
-              type: 'updateDatas',
-              payload: {
-                globalSearchModalVisible: true
-              }
-            })
-          }
+          // if (e && e.keyCode == 83 && fiterTargetArray.indexOf(target.nodeName.toLowerCase()) == -1 && target.getAttribute('role') != 'textbox' && hash.indexOf('/technological') != -1) {
+          //   dispatch({
+          //     type: 'updateDatas',
+          //     payload: {
+          //       globalSearchModalVisible: true
+          //     }
+          //   })
+          // }
         }
         if (location.pathname.indexOf('/technological') !== -1) {
           window.addEventListener("keydown", onkeyDown, false);

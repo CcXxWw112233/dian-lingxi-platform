@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input } from 'antd'
+import { Input, message } from 'antd'
 const TextArea = Input.TextArea
 
 //该组件用来封装点击input修改名称
@@ -54,9 +54,18 @@ export default class NameChangeInput extends React.Component{
 
   //textarea
   textAreaChange(e) {
-    this.setState({
-      localName: e.target.value
-    })
+    let val = e.target.value
+    if (val.length > 100) {
+      message.error("标题字符数最大限制为100字")
+      this.setState({
+        isOverFlowText: true, // 是否超出最大字数
+      })
+    } else {
+      this.setState({
+        localName: e.target.value,
+        isOverFlowText: false
+      })
+    }
   }
   textAreaBlur(e) {
     const value = e.target.value
@@ -71,6 +80,7 @@ export default class NameChangeInput extends React.Component{
       })
       return false
     }
+    if (this.state.isOverFlowText) return
     this.props.onBlur && this.props.onBlur(e)
   }
   textAreaClick(e) {
@@ -79,7 +89,7 @@ export default class NameChangeInput extends React.Component{
 
   render() {
 
-    const { localName } = this.state
+    const { localName, isOverFlowText } = this.state
     const { nodeName, className, autoFocus = true, autosize = true, goldName, onBlur, onPressEnter, onChange, style={}, size, onClick, maxLength = 30 } = this.props
 
     return (
@@ -105,7 +115,7 @@ export default class NameChangeInput extends React.Component{
                       autoFocus={autoFocus}
                       size={size}
                       maxLength={maxLength}
-                      style={{...style, width: '100%'}}
+                      style={{...style, width: '100%', boxShadow: isOverFlowText ? '0px 0px 8px 0px rgba(245,34,45,0.8)' : style.boxShadow && style.boxShadow}}
             />
           )
         }

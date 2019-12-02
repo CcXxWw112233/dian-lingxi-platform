@@ -11,6 +11,7 @@ const getEffectOrReducerByName = name => `project/${name}`;
 
 const Project = props => {
   const { dispatch, model, modal } = props;
+  const { model: { datas: { currentSelectedProjectMenuItem } } } = props
   const prjectListProps = {
     modal,
     model,
@@ -23,7 +24,10 @@ const Project = props => {
     addNewProject(data) {
       dispatch({
         type: getEffectOrReducerByName('addNewProject'),
-        payload: data
+        payload: {
+          ...data,
+          group_id: /^\d+$/.test(currentSelectedProjectMenuItem) ? currentSelectedProjectMenuItem : '', //匹配上id
+        }
       });
       dispatch({ type: 'modal/hideModal' });
     },

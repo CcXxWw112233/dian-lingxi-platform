@@ -58,7 +58,7 @@ export async function removeUserVisitor(data) {
   });
 }
 
-//给成员设置分组
+//给职员设置分组
 export async function setMemberWitchGroup(data) {
   return request({
     url: `${REQUEST_DOMAIN}/group/member/set`,
@@ -80,6 +80,19 @@ export async function getGroupList(params) {
     }      
   });
 }
+
+//分组列表（访问控制）
+export async function getAccessibleGroupList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/group/accessible/list`,
+    method: 'GET',
+    params: {
+      ...params,
+      // _organization_id: localStorage.getItem('OrganizationId'),
+    }      
+  });
+}
+
 //更新分组
 export async function updateGroup(data) {
   return request({
@@ -258,7 +271,10 @@ export async function getMembersInOneGroup(params) {
   return request({
     url: `${REQUEST_DOMAIN}/group/members`,
     method: 'GET',
-    params
+    params: {
+      _organization_id: localStorage.getItem('OrganizationId'),
+      ...params
+    }
   }, {isNotLoading: true});
 }
 //获取某个分组的成员 => 用于设置分组负责人
@@ -306,7 +322,7 @@ export async function getSetShowOrgName(data) {
 }
 
 // 用户设置是否显示极简模式
-export async function getSetShowSimple(data) {
+export async function setShowSimpleModel(data) {
   return request({
     url: `${REQUEST_DOMAIN}/user/set`,
     method: 'PUT',

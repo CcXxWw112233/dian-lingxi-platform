@@ -53,6 +53,7 @@ export default class Header extends Component {
                 highRiseFlag: false,
                 authorityFlag: false, // 权威的开关
                 dataBaseFlag: false, // 资料库的开关
+                areaFlag: false,
                 defaultArr: [],
             }
         })
@@ -74,6 +75,7 @@ export default class Header extends Component {
                 highRiseFlag: false,
                 authorityFlag: false, // 权威的开关
                 dataBaseFlag: false, // 资料库的开关
+                areaFlag: false,
             }
         })
         dispatch({
@@ -108,6 +110,8 @@ export default class Header extends Component {
 
     render() {
         const { xczNews, location } = this.props;
+        // console.log('location = ', location);
+        
         const { tabs } = this.state;
         const { inputValue } = xczNews;
         return (

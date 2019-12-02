@@ -31,7 +31,7 @@ export async function inviteMemberJoinOrg(data) {
   })
 }
 
-// 邀请成员加入项目 (只加入项目, 需配合其他接口一起使用)
+// 邀请职员加入项目 (只加入项目, 需配合其他接口一起使用)
 export async function inviteMemberJoinBoard(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/join`,

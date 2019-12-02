@@ -5,7 +5,7 @@ import Header from './Header'
 import ProccessDetailContent from "./ProccessDetailContent";
 
 const bodyHeight = document.querySelector('body').clientHeight
-export default class FileDetail extends React.Component {
+export default class ProccessDetail extends React.Component {
   state = {
     clientHeight: document.documentElement.clientHeight,
     clientWidth: document.documentElement.clientWidth,
@@ -32,9 +32,9 @@ export default class FileDetail extends React.Component {
     const { modalTop } = this.props
     const offsetTopDeviation = 100 //用来计算偏移量偏差
     return (
-      <div className={indexStyles.fileDetailOut} style={{height: clientHeight - offsetTopDeviation, top: 0}}>
-        <Header status={this.props.status} {...this.props} close={this.props.close} setPreviewProccessModalVisibile = {this.props.setPreviewProccessModalVisibile}/>
-        <ProccessDetailContent {...this.props} clientHeight={clientHeight} clientWidth={clientWidth} offsetTopDeviation = {offsetTopDeviation} modalTop={modalTop} />
+      <div className={indexStyles.fileDetailOut} style={{ height: clientHeight - offsetTopDeviation, top: 0 }}>
+        <Header status={this.props.status} principalList={this.props.principalList} visitControlUpdateCurrentModalData={this.props.visitControlUpdateCurrentModalData} {...this.props} close={this.props.close} setPreviewProccessModalVisibile={this.props.setPreviewProccessModalVisibile} />
+        <ProccessDetailContent principalList={this.props.principalList} {...this.props} clientHeight={clientHeight} clientWidth={clientWidth} offsetTopDeviation={offsetTopDeviation} modalTop={modalTop} />
       </div>
     )
   }

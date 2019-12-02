@@ -9,7 +9,7 @@ import {
 const AvatarList = (props) => {
   const { users = [], size = 'default' } = props
   const getSizeNum = () => {
-    switch (size){
+    switch (size) {
       case 'small':
         return 24
         break
@@ -38,14 +38,23 @@ const AvatarList = (props) => {
       {
         users.map((value, key) => {
           const { avatar, name, id, user_id } = value
-          return key < 3 &&(
-            <Avatar key={id || user_id} size={size} src={avatar} style={{...avatar_list_item_style, marginLeft: key == 0?0:-(size_num/2), }}>{name}</Avatar>
+          return key < 3 && (
+            <Avatar
+              onMouseDown={(e) => e.preventDefault()}
+              onMouseMove={(e) => e.preventDefault()}
+              onMouseOver={(e) => e.preventDefault()}
+              key={id || user_id}
+              size={size}
+              src={avatar}
+              style={{ ...avatar_list_item_style, marginLeft: key == 0 ? 0 : -(size_num / 2), }}>
+              {name}
+            </Avatar>
           )
         })
       }
       {
         users.length > 3 && (
-          <div className={styles.more_number} style={{...more_style, marginLeft: -(size_num/2)}}>+{users.length - 3}</div>
+          <div className={styles.more_number} style={{ ...more_style, marginLeft: -(size_num / 2) }}>+{users.length - 3}</div>
         )
       }
     </div>

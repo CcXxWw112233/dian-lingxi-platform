@@ -1,5 +1,5 @@
 // 通知提醒的数据
-import { getTriggerList, getTriggerHistory, setRemindInformation, updateRemindInformation, delRemindInformation } from '@/services/technological/informRemind'
+import { getUserInfoRemind, getTriggerList, getTriggerHistory, setRemindInformation, updateRemindInformation, delRemindInformation } from '@/services/technological/informRemind'
 import { isApiResponseOk } from '@/utils/handleResponseData'
 import { message } from 'antd';
 import { getModelSelectState } from '@/models/utils'
@@ -72,9 +72,9 @@ export default {
         { remind_time_value: 60 },
       ], // 1-60不同的时间段
       diff_text_term: [
+        { remind_time_type: 'd', txtVal: '天数' },
         { remind_time_type: 'm', txtVal: '分钟' },
         { remind_time_type: 'h', txtVal: '小时' },
-        { remind_time_type: 'd', txtVal: '天数' },
       ], // 匹配不同的字段类型
       historyList: [], // 保存设置的历史记录提醒
       setInfoRemindList: [
@@ -82,7 +82,7 @@ export default {
           rela_id: '',
           rela_type: '',
           remind_trigger: '',
-          remind_time_type: 'm',
+          remind_time_type: 'd',
           remind_time_value: '1',
           message_consumers: [],
           
@@ -91,7 +91,7 @@ export default {
       triggerList: [], // 每个对应的选项的类型列表
       is_add_remind: false, // 是否点击了添加操作 默认为false 没有点击
       remind_trigger: '', // 提醒触发器类型
-      remind_time_type: 'm', // 提醒时间类型 m=分钟 h=小时 d=天 datetime=时间日期
+      remind_time_type: 'd', // 提醒时间类型 m=分钟 h=小时 d=天 datetime=时间日期
       remind_time_value: '1', // 提醒时间值 如果是自定义时间传时间戳11位
       remind_edit_type: 1, // 可编辑的类型
       message_consumers: [],
@@ -103,6 +103,7 @@ export default {
          dispatch({
            type: 'updateDatas', 
            payload: {
+            informRemindUsers: [],
             triggerList: [],
             historyList: [],
             setInfoRemindList: [
@@ -110,7 +111,7 @@ export default {
                 rela_id: '',
                 rela_type: '',
                 remind_trigger: '',
-                remind_time_type: 'm',
+                remind_time_type: 'd',
                 remind_time_value: '1',
                 message_consumers: [], 
               }
@@ -123,6 +124,21 @@ export default {
     },
 
     effects: {
+      // 获取通知提醒用户列表
+      * getUserInfoRemind({ payload = {} }, { call, put }) {
+        const { id, type } = payload
+        const res = yield call(getUserInfoRemind, { id, type })
+        if(!isApiResponseOk(res)) {
+          message.error(res.message)
+          return
+        }
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            informRemindUsers: res.data
+          }
+        })
+      },
 
       // 获取事件类型列表的方法
       * getTriggerList({ payload = {} }, { select, call, put }) {
@@ -165,7 +181,17 @@ export default {
         const updateInfoRemind = {...payload.result}
         // console.log(updateInfoRemind, 'ss')
         const { id, remind_trigger, remind_time_type, remind_time_value, message_consumers} = updateInfoRemind
-        // console.log(message_consumers, 'pppp')
+        // 去除空数组
+        const removeEmptyArrayEle = (arr) => {
+          for (var i = 0; i < arr.length; i++) {
+            if (arr[i] == undefined) {
+              arr.splice(i, 1);
+              i = i - 1; // i - 1 ,因为空元素在数组下标 2 位置，删除空之后，后面的元素要向前补位，
+              // 这样才能真正去掉空元素,觉得这句可以删掉的连续为空试试，然后思考其中逻辑
+            }
+          }
+          return arr;
+        };
         let temp_user = [] // 存放用户的id
         for(var i in message_consumers) {
           temp_user.push(message_consumers[i].user_id)
@@ -175,7 +201,7 @@ export default {
           remind_trigger,
           remind_time_type,
           remind_time_value,
-          users: temp_user
+          users: removeEmptyArrayEle(temp_user)
         }
         const res = yield call(updateRemindInformation, data)
         if(!isApiResponseOk(res)) {
@@ -196,6 +222,7 @@ export default {
 
       // 设置提醒的方法
       * setRemindInformation({ payload = {} }, { select, call, put }) {
+        const { calback } = payload
         const [{ rela_id, rela_type, remind_time_type, remind_time_value, remind_trigger, message_consumers }] = yield select(getModelSelectState('informRemind', 'setInfoRemindList'))
         let tempId = []
         for(var i in message_consumers) {
@@ -203,13 +230,17 @@ export default {
             tempId.push(message_consumers[i].user_id)
           }
         }
-        const data = {
+        let data = {
           rela_id,
           rela_type,
           remind_time_type,
           remind_time_value,
           remind_trigger,
           users: tempId
+        }
+        let tempKey = Object.keys(payload)
+        if (tempKey && tempKey.length) {
+          data = payload
         }
         const res = yield call(setRemindInformation, data)
         if(!isApiResponseOk(res)) {
@@ -219,9 +250,11 @@ export default {
         yield put({
           type: 'getTriggerHistory',
           payload: {
-            rela_id
+            rela_id: tempKey && tempKey.length ? payload.rela_id : rela_id
           }
         })
+        calback && typeof calback == 'function' ? calback() : ''
+        return res || {}
       },
 
       // 删除提醒的方法

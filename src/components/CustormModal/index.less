@@ -1,9 +1,24 @@
-.ant-modal-wrap{
-  position: absolute !important;
-  width: 80% !important;
-  top: 0 !important;
-  left: 10% !important;
-}
-.custormOut{
 
+.wrapNormalModal {
+  overflow: hidden;
+  margin-right: 65px;
+  :global{
+    .ant-modal-body{
+      padding: 12px;
+    }
+  }
+}
+
+.wrapActiveModal {
+  overflow: hidden;
+  margin-right: 400px;
+  :global{
+    .ant-modal-body{
+      padding: 12px;
+    }
+  }
+}
+
+.wrapModal {
+  overflow: hidden
 }

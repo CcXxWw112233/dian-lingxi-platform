@@ -10,6 +10,7 @@ import CreateProject from './../Project/components/CreateProject/index';
 import { checkIsHasPermission, setBoardIdStorage } from './../../../../utils/businessFunction';
 import { ORG_TEAM_BOARD_CREATE } from './../../../../globalset/js/constant';
 import globalStyles from './../../../../globalset/css/globalClassName.less'
+import { beforeCreateBoardUpdateGantt } from '../Gantt/ganttBusiness';
 
 let cx = classNames.bind(styles);
 
@@ -90,31 +91,11 @@ class ProjectListBar extends Component {
       }
     );
   };
-  setAddProjectModalVisible = (data) => {
-    const { dispatch } = this.props
+  setAddProjectModalVisible = () => {
     const { addProjectModalVisible } = this.state
-    const { visible } = data || {}
-    if(data) {
-      // this.setState({
-      //   addProjectModalVisible: visible
-      // })
-    } else {
-      this.setState({
-        addProjectModalVisible: !addProjectModalVisible
-      })
-    }
-    // this.setState({
-    //   addProjectModalVisible: !addProjectModalVisible
-    // }, () => {
-    //   if(!addProjectModalVisible) {
-    //     dispatch({
-    //       type: 'project/getAppsList',
-    //       payload: {
-    //         type: '2'
-    //       }
-    //     });
-    //   }
-    // })
+    this.setState({
+      addProjectModalVisible: !addProjectModalVisible
+    })
   }
 
   handleSubmitNewProject = data => {
@@ -132,7 +113,9 @@ class ProjectListBar extends Component {
         });
       })
       .then(() => {
-        this.setAddProjectModalVisible();
+        // this.setAddProjectModalVisible();
+        const { workbench_show_gantt_card } = this.props
+        workbench_show_gantt_card == '1' && beforeCreateBoardUpdateGantt(dispatch) //新建项目后，如果是在甘特图页面，则查询下甘特图数据
       });
   };
   isVisitor = param => {
@@ -167,9 +150,9 @@ class ProjectListBar extends Component {
     })
   }
   handleGanttData(id) {
+    return
     const { dispatch, workbench_show_gantt_card } = this.props
     const { projectTabCurrentSelectedProject } = this.props
-
     if(workbench_show_gantt_card != '1') {
       return
     }
@@ -227,7 +210,7 @@ class ProjectListBar extends Component {
   }
   handleWinResize = () => {
     const { projectList } = this.props;
-    const listRefChildren = this.listRef.current.children;
+    const listRefChildren = (this.listRef && this.listRef.current) && this.listRef.current.children;
     if (listRefChildren) {
       const childNodeOffsetTopList = [...listRefChildren].map(childNode => {
         return childNode.offsetTop;
@@ -251,7 +234,7 @@ class ProjectListBar extends Component {
     }
   };
   render() {
-    const { project, projectList, projectTabCurrentSelectedProject } = this.props;
+    const { project, projectList, projectTabCurrentSelectedProject, workbench_show_gantt_card } = this.props;
     const { datas = { }} = project
     const { appsList = [] } = datas
     const { dropDownMenuItemList, addNewProjectModalVisible, addProjectModalVisible, is_show_new_project } = this.state;
@@ -295,7 +278,7 @@ class ProjectListBar extends Component {
           </p>
         )}
         <ul className={styles.projectListBarItemWrapper} ref={this.listRef}>
-          {projectList &&
+          {projectList && workbench_show_gantt_card == '0' &&
             projectList.map(({ board_id, board_name, apps, org_id }) => (
               <ProjectListBarCell
                 board_id={board_id}
@@ -308,15 +291,19 @@ class ProjectListBar extends Component {
               />
             ))}
         </ul>
-        {dropDownMenuItemList.length === 0 ? (
-          is_show_new_project && !isVisitor && checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && this.renderProjectListBarCreateNewProject()
-        ) : (
-          <Dropdown placement='bottomCenter' overlay={dropDownMenu} style={{ zIndex: '9999' }}>
-            <div className={styles.projectListBarExpand}>
-              <p className={styles.projectListBarExpandImg} />
-            </div>
-          </Dropdown>
-        )}
+        {
+          workbench_show_gantt_card == '0' && (
+            dropDownMenuItemList.length === 0 ? (
+              is_show_new_project && !isVisitor && checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && this.renderProjectListBarCreateNewProject()
+            ) : (
+              <Dropdown placement='bottomCenter' overlay={dropDownMenu} style={{ zIndex: '9999' }}>
+                <div className={styles.projectListBarExpand}>
+                  <p className={styles.projectListBarExpandImg} />
+                </div>
+              </Dropdown>
+            )
+          )
+        }
         {/*{addNewProjectModalVisible && (*/}
           {/*<AddModalFormWithExplicitProps*/}
             {/*addNewProjectModalVisible={addNewProjectModalVisible}*/}
@@ -327,7 +314,7 @@ class ProjectListBar extends Component {
             {/*handleSubmitNewProject={this.handleSubmitNewProject}*/}
           {/*/>*/}
         {/*)}*/}
-        {addProjectModalVisible && (
+        {addProjectModalVisible && workbench_show_gantt_card == '0' &&(
           <CreateProject
             setAddProjectModalVisible={this.setAddProjectModalVisible}
             addProjectModalVisible={addProjectModalVisible}

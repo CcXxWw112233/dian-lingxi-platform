@@ -30,6 +30,15 @@ class ProjectMenu extends Component {
       edit_tree_node_name_origin: '' //要编辑的名称的原始数值
     };
   }
+  componentWillUnmount() {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'project/updateDatas',
+      payload: {
+        currentSelectedProjectMenuItem: ''
+      }
+    })
+  }
   getSelectedItemKeywordOrId = () => {
     const {selectedKeys} = this.state
     //除了已归档项目的key为'archived-${组织id}'的形式，其他都是 id
@@ -92,7 +101,8 @@ class ProjectMenu extends Component {
           }
         })
       )
-    }).catch(err => console.log('切换项目列表失败：' + err))
+    })
+    // .catch(err => console.log('切换项目列表失败：' + err))
   };
   adjustArchivedProjectAlign = text => {
     const archivedProject = '已归档项目';
@@ -303,7 +313,7 @@ class ProjectMenu extends Component {
     );
   };
   genTreeNodeTitle = ops => {
-    const { title, layer, board_count, key, parentkey,org_id } = ops;
+    const { title, layer, board_count, key, parentkey, org_id } = ops;
     const { edit_tree_node } = this.state;
     //生成修改名称的 tree node
     if (edit_tree_node === key) {
@@ -524,7 +534,7 @@ class ProjectMenu extends Component {
     } else {
       params['_organization_id'] = org_id
     }
-    console.log('sssss_1', { org_id })
+    // console.log('sssss_1', { org_id })
     // debugger
     Promise.resolve(
       dispatch({
@@ -536,8 +546,8 @@ class ProjectMenu extends Component {
     ).then(res => this.createTreeNodeGetResponse(res));
   };
   createTreeNodeGetResponse = res => {
-    if (res === 'error') {
-      message.error('创建子分组失败');
+    if (res != 'success') {
+      message.error(res);
       return;
     }
     message.success('创建子分组成功')
@@ -550,8 +560,8 @@ class ProjectMenu extends Component {
     });
   };
   createTreeNodeGetResponse = res => {
-    if (res === 'error') {
-      message.error('创建分组失败');
+    if (res != 'success') {
+      message.error(res);
       return;
     }
     message.success('success')

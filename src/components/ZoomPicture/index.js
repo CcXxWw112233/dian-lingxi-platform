@@ -5,7 +5,16 @@ import classNames from 'classnames/bind';
 import withHover from './../HOC/withHover';
 import withBodyClientDimens from '../HOC/withBodyClientDimens';
 import { timestampToTimeNormal, judgeTimeDiffer_ten } from './../../utils/util';
+import globalStyles from '@/globalset/css/globalClassName.less'
+import { checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl } from "@/utils/businessFunction";
+import {
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN,
+  PROJECT_FILES_FILE_EDIT,
+  PROJECT_FILES_COMMENT_PUBLISH
+} from "@/globalset/js/constant";
 
+const rdom = require('react-dom');
 const cx = classNames.bind(styles);
 const { TextArea } = Input;
 class ZoomPicture extends Component {
@@ -34,6 +43,9 @@ class ZoomPicture extends Component {
 
       commitPublishText: '', //图评块的 textArea value
       isHideCommentList: false, //是否隐藏图评
+
+      isShowAllCircleReview: false, // 是否显示所有圈评
+      current_rotate: 0, // 当前图片旋转的次数
 
       isNewAComment: false, //是否是一条新的图评， 这里的逻辑是：后台决定图评的序号 (并且在提交数据(post)的时候，将序号返回过来), 因为只有组件才知道当前的图评是不是新的。
       //所以这里当新建一个图评的时候，把这个参数置为 true.
@@ -88,6 +100,8 @@ class ZoomPicture extends Component {
     //commentListItem zindex
     this.commentListItemZIndex = 10;
   }
+
+  // 加载图片
   loadImage = url => {
     return new Promise((resolve, reject) => {
       const image = new Image();
@@ -96,9 +110,33 @@ class ZoomPicture extends Component {
       image.src = url;
     });
   };
+
+  // 设置当前图片的尺寸
   setCurrentImgSize = (opts = {}) => {
     this.setState({ ...opts });
+    // console.log('ssssss_size', {
+    //   ...opts
+    // })
+    // this.handleMinImageSize(opts.currentImgZoomPercent)
   };
+  handleMinImageSize = (currentImgZoomPercent) => { //设置最小值边界
+    if(!currentImgZoomPercent) {
+      return '3%'
+    }
+    let percent = Number(currentImgZoomPercent.replace('%', ''))
+    if(percent < 3) {
+      percent = 3
+    }
+    // console.log(percent, 'sssss_percent')
+    this.setState({
+      currentImgZoomPercent: `${percent}%`
+    })
+  }
+
+  /**
+   * 获取当前图片的尺寸的百分比
+   * @param {String} type
+   */
   genCurrentImgZoomPercent = (type = 'reset') => {
     const { currentImgZoomPercent } = this.state;
     const { zoomStep } = this.props;
@@ -118,17 +156,21 @@ class ZoomPicture extends Component {
     };
     return cond[type];
   };
+
+  // 对图片进行操作的事件
   handleOperator = key => {
     const {
       imgRealWidth,
       imgRealHeight,
       currentImgZoomPercent,
       offsetLeft,
-      offsetTop
+      offsetTop,
+      isShowAllCircleReview
     } = this.state;
-    const { isFullScreenMode } = this.props;
+    const { isFullScreenMode, zoomPictureParams = {} } = this.props;
+    const { is_privilege, privileges = [], board_id } = zoomPictureParams
     const cond = {
-      resetSize: () => {
+      resetSize: () => { // 重置
         const isCurrentHasOnResetState =
           currentImgZoomPercent === '100%' &&
           offsetLeft === 0 &&
@@ -142,12 +184,18 @@ class ZoomPicture extends Component {
           offsetTop: 0
         });
       },
-      magnify: () => this.handleClickedImg(undefined, 'sup'),
-      shrink: () => this.handleClickedImg(undefined, 'sub'),
-      addCommit: () => {
+      magnify: () => this.handleClickedImg(undefined, 'sup'), // 放大
+      shrink: () => this.handleClickedImg(undefined, 'sub'), // 缩小
+      addCommit: () => { // 添加圈评
+        // 显示进入圈评转换pdf
+        this.props.handleEnterCirclePointComment && this.props.handleEnterCirclePointComment()
+        return
+        if ( !(checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) )) {
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         const { isHideCommentList } = this.state;
         if (isHideCommentList) return;
-
         //这里修正因为图片缩放，导致使用 ref 只能拿到上次 render 时的图片信息的问题
         const updateImgInfo = () => {
           let imgInfo = this.imgRef.current.getBoundingClientRect();
@@ -167,21 +215,21 @@ class ZoomPicture extends Component {
           isLongClick: false
         });
       },
-      hideCommit: () => {
+      hideCommit: () => { // 退出圈评
         const { isHideCommentList } = this.state;
         this.setState({
           isHideCommentList: !isHideCommentList,
           isShouldShowCommentDetail: false
         });
       },
-      exitCommitMode: () =>
+      exitCommitMode: () => // 编辑圈评
         this.setState({
           isCommentMode: false,
           isShowCommitBlock: false,
           commitBlockPopoverVisible: false,
           commitPublishText: ''
         }),
-      fullScreen: () => {
+      fullScreen: () => { // 是否全屏
         // this.setState(
         //   {
         //     isFullScreenMode: true
@@ -192,10 +240,14 @@ class ZoomPicture extends Component {
         // )
         const { handleFullScreen } = this.props;
         handleFullScreen(!isFullScreenMode);
-      }
+      },
+      showAllCircleReview: () => this.handleShowCircleReview(), // 是否显示所有圈评
+      rotate: () => this.handleImgRoate(), // 旋转
     };
     cond[key]();
   };
+
+  // 获取图片信息
   getMoreImgInfo = () => {
     const {
       imgInfo: { url }
@@ -229,6 +281,8 @@ class ZoomPicture extends Component {
       .then(image => getImgWidthAndHeight(image))
       .catch(err => message.error('加载预览图片失败'));
   };
+
+  // 更新图片尺寸
   updateImgSize = (imgWidth, imgHeight, zoomStep, type = 'sup') => {
     const { imgRealWidth, imgRealHeight } = this.state;
     //捕获缩放步进单位
@@ -354,6 +408,8 @@ class ZoomPicture extends Component {
       })
     };
   };
+
+  // 鼠标离开
   handleImgOnMouseLeave = e => {
     if (e) e.stopPropagation();
     const { isLongClick } = this.state;
@@ -605,6 +661,8 @@ class ZoomPicture extends Component {
     // }
   };
   handleImgOnMouseDown = e => {
+    // console.log('cccccc');
+
     if (e) e.stopPropagation();
     this.isMouseUp = false;
     this.isUserAdjustBlockSize = false;
@@ -661,6 +719,8 @@ class ZoomPicture extends Component {
     isLongTimeClick();
   };
   handleCommitBlockCornerMouseMove = (e, direction) => {
+
+
     if (e) e.stopPropagation();
     if (!this.isCommitBlockResizeStart) {
       return;
@@ -791,6 +851,8 @@ class ZoomPicture extends Component {
       commitBlockPopoverVisible: true
     });
   };
+
+  // 更新当前图片的尺寸比例
   handleUpdataImgSize = type => {
     const { zoomStep, zoomMax } = this.props;
     const { imgWidth, imgHeight, currentImgZoomPercent } = this.state;
@@ -817,7 +879,7 @@ class ZoomPicture extends Component {
         type
       ) =>
         parseInt(zoomMax) - parseInt(currentImgZoomPercent) <=
-          parseInt(zoomStep) && type === 'sup';
+        parseInt(zoomStep) && type === 'sup';
       if (
         isCurrentImgZoomIsEnoughSmall(currentImgZoomPercent, zoomStep, type)
       ) {
@@ -854,6 +916,8 @@ class ZoomPicture extends Component {
       currentImgZoomPercent: this.genCurrentImgZoomPercent(type)
     });
   };
+
+
   handleClickedImg = (e, type = 'sup') => {
     if (e) e.stopPropagation();
     const { isCommentMode } = this.state;
@@ -901,11 +965,11 @@ class ZoomPicture extends Component {
   };
   handleCommitPublishText = (e, isNewAComment) => {
     const { commitPublishText, shouldShowCommentDetailFlag } = this.state;
-    if(!commitPublishText || !commitPublishText.trim()) {
-        message.info({
-          content: '请不要提交空内容'
-        })
-        return
+    if (!commitPublishText || !commitPublishText.trim()) {
+      message.info({
+        content: '请不要提交空内容'
+      })
+      return
     }
     const { handleGetNewComment } = this.props;
     if (e) e.stopPropagation();
@@ -939,6 +1003,61 @@ class ZoomPicture extends Component {
       showCommitPublishBtn: true
     });
   };
+
+  // 设置图片向右旋转
+  handleImgRoate = () => {
+    const { current_rotate } = this.state
+    // console.log('ssss', '进来了')\
+    let temp_num = current_rotate
+    let new_tempNum
+    if (current_rotate > 4) {
+      // console.log('进来了', 'ssss')
+      temp_num = 1
+    }
+    new_tempNum = ++temp_num
+    // console.log(new_tempNum, 'ssss')
+    this.setState({
+      current_rotate: new_tempNum
+    })
+    //let imgInfo = this.imgRef.current.getBoundingClientRect();
+
+  }
+
+  // 访问控制权限弹窗
+  alarmNoEditPermission = () => {
+    message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+  }
+
+  // 设置切换版本圈评
+  handleShowCircleReview = () => {
+    // console.log('ssss_1111')
+    const { isShowAllCircleReview } = this.state
+    const { dispatch, workbenchType, projectFileType, zoomPictureParams = {} } = this.props
+    const { id: filePreviewCurrentFileId } = zoomPictureParams
+    this.setState({
+      isShowAllCircleReview: !isShowAllCircleReview
+    })
+    if (workbenchType) {
+      dispatch({
+        type: 'workbenchFileDetail/getFileCommitPoints',
+        payload: {
+          id: filePreviewCurrentFileId,
+          query_all: isShowAllCircleReview ? '' : '1'
+        }
+      })
+    }
+    if (projectFileType) {
+      // console.log('进来了' ,'ssss')
+      dispatch({
+        type: 'projectDetailFile/getFileCommitPoints',
+        payload: {
+          id: filePreviewCurrentFileId,
+          query_all: isShowAllCircleReview ? '' : '1'
+        }
+      })
+    }
+
+  }
 
   genImgInitSize = (
     containerWidth,
@@ -1365,50 +1484,81 @@ class ZoomPicture extends Component {
     );
   };
   renderOperatorBar = () => {
-    const { hovering, isFullScreenMode } = this.props;
+    const { hovering, isFullScreenMode, zoomPictureParams = {}, isShow_textArea } = this.props;
+    const { is_privilege, privileges = [], board_id } = zoomPictureParams
     const {
       currentImgZoomPercent,
       isCommentMode,
-      isHideCommentList
+      isHideCommentList,
+      isShowAllCircleReview,
     } = this.state;
     const operatorList = [
       {
         label: '缩小',
         key: 'shrink',
+        toolTipText: '缩小',
+        icon: <span>&#xe897;</span>,
         onClick: () => this.handleOperator('shrink')
       },
       {
         label: currentImgZoomPercent,
         key: 'resetSize',
         toolTipText: '重置到100%大小',
+        icon: <span>{currentImgZoomPercent}</span>,
         onClick: () => this.handleOperator('resetSize')
       },
       {
         label: '放大',
+        icon: <span>&#xe898;</span>,
+        toolTipText: '放大',
         key: 'magnify',
         onClick: () => this.handleOperator('magnify')
       },
       {
-        label: '添加圈点评论',
-        key: 'addCommit',
-        disabled: isHideCommentList,
-        onClick: () => this.handleOperator('addCommit')
-      },
-      {
-        label: isHideCommentList ? '显示圈点' : '隐藏圈点',
-        key: 'hideCommit',
-        onClick: () => this.handleOperator('hideCommit')
+        label: '向右旋转',
+        icon: <span>&#xe788;</span>,
+        toolTipText: '向右旋转',
+        key: 'rotate',
+        onClick: () => this.handleOperator('rotate')
       },
       {
         label: isFullScreenMode ? '退出全屏' : '全屏',
+        icon: isFullScreenMode ? <span>&#xe7f7;</span> : <span>&#xe7f3;</span>,
         key: 'fullScreen',
+        toolTipText: isFullScreenMode ? '退出全屏' : '全屏',
         onClick: () => this.handleOperator('fullScreen')
-      }
+      },
+      // {
+      //   label: isHideCommentList ? '显示圈点' : '隐藏圈点',
+      //   key: 'hideCommit',
+      //   icon: isHideCommentList ? <span>&#xe668;</span> : <span>&#xe66c;</span>,
+      //   toolTipText: isHideCommentList ? '显示圈点' : '隐藏圈点',
+      //   onClick: () => this.handleOperator('hideCommit')
+      // },
+      // {
+      //   label: isShowAllCircleReview ? '显示当前版本圈评' : '显示所有版本圈评',
+      //   key: 'showAllCircleReview',
+      //   icon: isShowAllCircleReview ? <span>&#xe699;</span> : <span>&#xe698;</span>,
+      //   toolTipText: isShowAllCircleReview ? '显示当前版本圈评' : '显示所有版本圈评',
+      //   onClick: () => this.handleOperator('showAllCircleReview')
+      // },
+
+      isShow_textArea == true ?
+        {
+          label: '添加圈点评论',
+          icon: <span>&#xe664;</span>,
+          // toolTipText: '添加圈点评论',
+          key: 'addCommit',
+          disabled: isHideCommentList,
+          onClick: () => this.handleOperator('addCommit')
+        } : '',
     ];
     const operatorListWhenCommit = [
       {
         label: '退出圈点模式',
         key: 'exitCommitMode',
+        icon: <span>&#xe67a;</span>,
+        // toolTipText: '退出圈点模式',
         onClick: () => this.handleOperator('exitCommitMode')
       }
     ];
@@ -1418,8 +1568,8 @@ class ZoomPicture extends Component {
       operatorBarWrapperOpacity: isFullScreenMode
         ? false
         : hovering
-        ? false
-        : true
+          ? false
+          : true
     });
     const getOperatorBarCellClass = ({ disabled }) =>
       cx({
@@ -1435,21 +1585,42 @@ class ZoomPicture extends Component {
               key={i.key}
               overlayStyle={{ zIndex: 999999999999 }}
             >
-              <div onClick={i.onClick} className={getOperatorBarCellClass(i)}>
-                {i.label}
+              <div style={{ position: 'relative' }} onClick={i.onClick} className={getOperatorBarCellClass(i)}>
+                {/* {i.label} */}
+                <div className={`${globalStyles.authTheme} ${i.key != 'resetSize' && styles.label_icon}`}>
+                  {/* {i.icon} */}
+                  {
+                    i && i.key && i.key == 'addCommit' && isShow_textArea == true ? (
+                      <span style={{ display: 'flex' }}>{i.icon}&nbsp;&nbsp;<span style={{ fontSize: '14px', width: '56px' }}>圈点评论</span></span>
+                    ) : (
+                        <span>{i.icon}</span>
+                      )
+                  }
+                </div>
               </div>
             </Tooltip>
           ))}
-        {isCommentMode &&
+        {/* {isCommentMode &&
           operatorListWhenCommit.map(i => (
-            <div
+            <Tooltip
+              title={i.toolTipText}
               key={i.key}
-              onClick={i.onClick}
-              className={styles.operatorBarCell}
+              overlayStyle={{ zIndex: 999999999999 }}
             >
-              {i.label}
-            </div>
-          ))}
+              <div
+                key={i.key}
+                onClick={i.onClick}
+                className={styles.operatorBarCell}
+              >
+                <div className={`${globalStyles.authTheme} ${i.key != 'resetSize' && styles.label_icon}`}><span style={{ display: 'flex' }}>{i.icon}&nbsp;&nbsp;<span style={{ fontSize: '14px' }}>退出圈点</span></span></div>
+              </div>
+            </Tooltip>
+          ))} */}
+        {
+          !isCommentMode && (
+            <div className={styles.commentMode_line}>|</div>
+          )
+        }
       </div>
     );
   };
@@ -1466,6 +1637,7 @@ class ZoomPicture extends Component {
           placeholder={commitInputPlaceholder}
           onPressEnter={e => this.handleCommitPublishText(e, true)}
           onFocus={e => this.handleFocusCommitInput(e)}
+          autoFocus={true}
           value={commitPublishText}
           onChange={this.onCommitPublishTextChange}
         />
@@ -1557,7 +1729,7 @@ class ZoomPicture extends Component {
           <div
             className={`${styles.commitBlockCorner} ${
               styles.commitBlockCornerLeftTop
-            }`}
+              }`}
             onMouseDown={e => this.handleCommitBlockCornerMouseDown(e)}
             onMouseUp={e => this.handleCommitBlockCornerMouseUp(e)}
             onMouseMove={e =>
@@ -1567,7 +1739,7 @@ class ZoomPicture extends Component {
           <div
             className={`${styles.commitBlockCorner} ${
               styles.commitBlockCornerRightTop
-            }`}
+              }`}
             onMouseDown={e => this.handleCommitBlockCornerMouseDown(e)}
             onMouseUp={e => this.handleCommitBlockCornerMouseUp(e)}
             onMouseMove={e =>
@@ -1578,7 +1750,7 @@ class ZoomPicture extends Component {
           <div
             className={`${styles.commitBlockCorner} ${
               styles.commitBlockCornerRightBottom
-            }`}
+              }`}
             onMouseDown={e => this.handleCommitBlockCornerMouseDown(e)}
             onMouseUp={e => this.handleCommitBlockCornerMouseUp(e)}
             onMouseMove={e =>
@@ -1589,7 +1761,7 @@ class ZoomPicture extends Component {
           <div
             className={`${styles.commitBlockCorner} ${
               styles.commitBlockCornerLeftBottom
-            }`}
+              }`}
             onMouseDown={e => this.handleCommitBlockCornerMouseDown(e)}
             onMouseUp={e => this.handleCommitBlockCornerMouseUp(e)}
             onMouseMove={e =>
@@ -1681,7 +1853,7 @@ class ZoomPicture extends Component {
     }, 500);
   };
   renderCommentItemPopoverContent = flag => {
-    const { currentSelectedCommentItemDetail, userId } = this.props;
+    const { currentSelectedCommentItemDetail, userId, isShow_textArea } = this.props;
     const {
       commitPublishText,
       isShouldShowCommentDetail,
@@ -1689,11 +1861,10 @@ class ZoomPicture extends Component {
     } = this.state;
     if (!isShouldShowCommentDetail || shouldShowCommentDetailFlag !== flag)
       return null;
-
     return (
       <div className={styles.commentItemPopoverContentWrapper}>
         <div className={styles.commentItemPopoverContentCommentList}>
-          {currentSelectedCommentItemDetail.map(i => {
+          {(currentSelectedCommentItemDetail && currentSelectedCommentItemDetail.length) && currentSelectedCommentItemDetail.map(i => {
             return (
               <div
                 key={i.id}
@@ -1704,7 +1875,7 @@ class ZoomPicture extends Component {
                     styles.commentItemPopoverContentCommentListItemAvatar
                   }
                 >
-                  <Avatar icon="user" />
+                  <Avatar icon="user" src={i.avatar} />
                 </div>
                 <div
                   className={
@@ -1765,24 +1936,27 @@ class ZoomPicture extends Component {
             );
           })}
         </div>
-        <div className={styles.commitPopoverContentWrapper}>
-          <TextArea
-            placeholder="按 Enter 发布图评"
-            onPressEnter={e => this.handleCommitPublishText(e, false)}
-            value={commitPublishText}
-            onChange={this.onCommitPublishTextChange}
-          />
-          <div className={styles.commitPublishWrapper}>
-            <Button
-              type="primary"
-              size="small"
-              onClick={e => this.handleCommitPublishText(e, false)}
-              disabled={!commitPublishText.trim()}
-            >
-              发布
+        {isShow_textArea == true ? (
+<div className={styles.commitPopoverContentWrapper}>
+            <TextArea
+              placeholder="按 Enter 发布图评"
+              onPressEnter={e => this.handleCommitPublishText(e, false)}
+              value={commitPublishText}
+              autoFocus={true}
+              onChange={this.onCommitPublishTextChange}
+            />
+            <div className={styles.commitPublishWrapper}>
+              <Button
+                type="primary"
+                size="small"
+                onClick={e => this.handleCommitPublishText(e, false)}
+                disabled={!commitPublishText.trim()}
+              >
+                发布
             </Button>
+            </div>
           </div>
-        </div>
+): ''}
       </div>
     );
   };
@@ -1876,14 +2050,16 @@ class ZoomPicture extends Component {
       imgHeight,
       isLongClick,
       offsetLeft,
-      offsetTop
+      offsetTop,
+      current_rotate,
     } = this.state;
     const imgStyle = {
       cursor: isCommentMode ? 'crosshair' : isLongClick ? 'grab' : 'zoom-in',
       width: imgWidth,
       height: imgHeight,
       top: offsetTop + 'px',
-      left: offsetLeft + 'px'
+      left: offsetLeft + 'px',
+      transform: `rotate(${current_rotate * 90}deg)`
     };
     const className = cx({
       content_img: true,
@@ -1906,6 +2082,20 @@ class ZoomPicture extends Component {
       </>
     );
   };
+
+  onMouseWheel = (e) => {
+    if (e.deltaY <= 0) {
+      // console.log("上-放大")
+      this.handleOperator('magnify')
+    } else {
+      // console.log("下->缩小")
+      this.handleOperator('shrink');
+    }
+
+    //console.log( e.pageX, e.pageY);
+    //console.log( e.clientX, e.clientY);
+
+  }
   render() {
     const {
       imgInfo: { url },
@@ -1934,22 +2124,22 @@ class ZoomPicture extends Component {
         imgWidth > containerWidthNum
           ? 0
           : (containerWidthNum - imgWidth - 4) / 2
-      }px`,
+        }px`,
       marginRight: `${
         imgWidth > containerWidthNum
           ? 0
           : (containerWidthNum - imgWidth - 4) / 2
-      }px`,
+        }px`,
       marginTop: `${
         imgHeight > containerHeightNum
           ? 0
           : (containerHeightNum - imgHeight - 4) / 2
-      }px`,
+        }px`,
       marginBottom: `${
         imgHeight > containerHeightNum
           ? 0
           : (containerHeightNum - imgHeight - 4) / 2
-      }px`
+        }px`
     };
 
     // const fullScreenWrapperWidth = bodyClientWidth - 100
@@ -1959,6 +2149,7 @@ class ZoomPicture extends Component {
         className={styles.wrapper}
         style={wrapperStyle}
         ref={this.containerRef}
+        onWheel={(e) => this.onMouseWheel(e)}
       >
         <div className={styles.content_wrapper}>
           <div className={styles.img_wrapper} style={imgWrapperStyle}>
@@ -1967,7 +2158,7 @@ class ZoomPicture extends Component {
           </div>
           {isShowCommitBlock && this.renderCommitBlock()}
         </div>
-        <>{this.renderOperatorBar()}</>
+        <div>{this.renderOperatorBar()}</div>
         {/* 有时间可以实现一个全局模式 */}
         {/* {isFullScreenMode && (
           <Modal zIndex={9999999999} style={{top: 0, left: 0, height: bodyClientHeight - 300 + 'px'}} footer={null} title={null} width={bodyClientWidth} visible={isFullScreenMode} onCancel={() => this.setState({isFullScreenMode: false})}>
@@ -2004,7 +2195,7 @@ ZoomPicture.defaultProps = {
   },
   zoomStep: '10%', //缩放步进,每次点击放大缩小，图片变化的比例
   zoomMax: '500%', //最大的放大倍数
-  handleGetNewComment: function(info) {
+  handleGetNewComment: function (info) {
     //当新发布一个评论的时候，返回的信息
     // info:
     // {
@@ -2012,11 +2203,11 @@ ZoomPicture.defaultProps = {
     //   comment: commitPublishText,
     // }
   },
-  handleClickedCommentItem: function(flag) {
+  handleClickedCommentItem: function (flag) {
     //flag 是指当前点击 图评序号
   },
   userId: '1111189894887247872', //当前操作用户的 id, 用来控制用户删除自己已创建的图评， 如果不传，那么就不会显示已有图评中当前用户创建的图评的删除按钮
-  handleDeleteCommentItem: function(obj) {
+  handleDeleteCommentItem: function (obj) {
     // obj: {
     //   id,
     //   type,
@@ -2057,7 +2248,7 @@ ZoomPicture.defaultProps = {
     //   type: '1'
     // }
   ],
-  handleFullScreen: function() {
+  handleFullScreen: function () {
     //全屏模式，
     //这里其实是可以直接在组件中做的，
     //但是需要时间的。。。

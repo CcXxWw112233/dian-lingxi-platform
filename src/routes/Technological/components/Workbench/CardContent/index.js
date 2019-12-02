@@ -28,7 +28,8 @@ import TeachingEffect from './School/TeachingEffect';
 import PreviewFileModal from '../PreviewFileModal.js';
 import CollectionProjectItem from './CollectionProjectItem';
 import MyCircleItem from './MyCircleItem';
-import TaskDetailModal from './Modal/TaskDetailModal';
+// import TaskDetailModal from './Modal/TaskDetailModal';
+import TaskDetailModal from '@/components/TaskDetailModal'
 import FileDetailModal from './Modal/FileDetailModal';
 import ProccessDetailModal from './Modal/ProccessDetailModal';
 import AddTaskModal from './Modal/AddTaskModal';
@@ -51,8 +52,21 @@ const TextArea = Input.TextArea;
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 
-@connect(({ workbench }) => ({
-  workbench
+@connect((
+  { workbench, 
+    workbenchDetailProcess: {
+  datas: {
+    processInfo = {}
+  }},
+   workbenchTaskDetail: {
+     datas: { projectDetailInfoData = {} }
+   },
+   publicTaskDetailModal: {
+     drawContent = {},
+     drawerVisible
+   }
+}) => ({
+  workbench, processInfo, projectDetailInfoData, drawerVisible, drawContent
 }))
 class CardContent extends React.Component {
   state = {
@@ -235,6 +249,10 @@ class CardContent extends React.Component {
       payload: { id: board_id }
     });
     await this.props.dispatch({
+      type: 'projectDetail/projectDetailInfo',
+      payload: { id: board_id }
+    });
+    await this.props.dispatch({
       type: 'workbenchDetailProcess/getWorkFlowComment',
       payload: { flow_instance_id: flowID }
     });
@@ -246,11 +264,27 @@ class CardContent extends React.Component {
       previewProccessModalVisibile: !this.state.previewProccessModalVisibile
     });
   }
+
+  
   setTaskDetailModalVisibile() {
     this.setState({
       TaskDetailModalVisibile: !this.state.TaskDetailModalVisibile
     });
   }
+
+  // 这是新的设置弹窗的回调
+  setTaskDetailModalVisible = () => {
+    this.props.dispatch({
+      type: 'publicTaskDetailModal/updateDatas',
+      payload: {
+        drawerVisible: false,
+        drawContent: {},
+        card_id: ''
+      }
+    })
+    
+  }
+
   handleAddTask = type => {
     this.handleAddATask(type);
   };
@@ -481,6 +515,194 @@ class CardContent extends React.Component {
       </div>
     );
   }
+
+  // 修改任务或会议回调
+  handleChangeCard = ({drawContent, card_id, name, value}) => {
+    const {
+      workbench: {
+        datas: {
+          responsibleTaskList = [],
+          meetingLsit = []
+        }
+      },
+      dispatch
+    } = this.props;
+    const new_responsibleTaskList = responsibleTaskList.map(item => {
+      let new_item = {...item}
+      if (item.id == card_id) {
+        new_item = {...item, name: drawContent.card_name}
+        if (name && value) new_item[name] = value
+        return new_item
+      } else {
+        return new_item
+      }
+    })
+    const new_meetingLsit = meetingLsit.map(item => {
+      let new_item = {...item}
+      if (item.id == card_id) {
+        new_item = {...item, name: drawContent.card_name}
+        if (name && value) new_item[name] = value
+        return new_item
+      } else {
+        return new_item
+      }
+    })
+    // const new_responsibleTaskList = responsibleTaskList.map(item => {
+    //   let new_item = {...item}
+    //   if(item.id == card_id) {
+    //     new_item = {...item, ...drawContent, name: drawContent.card_name}
+    //   }
+    //   return new_item
+    // })
+    // const new_meetingLsit = meetingLsit.map(item => {
+    //   let new_item = {...item}
+    //   if(item.id == card_id) {
+    //     new_item = {...item, ...drawContent, name: drawContent.card_name}
+    //   }
+    //   return new_item
+    // })
+    dispatch({
+      type: 'workbench/updateDatas',
+      payload: {
+        responsibleTaskList: new_responsibleTaskList,
+        meetingLsit: new_meetingLsit
+      }
+    })
+  }
+
+  // 删除某条卡片
+  handleDeleteCard = ({ card_id }) => {
+    const {
+      workbench: {
+        datas: {
+          responsibleTaskList = [],
+          meetingLsit = []
+        }
+      },
+      dispatch
+    } = this.props;
+
+    const new_responsibleTaskList = responsibleTaskList.filter(item => {
+      let new_item = {...item}
+      return new_item.id != card_id
+    })
+    const new_meetingLsit = meetingLsit.filter(item => {
+      let new_item = {...item}
+      return new_item.id != card_id
+    })
+    dispatch({
+      type: 'workbench/updateDatas',
+      payload: {
+        responsibleTaskList: new_responsibleTaskList,
+        meetingLsit: new_meetingLsit
+      }
+    })
+  }
+
+  // 数组去重
+  arrayNonRepeatfy = arr => {
+    let temp_arr = []
+    let temp_id = []
+    for (let i = 0; i < arr.length; i++) {
+      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
+        temp_arr.push(arr[i]);
+        temp_id.push(arr[i]['id'])
+      }
+    }
+    return temp_arr
+  }
+
+  // 访问控制中更新数据
+  commonProcessVisitControlUpdateCurrentModalData = (newProcessInfo, type) => {
+    const { dispatch, processInfo = {} } = this.props
+    dispatch({
+      type: 'workbenchDetailProcess/updateDatas',
+      payload: {
+        processInfo: newProcessInfo
+      }
+    })
+    if (type) {
+      dispatch({
+        type: 'workbenchDetailProcess/getBackLogProcessList',
+        payload: {
+          
+        }
+      })
+    }     
+  }
+
+  // 访问控制中流程操作
+  visitControlUpdateCurrentModalData = obj => {
+    const { processInfo = {} } = this.props
+    const { privileges = [] } = processInfo
+
+    // 访问控制开关
+    if (obj && obj.type &&  obj.type == 'privilege') {
+      let new_privileges = [...privileges]
+      for (let item in obj) {
+        if (item == 'privileges') {
+          obj[item].map(val => {
+            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            if (temp_arr && !temp_arr.length) return false
+            return new_privileges = [...temp_arr]
+          })
+        }
+      }
+      let newProcessInfo = {...processInfo, privileges: new_privileges, is_privilege: obj.is_privilege}
+      // this.props.updateDatasProcess({
+      //   processInfo: newProcessInfo
+      // });
+      // 这是需要获取一下流程列表 区分工作台和项目列表
+      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo, obj.type)
+      
+    };
+
+    // 访问控制添加
+    if (obj && obj.type && obj.type == 'add') {
+      let new_privileges = []
+      for (let item in obj) {
+        if (item == 'privileges') {
+          obj[item].map(val => {
+            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            return new_privileges = [...temp_arr]
+          })
+        }
+      }
+      let newProcessInfo = {...processInfo, privileges: new_privileges}
+      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
+    }
+
+    // 访问控制移除
+    if (obj && obj.type && obj.type == 'remove') {
+      let new_privileges = [...privileges]
+      new_privileges.map((item, index) => {
+        if (item.id == obj.removeId) {
+          new_privileges.splice(index, 1)
+        }
+      })
+      let newProcessInfo = {...processInfo, privileges: new_privileges, is_privilege: obj.is_privilege}
+      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
+    }
+
+    // 这是更新type类型
+    if (obj && obj.type && obj.type == 'change') {
+      let { id, content_privilege_code, user_info } = obj.temp_arr
+      let new_privileges = [...privileges]
+      new_privileges = new_privileges.map((item) => {
+        let new_item = item
+        if (item.id == id) {
+          new_item = {...item, content_privilege_code: obj.code}
+        } else {
+          new_item = {...item}
+        }
+        return new_item
+      })
+      let newProcessInfo = {...processInfo, privileges: new_privileges}
+      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
+    }
+
+  }
+
   render() {
 
     const { datas = {} } = this.props.model;
@@ -506,8 +728,10 @@ class CardContent extends React.Component {
         datas: {
           responsibleTaskList = []
         }
-      }
+      },
+      projectDetailInfoData = {}
     } = this.props;
+    const { data = [] } = projectDetailInfoData
     const { selected_board_data = [] } = itemValue; //已选board id
 
     const {
@@ -536,9 +760,7 @@ class CardContent extends React.Component {
                     key={key}
                     itemValue={value}
                     itemKey={key}
-                    setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(
-                      this
-                    )}
+                    // setTaskDetailModalVisible={this.setTaskDetailModalVisible}
                     isUsedInWorkbench={true}
                   />
                 ))}
@@ -588,9 +810,7 @@ class CardContent extends React.Component {
                       key={key2}
                       itemKey={key2}
                       itemValue={value2}
-                      setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(
-                        this
-                      )}
+                      // setTaskDetailModalVisible={this.setTaskDetailModalVisible}
                     />
                   );
                 })}
@@ -821,17 +1041,20 @@ class CardContent extends React.Component {
           setPreviewProccessModalVisibile={this.setPreviewProccessModalVisibile.bind(
             this
           )}
+          visitControlUpdateCurrentModalData={this.visitControlUpdateCurrentModalData}
+          principalList={data}
         />
-        <TaskDetailModal
-          {...this.props}
-          modalVisible={this.state.TaskDetailModalVisibile}
-          setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(
-            this
-          )}
-          setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(
-            this
-          )}
-        />
+        {
+          CardContentType == 'RESPONSIBLE_TASK' && (
+            <TaskDetailModal
+            task_detail_modal_visible={this.props.drawerVisible}
+            // setTaskDetailModalVisible={this.setTaskDetailModalVisible}
+            handleTaskDetailChange={this.handleChangeCard}
+            handleDeleteCard={this.handleDeleteCard}
+          />
+          )
+        }
+     
         {/* addTaskModalVisible */}
         {addTaskModalVisible && (
           <AddTaskModal

@@ -15,9 +15,9 @@ export default class RaletionDrop extends React.Component {
   }
 
   componentWillMount() {
-    const { datas: { relations_Prefix = [] } } = this.props.model
+    const { relations_Prefix = [] } = this.props
     let options = []
-    for(let val of relations_Prefix) {
+    for (let val of relations_Prefix) {
       const obj = {
         value: val, //['board_id'],
         label: val['board_name'],
@@ -36,11 +36,11 @@ export default class RaletionDrop extends React.Component {
     const length = selectedOptions.length
     const that = this
 
-    if(length == 1) {
+    if (length == 1) {
       this.getRelationsSelectionPre({
         board_id: targetOption.value.board_id
       }, { target: targetOption })
-    } else if (length == 2){
+    } else if (length == 2) {
       setTimeout(function () {
         const { selected } = that.state
         that.getRelationsSelectionSub({
@@ -66,9 +66,9 @@ export default class RaletionDrop extends React.Component {
     const res = await getRelationsSelectionPre(data)
     target.loading = false;
 
-    if(res.code == '0') {
+    if (res.code == '0') {
       const children = []
-      for(let val of res.data) {
+      for (let val of res.data) {
         const obj = {
           label: val['app_name'],
           value: val, //['app_key'],
@@ -91,9 +91,9 @@ export default class RaletionDrop extends React.Component {
     const res = await getRelationsSelectionSub(data)
     target.loading = false;
 
-    if(res.code == '0') {
+    if (res.code == '0') {
       const children = []
-      for(let val of res.data.parent_data) {
+      for (let val of res.data.parent_data) {
         const obj = {
           label: val['parent_name'],
           value: val, //val['parent_id'],
@@ -101,7 +101,7 @@ export default class RaletionDrop extends React.Component {
         }
         children.push(obj)
       }
-      for(let val of res.data.content_data) {
+      for (let val of res.data.content_data) {
         const obj = {
           label: val['content_name'],
           value: val, //val['content_id'],
@@ -132,8 +132,8 @@ export default class RaletionDrop extends React.Component {
       const { selected } = that.state
       const selectedLength = selected.length
 
-      if(!bool) {
-        if(typeof selected != 'object' || !selectedLength) {
+      if (!bool) {
+        if (typeof selected != 'object' || !selectedLength) {
           that.props.setIsInEditContentRelation && that.props.setIsInEditContentRelation(bool)
           return false
         }
@@ -153,7 +153,7 @@ export default class RaletionDrop extends React.Component {
           linked_board_id
         }
 
-        if(typeof selectedLast == 'object') {
+        if (typeof selectedLast == 'object') {
           parent_or_content_id = selectedLast['content_id'] ? 'linked_content_id' : 'linked_parent_id'
           parent_content_id = selectedLast['content_id'] || selectedLast['parent_id']
           linked_name = selectedLast['content_name'] || selectedLast['parent_name']
@@ -161,9 +161,9 @@ export default class RaletionDrop extends React.Component {
           parent_or_content_id = 'linked_parent_id'
         }
 
-        if(selectedLength == 1) {
+        if (selectedLength == 1) {
           obj.linked_name = selected[0]['board_name']
-        } else if(selectedLength == 2){
+        } else if (selectedLength == 2) {
           obj.linked_name = `${selected[0]['board_name']}~${selected[1]['app_name']}`
           obj.linked_app_key = linked_app_key
         } else {
@@ -179,7 +179,7 @@ export default class RaletionDrop extends React.Component {
           // debugger
         }
         that.props.setIsInEditContentRelation && that.props.setIsInEditContentRelation(bool)
-        that.props.addRelation && that.props.addRelation({...obj})
+        that.props.addRelation && that.props.addRelation({ ...obj })
         // debugger
       }
     }, 200)
@@ -192,17 +192,17 @@ export default class RaletionDrop extends React.Component {
       options,
     } = this.state
 
-    return(
+    return (
       <div>
         <Cascader options={options}
-                  onChange={this.onChange.bind(this)}
-                  loadData={this.loadData.bind(this)}
-                  autoFocus
-                  popupVisible={popupVisible}
-                  changeOnSelect
-                  style={{width: 300}}
-                  placeholder={'请选择'}
-                  onPopupVisibleChange={this.onPopupVisibleChange.bind(this)}
+          onChange={this.onChange.bind(this)}
+          loadData={this.loadData.bind(this)}
+          autoFocus
+          popupVisible={popupVisible}
+          changeOnSelect
+          style={{ width: 300 }}
+          placeholder={'请选择'}
+          onPopupVisibleChange={this.onPopupVisibleChange.bind(this)}
         />
       </div>
     )

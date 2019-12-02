@@ -193,7 +193,7 @@ class CreateOrganizationModal extends React.Component {
         {/* 确认 */}
         <FormItem>
           <Button type="primary" disabled={stepContinueDisabled} htmlType={'submit'} onClick={this.nextStep} style={{marginTop: 20, width: 208, height: 40}}>
-            {operateType === '0'? '发送请求' : '创建企业'}
+            {operateType === '0'? '发送请求' : '创建组织'}
           </Button>
         </FormItem>
       </Form>
