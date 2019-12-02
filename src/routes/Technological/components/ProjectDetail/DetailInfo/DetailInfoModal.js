@@ -22,13 +22,14 @@ class DetailInfoModal extends React.Component {
   componentWillReceiveProps(nextProps) { }
 
   onCancel() {
-    const { dispatch } = this.props
-    dispatch({
-      type: 'projectDetail/updateDatas',
-      payload: {
-        projectInfoDisplay: false
-      }
-    })
+    // const { dispatch } = this.props
+    // dispatch({
+    //   type: 'projectDetail/updateDatas',
+    //   payload: {
+    //     projectInfoDisplay: false
+    //   }
+    // })
+    this.props.setProjectDetailInfoModalVisible && this.props.setProjectDetailInfoModalVisible()
     this.setState({
       is_show_all_member: false,
     })
@@ -71,9 +72,9 @@ class DetailInfoModal extends React.Component {
         onCancel={this.onCancel.bind(this)}
         overInner={
           is_show_all_member ? (
-            <DetailMember invitationType={invitationType} invitationId={invitationId} {...this.props} is_show_all_member={is_show_all_member} />
+            <DetailMember invitationType={invitationType} invitationId={invitationId} is_show_all_member={is_show_all_member} />
           ) : (
-            <DrawDetailInfo invitationType={invitationType} invitationId={invitationId} {...this.props} is_show_all_member={is_show_all_member} handleTriggetModalTitle={this.handleTriggetModalTitle} />
+            <DrawDetailInfo invitationType={invitationType} invitationId={invitationId} is_show_all_member={is_show_all_member} handleTriggetModalTitle={this.handleTriggetModalTitle} />
           )
         }
       />

@@ -3,9 +3,9 @@ import DetailInfoModal from './DetailInfoModal'
 
 const DetailInfo = (props) => {
 
-  const { modalVisible, invitationType, invitationId, } = props
+  const { modalVisible, invitationType, invitationId, setProjectDetailInfoModalVisible} = props
   return (
-    <DetailInfoModal modalVisible={modalVisible} invitationType={invitationType} invitationId={invitationId} />
+    <DetailInfoModal modalVisible={modalVisible} setProjectDetailInfoModalVisible={setProjectDetailInfoModalVisible} invitationType={invitationType} invitationId={invitationId} />
   )
 }
 

@@ -42,6 +42,8 @@ export default class Header extends React.Component {
     localBoardName: '',
     isInEditBoardName: false,
     isShouldBeDropdownVisible: false,
+
+    projectDetailInfoVisible: false, // 控制看板信息的显示隐藏 默认为 false 不显示
   }
   componentWillMount() {
     //设置默认项目名称
@@ -99,6 +101,7 @@ export default class Header extends React.Component {
   setProjectInfoDisplay() {
     const { projectInfoDisplay } = this.props
     const { dispatch } = this.props
+    this.setProjectDetailInfoModalVisible()
 
     dispatch({
       type: 'projectDetail/updateDatas',
@@ -860,10 +863,18 @@ export default class Header extends React.Component {
     })
   }
 
+  // 控制项目信息弹窗是否显示
+  setProjectDetailInfoModalVisible = () => {
+    const { projectDetailInfoVisible } = this.state
+    this.setState({
+      projectDetailInfoVisible: !projectDetailInfoVisible
+    })
+  }
+
   render() {
     const that = this
     const { projectInfoDisplay, projectDetailInfoData = {}, appsSelectKey, selectedRowKeys = [], currentParrentDirectoryId, processInfo = {}, getTaskGroupListArrangeType = '1', dispatch } = this.props
-    const { ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection, localBoardName, isInEditBoardName } = this.state
+    const { ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection, localBoardName, isInEditBoardName, projectDetailInfoVisible } = this.state
     const { board_name, board_id, is_star, is_create, app_data = [], folder_id, is_privilege, data: projectParticipant, privileges, privileges_extend } = projectDetailInfoData
     let temp_projectParticipant = [].concat(projectParticipant && [...projectParticipant], privileges_extend && [...privileges_extend])
     const removeEmptyArrayEle = (arr) => {
@@ -1242,7 +1253,7 @@ export default class Header extends React.Component {
             </div>
           </div>
         </div>
-        <DetailInfo modalVisible={projectInfoDisplay} invitationType='1' invitationId={board_id} />
+        <DetailInfo modalVisible={projectDetailInfoVisible} setProjectDetailInfoModalVisible={this.setProjectDetailInfoModalVisible} invitationType='1' invitationId={board_id} />
 
         <ShowAddMenberModal
           addMenbersInProject={this.addMenbersInProject}
