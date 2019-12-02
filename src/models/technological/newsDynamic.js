@@ -139,7 +139,6 @@ export default {
           newsDynamicListTransform[i]['newDataList'] = removeEmptyArrayEle(newsDynamicListTransform[i]['newDataList']) //去除空数组
         }
         //-------------2018.10.18修改合并相邻相近任务结束
-        // console.log(2, newsDynamicListTransform)
         yield put({
           type: 'updateDatas',
           payload: {
@@ -156,6 +155,7 @@ export default {
     * getNewsDynamicListActivity({ payload }, { select, call, put }) { //获取评论列表
       const { next_id } = payload
       let res = yield call(getNewsDynamicListActivity, { next_id })
+      // console.log(res, 'sssss')
       if (next_id === '0') { //重新查询的情况,将存储的newsDynamicListOriginal设置为空，重新push
         yield put({
           type: 'updateDatas',
@@ -177,6 +177,7 @@ export default {
           dateArray.push(timestampToTime(data[i]['created']))
         }
         dateArray = Array.from(new Set(dateArray))
+        // console.log(dateArray, 'sssssss')
         for (let i = 0; i < dateArray.length; i++) {
           const obj = {
             date: dateArray[i],
@@ -189,10 +190,12 @@ export default {
           }
           newDataArray.push(obj)
         }
+        // console.log(obj, 'ssssss')
         newsDynamicList.push(...newDataArray)
         // console.log('eeee', 2, newsDynamicList)
         //-------------2018.10.18修改合并相邻相近任务
         let newsDynamicListTransform = JSON.parse(JSON.stringify(newsDynamicList));//[...newsDynamicList]
+        // console.log(newsDynamicListTransform, 'ssssssss')
         //将相邻且activity_type_id相同而且type等于固定类型的归为一条
         const removeEmptyArrayEle = (arr) => {
           for(var i = 0; i < arr.length; i++) {
@@ -365,7 +368,6 @@ export default {
         }
       })
     },
-
 
     * addCardNewComment({ payload }, { select, call, put }) { //
       const { card_id, comment, parentKey, childrenKey, valueItem, board_id } = payload

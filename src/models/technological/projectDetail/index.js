@@ -5,12 +5,12 @@ import { MESSAGE_DURATION_TIME, TASKS, PROJECTS, MEMBERS } from "../../../global
 import { routerRedux } from "dva/router";
 import {
   addMenbersInProject, archivedProject, cancelCollection, deleteProject, collectionProject,
-  quitProject, getAppsList, addProjectApp, editProjectApp
+  quitProject, getAppsList, addProjectApp, editProjectApp, getProjectDynamicsList
 } from "../../../services/technological/project";
 import {
   getRelationsSelectionPre
 } from "../../../services/technological/task";
-import { selectProjectDetailInfoData, selectAppsSelectKey, } from '../select'
+import { selectProjectDetailInfoData, selectAppsSelectKey, selectProjectDynamicsList } from '../select'
 import Cookies from "js-cookie";
 import { currentNounPlanFilterName, setBoardIdStorage, getGlobalData } from "../../../utils/businessFunction";
 import { postCommentToDynamics } from "../../../services/technological/library";
@@ -26,7 +26,9 @@ export default {
   namespace: 'projectDetail',
   state: {
     datas: {
-      milestoneList: []
+      milestoneList: [],
+      projectDynamicsList: [], // 项目动态消息列表
+      p_next_id: '', // 项目动态的id
     }
   },
   subscriptions: {
@@ -76,6 +78,8 @@ export default {
           relations_Prefix: [], //内容关联前部分
           projectDetailInfoData: {},
           milestoneList: [],
+          projectDynamicsList: [], // 项目动态消息列表
+          p_next_id: '', // 项目动态的id,
         }
       })
     },
@@ -237,6 +241,65 @@ export default {
           }
         })
         // localStorage.setItem('currentBoardPermission', JSON.stringify([]))
+      }
+    },
+
+    // 获取项目动态列表
+    * getProjectDynamicsList({ payload }, { select, call, put }) { // 获取项目动态列表
+      const { next_id } = payload
+      // console.log('进来了', 'sssss')
+      return
+      let res = yield call(getProjectDynamicsList, {...payload})
+      if (next_id === '0') { //重新查询的情况,将存储的newsDynamicListOriginal设置为空，重新push
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            projectDynamicsList: [],
+          }
+        })
+      }
+      // console.log(res, 'sss')
+      let new_projectDynamicsList = []
+      let projectDynamicsList = yield select(selectProjectDynamicsList)
+      // console.log(projectDynamicsList, 'sssss')
+      // debugger
+      if (isApiResponseOk(res)) {
+        // console.log('进来了', 'ssss')
+         // 去除空数组
+        const removeEmptyArrayEle = (arr) => {
+          for(var i = 0; i < arr.length; i++) {
+            if(arr[i] == undefined) {
+              arr.splice(i, 1);
+              i = i - 1; // i - 1 ,因为空元素在数组下标 2 位置，删除空之后，后面的元素要向前补位，
+              // 这样才能真正去掉空元素,觉得这句可以删掉的连续为空试试，然后思考其中逻辑
+            }
+          }
+          return arr;
+        };
+        projectDynamicsList = [].concat(projectDynamicsList, res.data.activity || [])
+        new_projectDynamicsList = [...removeEmptyArrayEle(projectDynamicsList)]
+        // console.log(new_projectDynamicsList, 'sssss')
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            projectDynamicsList: new_projectDynamicsList,
+            p_next_id: res.data.next_id,
+          }
+        })
+        // const delay = (ms) => new Promise(resolve => {
+        //   setTimeout(resolve, ms)
+        // })
+        // yield call(delay, 500)
+
+        // yield put({
+        //   type: 'updateDatas',
+        //   payload: {
+        //     is_dynamic_scroll: res.data.next_id ? true : false
+        //   }
+        // })
+
+      } else {
+        message.error(res.message)
       }
     },
 

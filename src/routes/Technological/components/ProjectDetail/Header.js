@@ -1242,7 +1242,7 @@ export default class Header extends React.Component {
             </div>
           </div>
         </div>
-        <DetailInfo modalVisible={projectInfoDisplay} dispatch={dispatch} invitationType='1' invitationId={board_id} />
+        <DetailInfo modalVisible={projectInfoDisplay} invitationType='1' invitationId={board_id} />
 
         <ShowAddMenberModal
           addMenbersInProject={this.addMenbersInProject}

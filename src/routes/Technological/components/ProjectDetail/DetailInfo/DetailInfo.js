@@ -90,7 +90,6 @@ export default class DetailInfo extends React.Component {
 
 
   render() {
-
     const { editDetaiDescription, detaiDescriptionValue } = this.state
     const {datas: { projectInfoDisplay, isInitEntry, projectDetailInfoData = {} } } = this.props.model
     let { board_id, board_name, data = [], description } = projectDetailInfoData //data是参与人列表

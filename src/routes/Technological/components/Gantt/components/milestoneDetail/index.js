@@ -56,6 +56,7 @@ export default class GanttDetail extends React.Component {
 
   //评论
   commentSubmitPost = (data) => {
+    // console.log(data, 'ssssss')
     let { text } = data
     const { dispatch, milestone_id, isShowAllDynamic} = this.props
     if(text) {

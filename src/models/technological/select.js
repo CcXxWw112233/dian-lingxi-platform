@@ -1,6 +1,8 @@
 
 export const selectProjectDetailInfoData = state => state[(`projectDetail`)].datas.projectDetailInfoData //项目详情
 export const selectProjectDetailBoardId = state => state[(`projectDetail`)].datas.board_id //项目详情
+// 获取项目动态列表
+export const selectProjectDynamicsList = state => state[(`projectDetail`)].datas.projectDynamicsList
 
 export const selectAppsSelectKey = state => state[(`projectDetail`)].datas.appsSelectKey //应用key
 export const selectAppsSelectKeyIsAreadyClickArray = state => state[(`projectDetail`)].datas.appsSelectKeyIsAreadyClickArray ////点击过的appsSelectKey push进数组，用来记录无需重新查询数据

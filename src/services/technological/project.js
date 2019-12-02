@@ -292,5 +292,14 @@ export async function joinBoardQRCode(params) {
   }, { isNotLoading: true });
 }
 
+// 查询项目动态列表 (项目详情中)
+export async function getProjectDynamicsList(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/activity/board`,
+    method: 'POST',
+    data
+  })
+}
+
 
 

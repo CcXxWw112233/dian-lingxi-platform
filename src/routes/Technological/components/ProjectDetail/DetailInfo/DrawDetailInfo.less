@@ -42,7 +42,12 @@
 }
 //项目详细信息
 .detailInfoOut{
-
+  width: 586px;
+  max-height: 706px;
+  overflow-y: auto;
+}
+.global_vertical_scrollbar {
+  color:rgba(238, 111, 111, 0.08);
 }
 .detailInfo, .detailInfo_2{
   //margin-top: 160px;
@@ -53,7 +58,147 @@
   box-sizing: border-box;
 }
 
+:global {
+  .ant-modal-body {
+    position: relative;
+  }
+}
+.shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 46px;
+  background: pink;
+  padding: 0 24px;
+  background:rgba(255,255,255,1);
+  box-shadow:0px 1px 2px 0px rgba(0,0,0,0.15);
+}
 
+.dy_title {
+  padding-right: 14px;
+}
+
+// 项目信息的弹窗样式
+.brief, .member, .dynamic_header {
+  font-size:14px;
+  font-family:PingFangSC-Medium;
+  font-weight:500;
+  color:rgba(0,0,0,0.45);
+  line-height: 46px;
+  position: relative;
+}
+
+.positionStyles {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  box-shadow:0px 2px 8px 0px rgba(0,0,0,0.15);
+  border-radius:4px;
+}
+
+// 小图标的样式
+.icon {
+  font-size: 14px;
+  color:rgba(0,0,0,0.45);
+  margin-right: 12px;
+}
+.brief_icon {
+  font-size: 16px;
+}
+
+.filter {
+  font-size: 18px;
+  color:rgba(0,0,0,0.45);
+  margin-right: 12px;
+  position: absolute;
+  right: 0px;
+  width: 24px;
+  height: 24px;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  cursor: pointer;
+  &:hover {
+    background: #E6F7FF;
+  }
+  .icon {
+    font-size: 16px;
+    position: absolute;
+    top: -9px;
+    right: 0;
+    left: 4px;
+    bottom: 0;
+    margin: auto;
+    color: rgba(0,0,0,0.65);
+    &:hover {
+      color: #1890FF;
+    }
+  }
+}
+
+.back {
+  color: rgba(0,0,0,0.45);
+  cursor: pointer;
+  &:hover {
+    color: rgba(0,0,0,0.65)
+  }
+}
+
+.show_member {
+  align-self: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0; 
+  // margin-top: 4px;
+  margin-right: 12px;
+  cursor: pointer;
+  background: url('@/assets/projectDetail/boardInfo/default_more.png');
+  &:hover {
+    background: url('@/assets/projectDetail/boardInfo/hover_more.png')
+  }
+}
+
+.dynamic .dynamic_contain {
+  li {
+    list-style: none;
+    display: flex;
+    // line-height: 58px;
+    min-height: 58px;
+    align-items: center;
+    margin-bottom: 8px; 
+    .left {
+      margin-right: 8px;
+      img {
+        display: block;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        // background: pink;
+      }
+    }
+    .right {
+      border-bottom: 1px solid rgba(0,0,0,0.09);
+      min-width: 500px;
+      .news_text {
+        font-size:14px;
+        font-family:PingFangSC-Regular;
+        font-weight:400;
+        color:rgba(0,0,0,0.45);
+      }
+      .news_name {
+        color:rgba(0,0,0,0.65);
+      }
+      .news_time {
+        font-size:12px;
+        font-family:PingFangSC-Regular;
+        font-weight:400;
+        color:rgba(0,0,0,0.45);
+        margin-bottom: 6px;       
+      }
+    }
+  }
+}
 
 
 .top{
@@ -78,20 +223,23 @@
 .manImageList{
   display: flex;
   flex-wrap:  wrap;
-  padding: 0 12px;
+  max-height: 70px;
+  overflow: hidden;
+  // padding: 0 12px;
   .manImageItem{
-    width: 36px;
-    height: 36px;
-    border-radius: 36px;
+    width: 40px;
+    height: 40px;
+    border-radius: 40px;
     //margin-left: 15px;
     margin-right: 15px;
-    margin-top: 40px;
+    // margin-top: 40px;
+    margin-top: 16px;
     cursor: pointer;
     position: relative;
     img{
-      width: 36px;
-      height: 36px;
-      border-radius: 36px;
+      width: 40px;
+      height: 40px;
+      border-radius: 40px;
     }
     .delete{
       display: none;
@@ -121,9 +269,9 @@
     height: 36px;
     background: #FFFFFF;
     border-radius: 36px;
-    border: 1px solid rgba(217,217,217,1);
+    border: 1px solid rgba(64,169,255,1);;
     //margin: 40px 0 0 15px;
-    margin: 40px 15px 0 0;
+    margin: 16px 15px 15px 0;
     text-align: center;
     line-height: 36px;
     cursor: pointer;
@@ -131,17 +279,42 @@
 }
 
 .Bottom{
-  margin-top: 40px;
+  // margin-top: 40px;
+  // margin-top: 14px;
   font-size: 12px;
   color: #595959;
   line-height: 22px;
+  font-size:14px;
+  font-family:PingFangSC-Regular;
+  font-weight:400;
+  color:rgba(0,0,0,0.25);
   cursor: pointer;
-  padding: 0 12px;
+  &:hover {
+    background:rgba(0,0,0,0.04);
+  }
+  padding: 8px 12px;
 }
 .editTextArea{
   font-size: 12px;
   line-height: 22px;
-  margin-top: 34px;
+  // margin-top: 34px;
+  outline: none;
+  box-shadow:0px 0px 8px 0px rgba(0,0,0,0.15);
+  // margin-top: 34px;
+  margin-bottom: 0px;
+  resize: none;
+  font-size: 14px;
+  font-family: PingFangSC-Regular;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.65);
+  border: none;
+  border-radius: 4px;
+  &:focus {
+    box-shadow:0px 0px 8px 0px rgba(0,0,0,0.15);
+  }
+}
+.editColor {
+  color:rgba(0,0,0,0.65);
 }
 //hover头像出现的内容
 .manImageDropdown {
@@ -175,6 +348,7 @@
         color: #262626;
         font-size: 14px;
         line-height: 14px;
+        max-width: 100px;
       }
       .percent{
         width: 100%;
@@ -231,6 +405,31 @@
     }
   }
 }
+
+// 显示全部成员
+.input_search {
+  margin-bottom: 32px;
+  position: relative;
+  .select_search {
+    height: 38px;
+    line-height: 38px;
+    color: rgba(0, 0, 0, 0.65);
+  }
+}
+
+.search_icon {
+  position: absolute;
+  z-index: 1;
+  left: 12px;
+  bottom: 12px;
+  right: 12px;
+}
+
+.detail_member {
+  flex-wrap: wrap;
+  overflow: visible;
+}
+
 //menu
 .elseProjectMemu{
   padding: 4px 10px;
@@ -244,4 +443,14 @@
 }
 .elseProjectDangerMenu:hover ,.elseProjectDangerMenu:active{
   background: #FFE7E8;
+}
+.overlay_manOperateMenu {
+  :global {
+    .ant-dropdown-menu-submenu-title {
+      text-align: center;
+      .ant-dropdown-menu-submenu-arrow {
+        display: none;
+      }
+    }
+  }
 }

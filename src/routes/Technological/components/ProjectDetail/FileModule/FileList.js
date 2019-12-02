@@ -317,6 +317,7 @@ export default class FileList extends React.Component {
 
   openFile(data) {
     const { file_id, version_id, file_resource_id, file_name } = data
+    // console.log(data, 'ssssss')
     // if(getSubfixName(file_name) == '.pdf' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
     //   openPDF({id: file_id})
     //   return false

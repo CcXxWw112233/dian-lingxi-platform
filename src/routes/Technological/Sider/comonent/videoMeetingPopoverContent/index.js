@@ -140,7 +140,13 @@ class VideoMeetingPopoverContent extends React.Component {
 		let new_projectList = [...projectList]
 		if (projectList && projectList.length) {
 			//过滤出来当前用户有编辑权限的项目
-			if (projectList.length == 1) {
+			if (new_projectList.find(item => item.is_my_private == '1')) {
+				let {board_id, org_id} = (new_projectList.find(item => item.is_my_private == '1') || {})
+				this.setState({
+					org_id
+				})
+				this.getProjectUsers({ projectId: board_id })
+			} else {
 				let {board_id, org_id} = (new_projectList.find((item, index) => index == '0') || {})
 				this.setState({
 					org_id
@@ -148,11 +154,6 @@ class VideoMeetingPopoverContent extends React.Component {
 				this.getProjectUsers({ projectId: board_id })
 				return
 			}
-			let {board_id, org_id} = (new_projectList.find(item => item.is_my_private == '1') || {})
-			this.setState({
-				org_id
-			})
-			this.getProjectUsers({ projectId: board_id })
 		} else {
 			this.getProjectUsers({ projectId: current_board })
 		}
@@ -167,7 +168,14 @@ class VideoMeetingPopoverContent extends React.Component {
 		projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
 		let new_projectList = [...projectList]
 		if (projectList && projectList.length) {
-			if (projectList.length == 1) {
+			if (new_projectList.find(item => item.is_my_private == '1')) {
+				let {board_id, org_id} = (new_projectList.find(item => item.is_my_private == '1') || {})
+				this.setState({
+					org_id
+				})
+				this.getProjectUsers({ projectId: board_id })
+				return
+			} else {
 				let {board_id, org_id} = (new_projectList.find((item, index) => index == '0') || {})
 				this.setState({
 					org_id
@@ -175,13 +183,6 @@ class VideoMeetingPopoverContent extends React.Component {
 				this.getProjectUsers({ projectId: board_id })
 				return
 			}
-			//过滤出来当前用户有编辑权限的项目
-			
-			let {board_id, org_id} = (new_projectList.find(item => item.is_my_private == '1') || {})
-			this.setState({
-				org_id
-			})
-			this.getProjectUsers({ projectId: board_id })
 		}
 	}
 
@@ -291,17 +292,17 @@ class VideoMeetingPopoverContent extends React.Component {
 		projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
 		if (projectList && projectList.length) {
 			let new_projectList = [...projectList]
-			if (projectList.length == '1') {
+			if (new_projectList.find(item => item.is_my_private == '1')) {
+				let gold_id = (new_projectList.find(item => item.is_my_private == '1') || {}).board_id
+				return gold_id
+			} else {
 				let gold_id = (new_projectList.find((item, index) => index == '0' ) || {}).board_id
 				return gold_id
 			}
-			let gold_id = (new_projectList.find(item => item.is_my_private == '1') || {}).board_id
-			return gold_id
 		} else {
 			let gold_id = current_board
 			return gold_id
 		}
-
 	}
 
 	// 获取当前用户的会议名称
