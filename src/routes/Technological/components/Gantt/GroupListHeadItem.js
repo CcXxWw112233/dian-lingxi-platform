@@ -15,6 +15,7 @@ import { PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_CARD_G
 import VisitControl from '../VisitControl/index'
 import globalStyle from '@/globalset/css/globalClassName.less'
 import { ganttIsFold } from './constants';
+import DetailInfo from '@/routes/Technological/components/ProjectDetail/DetailInfo/index'
 
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
@@ -26,6 +27,7 @@ export default class GroupListHeadItem extends Component {
       edit_input_value: '',
       local_list_name: '',
       show_add_menber_visible: false,
+      board_info_visible: false
     }
     this.visitControlOtherPersonOperatorMenuItem = [
       {
@@ -275,6 +277,9 @@ export default class GroupListHeadItem extends Component {
       case 'visitorControl':
         this.set
         break
+      case 'board_info':
+        this.setBoardInfoVisible()
+        break
       default:
         break
     }
@@ -411,6 +416,24 @@ export default class GroupListHeadItem extends Component {
       }
     })
   }
+
+  // 查看项目信息
+  setBoardInfoVisible = () => {
+    const { board_info_visible } = this.state
+    const { dispatch, list_id } = this.props
+    if (!board_info_visible) {
+      dispatch({
+        type: 'projectDetail/projectDetailInfo',
+        payload: {
+          id: list_id
+        }
+      })
+    }
+    this.setState({
+      board_info_visible: !board_info_visible
+    })
+  }
+
   // 操作项
   renderMenuOperateListName = () => {
     const { itemValue = {}, gantt_board_id } = this.props
@@ -438,7 +461,14 @@ export default class GroupListHeadItem extends Component {
           <Menu.Item key={'rename'}>重命名</Menu.Item>
         }
         {
-          <Menu.Item key={'archived'}>项目归档</Menu.Item>
+          gantt_board_id == '0' && (
+            <Menu.Item key={'board_info'}>项目信息</Menu.Item>
+          )
+        }
+        {
+          gantt_board_id == '0' && (
+            <Menu.Item key={'archived'}>归档</Menu.Item>
+          )
         }
         {
           // checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP, params_board_id) &&
@@ -674,7 +704,7 @@ export default class GroupListHeadItem extends Component {
     const { currentUserOrganizes = [], gantt_board_id = [], ceiHeight, is_show_org_name, is_all_org, rows = 5, show_board_fold, group_view_type, get_gantt_data_loading } = this.props
     const { itemValue = {}, itemKey } = this.props
     const { is_star, list_name, org_id, list_no_time_data = [], list_id, lane_icon, board_id, is_privilege = '0', privileges, create_by = {}, lane_overdue_count } = itemValue
-    const { isShowBottDetail, show_edit_input, local_list_name, edit_input_value, show_add_menber_visible } = this.state
+    const { isShowBottDetail, show_edit_input, local_list_name, edit_input_value, show_add_menber_visible, board_info_visible } = this.state
     const board_create_user = create_by.name
     return (
       <div>
@@ -784,7 +814,7 @@ export default class GroupListHeadItem extends Component {
             />
           )
         }
-
+        <DetailInfo setProjectDetailInfoModalVisible={this.setBoardInfoVisible} modalVisible={board_info_visible} invitationType='1' invitationId={gantt_board_id == '0' ? list_id : gantt_board_id} />
       </div >
     )
   }
