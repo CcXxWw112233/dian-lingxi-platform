@@ -5,10 +5,13 @@ import DetailMember from './DetailMember'
 import {min_page_width} from "../../../../../globalset/js/styles";
 import CustormModal from '../../../../../components/CustormModal'
 import DrawDetailInfoStyle from './DrawDetailInfo.less'
+import { currentNounPlanFilterName } from '@/utils/businessFunction'
+import { PROJECTS } from '@/globalset/js/constant'
+import { connect } from 'dva'
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 
-
+@connect(mapStateToProps)
 class DetailInfoModal extends React.Component {
   state = {
     is_show_all_member: false, // 是否显示全部成员, 默认为 false, 不显示
@@ -46,8 +49,9 @@ class DetailInfoModal extends React.Component {
   }
 
   render() {
-    const { modalVisible, invitationType, invitationId, } = this.props;
+    const { modalVisible, invitationType, invitationId, projectDetailInfoData = [] } = this.props;
     const { is_show_all_member } = this.state
+    const { board_id, board_name } = projectDetailInfoData
     return(
       <CustormModal
         title={is_show_all_member ? (
@@ -56,7 +60,7 @@ class DetailInfoModal extends React.Component {
             <span style={{flex: '1'}}>全部成员</span>
           </div>
         ) : (
-          <div style={{textAlign: 'center', fontSize: 16, fontWeight: 500, color: '#000'}}>项目信息</div>
+        <div style={{textAlign: 'center', fontSize: 16, fontWeight: 500, color: '#000'}}>{`${board_name || ''}${currentNounPlanFilterName(PROJECTS)}信息`}</div>
         )} 
         visible={modalVisible}
         width={614}
@@ -77,3 +81,16 @@ class DetailInfoModal extends React.Component {
   }
 }
 export default Form.create()(DetailInfoModal)
+
+//  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
+function mapStateToProps({
+  projectDetail: {
+    datas: {
+      projectDetailInfoData = {},
+    }
+  },
+}) {
+  return {
+    projectDetailInfoData
+  }
+}

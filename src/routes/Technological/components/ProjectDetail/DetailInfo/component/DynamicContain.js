@@ -26,7 +26,7 @@ export default class DynamicContain extends Component {
 
   componentDidMount() {
     const { board_id } = this.props
-    this.props.getDispatchDynamicList(board_id)
+    this.props.getDispatchDynamicList && this.props.getDispatchDynamicList(board_id)
   }
 
   // 获取任务中当前分组的的下标列表
@@ -1264,11 +1264,11 @@ export default class DynamicContain extends Component {
             )
           }
         </ul>
-        <MilestoneDetail
+        {/* <MilestoneDetail
           users={data}
           miletone_detail_modal_visible={this.state.miletone_detail_modal_visible}
           set_miletone_detail_modal_visible = {this.set_miletone_detail_modal_visible}
-        />
+        /> */}
       </>
     )
   }

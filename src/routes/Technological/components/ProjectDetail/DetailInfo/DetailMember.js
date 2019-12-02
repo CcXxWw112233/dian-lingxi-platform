@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Input, Dropdown, Menu, Icon, Tooltip, Select, Spin, Modal } from 'antd'
+import { Input, Dropdown, Menu, Icon, Tooltip, Select, Spin, Modal, message } from 'antd'
 import DrawDetailInfoStyle from './DrawDetailInfo.less'
 import {checkIsHasPermissionInBoard, isHasOrgMemberQueryPermission} from "@/utils/businessFunction";
 import NoPermissionUserCard from '@/components/NoPermissionUserCard/index'
@@ -8,8 +8,13 @@ import {
   PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_MEMBER
 } from "@/globalset/js/constant";
 import ShowAddMenberModal from '../../Project/ShowAddMenberModal'
+import { getGlobalData } from "../../../../../utils/businessFunction";
+import { isApiResponseOk } from '../../../../../utils/handleResponseData';
+import { organizationInviteWebJoin, commInviteWebJoin, } from '../../../../../services/technological/index'
+import globalsetStyles from '@/globalset/css/globalClassName.less'
+import { connect } from 'dva'
 let timer;
-
+@connect(mapStateToProps)
 export default class DetailMember extends Component {
 
    constructor(props) {
@@ -22,7 +27,7 @@ export default class DetailMember extends Component {
    }
 
    componentDidMount() {
-    const {datas: { projectDetailInfoData = {} } } = this.props.model
+    const { projectDetailInfoData = {}  } = this.props
     let {data = []} = projectDetailInfoData //data是参与人列表
     data = data || []
     const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
@@ -30,6 +35,60 @@ export default class DetailMember extends Component {
       new_avatar_list: avatarList
     })
    }
+
+   compareDiffObject(obj1,obj2){
+    let o1 = obj1 instanceof Object;
+    let o2 = obj2 instanceof Object;
+    // 判断是不是对象
+    if (!o1 || !o2) {
+        return obj1 === obj2;
+    }
+
+    //Object.keys() 返回一个由对象的自身可枚举属性(key值)组成的数组,
+    //例如：数组返回下表：let arr = ["a", "b", "c"];console.log(Object.keys(arr))->0,1,2;
+    if (Object.keys(obj1).length !== Object.keys(obj2).length) {
+        return false;
+    }
+
+    for (let o in obj1) {
+        let t1 = obj1[o] instanceof Object;
+        let t2 = obj2[o] instanceof Object;
+        if (t1 && t2) {
+            return this.compareDiffObject(obj1[o], obj2[o]);
+        } else if (obj1[o] !== obj2[o]) {
+            return false;
+        }
+    }
+    return true;
+  }
+
+
+   componentWillReceiveProps(nextProps) {
+     const { projectDetailInfoData = {} } = nextProps
+     const { projectDetailInfoData: oldProjectDetailInfoData } = this.props
+     if (!this.compareDiffObject(oldProjectDetailInfoData, projectDetailInfoData)) {
+      let {data = []} = projectDetailInfoData //data是参与人列表
+      data = data || []
+      const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
+      this.setState({
+        new_avatar_list: avatarList
+      })
+     }
+   }
+
+  // 检测当前成员是否是自己, 如果是, 那么不能移除自己
+  checkCurrentOperatorMemberWhetherSelf = (shouldDelItem) => {
+    const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
+    // console.log(id, shouldDelItem, 'ssssss')
+    let flag
+    if (shouldDelItem == id) {
+      flag = true
+      return flag
+    } else {
+      flag = false
+      return flag
+    }
+  }
 
     //点击添加成员操作
   setShowAddMenberModalVisibile() {
@@ -44,20 +103,31 @@ export default class DetailMember extends Component {
 
   // 设置成员角色
   handleSetRoleMenuClick(props, { key }) {
-    console.log(this.props, 'ssssss')
     if(!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)){
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    const {datas: { projectDetailInfoData = {} } } = this.props.model
+    const { projectDetailInfoData = {}  } = this.props
     const { board_id } = projectDetailInfoData //data是参与人列表
     const { user_id } = props
     if(/^role_\w+/.test(key)) {
-      this.props.setMemberRoleInProject({board_id, user_id, role_id: key.replace('role_', '')}) //设置角色
+      const { dispatch } = this.props
+      dispatch({
+        type: 'projectDetail/setMemberRoleInProject',
+        payload: {
+          board_id,
+          user_id,
+          role_id: key.replace('role_', '')
+        }
+      })
       return false
     }
     switch (key) {
       case 'removeMember':
+        if (this.checkCurrentOperatorMemberWhetherSelf(user_id)) {
+          message.warn('请不要移除自己哦~', MESSAGE_DURATION_TIME)
+          return false
+        }
         this.confirm({board_id, user_id})
         break
       default:
@@ -80,7 +150,13 @@ export default class DetailMember extends Component {
       okText: '确认',
       cancelText: '取消',
       onOk() {
-        that.props.removeMenbers(data)
+        const { dispatch } = that.props
+        dispatch({
+          type: 'projectDetail/removeMenbers',
+          payload: {
+            ...data
+          }
+        })
       }
     });
   }
@@ -106,7 +182,7 @@ export default class DetailMember extends Component {
   // 输入框的chg事件
   handleChange(e) {
     let val = e.target.value
-    const {datas: { projectDetailInfoData = {} } } = this.props.model
+    const {projectDetailInfoData = {} } = this.props
     let {data = []} = projectDetailInfoData //data是参与人列表
     data = data || []
     const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
@@ -129,11 +205,55 @@ export default class DetailMember extends Component {
     
   }
 
+    // 邀请人进项目
+    addMenbersInProject = (data) => {
+      const { invitationType, invitationId, rela_Condition, dispatch } = this.props
+      const temp_ids = data.users.split(",")
+      const invitation_org = localStorage.getItem('OrganizationId')
+      organizationInviteWebJoin({
+        _organization_id: invitation_org,
+        type: invitationType,
+        users: temp_ids
+      }).then(res => {
+        if (res && res.code === '0') {
+          commInviteWebJoin({
+            id: invitationId,
+            role_id: res.data.role_id,
+            type: invitationType,
+            users: res.data.users,
+            rela_condition: rela_Condition,
+          }).then(res => {
+            if (isApiResponseOk(res)) {
+              setTimeout(() => {
+                message.success('邀请成功', MESSAGE_DURATION_TIME)
+              }, 500)
+              const { projectDetailInfoData = {} } = this.props
+              const { board_id } = projectDetailInfoData
+              if (invitationType === '1') {
+                dispatch({
+                  type: 'projectDetail/projectDetailInfo',
+                  payload: {
+                    id: board_id
+                  }
+                })
+                dispatch({
+                  type: 'workbenchTaskDetail/projectDetailInfo',
+                  payload: {
+                    id: board_id
+                  }
+                })
+              }
+            }
+          })
+        }
+      })
+    }
+
 
   render() {
     let { inputVal, new_avatar_list = [] } = this.state
-    const {datas: { projectDetailInfoData = {} } } = this.props.model
-    let { board_id, board_name, data = [], projectRoles = []} = projectDetailInfoData //data是参与人列表
+    const { projectDetailInfoData = {}, projectRoles = [] } = this.props
+    let { board_id, board_name, data = []} = projectDetailInfoData //data是参与人列表
 
     const manImageDropdown = (props) => {
       const { role_id, role_name='...', name, email='...', avatar, mobile='...', user_id, organization='...', we_chat='...'} = props
@@ -164,7 +284,7 @@ export default class DetailMember extends Component {
               </Tooltip>
             </div>
             {role_id === '3'? ('') : (
-              <Dropdown overlay={manOperateMenu(props)}>
+              <Dropdown overlay={manOperateMenu(props)} getPopupContainer={triggerNode => triggerNode.parentNode} overlayClassName={DrawDetailInfoStyle.overlay_manOperateMenu}>
                 <div className={DrawDetailInfoStyle.manImageDropdown_top_operate}><Icon type="ellipsis" theme="outlined" /></div>
               </Dropdown>
             )}
@@ -192,7 +312,7 @@ export default class DetailMember extends Component {
       const { is_visitor } = props
       return(
         <Menu onClick={this.handleSetRoleMenuClick.bind(this, props)}>
-          {is_visitor === '0' && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) ? (
+          {checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) ? (
             <Menu.SubMenu title="设置角色" key={'setRole'}>
               {projectRoles.map((value, key) => {
                 return(
@@ -218,7 +338,7 @@ export default class DetailMember extends Component {
     }
 
     return (
-      <div style={{minHeight: 600}}>
+      <div style={{maxHeight: 600, minHeight: '200px', overflowY: 'auto'}} className={globalsetStyles.global_vertical_scrollbar}>
         <div className={DrawDetailInfoStyle.input_search}>
           {/* <span className={DrawDetailInfoStyle.search_icon}><Icon type="search" /></span> */}
           <Input 
@@ -258,8 +378,30 @@ export default class DetailMember extends Component {
             })
           }
         </div>
-        <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+        <ShowAddMenberModal
+          addMenbersInProject={this.addMenbersInProject}
+          show_wechat_invite={true}
+          invitationId={this.props.invitationId}
+          invitationType={this.props.invitationType}
+          invitationOrg={getGlobalData('aboutBoardOrganizationId')} 
+          board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} 
+          setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
       </div>
     )
+  }
+}
+
+//  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
+function mapStateToProps({
+  projectDetail: {
+    datas: {
+      projectDetailInfoData = {},
+      projectRoles = []
+    }
+  },
+}) {
+  return {
+    projectDetailInfoData,
+    projectRoles
   }
 }

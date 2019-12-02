@@ -244,10 +244,11 @@ export default {
       }
     },
 
-    
+    // 获取项目动态列表
     * getProjectDynamicsList({ payload }, { select, call, put }) { // 获取项目动态列表
       const { next_id } = payload
       // console.log('进来了', 'sssss')
+      return
       let res = yield call(getProjectDynamicsList, {...payload})
       if (next_id === '0') { //重新查询的情况,将存储的newsDynamicListOriginal设置为空，重新push
         yield put({

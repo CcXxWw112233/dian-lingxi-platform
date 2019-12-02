@@ -35,7 +35,7 @@ export default class DrawDetailInfo extends React.Component {
     isSoundsEvrybody_2: false, //edit是否通知项目所有人
     editDetaiDescription: false, //是否处于编辑状态
     detaiDescriptionValue: detaiDescription,
-    defaultDescriptionVal: detaiDescription, // 默认的描述数据
+    defaultDescriptionVal: detaiDescription, // 默认的描述数据 用来保存和对比的
     ShowAddMenberModalVisibile: false, 
     dynamic_header_sticky: false, // 项目动态是否固定, 默认为false, 不固定
     textArea_val: '', // 用来判断是否有用户输入
@@ -139,6 +139,7 @@ export default class DrawDetailInfo extends React.Component {
     }
   }
 
+  // 项目成员角色点击事件
   handleSetRoleMenuClick(props, { key }) {
     if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -262,13 +263,18 @@ export default class DrawDetailInfo extends React.Component {
 
   // 修改文本框的事件
   setTextAreaDescription(board_id) {
-    const { projectDetailInfoData = {} } = this.props
+    const { projectDetailInfoData = {}, dispatch } = this.props
       const obj = {
         isSoundsEvrybody_2: this.state.isSoundsEvrybody_2,
         description: projectDetailInfoData['description'],
         board_id
       }
-      this.props.updateProject(obj)
+      dispatch({
+        type: 'projectDetail/updateProject',
+        payload: {
+          ...obj
+        }
+      })
       this.setState({
         editDetaiDescription: false,
         textArea_val: ''
@@ -277,32 +283,31 @@ export default class DrawDetailInfo extends React.Component {
 
   // 获取文本域的键盘事件
   handleKeyDown(e, board_id) {
-    const { textArea_val } = this.state
     let code = e.keyCode
+    const { detaiDescriptionValue, defaultDescriptionVal } = this.state
     if (code == '13') {
-      if (textArea_val != '') {
-        this.setTextAreaDescription(board_id)
-      } else {
+      if(detaiDescriptionValue == defaultDescriptionVal) {
         this.setState({
           editDetaiDescription: false,
           textArea_val: ''
         })
+        return
       }
-      
+      this.setTextAreaDescription(board_id)
     }
   }
 
   // 获取文本框失去焦点的事件
   handleOnBlur(e, board_id) {
-    const { textArea_val } = this.state
-    if (textArea_val != '') {
-      this.setTextAreaDescription(board_id)
-    } else {
+    const { detaiDescriptionValue, defaultDescriptionVal } = this.state
+    if(detaiDescriptionValue == defaultDescriptionVal) {
       this.setState({
         editDetaiDescription: false,
         textArea_val: ''
       })
+      return
     }
+    this.setTextAreaDescription(board_id)
   }
 
   // 是否显示全部成员
@@ -332,6 +337,9 @@ export default class DrawDetailInfo extends React.Component {
           rela_condition: rela_Condition,
         }).then(res => {
           if (isApiResponseOk(res)) {
+            setTimeout(() => {
+              message.success('邀请成功', MESSAGE_DURATION_TIME)
+            }, 500)
             const { projectDetailInfoData = {} } = this.props
             const { board_id } = projectDetailInfoData
             if (invitationType === '1') {
@@ -341,33 +349,12 @@ export default class DrawDetailInfo extends React.Component {
                   id: board_id
                 }
               })
-              // dispatch({
-              //   type: 'projectDetailTask/getCardDetail',
-              //   payload: {
-              //     id: card_id
-              //   }
-              // })
               dispatch({
                 type: 'workbenchTaskDetail/projectDetailInfo',
                 payload: {
                   id: board_id
                 }
               })
-              // dispatch({
-              //   type: 'workbenchTaskDetail/getCardDetail',
-              //   payload: {
-              //     id: board_id,
-              //     board_id: board_id,
-              //     calback: function () {
-              //       dispatch({
-              //         type: 'workbenchPublicDatas/getRelationsSelectionPre',
-              //         payload: {
-              //           _organization_id: invitation_org
-              //         }
-              //       })
-              //     }
-              //   }
-              // })
             }
           }
         })
@@ -377,7 +364,7 @@ export default class DrawDetailInfo extends React.Component {
 
   render() {
     const { editDetaiDescription, detaiDescriptionValue, defaultDescriptionVal, dynamic_header_sticky, is_show_dot, is_show_more } = this.state
-    const { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [], p_next_id, projectDynamicsList = []  } = this.props
+    const { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [], p_next_id, projectDynamicsList = [], invitationId, invitationOrg, invitationType   } = this.props
     
     let { board_id, board_name, data = [], description, residue_quantity, realize_quantity } = projectDetailInfoData //data是参与人列表
     data = data || []
@@ -419,7 +406,7 @@ export default class DrawDetailInfo extends React.Component {
               </Tooltip>
             </div>
             {role_id === '3' ? ('') : (
-              <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={manOperateMenu(props)}>
+              <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={manOperateMenu(props)} overlayClassName={DrawDetailInfoStyle.overlay_manOperateMenu}>
                 <div className={DrawDetailInfoStyle.manImageDropdown_top_operate}><Icon type="ellipsis" theme="outlined" /></div>
               </Dropdown>
             )}
@@ -462,7 +449,7 @@ export default class DrawDetailInfo extends React.Component {
               {projectRoles.map((value, key) => {
                 return(
                   <Menu.Item key={`role_${value.id}`} style={{textAlign: 'center', padding: 0, margin: 5}}>
-                    <div className={DrawDetailInfoStyle.elseProjectMemu}>
+                    <div className={DrawDetailInfoStyle.elseProjectMemu} style={{textAlign: 'center'}}>
                       {value.name}
                     </div>
                   </Menu.Item>
@@ -548,7 +535,7 @@ export default class DrawDetailInfo extends React.Component {
               </div>
               
               {
-                avatarList && avatarList.length > 8 && is_show_dot && (
+                avatarList && avatarList.length > 9 && is_show_dot && (
                   <Tooltip title="全部成员" placement="top">
                     <div 
                       onClick={ () => { this.handdleTriggerModal() } }
@@ -557,7 +544,7 @@ export default class DrawDetailInfo extends React.Component {
                 )
               }
             </div>
-            <div className={DrawDetailInfoStyle.dynamic}>
+            {/* <div className={DrawDetailInfoStyle.dynamic}>
               <div className={ DrawDetailInfoStyle.dy_title }>
                 <div 
                   style={{width: '100%', display: 'flex', alignItems: 'center', display: dynamic_header_sticky ? 'none' : 'block'}} 
@@ -583,10 +570,17 @@ export default class DrawDetailInfo extends React.Component {
                 )
               }
              
-            </div>
-          <ShowAddMenberModal {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
+            </div> */}
+          <ShowAddMenberModal
+            addMenbersInProject={this.addMenbersInProject}
+            show_wechat_invite={true}
+            invitationId={invitationId}
+            invitationType={invitationType}
+            invitationOrg={getGlobalData('aboutBoardOrganizationId')}
+            {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} 
+            setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
         </div>
-        <div style={{display: dynamic_header_sticky ? 'block' : 'none'}} className={DrawDetailInfoStyle.shadow}>
+        {/* <div style={{display: dynamic_header_sticky ? 'block' : 'none'}} className={DrawDetailInfoStyle.shadow}>
           <div 
             style={{width: '100%', display: 'flex', alignItems: 'center'}} 
             ref="dynamic_header"
@@ -599,7 +593,7 @@ export default class DrawDetailInfo extends React.Component {
               </div>
             </Tooltip>
           </div>
-        </div>
+        </div> */}
       </div>
     )
   }
@@ -612,8 +606,7 @@ function mapStateToProps({
       projectInfoDisplay,
       isInitEntry,
       projectDetailInfoData = {},
-      projectRoles = [],
-      projectDynamicsList = []
+      projectRoles = []
     }
   },
 }) {
@@ -621,7 +614,6 @@ function mapStateToProps({
     projectInfoDisplay,
     isInitEntry,
     projectDetailInfoData,
-    projectRoles, 
-    projectDynamicsList
+    projectRoles
   }
 }
