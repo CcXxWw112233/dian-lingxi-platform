@@ -112,7 +112,7 @@ export default class GetRowGanttItem extends Component {
     if (gantt_board_id == '0') { //以分组划分，过滤掉不属于该项目分组的里程碑所属于的时间
       times_arr = times_arr.filter(time => milestoneMap[time].findIndex(item => item.board_id == list_id) != -1)
     }
-    console.log('ssssss', times_arr)
+    // console.log('ssssss', times_arr)
     times_arr = times_arr.sort((a, b) => Number(a) - Number(b))
     const index = times_arr.findIndex((item) => isSamDay(item, timestamp)) //对应上当前日期所属的下标
     const next_miletones_time = times_arr[index + 1] //当前里程碑日期的对应下一个里程碑日期所在时间
