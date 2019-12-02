@@ -14,6 +14,21 @@ export const handleTimeDetailReturn = (timestamp) => {
   }
 }
 
+// 计算两个日期的相差天数
+export const caldiffDays = (timestamp1, timestamp2) => {
+  let dateSpan,
+    tempDate,
+    iDays;
+  let sDate1 = timestampToTimeNormal(timestamp1, '/')
+  let sDate2 = timestampToTimeNormal(timestamp2, '/')
+  sDate1 = Date.parse(sDate1);
+  sDate2 = Date.parse(sDate2);
+  dateSpan = sDate2 - sDate1;
+  dateSpan = Math.abs(dateSpan);
+  iDays = Math.floor(dateSpan / (24 * 3600 * 1000));
+  return iDays
+}
+
 //是否同一周。以周一开始
 export const isSameWeek = (oldTimestamp, nowTimestamp) => {
   var oneDayTime = 1000 * 60 * 60 * 24;
@@ -65,7 +80,7 @@ export const timestampToTime = (timestamp, flag) => {
   const timestampNew = timestamp.length === 10 ? Number(timestamp) * 1000 : Number(timestamp)
   let date = new Date(timestampNew);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
   const now_year = new Date().getFullYear()
-  let Y = now_year == date.getFullYear()? '' : date.getFullYear() + '年';
+  let Y = now_year == date.getFullYear() ? '' : date.getFullYear() + '年';
   let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '月';
   let D = date.getDate() < 10 ? '0' + date.getDate() + '日 ' : date.getDate() + '日 ';
   let h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
@@ -82,7 +97,7 @@ export const timestampToTimeNormal3 = (timestamp, flag, split) => {
   const splitNew = split || '-'
   let date = new Date(timestampNew);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
   const now_year = new Date().getFullYear()
-  let Y = now_year == date.getFullYear()? '' : date.getFullYear() + splitNew;
+  let Y = now_year == date.getFullYear() ? '' : date.getFullYear() + splitNew;
   let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + splitNew;
   let D = date.getDate() < 10 ? '0' + date.getDate() + splitNew + ' ' : date.getDate() + splitNew + ' ';
   let h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
@@ -452,7 +467,7 @@ export const isOverdueTime = (timestamp) => {
   const today_last_time = (new Date(today_year, today_month, today_day, '23', '59', '59')).getTime()
   let color = ''
   if (new_timestamp < today_timestamp) { //逾期
-      return true;
+    return true;
   }
   return false
 }
@@ -460,120 +475,120 @@ export const isOverdueTime = (timestamp) => {
 /*处理时间格式 liuyj*/
 Date.prototype.Format = function (fmt) { //author: meizz
   var o = {
-      "M+": this.getMonth() + 1, //月份
-      "d+": this.getDate(), //日
-      "h+": this.getHours(), //小时
-      "m+": this.getMinutes(), //分
-      "s+": this.getSeconds(), //秒
-      "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-      "S": this.getMilliseconds() //毫秒
+    "M+": this.getMonth() + 1, //月份
+    "d+": this.getDate(), //日
+    "h+": this.getHours(), //小时
+    "m+": this.getMinutes(), //分
+    "s+": this.getSeconds(), //秒
+    "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+    "S": this.getMilliseconds() //毫秒
   };
   if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
   for (var k in o)
-      if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
   return fmt;
 }
 /*处理时间格式方法 liuyj*/
 export const timestampFormat = (millisecond, format) => {
   millisecond = millisecond.length === 10 ? Number(millisecond) * 1000 : Number(millisecond)
-  if(millisecond){
-      var date = new Date();
-      date.setTime(millisecond);
-      return date.Format(format||"yyyy-MM-dd hh:mm:ss");
-  }else{
-      return null
+  if (millisecond) {
+    var date = new Date();
+    date.setTime(millisecond);
+    return date.Format(format || "yyyy-MM-dd hh:mm:ss");
+  } else {
+    return null
   }
 }
 
 /* 过滤文件格式 (缩略图显示) */
 export const filterFileFormatType = (fileName) => {
-    let themeCode = '';
-    const type = fileName.substr(fileName.lastIndexOf(".")).toLowerCase();
-    switch (type) {
-      case '.3dm':
-        themeCode = '&#xe6e0;';
-        break
-      case '.iges':
-        themeCode = '&#xe658;';
-        break
-      case '.obj':
-        themeCode = '&#xe65b;';
-        break
-      case '.ma':
-        themeCode = '&#xe65f;';
-        break
-      case '.mb':
-        themeCode = '&#xe64f;';
-        break
-      case '.skp':
-        themeCode = '&#xe6e8;';
-        break
-      case '.dwg':
-        themeCode = '&#xe64c;';
-        break
-      case '.psd':
-        themeCode = '&#xe65d;';
-        break
-      case '.pdf':
-        themeCode = '&#xe651;';
-        break
-      case '.doc':
-        themeCode = '&#xe64d;';
-        break
-      case '.xls':
-        themeCode = '&#xe65e;';
-        break
-      case '.ppt':
-        themeCode = '&#xe655;';
-        break
-      case '.docx':
-        themeCode = '&#xe64a;';
-        break
-      case '.xlsx':
-        themeCode = '&#xe65c;';
-        break
-      case '.pptx':
-        themeCode = '&#xe650;';
-        break
-      case '.key':
-        themeCode = '&#xe64e;';
-        break
-      case '.jpg':
-        themeCode = '&#xe653;';
-        break
-      case '.jpeg':
-        themeCode = '&#xe659;';
-        break
-      case '.png':
-        themeCode = '&#xe69a;';
-        break
-      case '.gif':
-        themeCode = '&#xe657;';
-        break
-      case '.mp4':
-        themeCode = '&#xe6e1;';
-        break
-      case '.mp3':
-        themeCode = '&#xe6e2;';
-        break
-      case '.txt':
-        themeCode = '&#xe654;';
-        break
-      case '.rar':
-        themeCode = '&#xe6e4;';
-        break
-      case '.zip':
-        themeCode = '&#xe6e5;';
-        break
-      case '.7z':
-        themeCode = '&#xe6e6;';
-        break
-      case '.gz':
-        themeCode = '&#xe6e7;';
-        break
-      default:
-        themeCode = '&#xe660;'; // 未识别类型显示
-        break
-    }
-    return themeCode;
+  let themeCode = '';
+  const type = fileName.substr(fileName.lastIndexOf(".")).toLowerCase();
+  switch (type) {
+    case '.3dm':
+      themeCode = '&#xe6e0;';
+      break
+    case '.iges':
+      themeCode = '&#xe658;';
+      break
+    case '.obj':
+      themeCode = '&#xe65b;';
+      break
+    case '.ma':
+      themeCode = '&#xe65f;';
+      break
+    case '.mb':
+      themeCode = '&#xe64f;';
+      break
+    case '.skp':
+      themeCode = '&#xe6e8;';
+      break
+    case '.dwg':
+      themeCode = '&#xe64c;';
+      break
+    case '.psd':
+      themeCode = '&#xe65d;';
+      break
+    case '.pdf':
+      themeCode = '&#xe651;';
+      break
+    case '.doc':
+      themeCode = '&#xe64d;';
+      break
+    case '.xls':
+      themeCode = '&#xe65e;';
+      break
+    case '.ppt':
+      themeCode = '&#xe655;';
+      break
+    case '.docx':
+      themeCode = '&#xe64a;';
+      break
+    case '.xlsx':
+      themeCode = '&#xe65c;';
+      break
+    case '.pptx':
+      themeCode = '&#xe650;';
+      break
+    case '.key':
+      themeCode = '&#xe64e;';
+      break
+    case '.jpg':
+      themeCode = '&#xe653;';
+      break
+    case '.jpeg':
+      themeCode = '&#xe659;';
+      break
+    case '.png':
+      themeCode = '&#xe69a;';
+      break
+    case '.gif':
+      themeCode = '&#xe657;';
+      break
+    case '.mp4':
+      themeCode = '&#xe6e1;';
+      break
+    case '.mp3':
+      themeCode = '&#xe6e2;';
+      break
+    case '.txt':
+      themeCode = '&#xe654;';
+      break
+    case '.rar':
+      themeCode = '&#xe6e4;';
+      break
+    case '.zip':
+      themeCode = '&#xe6e5;';
+      break
+    case '.7z':
+      themeCode = '&#xe6e6;';
+      break
+    case '.gz':
+      themeCode = '&#xe6e7;';
+      break
+    default:
+      themeCode = '&#xe660;'; // 未识别类型显示
+      break
+  }
+  return themeCode;
 }
