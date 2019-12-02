@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect, } from 'dva';
 import indexStyles from './index.less'
-import { Avatar, Dropdown, Menu, Input, message, Tooltip } from 'antd'
+import { Avatar, Dropdown, Menu, Input, message, Tooltip, Modal } from 'antd'
 import { getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard, getOrgIdByBoardId } from '../../../../utils/businessFunction';
+import { archivedProject } from '../../../../services/technological/project'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '@/components/avatarList'
 import CheckItem from '@/components/CheckItem'
@@ -10,7 +11,7 @@ import { updateTaskGroup, deleteTaskGroup, } from '../../../../services/technolo
 import { updateProject, addMenbersInProject, toggleContentPrivilege, removeContentPrivilege, setContentPrivilege, collectionProject, cancelCollection } from '../../../../services/technological/project';
 import { isApiResponseOk } from '../../../../utils/handleResponseData';
 import ShowAddMenberModal from '../../../../routes/Technological/components/Project/ShowAddMenberModal'
-import { PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_CARD_GROUP, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../globalset/js/constant';
+import { PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_CARD_GROUP, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_TEAM_BOARD_ARCHIVE } from '../../../../globalset/js/constant';
 import VisitControl from '../VisitControl/index'
 import globalStyle from '@/globalset/css/globalClassName.less'
 import { ganttIsFold } from './constants';
@@ -268,6 +269,9 @@ export default class GroupListHeadItem extends Component {
         }
         this.requestDeleteGroup()
         break
+      case 'archived':
+        this.archivedProject({ board_id: params_board_id })
+        break
       case 'visitorControl':
         this.set
         break
@@ -369,6 +373,44 @@ export default class GroupListHeadItem extends Component {
       renderVistorContorlVisible: bool
     })
   }
+  // 项目归档---
+  handleArchivedBoard = () => {
+    const { dispatch } = this.props
+    const { list_group = [], list_id } = this.props
+    let list_group_new = [...list_group].filter(item => item.lane_id != list_id)
+    dispatch({
+      type: 'gantt/handleListGroup',
+      payload: {
+        data: list_group_new
+      }
+    })
+  }
+  archivedProject = ({ board_id }) => {
+    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_ARCHIVE, board_id)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    const that = this
+    Modal.confirm({
+      title: `归档该项目？`,
+      zIndex: 1007,
+      // content: <div style={{ color: 'rgba(0,0,0, .8)', fontSize: 14 }}>
+      //   <span >删除后不可恢复</span>
+      // </div>,
+      okText: '确认',
+      cancelText: '取消',
+      onOk() {
+        archivedProject({ is_archived: '1', board_id }).then(res => {
+          if (isApiResponseOk(res)) {
+            message.success('已成功归档该项目')
+            that.handleArchivedBoard()
+          } else {
+            message.error(res.message)
+          }
+        })
+      }
+    })
+  }
   // 操作项
   renderMenuOperateListName = () => {
     const { itemValue = {}, gantt_board_id } = this.props
@@ -394,6 +436,9 @@ export default class GroupListHeadItem extends Component {
         {
           // checkIsHasPermissionInBoard(rename_permission_code, params_board_id) &&
           <Menu.Item key={'rename'}>重命名</Menu.Item>
+        }
+        {
+          <Menu.Item key={'archived'}>项目归档</Menu.Item>
         }
         {
           // checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP, params_board_id) &&
