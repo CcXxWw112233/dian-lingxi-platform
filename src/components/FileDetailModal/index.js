@@ -16,13 +16,13 @@ import { message } from 'antd'
 export default class FileDetailModal extends Component {
 
   onCancel = () => {
-    this.props.dispatch({
-      type: 'publicFileDetailModal/updateDatas',
-      payload: {
-        currentPreviewFileVisible: false
-      }
-    })
-    this.props.setFileDetailModalVisible && this.props.setFileDetailModalVisible()
+    // this.props.dispatch({
+    //   type: 'publicFileDetailModal/updateDatas',
+    //   payload: {
+    //     currentPreviewFileVisible: false
+    //   }
+    // })
+    this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile()
   }
 
   render() {
@@ -47,7 +47,7 @@ export default class FileDetailModal extends Component {
 
 FileDetailModal.defaultProps = {
   file_detail_modal_visible: false, // 设置文件详情弹窗是否显示, 默认为 false 不显示
-  setFileDetailModalVisible: function() { }, // 设置文件详情弹窗是否显示
+  setPreviewFileModalVisibile: function() { }, // 设置文件详情弹窗是否显示
   users: [], // 用户列表
   handleFileDetailChange: function() { }, // 外部修改内部弹窗数据的回调
   updateParentFileList: function() { }, // 内部数据修改后用来更新外部数据的回调

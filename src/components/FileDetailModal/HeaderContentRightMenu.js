@@ -39,7 +39,7 @@ export default class HeaderContentRightMenu extends Component {
     return (
       <div className={headerStyles.header_rightMenuWrapper}>
         {/* 版本信息 */}
-        <div className={headerStyles.margin_right10}>
+        {/* <div className={headerStyles.margin_right10}>
           <VersionSwitching 
             // is_show={true}
             // handleVersionItem={this.handleVersionItem}
@@ -48,19 +48,19 @@ export default class HeaderContentRightMenu extends Component {
             // handleFileVersionValue={this.handleFileVersionValue}
             // uploadProps={uploadProps}
           />
-        </div>
+        </div> */}
         {/* 另存为 */}
         <div className={headerStyles.margin_right10}>
 
         </div>
         {/* 访问控制 */}
-        <div className={headerStyles.margin_right10}>
+        {/* <div className={headerStyles.margin_right10}>
           <VisitControl />
-        </div>
+        </div> */}
         {/* 通知提醒 */}
-        <div className={headerStyles.margin_right10}>
+        {/* <div className={headerStyles.margin_right10}>
           <InformRemind />
-        </div>
+        </div> */}
         {/* 全屏 */}
         <div>
           

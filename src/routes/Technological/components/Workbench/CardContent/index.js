@@ -221,17 +221,18 @@ class CardContent extends React.Component {
   }
 
   setPreviewFileModalVisibile() {
-    // this.setState({
-    //   previewFileModalVisibile: !this.state.previewFileModalVisibile
-    // });
-    this.props.dispatch({
-      type: 'publicFileDetailModal/updateDatas',
-      payload: {
-        currentPreviewFileVisible: true,
+    this.setState({
+      previewFileModalVisibile: !this.state.previewFileModalVisibile
+    });
+    // this.props.dispatch({
+    //   type: 'publicFileDetailModal/updateDatas',
+    //   payload: {
+    //     currentPreviewFileVisible: true,
 
-      }
-    })
+    //   }
+    // })
   }
+  
   close() {
     this.setState({
       previewProccessModalVisibile: false
@@ -1040,8 +1041,8 @@ class CardContent extends React.Component {
         {
           CardContentType == 'MY_DOCUMENT' && (
             <FileDetailModal 
-              file_detail_modal_visible={this.props.currentPreviewFileVisible}
-
+              file_detail_modal_visible={this.state.previewFileModalVisibile}
+              setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}
             />
           )
         }

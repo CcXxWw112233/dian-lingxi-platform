@@ -114,14 +114,14 @@ class FileItem extends React.Component {
     //     file_id: id
     //   }
     // });
-    // this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile();
-    dispatch({
-      type: 'publicFileDetailModal/updateDatas',
-      payload: {
-        currentPreviewFileVisible: true,
-        currentInitFileId: id
-      }
-    })
+    this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile();
+    // dispatch({
+    //   type: 'publicFileDetailModal/updateDatas',
+    //   payload: {
+    //     currentPreviewFileVisible: true,
+    //     currentInitFileId: id
+    //   }
+    // })
     // 将项目成员信息保存在项目详情, 而不在工作台中保存一份了
     dispatch({
       type: 'projectDetail/projectDetailInfo',
