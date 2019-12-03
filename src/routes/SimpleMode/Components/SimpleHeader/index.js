@@ -136,17 +136,14 @@ class SimpleHeader extends Component {
                 })
                 // console.log('ssss_最新已读', data)
             })
-            // if (typeof getUnreadList == 'function') {
-            //     const messages = getUnreadList()
-            //     // console.log('ssss_初始化', messages)
-            //     dispatch({
-            //         type: 'imCooperation/getImUnReadAllMessages',
-            //         payload: {
-            //             messages
-            //         }
-            //     })
-            // }
-
+            Im.on('updateImUnread', function (number) {
+                dispatch({
+                    type: 'imCooperation/updateDatas',
+                    payload: {
+                        im_alarm_no_reads_total: number
+                    }
+                })
+            })
         }
     }
     // 圈子点击
