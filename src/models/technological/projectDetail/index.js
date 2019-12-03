@@ -410,7 +410,7 @@ export default {
     },
 
     * getProjectRoles({ payload }, { select, call, put }) {
-      const res = yield call(getProjectRoles, { ...payload, _organization_id: getGlobalData('aboutBoardOrganizationId') })
+      const res = yield call(getProjectRoles, { ...payload, _organization_id: payload._organization_id || getGlobalData('aboutBoardOrganizationId') })
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',

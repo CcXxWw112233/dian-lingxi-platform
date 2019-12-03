@@ -420,12 +420,19 @@ export default class GroupListHeadItem extends Component {
   // 查看项目信息
   setBoardInfoVisible = () => {
     const { board_info_visible } = this.state
-    const { dispatch, list_id } = this.props
+    const { dispatch, list_id, itemValue: { org_id } } = this.props
     if (!board_info_visible) {
       dispatch({
         type: 'projectDetail/projectDetailInfo',
         payload: {
           id: list_id
+        }
+      })
+      dispatch({
+        type: 'projectDetail/getProjectRoles',
+        payload: {
+          type: '2',
+          _organization_id: org_id
         }
       })
     }
