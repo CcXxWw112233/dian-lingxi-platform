@@ -86,9 +86,12 @@ export default class GetRowGantt extends Component {
   // 在任务实例上点击到特定的位置，阻断，是能够不出现创建任务弹窗
   stopPropagationEle = (e) => {
     if (
-      e.target.dataset.targetclassname == 'specific_example' ||
-      e.target.className.indexOf('authTheme') != -1 ||
-      e.target.className.indexOf('ant-avatar') != -1
+      e.target.dataset && e.target.className && typeof e.target.className == 'string' &&//容错
+      (
+        e.target.dataset.targetclassname == 'specific_example' ||
+        e.target.className.indexOf('authTheme') != -1 ||
+        e.target.className.indexOf('ant-avatar') != -1
+      )
     ) { //不能滑动到某一个任务实例上
       return true
     }
