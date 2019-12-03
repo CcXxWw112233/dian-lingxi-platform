@@ -12,7 +12,7 @@ import {
 import Cookies from "js-cookie";
 import { workbench_selectFilePreviewCommitPointNumber, workbench_selectFilePreviewCurrentFileId, 
   workbench_selectFilePreviewCurrentVersionList, workbench_selectrUploadedFileList, workbench_selectBreadcrumbList,
-  workbench_selectFilePreviewCurrentPreviewFileName, workbench_selectFilePreviewIsEntryCirclePreviewLoading
+  workbench_selectFilePreviewCurrentPreviewFileName, workbench_selectFilePreviewIsEntryCirclePreviewLoading, workbench_selectCurrentPreviewFileData
  } from './selects'
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
@@ -195,6 +195,7 @@ export default {
     * getFilePDFInfo({ payload }, { select, call, put }) {
       //pdf做了特殊处理
       const { id } = payload // id = file_id
+      let fileListData = yield select(workbench_selectCurrentPreviewFileData)
       let res = yield call(getFilePDFInfo, payload)
       if(isApiResponseOk(res)) {
         yield put({
@@ -204,6 +205,7 @@ export default {
             filePreviewUrl: res.data.edit_url,
             pdfDownLoadSrc: res.data.download_annotation_url,
             filePreviewIsRealImage: false,
+            currentPreviewFileData: { ...fileListData, id: id }
           }
         })
         yield put({
@@ -578,6 +580,7 @@ export default {
       const { id } = payload
       let fileName = getSubfixName(yield select(workbench_selectFilePreviewCurrentPreviewFileName))
       let is_loading = yield select(workbench_selectFilePreviewIsEntryCirclePreviewLoading)
+      let fileListData = yield select(workbench_selectCurrentPreviewFileData)
       const supportFileTypeArray = ['.xlsx', '.xls', '.doc', '.docx', '.ppt', '.pptx', '.png', '.txt']
       // [png,gif,jpg,jpeg,tif,bmp,ico]
       const supportPictureFileTypeArray = ['.png', '.gif', '.jpg', '.jpeg', '.tif', '.bmp', '.ico']
@@ -611,7 +614,9 @@ export default {
             yield put({
               type: 'updateDatas',
               payload: {
-                filePreviewCurrentFileId: res.data.id
+                filePreviewCurrentFileId: res.data.id,
+                currentPreviewFileData: { ...fileListData, id: res.data.id },
+                currentPreviewFileName: res.data.file_name
               }
             })
             // setTimeout(() => {

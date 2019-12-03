@@ -37,7 +37,7 @@ import { MESSAGE_DURATION_TIME } from "../../../globalset/js/constant";
 import { isApiResponseOk } from "../../../utils/handleResponseData";
 import QueryString from 'querystring'
 import { projectDetailInfo } from "../../../services/technological/prjectDetail";
-import { project_selectFilePreviewIsEntryCirclePreviewLoading, project_selectFilePreviewCurrentPreviewFileName} from './select'
+import { project_selectFilePreviewIsEntryCirclePreviewLoading, project_selectFilePreviewCurrentPreviewFileName, project_selectCurrentPreviewFileBaseInfo } from './select'
 import { getModelSelectDatasState } from '../../utils'
 let board_id = null
 let appsSelectKey = null
@@ -554,6 +554,7 @@ export default modelExtend(projectDetail, {
     * getFilePDFInfo({ payload }, { select, call, put }) {
       //pdf做了特殊处理
       const { id } = payload // id = file_id
+      let fileListData = yield select(project_selectCurrentPreviewFileBaseInfo)
       let res = yield call(getFilePDFInfo, payload)
       if (isApiResponseOk(res)) {
         yield put({
@@ -563,6 +564,7 @@ export default modelExtend(projectDetail, {
             filePreviewUrl: res.data.edit_url,
             pdfDownLoadSrc: res.data.download_annotation_url,
             filePreviewIsRealImage: false,
+            currentPreviewFileBaseInfo: { ...fileListData, id: id }
           }
         })
         yield put({
@@ -1020,6 +1022,7 @@ export default modelExtend(projectDetail, {
       const { id } = payload
       let fileName = getSubfixName(yield select(project_selectFilePreviewCurrentPreviewFileName))
       let is_loading = yield select(project_selectFilePreviewIsEntryCirclePreviewLoading)
+      let fileListData = yield select(project_selectCurrentPreviewFileBaseInfo)
       const supportFileTypeArray = ['.xlsx', '.xls', '.doc', '.docx', '.ppt', '.pptx', '.png', '.txt']
       // [png,gif,jpg,jpeg,tif,bmp,ico]
       const supportPictureFileTypeArray = ['.png', '.gif', '.jpg', '.jpeg', '.tif', '.bmp', '.ico']
@@ -1050,7 +1053,9 @@ export default modelExtend(projectDetail, {
               type: 'updateDatas',
               payload: {
                 fileType: isPDF,
-                filePreviewCurrentFileId: res.data.id
+                filePreviewCurrentFileId: res.data.id,
+                currentPreviewFileBaseInfo: { ...fileListData, id: res.data.id },
+                currentPreviewFileName: res.data.file_name
               }
             })
             // setTimeout(() => {

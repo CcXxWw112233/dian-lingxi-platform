@@ -24,6 +24,7 @@ export const workbench_selectFilePreviewCommitPoints = state => state[(`workbenc
 export const workbench_selectFilePreviewCurrentVersionList = state => state[(`workbenchFileDetail`)].datas.filePreviewCurrentVersionList
 export const workbench_selectFilePreviewCurrentPreviewFileName = state => state[(`workbenchFileDetail`)].datas.currentPreviewFileName
 export const workbench_selectFilePreviewIsEntryCirclePreviewLoading = state => state[(`workbenchFileDetail`)].datas.isEntryCirclePreviewLoading
+export const workbench_selectCurrentPreviewFileData = state => state[(`workbenchFileDetail`)].datas.currentPreviewFileData
 
 
 //工作台任务
