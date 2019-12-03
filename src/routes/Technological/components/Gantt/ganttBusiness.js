@@ -37,7 +37,7 @@ export const beforeCreateBoardUpdateGantt = (dispatch) => {
 
         }
     })
-    // lx_utils.updateUserList()
+    lx_utils.updateUserList()
 }
 export const beforeChangeBoardUpdateGantt = ({ dispatch, board_id }) => {
     dispatch({
