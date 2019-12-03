@@ -16,6 +16,7 @@ import VisitControl from '../VisitControl/index'
 import globalStyle from '@/globalset/css/globalClassName.less'
 import { ganttIsFold } from './constants';
 import DetailInfo from '@/routes/Technological/components/ProjectDetail/DetailInfo/index'
+import { deleteBoardFollow } from './ganttBusiness';
 
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
@@ -409,6 +410,7 @@ export default class GroupListHeadItem extends Component {
           if (isApiResponseOk(res)) {
             message.success('已成功归档该项目')
             that.handleArchivedBoard()
+            deleteBoardFollow()
           } else {
             message.error(res.message)
           }
