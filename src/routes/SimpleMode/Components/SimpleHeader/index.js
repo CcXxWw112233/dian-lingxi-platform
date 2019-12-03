@@ -239,7 +239,7 @@ class SimpleHeader extends Component {
         }
     }
     render() {
-        const { chatImVisiable = false, leftMainNavVisible = false, leftMainNavIconVisible, drawerVisible, isInOpenFile, dispatch } = this.props;
+        const { chatImVisiable = false, leftMainNavVisible = false, leftMainNavIconVisible, drawerVisible, isInOpenFile, dispatch, im_alarm_no_reads_total } = this.props;
         const { simpleDrawerVisible, simpleDrawerContent, leftNavigationVisible, simpleDrawerTitle } = this.state;
         return (
             <div className={indexStyles.headerWapper}>
@@ -267,6 +267,11 @@ class SimpleHeader extends Component {
                     )}
 
                 <div className={indexStyles.miniImMessage} onClick={this.openOrCloseImChatModal}>
+                    {
+                        im_alarm_no_reads_total > 0 && (
+                            <div className={indexStyles.no_reads}>{im_alarm_no_reads_total > 99 ? '99+' : im_alarm_no_reads_total}</div>
+                        )
+                    }
                     <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe6df;</i>
                 </div>
 
@@ -319,7 +324,10 @@ function mapStateToProps({
             isInOpenFile
         }
     },
+    imCooperation: {
+        im_alarm_no_reads_total = 0
+    }
 }) {
-    return { chatImVisiable, leftMainNavVisible, leftMainNavIconVisible, modal, model: technological, loading, drawerVisible, isInOpenFile }
+    return { chatImVisiable, leftMainNavVisible, leftMainNavIconVisible, modal, model: technological, loading, drawerVisible, isInOpenFile, im_alarm_no_reads_total }
 }
 export default connect(mapStateToProps)(SimpleHeader)

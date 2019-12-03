@@ -156,7 +156,7 @@ export default class GetRowGanttItem extends Component {
   // 里程碑详情和列表
   renderLCBList = (current_date_miletones, timestamp) => {
     return (
-      <Menu onClick={(e) => this.selectLCB(e, timestamp)}>
+      <Menu onClick={(e) => this.selectLCB(e, timestamp)} style={{ width: 216 }}>
         {current_date_miletones.map((value, key) => {
           const { id, name, board_id } = value
           return (

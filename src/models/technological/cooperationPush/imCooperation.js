@@ -14,6 +14,7 @@ export default {
         im_all_latest_unread_messages: [], //最新未读消息列表
         // im_latest_unread_message: {}, //最新未读
         im_all_latest_readed_messages: [], //最新已读列表
+        im_alarm_no_reads_total: 0, //圈子未读消息（显示在极简模式右边消息按钮）
         wil_handle_types: [
             'board.card.create',
             'board.card.update.file.add',
