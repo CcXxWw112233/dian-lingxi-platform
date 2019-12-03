@@ -70,9 +70,10 @@ export default class Header extends React.Component {
           </div>
         </div>
         <div className={headerStyles.header_out_right}>
-          <Dropdown overlay={this.renderOperateMenu()}>
+          {/* <Dropdown overlay={this.renderOperateMenu()}>
             <div className={globalStyles.authTheme} style={{ fontSize: 18, marginRight: 10 }}>&#xe7fd;</div>
-          </Dropdown>
+          </Dropdown> */}
+          <div className={globalStyles.authTheme} onClick={this.confrimDelete} style={{ fontSize: 18, marginRight: 10, cursor: 'pointer' }}>&#xe7c3;</div>
           <InformRemind milestonePrincipals={principals} rela_id={id} rela_type='5' user_remind_info={users} />
         </div>
       </div>
