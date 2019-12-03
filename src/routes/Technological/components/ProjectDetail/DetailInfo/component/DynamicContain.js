@@ -2,7 +2,7 @@
 import React, { Component } from 'react'
 import DrawDetailInfoStyle from '../DrawDetailInfo.less'
 import { connect } from 'dva'
-import { Icon, Tooltip } from 'antd'
+import { Icon, Tooltip, message } from 'antd'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import MilestoneDetail from '../../../../components/Gantt/components/milestoneDetail'
 import DrawContentModal from '../../TaskItemComponent/components/DrawContentModal'
