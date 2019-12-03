@@ -205,10 +205,7 @@ export default class VersionSwitchingComponent extends Component {
 
 VersionSwitchingComponent.defaultProps = {
   params: {
-    board_id: '', // 当前的项目Id
     filePreviewCurrentFileId: '', // 当前预览文件ID
-    filePreviewUrl: '',// 当前预览文件的路径
-    filePreviewCurrentId: '',
     new_filePreviewCurrentVersionList: [], // 版本信息列表
     is_edit_version_description: '', // 是否正在编辑版本的信息描述
     editValue: '', // 编辑的内容

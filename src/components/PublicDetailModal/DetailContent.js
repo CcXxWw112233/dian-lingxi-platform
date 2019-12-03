@@ -63,6 +63,7 @@ export default class DetailContent extends React.Component {
       dynamicsContent = '', //动态列表区块
       commentUseParams = {}, //评论所需要参数
       showActiveStyles = false,
+      isNotShowFileDetailContentRightVisible
     } = this.props
 
     const whetherShowAllDynamic = (
@@ -82,64 +83,68 @@ export default class DetailContent extends React.Component {
       </Menu>
     )
     let styleSelect = indexStyles.fileDetailContentOut;
- 
+
     return (
       <div className={`${styleSelect} ${showActiveStyles && indexStyles.active_fileDetailContentOut}`} ref={'fileDetailContentOut'} style={{ height: (clientHeight - offsetTopDeviation - 54) }}>
-        <div className={`${indexStyles.fileDetailContentLeft} ${globalStyles.global_vertical_scrollbar} ${ showActiveStyles && indexStyles.active_fileDetailContentLeft}`}
+        <div className={`${indexStyles.fileDetailContentLeft} ${globalStyles.global_vertical_scrollbar} ${showActiveStyles && indexStyles.active_fileDetailContentLeft}`}
         // style={{overflowY: 'auto'}}
         >
           {/*主要内容放置区*/}
           {mainContent}
         </div>
-
-        <div className={`${indexStyles.fileDetailContentRight} ${showActiveStyles && indexStyles.active_fileDetailContentRight}`}>
-
-
-          <div style={{ position: 'relative' }} className={`${indexStyles.fileDetailContentRight_middle}`} style={{ height: !showActiveStyles && (clientHeight - offsetTopDeviation - 54 - 70)}}>
-
-            {/* <div
-              style={{lineHeight: '54px'}}
-              className={indexStyles.lookAll}
-              onClick={this.setIsShowAll.bind(this)}>
-              {!isShowAllDynamic? '所有动态': '部分动态'}
-              {isShowAllDynamic?(
-                <i style={{lineHeight: '54px'}} className={`${globalStyles.authTheme} ${indexStyles.lookAll_logo}`}>&#xe7ee;</i>
-              ):(
-                <i style={{lineHeight: '54px'}} className={`${globalStyles.authTheme}  ${indexStyles.lookAll_logo}`}>&#xe7ed;</i>
-              )}
-
-            </div> */}
-            <div>
-              <Dropdown overlayClassName={indexStyles.showAllDynamics} overlay={whetherShowAllDynamic} getPopupContainer={triggerNode => triggerNode.parentNode}>
-                <div className={indexStyles.lookAll}>
-                  <span>{isShowAllDynamic ? '所有动态' : '仅评论'}</span>
-                  <i style={{ lineHeight: '54px' }} className={`${globalStyles.authTheme} ${indexStyles.lookAll_logo}`}>&#xe7ee;</i>
-                </div>
-              </Dropdown>
-            </div>
+        {
+          !isNotShowFileDetailContentRightVisible && (
+            <div className={`${indexStyles.fileDetailContentRight} ${showActiveStyles && indexStyles.active_fileDetailContentRight}`}>
 
 
+              <div style={{ position: 'relative' }} className={`${indexStyles.fileDetailContentRight_middle}`} style={{ height: !showActiveStyles && (clientHeight - offsetTopDeviation - 54 - 70) }}>
 
-            <div className={`${globalStyles.global_vertical_scrollbar} ${indexStyles.fileDetailContentRight_dynamicList} ${ showActiveStyles && indexStyles.active_fileDetailContentRight_dynamicList}`} style={{ height: !showActiveStyles && (clientHeight - offsetTopDeviation - 54 - 70 - 50) }}>
-              {/*动态放置区*/}
-              <div style={{fontSize: '12px', color: '#595959'}}>
-                <div>
-                  {dynamicsContent}
-                </div>
-              </div>
-              {/*评论放置区*/}
-              <div style={{ overflow: 'hidden' }} key={isShowAllDynamic}>
-                {commentListsContent || (
-                  <CommentLists commentUseParams={commentUseParams} isShowAllDynamic={isShowAllDynamic} />
+                {/* <div
+                style={{lineHeight: '54px'}}
+                className={indexStyles.lookAll}
+                onClick={this.setIsShowAll.bind(this)}>
+                {!isShowAllDynamic? '所有动态': '部分动态'}
+                {isShowAllDynamic?(
+                  <i style={{lineHeight: '54px'}} className={`${globalStyles.authTheme} ${indexStyles.lookAll_logo}`}>&#xe7ee;</i>
+                ):(
+                  <i style={{lineHeight: '54px'}} className={`${globalStyles.authTheme}  ${indexStyles.lookAll_logo}`}>&#xe7ed;</i>
                 )}
-              </div>
-            </div>
-          </div>
-          <div className={`${indexStyles.fileDetailContentRight_bott} ${ showActiveStyles && indexStyles.active_fileDetailContentRight_bott}`}>
-            {commentSubmitContent || <CommentSubmit commentUseParams={commentUseParams} />}
-          </div>
+  
+              </div> */}
+                <div>
+                  <Dropdown overlayClassName={indexStyles.showAllDynamics} overlay={whetherShowAllDynamic} getPopupContainer={triggerNode => triggerNode.parentNode}>
+                    <div className={indexStyles.lookAll}>
+                      <span>{isShowAllDynamic ? '所有动态' : '仅评论'}</span>
+                      <i style={{ lineHeight: '54px' }} className={`${globalStyles.authTheme} ${indexStyles.lookAll_logo}`}>&#xe7ee;</i>
+                    </div>
+                  </Dropdown>
+                </div>
 
-        </div>
+
+
+                <div className={`${globalStyles.global_vertical_scrollbar} ${indexStyles.fileDetailContentRight_dynamicList} ${showActiveStyles && indexStyles.active_fileDetailContentRight_dynamicList}`} style={{ height: !showActiveStyles && (clientHeight - offsetTopDeviation - 54 - 70 - 50) }}>
+                  {/*动态放置区*/}
+                  <div style={{ fontSize: '12px', color: '#595959' }}>
+                    <div>
+                      {dynamicsContent}
+                    </div>
+                  </div>
+                  {/*评论放置区*/}
+                  <div style={{ overflow: 'hidden' }} key={isShowAllDynamic}>
+                    {commentListsContent || (
+                      <CommentLists commentUseParams={commentUseParams} isShowAllDynamic={isShowAllDynamic} />
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className={`${indexStyles.fileDetailContentRight_bott} ${showActiveStyles && indexStyles.active_fileDetailContentRight_bott}`}>
+                {commentSubmitContent || <CommentSubmit commentUseParams={commentUseParams} />}
+              </div>
+
+            </div>
+          )
+        }
+
 
       </div>
     )

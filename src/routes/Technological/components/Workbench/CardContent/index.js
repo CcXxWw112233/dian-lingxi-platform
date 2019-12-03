@@ -30,7 +30,8 @@ import CollectionProjectItem from './CollectionProjectItem';
 import MyCircleItem from './MyCircleItem';
 // import TaskDetailModal from './Modal/TaskDetailModal';
 import TaskDetailModal from '@/components/TaskDetailModal'
-import FileDetailModal from './Modal/FileDetailModal';
+// import FileDetailModal from './Modal/FileDetailModal';
+import FileDetailModal from '@/components/FileDetailModal'
 import ProccessDetailModal from './Modal/ProccessDetailModal';
 import AddTaskModal from './Modal/AddTaskModal';
 import AddProgressModal from './Modal/AddProgressModal';
@@ -64,9 +65,12 @@ const MenuItemGroup = Menu.ItemGroup;
    publicTaskDetailModal: {
      drawContent = {},
      drawerVisible
-   }
+   },
+   publicFileDetailModal: {
+    currentPreviewFileVisible
+  }
 }) => ({
-  workbench, processInfo, projectDetailInfoData, drawerVisible, drawContent
+  workbench, processInfo, projectDetailInfoData, drawerVisible, drawContent, currentPreviewFileVisible
 }))
 class CardContent extends React.Component {
   state = {
@@ -217,9 +221,16 @@ class CardContent extends React.Component {
   }
 
   setPreviewFileModalVisibile() {
-    this.setState({
-      previewFileModalVisibile: !this.state.previewFileModalVisibile
-    });
+    // this.setState({
+    //   previewFileModalVisibile: !this.state.previewFileModalVisibile
+    // });
+    this.props.dispatch({
+      type: 'publicFileDetailModal/updateDatas',
+      payload: {
+        currentPreviewFileVisible: true,
+
+      }
+    })
   }
   close() {
     this.setState({
@@ -1026,13 +1037,21 @@ class CardContent extends React.Component {
           {/*<CollectionProjectItem />*/}
           {/*<MyCircleItem />*/}
         </div>
-        <FileDetailModal
+        {
+          CardContentType == 'MY_DOCUMENT' && (
+            <FileDetailModal 
+              file_detail_modal_visible={this.props.currentPreviewFileVisible}
+
+            />
+          )
+        }
+        {/* <FileDetailModal
           {...this.props}
           modalVisible={this.state.previewFileModalVisibile}
           setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(
             this
           )}
-        />
+        /> */}
         {/* 我的流程 */}
         <ProccessDetailModal
           {...this.props}

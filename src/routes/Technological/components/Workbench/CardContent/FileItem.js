@@ -91,64 +91,79 @@ class FileItem extends React.Component {
       version_id
     } = data;
     const { dispatch} = this.props
-
     setBoardIdStorage(board_id)
     // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)) {
     //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
     //   return false;
     // }
-    dispatch({
-      type: 'workbenchPublicDatas/getRelationsSelectionPre',
-      payload: {
-        _organization_id: org_id
-      }
-    })
-    this.props.dispatch({
-      type: 'workbenchFileDetail/getCardCommentListAll',
-      payload: {
-        id: id
-      }
-    });
-    this.props.dispatch({
-      type: 'workbenchFileDetail/getFileType',
-      payload: {
-        file_id: id
-      }
-    });
-    this.props.setPreviewFileModalVisibile();
-    this.props.updateFileDatas({
-      seeFileInput: 'fileModule',
-      board_id,
-      filePreviewCurrentId: file_resource_id,
-      currentParrentDirectoryId: folder_id,
-      filePreviewCurrentFileId: id,
-      filePreviewCurrentVersionId: version_id, //file_id,
-      pdfDownLoadSrc: '',
-      currentPreviewFileData: data
-    })
-    // this.props.dispatch({
-    //   type: 'workbenchFileDetail/updateDatas',
+    // dispatch({
+    //   type: 'workbenchPublicDatas/getRelationsSelectionPre',
     //   payload: {
-    //     currentPreviewFileData: data
+    //     _organization_id: org_id
     //   }
     // })
-
-    if(getSubfixName(file_name) == '.pdf') {
-      this.props.dispatch({
-        type: 'workbenchFileDetail/getFilePDFInfo',
-        payload: {
-          id
-        }
-      })
-    } else {
-      this.props.filePreview({id: file_resource_id, file_id: id})
-    }
-    this.props.fileVersionist({
-      version_id: version_id, //file_id,
-      isNeedPreviewFile: false,
+    // this.props.dispatch({
+    //   type: 'workbenchFileDetail/getCardCommentListAll',
+    //   payload: {
+    //     id: id
+    //   }
+    // });
+    // this.props.dispatch({
+    //   type: 'workbenchFileDetail/getFileType',
+    //   payload: {
+    //     file_id: id
+    //   }
+    // });
+    // this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile();
+    dispatch({
+      type: 'publicFileDetailModal/updateDatas',
+      payload: {
+        currentPreviewFileVisible: true,
+        currentInitFileId: id
+      }
+    })
+    // 将项目成员信息保存在项目详情, 而不在工作台中保存一份了
+    dispatch({
+      type: 'projectDetail/projectDetailInfo',
+      payload: {
+        id: board_id
+      }
     })
     this.props.updatePublicDatas({ board_id })
-    this.props.getBoardMembers({id: board_id})
+    // this.props.updateFileDatas({
+    //   seeFileInput: 'fileModule',
+    //   board_id,
+    //   filePreviewCurrentId: file_resource_id,
+    //   currentParrentDirectoryId: folder_id,
+    //   filePreviewCurrentFileId: id,
+    //   filePreviewCurrentVersionId: version_id, //file_id,
+    //   pdfDownLoadSrc: '',
+    //   currentPreviewFileData: data
+    // })
+    // // this.props.dispatch({
+    // //   type: 'workbenchFileDetail/updateDatas',
+    // //   payload: {
+    // //     currentPreviewFileData: data
+    // //   }
+    // // })
+
+    // if(getSubfixName(file_name) == '.pdf') {
+    //   this.props.dispatch({
+    //     type: 'workbenchFileDetail/getFilePDFInfo',
+    //     payload: {
+    //       id
+    //     }
+    //   })
+    // } else {
+    //   this.props.filePreview({id: file_resource_id, file_id: id})
+    // }
+    // this.props.fileVersionist({
+    //   version_id: version_id, //file_id,
+    //   isNeedPreviewFile: false,
+    // })
+    // this.props.updatePublicDatas({ board_id })
+    // this.props.getBoardMembers({id: board_id})
+    
 
   }
   createUploadFileSuccessNote = file => {
