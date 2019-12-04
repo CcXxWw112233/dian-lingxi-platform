@@ -13,6 +13,7 @@ import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_QUERY, PROJECT_FILES_FILE_EDIT,
   PROJECT_FILES_FILE_INTERVIEW
 } from "../../../../../globalset/js/constant";
+import FileDetailModal from '@/components/FileDetailModal'
 
 @connect(({ workbench, technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } } }) => ({
   uploadedFileNotificationIdList:
@@ -22,6 +23,14 @@ import {
   currentUserOrganizes, is_show_org_name, is_all_org
 }))
 class FileItem extends React.Component {
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      previewFileModalVisibile: false
+    }
+  }
+
   judgeFileType(fileName) {
     let themeCode = '';
     const type = getSubfixName(fileName)
@@ -78,6 +87,7 @@ class FileItem extends React.Component {
     );
   }
   previewFile(data, e) {
+    e.stopPropagation()
     const {
       board_id,
       board_name,
@@ -114,7 +124,7 @@ class FileItem extends React.Component {
     //     file_id: id
     //   }
     // });
-    this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile();
+    this.setPreviewFileModalVisibile();
     // dispatch({
     //   type: 'publicFileDetailModal/updateDatas',
     //   payload: {
@@ -235,6 +245,12 @@ class FileItem extends React.Component {
     this.handleNewUploadedFileNotification(nextProps);
   }
 
+  setPreviewFileModalVisibile = () => {
+    this.setState({
+      previewFileModalVisibile: !this.state.previewFileModalVisibile
+    });
+  }
+
   render() {
     const { itemValue = {}, currentUserOrganizes, is_show_org_name, projectTabCurrentSelectedProject, is_all_org } = this.props;
     // console.log(is_show_org_name, is_all_org, projectTabCurrentSelectedProject, 'sss')
@@ -252,6 +268,7 @@ class FileItem extends React.Component {
     } = itemValue;
 
     return (
+      <>
       <div
         className={indexstyles.fileItem}
         onClick={this.previewFile.bind(this, { ...itemValue })}
@@ -317,6 +334,12 @@ class FileItem extends React.Component {
         </div>
         <div>{timestampToTimeNormal(create_time, '/', true)}</div>
       </div>
+      <FileDetailModal
+          filePreviewCurrentFileId={id} 
+          file_detail_modal_visible={this.state.previewFileModalVisibile}
+          setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
+        />
+      </>
     );
   }
 }

@@ -592,3 +592,33 @@ export const filterFileFormatType = (fileName) => {
   }
   return themeCode;
 }
+
+/**
+ * 比较两个对象是否相等
+ * @return {Boolean} 该方法返回一个布尔值, fasle 表示不相等, true表示相等
+ * @param {Object} obj1 对象1
+ * @param {Object} obj2 对象2
+ */
+export const compareACoupleOfObjects = (obj1, obj2) => {
+  let o1 = obj1 instanceof Object;
+  let o2 = obj2 instanceof Object;
+  if (!o1 || !o2) {/*  判断不是对象  */
+    return obj1 === obj2;
+  }
+
+  if (Object.keys(obj1).length !== Object.keys(obj2).length) {
+    return false;
+    //Object.keys() 返回一个由对象的自身可枚举属性(key值)组成的数组,例如：数组返回下表：let arr = ["a", "b", "c"];console.log(Object.keys(arr))->0,1,2;
+  }
+
+  for (let attr in obj1) {
+    let t1 = obj1[attr] instanceof Object;
+    let t2 = obj2[attr] instanceof Object;
+    if (t1 && t2) {
+      return compareACoupleOfObjects(obj1[attr], obj2[attr]);
+    } else if (obj1[attr] !== obj2[attr]) {
+      return false;
+    }
+  }
+  return true;
+}

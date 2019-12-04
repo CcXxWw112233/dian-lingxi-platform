@@ -31,7 +31,7 @@ import MyCircleItem from './MyCircleItem';
 // import TaskDetailModal from './Modal/TaskDetailModal';
 import TaskDetailModal from '@/components/TaskDetailModal'
 // import FileDetailModal from './Modal/FileDetailModal';
-import FileDetailModal from '@/components/FileDetailModal'
+// import FileDetailModal from '@/components/FileDetailModal'
 import ProccessDetailModal from './Modal/ProccessDetailModal';
 import AddTaskModal from './Modal/AddTaskModal';
 import AddProgressModal from './Modal/AddProgressModal';
@@ -1038,14 +1038,14 @@ class CardContent extends React.Component {
           {/*<CollectionProjectItem />*/}
           {/*<MyCircleItem />*/}
         </div>
-        {
+        {/* {
           CardContentType == 'MY_DOCUMENT' && (
             <FileDetailModal 
               file_detail_modal_visible={this.state.previewFileModalVisibile}
               setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}
             />
           )
-        }
+        } */}
         {/* <FileDetailModal
           {...this.props}
           modalVisible={this.state.previewFileModalVisibile}
