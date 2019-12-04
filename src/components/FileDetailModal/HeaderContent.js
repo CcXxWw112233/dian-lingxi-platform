@@ -7,14 +7,13 @@ import FileDetailBreadCrumbFileNav from './component/FileDetailBreadCrumbFileNav
 import HeaderContentRightMenu from './HeaderContentRightMenu'
 import { fileInfoByUrl, getFilePDFInfo } from '@/services/technological/file'
 import { isApiResponseOk } from '../../utils/handleResponseData'
-import { connect } from 'dva'
-@connect()
+
 export default class HeaderContent extends Component {
 
   constructor(props) {
     super(props)
     this.state = {
-      filePreviewCurrentFileId: props.filePreviewCurrentFileId
+      filePreviewCurrentFileId: props.filePreviewCurrentFileId, // 保存一份当前的文件ID
     }
   }
 
@@ -23,6 +22,7 @@ export default class HeaderContent extends Component {
     this.setState({...datas})
   }
 
+  // 更新详情数据
   getCurrentFilePreviewData = ({id}) => {
     fileInfoByUrl({id}).then(res => {// 获取详情的接口
       if (isApiResponseOk(res)) {
@@ -35,6 +35,7 @@ export default class HeaderContent extends Component {
           fileType: getSubfixName(res.data.base_info.file_name), // 文件的后缀名
           targetFilePath: res.data.target_path, // 当前文件路径
           filePreviewCurrentVersionList: res.data.version_list, // 文件的版本列表
+          filePreviewCurrentVersionId: res.data.version_list.length ? res.data.version_list[0]['version_id'] : '', // 保存一个当前版本ID
         })
       } else {
         message.wan(res.message)
@@ -42,6 +43,7 @@ export default class HeaderContent extends Component {
     })
   }
 
+  // PDF文件预览的特殊处理
   getFilePDFInfo = ({id}) => {
     const { currentPreviewFileData = {} } = this.state
     getFilePDFInfo({id}).then(res => {

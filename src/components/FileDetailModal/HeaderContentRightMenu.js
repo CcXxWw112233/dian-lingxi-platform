@@ -8,13 +8,18 @@ import { compareACoupleOfObjects } from '@/utils/util'
 import { checkIsHasPermissionInBoard, getSubfixName, checkIsHasPermissionInVisitControl } from "@/utils/businessFunction";
 import {
   MESSAGE_DURATION_TIME,
-  NOT_HAS_PERMISION_COMFIRN,PROJECT_FILES_FILE_UPDATE
+  NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_FILE_UPDATE, PROJECT_FILES_FILE_EDIT, UPLOAD_FILE_SIZE, REQUEST_DOMAIN_FILE
 } from "@/globalset/js/constant";
-import { setCurrentVersionFile, updateVersionFileDescription } from '@/services/technological/file'
+import { setCurrentVersionFile, updateVersionFileDescription, fileVersionist } from '@/services/technological/file'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
+import Cookies from "js-cookie";
+import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 
-@connect()
+
+@connect(({ projectDetail: { projectDetailInfoData = {} } }) => ({
+  projectDetailInfoData
+}))
 export default class HeaderContentRightMenu extends Component {
 
   constructor(props) {
@@ -33,7 +38,7 @@ export default class HeaderContentRightMenu extends Component {
         new_item = { ...item, is_edit: false }
         return new_item
       })
-  
+
       this.setState({
         new_filePreviewCurrentVersionList,
       })
@@ -45,7 +50,7 @@ export default class HeaderContentRightMenu extends Component {
   // 设为主版本回调
   setCurrentVersionFile = (data) => {
     let { id, set_major_version, version_id, file_name } = data
-    setCurrentVersionFile({id, set_major_version}).then(res => {
+    setCurrentVersionFile({ id, set_major_version }).then(res => {
       if (isApiResponseOk(res)) {
         setTimeout(() => {
           message.success('设置主版本成功', MESSAGE_DURATION_TIME)
@@ -58,14 +63,27 @@ export default class HeaderContentRightMenu extends Component {
     })
   }
 
+  getFileVersionist = (data) => {
+    fileVersionist({...data}).then(res => {
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('更新版本成功', MESSAGE_DURATION_TIME)
+        }, 500)
+        this.props.updateStateDatas && this.props.updateStateDatas({ filePreviewCurrentFileId: data.file_id, filePreviewCurrentVersionList: res.data })
+      } else {
+        message.warn(res.message)
+      }
+    })
+  }
+
   // pdf文件和普通文件区别时做不同地处理预览
   handleUploadPDForElesFilePreview = ({ file_name, id }) => {
     if (getSubfixName(file_name) == '.pdf') {
-      this.props.getCurrentFilePreviewData && this.props.getCurrentFilePreviewData({id}) // 需要先获取一遍详情
-      this.props.getFilePDFInfo && this.props.getFilePDFInfo({id})
+      this.props.getCurrentFilePreviewData && this.props.getCurrentFilePreviewData({ id }) // 需要先获取一遍详情
+      this.props.getFilePDFInfo && this.props.getFilePDFInfo({ id })
       this.props.updateStateDatas && this.props.updateStateDatas({ fileType: getSubfixName(file_name) })
     } else {
-      this.props.getCurrentFilePreviewData && this.props.getCurrentFilePreviewData({id})
+      this.props.getCurrentFilePreviewData && this.props.getCurrentFilePreviewData({ id })
     }
   }
 
@@ -100,7 +118,7 @@ export default class HeaderContentRightMenu extends Component {
     })
     const { file_id, file_resource_id, file_name } = temp_filePreviewCurrentVersionList[0]
     this.handleUploadPDForElesFilePreview({ file_name, id: file_id })
-    this.props.updateStateDatas && this.props.updateStateDatas({fileType: getSubfixName(file_name)})
+    this.props.updateStateDatas && this.props.updateStateDatas({ fileType: getSubfixName(file_name) })
   }
 
   // 每一个Item的点点点 事件
@@ -132,7 +150,7 @@ export default class HeaderContentRightMenu extends Component {
           imgLoaded: false
         })
         //版本改变预览
-        let data = { id:file_id,set_major_version: '1',version_id:file_version_id,file_name:file_name }
+        let data = { id: file_id, set_major_version: '1', version_id: file_version_id, file_name: file_name }
         this.setCurrentVersionFile(data)
 
         this.setState({
@@ -194,29 +212,30 @@ export default class HeaderContentRightMenu extends Component {
     })
 
     if (editValue != remarks) {
-      updateVersionFileDescription({id:file_id,version_info: editValue}).then(res => {
+      updateVersionFileDescription({ id: file_id, version_info: editValue }).then(res => {
         if (isApiResponseOk(res)) {
           setTimeout(() => {
-            message.success('编辑版本信息成功',MESSAGE_DURATION_TIME)
+            message.success('编辑版本信息成功', MESSAGE_DURATION_TIME)
           }, 500)
         } else {
           message.warn(res.message)
         }
       })
-      this.props.updateStateDatas && this.props.updateStateDatas({filePreviewCurrentVersionList:new_list})
+      this.props.updateStateDatas && this.props.updateStateDatas({ filePreviewCurrentVersionList: new_list })
       this.setState({
         editValue: ''
       })
     }
   }
-  
+
   // 关于版本信息的事件 E
 
 
   render() {
-    const { currentPreviewFileData = {}, filePreviewCurrentFileId } = this.props
+    const that = this
+    const { currentPreviewFileData = {}, filePreviewCurrentFileId, filePreviewCurrentVersionId, projectDetailInfoData: { data = [], folder_id } } = this.props
     const { new_filePreviewCurrentVersionList = [], is_edit_version_description, editValue } = this.state
-    const { board_id } = currentPreviewFileData
+    const { board_id, is_privilege, privileges = [] } = currentPreviewFileData
     const params = {
       filePreviewCurrentFileId,
       new_filePreviewCurrentVersionList,
@@ -224,18 +243,68 @@ export default class HeaderContentRightMenu extends Component {
       editValue
     }
 
+    const uploadProps = {
+      name: 'file',
+      withCredentials: true,
+      action: `${REQUEST_DOMAIN_FILE}/file/version_upload`,
+      data: {
+        board_id,
+        folder_id: folder_id,
+        file_version_id: filePreviewCurrentVersionId,
+      },
+      headers: {
+        Authorization: Cookies.get('Authorization'),
+        refreshToken: Cookies.get('refreshToken'),
+        ...setUploadHeaderBaseInfo({}),
+      },
+      beforeUpload(e) {
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
+          return false
+        }
+        if (e.size == 0) {
+          message.error(`不能上传空文件`)
+          return false
+        } else if (e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+          message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
+          return false
+        }
+      },
+      onChange({ file, fileList, event }) {
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
+        if (file.status === 'uploading') {
+
+        } else {
+          message.destroy()
+        }
+        if (file.status === 'done' && file.response.code === '0') {
+          message.success(`上传成功。`);
+          if (file.response && file.response.code == '0') {
+            that.getFileVersionist({ version_id: filePreviewCurrentVersionId, file_id: file.response.data.id })
+          }
+        } else if (file.status === 'error' || (file.response && file.response.code !== '0')) {
+          message.error(file.response && file.response.message || '上传失败');
+          setTimeout(function () {
+            message.destroy()
+          }, 2000)
+        }
+      },
+    };
+
     return (
       <div className={headerStyles.header_rightMenuWrapper}>
         {/* 版本信息 */}
         <div className={headerStyles.margin_right10}>
           <VersionSwitching
-            {...params} 
+            {...params}
             is_show={true}
             handleVersionItem={this.handleVersionItem}
             getVersionItemMenuClick={this.getVersionItemMenuClick}
             handleFileVersionDecription={this.handleFileVersionDecription}
             handleFileVersionValue={this.handleFileVersionValue}
-            // uploadProps={uploadProps}
+            uploadProps={uploadProps}
           />
         </div>
         {/* 另存为 */}
@@ -247,12 +316,17 @@ export default class HeaderContentRightMenu extends Component {
           <VisitControl />
         </div> */}
         {/* 通知提醒 */}
-        {/* <div className={headerStyles.margin_right10}>
-          <InformRemind />
-        </div> */}
+        {
+          checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) && (
+            <div className={headerStyles.margin_right10} style={{ marginTop: '4px' }}>
+              <InformRemind rela_id={filePreviewCurrentFileId} rela_type={'4'} user_remind_info={data} />
+            </div>
+          )
+        }
+
         {/* 全屏 */}
         <div>
-          
+
         </div>
       </div>
     )
