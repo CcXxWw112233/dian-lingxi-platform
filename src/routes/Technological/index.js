@@ -36,17 +36,17 @@ export default class Technological extends React.Component {
     const { dispatch } = this.props
     const calback = function (event) {
       setTimeout(function () {
-        if (Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')) {
-          const calback = function (event) {
-            dispatch({
-              type: 'cooperationPush/connectWsToModel',
-              payload: {
-                event
-              }
-            })
-          }
-          initWs(calback)
+        // if (Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')) {
+        const calback = function (event) {
+          dispatch({
+            type: 'cooperationPush/connectWsToModel',
+            payload: {
+              event
+            }
+          })
         }
+        initWs(calback)
+        // }
       }, 3000)
     }
     initWs(calback)
