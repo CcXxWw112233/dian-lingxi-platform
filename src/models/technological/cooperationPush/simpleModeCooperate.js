@@ -39,6 +39,9 @@ export default {
             const gantt_list_group = yield select(getModelSelectDatasState('gantt', 'list_group')) //甘特图任务数据
             const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id')) //甘特图项目id
 
+            const currentSelectedWorkbenchBox = yield select(getModelSelectState('simplemode', 'currentSelectedWorkbenchBox')) || {}
+            const workbenchBoxcode = currentSelectedWorkbenchBox.code
+
             let cObj = { ...coperateData }
             let gantt_list_group_ = [...gantt_list_group]
             let drawContent_ = { ...drawContent }
@@ -143,6 +146,127 @@ export default {
                             type: model_gantt('getGanttData'),
                             payload: {
                                 not_set_loading: true
+                            }
+                        })
+                    }
+                    break
+                case 'add:milestone':
+
+                    belong_board_id_ = getAfterNameId(coperateName)
+                    //如果是在甘特图模式下查看该项目
+                    if ('board:plans' == workbenchBoxcode) {
+                        if (gantt_board_id == '0' || gantt_board_id == belong_board_id_) {
+                            dispathes({
+                                type: 'gantt/getGttMilestoneList',
+                                payload: {
+                                }
+                            })
+                        }
+                    }
+                    break
+                //修改里程碑
+                case 'change:milestone':
+                    //当前的里程碑id和返回的里程碑id对应上
+                    let milestone_id = yield select(getModelSelectState('milestoneDetail', 'milestone_id'))
+                    let milestone_detail = yield select(getModelSelectState('milestoneDetail', 'milestone_detail'))
+                    let cope_milestone_id = getAfterNameId(coperateName)
+                    //更新里程碑详情
+                    if (milestone_id == cope_milestone_id) {
+                        dispathes({
+                            type: 'milestoneDetail/updateDatas',
+                            payload: {
+                                milestone_detail: { ...milestone_detail, ...coperateData }
+                            }
+                        })
+                        // debugger
+                    }
+                    //如果是项目id匹配上了,并且在查看甘特图的情况下，则更新甘特图里程碑列表
+                    belong_board_id_ = coperateData['board_id']
+                    if ('board:plans' == workbenchBoxcode) {
+                        if (gantt_board_id == '0' || gantt_board_id == belong_board_id_) {
+                            dispathes({
+                                type: 'gantt/getGttMilestoneList',
+                                payload: {
+                                }
+                            })
+                        }
+                    }
+                    break
+                //里程碑关联任务
+                case 'add:milestone:content':
+                    //当前的里程碑id和返回的里程碑id对应上
+                    milestone_id = yield select(getModelSelectState('milestoneDetail', 'milestone_id'))
+                    milestone_detail = yield select(getModelSelectState('milestoneDetail', 'milestone_detail'))
+                    cope_milestone_id = getAfterNameId(coperateName)
+                    //更新里程碑详情
+                    if (milestone_id == cope_milestone_id) {
+                        const contents = coperateData['content']
+                        const new_milestone_detail = { ...milestone_detail }
+                        if (new_milestone_detail['content_list']) {
+                            new_milestone_detail['content_list'].push(contents)
+                        } else {
+                            new_milestone_detail['content_list'] = [contents]
+                        }
+                        dispathes({
+                            type: 'milestoneDetail/updateDatas',
+                            payload: {
+                                milestone_detail: new_milestone_detail
+                            }
+                        })
+                        // debugger
+                    }
+                    break
+                //取消关联里程碑
+                case 'remove:milestone:content':
+                    //当前的里程碑id和返回的里程碑id对应上
+                    milestone_id = yield select(getModelSelectState('milestoneDetail', 'milestone_id'))
+                    milestone_detail = yield select(getModelSelectState('milestoneDetail', 'milestone_detail'))
+                    cope_milestone_id = getAfterNameId(coperateName)
+                    let milestone_rela_id = coperateData['rela_id']
+                    let new_milestone_detail = { ...milestone_detail }
+                    //更新里程碑详情
+                    if (milestone_id == cope_milestone_id) {
+                        let content_list = new_milestone_detail['content_list']
+                        if (typeof content_list != 'object') { //array
+                            return
+                        }
+                        //如果删除的是某一条id则遍历 数组将之删除
+                        for (let i = 0; i < content_list.length; i++) {
+                            if (milestone_rela_id == content_list[i]['id']) {
+                                new_milestone_detail['content_list'].splice(i, 1)
+                            }
+                        }
+                        dispathes({
+                            type: 'milestoneDetail/updateDatas',
+                            payload: {
+                                milestone_detail: new_milestone_detail
+                            }
+                        })
+                    }
+                    break
+                //关联里程碑的任务更新信息后
+                case 'change:milestone:content:update':
+                    //当前的里程碑id和返回的里程碑id对应上
+                    milestone_id = yield select(getModelSelectState('milestoneDetail', 'milestone_id'))
+                    milestone_detail = yield select(getModelSelectState('milestoneDetail', 'milestone_detail'))
+                    cope_milestone_id = getAfterNameId(coperateName)
+                    if (milestone_id == cope_milestone_id) {
+                        new_milestone_detail = { ...milestone_detail }
+                        const content_list_ = new_milestone_detail['content_list'] || []
+                        const { rela_id, rela_name } = coperateData //返回的关联任务的id
+                        const new_content_list_ = content_list_.map(item => {
+                            const { id } = item
+                            let new_item = { ...item }
+                            if (id == rela_id) {
+                                new_item = { ...item, ...coperateData, name: rela_name, id: rela_id }
+                            }
+                            return new_item
+                        })
+                        new_milestone_detail['content_list'] = new_content_list_
+                        dispathes({
+                            type: 'milestoneDetail/updateDatas',
+                            payload: {
+                                milestone_detail: new_milestone_detail
                             }
                         })
                     }
