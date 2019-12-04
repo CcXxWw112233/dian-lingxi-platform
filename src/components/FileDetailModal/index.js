@@ -2,15 +2,6 @@ import React, { Component } from 'react'
 import PublicDetailModal from '@/components/PublicDetailModal'
 import MainContent from './MainContent'
 import HeaderContent from './HeaderContent'
-import {
-  checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
-} from "@/utils/businessFunction";
-import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
-  PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_COMMENT_PUBLISH
-} from "@/globalset/js/constant";
-import { message } from 'antd'
-
 
 export default class FileDetailModal extends Component {
 
@@ -25,7 +16,7 @@ export default class FileDetailModal extends Component {
   }
 
   render() {
-    const { file_detail_modal_visible, filePreviewCurrentFileId } = this.props
+    const { file_detail_modal_visible, filePreviewCurrentFileId, fileType } = this.props
     return (
       <div>
         <PublicDetailModal
@@ -37,7 +28,7 @@ export default class FileDetailModal extends Component {
           // commentUseParams={commentUseParams}
           mainContent={<MainContent />}
           isNotShowFileDetailContentRightVisible={true}
-          headerContent={<HeaderContent filePreviewCurrentFileId={filePreviewCurrentFileId}/>}
+          headerContent={<HeaderContent filePreviewCurrentFileId={filePreviewCurrentFileId} fileType={fileType}/>}
         />
       </div>
     )
@@ -45,7 +36,8 @@ export default class FileDetailModal extends Component {
 }
 
 FileDetailModal.defaultProps = {
-  filePreviewCurrentFileId: '', // 需要一个当前的文件ID, 必传
+  filePreviewCurrentFileId: '', // 需要一个当前的文件ID, !!!
+  fileType: '', // 当前文件的后缀名, !!!
   file_detail_modal_visible: false, // 设置文件详情弹窗是否显示, 默认为 false 不显示
   setPreviewFileModalVisibile: function() { }, // 设置文件详情弹窗是否显示
   users: [], // 用户列表

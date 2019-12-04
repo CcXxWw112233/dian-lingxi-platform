@@ -6,6 +6,13 @@ import VersionSwitching from '@/components/VersionSwitching'
 import { connect } from 'dva'
 import { compareACoupleOfObjects } from '@/utils/util'
 import { checkIsHasPermissionInBoard, getSubfixName, checkIsHasPermissionInVisitControl } from "@/utils/businessFunction";
+import {
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN,PROJECT_FILES_FILE_UPDATE
+} from "@/globalset/js/constant";
+import { setCurrentVersionFile, updateVersionFileDescription } from '@/services/technological/file'
+import { isApiResponseOk } from '../../utils/handleResponseData'
+import { message } from 'antd'
 
 @connect()
 export default class HeaderContentRightMenu extends Component {
@@ -35,61 +42,186 @@ export default class HeaderContentRightMenu extends Component {
 
   // 关于版本信息的事件 S
 
-  //pdf文件和普通文件区别时做不同地处理预览
-  // handleUploadPDForElesFilePreview = ({ file_name, id, file_resource_id }) => {
-  //   if (getSubfixName(file_name) == '.pdf') {
-  //     this.props.dispatch({
-  //       type: 'workbenchFileDetail/getFilePDFInfo',
-  //       payload: {
-  //         id
-  //       }
-  //     })
-  //   } else {
-  //     this.props.filePreview({ id: file_resource_id, file_id: id })
-  //   }
-  //   this.props.dispatch({
-  //     type: 'workbenchFileDetail/updateDatas',
-  //     payload: {
-  //       isExpandFrame: false
-  //     }
-  //   })
-  // }
+  // 设为主版本回调
+  setCurrentVersionFile = (data) => {
+    let { id, set_major_version, version_id, file_name } = data
+    setCurrentVersionFile({id, set_major_version}).then(res => {
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('设置主版本成功', MESSAGE_DURATION_TIME)
+        }, 500)
+        this.handleUploadPDForElesFilePreview({ file_name: file_name, id })
+        this.props.updateStateDatas && this.props.updateStateDatas({ filePreviewCurrentFileId: id })
+      } else {
+        message.warn(res.message)
+      }
+    })
+  }
 
+  // pdf文件和普通文件区别时做不同地处理预览
+  handleUploadPDForElesFilePreview = ({ file_name, id }) => {
+    if (getSubfixName(file_name) == '.pdf') {
+      this.props.getCurrentFilePreviewData && this.props.getCurrentFilePreviewData({id}) // 需要先获取一遍详情
+      this.props.getFilePDFInfo && this.props.getFilePDFInfo({id})
+      this.props.updateStateDatas && this.props.updateStateDatas({ fileType: getSubfixName(file_name) })
+    } else {
+      this.props.getCurrentFilePreviewData && this.props.getCurrentFilePreviewData({id})
+    }
+  }
+
+  // 修改编辑版本描述的方法
+  chgVersionFileEdit({ list, file_id, file_name }) {
+    const { new_filePreviewCurrentVersionList, editValue } = this.state
+    let temp_val
+    let temp_filePreviewCurrentVersionList = [...new_filePreviewCurrentVersionList]
+    temp_filePreviewCurrentVersionList = temp_filePreviewCurrentVersionList.map(item => {
+      let new_item = item
+      if (new_item.file_id == file_id) {
+        temp_val = new_item.remarks
+        new_item = { ...item, is_edit: !item.is_edit }
+      }
+      return new_item
+    })
+    this.setState({
+      new_filePreviewCurrentVersionList: temp_filePreviewCurrentVersionList,
+      editValue: temp_val
+    })
+  }
 
   // 每一个menu菜单的item选项的切换 即点击切换预览文件版本
-  // handleVersionItem = (e) => {
-  //   const { key } = e
-  //   const { dispatch } = this.props
-  //   const { new_filePreviewCurrentVersionList } = this.state
-  //   // const { datas: { filePreviewCurrentVersionList = [] } } = this.props.model
-  //   let temp_filePreviewCurrentVersionList = [...new_filePreviewCurrentVersionList]
-  //   temp_filePreviewCurrentVersionList = temp_filePreviewCurrentVersionList.filter(item => {
-  //     if (item.file_id == key) {
-  //       return item
-  //     }
-  //   })
-  //   // console.log(new_filePreviewCurrentVersionList, 'sssss')
-  //   const { file_id, file_resource_id, file_name } = temp_filePreviewCurrentVersionList[0]
-  //   this.handleUploadPDForElesFilePreview({ file_name, id: file_id, file_resource_id })
-    
-  //   dispatch({
-  //     type: 'workbenchFileDetail/getFileType',
-  //     payload: {
-  //       file_id,
-  //     }
-  //   })
-  // }
+  handleVersionItem = (e) => {
+    const { key } = e
+    const { new_filePreviewCurrentVersionList } = this.state
+    let temp_filePreviewCurrentVersionList = [...new_filePreviewCurrentVersionList]
+    temp_filePreviewCurrentVersionList = temp_filePreviewCurrentVersionList.filter(item => {
+      if (item.file_id == key) {
+        return item
+      }
+    })
+    const { file_id, file_resource_id, file_name } = temp_filePreviewCurrentVersionList[0]
+    this.handleUploadPDForElesFilePreview({ file_name, id: file_id })
+    this.props.updateStateDatas && this.props.updateStateDatas({fileType: getSubfixName(file_name)})
+  }
+
+  // 每一个Item的点点点 事件
+  getVersionItemMenuClick = ({ list, file_id, file_name }, e) => {
+    e && e.domEvent && e.domEvent.stopPropagation()
+    const { currentPreviewFileData = {} } = this.props
+    const { board_id } = currentPreviewFileData
+    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    const key = e.key
+    switch (key) {
+      case '1': // 设置为主版本
+        const { dispatch } = this.props
+        let file_resource_id = ''
+        let file_version_id = ''
+        let file_name = ''
+        for (let val of list) {
+          if (file_id == val['file_id']) {
+            file_resource_id = val['file_resource_id']
+            file_version_id = val['version_id']
+            file_name = val['file_name']
+            break
+          }
+        }
+        // console.log({file_resource_id, file_id}, 'sssss')
+        this.setState({
+          imgLoaded: false
+        })
+        //版本改变预览
+        let data = { id:file_id,set_major_version: '1',version_id:file_version_id,file_name:file_name }
+        this.setCurrentVersionFile(data)
+
+        this.setState({
+          imgLoaded: false,
+          editMode: true,
+          currentRect: { x: 0, y: 0, width: 0, height: 0 },
+          isInAdding: false,
+          isInEdditOperate: false,
+          mentionFocus: false,
+        })
+        break
+      case '2':
+        break
+      // 编辑版本信息
+      case '3':
+        this.setState({
+          is_edit_version_description: true
+        })
+        this.chgVersionFileEdit({ list, file_id, file_name })
+        break
+      default:
+        break
+    }
+  }
+
+  // 改变编辑描述的value onChange事件
+  handleFileVersionValue = (list, e) => {
+    let val = e.target.value
+    this.setState({
+      editValue: val
+    })
+  }
+
+  // 失去焦点 的版本修改描述信息
+  handleFileVersionDecription = (list, key) => {
+    const { dispatch, } = this.props
+    const { editValue, is_edit_version_description } = this.state
+    let new_list = [...list]
+    let temp_list = [] // 定义一个空的数组列表用来保存之前编辑状态的哪一个元素
+    temp_list = new_list && new_list.filter(item => {
+      let new_item = item
+      if (new_item.is_edit) {
+        return new_item
+      }
+    })
+    new_list = new_list.map(item => {
+      let new_item = item
+      if (new_item.is_edit) {
+        new_item = { ...item, is_edit: false, remarks: editValue }
+        return new_item
+      } else {
+        return new_item
+      }
+    })
+    const { file_id, remarks } = temp_list[0]
+    this.setState({
+      is_edit_version_description: false,
+      new_filePreviewCurrentVersionList: new_list
+    })
+
+    if (editValue != remarks) {
+      updateVersionFileDescription({id:file_id,version_info: editValue}).then(res => {
+        if (isApiResponseOk(res)) {
+          setTimeout(() => {
+            message.success('编辑版本信息成功',MESSAGE_DURATION_TIME)
+          }, 500)
+        } else {
+          message.warn(res.message)
+        }
+      })
+      this.props.updateStateDatas && this.props.updateStateDatas({filePreviewCurrentVersionList:new_list})
+      this.setState({
+        editValue: ''
+      })
+    }
+  }
   
   // 关于版本信息的事件 E
 
 
   render() {
     const { currentPreviewFileData = {}, filePreviewCurrentFileId } = this.props
-    const { new_filePreviewCurrentVersionList = [] } = this.state
+    const { new_filePreviewCurrentVersionList = [], is_edit_version_description, editValue } = this.state
     const { board_id } = currentPreviewFileData
     const params = {
       filePreviewCurrentFileId,
-      new_filePreviewCurrentVersionList
+      new_filePreviewCurrentVersionList,
+      is_edit_version_description,
+      editValue
     }
 
     return (
@@ -99,10 +231,10 @@ export default class HeaderContentRightMenu extends Component {
           <VersionSwitching
             {...params} 
             is_show={true}
-            // handleVersionItem={this.handleVersionItem}
-            // getVersionItemMenuClick={this.getVersionItemMenuClick}
-            // handleFileVersionDecription={this.handleFileVersionDecription}
-            // handleFileVersionValue={this.handleFileVersionValue}
+            handleVersionItem={this.handleVersionItem}
+            getVersionItemMenuClick={this.getVersionItemMenuClick}
+            handleFileVersionDecription={this.handleFileVersionDecription}
+            handleFileVersionValue={this.handleFileVersionValue}
             // uploadProps={uploadProps}
           />
         </div>

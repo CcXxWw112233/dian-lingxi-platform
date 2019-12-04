@@ -335,7 +335,8 @@ class FileItem extends React.Component {
         <div>{timestampToTimeNormal(create_time, '/', true)}</div>
       </div>
       <FileDetailModal
-          filePreviewCurrentFileId={id} 
+          filePreviewCurrentFileId={id}
+          fileType={getSubfixName(file_name)} 
           file_detail_modal_visible={this.state.previewFileModalVisibile}
           setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
         />
