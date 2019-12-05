@@ -14,6 +14,7 @@ import {
   PROJECT_FILES_FILE_INTERVIEW
 } from "../../../../../globalset/js/constant";
 import FileDetailModal from '@/components/FileDetailModal'
+import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 
 @connect(({ workbench, technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } } }) => ({
   uploadedFileNotificationIdList:
@@ -124,7 +125,7 @@ class FileItem extends React.Component {
     //     file_id: id
     //   }
     // });
-    this.setPreviewFileModalVisibile();
+    
     // dispatch({
     //   type: 'publicFileDetailModal/updateDatas',
     //   payload: {
@@ -133,13 +134,20 @@ class FileItem extends React.Component {
     //   }
     // })
     // 将项目成员信息保存在项目详情, 而不在工作台中保存一份了
-    dispatch({
-      type: 'projectDetail/projectDetailInfo',
-      payload: {
-        id: board_id
+    Promise.resolve(
+      dispatch({
+        type: 'projectDetail/projectDetailInfo',
+        payload: {
+          id: board_id
+        }
+      })
+    ).then(res => {
+      if (isApiResponseOk(res)) {
+        this.setPreviewFileModalVisibile();
       }
     })
     this.props.updatePublicDatas({ board_id })
+    
     // this.props.updateFileDatas({
     //   seeFileInput: 'fileModule',
     //   board_id,

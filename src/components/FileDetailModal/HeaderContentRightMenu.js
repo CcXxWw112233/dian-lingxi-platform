@@ -17,9 +17,7 @@ import { message, Tooltip } from 'antd'
 import Cookies from "js-cookie";
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 
-@connect(({ projectDetail: { projectDetailInfoData = {} } }) => ({
-  projectDetailInfoData
-}))
+@connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
 
   constructor(props) {
@@ -69,7 +67,12 @@ export default class HeaderContentRightMenu extends Component {
         setTimeout(() => {
           message.success('更新版本成功', MESSAGE_DURATION_TIME)
         }, 500)
+        let { file_name, id } = res.data[0]
+        this.handleUploadPDForElesFilePreview({ file_name, id })
         this.props.updateStateDatas && this.props.updateStateDatas({ filePreviewCurrentFileId: data.file_id, filePreviewCurrentVersionList: res.data })
+        this.setState({
+          new_filePreviewCurrentVersionList: res.data
+        })
       } else {
         message.warn(res.message)
       }
@@ -80,7 +83,7 @@ export default class HeaderContentRightMenu extends Component {
   handleUploadPDForElesFilePreview = ({ file_name, id }) => {
     if (getSubfixName(file_name) == '.pdf') {
       this.props.getCurrentFilePreviewData && this.props.getCurrentFilePreviewData({ id }) // 需要先获取一遍详情
-      this.props.getFilePDFInfo && this.props.getFilePDFInfo({ id })
+      this.props.delayUpdatePdfDatas && this.props.delayUpdatePdfDatas({ id })
       this.props.updateStateDatas && this.props.updateStateDatas({ fileType: getSubfixName(file_name) })
     } else {
       this.props.getCurrentFilePreviewData && this.props.getCurrentFilePreviewData({ id })
@@ -236,6 +239,7 @@ export default class HeaderContentRightMenu extends Component {
     const { currentPreviewFileData = {}, filePreviewCurrentFileId, filePreviewCurrentVersionId, projectDetailInfoData: { data = [], folder_id } } = this.props
     const { new_filePreviewCurrentVersionList = [], is_edit_version_description, editValue } = this.state
     const { board_id, is_privilege, privileges = [] } = currentPreviewFileData
+    // console.log(this.props.projectDetailInfoData,folder_id, 'sssssss_folder_id')
     const params = {
       filePreviewCurrentFileId,
       new_filePreviewCurrentVersionList,
@@ -330,6 +334,16 @@ export default class HeaderContentRightMenu extends Component {
         </div>
       </div>
     )
+  }
+}
+
+function mapStateToProps({
+  projectDetail: {
+    projectDetailInfoData = {}
+  }
+}) {
+  return {
+    projectDetailInfoData
   }
 }
 

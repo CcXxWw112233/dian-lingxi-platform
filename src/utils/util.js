@@ -600,6 +600,7 @@ export const filterFileFormatType = (fileName) => {
  * @param {Object} obj2 对象2
  */
 export const compareACoupleOfObjects = (obj1, obj2) => {
+  let flag
   let o1 = obj1 instanceof Object;
   let o2 = obj2 instanceof Object;
   if (!o1 || !o2) {/*  判断不是对象  */
@@ -607,7 +608,8 @@ export const compareACoupleOfObjects = (obj1, obj2) => {
   }
 
   if (Object.keys(obj1).length !== Object.keys(obj2).length) {
-    return false;
+    flag = false;
+    return flag
     //Object.keys() 返回一个由对象的自身可枚举属性(key值)组成的数组,例如：数组返回下表：let arr = ["a", "b", "c"];console.log(Object.keys(arr))->0,1,2;
   }
 
@@ -617,8 +619,10 @@ export const compareACoupleOfObjects = (obj1, obj2) => {
     if (t1 && t2) {
       return compareACoupleOfObjects(obj1[attr], obj2[attr]);
     } else if (obj1[attr] !== obj2[attr]) {
-      return false;
+      flag = false;
+      return flag
     }
   }
-  return true;
+  flag = true
+  return flag;
 }

@@ -407,6 +407,7 @@ export default {
         })
       } else {
       }
+      return res || {}
     },
 
     * getProjectRoles({ payload }, { select, call, put }) {

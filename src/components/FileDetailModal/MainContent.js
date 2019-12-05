@@ -80,6 +80,11 @@ class MainContent extends Component {
     }
   }
 
+  getIframe = (src) => {
+    const iframe = '<iframe style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="' + src + '"></iframe>'
+    return iframe
+  }
+
   // 获取当前用户的ID
   getCurrentUserId = () => {
     try {
@@ -107,26 +112,30 @@ class MainContent extends Component {
     })
   }
 
-  fetchConvertPdfAlsoUpdateVersion = ({file_name, file_id}) => {
+  fetchConvertPdfAlsoUpdateVersion = ({ file_name, file_id }) => {
     const { currentPreviewFileData = {} } = this.props
-    const { supportFileTypeArray = [] } = this.state
+    const { supportFileTypeArray = [], isZoomPictureFullScreenMode } = this.state
     let FILE_NAME = getSubfixName(file_name)
     if (supportFileTypeArray.indexOf(FILE_NAME) != -1) {
-      fileConvertPdfAlsoUpdateVersion({id: file_id}).then(res => {
+      fileConvertPdfAlsoUpdateVersion({ id: file_id }).then(res => {
         if (isApiResponseOk(res)) {
           let isPDF = getSubfixName(res.data.file_name) == '.pdf'
           if (isPDF) {
-            this.props.getFilePDFInfo && this.props.getFilePDFInfo({id: res.data.id})
-            this.props.updateStateDatas && this.props.updateStateDatas({filePreviewCurrentFileId: res.data.id, currentPreviewFileData:{ ...currentPreviewFileData, id: res.data.id }, currentPreviewFileName: res.data.file_name, fileType: getSubfixName(res.data.file_name)})
-            setCurrentVersionFile({id: res.data.id, set_major_version: '1'}).then(result => {
+            setCurrentVersionFile({ id: res.data.id, set_major_version: '1' }).then(result => {
               if (isApiResponseOk(result)) {
-  
+                this.props.delayUpdatePdfDatas && this.props.delayUpdatePdfDatas({ id: res.data.id })
+                this.props.updateStateDatas && this.props.updateStateDatas({ filePreviewCurrentFileId: res.data.id, currentPreviewFileData: { ...currentPreviewFileData, id: res.data.id }, currentPreviewFileName: res.data.file_name, fileType: getSubfixName(res.data.file_name) })
+                this.setState({
+                  is_petty_loading: !isZoomPictureFullScreenMode && false,
+                  is_large_loading: isZoomPictureFullScreenMode && false,
+                  percent: 0
+                })
               }
             })
           } else {
-            this.props.getCurrentFilePreviewData && this.props.getCurrentFilePreviewData({id:res.data.id})
+            this.props.getCurrentFilePreviewData && this.props.getCurrentFilePreviewData({ id: res.data.id })
           }
-          
+
         } else {
           message.warn(res.message, MESSAGE_DURATION_TIME)
           if (res.code == 4047) { // 表示转换失败
@@ -139,10 +148,8 @@ class MainContent extends Component {
 
   // 加载进度条
   updateProcessPercent = () => {
-    const { dispatch } = this.props
-    const { filePreviewCurrentFileId, currentPreviewFileData = {} } = this.props
+    const { currentPreviewFileData = {} } = this.props
     const { id, board_id, file_name } = currentPreviewFileData
-    const { isZoomPictureFullScreenMode } = this.state
     let percent = this.state.percent + 10;
     // return
     if (percent > 100) {
@@ -150,7 +157,7 @@ class MainContent extends Component {
       this.setState({
         percent: 100
       })
-      this.fetchConvertPdfAlsoUpdateVersion({file_id: id, file_name: file_name})
+      this.fetchConvertPdfAlsoUpdateVersion({ file_id: id, file_name: file_name })
       return
     }
     this.setState({
@@ -174,8 +181,7 @@ class MainContent extends Component {
 
   // 渲染非全屏模式圈评图片
   renderPunctuateDom() {
-    const { clientHeight, filePreviewUrl, fileType, filePreviewCurrentFileId, currentPreviewFileData = {}, componentHeight, componentWidth } = this.props
-    const { board_id, is_privilege, privileges, id } = currentPreviewFileData
+    const { clientHeight, filePreviewUrl, fileType, filePreviewCurrentFileId } = this.props
     const { currentZoomPictureComponetWidth, currentZoomPictureComponetHeight, is_petty_loading, percent, } = this.state
 
     return (
@@ -210,6 +216,39 @@ class MainContent extends Component {
                   />
                 )}
               </div>
+            )
+        }
+      </>
+    )
+  }
+
+  // 渲染非全屏模式其他文件格式图片
+  renderIframeDom() {
+    const { clientHeight, filePreviewUrl, fileType } = this.props
+    const { is_petty_loading, percent, supportFileTypeArray = [] } = this.state
+
+    return (
+      <>
+        {
+          is_petty_loading ? (
+            <CirclePreviewLoadingComponent
+              height={clientHeight - 100 - 60}
+              percent={percent}
+              is_loading={is_petty_loading}
+              style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)', display: 'block', opacity: 1 }} />
+          ) : (
+              <>
+                <div style={{height: clientHeight - 100 - 60}} className={mainContentStyles.fileDetailContentLeft}
+                  dangerouslySetInnerHTML={{ __html: this.getIframe(filePreviewUrl) }}>
+                </div>
+                {
+                 fileType != '.pdf' && (supportFileTypeArray.indexOf(fileType) != -1) && (
+                    <div className={mainContentStyles.otherFilesOperator}>
+                      <span onClick={this.handleEnterCirclePointComment} className={mainContentStyles.operator_bar}><span className={`${globalStyles.authTheme} ${mainContentStyles.circle_icon}`}>&#xe664;</span>圈点评论</span>
+                    </div>
+                  )
+                }
+              </>
             )
         }
       </>
@@ -331,26 +370,43 @@ class MainContent extends Component {
   }
 
   render() {
-    const iframeDom = ('')
     const { clientHeight } = this.props
     const { filePreviewIsUsable, filePreviewIsRealImage, fileType } = this.props
     return (
 
       <div className={mainContentStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{ height: clientHeight - 100 - 60 }}>
-        {filePreviewIsUsable ? (
-          filePreviewIsRealImage ? (
-            this.renderPunctuateDom()
+        <div>
+          {filePreviewIsUsable ? (
+            filePreviewIsRealImage ? (
+              this.renderPunctuateDom()
+            ) : (
+                this.renderIframeDom()
+              )
           ) : (
-              iframeDom
-            )
-        ) : (
-            <div className={mainContentStyles.fileDetailContentLeft} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 16, color: '#595959' }}>
-              <div>
-                {this.renderNotSupport(fileType)}
+              <div className={mainContentStyles.fileDetailContentLeft} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 16, color: '#595959' }}>
+                <div>
+                  {this.renderNotSupport(fileType)}
+                </div>
               </div>
-            </div>
-          )}
-
+            )}
+        </div>
+        {/* {isZoomPictureFullScreenMode && (
+          <div>
+            {filePreviewIsUsable ? (
+              filePreviewIsRealImage ? (
+                punctuateBigDom
+              ) : (
+                  iframeBigDom
+                )
+            ) : (
+                <div className={mainContentStyles.fileDetailContentLeft} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 16, color: '#595959' }}>
+                  <div>
+                    {this.renderNotSupport(fileType)}
+                  </div>
+                </div>
+              )}
+          </div>
+        )} */}
       </div>
 
     )

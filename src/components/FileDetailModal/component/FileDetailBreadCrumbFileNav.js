@@ -35,9 +35,10 @@ export default class FileDetailBreadCrumbFileNav extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!compareACoupleOfObjects(this.props, nextProps)) {
-      this.getBreadCrumbList(nextProps)
-    }
+    this.getBreadCrumbList(nextProps)
+    // if (!compareACoupleOfObjects(this.props, nextProps)) {
+    //   this.getBreadCrumbList(nextProps)
+    // }
   }
 
   render() {
