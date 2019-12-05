@@ -424,6 +424,7 @@ export default {
     },
 
     * setMemberRoleInProject({ payload }, { select, call, put }) {
+      const { board_id } = payload
       const res = yield call(setMemberRoleInProject, payload)
       if (isApiResponseOk(res)) {
         yield put({
@@ -441,6 +442,7 @@ export default {
     },
 
     * removeMenbers({ payload }, { select, call, put }) { //
+      const { board_id } = payload
       let res = yield call(removeMenbers, payload)
       if (isApiResponseOk(res)) {
         yield put({
@@ -458,6 +460,7 @@ export default {
     },
 
     * updateProject({ payload }, { select, call, put }) { //
+      const { board_id } = payload
       let res = yield call(updateProject, payload)
       if (isApiResponseOk(res)) {
         yield put({
@@ -521,6 +524,7 @@ export default {
     },
 
     * addMenbersInProject({ payload }, { select, call, put }) {
+      const { board_id } = payload
       let res = yield call(addMenbersInProject, payload)
       if (isApiResponseOk(res)) {
         yield put({
