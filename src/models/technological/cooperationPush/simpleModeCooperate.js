@@ -194,6 +194,19 @@ export default {
                         }
                     }
                     break
+                case 'delete:milestone':
+                    belong_board_id_ = id_arr_[0]
+                    //如果是在甘特图模式下查看该项目
+                    if ('board:plans' == workbenchBoxcode) {
+                        if (gantt_board_id == '0' || gantt_board_id == belong_board_id_) {
+                            dispathes({
+                                type: 'gantt/getGttMilestoneList',
+                                payload: {
+                                }
+                            })
+                        }
+                    }
+                    break
                 //修改里程碑
                 case 'change:milestone':
                     //当前的里程碑id和返回的里程碑id对应上
