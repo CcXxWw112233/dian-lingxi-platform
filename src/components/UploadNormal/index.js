@@ -151,11 +151,21 @@ export default class UploadNormal extends Component {
                 // console.log('sssss_fileList', fileList)
                 const is_has_uploading = fileList_will.length && (fileList_will.findIndex(item => item.status == 'uploading') != -1)
                 if (!is_has_uploading) { //没有上传状态了
-                    if (typeof uploadCompleteCalback == 'function') {
-                        uploadCompleteCalback()
-                    }
-                    that.uploadCompleted()
+                    setTimeout(function () {
+                        if (typeof uploadCompleteCalback == 'function') {
+                            uploadCompleteCalback()
+                        }
+                        that.uploadCompleted()
+                    }, 1000)
                 }
+                // console.log('sssss', file)
+                // 错误处理
+                // if (file.status === 'done') {
+                //     if (file.response && file.response.code == '0') {
+                //     } else {
+                //         message.error(file.response && file.response.message || '上传出现了点问题');
+                //     }
+                // }
             },
             customRequest: this.customRequest
         };
