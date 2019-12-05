@@ -4,6 +4,9 @@ import { getModelSelectDatasState, getModelSelectState } from '../../utils'
 const model_milestoneDetail = name => `milestoneDetail/${name}`
 const model_gantt = name => `gantt/${name}`
 const model_publicTaskDetailModal = name => `publicTaskDetailModal/${name}`
+const getAfterNameId = (coperateName) => { //获取跟在名字后面的id
+    return coperateName.substring(coperateName.indexOf('/') + 1)
+}
 
 let dispathes = null
 export default {
@@ -17,7 +20,6 @@ export default {
 
     },
     effects: {
-        // 处理甘特图
         * handleSimpleModeCooperate({ payload }, { select, call, put }) { //im的某一条消息设置已读
             const { res } = payload
             const { data } = res
@@ -27,20 +29,34 @@ export default {
             const coperateName = coperate.e
             const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
             const coperateData = JSON.parse(coperate.d)
-            const getAfterNameId = (coperateName) => { //获取跟在名字后面的id
-                return coperateName.substring(coperateName.indexOf('/') + 1)
-            }
 
+            yield put({
+                type: 'handleGanttTask',
+                payload: {
+                    coperateName,
+                    coperateType,
+                    coperateData
+                }
+            })
+            yield put({
+                type: 'handleGanttMilestone',
+                payload: {
+                    coperateName,
+                    coperateType,
+                    coperateData
+                }
+            })
+        },
+
+        // 处理甘特图任务
+        * handleGanttTask({ payload }, { select, call, put }) {
+            const { coperateName, coperateType, coperateData } = payload
 
             const id_arr_ = getAfterNameId(coperateName).split('/') //name/id1/id2/...
             const drawContent = yield select(getModelSelectState('publicTaskDetailModal', 'drawContent')) //任务详情
             const card_detail_card_id = yield select(getModelSelectState('publicTaskDetailModal', 'card_id')) //任务弹窗的id
-
             const gantt_list_group = yield select(getModelSelectDatasState('gantt', 'list_group')) //甘特图任务数据
             const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id')) //甘特图项目id
-
-            const currentSelectedWorkbenchBox = yield select(getModelSelectState('simplemode', 'currentSelectedWorkbenchBox')) || {}
-            const workbenchBoxcode = currentSelectedWorkbenchBox.code
 
             let cObj = { ...coperateData }
             let gantt_list_group_ = [...gantt_list_group]
@@ -150,6 +166,20 @@ export default {
                         })
                     }
                     break
+                default:
+                    break
+            }
+        },
+        // 处理甘特图里程碑
+        * handleGanttMilestone({ payload }, { select, call, put }) {
+            const { coperateName, coperateType, coperateData } = payload
+            const currentSelectedWorkbenchBox = yield select(getModelSelectState('simplemode', 'currentSelectedWorkbenchBox')) || {}
+            const workbenchBoxcode = currentSelectedWorkbenchBox.code
+            const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id')) //甘特图项目id
+            const id_arr_ = getAfterNameId(coperateName).split('/') //name/id1/id2/...
+            let belong_board_id_ = id_arr_[0] //推送过来所属项目id
+
+            switch (coperateType) {
                 case 'add:milestone':
 
                     belong_board_id_ = getAfterNameId(coperateName)
