@@ -388,7 +388,6 @@ export default class DrawDetailInfo extends React.Component {
     
     let { board_id, board_name, data = [], description, residue_quantity, realize_quantity, org_id } = projectDetailInfoData //data是参与人列表
     data = data || []
-    console.log(description != '', 'ssssss')
     const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
     // 是否存在动态列表
     // let is_show_dynamic = this.refs.dynamic_contain && this.refs.dynamic_contain.props.model.datas.projectDynamicsList.length != 0 ? true : false
