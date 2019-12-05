@@ -168,7 +168,7 @@ class ZoomPicture extends Component {
       isShowAllCircleReview
     } = this.state;
     const { isFullScreenMode, zoomPictureParams = {} } = this.props;
-    const { is_privilege, privileges = [], board_id } = zoomPictureParams
+    // const { is_privilege, privileges = [], board_id } = zoomPictureParams
     const cond = {
       resetSize: () => { // 重置
         const isCurrentHasOnResetState =
@@ -1029,35 +1029,35 @@ class ZoomPicture extends Component {
   }
 
   // 设置切换版本圈评
-  handleShowCircleReview = () => {
-    // console.log('ssss_1111')
-    const { isShowAllCircleReview } = this.state
-    const { dispatch, workbenchType, projectFileType, zoomPictureParams = {} } = this.props
-    const { id: filePreviewCurrentFileId } = zoomPictureParams
-    this.setState({
-      isShowAllCircleReview: !isShowAllCircleReview
-    })
-    if (workbenchType) {
-      dispatch({
-        type: 'workbenchFileDetail/getFileCommitPoints',
-        payload: {
-          id: filePreviewCurrentFileId,
-          query_all: isShowAllCircleReview ? '' : '1'
-        }
-      })
-    }
-    if (projectFileType) {
-      // console.log('进来了' ,'ssss')
-      dispatch({
-        type: 'projectDetailFile/getFileCommitPoints',
-        payload: {
-          id: filePreviewCurrentFileId,
-          query_all: isShowAllCircleReview ? '' : '1'
-        }
-      })
-    }
+  // handleShowCircleReview = () => {
+  //   // console.log('ssss_1111')
+  //   const { isShowAllCircleReview } = this.state
+  //   const { dispatch, workbenchType, projectFileType, zoomPictureParams = {} } = this.props
+  //   const { id: filePreviewCurrentFileId } = zoomPictureParams
+  //   this.setState({
+  //     isShowAllCircleReview: !isShowAllCircleReview
+  //   })
+  //   if (workbenchType) {
+  //     dispatch({
+  //       type: 'workbenchFileDetail/getFileCommitPoints',
+  //       payload: {
+  //         id: filePreviewCurrentFileId,
+  //         query_all: isShowAllCircleReview ? '' : '1'
+  //       }
+  //     })
+  //   }
+  //   if (projectFileType) {
+  //     // console.log('进来了' ,'ssss')
+  //     dispatch({
+  //       type: 'projectDetailFile/getFileCommitPoints',
+  //       payload: {
+  //         id: filePreviewCurrentFileId,
+  //         query_all: isShowAllCircleReview ? '' : '1'
+  //       }
+  //     })
+  //   }
 
-  }
+  // }
 
   genImgInitSize = (
     containerWidth,
@@ -1485,7 +1485,7 @@ class ZoomPicture extends Component {
   };
   renderOperatorBar = () => {
     const { hovering, isFullScreenMode, zoomPictureParams = {}, isShow_textArea } = this.props;
-    const { is_privilege, privileges = [], board_id } = zoomPictureParams
+    // const { is_privilege, privileges = [], board_id } = zoomPictureParams
     const {
       currentImgZoomPercent,
       isCommentMode,

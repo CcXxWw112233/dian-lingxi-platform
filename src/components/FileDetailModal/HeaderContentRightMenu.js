@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import headerStyles from './HeaderContent.less'
+import globalStyles from '@/globalset/css/globalClassName.less'
 import VisitControl from '../../routes/Technological/components/VisitControl'
 import InformRemind from '@/components/InformRemind'
 import VersionSwitching from '@/components/VersionSwitching'
@@ -12,10 +13,9 @@ import {
 } from "@/globalset/js/constant";
 import { setCurrentVersionFile, updateVersionFileDescription, fileVersionist } from '@/services/technological/file'
 import { isApiResponseOk } from '../../utils/handleResponseData'
-import { message } from 'antd'
+import { message, Tooltip } from 'antd'
 import Cookies from "js-cookie";
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
-
 
 @connect(({ projectDetail: { projectDetailInfoData = {} } }) => ({
   projectDetailInfoData

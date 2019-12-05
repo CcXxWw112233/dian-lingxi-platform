@@ -3,9 +3,9 @@ import { Spin, Progress } from 'antd'
 
 export default class CirclePreviewLoadingComponent extends Component {
   render() {
-    const { is_loading = false, style, loading_text, delay, percent } = this.props
+    const { is_loading = false, style, loading_text, delay, percent, height } = this.props
     return (
-      <div style={{width: '100%', background: 'rgba(0,0,0,0.15)'}}>
+      <div style={{width: '100%', background: 'rgba(0,0,0,0.15)', height: height && height}}>
         <Spin size="large" spinning={is_loading} tip={
               <div>
                 <span style={{display: 'block', margin: '12px 0 24px', fontSize: '16px'}}>{loading_text}</span>

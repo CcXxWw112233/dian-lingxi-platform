@@ -65,12 +65,9 @@ const MenuItemGroup = Menu.ItemGroup;
    publicTaskDetailModal: {
      drawContent = {},
      drawerVisible
-   },
-   publicFileDetailModal: {
-    currentPreviewFileVisible
-  }
+   }
 }) => ({
-  workbench, processInfo, projectDetailInfoData, drawerVisible, drawContent, currentPreviewFileVisible
+  workbench, processInfo, projectDetailInfoData, drawerVisible, drawContent
 }))
 class CardContent extends React.Component {
   state = {
