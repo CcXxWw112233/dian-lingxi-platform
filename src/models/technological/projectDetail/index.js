@@ -509,9 +509,24 @@ export default {
     },
 
     * quitProject({ payload }, { select, call, put }) {
-      let res = yield call(quitProject, payload)
+      const { board_id, isJump } = payload
+      let res = yield call(quitProject, {board_id})
       if (isApiResponseOk(res)) {
         message.success(`已退出${currentNounPlanFilterName(PROJECTS)}`, MESSAGE_DURATION_TIME)
+        if (isJump) {
+          yield put({
+            type: 'routingJump',
+            payload: {
+              route: '/technological/project'
+            }
+          })
+          // yield put({// 退出项目后需要更新一下权限
+          //   type: 'technological/getUserBoardPermissions',
+          //   payload: {
+
+          //   }
+          // })
+        }
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -556,6 +571,12 @@ export default {
               route: '/technological/project'
             }
           })
+          // yield put({
+          //   type: 'technological/getUserBoardPermissions',
+          //   payload: {
+
+          //   }
+          // })
         }
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)

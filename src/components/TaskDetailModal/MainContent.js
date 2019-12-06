@@ -1128,7 +1128,7 @@ export default class MainContent extends Component {
           </div>
           {/* 各种字段的不同状态 E */}
           {/* 不同字段的渲染 S */}
-          <div>
+          <div style={{position: 'relative'}}>
             <DragDropContentComponent getMilestone={this.getMilestone} selectedKeys={selectedKeys} updateParentPropertiesList={this.updateParentPropertiesList} handleTaskDetailChange={handleTaskDetailChange} boardFolderTreeData={boardFolderTreeData} milestoneList={milestoneList} />
           </div>
           {/* 不同字段的渲染 E */}

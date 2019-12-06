@@ -558,7 +558,8 @@ export default class DrawDetailInfo extends React.Component {
               {
                 avatarList && avatarList.length > 9 && is_show_dot && (
                   <Tooltip title="全部成员" placement="top">
-                    <div 
+                    <div
+                      style={{marginTop: !checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) && '15px'}} 
                       onClick={ () => { this.handdleTriggerModal() } }
                       className={DrawDetailInfoStyle.show_member}></div>
                   </Tooltip>

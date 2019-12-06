@@ -128,7 +128,7 @@ class VideoMeetingPopoverContent extends React.Component {
 			payload: {
 
 			}
-		})
+		})	
 	}
 
 	componentDidMount() {
@@ -143,19 +143,23 @@ class VideoMeetingPopoverContent extends React.Component {
 			if (new_projectList.find(item => item.is_my_private == '1')) {
 				let {board_id, org_id} = (new_projectList.find(item => item.is_my_private == '1') || {})
 				this.setState({
-					org_id
+					org_id,
+					notProjectList: false
 				})
 				this.getProjectUsers({ projectId: board_id })
 			} else {
 				let {board_id, org_id} = (new_projectList.find((item, index) => index == '0') || {})
 				this.setState({
-					org_id
+					org_id,
+					notProjectList: false
 				})
 				this.getProjectUsers({ projectId: board_id })
 				return
 			}
 		} else {
-			this.getProjectUsers({ projectId: current_board })
+			this.setState({
+				notProjectList: true
+			})
 		}
 		this.setState({
 			isShowNowTime: true
@@ -164,6 +168,13 @@ class VideoMeetingPopoverContent extends React.Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
+		// const { dispatch } = this.props
+		// dispatch({
+		// 	type: 'technological/getUserBoardPermissions',
+		// 	payload: {
+
+		// 	}
+		// })
 		let { projectList = [] } = nextProps
 		projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
 		let new_projectList = [...projectList]
@@ -171,18 +182,24 @@ class VideoMeetingPopoverContent extends React.Component {
 			if (new_projectList.find(item => item.is_my_private == '1')) {
 				let {board_id, org_id} = (new_projectList.find(item => item.is_my_private == '1') || {})
 				this.setState({
-					org_id
+					org_id,
+					notProjectList: false
 				})
 				this.getProjectUsers({ projectId: board_id })
 				return
 			} else {
 				let {board_id, org_id} = (new_projectList.find((item, index) => index == '0') || {})
 				this.setState({
-					org_id
+					org_id,
+					notProjectList: false
 				})
 				this.getProjectUsers({ projectId: board_id })
 				return
 			}
+		} else {
+			this.setState({
+				notProjectList: true
+			})
 		}
 	}
 
@@ -253,6 +270,7 @@ class VideoMeetingPopoverContent extends React.Component {
 			
 		});
 		remind_time_value = '5'
+		defaultSaveToProject = ''
 		// clearTimeout(timer)
 	};
 
@@ -300,8 +318,8 @@ class VideoMeetingPopoverContent extends React.Component {
 				return gold_id
 			}
 		} else {
-			let gold_id = current_board
-			return gold_id
+			let gold_id
+			return gold_id = ''
 		}
 	}
 
@@ -840,8 +858,7 @@ class VideoMeetingPopoverContent extends React.Component {
 		//过滤出来当前用户有编辑权限的项目
 		projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
 		let newToNoticeList = [].concat(...toNoticeList, ...othersPeople)
-		const { defaultSaveToProject, defaultMeetingTitle, currentDelayStartTime } = this.getVideoMeetingPopoverContentNoramlDatas()
-		
+		let { defaultSaveToProject, defaultMeetingTitle, currentDelayStartTime } = this.getVideoMeetingPopoverContentNoramlDatas()
 		const videoMeetingPopoverContent_ = (
 			<div>
 				{videoMeetingPopoverVisible && (
@@ -969,6 +986,8 @@ class VideoMeetingPopoverContent extends React.Component {
 														{newToNoticeList.map((value) => {
 															// console.log(value, 'ssssss_value')
 															const { avatar, name, user_name, user_id } = value
+															let tempValue = Object.keys(value)
+															if (!tempValue) return
 															return (
 																<div style={{ display: 'flex', flexWrap: 'wrap' }} key={user_id}>
 
@@ -1001,7 +1020,7 @@ class VideoMeetingPopoverContent extends React.Component {
 						{/* 设置通知提醒 E */}
 
 						<div className={indexStyles.videoMeeting__submitBtn}>
-							<Button type="primary" onClick={this.handleVideoMeetingSubmit}>
+							<Button disabled={!defaultSaveToProject || this.state.notProjectList} type="primary" onClick={this.handleVideoMeetingSubmit}>
 								{isShowNowTime ? '发起会议' : '预约会议'}
 							</Button>
 						</div>

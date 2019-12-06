@@ -27,7 +27,7 @@ export default class UploadAttachment extends Component {
       toNoticeList: [],
       isOnlyNoticePersonsVisit: false,
       boardFolderTreeData: [],
-      fileSavePath: 0,
+      fileSavePath: null,
       uploading: false,
     }
   }
@@ -71,7 +71,7 @@ export default class UploadAttachment extends Component {
       fileList: [],
       toNoticeList: [],
       isOnlyNoticePersonsVisit: false,
-      fileSavePath: 0
+      fileSavePath: null
     }, () => {
       this.setUploadFileVisible(false);
 
@@ -116,7 +116,7 @@ export default class UploadAttachment extends Component {
       uploading: true,
     });
     const { org_id, board_id, card_id } = this.props;
-    const { fileSavePath = 0, fileList = [], toNoticeList, isOnlyNoticePersonsVisit } = this.state;
+    const { fileSavePath = null, fileList = [], toNoticeList, isOnlyNoticePersonsVisit } = this.state;
 
     const formData = new FormData();
     fileList.forEach(file => {
@@ -264,7 +264,6 @@ export default class UploadAttachment extends Component {
   }
 
   renderFolderTreeNodes = data => {
-
     return data.map(item => {
       if (item.child_data && item.child_data.length > 0) {
         return (
@@ -273,7 +272,7 @@ export default class UploadAttachment extends Component {
           </TreeNode>
         );
       } else {
-        return <TreeNode title={item.folder_name} key={item.folder_id} value={item.folder_id} dataRef={item} />;
+        return <TreeNode disabled={item.disabled && item.disabled} title={item.folder_name} key={item.folder_id} value={item.folder_id} dataRef={item} />;
       }
 
     });
@@ -292,12 +291,12 @@ export default class UploadAttachment extends Component {
       )
     }
 
-    return this.renderFolderTreeNodes([{ folder_id: 0, folder_name: '任务附件默认目录' }, boardFolderTreeData]);
+    return this.renderFolderTreeNodes([boardFolderTreeData]);
   }
 
   onChangeFileSavePath = (value) => {
-    if (!value && value != '0') {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    if (value == '0' || value == '') {
+      message.warn('请选择一个文件目录', MESSAGE_DURATION_TIME)
       return false
     } else {
       this.setState({
@@ -309,7 +308,7 @@ export default class UploadAttachment extends Component {
 
   render() {
     // 父组件传递的值
-    const { visible, children, board_id, card_id, projectDetailInfoData = {}, org_id } = this.props;
+    const { visible, children, board_id, card_id, projectDetailInfoData = {}, org_id, boardFolderTreeData } = this.props;
     const { uploadFileVisible, uploadFilePreviewList = [], toNoticeList = [], fileSavePath, uploading } = this.state;
 
     const { data: projectMemberData } = projectDetailInfoData;
@@ -328,7 +327,8 @@ export default class UploadAttachment extends Component {
           onCancel={this.closeUploadAttachmentModal}
           zIndex={1007}
           width={556}
-          okButtonProps={{ loading: uploading }}
+          maskClosable={false}
+          okButtonProps={{ loading: uploading, disabled: boardFolderTreeData && boardFolderTreeData.length == '0' || !fileSavePath }}
           cancelButtonProps={uploading ? { disabled: true } : {}}
           okText={uploading ? '上传中……' : '确定'}
         >
@@ -431,19 +431,25 @@ export default class UploadAttachment extends Component {
           <div style={{ marginTop: '16px' }}>
             <div className={styles.selectFolderWapper}>
               <TreeSelect
-                defaultValue={fileSavePath}
+                // defaultValue={fileSavePath}
+                disabled={boardFolderTreeData && boardFolderTreeData.length == '0'}
                 value={fileSavePath}
                 showSearch={false}
                 style={{ width: 508 }}
                 dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                placeholder="附件存放路径"
-                allowClear
-                treeDefaultExpandAll
+                placeholder="请选择"
+                allowClear={true}
+                treeDefaultExpandAll={true}
                 onChange={this.onChangeFileSavePath}
               >
                 {this.renderSelectBoardFileTreeList()}
               </TreeSelect>
             </div>
+            {
+              boardFolderTreeData && boardFolderTreeData.length == '0' && (
+                <span style={{display:'block', marginTop: '15px', marginLeft: '4px', color: '#FAAD14'}}>暂无访问文件权限哦~</span>
+              )
+            }
           </div>
         </Modal>
       </div >
