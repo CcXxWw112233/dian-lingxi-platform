@@ -156,16 +156,16 @@ export default class UploadNormal extends Component {
                             uploadCompleteCalback()
                         }
                         that.uploadCompleted()
-                    }, 1000)
+                    }, 1500)
                 }
                 // console.log('sssss', file)
                 // 错误处理
-                // if (file.status === 'done') {
-                //     if (file.response && file.response.code == '0') {
-                //     } else {
-                //         message.error(file.response && file.response.message || '上传出现了点问题');
-                //     }
-                // }
+                if (file.status === 'done') {
+                    if (file.response && file.response.code == '0') {
+                    } else {
+                        message.error(file.response && file.response.message || '上传出现了点问题');
+                    }
+                }
             },
             customRequest: this.customRequest
         };
