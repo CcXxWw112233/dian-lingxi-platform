@@ -239,6 +239,8 @@ class Gantt extends Component {
     const list_group_new = [...list_group]
     const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
     const group_index_cards_index = list_group_new[group_index].lane_data.cards.findIndex(item => item.id == card_id)
+    const current_item = {...list_group_new[group_index].lane_data.cards[group_index_cards_index]}
+
     list_group_new[group_index].lane_data.cards[group_index_cards_index] = { ...list_group_new[group_index].lane_data.cards[group_index_cards_index], ...new_drawContent }
     list_group_new[group_index].lane_data.cards[group_index_cards_index]['name'] = list_group_new[group_index].lane_data.cards[group_index_cards_index]['card_name']
 
@@ -248,6 +250,15 @@ class Gantt extends Component {
         data: list_group_new
       }
     })
+
+    // 做判断完成或者未完成后，查询里程碑接口更新,（里程碑状态和任务完成与否有关）
+    if (current_item.is_realize != new_drawContent.is_realize) {
+      dispatch({
+        type: 'gantt/getGttMilestoneList',
+        payload: {
+        }
+      })
+    }
   }
 
   // 删除某一条任务

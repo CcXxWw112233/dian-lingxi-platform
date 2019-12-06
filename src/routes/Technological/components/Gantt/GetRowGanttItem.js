@@ -143,6 +143,14 @@ export default class GetRowGanttItem extends Component {
         return 'rgba(0,0,0,0.15)'
       }
     }
+    // if (is_all_realized == '0') { //存在未完成任务
+    //   if (is_over_duetime) {
+    //     return '#FFA39E'
+    //   }
+    // } else { //全部任务已完成
+    //   return 'rgba(0,0,0,0.15)'
+    // }
+
     return ''
   }
 
