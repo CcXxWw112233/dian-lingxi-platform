@@ -6,8 +6,6 @@ import Cookies from 'js-cookie'
 import { setUploadHeaderBaseInfo } from '../../utils/businessFunction'
 import axios from 'axios'
 // import BMF from 'browser-md5-file';
-import { resolve, reject } from '_any-promise@1.3.0@any-promise'
-import { getUSerInfo } from '../../services/technological'
 import { checkFileMD5WithBack, uploadToOssCalback } from '../../services/technological/file'
 import oss from 'ali-oss';
 import SparkMD5 from 'spark-md5'
