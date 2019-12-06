@@ -9,9 +9,9 @@ import { compareACoupleOfObjects } from '@/utils/util'
 import { checkIsHasPermissionInBoard, getSubfixName, checkIsHasPermissionInVisitControl } from "@/utils/businessFunction";
 import {
   MESSAGE_DURATION_TIME,
-  NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_FILE_UPDATE, PROJECT_FILES_FILE_EDIT, UPLOAD_FILE_SIZE, REQUEST_DOMAIN_FILE
+  NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_FILE_UPDATE, PROJECT_FILES_FILE_EDIT, UPLOAD_FILE_SIZE, REQUEST_DOMAIN_FILE, PROJECT_FILES_FILE_DOWNLOAD
 } from "@/globalset/js/constant";
-import { setCurrentVersionFile, updateVersionFileDescription, fileVersionist } from '@/services/technological/file'
+import { setCurrentVersionFile, updateVersionFileDescription, fileVersionist, fileDownload, saveAsNewVersion } from '@/services/technological/file'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message, Tooltip, Dropdown, Menu, Button } from 'antd'
 import Cookies from "js-cookie";
@@ -132,13 +132,14 @@ export default class HeaderContentRightMenu extends Component {
     e && e.domEvent && e.domEvent.stopPropagation()
     const { currentPreviewFileData = {} } = this.props
     const { board_id } = currentPreviewFileData
-    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+
     const key = e.key
     switch (key) {
       case '1': // 设置为主版本
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         const { dispatch } = this.props
         let file_resource_id = ''
         let file_version_id = ''
@@ -172,6 +173,10 @@ export default class HeaderContentRightMenu extends Component {
         break
       // 编辑版本信息
       case '3':
+        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) {
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
         this.setState({
           is_edit_version_description: true
         })
@@ -237,18 +242,73 @@ export default class HeaderContentRightMenu extends Component {
   // ------------------------- 关于版本信息的事件 E --------------------------------
 
   // ------------------------- 关于另存为事件 S ------------------------------------
-  saveAsMenu = (data) => {
+
+  openWin(url) {
+    var element1 = document.createElement("a");
+    element1.href= url;
+    element1.id = 'openWin'
+    document.querySelector('body').appendChild(element1)
+    document.getElementById("openWin").click();//点击事件
+    document.getElementById("openWin").parentNode.removeChild(document.getElementById("openWin"))
+  }
+
+  // 下载文件
+  handleFileDownload({ filePreviewCurrentResourceId, pdfDownLoadSrc }) {
+    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    //如果时pdf
+    if (pdfDownLoadSrc) {
+      window.open(pdfDownLoadSrc)
+    } else {
+      fileDownload({ids: filePreviewCurrentResourceId}).then(res => {
+        if (isApiResponseOk(res)) {
+          const data = res.data
+          if(data && data.length) {
+            for (let val of data ) {
+              // window.open(val)
+              this.openWin(val)
+            }
+          }
+        } else {
+          message.warn(res.message, MESSAGE_DURATION_TIME)
+        }
+      })
+    }
+  }
+
+  // 保存为新版本
+  handleSaveAsNewVersion = () => {
+    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    const { currentPreviewFileData: { id } } = this.props
+    saveAsNewVersion({id}).then(res => {
+      if (isApiResponseOk(res)) {
+        // console.log(res, 'sssssss_res')
+        // return
+        const { fileId: version_id, id } = res.data
+        this.getFileVersionist({version_id, file_id: id})
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    })
+  }
+
+  saveAsMenu = () => {
+    const { filePreviewCurrentResourceId, filePreviewCurrentFileId, pdfDownLoadSrc } = this.props
     return (
-      // <Menu onClick={this.operationMenuClick.bind(this, data)}>
       <Menu>
-        <Menu.Item key="1" 
-          // onClick={this.fileDownload.bind(this, { filePreviewCurrentId, filePreviewCurrentFileId, pdfDownLoadSrc })}
-          >
+        <Menu.Item key="1"
+        onClick={this.handleFileDownload.bind(this, { filePreviewCurrentResourceId, pdfDownLoadSrc })}
+        >
           下载到本地
         </Menu.Item>
-        <Menu.Item key="2" 
-          // onClick={() => this.saveAsNewVersion({ filePreviewCurrentId, filePreviewCurrentFileId, pdfDownLoadSrc })}
-          >
+        <Menu.Item key="2"
+        onClick={this.handleSaveAsNewVersion}
+        >
           保存为新版本
         </Menu.Item>
       </Menu>
@@ -271,12 +331,7 @@ export default class HeaderContentRightMenu extends Component {
   }
 
   createOnlyReadingShareLink = () => {
-    // const { location } = this.props
-    // //获取参数
-    // const { board_id = '', appsSelectKey = '', file_id = '' } = this.getSearchFromLocation(location)
-
     const { currentPreviewFileData: { file_id, board_id, } } = this.props
-
     const payload = {
       board_id: board_id,
       rela_type: '3',
@@ -291,6 +346,7 @@ export default class HeaderContentRightMenu extends Component {
       }
     })
   }
+
   handleOnlyReadingShareExpChangeOrStopShare = (obj) => {
     const isStopShare = obj && obj['status'] && obj['status'] === '0'
     return modifOrStopShareLink(obj).then(res => {
@@ -682,9 +738,9 @@ export default class HeaderContentRightMenu extends Component {
           />
         </div>
         {/* 另存为 */}
-        <div className={headerStyles.margin_right10} style={{position: 'relative'}}>
-          <Dropdown overlay={this.saveAsMenu()} getPopupContainer={triggerNode => triggerNode.parentNode}>
-            <Button style={{ height: 24, marginLeft: 14 }} >
+        <div className={headerStyles.margin_right10} style={{ position: 'relative' }}>
+          <Dropdown trigger={['click']} overlay={this.saveAsMenu()} getPopupContainer={triggerNode => triggerNode.parentNode}>
+            <Button style={{ height: 24 }} >
               <span className={`${globalStyles.authTheme} ${headerStyles.right__shareIndicator_icon}`}>&#xe6dd;</span>
               另存为
                 </Button>
@@ -692,7 +748,7 @@ export default class HeaderContentRightMenu extends Component {
         </div>
 
         {/* 分享协作 */}
-        <div>
+        <div className={headerStyles.share_wrapper}>
           {
             file_id && (
               <div style={{ alignItems: 'center', display: 'flex', marginRight: '10px' }}>
@@ -748,7 +804,7 @@ export default class HeaderContentRightMenu extends Component {
 
         {/* 全屏 */}
         <div>
-          <div style={{ cursor: 'pointer' }} onClick={this.zoomFrame} className={`${globalStyles.authTheme}`}>{isZoomPictureFullScreenMode ? (<span style={{ fontSize: '18px' }}>&#xe7f7;</span>) : (<span style={{ fontSize: '18px' }}>&#xe7f3;</span>)}</div>
+          <div style={{ cursor: 'pointer' }} onClick={this.zoomFrame} className={`${globalStyles.authTheme}`}><span style={{ fontSize: '22px' }}>&#xe7f3;</span></div>
         </div>
       </div>
     )

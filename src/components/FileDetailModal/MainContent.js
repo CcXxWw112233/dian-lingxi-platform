@@ -172,7 +172,7 @@ class MainContent extends Component {
 
   // 渲染非全屏模式圈评图片
   renderPunctuateDom() {
-    const { clientHeight, filePreviewUrl, filePreviewCurrentFileId } = this.props
+    const { clientHeight, filePreviewUrl, filePreviewCurrentFileId, isZoomPictureFullScreenMode } = this.props
     const { currentZoomPictureComponetWidth, currentZoomPictureComponetHeight, is_petty_loading, percent, } = this.state
 
     return (
@@ -200,6 +200,7 @@ class MainContent extends Component {
                     imgInfo={{ url: filePreviewUrl }}
                     componentInfo={{ width: currentZoomPictureComponetWidth + 'px', height: currentZoomPictureComponetHeight + 'px' }}
                     userId={this.getCurrentUserId()}
+                    isFullScreenMode={isZoomPictureFullScreenMode}
                     handleFullScreen={this.handleZoomPictureFullScreen}
                     filePreviewCurrentFileId={filePreviewCurrentFileId}
                     handleEnterCirclePointComment={this.handleEnterCirclePointComment}
@@ -389,6 +390,7 @@ class MainContent extends Component {
                     imgInfo={{ url: filePreviewUrl }}
                     componentInfo={{ width: bodyClientWidth - 100, height: bodyClientHeight - 60 }}
                     userId={this.getCurrentUserId()}
+                    isFullScreenMode={isZoomPictureFullScreenMode}
                     handleFullScreen={this.handleZoomPictureFullScreen}
                     filePreviewCurrentFileId={filePreviewCurrentFileId}
                     handleEnterCirclePointComment={this.handleEnterCirclePointComment}

@@ -22,39 +22,41 @@ export default class FileDetailContent extends Component {
     }
   }
 
-  initStateDatas = ({data}) => {
+  initStateDatas = ({ data }) => {
     this.setState({
+      filePreviewCurrentResourceId: data.base_info.file_resource_id, // 需要保存源文件ID
       currentPreviewFileData: data.base_info, // 当前文件的详情内容
-        filePreviewIsUsable: data.preview_info.is_usable,
-        filePreviewUrl: data.preview_info.url, // 文件路径
-        filePreviewIsRealImage: data.preview_info.is_real_image, // 是否是真的图片
-        currentPreviewFileName: data.base_info.file_name, // 当前文件的名称
-        fileType: getSubfixName(data.base_info.file_name), // 文件的后缀名
-        targetFilePath: data.target_path, // 当前文件路径
-        filePreviewCurrentVersionList: data.version_list, // 文件的版本列表
-        filePreviewCurrentVersionId: data.version_list.length ? data.version_list[0]['version_id'] : '', // 保存一个当前版本ID
+      filePreviewIsUsable: data.preview_info.is_usable,
+      filePreviewUrl: data.preview_info.url, // 文件路径
+      filePreviewIsRealImage: data.preview_info.is_real_image, // 是否是真的图片
+      currentPreviewFileName: data.base_info.file_name, // 当前文件的名称
+      fileType: getSubfixName(data.base_info.file_name), // 文件的后缀名
+      targetFilePath: data.target_path, // 当前文件路径
+      filePreviewCurrentVersionList: data.version_list, // 文件的版本列表
+      filePreviewCurrentVersionId: data.version_list.length ? data.version_list[0]['version_id'] : '', // 保存一个当前版本ID
     })
   }
 
-   delayUpdatePdfDatas = async({ id }) => {
-    let res = await fileInfoByUrl({id})
+  delayUpdatePdfDatas = async ({ id }) => {
+    let res = await fileInfoByUrl({ id })
     if (isApiResponseOk(res)) {
-      this.initStateDatas({data: res.data})
-      await this.getFilePDFInfo({id})
+      this.initStateDatas({ data: res.data })
+      await this.getFilePDFInfo({ id })
     } else {
       message.warn(res.message, MESSAGE_DURATION_TIME)
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    const { fileType } = this.props
-    const { filePreviewCurrentFileId: newFilePreviewCurrentFileId } = nextProps
+    const { fileType, clientHeight } = this.props
+    const { filePreviewCurrentFileId: newFilePreviewCurrentFileId, clientHeight: newClientHeight } = nextProps
     // 初始化数据
-    if (!newFilePreviewCurrentFileId || compareACoupleOfObjects(this.props, nextProps)) return
-      // this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
+    if (clientHeight != newClientHeight) return
+    if (compareACoupleOfObjects(this.props, nextProps)) return
+    // this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
     if (fileType == '.pdf') {
       // this.getFilePDFInfo({ id: newFilePreviewCurrentFileId })
-      this.delayUpdatePdfDatas({id: newFilePreviewCurrentFileId})
+      this.delayUpdatePdfDatas({ id: newFilePreviewCurrentFileId })
       return
     }
     this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
@@ -73,7 +75,7 @@ export default class FileDetailContent extends Component {
   getCurrentFilePreviewData = ({ id }) => {
     fileInfoByUrl({ id }).then(res => {// 获取详情的接口
       if (isApiResponseOk(res)) {
-        this.initStateDatas({data: res.data})
+        this.initStateDatas({ data: res.data })
       } else {
         message.warn(res.message)
       }
