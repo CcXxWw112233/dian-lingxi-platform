@@ -1066,7 +1066,7 @@ class VideoMeetingPopoverContent extends React.Component {
 				}
 				onVisibleChange={this.handleVideoMeetingPopoverVisibleChange}
 				trigger="click"
-				getPopupContainer={triggerNode => triggerNode.parentNode}
+				// getPopupContainer={triggerNode => triggerNode.parentNode}
 			>
 				<div
 					className={indexStyles.videoMeeting__icon}
