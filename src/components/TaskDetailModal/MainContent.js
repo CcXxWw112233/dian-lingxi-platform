@@ -760,7 +760,9 @@ export default class MainContent extends Component {
   // 获取添加属性中的不同字段
   getDiffAttributies = () => {
     const { propertiesList = [], selectedKeys = [] } = this.state
-    if (!(propertiesList && propertiesList.length)) return
+    if (!(propertiesList && propertiesList.length)) {
+      return (<></>)
+    }
     let new_propertiesList = [...propertiesList]
     new_propertiesList = new_propertiesList.filter(item => item.code != 'CONTENTLINK')
     return (
@@ -1128,7 +1130,7 @@ export default class MainContent extends Component {
           </div>
           {/* 各种字段的不同状态 E */}
           {/* 不同字段的渲染 S */}
-          <div>
+          <div style={{position: 'relative'}}>
             <DragDropContentComponent getMilestone={this.getMilestone} selectedKeys={selectedKeys} updateParentPropertiesList={this.updateParentPropertiesList} handleTaskDetailChange={handleTaskDetailChange} boardFolderTreeData={boardFolderTreeData} milestoneList={milestoneList} />
           </div>
           {/* 不同字段的渲染 E */}

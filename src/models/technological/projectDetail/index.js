@@ -425,12 +425,14 @@ export default {
     },
 
     * setMemberRoleInProject({ payload }, { select, call, put }) {
+      // const { board_id } = payload
+      const BOARD_ID = (payload && payload.board_id) && payload.board_id
       const res = yield call(setMemberRoleInProject, payload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'projectDetailInfo',
           payload: {
-            id: board_id,
+            id: BOARD_ID || board_id,
             calback: function () {
               message.success('设置角色成功', MESSAGE_DURATION_TIME)
             }
@@ -442,12 +444,14 @@ export default {
     },
 
     * removeMenbers({ payload }, { select, call, put }) { //
+      // const { board_id } = payload
+      const BOARD_ID = (payload && payload.board_id) && payload.board_id
       let res = yield call(removeMenbers, payload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'projectDetailInfo',
           payload: {
-            id: board_id,
+            id: BOARD_ID || board_id,
             calback: function () {
               message.success(`已从${currentNounPlanFilterName(PROJECTS)}移除该${currentNounPlanFilterName(MEMBERS)}`, MESSAGE_DURATION_TIME)
             }
@@ -459,12 +463,14 @@ export default {
     },
 
     * updateProject({ payload }, { select, call, put }) { //
+      // const { board_id } = payload
+      const BOARD_ID = (payload && payload.board_id) && payload.board_id
       let res = yield call(updateProject, payload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'projectDetailInfo',
           payload: {
-            id: board_id,
+            id: BOARD_ID || board_id,
             calback: function () {
               message.success('更新成功', MESSAGE_DURATION_TIME)
             }
@@ -504,9 +510,24 @@ export default {
     },
 
     * quitProject({ payload }, { select, call, put }) {
-      let res = yield call(quitProject, payload)
+      const { board_id, isJump } = payload
+      let res = yield call(quitProject, {board_id})
       if (isApiResponseOk(res)) {
         message.success(`已退出${currentNounPlanFilterName(PROJECTS)}`, MESSAGE_DURATION_TIME)
+        if (isJump) {
+          yield put({
+            type: 'routingJump',
+            payload: {
+              route: '/technological/project'
+            }
+          })
+          // yield put({// 退出项目后需要更新一下权限
+          //   type: 'technological/getUserBoardPermissions',
+          //   payload: {
+
+          //   }
+          // })
+        }
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -522,12 +543,14 @@ export default {
     },
 
     * addMenbersInProject({ payload }, { select, call, put }) {
+      // const { board_id } = payload
+      const BOARD_ID = (payload && payload.board_id) && payload.board_id
       let res = yield call(addMenbersInProject, payload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'projectDetailInfo',
           payload: {
-            id: board_id,
+            id: BOARD_ID || board_id,
             calback: function () {
               message.success(`${currentNounPlanFilterName(PROJECTS)}添加${currentNounPlanFilterName(MEMBERS)}成功`, MESSAGE_DURATION_TIME)
             }
@@ -549,6 +572,12 @@ export default {
               route: '/technological/project'
             }
           })
+          // yield put({
+          //   type: 'technological/getUserBoardPermissions',
+          //   payload: {
+
+          //   }
+          // })
         }
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)

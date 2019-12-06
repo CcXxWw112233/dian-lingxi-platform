@@ -1128,7 +1128,7 @@ export default class DragDropContentComponent extends Component {
     let messageValue = (<div></div>)
     messageValue = (
       <div>
-      <DragDropContext onDragEnd={this.onDragEnd}>
+      <DragDropContext getPopupContainer={triggerNode => triggerNode.parentNode} onDragEnd={this.onDragEnd}>
         <Droppable droppableId="droppable">
           {(provided, snapshot) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>

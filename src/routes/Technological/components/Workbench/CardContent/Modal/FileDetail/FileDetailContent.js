@@ -1695,7 +1695,7 @@ class FileDetailContent extends React.Component {
                   <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
                 )
               }
-              <Dropdown overlay={saveAsMenu}>
+              <Dropdown overlay={saveAsMenu()}>
                 <Button style={{ height: 24, marginLeft: 14 }} >
                   <span className={`${globalStyles.authTheme} ${indexStyles.right__shareIndicator_icon}`}>&#xe6dd;</span>
                   另存为

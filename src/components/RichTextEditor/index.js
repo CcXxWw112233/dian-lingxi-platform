@@ -64,7 +64,8 @@ export default class RichTextEditor extends React.Component {
     setIsInEdit = (isInEdit, e) => {
         e && e.stopPropagation()
         this.setState({
-            isInEdit: isInEdit
+            isInEdit: isInEdit,
+            editorState: ''
         });
     }
 

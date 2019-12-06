@@ -211,8 +211,11 @@ export default class DrawDetailInfo extends React.Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
+    const { projectDetailInfoData:{description} } = this.props
     this.setState({
-      editDetaiDescription: true
+      editDetaiDescription: true,
+      detaiDescriptionValue: '',
+      textArea_val: description
     })
   }
   setEditIsSoundsEvrybody(e) {
@@ -226,8 +229,10 @@ export default class DrawDetailInfo extends React.Component {
       detaiDescriptionValue: e.target.value || detaiDescription,
       textArea_val: e.target.value
     })
-    const { projectDetailInfoData = {} } = this.props
-    projectDetailInfoData['description'] = e.target.value
+    // const { projectDetailInfoData: { description }, projectDetailInfoData } = this.props
+    // if (description == '') return
+    // projectDetailInfoData['description'] = e.target.value
+    
   }
   // editSave(board_id, e) {
   //   const { projectDetailInfoData = {} } = this.props
@@ -263,16 +268,23 @@ export default class DrawDetailInfo extends React.Component {
 
   // 修改文本框的事件
   setTextAreaDescription(board_id) {
-    const { projectDetailInfoData = {}, dispatch } = this.props
+    const { projectDetailInfoData:{description}, dispatch, projectDetailInfoData = {} } = this.props
+    const { textArea_val } = this.state
       const obj = {
         isSoundsEvrybody_2: this.state.isSoundsEvrybody_2,
-        description: projectDetailInfoData['description'],
+        description: textArea_val,
         board_id
       }
       dispatch({
         type: 'projectDetail/updateProject',
         payload: {
           ...obj
+        }
+      })
+      dispatch({
+        type: 'projectDetail/updateDatas',
+        payload: {
+          projectDetailInfoData: {...projectDetailInfoData, description: textArea_val}
         }
       })
       this.setState({
@@ -285,8 +297,13 @@ export default class DrawDetailInfo extends React.Component {
   handleKeyDown(e, board_id) {
     let code = e.keyCode
     const { detaiDescriptionValue, defaultDescriptionVal } = this.state
+    const { projectDetailInfoData:{description} } = this.props
     if (code == '13') {
       if(detaiDescriptionValue == defaultDescriptionVal) {
+        if (description == '') {
+          this.setTextAreaDescription(board_id)
+          return
+        }
         this.setState({
           editDetaiDescription: false,
           textArea_val: ''
@@ -299,15 +316,17 @@ export default class DrawDetailInfo extends React.Component {
 
   // 获取文本框失去焦点的事件
   handleOnBlur(e, board_id) {
-    const { detaiDescriptionValue, defaultDescriptionVal } = this.state
-    if(detaiDescriptionValue == defaultDescriptionVal) {
+    const { detaiDescriptionValue, defaultDescriptionVal, textArea_val } = this.state
+    const { projectDetailInfoData:{description}, projectDetailInfoData = {} } = this.props
+    if (textArea_val.trim() != description) {
+      this.setTextAreaDescription(board_id)
+    } else {
       this.setState({
         editDetaiDescription: false,
-        textArea_val: ''
+        textArea_val: '',
       })
-      return
     }
-    this.setTextAreaDescription(board_id)
+   
   }
 
   // 是否显示全部成员
@@ -320,11 +339,12 @@ export default class DrawDetailInfo extends React.Component {
 
   // 邀请人进项目
   addMenbersInProject = (data) => {
-    const { invitationType, invitationId, rela_Condition, dispatch } = this.props
+    const { invitationType, invitationId, rela_Condition, dispatch, projectDetailInfoData = {} } = this.props
+    const { org_id } = projectDetailInfoData
     const temp_ids = data.users.split(",")
     const invitation_org = localStorage.getItem('OrganizationId')
     organizationInviteWebJoin({
-      _organization_id: invitation_org,
+      _organization_id: org_id,
       type: invitationType,
       users: temp_ids
     }).then(res => {
@@ -366,7 +386,7 @@ export default class DrawDetailInfo extends React.Component {
     const { editDetaiDescription, detaiDescriptionValue, defaultDescriptionVal, dynamic_header_sticky, is_show_dot, is_show_more } = this.state
     const { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [], p_next_id, projectDynamicsList = [], invitationId, invitationOrg, invitationType   } = this.props
     
-    let { board_id, board_name, data = [], description, residue_quantity, realize_quantity } = projectDetailInfoData //data是参与人列表
+    let { board_id, board_name, data = [], description, residue_quantity, realize_quantity, org_id } = projectDetailInfoData //data是参与人列表
     data = data || []
     const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
     // 是否存在动态列表
@@ -472,8 +492,9 @@ export default class DrawDetailInfo extends React.Component {
       <div>
         <TextArea
           autoFocus
-          onBlur={ (e) => { this.handleOnBlur(e, board_id) } } 
-          defaultValue={description || detaiDescriptionValue} 
+          onBlur={ (e) => { this.handleOnBlur(e, board_id) } }
+          value={this.state.textArea_val}
+          placeholder={this.state.textArea_val != '' ? this.state.textArea_val : defaultDescriptionVal} 
           autosize={true} 
           onKeyDown={ (e) => { this.handleKeyDown(e, board_id) } } 
           className={DrawDetailInfoStyle.editTextArea} 
@@ -495,7 +516,7 @@ export default class DrawDetailInfo extends React.Component {
           </div>
           {!editDetaiDescription?(
               <div className={`${DrawDetailInfoStyle.Bottom} ${ defaultDescriptionVal != description && description != '' && DrawDetailInfoStyle.editColor}`} onClick={this.setEditDetaiDescriptionShow.bind(this)}>
-                {description || detaiDescriptionValue}
+                {description != '' ? description : defaultDescriptionVal}
               </div>
             ) : ( EditArea)}
             <div className={DrawDetailInfoStyle.member}> 
@@ -537,7 +558,8 @@ export default class DrawDetailInfo extends React.Component {
               {
                 avatarList && avatarList.length > 9 && is_show_dot && (
                   <Tooltip title="全部成员" placement="top">
-                    <div 
+                    <div
+                      style={{marginTop: !checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) && '15px'}} 
                       onClick={ () => { this.handdleTriggerModal() } }
                       className={DrawDetailInfoStyle.show_member}></div>
                   </Tooltip>
@@ -574,9 +596,9 @@ export default class DrawDetailInfo extends React.Component {
           <ShowAddMenberModal
             addMenbersInProject={this.addMenbersInProject}
             show_wechat_invite={true}
-            invitationId={invitationId}
+            invitationId={board_id}
             invitationType={invitationType}
-            invitationOrg={getGlobalData('aboutBoardOrganizationId')}
+            invitationOrg={org_id}
             {...this.props} board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} 
             setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
         </div>

@@ -141,10 +141,10 @@ export default class Header extends React.Component {
     const that = this
     const { projectDetailInfoData = {} } = this.props
     const { org_id } = projectDetailInfoData
-    if (!checkIsHasPermission(ORG_TEAM_BOARD_JOIN, org_id)) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+    // if (!checkIsHasPermission(ORG_TEAM_BOARD_JOIN, org_id)) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     Modal.confirm({
       title: `确认要退出该${currentNounPlanFilterName(PROJECTS)}吗？`,
       content: <div style={{ color: 'rgba(0,0,0, .8)', fontSize: 14 }}>
@@ -161,7 +161,8 @@ export default class Header extends React.Component {
         dispatch({
           type: 'projectDetail/quitProject',
           payload: {
-            board_id
+            board_id,
+            isJump: true
           }
         })
       }

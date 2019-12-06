@@ -6,8 +6,6 @@ import Cookies from 'js-cookie'
 import { setUploadHeaderBaseInfo } from '../../utils/businessFunction'
 import axios from 'axios'
 // import BMF from 'browser-md5-file';
-import { resolve, reject } from '_any-promise@1.3.0@any-promise'
-import { getUSerInfo } from '../../services/technological'
 import { checkFileMD5WithBack, uploadToOssCalback } from '../../services/technological/file'
 import oss from 'ali-oss';
 import SparkMD5 from 'spark-md5'
@@ -151,10 +149,20 @@ export default class UploadNormal extends Component {
                 // console.log('sssss_fileList', fileList)
                 const is_has_uploading = fileList_will.length && (fileList_will.findIndex(item => item.status == 'uploading') != -1)
                 if (!is_has_uploading) { //没有上传状态了
-                    if (typeof uploadCompleteCalback == 'function') {
-                        uploadCompleteCalback()
+                    setTimeout(function () {
+                        if (typeof uploadCompleteCalback == 'function') {
+                            uploadCompleteCalback()
+                        }
+                        that.uploadCompleted()
+                    }, 1500)
+                }
+                // console.log('sssss', file)
+                // 错误处理
+                if (file.status === 'done') {
+                    if (file.response && file.response.code == '0') {
+                    } else {
+                        message.error(file.response && file.response.message || '上传出现了点问题');
                     }
-                    that.uploadCompleted()
                 }
             },
             customRequest: this.customRequest
