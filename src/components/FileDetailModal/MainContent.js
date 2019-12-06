@@ -7,7 +7,7 @@ import CirclePreviewLoadingComponent from '@/components/CirclePreviewLoadingComp
 import { connect } from 'dva'
 import { fileConvertPdfAlsoUpdateVersion, setCurrentVersionFile } from '@/services/technological/file'
 import { isApiResponseOk } from '../../utils/handleResponseData'
-import { message } from 'antd'
+import { message, Modal } from 'antd'
 import { getSubfixName } from '../../utils/businessFunction'
 import {
   MESSAGE_DURATION_TIME,
@@ -20,9 +20,7 @@ class MainContent extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      isZoomPictureFullScreenMode: false, //图评全屏模式
-      onlyReadingShareModalVisible: false, //只读分享model
-      onlyReadingShareData: {},
+      // isZoomPictureFullScreenMode: false, //图评全屏模式
 
       // 进度条的百分比
       percent: 0,
@@ -32,15 +30,9 @@ class MainContent extends Component {
 
       supportFileTypeArray: ['.xlsx', '.xls', '.doc', '.docx', '.ppt', '.pptx', '.png', '.txt', '.gif', '.jpg', '.jpeg', '.tif', '.bmp', '.ico'],
     }
-
-    this.x1 = 0
-    this.y1 = 0
-    this.isDragging = false
-    this.SelectedRect = { x: 0, y: 0 }
   }
 
   componentDidMount() {
-    console.log(document.getElementById('container_fileDetailContentOut') && document.getElementById('container_fileDetailContentOut').offsetWidth, 'sssssss')
     setTimeout(() => {
       const container_fileDetailContentOut = document.getElementById('container_fileDetailContentOut');
       let zommPictureComponentHeight = container_fileDetailContentOut ? container_fileDetailContentOut.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding  
@@ -98,23 +90,16 @@ class MainContent extends Component {
   // 点击是否全屏
   handleZoomPictureFullScreen = (flag) => {
     this.setState({
-      isZoomPictureFullScreenMode: flag,
+      // isZoomPictureFullScreenMode: flag,
       percent: 0
     })
+    this.props.updateStateDatas && this.props.updateStateDatas({ isZoomPictureFullScreenMode: flag })
     clearTimeout(timer)
   }
 
-  updateState = () => {
-    this.setState({
-      is_petty_loading: !isZoomPictureFullScreenMode && false,
-      is_large_loading: isZoomPictureFullScreenMode && false,
-      percent: 0
-    })
-  }
-
   fetchConvertPdfAlsoUpdateVersion = ({ file_name, file_id }) => {
-    const { currentPreviewFileData = {} } = this.props
-    const { supportFileTypeArray = [], isZoomPictureFullScreenMode } = this.state
+    const { currentPreviewFileData = {}, isZoomPictureFullScreenMode } = this.props
+    const { supportFileTypeArray = [] } = this.state
     let FILE_NAME = getSubfixName(file_name)
     if (supportFileTypeArray.indexOf(FILE_NAME) != -1) {
       fileConvertPdfAlsoUpdateVersion({ id: file_id }).then(res => {
@@ -141,8 +126,14 @@ class MainContent extends Component {
           if (res.code == 4047) { // 表示转换失败
             message.error(res.message, MESSAGE_DURATION_TIME)
           }
+          this.setState({
+            is_petty_loading: !isZoomPictureFullScreenMode && false,
+            is_large_loading: isZoomPictureFullScreenMode && false,
+            percent: 0
+          })
         }
       })
+      
     }
   }
 
@@ -170,7 +161,7 @@ class MainContent extends Component {
 
   // 除pdf外的其他文件进入圈评
   handleEnterCirclePointComment = () => {
-    const { isZoomPictureFullScreenMode } = this.state
+    const { isZoomPictureFullScreenMode } = this.props
     this.updateProcessPercent()
     this.setState({
       is_petty_loading: !isZoomPictureFullScreenMode,
@@ -181,7 +172,7 @@ class MainContent extends Component {
 
   // 渲染非全屏模式圈评图片
   renderPunctuateDom() {
-    const { clientHeight, filePreviewUrl, fileType, filePreviewCurrentFileId } = this.props
+    const { clientHeight, filePreviewUrl, filePreviewCurrentFileId } = this.props
     const { currentZoomPictureComponetWidth, currentZoomPictureComponetHeight, is_petty_loading, percent, } = this.state
 
     return (
@@ -238,11 +229,11 @@ class MainContent extends Component {
               style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)', display: 'block', opacity: 1 }} />
           ) : (
               <>
-                <div style={{height: clientHeight - 100 - 60}} className={mainContentStyles.fileDetailContentLeft}
+                <div style={{ height: clientHeight - 100 - 60 }} className={mainContentStyles.fileDetailContentLeft}
                   dangerouslySetInnerHTML={{ __html: this.getIframe(filePreviewUrl) }}>
                 </div>
                 {
-                 fileType != '.pdf' && (supportFileTypeArray.indexOf(fileType) != -1) && (
+                  fileType != '.pdf' && (supportFileTypeArray.indexOf(fileType) != -1) && (
                     <div className={mainContentStyles.otherFilesOperator}>
                       <span onClick={this.handleEnterCirclePointComment} className={mainContentStyles.operator_bar}><span className={`${globalStyles.authTheme} ${mainContentStyles.circle_icon}`}>&#xe664;</span>圈点评论</span>
                     </div>
@@ -369,9 +360,89 @@ class MainContent extends Component {
     return content
   }
 
+  // 全屏的取消事件
+  cancelZoomFrame = () => {
+    this.props.updateStateDatas && this.props.updateStateDatas({ isZoomPictureFullScreenMode: !this.props.isZoomPictureFullScreenMode });
+  }
+
+  // 渲染全屏模式的图片
+  renderFullScreenModePunctuateDom() {
+    const { filePreviewUrl, filePreviewCurrentFileId, bodyClientHeight, bodyClientWidth, isZoomPictureFullScreenMode } = this.props
+    const { is_large_loading, percent, } = this.state
+
+    return (
+      <Modal zIndex={1010} style={{ top: 0, left: 0, height: bodyClientHeight - 200 + 'px' }} footer={null} title={null} width={bodyClientWidth} visible={isZoomPictureFullScreenMode} onCancel={this.cancelZoomFrame}>
+        {
+          is_large_loading ? (
+            <div style={{ height: bodyClientHeight, marginTop: '20px', background: 'rgba(0,0,0,0.15)' }}>
+              <CirclePreviewLoadingComponent
+                percent={percent}
+                is_loading={is_large_loading}
+                style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)', display: 'block', opacity: 1 }} />
+            </div>
+
+          ) : (
+              <div>
+                {filePreviewUrl && (
+                  <ZoomPicture
+                    // {...this.props}
+                    imgInfo={{ url: filePreviewUrl }}
+                    componentInfo={{ width: bodyClientWidth - 100, height: bodyClientHeight - 60 }}
+                    userId={this.getCurrentUserId()}
+                    handleFullScreen={this.handleZoomPictureFullScreen}
+                    filePreviewCurrentFileId={filePreviewCurrentFileId}
+                    handleEnterCirclePointComment={this.handleEnterCirclePointComment}
+                    isShow_textArea={true}
+                  />
+                )}
+              </div>
+            )
+        }
+      </Modal>
+    )
+  }
+
+  // 渲染全屏时其他格式文件
+  renderFullScreenModeIframeDom() {
+    const { filePreviewUrl, bodyClientHeight, bodyClientWidth, isZoomPictureFullScreenMode, fileType } = this.props
+    const { is_large_loading, percent, supportFileTypeArray = [] } = this.state
+    return (
+      <Modal wrapClassName={mainContentStyles.overlay_iframBigDom} zIndex={1010} style={{ top: 0, left: 0, minWidth: bodyClientWidth + 'px', minHeight: bodyClientHeight + 'px' }} width={bodyClientWidth} height={bodyClientHeight} footer={null} title={null} visible={isZoomPictureFullScreenMode} onCancel={this.cancelZoomFrame}>
+        {/* <div
+        style={{ height: bodyClientHeight, marginTop: '20px' }}
+        dangerouslySetInnerHTML={{ __html: getIframe(filePreviewUrl) }}></div>
+        <> */}
+        {
+          is_large_loading ? (
+            <div style={{ height: bodyClientHeight, marginTop: '20px', background: 'rgba(0,0,0,0.15)' }}>
+              <CirclePreviewLoadingComponent
+                percent={percent}
+                is_loading={is_large_loading}
+                style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)', display: 'block', opacity: 1 }} />
+            </div>
+
+          ) : (
+              <>
+                <div
+                  style={{ height: bodyClientHeight, marginTop: '20px' }}
+                  dangerouslySetInnerHTML={{ __html: this.getIframe(filePreviewUrl) }}></div>
+                {
+                  fileType != '.pdf' && (supportFileTypeArray.indexOf(fileType) != -1) && (
+                    <div className={mainContentStyles.otherFilesOperator} style={{ bottom: '100px' }}>
+                      <span onClick={this.handleEnterCirclePointComment} className={mainContentStyles.operator_bar}><span className={`${globalStyles.authTheme} ${mainContentStyles.circle_icon}`}>&#xe664;</span>圈点评论</span>
+                    </div>
+                  )
+                }
+              </>
+            )
+        }
+      </Modal >
+    )
+  }
+
   render() {
     const { clientHeight } = this.props
-    const { filePreviewIsUsable, filePreviewIsRealImage, fileType } = this.props
+    const { filePreviewIsUsable, filePreviewIsRealImage, fileType, isZoomPictureFullScreenMode } = this.props
     return (
 
       <div className={mainContentStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{ height: clientHeight - 100 - 60 }}>
@@ -390,13 +461,13 @@ class MainContent extends Component {
               </div>
             )}
         </div>
-        {/* {isZoomPictureFullScreenMode && (
+        {isZoomPictureFullScreenMode && (
           <div>
             {filePreviewIsUsable ? (
               filePreviewIsRealImage ? (
-                punctuateBigDom
+                this.renderFullScreenModePunctuateDom()
               ) : (
-                  iframeBigDom
+                  this.renderFullScreenModeIframeDom()
                 )
             ) : (
                 <div className={mainContentStyles.fileDetailContentLeft} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: 16, color: '#595959' }}>
@@ -406,7 +477,7 @@ class MainContent extends Component {
                 </div>
               )}
           </div>
-        )} */}
+        )}
       </div>
 
     )

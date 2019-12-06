@@ -4,7 +4,7 @@ import MainContent from './MainContent'
 import HeaderContent from './HeaderContent'
 import { fileInfoByUrl, getFilePDFInfo } from '@/services/technological/file'
 import { isApiResponseOk } from '../../utils/handleResponseData'
-import { FILES } from '../../globalset/js/constant'
+import { FILES, MESSAGE_DURATION_TIME } from '../../globalset/js/constant'
 import { connect } from 'dva'
 import { message } from 'antd'
 import { currentNounPlanFilterName, getOrgNameWithOrgIdFilter, checkIsHasPermissionInVisitControl, getSubfixName } from '@/utils/businessFunction.js'
@@ -16,6 +16,9 @@ export default class FileDetailContent extends Component {
     super(props)
     this.state = {
       filePreviewCurrentFileId: props.filePreviewCurrentFileId, // 保存一份当前的文件ID
+      isZoomPictureFullScreenMode: false, //图评全屏模式
+      onlyReadingShareModalVisible: false, //只读分享model
+      onlyReadingShareData: {},
     }
   }
 
@@ -38,6 +41,8 @@ export default class FileDetailContent extends Component {
     if (isApiResponseOk(res)) {
       this.initStateDatas({data: res.data})
       await this.getFilePDFInfo({id})
+    } else {
+      message.warn(res.message, MESSAGE_DURATION_TIME)
     }
   }
 

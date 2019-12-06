@@ -704,6 +704,7 @@ class VisitControl extends Component {
 }
 
 VisitControl.defaultProps = {
+  board_id: '', // 需要一个项目ID
   onlyShowPopoverContent: false, //是否直接显示popover里的内容 ----这个是定义有些是在弹窗中的时候,那么就是小图标的形式
   popoverPlacement: 'bottomRight', //popoverplacement
   tooltipUnClockText: '访问控制', //默认的popover包裹元素的tooltip
