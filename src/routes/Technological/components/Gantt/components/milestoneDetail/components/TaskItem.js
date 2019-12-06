@@ -52,10 +52,10 @@ export default class DCAddChirdrenTaskItem extends React.Component{
           {/*</Avatar>*/}
 
           {/*cuozuo*/}
-          <Popconfirm onConfirm={this.deleteConfirm.bind(this, {id})} title={'删除该子任务？'}>
-            <Tooltip title={'移出里程碑'}>
+          <Popconfirm onConfirm={this.deleteConfirm.bind(this, {id})} title={'删除该子任务？'} zIndex={10000}>
+            {/* <Tooltip title={'移出里程碑'}> */}
               <div className={`${globalStyles.authTheme} ${taskItemStyles.deletedIcon}`} style={{fontSize: 16}}>&#xe70f;</div>
-            </Tooltip>
+            {/* </Tooltip> */}
           </Popconfirm>
         </div>
       </div>

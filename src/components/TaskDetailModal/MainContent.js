@@ -760,7 +760,9 @@ export default class MainContent extends Component {
   // 获取添加属性中的不同字段
   getDiffAttributies = () => {
     const { propertiesList = [], selectedKeys = [] } = this.state
-    if (!(propertiesList && propertiesList.length)) return
+    if (!(propertiesList && propertiesList.length)) {
+      return (<></>)
+    }
     let new_propertiesList = [...propertiesList]
     new_propertiesList = new_propertiesList.filter(item => item.code != 'CONTENTLINK')
     return (
