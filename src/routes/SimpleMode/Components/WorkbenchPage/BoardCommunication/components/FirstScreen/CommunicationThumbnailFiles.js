@@ -114,69 +114,82 @@ export default class CommunicationThumbnailFiles extends Component {
         //     return false;
         // }
 
+        // dispatch({
+        //     type: 'workbenchFileDetail/getCardCommentListAll',
+        //     payload: {
+        //         id: id
+        //     }
+        // });
+        // dispatch({
+        //     type: 'workbenchFileDetail/getFileType',
+        //     payload: {
+        //         file_id: id,
+        //         // calback: function (data) {
+        //         //     dispatch({
+        //         //         type: 'workbenchPublicDatas/getRelationsSelectionPre',
+        //         //         payload: {
+        //         //             _organization_id: data.base_info.org_id
+        //         //         }
+        //         //     })
+        //         // }
+        //     }
+        // });
         dispatch({
-            type: 'workbenchFileDetail/getCardCommentListAll',
+            type: 'publicFileDetailModal/updateDatas',
             payload: {
-                id: id
-            }
-        });
-        dispatch({
-            type: 'workbenchFileDetail/getFileType',
-            payload: {
-                file_id: id,
-                // calback: function (data) {
-                //     dispatch({
-                //         type: 'workbenchPublicDatas/getRelationsSelectionPre',
-                //         payload: {
-                //             _organization_id: data.base_info.org_id
-                //         }
-                //     })
-                // }
-            }
-        });
-        this.props.setPreviewFileModalVisibile();
-        dispatch({
-            type: 'workbenchFileDetail/updateDatas',
-            payload: {
-                seeFileInput: 'fileModule',
-                board_id,
-                filePreviewCurrentId: file_resource_id,
-                currentParrentDirectoryId: folder_id,
                 filePreviewCurrentFileId: id,
-                filePreviewCurrentVersionId: version_id, //file_id,
-                pdfDownLoadSrc: '',
-            }
-        })
-
-
-        if (getSubfixName(file_name || name) == '.pdf') {
-            this.props.dispatch({
-                type: 'workbenchFileDetail/getFilePDFInfo',
-                payload: {
-                    id
-                }
-            })
-        } else {
-            dispatch({
-                type: 'workbenchFileDetail/filePreview',
-                payload: {
-                    id: file_resource_id, file_id: id
-                }
-            })
-        }
-        dispatch({
-            type: 'workbenchFileDetail/fileVersionist',
-            payload: {
-                version_id: version_id, //file_id,
-                isNeedPreviewFile: false,
+                fileType: getSubfixName(file_name)
             }
         })
         dispatch({
-            type: 'workbenchTaskDetail/getBoardMembers',
+            type: 'projectDetail/projectDetailInfo',
             payload: {
-                id: board_id
+                id:board_id
             }
         })
+        this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile();
+        // dispatch({
+        //     type: 'workbenchFileDetail/updateDatas',
+        //     payload: {
+        //         seeFileInput: 'fileModule',
+        //         board_id,
+        //         filePreviewCurrentId: file_resource_id,
+        //         currentParrentDirectoryId: folder_id,
+        //         filePreviewCurrentFileId: id,
+        //         filePreviewCurrentVersionId: version_id, //file_id,
+        //         pdfDownLoadSrc: '',
+        //     }
+        // })
+
+
+        // if (getSubfixName(file_name || name) == '.pdf') {
+        //     this.props.dispatch({
+        //         type: 'workbenchFileDetail/getFilePDFInfo',
+        //         payload: {
+        //             id
+        //         }
+        //     })
+        // } else {
+        //     dispatch({
+        //         type: 'workbenchFileDetail/filePreview',
+        //         payload: {
+        //             id: file_resource_id, file_id: id
+        //         }
+        //     })
+        // }
+        // dispatch({
+        //     type: 'workbenchFileDetail/fileVersionist',
+        //     payload: {
+        //         version_id: version_id, //file_id,
+        //         isNeedPreviewFile: false,
+        //     }
+        // })
+        // dispatch({
+        //     type: 'workbenchTaskDetail/getBoardMembers',
+        //     payload: {
+        //         id: board_id
+        //     }
+        // })
         dispatch({
             type: 'workbenchPublicDatas/updateDatas',
             payload: {
@@ -359,4 +372,8 @@ function mapStateToProps({
         onlyFileTableLoading,
         filesShowType
     }
+}
+
+CommunicationThumbnailFiles.defaultProps = {
+    // 这是一个项目交流中的每一个文件item列表,
 }

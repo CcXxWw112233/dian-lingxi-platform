@@ -63,6 +63,11 @@ export default class FileDetailContent extends Component {
   }
 
   onCancel = () => {
+    const { is_petty_loading, is_large_loading } = this.state
+    if (is_petty_loading || is_large_loading) {
+      message.warn('正在进入圈评,请勿退出', MESSAGE_DURATION_TIME)
+      return false
+    }
     this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile()
   }
 

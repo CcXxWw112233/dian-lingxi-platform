@@ -1,5 +1,8 @@
 import React from 'react';
 import FileDetail from './FileDetail/index';
+import BoardCommuicationFileDetailContainer from './component/BoardCommuicationFileDetailContainer'
+import HeaderContent from '@/components/FileDetailModal/HeaderContent.js'
+import MainContent from '@/components/FileDetailModal/MainContent.js'
 import styles from './FileListRightBarFileDetailModal.less';
 import { connect } from 'dva'
 @connect(mapStateToProps)
@@ -9,7 +12,9 @@ class FileListRightBarFileDetailModal extends React.Component {
 		super(props)
 		this.state = {
 			currentZoomPictureComponetWidth: null,
-			currentZoomPictureComponetHeight: null
+			currentZoomPictureComponetHeight: null,
+			filePreviewCurrentFileId: props.filePreviewCurrentFileId,
+			fileType: props.fileType
 		}
 	}
 
@@ -18,7 +23,7 @@ class FileListRightBarFileDetailModal extends React.Component {
 		setTimeout(() => {
 			const container_FileListRightBarFileDetailModal = document.getElementById('container_FileListRightBarFileDetailModal');
 			let zommPictureComponentHeight = container_FileListRightBarFileDetailModal ? container_FileListRightBarFileDetailModal.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding  
-			let zommPictureComponentWidth = container_FileListRightBarFileDetailModal ? container_FileListRightBarFileDetailModal.offsetWidth - 50 - 5 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
+			let zommPictureComponentWidth = container_FileListRightBarFileDetailModal ? container_FileListRightBarFileDetailModal.offsetWidth - 5 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
 			this.setState({
 				currentZoomPictureComponetWidth: zommPictureComponentWidth,
 				currentZoomPictureComponetHeight: zommPictureComponentHeight
@@ -34,7 +39,7 @@ class FileListRightBarFileDetailModal extends React.Component {
 			setTimeout(() => {
 				const container_FileListRightBarFileDetailModal = document.getElementById('container_FileListRightBarFileDetailModal');
 				let zommPictureComponentHeight = container_FileListRightBarFileDetailModal ? container_FileListRightBarFileDetailModal.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding  
-				let zommPictureComponentWidth = container_FileListRightBarFileDetailModal ? container_FileListRightBarFileDetailModal.offsetWidth - 50 - 5 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
+				let zommPictureComponentWidth = container_FileListRightBarFileDetailModal ? container_FileListRightBarFileDetailModal.offsetWidth - 5 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
 				this.setState({
 					currentZoomPictureComponetWidth: zommPictureComponentWidth,
 					currentZoomPictureComponetHeight: zommPictureComponentHeight
@@ -44,7 +49,7 @@ class FileListRightBarFileDetailModal extends React.Component {
 			setTimeout(() => {
 				const container_FileListRightBarFileDetailModal = document.getElementById('container_FileListRightBarFileDetailModal');
 				let zommPictureComponentHeight = container_FileListRightBarFileDetailModal ? container_FileListRightBarFileDetailModal.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding  
-				let zommPictureComponentWidth = container_FileListRightBarFileDetailModal ? container_FileListRightBarFileDetailModal.offsetWidth - 50 - 5 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
+				let zommPictureComponentWidth = container_FileListRightBarFileDetailModal ? container_FileListRightBarFileDetailModal.offsetWidth - 5 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
 				this.setState({
 					currentZoomPictureComponetWidth: zommPictureComponentWidth,
 					currentZoomPictureComponetHeight: zommPictureComponentHeight
@@ -62,7 +67,15 @@ class FileListRightBarFileDetailModal extends React.Component {
 
 		return (
 			<div id="container_FileListRightBarFileDetailModal" className={styles.fileListRightBarFileDetailModal}>
-				<FileDetail
+				<BoardCommuicationFileDetailContainer
+					filePreviewCurrentFileId={this.state.filePreviewCurrentFileId}
+					fileType={this.state.fileType}
+					componentHeight={currentZoomPictureComponetHeight} 
+					componentWidth={currentZoomPictureComponetWidth}
+					setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
+					hideUpdatedFileDetail={this.props.hideUpdatedFileDetail}//取消关闭弹窗的回调,项目交流中的特殊处理
+				/>
+				{/* <FileDetail
 					{...this.props}
 					{...this.props.fileDetailModalDatas}
 					componentHeight={currentZoomPictureComponetHeight}
@@ -70,7 +83,7 @@ class FileListRightBarFileDetailModal extends React.Component {
 					setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
 					updateCommunicationFolderListData={this.props.updateCommunicationFolderListData}
 					modalTop={20}
-				/>
+				/> */}
 			</div>
 		);
 	}

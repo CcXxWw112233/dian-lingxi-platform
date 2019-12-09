@@ -25,6 +25,7 @@ class MainContent extends Component {
       // 进度条的百分比
       percent: 0,
 
+      // 如果说外部没有传入对应的宽高表示用的是publicModal中的弹窗, 那么就监听自己的变化
       currentZoomPictureComponetWidth: 600,
       currentZoomPictureComponetHeight: 600,
 
@@ -97,6 +98,7 @@ class MainContent extends Component {
     clearTimeout(timer)
   }
 
+  // PDF圈评转换事件
   fetchConvertPdfAlsoUpdateVersion = ({ file_name, file_id }) => {
     const { currentPreviewFileData = {}, isZoomPictureFullScreenMode } = this.props
     const { supportFileTypeArray = [] } = this.state
@@ -115,6 +117,11 @@ class MainContent extends Component {
                   is_large_loading: isZoomPictureFullScreenMode && false,
                   percent: 0
                 })
+                // 用来保存在父元素中管理起来
+                this.props.updateStateDatas && this.props.updateStateDatas({
+                  is_petty_loading: !isZoomPictureFullScreenMode && false,
+                  is_large_loading: isZoomPictureFullScreenMode && false,
+                })
               }
             })
           } else {
@@ -130,6 +137,10 @@ class MainContent extends Component {
             is_petty_loading: !isZoomPictureFullScreenMode && false,
             is_large_loading: isZoomPictureFullScreenMode && false,
             percent: 0
+          })
+          this.props.updateStateDatas && this.props.updateStateDatas({
+            is_petty_loading: !isZoomPictureFullScreenMode && false,
+            is_large_loading: isZoomPictureFullScreenMode && false,
           })
         }
       })
@@ -168,11 +179,15 @@ class MainContent extends Component {
       is_large_loading: isZoomPictureFullScreenMode,
       percent: 0
     })
+    this.props.updateStateDatas && this.props.updateStateDatas({
+      is_petty_loading: !isZoomPictureFullScreenMode,
+      is_large_loading: isZoomPictureFullScreenMode,
+    })
   }
 
   // 渲染非全屏模式圈评图片
   renderPunctuateDom() {
-    const { clientHeight, filePreviewUrl, filePreviewCurrentFileId, isZoomPictureFullScreenMode } = this.props
+    const { clientHeight, filePreviewUrl, filePreviewCurrentFileId, isZoomPictureFullScreenMode, componentWidth, componentHeight } = this.props
     const { currentZoomPictureComponetWidth, currentZoomPictureComponetHeight, is_petty_loading, percent, } = this.state
 
     return (
@@ -180,7 +195,7 @@ class MainContent extends Component {
         {
           is_petty_loading ? (
             <CirclePreviewLoadingComponent
-              height={clientHeight - 100 - 60}
+              height={clientHeight ? clientHeight - 100 - 60 : componentHeight}
               percent={percent}
               is_loading={is_petty_loading}
               style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)', display: 'block', opacity: 1 }} />
@@ -189,16 +204,10 @@ class MainContent extends Component {
                 // minWidth: currentZoomPictureComponetWidth + 'px', minHeight: currentZoomPictureComponetHeight + 'px', 
                 overflow: 'auto', textAlign: 'center', position: 'relative'
               }}>
-                {/* {
-          checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) ? ('') : (
-            <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
-          )
-        } */}
                 {filePreviewUrl && (
                   <ZoomPicture
-                    // {...this.props}
                     imgInfo={{ url: filePreviewUrl }}
-                    componentInfo={{ width: currentZoomPictureComponetWidth + 'px', height: currentZoomPictureComponetHeight + 'px' }}
+                    componentInfo={{ width: !componentWidth ? currentZoomPictureComponetWidth + 'px' : componentWidth + 'px', height: !componentHeight ? currentZoomPictureComponetHeight + 'px' : componentHeight + 'px' }}
                     userId={this.getCurrentUserId()}
                     isFullScreenMode={isZoomPictureFullScreenMode}
                     handleFullScreen={this.handleZoomPictureFullScreen}
@@ -216,7 +225,7 @@ class MainContent extends Component {
 
   // 渲染非全屏模式其他文件格式图片
   renderIframeDom() {
-    const { clientHeight, filePreviewUrl, fileType } = this.props
+    const { clientHeight, filePreviewUrl, fileType, componentHeight } = this.props
     const { is_petty_loading, percent, supportFileTypeArray = [] } = this.state
 
     return (
@@ -224,13 +233,13 @@ class MainContent extends Component {
         {
           is_petty_loading ? (
             <CirclePreviewLoadingComponent
-              height={clientHeight - 100 - 60}
+              height={clientHeight ? clientHeight - 100 - 60 : componentHeight}
               percent={percent}
               is_loading={is_petty_loading}
               style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)', display: 'block', opacity: 1 }} />
           ) : (
               <>
-                <div style={{ height: clientHeight - 100 - 60 }} className={mainContentStyles.fileDetailContentLeft}
+                <div style={{ height: clientHeight ? clientHeight - 100 - 60 : componentHeight }} className={mainContentStyles.fileDetailContentLeft}
                   dangerouslySetInnerHTML={{ __html: this.getIframe(filePreviewUrl) }}>
                 </div>
                 {
@@ -386,7 +395,6 @@ class MainContent extends Component {
               <div>
                 {filePreviewUrl && (
                   <ZoomPicture
-                    // {...this.props}
                     imgInfo={{ url: filePreviewUrl }}
                     componentInfo={{ width: bodyClientWidth - 100, height: bodyClientHeight - 60 }}
                     userId={this.getCurrentUserId()}
@@ -444,10 +452,10 @@ class MainContent extends Component {
 
   render() {
     const { clientHeight } = this.props
-    const { filePreviewIsUsable, filePreviewIsRealImage, fileType, isZoomPictureFullScreenMode } = this.props
+    const { filePreviewIsUsable, filePreviewIsRealImage, fileType, isZoomPictureFullScreenMode, componentHeight, componentWidth } = this.props
     return (
 
-      <div className={mainContentStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{ height: clientHeight - 100 - 60 }}>
+      <div className={mainContentStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{ height: clientHeight ? clientHeight - 100 - 60 : componentHeight }}>
         <div>
           {filePreviewIsUsable ? (
             filePreviewIsRealImage ? (

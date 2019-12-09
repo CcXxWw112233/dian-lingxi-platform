@@ -50,3 +50,7 @@ export default class ThumbnailFilesTilingShow extends Component {
         )
     }
 }
+
+ThumbnailFilesTilingShow.defaultProps = {
+    // 这是一个项目交流中缩略图组件
+}

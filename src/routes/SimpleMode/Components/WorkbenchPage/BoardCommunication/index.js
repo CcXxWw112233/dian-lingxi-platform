@@ -70,7 +70,7 @@ class BoardCommunication extends Component {
     constructor(props) {
         super(props)
         const { dispatch } = this.props;
-        Im.addEventListener('visible', (val)=>{ // 获取圈子显示隐藏状态
+        Im.addEventListener('visible', (val) => { // 获取圈子显示隐藏状态
             // this.setState({ isShowlingxiIm: val});
         })
     }
@@ -85,13 +85,13 @@ class BoardCommunication extends Component {
         const { dispatch, gantt_board_id } = this.props;
         const boardId = gantt_board_id == '0' ? '' : gantt_board_id
         dispatch({
-          type: getEffectOrReducerByName_7('getGanttBoardsFiles'),
-          payload: {
-            // query_board_ids: content_filter_params.query_board_ids,
-            // board_id: gantt_board_id == '0' ? '' : gantt_board_id
-            board_id: boardId,
-            query_board_ids: [],
-          }
+            type: getEffectOrReducerByName_7('getGanttBoardsFiles'),
+            payload: {
+                // query_board_ids: content_filter_params.query_board_ids,
+                // board_id: gantt_board_id == '0' ? '' : gantt_board_id
+                board_id: boardId,
+                query_board_ids: [],
+            }
         });
         this.setState({ currentFileDataType: '0' });
     }
@@ -99,7 +99,7 @@ class BoardCommunication extends Component {
     // 获取项目交流目录下项目数据'1'
     getCommunicationFolderList = (boardId) => {
         const { dispatch } = this.props;
-        if(boardId){
+        if (boardId) {
             dispatch({
                 type: getEffectOrReducerByName_8('getFolderList'),
                 payload: {
@@ -107,7 +107,7 @@ class BoardCommunication extends Component {
                 }
             });
         }
-        
+
         this.setState({
             showFileListisOpenFileDetailModal: false, // 关闭圈屏组件
             previewFileModalVisibile: false, // 显示首屏展示组件（头部面包屑,右侧文件按列表）
@@ -115,14 +115,14 @@ class BoardCommunication extends Component {
             currentSearchValue: '', // 清空搜索关键字
         });
         this.setcurrentItemLayerId(boardId);
-        
+
     }
 
     setcurrentItemLayerId = (id) => { // 设置当前所在的项目/层级ID
         this.setState({
             currentSelectBoardId: id,
             currentItemLayerId: id,
-        },()=>{
+        }, () => {
             this.changeFirstBreadPaths(); // 改变第一层面包屑路径
             this.getThumbnailFilesData(); // 更新右侧缩略图列表
         });
@@ -132,17 +132,17 @@ class BoardCommunication extends Component {
         // console.log('点击了当前层');
         const { currentItemLayerId } = this.state;
         const { boards_flies } = this.props;
-        const firstLayerData = boards_flies.filter(item=>item.id == currentItemLayerId);
-        firstLayerData.map(item=>item.layerType = 'projectLayer');
+        const firstLayerData = boards_flies.filter(item => item.id == currentItemLayerId);
+        firstLayerData.map(item => item.layerType = 'projectLayer');
         // firstLayerData[0].layerType = 'firstLayer';
-        this.setState({ 
+        this.setState({
             bread_paths: firstLayerData,
             currentFolderId: firstLayerData && firstLayerData[0] && firstLayerData[0].folder_id,
         });
     }
 
     // 改变当前文件夹tree层级-处理当前层【文件夹层面包屑路径】
-    onSelectTree = (currentfloor,first_item) => {
+    onSelectTree = (currentfloor, first_item) => {
         first_item.layerType = 'projectLayer';
         const { communicationSubFolderData } = this.props;
         const { child_data = [] } = communicationSubFolderData;
@@ -157,10 +157,10 @@ class BoardCommunication extends Component {
             currentFileDataType: '2', // 当前文件数据所属层：0全部文件/1项目内文件/2文件夹内文件
             currentFolderId: folder_id,
             currentSearchValue: '', // 清空搜索关键字
-        },()=>{
+        }, () => {
             this.getThumbnailFilesData();
         });
-        
+
     }
 
     // 处理传值
@@ -175,23 +175,23 @@ class BoardCommunication extends Component {
         let boardId = '';
         let folderId = '';
         let queryConditions = "";
-        switch(currentFileDataType){
+        switch (currentFileDataType) {
             case '0':
                 boardId = '';
                 folderId = '';
                 queryConditions = "";
                 break
-            case '1': 
+            case '1':
                 boardId = currentSelectBoardId;
                 folderId = '';
-                queryConditions = currentSelectBoardId ? [{id:'1135447108158099461', value: currentSelectBoardId}]: null;
+                queryConditions = currentSelectBoardId ? [{ id: '1135447108158099461', value: currentSelectBoardId }] : null;
                 break
-            case '2': 
+            case '2':
                 boardId = currentSelectBoardId;
                 folderId = currentFolderId;
                 queryConditions = [
-                    {id:'1135447108158099461', value: currentSelectBoardId},
-                    {id:'1192646538984296448', value: currentFolderId},
+                    { id: '1135447108158099461', value: currentSelectBoardId },
+                    { id: '1192646538984296448', value: currentFolderId },
                 ];
                 break
             default:
@@ -220,8 +220,8 @@ class BoardCommunication extends Component {
         dispatch({
             type: getEffectOrReducerByName_8('getOnlyFileList'),
             payload: {
-              board_id: boardId,
-              folder_id: folderId,
+                board_id: boardId,
+                folder_id: folderId,
             }
         });
     }
@@ -236,13 +236,13 @@ class BoardCommunication extends Component {
         dispatch({
             type: getEffectOrReducerByName_8('getSearchCommunicationFilelist'),
             payload: {
-              board_id: boardId,
-              folder_id: folderId,
-              search_term: currentSearchValue, // 搜索关键字
-              search_type: '6', // 搜索类型 '6' 文件类型（目前这里固定'6'，按文件类型搜索）
-              query_conditions: queryConditions ? JSON.stringify(queryConditions): null, // 原详细搜索附带条件
-              page_size: 100,
-              // page_number: 1,
+                board_id: boardId,
+                folder_id: folderId,
+                search_term: currentSearchValue, // 搜索关键字
+                search_type: '6', // 搜索类型 '6' 文件类型（目前这里固定'6'，按文件类型搜索）
+                query_conditions: queryConditions ? JSON.stringify(queryConditions) : null, // 原详细搜索附带条件
+                page_size: 100,
+                // page_number: 1,
             }
         });
     }
@@ -253,12 +253,12 @@ class BoardCommunication extends Component {
         this.setState({
             isSearchDetailOnfocusOrOnblur: value,
             currentSearchValue: searchValue,
-        },()=>{
+        }, () => {
             this.searchCommunicationFilelist();
         });
     }
 
-    
+
 
     // 更新数据
     updataApiData = (type) => {
@@ -278,7 +278,7 @@ class BoardCommunication extends Component {
         // isSearchDetailOnfocusOrOnblur: false, // 搜索框聚焦显示当前搜索条件详情
         // currentFileDataType: '0', // 当前文件数据类型 '0' 全部文件 '1' 项目下全部文件 '2' 文件夹下全部文件
         // currentSearchValue: '', // 搜索框输入值
-        
+
         // 待处理 
 
         this.setState({
@@ -289,7 +289,7 @@ class BoardCommunication extends Component {
             currentFileDataType: '0',
             currentSearchValue: '',
             isSearchDetailOnfocusOrOnblur: false,
-        },()=>{
+        }, () => {
             this.queryCommunicationFileData();
             this.getThumbnailFilesData();
         });
@@ -362,7 +362,9 @@ class BoardCommunication extends Component {
 
         this.initModalSelect()
     }
-    setPreviewFileModalVisibile() {
+
+    // 设置文件弹窗显示隐藏
+    setPreviewFileModalVisibile = () => {
         this.setState({
             previewFileModalVisibile: !this.state.previewFileModalVisibile
         })
@@ -1045,7 +1047,7 @@ class BoardCommunication extends Component {
 
     // 显示/隐藏项目文件列表
     isShowFileList = () => {
-        this.setState({ isVisibleFileList: !this.state.isVisibleFileList});
+        this.setState({ isVisibleFileList: !this.state.isVisibleFileList });
     }
 
     // 是否需要更新文件列表, 当访问控制设置时
@@ -1079,7 +1081,7 @@ class BoardCommunication extends Component {
     }
 
     // 设置折叠面板keys
-    setCollapseActiveKeys=(keys)=>{
+    setCollapseActiveKeys = (keys) => {
         // this.setState({ collapseActiveKeys: keys },()=>{
         const { dispatch, expandedKeys } = this.props;
         // if(expandedKeys && expandedKeys.length){
@@ -1090,13 +1092,13 @@ class BoardCommunication extends Component {
         //         }
         //     })
         // }
-        
-        this.setState({ currentSelectBoardId: keys },()=>{
-            console.log('keys_lalala',keys);
+
+        this.setState({ currentSelectBoardId: keys }, () => {
+            // console.log('keys_lalala', keys);
             // if(keys){
-                this.getCommunicationFolderList(keys); // 获取项目交流目录下子集数据
+            this.getCommunicationFolderList(keys); // 获取项目交流目录下子集数据
             // }
-            
+
         });
     }
 
@@ -1106,9 +1108,9 @@ class BoardCommunication extends Component {
         // console.log('点击的层:', type);
         this.setState({
             currentFileDataType: type,
-        },()=>{
+        }, () => {
             const { currentSearchValue } = this.props;
-            if(type == '0'){
+            if (type == '0') {
                 this.goAllFileStatus();
             } else {
                 this.searchCommunicationFilelist();
@@ -1154,307 +1156,307 @@ class BoardCommunication extends Component {
             modal,
             model,
             getBoardMembers(payload) {
-              dispatch({
-                type: getEffectOrReducerByName_4('getBoardMembers'),
-                payload: payload
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('getBoardMembers'),
+                    payload: payload
+                })
             },
             getCardDetail(payload) {
-              dispatch({
-                type: getEffectOrReducerByName_4('getCardDetail'),
-                payload: payload
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('getCardDetail'),
+                    payload: payload
+                })
             },
             updateTaskDatas(payload) {
-              dispatch({
-                type: getEffectOrReducerByName_4('updateDatas'),
-                payload: payload
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('updateDatas'),
+                    payload: payload
+                })
             },
             deleteTaskFile(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('deleteTaskFile'),
-                payload: data,
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('deleteTaskFile'),
+                    payload: data,
+                })
             },
             addTaskGroup(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('addTaskGroup'),
-                payload: data,
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('addTaskGroup'),
+                    payload: data,
+                })
             },
             deleteTaskGroup(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('deleteTaskGroup'),
-                payload: data,
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('deleteTaskGroup'),
+                    payload: data,
+                })
             },
             updateTaskGroup(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('updateTaskGroup'),
-                payload: data,
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('updateTaskGroup'),
+                    payload: data,
+                })
             },
             getTaskGroupList(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('getTaskGroupList'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('getTaskGroupList'),
+                    payload: data
+                })
             },
             addTask(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('addTask'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('addTask'),
+                    payload: data
+                })
             },
             updateTask(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('updateTask'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('updateTask'),
+                    payload: data
+                })
             },
             deleteTask(id) {
-              dispatch({
-                type: getEffectOrReducerByName_4('deleteTask'),
-                payload: {
-                  id
-                }
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('deleteTask'),
+                    payload: {
+                        id
+                    }
+                })
             },
             updateChirldTask(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('updateChirldTask'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('updateChirldTask'),
+                    payload: data
+                })
             },
             deleteChirldTask(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('deleteChirldTask'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('deleteChirldTask'),
+                    payload: data
+                })
             },
-      
+
             archivedTask(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('archivedTask'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('archivedTask'),
+                    payload: data
+                })
             },
             changeTaskType(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('changeTaskType'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('changeTaskType'),
+                    payload: data
+                })
             },
             addChirldTask(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('addChirldTask'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('addChirldTask'),
+                    payload: data
+                })
             },
             addTaskExecutor(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('addTaskExecutor'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('addTaskExecutor'),
+                    payload: data
+                })
             },
             removeTaskExecutor(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('removeTaskExecutor'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('removeTaskExecutor'),
+                    payload: data
+                })
             },
             completeTask(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('completeTask'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('completeTask'),
+                    payload: data
+                })
             },
             addTaskTag(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('addTaskTag'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('addTaskTag'),
+                    payload: data
+                })
             },
             removeTaskTag(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('removeTaskTag'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('removeTaskTag'),
+                    payload: data
+                })
             },
             removeProjectMenbers(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('removeProjectMenbers'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('removeProjectMenbers'),
+                    payload: data
+                })
             },
             getCardCommentList(id) {
-              dispatch({
-                type: getEffectOrReducerByName_4('getCardCommentList'),
-                payload: {
-                  id
-                }
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('getCardCommentList'),
+                    payload: {
+                        id
+                    }
+                })
             },
             addCardNewComment(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('addCardNewComment'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('addCardNewComment'),
+                    payload: data
+                })
             },
             deleteCardNewComment(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('deleteCardNewComment'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('deleteCardNewComment'),
+                    payload: data
+                })
             },
             getBoardTagList(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('getBoardTagList'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('getBoardTagList'),
+                    payload: data
+                })
             },
             updateBoardTag(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('updateBoardTag'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('updateBoardTag'),
+                    payload: data
+                })
             },
             toTopBoardTag(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('toTopBoardTag'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('toTopBoardTag'),
+                    payload: data
+                })
             },
             deleteBoardTag(data) {
-              dispatch({
-                type: getEffectOrReducerByName_4('deleteBoardTag'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_4('deleteBoardTag'),
+                    payload: data
+                })
             }
         }
         const FileModuleProps = {
             modal,
             model,
             updateFileDatas(payload) {
-              dispatch({
-                type: getEffectOrReducerByName_5('updateDatas'),
-                payload: payload
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_5('updateDatas'),
+                    payload: payload
+                })
             },
             getFileList(params) {
-              dispatch({
-                type: getEffectOrReducerByName('getFileList'),
-                payload: params
-              })
+                dispatch({
+                    type: getEffectOrReducerByName('getFileList'),
+                    payload: params
+                })
             },
             fileCopy(data) {
-              dispatch({
-                type: getEffectOrReducerByName_5('fileCopy'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_5('fileCopy'),
+                    payload: data
+                })
             },
             fileDownload(params) {
-              dispatch({
-                type: getEffectOrReducerByName_5('fileDownload'),
-                payload: params
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_5('fileDownload'),
+                    payload: params
+                })
             },
             fileRemove(data) {
-              dispatch({
-                type: getEffectOrReducerByName_5('fileRemove'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_5('fileRemove'),
+                    payload: data
+                })
             },
             fileMove(data) {
-              dispatch({
-                type: getEffectOrReducerByName_5('fileMove'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_5('fileMove'),
+                    payload: data
+                })
             },
             fileUpload(data) {
-              dispatch({
-                type: getEffectOrReducerByName_5('fileUpload'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_5('fileUpload'),
+                    payload: data
+                })
             },
             fileVersionist(params) {
-              dispatch({
-                type: getEffectOrReducerByName_5('fileVersionist'),
-                payload: params
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_5('fileVersionist'),
+                    payload: params
+                })
             },
             recycleBinList(params) {
-              dispatch({
-                type: getEffectOrReducerByName_5('recycleBinList'),
-                payload: params
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_5('recycleBinList'),
+                    payload: params
+                })
             },
             deleteFile(data) {
-              dispatch({
-                type: getEffectOrReducerByName_5('deleteFile'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_5('deleteFile'),
+                    payload: data
+                })
             },
             restoreFile(data) {
-              dispatch({
-                type: getEffectOrReducerByName_5('restoreFile'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_5('restoreFile'),
+                    payload: data
+                })
             },
             getFolderList(params) {
-              dispatch({
-                type: getEffectOrReducerByName_5('getFolderList'),
-                payload: params
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_5('getFolderList'),
+                    payload: params
+                })
             },
             addNewFolder(data) {
-              dispatch({
-                type: getEffectOrReducerByName_5('addNewFolder'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_5('addNewFolder'),
+                    payload: data
+                })
             },
             updateFolder(data) {
-              dispatch({
-                type: getEffectOrReducerByName_5('updateFolder'),
-                payload: data
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_5('updateFolder'),
+                    payload: data
+                })
             },
             filePreview(params) {
-              dispatch({
-                type: getEffectOrReducerByName_5('filePreview'),
-                payload: params
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_5('filePreview'),
+                    payload: params
+                })
             },
             getPreviewFileCommits(params) {
-              dispatch({
-                type: getEffectOrReducerByName_5('getPreviewFileCommits'),
-                payload: params
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_5('getPreviewFileCommits'),
+                    payload: params
+                })
             },
             addFileCommit(params) {
-              dispatch({
-                type: getEffectOrReducerByName_5('addFileCommit'),
-                payload: params
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_5('addFileCommit'),
+                    payload: params
+                })
             },
             deleteCommit(params) {
-              dispatch({
-                type: getEffectOrReducerByName_5('deleteCommit'),
-                payload: params
-              })
+                dispatch({
+                    type: getEffectOrReducerByName_5('deleteCommit'),
+                    payload: params
+                })
             },
         }
         const updateDatasTask = (payload) => {
             dispatch({
-              type: getEffectOrReducerByName_4('updateDatas'),
-              payload: payload
+                type: getEffectOrReducerByName_4('updateDatas'),
+                payload: payload
             })
         }
         const updateDatasFile = (payload) => {
             dispatch({
-              type: getEffectOrReducerByName_5('updateDatas'),
-              payload: payload
+                type: getEffectOrReducerByName_5('updateDatas'),
+                payload: payload
             })
         }
         const fileDetailModalDatas = {
@@ -1490,12 +1492,12 @@ class BoardCommunication extends Component {
                         {...this.props}
                     />
                 }
-                
-                
+
+
                 {/* 控制列表是否显示隐藏的控制按钮 */}
                 <div
                     className={indexStyles.operationBtn}
-                    style={{ left: isVisibleFileList ? '299px' : '0'}}
+                    style={{ left: isVisibleFileList ? '299px' : '0' }}
                     onClick={this.isShowFileList}
                 >
                     <Icon type={isVisibleFileList ? 'left' : 'right'} />
@@ -1563,6 +1565,20 @@ class BoardCommunication extends Component {
 
                 {/* 左侧列表点击文件圈图显示 */}
                 {
+                    showFileListisOpenFileDetailModal && this.props.filePreviewCurrentFileId && (
+                        <FileListRightBarFileDetailModal
+                            filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
+                            fileType={this.props.fileType}
+                            file_detail_modal_visible={this.state.previewFileModalVisibile}
+                            setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
+                            whetherUpdateFolderListData={this.whetherUpdateFolderListData}
+                            updateCommunicationFolderListData={this.updateCommunicationFolderListData}
+                            hideUpdatedFileDetail={this.hideUpdatedFileDetail}
+                        />
+                    )
+                }
+
+                {/* {
                     showFileListisOpenFileDetailModal && (
                         <FileListRightBarFileDetailModal
                             {...this.props}
@@ -1577,7 +1593,7 @@ class BoardCommunication extends Component {
                             updateCommunicationFolderListData={this.updateCommunicationFolderListData}
                         />
                     )
-                }
+                } */}
 
                 {/* 右侧上传文件的圈图详情（1025前版本功能） */}
                 {/* {
@@ -1610,7 +1626,7 @@ class BoardCommunication extends Component {
                         />
                     )
                 } */}
-                
+
 
                 {/* 拖拽上传文件（1025前版本） */}
                 {/* {
@@ -1745,16 +1761,20 @@ function mapStateToProps({
         }
     },
     gantt,
-    projectCommunication:{
+    projectCommunication: {
         currentBoardId,
         communicationProjectListData,
         communicationSubFolderData,
         rootDirectoryFolder_id,
         currentLayerSelectedStyle,
+    },
+    publicFileDetailModal: {
+        filePreviewCurrentFileId,
+        fileType
     }
 }) {
     const modelObj = {
-        datas: { 
+        datas: {
             // ...workbenchFileDetail['datas'],
             // ...workbenchPublicDatas['datas'],
             ...workbenchTaskDetail['datas'],
@@ -1779,7 +1799,9 @@ function mapStateToProps({
         communicationSubFolderData,
         boards_flies,
         rootDirectoryFolder_id,
-        currentLayerSelectedStyle
+        currentLayerSelectedStyle,
+        filePreviewCurrentFileId,
+        fileType
     }
 }
 export default connect(mapStateToProps)(BoardCommunication)

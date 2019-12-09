@@ -118,3 +118,7 @@ export default class ThumbnailFilesListShow extends Component {
         )
     }
 }
+
+ThumbnailFilesListShow.defaultProps = {
+    // 这是一个项目交流中默认渲染文件的组件
+}

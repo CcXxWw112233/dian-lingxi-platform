@@ -58,7 +58,7 @@ export default class CommunicationFileItem extends Component {
                     showWhatComponent={this.props.showWhatComponent}
                     getSubFileData={this.props.getSubFileData}
                     queryCommunicationFileData={this.props.queryCommunicationFileData}
-                    showUpdatedFileDetail={this.props.showUpdatedFileDetail}
+                    setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
                     hideUpdatedFileDetail={this.props.hideUpdatedFileDetail}
                 />
 

@@ -58,7 +58,7 @@ export default class SubFileItem extends Component{
                     queryCommunicationFileData={this.props.queryCommunicationFileData}
                     showUpdatedFileDetail={this.props.showUpdatedFileDetail}
                     hideUpdatedFileDetail={this.props.hideUpdatedFileDetail}
-                    // setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
+                    setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
                 />
             </div>
         )
