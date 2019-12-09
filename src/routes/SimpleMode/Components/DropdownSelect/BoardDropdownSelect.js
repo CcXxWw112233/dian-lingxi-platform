@@ -5,7 +5,7 @@ import { Icon, message, Tooltip } from 'antd';
 import DropdownSelect from '../DropdownSelect'
 import CreateProject from '@/routes/Technological/components/Project/components/CreateProject/index';
 import { getOrgNameWithOrgIdFilter, setBoardIdStorage } from "@/utils/businessFunction"
-import { beforeChangeBoardUpdateGantt } from "../../../Technological/components/Gantt/ganttBusiness";
+import { afterChangeBoardUpdateGantt } from "../../../Technological/components/Gantt/ganttBusiness";
 import { beforeChangeCommunicationUpdateFileList } from "../WorkbenchPage/BoardCommunication/components/getCommunicationFileListFn";
 import { isPaymentOrgUser } from "@/utils/businessFunction"
 class BoardDropdownSelect extends Component {
@@ -23,7 +23,7 @@ class BoardDropdownSelect extends Component {
     if ('board:chat' == code) {
       beforeChangeCommunicationUpdateFileList({ board_id, dispatch });
     } else if ('board:plans' == code) {
-      beforeChangeBoardUpdateGantt({ board_id, dispatch })
+      afterChangeBoardUpdateGantt({ board_id, dispatch })
     }
   }
 

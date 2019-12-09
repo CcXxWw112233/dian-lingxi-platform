@@ -1,5 +1,5 @@
 import { lx_utils  } from 'lingxi-im'
-export const beforeCreateBoardUpdateGantt = (dispatch) => {
+export const afterCreateBoardUpdateGantt = (dispatch) => {
     dispatch({
         type: 'gantt/getGanttData',
         payload: {
@@ -37,16 +37,16 @@ export const beforeCreateBoardUpdateGantt = (dispatch) => {
 
         }
     })
-    lx_utils.updateUserList()
+    // lx_utils.updateUserList()
 }
-export const beforeChangeBoardUpdateGantt = ({ dispatch, board_id }) => {
+export const afterChangeBoardUpdateGantt = ({ dispatch, board_id }) => {
     dispatch({
         type: 'gantt/updateDatas',
         payload: {
             gantt_board_id: board_id,
         }
     })
-    beforeCreateBoardUpdateGantt(dispatch)
+    afterCreateBoardUpdateGantt(dispatch)
 }
 export const handleChangeBoardViewScrollTop = ({ group_view_type, gantt_board_id, target_scrollTop_board_storage }) => {
     const target = document.getElementById('gantt_card_out_middle')

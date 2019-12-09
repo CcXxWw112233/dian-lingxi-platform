@@ -4,7 +4,7 @@ import { Dropdown, Tooltip, message } from 'antd'
 import indexStyles from './index.less'
 import { connect } from 'dva'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { beforeCreateBoardUpdateGantt } from './ganttBusiness';
+import { afterCreateBoardUpdateGantt } from './ganttBusiness';
 import CreateProject from './../Project/components/CreateProject/index';
 import { checkIsHasPermission } from '../../../../utils/businessFunction'
 import { ORG_TEAM_BOARD_CREATE } from '../../../../globalset/js/constant'
@@ -100,7 +100,7 @@ export default class GroupListHeadSet extends Component {
                 });
             })
             .then(() => {
-                beforeCreateBoardUpdateGantt(dispatch)
+                afterCreateBoardUpdateGantt(dispatch)
             });
     };
 
