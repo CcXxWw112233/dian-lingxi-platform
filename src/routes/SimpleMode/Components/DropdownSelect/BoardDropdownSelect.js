@@ -8,6 +8,7 @@ import { getOrgNameWithOrgIdFilter, setBoardIdStorage } from "@/utils/businessFu
 import { afterChangeBoardUpdateGantt } from "../../../Technological/components/Gantt/ganttBusiness";
 import { beforeChangeCommunicationUpdateFileList } from "../WorkbenchPage/BoardCommunication/components/getCommunicationFileListFn";
 import { isPaymentOrgUser } from "@/utils/businessFunction"
+import { selectBoardToSeeInfo } from "../../../../utils/businessFunction";
 class BoardDropdownSelect extends Component {
   constructor(props) {
     super(props);
@@ -23,7 +24,7 @@ class BoardDropdownSelect extends Component {
     if ('board:chat' == code) {
       beforeChangeCommunicationUpdateFileList({ board_id, dispatch });
     } else if ('board:plans' == code) {
-      afterChangeBoardUpdateGantt({ board_id, dispatch })
+      // afterChangeBoardUpdateGantt({ board_id, dispatch })
     }
   }
 
@@ -50,12 +51,14 @@ class BoardDropdownSelect extends Component {
             current_board: {}
           }
         });
-        dispatch({
-          type: 'gantt/updateDatas',
-          payload: {
-            gantt_board_id: 0,
-          }
-        });
+        // dispatch({
+        //   type: 'gantt/updateDatas',
+        //   payload: {
+        //     gantt_board_id: 0,
+        //   }
+        // });
+        selectBoardToSeeInfo({ board_id: '0', dispatch })
+
         dispatch({
           type: 'projectCommunication/updateDatas',
           payload: {
@@ -83,12 +86,13 @@ class BoardDropdownSelect extends Component {
             current_board: data.key
           }
         });
-        dispatch({
-          type: 'gantt/updateDatas',
-          payload: {
-            gantt_board_id: data.key,
-          }
-        });
+        // dispatch({
+        //   type: 'gantt/updateDatas',
+        //   payload: {
+        //     gantt_board_id: data.key,
+        //   }
+        // });
+        selectBoardToSeeInfo({ board_id: selectBoard[0] && selectBoard[0].board_id, board_name: selectBoard[0] && selectBoard[0].board_name, dispatch })
 
         dispatch({
           type: 'projectCommunication/updateDatas',
@@ -152,11 +156,11 @@ class BoardDropdownSelect extends Component {
       const { board_id: id, board_name: name, org_id } = board;
       //根据当前模块是付费非付费模块 去设置项目列表中的项目是否可以选择
       if (currentSelectedWorkbenchBox.code !== 'board:plans' && !isPaymentOrgUser(org_id)) {
-        menuItemList.push({ id, name, parentName: getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes), disabled: true});
-      }else{
+        menuItemList.push({ id, name, parentName: getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes), disabled: true });
+      } else {
         menuItemList.push({ id, name, parentName: getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes) });
       }
-    
+
     });
 
     return menuItemList;
