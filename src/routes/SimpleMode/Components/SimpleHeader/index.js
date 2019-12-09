@@ -94,8 +94,10 @@ class SimpleHeader extends Component {
     //圈子
     imInitOption = () => {
         const { protocol, host } = window.location
+        // 设置组织id过滤
         const { dispatch, OrganizationId } = this.props
         const filterId = OrganizationId == '0' ? '' : OrganizationId
+
         lx_utils.filterUserList(filterId)
         Im.option({
             baseUrl: `${protocol}//${host}/`,
