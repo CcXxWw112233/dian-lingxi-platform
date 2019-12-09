@@ -134,7 +134,6 @@ export default {
       if (creator_id == user_id) {
         return false
       }
-
       let handleType = 'handleWsData_board_detail'
       if (locationPath.indexOf('technological/workbench') != -1) {
         handleType = 'handleWsData_workbench'
@@ -142,6 +141,8 @@ export default {
         handleType = 'handleWsData_board_detail'
       } else if (locationPath.indexOf('technological/project') != -1) {
         handleType = 'handleWsData_board_list'
+      } else if(locationPath.indexOf('/technological/simplemode/workbench') != -1) {
+        handleType = 'simpleModeCooperate/handleSimpleModeCooperate'
       }
       yield put({
         type: handleType,
