@@ -29,6 +29,8 @@ export default class BoardCommuicationFileDetailContainer extends Component {
       return false
     }
     this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
+    // 表示是从详情进来的
+    this.props.shouldDidMountUpdate && this.props.setPreviewFileModalVisibile()
   }
 
   initStateDatas = ({ data }) => {
@@ -88,6 +90,20 @@ export default class BoardCommuicationFileDetailContainer extends Component {
   // 更新该组件中的数据
   updateStateDatas = (datas) => {
     this.setState({ ...datas })
+  }
+
+  componentDidMount() {
+    const { filePreviewCurrentFileId, fileType, file_detail_modal_visible, shouldDidMountUpdate } = this.props
+    if (filePreviewCurrentFileId && file_detail_modal_visible && shouldDidMountUpdate) {
+      console.log('进来了', 'sssssssssssss')
+      if (fileType == '.pdf') {
+        // this.getFilePDFInfo({ id: newFilePreviewCurrentFileId })
+        this.delayUpdatePdfDatas({ id: filePreviewCurrentFileId })
+        return
+      }
+      this.getCurrentFilePreviewData({ id: filePreviewCurrentFileId })
+      // this.getFilePreviewInfoByUrl()
+    }
   }
 
   componentWillReceiveProps(nextProps) {

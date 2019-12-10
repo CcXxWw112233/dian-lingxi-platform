@@ -7,6 +7,7 @@ import BreadCrumbFileNav from './BreadCrumbFileNav'
 import FileDetail from './FileDetail'
 // import FileDetailModal from './FileDetail/FileDetailModal'
 import FileListRightBarFileDetailModal from './FileListRightBarFileDetailModal'
+// import FileListRightBarFileDetailModal from '@/routes/Technological/components/Workbench/CardContent/Modal/FileListRightBarFileDetailModal';
 import FileDetailModal from '@/components/FileDetailModal'
 import { connect } from 'dva';
 
@@ -39,7 +40,7 @@ export default class FileIndex extends React.Component {
         </div>
         {
           this.state.previewFileModalVisibile && (
-            <FileListRightBarFileDetailModal fileType={fileType} filePreviewCurrentFileId={filePreviewCurrentFileId} previewFileModalVisibile={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile} />
+            <FileListRightBarFileDetailModal shouldDidMountUpdate={true} fileType={fileType} previewFileModalVisibile={this.state.previewFileModalVisibile} filePreviewCurrentFileId={filePreviewCurrentFileId} file_detail_modal_visible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile} />
           )
         }
       </div>

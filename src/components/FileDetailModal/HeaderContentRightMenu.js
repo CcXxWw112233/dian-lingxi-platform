@@ -46,6 +46,27 @@ export default class HeaderContentRightMenu extends Component {
     }
   }
 
+  /**
+   * 检测是否进入圈评
+   * @return {Boolean} true/false true表示正在进入圈评 false表示没有进入
+   */
+  checkWhetherEntryCircleEvaluation = () => {
+    const { is_large_loading, is_petty_loading } = this.state
+    let flag
+    if (is_large_loading || is_petty_loading) {
+      flag = true
+    } else {
+      flag = false
+    }
+    return flag
+  }
+
+  // 关于右侧menu的点击事件
+  handleDisabledOperator = () => {
+    message.warn('正在进入圈评,请稍等...', MESSAGE_DURATION_TIME)
+    return false
+  }
+
   // ------------------------- 关于版本信息的事件 S --------------------------------
 
   // 设为主版本回调
@@ -289,7 +310,7 @@ export default class HeaderContentRightMenu extends Component {
       if (isApiResponseOk(res)) {
         // console.log(res, 'sssssss_res')
         // return
-        const { fileId: version_id, id } = res.data
+        const { version_id, id } = res.data
         this.getFileVersionist({version_id, file_id: id})
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
@@ -298,7 +319,7 @@ export default class HeaderContentRightMenu extends Component {
   }
 
   saveAsMenu = () => {
-    const { filePreviewCurrentResourceId, filePreviewCurrentFileId, pdfDownLoadSrc } = this.props
+    const { filePreviewCurrentResourceId, pdfDownLoadSrc } = this.props
     return (
       <Menu>
         <Menu.Item key="1"
@@ -644,11 +665,6 @@ export default class HeaderContentRightMenu extends Component {
 
   /* 点击圈屏右上脚icon-是否全屏显示 */
   zoomFrame = () => {
-    const { is_petty_loading, is_large_loading } = this.props
-    if (is_petty_loading || is_large_loading) {
-      message.warn('正在进入圈评,请稍等...', MESSAGE_DURATION_TIME)
-      return false
-    }
     this.props.updateStateDatas && this.props.updateStateDatas({ isZoomPictureFullScreenMode: !this.props.isZoomPictureFullScreenMode, percent: 0 });
   }
 
@@ -729,7 +745,12 @@ export default class HeaderContentRightMenu extends Component {
     };
 
     return (
-      <div className={headerStyles.header_rightMenuWrapper}>
+      <div className={headerStyles.header_rightMenuWrapper} style={{position: 'relative'}}>
+        {
+          this.checkWhetherEntryCircleEvaluation() && (
+            <div style={{position: 'absolute', top: '0', right: '0', bottom: '0', left: '0', margin: '0 auto', zIndex: 1}} onClick={this.handleDisabledOperator}></div>
+          )
+        }
         {/* 版本信息 */}
         <div className={headerStyles.margin_right10}>
           <VersionSwitching

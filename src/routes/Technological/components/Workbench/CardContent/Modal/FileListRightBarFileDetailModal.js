@@ -69,11 +69,13 @@ class FileListRightBarFileDetailModal extends React.Component {
 			<div id="container_FileListRightBarFileDetailModal" className={styles.fileListRightBarFileDetailModal}>
 				<BoardCommuicationFileDetailContainer
 					filePreviewCurrentFileId={this.state.filePreviewCurrentFileId}
+					file_detail_modal_visible={this.props.file_detail_modal_visible}
 					fileType={this.state.fileType}
 					componentHeight={currentZoomPictureComponetHeight} 
 					componentWidth={currentZoomPictureComponetWidth}
 					setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
 					hideUpdatedFileDetail={this.props.hideUpdatedFileDetail}//取消关闭弹窗的回调,项目交流中的特殊处理
+					shouldDidMountUpdate={this.props.shouldDidMountUpdate}
 				/>
 				{/* <FileDetail
 					{...this.props}
