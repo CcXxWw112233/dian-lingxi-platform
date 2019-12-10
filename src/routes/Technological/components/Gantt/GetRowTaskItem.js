@@ -547,7 +547,7 @@ export default class GetRowTaskItem extends Component {
                         >
                             {name}
                             {
-                                is_privilege != '0' && (
+                                is_privilege == '1' && (
                                     <Tooltip title="已开启访问控制" placement="top">
                                         <span className={`${globalStyles.authTheme}`}
                                             style={{ color: 'rgba(0,0,0,0.50)', marginLeft: '5px' }}
