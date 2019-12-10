@@ -1,13 +1,14 @@
 import React, { Component } from 'react'
 import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { getSubfixName, setBoardIdStorage, checkIsHasPermissionInBoard } from '../../../../../../../utils/businessFunction';
+import { getSubfixName, setBoardIdStorage, checkIsHasPermissionInBoard, getGlobalData } from '../../../../../../../utils/businessFunction';
 import { Input, Menu, Dropdown, message, Tooltip } from 'antd'
 import { PROJECT_FILES_FILE_INTERVIEW, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../../../globalset/js/constant';
 import { connect } from 'dva';
 import { fileRemove, updateFolder } from '../../../../../../../services/technological/file';
 import { isApiResponseOk } from '../../../../../../../utils/handleResponseData';
 import { fileItemIsHasUnRead, cardItemIsHasUnRead, folderItemHasUnReadNo } from '../../../ganttBusiness';
+import FileDetailModal from '@/components/FileDetailModal'
 
 @connect(mapStateToProps)
 export default class FolderItem extends Component {
@@ -157,69 +158,84 @@ export default class FolderItem extends Component {
         //     return false;
         // }
 
+        // dispatch({
+        //     type: 'publicFileDetailModal/updateDatas',
+        //     payload: {
+        //         filePreviewCurrentFileId: id,
+        //         fileType: getSubfixName(file_name)
+        //     }
+        // })
         dispatch({
-            type: 'workbenchFileDetail/getCardCommentListAll',
+            type: 'projectDetail/projectDetailInfo',
             payload: {
-                id: id
-            }
-        });
-        dispatch({
-            type: 'workbenchFileDetail/getFileType',
-            payload: {
-                file_id: id,
-                calback: function (data) {
-                    dispatch({
-                        type: 'workbenchPublicDatas/getRelationsSelectionPre',
-                        payload: {
-                            _organization_id: data.base_info.org_id
-                        }
-                    })
-                }
-            }
-        });
-        this.props.setPreviewFileModalVisibile();
-        dispatch({
-            type: 'workbenchFileDetail/updateDatas',
-            payload: {
-                seeFileInput: 'fileModule',
-                board_id,
-                filePreviewCurrentId: file_resource_id,
-                currentParrentDirectoryId: folder_id,
-                filePreviewCurrentFileId: id,
-                filePreviewCurrentVersionId: version_id, //file_id,
-                pdfDownLoadSrc: '',
+                id:board_id
             }
         })
+        this.setPreviewFileModalVisibile()
+        // this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile();
+        // dispatch({
+        //     type: 'workbenchFileDetail/getCardCommentListAll',
+        //     payload: {
+        //         id: id
+        //     }
+        // });
+        // dispatch({
+        //     type: 'workbenchFileDetail/getFileType',
+        //     payload: {
+        //         file_id: id,
+        //         calback: function (data) {
+        //             dispatch({
+        //                 type: 'workbenchPublicDatas/getRelationsSelectionPre',
+        //                 payload: {
+        //                     _organization_id: data.base_info.org_id
+        //                 }
+        //             })
+        //         }
+        //     }
+        // });
+        // this.props.setPreviewFileModalVisibile();
+        // dispatch({
+        //     type: 'workbenchFileDetail/updateDatas',
+        //     payload: {
+        //         seeFileInput: 'fileModule',
+        //         board_id,
+        //         filePreviewCurrentId: file_resource_id,
+        //         currentParrentDirectoryId: folder_id,
+        //         filePreviewCurrentFileId: id,
+        //         filePreviewCurrentVersionId: version_id, //file_id,
+        //         pdfDownLoadSrc: '',
+        //     }
+        // })
 
 
-        if (getSubfixName(name) == '.pdf') {
-            this.props.dispatch({
-                type: 'workbenchFileDetail/getFilePDFInfo',
-                payload: {
-                    id
-                }
-            })
-        } else {
-            dispatch({
-                type: 'workbenchFileDetail/filePreview',
-                payload: {
-                    id: file_resource_id, file_id: id
-                }
-            })
-        }
-        dispatch({
-            type: 'workbenchFileDetail/fileVersionist',
-            payload: {
-                version_id: version_id, //file_id,
-                isNeedPreviewFile: false,
-            }
-        })
-        dispatch({
-            type: 'workbenchTaskDetail/getBoardMembers',
-            payload: {
-                id: board_id
-            }
-        })
+        // if (getSubfixName(name) == '.pdf') {
+        //     this.props.dispatch({
+        //         type: 'workbenchFileDetail/getFilePDFInfo',
+        //         payload: {
+        //             id
+        //         }
+        //     })
+        // } else {
+        //     dispatch({
+        //         type: 'workbenchFileDetail/filePreview',
+        //         payload: {
+        //             id: file_resource_id, file_id: id
+        //         }
+        //     })
+        // }
+        // dispatch({
+        //     type: 'workbenchFileDetail/fileVersionist',
+        //     payload: {
+        //         version_id: version_id, //file_id,
+        //         isNeedPreviewFile: false,
+        //     }
+        // })
+        // dispatch({
+        //     type: 'workbenchTaskDetail/getBoardMembers',
+        //     payload: {
+        //         id: board_id
+        //     }
+        // })
         dispatch({
             type: 'workbenchPublicDatas/updateDatas',
             payload: {
@@ -278,11 +294,18 @@ export default class FolderItem extends Component {
         }
     }
 
+    setPreviewFileModalVisibile = () => {
+        this.setState({
+          previewFileModalVisibile: !this.state.previewFileModalVisibile
+        });
+      }
+
     render() {
-        const { itemValue = {}, im_all_latest_unread_messages = [], wil_handle_types = [] } = this.props
-        const { name, id, type, is_privilege } = itemValue
+        const { itemValue = {}, im_all_latest_unread_messages = [], wil_handle_types = [], board_id } = this.props
+        const { name, id, type, is_privilege, file_name } = itemValue
         const { is_show_change, input_folder_value, local_name } = this.state
         return (
+            <>
             <div className={`${styles.folder_item_out}`}>
                 {
                     is_show_change ? (
@@ -327,6 +350,13 @@ export default class FolderItem extends Component {
                         )
                 }
             </div>
+            <FileDetailModal
+                filePreviewCurrentFileId={id}
+                fileType={getSubfixName(file_name)} 
+                file_detail_modal_visible={this.state.previewFileModalVisibile && getGlobalData('storageCurrentOperateBoardId') == board_id}
+                setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
+                />
+            </>
         )
     }
 }

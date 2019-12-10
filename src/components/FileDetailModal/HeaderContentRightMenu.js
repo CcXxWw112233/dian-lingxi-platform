@@ -644,7 +644,12 @@ export default class HeaderContentRightMenu extends Component {
 
   /* 点击圈屏右上脚icon-是否全屏显示 */
   zoomFrame = () => {
-    this.props.updateStateDatas && this.props.updateStateDatas({ isZoomPictureFullScreenMode: !this.props.isZoomPictureFullScreenMode });
+    const { is_petty_loading, is_large_loading } = this.props
+    if (is_petty_loading || is_large_loading) {
+      message.warn('正在进入圈评,请稍等...', MESSAGE_DURATION_TIME)
+      return false
+    }
+    this.props.updateStateDatas && this.props.updateStateDatas({ isZoomPictureFullScreenMode: !this.props.isZoomPictureFullScreenMode, percent: 0 });
   }
 
   //header

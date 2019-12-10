@@ -1,5 +1,6 @@
 import React from 'react';
-import FileDetailModal from './FileDetail/FileDetailModal'
+// import FileDetailModal from './FileDetail/FileDetailModal'
+import FileDetailModal from '@/components/FileDetailModal'
 
 import { connect } from 'dva'
 @connect(mapStateToProps)
@@ -9,7 +10,9 @@ class FileListRightBarFileDetailModal extends React.Component {
 		super(props)
 		this.state = {
 			currentZoomPictureComponetWidth: null,
-			currentZoomPictureComponetHeight: null
+			currentZoomPictureComponetHeight: null,
+			filePreviewCurrentFileId: props.filePreviewCurrentFileId,
+			fileType: props.fileType
 		}
 	}
 
@@ -18,7 +21,7 @@ class FileListRightBarFileDetailModal extends React.Component {
 		setTimeout(() => {
 			const projectList_FileListRightBarFileDetailModal = document.getElementById('projectList_FileListRightBarFileDetailModal');
 			let zommPictureComponentHeight = projectList_FileListRightBarFileDetailModal ? projectList_FileListRightBarFileDetailModal.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding  
-			let zommPictureComponentWidth = projectList_FileListRightBarFileDetailModal ? projectList_FileListRightBarFileDetailModal.offsetWidth -60 - 130 - 30 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
+			let zommPictureComponentWidth = projectList_FileListRightBarFileDetailModal ? projectList_FileListRightBarFileDetailModal.offsetWidth - 60 - 130 - 30 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
 			this.setState({
 				currentZoomPictureComponetWidth: zommPictureComponentWidth,
 				currentZoomPictureComponetHeight: zommPictureComponentHeight
@@ -34,7 +37,7 @@ class FileListRightBarFileDetailModal extends React.Component {
 			setTimeout(() => {
 				const projectList_FileListRightBarFileDetailModal = document.getElementById('projectList_FileListRightBarFileDetailModal');
 				let zommPictureComponentHeight = projectList_FileListRightBarFileDetailModal ? projectList_FileListRightBarFileDetailModal.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding  
-				let zommPictureComponentWidth = projectList_FileListRightBarFileDetailModal ? projectList_FileListRightBarFileDetailModal.offsetWidth -60 - 130 - 30 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
+				let zommPictureComponentWidth = projectList_FileListRightBarFileDetailModal ? projectList_FileListRightBarFileDetailModal.offsetWidth - 60 - 130 - 30 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
 				this.setState({
 					currentZoomPictureComponetWidth: zommPictureComponentWidth,
 					currentZoomPictureComponetHeight: zommPictureComponentHeight
@@ -44,7 +47,7 @@ class FileListRightBarFileDetailModal extends React.Component {
 			setTimeout(() => {
 				const projectList_FileListRightBarFileDetailModal = document.getElementById('projectList_FileListRightBarFileDetailModal');
 				let zommPictureComponentHeight = projectList_FileListRightBarFileDetailModal ? projectList_FileListRightBarFileDetailModal.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding  
-				let zommPictureComponentWidth = projectList_FileListRightBarFileDetailModal ? projectList_FileListRightBarFileDetailModal.offsetWidth -60 - 130 - 30 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
+				let zommPictureComponentWidth = projectList_FileListRightBarFileDetailModal ? projectList_FileListRightBarFileDetailModal.offsetWidth - 60 - 130 - 30 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
 				this.setState({
 					currentZoomPictureComponetWidth: zommPictureComponentWidth,
 					currentZoomPictureComponetHeight: zommPictureComponentHeight
@@ -54,10 +57,19 @@ class FileListRightBarFileDetailModal extends React.Component {
 	}
 
 	render() {
-		const { currentZoomPictureComponetWidth, currentZoomPictureComponetHeight } = this.state
+		const { currentZoomPictureComponetWidth, currentZoomPictureComponetHeight, filePreviewCurrentFileId, fileType } = this.state
 		return (
-			<div id="projectList_FileListRightBarFileDetailModal" style={{width: '100%', height: '100%'}}>
+			<div id="projectList_FileListRightBarFileDetailModal" style={{ width: '100%', height: '100%' }}>
 				<FileDetailModal
+					componentHeight={currentZoomPictureComponetHeight}
+					componentWidth={currentZoomPictureComponetWidth}
+					filePreviewCurrentFileId={filePreviewCurrentFileId}
+					fileType={fileType}
+					file_detail_modal_visible={this.props.previewFileModalVisibile}
+					setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
+					shouldDidMountUpdate={true}
+				/>
+				{/* <FileDetailModal
 					{...this.props}
 					{...this.props.fileDetailModalDatas}
 					componentHeight={currentZoomPictureComponetHeight}
@@ -65,7 +77,7 @@ class FileListRightBarFileDetailModal extends React.Component {
 					setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
 					updateCommunicationFolderListData={this.props.updateCommunicationFolderListData}
 					modalTop={20}
-				/>
+				/> */}
 			</div>
 		);
 	}

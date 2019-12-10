@@ -316,7 +316,7 @@ export default class FileList extends React.Component {
   }
 
   openFile(data) {
-    const { file_id, version_id, file_resource_id, file_name } = data
+    const { file_id, version_id, file_resource_id, file_name, board_id, id } = data
     // console.log(data, 'ssssss')
     // if(getSubfixName(file_name) == '.pdf' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
     //   openPDF({id: file_id})
@@ -325,69 +325,82 @@ export default class FileList extends React.Component {
     this.open(data, '2')
 
     const { fileList = [], dispatch } = this.props
-
     dispatch({
-      type: 'projectDetailFile/getCardCommentListAll',
+      type: 'projectDetail/projectDetailInfo',
       payload: {
-        id: file_id
+        id: board_id
       }
     })
     dispatch({
-      type: 'projectDetailFile/updateDatas',
+      type: 'publicFileDetailModal/updateDatas',
       payload: {
-        filePreviewCurrentFileId: file_id
+        filePreviewCurrentFileId: id,
+				fileType: getSubfixName(file_name)
       }
     })
-    dispatch({
-      type: 'projectDetailFile/getFileType',
-      payload: {
-        fileList,
-        file_id
-      }
-    })
-    //接下来打开文件
-    dispatch({
-      type: 'projectDetailFile/updateDatas',
-      payload: {
-        isInOpenFile: true,
-        seeFileInput: 'fileModule',
-        // currentPreviewFileData: data,
-        filePreviewCurrentFileId: file_id,
-        filePreviewCurrentId: file_resource_id,
-        filePreviewCurrentVersionId: version_id,
-        pdfDownLoadSrc: '',
-      }
-    })
-    if (getSubfixName(file_name) == '.pdf') {
-      dispatch({
-        type: 'projectDetailFile/getFilePDFInfo',
-        payload: {
-          id: file_id
-        }
-      })
-    } else {
-      dispatch({
-        type: 'projectDetailFile/filePreview',
-        payload: {
-          id: file_resource_id, file_id
-        }
-      })
-      // 这里调用是用来获取以及更新访问控制文件弹窗详情中的数据, 一开始没有的
-      // 但是这样会影响 文件路径, 所以传递一个参数来阻止更新
-      dispatch({
-        type: 'projectDetailFile/fileInfoByUrl',
-        payload: {
-          file_id: file_id,
-          isNotNecessaryUpdateBread: true
-        }
-      })
-    }
-    dispatch({
-      type: 'projectDetailFile/fileVersionist',
-      payload: {
-        version_id
-      }
-    })
+    this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile();
+    // dispatch({
+    //   type: 'projectDetailFile/getCardCommentListAll',
+    //   payload: {
+    //     id: file_id
+    //   }
+    // })
+    // dispatch({
+    //   type: 'projectDetailFile/updateDatas',
+    //   payload: {
+    //     filePreviewCurrentFileId: file_id
+    //   }
+    // })
+    // dispatch({
+    //   type: 'projectDetailFile/getFileType',
+    //   payload: {
+    //     fileList,
+    //     file_id
+    //   }
+    // })
+    // //接下来打开文件
+    // dispatch({
+    //   type: 'projectDetailFile/updateDatas',
+    //   payload: {
+    //     isInOpenFile: true,
+    //     seeFileInput: 'fileModule',
+    //     // currentPreviewFileData: data,
+    //     filePreviewCurrentFileId: file_id,
+    //     filePreviewCurrentId: file_resource_id,
+    //     filePreviewCurrentVersionId: version_id,
+    //     pdfDownLoadSrc: '',
+    //   }
+    // })
+    // if (getSubfixName(file_name) == '.pdf') {
+    //   dispatch({
+    //     type: 'projectDetailFile/getFilePDFInfo',
+    //     payload: {
+    //       id: file_id
+    //     }
+    //   })
+    // } else {
+    //   dispatch({
+    //     type: 'projectDetailFile/filePreview',
+    //     payload: {
+    //       id: file_resource_id, file_id
+    //     }
+    //   })
+    //   // 这里调用是用来获取以及更新访问控制文件弹窗详情中的数据, 一开始没有的
+    //   // 但是这样会影响 文件路径, 所以传递一个参数来阻止更新
+    //   dispatch({
+    //     type: 'projectDetailFile/fileInfoByUrl',
+    //     payload: {
+    //       file_id: file_id,
+    //       isNotNecessaryUpdateBread: true
+    //     }
+    //   })
+    // }
+    // dispatch({
+    //   type: 'projectDetailFile/fileVersionist',
+    //   payload: {
+    //     version_id
+    //   }
+    // })
     //通过url
     // this.props.openFileInUrl({file_id})
   }

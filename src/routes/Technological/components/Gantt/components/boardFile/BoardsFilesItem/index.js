@@ -269,7 +269,7 @@ export default class Index extends Component {
                     </Dragger>
                 </div>
                 {/* )} */}
-                <FileDetailModal
+                {/* <FileDetailModal
                     {...this.props}
                     {...this.props.fileDetailModalDatas}
                     setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
@@ -278,7 +278,7 @@ export default class Index extends Component {
                     updateDatasTask={this.props.fileDetailModalDatas.updateDatasTask}
                     updateDatasFile={this.props.fileDetailModalDatas.updateDatasFile}
                     whetherUpdateFolderListData={this.whetherUpdateFolderListData}
-                />
+                /> */}
             </div>
         )
     }

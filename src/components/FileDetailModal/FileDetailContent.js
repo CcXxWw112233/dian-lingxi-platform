@@ -9,8 +9,14 @@ import { connect } from 'dva'
 import { message } from 'antd'
 import { currentNounPlanFilterName, getOrgNameWithOrgIdFilter, checkIsHasPermissionInVisitControl, getSubfixName } from '@/utils/businessFunction.js'
 import { compareACoupleOfObjects } from '@/utils/util'
+import { withRouter } from 'react-router-dom'
+import QueryString from 'querystring'
+let board_id = null
+let appsSelectKey = null
+let file_id = null
+let folder_id = null
 @connect(mapStateToProps)
-export default class FileDetailContent extends Component {
+class FileDetailContent extends Component {
 
   constructor(props) {
     super(props)
@@ -19,6 +25,7 @@ export default class FileDetailContent extends Component {
       isZoomPictureFullScreenMode: false, //图评全屏模式
       onlyReadingShareModalVisible: false, //只读分享model
       onlyReadingShareData: {},
+      file_detail_modal_visible: props.file_detail_modal_visible
     }
   }
 
@@ -40,26 +47,68 @@ export default class FileDetailContent extends Component {
   delayUpdatePdfDatas = async ({ id }) => {
     let res = await fileInfoByUrl({ id })
     if (isApiResponseOk(res)) {
+      let file_type = getSubfixName(res.data.base_info.file_name)
       this.initStateDatas({ data: res.data })
-      await this.getFilePDFInfo({ id })
+      if (file_type == '.pdf') {
+        await this.getFilePDFInfo({ id })
+      }
     } else {
       message.warn(res.message, MESSAGE_DURATION_TIME)
     }
   }
 
+  // 有关路由跳转获取详情
+  getFilePreviewInfoByUrl = () => {
+    const { location, history } = this.props
+    if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
+
+      const param = QueryString.parse(location.search.replace('?', ''))
+      board_id = param.board_id
+      appsSelectKey = param.appsSelectKey
+      file_id = param.file_id
+      folder_id = param.folder_id
+      this.updateStateDatas({filePreviewCurrentFileId: file_id})
+      if (appsSelectKey == '4') {
+
+        if (file_id) {
+          this.setState({
+            file_detail_modal_visible: true
+          })
+          this.delayUpdatePdfDatas({id:file_id})
+        }
+      }
+
+    }
+  }
+
+  componentDidMount() {
+    const { filePreviewCurrentFileId, fileType, file_detail_modal_visible, shouldDidMountUpdate } = this.props
+    if (filePreviewCurrentFileId && file_detail_modal_visible && shouldDidMountUpdate) {
+      if (fileType == '.pdf') {
+        // this.getFilePDFInfo({ id: newFilePreviewCurrentFileId })
+        this.delayUpdatePdfDatas({ id: filePreviewCurrentFileId })
+        return
+      }
+      this.getCurrentFilePreviewData({ id: filePreviewCurrentFileId })
+      // this.getFilePreviewInfoByUrl()
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
-    const { fileType, clientHeight } = this.props
-    const { filePreviewCurrentFileId: newFilePreviewCurrentFileId, clientHeight: newClientHeight } = nextProps
-    // 初始化数据
+    const { fileType, clientHeight = '' } = this.props
+    const { filePreviewCurrentFileId: newFilePreviewCurrentFileId, clientHeight: newClientHeight, file_detail_modal_visible } = nextProps
     if (clientHeight != newClientHeight) return
     if (compareACoupleOfObjects(this.props, nextProps)) return
     // this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
-    if (fileType == '.pdf') {
-      // this.getFilePDFInfo({ id: newFilePreviewCurrentFileId })
-      this.delayUpdatePdfDatas({ id: newFilePreviewCurrentFileId })
-      return
+    if (file_detail_modal_visible) {
+      if (fileType == '.pdf') {
+        // this.getFilePDFInfo({ id: newFilePreviewCurrentFileId })
+        this.delayUpdatePdfDatas({ id: newFilePreviewCurrentFileId })
+        return
+      }
+      this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
+      // this.getFilePreviewInfoByUrl()
     }
-    this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
   }
 
   onCancel = () => {
@@ -69,6 +118,13 @@ export default class FileDetailContent extends Component {
       return false
     }
     this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile()
+    this.props.dispatch({
+      type: 'publicFileDetailModal/updateDatas',
+      payload: {
+        filePreviewCurrentFileId: '',
+				fileType: ''
+      }
+    })
   }
 
   // 更新该组件中的数据
@@ -106,7 +162,7 @@ export default class FileDetailContent extends Component {
   }
 
   render() {
-    const { file_detail_modal_visible, clientWidth, clientHeight } = this.props
+    const { clientWidth, clientHeight, file_detail_modal_visible } = this.props
     const { filePreviewCurrentFileId, fileType } = this.state
     return (
       <div>
@@ -136,6 +192,8 @@ export default class FileDetailContent extends Component {
     )
   }
 }
+
+export default withRouter(FileDetailContent)
 
 FileDetailContent.defaultProps = {
   filePreviewCurrentFileId: '', // 需要一个当前的文件ID, !!!

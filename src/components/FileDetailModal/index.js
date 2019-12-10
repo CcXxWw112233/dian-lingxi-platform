@@ -41,7 +41,9 @@ export default class FileDetailModal extends Component {
           file_detail_modal_visible={file_detail_modal_visible} 
           setPreviewFileModalVisibile={setPreviewFileModalVisibile} 
           filePreviewCurrentFileId={filePreviewCurrentFileId} 
-          fileType={fileType}/>
+          fileType={fileType}
+          {...this.props}
+          />
       </div>
     )
   }
