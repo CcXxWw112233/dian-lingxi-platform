@@ -19,9 +19,9 @@ class FileListRightBarFileDetailModal extends React.Component {
 	// 初始化的时候，会拿到当前这个width，然后赋给圈图的这个width
 	componentDidMount() {
 		setTimeout(() => {
-			const projectList_FileListRightBarFileDetailModal = document.getElementById('projectList_FileListRightBarFileDetailModal');
-			let zommPictureComponentHeight = projectList_FileListRightBarFileDetailModal ? projectList_FileListRightBarFileDetailModal.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding  
-			let zommPictureComponentWidth = projectList_FileListRightBarFileDetailModal ? projectList_FileListRightBarFileDetailModal.offsetWidth - 60 - 130 - 30 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
+			const container_fileDetailOut = document.getElementById('container_fileDetailOut');
+			let zommPictureComponentHeight = container_fileDetailOut ? container_fileDetailOut.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding  
+			let zommPictureComponentWidth = container_fileDetailOut ? container_fileDetailOut.offsetWidth : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
 			this.setState({
 				currentZoomPictureComponetWidth: zommPictureComponentWidth,
 				currentZoomPictureComponetHeight: zommPictureComponentHeight
@@ -35,9 +35,9 @@ class FileListRightBarFileDetailModal extends React.Component {
 		const { chatImVisiable } = this.props
 		if (newChatImVisiable != chatImVisiable) { // 是展开和关闭需要重新获取宽高
 			setTimeout(() => {
-				const projectList_FileListRightBarFileDetailModal = document.getElementById('projectList_FileListRightBarFileDetailModal');
-				let zommPictureComponentHeight = projectList_FileListRightBarFileDetailModal ? projectList_FileListRightBarFileDetailModal.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding  
-				let zommPictureComponentWidth = projectList_FileListRightBarFileDetailModal ? projectList_FileListRightBarFileDetailModal.offsetWidth - 60 - 130 - 30 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
+				const container_fileDetailOut = document.getElementById('container_fileDetailOut');
+				let zommPictureComponentHeight = container_fileDetailOut ? container_fileDetailOut.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding  
+				let zommPictureComponentWidth = container_fileDetailOut ? container_fileDetailOut.offsetWidth  : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
 				this.setState({
 					currentZoomPictureComponetWidth: zommPictureComponentWidth,
 					currentZoomPictureComponetHeight: zommPictureComponentHeight
@@ -45,9 +45,9 @@ class FileListRightBarFileDetailModal extends React.Component {
 			}, 200)
 		} else { // 这里是浏览器视图变化的时候需要重新获取宽高
 			setTimeout(() => {
-				const projectList_FileListRightBarFileDetailModal = document.getElementById('projectList_FileListRightBarFileDetailModal');
-				let zommPictureComponentHeight = projectList_FileListRightBarFileDetailModal ? projectList_FileListRightBarFileDetailModal.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding  
-				let zommPictureComponentWidth = projectList_FileListRightBarFileDetailModal ? projectList_FileListRightBarFileDetailModal.offsetWidth - 60 - 130 - 30 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
+				const container_fileDetailOut = document.getElementById('container_fileDetailOut');
+				let zommPictureComponentHeight = container_fileDetailOut ? container_fileDetailOut.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding  
+				let zommPictureComponentWidth = container_fileDetailOut ? container_fileDetailOut.offsetWidth : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
 				this.setState({
 					currentZoomPictureComponetWidth: zommPictureComponentWidth,
 					currentZoomPictureComponetHeight: zommPictureComponentHeight

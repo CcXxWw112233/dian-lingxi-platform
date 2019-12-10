@@ -121,6 +121,21 @@ class FileDetailContent extends React.Component {
     })
   }
 
+  /**
+   * 检测是否进入圈评
+   * @return {Boolean} true/false true表示正在进入圈评 false表示没有进入
+   */
+  checkWhetherEntryCircleEvaluation = () => {
+    const { is_large_loading, is_petty_loading } = this.state
+    let flag
+    if (is_large_loading || is_petty_loading) {
+      flag = true
+    } else {
+      flag = false
+    }
+    return flag
+  }
+
   //评图功能
   previewImgLoad(e) {
     const { maxImageWidth } = this.state
@@ -376,6 +391,10 @@ class FileDetailContent extends React.Component {
 
   //header
   closeFile() {
+    if (this.checkWhetherEntryCircleEvaluation()) {
+      message.warn('正在进入圈评,请勿退出', MESSAGE_DURATION_TIME)
+      return false
+    }
     const { datas: { breadcrumbList = [], isExpandFrame } } = this.props.model
     breadcrumbList.splice(breadcrumbList.length - 1, 1)
     clearTimeout(timer)
@@ -388,7 +407,12 @@ class FileDetailContent extends React.Component {
 
   /* 点击圈屏右上脚icon-是否全屏显示 */
   zoomFrame() {
-    this.setState({ isZoomPictureFullScreenMode: !this.state.isZoomPictureFullScreenMode });
+    if (this.checkWhetherEntryCircleEvaluation()) {
+      message.warn('正在进入圈评,请稍等...', MESSAGE_DURATION_TIME)
+      return false
+    }
+    this.setState({ isZoomPictureFullScreenMode: !this.state.isZoomPictureFullScreenMode, percent: 0 });
+    clearTimeout(timer)
   }
 
   // 显示/隐藏右侧实时圈图信息
@@ -419,6 +443,10 @@ class FileDetailContent extends React.Component {
     // const { datas = {} } = this.props.model;
     // const { currentPreviewFileData = {} } = datas
     // const { id } = currentPreviewFileData;
+    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { dispatch } = this.props;
     dispatch({
       type: 'workbenchFileDetail/saveAsNewVersion',
@@ -1181,6 +1209,15 @@ class FileDetailContent extends React.Component {
     }, 500)
   }
 
+  onCancel = () => {
+    if (this.checkWhetherEntryCircleEvaluation()) {
+      message.warn('正在进入圈评,请勿退出', MESSAGE_DURATION_TIME)
+      return false
+    }
+    this.setState({ isZoomPictureFullScreenMode: false, percent: 0 })
+    clearTimeout(timer)
+  }
+
   // 除pdf外的其他文件进入圈评
   handleEnterCirclePointComment = () => {
     const { isZoomPictureFullScreenMode } = this.state
@@ -1190,6 +1227,11 @@ class FileDetailContent extends React.Component {
       is_large_loading: isZoomPictureFullScreenMode,
       percent: 0
     })
+  }
+
+  handleNotClick = () => {
+    message.warn('正在进入圈评,请稍等...', MESSAGE_DURATION_TIME)
+    return false
   }
 
   render() {
@@ -1474,7 +1516,7 @@ class FileDetailContent extends React.Component {
 
     // 点击全屏之后的图片
     const punctuateBigDom = (
-      <Modal zIndex={1010} style={{ top: 0, left: 0, height: bodyClientHeight - 200 + 'px' }} footer={null} title={null} width={bodyClientWidth} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
+      <Modal zIndex={1010} style={{ top: 0, left: 0, height: bodyClientHeight - 200 + 'px' }} footer={null} title={null} width={bodyClientWidth} visible={isZoomPictureFullScreenMode} onCancel={this.onCancel}>
         {
           is_large_loading ? (
             <div style={{ height: bodyClientHeight, marginTop: '20px', background: 'rgba(0,0,0,0.15)' }}>
@@ -1517,7 +1559,7 @@ class FileDetailContent extends React.Component {
 
     // 其他格式点击全屏时候的展示
     const iframeBigDom = (
-      <Modal wrapClassName={indexStyles.overlay_iframBigDom} zIndex={1010} style={{ top: 0, left: 0, minWidth: componentWidth + 'px', minHeight: componentHeight + 'px' }} width={bodyClientWidth} height={bodyClientHeight} footer={null} title={null} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
+      <Modal wrapClassName={indexStyles.overlay_iframBigDom} zIndex={1010} style={{ top: 0, left: 0, minWidth: componentWidth + 'px', minHeight: componentHeight + 'px' }} width={bodyClientWidth} height={bodyClientHeight} footer={null} title={null} visible={isZoomPictureFullScreenMode} onCancel={this.onCancel}>
         {/* <div
           style={{ height: bodyClientHeight, marginTop: '20px' }}
           dangerouslySetInnerHTML={{ __html: getIframe(filePreviewUrl) }}></div>
@@ -1672,7 +1714,12 @@ class FileDetailContent extends React.Component {
           </div>
 
 
-          <div className={indexStyles.fileDetailHeadRight} style={{ flexShrink: 0 }}>
+          <div className={indexStyles.fileDetailHeadRight} style={{ flexShrink: 0, position: 'relative' }}>
+            {
+              this.checkWhetherEntryCircleEvaluation() && (
+                <div style={{position: 'absolute', left: '0', right: '0', top: '0', bottom: '0', margin: '0 auto', zIndex: 1}} onClick={this.handleNotClick}></div>
+              )
+            }
             <div style={{ position: 'relative' }}>
               {/* {
                 checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) ? ('') : (
@@ -1690,11 +1737,11 @@ class FileDetailContent extends React.Component {
               )}
             </div>
             <div style={{ position: 'relative' }}>
-              {
+              {/* {
                 checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD, board_id)) ? ('') : (
                   <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
                 )
-              }
+              } */}
               <Dropdown overlay={saveAsMenu()}>
                 <Button style={{ height: 24, marginLeft: 14 }} >
                   <span className={`${globalStyles.authTheme} ${indexStyles.right__shareIndicator_icon}`}>&#xe6dd;</span>

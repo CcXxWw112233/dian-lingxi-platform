@@ -136,6 +136,21 @@ class FileDetailContent extends React.Component {
     })
   }
 
+  /**
+   * 检测是否进入圈评
+   * @return {Boolean} true/false true表示正在进入圈评 false表示没有进入
+   */
+  checkWhetherEntryCircleEvaluation = () => {
+    const { is_large_loading, is_petty_loading } = this.state
+    let flag
+    if (is_large_loading || is_petty_loading) {
+      flag = true
+    } else {
+      flag = false
+    }
+    return flag
+  }
+
   //评图功能
   previewImgLoad(e) {
     const { maxImageWidth } = this.state
@@ -411,6 +426,10 @@ class FileDetailContent extends React.Component {
 
   //header
   closeFile() {
+    if (this.checkWhetherEntryCircleEvaluation()) {
+      message.warn('正在进入圈评,请勿退出...', MESSAGE_DURATION_TIME)
+      return false
+    }
     const { breadcrumbList = [], dispatch, isExpandFrame } = this.props
     const new_arr_ = [...breadcrumbList]
     new_arr_.splice(new_arr_.length - 1, 1)
@@ -439,14 +458,12 @@ class FileDetailContent extends React.Component {
     clearTimeout(timer)
   }
   zoomFrame() {
-    const { isExpandFrame, dispatch } = this.props
+    if (this.checkWhetherEntryCircleEvaluation()) {
+      message.warn('正在进入圈评,请稍等...', MESSAGE_DURATION_TIME)
+      return false
+    }
     this.setState({ isZoomPictureFullScreenMode: !this.state.isZoomPictureFullScreenMode, percent: 0 });
-    // dispatch({
-    //   type: 'projectDetailFile/updateDatas',
-    //   payload: {
-    //     isExpandFrame: !isExpandFrame,
-    //   }
-    // })
+    clearTimeout(timer)
   }
   fileDownload({ filePreviewCurrentId, filePreviewCurrentFileId, pdfDownLoadSrc }) {
     if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
@@ -466,6 +483,23 @@ class FileDetailContent extends React.Component {
       })
     }
   }
+
+  // 保存为新版本
+  saveAsNewVersion = () => {
+    const { currentPreviewFileBaseInfo: { id, board_id } } = this.props
+    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'projectDetailFile/saveAsNewVersion',
+      payload: {
+        id: id,
+      }
+    })
+  }
+
   //item操作
   operationMenuClick(data, e) {
     const { file_id, type, file_resource_id } = data
@@ -1302,6 +1336,15 @@ class FileDetailContent extends React.Component {
     })
   }
 
+  onCancel = () => {
+    if (this.checkWhetherEntryCircleEvaluation()) {
+      message.warn('正在进入圈评,请稍等...', MESSAGE_DURATION_TIME)
+      return false
+    }
+    this.setState({ isZoomPictureFullScreenMode: false, percent: 0 })
+    clearTimeout(timer)
+  }
+
   // 显示/隐藏右侧实时圈图信息
   isShowRightRealTimeMsg = () => {
     const { isExpandFrame = false } = this.props
@@ -1311,6 +1354,11 @@ class FileDetailContent extends React.Component {
         isExpandFrame: !isExpandFrame,
       }
     })
+  }
+
+  handleNotClick = () => {
+    message.warn('正在进入圈评,请稍等...', MESSAGE_DURATION_TIME)
+    return false
   }
 
   render() {
@@ -1595,7 +1643,7 @@ class FileDetailContent extends React.Component {
 
     // 点击全屏之后的图片
     const punctuateBigDom = (
-      <Modal zIndex={1010} style={{ top: 0, left: 0, height: bodyClientHeight - 200 + 'px' }} footer={null} title={null} width={bodyClientWidth} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
+      <Modal zIndex={1010} style={{ top: 0, left: 0, height: bodyClientHeight - 200 + 'px' }} footer={null} title={null} width={bodyClientWidth} visible={isZoomPictureFullScreenMode} onCancel={this.onCancel}>
         {
           is_large_loading ? (
             <div style={{ height: bodyClientHeight, marginTop: '20px', background: 'rgba(0,0,0,0.15)' }}>
@@ -1637,7 +1685,7 @@ class FileDetailContent extends React.Component {
 
     // 其他格式点击全屏时候的展示
     const iframeBigDom = (
-      <Modal wrapClassName={indexStyles.overlay_iframBigDom} zIndex={1010} style={{ top: 0, left: 0, minWidth: componentWidth + 'px', minHeight: componentHeight + 'px' }} width={bodyClientWidth} height={bodyClientHeight} footer={null} title={null} visible={isZoomPictureFullScreenMode} onCancel={() => this.setState({ isZoomPictureFullScreenMode: false })}>
+      <Modal wrapClassName={indexStyles.overlay_iframBigDom} zIndex={1010} style={{ top: 0, left: 0, minWidth: componentWidth + 'px', minHeight: componentHeight + 'px' }} width={bodyClientWidth} height={bodyClientHeight} footer={null} title={null} visible={isZoomPictureFullScreenMode} onCancel={this.onCancel}>
         {/* <div
           style={{ height: bodyClientHeight, marginTop: '20px' }}
           dangerouslySetInnerHTML={{ __html: getIframe(filePreviewUrl) }}></div>
@@ -1766,6 +1814,20 @@ class FileDetailContent extends React.Component {
       )
     }
 
+    const saveAsMenu = (data) => {
+      return (
+        // <Menu onClick={this.operationMenuClick.bind(this, data)}>
+        <Menu>
+          <Menu.Item key="1" onClick={this.fileDownload.bind(this, { filePreviewCurrentId, filePreviewCurrentFileId, pdfDownLoadSrc })}>
+            下载到本地
+          </Menu.Item>
+          <Menu.Item key="2" onClick={this.saveAsNewVersion}>
+            保存为新版本
+          </Menu.Item>
+        </Menu>
+      )
+    }
+
     // 定义一个版本列表的数据,而不用model中的数据
     // let new_filePreviewVersionList = editVersionFileList && editVersionFileList.length ? editVersionFileList : filePreviewCurrentVersionList
 
@@ -1797,7 +1859,12 @@ class FileDetailContent extends React.Component {
             </div>
           </div>
 
-          <div className={indexStyles.fileDetailHeadRight}>
+          <div className={indexStyles.fileDetailHeadRight} style={{position: 'relative'}}>
+          {
+              this.checkWhetherEntryCircleEvaluation() && (
+                <div style={{position: 'absolute', left: '0', right: '0', top: '0', bottom: '0', margin: '0 auto', zIndex: 1}} onClick={this.handleNotClick}></div>
+              )
+            }
             <div style={{ position: 'relative' }}>
               {/* {
                 checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) ? ('') : (
@@ -1815,14 +1882,12 @@ class FileDetailContent extends React.Component {
               )}
             </div>
             <div style={{ position: 'relative' }}>
-              {
-                checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD, board_id)) ? ('') : (
-                  <div onClick={this.alarmNoEditPermission} className={globalStyles.drawContent_mask}></div>
-                )
-              }
-              <Button style={{ height: 24, marginLeft: 14 }} onClick={this.fileDownload.bind(this, { filePreviewCurrentId, filePreviewCurrentFileId, pdfDownLoadSrc })}>
-                <Icon type="download" />下载
-              </Button>
+              <Dropdown overlay={saveAsMenu()}>
+                  <Button style={{ height: 24, marginLeft: 14 }} >
+                    <span className={`${globalStyles.authTheme} ${indexStyles.right__shareIndicator_icon}`}>&#xe6dd;</span>
+                    另存为
+                  </Button>
+              </Dropdown>
             </div>
             <span style={{ marginLeft: '10px' }}>
             </span>
@@ -1918,7 +1983,7 @@ class FileDetailContent extends React.Component {
           </div>
         </div>
         {/*文件详情*/}
-        <div className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{ height: clientHeight - offsetTopDeviation - 60 }}>
+        <div id={'container_fileDetailContentOut'} className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{ height: clientHeight - offsetTopDeviation - 60 }}>
           {filePreviewIsUsable ? (
             filePreviewIsRealImage ? (
               punctuateDom

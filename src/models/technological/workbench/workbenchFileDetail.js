@@ -260,9 +260,7 @@ export default {
         let res = yield call(saveAsNewVersion, payload)
         if(isApiResponseOk(res)) {
           const data = res.data
-            // console.log('保存为新版本啦啦啦啦啦啊');
-            // const version_id = data.fileId;
-            const version_id = data.fileId;
+            const version_id = data.version_id;
             setTimeout(() => {
               message.success('保存为新版本成功', MESSAGE_DURATION_TIME)
             }, 200)
