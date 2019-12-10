@@ -7,7 +7,8 @@ import { Modal, Dropdown, Button, Select, Icon, TreeSelect, Tree } from 'antd';
 import {
   checkIsHasPermission, checkIsHasPermissionInBoard, getSubfixName,
   openPDF, setBoardIdStorage, getOrgNameWithOrgIdFilter,
-  isPaymentOrgUser
+  isPaymentOrgUser,
+  selectBoardToSeeInfo
 } from "../../../../../utils/businessFunction";
 import { height } from 'window-size';
 import BoarderfilesHeader from '@/routes/Technological/components/ProjectDetail/BoarderfilesHeader'
@@ -84,8 +85,7 @@ class BoardFiles extends Component {
 
   }
 
-  openBoardFiles = (board) => {
-    //console.log(board);
+  openBoardFiles = (board, by_selected) => {
     this.setState({
       boardSelectVisible: false,
       boardFileContentVisible: true,
@@ -93,7 +93,10 @@ class BoardFiles extends Component {
     }, () => {
       this.initialget(board.board_id)
     });
-
+    if(by_selected) {
+      const { dispatch } = this.props;
+      selectBoardToSeeInfo({board_id: board.board_id, board_name: board.board_name, dispatch})
+    }
   }
 
   initialget(id) {
@@ -309,7 +312,7 @@ class BoardFiles extends Component {
                                     this.setState({
                                       userSelectBoard: true
                                     });
-                                    this.openBoardFiles(board);
+                                    this.openBoardFiles(board, true);
                                   }}>
                                     <i className={`${globalStyles.authTheme} ${indexStyles.boardIcon}`}>&#xe67d;</i>
                                     <span className={indexStyles.boardName}>{board.board_name}</span>

@@ -6,7 +6,7 @@ import { Icon, message, Tooltip } from 'antd';
 import DropdownSelect from '../../Components/DropdownSelect/index'
 import CreateProject from '@/routes/Technological/components/Project/components/CreateProject/index';
 import simpleMode from "../../../../models/simpleMode";
-import { getOrgNameWithOrgIdFilter, setBoardIdStorage, isPaymentOrgUser } from "@/utils/businessFunction"
+import { getOrgNameWithOrgIdFilter, setBoardIdStorage, isPaymentOrgUser, selectBoardToSeeInfo } from "@/utils/businessFunction"
 
 class MyWorkbenchBoxs extends Component {
   constructor(props) {
@@ -78,12 +78,13 @@ class MyWorkbenchBoxs extends Component {
             current_board: {}
           }
         });
-        dispatch({
-          type: 'gantt/updateDatas',
-          payload: {
-            gantt_board_id: 0,
-          }
-        });
+        // dispatch({
+        //   type: 'gantt/updateDatas',
+        //   payload: {
+        //     gantt_board_id: 0,
+        //   }
+        // });
+        selectBoardToSeeInfo({ board_id: '0', dispatch })
       } else {
         const selectBoard = projectList.filter(item => item.board_id === data.key);
         if (!selectBoard && selectBoard.length == 0) {
@@ -106,12 +107,13 @@ class MyWorkbenchBoxs extends Component {
           }
         });
 
-        dispatch({
-          type: 'gantt/updateDatas',
-          payload: {
-            gantt_board_id: data.key,
-          }
-        });
+        // dispatch({
+        //   type: 'gantt/updateDatas',
+        //   payload: {
+        //     gantt_board_id: data.key,
+        //   }
+        // });
+        selectBoardToSeeInfo({ board_id: selectBoard[0] && selectBoard[0].board_id, board_name: selectBoard[0] && selectBoard[0].board_name, dispatch })
       }
       // dispatch({
       //   type: 'gantt/updateDatas',

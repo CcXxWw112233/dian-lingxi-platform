@@ -3,6 +3,7 @@ import { NORMAL_NOUN_PLAN, CONTENT_DATA_TYPE_FILE } from '../globalset/js/consta
 import { get } from 'https';
 import { Base64 } from 'js-base64';
 import moment from 'moment';
+import { lx_utils } from 'lingxi-im'
 
 // 权限的过滤和存储在technological下
 // 权限分为全组织和确定组织下
@@ -338,9 +339,9 @@ export const setUploadHeaderBaseInfo = ({ orgId, boardId, aboutBoardOrganization
 
 export const isPaymentOrgUser = (_org_id) => {
   let OrganizationId;
-  if(_org_id){
+  if (_org_id) {
     OrganizationId = _org_id;
-  }else{
+  } else {
     OrganizationId = localStorage.getItem('OrganizationId')
   }
   const currentUserOrganizes = JSON.parse(localStorage.getItem('currentUserOrganizes')) || [];
@@ -350,8 +351,8 @@ export const isPaymentOrgUser = (_org_id) => {
   if (OrganizationId == '0') {
     //全组织
     for (let org of currentUserOrganizes) {
-      if(org.payment_status==1){
-          return true
+      if (org.payment_status == 1) {
+        return true
       }
     };
   } else {
@@ -370,4 +371,59 @@ export const isPaymentOrgUser = (_org_id) => {
     }
   }
 
+}
+
+// (极简模式下)，点击或选择某个项目时，做项目联动，圈子联动和相关规划统一处理
+export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenIm = true }) => {
+  dispatch({
+    type: 'simplemode/updateDatas',
+    payload: {
+      simplemodeCurrentProject: board_id == '0' ? '' : {
+        board_id,
+        board_name
+      }
+    }
+  })
+  dispatch({
+    type: 'gantt/updateDatas',
+    payload: {
+      gantt_board_id: board_id || '0'
+    }
+  })
+  // console.log('sssss', window.location)
+  const hash = window.location.hash
+  if (hash.indexOf('/technological/simplemode/workbench') != -1) {
+    const sessionStorage_item = window.sessionStorage.getItem('session_currentSelectedWorkbenchBox')
+    const session_currentSelectedWorkbenchBox = JSON.parse(sessionStorage_item || '{}')
+    const { code } = session_currentSelectedWorkbenchBox
+    if (code == 'board:plans') { //项目计划
+      dispatch({
+        type: 'gantt/getGanttData',
+        payload: {
+          gantt_board_id: board_id || '0'
+        }
+      })
+    } else if (code == 'board:chat') { //项目交流
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          gantt_board_id: board_id || '0'
+        }
+      })
+    } else if (code == 'board:files') { //项目文档
+
+    } else {
+
+    }
+  } else if (hash.indexOf('/technological/workbench') != -1) {
+
+  } else {
+
+  }
+
+  openImChat({ board_id, autoOpenIm })
+
+}
+export const openImChat = ({ board_id, autoOpenIm }) => {
+  lx_utils.openChat({ boardId: board_id == '0' ? '' : board_id, autoOpenIm })
 }

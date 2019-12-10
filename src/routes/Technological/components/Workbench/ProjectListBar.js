@@ -10,7 +10,7 @@ import CreateProject from './../Project/components/CreateProject/index';
 import { checkIsHasPermission, setBoardIdStorage } from './../../../../utils/businessFunction';
 import { ORG_TEAM_BOARD_CREATE } from './../../../../globalset/js/constant';
 import globalStyles from './../../../../globalset/css/globalClassName.less'
-import { beforeCreateBoardUpdateGantt } from '../Gantt/ganttBusiness';
+import { afterCreateBoardUpdateGantt } from '../Gantt/ganttBusiness';
 
 let cx = classNames.bind(styles);
 
@@ -115,7 +115,7 @@ class ProjectListBar extends Component {
       .then(() => {
         // this.setAddProjectModalVisible();
         const { workbench_show_gantt_card } = this.props
-        workbench_show_gantt_card == '1' && beforeCreateBoardUpdateGantt(dispatch) //新建项目后，如果是在甘特图页面，则查询下甘特图数据
+        workbench_show_gantt_card == '1' && afterCreateBoardUpdateGantt(dispatch) //新建项目后，如果是在甘特图页面，则查询下甘特图数据
       });
   };
   isVisitor = param => {

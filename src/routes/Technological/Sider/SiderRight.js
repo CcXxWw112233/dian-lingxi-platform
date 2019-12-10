@@ -17,7 +17,7 @@ import classNames from "classnames/bind";
 // import GroupChat from './comonent/GroupChat'
 // import InitialChat from './comonent/InitialChat'
 import VideoMeetingPopoverContent from './comonent/videoMeetingPopoverContent/index'
-import LingxiIm, { Im } from 'lingxi-im'
+import LingxiIm, { Im, lx_utils } from 'lingxi-im'
 
 let cx = classNames.bind(indexStyles);
 
@@ -28,10 +28,11 @@ const { getMentions, toString, toContentState } = Mention;
 const Nav = Mention.Nav;
 
 @connect(({
-  technological: { userInfo = {} }
+  technological: { userInfo = {}, datas: { OrganizationId } }
 }) => {
   return {
-    userInfo
+    userInfo,
+    OrganizationId
   };
 })
 class SiderRight extends React.Component {
@@ -39,12 +40,27 @@ class SiderRight extends React.Component {
     collapsed: true,
   };
 
+  componentWillReceiveProps(nextProps) {
+    const { OrganizationId: nextOrg } = nextProps
+    const { OrganizationId: lastOrg } = this.props
+    if (nextOrg != lastOrg) {
+      const filterId = nextOrg == '0' ? '' : nextOrg
+      lx_utils.filterUserList(filterId)
+    }
+  }
+
   componentDidMount() {
     this.imInitOption()
   }
 
   imInitOption = () => {
     LingxiIm.hide();
+
+    // 设置组织id过滤
+    const { OrganizationId } = this.props
+    const filterId = OrganizationId == '0' ? '' : OrganizationId
+    lx_utils.filterUserList(filterId)
+
     const { protocol, host } = window.location
     Im.option({
       baseUrl: `${protocol}//${host}/`,

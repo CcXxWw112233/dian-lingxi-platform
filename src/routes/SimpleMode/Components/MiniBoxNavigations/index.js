@@ -7,6 +7,7 @@ import { MESSAGE_DURATION_TIME } from "@/globalset/js/constant";
 import BoardDropdownSelect from '../../Components/DropdownSelect/BoardDropdownSelect'
 import { routerRedux } from "dva/router";
 import { isPaymentOrgUser } from "@/utils/businessFunction"
+import { selectBoardToSeeInfo } from '../../../../utils/businessFunction';
 
 
 const MiniBoxNavigations = (props) => {
@@ -54,12 +55,13 @@ const MiniBoxNavigations = (props) => {
                 route: '/technological/simplemode/home'
             }
         })
-        dispatch({ //解决组织切换时，由于调用了甘特图查看具体id而报错
-            type: 'gantt/updateDatas',
-            payload: {
-                gantt_board_id: '0'
-            }
-        })
+        selectBoardToSeeInfo({ board_id: '0', dispatch })
+        // dispatch({ //解决组织切换时，由于调用了甘特图查看具体id而报错
+        //     type: 'gantt/updateDatas',
+        //     payload: {
+        //         gantt_board_id: '0'
+        //     }
+        // })
     };
 
     const setWorkbenchPage = (box) => {
