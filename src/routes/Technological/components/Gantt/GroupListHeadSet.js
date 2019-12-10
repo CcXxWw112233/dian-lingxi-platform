@@ -85,6 +85,7 @@ export default class GroupListHeadSet extends Component {
                     list_group: [],
                 }
             })
+            selectBoardToSeeInfo({ board_id: id, board_name: data.board_name, dispatch })
         }
         Promise.resolve(
             dispatch({
