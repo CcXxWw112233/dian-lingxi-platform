@@ -6,6 +6,7 @@ import dva from 'dva';
 import 'lingxi-im/dist/main.min.css'
 import './index.css';
 import { Modal } from 'antd'
+import './global_constants' //项目全局属性
 //兼容ie10及以下
 Object.setPrototypeOf = require('setprototypeof');
 // var browser=navigator.appName
