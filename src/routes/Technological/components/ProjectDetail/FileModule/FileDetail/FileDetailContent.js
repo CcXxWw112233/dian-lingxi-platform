@@ -1540,7 +1540,7 @@ class FileDetailContent extends React.Component {
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
             </div>
           )
           break;
@@ -1553,7 +1553,7 @@ class FileDetailContent extends React.Component {
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
             </div>
           )
           break;
@@ -1566,7 +1566,7 @@ class FileDetailContent extends React.Component {
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
             </div>
           )
           break;
@@ -1579,7 +1579,7 @@ class FileDetailContent extends React.Component {
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
             </div>
           )
           break;
@@ -1592,7 +1592,7 @@ class FileDetailContent extends React.Component {
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
             </div>
           )
           break;
@@ -1605,7 +1605,7 @@ class FileDetailContent extends React.Component {
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
             </div>
           )
           break;
@@ -1618,7 +1618,7 @@ class FileDetailContent extends React.Component {
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
             </div>
           )
           break;
@@ -1631,7 +1631,7 @@ class FileDetailContent extends React.Component {
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
               </div>
-              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在灵犀上圈点协作</i>
+              <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
             </div>
           )
           break;

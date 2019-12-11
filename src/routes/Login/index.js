@@ -153,7 +153,7 @@ class Login extends React.Component {
                 border: '1px solid rgba(217,217,217,1)',
                 borderRadius: '4px'
               }}>
-                <TopContent text={'欢迎来到'} productName={'灵犀'} />
+                <TopContent text={'欢迎来到'} productName={'聆悉'} />
                 <div>
                   <iframe id='wechatCode' style={{ marginLeft: '120px' }} frameBorder="0" src={src} width='211px' height='212px'></iframe>
                   <div style={{
@@ -196,7 +196,7 @@ class Login extends React.Component {
                 border: '1px solid rgba(217,217,217,1)',
                 borderRadius: '4px'
               }}>
-                <TopContent text={'欢迎来到'} productName={'灵犀'} />
+                <TopContent text={'欢迎来到'} productName={'聆悉'} />
                 <FormList {...formListProps} setLoginType={this.setLoginType.bind(this)} loginType={loginType} routingJump={routingJump} />
                 <div className={indexStyles.bottomWhole}>
                   <div className={indexStyles.bottomWholeLeft} style={{ marginTop: -8 }}>
@@ -245,7 +245,7 @@ class Login extends React.Component {
                 border: '1px solid rgba(217,217,217,1)',
                 borderRadius: '4px'
               }}>
-                <TopContent text={'欢迎来到'} productName={'灵犀'} />
+                <TopContent text={'欢迎来到'} productName={'聆悉'} />
                 <FormListBind bindType={this.state.bindType} {...formListProps} setLoginType={this.setLoginType.bind(this)} loginType={loginType} routingJump={routingJump} />
                 <div style={{
                   margin: '8px auto 100px',
@@ -278,7 +278,7 @@ class Login extends React.Component {
                 border: '1px solid rgba(217,217,217,1)',
                 borderRadius: '4px'
               }}>
-                <TopContent text={'欢迎来到'} productName={'灵犀'} />
+                <TopContent text={'欢迎来到'} productName={'聆悉'} />
                 <FormList {...formListProps} setLoginType={this.setLoginType.bind(this)} loginType={loginType} routingJump={routingJump} />
                 <div className={indexStyles.bottomWhole}>
                   <div className={indexStyles.bottomWholeLeft} style={{ marginTop: -8 }}>

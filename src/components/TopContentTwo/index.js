@@ -11,7 +11,7 @@ const TopContentTwo = (props) => {
         <div className={indexStyles.circle}>
           <img src={logoImg}/>
         </div>
-        <div className={indexStyles.productName}>灵犀</div>
+        <div className={indexStyles.productName}>聆悉</div>
       </div>
       <div className={indexStyles.description}>连接共生，协同共享</div>
     </div>

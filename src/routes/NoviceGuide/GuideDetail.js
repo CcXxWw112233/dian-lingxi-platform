@@ -118,7 +118,7 @@ export default class GuideDetail extends React.Component {
         <div className={indexStyles.contain1}>
           <img src={logo} />
         </div>
-        <div className={indexStyles.contain2}>欢迎使用灵犀协作</div>
+        <div className={indexStyles.contain2}>欢迎使用聆悉</div>
         <div className={indexStyles.contain3}>查找并加入你的组织，轻松连接工作的伙伴与项目：</div>
 
         <div className={indexStyles.contain4}>

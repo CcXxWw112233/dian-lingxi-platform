@@ -1025,7 +1025,7 @@ class VideoMeetingPopoverContent extends React.Component {
 							</Button>
 						</div>
 						<div className={indexStyles.videoMeeting__remarks}>
-							<span>灵犀推荐使用以下方式开展远程会议: (点击前往下载）</span>
+							<span>聆悉推荐使用以下方式开展远程会议: (点击前往下载）</span>
 							<span>
 								<a href="https://zoom.com.cn/download" target="_blank"><img src={zoom_logo} alt="Zoom" title="Zoom视频会议" /></a>
 								<a href="https://www.xylink.com/download" target="_blank"><img src={xiaoyuyilian_logo} alt="小鱼易连" title="小鱼易连视频会议" /></a>
