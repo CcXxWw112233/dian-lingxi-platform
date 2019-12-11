@@ -112,14 +112,14 @@ class FileDetailContent extends Component {
       return false
     }
     this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile()
-    this.props.dispatch({
-      type: 'publicFileDetailModal/updateDatas',
-      payload: {
-        filePreviewCurrentFileId: '',
-        fileType: '',
-        isInOpenFile: false
-      }
-    })
+    // this.props.dispatch({
+    //   type: 'publicFileDetailModal/updateDatas',
+    //   payload: {
+    //     filePreviewCurrentFileId: '',
+    //     fileType: '',
+    //     isInOpenFile: false
+    //   }
+    // })
     this.whetherUpdateProjectDetailFileBreadCrumbListNav()
   }
 

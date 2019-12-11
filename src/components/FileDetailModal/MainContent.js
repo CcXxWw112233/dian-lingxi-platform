@@ -195,7 +195,6 @@ class MainContent extends Component {
   renderPunctuateDom() {
     const { clientHeight, filePreviewUrl, filePreviewCurrentFileId, isZoomPictureFullScreenMode, componentWidth, componentHeight } = this.props
     const { currentZoomPictureComponetWidth, currentZoomPictureComponetHeight, is_petty_loading, percent, } = this.state
-    console.log(currentZoomPictureComponetWidth, componentWidth, 'sssssss_component')
 
     return (
       <>

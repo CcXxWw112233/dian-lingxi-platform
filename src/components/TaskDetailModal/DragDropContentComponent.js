@@ -9,7 +9,8 @@ import RichTextEditor from '@/components/RichTextEditor'
 import MilestoneAdd from '@/components/MilestoneAdd'
 import LabelDataComponent from '@/components/LabelDataComponent'
 import AppendSubTask from './components/AppendSubTask'
-import PreviewFileModal from '@/routes/Technological/components/ProjectDetail/TaskItemComponent/PreviewFileModal'
+// import PreviewFileModal from '@/routes/Technological/components/ProjectDetail/TaskItemComponent/PreviewFileModal'
+import FileDetailModal from '@/components/FileDetailModal'
 import { timestampFormat, compareTwoTimestamp } from '@/utils/util'
 import { getSubfixName } from "@/utils/businessFunction";
 import {
@@ -448,39 +449,54 @@ export default class DragDropContentComponent extends Component {
     const file_name = fileInfo.name
     const file_resource_id = fileInfo.file_resource_id
     const file_id = fileInfo.file_id;
+    const board_id = fileInfo.board_id
     const { dispatch } = this.props
     dispatch({
-      type: 'projectDetailFile/updateDatas',
+      type: 'projectDetail/projectDetailInfo',
       payload: {
-        isInOpenFile: true,
-        seeFileInput: 'taskModule',
-        filePreviewCurrentId: file_resource_id,
-        filePreviewCurrentFileId: file_id,
-        pdfDownLoadSrc: '',
+        id: board_id
       }
     })
+    dispatch({
+      type: 'publicFileDetailModal/updateDatas',
+      payload: {
+        filePreviewCurrentFileId: file_id,
+        fileType: getSubfixName(file_name),
+        isInOpenFile: true
+      }
+    })
+    // dispatch({
+    //   type: 'projectDetailFile/updateDatas',
+    //   payload: {
+    //     isInOpenFile: true,
+    //     seeFileInput: 'taskModule',
+    //     filePreviewCurrentId: file_resource_id,
+    //     filePreviewCurrentFileId: file_id,
+    //     pdfDownLoadSrc: '',
+    //   }
+    // })
 
-    if (getSubfixName(file_name) == '.pdf') {
-      dispatch({
-        type: 'projectDetailFile/getFilePDFInfo',
-        payload: {
-          id: file_id
-        }
-      })
-    } else {
-      dispatch({
-        type: 'projectDetailFile/filePreview',
-        payload: {
-          file_id
-        }
-      })
-      dispatch({
-        type: 'projectDetailFile/fileInfoByUrl',
-        payload: {
-          file_id
-        }
-      })
-    }
+    // if (getSubfixName(file_name) == '.pdf') {
+    //   dispatch({
+    //     type: 'projectDetailFile/getFilePDFInfo',
+    //     payload: {
+    //       id: file_id
+    //     }
+    //   })
+    // } else {
+    //   dispatch({
+    //     type: 'projectDetailFile/filePreview',
+    //     payload: {
+    //       file_id
+    //     }
+    //   })
+    //   dispatch({
+    //     type: 'projectDetailFile/fileInfoByUrl',
+    //     payload: {
+    //       file_id
+    //     }
+    //   })
+    // }
 
   }
   /**附件下载、删除等操作 */
@@ -573,6 +589,14 @@ export default class DragDropContentComponent extends Component {
   setPreviewFileModalVisibile() {
     this.setState({
       previewFileModalVisibile: !this.state.previewFileModalVisibile
+    })
+    this.props.dispatch({
+      type: 'publicFileDetailModal/updateDatas',
+      payload: {
+        filePreviewCurrentFileId: '',
+        fileType: '',
+        isInOpenFile: false
+      }
     })
   }
   /* 附件点点点字段 */
@@ -1172,7 +1196,13 @@ export default class DragDropContentComponent extends Component {
           }
         </div>
         {/*查看任务附件*/}
-        <PreviewFileModal modalVisible={isInOpenFile} />
+        {/* <PreviewFileModal modalVisible={isInOpenFile} /> */}
+        <FileDetailModal 
+          filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
+					fileType={this.props.fileType}
+					file_detail_modal_visible={this.props.isInOpenFile}
+					setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
+        />
         {/*外部附件引入结束 */}
       </div>
     )
@@ -1183,11 +1213,11 @@ export default class DragDropContentComponent extends Component {
 function mapStateToProps({
   publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id, boardTagList = [] },
   projectDetail: { datas: { projectDetailInfoData = {} } },
-  projectDetailFile: {
-    datas: {
-      isInOpenFile
-    }
+  publicFileDetailModal: {
+    isInOpenFile,
+    filePreviewCurrentFileId,
+    fileType
   }
 }) {
-  return { drawContent, is_edit_title, card_id, boardTagList, projectDetailInfoData, isInOpenFile }
+  return { drawContent, is_edit_title, card_id, boardTagList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType  }
 }
