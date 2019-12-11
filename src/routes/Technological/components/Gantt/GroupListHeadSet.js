@@ -4,9 +4,9 @@ import { Dropdown, Tooltip, message } from 'antd'
 import indexStyles from './index.less'
 import { connect } from 'dva'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { beforeCreateBoardUpdateGantt } from './ganttBusiness';
+import { afterCreateBoardUpdateGantt } from './ganttBusiness';
 import CreateProject from './../Project/components/CreateProject/index';
-import { checkIsHasPermission } from '../../../../utils/businessFunction'
+import { checkIsHasPermission, selectBoardToSeeInfo } from '../../../../utils/businessFunction'
 import { ORG_TEAM_BOARD_CREATE } from '../../../../globalset/js/constant'
 
 @connect(mapStateToProps)
@@ -32,10 +32,11 @@ export default class GroupListHeadSet extends Component {
                 list_group: [],
             }
         })
-        dispatch({
-            type: 'gantt/getGanttData',
-            payload: {}
-        })
+        selectBoardToSeeInfo({ board_id: '0', dispatch })
+        // dispatch({
+        //     type: 'gantt/getGanttData',
+        //     payload: {}
+        // })
     }
     onVisibleChange = (bool) => {
         this.setDropdownVisible(bool)
@@ -55,12 +56,13 @@ export default class GroupListHeadSet extends Component {
                 list_group: [],
             }
         })
-        dispatch({
-            type: 'gantt/getGanttData',
-            payload: {
+        selectBoardToSeeInfo({ board_id: '0', dispatch })
+        // dispatch({
+        //     type: 'gantt/getGanttData',
+        //     payload: {
 
-            }
-        })
+        //     }
+        // })
     }
     // 添加项目
     setAddProjectModalVisible = (data) => {
@@ -83,6 +85,7 @@ export default class GroupListHeadSet extends Component {
                     list_group: [],
                 }
             })
+            selectBoardToSeeInfo({ board_id: id, board_name: data.board_name, dispatch })
         }
         Promise.resolve(
             dispatch({
@@ -100,7 +103,7 @@ export default class GroupListHeadSet extends Component {
                 });
             })
             .then(() => {
-                beforeCreateBoardUpdateGantt(dispatch)
+                afterCreateBoardUpdateGantt(dispatch)
             });
     };
 

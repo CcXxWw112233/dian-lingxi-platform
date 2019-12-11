@@ -25,6 +25,7 @@ import coverIconSrc from '@/assets/simplemode/communication_cover_icon@2x.png'
 import { Im } from 'lingxi-im';
 import uploadIconSrc from '@/assets/simplemode/cloud-upload_icon@2x.png'
 import { UPLOAD_FILE_SIZE, FILE_TYPE_UPLOAD_WHITELISTED } from "@/globalset/js/constant";
+import { openImChat } from '../../../../../utils/businessFunction';
 
 const { Option } = Select;
 const { TreeNode, DirectoryTree } = Tree;
@@ -75,9 +76,30 @@ class BoardCommunication extends Component {
         })
     }
 
+    componentWillReceiveProps(nextProps) { //当捕获到全局所选的项目id变化时，查询
+        const { board_id: next_board_id } = nextProps.simplemodeCurrentProject
+        const { board_id: last_board_id } = this.props.simplemodeCurrentProject
+        if(next_board_id != last_board_id) {
+            const is_all_boards =  next_board_id == '0' || !next_board_id
+            const { boards_flies = [] } = this.props
+            const cur_bread_paths = boards_flies.filter(item => item.id == next_board_id)
+            this.setState({
+                currentFileDataType: is_all_boards? '0':'1',
+                currentSelectBoardId: next_board_id,
+                currentFolderId: '',
+                bread_paths: is_all_boards? []:cur_bread_paths
+            }, () => {
+                // console.log('ssss_bread_paths', {path:this.state.bread_paths, boards_flies})
+                this.getThumbnailFilesData();
+            })
+        }
+    }
+
     componentDidMount() {
         this.queryCommunicationFileData();
         this.getThumbnailFilesData();
+        // const { simplemodeCurrentProject = {} } = this.props
+        // this.getThumbnailFilesData({init_board_id: simplemodeCurrentProject.board_id});
     }
 
     // 获取项目交流项目文件列表数据'0'
@@ -210,9 +232,10 @@ class BoardCommunication extends Component {
     }
 
     // 获取右侧缩略图展示列表显示
-    getThumbnailFilesData = () => {
+    getThumbnailFilesData = (data = {}) => {
         // console.log('获取右侧缩略图显示');
-        const { dispatch } = this.props;
+        const { dispatch, simplemodeCurrentProject = {} } = this.props;
+        const { board_id } = simplemodeCurrentProject
         const params = this.getParams();
         const { boardId, folderId } = params;
         // console.log('params......',params);
@@ -220,8 +243,8 @@ class BoardCommunication extends Component {
         dispatch({
             type: getEffectOrReducerByName_8('getOnlyFileList'),
             payload: {
-                board_id: boardId,
-                folder_id: folderId,
+              board_id: board_id || boardId,
+              folder_id: folderId,
             }
         });
     }
@@ -1098,7 +1121,7 @@ class BoardCommunication extends Component {
             // if(keys){
             this.getCommunicationFolderList(keys); // 获取项目交流目录下子集数据
             // }
-
+            openImChat({ board_id: keys || '' , autoOpenIm: true })
         });
     }
 

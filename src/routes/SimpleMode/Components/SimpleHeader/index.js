@@ -8,7 +8,7 @@ import { Tooltip, Dropdown } from 'antd'
 import Cookies from "js-cookie";
 import SimpleNavigation from "./Components/SimpleNavigation/index"
 import SimpleDrawer from './Components/SimpleDrawer/index'
-import LingxiIm, { Im, getUnreadList } from 'lingxi-im'
+import LingxiIm, { Im, lx_utils } from 'lingxi-im'
 import TaskDetailModal from '@/components/TaskDetailModal'
 import { setBoardIdStorage, getSubfixName } from "../../../../utils/businessFunction";
 import FileDetailModal from '../../../Technological/components/ProjectDetail/FileModule/FileDetail/FileDetailModal'
@@ -79,11 +79,14 @@ class SimpleHeader extends Component {
         });
     }
 
-    // componentWillReceiveProps(props, nextProps){
-    //   // if(nextProps.chatImVisiable){
-    //     LingxiIm.show();
-    //   // }
-    // }
+    componentWillReceiveProps(nextProps) {
+        const { OrganizationId: nextOrg } = nextProps
+        const { OrganizationId: lastOrg } = this.props
+        if (nextOrg != lastOrg) {
+            const filterId = nextOrg == '0' ? '' : nextOrg
+            lx_utils.filterUserList(filterId)
+        }
+    }
     componentDidMount() {
         this.imInitOption()
     }
@@ -91,7 +94,11 @@ class SimpleHeader extends Component {
     //圈子
     imInitOption = () => {
         const { protocol, host } = window.location
-        const { dispatch } = this.props
+        // 设置组织id过滤
+        const { dispatch, OrganizationId } = this.props
+        const filterId = OrganizationId == '0' ? '' : OrganizationId
+
+        lx_utils.filterUserList(filterId)
         Im.option({
             baseUrl: `${protocol}//${host}/`,
             // APPKEY: 'ab3db8f71133efc21085a278db04e7e7',//'6b5d044ca33c559b9b91f02e29573f79',//ceshi//"ab3db8f71133efc21085a278db04e7e7", //
@@ -312,7 +319,7 @@ class SimpleHeader extends Component {
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
-    simplemode: { chatImVisiable, leftMainNavVisible, leftMainNavIconVisible }, modal, technological, loading,
+    simplemode: { chatImVisiable, leftMainNavVisible, leftMainNavIconVisible }, modal, loading,
     publicTaskDetailModal: {
         drawerVisible
     },
@@ -323,8 +330,13 @@ function mapStateToProps({
     },
     imCooperation: {
         im_alarm_no_reads_total = 0
+    },
+    technological: {
+        datas: {
+            OrganizationId = '0'
+        }
     }
 }) {
-    return { chatImVisiable, leftMainNavVisible, leftMainNavIconVisible, modal, model: technological, loading, drawerVisible, isInOpenFile, im_alarm_no_reads_total }
+    return { OrganizationId, chatImVisiable, leftMainNavVisible, leftMainNavIconVisible, modal, loading, drawerVisible, isInOpenFile, im_alarm_no_reads_total }
 }
 export default connect(mapStateToProps)(SimpleHeader)

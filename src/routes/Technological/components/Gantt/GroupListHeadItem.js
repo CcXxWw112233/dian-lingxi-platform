@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect, } from 'dva';
 import indexStyles from './index.less'
 import { Avatar, Dropdown, Menu, Input, message, Tooltip, Modal } from 'antd'
-import { getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard, getOrgIdByBoardId } from '../../../../utils/businessFunction';
+import { getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard, getOrgIdByBoardId, selectBoardToSeeInfo } from '../../../../utils/businessFunction';
 import { archivedProject } from '../../../../services/technological/project'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '@/components/avatarList'
@@ -189,8 +189,7 @@ export default class GroupListHeadItem extends Component {
   //分组名点击
   listNameClick = () => {
     const { itemValue, gantt_board_id, dispatch, group_view_type } = this.props
-    // console.log('sssss', {itemValue, gantt_board_id, group_view_type})
-
+    const { local_list_name } = this.state
     if (group_view_type != '1' || gantt_board_id != '0') { //必须要在项目视图才能看
       return
     }
@@ -202,18 +201,13 @@ export default class GroupListHeadItem extends Component {
         list_group: [],
       }
     })
+    selectBoardToSeeInfo({ board_id: list_id, board_name: local_list_name, dispatch })
     // dispatch({
-    //   type: 'gantt/getGttMilestoneList',
+    //   type: 'gantt/getGanttData',
     //   payload: {
 
     //   }
     // })
-    dispatch({
-      type: 'gantt/getGanttData',
-      payload: {
-
-      }
-    })
   }
   //添加项目组成员操作
   setShowAddMenberModalVisibile = () => {

@@ -330,7 +330,10 @@ class AddTaskModal extends Component {
             <div className={styles.confirmBtn}>
               <Button
                 type="primary"
-                disabled={!isShouldNotDisableSubmitBtn() || !isHasSelectedProjectMember()}
+                disabled={
+                  !isShouldNotDisableSubmitBtn() 
+                  // || !isHasSelectedProjectMember()
+                }
                 onClick={this.handleClickedSubmitBtn}
               >
                 完成

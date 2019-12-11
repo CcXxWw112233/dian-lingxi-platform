@@ -6,6 +6,7 @@ import CardDropDetail from './CardDropDetail.js'
 import { Popover } from 'antd'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { task_item_height_fold } from '../../constants'
+import { selectBoardToSeeInfo } from '../../../../../../utils/businessFunction'
 
 @connect(mapStateToProps)
 export default class GetRowSummary extends Component {
@@ -70,7 +71,7 @@ export default class GetRowSummary extends Component {
 
     gotoBoard = (e) => {
         e.stopPropagation()
-        const { list_id, dispatch } = this.props
+        const { list_id, dispatch, itemValue: { lane_name } } = this.props
         dispatch({
             type: 'gantt/updateDatas',
             payload: {
@@ -78,12 +79,13 @@ export default class GetRowSummary extends Component {
                 list_group: []
             }
         })
-        dispatch({
-            type: 'gantt/getGanttData',
-            payload: {
+        selectBoardToSeeInfo({ board_id: list_id, board_name: lane_name, dispatch })
+        // dispatch({
+        //     type: 'gantt/getGanttData',
+        //     payload: {
 
-            }
-        })
+        //     }
+        // })
     }
 
     hanldListGroupMap = () => {

@@ -83,6 +83,12 @@ export default {
       if (!localStorage.getItem('OrganizationId')) {
         setOrganizationIdStorage('0')
       }
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          OrganizationId: localStorage.getItem('OrganizationId') || '0'
+        }
+      })
       //查询所在组织列表
       yield put({
         type: 'getCurrentUserOrganizes',

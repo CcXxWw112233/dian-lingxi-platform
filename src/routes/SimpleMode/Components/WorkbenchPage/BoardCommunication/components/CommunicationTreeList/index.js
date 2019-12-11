@@ -82,7 +82,8 @@ export default class CommunicationTreeList extends Component{
         // console.log('onSelect-first_item',first_item);
         // console.log('onSelect-selectedKeys',selectedKeys);
         // console.log('onSelect-info',info);
-        const currentInfo = info.selectedNodes[0].props.dataRef;
+        // const currentInfo = info.selectedNodes[0].props.dataRef;
+        const currentInfo = (info.selectedNodes.find(item=> item.key == selectedKeys[0]) || {props:{}}).props.dataRef;
         // this.setState({ selectedKeys });
         this.props.onSelectTree(currentInfo,first_item);
     }
