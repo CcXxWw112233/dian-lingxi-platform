@@ -8,7 +8,7 @@ import { Tooltip, Dropdown } from 'antd'
 import Cookies from "js-cookie";
 import SimpleNavigation from "./Components/SimpleNavigation/index"
 import SimpleDrawer from './Components/SimpleDrawer/index'
-import LingxiIm, { Im, lx_utils } from 'lingxi-im'
+import LingxiIm, { Im } from 'lingxi-im'
 import TaskDetailModal from '@/components/TaskDetailModal'
 import { setBoardIdStorage, getSubfixName } from "../../../../utils/businessFunction";
 import FileDetailModal from '@/components/FileDetailModal'
@@ -84,7 +84,7 @@ class SimpleHeader extends Component {
         const { OrganizationId: lastOrg } = this.props
         if (nextOrg != lastOrg) {
             const filterId = nextOrg == '0' ? '' : nextOrg
-            lx_utils.filterUserList(filterId)
+            global.constants.lx_utils.filterUserList(filterId)
         }
     }
     componentDidMount() {
@@ -98,7 +98,7 @@ class SimpleHeader extends Component {
         const { dispatch, OrganizationId } = this.props
         const filterId = OrganizationId == '0' ? '' : OrganizationId
 
-        lx_utils.filterUserList(filterId)
+        global.constants.lx_utils.filterUserList(filterId)
         Im.option({
             baseUrl: `${protocol}//${host}/`,
             // APPKEY: 'ab3db8f71133efc21085a278db04e7e7',//'6b5d044ca33c559b9b91f02e29573f79',//ceshi//"ab3db8f71133efc21085a278db04e7e7", //

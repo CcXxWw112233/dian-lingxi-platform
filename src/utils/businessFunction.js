@@ -3,7 +3,6 @@ import { NORMAL_NOUN_PLAN, CONTENT_DATA_TYPE_FILE } from '../globalset/js/consta
 import { get } from 'https';
 import { Base64 } from 'js-base64';
 import moment from 'moment';
-import { lx_utils } from 'lingxi-im'
 
 // 权限的过滤和存储在technological下
 // 权限分为全组织和确定组织下
@@ -425,5 +424,5 @@ export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenI
 
 }
 export const openImChat = ({ board_id, autoOpenIm }) => {
-  lx_utils.openChat({ boardId: board_id == '0' ? '' : board_id, autoOpenIm })
+  global.constants.lx_utils.openChat({ boardId: board_id == '0' ? '' : board_id, autoOpenIm })
 }

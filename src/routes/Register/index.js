@@ -79,7 +79,7 @@ const Register = (options) => {
               border: '1px solid rgba(217,217,217,1)',
               borderRadius: '4px'
             }}>
-              <TopContent text={'欢迎加入'} productName={'灵犀'} />
+              <TopContent text={'欢迎加入'} productName={'聆悉'} />
               <FormListBind {...formListProps} />
               {/* <BottomContent {...BottomContentProps} type={'register'}/> */}
               <div style={{
@@ -111,7 +111,7 @@ const Register = (options) => {
               border: '1px solid rgba(217,217,217,1)',
               borderRadius: '4px'
             }}>
-              <TopContent text={'欢迎加入'} productName={'灵犀'} />
+              <TopContent text={'欢迎加入'} productName={'聆悉'} />
               <FormList {...formListProps} />
               <BottomContent {...BottomContentProps} type={'register'} />
             </div>

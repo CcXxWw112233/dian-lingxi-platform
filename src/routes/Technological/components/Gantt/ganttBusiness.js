@@ -1,4 +1,3 @@
-import { lx_utils  } from 'lingxi-im'
 export const afterCreateBoardUpdateGantt = (dispatch) => {
     dispatch({
         type: 'gantt/getGanttData',
@@ -61,7 +60,7 @@ export const handleChangeBoardViewScrollTop = ({ group_view_type, gantt_board_id
 }
 // 在删除项目后做的操作
 export const deleteBoardFollow = () => {
-    lx_utils.updateUserList()
+    global.constants.lx_utils.updateUserList()
 }
 
 // 计算时间跨度

@@ -130,6 +130,29 @@ export default class GetRowGanttItem extends Component {
     }, '')
     return names
   }
+  // 设置里程碑的名字随着窗口上下滚动保持在窗口顶部
+  setMiletonesNamesPostionTop = () => {
+    let top = 0
+    const { target_scrollTop, itemKey = 0, group_list_area_section_height = [] } = this.props
+    // console.log('ssssss_top',
+    //   target_scrollTop,
+    //   group_list_area_section_height[itemKey - 1],
+    //   group_list_area_section_height[itemKey],
+    //   target_scrollTop > group_list_area_section_height[itemKey - 1] && target_scrollTop < group_list_area_section_height[itemKey]
+    // )
+    if (itemKey == 0) {
+      if (target_scrollTop < group_list_area_section_height[itemKey]) {
+        top = target_scrollTop
+      }
+      // console.log('ssssss_top_11', itemKey, target_scrollTop, group_list_area_section_height[itemKey])
+    } else {
+      if (target_scrollTop > group_list_area_section_height[itemKey - 1] && target_scrollTop < group_list_area_section_height[itemKey]) {
+        top = target_scrollTop - group_list_area_section_height[itemKey - 1]
+      }
+      // console.log('ssssss_top_22', itemKey, target_scrollTop, group_list_area_section_height[itemKey])
+    }
+    return top
+  }
 
   // 里程碑是否过期的颜色设置
   setMiletonesColor = ({ is_over_duetime, has_lcb, is_all_realized }) => {
@@ -288,6 +311,7 @@ export default class GetRowGanttItem extends Component {
                                 <div className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
                                   data-targetclassname="specific_example"
                                   style={{
+                                    top: this.setMiletonesNamesPostionTop(),
                                     maxWidth: this.setMiletonesNamesWidth(timestampEnd) - 30,
                                     color: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized })
                                   }}>
@@ -341,6 +365,6 @@ export default class GetRowGanttItem extends Component {
 
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ gantt: { datas: { gold_date_arr = [], group_list_area_section_height, ceiHeight, gantt_board_id, about_user_boards, milestoneMap, group_view_type, show_board_fold, ceilWidth } } }) {
-  return { gold_date_arr, ceiHeight, gantt_board_id, about_user_boards, milestoneMap, group_view_type, show_board_fold, group_list_area_section_height, ceilWidth }
+function mapStateToProps({ gantt: { datas: { target_scrollTop, gold_date_arr = [], group_list_area_section_height, ceiHeight, gantt_board_id, about_user_boards, milestoneMap, group_view_type, show_board_fold, ceilWidth } } }) {
+  return { target_scrollTop, gold_date_arr, ceiHeight, gantt_board_id, about_user_boards, milestoneMap, group_view_type, show_board_fold, group_list_area_section_height, ceilWidth }
 }

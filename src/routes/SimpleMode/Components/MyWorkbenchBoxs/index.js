@@ -301,7 +301,7 @@ class MyWorkbenchBoxs extends Component {
 
     if (!isPaymentUser) {
       if (item.code != 'board:plans') {
-        tipTitle = '付费功能，请升级灵犀企业版';
+        tipTitle = '付费功能，请升级聆悉企业版';
         isDisabled = true;
       }
 

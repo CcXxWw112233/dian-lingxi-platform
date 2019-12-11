@@ -158,7 +158,7 @@ export default class AccessInterface extends React.Component {
                             borderRadius: '4px',
                             textAlign: 'center',
                         }}>
-                            <TopContent text={'欢迎来到'} productName={'灵犀'} hidenDescription={true} />
+                            <TopContent text={'欢迎来到'} productName={'聆悉'} hidenDescription={true} />
                             <div className={indexStyles.textStyle}> 请输入访问密码 </div>
                             <div>
                                 <Input placeholder="请输入访问密码" onPressEnter={this.immediatelyVisitor} className={indexStyles.inputStyle} onChange={this.setVerificationCode} />

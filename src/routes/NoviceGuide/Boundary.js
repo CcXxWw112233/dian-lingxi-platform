@@ -223,7 +223,7 @@ export default class Boundary extends Component {
 	renderInit() {
 		return (
 			<div className={styles.introduce}>
-				<h1>欢迎使用灵犀，我们准备了以下功能以便你能更好地管理项目</h1>
+				<h1>欢迎使用聆悉，我们准备了以下功能以便你能更好地管理项目</h1>
 				<div className={styles.middle}>
 					<div className={styles.left}>
 						<h3>项目功能</h3>
@@ -338,7 +338,7 @@ export default class Boundary extends Component {
 
 		return (
 			<div className={styles.introduce}>
-				<h1 style={{ textAlign: 'center', marginBottom: 88 }}>是否现在就邀请其他人共同使用灵犀</h1>
+				<h1 style={{ textAlign: 'center', marginBottom: 88 }}>是否现在就邀请其他人共同使用聆悉</h1>
 				<div className={styles.form}>
 					<h3 style={{ marginBottom: 12 }}>输入被邀请人手机号/邮箱</h3>
 					{
