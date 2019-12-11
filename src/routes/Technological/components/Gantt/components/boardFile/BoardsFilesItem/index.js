@@ -10,7 +10,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { REQUEST_DOMAIN_FILE, PROJECT_FILES_FILE_UPLOAD, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, UPLOAD_FILE_SIZE } from '../../../../../../../globalset/js/constant';
 import Cookies from 'js-cookie'
 import { setUploadHeaderBaseInfo, checkIsHasPermissionInBoard, getGlobalData } from '../../../../../../../utils/businessFunction';
-import FileDetailModal from '../../../../Workbench/CardContent/Modal/FileDetailModal'
+import FileDetailModal from '@/components/FileDetailModal'
 import { connect } from 'dva'
 import { currentFolderJudegeFileUpload } from '../../../ganttBusiness'
 const { Dragger } = Upload
@@ -269,16 +269,21 @@ export default class Index extends Component {
                     </Dragger>
                 </div>
                 {/* )} */}
-                {/* <FileDetailModal
-                    {...this.props}
-                    {...this.props.fileDetailModalDatas}
-                    setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
-                    modalVisible={this.props.fileDetailModalDatas.previewFileModalVisibile && getGlobalData('storageCurrentOperateBoardId') == board_id}
-                    setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
-                    updateDatasTask={this.props.fileDetailModalDatas.updateDatasTask}
-                    updateDatasFile={this.props.fileDetailModalDatas.updateDatasFile}
-                    whetherUpdateFolderListData={this.whetherUpdateFolderListData}
-                /> */}
+                {
+                    this.props.isInOpenFile && (
+                    <FileDetailModal
+                        // {...this.props}
+                        // {...this.props.fileDetailModalDatas}
+                        // setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
+                        fileType={this.props.fileType} filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
+                        file_detail_modal_visible={this.props.isInOpenFile && getGlobalData('storageCurrentOperateBoardId') == board_id}
+                        setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
+                        updateDatasTask={this.props.fileDetailModalDatas.updateDatasTask}
+                        updateDatasFile={this.props.fileDetailModalDatas.updateDatasFile}
+                        whetherUpdateFolderListData={this.whetherUpdateFolderListData}
+                    />
+                    )
+                }
             </div>
         )
     }
@@ -287,7 +292,12 @@ export default class Index extends Component {
 function mapStateToProps({
     imCooperation: {
         im_all_latest_unread_messages = [], wil_handle_types = []
+    },
+    publicFileDetailModal: {
+        filePreviewCurrentFileId,
+        fileType,
+        isInOpenFile
     }
 }) {
-    return { im_all_latest_unread_messages, wil_handle_types }
+    return { im_all_latest_unread_messages, wil_handle_types, filePreviewCurrentFileId, fileType, isInOpenFile }
 }

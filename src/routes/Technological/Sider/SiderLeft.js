@@ -380,7 +380,13 @@ export default class SiderLeft extends React.Component {
         is_simple_model: model
       }
     })
-
+    // 需要将普通模式的侧边栏状态更新
+    dispatch({
+      type: 'technological/updateDatas',
+      payload: {
+        siderRightCollapsed: false
+      }
+    })
   }
 
 

@@ -15,6 +15,14 @@ export default class BoardsFilesArea extends Component {
         this.setState({
             previewFileModalVisibile: !this.state.previewFileModalVisibile
         });
+        this.props.dispatch({
+            type: 'publicFileDetailModal/updateDatas',
+            payload: {
+                isInOpenFile: false,
+                filePreviewCurrentFileId: '',
+                fileType: ''
+            }
+        })
     }
     setFileModalProps = () => {
         const { previewFileModalVisibile } = this.state

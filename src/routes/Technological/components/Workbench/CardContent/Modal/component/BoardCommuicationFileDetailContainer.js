@@ -12,6 +12,7 @@ import { currentNounPlanFilterName, getOrgNameWithOrgIdFilter, checkIsHasPermiss
 import { message } from 'antd'
 
 // @connect(mapStateToProps)
+@connect()
 export default class BoardCommuicationFileDetailContainer extends Component {
 
   constructor(props) {
@@ -22,15 +23,21 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     }
   }
 
-  onCancle = () => {
+  onCancel = () => {
     const { is_petty_loading, is_large_loading } = this.state
     if (is_petty_loading || is_large_loading) {
       message.warn('正在进入圈评,请勿退出', MESSAGE_DURATION_TIME)
       return false
     }
+    this.props.dispatch({
+      type: 'publicFileDetailModal/updateDatas',
+      payload: {
+        filePreviewCurrentFileId: '',
+        fileType: '',
+        isInOpenFile: false
+      }
+    })
     this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
-    // 表示是从详情进来的
-    this.props.shouldDidMountUpdate && this.props.setPreviewFileModalVisibile()
   }
 
   initStateDatas = ({ data }) => {
@@ -93,16 +100,13 @@ export default class BoardCommuicationFileDetailContainer extends Component {
   }
 
   componentDidMount() {
-    const { filePreviewCurrentFileId, fileType, file_detail_modal_visible, shouldDidMountUpdate } = this.props
-    if (filePreviewCurrentFileId && file_detail_modal_visible && shouldDidMountUpdate) {
-      console.log('进来了', 'sssssssssssss')
+    const { filePreviewCurrentFileId, fileType, file_detail_modal_visible } = this.props
+    if (filePreviewCurrentFileId && file_detail_modal_visible) {
       if (fileType == '.pdf') {
-        // this.getFilePDFInfo({ id: newFilePreviewCurrentFileId })
         this.delayUpdatePdfDatas({ id: filePreviewCurrentFileId })
         return
       }
       this.getCurrentFilePreviewData({ id: filePreviewCurrentFileId })
-      // this.getFilePreviewInfoByUrl()
     }
   }
 
@@ -110,9 +114,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     const { filePreviewCurrentFileId: newFilePreviewCurrentFileId, fileType } = nextProps
     // 初始化数据
     if (compareACoupleOfObjects(this.props, nextProps)) return
-    // this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
     if (fileType == '.pdf') {
-      // this.getFilePDFInfo({ id: newFilePreviewCurrentFileId })
       this.delayUpdatePdfDatas({ id: newFilePreviewCurrentFileId })
       return
     }

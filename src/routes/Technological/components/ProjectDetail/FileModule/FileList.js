@@ -335,10 +335,11 @@ export default class FileList extends React.Component {
       type: 'publicFileDetailModal/updateDatas',
       payload: {
         filePreviewCurrentFileId: id,
-				fileType: getSubfixName(file_name)
+        fileType: getSubfixName(file_name),
+        isInOpenFile: true
       }
     })
-    this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile();
+    // this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile();
     // dispatch({
     //   type: 'projectDetailFile/getCardCommentListAll',
     //   payload: {

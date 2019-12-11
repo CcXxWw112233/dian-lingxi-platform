@@ -25,7 +25,8 @@ class FileDetailContent extends Component {
       isZoomPictureFullScreenMode: false, //图评全屏模式
       onlyReadingShareModalVisible: false, //只读分享model
       onlyReadingShareData: {},
-      file_detail_modal_visible: props.file_detail_modal_visible
+      file_detail_modal_visible: props.file_detail_modal_visible,
+      fileType: props.fileType
     }
   }
 
@@ -57,40 +58,14 @@ class FileDetailContent extends Component {
     }
   }
 
-  // 有关路由跳转获取详情
-  getFilePreviewInfoByUrl = () => {
-    const { location, history } = this.props
-    if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
-
-      const param = QueryString.parse(location.search.replace('?', ''))
-      board_id = param.board_id
-      appsSelectKey = param.appsSelectKey
-      file_id = param.file_id
-      folder_id = param.folder_id
-      this.updateStateDatas({filePreviewCurrentFileId: file_id})
-      if (appsSelectKey == '4') {
-
-        if (file_id) {
-          this.setState({
-            file_detail_modal_visible: true
-          })
-          this.delayUpdatePdfDatas({id:file_id})
-        }
-      }
-
-    }
-  }
-
   componentDidMount() {
-    const { filePreviewCurrentFileId, fileType, file_detail_modal_visible, shouldDidMountUpdate } = this.props
-    if (filePreviewCurrentFileId && file_detail_modal_visible && shouldDidMountUpdate) {
+    const { filePreviewCurrentFileId: newFilePreviewCurrentFileId, file_detail_modal_visible, fileType } = this.props
+    if (file_detail_modal_visible) {
       if (fileType == '.pdf') {
-        // this.getFilePDFInfo({ id: newFilePreviewCurrentFileId })
-        this.delayUpdatePdfDatas({ id: filePreviewCurrentFileId })
+        this.delayUpdatePdfDatas({ id: newFilePreviewCurrentFileId })
         return
       }
-      this.getCurrentFilePreviewData({ id: filePreviewCurrentFileId })
-      // this.getFilePreviewInfoByUrl()
+      this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
     }
   }
 
@@ -111,6 +86,25 @@ class FileDetailContent extends Component {
     }
   }
 
+  // 是否需要更新项目详情中的面包屑路径
+  whetherUpdateProjectDetailFileBreadCrumbListNav = () => {
+    const { projectDetailInfoData: { board_id, folder_name, folder_id }, location } = this.props
+    if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
+      this.props.dispatch({
+        type: 'projectDetailFile/updateDatas',
+        payload: {
+          breadcrumbList: [{ file_name: folder_name, file_id: folder_id, type: '1' }]
+        }
+      })
+    }
+    this.props.dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        breadcrumbList: [{ file_name: folder_name, file_id: folder_id, type: '1' }]
+      }
+    })
+  }
+
   onCancel = () => {
     const { is_petty_loading, is_large_loading } = this.state
     if (is_petty_loading || is_large_loading) {
@@ -122,9 +116,11 @@ class FileDetailContent extends Component {
       type: 'publicFileDetailModal/updateDatas',
       payload: {
         filePreviewCurrentFileId: '',
-				fileType: ''
+        fileType: '',
+        isInOpenFile: false
       }
     })
+    this.whetherUpdateProjectDetailFileBreadCrumbListNav()
   }
 
   // 更新该组件中的数据
@@ -162,8 +158,8 @@ class FileDetailContent extends Component {
   }
 
   render() {
-    const { clientWidth, clientHeight, file_detail_modal_visible } = this.props
-    const { filePreviewCurrentFileId, fileType } = this.state
+    const { clientWidth, clientHeight } = this.props
+    const { filePreviewCurrentFileId, fileType, file_detail_modal_visible } = this.state
     return (
       <div>
         <PublicDetailModal
@@ -209,9 +205,14 @@ FileDetailContent.defaultProps = {
 function mapStateToProps({
   simplemode: {
     chatImVisiable = false
+  },
+  projectDetail: {
+    datas: {
+      projectDetailInfoData = {}
+    }
   }
 }) {
   return {
-    chatImVisiable
+    chatImVisiable, projectDetailInfoData
   }
 }

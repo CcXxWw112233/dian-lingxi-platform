@@ -10,7 +10,6 @@ import CommunicationFileList from './components/CommunicationFileList';
 import CommunicationFirstScreenHeader from './components/FirstScreen/CommunicationFirstScreenHeader';
 import CommunicationTreeList from './components/CommunicationTreeList';
 import CommunicationThumbnailFiles from './components/FirstScreen/CommunicationThumbnailFiles';
-// import FileDetailModal from '@/routes/Technological/components/Workbench/CardContent/Modal/FileDetailModal'
 import { Modal, Dropdown, Button, Select, Icon, Tree, Upload, message } from 'antd';
 import { REQUEST_DOMAIN_FILE } from "@/globalset/js/constant";
 import axios from 'axios'
@@ -1592,8 +1591,8 @@ class BoardCommunication extends Component {
                         <FileListRightBarFileDetailModal
                             filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
                             fileType={this.props.fileType}
-                            file_detail_modal_visible={this.state.previewFileModalVisibile}
-                            setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
+                            file_detail_modal_visible={this.props.isInOpenFile}
+                            // setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
                             whetherUpdateFolderListData={this.whetherUpdateFolderListData}
                             updateCommunicationFolderListData={this.updateCommunicationFolderListData}
                             hideUpdatedFileDetail={this.hideUpdatedFileDetail}
@@ -1793,7 +1792,8 @@ function mapStateToProps({
     },
     publicFileDetailModal: {
         filePreviewCurrentFileId,
-        fileType
+        fileType,
+        isInOpenFile
     }
 }) {
     const modelObj = {
@@ -1824,7 +1824,8 @@ function mapStateToProps({
         rootDirectoryFolder_id,
         currentLayerSelectedStyle,
         filePreviewCurrentFileId,
-        fileType
+        fileType,
+        isInOpenFile
     }
 }
 export default connect(mapStateToProps)(BoardCommunication)

@@ -23,6 +23,19 @@ export default {
     },
   },
   effects: {
+    // 工作台中点击路由跳转进来
+    * previewFileByUrl({ payload }, { select, call, put }) {
+      const { file_id, file_name } = payload
+      // let res = yield call(fileInfoByUrl, { id: file_id })
+      yield put({
+        type: 'updateDatas',
+        payload: {
+         filePreviewCurrentFileId: file_id,
+         fileType: getSubfixName(file_name),
+         isInOpenFile: true
+        }
+      })
+    },
   },
   reducers: {
     updateDatas(state, action) {

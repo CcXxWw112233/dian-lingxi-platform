@@ -22,8 +22,16 @@ export default class FileIndex extends React.Component {
   }
 
   setPreviewFileModalVisibile = () => {
-    this.setState({
-      previewFileModalVisibile: !this.state.previewFileModalVisibile
+    // this.setState({
+    //   previewFileModalVisibile: !this.state.previewFileModalVisibile
+    // })
+    this.props.dispatch({
+      type: 'publicFileDetailModal/updateDatas',
+      payload: {
+        isInOpenFile: false,
+        filePreviewCurrentFileId: '',
+        fileType: ''
+      }
     })
   }
 
@@ -35,12 +43,12 @@ export default class FileIndex extends React.Component {
         {/*{isInOpenFile && <FileDetail {...this.props} />}*/}
         <div className={indexStyles.fileOut} style={{ marginTop: marginTop }}>
           <BreadCrumbFileNav />
-          <FileList setPreviewFileModalVisibile={this.setPreviewFileModalVisibile} />
+          <FileList />
           <MoveToDirectory />
         </div>
         {
-          this.state.previewFileModalVisibile && (
-            <FileListRightBarFileDetailModal shouldDidMountUpdate={true} fileType={fileType} previewFileModalVisibile={this.state.previewFileModalVisibile} filePreviewCurrentFileId={filePreviewCurrentFileId} file_detail_modal_visible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile} />
+          this.props.isInOpenFile && (
+            <FileListRightBarFileDetailModal setPreviewFileModalVisibile={this.setPreviewFileModalVisibile} fileType={fileType} filePreviewCurrentFileId={filePreviewCurrentFileId} file_detail_modal_visible={isInOpenFile} />
           )
         }
       </div>
@@ -48,14 +56,15 @@ export default class FileIndex extends React.Component {
   }
 }
 function mapStateToProps({
-  projectDetailFile: {
-    datas: {
-      isInOpenFile
-    }
-  },
+  // projectDetailFile: {
+  //   datas: {
+  //     isInOpenFile
+  //   }
+  // },
   publicFileDetailModal: {
     filePreviewCurrentFileId,
-    fileType
+    fileType,
+    isInOpenFile
   }
 }) {
   return {

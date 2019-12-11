@@ -13,8 +13,6 @@ import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_QUERY, PROJECT_FILES_FILE_EDIT,
   PROJECT_FILES_FILE_INTERVIEW
 } from "../../../../../globalset/js/constant";
-import FileDetailModal from '@/components/FileDetailModal'
-import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 
 @connect(({ workbench, technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } } }) => ({
   uploadedFileNotificationIdList:
@@ -75,7 +73,7 @@ class FileItem extends React.Component {
     }
     return themeCode;
   }
-  gotoBoardDetail({ id, board_id, org_id }, e) {
+  gotoBoardDetail({ id, board_id, org_id, file_name }, e) {
     stopPropagation(e);
     setBoardIdStorage(board_id)
 
@@ -84,7 +82,7 @@ class FileItem extends React.Component {
     //   return false;
     // }
     this.props.routingJump(
-      `/technological/projectDetail?board_id=${board_id}&appsSelectKey=4&file_id=${id}`
+      `/technological/projectDetail?board_id=${board_id}&appsSelectKey=4&file_id=${id}&file_name=${file_name}`
     );
   }
   previewFile(data, e) {
@@ -134,16 +132,18 @@ class FileItem extends React.Component {
     //   }
     // })
     // 将项目成员信息保存在项目详情, 而不在工作台中保存一份了
-    Promise.resolve(
-      dispatch({
-        type: 'projectDetail/projectDetailInfo',
-        payload: {
-          id: board_id
-        }
-      })
-    ).then(res => {
-      if (isApiResponseOk(res)) {
-        this.setPreviewFileModalVisibile();
+    dispatch({
+      type: 'projectDetail/projectDetailInfo',
+      payload: {
+        id: board_id
+      }
+    })
+    dispatch({
+      type: 'publicFileDetailModal/updateDatas',
+      payload: {
+        filePreviewCurrentFileId: id,
+        fileType: getSubfixName(file_name),
+        isInOpenFile: true
       }
     })
     this.props.updatePublicDatas({ board_id })
@@ -276,7 +276,6 @@ class FileItem extends React.Component {
     } = itemValue;
 
     return (
-      <>
       <div
         className={indexstyles.fileItem}
         onClick={this.previewFile.bind(this, { ...itemValue })}
@@ -315,7 +314,7 @@ class FileItem extends React.Component {
           }>
             <div
                 style={{ color: "#8c8c8c", cursor: "pointer", display: 'flex', alignItems: 'center' }}
-                onClick={this.gotoBoardDetail.bind(this, { id, board_id, org_id })}
+                onClick={this.gotoBoardDetail.bind(this, { id, board_id, org_id, file_name })}
               >
                 {
                   is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org && (
@@ -342,13 +341,6 @@ class FileItem extends React.Component {
         </div>
         <div>{timestampToTimeNormal(create_time, '/', true)}</div>
       </div>
-      <FileDetailModal
-          filePreviewCurrentFileId={id}
-          fileType={getSubfixName(file_name)} 
-          file_detail_modal_visible={this.state.previewFileModalVisibile}
-          setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
-        />
-      </>
     );
   }
 }

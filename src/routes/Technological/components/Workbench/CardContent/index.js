@@ -30,8 +30,7 @@ import CollectionProjectItem from './CollectionProjectItem';
 import MyCircleItem from './MyCircleItem';
 // import TaskDetailModal from './Modal/TaskDetailModal';
 import TaskDetailModal from '@/components/TaskDetailModal'
-// import FileDetailModal from './Modal/FileDetailModal';
-// import FileDetailModal from '@/components/FileDetailModal'
+import FileDetailModal from '@/components/FileDetailModal'
 import ProccessDetailModal from './Modal/ProccessDetailModal';
 import AddTaskModal from './Modal/AddTaskModal';
 import AddProgressModal from './Modal/AddProgressModal';
@@ -65,9 +64,15 @@ const MenuItemGroup = Menu.ItemGroup;
    publicTaskDetailModal: {
      drawContent = {},
      drawerVisible
+   },
+   publicFileDetailModal: {
+    filePreviewCurrentFileId,
+    fileType,
+    isInOpenFile
    }
 }) => ({
-  workbench, processInfo, projectDetailInfoData, drawerVisible, drawContent
+  workbench, processInfo, projectDetailInfoData, drawerVisible, drawContent,
+  filePreviewCurrentFileId, fileType, isInOpenFile
 }))
 class CardContent extends React.Component {
   state = {
@@ -217,17 +222,19 @@ class CardContent extends React.Component {
     }
   }
 
+  // 关闭文件弹窗的回调
   setPreviewFileModalVisibile() {
-    this.setState({
-      previewFileModalVisibile: !this.state.previewFileModalVisibile
-    });
-    // this.props.dispatch({
-    //   type: 'publicFileDetailModal/updateDatas',
-    //   payload: {
-    //     currentPreviewFileVisible: true,
-
-    //   }
-    // })
+    // this.setState({
+    //   previewFileModalVisibile: !this.state.previewFileModalVisibile
+    // });
+    this.props.dispatch({
+      type: 'publicFileDetailModal/updateDatas',
+      payload: {
+        filePreviewCurrentFileId: '',
+        fileType: '',
+        isInOpenFile: false
+      }
+    })
   }
   
   close() {
@@ -1035,14 +1042,16 @@ class CardContent extends React.Component {
           {/*<CollectionProjectItem />*/}
           {/*<MyCircleItem />*/}
         </div>
-        {/* {
-          CardContentType == 'MY_DOCUMENT' && (
-            <FileDetailModal 
-              file_detail_modal_visible={this.state.previewFileModalVisibile}
+        {
+          CardContentType == 'MY_DOCUMENT' && this.props.isInOpenFile && (
+            <FileDetailModal
+              filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
+              fileType={this.props.fileType} 
+              file_detail_modal_visible={this.props.isInOpenFile}
               setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}
             />
           )
-        } */}
+        }
         {/* <FileDetailModal
           {...this.props}
           modalVisible={this.state.previewFileModalVisibile}

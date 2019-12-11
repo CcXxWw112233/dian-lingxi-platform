@@ -8,7 +8,6 @@ import { connect } from 'dva';
 import { fileRemove, updateFolder } from '../../../../../../../services/technological/file';
 import { isApiResponseOk } from '../../../../../../../utils/handleResponseData';
 import { fileItemIsHasUnRead, cardItemIsHasUnRead, folderItemHasUnReadNo } from '../../../ganttBusiness';
-import FileDetailModal from '@/components/FileDetailModal'
 
 @connect(mapStateToProps)
 export default class FolderItem extends Component {
@@ -171,7 +170,14 @@ export default class FolderItem extends Component {
                 id:board_id
             }
         })
-        this.setPreviewFileModalVisibile()
+        dispatch({
+            type: 'publicFileDetailModal/updateDatas',
+            payload: {
+                filePreviewCurrentFileId: id,
+                fileType: getSubfixName(name || file_name),
+                isInOpenFile: true
+            }
+        })
         // this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile();
         // dispatch({
         //     type: 'workbenchFileDetail/getCardCommentListAll',
@@ -294,18 +300,11 @@ export default class FolderItem extends Component {
         }
     }
 
-    setPreviewFileModalVisibile = () => {
-        this.setState({
-          previewFileModalVisibile: !this.state.previewFileModalVisibile
-        });
-      }
-
     render() {
         const { itemValue = {}, im_all_latest_unread_messages = [], wil_handle_types = [], board_id } = this.props
         const { name, id, type, is_privilege, file_name } = itemValue
         const { is_show_change, input_folder_value, local_name } = this.state
         return (
-            <>
             <div className={`${styles.folder_item_out}`}>
                 {
                     is_show_change ? (
@@ -350,13 +349,6 @@ export default class FolderItem extends Component {
                         )
                 }
             </div>
-            <FileDetailModal
-                filePreviewCurrentFileId={id}
-                fileType={getSubfixName(file_name)} 
-                file_detail_modal_visible={this.state.previewFileModalVisibile && getGlobalData('storageCurrentOperateBoardId') == board_id}
-                setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
-                />
-            </>
         )
     }
 }

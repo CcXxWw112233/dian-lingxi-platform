@@ -136,7 +136,7 @@ class SiderRight extends React.Component {
   // 圈子点击
   imClickDynamic = (data = {}) => {
     const { dispatch } = this.props
-    const { orgId, boardId, type, relaDataId, cardId } = data
+    const { orgId, boardId, type, relaDataId, cardId, relaDataName } = data
     let else_params = ''
     switch (type) {
       case 'board':
@@ -144,7 +144,7 @@ class SiderRight extends React.Component {
       case 'folder':
         break;
       case 'file':
-        else_params = `&appsSelectKey=4&file_id=${relaDataId}`
+        else_params = `&appsSelectKey=4&file_id=${relaDataId}&file_name=${relaDataName}`
         break
       case 'card':
         else_params = `&appsSelectKey=3&card_id=${cardId}`

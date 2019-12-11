@@ -11,7 +11,7 @@ import SimpleDrawer from './Components/SimpleDrawer/index'
 import LingxiIm, { Im, lx_utils } from 'lingxi-im'
 import TaskDetailModal from '@/components/TaskDetailModal'
 import { setBoardIdStorage, getSubfixName } from "../../../../utils/businessFunction";
-import FileDetailModal from '../../../Technological/components/ProjectDetail/FileModule/FileDetail/FileDetailModal'
+import FileDetailModal from '@/components/FileDetailModal'
 
 class SimpleHeader extends Component {
     state = {
@@ -171,6 +171,16 @@ class SimpleHeader extends Component {
             case 'folder':
                 break;
             case 'file':
+                if (this.props.isInOpenFile) {
+                    dispatch({
+                        type: 'publicFileDetailModal/updateDatas',
+                        payload: {
+                            isInOpenFile: false,
+                            filePreviewCurrentFileId: '',
+                            fileType: '',
+                        }
+                    })
+                }
                 dispatch({
                     type: 'projectDetail/updateDatas',
                     payload: {
@@ -183,49 +193,59 @@ class SimpleHeader extends Component {
                         _organization_id: orgId
                     }
                 })
-                dispatch({
-                    type: 'projectDetailFile/getCardCommentListAll',
-                    payload: {
-                        id: relaDataId
-                    }
-                })
-                dispatch({
-                    type: 'projectDetailFile/updateDatas',
-                    payload: {
-                        isInOpenFile: true,
-                        seeFileInput: 'fileModule',
-                        // currentPreviewFileData: data,
-                        filePreviewCurrentFileId: relaDataId,
-                        // filePreviewCurrentId: file_resource_id,
-                        // filePreviewCurrentVersionId: version_id,
-                        pdfDownLoadSrc: '',
-                        fileType: getSubfixName(relaDataName)
-                    }
-                })
-                if (getSubfixName(relaDataName) == '.pdf') {
+                setTimeout(() => {
                     dispatch({
-                        type: 'projectDetailFile/getFilePDFInfo',
+                        type: 'publicFileDetailModal/updateDatas',
                         payload: {
-                            id: relaDataId
+                            isInOpenFile: true,
+                            filePreviewCurrentFileId: relaDataId,
+                            fileType: getSubfixName(relaDataName),
                         }
                     })
-                } else {
-                    dispatch({
-                        type: 'projectDetailFile/filePreview',
-                        payload: {
-                            file_id: relaDataId
-                        }
-                    })
-                    // 这里调用是用来获取以及更新访问控制文件弹窗详情中的数据, 一开始没有的
-                    // 但是这样会影响 文件路径, 所以传递一个参数来阻止更新
-                    dispatch({
-                        type: 'projectDetailFile/fileInfoByUrl',
-                        payload: {
-                            file_id: relaDataId,
-                            isNotNecessaryUpdateBread: true
-                        }
-                    })
-                }
+                }, 200)
+                // dispatch({
+                //     type: 'projectDetailFile/getCardCommentListAll',
+                //     payload: {
+                //         id: relaDataId
+                //     }
+                // })
+                // dispatch({
+                //     type: 'projectDetailFile/updateDatas',
+                //     payload: {
+                //         isInOpenFile: true,
+                //         seeFileInput: 'fileModule',
+                //         // currentPreviewFileData: data,
+                //         filePreviewCurrentFileId: relaDataId,
+                //         // filePreviewCurrentId: file_resource_id,
+                //         // filePreviewCurrentVersionId: version_id,
+                //         pdfDownLoadSrc: '',
+                //         fileType: getSubfixName(relaDataName)
+                //     }
+                // })
+                // if (getSubfixName(relaDataName) == '.pdf') {
+                //     dispatch({
+                //         type: 'projectDetailFile/getFilePDFInfo',
+                //         payload: {
+                //             id: relaDataId
+                //         }
+                //     })
+                // } else {
+                //     dispatch({
+                //         type: 'projectDetailFile/filePreview',
+                //         payload: {
+                //             file_id: relaDataId
+                //         }
+                //     })
+                //     // 这里调用是用来获取以及更新访问控制文件弹窗详情中的数据, 一开始没有的
+                //     // 但是这样会影响 文件路径, 所以传递一个参数来阻止更新
+                //     dispatch({
+                //         type: 'projectDetailFile/fileInfoByUrl',
+                //         payload: {
+                //             file_id: relaDataId,
+                //             isNotNecessaryUpdateBread: true
+                //         }
+                //     })
+                // }
                 break
             case 'card':
                 dispatch({
@@ -243,7 +263,7 @@ class SimpleHeader extends Component {
         }
     }
     render() {
-        const { chatImVisiable = false, leftMainNavVisible = false, leftMainNavIconVisible, drawerVisible, isInOpenFile, dispatch, im_alarm_no_reads_total } = this.props;
+        const { chatImVisiable = false, leftMainNavVisible = false, leftMainNavIconVisible, drawerVisible, isInOpenFile, filePreviewCurrentFileId, fileType, dispatch, im_alarm_no_reads_total } = this.props;
         const { simpleDrawerVisible, simpleDrawerContent, leftNavigationVisible, simpleDrawerTitle } = this.state;
         return (
             <div className={indexStyles.headerWapper}>
@@ -311,7 +331,11 @@ class SimpleHeader extends Component {
                 // handleTaskDetailChange={this.handleChangeCard}
                 // handleDeleteCard={this.handleDeleteCard}
                 />
-                <FileDetailModal visible={isInOpenFile} dispatch={dispatch} />
+                {
+                    isInOpenFile && (
+                        <FileDetailModal fileType={fileType} filePreviewCurrentFileId={filePreviewCurrentFileId} file_detail_modal_visible={isInOpenFile} />
+                    )
+                }
             </div>
         );
     }
@@ -323,10 +347,10 @@ function mapStateToProps({
     publicTaskDetailModal: {
         drawerVisible
     },
-    projectDetailFile: {
-        datas: {
-            isInOpenFile
-        }
+    publicFileDetailModal: {
+        filePreviewCurrentFileId,
+        fileType,
+        isInOpenFile
     },
     imCooperation: {
         im_alarm_no_reads_total = 0
@@ -337,6 +361,6 @@ function mapStateToProps({
         }
     }
 }) {
-    return { OrganizationId, chatImVisiable, leftMainNavVisible, leftMainNavIconVisible, modal, loading, drawerVisible, isInOpenFile, im_alarm_no_reads_total }
+    return { OrganizationId, chatImVisiable, leftMainNavVisible, leftMainNavIconVisible, modal, loading, drawerVisible, isInOpenFile, filePreviewCurrentFileId, fileType, im_alarm_no_reads_total }
 }
 export default connect(mapStateToProps)(SimpleHeader)

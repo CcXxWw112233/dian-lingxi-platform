@@ -75,7 +75,6 @@ class FileListRightBarFileDetailModal extends React.Component {
 					componentWidth={currentZoomPictureComponetWidth}
 					setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
 					hideUpdatedFileDetail={this.props.hideUpdatedFileDetail}//取消关闭弹窗的回调,项目交流中的特殊处理
-					shouldDidMountUpdate={this.props.shouldDidMountUpdate}
 				/>
 				{/* <FileDetail
 					{...this.props}

@@ -3,7 +3,9 @@ import PublicDetailModal from '@/components/PublicDetailModal'
 import MainContent from './MainContent'
 import HeaderContent from './HeaderContent'
 import FileDetailContent from './FileDetailContent'
+import { connect } from 'dva'
 
+@connect(mapStateToProps)
 export default class FileDetailModal extends Component {
 
   state = {
@@ -48,5 +50,21 @@ export default class FileDetailModal extends Component {
     )
   }
 }
+
+function mapStateToProps({
+  publicFileDetailModal: {
+    filePreviewCurrentFileId,
+    fileType,
+    isInOpenFile
+  }
+}) {
+  return {
+    filePreviewCurrentFileId,
+    fileType,
+    isInOpenFile
+  }
+}
+
+
 
 

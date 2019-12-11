@@ -44,6 +44,7 @@ let board_id = null
 let appsSelectKey = null
 let file_id = null
 let folder_id = null
+let file_name = null
 export default modelExtend(projectDetail, {
   namespace: 'projectDetailFile',
   state: {
@@ -94,6 +95,7 @@ export default modelExtend(projectDetail, {
           appsSelectKey = param.appsSelectKey
           file_id = param.file_id
           folder_id = param.folder_id
+          file_name = param.file_name
           dispatch({
             type: 'updateDatas',
             payload: {
@@ -130,6 +132,16 @@ export default modelExtend(projectDetail, {
                   file_id,
                 }
               })
+
+              if (file_name) {
+                dispatch({
+                  type: 'publicFileDetailModal/previewFileByUrl',
+                  payload: {
+                    file_id,
+                    file_name
+                  }
+                })
+              }
 
               dispatch({
                 type: 'getCardCommentListAll',
