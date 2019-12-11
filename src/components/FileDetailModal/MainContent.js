@@ -34,7 +34,7 @@ class MainContent extends Component {
   }
 
   componentDidMount() {
-    setTimeout(() => {
+    timer = setTimeout(() => {
       const container_fileDetailContentOut = document.getElementById('container_fileDetailContentOut');
       let zommPictureComponentHeight = container_fileDetailContentOut ? container_fileDetailContentOut.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding  
       let zommPictureComponentWidth = container_fileDetailContentOut ? container_fileDetailContentOut.offsetWidth - 50 - 5 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
@@ -51,8 +51,8 @@ class MainContent extends Component {
     const { chatImVisiable } = this.props
     // 根据圈子做自适应
     if (newChatImVisiable != chatImVisiable) { // 是展开和关闭需要重新获取宽高
-      setTimeout(() => {
-        const container_fileDetailContentOut = document.getElementById('container_fileDetailContentOut');
+      timer = setTimeout(() => {
+        const container_fileDetailContentOut = document.getElementById('container_FileListRightBarFileDetailModal') || document.getElementById('container_fileDetailContentOut') || document.getElementById('container_fileDetailOut') || document.querySelector('body');
         let zommPictureComponentHeight = container_fileDetailContentOut ? container_fileDetailContentOut.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding  
         let zommPictureComponentWidth = container_fileDetailContentOut ? container_fileDetailContentOut.offsetWidth - 50 - 5 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
         this.setState({
@@ -61,15 +61,21 @@ class MainContent extends Component {
         })
       }, 200)
     } else { // 这里是浏览器视图变化的时候需要重新获取宽高
-      // setTimeout(() => {
-      //   const container_fileDetailContentOut = document.getElementById('container_fileDetailContentOut');
-      //   let zommPictureComponentHeight = container_fileDetailContentOut ? container_fileDetailContentOut.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding  
-      //   let zommPictureComponentWidth = container_publicFileDetailModal ? container_publicFileDetailModal.offsetWidth - 50 - 5 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
-      //   this.setState({
-      //     currentZoomPictureComponetWidth: zommPictureComponentWidth,
-      //     currentZoomPictureComponetHeight: zommPictureComponentHeight
-      //   })
-      // }, 200)
+      timer = setTimeout(() => {
+        const container_fileDetailContentOut = document.getElementById('container_FileListRightBarFileDetailModal') || document.getElementById('container_fileDetailContentOut') || document.getElementById('container_fileDetailOut') || document.querySelector('body');
+        let zommPictureComponentHeight = container_fileDetailContentOut ? container_fileDetailContentOut.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding  
+        let zommPictureComponentWidth = container_fileDetailContentOut ? container_fileDetailContentOut.offsetWidth - 50 - 5 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
+        this.setState({
+          currentZoomPictureComponetWidth: zommPictureComponentWidth,
+          currentZoomPictureComponetHeight: zommPictureComponentHeight
+        })
+      }, 200)
+    }
+  }
+
+  componentWillUnmount() {
+    if (timer) {
+      clearTimeout(timer)
     }
   }
 
@@ -189,6 +195,7 @@ class MainContent extends Component {
   renderPunctuateDom() {
     const { clientHeight, filePreviewUrl, filePreviewCurrentFileId, isZoomPictureFullScreenMode, componentWidth, componentHeight } = this.props
     const { currentZoomPictureComponetWidth, currentZoomPictureComponetHeight, is_petty_loading, percent, } = this.state
+    console.log(currentZoomPictureComponetWidth, componentWidth, 'sssssss_component')
 
     return (
       <>
@@ -207,7 +214,7 @@ class MainContent extends Component {
                 {filePreviewUrl && (
                   <ZoomPicture
                     imgInfo={{ url: filePreviewUrl }}
-                    componentInfo={{ width: !componentWidth ? currentZoomPictureComponetWidth + 'px' : componentWidth + 'px', height: !componentHeight ? currentZoomPictureComponetHeight + 'px' : componentHeight + 'px' }}
+                    componentInfo={{ width: currentZoomPictureComponetWidth + 'px', height: currentZoomPictureComponetHeight + 'px' }}
                     userId={this.getCurrentUserId()}
                     isFullScreenMode={isZoomPictureFullScreenMode}
                     handleFullScreen={this.handleZoomPictureFullScreen}

@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 
 export default class DetailContent extends Component {
   render() {
-    const { mainContent = (<div></div>), componentWidth, componentHeight } = this.props
+    const { mainContent = (<div></div>) } = this.props
     return (
-      <div style={{ width: componentWidth + 'px', height: componentHeight + 'px'}}>
+      <div>
         {mainContent}
       </div>
     )

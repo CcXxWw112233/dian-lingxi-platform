@@ -1983,7 +1983,7 @@ class FileDetailContent extends React.Component {
           </div>
         </div>
         {/*文件详情*/}
-        <div id={'container_fileDetailContentOut'} className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{ height: clientHeight - offsetTopDeviation - 60 }}>
+        <div className={indexStyles.fileDetailContentOut} ref={'fileDetailContentOut'} style={{ height: clientHeight - offsetTopDeviation - 60 }}>
           {filePreviewIsUsable ? (
             filePreviewIsRealImage ? (
               punctuateDom
