@@ -199,7 +199,7 @@ export default {
         //组织切换重新加载
         const { operateType, routingJumpPath = '/technological?redirectHash', isNeedRedirectHash = true } = payload
         if (operateType === 'changeOrg') {
-          const redirectHash = '/technological/workbench'
+          const redirectHash = locallocation.pathname//'/technological/workbench'
           if (document.getElementById('iframImCircle')) {
             document.getElementById('iframImCircle').src = `/im/index.html?timestamp=${new Date().getTime()}`;
           }
