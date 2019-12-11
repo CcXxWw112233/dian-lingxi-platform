@@ -68,9 +68,9 @@ class FileListRightBarFileDetailModal extends React.Component {
 		return (
 			<div id="container_FileListRightBarFileDetailModal" className={styles.fileListRightBarFileDetailModal}>
 				<BoardCommuicationFileDetailContainer
-					filePreviewCurrentFileId={this.state.filePreviewCurrentFileId}
+					filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
 					file_detail_modal_visible={this.props.file_detail_modal_visible}
-					fileType={this.state.fileType}
+					fileType={this.props.fileType}
 					componentHeight={currentZoomPictureComponetHeight} 
 					componentWidth={currentZoomPictureComponetWidth}
 					setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}

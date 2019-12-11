@@ -7,8 +7,8 @@ export default class Header extends React.Component {
   state = {
   }
 
-  cancleModal = () => {
-    this.props.onCancle && this.props.onCancle()
+  cancelModal = () => {
+    this.props.onCancel && this.props.onCancel()
   }
 
   render() {
@@ -19,7 +19,7 @@ export default class Header extends React.Component {
           {headerContent}
         </div>
         <div className={indexStyles.header_out_right}>
-          <Icon type="close" onClick={this.cancleModal} />
+          <Icon type="close" onClick={this.cancelModal} />
         </div>
       </div>
     )

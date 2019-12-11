@@ -51,7 +51,7 @@ export default class HeaderContentRightMenu extends Component {
    * @return {Boolean} true/false true表示正在进入圈评 false表示没有进入
    */
   checkWhetherEntryCircleEvaluation = () => {
-    const { is_large_loading, is_petty_loading } = this.state
+    const { is_large_loading, is_petty_loading } = this.props
     let flag
     if (is_large_loading || is_petty_loading) {
       flag = true

@@ -29,14 +29,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
       message.warn('正在进入圈评,请勿退出', MESSAGE_DURATION_TIME)
       return false
     }
-    this.props.dispatch({
-      type: 'publicFileDetailModal/updateDatas',
-      payload: {
-        filePreviewCurrentFileId: '',
-        fileType: '',
-        isInOpenFile: false
-      }
-    })
+    // this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile()
     this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
   }
 
@@ -110,16 +103,16 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { filePreviewCurrentFileId: newFilePreviewCurrentFileId, fileType } = nextProps
-    // 初始化数据
-    if (compareACoupleOfObjects(this.props, nextProps)) return
-    if (fileType == '.pdf') {
-      this.delayUpdatePdfDatas({ id: newFilePreviewCurrentFileId })
-      return
-    }
-    this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
-  }
+  // componentWillReceiveProps(nextProps) {
+  //   const { filePreviewCurrentFileId: newFilePreviewCurrentFileId, fileType } = nextProps
+  //   // 初始化数据
+  //   if (compareACoupleOfObjects(this.props, nextProps)) return
+  //   if (fileType == '.pdf') {
+  //     this.delayUpdatePdfDatas({ id: newFilePreviewCurrentFileId })
+  //     return
+  //   }
+  //   this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
+  // }
 
   render() {
     const { componentHeight, componentWidth } = this.props
@@ -134,7 +127,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
             filePreviewCurrentFileId={filePreviewCurrentFileId}
             fileType={fileType}
           />
-        } {...this.props} onCancle={this.onCancle} />
+        } {...this.props} onCancel={this.onCancel} />
         <DetailContent mainContent={
           <MainContent {...this.props} {...this.state}
             delayUpdatePdfDatas={this.delayUpdatePdfDatas}

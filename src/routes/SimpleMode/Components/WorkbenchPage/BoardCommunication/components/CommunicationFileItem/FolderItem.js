@@ -77,7 +77,8 @@ class FolderItem extends Component {
             type: 'publicFileDetailModal/updateDatas',
             payload: {
                 filePreviewCurrentFileId: id,
-                fileType: getSubfixName(file_name)
+                fileType: getSubfixName(file_name),
+                isInOpenFile: true
             }
         })
         dispatch({
@@ -86,7 +87,7 @@ class FolderItem extends Component {
                 id:board_id
             }
         })
-        this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile();
+        // this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile();
         // this.props.setPreviewFileModalVisibile();
         // dispatch({
         //     type: 'workbenchFileDetail/updateDatas',

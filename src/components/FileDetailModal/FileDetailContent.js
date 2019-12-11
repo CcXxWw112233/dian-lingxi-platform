@@ -70,20 +70,20 @@ class FileDetailContent extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { fileType, clientHeight = '' } = this.props
-    const { filePreviewCurrentFileId: newFilePreviewCurrentFileId, clientHeight: newClientHeight, file_detail_modal_visible } = nextProps
-    if (clientHeight != newClientHeight) return
-    if (compareACoupleOfObjects(this.props, nextProps)) return
-    // this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
-    if (file_detail_modal_visible) {
-      if (fileType == '.pdf') {
-        // this.getFilePDFInfo({ id: newFilePreviewCurrentFileId })
-        this.delayUpdatePdfDatas({ id: newFilePreviewCurrentFileId })
-        return
-      }
-      this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
-      // this.getFilePreviewInfoByUrl()
-    }
+    // const { fileType, clientHeight = '' } = this.props
+    // const { filePreviewCurrentFileId: newFilePreviewCurrentFileId, clientHeight: newClientHeight, file_detail_modal_visible } = nextProps
+    // if (clientHeight != newClientHeight) return
+    // if (compareACoupleOfObjects(this.props, nextProps)) return
+    // // this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
+    // if (file_detail_modal_visible) {
+    //   if (fileType == '.pdf') {
+    //     // this.getFilePDFInfo({ id: newFilePreviewCurrentFileId })
+    //     this.delayUpdatePdfDatas({ id: newFilePreviewCurrentFileId })
+    //     return
+    //   }
+    //   this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
+    //   // this.getFilePreviewInfoByUrl()
+    // }
   }
 
   // 是否需要更新项目详情中的面包屑路径

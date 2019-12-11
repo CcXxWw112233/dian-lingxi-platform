@@ -138,7 +138,8 @@ export default class CommunicationThumbnailFiles extends Component {
             type: 'publicFileDetailModal/updateDatas',
             payload: {
                 filePreviewCurrentFileId: id,
-                fileType: getSubfixName(file_name)
+                fileType: getSubfixName(file_name),
+                // isInOpenFile: true
             }
         })
         dispatch({

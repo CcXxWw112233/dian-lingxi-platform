@@ -1100,6 +1100,14 @@ class BoardCommunication extends Component {
         });
         this.setPreviewFileModalVisibile();
         this.getThumbnailFilesData();
+        this.props.dispatch({
+            type: 'publicFileDetailModal/updateDatas',
+            payload: {
+                filePreviewCurrentFileId: '',
+                fileType: '',
+                isInOpenFile: false
+            }
+        })
     }
 
     // 设置折叠面板keys
@@ -1587,12 +1595,12 @@ class BoardCommunication extends Component {
 
                 {/* 左侧列表点击文件圈图显示 */}
                 {
-                    showFileListisOpenFileDetailModal && this.props.filePreviewCurrentFileId && (
+                    showFileListisOpenFileDetailModal && (
                         <FileListRightBarFileDetailModal
                             filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
                             fileType={this.props.fileType}
-                            file_detail_modal_visible={this.props.isInOpenFile}
-                            // setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
+                            file_detail_modal_visible={this.state.previewFileModalVisibile}
+                            setPreviewFileModalVisibile={this.showUpdatedFileDetail}
                             whetherUpdateFolderListData={this.whetherUpdateFolderListData}
                             updateCommunicationFolderListData={this.updateCommunicationFolderListData}
                             hideUpdatedFileDetail={this.hideUpdatedFileDetail}
