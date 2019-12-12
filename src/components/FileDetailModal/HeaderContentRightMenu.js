@@ -79,7 +79,7 @@ export default class HeaderContentRightMenu extends Component {
         }, 500)
         this.handleUploadPDForElesFilePreview({ file_name: file_name, id })
         this.props.updateStateDatas && this.props.updateStateDatas({ filePreviewCurrentFileId: id })
-        this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData(folder_id)
+        this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({folder_id, file_id: id, file_name})
       } else {
         message.warn(res.message)
       }
@@ -93,13 +93,13 @@ export default class HeaderContentRightMenu extends Component {
         setTimeout(() => {
           message.success('更新版本成功', MESSAGE_DURATION_TIME)
         }, 500)
-        let { file_name, id } = res.data[0]
+        let { file_name, id, create_time } = res.data[0]
         this.handleUploadPDForElesFilePreview({ file_name, id })
         this.props.updateStateDatas && this.props.updateStateDatas({ filePreviewCurrentFileId: data.file_id, filePreviewCurrentVersionList: res.data })
         this.setState({
           new_filePreviewCurrentVersionList: res.data
         })
-        this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData(folder_id)
+        this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({folder_id, file_id: file_id, file_name: file_name, create_time: create_time})
       } else {
         message.warn(res.message)
       }
@@ -418,7 +418,7 @@ export default class HeaderContentRightMenu extends Component {
       }
       let newCurrentPreviewFileData = { ...currentPreviewFileData, is_privilege: obj.is_privilege, privileges: new_privileges }
       this.props.updateStateDatas && this.props.updateStateDatas({ currentPreviewFileData: newCurrentPreviewFileData })
-      this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData(folder_id)
+      this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({folder_id})
       // 更新项目交流左侧文件列表
     }
 
@@ -437,7 +437,7 @@ export default class HeaderContentRightMenu extends Component {
       let newCurrentPreviewFileData = { ...currentPreviewFileData, privileges: new_privileges }
 
       this.props.updateStateDatas && this.props.updateStateDatas({ currentPreviewFileData: newCurrentPreviewFileData })
-      this.props.shouldUpdateAllFolderListData && this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData(folder_id)
+      this.props.shouldUpdateAllFolderListData && this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({folder_id})
     }
 
     // 移除成员
@@ -451,7 +451,7 @@ export default class HeaderContentRightMenu extends Component {
       let newCurrentPreviewFileData = { ...currentPreviewFileData, privileges: new_privileges }
 
       this.props.updateStateDatas && this.props.updateStateDatas({ currentPreviewFileData: newCurrentPreviewFileData })
-      this.props.shouldUpdateAllFolderListData && this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData(folder_id)
+      this.props.shouldUpdateAllFolderListData && this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({folder_id})
     }
 
     // 修改成员
@@ -470,7 +470,7 @@ export default class HeaderContentRightMenu extends Component {
       let newCurrentPreviewFileData = { ...currentPreviewFileData, privileges: new_privileges }
 
       this.props.updateStateDatas && this.props.updateStateDatas({ currentPreviewFileData: newCurrentPreviewFileData })
-      this.props.shouldUpdateAllFolderListData && this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData(folder_id)
+      this.props.shouldUpdateAllFolderListData && this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({folder_id})
     }
 
   }

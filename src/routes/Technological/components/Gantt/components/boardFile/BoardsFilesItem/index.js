@@ -110,7 +110,7 @@ export default class Index extends Component {
     }
 
     // 是否需要更新文件列表, 当访问控制设置时
-    whetherUpdateFolderListData = (folder_id) => {
+    whetherUpdateFolderListData = ({folder_id}) => {
         if (folder_id) {
             this.getFolderFileList({ id: folder_id })
         }

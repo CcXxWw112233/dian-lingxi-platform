@@ -15,6 +15,10 @@ let card_id = null
 export default {
   namespace: 'publicFileDetailModal',
   state: {
+    filePreviewCurrentFileId: '',
+    fileType: '',
+    isInOpenFile: false,
+    isOpenAttachmentFile: false
   },
   subscriptions: {
     setup({ dispatch, history }) {

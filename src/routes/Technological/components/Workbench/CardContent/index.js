@@ -68,11 +68,12 @@ const MenuItemGroup = Menu.ItemGroup;
    publicFileDetailModal: {
     filePreviewCurrentFileId,
     fileType,
-    isInOpenFile
+    isInOpenFile,
+    isInAttachmentFile
    }
 }) => ({
   workbench, processInfo, projectDetailInfoData, drawerVisible, drawContent,
-  filePreviewCurrentFileId, fileType, isInOpenFile
+  filePreviewCurrentFileId, fileType, isInOpenFile, isInAttachmentFile
 }))
 class CardContent extends React.Component {
   state = {
@@ -616,6 +617,7 @@ class CardContent extends React.Component {
   }
 
   whetherUpdateFolderListData = () => {
+    // if (this.props.isInAttachmentFile) return
     this.props.dispatch({
       type: 'workbench/getUploadedFileList',
       payload: {

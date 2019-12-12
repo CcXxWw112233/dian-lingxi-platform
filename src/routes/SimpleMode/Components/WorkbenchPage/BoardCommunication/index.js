@@ -1073,7 +1073,7 @@ class BoardCommunication extends Component {
     }
 
     // 是否需要更新文件列表, 当访问控制设置时
-    whetherUpdateFolderListData = (folder_id) => {
+    whetherUpdateFolderListData = () => {
         this.queryCommunicationFileData();
         // if (folder_id) {
         //     this.getFolderFileList({ id: folder_id })

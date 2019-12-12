@@ -35,7 +35,7 @@ export default class FileIndex extends React.Component {
     })
   }
 
-  whetherUpdateFolderListData = (folder_id) => {
+  whetherUpdateFolderListData = ({folder_id}) => {
     this.props.dispatch({
       type: 'projectDetailFile/getFileList',
       payload: {
