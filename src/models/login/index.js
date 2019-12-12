@@ -10,6 +10,21 @@ import { selectLoginCaptchaKey } from './selects'
 import { getModelIsImport } from '../utils';
 import { createDefaultOrg } from '../../services/technological/noviceGuide';
 let redirectLocation
+const clearAboutLocalstorage = () => { //清掉当前相关业务逻辑的用户数据
+  const names_arr = [
+    'OrganizationId',
+    'userInfo',
+    'userOrgPermissions',
+    'userAllOrgsAllBoards',
+    'currentUserOrganizes',
+    'userBoardPermissions',
+    'currentSelectOrganize',
+    'currentNounPlan',
+  ]
+  for(let val of names_arr) {
+    localStorage.removeItem(val)
+  }
+}
 export default {
   namespace: 'login',
   state: {
@@ -58,6 +73,7 @@ export default {
       // console.log(is_simple_model, 'sssssss')
       //如果存在组织， 否则跳到指引页面
       if (isApiResponseOk(res)) {
+        clearAboutLocalstorage() //清掉所有localstorage缓存
         if (has_org == '1') {
           // if (is_simple_model == '0') {
           //   if (redirectLocation.indexOf('/technological/simplemode') == -1) {
