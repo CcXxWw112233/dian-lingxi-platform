@@ -84,7 +84,7 @@ class ShareAndInvite extends Component {
       day1: now + dayToSec,
       day3: now + dayToSec * 3,
       day7: now + dayToSec * 7,
-      forever: "0"
+      forever: 0
     };
     //时间戳保留10位
     return stations[key] ? JSON.stringify(stations[key]).substr(0, 10) : "0";

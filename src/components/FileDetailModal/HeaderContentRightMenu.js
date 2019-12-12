@@ -71,7 +71,7 @@ export default class HeaderContentRightMenu extends Component {
 
   // 设为主版本回调
   setCurrentVersionFile = (data) => {
-    let { id, set_major_version, version_id, file_name } = data
+    let { id, set_major_version, version_id, file_name, folder_id } = data
     setCurrentVersionFile({ id, set_major_version }).then(res => {
       if (isApiResponseOk(res)) {
         setTimeout(() => {
@@ -79,6 +79,7 @@ export default class HeaderContentRightMenu extends Component {
         }, 500)
         this.handleUploadPDForElesFilePreview({ file_name: file_name, id })
         this.props.updateStateDatas && this.props.updateStateDatas({ filePreviewCurrentFileId: id })
+        this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData(folder_id)
       } else {
         message.warn(res.message)
       }
@@ -86,7 +87,8 @@ export default class HeaderContentRightMenu extends Component {
   }
 
   getFileVersionist = (data) => {
-    fileVersionist({ ...data }).then(res => {
+    const { version_id, file_id, folder_id } = data
+    fileVersionist({ version_id, file_id }).then(res => {
       if (isApiResponseOk(res)) {
         setTimeout(() => {
           message.success('更新版本成功', MESSAGE_DURATION_TIME)
@@ -97,6 +99,7 @@ export default class HeaderContentRightMenu extends Component {
         this.setState({
           new_filePreviewCurrentVersionList: res.data
         })
+        this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData(folder_id)
       } else {
         message.warn(res.message)
       }
@@ -153,7 +156,6 @@ export default class HeaderContentRightMenu extends Component {
     e && e.domEvent && e.domEvent.stopPropagation()
     const { currentPreviewFileData = {} } = this.props
     const { board_id } = currentPreviewFileData
-
     const key = e.key
     switch (key) {
       case '1': // 设置为主版本
@@ -165,11 +167,13 @@ export default class HeaderContentRightMenu extends Component {
         let file_resource_id = ''
         let file_version_id = ''
         let file_name = ''
+        let folder_id = ''
         for (let val of list) {
           if (file_id == val['file_id']) {
             file_resource_id = val['file_resource_id']
             file_version_id = val['version_id']
             file_name = val['file_name']
+            folder_id = val['folder_id']
             break
           }
         }
@@ -178,7 +182,7 @@ export default class HeaderContentRightMenu extends Component {
           imgLoaded: false
         })
         //版本改变预览
-        let data = { id: file_id, set_major_version: '1', version_id: file_version_id, file_name: file_name }
+        let data = { id: file_id, set_major_version: '1', version_id: file_version_id, file_name: file_name, folder_id: folder_id }
         this.setCurrentVersionFile(data)
 
         this.setState({
@@ -305,13 +309,11 @@ export default class HeaderContentRightMenu extends Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    const { currentPreviewFileData: { id } } = this.props
+    const { currentPreviewFileData: { id }, projectDetailInfoData: { folder_id } } = this.props
     saveAsNewVersion({id}).then(res => {
       if (isApiResponseOk(res)) {
-        // console.log(res, 'sssssss_res')
-        // return
         const { version_id, id } = res.data
-        this.getFileVersionist({version_id, file_id: id})
+        this.getFileVersionist({version_id, file_id: id, folder_id})
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -416,17 +418,8 @@ export default class HeaderContentRightMenu extends Component {
       }
       let newCurrentPreviewFileData = { ...currentPreviewFileData, is_privilege: obj.is_privilege, privileges: new_privileges }
       this.props.updateStateDatas && this.props.updateStateDatas({ currentPreviewFileData: newCurrentPreviewFileData })
-      // 这里需要调用更新外部的列表
-      // dispatch({
-      //   type: 'workbench/getUploadedFileList',
-      //   payload: {
-
-      //   }
-      // })
-      // 这里是用来更新甘特图中的文件列表
       this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData(folder_id)
       // 更新项目交流左侧文件列表
-      this.props.updateCommunicationFolderListData && this.props.updateCommunicationFolderListData(folder_id);
     }
 
     // 添加成员
@@ -444,6 +437,7 @@ export default class HeaderContentRightMenu extends Component {
       let newCurrentPreviewFileData = { ...currentPreviewFileData, privileges: new_privileges }
 
       this.props.updateStateDatas && this.props.updateStateDatas({ currentPreviewFileData: newCurrentPreviewFileData })
+      this.props.shouldUpdateAllFolderListData && this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData(folder_id)
     }
 
     // 移除成员
@@ -457,6 +451,7 @@ export default class HeaderContentRightMenu extends Component {
       let newCurrentPreviewFileData = { ...currentPreviewFileData, privileges: new_privileges }
 
       this.props.updateStateDatas && this.props.updateStateDatas({ currentPreviewFileData: newCurrentPreviewFileData })
+      this.props.shouldUpdateAllFolderListData && this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData(folder_id)
     }
 
     // 修改成员
@@ -475,6 +470,7 @@ export default class HeaderContentRightMenu extends Component {
       let newCurrentPreviewFileData = { ...currentPreviewFileData, privileges: new_privileges }
 
       this.props.updateStateDatas && this.props.updateStateDatas({ currentPreviewFileData: newCurrentPreviewFileData })
+      this.props.shouldUpdateAllFolderListData && this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData(folder_id)
     }
 
   }
@@ -686,7 +682,6 @@ export default class HeaderContentRightMenu extends Component {
     const { currentPreviewFileData = {}, filePreviewCurrentFileId, filePreviewCurrentVersionId, projectDetailInfoData: { data = [], folder_id }, isZoomPictureFullScreenMode, onlyReadingShareModalVisible, onlyReadingShareData, } = this.props
     const { new_filePreviewCurrentVersionList = [], is_edit_version_description, editValue } = this.state
     const { board_id, is_privilege, privileges = [], id, file_id, is_shared } = currentPreviewFileData
-    // console.log(this.props.projectDetailInfoData,folder_id, 'sssssss_folder_id')
     const params = {
       filePreviewCurrentFileId,
       new_filePreviewCurrentVersionList,
@@ -733,7 +728,7 @@ export default class HeaderContentRightMenu extends Component {
         if (file.status === 'done' && file.response.code === '0') {
           message.success(`上传成功。`);
           if (file.response && file.response.code == '0') {
-            that.getFileVersionist({ version_id: filePreviewCurrentVersionId, file_id: file.response.data.id })
+            that.getFileVersionist({ version_id: filePreviewCurrentVersionId, file_id: file.response.data.id, folder_id: folder_id })
           }
         } else if (file.status === 'error' || (file.response && file.response.code !== '0')) {
           message.error(file.response && file.response.message || '上传失败');
@@ -839,7 +834,9 @@ export default class HeaderContentRightMenu extends Component {
 
 function mapStateToProps({
   projectDetail: {
-    projectDetailInfoData = {}
+    datas: {
+      projectDetailInfoData = {}
+    }
   }
 }) {
   return {

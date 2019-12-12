@@ -32,7 +32,7 @@ export default class AnotherItem extends React.Component {
   }
 
   itemClick(data, e) {
-    const { id, board_id } = data;
+    const { id, board_id, file_name } = data;
     setBoardIdStorage( board_id)
     // if(!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)){
     //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -51,7 +51,7 @@ export default class AnotherItem extends React.Component {
     dispatch({
       type: 'globalSearch/routingJump',
       payload: {
-        route: `/technological/projectDetail?board_id=${board_id}&appsSelectKey=${APP_KEY.FILE}&file_id=${id}`
+        route: `/technological/projectDetail?board_id=${board_id}&appsSelectKey=${APP_KEY.FILE}&file_id=${id}&file_name=${file_name}`
       }
     })
   }
@@ -67,7 +67,7 @@ export default class AnotherItem extends React.Component {
         <div className={indexstyles.taskItem}>
           <div className={globalStyles.authTheme}>&#xe60b;</div>
           <div className={indexstyles.itemName}>
-            <div style={{textDecoration: is_realize === "1" ? "line-through" : "none"}} onClick={this.itemClick.bind(this, { id, board_id })}>
+            <div style={{textDecoration: is_realize === "1" ? "line-through" : "none"}} onClick={this.itemClick.bind(this, { id, board_id, file_name })}>
               {file_name}
               {/* <div style={{color: "#8c8c8c", display: 'flex', justifyContent: 'center', alignItems: 'center'}}> */}
                 <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>

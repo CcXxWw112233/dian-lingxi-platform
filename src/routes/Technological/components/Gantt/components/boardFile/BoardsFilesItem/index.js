@@ -278,8 +278,6 @@ export default class Index extends Component {
                         fileType={this.props.fileType} filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
                         file_detail_modal_visible={this.props.isInOpenFile && getGlobalData('storageCurrentOperateBoardId') == board_id}
                         setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
-                        updateDatasTask={this.props.fileDetailModalDatas.updateDatasTask}
-                        updateDatasFile={this.props.fileDetailModalDatas.updateDatasFile}
                         whetherUpdateFolderListData={this.whetherUpdateFolderListData}
                     />
                     )

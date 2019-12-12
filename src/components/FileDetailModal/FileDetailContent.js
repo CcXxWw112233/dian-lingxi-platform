@@ -170,6 +170,7 @@ class FileDetailContent extends Component {
               clientWidth={clientWidth}
               clientHeight={clientHeight}
               {...this.state}
+              whetherUpdateFolderListData={this.props.whetherUpdateFolderListData}
               delayUpdatePdfDatas={this.delayUpdatePdfDatas}
               getCurrentFilePreviewData={this.getCurrentFilePreviewData}
               updateStateDatas={this.updateStateDatas}
@@ -181,6 +182,8 @@ class FileDetailContent extends Component {
               getCurrentFilePreviewData={this.getCurrentFilePreviewData}
               updateStateDatas={this.updateStateDatas}
               {...this.state}
+              shouldUpdateAllFolderListData={this.props.shouldUpdateAllFolderListData}
+              whetherUpdateFolderListData={this.props.whetherUpdateFolderListData}
               filePreviewCurrentFileId={filePreviewCurrentFileId}
               fileType={fileType} />}
         />
@@ -196,10 +199,9 @@ FileDetailContent.defaultProps = {
   fileType: '', // 当前文件的后缀名, !!!
   file_detail_modal_visible: false, // 设置文件详情弹窗是否显示, 默认为 false 不显示
   setPreviewFileModalVisibile: function () { }, // 设置文件详情弹窗是否显示
-  users: [], // 用户列表
   handleFileDetailChange: function () { }, // 外部修改内部弹窗数据的回调
-  updateParentFileList: function () { }, // 内部数据修改后用来更新外部数据的回调
-  handleDeleteFileCard: function () { }, // 删除某条文件
+  whetherUpdateFolderListData: function () { }, // 内部数据修改后用来更新外部数据的回调
+  shouldUpdateAllFolderListData: false, // 用来区分是否需要每一次操作都更新外部列表
 }
 
 function mapStateToProps({

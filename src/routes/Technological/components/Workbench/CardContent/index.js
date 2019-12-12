@@ -615,6 +615,15 @@ class CardContent extends React.Component {
     })
   }
 
+  whetherUpdateFolderListData = () => {
+    this.props.dispatch({
+      type: 'workbench/getUploadedFileList',
+      payload: {
+
+      }
+    })
+  }
+
   // 数组去重
   arrayNonRepeatfy = arr => {
     let temp_arr = []
@@ -1049,6 +1058,7 @@ class CardContent extends React.Component {
               fileType={this.props.fileType} 
               file_detail_modal_visible={this.props.isInOpenFile}
               setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}
+              whetherUpdateFolderListData={this.whetherUpdateFolderListData}
             />
           )
         }

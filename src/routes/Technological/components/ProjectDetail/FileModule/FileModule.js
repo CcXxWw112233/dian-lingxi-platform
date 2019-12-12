@@ -35,6 +35,15 @@ export default class FileIndex extends React.Component {
     })
   }
 
+  whetherUpdateFolderListData = (folder_id) => {
+    this.props.dispatch({
+      type: 'projectDetailFile/getFileList',
+      payload: {
+        folder_id: folder_id,
+      }
+    })
+  }
+
   render() {
     const { isInOpenFile, dispatch, filePreviewCurrentFileId, fileType } = this.props
     const { marginTop = '20px' } = this.props;
@@ -48,7 +57,7 @@ export default class FileIndex extends React.Component {
         </div>
         {
           this.props.isInOpenFile && (
-            <FileListRightBarFileDetailModal setPreviewFileModalVisibile={this.setPreviewFileModalVisibile} fileType={fileType} filePreviewCurrentFileId={filePreviewCurrentFileId} file_detail_modal_visible={isInOpenFile} />
+            <FileListRightBarFileDetailModal shouldUpdateAllFolderListData={true} whetherUpdateFolderListData={this.whetherUpdateFolderListData} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile} fileType={fileType} filePreviewCurrentFileId={filePreviewCurrentFileId} file_detail_modal_visible={isInOpenFile} />
           )
         }
       </div>

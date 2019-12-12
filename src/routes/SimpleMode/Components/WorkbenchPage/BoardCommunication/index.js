@@ -1602,7 +1602,7 @@ class BoardCommunication extends Component {
                             file_detail_modal_visible={this.state.previewFileModalVisibile}
                             setPreviewFileModalVisibile={this.showUpdatedFileDetail}
                             whetherUpdateFolderListData={this.whetherUpdateFolderListData}
-                            updateCommunicationFolderListData={this.updateCommunicationFolderListData}
+                            // updateCommunicationFolderListData={this.updateCommunicationFolderListData}
                             hideUpdatedFileDetail={this.hideUpdatedFileDetail}
                         />
                     )

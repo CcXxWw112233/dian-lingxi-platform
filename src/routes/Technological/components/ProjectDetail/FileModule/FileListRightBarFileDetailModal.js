@@ -29,6 +29,8 @@ class FileListRightBarFileDetailModal extends React.Component {
 					fileType={fileType}
 					file_detail_modal_visible={this.props.file_detail_modal_visible}
 					setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
+					whetherUpdateFolderListData={this.props.whetherUpdateFolderListData}
+					shouldUpdateAllFolderListData={this.props.shouldUpdateAllFolderListData} // 这是用来区分项目详情中的详情列表更新状态
 				/>
 				{/* <FileDetailModal
 					{...this.props}
