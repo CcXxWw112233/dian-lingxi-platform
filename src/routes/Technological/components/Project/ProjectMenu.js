@@ -82,7 +82,7 @@ class ProjectMenu extends Component {
     if(!type) {
       this.initSelectedKeys()
     }
-    if(item === currentSelectedProjectMenuItem) return
+    // if(item === currentSelectedProjectMenuItem) return
     Promise.resolve(
       dispatch({
         type: 'project/setCurrentSelectedProjectMenuItem',
