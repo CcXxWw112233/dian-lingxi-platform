@@ -12,6 +12,7 @@ import { getSubfixName } from '../../utils/businessFunction'
 import {
   MESSAGE_DURATION_TIME,
 } from "@/globalset/js/constant";
+let timer
 
 @connect()
 class MainContent extends Component {
@@ -33,7 +34,7 @@ class MainContent extends Component {
   }
 
   componentDidMount() {
-    const container_fileDetailContentOut = document.getElementById('container_fileDetailContentOut');
+    const container_fileDetailContentOut = document.getElementById('container_fileDetailContentOut') || document.getElementById('container_FileListRightBarFileDetailModal') || document.getElementById('container_fileDetailOut') || document.querySelector('body');
     let zommPictureComponentHeight = container_fileDetailContentOut ? container_fileDetailContentOut.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding  
     let zommPictureComponentWidth = container_fileDetailContentOut ? container_fileDetailContentOut.offsetWidth - 50 - 5 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
     this.setState({
@@ -48,7 +49,7 @@ class MainContent extends Component {
     const { chatImVisiable } = this.props
     // 根据圈子做自适应
     if (newChatImVisiable != chatImVisiable) { // 是展开和关闭需要重新获取宽高
-      const container_fileDetailContentOut = document.getElementById('container_FileListRightBarFileDetailModal') || document.getElementById('container_fileDetailContentOut') || document.getElementById('container_fileDetailOut') || document.querySelector('body');
+      const container_fileDetailContentOut = document.getElementById('container_fileDetailContentOut') || document.getElementById('container_FileListRightBarFileDetailModal') || document.getElementById('container_fileDetailOut') || document.querySelector('body');
       let zommPictureComponentHeight = container_fileDetailContentOut ? container_fileDetailContentOut.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding  
       let zommPictureComponentWidth = container_fileDetailContentOut ? container_fileDetailContentOut.offsetWidth - 50 - 5 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
       this.setState({
@@ -56,7 +57,7 @@ class MainContent extends Component {
         currentZoomPictureComponetHeight: zommPictureComponentHeight
       })
     } else { // 这里是浏览器视图变化的时候需要重新获取宽高
-      const container_fileDetailContentOut = document.getElementById('container_FileListRightBarFileDetailModal') || document.getElementById('container_fileDetailContentOut') || document.getElementById('container_fileDetailOut') || document.querySelector('body');
+      const container_fileDetailContentOut = document.getElementById('container_fileDetailContentOut') || document.getElementById('container_FileListRightBarFileDetailModal') || document.getElementById('container_fileDetailOut') || document.querySelector('body');
       let zommPictureComponentHeight = container_fileDetailContentOut ? container_fileDetailContentOut.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding  
       let zommPictureComponentWidth = container_fileDetailContentOut ? container_fileDetailContentOut.offsetWidth - 50 - 5 : 600; //60为文件内容组件评s论等区域宽带   50为容器padding
       this.setState({
@@ -194,7 +195,7 @@ class MainContent extends Component {
         {
           is_petty_loading ? (
             <CirclePreviewLoadingComponent
-              height={clientHeight ? clientHeight - 100 - 60 : componentHeight}
+              height={currentZoomPictureComponetHeight}
               percent={percent}
               is_loading={is_petty_loading}
               style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)', display: 'block', opacity: 1 }} />
@@ -225,20 +226,20 @@ class MainContent extends Component {
   // 渲染非全屏模式其他文件格式图片
   renderIframeDom() {
     const { clientHeight, filePreviewUrl, fileType, componentHeight } = this.props
-    const { is_petty_loading, percent, supportFileTypeArray = [] } = this.state
+    const { is_petty_loading, percent, supportFileTypeArray = [], currentZoomPictureComponetHeight } = this.state
 
     return (
       <>
         {
           is_petty_loading ? (
             <CirclePreviewLoadingComponent
-              height={clientHeight ? clientHeight - 100 - 60 : componentHeight}
+              height={currentZoomPictureComponetHeight}
               percent={percent}
               is_loading={is_petty_loading}
               style={{ left: '0', right: '0', top: '50%', bottom: '0', margin: '0 180px', position: 'absolute', transform: 'translateY(-25%)', display: 'block', opacity: 1 }} />
           ) : (
               <>
-                <div style={{ height: clientHeight ? clientHeight - 100 - 60 : componentHeight }} className={mainContentStyles.fileDetailContentLeft}
+                <div style={{ height: currentZoomPictureComponetHeight }} className={mainContentStyles.fileDetailContentLeft}
                   dangerouslySetInnerHTML={{ __html: this.getIframe(filePreviewUrl) }}>
                 </div>
                 {

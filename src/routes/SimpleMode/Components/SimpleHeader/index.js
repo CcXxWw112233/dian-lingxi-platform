@@ -262,6 +262,19 @@ class SimpleHeader extends Component {
                 break
         }
     }
+
+    // 文件弹窗的关闭回调
+    setPreviewFileModalVisibile = () => {
+      this.props.dispatch({
+        type: 'publicFileDetailModal/updateDatas',
+        payload: {
+            filePreviewCurrentFileId: '',
+            fileType: '',
+            isInOpenFile: false
+        }
+      })
+    }
+
     render() {
         const { chatImVisiable = false, leftMainNavVisible = false, leftMainNavIconVisible, drawerVisible, isInOpenFile, filePreviewCurrentFileId, fileType, dispatch, im_alarm_no_reads_total } = this.props;
         const { simpleDrawerVisible, simpleDrawerContent, leftNavigationVisible, simpleDrawerTitle } = this.state;
@@ -333,7 +346,7 @@ class SimpleHeader extends Component {
                 />
                 {
                     isInOpenFile && (
-                        <FileDetailModal fileType={fileType} filePreviewCurrentFileId={filePreviewCurrentFileId} file_detail_modal_visible={isInOpenFile} />
+                        <FileDetailModal setPreviewFileModalVisibile={this.setPreviewFileModalVisibile} fileType={fileType} filePreviewCurrentFileId={filePreviewCurrentFileId} file_detail_modal_visible={isInOpenFile} />
                     )
                 }
             </div>

@@ -126,6 +126,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
             updateStateDatas={this.updateStateDatas}
             filePreviewCurrentFileId={filePreviewCurrentFileId}
             fileType={fileType}
+            whetherUpdateFolderListData={this.props.whetherUpdateFolderListData}
           />
         } {...this.props} onCancel={this.onCancel} />
         <DetailContent mainContent={
