@@ -173,6 +173,7 @@ export default class DragDropContentComponent extends Component {
         }
       })
     }
+    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, operate_properties_code: 'MILESTONE' })
   }
   // 里程碑选择回调 E
 

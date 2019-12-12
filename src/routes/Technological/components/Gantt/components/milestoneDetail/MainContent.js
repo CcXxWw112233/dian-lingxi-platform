@@ -434,7 +434,7 @@ export default class MainContent extends React.Component {
             {content_list.map((value, key) => {
               const { name, id } = value
               return (
-                <TaskItem itemValue = {value} key={id} milestone_id={milestone_detail['id']}/>
+                <TaskItem itemValue = {value} key={id} milestone_id={milestone_detail['id']} deleteRelationContent={this.props.deleteRelationContent} />
               )
             })}
           </div>

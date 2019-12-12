@@ -195,6 +195,14 @@ class Gantt extends Component {
   // 修改没有排期的任务
   handleNoHasScheduleCard = ({ card_id, drawContent = {}, operate_properties_code }) => {
     const { dispatch } = this.props
+    if(operate_properties_code == 'MILESTONE') { //修改的是里程碑
+      dispatch({
+        type: 'gantt/getGttMilestoneList',
+        payload: {
+        }
+      })
+      return
+    }
     const new_drawContent = this.cardPropertiesPromote({ drawContent, operate_properties_code })
     const { start_time, due_time } = new_drawContent
     const { list_group = [], current_list_group_id } = this.props
@@ -233,6 +241,14 @@ class Gantt extends Component {
   // 修改有排期的任务
   handleHasScheduleCard = ({ card_id, drawContent, operate_properties_code }) => {
     const { dispatch } = this.props
+    if(operate_properties_code == 'MILESTONE') { //修改的是里程碑
+      dispatch({
+        type: 'gantt/getGttMilestoneList',
+        payload: {
+        }
+      })
+      return
+    }
     const new_drawContent = this.cardPropertiesPromote({ drawContent, operate_properties_code })
 
     const { list_group = [], current_list_group_id } = this.props

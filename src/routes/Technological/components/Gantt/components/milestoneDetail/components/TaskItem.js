@@ -16,13 +16,17 @@ export default class DCAddChirdrenTaskItem extends React.Component{
     isInEditTaskName: false,
   }
   deleteConfirm = ({id}) => {
-    const { milestone_id, dispatch } = this.props
+    const { milestone_id, dispatch, deleteRelationContent } = this.props
     dispatch({
       type: 'milestoneDetail/taskCancelRelaMiletones',
       payload: {
         id: milestone_id,
         rela_id: id
       }
+    }).then(res => {
+      // debugger
+      // console.log('sssssss_res', res)
+      deleteRelationContent()
     })
   }
   render() {

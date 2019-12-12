@@ -242,6 +242,15 @@ export default class DateList extends Component {
       }
     })
   }
+  // 里程碑删除子任务回调
+  deleteRelationContent = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/getGttMilestoneList',
+      payload: {
+      }
+    })
+  }
   render() {
     const {
       gold_date_arr = [],
@@ -341,6 +350,7 @@ export default class DateList extends Component {
           miletone_detail_modal_visible={this.state.miletone_detail_modal_visible}
           set_miletone_detail_modal_visible={this.set_miletone_detail_modal_visible}
           deleteMiletone={this.deleteMiletone}
+          deleteRelationContent={this.deleteRelationContent}
         />
       </div>
     )

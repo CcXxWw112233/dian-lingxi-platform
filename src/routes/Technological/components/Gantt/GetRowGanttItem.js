@@ -265,6 +265,15 @@ export default class GetRowGanttItem extends Component {
       }
     })
   }
+  // 里程碑删除子任务回调
+  deleteRelationContent = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/getGttMilestoneList',
+      payload: {
+      }
+    })
+  }
   render() {
     const { rows = 7, itemKey } = this.props
     const { gold_date_arr = [], ceiHeight, gantt_board_id, group_view_type, show_board_fold, group_list_area_section_height } = this.props
@@ -358,6 +367,7 @@ export default class GetRowGanttItem extends Component {
           users={currentSelectedProjectMembersList}
           miletone_detail_modal_visible={this.state.miletone_detail_modal_visible}
           set_miletone_detail_modal_visible={this.set_miletone_detail_modal_visible}
+          deleteRelationContent={this.deleteRelationContent}
         />
       </div>
     )
