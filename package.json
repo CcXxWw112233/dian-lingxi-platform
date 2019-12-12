@@ -34,7 +34,6 @@
     "react-beautiful-dnd": "^10.0.1",
     "react-dom": "^16.10.2",
     "react-grid-layout": "^0.16.6",
-    "react-masonry-mixin": "^2.1.0",
     "react-virtualized": "^9.21.0",
     "spark-md5": "^3.0.0"
   },
