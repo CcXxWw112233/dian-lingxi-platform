@@ -571,7 +571,7 @@ export default class GetRowTaskItem extends Component {
                                 opacity: is_realize == '1' ? 0.5 : 1
                             }}
                         >
-                            <AvatarList users={executors} size={'small'} />
+                            <AvatarList users={executors} size={'small'} targetclassname={'specific_example'} />
                         </div>
                     </div>
                     {/* 存在未读 */}

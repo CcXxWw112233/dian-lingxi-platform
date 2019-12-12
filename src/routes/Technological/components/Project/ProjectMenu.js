@@ -46,7 +46,8 @@ class ProjectMenu extends Component {
     if(key.includes('archived')) {
       return {
         type: 'keyword',
-        value: 'archived'
+        keyword: 'archived',
+        value: key.split('-')[1]
       }
     } else if(key.includes('org')) {
       return {
@@ -62,15 +63,15 @@ class ProjectMenu extends Component {
     }
   }
   handleSelectedProjectMenuItem = () => {
-    const {type, value} = this.getSelectedItemKeywordOrId()
-    this.handleSelectedProjectMenuItemChange(value, null, type)
+    const {type, value, keyword} = this.getSelectedItemKeywordOrId()
+    this.handleSelectedProjectMenuItemChange(value, null, type, keyword)
   }
   initSelectedKeys = () => {
     this.setState({
       selectedKeys: []
     })
   }
-  handleSelectedProjectMenuItemChange = (item, e, type) => {
+  handleSelectedProjectMenuItemChange = (item, e, type, keyword) => {
     const { dispatch, currentSelectedProjectMenuItem } = this.props;
     if (e) {
       e.stopPropagation();
@@ -81,7 +82,7 @@ class ProjectMenu extends Component {
     if(!type) {
       this.initSelectedKeys()
     }
-    if(item === currentSelectedProjectMenuItem) return
+    // if(item === currentSelectedProjectMenuItem) return
     Promise.resolve(
       dispatch({
         type: 'project/setCurrentSelectedProjectMenuItem',
@@ -95,9 +96,9 @@ class ProjectMenu extends Component {
         dispatch({
           type: 'project/fetchCurrentProjectGroupProjectList',
           payload: {
-            keyword: (!type) || type === 'keyword' ? item : "",
+            keyword:  (type == 'keyword')? keyword : ((!type)? item : ""), //(!type) || type === 'keyword' ? item : "",
             group_id: type === 'group_id' ? item : '',
-            org_id: type === 'org' ? item : ''
+            org_id: (type == 'org' || type == 'keyword')? item : '',//type === 'org' ? item : ''
           }
         })
       )
