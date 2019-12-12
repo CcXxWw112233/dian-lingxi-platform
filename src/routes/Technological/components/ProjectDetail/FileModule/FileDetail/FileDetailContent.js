@@ -1882,12 +1882,16 @@ class FileDetailContent extends React.Component {
               )}
             </div>
             <div style={{ position: 'relative' }}>
-              <Dropdown overlay={saveAsMenu()}>
-                  <Button style={{ height: 24, marginLeft: 14 }} >
-                    <span className={`${globalStyles.authTheme} ${indexStyles.right__shareIndicator_icon}`}>&#xe6dd;</span>
-                    另存为
-                  </Button>
-              </Dropdown>
+              {
+                seeFileInput === 'fileModule' && (
+                  <Dropdown overlay={saveAsMenu()}>
+                      <Button style={{ height: 24, marginLeft: 14 }} >
+                        <span className={`${globalStyles.authTheme} ${indexStyles.right__shareIndicator_icon}`}>&#xe6dd;</span>
+                        另存为
+                      </Button>
+                  </Dropdown>
+                )
+              }
             </div>
             <span style={{ marginLeft: '10px' }}>
             </span>
