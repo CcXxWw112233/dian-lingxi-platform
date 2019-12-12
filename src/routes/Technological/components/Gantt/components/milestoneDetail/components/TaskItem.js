@@ -25,7 +25,7 @@ export default class DCAddChirdrenTaskItem extends React.Component{
       }
     }).then(res => {
       // debugger
-      console.log('sssssss_res', res)
+      // console.log('sssssss_res', res)
       deleteRelationContent()
     })
   }
