@@ -9,8 +9,7 @@ import RichTextEditor from '@/components/RichTextEditor'
 import MilestoneAdd from '@/components/MilestoneAdd'
 import LabelDataComponent from '@/components/LabelDataComponent'
 import AppendSubTask from './components/AppendSubTask'
-// import PreviewFileModal from '@/routes/Technological/components/ProjectDetail/TaskItemComponent/PreviewFileModal'
-import FileDetailModal from '@/components/FileDetailModal'
+// import FileDetailModal from '@/components/FileDetailModal'
 import { timestampFormat, compareTwoTimestamp } from '@/utils/util'
 import { getSubfixName } from "@/utils/businessFunction";
 import {
@@ -467,38 +466,6 @@ export default class DragDropContentComponent extends Component {
         isInAttachmentFile: true
       }
     })
-    // dispatch({
-    //   type: 'projectDetailFile/updateDatas',
-    //   payload: {
-    //     isInOpenFile: true,
-    //     seeFileInput: 'taskModule',
-    //     filePreviewCurrentId: file_resource_id,
-    //     filePreviewCurrentFileId: file_id,
-    //     pdfDownLoadSrc: '',
-    //   }
-    // })
-
-    // if (getSubfixName(file_name) == '.pdf') {
-    //   dispatch({
-    //     type: 'projectDetailFile/getFilePDFInfo',
-    //     payload: {
-    //       id: file_id
-    //     }
-    //   })
-    // } else {
-    //   dispatch({
-    //     type: 'projectDetailFile/filePreview',
-    //     payload: {
-    //       file_id
-    //     }
-    //   })
-    //   dispatch({
-    //     type: 'projectDetailFile/fileInfoByUrl',
-    //     payload: {
-    //       file_id
-    //     }
-    //   })
-    // }
 
   }
   /**附件下载、删除等操作 */
@@ -587,21 +554,6 @@ export default class DragDropContentComponent extends Component {
       }
     });
   }
-  /* 附件显示隐藏 */
-  setPreviewFileModalVisibile = () => {
-    // this.setState({
-    //   previewFileModalVisibile: !this.state.previewFileModalVisibile
-    // })
-    this.props.dispatch({
-      type: 'publicFileDetailModal/updateDatas',
-      payload: {
-        filePreviewCurrentFileId: '',
-        fileType: '',
-        isInOpenFile: false,
-        isInAttachmentFile: false
-      }
-    })
-  }
 
   /* 附件点点点字段 */
   getAttachmentActionMenus = (fileInfo, card_id) => {
@@ -619,45 +571,6 @@ export default class DragDropContentComponent extends Component {
         </Menu.Item>
       </Menu>
     );
-  }
-
-  /* 附件版本更新数据  */
-  whetherUpdateFolderListData = ({folder_id,file_id ,file_name, create_time}) => {
-    /***
-     * board_id: "1204966621836349440"
-card_id: "1204966730338799616"
-create_by: "1158204054019641344"
-create_time: "1576121460"
-file_id: "1204966855622660096"
-file_resource_id: "1174884456079691776"
-folder_path: {id: "1204966622633267202", board_id: "1204966621836349440", user_id: "1158204054019641344",…}
-id: "1204966856004341760"
-name: "tom.jpg"
-     */
-    const { projectDetailInfoData: { board_id } } = this.props
-    if (file_name) {
-      const { drawContent = {}, dispatch } = this.props
-      const gold_data = (drawContent['properties'].find(item => item.code == 'ATTACHMENT') || {}).data
-      let newData = [...gold_data]
-      newData = newData && newData.map(item => {
-        if (item.file_id == this.props.filePreviewCurrentFileId) {
-          let new_item = item
-          new_item = {...item, file_id: file_id, name: file_name, create_time: create_time}
-          return new_item
-        } else {
-          let new_item = item
-          return new_item
-        }
-      })
-      drawContent['properties'] = this.filterCurrentUpdateDatasField('ATTACHMENT', newData)
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent
-        }
-      })
-    }
-    
   }
   // 递归获取附件路径 S
   getFolderPathName = (fileList, fileItem) => {
@@ -1217,7 +1130,7 @@ name: "tom.jpg"
   }
 
   render() {
-    const { drawContent = {}, isInOpenFile } = this.props
+    const { drawContent = {} } = this.props
     const { properties = [] } = drawContent
     return (
       <div>
@@ -1238,18 +1151,6 @@ name: "tom.jpg"
           }
         </div>
         {/*查看任务附件*/}
-        {/* <PreviewFileModal modalVisible={isInOpenFile} /> */}
-        {
-          isInOpenFile && (
-            <FileDetailModal 
-              filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
-              fileType={this.props.fileType}
-              file_detail_modal_visible={this.props.isInOpenFile}
-              setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
-              whetherUpdateFolderListData={this.whetherUpdateFolderListData}
-            />
-          )
-        }
         {/*外部附件引入结束 */}
       </div>
     )
@@ -1259,12 +1160,7 @@ name: "tom.jpg"
 // 只关联public弹窗内的数据
 function mapStateToProps({
   publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id, boardTagList = [] },
-  projectDetail: { datas: { projectDetailInfoData = {} } },
-  publicFileDetailModal: {
-    isInOpenFile,
-    filePreviewCurrentFileId,
-    fileType
-  }
+  projectDetail: { datas: { projectDetailInfoData = {} } }
 }) {
-  return { drawContent, is_edit_title, card_id, boardTagList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType  }
+  return { drawContent, is_edit_title, card_id, boardTagList, projectDetailInfoData  }
 }

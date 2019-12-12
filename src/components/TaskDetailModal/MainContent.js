@@ -8,7 +8,7 @@ import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner
 import InformRemind from '@/components/InformRemind'
 import { timestampToTime, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal, isSamDay } from '@/utils/util'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_EDIT,PROJECT_FILES_FILE_INTERVIEW
+  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_EDIT, PROJECT_FILES_FILE_INTERVIEW
 } from "@/globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { addTaskExecutor, removeTaskExecutor, deleteTaskFile, getBoardTagList } from '../../services/technological/task'
@@ -18,6 +18,7 @@ import {
 import { getFolderList } from '@/services/technological/file'
 import { getMilestoneList } from '@/services/technological/prjectDetail'
 import DragDropContentComponent from './DragDropContentComponent'
+import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -76,7 +77,7 @@ export default class MainContent extends Component {
   // 初始化过滤当前已经存在的字段
   filterCurrentExistenceField = (currentData) => {
     const { propertiesList = [] } = this.state
-    let newCurrentData = {...currentData}
+    let newCurrentData = { ...currentData }
     let newPropertiesList = [...propertiesList]
     newPropertiesList = newPropertiesList.filter((value, index) => {
       const gold_code = (newCurrentData['properties'].find(item => item.code === value.code) || {}).code
@@ -97,7 +98,7 @@ export default class MainContent extends Component {
       type: 'publicTaskDetailModal/getCardWithAttributesDetail',
       payload: {
         id: card_id,
-        calback: function(data) {
+        calback: function (data) {
           if (checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW, data.board_id)) {
             that.getProjectFolderList(data.board_id)
           }
@@ -106,7 +107,7 @@ export default class MainContent extends Component {
         }
       }
     })
-    
+
   }
 
   // 获取 currentDrawerContent 数据
@@ -207,7 +208,7 @@ export default class MainContent extends Component {
       card_name: val,
       name: val
     }
-    
+
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/updateTask',
@@ -529,7 +530,7 @@ export default class MainContent extends Component {
   }
   // 删除结束时间 E
 
-  updateParentPropertiesList = ({shouldDeleteId, new_selectedKeys = []}) => {
+  updateParentPropertiesList = ({ shouldDeleteId, new_selectedKeys = [] }) => {
     const { attributesList = [] } = this.props
     const { propertiesList = [] } = this.state
     let new_attributesList = [...attributesList]
@@ -600,7 +601,7 @@ export default class MainContent extends Component {
                 shouldDeleteId: '',
                 showDelColor: ''
               })
-              that.updateParentPropertiesList({shouldDeleteId, new_selectedKeys})
+              that.updateParentPropertiesList({ shouldDeleteId, new_selectedKeys })
               dispatch({
                 type: 'publicTaskDetailModal/updateDatas',
                 payload: {
@@ -608,7 +609,7 @@ export default class MainContent extends Component {
                 }
               })
               if (!(gold_executor && gold_executor.length)) {
-                that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({card_id, drawContent: new_drawContent, operate_properties_code: 'EXECUTOR'})
+                that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({ card_id, drawContent: new_drawContent, operate_properties_code: 'EXECUTOR' })
               }
             }
           })
@@ -635,7 +636,7 @@ export default class MainContent extends Component {
             shouldDeleteId: '',
             showDelColor: ''
           })
-          that.updateParentPropertiesList({shouldDeleteId, new_selectedKeys})
+          that.updateParentPropertiesList({ shouldDeleteId, new_selectedKeys })
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',
             payload: {
@@ -643,7 +644,7 @@ export default class MainContent extends Component {
             }
           })
           if (!(gold_executor && gold_executor.length)) {
-            that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({card_id, drawContent: new_drawContent, operate_properties_code: 'EXECUTOR'})
+            that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({ card_id, drawContent: new_drawContent, operate_properties_code: 'EXECUTOR' })
           }
         }
       })
@@ -796,7 +797,7 @@ export default class MainContent extends Component {
     const flag = (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()
     return (
       <div>
-        <div style={{cursor: 'pointer'}} className={`${mainContentStyles.field_content} ${showDelColor && id == currentDelId && mainContentStyles.showDelColor}`}>
+        <div style={{ cursor: 'pointer' }} className={`${mainContentStyles.field_content} ${showDelColor && id == currentDelId && mainContentStyles.showDelColor}`}>
           <div className={mainContentStyles.field_left}>
             {
               !flag && (
@@ -920,8 +921,51 @@ export default class MainContent extends Component {
     return flag
   }
 
+  // 附件关闭回调
+  setPreviewFileModalVisibile = () => {
+    // this.setState({
+    //   previewFileModalVisibile: !this.state.previewFileModalVisibile
+    // })
+    this.props.dispatch({
+      type: 'publicFileDetailModal/updateDatas',
+      payload: {
+        filePreviewCurrentFileId: '',
+        fileType: '',
+        isInOpenFile: false,
+        isInAttachmentFile: false
+      }
+    })
+  }
+
+  /* 附件版本更新数据  */
+  whetherUpdateFolderListData = ({ folder_id, file_id, file_name, create_time }) => {
+    if (file_name) {
+      const { drawContent = {}, dispatch } = this.props
+      const gold_data = (drawContent['properties'].find(item => item.code == 'ATTACHMENT') || {}).data
+      let newData = [...gold_data]
+      newData = newData && newData.map(item => {
+        if (item.file_id == this.props.filePreviewCurrentFileId) {
+          let new_item = item
+          new_item = { ...item, file_id: file_id, name: file_name, create_time: create_time }
+          return new_item
+        } else {
+          let new_item = item
+          return new_item
+        }
+      })
+      drawContent['properties'] = this.filterCurrentUpdateDatasField('ATTACHMENT', newData)
+      dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent
+        }
+      })
+    }
+
+  }
+
   render() {
-    const { drawContent = {}, is_edit_title, isInOpenFile, handleTaskDetailChange} = this.props
+    const { drawContent = {}, is_edit_title, isInOpenFile, handleTaskDetailChange } = this.props
     const {
       card_id,
       card_name,
@@ -999,8 +1043,8 @@ export default class MainContent extends Component {
           <div>
             {/* 状态区域 */}
             <div>
-              <div style={{ position: 'relative' }} className={mainContentStyles.field_content} style={{cursor: 'pointer'}}>
-                <div className={mainContentStyles.field_left} style={{paddingLeft: '10px'}}>
+              <div style={{ position: 'relative' }} className={mainContentStyles.field_content} style={{ cursor: 'pointer' }}>
+                <div className={mainContentStyles.field_left} style={{ paddingLeft: '10px' }}>
                   <span className={`${globalStyles.authTheme}`}>&#xe6b6;</span>
                   <span>状态</span>
                 </div>
@@ -1040,12 +1084,12 @@ export default class MainContent extends Component {
               </div>
             </div>
             {/* 负责人区域 S */}
-            { this.whetherExistencePriciple() && this.renderPriciple() }
+            {this.whetherExistencePriciple() && this.renderPriciple()}
             {/* 负责人区域 E */}
             {/* 时间区域 */}
             <div>
-              <div className={mainContentStyles.field_content} style={{cursor: 'pointer'}}>
-                <div className={mainContentStyles.field_left} style={{paddingLeft: '10px'}}>
+              <div className={mainContentStyles.field_content} style={{ cursor: 'pointer' }}>
+                <div className={mainContentStyles.field_left} style={{ paddingLeft: '10px' }}>
                   <span className={globalStyles.authTheme}>&#xe686;</span>
                   <span>时间</span>
                 </div>
@@ -1130,7 +1174,7 @@ export default class MainContent extends Component {
           </div>
           {/* 各种字段的不同状态 E */}
           {/* 不同字段的渲染 S */}
-          <div style={{position: 'relative'}}>
+          <div style={{ position: 'relative' }}>
             <DragDropContentComponent getMilestone={this.getMilestone} selectedKeys={selectedKeys} updateParentPropertiesList={this.updateParentPropertiesList} handleTaskDetailChange={handleTaskDetailChange} boardFolderTreeData={boardFolderTreeData} milestoneList={milestoneList} />
           </div>
           {/* 不同字段的渲染 E */}
@@ -1141,11 +1185,11 @@ export default class MainContent extends Component {
               (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
                 ''
               ) : (
-                <>
-                  {
-                    !(properties && properties.length == 6) && (
+                  <>
+                    {
+                      !(properties && properties.length == 6) && (
                         <div className={mainContentStyles.field_content}>
-                          <div className={mainContentStyles.field_left} style={{paddingLeft: '10px'}}>
+                          <div className={mainContentStyles.field_left} style={{ paddingLeft: '10px' }}>
                             <span className={globalStyles.authTheme}>&#xe8fe;</span>
                             <span>添加属性</span>
                           </div>
@@ -1160,13 +1204,27 @@ export default class MainContent extends Component {
                           </div>
                         </div>
                       )
-                  }
-                </>
-              )
+                    }
+                  </>
+                )
             }
-            
+
           </div>
           {/* 添加字段 E */}
+        </div>
+        {/*查看任务附件*/}
+        <div>
+          {
+            this.props.isInOpenFile && (
+              <FileListRightBarFileDetailModal
+                filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
+                fileType={this.props.fileType}
+                file_detail_modal_visible={this.props.isInOpenFile}
+                setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
+                whetherUpdateFolderListData={this.whetherUpdateFolderListData}
+              />
+            )
+          }
         </div>
       </div>
     )
@@ -1179,9 +1237,11 @@ function mapStateToProps({
   projectDetail: { datas: { projectDetailInfoData = {} } },
   projectDetailFile: {
     datas: {
-      isInOpenFile
+      isInOpenFile,
+      filePreviewCurrentFileId,
+      fileType
     }
   }
 }) {
-  return { drawContent, is_edit_title, card_id, boardTagList, attributesList, projectDetailInfoData, isInOpenFile }
+  return { drawContent, is_edit_title, card_id, boardTagList, attributesList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType }
 }

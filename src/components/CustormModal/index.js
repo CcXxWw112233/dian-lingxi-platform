@@ -22,21 +22,17 @@ class CustormModal extends React.Component {
     const { clientWidth } = this.state
     const { chatImVisiable, siderRightCollapsed } = this.props
     if (chatImVisiable || siderRightCollapsed) {
-      setTimeout(() => {
-        const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
-        let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth - 400 : clientWidth
-        this.setState({
-          layoutClientWidth
-        })
-      }, 200)
+      const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
+      let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth - 400 : clientWidth
+      this.setState({
+        layoutClientWidth
+      })
     } else {
-      setTimeout(() => {
-        const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
-        let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth : clientWidth
-        this.setState({
-          layoutClientWidth
-        })
-      }, 200)
+      const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
+      let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth : clientWidth
+      this.setState({
+        layoutClientWidth
+      })
     }
   }
 
@@ -44,23 +40,19 @@ class CustormModal extends React.Component {
     const { clientWidth } = this.state
     const { chatImVisiable, siderRightCollapsed } = nextProps
     if (chatImVisiable || siderRightCollapsed) {
-      setTimeout(() => {
-        const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
-        let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth - 400 : clientWidth
-        this.setState({
-          layoutClientWidth
-        })
-      }, 200)
+      const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
+      let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth - 400 : clientWidth
+      this.setState({
+        layoutClientWidth
+      })
     } else {
-      setTimeout(() => {
-        const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
-        let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth : clientWidth
-        this.setState({
-          layoutClientWidth
-        })
-      }, 200)
+      const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
+      let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth : clientWidth
+      this.setState({
+        layoutClientWidth
+      })
     }
-    
+
   }
 
   // componentDidMount() {
@@ -121,7 +113,7 @@ class CustormModal extends React.Component {
 
 
   render() {
-    const { siderRightCollapsed = false, visible, overInner, width, zIndex = 1006, maskClosable, footer, destroyOnClose, keyboard = true, maskStyle = {}, style = {}, onOk, onCancel, bodyStyle = {}, closable = true, title,page_load_type, chatImVisiable} = this.props;
+    const { siderRightCollapsed = false, visible, overInner, width, zIndex = 1006, maskClosable, footer, destroyOnClose, keyboard = true, maskStyle = {}, style = {}, onOk, onCancel, bodyStyle = {}, closable = true, title, page_load_type, chatImVisiable } = this.props;
     const { clientWidth, clientHeight, layoutClientWidth } = this.state
     // const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     // const { is_simple_model } = user_set;
@@ -148,7 +140,7 @@ class CustormModal extends React.Component {
         bodyStyle={{ ...bodyStyle }}
         onCancel={onCancel}
         onOk={onOk}
-        wrapClassName={`${ page_load_type == '2' ? (siderRightCollapsed ? indexStyles.wrapActiveModal : indexStyles.wrapNormalModal) : indexStyles.wrapModal} ${chatImVisiable || siderRightCollapsed ? indexStyles.container_wrapperActiveModal : indexStyles.container_wrapperNormalModal}`}
+        wrapClassName={`${page_load_type == '2' ? (siderRightCollapsed ? indexStyles.wrapActiveModal : indexStyles.wrapNormalModal) : indexStyles.wrapModal} ${chatImVisiable || siderRightCollapsed ? indexStyles.container_wrapperActiveModal : indexStyles.container_wrapperNormalModal}`}
       >
         {overInner}
       </Modal>
@@ -157,8 +149,8 @@ class CustormModal extends React.Component {
 }
 
 function mapStateToProps({
-	simplemode: {
-		chatImVisiable = false
+  simplemode: {
+    chatImVisiable = false
   },
   technological: {
     datas: {
@@ -166,8 +158,8 @@ function mapStateToProps({
     }
   }
 }) {
-	return {
-		chatImVisiable, siderRightCollapsed
-	}
+  return {
+    chatImVisiable, siderRightCollapsed
+  }
 }
 export default Form.create()(CustormModal)
