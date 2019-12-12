@@ -67,19 +67,21 @@ export default class index extends React.Component {
         return (
             <div className={indexStyles.mapsContainer} style={{ height: contentHeight + 'px' }}>
                 {user_set.current_org === '0' && selectOrganizationVisible === false && mapOrganizationList.length > 1 ? (
-                    <div className={indexStyles.boardSelectWapper}>
-                        <div className={indexStyles.groupName}>请选择一个组织进行查看地图</div>
-                        <div className={indexStyles.boardItemWapper}>
-                            {
-                                mapOrganizationList && mapOrganizationList.map((value, key) => {
-                                    return (
-                                        <div key={key} className={indexStyles.boardItem} onClick={e => this.seeInvestmentMaps(value)}>
-                                            <i className={`${globalStyles.authTheme} ${indexStyles.boardIcon}`}>&#xe677;</i>
-                                            <span className={indexStyles.boardName}>{value.name}</span>
-                                        </div>
-                                    )
-                                })
-                            }
+                    <div className={indexStyles.boardSelectWapperOut}>
+                        <div className={indexStyles.boardSelectWapper}>
+                            <div className={indexStyles.groupName}>请选择一个组织进行查看地图</div>
+                            <div className={indexStyles.boardItemWapper}>
+                                {
+                                    mapOrganizationList && mapOrganizationList.map((value, key) => {
+                                        return (
+                                            <div key={key} className={indexStyles.boardItem} onClick={e => this.seeInvestmentMaps(value)}>
+                                                <i className={`${globalStyles.authTheme} ${indexStyles.boardIcon}`}>&#xe677;</i>
+                                                <span className={indexStyles.boardName}>{value.name}</span>
+                                            </div>
+                                        )
+                                    })
+                                }
+                            </div>
                         </div>
                     </div>
                 ) : (
