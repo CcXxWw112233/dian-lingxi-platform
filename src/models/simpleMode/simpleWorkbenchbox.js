@@ -175,6 +175,13 @@ export default {
                         folder_id: res.data.folder_id
                     }
                 })
+                yield put({
+                    type: 'projectDetailFile/updateDatas',
+                    payload: {
+                        breadcrumbList: [{ file_name: res.data.folder_name, file_id: res.data.folder_id, type: '1' }],
+                        currentParrentDirectoryId: res.data.folder_id,
+                    }
+                })
                 // yield put({
                 //     type: 'projectDetailFile/initialget',
                 //     payload: {
