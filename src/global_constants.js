@@ -1,5 +1,7 @@
-import { lx_utils } from 'lingxi-im'
+import LingxiIm, { lx_utils, Im } from 'lingxi-im'
 
 global.constants = {
-    lx_utils
+    lx_utils,
+    LingxiIm,
+    Im
 }

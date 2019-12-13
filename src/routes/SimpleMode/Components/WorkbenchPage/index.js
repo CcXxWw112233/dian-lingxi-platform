@@ -8,9 +8,9 @@ import BoardPlan from './BoardPlan/index'
 import InvestmentMaps from './InvestmentMaps/index'
 import XczNews from './XczNews/index'
 import Zhichengshe from './Zhichengshe/index'
-import LingxiIm, { Im } from 'lingxi-im'
+// import LingxiIm, { Im } from 'lingxi-im'
 import { isPaymentOrgUser } from "@/utils/businessFunction"
-
+const { LingxiIm } = global.constants
 class WorkbenchPage extends Component {
     constructor(props) {
         // console.log("WorkbenchPage组件初始化");
@@ -187,7 +187,7 @@ class WorkbenchPage extends Component {
         let isPaymentUser = false;
         console.log("simplemodeCurrentProject", simplemodeCurrentProject);
         if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
-         
+
             isPaymentUser = isPaymentOrgUser(simplemodeCurrentProject.org_id);
         } else {
             isPaymentUser = isPaymentOrgUser();
