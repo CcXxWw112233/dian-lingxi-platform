@@ -17,8 +17,8 @@ import classNames from "classnames/bind";
 // import GroupChat from './comonent/GroupChat'
 // import InitialChat from './comonent/InitialChat'
 import VideoMeetingPopoverContent from './comonent/videoMeetingPopoverContent/index'
-import LingxiIm, { Im } from 'lingxi-im'
-
+// import LingxiIm, { Im } from 'lingxi-im'
+const { LingxiIm, Im } = global.constants
 let cx = classNames.bind(indexStyles);
 
 const { Sider } = Layout;

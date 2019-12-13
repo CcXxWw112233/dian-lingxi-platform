@@ -204,7 +204,7 @@ export default class BoardsFilesArea extends Component {
                         boards_flies.map((item, key) => {
                             const { id, board_name, org_id } = item
                             return (
-                                <div key={id}>
+                                <div key={`${id}_${board_name}`}>
                                     {
                                         isPaymentOrgUser(org_id) &&
                                         this.filterSeeingBoard(id) &&

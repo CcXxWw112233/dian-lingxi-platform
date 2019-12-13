@@ -384,7 +384,7 @@ export default class MainContent extends React.Component {
             <div className={`${indexStyles.contain2_item_right} ${indexStyles.pub_hover}`}>
               <span style={{position: 'relative'}}>{deadline ? timestampToTimeNormal(deadline, '/', true) : '添加时间'}
                 <DatePicker
-                  disabledDate={this.disabledDueTime.bind(this)}
+                  // disabledDate={this.disabledDueTime.bind(this)}
                   placeholder={'截止时间'}
                   format="YYYY/MM/DD HH:mm"
                   showTime={{format: 'HH:mm'}}

@@ -35,41 +35,80 @@ class FileItem extends React.Component {
     const type = getSubfixName(fileName)
     switch (type) {
       case '.xls':
-        themeCode = '&#xe6d5;';
-        break;
+        themeCode = '&#xe65c;'
+        break
       case '.png':
-        themeCode = '&#xe6d4;';
-        break;
+        themeCode = '&#xe69a;'
+        break
       case '.xlsx':
-        themeCode = '&#xe6d3;';
-        break;
+        themeCode = '&#xe65c;'
+        break
       case '.ppt':
-        themeCode = '&#xe6d2;';
-        break;
+        themeCode = '&#xe655;'
+        break
+      case '.pptx':
+        themeCode = '&#xe650;'
+        break
       case '.gif':
-        themeCode = '&#xe6d1;';
-        break;
+        themeCode = '&#xe657;'
+        break
       case '.jpeg':
-        themeCode = '&#xe6d0;';
-        break;
+        themeCode = '&#xe659;'
+        break
       case '.pdf':
-        themeCode = '&#xe6cf;';
-        break;
+        themeCode = '&#xe651;'
+        break
       case '.docx':
-        themeCode = '&#xe6ce;';
-        break;
+        themeCode = '&#xe64a;'
+        break
       case '.txt':
-        themeCode = '&#xe6cd;';
-        break;
+        themeCode = '&#xe654;'
+        break
       case '.doc':
-        themeCode = '&#xe6cc;';
-        break;
+        themeCode = '&#xe64d;'
+        break
       case '.jpg':
-        themeCode = '&#xe6cb;';
-        break;
+        themeCode = '&#xe653;'
+        break
+      case '.mp4':
+        themeCode = '&#xe6e1;'
+        break
+      case '.mp3':
+        themeCode = '&#xe6e2;'
+        break
+      case '.skp':
+        themeCode = '&#xe6e8;'
+        break
+      case '.gz':
+        themeCode = '&#xe6e7;'
+        break
+      case '.7z':
+        themeCode = '&#xe6e6;'
+        break
+      case '.zip':
+        themeCode = '&#xe6e5;'
+        break
+      case '.rar':
+        themeCode = '&#xe6e4;'
+        break
+      case '.3dm':
+        themeCode = '&#xe6e0;'
+        break
+      case '.ma':
+        themeCode = '&#xe65f;'
+        break
+      case '.psd':
+        themeCode = '&#xe65d;'
+        break
+      case '.obj':
+        themeCode = '&#xe65b;'
+        break
+      case '.bmp':
+        themeCode = '&#xe6ee;'
+        break
       default:
-        themeCode = '&#xe6c6;';
-        break;
+        themeCode = '&#xe660;'
+        break
     }
     return themeCode;
   }
@@ -285,7 +324,7 @@ class FileItem extends React.Component {
             className={globalStyles.authTheme}
             style={{
               fontStyle: 'normal',
-              fontSize: 20,
+              fontSize: 26,
               color: '#1890FF',
               cursor: 'pointer'
             }}

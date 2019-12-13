@@ -315,12 +315,30 @@ export default class GroupListHeadItem extends Component {
     }
 
   }
+  // 更新文件区域项目名称
+  updateBoardFiles = ({ board_id, name }) => {
+    const { dispatch, boards_flies } = this.props
+    let new_boards_flies = boards_flies.map(item => {
+      let new_item = { ...item }
+      if (board_id == item.id) {
+        new_item.board_name = name
+      }
+      return new_item
+    })
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        boards_flies: new_boards_flies
+      }
+    })
+  }
   // 请求更新项目名称
   requestUpdateBoard = (data = {}) => {
     updateProject({ ...data }).then(res => {
       if (isApiResponseOk(res)) {
         this.setLocalListName(this.state.edit_input_value)
         message.success('已成功更新项目名称')
+        this.updateBoardFiles(data)
       } else {
         message.error(res.message)
       }
@@ -825,8 +843,8 @@ export default class GroupListHeadItem extends Component {
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
-  gantt: { datas: { group_rows = [], ceiHeight, gantt_board_id, group_view_type, get_gantt_data_loading, list_group, show_board_fold } },
+  gantt: { datas: { boards_flies, group_rows = [], ceiHeight, gantt_board_id, group_view_type, get_gantt_data_loading, list_group, show_board_fold } },
   technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, } },
 }) {
-  return { list_group, ceiHeight, group_rows, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, get_gantt_data_loading, show_board_fold }
+  return { boards_flies, list_group, ceiHeight, group_rows, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, get_gantt_data_loading, show_board_fold }
 }

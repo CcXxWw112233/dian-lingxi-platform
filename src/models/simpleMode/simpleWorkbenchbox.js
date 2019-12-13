@@ -169,13 +169,18 @@ export default {
                         board_id: id
                     }
                 })
-
                 yield put({
-                    type: 'projectDetailFile/initialget',
+                    type: 'projectDetailFile/getFileList',
                     payload: {
-                        id
+                        folder_id: res.data.folder_id
                     }
                 })
+                // yield put({
+                //     type: 'projectDetailFile/initialget',
+                //     payload: {
+                //         id
+                //     }
+                // })
                 yield put({
                     type: 'projectDetail/getRelationsSelectionPre',
                     payload: {

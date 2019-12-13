@@ -61,14 +61,14 @@ export default class MoveToDirectory extends React.Component {
         moveToDirectoryVisiblie: false
       }
     })
-    const { fileList, selectedRowKeys, copyOrMove, currentFileListMenuOperatorId, openMoveDirectoryType, filePreviewCurrentFileId, breadcrumbList, treeFolderData } = this.props
+    const { fileList, selectedRowKeys, selectedRows, copyOrMove, currentFileListMenuOperatorId, openMoveDirectoryType, filePreviewCurrentFileId, breadcrumbList, treeFolderData } = this.props
 
     let file_ids
     //分别从多文件选择， fileList单条信息 ， 文件预览进来
     if (openMoveDirectoryType === '1') {
       let chooseArray = []
-      for (let i = 0; i < selectedRowKeys.length; i++) {
-        chooseArray.push(fileList[selectedRowKeys[i]].file_id)
+      for (let i = 0; i < selectedRows.length; i++) {
+        chooseArray.push(selectedRows[i].file_id)
       }
       file_ids = chooseArray.join(',')
     } else if (openMoveDirectoryType === '2') {
@@ -177,6 +177,7 @@ function mapStateToProps({
       treeFolderData = {},
       fileList = [],
       selectedRowKeys,
+      selectedRows,
       currentFileListMenuOperatorId,
       openMoveDirectoryType,
       filePreviewCurrentFileId,
@@ -192,6 +193,7 @@ function mapStateToProps({
     treeFolderData,
     fileList,
     selectedRowKeys,
+    selectedRows,
     currentFileListMenuOperatorId,
     openMoveDirectoryType,
     filePreviewCurrentFileId,

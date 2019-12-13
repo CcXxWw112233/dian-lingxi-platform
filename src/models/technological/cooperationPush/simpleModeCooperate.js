@@ -176,6 +176,7 @@ export default {
             const currentSelectedWorkbenchBox = yield select(getModelSelectState('simplemode', 'currentSelectedWorkbenchBox')) || {}
             const workbenchBoxcode = currentSelectedWorkbenchBox.code
             const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id')) //甘特图项目id
+            const workbench_show_gantt_card = yield select(getModelSelectDatasState('workbench', 'workbench_show_gantt_card'))
             const id_arr_ = getAfterNameId(coperateName).split('/') //name/id1/id2/...
             let belong_board_id_ = id_arr_[0] //推送过来所属项目id
 
@@ -184,7 +185,7 @@ export default {
 
                     belong_board_id_ = getAfterNameId(coperateName)
                     //如果是在甘特图模式下查看该项目
-                    if ('board:plans' == workbenchBoxcode) {
+                    if ('board:plans' == workbenchBoxcode || workbench_show_gantt_card == '1') {
                         if (gantt_board_id == '0' || gantt_board_id == belong_board_id_) {
                             dispathes({
                                 type: 'gantt/getGttMilestoneList',
@@ -197,7 +198,7 @@ export default {
                 case 'delete:milestone':
                     belong_board_id_ = id_arr_[0]
                     //如果是在甘特图模式下查看该项目
-                    if ('board:plans' == workbenchBoxcode) {
+                    if ('board:plans' == workbenchBoxcode || workbench_show_gantt_card == '1') {
                         if (gantt_board_id == '0' || gantt_board_id == belong_board_id_) {
                             dispathes({
                                 type: 'gantt/getGttMilestoneList',
@@ -225,7 +226,7 @@ export default {
                     }
                     //如果是项目id匹配上了,并且在查看甘特图的情况下，则更新甘特图里程碑列表
                     belong_board_id_ = coperateData['board_id']
-                    if ('board:plans' == workbenchBoxcode) {
+                    if ('board:plans' == workbenchBoxcode || workbench_show_gantt_card == '1') {
                         if (gantt_board_id == '0' || gantt_board_id == belong_board_id_) {
                             dispathes({
                                 type: 'gantt/getGttMilestoneList',
