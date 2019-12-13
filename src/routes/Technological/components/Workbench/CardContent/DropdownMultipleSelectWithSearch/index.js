@@ -344,10 +344,20 @@ class DropdownMultipleSelectWithSearch extends Component {
     const calback = (lists) => {
       const arr = lists.filter(item => users.indexOf(item.id) != -1)
       const new_selectedList = [].concat(selectedList, arr)
+      // 去重
+      let temp = {};   //用于name判断重复
+      let result = [];  //最后的新数组
+      new_selectedList.map(item => {
+        if (!temp[item.id]) {
+          result.push(item);
+          temp[item.id] = true;
+        }
+      });
+      // 去重
       this.setState({
-        selectedList: new_selectedList
+        selectedList: result
       })
-      handleSelectedItemChange(new_selectedList)
+      handleSelectedItemChange(result)
     }
     if (typeof inviteOthersToBoardCalbackRequest == 'function') {
       inviteOthersToBoardCalbackRequest()

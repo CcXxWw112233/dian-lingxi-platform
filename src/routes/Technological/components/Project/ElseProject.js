@@ -438,7 +438,7 @@ export default class ElseProject extends React.Component {
                 })}
                 {data.length > 7 ? (
                   <div style={{ display: 'flex', fontSize: 12 }}>
-                    <div className={indexStyle.manwrap} ><Icon type="ellipsis" style={{ fontSize: 18 }} /></div>{user_count}位任务执行人
+                    <div className={indexStyle.manwrap} ><Icon type="ellipsis" style={{ fontSize: 18 }} /></div>{data.length}位任务执行人
                   </div>
                 ) : ('')}
               </div>
