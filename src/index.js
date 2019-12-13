@@ -20,9 +20,15 @@ Object.setPrototypeOf = require('setprototypeof');
 // 1. Initialize
 const app = dva({
   // history: createHistory(), //参考自https://www.jianshu.com/p/2e9e45e9a880
-  // onError(e, dispatch) {
-  //   console.log(e.message);
-  // },
+  onError(e, dispatch) {
+    console.log('ssssss_app_error', e.message);
+    const pattern = /Loading chunk (\d)+ failed/g;
+    const isChunkLoadFailed = e.message.match(pattern);
+    if (isChunkLoadFailed) {
+      alert('当前服务器文件有更新，正在获取中...')
+      window.location.reload()
+    }
+  },
 });
 
 // 2. Plugins
@@ -39,8 +45,8 @@ app.start('#root');
 
 window.addEventListener("storage", function (e) {
   const { key, newValue, oldValue } = e
-  if('OrganizationId' == key) { //作为切换组织时，需要重新加载数据
-    if(newValue != oldValue) {
+  if ('OrganizationId' == key) { //作为切换组织时，需要重新加载数据
+    if (newValue != oldValue) {
       Modal.confirm({
         title: '您当前所属的组织已经发生变化，继续操作将有可能无法正常使用后台服务，确认重新加载数据？',
         onOk() {
