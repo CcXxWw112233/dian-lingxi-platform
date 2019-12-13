@@ -251,6 +251,9 @@ export default class FileList extends React.Component {
       case '.ppt':
         themeCode = '&#xe655;'
         break
+      case '.pptx':
+        themeCode = '&#xe650;'
+        break
       case '.gif':
         themeCode = '&#xe657;'
         break

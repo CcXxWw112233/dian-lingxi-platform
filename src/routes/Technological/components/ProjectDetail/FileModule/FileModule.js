@@ -11,6 +11,18 @@ import { connect } from 'dva';
 
 @connect(mapStateToProps)
 export default class FileIndex extends React.Component {
+
+  componentWillUnmount() {
+    this.props.dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        breadcrumbList: [],
+        currentParrentDirectoryId: '',
+        currentPreviewFileData: {}
+      }
+    })
+  }
+
   render() {
     const { isInOpenFile, dispatch } = this.props
     const { marginTop = '20px' } = this.props;

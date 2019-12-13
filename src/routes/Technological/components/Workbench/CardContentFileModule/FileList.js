@@ -184,40 +184,79 @@ export default class FileList extends React.Component {
     const type = fileName.substr(fileName.lastIndexOf(".")).toLowerCase()
     switch (type) {
       case '.xls':
-        themeCode = '&#xe6d5;'
+        themeCode = '&#xe65c;'
         break
       case '.png':
-        themeCode = '&#xe6d4;'
+        themeCode = '&#xe69a;'
         break
       case '.xlsx':
-        themeCode = '&#xe6d3;'
+        themeCode = '&#xe65c;'
         break
       case '.ppt':
-        themeCode = '&#xe6d2;'
+        themeCode = '&#xe655;'
+        break
+      case '.pptx':
+        themeCode = '&#xe650;'
         break
       case '.gif':
-        themeCode = '&#xe6d1;'
+        themeCode = '&#xe657;'
         break
       case '.jpeg':
-        themeCode = '&#xe6d0;'
+        themeCode = '&#xe659;'
         break
       case '.pdf':
-        themeCode = '&#xe6cf;'
+        themeCode = '&#xe651;'
         break
       case '.docx':
-        themeCode = '&#xe6ce;'
+        themeCode = '&#xe64a;'
         break
-      case 'txt':
-        themeCode = '&#xe6cd;'
+      case '.txt':
+        themeCode = '&#xe654;'
         break
       case '.doc':
-        themeCode = '&#xe6cc;'
+        themeCode = '&#xe64d;'
         break
       case '.jpg':
-        themeCode = '&#xe6cb;'
+        themeCode = '&#xe653;'
+        break
+      case '.mp4':
+        themeCode = '&#xe6e1;'
+        break
+      case '.mp3':
+        themeCode = '&#xe6e2;'
+        break
+      case '.skp':
+        themeCode = '&#xe6e8;'
+        break
+      case '.gz':
+        themeCode = '&#xe6e7;'
+        break
+      case '.7z':
+        themeCode = '&#xe6e6;'
+        break
+      case '.zip':
+        themeCode = '&#xe6e5;'
+        break
+      case '.rar':
+        themeCode = '&#xe6e4;'
+        break
+      case '.3dm':
+        themeCode = '&#xe6e0;'
+        break
+      case '.ma':
+        themeCode = '&#xe65f;'
+        break
+      case '.psd':
+        themeCode = '&#xe65d;'
+        break
+      case '.obj':
+        themeCode = '&#xe65b;'
+        break
+      case '.bmp':
+        themeCode = '&#xe6ee;'
         break
       default:
-        themeCode = ''
+        themeCode = '&#xe660;'
         break
     }
     return themeCode
@@ -292,7 +331,7 @@ export default class FileList extends React.Component {
         render: (data) => {
           const { file_name} = data
           return (
-            <span onClick={this.openFile.bind(this, data )} style={{cursor: 'pointer'}}><i className={globalStyles.authTheme} style={{fontStyle: 'normal', fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer' }} dangerouslySetInnerHTML={{__html: this.judgeFileType(file_name)}}></i>{file_name}</span>
+            <span onClick={this.openFile.bind(this, data )} style={{cursor: 'pointer'}}><i className={globalStyles.authTheme} style={{fontStyle: 'normal', fontSize: 30, color: '#1890FF', marginRight: 8, cursor: 'pointer' }} dangerouslySetInnerHTML={{__html: this.judgeFileType(file_name)}}></i>{file_name}</span>
           )
         }
       }, {
