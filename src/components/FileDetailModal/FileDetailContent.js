@@ -88,19 +88,13 @@ class FileDetailContent extends Component {
 
   // 是否需要更新项目详情中的面包屑路径
   whetherUpdateProjectDetailFileBreadCrumbListNav = () => {
-    const { projectDetailInfoData: { board_id, folder_name, folder_id }, location } = this.props
-    if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
-      this.props.dispatch({
-        type: 'projectDetailFile/updateDatas',
-        payload: {
-          breadcrumbList: [{ file_name: folder_name, file_id: folder_id, type: '1' }]
-        }
-      })
-    }
+    const { projectDetailInfoData: { board_id, folder_name, folder_id }, location, breadcrumbList } = this.props
+    const new_arr_ = [...breadcrumbList]
+    new_arr_.splice(new_arr_.length - 1, 1)
     this.props.dispatch({
       type: 'projectDetailFile/updateDatas',
       payload: {
-        breadcrumbList: [{ file_name: folder_name, file_id: folder_id, type: '1' }]
+        breadcrumbList: new_arr_
       }
     })
   }
@@ -212,9 +206,14 @@ function mapStateToProps({
     datas: {
       projectDetailInfoData = {}
     }
+  },
+  projectDetailFile: {
+    datas: {
+      breadcrumbList = []
+    }
   }
 }) {
   return {
-    chatImVisiable, projectDetailInfoData
+    chatImVisiable, projectDetailInfoData, breadcrumbList
   }
 }
