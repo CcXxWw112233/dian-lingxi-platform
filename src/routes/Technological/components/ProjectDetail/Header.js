@@ -876,7 +876,7 @@ export default class Header extends React.Component {
     const that = this
     const { projectInfoDisplay, projectDetailInfoData = {}, appsSelectKey, selectedRowKeys = [], currentParrentDirectoryId, processInfo = {}, getTaskGroupListArrangeType = '1', dispatch } = this.props
     const { ellipsisShow, dropdownVisibleChangeValue, isInitEntry, isCollection, localBoardName, isInEditBoardName, projectDetailInfoVisible } = this.state
-    const { board_name, board_id, is_star, is_create, app_data = [], folder_id, is_privilege, data: projectParticipant, privileges, privileges_extend } = projectDetailInfoData
+    const { board_name, board_id, org_id, is_star, is_create, app_data = [], folder_id, is_privilege, data: projectParticipant, privileges, privileges_extend } = projectDetailInfoData
     let temp_projectParticipant = [].concat(projectParticipant && [...projectParticipant], privileges_extend && [...privileges_extend])
     const removeEmptyArrayEle = (arr) => {
       for (var i = 0; i < arr.length; i++) {
@@ -931,7 +931,7 @@ export default class Header extends React.Component {
               invitationId={board_id}
               board_id={board_id}
               type="board_list"
-              invitationOrg={localStorage.getItem('OrganizationId')}
+              invitationOrg={org_id}
               popoverPlacement={'leftTop'}
               isPropVisitControl={is_privilege == '0' ? false : true}
               principalList={new_projectParticipant}
@@ -1264,7 +1264,7 @@ export default class Header extends React.Component {
           setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}
           invitationId={board_id}
           invitationType='1'
-          invitationOrg={localStorage.getItem('OrganizationId')}
+          invitationOrg={org_id}
         />
 
         <AddModalForm board_id={board_id} modalVisible={this.state.AddModalFormVisibile} setAddModalFormVisibile={this.setAddModalFormVisibile.bind(this)} />
