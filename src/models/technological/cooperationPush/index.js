@@ -141,7 +141,7 @@ export default {
         handleType = 'handleWsData_board_detail'
       } else if (locationPath.indexOf('technological/project') != -1) {
         handleType = 'handleWsData_board_list'
-      } else if(locationPath.indexOf('/technological/simplemode/workbench') != -1) {
+      } else if (locationPath.indexOf('/technological/simplemode/workbench') != -1) {
         handleType = 'simpleModeCooperate/handleSimpleModeCooperate'
       }
       yield put({
@@ -1321,7 +1321,13 @@ export default {
         default:
           break
       }
-
+      // 处理甘特图临时方案
+      yield put({
+        type: 'simpleModeCooperate/handleSimpleModeCooperate',
+        payload: {
+          res
+        }
+      })
       //跨组织不推送消息
       const news_d = JSON.parse(news['d'] || '{}')
       const { org_id } = news_d
@@ -1337,7 +1343,7 @@ export default {
           newsItem: JSON.parse(news['d'] || '{}')
         }
       })
-
+      
     },
 
     * handleWsData_public({ payload }, { call, put, select }) {

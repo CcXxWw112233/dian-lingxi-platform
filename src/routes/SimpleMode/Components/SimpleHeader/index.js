@@ -8,10 +8,11 @@ import { Tooltip, Dropdown } from 'antd'
 import Cookies from "js-cookie";
 import SimpleNavigation from "./Components/SimpleNavigation/index"
 import SimpleDrawer from './Components/SimpleDrawer/index'
-import LingxiIm, { Im } from 'lingxi-im'
+// import LingxiIm, { Im } from 'lingxi-im'
 import TaskDetailModal from '@/components/TaskDetailModal'
 import { setBoardIdStorage, getSubfixName } from "../../../../utils/businessFunction";
 import FileDetailModal from '../../../Technological/components/ProjectDetail/FileModule/FileDetail/FileDetailModal'
+const { LingxiIm, Im } = global.constants
 
 class SimpleHeader extends Component {
     state = {
