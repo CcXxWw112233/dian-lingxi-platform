@@ -313,6 +313,13 @@ export default class FileList extends React.Component {
         folder_id: file_id
       }
     })
+    dispatch({
+      type: 'projectDetailFile/updateDatas',
+      payload: {
+        selectedRows: [],
+        selectedRowKeys: []
+      }
+    })
   }
 
   openFile(data) {
@@ -1082,15 +1089,18 @@ export default class FileList extends React.Component {
             selectedRowKeys,
             selectedRows,
             onChange: this.onSelectChange,
+            // onSelectAll: this.onSelectAll,
             getCheckboxProps: data => ({
               disabled: data.type === '1', //data.isInAdd === true || data.type === '1', // Column configuration not to be checked
-              name: data.file_id, //data.file_id,
+              name: data.type === '2' ? data.folder_id : data.file_id, //data.file_id,
+              type: data.type
             }),
           }}
           columns={columns}
           dataSource={fileList}
           pagination={false}
           onChange={this.handleChange.bind(this)}
+          rowKey={record => record.type == '2' ? record.file_id : record.folder_id}
         />
         {/* <Modal
           title={visitControlModalTitle}

@@ -18,7 +18,9 @@ export default class BreadCrumbFileNav extends React.Component {
       payload: {
         breadcrumbList: new_breadcrumbList,
         currentParrentDirectoryId: file_id,
-        isInAddDirectory: false
+        isInAddDirectory: false,
+        selectedRows: [],
+        selectedRowKeys: []
       }
     })
     dispatch({
@@ -28,6 +30,7 @@ export default class BreadCrumbFileNav extends React.Component {
       }
     })
   }
+
   render() {
     const { breadcrumbList = [] } = this.props
     const { showBackBtn = false, showBackBtnTitle, fileModuleBack = () => { } } = this.props;

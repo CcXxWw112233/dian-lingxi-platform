@@ -55,7 +55,7 @@ export async function fileCopy(data) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/copy`,
     method: 'PUT',
-    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, data.folder_id),
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, data.file_ids),
     data,
   });
 }
@@ -128,6 +128,7 @@ export async function fileMove(data) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/remove`,
     method: 'PUT',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, data.file_ids),
     data,
   });
 }

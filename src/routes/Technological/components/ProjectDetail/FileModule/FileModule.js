@@ -18,7 +18,7 @@ export default class FileIndex extends React.Component {
       <div>
         {/*{isInOpenFile && <FileDetail {...this.props} />}*/}
         <div className={indexStyles.fileOut} style={{ marginTop: marginTop }}>
-          <BreadCrumbFileNav />
+          <BreadCrumbFileNav {...this.props}/>
           <FileList />
           <MoveToDirectory />
         </div>
