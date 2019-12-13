@@ -240,40 +240,76 @@ export default class FileList extends React.Component {
     const type = getSubfixName(fileName)
     switch (type) {
       case '.xls':
-        themeCode = '&#xe6d5;'
+        themeCode = '&#xe65c;'
         break
       case '.png':
-        themeCode = '&#xe6d4;'
+        themeCode = '&#xe69a;'
         break
       case '.xlsx':
-        themeCode = '&#xe6d3;'
+        themeCode = '&#xe65c;'
         break
       case '.ppt':
-        themeCode = '&#xe6d2;'
+        themeCode = '&#xe655;'
         break
       case '.gif':
-        themeCode = '&#xe6d1;'
+        themeCode = '&#xe657;'
         break
       case '.jpeg':
-        themeCode = '&#xe6d0;'
+        themeCode = '&#xe659;'
         break
       case '.pdf':
-        themeCode = '&#xe6cf;'
+        themeCode = '&#xe651;'
         break
       case '.docx':
-        themeCode = '&#xe6ce;'
+        themeCode = '&#xe64a;'
         break
       case '.txt':
-        themeCode = '&#xe6cd;'
+        themeCode = '&#xe654;'
         break
       case '.doc':
-        themeCode = '&#xe6cc;'
+        themeCode = '&#xe64d;'
         break
       case '.jpg':
-        themeCode = '&#xe6cb;'
+        themeCode = '&#xe653;'
+        break
+      case '.mp4':
+        themeCode = '&#xe6e1;'
+        break
+      case '.mp3':
+        themeCode = '&#xe6e2;'
+        break
+      case '.skp':
+        themeCode = '&#xe6e8;'
+        break
+      case '.gz':
+        themeCode = '&#xe6e7;'
+        break
+      case '.7z':
+        themeCode = '&#xe6e6;'
+        break
+      case '.zip':
+        themeCode = '&#xe6e5;'
+        break
+      case '.rar':
+        themeCode = '&#xe6e4;'
+        break
+      case '.3dm':
+        themeCode = '&#xe6e0;'
+        break
+      case '.ma':
+        themeCode = '&#xe65f;'
+        break
+      case '.psd':
+        themeCode = '&#xe65d;'
+        break
+      case '.obj':
+        themeCode = '&#xe65b;'
+        break
+      case '.bmp':
+        themeCode = '&#xe6ee;'
         break
       default:
-        themeCode = ''
+        themeCode = '&#xe660;'
         break
     }
     return themeCode
@@ -692,7 +728,7 @@ export default class FileList extends React.Component {
       }
       new_ids.push(id)
     })
-    
+
     // 这里是需要做一个只添加了自己的一条提示
     if (flag && temp_ids.length == '1') { // 表示只选择了自己, 而不是全选
       message.warn('该成员已存在, 请不要重复添加', MESSAGE_DURATION_TIME)
@@ -770,7 +806,7 @@ export default class FileList extends React.Component {
     // 访问控制开关切换
     if (obj && obj.type && obj.type == 'privilege') {
       let new_privileges = []
-      
+
       for (let item in obj) {
         if (item == 'privileges') {
           obj[item].map(val => {
@@ -793,8 +829,8 @@ export default class FileList extends React.Component {
       })
       // 这里是也要更新选中的列表, 但是需要这个选择列表存在的情况下
       if (selectedRows && selectedRows.length) {
-        this.updateSelectedRowsData({new_privileges, is_privilege: obj.is_privilege, file_id})
-       }
+        this.updateSelectedRowsData({ new_privileges, is_privilege: obj.is_privilege, file_id })
+      }
     }
 
     // 访问控制添加
@@ -810,7 +846,7 @@ export default class FileList extends React.Component {
         }
       }
       let new_visitControlModalData = { ...visitControlModalData, privileges: new_privileges }
-      
+
       this.setState({
         visitControlModalData: new_visitControlModalData
       })
@@ -822,8 +858,8 @@ export default class FileList extends React.Component {
         }
       })
       if (selectedRows && selectedRows.length) {
-        this.updateSelectedRowsData({new_privileges, file_id})
-       }
+        this.updateSelectedRowsData({ new_privileges, file_id })
+      }
     }
 
     // 访问控制移除
@@ -847,8 +883,8 @@ export default class FileList extends React.Component {
         }
       })
       if (selectedRows && selectedRows.length) {
-        this.updateSelectedRowsData({new_privileges, file_id})
-       }
+        this.updateSelectedRowsData({ new_privileges, file_id })
+      }
     }
 
     // 访问控制设置
@@ -877,8 +913,8 @@ export default class FileList extends React.Component {
         }
       })
       if (selectedRows && selectedRows.length) {
-        this.updateSelectedRowsData({new_privileges, file_id})
-       }
+        this.updateSelectedRowsData({ new_privileges, file_id })
+      }
     }
 
 
@@ -891,9 +927,9 @@ export default class FileList extends React.Component {
     new_selectedRows = new_selectedRows && new_selectedRows.map(item => {
       let new_item = item
       if (item.file_id == obj.file_id) {
-        new_item = {...item, privileges: obj.new_privileges, is_privilege: obj.is_privilege ? obj.is_privilege : item.is_privilege}
+        new_item = { ...item, privileges: obj.new_privileges, is_privilege: obj.is_privilege ? obj.is_privilege : item.is_privilege }
       } else {
-        new_item = {...item}
+        new_item = { ...item }
       }
       return new_item
     })
@@ -998,7 +1034,7 @@ export default class FileList extends React.Component {
               )
               : (
                 <span onClick={this.openFile.bind(this, data)} style={{ cursor: 'pointer', display: 'inline-block', maxWidth: '700px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                  <i className={globalStyles.authTheme} style={{ fontStyle: 'normal', fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer' }} dangerouslySetInnerHTML={{ __html: this.judgeFileType(file_name) }}></i>
+                  <i className={globalStyles.authTheme} style={{ fontStyle: 'normal', fontSize: 30, color: '#1890FF', marginRight: 8, cursor: 'pointer' }} dangerouslySetInnerHTML={{ __html: this.judgeFileType(file_name) }}></i>
                   {file_name}
                   {
                     !(is_privilege == '0') && (
@@ -1025,11 +1061,11 @@ export default class FileList extends React.Component {
         render: (text, record, index) => {
           const { type } = record
           // console.log({text, record}, 'ssssssss')
-          return(
-              <div>
-                  {/* { timestampToTime(text, true)} */}
-                  {type == '2' ? timestampToTimeNormal(text, '/', true) : text}
-              </div>
+          return (
+            <div>
+              {/* { timestampToTime(text, true)} */}
+              {type == '2' ? timestampToTimeNormal(text, '/', true) : text}
+            </div>
           )
         }
       }, {
