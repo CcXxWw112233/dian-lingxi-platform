@@ -105,7 +105,6 @@ export default class DCMenuItemOne extends React.Component {
     const { execusorList, canNotRemoveItem, currentExecutor = {}, invitationType, invitationId, isInvitation } = this.props //currentExecutor当前已选执行人
     const { resultArr, keyWord } = this.state
     const executorUserId = currentExecutor.user_id
-
     return (
       <div className={DrawerContentStyles.menuOneout}>
         <div className={DrawerContentStyles.menuOne}>
