@@ -133,13 +133,16 @@ export default class GetRowGanttItem extends Component {
   // 设置里程碑的名字随着窗口上下滚动保持在窗口顶部
   setMiletonesNamesPostionTop = () => {
     let top = 0
-    const { target_scrollTop, itemKey = 0, group_list_area_section_height = [] } = this.props
+    const { target_scrollTop, itemKey = 0, group_list_area_section_height = [], gantt_board_id } = this.props
     // console.log('ssssss_top',
     //   target_scrollTop,
     //   group_list_area_section_height[itemKey - 1],
     //   group_list_area_section_height[itemKey],
     //   target_scrollTop > group_list_area_section_height[itemKey - 1] && target_scrollTop < group_list_area_section_height[itemKey]
     // )
+    if (gantt_board_id && gantt_board_id != '0') { //项目任务分组的情况下
+      return target_scrollTop
+    }
     if (itemKey == 0) {
       if (target_scrollTop < group_list_area_section_height[itemKey]) {
         top = target_scrollTop
