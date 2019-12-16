@@ -194,7 +194,7 @@ class CreateProject extends React.Component {
   stepTwoButtonClick(data) {
     const { isAdd, id, itemKey } = data
     const appsArray = this.state.appsArray
-    // console.log(appsArray, 'sssssssss_apppp')
+    console.log(appsArray, 'sssssssss_apppp')
     if (isAdd) {
       appsArray[itemKey] = id
     } else {
