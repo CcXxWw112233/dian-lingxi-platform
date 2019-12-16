@@ -309,7 +309,7 @@ export default class ElseProject extends React.Component {
     const { itemDetailInfo = {}, currentUserOrganizes, is_show_org_name, is_all_org } = this.props
     const { org_id, data = [], board_id, board_name, is_star, user_count, is_create, residue_quantity, realize_quantity } = itemDetailInfo // data为项目参与人信息
     // console.log(getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes), 'sssss')
-
+    
     is_starinit = is_star
 
     const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
@@ -467,7 +467,7 @@ export default class ElseProject extends React.Component {
           modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}
           invitationId={board_id}
           invitationType='1'
-          invitationOrg={localStorage.getItem('OrganizationId')}
+          invitationOrg={org_id}
         />
 )}
         {removePojectToGroupModalVisible && (

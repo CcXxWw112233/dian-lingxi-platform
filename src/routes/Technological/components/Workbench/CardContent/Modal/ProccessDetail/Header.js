@@ -469,9 +469,6 @@ export default class Header extends React.Component {
               otherPrivilege={privileges}
               handleAddNewMember={this.handleVisitControlAddNewMember}
               handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
-              invitationType='6'
-              invitationId={id}
-              invitationOrg={localStorage.getItem('OrganizationId')}
             />
           </span>
           <span style={{ marginTop: '-4px', float: 'right', marginLeft: '18px', position: 'relative' }}>
