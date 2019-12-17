@@ -40,7 +40,7 @@ export default class GetRowGantt extends Component {
     this.isMouseDown = false //是否鼠标按下
     this.SelectedRect = { x: 0, y: 0 }
   }
-  setIsDragging(isDragging) {
+  setIsDragging = (isDragging) => {
     const { dispatch } = this.props
     this.isDragging = isDragging
     dispatch({
@@ -106,6 +106,7 @@ export default class GetRowGantt extends Component {
     ) {
       return false
     }
+    e.preventDefault() //解决拖拽卡顿？(尚未明确)
     if (this.isDragging || this.isMouseDown) { //在拖拽中，还有防止重复点击
       return
     }
@@ -447,6 +448,9 @@ export default class GetRowGantt extends Component {
             ganttPanelDashedDrag={this.isDragging}
             getCurrentGroup={this.getCurrentGroup}
             list_id={list_id}
+            setGoldDateArr={this.props.setGoldDateArr}
+            setScrollPosition={this.props.setScrollPosition}
+            setIsDragging={this.setIsDragging}
           />
         )
       })

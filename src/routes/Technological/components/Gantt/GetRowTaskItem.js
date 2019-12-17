@@ -114,6 +114,7 @@ export default class GetRowTaskItem extends Component {
 
     onMouseDown = (e) => {
         e.stopPropagation()
+        e.preventDefault() //解决拖拽卡顿？(尚未明确)
         const target = this.out_ref.current
         this.is_down = true;
         const { drag_type, local_top } = this.state
@@ -131,6 +132,7 @@ export default class GetRowTaskItem extends Component {
 
         window.onmousemove = this.onMouseMove.bind(this);
         window.onmouseup = this.onMouseUp.bind(this);
+        // this.props.setIsDragging && this.props.setIsDragging(true) //当拖动时，有可能会捕获到创建任务的动作，阻断
         // target.onmouseleave = this.onMouseUp.bind(this);
     }
 
@@ -172,6 +174,11 @@ export default class GetRowTaskItem extends Component {
 
         //计算移动后的左偏移量和顶部的偏移量
         const nw = nx - this.x + local_width_flag //宽度
+        // console.log('sssss', {
+        //     nx,
+        //     x: this.x,
+        //     pageX: e.pageX
+        // })
         this.setState({
             local_width: nw < 44 ? 44 : nw
         })
@@ -281,8 +288,8 @@ export default class GetRowTaskItem extends Component {
             this.setState({
                 is_moved: false
             })
-        }, 200)
-
+        }, 500)
+        // this.props.setIsDragging && this.props.setIsDragging(false) //当拖动完成后，释放创建任务的锁，让可以正常创建任务
     }
 
     // 拖拽完成后的事件处理-----start--------

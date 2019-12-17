@@ -274,6 +274,8 @@ export default class GanttFace extends Component {
               dataAreaRealHeight={dataAreaRealHeight}
               setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
               addTaskModalVisibleChange={this.props.addTaskModalVisibleChange}
+              setGoldDateArr={this.setGoldDateArr} 
+              setScrollPosition={this.setScrollPosition}
             />
           </div>
         </div>
