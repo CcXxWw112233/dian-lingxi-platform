@@ -60,7 +60,6 @@ class CreateProject extends React.Component {
     })
   }
   componentWillReceiveProps(nextProps) {
-    console.log('进来了', 'ssssssss', nextProps)
     const { addProjectModalVisible } = nextProps
     const { addProjectModalVisibleLocal } = this.state
     if (addProjectModalVisible && !addProjectModalVisibleLocal) {
@@ -70,7 +69,6 @@ class CreateProject extends React.Component {
     this.setAddProjectModalVisibleLocal(nextProps)
   }
   componentDidMount() {
-    console.log("ssssssss_didmount", this.props)
     // this.getProjectList(true)
     // this.getAppList(true)
     this.handleOrgSetInit()
