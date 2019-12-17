@@ -60,6 +60,7 @@ class CreateProject extends React.Component {
     })
   }
   componentWillReceiveProps(nextProps) {
+    console.log('进来了', 'ssssssss', nextProps)
     const { addProjectModalVisible } = nextProps
     const { addProjectModalVisibleLocal } = this.state
     if (addProjectModalVisible && !addProjectModalVisibleLocal) {
@@ -69,6 +70,7 @@ class CreateProject extends React.Component {
     this.setAddProjectModalVisibleLocal(nextProps)
   }
   componentDidMount() {
+    console.log("ssssssss_didmount", this.props)
     // this.getProjectList(true)
     // this.getAppList(true)
     this.handleOrgSetInit()
@@ -519,6 +521,50 @@ class CreateProject extends React.Component {
     return step_3
   }
 
+  filterCurrentProjectListWithFlows = () => {
+    const { projects = [] } = this.state
+    let newProjects = [...projects]
+    let arr = []
+    for (let i = 0; i < newProjects.length; i++) {
+      let element = newProjects[i].apps || [];
+      // console.log(element, 'ssssssssssssss')
+      for (let j = 0; j < element.length; j++) {
+        if (element[j].code == 'Flows') {
+          arr.push(newProjects[i])
+        }
+      }
+    }
+    let permissionArr = this.filterProjectWhichCurrentUserHasAccessFlowsPermission(arr)
+    return permissionArr
+    // console.log(newProjects, 'sssssssssssss_newProjects')
+  }
+
+  // 获取当前用户
+	getInfoFromLocalStorage = item => {
+		try {
+			const userInfo = localStorage.getItem(item)
+			return JSON.parse(userInfo)
+		} catch (e) {
+			message.error('从 Cookie 中获取用户信息失败, 当复制项目流程模板的时候')
+		}
+	}
+
+  // 获取项目权限
+	getProjectPermission = (permissionType, board_id) => {
+		const userBoardPermissions = this.getInfoFromLocalStorage('userBoardPermissions')
+		if (!userBoardPermissions || !userBoardPermissions.length) {
+			return false
+		}
+		const isFindedBoard = userBoardPermissions.find(board => board.board_id === board_id)
+		if (!isFindedBoard) return false
+		const { permissions = [] } = isFindedBoard
+		return !!permissions.find(permission => permission.code === permissionType && permission.type === '1')
+	}
+	// 查询当前用户是否有权限
+	filterProjectWhichCurrentUserHasAccessFlowsPermission = (projectList = []) => {
+		return projectList.filter(({ board_id }) => this.getProjectPermission('project:flows:flow:access', board_id))
+	}
+
   // 直接渲染复制流程模板
   renderCopyFlowTemplete = () => {
     const {
@@ -528,6 +574,7 @@ class CreateProject extends React.Component {
       project_apps = [],
       select_project_id,
     } = this.state
+    const filterProject = this.filterCurrentProjectListWithFlows() || []
     const step_2_copy = (
       <div style={{ margin: '12px auto', width: 346, height: 'auto' }}>
         <div className={indexStyles.operateAreaOut}>
@@ -541,7 +588,7 @@ class CreateProject extends React.Component {
               onChange={this.selectProjectChange}
               allowClear={true}
             >
-              {projects.map((value, key) => {
+              {filterProject.map((value, key) => {
                 const { board_id, board_name } = value
                 return (
                   <Option value={board_id} key={board_id}>{board_name}</Option>
@@ -705,8 +752,8 @@ class CreateProject extends React.Component {
 export default Form.create()(CreateProject)
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ technological: { datas: { currentUserOrganizes = [] } } }) {
-  return { currentUserOrganizes };
+function mapStateToProps({ technological: { datas: { currentUserOrganizes = [], currentOrgProjectList = [] } } }) {
+  return { currentUserOrganizes, currentOrgProjectList };
 }
 
 CreateProject.defaultProps = {

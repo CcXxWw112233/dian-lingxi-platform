@@ -529,6 +529,7 @@ export default {
       } else {
 
       }
+      return res || {}
     },
     * fetchCurrentOrgAllMembers({ payload }, { call, put }) {
       let res = yield call(getCurrentOrgAllMembers, { ...payload })
