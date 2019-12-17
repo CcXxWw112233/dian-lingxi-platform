@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from "dva/index";
-import { Icon, Tabs, message, Menu } from 'antd'
+import { Icon, Tabs, message } from 'antd'
 import indexStyles from './index.less'
 import { color_4 } from '../../globalset/js/styles'
 import ProjectRole from './ProjectRole'
@@ -11,7 +11,6 @@ import NounDefinition from "./NounDefinition";
 import { ORGANIZATION, PROJECTS } from "../../globalset/js/constant";
 import { currentNounPlanFilterName } from "../../utils/businessFunction";
 import FnManagement from './FnManagement';
-import globalStyles from '@/globalset/css/globalClassName.less' 
 
 
 const TabPane = Tabs.TabPane
@@ -149,51 +148,6 @@ const Organization = (options) => {
     })
   }
 
-  const handleChangeNavStatus = ({key}) => {
-    updateDatas({
-      tabSelectKey: key
-    })
-  }
-
-  // 渲染组织管理后台导航栏
- const renderManagementNavList = () => {
-    return (
-      <Menu
-        selectedKeys={[tabSelectKey]}
-        onClick={handleChangeNavStatus}
-        getPopupContainer={triggerNode => triggerNode.parentNode} style={{minWidth: '228px', textAlign: 'center'}}>
-        <Menu.Item key="1">基本信息</Menu.Item>
-        <Menu.Item key="2">{`${currentNounPlanFilterName(ORGANIZATION)}角色`}</Menu.Item>
-        <Menu.Item key="3">{`${currentNounPlanFilterName(PROJECTS)}角色`}</Menu.Item>
-        <Menu.Item key="4">名词定义</Menu.Item>
-        <Menu.Item key="5">功能管理</Menu.Item>
-      </Menu>
-    )
-  }
-
-  const renderManagementContainer = () => {
-    let mainContent = (<div></div>)
-    switch (tabSelectKey) {
-      case '1':
-        mainContent = (<div><BaseInfo {...asyncProprs} updateDatas={updateDatas}/></div>)
-        break;
-      case '2':
-        mainContent = (<div><OrgnizationRole {...asyncProprs} updateDatas={updateDatas} /></div>)
-        break
-      case '3':
-        mainContent = (<div><ProjectRole {...asyncProprs} updateDatas={updateDatas} /></div>)
-        break
-      case '4':
-        mainContent = (<div><NounDefinition {...asyncProprs} updateDatas={updateDatas} /></div>)
-        break
-      case '5':
-        mainContent = (<div><FnManagement {...asyncProprs} updateDatas={updateDatas}></FnManagement></div>)
-        break
-      default:
-        break;
-    }
-    return mainContent
-  }
 
 
   return (
@@ -205,14 +159,31 @@ const Organization = (options) => {
               <Icon type="left" theme="outlined" />返回
           </div>
           )}
-        <div className={indexStyles.orgManagementWrapper}>
-          {/* 左边导航 */}
-          <div className={indexStyles.org_managementNav}>
-            {renderManagementNavList()}
-          </div>
-          {/* 右边内容 */}
-          <div className={`${indexStyles.org_managementContainer} ${globalStyles.global_vertical_scrollbar}`}>
-            {renderManagementContainer()}
+
+        <div className={indexStyles.topTitle}>
+          <Icon type="home" theme="outlined" style={{ color: color_4, fontSize: 32 }} />
+          <div className={indexStyles.titleName}>{currentNounPlanFilterName(ORGANIZATION)}管理后台</div>
+          {/*tabs 页*/}
+          <div className={indexStyles.tabsOut}>
+            <Tabs defaultActiveKey="1" size='small' tabBarGutter={60} activeKey={tabSelectKey} onTabClick={onTabClick}>
+              <TabPane tab="基本信息" key="1">
+                <BaseInfo {...asyncProprs} updateDatas={updateDatas} />
+              </TabPane>
+              <TabPane tab={`${currentNounPlanFilterName(ORGANIZATION)}角色`} key="2">
+                <OrgnizationRole {...asyncProprs} updateDatas={updateDatas} />
+                {/*<RoleTabPaneContent {...asyncProprs} updateDatas={updateDatas}/>*/}
+              </TabPane>
+              <TabPane tab={`${currentNounPlanFilterName(PROJECTS)}角色`} key="3">
+                <ProjectRole {...asyncProprs} updateDatas={updateDatas} />
+                {/*<AuthTabPaneContent {...asyncProprs} updateDatas={updateDatas}/>*/}
+              </TabPane>
+              <TabPane tab="名词定义" key="4">
+                <NounDefinition {...asyncProprs} updateDatas={updateDatas} />
+              </TabPane>
+              <TabPane tab="功能管理" key="5">
+                <FnManagement {...asyncProprs} updateDatas={updateDatas}></FnManagement>
+              </TabPane>
+            </Tabs>
           </div>
         </div>
       </div>
