@@ -11,6 +11,7 @@ import NounDefinition from "./NounDefinition";
 import { ORGANIZATION, PROJECTS } from "../../globalset/js/constant";
 import { currentNounPlanFilterName } from "../../utils/businessFunction";
 import FnManagement from './FnManagement';
+import NormalMakeLcbPlans from './normalMakeLcbPlans'
 import globalStyles from '@/globalset/css/globalClassName.less' 
 
 
@@ -167,6 +168,7 @@ const Organization = (options) => {
         <Menu.Item key="3">{`${currentNounPlanFilterName(PROJECTS)}角色`}</Menu.Item>
         <Menu.Item key="4">名词定义</Menu.Item>
         <Menu.Item key="5">功能管理</Menu.Item>
+        <Menu.Item key="6">{`${currentNounPlanFilterName(PROJECTS)}项目解决方案`}</Menu.Item>
       </Menu>
     )
   }
@@ -188,6 +190,9 @@ const Organization = (options) => {
         break
       case '5':
         mainContent = (<div><FnManagement {...asyncProprs} updateDatas={updateDatas}></FnManagement></div>)
+        break
+      case '6':
+        mainContent = (<div><NormalMakeLcbPlans /></div>)
         break
       default:
         break;
