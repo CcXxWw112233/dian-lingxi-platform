@@ -91,8 +91,9 @@ export default class GetRowTaskItem extends Component {
 
     // 任务弹窗
     setSpecilTaskExample = (data) => {
+        const { task_is_dragging } = this.props
         const { is_moved } = this.state
-        if (is_moved) {
+        if (is_moved || task_is_dragging) {
             return
         }
         const { setSpecilTaskExample } = this.props

@@ -462,6 +462,7 @@ export default class GetRowGantt extends Component {
             ganttPanelDashedDrag={this.isDragging}
             getCurrentGroup={this.getCurrentGroup}
             list_id={list_id}
+            task_is_dragging={this.task_is_dragging}
             setGoldDateArr={this.props.setGoldDateArr}
             setScrollPosition={this.props.setScrollPosition}
             setIsDragging={this.setIsDragging}
