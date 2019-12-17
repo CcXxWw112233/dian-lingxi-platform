@@ -359,7 +359,6 @@ export default class CommentListItem extends React.Component {
 
   // 评论动态
   commentNews = (data) => {
-    console.log(data, 'sssssssss_data')
     const { id: local_user_id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     const { action, create_time, text, id } = data
     let container = ''
