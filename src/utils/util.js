@@ -99,7 +99,7 @@ export const timestampToTimeNormal3 = (timestamp, flag, split) => {
   const now_year = new Date().getFullYear()
   let Y = now_year == date.getFullYear() ? '' : date.getFullYear() + splitNew;
   let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + splitNew;
-  let D = date.getDate() < 10 ? '0' + date.getDate() + splitNew + ' ' : date.getDate() + splitNew + ' ';
+  let D = date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' ';
   let h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
   let m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
   return flag ? Y + M + D + h + m : Y + M + D;

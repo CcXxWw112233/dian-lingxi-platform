@@ -151,7 +151,7 @@ class ZoomPicture extends Component {
       isShowAllCircleReview
     } = this.state;
     const { isFullScreenMode, zoomPictureParams = {} } = this.props;
-    const { is_privilege, privileges = [], board_id } = zoomPictureParams
+    // const { is_privilege, privileges = [], board_id } = zoomPictureParams
     const cond = {
       resetSize: () => { // 重置
         const isCurrentHasOnResetState =
@@ -170,10 +170,11 @@ class ZoomPicture extends Component {
       magnify: () => this.handleClickedImg(undefined, 'sup'), // 放大
       shrink: () => this.handleClickedImg(undefined, 'sub'), // 缩小
       addCommit: () => { // 添加圈评
-        if ( !(checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) )) {
-          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-          return false
-        }
+        return
+        // if ( !(checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_COMMENT_PUBLISH, board_id)) )) {
+        //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        //   return false
+        // }
         const { isHideCommentList } = this.state;
         if (isHideCommentList) return;
         //这里修正因为图片缩放，导致使用 ref 只能拿到上次 render 时的图片信息的问题
@@ -1465,7 +1466,7 @@ class ZoomPicture extends Component {
   };
   renderOperatorBar = () => {
     const { hovering, isFullScreenMode, zoomPictureParams = {}, isShow_textArea } = this.props;
-    const { is_privilege, privileges = [], board_id } = zoomPictureParams
+    // const { is_privilege, privileges = [], board_id } = zoomPictureParams
     const {
       currentImgZoomPercent,
       isCommentMode,

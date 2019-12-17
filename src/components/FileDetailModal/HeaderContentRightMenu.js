@@ -666,12 +666,10 @@ export default class HeaderContentRightMenu extends Component {
 
   //header
   closeFile() {
-    const { datas: { breadcrumbList = [], isExpandFrame } } = this.props.model
-    breadcrumbList.splice(breadcrumbList.length - 1, 1)
-    clearTimeout(timer)
-    this.setState({
-      percent: 0
-    })
+    // const { datas: { breadcrumbList = [], isExpandFrame } } = this.props.model
+    // breadcrumbList.splice(breadcrumbList.length - 1, 1)
+    // clearTimeout(timer)
+    this.props.updateStateDatas && this.props.updateStateDatas({ percent: 0 });
     this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile()
   }
   // --------------------- 关于全屏事件 E ---------------------------------
