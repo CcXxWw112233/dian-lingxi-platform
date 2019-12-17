@@ -39,6 +39,17 @@ export default class GetRowGantt extends Component {
     this.isDragging = false //判断是否在拖拽虚线框
     this.isMouseDown = false //是否鼠标按下
     this.SelectedRect = { x: 0, y: 0 }
+
+    this.task_is_dragging = false //任务实例是否在拖拽中
+  }
+  setTaskIsDragging = (bool) => { //设置任务是否在拖拽中的状态
+    this.task_is_dragging = bool
+    const target = this.refs.gantt_operate_area_panel
+    if (bool) {
+      target.style.cursor = 'move';
+    } else {
+      target.style.cursor = 'crosshair';
+    }
   }
   setIsDragging = (isDragging) => {
     const { dispatch } = this.props
@@ -85,6 +96,9 @@ export default class GetRowGantt extends Component {
 
   // 在任务实例上点击到特定的位置，阻断，是能够不出现创建任务弹窗
   stopPropagationEle = (e) => {
+    if (this.task_is_dragging) {//在做单条任务拖动的时候，不能创建
+      return true
+    }
     if (
       e.target.dataset && e.target.className && typeof e.target.className == 'string' &&//容错
       (
@@ -106,7 +120,7 @@ export default class GetRowGantt extends Component {
     ) {
       return false
     }
-    e.preventDefault() //解决拖拽卡顿？(尚未明确)
+    // e.preventDefault() //解决拖拽卡顿？(尚未明确)
     if (this.isDragging || this.isMouseDown) { //在拖拽中，还有防止重复点击
       return
     }
@@ -451,6 +465,7 @@ export default class GetRowGantt extends Component {
             setGoldDateArr={this.props.setGoldDateArr}
             setScrollPosition={this.props.setScrollPosition}
             setIsDragging={this.setIsDragging}
+            setTaskIsDragging={this.setTaskIsDragging}
           />
         )
       })
@@ -489,22 +504,25 @@ export default class GetRowGantt extends Component {
         onMouseLeave={this.dashedMouseLeave.bind(this)}
         id={'gantt_operate_area_panel'}
         ref={'gantt_operate_area_panel'}>
-        {dasheRectShow && (
-          <div className={indexStyles.dasheRect} style={{
-            left: currentRect.x + 1, top: currentRect.y,
-            width: currentRect.width, height: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? task_item_height_fold : task_item_height,//currentRect.height,
-            boxSizing: 'border-box',
-            marginTop: !ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? task_item_margin_top : (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2, //task_item_margin_top,//
-            color: 'rgba(0,0,0,0.45)',
-            textAlign: 'right',
-            lineHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? `${task_item_height_fold}px` : `${ceiHeight - task_item_margin_top}px`,
-            paddingRight: 8,
-            zIndex: this.isDragging ? 2 : 1
-          }} >
-            {Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth) - drag_holiday_count}
-            {Math.ceil(currentRect.width / ceilWidth) != 1 && (drag_holiday_count > 0 ? `+${drag_holiday_count}` : '')}
-          </div>
-        )}
+        {
+          dasheRectShow
+          && !this.task_is_dragging
+          && (
+            <div className={indexStyles.dasheRect} style={{
+              left: currentRect.x + 1, top: currentRect.y,
+              width: currentRect.width, height: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? task_item_height_fold : task_item_height,//currentRect.height,
+              boxSizing: 'border-box',
+              marginTop: !ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? task_item_margin_top : (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2, //task_item_margin_top,//
+              color: 'rgba(0,0,0,0.45)',
+              textAlign: 'right',
+              lineHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? `${task_item_height_fold}px` : `${ceiHeight - task_item_margin_top}px`,
+              paddingRight: 8,
+              zIndex: this.isDragging ? 2 : 1
+            }} >
+              {Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth) - drag_holiday_count}
+              {Math.ceil(currentRect.width / ceilWidth) != 1 && (drag_holiday_count > 0 ? `+${drag_holiday_count}` : '')}
+            </div>
+          )}
         {list_group.map((value, key) => {
           const { list_data = [], list_id, board_fold_data } = value
           if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) {

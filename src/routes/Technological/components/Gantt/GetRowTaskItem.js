@@ -132,7 +132,7 @@ export default class GetRowTaskItem extends Component {
 
         window.onmousemove = this.onMouseMove.bind(this);
         window.onmouseup = this.onMouseUp.bind(this);
-        // this.props.setIsDragging && this.props.setIsDragging(true) //当拖动时，有可能会捕获到创建任务的动作，阻断
+        this.props.setTaskIsDragging && this.props.setTaskIsDragging(true) //当拖动时，有可能会捕获到创建任务的动作，阻断
         // target.onmouseleave = this.onMouseUp.bind(this);
     }
 
@@ -154,6 +154,19 @@ export default class GetRowTaskItem extends Component {
             this.extentionRight(e)
         }
     }
+
+    // 拖动到边界时，设置滚动条的位置
+    // dragToBoundaryExpand = ({ delay = 300, position = 200 }) => {
+    //     const that = this
+    //     const target = document.getElementById('gantt_card_out_middle')
+    //     setTimeout(function () {
+    //         if (target.scrollTo) {
+    //             target.scrollTo(position, 0)
+    //         } else {
+    //             target.scrollLeft = position
+    //         }
+    //     }, delay)
+    // }
 
     // 延展左边
     extentionLeft = (e) => {
@@ -288,8 +301,8 @@ export default class GetRowTaskItem extends Component {
             this.setState({
                 is_moved: false
             })
+            this.props.setTaskIsDragging && this.props.setTaskIsDragging(false) //当拖动完成后，释放创建任务的锁，让可以正常创建任务
         }, 500)
-        // this.props.setIsDragging && this.props.setIsDragging(false) //当拖动完成后，释放创建任务的锁，让可以正常创建任务
     }
 
     // 拖拽完成后的事件处理-----start--------
