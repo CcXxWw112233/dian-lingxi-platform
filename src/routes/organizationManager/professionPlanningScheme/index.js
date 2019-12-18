@@ -28,7 +28,16 @@ export default class index extends Component {
         isAddNewPlan: true
       }
     })
+    this.whetherShowPlanDetail()
+  }
 
+  // 其他项目列表的点击事件
+  handleOperatorOthersPlan = () => {
+    this.whetherShowPlanDetail()
+  }
+
+  // 是否显示详情页
+  whetherShowPlanDetail = () => {
     this.setState({
       whetherShowPlanDetail: true
     })
@@ -48,12 +57,12 @@ export default class index extends Component {
           whetherShowPlanDetail ? (
             <div><PlanningSchemeContainer updateStateDatas={this.updateStateDatas}/></div>
           ) : (
-              <div className={indexStyles.plan_list_wrapper} onClick={this.handleAddNewPlan}>
-                <div className={`${indexStyles.add_plan} ${indexStyles.margin_right}`}>
+              <div className={indexStyles.plan_list_wrapper}>
+                <div className={`${indexStyles.add_plan} ${indexStyles.margin_right}`} onClick={this.handleAddNewPlan}>
                   <span className={`${globalStyles.authTheme} ${indexStyles._add_plan_name}`}>&#xe8fe; 新建方案</span>
                 </div>
                 {/* 项目默认方案 */}
-                <div style={{ position: 'relative' }} className={indexStyles.margin_right}>
+                <div style={{ position: 'relative' }} className={indexStyles.margin_right} onClick={this.handleOperatorOthersPlan}>
                   <img src={planning} width={'148px'} height={'100px'} />
                   <span className={indexStyles.plan_default_name}>城市规划方案</span>
                 </div>
