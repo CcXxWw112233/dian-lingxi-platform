@@ -16,7 +16,7 @@ import FaceRightButton from './components/gattFaceCardItem/FaceRightButton'
 import { Spin } from 'antd'
 import MiletoneGuide from './components/MiletonesGuide/index'
 import { isPaymentOrgUser } from '../../../../utils/businessFunction';
-
+import BoardTemplate from './components/boardTemplate'
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
 export default class GanttFace extends Component {
@@ -274,9 +274,10 @@ export default class GanttFace extends Component {
               dataAreaRealHeight={dataAreaRealHeight}
               setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
               addTaskModalVisibleChange={this.props.addTaskModalVisibleChange}
-              setGoldDateArr={this.setGoldDateArr} 
+              setGoldDateArr={this.setGoldDateArr}
               setScrollPosition={this.setScrollPosition}
             />
+            <BoardTemplate />
           </div>
         </div>
         <div className={indexStyles.cardDetail_right}></div>
