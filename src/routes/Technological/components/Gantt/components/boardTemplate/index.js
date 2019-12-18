@@ -12,9 +12,10 @@ export default class BoardTemplate extends Component {
         super(props)
         this.state = {
             selected_plane_keys: '', //已选择的项目模板
+            show_type: '0', // 0 1 2 //默认关闭 / 出现动画 / 隐藏动画
             template_data: [
                 {
-                    name: '1',
+                    name: '啊收到了',
                     id: '1',
                     type: 'a',
                     child_data: [
@@ -86,24 +87,70 @@ export default class BoardTemplate extends Component {
             </Menu>
         )
     }
+    renderTreeItemName = ({ type, name }) => {
+        let icon = ''
+        if (type == 'a') {
+            icon = <div className={globalStyles.authTheme} style={{ color: '#FAAD14', fontSize: 18, marginRight: 6 }}>&#xe6ef;</div>
+        } else {
+            icon = <div className={globalStyles.authTheme} style={{ color: '#18B2FF', fontSize: 18, marginRight: 6 }} >&#xe6f0;</div>
+        }
+        return (
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+                {icon}
+                <div>{name}</div>
+            </div>
+        )
+    }
     renderTemplateTree = (data) => {
         return (
             data.map(item => {
-                if (item.child_data) {
+                const { name, type, child_data, id } = item
+                if (child_data) {
                     return (
-                        <TreeNode key={item.id} title={item.name} selectable={false}>
-                            {this.renderTemplateTree(item.child_data)}
+                        <TreeNode
+                            icon={<i className={globalStyles.authTheme}>&#xe6f0;</i>}
+                            key={id}
+                            title={this.renderTreeItemName({ type, name })}
+                            selectable={false}>
+                            {this.renderTemplateTree(child_data)}
                         </TreeNode>
                     );
                 }
-                return <TreeNode key={item.id} title={item.name} selectable={false} />;
+                return <TreeNode
+                    key={id}
+                    title={this.renderTreeItemName({ type, name })}
+                    selectable={false}
+                    icon={<Icon type="caret-down" style={{ fontSize: 20, color: 'rgba(0,0,0,.45)' }} />}
+                />;
             })
         )
     }
+    setShowType = () => {
+        const { show_type } = this.state
+        let new_type
+        if ('0' == show_type) {
+            new_type = '1'
+        } else if ('1' == show_type) {
+            new_type = '2'
+        } else if ('2' == show_type) {
+            new_type = '1'
+        } else {
+
+        }
+        this.setState({
+            show_type: new_type
+        })
+    }
     render() {
-        const { template_data } = this.state
+        const { template_data, show_type } = this.state
         return (
-            <div className={styles.container} style={{
+            <div className={
+                `
+                ${styles.container_init}  
+                ${show_type == '1' && styles.container_show}
+                ${show_type == '2' && styles.container_hide}
+                `
+            } style={{
                 height: this.getHeight(),
                 top: date_area_height
             }}>
@@ -126,7 +173,22 @@ export default class BoardTemplate extends Component {
                     </Tree>
 
                 </div>
-            </div>
+                <div
+                    onClick={this.setShowType}
+                    className={
+                        `
+                        ${styles.switchSpin_init}  
+                        ${show_type == '1' && styles.switchSpinShow}
+                        ${show_type == '2' && styles.switchSpinClose}
+                        `
+                    }
+                    style={{
+                        top: (this.getHeight() + date_area_height) / 2
+                    }} >
+                    <div className={`${styles.switchSpin_top}`}></div>
+                    <div className={`${styles.switchSpin_bott}`}></div>
+                </div>
+            </div >
         )
     }
 }
