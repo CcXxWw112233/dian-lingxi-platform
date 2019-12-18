@@ -103,6 +103,9 @@ class Gantt extends Component {
           this.insertTaskToListGroup(res)
         } else {
           message.warn('创建任务失败')
+          if (res.code == 4041) {
+            message.warn(res.message)
+          }
         }
       })
     // .catch(err => message.error(err));

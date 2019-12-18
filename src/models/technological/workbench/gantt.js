@@ -663,7 +663,10 @@ export default {
           }
         })
       } else {
-
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+        if (res.code == 4041) {
+          message.warn(res.message, MESSAGE_DURATION_TIME)
+        }
       }
     }
   },

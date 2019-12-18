@@ -141,6 +141,10 @@ export default modelExtend(technological, {
         // console.log('create task failed :' + res)
         return
       } else {
+        if (res.code == 4041) {
+          message.warn(res.message)
+          return
+        }
         //创建任务成功的任务 id
         return res.data
       }

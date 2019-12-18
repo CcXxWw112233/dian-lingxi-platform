@@ -48,6 +48,13 @@ class ProjectItems extends Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
       return false;
     }
+    // 点击的时候需要重新更新一下当前组织中的项目列表
+    // this.props.dispatch({
+    //   type: 'technological/getCurrentOrgProjectList',
+    //   payload: {
+        
+    //   }
+    // })
     this.setAddProjectModalVisible()
   };
 
