@@ -1,0 +1,85 @@
+.title {
+  text-align: center;
+  margin-bottom: 40px;
+  .title_icon {
+    font-size: 40px;
+    font-weight: 900;
+    color: #1890FF;
+  }
+}
+
+.plan_list_wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  .margin_right {
+    // margin-right: 16px;
+    cursor: pointer;
+    margin-bottom: 16px;
+    width: 25%;
+  }
+  .plan_default_name {
+    position: absolute;
+    bottom: 0;
+    width:148px;
+    height:28px;
+    background:rgba(0,0,0,0.7);
+    color: #fff;
+    line-height: 28px;
+    letter-spacing: 1px;
+    font-weight: 500;
+    left: 0;
+    text-align: center;
+    font-size: 14px;
+    border-radius: 0px 0px 4px 4px;
+  }
+  .add_plan {
+    width:140px;
+    height:100px;
+    background:rgba(245,245,245,1);
+    border-radius:4px;
+    position: relative;
+    margin-right: 16px;
+    ._add_plan_name {
+      font-size: 14px;
+      font-weight: 900;
+      color: rgba(0, 0, 0, 0.65);
+      letter-spacing: 1px;
+      position: absolute;
+      top: 50%;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      text-align: center;
+      transform: translateY(-25%);
+    }
+  }
+}
+
+.plan_back {
+  width:88px;
+  height:30px;
+  background:rgba(0,0,0,0.04);
+  border-radius:4px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  span {
+    display: block;
+    text-align: center;
+    line-height: 30px;
+    &:hover {
+      color: #1890FF;
+    }
+  }
+}
+.breadcrumb_wrapper {
+  min-width:176px;
+  height:30px;
+  background:rgba(0,0,0,0.04);
+  border-radius:4px;
+  .breadcrumb {
+    padding: 4px 8px;
+    font-size: 14px;
+    color:rgba(0,0,0,0.65);
+  }
+}
+
