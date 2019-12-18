@@ -178,6 +178,7 @@ class SimpleHeader extends Component {
                             isInOpenFile: false,
                             filePreviewCurrentFileId: '',
                             fileType: '',
+                            currentPreviewFileName: ''
                         }
                     })
                 }
@@ -200,6 +201,7 @@ class SimpleHeader extends Component {
                             isInOpenFile: true,
                             filePreviewCurrentFileId: relaDataId,
                             fileType: getSubfixName(relaDataName),
+                            currentPreviewFileName: relaDataName
                         }
                     })
                 }, 200)
@@ -270,7 +272,8 @@ class SimpleHeader extends Component {
         payload: {
             filePreviewCurrentFileId: '',
             fileType: '',
-            isInOpenFile: false
+            isInOpenFile: false,
+            currentPreviewFileName: ''
         }
       })
     }

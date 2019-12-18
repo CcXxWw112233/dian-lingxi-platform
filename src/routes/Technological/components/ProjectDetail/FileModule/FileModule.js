@@ -41,7 +41,8 @@ export default class FileIndex extends React.Component {
       payload: {
         isInOpenFile: false,
         filePreviewCurrentFileId: '',
-        fileType: ''
+        fileType: '',
+        currentPreviewFileName: ''
       }
     })
   }

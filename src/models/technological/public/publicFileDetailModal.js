@@ -36,7 +36,8 @@ export default {
         payload: {
          filePreviewCurrentFileId: file_id,
          fileType: getSubfixName(file_name),
-         isInOpenFile: true
+         isInOpenFile: true,
+         currentPreviewFileName: file_name
         }
       })
     },

@@ -11,8 +11,7 @@ import { FILES, MESSAGE_DURATION_TIME } from '@/globalset/js/constant'
 import { currentNounPlanFilterName, getOrgNameWithOrgIdFilter, checkIsHasPermissionInVisitControl, getSubfixName } from '@/utils/businessFunction.js'
 import { message } from 'antd'
 
-// @connect(mapStateToProps)
-@connect()
+@connect(mapStateToProps)
 export default class BoardCommuicationFileDetailContainer extends Component {
 
   constructor(props) {
@@ -46,6 +45,24 @@ export default class BoardCommuicationFileDetailContainer extends Component {
       filePreviewCurrentVersionList: data.version_list, // 文件的版本列表
       filePreviewCurrentVersionId: data.version_list.length ? data.version_list[0]['version_id'] : '', // 保存一个当前版本ID
     })
+  }
+
+  linkImWithFile = (data) => {
+    const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    const { is_simple_model } = user_set;
+    if (!data) {
+      global.constants.lx_utils && global.constants.lx_utils.setCommentData(null) 
+      return false
+    }
+    global.constants.lx_utils && global.constants.lx_utils.setCommentData({...data})
+    // if (is_simple_model == '1') {
+    //   this.props.dispatch({
+    //     type: 'simplemode/updateDatas',
+    //     payload: {
+    //       chatImVisiable: true
+    //     }
+    //   })
+    // }
   }
 
   delayUpdatePdfDatas = async ({ id }) => {
@@ -93,26 +110,25 @@ export default class BoardCommuicationFileDetailContainer extends Component {
   }
 
   componentDidMount() {
-    const { filePreviewCurrentFileId, fileType, file_detail_modal_visible } = this.props
+    const { filePreviewCurrentFileId, fileType, file_detail_modal_visible, currentPreviewFileName, board_id } = this.props
     if (filePreviewCurrentFileId && file_detail_modal_visible) {
       if (fileType == '.pdf') {
         this.delayUpdatePdfDatas({ id: filePreviewCurrentFileId })
+        this.linkImWithFile({name: currentPreviewFileName, type: 'file', board_id: board_id, id: filePreviewCurrentFileId})
         return
       }
       this.getCurrentFilePreviewData({ id: filePreviewCurrentFileId })
+      this.linkImWithFile({name: currentPreviewFileName, type: 'file', board_id: board_id, id: filePreviewCurrentFileId})
     }
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   const { filePreviewCurrentFileId: newFilePreviewCurrentFileId, fileType } = nextProps
-  //   // 初始化数据
-  //   if (compareACoupleOfObjects(this.props, nextProps)) return
-  //   if (fileType == '.pdf') {
-  //     this.delayUpdatePdfDatas({ id: newFilePreviewCurrentFileId })
-  //     return
-  //   }
-  //   this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
-  // }
+  componentWillReceiveProps(nextProps) {
+    const { isInOpenFile } = nextProps
+    const { isInOpenFile: oldOpenFile } = this.props
+    if (isInOpenFile == false && oldOpenFile == true) {
+      this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
+    }
+  }
 
   render() {
     const { componentHeight, componentWidth } = this.props
@@ -142,16 +158,18 @@ export default class BoardCommuicationFileDetailContainer extends Component {
   }
 }
 
-// function mapStateToProps({
-//   publicFileDetailModal: {
-//     filePreviewCurrentFileId,
-//     fileType
-//   }
-// }) {
-//   return {
-//     filePreviewCurrentFileId,
-//     fileType
-//   }
-// }
+function mapStateToProps({
+  publicFileDetailModal: {
+    // filePreviewCurrentFileId,
+    // fileType,
+    isInOpenFile
+  }
+}) {
+  return {
+    // filePreviewCurrentFileId,
+    // fileType,
+    isInOpenFile
+  }
+}
 
 

@@ -233,7 +233,8 @@ class CardContent extends React.Component {
       payload: {
         filePreviewCurrentFileId: '',
         fileType: '',
-        isInOpenFile: false
+        isInOpenFile: false,
+        currentPreviewFileName: ''
       }
     })
   }

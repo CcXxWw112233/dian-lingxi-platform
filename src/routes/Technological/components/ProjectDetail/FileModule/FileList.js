@@ -382,7 +382,8 @@ export default class FileList extends React.Component {
       payload: {
         filePreviewCurrentFileId: id,
         fileType: getSubfixName(file_name),
-        isInOpenFile: true
+        isInOpenFile: true,
+        currentPreviewFileName: file_name
       }
     })
     // this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile();

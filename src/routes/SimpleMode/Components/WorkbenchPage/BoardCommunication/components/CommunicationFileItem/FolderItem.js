@@ -78,7 +78,8 @@ class FolderItem extends Component {
             payload: {
                 filePreviewCurrentFileId: id,
                 fileType: getSubfixName(file_name),
-                isInOpenFile: true
+                isInOpenFile: true,
+                currentPreviewFileName: file_name
             }
         })
         dispatch({
