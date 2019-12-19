@@ -279,7 +279,7 @@ export default class GetRowGanttItem extends Component {
   }
   render() {
     const { rows = 7, itemKey } = this.props
-    const { gold_date_arr = [], ceiHeight, gantt_board_id, group_view_type, show_board_fold, group_list_area_section_height } = this.props
+    const { gold_date_arr = [], ceiHeight, gantt_board_id, group_view_type, show_board_fold, group_list_area_section_height, list_id } = this.props
     const { currentSelectedProjectMembersList } = this.state
     const item_height = rows * ceiHeight
     return (
@@ -299,6 +299,9 @@ export default class GetRowGanttItem extends Component {
                     const is_all_realized = this.isHasMiletoneList(Number(timestampEnd)).is_all_realized
                     return (
                       <div className={`${indexStyles.ganttDetailItem}`}
+                        data-list_id={list_id}
+                        data-start_time={timestamp}
+                        data-end_time={timestampEnd}
                         key={key2}
                         style={{ backgroundColor: (week_day == 0 || week_day == 6) ? 'rgba(0, 0, 0, 0.04)' : (isToday(timestamp) ? 'rgb(242, 251, 255)' : 'rgba(0,0,0,.02)') }}
                       >
