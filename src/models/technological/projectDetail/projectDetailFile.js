@@ -207,7 +207,7 @@ export default modelExtend(projectDetail, {
       yield put({
         type: 'updateDatas',
         payload: {
-          isInOpenFile: true,
+          // isInOpenFile: true,
           seeFileInput: 'fileModule',
           filePreviewCurrentFileId: file_id,
           // filePreviewCurrentId: file_resource_id,

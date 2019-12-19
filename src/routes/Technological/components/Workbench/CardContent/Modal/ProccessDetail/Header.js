@@ -448,7 +448,7 @@ export default class Header extends React.Component {
               <div onClick={this.alarmNoEditPermission} style={{ right: '40px', height: '50px' }} className={globalStyles.drawContent_mask}></div>
             )
           } */}
-          <Icon type="close" onClick={this.close.bind(this)} style={{ float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer' }} />
+          <Icon type="close" onClick={this.close.bind(this)} style={{ float: 'right', marginRight: '20px', marginTop: '2px', fontSize: '16px', cursor: 'pointer' }} />
           <Settings status={this.props.status} status={this.props.listData} {...this.props} item={ellipsis} dataSource={r} disabledEnd={(disabled === undefined || disabled === '') ? false : true} disabledDel={(disabled === undefined || disabled === '') ? true : false} />
           <span
             style={{
@@ -471,7 +471,7 @@ export default class Header extends React.Component {
               handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
             />
           </span>
-          <span style={{ marginTop: '-4px', float: 'right', marginLeft: '18px', position: 'relative' }}>
+          <span style={{ marginTop: is_privilege === '0' ? '2px' : '-2px', float: 'right', marginLeft: '18px', marginRight: '5px', position: 'relative' }}>
             {/* {
               checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, principalList, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) ? ('') : (
                 <div onClick={this.alarmNoEditPermission} style={{ height: '50px' }} className={globalStyles.drawContent_mask}></div>
