@@ -194,7 +194,7 @@ class CreateProject extends React.Component {
   stepTwoButtonClick(data) {
     const { isAdd, id, itemKey } = data
     const appsArray = this.state.appsArray
-    // console.log(appsArray, 'sssssssss_apppp')
+    console.log(appsArray, 'sssssssss_apppp')
     if (isAdd) {
       appsArray[itemKey] = id
     } else {
@@ -319,8 +319,7 @@ class CreateProject extends React.Component {
     })
   }
   setStepTwotype = () => {
-    const { step_2_type, _organization_id, OrganizationId } = this.state
-    if (OrganizationId == '0' && !_organization_id) return false
+    const { step_2_type } = this.state
     this.setState({
       step_2_type: step_2_type == 'normal' ? 'copy' : 'normal',
       project_apps: [],
@@ -328,12 +327,6 @@ class CreateProject extends React.Component {
       appsArray: [],
       stepTwoContinueDisabled: true,
     })
-    const obj = {
-      flows: {
-        is_copy_flow_template: true
-      }
-    }
-    this.setCopyValue(obj)
   }
   setCopyValue = (data) => {
     const { copy_value = {} } = this.state
@@ -519,87 +512,6 @@ class CreateProject extends React.Component {
     return step_3
   }
 
-  filterCurrentProjectListWithFlows = () => {
-    const { projects = [] } = this.state
-    let newProjects = [...projects]
-    let arr = []
-    for (let i = 0; i < newProjects.length; i++) {
-      let element = newProjects[i].apps || [];
-      // console.log(element, 'ssssssssssssss')
-      for (let j = 0; j < element.length; j++) {
-        if (element[j].code == 'Flows') {
-          arr.push(newProjects[i])
-        }
-      }
-    }
-    let permissionArr = this.filterProjectWhichCurrentUserHasAccessFlowsPermission(arr)
-    return permissionArr
-    // console.log(newProjects, 'sssssssssssss_newProjects')
-  }
-
-  // 获取当前用户
-	getInfoFromLocalStorage = item => {
-		try {
-			const userInfo = localStorage.getItem(item)
-			return JSON.parse(userInfo)
-		} catch (e) {
-			message.error('从 Cookie 中获取用户信息失败, 当复制项目流程模板的时候')
-		}
-	}
-
-  // 获取项目权限
-	getProjectPermission = (permissionType, board_id) => {
-		const userBoardPermissions = this.getInfoFromLocalStorage('userBoardPermissions')
-		if (!userBoardPermissions || !userBoardPermissions.length) {
-			return false
-		}
-		const isFindedBoard = userBoardPermissions.find(board => board.board_id === board_id)
-		if (!isFindedBoard) return false
-		const { permissions = [] } = isFindedBoard
-		return !!permissions.find(permission => permission.code === permissionType && permission.type === '1')
-	}
-	// 查询当前用户是否有权限
-	filterProjectWhichCurrentUserHasAccessFlowsPermission = (projectList = []) => {
-		return projectList.filter(({ board_id }) => this.getProjectPermission('project:flows:flow:access', board_id))
-	}
-
-  // 直接渲染复制流程模板
-  renderCopyFlowTemplete = () => {
-    const {
-      stepTwoContinueDisabled,
-      step_2_type,
-      projects = [],
-      project_apps = [],
-      select_project_id,
-    } = this.state
-    const filterProject = this.filterCurrentProjectListWithFlows() || []
-    const step_2_copy = (
-      <div style={{ margin: '12px auto', width: 346, height: 'auto' }}>
-        <div className={indexStyles.operateAreaOut}>
-          <div className={indexStyles.operateArea}>
-            <Select
-              value={select_project_id}
-              style={{ width: '100%', fontSize: '14px' }}
-              size={'large'}
-              placeholder="选择一个项目复制流程模版"
-              optionFilterProp="children"
-              onChange={this.selectProjectChange}
-              allowClear={true}
-            >
-              {filterProject.map((value, key) => {
-                const { board_id, board_name } = value
-                return (
-                  <Option value={board_id} key={board_id}>{board_name}</Option>
-                )
-              })}
-            </Select>
-          </div>
-        </div>
-      </div>
-    )
-    return step_2_copy
-  }
-
   // 几个步骤的处理
   renderOperateStep = () => {
     const { step_2_type, step } = this.state
@@ -626,10 +538,9 @@ class CreateProject extends React.Component {
 
   // 以上几步合成一步
   renderCreateStep = () => {
-    const { _organization_id, OrganizationId, stepOneContinueDisabled, step_2_type } = this.state
+    const { _organization_id, OrganizationId, stepOneContinueDisabled } = this.state
     const { currentUserOrganizes = [], form: { getFieldDecorator } } = this.props;
-    const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
-    const { is_simple_model } = user_set; 
+
     const step = (
       <div style={{ margin: '0 auto', width: 346 }}>
         <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}>新建{currentNounPlanFilterName(PROJECTS)}</div>
@@ -660,19 +571,7 @@ class CreateProject extends React.Component {
             {/* 项目名称 */}
             <Input placeholder={`输入${currentNounPlanFilterName(PROJECTS)}名称`}
               onChange={this.boardNameChange.bind(this)}
-              style={{ height: 40, marginBottom: '8px' }} />
-            
-            {/* 复制流程模板 */}
-            {
-              is_simple_model == '0' && (
-                step_2_type == 'copy' ? (
-                  this.renderCopyFlowTemplete()
-                ) : (
-                  <div onClick={this.setStepTwotype} style={{textAlign: 'left', color: OrganizationId == '0' && !_organization_id ? '#BFBFBF' : '#1890FF', cursor: 'pointer'}}>从现有项目中复制流程模版？</div>
-                )
-              )
-            }
-
+              style={{ height: 40 }} />
             {/* 邀请他人 */}
             {/* <div style={{ marginTop: -10, width: 344,}} > */}
             <InviteOthers selectDisabled={OrganizationId == '0' && !!!_organization_id} _organization_id={_organization_id || localStorage.getItem('OrganizationId')} isShowTitle={false} isShowSubmitBtn={false} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} />
@@ -685,42 +584,15 @@ class CreateProject extends React.Component {
     return step
   }
   createBoard = () => {
-    const { _organization_id, OrganizationId, board_name, users, appsList = [], copy_value, select_project_id } = this.state
-    if (copy_value && Object.keys(copy_value).length && select_project_id) {
-      let apps = appsList.map(item => item.id).join(',')
-      const copy_obj = {
-        board_id: select_project_id,
-        ...copy_value
-      }
-      const params = {
-        apps,
-        users: this.handleUsersToUsersStr(users),
-        _organization_id: _organization_id || OrganizationId,
-        board_name,
-        copy: JSON.stringify(copy_obj)
-      }
-      this.props.addNewProject ? this.props.addNewProject(params) : false
-    } else {
-      let apps = appsList.filter(item => 'Tasks' == item.code || 'Files' == item.code).map(item => item.id).join(',')
-      const params = {
-        apps,
-        users: this.handleUsersToUsersStr(users),
-        _organization_id: _organization_id || OrganizationId,
-        board_name,
-        
-      }
-      this.props.addNewProject ? this.props.addNewProject(params) : false
+    const { _organization_id, OrganizationId, board_name, users, appsList = [] } = this.state
+    const apps = appsList.filter(item => 'Tasks' == item.code || 'Files' == item.code).map(item => item.id).join(',')
+    const params = {
+      apps,
+      users: this.handleUsersToUsersStr(users),
+      _organization_id: _organization_id || OrganizationId,
+      board_name,
     }
-    // const apps = appsList.filter(item => 'Tasks' == item.code || 'Files' == item.code).map(item => item.id).join(',')
-    // // copy: "{"board_id":"1206490600661192704","flows":{"is_copy_flow_template":true}}
-    // const params = {
-    //   apps,
-    //   users: this.handleUsersToUsersStr(users),
-    //   _organization_id: _organization_id || OrganizationId,
-    //   board_name,
-      
-    // }
-    // this.props.addNewProject ? this.props.addNewProject(params) : false
+    this.props.addNewProject ? this.props.addNewProject(params) : false
     this.props.setAddProjectModalVisible && this.props.setAddProjectModalVisible({ visible: false })
     this.initData()
   }
@@ -738,8 +610,8 @@ class CreateProject extends React.Component {
           style={{ textAlign: 'center' }}
           onCancel={this.onCancel}
           overInner={
-            // this.renderOperateStep()
-            this.renderCreateStep()
+            this.renderOperateStep()
+            // this.renderCreateStep()
           }
         >
         </CustormModal>
@@ -750,8 +622,8 @@ class CreateProject extends React.Component {
 export default Form.create()(CreateProject)
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ technological: { datas: { currentUserOrganizes = [], currentOrgProjectList = [] } } }) {
-  return { currentUserOrganizes, currentOrgProjectList };
+function mapStateToProps({ technological: { datas: { currentUserOrganizes = [] } } }) {
+  return { currentUserOrganizes };
 }
 
 CreateProject.defaultProps = {
