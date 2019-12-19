@@ -20,7 +20,8 @@ export default class BoardsFilesArea extends Component {
             payload: {
                 isInOpenFile: false,
                 filePreviewCurrentFileId: '',
-                fileType: ''
+                fileType: '',
+                currentPreviewFileName: ''
             }
         })
     }

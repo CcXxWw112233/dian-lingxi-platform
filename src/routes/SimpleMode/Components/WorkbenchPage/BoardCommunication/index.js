@@ -1106,9 +1106,11 @@ class BoardCommunication extends Component {
             payload: {
                 filePreviewCurrentFileId: '',
                 fileType: '',
-                isInOpenFile: false
+                isInOpenFile: false,
+                currentPreviewFileName: ''
             }
         })
+        global.constants.lx_utils && global.constants.lx_utils.setCommentData(null)
     }
 
     // 设置折叠面板keys
@@ -1601,6 +1603,7 @@ class BoardCommunication extends Component {
                             filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
                             fileType={this.props.fileType}
                             file_detail_modal_visible={this.state.previewFileModalVisibile}
+                            currentPreviewFileName={this.props.currentPreviewFileName}
                             setPreviewFileModalVisibile={this.showUpdatedFileDetail}
                             whetherUpdateFolderListData={this.whetherUpdateFolderListData}
                             // updateCommunicationFolderListData={this.updateCommunicationFolderListData}
@@ -1802,7 +1805,8 @@ function mapStateToProps({
     publicFileDetailModal: {
         filePreviewCurrentFileId,
         fileType,
-        isInOpenFile
+        isInOpenFile,
+        currentPreviewFileName
     }
 }) {
     const modelObj = {
@@ -1834,7 +1838,8 @@ function mapStateToProps({
         currentLayerSelectedStyle,
         filePreviewCurrentFileId,
         fileType,
-        isInOpenFile
+        isInOpenFile,
+        currentPreviewFileName
     }
 }
 export default connect(mapStateToProps)(BoardCommunication)

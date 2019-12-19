@@ -45,6 +45,26 @@ class FileDetailContent extends Component {
     })
   }
 
+  // global.constants.lx_utils && global.constants.lx_utils.setCommentData({name: })
+  linkImWithFile = (data) => {
+    // console.log('进来了', 'sssssssssss')
+    const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    const { is_simple_model } = user_set;
+    if (!data) {
+      global.constants.lx_utils && global.constants.lx_utils.setCommentData(null) 
+      return false
+    }
+    global.constants.lx_utils && global.constants.lx_utils.setCommentData({...data})
+    if (is_simple_model == '1') {
+      this.props.dispatch({
+        type: 'simplemode/updateDatas',
+        payload: {
+          chatImVisiable: true
+        }
+      })
+    }
+  }
+
   delayUpdatePdfDatas = async ({ id }) => {
     let res = await fileInfoByUrl({ id })
     if (isApiResponseOk(res)) {
@@ -59,13 +79,15 @@ class FileDetailContent extends Component {
   }
 
   componentDidMount() {
-    const { filePreviewCurrentFileId: newFilePreviewCurrentFileId, file_detail_modal_visible, fileType } = this.props
+    const { filePreviewCurrentFileId: newFilePreviewCurrentFileId, file_detail_modal_visible, fileType, currentPreviewFileName, board_id } = this.props
     if (file_detail_modal_visible) {
       if (fileType == '.pdf') {
         this.delayUpdatePdfDatas({ id: newFilePreviewCurrentFileId })
+        this.linkImWithFile({name: currentPreviewFileName, type: 'file', board_id: board_id, id: newFilePreviewCurrentFileId})
         return
       }
       this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
+      this.linkImWithFile({name: currentPreviewFileName, type: 'file', board_id: board_id, id: newFilePreviewCurrentFileId})
     }
   }
 
@@ -88,7 +110,7 @@ class FileDetailContent extends Component {
 
   // 是否需要更新项目详情中的面包屑路径
   whetherUpdateProjectDetailFileBreadCrumbListNav = () => {
-    const { projectDetailInfoData: { board_id, folder_name, folder_id }, location, breadcrumbList } = this.props
+    const { breadcrumbList = [] } = this.props
     const new_arr_ = [...breadcrumbList]
     new_arr_.splice(new_arr_.length - 1, 1)
     this.props.dispatch({
@@ -114,6 +136,7 @@ class FileDetailContent extends Component {
     //     isInOpenFile: false
     //   }
     // })
+    this.linkImWithFile(null)
     this.whetherUpdateProjectDetailFileBreadCrumbListNav()
   }
 
@@ -189,6 +212,8 @@ class FileDetailContent extends Component {
 export default withRouter(FileDetailContent)
 
 FileDetailContent.defaultProps = {
+  board_id: '', // 当前项目ID
+  currentPreviewFileName: '', // 当前预览文件的名称
   filePreviewCurrentFileId: '', // 需要一个当前的文件ID, !!!
   fileType: '', // 当前文件的后缀名, !!!
   file_detail_modal_visible: false, // 设置文件详情弹窗是否显示, 默认为 false 不显示
@@ -202,11 +227,6 @@ function mapStateToProps({
   simplemode: {
     chatImVisiable = false
   },
-  projectDetail: {
-    datas: {
-      projectDetailInfoData = {}
-    }
-  },
   projectDetailFile: {
     datas: {
       breadcrumbList = []
@@ -214,6 +234,6 @@ function mapStateToProps({
   }
 }) {
   return {
-    chatImVisiable, projectDetailInfoData, breadcrumbList
+    chatImVisiable, breadcrumbList
   }
 }
