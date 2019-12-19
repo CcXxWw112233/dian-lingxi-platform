@@ -270,12 +270,13 @@ export default class Index extends Component {
                 </div>
                 {/* )} */}
                 {
-                    this.props.isInOpenFile && (
+                    this.props.isInOpenFile && board_id && (
                     <FileDetailModal
                         // {...this.props}
                         // {...this.props.fileDetailModalDatas}
                         // setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
                         fileType={this.props.fileType} filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
+                        board_id={board_id}
                         file_detail_modal_visible={this.props.isInOpenFile && getGlobalData('storageCurrentOperateBoardId') == board_id}
                         setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
                         whetherUpdateFolderListData={this.whetherUpdateFolderListData}
