@@ -360,6 +360,7 @@ export default class CommentListItem extends React.Component {
   // 评论动态
   commentNews = (data) => {
     const { action, create_time, text, id } = data
+    const { id: local_user_id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     let container = ''
     let messageContainer = (<div></div>)
     switch (action) {
@@ -377,7 +378,7 @@ export default class CommentListItem extends React.Component {
                   {data.creator && data.creator.name}
                 </div>
                 {
-                  judgeTimeDiffer_ten(create_time) ? (
+                  judgeTimeDiffer_ten(create_time) || (local_user_id != (data.creator && data.creator.id) && data.creator.id) ? (
                     <div className={commonCommentStyles.common_create_time}>
                       {newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}
                     </div>
