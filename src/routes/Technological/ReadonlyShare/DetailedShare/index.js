@@ -87,7 +87,6 @@ class DetailedShare extends React.Component {
     render() {
         const { rela_type, board_id } = this.state
         const { dispatch, drawerVisible = true, } = this.props
-
         return (
             <div>
                 <div>

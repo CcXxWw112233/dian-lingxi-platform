@@ -1,6 +1,6 @@
 import React from 'react'
 import { Form, Input, } from 'antd'
-import CustormModal from '../../../../../../components/CustormModal'
+import CustormModal from '../../../CustormModal'
 import FileDetail from './index'
 
 class FileDetailModal extends React.Component {

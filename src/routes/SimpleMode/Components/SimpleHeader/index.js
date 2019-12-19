@@ -306,7 +306,7 @@ class SimpleHeader extends Component {
                         </Dropdown>
                     )}
 
-                <div style={{zIndex: !chatImVisiable && 1100}} className={indexStyles.miniImMessage} onClick={this.openOrCloseImChatModal}>
+                <div style={{zIndex: !chatImVisiable && 1009}} className={indexStyles.miniImMessage} onClick={this.openOrCloseImChatModal}>
                     {
                         im_alarm_no_reads_total > 0 && (
                             <div className={indexStyles.no_reads}>{im_alarm_no_reads_total > 99 ? '99+' : im_alarm_no_reads_total}</div>
