@@ -80,6 +80,14 @@
     padding: 4px 8px;
     font-size: 14px;
     color:rgba(0,0,0,0.65);
+    :global {
+      .ant-breadcrumb-link {
+        &:hover {
+          color: #1890FF;
+          cursor: pointer;
+        }
+      }
+    }
   }
 }
 
@@ -111,5 +119,30 @@
   .planningSchemeItem_bottom {
     padding: 12px;
   }
+  // ant-tree-switcher
+  .treeNodeWrapper {
+    :global {
+      .ant-tree-switcher {
+        color: rgba(0,0,0,0.25);
+        font-size: 14px;
+      }
+      .ant-tree-treenode-switcher-close {
+        padding: 12px 12px 12px 0;
+        box-sizing: border-box;
+        // display: flex;
+        .ant-tree-node-content-wrapper-close {
+          // display: inline-block;
+        }
+      }
+      .ant-tree-switcher_open, .ant-tree-node-content-wrapper-open {
+        margin-bottom: 12px;
+      }
+    }
+  }
+}
+
+.pub_border_hover {
+  border-radius: 4px;
+  border: 2px solid #1890FF;
 }
 

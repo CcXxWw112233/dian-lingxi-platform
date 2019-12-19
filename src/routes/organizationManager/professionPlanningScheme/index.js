@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
-import PlanningSchemeItem from './component/PlanningSchemeItem'
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { ORGANIZATION, PROJECTS } from "@/globalset/js/constant";
 import { currentNounPlanFilterName } from "@/utils/businessFunction";
 import planning from '../../../assets/organizationManager/planning.png'
-import PlanningSchemeContainer from './component/PlanningSchemeContainer'
+import PlanningSchemeContainer from './PlanningSchemeContainer'
 import { connect } from 'dva'
 
 @connect()
