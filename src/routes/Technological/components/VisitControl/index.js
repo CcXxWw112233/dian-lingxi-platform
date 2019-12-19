@@ -62,8 +62,7 @@ class VisitControl extends Component {
   // 获取添加成员的回调
   handleGetAddNewMember = members => {
 
-    const { handleAddNewMember, invitationType,
-      invitationId, invitationOrg } = this.props;
+    const { handleAddNewMember } = this.props;
     const filterPlatformUsersId = users =>
       users && users.filter(u => u.type == 'platform');
     this.handleNotPlatformMember(members)
@@ -592,9 +591,6 @@ class VisitControl extends Component {
       children,
       board_id,
       onlyShowPopoverContent,
-      invitationType,
-      invitationId,
-      invitationOrg,
     } = this.props;
 
     const {

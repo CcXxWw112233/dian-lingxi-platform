@@ -253,7 +253,7 @@ export default class DetailMember extends Component {
   render() {
     let { inputVal, new_avatar_list = [] } = this.state
     const { projectDetailInfoData = {}, projectRoles = [] } = this.props
-    let { board_id, board_name, data = []} = projectDetailInfoData //data是参与人列表
+    let { board_id, board_name, data = [], org_id} = projectDetailInfoData //data是参与人列表
 
     const manImageDropdown = (props) => {
       const { role_id, role_name='...', name, email='...', avatar, mobile='...', user_id, organization='...', we_chat='...'} = props
@@ -383,7 +383,7 @@ export default class DetailMember extends Component {
           show_wechat_invite={true}
           invitationId={this.props.invitationId}
           invitationType={this.props.invitationType}
-          invitationOrg={getGlobalData('aboutBoardOrganizationId')} 
+          invitationOrg={org_id} 
           board_id = {board_id} modalVisible={this.state.ShowAddMenberModalVisibile} 
           setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}/>
       </div>

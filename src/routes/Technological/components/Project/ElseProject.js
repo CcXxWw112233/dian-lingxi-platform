@@ -467,7 +467,7 @@ export default class ElseProject extends React.Component {
           modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}
           invitationId={board_id}
           invitationType='1'
-          invitationOrg={localStorage.getItem('OrganizationId')}
+          invitationOrg={org_id}
         />
 )}
         {removePojectToGroupModalVisible && (
