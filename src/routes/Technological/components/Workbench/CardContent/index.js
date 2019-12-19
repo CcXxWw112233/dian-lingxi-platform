@@ -58,7 +58,7 @@ const MenuItemGroup = Menu.ItemGroup;
   datas: {
     processInfo = {}
   }},
-   workbenchTaskDetail: {
+  projectDetail: {
      datas: { projectDetailInfoData = {} }
    },
    publicTaskDetailModal: {
@@ -759,7 +759,7 @@ class CardContent extends React.Component {
       },
       projectDetailInfoData = {}
     } = this.props;
-    const { data = [] } = projectDetailInfoData
+    const { data = [], board_id } = projectDetailInfoData
     const { selected_board_data = [] } = itemValue; //已选board id
 
     const {
@@ -1055,10 +1055,11 @@ class CardContent extends React.Component {
           {/*<MyCircleItem />*/}
         </div>
         {
-          CardContentType == 'MY_DOCUMENT' && this.props.isInOpenFile && (
+          CardContentType == 'MY_DOCUMENT' && this.props.isInOpenFile && board_id && (
             <FileDetailModal
               filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
-              fileType={this.props.fileType} 
+              fileType={this.props.fileType}
+              board_id={board_id} 
               file_detail_modal_visible={this.props.isInOpenFile}
               setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}
               whetherUpdateFolderListData={this.whetherUpdateFolderListData}
