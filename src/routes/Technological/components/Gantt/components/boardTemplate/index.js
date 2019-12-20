@@ -129,21 +129,22 @@ export default class BoardTemplate extends Component {
             </div>
         )
     }
-    renderTemplateTree = (data, parent_type, parrent_id) => {
+    renderTemplateTree = (data, parent_type, parrent_id, parrent_name) => {
         return (
             data.map(item => {
-                const { name, template_data_type, child_content, id } = item
+                const { name, template_data_type, child_content = [], id } = item
                 if (child_content) {
                     return (
                         <TreeNode
                             data_type={template_data_type}
                             data_id={parent_type == '2' ? parrent_id : id} //当父级是任务的时候，默认存储的是父类任务
-                            data_name={name}
+                            data_name={parent_type == '2' ? parrent_name : name}
+                            // data_parent_length={child_content.length}
                             icon={<i className={globalStyles.authTheme}>&#xe6f0;</i>}
                             key={id}
                             title={this.renderTreeItemName({ template_data_type, name })}
                             selectable={false}>
-                            {this.renderTemplateTree(child_content, template_data_type, id)}
+                            {this.renderTemplateTree(child_content, template_data_type, id, name)}
                         </TreeNode>
                     );
                 }
@@ -151,6 +152,7 @@ export default class BoardTemplate extends Component {
                     data_type={template_data_type}
                     data_id={id}
                     data_name={name}
+                    // data_parent_length={child_content.length}
                     key={id}
                     title={this.renderTreeItemName({ template_data_type, name })}
                     selectable={false}
@@ -182,25 +184,29 @@ export default class BoardTemplate extends Component {
         let drag_init_html = '' //用来存储所拖拽的对象的内容
 
         document.addEventListener("dragstart", function (event) {
-            //dataTransfer.setData()方法设置数据类型和拖动的数据
-            // event.dataTransfer.setData("Text", 'demo');
-            // 拖动 p 元素时输出一些文本
-            // document.getElementById("demo").innerHTML = "开始拖动 p 元素.";
-            //修改拖动元素的透明度
             event.target.style.opacity = "0.4";
             drag_init_target = event.target
             drag_init_html = event.target.innerHTML
 
-            const { drag_node_data: { data_name, data_type } } = that.state
+            const { drag_node_data: { data_type } } = that.state
+            console.log('ssssssdrag_node_data', that.state.drag_node_data)
+            if (data_type == '2') { //当拖拽的是子任务的话，需要改变节点内容为 （‘父任务名称+父任务下的子任务个数’）
+                event.target.style.opacity = "0";
+                event.target.innerHTML = document.getElementById('save_drag_child_card_parent').innerHTML
+                setTimeout(() => {
+                    event.target.innerHTML = drag_init_html
+                    setTimeout(() => {
+                        event.target.style.opacity = "0.4";
+                    }, 300)
+                }, 300)
+            }
 
         });
         //在拖动p元素的同时,改变输出文本的颜色
         document.addEventListener("drag", function (event) {
-            // document.getElementById("demo").style.color = "red";
         });
         // 当拖完p元素输出一些文本元素和重置透明度
         document.addEventListener("dragend", function (event) {
-            // document.getElementById("demo").innerHTML = "完成 p 元素的拖动";
             event.target.style.opacity = "1";
         });
         /* 拖动完成后触发 */
@@ -220,14 +226,10 @@ export default class BoardTemplate extends Component {
             //     event.target.style.border = "";
             // }
         });
-        /*对于drop,防止浏览器的默认处理数据(在drop中链接是默认打开)
-        复位输出文本的颜色和DIV的边框颜色
-        利用dataTransfer.getData()方法获得拖放数据
-        拖拖的数据元素id(“drag1”)
-        拖拽元素附加到drop元素*/
+        /*对于drop,防止浏览器的默认处理数据(在drop中链接是默认打开)*/
         document.addEventListener("drop", function (event) {
             event.preventDefault();
-            drag_init_target.innerHTML = drag_init_html
+            // drag_init_target.innerHTML = drag_init_html
             if (event.target.className.indexOf('ganttDetailItem') != -1) {
                 const { list_id, start_time, end_time } = event.target.dataset
                 that.handleDragCompleted({ list_id, start_time, end_time })
@@ -235,12 +237,13 @@ export default class BoardTemplate extends Component {
         });
     }
     onDragStart = ({ node }) => {
-        const { data_id, data_type, data_name } = node.props
+        const { data_id, data_type, data_name, data_parent_length } = node.props
         this.setState({
             drag_node_data: {
                 data_id,
                 data_type,
-                data_name
+                data_name,
+                data_parent_length,
             }
         })
     }
@@ -299,7 +302,7 @@ export default class BoardTemplate extends Component {
             start_time,
             list_id: list_id != '0' ? list_id : ''
         }
-        console.log('sssssparams', params)
+        // console.log('sssssparams', params)
         const res = await createCardByTemplate({ ...params })
         if (isApiResponseOk(res)) {
             this.props.insertTaskToListGroup && this.props.insertTaskToListGroup(res.data) //创建任务后，返回的数据手动插入
@@ -308,7 +311,7 @@ export default class BoardTemplate extends Component {
         }
     }
     render() {
-        const { template_data, show_type, selected_template_name, spinning } = this.state
+        const { template_data, show_type, selected_template_name, spinning, drag_node_data } = this.state
         const { gantt_board_id } = this.props
         return (
             gantt_board_id && gantt_board_id != '0' ?
@@ -328,6 +331,16 @@ export default class BoardTemplate extends Component {
                             </Dropdown>
                             <div className={`${globalStyles.authTheme} ${styles.top_right}`}>&#xe78e;</div>
                         </div>
+                        {/* 拖拽子任务时，把相似父任务ui的dom节点渲染进来，该拖拽子任务的ui和这个相同 */}
+                        <div
+                            // style={{ display: 'none' }}
+                            id={'save_drag_child_card_parent'}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                {this.renderTreeItemName({ template_data_type: drag_node_data.data_type, name: drag_node_data.data_name })}
+                                <div> 等{drag_node_data.data_parent_length}项</div>
+                            </div>
+                        </div>
+                        {/* 主区 */}
                         <Spin spinning={spinning}>
                             <div className={styles.main}>
                                 <Tree
