@@ -6,8 +6,8 @@ import { currentNounPlanFilterName } from "@/utils/businessFunction";
 import planning from '../../../assets/organizationManager/planning.png'
 import { connect } from 'dva'
 import { Tooltip } from 'antd';
-import TempleteSchemeDetail from './component/TempleteSchemeDetail'
-import CreateTempleteScheme from './component/CreateTempleteScheme'
+import TempleteSchemeDetail from './TempleteSchemeDetail'
+import CreateTempleteScheme from './CreateTempleteScheme'
 
 @connect(mapStateToProps)
 export default class index extends Component {
@@ -34,7 +34,15 @@ export default class index extends Component {
     this.setState({ ...datas })
   }
 
-  handleOpetatorSchemeList = ({ id, name }) => {
+  handleOperatorSchemeList = ({ id, name }) => {
+    if (id != '0') {
+      this.props.dispatch({
+        type: 'organizationManager/getTemplateListContainer',
+        payload: {
+          template_id: id
+        }
+      })
+    }
 
     this.setState({
       whetherShowSchemeDetail: true,
@@ -48,7 +56,7 @@ export default class index extends Component {
     const { projectTemplateList = [] } = this.props
     return (
       <div className={indexStyles.plan_list_wrapper}>
-        <div className={`${indexStyles.add_plan} ${indexStyles.margin_right}`} onClick={() => { this.handleOpetatorSchemeList({ id:'0', name:'全部方案' }) }}>
+        <div className={`${indexStyles.add_plan} ${indexStyles.margin_right}`} onClick={() => { this.handleOperatorSchemeList({ id:'0', name:'全部方案' }) }}>
           <span className={`${globalStyles.authTheme} ${indexStyles._add_plan_name}`}>&#xe8fe; 新建方案</span>
         </div>
         {
@@ -56,12 +64,12 @@ export default class index extends Component {
             let { template_type, id, name } = item
             return (
               template_type == '1' ? (
-                <div key={item.id} style={{ position: 'relative', marginRight: '16px' }} className={indexStyles.margin_right} onClick={() => { this.handleOpetatorSchemeList({ id, name }) }}>
+                <div key={item.id} style={{ position: 'relative', marginRight: '16px' }} className={indexStyles.margin_right} onClick={() => { this.handleOperatorSchemeList({ id, name }) }}>
                   <img src={planning} width={'140px'} height={'100px'} />
                   <span className={indexStyles.plan_default_name}>{item.name}</span>
                 </div>
               ) : (
-                  <div key={item.id} style={{ position: 'relative' }} className={`${indexStyles.margin_right} ${indexStyles.others_list}`} onClick={() => { this.handleOpetatorSchemeList({ id, name }) }}>
+                  <div key={item.id} style={{ position: 'relative' }} className={`${indexStyles.margin_right} ${indexStyles.others_list}`} onClick={() => { this.handleOperatorSchemeList({ id, name }) }}>
                     <Tooltip placement="top" title={item.name}>
                       <span className={indexStyles.plan_name}>{item.name}</span>
                     </Tooltip>

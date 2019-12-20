@@ -4,7 +4,7 @@ import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 const { TreeNode } = Tree;
 
-export default class PlanningSchemeItem extends Component {
+export default class TempleteSchemeTree extends Component {
 
   state = {
     planningData: [
@@ -108,18 +108,6 @@ export default class PlanningSchemeItem extends Component {
               </Tooltip>
             ))
           }
-          {/* <Tooltip placement="top" title="添加同级">
-            <span onClick={this.handleAddSibiling} className={`${globalStyles.authTheme} ${indexStyles.icon_item}`}>&#xe6f1;</span>
-          </Tooltip>
-          <Tooltip placement="top" title="添加子级">
-            <span onClick={this.handleAddChildren} className={`${globalStyles.authTheme} ${indexStyles.icon_item}`}>&#xe6f2;</span>
-          </Tooltip>
-          <Tooltip placement="top" title="重命名">
-            <span onClick={this.handleRename} className={`${globalStyles.authTheme} ${indexStyles.icon_item}`}>&#xe602;</span>
-          </Tooltip>
-          <Tooltip placement="top" title="删除">
-            <span onClick={this.handleDeleteItem} className={`${globalStyles.authTheme} ${indexStyles.icon_item}`}>&#xe7c3;</span>
-          </Tooltip> */}
         </div>
       </div>
     )

@@ -1,15 +1,12 @@
 import React, { Component } from 'react'
-import indexStyles from '../index.less'
+import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { Input, Button, Breadcrumb } from 'antd';
+import { Input, Button, Breadcrumb, Tooltip, Tree } from 'antd';
 import { connect } from 'dva'
+import TempleteSchemeContent from './component/TempleteSchemeContent'
 
 @connect(mapStateToProps)
 export default class TempleteSchemeDetail extends Component {
-
-  state = {
-
-  }
 
   // 点击全部方案返回
   handleBackAllScheme = () => {
@@ -18,7 +15,7 @@ export default class TempleteSchemeDetail extends Component {
 
   // 渲染其他方案
   renderOthersSchemeNav = () => {
-    const { projectSchemeBreadCrumbList = [], current_templete_id, current_templete_name } = this.props
+    const { current_templete_id, current_templete_name } = this.props
     return (
       <div className={indexStyles.breadcrumb_wrapper}>
         <Breadcrumb separator=">" className={indexStyles.breadcrumb}>
@@ -36,6 +33,7 @@ export default class TempleteSchemeDetail extends Component {
         {/* 头部 */}
         <div>{this.renderOthersSchemeNav()}</div>
         {/* 内容 */}
+        <TempleteSchemeContent />
       </div>
     )
   }

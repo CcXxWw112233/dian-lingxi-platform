@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import indexStyles from '../index.less'
+import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
 import { Input, Button } from 'antd'
