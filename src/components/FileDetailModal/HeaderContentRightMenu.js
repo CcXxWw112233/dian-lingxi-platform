@@ -816,7 +816,7 @@ export default class HeaderContentRightMenu extends Component {
         {
           checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) && (
             <div className={headerStyles.margin_right10} style={{ marginTop: '4px' }}>
-              <InformRemind rela_id={filePreviewCurrentFileId} rela_type={'4'} user_remind_info={data} />
+              <InformRemind rela_fileId={filePreviewCurrentFileId} rela_id={filePreviewCurrentVersionId} rela_type={'4'} user_remind_info={data} />
             </div>
           )
         }
