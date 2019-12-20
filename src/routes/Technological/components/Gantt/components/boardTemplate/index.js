@@ -129,7 +129,7 @@ export default class BoardTemplate extends Component {
             </div>
         )
     }
-    renderTemplateTree = (data) => {
+    renderTemplateTree = (data, parent_type, parrent_id) => {
         return (
             data.map(item => {
                 const { name, template_data_type, child_content, id } = item
@@ -137,13 +137,13 @@ export default class BoardTemplate extends Component {
                     return (
                         <TreeNode
                             data_type={template_data_type}
-                            data_id={id}
+                            data_id={parent_type == '2' ? parrent_id : id} //当父级是任务的时候，默认存储的是父类任务
                             data_name={name}
                             icon={<i className={globalStyles.authTheme}>&#xe6f0;</i>}
                             key={id}
                             title={this.renderTreeItemName({ template_data_type, name })}
                             selectable={false}>
-                            {this.renderTemplateTree(child_content)}
+                            {this.renderTemplateTree(child_content, template_data_type, id)}
                         </TreeNode>
                     );
                 }

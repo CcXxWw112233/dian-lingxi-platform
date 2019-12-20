@@ -31,7 +31,7 @@ const CardDropDetail = ({ list }) => {
                                 <div className={`${styles.card_item_name}`}>
                                     {`${name}`}
                                     {
-                                        !(is_privilege == '0') && (
+                                        is_privilege == '1' && (
                                             <Tooltip title="已开启访问控制" placement="top">
                                                 <span style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', cursor: 'pointer', marginLeft: '5px' }}>
                                                     <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
