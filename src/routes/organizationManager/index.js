@@ -11,7 +11,7 @@ import NounDefinition from "./NounDefinition";
 import { ORGANIZATION, PROJECTS } from "../../globalset/js/constant";
 import { currentNounPlanFilterName } from "../../utils/businessFunction";
 import FnManagement from './FnManagement';
-import ProfessionPlanningScheme from './professionPlanningScheme'
+import ProjectTempleteScheme from './projectTempleteScheme'
 import globalStyles from '@/globalset/css/globalClassName.less' 
 
 
@@ -192,7 +192,7 @@ const Organization = (options) => {
         mainContent = (<div><FnManagement {...asyncProprs} updateDatas={updateDatas}></FnManagement></div>)
         break
       case '6':
-        mainContent = (<div><ProfessionPlanningScheme /></div>)
+        mainContent = (<div><ProjectTempleteScheme /></div>)
         break
       default:
         break;

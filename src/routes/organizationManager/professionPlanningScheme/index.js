@@ -62,7 +62,7 @@ export default class index extends Component {
 
   render() {
     const { whetherShowPlanDetail } = this.state
-    const { templateList = [] } = this.props
+    const { projectTemplateList = [] } = this.props
     return (
       <div>
 
@@ -81,7 +81,7 @@ export default class index extends Component {
                 </div>
                 {/* 项目默认方案 */}
                 {
-                  templateList && templateList.map(item => {
+                  projectTemplateList && projectTemplateList.map(item => {
                     let { template_type, id } = item
                     return(
                       template_type == '1' ? (
@@ -111,12 +111,12 @@ function mapStateToProps({
   organizationManager: {
     datas: {
       isAddNewPlan,
-      templateList = []
+      projectTemplateList = []
     }
   }
 }) {
   return {
     isAddNewPlan,
-    templateList
+    projectTemplateList
   }
 }

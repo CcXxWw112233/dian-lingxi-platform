@@ -23,7 +23,6 @@ export default {
   namespace: 'organizationManager',
   state: {
     datas: {
-      isAddNewPlan: false, // 是否新建项目方案
     }
   },
   subscriptions: {
@@ -49,7 +48,7 @@ export default {
               function_tree_data: [],
               orgnization_role_data: [], //组织角色数据
               project_role_data: [], //项目角色数据
-              tabSelectKey: '6',
+              tabSelectKey: '1',
               // permission_data: [], //权限数据
               //名词定义
               current_scheme_local: '', //已选方案名称
@@ -60,6 +59,8 @@ export default {
               editable: '0', //当前是否在自定义编辑状态 1是 0 否
               fnmanagement_list: [], //功能管理状态
               myWorkbenchBoxList: [],
+
+              // projectSchemeBreadCrumbList: [{id: '0', name: '全部方案'}]
             }
           })
 
@@ -543,7 +544,7 @@ export default {
         yield put({
           type: 'updateDatas',
           payload: {
-            templateList: res.data
+            projectTemplateList: res.data
           }
         })
       }
