@@ -2,11 +2,15 @@ import React, { Component } from 'react'
 import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { date_area_height } from '../../constants'
-import { Dropdown, Menu, message, Tree, Icon } from 'antd'
+import { Dropdown, Menu, message, Tree, Icon, Spin } from 'antd'
+import { connect, } from 'dva';
+import { getBoardTemplateList, getBoardTemplateInfo } from '../../../../../../services/technological/gantt'
+import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 
 const MenuItem = Menu.Item
 const TreeNode = Tree.TreeNode;
 
+@connect()
 export default class BoardTemplate extends Component {
     constructor(props) {
         super(props)
@@ -18,51 +22,10 @@ export default class BoardTemplate extends Component {
                 data_type: '',
                 data_name: ''
             },
-            template_data: [
-                {
-                    name: '啊收到了',
-                    id: '1',
-                    type: '1',
-                    child_data: [
-                        {
-                            name: '1-1',
-                            id: '1-1',
-                            type: '2',
-                            parent_id: '0',
-                            child_data: [
-                                {
-                                    name: '1-1-1',
-                                    id: '1-1-1',
-                                    type: '2',
-                                    parent_id: '1-1',
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    name: '2',
-                    id: '2',
-                    type: '1',
-                    child_data: [
-                        {
-                            name: '2-1',
-                            id: '2-1',
-                            type: '2',
-                            parent_id: '0',
-                            child_data: [
-                                {
-                                    name: '2-1-1',
-                                    id: '2-1-1',
-                                    type: '2',
-                                    parent_id: '2-1',
-                                }
-                            ]
-                        }
-                    ]
-                },
-
-            ], //模板数据
+            selected_template_id: '',
+            selected_template_name: '请选择模板',
+            template_list: [],
+            template_data: [], //模板数据
         }
     }
     getHeight = () => {
@@ -72,29 +35,88 @@ export default class BoardTemplate extends Component {
         }
         return '100%'
     }
-    selectPlane = (e) => {
-        const { key } = e
-
+    componentDidMount() {
+        this.listenDrag()
+        this.getBoardTemplateList()
     }
-    plansMenu = () => {
+    // 获取模板列表
+    getBoardTemplateList = async () => {
+        const res = await getBoardTemplateList({ _organization_id: localStorage.getItem('OrganizationId') })
+        if (isApiResponseOk(res)) {
+            const { data } = res
+            this.setState({
+                template_list: data
+            })
+            if (data && data.length) {
+                this.setState({
+                    selected_template_name: data[0].name,
+                    selected_template_id: data[0].id
+                })
+                this.getTemplateInfo(data[0].id)
+            }
+        } else {
+            message.error(res.message)
+        }
+    }
+    // 获取特定模板内容
+    getTemplateInfo = async (template_id) => {
+        this.setState({
+            spinning: true
+        })
+        const res = await getBoardTemplateInfo({ template_id })
+        this.setState({
+            spinning: false
+        })
+        if (isApiResponseOk(res)) {
+            this.setState({
+                template_data: res.data
+            })
+        } else {
+            message.error(res.message)
+        }
+    }
+    selectTemplate = (e) => {
+        const { key } = e
+        const { template_list = [] } = this.state
+        if ('0_0' == key) {
+
+        } else {
+            this.setState({
+                selected_template_id: key,
+                selected_template_name: template_list.find(item => item.id == key).name || '请选择模板'
+            })
+            this.getTemplateInfo(key)
+        }
+    }
+
+    renderTemplateList = () => {
+        const { template_list = [] } = this.state
         return (
-            <Menu onClick={this.selectPlane}>
+            <Menu onClick={this.selectTemplate}>
                 <MenuItem key={`0_0`} style={{ color: '#1890FF' }}>
                     <i className={globalStyles.authTheme}>&#xe8fe;</i>
                     &nbsp;
                      新建方案
                 </MenuItem>
-                <MenuItem
-                    className={globalStyles.global_ellipsis}
-                    style={{ width: 216 }}>
-                    爱丽丝的接口拉萨角度来看爱上了大家拉克丝的
-                </MenuItem>
+                {
+                    template_list.map(item => {
+                        const { id, name } = item
+                        return (
+                            <MenuItem
+                                key={`${id}`}
+                                className={globalStyles.global_ellipsis}
+                                style={{ width: 216 }}>
+                                {name}
+                            </MenuItem>
+                        )
+                    })
+                }
             </Menu>
         )
     }
-    renderTreeItemName = ({ type, name }) => {
+    renderTreeItemName = ({ template_data_type, name }) => {
         let icon = ''
-        if (type == '1') {
+        if (template_data_type == '1') {
             icon = <div className={globalStyles.authTheme} style={{ color: '#FAAD14', fontSize: 18, marginRight: 6 }}>&#xe6ef;</div>
         } else {
             icon = <div className={globalStyles.authTheme} style={{ color: '#18B2FF', fontSize: 18, marginRight: 6 }} >&#xe6f0;</div>
@@ -109,27 +131,27 @@ export default class BoardTemplate extends Component {
     renderTemplateTree = (data) => {
         return (
             data.map(item => {
-                const { name, type, child_data, id } = item
-                if (child_data) {
+                const { name, template_data_type, child_content, id } = item
+                if (child_content) {
                     return (
                         <TreeNode
-                            data_type={type}
+                            data_type={template_data_type}
                             data_id={id}
                             data_name={name}
                             icon={<i className={globalStyles.authTheme}>&#xe6f0;</i>}
                             key={id}
-                            title={this.renderTreeItemName({ type, name })}
+                            title={this.renderTreeItemName({ template_data_type, name })}
                             selectable={false}>
-                            {this.renderTemplateTree(child_data)}
+                            {this.renderTemplateTree(child_content)}
                         </TreeNode>
                     );
                 }
                 return <TreeNode
-                    data_type={type}
+                    data_type={template_data_type}
                     data_id={id}
                     data_name={name}
                     key={id}
-                    title={this.renderTreeItemName({ type, name })}
+                    title={this.renderTreeItemName({ template_data_type, name })}
                     selectable={false}
                     icon={<Icon type="caret-down" style={{ fontSize: 20, color: 'rgba(0,0,0,.45)' }} />}
                 />;
@@ -152,9 +174,6 @@ export default class BoardTemplate extends Component {
             show_type: new_type
         })
     }
-    componentDidMount() {
-        this.listenDrag()
-    }
     // 处理document的drag事件
     listenDrag = () => {
         const that = this
@@ -168,12 +187,10 @@ export default class BoardTemplate extends Component {
             // document.getElementById("demo").innerHTML = "开始拖动 p 元素.";
             //修改拖动元素的透明度
             event.target.style.opacity = "0.4";
-            console.log('sssss_start', that.state.drag_node_data, that.renderTreeItemName({ name: data_name, type: data_type }).innerHTML)
             drag_init_target = event.target
             drag_init_html = event.target.innerHTML
 
             const { drag_node_data: { data_name, data_type } } = that.state
-            // event.target.innerHTML = that.renderTreeItemName({ name: data_name, type: data_type }).innerHTML
 
         });
         //在拖动p元素的同时,改变输出文本的颜色
@@ -228,11 +245,11 @@ export default class BoardTemplate extends Component {
     }
     handleDragCompleted = ({ list_id, start_time, end_time }) => {
         const { drag_node_data } = this.state
-        // console.log('sssss_目标位置', { list_id, start_time, end_time })
-        // console.log('sssss_拖动对象', drag_node_data)
+        console.log('sssss_目标位置', { list_id, start_time, end_time })
+        console.log('sssss_拖动对象', drag_node_data)
     }
     render() {
-        const { template_data, show_type } = this.state
+        const { template_data, show_type, selected_template_name, spinning } = this.state
         return (
             <div className={
                 `
@@ -245,26 +262,28 @@ export default class BoardTemplate extends Component {
                 top: date_area_height
             }}>
                 <div className={styles.top}>
-                    <Dropdown overlay={this.plansMenu()}>
+                    <Dropdown overlay={this.renderTemplateList()}>
                         <div className={styles.top_left}>
-                            <div className={`${globalStyles.global_ellipsis} ${styles.name}`}>城市规划方案城市规划方案</div>
+                            <div className={`${globalStyles.global_ellipsis} ${styles.name}`}>{selected_template_name}</div>
                             <div className={`${globalStyles.authTheme} ${styles.down}`}>&#xe7ee;</div>
                         </div>
                     </Dropdown>
                     <div className={`${globalStyles.authTheme} ${styles.top_right}`}>&#xe781;</div>
                 </div>
-                <div className={styles.main}>
-                    <Tree
-                        draggable
-                        onDragStart={this.onDragStart}
-                        switcherIcon={
-                            <Icon type="caret-down" style={{ fontSize: 20, color: 'rgba(0,0,0,.45)' }} />
-                        }
-                    >
-                        {this.renderTemplateTree(template_data)}
-                    </Tree>
+                <Spin spinning={spinning}>
+                    <div className={styles.main}>
+                        <Tree
+                            draggable
+                            onDragStart={this.onDragStart}
+                            switcherIcon={
+                                <Icon type="caret-down" style={{ fontSize: 20, color: 'rgba(0,0,0,.45)' }} />
+                            }
+                        >
+                            {this.renderTemplateTree(template_data)}
+                        </Tree>
 
-                </div>
+                    </div>
+                </Spin>
                 <div
                     onClick={this.setShowType}
                     className={
