@@ -7,7 +7,7 @@ export default class PlanningSchemeContainer extends Component {
     return (
       <div>
         <div style={{marginBottom: '16px'}}><PlanningSchemeBreadcrumbNav {...this.props}/></div>
-        <div><PlanningSchemeContent /></div>
+        <div><PlanningSchemeContent {...this.props}/></div>
       </div>
     )
   }

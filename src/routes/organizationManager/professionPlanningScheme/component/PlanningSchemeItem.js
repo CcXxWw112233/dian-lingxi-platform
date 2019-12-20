@@ -16,7 +16,10 @@ export default class PlanningSchemeItem extends Component {
   }
 
   onSelect = (selectedKeys, e) => {
-    console.log(selectedKeys, e, 'sssssssssss_eee')
+    // console.log(selectedKeys, e, 'sssssssssss_eee')
+    this.setState({
+      selectedKeys
+    })
   }
 
   handleOperator = (key, e) => {
@@ -31,7 +34,7 @@ export default class PlanningSchemeItem extends Component {
 
   // 添加同级 S
   handleAddSibiling = (e) => {
-    console.log(e, 'sssssssss_eeeeeeee')
+    // console.log(e, 'sssssssss_eeeeeeee')
     e && e.stopPropagation()
   }
   // 添加同级 E

@@ -1,7 +1,8 @@
 import {
   saveNounList, getNounList, getPayingStatus, getOrderList, getPermissions, savePermission, getRolePermissions, saveRolePermission, createRole,
   updateRole, deleteRole, copyRole, updateOrganization, setDefaultRole, getCurrentNounPlan, getFnManagementList,
-  setFnManagementStatus, investmentMapAddAdministrators, investmentMapDeleteAdministrators, investmentMapQueryAdministrators
+  setFnManagementStatus, investmentMapAddAdministrators, investmentMapDeleteAdministrators, investmentMapQueryAdministrators,
+  getTemplateList, createTemplete, getTemplateListContainer
 } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
@@ -532,6 +533,54 @@ export default {
         message.info('移除成功', MESSAGE_DURATION_TIME)
       } else {
         message.warn('移除失败', MESSAGE_DURATION_TIME)
+      }
+    },
+
+    // 获取模板列表
+    * getTemplateList({ payload }, { call, put }) {
+      const res = yield call(getTemplateList, payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            templateList: res.data
+          }
+        })
+      }
+    },
+
+    // 获取模板列表内容
+    * getTemplateListContainer({ payload }, { call, put }) {
+      let { template_id } = payload
+      const res = yield call(getTemplateListContainer,{template_id})
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            currentTempleteListContainer: res.data
+          }
+        })
+      }
+    },
+
+    // 创建模板
+    * createTemplete({ payload }, { call, put }) {
+      const res = yield call(createTemplete, payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            isAddNewPlan: false
+          }
+        })
+        yield put({
+          type: 'getTemplateList',
+          payload: {
+
+          }
+        })
+      } else {
+        message.warn(res.message)
       }
     },
 
