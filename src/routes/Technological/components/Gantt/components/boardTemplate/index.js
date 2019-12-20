@@ -4,13 +4,14 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { date_area_height } from '../../constants'
 import { Dropdown, Menu, message, Tree, Icon, Spin } from 'antd'
 import { connect, } from 'dva';
-import { getBoardTemplateList, getBoardTemplateInfo } from '../../../../../../services/technological/gantt'
+import { getBoardTemplateList, getBoardTemplateInfo, createCardByTemplate } from '../../../../../../services/technological/gantt'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
+import { createMilestone } from '../../../../../../services/technological/prjectDetail'
 
 const MenuItem = Menu.Item
 const TreeNode = Tree.TreeNode;
 
-@connect()
+@connect(mapStateToProps)
 export default class BoardTemplate extends Component {
     constructor(props) {
         super(props)
@@ -244,62 +245,127 @@ export default class BoardTemplate extends Component {
         })
     }
     handleDragCompleted = ({ list_id, start_time, end_time }) => {
-        const { drag_node_data } = this.state
-        console.log('sssss_目标位置', { list_id, start_time, end_time })
-        console.log('sssss_拖动对象', drag_node_data)
+        const { dispatch } = this.props
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                current_list_group_id: list_id
+            }
+        })
+        const { drag_node_data: { data_type }, drag_node_data } = this.state
+        // console.log('sssss_目标位置', { list_id, start_time, end_time })
+        // console.log('sssss_拖动对象', drag_node_data)
+        if (data_type == '1') {
+            this.createMilestone({ end_time })
+        } else if (data_type == '2') {
+            this.createCard({ list_id, start_time, end_time })
+        } else {
+
+        }
+    }
+    // 创建里程碑
+    createMilestone = async ({ end_time }) => {
+        const { drag_node_data: { data_name } } = this.state
+        const { dispatch, gantt_board_id } = this.props
+        const params = {
+            board_id: gantt_board_id,
+            deadline: end_time,
+            name: data_name
+        }
+        if (!end_time) {
+            return
+        }
+        const res = await createMilestone(params)
+        if (isApiResponseOk(res)) {
+            dispatch({
+                type: 'gantt/getGttMilestoneList',
+                payload: {
+
+                }
+            })
+        } else {
+            message.error(res.message)
+        }
+    }
+    // 创建任务
+    createCard = async ({ list_id, start_time, end_time }) => {
+        const { dispatch, gantt_board_id } = this.props
+        const { drag_node_data: { data_name, data_id } } = this.state
+
+        const params = {
+            board_id: gantt_board_id,
+            content_id: data_id,
+            due_time: end_time,
+            start_time,
+            list_id: list_id != '0' ? list_id : ''
+        }
+        console.log('sssssparams', params)
+        const res = await createCardByTemplate({ ...params })
+        if (isApiResponseOk(res)) {
+            this.props.insertTaskToListGroup && this.props.insertTaskToListGroup(res.data) //创建任务后，返回的数据手动插入
+        } else {
+            message.error(res.message)
+        }
     }
     render() {
         const { template_data, show_type, selected_template_name, spinning } = this.state
+        const { gantt_board_id } = this.props
         return (
-            <div className={
-                `
-                ${styles.container_init}  
-                ${show_type == '1' && styles.container_show}
-                ${show_type == '2' && styles.container_hide}
-                `
-            } style={{
-                height: this.getHeight(),
-                top: date_area_height
-            }}>
-                <div className={styles.top}>
-                    <Dropdown overlay={this.renderTemplateList()}>
-                        <div className={styles.top_left}>
-                            <div className={`${globalStyles.global_ellipsis} ${styles.name}`}>{selected_template_name}</div>
-                            <div className={`${globalStyles.authTheme} ${styles.down}`}>&#xe7ee;</div>
+            gantt_board_id && gantt_board_id != '0' ?
+                (
+                    <div
+                        className={`${styles.container_init}   ${show_type == '1' && styles.container_show} ${show_type == '2' && styles.container_hide}`}
+                        style={{
+                            height: this.getHeight(),
+                            top: date_area_height
+                        }}>
+                        <div className={styles.top}>
+                            <Dropdown overlay={this.renderTemplateList()}>
+                                <div className={styles.top_left}>
+                                    <div className={`${globalStyles.global_ellipsis} ${styles.name}`}>{selected_template_name}</div>
+                                    <div className={`${globalStyles.authTheme} ${styles.down}`}>&#xe7ee;</div>
+                                </div>
+                            </Dropdown>
+                            <div className={`${globalStyles.authTheme} ${styles.top_right}`}>&#xe781;</div>
                         </div>
-                    </Dropdown>
-                    <div className={`${globalStyles.authTheme} ${styles.top_right}`}>&#xe781;</div>
-                </div>
-                <Spin spinning={spinning}>
-                    <div className={styles.main}>
-                        <Tree
-                            draggable
-                            onDragStart={this.onDragStart}
-                            switcherIcon={
-                                <Icon type="caret-down" style={{ fontSize: 20, color: 'rgba(0,0,0,.45)' }} />
-                            }
-                        >
-                            {this.renderTemplateTree(template_data)}
-                        </Tree>
+                        <Spin spinning={spinning}>
+                            <div className={styles.main}>
+                                <Tree
+                                    draggable
+                                    onDragStart={this.onDragStart}
+                                    switcherIcon={
+                                        <Icon type="caret-down" style={{ fontSize: 20, color: 'rgba(0,0,0,.45)' }} />
+                                    }
+                                >
+                                    {this.renderTemplateTree(template_data)}
+                                </Tree>
 
-                    </div>
-                </Spin>
-                <div
-                    onClick={this.setShowType}
-                    className={
-                        `
-                        ${styles.switchSpin_init}  
-                        ${show_type == '1' && styles.switchSpinShow}
-                        ${show_type == '2' && styles.switchSpinClose}
-                        `
-                    }
-                    style={{
-                        top: (this.getHeight() + date_area_height) / 2
-                    }} >
-                    <div className={`${styles.switchSpin_top}`}></div>
-                    <div className={`${styles.switchSpin_bott}`}></div>
-                </div>
-            </div >
+                            </div>
+                        </Spin>
+                        <div
+                            onClick={this.setShowType}
+                            className={`${styles.switchSpin_init} ${show_type == '1' && styles.switchSpinShow} ${show_type == '2' && styles.switchSpinClose}`}
+                            style={{
+                                top: (this.getHeight() + date_area_height) / 2
+                            }} >
+                            <div className={`${styles.switchSpin_top}`}></div>
+                            <div className={`${styles.switchSpin_bott}`}></div>
+                        </div>
+                    </div >
+                ) : (
+                    <></>
+                )
         )
+    }
+}
+function mapStateToProps({
+    gantt: {
+        datas: {
+            gantt_board_id
+        }
+    }
+}) {
+    return {
+        gantt_board_id
     }
 }

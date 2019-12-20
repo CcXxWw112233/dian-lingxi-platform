@@ -277,7 +277,7 @@ export default class GanttFace extends Component {
               setGoldDateArr={this.setGoldDateArr}
               setScrollPosition={this.setScrollPosition}
             />
-            <BoardTemplate />
+            <BoardTemplate insertTaskToListGroup={this.props.insertTaskToListGroup} />
           </div>
         </div>
         <div className={indexStyles.cardDetail_right}></div>

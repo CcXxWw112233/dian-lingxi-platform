@@ -108,7 +108,7 @@ export async function getBoardTemplateInfo(params) {
 //拖动模板创建任务
 export async function createCardByTemplate(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/card/template/drag/add`,
+    url: `${REQUEST_DOMAIN_BOARD}/card/template/drag/add`,
     method: 'POST',
     data
   })
