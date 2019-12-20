@@ -53,6 +53,7 @@ export default class PlanningSchemeContent extends Component {
             <span style={{ marginLeft: '18px' }} className={`${globalStyles.authTheme} ${is_selected_item && indexStyles.pub_hover}`}>&#xe6f2; 添加子级</span>
           </div>
           <div>
+            <span style={{marginRight: '18px'}} className={`${globalStyles.authTheme} ${is_selected_item && indexStyles.pub_hover}`}>&#xe602; 重命名</span>
             <span className={`${globalStyles.authTheme} ${is_selected_item && indexStyles.pub_hover}`}>&#xe7c3; 删除</span>
           </div>
         </div>

@@ -137,6 +137,14 @@
       .ant-tree-switcher_open, .ant-tree-node-content-wrapper-open {
         margin-bottom: 12px;
       }
+      .ant-tree-node-content-wrapper {
+        width: calc(100% - 2px);
+        height: 30px;
+        line-height: 30px;
+      }
+      .ant-tree-node-content-wrapper-open {
+        width: calc(100% - 4px);
+      }
 
       .ant-collapse-item {
         border-bottom: 0;
@@ -161,12 +169,30 @@
 
 .icon_list {
   display: none;
+  position: absolute;
+  right: 0;
 }
-.panel_header {
+.show_icon {
+  position: relative;
   &:hover {
     .icon_list {
       display: block;
     }
+  }
+  .icon_item {
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.45);
+    margin-right: 12px;
+    font-weight: 900;
+    &:hover {
+      color: #40A9FF;
+    }
+  }
+}
+
+.delete_item {
+  &:hover {
+    color: #FF4D4F !important;
   }
 }
 

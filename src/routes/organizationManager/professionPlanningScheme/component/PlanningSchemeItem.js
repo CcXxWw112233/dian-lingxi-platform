@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
-import { Tree, Collapse, Icon } from 'antd'
+import { Tree, Menu, Tooltip } from 'antd'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 const { TreeNode } = Tree;
-const { Panel } = Collapse;
 
 export default class PlanningSchemeItem extends Component {
 
@@ -16,26 +15,108 @@ export default class PlanningSchemeItem extends Component {
     ],
   }
 
-  onChange = (e) => {
-    console.log(e, 'sssssssss')
+  onSelect = (selectedKeys, e) => {
+    console.log(selectedKeys, e, 'sssssssssss_eee')
+  }
+
+  handleOperator = (key, e) => {
+    const cond = {
+      add_sibiling: (e) => this.handleAddSibiling(e),
+      add_children: (e) => this.handleAddChildren(e),
+      rename: (e) => this.handleRename(e),
+      delete_item: (e) => this.handleDeleteItem(e)
+    }
+    cond[key](e);
+  }
+
+  // 添加同级 S
+  handleAddSibiling = (e) => {
+    console.log(e, 'sssssssss_eeeeeeee')
+    e && e.stopPropagation()
+  }
+  // 添加同级 E
+
+  // 添加子级 S
+  handleAddChildren = (e) => {
+    e && e.stopPropagation()
+  }
+  // 添加子级 E
+
+  // 重命名 S
+  handleRename = (e) => {
+    e && e.stopPropagation()
+  }
+  // 重命名 E
+
+  // 删除 S
+  handleDeleteItem = (e) => {
+    e && e.stopPropagation()
+  }
+  // 删除 E
+
+  renderOperatorIconList = () => {
+    const operatorIconList = [
+      {
+        toolTipText: '添加同级',
+        key: 'add_sibiling',
+        icon: <span>&#xe6f1;</span>,
+        onClick: (e) => this.handleOperator('add_sibiling',e)
+      },
+      {
+        toolTipText: '添加子级',
+        key: 'add_children',
+        icon: <span>&#xe6f2;</span>,
+        onClick: (e) => this.handleOperator('add_children',e)
+      },
+      {
+        toolTipText: '重命名',
+        key: 'rename',
+        icon: <span>&#xe602;</span>,
+        onClick: (e) => this.handleOperator('rename',e)
+      },
+      {
+        toolTipText: '删除',
+        key: 'delete_item',
+        icon: <span>&#xe7c3;</span>,
+        onClick: (e) => this.handleOperator('delete_item',e)
+      },
+    ]
+    return operatorIconList
   }
 
   // 渲染树状列表的title
-  renderPlanTreeTitle = ({ type, name }) => {
+  renderPlanTreeTitle = ({ type, name, id }) => {
     let icon = ''
     if (type == 'lcb') {
       icon = <span className={globalStyles.authTheme} style={{ color: '#FAAD14', fontSize: '18px', marginRight: '6px' }}>&#xe6ef;</span>
     } else {
       icon = <span className={globalStyles.authTheme} style={{ color: '#18B2FF', fontSize: '18px', marginRight: '6px' }}>&#xe6f0;</span>
     }
+    let operatorIconList = this.renderOperatorIconList()
     return (
-      <div className={indexStyles.panel_header} style={{ display: 'flex', alignItems: 'center' }}>
+      <div className={indexStyles.show_icon} style={{ display: 'flex', alignItems: 'center' }}>
         {icon}
-        <span style={{flex:1}}>{name}</span>
-        <div className={indexStyles.icon_list} style={{alignSelf: 'flex-end'}}>
-          <span className={globalStyles.authTheme}>&#xe6f1;</span>
-          <span className={globalStyles.authTheme}>&#xe6f2;</span>
-          <span className={globalStyles.authTheme}>&#xe7c3;</span>
+        <span>{name}</span>
+        <div className={indexStyles.icon_list}>
+          {
+            operatorIconList.map(item => (
+              <Tooltip placement="top" title={item.toolTipText}>
+                <span onClick={item.onClick} key={item.key} className={`${globalStyles.authTheme} ${indexStyles.icon_item} ${item.key == 'delete_item' && indexStyles.delete_item}`}>{item.icon}</span>
+              </Tooltip>
+            ))
+          }
+          {/* <Tooltip placement="top" title="添加同级">
+            <span onClick={this.handleAddSibiling} className={`${globalStyles.authTheme} ${indexStyles.icon_item}`}>&#xe6f1;</span>
+          </Tooltip>
+          <Tooltip placement="top" title="添加子级">
+            <span onClick={this.handleAddChildren} className={`${globalStyles.authTheme} ${indexStyles.icon_item}`}>&#xe6f2;</span>
+          </Tooltip>
+          <Tooltip placement="top" title="重命名">
+            <span onClick={this.handleRename} className={`${globalStyles.authTheme} ${indexStyles.icon_item}`}>&#xe602;</span>
+          </Tooltip>
+          <Tooltip placement="top" title="删除">
+            <span onClick={this.handleDeleteItem} className={`${globalStyles.authTheme} ${indexStyles.icon_item}`}>&#xe7c3;</span>
+          </Tooltip> */}
         </div>
       </div>
     )
@@ -43,33 +124,30 @@ export default class PlanningSchemeItem extends Component {
 
   renderPlanTreeNode = (data) => {
     return data && data.map(item => {
-      let { type, name } = item
+      let { type, name, id } = item
       if (item.child_data && item.child_data.length > 0) {
         return (
-          <Panel forceRender={false} showArrow={true} header={this.renderPlanTreeTitle({ type, name })} key={item.id} dataRef={item} >
-            {/* <div>{this.renderPlanTreeNode(item.child_data)}</div> */}
-            <Collapse onChange={this.onChange} bordered={false}>
-              {this.renderPlanTreeNode(item.child_data)}
-            </Collapse>
-          </Panel>
+          <TreeNode title={this.renderPlanTreeTitle({ type, name, id })} key={item.id} dataRef={item} >
+            {this.renderPlanTreeNode(item.child_data)}
+          </TreeNode>
         );
       } else {
-        return <Panel forceRender={false} className={indexStyles.not_arrow} showArrow={false} header={this.renderPlanTreeTitle({ type, name })} key={item.id} dataRef={item}/>;
+        return <TreeNode title={this.renderPlanTreeTitle({ type, name })} key={item.id} dataRef={item} />;
       }
 
     });
   }
 
-
   render() {
-    const { planningData = [] } = this.state
-
+    const { planningData = [], expandedKeys = [], selectedKeys = [] } = this.state
     return (
       <div className={indexStyles.treeNodeWrapper}>
-        <Collapse bordered={false} onChange={this.onChange}>
+        <Tree
+          blockNode={true}
+          onSelect={this.onSelect}
+        >
           {this.renderPlanTreeNode(planningData)}
-          {/* <Panel showArrow={true} header={this.renderPlanTreeTitle({ type: 'lcb', name: '我的天' })} key={'1'}><div>{this.renderPlanTreeTitle({type: 'lcb',name: 'wodet'})}</div></Panel> */}
-        </Collapse>
+        </Tree>
       </div>
     )
   }
