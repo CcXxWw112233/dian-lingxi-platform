@@ -326,7 +326,7 @@ export default class BoardTemplate extends Component {
                                     <div className={`${globalStyles.authTheme} ${styles.down}`}>&#xe7ee;</div>
                                 </div>
                             </Dropdown>
-                            <div className={`${globalStyles.authTheme} ${styles.top_right}`}>&#xe781;</div>
+                            <div className={`${globalStyles.authTheme} ${styles.top_right}`}>&#xe78e;</div>
                         </div>
                         <Spin spinning={spinning}>
                             <div className={styles.main}>
