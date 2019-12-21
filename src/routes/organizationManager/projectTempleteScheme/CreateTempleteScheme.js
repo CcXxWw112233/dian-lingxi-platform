@@ -23,6 +23,7 @@ export default class CreateTempleteScheme extends Component {
     })
   }
 
+  // 点击新建模板
   handleCreateTemplete = () => {
     const { inputValue } = this.state
     this.props.dispatch({

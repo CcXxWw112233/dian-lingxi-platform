@@ -2,7 +2,7 @@ import {
   saveNounList, getNounList, getPayingStatus, getOrderList, getPermissions, savePermission, getRolePermissions, saveRolePermission, createRole,
   updateRole, deleteRole, copyRole, updateOrganization, setDefaultRole, getCurrentNounPlan, getFnManagementList,
   setFnManagementStatus, investmentMapAddAdministrators, investmentMapDeleteAdministrators, investmentMapQueryAdministrators,
-  getTemplateList, createTemplete, getTemplateListContainer
+  getTemplateList, createTemplete, getTemplateListContainer, createTempleteContainer
 } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
@@ -569,12 +569,6 @@ export default {
       const res = yield call(createTemplete, payload)
       if (isApiResponseOk(res)) {
         yield put({
-          type: 'updateDatas',
-          payload: {
-            isAddNewPlan: false
-          }
-        })
-        yield put({
           type: 'getTemplateList',
           payload: {
 
@@ -583,6 +577,22 @@ export default {
       } else {
         message.warn(res.message)
       }
+    },
+
+    // 创建模板内容
+    * createTempleteContainer({payload}, { call, put }) {
+      let res = yield call(createTempleteContainer, payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'getTemplateListContainer',
+          payload: {
+            template_id: payload.template_id
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
     },
 
   },

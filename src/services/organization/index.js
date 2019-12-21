@@ -256,3 +256,12 @@ export async function createTemplete(data) {
     }
   })
 }
+
+// 创建模板内容
+export async function createTempleteContainer(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template/content`,
+    method: 'POST',
+    data
+  })
+}

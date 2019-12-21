@@ -3,7 +3,7 @@ import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { Input, Button, Breadcrumb, Tooltip, Tree } from 'antd';
 import { connect } from 'dva'
-import TempleteSchemeContent from './component/TempleteSchemeContent'
+import TempleteSchemeTree from './component/TempleteSchemeTree'
 
 @connect(mapStateToProps)
 export default class TempleteSchemeDetail extends Component {
@@ -33,7 +33,7 @@ export default class TempleteSchemeDetail extends Component {
         {/* 头部 */}
         <div>{this.renderOthersSchemeNav()}</div>
         {/* 内容 */}
-        <TempleteSchemeContent />
+        <TempleteSchemeTree />
       </div>
     )
   }
