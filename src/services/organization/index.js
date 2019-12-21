@@ -265,3 +265,21 @@ export async function createTempleteContainer(data) {
     data
   })
 }
+
+// 更新模板内容
+export async function updateTempleteContainer(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template/content`,
+    method: 'PUT',
+    data
+  })
+}
+
+// 删除模板内容
+export async function deleteTempleteContainer(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template/content`,
+    method: 'DELETE',
+    data
+  })
+}
