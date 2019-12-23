@@ -374,6 +374,7 @@ export const isPaymentOrgUser = (_org_id) => {
 
 // (极简模式下)，点击或选择某个项目时，做项目联动，圈子联动和相关规划统一处理
 export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenIm = true }) => {
+  setBoardIdStorage(board_id)
   dispatch({
     type: 'simplemode/updateDatas',
     payload: {

@@ -7,6 +7,7 @@ import { connect, } from 'dva';
 import { getBoardTemplateList, getBoardTemplateInfo, createCardByTemplate } from '../../../../../../services/technological/gantt'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import { createMilestone } from '../../../../../../services/technological/prjectDetail'
+import { getGlobalData } from '../../../../../../utils/businessFunction'
 
 const MenuItem = Menu.Item
 const TreeNode = Tree.TreeNode;
@@ -23,6 +24,7 @@ export default class BoardTemplate extends Component {
                 data_type: '',
                 data_name: ''
             },
+            spinning: false,
             selected_template_id: '',
             selected_template_name: '请选择模板',
             template_list: [],
@@ -36,13 +38,48 @@ export default class BoardTemplate extends Component {
         }
         return '100%'
     }
+    // 初始化数据
+    initState = () => {
+        this.setState({
+            selected_plane_keys: '', //已选择的项目模板
+            show_type: '1', // 0 1 2 //默认关闭 / 出现动画 / 隐藏动画
+            drag_node_data: {
+                data_id: '',
+                data_type: '',
+                data_name: ''
+            },
+            selected_template_id: '',
+            selected_template_name: '请选择模板',
+            template_list: [],
+            template_data: [], //模板数据
+        })
+    }
     componentDidMount() {
         this.listenDrag()
-        this.getBoardTemplateList()
+    }
+    componentWillReceiveProps(nextProps) {
+        const { gantt_board_id: last_gantt_board_id } = this.props
+        const { gantt_board_id: next_gantt_board_id } = nextProps
+        if ((last_gantt_board_id != next_gantt_board_id) && next_gantt_board_id != '0') { //当项目变化并且进入具体项目时
+            this.initState()
+            this.getBoardTemplateList()
+        }
+    }
+    componentWillUnmount() {
+        this.initState()
     }
     // 获取模板列表
     getBoardTemplateList = async () => {
-        const res = await getBoardTemplateList({ _organization_id: localStorage.getItem('OrganizationId') })
+        const OrganizationId = localStorage.getItem('OrganizationId')
+        const aboutBoardOrganizationId = getGlobalData('aboutBoardOrganizationId')
+        if (
+            !OrganizationId ||
+            (OrganizationId == '0' && (!aboutBoardOrganizationId || aboutBoardOrganizationId == '0'))
+        ) {
+            return
+        }
+        const _organization_id = OrganizationId != '0' ? OrganizationId : aboutBoardOrganizationId
+        const res = await getBoardTemplateList({ _organization_id })
         if (isApiResponseOk(res)) {
             const { data } = res
             this.setState({
@@ -53,7 +90,9 @@ export default class BoardTemplate extends Component {
                     selected_template_name: data[0].name,
                     selected_template_id: data[0].id
                 })
-                this.getTemplateInfo(data[0].id)
+                if (data.length) {
+                    this.getTemplateInfo(data[0].id)
+                }
             }
         } else {
             message.error(res.message)
