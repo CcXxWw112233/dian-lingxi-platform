@@ -276,10 +276,10 @@ export async function updateTempleteContainer(data) {
 }
 
 // 删除模板内容
-export async function deleteTempleteContainer(data) {
+export async function deleteTempleteContainer(params) {
   return request({
     url: `${REQUEST_DOMAIN}/org/template/content`,
     method: 'DELETE',
-    data
+    params
   })
 }
