@@ -14,7 +14,7 @@ export default class TempleteSchemeTree extends Component {
   // 初始化的state数据
   initStateDatas = () => {
     this.setState({
-      is_add_sibling: false,
+      is_add_sibiling: false,
       is_add_children: false,
       is_add_rename: false,
       inputValue: '',
@@ -42,10 +42,10 @@ export default class TempleteSchemeTree extends Component {
     const { currentTempleteListContainer = [] } = this.props
     let new_data = [...currentTempleteListContainer]
     const { selected } = e
-    const { is_add_sibling, is_add_children, is_add_rename, selectedKeys: oldSelectedKeys } = this.state
+    const { is_add_sibiling, is_add_children, is_add_rename, selectedKeys: oldSelectedKeys } = this.state
     if (oldSelectedKeys && oldSelectedKeys[0] != selectedKeys[0] && selected) {
       // this.updateSpliceTreeList({ datas: currentTempleteListContainer, currentId: oldSelectedKeys[0], type: 'remove' })
-      if (is_add_sibling) {
+      if (is_add_sibiling) {
         this.updateCancelOrDeleteSibilingTreeList({ datas: currentTempleteListContainer, type: 'add_sibiling' })
       } else if (is_add_children) {
         this.updateCancelOrDeleteChildrenTreeList({ datas: currentTempleteListContainer, type: 'add_children' })
@@ -171,13 +171,13 @@ export default class TempleteSchemeTree extends Component {
     let arr = [...datas]
     const { currentSelectedItemInfo = {} } = this.props
     if (currentSelectedItemInfo && Object.keys(currentSelectedItemInfo) && Object.keys(currentSelectedItemInfo).length == '0' || !currentSelectedItemInfo) return false
-    let { template_data_type, template_id, parent_id } = currentSelectedItemInfo
+    let { template_data_type, template_id, parent_id, id } = currentSelectedItemInfo
     // let obj = { id: 'add_sibiling', name: '', template_data_type: template_data_type, template_id: template_id, parent_id: parent_id, child_content: [] }
     // 得到一个当前元素中所有父级所在的下标位置的数组
     let parentKeysArr = this.getCurrentElementParentKey(arr, currentId);
-
+    let PARENTID = parent_id == '0' ? id : parent_id
     if (parentKeysArr.length == '1') { // 如果说当前点击的是最外层的元素, 那么就直接在当前追加一条
-      arr.splice(parentKeysArr[0] + 1, 0, { id: 'add_sibiling', name: '', template_data_type: template_data_type, template_id: template_id, parent_id: parent_id, child_content: [] })
+      arr.splice(parentKeysArr[0] + 1, 0, { id: 'add_sibiling', name: '', template_data_type: template_data_type, template_id: template_id, parent_id: PARENTID, child_content: [] })
     } else {
       parentKeysArr.splice(-1, 1) // 这里为什么要截取呢, 是因为,只需要找到当前元素的父元素即可
       arr.map((item, i) => {
@@ -222,13 +222,13 @@ export default class TempleteSchemeTree extends Component {
     let { template_data_type, template_id, parent_id, prev_index, id } = currentSelectedItemInfo
     let tempExpandedKeys = [...expandedKeys]
     // let obj = { id: 'add_sibiling', name: '', template_data_type: template_data_type, template_id: template_id, parent_id: parent_id, child_content: [] }
+    let PARENTID = parent_id == '0' ? id : parent_id
     // 得到一个当前元素中所有父级所在的下标位置的数组
     let parentKeysArr = this.getCurrentElementParentKey(arr, currentId);
-    let temp = [].concat(currentSelectedItemInfo.child_content, [{ id: 'add_children', name: '', template_data_type: '2', template_id: template_id, parent_id: parent_id, child_content: [] }])
+    let temp = [].concat(currentSelectedItemInfo.child_content, [{ id: 'add_children', name: '', template_data_type: '2', template_id: template_id, parent_id: PARENTID, child_content: [] }])
 
     // currentSelectedItemInfo.child_content.push()
     if (parentKeysArr.length == '1') { // 如果说当前点击的是最外层的元素, 那么就直接在当前追加一条
-      let PARENTID = parent_id == '0' ? id : parent_id
       arr.splice(prev_index, 1, { ...currentSelectedItemInfo, child_content: this.removeEmptyArrayEle(temp) })
       tempExpandedKeys.push(PARENTID)
     } else {
@@ -488,7 +488,7 @@ export default class TempleteSchemeTree extends Component {
     const { currentTempleteListContainer = [], dispatch } = this.props
     let currentId = selectedKeys[0]
     this.setState({
-      is_add_sibling: true,
+      is_add_sibiling: true,
       selectedKeys: []
     })
     this.updateAddSibilingTreeList({ datas: currentTempleteListContainer, currentId })
@@ -607,6 +607,9 @@ export default class TempleteSchemeTree extends Component {
   handleAddSibiling = (e, id) => {
     e && e.stopPropagation()
     const { currentTempleteListContainer = [] } = this.props
+    this.setState({
+      is_add_sibiling: true
+    })
     this.updateAddSibilingTreeList({ datas: currentTempleteListContainer, currentId: id })
   }
   // 添加同级 E
@@ -615,6 +618,9 @@ export default class TempleteSchemeTree extends Component {
   handleAddChildren = (e, id) => {
     e && e.stopPropagation()
     const { currentTempleteListContainer = [] } = this.props
+    this.setState({
+      is_add_children: true
+    })
     this.updateAddChildrenTreeList({ datas: currentTempleteListContainer, currentId: id })
   }
   // 添加子级 E
