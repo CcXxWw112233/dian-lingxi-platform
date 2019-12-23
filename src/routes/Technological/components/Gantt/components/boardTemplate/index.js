@@ -190,12 +190,12 @@ export default class BoardTemplate extends Component {
     }
     // 渲染拖拽时子任务
     renderChildTaskUI = ({ propername, properlength, node_width = 130 }) => {
-        // console.log('sssssss_demo_innerHTML', document.getElementById('save_drag_child_card_parent').innerHTML)
+        const task_icon = document.getElementById('save_child_card_icon').children[0].className //编译后的iconfont classname
         // console.log('ssssss_propername', propername)
         let string =
             '<div style="display: flex; align-items: center; min-width:' + node_width + 'px">' +
             '<div style="display: flex; align-items: center;">' +
-            '<div class="globalClassName__authTheme___2nVHl" style="color: rgb(24, 178, 255); font-size: 18px; margin-right: 6px;">' +
+            '<div class="' + task_icon + '" style="color: rgb(24, 178, 255); font-size: 18px; margin-right: 6px;">' +
             '' +
             '</div>' +
             '<div>' + propername + '</div>' +
@@ -212,16 +212,16 @@ export default class BoardTemplate extends Component {
 
         document.addEventListener("dragstart", function (event) {
             drag_init_inner_html = event.target.innerHTML
-            event.target.style.opacity = "0";
+            // event.target.style.opacity = "0";
             const { propername, propertype, properlength } = event.target.children[0].children[0].dataset //存储在渲染名称的ui里面，拖拽的时候拿出来，做改变ui（仅限于子任务）
             if (propertype == '2') { //当拖拽的是子任务的话，需要改变节点内容为 （‘父任务名称+父任务下的子任务个数’）
                 event.target.innerHTML = that.renderChildTaskUI({ propername, propertype, properlength, node_width: event.target.clientWidth - 10 })
-                event.target.style.opacity = "0";
+                // event.target.style.opacity = "0";
                 setTimeout(() => {
                     event.target.innerHTML = drag_init_inner_html
-                    setTimeout(() => {
-                        event.target.style.opacity = "1";
-                    }, 300)
+                    // setTimeout(() => {
+                    //     event.target.style.opacity = "1";
+                    // }, 300)
                 }, 100)
             }
 
@@ -353,15 +353,12 @@ export default class BoardTemplate extends Component {
                             </Dropdown>
                             <div className={`${globalStyles.authTheme} ${styles.top_right}`}>&#xe78e;</div>
                         </div>
-                        {/* 拖拽子任务时，把相似父任务ui的dom节点渲染进来，该拖拽子任务的ui和这个相同 */}
-                        {/* <div
-                            // style={{ display: 'none' }}
-                            id={'save_drag_child_card_parent'}>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                {this.renderTreeItemName({ template_data_type: drag_node_data.data_type, name: drag_node_data.data_name })}
-                                <div> 等项</div>
-                            </div>
-                        </div> */}
+                        {/* 拖拽子任务时，用于存放任务图标的ui,做dom操作 */}
+                        <div
+                            style={{ display: 'none' }}
+                            id={'save_child_card_icon'}>
+                            <div className={globalStyles.authTheme} style={{ color: '#18B2FF', fontSize: 18, marginRight: 6 }} >&#xe6f0;</div>
+                        </div>
                         {/* 主区 */}
                         <Spin spinning={spinning}>
                             <div className={styles.main}>
