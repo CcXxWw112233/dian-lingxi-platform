@@ -361,7 +361,6 @@ export default class CommentListItem extends React.Component {
   commentNews = (data) => {
     const { id: local_user_id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     const { action, create_time, text, id } = data
-    const { id: local_user_id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     let container = ''
     let messageContainer = (<div></div>)
     switch (action) {
