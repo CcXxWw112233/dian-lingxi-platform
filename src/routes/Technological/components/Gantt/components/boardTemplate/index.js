@@ -124,12 +124,13 @@ export default class BoardTemplate extends Component {
         }
         return (
             <div
+                title={name}
                 style={{ display: 'flex', alignItems: 'center' }}
                 data-propertype={template_data_type}
                 data-properlength={parent_content_length}
                 data-propername={parrent_name}>
                 {icon}
-                <div>{name}</div>
+                <div style={{ maxWidth: 112, }} className={`${globalStyles.global_ellipsis}`}>{name}</div>
             </div>
         )
     }
@@ -188,18 +189,18 @@ export default class BoardTemplate extends Component {
         })
     }
     // 渲染拖拽时子任务
-    renderChildTaskUI = ({ propername, properlength }) => {
+    renderChildTaskUI = ({ propername, properlength, node_width = 130 }) => {
         // console.log('sssssss_demo_innerHTML', document.getElementById('save_drag_child_card_parent').innerHTML)
-        console.log('ssssss_propername', propername)
+        // console.log('ssssss_propername', propername)
         let string =
-            '<div style="display: flex; align-items: center;">' +
+            '<div style="display: flex; align-items: center; min-width:' + node_width + 'px">' +
             '<div style="display: flex; align-items: center;">' +
             '<div class="globalClassName__authTheme___2nVHl" style="color: rgb(24, 178, 255); font-size: 18px; margin-right: 6px;">' +
             '' +
             '</div>' +
             '<div>' + propername + '</div>' +
             '</div>' +
-            '<div>' + `${properlength > 0 ? ('等' + properlength + '项') : ''}` + '</div>' +
+            '<div>' + `${properlength > 0 ? ('&nbsp; ' + '&nbsp;' + '等' + properlength + '项') : ''}` + '</div>' +
             '</div>'
         // string= '<div>asda</div>'
         return string
@@ -209,13 +210,12 @@ export default class BoardTemplate extends Component {
         const that = this
         let drag_init_inner_html = '' //用来存储所拖拽的对象的内容
 
-        document.addEventListener("dragstart", function (event) {            
+        document.addEventListener("dragstart", function (event) {
             drag_init_inner_html = event.target.innerHTML
             event.target.style.opacity = "0";
             const { propername, propertype, properlength } = event.target.children[0].children[0].dataset //存储在渲染名称的ui里面，拖拽的时候拿出来，做改变ui（仅限于子任务）
-
             if (propertype == '2') { //当拖拽的是子任务的话，需要改变节点内容为 （‘父任务名称+父任务下的子任务个数’）
-                event.target.innerHTML = that.renderChildTaskUI({ propername, propertype, properlength })
+                event.target.innerHTML = that.renderChildTaskUI({ propername, propertype, properlength, node_width: event.target.clientWidth - 10 })
                 event.target.style.opacity = "0";
                 setTimeout(() => {
                     event.target.innerHTML = drag_init_inner_html
