@@ -2,7 +2,7 @@ import {
   saveNounList, getNounList, getPayingStatus, getOrderList, getPermissions, savePermission, getRolePermissions, saveRolePermission, createRole,
   updateRole, deleteRole, copyRole, updateOrganization, setDefaultRole, getCurrentNounPlan, getFnManagementList,
   setFnManagementStatus, investmentMapAddAdministrators, investmentMapDeleteAdministrators, investmentMapQueryAdministrators,
-  getTemplateList, createTemplete, getTemplateListContainer, createTempleteContainer, deleteTempleteContainer, updateTempleteContainer
+  getTemplateList, createTemplete, deleteTemplete, getTemplateListContainer, createTempleteContainer, deleteTempleteContainer, updateTempleteContainer
 } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
@@ -568,6 +568,27 @@ export default {
     * createTemplete({ payload }, { call, put }) {
       const res = yield call(createTemplete, payload)
       if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('创建模板成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getTemplateList',
+          payload: {
+
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+    },
+
+    // 删除模板
+    * deleteTemplete({ payload }, { call, put }) {
+      const res = yield call(deleteTemplete, payload)
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('删除模板成功', MESSAGE_DURATION_TIME)
+        }, 200)
         yield put({
           type: 'getTemplateList',
           payload: {
@@ -583,6 +604,9 @@ export default {
     * createTempleteContainer({payload}, { call, put }) {
       let res = yield call(createTempleteContainer, payload)
       if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('创建成功', MESSAGE_DURATION_TIME)
+        }, 200)
         yield put({
           type: 'getTemplateListContainer',
           payload: {
@@ -600,6 +624,9 @@ export default {
       let { id, name, template_id } = payload
       let res = yield call(updateTempleteContainer, {id,name})
       if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('更新成功', MESSAGE_DURATION_TIME)
+        }, 200)
         yield put({
           type: 'getTemplateListContainer',
           payload: {
@@ -614,6 +641,9 @@ export default {
       let { id, template_id } = payload
       let res = yield call(deleteTempleteContainer, {id})
       if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('删除成功', MESSAGE_DURATION_TIME)
+        }, 200)
         yield put({
           type: 'getTemplateListContainer',
           payload: {

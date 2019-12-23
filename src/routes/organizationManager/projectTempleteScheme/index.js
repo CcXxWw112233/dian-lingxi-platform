@@ -5,7 +5,7 @@ import { ORGANIZATION, PROJECTS } from "@/globalset/js/constant";
 import { currentNounPlanFilterName } from "@/utils/businessFunction";
 import planning from '../../../assets/organizationManager/planning.png'
 import { connect } from 'dva'
-import { Tooltip } from 'antd';
+import { Tooltip, Modal } from 'antd';
 import TempleteSchemeDetail from './TempleteSchemeDetail'
 import CreateTempleteScheme from './CreateTempleteScheme'
 
@@ -20,7 +20,6 @@ export default class index extends Component {
   }
 
   componentDidMount() {
-    console.log("进来了", 'sssssssss')
     this.props.dispatch({
       type: 'organizationManager/getTemplateList',
       payload: {
@@ -42,6 +41,12 @@ export default class index extends Component {
           template_id: id
         }
       })
+      this.props.dispatch({
+        type: 'organizationManager/updateDatas',
+        payload: {
+          currentTempleteId: id
+        }
+      })
     }
 
     this.setState({
@@ -49,6 +54,26 @@ export default class index extends Component {
       current_templete_id: id,
       current_templete_name: name
     })
+  }
+
+  handleDeleteTemplete = (e, id) => {
+    e && e.stopPropagation()
+    const that = this
+    Modal.confirm({
+      title: '删除模板',
+      content: '确认删除该模板吗？',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        this.props.dispatch({
+          type: 'organizationManager/deleteTemplete',
+          payload: {
+            id: id
+          }
+        })
+      }
+    });
+    
   }
 
   // 渲染初始列表状态
@@ -70,7 +95,10 @@ export default class index extends Component {
                 </div>
               ) : (
                   <div key={item.id} style={{ position: 'relative' }} className={`${indexStyles.margin_right} ${indexStyles.others_list}`} onClick={() => { this.handleOperatorSchemeList({ id, name }) }}>
-                    <Tooltip placement="top" title={item.name}>
+                    <Tooltip title="删除模板" placement="top">
+                      <span onClick={(e) => { this.handleDeleteTemplete(e, item.id) }} className={`${globalStyles.authTheme} ${indexStyles.del_temp}`}>&#xe7c3;</span>
+                    </Tooltip>
+                    <Tooltip placement="bottom" title={item.name}>
                       <span className={indexStyles.plan_name}>{item.name}</span>
                     </Tooltip>
                   </div>

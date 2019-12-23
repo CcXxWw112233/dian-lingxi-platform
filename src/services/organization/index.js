@@ -257,6 +257,15 @@ export async function createTemplete(data) {
   })
 }
 
+// 删除模板
+export async function deleteTemplete(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template`,
+    method: 'DELETE',
+    params
+  })
+}
+
 // 创建模板内容
 export async function createTempleteContainer(data) {
   return request({

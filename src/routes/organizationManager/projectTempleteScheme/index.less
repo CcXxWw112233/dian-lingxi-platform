@@ -78,6 +78,19 @@
     white-space: nowrap;
     text-overflow: ellipsis;
   }
+  .del_temp {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: none;
+    &:hover {
+      color: #FF4D4F;
+    }
+  }
+}
+
+.others_list:hover .del_temp {
+  display: block;
 }
 
 .plan_back {
@@ -229,5 +242,13 @@
   &:hover {
     color: #FF4D4F !important;
   }
+}
+
+.empty_data {
+  text-align: center;
+  color: #1890FF;
+  line-height: 40px;
+  font-weight: 900;
+  cursor: pointer;
 }
 
