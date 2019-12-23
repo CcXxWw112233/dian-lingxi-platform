@@ -227,10 +227,14 @@ export const setOrganizationIdStorage = (value) => {
   localStorage.setItem('OrganizationId', value)
 }
 //设置board_id localstorage缓存, 同时存储board_id对应的org_id
-export const setBoardIdStorage = (value) => {
+export const setBoardIdStorage = (value, param_org_id) => {
   setGlobalData('storageCurrentOperateBoardId', value)
   // 从缓存中拿到相应的board_id对应上org_id，存储当前项目的org_id => aboutBoardOrganizationId,
   // 如果当前组织确定（非全部组织），则返回当前组织
+  if (param_org_id) {
+    setGlobalData('aboutBoardOrganizationId', param_org_id)
+    return
+  }
   const OrganizationId = localStorage.getItem('OrganizationId', value)
   if (OrganizationId && OrganizationId != '0') {
     setGlobalData('aboutBoardOrganizationId', OrganizationId)
@@ -373,8 +377,8 @@ export const isPaymentOrgUser = (_org_id) => {
 }
 
 // (极简模式下)，点击或选择某个项目时，做项目联动，圈子联动和相关规划统一处理
-export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenIm = true }) => {
-  setBoardIdStorage(board_id)
+export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenIm = true, org_id, is_new_board }) => {
+  setBoardIdStorage(board_id, org_id)
   dispatch({
     type: 'simplemode/updateDatas',
     payload: {
@@ -387,7 +391,8 @@ export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenI
   dispatch({
     type: 'gantt/updateDatas',
     payload: {
-      gantt_board_id: board_id || '0'
+      gantt_board_id: board_id || '0',
+      is_new_board
     }
   })
   // console.log('sssss', window.location)

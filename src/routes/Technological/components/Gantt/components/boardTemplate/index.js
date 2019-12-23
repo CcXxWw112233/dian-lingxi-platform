@@ -18,7 +18,7 @@ export default class BoardTemplate extends Component {
         super(props)
         this.state = {
             selected_plane_keys: '', //已选择的项目模板
-            show_type: '1', // 0 1 2 //默认关闭 / 出现动画 / 隐藏动画
+            show_type: '0', // 0 1 2 //默认关闭 / 出现动画 / 隐藏动画
             drag_node_data: {
                 data_id: '',
                 data_type: '',
@@ -39,10 +39,10 @@ export default class BoardTemplate extends Component {
         return '100%'
     }
     // 初始化数据
-    initState = () => {
+    initState = (is_new_board) => {
         this.setState({
             selected_plane_keys: '', //已选择的项目模板
-            show_type: '1', // 0 1 2 //默认关闭 / 出现动画 / 隐藏动画
+            show_type: is_new_board ? '1' : '0', // 0 1 2 //默认关闭 / 出现动画 / 隐藏动画
             drag_node_data: {
                 data_id: '',
                 data_type: '',
@@ -59,14 +59,11 @@ export default class BoardTemplate extends Component {
     }
     componentWillReceiveProps(nextProps) {
         const { gantt_board_id: last_gantt_board_id } = this.props
-        const { gantt_board_id: next_gantt_board_id } = nextProps
+        const { gantt_board_id: next_gantt_board_id, is_new_board } = nextProps
         if ((last_gantt_board_id != next_gantt_board_id) && next_gantt_board_id != '0') { //当项目变化并且进入具体项目时
-            this.initState()
+            this.initState(is_new_board)
             this.getBoardTemplateList()
         }
-    }
-    componentWillUnmount() {
-        this.initState()
     }
     // 获取模板列表
     getBoardTemplateList = async () => {
@@ -432,11 +429,13 @@ export default class BoardTemplate extends Component {
 function mapStateToProps({
     gantt: {
         datas: {
-            gantt_board_id
+            gantt_board_id,
+            is_new_board
         }
     }
 }) {
     return {
-        gantt_board_id
+        gantt_board_id,
+        is_new_board
     }
 }
