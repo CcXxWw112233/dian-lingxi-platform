@@ -405,7 +405,7 @@ export async function getShareCardDetail(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/card/detail/share/${params.id}`,
     method: 'GET',
-    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_CARD, params.id),
     params
   });
 }

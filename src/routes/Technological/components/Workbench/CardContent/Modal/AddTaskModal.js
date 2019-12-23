@@ -349,10 +349,10 @@ class AddTaskModal extends Component {
         }
       })
     )
-      .then(taskId => {
-        if (!taskId) throw new Error('创建任务失败');
+      .then(data => {
+        if (!data) throw new Error('创建任务失败');
         const { board_id, name } = paramObj;
-        this.showCreateTaskSuccessNote(board_id, taskId, name);
+        this.showCreateTaskSuccessNote(board_id, data.id, name);
       })
       .then(() =>
         dispatch({
@@ -383,10 +383,10 @@ class AddTaskModal extends Component {
         }
       })
     )
-      .then(taskId => {
-        if (!taskId) throw new Error('创建任务失败');
+      .then(data => {
+        if (!data) throw new Error('创建任务失败');
         const { board_id, name } = paramObj;
-        this.showCreateTaskSuccessNote(board_id, taskId, name);
+        this.showCreateTaskSuccessNote(board_id, data.id, name);
       })
       .then(() => {
         dispatch({
@@ -408,6 +408,7 @@ class AddTaskModal extends Component {
     return taskTypeObj[taskType];
   };
   showCreateTaskSuccessNote = (board_id, id, name) => {
+    return
     const handleJump = e => {
       if (e) e.stopPropagation();
       notification.destroy();
