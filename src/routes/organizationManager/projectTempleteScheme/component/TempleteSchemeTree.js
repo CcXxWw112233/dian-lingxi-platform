@@ -33,7 +33,6 @@ export default class TempleteSchemeTree extends Component {
     let new_data = [...currentTempleteListContainer]
     const { selected } = e
     const { is_add_sibling, is_add_children, is_add_rename, selectedKeys: oldSelectedKeys } = this.state
-    console.log(oldSelectedKeys, selectedKeys, selected, 'ssssssss_compare')
     if (oldSelectedKeys && oldSelectedKeys[0] != selectedKeys[0]) {
       // this.updateSpliceTreeList({ datas: currentTempleteListContainer, currentId: oldSelectedKeys[0], type: 'remove' })
       if (is_add_sibling) {
@@ -63,7 +62,8 @@ export default class TempleteSchemeTree extends Component {
   whetherDisabled =  () => {
     const { selectedKeys = [], is_add_rename } = this.state
     let flag
-    flag = selectedKeys && selectedKeys.length && !is_add_rename
+    // 不存在选中 或者说 重命名为 true 的时候 表示禁用
+    flag = !(selectedKeys && selectedKeys.length) || is_add_rename
     return flag
   }
 
@@ -236,10 +236,10 @@ export default class TempleteSchemeTree extends Component {
       return content
     }
     const { currentSelectedItemInfo = {}, dispatch } = this.props
-    let { id: currentId, prev_index } = currentSelectedItemInfo
+    let { id, prev_index } = currentSelectedItemInfo
     // let obj = { id: 'add_sibiling', name: '', template_data_type: template_data_type, template_id: template_id, parent_id: parent_id, child_content: [] }
     // 得到一个当前元素中所有父级所在的下标位置的数组
-    let parentKeysArr = this.getCurrentElementParentKey(arr, currentId);
+    let parentKeysArr = this.getCurrentElementParentKey(arr, id);
 
     if (parentKeysArr.length == '1') { // 如果说当前点击的是最外层的元素, 那么就直接在当前追加一条
       let flag = whetherExistenceOthersType(arr)
@@ -249,7 +249,8 @@ export default class TempleteSchemeTree extends Component {
         dispatch({
           type: 'organizationManager/updateDatas',
           payload: {
-            currentTempleteListContainer: arr
+            currentTempleteListContainer: arr,
+            currentSelectedItemInfo: {}
           }
         })
       }
@@ -273,7 +274,8 @@ export default class TempleteSchemeTree extends Component {
       dispatch({
         type: 'organizationManager/updateDatas',
         payload: {
-          currentTempleteListContainer: arr
+          currentTempleteListContainer: arr,
+          currentSelectedItemInfo: {}
         }
       })
     }
@@ -295,10 +297,10 @@ export default class TempleteSchemeTree extends Component {
     }
     const { expandedKeys = [] } = this.state
     const { currentSelectedItemInfo = {}, dispatch } = this.props
-    let { id: currentId, prev_index, parent_id } = currentSelectedItemInfo
+    let { id, prev_index, parent_id } = currentSelectedItemInfo
     // let obj = { id: 'add_sibiling', name: '', template_data_type: template_data_type, template_id: template_id, parent_id: parent_id, child_content: [] }
     // 得到一个当前元素中所有父级所在的下标位置的数组
-    let parentKeysArr = this.getCurrentElementParentKey(arr, currentId);
+    let parentKeysArr = this.getCurrentElementParentKey(arr, id);
 
     if (parentKeysArr.length == '1') { // 如果说当前点击的是最外层的元素, 那么就直接在当前追加一条
       let flag = whetherExistenceOthersType(arr[parentKeysArr[0]].child_content)
@@ -308,10 +310,11 @@ export default class TempleteSchemeTree extends Component {
         dispatch({
           type: 'organizationManager/updateDatas',
           payload: {
-            currentTempleteListContainer: arr
+            currentTempleteListContainer: arr,
+            currentSelectedItemInfo: {}
           }
         })
-        let PARENTID = parent_id == '0' ? currentId : parent_id
+        let PARENTID = parent_id == '0' ? id : parent_id
         if (expandedKeys.indexOf(PARENTID) != -1) {
           let tempExpandedKeys = [...expandedKeys]
           tempExpandedKeys = tempExpandedKeys.filter(item => item != PARENTID)
@@ -347,7 +350,8 @@ export default class TempleteSchemeTree extends Component {
       dispatch({
         type: 'organizationManager/updateDatas',
         payload: {
-          currentTempleteListContainer: arr
+          currentTempleteListContainer: arr,
+          currentSelectedItemInfo: {}
         }
       })
     }
@@ -357,14 +361,15 @@ export default class TempleteSchemeTree extends Component {
    * 对已经存在的 元素进行取消删除等操作
    */
   updateCancelOrDeleteAlreadyExistsTreeList = ({datas, type}) => {
+    console.log(type, 'ssssssss_type')
     let arr = [...datas]
     const { currentSelectedItemInfo = {}, dispatch } = this.props
-    let { id: currentId, prev_index, template_id } = currentSelectedItemInfo
+    let { id, prev_index, template_id } = currentSelectedItemInfo
     if (type == 'DELETE') {
       this.props.dispatch({
         type: 'organizationManager/deleteTempleteContainer',
         payload: {
-          id: currentId,
+          id: id,
           template_id
         }
       })
@@ -372,10 +377,11 @@ export default class TempleteSchemeTree extends Component {
     }
     // let obj = { id: 'add_sibiling', name: '', template_data_type: template_data_type, template_id: template_id, parent_id: parent_id, child_content: [] }
     // 得到一个当前元素中所有父级所在的下标位置的数组
-    let parentKeysArr = this.getCurrentElementParentKey(arr, currentId);
+    let parentKeysArr = this.getCurrentElementParentKey(arr, id);
 
     if (parentKeysArr.length == '1') { // 如果说当前点击的是最外层的元素, 那么就直接在当前追加一条
-      arr = this.rename({datas: arr, currentId, flag: false})
+      // arr = this.rename({datas: arr, id, flag: false})
+      arr.splice(parentKeysArr[0], 1, { ...currentSelectedItemInfo, is_rename: false })
     } else {
       parentKeysArr.splice(-1, 1) // 这里为什么要截取呢, 是因为,只需要找到当前元素的父元素即可
       arr.map((item, i) => {
@@ -389,10 +395,12 @@ export default class TempleteSchemeTree extends Component {
         return item;
       });
     }
+    console.log(arr, 'ssssssss_arrr')
     dispatch({
       type: 'organizationManager/updateDatas',
       payload: {
-        currentTempleteListContainer: arr
+        currentTempleteListContainer: arr,
+        currentSelectedItemInfo: {}
       }
     })
     this.setState({
@@ -406,7 +414,7 @@ export default class TempleteSchemeTree extends Component {
   handleWrapperAddSibiling = (e) => {
     e && e.stopPropagation()
     const { selectedKeys = [] } = this.state
-    if (!this.whetherDisabled()) return
+    if (this.whetherDisabled()) return
     const { currentTempleteListContainer = [], dispatch } = this.props
     let currentId = selectedKeys[0]
     this.setState({
@@ -420,7 +428,7 @@ export default class TempleteSchemeTree extends Component {
   handleWrapperAddChildren = (e) => {
     e && e.stopPropagation()
     const { selectedKeys = [], expandedKeys = [] } = this.state
-    if (!this.whetherDisabled()) return
+    if (this.whetherDisabled()) return
     const { currentTempleteListContainer = [] } = this.props
     let currentId = selectedKeys[0]
     this.setState({
@@ -445,6 +453,7 @@ export default class TempleteSchemeTree extends Component {
     let parentKeysArr = this.getCurrentElementParentKey(arr, currentId);
 
     if (parentKeysArr.length == '1') { // 如果说当前点击的是最外层的元素, 那么就直接在当前追加一条
+      // debugger
       arr.splice(parentKeysArr[0], 1, { ...currentSelectedItemInfo, is_rename: flag })
     } else {
       parentKeysArr.splice(-1, 1) // 这里为什么要截取呢, 是因为,只需要找到当前元素的父元素即可
@@ -466,7 +475,7 @@ export default class TempleteSchemeTree extends Component {
   handleWrapperRename = (e) => {
     e && e.stopPropagation()
     const { selectedKeys = [] } = this.state
-    if (!this.whetherDisabled()) return
+    if (this.whetherDisabled()) return
     const { currentTempleteListContainer = [], dispatch } = this.props
     let currentId = selectedKeys[0]
     let newArr = this.rename({datas: currentTempleteListContainer, currentId, flag: true})
@@ -502,38 +511,62 @@ export default class TempleteSchemeTree extends Component {
    * @param {String} key 当前操作的字段名称
    * @param {Object} e 当前事件对象 
    */
-  handleOperator = (key, e) => {
-    const cond = {
-      add_sibiling: (e) => this.handleAddSibiling(e),
-      add_children: (e) => this.handleAddChildren(e),
-      rename: (e) => this.handleRename(e),
-      delete_item: (e) => this.handleDeleteItem(e)
+  handleOperator = (key, e, id) => {
+    e && e.stopPropagation()
+    const { currentTempleteListContainer = [] } = this.props
+    if (id) {
+      let currentSelectedItemInfo = this.recursion(currentTempleteListContainer, id)
+      this.props.dispatch({
+        type: 'organizationManager/updateDatas',
+        payload: {
+          currentSelectedItemInfo // 需要点击的时候保存一个当前对象
+        }
+      })
     }
-    cond[key](e);
+    const cond = {
+      add_sibiling: (e) => this.handleAddSibiling(e, id),
+      add_children: (e) => this.handleAddChildren(e, id),
+      rename: (e) => this.handleRename(e, id),
+      delete_item: (e) => this.handleDeleteItem(e, id)
+    }
+    setTimeout(() => {cond[key](e)},200);
   }
 
   // 添加同级 S
-  handleAddSibiling = (e) => {
-    // console.log(e, 'sssssssss_eeeeeeee')
+  handleAddSibiling = (e,id) => {
     e && e.stopPropagation()
+    const { currentTempleteListContainer = [] } = this.props
+    this.updateAddSibilingTreeList({datas: currentTempleteListContainer, currentId: id})
   }
   // 添加同级 E
 
   // 添加子级 S
-  handleAddChildren = (e) => {
+  handleAddChildren = (e,id) => {
     e && e.stopPropagation()
+    const { currentTempleteListContainer = [] } = this.props
+    this.updateAddChildrenTreeList({datas: currentTempleteListContainer, currentId: id})
   }
   // 添加子级 E
 
   // 重命名 S
-  handleRename = (e) => {
+  handleRename = (e,id) => {
     e && e.stopPropagation()
+    const { currentTempleteListContainer = [], dispatch } = this.props
+    let newArr = this.rename({datas: currentTempleteListContainer, currentId:id, flag: true})
+    this.props.dispatch({
+      type: 'organizationManager/updateDatas',
+      payload: {
+        currentTempleteListContainer: newArr
+      }
+    })
   }
   // 重命名 E
 
   // 删除 S
-  handleDeleteItem = (e) => {
+  handleDeleteItem = (e,id) => {
     e && e.stopPropagation()
+    const { currentTempleteListContainer = [] } = this.props
+    this.updateCancelOrDeleteAlreadyExistsTreeList({datas: currentTempleteListContainer, id, type: 'DELETE'})
   }
   // 删除 E
 
@@ -590,31 +623,31 @@ export default class TempleteSchemeTree extends Component {
   // --------------------------  新增元素的输入框等事件 E -------------------------------------
 
   // 每一个Icon小图标的操作
-  renderOperatorIconList = () => {
+  renderOperatorIconList = (id) => {
     const operatorIconList = [
       {
         toolTipText: '添加同级',
         key: 'add_sibiling',
         icon: <span>&#xe6f1;</span>,
-        onClick: (e) => this.handleOperator('add_sibiling', e)
+        onClick: (e) => this.handleOperator('add_sibiling', e, id)
       },
       {
         toolTipText: '添加子级',
         key: 'add_children',
         icon: <span>&#xe6f2;</span>,
-        onClick: (e) => this.handleOperator('add_children', e)
+        onClick: (e) => this.handleOperator('add_children', e,id)
       },
       {
         toolTipText: '重命名',
         key: 'rename',
         icon: <span>&#xe602;</span>,
-        onClick: (e) => this.handleOperator('rename', e)
+        onClick: (e) => this.handleOperator('rename', e, id)
       },
       {
         toolTipText: '删除',
         key: 'delete_item',
         icon: <span>&#xe7c3;</span>,
-        onClick: (e) => this.handleOperator('delete_item', e)
+        onClick: (e) => this.handleOperator('delete_item', e, id)
       },
     ]
     return operatorIconList
@@ -628,7 +661,7 @@ export default class TempleteSchemeTree extends Component {
     } else if (type == '2') {
       icon = <span className={globalStyles.authTheme} style={{ color: '#18B2FF', fontSize: '18px', marginRight: '6px' }}>&#xe6f0;</span>
     }
-    let operatorIconList = this.renderOperatorIconList()
+    let operatorIconList = this.renderOperatorIconList(id)
     return (
       <div className={indexStyles.show_icon} style={{ display: 'flex', alignItems: 'center' }}>
         {
