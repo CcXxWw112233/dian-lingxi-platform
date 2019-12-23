@@ -115,7 +115,7 @@ export default class BoardTemplate extends Component {
             </Menu>
         )
     }
-    renderTreeItemName = ({ template_data_type, name }) => {
+    renderTreeItemName = ({ template_data_type, name, parent_content_length = 0, parrent_name }) => {
         let icon = ''
         if (template_data_type == '1') {
             icon = <div className={globalStyles.authTheme} style={{ color: '#FAAD14', fontSize: 18, marginRight: 6 }}>&#xe6ef;</div>
@@ -123,38 +123,48 @@ export default class BoardTemplate extends Component {
             icon = <div className={globalStyles.authTheme} style={{ color: '#18B2FF', fontSize: 18, marginRight: 6 }} >&#xe6f0;</div>
         }
         return (
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div
+                style={{ display: 'flex', alignItems: 'center' }}
+                data-propertype={template_data_type}
+                data-properlength={parent_content_length}
+                data-propername={parrent_name}>
                 {icon}
                 <div>{name}</div>
             </div>
         )
     }
-    renderTemplateTree = (data, parent_type, parrent_id, parrent_name) => {
+    // 渲染树
+    renderTemplateTree = (data, parent_type, parrent_id, parrent_name, parent_content_length = 0, ) => {
+        const is_child_task = parent_type == '2'
         return (
             data.map(item => {
                 const { name, template_data_type, child_content = [], id } = item
+                const params = {
+                    template_data_type,
+                    name,
+                    parrent_name: is_child_task ? parrent_name : name,
+                    parent_content_length: is_child_task ? parent_content_length : child_content.length //如果是父类任务，就取子任务长度，如果是子任务，就取父类任务的全部子任务长度
+                }
                 if (child_content) {
                     return (
                         <TreeNode
                             data_type={template_data_type}
-                            data_id={parent_type == '2' ? parrent_id : id} //当父级是任务的时候，默认存储的是父类任务
-                            data_name={parent_type == '2' ? parrent_name : name}
-                            // data_parent_length={child_content.length}
+                            data_id={is_child_task ? parrent_id : id} //当父级是任务的时候，默认存储的是父类任务
+                            data_name={is_child_task ? parrent_name : name}
                             icon={<i className={globalStyles.authTheme}>&#xe6f0;</i>}
                             key={id}
-                            title={this.renderTreeItemName({ template_data_type, name })}
+                            title={this.renderTreeItemName(params)}
                             selectable={false}>
-                            {this.renderTemplateTree(child_content, template_data_type, id, name)}
+                            {this.renderTemplateTree(child_content, template_data_type, id, name, child_content.length)}
                         </TreeNode>
                     );
                 }
                 return <TreeNode
                     data_type={template_data_type}
                     data_id={id}
-                    data_name={name}
-                    // data_parent_length={child_content.length}
+                    data_name={is_child_task ? parrent_name : name}
                     key={id}
-                    title={this.renderTreeItemName({ template_data_type, name })}
+                    title={this.renderTreeItemName(params)}
                     selectable={false}
                     icon={<Icon type="caret-down" style={{ fontSize: 20, color: 'rgba(0,0,0,.45)' }} />}
                 />;
@@ -177,28 +187,42 @@ export default class BoardTemplate extends Component {
             show_type: new_type
         })
     }
+    // 渲染拖拽时子任务
+    renderChildTaskUI = ({ propername, properlength }) => {
+        // console.log('sssssss_demo_innerHTML', document.getElementById('save_drag_child_card_parent').innerHTML)
+        console.log('ssssss_propername', propername)
+        let string =
+            '<div style="display: flex; align-items: center;">' +
+            '<div style="display: flex; align-items: center;">' +
+            '<div class="globalClassName__authTheme___2nVHl" style="color: rgb(24, 178, 255); font-size: 18px; margin-right: 6px;">' +
+            '' +
+            '</div>' +
+            '<div>' + propername + '</div>' +
+            '</div>' +
+            '<div>' + `${properlength > 0 ? ('等' + properlength + '项') : ''}` + '</div>' +
+            '</div>'
+        // string= '<div>asda</div>'
+        return string
+    }
     // 处理document的drag事件
     listenDrag = () => {
         const that = this
-        let drag_init_target = '' //用来存储所拖拽的对象
-        let drag_init_html = '' //用来存储所拖拽的对象的内容
+        let drag_init_inner_html = '' //用来存储所拖拽的对象的内容
 
-        document.addEventListener("dragstart", function (event) {
-            event.target.style.opacity = "0.4";
-            drag_init_target = event.target
-            drag_init_html = event.target.innerHTML
+        document.addEventListener("dragstart", function (event) {            
+            drag_init_inner_html = event.target.innerHTML
+            event.target.style.opacity = "0";
+            const { propername, propertype, properlength } = event.target.children[0].children[0].dataset //存储在渲染名称的ui里面，拖拽的时候拿出来，做改变ui（仅限于子任务）
 
-            const { drag_node_data: { data_type } } = that.state
-            console.log('ssssssdrag_node_data', that.state.drag_node_data)
-            if (data_type == '2') { //当拖拽的是子任务的话，需要改变节点内容为 （‘父任务名称+父任务下的子任务个数’）
+            if (propertype == '2') { //当拖拽的是子任务的话，需要改变节点内容为 （‘父任务名称+父任务下的子任务个数’）
+                event.target.innerHTML = that.renderChildTaskUI({ propername, propertype, properlength })
                 event.target.style.opacity = "0";
-                event.target.innerHTML = document.getElementById('save_drag_child_card_parent').innerHTML
                 setTimeout(() => {
-                    event.target.innerHTML = drag_init_html
+                    event.target.innerHTML = drag_init_inner_html
                     setTimeout(() => {
-                        event.target.style.opacity = "0.4";
+                        event.target.style.opacity = "1";
                     }, 300)
-                }, 300)
+                }, 100)
             }
 
         });
@@ -229,7 +253,6 @@ export default class BoardTemplate extends Component {
         /*对于drop,防止浏览器的默认处理数据(在drop中链接是默认打开)*/
         document.addEventListener("drop", function (event) {
             event.preventDefault();
-            // drag_init_target.innerHTML = drag_init_html
             if (event.target.className.indexOf('ganttDetailItem') != -1) {
                 const { list_id, start_time, end_time } = event.target.dataset
                 that.handleDragCompleted({ list_id, start_time, end_time })
@@ -237,13 +260,12 @@ export default class BoardTemplate extends Component {
         });
     }
     onDragStart = ({ node }) => {
-        const { data_id, data_type, data_name, data_parent_length } = node.props
+        const { data_id, data_type, data_name } = node.props
         this.setState({
             drag_node_data: {
                 data_id,
                 data_type,
                 data_name,
-                data_parent_length,
             }
         })
     }
@@ -255,7 +277,7 @@ export default class BoardTemplate extends Component {
                 current_list_group_id: list_id
             }
         })
-        const { drag_node_data: { data_type }, drag_node_data } = this.state
+        const { drag_node_data: { data_type } } = this.state
         // console.log('sssss_目标位置', { list_id, start_time, end_time })
         // console.log('sssss_拖动对象', drag_node_data)
         if (data_type == '1') {
@@ -293,7 +315,7 @@ export default class BoardTemplate extends Component {
     // 创建任务
     createCard = async ({ list_id, start_time, end_time }) => {
         const { dispatch, gantt_board_id } = this.props
-        const { drag_node_data: { data_name, data_id } } = this.state
+        const { drag_node_data: { data_id } } = this.state
 
         const params = {
             board_id: gantt_board_id,
@@ -311,7 +333,7 @@ export default class BoardTemplate extends Component {
         }
     }
     render() {
-        const { template_data, show_type, selected_template_name, spinning, drag_node_data } = this.state
+        const { template_data, show_type, selected_template_name, spinning } = this.state
         const { gantt_board_id } = this.props
         return (
             gantt_board_id && gantt_board_id != '0' ?
@@ -332,14 +354,14 @@ export default class BoardTemplate extends Component {
                             <div className={`${globalStyles.authTheme} ${styles.top_right}`}>&#xe78e;</div>
                         </div>
                         {/* 拖拽子任务时，把相似父任务ui的dom节点渲染进来，该拖拽子任务的ui和这个相同 */}
-                        <div
+                        {/* <div
                             // style={{ display: 'none' }}
                             id={'save_drag_child_card_parent'}>
                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                 {this.renderTreeItemName({ template_data_type: drag_node_data.data_type, name: drag_node_data.data_name })}
-                                <div> 等{drag_node_data.data_parent_length}项</div>
+                                <div> 等项</div>
                             </div>
-                        </div>
+                        </div> */}
                         {/* 主区 */}
                         <Spin spinning={spinning}>
                             <div className={styles.main}>
