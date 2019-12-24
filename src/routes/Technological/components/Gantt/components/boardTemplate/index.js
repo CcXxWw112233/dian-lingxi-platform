@@ -461,9 +461,9 @@ export default class BoardTemplate extends Component {
                                 <Tree
                                     draggable
                                     onDragStart={this.onDragStart}
-                                    switcherIcon={
-                                        <Icon type="caret-down" style={{ fontSize: 20, color: 'rgba(0,0,0,.45)' }} />
-                                    }
+                                // switcherIcon={
+                                //     <Icon type="caret-down" style={{ fontSize: 20, color: 'rgba(0,0,0,.45)' }} />
+                                // }
                                 >
                                     {this.renderTemplateTree(template_data)}
                                 </Tree>
