@@ -421,7 +421,12 @@ export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenI
 
     }
   } else if (hash.indexOf('/technological/workbench') != -1) {
-
+    dispatch({
+      type: 'gantt/getGanttData',
+      payload: {
+        gantt_board_id: board_id || '0'
+      }
+    })
   } else {
 
   }
