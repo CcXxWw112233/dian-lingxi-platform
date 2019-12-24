@@ -247,9 +247,18 @@ export default class BoardTemplate extends Component {
         let drag_init_inner_html = '' //用来存储所拖拽的对象的内容
 
         document.addEventListener("dragstart", function (event) {
-            drag_init_inner_html = event.target.innerHTML
+            console.log('sssssssssssss', 'drag')
+            const drag_target = event.target
             // event.target.style.opacity = "0";
-            const { propername, propertype, properlength } = event.target.children[0].children[0].dataset //存储在渲染名称的ui里面，拖拽的时候拿出来，做改变ui（仅限于子任务）
+            if (!event) return
+            if (!drag_target) return
+            if (!drag_target.children) return
+            if (!drag_target.children[0]) return
+            if (!drag_target.children[0].children) return
+            if (!drag_target.children[0].children[0]) return
+            drag_init_inner_html = event.target.innerHTML
+
+            const { propername, propertype, properlength } = event.target.children[0].children[0].dataset || {} //存储在渲染名称的ui里面，拖拽的时候拿出来，做改变ui（仅限于子任务）
             if (propertype == '2') { //当拖拽的是子任务的话，需要改变节点内容为 （‘父任务名称+父任务下的子任务个数’）
                 event.target.innerHTML = that.renderChildTaskUI({ propername, propertype, properlength, node_width: event.target.clientWidth - 10 })
                 // event.target.style.opacity = "0";
@@ -267,6 +276,9 @@ export default class BoardTemplate extends Component {
         });
         // 当拖完p元素输出一些文本元素和重置透明度
         document.addEventListener("dragend", function (event) {
+            if (!event) return
+            if (!event.target) return
+            if (!event.target.style) return
             event.target.style.opacity = "1";
         });
         /* 拖动完成后触发 */
@@ -288,9 +300,13 @@ export default class BoardTemplate extends Component {
         });
         /*对于drop,防止浏览器的默认处理数据(在drop中链接是默认打开)*/
         document.addEventListener("drop", function (event) {
+            if (!event) return
+            if (!event.target) return
+            if (!event.target.className) return
             event.preventDefault();
             if (event.target.className.indexOf('ganttDetailItem') != -1) {
                 const { list_id, start_time, end_time } = event.target.dataset
+                if (!list_id || !start_time || !end_time) return
                 that.handleDragCompleted({ list_id, start_time, end_time })
             }
         });
