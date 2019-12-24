@@ -118,6 +118,11 @@ export default class BoardTemplate extends Component {
             message.error(res.message)
         }
     }
+    // 是否显示去到组织管理的界面
+    isShowSetting = () => {
+        const OrganizationId = localStorage.getItem('OrganizationId')
+        return OrganizationId && (OrganizationId != '0')
+    }
     // 去到新建的管理后台界面
     routingJumpToOrgManager = () => {
         const { dispatch } = this.props
@@ -158,11 +163,16 @@ export default class BoardTemplate extends Component {
         const { template_list = [] } = this.state
         return (
             <Menu onClick={this.selectTemplate}>
-                <MenuItem key={`0_0`} style={{ color: '#1890FF' }}>
-                    <i className={globalStyles.authTheme}>&#xe8fe;</i>
-                    &nbsp;
-                     新建方案
-                </MenuItem>
+                {
+                    this.isShowSetting() &&
+                    (
+                        <MenuItem key={`0_0`} style={{ color: '#1890FF' }}>
+                            <i className={globalStyles.authTheme}>&#xe8fe;</i>
+                            &nbsp;
+                             新建方案
+                        </MenuItem>
+                    )
+                }
                 {
                     template_list.map(item => {
                         const { id, name } = item
@@ -431,7 +441,12 @@ export default class BoardTemplate extends Component {
                                     <div className={`${globalStyles.authTheme} ${styles.down}`}>&#xe7ee;</div>
                                 </div>
                             </Dropdown>
-                            <div className={`${globalStyles.authTheme} ${styles.top_right}`} onClick={this.routingJumpToOrgManager}>&#xe78e;</div>
+                            {
+                                this.isShowSetting() &&
+                                (
+                                    <div className={`${globalStyles.authTheme} ${styles.top_right}`} onClick={this.routingJumpToOrgManager}>&#xe78e;</div>
+                                )
+                            }
                         </div>
                         {/* 拖拽子任务时，用于存放任务图标的ui,做dom操作 */}
                         <div
