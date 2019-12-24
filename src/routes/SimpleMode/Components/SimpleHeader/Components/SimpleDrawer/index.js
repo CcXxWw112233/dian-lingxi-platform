@@ -29,7 +29,7 @@ export default class SimpleDrawer extends Component {
                 onClose={this.onClose}
                 visible={true}
                 keyboard={true}
-                style={{ background: 'rgb(245, 245, 245)', height: (drawerHeight - 55) + 'px', ...style }}
+                style={{ background: 'rgb(245, 245, 245)', height: (drawerHeight - 55) + 'px' }}
 
             >
 
