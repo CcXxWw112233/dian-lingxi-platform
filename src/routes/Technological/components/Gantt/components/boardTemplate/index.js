@@ -55,6 +55,8 @@ export default class BoardTemplate extends Component {
         })
     }
     componentDidMount() {
+        this.initState(this.props.is_new_board)
+        this.getBoardTemplateList()
         this.listenDrag()
     }
     componentWillReceiveProps(nextProps) {
@@ -64,6 +66,10 @@ export default class BoardTemplate extends Component {
             this.initState(is_new_board)
             this.getBoardTemplateList()
         }
+    }
+    // componentWillUnmount
+    componentWillUnmount() {
+        console.log('ssssssss', 'asdasd')
     }
     // 获取模板列表
     getBoardTemplateList = async () => {

@@ -45,6 +45,8 @@ export default class GetRowGantt extends Component {
   setTaskIsDragging = (bool) => { //设置任务是否在拖拽中的状态
     this.task_is_dragging = bool
     const target = this.refs.gantt_operate_area_panel
+    if (!target) return
+    if (!target.style) return
     if (bool) {
       target.style.cursor = 'move';
     } else {
