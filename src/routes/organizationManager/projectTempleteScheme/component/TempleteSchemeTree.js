@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { Tree, Menu, Tooltip, Input, Button } from 'antd'
+import { Tree, Menu, Tooltip, Input, Button, message } from 'antd'
+import { MESSAGE_DURATION_TIME } from '@/globalset/js/constant'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
@@ -55,7 +56,7 @@ export default class TempleteSchemeTree extends Component {
       this.initStateDatas()
     }
     this.setState({
-      selectedKeys
+      selectedKeys,
     })
     // 这是在选中的时候更新一个当前点击的对象, 保存在 model 中
     let currentSelectedItemInfo = this.recursion(currentTempleteListContainer, selectedKeys[0])
@@ -75,6 +76,35 @@ export default class TempleteSchemeTree extends Component {
     // 不存在选中 或者说 重命名为 true 的时候 表示禁用
     flag = !(selectedKeys && selectedKeys.length) || is_add_rename
     return flag
+  }
+
+  // 判断是否创建子任务
+  judgeWhetherCreateChildTask = (data, nodeId) => {
+    let flag
+    if (data.length == 0) {
+      if (!!nodeId2) {
+        flag = false
+      }
+      return flag;
+    }
+    let rev = (data, nodeId, parent_type) => {
+      for (let i = 0, length = data.length; i < length; i++) {
+        let node = data[i];
+        if (node.id == nodeId) {
+          flag = node.template_data_type == '2' && node.template_data_type == parent_type && parent_type == '2'
+          rev(data, node.parent_id);
+          break;
+        }
+        else {
+          if (!!node.child_content) {
+            rev(node.child_content, nodeId, node.template_data_type);
+          }
+        }
+      }
+      return flag;
+    };
+    flag = rev(data, nodeId);
+    return flag;
   }
 
   // 创建初始化第一条里程碑
@@ -498,8 +528,13 @@ export default class TempleteSchemeTree extends Component {
   handleWrapperAddChildren = (e) => {
     e && e.stopPropagation()
     const { selectedKeys = [], expandedKeys = [] } = this.state
-    if (this.whetherDisabled()) return
     const { currentTempleteListContainer = [] } = this.props
+    let flag = this.judgeWhetherCreateChildTask(currentTempleteListContainer, selectedKeys[0])
+    if (this.whetherDisabled()) return
+    if (flag) {
+      message.warn('子任务不能创建子任务哦~', MESSAGE_DURATION_TIME)
+      return
+    }
     let currentId = selectedKeys[0]
     this.setState({
       is_add_children: true,
@@ -618,6 +653,11 @@ export default class TempleteSchemeTree extends Component {
   handleAddChildren = (e, id) => {
     e && e.stopPropagation()
     const { currentTempleteListContainer = [] } = this.props
+    let flag = this.judgeWhetherCreateChildTask(currentTempleteListContainer, id)
+    if (flag) {
+      message.warn('子任务不能创建子任务哦~', MESSAGE_DURATION_TIME)
+      return
+    }
     this.setState({
       is_add_children: true
     })
@@ -735,6 +775,7 @@ export default class TempleteSchemeTree extends Component {
   // 渲染树状列表的title
   renderPlanTreeTitle = ({ type, name, is_rename, id }) => {
     let icon = ''
+    let flag = this.judgeWhetherCreateChildTask(this.props.currentTempleteListContainer, id)
     if (type == '1') {
       icon = <span className={globalStyles.authTheme} style={{ color: '#FAAD14', fontSize: '18px', marginRight: '6px' }}>&#xe6ef;</span>
     } else if (type == '2') {
@@ -760,8 +801,8 @@ export default class TempleteSchemeTree extends Component {
                 <div className={indexStyles.icon_list}>
                   {
                     operatorIconList.map(item => (
-                      <Tooltip placement="top" title={item.toolTipText}>
-                        <span onClick={item.onClick} key={item.key} className={`${globalStyles.authTheme} ${indexStyles.icon_item} ${item.key == 'delete_item' && indexStyles.delete_item}`}>{item.icon}</span>
+                      <Tooltip placement="top" title={item.toolTipText} getPopupContainer={triggerNode => triggerNode.parentNode}>
+                        <span onClick={item.onClick} key={item.key} className={`${globalStyles.authTheme} ${indexStyles.icon_item} ${item.key == 'add_children' && flag && indexStyles.is_add_children} ${item.key == 'delete_item' && indexStyles.delete_item}`}>{item.icon}</span>
                       </Tooltip>
                     ))
                   }
@@ -777,6 +818,8 @@ export default class TempleteSchemeTree extends Component {
   renderPlanTreeNode = (data) => {
     return data && data.map(item => {
       let { template_data_type, name, id, is_rename } = item
+      // let is_child_card = parent_type == '2'
+      // this.judgeWhetherCreateChildTask(id)
       if (item.child_content && item.child_content.length > 0) {
         return (
           <TreeNode title={this.renderPlanTreeTitle({ type: template_data_type, name, id, is_rename })} key={item.id} dataRef={item} >
@@ -820,15 +863,16 @@ export default class TempleteSchemeTree extends Component {
 
   render() {
     const { planningData = [], expandedKeys = [], selectedKeys = [], is_add_rename } = this.state
-    let flag = selectedKeys && selectedKeys.length && !is_add_rename
     const { currentTempleteListContainer = [] } = this.props
+    let flag = selectedKeys && selectedKeys.length && !is_add_rename
+    let whetherCreateChildTask = selectedKeys && selectedKeys.length && this.judgeWhetherCreateChildTask(currentTempleteListContainer, selectedKeys[0])
     return (
       <div className={indexStyles.planningSchemeItemWrapper}>
         {/* 顶部工具栏 */}
         <div className={indexStyles.planningSchemeItem_top}>
           <div>
             <span onClick={this.handleWrapperAddSibiling} className={`${globalStyles.authTheme} ${flag ? indexStyles.pub_hover : indexStyles.disabled}`}>&#xe6f1; 添加同级</span>
-            <span onClick={this.handleWrapperAddChildren} style={{ marginLeft: '18px' }} className={`${globalStyles.authTheme} ${flag ? indexStyles.pub_hover : indexStyles.disabled}`}>&#xe6f2; 添加子级</span>
+            <span onClick={this.handleWrapperAddChildren} style={{ marginLeft: '18px' }} className={`${globalStyles.authTheme} ${flag ? indexStyles.pub_hover : indexStyles.disabled} ${whetherCreateChildTask && indexStyles.is_add_children}`}>&#xe6f2; 添加子级</span>
           </div>
           <div>
             <span onClick={this.handleWrapperRename} style={{ marginRight: '18px' }} className={`${globalStyles.authTheme} ${flag ? indexStyles.pub_hover : indexStyles.disabled}`}>&#xe602; 重命名</span>

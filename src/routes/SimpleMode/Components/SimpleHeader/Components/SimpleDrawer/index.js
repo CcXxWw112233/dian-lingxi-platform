@@ -15,12 +15,13 @@ export default class SimpleDrawer extends Component {
 
     render() {
         const drawerHeight = document.body.scrollHeight;
-        const { simpleDrawerContent = null, drawerTitle = '' } = this.props;
+        const { simpleDrawerContent = null, drawerTitle = '', style } = this.props;
         return (
             <Drawer
                 title={drawerTitle}
                 placement="right"
                 closable={true}
+                zIndex={1105}
                 maskStyle={{
                     opacity: 1,
                 }}
@@ -28,7 +29,7 @@ export default class SimpleDrawer extends Component {
                 onClose={this.onClose}
                 visible={true}
                 keyboard={true}
-                style={{ background: 'rgb(245, 245, 245)', height: (drawerHeight - 55) + 'px' }}
+                style={{ background: 'rgb(245, 245, 245)', height: (drawerHeight - 55) + 'px', ...style }}
 
             >
 

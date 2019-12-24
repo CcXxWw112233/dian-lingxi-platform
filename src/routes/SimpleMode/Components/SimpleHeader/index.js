@@ -339,7 +339,7 @@ class SimpleHeader extends Component {
                 </div>
 
                 {simpleDrawerVisible &&
-                    <SimpleDrawer updateState={this.updateStates} closeDrawer={this.closeDrawer} simpleDrawerContent={simpleDrawerContent} drawerTitle={simpleDrawerTitle} />
+                    <SimpleDrawer style={{height: 'auto'}} updateState={this.updateStates} closeDrawer={this.closeDrawer} simpleDrawerContent={simpleDrawerContent} drawerTitle={simpleDrawerTitle} />
                 }
                 <TaskDetailModal
                     task_detail_modal_visible={drawerVisible}
