@@ -1,7 +1,8 @@
 import {
   saveNounList, getNounList, getPayingStatus, getOrderList, getPermissions, savePermission, getRolePermissions, saveRolePermission, createRole,
   updateRole, deleteRole, copyRole, updateOrganization, setDefaultRole, getCurrentNounPlan, getFnManagementList,
-  setFnManagementStatus, investmentMapAddAdministrators, investmentMapDeleteAdministrators, investmentMapQueryAdministrators
+  setFnManagementStatus, investmentMapAddAdministrators, investmentMapDeleteAdministrators, investmentMapQueryAdministrators,
+  getTemplateList, createTemplete, deleteTemplete, getTemplateListContainer, createTempleteContainer, deleteTempleteContainer, updateTempleteContainer
 } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
@@ -22,7 +23,6 @@ export default {
   namespace: 'organizationManager',
   state: {
     datas: {
-
     }
   },
   subscriptions: {
@@ -59,6 +59,8 @@ export default {
               editable: '0', //当前是否在自定义编辑状态 1是 0 否
               fnmanagement_list: [], //功能管理状态
               myWorkbenchBoxList: [],
+
+              // projectSchemeBreadCrumbList: [{id: '0', name: '全部方案'}]
             }
           })
 
@@ -533,6 +535,125 @@ export default {
       } else {
         message.warn('移除失败', MESSAGE_DURATION_TIME)
       }
+    },
+
+    // 获取模板列表
+    * getTemplateList({ payload }, { call, put }) {
+      const res = yield call(getTemplateList, payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            projectTemplateList: res.data
+          }
+        })
+      }
+    },
+
+    // 获取模板列表内容
+    * getTemplateListContainer({ payload }, { call, put }) {
+      let { template_id } = payload
+      const res = yield call(getTemplateListContainer,{template_id})
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            currentTempleteListContainer: res.data
+          }
+        })
+      }
+    },
+
+    // 创建模板
+    * createTemplete({ payload }, { call, put }) {
+      const res = yield call(createTemplete, payload)
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('创建模板成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getTemplateList',
+          payload: {
+
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+    },
+
+    // 删除模板
+    * deleteTemplete({ payload }, { call, put }) {
+      const res = yield call(deleteTemplete, payload)
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('删除模板成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getTemplateList',
+          payload: {
+
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+    },
+
+    // 创建模板内容
+    * createTempleteContainer({payload}, { call, put }) {
+      let res = yield call(createTempleteContainer, payload)
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('创建成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getTemplateListContainer',
+          payload: {
+            template_id: payload.template_id
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
+    },
+
+    // 更新模板内容
+    * updateTempleteContainer({ payload }, { call, put }) {
+      let { id, name, template_id } = payload
+      let res = yield call(updateTempleteContainer, {id,name})
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('更新成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getTemplateListContainer',
+          payload: {
+            template_id: template_id
+          }
+        })
+      }
+    },
+
+    // 删除模板内容
+    * deleteTempleteContainer({ payload }, { call, put }) {
+      let { id, template_id } = payload
+      let res = yield call(deleteTempleteContainer, {id})
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('删除成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getTemplateListContainer',
+          payload: {
+            template_id: template_id
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
     },
 
   },

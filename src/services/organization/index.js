@@ -224,3 +224,71 @@ export async function getOrderList(params) {
     method: 'GET'
   });
 }
+
+// 获取模板列表
+export async function getTemplateList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template/list`,
+    method: 'GET',
+    params: {
+      _organization_id: params._organization_id || localStorage.getItem('OrganizationId')
+    }
+  })
+}
+
+// 获取模板列表内容
+export async function getTemplateListContainer(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template/content`,
+    method: 'GET',
+    params
+  })
+}
+
+// 创建模板
+export async function createTemplete(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template`,
+    method: 'POST',
+    data: {
+      ...data,
+      _organization_id: data._organization_id || localStorage.getItem('OrganizationId')
+    }
+  })
+}
+
+// 删除模板
+export async function deleteTemplete(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template`,
+    method: 'DELETE',
+    params
+  })
+}
+
+// 创建模板内容
+export async function createTempleteContainer(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template/content`,
+    method: 'POST',
+    data
+  })
+}
+
+// 更新模板内容
+export async function updateTempleteContainer(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template/content`,
+    method: 'PUT',
+    data
+  })
+}
+
+// 删除模板内容
+export async function deleteTempleteContainer(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template/content`,
+    method: 'DELETE',
+    params
+  })
+}
