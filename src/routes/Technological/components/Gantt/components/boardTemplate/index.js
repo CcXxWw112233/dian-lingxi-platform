@@ -121,13 +121,24 @@ export default class BoardTemplate extends Component {
     // 去到新建的管理后台界面
     routingJumpToOrgManager = () => {
         const { dispatch } = this.props
-        window.sessionStorage.setItem('orgManagerTabSelectKey', '6')
-        dispatch({
-            type: 'technological/routingJump',
-            payload: {
-                route: `/organizationManager?nextpath=${window.location.hash.replace('#', '')}`
-            }
-        })
+        if (window.location.hash.indexOf('/technological/simplemode/workbench') != -1) {
+            window.sessionStorage.setItem('simplemode_home_open_key', 'org')
+            dispatch({
+                type: 'technological/routingJump',
+                payload: {
+                    route: `/technological/simplemode/home`
+                }
+            })
+        } else {
+            window.sessionStorage.setItem('orgManagerTabSelectKey', '6')
+            dispatch({
+                type: 'technological/routingJump',
+                payload: {
+                    route: `/organizationManager?nextpath=${window.location.hash.replace('#', '')}`
+                }
+            })
+        }
+
     }
     selectTemplate = (e) => {
         const { key } = e

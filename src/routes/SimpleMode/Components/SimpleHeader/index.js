@@ -13,6 +13,8 @@ import TaskDetailModal from '@/components/TaskDetailModal'
 import { setBoardIdStorage, getSubfixName } from "../../../../utils/businessFunction";
 import FileDetailModal from '@/components/FileDetailModal'
 const { LingxiIm, Im } = global.constants
+import Organization from '@/routes/organizationManager'
+
 class SimpleHeader extends Component {
     state = {
         leftNavigationVisible: false,
@@ -89,6 +91,7 @@ class SimpleHeader extends Component {
     }
     componentDidMount() {
         this.imInitOption()
+        this.openDrawDefault()
     }
 
     //圈子
@@ -265,14 +268,92 @@ class SimpleHeader extends Component {
 
     // 文件弹窗的关闭回调
     setPreviewFileModalVisibile = () => {
-      this.props.dispatch({
-        type: 'publicFileDetailModal/updateDatas',
-        payload: {
-            filePreviewCurrentFileId: '',
-            fileType: '',
-            isInOpenFile: false
+        this.props.dispatch({
+            type: 'publicFileDetailModal/updateDatas',
+            payload: {
+                filePreviewCurrentFileId: '',
+                fileType: '',
+                isInOpenFile: false
+            }
+        })
+    }
+
+    // 如果捕获到参数，默认打开组织管理后台
+    openDrawDefault = () => {
+        const session_name = 'simplemode_home_open_key'
+        const open_draw_name = window.sessionStorage.getItem(session_name)
+        if (!open_draw_name) return
+        this.openOrgManagerDraw()
+        window.sessionStorage.removeItem(session_name)
+    }
+    openOrgManagerDraw = () => {
+        //isHasManagerBack() && this.routingJump(`/organizationManager?nextpath=${window.location.hash.replace('#', '')}`)
+        const currentSelectOrganize = localStorage.getItem('currentSelectOrganize') ? JSON.parse(localStorage.getItem('currentSelectOrganize')) : {}//JSON.parse(localStorage.getItem('currentSelectOrganize'))
+        const { name, member_join_model, member_join_content, logo, logo_id, id } = currentSelectOrganize
+        const { dispatch } = this.props
+        dispatch({
+            type: 'organizationManager/updateDatas',
+            payload: {
+                currentOrganizationInfo: { //组织信息
+                    name,
+                    member_join_model,
+                    member_join_content,
+                    logo,
+                    logo_id,
+                    id,
+                    management_Array: [], //地图管理人员数组
+                },
+                content_tree_data: [], //可访问内容
+                function_tree_data: [],
+                orgnization_role_data: [], //组织角色数据
+                project_role_data: [], //项目角色数据
+                tabSelectKey: '1',
+                // permission_data: [], //权限数据
+                //名词定义
+                current_scheme_local: '', //已选方案名称
+                current_scheme: '', //当前方案名称
+                current_scheme_id: '',
+                scheme_data: [],
+                field_data: [],
+                editable: '0', //当前是否在自定义编辑状态 1是 0 否
+
+            }
+        })
+
+        dispatch({
+            type: 'organizationManager/getRolePermissions',
+            payload: {
+                type: '1',
+            }
+        })
+        dispatch({
+            type: 'organizationManager/getRolePermissions',
+            payload: {
+                type: '2',
+            }
+        })
+        dispatch({
+            type: 'organizationManager/getNounList',
+            payload: {}
+        })
+        dispatch({
+            type: 'organizationManager/getNounList',
+            payload: {}
+        })
+        const OrganizationId = localStorage.getItem('OrganizationId');
+        if (OrganizationId !== '0') {
+            dispatch({
+                type: 'organizationManager/getPayingStatus',
+                payload: { orgId: OrganizationId }
+            })
         }
-      })
+        this.updateStates({
+            simpleDrawerVisible: true,
+            simpleDrawerContent: <Organization showBackBtn={false} />,
+            simpleDrawerTitle: '后台管理'
+
+        });
+        this.handleVisibleChange(false);
     }
 
     render() {
@@ -303,7 +384,7 @@ class SimpleHeader extends Component {
                         </Dropdown>
                     )}
 
-                <div style={{zIndex: !chatImVisiable && 1100}} className={indexStyles.miniImMessage} onClick={this.openOrCloseImChatModal}>
+                <div style={{ zIndex: !chatImVisiable && 1100 }} className={indexStyles.miniImMessage} onClick={this.openOrCloseImChatModal}>
                     {
                         im_alarm_no_reads_total > 0 && (
                             <div className={indexStyles.no_reads}>{im_alarm_no_reads_total > 99 ? '99+' : im_alarm_no_reads_total}</div>
