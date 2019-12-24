@@ -118,11 +118,22 @@ export default class BoardTemplate extends Component {
             message.error(res.message)
         }
     }
+    // 去到新建的管理后台界面
+    routingJumpToOrgManager = () => {
+        const { dispatch } = this.props
+        window.sessionStorage.setItem('orgManagerTabSelectKey', '6')
+        dispatch({
+            type: 'technological/routingJump',
+            payload: {
+                route: `/organizationManager?nextpath=${window.location.hash.replace('#', '')}`
+            }
+        })
+    }
     selectTemplate = (e) => {
         const { key } = e
         const { template_list = [] } = this.state
         if ('0_0' == key) {
-
+            this.routingJumpToOrgManager()
         } else {
             this.setState({
                 selected_template_id: key,
@@ -409,7 +420,7 @@ export default class BoardTemplate extends Component {
                                     <div className={`${globalStyles.authTheme} ${styles.down}`}>&#xe7ee;</div>
                                 </div>
                             </Dropdown>
-                            <div className={`${globalStyles.authTheme} ${styles.top_right}`}>&#xe78e;</div>
+                            <div className={`${globalStyles.authTheme} ${styles.top_right}`} onClick={this.routingJumpToOrgManager}>&#xe78e;</div>
                         </div>
                         {/* 拖拽子任务时，用于存放任务图标的ui,做dom操作 */}
                         <div
