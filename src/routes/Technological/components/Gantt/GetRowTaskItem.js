@@ -436,19 +436,23 @@ export default class GetRowTaskItem extends Component {
         updateData.start_time = start_time_timestamp
         updateData.due_time = end_time_timestamp
 
+        const params_list_id = this.getDragAroundListId()
         const params = {
             card_id: id,
             due_time: end_time_timestamp,
             start_time: start_time_timestamp,
             board_id,
-            list_id: this.getDragAroundListId()
+            list_id: params_list_id
+        }
+        if (params_list_id == '0') {
+            delete params.list_id
         }
         changeTaskType({ ...params }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
                     this.changeCardBelongGroup({
                         card_id: id,
-                        new_list_id: params.list_id,
+                        new_list_id: params_list_id,
                         updateData
                     })
                 } else {
