@@ -82,7 +82,7 @@ export default class TempleteSchemeTree extends Component {
   judgeWhetherCreateChildTask = (data, nodeId) => {
     let flag
     if (data.length == 0) {
-      if (!!nodeId2) {
+      if (!!nodeId) {
         flag = false
       }
       return flag;
