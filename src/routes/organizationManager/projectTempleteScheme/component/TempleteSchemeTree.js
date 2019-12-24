@@ -643,7 +643,8 @@ export default class TempleteSchemeTree extends Component {
     e && e.stopPropagation()
     const { currentTempleteListContainer = [] } = this.props
     this.setState({
-      is_add_sibiling: true
+      is_add_sibiling: true,
+      selectedKeys: []
     })
     this.updateAddSibilingTreeList({ datas: currentTempleteListContainer, currentId: id })
   }
@@ -659,7 +660,8 @@ export default class TempleteSchemeTree extends Component {
       return
     }
     this.setState({
-      is_add_children: true
+      is_add_children: true,
+      selectedKeys: []
     })
     this.updateAddChildrenTreeList({ datas: currentTempleteListContainer, currentId: id })
   }
