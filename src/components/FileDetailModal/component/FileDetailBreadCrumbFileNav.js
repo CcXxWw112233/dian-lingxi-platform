@@ -50,7 +50,7 @@ export default class FileDetailBreadCrumbFileNav extends Component {
           {(breadcrumbList && breadcrumbList.length) && breadcrumbList.map((value, key) => {
             return (
               <Breadcrumb.Item key={key}>
-                <span>{value && value.file_name}</span>
+                <span style={{wordBreak: 'break-all'}}>{value && value.file_name}</span>
               </Breadcrumb.Item>
             )
           })}

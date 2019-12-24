@@ -20,6 +20,7 @@ class FileListRightBarFileDetailModal extends React.Component {
 
 	render() {
 		const { currentZoomPictureComponetWidth, currentZoomPictureComponetHeight, filePreviewCurrentFileId, fileType } = this.state
+		const { projectDetailInfoData: { board_id } } = this.props
 		return (
 			<div id="projectList_FileListRightBarFileDetailModal" style={{ width: '100%', height: '100%' }}>
 				<FileDetailModal
@@ -27,6 +28,8 @@ class FileListRightBarFileDetailModal extends React.Component {
 					// componentWidth={currentZoomPictureComponetWidth}
 					filePreviewCurrentFileId={filePreviewCurrentFileId}
 					fileType={fileType}
+					board_id={board_id}
+					currentPreviewFileName={this.props.currentPreviewFileName}
 					file_detail_modal_visible={this.props.file_detail_modal_visible}
 					setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
 					whetherUpdateFolderListData={this.props.whetherUpdateFolderListData}
@@ -48,10 +51,14 @@ class FileListRightBarFileDetailModal extends React.Component {
 function mapStateToProps({
 	simplemode: {
 		chatImVisiable = false
-	}
+	},
+	projectDetail: {
+		datas: { projectDetailInfoData = {} }
+	},
 }) {
 	return {
-		chatImVisiable
+		chatImVisiable,
+		projectDetailInfoData
 	}
 }
 export default FileListRightBarFileDetailModal;

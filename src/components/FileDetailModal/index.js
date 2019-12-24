@@ -33,7 +33,7 @@ export default class FileDetailModal extends Component {
   }
 
   render() {
-    const { file_detail_modal_visible, setPreviewFileModalVisibile, filePreviewCurrentFileId, fileType } = this.props
+    const { file_detail_modal_visible, setPreviewFileModalVisibile, filePreviewCurrentFileId, fileType, currentPreviewFileName, projectDetailInfoData:{ board_id } } = this.props
     const { clientWidth, clientHeight } = this.state
     return (
       <div id={'container_publicFileDetailModal'}>
@@ -42,8 +42,10 @@ export default class FileDetailModal extends Component {
           clientHeight={clientHeight}
           file_detail_modal_visible={file_detail_modal_visible} 
           setPreviewFileModalVisibile={setPreviewFileModalVisibile} 
-          filePreviewCurrentFileId={filePreviewCurrentFileId} 
+          filePreviewCurrentFileId={filePreviewCurrentFileId}
+          currentPreviewFileName={currentPreviewFileName} 
           fileType={fileType}
+          board_id={board_id}
           {...this.props}
           />
       </div>
@@ -55,13 +57,21 @@ function mapStateToProps({
   publicFileDetailModal: {
     filePreviewCurrentFileId,
     fileType,
-    isInOpenFile
-  }
+    isInOpenFile,
+    currentPreviewFileName
+  },
+  projectDetail: {
+    datas: {
+      projectDetailInfoData = {}
+    }
+  },
 }) {
   return {
     filePreviewCurrentFileId,
     fileType,
-    isInOpenFile
+    isInOpenFile,
+    currentPreviewFileName,
+    projectDetailInfoData
   }
 }
 

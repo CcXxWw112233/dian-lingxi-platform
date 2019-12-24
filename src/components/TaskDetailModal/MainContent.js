@@ -932,7 +932,8 @@ export default class MainContent extends Component {
         filePreviewCurrentFileId: '',
         fileType: '',
         isInOpenFile: false,
-        isInAttachmentFile: false
+        isInAttachmentFile: false,
+        currentPreviewFileName: ''
       }
     })
   }
@@ -1220,6 +1221,7 @@ export default class MainContent extends Component {
                 filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
                 fileType={this.props.fileType}
                 file_detail_modal_visible={this.props.isInOpenFile}
+                currentPreviewFileName={this.props.currentPreviewFileName}
                 setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
                 whetherUpdateFolderListData={this.whetherUpdateFolderListData}
               />
@@ -1235,13 +1237,12 @@ export default class MainContent extends Component {
 function mapStateToProps({
   publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id, boardTagList = [], attributesList = [] },
   projectDetail: { datas: { projectDetailInfoData = {} } },
-  projectDetailFile: {
-    datas: {
-      isInOpenFile,
-      filePreviewCurrentFileId,
-      fileType
-    }
+  publicFileDetailModal: {
+    isInOpenFile,
+    filePreviewCurrentFileId,
+    fileType,
+    currentPreviewFileName
   }
 }) {
-  return { drawContent, is_edit_title, card_id, boardTagList, attributesList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType }
+  return { drawContent, is_edit_title, card_id, boardTagList, attributesList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType, currentPreviewFileName }
 }
