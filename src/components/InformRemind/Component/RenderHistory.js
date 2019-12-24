@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
-import { Select, Icon, Tooltip, Button, DatePicker, Dropdown } from 'antd'
+import { Select, Icon, Tooltip, Button, DatePicker, Dropdown, message } from 'antd'
 import infoRemindStyle from '../index.less'
 import moment from 'moment';
 import ExecutorAvatarList from '@/components/avatarList/executorAvatarList.js'
@@ -12,6 +12,11 @@ const { Option } = Select;
   triggerList, diff_text_term, diff_remind_time, historyList
 }))
 export default class RenderHistory extends Component {
+
+  state = {
+    is_click_button: false, // 是否正在点击确定按钮
+    is_click_del: false, // 是否正在点击删除按钮
+  }
 
   /**
    *  改变选项的类型切换的方法
@@ -94,6 +99,19 @@ export default class RenderHistory extends Component {
    * @param {String} id 更新某一条状态对应的id
    */
   handleUpdateInfoRemind(id, message_consumers) {
+    this.setState({
+      is_click_button: true
+    })
+    const { is_click_button } = this.state
+    if (is_click_button) {
+      setTimeout(() => {
+        message.warn('正在添加中,请不要重复点击哦~')
+      }, 200)
+      this.setState({
+        is_click_button: false
+      })
+      return
+    }
     // console.log(id, 'sss')
     const { historyList = [], dispatch, rela_id } = this.props;
     let new_history_list = [...historyList]
@@ -122,6 +140,19 @@ export default class RenderHistory extends Component {
    * @param {String} id 删除对应信息状态的id
    */
   handleDelInfoRemind(id) {
+    this.setState({
+      is_click_del: true
+    })
+    const { is_click_del } = this.state
+    if (is_click_del) {
+      setTimeout(() => {
+        message.warn('正在删除中,请不要重复点击哦~')
+      }, 200)
+      this.setState({
+        is_click_del: false
+      })
+      return
+    }
     const { dispatch, rela_id } = this.props;
     // console.log(rela_id, 'sss')
     dispatch({
@@ -291,6 +322,7 @@ export default class RenderHistory extends Component {
             {
               remind_edit_type == 3 && (
                 <DatePicker
+                  allowClear={false}
                   disabled={status == 2 ? true : false}
                   showTime={{ format: 'HH:mm' }}
                   defaultValue={remind_time_value.length <= 2 ? '' : moment(this.getdate(remind_time_value))}

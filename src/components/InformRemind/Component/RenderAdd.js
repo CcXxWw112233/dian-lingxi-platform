@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
-import { Select, Icon, Tooltip, Button, DatePicker, Dropdown } from 'antd'
+import { Select, Icon, Tooltip, Button, DatePicker, Dropdown, message } from 'antd'
 import infoRemindStyle from '../index.less'
 import moment from 'moment';
 import ExecutorAvatarList from '@/components/avatarList/executorAvatarList.js'
@@ -172,6 +172,19 @@ export default class RenderAdd extends Component {
    * 设置提醒的事件
    */
   handleSetInfoRemind() {
+    this.setState({
+      is_click_button: true
+    })
+    const { is_click_button } = this.state
+    if (is_click_button) {
+      setTimeout(() => {
+        message.warn('正在添加中,请不要重复点击哦~')
+      }, 200)
+      this.setState({
+        is_click_button: false
+      })
+      return
+    }
     const { dispatch, setInfoRemindList = [], triggerList = [], message_consumers } = this.props;
     let new_info_list = [...setInfoRemindList]
     new_info_list = new_info_list.map(item => {
@@ -344,6 +357,7 @@ export default class RenderAdd extends Component {
           {
             remind_edit_type == 3 && (
               <DatePicker
+                allowClear={false}
                 showTime={{ format: 'HH:mm' }}
                 defaultValue={remind_time_value.length <= 2 ? '' : moment(this.getdate(remind_time_value))}
                 placeholder="请选择日期"
