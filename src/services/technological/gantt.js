@@ -1,5 +1,5 @@
 import request from '../../utils/requestAxios'
-import {REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID, REQUEST_DOMAIN_FLOWS, REQUEST_DOMAIN_TEAM_SHOW} from '../../globalset/js/constant'
+import { REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID, REQUEST_DOMAIN_FLOWS, REQUEST_DOMAIN_TEAM_SHOW } from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 import { getGlobalData } from '../../utils/businessFunction';
 
@@ -33,7 +33,7 @@ export async function getGttMilestoneList(data) {
       ...data,
       // _organization_id: getGlobalData('aboutBoardOrganizationId')
     }
-  }, { isNotLoading: true});
+  }, { isNotLoading: true });
 }
 
 //获取内容过滤项目分组树
@@ -83,6 +83,32 @@ export async function miletonesUserGuide(data) {
 export async function setAlarmMiletonesUserGuide(data) {
   return request({
     url: `${REQUEST_DOMAIN}/user/guide`,
+    method: 'POST',
+    data
+  })
+}
+
+// 模板
+//获取项目模板列表
+export async function getBoardTemplateList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template/list`,
+    method: 'GET',
+    params
+  })
+}
+//获取项目模板内容列表
+export async function getBoardTemplateInfo(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template/content`,
+    method: 'GET',
+    params
+  }, { isNotLoading: true })
+}
+//拖动模板创建任务
+export async function createCardByTemplate(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/template/drag/add`,
     method: 'POST',
     data
   })

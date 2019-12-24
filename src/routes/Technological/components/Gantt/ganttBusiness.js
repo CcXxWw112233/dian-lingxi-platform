@@ -196,7 +196,7 @@ export const folderItemHasUnReadNo = ({ type, relaDataId, im_all_latest_unread_m
     if (!im_all_latest_unread_messages.length) {
         return 0
     }
-  
+
     if (type == '2') { //1文件2文件夹
         const file_has_unread = !!im_all_latest_unread_messages.find(item => relaDataId == item.relaDataId)
         if (file_has_unread) {
@@ -217,7 +217,7 @@ export const folderItemHasUnReadNo = ({ type, relaDataId, im_all_latest_unread_m
     if (!current_item) {
         return false
     }
-   
+
     // 这里arr已经更新
     let count = 0
     for (let val of im_all_latest_unread_messages) {

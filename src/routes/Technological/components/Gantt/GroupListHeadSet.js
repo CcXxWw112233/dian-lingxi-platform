@@ -6,7 +6,7 @@ import { connect } from 'dva'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { afterCreateBoardUpdateGantt } from './ganttBusiness';
 import CreateProject from './../Project/components/CreateProject/index';
-import { checkIsHasPermission, selectBoardToSeeInfo } from '../../../../utils/businessFunction'
+import { checkIsHasPermission, selectBoardToSeeInfo, setBoardIdStorage } from '../../../../utils/businessFunction'
 import { ORG_TEAM_BOARD_CREATE } from '../../../../globalset/js/constant'
 
 @connect(mapStateToProps)
@@ -78,14 +78,14 @@ export default class GroupListHeadSet extends Component {
             if (!!!id) {
                 return
             }
-            dispatch({
-                type: 'gantt/updateDatas',
-                payload: {
-                    gantt_board_id: id,
-                    list_group: [],
-                }
-            })
-            selectBoardToSeeInfo({ board_id: id, board_name: data.board_name, dispatch })
+            // dispatch({
+            //     type: 'gantt/updateDatas',
+            //     payload: {
+            //         gantt_board_id: id,
+            //         list_group: [],
+            //     }
+            // })
+            selectBoardToSeeInfo({ board_id: id, board_name: data.board_name, dispatch, org_id: data._organization_id, is_new_board: true })
         }
         Promise.resolve(
             dispatch({

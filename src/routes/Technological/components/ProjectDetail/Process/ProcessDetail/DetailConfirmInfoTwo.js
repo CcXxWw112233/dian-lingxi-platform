@@ -9,7 +9,8 @@ import { deleteProcessFile, getProcessList } from '../../../../../../services/te
 import Cookies from "js-cookie";
 import OpinionModal from './OpinionModal'
 import { PROJECT_FILES_FILE_EDIT, REQUEST_DOMAIN_FLOWS, UPLOAD_FILE_SIZE } from "../../../../../../globalset/js/constant";
-import PreviewFileModal from '../../TaskItemComponent/PreviewFileModal'
+// import PreviewFileModal from '../../TaskItemComponent/PreviewFileModal'
+import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
 import { filePreview } from "../../../../../../services/technological/file";
 import { checkIsHasPermissionInBoard, getSubfixName, openPDF } from "../../../../../../utils/businessFunction";
 import ContentRaletion from '../../../../../../components/ContentRaletion'
@@ -246,40 +247,57 @@ export default class DetailConfirmInfoTwo extends React.Component {
     const file_name = e.name || e.file_name
     const file_id = e.file_id || e.response.data.file_id || e.response.data.id
     const file_resource_id = e.file_resource_id || e.response.data.file_resource_id
-
-    if (getSubfixName(file_name) == '.pdf' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
-      openPDF({ id: file_id })
-      return false
-    }
-    this.props.updateDatasFile({
-      seeFileInput: 'taskModule',
-      isInOpenFile: true,
-      filePreviewCurrentId: file_resource_id,
-      filePreviewCurrentFileId: file_id,
-    })
-
+const { datas: { projectDetailInfoData = {} } } = this.props.model
+const { board_id } = projectDetailInfoData
     this.props.dispatch({
-      type: 'projectDetailFile/updateDatas',
+      type: 'projectDetail/projectDetailInfo',
       payload: {
-        seeFileInput: 'taskModule',
-        isInOpenFile: true,
-        filePreviewCurrentId: file_resource_id,
+        id: board_id
+      }
+    })
+    this.props.dispatch({
+      type: 'publicFileDetailModal/updateDatas',
+      payload: {
         filePreviewCurrentFileId: file_id,
+        fileType: getSubfixName(file_name),
+        isInOpenFile: true,
+        isInAttachmentFile: true,
+        currentPreviewFileName: file_name
       }
     })
-    // this.props.filePreview({ id: file_resource_id, file_id: file_id })
-    this.props.dispatch({
-      type: 'projectDetailFile/filePreview',
-      payload: {
-        id: file_resource_id, file_id: file_id
-      }
-    })
-    this.props.dispatch({
-      type: 'projectDetailFile/fileInfoByUrl',
-      payload: {
-        file_id
-      }
-    })
+    // if (getSubfixName(file_name) == '.pdf' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
+    //   openPDF({ id: file_id })
+    //   return false
+    // }
+    // this.props.updateDatasFile({
+    //   seeFileInput: 'taskModule',
+    //   isInOpenFile: true,
+    //   filePreviewCurrentId: file_resource_id,
+    //   filePreviewCurrentFileId: file_id,
+    // })
+
+    // this.props.dispatch({
+    //   type: 'projectDetailFile/updateDatas',
+    //   payload: {
+    //     seeFileInput: 'taskModule',
+    //     isInOpenFile: true,
+    //     filePreviewCurrentId: file_resource_id,
+    //     filePreviewCurrentFileId: file_id,
+    //   }
+    // })
+    // // this.props.filePreview({ id: file_resource_id, file_id: file_id })
+    // this.props.dispatch({
+    //   type: 'projectDetailFile/filePreview',
+    //   payload: {
+    //     id: file_resource_id, file_id: file_id
+    //   }
+    // })
+    // this.props.dispatch({
+    //   type: 'projectDetailFile/fileInfoByUrl',
+    //   payload: {
+    //     file_id
+    //   }
+    // })
   }
 
   render() {
@@ -663,49 +681,64 @@ export default class DetailConfirmInfoTwo extends React.Component {
         const file_name = e.name || e.file_name
         const file_id = e.file_id || e.response.data.file_id || e.response.data.id
         const file_resource_id = e.file_resource_id || e.response.data.file_resource_id
-
-        if (getSubfixName(file_name) == '.pdf' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
-          openPDF({ id: file_id })
-          return false
-        }
-        that.props.updateDatasFile({
-          seeFileInput: 'taskModule',
-          isInOpenFile: true,
-          filePreviewCurrentId: file_resource_id,
-          filePreviewCurrentFileId: file_id,
+        that.props.dispatch({
+          type: 'projectDetail/projectDetailInfo',
+          payload: {
+            id: board_id
+          }
         })
-        // that.props.filePreview({ id: file_resource_id, file_id: file_id })
-        // that.props.dispatch({
+        that.props.dispatch({
+          type: 'publicFileDetailModal/updateDatas',
+          payload: {
+            filePreviewCurrentFileId: file_id,
+            fileType: getSubfixName(file_name),
+            isInOpenFile: true,
+            isInAttachmentFile: true,
+            currentPreviewFileName: file_name
+          }
+        })
+        // if (getSubfixName(file_name) == '.pdf' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
+        //   openPDF({ id: file_id })
+        //   return false
+        // }
+        // that.props.updateDatasFile({
+        //   seeFileInput: 'taskModule',
+        //   isInOpenFile: true,
+        //   filePreviewCurrentId: file_resource_id,
+        //   filePreviewCurrentFileId: file_id,
+        // })
+        // // that.props.filePreview({ id: file_resource_id, file_id: file_id })
+        // // that.props.dispatch({
+        // //   type: 'projectDetailFile/fileInfoByUrl',
+        // //   payload: {
+        // //     file_id
+        // //   }
+        // // })
+        // // console.log('sssss', {
+        // //   dispatch
+        // // })
+        // dispatch({
+        //   type: 'projectDetailFile/updateDatas',
+        //   payload: {
+        //     seeFileInput: 'taskModule',
+        //     isInOpenFile: true,
+        //     filePreviewCurrentId: file_resource_id,
+        //     filePreviewCurrentFileId: file_id,
+        //   }
+        // })
+        // // this.props.filePreview({ id: file_resource_id, file_id: file_id })
+        // dispatch({
+        //   type: 'projectDetailFile/filePreview',
+        //   payload: {
+        //     id: file_resource_id, file_id: file_id
+        //   }
+        // })
+        // dispatch({
         //   type: 'projectDetailFile/fileInfoByUrl',
         //   payload: {
         //     file_id
         //   }
         // })
-        // console.log('sssss', {
-        //   dispatch
-        // })
-        dispatch({
-          type: 'projectDetailFile/updateDatas',
-          payload: {
-            seeFileInput: 'taskModule',
-            isInOpenFile: true,
-            filePreviewCurrentId: file_resource_id,
-            filePreviewCurrentFileId: file_id,
-          }
-        })
-        // this.props.filePreview({ id: file_resource_id, file_id: file_id })
-        dispatch({
-          type: 'projectDetailFile/filePreview',
-          payload: {
-            id: file_resource_id, file_id: file_id
-          }
-        })
-        dispatch({
-          type: 'projectDetailFile/fileInfoByUrl',
-          payload: {
-            file_id
-          }
-        })
       }
     }
     let node_amount = this.props.model.datas && this.props.model.datas.processInfo && this.props.model.datas.processInfo.node_amount
@@ -772,7 +805,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
           </Card>
           <OpinionModal itemValue={itemValue} operateType={this.state.operateType} enableOpinion={enable_opinion} {...this.props} setOpinionModalVisible={this.setOpinionModalVisible.bind(this)} opinionModalVisible={this.state.opinionModalVisible} />
           {/*<PreviewFileModal {...this.props} filePreviewIsUsable={this.state.filePreviewIsUsable} filePreviewUrl={this.state.filePreviewUrl} current_file_resource_id={this.state.current_file_resource_id} setPreview={this.setPreview.bind(this)} modalVisible={this.state.previewFileModalVisibile} setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)} />*/}
-          <PreviewFileModal {...this.props} modalVisible={isInOpenFile} />
+          {/* <PreviewFileModal {...this.props} modalVisible={isInOpenFile} /> */}
         </div>
       </div>
     )

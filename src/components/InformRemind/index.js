@@ -22,14 +22,24 @@ export default class index extends Component {
      * 2. 还需要获取事件的消息列表(是否存在历史记录)
      */
     handleInformRemind() {
-        const { dispatch, rela_type, rela_id } = this.props;
-        dispatch({
-            type: 'informRemind/getUserInfoRemind',
-            payload: {
-                id: rela_id,
-                type: rela_type
-            }
-        })
+        const { dispatch, rela_type, rela_id, rela_fileId } = this.props;
+        if (rela_type == '4') {
+            dispatch({
+                type: 'informRemind/getUserInfoRemind',
+                payload: {
+                    id: rela_fileId,
+                    type: rela_type
+                }
+            })
+        } else {
+            dispatch({
+                type: 'informRemind/getUserInfoRemind',
+                payload: {
+                    id: rela_id,
+                    type: rela_type
+                }
+            })
+        }
         // 1. 获取事件列表 需要传递是哪一个类型
         dispatch({
             type: "informRemind/getTriggerList",

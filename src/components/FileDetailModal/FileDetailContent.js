@@ -9,7 +9,6 @@ import { connect } from 'dva'
 import { message } from 'antd'
 import { currentNounPlanFilterName, getOrgNameWithOrgIdFilter, checkIsHasPermissionInVisitControl, getSubfixName } from '@/utils/businessFunction.js'
 import { compareACoupleOfObjects } from '@/utils/util'
-import { withRouter } from 'react-router-dom'
 import QueryString from 'querystring'
 let board_id = null
 let appsSelectKey = null
@@ -209,7 +208,7 @@ class FileDetailContent extends Component {
   }
 }
 
-export default withRouter(FileDetailContent)
+export default FileDetailContent
 
 FileDetailContent.defaultProps = {
   board_id: '', // 当前项目ID

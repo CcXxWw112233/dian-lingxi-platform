@@ -64,6 +64,8 @@ export default {
       boards_flies: [], //带根目录文件列表的项目列表
       show_board_fold: false, //是否显示项目汇总视图 
       folder_seeing_board_id: '0', //查看文件夹所属的项目id
+
+      is_new_board: false, //是否刚刚创建的新项目
     },
   },
   subscriptions: {

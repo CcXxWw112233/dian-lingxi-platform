@@ -16,7 +16,7 @@ import FaceRightButton from './components/gattFaceCardItem/FaceRightButton'
 import { Spin } from 'antd'
 import MiletoneGuide from './components/MiletonesGuide/index'
 import { isPaymentOrgUser } from '../../../../utils/businessFunction';
-
+import BoardTemplate from './components/boardTemplate'
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
 export default class GanttFace extends Component {
@@ -237,7 +237,7 @@ export default class GanttFace extends Component {
   }
   render() {
     const { gantt_card_out_middle_max_height } = this.state
-    const { gantt_card_height, get_gantt_data_loading, is_need_calculate_left_dx } = this.props
+    const { gantt_card_height, get_gantt_data_loading, is_need_calculate_left_dx, gantt_board_id } = this.props
     const dataAreaRealHeight = this.getDataAreaRealHeight()
 
     return (
@@ -274,7 +274,14 @@ export default class GanttFace extends Component {
               dataAreaRealHeight={dataAreaRealHeight}
               setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
               addTaskModalVisibleChange={this.props.addTaskModalVisibleChange}
+              setGoldDateArr={this.setGoldDateArr}
+              setScrollPosition={this.setScrollPosition}
             />
+            {
+              gantt_board_id && gantt_board_id != '0' && (
+                <BoardTemplate insertTaskToListGroup={this.props.insertTaskToListGroup} />
+              )
+            }
           </div>
         </div>
         <div className={indexStyles.cardDetail_right}></div>
