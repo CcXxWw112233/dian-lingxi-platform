@@ -11,10 +11,9 @@ import SimpleDrawer from './Components/SimpleDrawer/index'
 // import LingxiIm, { Im } from 'lingxi-im'
 import TaskDetailModal from '@/components/TaskDetailModal'
 import { setBoardIdStorage, getSubfixName } from "../../../../utils/businessFunction";
-import FileDetailModal from '@/components/FileDetailModal'
 import Organization from '@/routes/organizationManager'
+import FileDetailModal from '@/components/FileDetailModal'
 const { LingxiIm, Im } = global.constants
-
 
 class SimpleHeader extends Component {
     state = {

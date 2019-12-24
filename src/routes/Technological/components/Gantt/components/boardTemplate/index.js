@@ -128,6 +128,7 @@ export default class BoardTemplate extends Component {
         const { dispatch } = this.props
         if (window.location.hash.indexOf('/technological/simplemode/workbench') != -1) {
             window.sessionStorage.setItem('simplemode_home_open_key', 'org')
+            window.sessionStorage.setItem('orgManagerTabSelectKey', '6')
             dispatch({
                 type: 'technological/routingJump',
                 payload: {
