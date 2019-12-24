@@ -11,7 +11,7 @@ import NounDefinition from "./NounDefinition";
 import { ORGANIZATION, PROJECTS } from "../../globalset/js/constant";
 import { currentNounPlanFilterName } from "../../utils/businessFunction";
 import FnManagement from './FnManagement';
-import ProjectTempleteScheme from './projectTempleteScheme'
+import ProjectTempleteScheme from './projectTempleteScheme/ProjectTempleteSchemeModal'
 import globalStyles from '@/globalset/css/globalClassName.less'
 
 
