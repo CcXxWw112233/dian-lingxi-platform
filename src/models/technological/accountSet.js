@@ -27,7 +27,7 @@ export default modelExtend(technological, {
               SelectedKeys: SelectedKeys || '1', //正常默认进来menu选项‘1’,通过外部邮件进来其他
             }
           })
-        }else{
+        } else {
           // console.log(2)
         }
       })
@@ -37,18 +37,18 @@ export default modelExtend(technological, {
     * getUserInfo({ payload = {} }, { select, call, put }) {
       let res = yield call(getUserInfo, {})
       const { calback } = payload
-      if(calback && typeof calback === 'function') {
+      if (calback && typeof calback === 'function') {
         calback()
       }
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload: {
             userInfo: res.data
           }
         })
-        
-      }else{
+
+      } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
@@ -56,7 +56,7 @@ export default modelExtend(technological, {
     * updateUserInfo({ payload }, { select, call, put }) {
       const { data } = payload
       let res = yield call(updateUserInfo, data)
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'onlyGetUserInfo',
         })
@@ -68,7 +68,7 @@ export default modelExtend(technological, {
             }
           }
         })
-      }else{
+      } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
@@ -76,17 +76,17 @@ export default modelExtend(technological, {
     * changePassWord({ payload }, { select, call, put }) {
       const { data } = payload
       let res = yield call(changePassWord, data)
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         message.success('修改密码成功', MESSAGE_DURATION_TIME)
-      }else{
+      } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * formSubmit({ payload }, { select, call, put }) { //提交表单
       let res = yield call(formSubmit, payload)
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         message.success('登录成功', MESSAGE_DURATION_TIME)
-      }else{
+      } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
@@ -94,9 +94,9 @@ export default modelExtend(technological, {
       const { data, calback } = payload
       let res = yield call(requestVerifyCode, data)
       calback && typeof calback === 'function' ? calback() : ''
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         message.success(res.message, MESSAGE_DURATION_TIME)
-      }else{
+      } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
@@ -108,41 +108,41 @@ export default modelExtend(technological, {
     * checkMobileIsRegisted({ payload }, { select, call, put }) {
       const { data } = payload
       let res = yield call(checkMobileIsRegisted, data)
-      if(isApiResponseOk(res)) {
-        if(res.data) {
+      if (isApiResponseOk(res)) {
+        if (res.data) {
           message.warn('该手机号已被注册', MESSAGE_DURATION_TIME)
-        }else{
+        } else {
           let res2 = yield call(changeMobile, data)
-          if(isApiResponseOk(res2)) {
+          if (isApiResponseOk(res2)) {
             message.success('更换手机号成功。', MESSAGE_DURATION_TIME)
-          }else{
+          } else {
             message.warn(res2.message, MESSAGE_DURATION_TIME)
           }
         }
-      }else{
+      } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     * checkEmailIsRegisted({ payload }, { select, call, put }) {
       const { data } = payload
       let res = yield call(checkEmailIsRegisted, data)
-      if(isApiResponseOk(res)) {
-        if(res.data) {
+      if (isApiResponseOk(res)) {
+        if (res.data) {
           message.warn('该邮箱已被注册', MESSAGE_DURATION_TIME)
-        }else{
+        } else {
           let res2 = yield call(changeEmail, data)
-          if(isApiResponseOk(res2)) {
+          if (isApiResponseOk(res2)) {
             message.success('邮件发送成功。', MESSAGE_DURATION_TIME)
-          }else{
+          } else {
             message.warn(res2.message, MESSAGE_DURATION_TIME)
           }
         }
-      }else{
+      } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     //解绑微信
-    * unBindWechat({payload}, {select, call, put}){
+    * unBindWechat({ payload }, { select, call, put }) {
       let res = yield call(unBindWechat, payload)
       if (isApiResponseOk(res)) {
         setTimeout(() => {
@@ -157,7 +157,7 @@ export default modelExtend(technological, {
       }
     },
     //用户设置 /user/set
-    * updateUserSet({payload}, {select, call, put}){
+    * updateUserSet({ payload }, { select, call, put }) {
       let res = yield call(updateUserSet, payload)
     }
   },
