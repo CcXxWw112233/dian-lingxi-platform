@@ -959,6 +959,17 @@ export default class FileList extends React.Component {
     })
   }
 
+  getEllipsisFileName = (name) => {
+    // wx6535e025f795dca9.o6zAJs5_pqZsbrr7sJng7qkxKKbM.ZhMftVUvAIJ9b5dcb721199c1b8f4f84b0954a80e589.png
+    // let str = 'wx6535e025f795dca9.o6zAJs5_pqZsbrr7sJng7qkxKKbM.ZhMftVUvAIJ9b5dcb721199c1b8f4f84b0954a80e589.png'
+    let str = name
+    if (!name) return
+    let arr = str.split('.')
+    arr.splice(-1,1)
+    arr.join('.')
+    return arr
+  }
+
   render() {
     const { selectedRowKeys, selectedRows, fileList = [], board_id } = this.props
     const { nameSort, sizeSort, creatorSort, visitControlModalVisible, visitControlModalData, visitControlModalData: { belong_folder_id, privileges = [], privileges_extend = [] }, shouldHideVisitControlPopover } = this.state;
@@ -1051,9 +1062,10 @@ export default class FileList extends React.Component {
 
               )
               : (
-                <span onClick={this.openFile.bind(this, data)} style={{ cursor: 'pointer', display: 'inline-block', maxWidth: '700px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+                <span onClick={this.openFile.bind(this, data)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
                   <i className={globalStyles.authTheme} style={{ fontStyle: 'normal', fontSize: 30, color: '#1890FF', marginRight: 8, cursor: 'pointer' }} dangerouslySetInnerHTML={{ __html: this.judgeFileType(file_name) }}></i>
-                  {file_name}
+                    <span style={{display: 'flex'}}><span style={{maxWidth: '500px', overflow: 'hidden',  whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{this.getEllipsisFileName(file_name)}</span>{getSubfixName(file_name)}</span>
+                  {/* {file_name} */}
                   {
                     !(is_privilege == '0') && (
                       <Tooltip title="已开启访问控制" placement="top">

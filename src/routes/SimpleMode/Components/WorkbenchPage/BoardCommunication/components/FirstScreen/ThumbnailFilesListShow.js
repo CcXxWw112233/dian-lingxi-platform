@@ -3,7 +3,7 @@ import { filterFileFormatType, timestampToTime, timestampToTimeNormal } from '@/
 import globalStyles from '@/globalset/css/globalClassName.less';
 import { Table } from 'antd';
 import styles from './CommunicationThumbnailFiles.less';
-
+import { getSubfixName } from '@/utils/businessFunction.js'
 
 // @connect(mapStateToProps)
 // @connect()
@@ -20,6 +20,14 @@ export default class ThumbnailFilesListShow extends Component {
                     dataIndex: 'file_name',
                     key: 'file_name',
                     render: (text, record, index) => {
+                        const  getEllipsisFileName = (name) => {
+													let str = name
+													if (!name) return
+													let arr = str.split('.')
+													arr.splice(-1,1)
+													arr.join('.')
+													return arr
+                        }
                         if (!text) return
                         // console.log(text, 'ssssssss')
                         return (
@@ -37,7 +45,8 @@ export default class ThumbnailFilesListShow extends Component {
                                         </div>
                                     )
                                 }
-                                <span>{text}</span>
+																<span style={{display: 'flex'}}><span style={{maxWidth: '500px', overflow: 'hidden',  whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{getEllipsisFileName(text)}</span>&nbsp;{getSubfixName(text)}</span>
+                                {/* <span>{text}</span> */}
                             </div>
                         )
                     }
