@@ -140,7 +140,7 @@ export default class MilestoneAdd extends React.Component {
     submitCreatMilestone = (data) => {
         const { dispatch, dataInfo = {} } = this.props
         const { users, currentSelectedProject, due_time, add_name } = data
-        if (compareTwoTimestamp(dataInfo.due_time, due_time) || compareTwoTimestamp(dataInfo.start_time, due_time)) {
+        if (dataInfo.due_time && compareTwoTimestamp(dataInfo.due_time, due_time) || dataInfo.start_time && compareTwoTimestamp(dataInfo.start_time, due_time)) {
             message.warn('关联里程碑的截止日期不能小于任务的开始或截止时间')
             return false
         }
