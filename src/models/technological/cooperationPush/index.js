@@ -936,10 +936,17 @@ export default {
           let list_id = id_arr_[1]
           let work_parent_card_id_ = id_arr_[2] //如果有则是添加子任务
           let selectCard_id = yield select(workbench_selectCard_id)
-          let { is_archived, is_deleted } = coperateData
+          let { is_archived, is_deleted, executors = [] } = coperateData
           let card_type = coperateData['type']
           let is_has_realize = false //插入还是push标志
           let cObj = { ...coperateData, name: coperateData['card_name'], id: coperateData['card_id'], board_id: board_id_ }
+
+          const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}
+          const user_id = userInfo['id']
+          const is_handler = executors.find(item => item.user_id == user_id)
+          if (!is_handler) {
+            return
+          }
 
           if (!work_parent_card_id_) { //新增父任务
             if (card_type == '0') { //任务
@@ -1343,7 +1350,7 @@ export default {
           newsItem: JSON.parse(news['d'] || '{}')
         }
       })
-      
+
     },
 
     * handleWsData_public({ payload }, { call, put, select }) {
