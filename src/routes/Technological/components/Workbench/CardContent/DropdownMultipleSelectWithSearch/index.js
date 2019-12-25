@@ -111,7 +111,7 @@ class DropdownMultipleSelectWithSearch extends Component {
     const { list } = this.props;
     if (!list || !list.length) {
       message.destroy();
-      message.warning("请先选择项目");
+      message.warning("未选择项目或没有可选择的成员");
     }
   };
   handleSelectedItem = selectedKeys => {
