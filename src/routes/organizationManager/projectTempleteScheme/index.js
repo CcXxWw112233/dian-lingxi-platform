@@ -19,7 +19,7 @@ export default class index extends Component {
           width={'714px'}
           zIndex={1006}
           footer={null}
-          destroyOnClose
+          destroyOnClose={true}
           style={{ width: '714px', height: '860px', ...style }}
           maskClosable={false}
           onCancel={this.onCancel}
