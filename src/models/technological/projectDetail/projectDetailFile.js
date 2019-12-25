@@ -126,12 +126,12 @@ export default modelExtend(projectDetail, {
               })
             }
             if (file_id) {
-              dispatch({
-                type: 'previewFileByUrl',
-                payload: {
-                  file_id,
-                }
-              })
+              // dispatch({
+              //   type: 'previewFileByUrl',
+              //   payload: {
+              //     file_id,
+              //   }
+              // })
 
               if (file_name) {
                 dispatch({
@@ -176,12 +176,12 @@ export default modelExtend(projectDetail, {
         })
 
         if (file_id) {
-          yield put({
-            type: 'fileInfoByUrl',
-            payload: {
-              file_id,
-            }
-          })
+          // yield put({
+          //   type: 'fileInfoByUrl',
+          //   payload: {
+          //     file_id,
+          //   }
+          // })
           yield put({
             type: 'getFileList',
             payload: {

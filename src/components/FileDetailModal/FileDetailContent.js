@@ -74,6 +74,15 @@ class FileDetailContent extends Component {
       }
     } else {
       message.warn(res.message, MESSAGE_DURATION_TIME)
+      setTimeout(() => {
+        this.props.dispatch({
+          type: 'publicFileDetailModal/updateDatas',
+          payload: {
+            isInOpenFile: false
+          }
+        })
+        this.linkImWithFile(null)
+      }, 200)
     }
   }
 
@@ -151,6 +160,15 @@ class FileDetailContent extends Component {
         this.initStateDatas({ data: res.data })
       } else {
         message.warn(res.message)
+        setTimeout(() => {
+          this.props.dispatch({
+            type: 'publicFileDetailModal/updateDatas',
+            payload: {
+              isInOpenFile: false
+            }
+          })
+          this.linkImWithFile(null)
+        }, 500)
       }
     })
   }

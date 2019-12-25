@@ -89,6 +89,10 @@ export default class BoardCommuicationFileDetailContainer extends Component {
         })
       } else {
         message.warn(res.message)
+        setTimeout(() => {
+          this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
+          this.linkImWithFile(null)
+        }, 200)
       }
     })
   }
@@ -100,6 +104,10 @@ export default class BoardCommuicationFileDetailContainer extends Component {
         this.initStateDatas({ data: res.data })
       } else {
         message.warn(res.message)
+        setTimeout(() => {
+          this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
+          this.linkImWithFile(null)
+        }, 500)
       }
     })
   }

@@ -9,6 +9,7 @@ import QueryString from 'querystring'
 let board_id = null
 let appsSelectKey = null
 let card_id = null
+let dispatchs
 export default {
   namespace: 'publicTaskDetailModal',
   state: {
@@ -18,6 +19,7 @@ export default {
   },
   subscriptions: {
     setup({ dispatch, history }) {
+      dispatchs = dispatch
       history.listen((location) => {
         if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
           const param = QueryString.parse(location.search.replace('?', ''))
@@ -105,6 +107,14 @@ export default {
         calback && typeof calback == 'function' ? calback(res.data) : ''
       } else {
         message.warn(res.message)
+        setTimeout(() => {
+          dispatchs({
+            type: 'publicTaskDetailModal/updateDatas',
+            payload: {
+              drawerVisible: false
+            }
+          })
+        }, 200)
       }
       return res || {}
     },
