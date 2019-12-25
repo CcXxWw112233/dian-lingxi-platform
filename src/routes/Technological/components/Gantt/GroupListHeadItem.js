@@ -305,13 +305,20 @@ export default class GroupListHeadItem extends Component {
     this.setShowEditInput(false)
     const { gantt_board_id, list_id } = this.props
     const { edit_input_value, local_list_name } = this.state
-    if (local_list_name == edit_input_value || !!!edit_input_value) { //检测到输入变化
+    const edit_input_value_trim = edit_input_value.trim()
+    if (local_list_name == edit_input_value || !!!edit_input_value || !!!edit_input_value_trim) { //检测到输入变化
+      this.setState({
+        edit_input_value: local_list_name
+      })
       return
     }
+    this.setState({
+      edit_input_value: edit_input_value_trim
+    })
     if (gantt_board_id == '0') {
-      this.requestUpdateBoard({ board_id: list_id, name: edit_input_value })
+      this.requestUpdateBoard({ board_id: list_id, name: edit_input_value_trim })
     } else {
-      this.requestUpdateGroup({ id: list_id, name: edit_input_value, board_id: gantt_board_id })
+      this.requestUpdateGroup({ id: list_id, name: edit_input_value_trim, board_id: gantt_board_id })
     }
 
   }
