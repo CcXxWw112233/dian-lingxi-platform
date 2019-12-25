@@ -84,7 +84,11 @@ export default modelExtend(technological, {
     },
 
     * getGroupList({ payload }, { select, call, put }) {
-      let res = yield call(getGroupList, {_organization_id: localStorage.getItem('OrganizationId'), ...payload, })
+      const params  = {...payload}
+      if(typeof params == 'object') {
+        delete params.calback
+      }
+      let res = yield call(getGroupList, {_organization_id: localStorage.getItem('OrganizationId'), ...params, })
       if(isApiResponseOk(res)) {
         const groupList = res.data.data
         //将角色信息数据包裹
