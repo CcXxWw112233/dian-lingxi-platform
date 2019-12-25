@@ -570,7 +570,9 @@ export default class Header extends React.Component {
     const { board_id } = projectDetailInfoData
     let chooseArray = []
     for (let i = 0; i < selectedRowKeys.length; i++) {
-      chooseArray.push({ type: fileList[selectedRowKeys[i]].type, id: fileList[selectedRowKeys[i]].file_id })
+      // chooseArray.push({ type: fileList[selectedRowKeys[i]].type, id: fileList[selectedRowKeys[i]].file_id }) //之前索引为key
+      const item = fileList.find(item => item.id == selectedRowKeys[i]) || {}
+      chooseArray.push({ type: item.type, id: item.file_id }) //索引为id
     }
     const { dispatch } = this.props
     dispatch({
@@ -680,7 +682,7 @@ export default class Header extends React.Component {
       }
     })
   }
-  
+
   /**
    * 访问控制移除职员
    * @param {String} id 移除职员对应的id
@@ -753,17 +755,17 @@ export default class Header extends React.Component {
       new_ids.push(id)
     })
 
-     // 这里是需要做一个只添加了自己的一条提示
-     if (flag && temp_ids.length == '1') { // 表示只选择了自己, 而不是全选
-        message.warn('该职员已存在, 请不要重复添加', MESSAGE_DURATION_TIME)
-        return false
-      } else { // 否则表示进行了全选, 那么就过滤
-        temp_ids = temp_ids && temp_ids.filter(item => {
-          if (new_ids.indexOf(item) == -1) {
-            return item
-          }
-        })
-      }
+    // 这里是需要做一个只添加了自己的一条提示
+    if (flag && temp_ids.length == '1') { // 表示只选择了自己, 而不是全选
+      message.warn('该职员已存在, 请不要重复添加', MESSAGE_DURATION_TIME)
+      return false
+    } else { // 否则表示进行了全选, 那么就过滤
+      temp_ids = temp_ids && temp_ids.filter(item => {
+        if (new_ids.indexOf(item) == -1) {
+          return item
+        }
+      })
+    }
 
     setContentPrivilege({
       content_id,

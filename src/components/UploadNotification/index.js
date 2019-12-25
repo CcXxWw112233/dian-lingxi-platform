@@ -29,6 +29,7 @@ export default class UploadNotification extends Component {
         const upload_props = {
             fileList: uploading_file_list,
             listType: 'picture',
+            showUploadList: { showPreviewIcon: false, showRemoveIcon: false, showDownloadIcon: false },
             onRemove: () => false,
             onDownload: () => false,
             onPreview: () => false
