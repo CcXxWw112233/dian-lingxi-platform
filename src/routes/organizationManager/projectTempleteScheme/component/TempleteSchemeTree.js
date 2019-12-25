@@ -218,7 +218,7 @@ export default class TempleteSchemeTree extends Component {
           for (let n = 1; n < parentKeysArr.length; n++) {
             obj = item.child_content[parentKeysArr[n]];
           }
-          obj.child_content && obj.child_content.push({ id: 'add_sibiling', name: '', template_data_type: template_data_type, template_id: template_id, parent_id: parent_id, child_content: [] });
+          obj.child_content && obj.child_content.push({ id: 'add_sibiling', name: '', template_data_type: template_data_type, template_id: template_id, parent_id: PARENTID, child_content: [] });
         }
         return item;
       });
@@ -530,7 +530,7 @@ export default class TempleteSchemeTree extends Component {
           for (let n = 1; n < parentKeysArr.length; n++) {
             obj = item.child_content[parentKeysArr[n]];
           }
-          obj.child_content && obj.child_content.splice(obj.child_content[prev_index], 1, { ...currentSelectedItemInfo, is_rename: false });
+          obj.child_content && obj.child_content.splice(prev_index, 1, { ...currentSelectedItemInfo, is_rename: false });
         }
         return item;
       });
@@ -593,7 +593,6 @@ export default class TempleteSchemeTree extends Component {
     // let obj = { id: 'add_sibiling', name: '', template_data_type: template_data_type, template_id: template_id, parent_id: parent_id, child_content: [] }
     // 得到一个当前元素中所有父级所在的下标位置的数组
     let parentKeysArr = this.getCurrentElementParentKey(arr, currentId);
-
     if (parentKeysArr.length == '1') { // 如果说当前点击的是最外层的元素, 那么就直接在当前追加一条
       // debugger
       arr.splice(parentKeysArr[0], 1, { ...currentSelectedItemInfo, is_rename: flag })
@@ -604,8 +603,9 @@ export default class TempleteSchemeTree extends Component {
           let obj = { ...item };
           for (let n = 1; n < parentKeysArr.length; n++) {
             obj = item.child_content[parentKeysArr[n]];
+            // obj = item.child_content[prev_index];
           }
-          obj.child_content && obj.child_content.splice(obj.child_content[prev_index], 1, { ...currentSelectedItemInfo, is_rename: flag });
+          obj.child_content && obj.child_content.splice(prev_index, 1, { ...currentSelectedItemInfo, is_rename: flag });
         }
         return item;
       });
@@ -788,7 +788,7 @@ export default class TempleteSchemeTree extends Component {
     if (currentSelectedItemInfo && Object.keys(currentSelectedItemInfo) && Object.keys(currentSelectedItemInfo).length == '0' || !currentSelectedItemInfo) return false
     const { template_data_type, template_id, parent_id, id, name, child_content } = currentSelectedItemInfo
     const { inputValue, is_add_children } = this.state
-    let PARENTID = child_content && child_content.length > 0 ? id : parent_id
+    let PARENTID = child_content && child_content.length > 0 ? child_content[0].parent_id : parent_id
     if (is_rename) {
       this.props.dispatch({
         type: 'organizationManager/updateTempleteContainer',
@@ -858,7 +858,8 @@ export default class TempleteSchemeTree extends Component {
   // 渲染树状列表的title
   renderPlanTreeTitle = ({ type, name, is_rename, id }) => {
     const { is_add_sibiling, is_add_children, is_add_rename } = this.state
-    const { currentSelectedItemInfo = {} } = this.props
+    const { currentSelectedItemInfo = {}, currentTempleteListContainer = [] } = this.props
+    let firstEleId = currentTempleteListContainer && currentTempleteListContainer.length > 0 && currentTempleteListContainer[0].id
     let icon = ''
     let flag = this.judgeWhetherCreateChildTask(this.props.currentTempleteListContainer, id)
     if (type == '1') {
@@ -887,7 +888,7 @@ export default class TempleteSchemeTree extends Component {
                 <div className={indexStyles.icon_list}>
                   {
                     operatorIconList.map(item => (
-                      <Tooltip autoAdjustOverflow={false} placement="bottom" title={item.toolTipText} getPopupContainer={triggerNode => triggerNode.parentNode}>
+                      <Tooltip autoAdjustOverflow={false} placement={firstEleId == id ? 'bottom' : 'top'} title={item.toolTipText} getPopupContainer={triggerNode => triggerNode.parentNode}>
                         <span onClick={item.onClick} key={item.key} className={`${globalStyles.authTheme} ${indexStyles.icon_item} ${item.key == 'add_children' && flag && indexStyles.is_add_children} ${item.key == 'delete_item' && indexStyles.delete_item} ${disabledAll && indexStyles.disabledAll}`}>{item.icon}</span>
                       </Tooltip>
                     ))

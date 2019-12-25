@@ -165,6 +165,7 @@ class BoardCommunication extends Component {
 
     // 改变当前文件夹tree层级-处理当前层【文件夹层面包屑路径】
     onSelectTree = (currentfloor, first_item) => {
+        if (!currentfloor) return
         first_item.layerType = 'projectLayer';
         const { communicationSubFolderData } = this.props;
         const { child_data = [] } = communicationSubFolderData;
