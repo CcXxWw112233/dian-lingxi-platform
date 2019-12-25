@@ -437,7 +437,7 @@ class Organization extends Component {
               {this.renderManagementNavList()}
             </div>
             {/* 右边内容 */}
-            <div className={`${indexStyles.org_managementContainer} ${globalStyles.global_vertical_scrollbar}`}>
+            <div id={'org_managementContainer'} className={`${indexStyles.org_managementContainer} ${globalStyles.global_vertical_scrollbar}`}>
               {this.renderManagementContainer()}
             </div>
           </div>

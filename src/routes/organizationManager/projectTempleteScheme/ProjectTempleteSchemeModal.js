@@ -59,11 +59,12 @@ export default class ProjectTempleteSchemeModal extends Component {
   handleDeleteTemplete = (e, id) => {
     e && e.stopPropagation()
     const that = this
-    Modal.confirm({
+    const modal = Modal.confirm();
+    modal.update({
       title: '删除模板',
       content: '确认删除该模板吗？',
-      okText: '确认',
-      cancelText: '取消',
+      zIndex: 1110,
+      getContainer: () => document.getElementById('org_managementContainer'),
       onOk: () => {
         this.props.dispatch({
           type: 'organizationManager/deleteTemplete',
@@ -71,8 +72,26 @@ export default class ProjectTempleteSchemeModal extends Component {
             id: id
           }
         })
+      },
+      onCancel: () => {
+        modal.destroy();
       }
     });
+    // Modal.confirm({
+    //   title: '删除模板',
+    //   content: '确认删除该模板吗？',
+    //   okText: '确认',
+    //   cancelText: '取消',
+    //   // getContainer: () => document.getElementById('getContainer'),
+    //   onOk: () => {
+    //     this.props.dispatch({
+    //       type: 'organizationManager/deleteTemplete',
+    //       payload: {
+    //         id: id
+    //       }
+    //     })
+    //   }
+    // });
     
   }
 
@@ -98,7 +117,7 @@ export default class ProjectTempleteSchemeModal extends Component {
                     <Tooltip title="删除模板" placement="top">
                       <span onClick={(e) => { this.handleDeleteTemplete(e, item.id) }} className={`${globalStyles.authTheme} ${indexStyles.del_temp}`}>&#xe7c3;</span>
                     </Tooltip>
-                    <Tooltip placement="bottom" title={item.name}>
+                    <Tooltip placement="bottom" title={item.name} getPopupContainer={triggerNode => triggerNode.parentNode}>
                       <span className={indexStyles.plan_name}>{item.name}</span>
                     </Tooltip>
                   </div>
