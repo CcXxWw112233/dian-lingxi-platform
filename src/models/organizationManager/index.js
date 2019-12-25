@@ -566,6 +566,7 @@ export default {
 
     // 创建模板
     * createTemplete({ payload }, { call, put }) {
+      const { _organization_id } = payload
       const res = yield call(createTemplete, payload)
       if (isApiResponseOk(res)) {
         setTimeout(() => {
@@ -574,7 +575,7 @@ export default {
         yield put({
           type: 'getTemplateList',
           payload: {
-
+            _organization_id
           }
         })
       } else {
@@ -584,7 +585,8 @@ export default {
 
     // 删除模板
     * deleteTemplete({ payload }, { call, put }) {
-      const res = yield call(deleteTemplete, payload)
+      const { _organization_id, id } = payload
+      const res = yield call(deleteTemplete, {id})
       if (isApiResponseOk(res)) {
         setTimeout(() => {
           message.success('删除模板成功', MESSAGE_DURATION_TIME)
@@ -592,7 +594,7 @@ export default {
         yield put({
           type: 'getTemplateList',
           payload: {
-
+            _organization_id
           }
         })
       } else {

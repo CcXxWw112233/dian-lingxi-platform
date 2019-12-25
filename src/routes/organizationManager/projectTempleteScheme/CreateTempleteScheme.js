@@ -26,10 +26,12 @@ export default class CreateTempleteScheme extends Component {
   // 点击新建模板
   handleCreateTemplete = () => {
     const { inputValue } = this.state
+    const { _organization_id } = this.props
     this.props.dispatch({
       type: 'organizationManager/createTemplete',
       payload: {
-        name: inputValue
+        name: inputValue,
+        _organization_id
       }
     })
     this.props.updateStateDatas && this.props.updateStateDatas({ whetherShowSchemeDetail: false })

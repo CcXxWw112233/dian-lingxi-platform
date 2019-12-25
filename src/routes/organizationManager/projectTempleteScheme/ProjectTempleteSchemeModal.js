@@ -20,10 +20,11 @@ export default class ProjectTempleteSchemeModal extends Component {
   }
 
   componentDidMount() {
+    const { _organization_id } = this.props
     this.props.dispatch({
       type: 'organizationManager/getTemplateList',
       payload: {
-
+        _organization_id
       }
     })
   }
@@ -58,18 +59,22 @@ export default class ProjectTempleteSchemeModal extends Component {
 
   handleDeleteTemplete = (e, id) => {
     e && e.stopPropagation()
+    const { _organization_id } = this.props
     const that = this
     const modal = Modal.confirm();
     modal.update({
       title: '删除模板',
       content: '确认删除该模板吗？',
       zIndex: 1110,
+      okText: '确认',
+      cancelText: '取消',
       getContainer: () => document.getElementById('org_managementContainer'),
       onOk: () => {
         this.props.dispatch({
           type: 'organizationManager/deleteTemplete',
           payload: {
-            id: id
+            id: id,
+            _organization_id
           }
         })
       },
@@ -114,7 +119,7 @@ export default class ProjectTempleteSchemeModal extends Component {
                 </div>
               ) : (
                   <div key={item.id} style={{ position: 'relative' }} className={`${indexStyles.margin_right} ${indexStyles.others_list}`} onClick={() => { this.handleOperatorSchemeList({ id, name }) }}>
-                    <Tooltip title="删除模板" placement="top">
+                    <Tooltip autoAdjustOverflow={false} title="删除模板" placement="top">
                       <span onClick={(e) => { this.handleDeleteTemplete(e, item.id) }} className={`${globalStyles.authTheme} ${indexStyles.del_temp}`}>&#xe7c3;</span>
                     </Tooltip>
                     <Tooltip placement="bottom" title={item.name} getPopupContainer={triggerNode => triggerNode.parentNode}>
@@ -132,9 +137,11 @@ export default class ProjectTempleteSchemeModal extends Component {
   // 渲染每一个列表详情
   renderEverySchemeItem = () => {
     let { projectSchemeBreadCrumbList, current_templete_id, current_templete_name } = this.state
+    const { _organization_id } = this.props
     return (current_templete_id == '0' ?
       <CreateTempleteScheme 
         updateStateDatas={this.updateStateDatas}
+        _organization_id={_organization_id}
       /> :
       <TempleteSchemeDetail
         current_templete_id={current_templete_id}

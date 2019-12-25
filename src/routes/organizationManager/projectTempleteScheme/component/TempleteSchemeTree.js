@@ -519,7 +519,6 @@ export default class TempleteSchemeTree extends Component {
     // let obj = { id: 'add_sibiling', name: '', template_data_type: template_data_type, template_id: template_id, parent_id: parent_id, child_content: [] }
     // 得到一个当前元素中所有父级所在的下标位置的数组
     let parentKeysArr = this.getCurrentElementParentKey(arr, id);
-debugger
     if (parentKeysArr.length == '1') { // 如果说当前点击的是最外层的元素, 那么就直接在当前追加一条
       // arr = this.rename({datas: arr, id, flag: false})
       arr.splice(parentKeysArr[0], 1, { ...currentSelectedItemInfo, is_rename: false })
@@ -870,7 +869,7 @@ debugger
     let operatorIconList = this.renderOperatorIconList(id)
     let disabledAll = is_add_sibiling || is_add_children || is_add_rename
     return (
-      <div className={indexStyles.show_icon} style={{ display: 'flex', alignItems: 'center' }}>
+      <div id={`show_icon-${id}`} className={indexStyles.show_icon} style={{ display: 'flex', alignItems: 'center' }}>
         {
           !name || is_rename ? (
             <>
@@ -888,7 +887,7 @@ debugger
                 <div className={indexStyles.icon_list}>
                   {
                     operatorIconList.map(item => (
-                      <Tooltip placement="top" title={item.toolTipText} getPopupContainer={triggerNode => triggerNode.parentNode}>
+                      <Tooltip autoAdjustOverflow={false} placement="bottom" title={item.toolTipText} getPopupContainer={triggerNode => triggerNode.parentNode}>
                         <span onClick={item.onClick} key={item.key} className={`${globalStyles.authTheme} ${indexStyles.icon_item} ${item.key == 'add_children' && flag && indexStyles.is_add_children} ${item.key == 'delete_item' && indexStyles.delete_item} ${disabledAll && indexStyles.disabledAll}`}>{item.icon}</span>
                       </Tooltip>
                     ))
@@ -934,7 +933,7 @@ debugger
     const { expandedKeys = [], selectedKeys = [], is_add_rename } = this.state
     const { currentTempleteListContainer = [] } = this.props
     return (
-      < div className={indexStyles.treeNodeWrapper} >
+      < div className={`${indexStyles.treeNodeWrapper} ${globalStyles.global_vertical_scrollbar}`} >
         <Tree
           blockNode={true}
           selectedKeys={selectedKeys}
