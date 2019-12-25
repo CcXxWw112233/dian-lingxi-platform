@@ -22,6 +22,7 @@ export default class index extends Component {
           destroyOnClose={true}
           style={{ width: '714px', height: '860px', ...style }}
           maskClosable={false}
+          bodyStyle={{height: '860px'}}
           onCancel={this.onCancel}
         >
           <ProjectTempleteSchemeModal _organization_id={_organization_id} />
