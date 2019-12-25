@@ -133,6 +133,8 @@ export default class BoardTemplate extends Component {
     // 去到新建的管理后台界面
     routingJumpToOrgManager = () => {
         const { dispatch } = this.props
+        this.setProjectTempleteSchemeModal() //全组织下
+        return
         if (localStorage.getItem('OrganizationId') == '0') {
             this.setProjectTempleteSchemeModal() //全组织下
             return
@@ -500,7 +502,10 @@ export default class BoardTemplate extends Component {
                             <div className={`${styles.switchSpin_top}`}></div>
                             <div className={`${styles.switchSpin_bott}`}></div>
                         </div>
-                        <BoardTemplateManager _organization_id={getGlobalData('aboutBoardOrganizationId')} project_templete_scheme_visible={project_templete_scheme_visible} setProjectTempleteSchemeModal={this.setProjectTempleteSchemeModal}></BoardTemplateManager>
+                        <BoardTemplateManager
+                            _organization_id={localStorage.getItem('OrganizationId') != '0' ? localStorage.getItem('OrganizationId') : getGlobalData('aboutBoardOrganizationId')}
+                            project_templete_scheme_visible={project_templete_scheme_visible}
+                            setProjectTempleteSchemeModal={this.setProjectTempleteSchemeModal}></BoardTemplateManager>
                     </div >
                 ) : (
                     <></>
