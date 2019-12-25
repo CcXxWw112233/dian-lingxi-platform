@@ -228,8 +228,11 @@ export default class BoarderfilesHeader extends Component {
         const { fileList, selectedRowKeys, projectDetailInfoData = {}, dispatch } = this.props
         const { board_id } = projectDetailInfoData
         let chooseArray = []
+     
         for (let i = 0; i < selectedRowKeys.length; i++) {
-            chooseArray.push({ type: fileList[selectedRowKeys[i]].type, id: fileList[selectedRowKeys[i]].file_id })
+            // chooseArray.push({ type: fileList[selectedRowKeys[i]].type, id: fileList[selectedRowKeys[i]].file_id }) //之前索引为key
+            const item = fileList.find(item => item.id == selectedRowKeys[i]) || {}
+            chooseArray.push({ type: item.type, id: item.file_id }) //索引为id
         }
 
         dispatch({
