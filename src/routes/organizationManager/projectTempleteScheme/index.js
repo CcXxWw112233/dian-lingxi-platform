@@ -10,7 +10,7 @@ export default class index extends Component {
   }
 
   render() {
-    const { project_templete_scheme_visible = true } = this.props
+    const { project_templete_scheme_visible = true, style } = this.props
     return (
       <div>
         <Modal
@@ -19,7 +19,7 @@ export default class index extends Component {
           zIndex={1006}
           footer={null}
           destroyOnClose
-          style={{width: '714px', height: '860px', overflowY: 'auto'}}
+          style={{width: '714px', height: '860px', overflowY: 'auto', ...style}}
           maskClosable={false}
           onCancel={this.onCancel}
         >
