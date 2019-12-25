@@ -165,6 +165,8 @@ export default class UploadNormal extends Component {
                     }
                 }
             },
+            onRemove: () => false,
+            showRemoveIcon: false, 
             customRequest: this.customRequest
         };
         return propsObj
@@ -271,9 +273,13 @@ export default class UploadNormal extends Component {
         }
         const p = new Promise(async (resolve, reject) => {
             checkFileMD5WithBack(params).then(res => {
-                resolve(res)
+                if (res.code == '0') {
+                    resolve(res)
+                } else {
+                    resolve({ data: {} })
+                }
             }).catch(err => {
-                resolve({})
+                resolve({ data: {} })
             })
         })
         return p
