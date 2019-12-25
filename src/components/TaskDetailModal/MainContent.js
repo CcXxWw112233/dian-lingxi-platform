@@ -30,6 +30,25 @@ export default class MainContent extends Component {
     }
   }
 
+  linkImWithCard = (data) => {
+    // console.log('进来了', 'sssssssssss')
+    const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    const { is_simple_model } = user_set;
+    if (!data) {
+      global.constants.lx_utils && global.constants.lx_utils.setCommentData(null) 
+      return false
+    }
+    global.constants.lx_utils && global.constants.lx_utils.setCommentData({...data})
+    if (is_simple_model == '1') {
+      this.props.dispatch({
+        type: 'simplemode/updateDatas',
+        payload: {
+          chatImVisiable: true
+        }
+      })
+    }
+  }
+
   //获取项目里文件夹列表
   getProjectFolderList = (board_id) => {
     getFolderList({ board_id }).then((res) => {
@@ -91,22 +110,58 @@ export default class MainContent extends Component {
   }
 
   componentDidMount() {
-    const { card_id } = this.props
+    const { card_id, dispatch } = this.props
     if (!card_id) return false
     const that = this
-    this.props.dispatch({
-      type: 'publicTaskDetailModal/getCardWithAttributesDetail',
-      payload: {
-        id: card_id,
-        calback: function (data) {
-          if (checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW, data.board_id)) {
-            that.getProjectFolderList(data.board_id)
-          }
-          that.getMilestone(data.board_id)
-          that.filterCurrentExistenceField(data)// 初始化获取字段信息
+    Promise.resolve(
+      dispatch({
+        type: 'publicTaskDetailModal/getCardWithAttributesDetail',
+        payload: {
+          id: card_id,
+          // calback: function (data) {
+          //   if (checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW, data.board_id)) {
+          //     that.getProjectFolderList(data.board_id)
+          //   }
+          //   that.getMilestone(data.board_id)
+          //   that.filterCurrentExistenceField(data)// 初始化获取字段信息
+          //   that.linkImWithCard({name: data.card_name, type: 'card', board_id: data.board_id, id: data.card_id})
+          // }
         }
+      })
+    ).then(res => {
+      if (isApiResponseOk(res)) {
+        if (checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW, res.data.board_id)) {
+          this.getProjectFolderList(res.data.board_id)
+        }
+        this.getMilestone(res.data.board_id)
+        this.filterCurrentExistenceField(res.data)// 初始化获取字段信息
+        this.linkImWithCard({name: res.data.card_name, type: 'card', board_id: res.data.board_id, id: res.data.card_id})
+      } else {
+        setTimeout(() => {
+          dispatch({
+            type: 'publicTaskDetailModal/updateDatas',
+            payload: {
+              drawerVisible: false
+            }
+          })
+          this.linkImWithCard(null)
+        }, 500)
       }
     })
+    // this.props.dispatch({
+    //   type: 'publicTaskDetailModal/getCardWithAttributesDetail',
+    //   payload: {
+    //     id: card_id,
+    //     calback: function (data) {
+    //       if (checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW, data.board_id)) {
+    //         that.getProjectFolderList(data.board_id)
+    //       }
+    //       that.getMilestone(data.board_id)
+    //       that.filterCurrentExistenceField(data)// 初始化获取字段信息
+    //       that.linkImWithCard({name: data.card_name, type: 'card', board_id: data.board_id, id: data.card_id})
+    //     }
+    //   }
+    // })
 
   }
 

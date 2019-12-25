@@ -107,14 +107,6 @@ export default {
         calback && typeof calback == 'function' ? calback(res.data) : ''
       } else {
         message.warn(res.message)
-        setTimeout(() => {
-          dispatchs({
-            type: 'publicTaskDetailModal/updateDatas',
-            payload: {
-              drawerVisible: false
-            }
-          })
-        }, 200)
       }
       return res || {}
     },

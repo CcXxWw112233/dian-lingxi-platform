@@ -34,6 +34,8 @@ export default class TaskDetailModal extends Component {
       }
     })
     this.props.setTaskDetailModalVisible && this.props.setTaskDetailModalVisible()
+    // 圈子关闭联动
+    global.constants.lx_utils && global.constants.lx_utils.setCommentData(null) 
   }
 
    // 检测不同类型的权限控制类型的是否显示
