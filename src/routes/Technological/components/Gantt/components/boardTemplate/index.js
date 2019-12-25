@@ -8,6 +8,7 @@ import { getBoardTemplateList, getBoardTemplateInfo, createCardByTemplate } from
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import { createMilestone } from '../../../../../../services/technological/prjectDetail'
 import { getGlobalData } from '../../../../../../utils/businessFunction'
+import BoardTemplateManager from '@/routes/organizationManager/projectTempleteScheme/index.js'
 
 const MenuItem = Menu.Item
 const TreeNode = Tree.TreeNode;
@@ -17,7 +18,6 @@ export default class BoardTemplate extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            selected_plane_keys: '', //已选择的项目模板
             show_type: '0', // 0 1 2 //默认关闭 / 出现动画 / 隐藏动画
             drag_node_data: {
                 data_id: '',
@@ -41,14 +41,13 @@ export default class BoardTemplate extends Component {
     // 初始化数据
     initState = (is_new_board) => {
         this.setState({
-            selected_plane_keys: '', //已选择的项目模板
             show_type: is_new_board ? '1' : '0', // 0 1 2 //默认关闭 / 出现动画 / 隐藏动画
             drag_node_data: {
                 data_id: '',
                 data_type: '',
                 data_name: ''
             },
-            selected_template_id: '',
+            selected_template_id: '',//已选择的项目模板
             selected_template_name: '请选择模板',
             template_list: [],
             template_data: [], //模板数据
@@ -88,6 +87,14 @@ export default class BoardTemplate extends Component {
             this.setState({
                 template_list: data
             })
+            const { selected_template_id } = this.state
+            if (!!selected_template_id) {
+                this.getTemplateInfo(selected_template_id)
+                this.setState({
+                    selected_template_name: data.find(item => item.id == selected_template_id).name,
+                })
+                return
+            }
             if (data && data.length) {
                 this.setState({
                     selected_template_name: data[0].name,
@@ -121,11 +128,15 @@ export default class BoardTemplate extends Component {
     // 是否显示去到组织管理的界面
     isShowSetting = () => {
         const OrganizationId = localStorage.getItem('OrganizationId')
-        return OrganizationId && (OrganizationId != '0')
+        return true//OrganizationId && (OrganizationId != '0')
     }
     // 去到新建的管理后台界面
     routingJumpToOrgManager = () => {
         const { dispatch } = this.props
+        if (localStorage.getItem('OrganizationId') == '0') {
+            this.setProjectTempleteSchemeModal() //全组织下
+            return
+        }
         if (window.location.hash.indexOf('/technological/simplemode/workbench') != -1) {
             window.sessionStorage.setItem('simplemode_home_open_key', 'org')
             window.sessionStorage.setItem('orgManagerTabSelectKey', '6')
@@ -158,6 +169,16 @@ export default class BoardTemplate extends Component {
             })
             this.getTemplateInfo(key)
         }
+    }
+    // 设置管理模板弹窗是否出现
+    setProjectTempleteSchemeModal = () => {
+        const { project_templete_scheme_visible } = this.state
+        if (!!project_templete_scheme_visible) {
+            this.getBoardTemplateList()
+        }
+        this.setState({
+            project_templete_scheme_visible: !project_templete_scheme_visible
+        })
     }
 
     renderTemplateList = () => {
@@ -424,7 +445,7 @@ export default class BoardTemplate extends Component {
         }
     }
     render() {
-        const { template_data, show_type, selected_template_name, spinning } = this.state
+        const { template_data, show_type, selected_template_name, spinning, project_templete_scheme_visible } = this.state
         const { gantt_board_id } = this.props
         return (
             gantt_board_id && gantt_board_id != '0' ?
@@ -479,6 +500,7 @@ export default class BoardTemplate extends Component {
                             <div className={`${styles.switchSpin_top}`}></div>
                             <div className={`${styles.switchSpin_bott}`}></div>
                         </div>
+                        <BoardTemplateManager _organization_id={getGlobalData('aboutBoardOrganizationId')} project_templete_scheme_visible={project_templete_scheme_visible} setProjectTempleteSchemeModal={this.setProjectTempleteSchemeModal}></BoardTemplateManager>
                     </div >
                 ) : (
                     <></>
