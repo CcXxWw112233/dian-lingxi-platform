@@ -22,6 +22,7 @@ export default class TempleteSchemeTree extends Component {
     })
   }
 
+  // 卸载事件
   componentWillUnmount() {
     this.props.dispatch({
       type: 'organizationManager/updateDatas',
@@ -32,6 +33,7 @@ export default class TempleteSchemeTree extends Component {
     })
   }
 
+  // 展开的回调
   onExpand = (expandedKeys) => {
     this.setState({
       expandedKeys: expandedKeys
@@ -44,18 +46,20 @@ export default class TempleteSchemeTree extends Component {
     let new_data = [...currentTempleteListContainer]
     const { selected } = e
     const { is_wrapper_add_sibiling, is_add_sibiling, is_wrapper_add_children, is_add_children, is_wrapper_add_rename, is_add_rename, selectedKeys: oldSelectedKeys } = this.state
-    if (oldSelectedKeys && oldSelectedKeys[0] != selectedKeys[0] && selected) {
+    // if (is_add_sibiling || is_add_children || is_add_rename) return
+    if (oldSelectedKeys && oldSelectedKeys[0] != selectedKeys[0] && selected) { // 这步判断就是 ==> 相当于点击每一个item的切换，需要把上一个找到并恢复上一个点击的状态
       // this.updateSpliceTreeList({ datas: currentTempleteListContainer, currentId: oldSelectedKeys[0], type: 'remove' })
-      if (is_wrapper_add_sibiling || is_add_sibiling) {
+      if (is_wrapper_add_sibiling || is_add_sibiling) { // 如果是同级，就处理同级
         this.updateCancelOrDeleteSibilingTreeList({ datas: currentTempleteListContainer, type: 'add_sibiling' })
-      } else if (is_wrapper_add_children || is_add_children) {
+      } else if (is_wrapper_add_children || is_add_children) { // 如果是子级，就处理子级
         this.updateCancelOrDeleteChildrenTreeList({ datas: currentTempleteListContainer, type: 'add_children' })
-      } else if (is_wrapper_add_rename || is_add_rename){
+      } else if (is_wrapper_add_rename || is_add_rename){ // 如果是重命名就处理重命名
         this.updateCancelOrDeleteAlreadyExistsTreeList({ datas: currentTempleteListContainer, type: oldSelectedKeys && oldSelectedKeys[0] })
       }
       this.initStateDatas()
-    } else if (!oldSelectedKeys && selected) {
+    } else if (!oldSelectedKeys && selected) { // 这里是点击每一个item上hover图标的点击事件
       this.updateCancelOrDeleteAlreadyExistsTreeList({ datas: currentTempleteListContainer, type: selectedKeys[0] })
+      this.initStateDatas()
     }
     this.setState({
       selectedKeys,
@@ -196,6 +200,7 @@ export default class TempleteSchemeTree extends Component {
 
   /**
    * 更新添加同级树状结构
+   * 逻辑: 找到当前点击对象的父元素, 然后push一个同级对象
    * @param {Array} datas 当前的树状结构
    * @param {String} currentId 当前的对象ID
    */
@@ -215,9 +220,10 @@ export default class TempleteSchemeTree extends Component {
       arr.map((item, i) => {
         if (i == parentKeysArr[0]) {
           let obj = { ...item };
-          for (let n = 1; n < parentKeysArr.length; n++) {
+          for (let n = 1; n < parentKeysArr.length; n++) {// 不管怎样，这里的obj永远获取到的都是当前点击的元素的父元素
             obj = item.child_content[parentKeysArr[n]];
           }
+          // 想要的这个操作就是在当前点击父元素上push一个同级对象
           obj.child_content && obj.child_content.push({ id: 'add_sibiling', name: '', template_data_type: template_data_type, template_id: template_id, parent_id: PARENTID, child_content: [] });
         }
         return item;
@@ -246,6 +252,10 @@ export default class TempleteSchemeTree extends Component {
 
   /**
    * 添加子级更新树状结构
+   * 逻辑: 获取当前对象自己所在的位置,然后在child_content中push一个对象
+   * 同时也要更新父级的展开关闭状态
+   * @param {Array} datas 当前的树状结构
+   * @param {String} currentId 当前的对象ID
    */
   updateAddChildrenTreeList = ({ datas, currentId }) => {
     let arr = [...datas]
@@ -307,6 +317,7 @@ export default class TempleteSchemeTree extends Component {
   /**
    * 新增加的结构的取消删除更新树状结构
    * 同级操作更新
+   * 逻辑: 找到当前操作的并截取
    * @param {Array} datas 当前的树状结构
    * @param {String} type 当前添加该结构的ID,利用type类型来进行区分
    */
@@ -509,7 +520,8 @@ export default class TempleteSchemeTree extends Component {
           })
           this.setState({
             selectedKeys: [],
-            expandedKeys: [],
+            is_wrapper_add_rename: false
+            // expandedKeys: [],
           })
           this.initStateDatas()
         }
@@ -536,6 +548,11 @@ export default class TempleteSchemeTree extends Component {
       });
     }
     this.initStateDatas()
+    this.setState({
+      selectedKeys: [],
+      is_wrapper_add_rename: false
+      // expandedKeys: [],
+    })
     dispatch({
       type: 'organizationManager/updateDatas',
       payload: {
@@ -787,8 +804,10 @@ export default class TempleteSchemeTree extends Component {
     const { currentSelectedItemInfo = {} } = this.props
     if (currentSelectedItemInfo && Object.keys(currentSelectedItemInfo) && Object.keys(currentSelectedItemInfo).length == '0' || !currentSelectedItemInfo) return false
     const { template_data_type, template_id, parent_id, id, name, child_content } = currentSelectedItemInfo
-    const { inputValue, is_add_children } = this.state
-    let PARENTID = child_content && child_content.length > 0 ? child_content[0].parent_id : parent_id
+    const { inputValue, is_add_children, is_wrapper_add_children } = this.state
+    // 如果是template_data_type == '2' 子任务, 就取parent_id , 否则为 id ==> 判断是否 创建添加的是什么
+    // 如果是创建添加子任务，那么就取该 对象中的 id 否则为parent_id
+    let PARENTID = template_data_type == '2' ? ((is_add_children || is_wrapper_add_children) ? id : parent_id) : parent_id
     if (is_rename) {
       this.props.dispatch({
         type: 'organizationManager/updateTempleteContainer',
@@ -804,7 +823,7 @@ export default class TempleteSchemeTree extends Component {
         payload: {
           name: inputValue,
           parent_id: parent_id == '0' ? id : PARENTID,
-          template_data_type: is_add_children ? '2' : template_data_type,
+          template_data_type: is_add_children || is_wrapper_add_children ? '2' : template_data_type,
           template_id: template_id
         }
       })
