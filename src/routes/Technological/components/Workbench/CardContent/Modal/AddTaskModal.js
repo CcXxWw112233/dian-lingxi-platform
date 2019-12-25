@@ -408,16 +408,23 @@ class AddTaskModal extends Component {
     return taskTypeObj[taskType];
   };
   showCreateTaskSuccessNote = (board_id, id, name) => {
-    return
+    // return
     const handleJump = e => {
       if (e) e.stopPropagation();
       notification.destroy();
       this.props.updatePublicDatas({ board_id });
-      this.props.getCardDetail({
-        id,
-        board_id,
-        calback: this.props.setTaskDetailModalVisibile
-      });
+      this.props.dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawerVisible: true,
+          card_id: id
+        }
+      })
+      // this.props.getCardDetail({
+      //   id,
+      //   board_id,
+      //   calback: this.props.setTaskDetailModalVisibile
+      // });
       // this.props.setTaskDetailModalVisibile();
     };
     const descirptionEle = (

@@ -125,7 +125,7 @@ class FileItem extends React.Component {
     );
   }
   previewFile(data, e) {
-    e.stopPropagation()
+    e && e.stopPropagation()
     const {
       board_id,
       board_name,
