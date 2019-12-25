@@ -10,7 +10,8 @@ export default class index extends Component {
   }
 
   render() {
-    const { project_templete_scheme_visible = true, style } = this.props
+    const { project_templete_scheme_visible, style, _organization_id } = this.props
+    // console.log('sssssss__organization_id', _organization_id)
     return (
       <div>
         <Modal
@@ -19,11 +20,11 @@ export default class index extends Component {
           zIndex={1006}
           footer={null}
           destroyOnClose
-          style={{width: '714px', height: '860px', overflowY: 'auto', ...style}}
+          style={{ width: '714px', height: '860px', overflowY: 'auto', ...style }}
           maskClosable={false}
           onCancel={this.onCancel}
         >
-          <ProjectTempleteSchemeModal />
+          <ProjectTempleteSchemeModal _organization_id={_organization_id} />
         </Modal>
       </div>
     )
