@@ -40,6 +40,17 @@ class FileDetailContent extends Component {
   //   }
   // }
 
+  // 获取所有版本列表的IDS
+  getEveryVersionListIds = () => {
+    const { filePreviewCurrentVersionList = [] } = this.state
+    let Ids = []
+    let new_filePreviewCurrentVersionList = [...filePreviewCurrentVersionList]
+    new_filePreviewCurrentVersionList.map(item => {
+      Ids.push(item.id)
+    })
+    return Ids
+  }
+
   initStateDatas = ({ data }) => {
     this.setState({
       filePreviewCurrentResourceId: data.base_info.file_resource_id, // 需要保存源文件ID
@@ -157,7 +168,8 @@ class FileDetailContent extends Component {
     //     isInOpenFile: false
     //   }
     // })
-    global.constants.lx_utils && global.constants.lx_utils.setCommentData(this.state.filePreviewCurrentFileId || null)
+    let all_version_list_Ids = this.getEveryVersionListIds()
+    global.constants.lx_utils && global.constants.lx_utils.setCommentData((all_version_list_Ids && all_version_list_Ids.length) && all_version_list_Ids ||this.props.filePreviewCurrentFileId || null)
     this.whetherUpdateProjectDetailFileBreadCrumbListNav()
   }
 
