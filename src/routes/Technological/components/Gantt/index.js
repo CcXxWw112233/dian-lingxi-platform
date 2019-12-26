@@ -28,13 +28,21 @@ class Gantt extends Component {
   }
 
   componentWillUnmount() {
-    const { dispatch } = this.props
+    const { dispatch, page_load_type } = this.props
     dispatch({
       type: 'gantt/updateDatas',
       payload: {
         is_show_board_file_area: '0'
       }
     })
+    if (page_load_type != 1) {
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          gantt_board_id: '0'
+        }
+      })
+    }
   }
 
   //用来实现创建任务弹窗方法
@@ -198,7 +206,7 @@ class Gantt extends Component {
   // 修改没有排期的任务
   handleNoHasScheduleCard = ({ card_id, drawContent = {}, operate_properties_code }) => {
     const { dispatch } = this.props
-    if(operate_properties_code == 'MILESTONE') { //修改的是里程碑
+    if (operate_properties_code == 'MILESTONE') { //修改的是里程碑
       dispatch({
         type: 'gantt/getGttMilestoneList',
         payload: {
@@ -244,7 +252,7 @@ class Gantt extends Component {
   // 修改有排期的任务
   handleHasScheduleCard = ({ card_id, drawContent, operate_properties_code }) => {
     const { dispatch } = this.props
-    if(operate_properties_code == 'MILESTONE') { //修改的是里程碑
+    if (operate_properties_code == 'MILESTONE') { //修改的是里程碑
       dispatch({
         type: 'gantt/getGttMilestoneList',
         payload: {
@@ -258,7 +266,7 @@ class Gantt extends Component {
     const list_group_new = [...list_group]
     const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
     const group_index_cards_index = list_group_new[group_index].lane_data.cards.findIndex(item => item.id == card_id)
-    const current_item = {...list_group_new[group_index].lane_data.cards[group_index_cards_index]}
+    const current_item = { ...list_group_new[group_index].lane_data.cards[group_index_cards_index] }
 
     list_group_new[group_index].lane_data.cards[group_index_cards_index] = { ...list_group_new[group_index].lane_data.cards[group_index_cards_index], ...new_drawContent }
     list_group_new[group_index].lane_data.cards[group_index_cards_index]['name'] = list_group_new[group_index].lane_data.cards[group_index_cards_index]['card_name']
@@ -368,6 +376,11 @@ function mapStateToProps({
       show_board_fold,
     }
   },
+  technological: {
+    datas: {
+      page_load_type
+    }
+  },
   publicTaskDetailModal: { drawerVisible }
 }) {
   return {
@@ -381,7 +394,8 @@ function mapStateToProps({
     about_apps_boards,
     about_group_boards,
     about_user_boards,
-    show_board_fold
+    show_board_fold,
+    page_load_type
   }
 }
 
