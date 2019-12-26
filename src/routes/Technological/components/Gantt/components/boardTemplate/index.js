@@ -216,19 +216,20 @@ export default class BoardTemplate extends Component {
     renderTreeItemName = ({ template_data_type, name, parent_content_length = 0, parrent_name }) => {
         let icon = ''
         if (template_data_type == '1') {
-            icon = <div className={globalStyles.authTheme} style={{ color: '#FAAD14', fontSize: 18, marginRight: 6 }}>&#xe6ef;</div>
+            icon = <div className={`${globalStyles.authTheme} main_can_drag_flag`} style={{ color: '#FAAD14', fontSize: 18, marginRight: 6 }}>&#xe6ef;</div>
         } else {
-            icon = <div className={globalStyles.authTheme} style={{ color: '#18B2FF', fontSize: 18, marginRight: 6 }} >&#xe6f0;</div>
+            icon = <div className={`${globalStyles.authTheme} main_can_drag_flag`} style={{ color: '#18B2FF', fontSize: 18, marginRight: 6 }} >&#xe6f0;</div>
         }
         return (
             <div
+                className={`main_can_drag_flag`}
                 title={name}
                 style={{ display: 'flex', alignItems: 'center' }}
                 data-propertype={template_data_type}
                 data-properlength={parent_content_length}
                 data-propername={parrent_name}>
                 {icon}
-                <div style={{ maxWidth: 112, }} className={`${globalStyles.global_ellipsis}`}>{name}</div>
+                <div style={{ maxWidth: 112, }} className={`${globalStyles.global_ellipsis} main_can_drag_flag`}>{name}</div>
             </div>
         )
     }
@@ -343,7 +344,7 @@ export default class BoardTemplate extends Component {
         })
     }
     dragstart = (event) => {
-        console.log('sssssssssssss', 'dragstart')
+        // console.log('sssssssssssss', 'dragstart')
         const drag_target = event.target
         // event.target.style.opacity = "0";
         if (!event) return
@@ -363,33 +364,38 @@ export default class BoardTemplate extends Component {
         }
     }
     dragenter = (event) => {
-        console.log('sssssssssssss', 'dragstart')
+        // console.log('sssssssssssss', 'dragstart')
     }
     dragleave = (event) => {
-        console.log('sssssssssssss', 'dragleave')
+        // console.log('sssssssssssss', 'dragleave')
     }
     dragover = (event) => {
-        console.log('sssssssssssss', 'dragover')
+        // console.log('sssssssssssss', 'dragover')
         event.preventDefault();
     }
     dragend = (event) => {
-        console.log('sssssssssssss', 'dragend')
+        // console.log('sssssssssssss', 'dragend')
         if (!event) return
         if (!event.target) return
         if (!event.target.style) return
         event.target.style.opacity = "1";
     }
     drop = (event) => {
-        console.log('sssssssssssss', 'drop')
+        // console.log('sssssssssssss', 'drop')
         if (!event) return
         if (!event.target) return
         if (!event.target.className) return
         event.preventDefault();
-        if (event.target.className.indexOf('ganttDetailItem') != -1) {
-            const { list_id, start_time, end_time } = event.target.dataset
-            if (!list_id || !start_time || !end_time) return
-            this.handleDragCompleted({ list_id, start_time, end_time })
+        try {
+            if (event.target.className.indexOf('ganttDetailItem') != -1) {
+                const { list_id, start_time, end_time } = event.target.dataset
+                if (!list_id || !start_time || !end_time) return
+                this.handleDragCompleted({ list_id, start_time, end_time })
+            }
+        } catch (err) {
+            // console.log(err)
         }
+
     }
     // =================拖拽任务end
 
@@ -458,6 +464,20 @@ export default class BoardTemplate extends Component {
             message.error(res.message)
         }
     }
+
+    // 外部拖拽时
+    outerMouseDown = (e) => { //在树组件区域内拖动时，如果没有选中某一个选项就直接在空白区域拖动，会产生拖动多个元素的影像
+        const { className } = e.target
+        if (!className || typeof className != 'string') {
+            e.preventDefault()
+            return
+        }
+        const is_tree_node_drag = className.indexOf('main_can_drag_flag') == -1
+        if (is_tree_node_drag) {
+            e.preventDefault()
+            return
+        }
+    }
     render() {
         const { template_data, show_type, selected_template_name, spinning, project_templete_scheme_visible } = this.state
         const { gantt_board_id } = this.props
@@ -492,7 +512,9 @@ export default class BoardTemplate extends Component {
                         </div>
                         {/* 主区 */}
                         <Spin spinning={spinning}>
-                            <div className={styles.main}>
+                            <div
+                                onMouseDown={this.outerMouseDown}
+                                className={styles.main}>
                                 <Tree
                                     draggable
                                     onDragStart={this.onDragStart}
