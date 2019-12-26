@@ -31,7 +31,6 @@ export default class MainContent extends Component {
   }
 
   linkImWithCard = (data) => {
-    // console.log('进来了', 'sssssssssss')
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     const { is_simple_model } = user_set;
     if (!data) {
