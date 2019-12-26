@@ -29,6 +29,17 @@ class FileDetailContent extends Component {
     }
   }
 
+  // 判断是否是新版本
+  // judgeWhetherItIsNewVersion = ({data}) => {
+  //   let version_list = [...data.version_list]
+  //   version_list = version_list.find(item => item.is_new_version == '1')
+  //   if (Object.keys(version_list) && Object.keys(version_list).length) {
+  //     this.setState({
+  //       filePreviewCurrentFileId: version_list.id
+  //     })
+  //   }
+  // }
+
   initStateDatas = ({ data }) => {
     this.setState({
       filePreviewCurrentResourceId: data.base_info.file_resource_id, // 需要保存源文件ID
@@ -42,6 +53,7 @@ class FileDetailContent extends Component {
       filePreviewCurrentVersionList: data.version_list, // 文件的版本列表
       filePreviewCurrentVersionId: data.version_list.length ? data.version_list[0]['version_id'] : '', // 保存一个当前版本ID
     })
+    // this.judgeWhetherItIsNewVersion({data})
   }
 
   // global.constants.lx_utils && global.constants.lx_utils.setCommentData({name: })
@@ -72,6 +84,7 @@ class FileDetailContent extends Component {
       if (file_type == '.pdf') {
         await this.getFilePDFInfo({ id })
       }
+      this.linkImWithFile({name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id})
     } else {
       message.warn(res.message, MESSAGE_DURATION_TIME)
       setTimeout(() => {
@@ -81,7 +94,7 @@ class FileDetailContent extends Component {
             isInOpenFile: false
           }
         })
-        this.linkImWithFile(null)
+        global.constants.lx_utils && global.constants.lx_utils.setCommentData(id || null)
       }, 200)
     }
   }
@@ -91,11 +104,11 @@ class FileDetailContent extends Component {
     if (file_detail_modal_visible) {
       if (fileType == '.pdf') {
         this.delayUpdatePdfDatas({ id: newFilePreviewCurrentFileId })
-        this.linkImWithFile({name: currentPreviewFileName, type: 'file', board_id: board_id, id: newFilePreviewCurrentFileId})
+        // this.linkImWithFile({name: currentPreviewFileName, type: 'file', board_id: board_id, id: newFilePreviewCurrentFileId})
         return
       }
       this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
-      this.linkImWithFile({name: currentPreviewFileName, type: 'file', board_id: board_id, id: newFilePreviewCurrentFileId})
+      // this.linkImWithFile({name: currentPreviewFileName, type: 'file', board_id: board_id, id: newFilePreviewCurrentFileId})
     }
   }
 
@@ -144,7 +157,7 @@ class FileDetailContent extends Component {
     //     isInOpenFile: false
     //   }
     // })
-    this.linkImWithFile(null)
+    global.constants.lx_utils && global.constants.lx_utils.setCommentData(this.state.filePreviewCurrentFileId || null)
     this.whetherUpdateProjectDetailFileBreadCrumbListNav()
   }
 
@@ -158,6 +171,7 @@ class FileDetailContent extends Component {
     fileInfoByUrl({ id }).then(res => {// 获取详情的接口
       if (isApiResponseOk(res)) {
         this.initStateDatas({ data: res.data })
+        this.linkImWithFile({name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id})
       } else {
         message.warn(res.message)
         setTimeout(() => {
@@ -167,7 +181,7 @@ class FileDetailContent extends Component {
               isInOpenFile: false
             }
           })
-          this.linkImWithFile(null)
+          global.constants.lx_utils && global.constants.lx_utils.setCommentData(id || null)
         }, 500)
       }
     })

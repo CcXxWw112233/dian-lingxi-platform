@@ -408,7 +408,7 @@ export default class HeaderContentRightMenu extends Component {
                 }
               })
               // 删除卡片也需要调用圈子关闭联动
-              setTimeout(() => global.constants.lx_utils && global.constants.lx_utils.setCommentData(null) , 200)
+              setTimeout(() => global.constants.lx_utils && global.constants.lx_utils.setCommentData(card_id || null) , 200)
               that.props.handleDeleteCard && that.props.handleDeleteCard({ card_id: card_id })
             }
           }

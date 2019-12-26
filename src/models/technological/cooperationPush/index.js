@@ -1088,7 +1088,7 @@ export default {
           break
         case 'change:file:comment':
           const comment_file_id = getAfterNameId(coperateName)
-          let file_id = yield select(workbench_selectFilePreviewCurrentFileId)
+          let file_id = yield select(workbench_selectFilePreviewCurrentFileId) || ''
           if (comment_file_id == file_id) { //如果推送评论的文档id和查看的id是一样
             const filePreviewCommits = yield select(workbench_selectFilePreviewCommits) || []
             const filePreviewPointNumCommits = yield select(workbench_selectFilePreviewPointNumCommits) || []

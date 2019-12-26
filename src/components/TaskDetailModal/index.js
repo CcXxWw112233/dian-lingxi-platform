@@ -16,13 +16,13 @@ import { message } from 'antd'
 export default class TaskDetailModal extends Component {
 
   onCancel = () => {
-    this.props.dispatch({
-      type: 'publicModalComment/updateDatas',
-      payload: {
-        comment_list: [],
-        isShowAllDynamic: true, // 是否显示全部动态
-      }
-    })
+    // this.props.dispatch({
+    //   type: 'publicModalComment/updateDatas',
+    //   payload: {
+    //     comment_list: [],
+    //     isShowAllDynamic: true, // 是否显示全部动态
+    //   }
+    // })
     this.props.dispatch({
       type: 'publicTaskDetailModal/updateDatas',
       payload: {
@@ -35,7 +35,7 @@ export default class TaskDetailModal extends Component {
     })
     this.props.setTaskDetailModalVisible && this.props.setTaskDetailModalVisible()
     // 圈子关闭联动
-    global.constants.lx_utils && global.constants.lx_utils.setCommentData(null) 
+    global.constants.lx_utils && global.constants.lx_utils.setCommentData( this.props.card_id || null) 
   }
 
    // 检测不同类型的权限控制类型的是否显示

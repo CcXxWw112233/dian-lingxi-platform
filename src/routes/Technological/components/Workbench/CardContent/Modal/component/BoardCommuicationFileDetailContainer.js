@@ -70,6 +70,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     if (isApiResponseOk(res)) {
       this.initStateDatas({ data: res.data })
       await this.getFilePDFInfo({ id })
+      this.linkImWithFile({name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id})
     } else {
       message.warn(res.message, MESSAGE_DURATION_TIME)
     }
@@ -91,7 +92,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
         message.warn(res.message)
         setTimeout(() => {
           this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
-          this.linkImWithFile(null)
+          global.constants.lx_utils && global.constants.lx_utils.setCommentData(id || null)
         }, 200)
       }
     })
@@ -102,11 +103,12 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     fileInfoByUrl({ id }).then(res => {// 获取详情的接口
       if (isApiResponseOk(res)) {
         this.initStateDatas({ data: res.data })
+        this.linkImWithFile({name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id})
       } else {
         message.warn(res.message)
         setTimeout(() => {
           this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
-          this.linkImWithFile(null)
+          global.constants.lx_utils && global.constants.lx_utils.setCommentData(id || null)
         }, 500)
       }
     })
