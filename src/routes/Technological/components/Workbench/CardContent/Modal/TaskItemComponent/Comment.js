@@ -9,7 +9,7 @@ import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMMENT_PUBLISH,
   PROJECT_FILES_FILE_EDIT
 } from "../../../../../../../globalset/js/constant";
-import {checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl} from "../../../../../../../utils/businessFunction";
+import { checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl } from "../../../../../../../utils/businessFunction";
 import CommentMention from '../../../../../../../components/CommentMention'
 
 const { toString, toContentState } = Mention;
@@ -36,7 +36,7 @@ export default class Comment extends React.Component {
   submitComment(editText) {
     const { datas: { drawContent = {} } } = this.props.model
     const { card_id, board_id, privileges = [], is_privilege, executors = [] } = drawContent
-    if(!(checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH, board_id)))){
+    if (!(checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH, board_id)))) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -66,8 +66,8 @@ export default class Comment extends React.Component {
     const { data = [] } = projectDetailInfoData
     const { privileges = [], board_id, is_privilege, executors = [] } = drawContent
     let suggestions = []
-    for(let val of data) {
-      if(val['full_name']) {
+    for (let val of data) {
+      if (val['full_name']) {
         suggestions.push(val['full_name'])
       }
     }
@@ -93,27 +93,27 @@ export default class Comment extends React.Component {
     return (
       <div>
         <div className={CommentStyles.out}>
-          <div style={{width: leftSpaceDivWH, height: leftSpaceDivWH}}>
+          <div style={{ width: leftSpaceDivWH, height: leftSpaceDivWH }}>
           </div>
           <div className={CommentStyles.right}>
-            <CommentListItem {...this.props}/>
+            <CommentListItem {...this.props} />
           </div>
         </div>
-        { (checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH, board_id))) && (
+        {(checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH, board_id)) || checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMMENT_PUBLISH, board_id))) && (
           <div className={CommentStyles.out}>
             <div>
-              {avatar?(
-                <img src={avatar} className={CommentStyles.avartarImg} style={{width: leftSpaceDivWH, height: leftSpaceDivWH}} />
-              ): (
-                <div style={{width: 26, height: 26, borderRadius: 26, backgroundColor: '#f5f5f5', textAlign: 'center'}}>
-                  <Icon type={'user'} style={{fontSize: 16, marginTop: 4, color: '#8c8c8c'}}/>
-                </div>
-              )}
+              {avatar ? (
+                <img src={avatar} className={CommentStyles.avartarImg} style={{ width: leftSpaceDivWH, height: leftSpaceDivWH }} />
+              ) : (
+                  <div style={{ width: 26, height: 26, borderRadius: 26, backgroundColor: '#f5f5f5', textAlign: 'center' }}>
+                    <Icon type={'user'} style={{ fontSize: 16, marginTop: 4, color: '#8c8c8c' }} />
+                  </div>
+                )}
             </div>
             {/*<Dragger {...props} >*/}
             <div className={CommentStyles.right}>
 
-              <CommentMention users={data} submitComment={this.submitComment.bind(this)} commentToDynamics={this.commentToDynamics.bind(this)}/>
+              <CommentMention users={data} submitComment={this.submitComment.bind(this)} commentToDynamics={this.commentToDynamics.bind(this)} />
             </div>
             {/*</Dragger>*/}
           </div>

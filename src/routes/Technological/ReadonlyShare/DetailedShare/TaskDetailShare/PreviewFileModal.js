@@ -1,6 +1,6 @@
 import React from 'react'
 import { Modal, Form, Button, Input, message } from 'antd'
-import CustormModal from '../../../../../components/CustormModal'
+import CustormModal from '../../CustormModal'
 // import FileDetail from '../FileModule/FileDetail/index'
 
 class PreviewFileModal extends React.Component {

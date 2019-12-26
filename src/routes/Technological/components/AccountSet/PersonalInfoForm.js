@@ -3,7 +3,7 @@ import React from 'react'
 import { Form, Input, InputNumber, Radio, Switch, DatePicker, Upload, Modal, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete, message } from 'antd';
 import moment from 'moment';
 import indexStyle from './index.less'
-import {REQUEST_DOMAIN, REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE} from "../../../../globalset/js/constant";
+import { REQUEST_DOMAIN, REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE } from "../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 
@@ -37,7 +37,7 @@ class PersonalInfoForm extends React.Component {
   }
 
   gotoMemuSecond() {
-    this.props.handleMenuClick({key: '2'})
+    this.props.handleMenuClick({ key: '2' })
   }
 
   render() {
@@ -91,10 +91,10 @@ class PersonalInfoForm extends React.Component {
         ...setUploadHeaderBaseInfo({}),
       },
       beforeUpload(e) {
-        if(e.size == 0) {
+        if (e.size == 0) {
           message.error(`不能上传空文件`)
           return false
-        }else if(e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+        } else if (e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
           message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
           return false
         }
@@ -129,16 +129,17 @@ class PersonalInfoForm extends React.Component {
           that.props.updateDatas({
             userInfo
           })
+          that.props.simplGetUserInfo({})
         }
       },
     };
     return (
-      <Form onSubmit={this.handleSubmit} style={{padding: '20px 0', width: 600}}>
+      <Form onSubmit={this.handleSubmit} style={{ padding: '20px 0', width: 600 }}>
         {/* 姓名 */}
         <FormItem
           {...formItemLayout}
           label={(
-            <span style={{fontSize: 16}}>
+            <span style={{ fontSize: 16 }}>
               姓名
             </span>
           )}
@@ -147,30 +148,30 @@ class PersonalInfoForm extends React.Component {
             initialValue: name || undefined,
             rules: [{ required: false, message: '请输入姓名', whitespace: true }],
           })(
-            <Input placeholder="" className={indexStyle.personInfoInput}/>
+            <Input placeholder="" className={indexStyle.personInfoInput} />
           )}
         </FormItem>
         {/* 职位 */}
         {/*<FormItem*/}
-          {/*{...formItemLayout}*/}
-          {/*label={(*/}
-            {/*<span style={{fontSize: 16}}>*/}
-              {/*职位*/}
-            {/*</span>*/}
-          {/*)}*/}
+        {/*{...formItemLayout}*/}
+        {/*label={(*/}
+        {/*<span style={{fontSize: 16}}>*/}
+        {/*职位*/}
+        {/*</span>*/}
+        {/*)}*/}
         {/*>*/}
-          {/*{getFieldDecorator('job', {*/}
-            {/*initialValue: job || undefined,*/}
-            {/*rules: [{ required: false, message: '请输入职位', whitespace: true }],*/}
-          {/*})(*/}
-            {/*<Input placeholder="" className={indexStyle.personInfoInput}/>*/}
-          {/*)}*/}
+        {/*{getFieldDecorator('job', {*/}
+        {/*initialValue: job || undefined,*/}
+        {/*rules: [{ required: false, message: '请输入职位', whitespace: true }],*/}
+        {/*})(*/}
+        {/*<Input placeholder="" className={indexStyle.personInfoInput}/>*/}
+        {/*)}*/}
         {/*</FormItem>*/}
         {/* 组织 */}
         <FormItem
           {...formItemLayout}
           label={(
-            <span style={{fontSize: 16}}>
+            <span style={{ fontSize: 16 }}>
               组织
             </span>
           )}
@@ -179,14 +180,14 @@ class PersonalInfoForm extends React.Component {
             initialValue: orgnization || undefined,
             rules: [{ required: false, message: '请输入组织', whitespace: true }],
           })(
-            <div className={indexStyle.personInfoInput} style={{color: 'rgb(38, 38, 38)'}}>{current_org_name}</div>
+            <div className={indexStyle.personInfoInput} style={{ color: 'rgb(38, 38, 38)' }}>{current_org_name}</div>
           )}
         </FormItem>
         {/* 头像 */}
         <FormItem
           {...formItemLayout}
           label={(
-            <span style={{fontSize: 16}}>
+            <span style={{ fontSize: 16 }}>
               头像
             </span>
           )}
@@ -194,13 +195,13 @@ class PersonalInfoForm extends React.Component {
           {getFieldDecorator('avatar', {
             initialValue: avatar || undefined,
           })(
-            <div style={{display: 'flex'}}>
+            <div style={{ display: 'flex' }}>
               <div className={indexStyle.avatar}>
-                {avatar?(
-                  <img src={avatar} style={{width: '100%', height: '100%', borderRadius: 40}}></img>
-                ):(
-                  <Icon type="user" style={{fontSize: 28, color: '#ffffff', display: 'inline-block', margin: '0 auto', marginTop: 6}}/>
-                )}
+                {avatar ? (
+                  <img src={avatar} style={{ width: '100%', height: '100%', borderRadius: 40 }}></img>
+                ) : (
+                    <Icon type="user" style={{ fontSize: 28, color: '#ffffff', display: 'inline-block', margin: '0 auto', marginTop: 6 }} />
+                  )}
 
               </div>
               <Upload {...uploadProps} showUploadList={false} accept={"image/jpg, image/jpeg,  image/png"}>
@@ -208,10 +209,10 @@ class PersonalInfoForm extends React.Component {
                   <Icon type="upload" /> Click to Upload
                 </Button>
               </Upload>
-              <div style={{width: 120}} >
-                {uploading?(
-                  <span><Icon type="loading" style={{fontSize: 20, marginLeft: 12}}/>'上传中...'</span>
-                ):('')}
+              <div style={{ width: 120 }} >
+                {uploading ? (
+                  <span><Icon type="loading" style={{ fontSize: 20, marginLeft: 12 }} />'上传中...'</span>
+                ) : ('')}
               </div>
             </div>
           )}
@@ -220,7 +221,7 @@ class PersonalInfoForm extends React.Component {
         <FormItem
           {...formItemLayout}
           label={(
-            <span style={{fontSize: 16}}>
+            <span style={{ fontSize: 16 }}>
               邮箱
             </span>
           )}
@@ -229,14 +230,14 @@ class PersonalInfoForm extends React.Component {
             initialValue: email || undefined,
             rules: [{ required: false, message: '请输入组织', whitespace: true }],
           })(
-            <div style={{marginLeft: 12, fontSize: 16, color: '#262626' }}>{ email || '未绑定' } <Button style={{fontSize: 14, color: 'rgba(0,0,0,.65)', marginLeft: 12 }} onClick={this.gotoMemuSecond.bind(this)}>修改</Button></div>
+            <div style={{ marginLeft: 12, fontSize: 16, color: '#262626' }}>{email || '未绑定'} <Button style={{ fontSize: 14, color: 'rgba(0,0,0,.65)', marginLeft: 12 }} onClick={this.gotoMemuSecond.bind(this)}>修改</Button></div>
           )}
         </FormItem>
         {/*手机号*/}
         <FormItem
           {...formItemLayout}
           label={(
-            <span style={{fontSize: 16}}>
+            <span style={{ fontSize: 16 }}>
               手机号
             </span>
           )}
@@ -245,7 +246,7 @@ class PersonalInfoForm extends React.Component {
             initialValue: mobile || undefined,
             rules: [{ required: false }],
           })(
-            <div style={{marginLeft: 12, fontSize: 16, color: '#262626'}}>{ mobile || '未绑定' } <Button style={{fontSize: 14, color: 'rgba(0,0,0,.65)', marginLeft: 12 }} onClick={this.gotoMemuSecond.bind(this)}>修改</Button></div>
+            <div style={{ marginLeft: 12, fontSize: 16, color: '#262626' }}>{mobile || '未绑定'} <Button style={{ fontSize: 14, color: 'rgba(0,0,0,.65)', marginLeft: 12 }} onClick={this.gotoMemuSecond.bind(this)}>修改</Button></div>
           )}
         </FormItem>
         {/*  微信 */}
@@ -268,7 +269,7 @@ class PersonalInfoForm extends React.Component {
         <FormItem
           {...formItemLayout}
         >
-          <Button type="primary" htmlType="submit" style={{marginLeft: 112, width: 80, height: 40, fontSize: 16}}>确认</Button>
+          <Button type="primary" htmlType="submit" style={{ marginLeft: 112, width: 80, height: 40, fontSize: 16 }}>确认</Button>
         </FormItem>
       </Form>
     );
