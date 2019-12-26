@@ -30,6 +30,7 @@ export default class BoardTemplate extends Component {
             template_list: [],
             template_data: [], //模板数据
         }
+        this.drag_init_inner_html = ''
     }
     getHeight = () => {
         const target = document.getElementById('gantt_card_out_middle')
@@ -66,9 +67,8 @@ export default class BoardTemplate extends Component {
             this.getBoardTemplateList()
         }
     }
-    // componentWillUnmount
     componentWillUnmount() {
-        console.log('ssssssss', 'asdasd')
+        this.removeEvent()
     }
     // 获取模板列表
     getBoardTemplateList = async () => {
@@ -303,75 +303,34 @@ export default class BoardTemplate extends Component {
         // string= '<div>asda</div>'
         return string
     }
+    // ==================拖拽任务start
     // 处理document的drag事件
     listenDrag = () => {
-        const that = this
-        let drag_init_inner_html = '' //用来存储所拖拽的对象的内容
+        // const that = this
+        // let drag_init_inner_html = '' //用来存储所拖拽的对象的内容
 
-        document.addEventListener("dragstart", function (event) {
-            console.log('sssssssssssss', 'drag')
-            const drag_target = event.target
-            // event.target.style.opacity = "0";
-            if (!event) return
-            if (!drag_target) return
-            if (!drag_target.children) return
-            if (!drag_target.children[0]) return
-            if (!drag_target.children[0].children) return
-            if (!drag_target.children[0].children[0]) return
-            drag_init_inner_html = event.target.innerHTML
-
-            const { propername, propertype, properlength } = event.target.children[0].children[0].dataset || {} //存储在渲染名称的ui里面，拖拽的时候拿出来，做改变ui（仅限于子任务）
-            if (propertype == '2') { //当拖拽的是子任务的话，需要改变节点内容为 （‘父任务名称+父任务下的子任务个数’）
-                event.target.innerHTML = that.renderChildTaskUI({ propername, propertype, properlength, node_width: event.target.clientWidth - 10 })
-                // event.target.style.opacity = "0";
-                setTimeout(() => {
-                    event.target.innerHTML = drag_init_inner_html
-                    // setTimeout(() => {
-                    //     event.target.style.opacity = "1";
-                    // }, 300)
-                }, 100)
-            }
-
-        });
-        //在拖动p元素的同时,改变输出文本的颜色
-        document.addEventListener("drag", function (event) {
-        });
+        document.body.addEventListener("dragstart", this.dragstart);
+        //在拖动元素的同时,改变输出文本的颜色
+        // document.addEventListener("drag", function (event) {
+        // });
         // 当拖完p元素输出一些文本元素和重置透明度
-        document.addEventListener("dragend", function (event) {
-            if (!event) return
-            if (!event.target) return
-            if (!event.target.style) return
-            event.target.style.opacity = "1";
-        });
+        document.body.addEventListener("dragend", this.dragend);
         /* 拖动完成后触发 */
         // 当p元素完成拖动进入droptarget,改变div的边框样式
-        document.addEventListener("dragenter", function (event) {
-            // if (event.target.className == "droptarget") {
-            //     event.target.style.border = "3px dotted red";
-            // }
-        });
+        // document.addEventListener("dragenter", function (event) {
+        // });
         // 默认情况下,数据/元素不能在其他元素中被拖放。对于drop我们必须防止元素的默认处理
-        document.addEventListener("dragover", function (event) {
-            event.preventDefault();
-        });
+        document.body.addEventListener("dragover", this.dragover);
         // 当可拖放的p元素离开droptarget，重置div的边框样式
-        document.addEventListener("dragleave", function (event) {
-            // if (event.target.className == "droptarget") {
-            //     event.target.style.border = "";
-            // }
-        });
+        // document.addEventListener("dragleave", function (event) { });
         /*对于drop,防止浏览器的默认处理数据(在drop中链接是默认打开)*/
-        document.addEventListener("drop", function (event) {
-            if (!event) return
-            if (!event.target) return
-            if (!event.target.className) return
-            event.preventDefault();
-            if (event.target.className.indexOf('ganttDetailItem') != -1) {
-                const { list_id, start_time, end_time } = event.target.dataset
-                if (!list_id || !start_time || !end_time) return
-                that.handleDragCompleted({ list_id, start_time, end_time })
-            }
-        });
+        document.body.addEventListener("drop", this.drop);
+    }
+    removeEvent = () => {
+        document.body.removeEventListener("dragstart", this.dragstart);
+        document.body.removeEventListener("dragend", this.dragend);
+        document.body.removeEventListener("dragover", this.dragover);
+        document.body.removeEventListener("drop", this.drop);
     }
     onDragStart = ({ node }) => {
         const { data_id, data_type, data_name } = node.props
@@ -383,6 +342,59 @@ export default class BoardTemplate extends Component {
             }
         })
     }
+    dragstart = (event) => {
+        console.log('sssssssssssss', 'dragstart')
+        const drag_target = event.target
+        // event.target.style.opacity = "0";
+        if (!event) return
+        if (!drag_target) return
+        if (!drag_target.children) return
+        if (!drag_target.children[0]) return
+        if (!drag_target.children[0].children) return
+        if (!drag_target.children[0].children[0]) return
+        this.drag_init_inner_html = event.target.innerHTML
+
+        const { propername, propertype, properlength } = event.target.children[0].children[0].dataset || {} //存储在渲染名称的ui里面，拖拽的时候拿出来，做改变ui（仅限于子任务）
+        if (propertype == '2') { //当拖拽的是子任务的话，需要改变节点内容为 （‘父任务名称+父任务下的子任务个数’）
+            event.target.innerHTML = this.renderChildTaskUI({ propername, propertype, properlength, node_width: event.target.clientWidth - 10 })
+            setTimeout(() => {
+                event.target.innerHTML = this.drag_init_inner_html
+            }, 100)
+        }
+    }
+    dragenter = (event) => {
+        console.log('sssssssssssss', 'dragstart')
+    }
+    dragleave = (event) => {
+        console.log('sssssssssssss', 'dragleave')
+    }
+    dragover = (event) => {
+        console.log('sssssssssssss', 'dragover')
+        event.preventDefault();
+    }
+    dragend = (event) => {
+        console.log('sssssssssssss', 'dragend')
+        if (!event) return
+        if (!event.target) return
+        if (!event.target.style) return
+        event.target.style.opacity = "1";
+    }
+    drop = (event) => {
+        console.log('sssssssssssss', 'drop')
+        if (!event) return
+        if (!event.target) return
+        if (!event.target.className) return
+        event.preventDefault();
+        if (event.target.className.indexOf('ganttDetailItem') != -1) {
+            const { list_id, start_time, end_time } = event.target.dataset
+            if (!list_id || !start_time || !end_time) return
+            this.handleDragCompleted({ list_id, start_time, end_time })
+        }
+    }
+    // =================拖拽任务end
+
+
+
     handleDragCompleted = ({ list_id, start_time, end_time }) => {
         const { dispatch } = this.props
         dispatch({
@@ -484,6 +496,11 @@ export default class BoardTemplate extends Component {
                                 <Tree
                                     draggable
                                     onDragStart={this.onDragStart}
+                                // onDragEnter={this.onDragEnter}
+                                // onDragLeave={this.onDragLeave}
+                                // onDragOver={this.onDragOver}
+                                // onDragEnd={this.onDragEnd}
+                                // onDrop={this.onDrop}
                                 // switcherIcon={
                                 //     <Icon type="caret-down" style={{ fontSize: 20, color: 'rgba(0,0,0,.45)' }} />
                                 // }

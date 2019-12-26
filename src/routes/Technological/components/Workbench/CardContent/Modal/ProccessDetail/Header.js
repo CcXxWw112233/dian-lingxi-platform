@@ -87,7 +87,7 @@ export default class Header extends React.Component {
                 : user.user_id
                   ? user.user_id
                   : '',
-              user_id: user.user_id
+            user_id: user.user_id
           }));
         };
         // 数组去重
@@ -337,7 +337,7 @@ export default class Header extends React.Component {
     const disabled = this.props.model.datas.isProcessEnd
     const id = this.props.model.datas.totalId.flow
     const { board_id, processDoingList = [], processStopedList = [], processComepletedList = [], projectDetailInfoData = {}, processEditDatas = [], processInfo = {} } = this.props.model.datas
-    const { data = [] } = projectDetailInfoData //任务执行人列表
+    const { data = [], board_name } = projectDetailInfoData //任务执行人列表
     const ellipsis = <Icon type="ellipsis" style={{ float: 'right', marginRight: '20px', fontSize: '16px', cursor: 'pointer' }} />
     const processDelete = async () => {
       await this.props.dispatch({
@@ -429,17 +429,18 @@ export default class Header extends React.Component {
         borderRadius: '4px 4px 0px 0px'
       }}>
         <div style={{
-          width: '237px',
+          // width: '237px',
           height: '24px',
           background: 'rgba(245,245,245,1)',
           borderRadius: '4px',
           textAlign: 'center',
           lineHeight: '24px',
-          float: 'left'
+          float: 'left',
+          padding: '0 6px'
         }}>
-          <span style={{ cursor: 'pointer', color: '##8C8C8C', fontSize: '14px' }}>示例项目</span>
-          <span style={{ color: '##8C8C8C', fontSize: '14px' }}> > </span>
-          <span style={{ cursor: 'pointer', color: '##8C8C8C', fontSize: '14px' }}>任务看板分组名称</span>
+          <span style={{ cursor: 'pointer', color: '##8C8C8C', fontSize: '14px' }}>{board_name}</span>
+          {/* <span style={{ color: '##8C8C8C', fontSize: '14px' }}> > </span>
+          <span style={{ cursor: 'pointer', color: '##8C8C8C', fontSize: '14px' }}>任务看板分组名称</span> */}
         </div>
 
         <div style={{ float: 'right' }}>
@@ -482,7 +483,7 @@ export default class Header extends React.Component {
                 <InformRemind processPrincipalList={principalList} rela_id={id} rela_type={'3'} user_remind_info={data} />
               )
             }
-            
+
           </span>
           {/* <span style={{position: 'relative'}}>
             {
