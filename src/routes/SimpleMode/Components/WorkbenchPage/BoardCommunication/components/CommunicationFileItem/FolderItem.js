@@ -360,7 +360,7 @@ class FolderItem extends Component {
                                 <div className={`${globalStyles.authTheme} ${styles.file_logo}`} dangerouslySetInnerHTML={{ __html: this.judgeFileType({ type, local_name }) }}></div>
                                 <div className={`${globalStyles.global_ellipsis} ${styles.file_name}`}>{local_name}</div>
                                 {
-                                    !(is_privilege == '0') && (
+                                    is_privilege == '1' && (
                                         <Tooltip title="已开启访问控制" placement="top">
                                             <div style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px' }}>
                                                 <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>

@@ -555,7 +555,7 @@ export default class TaskItem extends React.Component {
         {!isInEditName ? (
           <div className={CreateTaskStyle.title}>
             {
-              !(is_privilege == '0') && (
+              is_privilege == '1' && (
                 <Tooltip title="已开启访问控制" placement="top">
                   <div style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px' }}>
                     <span className={`${globalStyle.authTheme}`}>&#xe7ca;</span>
@@ -582,7 +582,7 @@ export default class TaskItem extends React.Component {
         ) : (
             <div style={{ marginBottom: 16, display: 'flex', alignItems: 'center' }} >
               {
-                !(is_privilege == '0') && (
+                is_privilege == '1' && (
                   <Tooltip title="已开启访问控制" placement="top">
                     <div style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px' }}>
                       <span className={`${globalStyle.authTheme}`}>&#xe7ca;</span>

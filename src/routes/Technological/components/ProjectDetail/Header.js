@@ -1192,11 +1192,11 @@ export default class Header extends React.Component {
               <Icon type="left-square-o" className={indexStyle.projectNameIcon} onClick={this.gobackToProject.bind(this)} />
               {/*<span className={indexStyle.projectName}>{board_name}</span> 原来项目名称*/}
               {!isInEditBoardName ? (
-                <span className={`${indexStyle.projectName} ${!(is_privilege == '0') && indexStyle.tempLeft}`} onClick={this.setIsInEditBoardName.bind(this)}>{localBoardName}</span>
+                <span className={`${indexStyle.projectName} ${is_privilege == '1' && indexStyle.tempLeft}`} onClick={this.setIsInEditBoardName.bind(this)}>{localBoardName}</span>
 
               ) : (
                   <Input value={localBoardName}
-                    className={`${indexStyle.projectName} ${!(is_privilege == '0') && indexStyle.tempLeft}`}
+                    className={`${indexStyle.projectName} ${is_privilege == '1' && indexStyle.tempLeft}`}
                     autoFocus
                     onChange={this.localBoardNameChange.bind(this)}
                     onPressEnter={this.editBoardNameComplete.bind(this)}

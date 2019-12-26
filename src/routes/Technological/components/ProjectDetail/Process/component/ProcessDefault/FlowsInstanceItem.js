@@ -136,7 +136,7 @@ export default class FlowsInstanceItem extends Component {
           <div className={indexStyles.panelHead_m_l}>{name}{this.filterProgress.bind(this, { status, completed_node_num, total_node_num })}</div>
           <div className={indexStyles.panelHead_m_r}>{curr_node_name}</div>
           {
-            !(is_privilege == '0') && (
+            is_privilege == '1' && (
               <Tooltip title="已开启访问控制" placement="top">
                 <div style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', marginLeft: '5px' }}>
                   <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>

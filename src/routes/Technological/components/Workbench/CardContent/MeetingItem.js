@@ -91,7 +91,7 @@ export default class MeetingItem extends React.Component {
           </Tooltip>
           {/* 添加访问控制小锁 */}
           {
-            !(is_privilege == '0') && (
+            is_privilege == '1' && (
               <Tooltip title="已开启访问控制" placement="top">
                 <span style={{ color: 'rgba(0,0,0,0.50)', cursor: 'pointer', marginRight: '5px', marginLeft: '5px' }}>
                   <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>

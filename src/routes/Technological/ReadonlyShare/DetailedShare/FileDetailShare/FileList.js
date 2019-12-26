@@ -976,7 +976,7 @@ export default class FileList extends React.Component {
                   <i className={globalStyles.authTheme} style={{ fontStyle: 'normal', fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer' }}>&#xe6c4;</i>
                   {file_name}
                   {
-                    !(is_privilege == '0') && (
+                    is_privilege == '1' && (
                       <Tooltip title="已开启访问控制" placement="top">
                         <span style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', marginLeft: '5px' }}>
                           <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
@@ -992,7 +992,7 @@ export default class FileList extends React.Component {
                   <i className={globalStyles.authTheme} style={{ fontStyle: 'normal', fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer' }} dangerouslySetInnerHTML={{ __html: this.judgeFileType(file_name) }}></i>
                   {file_name}
                   {
-                    !(is_privilege == '0') && (
+                    is_privilege == '1' && (
                       <Tooltip title="已开启访问控制" placement="top">
                         <span style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', marginLeft: '5px' }}>
                           <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
