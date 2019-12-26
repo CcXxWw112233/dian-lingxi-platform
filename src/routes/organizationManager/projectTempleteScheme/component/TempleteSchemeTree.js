@@ -794,7 +794,7 @@ export default class TempleteSchemeTree extends Component {
   // Input输入框事件
   handleChangeTempleteContainerValue = (e) => {
     e && e.stopPropagation()
-    if (e.target.value.length > 20) {
+    if (e.target.value.length > 19) {
       message.warn('最多只能输入20个字符哦~')
       // return
     }
@@ -899,7 +899,7 @@ export default class TempleteSchemeTree extends Component {
           !name || is_rename ? (
             <>
               {icon}
-              <span style={{ flex: 1, marginRight: '12px' }}><Input maxLength={21} autoFocus={true} onClick={this.handleChangeTempleteContainerValue} onChange={this.handleChangeTempleteContainerValue} /></span>
+              <span style={{ flex: 1, marginRight: '12px' }}><Input maxLength={20} autoFocus={true} onClick={this.handleChangeTempleteContainerValue} onChange={this.handleChangeTempleteContainerValue} /></span>
               <span>
                 <Button onClick={(e) => { this.handleCreateTempContainer({ e, is_rename }) }} type="primary" style={{ marginRight: '8px' }} disabled={this.state.inputValue && this.state.inputValue.length <= 20 ? false : true}>确定</Button>
                 <Button onClick={(e) => { this.handleCancelTempContainer({ e, id }) }}>取消</Button>
