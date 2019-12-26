@@ -674,8 +674,8 @@ export default class TempleteSchemeTree extends Component {
   handleOperator = (key, e, id) => {
     e && e.stopPropagation()
     const { currentTempleteListContainer = [] } = this.props
-    const { is_add_sibiling, is_add_children, is_add_rename } = this.state
-    if (is_add_sibiling || is_add_children || is_add_rename) return
+    const { is_add_sibiling, is_add_children, is_add_rename, is_wrapper_add_sibiling, is_wrapper_add_children, is_wrapper_add_rename } = this.state
+    if (is_add_sibiling || is_add_children || is_add_rename || is_wrapper_add_sibiling || is_wrapper_add_children || is_wrapper_add_rename) return
     if (id) {
       let currentSelectedItemInfo = this.recursion(currentTempleteListContainer, id)
       this.props.dispatch({
@@ -881,7 +881,7 @@ export default class TempleteSchemeTree extends Component {
 
   // 渲染树状列表的title
   renderPlanTreeTitle = ({ type, name, is_rename, id }) => {
-    const { is_add_sibiling, is_add_children, is_add_rename } = this.state
+    const { is_add_sibiling, is_add_children, is_add_rename, is_wrapper_add_sibiling, is_wrapper_add_children, is_wrapper_add_rename } = this.state
     const { currentSelectedItemInfo = {}, currentTempleteListContainer = [] } = this.props
     let firstEleId = currentTempleteListContainer && currentTempleteListContainer.length > 0 && currentTempleteListContainer[0].id
     let icon = ''
@@ -892,7 +892,7 @@ export default class TempleteSchemeTree extends Component {
       icon = <span className={globalStyles.authTheme} style={{ color: '#18B2FF', fontSize: '18px', marginRight: '6px' }}>&#xe6f0;</span>
     }
     let operatorIconList = this.renderOperatorIconList(id)
-    let disabledAll = is_add_sibiling || is_add_children || is_add_rename
+    let disabledAll = is_add_sibiling || is_add_children || is_add_rename || is_wrapper_add_sibiling || is_wrapper_add_children || is_wrapper_add_rename
     return (
       <div id={`show_icon-${id}`} className={indexStyles.show_icon} style={{ display: 'flex', alignItems: 'center' }}>
         {
