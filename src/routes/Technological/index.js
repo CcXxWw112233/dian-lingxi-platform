@@ -19,7 +19,7 @@ import { routerRedux } from "dva/router";
 import UploadNotification from '@/components/UploadNotification'
 
 const { Sider, Content } = Layout;
-
+let net = null
 @connect(mapStateToProps)
 export default class Technological extends React.Component {
 
@@ -31,25 +31,19 @@ export default class Technological extends React.Component {
     this.historyListenSet()
     this.connectWsToModel()
   }
-
+  componentWillUnmount() {
+    // console.log('netnet-ummount', net)
+    if (net && typeof net == 'object') {
+      net.send('close')
+      net = null
+    }
+  }
   connectWsToModel = () => {
     const { dispatch } = this.props
-    // const calback = function (event) {
-    //   setTimeout(function () {
-    //     // if (Cookies.get('wsLinking') === 'false' || !Cookies.get('wsLinking')) {
-    //     const calback = function (event) {
-    //       dispatch({
-    //         type: 'cooperationPush/connectWsToModel',
-    //         payload: {
-    //           event
-    //         }
-    //       })
-    //     }
-    //     initWs(calback)
-    //     // }
-    //   }, 3000)
-    // }
-    // initWs(calback)
+    if (net && typeof net == 'object') {
+      net.send('close')
+      net = null
+    }
     setTimeout(function () {
       const calback = function (event) {
         dispatch({
@@ -59,8 +53,8 @@ export default class Technological extends React.Component {
           }
         })
       }
-      initWs(calback)
-    }, 3000)
+      net = initWs(calback)
+    }, 1000)
   }
 
   componentWillReceiveProps(nextProps) {

@@ -87,7 +87,6 @@ export default class Comment extends React.Component {
     const { img } = projectDetailInfoData
     const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
     const { avatar } = userInfo
-
     const { leftSpaceDivWH = 40 } = this.props
     const props = {
       name: 'file',

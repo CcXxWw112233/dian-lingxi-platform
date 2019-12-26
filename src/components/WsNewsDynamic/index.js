@@ -19,7 +19,7 @@ const initWsFun = (calback) => {
   let queryString = `uid=${id}&token=${Authorization}`
   let param = null
   tiows = new tio.ws(ws_url, ip, port, queryString, param, handler, heartbeatTimeout, reconnInterval, binaryType, calback)
-  tiows.connect()
+  return tiows.connect()
 }
 export const sendWsFun =(value) => {
   tiows.send(value)

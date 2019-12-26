@@ -91,7 +91,6 @@ export default class Comment extends React.Component {
     const { img } = projectDetailInfoData
     const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
     const { avatar } = userInfo
-
     const { leftSpaceDivWH = 40 } = this.props
     return (
       <div className={CommentStyles.commentOut} id={'ssss'} onBlur={this.outBlur.bind(this)} onFocus={this.outFocus.bind(this)} onClick={this.stopUp.bind(this)} onMouseDown={this.stopUp.bind(this)}>

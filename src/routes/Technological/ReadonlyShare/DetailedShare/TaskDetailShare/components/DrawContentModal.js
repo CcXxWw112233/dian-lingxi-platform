@@ -40,4 +40,18 @@ class DrawContentModal extends React.Component {
     )
   }
 }
+function mapStateToProps({
+  simplemode: {
+    chatImVisiable = false
+  },
+  projectDetailFile: {
+    datas: {
+      breadcrumbList = []
+    }
+  }
+}) {
+  return {
+    chatImVisiable, breadcrumbList
+  }
+}
 export default Form.create()(DrawContentModal)
