@@ -276,17 +276,44 @@ export default class CreateTask extends React.Component {
   }
   //右方抽屉弹窗---end
 
+  // 修改某一任务针对项目详情接口结构的数据变化处理
+  cardPropertiesPromote = ({ operate_properties_code, drawContent = {} }) => {
+    if (!!!operate_properties_code) {
+      return drawContent
+    }
+    const { properties = [] } = drawContent
+    const gold_data = (properties.find(item => item.code === operate_properties_code) || {}).data
+    let gold_key = 'nothing'
+    if ('EXECUTOR' == operate_properties_code) {
+      gold_key = 'executors'
+    } else if ('LABEL' == operate_properties_code) {
+      gold_key = 'label_data'
+    }
+    return { ...drawContent, [gold_key]: gold_data }
+  }
+
   /**
    * 更新父级任务列表
    * @param {Object} payload 需要传递进来的参数
    */
-  handleTaskDetailChange = ({ drawContent, card_id, name, value }) => {
+  handleTaskDetailChange = ({ drawContent, card_id, name, value, operate_properties_code }) => {
     // console.log('更新父级任务列表', 'sssssss_进来了')
     // const { is_realize, card_name } = payload
-    
     const { taskGroupList = [], taskGroupListIndex, taskGroupListIndex_index, dispatch } = this.props
+
+    if (operate_properties_code) {
+      const new_drawContent = this.cardPropertiesPromote({ drawContent, operate_properties_code })
+      taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index] = {...new_drawContent}
+      dispatch({
+        type: 'projectDetailTask/updateDatas',
+        payload: {
+          taskGroupList
+        }
+      })
+      return
+    }
     // taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index][name] = value
-    if (name && value) {
+    if (name && value && !operate_properties_code) {
       taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index][name] = value
     } else {
       taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index] = {...drawContent}
