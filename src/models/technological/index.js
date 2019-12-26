@@ -146,7 +146,6 @@ export default {
     // 简单获取用户信息，设置用户的值
     * simplGetUserInfo({ payload }, { select, call, put }) {
       const res = yield call(getUSerInfo)
-      debugger
       if (isApiResponseOk(res)) {
         const current_org = res.data.current_org || {}
         // 如果用户已选了某个确认的组织，而与当前前端缓存中组织不一致，则默认执行改变组织操作，并刷新
