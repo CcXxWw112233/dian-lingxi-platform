@@ -152,7 +152,7 @@ export default class HeaderContentRightMenu extends Component {
           drawContent: new_drawContent
         }
       })
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id, name: 'is_privilege', value: obj.is_privilege })
       this.props.updateParentTaskList && this.props.updateParentTaskList()
     }
 

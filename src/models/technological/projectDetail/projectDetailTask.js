@@ -349,6 +349,13 @@ export default modelExtend(projectDetail, {
             taskGroupListIndex_index
           }
         })
+        yield put({
+          type: 'publicTaskDetailModal/updateDatas',
+          payload: {
+            taskGroupListIndex,
+            taskGroupListIndex_index
+          }
+        })
       } else {
       }
     },
