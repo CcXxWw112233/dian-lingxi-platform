@@ -146,15 +146,16 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { isInOpenFile } = nextProps
-    const { isInOpenFile: oldOpenFile } = this.props
-    if (isInOpenFile == false && oldOpenFile == true) {
-      this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
-      let all_version_list_Ids = this.getEveryVersionListIds()
-      global.constants.lx_utils && global.constants.lx_utils.setCommentData((all_version_list_Ids && all_version_list_Ids.length) && all_version_list_Ids || null) 
-    }
-  }
+  // 可以不用判断项目交流中打开了其他文件,关闭后文件评论还存在
+  // componentWillReceiveProps(nextProps) {
+  //   const { isInOpenFile } = nextProps
+  //   const { isInOpenFile: oldOpenFile } = this.props
+  //   if (isInOpenFile == false && oldOpenFile == true) {
+  //     // this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
+  //     // let all_version_list_Ids = this.getEveryVersionListIds()
+  //     // global.constants.lx_utils && global.constants.lx_utils.setCommentData((all_version_list_Ids && all_version_list_Ids.length) && all_version_list_Ids || null) 
+  //   }
+  // }
 
   render() {
     const { componentHeight, componentWidth } = this.props
