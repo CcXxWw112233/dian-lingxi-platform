@@ -39,7 +39,8 @@ class CustormModal extends React.Component {
     const { chatImVisiable, siderRightCollapsed } = this.props
     if (chatImVisiable || siderRightCollapsed) {
       const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
-      let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth - 400 : clientWidth - 450
+      // let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth - 400 : clientWidth - 450
+      let layoutClientWidth = clientWidth - 400
       this.setState({
         layoutClientWidth
       })
@@ -58,7 +59,8 @@ class CustormModal extends React.Component {
     const { chatImVisiable, siderRightCollapsed } = nextProps
     if (chatImVisiable || siderRightCollapsed) {
       const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
-      let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth - 400 : clientWidth - 450
+      // let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth - 400 : clientWidth - 450
+      let layoutClientWidth = clientWidth - 400
       this.setState({
         layoutClientWidth
       })
