@@ -93,11 +93,11 @@ export default class VersionSwitchingComponent extends Component {
   getVersionItemMenu = (list) => {
     const { editValue, filePreviewCurrentFileId, uploadProps, is_edit_version_description, is_show, selectedKeys } = this.props //is_show = 是否显示'上传新版本'
     const { defaultSelectedKeys = [] } = this.state
-    // console.log(this.props.selectedKeys, 'sssssssssssssssss_this.props.selectedKeys')
     return (
       <div style={{ position: 'relative' }} id="versionPanePosition" className={indexStyles.versionPanePosition}>
-        <Menu 
-          // defaultSelectedKeys={defaultSelectedKeys} selectedKeys={selectedKeys} 
+        <Menu
+          key={selectedKeys} 
+          selectedKeys={selectedKeys} 
           getPopupContainer={triggerNode => triggerNode.parentNode} selectable={true} style={{ width: 400, maxHeight: '314px' }}>
           <div key="versionTitle" style={{ borderBottom: '1px solid rgba(0,0,0,0.09)', height: '56px', lineHeight: '56px', padding: '0 16px' }}>
             <div className={indexStyles.title_wrapper} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

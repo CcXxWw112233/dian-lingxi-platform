@@ -106,6 +106,7 @@ class MainContent extends Component {
     if (supportFileTypeArray.indexOf(FILE_NAME) != -1) {
       fileConvertPdfAlsoUpdateVersion({ id: file_id }).then(res => {
         if (isApiResponseOk(res)) {
+          this.props.updateStateDatas && this.props.updateStateDatas({selectedKeys: [res.data.id]})
           let isPDF = getSubfixName(res.data.file_name) == '.pdf'
           if (isPDF) {
             setCurrentVersionFile({ id: res.data.id, set_major_version: '1' }).then(result => {
@@ -121,13 +122,15 @@ class MainContent extends Component {
                 this.props.updateStateDatas && this.props.updateStateDatas({
                   is_petty_loading: !isZoomPictureFullScreenMode && false,
                   is_large_loading: isZoomPictureFullScreenMode && false,
+                  selectedKeys: [res.data.id]
                 })
                 // setTimeout(() => this.props.updateStateDatas && this.props.updateStateDatas({selectedKeys: [res.data.id]}),200)
+                // this.props.updateStateDatas && this.props.updateStateDatas({selectedKeys: [res.data.id]})
               }
             })
           } else {
             this.props.getCurrentFilePreviewData && this.props.getCurrentFilePreviewData({ id: res.data.id })
-            // this.props.updateStateDatas && this.props.updateStateDatas({selectedKeys: [res.data.id]})
+            this.props.updateStateDatas && this.props.updateStateDatas({selectedKeys: [res.data.id]})
           }
 
         } else {
@@ -185,7 +188,7 @@ class MainContent extends Component {
     this.props.updateStateDatas && this.props.updateStateDatas({
       is_petty_loading: !isZoomPictureFullScreenMode,
       is_large_loading: isZoomPictureFullScreenMode,
-      // selectedKeys: []
+      selectedKeys: []
     })
   }
 

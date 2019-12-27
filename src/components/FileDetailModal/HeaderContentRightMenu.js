@@ -44,7 +44,7 @@ export default class HeaderContentRightMenu extends Component {
       this.setState({
         new_filePreviewCurrentVersionList,
       })
-      // setTimeout(() => this.judgeWhetherItIsNewVersion(filePreviewCurrentVersionList, filePreviewCurrentFileId), 200)
+      setTimeout(() => this.judgeWhetherItIsNewVersion(new_filePreviewCurrentVersionList, filePreviewCurrentFileId), 200)
     }
     
   }
@@ -52,16 +52,21 @@ export default class HeaderContentRightMenu extends Component {
     // 判断是否是新版本
     judgeWhetherItIsNewVersion = (data, id) => {
       if (!data) return
-      const { filePreviewCurrentVersionList = [] } = this.props
       let currentPreviewFile = [...data] // 当前预览的文件
       let currentPreviewVersionFile = [...data] // 当前的版本文件
       currentPreviewFile = currentPreviewFile.find(item => item.is_new_version != '1' && item.id == id)
       currentPreviewVersionFile = currentPreviewVersionFile.find(item => item.is_new_version == '1')
       if ( currentPreviewFile && Object.keys(currentPreviewFile) && Object.keys(currentPreviewFile).length) {
         this.props.updateStateDatas && this.props.updateStateDatas({ selectedKeys: [currentPreviewFile.id] })
+        // this.setState({
+        //   selectedKeys: [currentPreviewFile.id]
+        // })
       }
       if (currentPreviewVersionFile && Object.keys(currentPreviewVersionFile) && Object.keys(currentPreviewVersionFile).length) {
         this.props.updateStateDatas && this.props.updateStateDatas({ filePreviewCurrentFileId: currentPreviewVersionFile.id })
+        this.setState({
+          // selectedKeys: [currentPreviewVersionFile.id]
+        })
       }
     }
 
