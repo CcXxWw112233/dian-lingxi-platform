@@ -310,7 +310,7 @@ export default class ItemOne extends React.Component {
           </div>
           <div className={CreateTaskStyle.item_1_top_right}>
             {role_type !== '0'?(
-              <Dropdown overlay={operateMenu()}>
+              <Dropdown overlay={operateMenu()} getPopupContainer={() => document.getElementById('organizationMemberContainer')}>
                 <div><Icon type="ellipsis" theme="outlined" /></div>
               </Dropdown>
             ) : ('')}
