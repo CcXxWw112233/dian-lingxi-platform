@@ -18,7 +18,7 @@ export default {
     filePreviewCurrentFileId: '',
     fileType: '',
     isInOpenFile: false,
-    isOpenAttachmentFile: false
+    // isOpenAttachmentFile: false
   },
   subscriptions: {
     setup({ dispatch, history }) {

@@ -490,6 +490,7 @@ class InviteOtherWithBatch extends Component {
                 onSelect={this.handleInputSelected}
                 onDeselect={this.handleInputDeselected}
                 style={{ width: '100%' }}
+                getPopupContainer={triggerNode => triggerNode.parentNode}
               >
                 {inputRet.map(item => (
                   <Option key={item.value}>{this.genOptionLabel(item)}</Option>

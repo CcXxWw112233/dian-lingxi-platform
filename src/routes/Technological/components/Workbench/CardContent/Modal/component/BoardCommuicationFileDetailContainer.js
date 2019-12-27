@@ -33,6 +33,19 @@ export default class BoardCommuicationFileDetailContainer extends Component {
       return Ids
     }
 
+      // 获取当前预览文件的版本ID
+  getCurrentFilePreviewVersionId = () => {
+    const { filePreviewCurrentVersionList = [], filePreviewCurrentFileId } = this.state
+    let versionId = ''
+    let new_filePreviewCurrentVersionList = [...filePreviewCurrentVersionList]
+    new_filePreviewCurrentVersionList.map(item => {
+      if (item.id == filePreviewCurrentFileId) {
+        versionId = item.version_id
+      }
+    })
+    return versionId
+  }
+
   onCancel = () => {
     const { is_petty_loading, is_large_loading } = this.state
     if (is_petty_loading || is_large_loading) {
@@ -41,7 +54,8 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     }
     // this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile()
     let all_version_list_Ids = this.getEveryVersionListIds()
-    global.constants.lx_utils && global.constants.lx_utils.setCommentData((all_version_list_Ids && all_version_list_Ids.length) && all_version_list_Ids || this.props.filePreviewCurrentFileId || null) 
+    let currentPreviewFileVersionId = this.getCurrentFilePreviewVersionId()
+    global.constants.lx_utils && global.constants.lx_utils.setCommentData(currentPreviewFileVersionId || (all_version_list_Ids && all_version_list_Ids.length) && all_version_list_Ids || this.props.filePreviewCurrentFileId || null) 
     this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
   }
 
@@ -92,6 +106,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
   // PDF文件预览的特殊处理
   getFilePDFInfo = ({ id }) => {
     const { currentPreviewFileData = {} } = this.state
+    let currentPreviewFileVersionId = this.getCurrentFilePreviewVersionId()
     getFilePDFInfo({ id }).then(res => {
       if (isApiResponseOk(res)) {
         this.updateStateDatas({
@@ -101,12 +116,12 @@ export default class BoardCommuicationFileDetailContainer extends Component {
           filePreviewIsRealImage: false,
           currentPreviewFileData: { ...currentPreviewFileData, id: id }
         })
-        this.linkImWithFile({name: this.props.currentPreviewFileName, type: 'file', board_id: this.props.board_id, id: this.props.filePreviewCurrentFileId})
+        this.linkImWithFile({name: this.props.currentPreviewFileName, type: 'file', board_id: this.props.board_id, id: this.props.filePreviewCurrentFileId, currentPreviewFileVersionId: currentPreviewFileVersionId})
       } else {
         message.warn(res.message)
         setTimeout(() => {
           this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
-          global.constants.lx_utils && global.constants.lx_utils.setCommentData(id || null)
+          global.constants.lx_utils && global.constants.lx_utils.setCommentData(currentPreviewFileVersionId || id || null)
         }, 200)
       }
     })
@@ -117,12 +132,13 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     fileInfoByUrl({ id }).then(res => {// 获取详情的接口
       if (isApiResponseOk(res)) {
         this.initStateDatas({ data: res.data })
-        this.linkImWithFile({name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id})
+        this.linkImWithFile({name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id, currentPreviewFileVersionId: res.data.base_info.version_id})
       } else {
         message.warn(res.message)
+        let currentPreviewFileVersionId = this.getCurrentFilePreviewVersionId()
         setTimeout(() => {
           this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
-          global.constants.lx_utils && global.constants.lx_utils.setCommentData(id || null)
+          global.constants.lx_utils && global.constants.lx_utils.setCommentData(currentPreviewFileVersionId || id || null)
         }, 500)
       }
     })

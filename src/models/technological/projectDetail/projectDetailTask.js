@@ -82,6 +82,17 @@ export default modelExtend(projectDetail, {
                 }
               })
 
+              // 需要情况该弹窗的数据 因为圈子联动导致的问题
+              dispatch({
+                type: 'publicFileDetailModal/updateDatas',
+                payload: {
+                  filePreviewCurrentFileId: '',
+                  fileType: '',
+                  isInOpenFile: false,
+                  isInAttachmentFile: false,
+                  currentPreviewFileName: ''
+                }
+              })
             } else {
               dispatch({
                 type: 'getTaskGroupList',

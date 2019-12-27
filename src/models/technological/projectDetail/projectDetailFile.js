@@ -133,6 +133,15 @@ export default modelExtend(projectDetail, {
               //   }
               // })
 
+              // 需要情况该弹窗的数据 因为圈子联动导致的问题
+              dispatch({
+                type: 'publicTaskDetailModal/updateDatas',
+                payload: {
+                  drawContent: {},
+                  drawerVisible: false
+                }
+              })
+              
               if (file_name) {
                 dispatch({
                   type: 'publicFileDetailModal/previewFileByUrl',
