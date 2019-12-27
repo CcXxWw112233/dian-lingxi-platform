@@ -91,7 +91,7 @@ export default class BoardTemplate extends Component {
             if (!!selected_template_id) {
                 this.getTemplateInfo(selected_template_id)
                 this.setState({
-                    selected_template_name: data.find(item => item.id == selected_template_id).name,
+                    selected_template_name: (data.find(item => item.id == selected_template_id) || {}).name || '请选择模板',
                 })
                 return
             }
