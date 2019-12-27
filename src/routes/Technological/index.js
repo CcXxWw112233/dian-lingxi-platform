@@ -12,7 +12,7 @@ import SiderLeft from './Sider/SiderLeft'
 import SiderRight from './Sider/SiderRight'
 import GlobalSearch from './GlobalSearch'
 import QueryString from 'querystring'
-import { initWs } from '../../components/WsNewsDynamic'
+import { initWsFun } from '../../components/WsNewsDynamic'
 import Cookies from 'js-cookie'
 import { isPaymentOrgUser } from "@/utils/businessFunction"
 import { routerRedux } from "dva/router";
@@ -44,6 +44,7 @@ export default class Technological extends React.Component {
       net.send('close')
       net = null
     }
+    // console.log('netnet-create_before', net)
     setTimeout(function () {
       const calback = function (event) {
         dispatch({
@@ -53,7 +54,8 @@ export default class Technological extends React.Component {
           }
         })
       }
-      net = initWs(calback)
+      net = initWsFun(calback)
+      // console.log('netnet-create', net)
     }, 1000)
   }
 

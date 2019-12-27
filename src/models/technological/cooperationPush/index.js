@@ -944,29 +944,31 @@ export default {
           const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}
           const user_id = userInfo['id']
           const is_handler = executors.find(item => item.user_id == user_id)
-          if (!is_handler) {
-            return
-          }
+          // if (!is_handler) {
+          //   return
+          // }
 
           if (!work_parent_card_id_) { //新增父任务
-            if (card_type == '0') { //任务
-              for (let i = 0; i < task_list_.length; i++) {
-                //如果某一列里面有完成的任务，则在完成的任务前面增加一条，否则直接往后塞
-                if (task_list_[i]['is_realize'] == '1') {
-                  is_has_realize = true
-                  task_list_.splice(i, 0, cObj)
-                  break
+            if (is_handler) { //并且执行人有当前操作人
+              if (card_type == '0') { //任务
+                for (let i = 0; i < task_list_.length; i++) {
+                  //如果某一列里面有完成的任务，则在完成的任务前面增加一条，否则直接往后塞
+                  if (task_list_[i]['is_realize'] == '1') {
+                    is_has_realize = true
+                    task_list_.splice(i, 0, cObj)
+                    break
+                  }
+
                 }
+              } else if (card_type == '1') { //会议
+                meetingList.push(cObj)
+              } else {
 
               }
-            } else if (card_type == '1') { //会议
-              meetingList.push(cObj)
-            } else {
-
-            }
-            if (!is_has_realize) {
-              if (card_type == '0') {
-                task_list_.push(cObj)
+              if (!is_has_realize) {
+                if (card_type == '0') {
+                  task_list_.push(cObj)
+                }
               }
             }
           } else { //新增子任务
