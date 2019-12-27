@@ -81,6 +81,7 @@ export default class DetailModal extends React.Component {
         bodyStyle={{ padding: '0px' }}
         style={{ ...style }}
         onCancel={this.onCancel.bind(this)}
+        whetherShowBodyScreenWidth={true}
         overInner={<DetailDom {...this.props} showActiveStyles={showActiveStyles} />}
       />
     )

@@ -132,17 +132,17 @@ class CustormModal extends React.Component {
 
 
   render() {
-    const { siderRightCollapsed = false, visible, overInner, width, zIndex = 1006, maskClosable, footer, destroyOnClose, keyboard = true, maskStyle = {}, style = {}, onOk, onCancel, bodyStyle = {}, closable = true, title, page_load_type, chatImVisiable } = this.props;
+    const { whetherShowBodyScreenWidth, siderRightCollapsed = false, visible, overInner, width, zIndex = 1006, maskClosable, footer, destroyOnClose, keyboard = true, maskStyle = {}, style = {}, onOk, onCancel, bodyStyle = {}, closable = true, title, page_load_type, chatImVisiable } = this.props;
     const { clientWidth, clientHeight, layoutClientWidth } = this.state
     // const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     // const { is_simple_model } = user_set;
     selfAdaptationWidth = layoutClientWidth
-
+    let active_width = whetherShowBodyScreenWidth ? clientWidth - 450 > 1200 ? width : (clientWidth - 450 < 818 ? 818 : clientWidth - 450) : width
     return (
       <Modal
         title={title}
         visible={visible}
-        width={clientWidth - 450 > 1200 ? width : (clientWidth - 450 < 818 ? 818 : clientWidth - 450)  }
+        width={active_width}
         closable={closable}
         zIndex={zIndex}
         maskClosable={maskClosable}
