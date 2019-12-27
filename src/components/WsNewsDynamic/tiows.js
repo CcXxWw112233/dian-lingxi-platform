@@ -105,7 +105,9 @@ tio.ws = function (ws_url, ip, port, paramStr, param, handler, heartbeatTimeout,
   };
 
   this.send = function (data) {
-    this.ws.send(data);
+    if (this.ws.readyState == 1) {
+      this.ws.send(data);
+    }
   };
 
 }
