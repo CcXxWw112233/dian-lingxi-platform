@@ -17,10 +17,18 @@ export default class Header extends React.Component {
     ShowAddMenberModalVisibile: false,
   };
   addMembers(data) {
-
-    const { invitationType, invitationId, rela_Condition } = this.props
+    const { invitationType, invitationId, rela_Condition, model: { datas: { groupList = [] } } } = this.props
+    let new_groupList = [...groupList]
+    let group_id = (new_groupList.find(item => item.is_default == '1') || {}).id
+    // 因为分组ID是必传的, 所以没有的话需要return
+    if (!group_id) return
     const temp_ids = data.users.split(",")
     const invitation_org = localStorage.getItem('OrganizationId')
+    this.props.inviteMemberToGroup({
+      members: temp_ids.join(','),
+      group_id: group_id
+    })
+    return
     organizationInviteWebJoin({
       _organization_id: invitation_org,
       type: '11',
