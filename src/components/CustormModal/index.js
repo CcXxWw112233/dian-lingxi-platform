@@ -142,7 +142,7 @@ class CustormModal extends React.Component {
       <Modal
         title={title}
         visible={visible}
-        width={clientWidth - 450 > 1200 ? width : clientWidth - 450}
+        width={clientWidth - 450 > 1200 ? width : (clientWidth - 450 < 818 ? 818 : clientWidth - 450)  }
         closable={closable}
         zIndex={zIndex}
         maskClosable={maskClosable}
