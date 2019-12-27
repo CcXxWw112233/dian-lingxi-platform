@@ -24,7 +24,7 @@ import coverIconSrc from '@/assets/simplemode/communication_cover_icon@2x.png'
 // import { Im } from 'lingxi-im';
 import uploadIconSrc from '@/assets/simplemode/cloud-upload_icon@2x.png'
 import { UPLOAD_FILE_SIZE, FILE_TYPE_UPLOAD_WHITELISTED } from "@/globalset/js/constant";
-import { openImChat } from '../../../../../utils/businessFunction';
+import { openImChatBoard } from '../../../../../utils/businessFunction';
 const { Im } = global.constants
 
 const { Option } = Select;
@@ -1133,7 +1133,7 @@ class BoardCommunication extends Component {
             // if(keys){
             this.getCommunicationFolderList(keys); // 获取项目交流目录下子集数据
             // }
-            openImChat({ board_id: keys || '', autoOpenIm: true })
+            openImChatBoard({ board_id: keys || '', autoOpenIm: true })
         });
     }
 

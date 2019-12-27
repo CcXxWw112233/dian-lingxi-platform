@@ -5,49 +5,23 @@ import CreateTask from './TaskItemComponent/CreateTask'
 import FileModule from './FileModule'
 import ProcessIndex from './Process'
 import indexStyles from './index.less'
-import { checkIsHasPermissionInBoard } from "../../../../utils/businessFunction";
-import {
-  PROJECT_FILES_FILE_INTERVIEW, PROJECT_FLOW_FLOW_ACCESS,
-  PROJECT_TEAM_CARD_INTERVIEW
-} from "../../../../globalset/js/constant";
-
-// const getEffectOrReducerByName = name => `projectDetail/${name}`
-// const getEffectOrReducerByNameTask = name => `projectDetailTask/${name}`
-// const getEffectOrReducerByNameFile = name => `projectDetailFile/${name}`
-// const getEffectOrReducerByNameProcess = name => `projectDetailProcess/${name}`
-// const updateDatas = (payload) => {
-//   dispatch({
-//     type: getEffectOrReducerByName('updateDatas'),
-//     payload: payload
-//   })
-// }
-// const updateDatasTask = (payload) => {
-//   dispatch({
-//     type: getEffectOrReducerByNameTask('updateDatas'),
-//     payload: payload
-//   })
-// }
-// const updateDatasFile = (payload) => {
-//   dispatch({
-//     type: getEffectOrReducerByNameFile('updateDatas'),
-//     payload: payload
-//   })
-// }
-// const updateDatasProcess = (payload) => {
-//   dispatch({
-//     type: getEffectOrReducerByNameProcess('updateDatas'),
-//     payload: payload
-//   })
-// }
-// const getProjectDetailInfo = (payload) => {
-//   dispatch({
-//     type: 'workbenchTaskDetail/projectDetailInfo',
-//     payload: payload
-//   })
-// }
+import { openImChatBoard } from '../../../../utils/businessFunction';
+import { getQueryString } from '../../../../utils/util';
 
 const ProjectDetail = (props) => {
   const { appsSelectKey, projectDetailInfoData = {} } = props
+
+  const { board_id } = projectDetailInfoData
+  if (board_id) { //当是查看项目而非查看项目内应用详情（任务文件流程）
+    const { location: { search } } = props
+    const card_id = getQueryString(search, 'card_id')
+    const file_id = getQueryString(search, 'file_id')
+    const flow_id = getQueryString(search, 'flow_id')
+    const only_see_board_detail = !card_id && !file_id && !flow_id
+    if (only_see_board_detail) {
+      openImChatBoard({ board_id, autoOpenIm: true })
+    }
+  }
 
   const filterAppsModule = (appsSelectKey) => {
     let appFace = (<div></div>)
