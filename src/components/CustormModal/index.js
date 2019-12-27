@@ -17,13 +17,29 @@ class CustormModal extends React.Component {
     clientWidth: document.documentElement.clientWidth, //获取页面可见高度
     layoutClientWidth: document.getElementById('technologicalLayoutWrapper') && document.getElementById('technologicalLayoutWrapper').clientWidth,
   }
+  constructor(props) {
+    super(props);
+    this.resizeTTY = this.resizeTTY.bind(this)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.resizeTTY);
+  }
+  resizeTTY = () => {
+    const clientHeight = document.documentElement.clientHeight;//获取页面可见高度
+    const clientWidth = document.documentElement.clientWidth
+    this.setState({
+      clientHeight,
+      clientWidth
+    })
+  }
 
   componentDidMount() {
     const { clientWidth } = this.state
     const { chatImVisiable, siderRightCollapsed } = this.props
     if (chatImVisiable || siderRightCollapsed) {
       const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
-      let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth - 400 : clientWidth
+      let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth - 400 : clientWidth - 450
       this.setState({
         layoutClientWidth
       })
@@ -34,6 +50,7 @@ class CustormModal extends React.Component {
         layoutClientWidth
       })
     }
+    window.addEventListener('resize', this.resizeTTY)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -41,13 +58,13 @@ class CustormModal extends React.Component {
     const { chatImVisiable, siderRightCollapsed } = nextProps
     if (chatImVisiable || siderRightCollapsed) {
       const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
-      let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth - 400 : clientWidth
+      let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth - 400 : clientWidth - 450
       this.setState({
         layoutClientWidth
       })
     } else {
       const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
-      let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth : clientWidth
+      let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth : clientWidth - 450
       this.setState({
         layoutClientWidth
       })
@@ -123,7 +140,7 @@ class CustormModal extends React.Component {
       <Modal
         title={title}
         visible={visible}
-        width={width && width}
+        width={clientWidth - 450 > 1200 ? width : clientWidth - 450}
         closable={closable}
         zIndex={zIndex}
         maskClosable={maskClosable}
