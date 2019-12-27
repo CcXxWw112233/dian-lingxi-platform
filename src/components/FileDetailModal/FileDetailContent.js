@@ -29,17 +29,6 @@ class FileDetailContent extends Component {
     }
   }
 
-  // 判断是否是新版本
-  // judgeWhetherItIsNewVersion = ({data}) => {
-  //   let version_list = [...data.version_list]
-  //   version_list = version_list.find(item => item.is_new_version == '1')
-  //   if (Object.keys(version_list) && Object.keys(version_list).length) {
-  //     this.setState({
-  //       filePreviewCurrentFileId: version_list.id
-  //     })
-  //   }
-  // }
-
   // 获取所有版本列表的IDS
   getEveryVersionListIds = () => {
     const { filePreviewCurrentVersionList = [] } = this.state
@@ -69,7 +58,6 @@ class FileDetailContent extends Component {
 
   // global.constants.lx_utils && global.constants.lx_utils.setCommentData({name: })
   linkImWithFile = (data) => {
-    // console.log('进来了', 'sssssssssss')
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     const { is_simple_model } = user_set;
     if (!data) {
@@ -95,7 +83,7 @@ class FileDetailContent extends Component {
       if (file_type == '.pdf') {
         await this.getFilePDFInfo({ id })
       }
-      this.linkImWithFile({name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id})
+      // this.linkImWithFile({name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id})
     } else {
       message.warn(res.message, MESSAGE_DURATION_TIME)
       setTimeout(() => {
@@ -211,8 +199,19 @@ class FileDetailContent extends Component {
           filePreviewIsRealImage: false,
           currentPreviewFileData: { ...currentPreviewFileData, id: id }
         })
+        this.linkImWithFile({name: this.props.currentPreviewFileName, type: 'file', board_id: this.props.board_id, id: this.props.filePreviewCurrentFileId})
       } else {
         message.warn(res.message)
+        setTimeout(() => {
+          this.props.dispatch({
+            type: 'publicFileDetailModal/updateDatas',
+            payload: {
+              isInOpenFile: false
+            }
+          })
+          // this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
+          global.constants.lx_utils && global.constants.lx_utils.setCommentData(id || null)
+        }, 200)
       }
     })
   }

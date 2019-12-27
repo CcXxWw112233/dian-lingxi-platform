@@ -122,10 +122,12 @@ class MainContent extends Component {
                   is_petty_loading: !isZoomPictureFullScreenMode && false,
                   is_large_loading: isZoomPictureFullScreenMode && false,
                 })
+                // setTimeout(() => this.props.updateStateDatas && this.props.updateStateDatas({selectedKeys: [res.data.id]}),200)
               }
             })
           } else {
             this.props.getCurrentFilePreviewData && this.props.getCurrentFilePreviewData({ id: res.data.id })
+            // this.props.updateStateDatas && this.props.updateStateDatas({selectedKeys: [res.data.id]})
           }
 
         } else {
@@ -141,6 +143,7 @@ class MainContent extends Component {
           this.props.updateStateDatas && this.props.updateStateDatas({
             is_petty_loading: !isZoomPictureFullScreenMode && false,
             is_large_loading: isZoomPictureFullScreenMode && false,
+            selectedKeys: []
           })
         }
       })
@@ -182,6 +185,7 @@ class MainContent extends Component {
     this.props.updateStateDatas && this.props.updateStateDatas({
       is_petty_loading: !isZoomPictureFullScreenMode,
       is_large_loading: isZoomPictureFullScreenMode,
+      // selectedKeys: []
     })
   }
 

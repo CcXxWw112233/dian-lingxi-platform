@@ -6,9 +6,15 @@ import indexStyles from './index.less'
 
 export default class VersionSwitchingComponent extends Component {
 
-  state = {
-    is_close: null, // 是否关闭状态, 默认为 null
+  constructor(props) {
+    super(props)
+    this.state = {
+      // selectedKeys: []
+      defaultSelectedKeys: props.selectedKeys,
+      is_close: null, // 是否关闭状态, 默认为 null
+    }
   }
+
 
 
   /**
@@ -85,17 +91,21 @@ export default class VersionSwitchingComponent extends Component {
 
   // 每一个切换版本的item结构
   getVersionItemMenu = (list) => {
-    const { editValue, filePreviewCurrentFileId, uploadProps, is_edit_version_description, is_show } = this.props //is_show = 是否显示'上传新版本'
+    const { editValue, filePreviewCurrentFileId, uploadProps, is_edit_version_description, is_show, selectedKeys } = this.props //is_show = 是否显示'上传新版本'
+    const { defaultSelectedKeys = [] } = this.state
+    // console.log(this.props.selectedKeys, 'sssssssssssssssss_this.props.selectedKeys')
     return (
       <div style={{ position: 'relative' }} id="versionPanePosition" className={indexStyles.versionPanePosition}>
-        <Menu getPopupContainer={triggerNode => triggerNode.parentNode} selectable={true} style={{ width: 400, maxHeight: '314px' }}>
+        <Menu 
+          // defaultSelectedKeys={defaultSelectedKeys} selectedKeys={selectedKeys} 
+          getPopupContainer={triggerNode => triggerNode.parentNode} selectable={true} style={{ width: 400, maxHeight: '314px' }}>
           <div key="versionTitle" style={{ borderBottom: '1px solid rgba(0,0,0,0.09)', height: '56px', lineHeight: '56px', padding: '0 16px' }}>
             <div className={indexStyles.title_wrapper} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span className={indexStyles.version_title}>版本信息</span>
               <span onClick={() => { this.handleCloseChg() }} className={indexStyles.version_close}>x</span>
             </div>
           </div>
-          <Menu getPopupContainer={triggerNode => triggerNode.parentNode} onClick={(e) => { this.handleVersionItem(e) }} className={`${globalStyles.global_vertical_scrollbar}`} style={{ maxHeight: '200px', overflowY: 'auto' }}>
+          <Menu  getPopupContainer={triggerNode => triggerNode.parentNode} onClick={(e) => { this.handleVersionItem(e) }} className={`${globalStyles.global_vertical_scrollbar}`} style={{ maxHeight: '200px', overflowY: 'auto' }}>
             {list.map((value, key) => {
               const { file_name, creator, create_time, file_size, file_id, is_edit, remarks, file_resource_id } = value
               return (

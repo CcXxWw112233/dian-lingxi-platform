@@ -83,7 +83,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     if (isApiResponseOk(res)) {
       this.initStateDatas({ data: res.data })
       await this.getFilePDFInfo({ id })
-      this.linkImWithFile({name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id})
+      // this.linkImWithFile({name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id})
     } else {
       message.warn(res.message, MESSAGE_DURATION_TIME)
     }
@@ -101,6 +101,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
           filePreviewIsRealImage: false,
           currentPreviewFileData: { ...currentPreviewFileData, id: id }
         })
+        this.linkImWithFile({name: this.props.currentPreviewFileName, type: 'file', board_id: this.props.board_id, id: this.props.filePreviewCurrentFileId})
       } else {
         message.warn(res.message)
         setTimeout(() => {
@@ -137,11 +138,11 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     if (filePreviewCurrentFileId && file_detail_modal_visible) {
       if (fileType == '.pdf') {
         this.delayUpdatePdfDatas({ id: filePreviewCurrentFileId })
-        this.linkImWithFile({name: currentPreviewFileName, type: 'file', board_id: board_id, id: filePreviewCurrentFileId})
+        // this.linkImWithFile({name: currentPreviewFileName, type: 'file', board_id: board_id, id: filePreviewCurrentFileId})
         return
       }
       this.getCurrentFilePreviewData({ id: filePreviewCurrentFileId })
-      this.linkImWithFile({name: currentPreviewFileName, type: 'file', board_id: board_id, id: filePreviewCurrentFileId})
+      // this.linkImWithFile({name: currentPreviewFileName, type: 'file', board_id: board_id, id: filePreviewCurrentFileId})
     }
   }
 

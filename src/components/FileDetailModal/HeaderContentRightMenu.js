@@ -26,12 +26,13 @@ export default class HeaderContentRightMenu extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      // selectedKeys: []
     }
   }
 
   // 这里是更新版本列表添加一个编辑的字段
   componentWillReceiveProps(nextProps) {
-    const { filePreviewCurrentVersionList = [] } = nextProps
+    const { filePreviewCurrentVersionList = [], filePreviewCurrentFileId } = nextProps
     if (!compareACoupleOfObjects(this.props, nextProps)) {
       let new_filePreviewCurrentVersionList = [...filePreviewCurrentVersionList]
       new_filePreviewCurrentVersionList = new_filePreviewCurrentVersionList.map(item => {
@@ -43,8 +44,26 @@ export default class HeaderContentRightMenu extends Component {
       this.setState({
         new_filePreviewCurrentVersionList,
       })
+      // setTimeout(() => this.judgeWhetherItIsNewVersion(filePreviewCurrentVersionList, filePreviewCurrentFileId), 200)
     }
+    
   }
+
+    // 判断是否是新版本
+    judgeWhetherItIsNewVersion = (data, id) => {
+      if (!data) return
+      const { filePreviewCurrentVersionList = [] } = this.props
+      let currentPreviewFile = [...data] // 当前预览的文件
+      let currentPreviewVersionFile = [...data] // 当前的版本文件
+      currentPreviewFile = currentPreviewFile.find(item => item.is_new_version != '1' && item.id == id)
+      currentPreviewVersionFile = currentPreviewVersionFile.find(item => item.is_new_version == '1')
+      if ( currentPreviewFile && Object.keys(currentPreviewFile) && Object.keys(currentPreviewFile).length) {
+        this.props.updateStateDatas && this.props.updateStateDatas({ selectedKeys: [currentPreviewFile.id] })
+      }
+      if (currentPreviewVersionFile && Object.keys(currentPreviewVersionFile) && Object.keys(currentPreviewVersionFile).length) {
+        this.props.updateStateDatas && this.props.updateStateDatas({ filePreviewCurrentFileId: currentPreviewVersionFile.id })
+      }
+    }
 
   /**
    * 检测是否进入圈评
@@ -78,7 +97,7 @@ export default class HeaderContentRightMenu extends Component {
           message.success('设置主版本成功', MESSAGE_DURATION_TIME)
         }, 500)
         this.handleUploadPDForElesFilePreview({ file_name: file_name, id })
-        this.props.updateStateDatas && this.props.updateStateDatas({ filePreviewCurrentFileId: id })
+        this.props.updateStateDatas && this.props.updateStateDatas({ filePreviewCurrentFileId: id, selectedKeys: [] })
         this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({folder_id, file_id: id, file_name})
       } else {
         message.warn(res.message)
@@ -95,7 +114,7 @@ export default class HeaderContentRightMenu extends Component {
         }, 500)
         let { file_name, id, create_time } = res.data[0]
         this.handleUploadPDForElesFilePreview({ file_name, id })
-        this.props.updateStateDatas && this.props.updateStateDatas({ filePreviewCurrentFileId: data.file_id, filePreviewCurrentVersionList: res.data })
+        this.props.updateStateDatas && this.props.updateStateDatas({ filePreviewCurrentFileId: data.file_id, filePreviewCurrentVersionList: res.data, selectedKeys: [] })
         this.setState({
           new_filePreviewCurrentVersionList: res.data
         })
@@ -148,7 +167,7 @@ export default class HeaderContentRightMenu extends Component {
     })
     const { file_id, file_resource_id, file_name } = temp_filePreviewCurrentVersionList[0]
     this.handleUploadPDForElesFilePreview({ file_name, id: file_id })
-    this.props.updateStateDatas && this.props.updateStateDatas({ fileType: getSubfixName(file_name) })
+    this.props.updateStateDatas && this.props.updateStateDatas({ fileType: getSubfixName(file_name), selectedKeys: [key] })
   }
 
   // 每一个Item的点点点 事件
@@ -677,14 +696,15 @@ export default class HeaderContentRightMenu extends Component {
 
   render() {
     const that = this
-    const { currentPreviewFileData = {}, filePreviewCurrentFileId, filePreviewCurrentVersionId, projectDetailInfoData: { data = [], folder_id }, isZoomPictureFullScreenMode, onlyReadingShareModalVisible, onlyReadingShareData, } = this.props
-    const { new_filePreviewCurrentVersionList = [], is_edit_version_description, editValue } = this.state
+    const { currentPreviewFileData = {}, filePreviewCurrentFileId, filePreviewCurrentVersionId, projectDetailInfoData: { data = [], folder_id }, isZoomPictureFullScreenMode, onlyReadingShareModalVisible, onlyReadingShareData, selectedKeys = [] } = this.props
+    const { new_filePreviewCurrentVersionList = [], is_edit_version_description, editValue} = this.state
     const { board_id, is_privilege, privileges = [], id, file_id, is_shared } = currentPreviewFileData
     const params = {
       filePreviewCurrentFileId,
       new_filePreviewCurrentVersionList,
       is_edit_version_description,
-      editValue
+      editValue,
+      selectedKeys
     }
 
     const uploadProps = {
