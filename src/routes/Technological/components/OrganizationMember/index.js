@@ -139,7 +139,7 @@ const OrganizationMember = (props) => {
     })
   }
   return(
-    <div className={indexStyles.OMout} style={{ minHeight: '100%', height: 'auto', position: 'relative', width: '100%', overflow: 'hidden'}}>
+    <div id={'organizationMemberContainer'} className={indexStyles.OMout} style={{ minHeight: '100%', height: 'auto', position: 'relative', width: '100%', overflow: 'hidden'}}>
       {checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY) && (
         <Header {...CreateGroupProps} model={model}/>
       )}

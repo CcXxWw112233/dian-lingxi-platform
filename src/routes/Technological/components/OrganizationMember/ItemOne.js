@@ -93,15 +93,31 @@ export default class ItemOne extends React.Component {
       return false
     }
     const that = this
-    Modal.confirm({
-      title: `确认要移除这个用户吗？`,
-      content: '同时在本组织中将此用户移出所有项目',
-      okText: '确认',
-      cancelText: '取消',
-      onOk() {
-        that.removeUserVisitor({member_id})
-      }
-    });
+    const modal = Modal.confirm()
+    // 这里的 `update` 相当于是对 Modal进行配置
+    modal.update({
+        title: `确认要移除这个用户吗？`,
+        content: '同时在本组织中将此用户移出所有项目',
+        okText: '确认',
+        cancelText: '取消',
+        getContainer: () => document.getElementById('organizationMemberContainer'),
+        zIndex: 1010,
+        onOk() {
+          that.removeUserVisitor({member_id})
+        },
+        onCancel: () => {
+            modal.destroy();
+          }
+    })
+    // Modal.confirm({
+    //   title: `确认要移除这个用户吗？`,
+    //   content: '同时在本组织中将此用户移出所有项目',
+    //   okText: '确认',
+    //   cancelText: '取消',
+    //   onOk() {
+    //     that.removeUserVisitor({member_id})
+    //   }
+    // });
   }
   removeUserVisitor({member_id}) {
     this.props.removeUserVisitor({ id: member_id})
@@ -114,14 +130,29 @@ export default class ItemOne extends React.Component {
       return false
     }
     const that = this
-    Modal.confirm({
-      title: `确认从该分组中移出该${currentNounPlanFilterName(MEMBERS)}？`,
-      okText: '确认',
-      cancelText: '取消',
-      onOk() {
-        that.removeMember()
-      }
-    });
+    const modal = Modal.confirm()
+    // 这里的 `update` 相当于是对 Modal进行配置
+    modal.update({
+        title: `确认从该分组中移出该${currentNounPlanFilterName(MEMBERS)}？`,
+        okText: '确认',
+        cancelText: '取消',
+        getContainer: () => document.getElementById('organizationMemberContainer'),
+        zIndex: 1010,
+        onOk() {
+          that.removeMember()
+        },
+        onCancel: () => {
+            modal.destroy();
+          }
+    })
+    // Modal.confirm({
+    //   title: `确认从该分组中移出该${currentNounPlanFilterName(MEMBERS)}？`,
+    //   okText: '确认',
+    //   cancelText: '取消',
+    //   onOk() {
+    //     that.removeMember()
+    //   }
+    // });
   }
   removeMember() {
     const { itemValue, parentItemValue } = this.props
@@ -137,14 +168,29 @@ export default class ItemOne extends React.Component {
       return false
     }
     const that = this
-    Modal.confirm({
-      title: `确认停用该${currentNounPlanFilterName(MEMBERS)}？`,
-      okText: '确认',
-      cancelText: '取消',
-      onOk() {
-        that.discontinueMember(member_id)
-      }
-    });
+    const modal = Modal.confirm()
+    // 这里的 `update` 相当于是对 Modal进行配置
+    modal.update({
+        title: `确认停用该${currentNounPlanFilterName(MEMBERS)}？`,
+        okText: '确认',
+        cancelText: '取消',
+        onOk() {
+          that.discontinueMember(member_id)
+        },
+        getContainer: () => document.getElementById('organizationMemberContainer'),
+        zIndex: 1010,
+        onCancel: () => {
+            modal.destroy();
+          }
+    })
+    // Modal.confirm({
+    //   title: `确认停用该${currentNounPlanFilterName(MEMBERS)}？`,
+    //   okText: '确认',
+    //   cancelText: '取消',
+    //   onOk() {
+    //     that.discontinueMember(member_id)
+    //   }
+    // });
   }
   discontinueMember(member_id) {
     this.props.discontinueMember({member_id})

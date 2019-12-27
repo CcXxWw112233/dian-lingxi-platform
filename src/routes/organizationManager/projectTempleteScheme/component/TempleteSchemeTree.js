@@ -835,6 +835,11 @@ export default class TempleteSchemeTree extends Component {
     }
 
     this.initStateDatas()
+    this.setState({
+      is_wrapper_add_sibiling: false,
+      is_wrapper_add_children: false,
+      is_wrapper_add_rename: false
+    })
 
   }
 

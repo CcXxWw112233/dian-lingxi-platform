@@ -21,7 +21,7 @@ export default class SimpleDrawer extends Component {
                 title={drawerTitle}
                 placement="right"
                 closable={true}
-                zIndex={1105}
+                zIndex={1010}
                 maskStyle={{
                     opacity: 1,
                 }}
