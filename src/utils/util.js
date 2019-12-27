@@ -241,7 +241,16 @@ export const getUrlQueryString = (href, name) => {
   const r = href.match(reg)//window.location.href.match(reg);
   if (r != null) return unescape(r[1]); return null;
 }
-
+//获取url参数(比较通用)
+export const getQueryString = (search, name) => {
+  const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+  const _search_ = search || window.location.search
+  const r = _search_.substr(1).match(reg);
+  if (r != null) {
+    return unescape(r[2]);
+  }
+  return null;
+}
 export const getLocationUrlQueryString = (name) => {
   const reg = new RegExp(name + "=([^&]*)");
   const r = window.location.href.match(reg)//window.location.href.match(reg);

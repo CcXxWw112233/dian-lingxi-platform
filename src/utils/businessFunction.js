@@ -431,9 +431,9 @@ export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenI
 
   }
 
-  openImChat({ board_id, autoOpenIm })
+  openImChatBoard({ board_id, autoOpenIm })
 
 }
-export const openImChat = ({ board_id, autoOpenIm }) => {
+export const openImChatBoard = ({ board_id, autoOpenIm }) => {
   global.constants.lx_utils.openChat({ boardId: board_id == '0' ? '' : board_id, autoOpenIm })
 }
