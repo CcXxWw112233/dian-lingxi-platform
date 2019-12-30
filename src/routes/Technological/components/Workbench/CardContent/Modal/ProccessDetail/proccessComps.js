@@ -1,21 +1,14 @@
 import React from 'react'
 // import indexStyles from '../../../../ProjectDetail/Process/ProcessDetail/index.less'
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
-import styles from './index.css'
 import { Icon, message } from 'antd'
 import DetailConfirmInfoTwo from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoTwo'
 import DetailConfirmInfoOne from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoOne'
 import DetailConfirmInfoThree from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoThree'
 import DetailConfirmInfoFour from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoFour'
 import DetailConfirmInfoFive from '../../../../ProjectDetail/Process/ProcessDetail/DetailConfirmInfoFive'
-import user from '../../../../../../../assets/workbench/person_group@2x.png'
-import sssimg from '../../../../../../../assets/workbench/processIcon.png'
-import { timestampToHM } from '../../../../../../../utils/util'
-import { currentNounPlanFilterName, checkIsHasPermission } from '../../../../../../../utils/businessFunction'
 import { FLOWS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_FLOW_FLOW_ACCESS } from '@/globalset/js/constant'
-import { checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl } from '@/utils/businessFunction'
 
-const bodyHeight = document.querySelector('body').clientHeight
 export default class ProccessContent extends React.Component {
   state = {
     isShowAll: false, //是否查看全部
