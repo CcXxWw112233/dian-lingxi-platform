@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Input, Breadcrumb, Icon } from 'antd';
 import styles from './CommunicationFirstScreenHeader.less';
-import { setTimeout } from 'core-js';
+// import { setTimeout } from 'core-js';
 
 
 const { Search } = Input;
