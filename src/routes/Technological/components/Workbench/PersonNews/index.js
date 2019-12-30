@@ -23,12 +23,15 @@ export default class PersonNews extends React.Component {
   componentDidMount() {
     window.addEventListener(
       "resize",
-      this.resizeTTY.bind(this, "person_news_out")
+      this.resizeTTY
     );
     this.listenSiderRightresize();
   }
-  resizeTTY(type) {
-    if(!document.getElementById("technologicalOut")) {
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.resizeTTY)
+  }
+  resizeTTY = (type) => {
+    if (!document.getElementById("technologicalOut")) {
       return
     }
     const width = document.getElementById("technologicalOut").clientWidth; //获取页面可见高度
@@ -93,8 +96,8 @@ export default class PersonNews extends React.Component {
       {
         isShowBottDetail: !this.state.isShowBottDetail
       },
-      function() {
-        setTimeout(function() {
+      function () {
+        setTimeout(function () {
           that.setState({
             isShowBottDetailStyleSet: that.state.isShowBottDetail
           });
@@ -103,7 +106,7 @@ export default class PersonNews extends React.Component {
       }
     );
   }
-  funTransitionHeight = function(element, time, type) {
+  funTransitionHeight = function (element, time, type) {
     // time, 数值，可缺省
     if (typeof window.getComputedStyle === "undefined") return;
     const height = window.getComputedStyle(element).height;
@@ -137,12 +140,12 @@ export default class PersonNews extends React.Component {
       window.MozMutationObserver;
     // 选择目标节点
     const target = document.getElementById("siderRight");
-    if(!target) {
+    if (!target) {
       return
     }
     // 创建观察者对象
-    const observer = new MutationObserver(function(mutations) {
-      mutations.forEach(function(mutation) {
+    const observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
         that.setState({
           siderRightWidth:
             document.getElementById("siderRight").clientWidth === 56 ? 300 : 56
@@ -215,8 +218,8 @@ export default class PersonNews extends React.Component {
             style={{ width: maskWidth, height: clientHeight }}
           />
         ) : (
-          ""
-        )}
+            ""
+          )}
         <div
           className={indexStyles.person_news_out}
           style={{
@@ -272,8 +275,8 @@ export default class PersonNews extends React.Component {
             {!isShowBottDetail ? (
               <InitialNews {...this.props} />
             ) : (
-              <NewsListNewDatas {...this.props} />
-            )}
+                <NewsListNewDatas {...this.props} />
+              )}
           </div>
           <div
             className={indexStyles.spin_turn}

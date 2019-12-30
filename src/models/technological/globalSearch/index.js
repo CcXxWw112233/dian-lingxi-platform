@@ -34,32 +34,32 @@ export default {
     }
   },
   subscriptions: {
-    setup({ dispatch, history }) {
-      history.listen((location) => {
-        function onkeyDown(event) {
-          const e = event || window.event || arguments.callee.caller.arguments[0];
-          const target = e.target
-          let hash = window.location.hash
-          if (hash.indexOf('?') !== -1) {
-            hash = hash.split('?')[0]
-          }
-          const fiterTargetArray = ['input', 'textarea']
-          // if (e && e.keyCode == 83 && fiterTargetArray.indexOf(target.nodeName.toLowerCase()) == -1 && target.getAttribute('role') != 'textbox' && hash.indexOf('/technological') != -1) {
-          //   dispatch({
-          //     type: 'updateDatas',
-          //     payload: {
-          //       globalSearchModalVisible: true
-          //     }
-          //   })
-          // }
-        }
-        if (location.pathname.indexOf('/technological') !== -1) {
-          window.addEventListener("keydown", onkeyDown, false);
-        }else {
+    // setup({ dispatch, history }) {
+    //   history.listen((location) => {
+    //     function onkeyDown(event) {
+    //       const e = event || window.event || arguments.callee.caller.arguments[0];
+    //       const target = e.target
+    //       let hash = window.location.hash
+    //       if (hash.indexOf('?') !== -1) {
+    //         hash = hash.split('?')[0]
+    //       }
+    //       const fiterTargetArray = ['input', 'textarea']
+    //       // if (e && e.keyCode == 83 && fiterTargetArray.indexOf(target.nodeName.toLowerCase()) == -1 && target.getAttribute('role') != 'textbox' && hash.indexOf('/technological') != -1) {
+    //       //   dispatch({
+    //       //     type: 'updateDatas',
+    //       //     payload: {
+    //       //       globalSearchModalVisible: true
+    //       //     }
+    //       //   })
+    //       // }
+    //     }
+    //     if (location.pathname.indexOf('/technological') !== -1) {
+    //       window.addEventListener("keydown", onkeyDown, false);
+    //     }else {
 
-        }
-      })
-    },
+    //     }
+    //   })
+    // },
   },
   effects: {
 
