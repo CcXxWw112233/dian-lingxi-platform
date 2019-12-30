@@ -303,6 +303,7 @@ class Organization extends Component {
     const { datas: { tabSelectKey } } = model
     const asyncProprs = {
       model,
+      dispatch,
       getFnManagementList(data) {
         dispatch({
           type: getEffectOrReducerByName('getFnManagementList'),
