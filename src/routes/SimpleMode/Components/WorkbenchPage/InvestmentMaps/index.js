@@ -4,7 +4,7 @@ import { MAP_URL } from "@/globalset/js/constant";
 import { connect } from 'dva';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import indexStyles from './index.less';
-
+import { openImChatBoard } from '@/utils/businessFunction.js'
 
 @connect(({ InvestmentMaps = [],
     investmentMap: { datas: { mapOrganizationList } },
@@ -22,15 +22,16 @@ export default class index extends React.Component {
     }
     componentDidMount() {
         window.addEventListener('resize', this.setHeight)
-
         const { dispatch } = this.props
         dispatch({
             type: 'investmentMap/getMapsQueryUser',
             payload: {}
         })
+        window.addEventListener('message', this.listenMapBoardChange)
     }
     componentWillUnmount() {
         window.removeEventListener('resize', this.setHeight)
+        window.removeEventListener('message', this.listenMapBoardChange)
     }
     setHeight = () => {
         const height = document.querySelector('body').clientHeight
@@ -38,7 +39,18 @@ export default class index extends React.Component {
             height
         })
     }
-
+    // 监听地图项目变化
+    listenMapBoardChange = (event) => {
+        const message = event.data
+        const message_head = 'map_board_change_'
+        if (!message || typeof message != 'string') {
+            return
+        }
+        if (message.indexOf(message_head) != -1) {
+            const board_id = message.replace(message_head, '')
+            openImChatBoard({ board_id, autoOpenIm: true })
+        }
+    }
     seeInvestmentMaps(params) {
         this.setState({
             orgId: params.id,
