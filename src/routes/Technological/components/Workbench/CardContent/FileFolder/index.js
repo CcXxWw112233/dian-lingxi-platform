@@ -1,10 +1,18 @@
 import React, { Component } from 'react';
-import { Breadcrumb } from 'antd';
+import { Breadcrumb, Tooltip, Icon } from 'antd';
 import globalStyles from './../../../../../../globalset/css/globalClassName.less';
 import FileItem from './../FileItem';
 import styles from './index.less';
+import { connect } from 'dva'
+import {
+  getOrgNameWithOrgIdFilter
+} from "@/utils/businessFunction";
 
 /* eslint-disable */
+@connect(({ workbench, technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } } }) => ({
+  projectTabCurrentSelectedProject: workbench.datas.projectTabCurrentSelectedProject,
+  currentUserOrganizes, is_show_org_name, is_all_org
+}))
 class FileFolder extends Component {
   constructor(props) {
     super(props);
@@ -128,7 +136,8 @@ class FileFolder extends Component {
       </Breadcrumb>
     );
   };
-  renderFolderItem = ({ folder_name = '新建文件夹', id } = {}) => {
+  renderFolderItem = ({ folder_name = '新建文件夹', id, is_privilege, org_id, board_name } = {}) => {
+    const { projectTabCurrentSelectedProject, is_show_org_name, is_all_org, currentUserOrganizes = [] } = this.props
     return (
       <div
         className={styles.folderListItem}
@@ -142,7 +151,54 @@ class FileFolder extends Component {
             &#xe6c4;
           </i>
         </span>
-        <span className={styles.folderListItemTitle}>{folder_name}</span>
+        {/* <span className={styles.folderListItemTitle}>{folder_name}</span> */}
+        <div className={styles.file_text}>
+          <span className={styles.folderListItemTitle}>{folder_name}</span>
+          {
+            is_privilege == '1' && (
+              <Tooltip title="已开启访问控制" placement="top">
+                <span style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', marginLeft: '5px' }}>
+                  <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
+                </span>
+              </Tooltip>
+            )
+          }
+          {
+            projectTabCurrentSelectedProject == '0' && (
+              <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>
+            )
+          }
+          <Tooltip placement="topLeft" title={
+           is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org ? (<span>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)} <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/> {board_name}</span>)
+            : (<span>{board_name}</span>)
+          }>
+            <div
+                style={{ color: "#8c8c8c", cursor: "pointer", display: 'flex', alignItems: 'center' }}
+                // onClick={this.gotoBoardDetail.bind(this, { id, board_id, org_id, folder_name })}
+              >
+                {
+                  is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org && (
+                    <span className={styles.org_name}>
+                      {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
+                    </span>
+                  )
+                }
+                {
+                  is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org && (
+                    <span>
+                      <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/>
+                    </span>
+                  )
+                }
+                {
+                  projectTabCurrentSelectedProject == '0' && (
+                    <span className={styles.ellipsis}>{board_name}</span>
+                  )
+                }
+                
+              </div>
+            </Tooltip>
+        </div>
       </div>
     );
   };

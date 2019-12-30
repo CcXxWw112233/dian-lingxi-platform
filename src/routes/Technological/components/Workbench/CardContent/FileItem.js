@@ -298,6 +298,17 @@ class FileItem extends React.Component {
       previewFileModalVisibile: !this.state.previewFileModalVisibile
     });
   }
+  
+  getEllipsisFileName = (name) => {
+    // wx6535e025f795dca9.o6zAJs5_pqZsbrr7sJng7qkxKKbM.ZhMftVUvAIJ9b5dcb721199c1b8f4f84b0954a80e589.png
+    // let str = 'wx6535e025f795dca9.o6zAJs5_pqZsbrr7sJng7qkxKKbM.ZhMftVUvAIJ9b5dcb721199c1b8f4f84b0954a80e589.png'
+    let str = name
+    if (!name) return
+    let arr = str.split('.')
+    arr.splice(-1,1)
+    arr.join('.')
+    return arr
+  }
 
   render() {
     const { itemValue = {}, currentUserOrganizes, is_show_org_name, projectTabCurrentSelectedProject, is_all_org } = this.props;
@@ -333,7 +344,7 @@ class FileItem extends React.Component {
           />
         </div>
         <div className={indexstyles.file_text}>
-          <span className={indexstyles.hoverUnderline}>{file_name}</span>
+          <span style={{display: 'flex', alignItems: 'center'}}><span className={indexstyles.hoverUnderline}>{this.getEllipsisFileName(file_name)}</span>{getSubfixName(file_name)}</span>
           {
             is_privilege == '1' && (
               <Tooltip title="已开启访问控制" placement="top">
