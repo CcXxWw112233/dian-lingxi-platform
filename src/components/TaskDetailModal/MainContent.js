@@ -338,6 +338,30 @@ export default class MainContent extends Component {
     return new_properties
   }
 
+  // 邀请他人参与回调 并设置为执行人
+  inviteOthersToBoardCalback = ({ users }) => {
+    const { dispatch, projectDetailInfoData = {}, drawContent = {} } = this.props
+    const { board_id, data = [] } = projectDetailInfoData
+    const { card_id } = drawContent
+    const gold_data = (drawContent['properties'].find(item => item.code == 'EXECUTOR') || {}).data
+    const calback = (res) => {
+      const new_users = res.data
+      const arr = new_users.filter(item => users.indexOf(item.user_id) != -1)
+      const newExecutors = [].concat(gold_data, arr)
+      let new_drawContent = { ...drawContent }
+      // new_drawContent['executors'] = newExecutors
+      new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', newExecutors)
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'executors', value: newExecutors, operate_properties_code: 'EXECUTOR' })
+    }
+    dispatch({
+      type: 'projectDetail/projectDetailInfo',
+      payload: {
+        id: board_id,
+        calback
+      }
+    })
+  }
+
   // 添加执行人的回调 S
   chirldrenTaskChargeChange = (dataInfo) => {
     const { drawContent = {}, projectDetailInfoData = {}, dispatch } = this.props
@@ -905,6 +929,7 @@ export default class MainContent extends Component {
                           overlay={
                             <MenuSearchPartner
                               // isInvitation={true}
+                              inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
                               invitationType='4'
                               invitationId={card_id}
                               invitationOrg={org_id}
@@ -925,6 +950,7 @@ export default class MainContent extends Component {
                             overlay={
                               <MenuSearchPartner
                                 // isInvitation={true}
+                                inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
                                 invitationType='4'
                                 invitationId={card_id}
                                 invitationOrg={org_id}

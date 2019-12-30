@@ -71,6 +71,7 @@ class PayUpgrade extends Component {
                 visible={true}
                 footer={null}
                 width={903}
+                getContainer={() => document.getElementById('org_managementContainer') || document.body}
                 onCancel={this.handleCancel}
             >
                 <div className={indexStyles.infoTitle}>协作人数与项目数统计{paymentInfo.is_free_trial && paymentInfo.is_free_trial=='0' && <span style={{color: '#1890FF'}}>(已付费组织)</span>}</div>
