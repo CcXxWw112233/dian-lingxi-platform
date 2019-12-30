@@ -127,14 +127,27 @@ const MiniBoxNavigations = (props) => {
                             const { rela_app_id, id, code } = item
                             const isDisableds = getIsDisabled(item)
                             if (isPaymentUser || item.code === 'board:plans') {
-                                return (
-                                    <Tooltip key={item.id} onClick={e => setWorkbenchPage({ rela_app_id, id, code })} placement="bottom" title={item.name} className={`${indexStyles.nav} ${indexStyles.menu} ${currentSelectedWorkbenchBox.code == item.code ? indexStyles.selected : ''}`} disabled={isDisableds} key={key}>
-
-                                        <div dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '24px', textShadow: '1px 2px 0px rgba(0,0,0,0.15)' }}></div>
-                                        <div className={indexStyles.text}>{item.name}</div>
-
-                                    </Tooltip>
-                                );
+                                if(item.status == 1){
+                                    return (
+                                        <Tooltip key={item.id} onClick={e => setWorkbenchPage({ rela_app_id, id, code })} placement="bottom" title={item.name} className={`${indexStyles.nav} ${indexStyles.menu} ${currentSelectedWorkbenchBox.code == item.code ? indexStyles.selected : ''}`} disabled={isDisableds} key={key}>
+    
+                                            <div dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '24px', textShadow: '1px 2px 0px rgba(0,0,0,0.15)' }}></div>
+                                            <div className={indexStyles.text}>{item.name}</div>
+    
+                                        </Tooltip>
+                                    );
+                                }else{
+                                    return (
+                                        <Tooltip key={item.id} placement="bottom" title={'功能开发中，敬请期待'} className={`${indexStyles.nav} ${indexStyles.menu} ${indexStyles.disabled}`} key={key}>
+    
+                                            <div dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '24px', textShadow: '1px 2px 0px rgba(0,0,0,0.15)' }}></div>
+                                            <div className={indexStyles.text}>{item.name}</div>
+    
+                                        </Tooltip>
+                                    );
+                                }
+                                
+                              
                             } else {
                                 return (
                                     <Tooltip key={item.id} placement="bottom" title={'付费功能：该项目所在企业尚未升级企业版'} className={`${indexStyles.nav} ${indexStyles.menu} ${indexStyles.disabled}`} key={key}>
