@@ -36,12 +36,12 @@ export default class CreateTask extends React.Component {
     this.resizeTTY.bind(this)
   }
   componentDidMount() {
-    window.addEventListener('resize', this.resizeTTY.bind(this, 'ing'))
+    window.addEventListener('resize', this.resizeTTY)
   }
   componentWillUnmount() {
-    // window.removeEventListener('resize', this.resizeTTY.bind(this,'ed'))
+    window.removeEventListener('resize', this.resizeTTY)
   }
-  resizeTTY(type) {
+  resizeTTY = () => {
     const clientHeight = document.documentElement.clientHeight;//获取页面可见高度
     this.setState({
       clientHeight
