@@ -44,17 +44,17 @@ app.router(require('./router').default);
 // 5. Start
 app.start('#root');
 
-window.addEventListener("storage", function (e) {
-  const { key, newValue, oldValue } = e
-  if ('OrganizationId' == key) { //作为切换组织时，需要重新加载数据
-    if (newValue != oldValue) {
-      Modal.confirm({
-        title: '您当前所属的组织已经发生变化，继续操作将有可能无法正常使用后台服务，确认重新加载数据？',
-        onOk() {
-          window.location.reload()
-        }
-      })
+// window.addEventListener("storage", function (e) {
+//   const { key, newValue, oldValue } = e
+//   if ('OrganizationId' == key) { //作为切换组织时，需要重新加载数据
+//     if (newValue != oldValue) {
+//       Modal.confirm({
+//         title: '您当前所属的组织已经发生变化，继续操作将有可能无法正常使用后台服务，确认重新加载数据？',
+//         onOk() {
+//           window.location.reload()
+//         }
+//       })
 
-    }
-  }
-});
+//     }
+//   }
+// });
