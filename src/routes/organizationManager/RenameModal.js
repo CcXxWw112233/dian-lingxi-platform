@@ -73,6 +73,7 @@ class RenameModal extends React.Component {
           destroyOnClose
           style={{textAlign: 'center'}}
           onCancel={this.onCancel}
+          getContainer={() => document.getElementById('org_managementContainer') || document.body}
         >
           {formContain}
         </Modal>
