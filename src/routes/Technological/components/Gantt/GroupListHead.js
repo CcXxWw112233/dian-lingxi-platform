@@ -29,7 +29,7 @@ export default class GroupListHead extends Component {
   }
 
   render() {
-    const { datas: { list_group = [], group_rows = [], ceiHeight, target_scrollLeft } } = this.props.model
+    const { list_group = [], group_rows = [], ceiHeight, target_scrollLeft } = this.props
     return (
       <div className={indexStyles.listHead} style={{ left: target_scrollLeft, }}>
         {list_group.map((value, key) => {
@@ -44,13 +44,25 @@ export default class GroupListHead extends Component {
             </div>
           )
         })}
-        <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />   
+        <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
       </div>
     )
   }
 
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ modal, gantt, loading }) {
-  return { modal, model: gantt, loading }
+function mapStateToProps({ gantt: {
+  datas: {
+    list_group = [],
+    group_rows = [],
+    ceiHeight,
+    target_scrollLeft
+  }
+} }) {
+  return {
+    list_group,
+    group_rows,
+    ceiHeight,
+    target_scrollLeft
+  }
 }

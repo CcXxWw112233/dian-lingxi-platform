@@ -14,7 +14,7 @@ export default class DateListLCBItem extends Component {
 
   }
 
-  checkLCB = ({has_lcb}) => {
+  checkLCB = ({ has_lcb }) => {
 
   }
 
@@ -51,7 +51,7 @@ export default class DateListLCBItem extends Component {
           return (
             <MenuItem
               className={globalStyles.global_ellipsis}
-              style={{width: 216}}
+              style={{ width: 216 }}
               key={id}>
               {name}
             </MenuItem>
@@ -65,22 +65,22 @@ export default class DateListLCBItem extends Component {
     this.props.setCreateLcbTime && this.props.setCreateLcbTime(timestamp)
     this.props.setAddLCBModalVisibile && this.props.setAddLCBModalVisibile()
   }
-  render () {
+  render() {
     const { has_lcb, boardName = '', lcb_list = [], timestamp } = this.props
     return (
       <div
         // onClick={this.checkLCB.bind(this, {has_lcb})}
-        className={`${indexStyles.lcb_area} ${has_lcb?indexStyles.has_lcb:indexStyles.no_has_lcb}`}>
+        className={`${indexStyles.lcb_area} ${has_lcb ? indexStyles.has_lcb : indexStyles.no_has_lcb}`}>
         {has_lcb ? (
           <Dropdown overlay={this.renderLCBList()}>
             <Tooltip title={`${boardName}`}>
               <div className={`${globalStyles.authTheme} ${indexStyles.lcb_logo}`}
-                   onClick={this.setAddLCBModalVisibile.bind(this, timestamp)}>&#xe633;</div>
+                onClick={this.setAddLCBModalVisibile.bind(this, timestamp)}>&#xe633;</div>
             </Tooltip>
           </Dropdown>
-        ): (
-          <div className={`${globalStyles.authTheme} ${indexStyles.lcb_logo}`} onClick={this.setAddLCBModalVisibile.bind(this, timestamp)}>&#xe633;</div>
-        )}
+        ) : (
+            <div className={`${globalStyles.authTheme} ${indexStyles.lcb_logo}`} onClick={this.setAddLCBModalVisibile.bind(this, timestamp)}>&#xe633;</div>
+          )}
 
       </div>
     )
@@ -88,6 +88,10 @@ export default class DateListLCBItem extends Component {
 
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ modal, gantt, loading }) {
-  return { modal, model: gantt, loading }
+function mapStateToProps({ gantt: {
+  datas: {
+    gantt_board_id
+  }
+} }) {
+  return { gantt_board_id }
 }

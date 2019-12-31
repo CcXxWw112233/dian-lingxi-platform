@@ -292,7 +292,7 @@ export default class MainContent extends React.Component {
       value: editorState,
       media: {uploadFn: this.myUploadFn},
       onChange: (e) => {
-        // const { datas:{ drawContent = {} } } = this.props.model
+        // const { datas:{ drawContent = {} } } = this.props
         // drawContent['description'] = e
         // this.props.updateTaskDatas({drawContent})
         this.setState({
