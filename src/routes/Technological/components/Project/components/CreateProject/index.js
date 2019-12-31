@@ -140,6 +140,12 @@ class CreateProject extends React.Component {
   // 项目名称 onChange 事件
   boardNameChange(e) {
     const value = e.target.value
+    if (value.trimLR() == '') {
+      this.setState({
+        stepOneContinueDisabled: true
+      })
+      return false
+    }
     this.setState({
       board_name: value,
       stepOneContinueDisabled: !e.target.value
@@ -626,7 +632,7 @@ class CreateProject extends React.Component {
 
   // 以上几步合成一步
   renderCreateStep = () => {
-    const { _organization_id, OrganizationId, stepOneContinueDisabled, step_2_type } = this.state
+    const { _organization_id, OrganizationId, stepOneContinueDisabled, step_2_type, board_name } = this.state
     const { currentUserOrganizes = [], form: { getFieldDecorator } } = this.props;
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     const { is_simple_model } = user_set; 
@@ -679,7 +685,7 @@ class CreateProject extends React.Component {
             {/* </div> */}
           </div>
         </div>
-        <Button type="primary" disabled={stepOneContinueDisabled || (OrganizationId == '0' && (!_organization_id || !checkIsHasPermission(ORG_TEAM_BOARD_CREATE, _organization_id)))} onClick={this.createBoard} style={{ width: 208, height: 40, marginBottom: 40 }}>确认</Button>
+        <Button type="primary" disabled={ stepOneContinueDisabled || (OrganizationId == '0' && (!_organization_id || !checkIsHasPermission(ORG_TEAM_BOARD_CREATE, _organization_id)))} onClick={this.createBoard} style={{ width: 208, height: 40, marginBottom: 40 }}>确认</Button>
       </div>
     )
     return step
