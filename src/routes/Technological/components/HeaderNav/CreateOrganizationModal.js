@@ -5,6 +5,7 @@ import styles from './CreateOrganizationModal.less'
 import { INPUT_CHANGE_SEARCH_TIME } from '../../../../globalset/js/constant'
 import { getSearchOrganizationList } from '../../../../services/technological/organizationMember'
 import CustormModal from '../../../../components/CustormModal'
+import { isApiResponseOk } from '../../../../utils/handleResponseData'
 
 
 const Option = Select.Option
@@ -128,10 +129,35 @@ class CreateOrganizationModal extends React.Component {
           })
           // this.props.applyJoinOrganization({org_id, remarks: values['remarks']})
         }else if(operateType === '1') {
-          dispatch({
-            type: 'technological/createOrganization',
-            payload: {
-              ...values
+          // 新创建的组织未付费, 需要跳转至极简模式
+          Promise.resolve(
+            dispatch({
+              type: 'technological/createOrganization',
+              payload: {
+                ...values
+              }
+            })
+          ).then(res => {
+            let userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
+            let { is_simple_model } = userInfo.user_set
+            if (isApiResponseOk(res)) {
+              if (is_simple_model == '0') {
+                dispatch({
+                  type: 'technological/setShowSimpleModel',
+                  payload: {
+                    is_simple_model: '1',
+                    calback: () => {
+                      dispatch({
+                        type: 'technological/routingJump',
+                        payload: {
+                          route: '/technological/simplemode/home',
+                        }
+                      })
+                    }
+                  }
+                })
+                
+              }
             }
           })
           // this.props.createOrganization(values)

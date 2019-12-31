@@ -324,6 +324,7 @@ export default {
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
+      return res || {}
     },
     * updateOrganization({ payload }, { select, call, put }) {
       let res = yield call(updateOrganization, payload)
@@ -364,7 +365,7 @@ export default {
     },
     // 获取显示是否是极简模式
     * setShowSimpleModel({ payload }, { select, call, put }) {
-      const { is_simple_model, redirectLocation = '/technological/workbench' } = payload
+      const { is_simple_model, redirectLocation = '/technological/workbench', calback } = payload
       let res = yield call(setShowSimpleModel, is_simple_model)
       if (!isApiResponseOk(res)) {
         message.error(res.message)
@@ -411,6 +412,9 @@ export default {
             route: redirectLocation,
           }
         })
+      }
+      if (calback && typeof calback === 'function') {
+        calback()
       }
     },
 
