@@ -157,7 +157,7 @@ export default class SearchArea extends React.Component {
       type: 'globalSearch/updateDatas',
       payload: {
         selected_conditions,
-        // searchInputValue: '',
+        searchInputValue: '',
       }
     })
   }

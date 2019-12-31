@@ -168,7 +168,7 @@ class FormList extends React.Component {
               />
             )}
           </FormItem>
-          <div style={{ position: 'absolute', top: 0, right: 0, color: '#bfbfbf', height: '40px', lineHeight: '40px', padding: '0 16px 0 16px', cursor: 'pointer', display: 'flex' }}>
+          <div style={{ position: 'absolute', top: 0, right: 0, color: '#bfbfbf', height: '40px', lineHeight: '40px', padding: '0 10px 0 10px', cursor: 'pointer', display: 'flex' }}>
             <div style={{ height: 20, marginTop: 10, width: 1, backgroundColor: '#bfbfbf', }}></div>
             {loginType === 'password' ? (
               <div className={globalStyles.link_mouse}

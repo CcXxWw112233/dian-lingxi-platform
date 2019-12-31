@@ -92,10 +92,15 @@ class WorkbenchPage extends Component {
                     this.setState({
                         BoardCommunicationVisible: false,
                         BoardFilesVisible: false,
-                        BoardPlanVisible: true,
                         InvestmentMapsVisible: false,
                         XczNewsVisible: false,
                         ZhichengsheVisible: false,
+                    }, () => {
+                        setTimeout(() => {
+                            this.setState({
+                                BoardPlanVisible: true,
+                            })
+                        }, 100)
                     });
                 }
                     break;
