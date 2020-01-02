@@ -1,13 +1,9 @@
 /*eslint-disable*/
 import {
-  Card,
   Icon,
   Dropdown,
   Input,
   Menu,
-  Tooltip,
-  Modal,
-  Button,
   message
 } from 'antd';
 import indexstyles from '../index.less';
@@ -15,20 +11,8 @@ import TaskItem from './TaskItem';
 import ProcessItem from './ProcessItem';
 import FileItem from './FileItem';
 import MeetingItem from './MeetingItem';
-import ProjectCountItem from './ProjectCountItem';
-import MapItem from './MapItem';
 import React from 'react';
 import MenuSearchMultiple from '../CardContent/MenuSearchMultiple';
-import SchedulingItem from './School/SchedulingItem';
-import Journey from './School/Journey';
-import Todo from './School/Todo';
-import SchoolWork from './School/SchoolWork';
-import MyShowItem from './MyShowItem';
-import TeachingEffect from './School/TeachingEffect';
-import PreviewFileModal from '../PreviewFileModal.js';
-import CollectionProjectItem from './CollectionProjectItem';
-import MyCircleItem from './MyCircleItem';
-// import TaskDetailModal from './Modal/TaskDetailModal';
 import TaskDetailModal from '@/components/TaskDetailModal'
 import FileDetailModal from '@/components/FileDetailModal'
 import ProccessDetailModal from './Modal/ProccessDetailModal';
@@ -36,11 +20,10 @@ import AddTaskModal from './Modal/AddTaskModal';
 import AddProgressModal from './Modal/AddProgressModal';
 import { connect } from 'dva';
 import { checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction';
-import {getProjectGoupList} from './../../../../../services/technological/task'
+import { getProjectGoupList } from './../../../../../services/technological/task'
 import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN,
-  PROJECT_FILES_FILE_DELETE,
   PROJECT_TEAM_CARD_CREATE,
   PROJECT_FILES_FILE_UPLOAD,
   PROJECT_FLOWS_FLOW_CREATE
@@ -48,33 +31,31 @@ import {
 import CheckboxGroup from './CheckboxGroup/index'
 import FileFolder from './FileFolder/index'
 
-const TextArea = Input.TextArea;
 const SubMenu = Menu.SubMenu;
-const MenuItemGroup = Menu.ItemGroup;
 
 @connect((
-  { workbench, 
+  { workbench,
     workbenchDetailProcess: {
-  datas: {
-    processInfo = {}
-  }},
-  projectDetail: {
-     datas: { projectDetailInfoData = {} }
-   },
-   publicTaskDetailModal: {
-     drawContent = {},
-     drawerVisible
-   },
-   publicFileDetailModal: {
-    filePreviewCurrentFileId,
-    fileType,
-    isInOpenFile,
-    isInAttachmentFile
-   }
-}) => ({
-  workbench, processInfo, projectDetailInfoData, drawerVisible, drawContent,
-  filePreviewCurrentFileId, fileType, isInOpenFile, isInAttachmentFile
-}))
+      datas: {
+        processInfo = {}
+      } },
+    projectDetail: {
+      datas: { projectDetailInfoData = {} }
+    },
+    publicTaskDetailModal: {
+      drawContent = {},
+      drawerVisible
+    },
+    publicFileDetailModal: {
+      filePreviewCurrentFileId,
+      fileType,
+      isInOpenFile,
+      isInAttachmentFile
+    }
+  }) => ({
+    workbench, processInfo, projectDetailInfoData, drawerVisible, drawContent,
+    filePreviewCurrentFileId, fileType, isInOpenFile, isInAttachmentFile
+  }))
 class CardContent extends React.Component {
   state = {
     dropDonwVisible: false, //下拉菜单是否可见
@@ -88,7 +69,7 @@ class CardContent extends React.Component {
     uploadFileModalVisible: false,
     addProcessModalVisible: false,
     newTask: {},
-    projectGroupLists:[]
+    projectGroupLists: []
   };
   //这里
   componentWillMount() {
@@ -172,10 +153,10 @@ class CardContent extends React.Component {
     this.setIsInEditTitle();
     const { localTitle } = this.state
     const { boxId, title } = this.props;
-    if(localTitle == title) {
+    if (localTitle == title) {
       return false
     }
-    if(!localTitle) {
+    if (!localTitle) {
       this.setState({
         localTitle: title
       })
@@ -238,7 +219,7 @@ class CardContent extends React.Component {
       }
     })
   }
-  
+
   close() {
     this.setState({
       previewProccessModalVisibile: false
@@ -250,7 +231,7 @@ class CardContent extends React.Component {
   async getProjectGoupLists() {
     const res = await getProjectGoupList()
     const isResOk = res => res && res.code === '0'
-    if(!isResOk(res)) {
+    if (!isResOk(res)) {
       message.error('获取项目分组信息失败')
       return
     }
@@ -283,7 +264,7 @@ class CardContent extends React.Component {
     });
   }
 
-  
+
   setTaskDetailModalVisibile() {
     this.setState({
       TaskDetailModalVisibile: !this.state.TaskDetailModalVisibile
@@ -300,7 +281,7 @@ class CardContent extends React.Component {
         card_id: ''
       }
     })
-    
+
   }
 
   handleAddTask = type => {
@@ -408,12 +389,12 @@ class CardContent extends React.Component {
           }
         })
       )
-      .then(() => this.getProjectGoupLists())
-      .then(() =>
-        this.setState({
-          [visibleValue]: true
-        })
-      );
+        .then(() => this.getProjectGoupLists())
+        .then(() =>
+          this.setState({
+            [visibleValue]: true
+          })
+        );
     } else {
       Promise.resolve(this.getProjectGoupLists()).then(() => {
         this.setState({
@@ -443,7 +424,7 @@ class CardContent extends React.Component {
       addProcessModalVisible: flag
     });
   };
-  handleSelectFileFolderChange = folder_id => {};
+  handleSelectFileFolderChange = folder_id => { };
   noContentTooltip = (prompt = '添加任务', type = 'RESPONSIBLE_TASK') => {
     let authCode = '';
     switch (type) {
@@ -490,14 +471,14 @@ class CardContent extends React.Component {
   };
   getCurrentBoxScreenListAllSelectedItemIdStr = (arr = [], currentItem) => {
     return arr.reduce((acc, curr) => {
-      if(curr.id === currentItem.id) {
-        return currentItem.checked ? acc ? `${acc},${curr.id}` :  `${curr.id}` : acc
+      if (curr.id === currentItem.id) {
+        return currentItem.checked ? acc ? `${acc},${curr.id}` : `${curr.id}` : acc
       }
       return curr && curr.selected === '1' ? acc ? `${acc},${curr.id}` : `${curr.id}` : acc
-    } ,'')
+    }, '')
   }
   handleSelectedCardFilterContentItem = (item, status) => {
-    const {itemValue: {id:box_id, screen_list, code}, dispatch} = this.props
+    const { itemValue: { id: box_id, screen_list, code }, dispatch } = this.props
 
     const getSelectedCardFilterContentItemStatus = Object.assign({}, item, status)
 
@@ -509,12 +490,12 @@ class CardContent extends React.Component {
     }
     dispatch({
       type: 'workbench/handleSetBoxFilterCon',
-      payload:data
+      payload: data
     })
   }
-  strNumToBool = str => str === '0' ? false: str === '1' ? true : false
+  strNumToBool = str => str === '0' ? false : str === '1' ? true : false
   tranScreenList = (arr = []) => {
-    return arr.map(({name, id, editable, selected}) => ({
+    return arr.map(({ name, id, editable, selected }) => ({
       label: name,
       checked: this.strNumToBool(selected),
       disabled: !this.strNumToBool(editable),
@@ -522,7 +503,7 @@ class CardContent extends React.Component {
     }))
   }
   contentSelectMenu = () => {
-    const {itemValue: {screen_list = []} = {}} = this.props
+    const { itemValue: { screen_list = [] } = {} } = this.props
 
     return (
       <div>
@@ -535,7 +516,7 @@ class CardContent extends React.Component {
   }
 
   // 修改任务或会议回调
-  handleChangeCard = ({drawContent, card_id, name, value}) => {
+  handleChangeCard = ({ drawContent, card_id, name, value }) => {
     const {
       workbench: {
         datas: {
@@ -546,9 +527,9 @@ class CardContent extends React.Component {
       dispatch
     } = this.props;
     const new_responsibleTaskList = responsibleTaskList.map(item => {
-      let new_item = {...item}
+      let new_item = { ...item }
       if (item.id == card_id) {
-        new_item = {...item, name: drawContent.card_name}
+        new_item = { ...item, name: drawContent.card_name }
         if (name && value) new_item[name] = value
         return new_item
       } else {
@@ -556,9 +537,9 @@ class CardContent extends React.Component {
       }
     })
     const new_meetingLsit = meetingLsit.map(item => {
-      let new_item = {...item}
+      let new_item = { ...item }
       if (item.id == card_id) {
-        new_item = {...item, name: drawContent.card_name}
+        new_item = { ...item, name: drawContent.card_name }
         if (name && value) new_item[name] = value
         return new_item
       } else {
@@ -601,11 +582,11 @@ class CardContent extends React.Component {
     } = this.props;
 
     const new_responsibleTaskList = responsibleTaskList.filter(item => {
-      let new_item = {...item}
+      let new_item = { ...item }
       return new_item.id != card_id
     })
     const new_meetingLsit = meetingLsit.filter(item => {
-      let new_item = {...item}
+      let new_item = { ...item }
       return new_item.id != card_id
     })
     dispatch({
@@ -653,10 +634,10 @@ class CardContent extends React.Component {
       dispatch({
         type: 'workbenchDetailProcess/getBackLogProcessList',
         payload: {
-          
+
         }
       })
-    }     
+    }
   }
 
   // 访问控制中流程操作
@@ -665,7 +646,7 @@ class CardContent extends React.Component {
     const { privileges = [] } = processInfo
 
     // 访问控制开关
-    if (obj && obj.type &&  obj.type == 'privilege') {
+    if (obj && obj.type && obj.type == 'privilege') {
       let new_privileges = [...privileges]
       for (let item in obj) {
         if (item == 'privileges') {
@@ -676,13 +657,13 @@ class CardContent extends React.Component {
           })
         }
       }
-      let newProcessInfo = {...processInfo, privileges: new_privileges, is_privilege: obj.is_privilege}
+      let newProcessInfo = { ...processInfo, privileges: new_privileges, is_privilege: obj.is_privilege }
       // this.props.updateDatasProcess({
       //   processInfo: newProcessInfo
       // });
       // 这是需要获取一下流程列表 区分工作台和项目列表
       this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo, obj.type)
-      
+
     };
 
     // 访问控制添加
@@ -696,7 +677,7 @@ class CardContent extends React.Component {
           })
         }
       }
-      let newProcessInfo = {...processInfo, privileges: new_privileges}
+      let newProcessInfo = { ...processInfo, privileges: new_privileges }
       this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
     }
 
@@ -708,7 +689,7 @@ class CardContent extends React.Component {
           new_privileges.splice(index, 1)
         }
       })
-      let newProcessInfo = {...processInfo, privileges: new_privileges, is_privilege: obj.is_privilege}
+      let newProcessInfo = { ...processInfo, privileges: new_privileges, is_privilege: obj.is_privilege }
       this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
     }
 
@@ -719,13 +700,13 @@ class CardContent extends React.Component {
       new_privileges = new_privileges.map((item) => {
         let new_item = item
         if (item.id == id) {
-          new_item = {...item, content_privilege_code: obj.code}
+          new_item = { ...item, content_privilege_code: obj.code }
         } else {
-          new_item = {...item}
+          new_item = { ...item }
         }
         return new_item
       })
-      let newProcessInfo = {...processInfo, privileges: new_privileges}
+      let newProcessInfo = { ...processInfo, privileges: new_privileges }
       this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
     }
 
@@ -737,14 +718,11 @@ class CardContent extends React.Component {
     const {
       projectStarList = [],
       // responsibleTaskList = [],
-      uploadedFileList:{file_list = [], folder_list = []} = {},
+      uploadedFileList: { file_list = [], folder_list = [] } = {},
       joinedProcessList = [],
       backLogProcessList = [],
       meetingLsit = [],
       projectList = [],
-      schedulingList = [],
-      journeyList = [],
-      todoList = [],
       projectTabCurrentSelectedProject
     } = datas;
     // const {workbench: {datas: {responsibleTaskList}}} = this.props
@@ -796,16 +774,16 @@ class CardContent extends React.Component {
               {this.noContentTooltip('添加任务', 'RESPONSIBLE_TASK')}
             </div>
           ) : (
-            // <div style={{marginTop: 12}}>暂无数据</div>
-            <>{this.noContent('添加任务', 'RESPONSIBLE_TASK')}</>
-          );
+              // <div style={{marginTop: 12}}>暂无数据</div>
+              <>{this.noContent('添加任务', 'RESPONSIBLE_TASK')}</>
+            );
           break;
         //审核
         case 'EXAMINE_PROGRESS': //待处理的流程
           contanner = backLogProcessList.length ? (
             <div>
               <div>
-                {backLogProcessList.map((value, key) =>{
+                {backLogProcessList.map((value, key) => {
                   const { flow_instance_id } = value
                   return (
                     <ProcessItem
@@ -814,17 +792,18 @@ class CardContent extends React.Component {
                       click={this.setPreviewProccessModalVisibile.bind(this)}
                       itemValue={value}
                     />
-                 )}
+                  )
+                }
                 )}
               </div>
               {/* {this.noContentTooltip("发起流程", "EXAMINE_PROGRESS")} */}
             </div>
           ) : (
-            <>
-              {/* <div style={{marginTop: 12}}>暂无数据</div> */}
-              {this.noContent('发起流程', 'EXAMINE_PROGRESS')}
-            </>
-          );
+              <>
+                {/* <div style={{marginTop: 12}}>暂无数据</div> */}
+                {this.noContent('发起流程', 'EXAMINE_PROGRESS')}
+              </>
+            );
           break;
         //我参与的会议
         case 'MEETIMG_ARRANGEMENT':
@@ -838,7 +817,7 @@ class CardContent extends React.Component {
                       key={key2}
                       itemKey={key2}
                       itemValue={value2}
-                      // setTaskDetailModalVisible={this.setTaskDetailModalVisible}
+                    // setTaskDetailModalVisible={this.setTaskDetailModalVisible}
                     />
                   );
                 })}
@@ -846,9 +825,9 @@ class CardContent extends React.Component {
               {this.noContentTooltip('添加日程', 'MEETIMG_ARRANGEMENT')}
             </div>
           ) : (
-            <>{this.noContent('添加日程', 'MEETIMG_ARRANGEMENT')}</>
-            // <div style={{marginTop: 12}}>暂无数据</div>
-          );
+              <>{this.noContent('添加日程', 'MEETIMG_ARRANGEMENT')}</>
+              // <div style={{marginTop: 12}}>暂无数据</div>
+            );
           break;
         //我的文档
         case 'MY_DOCUMENT':
@@ -871,9 +850,9 @@ class CardContent extends React.Component {
               {this.noContentTooltip('上传文档', 'MY_DOCUMENT')}
             </div>
           ) : (
-            // <div style={{marginTop: 12}}>暂无数据</div>
-            <>{this.noContent('上传文档', 'MY_DOCUMENT')}</>
-          );
+              // <div style={{marginTop: 12}}>暂无数据</div>
+              <>{this.noContent('上传文档', 'MY_DOCUMENT')}</>
+            );
           break;
         case 'joinedFlows': //参与的流程
           contanner = joinedProcessList.length ? (
@@ -881,102 +860,9 @@ class CardContent extends React.Component {
               <ProcessItem {...this.props} key={key} itemValue={value} />
             ))
           ) : (
-            <div style={{ marginTop: 12 }}>暂无数据</div>
-          );
+              <div style={{ marginTop: 12 }}>暂无数据</div>
+            );
           break;
-        case 'PROJECT_STATISTICS':
-          contanner = <ProjectCountItem />;
-          break;
-        case 'YINYI_MAP':
-          contanner = <MapItem />;
-          break;
-        case 'PROJECT_TRCKING':
-          contanner = projectStarList.length ? (
-            projectStarList.map((value2, key2) => {
-              return (
-                <CollectionProjectItem
-                  {...this.props}
-                  key={key2}
-                  itemKey={key2}
-                  itemValue={value2}
-                />
-              );
-            })
-          ) : (
-            <div style={{ marginTop: 12 }}>暂无数据</div>
-          );
-          break;
-        case 'MY_SHOW':
-          contanner = <MyShowItem {...this.props} />;
-          break;
-        case 'MY_CIRCLE':
-          contanner = <MyCircleItem {...this.props} />;
-          break;
-        //老师
-        case 'MY_SCHEDULING':
-          contanner = schedulingList.length ? (
-            schedulingList.map((value, key) => {
-              return (
-                <SchedulingItem
-                  {...this.props}
-                  key={key}
-                  itemValue={value}
-                  itemKey={key}
-                  setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(
-                    this
-                  )}
-                />
-              );
-            })
-          ) : (
-            <div style={{ marginTop: 12 }}>暂无数据</div>
-          );
-          break;
-        case 'JOURNEY':
-          contanner = journeyList.length ? (
-            journeyList.map((value, key) => {
-              return (
-                <Journey
-                  {...this.props}
-                  key={key}
-                  itemValue={value}
-                  itemKey={key}
-                  setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(
-                    this
-                  )}
-                />
-              );
-            })
-          ) : (
-            <div style={{ marginTop: 12 }}>暂无数据</div>
-          );
-          break;
-        case 'TO_DO':
-          contanner = todoList.length ? (
-            todoList.map((value, key) => {
-              return (
-                <Todo
-                  {...this.props}
-                  key={key}
-                  itemValue={value}
-                  itemKey={key}
-                  setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(
-                    this
-                  )}
-                />
-              );
-            })
-          ) : (
-            <div style={{ marginTop: 12 }}>暂无数据</div>
-          );
-          break;
-        case 'SCHOOLWORK_CORRECTION':
-          contanner = <SchoolWork />;
-          break;
-        case 'TEACHING_EFFECT':
-          contanner = <TeachingEffect />;
-          break;
-
         default:
           break;
       }
@@ -987,26 +873,26 @@ class CardContent extends React.Component {
       return (
         <Menu
           onClick={this.handleMenuClick.bind(this)}
-          // selectedKeys={[this.state.current]}
-          // mode="horizontal"
+        // selectedKeys={[this.state.current]}
+        // mode="horizontal"
         >
           <Menu.Item key="rename">重命名</Menu.Item>
           {'YINYI_MAP' === CardContentType ||
-          'TEAM_SHOW' === CardContentType ? (
-            ''
-          ) : (
-            <SubMenu title={'选择项目'}>
-              <MenuSearchMultiple
-                keyCode={'board_id'}
-                onCheck={this.selectMultiple.bind(this)}
-                selectedKeys={selected_board_data}
-                menuSearchSingleSpinning={false}
-                Inputlaceholder={'搜索项目'}
-                searchName={'board_name'}
-                listData={projectList}
-              />
-            </SubMenu>
-          )}
+            'TEAM_SHOW' === CardContentType ? (
+              ''
+            ) : (
+              <SubMenu title={'选择项目'}>
+                <MenuSearchMultiple
+                  keyCode={'board_id'}
+                  onCheck={this.selectMultiple.bind(this)}
+                  selectedKeys={selected_board_data}
+                  menuSearchSingleSpinning={false}
+                  Inputlaceholder={'搜索项目'}
+                  searchName={'board_name'}
+                  listData={projectList}
+                />
+              </SubMenu>
+            )}
 
           <Menu.Item key="remove">移除</Menu.Item>
         </Menu>
@@ -1026,26 +912,26 @@ class CardContent extends React.Component {
               {localTitle}
             </div>
           ) : (
-            <Input
-              value={localTitle}
-              // className={indexStyle.projectName}
-              style={{ resize: 'none', color: '#595959', fontSize: 16 }}
-              maxLength={30}
-              autoFocus
-              onChange={this.localTitleChange.bind(this)}
-              onPressEnter={this.editTitleComplete.bind(this)}
-              onBlur={this.editTitleComplete.bind(this)}
-              onClick={() => {}}
-            />
-          )}
+              <Input
+                value={localTitle}
+                // className={indexStyle.projectName}
+                style={{ resize: 'none', color: '#595959', fontSize: 16 }}
+                maxLength={30}
+                autoFocus
+                onChange={this.localTitleChange.bind(this)}
+                onPressEnter={this.editTitleComplete.bind(this)}
+                onBlur={this.editTitleComplete.bind(this)}
+                onClick={() => { }}
+              />
+            )}
           {/*<MenuSearchMultiple keyCode={'board_id'} onCheck={this.selectMultiple.bind(this)} selectedKeys={selected_board_data} menuSearchSingleSpinning={false} Inputlaceholder={'搜索项目'} searchName={'board_name'} listData={projectList} />*/}
           <Dropdown
             placement="bottomCenter"
-             trigger={['click']}
-             visible={this.state.dropDonwVisible}
-             onVisibleChange={this.onVisibleChange.bind(this)}
-             overlay={this.contentSelectMenu()}>
-            <div className={indexstyles.operate}><Icon type="ellipsis" style={{color: '#8c8c8c', fontSize: 20}} /></div>
+            trigger={['click']}
+            visible={this.state.dropDonwVisible}
+            onVisibleChange={this.onVisibleChange.bind(this)}
+            overlay={this.contentSelectMenu()}>
+            <div className={indexstyles.operate}><Icon type="ellipsis" style={{ color: '#8c8c8c', fontSize: 20 }} /></div>
           </Dropdown>
         </div>
         <div className={indexstyles.contentBody}>
@@ -1059,7 +945,7 @@ class CardContent extends React.Component {
             <FileDetailModal
               filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
               fileType={this.props.fileType}
-              board_id={board_id} 
+              board_id={board_id}
               file_detail_modal_visible={this.props.isInOpenFile}
               setPreviewFileModalVisibile={this.setPreviewFileModalVisibile.bind(this)}
               whetherUpdateFolderListData={this.whetherUpdateFolderListData}
@@ -1087,14 +973,14 @@ class CardContent extends React.Component {
         {
           CardContentType == 'RESPONSIBLE_TASK' && (
             <TaskDetailModal
-            task_detail_modal_visible={this.props.drawerVisible}
-            // setTaskDetailModalVisible={this.setTaskDetailModalVisible}
-            handleTaskDetailChange={this.handleChangeCard}
-            handleDeleteCard={this.handleDeleteCard}
-          />
+              task_detail_modal_visible={this.props.drawerVisible}
+              // setTaskDetailModalVisible={this.setTaskDetailModalVisible}
+              handleTaskDetailChange={this.handleChangeCard}
+              handleDeleteCard={this.handleDeleteCard}
+            />
           )
         }
-     
+
         {/* addTaskModalVisible */}
         {addTaskModalVisible && (
           <AddTaskModal
@@ -1114,7 +1000,7 @@ class CardContent extends React.Component {
           />
         )}
         {addMeetingModalVisible && (
-            <AddTaskModal
+          <AddTaskModal
             {...this.props}
             setTaskDetailModalVisibile={this.setTaskDetailModalVisibile.bind(
               this

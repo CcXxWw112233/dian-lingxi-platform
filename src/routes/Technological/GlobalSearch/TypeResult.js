@@ -1,21 +1,13 @@
 import React from 'react'
-import { Modal, Form, Button, Input, message, Select, Icon } from 'antd'
-import {min_page_width} from "./../../../globalset/js/styles";
 import indexstyles from './index.less'
-import globalStyles from './../../../globalset/css/globalClassName.less'
-import {checkIsHasPermissionInBoard, setStorage} from "../../../utils/businessFunction";
 import MeetingItem from './MeetingItem'
 import TaskItem from './TaskItem'
 import BoardItem from './BoardItem'
 import FlowItem from './FlowItem'
 import FileItem from './FileItem'
 
-import {connect} from "dva/index";
-import SchedulingItem from "../components/Workbench/CardContent/School/SchedulingItem";
-const FormItem = Form.Item
-const TextArea = Input.TextArea
-const InputGroup = Input.Group;
-const Option = Select.Option;
+import { connect } from "dva/index";
+
 
 //此弹窗应用于各个业务弹窗，和右边圈子适配
 //此弹窗应用于各个业务弹窗，和右边圈子适配
@@ -43,7 +35,7 @@ export default class TypeResult extends React.Component {
       case 'boards':
         title = '项目'
         defaultSearchType = '2'
-        ele = <BoardItem itemValue={value} dispatch={dispatch}/>
+        ele = <BoardItem itemValue={value} dispatch={dispatch} />
         break
       case 'cards':
         title = '任务'
@@ -86,7 +78,7 @@ export default class TypeResult extends React.Component {
     const { allTypeResultList } = this.props
     const { dispatch } = this.props
 
-    return(
+    return (
       <div>
         {allTypeResultList.map((value, key) => {
           const { lists = [], listType } = value
@@ -100,15 +92,15 @@ export default class TypeResult extends React.Component {
                   </div>
                 )
               })}
-              {lists.length?(
+              {lists.length ? (
                 <div className={indexstyles.lookMore} onClick={this.lookMore.bind(this, this.filterTitle(listType).defaultSearchType)}>
                   查看更多...
                 </div>
-              ):(
-                <div className={indexstyles.lookMore} >
-                  暂无数据
+              ) : (
+                  <div className={indexstyles.lookMore} >
+                    暂无数据
                 </div>
-              )}
+                )}
 
             </div>
           )
@@ -119,8 +111,8 @@ export default class TypeResult extends React.Component {
   }
 }
 
-function mapStateToProps({ globalSearch: { datas: {searchTypeList = [], defaultSearchType, searchInputValue, allTypeResultList = [] } } }) {
+function mapStateToProps({ globalSearch: { datas: { searchTypeList = [], defaultSearchType, searchInputValue, allTypeResultList = [] } } }) {
   return {
-     searchTypeList, defaultSearchType, searchInputValue, allTypeResultList
+    searchTypeList, defaultSearchType, searchInputValue, allTypeResultList
   }
 }

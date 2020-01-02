@@ -7,7 +7,7 @@ import {
   ORG_UPMS_ORGANIZATION_ROLE_CREATE, ORG_UPMS_ORGANIZATION_ROLE_DELETE, ORG_UPMS_ORGANIZATION_ROLE_EDIT,
 } from "../../globalset/js/constant";
 import {checkIsHasPermission} from "../../utils/businessFunction";
-import EditCardDrop from './setWorkBench/EditCardDrop'
+// import EditCardDrop from './setWorkBench/EditCardDrop'
 
 const TreeNode = Tree.TreeNode;
 
@@ -313,7 +313,7 @@ export default class OrgnizationRole extends React.Component {
                   {/*{collapseStatus?(*/}
                     {/*<EditCardDrop {...this.props} itemValue={value} itemKey={parentKey} key={parentKey} collapseStatus={collapseStatus}/>*/}
                   {/*):('')}*/}
-                  <EditCardDrop {...this.props} itemValue={value} itemKey={parentKey} key={parentKey} collapseStatus={collapseStatus}/>
+                  {/* <EditCardDrop {...this.props} itemValue={value} itemKey={parentKey} key={parentKey} collapseStatus={collapseStatus}/> */}
                   {/*<TreeSelect*/}
                     {/*treeData={canVisittreeData}*/}
                     {/*treeValue={treeDataSelects}*/}

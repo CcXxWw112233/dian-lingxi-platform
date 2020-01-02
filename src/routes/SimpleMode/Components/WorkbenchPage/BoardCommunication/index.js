@@ -2,35 +2,26 @@ import React, { Component } from 'react';
 import { connect } from "dva/index"
 import indexStyles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less'
-import FileDetail from '@/routes/Technological/components/Workbench/CardContent/Modal/FileDetail/index'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/Workbench/CardContent/Modal/FileListRightBarFileDetailModal';
 import { getParent } from "./components/getCommunicationFileListFn";
-import CommunicationFileList from './components/CommunicationFileList';
 // import UploadTemporaryFile from './components/UploadTemporaryFile';
 import CommunicationFirstScreenHeader from './components/FirstScreen/CommunicationFirstScreenHeader';
 import CommunicationTreeList from './components/CommunicationTreeList';
 import CommunicationThumbnailFiles from './components/FirstScreen/CommunicationThumbnailFiles';
-import { Modal, Dropdown, Button, Select, Icon, Tree, Upload, message } from 'antd';
+import { Select, Icon, Tree, Upload, message } from 'antd';
 import { REQUEST_DOMAIN_FILE } from "@/globalset/js/constant";
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import {
-    checkIsHasPermission, checkIsHasPermissionInBoard, getSubfixName, openPDF,
-    setBoardIdStorage, getOrgNameWithOrgIdFilter, setUploadHeaderBaseInfo
+    getSubfixName, setBoardIdStorage, setUploadHeaderBaseInfo
 } from "@/utils/businessFunction";
 import { isApiResponseOk } from "@/utils/handleResponseData";
-import { getFileList, getBoardFileList, fileInfoByUrl } from '@/services/technological/file'
-import coverIconSrc from '@/assets/simplemode/communication_cover_icon@2x.png'
-// import { Im } from 'lingxi-im';
-import uploadIconSrc from '@/assets/simplemode/cloud-upload_icon@2x.png'
+import { getBoardFileList } from '@/services/technological/file'
 import { UPLOAD_FILE_SIZE, FILE_TYPE_UPLOAD_WHITELISTED } from "@/globalset/js/constant";
 import { openImChatBoard } from '../../../../../utils/businessFunction';
 const { Im } = global.constants
 
-const { Option } = Select;
 const { TreeNode, DirectoryTree } = Tree;
-const { Dragger } = Upload;
-
 
 const getEffectOrReducerByName = name => `technological/${name}`
 const getEffectOrReducerByName_4 = name => `workbenchTaskDetail/${name}`

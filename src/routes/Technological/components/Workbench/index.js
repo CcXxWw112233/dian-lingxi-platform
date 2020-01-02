@@ -1,18 +1,9 @@
 import React from 'react';
 import {connect} from "dva/index";
-import QueueAnim from 'rc-queue-anim'
 import indexStyles from './index.less'
-import CardContent from './CardContent'
-import Header from './Header'
-import CardContentArticle from './CardContent/CardContentArticle'
-import {WE_APP_TYPE_KNOW_CITY, WE_APP_TYPE_KNOW_POLICY} from "../../../../globalset/js/constant";
-import EditCardDrop from './HeaderComponent/EditCardDrop'
 import PersonNews from './PersonNews'
-import technological from "../../../../models/technological";
 import GroupContent from './GropContent'
 import ProjectListBar from './ProjectListBar'
-
-import VisitControl from './../VisitControl/index'
 import UpdateLog from './UpdateLog/index'
 import ChangeCardView from './ChangeCardView'
 

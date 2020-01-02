@@ -1,8 +1,5 @@
 import React from 'react';
-import FileDetail from './FileDetail/index';
 import BoardCommuicationFileDetailContainer from './component/BoardCommuicationFileDetailContainer'
-import HeaderContent from '@/components/FileDetailModal/HeaderContent.js'
-import MainContent from '@/components/FileDetailModal/MainContent.js'
 import styles from './FileListRightBarFileDetailModal.less';
 import { connect } from 'dva'
 let timer
