@@ -185,54 +185,134 @@ class ProjectListBar extends Component {
     )
   }
   componentDidMount() {
-    this.handleWinResize();
+    setTimeout(() => {
+      this.handleWinResize();
+      // this.setState({
+      //   is_show_new_project: !this.state.is_show_new_project
+      // })
+    }, 500)
     window.addEventListener('resize', this.handleWinResize, false);
+    // this.listenProjectListBarItemWrapper()
   }
   componentWillUnmount() {
     window.removeEventListener('resize', this.handleWinResize, false);
   }
   componentWillReceiveProps(nextProps) {
-    const { projectList } = this.props
+    const { projectList, siderRightCollapsed } = this.props
+    const { siderRightCollapsed: newSiderRightCollapsed } = nextProps
+    const { is_show_new_project } = this.state
     // console.log(nextProps, 'ssssss')
     // console.log(projectList, 'sss')
+    // this.listenProjectListBarItemWrapper()
     const that = this
     if (projectList.length != nextProps.projectList.length) {
       setTimeout(() => {
         // console.log('ssssss', 1111111111111)
         that.handleWinResize()
-        this.setState({
-          is_show_new_project: true
-        })
-      }, 200)
+        // this.setState({
+        //   is_show_new_project: !is_show_new_project
+        // })
+      }, 500)
+    }
+    // 需要监听右侧IM圈子的变化
+    if (siderRightCollapsed != newSiderRightCollapsed) {
+      setTimeout(() => {
+        // console.log('ssssss', 1111111111111)
+        that.handleWinResize()
+        // this.setState({
+        //   is_show_new_project: !is_show_new_project
+        // })
+      }, 500)
     }
     
-    
   }
+
+    // 观察者模式
+    listenProjectListBarItemWrapper() {
+      const that = this;
+      // Firefox和Chrome早期版本中带有前缀
+      const MutationObserver =
+        window.MutationObserver ||
+        window.WebKitMutationObserver ||
+        window.MozMutationObserver;
+      // 选择目标节点
+      const target = this.listRef && this.listRef.current;
+      if (!target) {
+        return
+      }
+      // 创建观察者对象
+      const observer = new MutationObserver(function (mutations) {
+        target.childNodes.forEach(childNode => {
+          console.log(childNode.offsetTop, 'ssssssss')
+        })
+        // mutations.forEach(function (mutation) {
+          
+        // });
+      });
+      // 配置观察选项:
+      const config = {
+        attributes: true, //检测属性变动
+        subtree: true,
+        childList: true,//检测子节点变动
+        characterData: true//节点内容或节点文本的变动。
+      };
+      // 传入目标节点和观察选项
+      observer.observe(target, config);
+      // /停止观察
+      // observer.disconnect();
+    }
+
   handleWinResize = () => {
     const { projectList } = this.props;
     const listRefChildren = (this.listRef && this.listRef.current) && this.listRef.current.children;
+    let childNodeOffsetTopList
     if (listRefChildren) {
-      const childNodeOffsetTopList = [...listRefChildren].map(childNode => {
-        return childNode.offsetTop;
-      });
-      // console.log('sssss',{listRefChildren})
-      const shouldPushInDropDownMenuItem = childNodeOffsetTopList.reduce(
-        (acc, curr, ind) => {
-          // console.log('sssss',{acc, curr, ind})
-          if (curr !== 0) {
-            return [...acc, projectList[ind]];
-          }
-          return acc;
-        },
-        []
-      );
-      this.setState({
-        dropDownMenuItemList: shouldPushInDropDownMenuItem
-      }, () => {
-        // console.info('ssssss',this.state.dropDownMenuItemList)
-      });
+      // 因为获取DOM元素有延迟
+      // 本意想用观察者模式进行监听DOM元素的变化
+      setTimeout(() => {
+        childNodeOffsetTopList = [...listRefChildren].map(childNode => {
+          return childNode.offsetTop;
+        });
+      }, 50)
+      // 必须要获取完毕之后在进行, 使用观察者模式也不行, 所以采用延时操作
+      setTimeout(() => {
+        if (childNodeOffsetTopList && childNodeOffsetTopList.length) {
+          const shouldPushInDropDownMenuItem = childNodeOffsetTopList.reduce(
+            (acc, curr, ind) => {
+              // console.log('sssss',{acc, curr, ind})
+              if (curr !== 0) {
+                return [...acc, projectList[ind]];
+              }
+              return acc;
+            },
+            []
+          );
+          this.setState({
+            dropDownMenuItemList: shouldPushInDropDownMenuItem,
+            is_show_new_project: shouldPushInDropDownMenuItem && shouldPushInDropDownMenuItem.length != 0 ? false : true
+          }, () => {
+            // console.info('ssssss',this.state.dropDownMenuItemList)
+          });
+        }
+      }, 200)
+      
     }
   };
+
+  dropDownMenu = (dropDownMenuItemList = []) => {
+    return (
+      <div className={styles.dropDownMenuWrapper}>
+        <Menu onClick={this.onClick} style={{ minWidth: '120px' }}>
+          {(dropDownMenuItemList && dropDownMenuItemList.length) && dropDownMenuItemList.map(item => (
+            <Menu.Item key={item.board_id}><span style={{userSelect: 'none'}}>{item.board_name}</span></Menu.Item>
+          ))}
+          {/* {!isVisitor && checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && <Menu.Item key='create_project'><span style={{userSelect: 'none'}}><i className={`${globalStyles.authTheme}`}>&#xe782;</i>新建项目</span></Menu.Item>} */}
+          {checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && <Menu.Item key='create_project'><span style={{userSelect: 'none'}}><i className={`${globalStyles.authTheme}`}>&#xe782;</i>新建项目</span></Menu.Item>}
+        </Menu>
+      </div>
+    )
+  }
+
   render() {
     const { project, projectList, projectTabCurrentSelectedProject, workbench_show_gantt_card } = this.props;
     const { datas = { }} = project
@@ -247,27 +327,8 @@ class ProjectListBar extends Component {
       current_org: { identity_type } = {}
     } = this.getUerInfoFromLocalStorage() ? this.getUerInfoFromLocalStorage() : {};
     const isVisitor = this.isVisitor(identity_type);
-    const dropDownMenu = (
-      <div className={styles.dropDownMenuWrapper}>
-        <Menu onClick={this.onClick} style={{ minWidth: '120px' }}>
-          {dropDownMenuItemList.map(item => (
-            <Menu.Item key={item.board_id}><span style={{userSelect: 'none'}}>{item.board_name}</span></Menu.Item>
-          ))}
-           {/* {!isVisitor && checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && <Menu.Item key='create_project'><span style={{userSelect: 'none'}}><i className={`${globalStyles.authTheme}`}>&#xe782;</i>新建项目</span></Menu.Item>} */}
-           {checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && <Menu.Item key='create_project'><span style={{userSelect: 'none'}}><i className={`${globalStyles.authTheme}`}>&#xe782;</i>新建项目</span></Menu.Item>}
-        </Menu>
-      </div>
-    );
-    const dropDownMenuCreateProject = (
-      <div className={styles.dropDownMenuWrapper}>
-        <p
-          className={styles.dropDownMenuItem__createProject}
-          onClick={e => this.handleCreateNewProject(e)}
-        >
-          新建项目
-        </p>
-      </div>
-    );
+
+
     return (
       <div className={styles.projectListBarWrapper}>
         {projectList && projectList.length !== 0 && (
@@ -294,14 +355,14 @@ class ProjectListBar extends Component {
         </ul>
         {
           workbench_show_gantt_card == '0' && (
-            dropDownMenuItemList.length === 0 ? (
-              is_show_new_project && !isVisitor && checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && this.renderProjectListBarCreateNewProject()
-            ) : (
-              <Dropdown placement='bottomCenter' overlay={dropDownMenu} style={{ zIndex: '9999' }}>
+            dropDownMenuItemList.length != 0 ? (
+              <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} placement='bottomCenter' overlay={this.dropDownMenu(dropDownMenuItemList)} style={{ zIndex: '9999' }}>
                 <div className={styles.projectListBarExpand}>
                   <p className={styles.projectListBarExpandImg} />
                 </div>
               </Dropdown>
+            ) : (
+              is_show_new_project && !isVisitor && checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && this.renderProjectListBarCreateNewProject()
             )
           )
         }
@@ -334,12 +395,18 @@ export default connect(
       datas: { projectList, projectTabCurrentSelectedProject, workbench_show_gantt_card }
     },
     gantt,
-    project
+    project,
+    technological: {
+      datas: {
+        siderRightCollapsed = false
+      }
+    }
   }) => ({
     project,
     projectList,
     projectTabCurrentSelectedProject,
     gantt,
-    workbench_show_gantt_card
+    workbench_show_gantt_card,
+    siderRightCollapsed
   })
 )(ProjectListBar);
