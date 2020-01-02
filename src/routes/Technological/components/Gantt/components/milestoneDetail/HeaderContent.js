@@ -1,5 +1,5 @@
 import React from 'react'
-import { Menu, Modal, message, Dropdown } from 'antd'
+import { Menu, Modal, message, Dropdown, Tooltip } from 'antd'
 import globalStyles from '../../../../../../globalset/css/globalClassName.less'
 import headerStyles from './headerContent.less'
 import { connect } from 'dva'
@@ -73,7 +73,11 @@ export default class Header extends React.Component {
           {/* <Dropdown overlay={this.renderOperateMenu()}>
             <div className={globalStyles.authTheme} style={{ fontSize: 18, marginRight: 10 }}>&#xe7fd;</div>
           </Dropdown> */}
-          <div className={globalStyles.authTheme} onClick={this.confrimDelete} style={{ fontSize: 18, marginRight: 10, cursor: 'pointer' }}>&#xe7c3;</div>
+          <div className={headerStyles.del_milestone}>
+            <Tooltip placement="top" title="删除" getPopupContainer={triggerNode => triggerNode.parentNode}>
+              <div className={`${globalStyles.authTheme} ${headerStyles.del_icon}`} onClick={this.confrimDelete} style={{ fontSize: 18, marginRight: 10, cursor: 'pointer' }}>&#xe7c3;</div>
+            </Tooltip>
+          </div>
           <InformRemind milestonePrincipals={principals} rela_id={id} rela_type='5' user_remind_info={users} />
         </div>
       </div>
