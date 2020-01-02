@@ -9,6 +9,7 @@ import { afterChangeBoardUpdateGantt } from "../../../Technological/components/G
 import { beforeChangeCommunicationUpdateFileList } from "../WorkbenchPage/BoardCommunication/components/getCommunicationFileListFn";
 import { isPaymentOrgUser } from "@/utils/businessFunction"
 import { selectBoardToSeeInfo } from "../../../../utils/businessFunction";
+import { isApiResponseOk } from "../../../../utils/handleResponseData";
 class BoardDropdownSelect extends Component {
   constructor(props) {
     super(props);
@@ -31,7 +32,7 @@ class BoardDropdownSelect extends Component {
   onSelectBoard = (data) => {
     // console.log(data, 'bbbbb');
     if (data.key === 'add') {
-      //console.log("onSelectBoard");
+      console.log("onSelectBoard");
       this.setState({
         addProjectModalVisible: true
       });
@@ -130,11 +131,13 @@ class BoardDropdownSelect extends Component {
         payload: data
       })
     )
-      .then(() => {
-        dispatch({
-          type: 'workbench/getProjectList',
-          payload: {}
-        });
+      .then((res) => {
+        if (isApiResponseOk(res)) {
+          dispatch({
+            type: 'workbench/getProjectList',
+            payload: {}
+          });
+        }
       })
       .then(() => {
         this.setAddProjectModalVisible();

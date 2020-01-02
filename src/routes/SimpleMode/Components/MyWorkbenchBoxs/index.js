@@ -7,6 +7,7 @@ import DropdownSelect from '../../Components/DropdownSelect/index'
 import CreateProject from '@/routes/Technological/components/Project/components/CreateProject/index';
 import simpleMode from "../../../../models/simpleMode";
 import { getOrgNameWithOrgIdFilter, setBoardIdStorage, isPaymentOrgUser, selectBoardToSeeInfo } from "@/utils/businessFunction"
+import { isApiResponseOk } from "../../../../utils/handleResponseData";
 
 class MyWorkbenchBoxs extends Component {
   constructor(props) {
@@ -150,11 +151,14 @@ class MyWorkbenchBoxs extends Component {
         payload: data
       })
     )
-      .then(() => {
-        dispatch({
-          type: 'workbench/getProjectList',
-          payload: {}
-        });
+      .then((res) => {
+        if (isApiResponseOk(res)) {
+          dispatch({
+            type: 'workbench/getProjectList',
+            payload: {}
+          });
+        }
+
       })
       .then(() => {
         this.setAddProjectModalVisible();
