@@ -289,7 +289,8 @@ class Login extends React.Component {
                     <i onClick={this.wechatLogin.bind(this)} className={globalClassName.authTheme} style={{
                       fontStyle: 'normal',
                       fontSize: 24,
-                      color: '#bfbfbf',
+                      // color: '#bfbfbf',
+                      color: '#78b63b',
                       cursor: 'pointer',
                       marginLeft: 6,
                       marginTop: -6
