@@ -6,6 +6,13 @@ export default {
   ],
   alias: {
     '@': path.resolve(__dirname, './src')
+  },
+  "hash": true,
+  "manifest": {
+    "basePath": "/app/"
+  },
+  "html": {
+    "template": "./src/index.ejs"
   }
 }
 
