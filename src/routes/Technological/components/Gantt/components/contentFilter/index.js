@@ -91,6 +91,7 @@ export default class ContentFilter extends Component {
                     whiteSpace: 'nowrap'}}
                 dropdownClassName={`${indexStyles.treeSelectDropDown} ${globalStyles.global_vertical_scrollbar}`}
                 style={{ width: '100%' }}
+                searchValue={''}
                 searchPlaceholder={`选择${ treeType == 'boards'? '项目': '成员'}`}
                 onChange={(value) => this.handleTreeSelectChange({treeType}, value)} />
         )

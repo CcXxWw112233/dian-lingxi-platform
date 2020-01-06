@@ -32,7 +32,9 @@ class Gantt extends Component {
     dispatch({
       type: 'gantt/updateDatas',
       payload: {
-        is_show_board_file_area: '0'
+        is_show_board_file_area: '0',
+        group_view_filter_boards: [],
+        group_view_filter_users: [],
       }
     })
     if (page_load_type != 1) {
