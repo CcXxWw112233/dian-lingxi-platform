@@ -5,7 +5,7 @@ import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from "../../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import queryString from 'query-string';
-import { isSamDay } from "../../../routes/Technological/components/Gantt/getDate";
+import { isSamDay, getDateInfo } from "../../../routes/Technological/components/Gantt/getDate";
 import {
   workbench_projectTabCurrentSelectedProject,
   workbench_start_date,
@@ -24,6 +24,18 @@ import { getProjectGoupList } from '../../../services/technological/task';
 import { handleChangeBoardViewScrollTop } from '../../../routes/Technological/components/Gantt/ganttBusiness';
 
 let dispatches = null
+const getDigit = (timestamp) => {
+  if (!timestamp) {
+    return 0
+  }
+  let new_timestamp = timestamp.toString()
+  if (new_timestamp.length == 10) {
+    new_timestamp = Number(new_timestamp) * 1000
+  } else {
+    new_timestamp = Number(new_timestamp)
+  }
+  return new_timestamp
+}
 export default {
   namespace: 'gantt',
   state: {
@@ -233,18 +245,6 @@ export default {
       const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
       const show_board_fold = yield select(getModelSelectDatasState('gantt', 'show_board_fold'))
 
-      const getDigit = (timestamp) => {
-        if (!timestamp) {
-          return 0
-        }
-        let new_timestamp = timestamp.toString()
-        if (new_timestamp.length == 10) {
-          new_timestamp = Number(new_timestamp) * 1000
-        } else {
-          new_timestamp = Number(new_timestamp)
-        }
-        return new_timestamp
-      }
       for (let val of data) {
         const list_group_item = {
           ...val,
@@ -271,7 +271,7 @@ export default {
             let list_data_item = {
               ...val_1,
               start_time,
-              end_time: due_time,
+              end_time: due_time || getDateInfo(start_time).timestampEnd,
               create_time,
               time_span,
               is_has_start_time: !!getDigit(val_1['start_time']),

@@ -110,6 +110,10 @@ export default class DragDropContentComponent extends Component {
         payload: {
           ...params
         }
+      }).then(res => {
+        if(isApiResponseOk(res)) {
+          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, operate_properties_code: 'MILESTONE' })
+        }
       });
 
       // drawContent['milestone_data'] = info;
@@ -130,6 +134,10 @@ export default class DragDropContentComponent extends Component {
         type: 'publicTaskDetailModal/shiftOutMilestone',
         payload: {
           ...params
+        }
+      }).then(res => {
+        if(isApiResponseOk(res)) {
+          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, operate_properties_code: 'MILESTONE' })
         }
       });
       // drawContent['milestone_data'] = [];
@@ -162,6 +170,10 @@ export default class DragDropContentComponent extends Component {
           addParams,
           removeParams
         }
+      }).then(res => {
+        if(isApiResponseOk(res)) {
+          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, operate_properties_code: 'MILESTONE' })
+        }
       });
       // drawContent['milestone_data'] = info;
       drawContent['properties'] = this.filterCurrentUpdateDatasField('MILESTONE', info)
@@ -172,7 +184,7 @@ export default class DragDropContentComponent extends Component {
         }
       })
     }
-    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, operate_properties_code: 'MILESTONE' })
+    // this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, operate_properties_code: 'MILESTONE' })
   }
   // 里程碑选择回调 E
 

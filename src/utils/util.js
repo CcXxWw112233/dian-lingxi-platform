@@ -635,3 +635,17 @@ export const compareACoupleOfObjects = (obj1, obj2) => {
   flag = true
   return flag;
 }
+
+// 将时间戳统一转化成13位
+export const transformTimestamp = (timestamp) => {
+  if (!timestamp) {
+    return 0
+  }
+  let new_timestamp = timestamp.toString()
+  if (new_timestamp.length == 10) {
+    new_timestamp = Number(new_timestamp) * 1000
+  } else {
+    new_timestamp = Number(new_timestamp)
+  }
+  return new_timestamp
+}

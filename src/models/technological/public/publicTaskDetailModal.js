@@ -412,6 +412,7 @@ export default {
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
+      return res
     },
     //移除里程碑
     * shiftOutMilestone({ payload }, { select, call, put }) {
@@ -421,6 +422,7 @@ export default {
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
+      return res
     },
     //更新里程本
     * updateMilestone({ payload }, { select, call, put }) {
@@ -436,6 +438,7 @@ export default {
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
+      return res || {}
     },
   },
   reducers: {
