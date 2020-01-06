@@ -1,7 +1,7 @@
 const current_date = new Date()
 const current_year = current_date.getFullYear()
 const current_month = current_date.getMonth() + 1
-const current_date_no= current_date.getDate()
+const current_date_no = current_date.getDate()
 const current_date_timestamp = current_date.getTime()
 
 // console.log(current_date_timestamp, current_year, current_month, current_date_no)
@@ -23,7 +23,7 @@ function getDaysNumInMonth(year, month) {
 function getOneMonthDateDetail(year, month) {
   const total_day = getDaysNumInMonth(year, month)
   const date_arr = []
-  for(let i = 1; i < total_day + 1; i ++) {
+  for (let i = 1; i < total_day + 1; i++) {
     const obj = getNeedDate(`${year}/${month}/${i}`)
     date_arr.push(obj)
   }
@@ -45,7 +45,7 @@ function getWeekDay(index) {
 
 //传入日期，获取所需传入日期的年月日周几
 function getNeedDate(timestring) {
-  if(!timestring) {
+  if (!timestring) {
     return {}
   }
   const date = new Date(timestring)
@@ -71,7 +71,7 @@ function getDateTop(gold_year, gold_month) {
   return current_year == gold_year ? `${gold_month}月` : `${gold_year}年${gold_month}月`
 }
 //获取固定日期的当前月份包括前后一个月的每天日期详情
-function getAroundDate (timestamp) {
+function getAroundDate(timestamp) {
   const timestamp_trans = timestamp || current_date_timestamp
   const {
     year,
@@ -91,7 +91,7 @@ function getAroundDate (timestamp) {
     {
       date_top: getDateTop(front_one_year, front_one_month),
       date_inner: front_month_date,
-     },
+    },
     {
       date_top: getDateTop(year, month),
       date_inner: base_month_date,
@@ -137,10 +137,11 @@ export const isToday = (timestamp) => {
 }
 
 export const isSamDay = (timestamp, timestamp2) => {
-  if(!!!timestamp || !!!timestamp2) {
+  if (!!!timestamp || !!!timestamp2) {
     return false
   }
-  const new_time_a = timestamp.toString().length < 13? Number(timestamp) * 1000: Number(timestamp)
-  const new_time_b = timestamp2.toString().length < 13? Number(timestamp2) * 1000: Number(timestamp2)
+  const new_time_a = timestamp.toString().length < 13 ? Number(timestamp) * 1000 : Number(timestamp)
+  const new_time_b = timestamp2.toString().length < 13 ? Number(timestamp2) * 1000 : Number(timestamp2)
   return new Date(new_time_a).toDateString() == new Date(new_time_b).toDateString()
 }
+export const getDateInfo = getNeedDate
