@@ -11,6 +11,7 @@ import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import { message, Dropdown, Popover, Tooltip } from 'antd'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import { filterDueTimeSpan, cardIsHasUnRead, cardItemIsHasUnRead } from './ganttBusiness'
+import { transformTimestamp } from '../../../../utils/util'
 
 // 参考自http://www.jq22.com/webqd1348
 
@@ -502,6 +503,16 @@ export default class GetRowTaskItem extends Component {
         const group_index = list_group_new.findIndex(item => item.lane_id == list_id)
         const group_index_cards_index = list_group_new[group_index].lane_data.cards.findIndex(item => item.id == card_id)
         list_group_new[group_index].lane_data.cards[group_index_cards_index] = { ...list_group_new[group_index].lane_data.cards[group_index_cards_index], ...updateData }
+
+        if (list_group_new[group_index].lane_data.cards[group_index_cards_index].type == '1') { //如果是会议，会议的完成状态由截至时间控制
+            let is_realize = '0'
+            if (transformTimestamp(list_group_new[group_index].lane_data.cards[group_index_cards_index].due_time) > new Date().getTime()) {
+                is_realize = '0'
+            } else {
+                is_realize = '1'
+            }
+            list_group_new[group_index].lane_data.cards[group_index_cards_index].is_realize = is_realize
+        }
 
         dispatch({
             type: 'gantt/handleListGroup',
