@@ -172,7 +172,7 @@ export default class HeaderContentRightMenu extends Component {
     })
     const { file_id, file_resource_id, file_name } = temp_filePreviewCurrentVersionList[0]
     this.handleUploadPDForElesFilePreview({ file_name, id: file_id })
-    this.props.updateStateDatas && this.props.updateStateDatas({ fileType: getSubfixName(file_name), selectedKeys: [key] })
+    this.props.updateStateDatas && this.props.updateStateDatas({ fileType: getSubfixName(file_name), selectedKeys: [key], pdfDownLoadSrc:  getSubfixName(file_name) != '.pdf' && ''})
   }
 
   // 每一个Item的点点点 事件

@@ -68,14 +68,29 @@ export default class TaskItem extends React.Component {
   }
   deleteConfirm( ) {
     const that = this
-    Modal.confirm({
+    const modal = Modal.confirm()
+    // 这里的 `update` 相当于是对 Modal进行配置
+    modal.update({
       title: '确认删除？',
       okText: '确认',
       cancelText: '取消',
+      getContainer: () => document.getElementById('organizationMemberContainer'),
+      zIndex: 1010,
       onOk() {
-        that.deleteGroupItem()
-      }
-    });
+        that.deleteGroupItem({member_id})
+      },
+      onCancel: () => {
+          modal.destroy();
+        }
+  })
+    // Modal.confirm({
+    //   title: '确认删除？',
+    //   okText: '确认',
+    //   cancelText: '取消',
+    //   onOk() {
+    //     that.deleteGroupItem()
+    //   }
+    // });
   }
   deleteGroupItem() {
     const { itemValue = {} } = this.props

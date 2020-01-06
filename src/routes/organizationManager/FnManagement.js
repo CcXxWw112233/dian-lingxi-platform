@@ -93,6 +93,7 @@ export default class FnManagement extends React.Component {
           visible={visible}
           title="投资地图权限功能"
           footer={null}
+          getContainer={() => document.getElementById('org_managementContainer')}
           onCancel={this.handleCancel}>
 
           <MapManage {...this.props} />
