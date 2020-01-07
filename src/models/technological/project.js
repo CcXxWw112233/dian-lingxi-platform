@@ -205,6 +205,19 @@ export default {
           calback(res.data.id)
         }
         yield put({
+          type: 'afterCreateBoardHandle',
+          payload: {}
+        });
+      
+        return yield put({
+          type: 'fetchProjectListAndUpdateProjectGroupTree'
+        })
+      }else{
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    * afterCreateBoardHandle({ payload }, { select, call, put }) {
+        yield put({
           type: 'technological/getUserAllOrgsAllBoards',
           payload: {}
         });
@@ -216,14 +229,7 @@ export default {
           type: 'technological/getUserBoardPermissions',
           payload: {}
         });
-        return yield put({
-          type: 'fetchProjectListAndUpdateProjectGroupTree'
-        })
-      }else{
-        message.warn(res.message, MESSAGE_DURATION_TIME)
-      }
     },
-
     * collectionProject({ payload }, { select, call, put }) {
       const {org_id, board_id } = payload
       let res = yield call(collectionProject, {org_id, board_id })

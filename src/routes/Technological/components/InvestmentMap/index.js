@@ -33,6 +33,7 @@ export default class Index extends React.Component {
   }
   // 监听地图项目变化
   listenMapBoardChange = (event) => {
+    const { dispatch } = this.props
     const message = event.data
     const message_head = 'map_board_change_'
     if (!message || typeof message != 'string') {
@@ -41,6 +42,15 @@ export default class Index extends React.Component {
     if (message.indexOf(message_head) != -1) {
       const board_id = message.replace(message_head, '')
       openImChatBoard({ board_id, autoOpenIm: true })
+    } else if (message == 'map_board_create') { //创建项目后要拉取项目权限和全部项目信息
+      dispatch({
+        type: 'project/afterCreateBoardHandle',
+        payload: {
+
+        }
+      })
+    } else {
+
     }
   }
   render() {
