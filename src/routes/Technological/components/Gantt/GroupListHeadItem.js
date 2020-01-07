@@ -345,6 +345,7 @@ export default class GroupListHeadItem extends Component {
       if (isApiResponseOk(res)) {
         this.setLocalListName(this.state.edit_input_value)
         message.success('已成功更新项目名称')
+        global.constants.lx_utils.editBoardName({ board_id: data.board_id, name: data.name }) //更新圈子
         this.updateBoardFiles(data)
       } else {
         message.error(res.message)

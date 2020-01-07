@@ -249,7 +249,7 @@ export default {
       const { next_id } = payload
       // console.log('进来了', 'sssss')
       return
-      let res = yield call(getProjectDynamicsList, {...payload})
+      let res = yield call(getProjectDynamicsList, { ...payload })
       if (next_id === '0') { //重新查询的情况,将存储的newsDynamicListOriginal设置为空，重新push
         yield put({
           type: 'updateDatas',
@@ -265,10 +265,10 @@ export default {
       // debugger
       if (isApiResponseOk(res)) {
         // console.log('进来了', 'ssss')
-         // 去除空数组
+        // 去除空数组
         const removeEmptyArrayEle = (arr) => {
-          for(var i = 0; i < arr.length; i++) {
-            if(arr[i] == undefined) {
+          for (var i = 0; i < arr.length; i++) {
+            if (arr[i] == undefined) {
               arr.splice(i, 1);
               i = i - 1; // i - 1 ,因为空元素在数组下标 2 位置，删除空之后，后面的元素要向前补位，
               // 这样才能真正去掉空元素,觉得这句可以删掉的连续为空试试，然后思考其中逻辑
@@ -487,6 +487,7 @@ export default {
         })
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
+      return res || {}
     },
 
     * collectionProject({ payload }, { select, call, put }) {
@@ -511,7 +512,7 @@ export default {
 
     * quitProject({ payload }, { select, call, put }) {
       const { board_id, isJump } = payload
-      let res = yield call(quitProject, {board_id})
+      let res = yield call(quitProject, { board_id })
       if (isApiResponseOk(res)) {
         message.success(`已退出${currentNounPlanFilterName(PROJECTS)}`, MESSAGE_DURATION_TIME)
         if (isJump) {

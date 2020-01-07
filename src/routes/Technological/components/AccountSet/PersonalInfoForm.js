@@ -130,6 +130,7 @@ class PersonalInfoForm extends React.Component {
             userInfo
           })
           that.props.simplGetUserInfo({})
+          global.constants.lx_utils.updateUserAvatar(id,file.response.data.avatar)
         }
       },
     };
