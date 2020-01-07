@@ -14,6 +14,7 @@ import {
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, PROJECT_FILES_FILE_INTERVIEW, UPLOAD_FILE_SIZE
 } from "@/globalset/js/constant";
+import _ from "lodash";
 const { TreeNode } = TreeSelect;
 /**上传附件组件 */
 @connect(mapStateToProps)
@@ -149,34 +150,60 @@ export default class UploadAttachment extends Component {
         notify_user_ids: notify_user_ids.join(','),
 
       },
-      // timeout: 0
-    }).then(res => {
-      const apiResult = res.data;
-      if (isApiResponseOk(apiResult)) {
-        message.destroy()
-        message.success('上传成功');
-        this.props.onFileListChange(apiResult.data);
-        this.setState({
-          uploading: false,
-        }, () => {
-          this.closeUploadAttachmentModal();
-        });
-
-      } else {
-        message.warn(apiResult.message)
-        this.setState({
-          uploading: false,
-        });
-      }
-
+      timeout: 30000
     })
-    // .catch((error, e) => {
-    //   message.destroy()
-    //   message.error('上传失败');
-    //   this.setState({
-    //     uploading: false,
-    //   });
-    // });
+      .then(res => {
+        const apiResult = res.data;
+        if (isApiResponseOk(apiResult)) {
+          message.destroy()
+          message.success('上传成功');
+          this.props.onFileListChange(apiResult.data);
+          this.setState({
+            uploading: false,
+          }, () => {
+            this.closeUploadAttachmentModal();
+          });
+
+        } else {
+          message.warn(res.message)
+          this.setState({
+            uploading: false,
+          });
+        }
+
+      })
+      .catch((error, e) => {
+        message.destroy()
+        if (_.has(error, "response.status")) {
+          switch (error.response.status) {
+            case 413:
+              message.error('总文件超过100M,请分多次上传哦~');
+              this.setState({
+                uploading: false,
+              });
+              this.setUploadFileVisible(false);
+              this.closeUploadAttachmentModal();
+              break;
+            default:
+              break
+          }
+        } else if (error.message.indexOf('timeout of') != -1) {
+          message.error('上传文件超时了哦~');
+          this.setState({
+            uploading: false,
+          });
+          this.setUploadFileVisible(false);
+          this.closeUploadAttachmentModal();
+          return false
+        } else {
+          message.error('上传失败');
+          this.setState({
+            uploading: false,
+          });
+          this.setUploadFileVisible(false);
+          this.closeUploadAttachmentModal();
+        }
+      });
   }
 
 
@@ -191,7 +218,7 @@ export default class UploadAttachment extends Component {
       message.error(`不能上传空文件`)
       return false
     } else if (size > UPLOAD_FILE_SIZE * 1024 * 1024) {
-      message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
+      message.error(`上传文件不能超过${UPLOAD_FILE_SIZE}MB`)
       return false
     } else {
       this.setState(state => ({
@@ -200,7 +227,7 @@ export default class UploadAttachment extends Component {
       this.setUploadFileVisible(true)
       return false;
     }
-    
+
   }
   onCustomPreviewFile = (info) => {
     this.setState({
@@ -323,6 +350,7 @@ export default class UploadAttachment extends Component {
 
         <Modal
           title={<div style={{ textAlign: 'center', fontSize: '16px', fontWeight: 600, color: 'rgba(0,0,0,0.85)' }}>上传附件设置</div>}
+          getContainer={() => document.getElementById('technologicalLayoutWrapper')}
           visible={uploadFileVisible || visible}
           onOk={this.handleOk}
           onCancel={this.closeUploadAttachmentModal}
@@ -448,7 +476,7 @@ export default class UploadAttachment extends Component {
             </div>
             {
               boardFolderTreeData && boardFolderTreeData.length == '0' && (
-                <span style={{display:'block', marginTop: '15px', marginLeft: '4px', color: '#FAAD14'}}>暂无访问文件权限哦~</span>
+                <span style={{ display: 'block', marginTop: '15px', marginLeft: '4px', color: '#FAAD14' }}>暂无访问文件权限哦~</span>
               )
             }
           </div>
