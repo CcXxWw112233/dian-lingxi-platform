@@ -42,8 +42,44 @@ const taskTypeToName = {
   MY_DOCUMENT: 'Files'
 };
 /* eslint-disable */
-@connect(({ workbench }) => ({ workbench }))
+@connect(({ }) => ({}))
 class AddTaskModal extends Component {
+  constructor(props) {
+    super(props)
+  }
+  handleAddTaskModalCancel = () => {
+    this.props.setAddLCBModalVisibile && this.props.setAddLCBModalVisibile()
+  };
+  render() {
+
+    const {
+      add_lcb_modal_visible,
+
+      zIndex
+    } = this.props;
+
+    // console.log('sssss_0', {
+    //   current_selected_board,
+    //   current_selected_users
+    // } )
+
+    return (
+      <Modal
+        visible={add_lcb_modal_visible}
+        maskClosable={false}
+        title={<div style={{ textAlign: 'center' }}>{'新建里程碑'}</div>}
+        onCancel={this.handleAddTaskModalCancel}
+        footer={null}
+        destroyOnClose={true}
+        zIndex={zIndex || 1000}
+      >
+        <AddTaskContent {...this.props}></AddTaskContent>
+      </Modal>
+    );
+  }
+}
+
+class AddTaskContent extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -53,8 +89,8 @@ class AddTaskModal extends Component {
       due_time: '',
     };
   }
-  componentWillReceiveProps(nextProps) {
-    const { create_lcb_time, board_id, about_user_boards = [], current_selected_board } = nextProps
+  componentDidMount() {
+    const { create_lcb_time, board_id, about_user_boards = [], current_selected_board } = this.props
 
     const { due_time } = this.state
     if (create_lcb_time && due_time != create_lcb_time) {
@@ -63,10 +99,12 @@ class AddTaskModal extends Component {
       })
     }
     // 初始化设置已选项目
-    const init_selected_board = about_user_boards.find(item => item.board_id == board_id) || {}
-    this.setState({
-      current_selected_board: current_selected_board || init_selected_board
-    })
+    if (board_id && board_id != '0') {
+      const init_selected_board = about_user_boards.find(item => item.board_id == board_id) || {}
+      this.setState({
+        current_selected_board: current_selected_board || init_selected_board
+      })
+    }
   }
   handleSelectedItemChange = list => {
     this.setState({
@@ -143,6 +181,7 @@ class AddTaskModal extends Component {
       current_selected_board: data
     })
   }
+
   render() {
     const {
       add_name,
@@ -151,95 +190,78 @@ class AddTaskModal extends Component {
       due_time,
     } = this.state;
     const {
-      add_lcb_modal_visible,
       create_lcb_time,
       board_id,
       about_user_boards,
-      zIndex
     } = this.props;
-
-    // console.log('sssss_0', {
-    //   current_selected_board,
-    //   current_selected_users
-    // } )
-
     return (
-      <Modal
-        visible={add_lcb_modal_visible}
-        maskClosable={false}
-        title={<div style={{ textAlign: 'center' }}>{'新建里程碑'}</div>}
-        onOk={this.handleAddTaskModalOk}
-        onCancel={this.handleAddTaskModalCancel}
-        footer={null}
-        destroyOnClose={true}
-        zIndex={zIndex || 1000}
-      >
-        <div className={styles.addTaskModalContent}>
-          <div className={styles.addTaskModalSelectProject}>
-            <div className={styles.addTaskModalSelectProject_and_groupList}>
-              {/*在甘特图中传递了项目id的情况下，会固定不允许选择项目*/}
-              {current_selected_board.board_id && board_id != '0' ? (
-                <div className={styles.groupList__wrapper} style={{ marginLeft: 0 }}>
-                  <span className={globalStyles.authTheme} style={{ marginRight: 2, fontSize: 18 }}>&#xe60a;</span>
-                  {current_selected_board.board_name}
-                </div>
-              ) : (
-                  <DropdownSelectWithSearch
-                    list={about_user_boards}
-                    _organization_id={current_selected_board.org_id}
-                    initSearchTitle="选择项目"
-                    selectedItem={current_selected_board}
-                    handleSelectedItem={this.handleSelectedBoard}
-                    isShouldDisableDropdown={false}
-                  />
-                )}
-            </div>
-
-            {/*时间选择*/}
-            <div>
-              {create_lcb_time ? timestampToTimeNormal(create_lcb_time, '/', true) : (
-                <div style={{ position: 'relative' }}>
-                  {timestampToTimeNormal(due_time, '/', true) || '设置截止时间'}
-                  <DatePicker onChange={this.datePickerChange.bind(this)}
-                    placeholder={'选择截止时间'}
-                    showTime={{ format: 'HH:mm' }}
-                    format="YYYY-MM-DD HH:mm"
-                    style={{ opacity: 0, height: 16, minWidth: 0, maxWidth: '100px', background: '#000000', position: 'absolute', right: 0, zIndex: 2, cursor: 'pointer' }} />
-                </div>
+      <div className={styles.addTaskModalContent}>
+        <div className={styles.addTaskModalSelectProject}>
+          <div className={styles.addTaskModalSelectProject_and_groupList}>
+            {/*在甘特图中传递了项目id的情况下，会固定不允许选择项目*/}
+            {current_selected_board.board_id && board_id != '0' ? (
+              <div className={styles.groupList__wrapper} style={{ marginLeft: 0 }}>
+                <span className={globalStyles.authTheme} style={{ marginRight: 2, fontSize: 18 }}>&#xe60a;</span>
+                {current_selected_board.board_name}
+              </div>
+            ) : (
+                <DropdownSelectWithSearch
+                  list={about_user_boards}
+                  _organization_id={current_selected_board.org_id}
+                  initSearchTitle="选择项目"
+                  selectedItem={current_selected_board}
+                  handleSelectedItem={this.handleSelectedBoard}
+                  isShouldDisableDropdown={false}
+                />
               )}
-            </div>
-
           </div>
-          <div className={styles.addTaskModalTaskTitle}>
-            <Input
-              value={add_name}
-              onChange={this.handleAddTaskModalTaskTitleChange}
+
+          {/*时间选择*/}
+          <div>
+            {create_lcb_time ? timestampToTimeNormal(create_lcb_time, '/', true) : (
+              <div style={{ position: 'relative' }}>
+                {timestampToTimeNormal(due_time, '/', true) || '设置截止时间'}
+                <DatePicker onChange={this.datePickerChange.bind(this)}
+                  placeholder={'选择截止时间'}
+                  showTime={{ format: 'HH:mm' }}
+                  format="YYYY-MM-DD HH:mm"
+                  style={{ opacity: 0, height: 16, minWidth: 0, maxWidth: '100px', background: '#000000', position: 'absolute', right: 0, zIndex: 2, cursor: 'pointer' }} />
+              </div>
+            )}
+          </div>
+
+        </div>
+        <div className={styles.addTaskModalTaskTitle}>
+          <Input
+            value={add_name}
+            onChange={this.handleAddTaskModalTaskTitleChange}
+          />
+        </div>
+        {/*参与人*/}
+        <div className={styles.addTaskModalFooter}>
+          <div className={styles.addTaskModalOperator}>
+            <DropdownMultipleSelectWithSearch
+              itemTitle={'参与人'}
+              board_id={current_selected_board.board_id}
+              list={current_selected_board.users || []}
+              handleSelectedItemChange={this.handleSelectedItemChange}
+              current_selected_users={current_selected_users}
             />
           </div>
-          {/*参与人*/}
-          <div className={styles.addTaskModalFooter}>
-            <div className={styles.addTaskModalOperator}>
-              <DropdownMultipleSelectWithSearch
-                itemTitle={'参与人'}
-                board_id={current_selected_board.board_id}
-                list={current_selected_board.users || []}
-                handleSelectedItemChange={this.handleSelectedItemChange}
-                current_selected_users={current_selected_users}
-              />
-            </div>
-            <div className={styles.confirmBtn}>
-              <Button
-                type="primary"
-                disabled={this.isShouldNotDisableSubmitBtn()}
-                onClick={this.handleClickedSubmitBtn}>
-                完成
+          <div className={styles.confirmBtn}>
+            <Button
+              type="primary"
+              disabled={this.isShouldNotDisableSubmitBtn()}
+              onClick={this.handleClickedSubmitBtn}>
+              完成
               </Button>
-            </div>
           </div>
         </div>
-      </Modal>
-    );
+      </div>
+    )
   }
+
+
 }
 
 export default AddTaskModal;
