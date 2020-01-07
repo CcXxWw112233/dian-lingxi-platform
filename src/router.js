@@ -179,7 +179,7 @@ const Routers = function ({ history, app }) {
       component: () => import('./routes/EmailRedirect/'),
     }, {
       path: '/organizationManager',
-      models: () => [import('./models/organizationManager')],
+      // models: () => [import('./models/organizationManager')],
       component: () => import('./routes/organizationManager/'),
     }, {
       path: '/teamShow',
