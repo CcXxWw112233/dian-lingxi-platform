@@ -39,7 +39,7 @@ export default class BaseInfo extends React.Component {
     const value = e.target.value
     this.storeChange('name', value)
     let flag = true
-    if (value) {
+    if (value && value.trimLR() != '') {
       flag = false
     }
     this.setState({

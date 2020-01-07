@@ -64,6 +64,7 @@ export default class MainContent extends React.Component {
   //标题
   titleChangeBlur(e) {
     const value = e.target.value
+    if (value.trimLR() == '') return
     this.updateMilestone({name: value})
     this.handleMiletonesChange({ name: value })
   }

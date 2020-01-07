@@ -157,7 +157,7 @@ class FormList extends React.Component {
     const { name, email, mobile, verifycode, password, checkBoxChecked, submitButtonDisabled } = this.state
     let submitButtonDisabledLocal = submitButtonDisabled
     if (
-      name
+      name && name.trimLR() != ''
       // && validateEmail(email)
       && validateTel(mobile)
       && verifycode

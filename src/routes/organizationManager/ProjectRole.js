@@ -133,14 +133,29 @@ export default class ProjectRole extends React.Component {
       return false
     }
     const that = this
-    Modal.confirm({
+    const modal = Modal.confirm()
+    // 这里的 `update` 相当于是对 Modal进行配置
+    modal.update({
       title: '确认删除？',
       okText: '确认',
       cancelText: '取消',
+      getContainer: () => document.getElementById('org_managementContainer'),
+      zIndex: 1010,
       onOk() {
         that.deletePanelItem({parentKey, value})
-      }
-    });
+      },
+      onCancel: () => {
+          modal.destroy();
+        }
+    })
+    // Modal.confirm({
+    //   title: '确认删除？',
+    //   okText: '确认',
+    //   cancelText: '取消',
+    //   onOk() {
+    //     that.deletePanelItem({parentKey, value})
+    //   }
+    // });
   }
   deletePanelItem(parentKey) {
    this.props.deleteRole({

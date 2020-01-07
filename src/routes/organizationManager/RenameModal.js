@@ -11,7 +11,7 @@ class RenameModal extends React.Component {
   nameChange(e) {
     const value = e.target.value
     let flag = true
-    if(value) {
+    if(value && value.trimLR() != '') {
       flag = false
     }
     this.setState({
@@ -37,6 +37,9 @@ class RenameModal extends React.Component {
           this.props.copy ? this.props.copy(values) : false
         }
       }
+      this.setState({
+        stepContinueDisabled: true
+      })
     });
   }
   render() {
@@ -49,7 +52,7 @@ class RenameModal extends React.Component {
         <div style={{fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28}}>{reName_Add_type==='1'? '重命名': (reName_Add_type==='2'?'添加': '复制')}</div>
         <FormItem style={{width: 336}}>
           {getFieldDecorator('name', {
-            rules: [{ required: false, message: '', whitespace: true }],
+            rules: [{ required: false, message: '', whitespace: true, message: `名称不能为空` }],
           })(
             <Input placeholder={'输入名称'} style={{height: 40}} onChange={this.nameChange.bind(this)} maxLength={50}/>
           )}
