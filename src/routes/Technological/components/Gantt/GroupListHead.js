@@ -56,13 +56,17 @@ function mapStateToProps({ gantt: {
     list_group = [],
     group_rows = [],
     ceiHeight,
-    target_scrollLeft
+    target_scrollLeft,
+    group_list_area,
+    group_list_area_section_height
   }
 } }) {
   return {
     list_group,
     group_rows,
     ceiHeight,
-    target_scrollLeft
+    target_scrollLeft,
+    group_list_area,
+    group_list_area_section_height
   }
 }
