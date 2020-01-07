@@ -26,6 +26,7 @@ import LcbInHeader from './components/LcbInHeader/index'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 import globalStyle from '@/globalset/css/globalClassName.less'
 import { connect } from "dva/index";
+import { isApiResponseOk } from '../../../../utils/handleResponseData'
 
 let is_starinit = null
 
@@ -93,6 +94,10 @@ export default class Header extends React.Component {
       payload: {
         board_id: board_id,
         name: this.state.localBoardName
+      }
+    }).then(res => {
+      if (isApiResponseOk(res)) {
+        global.constants.lx_utils.editBoardName({ board_id: board_id, name: this.state.localBoardName })
       }
     })
   }
