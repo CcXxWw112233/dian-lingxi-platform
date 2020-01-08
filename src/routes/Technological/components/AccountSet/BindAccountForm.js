@@ -7,6 +7,7 @@ import VerificationCodeTwo from '../../../../components/VerificationCodeTwo'
 import globalStyles from '../../../../globalset/css/globalClassName.less'
 import {validateTel, validateEmail} from "../../../../utils/verify";
 import {MESSAGE_DURATION_TIME} from "../../../../globalset/js/constant";
+import { isApiResponseOk } from '../../../../utils/handleResponseData';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -38,9 +39,19 @@ class BindAccountForm extends React.Component {
             code: values['code']
           })
         } else if(type === 'wechat') {
-          this.props.dispatch({
-            type: 'accountSet/unBindWechat'
+          let that = this
+          Promise.resolve(
+            that.props.dispatch({
+              type: 'accountSet/unBindWechat'
+            })
+          ).then(res => {
+            if (isApiResponseOk(res)) {
+              this.props.form.setFieldsValue({
+                'wechat': ''
+              })
+            }
           })
+
         }
       }
     });
