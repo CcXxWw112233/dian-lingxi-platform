@@ -147,7 +147,9 @@ class FormList extends React.Component {
             <Input
               style={{ height: '40px', fontSize: 16 }}
               prefix={<Icon type="user" style={{ color: '#8C8C8C', fontSize: 16 }} />}
-              maxLength={40} placeholder="手机号/邮箱"
+              maxLength={40}
+              // placeholder="手机号/邮箱"
+              placeholder={loginType === 'password' ? '手机号/邮箱' : '输入手机号'}
               onBlur={this.verifyByBlur.bind(null, 'account')}
               onChange={(e) => this.verifyAccountByChange(e, 'account')}
             />
