@@ -191,12 +191,12 @@ class SimpleHeader extends Component {
                         projectDetailInfoData: { board_id: boardId }
                     }
                 })
-                dispatch({
-                    type: 'projectDetail/getRelationsSelectionPre',
-                    payload: {
-                        _organization_id: orgId
-                    }
-                })
+                // dispatch({
+                //     type: 'projectDetail/getRelationsSelectionPre',
+                //     payload: {
+                //         _organization_id: orgId
+                //     }
+                // })
                 setTimeout(() => {
                     dispatch({
                         type: 'publicFileDetailModal/updateDatas',
@@ -253,13 +253,30 @@ class SimpleHeader extends Component {
                 // }
                 break
             case 'card':
+                if (this.props.drawerVisible) {
+                    dispatch({
+                        type: 'publicTaskDetailModal/updateDatas',
+                        payload: {
+                            drawerVisible: false,
+                            card_id: ''
+                        }
+                    })
+                }
                 dispatch({
-                    type: 'publicTaskDetailModal/updateDatas',
+                    type: 'projectDetail/updateDatas',
                     payload: {
-                        drawerVisible: true,
-                        card_id: cardId
+                        projectDetailInfoData: { board_id: boardId }
                     }
                 })
+                setTimeout(() => {
+                    dispatch({
+                        type: 'publicTaskDetailModal/updateDatas',
+                        payload: {
+                            drawerVisible: true,
+                            card_id: cardId
+                        }
+										})
+                }, 200)
                 break;
             case 'flow':
                 break
