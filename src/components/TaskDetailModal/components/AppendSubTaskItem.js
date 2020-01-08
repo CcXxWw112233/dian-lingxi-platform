@@ -220,6 +220,13 @@ export default class AppendSubTaskItem extends Component {
 
   // 文本框onChange事件
   setchildTaskNameChange = (e) => {
+    if (e.target.value.trimLR() == '') {
+      // message.warn('名称不能为空哦~', MESSAGE_DURATION_TIME)
+      this.setState({
+        local_card_name: ''
+      })
+      return false
+    }
     this.setState({
       local_card_name: e.target.value
     })

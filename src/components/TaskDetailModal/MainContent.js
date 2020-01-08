@@ -19,6 +19,7 @@ import { getFolderList } from '@/services/technological/file'
 import { getMilestoneList } from '@/services/technological/prjectDetail'
 import DragDropContentComponent from './DragDropContentComponent'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
+const { LingxiIm, Im } = global.constants
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -108,7 +109,7 @@ export default class MainContent extends Component {
     })
   }
 
-  componentDidMount() {
+  getInitCardDetailDatas = () => {
     const { card_id, dispatch } = this.props
     if (!card_id) return false
     const that = this
@@ -147,6 +148,10 @@ export default class MainContent extends Component {
         }, 500)
       }
     })
+  }
+
+  componentDidMount() {
+    this.getInitCardDetailDatas()
     // this.props.dispatch({
     //   type: 'publicTaskDetailModal/getCardWithAttributesDetail',
     //   payload: {
@@ -161,7 +166,29 @@ export default class MainContent extends Component {
     //     }
     //   }
     // })
+  }
 
+  componentWillReceiveProps(nextProps) {
+    const { drawerVisible } = nextProps
+    const { drawerVisible: oldDrawerVisible } = this.props
+    if (oldDrawerVisible == false && drawerVisible == true) {
+      Promise.resolve(
+        this.props.dispatch({
+          type: 'publicTaskDetailModal/getCardAttributesList',
+          payload: {
+          }
+        })
+      ).then(res => {
+        if (isApiResponseOk(res)) {
+          this.setState({
+            propertiesList: res.data
+          })
+        }
+      })
+      setTimeout(() => {
+        this.getInitCardDetailDatas()
+      }, 200)
+    }
   }
 
   // 获取 currentDrawerContent 数据
@@ -1315,7 +1342,7 @@ export default class MainContent extends Component {
 
 // 只关联public弹窗内的数据
 function mapStateToProps({
-  publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id, boardTagList = [], attributesList = [] },
+  publicTaskDetailModal: { drawerVisible, drawContent = {}, is_edit_title, card_id, boardTagList = [], attributesList = [] },
   projectDetail: { datas: { projectDetailInfoData = {} } },
   publicFileDetailModal: {
     isInOpenFile,
@@ -1324,5 +1351,5 @@ function mapStateToProps({
     currentPreviewFileName
   }
 }) {
-  return { drawContent, is_edit_title, card_id, boardTagList, attributesList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType, currentPreviewFileName }
+  return { drawerVisible, drawContent, is_edit_title, card_id, boardTagList, attributesList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType, currentPreviewFileName }
 }

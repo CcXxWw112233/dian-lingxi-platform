@@ -794,6 +794,13 @@ export default class TempleteSchemeTree extends Component {
   // Input输入框事件
   handleChangeTempleteContainerValue = (e) => {
     e && e.stopPropagation()
+    if (e.target.value.trimLR() == '') {
+      // message.warn('名称不能为空哦~', MESSAGE_DURATION_TIME)
+      this.setState({
+        inputValue: ''
+      })
+      return false
+    }
     if (e.target.value.length > 19) {
       message.warn('最多只能输入20个字符哦~')
       // return

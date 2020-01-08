@@ -162,6 +162,14 @@ export default class AppendSubTask extends Component {
 
   //子任务名称设置
   setchildTaskNameChange = (e) => {
+    if (e.target.value.trimLR() == '') {
+      // message.warn('名称不能为空哦~', MESSAGE_DURATION_TIME)
+      this.setState({
+        inputValue: '',
+        saveDisabled: true
+      })
+      return false
+    }
     this.setState({
       inputValue: e.target.value,
       saveDisabled: e.target.value ? false : true

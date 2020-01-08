@@ -14,6 +14,7 @@ let board_id = null
 let appsSelectKey = null
 let file_id = null
 let folder_id = null
+const { LingxiIm, Im } = global.constants
 @connect(mapStateToProps)
 class FileDetailContent extends Component {
 
@@ -121,6 +122,21 @@ class FileDetailContent extends Component {
       }
       this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
       // this.linkImWithFile({name: currentPreviewFileName, type: 'file', board_id: board_id, id: newFilePreviewCurrentFileId})
+      let that = this
+      if (Im) {
+        Im.on('fileCancel',function({id}){
+          if (id == that.props.filePreviewCurrentFileId) {
+            that.props.dispatch({
+              type: 'publicFileDetailModal/updateDatas',
+              payload: {
+                filePreviewCurrentFileId: '',
+                fileType: '',
+                isInOpenFile: false
+              }
+            })
+          }
+        })
+      }
     }
   }
 

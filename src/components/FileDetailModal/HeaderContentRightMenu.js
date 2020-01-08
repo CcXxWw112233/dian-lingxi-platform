@@ -179,14 +179,18 @@ export default class HeaderContentRightMenu extends Component {
   getVersionItemMenuClick = ({ list, file_id, file_name }, e) => {
     e && e.domEvent && e.domEvent.stopPropagation()
     const { currentPreviewFileData = {} } = this.props
-    const { board_id } = currentPreviewFileData
+    const { board_id, privileges = [], is_privilege } = currentPreviewFileData
     const key = e.key
     switch (key) {
       case '1': // 设置为主版本
-        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
+        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
+        // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
+        //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        //   return false
+        // }
         const { dispatch } = this.props
         let file_resource_id = ''
         let file_version_id = ''
@@ -222,10 +226,14 @@ export default class HeaderContentRightMenu extends Component {
         break
       // 编辑版本信息
       case '3':
-        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) {
+        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id))) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
+        // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) {
+        //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        //   return false
+        // }
         this.setState({
           is_edit_version_description: true
         })
@@ -329,11 +337,16 @@ export default class HeaderContentRightMenu extends Component {
 
   // 保存为新版本
   handleSaveAsNewVersion = () => {
-    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)) {
+    const { currentPreviewFileData: { id, privileges = [], is_privilege }, projectDetailInfoData: { folder_id, board_id } } = this.props
+    if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    const { currentPreviewFileData: { id }, projectDetailInfoData: { folder_id } } = this.props
+    // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
+    
     saveAsNewVersion({id}).then(res => {
       if (isApiResponseOk(res)) {
         const { version_id, id } = res.data
@@ -727,9 +740,13 @@ export default class HeaderContentRightMenu extends Component {
         ...setUploadHeaderBaseInfo({}),
       },
       beforeUpload(e) {
-        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
+        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+          // message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
+        // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
+        //   return false
+        // }
         if (e.size == 0) {
           message.error(`不能上传空文件`)
           return false
@@ -739,10 +756,14 @@ export default class HeaderContentRightMenu extends Component {
         }
       },
       onChange({ file, fileList, event }) {
-        if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
+        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
+        // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)) {
+        //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        //   return false
+        // }
         if (file.status === 'uploading') {
 
         } else {

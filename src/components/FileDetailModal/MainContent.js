@@ -8,9 +8,10 @@ import { connect } from 'dva'
 import { fileConvertPdfAlsoUpdateVersion, setCurrentVersionFile } from '@/services/technological/file'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message, Modal } from 'antd'
-import { getSubfixName } from '../../utils/businessFunction'
+import { checkIsHasPermissionInBoard, getSubfixName, checkIsHasPermissionInVisitControl } from "@/utils/businessFunction";
 import {
   MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_FILE_UPDATE
 } from "@/globalset/js/constant";
 let timer
 
@@ -179,6 +180,12 @@ class MainContent extends Component {
   // 除pdf外的其他文件进入圈评
   handleEnterCirclePointComment = () => {
     const { isZoomPictureFullScreenMode } = this.props
+    const { currentPreviewFileData = {} } = this.props
+    const { board_id, privileges = [], is_privilege } = currentPreviewFileData
+    if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     this.updateProcessPercent()
     this.setState({
       is_petty_loading: !isZoomPictureFullScreenMode,

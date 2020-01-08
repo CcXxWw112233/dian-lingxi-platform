@@ -10,6 +10,7 @@ import { isApiResponseOk } from '@/utils/handleResponseData'
 import { FILES, MESSAGE_DURATION_TIME } from '@/globalset/js/constant'
 import { currentNounPlanFilterName, getOrgNameWithOrgIdFilter, checkIsHasPermissionInVisitControl, getSubfixName } from '@/utils/businessFunction.js'
 import { message } from 'antd'
+const { LingxiIm, Im } = global.constants
 
 @connect(mapStateToProps)
 export default class BoardCommuicationFileDetailContainer extends Component {
@@ -158,20 +159,30 @@ export default class BoardCommuicationFileDetailContainer extends Component {
         return
       }
       this.getCurrentFilePreviewData({ id: filePreviewCurrentFileId })
+      let that = this
+      if (Im) {
+        Im.on('fileCancel',function({id}){
+          if (id == that.props.filePreviewCurrentFileId) {
+            that.onCancel()
+          }
+        })
+      }
       // this.linkImWithFile({name: currentPreviewFileName, type: 'file', board_id: board_id, id: filePreviewCurrentFileId})
     }
   }
 
   // 可以不用判断项目交流中打开了其他文件,关闭后文件评论还存在
-  // componentWillReceiveProps(nextProps) {
-  //   const { isInOpenFile } = nextProps
-  //   const { isInOpenFile: oldOpenFile } = this.props
-  //   if (isInOpenFile == false && oldOpenFile == true) {
-  //     // this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
-  //     // let all_version_list_Ids = this.getEveryVersionListIds()
-  //     // global.constants.lx_utils && global.constants.lx_utils.setCommentData((all_version_list_Ids && all_version_list_Ids.length) && all_version_list_Ids || null) 
-  //   }
-  // }
+  componentWillReceiveProps(nextProps) {
+    const { isInOpenFile } = nextProps
+    const { isInOpenFile: oldOpenFile } = this.props
+    let that = this
+    if (isInOpenFile == false && oldOpenFile == true) {
+      let currentPreviewFileVersionId = this.getCurrentFilePreviewVersionId()
+      this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
+      let all_version_list_Ids = this.getEveryVersionListIds()
+      global.constants.lx_utils && global.constants.lx_utils.setCommentData(currentPreviewFileVersionId || (all_version_list_Ids && all_version_list_Ids.length) && all_version_list_Ids || null) 
+    }
+  }
 
   render() {
     const { componentHeight, componentWidth } = this.props

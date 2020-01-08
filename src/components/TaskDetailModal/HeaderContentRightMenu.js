@@ -19,6 +19,12 @@ export default class HeaderContentRightMenu extends Component {
     onlyReadingShareData: {},
   }
 
+  getCurrentDrawerContentPropsModelDatasExecutors = () => {
+    const { drawContent: { properties = [] } } = this.props
+    const pricipleInfo = properties.filter(item => item.code == 'EXECUTOR')[0]
+    return pricipleInfo || {}
+  }
+
   // 访问控制的操作 S
   /**
    * 访问控制的开关切换
@@ -424,6 +430,7 @@ export default class HeaderContentRightMenu extends Component {
     const { drawContent = {} } = this.props
     const { board_id, card_id, is_privilege, privileges = [], executors = [], is_shared } = drawContent
     const { onlyReadingShareData, onlyReadingShareModalVisible } = this.state
+    const { data } = this.getCurrentDrawerContentPropsModelDatasExecutors()
     return (
 
       <div className={headerStyles.detail_action_list}>
@@ -436,7 +443,7 @@ export default class HeaderContentRightMenu extends Component {
               board_id={board_id}
               isPropVisitControl={is_privilege === '0' ? false : true}
               handleVisitControlChange={this.handleVisitControlChange}
-              principalList={executors}
+              principalList={data}
               otherPrivilege={privileges}
               handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
               handleAddNewMember={this.handleVisitControlAddNewMember}
