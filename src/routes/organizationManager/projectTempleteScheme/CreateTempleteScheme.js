@@ -2,7 +2,10 @@ import React, { Component } from 'react'
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
-import { Input, Button } from 'antd'
+import { Input, Button, message } from 'antd'
+import {
+  MESSAGE_DURATION_TIME
+} from "@/globalset/js/constant";
 
 @connect()
 export default class CreateTempleteScheme extends Component {
@@ -18,6 +21,13 @@ export default class CreateTempleteScheme extends Component {
 
   // 文本框输入变化
   handleChangeVal = (e) => {
+    if (e.target.value.trimLR() == '') {
+      // message.warn('名称不能为空哦~', MESSAGE_DURATION_TIME)
+      this.setState({
+        inputValue: ''
+      })
+      return false
+    }
     this.setState({
       inputValue: e.target.value
     })
