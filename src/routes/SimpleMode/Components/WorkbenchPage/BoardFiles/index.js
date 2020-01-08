@@ -37,6 +37,9 @@ class BoardFiles extends Component {
 
   componentDidMount() {
     const { dispatch, simplemodeCurrentProject = {} } = this.props;
+    dispatch({
+      type: 'simplemode/getOrgBoardData',
+    })
     let currentBoardDetail = {}
     if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
       currentBoardDetail = { ...simplemodeCurrentProject }
@@ -93,9 +96,9 @@ class BoardFiles extends Component {
     }, () => {
       this.initialget(board.board_id)
     });
-    if(by_selected) {
+    if (by_selected) {
       const { dispatch } = this.props;
-      selectBoardToSeeInfo({board_id: board.board_id, board_name: board.board_name, dispatch})
+      selectBoardToSeeInfo({ board_id: board.board_id, board_name: board.board_name, dispatch })
     }
   }
 
@@ -301,28 +304,28 @@ class BoardFiles extends Component {
                     if (user_set.current_org === '0' || user_set.current_org === org.org_id) {
                       if (isPaymentOrgUser(org.org_id)) {
 
-                      return org.board_list && org.board_list.length > 0 && (
-                        <div key={org.org_id}>
-                          <div className={indexStyles.groupName}>{org.org_name}</div>
-                          <div className={indexStyles.boardItemWapper}>
-                            {
-                              org.board_list.map((board, key) => {
-                                return (
-                                  <div key={board.board_id} className={indexStyles.boardItem} onClick={e => {
-                                    this.setState({
-                                      userSelectBoard: true
-                                    });
-                                    this.openBoardFiles(board, true);
-                                  }}>
-                                    <i className={`${globalStyles.authTheme} ${indexStyles.boardIcon}`}>&#xe67d;</i>
-                                    <span className={indexStyles.boardName}>{board.board_name}</span>
-                                  </div>
-                                );
-                              })
-                            }
+                        return org.board_list && org.board_list.length > 0 && (
+                          <div key={org.org_id}>
+                            <div className={indexStyles.groupName}>{org.org_name}</div>
+                            <div className={indexStyles.boardItemWapper}>
+                              {
+                                org.board_list.map((board, key) => {
+                                  return (
+                                    <div key={board.board_id} className={indexStyles.boardItem} onClick={e => {
+                                      this.setState({
+                                        userSelectBoard: true
+                                      });
+                                      this.openBoardFiles(board, true);
+                                    }}>
+                                      <i className={`${globalStyles.authTheme} ${indexStyles.boardIcon}`}>&#xe67d;</i>
+                                      <span className={indexStyles.boardName}>{board.board_name}</span>
+                                    </div>
+                                  );
+                                })
+                              }
+                            </div>
                           </div>
-                        </div>
-                      )
+                        )
                         return org.board_list && org.board_list.length > 0 && (
                           <div key={org.org_id}>
                             <div className={indexStyles.groupName}>{org.org_name}</div>

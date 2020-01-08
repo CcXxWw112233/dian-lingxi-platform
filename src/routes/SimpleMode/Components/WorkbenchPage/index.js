@@ -42,7 +42,15 @@ class WorkbenchPage extends Component {
             }
         });
     }
-
+    componentWillUnmount() {
+        const { dispatch } = this.props
+        dispatch({
+            type: 'simplemode/updateDatas',
+            payload: {
+                allOrgBoardTreeList: []
+            }
+        })
+    }
     componentDidMount() {
         const { currentSelectedWorkbenchBox = {} } = this.props;
         this.setWorkbenchVisible(currentSelectedWorkbenchBox);
