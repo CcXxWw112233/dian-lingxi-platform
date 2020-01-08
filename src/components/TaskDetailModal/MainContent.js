@@ -166,46 +166,11 @@ export default class MainContent extends Component {
     //     }
     //   }
     // })
-    // if (Im) {
-    //   Im.on('cardCancel',function({id}){
-    //     console.log(id, 'ssssssssssssssssssss_id')
-    //     if (id == that.props.card_id) {
-    //       that.props.dispatch({
-    //         type: 'publicTaskDetailModal/updateDatas',
-    //         payload: {
-    //           drawerVisible: false,
-    //           drawContent: {},
-    //           card_id: '',
-    //           is_edit_title: false, // 是否编辑标题 默认为 false 不显示
-    //           boardTagList: []
-    //         }
-    //       })
-    //     }
-    //   })
-    // }
-
   }
 
   componentWillReceiveProps(nextProps) {
     const { drawerVisible } = nextProps
     const { drawerVisible: oldDrawerVisible } = this.props
-    // if (Im) {
-    //   Im.on('cardCancel',function({id}){
-    //     console.log(id, 'ssssssssssssssssssss_id')
-    //     if (id == that.props.card_id) {
-    //       that.props.dispatch({
-    //         type: 'publicTaskDetailModal/updateDatas',
-    //         payload: {
-    //           drawerVisible: false,
-    //           drawContent: {},
-    //           card_id: '',
-    //           is_edit_title: false, // 是否编辑标题 默认为 false 不显示
-    //           boardTagList: []
-    //         }
-    //       })
-    //     }
-    //   })
-    // }
     if (oldDrawerVisible == false && drawerVisible == true) {
       Promise.resolve(
         this.props.dispatch({

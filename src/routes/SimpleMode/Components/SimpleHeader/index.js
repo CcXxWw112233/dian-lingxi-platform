@@ -154,6 +154,21 @@ class SimpleHeader extends Component {
                     }
                 })
             })
+            let that = this
+            Im.on('fileCancel',function({id}){
+                if (id == that.props.card_id) {
+                  dispatch({
+                    type: 'publicTaskDetailModal/updateDatas',
+                    payload: {
+                      drawerVisible: false,
+                      drawContent: {},
+                      card_id: '',
+                      is_edit_title: false, // 是否编辑标题 默认为 false 不显示
+                      boardTagList: []
+                    }
+                  })
+                }
+              })
         }
     }
     // 圈子点击
@@ -459,7 +474,8 @@ class SimpleHeader extends Component {
 function mapStateToProps({
     simplemode: { chatImVisiable, leftMainNavVisible, leftMainNavIconVisible }, modal, loading,
     publicTaskDetailModal: {
-        drawerVisible
+        drawerVisible,
+        card_id
     },
     publicFileDetailModal: {
         filePreviewCurrentFileId,
@@ -475,6 +491,6 @@ function mapStateToProps({
         }
     }
 }) {
-    return { OrganizationId, chatImVisiable, leftMainNavVisible, leftMainNavIconVisible, modal, loading, drawerVisible, isInOpenFile, filePreviewCurrentFileId, fileType, im_alarm_no_reads_total }
+    return { OrganizationId, chatImVisiable, leftMainNavVisible, leftMainNavIconVisible, modal, loading, drawerVisible, card_id, isInOpenFile, filePreviewCurrentFileId, fileType, im_alarm_no_reads_total }
 }
 export default connect(mapStateToProps)(SimpleHeader)
