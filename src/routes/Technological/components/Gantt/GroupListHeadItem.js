@@ -410,6 +410,11 @@ export default class GroupListHeadItem extends Component {
         data: list_group_new
       }
     })
+    dispatch({
+      type: 'gantt/getGttMilestoneList',
+      payload: {
+      }
+    })
   }
   archivedProject = ({ board_id }) => {
     if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_ARCHIVE, board_id)) {
