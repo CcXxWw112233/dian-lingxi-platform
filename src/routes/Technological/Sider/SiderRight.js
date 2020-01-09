@@ -51,7 +51,6 @@ class SiderRight extends React.Component {
   componentWillReceiveProps(nextProps) {
     const { OrganizationId: nextOrg, card_id: nextCardId, filePreviewCurrentFileId: nextFilePreviewCurrentFileId } = nextProps
     const { OrganizationId: lastOrg, card_id, dispatch, filePreviewCurrentFileId } = this.props
-    console.log(nextProps, 'ssssssssssssssssssssssss_nextprops')
     if (nextOrg != lastOrg) {
       const filterId = nextOrg == '0' ? '' : nextOrg
       global.constants.lx_utils.filterUserList(filterId)
