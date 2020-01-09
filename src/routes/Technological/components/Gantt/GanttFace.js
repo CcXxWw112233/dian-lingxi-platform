@@ -251,6 +251,7 @@ export default class GanttFace extends Component {
           )
         }
         <DateList />
+        <GroupListHeadSet />
         <MiletoneGuide />
         <div className={indexStyles.cardDetail_left_mask}></div>
         <div className={indexStyles.cardDetail_left}></div>
@@ -260,7 +261,7 @@ export default class GanttFace extends Component {
           onScroll={this.ganttScroll}
           style={{ maxHeight: gantt_card_out_middle_max_height }}
         >
-          <GroupListHeadSet />
+          {/* <GroupListHeadSet /> */}
           <div
             style={{ height: date_area_height }} //撑住DateList相同高度的底部
           />
