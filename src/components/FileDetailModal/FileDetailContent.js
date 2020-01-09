@@ -123,20 +123,20 @@ class FileDetailContent extends Component {
       this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
       // this.linkImWithFile({name: currentPreviewFileName, type: 'file', board_id: board_id, id: newFilePreviewCurrentFileId})
       let that = this
-      if (Im) {
-        Im.on('fileCancel',function({id}){
-          if (id == that.props.filePreviewCurrentFileId) {
-            that.props.dispatch({
-              type: 'publicFileDetailModal/updateDatas',
-              payload: {
-                filePreviewCurrentFileId: '',
-                fileType: '',
-                isInOpenFile: false
-              }
-            })
-          }
-        })
-      }
+      // if (Im) {
+      //   Im.on('fileCancel',function({id}){
+      //     if (id == that.props.filePreviewCurrentFileId) {
+      //       that.props.dispatch({
+      //         type: 'publicFileDetailModal/updateDatas',
+      //         payload: {
+      //           filePreviewCurrentFileId: '',
+      //           fileType: '',
+      //           isInOpenFile: false
+      //         }
+      //       })
+      //     }
+      //   })
+      // }
     }
   }
 
