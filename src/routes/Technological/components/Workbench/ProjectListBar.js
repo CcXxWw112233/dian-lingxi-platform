@@ -288,7 +288,6 @@ class ProjectListBar extends Component {
             },
             []
           );
-            is_show_new_project: shouldPushInDropDownMenuItem && shouldPushInDropDownMenuItem.length != 0 ? false : true
           this.setState({
             dropDownMenuItemList: shouldPushInDropDownMenuItem,
             is_show_new_project: shouldPushInDropDownMenuItem && shouldPushInDropDownMenuItem.length != 0 ? false : true
