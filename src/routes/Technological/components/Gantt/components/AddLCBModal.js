@@ -147,6 +147,12 @@ class AddTaskContent extends Component {
   }
 
   handleAddTaskModalTaskTitleChange = e => {
+    if (e.target.value.trimLR() == '') {
+      this.setState({
+        add_name: ''
+      })
+      return false
+    }
     this.setState({
       add_name: e.target.value
     });
