@@ -185,12 +185,14 @@ class ProjectListBar extends Component {
     )
   }
   componentDidMount() {
-    setTimeout(() => {
-      this.handleWinResize();
-      // this.setState({
-      //   is_show_new_project: !this.state.is_show_new_project
-      // })
-    }, 500)
+    console.log('进来了', 'ssssssssssssssssssssss_1111111111')
+    this.handleWinResize();
+    // setTimeout(() => {
+    //   this.handleWinResize();
+    //   // this.setState({
+    //   //   is_show_new_project: !this.state.is_show_new_project
+    //   // })
+    // }, 500)
     window.addEventListener('resize', this.handleWinResize, false);
     // this.listenProjectListBarItemWrapper()
   }
@@ -276,7 +278,7 @@ class ProjectListBar extends Component {
       }, 50)
       // 必须要获取完毕之后在进行, 使用观察者模式也不行, 所以采用延时操作
       setTimeout(() => {
-        if (childNodeOffsetTopList && childNodeOffsetTopList.length) {
+        if (childNodeOffsetTopList && childNodeOffsetTopList.length) { // 这个是表示它有项目的情况
           const shouldPushInDropDownMenuItem = childNodeOffsetTopList.reduce(
             (acc, curr, ind) => {
               // console.log('sssss',{acc, curr, ind})
@@ -287,11 +289,16 @@ class ProjectListBar extends Component {
             },
             []
           );
+            is_show_new_project: shouldPushInDropDownMenuItem && shouldPushInDropDownMenuItem.length != 0 ? false : true
           this.setState({
             dropDownMenuItemList: shouldPushInDropDownMenuItem,
             is_show_new_project: shouldPushInDropDownMenuItem && shouldPushInDropDownMenuItem.length != 0 ? false : true
           }, () => {
             // console.info('ssssss',this.state.dropDownMenuItemList)
+          });
+        } else { // 表示没有一个项目的时候
+          this.setState({
+            is_show_new_project: true
           });
         }
       }, 200)
@@ -327,7 +334,6 @@ class ProjectListBar extends Component {
       current_org: { identity_type } = {}
     } = this.getUerInfoFromLocalStorage() ? this.getUerInfoFromLocalStorage() : {};
     const isVisitor = this.isVisitor(identity_type);
-
 
     return (
       <div className={styles.projectListBarWrapper}>

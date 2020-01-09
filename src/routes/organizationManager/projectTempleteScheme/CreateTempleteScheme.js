@@ -29,7 +29,7 @@ export default class CreateTempleteScheme extends Component {
       return false
     }
     this.setState({
-      inputValue: e.target.value
+      inputValue: e.target.value.trimLR()
     })
   }
 
@@ -55,7 +55,7 @@ export default class CreateTempleteScheme extends Component {
           <span className={globalStyles.authTheme}>&#xe7ec; 全部方案</span>
         </div>
         <div>
-          <div style={{ width: '100%', marginBottom: '12px', height: '38px' }}><Input value={inputValue} onChange={this.handleChangeVal} autoFocus={true} placeholder="请输入方案名称" style={{ width: '100%', padding: '8px 12px', height: '38px' }} /></div>
+          <div style={{ width: '100%', marginBottom: '12px', height: '38px' }}><Input maxLength={50} value={inputValue} onChange={this.handleChangeVal} autoFocus={true} placeholder="请输入方案名称" style={{ width: '100%', padding: '8px 12px', height: '38px' }} /></div>
           <div style={{ textAlign: 'right' }}><Button disabled={!(inputValue != '')} type="primary" onClick={this.handleCreateTemplete}>确定</Button></div>
         </div>
       </div>
