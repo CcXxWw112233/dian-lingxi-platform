@@ -250,7 +250,9 @@ export default class GanttFace extends Component {
             </div>
           )
         }
+        <DateList />
         <MiletoneGuide />
+        <div className={indexStyles.cardDetail_left_mask}></div>
         <div className={indexStyles.cardDetail_left}></div>
         <div className={indexStyles.cardDetail_middle}
           id={'gantt_card_out_middle'}
@@ -262,7 +264,7 @@ export default class GanttFace extends Component {
           <div
             style={{ height: date_area_height }} //撑住DateList相同高度的底部
           />
-          <DateList />
+          {/* <DateList /> */}
           <div className={indexStyles.panel}>
             <GroupListHead
               setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
