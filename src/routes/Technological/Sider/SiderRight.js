@@ -28,11 +28,19 @@ const { getMentions, toString, toContentState } = Mention;
 const Nav = Mention.Nav;
 
 @connect(({
-  technological: { userInfo = {}, datas: { OrganizationId } }
+  technological: { userInfo = {}, datas: { OrganizationId } },
+  publicTaskDetailModal: {
+    card_id
+  },
+  publicFileDetailModal: {
+    filePreviewCurrentFileId,
+  },
 }) => {
   return {
     userInfo,
-    OrganizationId
+    OrganizationId,
+    card_id,
+    filePreviewCurrentFileId
   };
 })
 class SiderRight extends React.Component {
@@ -41,11 +49,49 @@ class SiderRight extends React.Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    const { OrganizationId: nextOrg } = nextProps
-    const { OrganizationId: lastOrg } = this.props
+    const { OrganizationId: nextOrg, card_id: nextCardId, filePreviewCurrentFileId: nextFilePreviewCurrentFileId } = nextProps
+    const { OrganizationId: lastOrg, card_id, dispatch, filePreviewCurrentFileId } = this.props
+    console.log(nextProps, 'ssssssssssssssssssssssss_nextprops')
     if (nextOrg != lastOrg) {
       const filterId = nextOrg == '0' ? '' : nextOrg
       global.constants.lx_utils.filterUserList(filterId)
+    }
+
+    if (card_id == nextCardId) {
+      let that = this
+      Im.on('fileCancel',function({id}){
+        console.log(id, 'sssssssssssss_id')
+          if (id == nextCardId) {
+            dispatch({
+              type: 'publicTaskDetailModal/updateDatas',
+              payload: {
+                drawerVisible: false,
+                drawContent: {},
+                card_id: '',
+                is_edit_title: false, // 是否编辑标题 默认为 false 不显示
+                boardTagList: []
+              }
+            })
+          }
+        })
+    }
+
+    if (filePreviewCurrentFileId == nextFilePreviewCurrentFileId) {
+      let that = this
+      Im.on('fileCancel',function({id}){
+        console.log(id, 'sssssssssssss_id')
+          if (id == nextFilePreviewCurrentFileId) {
+            dispatch({
+              type: 'publicFileDetailModal/updateDatas',
+              payload: {
+                filePreviewCurrentFileId: '',
+                fileType: '',
+                isInOpenFile: false,
+                currentPreviewFileName: ''
+              }
+            })
+          }
+        })
     }
   }
 
