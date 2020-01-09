@@ -185,14 +185,13 @@ class ProjectListBar extends Component {
     )
   }
   componentDidMount() {
-    console.log('进来了', 'ssssssssssssssssssssss_1111111111')
-    this.handleWinResize();
-    // setTimeout(() => {
-    //   this.handleWinResize();
-    //   // this.setState({
-    //   //   is_show_new_project: !this.state.is_show_new_project
-    //   // })
-    // }, 500)
+    // this.handleWinResize();
+    setTimeout(() => {
+      this.handleWinResize();
+      // this.setState({
+      //   is_show_new_project: !this.state.is_show_new_project
+      // })
+    }, 500)
     window.addEventListener('resize', this.handleWinResize, false);
     // this.listenProjectListBarItemWrapper()
   }
