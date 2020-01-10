@@ -18,8 +18,16 @@ class DropdownMultipleSelectWithSearch extends Component {
     if (findUserInList) {
       handleSelectedItemChange([findUserInList])
     }
+    const userInfo = this.getCurrentUserFromLocalStorage('userInfo')
+    const userInfo_simple = { //当项目变化时，默认选上当前用户
+      avatar: userInfo.avatar,
+      full_name: userInfo.full_name,
+      name: userInfo.name,
+      id: userInfo.id,
+      user_id: userInfo.id
+    }
     this.state = {
-      selectedList: currentSelectedProjectMember ? currentSelectedProjectMember : (findUserInList ? [findUserInList] : []),
+      selectedList: [userInfo_simple],//currentSelectedProjectMember ? currentSelectedProjectMember : (findUserInList ? [findUserInList] : []),
       searchValue: "",
       dropdownOptionVisible: false
     }
@@ -298,35 +306,52 @@ class DropdownMultipleSelectWithSearch extends Component {
     return true;
   };
   componentWillReceiveProps(nextProps) {
-    const { list, handleSelectedItemChange, currentSelectedProjectMember = [] } = this.props;
-    const isReceiveSameListFromProps = this.comparePropsList(
-      nextProps.list,
-      list
-    );
-    if (!isReceiveSameListFromProps) {
-      const currentUserFromCookie = this.getCurrentUserFromLocalStorage('userInfo')
-      if (currentUserFromCookie) {
-        const currentUserId = currentUserFromCookie.id;
-        const currentUserInList = nextProps.list.find(
-          item => item.id === currentUserId
-        );
-        let new_new_selectedList = currentUserInList ? [currentUserInList] : []
-        let new_selectedList = currentSelectedProjectMember.length ? currentSelectedProjectMember : new_new_selectedList
-        this.setState({
-          selectedList: new_selectedList,//currentUserInList ? [currentUserInList] : [],
-          searchValue: ""
-        }, () => {
-          if (currentUserInList) {
-            handleSelectedItemChange(new_selectedList)
-          }
-        });
-      } else {
-        this.setState({
-          selectedList: [],
-          searchValue: ""
-        });
+    const { board_id, handleSelectedItemChange } = this.props
+    const { board_id: next_board_id } = nextProps
+    if (board_id != next_board_id) {
+      const userInfo = this.getCurrentUserFromLocalStorage('userInfo')
+      const userInfo_simple = { //当项目变化时，默认选上当前用户
+        avatar: userInfo.avatar,
+        full_name: userInfo.full_name,
+        name: userInfo.name,
+        id: userInfo.id,
+        user_id: userInfo.id
       }
+      this.setState({
+        selectedList: [userInfo_simple],
+        searchValue: ""
+      });
+      handleSelectedItemChange([userInfo_simple])
     }
+    // const { list, handleSelectedItemChange, currentSelectedProjectMember = [] } = this.props;
+    // const isReceiveSameListFromProps = this.comparePropsList(
+    //   nextProps.list,
+    //   list
+    // );
+    // if (!isReceiveSameListFromProps) {
+    //   const currentUserFromCookie = this.getCurrentUserFromLocalStorage('userInfo')
+    //   if (currentUserFromCookie) {
+    //     const currentUserId = currentUserFromCookie.id;
+    //     const currentUserInList = nextProps.list.find(
+    //       item => item.id === currentUserId
+    //     );
+    //     let new_new_selectedList = currentUserInList ? [currentUserInList] : []
+    //     let new_selectedList = currentSelectedProjectMember.length ? currentSelectedProjectMember : new_new_selectedList
+    //     this.setState({
+    //       selectedList: new_selectedList,//currentUserInList ? [currentUserInList] : [],
+    //       searchValue: ""
+    //     }, () => {
+    //       if (currentUserInList) {
+    //         handleSelectedItemChange(new_selectedList)
+    //       }
+    //     });
+    //   } else {
+    //     this.setState({
+    //       selectedList: [],
+    //       searchValue: ""
+    //     });
+    //   }
+    // }
   }
 
   chirldrenTaskChargeChange = ({ selectedKeys = [] }) => {
@@ -357,7 +382,7 @@ class DropdownMultipleSelectWithSearch extends Component {
       this.setState({
         selectedList: result
       })
-      handleSelectedItemChange(result)
+      handleSelectedItemChange(result, 'inviteOthers')
     }
     if (typeof inviteOthersToBoardCalbackRequest == 'function') {
       inviteOthersToBoardCalbackRequest()
