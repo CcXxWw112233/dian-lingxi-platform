@@ -33,6 +33,13 @@ export default class UploadAttachment extends Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { projectDetailInfoData = {} } = nextProps
+    if (projectDetailInfoData && Object.keys(projectDetailInfoData) && Object.keys(projectDetailInfoData).length) {
+      this.getDefaultNoticeUser(projectDetailInfoData.data)
+    }
+  }
+
   // componentDidMount() {
   //   const { board_id, boardFolderTreeData = [] } = this.props;
   //   if (board_id) {
@@ -67,6 +74,7 @@ export default class UploadAttachment extends Component {
     if (this.state.uploading) {
       return message.error('上传中：暂不能操作');
     }
+    const { projectDetailInfoData: { data = [] } } = this.props
     this.setState({
       uploadFilePreviewList: [],
       fileList: [],
@@ -75,7 +83,7 @@ export default class UploadAttachment extends Component {
       fileSavePath: null
     }, () => {
       this.setUploadFileVisible(false);
-
+      this.getDefaultNoticeUser(data)
     });
   };
 
@@ -165,7 +173,8 @@ export default class UploadAttachment extends Component {
           });
 
         } else {
-          message.warn(res.message)
+          const apiResult = res.data;
+          message.warn(apiResult.message)
           this.setState({
             uploading: false,
           });
@@ -333,6 +342,30 @@ export default class UploadAttachment extends Component {
     }
   }
 
+  // 获取默认附件提醒人 负责人 || 操作人
+  getDefaultNoticeUser = (data) => {
+    const { executors = [] } = this.props
+    const {id} = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    let new_toNoticeList = []
+    let tempIds = []
+    let new_executors = [...executors]
+    let new_data = [...data]
+    if (executors && executors.length) {
+      new_executors.map(item => {
+        tempIds.push(item.user_id)
+      })
+    }
+    new_data && new_data.map(item => {
+      if (item.user_id == id || tempIds.indexOf(item.user_id) != -1) {
+        new_toNoticeList.push(item)
+      }
+    })
+    this.setState({
+      toNoticeList: new_toNoticeList
+    })
+
+  }
+
 
   render() {
     // 父组件传递的值
@@ -340,7 +373,6 @@ export default class UploadAttachment extends Component {
     const { uploadFileVisible, uploadFilePreviewList = [], toNoticeList = [], fileSavePath, uploading } = this.state;
 
     const { data: projectMemberData } = projectDetailInfoData;
-
     return (
 
       <div>
@@ -350,7 +382,7 @@ export default class UploadAttachment extends Component {
 
         <Modal
           title={<div style={{ textAlign: 'center', fontSize: '16px', fontWeight: 600, color: 'rgba(0,0,0,0.85)' }}>上传附件设置</div>}
-          getContainer={() => document.getElementById('technologicalLayoutWrapper')}
+          getContainer={() => document.getElementById('technologicalLayoutWrapper') || document.body}
           visible={uploadFileVisible || visible}
           onOk={this.handleOk}
           onCancel={this.closeUploadAttachmentModal}
