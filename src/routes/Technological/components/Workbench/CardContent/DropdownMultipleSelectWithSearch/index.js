@@ -31,6 +31,7 @@ class DropdownMultipleSelectWithSearch extends Component {
       searchValue: "",
       dropdownOptionVisible: false
     }
+    handleSelectedItemChange([userInfo_simple])
   }
   getCurrentUserFromLocalStorage = key => {
     try {
