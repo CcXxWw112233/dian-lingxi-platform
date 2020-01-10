@@ -100,7 +100,7 @@ class MainContent extends Component {
   }
 
   // PDF圈评转换事件
-  fetchConvertPdfAlsoUpdateVersion = ({ file_name, file_id }) => {
+  fetchConvertPdfAlsoUpdateVersion = ({ file_name, file_id, folder_id }) => {
     const { currentPreviewFileData = {}, isZoomPictureFullScreenMode } = this.props
     const { supportFileTypeArray = [] } = this.state
     let FILE_NAME = getSubfixName(file_name)
@@ -125,6 +125,7 @@ class MainContent extends Component {
                   is_large_loading: isZoomPictureFullScreenMode && false,
                   selectedKeys: [res.data.id]
                 })
+                this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({folder_id})
                 // setTimeout(() => this.props.updateStateDatas && this.props.updateStateDatas({selectedKeys: [res.data.id]}),200)
                 // this.props.updateStateDatas && this.props.updateStateDatas({selectedKeys: [res.data.id]})
               }
@@ -158,7 +159,7 @@ class MainContent extends Component {
   // 加载进度条
   updateProcessPercent = () => {
     const { currentPreviewFileData = {} } = this.props
-    const { id, board_id, file_name } = currentPreviewFileData
+    const { id, board_id, file_name, folder_id } = currentPreviewFileData
     let percent = this.state.percent + 10;
     // return
     if (percent > 100) {
@@ -166,7 +167,7 @@ class MainContent extends Component {
       this.setState({
         percent: 100
       })
-      this.fetchConvertPdfAlsoUpdateVersion({ file_id: id, file_name: file_name })
+      this.fetchConvertPdfAlsoUpdateVersion({ file_id: id, file_name: file_name, folder_id: folder_id })
       return
     }
     this.setState({
