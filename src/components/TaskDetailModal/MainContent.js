@@ -365,6 +365,19 @@ export default class MainContent extends Component {
     return new_properties
   }
 
+  // 执行人列表去重
+  arrayNonRepeatfy = arr => {
+    let temp_arr = []
+    let temp_id = []
+    for (let i = 0; i < arr.length; i++) {
+      if (!temp_id.includes(arr[i]['user_id'])) {//includes 检测数组是否有某个值
+        temp_arr.push(arr[i]);
+        temp_id.push(arr[i]['user_id'])
+      }
+    }
+    return temp_arr
+  }
+
   // 邀请他人参与回调 并设置为执行人
   inviteOthersToBoardCalback = ({ users }) => {
     const { dispatch, projectDetailInfoData = {}, drawContent = {} } = this.props
@@ -374,7 +387,7 @@ export default class MainContent extends Component {
     const calback = (res) => {
       const new_users = res.data
       const arr = new_users.filter(item => users.indexOf(item.user_id) != -1)
-      const newExecutors = [].concat(gold_data, arr)
+      const newExecutors = this.arrayNonRepeatfy([].concat(gold_data, arr))
       let new_drawContent = { ...drawContent }
       // new_drawContent['executors'] = newExecutors
       new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', newExecutors)
