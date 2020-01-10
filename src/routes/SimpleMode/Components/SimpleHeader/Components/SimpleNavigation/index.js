@@ -620,7 +620,7 @@ export default class SimpleNavigation extends Component {
                         }
                     >
                         {/* <Menu.Item disabled={!is_show_org_name || is_disabled} key="subShowOrgName"> */}
-                        <Menu.Item key="subShowOrgName">
+                        {/* <Menu.Item key="subShowOrgName">
                             <span>显示组织名称
                       <Switch
                                     style={{ display: 'inline-block', marginLeft: 8 }}
@@ -629,7 +629,7 @@ export default class SimpleNavigation extends Component {
                                 ></Switch>
 
                             </span>
-                        </Menu.Item>
+                        </Menu.Item> */}
                         <Menu.Item key="subInfoSet">
                             <span>通知设置</span>
                         </Menu.Item>
