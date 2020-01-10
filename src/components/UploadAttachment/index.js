@@ -178,6 +178,8 @@ export default class UploadAttachment extends Component {
           this.setState({
             uploading: false,
           });
+          this.setUploadFileVisible(false);
+          this.closeUploadAttachmentModal();
         }
 
       })
