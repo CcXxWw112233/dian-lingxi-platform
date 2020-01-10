@@ -307,7 +307,7 @@ export async function fileConvertPdfAlsoUpdateVersion(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/pdf/convert`,
     method: 'GET',
-    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.id),
     params
   })
 }
