@@ -137,7 +137,7 @@ export default modelExtend(technological, {
       const { data } = payload
       const res = yield call(addTaskInWorkbench, data)
       if (!isApiResponseOk(res)) {
-        message.error('创建任务失败')
+        message.error(res.message || '创建任务失败')
         // console.log('create task failed :' + res)
         return
       } else {
