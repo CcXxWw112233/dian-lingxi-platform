@@ -277,7 +277,7 @@ class MyWorkbenchBoxs extends Component {
     const { rela_app_id, code } = item
     const { currentUserOrganizes = [] } = this.props
     let isDisabled = true
-    if ("regulations" == code || "maps" == code) {
+    if ("regulations" == code || "maps" == code || 'board:files' == code || 'board:chat' == code) {
       if (localStorage.getItem('OrganizationId') == '0') {
         let flag = false
         for (let val of currentUserOrganizes) {
@@ -295,12 +295,18 @@ class MyWorkbenchBoxs extends Component {
       } else {
         const org = currentUserOrganizes.find(item => item.id == localStorage.getItem('OrganizationId')) || {}
         const enabled_app_list = org.enabled_app_list || []
-        for (let val2 of enabled_app_list) {
-          if (rela_app_id == val2['app_id'] && val2['status'] == '1') {
-            isDisabled = false
-            break
-          }
+        let gold_data = enabled_app_list.find(item => item.code == 'Files') || {}
+        if (gold_data && Object.keys(gold_data) && Object.keys(gold_data).length) {
+          isDisabled = false
+        } else {
+          isDisabled = true
         }
+        // for (let val2 of enabled_app_list) {
+        //   if (rela_app_id == val2['app_id'] && val2['status'] == '1') {
+        //     isDisabled = false
+        //     break
+        //   }
+        // }
       }
     } else {
       isDisabled = false
