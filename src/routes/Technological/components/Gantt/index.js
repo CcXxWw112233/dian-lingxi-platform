@@ -35,6 +35,7 @@ class Gantt extends Component {
         is_show_board_file_area: '0',
         group_view_filter_boards: [],
         group_view_filter_users: [],
+        boards_flies: []
       }
     })
     if (page_load_type != 1) {

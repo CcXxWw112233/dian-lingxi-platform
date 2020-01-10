@@ -105,12 +105,12 @@ export default class Index extends Component {
                 file_data
             })
         } else {
-            message.error('获取数据失败')
+            message.error(res.message || '获取数据失败')
         }
     }
 
     // 是否需要更新文件列表, 当访问控制设置时
-    whetherUpdateFolderListData = ({folder_id}) => {
+    whetherUpdateFolderListData = ({ folder_id }) => {
         if (folder_id) {
             this.getFolderFileList({ id: folder_id })
         }
@@ -271,16 +271,16 @@ export default class Index extends Component {
                 {/* )} */}
                 {
                     this.props.isInOpenFile && board_id && (
-                    <FileDetailModal
-                        // {...this.props}
-                        // {...this.props.fileDetailModalDatas}
-                        // setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
-                        fileType={this.props.fileType} filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
-                        board_id={board_id}
-                        file_detail_modal_visible={this.props.isInOpenFile && getGlobalData('storageCurrentOperateBoardId') == board_id}
-                        setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
-                        whetherUpdateFolderListData={this.whetherUpdateFolderListData}
-                    />
+                        <FileDetailModal
+                            // {...this.props}
+                            // {...this.props.fileDetailModalDatas}
+                            // setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
+                            fileType={this.props.fileType} filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
+                            board_id={board_id}
+                            file_detail_modal_visible={this.props.isInOpenFile && getGlobalData('storageCurrentOperateBoardId') == board_id}
+                            setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
+                            whetherUpdateFolderListData={this.whetherUpdateFolderListData}
+                        />
                     )
                 }
             </div>
