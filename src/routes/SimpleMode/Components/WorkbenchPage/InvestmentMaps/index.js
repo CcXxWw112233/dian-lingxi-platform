@@ -57,6 +57,8 @@ export default class index extends React.Component {
 
                 }
             })
+        } else if (message == 'token_invalid') {
+            window.location.hash = `#/login?redirect=${window.location.hash.replace('#', '')}`
         } else {
 
         }
