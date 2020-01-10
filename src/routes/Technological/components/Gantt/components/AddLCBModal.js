@@ -106,9 +106,31 @@ class AddTaskContent extends Component {
       })
     }
   }
-  handleSelectedItemChange = list => {
+  handleSelectedItemChange = (list, type) => {
     this.setState({
       current_selected_users: list
+    }, () => {
+      console.log('ssssss_aa', {
+        list, type
+      })
+      if ('inviteOthers' == type) { //如果是邀请他人
+        let { current_selected_board } = this.state
+        current_selected_board.users = [...current_selected_board.users, ...list]
+        // 去重
+        let temp = {};   //用于name判断重复
+        let result = [];  //最后的新数组
+        current_selected_board.users.map(item => {
+          if (!temp[item.id]) {
+            result.push(item);
+            temp[item.id] = true;
+          }
+        });
+        current_selected_board.users = result
+        // 去重
+        this.setState({
+          current_selected_board
+        })
+      }
     });
   };
 
@@ -187,7 +209,16 @@ class AddTaskContent extends Component {
       current_selected_board: data
     })
   }
+  // 邀请他人回调
+  inviteOthersToBoardCalbackRequest = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/getAboutUsersBoards',
+      payload: {
 
+      }
+    })
+  }
   render() {
     const {
       add_name,
@@ -251,6 +282,7 @@ class AddTaskContent extends Component {
               board_id={current_selected_board.board_id}
               list={current_selected_board.users || []}
               handleSelectedItemChange={this.handleSelectedItemChange}
+              inviteOthersToBoardCalbackRequest={this.inviteOthersToBoardCalbackRequest}
               current_selected_users={current_selected_users}
             />
           </div>
