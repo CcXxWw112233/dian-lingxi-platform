@@ -63,10 +63,10 @@ class VideoMeetingPopoverContent extends React.Component {
 		currentOrgAllMembers: [], //当前组织的职员
 		org_id: '0',
 		dueTimeList: [
-			{remind_time_type: 'm', txtVal: '5'},
-			{remind_time_type: 'm', txtVal: '15'},
-			{remind_time_type: 'm', txtVal: '30'},
-			{remind_time_type: 'm', txtVal: '45'},
+			{ remind_time_type: 'm', txtVal: '5' },
+			{ remind_time_type: 'm', txtVal: '15' },
+			{ remind_time_type: 'm', txtVal: '30' },
+			{ remind_time_type: 'm', txtVal: '45' },
 			// { remind_time_type: 'm', txtVal: '30' },
 			// { remind_time_type: 'h', txtVal: '1' },
 			// { remind_time_type: 'm', txtVal: '90' },
@@ -128,7 +128,7 @@ class VideoMeetingPopoverContent extends React.Component {
 			payload: {
 
 			}
-		})	
+		})
 	}
 
 	componentDidMount() {
@@ -141,14 +141,14 @@ class VideoMeetingPopoverContent extends React.Component {
 		if (projectList && projectList.length) {
 			//过滤出来当前用户有编辑权限的项目
 			if (new_projectList.find(item => item.is_my_private == '1')) {
-				let {board_id, org_id} = (new_projectList.find(item => item.is_my_private == '1') || {})
+				let { board_id, org_id } = (new_projectList.find(item => item.is_my_private == '1') || {})
 				this.setState({
 					org_id,
 					notProjectList: false
 				})
 				this.getProjectUsers({ projectId: board_id })
 			} else {
-				let {board_id, org_id} = (new_projectList.find((item, index) => index == '0') || {})
+				let { board_id, org_id } = (new_projectList.find((item, index) => index == '0') || {})
 				this.setState({
 					org_id,
 					notProjectList: false
@@ -180,7 +180,7 @@ class VideoMeetingPopoverContent extends React.Component {
 		let new_projectList = [...projectList]
 		if (projectList && projectList.length) {
 			if (new_projectList.find(item => item.is_my_private == '1')) {
-				let {board_id, org_id} = (new_projectList.find(item => item.is_my_private == '1') || {})
+				let { board_id, org_id } = (new_projectList.find(item => item.is_my_private == '1') || {})
 				this.setState({
 					org_id,
 					notProjectList: false
@@ -188,7 +188,7 @@ class VideoMeetingPopoverContent extends React.Component {
 				this.getProjectUsers({ projectId: board_id })
 				return
 			} else {
-				let {board_id, org_id} = (new_projectList.find((item, index) => index == '0') || {})
+				let { board_id, org_id } = (new_projectList.find((item, index) => index == '0') || {})
 				this.setState({
 					org_id,
 					notProjectList: false
@@ -267,7 +267,7 @@ class VideoMeetingPopoverContent extends React.Component {
 			changeValue: false,
 			toNoticeList: this.getCurrentRemindUser(),
 			remindDropdownVisible: false
-			
+
 		});
 		remind_time_value = '5'
 		defaultSaveToProject = ''
@@ -314,7 +314,7 @@ class VideoMeetingPopoverContent extends React.Component {
 				let gold_id = (new_projectList.find(item => item.is_my_private == '1') || {}).board_id
 				return gold_id
 			} else {
-				let gold_id = (new_projectList.find((item, index) => index == '0' ) || {}).board_id
+				let gold_id = (new_projectList.find((item, index) => index == '0') || {}).board_id
 				return gold_id
 			}
 		} else {
@@ -326,12 +326,12 @@ class VideoMeetingPopoverContent extends React.Component {
 	// 获取当前用户的会议名称
 	getCurrentUserNameThenSetMeetingTitle = () => {
 		const currentUser = this.getInfoFromLocalStorage("userInfo");
-		const {changeValue, meetingTitle } = this.state
+		const { changeValue, meetingTitle } = this.state
 		if (currentUser) {
 			if (changeValue) {
 				let temp_title = meetingTitle
 				return temp_title
-			} 
+			}
 			let temp_title = `${currentUser.name}发起的会议`;
 			return temp_title
 		}
@@ -580,7 +580,7 @@ class VideoMeetingPopoverContent extends React.Component {
 				othersPeople: new_othersPeople
 			})
 		}
-	
+
 		this.setState({
 			toNoticeList: new_toNoticeList
 		})
@@ -742,7 +742,7 @@ class VideoMeetingPopoverContent extends React.Component {
 					dispatch({
 						type: 'workbench/getMeetingList',
 						payload: {
-							
+
 						}
 					})
 				} else {
@@ -783,7 +783,12 @@ class VideoMeetingPopoverContent extends React.Component {
 				if (isShowNowTime) remind_time_value = parseInt(meeting_start_time / 1000)
 				// this.openWinNiNewTabWithATag(start_url)
 				this.inviteMemberJoin({ card_id, userIds, user_phone, start_url })
-				
+
+				// 低频操作，获取甘特图数据
+				dispatch({
+					type: 'gantt/getGanttData',
+					payload: {}
+				})
 			} else if (res.code === "1") {
 				message.error(res.message);
 				this.setState(
@@ -814,7 +819,7 @@ class VideoMeetingPopoverContent extends React.Component {
 					dispatch({
 						type: 'technological/getCurrentOrgProjectList',
 						payload: {
-			
+
 						}
 					})
 				}
@@ -1066,7 +1071,7 @@ class VideoMeetingPopoverContent extends React.Component {
 				}
 				onVisibleChange={this.handleVideoMeetingPopoverVisibleChange}
 				trigger="click"
-				// getPopupContainer={triggerNode => triggerNode.parentNode}
+			// getPopupContainer={triggerNode => triggerNode.parentNode}
 			>
 				<div
 					className={indexStyles.videoMeeting__icon}
