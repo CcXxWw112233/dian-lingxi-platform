@@ -16,6 +16,7 @@ import {
 } from "@/globalset/js/constant";
 import _ from "lodash";
 const { TreeNode } = TreeSelect;
+let uploadMaxFileSize = []
 /**上传附件组件 */
 @connect(mapStateToProps)
 export default class UploadAttachment extends Component {
@@ -134,6 +135,7 @@ export default class UploadAttachment extends Component {
 
 
     let loading = message.loading('文件正在上传中...', 0);
+    console.log(loading, 'ssssssssssssssssss_loading')
     let notify_user_ids = new Array();
     for (var i = 0; i < toNoticeList.length; i++) {
       notify_user_ids.push(toNoticeList[i].user_id);
@@ -225,21 +227,29 @@ export default class UploadAttachment extends Component {
       return false
     }
     const { size } = file
-    if (size == 0) {
+    uploadMaxFileSize.push(size)
+    let sum = 0
+    for (let i = 0; i < uploadMaxFileSize.length; i++) {
+      sum += uploadMaxFileSize[i];
+    }
+    if (sum == 0) {
       message.error(`不能上传空文件`)
       this.setUploadFileVisible(false);
       this.closeUploadAttachmentModal();
+      uploadMaxFileSize = []
       return false
-    } else if (size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+    } else if (sum > UPLOAD_FILE_SIZE * 1024 * 1024) {
       message.error(`上传文件不能超过${UPLOAD_FILE_SIZE}MB`)
       this.setUploadFileVisible(false);
       this.closeUploadAttachmentModal();
+      uploadMaxFileSize = []
       return false
     } else {
       this.setState(state => ({
         fileList: [...state.fileList, file],
       }));
       this.setUploadFileVisible(true)
+      uploadMaxFileSize = []
       return false;
     }
 
@@ -252,6 +262,10 @@ export default class UploadAttachment extends Component {
 
   //修改通知人的回调 S
   chirldrenTaskChargeChange = (data) => {
+    if (this.state.uploading) {
+      message.warn('正在上传中...请勿操作哦~')
+      return false
+    }
     const { projectDetailInfoData = {} } = this.props;
     // 多个任务执行人
     const membersData = projectDetailInfoData['data'] //所有的人
@@ -301,6 +315,10 @@ export default class UploadAttachment extends Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
+    if (this.state.uploading) {
+      message.warn('正在上传中...请勿操作哦~')
+      return false
+    }
     this.setState({
       isOnlyNoticePersonsVisit: e.target.checked
     });
@@ -338,6 +356,10 @@ export default class UploadAttachment extends Component {
   }
 
   onChangeFileSavePath = (value) => {
+    if (this.state.uploading) {
+      message.warn('正在上传中...请勿操作哦~')
+      return false
+    }
     if (value == '0' || value == '') {
       message.warn('请选择一个文件目录', MESSAGE_DURATION_TIME)
       return false
@@ -370,6 +392,16 @@ export default class UploadAttachment extends Component {
       toNoticeList: new_toNoticeList
     })
 
+  }
+
+  onVisibleChange = (visible) => {
+    if (this.state.uploading) {
+      message.warn('正在上传中...请勿操作哦~')
+      return false
+    }
+    this.setState({
+      visible: visible
+    })
   }
 
 
@@ -423,7 +455,7 @@ export default class UploadAttachment extends Component {
               {
                 !toNoticeList.length ? (
                   <div style={{ flex: '1', position: 'relative' }}>
-                    <Dropdown overlayClassName={styles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                    <Dropdown visible={this.state.visible} trigger={['click']} overlayClassName={styles.overlay_pricipal} onVisibleChange={this.onVisibleChange} getPopupContainer={triggerNode => triggerNode.parentNode}
                       overlayStyle={{ maxWidth: '200px' }}
                       overlay={
                         <MenuSearchPartner
@@ -444,7 +476,7 @@ export default class UploadAttachment extends Component {
                   </div>
                 ) : (
                     <div style={{ flex: '1', position: 'relative' }}>
-                      <Dropdown overlayClassName={styles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                      <Dropdown visible={this.state.visible} trigger={['click']} overlayClassName={styles.overlay_pricipal} onVisibleChange={this.onVisibleChange} getPopupContainer={triggerNode => triggerNode.parentNode}
                         overlay={
                           <MenuSearchPartner
                             invitationType='1'
