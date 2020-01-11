@@ -227,9 +227,13 @@ export default class UploadAttachment extends Component {
     const { size } = file
     if (size == 0) {
       message.error(`不能上传空文件`)
+      this.setUploadFileVisible(false);
+      this.closeUploadAttachmentModal();
       return false
     } else if (size > UPLOAD_FILE_SIZE * 1024 * 1024) {
       message.error(`上传文件不能超过${UPLOAD_FILE_SIZE}MB`)
+      this.setUploadFileVisible(false);
+      this.closeUploadAttachmentModal();
       return false
     } else {
       this.setState(state => ({
