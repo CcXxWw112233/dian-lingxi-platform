@@ -141,7 +141,7 @@ export default modelExtend(projectDetail, {
                   drawerVisible: false
                 }
               })
-              
+
               if (file_name) {
                 dispatch({
                   type: 'publicFileDetailModal/previewFileByUrl',
@@ -261,7 +261,7 @@ export default modelExtend(projectDetail, {
     // 更新面包屑路径
     * updateBreadcrumbList({ payload }, { select, call, put }) {
       const { file_id } = payload
-      let res = yield call(fileInfoByUrl, {id: file_id})
+      let res = yield call(fileInfoByUrl, { id: file_id })
       if (isApiResponseOk(res)) {
         let arr = []
         const target_path = res.data.target_path
@@ -284,7 +284,7 @@ export default modelExtend(projectDetail, {
           }
         })
       }
-      
+
     },
     * fileInfoByUrl({ payload }, { select, call, put }) {
       const { file_id, isNotNecessaryUpdateBread, whetherUpdateFileList } = payload
@@ -561,7 +561,7 @@ export default modelExtend(projectDetail, {
         //     }
         //   })
         // }
-        
+
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         if (res.code == 4003) { //分享链接失效,返回验证页面
@@ -624,7 +624,7 @@ export default modelExtend(projectDetail, {
     * fileCopy({ payload }, { select, call, put }) {
       let res = yield call(fileCopy, payload)
       const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
-      let projectDetailInfoData = yield select(getModelSelectDatasState('projectDetail','projectDetailInfoData'))
+      let projectDetailInfoData = yield select(getModelSelectDatasState('projectDetail', 'projectDetailInfoData'))
       projectDetailInfoData = projectDetailInfoData || {}
       const BOARD_ID = projectDetailInfoData.board_id
       if (isApiResponseOk(res)) {
@@ -672,35 +672,42 @@ export default modelExtend(projectDetail, {
             openWin(val)
           }
         }
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            selectedRowKeys: [], 
+            selectedRows: []
+          }
+        })
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
-     // 另存为 - 保存为新版本
-     *saveAsNewVersion({ payload }, { select, call, put }){
+    // 另存为 - 保存为新版本
+    *saveAsNewVersion({ payload }, { select, call, put }) {
       let res = yield call(saveAsNewVersion, payload)
-      if(isApiResponseOk(res)) {
-          const data = res.data
-          const version_id = data.version_id;
-          setTimeout(() => {
-            message.success('保存为新版本成功', MESSAGE_DURATION_TIME)
-          }, 200)
-          yield put({
-            type: 'projectDetailFile/fileVersionist',
-            payload: {
-              version_id: version_id, //file_id,
-              isNeedPreviewFile: false,
-            }
-          })
-          yield put({
-            type: 'updateDatas',
-            payload: {
-              filePreviewCurrentFileId: data.id
-            }
-          })
-          // return data;
-      }else{
+      if (isApiResponseOk(res)) {
+        const data = res.data
+        const version_id = data.version_id;
+        setTimeout(() => {
+          message.success('保存为新版本成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'projectDetailFile/fileVersionist',
+          payload: {
+            version_id: version_id, //file_id,
+            isNeedPreviewFile: false,
+          }
+        })
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            filePreviewCurrentFileId: data.id
+          }
+        })
+        // return data;
+      } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
@@ -739,7 +746,7 @@ export default modelExtend(projectDetail, {
     * fileMove({ payload }, { select, call, put }) {
       let res = yield call(fileMove, payload)
       const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
-      let projectDetailInfoData = yield select(getModelSelectDatasState('projectDetail','projectDetailInfoData'))
+      let projectDetailInfoData = yield select(getModelSelectDatasState('projectDetail', 'projectDetailInfoData'))
       projectDetailInfoData = projectDetailInfoData || {}
       const BOARD_ID = projectDetailInfoData.board_id
 
@@ -774,7 +781,7 @@ export default modelExtend(projectDetail, {
     },
     * fileVersionist({ payload }, { select, call, put }) {
       const { isNeedPreviewFile, isPDF, file_id, version_id } = payload //是否需要重新读取文档
-      let res = yield call(fileVersionist, {version_id})
+      let res = yield call(fileVersionist, { version_id })
       // console.log(payload, 'ssssss')
       // console.log(version_id, 'ssssss')
       const new_breadcrumbList = yield select(selectBreadcrumbList)
@@ -1061,7 +1068,7 @@ export default modelExtend(projectDetail, {
     },
 
     // 圈评转换pdf并且设置为新版本
-    * fileConvertPdfAlsoUpdateVersion({payload}, {select, call, put}) {
+    * fileConvertPdfAlsoUpdateVersion({ payload }, { select, call, put }) {
       // const timer = setTimeout(() => {
       //   actionReducer({
       //     type: 'updateDatas',
@@ -1079,10 +1086,10 @@ export default modelExtend(projectDetail, {
       const supportPictureFileTypeArray = ['.png', '.gif', '.jpg', '.jpeg', '.tif', '.bmp', '.ico']
       if (is_loading) return
       if (supportFileTypeArray.indexOf(fileName) != -1 || supportPictureFileTypeArray.indexOf(fileName) != -1) { // 表示存在
-        let res = yield call(fileConvertPdfAlsoUpdateVersion, {id})
+        let res = yield call(fileConvertPdfAlsoUpdateVersion, { id })
         if (isApiResponseOk(res)) {
           let isPDF = getSubfixName(res.data.file_name) == '.pdf'
-          
+
           if (isPDF) {
             // yield put({
             //   type: 'getFilePDFInfo',

@@ -495,10 +495,16 @@ export default class Header extends React.Component {
     const { board_id, is_privilege, privileges = [] } = projectDetailInfoData
     const { dispatch } = this.props
     let chooseArray = []
-    for (let i = 0; i < selectedRowKeys.length; i++) {
-      chooseArray.push(fileList[selectedRowKeys[i]].file_resource_id)
-    }
+    // for (let i = 0; i < selectedRows.length; i++) {
+    //   // chooseArray.push(fileList[selectedRows[i]].file_resource_id)
+      
+    // }
+    selectedRows.map((item,i) => {
+      chooseArray.push(item.file_resource_id)
+      return chooseArray
+    })
     const ids = chooseArray.join(',')
+    if (!(ids && ids.length)) return
     dispatch({
       type: 'projectDetailFile/fileDownload',
       payload: {
