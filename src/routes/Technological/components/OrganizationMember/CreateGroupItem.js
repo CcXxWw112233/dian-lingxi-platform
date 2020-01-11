@@ -218,15 +218,7 @@ export default class TaskItem extends React.Component {
           {members.map((value, key) => {
             const { status } = value
             let contain
-            if (status === '2') {
-              contain = (
-                <ItemOne {...this.props} itemValue={value}
-                  parentItemValue={itemValue}
-                  parentKey={itemKey}
-                  itemKey={key}
-                  key={key} />
-              )
-            } else if (status === '1') {
+            if (status == '1' && is_default == '1') {//未分组下的审批状态
               contain = (
                 <ItemTwo {...this.props} itemValue={value}
                   parentItemValue={itemValue}
@@ -234,7 +226,13 @@ export default class TaskItem extends React.Component {
                   key={key} />
               )
             } else {
-
+              contain = (
+                <ItemOne {...this.props} itemValue={value}
+                  parentItemValue={itemValue}
+                  parentKey={itemKey}
+                  itemKey={key}
+                  key={key} />
+              )
             }
             return contain
           })}
