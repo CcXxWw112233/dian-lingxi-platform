@@ -96,6 +96,15 @@ export async function getUserAllOrgsBoardList(params) {
   });
 }
 
+// 极简模式中只针对项目档案中获取组织列表
+export async function getFilterAllOrgsWhetherItIsFilesAppsBoardList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/organization/board/file/list`,
+    method: 'GET',
+    params
+  })
+}
+
 //生成扫码加入小程序二维码
 export async function scanQrCodeJoin(data) {
   return request({

@@ -4,7 +4,7 @@ import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { getModelSelectState } from '@/models/utils'
 import { message } from 'antd'
-import { getUserAllOrgsBoardList, } from '@/services/technological/index'
+import { getUserAllOrgsBoardList, getFilterAllOrgsWhetherItIsFilesAppsBoardList} from '@/services/technological/index'
 export default {
     namespace: 'simplemode',
     state: {
@@ -162,6 +162,19 @@ export default {
             let res = yield call(getUserAllOrgsBoardList, payload);
             if (isApiResponseOk(res)) {
 
+                yield put({
+                    type: 'updateDatas',
+                    payload: {
+                        allOrgBoardTreeList: res.data
+                    }
+                });
+            } else {
+                message.warn(res.message, MESSAGE_DURATION_TIME)
+            }
+        },
+        * getFilterAllOrgsWhetherItIsFilesAppsBoardList({ payload }, { call, put, select }) {
+            let res = yield call(getFilterAllOrgsWhetherItIsFilesAppsBoardList, payload);
+            if (isApiResponseOk(res)) {
                 yield put({
                     type: 'updateDatas',
                     payload: {
