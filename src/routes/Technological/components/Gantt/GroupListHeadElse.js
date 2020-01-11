@@ -82,6 +82,13 @@ export default class GroupListHeadElse extends Component {
   }
   inputOnchange = (e) => {
     const { value } = e.target
+    if (value.trimLR() == '') {
+      message.warn('分组名称不能为空')
+      this.setState({
+        add_new_board_group_value: ''
+      })
+      return false
+  }
     this.setState({
       add_new_board_group_value: value
     })

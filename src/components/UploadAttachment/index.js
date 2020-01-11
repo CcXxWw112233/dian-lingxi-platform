@@ -239,7 +239,6 @@ export default class UploadAttachment extends Component {
       return false
     } else if (sum > UPLOAD_FILE_SIZE * 1024 * 1024) {
       message.error(`上传文件不能超过${UPLOAD_FILE_SIZE}MB`)
-      console.log('进来了','ssssssssssssssssssssssssssssss_error')
       // this.setUploadFileVisible(false);
       setTimeout(() => {
         this.closeUploadAttachmentModal()
@@ -377,6 +376,7 @@ export default class UploadAttachment extends Component {
 
   // 获取默认附件提醒人 负责人 || 操作人
   getDefaultNoticeUser = (data) => {
+    if (!data) return
     const { executors = [] } = this.props
     const {id} = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     let new_toNoticeList = []
@@ -414,7 +414,6 @@ export default class UploadAttachment extends Component {
     // 父组件传递的值
     const { visible, children, board_id, card_id, projectDetailInfoData = {}, org_id, boardFolderTreeData } = this.props;
     const { uploadFileVisible, uploadFilePreviewList = [], toNoticeList = [], fileSavePath, uploading } = this.state;
-    console.log(uploadFilePreviewList, 'sssssssssssssssssssssss_uploadFilePreviewList')
 
     const { data: projectMemberData } = projectDetailInfoData;
     return (

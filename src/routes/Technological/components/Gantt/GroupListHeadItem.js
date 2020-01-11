@@ -297,6 +297,13 @@ export default class GroupListHeadItem extends Component {
   }
   inputOnchange = (e) => {
     const { value } = e.target
+    if (value.trimLR() == '') {
+      message.warn('项目名称不能为空')
+      this.setState({
+        edit_input_value: ''
+      })
+      return false
+    }
     this.setState({
       edit_input_value: value
     })
