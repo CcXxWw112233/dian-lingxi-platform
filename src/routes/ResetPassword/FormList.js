@@ -33,7 +33,7 @@ class FormList extends React.Component {
       const { mobile = ''} = this.props.datas
       const obj = {
         mobile,
-        type: '3'
+        type: '4'
       }
       this.props.getVerificationcode ? this.props.getVerificationcode(obj, calback) : false
     })
