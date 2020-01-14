@@ -411,7 +411,7 @@ class VideoMeetingPopoverContent extends React.Component {
 	 * 6. 通知提醒人 -- 可有可无 默认为空[]
 	 */
 	getVideoMeetingPopoverContentNoramlDatas = () => {
-		defaultSaveToProject = this.filterCurrentDefaultSaveProjectValue()
+		defaultSaveToProject = this.filterCurrentDefaultSaveProjectValue() == '' ? '暂无可选项目' : this.filterCurrentDefaultSaveProjectValue()
 		defaultMeetingTitle = this.getCurrentUserNameThenSetMeetingTitle()
 		defaultAppointStartTime = this.getAppointStartTimeStamp()
 		currentDelayStartTime = this.getCurrentStartTimeStamp()
