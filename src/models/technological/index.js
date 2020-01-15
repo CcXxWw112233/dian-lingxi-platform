@@ -166,7 +166,7 @@ export default {
     },
 
     // 获取用户信息,相应的跳转操作
-    * getUSerInfo({ payload }, { select, call, put }) {
+    * getUSerInfo({ payload }, { select, call, put, all }) {
       const simplGetUserInfo = yield put({
         type: 'simplGetUserInfo',
       })
@@ -177,7 +177,7 @@ export default {
       const res = yield call(simplGetUserInfoSync) || {}
       if (isApiResponseOk(res)) {
         const user_set = res.data.user_set || {}//当前选中的组织
-        const current_org_id = user_set.current_org
+        const { is_simple_model, current_org_id } = user_set
         // 如果用户已选了某个确认的组织，而与当前前端缓存中组织不一致，则默认执行改变组织操作，并刷新
         if (current_org_id && current_org_id != localStorage.getItem('OrganizationId')) {
           yield put({
@@ -188,26 +188,52 @@ export default {
           })
           return
         }
-        const is_simple_model = user_set.is_simple_model
-        if (is_simple_model == '0' && locallocation.pathname.indexOf('/technological/simplemode') != -1) {
-          // 如果用户设置的是高效模式, 但是路由中存在极简模式, 则以模式为准
-          yield put(routerRedux.push('/technological/workbench'));
-        } else if (is_simple_model == '1' && locallocation.pathname.indexOf('/technological/simplemode') == -1) {
-          // 如果是用户设置的是极简模式, 但是路由中存在高效模式, 则以模式为准
-          yield put(routerRedux.push('/technological/simplemode/home'))
-        }
+        // if (is_simple_model == '0' && locallocation.pathname.indexOf('/technological/simplemode') != -1) {
+        //   // 如果用户设置的是高效模式, 但是路由中存在极简模式, 则以模式为准
+        //   yield put(routerRedux.push('/technological/workbench'));
+        // } else if (is_simple_model == '1' && locallocation.pathname.indexOf('/technological/simplemode') == -1) {
+        //   // 如果是用户设置的是极简模式, 但是路由中存在高效模式, 则以模式为准
+        //   yield put(routerRedux.push('/technological/simplemode/home'))
+        // }
         //组织切换重新加载
         const { operateType, routingJumpPath = '/technological?redirectHash', isNeedRedirectHash = true } = payload
         if (operateType === 'changeOrg') {
           const redirectHash = locallocation.pathname//'/technological/workbench'
-          if (document.getElementById('iframImCircle')) {
-            document.getElementById('iframImCircle').src = `/im/index.html?timestamp=${new Date().getTime()}`;
-          }
-          if (isNeedRedirectHash) {
-            yield put(routerRedux.push(`${routingJumpPath}=${redirectHash}`));
+          // if (isNeedRedirectHash) {
+          //   yield put(routerRedux.push(`${routingJumpPath}=${redirectHash}`));
+          // } else {
+          //   yield put(routerRedux.push(routingJumpPath));
+          // }
+          //仅仅为了阻塞,切换组织成功之后，先拉取权限，再做跳转，避免跳转后页面上根据权限显示的东西被上一个组织的权限覆盖
+          const getUserOrgPermissions = yield put({
+            type: 'getUserOrgPermissions',
+            payload: {}
+          })
+          const getUserOrgPermissionsfoSync = () => new Promise(resolve => {
+            resolve(getUserOrgPermissions.then())
+          })
+          const getUserBoardPermissions = yield put({
+            type: 'getUserBoardPermissions',
+            payload: {}
+          })
+          const getUserBoardPermissionsSync = () => new Promise(resolve => {
+            resolve(getUserBoardPermissions.then())
+          })
+          // Pro
+          yield call(getUserOrgPermissionsfoSync);
+          yield call(getUserBoardPermissionsSync);
+
+          // const permission_res = yield all([
+          //   getUserOrgPermissions,
+          //   getUserBoardPermissions,
+          // ])
+          // debugger
+          if (is_simple_model == '0') {
+            yield put(routerRedux.replace('/technological/workbench'));
           } else {
-            yield put(routerRedux.push(routingJumpPath));
+            yield put(routerRedux.replace('/technological/simplemode/home'));
           }
+
         }
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
@@ -451,6 +477,7 @@ export default {
         localStorage.setItem('userOrgPermissions', JSON.stringify([]))
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
+      return res
     },
     * getUserBoardPermissions({ payload }, { select, call, put }) {
       let res = yield call(getUserBoardPermissions, payload)
@@ -460,6 +487,7 @@ export default {
         localStorage.setItem('userBoardPermissions', JSON.stringify([]))
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
+      return res
     },
     //权限---end
 
