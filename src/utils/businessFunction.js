@@ -384,7 +384,8 @@ export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenI
     payload: {
       simplemodeCurrentProject: board_id == '0' ? '' : {
         board_id,
-        board_name
+        board_name,
+        org_id: org_id || getOrgIdByBoardId(board_id)
       }
     }
   })
