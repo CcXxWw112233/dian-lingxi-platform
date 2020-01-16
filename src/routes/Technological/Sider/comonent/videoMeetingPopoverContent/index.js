@@ -114,6 +114,12 @@ class VideoMeetingPopoverContent extends React.Component {
 					}, () => {
 						this.setVideoMeetingDefaultSuggesstionsByBoardUser({ board_users })
 						this.getCurrentRemindUser()
+						setTimeout(() => {
+							this.setState({
+								isShowNowTime: true
+							})
+							this.showTime()
+						})
 					})
 				} else {
 					message.error(res.message)
@@ -128,6 +134,12 @@ class VideoMeetingPopoverContent extends React.Component {
 			payload: {
 
 			}
+		})
+		setTimeout(() => {
+			this.setState({
+				isShowNowTime: true
+			})
+			this.showTime()
 		})
 	}
 
@@ -161,10 +173,12 @@ class VideoMeetingPopoverContent extends React.Component {
 				notProjectList: true
 			})
 		}
-		this.setState({
-			isShowNowTime: true
+		setTimeout(() => {
+			this.setState({
+				isShowNowTime: true
+			})
+			this.showTime()
 		})
-		this.showTime()
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -263,6 +277,7 @@ class VideoMeetingPopoverContent extends React.Component {
 			othersPeople: [],
 			userIds: [],
 			isShowNowTime: true,
+			isExeecedTime: false,
 			defaultValue: '30', // 当前选择的持续时间
 			changeValue: false,
 			toNoticeList: this.getCurrentRemindUser(),
@@ -472,15 +487,40 @@ class VideoMeetingPopoverContent extends React.Component {
 	startDatePickerChange = (timeString) => {
 		const start_timeStamp = timeToTimestamp(timeString)
 		const nowDate = timeToTimestamp(new Date())
+		let nextOrPrevDate = new Date(timestampToTimeNormal(start_timeStamp)).getDate()
+		let currentDate= new Date().getDate()
 		// console.log(parseInt(start_timeStamp / 1000), parseInt(nowDate / 1000), 'sssssssss')
 		if (timer) {
 			clearTimeout(timer)
 		}
-		this.setState({
-			start_time: timestampToTime(start_timeStamp, true),
-			meeting_start_time: start_timeStamp,
-			isShowNowTime: parseInt(start_timeStamp / 1000) == parseInt(nowDate / 1000) ? true : false
-		})
+		// 如果是点击的今天，那么提醒什么的都要隐藏
+		// 如果点击的是今天之前或者之后，那么就要显示
+		console.log(start_timeStamp, new Date(timestampToTimeNormal(start_timeStamp)).getDate(), new Date().getDate(), 'sssssssssssssssss_start_timeStamp')
+		if (currentDate == nextOrPrevDate) { // 表示是今天
+			this.handleChangeNowTime()
+			this.setState({
+				isExeecedTime: false
+			})
+		} else if (nextOrPrevDate < currentDate){ // 表示是今天之前
+			this.setState({
+				start_time: timestampToTime(start_timeStamp, true),
+				meeting_start_time: start_timeStamp,
+				isShowNowTime: false,
+				isExeecedTime: true
+			})
+		} else {
+			this.setState({
+				start_time: timestampToTime(start_timeStamp, true),
+				meeting_start_time: start_timeStamp,
+				isShowNowTime: false,
+				isExeecedTime: false
+			})
+		}
+		// this.setState({
+		// 	start_time: timestampToTime(start_timeStamp, true),
+		// 	meeting_start_time: start_timeStamp,
+		// 	isShowNowTime: parseInt(start_timeStamp / 1000) > parseInt(nowDate / 1000) ? false : true,
+		// })
 	}
 
 	// 设置会议的结束时间
@@ -679,14 +719,14 @@ class VideoMeetingPopoverContent extends React.Component {
 	// 发起会议成功之后调用通知提醒
 	setRemindInfo = ({ card_id, userIds = [], user_phone = [], start_url }) => {
 		const { dispatch } = this.props
-		const { isShowNowTime } = this.state
+		const { isShowNowTime, isExeecedTime } = this.state
 		const temp_user = [].concat(userIds, user_phone)
 		const data = {
 			rela_id: card_id,
 			remind_time_value,
 			rela_type: '2',
-			remind_time_type: isShowNowTime ? 'datetime' : 'm',
-			remind_trigger: isShowNowTime ? 'userdefined' : 'schedule:start:before',
+			remind_time_type: isShowNowTime || isExeecedTime ? 'datetime' : 'm',
+			remind_trigger: isShowNowTime || isExeecedTime ? 'userdefined' : 'schedule:start:before',
 			users: temp_user
 		}
 
@@ -745,8 +785,6 @@ class VideoMeetingPopoverContent extends React.Component {
 
 						}
 					})
-				} else {
-					message.warn(res.message)
 				}
 			})
 		}
@@ -755,7 +793,7 @@ class VideoMeetingPopoverContent extends React.Component {
 	// 发起会议
 	handleVideoMeetingSubmit = () => {
 		const { dispatch } = this.props;
-		const { saveToProject, org_id, meetingTitle, meeting_start_time, userIds = [], user_phone = [], isShowNowTime = true } = this.state;
+		const { saveToProject, org_id, meetingTitle, meeting_start_time, userIds = [], user_phone = [], isShowNowTime = true, isExeecedTime } = this.state;
 		const { defaultMeetingTitle, defaultSaveToProject, defaultAppointStartTime, defaultDelayDueTime } = this.getVideoMeetingPopoverContentNoramlDatas()
 		const time2 = currentDelayDueTime ? (meeting_start_time ? (meeting_start_time + currentDelayDueTime) : (defaultAppointStartTime + currentDelayDueTime)) : (defaultDelayDueTime)
 
@@ -780,15 +818,15 @@ class VideoMeetingPopoverContent extends React.Component {
 			if (res.code === "0") {
 				const { start_url, card_id } = res.data;
 				// this.setRemindInfo({card_id, userIds, user_phone})
-				if (isShowNowTime) remind_time_value = parseInt(meeting_start_time / 1000)
+				if (isShowNowTime || isExeecedTime) remind_time_value = parseInt(meeting_start_time / 1000)
 				// this.openWinNiNewTabWithATag(start_url)
 				this.inviteMemberJoin({ card_id, userIds, user_phone, start_url })
 
 				// 低频操作，获取甘特图数据
-				dispatch({
-					type: 'gantt/getGanttData',
-					payload: {}
-				})
+				// dispatch({
+				// 	type: 'gantt/getGanttData',
+				// 	payload: {}
+				// })
 			} else if (res.code === "1") {
 				message.error(res.message);
 				this.setState(
@@ -801,6 +839,14 @@ class VideoMeetingPopoverContent extends React.Component {
 				);
 			} else {
 				message.error("发起会议失败");
+				this.setState(
+					{
+						videoMeetingPopoverVisible: false
+					},
+					() => {
+						this.initVideoMeetingPopover();
+					}
+				);
 			}
 		});
 	};
@@ -856,6 +902,7 @@ class VideoMeetingPopoverContent extends React.Component {
 			showUserDefinedIconVisible,
 			defaultValue,
 			isShowNowTime,
+			isExeecedTime,
 			remindDropdownVisible
 		} = this.state;
 		let { projectList, board_id } = this.props;
@@ -936,9 +983,9 @@ class VideoMeetingPopoverContent extends React.Component {
 						{/* 设置通知提醒 S */}
 						<div className={indexStyles.videoMeeting__remind}>
 							<div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-								<span style={{ color: 'rgba(0,0,0,0.45)' }}>{isShowNowTime ? '邀请' : '提醒'}谁参与?</span>
+								<span style={{ color: 'rgba(0,0,0,0.45)' }}>{isShowNowTime || isExeecedTime ? '邀请' : '提醒'}谁参与?</span>
 								{
-									isShowNowTime ? ('') : (
+									isShowNowTime || isExeecedTime ? ('') : (
 										<span>
 											<Dropdown overlay={this.renderSelectedRemindTime()}>
 												<span className={`${globalStyles.authTheme}`}>开始前 {selectedKeys ? selectedKeys : '5'} 分钟提醒 &#xe7ee;</span>
