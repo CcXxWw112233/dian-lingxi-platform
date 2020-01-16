@@ -22,6 +22,7 @@ import { PROJECTS } from '@/globalset/js/constant'
 import { isApiResponseOk } from '@/utils/handleResponseData'
 import { organizationInviteWebJoin, commInviteWebJoin } from '@/services/technological'
 import { MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant';
+import moment from 'moment';
 const Option = Select.Option;
 const { TextArea } = Input;
 const { getMentions, toString, toContentState } = Mention;
@@ -502,7 +503,6 @@ class VideoMeetingPopoverContent extends React.Component {
 		}
 		// 如果是点击的今天，那么提醒什么的都要隐藏
 		// 如果点击的是今天之前或者之后，那么就要显示
-		console.log(start_timeStamp, new Date(timestampToTimeNormal(start_timeStamp)).getDate(), new Date().getDate(), 'sssssssssssssssss_start_timeStamp')
 		if (currentDate == nextOrPrevDate) { // 表示是今天
 			this.handleChangeNowTime()
 			this.setState({
@@ -892,6 +892,11 @@ class VideoMeetingPopoverContent extends React.Component {
 		});
 	};
 
+	// 禁用日期时间
+	disabledDate = (current) => {
+		return current && current < moment().add(-1, 'day')
+	}
+
 
 	renderPopover = () => {
 		const {
@@ -962,6 +967,7 @@ class VideoMeetingPopoverContent extends React.Component {
 										<DatePicker
 											onChange={this.startDatePickerChange.bind(this)}
 											// getCalendarContainer={triggerNode => triggerNode.parentNode}
+											disabledDate={this.disabledDate}
 											placeholder={start_time ? start_time : currentDelayStartTime}
 											format="YYYY/MM/DD HH:mm"
 											showTime={{ format: 'HH:mm' }}
