@@ -30,6 +30,7 @@ const Nav = Mention.Nav;
 // 定义组件中需要的默认状态值
 let nowDate = new Date()
 let defaultSaveToProject // 默认的保存项目名称
+let defaultSaveProjectName // 默认的项目名称
 let defaultMeetingTitle // 默认的会议名称
 let defaultAppointStartTime // 默认的开始时间
 let defaultDelayDueTime // 默认的结束时间
@@ -286,6 +287,7 @@ class VideoMeetingPopoverContent extends React.Component {
 		});
 		remind_time_value = '5'
 		defaultSaveToProject = ''
+		defaultSaveProjectName = ''
 		// clearTimeout(timer)
 	};
 
@@ -326,14 +328,19 @@ class VideoMeetingPopoverContent extends React.Component {
 		if (projectList && projectList.length) {
 			let new_projectList = [...projectList]
 			if (new_projectList.find(item => item.is_my_private == '1')) {
-				let gold_id = (new_projectList.find(item => item.is_my_private == '1') || {}).board_id
+				// let gold_id = (new_projectList.find(item => item.is_my_private == '1') || {}).board_id
+				let { board_id: gold_id, board_name } = (new_projectList.find(item => item.is_my_private == '1') || {})
+				defaultSaveProjectName = board_name
 				return gold_id
 			} else {
-				let gold_id = (new_projectList.find((item, index) => index == '0') || {}).board_id
+				// let gold_id = (new_projectList.find((item, index) => index == '0') || {}).board_id
+				let { board_id:gold_id, board_name } = (new_projectList.find((item, index) => index == '0') || {})
+				defaultSaveProjectName = board_name
 				return gold_id
 			}
 		} else {
 			let gold_id
+			defaultSaveProjectName = null
 			return gold_id = ''
 		}
 	}
@@ -1098,7 +1105,7 @@ class VideoMeetingPopoverContent extends React.Component {
 				{videoMeetingPopoverVisible && (
 					<div className={indexStyles.videoMeeting__header}>
 						<div className={`${globalStyles.authTheme} ${indexStyles.videoMeeting__mark}`}>&#xe6de;</div>
-						<div className={indexStyles.videoMeeting__title}>{saveToProject && saveProjectName && `${saveProjectName}${currentNounPlanFilterName(PROJECTS)}`} 在线会议</div>
+						<div className={indexStyles.videoMeeting__title}>{(saveToProject && saveProjectName) || defaultSaveProjectName && `${saveProjectName || defaultSaveProjectName}${currentNounPlanFilterName(PROJECTS)}`} 在线会议</div>
 					</div>
 				)}
 			</div>
