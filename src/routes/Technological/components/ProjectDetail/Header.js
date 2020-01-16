@@ -438,7 +438,10 @@ export default class Header extends React.Component {
 
   }
 
-  // 获取当前需要下载或者移动或者复制或者删除的文件, 该方法返回boolean类型的值
+  /**
+   * 获取当前需要下载或者移动或者复制或者删除的文件, 该方法返回boolean类型的值
+   * @returns {Boolean} true：表示没有权限 false：表示有权限
+   */
   getSelectedRows = () => {
     const { selectedRows = [] } = this.props
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
@@ -454,6 +457,8 @@ export default class Header extends React.Component {
       }
       return temp_arr
     })
+    // 如果说没有找到对应的权限列表
+    if (!(temp_arr && temp_arr.length)) return flag = false
     let new_arr = []
     // 这是取出当前操作人的权限
     temp_arr && temp_arr.map(item => {
@@ -468,7 +473,6 @@ export default class Header extends React.Component {
       temp_code.push(item.content_privilege_code)
       return temp_code
     })
-
     if (temp_code.indexOf('read') != -1 || temp_code.indexOf('comment') != -1) {
       flag = false
     } else {
@@ -484,7 +488,7 @@ export default class Header extends React.Component {
     //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
     //   return false
     // }
-    if (!this.getSelectedRows()) {
+    if (this.getSelectedRows()) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     } else if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {

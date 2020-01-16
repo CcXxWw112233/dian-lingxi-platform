@@ -658,19 +658,25 @@ export default modelExtend(projectDetail, {
       function openWin(url) {
         var element1 = document.createElement("a");
         element1.href = url;
+        element1.download = url // 需要加上download属性 
         element1.id = 'openWin'
         document.querySelector('body').appendChild(element1)
         document.getElementById("openWin").click();//点击事件
         document.getElementById("openWin").parentNode.removeChild(document.getElementById("openWin"))
       }
+
       let res = yield call(fileDownload, payload)
       if (isApiResponseOk(res)) {
         const data = res.data
         if (data && data.length) {
-          for (let val of data) {
-            // window.open(val)
-            openWin(val)
+          // 循环延时控制
+          for (let i = 0; i < data.length; i++) {
+            setTimeout(() => openWin(data[i]), i * 500)
           }
+          // for (let val of data) {
+          //   // window.open(val)
+          //   setTimeout(() => openWin(val), 500)
+          // }
         }
         yield put({
           type: 'updateDatas',
