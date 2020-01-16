@@ -177,13 +177,13 @@ export default {
       const res = yield call(simplGetUserInfoSync) || {}
       if (isApiResponseOk(res)) {
         const user_set = res.data.user_set || {}//当前选中的组织
-        const { is_simple_model, current_org_id } = user_set
+        const { is_simple_model, current_org } = user_set
         // 如果用户已选了某个确认的组织，而与当前前端缓存中组织不一致，则默认执行改变组织操作，并刷新
-        if (current_org_id && current_org_id != localStorage.getItem('OrganizationId')) {
+        if (current_org && current_org != localStorage.getItem('OrganizationId')) {
           yield put({
             type: 'changeCurrentOrg',
             payload: {
-              org_id: current_org_id
+              org_id: current_org
             }
           })
           return
@@ -219,10 +219,9 @@ export default {
           const getUserBoardPermissionsSync = () => new Promise(resolve => {
             resolve(getUserBoardPermissions.then())
           })
-          // Pro
-          yield call(getUserOrgPermissionsfoSync);
-          yield call(getUserBoardPermissionsSync);
-
+          // // Pro
+          // yield call(getUserOrgPermissionsfoSync);
+          // yield call(getUserBoardPermissionsSync);
           // const permission_res = yield all([
           //   getUserOrgPermissions,
           //   getUserBoardPermissions,
