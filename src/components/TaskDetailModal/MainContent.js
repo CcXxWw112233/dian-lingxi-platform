@@ -13,7 +13,7 @@ import {
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { addTaskExecutor, removeTaskExecutor, deleteTaskFile, getBoardTagList } from '../../services/technological/task'
 import {
-  checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
+  checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl, isPaymentOrgUser
 } from "@/utils/businessFunction";
 import { getFolderList } from '@/services/technological/file'
 import { getMilestoneList } from '@/services/technological/prjectDetail'
@@ -879,11 +879,16 @@ export default class MainContent extends Component {
   // 获取添加属性中的不同字段
   getDiffAttributies = () => {
     const { propertiesList = [], selectedKeys = [] } = this.state
+    const { drawContent = {}, projectDetailInfoData } = this.props
+    const { org_id } = drawContent
     if (!(propertiesList && propertiesList.length)) {
       return (<></>)
     }
     let new_propertiesList = [...propertiesList]
     new_propertiesList = new_propertiesList.filter(item => item.code != 'CONTENTLINK')
+    if (!isPaymentOrgUser(org_id)) {
+      new_propertiesList = new_propertiesList.filter(item => item.code != 'ATTACHMENT')
+    }
     return (
       <div>
         <div className={mainContentStyles.attrWrapper}>

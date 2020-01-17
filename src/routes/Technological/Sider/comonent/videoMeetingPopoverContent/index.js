@@ -1111,7 +1111,7 @@ class VideoMeetingPopoverContent extends React.Component {
 				{videoMeetingPopoverVisible && (
 					<div className={indexStyles.videoMeeting__header}>
 						<div className={`${globalStyles.authTheme} ${indexStyles.videoMeeting__mark}`}>&#xe6de;</div>
-						<div className={indexStyles.videoMeeting__title}>{(saveToProject && saveProjectName) || defaultSaveProjectName && `${saveProjectName || defaultSaveProjectName}${currentNounPlanFilterName(PROJECTS)}`} 在线会议</div>
+						<div className={indexStyles.videoMeeting__title}><span style={{maxWidth: '256px', marginRight: '5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'inline-block'}}>{(saveToProject && saveProjectName) || defaultSaveProjectName && `${saveProjectName || defaultSaveProjectName}${currentNounPlanFilterName(PROJECTS)}`}</span> 在线会议</div>
 					</div>
 				)}
 			</div>
