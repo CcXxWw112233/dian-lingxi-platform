@@ -164,7 +164,7 @@ export default class DrawDetailInfo extends React.Component {
       case 'removeMember':
         // console.log(this.checkCurrentOperatorMemberWhetherSelf(user_id), 'ssssss')
         if (this.checkCurrentOperatorMemberWhetherSelf(user_id)) {
-          message.warn('请不要移除自己哦~', MESSAGE_DURATION_TIME)
+          message.warn('请不要移除自己', MESSAGE_DURATION_TIME)
           return false
         }
         this.confirm({ board_id, user_id })

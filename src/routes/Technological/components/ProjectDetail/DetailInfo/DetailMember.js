@@ -125,7 +125,7 @@ export default class DetailMember extends Component {
     switch (key) {
       case 'removeMember':
         if (this.checkCurrentOperatorMemberWhetherSelf(user_id)) {
-          message.warn('请不要移除自己哦~', MESSAGE_DURATION_TIME)
+          message.warn('请不要移除自己', MESSAGE_DURATION_TIME)
           return false
         }
         this.confirm({board_id, user_id})
