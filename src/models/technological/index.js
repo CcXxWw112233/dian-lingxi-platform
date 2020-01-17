@@ -227,7 +227,7 @@ export default {
           //   getUserBoardPermissions,
           // ])
           // debugger
-          if (is_simple_model == '0') {
+          if (locallocation.pathname.indexOf('/technological/simplemode') == -1) { //is_simple_model == '0'
             yield put(routerRedux.replace('/technological/workbench'));
           } else {
             yield put(routerRedux.replace('/technological/simplemode/home'));
