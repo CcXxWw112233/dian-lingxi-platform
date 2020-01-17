@@ -43,7 +43,7 @@ export default class Technological extends React.Component {
   customOrgRouting = (nextProps) => {
     const { currentSelectOrganize: { id: last_id }, dispatch } = this.props
     const { currentSelectOrganize: { id: next_id } } = nextProps
-    const { location = {} } = this.props
+    const { location = {} } = nextProps
     // console.log('sssssssssss', this.props)
     const { pathname } = location
     if (last_id != next_id) { //组织切换的时候
@@ -59,6 +59,16 @@ export default class Technological extends React.Component {
       }
     }
 
+    if (pathname.indexOf('/technological/simplemode') == -1) { //在普通模式下，校验特定组织
+      if (!CUSTOMIZATION_ORGNIZATIONS.includes(next_id)) {
+        dispatch({
+          type: 'technological/routingReplace',
+          payload: {
+            route: '/technological/simplemode/home'
+          }
+        })
+      }
+    }
 
   }
 
