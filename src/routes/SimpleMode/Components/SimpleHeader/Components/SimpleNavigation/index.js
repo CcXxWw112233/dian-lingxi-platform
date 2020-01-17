@@ -22,6 +22,7 @@ import OrganizationMember from '@/routes/Technological/components/OrganizationMe
 import Organization from '@/routes/organizationManager'
 import queryString from 'query-string';
 import PayUpgrade from '@/routes/Technological/components/PayUpgrade/index'
+import { CUSTOMIZATION_ORGNIZATIONS } from '../../../../../../globalset/js/constant';
 const { SubMenu } = Menu;
 let timer;
 @connect(mapStateToProps)
@@ -634,13 +635,17 @@ export default class SimpleNavigation extends Component {
                             <span>通知设置</span>
                         </Menu.Item>
                         {
-                            isPaymentOrgUser() && (
-                            <Menu.Item key="subShowSimple">
-                                <span>
-                                    切换普通模式
-                                </span>
-                            </Menu.Item>
-                          )}
+                            isPaymentOrgUser() &&
+                            CUSTOMIZATION_ORGNIZATIONS.includes(this.props.currentSelectOrganize.id) &&
+                            true &&
+                            (
+                                <Menu.Item key="subShowSimple">
+                                    <span>
+                                        切换普通模式
+                                    </span>
+                                </Menu.Item>
+                            )
+                        }
 
                     </SubMenu>
 

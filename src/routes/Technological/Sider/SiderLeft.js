@@ -3,11 +3,11 @@ import { Icon, Layout, Menu, Dropdown, Tooltip, Switch, Modal } from 'antd';
 import indexStyles from './index.less'
 import glabalStyles from '../../../globalset/css/globalClassName.less'
 import linxiLogo from '../../../assets/library/lingxi_logo.png'
-import { checkIsHasPermission, currentNounPlanFilterName, isPaymentOrgUser} from "../../../utils/businessFunction";
+import { checkIsHasPermission, currentNounPlanFilterName, isPaymentOrgUser } from "../../../utils/businessFunction";
 import {
   DASHBOARD, MEMBERS, ORG_UPMS_ORGANIZATION_EDIT, ORG_UPMS_ORGANIZATION_ROLE_CREATE,
   ORG_UPMS_ORGANIZATION_ROLE_EDIT, ORG_UPMS_ORGANIZATION_ROLE_DELETE, ORG_UPMS_ORGANIZATION_MEMBER_ADD,
-  ORGANIZATION, PROJECTS, ORG_UPMS_ORGANIZATION_MEMBER_QUERY, MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN
+  ORGANIZATION, PROJECTS, ORG_UPMS_ORGANIZATION_MEMBER_QUERY, MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, CUSTOMIZATION_ORGNIZATIONS
 } from "../../../globalset/js/constant";
 import Cookies from 'js-cookie'
 import CreateOrganizationModal from '../components/HeaderNav/CreateOrganizationModal'
@@ -345,13 +345,13 @@ export default class SiderLeft extends React.Component {
     this.setState({
       payUpgradeModalVisible: true
     });
-   }
+  }
 
-   setPayUpgradeModalVisible = (visible) => {
+  setPayUpgradeModalVisible = (visible) => {
     this.setState({
       payUpgradeModalVisible: visible
     });
-   }
+  }
 
   // 是否显示全部组织
   handleShowAllOrg(checked) {
@@ -500,7 +500,7 @@ export default class SiderLeft extends React.Component {
                   <div className={indexStyles.bank}>
                     <div className={`${glabalStyles.authTheme} ${indexStyles.bank_icon}`}>&#xe719;</div>
                     <span className={indexStyles.middle_text}>组织管理后台</span>
-                    <div className={indexStyles.payUpgrade} onClick={(e)=>{this.openPayUpgradeModal(e)}} >升级</div>
+                    <div className={indexStyles.payUpgrade} onClick={(e) => { this.openPayUpgradeModal(e) }} >升级</div>
                   </div>
                 </div>
               </Menu.Item>
@@ -581,11 +581,17 @@ export default class SiderLeft extends React.Component {
             <Menu.Item key="subInfoSet">
               <span>通知设置</span>
             </Menu.Item>
-            <Menu.Item key="subShowSimple">
-              <span>
-                切换极简模式
-              </span>
-            </Menu.Item>
+            {
+              CUSTOMIZATION_ORGNIZATIONS.includes(this.props.currentSelectOrganize.id) &&
+              true &&
+              (
+                <Menu.Item key="subShowSimple">
+                  <span>
+                    切换极简模式
+                  </span>
+                </Menu.Item>
+              )
+            }
           </SubMenu>
 
           <Menu.Item key="10" >
@@ -708,7 +714,7 @@ export default class SiderLeft extends React.Component {
           <NotificationSettingsModal notificationSettingsModalVisible={this.state.NotificationSettingsModalVisible} setNotificationSettingsModalVisible={this.setNotificationSettingsModalVisible.bind(this)} />
         )}
         {
-          this.state.payUpgradeModalVisible && <PayUpgrade setPayUpgradeModalVisible={this.setPayUpgradeModalVisible}/>
+          this.state.payUpgradeModalVisible && <PayUpgrade setPayUpgradeModalVisible={this.setPayUpgradeModalVisible} />
         }
 
       </Sider>
