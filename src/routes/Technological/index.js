@@ -17,6 +17,7 @@ import Cookies from 'js-cookie'
 import { isPaymentOrgUser } from "@/utils/businessFunction"
 import { routerRedux } from "dva/router";
 import UploadNotification from '@/components/UploadNotification'
+import { CUSTOMIZATION_ORGNIZATIONS } from '../../globalset/js/constant';
 
 const { Sider, Content } = Layout;
 let net = null
@@ -38,6 +39,29 @@ export default class Technological extends React.Component {
       net = null
     }
   }
+
+  customOrgRouting = (nextProps) => {
+    const { currentSelectOrganize: { id: last_id }, dispatch } = this.props
+    const { currentSelectOrganize: { id: next_id } } = nextProps
+    const { location = {} } = this.props
+    // console.log('sssssssssss', this.props)
+    const { pathname } = location
+    if (last_id != next_id) { //组织切换的时候
+      if (!CUSTOMIZATION_ORGNIZATIONS.includes(next_id)) {
+        if (pathname.indexOf('/technological/simplemode') == -1) {
+          dispatch({
+            type: 'technological/routingReplace',
+            payload: {
+              route: '/technological/simplemode/home'
+            }
+          })
+        }
+      }
+    }
+
+
+  }
+
   connectWsToModel = () => {
     const { dispatch } = this.props
     if (net && typeof net == 'object') {
@@ -65,7 +89,7 @@ export default class Technological extends React.Component {
     if (old_page_load_type != nextProps.page_load_type) {
 
     }
-
+    this.customOrgRouting(nextProps)
 
   }
   // shouldComponentUpdate(newProps, newState) {
@@ -256,12 +280,14 @@ export default class Technological extends React.Component {
 function mapStateToProps({ technological: {
   datas: {
     page_load_type,
+    currentSelectOrganize = {}
     // currentUserOrganizes = [],
   }
 }
 }) {
   return {
     page_load_type,
+    currentSelectOrganize
     // currentUserOrganizes,
 
   }
