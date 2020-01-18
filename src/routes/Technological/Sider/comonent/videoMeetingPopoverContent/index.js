@@ -117,6 +117,10 @@ class VideoMeetingPopoverContent extends React.Component {
 						this.setVideoMeetingDefaultSuggesstionsByBoardUser({ board_users })
 						this.getCurrentRemindUser()
 						setTimeout(() => {
+							if (this.state.isNotUpdateShowTime) {
+								clearTimeout(timer)
+								return false
+							}
 							this.setState({
 								isShowNowTime: true
 							})
@@ -137,12 +141,13 @@ class VideoMeetingPopoverContent extends React.Component {
 
 			}
 		})
-		setTimeout(() => {
-			this.setState({
-				isShowNowTime: true
-			})
-			this.showTime()
-		})
+		// setTimeout(() => {
+		// 	if (this.state.isExeecedTime) return
+		// 	this.setState({
+		// 		isShowNowTime: true
+		// 	})
+		// 	this.showTime()
+		// })
 	}
 
 	componentDidMount() {
@@ -175,12 +180,6 @@ class VideoMeetingPopoverContent extends React.Component {
 				notProjectList: true
 			})
 		}
-		setTimeout(() => {
-			this.setState({
-				isShowNowTime: true
-			})
-			this.showTime()
-		})
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -237,6 +236,7 @@ class VideoMeetingPopoverContent extends React.Component {
 
 	// 时钟
 	showTime = () => {
+		if (!this.state.isShowNowTime) return
 		let nowDate = timestampToTime(timeToTimestamp(new Date()), true)
 		// console.log(nowDate, 'ssssssss')
 		this.setState({
@@ -459,6 +459,14 @@ class VideoMeetingPopoverContent extends React.Component {
 
 	// 修改创建会话的名称回调
 	handleVideoMeetingTopicChange = e => {
+		if (e.target.value.trimLR() == '') {
+			this.setState({
+				meetingTitle: '',
+				changeValue: true
+			})
+			
+			return false
+		}
 		this.setState({
 			meetingTitle: e.target.value,
 			changeValue: true
@@ -516,11 +524,18 @@ class VideoMeetingPopoverContent extends React.Component {
 				isExeecedTime: true
 			})
 		} else {
+			if (timer) {
+				clearTimeout(timer)
+			}
 			this.setState({
 				start_time: timestampToTime(start_timeStamp, true),
 				meeting_start_time: start_timeStamp,
 				isShowNowTime: false,
 				isExeecedTime: false
+			}, () => {
+				this.setState({
+					isNotUpdateShowTime: true
+				})
 			})
 		}
 		// this.setState({
@@ -663,7 +678,7 @@ class VideoMeetingPopoverContent extends React.Component {
 		if (isShowNowTime) {
 			return false
 		}
-		this.showTime() // 点击现在之后开启定时器
+		// this.showTime() // 点击现在之后开启定时器
 		const nowDate = timestampToTime(timeToTimestamp(new Date()), true)
 		const timestamp = timeToTimestamp(new Date())
 		// console.log(nowDate, timeToTimestamp(new Date()) / 1000, 'sssssssss')
@@ -671,6 +686,8 @@ class VideoMeetingPopoverContent extends React.Component {
 			isShowNowTime: true, // 显示当前时间
 			// start_time: nowDate,
 			// meeting_start_time: timestamp
+		}, () => {
+			this.showTime() // 点击现在之后开启定时器
 		})
 	}
 
@@ -934,7 +951,6 @@ class VideoMeetingPopoverContent extends React.Component {
 			remindDropdownVisible
 		} = this.state;
 		let { projectList, board_id } = this.props;
-
 		//过滤出来当前用户有编辑权限的项目
 		projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
 		let newToNoticeList = [].concat(...toNoticeList, ...othersPeople)
@@ -1101,7 +1117,7 @@ class VideoMeetingPopoverContent extends React.Component {
 						{/* 设置通知提醒 E */}
 
 						<div className={indexStyles.videoMeeting__submitBtn}>
-							<Button disabled={!defaultSaveToProject || this.state.notProjectList} type="primary" onClick={this.handleVideoMeetingSubmit}>
+							<Button disabled={!defaultSaveToProject || this.state.notProjectList ||(this.state.meetingTitle == '' && this.state.changeValue)} type="primary" onClick={this.handleVideoMeetingSubmit}>
 								{isShowNowTime ? '发起会议' : '预约会议'}
 							</Button>
 						</div>
