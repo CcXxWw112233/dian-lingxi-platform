@@ -512,10 +512,30 @@ class VideoMeetingPopoverContent extends React.Component {
 		// 如果是点击的今天，那么提醒什么的都要隐藏
 		// 如果点击的是今天之前或者之后，那么就要显示
 		if (currentDate == nextOrPrevDate) { // 表示是今天
-			this.handleChangeNowTime()
-			this.setState({
-				isExeecedTime: false
-			})
+			// 这里还需要判断选择的时钟和分钟是否是现在
+			if (new Date(timestampToTimeNormal(start_timeStamp,'/',true)).getHours() == new Date(nowDate).getHours() &&
+					new Date(timestampToTimeNormal(start_timeStamp,'/',true)).getMinutes() == new Date(nowDate).getMinutes()
+			) {
+				this.handleChangeNowTime()
+				this.setState({
+					isExeecedTime: false
+				})
+			} else {
+				if (timer) {
+					clearTimeout(timer)
+				}
+				this.setState({
+					start_time: timestampToTime(start_timeStamp, true),
+					meeting_start_time: start_timeStamp,
+					isShowNowTime: false,
+					isExeecedTime: true
+				}, () => {
+					this.setState({
+						isNotUpdateShowTime: true
+					})
+				})
+			}
+			
 		} else if (nextOrPrevDate < currentDate){ // 表示是今天之前
 			this.setState({
 				start_time: timestampToTime(start_timeStamp, true),
