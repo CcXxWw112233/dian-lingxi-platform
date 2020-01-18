@@ -552,7 +552,7 @@ export default class UploadAttachment extends Component {
             </div>
             {
               boardFolderTreeData && boardFolderTreeData.length == '0' && (
-                <span style={{ display: 'block', marginTop: '15px', marginLeft: '4px', color: '#FAAD14' }}>暂无访问文件权限哦~</span>
+                <span style={{ display: 'block', marginTop: '15px', marginLeft: '4px', color: '#FAAD14' }}>暂无访问文件权限</span>
               )
             }
           </div>
