@@ -137,8 +137,16 @@ class FormList extends React.Component {
       checkBoxChecked: !this.state.checkBoxChecked
     })
   }
+  // 校验是否可以点击验证码
+  getVerifyCodeCheck = () => {
+    const { mobile } = this.state
+    if (!validateTel(mobile)) {
+      return false
+    }
+    return true
+  }
   //获取验证码
-  getVerifyCode = (calback) => {
+  getVerifyCode = ({calback}) => {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!validateTel(values['mobile'])) {
         message.warn('请输入正确的手机号', MESSAGE_DURATION_TIME)
@@ -220,7 +228,7 @@ class FormList extends React.Component {
               )}
             </Col>
             <Col span={10}>
-              <VerificationCode getVerifyCode={this.getVerifyCode.bind(this)} style={{ height: '40px', fontSize: 16, color: 'rgba(0,0,0,.65)', width: '100%' }} text={'获取验证码'} />
+              <VerificationCode value_pass_check={this.getVerifyCodeCheck()} getVerifyCode={this.getVerifyCode.bind(this)} style={{ height: '40px', fontSize: 16, color: 'rgba(0,0,0,.65)', width: '100%' }} text={'获取验证码'} />
               {/*<Button style={{height: '40px',fontSize: 16,color: 'rgba(0,0,0,.65)', width: '100%'}}>获取验证码</Button>*/}
             </Col>
           </Row>
