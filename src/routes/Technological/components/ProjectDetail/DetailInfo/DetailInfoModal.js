@@ -61,7 +61,7 @@ class DetailInfoModal extends React.Component {
             <span style={{flex: '1'}}>全部成员</span>
           </div>
         ) : (
-        <div style={{textAlign: 'center', fontSize: 16, fontWeight: 500, color: '#000'}}>{`${board_name || ''}${currentNounPlanFilterName(PROJECTS)}信息`}</div>
+        <div style={{textAlign: 'center', fontSize: 16, fontWeight: 500, color: '#000', marginRight: '16px'}}>{`${board_name || ''}${currentNounPlanFilterName(PROJECTS)}信息`}</div>
         )} 
         visible={modalVisible}
         width={614}

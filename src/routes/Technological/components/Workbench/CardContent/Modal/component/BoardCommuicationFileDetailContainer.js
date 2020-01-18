@@ -7,8 +7,8 @@ import { connect } from 'dva'
 import { compareACoupleOfObjects } from '@/utils/util'
 import { fileInfoByUrl, getFilePDFInfo } from '@/services/technological/file'
 import { isApiResponseOk } from '@/utils/handleResponseData'
-import { FILES, MESSAGE_DURATION_TIME } from '@/globalset/js/constant'
-import { currentNounPlanFilterName, getOrgNameWithOrgIdFilter, checkIsHasPermissionInVisitControl, getSubfixName } from '@/utils/businessFunction.js'
+import { FILES, MESSAGE_DURATION_TIME, PROJECT_FILES_FILE_UPDATE } from '@/globalset/js/constant'
+import { currentNounPlanFilterName, getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl, getSubfixName } from '@/utils/businessFunction.js'
 import { message } from 'antd'
 const { LingxiIm, Im } = global.constants
 
@@ -97,7 +97,11 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     let res = await fileInfoByUrl({ id })
     if (isApiResponseOk(res)) {
       this.initStateDatas({ data: res.data })
-      await this.getFilePDFInfo({ id })
+      let flag = checkIsHasPermissionInVisitControl('edit', res.data.base_info.privileges, res.data.base_info.is_privilege,[], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, res.data.base_info.board_id))
+      if (flag) {
+        await this.getFilePDFInfo({ id })
+      }
+      // await this.getFilePDFInfo({ id })
       this.linkImWithFile({name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id})
     } else {
       message.warn(res.message, MESSAGE_DURATION_TIME)
