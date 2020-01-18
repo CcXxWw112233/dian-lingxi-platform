@@ -28,7 +28,7 @@ class FormList extends React.Component {
     }
   }
   //获取验证码
-  getVerifyCode = (calback) => {
+  getVerifyCode = ({calback}) => {
     this.props.form.validateFieldsAndScroll((err, values) => {
       const { mobile = ''} = this.props.datas
       const obj = {

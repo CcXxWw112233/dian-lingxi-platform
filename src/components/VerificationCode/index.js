@@ -1,9 +1,7 @@
 import React from 'react';
 import { Button } from 'antd'
-let interval = null
-let initTime = 60
 
-export default class VerificationCode extends React.Component{
+export default class VerificationCode extends React.Component {
 
   constructor(props) {
     super(props)
@@ -11,6 +9,9 @@ export default class VerificationCode extends React.Component{
   state = {
     initTimeText: '获取验证码',
     buttonDisabled: false, //初始设置按钮是可以点击的
+    interval: null,
+    initTimeValue: 60,
+    initTime: 60
   }
 
   buttonClick = () => {
@@ -18,35 +19,53 @@ export default class VerificationCode extends React.Component{
   }
   buttonClickAction = () => {
     const that = this
-    this.setState({
-      initTimeText: --initTime,
-      buttonDisabled: true
-    })
-    interval = setInterval(function () {
-      initTime --
-      that.setState({
-        initTimeText: initTime,
-        buttonDisabled: true
+    if (this.state.buttonDisabled) {
+      return false
+    }
+    that.setState({
+      buttonDisabled: true,
+    }, function () {
+      this.props.getVerifyCode({
+        calback: function () {
+          const { initTimeValue } = that.state
+          that.setState({
+            interval: setInterval(function () {
+              const { initTime } = that.state
+              that.setState({
+                initTime: initTime - 1,
+                initTimeText: initTime - 1,
+                buttonDisabled: true
+              })
+              if (initTime === 0) {
+                that.setState({
+                  initTime: initTimeValue,
+                  initTimeText: '重新获取',
+                  buttonDisabled: false,
+                })
+                if (that.state.interval != null) {
+                  clearInterval(that.state.interval)
+                }
+              }
+            }, 1000)
+          })
+        }
       })
-      if(initTime === 0) {
-        initTime = 60
-        clearInterval(interval)
-        that.setState({
-          initTimeText: '重新获取',
-          buttonDisabled: false,
-        })
-      }
-    }, 1000)
+    })
   }
   render() {
-    const { text, style, getVerifyCode } = this.props
-    const buttonDisabled = this.state.buttonDisabled
+    const { text, style, getVerifyCode, value_pass_check } = this.props
+    const { buttonDisabled } = this.state
     return (
-      <Button style={{...style, color: !buttonDisabled ? 'rgba(0,0,0,.65)' : 'rgba(0,0,0,.25)', }} disabled={this.state.buttonDisabled} onClick={getVerifyCode.bind(null, this.buttonClick)}>{this.state.initTimeText}</Button>
+      <Button style={{ ...style, color: !buttonDisabled ? 'rgba(0,0,0,.65)' : 'rgba(0,0,0,.25)', }} disabled={buttonDisabled || !value_pass_check} onClick={this.buttonClickAction.bind(this)}>{this.state.initTimeText}</Button>
     );
   }
 
 };
+VerificationCode.defaultProps = {
+  getVerifyCode: function () {
 
+  },
+  value_pass_check: true, //校验是否可以点击
+}
 VerificationCode.propTypes = {
 };
