@@ -694,6 +694,22 @@ class VideoMeetingPopoverContent extends React.Component {
 
 	// 邀请人加入的回调
 	inviteMemberJoin = ({ card_id, userIds = [], user_phone = [], start_url }) => {
+		if (!card_id) {
+			setTimeout(() => {
+				message.success("发起会议成功");
+			}, 500)
+			this.setState(
+				{
+					videoMeetingPopoverVisible: false,
+				},
+				() => {
+					this.initVideoMeetingPopover();
+					this.getCurrentRemindUser()
+				}
+			)
+			this.openWinNiNewTabWithATag(start_url)
+			return false
+		}
 		const { org_id } = this.state
 		let data = {
 			type: '4',
