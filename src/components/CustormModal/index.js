@@ -159,7 +159,7 @@ class CustormModal extends React.Component {
         bodyStyle={{ ...bodyStyle }}
         onCancel={onCancel}
         onOk={onOk}
-        wrapClassName={`${page_load_type == '2' ? (siderRightCollapsed ? indexStyles.wrapActiveModal : indexStyles.wrapNormalModal) : indexStyles.wrapModal} ${chatImVisiable || siderRightCollapsed ? indexStyles.container_wrapperActiveModal : indexStyles.container_wrapperNormalModal}`}
+        wrapClassName={`${page_load_type == '2' || whetherShowBodyScreenWidth ? (siderRightCollapsed ? indexStyles.wrapActiveModal : indexStyles.wrapNormalModal) : indexStyles.wrapModal} ${chatImVisiable || siderRightCollapsed ? indexStyles.container_wrapperActiveModal : indexStyles.container_wrapperNormalModal}`}
       >
         {overInner}
       </Modal>

@@ -498,9 +498,13 @@ export default class GroupListHeadItem extends Component {
       onOk: () => {
         deleteProject(board_id).then(res => {
           if (isApiResponseOk(res)) {
-            message.success(`已成功删除该${currentNounPlanFilterName(PROJECTS)}`)
+            setTimeout(() => message.success(`已成功删除该${currentNounPlanFilterName(PROJECTS)}`), 200)
             that.handleArchivedBoard()
             deleteBoardFollow()
+            that.props.dispatch({
+              type: 'workbench/getProjectList',
+              payload: {}
+            });
             modal.destroy();
           } else {
             message.warn(res.message)
@@ -528,9 +532,13 @@ export default class GroupListHeadItem extends Component {
       onOk: () => {
         quitProject({ board_id }).then(res => {
           if (isApiResponseOk(res)) {
-            message.success(`已成功退出该${currentNounPlanFilterName(PROJECTS)}`)
+            setTimeout(() => message.success(`已成功退出该${currentNounPlanFilterName(PROJECTS)}`), 200)
             that.handleArchivedBoard()
             deleteBoardFollow()
+            that.props.dispatch({
+              type: 'workbench/getProjectList',
+              payload: {}
+            });
             modal.destroy();
           } else {
             message.warn(res.message)
