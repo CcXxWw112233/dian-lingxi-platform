@@ -305,7 +305,7 @@ class VideoMeetingPopoverContent extends React.Component {
 	}
 	// 查询当前用户是否有权限
 	filterProjectWhichCurrentUserHasEditPermission = (projectList = []) => {
-		return projectList.filter(({ board_id }) => this.getProjectPermission('project:team:board:edit', board_id))
+		return projectList.filter(({ board_id }) => this.getProjectPermission('project:team:card:create', board_id))
 	}
 
 	// 获取当前用户
