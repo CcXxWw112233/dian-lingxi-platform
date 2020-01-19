@@ -456,6 +456,8 @@ export default class SimpleNavigation extends Component {
     }
     openPayUpgradeModal = (e) => {
         e.stopPropagation();
+        window.open('https://docs.qq.com/form/edit/DSHRaQ01GSU1qZHlT#/edit')
+        return
         this.setState({
             payUpgradeModalVisible: true
         });

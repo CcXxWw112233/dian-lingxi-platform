@@ -22,6 +22,7 @@ import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
 import QueryString from 'querystring'
 import { currentNounPlanFilterName, setOrganizationIdStorage } from "../../utils/businessFunction";
+import { clearnImAuth } from '../../utils/businessFunction'
 
 // 该model用于存放公用的 组织/权限/偏好设置/侧边栏的数据 (权限目前存放于localstorage, 未来会迁移到model中做统一)
 let naviHeadTabIndex //导航栏naviTab选项
@@ -503,6 +504,7 @@ export default {
 
 
     * logout({ payload }, { select, call, put }) { //提交表单
+      clearnImAuth()
       if (!Cookies.get('Authorization') || !Cookies.get('refreshToken')) {
         Cookies.remove('Authorization')
         Cookies.remove('refreshToken')
