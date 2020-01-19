@@ -335,7 +335,7 @@ class VideoMeetingPopoverContent extends React.Component {
 				return gold_id
 			} else {
 				// let gold_id = (new_projectList.find((item, index) => index == '0') || {}).board_id
-				let { board_id:gold_id, board_name } = (new_projectList.find((item, index) => index == '0') || {})
+				let { board_id: gold_id, board_name } = (new_projectList.find((item, index) => index == '0') || {})
 				defaultSaveProjectName = board_name
 				return gold_id
 			}
@@ -464,7 +464,7 @@ class VideoMeetingPopoverContent extends React.Component {
 				meetingTitle: '',
 				changeValue: true
 			})
-			
+
 			return false
 		}
 		this.setState({
@@ -504,7 +504,7 @@ class VideoMeetingPopoverContent extends React.Component {
 		const start_timeStamp = timeToTimestamp(timeString)
 		const nowDate = timeToTimestamp(new Date())
 		let nextOrPrevDate = new Date(timestampToTimeNormal(start_timeStamp)).getDate()
-		let currentDate= new Date().getDate()
+		let currentDate = new Date().getDate()
 		// console.log(parseInt(start_timeStamp / 1000), parseInt(nowDate / 1000), 'sssssssss')
 		if (timer) {
 			clearTimeout(timer)
@@ -513,8 +513,8 @@ class VideoMeetingPopoverContent extends React.Component {
 		// 如果点击的是今天之前或者之后，那么就要显示
 		if (currentDate == nextOrPrevDate) { // 表示是今天
 			// 这里还需要判断选择的时钟和分钟是否是现在
-			if (new Date(timestampToTimeNormal(start_timeStamp,'/',true)).getHours() == new Date(nowDate).getHours() &&
-					new Date(timestampToTimeNormal(start_timeStamp,'/',true)).getMinutes() == new Date(nowDate).getMinutes()
+			if (new Date(timestampToTimeNormal(start_timeStamp, '/', true)).getHours() == new Date(nowDate).getHours() &&
+				new Date(timestampToTimeNormal(start_timeStamp, '/', true)).getMinutes() == new Date(nowDate).getMinutes()
 			) {
 				this.handleChangeNowTime()
 				this.setState({
@@ -535,8 +535,8 @@ class VideoMeetingPopoverContent extends React.Component {
 					})
 				})
 			}
-			
-		} else if (nextOrPrevDate < currentDate){ // 表示是今天之前
+
+		} else if (nextOrPrevDate < currentDate) { // 表示是今天之前
 			this.setState({
 				start_time: timestampToTime(start_timeStamp, true),
 				meeting_start_time: start_timeStamp,
@@ -753,6 +753,8 @@ class VideoMeetingPopoverContent extends React.Component {
 			users: user_phone,
 			_organization_id: org_id
 		}
+		this.setRemindInfo({ card_id, userIds, user_phone: [], start_url })
+		return
 		if (user_phone && user_phone.length) {
 			organizationInviteWebJoin({ ...data }).then(res => {
 				if (isApiResponseOk(res)) {
@@ -1137,7 +1139,7 @@ class VideoMeetingPopoverContent extends React.Component {
 						{/* 设置通知提醒 E */}
 
 						<div className={indexStyles.videoMeeting__submitBtn}>
-							<Button disabled={!defaultSaveToProject || this.state.notProjectList ||(this.state.meetingTitle == '' && this.state.changeValue)} type="primary" onClick={this.handleVideoMeetingSubmit}>
+							<Button disabled={!defaultSaveToProject || this.state.notProjectList || (this.state.meetingTitle == '' && this.state.changeValue)} type="primary" onClick={this.handleVideoMeetingSubmit}>
 								{isShowNowTime ? '发起会议' : '预约会议'}
 							</Button>
 						</div>
@@ -1163,7 +1165,7 @@ class VideoMeetingPopoverContent extends React.Component {
 				{videoMeetingPopoverVisible && (
 					<div className={indexStyles.videoMeeting__header}>
 						<div className={`${globalStyles.authTheme} ${indexStyles.videoMeeting__mark}`}>&#xe6de;</div>
-						<div className={indexStyles.videoMeeting__title}><span style={{maxWidth: '256px', marginRight: '5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'inline-block'}}>{(saveToProject && saveProjectName) || defaultSaveProjectName && `${saveProjectName || defaultSaveProjectName}${currentNounPlanFilterName(PROJECTS)}`}</span> 在线会议</div>
+						<div className={indexStyles.videoMeeting__title}><span style={{ maxWidth: '256px', marginRight: '5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'inline-block' }}>{(saveToProject && saveProjectName) || defaultSaveProjectName && `${saveProjectName || defaultSaveProjectName}${currentNounPlanFilterName(PROJECTS)}`}</span> 在线会议</div>
 					</div>
 				)}
 			</div>
