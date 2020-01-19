@@ -251,9 +251,9 @@ export default class GroupListHeadItem extends Component {
     if (VisitControlPopoverVisible) return false
     this.props.dispatch({
       type: 'projectDetail/projectDetailInfo',
-        payload: {
-          id: board_id
-        }
+      payload: {
+        id: board_id
+      }
     })
   }
 
@@ -379,6 +379,27 @@ export default class GroupListHeadItem extends Component {
       }
     })
   }
+  updateBoardsName = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/getAboutAppsBoards',
+      payload: {
+
+      }
+    })
+    dispatch({
+      type: 'gantt/getAboutGroupBoards',
+      payload: {
+
+      }
+    })
+    dispatch({
+      type: 'gantt/getAboutUsersBoards',
+      payload: {
+
+      }
+    })
+  }
   // 请求更新项目名称
   requestUpdateBoard = (data = {}) => {
     updateProject({ ...data }).then(res => {
@@ -387,6 +408,7 @@ export default class GroupListHeadItem extends Component {
         message.success('已成功更新项目名称')
         global.constants.lx_utils.editBoardName({ board_id: data.board_id, name: data.name }) //更新圈子
         this.updateBoardFiles(data)
+        this.updateBoardsName()
       } else {
         message.error(res.message)
       }
@@ -829,7 +851,7 @@ export default class GroupListHeadItem extends Component {
   // 获取项目详情中的成员列表
   getProjectDetailInfoData = () => {
     const { projectDetailInfoData = {}, itemValue } = this.props
-    const { data:  projectParticipant = []} = projectDetailInfoData
+    const { data: projectParticipant = [] } = projectDetailInfoData
     const { privileges_extend = [] } = itemValue
     let temp_projectParticipant = [].concat(projectParticipant && [...projectParticipant], privileges_extend && [...privileges_extend])
     const removeEmptyArrayEle = (arr) => {
