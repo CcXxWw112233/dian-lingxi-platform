@@ -528,7 +528,7 @@ class VideoMeetingPopoverContent extends React.Component {
 					start_time: timestampToTime(start_timeStamp, true),
 					meeting_start_time: start_timeStamp,
 					isShowNowTime: false,
-					isExeecedTime: true
+					isExeecedTime: false
 				}, () => {
 					this.setState({
 						isNotUpdateShowTime: true
@@ -1011,7 +1011,7 @@ class VideoMeetingPopoverContent extends React.Component {
 								{/* 会议名称 E */}
 
 								{/* 时间选择 S */}
-								<span className={indexStyles.videoMeeting__topic_content_time}>
+								{/* <span className={indexStyles.videoMeeting__topic_content_time}>
 									<span className={indexStyles.videoMeeting__topic_content_datePicker} style={{ position: 'relative', zIndex: 0, minWidth: '200px', lineHeight: '38px', display: 'inline-block', textAlign: 'center' }}>
 										<span>
 											<Input
@@ -1033,7 +1033,6 @@ class VideoMeetingPopoverContent extends React.Component {
 											// onChange={(e) => { this.endDatePickerChange(e) }} 
 
 											getPopupContainer={triggerNode => triggerNode.parentNode} dropdownClassName={`${indexStyles.select_overlay} ${globalStyles.global_vertical_scrollbar}`} style={{ width: '136px' }} value={[defaultValue]}>
-											{/* <Option value="1">持续1小时</Option> */}
 											{
 												dueTimeList && dueTimeList.map((item, index) => (
 													<Option
@@ -1043,7 +1042,7 @@ class VideoMeetingPopoverContent extends React.Component {
 											}
 										</Select>
 									</span>
-								</span>
+								</span> */}
 								{/* 时间选择 E */}
 							</div>
 						</div>
@@ -1051,7 +1050,7 @@ class VideoMeetingPopoverContent extends React.Component {
 						<div className={indexStyles.videoMeeting__remind}>
 							<div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
 								<span style={{ color: 'rgba(0,0,0,0.45)' }}>{isShowNowTime || isExeecedTime ? '邀请' : '提醒'}谁参与?</span>
-								{
+								{/* {
 									isShowNowTime || isExeecedTime ? ('') : (
 										<span>
 											<Dropdown overlay={this.renderSelectedRemindTime()}>
@@ -1059,7 +1058,7 @@ class VideoMeetingPopoverContent extends React.Component {
 											</Dropdown>
 										</span>
 									)
-								}
+								} */}
 							</div>
 							<div className={indexStyles.noticeUsersWrapper}>
 								{
