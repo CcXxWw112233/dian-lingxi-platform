@@ -40,6 +40,8 @@ export default {
       currentUserWallpaperContent: null,
       currentSelectOrganize: {}, //用户当前组织
       userInfo: {}, //用户信息
+      userOrgPermissions: [],
+      userBoardPermissions: []
     }
   },
   subscriptions: {
