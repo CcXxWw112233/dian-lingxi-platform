@@ -19,6 +19,7 @@ import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from '../../services/technological/project'
 import { createShareLink, modifOrStopShareLink } from '@/services/technological/workbench'
 import ShareAndInvite from '@/routes/Technological/components/ShareAndInvite/index'
+import SaveAsNewVersionFile from './component/SaveAsNewVersionFile'
 
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
@@ -335,25 +336,54 @@ export default class HeaderContentRightMenu extends Component {
     }
   }
 
+  // 关闭弹窗的回调
+  setSaveAsNewVersionVisible = () => {
+    this.setState({
+      saveAsNewVersionFileVisible: false,
+      saveAsNewVersionFileTitle: ''
+    })
+  }
+
   // 保存为新版本
-  handleSaveAsNewVersion = () => {
+  handleSaveAsNewVersion = (e) => {
+    const { key } = e
     const { currentPreviewFileData: { id, privileges = [], is_privilege }, projectDetailInfoData: { folder_id, board_id } } = this.props
     if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
+    this.setState({
+      saveAsNewVersionFileVisible: true,
+      saveAsNewVersionFileTitle: '保存为新版本',
+      titleKey:key
+    })
     // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)) {
     //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
     //   return false
     // }
     
-    saveAsNewVersion({id}).then(res => {
-      if (isApiResponseOk(res)) {
-        const { version_id, id } = res.data
-        this.getFileVersionist({version_id, file_id: id, folder_id})
-      } else {
-        message.warn(res.message, MESSAGE_DURATION_TIME)
-      }
+    // saveAsNewVersion({id}).then(res => {
+    //   if (isApiResponseOk(res)) {
+    //     const { version_id, id } = res.data
+    //     this.getFileVersionist({version_id, file_id: id, folder_id})
+    //   } else {
+    //     message.warn(res.message, MESSAGE_DURATION_TIME)
+    //   }
+    // })
+  }
+
+  // 另存文件为新版本
+  handleSaveAsOthersNewVersion = (e) => {
+    const { key } = e
+    const { currentPreviewFileData: { id, privileges = [], is_privilege }, projectDetailInfoData: { folder_id, board_id } } = this.props
+    if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    this.setState({
+      saveAsNewVersionFileVisible: true,
+      saveAsNewVersionFileTitle: '另存新版本',
+      titleKey: key
     })
   }
 
@@ -361,15 +391,20 @@ export default class HeaderContentRightMenu extends Component {
     const { filePreviewCurrentResourceId, pdfDownLoadSrc } = this.props
     return (
       <Menu>
-        <Menu.Item key="1"
-        onClick={this.handleFileDownload.bind(this, { filePreviewCurrentResourceId, pdfDownLoadSrc })}
-        >
-          下载到本地
-        </Menu.Item>
         <Menu.Item key="2"
         onClick={this.handleSaveAsNewVersion}
         >
           保存为新版本
+        </Menu.Item>
+        <Menu.Item key="3"
+        onClick={this.handleSaveAsOthersNewVersion}
+        >
+          另存为新文件
+        </Menu.Item>
+        <Menu.Item key="1"
+        onClick={this.handleFileDownload.bind(this, { filePreviewCurrentResourceId, pdfDownLoadSrc })}
+        >
+          下载到本地
         </Menu.Item>
       </Menu>
     )
@@ -871,6 +906,12 @@ export default class HeaderContentRightMenu extends Component {
         <div>
           <div style={{ cursor: 'pointer' }} onClick={this.zoomFrame} className={`${globalStyles.authTheme}`}><span style={{ fontSize: '22px' }}>&#xe7f3;</span></div>
         </div>
+
+        {/* 另存为Modal */}
+        <div>
+          <SaveAsNewVersionFile setSaveAsNewVersionVisible={this.setSaveAsNewVersionVisible} visible={this.state.saveAsNewVersionFileVisible} title={this.state.saveAsNewVersionFileTitle}
+          titleKey={this.state.titleKey}/>
+        </div>
       </div>
     )
   }
@@ -887,4 +928,3 @@ function mapStateToProps({
     projectDetailInfoData
   }
 }
-
