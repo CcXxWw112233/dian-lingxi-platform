@@ -20,6 +20,7 @@ import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } f
 import { createShareLink, modifOrStopShareLink } from '@/services/technological/workbench'
 import ShareAndInvite from '@/routes/Technological/components/ShareAndInvite/index'
 import SaveAsNewVersionFile from './component/SaveAsNewVersionFile'
+import { getFolderList } from '@/services/technological/file'
 
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
@@ -372,19 +373,36 @@ export default class HeaderContentRightMenu extends Component {
     // })
   }
 
+  //获取项目里文件夹列表
+	getProjectFolderList = ({board_id, file_name, key}) => {
+		getFolderList({ board_id }).then((res) => {
+			if (isApiResponseOk(res)) {
+				this.setState({
+          boardFolderTreeData: res.data,
+          saveAsNewVersionFileVisible: true,
+          saveAsNewVersionFileTitle: '另存为新版本',
+          titleKey: key,
+				});
+			} else {
+				message.error(res.message)
+			}
+		})
+	}
+
   // 另存文件为新版本
   handleSaveAsOthersNewVersion = (e) => {
     const { key } = e
-    const { currentPreviewFileData: { id, privileges = [], is_privilege }, projectDetailInfoData: { folder_id, board_id } } = this.props
+    const { currentPreviewFileData: { id, file_name, privileges = [], is_privilege }, projectDetailInfoData: { folder_id, board_id } } = this.props
     if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    this.setState({
-      saveAsNewVersionFileVisible: true,
-      saveAsNewVersionFileTitle: '另存新版本',
-      titleKey: key
-    })
+    this.getProjectFolderList({board_id, file_name, key})
+    // this.setState({
+    //   saveAsNewVersionFileVisible: true,
+    //   saveAsNewVersionFileTitle: '另存新版本',
+    //   titleKey: key,
+    // })
   }
 
   saveAsMenu = () => {
@@ -749,8 +767,8 @@ export default class HeaderContentRightMenu extends Component {
 
   render() {
     const that = this
-    const { currentPreviewFileData = {}, filePreviewCurrentFileId, filePreviewCurrentVersionId, projectDetailInfoData: { data = [], folder_id }, isZoomPictureFullScreenMode, onlyReadingShareModalVisible, onlyReadingShareData, selectedKeys = [] } = this.props
-    const { new_filePreviewCurrentVersionList = [], is_edit_version_description, editValue} = this.state
+    const { currentPreviewFileData = {}, filePreviewCurrentFileId, filePreviewCurrentVersionId, projectDetailInfoData: { data = [], folder_id }, isZoomPictureFullScreenMode, onlyReadingShareModalVisible, onlyReadingShareData, selectedKeys = [], targetFilePath = {} } = this.props
+    const { new_filePreviewCurrentVersionList = [], is_edit_version_description, editValue, boardFolderTreeData = []} = this.state
     const { board_id, is_privilege, privileges = [], id, file_id, is_shared } = currentPreviewFileData
     const params = {
       filePreviewCurrentFileId,
@@ -909,7 +927,7 @@ export default class HeaderContentRightMenu extends Component {
 
         {/* 另存为Modal */}
         <div>
-          <SaveAsNewVersionFile setSaveAsNewVersionVisible={this.setSaveAsNewVersionVisible} visible={this.state.saveAsNewVersionFileVisible} title={this.state.saveAsNewVersionFileTitle}
+          <SaveAsNewVersionFile currentPreviewFileData={currentPreviewFileData} boardFolderTreeData={boardFolderTreeData} setSaveAsNewVersionVisible={this.setSaveAsNewVersionVisible} visible={this.state.saveAsNewVersionFileVisible} title={this.state.saveAsNewVersionFileTitle}
           titleKey={this.state.titleKey}/>
         </div>
       </div>
