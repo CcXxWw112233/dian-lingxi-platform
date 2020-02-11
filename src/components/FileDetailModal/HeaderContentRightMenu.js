@@ -767,7 +767,7 @@ export default class HeaderContentRightMenu extends Component {
 
   render() {
     const that = this
-    const { currentPreviewFileData = {}, filePreviewCurrentFileId, filePreviewCurrentVersionId, projectDetailInfoData: { data = [], folder_id }, isZoomPictureFullScreenMode, onlyReadingShareModalVisible, onlyReadingShareData, selectedKeys = [], targetFilePath = {} } = this.props
+    const { currentPreviewFileData = {}, filePreviewCurrentFileId, filePreviewCurrentVersionId, projectDetailInfoData: { data = [], folder_id }, projectDetailInfoData = {}, isZoomPictureFullScreenMode, onlyReadingShareModalVisible, onlyReadingShareData, selectedKeys = [], targetFilePath = {} } = this.props
     const { new_filePreviewCurrentVersionList = [], is_edit_version_description, editValue, boardFolderTreeData = []} = this.state
     const { board_id, is_privilege, privileges = [], id, file_id, is_shared } = currentPreviewFileData
     const params = {
@@ -858,9 +858,9 @@ export default class HeaderContentRightMenu extends Component {
         {/* 另存为 */}
         <div className={headerStyles.margin_right10} style={{ position: 'relative' }}>
           <Dropdown trigger={['click']} overlay={this.saveAsMenu()} getPopupContainer={triggerNode => triggerNode.parentNode}>
-            <Button style={{ height: 24 }} >
-              <span className={`${globalStyles.authTheme} ${headerStyles.right__shareIndicator_icon}`}>&#xe6dd;</span>
-              另存为
+            <Button type={'primary'} style={{ height: 24,lineHeight: '24px' }} >
+              <span style={{marginRight:'4px'}} className={`${globalStyles.authTheme} ${headerStyles.right__shareIndicator_icon}`}>&#xe63b;</span>
+               保存 <span style={{display:'inline-block',verticalAlign:'middle',fontSize:'12px',marginLeft:'2px'}} className={`${globalStyles.authTheme}`}>&#xe7ee;</span>
                 </Button>
           </Dropdown>
         </div>
@@ -927,7 +927,7 @@ export default class HeaderContentRightMenu extends Component {
 
         {/* 另存为Modal */}
         <div>
-          <SaveAsNewVersionFile currentPreviewFileData={currentPreviewFileData} boardFolderTreeData={boardFolderTreeData} setSaveAsNewVersionVisible={this.setSaveAsNewVersionVisible} visible={this.state.saveAsNewVersionFileVisible} title={this.state.saveAsNewVersionFileTitle}
+          <SaveAsNewVersionFile projectDetailInfoData={projectDetailInfoData} currentPreviewFileData={currentPreviewFileData} boardFolderTreeData={boardFolderTreeData} setSaveAsNewVersionVisible={this.setSaveAsNewVersionVisible} visible={this.state.saveAsNewVersionFileVisible} title={this.state.saveAsNewVersionFileTitle}
           titleKey={this.state.titleKey}/>
         </div>
       </div>

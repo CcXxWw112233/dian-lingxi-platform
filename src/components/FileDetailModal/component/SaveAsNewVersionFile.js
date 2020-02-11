@@ -10,7 +10,18 @@ export default class SaveAsNewVersionFile extends Component {
 
 	state = {
 		fileSavePath: null,
-		uploading: null
+		uploading: null,
+		toNoticeList: [],
+		visible: false
+	}
+
+	initState = () => {
+		this.setState({
+			fileSavePath: null,
+			uploading: null,
+			toNoticeList: [],
+			visible: false
+		})
 	}
 
 	// 关闭弹框
@@ -19,6 +30,7 @@ export default class SaveAsNewVersionFile extends Component {
 		// 	return message.error('另存为中：暂不能操作');
 		// }
 		this.props.setSaveAsNewVersionVisible && this.props.setSaveAsNewVersionVisible()
+		this.initState()
 	}
 
 	// 截取文件名称点缀
@@ -30,6 +42,16 @@ export default class SaveAsNewVersionFile extends Component {
 		arr.join('.')
 		return arr
 	}
+
+	onVisibleChange = (visible) => {
+    if (this.state.uploading) {
+      message.warn('正在上传中...请勿操作')
+      return false
+    }
+    this.setState({
+      visible: visible
+    })
+  }
 
 	onChangeFileSavePath = (value) => {
 		// if (this.state.uploading) {
@@ -46,9 +68,64 @@ export default class SaveAsNewVersionFile extends Component {
 		}
 	}
 
+	//修改通知人的回调 S
+	chirldrenTaskChargeChange = (data) => {
+		if (this.state.uploading) {
+			message.warn('正在上传中...请勿操作')
+			return false
+		}
+		const { projectDetailInfoData = {} } = this.props;
+		// 多个任务执行人
+		const membersData = projectDetailInfoData['data'] //所有的人
+		// const excutorData = new_userInfo_data //所有的人
+		let newNoticeUserList = []
+		const { selectedKeys = [], type, key } = data
+		for (let i = 0; i < selectedKeys.length; i++) {
+			for (let j = 0; j < membersData.length; j++) {
+				if (selectedKeys[i] === membersData[j]['user_id']) {
+					newNoticeUserList.push(membersData[j])
+				}
+			}
+		}
+
+		this.setState({
+			toNoticeList: newNoticeUserList
+		});
+
+		if (data.type === "add") {
+
+		} else if (data.type === "remove") {
+			//toNoticeList.add();
+		}
+
+	}
+	// 添加执行人的回调 E
+
+	// 移除执行人的回调 S
+	handleRemoveExecutors = (e, shouldDeleteItem) => {
+		e && e.stopPropagation()
+		if (this.state.uploading) {
+			message.warn('正在上传中...请勿操作')
+			return false
+		}
+		const { toNoticeList = [] } = this.state
+		let new_toNoticeList = [...toNoticeList]
+		new_toNoticeList.map((item, index) => {
+			if (item.user_id == shouldDeleteItem) {
+				new_toNoticeList.splice(index, 1)
+			}
+		})
+		this.setState({
+			toNoticeList: new_toNoticeList
+		})
+	}
+	// 移除执行人的回调 E
+
 	// 保存为新版本
 	renderKeepNewVersion = () => {
-		const { projectMemberData = [], toNoticeList = [] } = this.props
+		const { projectDetailInfoData = {} } = this.props
+		const { data: projectMemberData, board_id, org_id } = projectDetailInfoData;
+		const { toNoticeList = [] } = this.state
 		return (
 			<div>
 				{/* 通知内容 */}
@@ -59,26 +136,80 @@ export default class SaveAsNewVersionFile extends Component {
 				<div>
 					<span className={globalStyles.authTheme}>&#xe6e3;</span> 提醒谁查看：
 				   <div className={headerStyles.noticeUsersWrapper} style={{ marginTop: '6px' }}>
-						<div style={{ position: 'relative' }}>
-							<Dropdown trigger={['click']} overlayClassName={headerStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
-								overlayStyle={{ maxWidth: '200px' }}
-								overlay={
-									<MenuSearchPartner
-										listData={projectMemberData} keyCode={'user_id'} searchName={'name'} currentSelect={toNoticeList}
-										// board_id={board_id}
-										invitationType='1'
-										// invitationId={board_id}
-										// invitationOrg={org_id}
-										chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
-								}
-							>
-								{/* 添加通知人按钮 */}
 
-								<div className={headerStyles.addNoticePerson}>
-									<Icon type="plus-circle" style={{ fontSize: '40px', color: '#40A9FF' }} />
-								</div>
-							</Dropdown>
-						</div>
+						<span style={{ flex: '1' }}>
+							{
+								!toNoticeList.length ? (
+									<div style={{ flex: '1', position: 'relative' }}>
+										<Dropdown 
+										visible={this.state.visible} 
+										trigger={['click']} overlayClassName={headerStyles.overlay_pricipal} 
+										onVisibleChange={this.onVisibleChange} 
+										getPopupContainer={triggerNode => triggerNode.parentNode}
+											overlayStyle={{ maxWidth: '200px' }}
+											overlay={
+												<MenuSearchPartner
+													listData={projectMemberData} keyCode={'user_id'} searchName={'name'} currentSelect={toNoticeList}
+													board_id={board_id}
+													invitationType='1'
+													invitationId={board_id}
+													invitationOrg={org_id}
+													chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
+											}
+										>
+											{/* 添加通知人按钮 */}
+
+											<div className={headerStyles.addNoticePerson}>
+												<Icon type="plus-circle" style={{ fontSize: '40px', color: '#40A9FF' }} />
+											</div>
+										</Dropdown>
+									</div>
+								) : (
+										<div style={{ flex: '1', position: 'relative' }}>
+											<Dropdown visible={this.state.visible} trigger={['click']} overlayClassName={headerStyles.overlay_pricipal} onVisibleChange={this.onVisibleChange} getPopupContainer={triggerNode => triggerNode.parentNode}
+											overlayStyle={{ maxWidth: '200px' }}
+												overlay={
+													<MenuSearchPartner
+														invitationType='1'
+														invitationId={board_id}
+														invitationOrg={org_id}
+														listData={projectMemberData} keyCode={'user_id'} searchName={'name'} currentSelect={toNoticeList} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+														board_id={board_id} />
+												}
+											>
+												<div style={{ display: 'flex', flexWrap: 'wrap' }} >
+													{/* 添加通知人按钮 */}
+													<div className={headerStyles.addNoticePerson}>
+														<Icon type="plus-circle" style={{ fontSize: '40px', color: '#40A9FF' }} />
+													</div>
+
+
+													{toNoticeList.map((value) => {
+														const { avatar, name, user_name, user_id } = value
+														return (
+															<div style={{ display: 'flex', flexWrap: 'wrap' }} key={user_id}>
+
+																<div className={`${headerStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 0', textAlign: 'center' }} key={user_id}>
+																	{avatar ? (
+																		<img style={{ width: '40px', height: '40px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
+																	) : (
+																			<div style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
+																				<Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
+																			</div>
+																		)}
+																	<div style={{ marginRight: 8, fontSize: '14px' }}>{name || user_name || '佚名'}</div>
+																	<span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${headerStyles.userItemDeleBtn}`}></span>
+																</div>
+
+															</div>
+														)
+													})}
+												</div>
+											</Dropdown>
+										</div>
+									)
+							}
+						</span>
 					</div>
 				</div>
 			</div>
