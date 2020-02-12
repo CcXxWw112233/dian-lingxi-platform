@@ -182,8 +182,8 @@ export default class UploadNormal extends Component {
                 }
             },
             onRemove: () => false,
-            showRemoveIcon: false, 
-            // customRequest: this.customRequest
+            showRemoveIcon: false,
+            customRequest: this.customRequest
         };
         return propsObj
     }
@@ -302,6 +302,33 @@ export default class UploadNormal extends Component {
     }
     // 处理md5
     handleBMF = (file) => {
+        const blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice
+        const chunkSize = 2097152                       // read in chunks of 2MB
+        const chunks = Math.ceil(file.size / chunkSize)
+        let currentChunk = 0
+        let spark = new SparkMD5.ArrayBuffer()
+        const fileReader = new FileReader();
+
+        function loadNext() {
+            const start = currentChunk * chunkSize
+            const end = start + chunkSize >= file.size ? file.size : start + chunkSize;
+            fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
+        }
+        loadNext();
+        return new Promise((resolve) => {
+            fileReader.onload = function (e) {
+                spark.append(e.target.result);                 // append array buffer
+                currentChunk += 1;
+                if (currentChunk < chunks) {
+                    loadNext();
+                } else {
+                    const md5 = spark.end()
+                    resolve(md5)
+                }
+            };
+        })
+    }
+    handleBMF_2 = (file) => {
         // const bmf = new BMF()
         // const p = new Promise((resolve, reject) => {
         //     bmf.md5(
