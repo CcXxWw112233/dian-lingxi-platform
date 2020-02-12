@@ -221,12 +221,20 @@ function mapStateToProps({
     // filePreviewCurrentFileId,
     // fileType,
     isInOpenFile
+  },
+  technological: {
+    datas: {
+      userOrgPermissions,
+      userBoardPermissions
+    }
   }
 }) {
   return {
     // filePreviewCurrentFileId,
     // fileType,
-    isInOpenFile
+    isInOpenFile,
+    userOrgPermissions,
+    userBoardPermissions
   }
 }
 

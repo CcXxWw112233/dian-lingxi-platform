@@ -8,7 +8,9 @@ import {
   NOT_HAS_PERMISION_COMFIRN
 } from "../../globalset/js/constant";
 import {checkIsHasPermission} from "../../utils/businessFunction";
+import { connect } from "dva/index";
 
+@connect(mapStateToProps)
 export default class NounDefinition extends React.Component {
   state = {
     saveDisabled: false
@@ -136,3 +138,16 @@ export default class NounDefinition extends React.Component {
     )
   }
 }
+
+function mapStateToProps({
+  technological: {
+    datas: {
+      userOrgPermissions
+    }
+  }
+}) {
+  return {
+    userOrgPermissions
+  }
+}
+

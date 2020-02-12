@@ -17,6 +17,8 @@ import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
 
 const TabPane = Tabs.TabPane;
 const SubMenu = Menu.SubMenu
+@connect(mapStateToProps)
+
 export default class HeaderNav extends React.Component{
   constructor(props) {
     super(props)
@@ -358,5 +360,16 @@ export default class HeaderNav extends React.Component{
   }
 };
 
-//readme:     const { isNeedTimeDown , dispatch, discriptionText, jumpText } = this.props要从父组件传递进来
+function mapStateToProps({
+  technological: {
+    datas: {
+      userOrgPermissions
+    }
+  }
+}) {
+  return {
+    userOrgPermissions
+  }
+}
+
 

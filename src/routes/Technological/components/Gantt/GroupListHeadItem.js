@@ -1060,8 +1060,8 @@ export default class GroupListHeadItem extends Component {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
   gantt: { datas: { boards_flies, group_rows = [], ceiHeight, gantt_board_id, group_view_type, get_gantt_data_loading, list_group, show_board_fold } },
-  technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, } },
+  technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org,userBoardPermissions } },
   projectDetail: { datas: { projectDetailInfoData = {} } }
 }) {
-  return { boards_flies, list_group, ceiHeight, group_rows, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, get_gantt_data_loading, show_board_fold, projectDetailInfoData }
+  return { boards_flies, list_group, ceiHeight, group_rows, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, get_gantt_data_loading, show_board_fold, projectDetailInfoData,userBoardPermissions}
 }

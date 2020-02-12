@@ -82,11 +82,12 @@ const ProjectListBarCell = ({
 export default connect(
   ({
     technological: {
-      datas: { currentUserOrganizes = [], is_show_org_name, is_all_org }
+      datas: { currentUserOrganizes = [], is_show_org_name, is_all_org,userOrgPermissions}
     },
   }) => ({
     currentUserOrganizes,
     is_show_org_name,
     is_all_org,
+    userOrgPermissions
   })
 )(ProjectListBarCell) ;

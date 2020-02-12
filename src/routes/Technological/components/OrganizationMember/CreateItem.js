@@ -9,8 +9,10 @@ import {
   ORG_UPMS_ORGANIZATION_GROUP
 } from "../../../../globalset/js/constant";
 import {checkIsHasPermission} from "../../../../utils/businessFunction";
-const Panel = Collapse.Panel
+import { connect } from "dva/index";
 
+const Panel = Collapse.Panel
+@connect(mapStateToProps)
 export default class CreateItem extends React.Component {
   state = {
     isInEditAdd: false,
@@ -61,5 +63,17 @@ export default class CreateItem extends React.Component {
         )}
       </div>
     )
+  }
+}
+
+function mapStateToProps({
+  technological: {
+    datas: {
+      userOrgPermissions
+    }
+  }
+}) {
+  return {
+    userOrgPermissions
   }
 }

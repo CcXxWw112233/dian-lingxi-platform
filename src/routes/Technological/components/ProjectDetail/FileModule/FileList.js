@@ -1214,6 +1214,12 @@ function mapStateToProps({
       projectDetailInfoData = {},
       board_id
     }
+  },
+  technological: {
+    datas: {
+
+  	userBoardPermissions
+    }
   }
 }) {
   return {
@@ -1225,6 +1231,7 @@ function mapStateToProps({
     fileList,
     board_id,
     breadcrumbList,
-    currentParrentDirectoryId
+    currentParrentDirectoryId,
+    userBoardPermissions
   }
 }

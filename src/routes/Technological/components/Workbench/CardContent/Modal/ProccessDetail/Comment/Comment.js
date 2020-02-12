@@ -9,7 +9,7 @@ import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMMENT_PUBLISH,
   PROJECT_FILES_FILE_EDIT
 } from "../../../../../../../../globalset/js/constant";
-import { checkIsHasPermissionInBoard } from "../../../../../../../../utils/businessFunction";
+
 import CommentMention from '../../../../../../../../components/CommentMention'
 
 

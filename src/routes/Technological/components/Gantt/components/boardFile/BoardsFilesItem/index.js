@@ -9,7 +9,7 @@ import { message, Upload } from 'antd';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { REQUEST_DOMAIN_FILE, PROJECT_FILES_FILE_UPLOAD, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, UPLOAD_FILE_SIZE } from '../../../../../../../globalset/js/constant';
 import Cookies from 'js-cookie'
-import { setUploadHeaderBaseInfo, checkIsHasPermissionInBoard, getGlobalData } from '../../../../../../../utils/businessFunction';
+import { setUploadHeaderBaseInfo, getGlobalData } from '../../../../../../../utils/businessFunction';
 import FileDetailModal from '@/components/FileDetailModal'
 import { connect } from 'dva'
 import { currentFolderJudegeFileUpload } from '../../../ganttBusiness'
@@ -177,10 +177,7 @@ export default class Index extends Component {
             },
             beforeUpload(e) {
                 that.setShowDrag(false)
-                // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id)) {
-                //     message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-                //     return false
-                // }
+      
                 if (e.size == 0) {
                     message.error(`不能上传空文件`)
                     return false

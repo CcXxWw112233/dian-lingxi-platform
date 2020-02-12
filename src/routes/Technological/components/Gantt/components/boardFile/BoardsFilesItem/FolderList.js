@@ -4,7 +4,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import FolderItem from './FolderItem'
 import { Input, Menu, Dropdown, message, Upload, notification } from 'antd'
 import { REQUEST_DOMAIN_FILE, PROJECT_FILES_FILE_UPLOAD, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, UPLOAD_FILE_SIZE } from '../../../../../../../globalset/js/constant';
-import { setUploadHeaderBaseInfo, checkIsHasPermissionInBoard } from '../../../../../../../utils/businessFunction';
+import { setUploadHeaderBaseInfo } from '../../../../../../../utils/businessFunction';
 import Cookies from 'js-cookie'
 import { addNewFolder } from '../../../../../../../services/technological/file';
 import { isApiResponseOk } from '../../../../../../../utils/handleResponseData';
@@ -74,10 +74,7 @@ export default class FolderList extends Component {
                 ...setUploadHeaderBaseInfo({ boardId: board_id }),
             },
             beforeUpload(e) {
-                // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id)) {
-                //     message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-                //     return false
-                // }
+        
                 if (e.size == 0) {
                     message.error(`不能上传空文件`)
                     return false

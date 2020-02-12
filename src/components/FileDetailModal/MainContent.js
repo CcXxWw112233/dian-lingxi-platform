@@ -15,7 +15,7 @@ import {
 } from "@/globalset/js/constant";
 let timer
 
-@connect()
+@connect(mapStateToProps)
 class MainContent extends Component {
 
   constructor(props) {
@@ -510,4 +510,18 @@ class MainContent extends Component {
 }
 
 export default withBodyClientDimens(MainContent)
+
+
+function mapStateToProps({
+  technological: {
+    datas: {
+      userBoardPermissions
+    }
+  }
+}) {
+  return {
+    userBoardPermissions
+  }
+}
+
 

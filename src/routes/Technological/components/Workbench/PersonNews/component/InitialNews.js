@@ -17,8 +17,8 @@ import double_right from '@/assets/workbench/double_right.png'
 import MilestoneDetail from '../../../../components/Gantt/components/milestoneDetail'
 
 
-@connect(({ technological: { datas: { currentUserOrganizes = [], is_show_org_name } } }) => ({
-  currentUserOrganizes, is_show_org_name
+@connect(({ technological: { datas: { currentUserOrganizes = [], is_show_org_name ,userOrgPermissions,userBoardPermissions} } }) => ({
+  currentUserOrganizes, is_show_org_name,userOrgPermissions,userBoardPermissions
 }))
 export default class InitialNews extends React.Component {
 

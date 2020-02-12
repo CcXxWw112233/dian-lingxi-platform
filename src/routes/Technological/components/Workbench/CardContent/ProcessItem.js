@@ -3,7 +3,7 @@ import indexstyles from '../index.less'
 import { Icon, Tooltip } from 'antd'
 import Cookies from 'js-cookie'
 import {
-  checkIsHasPermission, checkIsHasPermissionInBoard, setBoardIdStorage, getOrgNameWithOrgIdFilter
+ setBoardIdStorage, getOrgNameWithOrgIdFilter
 } from "../../../../../utils/businessFunction";
 import { message } from "antd/lib/index";
 import {
@@ -15,7 +15,7 @@ import { connect } from 'dva'
 import globalStyle from '../../../../../globalset/css/globalClassName.less'
 
 @connect((
-  { technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } } },
+  { technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org} } },
   { workbench: { datas: { projectTabCurrentSelectedProject } } }
 ) => ({
   currentUserOrganizes, is_show_org_name, projectTabCurrentSelectedProject, is_all_org

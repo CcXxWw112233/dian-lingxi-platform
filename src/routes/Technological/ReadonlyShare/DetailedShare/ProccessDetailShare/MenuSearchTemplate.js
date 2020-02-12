@@ -7,7 +7,9 @@ import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
   PROJECT_FLOWS_FLOW_CREATE
 } from "../../../../../globalset/js/constant";
+import { connect } from "dva/index";
 
+@connect(mapStateToProps)
 export default class MenuSearchTemplate extends React.Component{
    state = {
      resultArr: [],
@@ -83,4 +85,15 @@ export default class MenuSearchTemplate extends React.Component{
 
 }
 
+function mapStateToProps({
+  technological: {
+    datas: {
+      userBoardPermissions
+    }
+  }
+}) {
+  return {
+    userBoardPermissions
+  }
+}
 

@@ -6,9 +6,7 @@ import {
   NOT_HAS_PERMISION_COMFIRN,
   MESSAGE_DURATION_TIME
 } from "../../../../../../../globalset/js/constant";
-import {
-  checkIsHasPermissionInBoard,
-} from "../../../../../../../utils/businessFunction";
+
 import { Collapse } from 'antd';
 import { getProcessListByType } from "../../../../../../../services/technological/process";
 import nodataImg from '../../../../../../../assets/projectDetail/process/Empty@2x.png'

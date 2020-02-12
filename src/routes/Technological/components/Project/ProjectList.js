@@ -11,7 +11,7 @@ import {MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_CREATE,
 import { message } from 'antd'
 import Cookies from 'js-cookie'
 const Panel = Collapse.Panel
-
+@connect(mapStateToProps)
 export default class Projectlist extends React.Component {
 
   addItem() {
@@ -85,3 +85,14 @@ const customPanelStyle = {
   border: 0,
   overflow: 'hidden',
 };
+function mapStateToProps({
+  technological: {
+    datas: {
+      userOrgPermissions
+    }
+  }
+}) {
+  return {
+    userOrgPermissions
+  }
+}

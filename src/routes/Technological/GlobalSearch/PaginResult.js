@@ -4,7 +4,7 @@ import {min_page_width} from "./../../../globalset/js/styles";
 import { getGlobalSearchResultList } from '../../../services/technological'
 import indexstyles from './index.less'
 import globalStyles from './../../../globalset/css/globalClassName.less'
-import {checkIsHasPermissionInBoard, setStorage} from "../../../utils/businessFunction";
+
 import {connect} from "dva/index";
 import MeetingItem from './MeetingItem'
 import TaskItem from './TaskItem'

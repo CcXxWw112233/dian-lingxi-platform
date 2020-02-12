@@ -337,7 +337,8 @@ function mapStateToProps({
         datas: {
             currentUserOrganizes = [],
             is_show_org_name,
-            is_all_org
+            is_all_org,
+            userBoardPermissions
         }
     },
     // projectCommunication:{
@@ -350,6 +351,7 @@ function mapStateToProps({
         currentUserOrganizes,
         is_show_org_name,
         is_all_org,
+        userBoardPermissions
         // count
     }
 }

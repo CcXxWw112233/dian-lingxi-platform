@@ -416,7 +416,7 @@ export default connect(
       simplemodeCurrentProject
     },
     technological: {
-      datas: { currentUserOrganizes }
+      datas: { currentUserOrganizes,userOrgPermissions}
     },
     investmentMap: {
       datas: {
@@ -435,4 +435,5 @@ export default connect(
       simplemodeCurrentProject,
       mapOrganizationList,
       XczNewsOrganizationList,
+      userOrgPermissions
     }))(MyWorkbenchBoxs)

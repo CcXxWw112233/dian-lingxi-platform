@@ -3,7 +3,7 @@ import indexstyles from "../index.less";
 import { Icon, Tooltip } from "antd";
 import Cookies from "js-cookie";
 import { timestampToTimeNormal2, timeColor } from './../../../../../utils/util'
-import { checkIsHasPermissionInBoard, checkIsHasPermission, checkIsHasPermissionInVisitControl } from './../../../../../utils/businessFunction'
+import { checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl } from './../../../../../utils/businessFunction'
 import { message } from "antd/lib/index";
 import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_INTERVIEW, ORG_TEAM_BOARD_QUERY } from "../../../../../globalset/js/constant";
 import { setBoardIdStorage, getOrgNameWithOrgIdFilter } from "../../../../../utils/businessFunction";
@@ -12,11 +12,11 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 
 @connect((
   {
-    technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } },
-    workbench: { datas: { projectTabCurrentSelectedProject } }
+    technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org,userBoardPermissions} },
+    workbench: { datas: { projectTabCurrentSelectedProject} }
   },
 ) => ({
-  currentUserOrganizes, is_show_org_name, projectTabCurrentSelectedProject, is_all_org
+  currentUserOrganizes, is_show_org_name, projectTabCurrentSelectedProject, is_all_org,userBoardPermissions
 }))
 export default class TaskItem extends React.Component {
   itemOneClick(e) {

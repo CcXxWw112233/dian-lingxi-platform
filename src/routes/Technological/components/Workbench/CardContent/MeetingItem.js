@@ -15,11 +15,12 @@ import { connect } from 'dva'
 
 @connect((
   { 
-    technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } }, 
-    workbench: { datas: { projectTabCurrentSelectedProject } }
+    technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org,userOrgPermissions,
+      userBoardPermissions } }, 
+    workbench: { datas: { projectTabCurrentSelectedProject} }
   },
 ) => ({
-  currentUserOrganizes, is_show_org_name, projectTabCurrentSelectedProject, is_all_org
+  currentUserOrganizes, is_show_org_name, projectTabCurrentSelectedProject, is_all_org,userOrgPermissions,userBoardPermissions
 }))
 export default class MeetingItem extends React.Component {
 
@@ -30,10 +31,7 @@ export default class MeetingItem extends React.Component {
 
     setBoardIdStorage(board_id)
 
-    // if(!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW)){
-    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-    //   return false
-    // }
+
     dispatch({
       type: 'workbenchPublicDatas/getRelationsSelectionPre',
       payload: {

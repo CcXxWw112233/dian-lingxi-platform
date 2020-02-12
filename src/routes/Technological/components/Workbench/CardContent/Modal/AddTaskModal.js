@@ -46,7 +46,14 @@ const taskTypeToName = {
   MY_DOCUMENT: 'Files'
 };
 /* eslint-disable */
-@connect(({ workbench }) => ({ workbench }))
+@connect(({ workbench,  
+  technological: {
+    datas: {
+      userOrgPermissions,
+      userBoardPermissions
+    }
+  }
+}) => ({ workbench,userOrgPermissions,userBoardPermissions}))
 class AddTaskModal extends Component {
   constructor(props) {
     super(props);

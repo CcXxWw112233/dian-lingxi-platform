@@ -2113,6 +2113,12 @@ function mapStateToProps({
       board_id,
       relations_Prefix
     }
+  },
+  technological: {
+    datas: {
+      userOrgPermissions,
+  	  userBoardPermissions
+    }
   }
 }) {
   return {
@@ -2134,6 +2140,8 @@ function mapStateToProps({
     filePreviewIsRealImage,
     projectDetailInfoData,
     board_id,
-    relations_Prefix
+    relations_Prefix,
+    userOrgPermissions,
+    userBoardPermissions
   }
 }

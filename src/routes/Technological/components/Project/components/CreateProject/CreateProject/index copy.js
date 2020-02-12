@@ -12,9 +12,12 @@ import { getProjectList } from '../../../../../../services/technological/workben
 import { isApiResponseOk } from "../../../../../../utils/handleResponseData";
 import { connect } from 'dva'
 import { getAppsList } from "../../../../../../services/technological/project";
+import { connect } from "dva/index";
+
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 const { Option } = Select;
+
 
 @connect(mapStateToProps)
 class CreateProject extends React.Component {
@@ -622,8 +625,8 @@ class CreateProject extends React.Component {
 export default Form.create()(CreateProject)
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ technological: { datas: { currentUserOrganizes = [] } } }) {
-  return { currentUserOrganizes };
+function mapStateToProps({ technological: { datas: { currentUserOrganizes = [],userOrgPermissions } } }) {
+  return { currentUserOrganizes,userOrgPermissions };
 }
 
 CreateProject.defaultProps = {

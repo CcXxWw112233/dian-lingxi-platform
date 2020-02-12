@@ -631,11 +631,18 @@ function mapStateToProps({
       projectRoles = []
     }
   },
+  technological: {
+    datas: {
+  	userBoardPermissions
+    }
+  }
+
 }) {
   return {
     projectInfoDisplay,
     isInitEntry,
     projectDetailInfoData,
-    projectRoles
+    projectRoles,
+    userBoardPermissions
   }
 }

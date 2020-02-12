@@ -11,15 +11,15 @@ import styles from './CommunicationThumbnailFiles.less';
 import UploadNormal from '../../../../../../../components/UploadNormal';
 import {
     MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD
-  } from "@/globalset/js/constant";
-  import {
+} from "@/globalset/js/constant";
+import {
     checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
-  } from "@/utils/businessFunction";
+} from "@/utils/businessFunction";
 
 
 @connect(mapStateToProps)
 export default class CommunicationThumbnailFiles extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             currentFileschoiceTab: 0, // "0 搜索全部文件 1 搜索子集文件
@@ -99,19 +99,19 @@ export default class CommunicationThumbnailFiles extends Component {
             file_resource_id,
             file_id,
             id,
-            board_id="",
-            folder_id="",
+            board_id = "",
+            folder_id = "",
             version_id
         } = data;
         // const id = file_id;
         // const board_id = board_id || currentSelectBoardId;
         // const folder_id = folder_id || current_folder_id;
         const { dispatch } = this.props
-        if(!board_id || !folder_id){
+        if (!board_id || !folder_id) {
             message.info('board_id或folder_id为空');
             return;
         }
-        if(!id){
+        if (!id) {
             return;
         }
         setBoardIdStorage(board_id)
@@ -152,7 +152,7 @@ export default class CommunicationThumbnailFiles extends Component {
         dispatch({
             type: 'projectDetail/projectDetailInfo',
             payload: {
-                id:board_id
+                id: board_id
             }
         })
         this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile();
@@ -229,10 +229,10 @@ export default class CommunicationThumbnailFiles extends Component {
         console.log('currentIayerSearch', item);
         console.log('bread_paths', bread_paths);
         let tabType = '';
-        if(type == 'all_files'){
+        if (type == 'all_files') {
             tabType = '0';
-        } else if(type ="sub_files"){
-            if(item.layerType == "projectLayer"){
+        } else if (type = "sub_files") {
+            if (item.layerType == "projectLayer") {
                 tabType = '1';
             } else {
                 tabType = '2';
@@ -243,10 +243,10 @@ export default class CommunicationThumbnailFiles extends Component {
 
     // 公用上传组件
     renderUpload = () => {
-                    // if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD, board_id)) {
-            //     message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-            //     return false
-            //   }
+        // if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD, board_id)) {
+        //     message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        //     return false
+        //   }
         const { currentSelectBoardId, current_folder_id, getThumbnailFilesData } = this.props
         const isHasUploadFilesPermission = () => {
             return checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD, currentSelectBoardId)
@@ -271,8 +271,8 @@ export default class CommunicationThumbnailFiles extends Component {
                             <><Icon type="upload" /> 上传文件</>
                         </UploadNormal>
                     ) : (
-                        <div></div>
-                    )
+                            <div></div>
+                        )
                 }
             </div>
         )
@@ -283,7 +283,7 @@ export default class CommunicationThumbnailFiles extends Component {
         // )
     }
 
-    render(){
+    render() {
         const {
             isVisibleFileList,
             onlyFileList,
@@ -294,35 +294,35 @@ export default class CommunicationThumbnailFiles extends Component {
             filesShowType,
             currentFileDataType
         } = this.props;
-        const currentIayerSearch = bread_paths && bread_paths.length && bread_paths[bread_paths.length-1];
-        const currentIayerFolderName = bread_paths && bread_paths.length && (bread_paths[bread_paths.length-1].board_name || bread_paths[bread_paths.length-1].folder_name);
+        const currentIayerSearch = bread_paths && bread_paths.length && bread_paths[bread_paths.length - 1];
+        const currentIayerFolderName = bread_paths && bread_paths.length && (bread_paths[bread_paths.length - 1].board_name || bread_paths[bread_paths.length - 1].folder_name);
         // console.log('bread_paths',bread_paths);
-        return(
+        return (
             <div className={`${styles.communicationThumbnailFiles} ${isVisibleFileList ? styles.changeContentWidth : null}`}>
                 {/* 上传文件和切换列表显示操作 */}
                 <div className={styles.thumbnailFilesHeader}>
                     <div className={styles.uploadFile}>
                         {
-                            bread_paths && bread_paths.length ?(
+                            bread_paths && bread_paths.length ? (
                                 this.renderUpload()
                                 // <Upload {...this.uploadProps()} showUploadList={false}>
                                 //     <Icon type="upload" /> 上传文件
                                 // </Upload>
-                            ): ''
+                            ) : ''
                         }
-                        
+
                     </div>
                     <div className={styles.changeTypeOperation}>
                         <div
                             className={`${styles.listShow} ${filesShowType == '0' ? styles.currentFilesShowType : ''}`}
-                            onClick={()=>this.changeShowTab('0')}
+                            onClick={() => this.changeShowTab('0')}
                         >
                             <Icon type="bars" />
                         </div>
                         {/* <div className={styles.tilingShow}> */}
                         <div
                             className={`${styles.tilingShow} ${filesShowType == '1' ? styles.currentFilesShowType : ''}`}
-                            onClick={()=>this.changeShowTab('1')}
+                            onClick={() => this.changeShowTab('1')}
                         >
                             <Icon type="appstore" />
                         </div>
@@ -335,27 +335,27 @@ export default class CommunicationThumbnailFiles extends Component {
                         <div className={styles.searchTypeBox}>
                             搜索：
                             <span
-                                className={ currentFileDataType == '0' ? styles.currentFile : ''}
-                                onClick={()=>this.changeChooseType('all_files')}
+                                className={currentFileDataType == '0' ? styles.currentFile : ''}
+                                onClick={() => this.changeChooseType('all_files')}
                             >
                                 “全部文件”
                             </span>
                             {
                                 currentIayerFolderName ? (
                                     <span
-                                        className={ currentFileDataType !== '0' ? styles.currentFile : '' }
-                                        onClick={()=>this.changeChooseType('sub_files', currentIayerSearch)}
+                                        className={currentFileDataType !== '0' ? styles.currentFile : ''}
+                                        onClick={() => this.changeChooseType('sub_files', currentIayerSearch)}
                                     >
-                                        { currentIayerFolderName }
+                                        {currentIayerFolderName}
                                     </span>
                                 ) :
-                                ''
+                                    ''
                             }
-                            
+
                         </div>
                     )
                 }
-                
+
 
                 {/* 首屏-右侧缩略图列表 */}
                 {/* <ThumbnailFilesListShow
@@ -376,29 +376,35 @@ export default class CommunicationThumbnailFiles extends Component {
                             previewFile={this.previewFile}
                         />
                     ) : (
-                        <ThumbnailFilesTilingShow
-                            thumbnailFilesList={onlyFileList}
-                            previewFile={this.previewFile}
-                        />
-                    )
+                            <ThumbnailFilesTilingShow
+                                thumbnailFilesList={onlyFileList}
+                                previewFile={this.previewFile}
+                            />
+                        )
                 }
-                
+
             </div>
         )
     }
 }
 
 function mapStateToProps({
-    projectCommunication:{
+    projectCommunication: {
         onlyFileList,
         onlyFileTableLoading,
         filesShowType
+    }, 
+    technological: {
+        datas: {
+            userBoardPermissions
+        }
     }
 }) {
     return {
         onlyFileList,
         onlyFileTableLoading,
-        filesShowType
+        filesShowType,
+        userBoardPermissions
     }
 }
 

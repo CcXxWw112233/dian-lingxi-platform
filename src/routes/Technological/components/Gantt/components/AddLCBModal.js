@@ -21,10 +21,7 @@ import DropdownSelectWithSearch from './../../../components/Workbench/CardConten
 import DropdownMultipleSelectWithSearch from './../../../components/Workbench/CardContent/DropdownMultipleSelectWithSearch/index';
 import DateRangePicker from './../../../components/Workbench/CardContent/DateRangePicker/index';
 import Cookies from 'js-cookie';
-import {
-  checkIsHasPermissionInBoard,
-  setStorage
-} from '../../../../../utils/businessFunction';
+
 import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN,

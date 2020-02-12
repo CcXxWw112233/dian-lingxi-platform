@@ -1317,6 +1317,12 @@ function mapStateToProps({
     datas: {
       processInfo = {},
     }
+  },
+  technological: {
+    datas: {
+      userOrgPermissions,
+  	userBoardPermissions
+    }
   }
 }) {
   return {
@@ -1330,6 +1336,8 @@ function mapStateToProps({
     processInfo,
     currentParrentDirectoryId,
     getTaskGroupListArrangeType,
-    appsSelectKey
+    appsSelectKey,
+    userOrgPermissions,
+    userBoardPermissions
   }
 }

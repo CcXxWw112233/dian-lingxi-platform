@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Collapse, Icon, message, Tree, Button } from 'antd';
-import { getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard, isPaymentOrgUser} from '@/utils/businessFunction';
+import { getOrgNameWithOrgIdFilter, isPaymentOrgUser} from '@/utils/businessFunction';
 import { getFileList } from '@/services/technological/file.js'
 import { isApiResponseOk } from '@/utils/handleResponseData';
 import styles from './index.less';

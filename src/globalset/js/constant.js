@@ -48,8 +48,8 @@ export const WEBSOCKET_URL = (function (NODE_ENV, location) {
     // return 'ws://https://knowapi.new-di.com/api/common/hotspot'
     //'ws://prerelease.lingxi.new-di.com/websocket'  
     // return 'ws://192.168.1.68/websocket'
-    // return 'ws://dev.lingxi.new-di.com/websocket' //开发环境
-    return 'wss://lingxi.di-an.com/websocket'
+    return 'ws://dev.lingxi.new-di.com/websocket' //开发环境
+    //return 'wss://lingxi.di-an.com/websocket'
 
   } else {
     const protocol = location.protocol == 'http:' ? 'ws:' : 'wss:'

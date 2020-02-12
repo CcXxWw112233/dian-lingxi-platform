@@ -15,8 +15,15 @@ import {ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_U
 import {newsDynamicHandleTime, timestampToTime, timestampToHM, timestampToTimeNormal2} from '@/utils/util'
 
 
-@connect(({projectDetail: { datas: { projectDynamicsList = [], p_next_id, projectDetailInfoData = {} } } }) => ({
-  projectDynamicsList, p_next_id, projectDetailInfoData
+@connect(({projectDetail: { datas: { projectDynamicsList = [], p_next_id, projectDetailInfoData = {} } },  
+  technological: {
+    datas: {
+      userOrgPermissions,
+      userBoardPermissions
+    }
+  }
+}) => ({
+  projectDynamicsList, p_next_id, projectDetailInfoData,userOrgPermissions,userBoardPermissions
 }))
 export default class DynamicContain extends Component {
 

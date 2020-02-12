@@ -28,7 +28,8 @@ import { checkIsHasPermissionInBoard, isHasOrgMemberQueryPermission } from "@/ut
 
 let cx = classNames.bind(styles);
 @connect(({ technological }) => ({
-  currentOrgAllMembersList: technological.datas.currentOrgAllMembersList || []
+  currentOrgAllMembersList: technological.datas.currentOrgAllMembersList || [],
+  userBoardPermissions: technological.datas.userBoardPermissions
 }))
 class VisitControl extends Component {
   constructor(props) {

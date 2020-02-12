@@ -377,7 +377,13 @@ function mapStateToProps({
         historyList,
         is_history,
         is_add_remind
-    }
+    },
+    technological: {
+        datas: {
+          userOrgPermissions,
+          userBoardPermissions
+        }
+      }
 }) {
     return {
         currentParrentDirectoryId,
@@ -389,6 +395,8 @@ function mapStateToProps({
         historyList,
         is_history,
         is_add_remind,
-        selectedRows
+        selectedRows,
+        userOrgPermissions,
+        userBoardPermissions
     }
 }

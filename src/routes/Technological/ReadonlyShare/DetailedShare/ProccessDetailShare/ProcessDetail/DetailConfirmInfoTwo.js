@@ -22,7 +22,10 @@ import MenuSearchPartner from '../../../../../../components/MenuSearchMultiple/M
 const { RangePicker } = DatePicker
 const Dragger = Upload.Dragger
 
+
+import { connect } from "dva/index";
 //里程碑确认信息
+@connect(mapStateToProps)
 export default class DetailConfirmInfoTwo extends React.Component {
   state = {
     opinionModalVisible: false,
@@ -776,5 +779,17 @@ export default class DetailConfirmInfoTwo extends React.Component {
         </div>
       </div>
     )
+  }
+}
+
+function mapStateToProps({
+  technological: {
+    datas: {
+      userBoardPermissions
+    }
+  }
+}) {
+  return {
+    userBoardPermissions
   }
 }

@@ -10,6 +10,9 @@ import globalStyles from '../../../../../../../globalset/css/globalClassName.les
 import { Collapse } from 'antd';
 const Panel = Collapse.Panel;
 
+import { connect } from "dva/index";
+
+@connect(mapStateToProps)
 export default class TemplateItem extends React.Component {
   state = {
     showBott: false,
@@ -137,3 +140,15 @@ const customPanelStyle = {
   marginLeft: 10,
   overflow: 'hidden',
 };
+function mapStateToProps({
+  technological: {
+    datas: {
+      userBoardPermissions
+    }
+  }
+}) {
+  return {
+    userBoardPermissions
+  }
+}
+

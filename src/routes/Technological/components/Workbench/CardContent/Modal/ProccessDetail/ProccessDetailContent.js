@@ -11,10 +11,12 @@ import { getRelations, JoinRelation } from "../../../../../../../services/techno
 import { isApiResponseOk } from "../../../../../../../utils/handleResponseData";
 import ContentRaletion from '../../../../../../../components/ContentRaletion'
 import { timestampToHM, judgeTimeDiffer, judgeTimeDiffer_ten } from '../../../../../../../utils/util'
-import { checkIsHasPermissionInBoard, currentNounPlanFilterName, checkIsHasPermissionInVisitControl, checkIsHasPermission } from '../../../../../../../utils/businessFunction'
+import { checkIsHasPermissionInBoard, currentNounPlanFilterName, checkIsHasPermissionInVisitControl } from '../../../../../../../utils/businessFunction'
 import { FLOWS, PROJECT_FLOWS_FLOW_COMMENT, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_FLOW_FLOW_ACCESS } from '../../../../../../../globalset/js/constant'
 import ProcessDetail from './proccessComps'
+import { connect } from "dva/index";
 
+@connect(mapStateToProps)
 export default class FileDetailContent extends React.Component {
   state = {
     isShowAll: false, //是否查看全部
@@ -628,5 +630,17 @@ export default class FileDetailContent extends React.Component {
 
       </div>
     )
+  }
+}
+
+function mapStateToProps({
+  technological: {
+    datas: {
+      userBoardPermissions
+    }
+  }
+}) {
+  return {
+    userBoardPermissions
   }
 }

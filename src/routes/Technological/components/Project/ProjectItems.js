@@ -18,8 +18,14 @@ import CreateProject from './components/CreateProject/index';
 
 import ElseProject from './ElseProject';
 
-@connect(({ project }) => ({
-  currentProjectGroupProjectList: project.datas.currentProjectGroupProjectList,
+@connect(({ project,
+  technological: {
+    datas: {
+      userBoardPermissions
+    }
+  }
+}) => ({
+  currentProjectGroupProjectList: project.datas.currentProjectGroupProjectList,userBoardPermissions
 }))
 class ProjectItems extends Component {
 
