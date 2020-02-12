@@ -35,8 +35,18 @@ export default class UploadNotification extends Component {
             onPreview: () => false
         }
         return (
-            <Upload {...upload_props}>
-            </Upload>
+            // <Upload {...upload_props}>
+            // </Upload>
+            <div>
+                {
+                    uploading_file_list.map(value => {
+                        const { name, percent } = value
+                        return (
+                        <div>{name}{percent}</div>
+                        )
+                    })
+                }
+            </div>
         )
     }
     renderUploadState = () => {

@@ -65,6 +65,22 @@ export default class UploadNormal extends Component {
         gold_arr = gold_arr.map(item => { //目标覆盖
             let new_item = { ...item }
             new_item = old_list.find(val => val.uid == new_item.uid) || new_item
+            const {
+                size,
+                status,
+                name,
+                percent,
+                uid,
+                response,
+            } = new_item
+            return {
+                size,
+                status,
+                name,
+                percent,
+                uid,
+                response
+            }
             return new_item
         })
         // console.log('ssssss', gold_arr)
@@ -167,7 +183,7 @@ export default class UploadNormal extends Component {
             },
             onRemove: () => false,
             showRemoveIcon: false, 
-            customRequest: this.customRequest
+            // customRequest: this.customRequest
         };
         return propsObj
     }
