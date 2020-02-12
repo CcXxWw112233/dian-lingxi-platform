@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
-import { Modal, TreeSelect, Icon, Dropdown, message } from 'antd'
+import { Modal, TreeSelect, Icon, Dropdown, message, Tooltip } from 'antd'
 import headerStyles from '../HeaderContent.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
-import { getSubfixName } from '@/utils/businessFunction.js'
+import { getSubfixName, currentNounPlanFilterName } from '@/utils/businessFunction.js'
+import { PROJECTS } from '@/globalset/js/constant.js'
 const { TreeNode } = TreeSelect;
 
 export default class SaveAsNewVersionFile extends Component {
@@ -44,14 +45,14 @@ export default class SaveAsNewVersionFile extends Component {
 	}
 
 	onVisibleChange = (visible) => {
-    if (this.state.uploading) {
-      message.warn('正在上传中...请勿操作')
-      return false
-    }
-    this.setState({
-      visible: visible
-    })
-  }
+		if (this.state.uploading) {
+			message.warn('正在上传中...请勿操作')
+			return false
+		}
+		this.setState({
+			visible: visible
+		})
+	}
 
 	onChangeFileSavePath = (value) => {
 		// if (this.state.uploading) {
@@ -123,15 +124,14 @@ export default class SaveAsNewVersionFile extends Component {
 
 	// 保存为新版本
 	renderKeepNewVersion = () => {
-		const { projectDetailInfoData = {} } = this.props
-		const { data: projectMemberData, board_id, org_id } = projectDetailInfoData;
+		const { projectDetailInfoData = {}, titleKey } = this.props
+		const { data: projectMemberData, board_id, board_name, org_id } = projectDetailInfoData;
 		const { toNoticeList = [] } = this.state
+		const { name } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+		const { currentPreviewFileData: { file_name }, boardFolderTreeData = [] } = this.props
+		const text = titleKey == '2' ? '更新了' : titleKey == '3' ? '上传了' : ''
 		return (
 			<div>
-				{/* 通知内容 */}
-				<div style={{ width: '100%', height: '40px', background: 'rgba(245,245,245,1)', borderRadius: '4px', boxSizing: 'border-box', padding: '10px 0 10px 10px', marginBottom: '10px' }}>
-					通知内容: <sapn>严世威 在 西塘项目  中更新了  2019-01-14.pdf</sapn>
-				</div>
 				{/* 通知的人员 */}
 				<div>
 					<span className={globalStyles.authTheme}>&#xe6e3;</span> 提醒谁查看：
@@ -141,11 +141,11 @@ export default class SaveAsNewVersionFile extends Component {
 							{
 								!toNoticeList.length ? (
 									<div style={{ flex: '1', position: 'relative' }}>
-										<Dropdown 
-										visible={this.state.visible} 
-										trigger={['click']} overlayClassName={headerStyles.overlay_pricipal} 
-										onVisibleChange={this.onVisibleChange} 
-										getPopupContainer={triggerNode => triggerNode.parentNode}
+										<Dropdown
+											visible={this.state.visible}
+											trigger={['click']} overlayClassName={headerStyles.overlay_pricipal}
+											onVisibleChange={this.onVisibleChange}
+											getPopupContainer={triggerNode => triggerNode.parentNode}
 											overlayStyle={{ maxWidth: '200px' }}
 											overlay={
 												<MenuSearchPartner
@@ -167,7 +167,7 @@ export default class SaveAsNewVersionFile extends Component {
 								) : (
 										<div style={{ flex: '1', position: 'relative' }}>
 											<Dropdown visible={this.state.visible} trigger={['click']} overlayClassName={headerStyles.overlay_pricipal} onVisibleChange={this.onVisibleChange} getPopupContainer={triggerNode => triggerNode.parentNode}
-											overlayStyle={{ maxWidth: '200px' }}
+												overlayStyle={{ maxWidth: '200px' }}
 												overlay={
 													<MenuSearchPartner
 														invitationType='1'
@@ -211,6 +211,10 @@ export default class SaveAsNewVersionFile extends Component {
 							}
 						</span>
 					</div>
+				</div>
+				{/* 通知内容 */}
+				<div style={{ width: '100%', height: '40px', background: 'rgba(245,245,245,1)', borderRadius: '4px', boxSizing: 'border-box', padding: '10px 0 10px 10px', marginTop: '10px' }}>
+					通知内容: <sapn>{name} 在 <span style={{fontWeight: 900}}>{board_name}</span>{currentNounPlanFilterName(PROJECTS)}  中 {text}  <span style={{maxWidth:'80px',overflow:'hidden',textOverflow: 'ellipsis', whiteSpace: 'noWrap', display: 'inline-block', verticalAlign: 'middle',fontWeight:900, marginTop: '-3px'}}>{this.getEllipsisFileName(file_name) || ''}</span> <span style={{ display: 'inline-block', verticalAlign: 'middle',fontWeight:900,marginTop: '-3px' }}>{getSubfixName(file_name)}</span> 文件</sapn>
 				</div>
 			</div>
 		)
@@ -257,7 +261,7 @@ export default class SaveAsNewVersionFile extends Component {
 				<div style={{ marginBottom: '16px' }}>
 					<div>文件名：</div>
 					<div style={{ width: '100%', height: '40px', background: 'rgba(255,255,255,1)', borderRadius: '4px', boxSizing: 'border-box', padding: '10px 0 10px 10px', marginTop: '8px', marginBottom: '10px', border: '1px solid rgba(0,0,0,0.15)' }}>
-						<sapn style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'noWrap', display: 'inline-block', verticalAlign: 'middle' }}>{FILENAME}</sapn><span style={{ display: 'inline-block', verticalAlign: 'middle' }}>{getSubfixName(file_name)}</span>
+						<sapn style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'noWrap', display: 'inline-block', verticalAlign: 'middle',marginTop: '-3px' }}>{FILENAME}</sapn><span style={{ display: 'inline-block', verticalAlign: 'middle', marginTop: '-3px' }}>{getSubfixName(file_name)}</span>
 					</div>
 				</div>
 				<div>
@@ -281,10 +285,11 @@ export default class SaveAsNewVersionFile extends Component {
 					</div>
 					{
 						boardFolderTreeData && boardFolderTreeData.length == '0' && (
-							<span style={{ display: 'block', marginTop: '15px', marginLeft: '4px', color: '#FAAD14' }}>暂无访问文件权限</span>
+							<span style={{ display: 'block', marginTop: '15px', marginBottom: '5px', marginLeft: '4px', color: '#FAAD14' }}>暂无访问文件权限</span>
 						)
 					}
 				</div>
+				<div style={{marginTop:'10px'}}>{this.renderKeepNewVersion()}</div>
 			</div>
 		)
 	}
@@ -310,6 +315,7 @@ export default class SaveAsNewVersionFile extends Component {
 					okButtonProps={{ loading: uploading, disabled: okButtonPropsFromSaveOthersFile }}
 					cancelButtonProps={uploading ? { disabled: true } : {}}
 					okText={uploading ? '另存为中……' : '确定'}
+					// bodyStyle={{maxHeight: '1000px',overflowY:'auto'}}
 				>
 					{titleKey == '2' ? this.renderKeepNewVersion() : (titleKey == '3' ? this.renderSaveNewVersion() : <div></div>)}
 				</Modal>
