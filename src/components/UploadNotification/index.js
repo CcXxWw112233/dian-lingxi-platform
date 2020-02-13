@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Upload, notification } from 'antd'
+import { Progress, notification } from 'antd'
 import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
@@ -34,9 +34,45 @@ export default class UploadNotification extends Component {
             onDownload: () => false,
             onPreview: () => false
         }
+        console.log('ssssss_uploading_file_list', uploading_file_list)
         return (
-            <Upload {...upload_props}>
-            </Upload>
+            // <Upload {...upload_props}>
+            // </Upload>
+            <div className={styles.file_out}>
+                {
+                    uploading_file_list.map(value => {
+                        const { name, percent, status } = value
+                        let progress_status = 'active'
+                        let progress_percent = parseInt(Number(percent))
+                        if (status == 'error') {
+                            progress_status = 'exception '
+                            progress_percent = 100
+                        } else if (status == 'done') {
+                            progress_percent = 100
+                            progress_status = 'success'
+                        }
+                        return (
+                            <div className={`${styles.upload_file_item} ${status == 'error' && styles.error}`}>
+                                <div className={styles.upload_file_item_left}>
+                                    <img src='https://asd.asd.'></img>
+                                </div>
+                                <div className={styles.upload_file_item_right}>
+                                    <div className={`${styles.upload_file_item_name} ${globalStyles.global_ellipsis}`}>
+                                        {name}
+                                    </div>
+                                    <div className={styles.upload_file_item_percent}>
+                                        <Progress
+                                            percent={progress_percent}
+                                            size="small"
+                                            status={progress_status}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    })
+                }
+            </div>
         )
     }
     renderUploadState = () => {
