@@ -4,25 +4,35 @@ import headerStyles from '../HeaderContent.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import { getSubfixName, currentNounPlanFilterName } from '@/utils/businessFunction.js'
-import { PROJECTS } from '@/globalset/js/constant.js'
+import { PROJECTS, FILES } from '@/globalset/js/constant.js'
+import NameChangeInput from '@/components/NameChangeInput'
 const { TreeNode } = TreeSelect;
 
 export default class SaveAsNewVersionFile extends Component {
 
 	state = {
-		fileSavePath: null,
-		uploading: null,
-		toNoticeList: [],
-		visible: false
+		fileSavePath: null, // 选择文件夹路径 folder_id
+		uploading: null, // 
+		toNoticeList: [], // 默认通知提醒人
+		visible: false, // 下拉框的显示隐藏
+		is_edit_file_name: false, // 是否编辑文件名
+		inputValue: '', // 文件名
 	}
 
+	// 初始化数据
 	initState = () => {
 		this.setState({
 			fileSavePath: null,
 			uploading: null,
 			toNoticeList: [],
-			visible: false
+			visible: false,
+			is_edit_file_name: false,
+			inputValue: ''
 		})
+	}
+
+	componentWillReceiveProps(nextProps) {
+		this.getDefaultNoticeUser()
 	}
 
 	// 关闭弹框
@@ -54,6 +64,50 @@ export default class SaveAsNewVersionFile extends Component {
 		})
 	}
 
+	setEditFileName = (e) => {
+		e && e.stopPropagation();
+		this.setState({
+			is_edit_file_name: true
+		})
+	}
+
+	onChangeVlaue = (e) => {
+		e && e.stopPropagation();
+		if (e.target.value.length > 100) {
+			this.setState({
+				inputValue: '',
+				is_edit_file_name: false
+			})
+		}
+	}
+
+	titleTextAreaChangeBlur = (e) => {
+		let val = e.target.value
+		const { currentPreviewFileData: { file_name } } = this.props
+		if (e.target.value.trimLR() == '') {
+			this.setState({
+				is_edit_file_name: false,
+				inputValue: ''
+			})
+			return
+		} else {
+			if (val == this.getEllipsisFileName(file_name)) {
+				this.setState({
+					is_edit_file_name: false,
+					inputValue: ''
+				})
+			} else {
+				this.setState({
+					inputValue: e.target.value,
+					is_edit_file_name: false
+				})
+			}
+		}
+	
+
+	}
+
+	// 选择文件夹目录
 	onChangeFileSavePath = (value) => {
 		// if (this.state.uploading) {
 		// 	message.warn('正在另存为中...请勿操作')
@@ -122,11 +176,39 @@ export default class SaveAsNewVersionFile extends Component {
 	}
 	// 移除执行人的回调 E
 
+	// 获取默认通知文件上传者
+	getDefaultNoticeUser = () => {
+		const { projectDetailInfoData: { data = [] }, currentPreviewFileData: { user_id } } = this.props
+		let new_data = [...data]
+		new_data = new_data.filter(item => item.user_id == user_id)
+		// console.log(new_data,'sssssssssssssssssssss_data')
+		this.setState({
+			toNoticeList: new_data
+		})
+	}
+
+	// 确认的点击事件
+	onOk = () => {
+		const { titleKey } = this.props
+		const { projectDetailInfoData: { data = [] }, currentPreviewFileData: { id, user_id, folder_id, file_name } } = this.props
+		const { toNoticeList = [], fileSavePath, inputValue } = this.state
+		let temp_user_ids = []
+		toNoticeList && toNoticeList.map(item => {
+			temp_user_ids.push(item.user_id)
+		})
+		let notify_user_ids = temp_user_ids.join(',')
+		if (titleKey == '2') {
+			this.props.handleSaveAsNewVersionButton && this.props.handleSaveAsNewVersionButton({ id, notify_user_ids, folder_id, calback: this.hideModal() })
+		} else if (titleKey == '3') {
+			this.props.handleSaveAsOthersNewVersionButton && this.props.handleSaveAsOthersNewVersionButton({ file_ids: id, folder_id: fileSavePath, notify_user_ids, file_name: inputValue != '' ? inputValue : file_name, calback: this.hideModal() })
+		}
+	}
+
 	// 保存为新版本
 	renderKeepNewVersion = () => {
 		const { projectDetailInfoData = {}, titleKey } = this.props
 		const { data: projectMemberData, board_id, board_name, org_id } = projectDetailInfoData;
-		const { toNoticeList = [] } = this.state
+		const { toNoticeList = [], inputValue } = this.state
 		const { name } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
 		const { currentPreviewFileData: { file_name }, boardFolderTreeData = [] } = this.props
 		const text = titleKey == '2' ? '更新了' : titleKey == '3' ? '上传了' : ''
@@ -213,8 +295,9 @@ export default class SaveAsNewVersionFile extends Component {
 					</div>
 				</div>
 				{/* 通知内容 */}
-				<div style={{ width: '100%', height: '40px', background: 'rgba(245,245,245,1)', borderRadius: '4px', boxSizing: 'border-box', padding: '10px 0 10px 10px', marginTop: '10px' }}>
-					通知内容: <sapn>{name} 在 <span style={{fontWeight: 900}}>{board_name}</span>{currentNounPlanFilterName(PROJECTS)}  中 {text}  <span style={{maxWidth:'80px',overflow:'hidden',textOverflow: 'ellipsis', whiteSpace: 'noWrap', display: 'inline-block', verticalAlign: 'middle',fontWeight:900, marginTop: '-3px'}}>{this.getEllipsisFileName(file_name) || ''}</span> <span style={{ display: 'inline-block', verticalAlign: 'middle',fontWeight:900,marginTop: '-3px' }}>{getSubfixName(file_name)}</span> 文件</sapn>
+				<div style={{ position:'relative', width: '100%', height: '40px', background: 'rgba(245,245,245,1)', borderRadius: '4px', boxSizing: 'border-box', padding: '10px 0 10px 10px', marginTop: '10px' }}>
+					通知内容: <sapn>{name} 在 <span style={{ fontWeight: 900 }}>{board_name}</span>{currentNounPlanFilterName(PROJECTS)}  中 {text}  <Tooltip title={inputValue != '' ? inputValue : file_name} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+					<span style={{ maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'noWrap', display: 'inline-block', verticalAlign: 'middle', fontWeight: 900, marginTop: '-3px' }}>{inputValue != '' ? inputValue : this.getEllipsisFileName(file_name) || ''}</span> </Tooltip><span style={{ display: 'inline-block', verticalAlign: 'middle', fontWeight: 900, marginTop: '-3px' }}>{getSubfixName(file_name)}</span> {currentNounPlanFilterName(FILES)}</sapn>
 				</div>
 			</div>
 		)
@@ -236,7 +319,6 @@ export default class SaveAsNewVersionFile extends Component {
 
 	}
 
-
 	renderSelectBoardFileTreeList = () => {
 		const { is_file_tree_loading, boardFolderTreeData = [] } = this.props;
 		// const { boardFolderTreeData } = this.state;
@@ -254,16 +336,34 @@ export default class SaveAsNewVersionFile extends Component {
 	// 另存文件为新版本
 	renderSaveNewVersion = () => {
 		const { currentPreviewFileData: { file_name }, boardFolderTreeData = [] } = this.props
-		const { fileSavePath } = this.state
-		const FILENAME = this.getEllipsisFileName(file_name)
+		const { fileSavePath, is_edit_file_name, inputValue } = this.state
+		const FILENAME = inputValue != '' ? inputValue : this.getEllipsisFileName(file_name)
 		return (
 			<div>
 				<div style={{ marginBottom: '16px' }}>
-					<div>文件名：</div>
-					<div style={{ width: '100%', height: '40px', background: 'rgba(255,255,255,1)', borderRadius: '4px', boxSizing: 'border-box', padding: '10px 0 10px 10px', marginTop: '8px', marginBottom: '10px', border: '1px solid rgba(0,0,0,0.15)' }}>
-						<sapn style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'noWrap', display: 'inline-block', verticalAlign: 'middle',marginTop: '-3px' }}>{FILENAME}</sapn><span style={{ display: 'inline-block', verticalAlign: 'middle', marginTop: '-3px' }}>{getSubfixName(file_name)}</span>
-					</div>
+					<div>{currentNounPlanFilterName(FILES)}名：</div>
+					{
+						!is_edit_file_name ? (
+							<div onClick={this.setEditFileName} style={{ width: '100%', height: '40px', background: 'rgba(255,255,255,1)', borderRadius: '4px', boxSizing: 'border-box', padding: '10px 0 10px 10px', marginTop: '8px', marginBottom: '10px', border: '1px solid rgba(0,0,0,0.15)' }}>
+								<sapn style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'noWrap', display: 'inline-block', verticalAlign: 'middle', marginTop: '-3px' }}>{FILENAME}</sapn><span style={{ display: 'inline-block', verticalAlign: 'middle', marginTop: '-3px' }}>{ inputValue == '' && getSubfixName(file_name)}</span>
+							</div>
+						) : (
+								<NameChangeInput
+									autosize
+									onBlur={this.titleTextAreaChangeBlur}
+									onClick={this.setEditFileName}
+									onChange={this.onChangeVlaue}
+									setIsEdit={this.titleTextAreaChangeBlur}
+									autoFocus={true}
+									goldName={inputValue !='' ? inputValue : this.getEllipsisFileName(file_name)}
+									maxLength={101}
+									nodeName={'textarea'}
+									style={{ display: 'block', fontSize: 14, color: '#262626', resize: 'none', height: '40px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none' }}
+								/>
+							)
+					}
 				</div>
+
 				<div>
 					<div>存放位置：</div>
 					<div style={{ marginTop: '8px' }}>
@@ -289,7 +389,7 @@ export default class SaveAsNewVersionFile extends Component {
 						)
 					}
 				</div>
-				<div style={{marginTop:'10px'}}>{this.renderKeepNewVersion()}</div>
+				<div style={{ marginTop: '10px' }}>{this.renderKeepNewVersion()}</div>
 			</div>
 		)
 	}
@@ -305,17 +405,17 @@ export default class SaveAsNewVersionFile extends Component {
 					zIndex={1007}
 					visible={visible}
 					title={<div style={{ textAlign: 'center' }}>{title}</div>}
-					// onOk={this.hideModal}
+					onOk={this.onOk}
 					onCancel={this.hideModal}
 					okText="确认"
 					cancelText="取消"
 					destroyOnClose={true}
 					maskClosable={false}
 					style={{ width: '520px' }}
-					okButtonProps={{ loading: uploading, disabled: okButtonPropsFromSaveOthersFile }}
+					okButtonProps={{ loading: uploading, disabled: titleKey == '3' ? okButtonPropsFromSaveOthersFile : false }}
 					cancelButtonProps={uploading ? { disabled: true } : {}}
 					okText={uploading ? '另存为中……' : '确定'}
-					// bodyStyle={{maxHeight: '1000px',overflowY:'auto'}}
+				// bodyStyle={{maxHeight: '1000px',overflowY:'auto'}}
 				>
 					{titleKey == '2' ? this.renderKeepNewVersion() : (titleKey == '3' ? this.renderSaveNewVersion() : <div></div>)}
 				</Modal>

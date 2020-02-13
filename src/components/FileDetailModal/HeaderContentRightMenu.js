@@ -11,7 +11,7 @@ import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_FILE_UPDATE, PROJECT_FILES_FILE_EDIT, UPLOAD_FILE_SIZE, REQUEST_DOMAIN_FILE, PROJECT_FILES_FILE_DOWNLOAD
 } from "@/globalset/js/constant";
-import { setCurrentVersionFile, updateVersionFileDescription, fileVersionist, fileDownload, saveAsNewVersion } from '@/services/technological/file'
+import { setCurrentVersionFile, updateVersionFileDescription, fileVersionist, fileDownload, saveAsNewVersion, fileCopy } from '@/services/technological/file'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message, Tooltip, Dropdown, Menu, Button } from 'antd'
 import Cookies from "js-cookie";
@@ -21,6 +21,8 @@ import { createShareLink, modifOrStopShareLink } from '@/services/technological/
 import ShareAndInvite from '@/routes/Technological/components/ShareAndInvite/index'
 import SaveAsNewVersionFile from './component/SaveAsNewVersionFile'
 import { getFolderList } from '@/services/technological/file'
+import { currentNounPlanFilterName } from '../../utils/businessFunction';
+import { FILES } from '../../globalset/js/constant';
 
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
@@ -113,7 +115,7 @@ export default class HeaderContentRightMenu extends Component {
   }
 
   getFileVersionist = (data) => {
-    const { version_id, file_id, folder_id } = data
+    const { version_id, file_id, folder_id, calback } = data
     fileVersionist({ version_id, file_id }).then(res => {
       if (isApiResponseOk(res)) {
         setTimeout(() => {
@@ -126,6 +128,9 @@ export default class HeaderContentRightMenu extends Component {
           new_filePreviewCurrentVersionList: res.data
         })
         this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({folder_id, file_id: file_id, file_name: file_name, create_time: create_time})
+        if (calback && typeof calback == 'function') {
+          calback()
+        }
       } else {
         message.warn(res.message)
       }
@@ -342,6 +347,40 @@ export default class HeaderContentRightMenu extends Component {
     this.setState({
       saveAsNewVersionFileVisible: false,
       saveAsNewVersionFileTitle: ''
+    })
+  }
+
+  // 保存为新版本的回调
+  handleSaveAsNewVersionButton = ({id,notify_user_ids, folder_id, calback}) => {
+    saveAsNewVersion({id, notify_user_ids}).then(res => {
+      if (isApiResponseOk(res)) {
+        const { version_id, id } = res.data
+        this.getFileVersionist({version_id, file_id: id, folder_id, calback})
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+        if (calback && typeof calback == 'function') {
+          calback()
+        }
+      }
+    })
+  }
+  
+  // 另存为新版本的回调
+  handleSaveAsOthersNewVersionButton = ({file_ids, folder_id, notify_user_ids, file_name, calback}) => {
+    fileCopy({file_ids, folder_id, notify_user_ids,is_copy_version:false,file_name}).then(res => {
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success(`另存为${currentNounPlanFilterName(FILES)}成功`)
+        },200)
+        if (calback && typeof calback == 'function') {
+          calback()
+        }
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+        if (calback && typeof calback == 'function') {
+          calback()
+        }
+      }
     })
   }
 
@@ -928,7 +967,10 @@ export default class HeaderContentRightMenu extends Component {
         {/* 另存为Modal */}
         <div>
           <SaveAsNewVersionFile projectDetailInfoData={projectDetailInfoData} currentPreviewFileData={currentPreviewFileData} boardFolderTreeData={boardFolderTreeData} setSaveAsNewVersionVisible={this.setSaveAsNewVersionVisible} visible={this.state.saveAsNewVersionFileVisible} title={this.state.saveAsNewVersionFileTitle}
-          titleKey={this.state.titleKey}/>
+          titleKey={this.state.titleKey}
+          handleSaveAsNewVersionButton={this.handleSaveAsNewVersionButton}
+          handleSaveAsOthersNewVersionButton={this.handleSaveAsOthersNewVersionButton}
+          />
         </div>
       </div>
     )
