@@ -233,12 +233,16 @@ export default class UploadNormal extends Component {
                         onSuccess(res, file);
                     }, 500)
                 }
+                const errorCalback = (err) => {
+                    onError(err, file)
+                }
                 const params = { access, file, hash: md5_str, file_name: file.name }
                 this.UploadToOss(params, { progressCalback, successCalback }).then(res => {
                     that.checkRelationFile({ md5_str, file_name: file.name, is_live, file_size: file.size }).then(res => {
                         successCalback({ res })
                     })
                 }).catch(err => {
+                    errorCalback(err)
                     console.log('sssss_oss_fail', err)
                 })
             }
