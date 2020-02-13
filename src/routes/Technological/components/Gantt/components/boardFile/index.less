@@ -1,12 +1,9 @@
-.show_file_button {
+.show_file_button, .hide_file_button {
     width        : 100px;
     height       : 32px;
     background   : rgba(255, 255, 255, 0.8);
     box-shadow   : 0px 2px 8px 0px rgba(0, 0, 0, 0.15);
     border-radius: 16px;
-    position     : absolute;
-    left         : 270px;
-    bottom       : 32px;
     color        : rgba(0, 0, 0, .45);
     text-align   : center;
     line-height  : 32px;
@@ -26,6 +23,21 @@
         right: -4px;
         top: -7px;
     }
+}
+.hide_file_button {
+    margin: 0 auto;
+    margin-top: 24px;
+}
+.hide_file_button:hover {
+    color: #1890FF;
+}
+.show_file_button:hover {
+    color: #1890FF;
+}
+.show_file_button {
+    position     : absolute;
+    left         : 270px;
+    bottom       : 32px;
 }
 .show_file_button_show {
     animation: button_show 300ms ease;

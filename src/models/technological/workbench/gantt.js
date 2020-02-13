@@ -474,7 +474,7 @@ export default {
             id: board_id
           }
         })
-        message.success(res.message)
+        message.success('创建成功')
       } else {
         message.error(res.message)
       }

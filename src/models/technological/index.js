@@ -450,6 +450,12 @@ export default {
     * getUserOrgPermissions({ payload }, { select, call, put }) {
       const res = yield call(getUserOrgPermissions, payload)
       localStorage.setItem('userOrgPermissions', JSON.stringify({}))
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          userOrgPermissions: {}
+        }
+      })
       const delay = (ms) => new Promise(resolve => {
         setTimeout(resolve, ms)
       })
@@ -460,6 +466,12 @@ export default {
         // 全组织的情况下，直接存【组织=》权限】列表
         if (OrganizationId == '0') {
           localStorage.setItem('userOrgPermissions', JSON.stringify(res.data))
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              userOrgPermissions: res.data
+            }
+          })
           return
         }
         // 非全组织的情况下需要过滤出对应的当前选择的组织，获取对应的权限
@@ -470,11 +482,23 @@ export default {
         for (let val of res.data) {
           if (val['org_id'] == current_org_id) {
             localStorage.setItem('userOrgPermissions', JSON.stringify(val['permissions'] || []))
+            yield put({
+              type: 'updateDatas',
+              payload: {
+                userOrgPermissions: val['permissions'] || []
+              }
+            })
             break
           }
         }
       } else {
         localStorage.setItem('userOrgPermissions', JSON.stringify([]))
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            userOrgPermissions: []
+          }
+        })
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
       return res
@@ -483,8 +507,20 @@ export default {
       let res = yield call(getUserBoardPermissions, payload)
       if (isApiResponseOk(res)) {
         localStorage.setItem('userBoardPermissions', JSON.stringify(res.data || []))
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            userBoardPermissions: res.data || []
+          }
+        })
       } else {
         localStorage.setItem('userBoardPermissions', JSON.stringify([]))
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            userBoardPermissions: []
+          }
+        })
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
       return res
