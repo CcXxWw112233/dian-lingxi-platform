@@ -34,6 +34,7 @@ export default modelExtend(technological, {
             Promise.all([dispatch({
               type: 'updateDatas',
               payload: {
+                workbench_show_gantt_card: '0',
                 cardGroupKey: 0,
                 knowCityArticles: [], //优秀案例文章列表
                 knowPolicyArticles: [], //政策法规文章列表
@@ -137,7 +138,7 @@ export default modelExtend(technological, {
       const { data } = payload
       const res = yield call(addTaskInWorkbench, data)
       if (!isApiResponseOk(res)) {
-        message.error('创建任务失败')
+        message.error(res.message || '创建任务失败')
         // console.log('create task failed :' + res)
         return
       } else {

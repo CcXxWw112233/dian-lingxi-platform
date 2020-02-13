@@ -9,6 +9,12 @@ import defaultTypeImg from '@/assets/invite/user_default_avatar@2x.png';
 import { Upload, Icon, message } from 'antd';
 import styles from './CommunicationThumbnailFiles.less';
 import UploadNormal from '../../../../../../../components/UploadNormal';
+import {
+    MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD
+  } from "@/globalset/js/constant";
+  import {
+    checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
+  } from "@/utils/businessFunction";
 
 
 @connect(mapStateToProps)
@@ -237,7 +243,14 @@ export default class CommunicationThumbnailFiles extends Component {
 
     // 公用上传组件
     renderUpload = () => {
+                    // if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD, board_id)) {
+            //     message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+            //     return false
+            //   }
         const { currentSelectBoardId, current_folder_id, getThumbnailFilesData } = this.props
+        const isHasUploadFilesPermission = () => {
+            return checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD, currentSelectBoardId)
+        }
         const props = {
             uploadProps: {
                 action: `${REQUEST_DOMAIN_FILE}/file/upload`,
@@ -251,10 +264,23 @@ export default class CommunicationThumbnailFiles extends Component {
             uploadCompleteCalback: getThumbnailFilesData,
         }
         return (
-            <UploadNormal {...props}>
-                <><Icon type="upload" /> 上传文件</>
-            </UploadNormal>
+            <div>
+                {
+                    isHasUploadFilesPermission() ? (
+                        <UploadNormal {...props}>
+                            <><Icon type="upload" /> 上传文件</>
+                        </UploadNormal>
+                    ) : (
+                        <div></div>
+                    )
+                }
+            </div>
         )
+        // return (
+        //     <UploadNormal {...props}>
+        //         <><Icon type="upload" /> 上传文件</>
+        //     </UploadNormal>
+        // )
     }
 
     render(){

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Input, Button } from 'antd'
+import { Input, Button, message } from 'antd'
 import { connect } from 'dva'
 
 @connect(mapStateToProps)
@@ -8,6 +8,13 @@ export default class CreatDirector extends React.Component {
     file_name: ''
   }
   nameInputChange(e) {
+    if (e.target.value.trimLR() == '') {
+      message.warn('文件夹名称不能为空')
+      this.setState({
+        file_name: ''
+      })
+      return false
+    }
     this.setState({
       file_name: e.target.value
     })
@@ -62,7 +69,7 @@ export default class CreatDirector extends React.Component {
     return (
       <div style={{ fontSize: 14 }}>
         <Input autoFocus style={{ width: 160, height: 24 }} onChange={this.nameInputChange.bind(this)} />
-        <Button style={{ height: 24, marginLeft: 8 }} type={'primary'} onClick={this.onOk.bind(this)}>确认</Button>
+        <Button disabled={!this.state.file_name} style={{ height: 24, marginLeft: 8 }} type={'primary'} onClick={this.onOk.bind(this)}>确认</Button>
         <Button style={{ marginLeft: 8, height: 24 }} onClick={this.onCancel.bind(this)}>取消</Button>
       </div>
     )

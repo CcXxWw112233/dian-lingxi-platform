@@ -18,7 +18,7 @@ import classNames from "classnames/bind";
 // import InitialChat from './comonent/InitialChat'
 import VideoMeetingPopoverContent from './comonent/videoMeetingPopoverContent/index'
 // import LingxiIm, { Im } from 'lingxi-im'
-const { LingxiIm, Im } = global.constants
+const { LingxiIm } = global.constants
 let cx = classNames.bind(indexStyles);
 
 const { Sider } = Layout;
@@ -28,11 +28,22 @@ const { getMentions, toString, toContentState } = Mention;
 const Nav = Mention.Nav;
 
 @connect(({
-  technological: { userInfo = {}, datas: { OrganizationId } }
+  technological: { userInfo = {}, datas: { OrganizationId } },
+  publicTaskDetailModal: {
+    card_id,drawerVisible
+  },
+  publicFileDetailModal: {
+    filePreviewCurrentFileId,
+    isInOpenFile
+  },
 }) => {
   return {
     userInfo,
-    OrganizationId
+    OrganizationId,
+    card_id,
+    drawerVisible,
+    filePreviewCurrentFileId,
+    isInOpenFile
   };
 })
 class SiderRight extends React.Component {
@@ -54,6 +65,7 @@ class SiderRight extends React.Component {
   }
 
   imInitOption = () => {
+    const { Im } = global.constants;
     LingxiIm.hide();
 
     // 设置组织id过滤
@@ -67,7 +79,7 @@ class SiderRight extends React.Component {
       // APPKEY: "c3abea191b7838ff65f9a6a44ff5e45f"
     })
     const clickDynamicFunc = (data) => {
-      this.imClickDynamic(data);
+      setTimeout(() => this.imClickDynamic(data), 100)
     }
     const visibleFunc = (visible) => {
       this.handleImToggle(visible)
@@ -78,7 +90,7 @@ class SiderRight extends React.Component {
       Im.on('clickDynamic', clickDynamicFunc);
       Im.on('hasNewImMsg', ({ data, unread }) => { //最新一条未读消息推送过来                
         if (!data.hasOwnProperty('action')) { //首次进入不处理
-          console.log('ssss_初始化首次', unread)
+          // console.log('ssss_初始化首次', unread)
           dispatch({
             type: 'imCooperation/getImUnReadAllMessages',
             payload: {
@@ -103,6 +115,31 @@ class SiderRight extends React.Component {
           }
         })
         // console.log('ssss_最新已读', data)
+      })
+      Im.on('fileCancel',({id}) => {
+        if (id == this.props.card_id) {
+          dispatch({
+            type: 'publicTaskDetailModal/updateDatas',
+            payload: {
+              drawerVisible: false,
+              drawContent: {},
+              card_id: '',
+              is_edit_title: false, // 是否编辑标题 默认为 false 不显示
+              boardTagList: []
+            }
+          })
+        }
+        if (id == this.props.filePreviewCurrentFileId) {
+          dispatch({
+            type: 'publicFileDetailModal/updateDatas',
+            payload: {
+              filePreviewCurrentFileId: '',
+              fileType: '',
+              isInOpenFile: false,
+              currentPreviewFileName: ''
+            }
+          })
+        }
       })
     }
   }

@@ -19,6 +19,19 @@ export default class GroupListHeadSet extends Component {
         }
     }
 
+    // componentDidMount() {
+    //     const { dispatch } = this.props
+    //     setInterval(() => {
+    //         console.log('sssssss_aaa')
+    //         dispatch({
+    //             type: 'technological/getUserOrgPermissions',
+    //             payload: {
+
+    //             }
+    //         })
+    //     }, 5000)
+    // }
+
     setGroupViewType = (group_view_type_new) => {
         const { dispatch, group_view_type } = this.props
         if (group_view_type == group_view_type_new) {
@@ -183,6 +196,8 @@ export default class GroupListHeadSet extends Component {
         )
     }
 }
-function mapStateToProps({ gantt: { datas: { target_scrollLeft = [], target_scrollTop = [], group_view_type, gantt_board_id, group_view_filter_boards, group_view_filter_users } }, }) {
-    return { target_scrollLeft, target_scrollTop, group_view_type, gantt_board_id, group_view_filter_boards, group_view_filter_users }
+function mapStateToProps({
+    technological: { datas: { userOrgPermissions } },
+    gantt: { datas: { target_scrollLeft = [], target_scrollTop = [], group_view_type, gantt_board_id, group_view_filter_boards, group_view_filter_users } }, }) {
+    return { userOrgPermissions, target_scrollLeft, target_scrollTop, group_view_type, gantt_board_id, group_view_filter_boards, group_view_filter_users }
 }

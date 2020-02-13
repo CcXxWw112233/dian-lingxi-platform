@@ -65,6 +65,22 @@ export default class UploadNormal extends Component {
         gold_arr = gold_arr.map(item => { //目标覆盖
             let new_item = { ...item }
             new_item = old_list.find(val => val.uid == new_item.uid) || new_item
+            const {
+                size,
+                status,
+                name,
+                percent,
+                uid,
+                response,
+            } = new_item
+            return {
+                size,
+                status,
+                name,
+                percent,
+                uid,
+                response
+            }
             return new_item
         })
         // console.log('ssssss', gold_arr)
@@ -166,7 +182,7 @@ export default class UploadNormal extends Component {
                 }
             },
             onRemove: () => false,
-            showRemoveIcon: false, 
+            showRemoveIcon: false,
             customRequest: this.customRequest
         };
         return propsObj
@@ -217,12 +233,16 @@ export default class UploadNormal extends Component {
                         onSuccess(res, file);
                     }, 500)
                 }
+                const errorCalback = (err) => {
+                    onError(err, file)
+                }
                 const params = { access, file, hash: md5_str, file_name: file.name }
                 this.UploadToOss(params, { progressCalback, successCalback }).then(res => {
                     that.checkRelationFile({ md5_str, file_name: file.name, is_live, file_size: file.size }).then(res => {
                         successCalback({ res })
                     })
                 }).catch(err => {
+                    errorCalback(err)
                     console.log('sssss_oss_fail', err)
                 })
             }
@@ -286,6 +306,33 @@ export default class UploadNormal extends Component {
     }
     // 处理md5
     handleBMF = (file) => {
+        const blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice
+        const chunkSize = 2097152                       // read in chunks of 2MB
+        const chunks = Math.ceil(file.size / chunkSize)
+        let currentChunk = 0
+        let spark = new SparkMD5.ArrayBuffer()
+        const fileReader = new FileReader();
+
+        function loadNext() {
+            const start = currentChunk * chunkSize
+            const end = start + chunkSize >= file.size ? file.size : start + chunkSize;
+            fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
+        }
+        loadNext();
+        return new Promise((resolve) => {
+            fileReader.onload = function (e) {
+                spark.append(e.target.result);                 // append array buffer
+                currentChunk += 1;
+                if (currentChunk < chunks) {
+                    loadNext();
+                } else {
+                    const md5 = spark.end()
+                    resolve(md5)
+                }
+            };
+        })
+    }
+    handleBMF_2 = (file) => {
         // const bmf = new BMF()
         // const p = new Promise((resolve, reject) => {
         //     bmf.md5(

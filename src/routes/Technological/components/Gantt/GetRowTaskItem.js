@@ -95,6 +95,7 @@ export default class GetRowTaskItem extends Component {
         const { task_is_dragging } = this.props
         const { is_moved } = this.state
         if (is_moved || task_is_dragging) {
+            this.props.setTaskIsDragging && this.props.setTaskIsDragging(false) //当拖动完成后，释放创建任务的锁，让可以正常创建任务
             return
         }
         const { setSpecilTaskExample } = this.props
@@ -118,7 +119,9 @@ export default class GetRowTaskItem extends Component {
         e.stopPropagation()
         e.preventDefault() //解决拖拽卡顿？(尚未明确)
         const target = this.out_ref.current
-        this.is_down = true;
+        setTimeout(() => {
+            this.is_down = true;
+        }, 50)
         const { drag_type, local_top } = this.state
         if ('position' == drag_type) { //在中间
             target.style.cursor = 'move';
@@ -304,7 +307,7 @@ export default class GetRowTaskItem extends Component {
                 is_moved: false
             })
             this.props.setTaskIsDragging && this.props.setTaskIsDragging(false) //当拖动完成后，释放创建任务的锁，让可以正常创建任务
-        }, 500)
+        }, 300)
     }
 
     // 拖拽完成后的事件处理-----start--------

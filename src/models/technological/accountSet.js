@@ -155,6 +155,7 @@ export default modelExtend(technological, {
       } else {
         message.warn(res.message)
       }
+      return res || {}
     },
     //用户设置 /user/set
     * updateUserSet({ payload }, { select, call, put }) {

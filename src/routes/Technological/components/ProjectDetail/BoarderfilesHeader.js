@@ -156,12 +156,17 @@ export default class BoarderfilesHeader extends Component {
             message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
             return false
         }
-        const { fileList, selectedRowKeys, dispatch } = this.props
+        const { fileList, selectedRowKeys, selectedRows = [], sele, dispatch } = this.props
         let chooseArray = []
-        for (let i = 0; i < selectedRowKeys.length; i++) {
-            chooseArray.push(fileList[selectedRowKeys[i]].file_resource_id)
-        }
-        const ids = chooseArray.join(',')
+        // for (let i = 0; i < selectedRows.length; i++) {
+        //     chooseArray.push(fileList[selectedRows[i]].file_resource_id)
+        // }
+        selectedRows.map((item,i) => {
+            chooseArray.push(item.file_resource_id)
+            return chooseArray
+          })
+          const ids = chooseArray.join(',')
+          if (!(ids && ids.length)) return
         dispatch({
             type: 'projectDetailFile/fileDownload',
             payload: {
@@ -360,6 +365,7 @@ function mapStateToProps({
             fileList = [],
             filedata_1 = [],
             isInAddDirectory = false,
+            selectedRows = []
         }
     },
     projectDetail: {
@@ -382,6 +388,7 @@ function mapStateToProps({
         projectDetailInfoData,
         historyList,
         is_history,
-        is_add_remind
+        is_add_remind,
+        selectedRows
     }
 }

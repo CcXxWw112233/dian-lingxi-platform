@@ -720,6 +720,7 @@ export default class DragDropContentComponent extends Component {
     const { org_id, card_id, board_id, board_name, due_time, start_time } = drawContent
     const { code } = currentItem
     const flag = (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()
+    let executors = this.getCurrentDrawerContentPropsModelDatasExecutors()
     let messageValue = (<div></div>)
     switch (code) {
       case 'MILESTONE': // 里程碑
@@ -961,7 +962,7 @@ export default class DragDropContentComponent extends Component {
                     <div className={`${mainContentStyles.pub_hover}`}>
                       {
                         card_id && (
-                          <UploadAttachment boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
+                          <UploadAttachment executors={executors.data} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
                             onFileListChange={this.onUploadFileListChange}>
                             <div className={mainContentStyles.upload_file_btn}>
                               <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fa;</span> 上传附件

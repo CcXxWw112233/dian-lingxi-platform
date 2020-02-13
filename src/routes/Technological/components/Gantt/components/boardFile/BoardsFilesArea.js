@@ -4,6 +4,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
 import BoardsFilesItem from './BoardsFilesItem'
 import { isPaymentOrgUser } from '../../../../../../utils/businessFunction'
+import HideFileSlider from './HideFileSlider'
 
 @connect(mapStateToProps)
 export default class BoardsFilesArea extends Component {
@@ -65,6 +66,7 @@ export default class BoardsFilesArea extends Component {
             ${is_show_board_file_area == '1' && styles.boards_files_area_show}
             ${is_show_board_file_area == '2' && styles.boards_files_area_hide}
             `}>
+                <HideFileSlider />
                 <div onClick={this.setBoardFileMessagesRead} className={styles.all_set_read}>全部标为已读</div>
                 <div>
                     {

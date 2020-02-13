@@ -22,6 +22,7 @@ import { routerRedux } from "dva/router";
 import Cookies from "js-cookie";
 import QueryString from 'querystring'
 import { currentNounPlanFilterName, setOrganizationIdStorage } from "../../utils/businessFunction";
+import { clearnImAuth } from '../../utils/businessFunction'
 
 // 该model用于存放公用的 组织/权限/偏好设置/侧边栏的数据 (权限目前存放于localstorage, 未来会迁移到model中做统一)
 let naviHeadTabIndex //导航栏naviTab选项
@@ -166,7 +167,7 @@ export default {
     },
 
     // 获取用户信息,相应的跳转操作
-    * getUSerInfo({ payload }, { select, call, put }) {
+    * getUSerInfo({ payload }, { select, call, put, all }) {
       const simplGetUserInfo = yield put({
         type: 'simplGetUserInfo',
       })
@@ -177,37 +178,62 @@ export default {
       const res = yield call(simplGetUserInfoSync) || {}
       if (isApiResponseOk(res)) {
         const user_set = res.data.user_set || {}//当前选中的组织
-        const current_org_id = user_set.current_org
+        const { is_simple_model, current_org } = user_set
         // 如果用户已选了某个确认的组织，而与当前前端缓存中组织不一致，则默认执行改变组织操作，并刷新
-        if (current_org_id && current_org_id != localStorage.getItem('OrganizationId')) {
+        if (current_org && current_org != localStorage.getItem('OrganizationId')) {
           yield put({
             type: 'changeCurrentOrg',
             payload: {
-              org_id: current_org_id
+              org_id: current_org
             }
           })
           return
         }
-        const is_simple_model = user_set.is_simple_model
-        if (is_simple_model == '0' && locallocation.pathname.indexOf('/technological/simplemode') != -1) {
-          // 如果用户设置的是高效模式, 但是路由中存在极简模式, 则以模式为准
-          yield put(routerRedux.push('/technological/workbench'));
-        } else if (is_simple_model == '1' && locallocation.pathname.indexOf('/technological/simplemode') == -1) {
-          // 如果是用户设置的是极简模式, 但是路由中存在高效模式, 则以模式为准
-          yield put(routerRedux.push('/technological/simplemode/home'))
-        }
+        // if (is_simple_model == '0' && locallocation.pathname.indexOf('/technological/simplemode') != -1) {
+        //   // 如果用户设置的是高效模式, 但是路由中存在极简模式, 则以模式为准
+        //   yield put(routerRedux.push('/technological/workbench'));
+        // } else if (is_simple_model == '1' && locallocation.pathname.indexOf('/technological/simplemode') == -1) {
+        //   // 如果是用户设置的是极简模式, 但是路由中存在高效模式, 则以模式为准
+        //   yield put(routerRedux.push('/technological/simplemode/home'))
+        // }
         //组织切换重新加载
         const { operateType, routingJumpPath = '/technological?redirectHash', isNeedRedirectHash = true } = payload
         if (operateType === 'changeOrg') {
           const redirectHash = locallocation.pathname//'/technological/workbench'
-          if (document.getElementById('iframImCircle')) {
-            document.getElementById('iframImCircle').src = `/im/index.html?timestamp=${new Date().getTime()}`;
-          }
-          if (isNeedRedirectHash) {
-            yield put(routerRedux.push(`${routingJumpPath}=${redirectHash}`));
+          // if (isNeedRedirectHash) {
+          //   yield put(routerRedux.push(`${routingJumpPath}=${redirectHash}`));
+          // } else {
+          //   yield put(routerRedux.push(routingJumpPath));
+          // }
+          //仅仅为了阻塞,切换组织成功之后，先拉取权限，再做跳转，避免跳转后页面上根据权限显示的东西被上一个组织的权限覆盖
+          const getUserOrgPermissions = yield put({
+            type: 'getUserOrgPermissions',
+            payload: {}
+          })
+          const getUserOrgPermissionsfoSync = () => new Promise(resolve => {
+            resolve(getUserOrgPermissions.then())
+          })
+          const getUserBoardPermissions = yield put({
+            type: 'getUserBoardPermissions',
+            payload: {}
+          })
+          const getUserBoardPermissionsSync = () => new Promise(resolve => {
+            resolve(getUserBoardPermissions.then())
+          })
+          // // Pro
+          // yield call(getUserOrgPermissionsfoSync);
+          // yield call(getUserBoardPermissionsSync);
+          // const permission_res = yield all([
+          //   getUserOrgPermissions,
+          //   getUserBoardPermissions,
+          // ])
+          // debugger
+          if (locallocation.pathname.indexOf('/technological/simplemode') == -1) { //is_simple_model == '0'
+            yield put(routerRedux.replace('/technological/workbench'));
           } else {
-            yield put(routerRedux.push(routingJumpPath));
+            yield put(routerRedux.replace('/technological/simplemode/home'));
           }
+
         }
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
@@ -424,6 +450,12 @@ export default {
     * getUserOrgPermissions({ payload }, { select, call, put }) {
       const res = yield call(getUserOrgPermissions, payload)
       localStorage.setItem('userOrgPermissions', JSON.stringify({}))
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          userOrgPermissions: {}
+        }
+      })
       const delay = (ms) => new Promise(resolve => {
         setTimeout(resolve, ms)
       })
@@ -434,6 +466,12 @@ export default {
         // 全组织的情况下，直接存【组织=》权限】列表
         if (OrganizationId == '0') {
           localStorage.setItem('userOrgPermissions', JSON.stringify(res.data))
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              userOrgPermissions: res.data
+            }
+          })
           return
         }
         // 非全组织的情况下需要过滤出对应的当前选择的组织，获取对应的权限
@@ -444,22 +482,48 @@ export default {
         for (let val of res.data) {
           if (val['org_id'] == current_org_id) {
             localStorage.setItem('userOrgPermissions', JSON.stringify(val['permissions'] || []))
+            yield put({
+              type: 'updateDatas',
+              payload: {
+                userOrgPermissions: val['permissions'] || []
+              }
+            })
             break
           }
         }
       } else {
         localStorage.setItem('userOrgPermissions', JSON.stringify([]))
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            userOrgPermissions: []
+          }
+        })
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
+      return res
     },
     * getUserBoardPermissions({ payload }, { select, call, put }) {
       let res = yield call(getUserBoardPermissions, payload)
       if (isApiResponseOk(res)) {
         localStorage.setItem('userBoardPermissions', JSON.stringify(res.data || []))
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            userBoardPermissions: res.data || []
+          }
+        })
       } else {
         localStorage.setItem('userBoardPermissions', JSON.stringify([]))
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            userBoardPermissions: []
+          }
+        })
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
+      return res
     },
     //权限---end
 
@@ -476,6 +540,7 @@ export default {
 
 
     * logout({ payload }, { select, call, put }) { //提交表单
+      clearnImAuth()
       if (!Cookies.get('Authorization') || !Cookies.get('refreshToken')) {
         Cookies.remove('Authorization')
         Cookies.remove('refreshToken')

@@ -282,6 +282,10 @@ class FolderItem extends Component {
 
     inputOnchange = (e) => {
         const { value } = e.target
+        if (value.trimLR() == '') {
+            message.warn('文件夹名称不能为空')
+            return false
+        }
         this.setState({
             input_folder_value: value
         })
@@ -299,6 +303,9 @@ class FolderItem extends Component {
         const { input_folder_value } = this.state
         const { itemValue = {}, board_id } = this.props
         const { id } = itemValue
+        if (input_folder_value == '') {
+            return false
+        }
         const params = {
             board_id,
             folder_id: id,

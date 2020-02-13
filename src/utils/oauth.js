@@ -2,6 +2,7 @@
 import request from "./requestAxios";
 import {REQUEST_DOMAIN} from "../globalset/js/constant";
 import Cookies from 'js-cookie'
+import { clearnImAuth } from "./businessFunction";
 
 //is401: refreshToken 避免重复请求的标记
 Cookies.set('is401', false, {expires: 30, path: ''})
@@ -24,6 +25,7 @@ const gotoRefresh = async (data) => {
   } else {
     Cookies.set('is401', true, {expires: 30, path: ''})
     setTimeout(function () {
+      clearnImAuth()
       window.location.hash = `#/login?redirect=${window.location.hash.replace('#', '')}`
     }, 1000)
   }
@@ -35,6 +37,7 @@ export const reRefreshToken = (data) => {
     const { refreshToken } = data
     if(!!!refreshToken) {
       setTimeout(function () {
+        clearnImAuth()
         window.location.hash = `#/login?redirect=${window.location.hash.replace('#', '')}`
       }, 500)
       return

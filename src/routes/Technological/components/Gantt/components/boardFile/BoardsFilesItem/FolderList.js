@@ -164,6 +164,10 @@ export default class FolderList extends Component {
     }
     inputOnchange = (e) => {
         const { value } = e.target
+        if (value.trimLR() == '') {
+            message.warn('文件夹名称不能为空')
+            return false
+        }
         this.setState({
             add_folder_value: value
         })
@@ -171,6 +175,9 @@ export default class FolderList extends Component {
     requestAddNewFolder = async () => {
         const { board_id, current_folder_id, getFolderFileList } = this.props
         const { add_folder_value } = this.state
+        if (add_folder_value == '') {
+            return false
+        }
         const res = await addNewFolder({
             board_id,
             parent_id: current_folder_id,

@@ -63,7 +63,7 @@ export default class FileDetailBreadCrumbFileNav extends Component {
               <Breadcrumb.Item key={key}>
                 {
                   value.type == '2' ? (
-                    <span style={{wordBreak: 'break-all', display: 'flex', alignItems: 'center'}}><span style={{maxWidth: '500px', overflow: 'hidden',  whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{this.getEllipsisFileName(value && value.file_name)}</span>{`${getSubfixName((value && value.file_name ) && value.file_name)}`}</span>
+                    <span style={{wordBreak: 'break-all', display: 'flex', alignItems: 'center'}}><span style={{maxWidth: '300px', overflow: 'hidden',  whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{this.getEllipsisFileName(value && value.file_name)}</span>{`${getSubfixName((value && value.file_name ) && value.file_name)}`}</span>
                   ) : (
                     <span style={{wordBreak: 'break-all'}}>{value && value.file_name}</span>
                   )

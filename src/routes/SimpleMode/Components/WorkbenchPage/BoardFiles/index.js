@@ -38,7 +38,10 @@ class BoardFiles extends Component {
   componentDidMount() {
     const { dispatch, simplemodeCurrentProject = {} } = this.props;
     dispatch({
-      type: 'simplemode/getOrgBoardData',
+      type: 'simplemode/getFilterAllOrgsWhetherItIsFilesAppsBoardList',
+      payload: {
+        query_app: '1'
+      }
     })
     let currentBoardDetail = {}
     if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {

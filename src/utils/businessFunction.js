@@ -384,7 +384,8 @@ export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenI
     payload: {
       simplemodeCurrentProject: board_id == '0' ? '' : {
         board_id,
-        board_name
+        board_name,
+        org_id: org_id || getOrgIdByBoardId(board_id)
       }
     }
   })
@@ -436,4 +437,16 @@ export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenI
 }
 export const openImChatBoard = ({ board_id, autoOpenIm }) => {
   global.constants.lx_utils.openChat({ boardId: board_id == '0' ? '' : board_id, autoOpenIm })
+}
+
+// 清除圈子登录信息
+export const clearnImAuth = () => {
+  if (window.NIM) {
+    if (
+      window.NIM.disconnect &&
+      typeof window.NIM.disconnect == 'function'
+    ) {
+      window.NIM.disconnect()
+    }
+  }
 }

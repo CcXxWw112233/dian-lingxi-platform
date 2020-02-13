@@ -36,15 +36,24 @@ const MiniBoxNavigations = (props) => {
                 const org = currentUserOrganizes.find(item => item.id == localStorage.getItem('OrganizationId')) || {}
                 const enabled_app_list = org.enabled_app_list || []
                 for (let val2 of enabled_app_list) {
-                    if (rela_app_id == val2['app_id'] && val2['status'] == '1') {
-                        isDisabled = false
-                        break
-                    }
+                  if (rela_app_id == val2['app_id'] && val2['status'] == '1') {
+                    isDisabled = false
+                    break
+                  }
                 }
+              }
+            } else if (('board:files' == code || 'board:chat' == code) && localStorage.getItem('OrganizationId') != '0') {
+                const org = currentUserOrganizes.find(item => item.id == localStorage.getItem('OrganizationId')) || {}
+                const enabled_app_list = org.enabled_app_list || []
+                let gold_data = enabled_app_list.find(item => item.code == 'Files') || {}
+                if (gold_data && Object.keys(gold_data) && Object.keys(gold_data).length) {
+                  isDisabled = false
+                } else {
+                  isDisabled = true
+                }
+            } else {
+              isDisabled = false
             }
-        } else {
-            isDisabled = false
-        }
         return isDisabled
     }
 

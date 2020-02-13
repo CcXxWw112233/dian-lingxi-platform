@@ -6,9 +6,9 @@ import { Icon, message, Tooltip } from 'antd';
 import DropdownSelect from '../../Components/DropdownSelect/index'
 import CreateProject from '@/routes/Technological/components/Project/components/CreateProject/index';
 import simpleMode from "../../../../models/simpleMode";
-import { getOrgNameWithOrgIdFilter, setBoardIdStorage, isPaymentOrgUser, selectBoardToSeeInfo } from "@/utils/businessFunction"
+import { getOrgNameWithOrgIdFilter, setBoardIdStorage, isPaymentOrgUser, selectBoardToSeeInfo, checkIsHasPermission } from "@/utils/businessFunction"
 import { isApiResponseOk } from "../../../../utils/handleResponseData";
-
+import { ORG_TEAM_BOARD_CREATE } from '../../../../globalset/js/constant'
 class MyWorkbenchBoxs extends Component {
   constructor(props) {
     super(props);
@@ -249,6 +249,18 @@ class MyWorkbenchBoxs extends Component {
     }
   }
 
+  // 判断是否有新建项目的权限
+  isHasCreatBoardPermission = () => {
+    const org_id = localStorage.getItem('OrganizationId')
+    let flag = true
+    if (org_id != '0') {
+        if (!checkIsHasPermission(ORG_TEAM_BOARD_CREATE)) {
+            flag = false
+        }
+    }
+      return flag
+  }
+
   /**
      * 投资地图是否禁用
      * 1.单组织没权限 - 投资地图灰掉
@@ -290,6 +302,15 @@ class MyWorkbenchBoxs extends Component {
           }
         }
       }
+    } else if (('board:files' == code || 'board:chat' == code) && localStorage.getItem('OrganizationId') != '0') {
+        const org = currentUserOrganizes.find(item => item.id == localStorage.getItem('OrganizationId')) || {}
+        const enabled_app_list = org.enabled_app_list || []
+        let gold_data = enabled_app_list.find(item => item.code == 'Files') || {}
+        if (gold_data && Object.keys(gold_data) && Object.keys(gold_data).length) {
+          isDisabled = false
+        } else {
+          isDisabled = true
+        }
     } else {
       isDisabled = false
     }
@@ -343,7 +364,7 @@ class MyWorkbenchBoxs extends Component {
 
     const { addProjectModalVisible = false } = this.state;
     const menuItemList = this.getMenuItemList(projectList);
-    const fuctionMenuItemList = [{ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }];
+    const fuctionMenuItemList = this.isHasCreatBoardPermission() ? [{ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }] : [];
     let selectedKeys = ['0'];
     let isPaymentUser = false;
     if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {

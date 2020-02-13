@@ -3,7 +3,7 @@ import { connect, } from 'dva';
 import indexStyles from './index.less'
 import { Avatar, Dropdown, Menu, Input, message, Tooltip, Modal } from 'antd'
 import { getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard, getOrgIdByBoardId, selectBoardToSeeInfo } from '../../../../utils/businessFunction';
-import { archivedProject } from '../../../../services/technological/project'
+import { archivedProject, deleteProject, quitProject } from '../../../../services/technological/project'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '@/components/avatarList'
 import CheckItem from '@/components/CheckItem'
@@ -11,12 +11,13 @@ import { updateTaskGroup, deleteTaskGroup, } from '../../../../services/technolo
 import { updateProject, addMenbersInProject, toggleContentPrivilege, removeContentPrivilege, setContentPrivilege, collectionProject, cancelCollection } from '../../../../services/technological/project';
 import { isApiResponseOk } from '../../../../utils/handleResponseData';
 import ShowAddMenberModal from '../../../../routes/Technological/components/Project/ShowAddMenberModal'
-import { PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_CARD_GROUP, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_TEAM_BOARD_ARCHIVE } from '../../../../globalset/js/constant';
+import { PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_CARD_GROUP, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_TEAM_BOARD_ARCHIVE, PROJECTS, PROJECT_TEAM_BOARD_DELETE } from '../../../../globalset/js/constant';
 import VisitControl from '../VisitControl/index'
 import globalStyle from '@/globalset/css/globalClassName.less'
 import { ganttIsFold } from './constants';
 import DetailInfo from '@/routes/Technological/components/ProjectDetail/DetailInfo/index'
 import { deleteBoardFollow } from './ganttBusiness';
+import { currentNounPlanFilterName, setBoardIdStorage } from "@/utils/businessFunction";
 
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
@@ -236,11 +237,33 @@ export default class GroupListHeadItem extends Component {
     })
   }
 
+  // 包裹访问控制的div点击事件
+  handleVisitorWrapper = (e) => {
+    e && e.stopPropagation()
+  }
+
+  // 包裹访问控制的div鼠标mosedown事件
+  handleVisitorControlMouseDown = (board_id) => {
+    this.setState({
+      VisitControlPopoverVisible: true
+    })
+    const { VisitControlPopoverVisible } = this.state
+    if (VisitControlPopoverVisible) return false
+    this.props.dispatch({
+      type: 'projectDetail/projectDetailInfo',
+      payload: {
+        id: board_id
+      }
+    })
+  }
+
   // 操作项点击
   handleMenuSelect = ({ key }) => {
-    const { itemValue = {}, gantt_board_id } = this.props
-    const { list_id } = itemValue
+    const { itemValue = {}, gantt_board_id, dispatch } = this.props
+    const { list_id, org_id } = itemValue
     const params_board_id = gantt_board_id == '0' ? list_id : gantt_board_id
+    // 点击的时候需要更新baseInfo
+    setBoardIdStorage(params_board_id, org_id)
     switch (key) {
       case 'invitation':
         if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, params_board_id)) {
@@ -270,10 +293,20 @@ export default class GroupListHeadItem extends Component {
         this.archivedProject({ board_id: params_board_id })
         break
       case 'visitorControl':
-        this.set
+        // this.set
         break
       case 'board_info':
         this.setBoardInfoVisible()
+        break
+      case 'deleteBoard': // 删除项目
+        if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_DELETE, params_board_id)) {
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
+        this.deleteProject({ board_id: params_board_id })
+        break
+      case 'quitBoard': // 退出项目
+        this.quitProject({ board_id: params_board_id })
         break
       default:
         break
@@ -297,6 +330,13 @@ export default class GroupListHeadItem extends Component {
   }
   inputOnchange = (e) => {
     const { value } = e.target
+    if (value.trimLR() == '') {
+      message.warn('项目名称不能为空')
+      this.setState({
+        edit_input_value: ''
+      })
+      return false
+    }
     this.setState({
       edit_input_value: value
     })
@@ -339,6 +379,27 @@ export default class GroupListHeadItem extends Component {
       }
     })
   }
+  updateBoardsName = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/getAboutAppsBoards',
+      payload: {
+
+      }
+    })
+    dispatch({
+      type: 'gantt/getAboutGroupBoards',
+      payload: {
+
+      }
+    })
+    dispatch({
+      type: 'gantt/getAboutUsersBoards',
+      payload: {
+
+      }
+    })
+  }
   // 请求更新项目名称
   requestUpdateBoard = (data = {}) => {
     updateProject({ ...data }).then(res => {
@@ -347,6 +408,7 @@ export default class GroupListHeadItem extends Component {
         message.success('已成功更新项目名称')
         global.constants.lx_utils.editBoardName({ board_id: data.board_id, name: data.name }) //更新圈子
         this.updateBoardFiles(data)
+        this.updateBoardsName()
       } else {
         message.error(res.message)
       }
@@ -444,6 +506,74 @@ export default class GroupListHeadItem extends Component {
     })
   }
 
+  // 项目删除 --- S
+  deleteProject = ({ board_id }) => {
+    const that = this
+    const modal = Modal.confirm();
+    modal.update({
+      title: `确认要删除该${currentNounPlanFilterName(PROJECTS)}吗？`,
+      content: <div style={{ color: 'rgba(0,0,0, .8)', fontSize: 14 }}>
+        <span >删除后将无法获取该{currentNounPlanFilterName(PROJECTS)}的相关动态</span>
+      </div>,
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        deleteProject(board_id).then(res => {
+          if (isApiResponseOk(res)) {
+            setTimeout(() => message.success(`已成功删除该${currentNounPlanFilterName(PROJECTS)}`), 200)
+            that.handleArchivedBoard()
+            deleteBoardFollow()
+            that.props.dispatch({
+              type: 'workbench/getProjectList',
+              payload: {}
+            });
+            modal.destroy();
+          } else {
+            message.warn(res.message)
+          }
+        })
+      },
+      onCancel: () => {
+        modal.destroy();
+      }
+    });
+  }
+  // 项目删除 --- E
+
+  // 退出项目 --- S
+  quitProject = ({ board_id }) => {
+    const that = this
+    const modal = Modal.confirm();
+    modal.update({
+      title: `确认要退出该${currentNounPlanFilterName(PROJECTS)}吗？`,
+      content: <div style={{ color: 'rgba(0,0,0, .8)', fontSize: 14 }}>
+        <span >退出后将无法获取该{currentNounPlanFilterName(PROJECTS)}的相关动态</span>
+      </div>,
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        quitProject({ board_id }).then(res => {
+          if (isApiResponseOk(res)) {
+            setTimeout(() => message.success(`已成功退出该${currentNounPlanFilterName(PROJECTS)}`), 200)
+            that.handleArchivedBoard()
+            deleteBoardFollow()
+            that.props.dispatch({
+              type: 'workbench/getProjectList',
+              payload: {}
+            });
+            modal.destroy();
+          } else {
+            message.warn(res.message)
+          }
+        })
+      },
+      onCancel: () => {
+        modal.destroy();
+      }
+    });
+  }
+  // 退出项目 --- E
+
   // 查看项目信息
   setBoardInfoVisible = () => {
     const { board_info_visible } = this.state
@@ -472,7 +602,7 @@ export default class GroupListHeadItem extends Component {
   renderMenuOperateListName = () => {
     const { itemValue = {}, gantt_board_id } = this.props
     const { renderVistorContorlVisible } = this.state
-    const { list_id } = itemValue
+    const { list_id, is_create } = itemValue
     const params_board_id = gantt_board_id == '0' ? list_id : gantt_board_id
     const rename_permission_code = gantt_board_id == '0' ? PROJECT_TEAM_BOARD_EDIT : PROJECT_TEAM_CARD_GROUP
     return (
@@ -483,10 +613,16 @@ export default class GroupListHeadItem extends Component {
             邀请成员加入
           </Menu.Item>
         }
+        {/* 渲染分组|项目对应的访问控制 */}
         {
-          gantt_board_id != '0' && renderVistorContorlVisible && (
+          renderVistorContorlVisible && (
             <Menu.Item key={'visitorControl'}>
-              {this.renderVistorContorl()}
+              <div
+                // style={{ height: 60, width: 100, backgroundColor: 'red' }}
+                onClick={this.handleVisitorWrapper}
+                onMouseDown={() => { gantt_board_id == '0' && this.handleVisitorControlMouseDown(params_board_id) }}>
+                {this.renderVistorContorl()}
+              </div>
             </Menu.Item>
           )
         }
@@ -500,8 +636,18 @@ export default class GroupListHeadItem extends Component {
           )
         }
         {
-          gantt_board_id == '0' && (
+          gantt_board_id == '0' && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_ARCHIVE, params_board_id) && (
             <Menu.Item key={'archived'}>归档</Menu.Item>
+          )
+        }
+        {
+          gantt_board_id == '0' && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_DELETE, params_board_id) && (
+            <Menu.Item key={'deleteBoard'}>删除{currentNounPlanFilterName(PROJECTS)}</Menu.Item>
+          )
+        }
+        {
+          gantt_board_id == '0' && is_create == '0' && (
+            <Menu.Item key={'quitBoard'}>退出{currentNounPlanFilterName(PROJECTS)}</Menu.Item>
           )
         }
         {
@@ -514,12 +660,13 @@ export default class GroupListHeadItem extends Component {
   }
 
   // 访问控制-----------start----------------------------------------
+
   // 这是设置访问控制之后需要更新的数据
   visitControlUpdateInGanttData = (obj = {}) => {
     const { type, is_privilege, privileges = [], removeId } = obj
     const { dispatch, itemValue: { list_id } } = this.props
     const { list_group = [], gantt_board_id, board_id, group_view_type } = this.props
-    console.log('sssss', privileges)
+    // console.log('sssss', privileges)
     const list_group_new = [...list_group]
     const group_index = list_group_new.findIndex(item => item.lane_id == list_id)
 
@@ -569,7 +716,7 @@ export default class GroupListHeadItem extends Component {
 
   // 移除访问控制列表
   handleVisitControlRemoveContentPrivilege = id => {
-    const { itemValue = {} } = this.props
+    const { itemValue = {}, gantt_board_id } = this.props
     const { list_id, privileges, board_id } = itemValue
     const content_type = 'lists'
     const content_id = list_id
@@ -577,7 +724,7 @@ export default class GroupListHeadItem extends Component {
     temp_id.push(id)
     removeContentPrivilege({
       id: id,
-      board_id
+      board_id: gantt_board_id == '0' ? list_id : board_id
     }).then(res => {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
@@ -614,23 +761,56 @@ export default class GroupListHeadItem extends Component {
 
   // 访问控制添加成员
   handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试', ) => {
-    const { itemValue = {} } = this.props
+    const { itemValue = {}, gantt_board_id } = this.props
     const { list_id, privileges, board_id } = itemValue
-    const content_type = 'lists'
+    const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    const { user_id } = user_set
+    const content_type = gantt_board_id == '0' ? 'board' : 'lists'
     const privilege_code = type
     const content_id = list_id
     let temp_ids = [] // 用来保存用户的id
+
+    let new_ids = [] // 用来保存权限列表中用户id
+    let new_privileges = [...privileges]
     users_arr && users_arr.map(item => {
       temp_ids.push(item.id)
     })
+
+    let flag
+    // 权限列表中的id
+    new_privileges = new_privileges && new_privileges.map(item => {
+      let { id } = (item && item.user_info) && item.user_info
+      if (user_id == id) { // 从权限列表中找到自己
+        if (temp_ids.indexOf(id) != -1) { // 判断自己是否在添加的列表中
+          flag = true
+        }
+      }
+      new_ids.push(id)
+    })
+
+    // 这里是需要做一个只添加了自己的一条提示
+    if (flag && temp_ids.length == '1') { // 表示只选择了自己, 而不是全选
+      message.warn('该职员已存在, 请不要重复添加', MESSAGE_DURATION_TIME)
+      return false
+    } else { // 否则表示进行了全选, 那么就过滤
+      temp_ids = temp_ids && temp_ids.filter(item => {
+        if (new_ids.indexOf(item) == -1) {
+          return item
+        }
+      })
+    }
+
     setContentPrivilege({
-      board_id,
+      board_id: gantt_board_id == '0' ? list_id : board_id,
       content_id,
       content_type,
       privilege_code,
       user_ids: temp_ids
     }).then(res => {
       if (res && res.code === '0') {
+        setTimeout(() => {
+          message.success('添加用户成功')
+        }, 500)
         let temp_arr = []
         temp_arr.push(res.data)
         this.visitControlUpdateInGanttData({ privileges: temp_arr, type: 'add' })
@@ -639,7 +819,6 @@ export default class GroupListHeadItem extends Component {
       }
     })
   }
-
 
   // 执行人列表去重
   arrayNonRepeatfy = arr => {
@@ -653,7 +832,7 @@ export default class GroupListHeadItem extends Component {
     }
     return temp_arr
   }
-  //设置访问控制人的列表
+  //设置获取分组中访问控制人的列表
   getProjectParticipant = () => {
     const { itemValue: { privileges_extend = [], lane_data: { card_no_times, cards } } } = this.props
     // 1. 这是将在每一个card_data中的存在的executors取出来,保存在一个数组中
@@ -668,29 +847,53 @@ export default class GroupListHeadItem extends Component {
     let new_projectParticipant = this.arrayNonRepeatfy(temp_projectParticipant)
     return new_projectParticipant
   }
+
+  // 获取项目详情中的成员列表
+  getProjectDetailInfoData = () => {
+    const { projectDetailInfoData = {}, itemValue } = this.props
+    const { data: projectParticipant = [] } = projectDetailInfoData
+    const { privileges_extend = [] } = itemValue
+    let temp_projectParticipant = [].concat(projectParticipant && [...projectParticipant], privileges_extend && [...privileges_extend])
+    const removeEmptyArrayEle = (arr) => {
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i] == undefined) {
+          arr.splice(i, 1);
+          i = i - 1; // i - 1 ,因为空元素在数组下标 2 位置，删除空之后，后面的元素要向前补位，
+          // 这样才能真正去掉空元素,觉得这句可以删掉的连续为空试试，然后思考其中逻辑
+        }
+      }
+      return arr;
+    };
+    let new_projectParticipant = this.arrayNonRepeatfy(removeEmptyArrayEle(temp_projectParticipant))
+    return new_projectParticipant
+  }
+
   renderVistorContorl = () => {
-    const { itemValue = {}, } = this.props
-    const { list_id, board_id, is_privilege = '0', privileges = [], } = itemValue
+    const { itemValue = {}, gantt_board_id } = this.props
+    const { list_id, board_id, is_privilege = '0', privileges = [], org_id } = itemValue
     return (
       <VisitControl
-        invitationType='5'
+        invitationType={gantt_board_id == '0' ? '2' : '5'}
         invitationId={list_id}
-        board_id={board_id}
+        board_id={gantt_board_id == '0' ? list_id : board_id}
         popoverPlacement={'rightTop'}
+        type={gantt_board_id == '0' && 'board_list'}
         isPropVisitControl={is_privilege === '0' ? false : true}
-        principalList={this.getProjectParticipant()}
-        principalInfo='位任务列表负责人'
+        principalList={gantt_board_id == '0' ? this.getProjectDetailInfoData() : this.getProjectParticipant()}
+        // principalInfo='位任务列表负责人'
         otherPrivilege={privileges}
         otherPersonOperatorMenuItem={this.visitControlOtherPersonOperatorMenuItem}
         removeMemberPromptText='移出后用户将不能访问此任务列表'
         handleVisitControlChange={this.handleVisitControlChange}
         handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
         handleAddNewMember={this.handleVisitControlAddNewMember}
+        handleVisitControlPopoverVisible={this.handleVisitControlPopoverVisible}
       >
         <span>访问控制</span>
       </VisitControl>
     )
   }
+
   // 访问控制 ----------------end-----------------------------
 
   // 置顶
@@ -858,6 +1061,7 @@ export default class GroupListHeadItem extends Component {
 function mapStateToProps({
   gantt: { datas: { boards_flies, group_rows = [], ceiHeight, gantt_board_id, group_view_type, get_gantt_data_loading, list_group, show_board_fold } },
   technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, } },
+  projectDetail: { datas: { projectDetailInfoData = {} } }
 }) {
-  return { boards_flies, list_group, ceiHeight, group_rows, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, get_gantt_data_loading, show_board_fold }
+  return { boards_flies, list_group, ceiHeight, group_rows, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, get_gantt_data_loading, show_board_fold, projectDetailInfoData }
 }

@@ -35,6 +35,7 @@ class Gantt extends Component {
         is_show_board_file_area: '0',
         group_view_filter_boards: [],
         group_view_filter_users: [],
+        boards_flies: []
       }
     })
     if (page_load_type != 1) {
@@ -112,10 +113,10 @@ class Gantt extends Component {
           // })
           this.insertTaskToListGroup(res)
         } else {
-          message.warn('创建任务失败')
-          if (res.code == 4041) {
-            message.warn(res.message)
-          }
+          // message.warn('创建任务失败')
+          // if (res.code == 4041) {
+          //   message.warn(res.message)
+          // }
         }
       })
     // .catch(err => message.error(err));

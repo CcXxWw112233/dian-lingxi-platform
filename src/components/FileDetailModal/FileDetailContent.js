@@ -4,10 +4,10 @@ import MainContent from './MainContent'
 import HeaderContent from './HeaderContent'
 import { fileInfoByUrl, getFilePDFInfo } from '@/services/technological/file'
 import { isApiResponseOk } from '../../utils/handleResponseData'
-import { FILES, MESSAGE_DURATION_TIME } from '../../globalset/js/constant'
+import { FILES, MESSAGE_DURATION_TIME, PROJECT_FILES_FILE_UPDATE } from '../../globalset/js/constant'
 import { connect } from 'dva'
 import { message } from 'antd'
-import { currentNounPlanFilterName, getOrgNameWithOrgIdFilter, checkIsHasPermissionInVisitControl, getSubfixName } from '@/utils/businessFunction.js'
+import { currentNounPlanFilterName, getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl, getSubfixName } from '@/utils/businessFunction.js'
 import { compareACoupleOfObjects } from '@/utils/util'
 import QueryString from 'querystring'
 let board_id = null
@@ -94,7 +94,8 @@ class FileDetailContent extends Component {
     if (isApiResponseOk(res)) {
       let file_type = getSubfixName(res.data.base_info.file_name)
       this.initStateDatas({ data: res.data })
-      if (file_type == '.pdf') {
+      let flag = checkIsHasPermissionInVisitControl('edit', res.data.base_info.privileges, res.data.base_info.is_privilege,[], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, res.data.base_info.board_id))
+      if (file_type == '.pdf' && flag) {
         await this.getFilePDFInfo({ id })
       }
       this.linkImWithFile({name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id, currentPreviewFileVersionId: res.data.base_info.version_id})
@@ -123,20 +124,20 @@ class FileDetailContent extends Component {
       this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
       // this.linkImWithFile({name: currentPreviewFileName, type: 'file', board_id: board_id, id: newFilePreviewCurrentFileId})
       let that = this
-      if (Im) {
-        Im.on('fileCancel',function({id}){
-          if (id == that.props.filePreviewCurrentFileId) {
-            that.props.dispatch({
-              type: 'publicFileDetailModal/updateDatas',
-              payload: {
-                filePreviewCurrentFileId: '',
-                fileType: '',
-                isInOpenFile: false
-              }
-            })
-          }
-        })
-      }
+      // if (Im) {
+      //   Im.on('fileCancel',function({id}){
+      //     if (id == that.props.filePreviewCurrentFileId) {
+      //       that.props.dispatch({
+      //         type: 'publicFileDetailModal/updateDatas',
+      //         payload: {
+      //           filePreviewCurrentFileId: '',
+      //           fileType: '',
+      //           isInOpenFile: false
+      //         }
+      //       })
+      //     }
+      //   })
+      // }
     }
   }
 

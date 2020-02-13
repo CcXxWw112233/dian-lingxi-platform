@@ -22,6 +22,7 @@ import OrganizationMember from '@/routes/Technological/components/OrganizationMe
 import Organization from '@/routes/organizationManager'
 import queryString from 'query-string';
 import PayUpgrade from '@/routes/Technological/components/PayUpgrade/index'
+import { CUSTOMIZATION_ORGNIZATIONS } from '../../../../../../globalset/js/constant';
 const { SubMenu } = Menu;
 let timer;
 @connect(mapStateToProps)
@@ -455,6 +456,8 @@ export default class SimpleNavigation extends Component {
     }
     openPayUpgradeModal = (e) => {
         e.stopPropagation();
+        window.open('https://docs.qq.com/form/edit/DSHRaQ01GSU1qZHlT#/edit')
+        return
         this.setState({
             payUpgradeModalVisible: true
         });
@@ -620,7 +623,7 @@ export default class SimpleNavigation extends Component {
                         }
                     >
                         {/* <Menu.Item disabled={!is_show_org_name || is_disabled} key="subShowOrgName"> */}
-                        <Menu.Item key="subShowOrgName">
+                        {/* <Menu.Item key="subShowOrgName">
                             <span>显示组织名称
                       <Switch
                                     style={{ display: 'inline-block', marginLeft: 8 }}
@@ -629,18 +632,22 @@ export default class SimpleNavigation extends Component {
                                 ></Switch>
 
                             </span>
-                        </Menu.Item>
+                        </Menu.Item> */}
                         <Menu.Item key="subInfoSet">
                             <span>通知设置</span>
                         </Menu.Item>
                         {
-                            isPaymentOrgUser() && (
-                            <Menu.Item key="subShowSimple">
-                                <span>
-                                    切换普通模式
-                                </span>
-                            </Menu.Item>
-                          )}
+                            isPaymentOrgUser() &&
+                            CUSTOMIZATION_ORGNIZATIONS.includes(this.props.currentSelectOrganize.id) &&
+                            true &&
+                            (
+                                <Menu.Item key="subShowSimple">
+                                    <span>
+                                        切换普通模式
+                                    </span>
+                                </Menu.Item>
+                            )
+                        }
 
                     </SubMenu>
 

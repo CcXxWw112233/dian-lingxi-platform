@@ -16,6 +16,7 @@ import {
 } from "@/globalset/js/constant";
 import _ from "lodash";
 const { TreeNode } = TreeSelect;
+let uploadMaxFileSize = []
 /**上传附件组件 */
 @connect(mapStateToProps)
 export default class UploadAttachment extends Component {
@@ -30,6 +31,13 @@ export default class UploadAttachment extends Component {
       boardFolderTreeData: [],
       fileSavePath: null,
       uploading: false,
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { projectDetailInfoData = {} } = nextProps
+    if (projectDetailInfoData && Object.keys(projectDetailInfoData) && Object.keys(projectDetailInfoData).length) {
+      this.getDefaultNoticeUser(projectDetailInfoData.data)
     }
   }
 
@@ -67,6 +75,7 @@ export default class UploadAttachment extends Component {
     if (this.state.uploading) {
       return message.error('上传中：暂不能操作');
     }
+    const { projectDetailInfoData: { data = [] } } = this.props
     this.setState({
       uploadFilePreviewList: [],
       fileList: [],
@@ -75,8 +84,9 @@ export default class UploadAttachment extends Component {
       fileSavePath: null
     }, () => {
       this.setUploadFileVisible(false);
-
+      this.getDefaultNoticeUser(data)
     });
+    uploadMaxFileSize = []
   };
 
 
@@ -124,7 +134,6 @@ export default class UploadAttachment extends Component {
       formData.append('file', file);
     });
 
-
     let loading = message.loading('文件正在上传中...', 0);
     let notify_user_ids = new Array();
     for (var i = 0; i < toNoticeList.length; i++) {
@@ -150,7 +159,7 @@ export default class UploadAttachment extends Component {
         notify_user_ids: notify_user_ids.join(','),
 
       },
-      timeout: 30000
+      timeout: 60000
     })
       .then(res => {
         const apiResult = res.data;
@@ -165,10 +174,13 @@ export default class UploadAttachment extends Component {
           });
 
         } else {
-          message.warn(res.message)
+          const apiResult = res.data;
+          message.warn(apiResult.message)
           this.setState({
             uploading: false,
           });
+          this.setUploadFileVisible(false);
+          this.closeUploadAttachmentModal();
         }
 
       })
@@ -177,22 +189,22 @@ export default class UploadAttachment extends Component {
         if (_.has(error, "response.status")) {
           switch (error.response.status) {
             case 413:
-              message.error('总文件超过100M,请分多次上传哦~');
+              message.error('总文件超过100M,请分多次上传');
               this.setState({
                 uploading: false,
               });
-              this.setUploadFileVisible(false);
+              // this.setUploadFileVisible(false);
               this.closeUploadAttachmentModal();
               break;
             default:
               break
           }
         } else if (error.message.indexOf('timeout of') != -1) {
-          message.error('上传文件超时了哦~');
+          message.error('上传文件超时了');
           this.setState({
             uploading: false,
           });
-          this.setUploadFileVisible(false);
+          // this.setUploadFileVisible(false);
           this.closeUploadAttachmentModal();
           return false
         } else {
@@ -200,7 +212,7 @@ export default class UploadAttachment extends Component {
           this.setState({
             uploading: false,
           });
-          this.setUploadFileVisible(false);
+          // this.setUploadFileVisible(false);
           this.closeUploadAttachmentModal();
         }
       });
@@ -214,11 +226,24 @@ export default class UploadAttachment extends Component {
       return false
     }
     const { size } = file
-    if (size == 0) {
+    uploadMaxFileSize.push(size)
+    let sum = 0
+    for (let i = 0; i < uploadMaxFileSize.length; i++) {
+      sum += uploadMaxFileSize[i];
+    }
+    if (sum == 0) {
       message.error(`不能上传空文件`)
+      // this.setUploadFileVisible(false);
+      this.closeUploadAttachmentModal();
+      uploadMaxFileSize = []
       return false
-    } else if (size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+    } else if (sum > UPLOAD_FILE_SIZE * 1024 * 1024) {
       message.error(`上传文件不能超过${UPLOAD_FILE_SIZE}MB`)
+      // this.setUploadFileVisible(false);
+      setTimeout(() => {
+        this.closeUploadAttachmentModal()
+        uploadMaxFileSize = []
+      }, 50)
       return false
     } else {
       this.setState(state => ({
@@ -237,6 +262,10 @@ export default class UploadAttachment extends Component {
 
   //修改通知人的回调 S
   chirldrenTaskChargeChange = (data) => {
+    if (this.state.uploading) {
+      message.warn('正在上传中...请勿操作')
+      return false
+    }
     const { projectDetailInfoData = {} } = this.props;
     // 多个任务执行人
     const membersData = projectDetailInfoData['data'] //所有的人
@@ -267,6 +296,10 @@ export default class UploadAttachment extends Component {
   // 移除执行人的回调 S
   handleRemoveExecutors = (e, shouldDeleteItem) => {
     e && e.stopPropagation()
+    if (this.state.uploading) {
+      message.warn('正在上传中...请勿操作')
+      return false
+    }
     const { toNoticeList = [] } = this.state
     let new_toNoticeList = [...toNoticeList]
     new_toNoticeList.map((item, index) => {
@@ -284,6 +317,10 @@ export default class UploadAttachment extends Component {
     const { board_id } = this.props
     if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, board_id)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    if (this.state.uploading) {
+      message.warn('正在上传中...请勿操作')
       return false
     }
     this.setState({
@@ -323,6 +360,10 @@ export default class UploadAttachment extends Component {
   }
 
   onChangeFileSavePath = (value) => {
+    if (this.state.uploading) {
+      message.warn('正在上传中...请勿操作')
+      return false
+    }
     if (value == '0' || value == '') {
       message.warn('请选择一个文件目录', MESSAGE_DURATION_TIME)
       return false
@@ -333,6 +374,41 @@ export default class UploadAttachment extends Component {
     }
   }
 
+  // 获取默认附件提醒人 负责人 || 操作人
+  getDefaultNoticeUser = (data) => {
+    if (!data) return
+    const { executors = [] } = this.props
+    const {id} = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    let new_toNoticeList = []
+    let tempIds = []
+    let new_executors = [...executors]
+    let new_data = [...data]
+    if (executors && executors.length) {
+      new_executors.map(item => {
+        tempIds.push(item.user_id)
+      })
+    }
+    new_data && new_data.map(item => {
+      if (item.user_id == id || tempIds.indexOf(item.user_id) != -1) {
+        new_toNoticeList.push(item)
+      }
+    })
+    this.setState({
+      toNoticeList: new_toNoticeList
+    })
+
+  }
+
+  onVisibleChange = (visible) => {
+    if (this.state.uploading) {
+      message.warn('正在上传中...请勿操作')
+      return false
+    }
+    this.setState({
+      visible: visible
+    })
+  }
+
 
   render() {
     // 父组件传递的值
@@ -340,7 +416,6 @@ export default class UploadAttachment extends Component {
     const { uploadFileVisible, uploadFilePreviewList = [], toNoticeList = [], fileSavePath, uploading } = this.state;
 
     const { data: projectMemberData } = projectDetailInfoData;
-
     return (
 
       <div>
@@ -349,8 +424,9 @@ export default class UploadAttachment extends Component {
         </Upload>
 
         <Modal
+          destroyOnClose={true}
           title={<div style={{ textAlign: 'center', fontSize: '16px', fontWeight: 600, color: 'rgba(0,0,0,0.85)' }}>上传附件设置</div>}
-          getContainer={() => document.getElementById('technologicalLayoutWrapper')}
+          getContainer={() => document.getElementById('technologicalLayoutWrapper') || document.body}
           visible={uploadFileVisible || visible}
           onOk={this.handleOk}
           onCancel={this.closeUploadAttachmentModal}
@@ -385,7 +461,7 @@ export default class UploadAttachment extends Component {
               {
                 !toNoticeList.length ? (
                   <div style={{ flex: '1', position: 'relative' }}>
-                    <Dropdown overlayClassName={styles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                    <Dropdown visible={this.state.visible} trigger={['click']} overlayClassName={styles.overlay_pricipal} onVisibleChange={this.onVisibleChange} getPopupContainer={triggerNode => triggerNode.parentNode}
                       overlayStyle={{ maxWidth: '200px' }}
                       overlay={
                         <MenuSearchPartner
@@ -406,7 +482,7 @@ export default class UploadAttachment extends Component {
                   </div>
                 ) : (
                     <div style={{ flex: '1', position: 'relative' }}>
-                      <Dropdown overlayClassName={styles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                      <Dropdown visible={this.state.visible} trigger={['click']} overlayClassName={styles.overlay_pricipal} onVisibleChange={this.onVisibleChange} getPopupContainer={triggerNode => triggerNode.parentNode}
                         overlay={
                           <MenuSearchPartner
                             invitationType='1'
@@ -476,7 +552,7 @@ export default class UploadAttachment extends Component {
             </div>
             {
               boardFolderTreeData && boardFolderTreeData.length == '0' && (
-                <span style={{ display: 'block', marginTop: '15px', marginLeft: '4px', color: '#FAAD14' }}>暂无访问文件权限哦~</span>
+                <span style={{ display: 'block', marginTop: '15px', marginLeft: '4px', color: '#FAAD14' }}>暂无访问文件权限</span>
               )
             }
           </div>

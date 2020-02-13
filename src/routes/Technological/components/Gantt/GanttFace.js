@@ -237,7 +237,7 @@ export default class GanttFace extends Component {
   }
   render() {
     const { gantt_card_out_middle_max_height } = this.state
-    const { gantt_card_height, get_gantt_data_loading, is_need_calculate_left_dx, gantt_board_id } = this.props
+    const { gantt_card_height, get_gantt_data_loading, is_need_calculate_left_dx, gantt_board_id, is_show_board_file_area } = this.props
     const dataAreaRealHeight = this.getDataAreaRealHeight()
 
     return (
@@ -290,7 +290,7 @@ export default class GanttFace extends Component {
         <div className={indexStyles.cardDetail_right}></div>
         <FaceRightButton setGoldDateArr={this.setGoldDateArr} setScrollPosition={this.setScrollPosition} />
         {
-          isPaymentOrgUser() && <ShowFileSlider />
+          isPaymentOrgUser() && is_show_board_file_area != '1' &&<ShowFileSlider />
         }
         <BoardsFilesArea />
       </div>
@@ -310,7 +310,8 @@ function mapStateToProps({ gantt: { datas: {
   get_gantt_data_loading,
   ceiHeight,
   group_view_type,
-  gantt_board_id
+  gantt_board_id,
+  is_show_board_file_area
 } } }) {
   return {
     ceilWidth,
@@ -323,7 +324,8 @@ function mapStateToProps({ gantt: { datas: {
     get_gantt_data_loading,
     ceiHeight,
     group_view_type,
-    gantt_board_id
+    gantt_board_id,
+    is_show_board_file_area
   }
 }
 GanttFace.defaultProps = {

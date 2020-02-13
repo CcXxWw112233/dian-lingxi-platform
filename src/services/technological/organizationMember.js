@@ -1,5 +1,5 @@
 import request from '../../utils/requestAxios'
-import {REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_INTERGFACE_VERSIONN} from '../../globalset/js/constant'
+import { REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_INTERGFACE_VERSIONN } from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 
 //创建分组
@@ -22,7 +22,7 @@ export async function getGroupTreeList(params) {
     params: {
       ...params,
       _organization_id: localStorage.getItem('OrganizationId'),
-    }      
+    }
   });
 }
 
@@ -77,7 +77,7 @@ export async function getGroupList(params) {
     params: {
       ...params,
       // _organization_id: localStorage.getItem('OrganizationId'),
-    }      
+    }
   });
 }
 
@@ -89,7 +89,7 @@ export async function getAccessibleGroupList(params) {
     params: {
       ...params,
       // _organization_id: localStorage.getItem('OrganizationId'),
-    }      
+    }
   });
 }
 
@@ -127,7 +127,7 @@ export async function approvalMember(data) {
     data: {
       ...data,
       _organization_id: localStorage.getItem('OrganizationId'),
-    }      
+    }
   });
 }
 
@@ -161,7 +161,7 @@ export async function getCurrentUserOrganizes(params) {
     url: `${REQUEST_DOMAIN}/organization`,
     method: 'GET',
     params
-  }, { isNotLoading: true} );
+  }, { isNotLoading: true });
 }
 
 // 切换组织
@@ -181,7 +181,7 @@ export async function getCurrentOrgRole(params) {
     params: {
       ...params,
       _organization_id: localStorage.getItem('OrganizationId'),
-    }      
+    }
   });
 }
 //给成员设置角色
@@ -200,7 +200,7 @@ export async function getSearchOrganizationList(params) {
     url: `${REQUEST_DOMAIN}/organization/search`,
     method: 'GET',
     params
-  }, { isNotLoading: true} );
+  }, { isNotLoading: true });
 }
 
 //创建组织
@@ -262,7 +262,7 @@ export async function getMemberInfo(params) {
     params: {
       ...params,
       _organization_id: localStorage.getItem('OrganizationId'),
-    }      
+    }
   });
 }
 
@@ -275,7 +275,7 @@ export async function getMembersInOneGroup(params) {
       _organization_id: localStorage.getItem('OrganizationId'),
       ...params
     }
-  }, {isNotLoading: true});
+  }, { isNotLoading: true });
 }
 //获取某个分组的成员 => 用于设置分组负责人
 export async function setGroupLeader(data) {
@@ -301,7 +301,7 @@ export async function getUserOrgPermissions(params) {
     url: `${REQUEST_DOMAIN}/permissions/org`,
     method: 'GET',
     params
-  }, {isNotLoading: true});
+  }, { isNotLoading: true });
 }
 //获取用户所有项目所有权限
 export async function getUserBoardPermissions(params) {
@@ -309,7 +309,7 @@ export async function getUserBoardPermissions(params) {
     url: `${REQUEST_DOMAIN_BOARD}/permissions/board`,
     method: 'GET',
     params
-  }, {isNotLoading: true});
+  }, { isNotLoading: true });
 }
 
 // 用户设置是否显示组织名称
@@ -327,7 +327,8 @@ export async function setShowSimpleModel(data) {
     url: `${REQUEST_DOMAIN}/user/set`,
     method: 'PUT',
     data: {
-      is_simple_model: data
+      is_simple_model: data,
+      _organization_id: localStorage.getItem('OrganizationId') || '0'
     }
   })
 }

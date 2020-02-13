@@ -13,7 +13,7 @@ import TaskDetailModal from '@/components/TaskDetailModal'
 import { setBoardIdStorage, getSubfixName } from "../../../../utils/businessFunction";
 import Organization from '@/routes/organizationManager'
 import FileDetailModal from '@/components/FileDetailModal'
-const { LingxiIm, Im } = global.constants
+const { LingxiIm } = global.constants
 
 class SimpleHeader extends Component {
     state = {
@@ -96,6 +96,7 @@ class SimpleHeader extends Component {
 
     //圈子
     imInitOption = () => {
+        const { Im } = global.constants;
         const { protocol, host } = window.location
         // 设置组织id过滤
         const { dispatch, OrganizationId } = this.props
@@ -108,7 +109,8 @@ class SimpleHeader extends Component {
             // APPKEY: "c3abea191b7838ff65f9a6a44ff5e45f"
         })
         const clickDynamicFunc = (data) => {
-            this.imClickDynamic(data);
+            // 需要延时打开，因为IM先调用关闭，在打开的，而关闭比打开的走的慢
+            setTimeout(() => this.imClickDynamic(data), 100)
         }
         const visibleFunc = (val) => {
             if (!val) {
@@ -154,9 +156,8 @@ class SimpleHeader extends Component {
                     }
                 })
             })
-            let that = this
-            Im.on('fileCancel',function({id}){
-                if (id == that.props.card_id) {
+            Im.on('fileCancel',({id}) =>{
+                if (id == this.props.card_id) {
                   dispatch({
                     type: 'publicTaskDetailModal/updateDatas',
                     payload: {
@@ -168,6 +169,17 @@ class SimpleHeader extends Component {
                     }
                   })
                 }
+                if (id == this.props.filePreviewCurrentFileId) {
+                    dispatch({
+                      type: 'publicFileDetailModal/updateDatas',
+                      payload: {
+                        filePreviewCurrentFileId: '',
+                        fileType: '',
+                        isInOpenFile: false,
+                        currentPreviewFileName: ''
+                      }
+                    })
+                  }
               })
         }
     }
@@ -197,6 +209,15 @@ class SimpleHeader extends Component {
                             filePreviewCurrentFileId: '',
                             fileType: '',
                             currentPreviewFileName: ''
+                        }
+                    })
+                }
+                if (this.props.drawerVisible) { // 防止弹窗多层覆盖
+                    dispatch({
+                        type: 'publicTaskDetailModal/updateDatas',
+                        payload: {
+                            drawerVisible: false,
+                            card_id: ''
                         }
                     })
                 }
@@ -274,6 +295,17 @@ class SimpleHeader extends Component {
                         payload: {
                             drawerVisible: false,
                             card_id: ''
+                        }
+                    })
+                }
+                if (this.props.isInOpenFile) { // 防止弹窗多层覆盖
+                    dispatch({
+                        type: 'publicFileDetailModal/updateDatas',
+                        payload: {
+                            isInOpenFile: false,
+                            filePreviewCurrentFileId: '',
+                            fileType: '',
+                            currentPreviewFileName: ''
                         }
                     })
                 }

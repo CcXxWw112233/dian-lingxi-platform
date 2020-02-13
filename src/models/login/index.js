@@ -1,7 +1,7 @@
 import { formSubmit, requestVerifyCode, wechatAccountBind, changePicVerifySrc } from '../../services/login'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
-import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
+import { MESSAGE_DURATION_TIME, CUSTOMIZATION_ORGNIZATIONS } from "../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import Cookies from 'js-cookie'
 import QueryString from 'querystring'
@@ -21,7 +21,7 @@ const clearAboutLocalstorage = () => { //清掉当前相关业务逻辑的用户
     'currentSelectOrganize',
     'currentNounPlan',
   ]
-  for(let val of names_arr) {
+  for (let val of names_arr) {
     localStorage.removeItem(val)
   }
 }
@@ -69,26 +69,16 @@ export default {
     * loginRouteJump({ payload }, { select, call, put }) {
       const res = yield call(getUSerInfo, payload)
       const { has_org } = res.data
-      const { is_simple_model } = res.data.user_set
+      const { is_simple_model, current_org } = res.data.user_set
       // console.log(is_simple_model, 'sssssss')
       //如果存在组织， 否则跳到指引页面
       if (isApiResponseOk(res)) {
         clearAboutLocalstorage() //清掉所有localstorage缓存
         if (has_org == '1') {
-          // if (is_simple_model == '0') {
-          //   if (redirectLocation.indexOf('/technological/simplemode') == -1) {
-          //     yield put({
-          //       type: 'technological/setShowSimpleModel',
-          //       payload: {
-          //         is_simple_model: '0',
-          //         redirectLocation
-          //       }
-          //     })
-          //   } else {
-          //     yield put(routerRedux.push('/technological/workbench'))
-          //   }
-          // } else if (is_simple_model == '1') {
-          //   if (redirectLocation.indexOf('/technological/simplemode') == -1) {
+          // 已废弃--------start
+          // if (redirectLocation.indexOf('/technological/simplemode') == -1) {
+          //   const model_is_import = yield select(getModelIsImport('technological'))
+          //   if (model_is_import) { //在该模块注入之后才调用，否则就只是调用简单跳转
           //     yield put({
           //       type: 'technological/setShowSimpleModel',
           //       payload: {
@@ -100,57 +90,48 @@ export default {
           //     yield put(routerRedux.push('/technological/simplemode/home'))
           //   }
           // } else {
+          //   if (is_simple_model == '0') {
+          //     yield put(routerRedux.push('/technological/workbench'))
+          //   } else if (is_simple_model == '1') {
+          //     yield put(routerRedux.push('/technological/simplemode/home'))
+          //   } else {
 
+          //   }
           // }
+          // 已废弃--------end
 
-          if (redirectLocation.indexOf('/technological/simplemode') == -1) {
-            const model_is_import = yield select(getModelIsImport('technological'))
-            if (model_is_import) { //在该模块注入之后才调用，否则就只是调用简单跳转
-              yield put({
-                type: 'technological/setShowSimpleModel',
-                payload: {
-                  is_simple_model: '0',
-                  redirectLocation
-                }
-              })
-            } else {
-              yield put(routerRedux.push('/technological/simplemode/home'))
-            }
+          // 正常逻辑------start
+          // if (redirectLocation) {
+          //   yield put(routerRedux.push(redirectLocation))
+          // } else {
+          //   if (is_simple_model == '0') {
+          //     yield put(routerRedux.push('/technological/workbench'))
+          //   } else if (is_simple_model == '1') {
+          //     yield put(routerRedux.push('/technological/simplemode/home'))
+          //   } else {
+
+          //   }
+          // }
+          // 正常逻辑------end
+
+          // 针对性定制化组织-------start
+          if (redirectLocation) {
+            yield put(routerRedux.push(redirectLocation))
           } else {
-            if (is_simple_model == '0') {
-              yield put(routerRedux.push('/technological/workbench'))
-            } else if (is_simple_model == '1') {
-              yield put(routerRedux.push('/technological/simplemode/home'))
+            if (CUSTOMIZATION_ORGNIZATIONS.includes(current_org)) { //如果是需要开放的组织
+              if (is_simple_model == '0') {
+                yield put(routerRedux.push('/technological/workbench'))
+              } else if (is_simple_model == '1') {
+                yield put(routerRedux.push('/technological/simplemode/home'))
+              } else {
+
+              }
             } else {
-
+              yield put(routerRedux.push('/technological/simplemode/home'))
             }
+
           }
-
-          // if (is_simple_model == '0' && redirectLocation.indexOf('/technological/simplemode') == -1) { // 如果是普通模式,但重定向不为极简模式,那么就重定向到该去的地方
-          //   yield put({
-          //     type: 'technological/setShowSimpleModel',
-          //     payload: {
-          //       is_simple_model: '0',
-          //       redirectLocation
-          //     }
-          //   })
-          //   // yield put(routerRedux.push(redirectLocation))
-
-          // } else if (is_simple_model == '0' && redirectLocation.indexOf('/technological/simplemode') != -1) { // 如果是高效模式, 但重定向为极简模式, 那么就以模式为主
-          //   yield put(routerRedux.push('/technological/workbench'))
-          // } else if (is_simple_model == '1' && redirectLocation.indexOf('/technological/workbench') == -1) {
-          //   yield put({
-          //     type: 'technological/setShowSimpleModel',
-          //     payload: {
-          //       is_simple_model: '0',
-          //       redirectLocation
-          //     }
-          //   })
-          //   // yield put(routerRedux.push(redirectLocation))
-
-          // } else if (is_simple_model == '1' && redirectLocation.indexOf('/technological/workbench') != -1) {
-          //   yield put(routerRedux.push('/technological/simplemode/home'))
-          // }
+          // 针对性定制化组织-------start
 
         } else {
           // yield put(routerRedux.push('/noviceGuide'))

@@ -4,12 +4,13 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { Icon, message, Tooltip } from 'antd';
 import DropdownSelect from '../DropdownSelect'
 import CreateProject from '@/routes/Technological/components/Project/components/CreateProject/index';
-import { getOrgNameWithOrgIdFilter, setBoardIdStorage } from "@/utils/businessFunction"
+import { getOrgNameWithOrgIdFilter, setBoardIdStorage, checkIsHasPermission } from "@/utils/businessFunction"
 import { afterChangeBoardUpdateGantt } from "../../../Technological/components/Gantt/ganttBusiness";
 import { beforeChangeCommunicationUpdateFileList } from "../WorkbenchPage/BoardCommunication/components/getCommunicationFileListFn";
 import { isPaymentOrgUser } from "@/utils/businessFunction"
 import { selectBoardToSeeInfo } from "../../../../utils/businessFunction";
 import { isApiResponseOk } from "../../../../utils/handleResponseData";
+import { ORG_TEAM_BOARD_CREATE } from '../../../../globalset/js/constant'
 class BoardDropdownSelect extends Component {
   constructor(props) {
     super(props);
@@ -144,6 +145,18 @@ class BoardDropdownSelect extends Component {
       });
   }
 
+  // 判断是否有新建项目的权限
+  isHasCreatBoardPermission = () => {
+    const org_id = localStorage.getItem('OrganizationId')
+    let flag = true
+    if (org_id != '0') {
+        if (!checkIsHasPermission(ORG_TEAM_BOARD_CREATE)) {
+            flag = false
+        }
+    }
+      return flag
+  }
+
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
@@ -177,7 +190,7 @@ class BoardDropdownSelect extends Component {
     const { projectList, simplemodeCurrentProject, iconVisible = true } = this.props;
     const { addProjectModalVisible = false } = this.state;
     const menuItemList = this.getMenuItemList(projectList);
-    const fuctionMenuItemList = [{ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }];
+    const fuctionMenuItemList = this.isHasCreatBoardPermission() ? [{ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }] : [];
     let selectedKeys = ['0'];
     if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
       selectedKeys = [simplemodeCurrentProject.board_id]

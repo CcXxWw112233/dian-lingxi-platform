@@ -194,7 +194,7 @@ export default class CommentListItem extends React.Component {
             <span>{newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}</span>
           </div>
         )
-      break
+        break
       case 'board.card.update.startTime':// 修改开始时间
         messageContainer = (
           <div className={commonCommentStyles.news_item}>
@@ -350,7 +350,7 @@ export default class CommentListItem extends React.Component {
             <span>{newsDynamicHandleTime(create_time)} {timestampToHM(create_time)}</span>
           </div>
         )
-      break
+        break
       default:
         break
     }
@@ -416,8 +416,10 @@ export default class CommentListItem extends React.Component {
                     </div>
                   ) : (
                       <div className={commonCommentStyles.common_delete} onClick={this.deleteComment.bind(this, id)}>
-                        撤回
-                    </div>
+                        {
+                          data.creator.id == JSON.parse(localStorage.getItem('userInfo')).id && '撤回'
+                        }
+                      </div>
                     )
                 }
               </div>
@@ -447,8 +449,8 @@ export default class CommentListItem extends React.Component {
               message_type == '2' ? (
                 <>{this.filterTitleContain(action, value).messageContainer}</>
               ) : (
-                <>{this.commentNews(value).messageContainer}</>
-              )
+                  <>{this.commentNews(value).messageContainer}</>
+                )
             }
           </div>
         </div>

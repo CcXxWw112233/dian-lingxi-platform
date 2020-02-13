@@ -70,7 +70,7 @@ export default class CommunicationFirstScreenHeader extends Component {
                     {
                         bread_paths && bread_paths.length ?
                         (
-                            <Breadcrumb separator={this.showSeparator()}>
+                            <Breadcrumb separator={this.showSeparator()} style={{display: 'flex'}}>
                                 <BreadcrumbItem key={'allFiles'} onClick={()=>this.props.goAllFileStatus()}>
                                     全部文件
                                 </BreadcrumbItem>
@@ -79,7 +79,7 @@ export default class CommunicationFirstScreenHeader extends Component {
                                         const { id, folder_id, board_name, folder_name, type } = item
                                         return (
                                             <BreadcrumbItem key={ id || folder_id } onClick={() => this.chooseBreadItem(item)}>
-                                                <span style={{color: 'rgba(0,0,0,.65)'}}>{board_name || folder_name}</span>
+                                                <span style={{color: 'rgba(0,0,0,.65)', display: 'inline-block', maxWidth: '500px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{board_name || folder_name}</span>
                                             </BreadcrumbItem>
                                         )
                                     })

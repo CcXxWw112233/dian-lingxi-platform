@@ -48,7 +48,9 @@ export const WEBSOCKET_URL = (function (NODE_ENV, location) {
     // return 'ws://https://knowapi.new-di.com/api/common/hotspot'
     //'ws://prerelease.lingxi.new-di.com/websocket'  
     // return 'ws://192.168.1.68/websocket'
-    return 'ws://dev.lingxi.new-di.com/websocket'
+    return 'ws://dev.lingxi.new-di.com/websocket' //开发环境
+    return 'wss://lingxi.di-an.com/websocket'
+
   } else {
     const protocol = location.protocol == 'http:' ? 'ws:' : 'wss:'
     return `${protocol}//${location.host}/websocket`
@@ -149,3 +151,22 @@ export const CONTENT_DATA_TYPE_FOLDER = 'folder'
 export const CONTENT_DATA_TYPE_FLOW = 'flow'
 
 export const FILE_TYPE_UPLOAD_WHITELISTED = '3dm,iges,obj,ma,mb,skp,dwg,psd,pdf,doc,xls,ppt,docx,xlsx,pptx,key,jpg,png,gif,mp4,mp3,txt'
+
+// 针对性定制化开发的组织
+export const CUSTOMIZATION_ORGNIZATIONS = [
+  '1207841935180566528',
+  '1192754064144863232',
+  '1108192151461826560',
+  '1193858769025634304',
+  '1200009822913826816',
+  '1106838340805726208',
+  '1212911749708255232',
+  '1216604161253183488',
+  '1217998714627559424',
+  '1164926825101660160',
+  '1177520105660223488',
+  '1177054842179424256',
+  '1108909996021780480',
+  '1173834807776514048',
+  '1173837025166626816'
+]

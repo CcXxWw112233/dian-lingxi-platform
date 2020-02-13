@@ -30,7 +30,6 @@ export default class TreeGroupModal extends React.Component {
   }
   render () {
     const { datas: { TreeGroupModalVisiblie, groupTreeList = []} } = this.props.model
-
     const loop = data => {
       if(!data || !data.length){
         return
@@ -59,11 +58,19 @@ export default class TreeGroupModal extends React.Component {
           cancelText="取消"
           onCancel={this.onCancel}
           onOk={this.onOk}
+          okButtonProps={{disabled: groupTreeList && groupTreeList.length ? false : true}}
+          getContainer={() => document.getElementById('organizationMemberContainer') || document.body}
         >
           <div className={indexStyles.MoveToDirectoryOut}>
-            <Tree checkable multiple onCheck={this.onCheck.bind(this)}>
-              {loop(groupTreeList)}
-            </Tree>
+            {
+              groupTreeList && groupTreeList.length ? (
+                <Tree checkable multiple onCheck={this.onCheck.bind(this)}>
+                  {loop(groupTreeList)}
+                </Tree>
+              ) : (
+                <div>暂无分组</div>
+              )
+            }
           </div>
         </Modal>
       </div>
