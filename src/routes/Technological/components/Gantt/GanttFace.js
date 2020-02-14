@@ -63,8 +63,8 @@ export default class GanttFace extends Component {
   initSetScrollPosition() {
     const { ceilWidth } = this.props
     const date = new Date().getDate()
-    //30为一个月长度，3为遮住的部分长度，date为当前月到今天为止的长度,1为偏差修复, 16为左边header的宽度和withCeil * n的 %值
-    this.setScrollPosition({ delay: 300, position: ceilWidth * (30 - 4 + date - 1) - 16 })
+    //30为一个月长度，4为遮住的部分长度，date为当前月到今天为止的长度,1为偏差修复, 16为左边header的宽度和withCeil * n的 %值
+    this.setScrollPosition({ delay: 300, position: ceilWidth * (30 - 4 - 4 + date - 1) - 16 })
   }
   //设置滚动条位置
   setScrollPosition = ({ delay = 300, position = 200 }) => {
@@ -290,7 +290,7 @@ export default class GanttFace extends Component {
         <div className={indexStyles.cardDetail_right}></div>
         <FaceRightButton setGoldDateArr={this.setGoldDateArr} setScrollPosition={this.setScrollPosition} />
         {
-          isPaymentOrgUser() && is_show_board_file_area != '1' &&<ShowFileSlider />
+          isPaymentOrgUser() && is_show_board_file_area != '1' && <ShowFileSlider />
         }
         <BoardsFilesArea />
       </div>
