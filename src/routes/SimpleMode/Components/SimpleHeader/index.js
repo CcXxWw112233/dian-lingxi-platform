@@ -23,6 +23,16 @@ class SimpleHeader extends Component {
         simpleDrawerTitle: ''
     }
 
+    openGuideModal = () => {
+        const {dispatch} = this.props
+        dispatch({
+            type: 'simplemode/updateDatas',
+            payload: {
+                guideModalVisiable: true,
+            }
+        })
+    }
+
     openOrCloseImChatModal = (val) => {
         // console.log(val)
         const { dispatch, chatImVisiable } = this.props;
@@ -450,6 +460,10 @@ class SimpleHeader extends Component {
                             </div>
                         </Dropdown>
                     )}
+
+                    <div className={indexStyles.guideButton} onClick={this.openGuideModal}>
+                         <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '26px' }} >&#xe845;</i>
+                    </div>
 
                 <div style={{zIndex: !chatImVisiable && 1009}} className={indexStyles.miniImMessage} onClick={this.openOrCloseImChatModal}>
                     {

@@ -15,6 +15,7 @@ export default {
         leftMainNavIconVisible: true,
         leftMainNavVisible: false,
         chatImVisiable: false, //显示隐藏用
+        guideModalVisiable: false, //显示隐藏用
 
         workbenchBoxContentWapperModalStyle: { width: '100%' },
         myWorkbenchBoxList: [], //我的盒子列表
