@@ -4,7 +4,7 @@ import headerStyles from '../HeaderContent.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import { getSubfixName, currentNounPlanFilterName } from '@/utils/businessFunction.js'
-import { PROJECTS, FILES } from '@/globalset/js/constant.js'
+import { PROJECTS, FILES, MESSAGE_DURATION_TIME } from '@/globalset/js/constant.js'
 import NameChangeInput from '@/components/NameChangeInput'
 const { TreeNode } = TreeSelect;
 
@@ -324,7 +324,7 @@ export default class SaveAsNewVersionFile extends Component {
 		// const { boardFolderTreeData } = this.state;
 		if (is_file_tree_loading) {
 			return (
-				<div style={{ backgroundColor: '#FFFFFF', textAlign: 'center', height: '50px', lineHeight: '48px', overflow: 'hidden', color: 'rgba(0, 0, 0, 0.25)' }} className={`${styles.page_card_Normal} ${styles.directoryTreeWapper}`}>
+				<div style={{ backgroundColor: '#FFFFFF', textAlign: 'center', height: '50px', lineHeight: '48px', overflow: 'hidden', color: 'rgba(0, 0, 0, 0.25)' }} className={`${headerStyles.page_card_Normal} ${headerStyles.directoryTreeWapper}`}>
 					数据加载中
 			</div>
 			)
