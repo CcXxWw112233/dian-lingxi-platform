@@ -6,10 +6,10 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import indexStyles from './index.less';
 import { openImChatBoard } from '@/utils/businessFunction.js'
 
-@connect(({ InvestmentMaps = [],
+@connect(({ InvestmentMaps = [], technological: { datas: { currentSelectedProjectOrgIdByBoardId } },
     investmentMap: { datas: { mapOrganizationList } },
 }) => ({
-    InvestmentMaps, mapOrganizationList
+    InvestmentMaps, mapOrganizationList, currentSelectedProjectOrgIdByBoardId
 }))
 export default class index extends React.Component {
     constructor(props) {
@@ -71,6 +71,19 @@ export default class index extends React.Component {
                 selectOrganizationVisible: true
             })
         })
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { currentSelectedProjectOrgIdByBoardId } = nextProps
+        if (currentSelectedProjectOrgIdByBoardId) {
+            this.setState({
+                orgId: currentSelectedProjectOrgIdByBoardId,
+            }, () => {
+                this.setState({
+                    selectOrganizationVisible: true
+                })
+            })
+        }
     }
 
     render() {

@@ -6,7 +6,7 @@ import { Icon, message, Tooltip } from 'antd';
 import DropdownSelect from '../../Components/DropdownSelect/index'
 import CreateProject from '@/routes/Technological/components/Project/components/CreateProject/index';
 import simpleMode from "../../../../models/simpleMode";
-import { getOrgNameWithOrgIdFilter, setBoardIdStorage, isPaymentOrgUser, selectBoardToSeeInfo, checkIsHasPermission } from "@/utils/businessFunction"
+import { getOrgNameWithOrgIdFilter, setBoardIdStorage, isPaymentOrgUser, selectBoardToSeeInfo, checkIsHasPermission, getOrgIdByBoardId } from "@/utils/businessFunction"
 import { isApiResponseOk } from "../../../../utils/handleResponseData";
 import { ORG_TEAM_BOARD_CREATE } from '../../../../globalset/js/constant'
 class MyWorkbenchBoxs extends Component {
@@ -36,6 +36,12 @@ class MyWorkbenchBoxs extends Component {
             simplemodeCurrentProject: { ...selectBoard[0] }
           }
         });
+        // dispatch({
+        //   type: 'technological/updateDatas',
+        //   payload: {
+        //     currentSelectedProjectOrgIdByBoardId: selectBoard[0].board_id
+        //   }
+        // })
       } else {
         dispatch({
           type: 'simplemode/updateDatas',
@@ -59,6 +65,8 @@ class MyWorkbenchBoxs extends Component {
     });
   }
   onSelectBoard = (data) => {
+    // 首页的下拉选项
+    // console.log('进来了','ssssssssssssssssssss_select')
     if (data.key === 'add') {
       this.setState({
         addProjectModalVisible: true
@@ -79,6 +87,12 @@ class MyWorkbenchBoxs extends Component {
             current_board: {}
           }
         });
+        dispatch({
+          type: 'technological/updateDatas',
+          payload: {
+            currentSelectedProjectOrgIdByBoardId: ''
+          }
+        })
         // dispatch({
         //   type: 'gantt/updateDatas',
         //   payload: {
@@ -88,6 +102,7 @@ class MyWorkbenchBoxs extends Component {
         selectBoardToSeeInfo({ board_id: '0', dispatch })
       } else {
         const selectBoard = projectList.filter(item => item.board_id === data.key);
+        const selectOrgId = getOrgIdByBoardId(data.key)
         if (!selectBoard && selectBoard.length == 0) {
           message.error('数据异常，请刷新后重试');
           return;
@@ -107,6 +122,13 @@ class MyWorkbenchBoxs extends Component {
             current_board: data.key
           }
         });
+
+        dispatch({
+          type: 'technological/updateDatas',
+          payload: {
+            currentSelectedProjectOrgIdByBoardId: selectOrgId
+          }
+        })
 
         // dispatch({
         //   type: 'gantt/updateDatas',
