@@ -83,6 +83,14 @@ export default class index extends React.Component {
                     selectOrganizationVisible: true
                 })
             })
+        } else {
+            this.setState({
+                orgId: localStorage.getItem('OrganizationId'),
+            }, () => {
+                this.setState({
+                    selectOrganizationVisible: false
+                })
+            })
         }
     }
 
