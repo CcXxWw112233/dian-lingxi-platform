@@ -22,6 +22,7 @@ class SimpleHeader extends Component {
         simpleDrawerContent: null,
         simpleDrawerTitle: '',
         whetherShowTaskDetailModalVisible: false, // 控制引用的任务弹窗多次渲染
+        whetherShowFileDetailModalVisible: false, // 控制引用的文件弹窗多次渲染
     }
 
     openOrCloseImChatModal = (val) => {
@@ -183,7 +184,8 @@ class SimpleHeader extends Component {
                   }
               })
               this.setState({
-                whetherShowTaskDetailModalVisible: false
+                whetherShowTaskDetailModalVisible: false,
+                whetherShowFileDetailModalVisible: false
               })
         }
     }
@@ -507,7 +509,7 @@ class SimpleHeader extends Component {
                     )
                 }
                 {
-                    isInOpenFile && (
+                    isInOpenFile && this.state.cardIdwhetherShowFileDetailModalVisible && (
                         <FileDetailModal setPreviewFileModalVisibile={this.setPreviewFileModalVisibile} fileType={fileType} filePreviewCurrentFileId={filePreviewCurrentFileId} file_detail_modal_visible={isInOpenFile} />
                     )
                 }
