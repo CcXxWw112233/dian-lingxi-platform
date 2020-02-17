@@ -20,7 +20,8 @@ class SimpleHeader extends Component {
         leftNavigationVisible: false,
         simpleDrawerVisible: false,
         simpleDrawerContent: null,
-        simpleDrawerTitle: ''
+        simpleDrawerTitle: '',
+        whetherShowTaskDetailModalVisible: false, // 控制引用的任务弹窗多次渲染
     }
 
     openOrCloseImChatModal = (val) => {
@@ -181,6 +182,9 @@ class SimpleHeader extends Component {
                     })
                   }
               })
+              this.setState({
+                whetherShowTaskDetailModalVisible: false
+              })
         }
     }
     // 圈子点击
@@ -297,6 +301,9 @@ class SimpleHeader extends Component {
                             card_id: ''
                         }
                     })
+                    this.setState({
+                        whetherShowTaskDetailModalVisible: false
+                    })
                 }
                 if (this.props.isInOpenFile) { // 防止弹窗多层覆盖
                     dispatch({
@@ -322,7 +329,10 @@ class SimpleHeader extends Component {
                             drawerVisible: true,
                             card_id: cardId
                         }
-										})
+                                        })
+                                        // this.setState({
+                                        //     whetherShowTaskDetailModalVisible: true
+                                        // })
                 }, 200)
                 break;
             case 'flow':
@@ -486,12 +496,16 @@ class SimpleHeader extends Component {
                 {simpleDrawerVisible &&
                     <SimpleDrawer style={{height: 'auto'}} updateState={this.updateStates} closeDrawer={this.closeDrawer} simpleDrawerContent={simpleDrawerContent} drawerTitle={simpleDrawerTitle} />
                 }
-                <TaskDetailModal
-                    task_detail_modal_visible={drawerVisible}
-                // setTaskDetailModalVisible={this.setTaskDetailModalVisible}
-                // handleTaskDetailChange={this.handleChangeCard}
-                // handleDeleteCard={this.handleDeleteCard}
-                />
+                {
+                    drawerVisible && this.state.whetherShowTaskDetailModalVisible && (
+                        <TaskDetailModal
+                        task_detail_modal_visible={drawerVisible}
+                        // setTaskDetailModalVisible={this.setTaskDetailModalVisible}
+                        // handleTaskDetailChange={this.handleChangeCard}
+                        // handleDeleteCard={this.handleDeleteCard}
+                        />
+                    )
+                }
                 {
                     isInOpenFile && (
                         <FileDetailModal setPreviewFileModalVisibile={this.setPreviewFileModalVisibile} fileType={fileType} filePreviewCurrentFileId={filePreviewCurrentFileId} file_detail_modal_visible={isInOpenFile} />
