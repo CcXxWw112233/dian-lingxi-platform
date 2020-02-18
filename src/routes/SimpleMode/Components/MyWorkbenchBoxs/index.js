@@ -283,6 +283,28 @@ class MyWorkbenchBoxs extends Component {
       return flag
   }
 
+  // 选择单一项目时判断对应该组织是否开启投资地图app
+  isHasEnabledInvestmentMapsApp = () => {
+    const { currentSelectedProjectOrgIdByBoardId, currentUserOrganizes = [] } = this.props
+    let isDisabled = true
+    let flag = false
+    for (let val of currentUserOrganizes) {
+      if (val['id'] == currentSelectedProjectOrgIdByBoardId) {
+        let gold_data = val['enabled_app_list'].find(item =>  item.code == 'InvestmentMaps' && item.status == '1') || {}
+        if (gold_data && Object.keys(gold_data) && Object.keys(gold_data).length) {
+          flag = true
+          isDisabled = false
+        } else {
+          isDisabled = true
+        }
+      }
+      if (flag) {
+        break
+      }
+    }
+    return isDisabled
+  }
+
   /**
      * 投资地图是否禁用
      * 1.单组织没权限 - 投资地图灰掉
@@ -344,6 +366,12 @@ class MyWorkbenchBoxs extends Component {
     let isDisabled = this.getIsDisabled(item);
     if (isDisabled) {
       tipTitle = '暂无可查看的数据'
+    }
+
+    // 这是在选择单一项目时 对投资地图的判断
+    if (item.code == 'maps' && this.props.currentSelectedProjectOrgIdByBoardId && this.isHasEnabledInvestmentMapsApp()) {
+      tipTitle = '暂无可查看的数据'
+      isDisabled = true
     }
 
     if (!isPaymentUser) {
@@ -438,7 +466,7 @@ export default connect(
       simplemodeCurrentProject
     },
     technological: {
-      datas: { currentUserOrganizes }
+      datas: { currentUserOrganizes, currentSelectedProjectOrgIdByBoardId }
     },
     investmentMap: {
       datas: {
@@ -457,4 +485,5 @@ export default connect(
       simplemodeCurrentProject,
       mapOrganizationList,
       XczNewsOrganizationList,
+      currentSelectedProjectOrgIdByBoardId
     }))(MyWorkbenchBoxs)

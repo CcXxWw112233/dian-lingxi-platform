@@ -64,6 +64,12 @@ export default class index extends React.Component {
         }
     }
     seeInvestmentMaps(params) {
+        this.props.dispatch({
+            type: 'technological/updateDatas',
+            payload: {
+                currentSelectedProjectOrgIdByBoardId: params.id
+            }
+        })
         this.setState({
             orgId: params.id,
         }, () => {
@@ -74,8 +80,8 @@ export default class index extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        return
-        console.log(nextProps,'sssssssssssss_nect')
+        // return
+        // console.log(nextProps,'sssssssssssss_nect')
         const { currentSelectedProjectOrgIdByBoardId, simplemodeCurrentProject = {} } = nextProps
         if (currentSelectedProjectOrgIdByBoardId && Object.keys(simplemodeCurrentProject) && Object.keys(simplemodeCurrentProject).length) {
             this.setState({
@@ -86,7 +92,7 @@ export default class index extends React.Component {
                 })
             })
         } else {
-            if (!(Object.keys(simplemodeCurrentProject) && Object.keys(simplemodeCurrentProject).length)) {
+            if (!currentSelectedProjectOrgIdByBoardId) {
                 this.setState({
                     orgId: localStorage.getItem('OrganizationId'),
                 }, () => {
