@@ -6,10 +6,10 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import indexStyles from './index.less';
 import { openImChatBoard } from '@/utils/businessFunction.js'
 
-@connect(({ InvestmentMaps = [], technological: { datas: { currentSelectedProjectOrgIdByBoardId } },
+@connect(({ InvestmentMaps = [], technological: { datas: { currentSelectedProjectOrgIdByBoardId } }, workbench: { datas: { projectList = [] } }, simplemode: { simplemodeCurrentProject = {} },
     investmentMap: { datas: { mapOrganizationList } },
 }) => ({
-    InvestmentMaps, mapOrganizationList, currentSelectedProjectOrgIdByBoardId
+    InvestmentMaps, mapOrganizationList, currentSelectedProjectOrgIdByBoardId, projectList, simplemodeCurrentProject
 }))
 export default class index extends React.Component {
     constructor(props) {
@@ -74,8 +74,10 @@ export default class index extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        const { currentSelectedProjectOrgIdByBoardId } = nextProps
-        if (currentSelectedProjectOrgIdByBoardId) {
+        return
+        console.log(nextProps,'sssssssssssss_nect')
+        const { currentSelectedProjectOrgIdByBoardId, simplemodeCurrentProject = {} } = nextProps
+        if (currentSelectedProjectOrgIdByBoardId && Object.keys(simplemodeCurrentProject) && Object.keys(simplemodeCurrentProject).length) {
             this.setState({
                 orgId: currentSelectedProjectOrgIdByBoardId,
             }, () => {
@@ -84,18 +86,66 @@ export default class index extends React.Component {
                 })
             })
         } else {
-            this.setState({
-                orgId: localStorage.getItem('OrganizationId'),
-            }, () => {
+            if (!(Object.keys(simplemodeCurrentProject) && Object.keys(simplemodeCurrentProject).length)) {
                 this.setState({
-                    selectOrganizationVisible: false
+                    orgId: localStorage.getItem('OrganizationId'),
+                }, () => {
+                    this.setState({
+                        selectOrganizationVisible: false
+                    })
                 })
-            })
+            }
+            
         }
     }
 
+    /**
+     * 获取对应的组织ID中的项目列表
+     * @param {Array} arr1 对应的地图列表
+     * @param {Array} arr2 对应的项目列表
+     */
+    getCorrespondingBoardListByOrgId = (arr1, arr2) => {
+        let arr = arr1.reduce((acc,cur) => {
+            let obj = {
+                ...cur,
+                data: []
+            }
+            arr2.forEach(i => i.org_id == cur.id && obj.data.push(i))
+            acc.push(obj)
+            return acc
+        },[])
+        return arr
+    }
+
+    // 渲染地图列表
+    renderMapOrganizationList = (item) => {
+        let board_name = (val) => {
+            return <span key={val.board_id} id={val.board_id} className={indexStyles.board_name}>{val.board_name}</span>
+        }
+        return (
+            <div onClick={() => this.seeInvestmentMaps(item)} key={item.id} id={item.id} className={indexStyles.org_list}>
+                <div className={indexStyles.org_left}>
+                    <div className={`${globalStyles.authTheme} ${indexStyles.boardIcon}`}>&#xe677;</div>
+                    <div className={indexStyles.watch_board}>查看地图</div>
+                </div>
+                <div className={indexStyles.org_right}>
+                    <div className={indexStyles.org_rTop}>{item.name}：</div>
+                    <div className={indexStyles.org_rBottom}>
+                        {
+                            item.data && item.data.length ? item.data.map(val => {
+                                return board_name(val)
+                            }) : (
+                                <span style={{color:'rgba(0,0,0,0.25)'}}>暂无项目</span>
+                            )
+                        }
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
     render() {
-        const { mapOrganizationList = [] } = this.props
+        const { mapOrganizationList = [], projectList = [] } = this.props
         const { orgId } = this.state
         const accessToken = Cookies.get('Authorization')
 
@@ -109,9 +159,20 @@ export default class index extends React.Component {
         const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
         let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : 0;
 
+        let investmentMapsList = this.getCorrespondingBoardListByOrgId(mapOrganizationList, projectList)
+
         return (
-            <div className={indexStyles.mapsContainer} style={{ height: contentHeight + 'px' }}>
-                {user_set.current_org === '0' && selectOrganizationVisible === false && mapOrganizationList.length > 1 ? (
+            <div className={`${indexStyles.mapsContainer} ${globalStyles.global_vertical_scrollbar}`} style={{ height: contentHeight + 'px',padding:'48px',  overflowY: 'auto'}}>
+                 {
+                     user_set.current_org === '0' && selectOrganizationVisible === false && investmentMapsList && investmentMapsList.length ? (
+                        <>{investmentMapsList.map(item => {
+                            return this.renderMapOrganizationList(item)
+                        })}</>
+                     ) : (
+                        <iframe src={src_url} scrolling='no' frameborder="0" width='100%' height={'100%'}></iframe>
+                     )
+                 }
+                {/* {user_set.current_org === '0' && selectOrganizationVisible === false && mapOrganizationList.length > 1 ? (
                     <div className={indexStyles.boardSelectWapperOut}>
                         <div className={indexStyles.boardSelectWapper}>
                             <div className={indexStyles.groupName}>请选择一个组织进行查看地图</div>
@@ -126,12 +187,13 @@ export default class index extends React.Component {
                                         )
                                     })
                                 }
+                                                   
                             </div>
                         </div>
                     </div>
                 ) : (
                         <iframe src={src_url} scrolling='no' frameborder="0" width='100%' height={'100%'}></iframe>
-                    )}
+                    )} */}
             </div>
         );
     }
