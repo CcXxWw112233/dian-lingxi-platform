@@ -63,8 +63,8 @@ export default class GanttFace extends Component {
   initSetScrollPosition() {
     const { ceilWidth } = this.props
     const date = new Date().getDate()
-    //30为一个月长度，4为遮住的部分长度，date为当前月到今天为止的长度,1为偏差修复, 16为左边header的宽度和withCeil * n的 %值
-    this.setScrollPosition({ delay: 300, position: ceilWidth * (30 - 4 - 4 + date - 1) - 16 })
+    //30为一个月长度，3为遮住的部分长度，date为当前月到今天为止的长度,1为偏差修复, 16为左边header的宽度和withCeil * n的 %值
+    this.setScrollPosition({ delay: 300, position: ceilWidth * (30 - 4 - 4 + date - 1) - 16 }) //第一为左边头部宽度，第二个4为距离头部距离
   }
   //设置滚动条位置
   setScrollPosition = ({ delay = 300, position = 200 }) => {

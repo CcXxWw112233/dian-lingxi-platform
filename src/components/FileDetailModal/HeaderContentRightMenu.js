@@ -11,7 +11,7 @@ import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_FILE_UPDATE, PROJECT_FILES_FILE_EDIT, UPLOAD_FILE_SIZE, REQUEST_DOMAIN_FILE, PROJECT_FILES_FILE_DOWNLOAD
 } from "@/globalset/js/constant";
-import { setCurrentVersionFile, updateVersionFileDescription, fileVersionist, fileDownload, saveAsNewVersion } from '@/services/technological/file'
+import { setCurrentVersionFile, updateVersionFileDescription, fileVersionist, fileDownload, saveAsNewVersion, fileCopy } from '@/services/technological/file'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message, Tooltip, Dropdown, Menu, Button } from 'antd'
 import Cookies from "js-cookie";
@@ -19,6 +19,10 @@ import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from '../../services/technological/project'
 import { createShareLink, modifOrStopShareLink } from '@/services/technological/workbench'
 import ShareAndInvite from '@/routes/Technological/components/ShareAndInvite/index'
+import SaveAsNewVersionFile from './component/SaveAsNewVersionFile'
+import { getFolderList } from '@/services/technological/file'
+import { currentNounPlanFilterName } from '../../utils/businessFunction';
+import { FILES } from '../../globalset/js/constant';
 
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
@@ -111,7 +115,7 @@ export default class HeaderContentRightMenu extends Component {
   }
 
   getFileVersionist = (data) => {
-    const { version_id, file_id, folder_id } = data
+    const { version_id, file_id, folder_id, calback } = data
     fileVersionist({ version_id, file_id }).then(res => {
       if (isApiResponseOk(res)) {
         setTimeout(() => {
@@ -124,6 +128,9 @@ export default class HeaderContentRightMenu extends Component {
           new_filePreviewCurrentVersionList: res.data
         })
         this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({folder_id, file_id: file_id, file_name: file_name, create_time: create_time})
+        if (calback && typeof calback == 'function') {
+          calback()
+        }
       } else {
         message.warn(res.message)
       }
@@ -335,41 +342,126 @@ export default class HeaderContentRightMenu extends Component {
     }
   }
 
+  // 关闭弹窗的回调
+  setSaveAsNewVersionVisible = () => {
+    this.setState({
+      saveAsNewVersionFileVisible: false,
+      saveAsNewVersionFileTitle: ''
+    })
+  }
+
+  // 保存为新版本的回调
+  handleSaveAsNewVersionButton = ({id,notify_user_ids, folder_id, calback}) => {
+    saveAsNewVersion({id, notify_user_ids}).then(res => {
+      if (isApiResponseOk(res)) {
+        const { version_id, id } = res.data
+        this.getFileVersionist({version_id, file_id: id, folder_id, calback})
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+        if (calback && typeof calback == 'function') {
+          calback()
+        }
+      }
+    })
+  }
+  
+  // 另存为新版本的回调
+  handleSaveAsOthersNewVersionButton = ({file_ids, folder_id, notify_user_ids, file_name, calback}) => {
+    fileCopy({file_ids, folder_id, notify_user_ids,is_copy_version:false,file_name}).then(res => {
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success(`另存为${currentNounPlanFilterName(FILES)}成功`)
+        },200)
+        if (calback && typeof calback == 'function') {
+          calback()
+        }
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+        if (calback && typeof calback == 'function') {
+          calback()
+        }
+      }
+    })
+  }
+
   // 保存为新版本
-  handleSaveAsNewVersion = () => {
+  handleSaveAsNewVersion = (e) => {
+    const { key } = e
     const { currentPreviewFileData: { id, privileges = [], is_privilege }, projectDetailInfoData: { folder_id, board_id } } = this.props
     if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
+    this.setState({
+      saveAsNewVersionFileVisible: true,
+      saveAsNewVersionFileTitle: '保存为新版本',
+      titleKey:key
+    })
     // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)) {
     //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
     //   return false
     // }
     
-    saveAsNewVersion({id}).then(res => {
-      if (isApiResponseOk(res)) {
-        const { version_id, id } = res.data
-        this.getFileVersionist({version_id, file_id: id, folder_id})
-      } else {
-        message.warn(res.message, MESSAGE_DURATION_TIME)
-      }
-    })
+    // saveAsNewVersion({id}).then(res => {
+    //   if (isApiResponseOk(res)) {
+    //     const { version_id, id } = res.data
+    //     this.getFileVersionist({version_id, file_id: id, folder_id})
+    //   } else {
+    //     message.warn(res.message, MESSAGE_DURATION_TIME)
+    //   }
+    // })
+  }
+
+  //获取项目里文件夹列表
+	getProjectFolderList = ({board_id, file_name, key}) => {
+		getFolderList({ board_id }).then((res) => {
+			if (isApiResponseOk(res)) {
+				this.setState({
+          boardFolderTreeData: res.data,
+          saveAsNewVersionFileVisible: true,
+          saveAsNewVersionFileTitle: '另存为新版本',
+          titleKey: key,
+				});
+			} else {
+				message.error(res.message)
+			}
+		})
+	}
+
+  // 另存文件为新版本
+  handleSaveAsOthersNewVersion = (e) => {
+    const { key } = e
+    const { currentPreviewFileData: { id, file_name, privileges = [], is_privilege }, projectDetailInfoData: { folder_id, board_id } } = this.props
+    if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    this.getProjectFolderList({board_id, file_name, key})
+    // this.setState({
+    //   saveAsNewVersionFileVisible: true,
+    //   saveAsNewVersionFileTitle: '另存新版本',
+    //   titleKey: key,
+    // })
   }
 
   saveAsMenu = () => {
     const { filePreviewCurrentResourceId, pdfDownLoadSrc } = this.props
     return (
       <Menu>
-        <Menu.Item key="1"
-        onClick={this.handleFileDownload.bind(this, { filePreviewCurrentResourceId, pdfDownLoadSrc })}
-        >
-          下载到本地
-        </Menu.Item>
         <Menu.Item key="2"
         onClick={this.handleSaveAsNewVersion}
         >
           保存为新版本
+        </Menu.Item>
+        <Menu.Item key="3"
+        onClick={this.handleSaveAsOthersNewVersion}
+        >
+          另存为新文件
+        </Menu.Item>
+        <Menu.Item key="1"
+        onClick={this.handleFileDownload.bind(this, { filePreviewCurrentResourceId, pdfDownLoadSrc })}
+        >
+          下载到本地
         </Menu.Item>
       </Menu>
     )
@@ -714,8 +806,8 @@ export default class HeaderContentRightMenu extends Component {
 
   render() {
     const that = this
-    const { currentPreviewFileData = {}, filePreviewCurrentFileId, filePreviewCurrentVersionId, projectDetailInfoData: { data = [], folder_id }, isZoomPictureFullScreenMode, onlyReadingShareModalVisible, onlyReadingShareData, selectedKeys = [] } = this.props
-    const { new_filePreviewCurrentVersionList = [], is_edit_version_description, editValue} = this.state
+    const { currentPreviewFileData = {}, filePreviewCurrentFileId, filePreviewCurrentVersionId, projectDetailInfoData: { data = [], folder_id }, projectDetailInfoData = {}, isZoomPictureFullScreenMode, onlyReadingShareModalVisible, onlyReadingShareData, selectedKeys = [], targetFilePath = {} } = this.props
+    const { new_filePreviewCurrentVersionList = [], is_edit_version_description, editValue, boardFolderTreeData = []} = this.state
     const { board_id, is_privilege, privileges = [], id, file_id, is_shared } = currentPreviewFileData
     const params = {
       filePreviewCurrentFileId,
@@ -805,9 +897,9 @@ export default class HeaderContentRightMenu extends Component {
         {/* 另存为 */}
         <div className={headerStyles.margin_right10} style={{ position: 'relative' }}>
           <Dropdown trigger={['click']} overlay={this.saveAsMenu()} getPopupContainer={triggerNode => triggerNode.parentNode}>
-            <Button style={{ height: 24 }} >
-              <span className={`${globalStyles.authTheme} ${headerStyles.right__shareIndicator_icon}`}>&#xe6dd;</span>
-              另存为
+            <Button type={'primary'} style={{ height: 24,lineHeight: '24px' }} >
+              <span style={{marginRight:'4px'}} className={`${globalStyles.authTheme} ${headerStyles.right__shareIndicator_icon}`}>&#xe63b;</span>
+               保存 <span style={{display:'inline-block',verticalAlign:'middle',fontSize:'12px',marginLeft:'2px'}} className={`${globalStyles.authTheme}`}>&#xe7ee;</span>
                 </Button>
           </Dropdown>
         </div>
@@ -871,6 +963,15 @@ export default class HeaderContentRightMenu extends Component {
         <div>
           <div style={{ cursor: 'pointer' }} onClick={this.zoomFrame} className={`${globalStyles.authTheme}`}><span style={{ fontSize: '22px' }}>&#xe7f3;</span></div>
         </div>
+
+        {/* 另存为Modal */}
+        <div>
+          <SaveAsNewVersionFile projectDetailInfoData={projectDetailInfoData} currentPreviewFileData={currentPreviewFileData} boardFolderTreeData={boardFolderTreeData} setSaveAsNewVersionVisible={this.setSaveAsNewVersionVisible} visible={this.state.saveAsNewVersionFileVisible} title={this.state.saveAsNewVersionFileTitle}
+          titleKey={this.state.titleKey}
+          handleSaveAsNewVersionButton={this.handleSaveAsNewVersionButton}
+          handleSaveAsOthersNewVersionButton={this.handleSaveAsOthersNewVersionButton}
+          />
+        </div>
       </div>
     )
   }
@@ -887,4 +988,3 @@ function mapStateToProps({
     projectDetailInfoData
   }
 }
-

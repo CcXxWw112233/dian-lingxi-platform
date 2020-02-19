@@ -7,10 +7,10 @@ import CreateProject from '@/routes/Technological/components/Project/components/
 import { getOrgNameWithOrgIdFilter, setBoardIdStorage, checkIsHasPermission } from "@/utils/businessFunction"
 import { afterChangeBoardUpdateGantt } from "../../../Technological/components/Gantt/ganttBusiness";
 import { beforeChangeCommunicationUpdateFileList } from "../WorkbenchPage/BoardCommunication/components/getCommunicationFileListFn";
-import { isPaymentOrgUser } from "@/utils/businessFunction"
-import { selectBoardToSeeInfo } from "../../../../utils/businessFunction";
+import { isPaymentOrgUser, getOrgIdByBoardId } from "@/utils/businessFunction"
+import { selectBoardToSeeInfo, currentNounPlanFilterName } from "../../../../utils/businessFunction";
 import { isApiResponseOk } from "../../../../utils/handleResponseData";
-import { ORG_TEAM_BOARD_CREATE } from '../../../../globalset/js/constant'
+import { ORG_TEAM_BOARD_CREATE, PROJECTS, ORGANIZATION } from '../../../../globalset/js/constant'
 class BoardDropdownSelect extends Component {
   constructor(props) {
     super(props);
@@ -30,7 +30,30 @@ class BoardDropdownSelect extends Component {
     }
   }
 
+    // 选择单一项目时判断对应该组织是否开启投资地图app
+    isHasEnabledInvestmentMapsApp = (org_id) => {
+      const { currentUserOrganizes = [] } = this.props
+      let isDisabled = true
+      let flag = false
+      for (let val of currentUserOrganizes) {
+        if (val['id'] == org_id) {
+          let gold_data = val['enabled_app_list'].find(item =>  item.code == 'InvestmentMaps' && item.status == '1') || {}
+          if (gold_data && Object.keys(gold_data) && Object.keys(gold_data).length) {
+            flag = true
+            isDisabled = false
+          } else {
+            isDisabled = true
+          }
+        }
+        if (flag) {
+          break
+        }
+      }
+      return isDisabled
+    }
+
   onSelectBoard = (data) => {
+    // 迷你的下拉选项
     // console.log(data, 'bbbbb');
     if (data.key === 'add') {
       console.log("onSelectBoard");
@@ -53,6 +76,12 @@ class BoardDropdownSelect extends Component {
             current_board: {}
           }
         });
+        dispatch({
+          type: 'technological/updateDatas',
+          payload: {
+            currentSelectedProjectOrgIdByBoardId: ''
+          }
+        })
         // dispatch({
         //   type: 'gantt/updateDatas',
         //   payload: {
@@ -68,10 +97,16 @@ class BoardDropdownSelect extends Component {
           }
         });
       } else {
+        const { currentSelectedWorkbenchBox = {} } = this.props
         const selectBoard = projectList.filter(item => item.board_id === data.key);
+        const selectOrgId = getOrgIdByBoardId(data.key)
         if (!selectBoard && selectBoard.length == 0) {
           message.error('数据异常，请刷新后重试');
           return;
+        }
+        if (data.key != '0' && (currentSelectedWorkbenchBox && currentSelectedWorkbenchBox.code) && currentSelectedWorkbenchBox.code == 'maps' && this.isHasEnabledInvestmentMapsApp(selectOrgId)) {
+          message.warn(`该${currentNounPlanFilterName(PROJECTS)}${currentNounPlanFilterName(ORGANIZATION)}下没有开启地图APP`)
+          return
         }
         setBoardIdStorage(data.key)
         //设置当前选中的项目
@@ -88,6 +123,12 @@ class BoardDropdownSelect extends Component {
             current_board: data.key
           }
         });
+        dispatch({
+          type: 'technological/updateDatas',
+          payload: {
+            currentSelectedProjectOrgIdByBoardId: selectOrgId
+          }
+        })
         // dispatch({
         //   type: 'gantt/updateDatas',
         //   payload: {

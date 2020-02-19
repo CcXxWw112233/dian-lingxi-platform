@@ -66,6 +66,7 @@ export default class NameChangeInput extends React.Component{
         isOverFlowText: false
       })
     }
+    this.props.onChange && this.props.onChange(e)
   }
   textAreaBlur(e) {
     const value = e.target.value

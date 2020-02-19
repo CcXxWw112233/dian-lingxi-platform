@@ -1,10 +1,11 @@
 import { routerRedux } from 'dva/router';
-import { getUserBoxs, getAllBoxs, boxSet, boxCancel, getWallpaperList } from '@/services/technological/simplemode'
+import { getUserBoxs, getAllBoxs, boxSet, boxCancel, getWallpaperList, getGuideCategoryList, getGuideArticle, } from '@/services/technological/simplemode'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { getModelSelectState } from '@/models/utils'
 import { message } from 'antd'
-import { getUserAllOrgsBoardList, getFilterAllOrgsWhetherItIsFilesAppsBoardList} from '@/services/technological/index'
+import { getUserAllOrgsBoardList, getFilterAllOrgsWhetherItIsFilesAppsBoardList } from '@/services/technological/index'
+import { useLayoutEffect } from 'react';
 export default {
     namespace: 'simplemode',
     state: {
@@ -15,6 +16,7 @@ export default {
         leftMainNavIconVisible: true,
         leftMainNavVisible: false,
         chatImVisiable: false, //显示隐藏用
+        guideModalVisiable: false, //显示隐藏用
 
         workbenchBoxContentWapperModalStyle: { width: '100%' },
         myWorkbenchBoxList: [], //我的盒子列表
@@ -25,6 +27,9 @@ export default {
         allWallpaperList: [], //可选的壁纸列表
         currentUserWallpaperContent: null,
         simplemodeCurrentProject: {},
+        guideCategoryList: [], //协作引导类别
+        guideArticleList: [], //协作引导文章
+        guideCategorySelectedKeys: {}, //选中的协作引导类别
     },
     subscriptions: {
         setup({ dispatch, history }) {
@@ -64,6 +69,10 @@ export default {
                 yield put({
                     type: 'getWallpaperList'
                 });
+
+                yield put({
+                    type: 'getGuideCategoryList'
+                })
             }
 
         },
@@ -198,7 +207,40 @@ export default {
             } else {
                 message.warn(res.message, MESSAGE_DURATION_TIME)
             }
-        }
+        },
+        * getGuideCategoryList({ payload }, { call, put, select }) {
+            let res = yield call(getGuideCategoryList, payload);
+            if (isApiResponseOk(res)) {
+                yield put({
+                    type: 'updateDatas',
+                    payload: {
+                        guideCategoryList: res.data,
+                        guideCategorySelectedKeys: res.data[0],
+                    }
+                });
+                yield put({
+                    type: 'getGuideArticle',
+                    payload: {
+                        id: res.data[0].id
+                    }
+                })
+            } else {
+                message.warn(res.message, MESSAGE_DURATION_TIME)
+            }
+        },
+        * getGuideArticle({ payload }, { call, put, select }) {
+            let res = yield call(getGuideArticle, payload);
+            if (isApiResponseOk(res)) {
+                yield put({
+                    type: 'updateDatas',
+                    payload: {
+                        guideArticleList: res.data,
+                    }
+                });
+            } else {
+                message.warn(res.message, MESSAGE_DURATION_TIME)
+            }
+        },
     },
     reducers: {
         updateDatas(state, action) {

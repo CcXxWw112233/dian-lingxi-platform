@@ -84,3 +84,67 @@
 
     }
 }
+
+.org_list {
+    // width:812px;
+    // width: calc(100% - 200px);
+    width: 100%;
+    min-height:84px;
+    background:rgba(255,255,255,1);
+    border-radius:4px;
+    border:1px solid rgba(0,0,0,0.09);
+    display: flex;
+    margin-bottom: 32px;
+    cursor: pointer;
+    &:hover {
+        border-color: rgba(0, 0, 0, 0.25);
+    }
+}
+
+.org_left {
+    width: 102px;
+    // min-height: 84px;
+    border-right: 1px solid rgba(0,0,0,0.09);
+    text-align: center;
+    .boardIcon {
+        color      : #18B2FF;
+        font-size  : 24px;
+        // width      : 64px;
+        line-height: 40px;
+    }
+    .watch_board {
+        // width:56px;
+        // height:22px;
+        font-size:14px;
+        font-family:PingFangSC-Medium,PingFang SC;
+        font-weight:500;
+        color:rgba(64,169,255,1);
+        line-height:22px;
+    }
+}
+
+.org_right {
+    padding: 16px 24px;
+    flex: 1;
+    .org_rTop {
+        // width:70px;
+        height:22px;
+        font-size:14px;
+        font-family:PingFangSC-Medium,PingFang SC;
+        font-weight:500;
+        color:rgba(0,0,0,0.45);
+        line-height:22px;
+    }
+    .org_rBottom {
+        .board_name {
+            min-width:140px;
+            height:22px;
+            font-size:14px;
+            font-family:PingFangSC-Medium,PingFang SC;
+            font-weight:500;
+            color:rgba(0,0,0,0.65);
+            line-height:22px;
+            margin-right: 16px;
+        }
+    }
+}

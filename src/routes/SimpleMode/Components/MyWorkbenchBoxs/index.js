@@ -6,7 +6,7 @@ import { Icon, message, Tooltip } from 'antd';
 import DropdownSelect from '../../Components/DropdownSelect/index'
 import CreateProject from '@/routes/Technological/components/Project/components/CreateProject/index';
 import simpleMode from "../../../../models/simpleMode";
-import { getOrgNameWithOrgIdFilter, setBoardIdStorage, isPaymentOrgUser, selectBoardToSeeInfo, checkIsHasPermission } from "@/utils/businessFunction"
+import { getOrgNameWithOrgIdFilter, setBoardIdStorage, isPaymentOrgUser, selectBoardToSeeInfo, checkIsHasPermission, getOrgIdByBoardId } from "@/utils/businessFunction"
 import { isApiResponseOk } from "../../../../utils/handleResponseData";
 import { ORG_TEAM_BOARD_CREATE } from '../../../../globalset/js/constant'
 class MyWorkbenchBoxs extends Component {
@@ -36,6 +36,12 @@ class MyWorkbenchBoxs extends Component {
             simplemodeCurrentProject: { ...selectBoard[0] }
           }
         });
+        // dispatch({
+        //   type: 'technological/updateDatas',
+        //   payload: {
+        //     currentSelectedProjectOrgIdByBoardId: selectBoard[0].board_id
+        //   }
+        // })
       } else {
         dispatch({
           type: 'simplemode/updateDatas',
@@ -59,6 +65,8 @@ class MyWorkbenchBoxs extends Component {
     });
   }
   onSelectBoard = (data) => {
+    // 首页的下拉选项
+    // console.log('进来了','ssssssssssssssssssss_select')
     if (data.key === 'add') {
       this.setState({
         addProjectModalVisible: true
@@ -79,6 +87,12 @@ class MyWorkbenchBoxs extends Component {
             current_board: {}
           }
         });
+        dispatch({
+          type: 'technological/updateDatas',
+          payload: {
+            currentSelectedProjectOrgIdByBoardId: ''
+          }
+        })
         // dispatch({
         //   type: 'gantt/updateDatas',
         //   payload: {
@@ -88,6 +102,7 @@ class MyWorkbenchBoxs extends Component {
         selectBoardToSeeInfo({ board_id: '0', dispatch })
       } else {
         const selectBoard = projectList.filter(item => item.board_id === data.key);
+        const selectOrgId = getOrgIdByBoardId(data.key)
         if (!selectBoard && selectBoard.length == 0) {
           message.error('数据异常，请刷新后重试');
           return;
@@ -107,6 +122,13 @@ class MyWorkbenchBoxs extends Component {
             current_board: data.key
           }
         });
+
+        dispatch({
+          type: 'technological/updateDatas',
+          payload: {
+            currentSelectedProjectOrgIdByBoardId: selectOrgId
+          }
+        })
 
         // dispatch({
         //   type: 'gantt/updateDatas',
@@ -261,6 +283,28 @@ class MyWorkbenchBoxs extends Component {
       return flag
   }
 
+  // 选择单一项目时判断对应该组织是否开启投资地图app
+  isHasEnabledInvestmentMapsApp = () => {
+    const { currentSelectedProjectOrgIdByBoardId, currentUserOrganizes = [] } = this.props
+    let isDisabled = true
+    let flag = false
+    for (let val of currentUserOrganizes) {
+      if (val['id'] == currentSelectedProjectOrgIdByBoardId) {
+        let gold_data = val['enabled_app_list'].find(item =>  item.code == 'InvestmentMaps' && item.status == '1') || {}
+        if (gold_data && Object.keys(gold_data) && Object.keys(gold_data).length) {
+          flag = true
+          isDisabled = false
+        } else {
+          isDisabled = true
+        }
+      }
+      if (flag) {
+        break
+      }
+    }
+    return isDisabled
+  }
+
   /**
      * 投资地图是否禁用
      * 1.单组织没权限 - 投资地图灰掉
@@ -322,6 +366,12 @@ class MyWorkbenchBoxs extends Component {
     let isDisabled = this.getIsDisabled(item);
     if (isDisabled) {
       tipTitle = '暂无可查看的数据'
+    }
+
+    // 这是在选择单一项目时 对投资地图的判断
+    if (item.code == 'maps' && this.props.currentSelectedProjectOrgIdByBoardId && this.isHasEnabledInvestmentMapsApp()) {
+      tipTitle = '暂无可查看的数据'
+      isDisabled = true
     }
 
     if (!isPaymentUser) {
@@ -416,7 +466,7 @@ export default connect(
       simplemodeCurrentProject
     },
     technological: {
-      datas: { currentUserOrganizes }
+      datas: { currentUserOrganizes, currentSelectedProjectOrgIdByBoardId }
     },
     investmentMap: {
       datas: {
@@ -435,4 +485,5 @@ export default connect(
       simplemodeCurrentProject,
       mapOrganizationList,
       XczNewsOrganizationList,
+      currentSelectedProjectOrgIdByBoardId
     }))(MyWorkbenchBoxs)
