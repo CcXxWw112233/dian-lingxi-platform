@@ -201,6 +201,8 @@ export default class SaveAsNewVersionFile extends Component {
 			this.props.handleSaveAsNewVersionButton && this.props.handleSaveAsNewVersionButton({ id, notify_user_ids, folder_id, calback: this.hideModal() })
 		} else if (titleKey == '3') {
 			this.props.handleSaveAsOthersNewVersionButton && this.props.handleSaveAsOthersNewVersionButton({ file_ids: id, folder_id: fileSavePath, notify_user_ids, file_name: inputValue != '' ? inputValue : file_name, calback: this.hideModal() })
+			// 更新项目档案中的列表
+			this.props.shouldUpdateAllFolderListData && this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({folder_id})
 		}
 	}
 

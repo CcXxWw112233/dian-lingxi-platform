@@ -970,6 +970,8 @@ export default class HeaderContentRightMenu extends Component {
           titleKey={this.state.titleKey}
           handleSaveAsNewVersionButton={this.handleSaveAsNewVersionButton}
           handleSaveAsOthersNewVersionButton={this.handleSaveAsOthersNewVersionButton}
+          whetherUpdateFolderListData={this.props.whetherUpdateFolderListData}
+          shouldUpdateAllFolderListData={this.props.shouldUpdateAllFolderListData}
           />
         </div>
       </div>
