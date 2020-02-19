@@ -44,7 +44,7 @@ export default class AccountSetMenu extends React.Component {
   }
   render() {
     const { datas = {} } = this.props.model
-    const { SelectedKeys } = datas
+    const { SelectedKeys } = datas    
     return (
       <div className={indexStyle.menuOut}>
         {/*左边菜单*/}
