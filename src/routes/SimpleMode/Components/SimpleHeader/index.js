@@ -26,7 +26,7 @@ class SimpleHeader extends Component {
     }
 
     openGuideModal = () => {
-        const {dispatch} = this.props
+        const { dispatch } = this.props
         dispatch({
             type: 'simplemode/updateDatas',
             payload: {
@@ -168,35 +168,35 @@ class SimpleHeader extends Component {
                     }
                 })
             })
-            Im.on('fileCancel',({id}) =>{
+            Im.on('fileCancel', ({ id }) => {
                 if (id == this.props.card_id) {
-                  dispatch({
-                    type: 'publicTaskDetailModal/updateDatas',
-                    payload: {
-                      drawerVisible: false,
-                      drawContent: {},
-                      card_id: '',
-                      is_edit_title: false, // 是否编辑标题 默认为 false 不显示
-                      boardTagList: []
-                    }
-                  })
+                    dispatch({
+                        type: 'publicTaskDetailModal/updateDatas',
+                        payload: {
+                            drawerVisible: false,
+                            drawContent: {},
+                            card_id: '',
+                            is_edit_title: false, // 是否编辑标题 默认为 false 不显示
+                            boardTagList: []
+                        }
+                    })
                 }
                 if (id == this.props.filePreviewCurrentFileId) {
                     dispatch({
-                      type: 'publicFileDetailModal/updateDatas',
-                      payload: {
-                        filePreviewCurrentFileId: '',
-                        fileType: '',
-                        isInOpenFile: false,
-                        currentPreviewFileName: ''
-                      }
+                        type: 'publicFileDetailModal/updateDatas',
+                        payload: {
+                            filePreviewCurrentFileId: '',
+                            fileType: '',
+                            isInOpenFile: false,
+                            currentPreviewFileName: ''
+                        }
                     })
-                  }
-              })
-              this.setState({
+                }
+            })
+            this.setState({
                 whetherShowTaskDetailModalVisible: false,
                 whetherShowFileDetailModalVisible: false
-              })
+            })
         }
     }
     // 圈子点击
@@ -341,10 +341,10 @@ class SimpleHeader extends Component {
                             drawerVisible: true,
                             card_id: cardId
                         }
-                                        })
-                                        // this.setState({
-                                        //     whetherShowTaskDetailModalVisible: true
-                                        // })
+                    })
+                    // this.setState({
+                    //     whetherShowTaskDetailModalVisible: true
+                    // })
                 }, 200)
                 break;
             case 'flow':
@@ -473,11 +473,13 @@ class SimpleHeader extends Component {
                         </Dropdown>
                     )}
 
+                <Tooltip title="操作指引">
                     <div className={indexStyles.guideButton} onClick={this.openGuideModal}>
-                         <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '26px' }} >&#xe845;</i>
+                        <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '26px' }} >&#xe845;</i>
                     </div>
-
-                <div style={{zIndex: !chatImVisiable && 1009}} className={indexStyles.miniImMessage} onClick={this.openOrCloseImChatModal}>
+                </Tooltip>
+                <Tooltip title="项目圈">
+                <div style={{ zIndex: !chatImVisiable && 1009 }} className={indexStyles.miniImMessage} onClick={this.openOrCloseImChatModal}>
                     {
                         im_alarm_no_reads_total > 0 && (
                             <div className={indexStyles.no_reads}>{im_alarm_no_reads_total > 99 ? '99+' : im_alarm_no_reads_total}</div>
@@ -485,6 +487,7 @@ class SimpleHeader extends Component {
                     }
                     <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe6df;</i>
                 </div>
+                </Tooltip>
 
                 {/* {leftMainNavVisible &&
                         <SiderLeft is_simplemode={true} collapsed={false} />
@@ -510,12 +513,12 @@ class SimpleHeader extends Component {
                 </div>
 
                 {simpleDrawerVisible &&
-                    <SimpleDrawer style={{height: 'auto'}} updateState={this.updateStates} closeDrawer={this.closeDrawer} simpleDrawerContent={simpleDrawerContent} drawerTitle={simpleDrawerTitle} />
+                    <SimpleDrawer style={{ height: 'auto' }} updateState={this.updateStates} closeDrawer={this.closeDrawer} simpleDrawerContent={simpleDrawerContent} drawerTitle={simpleDrawerTitle} />
                 }
                 {
                     drawerVisible && this.state.whetherShowTaskDetailModalVisible && (
                         <TaskDetailModal
-                        task_detail_modal_visible={drawerVisible}
+                            task_detail_modal_visible={drawerVisible}
                         // setTaskDetailModalVisible={this.setTaskDetailModalVisible}
                         // handleTaskDetailChange={this.handleChangeCard}
                         // handleDeleteCard={this.handleDeleteCard}
