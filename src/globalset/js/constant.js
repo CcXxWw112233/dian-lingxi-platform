@@ -16,6 +16,8 @@ export const REQUEST_DOMAIN_WORK_BENCH = '/api/workbenchs'
 export const REQUEST_DOMAIN_TEAM_SHOW = '/api/more'
 
 export const REQUEST_DOMAIN_ARTICLE = 'https://knowapi.new-di.com' //微信小程序后台文章列表
+// export const REQUEST_DOMAIN_ARTICLE = 'http://fongjx.uicp.cn:40883' //微信小程序后台文章列表
+
 export const WE_APP_TYPE_KNOW_CITY = '1' //知城社
 export const WE_APP_TYPE_KNOW_POLICY = '2' //晓策志
 export const WE_APP_ID = (appType) => { //返回小程序后台appid

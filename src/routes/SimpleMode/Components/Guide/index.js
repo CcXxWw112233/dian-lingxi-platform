@@ -30,11 +30,34 @@ class Guide extends Component {
         });
     }
 
-    componentDidMount() { }
+    selectionCategoryList = (value) => {
+
+        this.loadGuideArticle(value)
+    }
+
+    loadGuideArticle = (value) => {
+
+        const { id } = value
+        const { dispatch } = this.props
+        dispatch({
+            type: 'simplemode/getGuideArticle',
+            payload: {
+                id: id
+            }
+        });
+
+        dispatch({
+            type: 'simplemode/updateDatas',
+            payload: {
+                guideCategorySelectedKeys: value
+            }
+        });
+    }
 
     render() {
 
-        const { guideModalVisiable } = this.props
+        const { guideModalVisiable, guideCategoryList = [], guideArticleList = [], guideCategorySelectedKeys, } = this.props
+        const { id } = guideCategorySelectedKeys
 
         return (
             <div>
@@ -44,11 +67,20 @@ class Guide extends Component {
                             灵犀项目协作引导场景
                         </div>
                         <div className={indexStyles.guideNavigationView}>
-                            <Menu>
-                                <Menu.Item>菜单项1</Menu.Item>
-                                <Menu.Item>菜单项2</Menu.Item>
-                                <Menu.Item>菜单项3</Menu.Item>
-                                <Menu.Item>菜单项4</Menu.Item>
+                            <Menu
+                                defaultSelectedKeys={id ? [id] : []}
+                                mode="inline"
+                            >
+                                {guideCategoryList.map((value, key) => {
+                                    const { text, id} = value
+                                    return (
+                                        <Menu.Item key={id} onClick={this.selectionCategoryList.bind(this, value)}>
+                                            <div className={indexStyles.menu_item_style}>
+                                                <div className={indexStyles.menu_item_text_style}>{text}</div>
+                                            </div>
+                                        </Menu.Item>
+                                    )
+                                })}
                             </Menu>
                         </div>
                     </div>
@@ -59,16 +91,16 @@ class Guide extends Component {
                             </div>
                         </div>
                         <div className={indexStyles.guidenTabsView}>
-                            <Tabs defaultActiveKey="1">
-                                <TabPane tab="Tab 1" key="1">
-                                    Content of Tab Pane 1
-                            </TabPane>
-                                <TabPane tab="Tab 2 || Tab 2" key="2">
-                                    Content of Tab Pane 2 || Content of Tab Pane 2
-                            </TabPane>
-                                <TabPane tab="Tab 3 || Tab 3 || Tab 3" key="3">
-                                    Content of Tab Pane 3 || Content of Tab Pane 3 || Content of Tab Pane 3
-                            </TabPane>
+                            <Tabs defaultActiveKey={guideArticleList && guideArticleList[0] ? guideArticleList[0].id : ''}>
+                                {guideArticleList.map(i => {
+                                    const {id, title, content } = i
+                                    return (
+                                        <TabPane tab={title} key={id}>
+                                            <div className={indexStyles.tab_content_style} dangerouslySetInnerHTML={{ __html: content }}></div>
+                                        </TabPane>
+                                    )
+                                }
+                                )}
                             </Tabs>
                         </div>
                     </div>
@@ -80,6 +112,6 @@ class Guide extends Component {
 }
 
 export default connect(({
-    simplemode: { guideModalVisiable, },
+    simplemode: { guideCategoryList, guideModalVisiable, guideArticleList, guideCategorySelectedKeys, },
 
-}) => ({ guideModalVisiable, }))(Guide)
+}) => ({ guideCategoryList, guideModalVisiable, guideArticleList, guideCategorySelectedKeys, }))(Guide)

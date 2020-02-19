@@ -26,6 +26,16 @@
         .guideNavigationView {
             width: 100%;
             flex : 1;
+
+            .menu_item_style {
+
+                .menu_item_text_style {
+                    margin-left    : 50px;
+                    font-size      : 16px;
+                    justify-content: left;
+                    display        : flex;
+                }
+            }
         }
     }
 
@@ -38,7 +48,7 @@
 
         .guideModalRightHender {
             width     : 100%;
-            height    : 34px;
+            min-height: 34px;
 
             .close {
                 position: absolute;
@@ -52,8 +62,12 @@
         }
 
         .guidenTabsView {
-            width: 100%;
-            flex : 1;
+            width     : 100%;
+            flex      : 1;
+
+            .tab_content_style {
+                padding: 20px;
+            }
         }
     }
 }
