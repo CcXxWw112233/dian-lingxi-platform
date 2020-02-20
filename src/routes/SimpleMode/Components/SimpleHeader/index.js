@@ -4,7 +4,7 @@ import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import SiderLeft from '@/routes/Technological/Sider/SiderLeft'
 import VideoMeeting from '@/routes/Technological/Sider/comonent/videoMeetingPopoverContent/index'
-import { Tooltip, Dropdown } from 'antd'
+import { Tooltip, Dropdown, Modal } from 'antd'
 import Cookies from "js-cookie";
 import SimpleNavigation from "./Components/SimpleNavigation/index"
 import SimpleDrawer from './Components/SimpleDrawer/index'
@@ -23,6 +23,8 @@ class SimpleHeader extends Component {
         simpleDrawerContent: null,
         simpleDrawerTitle: '',
         whetherShowTaskDetailModalVisible: false, // 控制引用的任务弹窗多次渲染
+        guideImageMoadlVisible: false,  //协作引导图片全屏预览
+        guideImgSrc: '', //协作引导图片全屏预览资源
     }
 
     openGuideModal = () => {
@@ -444,9 +446,22 @@ class SimpleHeader extends Component {
         this.handleVisibleChange(false);
     }
 
+    opGuiImage = (src) => {
+        this.setState({
+            guideImageMoadlVisible: true,
+            guideImgSrc: src[0],
+        });
+    }
+
+    closedGuideImageModal = () => {
+        this.setState({
+            guideImageMoadlVisible: false,
+        });
+    }
+
     render() {
         const { chatImVisiable = false, leftMainNavVisible = false, leftMainNavIconVisible, drawerVisible, isInOpenFile, filePreviewCurrentFileId, fileType, dispatch, im_alarm_no_reads_total, guideModalVisiable } = this.props;
-        const { simpleDrawerVisible, simpleDrawerContent, leftNavigationVisible, simpleDrawerTitle } = this.state;
+        const { simpleDrawerVisible, simpleDrawerContent, leftNavigationVisible, simpleDrawerTitle, guideImgSrc } = this.state;
         return (
             <div className={indexStyles.headerWapper}>
                 {
@@ -530,8 +545,23 @@ class SimpleHeader extends Component {
                     )
                 }
                 {
-                    guideModalVisiable && <Guide />
+                    guideModalVisiable && <Guide opGuiImage={this.opGuiImage.bind(this)} />
                 }
+
+                <Modal
+                    visible={this.state.guideImageMoadlVisible}
+                    closable={false}
+                    destroyOnClose={true}
+                    maskClosable={true}
+                    footer={null}
+                    z-zIndex={10000}
+                    onCancel={this.closedGuideImageModal}
+                    centered={true}
+                    height={'80%'}
+                    width={'80%'}
+                >
+                    <img src={this.state.guideImgSrc} style={{ width: '100%', height: '100%' }} />
+                </Modal>
 
             </div>
         );

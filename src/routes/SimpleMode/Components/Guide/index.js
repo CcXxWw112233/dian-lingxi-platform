@@ -47,6 +47,22 @@ class Guide extends Component {
         });
     }
 
+    onClickBlowUpImage = (content) => {
+
+        //匹配string中的img标签，提取src
+        let imgReg = /<img.*?(?:>|\/>)/gi //匹配图片中的img标签
+        let srcReg = /src=[\'\"]?([^\'\"]*)[\'\"]?/i // 匹配图片中的src
+        let arr = content.match(imgReg)  //筛选出所有的img
+        let srcArr = []
+        for (let i = 0; i < arr.length; i++) {
+            let src = arr[i].match(srcReg)
+            // 获取图片地址
+            srcArr.push(src[1])
+        }
+
+        this.props.opGuiImage(srcArr)
+    }
+
     render() {
 
         const { guideModalVisiable, guideCategoryList = [], guideArticleList = [], guideCategorySelectedKeys, } = this.props
@@ -65,7 +81,7 @@ class Guide extends Component {
                                 mode="inline"
                             >
                                 {guideCategoryList.map((value, key) => {
-                                    const { text, id} = value
+                                    const { text, id } = value
                                     return (
                                         <Menu.Item key={id} onClick={this.selectionCategoryList.bind(this, value)}>
                                             <div className={indexStyles.menu_item_style}>
@@ -86,10 +102,11 @@ class Guide extends Component {
                         <div className={indexStyles.guidenTabsView}>
                             <Tabs defaultActiveKey={guideArticleList && guideArticleList[0] ? guideArticleList[0].id : ''}>
                                 {guideArticleList.map(i => {
-                                    const {id, title, content } = i
+                                    const { id, title, content } = i
+
                                     return (
                                         <TabPane tab={title} key={id}>
-                                            <div className={indexStyles.tab_content_style} dangerouslySetInnerHTML={{ __html: content }}></div>
+                                            <div className={indexStyles.tab_content_style} dangerouslySetInnerHTML={{ __html: content }} onClick={this.onClickBlowUpImage.bind(this, content)}></div>
                                         </TabPane>
                                     )
                                 }
