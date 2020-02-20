@@ -365,14 +365,14 @@ function mapStateToProps(
     gantt: { datas: {
       target_scrollLeft,
       gold_date_arr = [], about_user_boards = [],
-      list_group = [], target_scrollTop = [], target_scrollLeft,
+      list_group = [], target_scrollTop = [],
       milestoneMap = [], holiday_list = [],
       gantt_board_id, group_view_type } },
   }) {
   return {
     target_scrollLeft,
     gold_date_arr, list_group,
-    target_scrollTop, milestoneMap, target_scrollLeft,
+    target_scrollTop, milestoneMap,
     holiday_list, gantt_board_id,
     group_view_type, about_user_boards
   }
