@@ -99,8 +99,8 @@ export default class GanttFace extends Component {
     const clientWidth = e.target.clientWidth
     const { ceilWidth, gold_date_arr = [], date_total } = this.props
     let delX = target_scrollLeft - scrollLeft //判断向左还是向右
-    const left_h = Math.floor(date_total / 5)
-    if (scrollLeft < left_h * ceilWidth && delX > 0) { //3为分组头部占用三个单元格的长度
+
+    if (scrollLeft < 3 * ceilWidth && delX > 0) { //3为分组头部占用三个单元格的长度
       const { timestamp } = gold_date_arr[0]['date_inner'][0]
       this.setState({
         searchTimer: setTimeout(function () {
@@ -254,10 +254,7 @@ export default class GanttFace extends Component {
             </div>
           )
         }
-        <DateList />
-        <GroupListHeadSet />
         <MiletoneGuide />
-        <div className={indexStyles.cardDetail_left_mask}></div>
         <div className={indexStyles.cardDetail_left}></div>
         <div className={indexStyles.cardDetail_middle}
           // id={'gantt_card_out_middle'}

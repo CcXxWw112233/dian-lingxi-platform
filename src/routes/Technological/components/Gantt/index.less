@@ -17,7 +17,7 @@
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  overflow: hidden;
+
   background: #ffffff;
   border: 1px solid rgba(217, 217, 217, 1);
   border-radius: 4px;
@@ -36,14 +36,6 @@
     background: rgba(255, 255, 255, .5)
   }
   .cardDetail_left, .cardDetail_right{
-    height: 100%;
-    width: 20px;
-    background-color: #FFFFFF;
-  }
-  .cardDetail_left_mask {
-    position: fixed;
-    left: 0;
-    z-index: 7;
     height: 100%;
     width: 20px;
     background-color: #FFFFFF;
@@ -591,8 +583,7 @@
    height: @date_area_height;
    width: 228px;
    background-color: #ffffff; 
-   position: fixed;
-   left: 20px;
+   position: absolute;
    box-shadow:1px -3px 4px 0px rgba(0,0,0,0.15);
    padding-right: @group_head_padding;
    border-bottom: 1px solid #E8E8E8;
