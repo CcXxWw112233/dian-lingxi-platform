@@ -275,7 +275,7 @@ export default class GanttFace extends Component {
                 setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
                 gantt_card_height={gantt_card_height}
                 dataAreaRealHeight={dataAreaRealHeight} />
-              <GroupListHeadElse gantt_card_height={gantt_card_height} dataAreaRealHeight={dataAreaRealHeight} />
+              {/* <GroupListHeadElse gantt_card_height={gantt_card_height} dataAreaRealHeight={dataAreaRealHeight} /> */}
             </div>
             <div
               className={indexStyles.board_body}

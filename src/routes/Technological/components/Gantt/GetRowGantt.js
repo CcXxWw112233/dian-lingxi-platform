@@ -18,7 +18,7 @@ import GetRowSummary from './components/gattFaceCardItem/GetRowSummary.js'
 import GetRowGanttVirtual from './GetRowGanttVirtual'
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
-const coperatedLeftDiv = 20 //滚动条左边还有一个div的宽度，作为修正
+const coperatedLeftDiv = 248 //滚动条左边还有一个div的宽度，作为修正
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)

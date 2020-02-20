@@ -47,7 +47,7 @@ export default class GroupListHead extends Component {
             </div>
           )
         })}
-        {/* <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} /> */}
+        <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
       </div>
     )
   }
