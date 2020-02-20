@@ -21,13 +21,6 @@ class Guide extends Component {
                 guideModalVisiable: false,
             }
         });
-        this.props.setHomeVisible({
-            simpleHeaderVisiable: true,
-            myWorkbenchBoxsVisiable: true,
-            wallpaperSelectVisiable: true,
-            workbenchBoxSelectVisiable: false,
-            createProjectVisiable: false,
-        });
     }
 
     selectionCategoryList = (value) => {

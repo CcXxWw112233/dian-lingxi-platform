@@ -13,6 +13,7 @@ import TaskDetailModal from '@/components/TaskDetailModal'
 import { setBoardIdStorage, getSubfixName } from "../../../../utils/businessFunction";
 import Organization from '@/routes/organizationManager'
 import FileDetailModal from '@/components/FileDetailModal'
+import Guide from '../Guide/index'
 const { LingxiIm } = global.constants
 
 class SimpleHeader extends Component {
@@ -20,11 +21,11 @@ class SimpleHeader extends Component {
         leftNavigationVisible: false,
         simpleDrawerVisible: false,
         simpleDrawerContent: null,
-        simpleDrawerTitle: ''
+        simpleDrawerTitle: '',
     }
 
     openGuideModal = () => {
-        const {dispatch} = this.props
+        const { dispatch } = this.props
         dispatch({
             type: 'simplemode/updateDatas',
             payload: {
@@ -166,31 +167,31 @@ class SimpleHeader extends Component {
                     }
                 })
             })
-            Im.on('fileCancel',({id}) =>{
+            Im.on('fileCancel', ({ id }) => {
                 if (id == this.props.card_id) {
-                  dispatch({
-                    type: 'publicTaskDetailModal/updateDatas',
-                    payload: {
-                      drawerVisible: false,
-                      drawContent: {},
-                      card_id: '',
-                      is_edit_title: false, // 是否编辑标题 默认为 false 不显示
-                      boardTagList: []
-                    }
-                  })
+                    dispatch({
+                        type: 'publicTaskDetailModal/updateDatas',
+                        payload: {
+                            drawerVisible: false,
+                            drawContent: {},
+                            card_id: '',
+                            is_edit_title: false, // 是否编辑标题 默认为 false 不显示
+                            boardTagList: []
+                        }
+                    })
                 }
                 if (id == this.props.filePreviewCurrentFileId) {
                     dispatch({
-                      type: 'publicFileDetailModal/updateDatas',
-                      payload: {
-                        filePreviewCurrentFileId: '',
-                        fileType: '',
-                        isInOpenFile: false,
-                        currentPreviewFileName: ''
-                      }
+                        type: 'publicFileDetailModal/updateDatas',
+                        payload: {
+                            filePreviewCurrentFileId: '',
+                            fileType: '',
+                            isInOpenFile: false,
+                            currentPreviewFileName: ''
+                        }
                     })
-                  }
-              })
+                }
+            })
         }
     }
     // 圈子点击
@@ -332,7 +333,7 @@ class SimpleHeader extends Component {
                             drawerVisible: true,
                             card_id: cardId
                         }
-										})
+                    })
                 }, 200)
                 break;
             case 'flow':
@@ -434,7 +435,7 @@ class SimpleHeader extends Component {
     }
 
     render() {
-        const { chatImVisiable = false, leftMainNavVisible = false, leftMainNavIconVisible, drawerVisible, isInOpenFile, filePreviewCurrentFileId, fileType, dispatch, im_alarm_no_reads_total } = this.props;
+        const { chatImVisiable = false, leftMainNavVisible = false, leftMainNavIconVisible, drawerVisible, isInOpenFile, filePreviewCurrentFileId, fileType, dispatch, im_alarm_no_reads_total, guideModalVisiable } = this.props;
         const { simpleDrawerVisible, simpleDrawerContent, leftNavigationVisible, simpleDrawerTitle } = this.state;
         return (
             <div className={indexStyles.headerWapper}>
@@ -461,11 +462,11 @@ class SimpleHeader extends Component {
                         </Dropdown>
                     )}
 
-                    <div className={indexStyles.guideButton} onClick={this.openGuideModal}>
-                         <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '26px' }} >&#xe845;</i>
-                    </div>
+                <div className={indexStyles.guideButton} onClick={this.openGuideModal}>
+                    <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '26px' }} >&#xe845;</i>
+                </div>
 
-                <div style={{zIndex: !chatImVisiable && 1009}} className={indexStyles.miniImMessage} onClick={this.openOrCloseImChatModal}>
+                <div style={{ zIndex: !chatImVisiable && 1009 }} className={indexStyles.miniImMessage} onClick={this.openOrCloseImChatModal}>
                     {
                         im_alarm_no_reads_total > 0 && (
                             <div className={indexStyles.no_reads}>{im_alarm_no_reads_total > 99 ? '99+' : im_alarm_no_reads_total}</div>
@@ -498,7 +499,7 @@ class SimpleHeader extends Component {
                 </div>
 
                 {simpleDrawerVisible &&
-                    <SimpleDrawer style={{height: 'auto'}} updateState={this.updateStates} closeDrawer={this.closeDrawer} simpleDrawerContent={simpleDrawerContent} drawerTitle={simpleDrawerTitle} />
+                    <SimpleDrawer style={{ height: 'auto' }} updateState={this.updateStates} closeDrawer={this.closeDrawer} simpleDrawerContent={simpleDrawerContent} drawerTitle={simpleDrawerTitle} />
                 }
                 <TaskDetailModal
                     task_detail_modal_visible={drawerVisible}
@@ -511,6 +512,10 @@ class SimpleHeader extends Component {
                         <FileDetailModal setPreviewFileModalVisibile={this.setPreviewFileModalVisibile} fileType={fileType} filePreviewCurrentFileId={filePreviewCurrentFileId} file_detail_modal_visible={isInOpenFile} />
                     )
                 }
+                {
+                    guideModalVisiable && <Guide />
+                }
+
             </div>
         );
     }
@@ -518,7 +523,7 @@ class SimpleHeader extends Component {
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
-    simplemode: { chatImVisiable, leftMainNavVisible, leftMainNavIconVisible }, modal, loading,
+    simplemode: { chatImVisiable, leftMainNavVisible, leftMainNavIconVisible, guideModalVisiable }, modal, loading,
     publicTaskDetailModal: {
         drawerVisible,
         card_id
@@ -537,6 +542,6 @@ function mapStateToProps({
         }
     }
 }) {
-    return { OrganizationId, chatImVisiable, leftMainNavVisible, leftMainNavIconVisible, modal, loading, drawerVisible, card_id, isInOpenFile, filePreviewCurrentFileId, fileType, im_alarm_no_reads_total }
+    return { OrganizationId, chatImVisiable, leftMainNavVisible, guideModalVisiable, leftMainNavIconVisible, modal, loading, drawerVisible, card_id, isInOpenFile, filePreviewCurrentFileId, fileType, im_alarm_no_reads_total }
 }
 export default connect(mapStateToProps)(SimpleHeader)

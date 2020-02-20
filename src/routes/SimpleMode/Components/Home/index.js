@@ -5,8 +5,6 @@ import SimpleHeader from '../SimpleHeader/index'
 import MyWorkbenchBoxs from '../MyWorkbenchBoxs/index'
 import WallpaperSelect from '../WallpaperSelect/index'
 import WorkbenchBoxSelect from '../WorkbenchBoxSelect/index'
-import Guide from '../Guide/index'
-
 
 const getEffectOrReducerByName = name => `technological/${name}`
 
@@ -20,7 +18,6 @@ class Home extends Component {
       wallpaperSelectVisiable: true,
       workbenchBoxSelectVisiable: false,
       createNewBoardVisiable: false,
-      guideVisiable: true,
     }
   }
 
@@ -62,7 +59,6 @@ class Home extends Component {
           wallpaperSelectVisiable: true,
           workbenchBoxSelectVisiable: false,
           createProjectVisiable: false,
-          guideVisiable: true,
         });
       }
     }
@@ -90,7 +86,6 @@ class Home extends Component {
       myWorkbenchBoxsVisiable,
       wallpaperSelectVisiable,
       workbenchBoxSelectVisiable,
-      guideVisiable,
     } = this.state;
 
     return (
@@ -101,7 +96,6 @@ class Home extends Component {
 
         {workbenchBoxSelectVisiable && <WorkbenchBoxSelect {...this.state} setHomeVisible={this.setHomeVisible} />}
 
-        {guideVisiable && <Guide {...this.state} setHomeVisible={this.setHomeVisible} />}
       </div>
     )
   }
