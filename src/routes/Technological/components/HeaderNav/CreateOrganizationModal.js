@@ -141,6 +141,7 @@ class CreateOrganizationModal extends React.Component {
             let userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
             let { is_simple_model } = userInfo.user_set
             if (isApiResponseOk(res)) {
+              return
               if (is_simple_model == '0') {
                 dispatch({
                   type: 'technological/setShowSimpleModel',
