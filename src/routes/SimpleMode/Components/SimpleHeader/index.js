@@ -13,6 +13,7 @@ import TaskDetailModal from '@/components/TaskDetailModal'
 import { setBoardIdStorage, getSubfixName } from "../../../../utils/businessFunction";
 import Organization from '@/routes/organizationManager'
 import FileDetailModal from '@/components/FileDetailModal'
+import Guide from '../Guide/index'
 const { LingxiIm } = global.constants
 
 class SimpleHeader extends Component {
@@ -22,7 +23,6 @@ class SimpleHeader extends Component {
         simpleDrawerContent: null,
         simpleDrawerTitle: '',
         whetherShowTaskDetailModalVisible: false, // 控制引用的任务弹窗多次渲染
-        whetherShowFileDetailModalVisible: false, // 控制引用的文件弹窗多次渲染
     }
 
     openGuideModal = () => {
@@ -195,7 +195,6 @@ class SimpleHeader extends Component {
             })
             this.setState({
                 whetherShowTaskDetailModalVisible: false,
-                whetherShowFileDetailModalVisible: false
             })
         }
     }
@@ -446,7 +445,7 @@ class SimpleHeader extends Component {
     }
 
     render() {
-        const { chatImVisiable = false, leftMainNavVisible = false, leftMainNavIconVisible, drawerVisible, isInOpenFile, filePreviewCurrentFileId, fileType, dispatch, im_alarm_no_reads_total } = this.props;
+        const { chatImVisiable = false, leftMainNavVisible = false, leftMainNavIconVisible, drawerVisible, isInOpenFile, filePreviewCurrentFileId, fileType, dispatch, im_alarm_no_reads_total, guideModalVisiable } = this.props;
         const { simpleDrawerVisible, simpleDrawerContent, leftNavigationVisible, simpleDrawerTitle } = this.state;
         return (
             <div className={indexStyles.headerWapper}>
@@ -530,6 +529,10 @@ class SimpleHeader extends Component {
                         <FileDetailModal setPreviewFileModalVisibile={this.setPreviewFileModalVisibile} fileType={fileType} filePreviewCurrentFileId={filePreviewCurrentFileId} file_detail_modal_visible={isInOpenFile} />
                     )
                 }
+                {
+                    guideModalVisiable && <Guide />
+                }
+
             </div>
         );
     }
@@ -537,7 +540,7 @@ class SimpleHeader extends Component {
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
-    simplemode: { chatImVisiable, leftMainNavVisible, leftMainNavIconVisible }, modal, loading,
+    simplemode: { chatImVisiable, leftMainNavVisible, leftMainNavIconVisible, guideModalVisiable }, modal, loading,
     publicTaskDetailModal: {
         drawerVisible,
         card_id
@@ -556,6 +559,6 @@ function mapStateToProps({
         }
     }
 }) {
-    return { OrganizationId, chatImVisiable, leftMainNavVisible, leftMainNavIconVisible, modal, loading, drawerVisible, card_id, isInOpenFile, filePreviewCurrentFileId, fileType, im_alarm_no_reads_total }
+    return { OrganizationId, chatImVisiable, leftMainNavVisible, guideModalVisiable, leftMainNavIconVisible, modal, loading, drawerVisible, card_id, isInOpenFile, filePreviewCurrentFileId, fileType, im_alarm_no_reads_total }
 }
 export default connect(mapStateToProps)(SimpleHeader)
