@@ -54,7 +54,11 @@ export default class UploadNotification extends Component {
                         return (
                             <div className={`${styles.upload_file_item} ${status == 'error' && styles.error}`}>
                                 <div className={styles.upload_file_item_left}>
-                                    <img src='https://asd.asd.'></img>
+                                    <div
+                                        className={globalStyles.authTheme}
+                                        style={{ fontSize: 30, color: 'rgb(70,166,255)' }}
+                                    >&#xe7de;</div>
+                                    {/* <img src='https://asd.asd.'></img> */}
                                 </div>
                                 <div className={styles.upload_file_item_right}>
                                     <div className={`${styles.upload_file_item_name} ${globalStyles.global_ellipsis}`}>
