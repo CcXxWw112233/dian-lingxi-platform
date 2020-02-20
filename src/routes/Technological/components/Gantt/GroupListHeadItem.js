@@ -1019,7 +1019,7 @@ export default class GroupListHeadItem extends Component {
                   is_show_org_name && is_all_org && group_view_type == '1' && !get_gantt_data_loading && gantt_board_id == '0' && (
                     <div className={indexStyles.list_head_footer_contain}>
                       <div className={`${indexStyles.list_head_footer_contain_lt} ${globalStyle.authTheme}`}>&#xe6da;</div>
-                      <div className={`${indexStyles.list_head_footer_contain_rt} ${globalStyle.global_ellipsis}`}>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</div>
+                      <Tooltip placement="top" title={getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}><div className={`${indexStyles.list_head_footer_contain_rt} ${globalStyle.global_ellipsis}`}>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</div></Tooltip>
                     </div>
                   )
                 }

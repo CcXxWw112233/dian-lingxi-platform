@@ -692,10 +692,12 @@ export default class SimpleNavigation extends Component {
                         const { name, id, identity_type, logo } = value
                         return (
                             <Menu.Item key={id} className={indexStyles.org_name} >
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <img src={logo || linxiLogo} className={indexStyles.org_img} />
-                                    <span style={{ maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{name}</span>
-                                </div>
+                                <Tooltip placement="top" title={name}>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <img src={logo || linxiLogo} className={indexStyles.org_img} />
+                                        <span style={{ maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{name}</span>
+                                    </div>
+                                </Tooltip>
                                 {identity_type == '0' ? (<span className={indexStyles.middle_bott} style={{ display: 'inline-block', backgroundColor: '#e5e5e5', padding: '0 4px', borderRadius: 40, marginLeft: 6, position: 'absolute', right: 34, top: 12 }}>访客</span>) : ('')}
                             </Menu.Item>
                         )
@@ -731,4 +733,3 @@ function mapStateToProps({ technological: { datas: {
 } } }) {
     return { menuList, naviHeadTabIndex, currentUserOrganizes, currentSelectOrganize, is_show_org_name, is_all_org, is_show_simple }
 }
-
