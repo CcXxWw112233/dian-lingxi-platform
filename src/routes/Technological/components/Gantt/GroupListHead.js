@@ -31,10 +31,10 @@ export default class GroupListHead extends Component {
   render() {
     const { list_group = [], group_rows = [], ceiHeight, target_scrollLeft, target_scrollTop } = this.props
     return (
-      <div className={indexStyles.listHead} style={{
-        // left: target_scrollLeft,
-        top: -target_scrollTop + 64,
-      }}>
+      <div className={indexStyles.listHead}
+        // style={{ left: target_scrollLeft, }}
+        style={{ top: -target_scrollTop + 64, }}
+      >
         {list_group.map((value, key) => {
           const { list_name, list_id, list_data = [] } = value
           return (

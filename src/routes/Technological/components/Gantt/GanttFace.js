@@ -17,6 +17,9 @@ import { Spin } from 'antd'
 import MiletoneGuide from './components/MiletonesGuide/index'
 import { isPaymentOrgUser } from '../../../../utils/businessFunction';
 import BoardTemplate from './components/boardTemplate'
+import GroupListHeadElse from './GroupListHeadElse'
+import GetRowGanttItemElse from './GetRowGanttItemElse'
+
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
 export default class GanttFace extends Component {
@@ -81,6 +84,7 @@ export default class GanttFace extends Component {
 
   //左右拖动,日期会更新
   ganttScroll = (e) => {
+    console.log('ssssss')
     e.stopPropagation();
     if ('gantt_card_out_middle' != e.target.getAttribute("id")) return
     const that = this
@@ -256,36 +260,66 @@ export default class GanttFace extends Component {
         <div className={indexStyles.cardDetail_left_mask}></div>
         <div className={indexStyles.cardDetail_left}></div>
         <div className={indexStyles.cardDetail_middle}
-          id={'gantt_card_out_middle'}
-          ref={'gantt_card_out_middle'}
-          onScroll={this.ganttScroll}
+          // id={'gantt_card_out_middle'}
+          // ref={'gantt_card_out_middle'}
+          // onScroll={this.ganttScroll}
           style={{ maxHeight: gantt_card_out_middle_max_height }}
         >
-          {/* <GroupListHeadSet /> */}
+          {/* <GroupListHeadSet />
           <div
             style={{ height: date_area_height }} //撑住DateList相同高度的底部
-          />
+          /> */}
           {/* <DateList /> */}
-          <div className={indexStyles.panel}>
-            <GroupListHead
-              setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
-              gantt_card_height={gantt_card_height}
-              dataAreaRealHeight={dataAreaRealHeight} />
-            <GetRowGantt
-              is_need_calculate_left_dx={is_need_calculate_left_dx}
-              gantt_card_height={gantt_card_height}
-              dataAreaRealHeight={dataAreaRealHeight}
-              setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
-              addTaskModalVisibleChange={this.props.addTaskModalVisibleChange}
-              setGoldDateArr={this.setGoldDateArr}
-              setScrollPosition={this.setScrollPosition}
-            />
-            {
-              gantt_board_id && gantt_board_id != '0' && (
-                <BoardTemplate insertTaskToListGroup={this.props.insertTaskToListGroup} />
-              )
-            }
+          <div className={indexStyles.board}>
+            <div className={indexStyles.board_head} style={{ height: gantt_card_height - 20 }}>
+              <GroupListHeadSet />
+              {/*  //撑住DateList相同高度的底部 */}
+              <GroupListHead
+                setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
+                gantt_card_height={gantt_card_height}
+                dataAreaRealHeight={dataAreaRealHeight} />
+              {/* <GroupListHeadElse gantt_card_height={gantt_card_height} dataAreaRealHeight={dataAreaRealHeight} /> */}
+            </div>
+            <div
+              className={indexStyles.board_body}
+              style={{ height: gantt_card_height - 20 }} >
+              <DateList />
+              <div
+                style={{
+                  height: gantt_card_height - 20,
+                }}
+                className={indexStyles.panel_out}
+                id={'gantt_card_out_middle'}
+                ref={'gantt_card_out_middle'}
+                onScroll={this.ganttScroll}
+              >
+                <div className={indexStyles.panel}>
+                  <div
+                    style={{ height: date_area_height }} //撑住DateList相同高度的底部
+                  />
+                  <GetRowGantt
+                    is_need_calculate_left_dx={is_need_calculate_left_dx}
+                    gantt_card_height={gantt_card_height}
+                    dataAreaRealHeight={dataAreaRealHeight}
+                    setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
+                    addTaskModalVisibleChange={this.props.addTaskModalVisibleChange}
+                    setGoldDateArr={this.setGoldDateArr}
+                    setScrollPosition={this.setScrollPosition}
+                  />
+                  {
+                    gantt_board_id && gantt_board_id != '0' && (
+                      <BoardTemplate insertTaskToListGroup={this.props.insertTaskToListGroup} />
+                    )
+                  }
+                </div>
+                <GetRowGanttItemElse gantt_card_height={gantt_card_height} dataAreaRealHeight={dataAreaRealHeight} />
+
+              </div>
+
+
+            </div>
           </div>
+
         </div>
         <div className={indexStyles.cardDetail_right}></div>
         <FaceRightButton setGoldDateArr={this.setGoldDateArr} setScrollPosition={this.setScrollPosition} />

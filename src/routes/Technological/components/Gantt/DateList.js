@@ -266,10 +266,7 @@ export default class DateList extends Component {
     return (
       <div>
         <div className={indexStyles.dateArea}
-          style={{
-            // top: target_scrollTop,
-            left: -target_scrollLeft + 20,
-          }}
+          style={{ left: -target_scrollLeft, }}
         >
           {gold_date_arr.map((value, key) => {
             const { date_top, date_inner = [] } = value
@@ -366,12 +363,14 @@ export default class DateList extends Component {
 function mapStateToProps(
   {
     gantt: { datas: {
+      target_scrollLeft,
       gold_date_arr = [], about_user_boards = [],
       list_group = [], target_scrollTop = [], target_scrollLeft,
       milestoneMap = [], holiday_list = [],
       gantt_board_id, group_view_type } },
   }) {
   return {
+    target_scrollLeft,
     gold_date_arr, list_group,
     target_scrollTop, milestoneMap, target_scrollLeft,
     holiday_list, gantt_board_id,
