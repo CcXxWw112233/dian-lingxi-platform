@@ -29,9 +29,12 @@ export default class GroupListHead extends Component {
   }
 
   render() {
-    const { list_group = [], group_rows = [], ceiHeight, target_scrollLeft } = this.props
+    const { list_group = [], group_rows = [], ceiHeight, target_scrollLeft, target_scrollTop } = this.props
     return (
-      <div className={indexStyles.listHead} style={{ left: target_scrollLeft, }}>
+      <div className={indexStyles.listHead}
+        // style={{ left: target_scrollLeft, }}
+        style={{ top: -target_scrollTop + 64, }}
+      >
         {list_group.map((value, key) => {
           const { list_name, list_id, list_data = [] } = value
           return (
@@ -44,7 +47,7 @@ export default class GroupListHead extends Component {
             </div>
           )
         })}
-        <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
+        {/* <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} /> */}
       </div>
     )
   }
@@ -57,6 +60,7 @@ function mapStateToProps({ gantt: {
     group_rows = [],
     ceiHeight,
     target_scrollLeft,
+    target_scrollTop,
     group_list_area,
     group_list_area_section_height
   }
@@ -66,6 +70,7 @@ function mapStateToProps({ gantt: {
     group_rows,
     ceiHeight,
     target_scrollLeft,
+    target_scrollTop,
     group_list_area,
     group_list_area_section_height
   }

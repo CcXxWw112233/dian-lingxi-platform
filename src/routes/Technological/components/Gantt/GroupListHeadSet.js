@@ -142,7 +142,9 @@ export default class GroupListHeadSet extends Component {
         const { target_scrollLeft, target_scrollTop, group_view_type = '1', gantt_board_id = '0', group_view_filter_boards, group_view_filter_users } = this.props
         const selected = `${indexStyles.button_nomal_background} ${indexStyles.type_select}`
         return (
-            <div className={indexStyles.groupHeadSet} style={{ left: target_scrollLeft, top: target_scrollTop }}>
+            <div className={indexStyles.groupHeadSet}
+            // style={{ left: target_scrollLeft, top: target_scrollTop }}
+            >
                 <div className={indexStyles.set_content}>
 
                     <div className={indexStyles.set_content_left}>

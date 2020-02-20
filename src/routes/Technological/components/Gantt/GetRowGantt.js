@@ -545,7 +545,7 @@ export default class GetRowGantt extends Component {
           )
         })} */}
         <GetRowGanttVirtual />
-        <GetRowGanttItemElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
+        {/* <GetRowGanttItemElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} /> */}
       </div>
     )
   }

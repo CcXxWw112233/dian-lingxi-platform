@@ -257,7 +257,8 @@ export default class DateList extends Component {
       gantt_board_id,
       target_scrollTop,
       group_view_type,
-      about_user_boards
+      about_user_boards,
+      target_scrollLeft
     } = this.props
 
     const { add_lcb_modal_visible, create_lcb_time, currentSelectedProjectMembersList = [] } = this.state
@@ -265,7 +266,8 @@ export default class DateList extends Component {
     return (
       <div>
         <div className={indexStyles.dateArea}
-          style={{ top: target_scrollTop }}>
+          style={{ left: -target_scrollLeft, }}
+        >
           {gold_date_arr.map((value, key) => {
             const { date_top, date_inner = [] } = value
             return (
@@ -361,12 +363,14 @@ export default class DateList extends Component {
 function mapStateToProps(
   {
     gantt: { datas: {
+      target_scrollLeft,
       gold_date_arr = [], about_user_boards = [],
       list_group = [], target_scrollTop = [],
       milestoneMap = [], holiday_list = [],
       gantt_board_id, group_view_type } },
   }) {
   return {
+    target_scrollLeft,
     gold_date_arr, list_group,
     target_scrollTop, milestoneMap,
     holiday_list, gantt_board_id,
