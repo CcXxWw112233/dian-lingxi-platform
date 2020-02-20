@@ -95,8 +95,8 @@ export default class GanttFace extends Component {
     const clientWidth = e.target.clientWidth
     const { ceilWidth, gold_date_arr = [], date_total } = this.props
     let delX = target_scrollLeft - scrollLeft //判断向左还是向右
-
-    if (scrollLeft < 3 * ceilWidth && delX > 0) { //3为分组头部占用三个单元格的长度
+    const left_h = Math.floor(date_total / 5)
+    if (scrollLeft < left_h * ceilWidth && delX > 0) { //3为分组头部占用三个单元格的长度
       const { timestamp } = gold_date_arr[0]['date_inner'][0]
       this.setState({
         searchTimer: setTimeout(function () {
@@ -250,7 +250,10 @@ export default class GanttFace extends Component {
             </div>
           )
         }
+        <DateList />
+        <GroupListHeadSet />
         <MiletoneGuide />
+        <div className={indexStyles.cardDetail_left_mask}></div>
         <div className={indexStyles.cardDetail_left}></div>
         <div className={indexStyles.cardDetail_middle}
           id={'gantt_card_out_middle'}
@@ -258,11 +261,11 @@ export default class GanttFace extends Component {
           onScroll={this.ganttScroll}
           style={{ maxHeight: gantt_card_out_middle_max_height }}
         >
-          <GroupListHeadSet />
+          {/* <GroupListHeadSet /> */}
           <div
             style={{ height: date_area_height }} //撑住DateList相同高度的底部
           />
-          <DateList />
+          {/* <DateList /> */}
           <div className={indexStyles.panel}>
             <GroupListHead
               setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
@@ -287,7 +290,7 @@ export default class GanttFace extends Component {
         <div className={indexStyles.cardDetail_right}></div>
         <FaceRightButton setGoldDateArr={this.setGoldDateArr} setScrollPosition={this.setScrollPosition} />
         {
-          isPaymentOrgUser() && is_show_board_file_area != '1' &&<ShowFileSlider />
+          isPaymentOrgUser() && is_show_board_file_area != '1' && <ShowFileSlider />
         }
         <BoardsFilesArea />
       </div>

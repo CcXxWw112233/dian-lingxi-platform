@@ -16,6 +16,8 @@ import { checkIsHasPermissionInBoard } from '../../../../utils/businessFunction'
 import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE } from '../../../../globalset/js/constant';
 import GetRowSummary from './components/gattFaceCardItem/GetRowSummary.js'
 import GetRowGanttVirtual from './GetRowGanttVirtual'
+import GroupListHead from './GroupListHead'
+
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
 const coperatedLeftDiv = 20 //滚动条左边还有一个div的宽度，作为修正
@@ -544,6 +546,10 @@ export default class GetRowGantt extends Component {
             <GetRowGanttItem key={list_id} itemKey={key} list_id={list_id} list_data={list_data} rows={group_rows[key]} milestones={milestones} />
           )
         })} */}
+        {/* <GroupListHead
+          setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
+          gantt_card_height={this.props.gantt_card_height}
+          dataAreaRealHeight={this.props.dataAreaRealHeight} /> */}
         <GetRowGanttVirtual />
         <GetRowGanttItemElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
       </div>
