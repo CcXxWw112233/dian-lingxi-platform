@@ -23,6 +23,7 @@ class SimpleHeader extends Component {
         simpleDrawerContent: null,
         simpleDrawerTitle: '',
         whetherShowTaskDetailModalVisible: false, // 控制引用的任务弹窗多次渲染
+        whetherShowFileDetailModalVisible: false,
         guideImageMoadlVisible: false,  //协作引导图片全屏预览
         guideImgSrc: '', //协作引导图片全屏预览资源
     }
@@ -228,6 +229,9 @@ class SimpleHeader extends Component {
                             currentPreviewFileName: ''
                         }
                     })
+                    this.setState({
+                        whetherShowFileDetailModalVisible: false
+                    })
                 }
                 if (this.props.drawerVisible) { // 防止弹窗多层覆盖
                     dispatch({
@@ -236,6 +240,9 @@ class SimpleHeader extends Component {
                             drawerVisible: false,
                             card_id: ''
                         }
+                    })
+                    this.setState({
+                        whetherShowTaskDetailModalVisible: false
                     })
                 }
                 dispatch({
@@ -259,6 +266,9 @@ class SimpleHeader extends Component {
                             fileType: getSubfixName(relaDataName),
                             currentPreviewFileName: relaDataName
                         }
+                    })
+                    this.setState({
+                        whetherShowFileDetailModalVisible: true
                     })
                 }, 200)
                 // dispatch({
@@ -328,6 +338,9 @@ class SimpleHeader extends Component {
                             currentPreviewFileName: ''
                         }
                     })
+                    this.setState({
+                        whetherShowFileDetailModalVisible: false
+                    })
                 }
                 dispatch({
                     type: 'projectDetail/updateDatas',
@@ -343,9 +356,9 @@ class SimpleHeader extends Component {
                             card_id: cardId
                         }
                     })
-                    // this.setState({
-                    //     whetherShowTaskDetailModalVisible: true
-                    // })
+                    this.setState({
+                        whetherShowTaskDetailModalVisible: true
+                    })
                 }, 200)
                 break;
             case 'flow':
@@ -540,7 +553,7 @@ class SimpleHeader extends Component {
                     )
                 }
                 {
-                    isInOpenFile && this.state.cardIdwhetherShowFileDetailModalVisible && (
+                    isInOpenFile && this.state.whetherShowFileDetailModalVisible && (
                         <FileDetailModal setPreviewFileModalVisibile={this.setPreviewFileModalVisibile} fileType={fileType} filePreviewCurrentFileId={filePreviewCurrentFileId} file_detail_modal_visible={isInOpenFile} />
                     )
                 }
