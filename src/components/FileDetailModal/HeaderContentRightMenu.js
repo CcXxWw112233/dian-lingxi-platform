@@ -330,9 +330,12 @@ export default class HeaderContentRightMenu extends Component {
         if (isApiResponseOk(res)) {
           const data = res.data
           if(data && data.length) {
-            for (let val of data ) {
-              // window.open(val)
-              this.openWin(val)
+            // for (let val of data ) {
+            //   // window.open(val)
+            //   this.openWin(val)
+            // }
+            for (let i = 0; i < data.length; i++) {
+              setTimeout(() => openWin(data[i]), i * 500)
             }
           }
         } else {

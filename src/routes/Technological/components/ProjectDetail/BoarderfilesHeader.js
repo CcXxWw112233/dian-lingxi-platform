@@ -158,19 +158,23 @@ export default class BoarderfilesHeader extends Component {
         }
         const { fileList, selectedRowKeys, selectedRows = [], sele, dispatch } = this.props
         let chooseArray = []
+        let chooseFileIdArray = []
         // for (let i = 0; i < selectedRows.length; i++) {
         //     chooseArray.push(fileList[selectedRows[i]].file_resource_id)
         // }
         selectedRows.map((item,i) => {
             chooseArray.push(item.file_resource_id)
+            chooseFileIdArray.push(item.file_id)
             return chooseArray
           })
           const ids = chooseArray.join(',')
+          const fileIds = chooseFileIdArray.join(',')
           if (!(ids && ids.length)) return
         dispatch({
             type: 'projectDetailFile/fileDownload',
             payload: {
-                ids
+                ids,
+                fileIds
             }
         })
         //将要进行多文件下载的mp3文件地址，以组数的形式存起来（这里只例了3个地址）

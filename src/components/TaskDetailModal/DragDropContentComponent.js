@@ -503,7 +503,8 @@ export default class DragDropContentComponent extends Component {
         type: 'projectDetailFile/fileDownload',
         payload: {
           ids: file_resource_id,
-          card_id
+          card_id,
+          fileIds: attachment_id
         }
       })
     }
