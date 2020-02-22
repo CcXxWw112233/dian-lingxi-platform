@@ -4,7 +4,7 @@ import indexStyles from './index.less'
 import GetRowGantt from './GetRowGantt'
 import DateList from './DateList'
 import GroupListHead from './GroupListHead'
-import { getMonthDate, getNextMonthDatePush, isSamDay } from './getDate'
+import { getMonthDate, getNextMonthDatePush, isSamDay, getLastMonthDateShift } from './getDate'
 import { INPUT_CHANGE_SEARCH_TIME } from "../../../../globalset/js/constant";
 import { getGanttData } from "../../../../services/technological/gantt";
 import { isApiResponseOk } from "../../../../utils/handleResponseData";
@@ -105,7 +105,7 @@ export default class GanttFace extends Component {
       this.setState({
         searchTimer: setTimeout(function () {
           that.setGoldDateArr({ timestamp, not_set_loading: true }) //取左边界日期来做日期更新的基准
-          that.setScrollPosition({ delay: 300, position: 30 * ceilWidth }) //大概移动四天的位置
+          that.setScrollPosition({ delay: 300, position: 4 * ceilWidth }) //大概移动四天的位置
         }, INPUT_CHANGE_SEARCH_TIME)
       })
 
@@ -160,6 +160,11 @@ export default class GanttFace extends Component {
     } else {
       date_arr = getMonthDate(timestamp)
     }
+    // if (!!to_right) { //如果是拖拽虚线框向右则是累加，否则是取基数前后
+    //   date_arr = [].concat(gold_date_arr, getNextMonthDatePush(timestamp))
+    // } else {
+    //   date_arr = [].concat(getMonthDate(timestamp), gold_date_arr)
+    // }
     const date_arr_one_level = []
     let date_total = 0
     for (let val of date_arr) {
