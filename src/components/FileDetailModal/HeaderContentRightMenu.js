@@ -335,7 +335,7 @@ export default class HeaderContentRightMenu extends Component {
             //   this.openWin(val)
             // }
             for (let i = 0; i < data.length; i++) {
-              setTimeout(() => openWin(data[i]), i * 500)
+              setTimeout(() => this.openWin(data[i]), i * 500)
             }
           }
         } else {
