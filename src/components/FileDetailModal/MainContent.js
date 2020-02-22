@@ -13,6 +13,7 @@ import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_FILE_UPDATE
 } from "@/globalset/js/constant";
+import NotSupportImg from '@/assets/projectDetail/fileDetail/not_support.png'
 let timer
 
 @connect()
@@ -107,7 +108,7 @@ class MainContent extends Component {
     if (supportFileTypeArray.indexOf(FILE_NAME) != -1) {
       fileConvertPdfAlsoUpdateVersion({ id: file_id }).then(res => {
         if (isApiResponseOk(res)) {
-          this.props.updateStateDatas && this.props.updateStateDatas({selectedKeys: [res.data.id]})
+          this.props.updateStateDatas && this.props.updateStateDatas({ selectedKeys: [res.data.id] })
           let isPDF = getSubfixName(res.data.file_name) == '.pdf'
           if (isPDF) {
             setCurrentVersionFile({ id: res.data.id, set_major_version: '1' }).then(result => {
@@ -125,14 +126,14 @@ class MainContent extends Component {
                   is_large_loading: isZoomPictureFullScreenMode && false,
                   selectedKeys: [res.data.id]
                 })
-                this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({folder_id})
+                this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({ folder_id })
                 // setTimeout(() => this.props.updateStateDatas && this.props.updateStateDatas({selectedKeys: [res.data.id]}),200)
                 // this.props.updateStateDatas && this.props.updateStateDatas({selectedKeys: [res.data.id]})
               }
             })
           } else {
             this.props.getCurrentFilePreviewData && this.props.getCurrentFilePreviewData({ id: res.data.id })
-            this.props.updateStateDatas && this.props.updateStateDatas({selectedKeys: [res.data.id]})
+            this.props.updateStateDatas && this.props.updateStateDatas({ selectedKeys: [res.data.id] })
           }
 
         } else {
@@ -278,104 +279,195 @@ class MainContent extends Component {
       case '.obj':
         content = (
           <div style={{ textAlign: 'center' }}>
-            <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe62f;</i>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe62f;</i>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
+            <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe65b;</i>
+            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
+              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
             </div>
-            <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
+            <i style={{ color: '#D4D4D4', fontSize: '12px', fontStyle: 'normal' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
           </div>
         )
         break;
       case '.3dm':
         content = (
           <div style={{ textAlign: 'center' }}>
-            <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe626;</i>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe626;</i>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
+            <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe6e0;</i>
+            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
+              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
             </div>
-            <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
+            <i style={{ color: '#D4D4D4', fontSize: '12px', fontStyle: 'normal' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
           </div>
         )
         break;
       case '.iges':
         content = (
           <div style={{ textAlign: 'center' }}>
-            <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe62b;</i>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe62b;</i>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
+            <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe658;</i>
+            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
+              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
             </div>
-            <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
+            <i style={{ color: '#D4D4D4', fontSize: '12px', fontStyle: 'normal' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
           </div>
         )
         break;
       case '.ma':
         content = (
           <div style={{ textAlign: 'center' }}>
-            <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe630;</i>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe630;</i>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
+            <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe65f;</i>
+            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
+              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
             </div>
-            <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
+            <i style={{ color: '#D4D4D4', fontSize: '12px', fontStyle: 'normal' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
           </div>
         )
         break;
       case '.mb':
         content = (
           <div style={{ textAlign: 'center' }}>
-            <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe628;</i>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe628;</i>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
+            <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe64f;</i>
+            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
+              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
             </div>
-            <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
+            <i style={{ color: '#D4D4D4', fontSize: '12px', fontStyle: 'normal' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
           </div>
         )
         break;
       case '.skp':
         content = (
           <div style={{ textAlign: 'center' }}>
-            <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe62e;</i>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe62e;</i>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
+            <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe6e8;</i>
+            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
+              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
             </div>
-            <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
+            <i style={{ color: '#D4D4D4', fontSize: '12px', fontStyle: 'normal' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
           </div>
         )
         break;
       case '.dwg':
         content = (
           <div style={{ textAlign: 'center' }}>
-            <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe62a;</i>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe62a;</i>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
+            <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe64c;</i>
+            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
+              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
             </div>
-            <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
+            <i style={{ color: '#D4D4D4', fontSize: '12px', fontStyle: 'normal' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
           </div>
         )
         break;
       case '.psd':
         content = (
           <div style={{ textAlign: 'center' }}>
-            <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe627;</i>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe627;</i>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe61e;</i>
-              <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6cf;</i>
+            <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe65d;</i>
+            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
+              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
             </div>
-            <i style={{ color: 'gray', fontSize: '12px' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
+            <i style={{ color: '#D4D4D4', fontSize: '12px', fontStyle: 'normal' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
+          </div>
+        )
+        break;
+      case '.rar':
+        content = (
+          <div style={{ textAlign: 'center' }}>
+            <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe6e4;</i>
+            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
+              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
+            </div>
+            <i style={{ color: '#D4D4D4', fontSize: '12px', fontStyle: 'normal' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
+          </div>
+        )
+        break;
+      case '.zip':
+        content = (
+          <div style={{ textAlign: 'center' }}>
+            <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe6e5;</i>
+            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
+              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
+            </div>
+            <i style={{ color: '#D4D4D4', fontSize: '12px', fontStyle: 'normal' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
+          </div>
+        )
+        break;
+      case '.7z':
+        content = (
+          <div style={{ textAlign: 'center' }}>
+            <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe6e6;</i>
+            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
+              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
+            </div>
+            <i style={{ color: '#D4D4D4', fontSize: '12px', fontStyle: 'normal' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
+          </div>
+        )
+        break;
+      case '.gz':
+        content = (
+          <div style={{ textAlign: 'center' }}>
+            <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe6e7;</i>
+            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
+              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
+            </div>
+            <i style={{ color: '#D4D4D4', fontSize: '12px', fontStyle: 'normal' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
+          </div>
+        )
+        break;
+      case '.key':
+        content = (
+          <div style={{ textAlign: 'center' }}>
+            <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe64e;</i>
+            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
+              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
+                <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
+            </div>
+            <i style={{ color: '#D4D4D4', fontSize: '12px', fontStyle: 'normal' }}>把文件转换为pdf格式即可在聆悉上圈点协作</i>
           </div>
         )
         break;
@@ -510,4 +602,3 @@ class MainContent extends Component {
 }
 
 export default withBodyClientDimens(MainContent)
-
