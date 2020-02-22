@@ -326,7 +326,8 @@ export default class HeaderContentRightMenu extends Component {
     if (pdfDownLoadSrc) {
       window.open(pdfDownLoadSrc)
     } else {
-      fileDownload({ids: filePreviewCurrentResourceId}).then(res => {
+      const { currentPreviewFileData: { id } } = this.props
+      fileDownload({ids: filePreviewCurrentResourceId,fileIds: id}).then(res => {
         if (isApiResponseOk(res)) {
           const data = res.data
           if(data && data.length) {
