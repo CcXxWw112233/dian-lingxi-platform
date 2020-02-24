@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Menu, Dropdown, Input, message, Tooltip } from 'antd';
-import { getSubfixName, setBoardIdStorage, checkIsHasPermissionInBoard } from '../../../../../../../utils/businessFunction';
+import { getSubfixName, setBoardIdStorage } from '../../../../../../../utils/businessFunction';
 import { isApiResponseOk } from '../../../../../../../utils/handleResponseData';
 import { fileRemove, updateFolder } from '../../../../../../../services/technological/file';
 import globalStyles from '@/globalset/css/globalClassName.less';

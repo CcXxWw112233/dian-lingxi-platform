@@ -562,8 +562,14 @@ export default class UploadAttachment extends Component {
   }
 }
 // 只关联public弹窗内的数据
-function mapStateToProps({ }) {
-  return {}
+function mapStateToProps({  
+  technological: {
+    datas: {
+      userBoardPermissions
+    }
+  } 
+}) {
+  return {userBoardPermissions}
 }
 
 

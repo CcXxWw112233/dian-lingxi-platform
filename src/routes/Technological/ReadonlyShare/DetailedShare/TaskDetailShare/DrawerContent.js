@@ -1982,6 +1982,11 @@ function mapStateToProps({
     datas: {
       isInOpenFile
     }
+  },
+  technological: {
+    datas: {
+      userBoardPermissions
+    }
   }
 }) {
   return {
@@ -1996,6 +2001,7 @@ function mapStateToProps({
     isInOpenFile,
     boardTagList,
     relationTaskList,
-    relations_Prefix
+    relations_Prefix,
+    userBoardPermissions
   }
 }

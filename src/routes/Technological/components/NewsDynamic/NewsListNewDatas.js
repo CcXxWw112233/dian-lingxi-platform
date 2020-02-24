@@ -14,8 +14,9 @@ import { currentNounPlanFilterName, getOrgNameWithOrgIdFilter, checkIsHasPermiss
 import { connect } from 'dva'
 import globalStyles from '@/globalset/css/globalClassName.less'
 
-@connect(({ technological: { datas: { currentUserOrganizes = [], is_show_org_name } } }) => ({
-  currentUserOrganizes, is_show_org_name
+@connect(({ technological: { datas: { currentUserOrganizes = [], is_show_org_name,userOrgPermissions,
+  userBoardPermissions} } }) => ({
+  currentUserOrganizes, is_show_org_name,userOrgPermissions,userBoardPermissions
 }))
 export default class NewsListNewDatas extends React.Component {
 

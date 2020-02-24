@@ -11,7 +11,9 @@ import { checkIsHasPermission, currentNounPlanFilterName } from "../../../../uti
 import { message } from "antd/lib/index";
 import { isApiResponseOk } from "@/utils/handleResponseData";
 import { organizationInviteWebJoin, commInviteWebJoin, } from '@/services/technological/index'
+import { connect } from "dva/index";
 
+@connect(mapStateToProps)
 export default class Header extends React.Component {
   state = {
     ShowAddMenberModalVisibile: false,
@@ -130,3 +132,16 @@ export default class Header extends React.Component {
     )
   }
 }
+
+function mapStateToProps({
+  technological: {
+    datas: {
+      userOrgPermissions
+    }
+  }
+}) {
+  return {
+    userOrgPermissions
+  }
+}
+

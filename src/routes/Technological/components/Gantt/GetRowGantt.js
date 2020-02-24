@@ -568,8 +568,13 @@ function mapStateToProps({ gantt: {
     group_view_type,
     group_list_area_section_height,
     show_board_fold,
+  }},
+  technological: {
+    datas: {
+      userBoardPermissions
+    }
   }
-} }) {
+ }) {
   return {
     gold_date_arr,
     list_group,
@@ -585,6 +590,7 @@ function mapStateToProps({ gantt: {
     group_view_type,
     group_list_area_section_height,
     show_board_fold,
+    userBoardPermissions
   }
 }
 

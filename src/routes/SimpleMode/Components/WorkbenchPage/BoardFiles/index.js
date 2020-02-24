@@ -4,8 +4,7 @@ import indexStyles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import FileModule from '@/routes/Technological/components/ProjectDetail/FileModule'
 import { Modal, Dropdown, Button, Select, Icon, TreeSelect, Tree } from 'antd';
-import {
-  checkIsHasPermission, checkIsHasPermissionInBoard, getSubfixName,
+import { getSubfixName,
   openPDF, setBoardIdStorage, getOrgNameWithOrgIdFilter,
   isPaymentOrgUser,
   selectBoardToSeeInfo

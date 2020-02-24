@@ -11,11 +11,11 @@ import { validateEmail, validateEmailSuffix } from "../../utils/verify";
 import { checkIsHasPermission, currentNounPlanFilterName } from "../../utils/businessFunction";
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction';
 import { timestampToTime, timestampToTimeNormal, isOverdueTime } from '@/utils/util'
-
 import PayUpgrade from '@/routes/Technological/components/PayUpgrade/index'
+import { connect } from "dva/index";
 
 const RadioGroup = Radio.Group;
-//
+@connect(mapStateToProps)
 export default class BaseInfo extends React.Component {
   state = {
     name: '',
@@ -394,3 +394,15 @@ const radioStyle = {
   height: '30px',
   lineHeight: '30px',
 };
+
+function mapStateToProps({
+  technological: {
+    datas: {
+      userOrgPermissions
+    }
+  }
+}) {
+  return {
+    userOrgPermissions
+  }
+}

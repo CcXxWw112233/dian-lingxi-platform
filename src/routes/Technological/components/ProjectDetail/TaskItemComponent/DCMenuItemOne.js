@@ -6,7 +6,9 @@ import { checkIsHasPermissionInBoard, } from "../../../../../utils/businessFunct
 import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_BOARD_MEMBER } from "@/globalset/js/constant";
 import { isApiResponseOk } from '@/utils/handleResponseData';
 import { organizationInviteWebJoin, commInviteWebJoin, } from '@/services/technological/index'
+import { connect } from "dva/index";
 
+@connect(mapStateToProps)
 export default class DCMenuItemOne extends React.Component {
   state = {
     resultArr: [], //实际显示执行人数组
@@ -163,6 +165,18 @@ export default class DCMenuItemOne extends React.Component {
     )
   }
 
+}
+
+function mapStateToProps({
+  technological: {
+    datas: {
+      userBoardPermissions
+    }
+  }
+}) {
+  return {
+    userBoardPermissions
+  }
 }
 
 

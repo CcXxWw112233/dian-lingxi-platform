@@ -16,7 +16,7 @@ import {
 import NotSupportImg from '@/assets/projectDetail/fileDetail/not_support.png'
 let timer
 
-@connect()
+@connect(mapStateToProps)
 class MainContent extends Component {
 
   constructor(props) {
@@ -602,3 +602,18 @@ class MainContent extends Component {
 }
 
 export default withBodyClientDimens(MainContent)
+
+
+function mapStateToProps({
+  technological: {
+    datas: {
+      userBoardPermissions
+    }
+  }
+}) {
+  return {
+    userBoardPermissions
+  }
+}
+
+

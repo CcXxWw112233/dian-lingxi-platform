@@ -51,10 +51,16 @@ const SubMenu = Menu.SubMenu;
       fileType,
       isInOpenFile,
       isInAttachmentFile
+    },
+    technological: {
+      datas: {
+        userBoardPermissions
+      }
     }
+  
   }) => ({
     workbench, processInfo, projectDetailInfoData, drawerVisible, drawContent,
-    filePreviewCurrentFileId, fileType, isInOpenFile, isInAttachmentFile
+    filePreviewCurrentFileId, fileType, isInOpenFile, isInAttachmentFile,userBoardPermissions
   }))
 class CardContent extends React.Component {
   state = {

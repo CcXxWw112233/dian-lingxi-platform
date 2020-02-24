@@ -6,7 +6,9 @@ import {
   PROJECT_FLOWS_FLOW_TEMPLATE
 } from "../../../../../../globalset/js/constant";
 import {checkIsHasPermissionInBoard} from "../../../../../../utils/businessFunction";
+import { connect } from "dva/index";
 
+@connect(mapStateToProps)
 export default class CopyCheck extends Component{
   state = {
     parentChecked: false
@@ -77,5 +79,16 @@ export default class CopyCheck extends Component{
         {this.renderCopyType()}
       </div>
     )
+  }
+}
+function mapStateToProps({
+  technological: {
+    datas: {
+      userBoardPermissions
+    }
+  }
+}) {
+  return {
+    userBoardPermissions
   }
 }

@@ -75,10 +75,10 @@ class FileDetailContent extends Component {
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     const { is_simple_model } = user_set;
     if (!data) {
-      global.constants.lx_utils && global.constants.lx_utils.setCommentData(null) 
+      global.constants.lx_utils && global.constants.lx_utils.setCommentData(null)
       return false
     }
-    global.constants.lx_utils && global.constants.lx_utils.setCommentData({...data})
+    global.constants.lx_utils && global.constants.lx_utils.setCommentData({ ...data })
     if (is_simple_model == '1') {
       this.props.dispatch({
         type: 'simplemode/updateDatas',
@@ -94,11 +94,11 @@ class FileDetailContent extends Component {
     if (isApiResponseOk(res)) {
       let file_type = getSubfixName(res.data.base_info.file_name)
       this.initStateDatas({ data: res.data })
-      let flag = checkIsHasPermissionInVisitControl('edit', res.data.base_info.privileges, res.data.base_info.is_privilege,[], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, res.data.base_info.board_id))
+      let flag = checkIsHasPermissionInVisitControl('edit', res.data.base_info.privileges, res.data.base_info.is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, res.data.base_info.board_id))
       if (file_type == '.pdf' && flag) {
         await this.getFilePDFInfo({ id })
       }
-      this.linkImWithFile({name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id, currentPreviewFileVersionId: res.data.base_info.version_id})
+      this.linkImWithFile({ name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id, currentPreviewFileVersionId: res.data.base_info.version_id })
     } else {
       message.warn(res.message, MESSAGE_DURATION_TIME)
       setTimeout(() => {
@@ -188,8 +188,8 @@ class FileDetailContent extends Component {
     // })
     let all_version_list_Ids = this.getEveryVersionListIds()
     let currentPreviewFileVersionId = this.getCurrentFilePreviewVersionId()
- 
-    global.constants.lx_utils && global.constants.lx_utils.setCommentData(currentPreviewFileVersionId || (all_version_list_Ids && all_version_list_Ids.length) && all_version_list_Ids ||this.props.filePreviewCurrentFileId || null)
+
+    global.constants.lx_utils && global.constants.lx_utils.setCommentData(currentPreviewFileVersionId || (all_version_list_Ids && all_version_list_Ids.length) && all_version_list_Ids || this.props.filePreviewCurrentFileId || null)
     this.whetherUpdateProjectDetailFileBreadCrumbListNav()
   }
 
@@ -203,7 +203,7 @@ class FileDetailContent extends Component {
     fileInfoByUrl({ id }).then(res => {// 获取详情的接口
       if (isApiResponseOk(res)) {
         this.initStateDatas({ data: res.data })
-        this.linkImWithFile({name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id, currentPreviewFileVersionId: res.data.base_info.version_id})
+        this.linkImWithFile({ name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id, currentPreviewFileVersionId: res.data.base_info.version_id })
       } else {
         message.warn(res.message)
         let currentPreviewFileVersionId = this.getCurrentFilePreviewVersionId()
@@ -307,9 +307,15 @@ function mapStateToProps({
     datas: {
       breadcrumbList = []
     }
+  },
+  technological: {
+    datas: {
+      userBoardPermissions
+    }
   }
 }) {
   return {
-    chatImVisiable, breadcrumbList
+    chatImVisiable, breadcrumbList,
+    userBoardPermissions
   }
 }

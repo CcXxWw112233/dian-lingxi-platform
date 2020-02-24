@@ -11,7 +11,7 @@ import { updateTaskGroup, deleteTaskGroup, } from '../../../../services/technolo
 import { updateProject, addMenbersInProject, toggleContentPrivilege, removeContentPrivilege, setContentPrivilege, collectionProject, cancelCollection } from '../../../../services/technological/project';
 import { isApiResponseOk } from '../../../../utils/handleResponseData';
 import ShowAddMenberModal from '../../../../routes/Technological/components/Project/ShowAddMenberModal'
-import { PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_CARD_GROUP, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_TEAM_BOARD_ARCHIVE, PROJECTS, PROJECT_TEAM_BOARD_DELETE } from '../../../../globalset/js/constant';
+import { PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_CARD_GROUP, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_TEAM_BOARD_ARCHIVE, PROJECTS, PROJECT_TEAM_BOARD_DELETE,PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE } from '../../../../globalset/js/constant';
 import VisitControl from '../VisitControl/index'
 import globalStyle from '@/globalset/css/globalClassName.less'
 import { ganttIsFold } from './constants';
@@ -604,18 +604,20 @@ export default class GroupListHeadItem extends Component {
     const { renderVistorContorlVisible } = this.state
     const { list_id, is_create } = itemValue
     const params_board_id = gantt_board_id == '0' ? list_id : gantt_board_id
-    const rename_permission_code = gantt_board_id == '0' ? PROJECT_TEAM_BOARD_EDIT : PROJECT_TEAM_CARD_GROUP
+    const rename_permission_code = gantt_board_id == '0' ? PROJECT_TEAM_BOARD_EDIT : PROJECT_TEAM_CARD_GROUP;
+    // console.log("", checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, params_board_id));
+    
     return (
       <Menu onClick={this.handleMenuSelect} onOpenChange={this.onOpenChange}>
         {
-          // checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, params_board_id)
+          checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, params_board_id) &&
           <Menu.Item key={'invitation'}>
             邀请成员加入
           </Menu.Item>
         }
         {/* 渲染分组|项目对应的访问控制 */}
         {
-          renderVistorContorlVisible && (
+          checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, params_board_id) && renderVistorContorlVisible && (
             <Menu.Item key={'visitorControl'}>
               <div
                 // style={{ height: 60, width: 100, backgroundColor: 'red' }}
@@ -627,7 +629,7 @@ export default class GroupListHeadItem extends Component {
           )
         }
         {
-          // checkIsHasPermissionInBoard(rename_permission_code, params_board_id) &&
+          checkIsHasPermissionInBoard(rename_permission_code, params_board_id) &&
           <Menu.Item key={'rename'}>重命名</Menu.Item>
         }
         {
@@ -651,7 +653,7 @@ export default class GroupListHeadItem extends Component {
           )
         }
         {
-          // checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP, params_board_id) &&
+          checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP, params_board_id) &&
           gantt_board_id != '0' &&
           <Menu.Item key={'delete_group'}>删除分组</Menu.Item>
         }
@@ -1060,8 +1062,8 @@ export default class GroupListHeadItem extends Component {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
   gantt: { datas: { boards_flies, group_rows = [], ceiHeight, gantt_board_id, group_view_type, get_gantt_data_loading, list_group, show_board_fold } },
-  technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, } },
+  technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org,userBoardPermissions } },
   projectDetail: { datas: { projectDetailInfoData = {} } }
 }) {
-  return { boards_flies, list_group, ceiHeight, group_rows, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, get_gantt_data_loading, show_board_fold, projectDetailInfoData }
+  return { boards_flies, list_group, ceiHeight, group_rows, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, get_gantt_data_loading, show_board_fold, projectDetailInfoData,userBoardPermissions}
 }

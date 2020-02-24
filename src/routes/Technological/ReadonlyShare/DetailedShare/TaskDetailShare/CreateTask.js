@@ -309,12 +309,19 @@ function mapStateToProps({
     datas: {
       board_id
     }
+  },
+  technological: {
+    datas: {
+      userBoardPermissions
+    }
   }
+
 }) {
   return {
     taskGroupList,
     drawerVisible,
     getTaskGroupListArrangeType,
-    board_id
+    board_id,
+    userBoardPermissions
   }
 }

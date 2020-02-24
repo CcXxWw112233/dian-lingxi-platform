@@ -12,7 +12,7 @@ import { PROJECT_FILES_FILE_EDIT, REQUEST_DOMAIN_FLOWS, UPLOAD_FILE_SIZE } from 
 // import PreviewFileModal from '../../TaskItemComponent/PreviewFileModal'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
 import { filePreview } from "../../../../../../services/technological/file";
-import { checkIsHasPermissionInBoard, getSubfixName, openPDF } from "../../../../../../utils/businessFunction";
+import { getSubfixName, openPDF } from "../../../../../../utils/businessFunction";
 import ContentRaletion from '../../../../../../components/ContentRaletion'
 import { getRelations, JoinRelation } from "../../../../../../services/technological/task";
 import { isApiResponseOk } from "../../../../../../utils/handleResponseData";
@@ -265,39 +265,7 @@ const { board_id } = projectDetailInfoData
         currentPreviewFileName: file_name
       }
     })
-    // if (getSubfixName(file_name) == '.pdf' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
-    //   openPDF({ id: file_id })
-    //   return false
-    // }
-    // this.props.updateDatasFile({
-    //   seeFileInput: 'taskModule',
-    //   isInOpenFile: true,
-    //   filePreviewCurrentId: file_resource_id,
-    //   filePreviewCurrentFileId: file_id,
-    // })
-
-    // this.props.dispatch({
-    //   type: 'projectDetailFile/updateDatas',
-    //   payload: {
-    //     seeFileInput: 'taskModule',
-    //     isInOpenFile: true,
-    //     filePreviewCurrentId: file_resource_id,
-    //     filePreviewCurrentFileId: file_id,
-    //   }
-    // })
-    // // this.props.filePreview({ id: file_resource_id, file_id: file_id })
-    // this.props.dispatch({
-    //   type: 'projectDetailFile/filePreview',
-    //   payload: {
-    //     id: file_resource_id, file_id: file_id
-    //   }
-    // })
-    // this.props.dispatch({
-    //   type: 'projectDetailFile/fileInfoByUrl',
-    //   payload: {
-    //     file_id
-    //   }
-    // })
+   
   }
 
   render() {
@@ -697,48 +665,7 @@ const { board_id } = projectDetailInfoData
             currentPreviewFileName: file_name
           }
         })
-        // if (getSubfixName(file_name) == '.pdf' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
-        //   openPDF({ id: file_id })
-        //   return false
-        // }
-        // that.props.updateDatasFile({
-        //   seeFileInput: 'taskModule',
-        //   isInOpenFile: true,
-        //   filePreviewCurrentId: file_resource_id,
-        //   filePreviewCurrentFileId: file_id,
-        // })
-        // // that.props.filePreview({ id: file_resource_id, file_id: file_id })
-        // // that.props.dispatch({
-        // //   type: 'projectDetailFile/fileInfoByUrl',
-        // //   payload: {
-        // //     file_id
-        // //   }
-        // // })
-        // // console.log('sssss', {
-        // //   dispatch
-        // // })
-        // dispatch({
-        //   type: 'projectDetailFile/updateDatas',
-        //   payload: {
-        //     seeFileInput: 'taskModule',
-        //     isInOpenFile: true,
-        //     filePreviewCurrentId: file_resource_id,
-        //     filePreviewCurrentFileId: file_id,
-        //   }
-        // })
-        // // this.props.filePreview({ id: file_resource_id, file_id: file_id })
-        // dispatch({
-        //   type: 'projectDetailFile/filePreview',
-        //   payload: {
-        //     id: file_resource_id, file_id: file_id
-        //   }
-        // })
-        // dispatch({
-        //   type: 'projectDetailFile/fileInfoByUrl',
-        //   payload: {
-        //     file_id
-        //   }
-        // })
+  
       }
     }
     let node_amount = this.props.model.datas && this.props.model.datas.processInfo && this.props.model.datas.processInfo.node_amount

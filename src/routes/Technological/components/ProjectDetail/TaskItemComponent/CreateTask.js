@@ -437,6 +437,11 @@ function mapStateToProps({
     drawContent,
     taskGroupListIndex,
     taskGroupListIndex_index
+  },
+  technological: {
+    datas: {
+      userBoardPermissions
+    }
   }
 }) {
   return {
@@ -446,6 +451,7 @@ function mapStateToProps({
     getTaskGroupListArrangeType,
     board_id,
     taskGroupListIndex,
-    taskGroupListIndex_index
+    taskGroupListIndex_index,
+    userBoardPermissions
   }
 }

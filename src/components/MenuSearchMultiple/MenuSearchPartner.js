@@ -11,9 +11,8 @@ import { connect } from 'dva';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { validateTel } from "@/utils/verify";
 
-@connect(({ technological, publicTaskDetailModal: { is_selected_all } }) => ({
-	technological, is_selected_all
-}))
+
+@connect(mapStateToProps)
 export default class MenuSearchPartner extends React.Component {
 	state = {
 		resultArr: [],
@@ -420,3 +419,19 @@ MenuSearchPartner.deafultProps = {
 
 	},
 }
+
+
+function mapStateToProps({
+	technological,
+	technological: {
+	  datas: {
+		userBoardPermissions
+	  }
+	},
+	publicTaskDetailModal: { is_selected_all } 
+  }) {
+	return {
+		technological,userBoardPermissions,is_selected_all
+	}
+  }
+  

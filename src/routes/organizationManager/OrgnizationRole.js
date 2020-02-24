@@ -8,14 +8,14 @@ import {
 } from "../../globalset/js/constant";
 import {checkIsHasPermission} from "../../utils/businessFunction";
 // import EditCardDrop from './setWorkBench/EditCardDrop'
-
+import { connect } from "dva/index";
 const TreeNode = Tree.TreeNode;
 
 const CheckboxGroup = Checkbox.Group;
 const Panel = Collapse.Panel
 const SHOW_PARENT = TreeSelect.SHOW_PARENT;
 
-
+@connect(mapStateToProps)
 export default class OrgnizationRole extends React.Component {
   state = {
     renameModalVisable: false, //重命名或添加item modal显示
@@ -391,4 +391,17 @@ const childrenPanelRowsStyles = { //子panel下的Row
 const childrenPanelTitle = {
   paddingLeft: 0
 }
+
+function mapStateToProps({
+  technological: {
+    datas: {
+      userOrgPermissions
+    }
+  }
+}) {
+  return {
+    userOrgPermissions
+  }
+}
+
 

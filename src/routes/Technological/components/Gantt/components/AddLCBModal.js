@@ -21,20 +21,18 @@ import DropdownSelectWithSearch from './../../../components/Workbench/CardConten
 import DropdownMultipleSelectWithSearch from './../../../components/Workbench/CardContent/DropdownMultipleSelectWithSearch/index';
 import DateRangePicker from './../../../components/Workbench/CardContent/DateRangePicker/index';
 import Cookies from 'js-cookie';
-import {
-  checkIsHasPermissionInBoard,
-  setStorage
-} from '../../../../../utils/businessFunction';
+
 import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN,
   PROJECT_FILES_FILE_UPLOAD,
   PROJECT_FLOWS_FLOW_CREATE,
-  PROJECT_TEAM_CARD_CREATE
+  PROJECT_TEAM_CARD_CREATE,
+  PROJECT_TEAM_BOARD_MILESTONE
 } from '../../../../../globalset/js/constant';
 import { timestampToTimeNormal, timeToTimestamp } from "../../../../../utils/util";
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
-
+import {checkIsHasPermissionInBoard} from '@/utils/businessFunction';
 const taskTypeToName = {
   RESPONSIBLE_TASK: 'Tasks',
   EXAMINE_PROGRESS: 'Flows',
@@ -42,7 +40,7 @@ const taskTypeToName = {
   MY_DOCUMENT: 'Files'
 };
 /* eslint-disable */
-@connect(({ }) => ({}))
+@connect(({ technological: { datas: { userBoardPermissions } },}) => ({userBoardPermissions}))
 class AddTaskModal extends Component {
   constructor(props) {
     super(props)
@@ -165,7 +163,7 @@ class AddTaskContent extends Component {
     const isHasChooseBoard = () => !!!board_id
     const isHasTaskTitle = () => !!!add_name
     const isHasDueTime = () => !!!due_time
-    return isHasTaskTitle() || isHasDueTime() || isHasChooseBoard()
+    return isHasTaskTitle() || isHasDueTime() || isHasChooseBoard() 
   }
 
   handleAddTaskModalTaskTitleChange = e => {
@@ -231,6 +229,15 @@ class AddTaskContent extends Component {
       board_id,
       about_user_boards,
     } = this.props;
+    let hasPermissionFlag = 0;
+    if((current_selected_board && current_selected_board.board_id)){
+        if(checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, current_selected_board.board_id)){
+          hasPermissionFlag = 2;
+        }else{
+          hasPermissionFlag = 1;
+        }
+    }
+    const  hasPermission= !((current_selected_board && current_selected_board.board_id) && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, current_selected_board.board_id));
     return (
       <div className={styles.addTaskModalContent}>
         <div className={styles.addTaskModalSelectProject}>
@@ -289,7 +296,8 @@ class AddTaskContent extends Component {
           <div className={styles.confirmBtn}>
             <Button
               type="primary"
-              disabled={this.isShouldNotDisableSubmitBtn()}
+              disabled={this.isShouldNotDisableSubmitBtn() || hasPermission}
+              title={hasPermissionFlag == 1?'没有创建里程碑权限':''}
               onClick={this.handleClickedSubmitBtn}>
               完成
               </Button>

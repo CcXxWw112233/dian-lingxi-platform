@@ -7,8 +7,7 @@ import {
   NOT_HAS_PERMISION_COMFIRN, ORG_UPMS_ORGANIZATION_EDIT, REQUEST_DOMAIN_TEAM_SHOW,
   REQUEST_DOMAIN, UPLOAD_FILE_SIZE
 } from "../../../../../globalset/js/constant";
-import {checkIsHasPermission} from "../../../../../utils/businessFunction";
-import BraftEditor from 'braft-editor'
+
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 
 const TextArea = Input.TextArea

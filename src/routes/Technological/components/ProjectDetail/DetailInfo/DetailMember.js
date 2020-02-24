@@ -399,6 +399,11 @@ function mapStateToProps({
       projectRoles = []
     }
   },
+  technological: {
+    datas: {
+  	userBoardPermissions
+    }
+  }
 }) {
   return {
     projectDetailInfoData,

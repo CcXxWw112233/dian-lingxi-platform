@@ -3,7 +3,7 @@ import { Modal, Form, Button, Input, message, Select, Icon, Avatar, Tooltip } fr
 import {min_page_width} from "./../../../globalset/js/styles";
 import indexstyles from './index.less'
 import globalStyles from './../../../globalset/css/globalClassName.less'
-import {checkIsHasPermission, checkIsHasPermissionInBoard, setBoardIdStorage, getOrgNameWithOrgIdFilter} from "../../../utils/businessFunction";
+import { setBoardIdStorage, getOrgNameWithOrgIdFilter} from "../../../utils/businessFunction";
 import {
   MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_INTERVIEW, NOT_HAS_PERMISION_COMFIRN,
   PROJECT_TEAM_CARD_COMPLETE, ORG_TEAM_BOARD_QUERY, PROJECT_FLOW_FLOW_ACCESS, APP_KEY

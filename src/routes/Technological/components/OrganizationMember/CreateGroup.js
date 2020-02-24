@@ -6,7 +6,8 @@ import TreeGroupModal from './TreeGroupModal'
 import {checkIsHasPermission} from "../../../../utils/businessFunction";
 import {ORG_UPMS_ORGANIZATION_GROUP} from "../../../../globalset/js/constant";
 const documentWidth = document.querySelector('body').offsetWidth
-
+import { connect } from "dva/index";
+@connect(mapStateToProps)
 export default class CreateGroup extends React.Component {
 
   state = {
@@ -87,5 +88,16 @@ export default class CreateGroup extends React.Component {
 
       </div>
     )
+  }
+}
+function mapStateToProps({
+  technological: {
+    datas: {
+      userOrgPermissions
+    }
+  }
+}) {
+  return {
+    userOrgPermissions
   }
 }

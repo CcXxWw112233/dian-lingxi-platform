@@ -14,12 +14,12 @@ import {
   PROJECT_FILES_FILE_INTERVIEW
 } from "../../../../../globalset/js/constant";
 
-@connect(({ workbench, technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } } }) => ({
+@connect(({ workbench, technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org,userOrgPermissions,userBoardPermissions } } }) => ({
   uploadedFileNotificationIdList:
     workbench.datas.uploadedFileNotificationIdList,
   uploadedFileList: workbench.datas.uploadedFileList,
   projectTabCurrentSelectedProject: workbench.datas.projectTabCurrentSelectedProject,
-  currentUserOrganizes, is_show_org_name, is_all_org
+  currentUserOrganizes, is_show_org_name, is_all_org,userOrgPermissions,userBoardPermissions
 }))
 class FileItem extends React.Component {
 

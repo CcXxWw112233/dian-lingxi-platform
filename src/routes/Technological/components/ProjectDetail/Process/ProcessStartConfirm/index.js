@@ -166,9 +166,15 @@ function mapStateToProps({
       templateInfo = {}
     }
   },
+  technological: {
+    datas: {
+  	userBoardPermissions
+    }
+  }
 }) {
   return {
     processEditDatas,
-    templateInfo
+    templateInfo,
+    userBoardPermissions
   }
 }

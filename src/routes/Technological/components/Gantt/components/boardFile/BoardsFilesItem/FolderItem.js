@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { getSubfixName, setBoardIdStorage, checkIsHasPermissionInBoard, getGlobalData } from '../../../../../../../utils/businessFunction';
+import { getSubfixName, setBoardIdStorage, getGlobalData } from '../../../../../../../utils/businessFunction';
 import { Input, Menu, Dropdown, message, Tooltip } from 'antd'
 import { PROJECT_FILES_FILE_INTERVIEW, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../../../globalset/js/constant';
 import { connect } from 'dva';
@@ -152,10 +152,7 @@ export default class FolderItem extends Component {
         } = data;
         const { dispatch } = this.props
         setBoardIdStorage(board_id)
-        // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)) {
-        //     message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
-        //     return false;
-        // }
+    
 
         // dispatch({
         //     type: 'publicFileDetailModal/updateDatas',

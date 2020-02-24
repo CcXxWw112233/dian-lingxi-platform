@@ -321,8 +321,15 @@ DropdownSelectWithSearch.defaultProps = {
   isShouldDisableDropdown: false, //设置禁用选择，当已经有当前选中值得时候
 };
 
-function mapStateToProps({ modal, project, loading }) {
-  return { modal, project };
+function mapStateToProps({ modal, project, loading,
+  technological: {
+    datas: {
+      userOrgPermissions,
+      userBoardPermissions
+    }
+  }
+}) {
+  return { modal, project,userOrgPermissions,userBoardPermissions};
 }
 
 export default connect(mapStateToProps)(DropdownSelectWithSearch);

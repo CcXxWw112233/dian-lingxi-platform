@@ -83,10 +83,16 @@ function mapStateToProps({
     datas: {
       projectDetailInfoData = {},
     }
+  },
+  technological: {
+    datas: {
+  	  userBoardPermissions
+    }
   }
 }) {
   return {
     taskGroupList,
-    projectDetailInfoData
+    projectDetailInfoData,
+    userBoardPermissions
   }
 }

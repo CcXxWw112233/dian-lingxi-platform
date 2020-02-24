@@ -125,10 +125,16 @@ function mapStateToProps({
       projectDetailInfoData = {},
     }
   },
+  technological: {
+    datas: {
+  	  userBoardPermissions
+    }
+  }
 }) {
   return {
     drawContent,
     cardCommentList,
     projectDetailInfoData,
+    userBoardPermissions
   }
 }

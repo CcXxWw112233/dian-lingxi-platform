@@ -9,8 +9,10 @@ import {
   ORG_UPMS_ORGANIZATION_MEMBER_ADD, ORG_UPMS_ORGANIZATION_MEMBER_REMOVE, ORG_UPMS_ORGANIZATION_MEMBER_EDIT, MEMBERS
 } from "../../../../globalset/js/constant";
 import {checkIsHasPermission, currentNounPlanFilterName} from "../../../../utils/businessFunction";
+import { connect } from "dva/index";
 const Panel = Collapse.Panel
 
+@connect(mapStateToProps)
 export default class ItemOne extends React.Component {
   state = {
     isShowBottDetail: false, //
@@ -384,3 +386,15 @@ const customPanelStyle = {
   border: 0,
   overflow: 'hidden',
 };
+
+function mapStateToProps({
+  technological: {
+    datas: {
+      userOrgPermissions
+    }
+  }
+}) {
+  return {
+    userOrgPermissions
+  }
+}

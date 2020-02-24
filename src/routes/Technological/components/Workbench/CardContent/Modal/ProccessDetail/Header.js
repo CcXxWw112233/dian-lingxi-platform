@@ -20,8 +20,15 @@ import ShareAndInvite from './../../../../ShareAndInvite/index'
 import { createShareLink, modifOrStopShareLink, } from './../../../../../../../services/technological/workbench'
 import { connect } from 'dva'
 
-@connect(({ workbenchDetailProcess = {}, projectDetailProcess = {} }) => ({
-  workbenchDetailProcess, projectDetailProcess
+@connect(({ workbenchDetailProcess = {}, projectDetailProcess = {},
+
+  technological: {
+    datas: {
+      userBoardPermissions
+    }
+  }
+}) => ({
+  workbenchDetailProcess, projectDetailProcess,userBoardPermissions
 }))
 export default class Header extends React.Component {
   state = {

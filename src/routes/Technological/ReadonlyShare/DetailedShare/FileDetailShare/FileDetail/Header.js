@@ -16,7 +16,9 @@ import ShareAndInvite from './../../../ShareAndInvite/index'
 import { createShareLink, modifOrStopShareLink } from './../../../../../../services/technological/workbench'
 import { color_4 } from "../../../../../../globalset/js/styles";
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
+import { connect } from "dva/index";
 
+@connect(mapStateToProps)
 class Header extends React.Component {
   state = {
     onlyReadingShareModalVisible: false, //只读分享modal
@@ -317,3 +319,15 @@ class Header extends React.Component {
 }
 
 export default withRouter(Header)
+
+function mapStateToProps({
+  technological: {
+    datas: {
+      userBoardPermissions
+    }
+  }
+}) {
+  return {
+    userBoardPermissions
+  }
+}

@@ -8,6 +8,9 @@ import DateListLCBItem from './DateListLCBItem'
 import AddLCBModal from './components/AddLCBModal'
 import { isSamDay } from './getDate'
 import MilestoneDetail from './components/milestoneDetail'
+import {checkIsHasPermissionInBoard} from '../../../../utils/businessFunction';
+import {PROJECT_TEAM_BOARD_MILESTONE} from "@/globalset/js/constant";
+
 const MenuItem = Menu.Item
 
 const getEffectOrReducerByName = name => `gantt/${name}`
@@ -37,14 +40,21 @@ export default class DateList extends Component {
 
   // 里程碑详情和列表
   renderLCBList = (current_date_miletones, timestamp) => {
-    const { gantt_board_id } = this.props
+    const { gantt_board_id } = this.props;
+    const params_board_id = gantt_board_id;
+    //console.log("里程碑", checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, params_board_id),params_board_id);
+    const flag = (params_board_id!=0 && !checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, params_board_id));
     return (
       <Menu onClick={(e) => this.selectLCB(e, timestamp)}>
-        <MenuItem key={`${0}__${0}`} style={{ color: '#1890FF' }}>
-          <i className={globalStyles.authTheme}>&#xe8fe;</i>
-          &nbsp;
-           新建里程碑
-          </MenuItem>
+          {
+            
+            <MenuItem key={`${0}__${0}`} style={flag?{}:{ color: '#1890FF'}} disabled ={flag}>
+            <i className={globalStyles.authTheme}>&#xe8fe;</i>
+            &nbsp;
+             新建里程碑
+            </MenuItem>
+          }
+       
         {current_date_miletones.map((value, key) => {
           const { id, name, board_name, board_id } = value
           return (
@@ -368,13 +378,15 @@ function mapStateToProps(
       list_group = [], target_scrollTop = [],
       milestoneMap = [], holiday_list = [],
       gantt_board_id, group_view_type } },
+      technological: { datas: { userBoardPermissions } }
   }) {
   return {
     target_scrollLeft,
     gold_date_arr, list_group,
     target_scrollTop, milestoneMap,
     holiday_list, gantt_board_id,
-    group_view_type, about_user_boards
+    group_view_type, about_user_boards,
+    userBoardPermissions
   }
 }
 

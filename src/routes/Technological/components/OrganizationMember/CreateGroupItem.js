@@ -15,8 +15,11 @@ import MenuSearchSingleNormal from '../../../../components/MenuSearchSingleNorma
 import { checkIsHasPermission } from "../../../../utils/businessFunction";
 import { ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP } from "../../../../globalset/js/constant";
 import { currentNounPlanFilterName } from "../../../../utils/businessFunction";
+import { connect } from "dva/index";
+
 const Panel = Collapse.Panel
 
+@connect(mapStateToProps)
 export default class TaskItem extends React.Component {
 
   state = {
@@ -247,5 +250,16 @@ export default class TaskItem extends React.Component {
         {/*<TreeGroupModal  {...this.props}/>*/}
       </div>
     )
+  }
+}
+function mapStateToProps({
+  technological: {
+    datas: {
+      userOrgPermissions
+    }
+  }
+}) {
+  return {
+    userOrgPermissions
   }
 }

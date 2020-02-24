@@ -90,7 +90,12 @@ function mapStateToProps({
     datas: {
       processTemplateList = []
     }
+  },
+  technological: {
+    datas: {
+      userBoardPermissions
+    }
   }
 }) {
-  return { processTemplateList }
+  return { processTemplateList,userBoardPermissions}
 }

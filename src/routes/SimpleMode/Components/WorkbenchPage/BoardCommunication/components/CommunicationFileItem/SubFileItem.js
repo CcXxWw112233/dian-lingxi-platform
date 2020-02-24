@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard } from '../../../../../../../utils/businessFunction';
+import { getOrgNameWithOrgIdFilter } from '../../../../../../../utils/businessFunction';
 import FolderList from './FolderList';
 import { Icon } from 'antd';
 import styles from './index.less';

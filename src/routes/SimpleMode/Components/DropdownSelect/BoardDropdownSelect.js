@@ -265,7 +265,7 @@ export default connect(
       currentSelectedWorkbenchBox
     },
     technological: {
-      datas: { currentUserOrganizes }
+      datas: { currentUserOrganizes,userOrgPermissions}
     }
     , project }) => ({
       project,
@@ -275,5 +275,6 @@ export default connect(
       workbenchBoxList,
       currentUserOrganizes,
       simplemodeCurrentProject,
-      currentSelectedWorkbenchBox
+      currentSelectedWorkbenchBox,
+      userOrgPermissions
     }))(BoardDropdownSelect)

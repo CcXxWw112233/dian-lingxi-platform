@@ -1367,7 +1367,12 @@ function mapStateToProps({
     filePreviewCurrentFileId,
     fileType,
     currentPreviewFileName
+  },
+  technological: {
+    datas: {
+      userBoardPermissions
+    }
   }
 }) {
-  return { drawerVisible, drawContent, is_edit_title, card_id, boardTagList, attributesList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType, currentPreviewFileName }
+  return { drawerVisible, drawContent, is_edit_title, card_id, boardTagList, attributesList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType, currentPreviewFileName,userBoardPermissions }
 }

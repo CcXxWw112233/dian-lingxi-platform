@@ -146,6 +146,12 @@ TaskDetailModal.defaultProps = {
 }
 
 //  只关联public中弹窗内的数据
-function mapStateToProps({ publicTaskDetailModal: { drawContent = {}, card_id }, publicModalComment: { isShowAllDynamic } } ) {
-  return { drawContent, card_id, isShowAllDynamic }
+function mapStateToProps({ publicTaskDetailModal: { drawContent = {}, card_id }, publicModalComment: { isShowAllDynamic }, 
+   technological: {
+      datas: {
+        userBoardPermissions
+      }
+    }
+ } ) {
+  return { drawContent, card_id, isShowAllDynamic,userBoardPermissions}
 }

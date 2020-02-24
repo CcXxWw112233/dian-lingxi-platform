@@ -323,6 +323,11 @@ function mapStateToProps({
     datas: {
       projectDetailInfoData = {}
     }
+  },
+  technological: {
+    datas: {
+      userBoardPermissions
+    }
   }
 }) {
   return {
@@ -330,6 +335,7 @@ function mapStateToProps({
     processEditDatas,
     processCurrentEditStep,
     node_type,
-    projectDetailInfoData
+    projectDetailInfoData,
+    userBoardPermissions
   }
 }

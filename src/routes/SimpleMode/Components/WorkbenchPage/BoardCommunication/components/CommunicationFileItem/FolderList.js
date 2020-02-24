@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Collapse, Menu, Dropdown, Upload, Input, message } from 'antd';
-import { setUploadHeaderBaseInfo, checkIsHasPermissionInBoard } from '../../../../../../../utils/businessFunction';
+import { setUploadHeaderBaseInfo } from '../../../../../../../utils/businessFunction';
 import { isApiResponseOk } from '../../../../../../../utils/handleResponseData';
 import { addNewFolder } from '../../../../../../../services/technological/file';
 import { REQUEST_DOMAIN_FILE, PROJECT_FILES_FILE_UPLOAD, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, UPLOAD_FILE_SIZE } from '../../../../../../../globalset/js/constant';

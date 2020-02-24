@@ -57,8 +57,15 @@ function mapStateToProps({
       taskGroupList = [],
     }
   },
+  technological: {
+    datas: {
+      userBoardPermissions
+    }
+  }
+
 }) {
   return {
     taskGroupList,
+    userBoardPermissions
   }
 }

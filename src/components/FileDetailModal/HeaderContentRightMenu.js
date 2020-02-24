@@ -986,11 +986,17 @@ export default class HeaderContentRightMenu extends Component {
 function mapStateToProps({
   projectDetail: {
     datas: {
-      projectDetailInfoData = {}
+      projectDetailInfoData = {},
+    }
+  },
+  technological: {
+    datas: {
+      userBoardPermissions
     }
   }
 }) {
   return {
-    projectDetailInfoData
+    projectDetailInfoData,
+    userBoardPermissions
   }
 }

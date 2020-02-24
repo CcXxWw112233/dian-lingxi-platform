@@ -136,12 +136,16 @@ class ProjectDetail extends Component {
 };
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ projectDetail: {
-  // datas: {
-  //   appsSelectKey
-  // }
-} }) {
-  // return { appsSelectKey }
+function mapStateToProps({
+  technological: {
+    datas: {
+      userBoardPermissions
+    }
+  }
+}) {
+  return {
+    userBoardPermissions
+  }
 }
 export default connect(mapStateToProps)(ProjectDetail)
 

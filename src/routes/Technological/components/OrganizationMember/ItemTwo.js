@@ -8,9 +8,10 @@ import {
   ORG_UPMS_ORGANIZATION_MEMBER_EDIT, ORG_UPMS_ORGANIZATION_MEMBER_ADD
 } from "../../../../globalset/js/constant";
 import {checkIsHasPermission} from "../../../../utils/businessFunction";
+import { connect } from "dva/index";
 
 const Panel = Collapse.Panel
-
+@connect(mapStateToProps)
 export default class ItemTwo extends React.Component {
   state = {
     collapseClose: true, //折叠面板变化回调
@@ -81,3 +82,15 @@ const customPanelStyle = {
   border: 0,
   overflow: 'hidden',
 };
+
+function mapStateToProps({
+  technological: {
+    datas: {
+      userOrgPermissions
+    }
+  }
+}) {
+  return {
+    userOrgPermissions
+  }
+}

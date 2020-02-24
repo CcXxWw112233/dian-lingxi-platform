@@ -152,8 +152,12 @@ const OrganizationMember = (props) => {
 };
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ modal, organizationMember, loading }) {
-  return { modal, model: organizationMember, loading }
+function mapStateToProps({ modal, organizationMember, loading, technological: {
+  datas: {
+    userOrgPermissions
+  }
+}}) {
+  return { modal, model: organizationMember, loading,userOrgPermissions }
 }
 export default connect(mapStateToProps)(OrganizationMember)
 

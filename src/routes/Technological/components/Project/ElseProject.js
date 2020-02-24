@@ -27,10 +27,10 @@ let is_starinit = null
 
 @connect((
   {
-    technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } },
+    technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, userOrgPermissions,userBoardPermissions} },
   },
 ) => ({
-  currentUserOrganizes, is_show_org_name, is_all_org
+  currentUserOrganizes, is_show_org_name, is_all_org,userOrgPermissions,userBoardPermissions
 }))
 export default class ElseProject extends React.Component {
   state = {

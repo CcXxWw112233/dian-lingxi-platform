@@ -14,6 +14,7 @@ import { afterCreateBoardUpdateGantt } from '../Gantt/ganttBusiness';
 
 let cx = classNames.bind(styles);
 
+
 class ProjectListBar extends Component {
   constructor(props) {
     super(props);
@@ -402,7 +403,8 @@ export default connect(
     project,
     technological: {
       datas: {
-        siderRightCollapsed = false
+        siderRightCollapsed = false,
+        userOrgPermissions
       }
     }
   }) => ({
@@ -411,6 +413,7 @@ export default connect(
     projectTabCurrentSelectedProject,
     gantt,
     workbench_show_gantt_card,
-    siderRightCollapsed
+    siderRightCollapsed,
+    userOrgPermissions
   })
 )(ProjectListBar);
