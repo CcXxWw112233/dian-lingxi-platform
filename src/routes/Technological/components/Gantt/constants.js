@@ -26,3 +26,35 @@ export const getDigitTime = (timestamp) => {
     }
     return new_timestamp
 }
+
+export const test_card_item = [
+    {
+        id: "1232147328316608510",
+        name: "测试用的",
+        board_id: "1230737131983474688",
+        user_id: "1192753179570343936",
+        is_deleted: "0",
+        // start_time: "1580400000",
+        // due_time: "1580659140",
+        is_realize: "0",
+        is_archived: "0",
+        id_list: ["1192753179570343936"],
+        type: "0",
+        is_privilege: "0",
+        label_data: [],
+    }, {
+        id: "1232147328316608511",
+        name: "测试用的2",
+        board_id: "1230737131983474688",
+        user_id: "1192753179570343936",
+        is_deleted: "0",
+        // start_time: "1580400000",
+        // due_time: "1580659140",
+        is_realize: "0",
+        is_archived: "0",
+        id_list: ["1192753179570343936"],
+        type: "0",
+        is_privilege: "0",
+        label_data: [],
+    },
+]
