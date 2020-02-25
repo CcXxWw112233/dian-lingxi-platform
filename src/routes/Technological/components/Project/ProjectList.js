@@ -9,6 +9,7 @@ import ShowAddMenberModal from './ShowAddMenberModal'
 import { checkIsHasPermission, currentNounPlanFilterName } from '../../../../utils/businessFunction'
 import {MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_CREATE, PROJECTS} from "../../../../globalset/js/constant";
 import { message } from 'antd'
+import { connect } from 'dva'
 import Cookies from 'js-cookie'
 const Panel = Collapse.Panel
 @connect(mapStateToProps)
