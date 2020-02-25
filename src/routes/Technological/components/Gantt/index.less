@@ -878,6 +878,10 @@
   margin-top: 10px;
 
   :global {
+    .ant-tree-iconEle .ant-tree-icon__customize{
+      height     : 60px;
+      line-height: 60px;
+    }
     .ant-tree li {
       margin     : 0;
       padding    : 0;
@@ -890,8 +894,7 @@
     .ant-tree li span.ant-tree-iconEle {
 
       height     : 60px;
-      line-height: 40px;
-      padding    : 10px 0px;
+      line-height: 60px;
     }
 
     .ant-tree li .ant-tree-node-content-wrapper {
@@ -899,18 +902,27 @@
       color      : rgba(0, 0, 0, 0.65);
       font-weight: 400;
       height     : 60px;
-      line-height: 40px;
-      padding    : 10px 0px;
+      line-height: 60px;
     }
   }
+
   .addTask {
     font-size  : 14px;
     font-weight: 400;
     color      : rgba(0, 0, 0, 0.25);
   }
+
   .addMilestone {
     font-size  : 14px;
     font-weight: 400;
     color      : rgba(0, 0, 0, 0.25);
+  }
+
+  .milestoneNode {
+    display   : inline-block;
+    width     : 8px;
+    height    : 8px;
+    background: rgba(250, 173, 20, 1);
+    border-radius: 8px;
   }
 }
