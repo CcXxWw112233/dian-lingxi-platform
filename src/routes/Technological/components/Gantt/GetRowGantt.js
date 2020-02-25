@@ -117,7 +117,7 @@ export default class GetRowGantt extends Component {
   //鼠标拖拽移动
   dashedMousedown(e) {
     const { gantt_board_id, group_view_type, show_board_fold } = this.props
-    if(group_view_type == '3' || true) {
+    if (group_view_type == '3' || true) {
       return
     }
     if (
@@ -216,7 +216,7 @@ export default class GetRowGantt extends Component {
     if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) {
       return
     }
-    if(group_view_type == '3' || true) {
+    if (group_view_type == '3' || true) {
       return
     }
     const { ceiHeight, ceilWidth } = this.props
@@ -492,6 +492,20 @@ export default class GetRowGantt extends Component {
     )
   }
 
+  // 渲染横条
+  renderStrip = ({ list_data, list_id }) => {
+    return (
+      list_data.map((value2, key) => {
+        // const { id, left, width, start_time, end_time } = value2
+        const { end_time, left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time, start_time, due_time } = value2
+        const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
+        return (
+          <div></div>
+        )
+      })
+    )
+  }
+
   render() {
     const { currentRect = {}, dasheRectShow, drag_holiday_count } = this.state
     const {
@@ -541,7 +555,14 @@ export default class GetRowGantt extends Component {
             )
           }
         })}
-
+        {
+          list_group.map((value, key) => {
+            const { list_data = [], list_id, board_fold_data } = value
+            return (
+              this.renderStrip({ list_data, list_id })
+            )
+          })
+        }
         {/* {list_group.map((value, key) => {
           const { lane_data, list_id, list_data = [] } = value
           const { milestones = {} } = lane_data
@@ -573,13 +594,13 @@ function mapStateToProps({ gantt: {
     group_view_type,
     group_list_area_section_height,
     show_board_fold,
-  }},
+  } },
   technological: {
     datas: {
       userBoardPermissions
     }
   }
- }) {
+}) {
   return {
     gold_date_arr,
     list_group,
