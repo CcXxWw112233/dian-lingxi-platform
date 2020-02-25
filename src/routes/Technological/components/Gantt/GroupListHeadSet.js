@@ -37,15 +37,23 @@ export default class GroupListHeadSet extends Component {
         if (group_view_type == group_view_type_new) {
             return
         }
+        const { gantt_board_id = '0' } = this.props;
+
         dispatch({
             type: 'gantt/updateDatas',
             payload: {
-                gantt_board_id: '0',
+                gantt_board_id: group_view_type_new == '3' ? gantt_board_id : '0',
                 group_view_type: group_view_type_new,
                 list_group: [],
             }
         })
-        selectBoardToSeeInfo({ board_id: '0', dispatch })
+        if (gantt_board_id != '0') {
+            const { simplemodeCurrentProject } = this.props;
+            selectBoardToSeeInfo({ board_id: gantt_board_id, board_name: simplemodeCurrentProject.board_name, dispatch });
+        } else {
+            selectBoardToSeeInfo({ board_id: '0', dispatch })
+        }
+
         // dispatch({
         //     type: 'gantt/getGanttData',
         //     payload: {}
@@ -140,7 +148,8 @@ export default class GroupListHeadSet extends Component {
     render() {
         const { dropdownVisible, addProjectModalVisible } = this.state
         const { target_scrollLeft, target_scrollTop, group_view_type = '1', gantt_board_id = '0', group_view_filter_boards, group_view_filter_users } = this.props
-        const selected = `${indexStyles.button_nomal_background} ${indexStyles.type_select}`
+        const selected = `${indexStyles.button_nomal_background} ${indexStyles.type_select}`;
+        console.log("gantt_board_id", gantt_board_id);
         return (
             <div className={indexStyles.groupHeadSet}
             // style={{ left: target_scrollLeft, top: target_scrollTop }}
@@ -152,8 +161,13 @@ export default class GroupListHeadSet extends Component {
                             <div onClick={this.backClick} className={`${indexStyles.group_back_to_board} ${globalStyles.authTheme}`}>&#xe7ec;</div>
                         )}
                         <div className={indexStyles.set_content_view_type}>
+
+                            <Tooltip title={gantt_board_id != '0' ? '大纲视图' : '请先进入单个项目'}>
+                                <div onClick={() => { if (gantt_board_id != '0') this.setGroupViewType('3') }} className={`${indexStyles.set_content_left_left} ${globalStyles.authTheme} ${group_view_type == '3' && selected} ${gantt_board_id == '0' ? indexStyles.disabled : ''}`}>&#xe7f9;</div>
+                            </Tooltip>
+
                             <Tooltip title={'项目视图'}>
-                                <div onClick={() => this.setGroupViewType('1')} className={`${indexStyles.set_content_left_left} ${globalStyles.authTheme} ${group_view_type == '1' && selected}`}>&#xe604;</div>
+                                <div onClick={() => this.setGroupViewType('1')} className={`${indexStyles.set_content_left_center} ${globalStyles.authTheme} ${group_view_type == '1' && selected}`}>&#xe604;</div>
                             </Tooltip>
                             <Tooltip title={'人员视图'}>
                                 <div onClick={() => this.setGroupViewType('2')} className={`${indexStyles.set_content_left_right} ${globalStyles.authTheme}  ${group_view_type == '2' && selected}`}>&#xe7b2;</div>
@@ -200,6 +214,8 @@ export default class GroupListHeadSet extends Component {
 }
 function mapStateToProps({
     technological: { datas: { userOrgPermissions } },
-    gantt: { datas: { target_scrollLeft = [], target_scrollTop = [], group_view_type, gantt_board_id, group_view_filter_boards, group_view_filter_users } }, }) {
-    return { userOrgPermissions, target_scrollLeft, target_scrollTop, group_view_type, gantt_board_id, group_view_filter_boards, group_view_filter_users }
+    gantt: { datas: { target_scrollLeft = [], target_scrollTop = [], group_view_type, gantt_board_id, group_view_filter_boards, group_view_filter_users } },
+    simplemode: { simplemodeCurrentProject }
+}) {
+    return { userOrgPermissions, target_scrollLeft, target_scrollTop, group_view_type, gantt_board_id, group_view_filter_boards, group_view_filter_users, simplemodeCurrentProject }
 }
