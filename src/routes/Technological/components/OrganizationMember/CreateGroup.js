@@ -5,8 +5,8 @@ import CreateItem from './CreateItem'
 import TreeGroupModal from './TreeGroupModal'
 import {checkIsHasPermission} from "../../../../utils/businessFunction";
 import {ORG_UPMS_ORGANIZATION_GROUP} from "../../../../globalset/js/constant";
-const documentWidth = document.querySelector('body').offsetWidth
 import { connect } from "dva/index";
+const documentWidth = document.querySelector('body').offsetWidth
 @connect(mapStateToProps)
 export default class CreateGroup extends React.Component {
 
