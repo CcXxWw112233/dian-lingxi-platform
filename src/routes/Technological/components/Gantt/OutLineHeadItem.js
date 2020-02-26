@@ -145,8 +145,39 @@ export default class OutLineHeadItem extends Component {
             }
         ]
         return (
-            <div className={styles.out_line_wrapper}>
-                {this.renderGanttOutLineTree(data, true)}
+            <div className={styles.outline_wrapper}>
+                <div className="el-tree " className={style.el_tree}>
+                    <div className="el-tree-node expanded">
+                        <div className="el-tree-node__content" style={{paddingLeft: '0px'}}>
+                            <span className="el-tree-node__expand-icon expanded"></span>
+                            <span className="el-tree-node__label">一级 1</span>
+                        </div>
+                        <div className="collapse-transition" data-old-padding-top="0px" data-old-padding-bottom="0px" data-old-overflow="hidden" style={{overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block'}}>
+                            <div className="el-tree-node__children">
+                                <div className="el-tree-node expanded">
+                                    <div className="el-tree-node__content" style={{paddingLeft: '16px'}}>
+                                        <span className="el-tree-node__expand-icon expanded"></span>
+                                        <span className="el-tree-node__label">二级 1-1</span>
+                                    </div>
+                                    <div className="collapse-transition" data-old-padding-top="0px" data-old-padding-bottom="0px" data-old-overflow="hidden" style={{overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block'}}>
+                                        <div className="el-tree-node__children">
+                                            <div className="el-tree-node">
+                                                <div className="el-tree-node__content" style={{paddingLeft: '32px'}}>
+                                                    <span className="el-tree-node__expand-icon is-leaf"></span>
+                                                    <span className="el-tree-node__label">三级 1-1-1</span>
+                                                </div>
+                                                <div className="collapse-transition" data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="hidden" style={{overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block'}}>
+                                                    <div className="el-tree-node__children"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         );
     }
