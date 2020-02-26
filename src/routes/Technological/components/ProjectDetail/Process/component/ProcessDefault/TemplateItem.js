@@ -8,8 +8,8 @@ import {
 import { checkIsHasPermissionInBoard, currentNounPlanFilterName } from "../../../../../../../utils/businessFunction";
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
 import { Collapse } from 'antd';
-const Panel = Collapse.Panel;
 import { connect } from "dva/index";
+const Panel = Collapse.Panel;
 
 @connect(mapStateToProps)
 export default class TemplateItem extends React.Component {
