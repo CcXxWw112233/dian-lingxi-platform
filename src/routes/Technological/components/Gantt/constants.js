@@ -50,6 +50,7 @@ export const test_card_item = [
         is_deleted: "0",
         // start_time: "1580400000",
         // due_time: "1580659140",
+        time_span: 4,
         is_realize: "0",
         is_archived: "0",
         id_list: ["1192753179570343936"],
@@ -57,4 +58,21 @@ export const test_card_item = [
         is_privilege: "0",
         label_data: [],
     },
+]
+
+const list_group = [//大分组
+    {
+        lane_data: {  //原始数据
+            card_no_times: [],
+            cards: [
+                {
+                    id: '',
+                    is_open: false
+                }
+            ]
+        },
+        outline_tree: {},//转化后的树
+        list_data: [], //转化后的数组，用于渲染中间部分任务条
+
+    }
 ]

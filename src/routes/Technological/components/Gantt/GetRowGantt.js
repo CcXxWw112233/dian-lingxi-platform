@@ -502,7 +502,7 @@ export default class GetRowGantt extends Component {
         const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
         return (
           <React.Fragment key={`${id}_${top}`}>
-            <GetRowStrip itemValue={value2}></GetRowStrip>
+            <GetRowStrip itemValue={value2} list_id={list_id}></GetRowStrip>
           </React.Fragment>
         )
       })

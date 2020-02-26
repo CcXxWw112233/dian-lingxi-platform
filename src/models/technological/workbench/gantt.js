@@ -78,7 +78,7 @@ export default {
       folder_seeing_board_id: '0', //查看文件夹所属的项目id
 
       is_new_board: false, //是否刚刚创建的新项目
-      outline_hover_id: '', //大纲视图下，hover的任务条所属id
+      outline_hover_obj: {}, //大纲视图下，hover的任务条所属id
     },
   },
   subscriptions: {
@@ -261,16 +261,19 @@ export default {
             const due_time = getDigit(val_1['due_time'])
             const start_time = getDigit(val_1['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
             const create_time = getDigit(val_1['create_time'])
-            let time_span = (!due_time || !start_time) ? 1 : (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1 //正常区间内
-            if (due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
-              time_span = (Math.floor((end_date.timestamp - start_time) / (24 * 3600 * 1000))) + 1
-            } else if (start_time < start_date.timestamp && due_time < end_date.timestamp) { //左区间
-              time_span = (Math.floor((due_time - start_date.timestamp) / (24 * 3600 * 1000))) + 1
-            } else if (due_time > end_date.timestamp && start_time < start_date.timestamp) { //超过左右区间
-              time_span = (Math.floor((end_date.timestamp - start_date.timestamp) / (24 * 3600 * 1000))) + 1
+            let time_span = val_1['time_span']
+            if (!time_span) {
+              time_span = (!due_time || !start_time) ? 1 : (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1 //正常区间内
+              if (due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
+                time_span = (Math.floor((end_date.timestamp - start_time) / (24 * 3600 * 1000))) + 1
+              } else if (start_time < start_date.timestamp && due_time < end_date.timestamp) { //左区间
+                time_span = (Math.floor((due_time - start_date.timestamp) / (24 * 3600 * 1000))) + 1
+              } else if (due_time > end_date.timestamp && start_time < start_date.timestamp) { //超过左右区间
+                time_span = (Math.floor((end_date.timestamp - start_date.timestamp) / (24 * 3600 * 1000))) + 1
+              }
+              // console.log('sssssss', val_1.name, time_span)
+              // time_span = time_span > date_arr_one_level.length?  date_arr_one_level.length: time_span
             }
-            // console.log('sssssss', val_1.name, time_span)
-            // time_span = time_span > date_arr_one_level.length?  date_arr_one_level.length: time_span
             let list_data_item = {
               ...val_1,
               start_time,
