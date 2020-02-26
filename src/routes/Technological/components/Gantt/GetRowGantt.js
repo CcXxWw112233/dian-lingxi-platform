@@ -16,6 +16,7 @@ import { checkIsHasPermissionInBoard } from '../../../../utils/businessFunction'
 import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE } from '../../../../globalset/js/constant';
 import GetRowSummary from './components/gattFaceCardItem/GetRowSummary.js'
 import GetRowGanttVirtual from './GetRowGanttVirtual'
+import GetRowStrip from './components/GetRowStrip'
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
 const coperatedLeftDiv = 248 //滚动条左边还有一个div的宽度，作为修正
@@ -23,7 +24,7 @@ const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
 export default class GetRowGantt extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       currentRect: { x: 0, y: 0, width: 0, height: task_item_height }, //当前操作的矩形属性
@@ -493,14 +494,16 @@ export default class GetRowGantt extends Component {
   }
 
   // 渲染横条
-  renderStrip = ({ list_data, list_id }) => {
+  renderStripSc = ({ list_data, list_id }) => {
     return (
       list_data.map((value2, key) => {
         // const { id, left, width, start_time, end_time } = value2
         const { end_time, left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time, start_time, due_time } = value2
         const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
         return (
-          <div></div>
+          <React.Fragment key={`${id}_${top}`}>
+            <GetRowStrip itemValue={value2}></GetRowStrip>
+          </React.Fragment>
         )
       })
     )
@@ -559,7 +562,7 @@ export default class GetRowGantt extends Component {
           list_group.map((value, key) => {
             const { list_data = [], list_id, board_fold_data } = value
             return (
-              this.renderStrip({ list_data, list_id })
+              this.renderStripSc({ list_data, list_id })
             )
           })
         }

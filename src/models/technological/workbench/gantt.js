@@ -78,6 +78,7 @@ export default {
       folder_seeing_board_id: '0', //查看文件夹所属的项目id
 
       is_new_board: false, //是否刚刚创建的新项目
+      outline_hover_id: '', //大纲视图下，hover的任务条所属id
     },
   },
   subscriptions: {
