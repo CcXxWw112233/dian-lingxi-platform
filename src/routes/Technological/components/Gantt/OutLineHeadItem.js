@@ -146,34 +146,152 @@ export default class OutLineHeadItem extends Component {
         ]
         return (
             <div className={styles.outline_wrapper}>
-                <div className="el-tree " className={style.el_tree}>
-                    <div className="el-tree-node expanded">
-                        <div className="el-tree-node__content" style={{paddingLeft: '0px'}}>
-                            <span className="el-tree-node__expand-icon expanded"></span>
-                            <span className="el-tree-node__label">一级 1</span>
+                <div className={styles.outline_tree}>
+                    <div className={`${styles.outline_tree_node} ${styles.leve_0} ${styles.expanded}`}>
+                        <div className={`${styles.outline_tree_node_content}`} style={{ paddingLeft: '0px' }}>
+                            <span className={`${styles.outline_tree_line_node_dot} ${styles.milestoneNode}`}></span>
+                            <span className={`${styles.outline_tree_node_expand_icon} ${styles.expanded}`}></span>
+                            <span className={styles.outline_tree_node_label}>一级 1</span>
                         </div>
-                        <div className="collapse-transition" data-old-padding-top="0px" data-old-padding-bottom="0px" data-old-overflow="hidden" style={{overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block'}}>
-                            <div className="el-tree-node__children">
-                                <div className="el-tree-node expanded">
-                                    <div className="el-tree-node__content" style={{paddingLeft: '16px'}}>
-                                        <span className="el-tree-node__expand-icon expanded"></span>
-                                        <span className="el-tree-node__label">二级 1-1</span>
+                        <div className={styles.collapse_transition} data-old-padding-top="0px" data-old-padding-bottom="0px" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
+                            <div className={styles.outline_tree_node_children}>
+                                <div className={`${styles.outline_tree_node} ${styles.leve_1} ${styles.expanded}`}>
+                                    <div className={styles.outline_tree_node_content} style={{ paddingLeft: '23px' }}>
+                                        <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
+                                        <span className={`${styles.outline_tree_node_expand_icon} ${styles.expanded}`}></span>
+                                        <span className={styles.outline_tree_node_label}>二级 1-1</span>
                                     </div>
-                                    <div className="collapse-transition" data-old-padding-top="0px" data-old-padding-bottom="0px" data-old-overflow="hidden" style={{overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block'}}>
-                                        <div className="el-tree-node__children">
-                                            <div className="el-tree-node">
-                                                <div className="el-tree-node__content" style={{paddingLeft: '32px'}}>
-                                                    <span className="el-tree-node__expand-icon is-leaf"></span>
-                                                    <span className="el-tree-node__label">三级 1-1-1</span>
+                                    <div className={styles.collapse_transition} data-old-padding-top="0px" data-old-padding-bottom="0px" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
+                                        <div className={styles.outline_tree_node_children}>
+                                            <div className={`${styles.outline_tree_node} ${styles.leve_2}`}>
+                                                <div className={`${styles.outline_tree_node_content} ${styles.is_leaf}`} style={{ paddingLeft: '46px' }}>
+                                                    <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
+                                                    {/* <span className={`${styles.outline_tree_node_expand_icon} ${styles.is_leaf}`}></span> */}
+                                                    <span className={styles.outline_tree_node_label}>三级 1-1-1</span>
                                                 </div>
-                                                <div className="collapse-transition" data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="hidden" style={{overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block'}}>
-                                                    <div className="el-tree-node__children"></div>
+                                                <div className={styles.collapse_transition} data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
+                                                    <div className={styles.outline_tree_node_children}></div>
+                                                </div>
+                                            </div>
+                                            <div className={`${styles.outline_tree_node} ${styles.leve_2}`}>
+                                                <div className={`${styles.outline_tree_node_content} ${styles.is_leaf}`} style={{ paddingLeft: '46px' }}>
+                                                    <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
+                                                    {/* <span className={`${styles.outline_tree_node_expand_icon} ${styles.is_leaf}`}></span> */}
+                                                    <span className={styles.outline_tree_node_label}>三级 1-1-1</span>
+                                                </div>
+                                                <div className={styles.collapse_transition} data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
+                                                    <div className={styles.outline_tree_node_children}></div>
+                                                </div>
+                                            </div>
+                                            <div className={`${styles.outline_tree_node} ${styles.leve_2}`}>
+                                                <div className={`${styles.outline_tree_node_content} ${styles.is_leaf}`} style={{ paddingLeft: '46px' }}>
+                                                    <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
+                                                    {/* <span className={`${styles.outline_tree_node_expand_icon} ${styles.is_leaf}`}></span> */}
+                                                    <span className={styles.outline_tree_node_label}>新建任务</span>
+                                                </div>
+                                                <div className={styles.collapse_transition} data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
+                                                    <div className={styles.outline_tree_node_children}></div>
                                                 </div>
                                             </div>
                                         </div>
+
                                     </div>
                                 </div>
+
+                                <div className={`${styles.outline_tree_node} ${styles.leve_1} ${styles.expanded}`}>
+                                    <div className={styles.outline_tree_node_content} style={{ paddingLeft: '23px' }}>
+                                        <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
+                                        <span className={`${styles.outline_tree_node_expand_icon} ${styles.expanded}`}></span>
+                                        <span className={styles.outline_tree_node_label}>二级 1-1</span>
+                                    </div>
+                                    <div className={styles.collapse_transition} data-old-padding-top="0px" data-old-padding-bottom="0px" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
+                                        <div className={styles.outline_tree_node_children}>
+                                            <div className={`${styles.outline_tree_node}`}>
+                                                <div className={`${styles.outline_tree_node_content} ${styles.is_leaf}`} style={{ paddingLeft: '46px' }}>
+                                                    <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
+                                                    {/* <span className={`${styles.outline_tree_node_expand_icon} ${styles.is_leaf}`}></span> */}
+                                                    <span className={styles.outline_tree_node_label}>三级 1-1-1</span>
+                                                </div>
+                                                <div className={styles.collapse_transition} data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
+                                                    <div className={styles.outline_tree_node_children}></div>
+                                                </div>
+                                            </div>
+                                            <div className={`${styles.outline_tree_node}`}>
+                                                <div className={`${styles.outline_tree_node_content} ${styles.is_leaf}`} style={{ paddingLeft: '46px' }}>
+                                                    <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
+                                                    {/* <span className={`${styles.outline_tree_node_expand_icon} ${styles.is_leaf}`}></span> */}
+                                                    <span className={styles.outline_tree_node_label}>三级 1-1-1</span>
+                                                </div>
+                                                <div className={styles.collapse_transition} data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
+                                                    <div className={styles.outline_tree_node_children}></div>
+                                                </div>
+                                            </div>
+                                            <div className={`${styles.outline_tree_node}`}>
+                                                <div className={`${styles.outline_tree_node_content} ${styles.is_leaf}`} style={{ paddingLeft: '46px' }}>
+                                                    <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
+                                                    {/* <span className={`${styles.outline_tree_node_expand_icon} ${styles.is_leaf}`}></span> */}
+                                                    <span className={styles.outline_tree_node_label}>新建任务</span>
+                                                </div>
+                                                <div className={styles.collapse_transition} data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
+                                                    <div className={styles.outline_tree_node_children}></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div className={`${styles.outline_tree_node} ${styles.leve_1} ${styles.expanded}`}>
+                                    <div className={styles.outline_tree_node_content} style={{ paddingLeft: '23px' }}>
+                                        <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
+                                        <span className={`${styles.outline_tree_node_expand_icon} ${styles.expanded}`}></span>
+                                        <span className={styles.outline_tree_node_label}>二级 1-1</span>
+                                    </div>
+                                    <div className={styles.collapse_transition} data-old-padding-top="0px" data-old-padding-bottom="0px" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
+                                        <div className={styles.outline_tree_node_children}>
+                                            <div className={`${styles.outline_tree_node}`}>
+                                                <div className={`${styles.outline_tree_node_content} ${styles.is_leaf}`} style={{ paddingLeft: '46px' }}>
+                                                    <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
+                                                    {/* <span className={`${styles.outline_tree_node_expand_icon} ${styles.is_leaf}`}></span> */}
+                                                    <span className={styles.outline_tree_node_label}>三级 1-1-1</span>
+                                                </div>
+                                                <div className={styles.collapse_transition} data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
+                                                    <div className={styles.outline_tree_node_children}></div>
+                                                </div>
+                                            </div>
+                                            <div className={`${styles.outline_tree_node}`}>
+                                                <div className={`${styles.outline_tree_node_content} ${styles.is_leaf}`} style={{ paddingLeft: '46px' }}>
+                                                    <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
+                                                    {/* <span className={`${styles.outline_tree_node_expand_icon} ${styles.is_leaf}`}></span> */}
+                                                    <span className={styles.outline_tree_node_label}>三级 1-1-1</span>
+                                                </div>
+                                                <div className={styles.collapse_transition} data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
+                                                    <div className={styles.outline_tree_node_children}></div>
+                                                </div>
+                                            </div>
+                                            <div className={`${styles.outline_tree_node}`}>
+                                                <div className={`${styles.outline_tree_node_content} ${styles.is_leaf}`} style={{ paddingLeft: '46px' }}>
+                                                    <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
+                                                    {/* <span className={`${styles.outline_tree_node_expand_icon} ${styles.is_leaf}`}></span> */}
+                                                    <span className={styles.outline_tree_node_label}>新建任务</span>
+                                                </div>
+                                                <div className={styles.collapse_transition} data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
+                                                    <div className={styles.outline_tree_node_children}></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
                             </div>
+                        </div>
+                    </div>
+                    <div className={`${styles.outline_tree_node} ${styles.leve_0}`}>
+                        <div className={`${styles.outline_tree_node_content}`} style={{ paddingLeft: '0px' }}>
+                            <span className={`${styles.outline_tree_line_node_dot} ${styles.milestoneNode}`}></span>
+                            {/* <span className={`${styles.outline_tree_node_expand_icon}`}></span> */}
+                            <span className={styles.outline_tree_node_label}>一级 1</span>
                         </div>
                     </div>
 
