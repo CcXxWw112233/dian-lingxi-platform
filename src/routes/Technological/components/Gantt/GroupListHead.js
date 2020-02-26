@@ -38,7 +38,7 @@ export default class GroupListHead extends Component {
       >
         {
           group_view_type == '3' &&
-          <div style={{ height:'100%',width:'280px' }}>
+          <div style={{ height:'100%',width:'250px' }}>
             <OutLineHeadItem />
           </div>
         }

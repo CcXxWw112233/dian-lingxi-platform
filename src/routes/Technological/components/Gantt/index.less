@@ -878,10 +878,13 @@
   margin-top: 10px;
 
   :global {
-    .ant-tree-iconEle .ant-tree-icon__customize{
+
+ 
+    .ant-tree-iconEle .ant-tree-icon__customize {
       height     : 60px;
       line-height: 60px;
     }
+
     .ant-tree li {
       margin     : 0;
       padding    : 0;
@@ -890,11 +893,24 @@
       outline    : 0;
     }
 
+    .ant-tree.ant-tree-show-line li:not(:last-child)::before {
+      left: 8px;
+    }
+
+    .ant-tree.ant-tree-show-line li:not(:last-child)::before {
+      left: 8px;
+    }
+
     .ant-tree li span.ant-tree-switcher,
     .ant-tree li span.ant-tree-iconEle {
-
+      width      : 16px;
       height     : 60px;
       line-height: 60px;
+      z-index    : 9;
+    }
+    .ant-tree-iconEle.ant-tree-icon__customize{
+      margin-left: 2px;
+      margin-right: 2px;
     }
 
     .ant-tree li .ant-tree-node-content-wrapper {
@@ -903,7 +919,41 @@
       font-weight: 400;
       height     : 60px;
       line-height: 60px;
+      padding    : 0px;
     }
+
+    // .ant-tree li .ant-tree-node-content-wrapper::before {
+
+    //   position          : absolute;
+    //   right             : 0;
+    //   left              : 0;
+    //   height            : 60px;
+    //   -webkit-transition: all 0.3s;
+    //   transition        : all 0.3s;
+    //   content           : '';
+    // }
+
+
+    // .ant-tree>li.ant-tree-treenode-selected>span.ant-tree-node-content-wrapper::before,
+    // .ant-tree .ant-tree-child-tree>li.ant-tree-treenode-selected>span.ant-tree-node-content-wrapper::before {
+    //   background: rgba(24, 144, 255, 0.45);
+    // }
+
+    // .ant-tree .ant-tree-node-content-wrapper:hover::before {
+    //   background: rgba(24, 144, 255, 0.15);
+    // }
+
+    // .ant-tree li .ant-tree-node-content-wrapper.ant-tree-node-selected {
+    //   background: none;
+    // }
+
+    // .ant-tree li .ant-tree-node-content-wrapper.ant-tree-node-selected {
+    //   background: none;
+    // }
+
+    // .ant-tree li .ant-tree-node-content-wrapper:hover {
+    //   background: none;
+    // }
   }
 
   .addTask {
@@ -914,15 +964,34 @@
 
   .addMilestone {
     font-size  : 14px;
-    font-weight: 400;
+    font-weight: 600;
     color      : rgba(0, 0, 0, 0.25);
   }
 
+  .addTaskNode{
+    font-size  : 14px;
+    font-weight: 600;
+    color   : rgba(24, 144, 255, 1);
+  }
+
   .milestoneNode {
-    display   : inline-block;
-    width     : 8px;
-    height    : 8px;
-    background: rgba(250, 173, 20, 1);
+    display      : inline-block;
+    width        : 8px;
+    height       : 8px;
+    background   : rgba(250, 173, 20, 1);
     border-radius: 8px;
+  }
+
+  .taskNode {
+    display      : inline-block;
+    width        : 8px;
+    height       : 8px;
+    background   : rgba(24, 144, 255, 1);
+    border-radius: 8px;
+  }
+
+  .addMilestoneNode {
+    font-size: 16px;
+    color    : rgba(250, 173, 20, 1);
   }
 }
