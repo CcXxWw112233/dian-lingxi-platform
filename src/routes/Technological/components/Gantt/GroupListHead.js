@@ -32,7 +32,7 @@ export default class GroupListHead extends Component {
   render() {
     const { list_group = [], group_rows = [], ceiHeight, target_scrollLeft, target_scrollTop,group_view_type} = this.props
     return (
-      <div className={indexStyles.listHead}
+      <div className={`${ group_view_type == '3'?indexStyles.listTree:indexStyles.listHead}`}
         // style={{ left: target_scrollLeft, }}
         style={{ top: -target_scrollTop + 64, }}
       >

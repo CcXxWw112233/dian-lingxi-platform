@@ -875,127 +875,65 @@
 }
 
 
-.addTask {
-  font-size  : 14px;
-  font-weight: 400;
-  color      : rgba(0, 0, 0, 0.25);
-}
 
-.addMilestone {
-  font-size  : 16px;
-  font-weight: 600;
-  color      : rgba(0, 0, 0, 0.25);
-}
+.listTree {
+  position: absolute;
+  left    : 0;
+  top     : 0;
 
-.addTaskNode {
-  font-size  : 16px;
-  font-weight: 600;
-  color      : rgba(24, 144, 255, 1);
-}
+  background-color: #FFFFFF;
+  height          : 100%;
 
-.out_line_wrapper {
-  margin-top: 10px;
+  .outline_wrapper {
+    margin-top: 10px;
+    position  : relative;
+    overflow  : hidden;
 
+    .outlineFooter {
+      z-index   : 3;
+      position  : fixed;
+      left      : 20px;
+      bottom    : 0px;
+      width     : 280px;
+      height    : 52px;
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.09);
+      border-top: 1px rgba(0, 0, 0, 0.09) solid;
+      display   : flex;
+      align-items: center;
+      justify-content: flex-end;
 
-  :global {
-
-
-    .ant-tree-iconEle .ant-tree-icon__customize {
-      height     : 60px;
-      line-height: 60px;
+      .actionIcon {
+        font-weight: 600;
+        margin-right: 16px;
+        font-size  : 16px
+      }
     }
 
-    .ant-tree li {
-      margin     : 0;
-      padding    : 0;
-      white-space: nowrap;
-      list-style : none;
-      outline    : 0;
-    }
 
-    .ant-tree.ant-tree-show-line li:not(:last-child)::before {
-      left: 8px;
-    }
-
-    .ant-tree.ant-tree-show-line li:not(:last-child)::before {
-      left: 8px;
-    }
-
-    .ant-tree li span.ant-tree-switcher,
-    .ant-tree li span.ant-tree-iconEle {
-      width      : 16px;
-      height     : 60px;
-      line-height: 60px;
-      z-index    : 9;
-    }
-
-    .ant-tree-iconEle.ant-tree-icon__customize {
-      margin-left : 2px;
-      margin-right: 2px;
-    }
-
-    .ant-tree li .ant-tree-node-content-wrapper {
+    .addTask {
       font-size  : 14px;
-      color      : rgba(0, 0, 0, 0.65);
       font-weight: 400;
-      height     : 60px;
-      line-height: 60px;
-      padding    : 0px;
+      color      : rgba(0, 0, 0, 0.25);
     }
 
-    // .ant-tree li .ant-tree-node-content-wrapper::before {
-
-    //   position          : absolute;
-    //   right             : 0;
-    //   left              : 0;
-    //   height            : 60px;
-    //   -webkit-transition: all 0.3s;
-    //   transition        : all 0.3s;
-    //   content           : '';
-    // }
+    .addMilestone {
+      font-size  : 14px;
+      font-weight: 400;
+      color      : rgba(0, 0, 0, 0.25);
+    }
 
 
-    // .ant-tree>li.ant-tree-treenode-selected>span.ant-tree-node-content-wrapper::before,
-    // .ant-tree .ant-tree-child-tree>li.ant-tree-treenode-selected>span.ant-tree-node-content-wrapper::before {
-    //   background: rgba(24, 144, 255, 0.45);
-    // }
+    .addMilestoneNode {
+      font-size   : 16px;
+      color       : rgba(250, 173, 20, 1);
+      margin-right: 5px;
+    }
 
-    // .ant-tree .ant-tree-node-content-wrapper:hover::before {
-    //   background: rgba(24, 144, 255, 0.15);
-    // }
-
-    // .ant-tree li .ant-tree-node-content-wrapper.ant-tree-node-selected {
-    //   background: none;
-    // }
-
-    // .ant-tree li .ant-tree-node-content-wrapper.ant-tree-node-selected {
-    //   background: none;
-    // }
-
-    // .ant-tree li .ant-tree-node-content-wrapper:hover {
-    //   background: none;
-    // }
-  }
-
-
-  .milestoneNode {
-    display      : inline-block;
-    width        : 8px;
-    height       : 8px;
-    background   : rgba(250, 173, 20, 1);
-    border-radius: 8px;
-  }
-
-  .taskNode {
-    display      : inline-block;
-    width        : 8px;
-    height       : 8px;
-    background   : rgba(24, 144, 255, 1);
-    border-radius: 8px;
-  }
-
-  .addMilestoneNode {
-    font-size: 16px;
-    color    : rgba(250, 173, 20, 1);
+    .addTaskNode {
+      font-size   : 16px;
+      color       : rgba(24, 144, 255, 1);
+      margin-right: 5px;
+    }
   }
 }

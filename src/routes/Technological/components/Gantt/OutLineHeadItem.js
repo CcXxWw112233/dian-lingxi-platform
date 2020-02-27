@@ -78,14 +78,14 @@ export default class OutLineHeadItem extends Component {
                     switcherIcon={<span><Icon type="down" /></span>}
                     // defaultExpandedKeys={['0-0-0']}
                     onSelect={this.onSelect}
-                    // onExpand={this.onExpand}
+                // onExpand={this.onExpand}
 
                 >
                     {
                         treeData.map((item, index) => {
                             if (item.children && item.children.length > 0) {
                                 return (
-                                    <TreeNode  title={item.name} key={item.id}>
+                                    <TreeNode title={item.name} key={item.id}>
                                         {this.renderGanttOutLineTree(item.children)}
                                         <TreeNode
                                             placeholder={'新建任务'}
@@ -99,7 +99,7 @@ export default class OutLineHeadItem extends Component {
                             } else {
                                 return (
 
-                                    <TreeNode  title={item.name} key={item.id}>
+                                    <TreeNode title={item.name} key={item.id}>
                                     </TreeNode>
                                 );
                             }
@@ -107,9 +107,9 @@ export default class OutLineHeadItem extends Component {
 
                         })
                     }
-                    <TreeNode 
+                    <TreeNode
                         placeholder={'新建里程碑'}
-                        icon={<span className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}  
+                        icon={<span className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
                         title={<span className={styles.addMilestone}>新建里程碑</span>} key="addMilestone">
 
                     </TreeNode>
@@ -166,6 +166,11 @@ export default class OutLineHeadItem extends Component {
         return (
             <div className={styles.outline_wrapper}>
                 {this.renderGanttOutLineTree(treeData, true)}
+                <div className={styles.outlineFooter}>
+                    <span className={`${styles.actionIcon} ${globalStyles.authTheme}`}>&#xe7ae;</span>
+                    <span className={`${styles.actionIcon} ${globalStyles.authTheme}`}>&#xe66f;</span>
+
+                </div>
             </div>
         );
     }
