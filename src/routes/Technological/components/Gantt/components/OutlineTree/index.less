@@ -69,9 +69,8 @@
   width        : 8px;
   height       : 8px;
   border-radius: 8px;
-  margin-right : 8px;
   display      : inline-block;
-  margin: 0px 4px;
+  margin: 0px 8px 0px 4px;
 }
 
 .outline_tree_line_node_dot.milestoneNode {
@@ -145,7 +144,17 @@
 }
 
 .outline_tree_node_label {
-  font-size: 14px
+  display: inline-block;
+  margin-left:8px;
+  font-size: 14px;
+  flex: auto;
+  display:flex;
+  justify-items: center;
+  align-items: center;
+  margin-right: 8px!important;
+}
+.outline_tree_node_label.hoverTitle{
+  margin-left:4px!important;
 }
 
 .outline_tree_node_loading_icon {
@@ -160,5 +169,24 @@
 
 .collapse_transition {
   transition: .3s height ease-in-out, .3s padding-top ease-in-out, .3s padding-bottom ease-in-out
+}
+.titleInputHover{
+  border-style: dashed;
+  background-color: transparent;
+}
+// .titleInputHover:focus{
+ 
+//   background-color: transparent;
+// }
+.titleInputFocus{
+  border-style: solid;
+}
+
+.title{
+  flex:auto;
+}
+.editIcon{
+  margin-left:8px;
+  font-size:16px
 }
 

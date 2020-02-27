@@ -88,6 +88,7 @@ export default class OutLineHeadItem extends Component {
                                     <TreeNode  title={item.name} key={item.id}>
                                         {this.renderGanttOutLineTree(item.children)}
                                         <TreeNode
+                                            placeholder={'新建任务'}
                                             type={'task'}
                                             icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
                                             switcherIcon={<span></span>}
@@ -106,7 +107,10 @@ export default class OutLineHeadItem extends Component {
 
                         })
                     }
-                    <TreeNode icon={<span className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}  title={<span className={styles.addMilestone}>新建里程碑</span>} key="addMilestone">
+                    <TreeNode 
+                        placeholder={'新建里程碑'}
+                        icon={<span className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}  
+                        title={<span className={styles.addMilestone}>新建里程碑</span>} key="addMilestone">
 
                     </TreeNode>
                 </OutlineTree>
@@ -120,6 +124,7 @@ export default class OutLineHeadItem extends Component {
                                 <TreeNode type={item.type} title={item.name} key={item.id}>
                                     {this.renderGanttOutLineTree(item.children)}
                                     <TreeNode
+                                        placeholder={'新建任务'}
                                         type={'task'}
                                         icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
                                         title={<span className={styles.addTask}>新建任务</span>} key={`addTask_${item.id}`}>
@@ -138,6 +143,7 @@ export default class OutLineHeadItem extends Component {
                             <TreeNode type={item.type} title={item.name} key={item.id}>
                                 {this.renderGanttOutLineTree(item.children)}
                                 <TreeNode
+                                    placeholder={'新建任务'}
                                     type={'task'}
                                     icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
                                     title={<span className={styles.addTask}>新建任务</span>} key={`addTask_${item.id}`}>

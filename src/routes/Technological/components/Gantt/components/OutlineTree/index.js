@@ -1,16 +1,19 @@
 import React, { Component } from 'react'
 import styles from './index.less';
-
+import { Input } from 'antd';
+import globalStyles from '@/globalset/css/globalClassName.less';
 const onExpand = () => {
 
 }
 
 class TreeNode extends Component {
     constructor(props) {
-        console.log("TreeNode",props);
+        console.log("TreeNode", props);
         super(props);
         this.state = {
-            open:true,
+            isTitleHover: false,
+            isTitleEdit: false,
+            open: true,
             ...props
         }
     }
@@ -21,13 +24,47 @@ class TreeNode extends Component {
         this.setState({
             open
         });
-        this.props.onExpand&&this.props.onExpand(key, open);
+        this.props.onExpand && this.props.onExpand(key, open);
     }
 
+    onMouseEnterTitle = () => {
+        this.setState({
+            isTitleHover: true
+        });
+    }
+
+    onMouseLeaveTitle = () => {
+        this.setState({
+            isTitleHover: false,
+            isTitleEdit: false
+        });
+    }
+
+    toggleTitleEdit = (e) => {
+        console.log("toggleTitleEdit", e);
+        this.setState({
+            isTitleEdit: !this.state.isTitleEdit
+        });
+    }
+
+    onPressEnter = ()=>{
+        this.setState({
+            isTitleHover: false,
+            isTitleEdit: false
+        });
+    }
+    onChangeTitle = (e) => {
+        this.setState({
+            title: e.target.value  
+        });
+    }
+
+
+
     render() {
-        const { key, leve = 0, open = true, title, type = 'milestone', icon } = this.state;
-        
-        console.log("openopenopenopen"+key,open);
+        const { isTitleHover, isTitleEdit, key, leve = 0, open = true, title, type = 'milestone', icon,placeholder} = this.state;
+
+        // console.log("openopenopenopen" + key, open);
         if (this.state.children) {
             console.log(this.state.children.length);
             let className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${isLeaf ? (open ? styles.expanded : '') : ''} `;
@@ -40,9 +77,30 @@ class TreeNode extends Component {
                             !isLeaf &&
                             <span className={`${styles.outline_tree_node_expand_icon} ${open ? styles.expanded : ''}`} onClick={(e) => { this.onChangeExpand(key, e) }}></span>
                         }
-                        <span className={styles.outline_tree_node_label}>{title}</span>
+                        <span className={`${styles.outline_tree_node_label} ${isTitleHover ? styles.hoverTitle : ''}`}>
+                            {/*<span><span>确定</span><span>取消</span></span> */}
+                            <span className={`${styles.title}`} onMouseEnter={this.onMouseEnterTitle} onMouseLeave={this.onMouseLeaveTitle}>
+                            {
+                                isTitleHover || isTitleEdit?   
+                                <Input value={title} 
+                                style={{ width: '100%' }} 
+                                onChange={this.onChangeTitle} 
+                                className={`${isTitleEdit?styles.titleInputFocus:styles.titleInputHover}`} 
+                                onFocus={this.toggleTitleEdit} 
+                                onBlur={this.toggleTitleEdit}  
+                                addonAfter={isTitleEdit?null:null} 
+                                onPressEnter={this.onPressEnter}/>
+                                :
+                                title
+                            }
+                            </span>
+                            <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
+                            <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe6d9;</span>
+
+                        </span>
+
                     </div>
-                    <div className={styles.collapse_transition} data-old-padding-top="0px" data-old-padding-bottom="0px" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: open?'block':'none' }}>
+                    <div className={styles.collapse_transition} data-old-padding-top="0px" data-old-padding-bottom="0px" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: open ? 'block' : 'none' }}>
                         <div className={styles.outline_tree_node_children}>
                             {
                                 React.Children.map(this.state.children, (child, i) => {
@@ -84,7 +142,30 @@ class TreeNode extends Component {
                             !isLeaf &&
                             <span className={`${styles.outline_tree_node_expand_icon} ${open ? styles.expanded : ''}`}></span>
                         }
-                        <span className={styles.outline_tree_node_label}>{title}</span>
+                         <span className={`${styles.outline_tree_node_label} ${isTitleHover ? styles.hoverTitle : ''}`}>
+                            {/*<span><span>确定</span><span>取消</span></span> */}
+                            <span className={`${styles.title}`} onMouseEnter={this.onMouseEnterTitle} onMouseLeave={this.onMouseLeaveTitle}>
+                            {
+                                isTitleHover || isTitleEdit?
+                                <span className={`${styles.title}`}> 
+                                <Input value={placeholder?'':title} 
+                                style={{ width: '100%' }}  
+                                onChange={this.onChangeTitle} 
+                                placeholder={placeholder?placeholder:''} 
+                                className={`${isTitleEdit?styles.titleInputFocus:styles.titleInputHover}`} 
+                                onFocus={this.toggleTitleEdit} 
+                                onBlur={this.toggleTitleEdit}  
+                                addonAfter={isTitleEdit?null:null} 
+                                onPressEnter={this.onPressEnter}/>
+                                </span>
+                                :
+                                title
+                            }
+                            </span>
+                            <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
+                            <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe6d9;</span>
+                        </span>
+
                     </div>
                 </div>
             );
