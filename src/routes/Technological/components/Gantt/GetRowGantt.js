@@ -494,7 +494,7 @@ export default class GetRowGantt extends Component {
   }
 
   // 渲染横条
-  renderStripSc = ({ list_data, list_id }) => {
+  renderStripSc = ({ list_data, list_id, list_group_key }) => {
     return (
       list_data.map((value2, key) => {
         // const { id, left, width, start_time, end_time } = value2
@@ -502,7 +502,7 @@ export default class GetRowGantt extends Component {
         const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
         return (
           <React.Fragment key={`${id}_${top}`}>
-            <GetRowStrip itemValue={value2} list_id={list_id}></GetRowStrip>
+            <GetRowStrip itemValue={value2} list_id={list_id} list_group_key={list_group_key}></GetRowStrip>
           </React.Fragment>
         )
       })
@@ -562,7 +562,7 @@ export default class GetRowGantt extends Component {
           list_group.map((value, key) => {
             const { list_data = [], list_id, board_fold_data } = value
             return (
-              this.renderStripSc({ list_data, list_id })
+              this.renderStripSc({ list_data, list_id, list_group_key: key })
             )
           })
         }

@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'dva'
 import styles from './index.less'
 import { task_item_margin_top, date_area_height } from '../../constants';
+import globalStyles from '@/globalset/css/globalClassName.less'
+
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
 const coperatedLeftDiv = 248 //滚动条左边还有一个div的宽度，作为修正
 @connect(mapStateToProps)
@@ -155,8 +157,38 @@ export default class GetRowStrip extends Component {
             }
         })
     }
-    render() {
 
+    //渲染里程碑设置---start
+    renderMilestoneSet = () => {
+        const { itemValue = {}, group_list_area, list_group_key } = this.props
+        const { id, name, time_span } = itemValue
+        const { is_card_has_time, currentRect = {} } = this.state
+        return (
+            <div
+                onClick={this.cardSetClick}
+                className={styles.will_set_item_milestone}
+                style={{
+                    display: 'flex',
+                    // display: (!is_card_has_time && this.onHoverState()) ? 'flex' : 'none',
+                    marginLeft: currentRect.x
+                }}>
+                <div
+                    style={{
+                        height: group_list_area[list_group_key] - 11 - 80
+                    }}
+                    className={styles.board_miletiones_flagpole}>
+                </div>
+                <div className={`${styles.board_miletiones_flag} ${globalStyles.authTheme}`}>&#xe6a0;</div>
+
+                <div className={styles.name}>{name}</div>
+            </div>
+        )
+    }
+    //渲染里程碑设置---end
+
+    render() {
+        const { itemValue = {} } = this.props
+        const { is_group_head } = itemValue
         return (
             <div
                 onMouseMove={this.stripMouseMove}
@@ -164,7 +196,14 @@ export default class GetRowStrip extends Component {
                 onMouseLeave={this.stripMouseLeave}
                 className={`${styles.row_srip} ${this.onHoverState() && styles.row_srip_on_hover}`}
                 style={{ ...this.renderStyles() }}>
-                {this.renderCardRect()}
+                {
+                    is_group_head ? (
+                        this.renderMilestoneSet()
+                    ) : (
+                            this.renderCardRect()
+                        )
+                }
+
             </div >
         )
     }
@@ -176,13 +215,13 @@ function mapStateToProps({ gantt: {
         date_arr_one_level = [],
         outline_hover_obj,
         ceiHeight, ceilWidth,
-        list_group
+        list_group, group_list_area
     } },
 }) {
     return {
         date_arr_one_level,
         outline_hover_obj,
         ceiHeight, ceilWidth,
-        list_group
+        list_group, group_list_area
     }
 }

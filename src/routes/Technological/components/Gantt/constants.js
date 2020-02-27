@@ -76,3 +76,10 @@ const list_group = [//大分组
 
     }
 ]
+
+export const visual_item = {
+    id: "1232147328316608asd0",
+    name: "里程碑头",
+    board_id: "1230737131983474688",
+    is_group_head: true
+}

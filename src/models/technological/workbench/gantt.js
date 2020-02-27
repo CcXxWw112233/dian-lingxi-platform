@@ -18,7 +18,7 @@ import {
 } from './selects'
 import { createMilestone } from "../../../services/technological/prjectDetail";
 import { getGlobalData } from '../../../utils/businessFunction';
-import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item } from '../../../routes/Technological/components/Gantt/constants';
+import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, visual_item } from '../../../routes/Technological/components/Gantt/constants';
 import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
 import { handleChangeBoardViewScrollTop } from '../../../routes/Technological/components/Gantt/ganttBusiness';
@@ -228,7 +228,9 @@ export default {
       // console.log('sssss', {res})
       if (isApiResponseOk(res)) {
         let data = res.data
-        data[0]['lane_data']['cards'] = [].concat(data[0]['lane_data']['cards'], test_card_item)
+        data[0]['lane_data']['cards'] = [].concat([visual_item], data[0]['lane_data']['cards'], test_card_item)
+        data[1]['lane_data']['cards'] = [].concat([visual_item], data[1]['lane_data']['cards'], test_card_item)
+
         yield put({
           type: 'handleListGroup',
           payload: {
