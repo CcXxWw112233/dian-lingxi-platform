@@ -874,8 +874,28 @@
   max-height: 300px;
 }
 
+
+.addTask {
+  font-size  : 14px;
+  font-weight: 400;
+  color      : rgba(0, 0, 0, 0.25);
+}
+
+.addMilestone {
+  font-size  : 16px;
+  font-weight: 600;
+  color      : rgba(0, 0, 0, 0.25);
+}
+
+.addTaskNode {
+  font-size  : 16px;
+  font-weight: 600;
+  color      : rgba(24, 144, 255, 1);
+}
+
 .out_line_wrapper {
   margin-top: 10px;
+
 
   :global {
 
@@ -957,23 +977,6 @@
     // }
   }
 
-  .addTask {
-    font-size  : 14px;
-    font-weight: 400;
-    color      : rgba(0, 0, 0, 0.25);
-  }
-
-  .addMilestone {
-    font-size  : 14px;
-    font-weight: 600;
-    color      : rgba(0, 0, 0, 0.25);
-  }
-
-  .addTaskNode {
-    font-size  : 14px;
-    font-weight: 600;
-    color      : rgba(24, 144, 255, 1);
-  }
 
   .milestoneNode {
     display      : inline-block;
@@ -1068,8 +1071,10 @@
     height       : 8px;
     border-radius: 8px;
     margin-right : 8px;
-    display   : inline-block;
+    display      : inline-block;
+    margin       : 4px;
   }
+
   .outline_tree_line_node_dot.milestoneNode {
     background: rgba(250, 173, 20, 1);
   }
@@ -1086,7 +1091,7 @@
     margin     : 40px 0 0;
     border-left: 1px solid #d9d9d9;
     content    : ' ';
-    z-index: 9999
+    z-index    : 9999
   }
 
   .outline_tree_node.leve_1:not(:last-child)::before {
@@ -1097,7 +1102,7 @@
     margin     : 40px 0 0;
     border-left: 1px solid #d9d9d9;
     content    : ' ';
-    z-index: 9999
+    z-index    : 9999
   }
 
   .outline_tree_node.leve_0:not(:last-child)::before {
@@ -1108,7 +1113,7 @@
     margin     : 40px 0 0;
     border-left: 1px solid #d9d9d9;
     content    : ' ';
-    z-index: 9999
+    z-index    : 9999
   }
 
 
