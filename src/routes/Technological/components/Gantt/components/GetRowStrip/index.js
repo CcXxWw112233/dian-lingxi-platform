@@ -188,7 +188,7 @@ export default class GetRowStrip extends Component {
 
     render() {
         const { itemValue = {} } = this.props
-        const { is_group_head } = itemValue
+        const { is_outine_group_head } = itemValue
         return (
             <div
                 onMouseMove={this.stripMouseMove}
@@ -197,7 +197,7 @@ export default class GetRowStrip extends Component {
                 className={`${styles.row_srip} ${this.onHoverState() && styles.row_srip_on_hover}`}
                 style={{ ...this.renderStyles() }}>
                 {
-                    is_group_head ? (
+                    is_outine_group_head ? (
                         this.renderMilestoneSet()
                     ) : (
                             this.renderCardRect()

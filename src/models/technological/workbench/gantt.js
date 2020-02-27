@@ -18,7 +18,7 @@ import {
 } from './selects'
 import { createMilestone } from "../../../services/technological/prjectDetail";
 import { getGlobalData } from '../../../utils/businessFunction';
-import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, visual_item } from '../../../routes/Technological/components/Gantt/constants';
+import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, visual_item, mock_gantt_data } from '../../../routes/Technological/components/Gantt/constants';
 import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
 import { handleChangeBoardViewScrollTop } from '../../../routes/Technological/components/Gantt/ganttBusiness';
@@ -227,12 +227,11 @@ export default {
       })
       // console.log('sssss', {res})
       if (isApiResponseOk(res)) {
+        // data[0]['lane_data']['cards'] = [].concat([visual_item], data[0]['lane_data']['cards'], test_card_item)
+        // data[1]['lane_data']['cards'] = [].concat([visual_item], data[1]['lane_data']['cards'], test_card_item)
         let data = res.data
-        data[0]['lane_data']['cards'] = [].concat([visual_item], data[0]['lane_data']['cards'], test_card_item)
-        data[1]['lane_data']['cards'] = [].concat([visual_item], data[1]['lane_data']['cards'], test_card_item)
-
         yield put({
-          type: 'handleListGroup',
+          type: 'transferDataBeforeHandle',
           payload: {
             data: data//res.data
           }
@@ -241,6 +240,54 @@ export default {
 
       }
     },
+    // 大纲视图或分组视图先转换
+    * transferDataBeforeHandle({ payload }, { select, call, put }) {
+      const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
+      // let { data } = payload
+      let data = [...mock_gantt_data]
+      let new_data = []
+      if (group_view_type == '3' || true) {
+        new_data = data.map(item => {
+          const obj = {
+            id: item.lane_id,
+            name: item.lane_name,
+            // due_time: item.lane_end_time,
+            time_span: item.time_span,
+            is_outine_group_head: true,
+          }
+          let new_item = { ...item, ...obj }
+          new_item['lane_data']['cards'] = [].concat([obj], new_item['lane_data']['cards'])
+          let cards = new_item['lane_data']['cards']
+          let cards_tree = cards.filter(item => !item.parent_id)
+          cards_tree = cards_tree.map(cards_item => {
+            let new_cards_item = { ...cards_item, children: [] }
+            for (let val of cards) {
+              if(val['parent_id'] == new_cards_item.id) {
+                new_cards_item.children.push(val)
+              }
+            }
+            return new_cards_item
+          })
+          new_item.cards_tree = cards_tree
+          return new_item
+        })
+        yield put({
+          type: 'handleListGroup',
+          payload: {
+            data: new_data//res.data
+          }
+        })
+      } else {
+        yield put({
+          type: 'handleListGroup',
+          payload: {
+            data: data//res.data
+          }
+        })
+      }
+
+    },
+
     * handleListGroup({ payload }, { select, call, put }) {
       const { data, not_set_scroll_top } = payload
       let list_group = []

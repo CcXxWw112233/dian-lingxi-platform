@@ -460,9 +460,10 @@ export default class GetRowGantt extends Component {
     return (
       list_data.map((value2, key) => {
         // const { id, left, width, start_time, end_time } = value2
-        const { end_time, left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time, start_time, due_time } = value2
+        const { end_time, left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time, start_time, due_time, is_outine_group_head } = value2
         const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
         return (
+          !is_outine_group_head && //大纲视图会将分组头部塞进任务，做统一处理,但并不是真正的任务
           <GetRowTaskItem
             key={`${id}_${start_time}_${end_time}_${left}_${top}`}
             itemValue={value2}
