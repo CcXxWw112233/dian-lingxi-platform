@@ -53,7 +53,7 @@ export default class GroupListHeadElse extends Component {
         rows = mult
       }
     }
-    return rows * ceiHeight
+    return rows * ceiHeight + 30
   }
 
   // 新增分组

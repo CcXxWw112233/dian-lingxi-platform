@@ -18,7 +18,7 @@ import {
 } from './selects'
 import { createMilestone } from "../../../services/technological/prjectDetail";
 import { getGlobalData } from '../../../utils/businessFunction';
-import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold } from '../../../routes/Technological/components/Gantt/constants';
+import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, visual_item, mock_gantt_data, ganttIsOutlineView, mock_outline_tree } from '../../../routes/Technological/components/Gantt/constants';
 import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
 import { handleChangeBoardViewScrollTop } from '../../../routes/Technological/components/Gantt/ganttBusiness';
@@ -65,7 +65,7 @@ export default {
       about_user_boards: [], //带用户的项目列表
 
       gantt_board_id: '0', //"1192342431761305600",//, //甘特图查看的项目id
-      group_view_type: '1', //分组视图1项目， 2成员
+      group_view_type: '3', //分组视图1项目， 2成员, 3大纲
       group_view_filter_boards: [], //内容过滤项目id 列表
       group_view_filter_users: [], //内容过滤职员id 列表
       group_view_boards_tree: [], //内容过滤项目分组树
@@ -78,6 +78,9 @@ export default {
       folder_seeing_board_id: '0', //查看文件夹所属的项目id
 
       is_new_board: false, //是否刚刚创建的新项目
+      outline_hover_obj: {}, //大纲视图下，hover的任务条所属id
+      outline_tree: [], //大纲树
+      outline_tree_round: [], //大纲树每一级平铺开来
     },
   },
   subscriptions: {
@@ -185,7 +188,7 @@ export default {
       const params = {
         start_time: start_date['timestamp'],
         end_time: end_date['timestamp'],
-        chart_type: group_view_type,
+        chart_type: '1',//group_view_type,
         ...content_filter_params,
       }
       if (gantt_board_id != '0' && gantt_board_id) {
@@ -226,16 +229,156 @@ export default {
       })
       // console.log('sssss', {res})
       if (isApiResponseOk(res)) {
-        yield put({
-          type: 'handleListGroup',
-          payload: {
-            data: res.data
-          }
-        })
+        let data = res.data
+        if (!ganttIsOutlineView({ group_view_type })) { //非大纲视图
+          yield put({
+            type: 'handleListGroup',
+            payload: {
+              data: data//res.data
+            }
+          })
+        } else {
+          yield put({
+            type: 'handleOutLineTreeData',
+            payload: {
+              data: mock_outline_tree//res.data
+            }
+          })
+        }
+
       } else {
 
       }
     },
+    // 大纲视图或分组视图先转换
+    * transferDataBeforeHandle({ payload }, { select, call, put }) {
+      const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
+      return
+      // let { data } = payload
+      let data = [...mock_gantt_data]
+      let new_data = []
+      if (group_view_type == '3' || true) {
+        new_data = data.map(item => {
+          const obj = {
+            id: item.lane_id,
+            name: item.lane_name,
+            // due_time: item.lane_end_time,
+            time_span: item.time_span,
+            is_outine_group_head: true,
+          }
+          let new_item = { ...item, ...obj }
+          new_item['lane_data']['cards'] = [].concat([obj], new_item['lane_data']['cards'])
+          let cards = new_item['lane_data']['cards']
+          let cards_tree = cards.filter(item => !item.parent_id)
+          cards_tree = cards_tree.map(cards_item => {
+            let new_cards_item = { ...cards_item, children: [] }
+            for (let val of cards) {
+              if (val['parent_id'] == new_cards_item.id) {
+                new_cards_item.children.push(val)
+              }
+            }
+            return new_cards_item
+          })
+          new_item.cards_tree = cards_tree
+          return new_item
+        })
+        yield put({
+          type: 'handleListGroup',
+          payload: {
+            data: new_data//res.data
+          }
+        })
+      } else {
+        yield put({
+          type: 'handleListGroup',
+          payload: {
+            data: data//res.data
+          }
+        })
+      }
+
+    },
+    // 转化处理大纲视图数据
+    * handleOutLineTreeData({ payload }, { select, call, put }) {
+      const { data = [] } = payload
+      const start_date = yield select(workbench_start_date)
+      const end_date = yield select(workbench_end_date)
+      const ceilWidth = yield select(workbench_ceilWidth)
+      const date_arr_one_level = yield select(workbench_date_arr_one_level)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          outline_tree: data
+        }
+      })
+      let arr = []
+      const recusion = (obj) => { //将树递归平铺成一级
+        arr.push(obj)
+        if (!obj.children) {
+          return
+        } else {
+          if (obj.children.length) {
+            for (let val of obj.children) {
+              recusion(val)
+            }
+          }
+        }
+      }
+      for (let val of data) {
+        recusion(val)
+      }
+      arr = arr.map((item, key) => {
+        let new_item = {}
+        item.top = key * ceil_height
+        const due_time = getDigit(item['due_time'])
+        const start_time = getDigit(item['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
+
+        let time_span = item['time_span']
+
+        if (!time_span) {
+          if (!due_time || !start_time) {
+            time_span = 1
+          } else {
+            time_span = (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1
+            if (due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
+              time_span = (Math.floor((end_date.timestamp - start_time) / (24 * 3600 * 1000))) + 1
+            } else if (start_time < start_date.timestamp && due_time < end_date.timestamp) { //左区间
+              time_span = (Math.floor((due_time - start_date.timestamp) / (24 * 3600 * 1000))) + 1
+            } else if (due_time > end_date.timestamp && start_time < start_date.timestamp) { //超过左右区间
+              time_span = (Math.floor((end_date.timestamp - start_date.timestamp) / (24 * 3600 * 1000))) + 1
+            }
+          }
+        }
+
+        new_item = {
+          ...item,
+          start_time,
+          end_time: due_time || getDateInfo(start_time).timestampEnd,
+          time_span,
+          is_has_start_time: !!getDigit(item['start_time']),
+          is_has_end_time: !!getDigit(item['due_time'])
+        }
+        if (new_item['start_time'] < date_arr_one_level[0]['timestamp']) { //如果该任务的起始日期在当前查看面板日期之前，就从最左边开始摆放
+          new_item.left = 0
+        } else {
+          for (let k = 0; k < date_arr_one_level.length; k++) {
+            if (isSamDay(item['start_time'], date_arr_one_level[k]['timestamp'])) { //是同一天
+              new_item.left = k * ceilWidth
+              break
+            }
+          }
+        }
+        return new_item
+      })
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          outline_tree_round: arr
+        }
+      })
+      console.log('ssssss_tree', arr)
+    },
+
     * handleListGroup({ payload }, { select, call, put }) {
       const { data, not_set_scroll_top } = payload
       let list_group = []
@@ -258,16 +401,19 @@ export default {
             const due_time = getDigit(val_1['due_time'])
             const start_time = getDigit(val_1['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
             const create_time = getDigit(val_1['create_time'])
-            let time_span = (!due_time || !start_time) ? 1 : (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1 //正常区间内
-            if (due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
-              time_span = (Math.floor((end_date.timestamp - start_time) / (24 * 3600 * 1000))) + 1
-            } else if (start_time < start_date.timestamp && due_time < end_date.timestamp) { //左区间
-              time_span = (Math.floor((due_time - start_date.timestamp) / (24 * 3600 * 1000))) + 1
-            } else if (due_time > end_date.timestamp && start_time < start_date.timestamp) { //超过左右区间
-              time_span = (Math.floor((end_date.timestamp - start_date.timestamp) / (24 * 3600 * 1000))) + 1
+            let time_span = val_1['time_span']
+            if (!time_span) {
+              time_span = (!due_time || !start_time) ? 1 : (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1 //正常区间内
+              if (due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
+                time_span = (Math.floor((end_date.timestamp - start_time) / (24 * 3600 * 1000))) + 1
+              } else if (start_time < start_date.timestamp && due_time < end_date.timestamp) { //左区间
+                time_span = (Math.floor((due_time - start_date.timestamp) / (24 * 3600 * 1000))) + 1
+              } else if (due_time > end_date.timestamp && start_time < start_date.timestamp) { //超过左右区间
+                time_span = (Math.floor((end_date.timestamp - start_date.timestamp) / (24 * 3600 * 1000))) + 1
+              }
+              // console.log('sssssss', val_1.name, time_span)
+              // time_span = time_span > date_arr_one_level.length?  date_arr_one_level.length: time_span
             }
-            // console.log('sssssss', val_1.name, time_span)
-            // time_span = time_span > date_arr_one_level.length?  date_arr_one_level.length: time_span
             let list_data_item = {
               ...val_1,
               start_time,
@@ -341,9 +487,12 @@ export default {
       //设置分组区域高度, 并为每一个任务新增一条
       for (let i = 0; i < list_group.length; i++) {
         let list_data = list_group[i]['list_data']
-        list_data = list_data.sort((a, b) => {
-          return a.start_time - b.start_time
-        })
+
+        if (!ganttIsOutlineView({ group_view_type })) { //在非大纲视图下才会有排序
+          list_data = list_data.sort((a, b) => {
+            return a.start_time - b.start_time
+          })
+        }
 
         const length = 5 //list_data.length < 5 ? 5 : (list_data.length + 1)
         const group_height = length * ceiHeight
@@ -379,42 +528,46 @@ export default {
 
           item.top = after_group_height + j * ceiHeight
 
-          // {满足在时间区间外的，定义before_start_time_arr先记录符合项。
-          // 该比较项和之前项存在交集，将交集项存入top_arr
-          // 筛选before_start_time_arr，如果top_arr中含有top与某一遍历项相等，则过滤。最终高度取剩余的第一项
-          let before_start_time_arr = []
-          let top_arr = []
-          let all_top = []
-          for (let k = 0; k < j; k++) {
-            all_top.push(list_data[k].top)
-            if (item.start_time > list_data[k].end_time) {
-              before_start_time_arr.push(list_data[k])
-            }
-            if (item.start_time <= list_data[k].end_time) {
-              top_arr.push(list_data[k])
-            }
-          }
-          before_start_time_arr = before_start_time_arr.filter(item => {
-            let flag = true
-            for (let val of top_arr) {
-              if (item.top == val.top) {
-                flag = false
-                break
+          // --------------------时间高度排序start
+          if (!ganttIsOutlineView({ group_view_type })) { // 大纲视图不需要插入排序
+            // {满足在时间区间外的，定义before_start_time_arr先记录符合项。
+            // 该比较项和之前项存在交集，将交集项存入top_arr
+            // 筛选before_start_time_arr，如果top_arr中含有top与某一遍历项相等，则过滤。最终高度取剩余的第一项
+            let before_start_time_arr = []
+            let top_arr = []
+            let all_top = []
+            for (let k = 0; k < j; k++) {
+              all_top.push(list_data[k].top)
+              if (item.start_time > list_data[k].end_time) {
+                before_start_time_arr.push(list_data[k])
+              }
+              if (item.start_time <= list_data[k].end_time) {
+                top_arr.push(list_data[k])
               }
             }
-            return flag && item
-          })
+            before_start_time_arr = before_start_time_arr.filter(item => {
+              let flag = true
+              for (let val of top_arr) {
+                if (item.top == val.top) {
+                  flag = false
+                  break
+                }
+              }
+              return flag && item
+            })
 
-          all_top = Array.from(new Set(all_top)).sort((a, b) => a - b)
-          const all_top_max = Math.max.apply(null, all_top) == -Infinity ? after_group_height : Math.max.apply(null, all_top)
+            all_top = Array.from(new Set(all_top)).sort((a, b) => a - b)
+            const all_top_max = Math.max.apply(null, all_top) == -Infinity ? after_group_height : Math.max.apply(null, all_top)
 
-          if (before_start_time_arr[0]) {
-            item.top = before_start_time_arr[0].top
-          } else {
-            if (item.top > all_top_max) {
-              item.top = all_top_max + ceiHeight
+            if (before_start_time_arr[0]) {
+              item.top = before_start_time_arr[0].top
+            } else {
+              if (item.top > all_top_max) {
+                item.top = all_top_max + ceiHeight
+              }
             }
           }
+          // --------------------时间高度排序end
           list_group[i]['list_data'][j] = item
         }
         const list_height_arr = list_group[i]['list_data'].map(item => item.top)
