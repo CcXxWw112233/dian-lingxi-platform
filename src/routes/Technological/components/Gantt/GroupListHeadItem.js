@@ -14,14 +14,14 @@ import ShowAddMenberModal from '../../../../routes/Technological/components/Proj
 import { PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_CARD_GROUP, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_TEAM_BOARD_ARCHIVE, PROJECTS, PROJECT_TEAM_BOARD_DELETE, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE } from '../../../../globalset/js/constant';
 import VisitControl from '../VisitControl/index'
 import globalStyle from '@/globalset/css/globalClassName.less'
-import { ganttIsFold } from './constants';
+import { ganttIsFold, ganttIsOutlineView } from './constants';
 import DetailInfo from '@/routes/Technological/components/ProjectDetail/DetailInfo/index'
 import { deleteBoardFollow } from './ganttBusiness';
 import { currentNounPlanFilterName, setBoardIdStorage } from "@/utils/businessFunction";
 
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       isShowBottDetail: '0', //0 初始化(关闭) 1展开 2 关闭
@@ -948,17 +948,23 @@ export default class GroupListHeadItem extends Component {
     const { list_data } = itemValue
     return (
       <div>
-        <div className={indexStyles.listHeadItem} style={{ height: rows * ceiHeight, }}>
-          {
-            list_data.map(item => {
-              const { id, name } = item
-              return (
-                <div style={{ height: 40, marginBottom: 20, lineHeight: '40px' }} key={id}>{name}</div>
-              )
-            })
-          }
-        </div>
-        <div className={indexStyles.listHeadItem} style={{ height: rows * ceiHeight, display: 'none' }}>
+        {
+          ganttIsOutlineView({ group_view_type }) && (
+            <div className={indexStyles.listHeadItem} style={{ height: rows * ceiHeight, }}>
+              {
+                list_data.map(item => {
+                  const { id, name } = item
+                  return (
+                    <div style={{ height: 40, marginBottom: 20, lineHeight: '40px' }} key={id}>{name}</div>
+                  )
+                })
+              }
+            </div>
+          )
+        }
+        <div className={indexStyles.listHeadItem}
+          style={{ height: rows * ceiHeight,
+           display:  ganttIsOutlineView({ group_view_type })?'none': 'block' }}>
           <div className={`${indexStyles.list_head_top}`}>
             <div className={`${indexStyles.list_head_top_left}`}>
               {
