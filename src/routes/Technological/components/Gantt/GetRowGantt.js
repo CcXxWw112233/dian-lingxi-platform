@@ -7,7 +7,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
 import AvatarList from '@/components/avatarList'
 import { Tooltip, Dropdown, message } from 'antd'
-import { date_area_height, task_item_height, task_item_margin_top, ganttIsFold, ceil_height_fold, task_item_height_fold, group_rows_fold } from './constants'
+import { date_area_height, task_item_height, task_item_margin_top, ganttIsFold, ceil_height_fold, task_item_height_fold, group_rows_fold, ganttIsOutlineView } from './constants'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import QueueAnim from 'rc-queue-anim'
 import GetRowTaskItem from './GetRowTaskItem'
@@ -118,7 +118,7 @@ export default class GetRowGantt extends Component {
   //鼠标拖拽移动
   dashedMousedown(e) {
     const { gantt_board_id, group_view_type, show_board_fold } = this.props
-    if (group_view_type == '3' || true) {
+    if (ganttIsOutlineView({ group_view_type })) {
       return
     }
     if (
@@ -217,7 +217,7 @@ export default class GetRowGantt extends Component {
     if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) {
       return
     }
-    if (group_view_type == '3' || true) {
+    if (ganttIsOutlineView({ group_view_type })) {
       return
     }
     const { ceiHeight, ceilWidth } = this.props
@@ -560,7 +560,7 @@ export default class GetRowGantt extends Component {
           }
         })}
         {
-          list_group.map((value, key) => {
+          ganttIsOutlineView({ group_view_type }) && list_group.map((value, key) => {
             const { list_data = [], list_id, board_fold_data } = value
             return (
               this.renderStripSc({ list_data, list_id, list_group_key: key })

@@ -13,6 +13,14 @@ export const ganttIsFold = ({ group_view_type, gantt_board_id, show_board_fold }
         return false
     }
 }
+
+// 甘特图是否大纲视图
+export const ganttIsOutlineView = ({ group_view_type }) => { //gantt是否折叠
+    if (group_view_type == '3') {
+        return true
+    }
+    return false
+}
 // 转义时间
 export const getDigitTime = (timestamp) => {
     if (!timestamp) {

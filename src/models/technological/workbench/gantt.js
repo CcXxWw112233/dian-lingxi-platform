@@ -18,7 +18,7 @@ import {
 } from './selects'
 import { createMilestone } from "../../../services/technological/prjectDetail";
 import { getGlobalData } from '../../../utils/businessFunction';
-import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, visual_item, mock_gantt_data } from '../../../routes/Technological/components/Gantt/constants';
+import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, visual_item, mock_gantt_data, ganttIsOutlineView } from '../../../routes/Technological/components/Gantt/constants';
 import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
 import { handleChangeBoardViewScrollTop } from '../../../routes/Technological/components/Gantt/ganttBusiness';
@@ -65,7 +65,7 @@ export default {
       about_user_boards: [], //带用户的项目列表
 
       gantt_board_id: '0', //"1192342431761305600",//, //甘特图查看的项目id
-      group_view_type: '1', //分组视图1项目， 2成员, 3大纲
+      group_view_type: '3', //分组视图1项目， 2成员, 3大纲
       group_view_filter_boards: [], //内容过滤项目id 列表
       group_view_filter_users: [], //内容过滤职员id 列表
       group_view_boards_tree: [], //内容过滤项目分组树
@@ -79,6 +79,8 @@ export default {
 
       is_new_board: false, //是否刚刚创建的新项目
       outline_hover_obj: {}, //大纲视图下，hover的任务条所属id
+      outline_tree: [], //大纲树
+      outline_tree_round: [], //大纲树每一级平铺开来
     },
   },
   subscriptions: {
@@ -186,7 +188,7 @@ export default {
       const params = {
         start_time: start_date['timestamp'],
         end_time: end_date['timestamp'],
-        chart_type: group_view_type,
+        chart_type: '1',//group_view_type,
         ...content_filter_params,
       }
       if (gantt_board_id != '0' && gantt_board_id) {
@@ -227,15 +229,23 @@ export default {
       })
       // console.log('sssss', {res})
       if (isApiResponseOk(res)) {
-        // data[0]['lane_data']['cards'] = [].concat([visual_item], data[0]['lane_data']['cards'], test_card_item)
-        // data[1]['lane_data']['cards'] = [].concat([visual_item], data[1]['lane_data']['cards'], test_card_item)
         let data = res.data
-        yield put({
-          type: 'transferDataBeforeHandle',
-          payload: {
-            data: data//res.data
-          }
-        })
+        if (!ganttIsOutlineView({ group_view_type })) { //非大纲视图
+          yield put({
+            type: 'handleListGroup',
+            payload: {
+              data: data//res.data
+            }
+          })
+        } else {
+          yield put({
+            type: 'transferDataBeforeHandle',
+            payload: {
+              data: data//res.data
+            }
+          })
+        }
+
       } else {
 
       }
@@ -262,7 +272,7 @@ export default {
           cards_tree = cards_tree.map(cards_item => {
             let new_cards_item = { ...cards_item, children: [] }
             for (let val of cards) {
-              if(val['parent_id'] == new_cards_item.id) {
+              if (val['parent_id'] == new_cards_item.id) {
                 new_cards_item.children.push(val)
               }
             }
@@ -397,7 +407,7 @@ export default {
       for (let i = 0; i < list_group.length; i++) {
         let list_data = list_group[i]['list_data']
 
-        if (group_view_type != '3' && false) { //在非大纲视图下才会有排序
+        if (!ganttIsOutlineView({ group_view_type })) { //在非大纲视图下才会有排序
           list_data = list_data.sort((a, b) => {
             return a.start_time - b.start_time
           })
@@ -438,7 +448,7 @@ export default {
           item.top = after_group_height + j * ceiHeight
 
           // --------------------时间高度排序start
-          if (group_view_type != '3' && false) { // 大纲视图不需要插入排序
+          if (!ganttIsOutlineView({ group_view_type })) { // 大纲视图不需要插入排序
             // {满足在时间区间外的，定义before_start_time_arr先记录符合项。
             // 该比较项和之前项存在交集，将交集项存入top_arr
             // 筛选before_start_time_arr，如果top_arr中含有top与某一遍历项相等，则过滤。最终高度取剩余的第一项
