@@ -54,22 +54,22 @@ export default class OutLineHeadItem extends Component {
         console.log("大纲:onDataProcess", action, param);
         const { dispatch, outline_tree } = this.props;
         switch (action) {
-            case 'add_1':
+            case 'add_milestone':
                 {
 
                 }
                 break;
-            case 'add_2':
+            case 'edit_milestone':
                 {
 
                 }
                 break;
-            case 'edit_1':
+            case 'add_task':
                 {
 
                 }
                 break;
-            case 'edit_2':
+            case 'edit_2task':
                 {
 
                 }

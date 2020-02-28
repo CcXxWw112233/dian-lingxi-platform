@@ -88,8 +88,9 @@ class TreeNode extends Component {
             });
     }
     onChangeTitle = (e) => {
+        const { nodeValue = {} } = this.state;
         this.setState({
-            title: e.target.value
+            nodeValue: { ...nodeValue, name: e.target.value }
         });
     }
 
@@ -97,7 +98,7 @@ class TreeNode extends Component {
 
     render() {
         const { isTitleHover, isTitleEdit, nodeValue = {} } = this.state;
-        const { id, name: title, tree_type,open,hover} = nodeValue;
+        const { id, name: title, tree_type, open, hover } = nodeValue;
         const { onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label } = this.props;
         let type;
         if (tree_type) {
@@ -173,9 +174,9 @@ class TreeNode extends Component {
                     <div className={`${styles.outline_tree_node_content}`} style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
                         {
                             icon ?
-                            icon
-                            :
-                            <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
+                                icon
+                                :
+                                <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
                         }
                         {
                             !isLeaf &&
