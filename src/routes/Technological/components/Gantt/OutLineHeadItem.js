@@ -8,6 +8,15 @@ const { TreeNode } = OutlineTree;
 @connect(mapStateToProps)
 export default class OutLineHeadItem extends Component {
 
+    updateOutLineTreeData = (outline_tree) => {
+        const { dispatch } = this.props;
+        dispatch({
+            type: 'gantt/handleOutLineTreeData',
+            payload: {
+                data: outline_tree
+            }
+        });
+    }
     onSelect = (selectedKeys, info) => {
         console.log('selected', selectedKeys, info);
     };
@@ -15,40 +24,67 @@ export default class OutLineHeadItem extends Component {
     onHover = (id, hover) => {
         console.log("大纲:onHover", id, hover);
         const { dispatch, outline_tree } = this.props;
-        let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, id);
-        if(nodeValue){
-            nodeValue.hover = hover;
-            dispatch({
-                type: 'gantt/handleOutLineTreeData',
-                payload: {
-                    data: outline_tree
-                }
-            });
-        }else{
-            console.error("OutlineTree.getTreeNodeValue:未查询到节点");
+        let nodeValue = {};
+        if (hover) {
+            nodeValue = OutlineTree.getTreeNodeValue(outline_tree, id) || {};
         }
+
+        this.updateOutLineTreeData(outline_tree);
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                outline_hover_obj: nodeValue
+            }
+        });
     }
 
     onExpand = (id, open) => {
         console.log("大纲:onExpand", id, open);
         const { dispatch, outline_tree } = this.props;
         let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, id);
-        if(nodeValue){
+        if (nodeValue) {
             nodeValue.open = open;
-            dispatch({
-                type: 'gantt/handleOutLineTreeData',
-                payload: {
-                    data: outline_tree
-                }
-            });
-        }else{
+            this.updateOutLineTreeData(outline_tree);
+        } else {
             console.error("OutlineTree.getTreeNodeValue:未查询到节点");
         }
-     
 
     }
     onDataProcess = ({ action, param }) => {
         console.log("大纲:onDataProcess", action, param);
+        const { dispatch, outline_tree } = this.props;
+        switch (action) {
+            case 'add_1':
+                {
+
+                }
+                break;
+            case 'add_2':
+                {
+
+                }
+                break;
+            case 'edit_1':
+                {
+
+                }
+                break;
+            case 'edit_2':
+                {
+
+                }
+                break;
+            default:
+                ;
+
+        }
+        let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, id);
+        if (nodeValue) {
+            nodeValue.open = open;
+            this.updateOutLineTreeData(outline_tree);
+        } else {
+            console.error("OutlineTree.getTreeNodeValue:未查询到节点");
+        }
 
     }
     renderGanttOutLineTree = (outline_tree, isRoot) => {
@@ -121,7 +157,7 @@ export default class OutLineHeadItem extends Component {
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
-    gantt: { datas: { gantt_board_id, group_view_type, outline_tree } },
+    gantt: { datas: { gantt_board_id, group_view_type, outline_tree, outline_hover_obj } },
     technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, userBoardPermissions } },
     projectDetail: { datas: { projectDetailInfoData = {} } }
 }) {
