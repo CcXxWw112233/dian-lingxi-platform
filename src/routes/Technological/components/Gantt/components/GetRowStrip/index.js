@@ -12,7 +12,7 @@ export default class GetRowStrip extends Component {
         super(props)
         this.state = {
             currentRect: {},  //任务位置
-            is_card_has_time: false, //处于该条上的任务有没有开始或者时间
+            is_item_has_time: false, //处于该条上的任务有没有开始或者时间
         }
         this.setIsCardHasTime()
     }
@@ -24,7 +24,7 @@ export default class GetRowStrip extends Component {
         const { itemValue = {} } = this.props
         const { start_time, end_time, due_time } = itemValue
         this.setState({
-            is_card_has_time: start_time || end_time || due_time
+            is_item_has_time: start_time || end_time || due_time
         })
     }
 
@@ -57,7 +57,7 @@ export default class GetRowStrip extends Component {
         })
     }
     stripMouseMove = (e) => {
-        if (this.state.is_card_has_time) { //存在时间的任务不需要再设置时间了
+        if (this.state.is_item_has_time) { //存在时间的任务不需要再设置时间了
             return
         }
         const { ceiHeight, ceilWidth } = this.props
@@ -109,13 +109,13 @@ export default class GetRowStrip extends Component {
     renderCardRect = () => {
         const { itemValue = {}, ceilWidth } = this.props
         const { id, name, time_span } = itemValue
-        const { is_card_has_time, currentRect = {} } = this.state
+        const { is_item_has_time, currentRect = {} } = this.state
         return (
             <div
                 onClick={this.cardSetClick}
                 className={styles.will_set_item}
                 style={{
-                    display: (!is_card_has_time && this.onHoverState()) ? 'flex' : 'none',
+                    display: (!is_item_has_time && this.onHoverState()) ? 'flex' : 'none',
                     marginLeft: currentRect.x
                 }}>
                 <div
@@ -161,16 +161,27 @@ export default class GetRowStrip extends Component {
     //渲染里程碑设置---start
     renderMilestoneSet = () => {
         const { itemValue = {}, group_list_area, list_group_key } = this.props
-        const { id, name, time_span } = itemValue
-        const { is_card_has_time, currentRect = {} } = this.state
+        const { id, name, due_time, left } = itemValue
+        const { is_item_has_time, currentRect = {} } = this.state
+        let display = 'none'
+        let marginLeft = currentRect.x
+        if(due_time) {
+            display = 'flex'
+            marginLeft = left
+        } else {
+            if(this.onHoverState()) {
+                display = 'flex'
+                marginLeft = currentRect.x
+            }
+        }
+     
         return (
             <div
                 onClick={this.cardSetClick}
                 className={styles.will_set_item_milestone}
                 style={{
-                    display: 'flex',
-                    // display: (!is_card_has_time && this.onHoverState()) ? 'flex' : 'none',
-                    marginLeft: currentRect.x
+                    display,
+                    marginLeft
                 }}>
                 <div
                     style={{

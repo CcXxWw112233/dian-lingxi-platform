@@ -431,7 +431,6 @@ export const mock_outline_tree = [
                         "due_time": "",
                         "time_span": "",
                         "executors": [],
-                        "is_expand": true
                     }
                 ]
             }
@@ -465,7 +464,6 @@ export const mock_outline_tree = [
                         "due_time": "1580399940",
                         "time_span": "",
                         "executors": [],
-                        "is_expand": true
                     }
                 ]
             }

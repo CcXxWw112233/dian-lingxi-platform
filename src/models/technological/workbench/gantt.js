@@ -305,12 +305,30 @@ export default {
       const end_date = yield select(workbench_end_date)
       const ceilWidth = yield select(workbench_ceilWidth)
       const date_arr_one_level = yield select(workbench_date_arr_one_level)
+      const visual_add_item = {
+        "id": "",
+        "name": "",
+        "tree_type": "4",
+        "is_expand": true,
+      }
+      let new_outline_tree = [...data]
+      new_outline_tree = new_outline_tree.map(item => {
+        let new_item = {...item}
+        const new_item_is_expand = item.is_expand
+        let new_item_children = item.children
+        if(new_item_is_expand) {
+        }
+        return new_item
+      })
+
       yield put({
         type: 'updateDatas',
         payload: {
           outline_tree: data
         }
       })
+
+      // 将数据平铺
       let arr = []
       const recusion = (obj) => { //将树递归平铺成一级
         arr.push(obj)
@@ -329,6 +347,8 @@ export default {
       }
       arr = arr.map((item, key) => {
         let new_item = {}
+        const { tree_type } = item //  里程碑/任务/子任务/虚拟占位 1/2/3/4
+        const cal_left_field = tree_type == '1' ? 'due_time' : 'start_time' //计算起始位置的字段
         item.top = key * ceil_height
         const due_time = getDigit(item['due_time'])
         const start_time = getDigit(item['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
@@ -355,14 +375,16 @@ export default {
           start_time,
           end_time: due_time || getDateInfo(start_time).timestampEnd,
           time_span,
+          width: time_span * ceilWidth,
+          height: task_item_height,
           is_has_start_time: !!getDigit(item['start_time']),
           is_has_end_time: !!getDigit(item['due_time'])
         }
-        if (new_item['start_time'] < date_arr_one_level[0]['timestamp']) { //如果该任务的起始日期在当前查看面板日期之前，就从最左边开始摆放
-          new_item.left = 0
+        if (getDigit(new_item[cal_left_field]) < getDigit(date_arr_one_level[0]['timestamp'])) { //如果该任务的起始日期在当前查看面板日期之前，就从最左边开始摆放
+          new_item.left = -500
         } else {
           for (let k = 0; k < date_arr_one_level.length; k++) {
-            if (isSamDay(item['start_time'], date_arr_one_level[k]['timestamp'])) { //是同一天
+            if (isSamDay(item[cal_left_field], date_arr_one_level[k]['timestamp'])) { //是同一天
               new_item.left = k * ceilWidth
               break
             }

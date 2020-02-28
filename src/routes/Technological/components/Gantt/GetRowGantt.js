@@ -567,21 +567,22 @@ export default class GetRowGantt extends Component {
         {/* 渲染大纲视图下的任务 */}
         {
           ganttIsOutlineView({ group_view_type }) && outline_tree_round.map((value, key) => {
-            const { end_time, left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time, start_time, due_time, is_outine_group_head } = value
+            const { end_time, left, top, id, start_time, tree_type } = value
             return (
-              <GetRowTaskItem
-                key={`${id}_${start_time}_${end_time}_${left}_${top}`}
-                itemValue={value}
-                setSpecilTaskExample={this.setSpecilTaskExample}
-                ganttPanelDashedDrag={this.isDragging}
-                getCurrentGroup={this.getCurrentGroup}
-                // list_id={list_id}
-                task_is_dragging={this.task_is_dragging}
-                setGoldDateArr={this.props.setGoldDateArr}
-                setScrollPosition={this.props.setScrollPosition}
-                setIsDragging={this.setIsDragging}
-                setTaskIsDragging={this.setTaskIsDragging}
-              />
+              (tree_type == '2' || tree_type == "3") && (
+                <GetRowTaskItem
+                  key={`${id}_${start_time}_${end_time}_${left}_${top}`}
+                  itemValue={value}
+                  setSpecilTaskExample={this.setSpecilTaskExample}
+                  ganttPanelDashedDrag={this.isDragging}
+                  getCurrentGroup={this.getCurrentGroup}
+                  // list_id={list_id}
+                  task_is_dragging={this.task_is_dragging}
+                  setGoldDateArr={this.props.setGoldDateArr}
+                  setScrollPosition={this.props.setScrollPosition}
+                  setIsDragging={this.setIsDragging}
+                  setTaskIsDragging={this.setTaskIsDragging}
+                />)
             )
           })
         }
