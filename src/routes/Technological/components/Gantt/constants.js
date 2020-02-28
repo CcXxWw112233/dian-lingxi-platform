@@ -402,3 +402,80 @@ export const mock_gantt_data = [
         "lane_overdue_count": "3"
     }
 ]
+
+export const mock_outline_tree = [
+    {
+        "id": "111",
+        "name": "里程碑1",
+        "tree_type": "1",
+        "due_time": "",
+        "time_span": "",
+        "is_expand": true,
+        "executors": [],
+        "children": [
+            {
+                "id": "111-1",
+                "name": "一级任务",
+                "tree_type": "2",
+                "start_time": "",
+                "due_time": "",
+                "time_span": "",
+                "is_expand": true,
+                "executors": [],
+                "children": [
+                    {
+                        "id": "111-2",
+                        "name": "二级任务",
+                        "tree_type": "3",
+                        "start_time": "",
+                        "due_time": "",
+                        "time_span": "",
+                        "executors": [],
+                        "is_expand": true
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "222",
+        "name": "里程碑2",
+        "tree_type": "1",
+        "start_time": "1580227200",
+        "due_time": "1580961676",
+        "time_span": "",
+        "is_expand": true,
+        "executors": [],
+        "children": [
+            {
+                "id": "222-1",
+                "name": "2一级任务",
+                "tree_type": "2",
+                "start_time": "1580227200",
+                "due_time": "1580399940",
+                "time_span": "",
+                "is_expand": true,
+                "executors": [],
+                "children": [
+                    {
+                        "id": "222-2",
+                        "name": "2二级任务",
+                        "tree_type": "3",
+                        "start_time": "1580227200",
+                        "due_time": "1580399940",
+                        "time_span": "",
+                        "executors": [],
+                        "is_expand": true
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "333",
+        "name": "无归属任务",
+        "tree_type": "2",
+        "children": [],
+        "is_expand": true
+    }
+]

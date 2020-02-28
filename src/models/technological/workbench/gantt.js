@@ -18,7 +18,7 @@ import {
 } from './selects'
 import { createMilestone } from "../../../services/technological/prjectDetail";
 import { getGlobalData } from '../../../utils/businessFunction';
-import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, visual_item, mock_gantt_data, ganttIsOutlineView } from '../../../routes/Technological/components/Gantt/constants';
+import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, visual_item, mock_gantt_data, ganttIsOutlineView, mock_outline_tree } from '../../../routes/Technological/components/Gantt/constants';
 import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
 import { handleChangeBoardViewScrollTop } from '../../../routes/Technological/components/Gantt/ganttBusiness';
@@ -239,9 +239,9 @@ export default {
           })
         } else {
           yield put({
-            type: 'transferDataBeforeHandle',
+            type: 'handleOutLineTreeData',
             payload: {
-              data: data//res.data
+              data: mock_outline_tree//res.data
             }
           })
         }
@@ -253,6 +253,7 @@ export default {
     // 大纲视图或分组视图先转换
     * transferDataBeforeHandle({ payload }, { select, call, put }) {
       const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
+      return
       // let { data } = payload
       let data = [...mock_gantt_data]
       let new_data = []
@@ -296,6 +297,86 @@ export default {
         })
       }
 
+    },
+    // 转化处理大纲视图数据
+    * handleOutLineTreeData({ payload }, { select, call, put }) {
+      const { data = [] } = payload
+      const start_date = yield select(workbench_start_date)
+      const end_date = yield select(workbench_end_date)
+      const ceilWidth = yield select(workbench_ceilWidth)
+      const date_arr_one_level = yield select(workbench_date_arr_one_level)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          outline_tree: data
+        }
+      })
+      let arr = []
+      const recusion = (obj) => { //将树递归平铺成一级
+        arr.push(obj)
+        if (!obj.children) {
+          return
+        } else {
+          if (obj.children.length) {
+            for (let val of obj.children) {
+              recusion(val)
+            }
+          }
+        }
+      }
+      for (let val of data) {
+        recusion(val)
+      }
+      arr = arr.map((item, key) => {
+        let new_item = {}
+        item.top = key * ceil_height
+        const due_time = getDigit(item['due_time'])
+        const start_time = getDigit(item['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
+
+        let time_span = item['time_span']
+
+        if (!time_span) {
+          if (!due_time || !start_time) {
+            time_span = 1
+          } else {
+            time_span = (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1
+            if (due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
+              time_span = (Math.floor((end_date.timestamp - start_time) / (24 * 3600 * 1000))) + 1
+            } else if (start_time < start_date.timestamp && due_time < end_date.timestamp) { //左区间
+              time_span = (Math.floor((due_time - start_date.timestamp) / (24 * 3600 * 1000))) + 1
+            } else if (due_time > end_date.timestamp && start_time < start_date.timestamp) { //超过左右区间
+              time_span = (Math.floor((end_date.timestamp - start_date.timestamp) / (24 * 3600 * 1000))) + 1
+            }
+          }
+        }
+
+        new_item = {
+          ...item,
+          start_time,
+          end_time: due_time || getDateInfo(start_time).timestampEnd,
+          time_span,
+          is_has_start_time: !!getDigit(item['start_time']),
+          is_has_end_time: !!getDigit(item['due_time'])
+        }
+        if (new_item['start_time'] < date_arr_one_level[0]['timestamp']) { //如果该任务的起始日期在当前查看面板日期之前，就从最左边开始摆放
+          new_item.left = 0
+        } else {
+          for (let k = 0; k < date_arr_one_level.length; k++) {
+            if (isSamDay(item['start_time'], date_arr_one_level[k]['timestamp'])) { //是同一天
+              new_item.left = k * ceilWidth
+              break
+            }
+          }
+        }
+        return new_item
+      })
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          outline_tree_round: arr
+        }
+      })
+      console.log('ssssss_tree', arr)
     },
 
     * handleListGroup({ payload }, { select, call, put }) {

@@ -5,7 +5,7 @@ import { task_item_margin_top, date_area_height } from '../../constants';
 import globalStyles from '@/globalset/css/globalClassName.less'
 
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
-const coperatedLeftDiv = 248 //滚动条左边还有一个div的宽度，作为修正
+const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
 @connect(mapStateToProps)
 export default class GetRowStrip extends Component {
     constructor (props) {
@@ -188,7 +188,7 @@ export default class GetRowStrip extends Component {
 
     render() {
         const { itemValue = {} } = this.props
-        const { is_outine_group_head } = itemValue
+        const { tree_type } = itemValue
         return (
             <div
                 onMouseMove={this.stripMouseMove}
@@ -197,7 +197,7 @@ export default class GetRowStrip extends Component {
                 className={`${styles.row_srip} ${this.onHoverState() && styles.row_srip_on_hover}`}
                 style={{ ...this.renderStyles() }}>
                 {
-                    is_outine_group_head ? (
+                    tree_type == '1' ? (
                         this.renderMilestoneSet()
                     ) : (
                             this.renderCardRect()
