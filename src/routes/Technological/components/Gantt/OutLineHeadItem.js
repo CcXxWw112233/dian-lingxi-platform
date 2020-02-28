@@ -62,9 +62,18 @@ export default class OutLineHeadItem extends Component {
         console.log('selected', selectedKeys, info);
     };
 
-    // onExpand = ({ id, open }) => {
-    //     os
-    // }
+    onHover = (key, hover) => {
+        console.log("大纲:onHover", id, hover);
+
+    }
+
+    onExpand = (id, open) => {
+        console.log("大纲:onExpand", id, open);
+
+    }
+    onDataProcess = ({ action, param }) => {
+        console.log("大纲:onDataProcess", action, param);
+    }
     renderGanttOutLineTree = (treeData, isRoot) => {
         if (!treeData) {
             return null;
@@ -78,28 +87,30 @@ export default class OutLineHeadItem extends Component {
                     switcherIcon={<span><Icon type="down" /></span>}
                     // defaultExpandedKeys={['0-0-0']}
                     onSelect={this.onSelect}
-                // onExpand={this.onExpand}
+                    onDataProcess={this.onDataProcess}
+                    onExpand={this.onExpand}
+                    onHover={this.onHover}
 
                 >
                     {
                         treeData.map((item, index) => {
                             if (item.children && item.children.length > 0) {
                                 return (
-                                    <TreeNode title={item.name} key={item.id}>
+                                    <TreeNode type={item.type} title={item.name} key={item.id}  id={item.id}>
                                         {this.renderGanttOutLineTree(item.children)}
                                         <TreeNode
                                             placeholder={'新建任务'}
                                             type={'task'}
                                             icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
                                             switcherIcon={<span></span>}
-                                            title={<span className={styles.addTask}>新建任务</span>} key={`addTask_${item.id}`}>
+                                            label={<span className={styles.addTask}>新建任务</span>} key={`addTask_${item.id}`}>
                                         </TreeNode>
                                     </TreeNode>
                                 );
                             } else {
                                 return (
 
-                                    <TreeNode title={item.name} key={item.id}>
+                                    <TreeNode type={item.type} title={item.name} key={item.id} id={item.id}>
                                     </TreeNode>
                                 );
                             }
@@ -108,9 +119,10 @@ export default class OutLineHeadItem extends Component {
                         })
                     }
                     <TreeNode
+                        type={'milestone'}
                         placeholder={'新建里程碑'}
                         icon={<span className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
-                        title={<span className={styles.addMilestone}>新建里程碑</span>} key="addMilestone">
+                        label={<span className={styles.addMilestone}>新建里程碑</span>} key="addMilestone">
 
                     </TreeNode>
                 </OutlineTree>
@@ -121,32 +133,32 @@ export default class OutLineHeadItem extends Component {
                     if (item.type == 'task') {
                         if (item.children && item.children.length > 0) {
                             return (
-                                <TreeNode type={item.type} title={item.name} key={item.id}>
+                                <TreeNode type={item.type} title={item.name} key={item.id} id={item.id}>
                                     {this.renderGanttOutLineTree(item.children)}
                                     <TreeNode
                                         placeholder={'新建任务'}
                                         type={'task'}
                                         icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
-                                        title={<span className={styles.addTask}>新建任务</span>} key={`addTask_${item.id}`}>
+                                        label={<span className={styles.addTask}>新建任务</span>} key={`addTask_${item.id}`}>
                                     </TreeNode>
                                 </TreeNode>
                             );
                         } else {
                             return (
-                                <TreeNode type={item.type} title={item.name} key={item.id}>
+                                <TreeNode type={item.type} title={item.name} key={item.id} id={item.id}>
                                 </TreeNode>
                             );
                         }
 
                     } else {
                         return (
-                            <TreeNode type={item.type} title={item.name} key={item.id}>
+                            <TreeNode type={item.type} title={item.name} key={item.id} id={item.id}>
                                 {this.renderGanttOutLineTree(item.children)}
                                 <TreeNode
                                     placeholder={'新建任务'}
                                     type={'task'}
                                     icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
-                                    title={<span className={styles.addTask}>新建任务</span>} key={`addTask_${item.id}`}>
+                                    label={<span className={styles.addTask}>新建任务</span>} key={`addTask_${item.id}`}>
                                 </TreeNode>
                             </TreeNode>
                         );
