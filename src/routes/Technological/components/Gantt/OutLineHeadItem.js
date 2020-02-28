@@ -5,73 +5,51 @@ import styles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less';
 import OutlineTree from './components/OutlineTree';
 const { TreeNode } = OutlineTree;
-
-let demoData = [
-    {
-        id: 100, "name": '前期调研', type: 'milestone', open: true, parentId: 0,
-        children: [
-            {
-                id: 110, "name": '现场勘探调查', type: 'task', open: true, parentId: 100,
-                children: [
-                    { id: 111, "name": '交通勘探', type: 'task', open: true, parentId: 110 },
-                    { id: 112, "name": '人文勘探', type: 'task', open: true, parentId: 110 },
-                ]
-            },
-            {
-                id: 120, "name": '座谈会', type: 'task', open: true, parentId: 100,
-                children: [
-                    { id: 121, "name": '第1次座谈会', type: 'task', open: true, parentId: 120 },
-                    { id: 122, "name": '第2次座谈会', type: 'task', open: true, parentId: 120 },
-                ]
-            },
-            {
-                id: 130, "name": '问卷调查', type: 'task', open: true, parentId: 100,
-                children: [
-                    { id: 131, "name": '第1次问卷调查', type: 'task', open: true, parentId: 130 },
-                    { id: 132, "name": '第2次问卷调查会', type: 'task', open: true, parentId: 130 },
-                ]
-            },
-            {
-                id: 140, "name": '走访访谈', type: 'task', open: true, parentId: 100
-            },
-            {
-                id: 150, "name": '文献资料整理', type: 'task', open: true, parentId: 100
-            }
-        ]
-    },
-    {
-        id: 101, "name": '方案设计', type: 'milestone', open: true, parentId: 0
-    },
-    {
-        id: 102, "name": '方案评估', type: 'milestone', open: true, parentId: 0
-    },
-    {
-        id: 103, "name": '成果编制', type: 'milestone', open: true, parentId: 0
-    },
-    {
-        id: 104, "name": '报审报批交付', type: 'milestone', open: true, parentId: 0
-    }
-]
 @connect(mapStateToProps)
 export default class OutLineHeadItem extends Component {
-    state = {
-        treeData: demoData
-    }
+
     onSelect = (selectedKeys, info) => {
         console.log('selected', selectedKeys, info);
     };
 
     onHover = (id, hover) => {
         console.log("大纲:onHover", id, hover);
-
+        const { dispatch, outline_tree } = this.props;
+        let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, id);
+        if(nodeValue){
+            nodeValue.hover = hover;
+            dispatch({
+                type: 'gantt/handleOutLineTreeData',
+                payload: {
+                    data: outline_tree
+                }
+            });
+        }else{
+            console.error("OutlineTree.getTreeNodeValue:未查询到节点");
+        }
     }
 
     onExpand = (id, open) => {
         console.log("大纲:onExpand", id, open);
+        const { dispatch, outline_tree } = this.props;
+        let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, id);
+        if(nodeValue){
+            nodeValue.open = open;
+            dispatch({
+                type: 'gantt/handleOutLineTreeData',
+                payload: {
+                    data: outline_tree
+                }
+            });
+        }else{
+            console.error("OutlineTree.getTreeNodeValue:未查询到节点");
+        }
+     
 
     }
     onDataProcess = ({ action, param }) => {
         console.log("大纲:onDataProcess", action, param);
+
     }
     renderGanttOutLineTree = (outline_tree, isRoot) => {
         if (!outline_tree) {
@@ -104,7 +82,6 @@ export default class OutLineHeadItem extends Component {
 
 
     render() {
-        const { treeData } = this.state;
         const { outline_tree } = this.props;
         console.log("outline_tree", outline_tree);
         return (

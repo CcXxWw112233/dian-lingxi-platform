@@ -97,23 +97,21 @@ class TreeNode extends Component {
 
     render() {
         const { isTitleHover, isTitleEdit, nodeValue = {} } = this.state;
-        const { id, name: title, tree_type } = nodeValue;
-        const { onDataProcess, onExpand, onHover, key, leve = 0, open = true, icon, placeholder, label } = this.props;
+        const { id, name: title, tree_type,open,hover} = nodeValue;
+        const { onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label } = this.props;
         let type;
         if (tree_type) {
             type = tree_type;
         } else {
             type = this.props.type;
         }
-
-        console.log("openopenopenopen", this.props.children);
         if (this.props.children && this.props.children.length > 0) {
 
             let className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${isLeaf ? (open ? styles.expanded : '') : ''} `;
             let isLeaf = false;
             return (
                 <div className={className} key={key}>
-                    <div className={`${styles.outline_tree_node_content}`} style={{ paddingLeft: (leve * 23) + 'px' }}>
+                    <div className={`${styles.outline_tree_node_content}`} style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
                         <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
                         {
                             !isLeaf &&
@@ -175,11 +173,10 @@ class TreeNode extends Component {
                     <div className={`${styles.outline_tree_node_content}`} style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
                         {
                             icon ?
-                                icon
-                                :
-                                <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
+                            icon
+                            :
+                            <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
                         }
-
                         {
                             !isLeaf &&
                             <span className={`${styles.outline_tree_node_expand_icon} ${open ? styles.expanded : ''}`}></span>
@@ -234,7 +231,58 @@ class MyOutlineTree extends Component {
     }
 }
 
+const getNode = (outline_tree, id) => {
+    let nodeValue = null;
+    if (outline_tree) {
+        nodeValue = outline_tree.find((item) => item.id == id);
+        if (nodeValue) {
+            return nodeValue;
+        } else {
+            for (let i = 0; i < outline_tree.length; i++) {
+                let node = outline_tree[i];
+                if (node.children && node.children.length > 0) {
+                    nodeValue = getNode(node.children, id);
+                    if (nodeValue) {
+                        return nodeValue;
+                    }
+                } else {
+                    return null;
+                }
+            }
+        }
+    }
+    return nodeValue
+}
+
+const getTreeNodeValue = (outline_tree, id) => {
+    if (outline_tree) {
+        for (let i = 0; i < outline_tree.length; i++) {
+            let node = outline_tree[i];
+            if (node.id == id) {
+                return node;
+            } else {
+                if (node.children && node.children.length > 0) {
+                    let childNode = getNode(node.children, id);
+                    if (childNode) {
+                        return childNode;
+                    }
+                } else {
+                    return null;
+                }
+            }
+        }
+    } else {
+        return null;
+    }
+
+}
+
+
 
 const OutlineTree = MyOutlineTree;
+//树节点
 OutlineTree.TreeNode = TreeNode;
+//树方法
+OutlineTree.getTreeNodeValue = getTreeNodeValue;
+
 export default OutlineTree;
