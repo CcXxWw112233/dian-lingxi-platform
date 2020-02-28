@@ -5,7 +5,7 @@ import globalStyles from '@/globalset/css/globalClassName.less';
 
 import OutlineTree from './components/OutlineTree';
 
-const { TreeNode, } = OutlineTree;
+const { TreeNode } = OutlineTree;
 
 let demoData = [
     {
