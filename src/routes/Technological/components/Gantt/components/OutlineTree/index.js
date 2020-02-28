@@ -5,24 +5,28 @@ import globalStyles from '@/globalset/css/globalClassName.less';
 
 class TreeNode extends Component {
     constructor(props) {
-        console.log("TreeNode", props);
+        //console.log("TreeNode", props);
         super(props);
         this.state = {
             isTitleHover: false,
             isTitleEdit: false,
-            open: true,
-            hover: false,
-            ...props
+            nodeValue: {
+                open: true,
+                hover: false,
+                ...props.nodeValue
+            }
         }
     }
 
     onChangeExpand = (e) => {
         e.stopPropagation();
-        const open = !this.state.open;
+        const { nodeValue = {} } = this.state;
+        let { id, open } = nodeValue;
+        open = !open;
         this.setState({
-            open
+            nodeValue: { ...nodeValue, open }
         });
-        this.props.onExpand(this.state.id, open);
+        this.props.onExpand(id, open);
     }
 
     onMouseEnterTitle = () => {
@@ -46,19 +50,20 @@ class TreeNode extends Component {
     }
 
     onMouseEnter = () => {
-        const { id, hover } = this.state;
-        this.props.onHover({
-            id,
-            hover: !hover
-        });
+        const { nodeValue = {} } = this.state;
+        const { id } = nodeValue;
+        if (id) {
+            this.props.onHover(id, true);
+        }
     }
 
     onMouseLeave = () => {
-        const { id, hover } = this.state;
-        this.props.onHover({
-            id,
-            hover: !hover
-        });
+        const { nodeValue = {} } = this.state;
+        const { id } = nodeValue;
+        if (id) {
+            this.props.onHover(id, false);
+        }
+
     }
 
 
@@ -67,17 +72,19 @@ class TreeNode extends Component {
             isTitleHover: false,
             isTitleEdit: false
         });
+        const { nodeValue = {} } = this.state;
+
         let action;
         if (this.state.placeholder) {
-            action = 'add_' + this.state.type;
+            action = 'add_' + this.props.type;
         } else {
-            action = 'edit_' + this.state.type;
+            action = 'edit_' + nodeValue.tree_type == '1' ? 'milestone' : 'task';
         }
 
         this.props.onDataProcess &&
             this.props.onDataProcess({
                 action,
-                param: { ...this.state }
+                param: { ...nodeValue }
             });
     }
     onChangeTitle = (e) => {
@@ -89,18 +96,25 @@ class TreeNode extends Component {
 
 
     render() {
-        const { isTitleHover, isTitleEdit, id, key, leve = 0, open = true, title, type = 'milestone', icon, placeholder, label } = this.state;
-        const { onDataProcess, onExpand,onHover} = this.props;
+        const { isTitleHover, isTitleEdit, nodeValue = {} } = this.state;
+        const { id, name: title, tree_type } = nodeValue;
+        const { onDataProcess, onExpand, onHover, key, leve = 0, open = true, icon, placeholder, label } = this.props;
+        let type;
+        if (tree_type) {
+            type = tree_type;
+        } else {
+            type = this.props.type;
+        }
 
-        // console.log("openopenopenopen" + key, open);
-        if (this.state.children) {
+        console.log("openopenopenopen", this.props.children);
+        if (this.props.children && this.props.children.length > 0) {
 
             let className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${isLeaf ? (open ? styles.expanded : '') : ''} `;
             let isLeaf = false;
             return (
                 <div className={className} key={key}>
                     <div className={`${styles.outline_tree_node_content}`} style={{ paddingLeft: (leve * 23) + 'px' }}>
-                        <span className={`${styles.outline_tree_line_node_dot} ${type == 'milestone' ? styles.milestoneNode : styles.taskNode}`}></span>
+                        <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
                         {
                             !isLeaf &&
                             <span className={`${styles.outline_tree_node_expand_icon} ${open ? styles.expanded : ''}`} onClick={this.onChangeExpand}></span>
@@ -131,7 +145,7 @@ class TreeNode extends Component {
                     <div className={styles.collapse_transition} data-old-padding-top="0px" data-old-padding-bottom="0px" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: open ? 'block' : 'none' }}>
                         <div className={styles.outline_tree_node_children}>
                             {
-                                React.Children.map(this.state.children, (child, i) => {
+                                React.Children.map(this.props.children, (child, i) => {
                                     // console.log("child.props", child.props);
                                     //child.props['leve'] = leve + 1;
                                     if (child.props.children && child.props.children.length > 0) {
@@ -158,12 +172,12 @@ class TreeNode extends Component {
             let isLeaf = true;
             return (
                 <div className={className} key={key}>
-                    <div className={`${styles.outline_tree_node_content}`} style={{ paddingLeft: (leve * 23) + 'px' }}>
+                    <div className={`${styles.outline_tree_node_content}`} style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
                         {
                             icon ?
                                 icon
                                 :
-                                <span className={`${styles.outline_tree_line_node_dot} ${type == 'milestone' ? styles.milestoneNode : styles.taskNode}`}></span>
+                                <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
                         }
 
                         {
@@ -200,164 +214,6 @@ class TreeNode extends Component {
         }
     }
 }
-
-
-// class index extends Component {
-//     render() {
-//         return (
-//             <div className={styles.outline_tree}>
-//                 <div className={`${styles.outline_tree_node} ${styles.leve_0} ${styles.expanded}`}>
-//                     <div className={`${styles.outline_tree_node_content}`} style={{ paddingLeft: '0px' }}>
-//                         <span className={`${styles.outline_tree_line_node_dot} ${styles.milestoneNode}`}></span>
-//                         <span className={`${styles.outline_tree_node_expand_icon} ${styles.expanded}`}></span>
-//                         <span className={styles.outline_tree_node_label}>一级 1</span>
-//                     </div>
-//                     <div className={styles.collapse_transition} data-old-padding-top="0px" data-old-padding-bottom="0px" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
-//                         <div className={styles.outline_tree_node_children}>
-//                             <div className={`${styles.outline_tree_node} ${styles.leve_1} ${styles.expanded}`}>
-//                                 <div className={styles.outline_tree_node_content} style={{ paddingLeft: '23px' }}>
-//                                     <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
-//                                     <span className={`${styles.outline_tree_node_expand_icon} ${styles.expanded}`}></span>
-//                                     <span className={styles.outline_tree_node_label}>二级 1-1</span>
-//                                 </div>
-//                                 <div className={styles.collapse_transition} data-old-padding-top="0px" data-old-padding-bottom="0px" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
-//                                     <div className={styles.outline_tree_node_children}>
-//                                         <div className={`${styles.outline_tree_node} ${styles.leve_2}`}>
-//                                             <div className={`${styles.outline_tree_node_content} ${styles.is_leaf}`} style={{ paddingLeft: '46px' }}>
-//                                                 <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
-//                                                 {/* <span className={`${styles.outline_tree_node_expand_icon} ${styles.is_leaf}`}></span> */}
-//                                                 <span className={styles.outline_tree_node_label}>三级 1-1-1</span>
-//                                             </div>
-//                                             <div className={styles.collapse_transition} data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
-//                                                 <div className={styles.outline_tree_node_children}></div>
-//                                             </div>
-//                                         </div>
-//                                         <div className={`${styles.outline_tree_node} ${styles.leve_2}`}>
-//                                             <div className={`${styles.outline_tree_node_content} ${styles.is_leaf}`} style={{ paddingLeft: '46px' }}>
-//                                                 <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
-//                                                 {/* <span className={`${styles.outline_tree_node_expand_icon} ${styles.is_leaf}`}></span> */}
-//                                                 <span className={styles.outline_tree_node_label}>三级 1-1-1</span>
-//                                             </div>
-//                                             <div className={styles.collapse_transition} data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
-//                                                 <div className={styles.outline_tree_node_children}></div>
-//                                             </div>
-//                                         </div>
-//                                         <div className={`${styles.outline_tree_node} ${styles.leve_2}`}>
-//                                             <div className={`${styles.outline_tree_node_content} ${styles.is_leaf}`} style={{ paddingLeft: '46px' }}>
-//                                                 <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
-//                                                 {/* <span className={`${styles.outline_tree_node_expand_icon} ${styles.is_leaf}`}></span> */}
-//                                                 <span className={styles.outline_tree_node_label}>新建任务</span>
-//                                             </div>
-//                                             <div className={styles.collapse_transition} data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
-//                                                 <div className={styles.outline_tree_node_children}></div>
-//                                             </div>
-//                                         </div>
-//                                     </div>
-
-//                                 </div>
-//                             </div>
-
-//                             <div className={`${styles.outline_tree_node} ${styles.leve_1} ${styles.expanded}`}>
-//                                 <div className={styles.outline_tree_node_content} style={{ paddingLeft: '23px' }}>
-//                                     <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
-//                                     <span className={`${styles.outline_tree_node_expand_icon} ${styles.expanded}`}></span>
-//                                     <span className={styles.outline_tree_node_label}>二级 1-1</span>
-//                                 </div>
-//                                 <div className={styles.collapse_transition} data-old-padding-top="0px" data-old-padding-bottom="0px" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
-//                                     <div className={styles.outline_tree_node_children}>
-//                                         <div className={`${styles.outline_tree_node}`}>
-//                                             <div className={`${styles.outline_tree_node_content} ${styles.is_leaf}`} style={{ paddingLeft: '46px' }}>
-//                                                 <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
-//                                                 {/* <span className={`${styles.outline_tree_node_expand_icon} ${styles.is_leaf}`}></span> */}
-//                                                 <span className={styles.outline_tree_node_label}>三级 1-1-1</span>
-//                                             </div>
-//                                             <div className={styles.collapse_transition} data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
-//                                                 <div className={styles.outline_tree_node_children}></div>
-//                                             </div>
-//                                         </div>
-//                                         <div className={`${styles.outline_tree_node}`}>
-//                                             <div className={`${styles.outline_tree_node_content} ${styles.is_leaf}`} style={{ paddingLeft: '46px' }}>
-//                                                 <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
-//                                                 {/* <span className={`${styles.outline_tree_node_expand_icon} ${styles.is_leaf}`}></span> */}
-//                                                 <span className={styles.outline_tree_node_label}>三级 1-1-1</span>
-//                                             </div>
-//                                             <div className={styles.collapse_transition} data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
-//                                                 <div className={styles.outline_tree_node_children}></div>
-//                                             </div>
-//                                         </div>
-//                                         <div className={`${styles.outline_tree_node}`}>
-//                                             <div className={`${styles.outline_tree_node_content} ${styles.is_leaf}`} style={{ paddingLeft: '46px' }}>
-//                                                 <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
-//                                                 {/* <span className={`${styles.outline_tree_node_expand_icon} ${styles.is_leaf}`}></span> */}
-//                                                 <span className={styles.outline_tree_node_label}>新建任务</span>
-//                                             </div>
-//                                             <div className={styles.collapse_transition} data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
-//                                                 <div className={styles.outline_tree_node_children}></div>
-//                                             </div>
-//                                         </div>
-//                                     </div>
-
-//                                 </div>
-//                             </div>
-
-//                             <div className={`${styles.outline_tree_node} ${styles.leve_1} ${styles.expanded}`}>
-//                                 <div className={styles.outline_tree_node_content} style={{ paddingLeft: '23px' }}>
-//                                     <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
-//                                     <span className={`${styles.outline_tree_node_expand_icon} ${styles.expanded}`}></span>
-//                                     <span className={styles.outline_tree_node_label}>二级 1-1</span>
-//                                 </div>
-//                                 <div className={styles.collapse_transition} data-old-padding-top="0px" data-old-padding-bottom="0px" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
-//                                     <div className={styles.outline_tree_node_children}>
-//                                         <div className={`${styles.outline_tree_node}`}>
-//                                             <div className={`${styles.outline_tree_node_content} ${styles.is_leaf}`} style={{ paddingLeft: '46px' }}>
-//                                                 <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
-//                                                 {/* <span className={`${styles.outline_tree_node_expand_icon} ${styles.is_leaf}`}></span> */}
-//                                                 <span className={styles.outline_tree_node_label}>三级 1-1-1</span>
-//                                             </div>
-//                                             <div className={styles.collapse_transition} data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
-//                                                 <div className={styles.outline_tree_node_children}></div>
-//                                             </div>
-//                                         </div>
-//                                         <div className={`${styles.outline_tree_node}`}>
-//                                             <div className={`${styles.outline_tree_node_content} ${styles.is_leaf}`} style={{ paddingLeft: '46px' }}>
-//                                                 <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
-//                                                 {/* <span className={`${styles.outline_tree_node_expand_icon} ${styles.is_leaf}`}></span> */}
-//                                                 <span className={styles.outline_tree_node_label}>三级 1-1-1</span>
-//                                             </div>
-//                                             <div className={styles.collapse_transition} data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
-//                                                 <div className={styles.outline_tree_node_children}></div>
-//                                             </div>
-//                                         </div>
-//                                         <div className={`${styles.outline_tree_node}`}>
-//                                             <div className={`${styles.outline_tree_node_content} ${styles.is_leaf}`} style={{ paddingLeft: '46px' }}>
-//                                                 <span className={`${styles.outline_tree_line_node_dot} ${styles.taskNode}`}></span>
-//                                                 {/* <span className={`${styles.outline_tree_node_expand_icon} ${styles.is_leaf}`}></span> */}
-//                                                 <span className={styles.outline_tree_node_label}>新建任务</span>
-//                                             </div>
-//                                             <div className={styles.collapse_transition} data-old-padding-top="" data-old-padding-bottom="" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: 'block' }}>
-//                                                 <div className={styles.outline_tree_node_children}></div>
-//                                             </div>
-//                                         </div>
-//                                     </div>
-
-//                                 </div>
-//                             </div>
-
-//                         </div>
-//                     </div>
-//                 </div>
-//                 <div className={`${styles.outline_tree_node} ${styles.leve_0}`}>
-//                     <div className={`${styles.outline_tree_node_content}`} style={{ paddingLeft: '0px' }}>
-//                         <span className={`${styles.outline_tree_line_node_dot} ${styles.milestoneNode}`}></span>
-//                         {/* <span className={`${styles.outline_tree_node_expand_icon}`}></span> */}
-//                         <span className={styles.outline_tree_node_label}>一级 1</span>
-//                     </div>
-//                 </div>
-
-//             </div>
-//         )
-//     }
-// }
 
 class MyOutlineTree extends Component {
     render() {

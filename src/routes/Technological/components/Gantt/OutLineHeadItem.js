@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
+import { connect, } from 'dva';
 import { Icon } from 'antd';
 import styles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less';
-
 import OutlineTree from './components/OutlineTree';
-
 const { TreeNode } = OutlineTree;
 
 let demoData = [
@@ -53,7 +52,7 @@ let demoData = [
         id: 104, "name": '报审报批交付', type: 'milestone', open: true, parentId: 0
     }
 ]
-
+@connect(mapStateToProps)
 export default class OutLineHeadItem extends Component {
     state = {
         treeData: demoData
@@ -62,7 +61,7 @@ export default class OutLineHeadItem extends Component {
         console.log('selected', selectedKeys, info);
     };
 
-    onHover = (key, hover) => {
+    onHover = (id, hover) => {
         console.log("大纲:onHover", id, hover);
 
     }
@@ -74,13 +73,43 @@ export default class OutLineHeadItem extends Component {
     onDataProcess = ({ action, param }) => {
         console.log("大纲:onDataProcess", action, param);
     }
-    renderGanttOutLineTree = (treeData, isRoot) => {
-        if (!treeData) {
+    renderGanttOutLineTree = (outline_tree, isRoot) => {
+        if (!outline_tree) {
             return null;
         }
-        console.log("treeData", treeData);
-        if (isRoot) {
-            return (
+        //console.log("outline_tree", outline_tree);
+        return (
+            outline_tree.map((item, index) => {
+                if (item.children && item.children.length > 0) {
+                    return (
+                        <TreeNode key={item.id} nodeValue={item}>
+                            {this.renderGanttOutLineTree(item.children)}
+                            <TreeNode
+                                type={'2'}
+                                placeholder={'新建任务'}
+                                icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
+                                label={<span className={styles.addTask}>新建任务</span>} key={`addTask_${item.id}`}>
+                            </TreeNode>
+                        </TreeNode>
+                    );
+                } else {
+                    return (<TreeNode key={item.id} key={item.id} nodeValue={item}></TreeNode>);
+                }
+
+
+            })
+        );
+    }
+
+
+
+    render() {
+        const { treeData } = this.state;
+        const { outline_tree } = this.props;
+        console.log("outline_tree", outline_tree);
+        return (
+            <div className={styles.outline_wrapper}>
+
                 <OutlineTree
                     showLine={true}
                     showIcon={true}
@@ -92,92 +121,16 @@ export default class OutLineHeadItem extends Component {
                     onHover={this.onHover}
 
                 >
-                    {
-                        treeData.map((item, index) => {
-                            if (item.children && item.children.length > 0) {
-                                return (
-                                    <TreeNode type={item.type} title={item.name} key={item.id}  id={item.id}>
-                                        {this.renderGanttOutLineTree(item.children)}
-                                        <TreeNode
-                                            placeholder={'新建任务'}
-                                            type={'task'}
-                                            icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
-                                            switcherIcon={<span></span>}
-                                            label={<span className={styles.addTask}>新建任务</span>} key={`addTask_${item.id}`}>
-                                        </TreeNode>
-                                    </TreeNode>
-                                );
-                            } else {
-                                return (
-
-                                    <TreeNode type={item.type} title={item.name} key={item.id} id={item.id}>
-                                    </TreeNode>
-                                );
-                            }
-
-
-                        })
-                    }
+                    {this.renderGanttOutLineTree(outline_tree, true)}
                     <TreeNode
-                        type={'milestone'}
+                        type={'1'}
                         placeholder={'新建里程碑'}
                         icon={<span className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
                         label={<span className={styles.addMilestone}>新建里程碑</span>} key="addMilestone">
-
                     </TreeNode>
+
                 </OutlineTree>
-            );
-        } else {
-            return (
-                treeData.map((item, index) => {
-                    if (item.type == 'task') {
-                        if (item.children && item.children.length > 0) {
-                            return (
-                                <TreeNode type={item.type} title={item.name} key={item.id} id={item.id}>
-                                    {this.renderGanttOutLineTree(item.children)}
-                                    <TreeNode
-                                        placeholder={'新建任务'}
-                                        type={'task'}
-                                        icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
-                                        label={<span className={styles.addTask}>新建任务</span>} key={`addTask_${item.id}`}>
-                                    </TreeNode>
-                                </TreeNode>
-                            );
-                        } else {
-                            return (
-                                <TreeNode type={item.type} title={item.name} key={item.id} id={item.id}>
-                                </TreeNode>
-                            );
-                        }
 
-                    } else {
-                        return (
-                            <TreeNode type={item.type} title={item.name} key={item.id} id={item.id}>
-                                {this.renderGanttOutLineTree(item.children)}
-                                <TreeNode
-                                    placeholder={'新建任务'}
-                                    type={'task'}
-                                    icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
-                                    label={<span className={styles.addTask}>新建任务</span>} key={`addTask_${item.id}`}>
-                                </TreeNode>
-                            </TreeNode>
-                        );
-                    }
-
-                })
-
-
-            );
-        }
-
-
-    }
-
-    render() {
-        const { treeData } = this.state;
-        return (
-            <div className={styles.outline_wrapper}>
-                {this.renderGanttOutLineTree(treeData, true)}
                 <div className={styles.outlineFooter}>
                     <span className={`${styles.actionIcon} ${globalStyles.authTheme}`}>&#xe7ae;</span>
                     <span className={`${styles.actionIcon} ${globalStyles.authTheme}`}>&#xe66f;</span>
@@ -188,3 +141,13 @@ export default class OutLineHeadItem extends Component {
     }
 
 }
+
+//  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
+function mapStateToProps({
+    gantt: { datas: { gantt_board_id, group_view_type, outline_tree } },
+    technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, userBoardPermissions } },
+    projectDetail: { datas: { projectDetailInfoData = {} } }
+}) {
+    return { currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, projectDetailInfoData, userBoardPermissions, outline_tree }
+}
+
