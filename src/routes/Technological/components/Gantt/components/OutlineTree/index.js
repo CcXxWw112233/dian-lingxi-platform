@@ -149,13 +149,14 @@ class TreeNode extends Component {
                                         <Input value={title}
                                             style={{ width: '100%' }}
                                             onChange={this.onChangeTitle}
+                                            placeholder={placeholder ? placeholder :'请填写任务名称'}
                                             className={`${isTitleEdit ? styles.titleInputFocus : styles.titleInputHover}`}
                                             onFocus={this.toggleTitleEdit}
                                             onBlur={this.toggleTitleEdit}
                                             addonAfter={isTitleEdit ? null : null}
                                             onPressEnter={this.onPressEnter} />
                                         :
-                                        title
+                                        (placeholder ? label : (title?title:'未填写任务名称'))
                                 }
                             </span>
 
