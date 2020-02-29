@@ -75,17 +75,25 @@ class TreeNode extends Component {
         const { nodeValue = {} } = this.state;
 
         let action;
-        if (this.state.placeholder) {
-            action = 'add_' + this.props.type;
+
+        if (this.props.placeholder) {
+            action = 'add_' + (this.props.type == '1' ? 'milestone' : 'task');
         } else {
             action = 'edit_' + (nodeValue.tree_type == '1' ? 'milestone' : 'task');
         }
 
-        this.props.onDataProcess &&
+        if(this.props.onDataProcess){
             this.props.onDataProcess({
                 action,
-                param: { ...nodeValue }
+                param: { ...nodeValue, parentId: this.props.parentId }
             });
+        }
+        //清空
+        if(action.indexOf('add') != -1){
+            this.setState({
+                nodeValue: {}
+            });
+        }
     }
     onChangeTitle = (e) => {
         const { nodeValue = {} } = this.state;
@@ -98,7 +106,7 @@ class TreeNode extends Component {
 
     render() {
         const { isTitleHover, isTitleEdit, nodeValue = {} } = this.state;
-        const { id, name: title, tree_type, is_expand, hover } = nodeValue;
+        const { id, name: title, tree_type, is_expand } = nodeValue;
         const { onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {} } = this.props;
         let type;
         if (tree_type) {
