@@ -349,6 +349,7 @@ export default {
         return new_item
       })
 
+      //console.log('filnaly_outline_tree', filnaly_outline_tree)
       yield put({
         type: 'updateDatas',
         payload: {
