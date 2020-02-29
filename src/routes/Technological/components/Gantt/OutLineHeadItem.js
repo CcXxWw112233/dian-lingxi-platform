@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect, } from 'dva';
-import { Icon, message} from 'antd';
+import { Icon, message } from 'antd';
 import styles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less';
 import OutlineTree from './components/OutlineTree';
@@ -39,12 +39,12 @@ export default class OutLineHeadItem extends Component {
         });
     }
 
-    onExpand = (id, open) => {
-        console.log("大纲:onExpand", id, open);
+    onExpand = (id, is_expand) => {
+        console.log("大纲:onExpand", id, is_expand);
         const { dispatch, outline_tree } = this.props;
         let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, id);
         if (nodeValue) {
-            nodeValue.open = open;
+            nodeValue.is_expand = is_expand;
             this.updateOutLineTreeData(outline_tree);
         } else {
             console.error("OutlineTree.getTreeNodeValue:未查询到节点");
@@ -85,13 +85,13 @@ export default class OutLineHeadItem extends Component {
                             if (isApiResponseOk(res)) {
                                 let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
                                 if (nodeValue) {
-                                    nodeValue.open = open;
+                                    nodeValue.is_expand = is_expand;
                                     this.updateOutLineTreeData(outline_tree);
                                 } else {
                                     console.error("OutlineTree.getTreeNodeValue:未查询到节点");
                                 }
                             } else {
-                                
+
                                 message.error(res.message)
                             }
                         }).catch(err => {
@@ -114,18 +114,24 @@ export default class OutLineHeadItem extends Component {
             outline_tree.map((item, index) => {
                 if (item.children && item.children.length > 0) {
                     return (
-                        <TreeNode key={item.id} nodeValue={item}>
+                        <TreeNode key={index} nodeValue={item}>
                             {this.renderGanttOutLineTree(item.children)}
+                        </TreeNode>
+                    );
+                } else {
+                    if (item.tree_type == 0) {
+                        return (
                             <TreeNode
                                 type={'2'}
                                 placeholder={'新建任务'}
                                 icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
-                                label={<span className={styles.addTask}>新建任务</span>} key={`addTask_${item.id}`}>
+                                label={<span className={styles.addTask}>新建任务</span>} key={`addTask_${item.index}`}>
                             </TreeNode>
-                        </TreeNode>
-                    );
-                } else {
-                    return (<TreeNode key={item.id} key={item.id} nodeValue={item}></TreeNode>);
+                        );
+                    } else {
+                        return (<TreeNode key={index} nodeValue={item}></TreeNode>);
+                    }
+
                 }
 
 
@@ -136,7 +142,7 @@ export default class OutLineHeadItem extends Component {
 
 
     render() {
-        const { outline_tree,outline_hover_obj} = this.props;
+        const { outline_tree, outline_hover_obj } = this.props;
         console.log("outline_tree", outline_tree);
         return (
             <div className={styles.outline_wrapper}>

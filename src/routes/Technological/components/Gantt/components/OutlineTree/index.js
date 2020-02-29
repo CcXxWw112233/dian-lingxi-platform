@@ -11,7 +11,7 @@ class TreeNode extends Component {
             isTitleHover: false,
             isTitleEdit: false,
             nodeValue: {
-                open: true,
+                is_expand: true,
                 hover: false,
                 ...props.nodeValue
             }
@@ -21,12 +21,12 @@ class TreeNode extends Component {
     onChangeExpand = (e) => {
         e.stopPropagation();
         const { nodeValue = {} } = this.state;
-        let { id, open } = nodeValue;
-        open = !open;
+        let { id, is_expand } = nodeValue;
+        is_expand = !is_expand;
         this.setState({
-            nodeValue: { ...nodeValue, open }
+            nodeValue: { ...nodeValue, is_expand }
         });
-        this.props.onExpand(id, open);
+        this.props.onExpand(id, is_expand);
     }
 
     onMouseEnterTitle = () => {
@@ -98,25 +98,26 @@ class TreeNode extends Component {
 
     render() {
         const { isTitleHover, isTitleEdit, nodeValue = {} } = this.state;
-        const { id, name: title, tree_type, open, hover } = nodeValue;
-        const { onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label ,hoverItem={}} = this.props;
+        const { id, name: title, tree_type, is_expand, hover } = nodeValue;
+        const { onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {} } = this.props;
         let type;
         if (tree_type) {
             type = tree_type;
         } else {
             type = this.props.type;
         }
+
         if (this.props.children && this.props.children.length > 0) {
 
-            let className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${isLeaf ? (open ? styles.expanded : '') : ''} `;
+            let className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;
             let isLeaf = false;
             return (
                 <div className={className} key={key}>
-                    <div className={`${styles.outline_tree_node_content} ${hoverItem.id&& hoverItem.id == id ? styles.hover:''}`} style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+                    <div className={`${styles.outline_tree_node_content} ${hoverItem.id && hoverItem.id == id ? styles.hover : ''}`} style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
                         <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
                         {
                             !isLeaf &&
-                            <span className={`${styles.outline_tree_node_expand_icon} ${open ? styles.expanded : ''}`} onClick={this.onChangeExpand}></span>
+                            <span className={`${styles.outline_tree_node_expand_icon} ${is_expand ? styles.expanded : ''}`} onClick={this.onChangeExpand}></span>
                         }
                         <span className={`${styles.outline_tree_node_label} ${isTitleHover ? styles.hoverTitle : ''}`}>
                             {/*<span><span>确定</span><span>取消</span></span> */}
@@ -141,21 +142,21 @@ class TreeNode extends Component {
                         </span>
 
                     </div>
-                    <div className={styles.collapse_transition} data-old-padding-top="0px" data-old-padding-bottom="0px" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: open ? 'block' : 'none' }}>
+                    <div className={styles.collapse_transition} data-old-padding-top="0px" data-old-padding-bottom="0px" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: is_expand ? 'block' : 'none' }}>
                         <div className={styles.outline_tree_node_children}>
                             {
                                 React.Children.map(this.props.children, (child, i) => {
                                     // console.log("child.props", child.props);
                                     //child.props['leve'] = leve + 1;
-                                    if (child.props.children && child.props.children.length > 0) {
+                                    if (child && child.props && child.props.children && child.props.children.length > 0) {
                                         return (
-                                            <TreeNode {...child.props} leve={leve + 1} isLeaf={false} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id}  hoverItem={hoverItem}>
+                                            <TreeNode {...child.props} leve={leve + 1} isLeaf={false} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem}>
                                                 {child.props.children}
                                             </TreeNode>
                                         );
                                     } else {
                                         return (
-                                            <TreeNode {...child.props} leve={leve + 1} isLeaf={true} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem}/>
+                                            <TreeNode {...child.props} leve={leve + 1} isLeaf={true} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem} />
                                         );
                                     }
                                 })
@@ -167,11 +168,11 @@ class TreeNode extends Component {
             );
 
         } else {
-            let className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${isLeaf ? (open ? styles.expanded : '') : ''} `;
+            let className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;
             let isLeaf = true;
             return (
                 <div className={className} key={key}>
-                    <div className={`${styles.outline_tree_node_content} ${hoverItem.id&& hoverItem.id == id ? styles.hover:''}`}  style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+                    <div className={`${styles.outline_tree_node_content} ${hoverItem.id && hoverItem.id == id ? styles.hover : ''}`} style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
                         {
                             icon ?
                                 icon
@@ -180,7 +181,7 @@ class TreeNode extends Component {
                         }
                         {
                             !isLeaf &&
-                            <span className={`${styles.outline_tree_node_expand_icon} ${open ? styles.expanded : ''}`}></span>
+                            <span className={`${styles.outline_tree_node_expand_icon} ${is_expand ? styles.expanded : ''}`}></span>
                         }
                         <span className={`${styles.outline_tree_node_label} ${isTitleHover ? styles.hoverTitle : ''}`}>
                             {/*<span><span>确定</span><span>取消</span></span> */}
@@ -202,8 +203,14 @@ class TreeNode extends Component {
                                         (placeholder ? label : title)
                                 }
                             </span>
-                            <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
-                            <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe6d9;</span>
+                            {
+                                tree_type &&
+                                <>
+                                    <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
+                                    <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe6d9;</span>
+                                </>
+                            }
+
                         </span>
 
                     </div>
@@ -215,8 +222,8 @@ class TreeNode extends Component {
 
 class MyOutlineTree extends Component {
     render() {
-        const { onDataProcess, onExpand, onHover,hoverItem} = this.props;
-     
+        const { onDataProcess, onExpand, onHover, hoverItem } = this.props;
+
         return (
             <div className={styles.outline_tree}>
                 {
