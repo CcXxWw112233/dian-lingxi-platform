@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { connect, } from 'dva';
-import { Icon } from 'antd';
+import { Icon, message} from 'antd';
 import styles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less';
 import OutlineTree from './components/OutlineTree';
+import { updateTask, changeTaskType } from '../../../../services/technological/task'
 const { TreeNode } = OutlineTree;
 @connect(mapStateToProps)
 export default class OutLineHeadItem extends Component {
@@ -52,7 +53,7 @@ export default class OutLineHeadItem extends Component {
     }
     onDataProcess = ({ action, param }) => {
         console.log("大纲:onDataProcess", action, param);
-        const { dispatch, outline_tree } = this.props;
+        const { dispatch, gantt_board_id, outline_tree } = this.props;
         switch (action) {
             case 'add_milestone':
                 {
@@ -69,21 +70,38 @@ export default class OutLineHeadItem extends Component {
 
                 }
                 break;
-            case 'edit_2task':
+            case 'edit_task':
                 {
+                    let updateParams = {};
+                    updateParams.card_id = param.id;
+                    updateParams.name = param.name;
+                    updateParams.board_id = gantt_board_id;
+                    // if (param.name) {
 
+                    // }
+
+                    updateTask({ ...updateParams }, { isNotLoading: false })
+                        .then(res => {
+                            if (isApiResponseOk(res)) {
+                                let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
+                                if (nodeValue) {
+                                    nodeValue.open = open;
+                                    this.updateOutLineTreeData(outline_tree);
+                                } else {
+                                    console.error("OutlineTree.getTreeNodeValue:未查询到节点");
+                                }
+                            } else {
+                                
+                                message.error(res.message)
+                            }
+                        }).catch(err => {
+                            message.error('更新失败')
+                        })
                 }
                 break;
             default:
                 ;
 
-        }
-        let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, id);
-        if (nodeValue) {
-            nodeValue.open = open;
-            this.updateOutLineTreeData(outline_tree);
-        } else {
-            console.error("OutlineTree.getTreeNodeValue:未查询到节点");
         }
 
     }
@@ -118,20 +136,18 @@ export default class OutLineHeadItem extends Component {
 
 
     render() {
-        const { outline_tree } = this.props;
+        const { outline_tree,outline_hover_obj} = this.props;
         console.log("outline_tree", outline_tree);
         return (
             <div className={styles.outline_wrapper}>
 
                 <OutlineTree
-                    showLine={true}
-                    showIcon={true}
-                    switcherIcon={<span><Icon type="down" /></span>}
                     // defaultExpandedKeys={['0-0-0']}
                     onSelect={this.onSelect}
                     onDataProcess={this.onDataProcess}
                     onExpand={this.onExpand}
                     onHover={this.onHover}
+                    hoverItem={outline_hover_obj}
 
                 >
                     {this.renderGanttOutLineTree(outline_tree, true)}
@@ -161,6 +177,6 @@ function mapStateToProps({
     technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, userBoardPermissions } },
     projectDetail: { datas: { projectDetailInfoData = {} } }
 }) {
-    return { currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, projectDetailInfoData, userBoardPermissions, outline_tree }
+    return { currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, projectDetailInfoData, userBoardPermissions, outline_tree, outline_hover_obj }
 }
 
