@@ -136,7 +136,7 @@ export default class GetRowStrip extends Component {
         this.changeOutLineTreeNodeProto(
             id, {
             start_time: timestamp,
-            due_time: timestamp + time_span * 24 * 60 * 60 * 1000
+            due_time: timestamp + time_span * 24 * 60 * 60 * 1000 - 1000
         }
         )
     }
