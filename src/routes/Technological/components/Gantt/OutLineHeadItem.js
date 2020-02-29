@@ -96,6 +96,7 @@ export default class OutLineHeadItem extends Component {
                     let updateParams = {};
                     updateParams.id = param.id;
                     updateParams.name = param.name;
+                    updateParams.time_span = param.time_span;
                     updateParams.board_id = gantt_board_id;
 
                     // updateMilestone{ ...updateParams }, { isNotLoading: false })
@@ -104,6 +105,7 @@ export default class OutLineHeadItem extends Component {
                     let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
                     if (nodeValue) {
                         nodeValue.name = param.name;
+                        nodeValue.time_span = param.time_span;
                         this.updateOutLineTreeData(outline_tree);
                     } else {
                         console.error("OutlineTree.getTreeNodeValue:未查询到节点");
@@ -165,13 +167,14 @@ export default class OutLineHeadItem extends Component {
                     updateParams.card_id = param.id;
                     updateParams.card_name = param.name;
                     updateParams.board_id = gantt_board_id;
-
+                    updateParams.time_span = param.time_span;
                     // updateTask({ ...updateParams }, { isNotLoading: false })
                     //     .then(res => {
                     //         if (isApiResponseOk(res)) {
                     let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
                     if (nodeValue) {
                         nodeValue.name = param.name;
+                        nodeValue.time_span = param.time_span;
                         this.updateOutLineTreeData(outline_tree);
                     } else {
                         console.error("OutlineTree.getTreeNodeValue:未查询到节点");
