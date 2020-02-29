@@ -53,20 +53,109 @@ export default class OutLineHeadItem extends Component {
     }
     onDataProcess = ({ action, param }) => {
         console.log("大纲:onDataProcess", action, param);
-        const { dispatch, gantt_board_id, outline_tree } = this.props;
+        const { dispatch, gantt_board_id } = this.props;
+        let { outline_tree = [] } = this.props;
         switch (action) {
             case 'add_milestone':
                 {
+                
+                    let updateParams = {};
+                    updateParams.parent_id = param.parentId;
+                    updateParams.name = param.name;
+                    updateParams.board_id = gantt_board_id;
+
+                    // addMilestone({ ...updateParams }, { isNotLoading: false })
+                    //     .then(res => {
+                    //         if (isApiResponseOk(res)) {
+
+
+                    let addNodeValue = {
+                        id: new Date().getTime(),
+                        tree_type: '1',
+                        name: param.name,
+                        is_expand: true,
+                        children:[]
+                    };
+
+                    outline_tree.push(addNodeValue);
+                    
+                    this.updateOutLineTreeData(outline_tree);
+
+                    //     } else {
+
+                    //         message.error(res.message)
+                    //     }
+                    // }).catch(err => {
+                    //     message.error('更新失败')
+                    // })
 
                 }
                 break;
             case 'edit_milestone':
                 {
+                    let updateParams = {};
+                    updateParams.id = param.id;
+                    updateParams.name = param.name;
+                    updateParams.board_id = gantt_board_id;
 
+                    // updateMilestone{ ...updateParams }, { isNotLoading: false })
+                    //     .then(res => {
+                    //         if (isApiResponseOk(res)) {
+                    let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
+                    if (nodeValue) {
+                        nodeValue.name = param.name;
+                        this.updateOutLineTreeData(outline_tree);
+                    } else {
+                        console.error("OutlineTree.getTreeNodeValue:未查询到节点");
+                    }
+                    //     } else {
+
+                    //         message.error(res.message)
+                    //     }
+                    // }).catch(err => {
+                    //     message.error('更新失败')
+                    // })
                 }
                 break;
             case 'add_task':
                 {
+
+                    let updateParams = {};
+                    updateParams.parent_id = param.parentId;
+                    updateParams.card_name = param.name;
+                    updateParams.board_id = gantt_board_id;
+
+                    // addTask({ ...updateParams }, { isNotLoading: false })
+                    //     .then(res => {
+                    //         if (isApiResponseOk(res)) {
+                    let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.parentId);
+
+                    let addNodeValue = {
+                        id: new Date().getTime(),
+                        tree_type: '2',
+                        name: param.name,
+                        is_expand: true,
+                        children:[]
+                    };
+
+                    let children = nodeValue.children || [];
+                    if (children.length > 0) {
+                        const index = children.findIndex((item) => item.tree_type == '0');
+                        children.splice(index, 0, addNodeValue);
+                    } else {
+                        children.push(addNodeValue);
+                    }
+
+                    nodeValue.children = children;
+                    this.updateOutLineTreeData(outline_tree);
+
+                    //     } else {
+
+                    //         message.error(res.message)
+                    //     }
+                    // }).catch(err => {
+                    //     message.error('更新失败')
+                    // })
 
                 }
                 break;
@@ -74,29 +163,26 @@ export default class OutLineHeadItem extends Component {
                 {
                     let updateParams = {};
                     updateParams.card_id = param.id;
-                    updateParams.name = param.name;
+                    updateParams.card_name = param.name;
                     updateParams.board_id = gantt_board_id;
-                    // if (param.name) {
 
-                    // }
+                    // updateTask({ ...updateParams }, { isNotLoading: false })
+                    //     .then(res => {
+                    //         if (isApiResponseOk(res)) {
+                    let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
+                    if (nodeValue) {
+                        nodeValue.name = param.name;
+                        this.updateOutLineTreeData(outline_tree);
+                    } else {
+                        console.error("OutlineTree.getTreeNodeValue:未查询到节点");
+                    }
+                    //     } else {
 
-                    updateTask({ ...updateParams }, { isNotLoading: false })
-                        .then(res => {
-                            if (isApiResponseOk(res)) {
-                                let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
-                                if (nodeValue) {
-                                    nodeValue.is_expand = is_expand;
-                                    this.updateOutLineTreeData(outline_tree);
-                                } else {
-                                    console.error("OutlineTree.getTreeNodeValue:未查询到节点");
-                                }
-                            } else {
-
-                                message.error(res.message)
-                            }
-                        }).catch(err => {
-                            message.error('更新失败')
-                        })
+                    //         message.error(res.message)
+                    //     }
+                    // }).catch(err => {
+                    //     message.error('更新失败')
+                    // })
                 }
                 break;
             default:
