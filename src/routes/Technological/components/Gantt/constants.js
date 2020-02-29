@@ -420,7 +420,7 @@ export const mock_outline_tree = [
                 "start_time": "",
                 "due_time": "",
                 "time_span": "",
-                "is_expand": true,
+                "is_expand": false,
                 "executors": [],
                 "children": [
                     {

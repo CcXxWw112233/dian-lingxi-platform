@@ -40,10 +40,11 @@ export default class GetRowStrip extends Component {
     // 长条鼠标事件---start
     stripMouseOver = (e) => {
         const { itemValue = {}, dispatch } = this.props
+        const { tree_type, id } = itemValue
         dispatch({
             type: 'gantt/updateDatas',
             payload: {
-                outline_hover_obj: itemValue
+                outline_hover_obj: tree_type == '0' ? {} : { id } //创建那一栏不需要效果
             }
         })
     }
@@ -165,16 +166,16 @@ export default class GetRowStrip extends Component {
         const { is_item_has_time, currentRect = {} } = this.state
         let display = 'none'
         let marginLeft = currentRect.x
-        if(due_time) {
+        if (due_time) {
             display = 'flex'
             marginLeft = left
         } else {
-            if(this.onHoverState()) {
+            if (this.onHoverState()) {
                 display = 'flex'
                 marginLeft = currentRect.x
             }
         }
-     
+
         return (
             <div
                 onClick={this.cardSetClick}
