@@ -567,9 +567,10 @@ export default class GetRowGantt extends Component {
         {/* 渲染大纲视图下的任务 */}
         {
           ganttIsOutlineView({ group_view_type }) && outline_tree_round.map((value, key) => {
-            const { end_time, left, top, id, start_time, tree_type } = value
+            const { end_time, left, top, id, start_time, tree_type, parent_expand, is_expand } = value
+            const juge_expand = (tree_type == '0' || tree_type == '3') ? parent_expand : (parent_expand && is_expand)
             return (
-              (tree_type == '2' || tree_type == "3") && (
+              (tree_type == '2' || tree_type == "3") && parent_expand && (
                 <GetRowTaskItem
                   key={`${id}_${start_time}_${end_time}_${left}_${top}`}
                   itemValue={value}
@@ -593,8 +594,9 @@ export default class GetRowGantt extends Component {
             // return (
             //   this.renderStripSc({ list_data, list_id, list_group_key: key })
             // )
-            const { id, top } = value
-            return (
+            const { id, top, parent_expand, is_expand, tree_type } = value
+            const juge_expand = (tree_type == '0' || tree_type == '3') ? parent_expand : (parent_expand && is_expand)
+            return parent_expand && (
               <React.Fragment key={`${id}_${top}`}>
                 <GetRowStrip itemValue={value} ></GetRowStrip>
               </React.Fragment>

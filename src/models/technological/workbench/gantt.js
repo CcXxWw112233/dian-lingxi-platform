@@ -312,7 +312,7 @@ export default {
       }
       let new_outline_tree = [...data]
       const filnaly_outline_tree = new_outline_tree.map(item => {
-        let new_item = { ...item }
+        let new_item = { ...item, parent_expand: true }
         const { tree_type, children = [], is_expand } = item
         let new_item_children = [...item.children]
         const added = new_item_children.find(item => item.tree_type == '0') //表示是否已经添加过虚拟节点
@@ -341,7 +341,6 @@ export default {
         return new_item
       })
 
-      console.log('filnaly_outline_tree', filnaly_outline_tree)
       yield put({
         type: 'updateDatas',
         payload: {
@@ -366,6 +365,7 @@ export default {
       for (let val of filnaly_outline_tree) {
         recusion(val)
       }
+      arr = arr.filter(item => item.parent_expand)
       arr = arr.map((item, key) => {
         let new_item = {}
         const { tree_type } = item //  里程碑/任务/子任务/虚拟占位 1/2/3/4
@@ -419,7 +419,8 @@ export default {
           outline_tree_round: arr
         }
       })
-      console.log('ssssss_tree', arr)
+      console.log('filnaly_outline_tree', filnaly_outline_tree)
+      console.log('filnaly_outline_tree2', arr)
     },
 
     * handleListGroup({ payload }, { select, call, put }) {
