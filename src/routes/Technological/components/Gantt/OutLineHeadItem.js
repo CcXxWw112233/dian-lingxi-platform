@@ -229,7 +229,7 @@ export default class OutLineHeadItem extends Component {
 
     render() {
         const { outline_tree, outline_hover_obj } = this.props;
-        console.log("outline_tree", outline_tree);
+        //console.log("outline_tree", outline_tree);
         return (
             <div className={styles.outline_wrapper}>
 

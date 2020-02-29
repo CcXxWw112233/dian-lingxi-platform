@@ -91,11 +91,11 @@
   position   : absolute;
   left       : 53px;
   width      : 1px;
-  height     : calc(~"100% - 18px");
-  margin     : 28px 0 0;
+  height     : calc(~"100%");
+  margin     : 29px 0 0;
   border-left: 1px solid #d9d9d9;
   content    : ' ';
-  z-index    : 2
+  z-index    : 9
 }
 
 // .outline_tree_node.leve_2:first-child::before {
@@ -204,7 +204,10 @@
 }
 
 .title {
+  display: inline-block;
   flex: auto;
+  min-width: 100px;
+  min-height: 10px;
 }
 
 .editIcon {

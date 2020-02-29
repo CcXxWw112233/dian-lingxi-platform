@@ -104,11 +104,23 @@ class TreeNode extends Component {
         });
     }
 
-
+    onManHourChange = (value) => {
+        const { nodeValue = {} } = this.state;
+        this.setState({
+            nodeValue: { ...nodeValue, time_span: value }
+        });
+        
+        if (this.props.onDataProcess) {
+            this.props.onDataProcess({
+                action,
+                param: { ...nodeValue, parentId: this.props.parentId }
+            });
+        }
+    }
 
     render() {
         const { isTitleHover, isTitleEdit, nodeValue = {} } = this.state;
-        const { id, name: title, tree_type, is_expand } = nodeValue;
+        const { id, name: title, tree_type, is_expand, time_span } = nodeValue;
         const { onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {} } = this.props;
         let type;
         if (tree_type) {
@@ -149,7 +161,7 @@ class TreeNode extends Component {
 
                             <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
 
-                            <Popover placement="bottom" content={<ManhourSet onChange={() => { }} />} title={<div style={{ textAlign: 'center', height: '36px', lineHeight: '36px', fontWeight: '600' }}>花费时间</div>} trigger="click">
+                            <Popover placement="bottom" content={<ManhourSet onChange={this.onManHourSet} />} title={<div style={{ textAlign: 'center', height: '36px', lineHeight: '36px', fontWeight: '600' }}>花费时间</div>} trigger="click">
                                 <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe6d9;</span>
                             </Popover>
                         </span>
@@ -205,7 +217,7 @@ class TreeNode extends Component {
                                             <Input value={title}
                                                 style={{ width: '100%' }}
                                                 onChange={this.onChangeTitle}
-                                                placeholder={placeholder ? placeholder : ''}
+                                                placeholder={placeholder ? placeholder :'请填写任务名称'}
                                                 className={`${isTitleEdit ? styles.titleInputFocus : styles.titleInputHover}`}
                                                 onFocus={this.toggleTitleEdit}
                                                 onBlur={this.toggleTitleEdit}
@@ -213,14 +225,20 @@ class TreeNode extends Component {
                                                 onPressEnter={this.onPressEnter} />
                                         </span>
                                         :
-                                        (placeholder ? label : title)
+                                        (placeholder ? label : (title?title:'未填写任务名称'))
                                 }
                             </span>
                             {
                                 tree_type &&
                                 <>
                                     <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
-                                    <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe6d9;</span>
+                                    {
+                                        time_span ?
+                                            <span className={`${styles.editIcon}`}>{time_span}天</span>
+                                            :
+                                            <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe6d9;</span>
+                                    }
+
                                 </>
                             }
 
