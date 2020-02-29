@@ -3,6 +3,7 @@ import { connect } from 'dva'
 import styles from './index.less'
 import { task_item_margin_top, date_area_height, ceil_height } from '../../constants';
 import globalStyles from '@/globalset/css/globalClassName.less'
+import OutlineTree from '../OutlineTree';
 
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
 const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
@@ -132,40 +133,45 @@ export default class GetRowStrip extends Component {
         const { timestamp } = date
         const { itemValue = {} } = this.props
         const { id, time_span = 1 } = itemValue
-        this.handleSetCard({
-            card_id: id,
+        this.changeOutLineTreeNodeProto(
+            id, {
             start_time: timestamp,
             due_time: timestamp + time_span * 24 * 60 * 60 * 1000
-        })
+        }
+        )
     }
     // 渲染任务滑块 --end
 
     // 点击任务将该任务设置时间
-    handleSetCard = ({ card_id, start_time, due_time }) => {
-        const { dispatch, list_group = [], list_id } = this.props
-        const list_group_new = [...list_group]
-        let belong_group_name = 'cards'
-
-        const group_index = list_group_new.findIndex(item => item.lane_id == list_id)
-        const group_index_cards_index = list_group_new[group_index].lane_data[belong_group_name].findIndex(item => item.id == card_id)
-        list_group_new[group_index].lane_data[belong_group_name][group_index_cards_index]['start_time'] = start_time
-        list_group_new[group_index].lane_data[belong_group_name][group_index_cards_index]['due_time'] = due_time
-
-        dispatch({
-            type: 'gantt/handleListGroup',
-            payload: {
-                data: list_group_new
-            }
-        })
+    changeOutLineTreeNodeProto = (id, data = {}) => {
+        let { dispatch, outline_tree } = this.props;
+        let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, id);
+        const mapSetProto = (data) => {
+            Object.keys(data).map(item => {
+                nodeValue[item] = data[item]
+            })
+        }
+        if (nodeValue) {
+            mapSetProto(data)
+            dispatch({
+                type: 'gantt/handleOutLineTreeData',
+                payload: {
+                    data: outline_tree
+                }
+            });
+        } else {
+            console.error("OutlineTree.getTreeNodeValue:未查询到节点");
+        }
     }
 
     //渲染里程碑设置---start
     renderMilestoneSet = () => {
-        const { itemValue = {}, group_list_area, list_group_key } = this.props
+        const { itemValue = {}, group_list_area, list_group_key, ceilWidth } = this.props
         const { id, name, due_time, left, expand_length } = itemValue
         const { is_item_has_time, currentRect = {} } = this.state
         let display = 'none'
         let marginLeft = currentRect.x
+        let paddingLeft = 0
         if (due_time) {
             display = 'flex'
             marginLeft = left
@@ -173,16 +179,18 @@ export default class GetRowStrip extends Component {
             if (this.onHoverState()) {
                 display = 'flex'
                 marginLeft = currentRect.x
+                paddingLeft = ceilWidth
             }
         }
 
         return (
             <div
-                onClick={this.cardSetClick}
+                onClick={this.milestoneSetClick}
                 className={styles.will_set_item_milestone}
                 style={{
                     display,
-                    marginLeft
+                    marginLeft,
+                    paddingLeft
                 }}>
                 <div
                     style={{
@@ -194,6 +202,18 @@ export default class GetRowStrip extends Component {
 
                 <div className={styles.name}>{name}</div>
             </div>
+        )
+    }
+    milestoneSetClick = () => {
+        const date = this.calHoverDate()
+        const { timestamp } = date
+        const { itemValue = {} } = this.props
+        const { id, time_span = 1 } = itemValue
+        this.changeOutLineTreeNodeProto(
+            id, {
+            start_time: timestamp,
+            due_time: timestamp + time_span * 24 * 60 * 60 * 1000
+        }
         )
     }
     //渲染里程碑设置---end
@@ -226,6 +246,7 @@ function mapStateToProps({ gantt: {
     datas: {
         date_arr_one_level = [],
         outline_hover_obj,
+        outline_tree = [],
         ceiHeight, ceilWidth,
         list_group, group_list_area
     } },
@@ -234,6 +255,7 @@ function mapStateToProps({ gantt: {
         date_arr_one_level,
         outline_hover_obj,
         ceiHeight, ceilWidth,
+        outline_tree,
         list_group, group_list_area
     }
 }

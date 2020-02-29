@@ -328,6 +328,10 @@ export default class GetRowGantt extends Component {
     if (top == undefined || top == null) {
       return
     }
+    const { group_view_type } = this.props
+    if (ganttIsOutlineView({ group_view_type })) {
+      return Promise.resolve({ current_list_group_id: 0 })
+    }
     const getSum = (total, num) => {
       return total + num;
     }
@@ -578,6 +582,7 @@ export default class GetRowGantt extends Component {
                   ganttPanelDashedDrag={this.isDragging}
                   getCurrentGroup={this.getCurrentGroup}
                   // list_id={list_id}
+                  changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
                   task_is_dragging={this.task_is_dragging}
                   setGoldDateArr={this.props.setGoldDateArr}
                   setScrollPosition={this.props.setScrollPosition}

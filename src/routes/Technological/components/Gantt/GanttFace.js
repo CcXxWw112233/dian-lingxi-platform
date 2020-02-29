@@ -23,7 +23,7 @@ import GetRowGanttItemElse from './GetRowGanttItemElse'
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
 export default class GanttFace extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       timer: null,
@@ -300,6 +300,7 @@ export default class GanttFace extends Component {
                     style={{ height: date_area_height }} //撑住DateList相同高度的底部
                   />
                   <GetRowGantt
+                    changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
                     is_need_calculate_left_dx={is_need_calculate_left_dx}
                     gantt_card_height={gantt_card_height}
                     dataAreaRealHeight={dataAreaRealHeight}
