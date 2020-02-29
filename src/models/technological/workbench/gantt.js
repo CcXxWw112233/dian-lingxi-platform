@@ -309,12 +309,14 @@ export default {
         "id": "0",
         "name": "0",
         "tree_type": "0",
+        "is_expand": true
       }
       let new_outline_tree = [...data]
       const filnaly_outline_tree = new_outline_tree.map(item => {
         let new_item = { ...item, parent_expand: true }
         const { tree_type, children = [], is_expand } = item
         let new_item_children = [...item.children]
+        let child_expand_length = 0 //第一级父节点下所有子孙元素展开的总长
         const added = new_item_children.find(item => item.tree_type == '0') //表示是否已经添加过虚拟节点
         if ((tree_type == '1' || tree_type == '2') && !added) { //是里程碑或者一级任务,并且没有添加过
           new_item_children.push(visual_add_item) //添加虚拟节点
@@ -324,19 +326,25 @@ export default {
           const tree_type2 = item2.tree_type
           const children2 = item2.children || []
           let new_item_children2 = [...children2]
+          const is_expand2 = item2.is_expand
+          if (is_expand) {
+            child_expand_length += 1
+          }
           const added2 = new_item_children2.find(item => item.tree_type == '0') //表示是否已经添加过虚拟节点
           if ((tree_type2 == '1' || tree_type2 == '2') && !added2) { //是里程碑或者一级任务
             new_item_children2.push(visual_add_item) //添加虚拟节点
           }
           new_item_children2 = new_item_children2.map(item3 => {
             let new_item3 = { ...item3, parent_expand: new_item2.parent_expand && new_item2.is_expand }
-
+            if (is_expand && is_expand2) {
+              child_expand_length += 1
+            }
             return new_item3
           })
           new_item2.children = new_item_children2
           return new_item2
         })
-
+        new_item.expand_length = child_expand_length + 1 //子孙节点展开的长度加上自身
         new_item.children = new_item_children
         return new_item
       })
@@ -419,8 +427,11 @@ export default {
           outline_tree_round: arr
         }
       })
-      console.log('filnaly_outline_tree', filnaly_outline_tree)
-      console.log('filnaly_outline_tree2', arr)
+      // console.log('filnaly_outline_tree', filnaly_outline_tree)
+      // console.log('filnaly_outline_tree2', arr)
+      // console.log('filnaly_outline_tree1', filnaly_outline_tree[0].expand_length)
+      // console.log('filnaly_outline_tree2', filnaly_outline_tree[1].expand_length)
+
     },
 
     * handleListGroup({ payload }, { select, call, put }) {

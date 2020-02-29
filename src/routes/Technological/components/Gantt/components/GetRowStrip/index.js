@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'dva'
 import styles from './index.less'
-import { task_item_margin_top, date_area_height } from '../../constants';
+import { task_item_margin_top, date_area_height, ceil_height } from '../../constants';
 import globalStyles from '@/globalset/css/globalClassName.less'
 
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
@@ -162,7 +162,7 @@ export default class GetRowStrip extends Component {
     //渲染里程碑设置---start
     renderMilestoneSet = () => {
         const { itemValue = {}, group_list_area, list_group_key } = this.props
-        const { id, name, due_time, left } = itemValue
+        const { id, name, due_time, left, expand_length } = itemValue
         const { is_item_has_time, currentRect = {} } = this.state
         let display = 'none'
         let marginLeft = currentRect.x
@@ -186,7 +186,7 @@ export default class GetRowStrip extends Component {
                 }}>
                 <div
                     style={{
-                        height: group_list_area[list_group_key] - 11 - 80
+                        height: (expand_length - 0.5) * ceil_height
                     }}
                     className={styles.board_miletiones_flagpole}>
                 </div>
