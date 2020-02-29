@@ -78,7 +78,7 @@ class TreeNode extends Component {
         if (this.state.placeholder) {
             action = 'add_' + this.props.type;
         } else {
-            action = 'edit_' + nodeValue.tree_type == '1' ? 'milestone' : 'task';
+            action = 'edit_' + (nodeValue.tree_type == '1' ? 'milestone' : 'task');
         }
 
         this.props.onDataProcess &&
@@ -99,7 +99,7 @@ class TreeNode extends Component {
     render() {
         const { isTitleHover, isTitleEdit, nodeValue = {} } = this.state;
         const { id, name: title, tree_type, open, hover } = nodeValue;
-        const { onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label } = this.props;
+        const { onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label ,hoverItem={}} = this.props;
         let type;
         if (tree_type) {
             type = tree_type;
@@ -112,7 +112,7 @@ class TreeNode extends Component {
             let isLeaf = false;
             return (
                 <div className={className} key={key}>
-                    <div className={`${styles.outline_tree_node_content}`} style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+                    <div className={`${styles.outline_tree_node_content} ${hoverItem.id&& hoverItem.id == id ? styles.hover:''}`} style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
                         <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
                         {
                             !isLeaf &&
@@ -149,13 +149,13 @@ class TreeNode extends Component {
                                     //child.props['leve'] = leve + 1;
                                     if (child.props.children && child.props.children.length > 0) {
                                         return (
-                                            <TreeNode {...child.props} leve={leve + 1} isLeaf={false} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id}>
+                                            <TreeNode {...child.props} leve={leve + 1} isLeaf={false} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id}  hoverItem={hoverItem}>
                                                 {child.props.children}
                                             </TreeNode>
                                         );
                                     } else {
                                         return (
-                                            <TreeNode {...child.props} leve={leve + 1} isLeaf={true} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} />
+                                            <TreeNode {...child.props} leve={leve + 1} isLeaf={true} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem}/>
                                         );
                                     }
                                 })
@@ -171,7 +171,7 @@ class TreeNode extends Component {
             let isLeaf = true;
             return (
                 <div className={className} key={key}>
-                    <div className={`${styles.outline_tree_node_content}`} style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+                    <div className={`${styles.outline_tree_node_content} ${hoverItem.id&& hoverItem.id == id ? styles.hover:''}`}  style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
                         {
                             icon ?
                                 icon
@@ -215,13 +215,14 @@ class TreeNode extends Component {
 
 class MyOutlineTree extends Component {
     render() {
-        const { onDataProcess, onExpand, onHover } = this.props;
+        const { onDataProcess, onExpand, onHover,hoverItem} = this.props;
+     
         return (
             <div className={styles.outline_tree}>
                 {
                     React.Children.map(this.props.children, (child, i) => {
                         return (
-                            <TreeNode {...child.props} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover}>
+                            <TreeNode {...child.props} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} hoverItem={hoverItem}>
                                 {child.props.children}
                             </TreeNode>
                         );
