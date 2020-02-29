@@ -305,12 +305,46 @@ export default {
       const end_date = yield select(workbench_end_date)
       const ceilWidth = yield select(workbench_ceilWidth)
       const date_arr_one_level = yield select(workbench_date_arr_one_level)
+      const visual_add_item = {
+        "id": "0",
+        "name": "0",
+        "tree_type": "0",
+      }
+      let new_outline_tree = [...data]
+      const filnaly_outline_tree = new_outline_tree.map(item => {
+        let new_item = { ...item }
+        const { tree_type, children = [] } = item
+        let new_item_children = [...item.children]
+        const added = new_item_children.find(item => item.tree_type == '0') //表示是否已经添加过虚拟节点
+        if ((tree_type == '1' || tree_type == '2') && !added) { //是里程碑或者一级任务,并且没有添加过
+          new_item_children.push(visual_add_item)
+        }
+        new_item_children = new_item_children.map(item2 => {
+          let new_item2 = { ...item2 }
+          const tree_type2 = item2.tree_type
+          const children2 =  item2.children || []
+          let new_item_children2 = [...children2]
+          const added2 = new_item_children2.find(item => item.tree_type == '0') //表示是否已经添加过虚拟节点
+          if ((tree_type2 == '1' || tree_type2 == '2') && !added2) { //是里程碑或者一级任务
+            new_item_children2.push(visual_add_item)
+          }
+          new_item2.children = new_item_children2
+          return new_item2
+        })
+
+        new_item.children = new_item_children
+        return new_item
+      })
+
+      console.log('filnaly_outline_tree', filnaly_outline_tree)
       yield put({
         type: 'updateDatas',
         payload: {
-          outline_tree: data
+          outline_tree: filnaly_outline_tree
         }
       })
+
+      // 将数据平铺
       let arr = []
       const recusion = (obj) => { //将树递归平铺成一级
         arr.push(obj)
@@ -329,6 +363,8 @@ export default {
       }
       arr = arr.map((item, key) => {
         let new_item = {}
+        const { tree_type } = item //  里程碑/任务/子任务/虚拟占位 1/2/3/4
+        const cal_left_field = tree_type == '1' ? 'due_time' : 'start_time' //计算起始位置的字段
         item.top = key * ceil_height
         const due_time = getDigit(item['due_time'])
         const start_time = getDigit(item['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
@@ -355,14 +391,16 @@ export default {
           start_time,
           end_time: due_time || getDateInfo(start_time).timestampEnd,
           time_span,
+          width: time_span * ceilWidth,
+          height: task_item_height,
           is_has_start_time: !!getDigit(item['start_time']),
           is_has_end_time: !!getDigit(item['due_time'])
         }
-        if (new_item['start_time'] < date_arr_one_level[0]['timestamp']) { //如果该任务的起始日期在当前查看面板日期之前，就从最左边开始摆放
-          new_item.left = 0
+        if (getDigit(new_item[cal_left_field]) < getDigit(date_arr_one_level[0]['timestamp'])) { //如果该任务的起始日期在当前查看面板日期之前，就从最左边开始摆放
+          new_item.left = -500
         } else {
           for (let k = 0; k < date_arr_one_level.length; k++) {
-            if (isSamDay(item['start_time'], date_arr_one_level[k]['timestamp'])) { //是同一天
+            if (isSamDay(item[cal_left_field], date_arr_one_level[k]['timestamp'])) { //是同一天
               new_item.left = k * ceilWidth
               break
             }
