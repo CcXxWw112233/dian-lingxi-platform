@@ -42,17 +42,18 @@
 }
 
 .outline_tree_node_content {
-  line-height: 60px;
-  height     : 60px;
-  cursor     : pointer;
-  display: flex;
-  justify-items: center;
-  align-items: center;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  line-height   : 40px;
+  height        : 40px;
+  cursor        : pointer;
+  display       : flex;
+  justify-items : center;
+  align-items   : center;
+  // margin-top   : 10px;
+  margin-bottom: 20px;
 }
-.outline_tree_node_content.hover{
-  background:rgba(24,144,255,0.15);
+
+.outline_tree_node_content.hover {
+  background: rgba(24, 144, 255, 0.15);
 }
 
 .outline_tree_node_content>.checkbox,
@@ -65,7 +66,7 @@
 }
 
 .outline_tree_node_content:hover {
-  background:rgba(24,144,255,0.15);
+  background: rgba(24, 144, 255, 0.15);
 }
 
 
@@ -75,7 +76,7 @@
   height       : 8px;
   border-radius: 8px;
   display      : inline-block;
-  margin: 0px 8px 0px 4px;
+  margin       : 0px 8px 0px 4px;
 }
 
 .outline_tree_line_node_dot.milestoneNode {
@@ -91,11 +92,12 @@
   left       : 53px;
   width      : 1px;
   height     : calc(~"100% - 18px");
-  margin     : 40px 0 0;
+  margin     : 28px 0 0;
   border-left: 1px solid #d9d9d9;
   content    : ' ';
   z-index    : 2
 }
+
 // .outline_tree_node.leve_2:first-child::before {
 //   position   : absolute;
 //   left       : 53px;
@@ -113,7 +115,7 @@
   left       : 30px;
   width      : 1px;
   height     : calc(~"100% - 18px");
-  margin     : 40px 0 0;
+  margin     : 28px 0 0;
   border-left: 1px solid #d9d9d9;
   content    : ' ';
   z-index    : 2
@@ -124,7 +126,7 @@
   left       : 8px;
   width      : 1px;
   height     : calc(~"100% - 18px");
-  margin     : 40px 0 0;
+  margin     : 28px 0 0;
   border-left: 1px solid #d9d9d9;
   content    : ' ';
   z-index    : 2
@@ -160,17 +162,18 @@
 }
 
 .outline_tree_node_label {
-  display: inline-block;
-  margin-left:8px;
-  font-size: 14px;
-  flex: auto;
-  display:flex;
+  display      : inline-block;
+  margin-left  : 8px;
+  font-size    : 14px;
+  flex         : auto;
+  display      : flex;
   justify-items: center;
-  align-items: center;
-  margin-right: 8px!important;
+  align-items  : center;
+  margin-right : 8px !important;
 }
-.outline_tree_node_label.hoverTitle{
-  margin-left:4px!important;
+
+.outline_tree_node_label.hoverTitle {
+  margin-left: 4px !important;
 }
 
 .outline_tree_node_loading_icon {
@@ -186,23 +189,33 @@
 .collapse_transition {
   transition: .3s height ease-in-out, .3s padding-top ease-in-out, .3s padding-bottom ease-in-out
 }
-.titleInputHover{
-  border-style: dashed;
+
+.titleInputHover {
+  border-style    : dashed;
   background-color: transparent;
 }
+
 // .titleInputHover:focus{
- 
+
 //   background-color: transparent;
 // }
-.titleInputFocus{
+.titleInputFocus {
   border-style: solid;
 }
 
-.title{
-  flex:auto;
-}
-.editIcon{
-  margin-left:8px;
-  font-size:16px
+.title {
+  flex: auto;
 }
 
+.editIcon {
+  margin-left: 8px;
+  font-size  : 16px;
+}
+
+.manhourSetWrapper {
+  width          : 248px;
+  height         : 66px;
+  display        : flex;
+  align-items    : center;
+  justify-content: center;
+}

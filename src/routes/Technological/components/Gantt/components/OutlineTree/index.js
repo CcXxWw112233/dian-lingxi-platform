@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import styles from './index.less';
 import { Input } from 'antd';
 import globalStyles from '@/globalset/css/globalClassName.less';
+import ManhourSet from './ManhourSet.js';
+import { Popover } from 'antd';
 
 class TreeNode extends Component {
     constructor(props) {
@@ -82,14 +84,14 @@ class TreeNode extends Component {
             action = 'edit_' + (nodeValue.tree_type == '1' ? 'milestone' : 'task');
         }
 
-        if(this.props.onDataProcess){
+        if (this.props.onDataProcess) {
             this.props.onDataProcess({
                 action,
                 param: { ...nodeValue, parentId: this.props.parentId }
             });
         }
         //清空
-        if(action.indexOf('add') != -1){
+        if (action.indexOf('add') != -1) {
             this.setState({
                 nodeValue: {}
             });
@@ -144,9 +146,12 @@ class TreeNode extends Component {
                                         title
                                 }
                             </span>
-                            <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
-                            <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe6d9;</span>
 
+                            <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
+
+                            <Popover placement="bottom" content={<ManhourSet onChange={() => { }} />} title={<div style={{ textAlign: 'center', height: '36px', lineHeight: '36px', fontWeight: '600' }}>花费时间</div>} trigger="click">
+                                <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe6d9;</span>
+                            </Popover>
                         </span>
 
                     </div>
@@ -220,7 +225,6 @@ class TreeNode extends Component {
                             }
 
                         </span>
-
                     </div>
                 </div>
             );
