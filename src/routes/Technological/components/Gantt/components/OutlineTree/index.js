@@ -123,14 +123,31 @@ class TreeNode extends Component {
 
 
     onExecutorTaskChargeChange = (data) => {
-        console.log("onExecutorTaskChargeChange", data);
+        let { nodeValue = {} } = this.state;
         //{selectedKeys: Array(1), key: "1194507125745913856", type: "add"}
-        // if (this.props.onDataProcess) {
-        //     this.props.onDataProcess({
-        //         action,
-        //         param: { ...nodeValue, parentId: this.props.parentId }
-        //     });
-        // }
+        const { selectedKeys, key, type } = data;
+
+        let action = type + '_executor';
+
+        if (!nodeValue.executors) {
+            nodeValue.executors = [];
+        }
+        if (type == 'add') {
+            nodeValue.executors.push(key);
+        }
+        if (type == 'remove') {
+            nodeValue.executors.splice(nodeValue.executors.findIndex((item) => item.id == key));
+        }
+        this.setState({
+            nodeValue
+        });
+        // console.log("kkkknodeValue",nodeValue);
+        if (this.props.onDataProcess) {
+            this.props.onDataProcess({
+                action,
+                param: { ...nodeValue, parentId: this.props.parentId }
+            });
+        }
     }
 
     renderTitle = () => {
@@ -168,29 +185,32 @@ class TreeNode extends Component {
                
                     <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe6d9;</span> */}
 
-                <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode}
-                    overlay={
-                        <MenuSearchPartner
-                            // isInvitation={true}
-                            // inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
-                            invitationType='4'
-                            invitationId={nodeValue.id}
-                            // invitationOrg={org_id}
-                            listData={projectDetailInfoData.data}
-                            keyCode={'user_id'}
-                            searchName={'name'}
-                            currentSelect={executors}
-            
-                            chirldrenTaskChargeChange={this.onExecutorTaskChargeChange}
-                            board_id={gantt_board_id} />
-                    }
-                >
-                    <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
-                </Dropdown>
+
 
                 {
                     tree_type &&
                     <>
+                        <Dropdown trigger={['click']}
+                            overlayClassName={styles.selectExecutors}
+                            overlay={
+                                <MenuSearchPartner
+                                    // isInvitation={true}
+                                    // inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
+
+                                    invitationType='4'
+                                    invitationId={nodeValue.id}
+                                    // invitationOrg={org_id}
+                                    listData={projectDetailInfoData.data}
+                                    keyCode={'user_id'}
+                                    searchName={'name'}
+                                    currentSelect={executors}
+
+                                    chirldrenTaskChargeChange={this.onExecutorTaskChargeChange}
+                                    board_id={gantt_board_id} />
+                            }
+                        >
+                            <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
+                        </Dropdown>
                         <Popover placement="bottom" content={<ManhourSet onChange={this.onManHourChange} />} title={<div style={{ textAlign: 'center', height: '36px', lineHeight: '36px', fontWeight: '600' }}>花费时间</div>} trigger="click">
                             {
                                 time_span ?

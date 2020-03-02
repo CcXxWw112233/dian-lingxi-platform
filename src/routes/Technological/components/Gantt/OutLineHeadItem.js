@@ -74,11 +74,11 @@ export default class OutLineHeadItem extends Component {
                         tree_type: '1',
                         name: param.name,
                         is_expand: true,
-                        children:[]
+                        children: []
                     };
 
                     outline_tree.push(addNodeValue);
-                    
+
                     this.updateOutLineTreeData(outline_tree);
 
                     //     } else {
@@ -137,7 +137,7 @@ export default class OutLineHeadItem extends Component {
                         tree_type: '2',
                         name: param.name,
                         is_expand: true,
-                        children:[]
+                        children: []
                     };
 
                     let children = nodeValue.children || [];
@@ -188,6 +188,60 @@ export default class OutLineHeadItem extends Component {
                     // })
                 }
                 break;
+            case 'add_executor':
+                {
+                    // let updateParams = {};
+                    // updateParams.card_id = param.id;
+                    // updateParams.card_name = param.name;
+                    // updateParams.board_id = gantt_board_id;
+                    // updateParams.time_span = param.time_span;
+                    // // updateTask({ ...updateParams }, { isNotLoading: false })
+                    // //     .then(res => {
+                    // //         if (isApiResponseOk(res)) {
+                    // let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
+                    // if (nodeValue) {
+                    //     nodeValue.name = param.name;
+                    //     nodeValue.time_span = param.time_span;
+                    //     this.updateOutLineTreeData(outline_tree);
+                    // } else {
+                    //     console.error("OutlineTree.getTreeNodeValue:未查询到节点");
+                    // }
+                    // //     } else {
+
+                    // //         message.error(res.message)
+                    // //     }
+                    // // }).catch(err => {
+                    // //     message.error('更新失败')
+                    // // })
+                }
+                break;
+            case 'remove_executor':
+                {
+                    // let updateParams = {};
+                    // updateParams.card_id = param.id;
+                    // updateParams.card_name = param.name;
+                    // updateParams.board_id = gantt_board_id;
+                    // updateParams.time_span = param.time_span;
+                    // // updateTask({ ...updateParams }, { isNotLoading: false })
+                    // //     .then(res => {
+                    // //         if (isApiResponseOk(res)) {
+                    // let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
+                    // if (nodeValue) {
+                    //     nodeValue.name = param.name;
+                    //     nodeValue.time_span = param.time_span;
+                    //     this.updateOutLineTreeData(outline_tree);
+                    // } else {
+                    //     console.error("OutlineTree.getTreeNodeValue:未查询到节点");
+                    // }
+                    // //     } else {
+
+                    // //         message.error(res.message)
+                    // //     }
+                    // // }).catch(err => {
+                    // //     message.error('更新失败')
+                    // // })
+                }
+                break;
             default:
                 ;
 
@@ -231,19 +285,19 @@ export default class OutLineHeadItem extends Component {
 
 
     render() {
-        const {outline_tree, outline_hover_obj,gantt_board_id,projectDetailInfoData} = this.props;
+        const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData } = this.props;
         return (
             <div className={styles.outline_wrapper}>
 
                 <OutlineTree
                     // defaultExpandedKeys={['0-0-0']}
-                    gantt_board_id = {gantt_board_id}
+                    gantt_board_id={gantt_board_id}
                     onSelect={this.onSelect}
                     onDataProcess={this.onDataProcess}
                     onExpand={this.onExpand}
                     onHover={this.onHover}
                     hoverItem={outline_hover_obj}
-                    projectDetailInfoData = {projectDetailInfoData}
+                    projectDetailInfoData={projectDetailInfoData}
                 >
                     {this.renderGanttOutLineTree(outline_tree, true)}
                     <TreeNode
