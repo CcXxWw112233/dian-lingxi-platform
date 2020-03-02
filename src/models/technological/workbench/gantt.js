@@ -185,12 +185,18 @@ export default {
       //   ...setContentFilterParams()
       // })
 
-      const params = {
-        start_time: start_date['timestamp'],
-        end_time: end_date['timestamp'],
-        chart_type: group_view_type,//group_view_type,
-        ...content_filter_params,
+      let params = {
+        chart_type: group_view_type
       }
+      if (!ganttIsOutlineView({ group_view_type })) {
+        params = {
+          start_time: start_date['timestamp'],
+          end_time: end_date['timestamp'],
+          chart_type: group_view_type,//group_view_type,
+          ...content_filter_params,
+        }
+      }
+
       if (gantt_board_id != '0' && gantt_board_id) {
         params.board_id = gantt_board_id
       }
