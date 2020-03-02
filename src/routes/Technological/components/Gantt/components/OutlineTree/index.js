@@ -3,7 +3,7 @@ import styles from './index.less';
 import { Input, Dropdown } from 'antd';
 import globalStyles from '@/globalset/css/globalClassName.less';
 import ManhourSet from './ManhourSet.js';
-import { Popover } from 'antd';
+import { Popover, Avatar } from 'antd';
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 
 class TreeNode extends Component {
@@ -19,6 +19,12 @@ class TreeNode extends Component {
                 ...props.nodeValue
             }
         }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            nodeValue: nextProps.nodeValue
+        });
     }
 
     onChangeExpand = (e) => {
@@ -107,15 +113,16 @@ class TreeNode extends Component {
 
     onManHourChange = (value) => {
         const { nodeValue = {} } = this.state;
+        const newNodeValue = { ...nodeValue, time_span: value };
         this.setState({
-            nodeValue: { ...nodeValue, time_span: value }
+            nodeValue:newNodeValue
         });
-        let action = 'edit_' + (nodeValue.tree_type == '1' ? 'milestone' : 'task');
-        console.log("onManHourChange", value);
+        let action = 'edit_' + (newNodeValue.tree_type == '1' ? 'milestone' : 'task');
+        console.log("onManHourChange", value, action);
         if (this.props.onDataProcess) {
             this.props.onDataProcess({
                 action,
-                param: { ...nodeValue, parentId: this.props.parentId }
+                param: { ...newNodeValue, parentId: this.props.parentId }
             });
         }
     }
@@ -150,6 +157,16 @@ class TreeNode extends Component {
         }
     }
 
+    renderExecutor = (members, executorId) => {
+        const currExecutor = members.find((item) => item.id = executorId);
+        if (currExecutor && currExecutor.avatar) {
+            return (<span><Avatar size={20} src={currExecutor.avatar} /></span>);
+        } else if (currExecutor) {
+            return (<span><Avatar size={20} >{currExecutor.name}</Avatar></span>);
+        }
+        return (<span className={`${styles.editIcon}`}>&#xe7b2;</span>);
+    }
+
     renderTitle = () => {
         const { isTitleHover, isTitleEdit, nodeValue = {} } = this.state;
         const { id, name: title, tree_type, is_expand, time_span, executors = [] } = nodeValue;
@@ -160,6 +177,9 @@ class TreeNode extends Component {
         } else {
             type = this.props.type;
         }
+
+        console.log("time_span",time_span);
+
         return (
             <span className={`${styles.outline_tree_node_label} ${isTitleHover ? styles.hoverTitle : ''}`}>
                 {/*<span><span>确定</span><span>取消</span></span> */}
@@ -208,12 +228,23 @@ class TreeNode extends Component {
                                     board_id={gantt_board_id} />
                             }
                         >
-                            <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
+                            {
+                                executors && executors.length > 0 ?
+                                    <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>
+                                        {
+                                            this.renderExecutor(projectDetailInfoData.data, executors[0])
+
+                                        }
+                                    </span>
+                                    :
+                                    <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
+                            }
+
                         </Dropdown>
-                        <Popover placement="bottom" content={<ManhourSet onChange={this.onManHourChange} />} title={<div style={{ textAlign: 'center', height: '36px', lineHeight: '36px', fontWeight: '600' }}>花费时间</div>} trigger="click">
+                        <Popover placement="bottom" content={<ManhourSet onChange={this.onManHourChange} value={time_span} />} title={<div style={{ textAlign: 'center', height: '36px', lineHeight: '36px', fontWeight: '600' }}>花费时间</div>} trigger="click">
                             {
                                 time_span ?
-                                    <span className={`${styles.editIcon}`}>{time_span}天</span>
+                                    <span className={`${styles.editTitle}`}>{time_span}天</span>
                                     :
                                     <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe6d9;</span>
                             }
@@ -235,13 +266,14 @@ class TreeNode extends Component {
         } else {
             type = this.props.type;
         }
+        console.log("更新节点", nodeValue);
 
         if (this.props.children && this.props.children.length > 0) {
 
             let className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;
             let isLeaf = false;
             return (
-                <div className={className} key={key}>
+                <div className={className} key={id}>
                     <div className={`${styles.outline_tree_node_content} ${hoverItem.id && hoverItem.id == id ? styles.hover : ''}`} style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
                         <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
                         {
@@ -280,7 +312,7 @@ class TreeNode extends Component {
             let className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;
             let isLeaf = true;
             return (
-                <div className={className} key={key}>
+                <div className={className} key={id}>
                     <div className={`${styles.outline_tree_node_content} ${hoverItem.id && hoverItem.id == id ? styles.hover : ''}`} style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
                         {
                             icon ?
