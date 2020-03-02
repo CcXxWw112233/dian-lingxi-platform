@@ -259,6 +259,7 @@ export default {
     // 转化处理大纲视图数据
     * handleOutLineTreeData({ payload }, { select, call, put }) {
       const { data = [] } = payload
+      console.log("handleOutLineTreeData",data);
       const start_date = yield select(workbench_start_date)
       const end_date = yield select(workbench_end_date)
       const ceilWidth = yield select(workbench_ceilWidth)

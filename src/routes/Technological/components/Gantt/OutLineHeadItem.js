@@ -4,7 +4,8 @@ import { Icon, message } from 'antd';
 import styles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less';
 import OutlineTree from './components/OutlineTree';
-import { updateTask, changeTaskType } from '../../../../services/technological/task';
+import { addTaskInWorkbench,updateTask, changeTaskType } from '../../../../services/technological/task';
+import { isApiResponseOk } from '@/utils/handleResponseData'
 
 const { TreeNode } = OutlineTree;
 @connect(mapStateToProps)
@@ -103,9 +104,11 @@ export default class OutLineHeadItem extends Component {
                     //     .then(res => {
                     //         if (isApiResponseOk(res)) {
                     let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
+
                     if (nodeValue) {
                         nodeValue.name = param.name;
                         nodeValue.time_span = param.time_span;
+
                         this.updateOutLineTreeData(outline_tree);
                     } else {
                         console.error("OutlineTree.getTreeNodeValue:未查询到节点");
@@ -123,41 +126,49 @@ export default class OutLineHeadItem extends Component {
                 {
 
                     let updateParams = {};
+                    updateParams.add_type = 0;
                     updateParams.parent_id = param.parentId;
-                    updateParams.card_name = param.name;
+                    updateParams.name  = param.name;
                     updateParams.board_id = gantt_board_id;
 
-                    // addTask({ ...updateParams }, { isNotLoading: false })
-                    //     .then(res => {
-                    //         if (isApiResponseOk(res)) {
-                    let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.parentId);
-
-                    let addNodeValue = {
-                        id: new Date().getTime(),
-                        tree_type: '2',
-                        name: param.name,
-                        is_expand: true,
-                        children: []
-                    };
-
-                    let children = nodeValue.children || [];
-                    if (children.length > 0) {
-                        const index = children.findIndex((item) => item.tree_type == '0');
-                        children.splice(index, 0, addNodeValue);
-                    } else {
-                        children.push(addNodeValue);
+                    let paraseNodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.parentId);
+                    if(paraseNodeValue && paraseNodeValue.tree_type == '1'){
+                        updateParams.milestone_id = paraseNodeValue.id;
                     }
+                  
+                    addTaskInWorkbench({ ...updateParams }, { isNotLoading: false })
+                        .then(res => {
+                            if (isApiResponseOk(res)) {
+                                let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.parentId);
 
-                    nodeValue.children = children;
-                    this.updateOutLineTreeData(outline_tree);
+                                let addNodeValue = {
+                                    id: new Date().getTime(),
+                                    tree_type: '2',
+                                    name: param.name,
+                                    is_expand: true,
+                                    children: []
+                                };
 
-                    //     } else {
+                                let children = nodeValue.children || [];
+                                if (children.length > 0) {
+                                    const index = children.findIndex((item) => item.tree_type == '0');
+                                    children.splice(index, 0, addNodeValue);
+                                } else {
+                                    children.push(addNodeValue);
+                                }
 
-                    //         message.error(res.message)
-                    //     }
-                    // }).catch(err => {
-                    //     message.error('更新失败')
-                    // })
+                                nodeValue.children = children;
+                                this.updateOutLineTreeData(outline_tree);
+
+                            } else {
+
+                                message.error(res.message)
+                            }
+                        }).catch(err => {
+                            console.error(err);
+                            
+                            message.error('更新失败')
+                        })
 
                 }
                 break;
@@ -286,6 +297,7 @@ export default class OutLineHeadItem extends Component {
 
     render() {
         const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData } = this.props;
+        console.log("刷新了数据", outline_tree);
         return (
             <div className={styles.outline_wrapper}>
 
