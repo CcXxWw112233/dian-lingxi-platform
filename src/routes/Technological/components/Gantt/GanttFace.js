@@ -8,7 +8,7 @@ import { getMonthDate, getNextMonthDatePush, isSamDay, getLastMonthDateShift } f
 import { INPUT_CHANGE_SEARCH_TIME } from "../../../../globalset/js/constant";
 import { getGanttData } from "../../../../services/technological/gantt";
 import { isApiResponseOk } from "../../../../utils/handleResponseData";
-import { date_area_height } from './constants'
+import { date_area_height, ganttIsOutlineView } from './constants'
 import GroupListHeadSet from './GroupListHeadSet.js'
 import ShowFileSlider from './components/boardFile/ShowFileSlider'
 import BoardsFilesArea from './components/boardFile/BoardsFilesArea'
@@ -23,7 +23,7 @@ import GetRowGanttItemElse from './GetRowGanttItemElse'
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
 export default class GanttFace extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       timer: null,
@@ -200,15 +200,25 @@ export default class GanttFace extends Component {
     //更新任务位置信息
     this.beforeHandListGroup()
     const that = this
-    setTimeout(function () {
+    const { group_view_type, outline_tree } = this.props
+    if (!ganttIsOutlineView({ group_view_type })) { //非大纲视图
+      setTimeout(function () {
+        dispatch({
+          type: getEffectOrReducerByName('getGanttData'),
+          payload: {
+            not_set_loading
+          }
+        })
+        that.getHoliday()
+      }, 300)
+    } else {
       dispatch({
-        type: getEffectOrReducerByName('getGanttData'),
+        type: 'gantt/handleOutLineTreeData',
         payload: {
-          not_set_loading
+          data: outline_tree
         }
       })
-      that.getHoliday()
-    }, 300)
+    }
   }
   //拖动日期后预先设置 处理任务排列
   beforeHandListGroup = () => {
@@ -348,7 +358,8 @@ function mapStateToProps({ gantt: { datas: {
   ceiHeight,
   group_view_type,
   gantt_board_id,
-  is_show_board_file_area
+  is_show_board_file_area,
+  outline_tree
 } } }) {
   return {
     ceilWidth,
@@ -362,7 +373,8 @@ function mapStateToProps({ gantt: { datas: {
     ceiHeight,
     group_view_type,
     gantt_board_id,
-    is_show_board_file_area
+    is_show_board_file_area,
+    outline_tree
   }
 }
 GanttFace.defaultProps = {
