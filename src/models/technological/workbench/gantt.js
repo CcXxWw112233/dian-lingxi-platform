@@ -21,7 +21,7 @@ import { getGlobalData } from '../../../utils/businessFunction';
 import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, visual_item, mock_gantt_data, ganttIsOutlineView, mock_outline_tree } from '../../../routes/Technological/components/Gantt/constants';
 import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
-import { handleChangeBoardViewScrollTop } from '../../../routes/Technological/components/Gantt/ganttBusiness';
+import { handleChangeBoardViewScrollTop, setGantTimeSpan } from '../../../routes/Technological/components/Gantt/ganttBusiness';
 
 let dispatches = null
 const getDigit = (timestamp) => {
@@ -65,7 +65,7 @@ export default {
       about_user_boards: [], //带用户的项目列表
 
       gantt_board_id: '0', //"1192342431761305600",//, //甘特图查看的项目id
-      group_view_type: '3', //分组视图1项目， 2成员, 3大纲
+      group_view_type: '1', //分组视图1项目， 2成员, 4大纲
       group_view_filter_boards: [], //内容过滤项目id 列表
       group_view_filter_users: [], //内容过滤职员id 列表
       group_view_boards_tree: [], //内容过滤项目分组树
@@ -185,12 +185,18 @@ export default {
       //   ...setContentFilterParams()
       // })
 
-      const params = {
-        start_time: start_date['timestamp'],
-        end_time: end_date['timestamp'],
-        chart_type: '1',//group_view_type,
-        ...content_filter_params,
+      let params = {
+        chart_type: group_view_type
       }
+      if (!ganttIsOutlineView({ group_view_type })) {
+        params = {
+          start_time: start_date['timestamp'],
+          end_time: end_date['timestamp'],
+          chart_type: group_view_type,//group_view_type,
+          ...content_filter_params,
+        }
+      }
+
       if (gantt_board_id != '0' && gantt_board_id) {
         params.board_id = gantt_board_id
       }
@@ -241,7 +247,7 @@ export default {
           yield put({
             type: 'handleOutLineTreeData',
             payload: {
-              data: mock_outline_tree//res.data
+              data: res.data
             }
           })
         }
@@ -249,54 +255,6 @@ export default {
       } else {
 
       }
-    },
-    // 大纲视图或分组视图先转换
-    * transferDataBeforeHandle({ payload }, { select, call, put }) {
-      const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
-      return
-      // let { data } = payload
-      let data = [...mock_gantt_data]
-      let new_data = []
-      if (group_view_type == '3' || true) {
-        new_data = data.map(item => {
-          const obj = {
-            id: item.lane_id,
-            name: item.lane_name,
-            // due_time: item.lane_end_time,
-            time_span: item.time_span,
-            is_outine_group_head: true,
-          }
-          let new_item = { ...item, ...obj }
-          new_item['lane_data']['cards'] = [].concat([obj], new_item['lane_data']['cards'])
-          let cards = new_item['lane_data']['cards']
-          let cards_tree = cards.filter(item => !item.parent_id)
-          cards_tree = cards_tree.map(cards_item => {
-            let new_cards_item = { ...cards_item, children: [] }
-            for (let val of cards) {
-              if (val['parent_id'] == new_cards_item.id) {
-                new_cards_item.children.push(val)
-              }
-            }
-            return new_cards_item
-          })
-          new_item.cards_tree = cards_tree
-          return new_item
-        })
-        yield put({
-          type: 'handleListGroup',
-          payload: {
-            data: new_data//res.data
-          }
-        })
-      } else {
-        yield put({
-          type: 'handleListGroup',
-          payload: {
-            data: data//res.data
-          }
-        })
-      }
-
     },
     // 转化处理大纲视图数据
     * handleOutLineTreeData({ payload }, { select, call, put }) {
@@ -309,29 +267,65 @@ export default {
         "id": "0",
         "name": "0",
         "tree_type": "0",
+        "is_expand": true
       }
       let new_outline_tree = [...data]
       const filnaly_outline_tree = new_outline_tree.map(item => {
-        let new_item = { ...item }
-        const { tree_type, children = [] } = item
+        let new_item = { ...item, parent_expand: true }
+        const { tree_type, children = [], is_expand } = item
         let new_item_children = [...item.children]
+        let child_expand_length = 0 //第一级父节点下所有子孙元素展开的总长
         const added = new_item_children.find(item => item.tree_type == '0') //表示是否已经添加过虚拟节点
         if ((tree_type == '1' || tree_type == '2') && !added) { //是里程碑或者一级任务,并且没有添加过
-          new_item_children.push(visual_add_item)
+          new_item_children.push(visual_add_item) //添加虚拟节点
         }
+
+        // 时间跨度设置
+        const due_time = getDigit(item['due_time'])
+        const start_time = getDigit(item['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
+        let time_span = item['time_span']
+        time_span = setGantTimeSpan({ time_span, start_time, due_time, start_date, end_date })
+        new_item.time_span = time_span
+
         new_item_children = new_item_children.map(item2 => {
-          let new_item2 = { ...item2 }
+          let new_item2 = { ...item2, parent_expand: is_expand }
           const tree_type2 = item2.tree_type
-          const children2 =  item2.children || []
+          const children2 = item2.children || []
           let new_item_children2 = [...children2]
+          const is_expand2 = item2.is_expand
+
+          // 时间跨度设置
+          const due_time2 = getDigit(item2['due_time'])
+          const start_time2 = getDigit(item2['start_time']) || due_time2 //如果没有开始时间，那就取截止时间当天
+          let time_span2 = item2['time_span']
+          time_span2 = setGantTimeSpan({ time_span2, start_time2, due_time2, start_date, end_date })
+          new_item2.time_span = time_span2
+
+          if (is_expand) {
+            child_expand_length += 1
+          }
           const added2 = new_item_children2.find(item => item.tree_type == '0') //表示是否已经添加过虚拟节点
           if ((tree_type2 == '1' || tree_type2 == '2') && !added2) { //是里程碑或者一级任务
-            new_item_children2.push(visual_add_item)
+            new_item_children2.push(visual_add_item) //添加虚拟节点
           }
+          new_item_children2 = new_item_children2.map(item3 => {
+            let new_item3 = { ...item3, parent_expand: new_item2.parent_expand && new_item2.is_expand }
+            if (is_expand && is_expand2) {
+              child_expand_length += 1
+            }
+            // 时间跨度设置
+            const due_time3 = getDigit(item3['due_time'])
+            const start_time3 = getDigit(item3['start_time']) || due_time3 //如果没有开始时间，那就取截止时间当天
+            let time_span3 = item3['time_span']
+            time_span3 = setGantTimeSpan({ time_span3, start_time3, due_time3, start_date, end_date })
+            new_item3.time_span = time_span3
+
+            return new_item3
+          })
           new_item2.children = new_item_children2
           return new_item2
         })
-
+        new_item.expand_length = child_expand_length + 1 //子孙节点展开的长度加上自身
         new_item.children = new_item_children
         return new_item
       })
@@ -358,9 +352,10 @@ export default {
           }
         }
       }
-      for (let val of data) {
+      for (let val of filnaly_outline_tree) {
         recusion(val)
       }
+      arr = arr.filter(item => item.parent_expand)
       arr = arr.map((item, key) => {
         let new_item = {}
         const { tree_type } = item //  里程碑/任务/子任务/虚拟占位 1/2/3/4
@@ -370,21 +365,7 @@ export default {
         const start_time = getDigit(item['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
 
         let time_span = item['time_span']
-
-        if (!time_span) {
-          if (!due_time || !start_time) {
-            time_span = 1
-          } else {
-            time_span = (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1
-            if (due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
-              time_span = (Math.floor((end_date.timestamp - start_time) / (24 * 3600 * 1000))) + 1
-            } else if (start_time < start_date.timestamp && due_time < end_date.timestamp) { //左区间
-              time_span = (Math.floor((due_time - start_date.timestamp) / (24 * 3600 * 1000))) + 1
-            } else if (due_time > end_date.timestamp && start_time < start_date.timestamp) { //超过左右区间
-              time_span = (Math.floor((end_date.timestamp - start_date.timestamp) / (24 * 3600 * 1000))) + 1
-            }
-          }
-        }
+        // time_span = setGantTimeSpan({ time_span, start_time, due_time, start_date, end_date })
 
         new_item = {
           ...item,
@@ -414,7 +395,11 @@ export default {
           outline_tree_round: arr
         }
       })
-      console.log('ssssss_tree', arr)
+      // console.log('filnaly_outline_tree', filnaly_outline_tree)
+      // console.log('filnaly_outline_tree2', arr)
+      // console.log('filnaly_outline_tree1', filnaly_outline_tree[0].expand_length)
+      // console.log('filnaly_outline_tree2', filnaly_outline_tree[1].expand_length)
+
     },
 
     * handleListGroup({ payload }, { select, call, put }) {
