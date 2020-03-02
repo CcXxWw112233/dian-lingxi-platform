@@ -180,7 +180,7 @@ class TreeNode extends Component {
                             keyCode={'user_id'}
                             searchName={'name'}
                             currentSelect={executors}
-            
+
                             chirldrenTaskChargeChange={this.onExecutorTaskChargeChange}
                             board_id={gantt_board_id} />
                     }
@@ -348,12 +348,31 @@ const getTreeNodeValue = (outline_tree, id) => {
 
 }
 
-
+// 过滤掉指定的树节点(删除树节点)
+const filterTreeNode = (tree, id) => {
+    if (!(tree instanceof Array)) {
+        return tree
+    }
+    const length = tree.length
+    for (let i = 0; i < length; i++) {
+        let el = tree[i]
+        if (el.id == id) {
+            tree.splice(i, 1)
+            break
+        } else {
+            if (el.children && el.children.length) {
+                filterTreeNode(el.children, id)
+            }
+        }
+    }
+    return tree
+}
 
 const OutlineTree = MyOutlineTree;
 //树节点
 OutlineTree.TreeNode = TreeNode;
 //树方法
 OutlineTree.getTreeNodeValue = getTreeNodeValue;
+OutlineTree.filterTreeNode = filterTreeNode
 
 export default OutlineTree;
