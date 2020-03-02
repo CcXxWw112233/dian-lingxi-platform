@@ -21,7 +21,7 @@ import { getGlobalData } from '../../../utils/businessFunction';
 import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, visual_item, mock_gantt_data, ganttIsOutlineView, mock_outline_tree } from '../../../routes/Technological/components/Gantt/constants';
 import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
-import { handleChangeBoardViewScrollTop } from '../../../routes/Technological/components/Gantt/ganttBusiness';
+import { handleChangeBoardViewScrollTop, setGantTimeSpan } from '../../../routes/Technological/components/Gantt/ganttBusiness';
 
 let dispatches = null
 const getDigit = (timestamp) => {
@@ -279,12 +279,28 @@ export default {
         if ((tree_type == '1' || tree_type == '2') && !added) { //是里程碑或者一级任务,并且没有添加过
           new_item_children.push(visual_add_item) //添加虚拟节点
         }
+
+        // 时间跨度设置
+        const due_time = getDigit(item['due_time'])
+        const start_time = getDigit(item['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
+        let time_span = item['time_span']
+        time_span = setGantTimeSpan({ time_span, start_time, due_time, start_date, end_date })
+        new_item.time_span = time_span
+
         new_item_children = new_item_children.map(item2 => {
           let new_item2 = { ...item2, parent_expand: is_expand }
           const tree_type2 = item2.tree_type
           const children2 = item2.children || []
           let new_item_children2 = [...children2]
           const is_expand2 = item2.is_expand
+
+          // 时间跨度设置
+          const due_time2 = getDigit(item2['due_time'])
+          const start_time2 = getDigit(item2['start_time']) || due_time2 //如果没有开始时间，那就取截止时间当天
+          let time_span2 = item2['time_span']
+          time_span2 = setGantTimeSpan({ time_span2, start_time2, due_time2, start_date, end_date })
+          new_item2.time_span = time_span2
+
           if (is_expand) {
             child_expand_length += 1
           }
@@ -297,6 +313,13 @@ export default {
             if (is_expand && is_expand2) {
               child_expand_length += 1
             }
+            // 时间跨度设置
+            const due_time3 = getDigit(item3['due_time'])
+            const start_time3 = getDigit(item3['start_time']) || due_time3 //如果没有开始时间，那就取截止时间当天
+            let time_span3 = item3['time_span']
+            time_span3 = setGantTimeSpan({ time_span3, start_time3, due_time3, start_date, end_date })
+            new_item3.time_span = time_span3
+
             return new_item3
           })
           new_item2.children = new_item_children2
@@ -342,21 +365,7 @@ export default {
         const start_time = getDigit(item['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
 
         let time_span = item['time_span']
-
-        if (!time_span) {
-          if (!due_time || !start_time) {
-            time_span = 1
-          } else {
-            time_span = (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1
-            if (due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
-              time_span = (Math.floor((end_date.timestamp - start_time) / (24 * 3600 * 1000))) + 1
-            } else if (start_time < start_date.timestamp && due_time < end_date.timestamp) { //左区间
-              time_span = (Math.floor((due_time - start_date.timestamp) / (24 * 3600 * 1000))) + 1
-            } else if (due_time > end_date.timestamp && start_time < start_date.timestamp) { //超过左右区间
-              time_span = (Math.floor((end_date.timestamp - start_date.timestamp) / (24 * 3600 * 1000))) + 1
-            }
-          }
-        }
+        // time_span = setGantTimeSpan({ time_span, start_time, due_time, start_date, end_date })
 
         new_item = {
           ...item,

@@ -261,3 +261,21 @@ export const currentFolderJudegeFileUpload = ({ folder_id, im_all_latest_unread_
     }
     return false
 }
+
+// 计算任务时间长度对应在甘特图上的跨度
+export const setGantTimeSpan = ({ time_span, start_time, due_time, start_date, end_date }) => {
+    let new_time_span = 1
+    if (!due_time || !start_time) {
+        return time_span || 1
+    } else {
+        new_time_span = (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1
+        // if (due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
+        //     new_time_span = (Math.floor((end_date.timestamp - start_time) / (24 * 3600 * 1000))) + 1
+        // } else if (start_time < start_date.timestamp && due_time < end_date.timestamp) { //左区间
+        //     new_time_span = (Math.floor((due_time - start_date.timestamp) / (24 * 3600 * 1000))) + 1
+        // } else if (due_time > end_date.timestamp && start_time < start_date.timestamp) { //超过左右区间
+        //     new_time_span = (Math.floor((end_date.timestamp - start_date.timestamp) / (24 * 3600 * 1000))) + 1
+        // }
+    }
+    return new_time_span
+}
