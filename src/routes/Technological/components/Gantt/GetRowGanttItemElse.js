@@ -8,7 +8,7 @@ const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
 export default class GetRowGanttItem extends Component {
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
     }
@@ -31,12 +31,12 @@ export default class GetRowGanttItem extends Component {
     if (ganttIsOutlineView({ group_view_type })) {
       const outline_tree_round_length = outline_tree_round.length
       if (outline_tree_round_length > rows) {
-        return (outline_tree_round_length + 5) * ceiHeight
+        return (outline_tree_round_length + 8) * ceiHeight
       } else {
-        return rows * ceiHeight
+        return (rows + 5) * ceiHeight
       }
     }
-    return rows * ceiHeight
+    return (rows + 5) * ceiHeight
   }
 
   render() {
