@@ -390,6 +390,14 @@ export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenI
       }
     }
   })
+
+  dispatch({
+    type: 'projectDetail/projectDetailInfo',
+    payload: {
+      id: board_id
+    }
+  })
+
   dispatch({
     type: 'gantt/updateDatas',
     payload: {

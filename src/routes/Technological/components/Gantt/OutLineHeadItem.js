@@ -4,7 +4,8 @@ import { Icon, message } from 'antd';
 import styles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less';
 import OutlineTree from './components/OutlineTree';
-import { updateTask, changeTaskType } from '../../../../services/technological/task'
+import { updateTask, changeTaskType } from '../../../../services/technological/task';
+
 const { TreeNode } = OutlineTree;
 @connect(mapStateToProps)
 export default class OutLineHeadItem extends Component {
@@ -58,7 +59,6 @@ export default class OutLineHeadItem extends Component {
         switch (action) {
             case 'add_milestone':
                 {
-                
                     let updateParams = {};
                     updateParams.parent_id = param.parentId;
                     updateParams.name = param.name;
@@ -231,19 +231,19 @@ export default class OutLineHeadItem extends Component {
 
 
     render() {
-        const { outline_tree, outline_hover_obj } = this.props;
-        //console.log("outline_tree", outline_tree);
+        const {outline_tree, outline_hover_obj,gantt_board_id,projectDetailInfoData} = this.props;
         return (
             <div className={styles.outline_wrapper}>
 
                 <OutlineTree
                     // defaultExpandedKeys={['0-0-0']}
+                    gantt_board_id = {gantt_board_id}
                     onSelect={this.onSelect}
                     onDataProcess={this.onDataProcess}
                     onExpand={this.onExpand}
                     onHover={this.onHover}
                     hoverItem={outline_hover_obj}
-
+                    projectDetailInfoData = {projectDetailInfoData}
                 >
                     {this.renderGanttOutLineTree(outline_tree, true)}
                     <TreeNode

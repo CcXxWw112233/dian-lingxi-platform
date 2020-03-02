@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import styles from './index.less';
-import { Input } from 'antd';
+import { Input, Dropdown } from 'antd';
 import globalStyles from '@/globalset/css/globalClassName.less';
 import ManhourSet from './ManhourSet.js';
 import { Popover } from 'antd';
+import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 
 class TreeNode extends Component {
     constructor(props) {
@@ -110,7 +111,7 @@ class TreeNode extends Component {
             nodeValue: { ...nodeValue, time_span: value }
         });
         let action = 'edit_' + (nodeValue.tree_type == '1' ? 'milestone' : 'task');
-        console.log("onManHourChange",value);
+        console.log("onManHourChange", value);
         if (this.props.onDataProcess) {
             this.props.onDataProcess({
                 action,
@@ -119,10 +120,23 @@ class TreeNode extends Component {
         }
     }
 
+
+
+    onExecutorTaskChargeChange = (data) => {
+        console.log("onExecutorTaskChargeChange", data);
+        //{selectedKeys: Array(1), key: "1194507125745913856", type: "add"}
+        // if (this.props.onDataProcess) {
+        //     this.props.onDataProcess({
+        //         action,
+        //         param: { ...nodeValue, parentId: this.props.parentId }
+        //     });
+        // }
+    }
+
     renderTitle = () => {
         const { isTitleHover, isTitleEdit, nodeValue = {} } = this.state;
-        const { id, name: title, tree_type, is_expand, time_span } = nodeValue;
-        const { onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {} } = this.props;
+        const { id, name: title, tree_type, is_expand, time_span, executors = [] } = nodeValue;
+        const { onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {} } = this.props;
         let type;
         if (tree_type) {
             type = tree_type;
@@ -153,17 +167,37 @@ class TreeNode extends Component {
 
                
                     <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe6d9;</span> */}
+
+                <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode}
+                    overlay={
+                        <MenuSearchPartner
+                            // isInvitation={true}
+                            // inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
+                            invitationType='4'
+                            invitationId={nodeValue.id}
+                            // invitationOrg={org_id}
+                            listData={projectDetailInfoData.data}
+                            keyCode={'user_id'}
+                            searchName={'name'}
+                            currentSelect={executors}
+            
+                            chirldrenTaskChargeChange={this.onExecutorTaskChargeChange}
+                            board_id={gantt_board_id} />
+                    }
+                >
+                    <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
+                </Dropdown>
+
                 {
                     tree_type &&
                     <>
-                        <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
                         <Popover placement="bottom" content={<ManhourSet onChange={this.onManHourChange} />} title={<div style={{ textAlign: 'center', height: '36px', lineHeight: '36px', fontWeight: '600' }}>花费时间</div>} trigger="click">
-                        {
-                            time_span ?
-                                <span className={`${styles.editIcon}`}>{time_span}天</span>
-                                :
-                                <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe6d9;</span>
-                        }
+                            {
+                                time_span ?
+                                    <span className={`${styles.editIcon}`}>{time_span}天</span>
+                                    :
+                                    <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe6d9;</span>
+                            }
                         </Popover>
                     </>
                 }
@@ -175,7 +209,7 @@ class TreeNode extends Component {
     render() {
         const { isTitleHover, isTitleEdit, nodeValue = {} } = this.state;
         const { id, name: title, tree_type, is_expand, time_span } = nodeValue;
-        const { onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {} } = this.props;
+        const { onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {} } = this.props;
         let type;
         if (tree_type) {
             type = tree_type;
@@ -195,7 +229,7 @@ class TreeNode extends Component {
                             !isLeaf &&
                             <span className={`${styles.outline_tree_node_expand_icon} ${is_expand ? styles.expanded : ''}`} onClick={this.onChangeExpand}></span>
                         }
-                        { this.renderTitle() }
+                        {this.renderTitle()}
 
                     </div>
                     <div className={styles.collapse_transition} data-old-padding-top="0px" data-old-padding-bottom="0px" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: is_expand ? 'block' : 'none' }}>
@@ -206,13 +240,13 @@ class TreeNode extends Component {
                                     //child.props['leve'] = leve + 1;
                                     if (child && child.props && child.props.children && child.props.children.length > 0) {
                                         return (
-                                            <TreeNode {...child.props} leve={leve + 1} isLeaf={false} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem}>
+                                            <TreeNode {...child.props} leve={leve + 1} isLeaf={false} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData}>
                                                 {child.props.children}
                                             </TreeNode>
                                         );
                                     } else {
                                         return (
-                                            <TreeNode {...child.props} leve={leve + 1} isLeaf={true} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem} />
+                                            <TreeNode {...child.props} leve={leve + 1} isLeaf={true} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} />
                                         );
                                     }
                                 })
@@ -239,8 +273,8 @@ class TreeNode extends Component {
                             !isLeaf &&
                             <span className={`${styles.outline_tree_node_expand_icon} ${is_expand ? styles.expanded : ''}`}></span>
                         }
-                        
-                        { this.renderTitle() }
+
+                        {this.renderTitle()}
                     </div>
                 </div>
             );
@@ -250,14 +284,14 @@ class TreeNode extends Component {
 
 class MyOutlineTree extends Component {
     render() {
-        const { onDataProcess, onExpand, onHover, hoverItem } = this.props;
+        const { onDataProcess, onExpand, onHover, hoverItem, gantt_board_id, projectDetailInfoData } = this.props;
 
         return (
             <div className={styles.outline_tree}>
                 {
                     React.Children.map(this.props.children, (child, i) => {
                         return (
-                            <TreeNode {...child.props} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} hoverItem={hoverItem}>
+                            <TreeNode {...child.props} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData}>
                                 {child.props.children}
                             </TreeNode>
                         );
