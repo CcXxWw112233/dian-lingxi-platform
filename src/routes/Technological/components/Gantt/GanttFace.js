@@ -311,6 +311,7 @@ export default class GanttFace extends Component {
                   />
                   <GetRowGantt
                     changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
+                    deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
                     is_need_calculate_left_dx={is_need_calculate_left_dx}
                     gantt_card_height={gantt_card_height}
                     dataAreaRealHeight={dataAreaRealHeight}

@@ -24,7 +24,7 @@ const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
 export default class GetRowGantt extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       currentRect: { x: 0, y: 0, width: 0, height: task_item_height }, //当前操作的矩形属性
@@ -603,7 +603,9 @@ export default class GetRowGantt extends Component {
             const juge_expand = (tree_type == '0' || tree_type == '3') ? parent_expand : (parent_expand && is_expand)
             return parent_expand && (
               <React.Fragment key={`${id}_${top}`}>
-                <GetRowStrip itemValue={value} ></GetRowStrip>
+                <GetRowStrip itemValue={value}
+                  deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
+                ></GetRowStrip>
               </React.Fragment>
             )
           })

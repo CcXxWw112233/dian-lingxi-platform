@@ -254,21 +254,8 @@ export default class GetRowStrip extends Component {
     deleteMiletone = ({ id }) => {
         const { milestoneMap = {}, dispatch } = this.props
         const new_milestoneMap = { ...milestoneMap }
-        let flag = false
-        for (let key in new_milestoneMap) {
-            const item = new_milestoneMap[key]
-            const length = item.length
-            for (let i = 0; i < length; i++) {
-                if (item[i].id == id) {
-                    flag = true
-                    new_milestoneMap[key].splice(i, 1)
-                    break
-                }
-            }
-            if (flag) {
-                break
-            }
-        }
+        this.props.deleteOutLineTreeNode(id)
+
         dispatch({
             type: 'gantt/updateDatas',
             payload: {

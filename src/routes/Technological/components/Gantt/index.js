@@ -10,7 +10,7 @@ import OutlineTree from './components/OutlineTree';
 
 class Gantt extends Component {
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       TaskDetailModalVisibile: false,
@@ -299,6 +299,11 @@ class Gantt extends Component {
 
   // 删除某一条任务
   handleDeleteCard = ({ card_id }) => {
+    const { group_view_type } = this.props
+    if (ganttIsOutlineView({ group_view_type })) {
+      this.deleteOutLineTreeNode(card_id)
+      return
+    }
     const { dispatch } = this.props
     const { list_group = [], current_list_group_id } = this.props
     const list_group_new = [...list_group]
@@ -340,6 +345,17 @@ class Gantt extends Component {
       console.error("OutlineTree.getTreeNodeValue:未查询到节点");
     }
   }
+  // 大纲视图删除某个节点
+  deleteOutLineTreeNode = (id) => {
+    let { dispatch, outline_tree } = this.props;
+    outline_tree = OutlineTree.filterTreeNode(outline_tree, id);
+    dispatch({
+      type: 'gantt/handleOutLineTreeData',
+      payload: {
+        data: outline_tree
+      }
+    });
+  }
   render() {
     const { addTaskModalVisible, } = this.state
     const {
@@ -356,6 +372,7 @@ class Gantt extends Component {
       <div>
         <GanttFace
           changeOutLineTreeNodeProto={this.changeOutLineTreeNodeProto}
+          deleteOutLineTreeNode={this.deleteOutLineTreeNode}
           setTaskDetailModalVisibile={this.setTaskDetailModalVisibile}
           addTaskModalVisibleChange={this.addTaskModalVisibleChange}
           gantt_board_id={gantt_board_id}
