@@ -16,7 +16,7 @@ export const ganttIsFold = ({ group_view_type, gantt_board_id, show_board_fold }
 
 // 甘特图是否大纲视图
 export const ganttIsOutlineView = ({ group_view_type }) => { //gantt是否折叠
-    if (group_view_type == '3') {
+    if (group_view_type == '4') {
         return true
     }
     return false
@@ -405,8 +405,8 @@ export const mock_gantt_data = [
 
 export const mock_outline_tree = [
     {
-        "id": "111",
-        "name": "里程碑1",
+        "id": "1210106992631353344",
+        "name": "第一阶段里程碑",
         "tree_type": "1",
         "due_time": "",
         "time_span": "",
@@ -425,8 +425,8 @@ export const mock_outline_tree = [
                 "board_id": "1218406760604372992",
                 "children": [
                     {
-                        "id": "111-2",
-                        "name": "二级任务",
+                        "id": "1218452431097171968",
+                        "name": "sda",
                         "tree_type": "3",
                         "start_time": "",
                         "due_time": "",

@@ -8,6 +8,7 @@ import { afterCreateBoardUpdateGantt } from './ganttBusiness';
 import CreateProject from './../Project/components/CreateProject/index';
 import { checkIsHasPermission, selectBoardToSeeInfo, setBoardIdStorage } from '../../../../utils/businessFunction'
 import { ORG_TEAM_BOARD_CREATE } from '../../../../globalset/js/constant'
+import { ganttIsOutlineView } from './constants'
 
 @connect(mapStateToProps)
 export default class GroupListHeadSet extends Component {
@@ -163,7 +164,7 @@ export default class GroupListHeadSet extends Component {
                         <div className={indexStyles.set_content_view_type}>
 
                             <Tooltip title={gantt_board_id != '0' ? '大纲视图' : '请先进入单个项目'}>
-                                <div onClick={() => { if (gantt_board_id != '0') this.setGroupViewType('3') }} className={`${indexStyles.set_content_left_left} ${globalStyles.authTheme} ${group_view_type == '3' && selected} ${gantt_board_id == '0' ? indexStyles.disabled : ''}`}>&#xe7f9;</div>
+                                <div onClick={() => { if (gantt_board_id != '0') this.setGroupViewType('4') }} className={`${indexStyles.set_content_left_left} ${globalStyles.authTheme} ${ganttIsOutlineView({ group_view_type }) && selected} ${gantt_board_id == '0' ? indexStyles.disabled : ''}`}>&#xe7f9;</div>
                             </Tooltip>
 
                             <Tooltip title={'项目视图'}>

@@ -4,6 +4,7 @@ import indexStyles from './index.less'
 import GroupListHeadItem from './GroupListHeadItem'
 import GroupListHeadElse from './GroupListHeadElse'
 import OutLineHeadItem from './OutLineHeadItem'
+import { ganttIsOutlineView } from './constants';
 @connect(mapStateToProps)
 export default class GroupListHead extends Component {
   constructor(props) {
@@ -30,20 +31,20 @@ export default class GroupListHead extends Component {
   }
 
   render() {
-    const { list_group = [], group_rows = [], ceiHeight, target_scrollLeft, target_scrollTop,group_view_type} = this.props
+    const { list_group = [], group_rows = [], ceiHeight, target_scrollLeft, target_scrollTop, group_view_type } = this.props
     return (
-      <div className={`${ group_view_type == '3'?indexStyles.listTree:indexStyles.listHead}`}
+      <div className={`${ganttIsOutlineView({ group_view_type }) ? indexStyles.listTree : indexStyles.listHead}`}
         // style={{ left: target_scrollLeft, }}
         style={{ top: -target_scrollTop + 64, }}
       >
         {
-          group_view_type == '3' &&
-          <div style={{ height:'100%',width:'280px',boxShadow:'1px 0px 4px 0px rgba(0,0,0,0.15);'}}>
+          ganttIsOutlineView({ group_view_type }) &&
+          <div style={{ height: '100%', width: '280px', boxShadow: '1px 0px 4px 0px rgba(0,0,0,0.15);' }}>
             <OutLineHeadItem />
           </div>
         }
         {
-          group_view_type != '3' &&
+          !ganttIsOutlineView({ group_view_type }) &&
           <>
             {
               list_group.map((value, key) => {

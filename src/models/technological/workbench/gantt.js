@@ -65,7 +65,7 @@ export default {
       about_user_boards: [], //带用户的项目列表
 
       gantt_board_id: '0', //"1192342431761305600",//, //甘特图查看的项目id
-      group_view_type: '3', //分组视图1项目， 2成员, 3大纲
+      group_view_type: '1', //分组视图1项目， 2成员, 4大纲
       group_view_filter_boards: [], //内容过滤项目id 列表
       group_view_filter_users: [], //内容过滤职员id 列表
       group_view_boards_tree: [], //内容过滤项目分组树
@@ -188,7 +188,7 @@ export default {
       const params = {
         start_time: start_date['timestamp'],
         end_time: end_date['timestamp'],
-        chart_type: '1',//group_view_type,
+        chart_type: group_view_type,//group_view_type,
         ...content_filter_params,
       }
       if (gantt_board_id != '0' && gantt_board_id) {
@@ -241,7 +241,7 @@ export default {
           yield put({
             type: 'handleOutLineTreeData',
             payload: {
-              data: mock_outline_tree//res.data
+              data: res.data
             }
           })
         }
@@ -249,54 +249,6 @@ export default {
       } else {
 
       }
-    },
-    // 大纲视图或分组视图先转换
-    * transferDataBeforeHandle({ payload }, { select, call, put }) {
-      const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
-      return
-      // let { data } = payload
-      let data = [...mock_gantt_data]
-      let new_data = []
-      if (group_view_type == '3' || true) {
-        new_data = data.map(item => {
-          const obj = {
-            id: item.lane_id,
-            name: item.lane_name,
-            // due_time: item.lane_end_time,
-            time_span: item.time_span,
-            is_outine_group_head: true,
-          }
-          let new_item = { ...item, ...obj }
-          new_item['lane_data']['cards'] = [].concat([obj], new_item['lane_data']['cards'])
-          let cards = new_item['lane_data']['cards']
-          let cards_tree = cards.filter(item => !item.parent_id)
-          cards_tree = cards_tree.map(cards_item => {
-            let new_cards_item = { ...cards_item, children: [] }
-            for (let val of cards) {
-              if (val['parent_id'] == new_cards_item.id) {
-                new_cards_item.children.push(val)
-              }
-            }
-            return new_cards_item
-          })
-          new_item.cards_tree = cards_tree
-          return new_item
-        })
-        yield put({
-          type: 'handleListGroup',
-          payload: {
-            data: new_data//res.data
-          }
-        })
-      } else {
-        yield put({
-          type: 'handleListGroup',
-          payload: {
-            data: data//res.data
-          }
-        })
-      }
-
     },
     // 转化处理大纲视图数据
     * handleOutLineTreeData({ payload }, { select, call, put }) {

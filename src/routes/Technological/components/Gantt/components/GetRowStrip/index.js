@@ -4,21 +4,27 @@ import styles from './index.less'
 import { task_item_margin_top, date_area_height, ceil_height } from '../../constants';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import OutlineTree from '../OutlineTree';
+import { updateTask, updateMilestone } from '../../../../../../services/technological/task';
+import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
+import { message } from 'antd';
+import MilestoneDetail from '../milestoneDetail'
 
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
 const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
 @connect(mapStateToProps)
 export default class GetRowStrip extends Component {
-    constructor (props) {
+    constructor(props) {
         super(props)
         this.state = {
             currentRect: {},  //任务位置
             is_item_has_time: false, //处于该条上的任务有没有开始或者时间
+            set_miletone_detail_modal_visible: false, //里程碑是否可见
         }
         this.setIsCardHasTime()
     }
     componentWillReceiveProps() {
         this.setIsCardHasTime()
+        this.fil
     }
     // 当前滑动的这一条任务是否存在时间？存在时间代表可以在面板上创建
     setIsCardHasTime = () => {
@@ -131,14 +137,18 @@ export default class GetRowStrip extends Component {
     cardSetClick = () => {
         const date = this.calHoverDate()
         const { timestamp } = date
-        const { itemValue = {} } = this.props
+        const { itemValue = {}, gantt_board_id } = this.props
         const { id, time_span = 1 } = itemValue
-        this.changeOutLineTreeNodeProto(
-            id, {
-            start_time: timestamp,
-            due_time: timestamp + time_span * 24 * 60 * 60 * 1000 - 1000
-        }
-        )
+        const due_time = timestamp + time_span * 24 * 60 * 60 * 1000 - 1000
+        updateTask({ card_id: id, due_time, board_id: gantt_board_id }, { isNotLoading: false }).then(res => {
+            if (isApiResponseOk(res)) {
+                this.changeOutLineTreeNodeProto(id, { start_time: timestamp, due_time })
+            } else {
+                message.error(res.message)
+            }
+        }).catch(err => {
+            message.error('更新失败')
+        })
     }
     // 渲染任务滑块 --end
 
@@ -175,17 +185,18 @@ export default class GetRowStrip extends Component {
         if (due_time) {
             display = 'flex'
             marginLeft = left
+            paddingLeft = ceilWidth - 2
         } else {
             if (this.onHoverState()) {
                 display = 'flex'
                 marginLeft = currentRect.x
-                paddingLeft = ceilWidth
+                paddingLeft = ceilWidth - 2
             }
         }
 
         return (
             <div
-                onClick={this.milestoneSetClick}
+                onClick={() => this.miletonesClick(due_time)}
                 className={styles.will_set_item_milestone}
                 style={{
                     display,
@@ -199,28 +210,119 @@ export default class GetRowStrip extends Component {
                     className={styles.board_miletiones_flagpole}>
                 </div>
                 <div className={`${styles.board_miletiones_flag} ${globalStyles.authTheme}`}>&#xe6a0;</div>
-
-                <div className={styles.name}>{name}</div>
+                <div className={styles.board_miletiones_names}>{name}</div>
             </div>
         )
+    }
+    miletonesClick = (due_time) => {
+        if (due_time) {
+            this.milestoneDetail()
+        } else {
+            this.milestoneSetClick()
+        }
     }
     milestoneSetClick = () => {
         const date = this.calHoverDate()
         const { timestamp } = date
-        const { itemValue = {} } = this.props
+        const { itemValue = {}, gantt_board_id } = this.props
         const { id, time_span = 1 } = itemValue
-        this.changeOutLineTreeNodeProto(
-            id, {
-            start_time: timestamp,
-            due_time: timestamp + time_span * 24 * 60 * 60 * 1000
+
+        const due_time = timestamp + time_span * 24 * 60 * 60 * 1000 - 1000
+        updateMilestone({ id, deadline: due_time }, { isNotLoading: false }).then(res => {
+            if (isApiResponseOk(res)) {
+                this.changeOutLineTreeNodeProto(id, { start_time: timestamp, due_time })
+            } else {
+                message.error(res.message)
+            }
+        }).catch(err => {
+            message.error('更新失败')
+        })
+    }
+    milestoneDetail = () => {
+        this.set_miletone_detail_modal_visible()
+        const { itemValue = {} } = this.props
+        const { id } = itemValue
+        //更新里程碑id,在里程碑的生命周期会监听到id改变，发生请求
+        const { dispatch } = this.props
+        dispatch({
+            type: 'milestoneDetail/updateDatas',
+            payload: {
+                milestone_id: id
+            }
+        })
+    }
+    deleteMiletone = ({ id }) => {
+        const { milestoneMap = {}, dispatch } = this.props
+        const new_milestoneMap = { ...milestoneMap }
+        let flag = false
+        for (let key in new_milestoneMap) {
+            const item = new_milestoneMap[key]
+            const length = item.length
+            for (let i = 0; i < length; i++) {
+                if (item[i].id == id) {
+                    flag = true
+                    new_milestoneMap[key].splice(i, 1)
+                    break
+                }
+            }
+            if (flag) {
+                break
+            }
         }
-        )
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                milestoneMap: new_milestoneMap
+            }
+        })
+    }
+    // 里程碑删除子任务回调
+    deleteRelationContent = () => {
+        const { dispatch } = this.props
+        dispatch({
+            type: 'gantt/getGttMilestoneList',
+            payload: {
+            }
+        })
+    }
+    // 甘特图信息变化后，实时触发甘特图渲染在甘特图上变化
+    handleMiletonsChangeMountInGantt = () => {
+        const { dispatch } = this.props
+        dispatch({
+            type: 'gantt/getGttMilestoneList',
+            payload: {
+
+            }
+        })
+
+    }
+    set_miletone_detail_modal_visible = () => {
+        const { miletone_detail_modal_visible } = this.state
+        this.setState({
+            miletone_detail_modal_visible: !miletone_detail_modal_visible
+        })
+        if (miletone_detail_modal_visible) { //关闭的时候更新
+            let { milestone_detail = {}, itemValue: { id } } = this.props
+            milestone_detail.due_time = milestone_detail.deadline
+            setTimeout(() => {
+                this.changeOutLineTreeNodeProto(id, milestone_detail)
+            }, 300)
+        }
+    }
+    // 过滤项目成员
+    setCurrentSelectedProjectMembersList = () => {
+        const { gantt_board_id, about_user_boards = [] } = this.props
+        const users = (about_user_boards.find(item => item.board_id == gantt_board_id) || {}).users || []
+        this.setState({
+            currentSelectedProjectMembersList: users
+        })
     }
     //渲染里程碑设置---end
 
     render() {
         const { itemValue = {} } = this.props
         const { tree_type } = itemValue
+        const { currentSelectedProjectMembersList = [] } = this.props
         return (
             <div
                 onMouseMove={this.stripMouseMove}
@@ -235,7 +337,14 @@ export default class GetRowStrip extends Component {
                             this.renderCardRect()
                         )
                 }
-
+                <MilestoneDetail
+                    handleMiletonesChange={this.handleMiletonsChangeMountInGantt}
+                    users={currentSelectedProjectMembersList}
+                    miletone_detail_modal_visible={this.state.miletone_detail_modal_visible}
+                    set_miletone_detail_modal_visible={this.set_miletone_detail_modal_visible}
+                    deleteMiletone={this.deleteMiletone}
+                    deleteRelationContent={this.deleteRelationContent}
+                />
             </div >
         )
     }
@@ -248,14 +357,24 @@ function mapStateToProps({ gantt: {
         outline_hover_obj,
         outline_tree = [],
         ceiHeight, ceilWidth,
-        list_group, group_list_area
+        list_group, group_list_area,
+        gantt_board_id,
+        milestoneMap,
+        about_user_boards
     } },
+    milestoneDetail: {
+        milestone_detail = {}
+    }
 }) {
     return {
         date_arr_one_level,
         outline_hover_obj,
         ceiHeight, ceilWidth,
         outline_tree,
-        list_group, group_list_area
+        list_group, group_list_area,
+        gantt_board_id,
+        milestoneMap,
+        about_user_boards,
+        milestone_detail
     }
 }
