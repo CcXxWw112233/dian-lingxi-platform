@@ -29,15 +29,20 @@ export default class BoardTemplate extends Component {
             selected_template_name: '请选择模板',
             template_list: [],
             template_data: [], //模板数据
+            contain_height: '100%'
         }
         this.drag_init_inner_html = ''
     }
     getHeight = () => {
         const target = document.getElementById('gantt_card_out_middle')
-        if (target) {
-            return target.clientHeight - date_area_height
-        }
-        return '100%'
+        // if (target) {
+        //     return target.clientHeight + 30
+        //     // return target.clientHeight - date_area_height
+        // }
+        // return '100%'
+        this.setState({
+            contain_height: target ? target.clientHeight + 30 : '100%'
+        })
     }
     // 初始化数据
     initState = (is_new_board) => {
@@ -58,6 +63,8 @@ export default class BoardTemplate extends Component {
         this.initState(this.props.is_new_board)
         this.getBoardTemplateList()
         this.listenDrag()
+        this.getHeight()
+        window.addEventListener('resize', this.getHeight, false)
     }
     componentWillReceiveProps(nextProps) {
         const { gantt_board_id: last_gantt_board_id } = this.props
@@ -69,6 +76,7 @@ export default class BoardTemplate extends Component {
     }
     componentWillUnmount() {
         this.removeEvent()
+        window.addEventListener('resize', this.getHeight, false)
     }
     // 获取模板列表
     getBoardTemplateList = async () => {
@@ -479,7 +487,7 @@ export default class BoardTemplate extends Component {
         }
     }
     render() {
-        const { template_data, show_type, selected_template_name, spinning, project_templete_scheme_visible } = this.state
+        const { template_data, show_type, selected_template_name, spinning, project_templete_scheme_visible, contain_height } = this.state
         const { gantt_board_id } = this.props
         return (
             gantt_board_id && gantt_board_id != '0' ?
@@ -487,10 +495,12 @@ export default class BoardTemplate extends Component {
                     <div
                         className={`${styles.container_init}   ${show_type == '1' && styles.container_show} ${show_type == '2' && styles.container_hide}`}
                         style={{
-                            height: this.getHeight(),
-                            top: date_area_height
+                            height: contain_height,
+                            // top: date_area_height
                         }}>
-                        <div className={styles.top}>
+                        <div
+                            style={{ height: date_area_height }}
+                            className={styles.top}>
                             <Dropdown overlay={this.renderTemplateList()}>
                                 <div className={styles.top_left}>
                                     <div className={`${globalStyles.global_ellipsis} ${styles.name}`}>{selected_template_name}</div>
@@ -510,33 +520,40 @@ export default class BoardTemplate extends Component {
                             id={'save_child_card_icon'}>
                             <div className={globalStyles.authTheme} style={{ color: '#18B2FF', fontSize: 18, marginRight: 6 }} >&#xe6f0;</div>
                         </div>
+                        <div className={`${styles.list_item} ${styles.temp_ope}`}>
+                            <div className={`${styles.temp_ope_name}`}>流程步骤</div>
+                            <div className={`${styles.temp_ope_cop} ${globalStyles.link_mouse}`}>引用到项目</div>
+                        </div>
                         {/* 主区 */}
                         <Spin spinning={spinning}>
                             <div
+                                style={{ maxHeight: contain_height - date_area_height }}
                                 onMouseDown={this.outerMouseDown}
                                 className={styles.main}>
-                                <Tree
-                                    draggable
-                                    onDragStart={this.onDragStart}
-                                // onDragEnter={this.onDragEnter}
-                                // onDragLeave={this.onDragLeave}
-                                // onDragOver={this.onDragOver}
-                                // onDragEnd={this.onDragEnd}
-                                // onDrop={this.onDrop}
-                                // switcherIcon={
-                                //     <Icon type="caret-down" style={{ fontSize: 20, color: 'rgba(0,0,0,.45)' }} />
-                                // }
-                                >
-                                    {this.renderTemplateTree(template_data)}
-                                </Tree>
-
+                                <div>
+                                    <Tree
+                                        checkable
+                                        draggable
+                                        onDragStart={this.onDragStart}
+                                    // onDragEnter={this.onDragEnter}
+                                    // onDragLeave={this.onDragLeave}
+                                    // onDragOver={this.onDragOver}
+                                    // onDragEnd={this.onDragEnd}
+                                    // onDrop={this.onDrop}
+                                    // switcherIcon={
+                                    //     <Icon type="caret-down" style={{ fontSize: 20, color: 'rgba(0,0,0,.45)' }} />
+                                    // }
+                                    >
+                                        {this.renderTemplateTree(template_data)}
+                                    </Tree>
+                                </div>
                             </div>
                         </Spin>
                         <div
                             onClick={this.setShowType}
                             className={`${styles.switchSpin_init} ${show_type == '1' && styles.switchSpinShow} ${show_type == '2' && styles.switchSpinClose}`}
                             style={{
-                                top: (this.getHeight() + date_area_height) / 2
+                                top: contain_height / 2
                             }} >
                             <div className={`${styles.switchSpin_top}`}></div>
                             <div className={`${styles.switchSpin_bott}`}></div>

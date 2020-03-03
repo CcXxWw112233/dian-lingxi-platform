@@ -7,7 +7,7 @@
     z-index       : 8;
     right         : 0px;
     top           : 0px;
-    width         : 248px;
+    width         : 280px;
     height        : 100%;
     background    : rgba(255, 255, 255, 1);
     box-shadow    : -1px 0px 2px 0px rgba(0, 0, 0, 0.15), 1px 0px 0px 0px rgba(0, 0, 0, 0.09);
@@ -51,10 +51,43 @@
         }
     }
 
+    .list_item {
+        width        : 100%;
+        height       : 48px;
+        background   : rgba(255, 255, 255, 1);
+        box-shadow   : 0px -1px 0px 0px rgba(0, 0, 0, 0.09);
+        border-bottom: 1px solid rgba(0, 0, 0, .1)
+    }
+
+    .list_item:hover {
+        background: rgba(245, 245, 245, 1);
+    }
+
+    .temp_ope {
+        display    : flex;
+        align-items: center;
+        padding    : 0 12px;
+
+        >div {
+            width      : 50%;
+            line-height: 48px;
+        }
+
+        .temp_ope_name {
+            font-weight: 500;
+            color      : rgba(0, 0, 0, 0.85);
+        }
+
+        .temp_ope_cop {
+            text-align: right;
+        }
+    }
+
     .main {
-        flex    : 1;
-        overflow: auto;
-        padding : 0 12px;
+        flex          : 1;
+        overflow      : auto;
+        padding       : 0 12px;
+        padding-bottom: 30px;
 
         .downSpin {
             font-size: 18px;
@@ -71,6 +104,17 @@
             }
         }
     }
+
+    :global {
+        .ant-tree-checkbox {
+            margin     : 0 !important;
+            padding-top: 4px !important;
+        }
+
+        .ant-tree li {
+            padding: 20px 0 0 0 !important;
+        }
+    }
 }
 
 @keyframes containerShow {
@@ -79,13 +123,13 @@
     }
 
     to {
-        width: 248px;
+        width: 280px;
     }
 }
 
 @keyframes containerHide {
     from {
-        width: 248px;
+        width: 280px;
     }
 
     to {
@@ -99,7 +143,7 @@
 
 .container_show {
     animation: containerShow 300ms ease;
-    width    : 248px;
+    width    : 280px;
 }
 
 .container_hide {
@@ -200,13 +244,13 @@
     }
 
     to {
-        right: 248px;
+        right: 280px;
     }
 }
 
 @keyframes switchSpinHide {
     from {
-        right: 248px;
+        right: 280px;
     }
 
     to {
@@ -220,7 +264,7 @@
 .switchSpinClose {
 
     position: fixed;
-    right   : 248px;
+    right   : 280px;
     width   : 20px;
     height  : 48px;
 
@@ -251,7 +295,7 @@
 
 .switchSpinShow {
     animation   : switchSpinShow 300ms ease;
-    right       : 248px;
+    right       : 280px;
     padding-left: 10px;
     width       : 30px;
 }
