@@ -1,16 +1,105 @@
 import React, { Component } from 'react';
-import { connect, } from 'dva';
-import { Icon, message } from 'antd';
+import { connect } from 'dva';
+import { Icon, message, Menu, Dropdown, Modal } from 'antd';
 import styles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less';
 import OutlineTree from './components/OutlineTree';
-import { addTaskInWorkbench, updateTask, changeTaskType, updateMilestone, addMilestoneExcutos, removeMilestoneExcutos, addTaskExecutor, removeTaskExecutor } from '../../../../services/technological/task';
-import { createMilestone } from '@/services/technological/prjectDetail.js';
-import { isApiResponseOk } from '@/utils/handleResponseData'
+import {
+    addTaskInWorkbench,
+    updateTask,
+    changeTaskType,
+    updateMilestone,
+    addMilestoneExcutos,
+    removeMilestoneExcutos,
+    addTaskExecutor,
+    removeTaskExecutor
+} from '../../../../services/technological/task';
 
+import { getBoardTemplateList, importBoardTemplate } from '@/services/technological/gantt.js';
+import { createMilestone } from '@/services/technological/prjectDetail.js';
+import { isApiResponseOk } from '@/utils/handleResponseData';
+import { getGlobalData } from '@/utils/businessFunction'
+const { SubMenu } = Menu;
 const { TreeNode } = OutlineTree;
+const { confirm } = Modal;
+
 @connect(mapStateToProps)
 export default class OutLineHeadItem extends Component {
+    state = {
+        template_list: []
+    }
+    componentDidMount() {
+        const OrganizationId = localStorage.getItem('OrganizationId')
+        const aboutBoardOrganizationId = getGlobalData('aboutBoardOrganizationId')
+        if (
+            !OrganizationId ||
+            (OrganizationId == '0' && (!aboutBoardOrganizationId || aboutBoardOrganizationId == '0'))
+        ) {
+            return
+        }
+        const _organization_id = OrganizationId != '0' ? OrganizationId : aboutBoardOrganizationId
+        getBoardTemplateList({ _organization_id }).then((res) => {
+            //console.log("getBoardTemplateList", res);
+            if (isApiResponseOk(res)) {
+                const { data } = res
+                this.setState({
+                    template_list: data
+                })
+            } else {
+                message.error(res.message)
+            }
+        });
+    }
+
+    handleProjectMenu = ({ key }) => {
+        const { gantt_board_id } = this.props;
+        if (key.indexOf('importTpl') != -1) {
+            let tplId = key.replace("importTpl_", "");
+            console.log("tplId", tplId);
+            confirm({
+                title: '确认要引用项目模版吗？',
+                content: '引用项目模版会覆盖删除项目现有的数据，如需引用请在下方输入“确认引用"。',
+                okText: '确定',
+                okType: 'danger',
+                cancelText: '取消',
+                onOk() {
+                    // console.log('OK');
+                    importBoardTemplate({ "board_id": gantt_board_id, 'template_id': tplId }).then(res => {
+                        if (isApiResponseOk(res)) {
+                            console.log("importBoardTemplate", res);
+                        } else {
+                            message.error(res.message)
+                        }
+                    }).catch(err => {
+                        message.error('更新失败')
+                    })
+                },
+                onCancel() {
+                    console.log('Cancel');
+                },
+            });
+        }
+    }
+
+    ganttProjectMenus = () => {
+        const { template_list = [] } = this.state;
+        return (
+            <Menu onClick={this.handleProjectMenu}>
+                <Menu.Item key="publishTpl" disabled>将项目内容发布为模版</Menu.Item>
+                <Menu.Item key="saveTpl" disabled>将项目内容保存为模版</Menu.Item>
+                <SubMenu title="引用项目模版" >
+                    {
+                        template_list.map((item) => {
+                            return (
+                                <Menu.Item key={`importTpl_${item.id}`}>{item.name}</Menu.Item>
+                            );
+                        })
+                    }
+                </SubMenu>
+                <Menu.Item key="info">项目信息</Menu.Item>
+            </Menu>
+        );
+    }
 
     updateOutLineTreeData = (outline_tree) => {
         const { dispatch } = this.props;
@@ -198,7 +287,7 @@ export default class OutLineHeadItem extends Component {
             case 'add_executor':
                 {
                     const { projectDetailInfoData } = this.props;
-                    debugger
+
                     let updateParams = {};
                     //里程碑
                     if (param.tree_type == '1') {
@@ -214,7 +303,7 @@ export default class OutLineHeadItem extends Component {
                                         }
                                         if (projectDetailInfoData.data) {
 
-                                            nodeValue.executors.push({...(projectDetailInfoData.data.find((item) => item.user_id == param.user_id)),id:param.user_id});
+                                            nodeValue.executors.push({ ...(projectDetailInfoData.data.find((item) => item.user_id == param.user_id)), id: param.user_id });
                                         }
 
                                         this.updateOutLineTreeData(outline_tree);
@@ -240,7 +329,7 @@ export default class OutLineHeadItem extends Component {
                                         if (!nodeValue.executors) {
                                             nodeValue.executors = [];
                                         }
-                                        nodeValue.executors.push({...(projectDetailInfoData.data.find((item) => item.user_id == param.user_id)),id:param.user_id});
+                                        nodeValue.executors.push({ ...(projectDetailInfoData.data.find((item) => item.user_id == param.user_id)), id: param.user_id });
                                         this.updateOutLineTreeData(outline_tree);
                                     } else {
                                         console.error("OutlineTree.getTreeNodeValue:未查询到节点");
@@ -379,7 +468,9 @@ export default class OutLineHeadItem extends Component {
 
                 <div className={styles.outlineFooter}>
                     <span className={`${styles.actionIcon} ${globalStyles.authTheme}`}>&#xe7ae;</span>
-                    <span className={`${styles.actionIcon} ${globalStyles.authTheme}`}>&#xe66f;</span>
+                    <Dropdown overlay={this.ganttProjectMenus()} trigger={['click']} placement={'topCenter'}>
+                        <span className={`${styles.actionIcon} ${globalStyles.authTheme}`}>&#xe66f;</span>
+                    </Dropdown>
 
                 </div>
             </div>
