@@ -21,7 +21,7 @@ import { currentNounPlanFilterName, setBoardIdStorage } from "@/utils/businessFu
 
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       isShowBottDetail: '0', //0 初始化(关闭) 1展开 2 关闭
@@ -948,23 +948,11 @@ export default class GroupListHeadItem extends Component {
     const { list_data } = itemValue
     return (
       <div>
-        {
-          ganttIsOutlineView({ group_view_type }) && (
-            <div className={indexStyles.listHeadItem} style={{ height: rows * ceiHeight, }}>
-              {
-                list_data.map(item => {
-                  const { id, name } = item
-                  return (
-                    <div style={{ height: 40, marginBottom: 20, lineHeight: '40px' }} key={id}>{name}</div>
-                  )
-                })
-              }
-            </div>
-          )
-        }
         <div className={indexStyles.listHeadItem}
-          style={{ height: rows * ceiHeight,
-           display:  ganttIsOutlineView({ group_view_type })?'none': 'block' }}>
+          style={{
+            height: rows * ceiHeight,
+            display: ganttIsOutlineView({ group_view_type }) ? 'none' : 'flex'
+          }}>
           <div className={`${indexStyles.list_head_top}`}>
             <div className={`${indexStyles.list_head_top_left}`}>
               {
