@@ -29,7 +29,9 @@ export default class BoardTemplate extends Component {
             selected_template_name: '请选择模板',
             template_list: [],
             template_data: [], //模板数据
-            contain_height: '100%'
+            contain_height: '100%',
+            checkedKeys: [], //已选择的key
+            checkedKeysObj: [], ////已选择的keyobj
         }
         this.drag_init_inner_html = ''
     }
@@ -129,6 +131,7 @@ export default class BoardTemplate extends Component {
             this.setState({
                 template_data: res.data
             })
+            this.initSetCheckKeys(res.data)
         } else {
             message.error(res.message)
         }
@@ -486,8 +489,86 @@ export default class BoardTemplate extends Component {
             return
         }
     }
+
+    // 复选框
+    onCheck = (e) => {
+        this.setState({
+            checkedKeys: e
+        })
+    }
+    // 初始化设置已选择
+    initSetCheckKeys = () => {
+        const { template_data = [] } = this.state
+        // 将数据平铺
+        let arr = []
+        const recusion = (obj) => { //将树递归平铺成一级
+            arr.push(obj)
+            if (!obj.child_content) {
+                return
+            } else {
+                if (obj.child_content.length) {
+                    for (let val of obj.child_content) {
+                        recusion(val)
+                    }
+                }
+            }
+        }
+        for (let val of template_data) {
+            recusion(val)
+        }
+        const checkedKeys = arr.map(item => item.id)
+        const checkedKeysObj = arr.map(item => {
+            return {
+                id: item.id,
+                parent_id: item.parent_id,
+                name: item.name
+            }
+        })
+        this.setState({
+            checkedKeys,
+            checkedKeysObj
+        })
+    }
+
+    // 引用到项目
+    quoteTemplate = () => {
+        const { checkedKeys, checkedKeysObj, template_data = [] } = this.state
+        let new_checkedKeys = [...checkedKeys]
+        // console.log('ssssssssss_0', checkedKeysObj)
+        // 将里程碑id和任务id拆分开来
+        let milestone_ids = checkedKeys.filter(item => checkedKeysObj.findIndex(item2 => item == item2.id && item2.parent_id == '0') != -1)
+        let card_ids = checkedKeys.filter(item => checkedKeysObj.findIndex(item2 => item == item2.id && item2.parent_id != '0') != -1)
+        let card_ids_objs = checkedKeysObj.filter(item => card_ids.findIndex(item2 => item2 == item.id) != -1)
+
+        let arr = [] //装载
+        for (let val of template_data) {
+            const child_content_1 = val.child_content
+            const id_1 = val.id
+            let flag = false
+            if (child_content_1.length) {
+                for (let val2 of child_content_1) {
+                    const id_2 = val2.id
+                    if (card_ids_objs.findIndex(item => item.parent_id == id_2) != -1) {
+                        arr.push(id_2)
+                        flag = true
+                    }
+                }
+            }
+            if (flag || card_ids_objs.findIndex(item => item.parent_id == id_1) != -1) {
+                arr.push(id_1)
+            }
+        }
+
+        new_checkedKeys = Array.from(new Set([].concat(new_checkedKeys, arr)))
+        let abs = checkedKeysObj.filter(item => new_checkedKeys.findIndex(item2 => item2 == item.id) != -1)
+        
+        //最终所需要数据
+        milestone_ids = new_checkedKeys.filter(item => abs.findIndex(item2 => item == item2.id && item2.parent_id == '0') != -1)
+        card_ids = new_checkedKeys.filter(item => abs.findIndex(item2 => item == item2.id && item2.parent_id != '0') != -1)
+
+    }
     render() {
-        const { template_data, show_type, selected_template_name, spinning, project_templete_scheme_visible, contain_height } = this.state
+        const { template_data, show_type, selected_template_name, spinning, project_templete_scheme_visible, contain_height, checkedKeys = [] } = this.state
         const { gantt_board_id } = this.props
         return (
             gantt_board_id && gantt_board_id != '0' ?
@@ -522,17 +603,20 @@ export default class BoardTemplate extends Component {
                         </div>
                         <div className={`${styles.list_item} ${styles.temp_ope}`}>
                             <div className={`${styles.temp_ope_name}`}>流程步骤</div>
-                            <div className={`${styles.temp_ope_cop} ${globalStyles.link_mouse}`}>引用到项目</div>
+                            <div className={`${styles.temp_ope_cop} ${globalStyles.link_mouse}`} onClick={this.quoteTemplate}>引用到项目</div>
                         </div>
                         {/* 主区 */}
                         <Spin spinning={spinning}>
                             <div
-                                style={{ maxHeight: contain_height - date_area_height }}
+                                style={{ maxHeight: contain_height - date_area_height - 48 }}
                                 onMouseDown={this.outerMouseDown}
                                 className={styles.main}>
                                 <div>
                                     <Tree
                                         checkable
+                                        // checkStrictly
+                                        checkedKeys={checkedKeys}
+                                        onCheck={this.onCheck}
                                         draggable
                                         onDragStart={this.onDragStart}
                                     // onDragEnter={this.onDragEnter}
