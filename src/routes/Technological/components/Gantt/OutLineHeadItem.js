@@ -4,7 +4,7 @@ import { Icon, message } from 'antd';
 import styles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less';
 import OutlineTree from './components/OutlineTree';
-import { addTaskInWorkbench, updateTask, changeTaskType, updateMilestone } from '../../../../services/technological/task';
+import { addTaskInWorkbench, updateTask, changeTaskType, updateMilestone, addMilestoneExcutos, removeMilestoneExcutos, addTaskExecutor, removeTaskExecutor } from '../../../../services/technological/task';
 import { createMilestone } from '@/services/technological/prjectDetail.js';
 import { isApiResponseOk } from '@/utils/handleResponseData'
 
@@ -56,7 +56,7 @@ export default class OutLineHeadItem extends Component {
     }
     onDataProcess = ({ action, param }) => {
         console.log("大纲:onDataProcess", action, param);
-        const { dispatch, gantt_board_id } = this.props;
+        const { dispatch, gantt_board_id, } = this.props;
         let { outline_tree = [] } = this.props;
         switch (action) {
             case 'add_milestone':
@@ -197,56 +197,116 @@ export default class OutLineHeadItem extends Component {
                 break;
             case 'add_executor':
                 {
-                    // let updateParams = {};
-                    // updateParams.card_id = param.id;
-                    // updateParams.card_name = param.name;
-                    // updateParams.board_id = gantt_board_id;
-                    // updateParams.time_span = param.time_span;
-                    // // updateTask({ ...updateParams }, { isNotLoading: false })
-                    // //     .then(res => {
-                    // //         if (isApiResponseOk(res)) {
-                    // let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
-                    // if (nodeValue) {
-                    //     nodeValue.name = param.name;
-                    //     nodeValue.time_span = param.time_span;
-                    //     this.updateOutLineTreeData(outline_tree);
-                    // } else {
-                    //     console.error("OutlineTree.getTreeNodeValue:未查询到节点");
-                    // }
-                    // //     } else {
+                    const { projectDetailInfoData } = this.props;
+                    debugger
+                    let updateParams = {};
+                    //里程碑
+                    if (param.tree_type == '1') {
+                        updateParams.id = param.id;
+                        updateParams.user_id = param.user_id;
+                        addMilestoneExcutos({ ...updateParams }, { isNotLoading: false })
+                            .then(res => {
+                                if (isApiResponseOk(res)) {
+                                    let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
+                                    if (nodeValue) {
+                                        if (!nodeValue.executors) {
+                                            nodeValue.executors = [];
+                                        }
+                                        if (projectDetailInfoData.data) {
 
-                    // //         message.error(res.message)
-                    // //     }
-                    // // }).catch(err => {
-                    // //     message.error('更新失败')
-                    // // })
+                                            nodeValue.executors.push({...(projectDetailInfoData.data.find((item) => item.user_id == param.user_id)),id:param.user_id});
+                                        }
+
+                                        this.updateOutLineTreeData(outline_tree);
+                                    } else {
+                                        console.error("OutlineTree.getTreeNodeValue:未查询到节点");
+                                    }
+                                } else {
+
+                                    message.error(res.message)
+                                }
+                            }).catch(err => {
+                                message.error('设置里程碑负责人失败')
+                            });
+                    }
+                    if (param.tree_type == '2') {
+                        updateParams.card_id = param.id;
+                        updateParams.executor = param.user_id;
+                        addTaskExecutor({ ...updateParams }, { isNotLoading: false })
+                            .then(res => {
+                                if (isApiResponseOk(res)) {
+                                    let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
+                                    if (nodeValue) {
+                                        if (!nodeValue.executors) {
+                                            nodeValue.executors = [];
+                                        }
+                                        nodeValue.executors.push({...(projectDetailInfoData.data.find((item) => item.user_id == param.user_id)),id:param.user_id});
+                                        this.updateOutLineTreeData(outline_tree);
+                                    } else {
+                                        console.error("OutlineTree.getTreeNodeValue:未查询到节点");
+                                    }
+                                } else {
+
+                                    message.error(res.message)
+                                }
+                            }).catch(err => {
+                                message.error('设置里程碑负责人失败')
+                            });
+                    }
+
+
                 }
                 break;
             case 'remove_executor':
                 {
-                    // let updateParams = {};
-                    // updateParams.card_id = param.id;
-                    // updateParams.card_name = param.name;
-                    // updateParams.board_id = gantt_board_id;
-                    // updateParams.time_span = param.time_span;
-                    // // updateTask({ ...updateParams }, { isNotLoading: false })
-                    // //     .then(res => {
-                    // //         if (isApiResponseOk(res)) {
-                    // let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
-                    // if (nodeValue) {
-                    //     nodeValue.name = param.name;
-                    //     nodeValue.time_span = param.time_span;
-                    //     this.updateOutLineTreeData(outline_tree);
-                    // } else {
-                    //     console.error("OutlineTree.getTreeNodeValue:未查询到节点");
-                    // }
-                    // //     } else {
+                    const { outline_tree } = this.props;
+                    let updateParams = {};
+                    //里程碑
+                    if (param.tree_type == '1') {
+                        updateParams.id = param.id;
+                        updateParams.user_id = param.user_id;
+                        removeMilestoneExcutos({ ...updateParams }, { isNotLoading: false })
+                            .then(res => {
+                                if (isApiResponseOk(res)) {
+                                    let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
+                                    if (nodeValue && nodeValue.executors) {
+                                        nodeValue.executors.splice(nodeValue.executors.findIndex((item) => item.id == param.id));
+                                        this.updateOutLineTreeData(outline_tree);
+                                    } else {
+                                        console.error("OutlineTree.getTreeNodeValue:未查询到节点");
+                                    }
+                                } else {
 
-                    // //         message.error(res.message)
-                    // //     }
-                    // // }).catch(err => {
-                    // //     message.error('更新失败')
-                    // // })
+                                    message.error(res.message)
+                                }
+                            }).catch(err => {
+                                message.error('更新失败')
+                            })
+                    }
+
+                    //任务
+                    if (param.tree_type == '2') {
+                        updateParams.card_id = param.id;
+                        updateParams.executor = param.user_id;
+                        removeTaskExecutor({ ...updateParams }, { isNotLoading: false })
+                            .then(res => {
+                                if (isApiResponseOk(res)) {
+                                    let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
+                                    if (nodeValue && nodeValue.executors) {
+                                        nodeValue.executors.splice(nodeValue.executors.findIndex((item) => item.id == param.id));
+                                        this.updateOutLineTreeData(outline_tree);
+                                    } else {
+                                        console.error("OutlineTree.getTreeNodeValue:未查询到节点");
+                                    }
+                                } else {
+
+                                    message.error(res.message)
+                                }
+                            }).catch(err => {
+                                message.error('更新失败')
+                            })
+                    }
+
                 }
                 break;
             default:

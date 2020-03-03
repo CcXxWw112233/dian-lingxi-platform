@@ -115,7 +115,7 @@ class TreeNode extends Component {
         const { nodeValue = {} } = this.state;
         const newNodeValue = { ...nodeValue, time_span: value };
         this.setState({
-            nodeValue:newNodeValue
+            nodeValue: newNodeValue
         });
         let action = 'edit_' + (newNodeValue.tree_type == '1' ? 'milestone' : 'task');
         console.log("onManHourChange", value, action);
@@ -140,19 +140,20 @@ class TreeNode extends Component {
             nodeValue.executors = [];
         }
         if (type == 'add') {
-            nodeValue.executors.push(key);
+            //nodeValue.executors.push(key);
         }
         if (type == 'remove') {
-            nodeValue.executors.splice(nodeValue.executors.findIndex((item) => item.id == key));
+            //nodeValue.executors.splice(nodeValue.executors.findIndex((item) => item.id == key));
         }
         this.setState({
             nodeValue
         });
+
         // console.log("kkkknodeValue",nodeValue);
         if (this.props.onDataProcess) {
             this.props.onDataProcess({
                 action,
-                param: { ...nodeValue, parentId: this.props.parentId }
+                param: { id: nodeValue.id, user_id: key, tree_type: nodeValue.tree_type, parentId: this.props.parentId }
             });
         }
     }
@@ -178,7 +179,7 @@ class TreeNode extends Component {
             type = this.props.type;
         }
 
-        console.log("time_span",time_span);
+        console.log("time_span", time_span);
 
         return (
             <span className={`${styles.outline_tree_node_label} ${isTitleHover ? styles.hoverTitle : ''}`}>
