@@ -11,10 +11,10 @@ import { updateTaskGroup, deleteTaskGroup, } from '../../../../services/technolo
 import { updateProject, addMenbersInProject, toggleContentPrivilege, removeContentPrivilege, setContentPrivilege, collectionProject, cancelCollection } from '../../../../services/technological/project';
 import { isApiResponseOk } from '../../../../utils/handleResponseData';
 import ShowAddMenberModal from '../../../../routes/Technological/components/Project/ShowAddMenberModal'
-import { PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_CARD_GROUP, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_TEAM_BOARD_ARCHIVE, PROJECTS, PROJECT_TEAM_BOARD_DELETE,PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE } from '../../../../globalset/js/constant';
+import { PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_CARD_GROUP, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_TEAM_BOARD_ARCHIVE, PROJECTS, PROJECT_TEAM_BOARD_DELETE, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE } from '../../../../globalset/js/constant';
 import VisitControl from '../VisitControl/index'
 import globalStyle from '@/globalset/css/globalClassName.less'
-import { ganttIsFold } from './constants';
+import { ganttIsFold, ganttIsOutlineView } from './constants';
 import DetailInfo from '@/routes/Technological/components/ProjectDetail/DetailInfo/index'
 import { deleteBoardFollow } from './ganttBusiness';
 import { currentNounPlanFilterName, setBoardIdStorage } from "@/utils/businessFunction";
@@ -606,7 +606,7 @@ export default class GroupListHeadItem extends Component {
     const params_board_id = gantt_board_id == '0' ? list_id : gantt_board_id
     const rename_permission_code = gantt_board_id == '0' ? PROJECT_TEAM_BOARD_EDIT : PROJECT_TEAM_CARD_GROUP;
     // console.log("", checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, params_board_id));
-    
+
     return (
       <Menu onClick={this.handleMenuSelect} onOpenChange={this.onOpenChange}>
         {
@@ -945,9 +945,14 @@ export default class GroupListHeadItem extends Component {
     const { is_star, list_name, org_id, list_no_time_data = [], list_id, lane_icon, board_id, is_privilege = '0', privileges, create_by = {}, lane_overdue_count } = itemValue
     const { isShowBottDetail, show_edit_input, local_list_name, edit_input_value, show_add_menber_visible, board_info_visible } = this.state
     const board_create_user = create_by.name
+    const { list_data } = itemValue
     return (
       <div>
-        <div className={indexStyles.listHeadItem} style={{ height: rows * ceiHeight }}>
+        <div className={indexStyles.listHeadItem}
+          style={{
+            height: rows * ceiHeight,
+            display: ganttIsOutlineView({ group_view_type }) ? 'none' : 'flex'
+          }}>
           <div className={`${indexStyles.list_head_top}`}>
             <div className={`${indexStyles.list_head_top_left}`}>
               {
@@ -1062,8 +1067,8 @@ export default class GroupListHeadItem extends Component {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
   gantt: { datas: { boards_flies, group_rows = [], ceiHeight, gantt_board_id, group_view_type, get_gantt_data_loading, list_group, show_board_fold } },
-  technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org,userBoardPermissions } },
+  technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, userBoardPermissions } },
   projectDetail: { datas: { projectDetailInfoData = {} } }
 }) {
-  return { boards_flies, list_group, ceiHeight, group_rows, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, get_gantt_data_loading, show_board_fold, projectDetailInfoData,userBoardPermissions}
+  return { boards_flies, list_group, ceiHeight, group_rows, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, get_gantt_data_loading, show_board_fold, projectDetailInfoData, userBoardPermissions }
 }

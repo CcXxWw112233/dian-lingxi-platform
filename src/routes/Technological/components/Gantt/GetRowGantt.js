@@ -7,7 +7,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
 import AvatarList from '@/components/avatarList'
 import { Tooltip, Dropdown, message } from 'antd'
-import { date_area_height, task_item_height, task_item_margin_top, ganttIsFold, ceil_height_fold, task_item_height_fold, group_rows_fold } from './constants'
+import { date_area_height, task_item_height, task_item_margin_top, ganttIsFold, ceil_height_fold, task_item_height_fold, group_rows_fold, ganttIsOutlineView } from './constants'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import QueueAnim from 'rc-queue-anim'
 import GetRowTaskItem from './GetRowTaskItem'
@@ -16,9 +16,10 @@ import { checkIsHasPermissionInBoard } from '../../../../utils/businessFunction'
 import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE } from '../../../../globalset/js/constant';
 import GetRowSummary from './components/gattFaceCardItem/GetRowSummary.js'
 import GetRowGanttVirtual from './GetRowGanttVirtual'
+import GetRowStrip from './components/GetRowStrip'
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
-const coperatedLeftDiv = 248 //滚动条左边还有一个div的宽度，作为修正
+const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -117,6 +118,9 @@ export default class GetRowGantt extends Component {
   //鼠标拖拽移动
   dashedMousedown(e) {
     const { gantt_board_id, group_view_type, show_board_fold } = this.props
+    if (ganttIsOutlineView({ group_view_type })) {
+      return
+    }
     if (
       this.stopPropagationEle(e) //不能滑动到某一个任务实例上
     ) {
@@ -213,7 +217,9 @@ export default class GetRowGantt extends Component {
     if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) {
       return
     }
-
+    if (ganttIsOutlineView({ group_view_type })) {
+      return
+    }
     const { ceiHeight, ceilWidth } = this.props
     if (this.isMouseDown) { //按下的情况不处理
       return false
@@ -321,6 +327,10 @@ export default class GetRowGantt extends Component {
   getCurrentGroup = ({ top }) => {
     if (top == undefined || top == null) {
       return
+    }
+    const { group_view_type } = this.props
+    if (ganttIsOutlineView({ group_view_type })) {
+      return Promise.resolve({ current_list_group_id: 0 })
     }
     const getSum = (total, num) => {
       return total + num;
@@ -454,9 +464,10 @@ export default class GetRowGantt extends Component {
     return (
       list_data.map((value2, key) => {
         // const { id, left, width, start_time, end_time } = value2
-        const { end_time, left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time, start_time, due_time } = value2
+        const { end_time, left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time, start_time, due_time, is_outine_group_head } = value2
         const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
         return (
+          !is_outine_group_head && //大纲视图会将分组头部塞进任务，做统一处理,但并不是真正的任务
           <GetRowTaskItem
             key={`${id}_${start_time}_${end_time}_${left}_${top}`}
             itemValue={value2}
@@ -487,6 +498,22 @@ export default class GetRowGantt extends Component {
     )
   }
 
+  // 渲染横条
+  renderStripSc = ({ list_data, list_id, list_group_key }) => {
+    return (
+      list_data.map((value2, key) => {
+        // const { id, left, width, start_time, end_time } = value2
+        const { end_time, left, top, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time, start_time, due_time } = value2
+        const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
+        return (
+          <React.Fragment key={`${id}_${top}`}>
+            <GetRowStrip itemValue={value2} list_id={list_id} list_group_key={list_group_key}></GetRowStrip>
+          </React.Fragment>
+        )
+      })
+    )
+  }
+
   render() {
     const { currentRect = {}, dasheRectShow, drag_holiday_count } = this.state
     const {
@@ -497,7 +524,8 @@ export default class GetRowGantt extends Component {
       ceiHeight,
       gantt_board_id,
       group_view_type,
-      show_board_fold
+      show_board_fold,
+      outline_tree_round
     } = this.props
 
     return (
@@ -525,26 +553,68 @@ export default class GetRowGantt extends Component {
               {Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth) - drag_holiday_count}
               {Math.ceil(currentRect.width / ceilWidth) != 1 && (drag_holiday_count > 0 ? `+${drag_holiday_count}` : '')}
             </div>
-          )}
-        {list_group.map((value, key) => {
-          const { list_data = [], list_id, board_fold_data } = value
-          if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) {
-            return (this.renderFoldTaskSummary({ list_id, list_data, board_fold_data, group_index: key }))
-          } else {
-            return (
-              this.renderNormalTaskList({ list_id, list_data })
-            )
-          }
-        })}
-
-        {/* {list_group.map((value, key) => {
-          const { lane_data, list_id, list_data = [] } = value
-          const { milestones = {} } = lane_data
-          return (
-            <GetRowGanttItem key={list_id} itemKey={key} list_id={list_id} list_data={list_data} rows={group_rows[key]} milestones={milestones} />
           )
-        })} */}
-        <GetRowGanttVirtual />
+        }
+        {/* 非大纲视图下渲染任务和或者进度 */}
+        {
+          !ganttIsOutlineView({ group_view_type }) && list_group.map((value, key) => {
+            const { list_data = [], list_id, board_fold_data } = value
+            if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) {
+              return (this.renderFoldTaskSummary({ list_id, list_data, board_fold_data, group_index: key }))
+            } else {
+              return (
+                this.renderNormalTaskList({ list_id, list_data })
+              )
+            }
+          })
+        }
+        {/* 渲染大纲视图下的任务 */}
+        {
+          ganttIsOutlineView({ group_view_type }) && outline_tree_round.map((value, key) => {
+            const { end_time, left, top, id, start_time, tree_type, parent_expand, is_expand } = value
+            const juge_expand = (tree_type == '0' || tree_type == '3') ? parent_expand : (parent_expand && is_expand)
+            return (
+              (tree_type == '2' || tree_type == "3") && parent_expand && (
+                <GetRowTaskItem
+                  key={`${id}_${start_time}_${end_time}_${left}_${top}`}
+                  itemValue={value}
+                  setSpecilTaskExample={this.setSpecilTaskExample}
+                  ganttPanelDashedDrag={this.isDragging}
+                  getCurrentGroup={this.getCurrentGroup}
+                  // list_id={list_id}
+                  changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
+                  task_is_dragging={this.task_is_dragging}
+                  setGoldDateArr={this.props.setGoldDateArr}
+                  setScrollPosition={this.props.setScrollPosition}
+                  setIsDragging={this.setIsDragging}
+                  setTaskIsDragging={this.setTaskIsDragging}
+                />)
+            )
+          })
+        }
+        {/* 渲染大纲视图下的横条 */}
+        {
+          ganttIsOutlineView({ group_view_type }) && outline_tree_round.map((value, key) => {
+            // const { list_data = [], list_id, board_fold_data } = value
+            // return (
+            //   this.renderStripSc({ list_data, list_id, list_group_key: key })
+            // )
+            const { id, top, parent_expand, is_expand, tree_type } = value
+            const juge_expand = (tree_type == '0' || tree_type == '3') ? parent_expand : (parent_expand && is_expand)
+            return parent_expand && (
+              <React.Fragment key={`${id}_${top}`}>
+                <GetRowStrip itemValue={value}
+                  deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
+                ></GetRowStrip>
+              </React.Fragment>
+            )
+          })
+        }
+        {
+          !ganttIsOutlineView({ group_view_type }) && (
+            <GetRowGanttVirtual />
+          )
+        }
         {/* <GetRowGanttItemElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} /> */}
       </div>
     )
@@ -568,13 +638,14 @@ function mapStateToProps({ gantt: {
     group_view_type,
     group_list_area_section_height,
     show_board_fold,
-  }},
+    outline_tree_round
+  } },
   technological: {
     datas: {
       userBoardPermissions
     }
   }
- }) {
+}) {
   return {
     gold_date_arr,
     list_group,
@@ -590,7 +661,8 @@ function mapStateToProps({ gantt: {
     group_view_type,
     group_list_area_section_height,
     show_board_fold,
-    userBoardPermissions
+    userBoardPermissions,
+    outline_tree_round
   }
 }
 

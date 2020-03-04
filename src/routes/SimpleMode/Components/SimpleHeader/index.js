@@ -567,7 +567,7 @@ class SimpleHeader extends Component {
                     destroyOnClose={true}
                     maskClosable={true}
                     footer={null}
-                    z-zIndex={10000}
+                    zIndex={10000}
                     onCancel={this.closedGuideImageModal}
                     centered={true}
                     height={'80%'}

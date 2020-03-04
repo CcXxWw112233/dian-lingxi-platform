@@ -53,7 +53,7 @@ export default class GroupListHeadElse extends Component {
         rows = mult
       }
     }
-    return rows * ceiHeight
+    return (rows + 5) * ceiHeight + 30
   }
 
   // 新增分组
@@ -88,7 +88,7 @@ export default class GroupListHeadElse extends Component {
         add_new_board_group_value: ''
       })
       return false
-  }
+    }
     this.setState({
       add_new_board_group_value: value
     })
