@@ -9,6 +9,7 @@ import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import { createMilestone } from '../../../../../../services/technological/prjectDetail'
 import { getGlobalData } from '../../../../../../utils/businessFunction'
 import BoardTemplateManager from '@/routes/organizationManager/projectTempleteScheme/index.js'
+import SafeConfirmModal from '../SafeConfirmModal';
 
 const MenuItem = Menu.Item
 const TreeNode = Tree.TreeNode;
@@ -561,7 +562,7 @@ export default class BoardTemplate extends Component {
 
         new_checkedKeys = Array.from(new Set([].concat(new_checkedKeys, arr)))
         let abs = checkedKeysObj.filter(item => new_checkedKeys.findIndex(item2 => item2 == item.id) != -1)
-        
+
         //最终所需要数据
         milestone_ids = new_checkedKeys.filter(item => abs.findIndex(item2 => item == item2.id && item2.parent_id == '0') != -1)
         card_ids = new_checkedKeys.filter(item => abs.findIndex(item2 => item == item2.id && item2.parent_id != '0') != -1)
@@ -574,7 +575,7 @@ export default class BoardTemplate extends Component {
             card_ids
         }
         importBoardTemplate(params).then(res => {
-            if(isApiResponseOk(res)) {
+            if (isApiResponseOk(res)) {
                 dispatch({
                     type: 'gantt/getGanttData',
                     payload: {
@@ -583,11 +584,20 @@ export default class BoardTemplate extends Component {
                 })
             }
         }).catch(err => {
-            console.log('ssss',err)
+            message.error('引入模板失败')
         })
     }
+    changeSafeConfirmModalVisible = () => {
+        this.setState({
+            safeConfirmModalVisible: !this.state.safeConfirmModalVisible
+        });
+    }
+    onImportBoardTemplate = () => {
+        this.quoteTemplate()
+    }
+    // 
     render() {
-        const { template_data, show_type, selected_template_name, spinning, project_templete_scheme_visible, contain_height, checkedKeys = [] } = this.state
+        const { template_data, show_type, selected_template_name, spinning, project_templete_scheme_visible, contain_height, checkedKeys = [], safeConfirmModalVisible } = this.state
         const { gantt_board_id } = this.props
         return (
             gantt_board_id && gantt_board_id != '0' ?
@@ -622,7 +632,7 @@ export default class BoardTemplate extends Component {
                         </div>
                         <div className={`${styles.list_item} ${styles.temp_ope}`}>
                             <div className={`${styles.temp_ope_name}`}>流程步骤</div>
-                            <div className={`${styles.temp_ope_cop} ${globalStyles.link_mouse}`} onClick={this.quoteTemplate}>引用到项目</div>
+                            <div className={`${styles.temp_ope_cop} ${globalStyles.link_mouse}`} onClick={this.changeSafeConfirmModalVisible}>引用到项目</div>
                         </div>
                         {/* 主区 */}
                         <Spin spinning={spinning}>
@@ -665,6 +675,8 @@ export default class BoardTemplate extends Component {
                             _organization_id={localStorage.getItem('OrganizationId') != '0' ? localStorage.getItem('OrganizationId') : getGlobalData('aboutBoardOrganizationId')}
                             project_templete_scheme_visible={project_templete_scheme_visible}
                             setProjectTempleteSchemeModal={this.setProjectTempleteSchemeModal}></BoardTemplateManager>
+                        <SafeConfirmModal visible={safeConfirmModalVisible} onChangeVisible={this.changeSafeConfirmModalVisible} onOk={this.onImportBoardTemplate} />
+
                     </div >
                 ) : (
                     <></>
