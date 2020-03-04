@@ -160,7 +160,7 @@ class TreeNode extends Component {
             nodeValue: newNodeValue
         });
         let action = 'edit_' + (newNodeValue.tree_type == '1' ? 'milestone' : 'task');
-        console.log("onManHourChange", value, action);
+        //console.log("onManHourChange", value, action);
         if (this.props.onDataProcess) {
             this.props.onDataProcess({
                 action,
@@ -224,7 +224,7 @@ class TreeNode extends Component {
             type = this.props.type;
         }
 
-        console.log("is_focus", is_focus);
+       //console.log("is_focus", is_focus);
 
 
         return (
@@ -318,7 +318,7 @@ class TreeNode extends Component {
         } else {
             type = this.props.type;
         }
-        console.log("更新节点", nodeValue);
+        //console.log("更新节点", nodeValue);
 
         if (this.props.children && this.props.children.length > 0) {
 

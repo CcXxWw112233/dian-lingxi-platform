@@ -113,11 +113,11 @@ export default class OutLineHeadItem extends Component {
         });
     }
     onSelect = (selectedKeys, info) => {
-        console.log('selected', selectedKeys, info);
+        //console.log('selected', selectedKeys, info);
     };
 
     onHover = (id, hover,parentId) => {
-        console.log("大纲:onHover", id, hover);
+        //console.log("大纲:onHover", id, hover);
         const { dispatch, outline_tree } = this.props;
         let nodeValue = {};
         if (hover) {
@@ -142,7 +142,7 @@ export default class OutLineHeadItem extends Component {
     }
 
     onExpand = (id, is_expand) => {
-        console.log("大纲:onExpand", id, is_expand);
+        //console.log("大纲:onExpand", id, is_expand);
         const { dispatch, outline_tree } = this.props;
         let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, id);
         if (nodeValue) {
@@ -154,7 +154,7 @@ export default class OutLineHeadItem extends Component {
 
     }
     onDataProcess = ({ action, param }) => {
-        console.log("大纲:onDataProcess", action, param);
+        //console.log("大纲:onDataProcess", action, param);
         const { dispatch, gantt_board_id, } = this.props;
         let { outline_tree = [] } = this.props;
         switch (action) {
@@ -559,7 +559,7 @@ export default class OutLineHeadItem extends Component {
         const { tplId } = this.state;
         importBoardTemplate({ "board_id": gantt_board_id, 'template_id': tplId }).then(res => {
             if (isApiResponseOk(res)) {
-                console.log("importBoardTemplate", res);
+                //console.log("importBoardTemplate", res);
                 dispatch({
                     type: 'gantt/getGanttData',
                     payload: {
