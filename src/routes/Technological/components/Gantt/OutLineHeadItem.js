@@ -116,21 +116,29 @@ export default class OutLineHeadItem extends Component {
         console.log('selected', selectedKeys, info);
     };
 
-    onHover = (id, hover) => {
+    onHover = (id, hover,parentId) => {
         console.log("大纲:onHover", id, hover);
         const { dispatch, outline_tree } = this.props;
         let nodeValue = {};
         if (hover) {
             nodeValue = OutlineTree.getTreeNodeValue(outline_tree, id) || {};
+            dispatch({
+                type: 'gantt/updateDatas',
+                payload: {
+                    outline_hover_obj: nodeValue
+                }
+            });
+        }else{
+            if(id=='0'){
+                let parent  = OutlineTree.getTreeNodeValue(outline_tree, parentId) || {};
+                nodeValue = parent.children.find((item)=>item.tree_type=='0');
+                nodeValue.is_focus = false;
+            }
+          
         }
 
         this.updateOutLineTreeData(outline_tree);
-        dispatch({
-            type: 'gantt/updateDatas',
-            payload: {
-                outline_hover_obj: nodeValue
-            }
-        });
+      
     }
 
     onExpand = (id, is_expand) => {
