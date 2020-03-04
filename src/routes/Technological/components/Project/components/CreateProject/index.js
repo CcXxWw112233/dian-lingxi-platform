@@ -1,5 +1,5 @@
 import React from 'react'
-import { Modal, Form, Button, Input, message, Select } from 'antd'
+import { Modal, Form, Button, Input, message, Select, Tooltip } from 'antd'
 import DragValidation from '../../../../../../components/DragValidation'
 import indexStyles from './index.less'
 import StepTwoListItem from './StepTwoListItem'
@@ -13,6 +13,8 @@ import { isApiResponseOk } from "../../../../../../utils/handleResponseData";
 import { connect } from 'dva'
 import { getAppsList } from "../../../../../../services/technological/project";
 import { getBoardTemplateList } from '../../../../../../services/technological/gantt'
+import globalStyles from '@/globalset/css/globalClassName.less'
+
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 const { Option } = Select;
@@ -97,6 +99,15 @@ class CreateProject extends React.Component {
   boardTemplateChange = (id) => {
     this.setState({
       selected_board_template_id: id
+    })
+  }
+  openGuideModal = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'simplemode/updateDatas',
+      payload: {
+        guideModalVisiable: true,
+      }
     })
   }
   // 项目模板---end
@@ -697,23 +708,29 @@ class CreateProject extends React.Component {
               style={{ height: 40, marginBottom: 20 }} />
 
             {/* 项目模板 */}
-            <Select
-              size={'large'}
-              value={selected_board_template_id}
-              style={{ height: 40, width: 346 }}
-              placeholder={"请选择项目模板"}
-              onChange={this.boardTemplateChange}
-            >
-              {
-                board_template_list.map(item => {
-                  const { name, id } = item
-                  return (
-                    <Option value={id}>{name}</Option>
-                  )
-                })
-              }
-            </Select>
-
+            <div style={{ position: 'relative' }}>
+              <Select
+                size={'large'}
+                value={selected_board_template_id}
+                style={{ height: 40, width: 346 }}
+                placeholder={"请选择项目模板"}
+                onChange={this.boardTemplateChange}
+              >
+                {
+                  board_template_list.map(item => {
+                    const { name, id } = item
+                    return (
+                      <Option value={id}>{name}</Option>
+                    )
+                  })
+                }
+              </Select>
+              <Tooltip title="操作指引">
+                <div style={{ height: 20, width: 20, position: 'absolute', right: -28, lineHeight: '20px', top: 10 }} onClick={this.openGuideModal}>
+                  <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(0, 0, 0, .45)', fontSize: '14px' }} >&#xe845;</i>
+                </div>
+              </Tooltip>
+            </div>
             {/* 复制流程模板 */}
             {
               is_simple_model == '0' && (
