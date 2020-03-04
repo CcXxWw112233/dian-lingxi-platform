@@ -5,7 +5,7 @@ import indexStyles from './index.less'
 import { connect } from 'dva'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { afterCreateBoardUpdateGantt } from './ganttBusiness';
-import CreateProject from './../Project/components/CreateProject/index';
+import CreateProject from '../Project/components/CreateProject/index';
 import { checkIsHasPermission, selectBoardToSeeInfo, setBoardIdStorage } from '../../../../utils/businessFunction'
 import { ORG_TEAM_BOARD_CREATE } from '../../../../globalset/js/constant'
 import { ganttIsOutlineView } from './constants'
@@ -164,15 +164,10 @@ export default class GroupListHeadSet extends Component {
             >
                 <div className={indexStyles.set_content}>
 
-                    <div className={indexStyles.set_content_right}>
-                        <div className={indexStyles.set_content_dec}>
-                            {group_view_type == '1' && '项目列表'}
-                            {group_view_type == '2' && '成员列表'}
-                            {group_view_type == '4' && '我的计划'}
-                        </div>
-                    </div>
-
                     <div className={indexStyles.set_content_left}>
+                        {gantt_board_id != '0' && (
+                            <div onClick={this.backClick} className={`${indexStyles.group_back_to_board} ${globalStyles.authTheme}`}>&#xe7ec;</div>
+                        )}
                         <div className={indexStyles.set_content_view_type}>
 
                             <Tooltip title={gantt_board_id != '0' ? '大纲视图' : '请先进入单个项目'}>
@@ -186,6 +181,32 @@ export default class GroupListHeadSet extends Component {
                                 <div onClick={() => this.setGroupViewType('2')} className={`${indexStyles.set_content_left_right} ${globalStyles.authTheme}  ${group_view_type == '2' && selected}`}>&#xe7b2;</div>
                             </Tooltip>
                         </div>
+
+                    </div>
+
+                    <div className={indexStyles.set_content_right}>
+                        <Tooltip title={'内容过滤'}>
+                            <Dropdown
+                                overlay={<ContentFilter dropdownVisible={dropdownVisible} setDropdownVisible={this.setDropdownVisible} />}
+                                trigger={['click']}
+                                visible={dropdownVisible}
+                                zIndex={500}>
+                                <div className={`${indexStyles.set_content_right_left} ${globalStyles.authTheme} 
+                                ${(group_view_filter_boards.length || group_view_filter_users.length) && indexStyles.has_filter_content}`}
+                                    onClick={() => this.setDropdownVisible(true)} >&#xe8bd;</div>
+                            </Dropdown>
+                        </Tooltip>
+                        {/* 在项目视图，并且在查看全部项目下 */}
+
+                        {
+                            group_view_type == '1' && gantt_board_id == '0' && this.isHasCreatBoardPermission() && (
+                                <Tooltip title={'新建项目'}>
+                                    <div className={`${indexStyles.set_content_right_right} ${globalStyles.authTheme}`}
+                                        onClick={this.createBoard}>&#xe846;</div>
+                                </Tooltip>
+                            )
+                        }
+
                     </div>
                 </div>
                 {addProjectModalVisible && (

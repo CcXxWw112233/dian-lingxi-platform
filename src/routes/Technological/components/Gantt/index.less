@@ -689,18 +689,17 @@
   }
 }
 
-.groupHeadSet {
+.groupHeadSet,
+.groupHeadSetBott {
   height          : @date_area_height;
   width           : 280px;
   background-color: #ffffff;
   position        : absolute;
-  box-shadow      : 1px -3px 4px 0px rgba(0, 0, 0, 0.15);
   padding-right   : @group_head_padding;
-  border-bottom   : 1px solid #E8E8E8;
   z-index         : 3;
 
   .set_content {
-    height         : @date_area_height;
+    height         : 100%;
     display        : flex;
     justify-content: space-between;
     align-items    : center;
@@ -775,7 +774,7 @@
       }
 
       .set_content_right_right {
-        margin-left            : 4px;
+        margin-left            : 12px;
         background-image       : -webkit-linear-gradient(bottom, #18B2FF, #18CDFF);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -791,7 +790,27 @@
       }
     }
 
+    .set_content_dec {
+      font-weight: 500;
+      color      : rgba(0, 0, 0, 0.85) !important;
+      font-weight: bold;
+    }
   }
+}
+
+.groupHeadSet {
+  box-shadow   : 1px -3px 4px 0px rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid #E8E8E8;
+  width        : 277px;
+
+}
+
+.groupHeadSetBott {
+  height    : 52px;
+  bottom    : 0;
+  border-top: 1px solid #E8E8E8;
+  box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.09);
+  width     : 277px;
 }
 
 .content_filter_out {
@@ -890,23 +909,23 @@
     overflow  : hidden;
 
     .outlineFooter {
-      z-index   : 3;
-      position  : fixed;
-      left      : 20px;
-      bottom    : 0px;
-      width     : 280px;
-      height    : 52px;
-      background: rgba(255, 255, 255, 1);
-      box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.09);
-      border-top: 1px rgba(0, 0, 0, 0.09) solid;
-      display   : flex;
-      align-items: center;
+      z-index        : 3;
+      position       : fixed;
+      left           : 20px;
+      bottom         : 0px;
+      width          : 280px;
+      height         : 52px;
+      background     : rgba(255, 255, 255, 1);
+      box-shadow     : 0px 1px 0px 0px rgba(0, 0, 0, 0.09);
+      border-top     : 1px rgba(0, 0, 0, 0.09) solid;
+      display        : flex;
+      align-items    : center;
       justify-content: flex-end;
 
       .actionIcon {
-        font-weight: 600;
+        font-weight : 600;
         margin-right: 16px;
-        font-size  : 16px
+        font-size   : 16px
       }
     }
 
