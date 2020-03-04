@@ -117,7 +117,7 @@ export async function modifOrStopShareLink(payload = {}) {
 }
 
 export async function createMeeting(payload) {
-  const { board_id, flag, topic, user_for = null, user_ids = null, _organization_id, start_time = '', end_time = '' } = payload
+  const { board_id, flag, topic, user_for = null, user_ids = null, _organization_id, start_time = '', end_time = '', provider_id } = payload
   return request({
     url: `${REQUEST_DOMAIN_TEAM_SHOW}/meeting`,
     method: 'POST',
@@ -129,7 +129,8 @@ export async function createMeeting(payload) {
       user_for,
       user_ids,
       start_time,
-      end_time
+      end_time,
+      provider_id
     }
   })
 
@@ -143,6 +144,15 @@ export async function createMeeting(payload) {
   //   "user_for": "string" //','
   // }
   //flag: 2 //会议类型，全局调用时，值为：2
+}
+
+// 获取视频会议提供商列表
+export async function getVideoConferenceProviderList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_TEAM_SHOW}/meeting/provider`,
+    method: 'GET',
+    params
+  })
 }
 
 //获取当前组织的所有成员信息
