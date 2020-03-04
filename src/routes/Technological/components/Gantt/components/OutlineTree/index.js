@@ -15,6 +15,7 @@ class TreeNode extends Component {
             isTitleHover: false,
             isTitleEdit: false,
             nodeValue: {
+                is_focus: false,
                 is_expand: true,
                 hover: false,
                 ...props.nodeValue
@@ -75,7 +76,7 @@ class TreeNode extends Component {
     onMouseEnter = () => {
         const { nodeValue = {} } = this.state;
         const { id } = nodeValue;
-        if (id) {
+        if (id&& nodeValue.tree_type != '0') {
             this.props.onHover(id, true);
         }
     }
@@ -212,7 +213,7 @@ class TreeNode extends Component {
 
     renderTitle = () => {
         const { isTitleHover, isTitleEdit, nodeValue = {} } = this.state;
-        const { id, name: title, tree_type, is_expand, time_span, executors = [], is_focus = false } = nodeValue;
+        const { id, name: title, tree_type, is_expand, time_span, executors = [], is_focus } = nodeValue;
         const { onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {} } = this.props;
         let type;
         if (tree_type) {
@@ -221,7 +222,8 @@ class TreeNode extends Component {
             type = this.props.type;
         }
 
-        console.log("time_span", time_span);
+        console.log("is_focus", is_focus);
+
 
         return (
             <span className={`${styles.outline_tree_node_label} ${isTitleHover ? styles.hoverTitle : ''}`}>
@@ -229,7 +231,7 @@ class TreeNode extends Component {
                 <span className={`${styles.title}`} onMouseEnter={this.onMouseEnterTitle} onMouseLeave={this.onMouseLeaveTitle}>
                     {
                         (isTitleHover || isTitleEdit) || is_focus ?
-                            <Input value={title}
+                            <Input value={title != '0' ? title : ''}
                                 autoFocus={is_focus}
                                 style={{ width: '100%' }}
                                 onChange={this.onChangeTitle}
