@@ -266,7 +266,7 @@ export const currentFolderJudegeFileUpload = ({ folder_id, im_all_latest_unread_
 export const setGantTimeSpan = ({ time_span, start_time, due_time, start_date, end_date }) => {
     let new_time_span = 1
     if (!due_time || !start_time) {
-        return time_span || 1
+        return Number(time_span) || 1
     } else {
         new_time_span = (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1
         // if (due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
