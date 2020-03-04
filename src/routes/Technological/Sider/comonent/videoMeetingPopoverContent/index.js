@@ -20,7 +20,7 @@ import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner
 import kty from '@/assets/sider_right/kty.png'
 import zoom from '@/assets/sider_right/zoom.png'
 import zhumu from '@/assets/sider_right/zhumu.png'
-import zyy from '@/assets/sider_right/zhumu.png'
+import zyy from '@/assets/sider_right/zyy.png'
 import { currentNounPlanFilterName } from "@/utils/businessFunction";
 import { PROJECTS } from '@/globalset/js/constant'
 import { isApiResponseOk } from '@/utils/handleResponseData'
