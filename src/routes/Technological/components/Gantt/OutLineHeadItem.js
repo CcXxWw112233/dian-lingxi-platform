@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Icon, message, Menu, Dropdown, Modal } from 'antd';
+import { message, Menu, Dropdown, Modal } from 'antd';
 import styles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less';
 import OutlineTree from './components/OutlineTree';
@@ -21,8 +21,8 @@ import { isApiResponseOk } from '@/utils/handleResponseData';
 import { checkIsHasPermissionInBoard, getOrgIdByBoardId, getGlobalData } from '@/utils/businessFunction';
 import DetailInfo from '@/routes/Technological/components/ProjectDetail/DetailInfo/index'
 import { PROJECT_TEAM_BOARD_MEMBER, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '@/globalset/js/constant';
-import ShowAddMenberModal from '../../../../routes/Technological/components/Project/ShowAddMenberModal'
-
+import ShowAddMenberModal from '../../../../routes/Technological/components/Project/ShowAddMenberModal';
+import SafeConfirmModal from './components/SafeConfirmModal';
 const { SubMenu } = Menu;
 const { TreeNode } = OutlineTree;
 const { confirm } = Modal;
@@ -32,7 +32,9 @@ export default class OutLineHeadItem extends Component {
     state = {
         template_list: [],
         board_info_visible: false,
-        show_add_menber_visible: false
+        show_add_menber_visible: false,
+        safeConfirmModalVisible: false,
+        tplId: 0,
     }
     componentDidMount() {
         const OrganizationId = localStorage.getItem('OrganizationId')
@@ -57,39 +59,51 @@ export default class OutLineHeadItem extends Component {
         });
     }
 
+    getConfirmContent = () => {
+        return (
+            <div>
+                <div>引用项目模版会覆盖删除项目现有的数据，如需引用请在下方输入“<span style={{ color: '#1890FF' }}>确认引用</span>”。</div>
+                <div><Input style={{ width: '124px' }} placeholder="请输入" block /></div>
+            </div>
+        );
+    }
     handleProjectMenu = ({ key }) => {
         const { dispatch, gantt_board_id } = this.props;
         if (key.indexOf('importTpl') != -1) {
             let tplId = key.replace("importTpl_", "");
-            console.log("tplId", tplId);
-            confirm({
-                title: '确认要引用项目模版吗？',
-                content: '引用项目模版会覆盖删除项目现有的数据，如需引用请在下方输入“确认引用"。',
-                okText: '确定',
-                okType: 'danger',
-                cancelText: '取消',
-                onOk() {
-                    // console.log('OK');
-                    importBoardTemplate({ "board_id": gantt_board_id, 'template_id': tplId }).then(res => {
-                        if (isApiResponseOk(res)) {
-                            console.log("importBoardTemplate", res);
-                            dispatch({
-                                type: 'gantt/getGanttData',
-                                payload: {
-
-                                }
-                            })
-                        } else {
-                            message.error(res.message)
-                        }
-                    }).catch(err => {
-                        message.error('更新失败')
-                    })
-                },
-                onCancel() {
-                    console.log('Cancel');
-                },
+            this.setState({
+                safeConfirmModalVisible: true,
+                tplId
             });
+            // console.log("tplId", tplId);
+            // confirm({
+            //     title: '确认要引用项目模版吗？',
+            //     content: this.getConfirmContent(),
+            //     okText: '确定',
+            //     okType: 'danger',
+            //     cancelText: '取消',
+            //     onOk() {
+            //         // console.log('OK');
+            //         importBoardTemplate({ "board_id": gantt_board_id, 'template_id': tplId }).then(res => {
+            //             if (isApiResponseOk(res)) {
+            //                 console.log("importBoardTemplate", res);
+            //                 dispatch({
+            //                     type: 'gantt/getGanttData',
+            //                     payload: {
+
+            //                     }
+            //                 })
+            //             } else {
+            //                 message.error(res.message)
+            //             }
+            //         }).catch(err => {
+            //             message.error('更新失败')
+            //         })
+            //     },
+            //     onCancel() {
+            //         console.log('Cancel');
+            //     },
+            // });
         } else {
             if (key == 'boardInfo') {
                 this.setBoardInfoVisible();
@@ -230,14 +244,14 @@ export default class OutLineHeadItem extends Component {
 
                     let updateParams = {};
                     updateParams.add_type = 0;
-             
+
                     updateParams.name = param.name;
                     updateParams.board_id = gantt_board_id;
 
                     let paraseNodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.parentId);
                     if (paraseNodeValue && paraseNodeValue.tree_type == '1') {
                         updateParams.milestone_id = paraseNodeValue.id;
-                    }else{
+                    } else {
                         updateParams.parent_id = param.parentId;
                     }
 
@@ -285,7 +299,7 @@ export default class OutLineHeadItem extends Component {
                     updateParams.name = param.name;
                     updateParams.board_id = gantt_board_id;
                     // if(){
-                        
+
                     // }
                     updateParams.start_time = param.start_time;
                     updateParams.due_time = param.due_time;
@@ -295,7 +309,7 @@ export default class OutLineHeadItem extends Component {
                             if (isApiResponseOk(res)) {
                                 let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
                                 if (nodeValue) {
-                                
+
                                     nodeValue.name = param.name;
                                     nodeValue.time_span = param.time_span;
                                     nodeValue.start_time = param.start_time;
@@ -525,9 +539,36 @@ export default class OutLineHeadItem extends Component {
         this.setShowAddMenberModalVisibile()
     }
 
+    changeSafeConfirmModalVisible = () => {
+        this.setState({
+            safeConfirmModalVisible: !this.state.safeConfirmModalVisible
+        });
+    }
+
+
+    onImportBoardTemplate = () => {
+        const { dispatch, gantt_board_id } = this.props;
+        const { tplId } = this.state;
+        importBoardTemplate({ "board_id": gantt_board_id, 'template_id': tplId }).then(res => {
+            if (isApiResponseOk(res)) {
+                console.log("importBoardTemplate", res);
+                dispatch({
+                    type: 'gantt/getGanttData',
+                    payload: {
+
+                    }
+                })
+            } else {
+                message.error(res.message)
+            }
+        }).catch(err => {
+            message.error('引入模板失败')
+        })
+    }
+
     render() {
-        const { board_info_visible, show_add_menber_visible } = this.state;
-        const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData,outline_tree_round } = this.props;
+        const { board_info_visible, show_add_menber_visible, safeConfirmModalVisible } = this.state;
+        const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData, outline_tree_round } = this.props;
         console.log("刷新了数据", outline_tree);
         return (
             <div className={styles.outline_wrapper}>
@@ -581,7 +622,7 @@ export default class OutLineHeadItem extends Component {
                     )
                 }
                 <DetailInfo setProjectDetailInfoModalVisible={this.setBoardInfoVisible} modalVisible={board_info_visible} invitationType='1' invitationId={gantt_board_id} />
-
+                <SafeConfirmModal visible={safeConfirmModalVisible} onChangeVisible={this.changeSafeConfirmModalVisible} onOk={this.onImportBoardTemplate} />
             </div>
         );
     }
@@ -590,10 +631,10 @@ export default class OutLineHeadItem extends Component {
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
-    gantt: { datas: { gantt_board_id, group_view_type, outline_tree, outline_hover_obj,outline_tree_round} },
+    gantt: { datas: { gantt_board_id, group_view_type, outline_tree, outline_hover_obj, outline_tree_round } },
     technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, userBoardPermissions } },
     projectDetail: { datas: { projectDetailInfoData = {} } }
 }) {
-    return { currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, projectDetailInfoData, userBoardPermissions, outline_tree, outline_hover_obj,outline_tree_round }
+    return { currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, projectDetailInfoData, userBoardPermissions, outline_tree, outline_hover_obj, outline_tree_round }
 }
 
