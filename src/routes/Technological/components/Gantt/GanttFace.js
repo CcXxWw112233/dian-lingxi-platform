@@ -10,6 +10,8 @@ import { getGanttData } from "../../../../services/technological/gantt";
 import { isApiResponseOk } from "../../../../utils/handleResponseData";
 import { date_area_height, ganttIsOutlineView } from './constants'
 import GroupListHeadSet from './GroupListHeadSet.js'
+import GroupListHeadSetBottom from './GroupListHeadSetBottom'
+
 import ShowFileSlider from './components/boardFile/ShowFileSlider'
 import BoardsFilesArea from './components/boardFile/BoardsFilesArea'
 import FaceRightButton from './components/gattFaceCardItem/FaceRightButton'
@@ -291,6 +293,7 @@ export default class GanttFace extends Component {
                 gantt_card_height={gantt_card_height}
                 dataAreaRealHeight={dataAreaRealHeight} />
               {/* <GroupListHeadElse gantt_card_height={gantt_card_height} dataAreaRealHeight={dataAreaRealHeight} /> */}
+              <GroupListHeadSetBottom />
             </div>
             <div
               className={indexStyles.board_body}
