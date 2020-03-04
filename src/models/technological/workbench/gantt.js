@@ -285,6 +285,8 @@ export default {
         const due_time = getDigit(item['due_time'])
         const start_time = getDigit(item['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
         let time_span = item['time_span']
+        new_item.due_time = due_time
+        new_item.start_time = start_time
         time_span = setGantTimeSpan({ time_span, start_time, due_time, start_date, end_date })
         new_item.time_span = time_span
 
@@ -299,7 +301,9 @@ export default {
           const due_time2 = getDigit(item2['due_time'])
           const start_time2 = getDigit(item2['start_time']) || due_time2 //如果没有开始时间，那就取截止时间当天
           let time_span2 = item2['time_span']
-          time_span2 = setGantTimeSpan({ time_span2, start_time2, due_time2, start_date, end_date })
+          new_item2.due_time = due_time2
+          new_item2.start_time = start_time2
+          time_span2 = setGantTimeSpan({ time_span: time_span2, start_time: start_time2, due_time: due_time2, start_date, end_date })
           new_item2.time_span = time_span2
 
           if (is_expand) {
@@ -318,7 +322,9 @@ export default {
             const due_time3 = getDigit(item3['due_time'])
             const start_time3 = getDigit(item3['start_time']) || due_time3 //如果没有开始时间，那就取截止时间当天
             let time_span3 = item3['time_span']
-            time_span3 = setGantTimeSpan({ time_span3, start_time3, due_time3, start_date, end_date })
+            new_item3.due_time = due_time3
+            new_item3.start_time = start_time3
+            time_span3 = setGantTimeSpan({ time_span: time_span3, start_time: start_time3, due_time: due_time3, start_date, end_date })
             new_item3.time_span = time_span3
 
             return new_item3
