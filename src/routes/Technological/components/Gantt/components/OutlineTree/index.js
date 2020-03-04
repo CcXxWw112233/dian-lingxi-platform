@@ -5,6 +5,7 @@ import globalStyles from '@/globalset/css/globalClassName.less';
 import ManhourSet from './ManhourSet.js';
 import { Popover, Avatar } from 'antd';
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
+import moment from 'moment';
 
 class TreeNode extends Component {
     constructor(props) {
@@ -26,6 +27,19 @@ class TreeNode extends Component {
             nodeValue: nextProps.nodeValue
         });
     }
+
+
+
+    isShowSetTimeSpan = (nodeValue) => {
+        if (nodeValue.tree_type == '1') {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+
+
 
     onChangeExpand = (e) => {
         e.stopPropagation();
@@ -112,8 +126,24 @@ class TreeNode extends Component {
     }
 
     onManHourChange = (value) => {
+        const { outline_tree_round = [] } = this.props;
         const { nodeValue = {} } = this.state;
+
+
         const newNodeValue = { ...nodeValue, time_span: value };
+        if (newNodeValue.is_has_start_time && newNodeValue.is_has_end_time) {
+            //开始时间不变，截至时间后移
+            newNodeValue.due_time = moment(parseInt(newNodeValue.start_time + "000")).add(value, 'days').valueOf() / 1000;
+
+        } else {
+            if (newNodeValue.is_has_start_time) {
+                newNodeValue.due_time = moment(parseInt(newNodeValue.start_time + "000")).add(value, 'days').valueOf() / 1000;
+            }
+            if (newNodeValue.is_has_end_time) {
+                newNodeValue.start_time = moment(parseInt(newNodeValue.is_has_end_time + "000")).add(-value, 'days').valueOf() / 1000;
+            }
+        }
+
         this.setState({
             nodeValue: newNodeValue
         });
@@ -125,6 +155,8 @@ class TreeNode extends Component {
                 param: { ...newNodeValue, parentId: this.props.parentId }
             });
         }
+
+
     }
 
 
@@ -158,8 +190,8 @@ class TreeNode extends Component {
         }
     }
 
-    renderExecutor = (members, {user_id}) => {
-        
+    renderExecutor = (members, { user_id }) => {
+
         const currExecutor = members.find((item) => item.user_id == user_id);
         if (currExecutor && currExecutor.avatar) {
             return (<span><Avatar size={20} src={currExecutor.avatar} /></span>);
@@ -243,14 +275,18 @@ class TreeNode extends Component {
                             }
 
                         </Dropdown>
-                        <Popover placement="bottom" content={<ManhourSet onChange={this.onManHourChange} value={time_span} />} title={<div style={{ textAlign: 'center', height: '36px', lineHeight: '36px', fontWeight: '600' }}>花费时间</div>} trigger="click">
-                            {
-                                time_span ?
-                                    <span className={`${styles.editTitle}`}>{time_span}天</span>
-                                    :
-                                    <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe6d9;</span>
-                            }
-                        </Popover>
+                        {
+                            this.isShowSetTimeSpan(nodeValue) &&
+                            <Popover placement="bottom" content={<ManhourSet onChange={this.onManHourChange} value={time_span} />} title={<div style={{ textAlign: 'center', height: '36px', lineHeight: '36px', fontWeight: '600' }}>花费时间</div>} trigger="click">
+                                {
+                                    time_span ?
+                                        <span className={`${styles.editTitle}`}>{time_span}天</span>
+                                        :
+                                        <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe6d9;</span>
+                                }
+                            </Popover>
+                        }
+
                     </>
                 }
 
@@ -261,7 +297,7 @@ class TreeNode extends Component {
     render() {
         const { isTitleHover, isTitleEdit, nodeValue = {} } = this.state;
         const { id, name: title, tree_type, is_expand, time_span } = nodeValue;
-        const { onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {} } = this.props;
+        const { onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {}, outline_tree_round = [] } = this.props;
         let type;
         if (tree_type) {
             type = tree_type;
@@ -293,13 +329,13 @@ class TreeNode extends Component {
                                     //child.props['leve'] = leve + 1;
                                     if (child && child.props && child.props.children && child.props.children.length > 0) {
                                         return (
-                                            <TreeNode {...child.props} leve={leve + 1} isLeaf={false} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData}>
+                                            <TreeNode {...child.props} leve={leve + 1} isLeaf={false} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round}>
                                                 {child.props.children}
                                             </TreeNode>
                                         );
                                     } else {
                                         return (
-                                            <TreeNode {...child.props} leve={leve + 1} isLeaf={true} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} />
+                                            <TreeNode {...child.props} leve={leve + 1} isLeaf={true} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round} />
                                         );
                                     }
                                 })
@@ -337,14 +373,14 @@ class TreeNode extends Component {
 
 class MyOutlineTree extends Component {
     render() {
-        const { onDataProcess, onExpand, onHover, hoverItem, gantt_board_id, projectDetailInfoData } = this.props;
+        const { onDataProcess, onExpand, onHover, hoverItem, gantt_board_id, projectDetailInfoData, outline_tree_round } = this.props;
 
         return (
             <div className={styles.outline_tree}>
                 {
                     React.Children.map(this.props.children, (child, i) => {
                         return (
-                            <TreeNode {...child.props} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData}>
+                            <TreeNode {...child.props} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round}>
                                 {child.props.children}
                             </TreeNode>
                         );

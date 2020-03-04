@@ -284,6 +284,9 @@ export default class OutLineHeadItem extends Component {
                     updateParams.card_id = param.id;
                     updateParams.name = param.name;
                     updateParams.board_id = gantt_board_id;
+                    // if(){
+                        
+                    // }
                     updateParams.time_span = param.time_span;
                     updateTask({ ...updateParams }, { isNotLoading: false })
                         .then(res => {
@@ -292,6 +295,8 @@ export default class OutLineHeadItem extends Component {
                                 if (nodeValue) {
                                     nodeValue.name = param.name;
                                     nodeValue.time_span = param.time_span;
+                                    nodeValue.start_time = param.start_time;
+                                    nodeValue.due_time = param.due_time;
                                     this.updateOutLineTreeData(outline_tree);
                                 } else {
                                     console.error("OutlineTree.getTreeNodeValue:未查询到节点");
@@ -519,7 +524,7 @@ export default class OutLineHeadItem extends Component {
 
     render() {
         const { board_info_visible, show_add_menber_visible } = this.state;
-        const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData } = this.props;
+        const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData,outline_tree_round } = this.props;
         console.log("刷新了数据", outline_tree);
         return (
             <div className={styles.outline_wrapper}>
@@ -532,6 +537,7 @@ export default class OutLineHeadItem extends Component {
                     onExpand={this.onExpand}
                     onHover={this.onHover}
                     hoverItem={outline_hover_obj}
+                    outline_tree_round={outline_tree_round}
                     projectDetailInfoData={projectDetailInfoData}
                 >
                     {this.renderGanttOutLineTree(outline_tree, true)}
@@ -581,10 +587,10 @@ export default class OutLineHeadItem extends Component {
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
-    gantt: { datas: { gantt_board_id, group_view_type, outline_tree, outline_hover_obj } },
+    gantt: { datas: { gantt_board_id, group_view_type, outline_tree, outline_hover_obj,outline_tree_round} },
     technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, userBoardPermissions } },
     projectDetail: { datas: { projectDetailInfoData = {} } }
 }) {
-    return { currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, projectDetailInfoData, userBoardPermissions, outline_tree, outline_hover_obj }
+    return { currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, projectDetailInfoData, userBoardPermissions, outline_tree, outline_hover_obj,outline_tree_round }
 }
 
