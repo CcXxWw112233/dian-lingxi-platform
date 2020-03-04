@@ -206,7 +206,7 @@ export default class OutLineHeadItem extends Component {
                                 };
 
                                 outline_tree.push(addNodeValue);
-
+                                //this.setCreateAfterInputFous(null,outline_tree);
                                 this.updateOutLineTreeData(outline_tree);
 
                             } else {
@@ -289,6 +289,7 @@ export default class OutLineHeadItem extends Component {
                                 }
 
                                 nodeValue.children = children;
+                                //this.setCreateAfterInputFous(paraseNodeValue,outline_tree);
                                 this.updateOutLineTreeData(outline_tree);
 
                             } else {
@@ -345,7 +346,7 @@ export default class OutLineHeadItem extends Component {
             case 'add_executor':
                 {
                     const { projectDetailInfoData } = this.props;
-                    if (param.tree_type != '1'&&!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, gantt_board_id)) {
+                    if (param.tree_type != '1' && !checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, gantt_board_id)) {
                         message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
                         return;
                     }
@@ -409,7 +410,7 @@ export default class OutLineHeadItem extends Component {
                 break;
             case 'remove_executor':
                 {
-                    if (param.tree_type != '1'&&!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, gantt_board_id)) {
+                    if (param.tree_type != '1' && !checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, gantt_board_id)) {
                         message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
                         return;
                     }
@@ -467,7 +468,19 @@ export default class OutLineHeadItem extends Component {
                 ;
 
         }
+    }
 
+    setCreateAfterInputFous = (paraseNodeValue, outline_tree = []) => {
+        let placeholder = null;
+        if (paraseNodeValue) {
+            placeholder = paraseNodeValue.children.find((item) => item.tree_type == '0');
+
+        } else {
+            placeholder = outline_tree.children.find((item) => item.tree_type == '0');
+        }
+        if (placeholder) {
+            placeholder.is_focus = true;
+        }
     }
     renderGanttOutLineTree = (outline_tree, isRoot) => {
         if (!outline_tree) {

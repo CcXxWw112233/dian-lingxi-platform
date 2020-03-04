@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import styles from './index.less';
-import { Input, Dropdown } from 'antd';
+import { Input, Dropdown, message } from 'antd';
 import globalStyles from '@/globalset/css/globalClassName.less';
 import ManhourSet from './ManhourSet.js';
 import { Popover, Avatar } from 'antd';
@@ -96,27 +96,37 @@ class TreeNode extends Component {
             isTitleEdit: false
         });
         const { nodeValue = {} } = this.state;
+        if (nodeValue.name) {
+            let action;
 
-        let action;
+            if (this.props.placeholder) {
+                action = 'add_' + (this.props.type == '1' ? 'milestone' : 'task');
+            } else {
+                action = 'edit_' + (nodeValue.tree_type == '1' ? 'milestone' : 'task');
+            }
 
-        if (this.props.placeholder) {
-            action = 'add_' + (this.props.type == '1' ? 'milestone' : 'task');
+            if (this.props.onDataProcess) {
+                this.props.onDataProcess({
+                    action,
+                    param: { ...nodeValue, parentId: this.props.parentId }
+                });
+            }
+            //清空
+            if (action.indexOf('add') != -1) {
+                this.setState({
+                    nodeValue: {}
+                });
+            }
         } else {
-            action = 'edit_' + (nodeValue.tree_type == '1' ? 'milestone' : 'task');
+            message.warn('标题不能为空');
+            nodeValue.name = (this.props.nodeValue || {}).name || '';
+            this.setState({
+                nodeValue
+            });
         }
 
-        if (this.props.onDataProcess) {
-            this.props.onDataProcess({
-                action,
-                param: { ...nodeValue, parentId: this.props.parentId }
-            });
-        }
-        //清空
-        if (action.indexOf('add') != -1) {
-            this.setState({
-                nodeValue: {}
-            });
-        }
+
+
     }
     onChangeTitle = (e) => {
         const { nodeValue = {} } = this.state;
@@ -132,14 +142,14 @@ class TreeNode extends Component {
         const newNodeValue = { ...nodeValue, time_span: value };
         if (newNodeValue.is_has_start_time && newNodeValue.is_has_end_time) {
             //开始时间不变，截至时间后移
-            newNodeValue.due_time = moment(newNodeValue.start_time).add(value-1, 'days').valueOf();
+            newNodeValue.due_time = moment(newNodeValue.start_time).add(value - 1, 'days').valueOf();
 
         } else {
             if (newNodeValue.is_has_start_time) {
-                newNodeValue.due_time = moment(newNodeValue.start_time).add(value-1, 'days').valueOf();
+                newNodeValue.due_time = moment(newNodeValue.start_time).add(value - 1, 'days').valueOf();
             }
             if (newNodeValue.is_has_end_time) {
-                newNodeValue.start_time = moment(newNodeValue.start_time).add(value-1, 'days').valueOf();
+                newNodeValue.start_time = moment(newNodeValue.start_time).add(value - 1, 'days').valueOf();
             }
         }
 
@@ -202,7 +212,7 @@ class TreeNode extends Component {
 
     renderTitle = () => {
         const { isTitleHover, isTitleEdit, nodeValue = {} } = this.state;
-        const { id, name: title, tree_type, is_expand, time_span, executors = [] } = nodeValue;
+        const { id, name: title, tree_type, is_expand, time_span, executors = [], is_focus = false } = nodeValue;
         const { onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {} } = this.props;
         let type;
         if (tree_type) {
@@ -218,8 +228,9 @@ class TreeNode extends Component {
                 {/*<span><span>确定</span><span>取消</span></span> */}
                 <span className={`${styles.title}`} onMouseEnter={this.onMouseEnterTitle} onMouseLeave={this.onMouseLeaveTitle}>
                     {
-                        isTitleHover || isTitleEdit ?
+                        (isTitleHover || isTitleEdit) || is_focus ?
                             <Input value={title}
+                                autoFocus={is_focus}
                                 style={{ width: '100%' }}
                                 onChange={this.onChangeTitle}
                                 placeholder={placeholder ? placeholder : '请填写任务名称'}
