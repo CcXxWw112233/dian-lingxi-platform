@@ -18,9 +18,9 @@ import { addMenbersInProject } from '../../../../services/technological/project'
 import { getBoardTemplateList, importBoardTemplate } from '@/services/technological/gantt.js';
 import { createMilestone } from '@/services/technological/prjectDetail.js';
 import { isApiResponseOk } from '@/utils/handleResponseData';
-import { checkIsHasPermissionInBoard, getOrgIdByBoardId,getGlobalData } from '@/utils/businessFunction';
+import { checkIsHasPermissionInBoard, getOrgIdByBoardId, getGlobalData } from '@/utils/businessFunction';
 import DetailInfo from '@/routes/Technological/components/ProjectDetail/DetailInfo/index'
-import { PROJECT_TEAM_BOARD_MEMBER, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME} from '@/globalset/js/constant';
+import { PROJECT_TEAM_BOARD_MEMBER, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '@/globalset/js/constant';
 import ShowAddMenberModal from '../../../../routes/Technological/components/Project/ShowAddMenberModal'
 
 const { SubMenu } = Menu;
@@ -58,7 +58,7 @@ export default class OutLineHeadItem extends Component {
     }
 
     handleProjectMenu = ({ key }) => {
-        const {dispatch,gantt_board_id } = this.props;
+        const { dispatch, gantt_board_id } = this.props;
         if (key.indexOf('importTpl') != -1) {
             let tplId = key.replace("importTpl_", "");
             console.log("tplId", tplId);
@@ -76,7 +76,7 @@ export default class OutLineHeadItem extends Component {
                             dispatch({
                                 type: 'gantt/getGanttData',
                                 payload: {
-        
+
                                 }
                             })
                         } else {
@@ -230,13 +230,15 @@ export default class OutLineHeadItem extends Component {
 
                     let updateParams = {};
                     updateParams.add_type = 0;
-                    updateParams.parent_id = param.parentId;
+             
                     updateParams.name = param.name;
                     updateParams.board_id = gantt_board_id;
 
                     let paraseNodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.parentId);
                     if (paraseNodeValue && paraseNodeValue.tree_type == '1') {
                         updateParams.milestone_id = paraseNodeValue.id;
+                    }else{
+                        updateParams.parent_id = param.parentId;
                     }
 
                     addTaskInWorkbench({ ...updateParams }, { isNotLoading: false })
@@ -245,11 +247,12 @@ export default class OutLineHeadItem extends Component {
                                 let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.parentId);
 
                                 let addNodeValue = {
-                                    id: new Date().getTime(),
+                                    id: res.id,
                                     tree_type: '2',
                                     name: param.name,
                                     is_expand: true,
-                                    children: []
+                                    children: [],
+                                    ...res.data
                                 };
 
                                 let children = nodeValue.children || [];
@@ -515,7 +518,7 @@ export default class OutLineHeadItem extends Component {
     }
 
     render() {
-        const { board_info_visible,show_add_menber_visible} = this.state;
+        const { board_info_visible, show_add_menber_visible } = this.state;
         const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData } = this.props;
         console.log("刷新了数据", outline_tree);
         return (
