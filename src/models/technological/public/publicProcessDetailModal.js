@@ -14,6 +14,7 @@ export default {
   namespace: 'publicProcessDetailModal',
   state: {
     processPageFlagStep: '1', // "1", "2", "3", "4" 分别对应 新建， 编辑， 启动
+    process_detail_modal_visible: false
   },
   subscriptions: {
     setup({ dispatch, history }) {
