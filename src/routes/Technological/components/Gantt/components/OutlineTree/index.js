@@ -32,10 +32,11 @@ class TreeNode extends Component {
 
 
     isShowSetTimeSpan = (nodeValue) => {
-        if (nodeValue.tree_type == '1') {
-            return false;
-        } else {
+        if (nodeValue.tree_type == '2') {
             return true;
+        } else {
+            return false;
+
         }
 
     }
@@ -71,7 +72,9 @@ class TreeNode extends Component {
         this.setState({
             isTitleEdit: !this.state.isTitleEdit,
         });
-
+        const { nodeValue = {} } = this.state;
+        const { id } = nodeValue;
+        this.props.onHover(id, false, this.props.parentId);
     }
 
     onMouseEnter = () => {
@@ -252,7 +255,7 @@ class TreeNode extends Component {
 
 
                 {
-                    tree_type &&
+                    tree_type != '0' &&
                     <>
                         <Dropdown trigger={['click']}
                             overlayClassName={styles.selectExecutors}
