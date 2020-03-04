@@ -4,11 +4,12 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { date_area_height } from '../../constants'
 import { Dropdown, Menu, message, Tree, Icon, Spin } from 'antd'
 import { connect, } from 'dva';
-import { getBoardTemplateList, getBoardTemplateInfo, createCardByTemplate } from '../../../../../../services/technological/gantt'
+import { getBoardTemplateList, getBoardTemplateInfo, createCardByTemplate, importBoardTemplate } from '../../../../../../services/technological/gantt'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import { createMilestone } from '../../../../../../services/technological/prjectDetail'
 import { getGlobalData } from '../../../../../../utils/businessFunction'
 import BoardTemplateManager from '@/routes/organizationManager/projectTempleteScheme/index.js'
+import SafeConfirmModal from '../SafeConfirmModal';
 
 const MenuItem = Menu.Item
 const TreeNode = Tree.TreeNode;
@@ -29,15 +30,22 @@ export default class BoardTemplate extends Component {
             selected_template_name: '请选择模板',
             template_list: [],
             template_data: [], //模板数据
+            contain_height: '100%',
+            checkedKeys: [], //已选择的key
+            checkedKeysObj: [], ////已选择的keyobj
         }
         this.drag_init_inner_html = ''
     }
     getHeight = () => {
         const target = document.getElementById('gantt_card_out_middle')
-        if (target) {
-            return target.clientHeight - date_area_height
-        }
-        return '100%'
+        // if (target) {
+        //     return target.clientHeight + 30
+        //     // return target.clientHeight - date_area_height
+        // }
+        // return '100%'
+        this.setState({
+            contain_height: target ? target.clientHeight + 30 : '100%'
+        })
     }
     // 初始化数据
     initState = (is_new_board) => {
@@ -58,6 +66,8 @@ export default class BoardTemplate extends Component {
         this.initState(this.props.is_new_board)
         this.getBoardTemplateList()
         this.listenDrag()
+        this.getHeight()
+        window.addEventListener('resize', this.getHeight, false)
     }
     componentWillReceiveProps(nextProps) {
         const { gantt_board_id: last_gantt_board_id } = this.props
@@ -69,6 +79,7 @@ export default class BoardTemplate extends Component {
     }
     componentWillUnmount() {
         this.removeEvent()
+        window.addEventListener('resize', this.getHeight, false)
     }
     // 获取模板列表
     getBoardTemplateList = async () => {
@@ -121,6 +132,7 @@ export default class BoardTemplate extends Component {
             this.setState({
                 template_data: res.data
             })
+            this.initSetCheckKeys(res.data)
         } else {
             message.error(res.message)
         }
@@ -478,8 +490,114 @@ export default class BoardTemplate extends Component {
             return
         }
     }
+
+    // 复选框
+    onCheck = (e) => {
+        this.setState({
+            checkedKeys: e
+        })
+    }
+    // 初始化设置已选择
+    initSetCheckKeys = () => {
+        const { template_data = [] } = this.state
+        // 将数据平铺
+        let arr = []
+        const recusion = (obj) => { //将树递归平铺成一级
+            arr.push(obj)
+            if (!obj.child_content) {
+                return
+            } else {
+                if (obj.child_content.length) {
+                    for (let val of obj.child_content) {
+                        recusion(val)
+                    }
+                }
+            }
+        }
+        for (let val of template_data) {
+            recusion(val)
+        }
+        const checkedKeys = arr.map(item => item.id)
+        const checkedKeysObj = arr.map(item => {
+            return {
+                id: item.id,
+                parent_id: item.parent_id,
+                name: item.name
+            }
+        })
+        this.setState({
+            checkedKeys,
+            checkedKeysObj
+        })
+    }
+
+    // 引用到项目
+    quoteTemplate = () => {
+        const { checkedKeys, checkedKeysObj, template_data = [] } = this.state
+        let new_checkedKeys = [...checkedKeys]
+        // console.log('ssssssssss_0', checkedKeysObj)
+        // 将里程碑id和任务id拆分开来
+        let milestone_ids = checkedKeys.filter(item => checkedKeysObj.findIndex(item2 => item == item2.id && item2.parent_id == '0') != -1)
+        let card_ids = checkedKeys.filter(item => checkedKeysObj.findIndex(item2 => item == item2.id && item2.parent_id != '0') != -1)
+        let card_ids_objs = checkedKeysObj.filter(item => card_ids.findIndex(item2 => item2 == item.id) != -1)
+
+        let arr = [] //装载
+        for (let val of template_data) {
+            const child_content_1 = val.child_content
+            const id_1 = val.id
+            let flag = false
+            if (child_content_1.length) {
+                for (let val2 of child_content_1) {
+                    const id_2 = val2.id
+                    if (card_ids_objs.findIndex(item => item.parent_id == id_2) != -1) {
+                        arr.push(id_2)
+                        flag = true
+                    }
+                }
+            }
+            if (flag || card_ids_objs.findIndex(item => item.parent_id == id_1) != -1) {
+                arr.push(id_1)
+            }
+        }
+
+        new_checkedKeys = Array.from(new Set([].concat(new_checkedKeys, arr)))
+        let abs = checkedKeysObj.filter(item => new_checkedKeys.findIndex(item2 => item2 == item.id) != -1)
+
+        //最终所需要数据
+        milestone_ids = new_checkedKeys.filter(item => abs.findIndex(item2 => item == item2.id && item2.parent_id == '0') != -1)
+        card_ids = new_checkedKeys.filter(item => abs.findIndex(item2 => item == item2.id && item2.parent_id != '0') != -1)
+
+        const { gantt_board_id, dispatch } = this.props
+        const params = {
+            board_id: gantt_board_id,
+            template_id: template_data[0].template_id,
+            milestone_ids,
+            card_ids
+        }
+        importBoardTemplate(params).then(res => {
+            if (isApiResponseOk(res)) {
+                dispatch({
+                    type: 'gantt/getGanttData',
+                    payload: {
+
+                    }
+                })
+            }
+        }).catch(err => {
+            message.error('引入模板失败')
+        })
+    }
+    changeSafeConfirmModalVisible = () => {
+        this.setState({
+            safeConfirmModalVisible: !this.state.safeConfirmModalVisible
+        });
+    }
+    onImportBoardTemplate = () => {
+        this.quoteTemplate()
+    }
+    // 
     render() {
-        const { template_data, show_type, selected_template_name, spinning, project_templete_scheme_visible } = this.state
+        const { template_data, show_type, selected_template_name, spinning, project_templete_scheme_visible, contain_height, checkedKeys = [], safeConfirmModalVisible } = this.state
         const { gantt_board_id } = this.props
         return (
             gantt_board_id && gantt_board_id != '0' ?
@@ -487,10 +605,12 @@ export default class BoardTemplate extends Component {
                     <div
                         className={`${styles.container_init}   ${show_type == '1' && styles.container_show} ${show_type == '2' && styles.container_hide}`}
                         style={{
-                            height: this.getHeight(),
-                            top: date_area_height
+                            height: contain_height,
+                            // top: date_area_height
                         }}>
-                        <div className={styles.top}>
+                        <div
+                            style={{ height: date_area_height }}
+                            className={styles.top}>
                             <Dropdown overlay={this.renderTemplateList()}>
                                 <div className={styles.top_left}>
                                     <div className={`${globalStyles.global_ellipsis} ${styles.name}`}>{selected_template_name}</div>
@@ -510,33 +630,43 @@ export default class BoardTemplate extends Component {
                             id={'save_child_card_icon'}>
                             <div className={globalStyles.authTheme} style={{ color: '#18B2FF', fontSize: 18, marginRight: 6 }} >&#xe6f0;</div>
                         </div>
+                        <div className={`${styles.list_item} ${styles.temp_ope}`}>
+                            <div className={`${styles.temp_ope_name}`}>流程步骤</div>
+                            <div className={`${styles.temp_ope_cop} ${globalStyles.link_mouse}`} onClick={this.changeSafeConfirmModalVisible}>引用到项目</div>
+                        </div>
                         {/* 主区 */}
                         <Spin spinning={spinning}>
                             <div
+                                style={{ maxHeight: contain_height - date_area_height - 48 }}
                                 onMouseDown={this.outerMouseDown}
                                 className={styles.main}>
-                                <Tree
-                                    draggable
-                                    onDragStart={this.onDragStart}
-                                // onDragEnter={this.onDragEnter}
-                                // onDragLeave={this.onDragLeave}
-                                // onDragOver={this.onDragOver}
-                                // onDragEnd={this.onDragEnd}
-                                // onDrop={this.onDrop}
-                                // switcherIcon={
-                                //     <Icon type="caret-down" style={{ fontSize: 20, color: 'rgba(0,0,0,.45)' }} />
-                                // }
-                                >
-                                    {this.renderTemplateTree(template_data)}
-                                </Tree>
-
+                                <div>
+                                    <Tree
+                                        checkable
+                                        // checkStrictly
+                                        checkedKeys={checkedKeys}
+                                        onCheck={this.onCheck}
+                                        draggable
+                                        onDragStart={this.onDragStart}
+                                    // onDragEnter={this.onDragEnter}
+                                    // onDragLeave={this.onDragLeave}
+                                    // onDragOver={this.onDragOver}
+                                    // onDragEnd={this.onDragEnd}
+                                    // onDrop={this.onDrop}
+                                    // switcherIcon={
+                                    //     <Icon type="caret-down" style={{ fontSize: 20, color: 'rgba(0,0,0,.45)' }} />
+                                    // }
+                                    >
+                                        {this.renderTemplateTree(template_data)}
+                                    </Tree>
+                                </div>
                             </div>
                         </Spin>
                         <div
                             onClick={this.setShowType}
                             className={`${styles.switchSpin_init} ${show_type == '1' && styles.switchSpinShow} ${show_type == '2' && styles.switchSpinClose}`}
                             style={{
-                                top: (this.getHeight() + date_area_height) / 2
+                                top: contain_height / 2
                             }} >
                             <div className={`${styles.switchSpin_top}`}></div>
                             <div className={`${styles.switchSpin_bott}`}></div>
@@ -545,6 +675,8 @@ export default class BoardTemplate extends Component {
                             _organization_id={localStorage.getItem('OrganizationId') != '0' ? localStorage.getItem('OrganizationId') : getGlobalData('aboutBoardOrganizationId')}
                             project_templete_scheme_visible={project_templete_scheme_visible}
                             setProjectTempleteSchemeModal={this.setProjectTempleteSchemeModal}></BoardTemplateManager>
+                        <SafeConfirmModal visible={safeConfirmModalVisible} onChangeVisible={this.changeSafeConfirmModalVisible} onOk={this.onImportBoardTemplate} />
+
                     </div >
                 ) : (
                     <></>
