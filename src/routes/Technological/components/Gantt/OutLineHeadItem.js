@@ -14,11 +14,15 @@ import {
     addTaskExecutor,
     removeTaskExecutor
 } from '../../../../services/technological/task';
-
+import { addMenbersInProject } from '../../../../services/technological/project';
 import { getBoardTemplateList, importBoardTemplate } from '@/services/technological/gantt.js';
 import { createMilestone } from '@/services/technological/prjectDetail.js';
 import { isApiResponseOk } from '@/utils/handleResponseData';
-import { getGlobalData } from '@/utils/businessFunction'
+import { checkIsHasPermissionInBoard, getOrgIdByBoardId,getGlobalData } from '@/utils/businessFunction';
+import DetailInfo from '@/routes/Technological/components/ProjectDetail/DetailInfo/index'
+import { PROJECT_TEAM_BOARD_MEMBER, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME} from '@/globalset/js/constant';
+import ShowAddMenberModal from '../../../../routes/Technological/components/Project/ShowAddMenberModal'
+
 const { SubMenu } = Menu;
 const { TreeNode } = OutlineTree;
 const { confirm } = Modal;
@@ -26,7 +30,9 @@ const { confirm } = Modal;
 @connect(mapStateToProps)
 export default class OutLineHeadItem extends Component {
     state = {
-        template_list: []
+        template_list: [],
+        board_info_visible: false,
+        show_add_menber_visible: false
     }
     componentDidMount() {
         const OrganizationId = localStorage.getItem('OrganizationId')
@@ -52,7 +58,7 @@ export default class OutLineHeadItem extends Component {
     }
 
     handleProjectMenu = ({ key }) => {
-        const { gantt_board_id } = this.props;
+        const {dispatch,gantt_board_id } = this.props;
         if (key.indexOf('importTpl') != -1) {
             let tplId = key.replace("importTpl_", "");
             console.log("tplId", tplId);
@@ -67,6 +73,12 @@ export default class OutLineHeadItem extends Component {
                     importBoardTemplate({ "board_id": gantt_board_id, 'template_id': tplId }).then(res => {
                         if (isApiResponseOk(res)) {
                             console.log("importBoardTemplate", res);
+                            dispatch({
+                                type: 'gantt/getGanttData',
+                                payload: {
+        
+                                }
+                            })
                         } else {
                             message.error(res.message)
                         }
@@ -78,7 +90,13 @@ export default class OutLineHeadItem extends Component {
                     console.log('Cancel');
                 },
             });
+        } else {
+            if (key == 'boardInfo') {
+                this.setBoardInfoVisible();
+            }
         }
+
+
     }
 
     ganttProjectMenus = () => {
@@ -96,7 +114,7 @@ export default class OutLineHeadItem extends Component {
                         })
                     }
                 </SubMenu>
-                <Menu.Item key="info">项目信息</Menu.Item>
+                <Menu.Item key="boardInfo">项目信息</Menu.Item>
             </Menu>
         );
     }
@@ -437,10 +455,67 @@ export default class OutLineHeadItem extends Component {
             })
         );
     }
+    setBoardInfoVisible = () => {
+        const { board_info_visible } = this.state
+        const { dispatch, gantt_board_id, projectDetailInfoData } = this.props
+        //console.log("projectDetailInfoData",projectDetailInfoData);
+        if (!board_info_visible) {
+            dispatch({
+                type: 'projectDetail/projectDetailInfo',
+                payload: {
+                    id: gantt_board_id
+                }
+            })
+            // dispatch({
+            //     type: 'projectDetail/getProjectRoles',
+            //     payload: {
+            //         type: '2',
+            //         _organization_id: org_id
+            //     }
+            // })
+        }
+        this.setState({
+            board_info_visible: !board_info_visible
+        })
+    }
 
+    //添加项目组成员操作
+    setShowAddMenberModalVisibile = () => {
+        this.setState({
+            show_add_menber_visible: !this.state.show_add_menber_visible
+        })
+    }
 
+    addMenbersInProject = (values) => {
+        const { dispatch } = this.props
+        addMenbersInProject({ ...values }).then(res => {
+            if (isApiResponseOk(res)) {
+                message.success('已成功添加项目成员')
+                setTimeout(() => {
+                    dispatch({
+                        type: 'gantt/getAboutUsersBoards',
+                        payload: {
+
+                        }
+                    })
+                }, 1000)
+
+            } else {
+                message.error(res.message)
+            }
+        })
+    }
+    invitationJoin = () => {
+        const { gantt_board_id } = this.props;
+        if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, gantt_board_id)) {
+            message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+            return false
+        }
+        this.setShowAddMenberModalVisibile()
+    }
 
     render() {
+        const { board_info_visible,show_add_menber_visible} = this.state;
         const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData } = this.props;
         console.log("刷新了数据", outline_tree);
         return (
@@ -467,12 +542,34 @@ export default class OutLineHeadItem extends Component {
                 </OutlineTree>
 
                 <div className={styles.outlineFooter}>
-                    <span className={`${styles.actionIcon} ${globalStyles.authTheme}`}>&#xe7ae;</span>
+                    {
+                        checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, gantt_board_id) &&
+                        <span className={`${styles.actionIcon} ${globalStyles.authTheme}`} onClick={this.invitationJoin}>&#xe7ae;</span>
+                    }
+
                     <Dropdown overlay={this.ganttProjectMenus()} trigger={['click']} placement={'topCenter'}>
                         <span className={`${styles.actionIcon} ${globalStyles.authTheme}`}>&#xe66f;</span>
                     </Dropdown>
 
                 </div>
+
+                {
+                    show_add_menber_visible && (
+                        <ShowAddMenberModal
+                            invitationType='1'
+                            invitationId={gantt_board_id}
+                            invitationOrg={getOrgIdByBoardId(gantt_board_id)}
+                            show_wechat_invite={true}
+                            _organization_id={getOrgIdByBoardId(gantt_board_id)}
+                            board_id={gantt_board_id}
+                            addMenbersInProject={this.addMenbersInProject}
+                            modalVisible={show_add_menber_visible}
+                            setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile}
+                        />
+                    )
+                }
+                <DetailInfo setProjectDetailInfoModalVisible={this.setBoardInfoVisible} modalVisible={board_info_visible} invitationType='1' invitationId={gantt_board_id} />
+
             </div>
         );
     }
