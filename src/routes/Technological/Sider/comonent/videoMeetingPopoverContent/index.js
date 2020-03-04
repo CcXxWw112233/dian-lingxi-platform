@@ -969,24 +969,24 @@ class VideoMeetingPopoverContent extends React.Component {
 
 	getImgLogo = (item) => {
 		const { id, icon, isDefault } = item
-		let src = ""
+		let img = <></>
 		switch (id) {
 			case "1":
-				src = zoom
+				img = <img src={zoom} width={61} height={14} />
 				break;
 			case "2":
-				src = kty
+				img = <img src={kty} width={62} height={18} />
 				break
 			case "3":
-				src = zhumu
+				img = <img src={zhumu} width={59} height={25} />
 				break
 			case "4":
-				src = zyy
+				img = <img src={zyy} width={37} height={31} />
 				break
 			default:
 				break;
 		}
-		return src
+		return img
 	}
 
 	onVideoProviderChange = (e) => {
@@ -1182,13 +1182,13 @@ class VideoMeetingPopoverContent extends React.Component {
 
 						<div>
 							<span>聆悉推荐使用以下方式开展远程会议: </span>
-							<div className={`${globalStyles.global_vertical_scrollbar}`} style={{display: 'flex', overflowX: 'auto', overflowY: 'hidden'}}> 
+							<div style={{display: 'flex'}}> 
 								{
 									videoConferenceProviderList && videoConferenceProviderList.map(item => {
 										return (
 											<Radio.Group style={{marginBottom: '12px'}} onChange={this.onVideoProviderChange} value={this.state.providerDefault ? this.state.providerDefault : item.is_default == '1' ? item.id : ''}>
 												<div key={`${item.id}-${item.icon}`} style={{textAlign: 'center', marginTop: '12px'}}>
-													<div className={indexStyles.video_provider}><img src={this.getImgLogo(item)} /></div>
+													<div className={indexStyles.video_provider}>{this.getImgLogo(item)}</div>
 													<div><Radio value={item.id}/></div>
 												</div>
 											</Radio.Group>
