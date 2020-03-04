@@ -3,7 +3,8 @@ import { connect } from "dva/index";
 import Header from './Header'
 import CreateTask from './TaskItemComponent/CreateTask'
 import FileModule from './FileModule'
-import ProcessIndex from './Process'
+// import ProcessIndex from './Process'
+import ProcessIndex from './WorkFlow'
 import indexStyles from './index.less'
 import { openImChatBoard } from '../../../../utils/businessFunction';
 import { getQueryString } from '../../../../utils/util';
