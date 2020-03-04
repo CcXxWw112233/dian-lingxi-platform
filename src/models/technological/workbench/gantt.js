@@ -284,6 +284,8 @@ export default {
         // 时间跨度设置
         const due_time = getDigit(item['due_time'])
         const start_time = getDigit(item['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
+        new_item.is_has_start_time = !!getDigit(item['start_time'])
+        new_item.is_has_end_time = !!getDigit(item['due_time'])
         let time_span = item['time_span']
         new_item.due_time = due_time
         new_item.start_time = start_time
@@ -300,6 +302,8 @@ export default {
           // 时间跨度设置
           const due_time2 = getDigit(item2['due_time'])
           const start_time2 = getDigit(item2['start_time']) || due_time2 //如果没有开始时间，那就取截止时间当天
+          new_item2.is_has_start_time = !!getDigit(item2['start_time'])
+          new_item2.is_has_end_time = !!getDigit(item2['due_time'])
           let time_span2 = item2['time_span']
           new_item2.due_time = due_time2
           new_item2.start_time = start_time2
@@ -321,6 +325,9 @@ export default {
             // 时间跨度设置
             const due_time3 = getDigit(item3['due_time'])
             const start_time3 = getDigit(item3['start_time']) || due_time3 //如果没有开始时间，那就取截止时间当天
+            new_item3.is_has_start_time = !!getDigit(item3['start_time'])
+            new_item3.is_has_end_time = !!getDigit(item3['due_time'])
+
             let time_span3 = item3['time_span']
             new_item3.due_time = due_time3
             new_item3.start_time = start_time3
@@ -381,8 +388,6 @@ export default {
           time_span,
           width: time_span * ceilWidth,
           height: task_item_height,
-          is_has_start_time: !!getDigit(item['start_time']),
-          is_has_end_time: !!getDigit(item['due_time'])
         }
         if (getDigit(new_item[cal_left_field]) < getDigit(date_arr_one_level[0]['timestamp'])) { //如果该任务的起始日期在当前查看面板日期之前，就从最左边开始摆放
           new_item.left = -500
