@@ -12,6 +12,7 @@ import { getProjectList } from '../../../../../../services/technological/workben
 import { isApiResponseOk } from "../../../../../../utils/handleResponseData";
 import { connect } from 'dva'
 import { getAppsList } from "../../../../../../services/technological/project";
+import { getBoardTemplateList } from '../../../../../../services/technological/gantt'
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 const { Option } = Select;
@@ -36,6 +37,8 @@ class CreateProject extends React.Component {
     OrganizationId: localStorage.getItem('OrganizationId'),
     _organization_id: this.props._organization_id || '', //选择的组织id
     appsList: [], //app列表
+    board_template_list: [], //项目模板
+    selected_board_template_id: undefined, //项目模板id
   }
 
   // 初始化数据
@@ -73,7 +76,30 @@ class CreateProject extends React.Component {
     // this.getAppList(true)
     this.handleOrgSetInit()
     this.setAddProjectModalVisibleLocal(this.props)
+    this.getBoardTemplates(this.state.OrganizationId)
   }
+
+  // 项目模板---start
+  getBoardTemplates = async (_organization_id) => {
+    if (!_organization_id || _organization_id == '0') {
+      return
+    }
+    const res = await getBoardTemplateList({ _organization_id })
+    if (isApiResponseOk(res)) {
+      const { data } = res
+      this.setState({
+        board_template_list: data
+      })
+    } else {
+      message.error(res.message)
+    }
+  }
+  boardTemplateChange = (id) => {
+    this.setState({
+      selected_board_template_id: id
+    })
+  }
+  // 项目模板---end
 
   // 缓存是否可见在state
   setAddProjectModalVisibleLocal = (props) => {
@@ -130,10 +156,12 @@ class CreateProject extends React.Component {
       return false
     }
     this.setState({
-      _organization_id: id
+      _organization_id: id,
+      selected_board_template_id: undefined
     }, () => {
       this.getAppList()
       this.getProjectList()
+      this.getBoardTemplates(id)
     })
   }
 
@@ -632,7 +660,7 @@ class CreateProject extends React.Component {
 
   // 以上几步合成一步
   renderCreateStep = () => {
-    const { _organization_id, OrganizationId, stepOneContinueDisabled, step_2_type, board_name } = this.state
+    const { _organization_id, OrganizationId, stepOneContinueDisabled, step_2_type, board_name, board_template_list, selected_board_template_id } = this.state
     const { currentUserOrganizes = [], form: { getFieldDecorator } } = this.props;
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     const { is_simple_model } = user_set;
@@ -669,26 +697,22 @@ class CreateProject extends React.Component {
               style={{ height: 40, marginBottom: 20 }} />
 
             {/* 项目模板 */}
-            {
-              OrganizationId == '0' && (
-                <Select
-                  size={'large'}
-                  value={_organization_id == '0' || !_organization_id ? undefined : _organization_id}
-                  style={{ height: 40, width: 346 }}
-                  placeholder={"请选择项目模板"}
-                  onChange={this.orgOnChange}
-                >
-                  {
-                    currentUserOrganizes.map(item => {
-                      const { name, id } = item
-                      return (
-                        <Option value={id}>{name}</Option>
-                      )
-                    })
-                  }
-                </Select>
-              )
-            }
+            <Select
+              size={'large'}
+              value={selected_board_template_id}
+              style={{ height: 40, width: 346 }}
+              placeholder={"请选择项目模板"}
+              onChange={this.boardTemplateChange}
+            >
+              {
+                board_template_list.map(item => {
+                  const { name, id } = item
+                  return (
+                    <Option value={id}>{name}</Option>
+                  )
+                })
+              }
+            </Select>
 
             {/* 复制流程模板 */}
             {
@@ -713,7 +737,7 @@ class CreateProject extends React.Component {
     return step
   }
   createBoard = () => {
-    const { _organization_id, OrganizationId, board_name, users, appsList = [], copy_value, select_project_id } = this.state
+    const { _organization_id, OrganizationId, board_name, users, appsList = [], copy_value, select_project_id, selected_board_template_id } = this.state
     if (copy_value && Object.keys(copy_value).length && select_project_id) {
       let apps = appsList.map(item => item.id).join(',')
       const copy_obj = {
@@ -725,7 +749,8 @@ class CreateProject extends React.Component {
         users: this.handleUsersToUsersStr(users),
         _organization_id: _organization_id || OrganizationId,
         board_name,
-        copy: JSON.stringify(copy_obj)
+        copy: JSON.stringify(copy_obj),
+        template_id: selected_board_template_id
       }
       this.props.addNewProject ? this.props.addNewProject(params) : false
     } else {
@@ -735,7 +760,7 @@ class CreateProject extends React.Component {
         users: this.handleUsersToUsersStr(users),
         _organization_id: _organization_id || OrganizationId,
         board_name,
-
+        template_id: selected_board_template_id
       }
       this.props.addNewProject ? this.props.addNewProject(params) : false
     }
