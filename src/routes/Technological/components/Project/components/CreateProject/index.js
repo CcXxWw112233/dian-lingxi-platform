@@ -726,7 +726,7 @@ class CreateProject extends React.Component {
                 }
               </Select>
               <Tooltip title="操作指引">
-                <div style={{ height: 20, width: 20, position: 'absolute', right: -28, lineHeight: '20px', top: 10 }} onClick={this.openGuideModal}>
+                <div style={{ height: 20, width: 20, position: 'absolute', right: -28, lineHeight: '20px', top: 10, cursor: 'pointer' }} onClick={this.openGuideModal}>
                   <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(0, 0, 0, .45)', fontSize: '14px' }} >&#xe845;</i>
                 </div>
               </Tooltip>
