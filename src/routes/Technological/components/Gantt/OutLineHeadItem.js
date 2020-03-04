@@ -20,7 +20,7 @@ import { createMilestone } from '@/services/technological/prjectDetail.js';
 import { isApiResponseOk } from '@/utils/handleResponseData';
 import { checkIsHasPermissionInBoard, getOrgIdByBoardId, getGlobalData } from '@/utils/businessFunction';
 import DetailInfo from '@/routes/Technological/components/ProjectDetail/DetailInfo/index'
-import { PROJECT_TEAM_BOARD_MEMBER, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '@/globalset/js/constant';
+import { PROJECT_TEAM_BOARD_MEMBER, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_CREATE, PROJECT_TEAM_CARD_EDIT } from '@/globalset/js/constant';
 import ShowAddMenberModal from '../../../../routes/Technological/components/Project/ShowAddMenberModal';
 import SafeConfirmModal from './components/SafeConfirmModal';
 const { SubMenu } = Menu;
@@ -114,20 +114,26 @@ export default class OutLineHeadItem extends Component {
     }
 
     ganttProjectMenus = () => {
+        const { gantt_board_id } = this.props;
         const { template_list = [] } = this.state;
         return (
             <Menu onClick={this.handleProjectMenu}>
                 <Menu.Item key="publishTpl" disabled>将项目内容发布为模版</Menu.Item>
                 <Menu.Item key="saveTpl" disabled>将项目内容保存为模版</Menu.Item>
-                <SubMenu title="引用项目模版" >
-                    {
-                        template_list.map((item) => {
-                            return (
-                                <Menu.Item key={`importTpl_${item.id}`}>{item.name}</Menu.Item>
-                            );
-                        })
-                    }
-                </SubMenu>
+                {
+                    checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id) &&
+                    <SubMenu title="引用项目模版" >
+                        {
+                            template_list.map((item) => {
+                                return (
+                                    <Menu.Item key={`importTpl_${item.id}`}>{item.name}</Menu.Item>
+                                );
+                            })
+                        }
+                    </SubMenu>
+                }
+
+
                 <Menu.Item key="boardInfo">项目信息</Menu.Item>
             </Menu>
         );
@@ -215,6 +221,7 @@ export default class OutLineHeadItem extends Component {
                 break;
             case 'edit_milestone':
                 {
+
                     let updateParams = {};
                     updateParams.id = param.id;
                     updateParams.name = param.name;
@@ -242,6 +249,10 @@ export default class OutLineHeadItem extends Component {
             case 'add_task':
                 {
 
+                    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id)) {
+                        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+                        return;
+                    }
                     let updateParams = {};
                     updateParams.add_type = 0;
 
@@ -294,6 +305,10 @@ export default class OutLineHeadItem extends Component {
                 break;
             case 'edit_task':
                 {
+                    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, gantt_board_id)) {
+                        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+                        return;
+                    }
                     let updateParams = {};
                     updateParams.card_id = param.id;
                     updateParams.name = param.name;
@@ -330,7 +345,10 @@ export default class OutLineHeadItem extends Component {
             case 'add_executor':
                 {
                     const { projectDetailInfoData } = this.props;
-
+                    if (param.tree_type != '1'&&!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, gantt_board_id)) {
+                        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+                        return;
+                    }
                     let updateParams = {};
                     //里程碑
                     if (param.tree_type == '1') {
@@ -391,6 +409,10 @@ export default class OutLineHeadItem extends Component {
                 break;
             case 'remove_executor':
                 {
+                    if (param.tree_type != '1'&&!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, gantt_board_id)) {
+                        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+                        return;
+                    }
                     const { outline_tree } = this.props;
                     let updateParams = {};
                     //里程碑
