@@ -259,7 +259,7 @@ export default {
     // 转化处理大纲视图数据
     * handleOutLineTreeData({ payload }, { select, call, put }) {
       const { data = [] } = payload
-      console.log("handleOutLineTreeData",data);
+      console.log("handleOutLineTreeData", data);
       const start_date = yield select(workbench_start_date)
       const end_date = yield select(workbench_end_date)
       const ceilWidth = yield select(workbench_ceilWidth)
@@ -382,7 +382,7 @@ export default {
           new_item.left = -500
         } else {
           for (let k = 0; k < date_arr_one_level.length; k++) {
-            if (isSamDay(item[cal_left_field], date_arr_one_level[k]['timestamp'])) { //是同一天
+            if (isSamDay(new_item[cal_left_field], date_arr_one_level[k]['timestamp'])) { //是同一天
               new_item.left = k * ceilWidth
               break
             }
