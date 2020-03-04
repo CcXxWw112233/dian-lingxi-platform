@@ -544,30 +544,30 @@ class CreateProject extends React.Component {
   }
 
   // 获取当前用户
-	getInfoFromLocalStorage = item => {
-		try {
-			const userInfo = localStorage.getItem(item)
-			return JSON.parse(userInfo)
-		} catch (e) {
-			message.error('从 Cookie 中获取用户信息失败, 当复制项目流程模板的时候')
-		}
-	}
+  getInfoFromLocalStorage = item => {
+    try {
+      const userInfo = localStorage.getItem(item)
+      return JSON.parse(userInfo)
+    } catch (e) {
+      message.error('从 Cookie 中获取用户信息失败, 当复制项目流程模板的时候')
+    }
+  }
 
   // 获取项目权限
-	getProjectPermission = (permissionType, board_id) => {
-		const userBoardPermissions = this.getInfoFromLocalStorage('userBoardPermissions')
-		if (!userBoardPermissions || !userBoardPermissions.length) {
-			return false
-		}
-		const isFindedBoard = userBoardPermissions.find(board => board.board_id === board_id)
-		if (!isFindedBoard) return false
-		const { permissions = [] } = isFindedBoard
-		return !!permissions.find(permission => permission.code === permissionType && permission.type === '1')
-	}
-	// 查询当前用户是否有权限
-	filterProjectWhichCurrentUserHasAccessFlowsPermission = (projectList = []) => {
-		return projectList.filter(({ board_id }) => this.getProjectPermission('project:flows:flow:access', board_id))
-	}
+  getProjectPermission = (permissionType, board_id) => {
+    const userBoardPermissions = this.getInfoFromLocalStorage('userBoardPermissions')
+    if (!userBoardPermissions || !userBoardPermissions.length) {
+      return false
+    }
+    const isFindedBoard = userBoardPermissions.find(board => board.board_id === board_id)
+    if (!isFindedBoard) return false
+    const { permissions = [] } = isFindedBoard
+    return !!permissions.find(permission => permission.code === permissionType && permission.type === '1')
+  }
+  // 查询当前用户是否有权限
+  filterProjectWhichCurrentUserHasAccessFlowsPermission = (projectList = []) => {
+    return projectList.filter(({ board_id }) => this.getProjectPermission('project:flows:flow:access', board_id))
+  }
 
   // 直接渲染复制流程模板
   renderCopyFlowTemplete = () => {
@@ -635,7 +635,7 @@ class CreateProject extends React.Component {
     const { _organization_id, OrganizationId, stepOneContinueDisabled, step_2_type, board_name } = this.state
     const { currentUserOrganizes = [], form: { getFieldDecorator } } = this.props;
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
-    const { is_simple_model } = user_set; 
+    const { is_simple_model } = user_set;
     const step = (
       <div style={{ margin: '0 auto', width: 346 }}>
         <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}>新建{currentNounPlanFilterName(PROJECTS)}</div>
@@ -666,16 +666,38 @@ class CreateProject extends React.Component {
             {/* 项目名称 */}
             <Input placeholder={`输入${currentNounPlanFilterName(PROJECTS)}名称`}
               onChange={this.boardNameChange.bind(this)}
-              style={{ height: 40, marginBottom: '8px' }} />
-            
+              style={{ height: 40, marginBottom: 20 }} />
+
+            {/* 项目模板 */}
+            {
+              OrganizationId == '0' && (
+                <Select
+                  size={'large'}
+                  value={_organization_id == '0' || !_organization_id ? undefined : _organization_id}
+                  style={{ height: 40, width: 346 }}
+                  placeholder={"请选择项目模板"}
+                  onChange={this.orgOnChange}
+                >
+                  {
+                    currentUserOrganizes.map(item => {
+                      const { name, id } = item
+                      return (
+                        <Option value={id}>{name}</Option>
+                      )
+                    })
+                  }
+                </Select>
+              )
+            }
+
             {/* 复制流程模板 */}
             {
               is_simple_model == '0' && (
                 step_2_type == 'copy' ? (
                   this.renderCopyFlowTemplete()
                 ) : (
-                  <div onClick={this.setStepTwotype} style={{textAlign: 'left', color: OrganizationId == '0' && !_organization_id ? '#BFBFBF' : '#1890FF', cursor: 'pointer'}}>从现有项目中复制流程模版？</div>
-                )
+                    <div onClick={this.setStepTwotype} style={{ textAlign: 'left', color: OrganizationId == '0' && !_organization_id ? '#BFBFBF' : '#1890FF', cursor: 'pointer' }}>从现有项目中复制流程模版？</div>
+                  )
               )
             }
 
@@ -685,7 +707,7 @@ class CreateProject extends React.Component {
             {/* </div> */}
           </div>
         </div>
-        <Button type="primary" disabled={ stepOneContinueDisabled || (OrganizationId == '0' && (!_organization_id || !checkIsHasPermission(ORG_TEAM_BOARD_CREATE, _organization_id)))} onClick={this.createBoard} style={{ width: 208, height: 40, marginBottom: 40 }}>确认</Button>
+        <Button type="primary" disabled={stepOneContinueDisabled || (OrganizationId == '0' && (!_organization_id || !checkIsHasPermission(ORG_TEAM_BOARD_CREATE, _organization_id)))} onClick={this.createBoard} style={{ width: 208, height: 40, marginBottom: 40 }}>确认</Button>
       </div>
     )
     return step
@@ -713,7 +735,7 @@ class CreateProject extends React.Component {
         users: this.handleUsersToUsersStr(users),
         _organization_id: _organization_id || OrganizationId,
         board_name,
-        
+
       }
       this.props.addNewProject ? this.props.addNewProject(params) : false
     }
@@ -724,7 +746,7 @@ class CreateProject extends React.Component {
     //   users: this.handleUsersToUsersStr(users),
     //   _organization_id: _organization_id || OrganizationId,
     //   board_name,
-      
+
     // }
     // this.props.addNewProject ? this.props.addNewProject(params) : false
     this.props.setAddProjectModalVisible && this.props.setAddProjectModalVisible({ visible: false })
@@ -756,12 +778,12 @@ class CreateProject extends React.Component {
 export default Form.create()(CreateProject)
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ technological: { datas: { currentUserOrganizes = [], currentOrgProjectList = [],userOrgPermissions } } }) {
-  return { currentUserOrganizes, currentOrgProjectList,userOrgPermissions};
+function mapStateToProps({ technological: { datas: { currentUserOrganizes = [], currentOrgProjectList = [], userOrgPermissions } } }) {
+  return { currentUserOrganizes, currentOrgProjectList, userOrgPermissions };
 }
 
 CreateProject.defaultProps = {
-  setAddProjectModalVisible: function() {}, // 控制新建项目的弹窗回调
+  setAddProjectModalVisible: function () { }, // 控制新建项目的弹窗回调
   addProjectModalVisible: false, // 该弹窗的显示隐藏
-  addNewProject: function() {}, // 创建完成时的回调
+  addNewProject: function () { }, // 创建完成时的回调
 }
