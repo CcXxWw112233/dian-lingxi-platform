@@ -1,7 +1,9 @@
 .processOut {
   padding-top: 32px;
   padding-left: 20px;
+  
   .processDefautOut {
+    /* 默认模板列表的样式 S */
     .processDefautOut_top {
       height: 280px;
       background: pink;
@@ -14,11 +16,18 @@
         color:rgba(0,0,0,0.65);
         line-height:26px;
       }
+      /* 模板内容样式 -- TemplateContent -- S */
       .templateContent {
         padding-top: 18px;
         padding-left: 64px;
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        /* 新建模板样式 S */
         .addTemplate {
           display: inline-block;
+          margin-right: 88px;
           .add_icon {
             display: block;
             width:106px;
@@ -29,14 +38,161 @@
             line-height: 106px;
             font-size: 50px;
             margin-bottom: 10px;
+            cursor: pointer;
           }
           .add_name {
             display: block;
             text-align: center;
+            font-weight: 900;
           }
         }
-        
+        /* 新建模板样式 E */
+        /* 每一项模板选项样式 -- TemplateItem -- S */
+        .templateItemContent {
+          display: flex;
+          overflow-x: auto;
+          height: 236px;
+          .tempItemWrapper {
+            display: inline-block;
+            margin: 0 auto;
+            width: 154px;
+            margin-right: 88px;
+            .tem_item {
+              display: block;
+              width:106px;
+              height:136px;
+              // background:rgba(255,255,255,1);
+              background: palegoldenrod;
+              border:1px solid rgba(0,0,0,0.15);
+              // margin-bottom: 10px;
+              position: relative;
+              cursor: pointer;
+              // margin-left: 25px;
+              margin: 0 auto 10px;
+            }
+            .tem_item:hover .hover_icon_display .common_authority_hover {
+              // display: block;
+              transition: all 1s linear;
+              opacity: 1;
+            }
+            .hover_icon_display {
+              // display: flex;
+              // flex-direction: column;
+              // display: none;
+              transition: all 1s linear;
+              .common_authority_hover {// 有权限的人显示的样式
+                opacity: 0;
+                display: block;
+                width:106px;
+                height:45px;
+                background:rgba(0,0,0,0.65);
+                box-shadow:0px -1px 0px 0px rgba(255,255,255,1);
+                text-align: center;
+                line-height: 45px;
+                .hover_icon {
+                  width:48px;
+                  height:20px;
+                  font-size:16px;
+                  // font-family:PingFangSC-Medium,PingFang SC;
+                  font-weight:500;
+                  color:rgba(255,255,255,1);
+                  line-height:20px;
+                }
+                .start_process_icon {
+                  &:hover {
+                    color: seagreen !important;
+                  }
+                }
+                .edit_temp_icon {
+                  &:hover {
+                    color: royalblue !important;
+                  }
+                }
+                .delete_temp_icon {
+                  &:hover {
+                    color: tomato !important;
+                  }
+                }
+              }
+              
+            }
+ 
+            .temp_item_name {
+              display: block;
+              text-align: center;
+              min-width:90px;
+              height:20px;
+              background:rgba(24,144,255,1);
+              border-radius:4px;
+              max-width: 154px;
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+            }
+          }
+          
+        }
+        /* 每一项模板选项样式 E */
       }
     }
+    /* 默认模板的样式 E */
+    /* 流程列表样式 -- PagingnationContent -- S */
+    .processDefautOut_bottom {
+      // padding: 16px 0;
+      background: thistle;
+      min-height: 1000px;
+      .pagingnationContent {
+        .flowsInstanceItemContent {
+          display: flex;
+          height:46px;
+          line-height: 46px;
+          // background:rgba(255,255,255,1);
+          cursor: pointer;
+          .flowsInstanceItem_left {
+            flex: 1;
+            .flow_instance_name {
+              // min-width:84px;
+              // height:22px;
+              font-size:14px;
+              font-family:PingFangSC-Medium,PingFang SC;
+              font-weight:500;
+              color:rgba(89,89,89,1);
+              line-height:22px;
+              margin: 0 24px 0 5px;
+            }
+            .current_step {
+              font-size:14px;
+              font-family:PingFangSC-Medium,PingFang SC;
+              font-weight:500;
+              color:rgba(140,140,140,1);
+              line-height:22px;
+              margin-right: 12px;
+            }
+            .current_step_name {
+              font-size:14px;
+              font-family:PingFangSC-Regular,PingFang SC;
+              font-weight:400;
+              color:rgba(24,144,255,1);
+              line-height:22px;
+            }
+          }
+          .flowsInstanceItem_right {
+            margin-right: 40px;
+           .date_line {
+            color:rgba(24,144,255,1);
+           } 
+          }
+        }
+      }
+      .pagingnationContent .flowsInstanceItemContent:nth-of-type(odd) {
+        background-color: #fff;
+      }
+      .pagingnationContent .flowsInstanceItemContent:nth-of-type(even) {
+        background-color: #e8e8e8;
+      }
+
+    }
+    /* 流程列表样式 E */
   }
+
 }
