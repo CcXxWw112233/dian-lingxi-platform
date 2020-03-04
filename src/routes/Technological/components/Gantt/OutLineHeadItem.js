@@ -59,14 +59,6 @@ export default class OutLineHeadItem extends Component {
         });
     }
 
-    getConfirmContent = () => {
-        return (
-            <div>
-                <div>引用项目模版会覆盖删除项目现有的数据，如需引用请在下方输入“<span style={{ color: '#1890FF' }}>确认引用</span>”。</div>
-                <div><Input style={{ width: '124px' }} placeholder="请输入" block /></div>
-            </div>
-        );
-    }
     handleProjectMenu = ({ key }) => {
         const { dispatch, gantt_board_id } = this.props;
         if (key.indexOf('importTpl') != -1) {
@@ -75,35 +67,7 @@ export default class OutLineHeadItem extends Component {
                 safeConfirmModalVisible: true,
                 tplId
             });
-            // console.log("tplId", tplId);
-            // confirm({
-            //     title: '确认要引用项目模版吗？',
-            //     content: this.getConfirmContent(),
-            //     okText: '确定',
-            //     okType: 'danger',
-            //     cancelText: '取消',
-            //     onOk() {
-            //         // console.log('OK');
-            //         importBoardTemplate({ "board_id": gantt_board_id, 'template_id': tplId }).then(res => {
-            //             if (isApiResponseOk(res)) {
-            //                 console.log("importBoardTemplate", res);
-            //                 dispatch({
-            //                     type: 'gantt/getGanttData',
-            //                     payload: {
-
-            //                     }
-            //                 })
-            //             } else {
-            //                 message.error(res.message)
-            //             }
-            //         }).catch(err => {
-            //             message.error('更新失败')
-            //         })
-            //     },
-            //     onCancel() {
-            //         console.log('Cancel');
-            //     },
-            // });
+     
         } else {
             if (key == 'boardInfo') {
                 this.setBoardInfoVisible();
@@ -289,7 +253,7 @@ export default class OutLineHeadItem extends Component {
                                 }
 
                                 nodeValue.children = children;
-                                //this.setCreateAfterInputFous(paraseNodeValue,outline_tree);
+                                this.setCreateAfterInputFous(paraseNodeValue,outline_tree);
                                 this.updateOutLineTreeData(outline_tree);
 
                             } else {
@@ -499,6 +463,7 @@ export default class OutLineHeadItem extends Component {
                     if (item.tree_type == 0) {
                         return (
                             <TreeNode
+                                nodeValue={item}
                                 type={'2'}
                                 placeholder={'新建任务'}
                                 icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
