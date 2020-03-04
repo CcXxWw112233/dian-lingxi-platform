@@ -69,14 +69,15 @@ class TreeNode extends Component {
     toggleTitleEdit = (e) => {
         // console.log("toggleTitleEdit", e);
         this.setState({
-            isTitleEdit: !this.state.isTitleEdit
+            isTitleEdit: !this.state.isTitleEdit,
         });
+
     }
 
     onMouseEnter = () => {
         const { nodeValue = {} } = this.state;
         const { id } = nodeValue;
-        if (id&& nodeValue.tree_type != '0') {
+        if (id && nodeValue.tree_type != '0') {
             this.props.onHover(id, true);
         }
     }
@@ -84,9 +85,7 @@ class TreeNode extends Component {
     onMouseLeave = () => {
         const { nodeValue = {} } = this.state;
         const { id } = nodeValue;
-        if (id) {
-            this.props.onHover(id, false);
-        }
+        this.props.onHover(id, false, this.props.parentId);
 
     }
 
