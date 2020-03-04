@@ -129,18 +129,17 @@ class TreeNode extends Component {
         const { outline_tree_round = [] } = this.props;
         const { nodeValue = {} } = this.state;
 
-
         const newNodeValue = { ...nodeValue, time_span: value };
         if (newNodeValue.is_has_start_time && newNodeValue.is_has_end_time) {
             //开始时间不变，截至时间后移
-            newNodeValue.due_time = moment(parseInt(newNodeValue.start_time + "000")).add(value, 'days').valueOf() / 1000;
+            newNodeValue.due_time = moment(newNodeValue.start_time).add(value-1, 'days').valueOf();
 
         } else {
             if (newNodeValue.is_has_start_time) {
-                newNodeValue.due_time = moment(parseInt(newNodeValue.start_time + "000")).add(value, 'days').valueOf() / 1000;
+                newNodeValue.due_time = moment(newNodeValue.start_time).add(value-1, 'days').valueOf();
             }
             if (newNodeValue.is_has_end_time) {
-                newNodeValue.start_time = moment(parseInt(newNodeValue.is_has_end_time + "000")).add(-value, 'days').valueOf() / 1000;
+                newNodeValue.start_time = moment(newNodeValue.start_time).add(value-1, 'days').valueOf();
             }
         }
 

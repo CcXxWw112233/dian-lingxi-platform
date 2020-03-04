@@ -287,12 +287,15 @@ export default class OutLineHeadItem extends Component {
                     // if(){
                         
                     // }
+                    updateParams.start_time = param.start_time;
+                    updateParams.due_time = param.due_time;
                     updateParams.time_span = param.time_span;
                     updateTask({ ...updateParams }, { isNotLoading: false })
                         .then(res => {
                             if (isApiResponseOk(res)) {
                                 let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
                                 if (nodeValue) {
+                                
                                     nodeValue.name = param.name;
                                     nodeValue.time_span = param.time_span;
                                     nodeValue.start_time = param.start_time;
