@@ -2,9 +2,13 @@ import React, { Component } from 'react'
 import { Modal, Button, Input, Icon } from 'antd';
 
 export default class SafeConfirmModal extends Component {
-    state = {
-        confirmContent: '确认引用',
-        confirmContentInputValue: ''
+   
+    constructor(props){
+        super(props);
+        state = {
+            confirmContent: '确认引用',
+            confirmContentInputValue: ''
+        }
     }
     handleOk = () => {
         this.props.onOk();
