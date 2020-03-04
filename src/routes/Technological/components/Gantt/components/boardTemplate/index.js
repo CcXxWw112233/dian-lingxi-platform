@@ -4,7 +4,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { date_area_height } from '../../constants'
 import { Dropdown, Menu, message, Tree, Icon, Spin } from 'antd'
 import { connect, } from 'dva';
-import { getBoardTemplateList, getBoardTemplateInfo, createCardByTemplate } from '../../../../../../services/technological/gantt'
+import { getBoardTemplateList, getBoardTemplateInfo, createCardByTemplate, importBoardTemplate } from '../../../../../../services/technological/gantt'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import { createMilestone } from '../../../../../../services/technological/prjectDetail'
 import { getGlobalData } from '../../../../../../utils/businessFunction'
@@ -566,6 +566,25 @@ export default class BoardTemplate extends Component {
         milestone_ids = new_checkedKeys.filter(item => abs.findIndex(item2 => item == item2.id && item2.parent_id == '0') != -1)
         card_ids = new_checkedKeys.filter(item => abs.findIndex(item2 => item == item2.id && item2.parent_id != '0') != -1)
 
+        const { gantt_board_id, dispatch } = this.props
+        const params = {
+            board_id: gantt_board_id,
+            template_id: template_data[0].template_id,
+            milestone_ids,
+            card_ids
+        }
+        importBoardTemplate(params).then(res => {
+            if(isApiResponseOk(res)) {
+                dispatch({
+                    type: 'gantt/getGanttData',
+                    payload: {
+
+                    }
+                })
+            }
+        }).catch(err => {
+            console.log('ssss',err)
+        })
     }
     render() {
         const { template_data, show_type, selected_template_name, spinning, project_templete_scheme_visible, contain_height, checkedKeys = [] } = this.state

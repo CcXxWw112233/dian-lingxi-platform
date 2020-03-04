@@ -265,7 +265,7 @@ export const currentFolderJudegeFileUpload = ({ folder_id, im_all_latest_unread_
 // 计算任务时间长度对应在甘特图上的跨度
 export const setGantTimeSpan = ({ time_span, start_time, due_time, start_date, end_date }) => {
     let new_time_span = 1
-    if (!due_time || !start_time) {
+    if (!!!due_time || !!!start_time) {
         return Number(time_span) || 1
     } else {
         new_time_span = (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1
