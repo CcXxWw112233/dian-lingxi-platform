@@ -52,7 +52,7 @@ export default class GroupListHeadSet extends Component {
             const { simplemodeCurrentProject } = this.props;
             selectBoardToSeeInfo({ board_id: gantt_board_id, board_name: simplemodeCurrentProject.board_name, dispatch });
         } else {
-            selectBoardToSeeInfo({ board_id: '0', dispatch })
+            selectBoardToSeeInfo({ board_id: '0', dispatch, group_view_type: group_view_type_new })
         }
 
         // dispatch({
