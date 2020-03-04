@@ -125,6 +125,12 @@ export default class GroupListHeadSet extends Component {
                 });
             })
             .then(() => {
+                dispatch({
+                    type: 'gantt/updateDatas',
+                    payload: {
+                        group_view_type: '4'
+                    }
+                })
                 afterCreateBoardUpdateGantt(dispatch)
             });
     };
