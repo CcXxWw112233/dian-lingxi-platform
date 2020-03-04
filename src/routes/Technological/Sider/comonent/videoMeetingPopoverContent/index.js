@@ -20,6 +20,7 @@ import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner
 import kty from '@/assets/sider_right/kty.png'
 import zoom from '@/assets/sider_right/zoom.png'
 import zhumu from '@/assets/sider_right/zhumu.png'
+import zyy from '@/assets/sider_right/zhumu.png'
 import { currentNounPlanFilterName } from "@/utils/businessFunction";
 import { PROJECTS } from '@/globalset/js/constant'
 import { isApiResponseOk } from '@/utils/handleResponseData'
@@ -979,6 +980,9 @@ class VideoMeetingPopoverContent extends React.Component {
 			case "3":
 				src = zhumu
 				break
+			case "4":
+				src = zyy
+				break
 			default:
 				break;
 		}
@@ -1178,11 +1182,11 @@ class VideoMeetingPopoverContent extends React.Component {
 
 						<div>
 							<span>聆悉推荐使用以下方式开展远程会议: </span>
-							<div style={{display: 'flex'}}> 
+							<div className={`${globalStyles.global_vertical_scrollbar}`} style={{display: 'flex', overflowX: 'auto', overflowY: 'hidden'}}> 
 								{
 									videoConferenceProviderList && videoConferenceProviderList.map(item => {
 										return (
-											<Radio.Group onChange={this.onVideoProviderChange} value={this.state.providerDefault ? this.state.providerDefault : item.is_default == '1' ? item.id : ''}>
+											<Radio.Group style={{marginBottom: '12px'}} onChange={this.onVideoProviderChange} value={this.state.providerDefault ? this.state.providerDefault : item.is_default == '1' ? item.id : ''}>
 												<div key={`${item.id}-${item.icon}`} style={{textAlign: 'center', marginTop: '12px'}}>
 													<div className={indexStyles.video_provider}><img src={this.getImgLogo(item)} /></div>
 													<div><Radio value={item.id}/></div>
