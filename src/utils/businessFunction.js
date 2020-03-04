@@ -405,6 +405,14 @@ export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenI
       is_new_board
     }
   })
+  if (board_id == '0' || !board_id) {
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        group_view_type: '1',
+      }
+    })
+  }
   // console.log('sssss', window.location)
   const hash = window.location.hash
   if (hash.indexOf('/technological/simplemode/workbench') != -1) {
