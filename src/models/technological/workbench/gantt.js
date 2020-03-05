@@ -334,10 +334,13 @@ export default {
               new_item3.start_time = start_time3
               time_span3 = setGantTimeSpan({ time_span: time_span3, start_time: start_time3, due_time: due_time3, start_date, end_date })
               new_item3.time_span = time_span3
-
+              if(tree_type2 == '2') {
+                new_item3.parent_card_id = item2.id
+              }
               return new_item3
             })
           } else {
+            new_item2.parent_card_id = item.id
             new_item_children2 = undefined
           }
           new_item2.children = new_item_children2
