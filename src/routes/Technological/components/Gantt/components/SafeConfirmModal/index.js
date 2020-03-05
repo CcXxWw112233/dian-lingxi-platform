@@ -23,6 +23,11 @@ export default class SafeConfirmModal extends Component {
             confirmContentInputValue: e.target.value
         });
     }
+    componentWillMount(){
+        this.setState({
+            confirmContentInputValue:''
+        });
+    }
     render() {
         const { confirmContent, confirmContentInputValue } = this.state;
         const { visible, onChangeVisible} = this.props;

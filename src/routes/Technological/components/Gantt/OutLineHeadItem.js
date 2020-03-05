@@ -577,7 +577,7 @@ export default class OutLineHeadItem extends Component {
     render() {
         const { board_info_visible, show_add_menber_visible, safeConfirmModalVisible } = this.state;
         const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData, outline_tree_round } = this.props;
-        console.log("刷新了数据", outline_tree);
+        //console.log("刷新了数据", outline_tree);
         return (
             <div className={styles.outline_wrapper}>
 
@@ -630,7 +630,10 @@ export default class OutLineHeadItem extends Component {
                     )
                 }
                 <DetailInfo setProjectDetailInfoModalVisible={this.setBoardInfoVisible} modalVisible={board_info_visible} invitationType='1' invitationId={gantt_board_id} />
-                <SafeConfirmModal visible={safeConfirmModalVisible} onChangeVisible={this.changeSafeConfirmModalVisible} onOk={this.onImportBoardTemplate} />
+                {
+                    safeConfirmModalVisible &&
+                    <SafeConfirmModal visible={safeConfirmModalVisible} onChangeVisible={this.changeSafeConfirmModalVisible} onOk={this.onImportBoardTemplate} />
+                }
             </div>
         );
     }
