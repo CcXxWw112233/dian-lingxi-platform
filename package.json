@@ -2,7 +2,9 @@
   "private": true,
   "scripts": {
     "start": "set port=8000 && cross-env ESLINT=none roadhog server",
-    "build": "roadhog build"
+    "build": "roadhog build",
+    "lint": "eslint --fix --ext .js src test",
+    "precommit": "npm run lint"
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.3",
