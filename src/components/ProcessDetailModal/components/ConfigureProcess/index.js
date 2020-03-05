@@ -3,6 +3,7 @@ import { connect } from 'dva'
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
+import ConfigureProcessStepInfoOne from './ConfigureProcessStepInfoOne'
 
 @connect(mapStateToProps)
 export default class ConfigureProcess extends Component {
@@ -137,8 +138,23 @@ export default class ConfigureProcess extends Component {
     })
   }
 
+  filterForm = (value, key) => {
+    const { node_type } = value
+    let container = (<div></div>)
+    const invitationType = '8'
+    switch (node_type) {
+      case '1':
+        container = (<ConfigureProcessStepInfoOne {...this.props} itemKey={key} itemValue={value} />)
+        break;
+      default:
+        container = (<div></div>)
+        break
+    }
+    return container
+  }
+
   render() {
-    const { isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription } = this.props
+    const { isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [] } = this.props
     const { currentFlowInstanceName, currentFlowInstanceDescription } = this.state
     const delHtmlTag = (str) => {
       return str.replace(/<[^>]+>/g, "")
@@ -149,7 +165,7 @@ export default class ConfigureProcess extends Component {
           <div style={{ display: 'flex', position: 'relative' }}>
             <canvas id="time_graph_canvas" width={210} height={210} style={{ float: 'left' }}></canvas>
             {/* <img id="node_img" src={sssimg} style={{position: 'relative', width: 20, height: 20, top: 155, right: 118}}/> */}
-            {parseInt(this.props.processCurrentCompleteStep) === parseInt(this.props.processInfo && this.props.processInfo.node_amount) ? <span className={globalStyles.authTheme} style={{ color: '#73D13C', position: 'absolute', top: 155, left: 92 }} >&#xe603;</span> : <span className={globalStyles.authTheme} style={{ color: '#D9D9D9', position: 'absolute', top: 155, left: 92 }} >&#xe603;</span>}
+            {parseInt(this.props.processCurrentCompleteStep) === parseInt(this.props.processInfo && this.props.processInfo.node_amount) ? <span className={globalStyles.authTheme} style={{ color: '#73D13C', position: 'absolute', top: 155, left: 92 }} >&#xe605;</span> : <span className={globalStyles.authTheme} style={{ color: '#D9D9D9', position: 'absolute', top: 155, left: 92 }} >&#xe605;</span>}
             <span style={{
               position: 'absolute',
               top: '70px',
@@ -227,7 +243,15 @@ export default class ConfigureProcess extends Component {
             </div>
           </div>
         </div>
-        <div className={indexStyles.configure_bottom}></div>
+        <div className={indexStyles.configure_bottom}>
+          {processEditDatas.map((value, key) => {
+            return (
+              <div className={indexStyles.processPointItem} key={key}>
+                {this.filterForm(value, key)}
+              </div>
+            )
+          })}
+        </div>
       </div>
     )
   }

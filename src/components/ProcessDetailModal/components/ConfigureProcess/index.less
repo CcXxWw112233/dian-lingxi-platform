@@ -23,4 +23,178 @@
       padding: 8px 0 0 12px;
     }
   }
+  .configure_bottom {
+    padding: 24px 32px 0 32px;
+  }
 }
+
+.configureProcessOut_1 {
+  position: relative;
+  .popover_card {
+    margin: 0 32px 0 26px;
+    flex: 1;
+    height:386px;
+    background:rgba(255,255,255,1);
+    box-shadow:0px 0px 0px 2px rgba(230,247,255,1),0px 0px 8px 2px rgba(24,144,255,0.15);
+    opacity:0.9;
+    border:1px solid rgba(24,144,255,1);
+    border-radius: 4px;
+    position: relative;
+    padding: 16px 12px;
+  }
+}
+
+.line{
+  width: 2px;
+  background: #7ED321;
+  position: absolute;
+  top: 48px;
+  left: 22px;
+  // bottom: 0;
+  z-index: -1;
+}
+.circle{
+  width: 40px;
+  height: 40px;
+  border-radius: 40px;
+  background-color: #7ED321;
+  text-align: center;
+  line-height: 40px;
+  color: #FFFFFF
+}
+.hasnotCompetedLine{
+  width: 2px;
+  background: #E0E0E0;
+  position: absolute;
+  top: 48px;
+  left: 22px;
+  // bottom: 0;
+  /* z-index: -30; */
+}
+.hasnotCompetedCircle{
+  width: 40px;
+  height: 40px;
+  border-radius: 40px;
+  border: 1px solid rgba(0,0,0,0.15);
+  background-color: rgba(0,0,0,0.15);
+  text-align: center;
+  line-height: 40px;
+  z-index: 1;
+}
+.doingCircle{
+  width: 48px;
+  height: 48px;
+  border-radius: 40px;
+  background:linear-gradient(90deg,rgba(24,144,255,1) 0%,rgba(24,205,255,1) 100%);
+  box-shadow:0px 1px 4px 0px rgba(0,0,0,0.15);
+  opacity:0.81;
+  text-align: center;
+  line-height: 48px;
+  color: #f5f5f5;
+  z-index: 1;
+  font-size: 20px;
+}
+.doingLine{
+  width: 2px;
+  background: #1890FF;
+  position: absolute;
+  top: 48px;
+  left: 22px;
+  // bottom: 0;
+  /* z-index: 0; */
+}
+
+/*  给矩形一个1px实心颜色rgb为#E4E4E2的边框  */
+.dynamicTime {
+  width: 125px;
+  height: 40px;
+  border: 1px solid #E4E4E2;
+  margin-left: 20px;
+  position: relative;
+      display: inline-block;
+      vertical-align: middle;
+}
+
+.popover_card:before {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: -10px;
+  width: 0;
+  height: 0;
+  border-right: 10px solid #1890FF;
+  border-bottom: 10px solid transparent;
+  border-top: 10px solid transparent; 
+}
+
+.popover_card:after {
+  content: '';
+  position: absolute;
+  top: 16px;
+  left: -9px;
+  width: 0;
+  height: 0;
+  border-bottom: 9px solid transparent;
+  border-right: 9px solid #fff;
+  border-top: 9px solid transparent; 
+}
+
+.check_line {
+  // width: 842px;
+  // height: 1px;
+  background:rgba(24,144,255,1);
+  box-shadow:0px 0px 0px 2px rgba(230,247,255,1),0px 0px 8px 2px rgba(24,144,255,0.15);
+  opacity:0.9;
+  border:1px solid rgba(24,144,255,1);
+  position: relative;
+}
+
+.check_line:before {
+  content: '';
+  position: absolute;
+  top: -9px;
+  left: 120px;
+  width: 0;
+  height: 0;
+  border-bottom: 10px solid #1890FF;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent; 
+}
+.check_line:after {
+  content: '';
+  position: absolute;
+  top: -7px;
+  left: 121px;
+  width: 0;
+  height: 0;
+  border-left: 9px solid transparent;
+  border-bottom: 9px solid #fff;
+  border-right: 9px solid transparent; 
+}
+
+// 三角实验
+
+// /*    上下透明，右边框为10px   */
+// .dynamicTime:before {
+//   content: '';
+//   position: absolute;
+//   top: 10px;
+//   left: -10px;
+//   width: 0;
+//   height: 0;
+//   border-right: 10px solid #E4E4E2;
+//   border-bottom: 10px solid transparent;
+//   border-top: 10px solid transparent; 
+// }
+// /*  上下透明，右边框为9px且在:before伪元素三角形的基础上，向右，下移动了1px  */
+// .dynamicTime:after {
+//   content: '';
+//   position: absolute;
+//   top: 11px;
+//   left: -9px;
+//   width: 0;
+//   height: 0;
+//   border-bottom: 9px solid transparent;
+//   border-right: 9px solid #fff;
+//   border-top: 9px solid transparent; 
+// }
