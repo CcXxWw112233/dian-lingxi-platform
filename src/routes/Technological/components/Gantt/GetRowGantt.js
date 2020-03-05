@@ -604,6 +604,7 @@ export default class GetRowGantt extends Component {
             return parent_expand && (
               <React.Fragment key={`${id}_${top}`}>
                 <GetRowStrip itemValue={value}
+                  coperatedX={this.state.coperatedX}
                   deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
                 ></GetRowStrip>
               </React.Fragment>

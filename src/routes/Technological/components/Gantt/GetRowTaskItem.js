@@ -21,7 +21,7 @@ const coperatedX = 0
 @connect(mapStateToProps)
 export default class GetRowTaskItem extends Component {
 
-    constructor (props) {
+    constructor(props) {
         super(props)
         this.out_ref = React.createRef()
         this.is_down = false
@@ -555,6 +555,7 @@ export default class GetRowTaskItem extends Component {
             executors = [], label_data = [],
             is_has_start_time, is_has_end_time,
             start_time, due_time, is_privilege,
+            parent_card_id
         } = itemValue
         const { local_left, local_top, local_width } = this.state
         const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
@@ -576,7 +577,7 @@ export default class GetRowTaskItem extends Component {
                     // 拖拽
                     onMouseDown={(e) => this.onMouseDown(e)}
                     onMouseMove={(e) => this.onMouseMove(e)}
-                    onMouseUp={() => this.setSpecilTaskExample({ id, top, board_id })}
+                    onMouseUp={() => this.setSpecilTaskExample({ id: parent_card_id || id, top, board_id })} //查看子任务是查看父任务
                 // 不拖拽
                 // onMouseMove={(e) => e.stopPropagation()}
                 // onClick={() => this.setSpecilTaskExample({ id, top, board_id })}
