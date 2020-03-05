@@ -140,7 +140,7 @@ export default class GetRowStrip extends Component {
         const { itemValue = {}, gantt_board_id } = this.props
         const { id, time_span = 1 } = itemValue
         const due_time = timestamp + time_span * 24 * 60 * 60 * 1000 - 1000
-        updateTask({ card_id: id, due_time, board_id: gantt_board_id }, { isNotLoading: false }).then(res => {
+        updateTask({ card_id: id, due_time, start_time: timestamp, board_id: gantt_board_id }, { isNotLoading: false }).then(res => {
             if (isApiResponseOk(res)) {
                 this.changeOutLineTreeNodeProto(id, { start_time: timestamp, due_time })
             } else {
@@ -190,7 +190,7 @@ export default class GetRowStrip extends Component {
             if (this.onHoverState()) {
                 display = 'flex'
                 marginLeft = currentRect.x
-                paddingLeft = ceilWidth - 2
+                paddingLeft = ceilWidth / 2 - 2
             }
         }
 
