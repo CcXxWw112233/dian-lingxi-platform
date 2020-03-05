@@ -173,8 +173,10 @@ export default class GroupListHeadSet extends Component {
                     </div>
 
                     <div className={indexStyles.set_content_left}>
+                        {gantt_board_id != '0' && (
+                            <div onClick={this.backClick} className={`${indexStyles.group_back_to_board} ${globalStyles.authTheme}`}>&#xe7ec;</div>
+                        )}
                         <div className={indexStyles.set_content_view_type}>
-
                             <Tooltip title={gantt_board_id != '0' ? '大纲视图' : '请先进入单个项目'}>
                                 <div onClick={() => { if (gantt_board_id != '0') this.setGroupViewType('4') }} className={`${indexStyles.set_content_left_left} ${globalStyles.authTheme} ${ganttIsOutlineView({ group_view_type }) && selected} ${gantt_board_id == '0' ? indexStyles.disabled : ''}`}>&#xe7f9;</div>
                             </Tooltip>
