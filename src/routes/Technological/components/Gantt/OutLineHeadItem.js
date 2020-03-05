@@ -573,11 +573,14 @@ export default class OutLineHeadItem extends Component {
             message.error('引入模板失败')
         })
     }
+  
+    
 
     render() {
         const { board_info_visible, show_add_menber_visible, safeConfirmModalVisible } = this.state;
         const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData, outline_tree_round } = this.props;
         //console.log("刷新了数据", outline_tree);
+        console.log("刷新了数据",checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, gantt_board_id));
         return (
             <div className={styles.outline_wrapper}>
 
@@ -643,7 +646,7 @@ export default class OutLineHeadItem extends Component {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
     gantt: { datas: { gantt_board_id, group_view_type, outline_tree, outline_hover_obj, outline_tree_round } },
-    technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, userBoardPermissions } },
+    technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, userBoardPermissions=[] } },
     projectDetail: { datas: { projectDetailInfoData = {} } }
 }) {
     return { currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, projectDetailInfoData, userBoardPermissions, outline_tree, outline_hover_obj, outline_tree_round }
