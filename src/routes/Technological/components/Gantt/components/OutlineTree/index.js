@@ -203,7 +203,7 @@ class TreeNode extends Component {
         }
     }
 
-    renderExecutor = (members, { user_id }) => {
+    renderExecutor = (members=[], { user_id }) => {
 
         const currExecutor = members.find((item) => item.user_id == user_id);
         if (currExecutor && currExecutor.avatar) {
