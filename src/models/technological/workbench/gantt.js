@@ -317,25 +317,29 @@ export default {
           if ((tree_type2 == '1' || tree_type2 == '2') && !added2) { //是里程碑或者一级任务
             new_item_children2.push(visual_add_item) //添加虚拟节点
           }
-          new_item_children2 = new_item_children2.map(item3 => {
-            let new_item3 = { ...item3, parent_expand: new_item2.parent_expand && new_item2.is_expand }
-            if (is_expand && is_expand2) {
-              child_expand_length += 1
-            }
-            // 时间跨度设置
-            const due_time3 = getDigit(item3['due_time'])
-            const start_time3 = getDigit(item3['start_time']) || due_time3 //如果没有开始时间，那就取截止时间当天
-            new_item3.is_has_start_time = !!getDigit(item3['start_time'])
-            new_item3.is_has_end_time = !!getDigit(item3['due_time'])
+          if (tree_type == '1') { //如果第一级是里程碑才有第三级
+            new_item_children2 = new_item_children2.map(item3 => {
+              let new_item3 = { ...item3, parent_expand: new_item2.parent_expand && new_item2.is_expand }
+              if (is_expand && is_expand2) {
+                child_expand_length += 1
+              }
+              // 时间跨度设置
+              const due_time3 = getDigit(item3['due_time'])
+              const start_time3 = getDigit(item3['start_time']) || due_time3 //如果没有开始时间，那就取截止时间当天
+              new_item3.is_has_start_time = !!getDigit(item3['start_time'])
+              new_item3.is_has_end_time = !!getDigit(item3['due_time'])
 
-            let time_span3 = item3['time_span']
-            new_item3.due_time = due_time3
-            new_item3.start_time = start_time3
-            time_span3 = setGantTimeSpan({ time_span: time_span3, start_time: start_time3, due_time: due_time3, start_date, end_date })
-            new_item3.time_span = time_span3
+              let time_span3 = item3['time_span']
+              new_item3.due_time = due_time3
+              new_item3.start_time = start_time3
+              time_span3 = setGantTimeSpan({ time_span: time_span3, start_time: start_time3, due_time: due_time3, start_date, end_date })
+              new_item3.time_span = time_span3
 
-            return new_item3
-          })
+              return new_item3
+            })
+          } else {
+            new_item_children2 = undefined
+          }
           new_item2.children = new_item_children2
           return new_item2
         })
