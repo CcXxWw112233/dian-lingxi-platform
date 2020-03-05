@@ -169,7 +169,7 @@ export default class OutLineHeadItem extends Component {
 
 
                                 let addNodeValue = {
-                                    id: new Date().getTime(),
+                                    id: res.data,
                                     tree_type: '1',
                                     name: param.name,
                                     is_expand: true,
