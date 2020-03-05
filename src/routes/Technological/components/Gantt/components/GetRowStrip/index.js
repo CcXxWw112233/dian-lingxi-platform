@@ -9,7 +9,6 @@ import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
 import { message } from 'antd';
 import MilestoneDetail from '../milestoneDetail'
 
-const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
 const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
 @connect(mapStateToProps)
 export default class GetRowStrip extends Component {
@@ -69,7 +68,7 @@ export default class GetRowStrip extends Component {
             return
         }
         const { ceiHeight, ceilWidth } = this.props
-        const { coperatedX = 0 } = this.state
+        const { coperatedX = 0 } = this.props
 
         const target_0 = document.getElementById('gantt_card_out')
         const target_1 = document.getElementById('gantt_card_out_middle')

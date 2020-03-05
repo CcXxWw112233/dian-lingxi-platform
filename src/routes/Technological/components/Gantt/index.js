@@ -43,7 +43,8 @@ class Gantt extends Component {
       dispatch({
         type: 'gantt/updateDatas',
         payload: {
-          gantt_board_id: '0'
+          gantt_board_id: '0',
+          group_view_type: '1'
         }
       })
     }
