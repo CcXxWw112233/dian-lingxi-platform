@@ -8,6 +8,8 @@ import { updateTask, updateMilestone } from '../../../../../../services/technolo
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
 import { message } from 'antd';
 import MilestoneDetail from '../milestoneDetail'
+import { checkIsHasPermission, checkIsHasPermissionInBoard } from '../../../../../../utils/businessFunction';
+import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT } from '../../../../../../globalset/js/constant';
 
 const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
 @connect(mapStateToProps)
@@ -134,9 +136,13 @@ export default class GetRowStrip extends Component {
         )
     }
     cardSetClick = () => {
+        const { itemValue = {}, gantt_board_id } = this.props
+        if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, gantt_board_id)) {
+            message.warn(NOT_HAS_PERMISION_COMFIRN)
+            return
+        }
         const date = this.calHoverDate()
         const { timestamp } = date
-        const { itemValue = {}, gantt_board_id } = this.props
         const { id, time_span = 1 } = itemValue
         const due_time = timestamp + time_span * 24 * 60 * 60 * 1000 - 1000
         updateTask({ card_id: id, due_time, start_time: timestamp, board_id: gantt_board_id }, { isNotLoading: false }).then(res => {
