@@ -30,11 +30,53 @@ export default class GroupListHead extends Component {
     }
   }
 
+  // 头部鼠标滚动设置位置
+  onWheel = (e) => {
+    const { target_scrollTop, dispatch, target_scrollLeft } = this.props
+    const ele = document.getElementById('gantt_card_out_middle')
+    const panel_scroll_top = ele.scrollTop
+    let new_target_scrollTop = panel_scroll_top
+    // console.log('ssssssssssss0', ele.scrollTop)
+    if (e.nativeEvent.deltaY <= 0) {
+      /* scrolling up */
+      if (ele.scrollTop <= 0) {
+        e.preventDefault();
+        // console.log('ssssssssssss1', 'scrolling up')
+        return
+      } else {
+        new_target_scrollTop -= 50
+        // console.log('ssssssssssss1', new_target_scrollTop)
+      }
+    }
+    else {
+      /* scrolling down */
+      if (ele.scrollTop + ele.clientHeight >= ele.scrollHeight) {
+        e.preventDefault();
+        // console.log('ssssssssssss2', 'scrolling down')
+        return
+      } else {
+        new_target_scrollTop += 50
+        // console.log('ssssssssssss2', new_target_scrollTop)
+      }
+    }
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        target_scrollTop: new_target_scrollTop
+      }
+    })
+    if (ele.scrollTo) {
+      ele.scrollTo(target_scrollLeft, new_target_scrollTop)
+    } else {
+      ele.scrollTop = new_target_scrollTop
+    }
+  }
   render() {
     const { list_group = [], group_rows = [], ceiHeight, target_scrollLeft, target_scrollTop, group_view_type } = this.props
     return (
       <div className={`${ganttIsOutlineView({ group_view_type }) ? indexStyles.listTree : indexStyles.listHead}`}
         // style={{ left: target_scrollLeft, }}
+        onWheel={this.onWheel}
         style={{ top: -target_scrollTop + 64, }}
       >
         {
