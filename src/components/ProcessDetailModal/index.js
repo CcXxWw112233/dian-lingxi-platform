@@ -4,7 +4,7 @@ import MainContent from './MainContent'
 import HeaderContent from './HeaderContent'
 import { connect } from 'dva'
 
-@connect()
+@connect(mapStateToProps)
 export default class ProcessDetailModal extends Component {
 
   onCancel = () => {
@@ -14,6 +14,37 @@ export default class ProcessDetailModal extends Component {
         process_detail_modal_visible: false
       }
     })
+  }
+
+  commonDrawerContentOutClick = () => {
+    const { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription } = this.props
+    console.log(currentFlowInstanceName && currentFlowInstanceName.trim() != '', 'ssssssssssssssssssssssssss_currentFlowInstanceName')
+    if (isEditCurrentFlowInstanceName) { // 如果操作的是实例名称
+      if (currentFlowInstanceName.trim() != '') { // 表示输入了名称, 那么就可以隐藏输入框
+        this.props.dispatch({
+          type: 'publicProcessDetailModal/updateDatas',
+          payload: {
+            isEditCurrentFlowInstanceName: false
+          }
+        })
+      } else {
+        this.props.dispatch({
+          type: 'publicProcessDetailModal/updateDatas',
+          payload: {
+            isEditCurrentFlowInstanceName: true
+          }
+        })
+      }
+    }  
+    if (isEditCurrentFlowInstanceDescription) { // 如果操作的是编辑描述
+      this.props.dispatch({
+        type: 'publicProcessDetailModal/updateDatas',
+        payload: {
+          isEditCurrentFlowInstanceDescription: false
+        }
+      })
+    }
+    
   }
 
   render() {
@@ -31,4 +62,11 @@ export default class ProcessDetailModal extends Component {
       </div>
     )
   }
+}
+
+//  只关联public中弹窗内的数据
+function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription } 
+  
+} ) {
+ return { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription}
 }

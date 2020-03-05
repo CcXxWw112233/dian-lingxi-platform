@@ -55,8 +55,9 @@ export default class NameChangeInput extends React.Component{
   //textarea
   textAreaChange(e) {
     let val = e.target.value
-    if (val.length > 100) {
-      message.error("标题字符数最大限制为100字")
+    const { maxLength } = this.props
+    if (val.length > maxLength - 1) {
+      message.error(`标题字符数最大限制为${maxLength - 1}字`)
       this.setState({
         isOverFlowText: true, // 是否超出最大字数
       })
@@ -91,7 +92,7 @@ export default class NameChangeInput extends React.Component{
   render() {
 
     const { localName, isOverFlowText } = this.state
-    const { nodeName, className, autoFocus = true, autosize = true, goldName, onBlur, onPressEnter, onChange, style={}, size, onClick, maxLength = 30 } = this.props
+    const { nodeName, className, autoFocus = true, autosize = true, goldName, onBlur, onPressEnter, onChange, style={}, size, onClick, maxLength = 30, placeholder = '' } = this.props
 
     return (
       <div style={{ width: '100%'}}>
@@ -107,7 +108,8 @@ export default class NameChangeInput extends React.Component{
                    style={{...style}}
             />
           ) :(
-            <TextArea value={localName}
+            <TextArea placeholder={placeholder}
+                      value={localName}
                       className={className}
                       autosize={autosize}
                       onChange={this.textAreaChange.bind(this)}
