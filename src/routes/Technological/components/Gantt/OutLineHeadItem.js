@@ -20,7 +20,7 @@ import { createMilestone } from '@/services/technological/prjectDetail.js';
 import { isApiResponseOk } from '@/utils/handleResponseData';
 import { checkIsHasPermissionInBoard, getOrgIdByBoardId, getGlobalData } from '@/utils/businessFunction';
 import DetailInfo from '@/routes/Technological/components/ProjectDetail/DetailInfo/index'
-import { PROJECT_TEAM_BOARD_MEMBER, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_CREATE, PROJECT_TEAM_CARD_EDIT } from '@/globalset/js/constant';
+import { PROJECT_TEAM_BOARD_MEMBER, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_CREATE, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_BOARD_MILESTONE } from '@/globalset/js/constant';
 import ShowAddMenberModal from '../../../../routes/Technological/components/Project/ShowAddMenberModal';
 import SafeConfirmModal from './components/SafeConfirmModal';
 const { SubMenu } = Menu;
@@ -85,7 +85,7 @@ export default class OutLineHeadItem extends Component {
                 <Menu.Item key="publishTpl" disabled>将项目内容发布为模版</Menu.Item>
                 <Menu.Item key="saveTpl" disabled>将项目内容保存为模版</Menu.Item>
                 {
-                    checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id) &&
+                    checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id) && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, gantt_board_id) &&
                     <SubMenu title="引用项目模版" >
                         {
                             template_list.map((item) => {
@@ -128,12 +128,12 @@ export default class OutLineHeadItem extends Component {
                 let placeholderNodeValue = parent.children.find((item) => item.tree_type == '0');
                 placeholderNodeValue.is_focus = false;
             }
-     
+
         }
         dispatch({
             type: 'gantt/updateDatas',
             payload: {
-                outline_hover_obj:nodeValue
+                outline_hover_obj: nodeValue
             }
         });
         this.updateOutLineTreeData(outline_tree);
@@ -473,13 +473,13 @@ export default class OutLineHeadItem extends Component {
                                 level={level}
                                 nodeValue={item}
                                 type={'2'}
-                                placeholder={level==2?'新建子任务':'新建任务'}
+                                placeholder={level == 2 ? '新建子任务' : '新建任务'}
                                 icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
-                                label={<span className={styles.addTask}>{level==2?'新建子任务':'新建任务'}</span>} key={`addTask_${item.index}`}>
+                                label={<span className={styles.addTask}>{level == 2 ? '新建子任务' : '新建任务'}</span>} key={`addTask_${item.index}`}>
                             </TreeNode>
                         );
                     } else {
-                        return (<TreeNode key={index} nodeValue={item}  level={level}></TreeNode>);
+                        return (<TreeNode key={index} nodeValue={item} level={level}></TreeNode>);
                     }
 
                 }
@@ -573,14 +573,14 @@ export default class OutLineHeadItem extends Component {
             message.error('引入模板失败')
         })
     }
-  
-    
+
+
 
     render() {
         const { board_info_visible, show_add_menber_visible, safeConfirmModalVisible } = this.state;
         const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData, outline_tree_round } = this.props;
         //console.log("刷新了数据", outline_tree);
-        console.log("刷新了数据",checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, gantt_board_id));
+        console.log("刷新了数据", checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, gantt_board_id));
         return (
             <div className={styles.outline_wrapper}>
 
@@ -646,7 +646,7 @@ export default class OutLineHeadItem extends Component {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
     gantt: { datas: { gantt_board_id, group_view_type, outline_tree, outline_hover_obj, outline_tree_round } },
-    technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, userBoardPermissions=[] } },
+    technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, userBoardPermissions = [] } },
     projectDetail: { datas: { projectDetailInfoData = {} } }
 }) {
     return { currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, projectDetailInfoData, userBoardPermissions, outline_tree, outline_hover_obj, outline_tree_round }
