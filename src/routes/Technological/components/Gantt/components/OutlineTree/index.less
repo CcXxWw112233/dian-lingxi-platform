@@ -42,14 +42,14 @@
 }
 
 .outline_tree_node_content {
-  line-height   : 40px;
-  height        : 40px;
-  cursor        : pointer;
-  display       : flex;
-  justify-items : center;
-  align-items   : center;
+  line-height     : 40px;
+  height          : 40px;
+  cursor          : pointer;
+  display         : flex;
+  justify-items   : center;
+  align-items     : center;
   // margin-top   : 10px;
-  margin-bottom: 20px;
+  margin-bottom   : 20px;
 }
 
 .outline_tree_node_content.hover {
@@ -170,6 +170,8 @@
   justify-items: center;
   align-items  : center;
   margin-right : 8px !important;
+  overflow: hidden;
+
 }
 
 .outline_tree_node_label.hoverTitle {
@@ -204,10 +206,13 @@
 }
 
 .title {
-  display: inline-block;
-  flex: auto;
-  min-width: 100px;
-  min-height: 10px;
+  display      : inline-block;
+  // flex         : auto;
+  width        : 134px;
+  min-height   : 10px;
+  overflow     : hidden;
+  text-overflow: ellipsis;
+  white-space  : nowrap;
 }
 
 .editIcon {
@@ -215,10 +220,13 @@
   font-size  : 16px;
 }
 
-.editTitle{
+.editTitle {
   margin-left: 8px;
-  font-size:14px;
-  min-width: 32px;
+  font-size  : 14px;
+  min-width  : 32px;
+  overflow     : hidden;
+  text-overflow: ellipsis;
+  white-space  : nowrap;
 }
 
 .manhourSetWrapper {
@@ -229,6 +237,6 @@
   justify-content: center;
 }
 
-.selectExecutors{
+.selectExecutors {
   z-index: 999;
 }

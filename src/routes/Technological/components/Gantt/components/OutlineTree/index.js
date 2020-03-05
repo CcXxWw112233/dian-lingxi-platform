@@ -83,6 +83,7 @@ class TreeNode extends Component {
         if (id && nodeValue.tree_type != '0') {
             this.props.onHover(id, true);
         }
+       
     }
 
     onMouseLeave = () => {

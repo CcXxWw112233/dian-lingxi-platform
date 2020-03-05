@@ -67,7 +67,7 @@ export default class OutLineHeadItem extends Component {
                 safeConfirmModalVisible: true,
                 tplId
             });
-     
+
         } else {
             if (key == 'boardInfo') {
                 this.setBoardInfoVisible();
@@ -116,29 +116,28 @@ export default class OutLineHeadItem extends Component {
         //console.log('selected', selectedKeys, info);
     };
 
-    onHover = (id, hover,parentId) => {
+    onHover = (id, hover, parentId) => {
         //console.log("大纲:onHover", id, hover);
         const { dispatch, outline_tree } = this.props;
         let nodeValue = {};
         if (hover) {
             nodeValue = OutlineTree.getTreeNodeValue(outline_tree, id) || {};
-            dispatch({
-                type: 'gantt/updateDatas',
-                payload: {
-                    outline_hover_obj: nodeValue
-                }
-            });
-        }else{
-            if(id=='0'){
-                let parent  = OutlineTree.getTreeNodeValue(outline_tree, parentId) || {};
-                nodeValue = parent.children.find((item)=>item.tree_type=='0');
-                nodeValue.is_focus = false;
+        } else {
+            if (id == '0') {
+                let parent = OutlineTree.getTreeNodeValue(outline_tree, parentId) || {};
+                let placeholderNodeValue = parent.children.find((item) => item.tree_type == '0');
+                placeholderNodeValue.is_focus = false;
             }
-          
+     
         }
-
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                outline_hover_obj:nodeValue
+            }
+        });
         this.updateOutLineTreeData(outline_tree);
-      
+
     }
 
     onExpand = (id, is_expand) => {
@@ -261,7 +260,7 @@ export default class OutLineHeadItem extends Component {
                                 }
 
                                 nodeValue.children = children;
-                                this.setCreateAfterInputFous(paraseNodeValue,outline_tree);
+                                this.setCreateAfterInputFous(paraseNodeValue, outline_tree);
                                 this.updateOutLineTreeData(outline_tree);
 
                             } else {
@@ -454,7 +453,7 @@ export default class OutLineHeadItem extends Component {
             placeholder.is_focus = true;
         }
     }
-    renderGanttOutLineTree = (outline_tree, isRoot) => {
+    renderGanttOutLineTree = (outline_tree, level) => {
         if (!outline_tree) {
             return null;
         }
@@ -463,23 +462,24 @@ export default class OutLineHeadItem extends Component {
             outline_tree.map((item, index) => {
                 if (item.children && item.children.length > 0) {
                     return (
-                        <TreeNode key={index} nodeValue={item}>
-                            {this.renderGanttOutLineTree(item.children)}
+                        <TreeNode key={index} nodeValue={item} level={level}>
+                            {this.renderGanttOutLineTree(item.children, level + 1)}
                         </TreeNode>
                     );
                 } else {
                     if (item.tree_type == 0) {
                         return (
                             <TreeNode
+                                level={level}
                                 nodeValue={item}
                                 type={'2'}
-                                placeholder={'新建任务'}
+                                placeholder={level==2?'新建子任务':'新建任务'}
                                 icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
-                                label={<span className={styles.addTask}>新建任务</span>} key={`addTask_${item.index}`}>
+                                label={<span className={styles.addTask}>{level==2?'新建子任务':'新建任务'}</span>} key={`addTask_${item.index}`}>
                             </TreeNode>
                         );
                     } else {
-                        return (<TreeNode key={index} nodeValue={item}></TreeNode>);
+                        return (<TreeNode key={index} nodeValue={item}  level={level}></TreeNode>);
                     }
 
                 }
@@ -592,7 +592,7 @@ export default class OutLineHeadItem extends Component {
                     outline_tree_round={outline_tree_round}
                     projectDetailInfoData={projectDetailInfoData}
                 >
-                    {this.renderGanttOutLineTree(outline_tree, true)}
+                    {this.renderGanttOutLineTree(outline_tree, 0)}
                     <TreeNode
                         type={'1'}
                         placeholder={'新建里程碑'}
