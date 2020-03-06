@@ -28,14 +28,21 @@ export default class SafeConfirmModal extends Component {
             confirmContentInputValue:''
         });
     }
+
+    onCancel = () =>{
+        this.setState({
+            confirmContentInputValue:''
+        });
+        this.props.onChangeVisible();
+    }
     render() {
         const { confirmContent, confirmContentInputValue } = this.state;
-        const { visible, onChangeVisible} = this.props;
+        const { visible} = this.props;
         return (
             <Modal
                 title={null}
                 visible={visible}
-                onCancel={onChangeVisible}
+                onCancel={this.onCancel}
                 footer={null}
                 destroyOnClose={true}
                 width={437}

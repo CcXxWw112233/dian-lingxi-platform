@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import styles from './index.less';
-import { Input, Dropdown, message } from 'antd';
+import { Input, Dropdown, message, Tooltip } from 'antd';
 import globalStyles from '@/globalset/css/globalClassName.less';
 import ManhourSet from './ManhourSet.js';
 import { Popover, Avatar } from 'antd';
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
-import {getOrgIdByBoardId } from '@/utils/businessFunction';
+import { getOrgIdByBoardId } from '@/utils/businessFunction';
 import moment from 'moment';
 
 class TreeNode extends Component {
@@ -64,7 +64,7 @@ class TreeNode extends Component {
     onMouseLeaveTitle = () => {
         this.setState({
             isTitleHover: false,
-            isTitleEdit: false
+            //isTitleEdit: false
         });
     }
 
@@ -84,7 +84,7 @@ class TreeNode extends Component {
         if (id && nodeValue.tree_type != '0') {
             this.props.onHover(id, true);
         }
-       
+
     }
 
     onMouseLeave = () => {
@@ -95,12 +95,10 @@ class TreeNode extends Component {
     }
 
 
-    onPressEnter = () => {
-        this.setState({
-            isTitleHover: false,
-            isTitleEdit: false
-        });
-        const { nodeValue = {} } = this.state;
+    onPressEnter = (e) => {
+
+        let { nodeValue = {} } = this.state;
+        nodeValue.name = e.target.value;
         if (nodeValue.name) {
             let action;
 
@@ -130,7 +128,10 @@ class TreeNode extends Component {
             });
         }
 
-
+        this.setState({
+            isTitleHover: false,
+            isTitleEdit: false
+        });
 
     }
     onChangeTitle = (e) => {
@@ -226,33 +227,35 @@ class TreeNode extends Component {
             type = this.props.type;
         }
 
-       //console.log("is_focus", is_focus);
+        //console.log("isTitleHover || isTitleEdit", isTitleHover, isTitleEdit);
 
 
         return (
             <span className={`${styles.outline_tree_node_label} ${isTitleHover ? styles.hoverTitle : ''}`}>
                 {/*<span><span>确定</span><span>取消</span></span> */}
                 <span className={`${styles.title}`} onMouseEnter={this.onMouseEnterTitle} onMouseLeave={this.onMouseLeaveTitle}>
-                    {
-                        (isTitleHover || isTitleEdit) || is_focus ?
-                            <Input value={title != '0' ? title : ''}
-                                // autoFocus={is_focus}
-                                style={{ width: '100%' }}
-                                onChange={this.onChangeTitle}
-                                placeholder={placeholder ? placeholder : '请填写任务名称'}
-                                className={`${isTitleEdit ? styles.titleInputFocus : styles.titleInputHover}`}
-                                onFocus={this.toggleTitleEdit}
-                                onBlur={this.toggleTitleEdit}
-                                addonAfter={isTitleEdit ? null : null}
-                                onPressEnter={this.onPressEnter} />
-                            :
-                            (placeholder ? label : (title ? title : '未填写任务名称'))
-                    }
+                    <Tooltip placement="top" title={title != '0' ? title : ''}>
+                        {
+                            (isTitleHover || isTitleEdit) ?
+                                <Input defaultValue={title != '0' ? title : ''}
+                                    //autoFocus={is_focus}
+                                    style={{ width: '100%' }}
+                                    onChange={this.onChangeTitle}
+                                    placeholder={placeholder ? placeholder : '请填写任务名称'}
+                                    className={`${isTitleEdit ? styles.titleInputFocus : styles.titleInputHover}`}
+                                    onFocus={this.toggleTitleEdit}
+                                    onBlur={this.onPressEnter}
+                                    // addonAfter={isTitleEdit ? null : null}
+                                    onPressEnter={this.onPressEnter} />
+                                :
+                                (placeholder ? label : (title ? title : '未填写任务名称'))
+                        }
+                    </Tooltip>
                 </span>
 
                 {/* <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
 
-               
+
                     <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe6d9;</span> */}
 
 
