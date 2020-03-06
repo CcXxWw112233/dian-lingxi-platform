@@ -265,8 +265,8 @@ export default {
       const ceilWidth = yield select(workbench_ceilWidth)
       const date_arr_one_level = yield select(workbench_date_arr_one_level)
       const visual_add_item = {
-        "id": "0",
-        "name": "0",
+        "id": "",
+        "name": "",
         "tree_type": "0",
         "is_expand": true
       }
