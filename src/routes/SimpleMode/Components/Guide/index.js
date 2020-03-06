@@ -73,7 +73,7 @@ class Guide extends Component {
                 {guideModalVisiable && (<div className={indexStyles.guideModal}>
                     <div className={indexStyles.guideModalLeft}>
                         <div className={indexStyles.guideModalLeftHender}>
-                            灵犀项目协作引导场景
+                            聆悉操作指引
                         </div>
                         <div className={indexStyles.guideNavigationView}>
                             <Menu
