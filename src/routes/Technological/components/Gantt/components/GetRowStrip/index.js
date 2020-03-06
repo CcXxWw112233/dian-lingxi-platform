@@ -14,7 +14,7 @@ import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT } from '../../../../.
 const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
 @connect(mapStateToProps)
 export default class GetRowStrip extends Component {
-    constructor(props) {
+    constructor (props) {
         super(props)
         this.state = {
             currentRect: {},  //任务位置
@@ -23,9 +23,12 @@ export default class GetRowStrip extends Component {
         }
         this.setIsCardHasTime()
     }
+    componentDidMount() {
+        this.setCurrentSelectedProjectMembersList()
+    }
     componentWillReceiveProps() {
         this.setIsCardHasTime()
-        this.fil
+        this.setCurrentSelectedProjectMembersList()
     }
     // 当前滑动的这一条任务是否存在时间？存在时间代表可以在面板上创建
     setIsCardHasTime = () => {
@@ -158,7 +161,10 @@ export default class GetRowStrip extends Component {
     // 渲染任务滑块 --end
 
     // 点击任务将该任务设置时间
-    changeOutLineTreeNodeProto = (id, data = {}) => {
+    changeOutLineTreeNodeProto = (id, data = {}, type) => {
+        if ('milestone' == type) {
+            data.executors = data.principals || []
+        }
         let { dispatch, outline_tree } = this.props;
         let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, id);
         const mapSetProto = (data) => {
@@ -168,6 +174,7 @@ export default class GetRowStrip extends Component {
         }
         if (nodeValue) {
             mapSetProto(data)
+
             dispatch({
                 type: 'gantt/handleOutLineTreeData',
                 payload: {
@@ -279,13 +286,13 @@ export default class GetRowStrip extends Component {
     }
     // 甘特图信息变化后，实时触发甘特图渲染在甘特图上变化
     handleMiletonsChangeMountInGantt = () => {
-        const { dispatch } = this.props
-        dispatch({
-            type: 'gantt/getGttMilestoneList',
-            payload: {
+        // const { dispatch } = this.props
+        // dispatch({
+        //     type: 'gantt/getGttMilestoneList',
+        //     payload: {
 
-            }
-        })
+        //     }
+        // })
 
     }
     set_miletone_detail_modal_visible = () => {
@@ -297,7 +304,7 @@ export default class GetRowStrip extends Component {
             let { milestone_detail = {}, itemValue: { id } } = this.props
             milestone_detail.due_time = milestone_detail.deadline
             setTimeout(() => {
-                this.changeOutLineTreeNodeProto(id, milestone_detail)
+                this.changeOutLineTreeNodeProto(id, milestone_detail, 'milestone')
             }, 300)
         }
     }
@@ -314,21 +321,24 @@ export default class GetRowStrip extends Component {
     render() {
         const { itemValue = {} } = this.props
         const { tree_type } = itemValue
-        const { currentSelectedProjectMembersList = [] } = this.props
+        const { currentSelectedProjectMembersList = [] } = this.state
+        console.log('sssssssssssscurrentSelectedProjectMembersList', currentSelectedProjectMembersList)
         return (
-            <div
-                onMouseMove={this.stripMouseMove}
-                onMouseOver={this.stripMouseOver}
-                onMouseLeave={this.stripMouseLeave}
-                className={`${styles.row_srip} ${this.onHoverState() && styles.row_srip_on_hover}`}
-                style={{ ...this.renderStyles() }}>
-                {
-                    tree_type == '1' ? (
-                        this.renderMilestoneSet()
-                    ) : (
-                            this.renderCardRect()
-                        )
-                }
+            <div>
+                <div
+                    onMouseMove={this.stripMouseMove}
+                    onMouseOver={this.stripMouseOver}
+                    onMouseLeave={this.stripMouseLeave}
+                    className={`${styles.row_srip} ${this.onHoverState() && styles.row_srip_on_hover}`}
+                    style={{ ...this.renderStyles() }}>
+                    {
+                        tree_type == '1' ? (
+                            this.renderMilestoneSet()
+                        ) : (
+                                this.renderCardRect()
+                            )
+                    }
+                </div >
                 <MilestoneDetail
                     handleMiletonesChange={this.handleMiletonsChangeMountInGantt}
                     users={currentSelectedProjectMembersList}
@@ -337,7 +347,8 @@ export default class GetRowStrip extends Component {
                     deleteMiletone={this.deleteMiletone}
                     deleteRelationContent={this.deleteRelationContent}
                 />
-            </div >
+            </div>
+
         )
     }
 }

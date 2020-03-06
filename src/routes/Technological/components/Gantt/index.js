@@ -10,7 +10,7 @@ import OutlineTree from './components/OutlineTree';
 
 class Gantt extends Component {
 
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       TaskDetailModalVisibile: false,
@@ -257,8 +257,9 @@ class Gantt extends Component {
   // 修改有排期的任务
   handleHasScheduleCard = ({ card_id, drawContent, operate_properties_code }) => {
     const { group_view_type } = this.props
+    const new_drawContent = this.cardPropertiesPromote({ drawContent, operate_properties_code })
     if (ganttIsOutlineView({ group_view_type })) {
-      this.changeOutLineTreeNodeProto(card_id, { ...drawContent, name: drawContent.card_name })
+      this.changeOutLineTreeNodeProto(card_id, { ...new_drawContent, name: drawContent.card_name })
       return
     }
     const { dispatch } = this.props
@@ -270,7 +271,6 @@ class Gantt extends Component {
       })
       return
     }
-    const new_drawContent = this.cardPropertiesPromote({ drawContent, operate_properties_code })
 
     const { list_group = [], current_list_group_id } = this.props
     const list_group_new = [...list_group]
@@ -334,8 +334,8 @@ class Gantt extends Component {
         nodeValue[item] = data[item]
       })
       // 为了避免删除开始时间后，关闭弹窗再删除截至时间，大纲树结构item的time覆盖问题
-      if(!data.start_time) nodeValue['start_time'] = ''
-      if(!data.due_time) nodeValue['due_time'] = ''
+      if (!data.start_time) nodeValue['start_time'] = ''
+      if (!data.due_time) nodeValue['due_time'] = ''
     }
     if (nodeValue) {
       mapSetProto(data)
