@@ -284,7 +284,12 @@ export default {
         // 时间跨度设置
         const due_time = getDigit(item['due_time'])
         const start_time = getDigit(item['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
-        new_item.is_has_start_time = !!getDigit(item['start_time'])
+        // new_item.is_has_start_time = !!getDigit(item['start_time'])
+        let is_has_start_time = false
+        if (!!getDigit(item['start_time']) && (due_time != start_time)) { //具有开始时间并且开始时间不等于截止时间,因为有可能 开始时间是截止时间赋值的
+          is_has_start_time = true
+        }
+        new_item.is_has_start_time = is_has_start_time
         new_item.is_has_end_time = !!getDigit(item['due_time'])
         let time_span = item['time_span']
         new_item.due_time = due_time
@@ -302,7 +307,12 @@ export default {
           // 时间跨度设置
           const due_time2 = getDigit(item2['due_time'])
           const start_time2 = getDigit(item2['start_time']) || due_time2 //如果没有开始时间，那就取截止时间当天
-          new_item2.is_has_start_time = !!getDigit(item2['start_time'])
+          // new_item2.is_has_start_time = !!getDigit(item2['start_time'])
+          let is_has_start_time2 = false
+          if (!!getDigit(item2['start_time']) && (due_time2 != start_time2)) { //具有开始时间并且开始时间不等于截止时间,因为有可能 开始时间是截止时间赋值的
+            is_has_start_time2 = true
+          }
+          new_item2.is_has_start_time = is_has_start_time2
           new_item2.is_has_end_time = !!getDigit(item2['due_time'])
           let time_span2 = item2['time_span']
           new_item2.due_time = due_time2
@@ -326,7 +336,12 @@ export default {
               // 时间跨度设置
               const due_time3 = getDigit(item3['due_time'])
               const start_time3 = getDigit(item3['start_time']) || due_time3 //如果没有开始时间，那就取截止时间当天
-              new_item3.is_has_start_time = !!getDigit(item3['start_time'])
+              // new_item3.is_has_start_time = !!getDigit(item3['start_time'])
+              let is_has_start_time3 = false
+              if (!!getDigit(item3['start_time']) && (due_time3 != start_time3)) { //具有开始时间并且开始时间不等于截止时间,因为有可能 开始时间是截止时间赋值的
+                is_has_start_time3 = true
+              }
+              new_item3.is_has_start_time = is_has_start_time3
               new_item3.is_has_end_time = !!getDigit(item3['due_time'])
 
               let time_span3 = item3['time_span']
@@ -334,7 +349,7 @@ export default {
               new_item3.start_time = start_time3
               time_span3 = setGantTimeSpan({ time_span: time_span3, start_time: start_time3, due_time: due_time3, start_date, end_date })
               new_item3.time_span = time_span3
-              if(tree_type2 == '2') {
+              if (tree_type2 == '2') {
                 new_item3.parent_card_id = item2.id
               }
               return new_item3
