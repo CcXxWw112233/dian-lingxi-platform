@@ -3,7 +3,7 @@ import { connect } from 'dva'
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
-import ConfigureProcessStepInfoOne from './ConfigureProcessStepInfoOne'
+import ConfigureNodeTypeInfo from './ConfigureNodeTypeInfo'
 
 @connect(mapStateToProps)
 export default class ConfigureProcess extends Component {
@@ -144,7 +144,7 @@ export default class ConfigureProcess extends Component {
     const invitationType = '8'
     switch (node_type) {
       case '1':
-        container = (<ConfigureProcessStepInfoOne {...this.props} itemKey={key} itemValue={value} />)
+        container = (<ConfigureNodeTypeInfo {...this.props} itemKey={key} itemValue={value} />)
         break;
       default:
         container = (<div></div>)
@@ -257,6 +257,6 @@ export default class ConfigureProcess extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList = [], processEditDatas = [], processEditDatasRecords = [], processInfo = {}, processCurrentCompleteStep } }) {
-  return { isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList, processEditDatas, processEditDatasRecords, processInfo, processCurrentCompleteStep }
+function mapStateToProps({ publicProcessDetailModal: { isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList = [], processEditDatas = [], processEditDatasRecords = [], processInfo = {}, processCurrentCompleteStep, node_type, processCurrentEditStep } }) {
+  return { isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList, processEditDatas, processEditDatasRecords, processInfo, processCurrentCompleteStep, node_type, processCurrentEditStep }
 }
