@@ -331,6 +331,10 @@ export default class GetRowTaskItem extends Component {
         const end_time_index = Math.floor((end_time_position - 6) / ceilWidth)
         const date = date_arr_one_level[end_time_index]
         const end_time_timestamp = parseInt(date.timestampEnd)
+        const start_time_index = Math.floor(local_left / ceilWidth)
+        const start_date = date_arr_one_level[start_time_index]
+        const start_time_timestamp = parseInt(start_date.timestamp)
+        updateData.start_time = parseInt(start_time_timestamp)
         updateData.due_time = parseInt(end_time_timestamp)
         if (isSamDay(end_time, end_time_timestamp)) { //向右拖动时，如果是在同一天，则不去更新
             const time_span_ = (Math.floor((end_time - start_time) / (24 * 3600 * 1000))) + 1
