@@ -7,9 +7,10 @@ import { connect, } from 'dva';
 import { getBoardTemplateList, getBoardTemplateInfo, createCardByTemplate, importBoardTemplate } from '../../../../../../services/technological/gantt'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import { createMilestone } from '../../../../../../services/technological/prjectDetail'
-import { getGlobalData } from '../../../../../../utils/businessFunction'
+import { getGlobalData, checkIsHasPermissionInBoard } from '../../../../../../utils/businessFunction'
 import BoardTemplateManager from '@/routes/organizationManager/projectTempleteScheme/index.js'
 import SafeConfirmModal from '../SafeConfirmModal';
+import { PROJECT_TEAM_CARD_CREATE, PROJECT_TEAM_BOARD_MILESTONE } from '../../../../../../globalset/js/constant'
 
 const MenuItem = Menu.Item
 const TreeNode = Tree.TreeNode;
@@ -582,6 +583,8 @@ export default class BoardTemplate extends Component {
 
                     }
                 })
+            } else {
+                message.error(res.message)
             }
         }).catch(err => {
             message.error('引入模板失败')
@@ -632,7 +635,12 @@ export default class BoardTemplate extends Component {
                         </div>
                         <div className={`${styles.list_item} ${styles.temp_ope}`}>
                             <div className={`${styles.temp_ope_name}`}>流程步骤</div>
-                            <div className={`${styles.temp_ope_cop} ${globalStyles.link_mouse}`} onClick={this.changeSafeConfirmModalVisible}>引用到项目</div>
+                            {
+                                checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id) && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, gantt_board_id) &&
+                                (
+                                    <div className={`${styles.temp_ope_cop} ${globalStyles.link_mouse}`} onClick={this.changeSafeConfirmModalVisible}>引用到项目</div>
+                                )
+                            }
                         </div>
                         {/* 主区 */}
                         <Spin spinning={spinning}>
@@ -690,10 +698,13 @@ function mapStateToProps({
             gantt_board_id,
             is_new_board
         }
-    }
+    },
+    technological: { datas: { userBoardPermissions = [] } },
+
 }) {
     return {
         gantt_board_id,
-        is_new_board
+        is_new_board,
+        userBoardPermissions
     }
 }
