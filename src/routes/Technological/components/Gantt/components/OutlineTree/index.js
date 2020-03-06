@@ -5,6 +5,7 @@ import globalStyles from '@/globalset/css/globalClassName.less';
 import ManhourSet from './ManhourSet.js';
 import { Popover, Avatar } from 'antd';
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
+import {getOrgIdByBoardId } from '@/utils/businessFunction';
 import moment from 'moment';
 
 class TreeNode extends Component {
@@ -267,7 +268,7 @@ class TreeNode extends Component {
 
                                     invitationType='4'
                                     invitationId={nodeValue.id}
-                                    // invitationOrg={org_id}
+                                    invitationOrg={getOrgIdByBoardId(gantt_board_id)}
                                     listData={projectDetailInfoData.data}
                                     keyCode={'user_id'}
                                     searchName={'name'}
