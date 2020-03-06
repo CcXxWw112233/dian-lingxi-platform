@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import { Modal, Button, Input, Icon } from 'antd';
 
 export default class SafeConfirmModal extends Component {
-   
-    constructor(props){
+
+    constructor(props) {
         super(props);
         this.state = {
             confirmContent: '确认引用',
@@ -13,31 +13,34 @@ export default class SafeConfirmModal extends Component {
     handleOk = () => {
         this.props.onOk();
         this.props.onChangeVisible();
+        this.clearInput();
     }
 
     handleCancel = () => {
         this.props.onChangeVisible();
+        this.clearInput();
     }
     onChange = (e) => {
         this.setState({
             confirmContentInputValue: e.target.value
         });
     }
-    componentWillMount(){
-        this.setState({
-            confirmContentInputValue:''
-        });
+    componentWillMount() {
+        this.clearInput();
     }
 
-    onCancel = () =>{
-        this.setState({
-            confirmContentInputValue:''
-        });
+    onCancel = () => {
+        this.clearInput();
         this.props.onChangeVisible();
+    }
+    clearInput = () => {
+        this.setState({
+            confirmContentInputValue: ''
+        });
     }
     render() {
         const { confirmContent, confirmContentInputValue } = this.state;
-        const { visible} = this.props;
+        const { visible } = this.props;
         return (
             <Modal
                 title={null}
