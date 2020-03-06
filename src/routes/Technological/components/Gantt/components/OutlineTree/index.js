@@ -205,7 +205,7 @@ class TreeNode extends Component {
         }
     }
 
-    renderExecutor = (members=[], { user_id }) => {
+    renderExecutor = (members = [], { user_id }) => {
 
         const currExecutor = members.find((item) => item.user_id == user_id);
         if (currExecutor && currExecutor.avatar) {
@@ -269,8 +269,8 @@ class TreeNode extends Component {
                                     // isInvitation={true}
                                     // inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
 
-                                    invitationType='4'
-                                    invitationId={nodeValue.id}
+                                    invitationType={tree_type == '1' ? '1' : '4'}
+                                    invitationId={tree_type == '1' ? gantt_board_id : nodeValue.id}
                                     invitationOrg={getOrgIdByBoardId(gantt_board_id)}
                                     listData={projectDetailInfoData.data}
                                     keyCode={'user_id'}
