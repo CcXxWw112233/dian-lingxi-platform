@@ -236,7 +236,7 @@ class TreeNode extends Component {
                     {
                         (isTitleHover || isTitleEdit) || is_focus ?
                             <Input value={title != '0' ? title : ''}
-                                autoFocus={is_focus}
+                                // autoFocus={is_focus}
                                 style={{ width: '100%' }}
                                 onChange={this.onChangeTitle}
                                 placeholder={placeholder ? placeholder : '请填写任务名称'}

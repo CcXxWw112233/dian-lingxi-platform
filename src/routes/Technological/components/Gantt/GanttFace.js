@@ -338,7 +338,7 @@ export default class GanttFace extends Component {
           </div>
 
         </div>
-        <div className={indexStyles.cardDetail_right}></div>
+        {/* <div className={indexStyles.cardDetail_right}></div> */}
         <FaceRightButton setGoldDateArr={this.setGoldDateArr} setScrollPosition={this.setScrollPosition} />
         {
           isPaymentOrgUser() && is_show_board_file_area != '1' && <ShowFileSlider />
