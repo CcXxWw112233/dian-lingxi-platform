@@ -36,6 +36,10 @@ export const afterCreateBoardUpdateGantt = (dispatch) => {
 
         }
     })
+    dispatch({
+        type: 'workbench/getProjectList',
+        payload: {}
+    });
     // lx_utils.updateUserList()
 }
 export const afterChangeBoardUpdateGantt = ({ dispatch, board_id }) => {
