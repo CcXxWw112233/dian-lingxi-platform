@@ -521,6 +521,7 @@ export default class OutLineHeadItem extends Component {
     }
 
     addMenbersInProject = (values) => {
+        const {gantt_board_id} = this.props;
         const { dispatch } = this.props
         addMenbersInProject({ ...values }).then(res => {
             if (isApiResponseOk(res)) {
@@ -537,7 +538,7 @@ export default class OutLineHeadItem extends Component {
                     dispatch({
                         type: 'projectDetail/projectDetailInfo',
                         payload: {
-
+                            id:gantt_board_id
                         }
                     })
                 }, 1000)
