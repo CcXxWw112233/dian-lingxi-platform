@@ -532,6 +532,14 @@ export default class OutLineHeadItem extends Component {
                         }
                     })
                 }, 1000)
+                setTimeout(() => {
+                    dispatch({
+                        type: 'projectDetail/projectDetailInfo',
+                        payload: {
+
+                        }
+                    })
+                }, 1000)
 
             } else {
                 message.error(res.message)
