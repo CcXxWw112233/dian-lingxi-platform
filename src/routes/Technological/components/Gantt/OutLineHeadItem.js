@@ -34,7 +34,8 @@ export default class OutLineHeadItem extends Component {
         board_info_visible: false,
         show_add_menber_visible: false,
         safeConfirmModalVisible: false,
-        tplId: 0,
+        selectedTpl: null,
+
     }
     componentDidMount() {
         const OrganizationId = localStorage.getItem('OrganizationId')
@@ -63,9 +64,11 @@ export default class OutLineHeadItem extends Component {
         const { dispatch, gantt_board_id } = this.props;
         if (key.indexOf('importTpl') != -1) {
             let tplId = key.replace("importTpl_", "");
+            const { template_list = [] } = this.state;
+            const selectedTpl = template_list.find((item) => item.id == tplId);
             this.setState({
                 safeConfirmModalVisible: true,
-                tplId
+                selectedTpl,
             });
 
         } else {
@@ -521,7 +524,7 @@ export default class OutLineHeadItem extends Component {
     }
 
     addMenbersInProject = (values) => {
-        const {gantt_board_id} = this.props;
+        const { gantt_board_id } = this.props;
         const { dispatch } = this.props
         addMenbersInProject({ ...values }).then(res => {
             if (isApiResponseOk(res)) {
@@ -538,7 +541,7 @@ export default class OutLineHeadItem extends Component {
                     dispatch({
                         type: 'projectDetail/projectDetailInfo',
                         payload: {
-                            id:gantt_board_id
+                            id: gantt_board_id
                         }
                     })
                 }, 1000)
@@ -566,8 +569,8 @@ export default class OutLineHeadItem extends Component {
 
     onImportBoardTemplate = () => {
         const { dispatch, gantt_board_id } = this.props;
-        const { tplId } = this.state;
-        importBoardTemplate({ "board_id": gantt_board_id, 'template_id': tplId }).then(res => {
+        const { selectedTpl = {} } = this.state;
+        importBoardTemplate({ "board_id": gantt_board_id, 'template_id': selectedTpl.id }).then(res => {
             if (isApiResponseOk(res)) {
                 //console.log("importBoardTemplate", res);
                 dispatch({
@@ -609,7 +612,7 @@ export default class OutLineHeadItem extends Component {
                     <TreeNode
                         type={'1'}
                         placeholder={'新建里程碑'}
-                        nodeValue={{'tree_type':'0'}}
+                        nodeValue={{ 'tree_type': '0' }}
                         icon={<span className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
                         label={<span className={styles.addMilestone}>新建里程碑</span>} key="addMilestone">
                     </TreeNode>
@@ -646,7 +649,7 @@ export default class OutLineHeadItem extends Component {
                 <DetailInfo setProjectDetailInfoModalVisible={this.setBoardInfoVisible} modalVisible={board_info_visible} invitationType='1' invitationId={gantt_board_id} />
                 {
                     safeConfirmModalVisible &&
-                    <SafeConfirmModal visible={safeConfirmModalVisible} onChangeVisible={this.changeSafeConfirmModalVisible} onOk={this.onImportBoardTemplate} />
+                    <SafeConfirmModal selectedTpl={this.state.selectedTpl} visible={safeConfirmModalVisible} onChangeVisible={this.changeSafeConfirmModalVisible} onOk={this.onImportBoardTemplate} />
                 }
             </div>
         );
