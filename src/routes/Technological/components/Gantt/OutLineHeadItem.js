@@ -599,6 +599,7 @@ export default class OutLineHeadItem extends Component {
                     <TreeNode
                         type={'1'}
                         placeholder={'新建里程碑'}
+                        nodeValue={{'tree_type':'0'}}
                         icon={<span className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
                         label={<span className={styles.addMilestone}>新建里程碑</span>} key="addMilestone">
                     </TreeNode>
