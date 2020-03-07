@@ -144,7 +144,10 @@ class TreeNode extends Component {
     onManHourChange = (value) => {
         const { outline_tree_round = [] } = this.props;
         const { nodeValue = {} } = this.state;
-
+        if(value>999){
+            message.warn('设置天数最大支持999天');
+            return;
+        }
         const newNodeValue = { ...nodeValue, time_span: value };
         if (newNodeValue.is_has_start_time && newNodeValue.is_has_end_time) {
             //开始时间不变，截至时间后移
