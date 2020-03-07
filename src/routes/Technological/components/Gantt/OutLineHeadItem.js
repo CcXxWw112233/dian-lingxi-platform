@@ -453,7 +453,7 @@ export default class OutLineHeadItem extends Component {
             placeholder.is_focus = true;
         }
     }
-    renderGanttOutLineTree = (outline_tree, level,parentNode) => {
+    renderGanttOutLineTree = (outline_tree, level, parentNode) => {
         if (!outline_tree) {
             return null;
         }
@@ -463,7 +463,7 @@ export default class OutLineHeadItem extends Component {
                 if (item.children && item.children.length > 0) {
                     return (
                         <TreeNode key={index} nodeValue={item} level={level}>
-                            {this.renderGanttOutLineTree(item.children, level + 1,item)}
+                            {this.renderGanttOutLineTree(item.children, level + 1, item)}
                         </TreeNode>
                     );
                 } else {
@@ -473,9 +473,9 @@ export default class OutLineHeadItem extends Component {
                                 level={level}
                                 nodeValue={item}
                                 type={'2'}
-                                placeholder={parentNode && parentNode.tree_type == '2'?'新建子任务':'新建任务'}
+                                placeholder={parentNode && parentNode.tree_type == '2' ? '新建子任务' : '新建任务'}
                                 icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
-                                label={<span className={styles.addTask}>{parentNode && parentNode.tree_type == '2'?'新建子任务':'新建任务'}</span>} key={`addTask_${item.index}`}>
+                                label={<span className={styles.addTask}>{parentNode && parentNode.tree_type == '2' ? '新建子任务' : '新建任务'}</span>} key={`addTask_${item.index}`}>
                             </TreeNode>
                         );
                     } else {
@@ -499,13 +499,14 @@ export default class OutLineHeadItem extends Component {
                     id: gantt_board_id
                 }
             })
-            // dispatch({
-            //     type: 'projectDetail/getProjectRoles',
-            //     payload: {
-            //         type: '2',
-            //         _organization_id: org_id
-            //     }
-            // })
+            let _organization_id = localStorage.getItem('OrganizationId')
+            dispatch({
+                type: 'projectDetail/getProjectRoles',
+                payload: {
+                    type: '2',
+                    _organization_id: (!_organization_id || _organization_id) == '0' ? getGlobalData('aboutBoardOrganizationId') : _organization_id
+                }
+            })
         }
         this.setState({
             board_info_visible: !board_info_visible
