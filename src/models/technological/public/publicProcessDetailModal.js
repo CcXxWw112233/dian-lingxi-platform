@@ -24,8 +24,10 @@ export default {
     processStopedList: [], // 已中止的流程
     processComepletedList: [], // 已完成的流程
     processNotBeginningList: [], // 未开始的流程
-    processEditDatas: JSON.parse(JSON.stringify(processEditDatasConstant)), //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
-    processEditDatasRecords: JSON.parse(JSON.stringify(processEditDatasRecordsConstant)), //每一步的每一个类型，记录，数组的全部数据step * type
+    // processEditDatas: JSON.parse(JSON.stringify(processEditDatasConstant)), //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
+    processEditDatas:[],
+    processEditDatasRecords: [],
+    // processEditDatasRecords: JSON.parse(JSON.stringify(processEditDatasRecordsConstant)), //每一步的每一个类型，记录，数组的全部数据step * type
     node_type: '1', // 当前的节点类型
     processCurrentEditStep: 0, // 当前的编辑步骤 第几步
     processCurrentCompleteStep: 0, // 当前处于的操作步骤

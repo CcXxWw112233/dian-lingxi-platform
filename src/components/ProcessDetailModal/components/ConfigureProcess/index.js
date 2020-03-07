@@ -21,10 +21,6 @@ export default class ConfigureProcess extends Component {
   componentDidMount() {
     this.initCanvas()
   }
-  componentDidUpdate() {
-    // console.log('进来了','sssssssssssssssssssss_1111111')
-    // this.initCanvas()
-  }
 
   initCanvas() {
     const { processInfo = {}, processEditDatas = [] } = this.props
@@ -45,34 +41,43 @@ export default class ConfigureProcess extends Component {
       y0,
       r, // 半径
       lineWidth, // 画笔宽度
-      strokeStyle, //画笔颜色
-      LinearGradientColor1, //起始渐变颜色
-      LinearGradientColor2, //结束渐变颜色
-      Percentage, // 进度百分比
     } = defaultProps
     let ele = document.getElementById("time_graph_canvas")
     let circle = ele.getContext("2d");
     circle.clearRect(0, 0, 138, 138);//清空
     //创建多个圆弧
     const length = processEditDatas.length
-    for (let i = 0; i < length; i++) {
+    if (length == '0') {
       circle.beginPath();//开始一个新的路径
       circle.save()
       circle.lineWidth = lineWidth;
       let color = 'rgba(0,0,0,0.04)'
-      if (Number(curr_node_sort) === Number(processEditDatas[i].sort)) {
-        color = 'rgba(24,144,255,1)' // 蓝色
-      } else if (Number(processEditDatas[i].sort) < Number(curr_node_sort)) {
-        color = 'rgba(83,196,26,1)' // 绿色
-      } else if (Number(processEditDatas[i].sort) > Number(curr_node_sort)) {
-        color = '#f2f2f2'
-      }
       circle.strokeStyle = color; //curr_node_sort
-      circle.arc(x0, y0, r, 0.6 * Math.PI + i * 1.83 / length * Math.PI, 0.6 * Math.PI + i * 1.83 / length * Math.PI + 1.83 / length * Math.PI - 0.03 * Math.PI, false);///用于绘制圆弧context.arc(x坐标，y坐标，半径，起始角度，终止角度，顺时针/逆时针)
+      circle.arc(x0,y0,r,0.6 * Math.PI, 0.6*Math.PI + 1.83*Math.PI, false)
       circle.stroke();//对当前路径进行描边
       circle.restore()
       circle.closePath()
+    } else {
+      for (let i = 0; i < length; i++) {
+        circle.beginPath();//开始一个新的路径
+        circle.save()
+        circle.lineWidth = lineWidth;
+        let color = 'rgba(0,0,0,0.45)'
+        if (Number(curr_node_sort) === Number(processEditDatas[i].sort)) {
+          color = 'rgba(24,144,255,1)' // 蓝色
+        } else if (Number(processEditDatas[i].sort) < Number(curr_node_sort)) {
+          color = 'rgba(83,196,26,1)' // 绿色
+        } else if (Number(processEditDatas[i].sort) > Number(curr_node_sort)) {
+          color = '#f2f2f2'
+        }
+        circle.strokeStyle = color; //curr_node_sort
+        circle.arc(x0, y0, r, 0.6 * Math.PI + i * 1.83 / length * Math.PI, 0.6 * Math.PI + i * 1.83 / length * Math.PI + 1.83 / length * Math.PI - 0.03 * Math.PI, false);///用于绘制圆弧context.arc(x坐标，y坐标，半径，起始角度，终止角度，顺时针/逆时针)
+        circle.stroke();//对当前路径进行描边
+        circle.restore()
+        circle.closePath()
+      }
     }
+    
   }
 
   // 标题失去焦点回调
@@ -142,14 +147,15 @@ export default class ConfigureProcess extends Component {
     const { node_type } = value
     let container = (<div></div>)
     const invitationType = '8'
-    switch (node_type) {
-      case '1':
-        container = (<ConfigureNodeTypeInfo {...this.props} itemKey={key} itemValue={value} />)
-        break;
-      default:
-        container = (<div></div>)
-        break
-    }
+    container = <ConfigureNodeTypeInfo {...this.props} itemKey={key} itemValue={value} />
+    // switch (node_type) {
+    //   case '1':
+    //     container = (<ConfigureNodeTypeInfo {...this.props} itemKey={key} itemValue={value} />)
+    //     break;
+    //   default:
+    //     container = (<div></div>)
+    //     break
+    // }
     return container
   }
 
@@ -176,7 +182,7 @@ export default class ConfigureProcess extends Component {
               fontWeight: 400,
               color: 'rgba(140,140,140,1)',
               lineHeight: '17px'
-            }}>{this.props.processCurrentCompleteStep ? this.props.processCurrentCompleteStep : 1}/{this.props.processInfo && this.props.processInfo.node_amount}</span>
+            }}>{this.props.processCurrentEditStep ? Number(this.props.processCurrentEditStep) + 1 : 0}/{this.props.processCurrentEditStep ? Number(this.props.processCurrentEditStep) + 1 : 0}</span>
             <span style={{
               position: 'absolute',
               top: '110px',
@@ -187,7 +193,7 @@ export default class ConfigureProcess extends Component {
               fontWeight: 400,
               color: 'rgba(89,89,89,1)',
               lineHeight: '30px'
-            }}>新建{this.props.processCurrentCompleteStep ? this.props.processCurrentCompleteStep : 1}步</span>
+            }}>新建{this.props.processCurrentEditStep ? Number(this.props.processCurrentEditStep) + 1 : 0}步</span>
             <div style={{ paddingTop: '32px', paddingRight: '32px', flex: 1, float: 'left', width: '977px', height: '210px' }}>
               {/* 显示流程名称 */}
               <div style={{ marginBottom: '12px' }}>
@@ -244,13 +250,14 @@ export default class ConfigureProcess extends Component {
           </div>
         </div>
         <div className={indexStyles.configure_bottom}>
-          {processEditDatas.map((value, key) => {
+          <ConfigureNodeTypeInfo {...this.props}/>
+          {/* {processEditDatas.map((value, key) => {
             return (
               <div className={indexStyles.processPointItem} key={key}>
                 {this.filterForm(value, key)}
               </div>
             )
-          })}
+          })} */}
         </div>
       </div>
     )

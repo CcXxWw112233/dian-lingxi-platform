@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Dropdown, Icon, Menu, Radio } from 'antd'
+import { Button, Dropdown, Icon, Menu, Radio, Select, InputNumber } from 'antd'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import ConfigureStepOne_one from './ConfigureStepOne_one'
@@ -8,6 +8,10 @@ import ConfigureStepOne_three from './ConfigureStepOne_three'
 import ConfigureStepOne_five from './ConfigureStepOne_five'
 
 export default class ConfigureStepTypeOne extends Component {
+
+  state = {
+
+  }
 
   updateConfigureProcess(data, key) { //更新单个数组单个属性
     const { value } = data
@@ -96,6 +100,7 @@ export default class ConfigureStepTypeOne extends Component {
     this.updateConfigureProcess({ value: form_data }, 'form_data')
   }
 
+  // 渲染不同的表项
   filterForm = (value, key) => {
     const { field_type } = value
     let container = (<div></div>)
@@ -143,6 +148,13 @@ export default class ConfigureStepTypeOne extends Component {
     )
   }
 
+  renderMoreSelect = () => {
+
+    return (
+      <div></div>
+    )
+  }
+
   render() {
     const { processEditDatasRecords, processEditDatas, processCurrentEditStep, node_type } = this.props
     const { form_data = [] } = processEditDatas[processCurrentEditStep]
@@ -173,10 +185,25 @@ export default class ConfigureStepTypeOne extends Component {
         {/* 更多选项 */}
         <div className={indexStyles.more_select}>
           <span className={indexStyles.more_label}>... 更多选项 &nbsp;:</span>
-          <sapn className={`${indexStyles.complet_deadline} ${indexStyles.select_item}`}>+ 完成期限</sapn>
+          <sapn className={`${indexStyles.select_item}`}>+ 完成期限</sapn>
           <sapn className={`${indexStyles.select_item}`}>+ 关联内容</sapn>
           <sapn className={`${indexStyles.select_item}`}>+ 备注</sapn>
         </div>
+        {/* 完成期限 */}
+        <div className={`${indexStyles.complet_deadline}`}>
+          <span style={{fontWeight: 900, marginRight: '2px'}} className={globalStyles.authTheme}>&#xe686;</span>
+          <span>完成期限 &nbsp;: </span>
+          <InputNumber className={indexStyles.select_number} />
+          <Select className={indexStyles.select_day}/>
+          <span className={`${globalStyles.authTheme}`}>&#xe7fe;</span>
+        </div>
+        {/* 备注 */}
+        <div className={`${indexStyles.select_remarks}`}>
+          <span className={globalStyles.authTheme}>&#xe636;</span>
+          <span>备注 &nbsp;:</span>
+          <div>添加备注</div>
+        </div>
+        {/* 关联内容 */}
         {/* 删除 | 确认 */}
         <div className={indexStyles.step_btn}>
           <Button>删除</Button>

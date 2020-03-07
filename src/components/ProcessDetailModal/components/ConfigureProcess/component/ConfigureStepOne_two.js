@@ -56,7 +56,7 @@ export default class ConfigureStepOne_two extends Component {
   render() {
     return (
       <div>
-        <div className={indexStyles.text_form}>
+        <div className={`${indexStyles.text_form}`}>
           <p>下拉选择:</p>
           <div className={indexStyles.text_fillOut}></div>
           <span className={`${indexStyles.delet_iconCircle}`}>
