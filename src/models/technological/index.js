@@ -13,7 +13,7 @@ import {
   setShowSimpleModel,
 } from '../../services/technological/organizationMember'
 import { getMenuList } from '../../services/technological/getMenuList'
-import { getProjectList, getCurrentOrgAllMembers, createMeeting } from './../../services/technological/workbench'
+import { getProjectList, getCurrentOrgAllMembers, createMeeting, getVideoConferenceProviderList } from './../../services/technological/workbench'
 import { getCurrentNounPlan } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
@@ -587,6 +587,19 @@ export default {
       const res = yield call(createMeeting, payload)
       return res || {}
     },
+    // 获取视频会议提供商列表
+    * getVideoConferenceProviderList({ payload }, { call, put }) {
+      const res = yield call(getVideoConferenceProviderList,payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            videoConferenceProviderList: res.data
+          }
+        })
+      }
+    },
+
     * getCurrentOrgProjectList({ payload }, { select, call, put }) {
 
       let res = yield call(getProjectList, payload)

@@ -18,10 +18,10 @@ import {
 } from './selects'
 import { createMilestone } from "../../../services/technological/prjectDetail";
 import { getGlobalData } from '../../../utils/businessFunction';
-import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold } from '../../../routes/Technological/components/Gantt/constants';
+import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, visual_item, mock_gantt_data, ganttIsOutlineView, mock_outline_tree } from '../../../routes/Technological/components/Gantt/constants';
 import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
-import { handleChangeBoardViewScrollTop } from '../../../routes/Technological/components/Gantt/ganttBusiness';
+import { handleChangeBoardViewScrollTop, setGantTimeSpan } from '../../../routes/Technological/components/Gantt/ganttBusiness';
 
 let dispatches = null
 const getDigit = (timestamp) => {
@@ -65,7 +65,7 @@ export default {
       about_user_boards: [], //带用户的项目列表
 
       gantt_board_id: '0', //"1192342431761305600",//, //甘特图查看的项目id
-      group_view_type: '1', //分组视图1项目， 2成员
+      group_view_type: '2', //分组视图1项目， 2成员, 4大纲
       group_view_filter_boards: [], //内容过滤项目id 列表
       group_view_filter_users: [], //内容过滤职员id 列表
       group_view_boards_tree: [], //内容过滤项目分组树
@@ -78,6 +78,9 @@ export default {
       folder_seeing_board_id: '0', //查看文件夹所属的项目id
 
       is_new_board: false, //是否刚刚创建的新项目
+      outline_hover_obj: {}, //大纲视图下，hover的任务条所属id
+      outline_tree: [], //大纲树
+      outline_tree_round: [], //大纲树每一级平铺开来
     },
   },
   subscriptions: {
@@ -182,12 +185,18 @@ export default {
       //   ...setContentFilterParams()
       // })
 
-      const params = {
-        start_time: start_date['timestamp'],
-        end_time: end_date['timestamp'],
-        chart_type: group_view_type,
-        ...content_filter_params,
+      let params = {
+        chart_type: group_view_type
       }
+      if (!ganttIsOutlineView({ group_view_type })) {
+        params = {
+          start_time: start_date['timestamp'],
+          end_time: end_date['timestamp'],
+          chart_type: group_view_type,//group_view_type,
+          ...content_filter_params,
+        }
+      }
+
       if (gantt_board_id != '0' && gantt_board_id) {
         params.board_id = gantt_board_id
       }
@@ -226,16 +235,207 @@ export default {
       })
       // console.log('sssss', {res})
       if (isApiResponseOk(res)) {
-        yield put({
-          type: 'handleListGroup',
-          payload: {
-            data: res.data
-          }
-        })
+        let data = res.data
+        if (!ganttIsOutlineView({ group_view_type })) { //非大纲视图
+          yield put({
+            type: 'handleListGroup',
+            payload: {
+              data: data//res.data
+            }
+          })
+        } else {
+          yield put({
+            type: 'handleOutLineTreeData',
+            payload: {
+              data: res.data
+            }
+          })
+        }
+
       } else {
 
       }
     },
+    // 转化处理大纲视图数据
+    * handleOutLineTreeData({ payload }, { select, call, put }) {
+      const { data = [] } = payload
+      console.log("handleOutLineTreeData", data);
+      const start_date = yield select(workbench_start_date)
+      const end_date = yield select(workbench_end_date)
+      const ceilWidth = yield select(workbench_ceilWidth)
+      const date_arr_one_level = yield select(workbench_date_arr_one_level)
+      const visual_add_item = {
+        "id": "",
+        "name": "",
+        "tree_type": "0",
+        "is_expand": true
+      }
+      let new_outline_tree = [...data]
+      const filnaly_outline_tree = new_outline_tree.map(item => {
+        let new_item = { ...item, parent_expand: true }
+        const { tree_type, children = [], is_expand } = item
+        let new_item_children = [...item.children]
+        let child_expand_length = 0 //第一级父节点下所有子孙元素展开的总长
+        const added = new_item_children.find(item => item.tree_type == '0') //表示是否已经添加过虚拟节点
+        if ((tree_type == '1' || tree_type == '2') && !added) { //是里程碑或者一级任务,并且没有添加过
+          new_item_children.push(visual_add_item) //添加虚拟节点
+        }
+
+        // 时间跨度设置
+        const due_time = getDigit(item['due_time'])
+        const start_time = getDigit(item['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
+        // new_item.is_has_start_time = !!getDigit(item['start_time'])
+        let is_has_start_time = false
+        if (!!getDigit(item['start_time']) && (due_time != start_time)) { //具有开始时间并且开始时间不等于截止时间,因为有可能 开始时间是截止时间赋值的
+          is_has_start_time = true
+        }
+        new_item.is_has_start_time = is_has_start_time
+        new_item.is_has_end_time = !!getDigit(item['due_time'])
+        let time_span = item['time_span']
+        new_item.due_time = due_time
+        new_item.start_time = start_time
+        time_span = setGantTimeSpan({ time_span, start_time, due_time, start_date, end_date })
+        new_item.time_span = time_span
+
+        new_item_children = new_item_children.map(item2 => {
+          let new_item2 = { ...item2, parent_expand: is_expand }
+          const tree_type2 = item2.tree_type
+          const children2 = item2.children || []
+          let new_item_children2 = [...children2]
+          const is_expand2 = item2.is_expand
+
+          // 时间跨度设置
+          const due_time2 = getDigit(item2['due_time'])
+          const start_time2 = getDigit(item2['start_time']) || due_time2 //如果没有开始时间，那就取截止时间当天
+          // new_item2.is_has_start_time = !!getDigit(item2['start_time'])
+          let is_has_start_time2 = false
+          if (!!getDigit(item2['start_time']) && (due_time2 != start_time2)) { //具有开始时间并且开始时间不等于截止时间,因为有可能 开始时间是截止时间赋值的
+            is_has_start_time2 = true
+          }
+          new_item2.is_has_start_time = is_has_start_time2
+          new_item2.is_has_end_time = !!getDigit(item2['due_time'])
+          let time_span2 = item2['time_span']
+          new_item2.due_time = due_time2
+          new_item2.start_time = start_time2
+          time_span2 = setGantTimeSpan({ time_span: time_span2, start_time: start_time2, due_time: due_time2, start_date, end_date })
+          new_item2.time_span = time_span2
+
+          if (is_expand) {
+            child_expand_length += 1
+          }
+          const added2 = new_item_children2.find(item => item.tree_type == '0') //表示是否已经添加过虚拟节点
+          if ((tree_type2 == '1' || tree_type2 == '2') && !added2) { //是里程碑或者一级任务
+            new_item_children2.push(visual_add_item) //添加虚拟节点
+          }
+          if (tree_type == '1') { //如果第一级是里程碑才有第三级
+            new_item_children2 = new_item_children2.map(item3 => {
+              let new_item3 = { ...item3, parent_expand: new_item2.parent_expand && new_item2.is_expand }
+              if (is_expand && is_expand2) {
+                child_expand_length += 1
+              }
+              // 时间跨度设置
+              const due_time3 = getDigit(item3['due_time'])
+              const start_time3 = getDigit(item3['start_time']) || due_time3 //如果没有开始时间，那就取截止时间当天
+              // new_item3.is_has_start_time = !!getDigit(item3['start_time'])
+              let is_has_start_time3 = false
+              if (!!getDigit(item3['start_time']) && (due_time3 != start_time3)) { //具有开始时间并且开始时间不等于截止时间,因为有可能 开始时间是截止时间赋值的
+                is_has_start_time3 = true
+              }
+              new_item3.is_has_start_time = is_has_start_time3
+              new_item3.is_has_end_time = !!getDigit(item3['due_time'])
+
+              let time_span3 = item3['time_span']
+              new_item3.due_time = due_time3
+              new_item3.start_time = start_time3
+              time_span3 = setGantTimeSpan({ time_span: time_span3, start_time: start_time3, due_time: due_time3, start_date, end_date })
+              new_item3.time_span = time_span3
+              if (tree_type2 == '2') {
+                new_item3.parent_card_id = item2.id
+              }
+              return new_item3
+            })
+          } else {
+            new_item2.parent_card_id = item.id
+            new_item_children2 = undefined
+          }
+          new_item2.children = new_item_children2
+          return new_item2
+        })
+        new_item.expand_length = child_expand_length + 1 //子孙节点展开的长度加上自身
+        new_item.children = new_item_children
+        return new_item
+      })
+
+      //console.log('filnaly_outline_tree', filnaly_outline_tree)
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          outline_tree: filnaly_outline_tree
+        }
+      })
+
+      // 将数据平铺
+      let arr = []
+      const recusion = (obj) => { //将树递归平铺成一级
+        arr.push(obj)
+        if (!obj.children) {
+          return
+        } else {
+          if (obj.children.length) {
+            for (let val of obj.children) {
+              recusion(val)
+            }
+          }
+        }
+      }
+      for (let val of filnaly_outline_tree) {
+        recusion(val)
+      }
+      arr = arr.filter(item => item.parent_expand)
+      arr = arr.map((item, key) => {
+        let new_item = {}
+        const { tree_type } = item //  里程碑/任务/子任务/虚拟占位 1/2/3/4
+        const cal_left_field = tree_type == '1' ? 'due_time' : 'start_time' //计算起始位置的字段
+        item.top = key * ceil_height
+        const due_time = getDigit(item['due_time'])
+        const start_time = getDigit(item['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
+
+        let time_span = item['time_span']
+        // time_span = setGantTimeSpan({ time_span, start_time, due_time, start_date, end_date })
+
+        new_item = {
+          ...item,
+          start_time,
+          end_time: due_time || getDateInfo(start_time).timestampEnd,
+          time_span,
+          width: time_span * ceilWidth,
+          height: task_item_height,
+        }
+        if (getDigit(new_item[cal_left_field]) < getDigit(date_arr_one_level[0]['timestamp'])) { //如果该任务的起始日期在当前查看面板日期之前，就从最左边开始摆放
+          new_item.left = -500
+        } else {
+          for (let k = 0; k < date_arr_one_level.length; k++) {
+            if (isSamDay(new_item[cal_left_field], date_arr_one_level[k]['timestamp'])) { //是同一天
+              new_item.left = k * ceilWidth
+              break
+            }
+          }
+        }
+        return new_item
+      })
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          outline_tree_round: arr
+        }
+      })
+      // console.log('filnaly_outline_tree', filnaly_outline_tree)
+      // console.log('filnaly_outline_tree2', arr)
+      // console.log('filnaly_outline_tree1', filnaly_outline_tree[0].expand_length)
+      // console.log('filnaly_outline_tree2', filnaly_outline_tree[1].expand_length)
+
+    },
+
     * handleListGroup({ payload }, { select, call, put }) {
       const { data, not_set_scroll_top } = payload
       let list_group = []
@@ -258,16 +458,19 @@ export default {
             const due_time = getDigit(val_1['due_time'])
             const start_time = getDigit(val_1['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
             const create_time = getDigit(val_1['create_time'])
-            let time_span = (!due_time || !start_time) ? 1 : (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1 //正常区间内
-            if (due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
-              time_span = (Math.floor((end_date.timestamp - start_time) / (24 * 3600 * 1000))) + 1
-            } else if (start_time < start_date.timestamp && due_time < end_date.timestamp) { //左区间
-              time_span = (Math.floor((due_time - start_date.timestamp) / (24 * 3600 * 1000))) + 1
-            } else if (due_time > end_date.timestamp && start_time < start_date.timestamp) { //超过左右区间
-              time_span = (Math.floor((end_date.timestamp - start_date.timestamp) / (24 * 3600 * 1000))) + 1
+            let time_span = val_1['time_span']
+            if (!time_span) {
+              time_span = (!due_time || !start_time) ? 1 : (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1 //正常区间内
+              if (due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
+                time_span = (Math.floor((end_date.timestamp - start_time) / (24 * 3600 * 1000))) + 1
+              } else if (start_time < start_date.timestamp && due_time < end_date.timestamp) { //左区间
+                time_span = (Math.floor((due_time - start_date.timestamp) / (24 * 3600 * 1000))) + 1
+              } else if (due_time > end_date.timestamp && start_time < start_date.timestamp) { //超过左右区间
+                time_span = (Math.floor((end_date.timestamp - start_date.timestamp) / (24 * 3600 * 1000))) + 1
+              }
+              // console.log('sssssss', val_1.name, time_span)
+              // time_span = time_span > date_arr_one_level.length?  date_arr_one_level.length: time_span
             }
-            // console.log('sssssss', val_1.name, time_span)
-            // time_span = time_span > date_arr_one_level.length?  date_arr_one_level.length: time_span
             let list_data_item = {
               ...val_1,
               start_time,
@@ -341,9 +544,12 @@ export default {
       //设置分组区域高度, 并为每一个任务新增一条
       for (let i = 0; i < list_group.length; i++) {
         let list_data = list_group[i]['list_data']
-        list_data = list_data.sort((a, b) => {
-          return a.start_time - b.start_time
-        })
+
+        if (!ganttIsOutlineView({ group_view_type })) { //在非大纲视图下才会有排序
+          list_data = list_data.sort((a, b) => {
+            return a.start_time - b.start_time
+          })
+        }
 
         const length = 5 //list_data.length < 5 ? 5 : (list_data.length + 1)
         const group_height = length * ceiHeight
@@ -379,42 +585,46 @@ export default {
 
           item.top = after_group_height + j * ceiHeight
 
-          // {满足在时间区间外的，定义before_start_time_arr先记录符合项。
-          // 该比较项和之前项存在交集，将交集项存入top_arr
-          // 筛选before_start_time_arr，如果top_arr中含有top与某一遍历项相等，则过滤。最终高度取剩余的第一项
-          let before_start_time_arr = []
-          let top_arr = []
-          let all_top = []
-          for (let k = 0; k < j; k++) {
-            all_top.push(list_data[k].top)
-            if (item.start_time > list_data[k].end_time) {
-              before_start_time_arr.push(list_data[k])
-            }
-            if (item.start_time <= list_data[k].end_time) {
-              top_arr.push(list_data[k])
-            }
-          }
-          before_start_time_arr = before_start_time_arr.filter(item => {
-            let flag = true
-            for (let val of top_arr) {
-              if (item.top == val.top) {
-                flag = false
-                break
+          // --------------------时间高度排序start
+          if (!ganttIsOutlineView({ group_view_type })) { // 大纲视图不需要插入排序
+            // {满足在时间区间外的，定义before_start_time_arr先记录符合项。
+            // 该比较项和之前项存在交集，将交集项存入top_arr
+            // 筛选before_start_time_arr，如果top_arr中含有top与某一遍历项相等，则过滤。最终高度取剩余的第一项
+            let before_start_time_arr = []
+            let top_arr = []
+            let all_top = []
+            for (let k = 0; k < j; k++) {
+              all_top.push(list_data[k].top)
+              if (item.start_time > list_data[k].end_time) {
+                before_start_time_arr.push(list_data[k])
+              }
+              if (item.start_time <= list_data[k].end_time) {
+                top_arr.push(list_data[k])
               }
             }
-            return flag && item
-          })
+            before_start_time_arr = before_start_time_arr.filter(item => {
+              let flag = true
+              for (let val of top_arr) {
+                if (item.top == val.top) {
+                  flag = false
+                  break
+                }
+              }
+              return flag && item
+            })
 
-          all_top = Array.from(new Set(all_top)).sort((a, b) => a - b)
-          const all_top_max = Math.max.apply(null, all_top) == -Infinity ? after_group_height : Math.max.apply(null, all_top)
+            all_top = Array.from(new Set(all_top)).sort((a, b) => a - b)
+            const all_top_max = Math.max.apply(null, all_top) == -Infinity ? after_group_height : Math.max.apply(null, all_top)
 
-          if (before_start_time_arr[0]) {
-            item.top = before_start_time_arr[0].top
-          } else {
-            if (item.top > all_top_max) {
-              item.top = all_top_max + ceiHeight
+            if (before_start_time_arr[0]) {
+              item.top = before_start_time_arr[0].top
+            } else {
+              if (item.top > all_top_max) {
+                item.top = all_top_max + ceiHeight
+              }
             }
           }
+          // --------------------时间高度排序end
           list_group[i]['list_data'][j] = item
         }
         const list_height_arr = list_group[i]['list_data'].map(item => item.top)

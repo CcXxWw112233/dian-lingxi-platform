@@ -71,7 +71,7 @@ export default class index extends Component {
                     not_show_create_guide ? (
                         <div></div>
                     ) : (
-                            <div className={`${indexStyles.miletone_guide} ${position_type == '0' ? indexStyles.position_1 : indexStyles.position_2}`} >
+                            <div className={`${indexStyles.miletone_guide} ${indexStyles.position_1}`} >
                                 <div className={indexStyles.top}>
                                     <div className={`${globalStyle.authTheme} ${indexStyles.smile}`}>&#xe847;</div>
                                     <div className={indexStyles.title}>点击日期可以建立里程碑</div>

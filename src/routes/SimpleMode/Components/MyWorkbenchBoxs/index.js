@@ -10,7 +10,7 @@ import { getOrgNameWithOrgIdFilter, setBoardIdStorage, isPaymentOrgUser, selectB
 import { isApiResponseOk } from "../../../../utils/handleResponseData";
 import { ORG_TEAM_BOARD_CREATE } from '../../../../globalset/js/constant'
 class MyWorkbenchBoxs extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.state = {
       addProjectModalVisible: false
@@ -170,7 +170,15 @@ class MyWorkbenchBoxs extends Component {
     Promise.resolve(
       dispatch({
         type: 'project/addNewProject',
-        payload: data
+        payload: {
+          ...data,
+          calback: () => {
+            dispatch({
+              type: 'workbench/getProjectList',
+              payload: {}
+            });
+          }
+        }
       })
     )
       .then((res) => {
@@ -276,11 +284,11 @@ class MyWorkbenchBoxs extends Component {
     const org_id = localStorage.getItem('OrganizationId')
     let flag = true
     if (org_id != '0') {
-        if (!checkIsHasPermission(ORG_TEAM_BOARD_CREATE)) {
-            flag = false
-        }
+      if (!checkIsHasPermission(ORG_TEAM_BOARD_CREATE)) {
+        flag = false
+      }
     }
-      return flag
+    return flag
   }
 
   // 选择单一项目时判断对应该组织是否开启投资地图app
@@ -290,7 +298,7 @@ class MyWorkbenchBoxs extends Component {
     let flag = false
     for (let val of currentUserOrganizes) {
       if (val['id'] == currentSelectedProjectOrgIdByBoardId) {
-        let gold_data = val['enabled_app_list'].find(item =>  item.code == 'InvestmentMaps' && item.status == '1') || {}
+        let gold_data = val['enabled_app_list'].find(item => item.code == 'InvestmentMaps' && item.status == '1') || {}
         if (gold_data && Object.keys(gold_data) && Object.keys(gold_data).length) {
           flag = true
           isDisabled = false
@@ -347,14 +355,14 @@ class MyWorkbenchBoxs extends Component {
         }
       }
     } else if (('board:files' == code || 'board:chat' == code) && localStorage.getItem('OrganizationId') != '0') {
-        const org = currentUserOrganizes.find(item => item.id == localStorage.getItem('OrganizationId')) || {}
-        const enabled_app_list = org.enabled_app_list || []
-        let gold_data = enabled_app_list.find(item => item.code == 'Files') || {}
-        if (gold_data && Object.keys(gold_data) && Object.keys(gold_data).length) {
-          isDisabled = false
-        } else {
-          isDisabled = true
-        }
+      const org = currentUserOrganizes.find(item => item.id == localStorage.getItem('OrganizationId')) || {}
+      const enabled_app_list = org.enabled_app_list || []
+      let gold_data = enabled_app_list.find(item => item.code == 'Files') || {}
+      if (gold_data && Object.keys(gold_data) && Object.keys(gold_data).length) {
+        isDisabled = false
+      } else {
+        isDisabled = true
+      }
     } else {
       isDisabled = false
     }

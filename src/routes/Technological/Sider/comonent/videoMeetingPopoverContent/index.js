@@ -8,15 +8,19 @@ import {
 	Mention,
 	Button,
 	message,
-	DatePicker, Dropdown, Menu, Icon, Tooltip
+	DatePicker, Dropdown, Menu, Icon, Tooltip, Radio
 } from 'antd'
 import { connect } from 'dva'
 import { validateTel } from "@/utils/verify";
 import { getCurrentSelectedProjectMembersList } from '@/services/technological/workbench'
 import { timestampToTime, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal, isSamDay } from '@/utils/util'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
-import zoom_logo from '@/assets/sider_right/zoom_logo.png'
-import xiaoyuyilian_logo from '@/assets/sider_right/xiaoyuyilian_logo.png'
+// import zoom_logo from '@/assets/sider_right/zoom_logo.png'
+// import xiaoyuyilian_logo from '@/assets/sider_right/xiaoyuyilian_logo.png'
+import kty from '@/assets/sider_right/kty.png'
+import zoom from '@/assets/sider_right/zoom.png'
+import zhumu from '@/assets/sider_right/zhumu.png'
+import zyy from '@/assets/sider_right/zyy.png'
 import { currentNounPlanFilterName } from "@/utils/businessFunction";
 import { PROJECTS } from '@/globalset/js/constant'
 import { isApiResponseOk } from '@/utils/handleResponseData'
@@ -50,6 +54,8 @@ let timer
 			workbench.datas && workbench.datas.projectTabCurrentSelectedProject
 				? workbench.datas.projectTabCurrentSelectedProject
 				: "0",
+				videoConferenceProviderList:
+					technological.datas && technological.datas.videoConferenceProviderList ? technological.datas.videoConferenceProviderList : []
 	};
 })
 class VideoMeetingPopoverContent extends React.Component {
@@ -86,6 +92,7 @@ class VideoMeetingPopoverContent extends React.Component {
 		],// 设置的提醒时间
 		toNoticeList: [], // 当前通知的用户
 		defaultValue: '30', // 当前选择的持续时间
+		providerDefault: null, // 默认选中的提供商
 	}
 
 	// 获取项目用户
@@ -137,6 +144,12 @@ class VideoMeetingPopoverContent extends React.Component {
 		const { dispatch } = this.props
 		dispatch({
 			type: 'technological/getCurrentOrgProjectList',
+			payload: {
+
+			}
+		})
+		dispatch({
+			type: 'technological/getVideoConferenceProviderList',
 			payload: {
 
 			}
@@ -283,7 +296,8 @@ class VideoMeetingPopoverContent extends React.Component {
 			defaultValue: '30', // 当前选择的持续时间
 			changeValue: false,
 			toNoticeList: this.getCurrentRemindUser(),
-			remindDropdownVisible: false
+			remindDropdownVisible: false,
+			providerDefault: null
 
 		});
 		remind_time_value = '5'
@@ -855,7 +869,7 @@ class VideoMeetingPopoverContent extends React.Component {
 	// 发起会议
 	handleVideoMeetingSubmit = () => {
 		const { dispatch } = this.props;
-		const { saveToProject, org_id, meetingTitle, meeting_start_time, userIds = [], user_phone = [], isShowNowTime = true, isExeecedTime } = this.state;
+		const { saveToProject, org_id, meetingTitle, meeting_start_time, userIds = [], user_phone = [], isShowNowTime = true, isExeecedTime, providerDefault } = this.state;
 		const { defaultMeetingTitle, defaultSaveToProject, defaultAppointStartTime, defaultDelayDueTime } = this.getVideoMeetingPopoverContentNoramlDatas()
 		const time2 = currentDelayDueTime ? (meeting_start_time ? (meeting_start_time + currentDelayDueTime) : (defaultAppointStartTime + currentDelayDueTime)) : (defaultDelayDueTime)
 
@@ -868,7 +882,8 @@ class VideoMeetingPopoverContent extends React.Component {
 			start_time: meeting_start_time ? meeting_start_time : defaultAppointStartTime,
 			end_time: time2,
 			user_for: user_phone && user_phone.join(',') || '',
-			user_ids: (userIds && userIds.join(',')) || ''
+			user_ids: (userIds && userIds.join(',')) || '',
+			provider_id: providerDefault
 		};
 
 		Promise.resolve(
@@ -952,6 +967,34 @@ class VideoMeetingPopoverContent extends React.Component {
 		return current && current < moment().add(-1, 'day')
 	}
 
+	getImgLogo = (item) => {
+		const { id, icon, isDefault } = item
+		let img = <></>
+		switch (id) {
+			case "1":
+				img = <img src={zoom} width={61} height={14} />
+				break;
+			case "2":
+				img = <img src={kty} width={62} height={18} />
+				break
+			case "3":
+				img = <img src={zhumu} width={59} height={25} />
+				break
+			case "4":
+				img = <img src={zyy} width={37} height={31} />
+				break
+			default:
+				break;
+		}
+		return img
+	}
+
+	onVideoProviderChange = (e) => {
+		this.setState({
+			providerDefault: e.target.value
+		})
+	}
+
 
 	renderPopover = () => {
 		const {
@@ -972,7 +1015,7 @@ class VideoMeetingPopoverContent extends React.Component {
 			isExeecedTime,
 			remindDropdownVisible
 		} = this.state;
-		let { projectList, board_id } = this.props;
+		let { projectList, board_id, videoConferenceProviderList = [] } = this.props;
 		//过滤出来当前用户有编辑权限的项目
 		projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
 		let newToNoticeList = [].concat(...toNoticeList, ...othersPeople)
@@ -1064,7 +1107,7 @@ class VideoMeetingPopoverContent extends React.Component {
 								{
 									!(newToNoticeList && newToNoticeList.length) ? (
 										<div style={{ flex: '1', position: 'relative' }}>
-											<Dropdown trigger={['click']} visible={remindDropdownVisible} onVisibleChange={this.handleVisibleChange} overlayClassName={indexStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+											<Dropdown className={indexStyles.dropdownWrapper} trigger={['click']} visible={remindDropdownVisible} onVisibleChange={this.handleVisibleChange} overlayClassName={indexStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
 												overlayStyle={{ maxWidth: '200px' }}
 												overlay={
 													<MenuSearchPartner
@@ -1083,7 +1126,7 @@ class VideoMeetingPopoverContent extends React.Component {
 										</div>
 									) : (
 											<div style={{ flex: '1', position: 'relative' }}>
-												<Dropdown trigger={['click']} visible={remindDropdownVisible} onVisibleChange={this.handleVisibleChange} overlayClassName={indexStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+												<Dropdown className={indexStyles.dropdownWrapper} trigger={['click']} visible={remindDropdownVisible} onVisibleChange={this.handleVisibleChange} overlayClassName={indexStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
 													overlayStyle={{ maxWidth: '200px' }}
 													overlay={
 														<MenuSearchPartner
@@ -1137,18 +1180,36 @@ class VideoMeetingPopoverContent extends React.Component {
 						</div>
 						{/* 设置通知提醒 E */}
 
+						<div>
+							<span>聆悉推荐使用以下方式开展远程会议: </span>
+							<div style={{display: 'flex'}}> 
+								{
+									videoConferenceProviderList && videoConferenceProviderList.map(item => {
+										return (
+											<Radio.Group style={{marginBottom: '12px'}} onChange={this.onVideoProviderChange} value={this.state.providerDefault ? this.state.providerDefault : item.is_default == '1' ? item.id : ''}>
+												<div key={`${item.id}-${item.icon}`} style={{textAlign: 'center', marginTop: '12px'}}>
+													<div className={indexStyles.video_provider}>{this.getImgLogo(item)}</div>
+													<div><Radio value={item.id}/></div>
+												</div>
+											</Radio.Group>
+										)
+									})
+								}
+							</div>
+						</div>
+
 						<div className={indexStyles.videoMeeting__submitBtn}>
 							<Button disabled={!defaultSaveToProject || this.state.notProjectList || (this.state.meetingTitle == '' && this.state.changeValue)} type="primary" onClick={this.handleVideoMeetingSubmit}>
 								{isShowNowTime ? '发起会议' : '预约会议'}
 							</Button>
 						</div>
-						<div className={indexStyles.videoMeeting__remarks}>
+						{/* <div className={indexStyles.videoMeeting__remarks}>
 							<span>聆悉推荐使用以下方式开展远程会议: (点击前往下载）</span>
 							<span>
 								<a href="https://zoom.com.cn/download" target="_blank"><img src={zoom_logo} alt="Zoom" title="Zoom视频会议" /></a>
 								<a href="https://www.xylink.com/download" target="_blank"><img src={xiaoyuyilian_logo} alt="小鱼易连" title="小鱼易连视频会议" /></a>
 							</span>
-						</div>
+						</div> */}
 					</div>
 				)
 				}

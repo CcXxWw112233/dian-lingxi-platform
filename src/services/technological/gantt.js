@@ -113,3 +113,12 @@ export async function createCardByTemplate(data) {
     data
   })
 }
+
+//引入模板
+export async function importBoardTemplate(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/template/quote`,
+    method: 'POST',
+    data
+  })
+}

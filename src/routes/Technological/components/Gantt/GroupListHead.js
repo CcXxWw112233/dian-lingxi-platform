@@ -3,6 +3,8 @@ import { connect, } from 'dva';
 import indexStyles from './index.less'
 import GroupListHeadItem from './GroupListHeadItem'
 import GroupListHeadElse from './GroupListHeadElse'
+import OutLineHeadItem from './OutLineHeadItem'
+import { ganttIsOutlineView } from './constants';
 @connect(mapStateToProps)
 export default class GroupListHead extends Component {
   constructor(props) {
@@ -28,26 +30,83 @@ export default class GroupListHead extends Component {
     }
   }
 
+  // 头部鼠标滚动设置位置
+  onWheel = (e) => {
+    const { target_scrollTop, dispatch, target_scrollLeft } = this.props
+    const ele = document.getElementById('gantt_card_out_middle')
+    const panel_scroll_top = ele.scrollTop
+    let new_target_scrollTop = panel_scroll_top
+    // console.log('ssssssssssss0', ele.scrollTop)
+    if (e.nativeEvent.deltaY <= 0) {
+      /* scrolling up */
+      if (ele.scrollTop <= 0) {
+        e.preventDefault();
+        // console.log('ssssssssssss1', 'scrolling up')
+        return
+      } else {
+        new_target_scrollTop -= 50
+        // console.log('ssssssssssss1', new_target_scrollTop)
+      }
+    }
+    else {
+      /* scrolling down */
+      if (ele.scrollTop + ele.clientHeight >= ele.scrollHeight) {
+        e.preventDefault();
+        // console.log('ssssssssssss2', 'scrolling down')
+        return
+      } else {
+        new_target_scrollTop += 50
+        // console.log('ssssssssssss2', new_target_scrollTop)
+      }
+    }
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        target_scrollTop: new_target_scrollTop
+      }
+    })
+    if (ele.scrollTo) {
+      ele.scrollTo(target_scrollLeft, new_target_scrollTop)
+    } else {
+      ele.scrollTop = new_target_scrollTop
+    }
+  }
   render() {
-    const { list_group = [], group_rows = [], ceiHeight, target_scrollLeft, target_scrollTop } = this.props
+    const { list_group = [], group_rows = [], ceiHeight, target_scrollLeft, target_scrollTop, group_view_type } = this.props
     return (
-      <div className={indexStyles.listHead}
+      <div className={`${ganttIsOutlineView({ group_view_type }) ? indexStyles.listTree : indexStyles.listHead}`}
         // style={{ left: target_scrollLeft, }}
+        onWheel={this.onWheel}
         style={{ top: -target_scrollTop + 64, }}
       >
-        {list_group.map((value, key) => {
-          const { list_name, list_id, list_data = [] } = value
-          return (
-            <div key={list_id}>
-              <GroupListHeadItem
-                list_id={list_id}
-                setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
-                itemValue={value} itemKey={key} rows={group_rows[key]} />
-              {/*<div className={indexStyles.listHeadItem} key={list_id} style={{height: (group_rows[key] || 2) * ceiHeight}}>{list_name}</div>*/}
-            </div>
-          )
-        })}
-        <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
+        {
+          ganttIsOutlineView({ group_view_type }) &&
+          <div style={{ height: '100%', width: '280px', boxShadow: '1px 0px 4px 0px rgba(0,0,0,0.15);' }}>
+            <OutLineHeadItem />
+          </div>
+        }
+        {
+          !ganttIsOutlineView({ group_view_type }) &&
+          <>
+            {
+              list_group.map((value, key) => {
+                const { list_name, list_id, list_data = [] } = value
+                return (
+                  <div key={list_id}>
+                    <GroupListHeadItem
+                      list_id={list_id}
+                      setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
+                      itemValue={value} itemKey={key} rows={group_rows[key]} />
+                    {/*<div className={indexStyles.listHeadItem} key={list_id} style={{height: (group_rows[key] || 2) * ceiHeight}}>{list_name}</div>*/}
+                  </div>
+                )
+              })
+            }
+            <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
+          </>
+        }
+
+
       </div>
     )
   }
@@ -62,7 +121,8 @@ function mapStateToProps({ gantt: {
     target_scrollLeft,
     target_scrollTop,
     group_list_area,
-    group_list_area_section_height
+    group_list_area_section_height,
+    group_view_type
   }
 } }) {
   return {
@@ -72,6 +132,7 @@ function mapStateToProps({ gantt: {
     target_scrollLeft,
     target_scrollTop,
     group_list_area,
-    group_list_area_section_height
+    group_list_area_section_height,
+    group_view_type
   }
 }

@@ -12,7 +12,7 @@ import { selectBoardToSeeInfo, currentNounPlanFilterName } from "../../../../uti
 import { isApiResponseOk } from "../../../../utils/handleResponseData";
 import { ORG_TEAM_BOARD_CREATE, PROJECTS, ORGANIZATION } from '../../../../globalset/js/constant'
 class BoardDropdownSelect extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.state = {
       addProjectModalVisible: false
@@ -30,27 +30,27 @@ class BoardDropdownSelect extends Component {
     }
   }
 
-    // 选择单一项目时判断对应该组织是否开启投资地图app
-    isHasEnabledInvestmentMapsApp = (org_id) => {
-      const { currentUserOrganizes = [] } = this.props
-      let isDisabled = true
-      let flag = false
-      for (let val of currentUserOrganizes) {
-        if (val['id'] == org_id) {
-          let gold_data = val['enabled_app_list'].find(item =>  item.code == 'InvestmentMaps' && item.status == '1') || {}
-          if (gold_data && Object.keys(gold_data) && Object.keys(gold_data).length) {
-            flag = true
-            isDisabled = false
-          } else {
-            isDisabled = true
-          }
-        }
-        if (flag) {
-          break
+  // 选择单一项目时判断对应该组织是否开启投资地图app
+  isHasEnabledInvestmentMapsApp = (org_id) => {
+    const { currentUserOrganizes = [] } = this.props
+    let isDisabled = true
+    let flag = false
+    for (let val of currentUserOrganizes) {
+      if (val['id'] == org_id) {
+        let gold_data = val['enabled_app_list'].find(item => item.code == 'InvestmentMaps' && item.status == '1') || {}
+        if (gold_data && Object.keys(gold_data) && Object.keys(gold_data).length) {
+          flag = true
+          isDisabled = false
+        } else {
+          isDisabled = true
         }
       }
-      return isDisabled
+      if (flag) {
+        break
+      }
     }
+    return isDisabled
+  }
 
   onSelectBoard = (data) => {
     // 迷你的下拉选项
@@ -170,7 +170,15 @@ class BoardDropdownSelect extends Component {
     Promise.resolve(
       dispatch({
         type: 'project/addNewProject',
-        payload: data
+        payload: {
+          ...data,
+          calback: () => {
+            dispatch({
+              type: 'workbench/getProjectList',
+              payload: {}
+            });
+          }
+        }
       })
     )
       .then((res) => {
@@ -191,11 +199,11 @@ class BoardDropdownSelect extends Component {
     const org_id = localStorage.getItem('OrganizationId')
     let flag = true
     if (org_id != '0') {
-        if (!checkIsHasPermission(ORG_TEAM_BOARD_CREATE)) {
-            flag = false
-        }
+      if (!checkIsHasPermission(ORG_TEAM_BOARD_CREATE)) {
+        flag = false
+      }
     }
-      return flag
+    return flag
   }
 
   componentDidMount() {
@@ -265,7 +273,7 @@ export default connect(
       currentSelectedWorkbenchBox
     },
     technological: {
-      datas: { currentUserOrganizes,userOrgPermissions}
+      datas: { currentUserOrganizes, userOrgPermissions }
     }
     , project }) => ({
       project,
