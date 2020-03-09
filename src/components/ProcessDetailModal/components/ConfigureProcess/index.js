@@ -84,17 +84,22 @@ export default class ConfigureProcess extends Component {
 
   // 标题失去焦点回调
   titleTextAreaChangeBlur = (e) => {
-    let val = e.target.value
-    let reStr = val.trim()
-    if (reStr == "" || reStr == " " || !reStr) return
-    this.setState({
-      currentFlowInstanceName: val,
-      // isEditCurrentFlowInstanceName: false
-    })
+    let val = e.target.value.trimLR()
+    // let reStr = val.trim()
+    if (val == "" || val == " " || !val) {
+      this.props.dispatch({
+        type: 'publicProcessDetailModal/updateDatas',
+        payload: {
+          // isEditCurrentFlowInstanceName: true,
+          currentFlowInstanceName: ''
+        }
+      })
+      return
+    }
     this.props.dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
-        isEditCurrentFlowInstanceName: true,
+        isEditCurrentFlowInstanceName: false,
         currentFlowInstanceName: val
       }
     })
@@ -129,13 +134,17 @@ export default class ConfigureProcess extends Component {
 
   // 描述失去焦点事件
   descriptionTextAreaChangeBlur = (e) => {
-    let val = e.target.value
-    let reStr = val.trim()
-    if (reStr == "" || reStr == " " || !reStr) return
-    this.setState({
-      // isEditCurrentFlowInstanceDescription: false,
-      currentFlowInstanceDescription: val
-    })
+    let val = e.target.value.trimLR()
+    if (val == "" || val == " " || !val) {
+      this.props.dispatch({
+        type: 'publicProcessDetailModal/updateDatas',
+        payload: {
+          // isEditCurrentFlowInstanceDescription: false,
+          currentFlowInstanceDescription: ''
+        }
+      })
+      return
+    }
     this.props.dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
@@ -145,40 +154,40 @@ export default class ConfigureProcess extends Component {
     })
   }
 
-    // 添加步骤
-    handleAddEditStep = (e) => {
-      e && e.stopPropagation()
-      const { processEditDatasRecords = [], processEditDatas = [], dispatch } = this.props
-      const nodeObj = JSON.parse(JSON.stringify(processEditDatasItemOneConstant))
-      const recordItemobjs = JSON.parse(JSON.stringify(processEditDatasRecordsItemOneConstant))
-  
-      // if (!this.verrificationForm(processEditDatas)) {
-      //   return false
-      // }
-      // processEditDatasRecords.push(recordItemobjs)
-      processEditDatas.push(nodeObj)
-      new Promise((resolve) => {
-        dispatch({
-          type: 'publicProcessDetailModal/updateDatas',
-          payload: {
-            node_type: '6'
-          }
-        })
-        resolve()
-      }).then(res => {
-        //正常操作
-        dispatch({
-          type: 'publicProcessDetailModal/updateDatas',
-          payload: {
-            // processEditDatasRecords,
-            processEditDatas,
-            processCurrentEditStep: (Number(processEditDatasRecords.length) - 1).toString(),
-            // node_type: '1'
-          }
-        })
-  
+  // 添加步骤
+  handleAddEditStep = (e) => {
+    e && e.stopPropagation()
+    const { processEditDatasRecords = [], processEditDatas = [], dispatch } = this.props
+    const nodeObj = JSON.parse(JSON.stringify(processEditDatasItemOneConstant))
+    const recordItemobjs = JSON.parse(JSON.stringify(processEditDatasRecordsItemOneConstant))
+
+    // if (!this.verrificationForm(processEditDatas)) {
+    //   return false
+    // }
+    // processEditDatasRecords.push(recordItemobjs)
+    processEditDatas.push(nodeObj)
+    new Promise((resolve) => {
+      dispatch({
+        type: 'publicProcessDetailModal/updateDatas',
+        payload: {
+          node_type: '6'
+        }
       })
-    }
+      resolve()
+    }).then(res => {
+      //正常操作
+      dispatch({
+        type: 'publicProcessDetailModal/updateDatas',
+        payload: {
+          // processEditDatasRecords,
+          processEditDatas,
+          processCurrentEditStep: (Number(processEditDatasRecords.length) - 1).toString(),
+          // node_type: '1'
+        }
+      })
+
+    })
+  }
 
   filterForm = (value, key) => {
     const { node_type } = value
@@ -200,7 +209,7 @@ export default class ConfigureProcess extends Component {
   renderAddProcessStep = () => {
     return (
       <>
-        <div className={indexStyles.add_node} onClick={(e) => {this.handleAddEditStep(e)}}>
+        <div className={`${indexStyles.add_node}`} onClick={(e) => {this.handleAddEditStep(e)}}>
           <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
           <ConfigureGuide />
         </div>
@@ -209,8 +218,8 @@ export default class ConfigureProcess extends Component {
   }
 
   render() {
-    const { isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [] } = this.props
-    const { currentFlowInstanceName, currentFlowInstanceDescription } = this.state
+    const {currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [] } = this.props
+    // const { currentFlowInstanceName, currentFlowInstanceDescription } = this.state
     const delHtmlTag = (str) => {
       return str.replace(/<[^>]+>/g, "")
     }
@@ -255,13 +264,14 @@ export default class ConfigureProcess extends Component {
                       <NameChangeInput
                         autosize
                         onBlur={this.titleTextAreaChangeBlur}
+                        onPressEnter={this.titleTextAreaChangeBlur}
                         // onClick={this.setTitleEdit}
                         setIsEdit={this.setTitleEdit}
                         autoFocus={true}
                         goldName={''}
                         placeholder={'流程名称(必填)'}
                         maxLength={101}
-                        nodeName={'textarea'}
+                        nodeName={'input'}
                         style={{ display: 'block', fontSize: 20, color: '#262626', resize: 'none', height: '44px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none' }}
                       />
                     )
@@ -312,6 +322,6 @@ export default class ConfigureProcess extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList = [], processEditDatas = [], processEditDatasRecords = [], processInfo = {}, processCurrentCompleteStep, node_type, processCurrentEditStep } }) {
-  return { isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList, processEditDatas, processEditDatasRecords, processInfo, processCurrentCompleteStep, node_type, processCurrentEditStep }
+function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList = [], processEditDatas = [], processEditDatasRecords = [], processInfo = {}, processCurrentCompleteStep, node_type, processCurrentEditStep } }) {
+  return { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList, processEditDatas, processEditDatasRecords, processInfo, processCurrentCompleteStep, node_type, processCurrentEditStep }
 }

@@ -1,3 +1,11 @@
+.pub_hover {
+  &:hover {
+    background   : rgba(0, 0, 0, 0.04);
+    cursor       : pointer;
+    border-radius: 4px;
+  }
+}
+
 .configureProcessOut {
   .configure_top {
     height: 204px;
@@ -42,9 +50,7 @@
   > span {
     color: rgba(0,0,0,0.45); 
     font-size: 22px;
-    &:hover {
-      color: #1890FF;
-    }
+    color: #1890FF;
   }
 }
 
@@ -63,6 +69,16 @@
     padding: 16px 12px;
     // overflow-y: auto;
     // overflow-x: hidden;
+    .node_name {
+      // width:866px;
+      height:40px;
+      line-height: 40px;
+      font-size:16px;
+      font-family:PingFangSC-Medium,PingFang SC;
+      font-weight:900;
+      color:rgba(0,0,0,0.65);
+      padding: 0 14px;
+    }
   }
   .add_tabsItem {
     width:100%;

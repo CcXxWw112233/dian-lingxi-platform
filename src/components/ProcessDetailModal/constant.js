@@ -1,6 +1,6 @@
 export const processEditDatasConstant = [
   {
-    "name": "资料收集",
+    "name": "",
     "node_type": "1", //节点类型：3代表填写节点
     "description": "",
     "deadline_type": "1", //完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
@@ -34,7 +34,7 @@ export const processEditDatasRecordsConstant = [
     'node_type': '1',
     'alltypedata': [
       {
-        "name": "资料收集",
+        "name": "",
         "node_type": "1", //节点类型：3代表填写节点
         "description": "",
         "deadline_type": "1", //完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
@@ -118,7 +118,7 @@ export const processEditDatasRecordsConstant = [
 ]
 
 export const processEditDatasItemOneConstant =   {
-  "name": "资料收集",
+  "name": "",
   "node_type": "1", //节点类型：3代表填写节点
   "description": "",
   "deadline_type": "1", //完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
@@ -137,7 +137,7 @@ export const processEditDatasRecordsItemOneConstant =   {
   'node_type': '1',
   'alltypedata': [
     {
-      "name": "资料收集",
+      "name": "",
       "node_type": "1", //节点类型：3代表填写节点
       "description": "",
       "deadline_type": "1", //完成期限类型 1=无期限 2=启动流程时指定 3=固定天数

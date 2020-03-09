@@ -39,7 +39,7 @@ export default class ProcessDetailModal extends Component {
   commonDrawerContentOutClick = () => {
     const { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription } = this.props
     if (isEditCurrentFlowInstanceName) { // 如果操作的是实例名称
-      if (currentFlowInstanceName.trim() != '') { // 表示输入了名称, 那么就可以隐藏输入框
+      if (currentFlowInstanceName != '') { // 表示输入了名称, 那么就可以隐藏输入框
         this.props.dispatch({
           type: 'publicProcessDetailModal/updateDatas',
           payload: {

@@ -9,7 +9,7 @@ import { connect } from 'dva'
 export default class ConfigureNodeTypeInfoOne extends Component {
 
   state = {
-
+    localName: '', // 当前节点步骤的名称
   }
 
   // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
@@ -20,17 +20,46 @@ export default class ConfigureNodeTypeInfoOne extends Component {
     dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
-        processEditDatas: new_processEditDatas,
+        processEditDatas: newProcessEditDatas,
       }
     })
+  }
+
+  // 外部点击事件是否取消节点名称输入框
+  handleCancelNodeName = (e) => {
+    e && e.stopPropagation()
+    const { itemValue, itemKey, processEditDatas = [] } = this.props
+    const { name } = itemValue
+    const { localName } = this.state
+    if (localName == name) { // 表示如果当前的名称没有修改的话就不出现输入框
+      this.updateCorrespondingPrcodessStepWithNodeContent('is_click_node_name', false)
+    }
+  }
+
+  // 节点名称点击事件
+  handleChangeNodeName = (e) => {
+    e && e.stopPropagation()
+    this.updateCorrespondingPrcodessStepWithNodeContent('is_click_node_name',true)
+  }
+
+  // 当前节点的步骤名称
+  titleTextAreaChangeBlur = (e) => {
+    let val = e.target.value.trimLR()
+    if (val == "" || val == " " || !val) {
+      this.updateCorrespondingPrcodessStepWithNodeContent('name','')
+      return
+    }
+    this.setState({
+      localName: val
+    })
+    this.updateCorrespondingPrcodessStepWithNodeContent('name',val)
+    this.updateCorrespondingPrcodessStepWithNodeContent('is_click_node_name', false)
   }
 
 
   // 当先选择的节点类型
   handleChangeStepType = (e) => {
     let key = e.target.value
-    const { processEditDatas = [], itemKey, dispatch, itemValue } = this.props
-    let new_processEditDatas = [...processEditDatas]
     this.updateCorrespondingPrcodessStepWithNodeContent('node_type', key)
   }
 
@@ -52,7 +81,7 @@ export default class ConfigureNodeTypeInfoOne extends Component {
 
   renderContent = () => {
     const { itemKey, itemValue, processEditDatasRecords = [], processCurrentEditStep, processEditDatas = [] } = this.props
-    const { node_type } = itemValue
+    const { name, node_type, description, is_click_node_name } = itemValue
     // let node_amount = this.props && this.props.processInfo && this.props.processInfo.node_amount
     let stylLine, stylCircle
     // if (this.props.processInfo.completed_amount >= itemKey + 1) { //0 1    1  2 | 1 3 | 1 4
@@ -81,7 +110,7 @@ export default class ConfigureNodeTypeInfoOne extends Component {
     }
     // const alltypedata = processEditDatasRecords[processCurrentEditStep]['alltypedata']
     return (
-      <div key={itemKey} style={{ display: 'flex', marginBottom: '45px' }}>
+      <div key={itemKey} style={{ display: 'flex', marginBottom: '45px' }} onClick={(e) => {this.handleCancelNodeName(e)}}>
         {/* {node_amount <= itemKey + 1 ? null : <div className={stylLine}></div>} */}
         <div className={indexStyles.doingLine}></div>
         <div className={indexStyles.doingCircle}> {itemKey + 1}</div>
@@ -89,18 +118,25 @@ export default class ConfigureNodeTypeInfoOne extends Component {
           <div className={`${globalStyles.global_vertical_scrollbar}`}>
             {/* 步骤名称 */}
             <div style={{ marginBottom: '16px' }}>
-              <NameChangeInput
-                autosize
-                // onBlur={this.titleTextAreaChangeBlur}
-                // onClick={this.setTitleEdit}
-                // setIsEdit={this.setTitleEdit}
-                autoFocus={true}
-                goldName={''}
-                placeholder={'步骤名称(必填)'}
-                maxLength={101}
-                nodeName={'textarea'}
-                style={{ display: 'block', fontSize: 20, color: '#262626', resize: 'none', height: '44px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none' }}
-              />
+              {
+                name && !is_click_node_name ? (
+                  <div onClick={(e) => {this.handleChangeNodeName(e)}} className={`${indexStyles.node_name} ${indexStyles.pub_hover}`}>
+                    {name}
+                  </div>
+                ) : (
+                  <NameChangeInput
+                    autosize
+                    onBlur={this.titleTextAreaChangeBlur}
+                    onPressEnter={this.titleTextAreaChangeBlur}
+                    autoFocus={true}
+                    goldName={''}
+                    placeholder={'步骤名称(必填)'}
+                    maxLength={101}
+                    nodeName={'input'}
+                    style={{ display: 'block', fontSize: 20, color: '#262626', resize: 'none', height: '44px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none' }}
+                  />
+                )
+              }
             </div>
             <div style={{ paddingLeft: '14px', paddingRight: '14px', position: 'relative' }}>
               {/* 步骤类型 */}

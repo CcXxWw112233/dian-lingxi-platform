@@ -98,7 +98,8 @@ export default class NameChangeInput extends React.Component{
       <div style={{ width: '100%'}}>
         {
           nodeName == 'input'? (
-            <Input value={localName}
+            <Input placeholder={placeholder}
+                   value={localName}
                    className={className}
                    size={size}
                    autoFocus={autoFocus}
