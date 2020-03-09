@@ -161,6 +161,7 @@
     border:1px solid rgba(217,217,217,1);
     margin-right: 16px;
     border: 0 none;
+    margin-right: 8px;
   }
 }
 /* 完成期限 E */
@@ -168,10 +169,40 @@
 /* 备注 S */
 .select_remarks {
   min-height: 88px;
-  line-height: 88px;
+  // line-height: 88px;
+  padding: 16px 0;
+  box-sizing: border-box;
   border-bottom: 1px solid #e8e8e8;
+  .remarks_content {
+    // width:866px;
+    height:38px;
+    // background:rgba(255,255,255,1);
+    border-radius:4px;
+    font-size:14px;
+    font-family:PingFangSC-Regular,PingFang SC;
+    font-weight:400;
+    color:rgba(0,0,0,0.25);
+    line-height: 38px;
+  }
 }
 /* 备注 E */
+
+/* 关联内容 S */
+.select_related {
+  min-height: 95px;
+  padding: 16px 0;
+  box-sizing: border-box;
+  border-bottom: 1px solid #e8e8e8;
+  .related_content {
+    height: 38px;
+    line-height: 38px;
+    font-size:14px;
+    font-family:PingFangSC-Regular,PingFang SC;
+    font-weight:400;
+    color:rgba(0,0,0,0.25);
+  }
+}
+/* 关联内容 E */
 
 // 更多选项的样式
 .more_select {
@@ -200,9 +231,19 @@
   }
 }
 
+.del_moreIcon {
+  margin-left: 8px;
+  color: rgba(0,0,0,0.25);
+  cursor: pointer;
+  &:hover {
+    color: rgba(0,0,0,0.45);
+  }
+}
+
 // 节点的button样式
 .step_btn {
   text-align: center;
+  margin-top: 24px;
   button {
     width:60px;
     height:34px;

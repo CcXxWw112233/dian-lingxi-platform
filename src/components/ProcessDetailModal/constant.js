@@ -1,7 +1,7 @@
 export const processEditDatasConstant = [
   {
-    "name": "", //节点名称
-    "node_type": "1", //节点类型：1代表里程碑节点
+    "name": "资料收集",
+    "node_type": "1", //节点类型：3代表填写节点
     "description": "",
     "deadline_type": "1", //完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
     "deadline_value": "1", //完成期限值
@@ -10,7 +10,9 @@ export const processEditDatasConstant = [
     "assignees": "", //审批人(id) 多个逗号隔开
     "transfer_mode": "2", //流转方式 1=自由选择 2= 下一步
     "enable_revocation": "1", //是否可撤回 1=可撤回 0=不可撤回
-    "enable_opinion": "1"//是否填写意见  1=填写 0=不填写
+    "enable_opinion": "1", //是否填写意见  1=填写 0=不填写
+    "form_data": [
+    ]
   },
   // {
   //   "name": "", //节点名称
@@ -115,9 +117,9 @@ export const processEditDatasRecordsConstant = [
   }
 ]
 
-export const processEditDatasItemOneConstant = {
-  "name": "", //节点名称
-  "node_type": "1", //节点类型：1代表里程碑节点
+export const processEditDatasItemOneConstant =   {
+  "name": "资料收集",
+  "node_type": "1", //节点类型：3代表填写节点
   "description": "",
   "deadline_type": "1", //完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
   "deadline_value": "1", //完成期限值
@@ -126,7 +128,9 @@ export const processEditDatasItemOneConstant = {
   "assignees": "", //审批人(id) 多个逗号隔开
   "transfer_mode": "2", //流转方式 1=自由选择 2= 下一步
   "enable_revocation": "1", //是否可撤回 1=可撤回 0=不可撤回
-  "enable_opinion": "1"//是否填写意见  1=填写 0=不填写
+  "enable_opinion": "1", //是否填写意见  1=填写 0=不填写
+  "form_data": [
+  ]
 }
 
 export const processEditDatasRecordsItemOneConstant =   {
@@ -144,43 +148,43 @@ export const processEditDatasRecordsItemOneConstant =   {
       "transfer_mode": "2", //流转方式 1=自由选择 2= 下一步
       "enable_revocation": "1", //是否可撤回 1=可撤回 0=不可撤回
       "enable_opinion": "1", //是否填写意见  1=填写 0=不填写
-      "form_data": [
-        // 文本
-        {
-          "field_type": "1", //字段类型 1=输入框
-          "property_name": "文本", //属性名称(标题)输入框
-          "default_value": "", //默认值 默认值
-          "verification_rule": "", //校验规则 '' =不校验格式 mobile = 手机号码，tel = 座机，ID_card = 身份证号码，chinese_name = 中文名，url = 网址,qq = QQ号，postal_code = 邮政编码，positive_integer = 正整数，negative = 负数，two_decimal_places = 精确到两位小数
-          "val_length": "20", //长度
-          "is_required": "0"//是否必须 1=必须 0=不是必须
-        },
-        // 选择
-        {
-          "field_type": "2", //字段类型 3=下拉框
-          "property_name": "选择", //属性名称(标题) 下拉框
-          "default_value": "", //默认值(预设值)默认值
-          "verification_rule": "redio", //校验规则 redio = 单选， multiple = 多选 ，province = 省市区
-          "is_required": "0", //是否必须 1=必须 0=不是必须
-          "options_data": []
-        },
-        // 日期
-        {
-          "field_type": "3", //字段类型 2=日期选择
-          "property_name": "日期", //属性名称(标题)日期选择
-          "default_value": "", //默认值 默认值
-          "verification_rule": "SINGLE_DATE_TIME", //校验规则 单个+日期+时分 = SINGLE_DATE_TIME ,单个+日期 = SINGLE_DATE,多个+日期+时分 = MULTI_DATE_TIME ,多个+日期 = MULTI_DATE
-          "is_required": "0"//是否必须 1=必须 0=不是必须
-        },
-        // 附件 
-        {
-          "field_type": "5",
-          "property_name": "附件", //属性名称(标题)
-          "limit_file_num": "10", //限制文件上传数量 0=不限制
-          "limit_file_type": "1,2,3,4", //限制上传类型(文件格式)1=文档 2=图像 3=音频 4=视频
-          "limit_file_size": "20",//限制文件大小
-          "is_required": "0"//是否必须 1=必须 0=不是必须
-        }
-      ]
+      // "form_data": [
+      //   // 文本
+      //   {
+      //     "field_type": "1", //字段类型 1=输入框
+      //     "property_name": "文本", //属性名称(标题)输入框
+      //     "default_value": "", //默认值 默认值
+      //     "verification_rule": "", //校验规则 '' =不校验格式 mobile = 手机号码，tel = 座机，ID_card = 身份证号码，chinese_name = 中文名，url = 网址,qq = QQ号，postal_code = 邮政编码，positive_integer = 正整数，negative = 负数，two_decimal_places = 精确到两位小数
+      //     "val_length": "20", //长度
+      //     "is_required": "0"//是否必须 1=必须 0=不是必须
+      //   },
+      //   // 选择
+      //   {
+      //     "field_type": "2", //字段类型 3=下拉框
+      //     "property_name": "选择", //属性名称(标题) 下拉框
+      //     "default_value": "", //默认值(预设值)默认值
+      //     "verification_rule": "redio", //校验规则 redio = 单选， multiple = 多选 ，province = 省市区
+      //     "is_required": "0", //是否必须 1=必须 0=不是必须
+      //     "options_data": []
+      //   },
+      //   // 日期
+      //   {
+      //     "field_type": "3", //字段类型 2=日期选择
+      //     "property_name": "日期", //属性名称(标题)日期选择
+      //     "default_value": "", //默认值 默认值
+      //     "verification_rule": "SINGLE_DATE_TIME", //校验规则 单个+日期+时分 = SINGLE_DATE_TIME ,单个+日期 = SINGLE_DATE,多个+日期+时分 = MULTI_DATE_TIME ,多个+日期 = MULTI_DATE
+      //     "is_required": "0"//是否必须 1=必须 0=不是必须
+      //   },
+      //   // 附件 
+      //   {
+      //     "field_type": "5",
+      //     "property_name": "附件", //属性名称(标题)
+      //     "limit_file_num": "10", //限制文件上传数量 0=不限制
+      //     "limit_file_type": "1,2,3,4", //限制上传类型(文件格式)1=文档 2=图像 3=音频 4=视频
+      //     "limit_file_size": "20",//限制文件大小
+      //     "is_required": "0"//是否必须 1=必须 0=不是必须
+      //   }
+      // ]
     },
     {
       "name": "审批",

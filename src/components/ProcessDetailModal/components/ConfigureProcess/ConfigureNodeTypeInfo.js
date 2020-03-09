@@ -4,65 +4,43 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
 import { Radio } from 'antd'
 import ConfigureStepTypeOne from './component/ConfigureStepTypeOne'
-import { processEditDatasItemOneConstant, processEditDatasRecordsItemOneConstant } from '../../constant'
-import ConfigureGuide from './ConfigureGuide'
+import { connect } from 'dva'
+@connect(mapStateToProps)
 export default class ConfigureNodeTypeInfoOne extends Component {
 
   state = {
 
   }
 
-  // 当先选择的节点类型
-  handleChangeStepType = (e) => {
-    let key = e.target.value
-    this.props.dispatch({
+  // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
+  updateCorrespondingPrcodessStepWithNodeContent = (data, value) => {
+    const { processEditDatas = [], itemKey, dispatch } = this.props
+    let newProcessEditDatas = [...processEditDatas]
+    newProcessEditDatas[itemKey][data] = value
+    dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
-        node_type: key
+        processEditDatas: new_processEditDatas,
       }
     })
   }
 
-  // 添加步骤
-  handleAddEditStep = () => {
-    const { processEditDatasRecords = [], processEditDatas = [], dispatch } = this.props
-    const nodeObj = JSON.parse(JSON.stringify(processEditDatasItemOneConstant))
-    const recordItemobjs = JSON.parse(JSON.stringify(processEditDatasRecordsItemOneConstant))
 
-    // if (!this.verrificationForm(processEditDatas)) {
-    //   return false
-    // }
-    processEditDatasRecords.push(recordItemobjs)
-    processEditDatas.push(nodeObj)
-    new Promise((resolve) => {
-      dispatch({
-        type: 'publicProcessDetailModal/updateDatas',
-        payload: {
-          node_type: '6'
-        }
-      })
-      resolve()
-    }).then(res => {
-      //正常操作
-      dispatch({
-        type: 'publicProcessDetailModal/updateDatas',
-        payload: {
-          processEditDatasRecords,
-          processEditDatas,
-          processCurrentEditStep: (Number(processEditDatasRecords.length) - 1).toString(),
-          node_type: '1'
-        }
-      })
-
-    })
+  // 当先选择的节点类型
+  handleChangeStepType = (e) => {
+    let key = e.target.value
+    const { processEditDatas = [], itemKey, dispatch, itemValue } = this.props
+    let new_processEditDatas = [...processEditDatas]
+    this.updateCorrespondingPrcodessStepWithNodeContent('node_type', key)
   }
 
   renderDiffStepTypeContent = () => {
-    const { node_type } = this.props
+    const { itemValue, itemKey } = this.props
+    const { node_type } = itemValue
     let container = <div></div>
     switch (node_type) {
       case '1': // 表示资料收集
-        container = <ConfigureStepTypeOne {...this.props} />
+        container = <ConfigureStepTypeOne {...this.props} itemValue={itemValue} itemKey={itemKey}/>
         break;
 
       default:
@@ -72,21 +50,10 @@ export default class ConfigureNodeTypeInfoOne extends Component {
     return container
   }
 
-  renderDefaultProcess = () => {
-
-    return (
-      <>
-        <div className={indexStyles.add_node} onClick={this.handleAddEditStep}>
-          <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
-          <ConfigureGuide />
-        </div>
-      </>
-    )
-  }
-
-  renderContent = ({ itemKey, itemValue }) => {
-    const { processEditDatasRecords = [], node_type, processCurrentEditStep } = this.props
-    let node_amount = this.props && this.props.processInfo && this.props.processInfo.node_amount
+  renderContent = () => {
+    const { itemKey, itemValue, processEditDatasRecords = [], processCurrentEditStep, processEditDatas = [] } = this.props
+    const { node_type } = itemValue
+    // let node_amount = this.props && this.props.processInfo && this.props.processInfo.node_amount
     let stylLine, stylCircle
     // if (this.props.processInfo.completed_amount >= itemKey + 1) { //0 1    1  2 | 1 3 | 1 4
     //   stylLine = indexStyles.line
@@ -112,9 +79,9 @@ export default class ConfigureNodeTypeInfoOne extends Component {
     let juge = {
       bordered: false
     }
-    const alltypedata = processEditDatasRecords[processCurrentEditStep]['alltypedata']
+    // const alltypedata = processEditDatasRecords[processCurrentEditStep]['alltypedata']
     return (
-      <div style={{ display: 'flex', marginBottom: '45px' }}>
+      <div key={itemKey} style={{ display: 'flex', marginBottom: '45px' }}>
         {/* {node_amount <= itemKey + 1 ? null : <div className={stylLine}></div>} */}
         <div className={indexStyles.doingLine}></div>
         <div className={indexStyles.doingCircle}> {itemKey + 1}</div>
@@ -139,14 +106,10 @@ export default class ConfigureNodeTypeInfoOne extends Component {
               {/* 步骤类型 */}
               <div style={{ marginBottom: '14px' }}>
                 <span style={{ color: 'rgba(0,0,0,0.45)' }} className={globalStyles.authTheme}>&#xe7f4; &nbsp;步骤类型 :&nbsp;&nbsp;&nbsp;</span>
-                <Radio.Group onChange={this.handleChangeStepType} value={this.props.node_type}>
-                  {
-                    alltypedata.map(item => {
-                      return (
-                        <Radio key={item.node_type} value={item.node_type}>{item.name}</Radio>
-                      )
-                    })
-                  }
+                <Radio.Group onChange={this.handleChangeStepType} value={node_type}>
+                  <Radio value="1">资料收集</Radio>
+                  <Radio value="2">审批</Radio>
+                  <Radio value="3">抄送</Radio>
                 </Radio.Group>
               </div>
               <div className={`${check_line} ${indexStyles.check_line}`}></div>
@@ -164,15 +127,19 @@ export default class ConfigureNodeTypeInfoOne extends Component {
     const { processEditDatas = [] } = this.props
     return (
       <div className={indexStyles.configureProcessOut_1}>
-        {
+        {/* {
           processEditDatas.map((item, key) => {
             return (
               this.renderContent({ itemKey: key, itemValue: item })
             )
           })
-        }
-        {this.renderDefaultProcess()}
+        } */}
+        {this.renderContent()}
       </div>
     )
   }
+}
+
+function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [] } }) {
+  return {  processEditDatas }
 }

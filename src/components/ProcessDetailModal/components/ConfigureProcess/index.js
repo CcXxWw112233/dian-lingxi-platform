@@ -4,6 +4,8 @@ import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
 import ConfigureNodeTypeInfo from './ConfigureNodeTypeInfo'
+import ConfigureGuide from './ConfigureGuide'
+import { processEditDatasItemOneConstant, processEditDatasRecordsItemOneConstant } from '../../constant'
 
 @connect(mapStateToProps)
 export default class ConfigureProcess extends Component {
@@ -143,11 +145,46 @@ export default class ConfigureProcess extends Component {
     })
   }
 
+    // 添加步骤
+    handleAddEditStep = (e) => {
+      e && e.stopPropagation()
+      const { processEditDatasRecords = [], processEditDatas = [], dispatch } = this.props
+      const nodeObj = JSON.parse(JSON.stringify(processEditDatasItemOneConstant))
+      const recordItemobjs = JSON.parse(JSON.stringify(processEditDatasRecordsItemOneConstant))
+  
+      // if (!this.verrificationForm(processEditDatas)) {
+      //   return false
+      // }
+      // processEditDatasRecords.push(recordItemobjs)
+      processEditDatas.push(nodeObj)
+      new Promise((resolve) => {
+        dispatch({
+          type: 'publicProcessDetailModal/updateDatas',
+          payload: {
+            node_type: '6'
+          }
+        })
+        resolve()
+      }).then(res => {
+        //正常操作
+        dispatch({
+          type: 'publicProcessDetailModal/updateDatas',
+          payload: {
+            // processEditDatasRecords,
+            processEditDatas,
+            processCurrentEditStep: (Number(processEditDatasRecords.length) - 1).toString(),
+            // node_type: '1'
+          }
+        })
+  
+      })
+    }
+
   filterForm = (value, key) => {
     const { node_type } = value
     let container = (<div></div>)
     const invitationType = '8'
-    container = <ConfigureNodeTypeInfo {...this.props} itemKey={key} itemValue={value} />
+    container = <ConfigureNodeTypeInfo itemKey={key} itemValue={value} />
     // switch (node_type) {
     //   case '1':
     //     container = (<ConfigureNodeTypeInfo {...this.props} itemKey={key} itemValue={value} />)
@@ -157,6 +194,18 @@ export default class ConfigureProcess extends Component {
     //     break
     // }
     return container
+  }
+
+  // 渲染添加步骤按钮
+  renderAddProcessStep = () => {
+    return (
+      <>
+        <div className={indexStyles.add_node} onClick={(e) => {this.handleAddEditStep(e)}}>
+          <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
+          <ConfigureGuide />
+        </div>
+      </>
+    )
   }
 
   render() {
@@ -250,14 +299,13 @@ export default class ConfigureProcess extends Component {
           </div>
         </div>
         <div className={indexStyles.configure_bottom}>
-          <ConfigureNodeTypeInfo {...this.props}/>
-          {/* {processEditDatas.map((value, key) => {
+          {/* <ConfigureNodeTypeInfo {...this.props}/> */}
+          {processEditDatas.map((value, key) => {
             return (
-              <div className={indexStyles.processPointItem} key={key}>
-                {this.filterForm(value, key)}
-              </div>
+              <><ConfigureNodeTypeInfo itemKey={key} itemValue={value}/></>
             )
-          })} */}
+          })}
+          {this.renderAddProcessStep()}
         </div>
       </div>
     )

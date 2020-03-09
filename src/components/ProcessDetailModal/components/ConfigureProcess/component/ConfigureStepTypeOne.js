@@ -50,8 +50,8 @@ export default class ConfigureStepTypeOne extends Component {
 
   //表单填写项
   menuAddFormClick({ key }) {
-    const { processEditDatas = [], processCurrentEditStep = 0, } = this.props
-    const { form_data = [] } = processEditDatas[processCurrentEditStep]
+    const { processEditDatas = [], processCurrentEditStep = 0, itemValue, itemKey} = this.props
+    const { form_data = [] } = processEditDatas[itemKey]
     //推进人一项
     let obj = {}
     switch (key) {
@@ -156,8 +156,8 @@ export default class ConfigureStepTypeOne extends Component {
   }
 
   render() {
-    const { processEditDatasRecords, processEditDatas, processCurrentEditStep, node_type } = this.props
-    const { form_data = [] } = processEditDatas[processCurrentEditStep]
+    const { itemValue } = this.props
+    const { form_data = [] } = itemValue
     return (
       <div style={{ position: 'relative' }}>
         <div style={{paddingBottom: '16px', borderBottom: '1px solid #e8e8e8'}}>
@@ -195,15 +195,20 @@ export default class ConfigureStepTypeOne extends Component {
           <span>完成期限 &nbsp;: </span>
           <InputNumber className={indexStyles.select_number} />
           <Select className={indexStyles.select_day}/>
-          <span className={`${globalStyles.authTheme}`}>&#xe7fe;</span>
+          <span className={`${globalStyles.authTheme} ${indexStyles.del_moreIcon}`}>&#xe7fe;</span>
         </div>
         {/* 备注 */}
         <div className={`${indexStyles.select_remarks}`}>
-          <span className={globalStyles.authTheme}>&#xe636;</span>
-          <span>备注 &nbsp;:</span>
-          <div>添加备注</div>
+          <span className={globalStyles.authTheme}>&#xe636; 备注 &nbsp;:</span>
+          <span className={`${globalStyles.authTheme} ${indexStyles.del_moreIcon}`}>&#xe7fe;</span>
+          <div className={indexStyles.remarks_content}>添加备注</div>
         </div>
         {/* 关联内容 */}
+        <div className={indexStyles.select_related}>
+          <span className={globalStyles.authTheme}>&#xe7f5; 关联内容 &nbsp; :</span>
+          <span className={`${globalStyles.authTheme} ${indexStyles.del_moreIcon}`}>&#xe7fe;</span>
+          <div className={indexStyles.related_content}>添加关联</div>
+        </div>
         {/* 删除 | 确认 */}
         <div className={indexStyles.step_btn}>
           <Button>删除</Button>
