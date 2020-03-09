@@ -630,27 +630,30 @@ export default class OutLineHeadItem extends Component {
                     </Dropdown>
 
                 </div>
-
-                {
-                    show_add_menber_visible && (
-                        <ShowAddMenberModal
-                            invitationType='1'
-                            invitationId={gantt_board_id}
-                            invitationOrg={getOrgIdByBoardId(gantt_board_id)}
-                            show_wechat_invite={true}
-                            _organization_id={getOrgIdByBoardId(gantt_board_id)}
-                            board_id={gantt_board_id}
-                            addMenbersInProject={this.addMenbersInProject}
-                            modalVisible={show_add_menber_visible}
-                            setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile}
-                        />
-                    )
-                }
-                <DetailInfo setProjectDetailInfoModalVisible={this.setBoardInfoVisible} modalVisible={board_info_visible} invitationType='1' invitationId={gantt_board_id} />
-                {
-                    safeConfirmModalVisible &&
-                    <SafeConfirmModal selectedTpl={this.state.selectedTpl} visible={safeConfirmModalVisible} onChangeVisible={this.changeSafeConfirmModalVisible} onOk={this.onImportBoardTemplate} />
-                }
+                <div onWheel={e => e.stopPropagation()}>
+                    {
+                        show_add_menber_visible && (
+                            <ShowAddMenberModal
+                                invitationType='1'
+                                invitationId={gantt_board_id}
+                                invitationOrg={getOrgIdByBoardId(gantt_board_id)}
+                                show_wechat_invite={true}
+                                _organization_id={getOrgIdByBoardId(gantt_board_id)}
+                                board_id={gantt_board_id}
+                                addMenbersInProject={this.addMenbersInProject}
+                                modalVisible={show_add_menber_visible}
+                                setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile}
+                            />
+                        )
+                    }
+                </div>
+                <div onWheel={e => e.stopPropagation()}>
+                    <DetailInfo setProjectDetailInfoModalVisible={this.setBoardInfoVisible} modalVisible={board_info_visible} invitationType='1' invitationId={gantt_board_id} />
+                    {
+                        safeConfirmModalVisible &&
+                        <SafeConfirmModal selectedTpl={this.state.selectedTpl} visible={safeConfirmModalVisible} onChangeVisible={this.changeSafeConfirmModalVisible} onOk={this.onImportBoardTemplate} />
+                    }
+                </div>
             </div>
         );
     }

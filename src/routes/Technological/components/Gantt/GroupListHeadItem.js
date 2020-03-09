@@ -1043,22 +1043,26 @@ export default class GroupListHeadItem extends Component {
               )
           }
         </div>
-        {
-          show_add_menber_visible && (
-            <ShowAddMenberModal
-              invitationType='1'
-              invitationId={gantt_board_id == '0' ? list_id : gantt_board_id}
-              invitationOrg={org_id || getOrgIdByBoardId(board_id)}
-              show_wechat_invite={true}
-              _organization_id={org_id || getOrgIdByBoardId(board_id)}
-              board_id={gantt_board_id == '0' ? list_id : gantt_board_id}
-              addMenbersInProject={this.addMenbersInProject}
-              modalVisible={show_add_menber_visible}
-              setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile}
-            />
-          )
-        }
-        <DetailInfo setProjectDetailInfoModalVisible={this.setBoardInfoVisible} modalVisible={board_info_visible} invitationType='1' invitationId={gantt_board_id == '0' ? list_id : gantt_board_id} />
+        <div onWheel={e => e.stopPropagation()}>
+          {
+            show_add_menber_visible && (
+              <ShowAddMenberModal
+                invitationType='1'
+                invitationId={gantt_board_id == '0' ? list_id : gantt_board_id}
+                invitationOrg={org_id || getOrgIdByBoardId(board_id)}
+                show_wechat_invite={true}
+                _organization_id={org_id || getOrgIdByBoardId(board_id)}
+                board_id={gantt_board_id == '0' ? list_id : gantt_board_id}
+                addMenbersInProject={this.addMenbersInProject}
+                modalVisible={show_add_menber_visible}
+                setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile}
+              />
+            )
+          }
+        </div>
+        <div onWheel={e => e.stopPropagation()}>
+          <DetailInfo setProjectDetailInfoModalVisible={this.setBoardInfoVisible} modalVisible={board_info_visible} invitationType='1' invitationId={gantt_board_id == '0' ? list_id : gantt_board_id} />
+        </div>
       </div >
     )
   }
