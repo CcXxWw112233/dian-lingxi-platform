@@ -441,11 +441,17 @@ export default class OutLineHeadItem extends Component {
             case 'reloadProjectDetailInfo':
                 {
                     dispatch({
+                        type: 'gantt/getAboutUsersBoards',
+                        payload: {
+
+                        }
+                    });
+                    dispatch({
                         type: 'projectDetail/projectDetailInfo',
                         payload: {
                             id: gantt_board_id,
                         }
-                    })
+                    });
                 }
                 break;
             default:
