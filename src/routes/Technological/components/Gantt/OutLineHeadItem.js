@@ -438,6 +438,16 @@ export default class OutLineHeadItem extends Component {
 
                 }
                 break;
+            case 'reloadProjectDetailInfo':
+                {
+                    dispatch({
+                        type: 'projectDetail/projectDetailInfo',
+                        payload: {
+                            id: gantt_board_id,
+                        }
+                    })
+                }
+                break;
             default:
                 ;
 

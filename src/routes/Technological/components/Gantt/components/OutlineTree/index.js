@@ -144,7 +144,7 @@ class TreeNode extends Component {
     onManHourChange = (value) => {
         const { outline_tree_round = [] } = this.props;
         const { nodeValue = {} } = this.state;
-        if(value>999){
+        if (value > 999) {
             message.warn('设置天数最大支持999天');
             return;
         }
@@ -208,6 +208,17 @@ class TreeNode extends Component {
         }
     }
 
+    inviteOthersToBoardCalback = ({ users }) => {
+        const { dispatch, gantt_board_id} = this.props
+        const action = 'reloadProjectDetailInfo';
+        if (this.props.onDataProcess) {
+            this.props.onDataProcess({
+                action
+            });
+        }
+    }
+
+
     renderExecutor = (members = [], { user_id }) => {
 
         const currExecutor = members.find((item) => item.user_id == user_id);
@@ -270,7 +281,7 @@ class TreeNode extends Component {
                             overlay={
                                 <MenuSearchPartner
                                     // isInvitation={true}
-                                    // inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
+                                    inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
 
                                     invitationType={tree_type == '1' ? '1' : '4'}
                                     invitationId={tree_type == '1' ? gantt_board_id : nodeValue.id}
