@@ -207,6 +207,7 @@ class CreateProject extends React.Component {
       select_project_id: board_id,
       project_apps: apps
     })
+    this.setCopyValue()
   }
   // 获取带有app的项目列表
   getProjectList = (init) => {
@@ -230,10 +231,12 @@ class CreateProject extends React.Component {
   }
 
   setCopyValue = (data) => {
-    const { copy_value = {} } = this.state
-    const copyValueNew = Object.assign(copy_value, data)
     this.setState({
-      copy_value: copyValueNew
+      copy_value: {
+        flows: {
+          is_copy_flow_template: true
+        }
+      }
     })
   }
 
@@ -421,7 +424,6 @@ class CreateProject extends React.Component {
   }
   createBoard = () => {
     const { _organization_id, OrganizationId, board_name, users, appsList = [], copy_value, select_project_id, selected_board_template_id } = this.state
-    debugger
     if (copy_value && Object.keys(copy_value).length && select_project_id) {
       let apps = appsList.map(item => item.id).join(',')
       const copy_obj = {
