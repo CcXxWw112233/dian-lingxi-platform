@@ -85,9 +85,9 @@ export default class OutLineHeadItem extends Component {
         const { template_list = [] } = this.state;
         return (
             <Menu onClick={this.handleProjectMenu}>
-                <Menu.Item key="publishTpl" disabled>将项目内容发布为模版</Menu.Item>
-                <Menu.Item key="saveTpl" disabled>将项目内容保存为模版</Menu.Item>
-                {
+                {/* <Menu.Item key="publishTpl" disabled>将项目内容发布为模版</Menu.Item>
+                <Menu.Item key="saveTpl" disabled>将项目内容保存为模版</Menu.Item> */}
+                {/* {
                     checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id) && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, gantt_board_id) &&
                     <SubMenu title="引用项目模版" >
                         {
@@ -98,7 +98,7 @@ export default class OutLineHeadItem extends Component {
                             })
                         }
                     </SubMenu>
-                }
+                } */}
 
 
                 <Menu.Item key="boardInfo">项目信息</Menu.Item>
