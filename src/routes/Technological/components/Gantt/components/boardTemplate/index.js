@@ -107,15 +107,15 @@ export default class BoardTemplate extends Component {
                 })
                 return
             }
-            if (data && data.length) {
-                this.setState({
-                    selected_template_name: data[0].name,
-                    selected_template_id: data[0].id
-                })
-                if (data.length) {
-                    this.getTemplateInfo(data[0].id)
-                }
-            }
+            // if (data && data.length) {
+            //     this.setState({
+            //         selected_template_name: data[0].name,
+            //         selected_template_id: data[0].id
+            //     })
+            //     if (data.length) {
+            //         this.getTemplateInfo(data[0].id)
+            //     }
+            // }
         } else {
             message.error(res.message)
         }
@@ -200,7 +200,7 @@ export default class BoardTemplate extends Component {
         const { template_list = [] } = this.state
         return (
             <Menu onClick={this.selectTemplate}>
-                {
+                {/* {
                     this.isShowSetting() &&
                     (
                         <MenuItem key={`0_0`} style={{ color: '#1890FF' }}>
@@ -209,7 +209,7 @@ export default class BoardTemplate extends Component {
                              新建方案
                         </MenuItem>
                     )
-                }
+                } */}
                 {
                     template_list.map(item => {
                         const { id, name } = item
@@ -620,12 +620,12 @@ export default class BoardTemplate extends Component {
                                     <div className={`${globalStyles.authTheme} ${styles.down}`}>&#xe7ee;</div>
                                 </div>
                             </Dropdown>
-                            {
+                            {/* {
                                 this.isShowSetting() &&
                                 (
                                     <div className={`${globalStyles.authTheme} ${styles.top_right}`} onClick={this.routingJumpToOrgManager}>&#xe78e;</div>
                                 )
-                            }
+                            } */}
                         </div>
                         {/* 拖拽子任务时，用于存放任务图标的ui,做dom操作 */}
                         <div
@@ -633,43 +633,58 @@ export default class BoardTemplate extends Component {
                             id={'save_child_card_icon'}>
                             <div className={globalStyles.authTheme} style={{ color: '#18B2FF', fontSize: 18, marginRight: 6 }} >&#xe6f0;</div>
                         </div>
-                        <div className={`${styles.list_item} ${styles.temp_ope}`}>
-                            <div className={`${styles.temp_ope_name}`}>流程步骤</div>
-                            {
-                                checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id) && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, gantt_board_id) &&
-                                (
-                                    <div className={`${styles.temp_ope_cop} ${globalStyles.link_mouse}`} onClick={this.changeSafeConfirmModalVisible}>引用到项目</div>
-                                )
-                            }
-                        </div>
-                        {/* 主区 */}
-                        <Spin spinning={spinning}>
-                            <div
-                                style={{ maxHeight: contain_height - date_area_height - 48 }}
-                                onMouseDown={this.outerMouseDown}
-                                className={styles.main}>
-                                <div>
-                                    <Tree
-                                        checkable
-                                        // checkStrictly
-                                        checkedKeys={checkedKeys}
-                                        onCheck={this.onCheck}
-                                        draggable
-                                        onDragStart={this.onDragStart}
-                                    // onDragEnter={this.onDragEnter}
-                                    // onDragLeave={this.onDragLeave}
-                                    // onDragOver={this.onDragOver}
-                                    // onDragEnd={this.onDragEnd}
-                                    // onDrop={this.onDrop}
-                                    // switcherIcon={
-                                    //     <Icon type="caret-down" style={{ fontSize: 20, color: 'rgba(0,0,0,.45)' }} />
-                                    // }
-                                    >
-                                        {this.renderTemplateTree(template_data)}
-                                    </Tree>
+                        {
+                            this.state.selected_template_id ?
+                                <>
+                                    <div className={`${styles.list_item} ${styles.temp_ope}`}>
+
+                                        <div className={`${styles.temp_ope_name}`}>流程步骤</div>
+
+
+                                        {
+                                            checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id) && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, gantt_board_id) &&
+                                            (
+                                                <div className={`${styles.temp_ope_cop} ${globalStyles.link_mouse}`} onClick={this.changeSafeConfirmModalVisible}>引用到项目</div>
+                                            )
+                                        }
+                                    </div>
+                                    {/* 主区 */}
+                                    <Spin spinning={spinning}>
+                                        <div
+                                            style={{ maxHeight: contain_height - date_area_height - 48 }}
+                                            onMouseDown={this.outerMouseDown}
+                                            className={styles.main}>
+                                            <div>
+                                                <Tree
+                                                    checkable
+                                                    // checkStrictly
+                                                    checkedKeys={checkedKeys}
+                                                    onCheck={this.onCheck}
+                                                    draggable
+                                                    onDragStart={this.onDragStart}
+                                                // onDragEnter={this.onDragEnter}
+                                                // onDragLeave={this.onDragLeave}
+                                                // onDragOver={this.onDragOver}
+                                                // onDragEnd={this.onDragEnd}
+                                                // onDrop={this.onDrop}
+                                                // switcherIcon={
+                                                //     <Icon type="caret-down" style={{ fontSize: 20, color: 'rgba(0,0,0,.45)' }} />
+                                                // }
+                                                >
+                                                    {this.renderTemplateTree(template_data)}
+                                                </Tree>
+                                            </div>
+                                        </div>
+                                    </Spin>
+                                </>
+                                :
+                                <div style={{ height:'100%', textAlign: 'center'}}>
+                                    <span style={{fontSize:'16px',lineHeight:'96px'}}>请先选择项目模板</span>
                                 </div>
-                            </div>
-                        </Spin>
+                        }
+
+
+
                         <div
                             onClick={this.setShowType}
                             className={`${styles.switchSpin_init} ${show_type == '1' && styles.switchSpinShow} ${show_type == '2' && styles.switchSpinClose}`}
