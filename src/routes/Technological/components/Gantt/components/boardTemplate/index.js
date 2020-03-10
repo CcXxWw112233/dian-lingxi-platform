@@ -683,8 +683,6 @@ export default class BoardTemplate extends Component {
                                 </div>
                         }
 
-
-
                         <div
                             onClick={this.setShowType}
                             className={`${styles.switchSpin_init} ${show_type == '1' && styles.switchSpinShow} ${show_type == '2' && styles.switchSpinClose}`}
