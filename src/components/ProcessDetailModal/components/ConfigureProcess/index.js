@@ -6,6 +6,7 @@ import NameChangeInput from '@/components/NameChangeInput'
 import ConfigureNodeTypeInfo from './ConfigureNodeTypeInfo'
 import ConfigureGuide from './ConfigureGuide'
 import { processEditDatasItemOneConstant, processEditDatasRecordsItemOneConstant } from '../../constant'
+import { Tooltip } from 'antd'
 
 @connect(mapStateToProps)
 export default class ConfigureProcess extends Component {
@@ -55,7 +56,7 @@ export default class ConfigureProcess extends Component {
       circle.lineWidth = lineWidth;
       let color = 'rgba(0,0,0,0.04)'
       circle.strokeStyle = color; //curr_node_sort
-      circle.arc(x0,y0,r,0.6 * Math.PI, 0.6*Math.PI + 1.83*Math.PI, false)
+      circle.arc(x0, y0, r, 0.6 * Math.PI, 0.6 * Math.PI + 1.83 * Math.PI, false)
       circle.stroke();//对当前路径进行描边
       circle.restore()
       circle.closePath()
@@ -79,7 +80,7 @@ export default class ConfigureProcess extends Component {
         circle.closePath()
       }
     }
-    
+
   }
 
   // 标题失去焦点回调
@@ -207,18 +208,42 @@ export default class ConfigureProcess extends Component {
 
   // 渲染添加步骤按钮
   renderAddProcessStep = () => {
+    const { processCurrentEditStep, processEditDatas = [] } = this.props
+    let { is_confirm } = processEditDatas && processEditDatas[processCurrentEditStep] || {}
     return (
-      <>
-        <div className={`${indexStyles.add_node}`} onClick={(e) => {this.handleAddEditStep(e)}}>
+      <div style={{ position: 'relative' }} id="addProcessStep">
+        {
+          processEditDatas && processEditDatas.length ? (
+            is_confirm == '1' ? (
+              <div className={`${indexStyles.add_node}`} onClick={(e) => { this.handleAddEditStep(e) }}>
+                <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
+                <ConfigureGuide />
+              </div>
+            ) : (
+                <Tooltip getPopupContainer={() => document.getElementById('addProcessStep')} placement="topLeft" title="完成上一步骤才能添加">
+                  <div><div className={`${indexStyles.add_normal}`} onClick={(e) => { this.handleAddEditStep(e) }}>
+                    <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
+                    <ConfigureGuide />
+                  </div></div>
+                </Tooltip>
+              )
+          ) : (
+              <div className={`${indexStyles.add_node}`} onClick={(e) => { this.handleAddEditStep(e) }}>
+                <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
+                <ConfigureGuide />
+              </div>
+            )
+        }
+        {/* <div className={`${processEditDatas.length ? (is_confirm == '1' ? indexStyles.add_node : indexStyles.add_normal) : indexStyles.add_node}`} onClick={(e) => { this.handleAddEditStep(e) }}>
           <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
           <ConfigureGuide />
-        </div>
-      </>
+        </div> */}
+      </div>
     )
   }
 
   render() {
-    const {currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [] } = this.props
+    const { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [] } = this.props
     // const { currentFlowInstanceName, currentFlowInstanceDescription } = this.state
     const delHtmlTag = (str) => {
       return str.replace(/<[^>]+>/g, "")
@@ -312,7 +337,7 @@ export default class ConfigureProcess extends Component {
           {/* <ConfigureNodeTypeInfo {...this.props}/> */}
           {processEditDatas.map((value, key) => {
             return (
-              <><ConfigureNodeTypeInfo itemKey={key} itemValue={value}/></>
+              <><ConfigureNodeTypeInfo itemKey={key} itemValue={value} /></>
             )
           })}
           {this.renderAddProcessStep()}

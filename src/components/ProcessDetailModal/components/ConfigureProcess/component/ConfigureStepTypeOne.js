@@ -85,6 +85,12 @@ export default class ConfigureStepTypeOne extends Component {
     e && e.stopPropagation()
   }
 
+  // 确认的点击事件
+  handleConfirmButton = (e) => {
+    e && e.stopPropagation()
+    this.updateConfigureProcess({value: '1'}, 'is_confirm')
+  }
+
   //表单填写项
   menuAddFormClick = ({ key }) => {
     const { processEditDatas = [], processCurrentEditStep = 0, itemValue, itemKey } = this.props
@@ -272,8 +278,8 @@ export default class ConfigureStepTypeOne extends Component {
         </div>
         {/* 删除 | 确认 */}
         <div className={indexStyles.step_btn}>
-          <Button>删除</Button>
-          <Button type="primary">确认</Button>
+          <Button disabled={itemKey == '0' ? true : false}>删除</Button>
+          <Button onClick={this.handleConfirmButton} type="primary">确认</Button>
         </div>
       </div>
     )

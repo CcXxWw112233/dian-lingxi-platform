@@ -27,6 +27,7 @@ export default class ConfigureNodeTypeInfoOne extends Component {
 
   // 外部点击事件是否取消节点名称输入框
   handleCancelNodeName = (e) => {
+    console.log('进来了','sssssssssssssssssssssssssss_外部点击事件')
     e && e.stopPropagation()
     const { itemValue, itemKey, processEditDatas = [] } = this.props
     const { name } = itemValue

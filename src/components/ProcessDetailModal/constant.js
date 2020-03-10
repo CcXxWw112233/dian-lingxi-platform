@@ -11,6 +11,7 @@ export const processEditDatasConstant = [
     "transfer_mode": "2", //流转方式 1=自由选择 2= 下一步
     "enable_revocation": "1", //是否可撤回 1=可撤回 0=不可撤回
     "enable_opinion": "1", //是否填写意见  1=填写 0=不填写
+    "is_confirm": "0",
     "form_data": [
     ]
   },
@@ -129,6 +130,7 @@ export const processEditDatasItemOneConstant =   {
   "transfer_mode": "2", //流转方式 1=自由选择 2= 下一步
   "enable_revocation": "1", //是否可撤回 1=可撤回 0=不可撤回
   "enable_opinion": "1", //是否填写意见  1=填写 0=不填写
+  "is_confirm": '0', // 是否确认
   "form_data": [
   ]
 }
@@ -148,6 +150,7 @@ export const processEditDatasRecordsItemOneConstant =   {
       "transfer_mode": "2", //流转方式 1=自由选择 2= 下一步
       "enable_revocation": "1", //是否可撤回 1=可撤回 0=不可撤回
       "enable_opinion": "1", //是否填写意见  1=填写 0=不填写
+      "is_confirm": "0",
       // "form_data": [
       //   // 文本
       //   {
@@ -199,7 +202,8 @@ export const processEditDatasRecordsItemOneConstant =   {
       "assignees": "", //审批人(id) 多个逗号隔开
       "transfer_mode": "2", //流转方式 1=自由选择 2= 下一步
       "enable_revocation": "1", //是否可撤回 1=可撤回 0=不可撤回
-      "enable_opinion": "1"//是否填写意见  1=填写 0=不填写
+      "enable_opinion": "1",//是否填写意见  1=填写 0=不填写
+      "is_confirm": "0"
     },
     {
       "name": "抄送",
@@ -214,7 +218,8 @@ export const processEditDatasRecordsItemOneConstant =   {
       "recipients": "", //抄送人 多个逗号隔开（传的是邮箱）
       "transfer_mode": "2", //流转方式 1=自由选择 2= 下一步
       "enable_revocation": "1", //是否可撤回 1=可撤回 0=不可撤回
-      "enable_opinion": "1"//是否填写意见  1=填写 0=不填写
+      "enable_opinion": "1",//是否填写意见  1=填写 0=不填写
+      "is_confirm": "0"
     },
   ],
 }
