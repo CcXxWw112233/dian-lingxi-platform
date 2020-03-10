@@ -42,7 +42,7 @@ export default class ConfigureStepTypeOne extends Component {
     dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
-        processEditDatas: new_processEditDatas
+        processEditDatas: new_processEditDatas,
       }
     })
   }
@@ -89,6 +89,27 @@ export default class ConfigureStepTypeOne extends Component {
   handleConfirmButton = (e) => {
     e && e.stopPropagation()
     this.updateConfigureProcess({value: '1'}, 'is_confirm')
+  }
+
+  // 删除的点击事件
+  handleDeleteButton = (e) => {
+    e && e.stopPropagation()
+    const { processEditDatas = [], processCurrentEditStep, dispatch, itemKey } = this.props
+    let newProcessEditDatas = null
+    if (processEditDatas.length) {
+      // processEditDatas.splice(processCurrentEditStep, 1)
+      newProcessEditDatas = JSON.parse(JSON.stringify(processEditDatas))
+      newProcessEditDatas.splice(itemKey, 1)
+
+    }
+    dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        processEditDatas: newProcessEditDatas,
+        // node_type: processEditDatas[itemKey > 1 ? itemKey - 1 : 0]['node_type'],
+        processCurrentEditStep: processCurrentEditStep >= 1 ? processCurrentEditStep - 1 : 0,
+      }
+    })
   }
 
   //表单填写项
@@ -278,7 +299,7 @@ export default class ConfigureStepTypeOne extends Component {
         </div>
         {/* 删除 | 确认 */}
         <div className={indexStyles.step_btn}>
-          <Button disabled={itemKey == '0' ? true : false}>删除</Button>
+          <Button onClick={this.handleDeleteButton} disabled={itemKey == '0' ? true : false}>删除</Button>
           <Button onClick={this.handleConfirmButton} type="primary">确认</Button>
         </div>
       </div>
@@ -291,6 +312,6 @@ ConfigureStepTypeOne.defaultProps = {
 
 }
 
-function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [] } }) {
-  return { processEditDatas }
+function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [], processCurrentEditStep } }) {
+  return { processEditDatas, processCurrentEditStep }
 }

@@ -221,7 +221,7 @@ export default class ConfigureProcess extends Component {
               </div>
             ) : (
                 <Tooltip getPopupContainer={() => document.getElementById('addProcessStep')} placement="topLeft" title="完成上一步骤才能添加">
-                  <div><div className={`${indexStyles.add_normal}`} onClick={(e) => { this.handleAddEditStep(e) }}>
+                  <div><div className={`${indexStyles.add_normal}`}>
                     <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
                     <ConfigureGuide />
                   </div></div>
