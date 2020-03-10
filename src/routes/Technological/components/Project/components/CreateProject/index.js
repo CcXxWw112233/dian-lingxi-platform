@@ -1,5 +1,5 @@
 import React from 'react'
-import { Modal, Form, Button, Input, message, Select, Tooltip } from 'antd'
+import { Modal, Form, Button, Input, message, Select, Tooltip, Dropdown, Menu } from 'antd'
 import DragValidation from '../../../../../../components/DragValidation'
 import indexStyles from './index.less'
 import StepTwoListItem from './StepTwoListItem'
@@ -61,6 +61,8 @@ class CreateProject extends React.Component {
       copy_value: {}, //复制的值
       OrganizationId: localStorage.getItem('OrganizationId'),
       _organization_id: this.props._organization_id || '', //选择的组织id
+      copy_flow_template_visible: false,
+      invit_others_visible: false,
       // appsList: [], //app列表
     })
   }
@@ -78,38 +80,9 @@ class CreateProject extends React.Component {
     // this.getAppList(true)
     this.handleOrgSetInit()
     this.setAddProjectModalVisibleLocal(this.props)
-    this.getBoardTemplates(this.state.OrganizationId)
   }
 
-  // 项目模板---start
-  getBoardTemplates = async (_organization_id) => {
-    if (!_organization_id || _organization_id == '0') {
-      return
-    }
-    const res = await getBoardTemplateList({ _organization_id })
-    if (isApiResponseOk(res)) {
-      const { data } = res
-      this.setState({
-        board_template_list: data
-      })
-    } else {
-      message.error(res.message)
-    }
-  }
-  boardTemplateChange = (id) => {
-    this.setState({
-      selected_board_template_id: id
-    })
-  }
-  openGuideModal = () => {
-    const { dispatch } = this.props
-    dispatch({
-      type: 'simplemode/updateDatas',
-      payload: {
-        guideModalVisiable: true,
-      }
-    })
-  }
+
   // 项目模板---end
 
   // 缓存是否可见在state
@@ -161,18 +134,21 @@ class CreateProject extends React.Component {
     })
   }
   //表单输入时记录值 组织选择的下拉回调
-  orgOnChange = (id) => {
+  orgOnChange = ({ key }) => {
+    const arr = key.split('__')
+    const id = arr[0]
+    const name = arr[1]
     if (!checkIsHasPermission(ORG_TEAM_BOARD_CREATE, id)) {
       message.warn('您在该组织没有创建项目权限')
       return false
     }
     this.setState({
       _organization_id: id,
+      _organization_name: name,
       selected_board_template_id: undefined
     }, () => {
       this.getAppList()
       this.getProjectList()
-      this.getBoardTemplates(id)
     })
   }
 
@@ -191,41 +167,6 @@ class CreateProject extends React.Component {
     })
   }
 
-  // 描述的onChange事件
-  descriptionChange(e) {
-    this.setState({
-      description: e.target.value
-    })
-  }
-
-  // 输入邀请人手机号或邮箱onChange事件
-  usersChange(e) {
-    this.setState({
-      users: e.target.value
-    })
-  }
-  //下一步
-  nextStep = () => {
-    this.setState({
-      step: this.state.step < 3 ? ++this.state.step : 3
-    })
-  }
-  //上一步
-  lastStep = (step) => {
-    this.setState({
-      step
-    })
-  }
-
-  //监听是否完成验证
-  listenCompleteValidation = (e) => {
-    // console.log(e)
-    this.setState({
-      completeValidation: e,
-      stepThreeContinueDisabled: !e
-    })
-  }
-
   // 取消回调
   onCancel = () => {
     this.setState({
@@ -235,83 +176,7 @@ class CreateProject extends React.Component {
     this.initData()
   }
 
-  //step 2 表单单项button点击
-  stepTwoButtonClick(data) {
-    const { isAdd, id, itemKey } = data
-    const appsArray = this.state.appsArray
-    // console.log(appsArray, 'sssssssss_apppp')
-    if (isAdd) {
-      appsArray[itemKey] = id
-    } else {
-      appsArray[itemKey] = 'itemIsNull'
-    }
-    this.setState({
-      appsArray
-    }, function () {
-      let stepTwoContinueDisabled = true
-      // console.log(this.state.appsArray)
-      for (let val of this.state.appsArray) {
-        if (val && val !== 'itemIsNull') {
-          stepTwoContinueDisabled = false
-          break
-        }
-      }
-      this.setState({
-        stepTwoContinueDisabled
-      })
-    })
-  }
-  // 提交表单
-  handleSubmit = (e) => {
-    e.preventDefault();
-    const { step_2_type, select_project_id, copy_value = {}, _organization_id, OrganizationId } = this.state
-    this.props.form.validateFieldsAndScroll((err, values) => {
-      if (!err) {
-        values['board_name'] = this.state.board_name
-        values['description'] = this.state.description
-        let appsString = ''
-        for (let val of this.state.appsArray) {
-          if (val && val !== 'itemIsNull') {
-            appsString += val + ','
-          }
-        }
-        values['apps'] = appsString
-        if (step_2_type == 'copy') {
-          const copy_obj = {
-            board_id: select_project_id,
-            ...copy_value
-          }
-          values['copy'] = JSON.stringify(copy_obj)
-        }
 
-        //参与人
-        // if(this.state.users) {
-        //   let users = this.state.users.replace(/\n/gim, ',') //替代换行符
-        //   let usersArr = users.split(',') //转成数组
-        //   let usersNewArr = []
-        //   for(let val of usersArr) {
-        //     if(val) {
-        //       usersNewArr.push(val)
-        //     }
-        //   }
-        //   users = usersNewArr.join(',')
-        //   for(let val of usersNewArr ) {
-        //     if(!validateTel(val) && !validateEmail(val)) {
-        //       message.warn('请正确输入被邀请人的手机号或者邮箱。', MESSAGE_DURATION_TIME)
-        //       return false
-        //     }
-        //   }
-        //   values['users'] = users
-        // }
-        const { users } = this.state
-        values['users'] = this.handleUsersToUsersStr(users)
-        values['_organization_id'] = _organization_id || OrganizationId
-        this.props.addNewProject ? this.props.addNewProject(values) : false
-        this.props.setAddProjectModalVisible && this.props.setAddProjectModalVisible({ visible: false })
-        this.initData()
-      }
-    });
-  }
   handleUsersToUsersStr = (users = []) => {
     return users.reduce((acc, curr) => {
       const isCurrentUserFromPlatform = () => curr.type === 'platform' && curr.id
@@ -363,205 +228,13 @@ class CreateProject extends React.Component {
       }
     })
   }
-  setStepTwotype = () => {
-    const { step_2_type, _organization_id, OrganizationId } = this.state
-    if (OrganizationId == '0' && !_organization_id) return false
-    this.setState({
-      step_2_type: step_2_type == 'normal' ? 'copy' : 'normal',
-      project_apps: [],
-      select_project_id: undefined,
-      appsArray: [],
-      stepTwoContinueDisabled: true,
-    })
-    const obj = {
-      flows: {
-        is_copy_flow_template: true
-      }
-    }
-    this.setCopyValue(obj)
-  }
+
   setCopyValue = (data) => {
     const { copy_value = {} } = this.state
     const copyValueNew = Object.assign(copy_value, data)
     this.setState({
       copy_value: copyValueNew
     })
-  }
-
-  //编辑第一步
-  renderStepFirst = () => {
-    const {
-      stepOneContinueDisabled,
-      _organization_id,
-      OrganizationId
-    } = this.state
-    const { currentUserOrganizes = [], form: { getFieldDecorator } } = this.props;
-    const step_1 = (
-      <Form style={{ margin: '0 auto', width: 336 }}>
-        <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}>步骤一：给你的{currentNounPlanFilterName(PROJECTS)}起个名称</div>
-        <div className={indexStyles.operateAreaOut}>
-          <div className={indexStyles.operateArea}>
-            {/* 组织 */}
-            {
-              OrganizationId == '0' && (
-                // <FormItem style={{width: 336}}>
-                // {getFieldDecorator('', {
-                // })(
-                <Select
-                  size={'large'}
-                  value={_organization_id == '0' || !_organization_id ? undefined : _organization_id}
-                  style={{ height: 40, marginBottom: 24 }}
-                  placeholder={"请选择组织（单位）"}
-                  onChange={this.orgOnChange}
-                >
-                  {
-                    currentUserOrganizes.map(item => {
-                      const { name, id } = item
-                      return (
-                        <Option value={id}>{name}</Option>
-                      )
-                    })
-                  }
-                </Select>
-                //   )}
-                // {/* </FormItem> */}
-              )
-            }
-
-            {/* 项目名称 */}
-            <FormItem style={{ width: 336 }}>
-              {getFieldDecorator('board_name', {
-                // initialValue:
-              })(
-                <Input placeholder={`输入${currentNounPlanFilterName(PROJECTS)}名称`}
-                  onChange={this.boardNameChange.bind(this)}
-                  style={{ height: 40 }} />
-              )}
-            </FormItem>
-            {/* 项目描述 */}
-            <FormItem style={{ width: 336 }}>
-              {getFieldDecorator('description', {
-                // rules: [{ required: false, message: '请输入姓名', whitespace: true }],
-              })(
-                <TextArea style={{ height: 208, resize: 'none' }} placeholder={`${currentNounPlanFilterName(PROJECTS)}描述（选填)`}
-                  onChange={this.descriptionChange.bind(this)} />
-              )}
-            </FormItem>
-          </div>
-        </div>
-        {/* 确认 */}
-        <FormItem
-        >
-          <Button type="primary" disabled={stepOneContinueDisabled || (OrganizationId == '0' && (!_organization_id || !checkIsHasPermission(ORG_TEAM_BOARD_CREATE, _organization_id)))} onClick={this.nextStep} style={{ width: 208, height: 40 }}>下一步</Button>
-        </FormItem>
-      </Form>
-    )
-    return step_1
-  }
-  // 设置应用
-  renderStepSecond = () => {
-    const {
-      stepTwoContinueDisabled,
-      step_2_type,
-      appsList = [],
-    } = this.state
-    const step_2 = (
-      <div style={{ margin: '0 auto', width: 392, height: 'auto' }}>
-        <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}>步骤二：选择本{currentNounPlanFilterName(PROJECTS)}具备的功能</div>
-        <div className={indexStyles.operateAreaOut} style={{ height: '300px' }}>
-          <div className={indexStyles.operateArea} style={{ height: '300px' }}>
-            <div style={{ margin: '0 auto', width: 392 }}>
-              {appsList.map((value, key) => {
-                return (
-                  <StepTwoListItem step_2_type={step_2_type} itemValue={{ ...value, itemKey: key }} key={value.id} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)} />
-                )
-              })}
-            </div>
-            <div style={{ color: '#1890ff', textDecoration: 'underline', marginTop: 28, textAlign: 'left', cursor: 'pointer' }} onClick={this.setStepTwotype}>从现有项目复制</div>
-          </div>
-        </div>
-
-        <div style={{ marginTop: 20, marginBottom: 40, }}>
-          <Button onClick={this.lastStep.bind(this, 1)} style={{ width: 100, height: 40, marginRight: 20 }}>上一步</Button>
-          <Button type="primary" disabled={stepTwoContinueDisabled} onClick={this.nextStep} style={{ width: 100, height: 40 }}>下一步</Button>
-        </div>
-      </div>
-    )
-    return step_2
-  }
-  // 复制应用
-  renderStepSecondCopy = () => {
-    const {
-      stepTwoContinueDisabled,
-      step_2_type,
-      projects = [],
-      project_apps = [],
-      select_project_id,
-    } = this.state
-    const step_2_copy = (
-      <div style={{ margin: '0 auto', width: 392, height: 'auto' }}>
-        <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}>复制现有项目</div>
-        <div className={indexStyles.operateAreaOut} style={{ height: '300px' }}>
-          <div className={indexStyles.operateArea} style={{ height: '300px' }}>
-            <Select
-              value={select_project_id}
-              style={{ width: '100%' }}
-              size={'large'}
-              placeholder="选择项目"
-              optionFilterProp="children"
-              onChange={this.selectProjectChange}
-            >
-              {projects.map((value, key) => {
-                const { board_id, board_name } = value
-                return (
-                  <Option value={board_id} key={board_id}>{board_name}</Option>
-                )
-              })}
-            </Select>
-            {select_project_id ? (
-              <div style={{ margin: '0 auto', width: 392 }}>
-                {project_apps.map((value, key) => {
-                  return (
-                    <StepTwoListItem setCopyValue={this.setCopyValue} step_2_type={step_2_type} itemValue={{ ...value, itemKey: key }} key={`${select_project_id}_${value.id}`} stepTwoButtonClick={this.stepTwoButtonClick.bind(this)} />
-                  )
-                })}
-              </div>
-            ) : (
-                <div className={indexStyles.no_select_board}>选择项目后进行下一步操作</div>
-              )}
-
-            <div style={{ color: '#1890ff', textDecoration: 'underline', marginTop: 28, textAlign: 'left', cursor: 'pointer' }} onClick={this.setStepTwotype}>返回基础功能选择</div>
-          </div>
-        </div>
-
-        <div style={{ marginTop: 20, marginBottom: 40, }}>
-          <Button onClick={this.lastStep.bind(this, 1)} style={{ width: 100, height: 40, marginRight: 20 }}>上一步</Button>
-          <Button type="primary" disabled={stepTwoContinueDisabled} onClick={this.nextStep} style={{ width: 100, height: 40 }}>下一步</Button>
-        </div>
-      </div>
-    )
-    return step_2_copy
-  }
-  //邀请他人信息
-  renderInviteOthers = () => {
-    const {
-      _organization_id,
-    } = this.state
-    const { currentUserOrganizes = [], form: { getFieldDecorator } } = this.props;
-
-    const step_3 = (
-      <Form onSubmit={this.handleSubmit} style={{ margin: '0 auto', width: 336 }}>
-        <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}>步骤三：邀请他人一起参加{currentNounPlanFilterName(PROJECTS)}</div>
-        {/* 他人信息 */}
-        <InviteOthers _organization_id={_organization_id || localStorage.getItem('OrganizationId')} isShowTitle={false} isShowSubmitBtn={false} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} />
-        {/* 确认 */}
-        <div style={{ marginTop: 20, marginBottom: 20, }}>
-          <Button onClick={this.lastStep.bind(this, 2)} style={{ width: 100, height: 40, marginRight: 20 }}>上一步</Button>
-          <Button type="primary" htmlType={'submit'} onClick={this.nextStep} style={{ width: 100, height: 40 }}>完成创建</Button>
-        </div>
-      </Form>
-    )
-    return step_3
   }
 
   filterCurrentProjectListWithFlows = () => {
@@ -619,7 +292,7 @@ class CreateProject extends React.Component {
     } = this.state
     const filterProject = this.filterCurrentProjectListWithFlows() || []
     const step_2_copy = (
-      <div style={{ margin: '12px auto', width: 346, height: 'auto' }}>
+      <div style={{ margin: '12px auto', height: 'auto' }}>
         <div className={indexStyles.operateAreaOut}>
           <div className={indexStyles.operateArea}>
             <Select
@@ -645,116 +318,110 @@ class CreateProject extends React.Component {
     return step_2_copy
   }
 
-  // 几个步骤的处理
-  renderOperateStep = () => {
-    const { step_2_type, step } = this.state
-    const contain = (
-      <div style={{ height: step === 2 ? 440 : 'auto' }}>
-        <div style={{ display: step === 1 ? 'block' : 'none' }}>
-          {this.renderStepFirst()}
-        </div>
-        <div style={{ display: step === 2 ? 'block' : 'none' }}>
-          {step_2_type == 'normal' ? this.renderStepSecond() : this.renderStepSecondCopy()}
-        </div>
-        <div style={{ display: step === 3 ? 'block' : 'none' }}>
-          {this.renderInviteOthers()}
-        </div>
-        <div className={indexStyles.circleOut}>
-          <div className={step === 1 ? indexStyles.chooseCircle : ''}></div>
-          <div className={step === 2 ? indexStyles.chooseCircle : ''}></div>
-          <div className={step === 3 ? indexStyles.chooseCircle : ''}></div>
-        </div>
-      </div>
+  // 渲染组织menu
+  renderOrgMenu = () => {
+    const { currentUserOrganizes = [] } = this.props
+    return (
+      <Menu onClick={this.orgOnChange}>
+        {
+          currentUserOrganizes.map(value => {
+            const { name, id } = value
+            return (
+              <Menu.Item key={`${id}__${name}`} style={{ width: 248 }}>
+                <span style={{ width: 248 }} className={`${globalStyles.global_ellipsis}`}>
+                  {name}
+                </span>
+              </Menu.Item>
+            )
+          })
+        }
+      </Menu>
     )
-    return contain
+  }
+
+  // 复制流程模板显示
+  setCopyFlowTemplateVisible = () => {
+    this.setState({
+      copy_flow_template_visible: !this.state.copy_flow_template_visible
+    })
+  }
+  // 邀请他人显示
+  setInviteOthersVisible = () => {
+    this.setState({
+      invit_others_visible: !this.state.invit_others_visible
+    })
   }
 
   // 以上几步合成一步
   renderCreateStep = () => {
-    const { _organization_id, OrganizationId, stepOneContinueDisabled, step_2_type, board_name, board_template_list, selected_board_template_id } = this.state
+    const { _organization_id,
+      OrganizationId, stepOneContinueDisabled, step_2_type, invit_others_visible, copy_flow_template_visible, _organization_name } = this.state
     const { currentUserOrganizes = [], form: { getFieldDecorator } } = this.props;
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     const { is_simple_model } = user_set;
     const step = (
-      <div style={{ margin: '0 auto', width: 346 }}>
-        <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}>新建{currentNounPlanFilterName(PROJECTS)}</div>
+      <div>
+        <div className={indexStyles.head}>
+          <div className={indexStyles.head_left}>
+            新建{currentNounPlanFilterName(PROJECTS)}{OrganizationId == '0' && '到'}
+          </div>
+          {
+            OrganizationId == '0' && (
+              <Dropdown overlay={this.renderOrgMenu()}>
+                <div className={indexStyles.head_org}>
+                  <span style={{ maxWidth: 246 }} className={`${globalStyles.global_ellipsis}`}>{(_organization_id && _organization_id != '0') ? _organization_name : '请选择组织'}</span>
+                  <span className={globalStyles.authTheme}>&#xe7ee;</span>
+                </div>
+              </Dropdown>
+            )
+          }
+        </div>
+
         <div className={indexStyles.operateAreaOut}>
           <div className={indexStyles.operateArea}>
-            {/* 组织 */}
-            {
-              OrganizationId == '0' && (
-                <Select
-                  size={'large'}
-                  value={_organization_id == '0' || !_organization_id ? undefined : _organization_id}
-                  style={{ height: 40, marginBottom: 20, width: 346 }}
-                  placeholder={"请选择组织（单位）"}
-                  onChange={this.orgOnChange}
-                >
-                  {
-                    currentUserOrganizes.map(item => {
-                      const { name, id } = item
-                      return (
-                        <Option value={id}>{name}</Option>
-                      )
-                    })
-                  }
-                </Select>
-              )
-            }
-
             {/* 项目名称 */}
             <Input placeholder={`输入${currentNounPlanFilterName(PROJECTS)}名称`}
               onChange={this.boardNameChange.bind(this)}
-              style={{ height: 40, marginBottom: 20 }} />
-
-            {/* 项目模板 */}
-            <div style={{ position: 'relative' }}>
-              <Select
-                size={'large'}
-                value={selected_board_template_id}
-                style={{ height: 40, width: 346 }}
-                placeholder={"请选择项目模板"}
-                onChange={this.boardTemplateChange}
-              >
+              style={{ height: 40, marginBottom: 16 }} />
+            <div className={indexStyles.setelse}>
+              <div className={indexStyles.setelse_left}>
                 {
-                  board_template_list.map(item => {
-                    const { name, id } = item
-                    return (
-                      <Option value={id}>{name}</Option>
-                    )
-                  })
+                  is_simple_model == '0' && (
+                    <div className={indexStyles.setelse_item} onClick={this.setCopyFlowTemplateVisible}>
+                      <div className={`${globalStyles.authTheme} ${indexStyles.addUSer}`}>&#xe68b;</div>
+                      <div className={indexStyles.setelse_item_name}>复制流程模板</div>
+                      <div className={`${globalStyles.authTheme} ${indexStyles.spin} ${!copy_flow_template_visible && indexStyles.spin_down}`}>&#xe66b;</div>
+                    </div>
+                  )
                 }
-              </Select>
-              <Tooltip title="操作指引">
-                <div style={{ height: 20, width: 20, position: 'absolute', right: -28, lineHeight: '20px', top: 10, cursor: 'pointer' }} onClick={this.openGuideModal}>
-                  <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(0, 0, 0, .45)', fontSize: '14px' }} >&#xe845;</i>
+                <div className={indexStyles.setelse_item} onClick={this.setInviteOthersVisible}>
+                  <div className={`${globalStyles.authTheme} ${indexStyles.addUSer}`}>&#xe685;</div>
+                  <div className={indexStyles.setelse_item_name}>邀请他人加入项目</div>
+                  <div className={`${globalStyles.authTheme} ${indexStyles.spin} ${!invit_others_visible && indexStyles.spin_down}`}>&#xe66b;</div>
                 </div>
-              </Tooltip>
+              </div>
+              <div className={indexStyles.setelse_right}>
+                <Button type="primary" disabled={stepOneContinueDisabled || (OrganizationId == '0' && (!_organization_id || !checkIsHasPermission(ORG_TEAM_BOARD_CREATE, _organization_id)))} onClick={this.createBoard} style={{ width: 96, height: 40, }}>创建项目</Button>
+              </div>
             </div>
             {/* 复制流程模板 */}
-            {
-              is_simple_model == '0' && (
-                step_2_type == 'copy' ? (
-                  this.renderCopyFlowTemplete()
-                ) : (
-                    <div onClick={this.setStepTwotype} style={{ textAlign: 'left', color: OrganizationId == '0' && !_organization_id ? '#BFBFBF' : '#1890FF', cursor: 'pointer' }}>从现有项目中复制流程模版？</div>
-                  )
-              )
-            }
-
+            <div style={{ display: copy_flow_template_visible ? 'block' : 'none' }}>
+              {this.renderCopyFlowTemplete()}
+            </div>
             {/* 邀请他人 */}
-            {/* <div style={{ marginTop: -10, width: 344,}} > */}
-            <InviteOthers selectDisabled={OrganizationId == '0' && !!!_organization_id} _organization_id={_organization_id || localStorage.getItem('OrganizationId')} isShowTitle={false} isShowSubmitBtn={false} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} />
+            <div style={{ display: invit_others_visible ? 'block' : 'none' }}>
+              <InviteOthers selectDisabled={OrganizationId == '0' && !!!_organization_id} _organization_id={_organization_id || localStorage.getItem('OrganizationId')} isShowTitle={false} isShowSubmitBtn={false} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} />
+            </div>
             {/* </div> */}
           </div>
         </div>
-        <Button type="primary" disabled={stepOneContinueDisabled || (OrganizationId == '0' && (!_organization_id || !checkIsHasPermission(ORG_TEAM_BOARD_CREATE, _organization_id)))} onClick={this.createBoard} style={{ width: 208, height: 40, marginBottom: 40 }}>确认</Button>
       </div>
     )
     return step
   }
   createBoard = () => {
     const { _organization_id, OrganizationId, board_name, users, appsList = [], copy_value, select_project_id, selected_board_template_id } = this.state
+    debugger
     if (copy_value && Object.keys(copy_value).length && select_project_id) {
       let apps = appsList.map(item => item.id).join(',')
       const copy_obj = {
@@ -802,13 +469,12 @@ class CreateProject extends React.Component {
         <CustormModal
           visible={addProjectModalVisible} //addProjectModalVisible
           maskClosable={false}
-          width={472}
+          width={640}
           footer={null}
           destroyOnClose
           style={{ textAlign: 'center' }}
           onCancel={this.onCancel}
           overInner={
-            // this.renderOperateStep()
             this.renderCreateStep()
           }
         >

@@ -454,7 +454,7 @@ class MyWorkbenchBoxs extends Component {
 
         <CreateProject
           setAddProjectModalVisible={this.setAddProjectModalVisible}
-          addProjectModalVisible={addProjectModalVisible}
+          addProjectModalVisible={addProjectModalVisible} //addProjectModalVisible
           addNewProject={this.handleSubmitNewProject}
         />
       </div>
