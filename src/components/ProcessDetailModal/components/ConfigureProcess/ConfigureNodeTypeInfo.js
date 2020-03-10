@@ -14,7 +14,7 @@ export default class ConfigureNodeTypeInfoOne extends Component {
 
   // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
   updateCorrespondingPrcodessStepWithNodeContent = (data, value) => {
-    const { processEditDatas = [], itemKey, dispatch } = this.props
+    const { itemValue, processEditDatas = [], itemKey, dispatch } = this.props
     let newProcessEditDatas = [...processEditDatas]
     newProcessEditDatas[itemKey][data] = value
     dispatch({
@@ -69,7 +69,7 @@ export default class ConfigureNodeTypeInfoOne extends Component {
     let container = <div></div>
     switch (node_type) {
       case '1': // 表示资料收集
-        container = <ConfigureStepTypeOne {...this.props} itemValue={itemValue} itemKey={itemKey}/>
+        container = <ConfigureStepTypeOne itemValue={itemValue} itemKey={itemKey}/>
         break;
 
       default:

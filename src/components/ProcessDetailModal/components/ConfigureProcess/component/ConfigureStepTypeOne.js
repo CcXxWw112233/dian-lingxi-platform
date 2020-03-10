@@ -6,63 +6,65 @@ import ConfigureStepOne_one from './ConfigureStepOne_one'
 import ConfigureStepOne_two from './ConfigureStepOne_two'
 import ConfigureStepOne_three from './ConfigureStepOne_three'
 import ConfigureStepOne_five from './ConfigureStepOne_five'
+import { connect } from 'dva'
 
+@connect(mapStateToProps)
 export default class ConfigureStepTypeOne extends Component {
+
+  constructor(props) {
+    super(props)
+  }
 
   state = {
 
   }
 
-  updateConfigureProcess(data, key) { //更新单个数组单个属性
-    const { value } = data
-    const { processEditDatasRecords = [], processEditDatas = [], processCurrentEditStep, dispatch } = this.props
-
-    const new_processEditDatas = [...processEditDatas]
-    const new_processEditDatasRecords_ = [...processEditDatasRecords]
-
-    //更新processEditDatasRecords操作解构赋值避免操作污染
-    const alltypedata = processEditDatasRecords[processCurrentEditStep]['alltypedata']
-    let newAlltypedata = [...alltypedata]
-    let obj = {}
-    for (let i = 0; i < newAlltypedata.length; i++) {
-      if (newAlltypedata[i]['node_type'] === '1') {
-        obj = { ...newAlltypedata[i] }
-        obj[key] = value
-        newAlltypedata[i] = obj
+  deepCopy = (source) => {
+    const isObject = (obj) => {
+      return typeof obj === 'object' && obj !== null
+    }
+    if (!isObject(source)) return source; //如果不是对象的话直接返回
+    let target = Array.isArray(source) ? [] : {} //数组兼容
+    for (var k in source) {
+      if (source.hasOwnProperty(k)) {
+        if (typeof source[k] === 'object') {
+          target[k] = this.deepCopy(source[k])
+        } else {
+          target[k] = source[k]
+        }
       }
     }
+    return target
+  }
 
-    new_processEditDatas[processCurrentEditStep][key] = value
-    new_processEditDatasRecords_[processCurrentEditStep] = {
-      node_type: '1',
-      alltypedata: newAlltypedata
-    }
-    ///更新processEditDatasRecords操作解构赋值避免操作污染
-
+  updateConfigureProcess(data, key) { //更新单个数组单个属性
+    const { value } = data
+    const { processEditDatas = [], itemKey, itemValue, dispatch } = this.props
+    const new_processEditDatas = [...processEditDatas]
+    new_processEditDatas[itemKey][key] = value
     dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
-        processEditDatas: new_processEditDatas,
-        processEditDatasRecords: new_processEditDatasRecords_
+        processEditDatas: new_processEditDatas
       }
     })
   }
 
   //表单填写项
   menuAddFormClick({ key }) {
-    const { processEditDatas = [], processCurrentEditStep = 0, itemValue, itemKey} = this.props
+    const { processEditDatas = [], processCurrentEditStep = 0, itemValue, itemKey } = this.props
     const { form_data = [] } = processEditDatas[itemKey]
     //推进人一项
     let obj = {}
     switch (key) {
       case '1':
-        obj = { //输入框
+        obj = { // 表示文本
           "field_type": "1",
-          "property_name": "",
-          "default_value": "",
-          "verification_rule": "",
-          "val_length": "20",
-          "is_required": "0"
+          "property_name": "文本输入", // 文本标题
+          "default_value": "请填写内容", // 提示内容
+          "verification_rule": "", // 校验规则
+          "val_length": "20", // 限制字数
+          "is_required": "0" // 是否为必填项
         }
         break
       case '2':
@@ -103,26 +105,27 @@ export default class ConfigureStepTypeOne extends Component {
   // 渲染不同的表项
   filterForm = (value, key) => {
     const { field_type } = value
+    const { itemKey, itemValue } = this.props
     let container = (<div></div>)
     switch (field_type) {
       case '1':
         container = (
-          <ConfigureStepOne_one itemKey={key} itemValue={value} />
+          <ConfigureStepOne_one updateConfigureProcess={this.updateConfigureProcess.bind(this)} itemKey={key} itemValue={value} parentKey={itemKey} parentValue={itemValue} />
         )
         break
       case '2':
         container = (
-          <ConfigureStepOne_two itemKey={key} itemValue={value} />
+          <ConfigureStepOne_two updateConfigureProcess={this.updateConfigureProcess.bind(this)} itemKey={key} itemValue={value} parentKey={itemKey} parentValue={itemValue} />
         )
         break
       case '3':
         container = (
-          <ConfigureStepOne_three itemKey={key} itemValue={value} />
+          <ConfigureStepOne_three updateConfigureProcess={this.updateConfigureProcess.bind(this)} itemKey={key} itemValue={value} parentKey={itemKey} parentValue={itemValue} />
         )
         break
       case '5':
         container = (
-          <ConfigureStepOne_five itemKey={key} itemValue={value} />
+          <ConfigureStepOne_five updateConfigureProcess={this.updateConfigureProcess.bind(this)} itemKey={key} itemValue={value} parentKey={itemKey} parentValue={itemValue} />
         )
         break
       default:
@@ -156,14 +159,14 @@ export default class ConfigureStepTypeOne extends Component {
   }
 
   render() {
-    const { itemValue } = this.props
-    const { form_data = [] } = itemValue
+    const { itemValue, processEditDatas = [], itemKey } = this.props
+    const { form_data = [] } = processEditDatas[itemKey]
     return (
       <div style={{ position: 'relative' }}>
-        <div style={{paddingBottom: '16px', borderBottom: '1px solid #e8e8e8'}}>
+        <div style={{ paddingBottom: '16px', borderBottom: '1px solid #e8e8e8' }}>
           <div>
             {form_data.map((value, key) => {
-              return (<div key={key}>{this.filterForm(value, key)}</div>)
+              return (<div key={`${key}-${value}`}>{this.filterForm(value, key)}</div>)
             })}
           </div>
           {/* <ConfigureStepOne_one />
@@ -191,10 +194,10 @@ export default class ConfigureStepTypeOne extends Component {
         </div>
         {/* 完成期限 */}
         <div className={`${indexStyles.complet_deadline}`}>
-          <span style={{fontWeight: 900, marginRight: '2px'}} className={globalStyles.authTheme}>&#xe686;</span>
+          <span style={{ fontWeight: 900, marginRight: '2px' }} className={globalStyles.authTheme}>&#xe686;</span>
           <span>完成期限 &nbsp;: </span>
           <InputNumber className={indexStyles.select_number} />
-          <Select className={indexStyles.select_day}/>
+          <Select className={indexStyles.select_day} />
           <span className={`${globalStyles.authTheme} ${indexStyles.del_moreIcon}`}>&#xe7fe;</span>
         </div>
         {/* 备注 */}
@@ -222,4 +225,8 @@ export default class ConfigureStepTypeOne extends Component {
 // 步骤类型为资料收集
 ConfigureStepTypeOne.defaultProps = {
 
+}
+
+function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [] } }) {
+  return { processEditDatas }
 }

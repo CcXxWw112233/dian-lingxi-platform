@@ -181,8 +181,8 @@ export default class ConfigureProcess extends Component {
         payload: {
           // processEditDatasRecords,
           processEditDatas,
-          processCurrentEditStep: (Number(processEditDatasRecords.length) - 1).toString(),
-          // node_type: '1'
+          processCurrentEditStep: (Number(processEditDatas.length) - 1).toString(),
+          node_type: '1'
         }
       })
 
