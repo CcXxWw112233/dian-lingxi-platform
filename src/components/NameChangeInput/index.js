@@ -106,6 +106,7 @@ export default class NameChangeInput extends React.Component{
                    onChange={this.inputLocalNameChange.bind(this)}
                    onPressEnter={this.inputonPressEnter.bind(this)}
                    onBlur={this.inputonBlur.bind(this)}
+                   onClick={onClick}
                    style={{...style}}
             />
           ) :(

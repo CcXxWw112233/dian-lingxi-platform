@@ -3,7 +3,7 @@ export const processEditDatasConstant = [
     "name": "",
     "node_type": "1", //节点类型：3代表填写节点
     "description": "",
-    "deadline_type": "1", //完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
+    "deadline_type": "d", //完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
     "deadline_value": "1", //完成期限值
     "is_workday": "0",
     "assignee_type": "1", //审批人类型 1=任何人 2=启动流程时指定 3=固定人选
@@ -120,8 +120,8 @@ export const processEditDatasRecordsConstant = [
 export const processEditDatasItemOneConstant =   {
   "name": "",
   "node_type": "1", //节点类型：3代表填写节点
-  "description": "",
-  "deadline_type": "1", //完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
+  "description": "", // 
+  "deadline_type": "d", //完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
   "deadline_value": "1", //完成期限值
   "is_workday": "0",
   "assignee_type": "1", //审批人类型 1=任何人 2=启动流程时指定 3=固定人选

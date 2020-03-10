@@ -6,6 +6,7 @@ import ConfigureStepOne_one from './ConfigureStepOne_one'
 import ConfigureStepOne_two from './ConfigureStepOne_two'
 import ConfigureStepOne_three from './ConfigureStepOne_three'
 import ConfigureStepOne_five from './ConfigureStepOne_five'
+import NameChangeInput from '@/components/NameChangeInput'
 import { connect } from 'dva'
 
 @connect(mapStateToProps)
@@ -13,10 +14,6 @@ export default class ConfigureStepTypeOne extends Component {
 
   constructor(props) {
     super(props)
-  }
-
-  state = {
-
   }
 
   deepCopy = (source) => {
@@ -37,7 +34,7 @@ export default class ConfigureStepTypeOne extends Component {
     return target
   }
 
-  updateConfigureProcess(data, key) { //更新单个数组单个属性
+  updateConfigureProcess = (data, key) => { //更新单个数组单个属性
     const { value } = data
     const { processEditDatas = [], itemKey, itemValue, dispatch } = this.props
     const new_processEditDatas = [...processEditDatas]
@@ -50,8 +47,46 @@ export default class ConfigureStepTypeOne extends Component {
     })
   }
 
+  // 任何人 | 指定人
+  assigneeTypeChange = (e) => {
+    this.updateConfigureProcess({value: e.target.value}, 'assignee_type')
+  }
+  // 完成期限
+  deadlineValueChange = (value) => {
+    this.updateConfigureProcess({value: value.toString()}, 'deadline_value')
+  }
+  deadlineTypeValueChange = (value) => {
+    this.updateConfigureProcess({value: value}, 'deadline_type')
+  }
+  
+  // 添加节点备注事件
+  handleRemarksWrapper = (e) => {
+    e && e.stopPropagation()
+    this.updateConfigureProcess({value: false}, 'is_click_node_description')
+  }
+
+  handleRemarksContent = (e) => {
+    e && e.stopPropagation()
+    this.updateConfigureProcess({value: true}, 'is_click_node_description')
+  }
+
+  titleTextAreaChangeBlur = (e) => {
+    let val = e.target.value.trimLR()
+    if (val == "" || val == " " || !val) {
+      this.updateConfigureProcess({value: ''}, 'description')
+      this.updateConfigureProcess({value: false}, 'is_click_node_description')
+      return
+    }
+    this.updateConfigureProcess({value: val}, 'description')
+    this.updateConfigureProcess({value: false}, 'is_click_node_description')
+  }
+
+  titleTextAreaChangeClick = (e) => {
+    e && e.stopPropagation()
+  }
+
   //表单填写项
-  menuAddFormClick({ key }) {
+  menuAddFormClick = ({ key }) => {
     const { processEditDatas = [], processCurrentEditStep = 0, itemValue, itemKey } = this.props
     const { form_data = [] } = processEditDatas[itemKey]
     //推进人一项
@@ -70,26 +105,32 @@ export default class ConfigureStepTypeOne extends Component {
       case '2':
         obj = {
           "field_type": "2",
-          "property_name": "",
-          "default_value": "",
-          "verification_rule": "redio",
+          "property_name": "下拉选择",
+          "default_value": "请选择内容",
+          "verification_rule": "0",// 是否支持多选
           "is_required": "0",
-          "options_data": []
+          "options_data": [
+            {
+              "key": '0',
+              "value": '选项1',
+            }
+          ]
         }
         break
       case '3': //下拉
         obj = { //日期
           "field_type": "3",
-          "property_name": "",
-          "default_value": "",
+          "property_name": "日期选择",
+          "default_value": "请选择日期",
           "verification_rule": "SINGLE_DATE_TIME",
-          "is_required": "1"
+          "date_scope": 'SINGLE_DATE',
+          "is_required": "0"
         }
         break
       case '5':
         obj = {
           "field_type": "5",
-          "property_name": "附件",
+          "property_name": "附件上传",
           "limit_file_num": "10",
           "limit_file_type": "1,2,3,4",
           "limit_file_size": "20",
@@ -110,22 +151,22 @@ export default class ConfigureStepTypeOne extends Component {
     switch (field_type) {
       case '1':
         container = (
-          <ConfigureStepOne_one updateConfigureProcess={this.updateConfigureProcess.bind(this)} itemKey={key} itemValue={value} parentKey={itemKey} parentValue={itemValue} />
+          <ConfigureStepOne_one updateConfigureProcess={this.updateConfigureProcess} itemKey={key} itemValue={value} parentKey={itemKey} parentValue={itemValue} />
         )
         break
       case '2':
         container = (
-          <ConfigureStepOne_two updateConfigureProcess={this.updateConfigureProcess.bind(this)} itemKey={key} itemValue={value} parentKey={itemKey} parentValue={itemValue} />
+          <ConfigureStepOne_two updateConfigureProcess={this.updateConfigureProcess} itemKey={key} itemValue={value} parentKey={itemKey} parentValue={itemValue} />
         )
         break
       case '3':
         container = (
-          <ConfigureStepOne_three updateConfigureProcess={this.updateConfigureProcess.bind(this)} itemKey={key} itemValue={value} parentKey={itemKey} parentValue={itemValue} />
+          <ConfigureStepOne_three updateConfigureProcess={this.updateConfigureProcess} itemKey={key} itemValue={value} parentKey={itemKey} parentValue={itemValue} />
         )
         break
       case '5':
         container = (
-          <ConfigureStepOne_five updateConfigureProcess={this.updateConfigureProcess.bind(this)} itemKey={key} itemValue={value} parentKey={itemKey} parentValue={itemValue} />
+          <ConfigureStepOne_five updateConfigureProcess={this.updateConfigureProcess} itemKey={key} itemValue={value} parentKey={itemKey} parentValue={itemValue} />
         )
         break
       default:
@@ -135,13 +176,9 @@ export default class ConfigureStepTypeOne extends Component {
   }
 
   renderFieldType = () => {
-    // const { processEditDatasRecords, processEditDatas, processCurrentEditStep, node_type } = this.props
-    // const { form_data = [] } = processEditDatas[processCurrentEditStep]
-    // const alltypedata = processEditDatasRecords[processCurrentEditStep]['alltypedata']
-    // const form_data = (alltypedata.filter(item => item.node_type == node_type))[0].form_data || []
     return (
       <div>
-        <Menu onClick={this.menuAddFormClick.bind(this)} getPopupContainer={triggerNode => triggerNode.parentNode}>
+        <Menu onClick={this.menuAddFormClick} getPopupContainer={triggerNode => triggerNode.parentNode}>
           <Menu.Item key="1">文本</Menu.Item>
           <Menu.Item key="2">选择</Menu.Item>
           <Menu.Item key="3">日期</Menu.Item>
@@ -161,6 +198,7 @@ export default class ConfigureStepTypeOne extends Component {
   render() {
     const { itemValue, processEditDatas = [], itemKey } = this.props
     const { form_data = [] } = processEditDatas[itemKey]
+    const { assignee_type, deadline_type, deadline_value, description, is_click_node_description } = itemValue
     return (
       <div style={{ position: 'relative' }}>
         <div style={{ paddingBottom: '16px', borderBottom: '1px solid #e8e8e8' }}>
@@ -180,9 +218,9 @@ export default class ConfigureStepTypeOne extends Component {
         {/* 填写人 */}
         <div className={indexStyles.fill_person}>
           <span className={`${globalStyles.authTheme} ${indexStyles.label_person}`}>&#xe7b2; 填写人&nbsp;:</span>
-          <Radio.Group>
-            <Radio>任何人</Radio>
-            <Radio>指定人员</Radio>
+          <Radio.Group value={assignee_type} onChange={this.assigneeTypeChange}>
+            <Radio value="1">任何人</Radio>
+            <Radio value="2">指定人员</Radio>
           </Radio.Group>
         </div>
         {/* 更多选项 */}
@@ -196,15 +234,35 @@ export default class ConfigureStepTypeOne extends Component {
         <div className={`${indexStyles.complet_deadline}`}>
           <span style={{ fontWeight: 900, marginRight: '2px' }} className={globalStyles.authTheme}>&#xe686;</span>
           <span>完成期限 &nbsp;: </span>
-          <InputNumber className={indexStyles.select_number} />
-          <Select className={indexStyles.select_day} />
+          <InputNumber min={1} value={deadline_value} onChange={this.deadlineValueChange} className={indexStyles.select_number} />
+          <Select className={indexStyles.select_day} value={deadline_type} onChange={this.deadlineTypeValueChange}>
+            <Option value="d">天</Option>
+            <Option value="h">时</Option>
+            <Option value="m">月</Option>
+          </Select>
           <span className={`${globalStyles.authTheme} ${indexStyles.del_moreIcon}`}>&#xe7fe;</span>
         </div>
         {/* 备注 */}
-        <div className={`${indexStyles.select_remarks}`}>
+        <div onClick={this.handleRemarksWrapper} className={`${indexStyles.select_remarks}`}>
           <span className={globalStyles.authTheme}>&#xe636; 备注 &nbsp;:</span>
           <span className={`${globalStyles.authTheme} ${indexStyles.del_moreIcon}`}>&#xe7fe;</span>
-          <div className={indexStyles.remarks_content}>添加备注</div>
+          {
+            !is_click_node_description ? (
+              <div onClick={(e) => {this.handleRemarksContent(e)}} className={indexStyles.remarks_content}>{description != '' ? description : '添加备注'}</div>
+            ) : (
+              <NameChangeInput
+                autosize
+                onBlur={this.titleTextAreaChangeBlur}
+                onPressEnter={this.titleTextAreaChangeBlur}
+                onClick={this.titleTextAreaChangeClick}
+                autoFocus={true}
+                goldName={''}
+                nodeName={'input'}
+                style={{ display: 'block', fontSize: 20, color: '#262626', resize: 'none', height: '38px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none', marginTop: '4px' }}
+              />
+            )
+          }
+
         </div>
         {/* 关联内容 */}
         <div className={indexStyles.select_related}>

@@ -13,7 +13,6 @@ export default class ConfigureStepOne_one extends Component {
 
   state = {
     popoverVisible: false,
-    disabled: true, // 禁用 true 表示禁用
   }
 
   handelPopoverVisible = () => {
@@ -29,15 +28,6 @@ export default class ConfigureStepOne_one extends Component {
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: form_data }, 'form_data')
   }
   propertyNameChange(e) {
-    if (e.target.value.trimLR() == '') {
-      this.setState({
-        disabled: true
-      })
-    } else {
-      this.setState({
-        disabled: false
-      })
-    }
     this.updateEdit({ value: e.target.value }, 'property_name')
   }
   defaultValueChange(e) {
@@ -51,6 +41,16 @@ export default class ConfigureStepOne_one extends Component {
   }
   verificationRuleChange(value) {
     this.updateEdit({ value: value }, 'verification_rule')
+  }
+
+  // 删除对应字段的表项
+  handleDelFormDataItem = () => {
+    const { processEditDatas = [], parentKey = 0, itemKey } = this.props
+    const { form_data = [] } = processEditDatas[parentKey]
+    let new_processEditDatas = [...processEditDatas]
+    let new_form_data = [...form_data]
+    new_form_data.splice(itemKey, 1)
+    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: new_form_data }, 'form_data')
   }
 
   renderContent = () => {
@@ -96,15 +96,14 @@ export default class ConfigureStepOne_one extends Component {
           </div>
         </div>
         <div className={indexStyles.pop_btn}>
-          <Button disabled={property_name && property_name != '' ? false : true} style={{width: '100%'}} type="primary">确定</Button>
+          <Button disabled={property_name && property_name != '' && property_name.trimLR() != '' ? false : true} style={{width: '100%'}} type="primary">确定</Button>
         </div>
       </div>
     )
   }
 
   render() {
-    const { itemKey, itemValue, processEditDatas = [], parentKey } = this.props
-    const { form_data = [] } = processEditDatas[parentKey]
+    const { itemKey, itemValue } = this.props
     const { property_name, default_value, verification_rule, val_length, is_required } = itemValue
     return (
       <div>
@@ -113,7 +112,7 @@ export default class ConfigureStepOne_one extends Component {
           <div className={indexStyles.text_fillOut}>
             <span>{default_value}</span>
           </div>
-          <span className={`${indexStyles.delet_iconCircle}`}>
+          <span onClick={this.handleDelFormDataItem} className={`${indexStyles.delet_iconCircle}`}>
             <span className={`${globalStyles.authTheme} ${indexStyles.deletet_icon}`}>&#xe68d;</span>
           </span>
           <div className={indexStyles.popoverContainer} style={{ position: 'absolute', right: 0, top: 0 }}>
@@ -124,7 +123,7 @@ export default class ConfigureStepOne_one extends Component {
               visible={this.state.popoverVisible}
               content={this.renderContent()}
               getPopupContainer={triggerNode => triggerNode.parentNode}
-              placement={itemKey == '0' ? 'bottomRight' : 'topRight'}
+              placement={itemKey == '0' || itemKey == '1' ? 'bottomRight' : 'topRight'}
               zIndex={1010}
               className={indexStyles.popoverWrapper}
               autoAdjustOverflow={false}

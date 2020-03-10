@@ -186,7 +186,7 @@
 .select_remarks {
   min-height: 88px;
   // line-height: 88px;
-  padding: 16px 0;
+  padding-top: 16px;
   box-sizing: border-box;
   border-bottom: 1px solid #e8e8e8;
   .remarks_content {
@@ -199,6 +199,12 @@
     font-weight:400;
     color:rgba(0,0,0,0.25);
     line-height: 38px;
+    margin-top: 4px;
+    cursor: pointer;
+    padding-left: 2px;
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
   }
 }
 /* 备注 E */
@@ -206,7 +212,7 @@
 /* 关联内容 S */
 .select_related {
   min-height: 95px;
-  padding: 16px 0;
+  padding-top: 16px;
   box-sizing: border-box;
   border-bottom: 1px solid #e8e8e8;
   .related_content {
@@ -216,6 +222,13 @@
     font-family:PingFangSC-Regular,PingFang SC;
     font-weight:400;
     color:rgba(0,0,0,0.25);
+    margin-top: 4px;
+    cursor: pointer;
+    border-radius: 4px;
+    padding-left: 2px;
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
   }
 }
 /* 关联内容 E */
@@ -306,9 +319,15 @@
   height:32px;
   background:rgba(255,255,255,1);
   border-radius:4px;
-  opacity:0.9;
   border:1px solid rgba(0,0,0,0.15);
   padding: 5px 8px;
+}
+
+// 下拉选项的配置
+.option_select {
+  width: 100%;
+  height: 32px;
+  border: 0 none;
 }
 
 // 配置表项标题
@@ -351,6 +370,15 @@
     line-height: 48px;
   }
 }
+// 删除选项的小图标
+.del_optionsIcon {
+  color: rgba(0,0,0,0.45);
+  cursor: pointer;
+  &:hover {
+    color: rgba(0,0,0,0.65);
+  }
+}
+
 .layout_style {
   display: flex;
 }

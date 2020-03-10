@@ -55,6 +55,9 @@ export default class ConfigureNodeTypeInfoOne extends Component {
     this.updateCorrespondingPrcodessStepWithNodeContent('name',val)
     this.updateCorrespondingPrcodessStepWithNodeContent('is_click_node_name', false)
   }
+  titleTextAreaChangeClick = (e) => {
+    e && e.stopPropagation()
+  }
 
 
   // 当先选择的节点类型
@@ -128,6 +131,7 @@ export default class ConfigureNodeTypeInfoOne extends Component {
                     autosize
                     onBlur={this.titleTextAreaChangeBlur}
                     onPressEnter={this.titleTextAreaChangeBlur}
+                    onClick={this.titleTextAreaChangeClick}
                     autoFocus={true}
                     goldName={''}
                     placeholder={'步骤名称(必填)'}
