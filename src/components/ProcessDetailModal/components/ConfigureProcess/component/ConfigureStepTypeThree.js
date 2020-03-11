@@ -100,7 +100,7 @@ export default class ConfigureStepTypeThree extends Component {
     return (
       <div>
         {/* 审批类型 */}
-        <div className={indexStyles.approve_content}>
+        <div className={indexStyles.approve_content} onClick={(e) => { e && e.stopPropagation() }}>
           <span style={{ marginRight: '20px' }} className={globalStyles.authTheme}>&#xe618; 抄送方式 :</span>
           <Radio.Group style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
             <Radio>自动抄送</Radio>

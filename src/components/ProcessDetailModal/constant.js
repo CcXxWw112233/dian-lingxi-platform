@@ -135,6 +135,40 @@ export const processEditDatasItemOneConstant =   {
   ]
 }
 
+export const processEditDatasItemTwoConstant =   {
+  "name": "",
+  "node_type": "2", //节点类型：5代表审批节点
+  "description": "",
+  "approve_type": "1", //审批模式 1=串签 2=并签 3=汇签
+  "approve_value": "", //汇签值 当approve_type=3 时该字段有效
+  "deadline_type": "1", //完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
+  "deadline_value": "1", //完成期限值
+  "is_workday": "0",
+  "assignee_type": "2", //审批人类型 1=任何人 2=启动流程时指定 3=固定人选
+  "assignees": "", //审批人(id) 多个逗号隔开
+  "transfer_mode": "2", //流转方式 1=自由选择 2= 下一步
+  "enable_revocation": "1", //是否可撤回 1=可撤回 0=不可撤回
+  "enable_opinion": "1",//是否填写意见  1=填写 0=不填写
+  "is_confirm": "0"
+}
+
+export const processEditDatasItemThreeConstant =       {
+  "name": "",
+  "node_type": "3", //节点类型：4代表抄送节点
+  "description": "",
+  "deadline_type": "1", //完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
+  "deadline_value": "1", //完成期限值
+  "is_workday": "0",
+  "assignee_type": "1", //抄送人类型 2=启动流程时指定 3=固定人选
+  "assignees": "", //抄送人 多个逗号隔开（传的是邮箱）
+  "cc_type": "1", //抄送人类型 1=启动流程时指定 2=固定人选
+  "recipients": "", //抄报人 多个逗号隔开（传的是邮箱）
+  "transfer_mode": "2", //流转方式 1=自由选择 2= 下一步
+  "enable_revocation": "1", //是否可撤回 1=可撤回 0=不可撤回
+  "enable_opinion": "1",//是否填写意见  1=填写 0=不填写
+  "is_confirm": "0"
+}
+
 export const processEditDatasRecordsItemOneConstant =   {
   'node_type': '1',
   'alltypedata': [
@@ -206,7 +240,7 @@ export const processEditDatasRecordsItemOneConstant =   {
       "is_confirm": "0"
     },
     {
-      "name": "抄送",
+      "name": "",
       "node_type": "3", //节点类型：4代表抄送节点
       "description": "",
       "deadline_type": "1", //完成期限类型 1=无期限 2=启动流程时指定 3=固定天数

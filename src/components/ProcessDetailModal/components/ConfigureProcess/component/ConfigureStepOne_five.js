@@ -81,11 +81,11 @@ export default class ConfigureStepOne_five extends Component {
           </div>
           <div>
             <p>限制附件上传数量(0为不限制）:</p>
-            <InputNumber onChange={this.limitFileNumValueChange.bind(this)} min={0} value={limit_file_num} style={{ width: '330px' }} /><span style={{ marginLeft: '8px', fontSize: '16px' }}>个</span>
+            <InputNumber precision="0.1" onChange={this.limitFileNumValueChange.bind(this)} min={0} value={limit_file_num} style={{ width: '330px' }} /><span style={{ marginLeft: '8px', fontSize: '16px' }}>个</span>
           </div>
           <div>
             <p>限制附件上传大小（0为不限制）:</p>
-            <InputNumber onChange={this.limitFileSizeValueChange.bind(this)} min={0} style={{ width: '322px' }} value={limit_file_size} /><span style={{ marginLeft: '8px', fontSize: '16px' }}>MB</span>
+            <InputNumber precision="0.1" onChange={this.limitFileSizeValueChange.bind(this)} min={0} style={{ width: '322px' }} value={limit_file_size} /><span style={{ marginLeft: '8px', fontSize: '16px' }}>MB</span>
           </div>
           <div>
             <p>限制附件上传格式&nbsp;:</p>

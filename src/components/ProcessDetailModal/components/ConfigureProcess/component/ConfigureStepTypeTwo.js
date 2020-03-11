@@ -15,6 +15,19 @@ export default class ConfigureStepTypeTwo extends Component {
     approvalsList: []
   }
 
+  updateConfigureProcess = (data, key) => { //更新单个数组单个属性
+    const { value } = data
+    const { processEditDatas = [], itemKey, itemValue, dispatch } = this.props
+    const new_processEditDatas = [...processEditDatas]
+    new_processEditDatas[itemKey][key] = value
+    dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        processEditDatas: new_processEditDatas,
+      }
+    })
+  }
+
   //修改通知人的回调 S
   chirldrenTaskChargeChange = (data) => {
     const { projectDetailInfoData = {} } = this.props;
@@ -53,23 +66,29 @@ export default class ConfigureStepTypeTwo extends Component {
     })
   }
 
+  // 审批类型
+  approveTypeChange = (e) => {
+    e && e.stopPropagation()
+    this.updateConfigureProcess({ value: e.target.value }, 'approve_type')
+  }
+
   render() {
     const { approvalsList = [] } = this.state
     const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData = {} } = this.props
     const { data, board_id } = projectDetailInfoData
-    const { assignee_type, deadline_type, deadline_value, description, is_click_node_description } = itemValue
+    const { assignee_type, deadline_type, deadline_value, description, is_click_node_description, approve_type } = itemValue
     return (
       <div>
         {/* 审批类型 */}
-        <div className={indexStyles.approve_content}>
+        <div className={indexStyles.approve_content} onClick={(e) => { e && e.stopPropagation() }}>
           <span style={{ marginRight: '20px' }} className={globalStyles.authTheme}>&#xe616; 审批类型 :</span>
-          <Radio.Group style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-            <Radio>串签</Radio>
+          <Radio.Group style={{ display: 'flex', alignItems: 'center', position: 'relative' }} value={approve_type} onChange={(e) => {this.approveTypeChange(e)}}>
+            <Radio value="1">串签</Radio>
             <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title="依照审批人员的排序依次审批"><span className={`${globalStyles.authTheme} ${indexStyles.approve_tips}`}>&#xe845;</span></Tooltip>
-            <Radio>并签</Radio>
+            <Radio value="2">并签</Radio>
             <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title="所有审批人员可同时审批"><span className={`${globalStyles.authTheme} ${indexStyles.approve_tips}`}>&#xe845;</span></Tooltip>
-            <Radio>汇签 ≥</Radio>
-            <span style={{ marginRight: '4px' }}><InputNumber min={1} />&nbsp;&nbsp;%&nbsp;&nbsp;通过</span>
+            <Radio value="3">汇签 ≥</Radio>
+            <span style={{ marginRight: '4px' }}><InputNumber precision="0.1" min={1} max={100} />&nbsp;&nbsp;%&nbsp;&nbsp;通过</span>
             <Tooltip overlayStyle={{ minWidth: '418px' }} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title="审批过程不公开其他审批人的意见，所有审批人审批后，公开所有审批意见，如通过率达到设定的标准，则审批通过。"><span className={`${globalStyles.authTheme} ${indexStyles.approve_tips}`}>&#xe845;</span></Tooltip>
           </Radio.Group>
         </div>

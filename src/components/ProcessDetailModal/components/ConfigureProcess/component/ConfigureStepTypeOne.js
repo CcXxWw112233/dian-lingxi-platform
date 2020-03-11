@@ -59,6 +59,7 @@ export default class ConfigureStepTypeOne extends Component {
   }
   deadlineTypeValueChange = (value) => {
     this.updateConfigureProcess({value: value}, 'deadline_type')
+    this.updateConfigureProcess({value: 1}, 'deadline_value')
   }
   
   // 添加节点备注事件
@@ -230,7 +231,7 @@ export default class ConfigureStepTypeOne extends Component {
     const { assignee_type, deadline_type, deadline_value, description, is_click_node_description } = itemValue
     return (
       <div style={{ position: 'relative' }}>
-        <div style={{ paddingBottom: '16px', borderBottom: '1px solid #e8e8e8' }}>
+        <div style={{ paddingBottom: '16px', borderBottom: '1px solid #e8e8e8' }} onClick={(e) => { e && e.stopPropagation() }}>
           <div>
             {form_data.map((value, key) => {
               return (<div key={`${key}-${value}`}>{this.filterForm(value, key)}</div>)
@@ -245,7 +246,7 @@ export default class ConfigureStepTypeOne extends Component {
           </Dropdown>
         </div>
         {/* 填写人 */}
-        <div className={indexStyles.fill_person}>
+        <div className={indexStyles.fill_person} onClick={(e) => { e && e.stopPropagation() }}>
           <span className={`${globalStyles.authTheme} ${indexStyles.label_person}`}>&#xe7b2; 填写人&nbsp;:</span>
           <Radio.Group style={{lineHeight: '48px'}} value={assignee_type} onChange={this.assigneeTypeChange}>
             <Radio value="1">任何人</Radio>
@@ -263,7 +264,7 @@ export default class ConfigureStepTypeOne extends Component {
         <div className={`${indexStyles.complet_deadline}`}>
           <span style={{ fontWeight: 900, marginRight: '2px' }} className={globalStyles.authTheme}>&#xe686;</span>
           <span>完成期限 &nbsp;: </span>
-          <InputNumber min={1} value={deadline_value} onChange={this.deadlineValueChange} className={indexStyles.select_number} />
+          <InputNumber precision="0.1" min={1} max={deadline_type == 'h' ? 24 : deadline_type == 'd' ? 30 : 12} value={deadline_value} onChange={this.deadlineValueChange} className={indexStyles.select_number} />
           <Select className={indexStyles.select_day} value={deadline_type} onChange={this.deadlineTypeValueChange}>
             <Option value="h">时</Option>
             <Option value="d">天</Option>

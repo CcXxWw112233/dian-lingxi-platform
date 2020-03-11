@@ -6,6 +6,7 @@ import { Radio } from 'antd'
 import ConfigureStepTypeOne from './component/ConfigureStepTypeOne'
 import ConfigureStepTypeTwo from './component/ConfigureStepTypeTwo'
 import ConfigureStepTypeThree from './component/ConfigureStepTypeThree'
+import { processEditDatasItemOneConstant, processEditDatasItemTwoConstant, processEditDatasItemThreeConstant } from '../../constant'
 import { connect } from 'dva'
 @connect(mapStateToProps)
 export default class ConfigureNodeTypeInfoOne extends Component {
@@ -62,12 +63,36 @@ export default class ConfigureNodeTypeInfoOne extends Component {
     e && e.stopPropagation()
   }
 
-
   // 当先选择的节点类型
   handleChangeStepType = (e) => {
     e && e.stopPropagation()
+    e && e.nativeEvent &&  e.nativeEvent.stopImmediatePropagation()
+    const { itemKey, itemValue, processEditDatas = [], dispatch } = this.props
     let key = e.target.value
-    this.updateCorrespondingPrcodessStepWithNodeContent('node_type', key)
+    let newProcessEditDatas = [...processEditDatas]
+    let nodeObj
+    switch (key) {
+      case '1':
+        nodeObj = JSON.parse(JSON.stringify(processEditDatasItemOneConstant))
+        break;
+      case '2':
+        nodeObj = JSON.parse(JSON.stringify(processEditDatasItemTwoConstant))
+        break
+      case '3':
+        nodeObj = JSON.parse(JSON.stringify(processEditDatasItemThreeConstant))
+        break
+      default:
+        break;
+    }
+    newProcessEditDatas[itemKey] = nodeObj
+    dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        processEditDatas: newProcessEditDatas,
+        // node_type: key
+      }
+    })
+    // this.updateCorrespondingPrcodessStepWithNodeContent('node_type', key)
   }
 
   renderDiffStepTypeContent = () => {
@@ -153,7 +178,7 @@ export default class ConfigureNodeTypeInfoOne extends Component {
             </div>
             <div style={{ paddingLeft: '14px', paddingRight: '14px', position: 'relative' }}>
               {/* 步骤类型 */}
-              <div style={{ marginBottom: '14px' }}>
+              <div style={{ marginBottom: '14px' }} onClick={(e) => { e && e.stopPropagation() }}>
                 <span style={{ color: 'rgba(0,0,0,0.45)' }} className={globalStyles.authTheme}>&#xe7f4; &nbsp;步骤类型 :&nbsp;&nbsp;&nbsp;</span>
                 <Radio.Group onChange={this.handleChangeStepType} value={node_type}>
                   <Radio value="1">资料收集</Radio>
