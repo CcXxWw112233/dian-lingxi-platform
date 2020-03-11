@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { message, Menu, Dropdown, Modal } from 'antd';
+import { message, Menu, Dropdown, Modal, Button } from 'antd';
 import styles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less';
 import OutlineTree from './components/OutlineTree';
@@ -23,6 +23,7 @@ import DetailInfo from '@/routes/Technological/components/ProjectDetail/DetailIn
 import { PROJECT_TEAM_BOARD_MEMBER, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_CREATE, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_BOARD_MILESTONE } from '@/globalset/js/constant';
 import ShowAddMenberModal from '../../../../routes/Technological/components/Project/ShowAddMenberModal';
 import SafeConfirmModal from './components/SafeConfirmModal';
+import emptyBoxImageUrl from '@/assets/gantt/empty-box.png';
 const { SubMenu } = Menu;
 const { TreeNode } = OutlineTree;
 const { confirm } = Modal;
@@ -610,68 +611,85 @@ export default class OutLineHeadItem extends Component {
         const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData, outline_tree_round } = this.props;
         //console.log("刷新了数据", outline_tree);
         console.log("刷新了数据", checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, gantt_board_id));
-        return (
-            <div className={styles.outline_wrapper}>
-
-                <OutlineTree
-                    // defaultExpandedKeys={['0-0-0']}
-                    gantt_board_id={gantt_board_id}
-                    onSelect={this.onSelect}
-                    onDataProcess={this.onDataProcess}
-                    onExpand={this.onExpand}
-                    onHover={this.onHover}
-                    hoverItem={outline_hover_obj}
-                    outline_tree_round={outline_tree_round}
-                    projectDetailInfoData={projectDetailInfoData}
-                >
-                    {this.renderGanttOutLineTree(outline_tree, 0)}
-                    <TreeNode
-                        type={'1'}
-                        placeholder={'新建里程碑'}
-                        nodeValue={{ 'tree_type': '0' }}
-                        icon={<span className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
-                        label={<span className={styles.addMilestone}>新建里程碑</span>} key="addMilestone">
-                    </TreeNode>
-
-                </OutlineTree>
-
-                <div className={styles.outlineFooter}>
-                    {
-                        checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, gantt_board_id) &&
-                        <span className={`${styles.actionIcon} ${globalStyles.authTheme}`} onClick={this.invitationJoin}>&#xe7ae;</span>
-                    }
-
-                    <Dropdown overlay={this.ganttProjectMenus()} trigger={['click']} placement={'topCenter'}>
-                        <span className={`${styles.actionIcon} ${globalStyles.authTheme}`}>&#xe66f;</span>
-                    </Dropdown>
-
+        const isNewProject = false;
+        if (isNewProject) {
+            return (
+                <div className={styles.newProjectGuideWrapper}>
+                    <div className={styles.emptyBox}>
+                        <div><img src={emptyBoxImageUrl} width={88} height={88} /></div>
+                        <div>还没有计划，赶快新建一个吧</div>
+                    </div>
+                    <div className={styles.guideButtons}>
+                        <Button type="primary" block className={styles.selectTpfBtn}>选择项目模版</Button>
+                        <Button block>直接新建计划</Button>
+                    </div>
                 </div>
-                <div onWheel={e => e.stopPropagation()}>
-                    {
-                        show_add_menber_visible && (
-                            <ShowAddMenberModal
-                                invitationType='1'
-                                invitationId={gantt_board_id}
-                                invitationOrg={getOrgIdByBoardId(gantt_board_id)}
-                                show_wechat_invite={true}
-                                _organization_id={getOrgIdByBoardId(gantt_board_id)}
-                                board_id={gantt_board_id}
-                                addMenbersInProject={this.addMenbersInProject}
-                                modalVisible={show_add_menber_visible}
-                                setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile}
-                            />
-                        )
-                    }
+            );
+        } else {
+            return (
+                <div className={styles.outline_wrapper}>
+
+                    <OutlineTree
+                        // defaultExpandedKeys={['0-0-0']}
+                        gantt_board_id={gantt_board_id}
+                        onSelect={this.onSelect}
+                        onDataProcess={this.onDataProcess}
+                        onExpand={this.onExpand}
+                        onHover={this.onHover}
+                        hoverItem={outline_hover_obj}
+                        outline_tree_round={outline_tree_round}
+                        projectDetailInfoData={projectDetailInfoData}
+                    >
+                        {this.renderGanttOutLineTree(outline_tree, 0)}
+                        <TreeNode
+                            type={'1'}
+                            placeholder={'新建里程碑'}
+                            nodeValue={{ 'tree_type': '0' }}
+                            icon={<span className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
+                            label={<span className={styles.addMilestone}>新建里程碑</span>} key="addMilestone">
+                        </TreeNode>
+
+                    </OutlineTree>
+
+                    <div className={styles.outlineFooter}>
+                        {
+                            checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, gantt_board_id) &&
+                            <span className={`${styles.actionIcon} ${globalStyles.authTheme}`} onClick={this.invitationJoin}>&#xe7ae;</span>
+                        }
+
+                        <Dropdown overlay={this.ganttProjectMenus()} trigger={['click']} placement={'topCenter'}>
+                            <span className={`${styles.actionIcon} ${globalStyles.authTheme}`}>&#xe66f;</span>
+                        </Dropdown>
+
+                    </div>
+                    <div onWheel={e => e.stopPropagation()}>
+                        {
+                            show_add_menber_visible && (
+                                <ShowAddMenberModal
+                                    invitationType='1'
+                                    invitationId={gantt_board_id}
+                                    invitationOrg={getOrgIdByBoardId(gantt_board_id)}
+                                    show_wechat_invite={true}
+                                    _organization_id={getOrgIdByBoardId(gantt_board_id)}
+                                    board_id={gantt_board_id}
+                                    addMenbersInProject={this.addMenbersInProject}
+                                    modalVisible={show_add_menber_visible}
+                                    setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile}
+                                />
+                            )
+                        }
+                    </div>
+                    <div onWheel={e => e.stopPropagation()}>
+                        <DetailInfo setProjectDetailInfoModalVisible={this.setBoardInfoVisible} modalVisible={board_info_visible} invitationType='1' invitationId={gantt_board_id} />
+                        {
+                            safeConfirmModalVisible &&
+                            <SafeConfirmModal selectedTpl={this.state.selectedTpl} visible={safeConfirmModalVisible} onChangeVisible={this.changeSafeConfirmModalVisible} onOk={this.onImportBoardTemplate} />
+                        }
+                    </div>
                 </div>
-                <div onWheel={e => e.stopPropagation()}>
-                    <DetailInfo setProjectDetailInfoModalVisible={this.setBoardInfoVisible} modalVisible={board_info_visible} invitationType='1' invitationId={gantt_board_id} />
-                    {
-                        safeConfirmModalVisible &&
-                        <SafeConfirmModal selectedTpl={this.state.selectedTpl} visible={safeConfirmModalVisible} onChangeVisible={this.changeSafeConfirmModalVisible} onOk={this.onImportBoardTemplate} />
-                    }
-                </div>
-            </div>
-        );
+            );
+        }
+
     }
 
 }
