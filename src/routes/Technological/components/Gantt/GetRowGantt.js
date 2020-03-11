@@ -42,6 +42,10 @@ export default class GetRowGantt extends Component {
     this.SelectedRect = { x: 0, y: 0 }
 
     this.task_is_dragging = false //任务实例是否在拖拽中
+
+    this.dashedMousedown = this.dashedMousedown.bind(this)//用来做拖拽虚线框
+    this.dashedMouseMove = this.dashedMouseMove.bind(this)
+    this.dashedMouseLeave = this.dashedMouseLeave.bind(this)
   }
   setTaskIsDragging = (bool) => { //设置任务是否在拖拽中的状态
     this.task_is_dragging = bool
@@ -116,7 +120,7 @@ export default class GetRowGantt extends Component {
   }
 
   //鼠标拖拽移动
-  dashedMousedown(e) {
+  dashedMousedown = (e) => {
     const { gantt_board_id, group_view_type, show_board_fold } = this.props
     if (ganttIsOutlineView({ group_view_type })) {
       return
@@ -143,7 +147,7 @@ export default class GetRowGantt extends Component {
     target.onmousemove = this.dashedDragMousemove.bind(this);
     target.onmouseup = this.dashedDragMouseup.bind(this);
   }
-  dashedDragMousemove(e) {
+  dashedDragMousemove = (e) => {
     if (
       this.stopPropagationEle(e)
     ) { //不能滑动到某一个任务实例上
@@ -181,7 +185,7 @@ export default class GetRowGantt extends Component {
       this.setDragDashedRectHolidayNo()
     })
   }
-  dashedDragMouseup(e) {
+  dashedDragMouseup = (e) => {
     if (
       this.stopPropagationEle(e)
     ) { //不能滑动到某一个任务实例上
@@ -191,7 +195,7 @@ export default class GetRowGantt extends Component {
     this.stopDragging()
     this.handleCreateTask({ start_end: '2', top: currentRect.y })
   }
-  stopDragging() {
+  stopDragging = () => {
     const target = this.refs.gantt_operate_area_panel
     target.onmousemove = null;
     target.onmuseup = null;
@@ -203,7 +207,8 @@ export default class GetRowGantt extends Component {
   }
 
   //鼠标移动
-  dashedMouseMove(e) {
+  dashedMouseMove = (e) => {
+    console.log('sssssssssssssssssaaa', 12)
     const { dataAreaRealHeight, gantt_board_id, group_view_type, show_board_fold } = this.props
     if (e.target.offsetTop >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
     if (
@@ -259,7 +264,7 @@ export default class GetRowGantt extends Component {
       drag_holiday_count: 0,
     })
   }
-  dashedMouseLeave(e) {
+  dashedMouseLeave = (e) => {
     if (!this.isMouseDown) {
       this.setState({
         dasheRectShow: false
@@ -290,7 +295,7 @@ export default class GetRowGantt extends Component {
   }
 
   //记录起始时间，做创建任务工作
-  handleCreateTask({ start_end, top, not_create }) {
+  handleCreateTask = ({ start_end, top, not_create }) => {
     const { dataAreaRealHeight } = this.props
     if (top >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
 
@@ -514,6 +519,22 @@ export default class GetRowGantt extends Component {
     )
   }
 
+  // 鼠标属性注册
+  targetMouseEvent = () => {
+    const { group_view_type } = this.props
+    if (ganttIsOutlineView({ group_view_type })) {
+      return {
+
+      }
+    } else {
+      return {
+        onMouseDown: this.dashedMousedown,
+        onMouseMove: this.dashedMouseMove,
+        onMouseLeave: this.dashedMouseLeave
+      }
+    }
+  }
+
   render() {
     const { currentRect = {}, dasheRectShow, drag_holiday_count } = this.state
     const {
@@ -530,9 +551,10 @@ export default class GetRowGantt extends Component {
 
     return (
       <div className={indexStyles.gantt_operate_top}
-        onMouseDown={this.dashedMousedown.bind(this)} //用来做拖拽虚线框
-        onMouseMove={this.dashedMouseMove.bind(this)}
-        onMouseLeave={this.dashedMouseLeave.bind(this)}
+        // onMouseDown={this.dashedMousedown.bind(this)} //用来做拖拽虚线框
+        // onMouseMove={this.dashedMouseMove.bind(this)}
+        // onMouseLeave={this.dashedMouseLeave.bind(this)}
+        {...this.targetMouseEvent()}
         id={'gantt_operate_area_panel'}
         ref={'gantt_operate_area_panel'}>
         {
