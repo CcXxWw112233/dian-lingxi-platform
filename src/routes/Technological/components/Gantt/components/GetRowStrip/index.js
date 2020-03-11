@@ -22,7 +22,7 @@ export default class GetRowStrip extends PureComponent {
             currentRect: {},  //任务位置
             is_item_has_time: false, //处于该条上的任务有没有开始或者时间
             set_miletone_detail_modal_visible: false, //里程碑是否可见
-            currentRect: { x: 0, width: 0 }, //当前操作的矩形属性
+            currentRectDashed: { x: 0, width: 0 }, //当前操作的矩形属性
             drag_holiday_count: 0,
             dasheRectShow: false
         }
@@ -371,8 +371,8 @@ export default class GetRowStrip extends PureComponent {
         ) {
             return false
         }
-        const { currentRect = {} } = this.state
-        this.x1 = currentRect.x
+        const { currentRectDashed = {} } = this.state
+        this.x1 = currentRectDashed.x
         this.setIsDragging(false)
         this.isMouseDown = true
         this.handleCreateTask({ start_end: '1' })
@@ -389,10 +389,8 @@ export default class GetRowStrip extends PureComponent {
         this.setIsDragging(true)
 
         const { ceilWidth } = this.props
-
         const target_0 = document.getElementById('gantt_card_out')
         const target_1 = document.getElementById('gantt_card_out_middle')
-        const target = this.refs.row_strip//event.target || event.srcElement;
         const { coperatedX } = this.props
         // 取得鼠标位置
         const x = e.pageX - target_0.offsetLeft + target_1.scrollLeft - coperatedLeftDiv - coperatedX
@@ -406,9 +404,8 @@ export default class GetRowStrip extends PureComponent {
             x: px,
             width,
         }
-
         this.setState({
-            currentRect: property
+            currentRectDashed: property
         }, () => {
             this.handleCreateTask({ start_end: '2', top: property.y, not_create: true })
             this.setDragDashedRectHolidayNo()
@@ -420,9 +417,8 @@ export default class GetRowStrip extends PureComponent {
         ) { //不能滑动到某一个任务实例上
             return false
         }
-        const { currentRect = {} } = this.state
         this.stopDragging()
-        this.handleCreateTask({ start_end: '2', top: currentRect.y })
+        this.handleCreateTask({ start_end: '2' })
     }
     stopDragging = () => {
         const target = this.refs.row_strip
@@ -436,15 +432,6 @@ export default class GetRowStrip extends PureComponent {
     }
     //鼠标移动
     dashedMouseMove = (e) => {
-        console.log('sssseeeee', 111)
-        if (
-            (e.target.dataset.targetclassname == 'specific_example') //不能滑动到某一个任务实例上
-        ) {
-            this.setState({
-                dasheRectShow: false
-            })
-            return false
-        }
         const { ceilWidth } = this.props
         if (this.isMouseDown) { //按下的情况不处理
             return false
@@ -465,13 +452,18 @@ export default class GetRowStrip extends PureComponent {
         const molX = px % ceilWidth
         px = px - molX
 
+        const { currentRectDashed } = this.state
+        if (currentRectDashed.x == px) {
+            return
+        }
+
         const property = {
             x: px,
             width: 40,
         }
 
         this.setState({
-            currentRect: property,
+            currentRectDashed: property,
             drag_holiday_count: 0,
         })
     }
@@ -486,8 +478,8 @@ export default class GetRowStrip extends PureComponent {
     handleCreateTask = ({ start_end, top, not_create }) => {
         const { dispatch } = this.props
         const { ceilWidth, date_arr_one_level = [] } = this.props
-        const { currentRect = {} } = this.state
-        const { x, width, } = currentRect
+        const { currentRectDashed = {} } = this.state
+        const { x, width, } = currentRectDashed
         let counter = 0
         let date = {}
         for (let val of date_arr_one_level) {
@@ -633,9 +625,18 @@ export default class GetRowStrip extends PureComponent {
             }
         } else {
             return {
-                onMouseDown: this.dashedMousedown,
-                onMouseMove: this.dashedMouseMove,
-                onMouseLeave: this.dashedMouseLeave
+                onMouseDown: (e) => {
+                    e.stopPropagation()
+                    this.dashedMousedown(e)
+                },
+                onMouseMove: (e) => {
+                    e.stopPropagation()
+                    this.dashedMouseMove(e)
+                },
+                onMouseLeave: (e) => {
+                    e.stopPropagation()
+                    this.dashedMouseLeave(e)
+                }
             }
         }
     }
@@ -644,37 +645,37 @@ export default class GetRowStrip extends PureComponent {
         const { itemValue = {}, ceilWidth } = this.props
         const { tree_type } = itemValue
 
-        const { currentSelectedProjectMembersList = [], currentRect = {}, dasheRectShow, drag_holiday_count } = this.state
-        // console.log('sssseeeee2', dasheRectShow, !this.task_is_dragging, currentRect)
+        const { currentSelectedProjectMembersList = [], currentRectDashed = {}, dasheRectShow, drag_holiday_count } = this.state
+        console.log('sssseeeee2', dasheRectShow, !this.task_is_dragging, currentRectDashed)
 
         return (
             <div>
                 <div
                     className={`${styles.row_srip} ${this.onHoverState() && styles.row_srip_on_hover}`}
                     ref={'row_strip'}
-                    // {...this.targetEventProps()}
-                    onMouseMove={this.stripMouseMove}
-                    onMouseOver={this.stripMouseOver}
-                    onMouseLeave={this.stripMouseLeave}
+                    {...this.targetEventProps()}
+                    // onMouseMove={this.stripMouseMove}
+                    // onMouseOver={this.stripMouseOver}
+                    // onMouseLeave={this.stripMouseLeave}
                     style={{ ...this.renderStyles() }}>
-                    {/* {
+                    {
                         dasheRectShow
                         && !this.task_is_dragging
                         && (
                             <div className={styles.dasheRect} style={{
-                                left: currentRect.x + 1,
-                                width: currentRect.width, height: task_item_height,//currentRect.height,
+                                left: currentRectDashed.x + 1,
+                                width: currentRectDashed.width, height: task_item_height,//currentRectDashed.height,
                                 boxSizing: 'border-box',
                                 color: 'rgba(0,0,0,0.45)',
                                 textAlign: 'right',
                                 lineHeight: `${task_item_height}px`,
                                 paddingRight: 8,
                             }} >
-                                {Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth) - drag_holiday_count}
-                                {Math.ceil(currentRect.width / ceilWidth) != 1 && (drag_holiday_count > 0 ? `+${drag_holiday_count}` : '')}
+                                {Math.ceil(currentRectDashed.width / ceilWidth) != 1 && Math.ceil(currentRectDashed.width / ceilWidth) - drag_holiday_count}
+                                {Math.ceil(currentRectDashed.width / ceilWidth) != 1 && (drag_holiday_count > 0 ? `+${drag_holiday_count}` : '')}
                             </div>
                         )
-                    } */}
+                    }
                     {
                         tree_type == '1' ? (
                             this.renderMilestoneSet()
