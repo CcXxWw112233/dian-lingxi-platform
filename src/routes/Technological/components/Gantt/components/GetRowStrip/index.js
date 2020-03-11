@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import { connect } from 'dva'
 import styles from './index.less'
-import { task_item_margin_top, date_area_height, ceil_height } from '../../constants';
+import { task_item_margin_top, date_area_height, ceil_height, task_item_height, ganttIsFold, ganttIsOutlineView } from '../../constants';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import OutlineTree from '../OutlineTree';
 import { updateTask, updateMilestone } from '../../../../../../services/technological/task';
@@ -9,19 +9,29 @@ import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
 import { message } from 'antd';
 import MilestoneDetail from '../milestoneDetail'
 import { checkIsHasPermission, checkIsHasPermissionInBoard } from '../../../../../../utils/businessFunction';
-import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT } from '../../../../../../globalset/js/constant';
-
+import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_CREATE } from '../../../../../../globalset/js/constant';
+const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
+const getEffectOrReducerByName = name => `gantt/${name}`
+
 @connect(mapStateToProps)
-export default class GetRowStrip extends Component {
-    constructor (props) {
+export default class GetRowStrip extends PureComponent {
+    constructor(props) {
         super(props)
         this.state = {
             currentRect: {},  //任务位置
             is_item_has_time: false, //处于该条上的任务有没有开始或者时间
             set_miletone_detail_modal_visible: false, //里程碑是否可见
+            currentRect: { x: 0, width: 0 }, //当前操作的矩形属性
+            drag_holiday_count: 0,
+            dasheRectShow: false
         }
         this.setIsCardHasTime()
+
+        this.x1 = 0 //用于做拖拽生成一条任务
+        this.isDragging = false //判断是否在拖拽虚线框
+        this.isMouseDown = false //是否鼠标按下
+        this.task_is_dragging = false //任务实例是否在拖拽中
     }
     componentDidMount() {
         this.setCurrentSelectedProjectMembersList()
@@ -318,19 +328,353 @@ export default class GetRowStrip extends Component {
     }
     //渲染里程碑设置---end
 
+
+    // 空条拖拽事件--------------------------------------------------------------------------start
+    setTaskIsDragging = (bool) => { //设置任务是否在拖拽中的状态
+        this.task_is_dragging = bool
+        const target = this.refs.row_strip
+        if (!target) return
+        if (!target.style) return
+        if (bool) {
+            target.style.cursor = 'move';
+        } else {
+            target.style.cursor = 'crosshair';
+        }
+    }
+    setIsDragging = (isDragging) => {
+        const { dispatch } = this.props
+        this.isDragging = isDragging
+    }
+
+    // 在任务实例上点击到特定的位置，阻断，是能够不出现创建任务弹窗
+    stopPropagationEle = (e) => {
+        if (this.task_is_dragging) {//在做单条任务拖动的时候，不能创建
+            return true
+        }
+        if (
+            e.target.dataset && e.target.className && typeof e.target.className == 'string' &&//容错
+            (
+                e.target.dataset.targetclassname == 'specific_example' ||
+                e.target.className.indexOf('authTheme') != -1 ||
+                e.target.className.indexOf('ant-avatar') != -1
+            )
+        ) { //不能滑动到某一个任务实例上
+            return true
+        }
+        return false
+    }
+    //鼠标拖拽移动
+    dashedMousedown = (e) => {
+        if (
+            this.stopPropagationEle(e) || //不能滑动到某一个任务实例上
+            this.isDragging || this.isMouseDown //在拖拽中，还有防止重复点击
+        ) {
+            return false
+        }
+        const { currentRect = {} } = this.state
+        this.x1 = currentRect.x
+        this.setIsDragging(false)
+        this.isMouseDown = true
+        this.handleCreateTask({ start_end: '1' })
+        const target = this.refs.row_strip//event.target || event.srcElement;
+        target.onmousemove = this.dashedDragMousemove.bind(this);
+        target.onmouseup = this.dashedDragMouseup.bind(this);
+    }
+    dashedDragMousemove = (e) => {
+        if (
+            this.stopPropagationEle(e)
+        ) { //不能滑动到某一个任务实例上
+            return false
+        }
+        this.setIsDragging(true)
+
+        const { ceilWidth } = this.props
+
+        const target_0 = document.getElementById('gantt_card_out')
+        const target_1 = document.getElementById('gantt_card_out_middle')
+        const target = this.refs.row_strip//event.target || event.srcElement;
+        const { coperatedX } = this.props
+        // 取得鼠标位置
+        const x = e.pageX - target_0.offsetLeft + target_1.scrollLeft - coperatedLeftDiv - coperatedX
+        //设置宽度
+        const offset_left = Math.abs(x - this.x1);
+        // 更新拖拽的最新矩形
+        let px = this.x1//x < this.x1 ? x : this.x1 //向左向右延申
+        let width = (offset_left < ceilWidth) || (x < this.x1) ? ceilWidth : offset_left //小于单位长度或者鼠标相对点击的起始点向左拖动都使用最小单位
+        width = Math.ceil(width / ceilWidth) * ceilWidth - 6 //向上取整 4为微调
+        const property = {
+            x: px,
+            width,
+        }
+
+        this.setState({
+            currentRect: property
+        }, () => {
+            this.handleCreateTask({ start_end: '2', top: property.y, not_create: true })
+            this.setDragDashedRectHolidayNo()
+        })
+    }
+    dashedDragMouseup = (e) => {
+        if (
+            this.stopPropagationEle(e)
+        ) { //不能滑动到某一个任务实例上
+            return false
+        }
+        const { currentRect = {} } = this.state
+        this.stopDragging()
+        this.handleCreateTask({ start_end: '2', top: currentRect.y })
+    }
+    stopDragging = () => {
+        const target = this.refs.row_strip
+        target.onmousemove = null;
+        target.onmuseup = null;
+        const that = this
+        setTimeout(function () {
+            that.isMouseDown = false
+            that.setIsDragging(false)
+        }, 1000)
+    }
+    //鼠标移动
+    dashedMouseMove = (e) => {
+        console.log('sssseeeee', 111)
+        if (
+            (e.target.dataset.targetclassname == 'specific_example') //不能滑动到某一个任务实例上
+        ) {
+            this.setState({
+                dasheRectShow: false
+            })
+            return false
+        }
+        const { ceilWidth } = this.props
+        if (this.isMouseDown) { //按下的情况不处理
+            return false
+        }
+        const { dasheRectShow, } = this.state
+        const { coperatedX } = this.props
+        if (!dasheRectShow) {
+            this.setState({
+                dasheRectShow: true
+            })
+        }
+
+        const target_0 = document.getElementById('gantt_card_out')
+        const target_1 = document.getElementById('gantt_card_out_middle')
+        // 取得鼠标位置
+        let px = e.pageX - target_0.offsetLeft + target_1.scrollLeft - coperatedLeftDiv - coperatedX
+
+        const molX = px % ceilWidth
+        px = px - molX
+
+        const property = {
+            x: px,
+            width: 40,
+        }
+
+        this.setState({
+            currentRect: property,
+            drag_holiday_count: 0,
+        })
+    }
+    dashedMouseLeave = (e) => {
+        if (!this.isMouseDown) {
+            this.setState({
+                dasheRectShow: false
+            })
+        }
+    }
+    //记录起始时间，做创建任务工作
+    handleCreateTask = ({ start_end, top, not_create }) => {
+        const { dispatch } = this.props
+        const { ceilWidth, date_arr_one_level = [] } = this.props
+        const { currentRect = {} } = this.state
+        const { x, width, } = currentRect
+        let counter = 0
+        let date = {}
+        for (let val of date_arr_one_level) {
+            counter += 1
+            if (counter * ceilWidth > x + width) {
+                date = val
+                break
+            }
+        }
+        const { timestamp, timestampEnd } = date
+        const update_name = start_end == '1' ? 'create_start_time' : 'create_end_time'
+        dispatch({
+            type: getEffectOrReducerByName('updateDatas'),
+            payload: {
+                [update_name]: start_end == '1' ? timestamp : timestampEnd
+            }
+        })
+        if (not_create) { //不创建和查看
+            return
+        }
+        if (start_end == '2') { //拖拽或点击操作完成，进行生成单条任务逻辑
+            this.setSpecilTaskExample({ top }) //出现任务创建或查看任务
+        }
+    }
+    //获取当前所在的分组, 根据创建或者查看任务时的高度
+    getCurrentGroup = ({ top }) => {
+        if (top == undefined || top == null) {
+            return Promise.resolve({ current_list_group_id: 0 })
+        }
+        const { group_view_type } = this.props
+        if (ganttIsOutlineView({ group_view_type })) {
+            return Promise.resolve({ current_list_group_id: 0 })
+        }
+        const getSum = (total, num) => {
+            return total + num;
+        }
+        const { dispatch } = this.props
+        const { group_list_area = [], list_group = [] } = this.props
+        let conter_key = 0
+        for (let i = 0; i < group_list_area.length; i++) {
+            if (i == 0) {
+                if (top < group_list_area[0]) {
+                    conter_key = 0
+                    break
+                }
+            } else {
+                const arr = group_list_area.slice(0, i + 1)
+                const sum = arr.reduce(getSum);
+                if (top < sum) {
+                    conter_key = i
+                    break
+                }
+            }
+        }
+        const current_list_group_id = list_group[conter_key]['list_id']
+        dispatch({
+            type: getEffectOrReducerByName('updateDatas'),
+            payload: {
+                current_list_group_id
+            }
+        })
+
+        return Promise.resolve({ current_list_group_id })
+    }
+    //点击某个实例,或者创建任务
+    setSpecilTaskExample = ({ id, board_id, top }, e) => {
+        const { dispatch, gantt_board_id } = this.props
+        if (e) {
+            e.stopPropagation()
+        }
+        this.getCurrentGroup({ top }).then(res => {
+            if (id) { //如果有id 则是修改任务，否则是创建任务
+                this.props.setTaskDetailModalVisibile && this.props.setTaskDetailModalVisibile()
+                dispatch({
+                    type: 'publicTaskDetailModal/updateDatas',
+                    payload: {
+                        drawerVisible: true,
+                        card_id: id,
+                    }
+                })
+                dispatch({
+                    type: 'workbenchPublicDatas/updateDatas',
+                    payload: {
+                        board_id
+                    }
+                })
+            } else {
+                const { current_list_group_id } = res
+                if (gantt_board_id == 0) {
+                    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, current_list_group_id)) {
+                        message.warn(NOT_HAS_PERMISION_COMFIRN)
+                        return
+                    }
+                } else {
+                    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id)) {
+                        message.warn(NOT_HAS_PERMISION_COMFIRN)
+                        return
+                    }
+                }
+                this.props.addTaskModalVisibleChange && this.props.addTaskModalVisibleChange(true)
+            }
+        })
+
+    }
+    // 设置拖拽生成任务虚线框内，节假日或者公休日的时间天数
+    setDragDashedRectHolidayNo = () => {
+        let count = 0
+
+        const { create_start_time, create_end_time, holiday_list = [] } = this.props
+        if (!create_start_time || !create_end_time) {
+            // return count
+            this.setState({
+                drag_holiday_count: count
+            })
+        }
+        const create_start_time_ = create_start_time / 1000
+        const create_end_time_ = create_end_time / 1000
+
+        const holidy_date_arr = holiday_list.filter(item => {
+            if (
+                create_start_time_ <= Number(item.timestamp)
+                && create_end_time_ >= Number(item.timestamp)
+                && (item.is_week || item.festival_status == '1') //周末或者节假日
+                && (item.festival_status != '2') //不是补班（周末补班不算）
+            ) {
+                return item
+            }
+        })
+
+        this.setState({
+            drag_holiday_count: holidy_date_arr.length
+        })
+    }
+    // /空条拖拽事件-----end
+
+    targetEventProps = () => {
+        const { itemValue: { id } } = this.props
+        if (!!id) {
+            return {
+                onMouseMove: this.stripMouseMove,
+                onMouseOver: this.stripMouseOver,
+                onMouseLeave: this.stripMouseLeave
+            }
+        } else {
+            return {
+                onMouseDown: this.dashedMousedown,
+                onMouseMove: this.dashedMouseMove,
+                onMouseLeave: this.dashedMouseLeave
+            }
+        }
+    }
+
     render() {
-        const { itemValue = {} } = this.props
+        const { itemValue = {}, ceilWidth } = this.props
         const { tree_type } = itemValue
-        const { currentSelectedProjectMembersList = [] } = this.state
-        console.log('sssssssssssscurrentSelectedProjectMembersList', currentSelectedProjectMembersList)
+
+        const { currentSelectedProjectMembersList = [], currentRect = {}, dasheRectShow, drag_holiday_count } = this.state
+        // console.log('sssseeeee2', dasheRectShow, !this.task_is_dragging, currentRect)
+
         return (
             <div>
                 <div
+                    className={`${styles.row_srip} ${this.onHoverState() && styles.row_srip_on_hover}`}
+                    ref={'row_strip'}
+                    // {...this.targetEventProps()}
                     onMouseMove={this.stripMouseMove}
                     onMouseOver={this.stripMouseOver}
                     onMouseLeave={this.stripMouseLeave}
-                    className={`${styles.row_srip} ${this.onHoverState() && styles.row_srip_on_hover}`}
                     style={{ ...this.renderStyles() }}>
+                    {/* {
+                        dasheRectShow
+                        && !this.task_is_dragging
+                        && (
+                            <div className={styles.dasheRect} style={{
+                                left: currentRect.x + 1,
+                                width: currentRect.width, height: task_item_height,//currentRect.height,
+                                boxSizing: 'border-box',
+                                color: 'rgba(0,0,0,0.45)',
+                                textAlign: 'right',
+                                lineHeight: `${task_item_height}px`,
+                                paddingRight: 8,
+                            }} >
+                                {Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth) - drag_holiday_count}
+                                {Math.ceil(currentRect.width / ceilWidth) != 1 && (drag_holiday_count > 0 ? `+${drag_holiday_count}` : '')}
+                            </div>
+                        )
+                    } */}
                     {
                         tree_type == '1' ? (
                             this.renderMilestoneSet()
@@ -347,7 +691,7 @@ export default class GetRowStrip extends Component {
                     deleteMiletone={this.deleteMiletone}
                     deleteRelationContent={this.deleteRelationContent}
                 />
-            </div>
+            </div >
 
         )
     }
@@ -363,7 +707,16 @@ function mapStateToProps({ gantt: {
         list_group, group_list_area,
         gantt_board_id,
         milestoneMap,
-        about_user_boards
+        about_user_boards,
+        gold_date_arr = [],
+        group_rows = [],
+        create_start_time,
+        create_end_time,
+        holiday_list = [],
+        group_view_type,
+        group_list_area_section_height,
+        show_board_fold,
+        outline_tree_round
     } },
     milestoneDetail: {
         milestone_detail = {}
@@ -378,6 +731,15 @@ function mapStateToProps({ gantt: {
         gantt_board_id,
         milestoneMap,
         about_user_boards,
-        milestone_detail
+        milestone_detail,
+        gold_date_arr,
+        group_rows,
+        create_start_time,
+        create_end_time,
+        holiday_list,
+        group_view_type,
+        group_list_area_section_height,
+        show_board_fold,
+        outline_tree_round
     }
 }

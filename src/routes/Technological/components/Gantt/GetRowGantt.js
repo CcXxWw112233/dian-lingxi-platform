@@ -606,6 +606,7 @@ export default class GetRowGantt extends Component {
                 <GetRowStrip itemValue={value}
                   coperatedX={this.state.coperatedX}
                   deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
+                  addTaskModalVisibleChange={this.props.addTaskModalVisibleChange}
                 ></GetRowStrip>
               </React.Fragment>
             )
