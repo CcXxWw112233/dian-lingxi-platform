@@ -5,6 +5,7 @@ import NameChangeInput from '@/components/NameChangeInput'
 import { Radio } from 'antd'
 import ConfigureStepTypeOne from './component/ConfigureStepTypeOne'
 import ConfigureStepTypeTwo from './component/ConfigureStepTypeTwo'
+import ConfigureStepTypeThree from './component/ConfigureStepTypeThree'
 import { connect } from 'dva'
 @connect(mapStateToProps)
 export default class ConfigureNodeTypeInfoOne extends Component {
@@ -79,6 +80,9 @@ export default class ConfigureNodeTypeInfoOne extends Component {
         break;
       case '2': // 表示审批
         container = <ConfigureStepTypeTwo itemValue={itemValue} itemKey={itemKey}/>
+        break
+      case '3': // 表示抄送
+        container = <ConfigureStepTypeThree itemValue={itemValue} itemKey={itemKey}/>
         break
       default:
         container = <div></div>
