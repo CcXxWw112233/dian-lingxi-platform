@@ -9,6 +9,8 @@ import ConfigureStepOne_five from './ConfigureStepOne_five'
 import NameChangeInput from '@/components/NameChangeInput'
 import { connect } from 'dva'
 
+const Option = Select.Option;
+
 @connect(mapStateToProps)
 export default class ConfigureStepTypeOne extends Component {
 
@@ -238,14 +240,14 @@ export default class ConfigureStepTypeOne extends Component {
           <ConfigureStepOne_two />
           <ConfigureStepOne_three />
           <ConfigureStepOne_five /> */}
-          <Dropdown overlayClassName={indexStyles.overlay_pricipal} overlay={this.renderFieldType()} getPopupContainer={() => document.getElementById('addTabsItem')} trigger={['click']}>
+          <Dropdown overlayClassName={indexStyles.overlay_addTabsItem} overlay={this.renderFieldType()} getPopupContainer={() => document.getElementById('addTabsItem')} trigger={['click']}>
             <Button id="addTabsItem" className={indexStyles.add_tabsItem}><span style={{ color: 'rgba(24,144,255,1)' }} className={globalStyles.authTheme}>&#xe782;</span>&nbsp;&nbsp;&nbsp;添加表项</Button>
           </Dropdown>
         </div>
         {/* 填写人 */}
         <div className={indexStyles.fill_person}>
           <span className={`${globalStyles.authTheme} ${indexStyles.label_person}`}>&#xe7b2; 填写人&nbsp;:</span>
-          <Radio.Group value={assignee_type} onChange={this.assigneeTypeChange}>
+          <Radio.Group style={{lineHeight: '48px'}} value={assignee_type} onChange={this.assigneeTypeChange}>
             <Radio value="1">任何人</Radio>
             <Radio value="2">指定人员</Radio>
           </Radio.Group>
@@ -263,8 +265,8 @@ export default class ConfigureStepTypeOne extends Component {
           <span>完成期限 &nbsp;: </span>
           <InputNumber min={1} value={deadline_value} onChange={this.deadlineValueChange} className={indexStyles.select_number} />
           <Select className={indexStyles.select_day} value={deadline_type} onChange={this.deadlineTypeValueChange}>
-            <Option value="d">天</Option>
             <Option value="h">时</Option>
+            <Option value="d">天</Option>
             <Option value="m">月</Option>
           </Select>
           <span className={`${globalStyles.authTheme} ${indexStyles.del_moreIcon}`}>&#xe7fe;</span>

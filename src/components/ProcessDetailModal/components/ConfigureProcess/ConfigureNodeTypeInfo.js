@@ -4,6 +4,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
 import { Radio } from 'antd'
 import ConfigureStepTypeOne from './component/ConfigureStepTypeOne'
+import ConfigureStepTypeTwo from './component/ConfigureStepTypeTwo'
 import { connect } from 'dva'
 @connect(mapStateToProps)
 export default class ConfigureNodeTypeInfoOne extends Component {
@@ -63,6 +64,7 @@ export default class ConfigureNodeTypeInfoOne extends Component {
 
   // 当先选择的节点类型
   handleChangeStepType = (e) => {
+    e && e.stopPropagation()
     let key = e.target.value
     this.updateCorrespondingPrcodessStepWithNodeContent('node_type', key)
   }
@@ -75,7 +77,9 @@ export default class ConfigureNodeTypeInfoOne extends Component {
       case '1': // 表示资料收集
         container = <ConfigureStepTypeOne itemValue={itemValue} itemKey={itemKey}/>
         break;
-
+      case '2': // 表示审批
+        container = <ConfigureStepTypeTwo itemValue={itemValue} itemKey={itemKey}/>
+        break
       default:
         container = <div></div>
         break;

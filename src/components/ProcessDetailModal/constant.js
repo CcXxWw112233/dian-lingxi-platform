@@ -190,7 +190,7 @@ export const processEditDatasRecordsItemOneConstant =   {
       // ]
     },
     {
-      "name": "审批",
+      "name": "",
       "node_type": "2", //节点类型：5代表审批节点
       "description": "",
       "approve_type": "1", //审批模式 1=串签 2=并签 3=汇签

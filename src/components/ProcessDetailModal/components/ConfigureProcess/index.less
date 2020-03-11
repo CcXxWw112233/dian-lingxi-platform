@@ -164,10 +164,30 @@
 // 填写人 审批人  抄送人样式
 .fill_person {
   min-height: 54px;
-  line-height: 54px;
+  // line-height: 54px;
   border-bottom: 1px solid #e8e8e8;
+  display: flex;
+  // align-items: center;
   .label_person {
     margin-right: 12px;
+    margin-top: 14px;
+    flex-shrink: 0;
+  }
+}
+
+// 审批样式
+.approve_content {
+  border-bottom: 1px solid #e8e8e8;
+  display: flex;
+  align-items: center;
+  padding-bottom: 20px;
+  .approve_tips {
+    cursor: pointer;
+    color: #D9D9D9;
+    font-size: 16px;
+    // margin-left: 8px;
+    margin-right: 40px;
+    margin-top: 1px;
   }
 }
 
@@ -257,7 +277,7 @@
   border-bottom: 1px solid #e8e8e8;
   .more_label {
     margin-right: 16px;
-    color: rgba(0, 0, 0, 0.45);
+    // color: rgba(0, 0, 0, 0.45);
   }
   .select_item {
     min-width:80px;
@@ -434,7 +454,7 @@
   }
 }
 
-.overlay_pricipal {
+.overlay_addTabsItem {
   height:168px;
   background:rgba(255,255,255,1);
   box-shadow:0px 2px 8px 0px rgba(0,0,0,0.15);
@@ -459,6 +479,90 @@
     }
   }
 }
+
+.overlay_pricipal {
+  // height:168px;
+  background:rgba(255,255,255,1);
+  box-shadow:0px 2px 8px 0px rgba(0,0,0,0.15);
+  border-radius:4px;
+  min-width: 200px !important;
+  max-width: 200px !important;
+  :global {
+    li {
+      line-height: 32px !important;
+      height     : 32px !important;
+      text-align: center;
+      color:rgba(0,0,0,0.65);
+      &:hover {
+        background   : rgba(0, 0, 0, 0.04) !important;
+        cursor       : pointer;
+        border-radius: 4px;
+        color:rgba(0,0,0,0.65);
+      }
+    }
+    .anticon {
+      margin-right: 0;
+    }
+  }
+}
+
+.addNoticePerson {
+  width:32px;
+  height:32px;
+  border:1px solid rgba(24,144,255,1);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin-left: 4px;
+  .plus_icon {
+    color: #1890FF;
+    display: block;
+    text-align: center;
+    width: 100%;
+  }
+}
+
+  // 每一个用户的样式
+  .user_item {
+    padding   : 2px 8px;
+    box-sizing: border-box;
+    cursor    : pointer;
+
+    // &:hover {
+    //   border: 1px solid #b1b1b1;
+    // }
+    .img_hover, .default_user_hover {
+      &:hover {
+        border: 1px solid #b1b1b1;
+      }
+    }
+
+    .userItemDeleBtn {
+      display          : none;
+      width            : 14px;
+      height           : 14px;
+      border-radius    : 4px;
+      position         : absolute;
+      background       : url(../../../../assets/workbench/close-circle@2x.png);
+      background-repeat: no-repeat;
+      background-size  : contain;
+      transition       : all 0.3s;
+    }
+
+    .userItemDeleBtn:hover {
+      background       : url(../../../../assets/workbench/close-circle-active@2x.png);
+      background-repeat: no-repeat;
+      background-size  : contain;
+    }
+  }
+
+  .user_item:hover .userItemDeleBtn {
+    display   : inline-block;
+    top       : 0px;
+    right     : 6px;
+    transition: all 0.3s;
+  }
 
 .line{
   width: 2px;
@@ -656,7 +760,7 @@
   background:rgba(255,255,255,1);
   box-shadow:0px 2px 8px 0px rgba(0,0,0,0.15);
   position: absolute;
-  z-index: 20;
+  // z-index: 20;
   font-size: 14px;
   color: rgba(0, 0, 0, .65);
   .top {
