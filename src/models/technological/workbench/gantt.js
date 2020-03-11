@@ -64,8 +64,8 @@ export default {
       about_group_boards: [], //带分组的项目列表
       about_user_boards: [], //带用户的项目列表
 
-      gantt_board_id: '1237575261273329664', //"1192342431761305600",//, //甘特图查看的项目id
-      group_view_type: '1', //分组视图1项目， 2成员, 4大纲
+      gantt_board_id: '0', //"1192342431761305600",//, //甘特图查看的项目id
+      group_view_type: '2', //分组视图1项目， 2成员, 4大纲
       group_view_filter_boards: [], //内容过滤项目id 列表
       group_view_filter_users: [], //内容过滤职员id 列表
       group_view_boards_tree: [], //内容过滤项目分组树
@@ -81,6 +81,7 @@ export default {
       outline_hover_obj: {}, //大纲视图下，hover的任务条所属id
       outline_tree: [], //大纲树
       outline_tree_round: [], //大纲树每一级平铺开来
+      panel_outline_create_card_params: {}
     },
   },
   subscriptions: {

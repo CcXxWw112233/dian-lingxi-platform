@@ -501,7 +501,7 @@ export default class GetRowStrip extends PureComponent {
             return
         }
         if (start_end == '2') { //拖拽或点击操作完成，进行生成单条任务逻辑
-            this.setSpecilTaskExample({ top }) //出现任务创建或查看任务
+            this.setSpecilTaskExample() //出现任务创建或查看任务
         }
     }
     //获取当前所在的分组, 根据创建或者查看任务时的高度
@@ -545,43 +545,28 @@ export default class GetRowStrip extends PureComponent {
         return Promise.resolve({ current_list_group_id })
     }
     //点击某个实例,或者创建任务
-    setSpecilTaskExample = ({ id, board_id, top }, e) => {
-        const { dispatch, gantt_board_id } = this.props
+    setSpecilTaskExample = (e) => {
+        const { dispatch, gantt_board_id, itemValue: { parent_card_id, parent_milestone_id } } = this.props
         if (e) {
             e.stopPropagation()
         }
-        this.getCurrentGroup({ top }).then(res => {
-            if (id) { //如果有id 则是修改任务，否则是创建任务
-                this.props.setTaskDetailModalVisibile && this.props.setTaskDetailModalVisibile()
-                dispatch({
-                    type: 'publicTaskDetailModal/updateDatas',
-                    payload: {
-                        drawerVisible: true,
-                        card_id: id,
-                    }
-                })
-                dispatch({
-                    type: 'workbenchPublicDatas/updateDatas',
-                    payload: {
-                        board_id
-                    }
-                })
-            } else {
-                const { current_list_group_id } = res
-                if (gantt_board_id == 0) {
-                    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, current_list_group_id)) {
-                        message.warn(NOT_HAS_PERMISION_COMFIRN)
-                        return
-                    }
-                } else {
-                    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id)) {
-                        message.warn(NOT_HAS_PERMISION_COMFIRN)
-                        return
-                    }
-                }
-                this.props.addTaskModalVisibleChange && this.props.addTaskModalVisibleChange(true)
+        if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id)) {
+            message.warn(NOT_HAS_PERMISION_COMFIRN)
+            return
+        }
+        let params = {}
+        if (parent_card_id) {
+            params.parent_id = parent_card_id
+        } else if (parent_milestone_id) {
+            params.milestone_id = parent_milestone_id
+        }
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                panel_outline_create_card_params: params, //创建任务的参数
             }
         })
+        this.props.addTaskModalVisibleChange && this.props.addTaskModalVisibleChange(true)
 
     }
     // 设置拖拽生成任务虚线框内，节假日或者公休日的时间天数
