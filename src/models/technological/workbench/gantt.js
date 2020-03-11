@@ -327,6 +327,9 @@ export default {
           if ((tree_type2 == '1' || tree_type2 == '2') && !added2) { //是里程碑或者一级任务
             new_item_children2.push(visual_add_item) //添加虚拟节点
           }
+          if (tree_type == '1') { //父元素是里程碑类型
+            new_item2.parent_milestone_id = item.id
+          }
           if (tree_type == '1') { //如果第一级是里程碑才有第三级
             new_item_children2 = new_item_children2.map(item3 => {
               let new_item3 = { ...item3, parent_expand: new_item2.parent_expand && new_item2.is_expand }
