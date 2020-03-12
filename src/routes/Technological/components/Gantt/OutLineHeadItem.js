@@ -237,6 +237,9 @@ export default class OutLineHeadItem extends Component {
 
                     updateParams.name = param.name;
                     updateParams.board_id = gantt_board_id;
+                    updateParams.start_time = param.start_time;
+                    updateParams.due_time = param.due_time;
+
 
                     let paraseNodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.parentId);
                     if (paraseNodeValue && paraseNodeValue.tree_type == '1') {
@@ -269,8 +272,16 @@ export default class OutLineHeadItem extends Component {
 
                                 nodeValue.children = children;
                                 this.setCreateAfterInputFous(paraseNodeValue, outline_tree);
-                                this.updateOutLineTreeData(outline_tree);
 
+
+                                //当前的添加按钮
+                                let addInputNodeValue = OutlineTree.getTreeAddNodeValue(outline_tree, param.add_id);
+                                addInputNodeValue.start_time = null;
+                                addInputNodeValue.due_time = null;
+                                addInputNodeValue.time_span = 1;
+                                addInputNodeValue.name = '';
+                                addInputNodeValue.editing = false;
+                                this.updateOutLineTreeData(outline_tree);
                             } else {
 
                                 message.error(res.message)
@@ -633,7 +644,7 @@ export default class OutLineHeadItem extends Component {
                     <TreeNode
                         type={'1'}
                         placeholder={'新建里程碑'}
-                        nodeValue={{ add_id:'add_milestone','tree_type': '0' }}
+                        nodeValue={{ add_id: 'add_milestone', 'tree_type': '0' }}
                         icon={<span className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
                         label={<span className={styles.addMilestone}>新建里程碑</span>} key="addMilestone">
                     </TreeNode>

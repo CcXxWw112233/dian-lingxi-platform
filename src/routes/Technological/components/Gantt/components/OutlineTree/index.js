@@ -247,7 +247,7 @@ class TreeNode extends Component {
                 <span className={`${styles.title}`} onMouseEnter={this.onMouseEnterTitle} onMouseLeave={this.onMouseLeaveTitle}>
                     <Tooltip placement="top" title={title != '0' ? title : ''}>
                         {
-                            (isTitleHover || isTitleEdit) ?
+                            editing||(isTitleHover || isTitleEdit) ?
                                 <Input defaultValue={title != '0' ? title : ''}
                                     autoFocus={editing ? true : false}
                                     style={{ width: '100%' }}
