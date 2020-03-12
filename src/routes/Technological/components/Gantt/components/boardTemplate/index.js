@@ -598,15 +598,26 @@ export default class BoardTemplate extends Component {
     onImportBoardTemplate = () => {
         this.quoteTemplate()
     }
-    // 
+  
+    
+    toggleBoardTemplateDrawer = () => {
+        const { dispatch } = this.props;
+        dispatch({
+          type:'gantt/updateDatas',
+          payload:{
+            boardTemplateShow:this.props.boardTemplateShow==1?2:1
+          }
+        });
+      }
+
     render() {
-        const { template_data, show_type, selected_template_name, spinning, project_templete_scheme_visible, contain_height, checkedKeys = [], safeConfirmModalVisible } = this.state
-        const { gantt_board_id } = this.props
+        const { template_data, selected_template_name, spinning, project_templete_scheme_visible, contain_height, checkedKeys = [], safeConfirmModalVisible } = this.state
+        const { gantt_board_id,boardTemplateShow} = this.props
         return (
             gantt_board_id && gantt_board_id != '0' ?
                 (
                     <div
-                        className={`${styles.container_init}   ${show_type == '1' && styles.container_show} ${show_type == '2' && styles.container_hide}`}
+                        className={`${styles.container_init}   ${boardTemplateShow == '1' && styles.container_show} ${boardTemplateShow == '2' && styles.container_hide}`}
                         style={{
                             height: contain_height,
                             // top: date_area_height
@@ -684,8 +695,8 @@ export default class BoardTemplate extends Component {
                         }
 
                         <div
-                            onClick={this.setShowType}
-                            className={`${styles.switchSpin_init} ${show_type == '1' && styles.switchSpinShow} ${show_type == '2' && styles.switchSpinClose}`}
+                            onClick={this.toggleBoardTemplateDrawer}
+                            className={`${styles.switchSpin_init} ${boardTemplateShow == '1' && styles.switchSpinShow} ${boardTemplateShow == '2' && styles.switchSpinClose}`}
                             style={{
                                 top: contain_height / 2
                             }} >
@@ -709,7 +720,8 @@ function mapStateToProps({
     gantt: {
         datas: {
             gantt_board_id,
-            is_new_board
+            is_new_board,
+            boardTemplateShow
         }
     },
     technological: { datas: { userBoardPermissions = [] } },
@@ -718,6 +730,7 @@ function mapStateToProps({
     return {
         gantt_board_id,
         is_new_board,
-        userBoardPermissions
+        userBoardPermissions,
+        boardTemplateShow
     }
 }
