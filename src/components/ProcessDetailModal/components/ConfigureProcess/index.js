@@ -8,12 +8,16 @@ import ConfigureGuide from './ConfigureGuide'
 import { processEditDatasItemOneConstant, processEditDatasRecordsItemOneConstant } from '../../constant'
 import { Tooltip } from 'antd'
 
+let timer
 @connect(mapStateToProps)
 export default class ConfigureProcess extends Component {
   constructor(props) {
     super(props)
     this.initCanvas = this.initCanvas.bind(this)
+    this.resizeTTY = this.resizeTTY.bind(this)
     this.state = {
+      clientHeight: document.documentElement.clientHeight,
+      clientWidth: document.documentElement.clientWidth,
       currentFlowInstanceName: '', // 当前流程实例的名称
       currentFlowInstanceDescription: '', // 当前的实例描述内容
       isEditCurrentFlowInstanceName: true, // 是否正在编辑当前实例的名称
@@ -23,6 +27,18 @@ export default class ConfigureProcess extends Component {
 
   componentDidMount() {
     this.initCanvas()
+    window.addEventListener('resize', this.resizeTTY)
+  }
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.resizeTTY);
+  }
+  resizeTTY = () => {
+    const clientHeight = document.documentElement.clientHeight;//获取页面可见高度
+    const clientWidth = document.documentElement.clientWidth
+    this.setState({
+      clientHeight,
+      clientWidth
+    })
   }
 
   initCanvas() {
@@ -81,6 +97,33 @@ export default class ConfigureProcess extends Component {
       }
     }
 
+  }
+
+  // 滚动事件
+  onScroll = (e) => {
+    let scrollTop = document.getElementById('container_configureProcessOut').scrollTop
+    let ele = document.getElementById('suspensionFlowInstansNav')
+    if (scrollTop >= 200) {
+      ele.style.display = 'block'
+      ele.style.position = 'sticky'
+      ele.style.bottom = '815px'
+      ele.style.zIndex = 1
+    } else {
+      ele.style.display = 'none'
+    }
+  }
+
+  // 返回顶部
+  handleBackToTop = (e) => {
+    e && e.stopPropagation()
+    timer = setInterval(() => {
+      let speedTop = 50
+      let currentTop =  document.getElementById('container_configureProcessOut').scrollTop
+      document.getElementById('container_configureProcessOut').scrollTop = currentTop - speedTop
+      if (currentTop == 0) {
+        clearInterval(timer)
+      }
+    }, 30)
   }
 
   // 标题失去焦点回调
@@ -190,22 +233,6 @@ export default class ConfigureProcess extends Component {
     })
   }
 
-  filterForm = (value, key) => {
-    const { node_type } = value
-    let container = (<div></div>)
-    const invitationType = '8'
-    container = <ConfigureNodeTypeInfo itemKey={key} itemValue={value} />
-    // switch (node_type) {
-    //   case '1':
-    //     container = (<ConfigureNodeTypeInfo {...this.props} itemKey={key} itemValue={value} />)
-    //     break;
-    //   default:
-    //     container = (<div></div>)
-    //     break
-    // }
-    return container
-  }
-
   // 渲染添加步骤按钮
   renderAddProcessStep = () => {
     const { processCurrentEditStep, processEditDatas = [] } = this.props
@@ -243,14 +270,15 @@ export default class ConfigureProcess extends Component {
   }
 
   render() {
+    const { clientHeight } = this.state
     const { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [] } = this.props
     // const { currentFlowInstanceName, currentFlowInstanceDescription } = this.state
     const delHtmlTag = (str) => {
       return str.replace(/<[^>]+>/g, "")
     }
     return (
-      <div className={indexStyles.configureProcessOut}>
-        <div className={indexStyles.configure_top}>
+      <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto' }} onScroll={this.onScroll}>
+        <div id="container_configureTop" className={indexStyles.configure_top}>
           <div style={{ display: 'flex', position: 'relative' }}>
             <canvas id="time_graph_canvas" width={210} height={210} style={{ float: 'left' }}></canvas>
             {/* <img id="node_img" src={sssimg} style={{position: 'relative', width: 20, height: 20, top: 155, right: 118}}/> */}
@@ -341,6 +369,16 @@ export default class ConfigureProcess extends Component {
             )
           })}
           {this.renderAddProcessStep()}
+        </div>
+        <div id="suspensionFlowInstansNav" className={`${indexStyles.suspensionFlowInstansNav}`}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <span style={{color: 'rgba(0,0,0,0.85)', fontSize: '16px', fontWeight: 500}}>投资论证流程 (1/2)</span>
+            </div>
+            <div>
+              <span onClick={this.handleBackToTop} style={{color: '#1890FF', cursor: 'pointer'}} className={globalStyles.authTheme}>&#xe63d; 回到顶部</span>
+            </div>
+          </div>
         </div>
       </div>
     )

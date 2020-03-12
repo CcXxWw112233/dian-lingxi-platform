@@ -120,10 +120,11 @@ export default class ConfigureStepOne_one extends Component {
               key={`${itemKey}-${itemValue}`}
               title={<div className={indexStyles.popover_title}>配置表项</div>}
               trigger="click"
-              visible={this.state.popoverVisible}
+              // visible={this.state.popoverVisible}
               content={this.renderContent()}
               getPopupContainer={triggerNode => triggerNode.parentNode}
-              placement={itemKey == '0' || itemKey == '1' ? 'bottomRight' : 'topRight'}
+              // placement={itemKey == '0' || itemKey == '1' ? 'bottomRight' : 'topRight'}
+              placement={'bottomRight'}
               zIndex={1010}
               className={indexStyles.popoverWrapper}
               autoAdjustOverflow={false}

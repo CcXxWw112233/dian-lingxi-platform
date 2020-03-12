@@ -63,7 +63,8 @@ export default class DetailContent extends React.Component {
       dynamicsContent = '', //动态列表区块
       commentUseParams = {}, //评论所需要参数
       showActiveStyles = false,
-      isNotShowFileDetailContentRightVisible
+      isNotShowFileDetailContentRightVisible,
+      isNotShowFileDetailContentLeftScrollBar
     } = this.props
 
     const whetherShowAllDynamic = (
@@ -86,8 +87,8 @@ export default class DetailContent extends React.Component {
 
     return (
       <div id={'container_fileDetailContentOut'} className={`${styleSelect} ${showActiveStyles && !isNotShowFileDetailContentRightVisible && indexStyles.active_fileDetailContentOut}`} ref={'fileDetailContentOut'} style={{ height: (clientHeight - offsetTopDeviation - 54) }}>
-        <div className={`${indexStyles.fileDetailContentLeft} ${globalStyles.global_vertical_scrollbar} ${showActiveStyles && indexStyles.active_fileDetailContentLeft}`}
-        // style={{overflowY: 'auto'}}
+        <div className={`${indexStyles.fileDetailContentLeft} ${ !isNotShowFileDetailContentLeftScrollBar && globalStyles.global_vertical_scrollbar} ${showActiveStyles && indexStyles.active_fileDetailContentLeft}`}
+        style={{overflowY: !isNotShowFileDetailContentLeftScrollBar ? 'auto' : 'hidden'}}
         >
           {/*主要内容放置区*/}
           {mainContent}

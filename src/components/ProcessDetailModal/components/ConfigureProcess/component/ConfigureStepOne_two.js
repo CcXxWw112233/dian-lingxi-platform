@@ -88,7 +88,7 @@ export default class ConfigureStepOne_two extends Component {
             <Input value={property_name} onChange={this.propertyNameChange.bind(this)} />
           </div>
           <div>
-            <p>{default_value}:</p>
+            <p>请选择标题:</p>
             <Input value={default_value} onChange={this.defaultValueChange.bind(this)} />
           </div>
           <div>
@@ -139,13 +139,14 @@ export default class ConfigureStepOne_two extends Component {
             <Popover
               title={<div className={indexStyles.popover_title}>配置表项</div>}
               trigger="click"
-              visible={this.state.popoverVisible}
+              // visible={this.state.popoverVisible}
               content={this.renderContent()}
               getPopupContainer={triggerNode => triggerNode.parentNode}
-              placement={itemKey == '0' || itemKey == '1' ? 'bottomRight' : 'topRight'}
+              // placement={itemKey == '0' || itemKey == '1' ? 'bottomRight' : 'topRight'}
+              placement={'bottomRight'}
               zIndex={1010}
               className={indexStyles.popoverWrapper}
-            // autoAdjustOverflow={false}
+              autoAdjustOverflow={false}
             >
               <div onClick={this.handelPopoverVisible} className={`${globalStyles.authTheme} ${indexStyles.setting_icon}`}>
                 <span>&#xe78e;</span>

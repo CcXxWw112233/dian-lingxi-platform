@@ -77,6 +77,7 @@ export default class ProcessDetailModal extends Component {
           mainContent={<MainContent />}
           headerContent={<HeaderContent />}
           commonDrawerContentOutClick={this.commonDrawerContentOutClick}
+          isNotShowFileDetailContentLeftScrollBar={true}
         />
       </div>
     )
