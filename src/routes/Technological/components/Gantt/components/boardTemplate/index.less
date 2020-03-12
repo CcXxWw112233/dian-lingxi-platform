@@ -24,7 +24,11 @@
         align-items    : center;
         box-shadow     : 0px -1px 0px 0px rgba(0, 0, 0, 0.09);
         border-bottom  : 1px solid #f5f5ff;
-
+        .title{
+            font-weight: 600;
+            font-size      : 16px;
+            color:rgba(0,0,0,0.85);
+        }
         .top_left {
             display    : flex;
             align-items: center;
@@ -56,12 +60,50 @@
         height       : 48px;
         background   : rgba(255, 255, 255, 1);
         box-shadow   : 0px -1px 0px 0px rgba(0, 0, 0, 0.09);
-        border-bottom: 1px solid rgba(0, 0, 0, .1)
+        border-bottom: 1px solid rgba(0, 0, 0, .1);
+
+        .backBtn{
+            margin-right: 8px;
+        }
     }
 
     .list_item:hover {
         background: rgba(245, 245, 245, 1);
     }
+
+    .footer{
+        bottom: 0px;
+        position: absolute;
+        margin: 8px 24px 24px 24px;
+        width: 232px;
+    }
+    .boardTplItem{
+        width        : 100%;
+        height       : 48px;
+        background   : rgba(255, 255, 255, 1);
+        box-shadow   : 0px -1px 0px 0px rgba(0, 0, 0, 0.09);
+        display    : flex;
+        align-items: center;
+        justify-items: center;
+        justify-content: space-between;
+        padding: 0px 16px;
+        .left{
+            font-size:14px;
+            font-weight:500;
+            color:rgba(0,0,0,0.85);
+        }
+        .right{
+           
+        }
+    }
+    .boardTplItem:last-child{
+        border-bottom: 1px solid rgba(0, 0, 0, .09);
+    }
+
+    .boardTplItem:hover {
+        background: rgba(245, 245, 245, 1);
+    }
+
 
     .temp_ope {
         display    : flex;

@@ -7,13 +7,15 @@ import OutLineHeadItem from './OutLineHeadItem'
 import { ganttIsOutlineView } from './constants';
 import emptyBoxImageUrl from '@/assets/gantt/empty-box.png';
 import { Button } from 'antd';
+import OutlineGuideModal from './components/OutlineGuideModal'
 @connect(mapStateToProps)
 export default class GroupListHead extends Component {
   constructor(props) {
     super(props)
     this.state = {
       offsetTop: 0,
-      offsetLeft: 0
+      offsetLeft: 0,
+      startPlanType: 1,
     }
   }
 
@@ -77,17 +79,24 @@ export default class GroupListHead extends Component {
   openBoardTemplateDrawer = () => {
     const { dispatch } = this.props;
     dispatch({
-      type:'gantt/updateDatas',
-      payload:{
-        boardTemplateShow:1
+      type: 'gantt/updateDatas',
+      payload: {
+        boardTemplateShow: 1
       }
     });
   }
-  
+
+  guideModalHandleClose = () => {
+    this.setState({
+      startPlanType: -1
+    });
+  }
+
   render() {
-    const { list_group = [], group_rows = [], ceiHeight, target_scrollLeft, target_scrollTop, group_view_type } = this.props;
-    const isNewProject = true;
-    if (ganttIsOutlineView({ group_view_type }) && isNewProject) {
+    const { list_group = [], group_rows = [], ceiHeight, target_scrollLeft, target_scrollTop, group_view_type, outline_tree = [] } = this.props;
+    const { startPlanType } = this.state;
+    const isNewProject = (!outline_tree || outline_tree.length == 0) ? true : false;
+    if (ganttIsOutlineView({ group_view_type }) && isNewProject && startPlanType == 0) {
 
       return (
         <div className={indexStyles.newProjectGuideWrapper}>
@@ -97,12 +106,12 @@ export default class GroupListHead extends Component {
           </div>
           <div className={indexStyles.guideButtons}>
             <Button type="primary" block className={indexStyles.selectTpfBtn} onClick={this.openBoardTemplateDrawer}>选择项目模版</Button>
-            <Button block>直接新建计划</Button>
+            <Button block onClick={() => { this.setState({ startPlanType: 1 }) }}>直接新建计划</Button>
           </div>
         </div>
       )
-    } else {
 
+    } else {
       return (
         <div className={`${ganttIsOutlineView({ group_view_type }) ? indexStyles.listTree : indexStyles.listHead}`}
           // style={{ left: target_scrollLeft, }}
@@ -113,6 +122,10 @@ export default class GroupListHead extends Component {
             ganttIsOutlineView({ group_view_type }) &&
             <div style={{ position: 'relative', height: '100%', width: '280px', boxShadow: '1px 0px 4px 0px rgba(0,0,0,0.15);' }}>
               <OutLineHeadItem />
+              {
+                startPlanType == 1 &&
+                <OutlineGuideModal handleClose = {this.guideModalHandleClose}/>
+              }
             </div>
           }
           {
@@ -152,7 +165,8 @@ function mapStateToProps({ gantt: {
     target_scrollTop,
     group_list_area,
     group_list_area_section_height,
-    group_view_type
+    group_view_type,
+    outline_tree,
   }
 } }) {
   return {
@@ -163,6 +177,7 @@ function mapStateToProps({ gantt: {
     target_scrollTop,
     group_list_area,
     group_list_area_section_height,
-    group_view_type
+    group_view_type,
+    outline_tree
   }
 }
