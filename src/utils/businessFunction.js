@@ -402,7 +402,8 @@ export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenI
     type: 'gantt/updateDatas',
     payload: {
       gantt_board_id: board_id || '0',
-      is_new_board
+      is_new_board,
+      list_group: [],
     }
   })
   if (board_id == '0' || !board_id) {
