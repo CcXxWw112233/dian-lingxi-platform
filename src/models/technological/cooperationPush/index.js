@@ -64,7 +64,9 @@ let dispathes = null
 let locationPath = null
 export default {
   namespace: 'cooperationPush',
-  state: [],
+  state: {
+    new_message: {}
+  },
   subscriptions: {
     setup({ dispatch, history }) {
       dispathes = dispatch
@@ -118,6 +120,12 @@ export default {
       if (data == "pong") {
         return;
       }
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          new_message: data
+        }
+      })
       //当前操作人
       data = JSON.parse(data)
       const news = data['data'][1] || {}
@@ -1519,8 +1527,7 @@ export default {
   reducers: {
     updateDatas(state, action) {
       return {
-        ...state,
-        datas: { ...state.datas, ...action.payload },
+        ...state, ...action.payload
       }
     }
   },
