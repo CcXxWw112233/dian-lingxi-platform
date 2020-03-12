@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { date_area_height } from '../../constants'
-import { Dropdown, Menu, message, Tree, Icon, Spin } from 'antd'
+import { Menu, message, Tree, Icon, Spin, Button } from 'antd'
 import { connect, } from 'dva';
 import { getBoardTemplateList, getBoardTemplateInfo, createCardByTemplate, importBoardTemplate } from '../../../../../../services/technological/gantt'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
@@ -34,6 +34,7 @@ export default class BoardTemplate extends Component {
             contain_height: '100%',
             checkedKeys: [], //已选择的key
             checkedKeysObj: [], ////已选择的keyobj
+            selectedTpl: {},
         }
         this.drag_init_inner_html = ''
     }
@@ -184,6 +185,23 @@ export default class BoardTemplate extends Component {
             })
             this.getTemplateInfo(key)
         }
+    }
+
+    selectBoardTemplate = (id) => {
+        if (id) {
+            const { template_list = [] } = this.state
+            this.setState({
+                selected_template_id: id,
+                selected_template_name: template_list.find(item => item.id == id).name || '请选择模板'
+            })
+            this.getTemplateInfo(id)
+        } else {
+            this.setState({
+                selected_template_id: 0,
+                selected_template_name: ''
+            })
+        }
+
     }
     // 设置管理模板弹窗是否出现
     setProjectTempleteSchemeModal = () => {
@@ -590,23 +608,47 @@ export default class BoardTemplate extends Component {
             message.error('引入模板失败')
         })
     }
+
     changeSafeConfirmModalVisible = () => {
         this.setState({
             safeConfirmModalVisible: !this.state.safeConfirmModalVisible
         });
     }
+
+
+    openImportBoardModal = (tplId) => {
+        const { template_list } = this.state;
+        const selectedTpl = template_list.find((item) => item.id == tplId);
+        this.setState({
+            safeConfirmModalVisible: true,
+            selectedTpl,
+        });
+
+    }
+
     onImportBoardTemplate = () => {
         this.quoteTemplate()
     }
-    // 
+
+
+    toggleBoardTemplateDrawer = () => {
+        const { dispatch } = this.props;
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                boardTemplateShow: this.props.boardTemplateShow == 1 ? 2 : 1
+            }
+        });
+    }
+
     render() {
-        const { template_data, show_type, selected_template_name, spinning, project_templete_scheme_visible, contain_height, checkedKeys = [], safeConfirmModalVisible } = this.state
-        const { gantt_board_id } = this.props
+        const { template_data, selected_template_name, spinning, project_templete_scheme_visible, contain_height, checkedKeys = [], safeConfirmModalVisible } = this.state
+        const { gantt_board_id, boardTemplateShow } = this.props
         return (
             gantt_board_id && gantt_board_id != '0' ?
                 (
                     <div
-                        className={`${styles.container_init}   ${show_type == '1' && styles.container_show} ${show_type == '2' && styles.container_hide}`}
+                        className={`${styles.container_init}   ${boardTemplateShow == '1' && styles.container_show} ${boardTemplateShow == '2' && styles.container_hide}`}
                         style={{
                             height: contain_height,
                             // top: date_area_height
@@ -614,12 +656,13 @@ export default class BoardTemplate extends Component {
                         <div
                             style={{ height: date_area_height }}
                             className={styles.top}>
-                            <Dropdown overlay={this.renderTemplateList()}>
+                            <span className={styles.title}>项目模板</span>
+                            {/* <Dropdown overlay={this.renderTemplateList()}>
                                 <div className={styles.top_left}>
                                     <div className={`${globalStyles.global_ellipsis} ${styles.name}`}>{selected_template_name}</div>
                                     <div className={`${globalStyles.authTheme} ${styles.down}`}>&#xe7ee;</div>
                                 </div>
-                            </Dropdown>
+                            </Dropdown> */}
                             {/* {
                                 this.isShowSetting() &&
                                 (
@@ -636,17 +679,10 @@ export default class BoardTemplate extends Component {
                         {
                             this.state.selected_template_id ?
                                 <>
-                                    <div className={`${styles.list_item} ${styles.temp_ope}`}>
+                                    <div className={`${styles.list_item} ${styles.temp_ope}`} onClick={() => this.selectBoardTemplate(0)}>
+                                        <span className={styles.backBtn}> <i className={globalStyles.authTheme}>&#xe7ec;</i></span>
+                                        <div className={`${styles.temp_ope_name}`}>{selected_template_name}</div>
 
-                                        <div className={`${styles.temp_ope_name}`}>流程步骤</div>
-
-
-                                        {
-                                            checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id) && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, gantt_board_id) &&
-                                            (
-                                                <div className={`${styles.temp_ope_cop} ${globalStyles.link_mouse}`} onClick={this.changeSafeConfirmModalVisible}>引用到项目</div>
-                                            )
-                                        }
                                     </div>
                                     {/* 主区 */}
                                     <Spin spinning={spinning}>
@@ -676,16 +712,35 @@ export default class BoardTemplate extends Component {
                                             </div>
                                         </div>
                                     </Spin>
+                                    {
+                                        checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id) && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, gantt_board_id) &&
+                                        (
+                                            <div className={styles.footer} >
+                                                <Button type="primary" block onClick={() => this.openImportBoardModal(this.state.selected_template_id)}>引用到项目</Button>
+                                            </div>
+                                        )
+                                    }
+
                                 </>
                                 :
-                                <div style={{ height:'100%', textAlign: 'center'}}>
-                                    <span style={{fontSize:'16px',lineHeight:'96px'}}>请先选择项目模板</span>
+                                <div style={{ height: '100%' }}>
+                                    {
+                                        this.state.template_list && this.state.template_list.map((item) => {
+                                            const { id, name } = item
+                                            return (
+                                                <div class={styles.boardTplItem} onClick={() => this.selectBoardTemplate(id)}>
+                                                    <span className={styles.left}>{name}</span>
+                                                    <span> <i className={globalStyles.authTheme}>&#xe7eb;</i></span>
+                                                </div>
+                                            );
+                                        })
+                                    }
                                 </div>
                         }
 
                         <div
-                            onClick={this.setShowType}
-                            className={`${styles.switchSpin_init} ${show_type == '1' && styles.switchSpinShow} ${show_type == '2' && styles.switchSpinClose}`}
+                            onClick={this.toggleBoardTemplateDrawer}
+                            className={`${styles.switchSpin_init} ${boardTemplateShow == '1' && styles.switchSpinShow} ${boardTemplateShow == '2' && styles.switchSpinClose}`}
                             style={{
                                 top: contain_height / 2
                             }} >
@@ -696,8 +751,11 @@ export default class BoardTemplate extends Component {
                             _organization_id={localStorage.getItem('OrganizationId') != '0' ? localStorage.getItem('OrganizationId') : getGlobalData('aboutBoardOrganizationId')}
                             project_templete_scheme_visible={project_templete_scheme_visible}
                             setProjectTempleteSchemeModal={this.setProjectTempleteSchemeModal}></BoardTemplateManager>
-                        <SafeConfirmModal visible={safeConfirmModalVisible} onChangeVisible={this.changeSafeConfirmModalVisible} onOk={this.onImportBoardTemplate} />
 
+                        {
+                            safeConfirmModalVisible &&
+                            <SafeConfirmModal visible={safeConfirmModalVisible} selectedTpl={this.state.selectedTpl} onChangeVisible={this.changeSafeConfirmModalVisible} onOk={this.onImportBoardTemplate} />
+                        }
                     </div >
                 ) : (
                     <></>
@@ -709,7 +767,8 @@ function mapStateToProps({
     gantt: {
         datas: {
             gantt_board_id,
-            is_new_board
+            is_new_board,
+            boardTemplateShow
         }
     },
     technological: { datas: { userBoardPermissions = [] } },
@@ -718,6 +777,7 @@ function mapStateToProps({
     return {
         gantt_board_id,
         is_new_board,
-        userBoardPermissions
+        userBoardPermissions,
+        boardTemplateShow
     }
 }

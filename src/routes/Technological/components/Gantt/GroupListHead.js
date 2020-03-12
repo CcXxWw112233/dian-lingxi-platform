@@ -5,13 +5,17 @@ import GroupListHeadItem from './GroupListHeadItem'
 import GroupListHeadElse from './GroupListHeadElse'
 import OutLineHeadItem from './OutLineHeadItem'
 import { ganttIsOutlineView } from './constants';
+import emptyBoxImageUrl from '@/assets/gantt/empty-box.png';
+import { Button } from 'antd';
+import OutlineGuideModal from './components/OutlineGuideModal'
 @connect(mapStateToProps)
 export default class GroupListHead extends Component {
   constructor(props) {
     super(props)
     this.state = {
       offsetTop: 0,
-      offsetLeft: 0
+      offsetLeft: 0,
+      startPlanType: 1,
     }
   }
 
@@ -71,44 +75,83 @@ export default class GroupListHead extends Component {
       ele.scrollTop = new_target_scrollTop
     }
   }
+
+  openBoardTemplateDrawer = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        boardTemplateShow: 1
+      }
+    });
+  }
+
+  guideModalHandleClose = () => {
+    this.setState({
+      startPlanType: -1
+    });
+  }
+
   render() {
-    const { list_group = [], group_rows = [], ceiHeight, target_scrollLeft, target_scrollTop, group_view_type } = this.props
-    return (
-      <div className={`${ganttIsOutlineView({ group_view_type }) ? indexStyles.listTree : indexStyles.listHead}`}
-        // style={{ left: target_scrollLeft, }}
-        onWheel={this.onWheel}
-        style={{ top: -target_scrollTop + 64, }}
-      >
-        {
-          ganttIsOutlineView({ group_view_type }) &&
-          <div style={{position:'relative',height: '100%', width: '280px', boxShadow: '1px 0px 4px 0px rgba(0,0,0,0.15);' }}>
-            <OutLineHeadItem />
+    const { list_group = [], group_rows = [], ceiHeight, target_scrollLeft, target_scrollTop, group_view_type, outline_tree = [] } = this.props;
+    const { startPlanType } = this.state;
+    const isNewProject = (!outline_tree || outline_tree.length == 0) ? true : false;
+    if (ganttIsOutlineView({ group_view_type }) && isNewProject && startPlanType == 0) {
+
+      return (
+        <div className={indexStyles.newProjectGuideWrapper}>
+          <div className={indexStyles.emptyBox}>
+            <div><img src={emptyBoxImageUrl} width={88} height={88} /></div>
+            <div>还没有计划，赶快新建一个吧</div>
           </div>
-        }
-        {
-          !ganttIsOutlineView({ group_view_type }) &&
-          <>
-            {
-              list_group.map((value, key) => {
-                const { list_name, list_id, list_data = [] } = value
-                return (
-                  <div key={list_id}>
-                    <GroupListHeadItem
-                      list_id={list_id}
-                      setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
-                      itemValue={value} itemKey={key} rows={group_rows[key]} />
-                    {/*<div className={indexStyles.listHeadItem} key={list_id} style={{height: (group_rows[key] || 2) * ceiHeight}}>{list_name}</div>*/}
-                  </div>
-                )
-              })
-            }
-            <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
-          </>
-        }
+          <div className={indexStyles.guideButtons}>
+            <Button type="primary" block className={indexStyles.selectTpfBtn} onClick={this.openBoardTemplateDrawer}>选择项目模版</Button>
+            <Button block onClick={() => { this.setState({ startPlanType: 1 }) }}>直接新建计划</Button>
+          </div>
+        </div>
+      )
 
+    } else {
+      return (
+        <div className={`${ganttIsOutlineView({ group_view_type }) ? indexStyles.listTree : indexStyles.listHead}`}
+          // style={{ left: target_scrollLeft, }}
+          onWheel={this.onWheel}
+          style={{ top: -target_scrollTop + 64, }}
+        >
+          {
+            ganttIsOutlineView({ group_view_type }) &&
+            <div style={{ position: 'relative', height: '100%', width: '280px', boxShadow: '1px 0px 4px 0px rgba(0,0,0,0.15);' }}>
+              <OutLineHeadItem />
+              {
+                startPlanType == 1 &&
+                <OutlineGuideModal handleClose = {this.guideModalHandleClose}/>
+              }
+            </div>
+          }
+          {
+            !ganttIsOutlineView({ group_view_type }) &&
+            <>
+              {
+                list_group.map((value, key) => {
+                  const { list_name, list_id, list_data = [] } = value
+                  return (
+                    <div key={list_id}>
+                      <GroupListHeadItem
+                        list_id={list_id}
+                        setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
+                        itemValue={value} itemKey={key} rows={group_rows[key]} />
+                      {/*<div className={indexStyles.listHeadItem} key={list_id} style={{height: (group_rows[key] || 2) * ceiHeight}}>{list_name}</div>*/}
+                    </div>
+                  )
+                })
+              }
+              <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
+            </>
+          }
+        </div>
+      )
+    }
 
-      </div>
-    )
   }
 
 }
@@ -122,7 +165,8 @@ function mapStateToProps({ gantt: {
     target_scrollTop,
     group_list_area,
     group_list_area_section_height,
-    group_view_type
+    group_view_type,
+    outline_tree,
   }
 } }) {
   return {
@@ -133,6 +177,7 @@ function mapStateToProps({ gantt: {
     target_scrollTop,
     group_list_area,
     group_list_area_section_height,
-    group_view_type
+    group_view_type,
+    outline_tree
   }
 }

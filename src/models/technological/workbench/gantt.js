@@ -83,14 +83,15 @@ export default {
       get_gantt_data_loading: false, //是否在请求甘特图数据状态
       is_show_board_file_area: '0', //显示文件区域 0默认不显示 1滑入 2滑出
       boards_flies: [], //带根目录文件列表的项目列表
-      show_board_fold: false, //是否显示项目汇总视图 
+      show_board_fold: false, //是否显示项目汇总视图
       folder_seeing_board_id: '0', //查看文件夹所属的项目id
 
       is_new_board: false, //是否刚刚创建的新项目
       outline_hover_obj: {}, //大纲视图下，hover的任务条所属id
       outline_tree: [], //大纲树
       outline_tree_round: [], //大纲树每一级平铺开来
-      panel_outline_create_card_params: {}
+      panel_outline_create_card_params: {},
+      boardTemplateShow:0
     },
   },
   subscriptions: {

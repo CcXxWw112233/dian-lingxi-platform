@@ -363,7 +363,7 @@ function mapStateToProps({ gantt: { datas: {
   group_view_type,
   gantt_board_id,
   is_show_board_file_area,
-  outline_tree
+  outline_tree,
 } } }) {
   return {
     ceilWidth,
@@ -378,7 +378,7 @@ function mapStateToProps({ gantt: { datas: {
     group_view_type,
     gantt_board_id,
     is_show_board_file_area,
-    outline_tree
+    outline_tree,
   }
 }
 GanttFace.defaultProps = {

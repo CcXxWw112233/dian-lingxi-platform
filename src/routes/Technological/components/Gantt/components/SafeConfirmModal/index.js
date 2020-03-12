@@ -40,7 +40,7 @@ export default class SafeConfirmModal extends Component {
     }
     render() {
         const { confirmContent, confirmContentInputValue } = this.state;
-        const { visible,selectedTpl={}} = this.props;
+        const { visible, selectedTpl = {} } = this.props;
         return (
             <Modal
                 title={null}
