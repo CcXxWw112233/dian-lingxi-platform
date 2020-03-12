@@ -16,40 +16,48 @@ export default class ConfigureStepOne_two extends Component {
       popoverVisible: !this.state.popoverVisible
     })
   }
-  updateEdit(data, key) {
+  updateEdit = (data, key) => {
     const { itemKey, parentKey, processEditDatas = [] } = this.props
     const { form_data = [] } = processEditDatas[parentKey]
     form_data[itemKey][key] = data.value
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: form_data }, 'form_data')
   }
-  propertyNameChange(e) {
-    this.updateEdit({ value: e.target.value }, 'property_name')
+  propertyNameChange = (e) => {
+    this.updateEdit({ value: e.target.value }, 'title')
   }
-  defaultValueChange(e) {
-    this.updateEdit({ value: e.target.value }, 'default_value')
+  defaultValueChange = (e) => {
+    this.updateEdit({ value: e.target.value }, 'prompt_content')
   }
   optionsValueChange = (e, key) => {
     const { itemValue } = this.props
-    let { options_data = [] } = itemValue
-    options_data[key]['value'] = e.target.value
-    this.updateEdit({ value: options_data }, 'options_data')
+    let { options_data = [], options = [] } = itemValue
+    // this.setState({
+    //   local_name: e.target.value,
+    //   key
+    // })
+    // options_data[key]['value'] = e.target.value
+    let newOptionsData = [...options]
+    newOptionsData[key]['value'] = e.target.value
+    this.updateEdit({ value: newOptionsData }, 'options')
   }
+
   // 添加选项的点击事件
   handleAddOptionsSelect = () => {
     const { itemValue } = this.props
-    const { options_data = [] } = itemValue
+    const { options_data = [], options = []} = itemValue
     let obj = {
-      key: (Number(options_data.length)).toString(),
-      value: `选项${(Number(options_data.length) + 1)}`
+      key: (Number(options.length)).toString(),
+      value: `选项${(Number(options.length) + 1)}`
     }
-    options_data.push(obj)
-    this.updateEdit({ value: options_data }, 'options_data')
+    options.push(obj)
+    // options.push(`选项${(Number(options.length) + 1)}`)
+    this.updateEdit({ value: options }, 'options')
   }
   // 删除选项的点击事件 (这里是根据下标来)
   handleDelOptionsSelect = (key) => {
     const { itemValue } = this.props
-    const { options_data = [] } = itemValue
-    let newOptionsData = [...options_data]
+    const { options_data = [], options = [] } = itemValue
+    let newOptionsData = [...options]
     for (var i = 0; i < newOptionsData.length; i++) {
       if (i == key) {
         newOptionsData.splice(key, 1); // 将使后面的元素依次前移，数组长度减1
@@ -58,13 +66,13 @@ export default class ConfigureStepOne_two extends Component {
       }
     }
     // newOptionsData.splice(key,1)
-    this.updateEdit({ value: newOptionsData }, 'options_data')
+    this.updateEdit({ value: newOptionsData }, 'options')
   }
-  isRequiredCheck(e) {
+  isRequiredCheck = (e) => {
     this.updateEdit({ value: e.target.value }, 'is_required')
   }
-  verificationRuleChange(e) {
-    this.updateEdit({ value: e.target.value }, 'verification_rule')
+  verificationRuleChange = (e) => {
+    this.updateEdit({ value: e.target.value }, 'is_multiple_choice')
   }
 
   // 删除对应字段的表项
@@ -79,46 +87,46 @@ export default class ConfigureStepOne_two extends Component {
 
   renderContent = () => {
     const { itemKey, itemValue, processEditDatas = [], parentKey } = this.props
-    const { property_name, default_value, verification_rule, val_length, is_required, options_data = [] } = itemValue
+    const { title, prompt_content, is_multiple_choice, val_length, is_required, options_data = [], options = [] } = itemValue
     return (
       <div className={indexStyles.popover_content}>
         <div className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
           <div>
             <p>标题:</p>
-            <Input value={property_name} onChange={this.propertyNameChange.bind(this)} />
+            <Input value={title} onChange={this.propertyNameChange} />
           </div>
           <div>
             <p>请选择标题:</p>
-            <Input value={default_value} onChange={this.defaultValueChange.bind(this)} />
+            <Input value={prompt_content} onChange={this.defaultValueChange} />
           </div>
           <div>
             <p>添加选项: <span onClick={this.handleAddOptionsSelect} style={{ color: '#1890FF', marginLeft: '5px', cursor: 'pointer', fontSize: '16px' }} className={`${globalStyles.authTheme}`}>&#xe846;</span></p>
             {/* <Input value="空"/> */}
             {
-              options_data.map((item, index) => {
+              options.map((item, index) => {
                 return (
-                  <div key={item} style={{ position: 'relative' }}><Input style={{ marginBottom: '4px', transition: 'all .5s' }} key={item.key} value={item.value} onChange={(e) => { this.optionsValueChange(e, item.key) }} />{item.key != '0' && <span onClick={() => { this.handleDelOptionsSelect(index) }} style={{ marginLeft: '4px', position: 'absolute', top: '6px' }} className={`${globalStyles.authTheme} ${indexStyles.del_optionsIcon}`}>&#xe7fe;</span>}</div>
+                  <div key={item} style={{ position: 'relative' }}><Input style={{ marginBottom: '4px', transition: 'all .5s' }} key={item.key} value={item.value} onChange={(e) => { this.optionsValueChange(e, item.key) }} />{index != '0' && <span onClick={() => { this.handleDelOptionsSelect(index) }} style={{ marginLeft: '4px', position: 'absolute', top: '6px' }} className={`${globalStyles.authTheme} ${indexStyles.del_optionsIcon}`}>&#xe7fe;</span>}</div>
                 )
               })
             }
           </div>
           <div className={indexStyles.layout_style}>
             <p style={{ marginRight: '16px' }}>是否为必填项:</p>
-            <Radio.Group value={is_required} onChange={this.isRequiredCheck.bind(this)}>
+            <Radio.Group value={is_required} onChange={this.isRequiredCheck}>
               <Radio value="1">是</Radio>
               <Radio value="0">否</Radio>
             </Radio.Group>
           </div>
           <div className={indexStyles.layout_style}>
             <p style={{ marginRight: '16px' }}>是否支持多选:</p>
-            <Radio.Group value={verification_rule} onChange={this.verificationRuleChange.bind(this)}>
+            <Radio.Group value={is_multiple_choice} onChange={this.verificationRuleChange}>
               <Radio value="1">是</Radio>
               <Radio value="0">否</Radio>
             </Radio.Group>
           </div>
         </div>
         <div className={indexStyles.pop_btn}>
-          <Button disabled={property_name && property_name != '' && property_name.trimLR() != '' ? false : true} style={{ width: '100%' }} type="primary">确定</Button>
+          <Button disabled={title && title != '' && title.trimLR() != '' ? false : true} style={{ width: '100%' }} type="primary">确定</Button>
         </div>
       </div>
     )
@@ -126,12 +134,12 @@ export default class ConfigureStepOne_two extends Component {
 
   render() {
     const { itemKey, itemValue, processEditDatas = [], parentKey } = this.props
-    const { property_name, default_value, verification_rule, val_length, is_required } = itemValue
+    const { title, prompt_content, is_multiple_choice, val_length, is_required } = itemValue
     return (
       <div>
         <div className={`${indexStyles.text_form}`}>
-          <p>{property_name}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</p>
-          <Select className={indexStyles.option_select} placeholder={default_value} disabled={true} />
+          <p>{title}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</p>
+          <Select className={indexStyles.option_select} placeholder={prompt_content} disabled={true} />
           <span onClick={this.handleDelFormDataItem} className={`${indexStyles.delet_iconCircle}`}>
             <span className={`${globalStyles.authTheme} ${indexStyles.deletet_icon}`}>&#xe68d;</span>
           </span>

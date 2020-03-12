@@ -21,25 +21,28 @@ export default class ConfigureStepOne_one extends Component {
     })
   }
 
-  updateEdit(data, key) {
+  updateEdit = (data, key) => {
     const { itemKey, parentKey, processEditDatas = [] } = this.props
     const { form_data = [] } = processEditDatas[parentKey]
     form_data[itemKey][key] = data.value
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: form_data }, 'form_data')
   }
-  propertyNameChange(e) {
-    this.updateEdit({ value: e.target.value }, 'property_name')
+  propertyNameChange = (e) => {
+    this.updateEdit({ value: e.target.value }, 'title')
   }
-  defaultValueChange(e) {
-    this.updateEdit({ value: e.target.value }, 'default_value')
+  defaultValueChange = (e) => {
+    this.updateEdit({ value: e.target.value }, 'prompt_content')
   }
-  valLengthChange(value) {
-    this.updateEdit({ value: value.toString() }, 'val_length')
+  valMinLengthChange = (value) => {
+    this.updateEdit({ value: value.toString() }, 'val_min_length')
   }
-  isRequiredCheck(e) {
+  valMaxLengthChange = (value) => {
+    this.updateEdit({ value: value.toString() }, 'val_max_length')
+  }
+  isRequiredCheck = (e) => {
     this.updateEdit({ value: e.target.value}, 'is_required')
   }
-  verificationRuleChange(value) {
+  verificationRuleChange = (value) => {
     this.updateEdit({ value: value }, 'verification_rule')
   }
 
@@ -55,21 +58,21 @@ export default class ConfigureStepOne_one extends Component {
 
   renderContent = () => {
     const { itemKey, itemValue, processEditDatas = [], parentKey } = this.props
-    const { property_name, default_value, verification_rule, val_length, is_required } = itemValue
+    const { title, prompt_content, verification_rule, val_length, is_required } = itemValue
     return (
       <div key={itemValue} className={indexStyles.popover_content}>
         <div className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
           <div>
             <p>标题:</p>
-            <Input value={property_name} onChange={this.propertyNameChange.bind(this)}/>
+            <Input value={title} onChange={this.propertyNameChange}/>
           </div>
           <div>
             <p>提示内容:</p>
-            <Input value={default_value} onChange={this.defaultValueChange.bind(this)}/>
+            <Input value={prompt_content} onChange={this.defaultValueChange}/>
           </div>
           <div>
             <p>校验规则:</p>
-            <Select value={verification_rule} onChange={this.verificationRuleChange.bind(this)} className={`${indexStyles.verify_select}`} style={{width: '100%', position: 'relative'}} getPopupContainer={triggerNode => triggerNode.parentNode}>
+            <Select value={verification_rule} onChange={this.verificationRuleChange} className={`${indexStyles.verify_select}`} style={{width: '100%', position: 'relative'}} getPopupContainer={triggerNode => triggerNode.parentNode}>
                 <Option value="">不校验格式</Option>
                 <Option value="mobile">手机号码</Option>
                 <Option value="tel">座机</Option>
@@ -85,18 +88,18 @@ export default class ConfigureStepOne_one extends Component {
           </div>
           <div>
             <p>限制字数:</p>
-            <InputNumber min={1} style={{ width: 174, marginRight: '8px' }} /> ~ <InputNumber min={1} max={100} style={{ width: 174, marginLeft: '8px' }}/>
+            <InputNumber min={1} precision="0.1" onChange={this.valMinLengthChange} style={{ width: 174, marginRight: '8px' }} /> ~ <InputNumber onChange={this.valMaxLengthChange} precision="0.1" min={1} style={{ width: 174, marginLeft: '8px' }}/>
           </div>
           <div className={indexStyles.layout_style}>
             <p style={{marginRight: '16px'}}>是否为必填项:</p>
-            <Radio.Group onChange={this.isRequiredCheck.bind(this)} value={is_required}>
+            <Radio.Group onChange={this.isRequiredCheck} value={is_required}>
               <Radio value="1">是</Radio>
               <Radio value="0">否</Radio>
             </Radio.Group>
           </div>
         </div>
         <div className={indexStyles.pop_btn}>
-          <Button disabled={property_name && property_name != '' && property_name.trimLR() != '' ? false : true} style={{width: '100%'}} type="primary">确定</Button>
+          <Button disabled={title && title != '' && title.trimLR() != '' ? false : true} style={{width: '100%'}} type="primary">确定</Button>
         </div>
       </div>
     )
@@ -104,13 +107,13 @@ export default class ConfigureStepOne_one extends Component {
 
   render() {
     const { itemKey, itemValue } = this.props
-    const { property_name, default_value, verification_rule, val_length, is_required } = itemValue
+    const { title, prompt_content, verification_rule, val_length, is_required } = itemValue
     return (
       <div>
         <div className={indexStyles.text_form}>
-          <p>{property_name}:&nbsp;&nbsp;{ is_required == '1' && <span style={{color: '#F5222D'}}>*</span>}</p>
+          <p>{title}:&nbsp;&nbsp;{ is_required == '1' && <span style={{color: '#F5222D'}}>*</span>}</p>
           <div className={indexStyles.text_fillOut}>
-            <span>{default_value}</span>
+            <span>{prompt_content}</span>
           </div>
           <span onClick={this.handleDelFormDataItem} className={`${indexStyles.delet_iconCircle}`}>
             <span className={`${globalStyles.authTheme} ${indexStyles.deletet_icon}`}>&#xe68d;</span>

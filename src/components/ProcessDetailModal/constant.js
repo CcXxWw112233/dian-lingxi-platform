@@ -118,73 +118,57 @@ export const processEditDatasRecordsConstant = [
   }
 ]
 
-export const processEditDatasItemOneConstant =   {
-  "name": "",
-  "node_type": "1", //节点类型：3代表填写节点
-  "description": "", // 
-  "deadline_type": "d", //完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
-  "deadline_value": "1", //完成期限值
-  "is_workday": "0",
-  "assignee_type": "1", //审批人类型 1=任何人 2=启动流程时指定 3=固定人选
-  "assignees": "", //审批人(id) 多个逗号隔开
-  "transfer_mode": "2", //流转方式 1=自由选择 2= 下一步
-  "enable_revocation": "1", //是否可撤回 1=可撤回 0=不可撤回
-  "enable_opinion": "1", //是否填写意见  1=填写 0=不填写
+export const processEditDatasItemOneConstant = {
+  "node_type": "1",//流程节点类型 1=资料收集 2=审批 3=抄送
+  "name": "",//流程节点名称
+  "description": "",//描述 备注
+  "deadline_time_type": "",//完成期限类型 hour = 时 day =天 month = 月
+  "deadline_value": "",//完成期限值
+  "assignee_type": "",//审批人类型 1=任何人 2=指定人员
+  "assignees": "",//审批人 多个逗号隔开
+  "froms": [],
   "is_confirm": '0', // 是否确认
   "form_data": [
   ]
 }
 
-export const processEditDatasItemTwoConstant =   {
-  "name": "",
-  "node_type": "2", //节点类型：5代表审批节点
-  "description": "",
-  "approve_type": "1", //审批模式 1=串签 2=并签 3=汇签
-  "approve_value": "", //汇签值 当approve_type=3 时该字段有效
-  "deadline_type": "1", //完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
-  "deadline_value": "1", //完成期限值
-  "is_workday": "0",
-  "assignee_type": "2", //审批人类型 1=任何人 2=启动流程时指定 3=固定人选
-  "assignees": "", //审批人(id) 多个逗号隔开
-  "transfer_mode": "2", //流转方式 1=自由选择 2= 下一步
-  "enable_revocation": "1", //是否可撤回 1=可撤回 0=不可撤回
-  "enable_opinion": "1",//是否填写意见  1=填写 0=不填写
+export const processEditDatasItemTwoConstant = {
+  "node_type": "2",//流程节点类型 1=资料收集 2=审批 3=抄送
+  "name": "",//流程节点名称
+  "description": "",//描述 备注
+  "approve_type": "",//审批类型 1=串签 2=并签 3=汇签
+  "approve_value": "",// 当为 汇签时需填的值
+  "deadline_time_type": "",//完成期限类型 hour = 时 day =天 month = 月
+  "deadline_value": "",//完成期限值
+  "assignees": "",//审批人 多个逗号隔开
   "is_confirm": "0"
 }
 
-export const processEditDatasItemThreeConstant =       {
-  "name": "",
-  "node_type": "3", //节点类型：4代表抄送节点
-  "description": "",
-  "deadline_type": "1", //完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
-  "deadline_value": "1", //完成期限值
-  "is_workday": "0",
-  "assignee_type": "1", //抄送人类型 2=启动流程时指定 3=固定人选
-  "assignees": "", //抄送人 多个逗号隔开（传的是邮箱）
-  "cc_type": "1", //抄送人类型 1=启动流程时指定 2=固定人选
-  "recipients": "", //抄报人 多个逗号隔开（传的是邮箱）
-  "transfer_mode": "2", //流转方式 1=自由选择 2= 下一步
-  "enable_revocation": "1", //是否可撤回 1=可撤回 0=不可撤回
-  "enable_opinion": "1",//是否填写意见  1=填写 0=不填写
+export const processEditDatasItemThreeConstant = {
+  "node_type": "3",//流程节点类型 1=资料收集 2=审批 3=抄送
+  "name": "",//流程节点名称
+  "description": "",//描述 备注
+  "deadline_time_type": "",//完成期限类型 hour = 时 day =天 month = 月
+  "deadline_value": "",//完成期限值
+  "cc_type": "",//抄送人类型 1=自动抄送 2=手动抄送
+  "recipients": "",//抄送人 多个逗号隔开
+  "assignees": "",//抄报人 多个逗号隔开
   "is_confirm": "0"
 }
 
-export const processEditDatasRecordsItemOneConstant =   {
+export const processEditDatasRecordsItemOneConstant = {
   'node_type': '1',
   'alltypedata': [
     {
-      "name": "",
-      "node_type": "1", //节点类型：3代表填写节点
-      "description": "",
-      "deadline_type": "1", //完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
-      "deadline_value": "1", //完成期限值
-      "is_workday": "0",
-      "assignee_type": "1", //审批人类型 1=任何人 2=启动流程时指定 3=固定人选
-      "assignees": "", //审批人(id) 多个逗号隔开
-      "transfer_mode": "2", //流转方式 1=自由选择 2= 下一步
-      "enable_revocation": "1", //是否可撤回 1=可撤回 0=不可撤回
-      "enable_opinion": "1", //是否填写意见  1=填写 0=不填写
-      "is_confirm": "0",
+      "node_type": "1",//流程节点类型 1=资料收集 2=审批 3=抄送
+      "name": "",//流程节点名称
+      "description": "",//描述 备注
+      "deadline_time_type": "",//完成期限类型 hour = 时 day =天 month = 月
+      "deadline_value": "",//完成期限值
+      "assignee_type": "",//审批人类型 1=任何人 2=指定人员
+      "assignees": "",//审批人 多个逗号隔开
+      "froms": [],
+      "is_confirm": '0', // 是否确认
       // "form_data": [
       //   // 文本
       //   {
@@ -224,35 +208,25 @@ export const processEditDatasRecordsItemOneConstant =   {
       // ]
     },
     {
-      "name": "",
-      "node_type": "2", //节点类型：5代表审批节点
-      "description": "",
-      "approve_type": "1", //审批模式 1=串签 2=并签 3=汇签
-      "approve_value": "", //汇签值 当approve_type=3 时该字段有效
-      "deadline_type": "1", //完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
-      "deadline_value": "1", //完成期限值
-      "is_workday": "0",
-      "assignee_type": "2", //审批人类型 1=任何人 2=启动流程时指定 3=固定人选
-      "assignees": "", //审批人(id) 多个逗号隔开
-      "transfer_mode": "2", //流转方式 1=自由选择 2= 下一步
-      "enable_revocation": "1", //是否可撤回 1=可撤回 0=不可撤回
-      "enable_opinion": "1",//是否填写意见  1=填写 0=不填写
+      "node_type": "2",//流程节点类型 1=资料收集 2=审批 3=抄送
+      "name": "",//流程节点名称
+      "description": "",//描述 备注
+      "approve_type": "",//审批类型 1=串签 2=并签 3=汇签
+      "approve_value": "",// 当为 汇签时需填的值
+      "deadline_time_type": "",//完成期限类型 hour = 时 day =天 month = 月
+      "deadline_value": "",//完成期限值
+      "assignees": "",//审批人 多个逗号隔开
       "is_confirm": "0"
     },
     {
-      "name": "",
-      "node_type": "3", //节点类型：4代表抄送节点
-      "description": "",
-      "deadline_type": "1", //完成期限类型 1=无期限 2=启动流程时指定 3=固定天数
-      "deadline_value": "1", //完成期限值
-      "is_workday": "0",
-      "assignee_type": "1", //抄送人类型 2=启动流程时指定 3=固定人选
-      "assignees": "", //抄送人 多个逗号隔开（传的是邮箱）
-      "cc_type": "1", //抄送人类型 1=启动流程时指定 2=固定人选
-      "recipients": "", //抄报人 多个逗号隔开（传的是邮箱）
-      "transfer_mode": "2", //流转方式 1=自由选择 2= 下一步
-      "enable_revocation": "1", //是否可撤回 1=可撤回 0=不可撤回
-      "enable_opinion": "1",//是否填写意见  1=填写 0=不填写
+      "node_type": "3",//流程节点类型 1=资料收集 2=审批 3=抄送
+      "name": "",//流程节点名称
+      "description": "",//描述 备注
+      "deadline_time_type": "",//完成期限类型 hour = 时 day =天 month = 月
+      "deadline_value": "",//完成期限值
+      "cc_type": "",//抄送人类型 1=自动抄送 2=手动抄送
+      "recipients": "",//抄送人 多个逗号隔开
+      "assignees": "",//抄报人 多个逗号隔开
       "is_confirm": "0"
     },
   ],
@@ -261,84 +235,84 @@ export const processEditDatasRecordsItemOneConstant =   {
 // 假数据
 export const processDoingListMatch = [
   {
-      "is_privilege":"0",
-      "privileges":[
+    "is_privilege": "0",
+    "privileges": [
 
-      ],
-      "id":"1235511262679535616",
-      "flow_template_id":"1235511229297070080",
-      "board_id":"1235125250149191680",
-      "name":"Señorita",
-      "description":"<p></p>",
-      "status":"1",
-      "proc_ins_id":"610115",
-      "proc_def_id":"process1235511229297070080:1:610114",
-      "create_by":"1135840292222668800",
-      "curr_node_id":"1235511262692118528",
-      "create_time":"1583403814",
-      "update_time":"1583403815",
-      "total_node_num":"0",
-      "completed_node_num":"0"
+    ],
+    "id": "1235511262679535616",
+    "flow_template_id": "1235511229297070080",
+    "board_id": "1235125250149191680",
+    "name": "Señorita",
+    "description": "<p></p>",
+    "status": "1",
+    "proc_ins_id": "610115",
+    "proc_def_id": "process1235511229297070080:1:610114",
+    "create_by": "1135840292222668800",
+    "curr_node_id": "1235511262692118528",
+    "create_time": "1583403814",
+    "update_time": "1583403815",
+    "total_node_num": "0",
+    "completed_node_num": "0"
   }
 ]
 
 export const processInfoMatch = {
-  "id":"1235511262679535616",
-  "name":"Señorita",
-  "description":"<p></p>",
-  "status":"1",
-  "create_user_id":"1135840292222668800",
-  "create_user_name":"",
-  "create_user_avatar":"",
-  "create_time":"1583403814",
-  "content_link":"1235511262692118528",
-  "curr_node_id":"1235511262692118528",
-  "nodes":[
-      {
-          "id":"1235511262692118528",
-          "name":"I love it when you call me señorita",
-          "description":"",
-          "node_type":"1",
-          "deadlined_timeout":"0",
-          "assignee_type":"1",
-          "assignees":[
+  "id": "1235511262679535616",
+  "name": "Señorita",
+  "description": "<p></p>",
+  "status": "1",
+  "create_user_id": "1135840292222668800",
+  "create_user_name": "",
+  "create_user_avatar": "",
+  "create_time": "1583403814",
+  "content_link": "1235511262692118528",
+  "curr_node_id": "1235511262692118528",
+  "nodes": [
+    {
+      "id": "1235511262692118528",
+      "name": "I love it when you call me señorita",
+      "description": "",
+      "node_type": "1",
+      "deadlined_timeout": "0",
+      "assignee_type": "1",
+      "assignees": [
 
-          ],
-          "transfer_mode":"2",
-          "enable_revocation":"1",
-          "enable_opinion":"1",
-          "sort":"1",
-          "content_link":[
+      ],
+      "transfer_mode": "2",
+      "enable_revocation": "1",
+      "enable_opinion": "1",
+      "sort": "1",
+      "content_link": [
 
-          ]
-      },
-      {
-          "id":"1235511262708895744",
-          "name":"I wish it wasn't so d**n hard to leave ya",
-          "description":"",
-          "node_type":"1",
-          "deadlined_timeout":"0",
-          "assignee_type":"1",
-          "assignees":[
+      ]
+    },
+    {
+      "id": "1235511262708895744",
+      "name": "I wish it wasn't so d**n hard to leave ya",
+      "description": "",
+      "node_type": "1",
+      "deadlined_timeout": "0",
+      "assignee_type": "1",
+      "assignees": [
 
-          ],
-          "transfer_mode":"2",
-          "enable_revocation":"1",
-          "enable_opinion":"1",
-          "sort":"2",
-          "content_link":[
+      ],
+      "transfer_mode": "2",
+      "enable_revocation": "1",
+      "enable_opinion": "1",
+      "sort": "2",
+      "content_link": [
 
-          ]
-      }
+      ]
+    }
   ],
-  "completed_amount":"0",
-  "node_amount":"2",
-  "is_privilege":"0",
-  "privileges":[
-
-  ],
-  "privileges_extend":[
+  "completed_amount": "0",
+  "node_amount": "2",
+  "is_privilege": "0",
+  "privileges": [
 
   ],
-  "is_shared":"0"
+  "privileges_extend": [
+
+  ],
+  "is_shared": "0"
 }

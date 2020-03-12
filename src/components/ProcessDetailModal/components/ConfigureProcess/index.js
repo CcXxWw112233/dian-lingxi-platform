@@ -137,10 +137,10 @@ export default class ConfigureProcess extends Component {
           return {confirmButtonText, confirmButtonDisabled}
         } else
         if (!name) { // 如果名称不存在
-          confirmButtonText = '请填写步骤名称,才能完成'
+          confirmButtonText = '请填写步骤名称'
           confirmButtonDisabled = true
         } else if (!(form_data && form_data.length)) {
-          confirmButtonText = '至少添加一个表项才能完成'
+          confirmButtonText = '至少添加一个表项'
           confirmButtonDisabled = true
         } else {
           confirmButtonDisabled = false

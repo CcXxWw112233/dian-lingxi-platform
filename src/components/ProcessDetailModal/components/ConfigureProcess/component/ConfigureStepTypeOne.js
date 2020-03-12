@@ -51,37 +51,37 @@ export default class ConfigureStepTypeOne extends Component {
 
   // 任何人 | 指定人
   assigneeTypeChange = (e) => {
-    this.updateConfigureProcess({value: e.target.value}, 'assignee_type')
+    this.updateConfigureProcess({ value: e.target.value }, 'assignee_type')
   }
   // 完成期限
   deadlineValueChange = (value) => {
-    this.updateConfigureProcess({value: value.toString()}, 'deadline_value')
+    this.updateConfigureProcess({ value: value.toString() }, 'deadline_value')
   }
   deadlineTypeValueChange = (value) => {
-    this.updateConfigureProcess({value: value}, 'deadline_type')
-    this.updateConfigureProcess({value: 1}, 'deadline_value')
+    this.updateConfigureProcess({ value: value }, 'deadline_type')
+    this.updateConfigureProcess({ value: 1 }, 'deadline_value')
   }
-  
+
   // 添加节点备注事件
   handleRemarksWrapper = (e) => {
     e && e.stopPropagation()
-    this.updateConfigureProcess({value: false}, 'is_click_node_description')
+    this.updateConfigureProcess({ value: false }, 'is_click_node_description')
   }
 
   handleRemarksContent = (e) => {
     e && e.stopPropagation()
-    this.updateConfigureProcess({value: true}, 'is_click_node_description')
+    this.updateConfigureProcess({ value: true }, 'is_click_node_description')
   }
 
   titleTextAreaChangeBlur = (e) => {
     let val = e.target.value.trimLR()
     if (val == "" || val == " " || !val) {
-      this.updateConfigureProcess({value: ''}, 'description')
-      this.updateConfigureProcess({value: false}, 'is_click_node_description')
+      this.updateConfigureProcess({ value: '' }, 'description')
+      this.updateConfigureProcess({ value: false }, 'is_click_node_description')
       return
     }
-    this.updateConfigureProcess({value: val}, 'description')
-    this.updateConfigureProcess({value: false}, 'is_click_node_description')
+    this.updateConfigureProcess({ value: val }, 'description')
+    this.updateConfigureProcess({ value: false }, 'is_click_node_description')
   }
 
   titleTextAreaChangeClick = (e) => {
@@ -97,22 +97,23 @@ export default class ConfigureStepTypeOne extends Component {
     switch (key) {
       case '1':
         obj = { // 表示文本
-          "field_type": "1",
-          "property_name": "文本输入", // 文本标题
-          "default_value": "请填写内容", // 提示内容
-          "verification_rule": "", // 校验规则
-          "val_length": "20", // 限制字数
-          "is_required": "0" // 是否为必填项
+          "field_type": "1",//类型 1=文本 2=选择 3=日期 4=表格 5=附件
+          "title": "文本输入",//标题
+          "prompt_content": "请填写内容",//提示内容
+          "is_required": "0",//是否必填 1=必须 0=不是必须
+          "verification_rule": "",//校验规则
+          "val_min_length": "",//最小长度
+          "val_max_length": ""//最大长度
         }
         break
       case '2':
         obj = {
-          "field_type": "2",
-          "property_name": "下拉选择",
-          "default_value": "请选择内容",
-          "verification_rule": "0",// 是否支持多选
-          "is_required": "0",
-          "options_data": [
+          "field_type": "2",//类型 1=文本 2=选择 3=日期 4=表格 5=附件
+          "title": "下拉选择",//标题
+          "prompt_content": "请选择内容",//提示内容
+          "is_required": "0",//是否必填 1=必须 0=不是必须
+          "is_multiple_choice": "0",//是否多选 1=是 0=否
+          "options": [
             {
               "key": '0',
               "value": '选项1',
@@ -122,22 +123,25 @@ export default class ConfigureStepTypeOne extends Component {
         break
       case '3': //下拉
         obj = { //日期
-          "field_type": "3",
-          "property_name": "日期选择",
-          "default_value": "请选择日期",
-          "verification_rule": "SINGLE_DATE_TIME",
-          "date_scope": 'SINGLE_DATE',
-          "is_required": "0"
+          "field_type": "3",//类型 1=文本 2=选择 3=日期 4=表格 5=附件
+          "title": "日期选择",//标题
+          "prompt_content": "请选择日期",//提示内容
+          "is_required": "0",//是否必填 1=必须 0=不是必须
+          "date_range": "1",//日期范围 1=单个日期 2=开始日期~截止日期
+          "date_precision": "2"//日期精度 1=仅日期 2=日期+时间
         }
         break
       case '5':
         obj = {
-          "field_type": "5",
-          "property_name": "附件上传",
-          "limit_file_num": "10",
-          "limit_file_type": "1,2,3,4",
-          "limit_file_size": "20",
-          "is_required": "0"
+          "field_type": "5",//类型 1=文本 2=选择 3=日期 4=表格 5=附件
+          "title": "附件上传",//标题
+          "prompt_content": "",//提示内容
+          "is_required": "0",//是否必填 1=必须 0=不是必须
+          "limit_file_num": "10",//上传数量
+          "limit_file_type": [//限制上传类型(文件格式) document=文档 image=图像 audio=音频 video=视频
+            "document", "image", "audio", "video"
+          ],
+          "limit_file_size": "20"//上传大小限制
         }
       default:
         break
@@ -221,7 +225,7 @@ export default class ConfigureStepTypeOne extends Component {
         {/* 填写人 */}
         <div className={indexStyles.fill_person} onClick={(e) => { e && e.stopPropagation() }}>
           <span className={`${globalStyles.authTheme} ${indexStyles.label_person}`}>&#xe7b2; 填写人&nbsp;:</span>
-          <Radio.Group style={{lineHeight: '48px'}} value={assignee_type} onChange={this.assigneeTypeChange}>
+          <Radio.Group style={{ lineHeight: '48px' }} value={assignee_type} onChange={this.assigneeTypeChange}>
             <Radio value="1">任何人</Radio>
             <Radio value="2">指定人员</Radio>
           </Radio.Group>
@@ -251,19 +255,19 @@ export default class ConfigureStepTypeOne extends Component {
           <span className={`${globalStyles.authTheme} ${indexStyles.del_moreIcon}`}>&#xe7fe;</span>
           {
             !is_click_node_description ? (
-              <div onClick={(e) => {this.handleRemarksContent(e)}} className={indexStyles.remarks_content}>{description != '' ? description : '添加备注'}</div>
+              <div onClick={(e) => { this.handleRemarksContent(e) }} className={indexStyles.remarks_content}>{description != '' ? description : '添加备注'}</div>
             ) : (
-              <NameChangeInput
-                autosize
-                onBlur={this.titleTextAreaChangeBlur}
-                onPressEnter={this.titleTextAreaChangeBlur}
-                onClick={this.titleTextAreaChangeClick}
-                autoFocus={true}
-                goldName={''}
-                nodeName={'input'}
-                style={{ display: 'block', fontSize: 20, color: '#262626', resize: 'none', height: '38px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none', marginTop: '4px' }}
-              />
-            )
+                <NameChangeInput
+                  autosize
+                  onBlur={this.titleTextAreaChangeBlur}
+                  onPressEnter={this.titleTextAreaChangeBlur}
+                  onClick={this.titleTextAreaChangeClick}
+                  autoFocus={true}
+                  goldName={''}
+                  nodeName={'input'}
+                  style={{ display: 'block', fontSize: 20, color: '#262626', resize: 'none', height: '38px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none', marginTop: '4px' }}
+                />
+              )
           }
 
         </div>
