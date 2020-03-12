@@ -604,14 +604,20 @@ export default class GetRowStrip extends PureComponent {
     // /空条拖拽事件-----end
 
     targetEventProps = () => {
-        const { itemValue: { id } } = this.props
-        if (!!id) {
+        const { itemValue: { id, add_id } } = this.props
+        if (!!id) { //真正上的里程碑或者任务 或者创建里程碑的虚拟节点
             return {
-                onMouseMove: this.stripMouseMove,
                 onMouseOver: this.stripMouseOver,
-                onMouseLeave: this.stripMouseLeave
+                onMouseLeave: this.stripMouseLeave,
+                onMouseMove: this.stripMouseMove,
             }
         } else {
+            if (add_id == '0') {
+                return {
+                    onMouseOver: this.stripMouseOver,
+                    onMouseLeave: this.stripMouseLeave
+                }
+            }
             return {
                 onMouseDown: (e) => {
                     e.stopPropagation()
