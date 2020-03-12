@@ -77,7 +77,7 @@ export default class GetRowStrip extends PureComponent {
                 outline_hover_obj: {}
             }
         })
-        this.addCardSetOutlineTree({ start_time: 0, due_time: 0, editing: false })
+        // this.addCardSetOutlineTree({ start_time: 0, due_time: 0, editing: false })
     }
     stripMouseMove = (e) => {
         if (this.state.is_item_has_time) { //存在时间的任务不需要再设置时间了
