@@ -176,11 +176,6 @@ export default class ConfigureStepTypeTwo extends Component {
           <sapn className={`${indexStyles.select_item}`}>+ 关联内容</sapn>
           <sapn className={`${indexStyles.select_item}`}>+ 备注</sapn>
         </div>
-        {/* 删除 | 确认 */}
-        <div className={indexStyles.step_btn}>
-          <Button onClick={this.handleDeleteButton} disabled={itemKey == '0' ? true : false}>删除</Button>
-          <Button onClick={this.handleConfirmButton} type="primary">确认</Button>
-        </div>
       </div>
     )
   }

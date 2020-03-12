@@ -4,6 +4,7 @@ import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
 import ConfigureProcess from './components/ConfigureProcess'
+import EditProcess from './components/EditProcess'
 import ConfigureGuide from './ConfigureGuide'
 import { processEditDatasItemOneConstant, processEditDatasRecordsItemOneConstant } from './constant'
 import { Tooltip } from 'antd'
@@ -201,15 +202,10 @@ export default class MainContent extends Component {
   // 添加步骤
   handleAddEditStep = (e) => {
     e && e.stopPropagation()
-    const { processEditDatasRecords = [], processEditDatas = [], dispatch } = this.props
+    const { processEditDatas = [], dispatch } = this.props
     const nodeObj = JSON.parse(JSON.stringify(processEditDatasItemOneConstant))
-    const recordItemobjs = JSON.parse(JSON.stringify(processEditDatasRecordsItemOneConstant))
-
-    // if (!this.verrificationForm(processEditDatas)) {
-    //   return false
-    // }
-    // processEditDatasRecords.push(recordItemobjs)
-    processEditDatas.push(nodeObj)
+    processEditDatas.length == '0' ?  processEditDatas.push(nodeObj) : processEditDatas.push({})
+    // processEditDatas.push(nodeObj)
     new Promise((resolve) => {
       dispatch({
         type: 'publicProcessDetailModal/updateDatas',
@@ -364,8 +360,9 @@ export default class MainContent extends Component {
         <div className={indexStyles.configure_bottom}>
           {/* <ConfigureProcess {...this.props}/> */}
           {processEditDatas.map((value, key) => {
+            const { is_confirm } = value
             return (
-              <><ConfigureProcess itemKey={key} itemValue={value} /></>
+              <>{is_confirm == '1' ? <EditProcess itemKey={key} itemValue={value}/> : <ConfigureProcess itemKey={key} itemValue={value} />}</>
             )
           })}
           {this.renderAddProcessStep()}

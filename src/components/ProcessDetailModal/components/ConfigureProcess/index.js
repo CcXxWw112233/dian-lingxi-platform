@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
-import { Radio } from 'antd'
+import { Radio, Button, Tooltip } from 'antd'
 import ConfigureStepTypeOne from './component/ConfigureStepTypeOne'
 import ConfigureStepTypeTwo from './component/ConfigureStepTypeTwo'
 import ConfigureStepTypeThree from './component/ConfigureStepTypeThree'
@@ -30,7 +30,7 @@ export default class ConfigureProcess extends Component {
 
   // 外部点击事件是否取消节点名称输入框
   handleCancelNodeName = (e) => {
-    console.log('进来了','sssssssssssssssssssssssssss_外部点击事件')
+    console.log('进来了', 'sssssssssssssssssssssssssss_外部点击事件')
     e && e.stopPropagation()
     const { itemValue, itemKey, processEditDatas = [] } = this.props
     const { name } = itemValue
@@ -43,30 +43,58 @@ export default class ConfigureProcess extends Component {
   // 节点名称点击事件
   handleChangeNodeName = (e) => {
     e && e.stopPropagation()
-    this.updateCorrespondingPrcodessStepWithNodeContent('is_click_node_name',true)
+    this.updateCorrespondingPrcodessStepWithNodeContent('is_click_node_name', true)
   }
 
   // 当前节点的步骤名称
   titleTextAreaChangeBlur = (e) => {
     let val = e.target.value.trimLR()
     if (val == "" || val == " " || !val) {
-      this.updateCorrespondingPrcodessStepWithNodeContent('name','')
+      this.updateCorrespondingPrcodessStepWithNodeContent('name', '')
       return
     }
     this.setState({
       localName: val
     })
-    this.updateCorrespondingPrcodessStepWithNodeContent('name',val)
+    this.updateCorrespondingPrcodessStepWithNodeContent('name', val)
     this.updateCorrespondingPrcodessStepWithNodeContent('is_click_node_name', false)
   }
   titleTextAreaChangeClick = (e) => {
     e && e.stopPropagation()
   }
 
+
+  // 确认的点击事件
+  handleConfirmButton = (e) => {
+    e && e.stopPropagation()
+    this.updateCorrespondingPrcodessStepWithNodeContent('is_confirm', '1')
+  }
+
+  // 删除的点击事件
+  handleDeleteButton = (e) => {
+    e && e.stopPropagation()
+    const { processEditDatas = [], processCurrentEditStep, dispatch, itemKey } = this.props
+    let newProcessEditDatas = null
+    if (processEditDatas.length) {
+      // processEditDatas.splice(processCurrentEditStep, 1)
+      newProcessEditDatas = JSON.parse(JSON.stringify(processEditDatas))
+      newProcessEditDatas.splice(itemKey, 1)
+
+    }
+    dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        processEditDatas: newProcessEditDatas,
+        // node_type: processEditDatas[itemKey > 1 ? itemKey - 1 : 0]['node_type'],
+        processCurrentEditStep: processCurrentEditStep >= 1 ? processCurrentEditStep - 1 : 0,
+      }
+    })
+  }
+
   // 当先选择的节点类型
   handleChangeStepType = (e) => {
     e && e.stopPropagation()
-    e && e.nativeEvent &&  e.nativeEvent.stopImmediatePropagation()
+    e && e.nativeEvent && e.nativeEvent.stopImmediatePropagation()
     const { itemKey, itemValue, processEditDatas = [], dispatch } = this.props
     let key = e.target.value
     let newProcessEditDatas = [...processEditDatas]
@@ -95,19 +123,91 @@ export default class ConfigureProcess extends Component {
     // this.updateCorrespondingPrcodessStepWithNodeContent('node_type', key)
   }
 
+  // 渲染不同种Button确认按钮的提示文案
+  renderDiffButtonTooltipsText = () => {
+    let confirmButtonText = ''
+    let confirmButtonDisabled
+    const { itemValue } = this.props
+    const { node_type, name, form_data = [], assignees, cc_type, recipients } = itemValue
+    switch (node_type) {
+      case '1':
+        if (!name && !(form_data && form_data.length)) {
+          confirmButtonText = '请填写步骤名称和至少添加一个表项'
+          confirmButtonDisabled = true
+          return {confirmButtonText, confirmButtonDisabled}
+        } else
+        if (!name) { // 如果名称不存在
+          confirmButtonText = '请填写步骤名称,才能完成'
+          confirmButtonDisabled = true
+        } else if (!(form_data && form_data.length)) {
+          confirmButtonText = '至少添加一个表项才能完成'
+          confirmButtonDisabled = true
+        } else {
+          confirmButtonDisabled = false
+        }
+        break;
+      case '2':
+        if (!name && !assignees.length) {
+          confirmButtonText = '请输入步骤名称和至少添加一个审批人'
+          confirmButtonDisabled = true
+          return {confirmButtonText, confirmButtonDisabled}
+        } else
+        if (!name) {
+          confirmButtonText = '请填写步骤名称'
+          confirmButtonDisabled = true
+        } else if (!assignees.length) {
+          confirmButtonText = '至少添加一个审批人'
+          confirmButtonDisabled = true
+        } else {
+          confirmButtonDisabled = false
+        }
+        break
+      case '3':
+        if (cc_type == '1' && (!name && !assignees.length) || cc_type == '2' && ((!name && !assignees.length && !recipients.length) || (!name && !assignees.length) || (!name && !recipients.length))) {
+          confirmButtonText = '请填写步骤名称和至少一位抄送人或抄报人'
+          confirmButtonDisabled = true
+          return {confirmButtonText, confirmButtonDisabled}
+        }
+        if (!name) {
+          confirmButtonText = '请填写步骤名称'
+          confirmButtonDisabled = true
+        }
+        if (cc_type == '1') {
+          if (!recipients.length) {
+            confirmButtonText = '至少添加一个抄送人'
+            confirmButtonDisabled = true
+          }
+        } else if (cc_type == '2') {
+          if (!recipients.length) {
+            confirmButtonText = '至少添加一个抄送人'
+            confirmButtonDisabled = true
+          } else if (!assignees.length) {
+            confirmButtonText = '至少添加一个抄报人'
+            confirmButtonDisabled = true
+          }
+        }
+        break
+      default:
+        // confirmButtonText = '确认'
+        confirmButtonDisabled = true
+        break;
+    }
+    return {confirmButtonText, confirmButtonDisabled}
+  }
+
   renderDiffStepTypeContent = () => {
     const { itemValue, itemKey } = this.props
     const { node_type } = itemValue
     let container = <div></div>
     switch (node_type) {
       case '1': // 表示资料收集
-        container = <ConfigureStepTypeOne itemValue={itemValue} itemKey={itemKey}/>
+        container = <ConfigureStepTypeOne itemValue={itemValue} itemKey={itemKey} />
         break;
       case '2': // 表示审批
-        container = <ConfigureStepTypeTwo itemValue={itemValue} itemKey={itemKey}/>
+        container = <ConfigureStepTypeTwo itemValue={itemValue} itemKey={itemKey} />
         break
       case '3': // 表示抄送
-        container = <ConfigureStepTypeThree itemValue={itemValue} itemKey={itemKey}/>
+        container = <ConfigureStepTypeThree itemValue={itemValue} itemKey={itemKey} />
         break
       default:
         container = <div></div>
@@ -147,7 +247,7 @@ export default class ConfigureProcess extends Component {
     }
     // const alltypedata = processEditDatasRecords[processCurrentEditStep]['alltypedata']
     return (
-      <div key={itemKey} style={{ display: 'flex', marginBottom: '45px' }} onClick={(e) => {this.handleCancelNodeName(e)}}>
+      <div key={itemKey} style={{ display: 'flex', marginBottom: '45px' }} onClick={(e) => { this.handleCancelNodeName(e) }}>
         {/* {node_amount <= itemKey + 1 ? null : <div className={stylLine}></div>} */}
         <div className={indexStyles.doingLine}></div>
         <div className={indexStyles.doingCircle}> {itemKey + 1}</div>
@@ -157,33 +257,39 @@ export default class ConfigureProcess extends Component {
             <div style={{ marginBottom: '16px' }}>
               {
                 name && !is_click_node_name ? (
-                  <div onClick={(e) => {this.handleChangeNodeName(e)}} className={`${indexStyles.node_name} ${indexStyles.pub_hover}`}>
+                  <div onClick={(e) => { this.handleChangeNodeName(e) }} className={`${indexStyles.node_name} ${indexStyles.pub_hover}`}>
                     {name}
                   </div>
                 ) : (
-                  <NameChangeInput
-                    autosize
-                    onBlur={this.titleTextAreaChangeBlur}
-                    onPressEnter={this.titleTextAreaChangeBlur}
-                    onClick={this.titleTextAreaChangeClick}
-                    autoFocus={true}
-                    goldName={''}
-                    placeholder={'步骤名称(必填)'}
-                    maxLength={101}
-                    nodeName={'input'}
-                    style={{ display: 'block', fontSize: 20, color: '#262626', resize: 'none', height: '44px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none' }}
-                  />
-                )
+                    <NameChangeInput
+                      autosize
+                      onBlur={this.titleTextAreaChangeBlur}
+                      onPressEnter={this.titleTextAreaChangeBlur}
+                      onClick={this.titleTextAreaChangeClick}
+                      autoFocus={true}
+                      goldName={''}
+                      placeholder={'步骤名称(必填)'}
+                      maxLength={101}
+                      nodeName={'input'}
+                      style={{ display: 'block', fontSize: 20, color: '#262626', resize: 'none', height: '44px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none' }}
+                    />
+                  )
               }
             </div>
             <div style={{ paddingLeft: '14px', paddingRight: '14px', position: 'relative' }}>
               {/* 步骤类型 */}
-              <div style={{ marginBottom: '14px' }} onClick={(e) => { e && e.stopPropagation() }}>
+              <div style={{ paddingBottom: '14px', borderBottom: '1px #e8e8e8' }} onClick={(e) => { e && e.stopPropagation() }}>
                 <span style={{ color: 'rgba(0,0,0,0.45)' }} className={globalStyles.authTheme}>&#xe7f4; &nbsp;步骤类型 :&nbsp;&nbsp;&nbsp;</span>
                 <Radio.Group onChange={this.handleChangeStepType} value={node_type}>
                   <Radio value="1">资料收集</Radio>
-                  <Radio value="2">审批</Radio>
-                  <Radio value="3">抄送</Radio>
+                  {
+                    itemKey != '0' && (
+                      <>
+                        <Radio value="2">审批</Radio>
+                        <Radio value="3">抄送</Radio>
+                      </>
+                    )
+                  }
                 </Radio.Group>
               </div>
               <div className={`${check_line} ${indexStyles.check_line}`}></div>
@@ -191,6 +297,11 @@ export default class ConfigureProcess extends Component {
               {this.renderDiffStepTypeContent()}
             </div>
             {/* <span className={indexStyles.dynamicTime}></span> */}
+            {/* 删除 | 确认 */}
+            <div className={indexStyles.step_btn}>
+              <Button onClick={this.handleDeleteButton} style={{ color: itemKey != '0' && '#FF7875' }} disabled={itemKey == '0' ? true : false}>删除</Button>
+              <Tooltip placement="top" title={this.renderDiffButtonTooltipsText().confirmButtonText}><Button disabled={this.renderDiffButtonTooltipsText().confirmButtonDisabled} onClick={this.handleConfirmButton} type="primary">确认</Button></Tooltip>
+            </div>
           </div>
         </div>
       </div>
@@ -198,16 +309,8 @@ export default class ConfigureProcess extends Component {
   }
 
   render() {
-    const { processEditDatas = [] } = this.props
     return (
       <div className={indexStyles.configureProcessOut_1}>
-        {/* {
-          processEditDatas.map((item, key) => {
-            return (
-              this.renderContent({ itemKey: key, itemValue: item })
-            )
-          })
-        } */}
         {this.renderContent()}
       </div>
     )
@@ -215,5 +318,5 @@ export default class ConfigureProcess extends Component {
 }
 
 function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [] } }) {
-  return {  processEditDatas }
+  return { processEditDatas }
 }
