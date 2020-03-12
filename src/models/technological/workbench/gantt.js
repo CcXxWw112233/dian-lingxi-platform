@@ -84,6 +84,7 @@ export default {
       group_view_users_tree: [], //内容过滤成员分组树
       holiday_list: [], //日历列表（包含节假日农历）
       get_gantt_data_loading: false, //是否在请求甘特图数据状态
+      get_gantt_data_loaded: false,
       is_show_board_file_area: '0', //显示文件区域 0默认不显示 1滑入 2滑出
       boards_flies: [], //带根目录文件列表的项目列表
       show_board_fold: false, //是否显示项目汇总视图
@@ -94,8 +95,8 @@ export default {
       outline_tree: [], //大纲树
       outline_tree_round: [], //大纲树每一级平铺开来
       panel_outline_create_card_params: {},
-      boardTemplateShow:0,
-      startPlanType:0
+      boardTemplateShow: 0,
+      startPlanType: 0
     },
   },
   subscriptions: {
@@ -224,7 +225,12 @@ export default {
           }
         })
       }, 2000)
-
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          get_gantt_data_loaded: false,
+        }
+      })
       // 查询文件列表
       yield put({
         type: 'getGanttBoardsFiles',
@@ -245,6 +251,7 @@ export default {
         type: 'updateDatas',
         payload: {
           get_gantt_data_loading: false,
+          get_gantt_data_loaded: true,
           folder_seeing_board_id: '0'
         }
       })

@@ -404,6 +404,7 @@ export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenI
       gantt_board_id: board_id || '0',
       is_new_board,
       list_group: [],
+      outline_tree: []
     }
   })
   if (board_id == '0' || !board_id) {
