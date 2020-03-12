@@ -18,6 +18,7 @@ import { ganttIsFold, ganttIsOutlineView } from './constants';
 import DetailInfo from '@/routes/Technological/components/ProjectDetail/DetailInfo/index'
 import { deleteBoardFollow } from './ganttBusiness';
 import { currentNounPlanFilterName, setBoardIdStorage } from "@/utils/businessFunction";
+import AddGroupSection from './components/AddGroupsection'
 
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
@@ -971,9 +972,13 @@ export default class GroupListHeadItem extends Component {
                     onBlur={this.inputOnBlur}
                   />
                 ) : (
-                    <div title={local_list_name} className={`${indexStyles.list_name} ${globalStyle.global_ellipsis}`} onClick={this.listNameClick}>
-                      {local_list_name}
-                    </div>
+                    list_id == '0' ? (
+                      <AddGroupSection></AddGroupSection>
+                    ) : (
+                        <div title={local_list_name} className={`${indexStyles.list_name} ${globalStyle.global_ellipsis}`} onClick={this.listNameClick}>
+                          {local_list_name}
+                        </div>
+                      )
                   )
               }
               {

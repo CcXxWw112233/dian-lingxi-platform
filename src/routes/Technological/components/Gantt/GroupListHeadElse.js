@@ -7,6 +7,7 @@ import { Input, message } from 'antd'
 import { addTaskGroup } from '../../../../services/technological/task';
 import { isApiResponseOk } from '../../../../utils/handleResponseData';
 import { afterCreateBoardUpdateGantt } from './ganttBusiness';
+import { ganttIsOutlineView } from './constants';
 
 @connect(mapStateToProps)
 export default class GroupListHeadElse extends Component {
@@ -120,12 +121,29 @@ export default class GroupListHeadElse extends Component {
       message.error(res.message)
     }
   }
+
+  filterHeight = () => {
+    const { list_group, group_view_type, gantt_board_id, } = this.props
+    if (
+      ganttIsOutlineView({ group_view_type }) ||
+      (group_view_type == '1' && gantt_board_id == '0') ||
+      group_view_type == '2' ||
+      (group_view_type == '1' && gantt_board_id != '0' && !list_group.length)
+      // (!ganttIsOutlineView({ group_view_type }) && !list_group.length)
+    ) {
+      return this.getElseHeight()
+    } else {
+      return 30
+    }
+
+  }
+
   render() {
     const { addProjectModalVisible, add_new_board_group, add_new_board_group_value } = this.state
     const { gantt_board_id, group_view_type } = this.props
 
     return (
-      <div style={{ height: this.getElseHeight() }} className={`${indexStyles.listHeadItem}`}>
+      <div style={{ height: this.filterHeight() }} className={`${indexStyles.listHeadItem}`}>
         {
           group_view_type == '1' && !add_new_board_group && gantt_board_id != '0' && (
             <div onClick={this.addNew} className={globalStyles.link_mouse} style={{ marginTop: 20 }}>
@@ -159,6 +177,6 @@ export default class GroupListHeadElse extends Component {
 }
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ gantt: { datas: { gold_date_arr = [], ceiHeight, gantt_board_id, group_view_type } } }) {
-  return { gold_date_arr, ceiHeight, group_view_type, gantt_board_id }
+function mapStateToProps({ gantt: { datas: { gold_date_arr = [], ceiHeight, gantt_board_id, group_view_type, list_group } } }) {
+  return { gold_date_arr, ceiHeight, group_view_type, gantt_board_id, list_group }
 }

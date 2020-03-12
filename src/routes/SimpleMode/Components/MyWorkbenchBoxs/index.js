@@ -10,7 +10,7 @@ import { getOrgNameWithOrgIdFilter, setBoardIdStorage, isPaymentOrgUser, selectB
 import { isApiResponseOk } from "../../../../utils/handleResponseData";
 import { ORG_TEAM_BOARD_CREATE } from '../../../../globalset/js/constant'
 class MyWorkbenchBoxs extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
       addProjectModalVisible: false
@@ -167,32 +167,54 @@ class MyWorkbenchBoxs extends Component {
 
   handleSubmitNewProject = data => {
     const { dispatch } = this.props;
+    this.setAddProjectModalVisible();
+    const calback = (id, name) => {
+      dispatch({
+        type: 'workbench/getProjectList',
+        payload: {}
+      });
+      selectBoardToSeeInfo({ board_id: id, board_name: name, dispatch }) //极简模式项目选择
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          group_view_type: '4'
+        }
+      })
+      window.sessionStorage.removeItem('session_currentSelectedWorkbenchBox') //重置当前盒子类型
+      dispatch({//重置当前盒子类型
+        type: 'simplemode/updateDatas',
+        payload: {
+          currentSelectedWorkbenchBox: {}
+        }
+      });
+      dispatch({
+        type: 'simplemode/routingJump',
+        payload: {
+          route: '/technological/simplemode/workbench'
+        }
+      });
+    }
     Promise.resolve(
       dispatch({
         type: 'project/addNewProject',
         payload: {
           ...data,
-          calback: () => {
-            dispatch({
-              type: 'workbench/getProjectList',
-              payload: {}
-            });
-          }
+          calback
         }
       })
     )
-      .then((res) => {
-        if (isApiResponseOk(res)) {
-          dispatch({
-            type: 'workbench/getProjectList',
-            payload: {}
-          });
-        }
+    // .then((res) => {
+    //   if (isApiResponseOk(res)) {
+    //     dispatch({
+    //       type: 'workbench/getProjectList',
+    //       payload: {}
+    //     });
+    //   }
 
-      })
-      .then(() => {
-        this.setAddProjectModalVisible();
-      });
+    // })
+    // .then(() => {
+    //   this.setAddProjectModalVisible();
+    // });
   }
 
   componentDidMount() {
@@ -454,7 +476,7 @@ class MyWorkbenchBoxs extends Component {
 
         <CreateProject
           setAddProjectModalVisible={this.setAddProjectModalVisible}
-          addProjectModalVisible={addProjectModalVisible}
+          addProjectModalVisible={addProjectModalVisible} //addProjectModalVisible
           addNewProject={this.handleSubmitNewProject}
         />
       </div>
