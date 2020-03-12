@@ -209,7 +209,7 @@ class TreeNode extends Component {
     }
 
     inviteOthersToBoardCalback = ({ users }) => {
-        const { dispatch, gantt_board_id} = this.props
+        const { dispatch, gantt_board_id } = this.props
         const action = 'reloadProjectDetailInfo';
         if (this.props.onDataProcess) {
             this.props.onDataProcess({
@@ -490,11 +490,34 @@ const filterTreeNode = (tree, id) => {
     return tree
 }
 
+const getTreeNodeValueByName = (outline_tree, key, value) => {
+    if (outline_tree) {
+        let length = outline_tree.length
+        for (let i = 0; i < length; i++) {
+            let node = outline_tree[i];
+            if (node[key] == value) {
+                return node;
+            } else {
+                if (node.children && node.children.length > 0) {
+                    let childNode = getNode(node.children, value);
+                    if (childNode) {
+                        return childNode;
+                    }
+                } else {
+                    return null;
+                }
+            }
+        }
+    } else {
+        return null;
+    }
+}
+
 const OutlineTree = MyOutlineTree;
 //树节点
 OutlineTree.TreeNode = TreeNode;
 //树方法
 OutlineTree.getTreeNodeValue = getTreeNodeValue;
 OutlineTree.filterTreeNode = filterTreeNode
-
+OutlineTree.getTreeNodeValueByName = getTreeNodeValueByName
 export default OutlineTree;
