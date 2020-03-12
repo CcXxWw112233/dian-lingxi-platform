@@ -61,11 +61,11 @@ export default class GetRowStrip extends PureComponent {
     // 长条鼠标事件---start
     stripMouseOver = (e) => {
         const { itemValue = {}, dispatch } = this.props
-        const { tree_type, id } = itemValue
+        const { tree_type, id, add_id } = itemValue
         dispatch({
             type: 'gantt/updateDatas',
             payload: {
-                outline_hover_obj: tree_type == '0' ? {} : { id } //创建那一栏不需要效果
+                outline_hover_obj: tree_type == '0' ? { add_id } : { id } //创建那一栏不需要效果
             }
         })
     }
@@ -108,7 +108,10 @@ export default class GetRowStrip extends PureComponent {
     //是否当前滑动在这一条上
     onHoverState = () => {
         const { itemValue = {}, outline_hover_obj } = this.props
-        const { id } = itemValue
+        const { id, add_id, tree_type } = itemValue
+        if (tree_type == '0') {
+            return outline_hover_obj.add_id == add_id
+        }
         return outline_hover_obj.id == id
     }
     // 计算当前鼠标滑动位置的时间
@@ -621,7 +624,9 @@ export default class GetRowStrip extends PureComponent {
                 onMouseLeave: (e) => {
                     e.stopPropagation()
                     this.dashedMouseLeave(e)
-                }
+                    this.stripMouseLeave(e)
+                },
+                onMouseOver: this.stripMouseOver,
             }
         }
     }
