@@ -106,9 +106,14 @@ export default class GroupListHead extends Component {
   }
 
   render() {
-    const { list_group = [], group_rows = [], ceiHeight, target_scrollLeft, target_scrollTop, group_view_type, outline_tree = [] } = this.props;
+    const { list_group = [], group_rows = [], ceiHeight, target_scrollLeft, target_scrollTop, group_view_type, outline_tree = [],get_gantt_data_loaded} = this.props;
     const { startPlanType } = this.props;
     const isNewProject = (!outline_tree || outline_tree.length == 0) ? true : false;
+    if(get_gantt_data_loaded == false){
+      return (
+        <div></div>
+      );
+    }
     if (ganttIsOutlineView({ group_view_type }) && isNewProject && startPlanType == 0) {
 
       return (
@@ -181,6 +186,7 @@ function mapStateToProps({ gantt: {
     group_view_type,
     outline_tree,
     startPlanType,
+    get_gantt_data_loaded,
   }
 } }) {
   return {
@@ -194,5 +200,6 @@ function mapStateToProps({ gantt: {
     group_view_type,
     outline_tree,
     startPlanType,
+    get_gantt_data_loaded,
   }
 }

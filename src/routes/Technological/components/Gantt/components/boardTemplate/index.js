@@ -632,7 +632,8 @@ export default class BoardTemplate extends Component {
         dispatch({
           type:'gantt/updateDatas',
           payload:{
-            startPlanType:1
+            startPlanType:1,
+            get_gantt_data_loaded:false
           }
         });
     }
