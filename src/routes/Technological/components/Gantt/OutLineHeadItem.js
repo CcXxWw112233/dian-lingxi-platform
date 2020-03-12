@@ -120,16 +120,20 @@ export default class OutLineHeadItem extends Component {
         //console.log('selected', selectedKeys, info);
     };
 
-    onHover = (id, hover, parentId) => {
+    onHover = (id, hover, parentId, is_add_node) => {
         //console.log("大纲:onHover", id, hover);
         const { dispatch, outline_tree } = this.props;
         let nodeValue = {};
         if (hover) {
-            nodeValue = OutlineTree.getTreeNodeValue(outline_tree, id) || {};
+            if (is_add_node) {
+                nodeValue = OutlineTree.getTreeAddNodeValue(outline_tree, id) || {};
+            } else {
+                nodeValue = OutlineTree.getTreeNodeValue(outline_tree, id) || {};
+            }
+
         } else {
-            if (id == '0') {
-                let parent = OutlineTree.getTreeNodeValue(outline_tree, parentId) || {};
-                let placeholderNodeValue = parent.children.find((item) => item.tree_type == '0');
+            if (is_add_node) {
+                let placeholderNodeValue = OutlineTree.getTreeAddNodeValue(outline_tree, id) || {};
                 placeholderNodeValue.is_focus = false;
             }
 
@@ -629,7 +633,7 @@ export default class OutLineHeadItem extends Component {
                     <TreeNode
                         type={'1'}
                         placeholder={'新建里程碑'}
-                        nodeValue={{ 'tree_type': '0' }}
+                        nodeValue={{ add_id:'add_milestone','tree_type': '0' }}
                         icon={<span className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
                         label={<span className={styles.addMilestone}>新建里程碑</span>} key="addMilestone">
                     </TreeNode>
