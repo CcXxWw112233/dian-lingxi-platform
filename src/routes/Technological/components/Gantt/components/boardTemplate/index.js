@@ -628,11 +628,15 @@ export default class BoardTemplate extends Component {
 
     onImportBoardTemplate = () => {
         this.quoteTemplate();
-        const { dispatch } = this.props;
+        const { dispatch,outline_tree} = this.props;
+        let startPlanType = 1;
+        if(outline_tree && outline_tree.length > 0){
+            startPlanType = -1;
+        }
         dispatch({
           type:'gantt/updateDatas',
           payload:{
-            startPlanType:1,
+            startPlanType,
             get_gantt_data_loaded:false
           }
         });
@@ -776,7 +780,8 @@ function mapStateToProps({
         datas: {
             gantt_board_id,
             is_new_board,
-            boardTemplateShow
+            boardTemplateShow,
+            outline_tree,
         }
     },
     technological: { datas: { userBoardPermissions = [] } },
@@ -786,6 +791,7 @@ function mapStateToProps({
         gantt_board_id,
         is_new_board,
         userBoardPermissions,
-        boardTemplateShow
+        boardTemplateShow,
+        outline_tree
     }
 }
