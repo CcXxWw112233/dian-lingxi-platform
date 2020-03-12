@@ -77,6 +77,7 @@ export default class GetRowStrip extends PureComponent {
                 outline_hover_obj: {}
             }
         })
+        this.addCardSetOutlineTree({ start_time: 0, due_time: 0, editing: false })
     }
     stripMouseMove = (e) => {
         if (this.state.is_item_has_time) { //存在时间的任务不需要再设置时间了
@@ -557,21 +558,52 @@ export default class GetRowStrip extends PureComponent {
             message.warn(NOT_HAS_PERMISION_COMFIRN)
             return
         }
-        let params = {}
-        if (parent_card_id) {
-            params.parent_id = parent_card_id
-        } else if (parent_milestone_id) {
-            params.milestone_id = parent_milestone_id
-        }
-        dispatch({
-            type: 'gantt/updateDatas',
-            payload: {
-                panel_outline_create_card_params: params, //创建任务的参数
-            }
-        })
-        this.props.addTaskModalVisibleChange && this.props.addTaskModalVisibleChange(true)
+        // 用弹出窗口创建任务
+        // let params = {}
+        // if (parent_card_id) {
+        //     params.parent_id = parent_card_id
+        // } else if (parent_milestone_id) {
+        //     params.milestone_id = parent_milestone_id
+        // }
+        // dispatch({
+        //     type: 'gantt/updateDatas',
+        //     payload: {
+        //         panel_outline_create_card_params: params, //创建任务的参数
+        //     }
+        // })
+        // this.props.addTaskModalVisibleChange && this.props.addTaskModalVisibleChange(true)
 
+        // 大纲树左边创建任务
+        let { create_start_time, create_end_time } = this.props;
+        this.addCardSetOutlineTree({ start_time: create_start_time, due_time: create_end_time, editing: true })
     }
+
+    // 拖拽任务将该任务设置映射到左边创建
+    addCardSetOutlineTree = (params = {}) => {
+        let { dispatch, outline_tree, itemValue: { add_id } } = this.props;
+        const data = {
+            ...params,
+            // editing: true
+        }
+        let nodeValue = OutlineTree.getTreeNodeValueByName(outline_tree, 'add_id', add_id);
+        const mapSetProto = (data) => {
+            Object.keys(data).map(item => {
+                nodeValue[item] = data[item]
+            })
+        }
+        if (nodeValue) {
+            mapSetProto(data)
+            dispatch({
+                type: 'gantt/handleOutLineTreeData',
+                payload: {
+                    data: outline_tree
+                }
+            });
+        } else {
+            console.error("OutlineTree.getTreeNodeValue:未查询到节点");
+        }
+    }
+
     // 设置拖拽生成任务虚线框内，节假日或者公休日的时间天数
     setDragDashedRectHolidayNo = () => {
         let count = 0

@@ -375,7 +375,7 @@ class Gantt extends Component {
       name: params.name,
       is_expand: true,
       children: [],
-      ...res.data
+      ...res
     };
 
     let children = nodeValue.children || [];

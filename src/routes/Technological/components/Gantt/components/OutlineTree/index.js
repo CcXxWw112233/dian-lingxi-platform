@@ -447,6 +447,30 @@ const getNode = (outline_tree, id) => {
     return nodeValue
 }
 
+const getNodeByname = (outline_tree, key, value) => {
+    let nodeValue = null;
+    if (outline_tree) {
+        nodeValue = outline_tree.find((item) => item[key] == value);
+        if (nodeValue) {
+            return nodeValue;
+        } else {
+            let length = outline_tree.length
+            for (let i = 0; i < length; i++) {
+                let node = outline_tree[i];
+                if (node.children && node.children.length > 0) {
+                    nodeValue = getNodeByname(node.children, key, value);
+                    if (nodeValue) {
+                        return nodeValue;
+                    }
+                } else {
+                    return null;
+                }
+            }
+        }
+    }
+    return nodeValue
+}
+
 const getTreeNodeValue = (outline_tree, id) => {
     if (outline_tree) {
         for (let i = 0; i < outline_tree.length; i++) {
@@ -499,7 +523,7 @@ const getTreeNodeValueByName = (outline_tree, key, value) => {
                 return node;
             } else {
                 if (node.children && node.children.length > 0) {
-                    let childNode = getNode(node.children, value);
+                    let childNode = getNodeByname(node.children, key, value);
                     if (childNode) {
                         return childNode;
                     }
