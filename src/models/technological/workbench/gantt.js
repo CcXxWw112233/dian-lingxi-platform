@@ -91,7 +91,8 @@ export default {
       outline_tree: [], //大纲树
       outline_tree_round: [], //大纲树每一级平铺开来
       panel_outline_create_card_params: {},
-      boardTemplateShow:0
+      boardTemplateShow:0,
+      startPlanType:0
     },
   },
   subscriptions: {

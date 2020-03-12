@@ -14,8 +14,7 @@ export default class GroupListHead extends Component {
     super(props)
     this.state = {
       offsetTop: 0,
-      offsetLeft: 0,
-      startPlanType: 1,
+      offsetLeft: 0
     }
   }
 
@@ -87,14 +86,28 @@ export default class GroupListHead extends Component {
   }
 
   guideModalHandleClose = () => {
-    this.setState({
-      startPlanType: -1
+    const { dispatch } = this.props;
+    dispatch({
+      type:'gantt/updateDatas',
+      payload:{
+        startPlanType:-1
+      }
+    });
+  }
+
+  openGuideModal = ()=>{
+    const { dispatch } = this.props;
+    dispatch({
+      type:'gantt/updateDatas',
+      payload:{
+        startPlanType:1
+      }
     });
   }
 
   render() {
     const { list_group = [], group_rows = [], ceiHeight, target_scrollLeft, target_scrollTop, group_view_type, outline_tree = [] } = this.props;
-    const { startPlanType } = this.state;
+    const { startPlanType } = this.props;
     const isNewProject = (!outline_tree || outline_tree.length == 0) ? true : false;
     if (ganttIsOutlineView({ group_view_type }) && isNewProject && startPlanType == 0) {
 
@@ -106,7 +119,7 @@ export default class GroupListHead extends Component {
           </div>
           <div className={indexStyles.guideButtons}>
             <Button type="primary" block className={indexStyles.selectTpfBtn} onClick={this.openBoardTemplateDrawer}>选择项目模版</Button>
-            <Button block onClick={() => { this.setState({ startPlanType: 1 }) }}>直接新建计划</Button>
+            <Button block onClick={() => { this.openGuideModal() }}>直接新建计划</Button>
           </div>
         </div>
       )
@@ -124,7 +137,7 @@ export default class GroupListHead extends Component {
               <OutLineHeadItem />
               {
                 startPlanType == 1 &&
-                <OutlineGuideModal handleClose = {this.guideModalHandleClose}/>
+                <OutlineGuideModal handleClose={this.guideModalHandleClose} />
               }
             </div>
           }
@@ -167,6 +180,7 @@ function mapStateToProps({ gantt: {
     group_list_area_section_height,
     group_view_type,
     outline_tree,
+    startPlanType,
   }
 } }) {
   return {
@@ -178,6 +192,7 @@ function mapStateToProps({ gantt: {
     group_list_area,
     group_list_area_section_height,
     group_view_type,
-    outline_tree
+    outline_tree,
+    startPlanType,
   }
 }

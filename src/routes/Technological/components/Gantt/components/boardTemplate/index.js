@@ -627,7 +627,14 @@ export default class BoardTemplate extends Component {
     }
 
     onImportBoardTemplate = () => {
-        this.quoteTemplate()
+        this.quoteTemplate();
+        const { dispatch } = this.props;
+        dispatch({
+          type:'gantt/updateDatas',
+          payload:{
+            startPlanType:1
+          }
+        });
     }
 
 
