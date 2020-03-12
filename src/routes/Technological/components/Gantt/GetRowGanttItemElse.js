@@ -39,9 +39,37 @@ export default class GetRowGanttItem extends Component {
     return (rows + 5) * ceiHeight
   }
 
+  filterHeight = () => {
+    const { list_group, group_view_type, gantt_board_id, } = this.props
+    if (
+      ganttIsOutlineView({ group_view_type }) ||
+      (group_view_type == '1' && gantt_board_id == '0') ||
+      group_view_type == '2' ||
+      (group_view_type == '1' && gantt_board_id != '0' && !list_group.length)
+    ) {
+      return this.getElseHeight()
+    } else {
+      return 30
+    }
+
+  }
+  setBorderTop = () => {
+    const { group_view_type, gantt_board_id, } = this.props
+    if (
+      group_view_type == '1' && gantt_board_id != '0'
+    ) {
+      return {
+        borderTop: 'none'
+      }
+    } else {
+      return {
+
+      }
+    }
+  }
+
   render() {
     const { gold_date_arr = [], } = this.props
-    console.log('ssssssa', this.getElseHeight())
     return (
       <div className={indexStyles.ganttAreaOut}>
         <div className={indexStyles.ganttArea} >
@@ -49,13 +77,14 @@ export default class GetRowGanttItem extends Component {
             const { date_inner = [] } = value
             return (
               <div className={indexStyles.ganttAreaItem} key={key}>
-                <div className={indexStyles.ganttDetail} style={{ height: this.getElseHeight() }}>
+                <div className={indexStyles.ganttDetail}
+                  style={{ height: this.filterHeight(), }}>
                   {date_inner.map((value2, key2) => {
                     const { week_day, timestamp } = value2
                     return (
                       <div className={`${indexStyles.ganttDetailItem}`}
                         key={key2}
-                        style={{ backgroundColor: (week_day == 0 || week_day == 6) ? 'rgba(0, 0, 0, 0.04)' : (isToday(timestamp) ? 'rgb(242, 251, 255)' : 'rgba(0,0,0,.02)') }}
+                        style={{ backgroundColor: (week_day == 0 || week_day == 6) ? 'rgba(0, 0, 0, 0.04)' : (isToday(timestamp) ? 'rgb(242, 251, 255)' : 'rgba(0,0,0,.02)'), ...this.setBorderTop() }}
                       >
                       </div>
                     )
@@ -71,6 +100,6 @@ export default class GetRowGanttItem extends Component {
 
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ gantt: { datas: { gold_date_arr = [], group_view_type, outline_tree_round, ceiHeight, group_rows = [], list_group = [] } } }) {
-  return { gold_date_arr, ceiHeight, group_rows, list_group, group_view_type, outline_tree_round }
+function mapStateToProps({ gantt: { datas: { gold_date_arr = [], gantt_board_id, group_view_type, outline_tree_round, ceiHeight, group_rows = [], list_group = [] } } }) {
+  return { gold_date_arr, ceiHeight, group_rows, list_group, group_view_type, outline_tree_round, gantt_board_id }
 }

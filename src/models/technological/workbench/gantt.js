@@ -635,7 +635,9 @@ export default {
         const list_group_item_height = Math.max.apply(null, list_height_arr) + 2 * ceiHeight - after_group_height
 
         group_rows[i] = (list_group_item_height / ceiHeight) < 3 ? 3 : list_group_item_height / ceiHeight // 原来是5，现在是1
-
+        if (list_group[i].list_id == '0') { //默认分组要设置得很高
+          group_rows[i] = group_rows[i] + 30
+        }
         // 设置项目汇总的top和left,width
         if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) { // 全项目视图下，为收缩状态
           group_rows[i] = group_rows_fold
