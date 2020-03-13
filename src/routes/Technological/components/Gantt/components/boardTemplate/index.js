@@ -628,17 +628,17 @@ export default class BoardTemplate extends Component {
 
     onImportBoardTemplate = () => {
         this.quoteTemplate();
-        const { dispatch,outline_tree} = this.props;
+        const { dispatch, outline_tree } = this.props;
         let startPlanType = 1;
-        if(outline_tree && outline_tree.length > 0){
+        if (outline_tree && outline_tree.length > 0) {
             startPlanType = -1;
         }
         dispatch({
-          type:'gantt/updateDatas',
-          payload:{
-            startPlanType,
-            get_gantt_data_loaded:false
-          }
+            type: 'gantt/updateDatas',
+            payload: {
+                startPlanType,
+                get_gantt_data_loaded: false
+            }
         });
     }
 
@@ -750,7 +750,7 @@ export default class BoardTemplate extends Component {
                                 </div>
                         }
 
-                        <div
+                        {/* <div
                             onClick={this.toggleBoardTemplateDrawer}
                             className={`${styles.switchSpin_init} ${boardTemplateShow == '1' && styles.switchSpinShow} ${boardTemplateShow == '2' && styles.switchSpinClose}`}
                             style={{
@@ -758,6 +758,16 @@ export default class BoardTemplate extends Component {
                             }} >
                             <div className={`${styles.switchSpin_top}`}></div>
                             <div className={`${styles.switchSpin_bott}`}></div>
+                        </div> */}
+                        <div
+                            onClick={this.toggleBoardTemplateDrawer}
+                            className={`${styles.switchExpand}`}
+                            style={{
+                                top: contain_height / 2,
+                                right   : boardTemplateShow == 1?'280px':'20px'
+                            }} >
+                            {/* <div className={`${styles.switchExpandOpen} ${globalStyles.authTheme}`}>&#xe687;</div> */}
+                            <div className={`${styles.switchExpandIcon}`}>{boardTemplateShow == 1 ? <span className={globalStyles.authTheme}>&#xe689;</span> : <span className={globalStyles.authTheme}>&#xe687;</span> }</div>
                         </div>
                         <BoardTemplateManager
                             _organization_id={localStorage.getItem('OrganizationId') != '0' ? localStorage.getItem('OrganizationId') : getGlobalData('aboutBoardOrganizationId')}

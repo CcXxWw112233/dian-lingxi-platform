@@ -24,11 +24,13 @@
         align-items    : center;
         box-shadow     : 0px -1px 0px 0px rgba(0, 0, 0, 0.09);
         border-bottom  : 1px solid #f5f5ff;
-        .title{
+
+        .title {
             font-weight: 600;
-            font-size      : 16px;
-            color:rgba(0,0,0,0.85);
+            font-size  : 16px;
+            color      : rgba(0, 0, 0, 0.85);
         }
+
         .top_left {
             display    : flex;
             align-items: center;
@@ -62,11 +64,12 @@
         box-shadow   : 0px -1px 0px 0px rgba(0, 0, 0, 0.09);
         border-bottom: 1px solid rgba(0, 0, 0, .1);
 
-        .backBtn{
+        .backBtn {
             margin-right: 8px;
         }
-        .lable{
-         flex: auto;
+
+        .lable {
+            flex: auto;
         }
     }
 
@@ -77,35 +80,37 @@
     .list_item_flex {
         display    : flex;
         align-items: center;
-        padding   : 0 12px;
+        padding    : 0 12px;
     }
 
-    .footer{
-        bottom: 0px;
+    .footer {
+        bottom  : 0px;
         position: absolute;
-        margin: 8px 24px 24px 24px;
-        width: 232px;
+        margin  : 8px 24px 24px 24px;
+        width   : 232px;
     }
-    .boardTplItem{
-        width        : 100%;
-        height       : 48px;
-        background   : rgba(255, 255, 255, 1);
-        box-shadow   : 0px -1px 0px 0px rgba(0, 0, 0, 0.09);
-        display    : flex;
-        align-items: center;
-        justify-items: center;
+
+    .boardTplItem {
+        width          : 100%;
+        height         : 48px;
+        background     : rgba(255, 255, 255, 1);
+        box-shadow     : 0px -1px 0px 0px rgba(0, 0, 0, 0.09);
+        display        : flex;
+        align-items    : center;
+        justify-items  : center;
         justify-content: space-between;
-        padding: 0px 16px;
-        .left{
-            font-size:14px;
-            font-weight:500;
-            color:rgba(0,0,0,0.85);
+        padding        : 0px 16px;
+
+        .left {
+            font-size  : 14px;
+            font-weight: 500;
+            color      : rgba(0, 0, 0, 0.85);
         }
-        .right{
-           
-        }
+
+        .right {}
     }
-    .boardTplItem:last-child{
+
+    .boardTplItem:last-child {
         border-bottom: 1px solid rgba(0, 0, 0, .09);
     }
 
@@ -340,9 +345,33 @@
 
 }
 
-.switchSpin_init {
-    right: 20px;
+.switchExpand {
+    position   : fixed;
+    width      : 36px;
+    height     : 38px;
+    line-height: 38px;
+
+    .switchExpandIcon {
+        font-size    : 36px;
+        font-weight  : bold;
+        color        : rgba(0, 0, 0, 0.15);
+        transform    : rotate(90deg);
+        -ms-transform: rotate(90deg);
+        /* Internet Explorer 9*/
+        -moz-transform: rotate(90deg);
+        /* Firefox */
+        -webkit-transform: rotate(90deg);
+        /* Safari 和 Chrome */
+        -o-transform: rotate(90deg);
+        /* Opera */
+        filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+    }
 }
+
+.switchExpand .switchExpandIcon:hover {
+    color: rgba(0, 0, 0, 0.45);
+}
+
 
 .switchSpinShow {
     animation   : switchSpinShow 300ms ease;
