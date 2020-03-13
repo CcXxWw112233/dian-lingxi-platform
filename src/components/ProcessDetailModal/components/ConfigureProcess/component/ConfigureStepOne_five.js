@@ -33,20 +33,41 @@ export default class ConfigureStepOne_five extends Component {
     this.updateEdit({ value: value.toString() }, 'limit_file_size')
   }
   limilFileTypeValueChange = (values) => {
-    this.updateEdit({ value: values}, 'limit_file_type')
+    this.updateEdit({ value: values }, 'limit_file_type')
   }
   isRequiredCheck = (e) => {
     this.updateEdit({ value: e.target.value }, 'is_required')
   }
 
   // 删除对应字段的表项
-  handleDelFormDataItem = () => {
+  handleDelFormDataItem = (e) => {
+    e && e.stopPropagation()
     const { processEditDatas = [], parentKey = 0, itemKey } = this.props
     const { forms = [] } = processEditDatas[parentKey]
     let new_processEditDatas = [...processEditDatas]
     let new_form_data = [...forms]
     new_form_data.splice(itemKey, 1)
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: new_form_data }, 'forms')
+  }
+
+  // 每一个表项的点击事件
+  handleChangeTextFormColor = (e) => {
+    e && e.stopPropagation()
+    const { itemValue, parentKey, processEditDatas = [] } = this.props
+    const { forms = [] } = processEditDatas[parentKey]
+    const { is_click_currentTextForm } = itemValue
+    let newFormsData = [...forms]
+    newFormsData = newFormsData.map(item => {
+      if (item.is_click_currentTextForm) {
+        let new_item
+        new_item = { ...item, is_click_currentTextForm: false }
+        return new_item
+      } else {
+        return item
+      }
+    })
+    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: newFormsData }, 'forms')
+    this.updateEdit({ value: !is_click_currentTextForm }, 'is_click_currentTextForm')
   }
 
   renderFileTypeArrayText = () => {
@@ -113,10 +134,10 @@ export default class ConfigureStepOne_five extends Component {
 
   render() {
     const { itemKey, itemValue } = this.props
-    const { title, limit_file_num, limit_file_type, limit_file_size, is_required } = itemValue
+    const { title, limit_file_num, limit_file_type, limit_file_size, is_required, is_click_currentTextForm } = itemValue
     return (
       <div>
-        <div className={indexStyles.text_form}>
+        <div className={indexStyles.text_form} style={{ background: is_click_currentTextForm ? 'rgba(230,247,255,1)' : 'rgba(0,0,0,0.02)' }} onClick={this.handleChangeTextFormColor}>
           <p>{title}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</p>
           {/* <div className={indexStyles.text_fillOut}></div> */}
           <div className={indexStyles.upload_static}>
@@ -126,28 +147,34 @@ export default class ConfigureStepOne_five extends Component {
               <div className={indexStyles.file_layout}>{limit_file_size == 0 ? `不限制大小` : `${limit_file_size}MB以内`}、{limit_file_num == 0 ? `不限制数量` : `最多${limit_file_num}个`}、 {this.renderFileTypeArrayText()}格式</div>
             </div>
           </div>
-          <span onClick={this.handleDelFormDataItem} className={`${indexStyles.delet_iconCircle}`}>
-            <span className={`${globalStyles.authTheme} ${indexStyles.deletet_icon}`}>&#xe68d;</span>
-          </span>
-          <div className={indexStyles.popoverContainer} style={{ position: 'absolute', right: 0, top: 0 }}>
-            <Popover
-              title={<div className={indexStyles.popover_title}>配置表项</div>}
-              trigger="click"
-              // visible={this.state.popoverVisible}
-              content={this.renderContent()}
-              getPopupContainer={triggerNode => triggerNode.parentNode}
-              // placement={itemKey == '0' || itemKey == '1' ? 'bottomRight' : 'topRight'}
-              placement={'bottomRight'}
-              zIndex={1010}
-              className={indexStyles.popoverWrapper}
-              autoAdjustOverflow={false}
-            >
-              <div onClick={this.handelPopoverVisible} className={`${globalStyles.authTheme} ${indexStyles.setting_icon}`}>
-                <span>&#xe78e;</span>
-              </div>
-            </Popover>
+          {
+            is_click_currentTextForm && (
+              <>
+                <span onClick={this.handleDelFormDataItem} className={`${indexStyles.delet_iconCircle}`}>
+                  <span className={`${globalStyles.authTheme} ${indexStyles.deletet_icon}`}>&#xe68d;</span>
+                </span>
+                <div onClick={(e) => e && e.stopPropagation()} className={indexStyles.popoverContainer} style={{ position: 'absolute', right: 0, top: 0 }}>
+                  <Popover
+                    title={<div className={indexStyles.popover_title}>配置表项</div>}
+                    trigger="click"
+                    // visible={this.state.popoverVisible}
+                    content={this.renderContent()}
+                    getPopupContainer={triggerNode => triggerNode.parentNode}
+                    // placement={itemKey == '0' || itemKey == '1' ? 'bottomRight' : 'topRight'}
+                    placement={'bottomRight'}
+                    zIndex={1010}
+                    className={indexStyles.popoverWrapper}
+                    autoAdjustOverflow={false}
+                  >
+                    <div onClick={this.handelPopoverVisible} className={`${globalStyles.authTheme} ${indexStyles.setting_icon}`}>
+                      <span>&#xe78e;</span>
+                    </div>
+                  </Popover>
 
-          </div>
+                </div>
+              </>
+            )
+          }
         </div>
       </div>
 

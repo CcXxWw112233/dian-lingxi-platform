@@ -40,11 +40,13 @@ export default class ConfigureStepTypeThree extends Component {
     const membersData = projectDetailInfoData['data'] //所有的人
     // const excutorData = new_userInfo_data //所有的人
     let newMakeCopyPersonList = []
+    let assignee_value = []
     const { selectedKeys = [], type, key } = data
     for (let i = 0; i < selectedKeys.length; i++) {
       for (let j = 0; j < membersData.length; j++) {
         if (selectedKeys[i] === membersData[j]['user_id']) {
           newMakeCopyPersonList.push(membersData[j])
+          assignee_value.push(membersData[j].user_id)
         }
       }
     }
@@ -52,7 +54,7 @@ export default class ConfigureStepTypeThree extends Component {
     this.setState({
       makeCopyPersonList: newMakeCopyPersonList
     });
-
+    this.updateConfigureProcess({value: assignee_value.join(',')}, 'assignees')
   }
   // 添加执行人的回调 E
 
@@ -60,15 +62,21 @@ export default class ConfigureStepTypeThree extends Component {
   handleRemoveExecutors = (e, shouldDeleteItem) => {
     e && e.stopPropagation()
     const { makeCopyPersonList = [] } = this.state
+    const { itemValue } = this.props
+    const { recipients } = itemValue
     let newMakeCopyPersonList = [...makeCopyPersonList]
+    let newAssigneesArray = recipients && recipients.length ? recipients.split(',') : []
     newMakeCopyPersonList.map((item, index) => {
       if (item.user_id == shouldDeleteItem) {
         newMakeCopyPersonList.splice(index, 1)
+        newAssigneesArray.splice(index,1)
       }
     })
+    let newRecipientsStr = newAssigneesArray.join(',')
     this.setState({
       makeCopyPersonList: newMakeCopyPersonList
     })
+    this.updateConfigureProcess({value: newRecipientsStr}, 'assignees')
   }
 
   //修改通知人的回调 S
@@ -78,11 +86,13 @@ export default class ConfigureStepTypeThree extends Component {
     const membersData = projectDetailInfoData['data'] //所有的人
     // const excutorData = new_userInfo_data //所有的人
     let newMakeCopyNewsPaperPersonList = []
+    let recipient_value = []
     const { selectedKeys = [], type, key } = data
     for (let i = 0; i < selectedKeys.length; i++) {
       for (let j = 0; j < membersData.length; j++) {
         if (selectedKeys[i] === membersData[j]['user_id']) {
           newMakeCopyNewsPaperPersonList.push(membersData[j])
+          recipient_value.push(membersData[j].user_id)
         }
       }
     }
@@ -90,23 +100,29 @@ export default class ConfigureStepTypeThree extends Component {
     this.setState({
       makeCopyNewsPaperPersonList: newMakeCopyNewsPaperPersonList
     });
-
+    this.updateConfigureProcess({value: recipient_value.join(',')}, 'recipients')
   }
   // 添加执行人的回调 E
 
   // 移除执行人的回调 S
   handleRemoveExecutorsTwo = (e, shouldDeleteItem) => {
     e && e.stopPropagation()
+    const { itemValue } = this.props
+    const { assignees } = itemValue
     const { makeCopyNewsPaperPersonList = [] } = this.state
     let newMakeCopyNewsPaperPersonList = [...makeCopyNewsPaperPersonList]
+    let newRecipientsArray = assignees && assignees.length ? assignees.split(',') : []
     newMakeCopyNewsPaperPersonList.map((item, index) => {
       if (item.user_id == shouldDeleteItem) {
         newMakeCopyNewsPaperPersonList.splice(index, 1)
+        newRecipientsArray.splice(index,1)
       }
     })
+    let newRecipientsStr = newRecipientsArray.join(',')
     this.setState({
       makeCopyNewsPaperPersonList: newMakeCopyNewsPaperPersonList
     })
+    this.updateConfigureProcess({value: newRecipientsStr}, 'recipients')
   }
 
   render() {
@@ -160,11 +176,11 @@ export default class ConfigureStepTypeThree extends Component {
                         <div style={{ display: 'flex', alignItems: 'center' }} key={user_id}>
                           <div className={`${indexStyles.user_item}`} style={{ position: 'relative', textAlign: 'center', marginBottom: '8px' }} key={user_id}>
                             {avatar ? (
-                              <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
+                              <Tooltip overlayStyle={{minWidth: '62px'}} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
                                 <img className={indexStyles.img_hover} style={{ width: '32px', height: '32px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
                               </Tooltip>
                             ) : (
-                                <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
+                                <Tooltip overlayStyle={{minWidth: '62px'}} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
                                   <div className={indexStyles.default_user_hover} style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
                                     <Icon type={'user'} style={{ fontSize: 14, color: '#8c8c8c' }} />
                                   </div>
@@ -236,11 +252,11 @@ export default class ConfigureStepTypeThree extends Component {
                             <div style={{ display: 'flex', alignItems: 'center' }} key={user_id}>
                               <div className={`${indexStyles.user_item}`} style={{ position: 'relative', textAlign: 'center', marginBottom: '8px' }} key={user_id}>
                                 {avatar ? (
-                                  <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
+                                  <Tooltip overlayStyle={{minWidth: '62px'}} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
                                     <img className={indexStyles.img_hover} style={{ width: '32px', height: '32px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
                                   </Tooltip>
                                 ) : (
-                                    <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
+                                    <Tooltip overlayStyle={{minWidth: '62px'}} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
                                       <div className={indexStyles.default_user_hover} style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
                                         <Icon type={'user'} style={{ fontSize: 14, color: '#8c8c8c' }} />
                                       </div>

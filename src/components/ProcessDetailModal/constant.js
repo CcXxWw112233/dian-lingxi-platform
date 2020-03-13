@@ -136,7 +136,7 @@ export const processEditDatasItemTwoConstant = {
   "node_type": "2",//流程节点类型 1=资料收集 2=审批 3=抄送
   "name": "",//流程节点名称
   "description": "",//描述 备注
-  "approve_type": "",//审批类型 1=串签 2=并签 3=汇签
+  "approve_type": "1",//审批类型 1=串签 2=并签 3=汇签
   "approve_value": "",// 当为 汇签时需填的值
   "deadline_time_type": "",//完成期限类型 hour = 时 day =天 month = 月
   "deadline_value": "",//完成期限值
@@ -150,7 +150,7 @@ export const processEditDatasItemThreeConstant = {
   "description": "",//描述 备注
   "deadline_time_type": "",//完成期限类型 hour = 时 day =天 month = 月
   "deadline_value": "",//完成期限值
-  "cc_type": "",//抄送人类型 1=自动抄送 2=手动抄送
+  "cc_type": "1",//抄送人类型 1=自动抄送 2=手动抄送
   "recipients": "",//抄送人 多个逗号隔开
   "assignees": "",//抄报人 多个逗号隔开
   "is_confirm": "0"

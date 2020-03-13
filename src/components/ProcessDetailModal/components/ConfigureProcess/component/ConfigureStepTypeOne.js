@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Dropdown, Icon, Menu, Radio, Select, InputNumber } from 'antd'
+import { Button, Dropdown, Icon, Menu, Radio, Select, InputNumber, Tooltip } from 'antd'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import ConfigureStepOne_one from './ConfigureStepOne_one'
@@ -7,6 +7,7 @@ import ConfigureStepOne_two from './ConfigureStepOne_two'
 import ConfigureStepOne_three from './ConfigureStepOne_three'
 import ConfigureStepOne_five from './ConfigureStepOne_five'
 import NameChangeInput from '@/components/NameChangeInput'
+import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import { connect } from 'dva'
 
 const Option = Select.Option;
@@ -16,6 +17,9 @@ export default class ConfigureStepTypeOne extends Component {
 
   constructor(props) {
     super(props)
+    this.state = {
+      designatedPersonnelList: []
+    }
   }
 
   deepCopy = (source) => {
@@ -88,11 +92,68 @@ export default class ConfigureStepTypeOne extends Component {
     e && e.stopPropagation()
   }
 
+    //修改通知人的回调 S
+    chirldrenTaskChargeChange = (data) => {
+      const { projectDetailInfoData = {} } = this.props;
+      // 多个任务执行人
+      const membersData = projectDetailInfoData['data'] //所有的人
+      // const excutorData = new_userInfo_data //所有的人
+      let newDesignatedPersonnelList = []
+      let assignee_value = []
+      const { selectedKeys = [], type, key } = data
+      for (let i = 0; i < selectedKeys.length; i++) {
+        for (let j = 0; j < membersData.length; j++) {
+          if (selectedKeys[i] === membersData[j]['user_id']) {
+            newDesignatedPersonnelList.push(membersData[j])
+            assignee_value.push(membersData[j].user_id)
+          }
+        }
+      }
+      this.setState({
+        designatedPersonnelList: newDesignatedPersonnelList
+      });
+      this.updateConfigureProcess({value: assignee_value.join(',')}, 'assignees')
+    }
+    // 添加执行人的回调 E
+  
+    // 移除执行人的回调 S
+    handleRemoveExecutors = (e, shouldDeleteItem) => {
+      e && e.stopPropagation()
+      const { itemValue } = this.props
+      const { assignees } = itemValue
+      const { designatedPersonnelList = [] } = this.state
+      let newDesignatedPersonnelList = [...designatedPersonnelList]
+      let newAssigneesArray = assignees && assignees.length ? assignees.split(',') : []
+      newDesignatedPersonnelList.map((item, index) => {
+        if (item.user_id == shouldDeleteItem) {
+          newDesignatedPersonnelList.splice(index, 1)
+          newAssigneesArray.splice(index,1)
+        }
+      })
+      let newAssigneesStr = newAssigneesArray.join(',')
+      this.setState({
+        designatedPersonnelList: newDesignatedPersonnelList
+      })
+      this.updateConfigureProcess({value: newAssigneesStr}, 'assignees')
+    }
+
   //表单填写项
   menuAddFormClick = ({ key }) => {
     const { processEditDatas = [], processCurrentEditStep = 0, itemValue, itemKey } = this.props
     const { forms = [] } = processEditDatas[itemKey]
     //推进人一项
+    let newFormsData = [...forms]
+    newFormsData = newFormsData.map(item => {
+      
+      if (item.is_click_currentTextForm) {
+        let new_item
+        new_item = {...item, is_click_currentTextForm: false}
+        return new_item
+      } else {
+        return item
+      }
+      
+    })
     let obj = {}
     switch (key) {
       case '1':
@@ -103,7 +164,8 @@ export default class ConfigureStepTypeOne extends Component {
           "is_required": "0",//是否必填 1=必须 0=不是必须
           "verification_rule": "",//校验规则
           "val_min_length": "",//最小长度
-          "val_max_length": ""//最大长度
+          "val_max_length": "",//最大长度
+          "is_click_currentTextForm": true
         }
         break
       case '2':
@@ -118,7 +180,8 @@ export default class ConfigureStepTypeOne extends Component {
               "key": '0',
               "value": '选项1',
             }
-          ]
+          ],
+          "is_click_currentTextForm": true
         }
         break
       case '3': //下拉
@@ -128,7 +191,8 @@ export default class ConfigureStepTypeOne extends Component {
           "prompt_content": "请选择日期",//提示内容
           "is_required": "0",//是否必填 1=必须 0=不是必须
           "date_range": "1",//日期范围 1=单个日期 2=开始日期~截止日期
-          "date_precision": "2"//日期精度 1=仅日期 2=日期+时间
+          "date_precision": "2",//日期精度 1=仅日期 2=日期+时间
+          "is_click_currentTextForm": true
         }
         break
       case '5':
@@ -141,13 +205,14 @@ export default class ConfigureStepTypeOne extends Component {
           "limit_file_type": [//限制上传类型(文件格式) document=文档 image=图像 audio=音频 video=视频
             "document", "image", "audio", "video"
           ],
-          "limit_file_size": "20"//上传大小限制
+          "limit_file_size": "20",//上传大小限制
+          "is_click_currentTextForm": true
         }
       default:
         break
     }
-    forms.push(obj)
-    this.updateConfigureProcess({ value: forms }, 'forms')
+    newFormsData.push(obj)
+    this.updateConfigureProcess({ value: newFormsData }, 'forms')
   }
 
   // 渲染不同的表项
@@ -195,6 +260,84 @@ export default class ConfigureStepTypeOne extends Component {
     )
   }
 
+  // 渲染指定人员
+  renderDesignatedPersonnel = () => {
+    const { projectDetailInfoData: { data = [] } } = this.props
+    const { designatedPersonnelList = [] } = this.state
+    return (
+      <div style={{ flex: 1, padding: '8px 0' }}>
+        {
+          !designatedPersonnelList.length ? (
+            <div style={{ position: 'relative' }}>
+              <Dropdown trigger={['click']} overlayClassName={indexStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                overlayStyle={{ maxWidth: '200px' }}
+                overlay={
+                  <MenuSearchPartner
+                    listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={designatedPersonnelList}
+                    // board_id={board_id}
+                    // invitationType='1'
+                    // invitationId={board_id}
+                    // invitationOrg={org_id}
+                    chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
+                }
+              >
+                {/* 添加通知人按钮 */}
+
+                <div className={indexStyles.addNoticePerson}>
+                  <span className={`${globalStyles.authTheme} ${indexStyles.plus_icon}`}>&#xe8fe;</span>
+                </div>
+              </Dropdown>
+            </div>
+          ) : (
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center', flexWrap: 'wrap', lineHeight: '22px' }}>
+                {designatedPersonnelList.map((value, index) => {
+                  const { avatar, name, user_name, user_id } = value
+                  return (
+                    <div style={{ display: 'flex', alignItems: 'center' }} key={user_id}>
+                      <div className={`${indexStyles.user_item}`} style={{ position: 'relative', textAlign: 'center', marginBottom: '8px' }} key={user_id}>
+                        {avatar ? (
+                          <Tooltip overlayStyle={{minWidth: '62px'}} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
+                            <img className={indexStyles.img_hover} style={{ width: '32px', height: '32px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
+                          </Tooltip>
+                        ) : (
+                            <Tooltip overlayStyle={{minWidth: '62px'}} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
+                              <div className={indexStyles.default_user_hover} style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
+                                <Icon type={'user'} style={{ fontSize: 14, color: '#8c8c8c' }} />
+                              </div>
+                            </Tooltip>
+                          )}
+                        {/* <div style={{ marginRight: 8, fontSize: '14px' }}>{name || user_name || '佚名'}</div> */}
+                        <span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${indexStyles.userItemDeleBtn}`}></span>
+                      </div>
+                    </div>
+                  )
+                })}
+                <Dropdown trigger={['click']} overlayClassName={indexStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                  overlayStyle={{ maxWidth: '200px' }}
+                  overlay={
+                    <MenuSearchPartner
+                      listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={designatedPersonnelList}
+                      // board_id={board_id}
+                      // invitationType='1'
+                      // invitationId={board_id}
+                      // invitationOrg={org_id}
+                      chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
+                  }
+                >
+                  {/* 添加通知人按钮 */}
+
+                  <div className={indexStyles.addNoticePerson} style={{ marginTop: '-6px' }}>
+                    <span className={`${globalStyles.authTheme} ${indexStyles.plus_icon}`}>&#xe8fe;</span>
+                  </div>
+                </Dropdown>
+              </div>
+            )
+        }
+
+      </div>
+    )
+  }
+
   renderMoreSelect = () => {
 
     return (
@@ -214,21 +357,20 @@ export default class ConfigureStepTypeOne extends Component {
               return (<div key={`${key}-${value}`}>{this.filterForm(value, key)}</div>)
             })}
           </div>
-          {/* <ConfigureStepOne_one />
-          <ConfigureStepOne_two />
-          <ConfigureStepOne_three />
-          <ConfigureStepOne_five /> */}
           <Dropdown overlayClassName={indexStyles.overlay_addTabsItem} overlay={this.renderFieldType()} getPopupContainer={() => document.getElementById('addTabsItem')} trigger={['click']}>
             <Button id="addTabsItem" className={indexStyles.add_tabsItem}><span style={{ color: 'rgba(24,144,255,1)' }} className={globalStyles.authTheme}>&#xe782;</span>&nbsp;&nbsp;&nbsp;添加表项</Button>
           </Dropdown>
         </div>
         {/* 填写人 */}
-        <div className={indexStyles.fill_person} onClick={(e) => { e && e.stopPropagation() }}>
-          <span className={`${globalStyles.authTheme} ${indexStyles.label_person}`}>&#xe7b2; 填写人&nbsp;:</span>
-          <Radio.Group style={{ lineHeight: '48px' }} value={assignee_type} onChange={this.assigneeTypeChange}>
-            <Radio value="1">任何人</Radio>
-            <Radio value="2">指定人员</Radio>
-          </Radio.Group>
+        <div className={indexStyles.fill_person} style={{flexDirection: 'column'}} onClick={(e) => { e && e.stopPropagation() }}>
+          <div>
+            <span className={`${globalStyles.authTheme} ${indexStyles.label_person}`}>&#xe7b2; 填写人&nbsp;:</span>
+            <Radio.Group style={{ lineHeight: '48px' }} value={assignee_type} onChange={this.assigneeTypeChange}>
+              <Radio value="1">任何人</Radio>
+              <Radio value="2">指定人员</Radio>
+            </Radio.Group>
+          </div>
+          {assignee_type == '2' && this.renderDesignatedPersonnel()}
         </div>
         {/* 更多选项 */}
         <div className={indexStyles.more_select}>
@@ -287,6 +429,6 @@ ConfigureStepTypeOne.defaultProps = {
 
 }
 
-function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [], processCurrentEditStep } }) {
-  return { processEditDatas, processCurrentEditStep }
+function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [], processCurrentEditStep }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
+  return { processEditDatas, processCurrentEditStep, projectDetailInfoData }
 }
