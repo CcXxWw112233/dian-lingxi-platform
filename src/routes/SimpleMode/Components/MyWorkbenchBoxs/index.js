@@ -174,12 +174,6 @@ class MyWorkbenchBoxs extends Component {
         payload: {}
       });
       selectBoardToSeeInfo({ board_id: id, board_name: name, dispatch, org_id: data._organization_id }) //极简模式项目选择
-      dispatch({
-        type: 'gantt/updateDatas',
-        payload: {
-          group_view_type: '4'
-        }
-      })
       window.sessionStorage.removeItem('session_currentSelectedWorkbenchBox') //重置当前盒子类型
       dispatch({//重置当前盒子类型
         type: 'simplemode/updateDatas',
