@@ -94,8 +94,7 @@ export default class EditStepTypeOne extends Component {
   }
 
   render() {
-    const { itemKey, itemValue, processEditDatasRecords = [], processCurrentEditStep, processEditDatas = [] } = this.props
-    const { name, node_type, description, is_click_node_name } = itemValue
+    const { itemKey } = this.props
     const { transPrincipalList = [], is_show_spread_arrow } = this.state
     return (
       <div key={itemKey} style={{ display: 'flex', marginBottom: '45px' }}>
@@ -113,7 +112,9 @@ export default class EditStepTypeOne extends Component {
                 </div>
                 <div>
                   <span onClick={this.handleSpreadArrow} className={`${indexStyles.spreadIcon}`}>
-                    <span className={`${globalStyles.authTheme} ${indexStyles.spread_arrow}`}>&#xe7ee;</span>
+                    {
+                      !is_show_spread_arrow ? <span className={`${globalStyles.authTheme} ${indexStyles.spread_arrow}`}>&#xe7ee;</span> : <span className={`${globalStyles.authTheme} ${indexStyles.spread_arrow}`}>&#xe7ed;</span>
+                    }
                   </span>
                 </div>
               </div>

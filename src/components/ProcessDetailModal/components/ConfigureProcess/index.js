@@ -98,18 +98,18 @@ export default class ConfigureProcess extends Component {
     const { itemKey, itemValue, processEditDatas = [], dispatch } = this.props
     let key = e.target.value
     let newProcessEditDatas = [...processEditDatas]
-    let name = {...newProcessEditDatas[itemKey]}.name || ''
+    let name = { ...newProcessEditDatas[itemKey] }.name || ''
     let nodeObj
     switch (key) {
       case '1':
-        nodeObj = Object.assign({},JSON.parse(JSON.stringify(processEditDatasItemOneConstant)),{name: name})
+        nodeObj = Object.assign({}, JSON.parse(JSON.stringify(processEditDatasItemOneConstant)), { name: name })
         break;
       case '2':
-        nodeObj = Object.assign({},JSON.parse(JSON.stringify(processEditDatasItemTwoConstant)),{name: name})
-        
+        nodeObj = Object.assign({}, JSON.parse(JSON.stringify(processEditDatasItemTwoConstant)), { name: name })
+
         break
       case '3':
-        nodeObj = Object.assign({},JSON.parse(JSON.stringify(processEditDatasItemThreeConstant)),{name: name})
+        nodeObj = Object.assign({}, JSON.parse(JSON.stringify(processEditDatasItemThreeConstant)), { name: name })
         break
       default:
         break;
@@ -134,66 +134,68 @@ export default class ConfigureProcess extends Component {
 
     let newAssignees = assignees ? assignees.split(',') : []
     let newRecipients = recipients ? recipients.split(',') : []
-    console.log(newAssignees.length, typeof newAssignees.length, !newAssignees.lengh, 'ssssssssssssssssssssssssss_assignees')
+    console.log(newAssignees, 'ssssssssssssssssss_new')
+    const lengh = newAssignees.length
+    console.log(lengh, typeof lengh, !!(lengh), 'ssssssssssssssssssssssssss_assignees')
     switch (node_type) {
       case '1':
         if (assignee_type == '1') { // 表示在任何人的情况下
           if (!name && !(forms && forms.length)) {
             confirmButtonText = '请填写步骤名称和至少添加一个表项'
             confirmButtonDisabled = true
-            return {confirmButtonText, confirmButtonDisabled}
+            return { confirmButtonText, confirmButtonDisabled }
           } else
-          if (!name) { // 如果名称不存在
-            confirmButtonText = '请填写步骤名称'
-            confirmButtonDisabled = true
-          } else if (!(forms && forms.length)) {
-            confirmButtonText = '至少添加一个表项'
-            confirmButtonDisabled = true
-          }
+            if (!name) { // 如果名称不存在
+              confirmButtonText = '请填写步骤名称'
+              confirmButtonDisabled = true
+            } else if (!(forms && forms.length)) {
+              confirmButtonText = '至少添加一个表项'
+              confirmButtonDisabled = true
+            }
         } else if (assignee_type == '2') { // 表示是指定人员的情况下
           if (!name && !(forms && forms.length) && !newAssignees.length) {
             confirmButtonText = '请填写步骤名称、并且至少选择一位填写人和至少添加一个表项'
             confirmButtonDisabled = true
-            return {confirmButtonText, confirmButtonDisabled}
+            return { confirmButtonText, confirmButtonDisabled }
           } else
-          if (!name) { // 如果名称不存在
-            confirmButtonText = '请填写步骤名称'
-            confirmButtonDisabled = true
-          } else if (!(forms && forms.length)) {
-            confirmButtonText = '至少添加一个表项'
-            confirmButtonDisabled = true
-          } else if (!(newAssignees.lengh)) {
-            console.log('进来了', 'sssssssssssssssssssssss')
-            confirmButtonText = '至少选择一位填写人'
-            confirmButtonDisabled = true
-          } else {
-            confirmButtonText = ''
-            confirmButtonDisabled = false
-          }
+            if (!name) { // 如果名称不存在
+              confirmButtonText = '请填写步骤名称'
+              confirmButtonDisabled = true
+            } else if (!(forms && forms.length)) {
+              confirmButtonText = '至少添加一个表项'
+              confirmButtonDisabled = true
+            } else if (!(newAssignees.lengh)) {
+              console.log('进来了', 'sssssssssssssssssssssss')
+              confirmButtonText = '至少选择一位填写人'
+              confirmButtonDisabled = true
+            } else {
+              confirmButtonText = ''
+              confirmButtonDisabled = false
+            }
         }
-        
+
         break;
       case '2':
         if (!name && !newAssignees.length) {
           confirmButtonText = '请输入步骤名称和至少添加一位审批人'
           confirmButtonDisabled = true
-          return {confirmButtonText, confirmButtonDisabled}
+          return { confirmButtonText, confirmButtonDisabled }
         } else
-        if (!name) {
-          confirmButtonText = '请填写步骤名称'
-          confirmButtonDisabled = true
-        } else if (!newAssignees.length) {
-          confirmButtonText = '至少添加一位审批人'
-          confirmButtonDisabled = true
-        } else {
-          confirmButtonDisabled = false
-        }
+          if (!name) {
+            confirmButtonText = '请填写步骤名称'
+            confirmButtonDisabled = true
+          } else if (!newAssignees.length) {
+            confirmButtonText = '至少添加一位审批人'
+            confirmButtonDisabled = true
+          } else {
+            confirmButtonDisabled = false
+          }
         break
       case '3':
         if (cc_type == '1' && (!name && !newAssignees.length) || cc_type == '2' && ((!name && !newAssignees.length && !newRecipients.length) || (!name && !newAssignees.length) || (!name && !newRecipients.length))) {
           confirmButtonText = '请填写步骤名称和至少一位抄送人或抄报人'
           confirmButtonDisabled = true
-          return {confirmButtonText, confirmButtonDisabled}
+          return { confirmButtonText, confirmButtonDisabled }
         }
         if (!name) {
           confirmButtonText = '请填写步骤名称'
@@ -222,7 +224,7 @@ export default class ConfigureProcess extends Component {
         confirmButtonDisabled = true
         break;
     }
-    return {confirmButtonText, confirmButtonDisabled}
+    return { confirmButtonText, confirmButtonDisabled }
   }
 
   renderDiffStepTypeContent = () => {
