@@ -691,9 +691,9 @@ export default class BoardTemplate extends Component {
                         {
                             this.state.selected_template_id ?
                                 <>
-                                    <div className={`${styles.list_item} ${styles.temp_ope}`} onClick={() => this.selectBoardTemplate(0)}>
+                                    <div className={`${styles.list_item} ${styles.list_item_flex}`} onClick={() => this.selectBoardTemplate(0)}>
                                         <span className={styles.backBtn}> <i className={globalStyles.authTheme}>&#xe7ec;</i></span>
-                                        <div className={`${styles.temp_ope_name}`}>{selected_template_name}</div>
+                                        <div className={`${styles.lable} ${globalStyles.global_ellipsis}`}>{selected_template_name}</div>
 
                                     </div>
                                     {/* 主区 */}
@@ -741,7 +741,7 @@ export default class BoardTemplate extends Component {
                                             const { id, name } = item
                                             return (
                                                 <div class={styles.boardTplItem} onClick={() => this.selectBoardTemplate(id)}>
-                                                    <span className={styles.left}>{name}</span>
+                                                    <span className={`${styles.left} ${globalStyles.global_ellipsis}`}>{name}</span>
                                                     <span> <i className={globalStyles.authTheme}>&#xe7eb;</i></span>
                                                 </div>
                                             );
