@@ -122,9 +122,9 @@ export const processEditDatasItemOneConstant = {
   "node_type": "1",//流程节点类型 1=资料收集 2=审批 3=抄送
   "name": "",//流程节点名称
   "description": "",//描述 备注
-  "deadline_time_type": "",//完成期限类型 hour = 时 day =天 month = 月
+  "deadline_time_type": "day",//完成期限类型 hour = 时 day =天 month = 月
   "deadline_value": "",//完成期限值
-  "assignee_type": "",//审批人类型 1=任何人 2=指定人员
+  "assignee_type": "1",//审批人类型 1=任何人 2=指定人员
   "assignees": "",//审批人 多个逗号隔开
   "forms": [],
   "is_confirm": '0', // 是否确认

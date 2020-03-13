@@ -98,17 +98,18 @@ export default class ConfigureProcess extends Component {
     const { itemKey, itemValue, processEditDatas = [], dispatch } = this.props
     let key = e.target.value
     let newProcessEditDatas = [...processEditDatas]
+    let name = {...newProcessEditDatas[itemKey]}.name || ''
     let nodeObj
     switch (key) {
       case '1':
-        nodeObj = Object.assign({},JSON.parse(JSON.stringify(processEditDatasItemOneConstant)),{...processEditDatas[itemKey]})
+        nodeObj = Object.assign({},JSON.parse(JSON.stringify(processEditDatasItemOneConstant)),{name: name})
         break;
       case '2':
-        nodeObj = Object.assign({},JSON.parse(JSON.stringify(processEditDatasItemTwoConstant)),{...processEditDatas[itemKey]})
+        nodeObj = Object.assign({},JSON.parse(JSON.stringify(processEditDatasItemTwoConstant)),{name: name})
         
         break
       case '3':
-        nodeObj = Object.assign({},JSON.parse(JSON.stringify(processEditDatasItemThreeConstant)),{...processEditDatas[itemKey]})
+        nodeObj = Object.assign({},JSON.parse(JSON.stringify(processEditDatasItemThreeConstant)),{name: name})
         break
       default:
         break;

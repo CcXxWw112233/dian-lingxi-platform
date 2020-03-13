@@ -234,7 +234,7 @@ export default class ConfigureStepTypeOne extends Component {
         <div className={indexStyles.more_select}>
           <span className={indexStyles.more_label}>... 更多选项 &nbsp;:</span>
           <sapn className={`${indexStyles.select_item}`}>+ 完成期限</sapn>
-          <sapn className={`${indexStyles.select_item}`}>+ 关联内容</sapn>
+          {/* <sapn className={`${indexStyles.select_item}`}>+ 关联内容</sapn> */}
           <sapn className={`${indexStyles.select_item}`}>+ 备注</sapn>
         </div>
         {/* 完成期限 */}
@@ -243,9 +243,9 @@ export default class ConfigureStepTypeOne extends Component {
           <span>完成期限 &nbsp;: </span>
           <InputNumber precision="0.1" min={1} max={deadline_type == 'h' ? 24 : deadline_type == 'd' ? 30 : 12} value={deadline_value} onChange={this.deadlineValueChange} className={indexStyles.select_number} />
           <Select className={indexStyles.select_day} value={deadline_type} onChange={this.deadlineTypeValueChange}>
-            <Option value="h">时</Option>
-            <Option value="d">天</Option>
-            <Option value="m">月</Option>
+            <Option value="hour">时</Option>
+            <Option value="day">天</Option>
+            <Option value="month">月</Option>
           </Select>
           <span className={`${globalStyles.authTheme} ${indexStyles.del_moreIcon}`}>&#xe7fe;</span>
         </div>
@@ -272,11 +272,11 @@ export default class ConfigureStepTypeOne extends Component {
 
         </div>
         {/* 关联内容 */}
-        <div className={indexStyles.select_related}>
+        {/* <div className={indexStyles.select_related}>
           <span className={globalStyles.authTheme}>&#xe7f5; 关联内容 &nbsp; :</span>
           <span className={`${globalStyles.authTheme} ${indexStyles.del_moreIcon}`}>&#xe7fe;</span>
           <div className={indexStyles.related_content}>添加关联</div>
-        </div>
+        </div> */}
       </div>
     )
   }
