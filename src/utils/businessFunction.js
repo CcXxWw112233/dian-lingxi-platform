@@ -391,12 +391,14 @@ export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenI
     }
   })
 
-  dispatch({
-    type: 'projectDetail/projectDetailInfo',
-    payload: {
-      id: board_id
-    }
-  })
+  if (board_id && board_id != '0') {
+    dispatch({
+      type: 'projectDetail/projectDetailInfo',
+      payload: {
+        id: board_id
+      }
+    })
+  }
 
   let new_group_view_type = group_view_type
   if (board_id == '0' || !board_id) {

@@ -331,9 +331,9 @@ class CreateProject extends React.Component {
             const { name, id } = value
             return (
               <Menu.Item key={`${id}__${name}`} style={{ width: 248 }}>
-                <span style={{ width: 248 }} className={`${globalStyles.global_ellipsis}`}>
+                <div style={{ maxWidth: 232 }} className={`${globalStyles.global_ellipsis}`}>
                   {name}
-                </span>
+                </div>
               </Menu.Item>
             )
           })
@@ -372,8 +372,8 @@ class CreateProject extends React.Component {
             OrganizationId == '0' && (
               <Dropdown overlay={this.renderOrgMenu()}>
                 <div className={indexStyles.head_org}>
-                  <span style={{ maxWidth: 246 }} className={`${globalStyles.global_ellipsis}`}>{(_organization_id && _organization_id != '0') ? _organization_name : '请选择组织'}</span>
-                  <span className={globalStyles.authTheme}>&#xe7ee;</span>
+                  <div style={{ maxWidth: 246 }} className={`${globalStyles.global_ellipsis}`}>{(_organization_id && _organization_id != '0') ? _organization_name : '请选择组织'}</div>
+                  <div className={globalStyles.authTheme}>&#xe7ee;</div>
                 </div>
               </Dropdown>
             )

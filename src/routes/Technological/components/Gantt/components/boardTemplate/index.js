@@ -10,7 +10,7 @@ import { createMilestone } from '../../../../../../services/technological/prject
 import { getGlobalData, checkIsHasPermissionInBoard } from '../../../../../../utils/businessFunction'
 import BoardTemplateManager from '@/routes/organizationManager/projectTempleteScheme/index.js'
 import SafeConfirmModal from '../SafeConfirmModal';
-import { PROJECT_TEAM_CARD_CREATE, PROJECT_TEAM_BOARD_MILESTONE } from '../../../../../../globalset/js/constant'
+import { PROJECT_TEAM_CARD_CREATE, PROJECT_TEAM_BOARD_MILESTONE, NOT_HAS_PERMISION_COMFIRN } from '../../../../../../globalset/js/constant'
 
 const MenuItem = Menu.Item
 const TreeNode = Tree.TreeNode;
@@ -453,8 +453,12 @@ export default class BoardTemplate extends Component {
     }
     // 创建里程碑
     createMilestone = async ({ end_time }) => {
-        const { drag_node_data: { data_name } } = this.state
         const { dispatch, gantt_board_id } = this.props
+        if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, gantt_board_id)) {
+            message.warn(NOT_HAS_PERMISION_COMFIRN)
+            return
+        }
+        const { drag_node_data: { data_name } } = this.state
         const params = {
             board_id: gantt_board_id,
             deadline: end_time,
@@ -478,6 +482,10 @@ export default class BoardTemplate extends Component {
     // 创建任务
     createCard = async ({ list_id, start_time, end_time }) => {
         const { dispatch, gantt_board_id } = this.props
+        if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id)) {
+            message.warn(NOT_HAS_PERMISION_COMFIRN)
+            return
+        }
         const { drag_node_data: { data_id } } = this.state
 
         const params = {

@@ -705,11 +705,14 @@ export default class GetRowStrip extends PureComponent {
                         )
                     }
                     {
-                        tree_type == '1' ? (
-                            this.renderMilestoneSet()
-                        ) : (
-                                this.renderCardRect()
-                            )
+                        tree_type == '0' ? ('') : (
+                            tree_type == '1' ? (
+                                this.renderMilestoneSet()
+                            ) : (
+                                    this.renderCardRect()
+                                )
+                        )
+
                     }
                 </div >
                 <MilestoneDetail
