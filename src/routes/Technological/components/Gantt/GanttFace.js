@@ -275,7 +275,7 @@ export default class GanttFace extends Component {
   }
   render() {
     const { gantt_card_out_middle_max_height } = this.state
-    const { gantt_card_height, get_gantt_data_loading, is_need_calculate_left_dx, gantt_board_id, is_show_board_file_area } = this.props
+    const { gantt_card_height, get_gantt_data_loading, is_need_calculate_left_dx, gantt_board_id, is_show_board_file_area, group_view_type } = this.props
     const dataAreaRealHeight = this.getDataAreaRealHeight()
 
     return (
@@ -288,7 +288,10 @@ export default class GanttFace extends Component {
             </div>
           )
         }
-        <MiletoneGuide />
+        {
+          group_view_type == '1' && <MiletoneGuide />
+        }
+
         <div className={indexStyles.cardDetail_left}></div>
         <div className={indexStyles.cardDetail_middle}
           // id={'gantt_card_out_middle'}
