@@ -96,6 +96,7 @@ class TreeNode extends Component {
 
         let { nodeValue = {} } = this.state;
         nodeValue.name = e.target.value;
+        nodeValue.editing = false;
         if (nodeValue.name) {
             let action;
 
