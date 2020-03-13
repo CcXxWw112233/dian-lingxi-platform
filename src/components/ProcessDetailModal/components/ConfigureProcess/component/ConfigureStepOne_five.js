@@ -19,9 +19,9 @@ export default class ConfigureStepOne_five extends Component {
 
   updateEdit = (data, key) => {
     const { itemKey, parentKey, processEditDatas = [] } = this.props
-    const { form_data = [] } = processEditDatas[parentKey]
-    form_data[itemKey][key] = data.value
-    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: form_data }, 'form_data')
+    const { forms = [] } = processEditDatas[parentKey]
+    forms[itemKey][key] = data.value
+    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
   }
   propertyNameChange = (e) => {
     this.updateEdit({ value: e.target.value }, 'title')
@@ -42,11 +42,11 @@ export default class ConfigureStepOne_five extends Component {
   // 删除对应字段的表项
   handleDelFormDataItem = () => {
     const { processEditDatas = [], parentKey = 0, itemKey } = this.props
-    const { form_data = [] } = processEditDatas[parentKey]
+    const { forms = [] } = processEditDatas[parentKey]
     let new_processEditDatas = [...processEditDatas]
-    let new_form_data = [...form_data]
+    let new_form_data = [...forms]
     new_form_data.splice(itemKey, 1)
-    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: new_form_data }, 'form_data')
+    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: new_form_data }, 'forms')
   }
 
   renderFileTypeArrayText = () => {

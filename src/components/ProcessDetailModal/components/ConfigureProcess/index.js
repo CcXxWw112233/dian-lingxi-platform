@@ -101,13 +101,14 @@ export default class ConfigureProcess extends Component {
     let nodeObj
     switch (key) {
       case '1':
-        nodeObj = JSON.parse(JSON.stringify(processEditDatasItemOneConstant))
+        nodeObj = Object.assign({},JSON.parse(JSON.stringify(processEditDatasItemOneConstant)),{...processEditDatas[itemKey]})
         break;
       case '2':
-        nodeObj = JSON.parse(JSON.stringify(processEditDatasItemTwoConstant))
+        nodeObj = Object.assign({},JSON.parse(JSON.stringify(processEditDatasItemTwoConstant)),{...processEditDatas[itemKey]})
+        
         break
       case '3':
-        nodeObj = JSON.parse(JSON.stringify(processEditDatasItemThreeConstant))
+        nodeObj = Object.assign({},JSON.parse(JSON.stringify(processEditDatasItemThreeConstant)),{...processEditDatas[itemKey]})
         break
       default:
         break;
@@ -128,10 +129,10 @@ export default class ConfigureProcess extends Component {
     let confirmButtonText = ''
     let confirmButtonDisabled
     const { itemValue } = this.props
-    const { node_type, name, form_data = [], assignees, cc_type, recipients } = itemValue
+    const { node_type, name, forms = [], assignees, cc_type, recipients } = itemValue
     switch (node_type) {
       case '1':
-        if (!name && !(form_data && form_data.length)) {
+        if (!name && !(forms && forms.length)) {
           confirmButtonText = '请填写步骤名称和至少添加一个表项'
           confirmButtonDisabled = true
           return {confirmButtonText, confirmButtonDisabled}
@@ -139,7 +140,7 @@ export default class ConfigureProcess extends Component {
         if (!name) { // 如果名称不存在
           confirmButtonText = '请填写步骤名称'
           confirmButtonDisabled = true
-        } else if (!(form_data && form_data.length)) {
+        } else if (!(forms && forms.length)) {
           confirmButtonText = '至少添加一个表项'
           confirmButtonDisabled = true
         } else {

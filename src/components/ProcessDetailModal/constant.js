@@ -126,7 +126,7 @@ export const processEditDatasItemOneConstant = {
   "deadline_value": "",//完成期限值
   "assignee_type": "",//审批人类型 1=任何人 2=指定人员
   "assignees": "",//审批人 多个逗号隔开
-  "froms": [],
+  "forms": [],
   "is_confirm": '0', // 是否确认
   "form_data": [
   ]
@@ -167,7 +167,7 @@ export const processEditDatasRecordsItemOneConstant = {
       "deadline_value": "",//完成期限值
       "assignee_type": "",//审批人类型 1=任何人 2=指定人员
       "assignees": "",//审批人 多个逗号隔开
-      "froms": [],
+      "forms": [],
       "is_confirm": '0', // 是否确认
       // "form_data": [
       //   // 文本
@@ -316,3 +316,83 @@ export const processInfoMatch = {
   ],
   "is_shared": "0"
 }
+
+export const principalList = [
+  {
+    "user_id": "1207501040593801216",
+    "name": "rabbitQi",
+    "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2020-01-09/43f14b585cff4de2ae18d23555e72192.jpeg"
+  },
+  {
+    "user_id": "1195311878813913088",
+    "name": "一只加菲吖",
+    "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-11-22/293c32e5af584288a238cc58d1c6a66f.jpg"
+  },
+
+  {
+    "user_id": "1158204054019641344",
+    "name": "加菲猫",
+    "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2020-01-10/4e5a59a2afad4c79a11429bd1771c12c.jpg"
+  },
+  {
+    "user_id": "1184398454126940160",
+    "name": "13388889999",
+    "avatar": ""
+  },
+  {
+    "user_id": "1128925957864951808",
+    "name": "ccc",
+    "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2020-02-10/a46f3f4152b443ae8be52965d7cde6d6.png"
+  },
+  {
+    "user_id": "1110067154134372352",
+    "name": "13333333333",
+    "avatar": ""
+  },
+  {
+    "user_id": "1205361599397892096",
+    "name": "13344444444",
+    "avatar": ""
+  },
+  {
+    "user_id": "1205361598592585728",
+    "name": "13311111111",
+    "avatar": ""
+  },
+  {
+    "user_id": "1150603267496087552",
+    "name": "汤姆",
+    "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-10-25/effec42aebf94d10a23b7608e4daed0b.jpg"
+  },
+  {
+    "user_id": "1192753179570343936",
+    "name": "15289749459",
+    "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-12-06/037ff1e467e64f658c4f2fbeaa40d5a4.jpg"
+  },
+  {
+    "user_id": "1205361597866971136",
+    "name": "13322222222",
+    "avatar": ""
+  },
+  {
+    "user_id": "1193865152404000768",
+    "name": "13222222333",
+    "avatar": ""
+  },
+  {
+    "user_id": "1205361597246214144",
+    "name": "13355555555",
+    "avatar": ""
+  },
+  {
+    "user_id": "1205361428626804736",
+    "name": "13322221111",
+    "avatar": ""
+  },
+  {
+    "user_id": "1205361596608679936",
+    "name": "13366666666",
+    "avatar": ""
+  }
+
+]

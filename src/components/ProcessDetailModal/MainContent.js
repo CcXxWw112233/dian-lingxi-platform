@@ -204,7 +204,7 @@ export default class MainContent extends Component {
     e && e.stopPropagation()
     const { processEditDatas = [], dispatch } = this.props
     const nodeObj = JSON.parse(JSON.stringify(processEditDatasItemOneConstant))
-    processEditDatas.length == '0' ?  processEditDatas.push(nodeObj) : processEditDatas.push({})
+    processEditDatas.length == '0' ?  processEditDatas.push(nodeObj) : processEditDatas.push({name: ''})
     // processEditDatas.push(nodeObj)
     new Promise((resolve) => {
       dispatch({

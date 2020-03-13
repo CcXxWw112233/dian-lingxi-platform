@@ -91,7 +91,7 @@ export default class ConfigureStepTypeOne extends Component {
   //表单填写项
   menuAddFormClick = ({ key }) => {
     const { processEditDatas = [], processCurrentEditStep = 0, itemValue, itemKey } = this.props
-    const { form_data = [] } = processEditDatas[itemKey]
+    const { forms = [] } = processEditDatas[itemKey]
     //推进人一项
     let obj = {}
     switch (key) {
@@ -146,8 +146,8 @@ export default class ConfigureStepTypeOne extends Component {
       default:
         break
     }
-    form_data.push(obj)
-    this.updateConfigureProcess({ value: form_data }, 'form_data')
+    forms.push(obj)
+    this.updateConfigureProcess({ value: forms }, 'forms')
   }
 
   // 渲染不同的表项
@@ -204,13 +204,13 @@ export default class ConfigureStepTypeOne extends Component {
 
   render() {
     const { itemValue, processEditDatas = [], itemKey } = this.props
-    const { form_data = [] } = processEditDatas[itemKey]
+    const { forms = [] } = processEditDatas[itemKey]
     const { assignee_type, deadline_type, deadline_value, description, is_click_node_description } = itemValue
     return (
       <div style={{ position: 'relative' }}>
         <div style={{ paddingBottom: '16px', borderBottom: '1px solid #e8e8e8' }} onClick={(e) => { e && e.stopPropagation() }}>
           <div>
-            {form_data.map((value, key) => {
+            {forms.map((value, key) => {
               return (<div key={`${key}-${value}`}>{this.filterForm(value, key)}</div>)
             })}
           </div>
@@ -265,7 +265,7 @@ export default class ConfigureStepTypeOne extends Component {
                   autoFocus={true}
                   goldName={''}
                   nodeName={'input'}
-                  style={{ display: 'block', fontSize: 20, color: '#262626', resize: 'none', height: '38px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none', marginTop: '4px' }}
+                  style={{ display: 'block', fontSize: 12, color: '#262626', resize: 'none', height: '38px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none', marginTop: '4px' }}
                 />
               )
           }
