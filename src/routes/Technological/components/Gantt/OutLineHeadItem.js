@@ -307,9 +307,15 @@ export default class OutLineHeadItem extends Component {
                     // if(){
 
                     // }
-                    updateParams.start_time = param.start_time;
-                    updateParams.due_time = param.due_time;
+
                     updateParams.time_span = param.time_span;
+                    if (param.time_span == 0) {
+                        updateParams.start_time = null;
+                        updateParams.due_time = null;
+                    } else {
+                        updateParams.start_time = param.start_time;
+                        updateParams.due_time = param.due_time;
+                    }
                     updateTask({ ...updateParams }, { isNotLoading: false })
                         .then(res => {
                             if (isApiResponseOk(res)) {
@@ -318,8 +324,13 @@ export default class OutLineHeadItem extends Component {
 
                                     nodeValue.name = param.name;
                                     nodeValue.time_span = param.time_span;
-                                    nodeValue.start_time = param.start_time;
-                                    nodeValue.due_time = param.due_time;
+                                    if (param.time_span == 0) {
+                                        nodeValue.start_time = null;
+                                        nodeValue.due_time = null;
+                                    } else {
+                                        nodeValue.start_time = param.start_time;
+                                        nodeValue.due_time = param.due_time;
+                                    }
                                     this.updateOutLineTreeData(outline_tree);
                                 } else {
                                     console.error("OutlineTree.getTreeNodeValue:未查询到节点");

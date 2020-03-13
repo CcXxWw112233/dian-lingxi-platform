@@ -244,10 +244,11 @@ class TreeNode extends Component {
         return (
             <span className={`${styles.outline_tree_node_label} ${isTitleHover ? styles.hoverTitle : ''}`}>
                 {/*<span><span>确定</span><span>取消</span></span> */}
-                <span className={`${styles.title}`} onMouseEnter={this.onMouseEnterTitle} onMouseLeave={this.onMouseLeaveTitle}>
-                    <Tooltip placement="top" title={title != '0' ? title : ''}>
+                <Tooltip mouseEnterDelay={0.5} mouseLeaveDelay={0} placement="top" title={title != '0' ? title : ''}>
+                    <span className={`${styles.title}`} onMouseEnter={this.onMouseEnterTitle} onMouseLeave={this.onMouseLeaveTitle}>
+
                         {
-                            editing||(isTitleHover || isTitleEdit) ?
+                            editing || (isTitleHover || isTitleEdit) ?
                                 <Input defaultValue={title != '0' ? title : ''}
                                     autoFocus={editing ? true : false}
                                     style={{ width: '100%' }}
@@ -261,9 +262,9 @@ class TreeNode extends Component {
                                 :
                                 (placeholder ? label : (title ? title : '未填写任务名称'))
                         }
-                    </Tooltip>
-                </span>
 
+                    </span>
+                </Tooltip>
                 {/* <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
 
 
@@ -272,8 +273,8 @@ class TreeNode extends Component {
 
                 {
                     tree_type != '0' &&
-                    <>
-                        <Dropdown trigger={['click']}
+                    <div onWheel={e => e.stopPropagation()}>
+                        <Dropdown
                             overlayClassName={styles.selectExecutors}
                             overlay={
                                 <MenuSearchPartner
@@ -317,7 +318,7 @@ class TreeNode extends Component {
                             </Popover>
                         }
 
-                    </>
+                    </div>
                 }
 
             </span>
