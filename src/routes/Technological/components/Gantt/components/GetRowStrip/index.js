@@ -160,7 +160,8 @@ export default class GetRowStrip extends PureComponent {
         }
         const date = this.calHoverDate()
         const { timestamp } = date
-        const { id, time_span = 1 } = itemValue
+        let { id, time_span = 1 } = itemValue
+        if (time_span == 0) time_span = 1
         const due_time = timestamp + time_span * 24 * 60 * 60 * 1000 - 1000
         updateTask({ card_id: id, due_time, start_time: timestamp, board_id: gantt_board_id }, { isNotLoading: false }).then(res => {
             if (isApiResponseOk(res)) {
@@ -251,8 +252,8 @@ export default class GetRowStrip extends PureComponent {
         const date = this.calHoverDate()
         const { timestamp } = date
         const { itemValue = {}, gantt_board_id } = this.props
-        const { id, time_span = 1 } = itemValue
-
+        let { id, time_span = 1 } = itemValue
+        if(isNaN(time_span)) time_span = 1
         const due_time = timestamp + time_span * 24 * 60 * 60 * 1000 - 1000
         updateMilestone({ id, deadline: due_time }, { isNotLoading: false }).then(res => {
             if (isApiResponseOk(res)) {
