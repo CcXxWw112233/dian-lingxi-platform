@@ -24,7 +24,9 @@ export default class GetRowStrip extends PureComponent {
             set_miletone_detail_modal_visible: false, //里程碑是否可见
             currentRectDashed: { x: 0, width: 0 }, //当前操作的矩形属性
             drag_holiday_count: 0,
-            dasheRectShow: false
+            dasheRectShow: false,
+            create_start_time: '',
+            create_end_time: ''
         }
         this.setIsCardHasTime()
 
@@ -36,9 +38,10 @@ export default class GetRowStrip extends PureComponent {
     componentDidMount() {
         this.setCurrentSelectedProjectMembersList()
     }
-    componentWillReceiveProps() {
+    componentWillReceiveProps(nextProps) {
         this.setIsCardHasTime()
         this.setCurrentSelectedProjectMembersList()
+        // this.clearDragInfo(nextProps)
     }
     // 当前滑动的这一条任务是否存在时间？存在时间代表可以在面板上创建
     setIsCardHasTime = () => {
@@ -496,58 +499,16 @@ export default class GetRowStrip extends PureComponent {
         }
         const { timestamp, timestampEnd } = date
         const update_name = start_end == '1' ? 'create_start_time' : 'create_end_time'
-        dispatch({
-            type: getEffectOrReducerByName('updateDatas'),
-            payload: {
-                [update_name]: start_end == '1' ? timestamp : timestampEnd
+        this.setState({
+            [update_name]: start_end == '1' ? timestamp : timestampEnd
+        }, () => {
+            if (not_create) { //不创建和查看
+                return
+            }
+            if (start_end == '2') { //拖拽或点击操作完成，进行生成单条任务逻辑
+                this.setSpecilTaskExample() //出现任务创建或查看任务
             }
         })
-        if (not_create) { //不创建和查看
-            return
-        }
-        if (start_end == '2') { //拖拽或点击操作完成，进行生成单条任务逻辑
-            this.setSpecilTaskExample() //出现任务创建或查看任务
-        }
-    }
-    //获取当前所在的分组, 根据创建或者查看任务时的高度
-    getCurrentGroup = ({ top }) => {
-        if (top == undefined || top == null) {
-            return Promise.resolve({ current_list_group_id: 0 })
-        }
-        const { group_view_type } = this.props
-        if (ganttIsOutlineView({ group_view_type })) {
-            return Promise.resolve({ current_list_group_id: 0 })
-        }
-        const getSum = (total, num) => {
-            return total + num;
-        }
-        const { dispatch } = this.props
-        const { group_list_area = [], list_group = [] } = this.props
-        let conter_key = 0
-        for (let i = 0; i < group_list_area.length; i++) {
-            if (i == 0) {
-                if (top < group_list_area[0]) {
-                    conter_key = 0
-                    break
-                }
-            } else {
-                const arr = group_list_area.slice(0, i + 1)
-                const sum = arr.reduce(getSum);
-                if (top < sum) {
-                    conter_key = i
-                    break
-                }
-            }
-        }
-        const current_list_group_id = list_group[conter_key]['list_id']
-        dispatch({
-            type: getEffectOrReducerByName('updateDatas'),
-            payload: {
-                current_list_group_id
-            }
-        })
-
-        return Promise.resolve({ current_list_group_id })
     }
     //点击某个实例,或者创建任务
     setSpecilTaskExample = (e) => {
@@ -575,7 +536,7 @@ export default class GetRowStrip extends PureComponent {
         // this.props.addTaskModalVisibleChange && this.props.addTaskModalVisibleChange(true)
 
         // 大纲树左边创建任务
-        let { create_start_time, create_end_time } = this.props;
+        let { create_start_time, create_end_time } = this.state;
         this.addCardSetOutlineTree({ start_time: create_start_time, due_time: create_end_time, editing: true })
     }
 
@@ -608,8 +569,8 @@ export default class GetRowStrip extends PureComponent {
     // 设置拖拽生成任务虚线框内，节假日或者公休日的时间天数
     setDragDashedRectHolidayNo = () => {
         let count = 0
-
-        const { create_start_time, create_end_time, holiday_list = [] } = this.props
+        const { create_start_time, create_end_time, } = this.state
+        const { holiday_list = [] } = this.props
         if (!create_start_time || !create_end_time) {
             // return count
             this.setState({
@@ -634,10 +595,25 @@ export default class GetRowStrip extends PureComponent {
             drag_holiday_count: holidy_date_arr.length
         })
     }
+
+    clearDragInfo = (nextProps) => {//清除掉拖拽生成任务的信息
+        const { itemValue: { add_id, editing }, outline_current_oprate_add_id } = nextProps
+        // const { itemValue: { next_add_id: add_id, next_editing: editing } } = nextProps
+        if (add_id != outline_current_oprate_add_id) {
+            this.setState({
+                currentRectDashed: { x: 0, width: 0 }, //当前操作的矩形属性
+                drag_holiday_count: 0,
+                dasheRectShow: false,
+                create_start_time: '',
+                create_end_time: ''
+            })
+        }
+    }
+
     // /空条拖拽事件-----end
 
     targetEventProps = () => {
-        const { itemValue: { id, add_id } } = this.props
+        const { itemValue: { id, add_id, editing } } = this.props
         if (!!id) { //真正上的里程碑或者任务 或者创建里程碑的虚拟节点
             return {
                 onMouseOver: this.stripMouseOver,
@@ -654,18 +630,32 @@ export default class GetRowStrip extends PureComponent {
             return {
                 onMouseDown: (e) => {
                     e.stopPropagation()
+                    if (editing) {
+                        return
+                    }
                     this.dashedMousedown(e)
                 },
                 onMouseMove: (e) => {
                     e.stopPropagation()
+                    if (editing) {
+                        return
+                    }
                     this.dashedMouseMove(e)
                 },
                 onMouseLeave: (e) => {
                     e.stopPropagation()
+                    if (editing) {
+                        return
+                    }
                     this.dashedMouseLeave(e)
                     this.stripMouseLeave(e)
                 },
-                onMouseOver: this.stripMouseOver,
+                onMouseOver: (e) => {
+                    if (editing) {
+                        return
+                    }
+                    this.stripMouseOver(e)
+                },
             }
         }
     }
@@ -743,8 +733,6 @@ function mapStateToProps({ gantt: {
         about_user_boards,
         gold_date_arr = [],
         group_rows = [],
-        create_start_time,
-        create_end_time,
         holiday_list = [],
         group_view_type,
         group_list_area_section_height,
@@ -767,8 +755,6 @@ function mapStateToProps({ gantt: {
         milestone_detail,
         gold_date_arr,
         group_rows,
-        create_start_time,
-        create_end_time,
         holiday_list,
         group_view_type,
         group_list_area_section_height,
