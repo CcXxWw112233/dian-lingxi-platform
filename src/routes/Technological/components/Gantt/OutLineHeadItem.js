@@ -259,6 +259,7 @@ export default class OutLineHeadItem extends Component {
                                     name: param.name,
                                     is_expand: true,
                                     children: [],
+                                    time_span:0,
                                     ...res.data
                                 };
 
