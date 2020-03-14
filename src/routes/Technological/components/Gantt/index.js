@@ -395,6 +395,16 @@ class Gantt extends Component {
   }
   render() {
     const { addTaskModalVisible, } = this.state
+    const { outline_tree_round } = this.props
+    if (outline_tree_round.length) {
+      console.log(
+        'ssssououtline_tree_round1',
+        outline_tree_round[1].editing,
+        outline_tree_round[1].start_time
+      )
+      // console.log('ssssououtline_tree_round2', outline_tree_round[3].editing)
+    }
+
     const {
       about_apps_boards = [],
       gantt_board_id,
@@ -460,6 +470,7 @@ function mapStateToProps({
       about_user_boards = [],
       show_board_fold,
       outline_tree,
+      outline_tree_round,
       panel_outline_create_card_params = {}
     }
   },
@@ -484,7 +495,8 @@ function mapStateToProps({
     show_board_fold,
     page_load_type,
     outline_tree,
-    panel_outline_create_card_params
+    panel_outline_create_card_params,
+    outline_tree_round
   }
 }
 

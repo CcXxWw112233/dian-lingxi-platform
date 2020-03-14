@@ -41,7 +41,7 @@ export default class GetRowStrip extends PureComponent {
     componentWillReceiveProps(nextProps) {
         this.setIsCardHasTime()
         this.setCurrentSelectedProjectMembersList()
-        // this.clearDragInfo(nextProps)
+        this.clearDragInfo(nextProps)
     }
     // 当前滑动的这一条任务是否存在时间？存在时间代表可以在面板上创建
     setIsCardHasTime = () => {
@@ -597,16 +597,20 @@ export default class GetRowStrip extends PureComponent {
     }
 
     clearDragInfo = (nextProps) => {//清除掉拖拽生成任务的信息
-        const { itemValue: { add_id, editing }, outline_current_oprate_add_id } = nextProps
-        // const { itemValue: { next_add_id: add_id, next_editing: editing } } = nextProps
-        if (add_id != outline_current_oprate_add_id) {
-            this.setState({
-                currentRectDashed: { x: 0, width: 0 }, //当前操作的矩形属性
-                drag_holiday_count: 0,
-                dasheRectShow: false,
-                create_start_time: '',
-                create_end_time: ''
-            })
+        const { itemValue: { add_id, editing } } = this.props
+        const { itemValue: { editing: next_editing } } = nextProps
+        if (add_id) {
+            if (editing && !next_editing) {  //由编辑状态转变为不是编辑状态时才重置
+                this.setState({
+                    currentRectDashed: { x: 0, width: 0 }, //当前操作的矩形属性
+                    drag_holiday_count: 0,
+                    dasheRectShow: false,
+                    create_start_time: '',
+                    create_end_time: ''
+                })
+                // this.addCardSetOutlineTree({ start_time: '', due_time: '' })
+                // debugger
+            }
         }
     }
 
