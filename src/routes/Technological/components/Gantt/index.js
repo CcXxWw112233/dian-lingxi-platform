@@ -396,14 +396,14 @@ class Gantt extends Component {
   render() {
     const { addTaskModalVisible, } = this.state
     const { outline_tree_round } = this.props
-    if (outline_tree_round.length) {
-      console.log(
-        'ssssououtline_tree_round1',
-        outline_tree_round[1].editing,
-        outline_tree_round[1].start_time
-      )
-      // console.log('ssssououtline_tree_round2', outline_tree_round[3].editing)
-    }
+    // if (outline_tree_round.length) {
+    //   console.log(
+    //     'ssssououtline_tree_round1',
+    //     outline_tree_round[1].editing,
+    //     outline_tree_round[1].start_time
+    //   )
+    //   // console.log('ssssououtline_tree_round2', outline_tree_round[3].editing)
+    // }
 
     const {
       about_apps_boards = [],
