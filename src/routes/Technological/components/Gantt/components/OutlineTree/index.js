@@ -96,10 +96,10 @@ class TreeNode extends Component {
 
         let { nodeValue = {} } = this.state;
         nodeValue.name = e.target.value;
-        nodeValue.editing = false;
+   
         if (nodeValue.name) {
             let action;
-
+            nodeValue.editing = false;
             if (this.props.placeholder) {
                 action = 'add_' + (this.props.type == '1' ? 'milestone' : 'task');
             } else {
@@ -121,6 +121,17 @@ class TreeNode extends Component {
         } else {
             message.warn('标题不能为空');
             nodeValue.name = (this.props.nodeValue || {}).name || '';
+
+            if(nodeValue.editing){
+                if (this.props.onDataProcess) {
+                    this.props.onDataProcess({
+                        action:'onBlur',
+                        param: { ...nodeValue, parentId: this.props.parentId }
+                    });
+                }
+    
+            }
+          
             this.setState({
                 nodeValue
             });

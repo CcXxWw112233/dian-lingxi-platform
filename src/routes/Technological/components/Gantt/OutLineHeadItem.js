@@ -259,6 +259,7 @@ export default class OutLineHeadItem extends Component {
                                     name: param.name,
                                     is_expand: true,
                                     children: [],
+                                    time_span:0,
                                     ...res.data
                                 };
 
@@ -481,6 +482,21 @@ export default class OutLineHeadItem extends Component {
                     });
                 }
                 break;
+            case 'onBlur':{
+                let nodeValue = OutlineTree.getTreeAddNodeValue(outline_tree, param.add_id);
+                if (nodeValue) {
+
+                    // nodeValue.name = param.name;
+                    nodeValue.editing = false;
+                    nodeValue.time_span = 0;
+                    nodeValue.start_time = null;
+                    nodeValue.due_time = null;
+        
+                    this.updateOutLineTreeData(outline_tree);
+                } else {
+                    console.error("OutlineTree.getTreeNodeValue:未查询到节点");
+                }
+            }
             default:
                 ;
 
