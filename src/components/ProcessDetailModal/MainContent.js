@@ -7,7 +7,7 @@ import ConfigureProcess from './components/ConfigureProcess'
 import EditProcess from './components/EditProcess'
 import ConfigureGuide from './ConfigureGuide'
 import { processEditDatasItemOneConstant, processEditDatasRecordsItemOneConstant } from './constant'
-import { Tooltip } from 'antd'
+import { Tooltip, Button } from 'antd'
 
 let timer
 @connect(mapStateToProps)
@@ -277,6 +277,7 @@ export default class MainContent extends Component {
     const delHtmlTag = (str) => {
       return str.replace(/<[^>]+>/g, "")
     }
+    let saveTempleteDisabled = currentFlowInstanceName == '' || processEditDatas[processEditDatas.length - 1].is_confirm == '0' ? true : false
     return (
       <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto' }} onScroll={this.onScroll}>
         <div id="container_configureTop" className={indexStyles.configure_top}>
@@ -371,6 +372,14 @@ export default class MainContent extends Component {
             )
           })}
           {this.renderAddProcessStep()}
+          {
+            processEditDatas.length >= 2 && (
+              <div style={{display: 'flex',alignItems: 'center',justifyContent:'center', marginTop: '32px'}}>
+                <Button disabled={saveTempleteDisabled} style={{marginRight: '24px', height: '40px', color: '#1890FF'}}>开始流程</Button>
+                <Button disabled={saveTempleteDisabled} type="primary" style={{height: '40px'}}>保存模板</Button>
+              </div>
+            )
+          }
         </div>
         <div id="suspensionFlowInstansNav" className={`${indexStyles.suspensionFlowInstansNav}`}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

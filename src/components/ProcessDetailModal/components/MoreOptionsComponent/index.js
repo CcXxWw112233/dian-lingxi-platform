@@ -6,7 +6,7 @@ import NameChangeInput from '@/components/NameChangeInput'
 
 const Option = Select.Option;
 
-export default class index extends Component {
+export default class MoreOptionsComponent extends Component {
 
   state = {
     // moreOptionsList: []
@@ -42,7 +42,7 @@ export default class index extends Component {
 
   // 完成期限
   deadlineValueChange = (value) => {
-    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: value.toString() }, 'deadline_value')
+    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: value }, 'deadline_value')
   }
   deadlineTimeTypeValueChange = (value) => {
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: value }, 'deadline_time_type')
@@ -83,7 +83,7 @@ export default class index extends Component {
       <div className={`${indexStyles.complet_deadline}`}>
         <span style={{ fontWeight: 900, marginRight: '2px' }} className={globalStyles.authTheme}>&#xe686;</span>
         <span>完成期限 &nbsp;: </span>
-        <InputNumber precision="0.1" min={1} max={deadline_time_type == 'hour' ? 24 : deadline_time_type == 'day' ? 30 : 12} value={deadline_value} onChange={this.deadlineValueChange} className={indexStyles.select_number} />
+        <InputNumber precision="0.1" min={1} max={deadline_time_type == 'hour' ? 24 : deadline_time_type == 'day' ? 30 : 12} value={deadline_value} onChange={this.deadlineValueChange} onClick={(e) => e.stopPropagation()} className={indexStyles.select_number} />
         <Select className={indexStyles.select_day} value={deadline_time_type} onChange={this.deadlineTimeTypeValueChange}>
           <Option value="hour">时</Option>
           <Option value="day">天</Option>
@@ -171,4 +171,9 @@ export default class index extends Component {
       </div>
     )
   }
+}
+
+// 更多选项组件
+MoreOptionsComponent.defaultProps = {
+
 }
