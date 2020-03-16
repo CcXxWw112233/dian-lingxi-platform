@@ -67,7 +67,7 @@ export default class ConfigureProcess extends Component {
   // 确认的点击事件
   handleConfirmButton = (e) => {
     e && e.stopPropagation()
-    this.updateCorrespondingPrcodessStepWithNodeContent('is_confirm', '1')
+    this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '1')
   }
 
   // 删除的点击事件

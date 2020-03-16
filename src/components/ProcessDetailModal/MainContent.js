@@ -5,6 +5,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
 import ConfigureProcess from './components/ConfigureProcess'
 import EditProcess from './components/EditProcess'
+import ProcessStartConfirm from './components/ProcessStartConfirm'
 import ConfigureGuide from './ConfigureGuide'
 import { processEditDatasItemOneConstant, processEditDatasRecordsItemOneConstant } from './constant'
 import { Tooltip, Button } from 'antd'
@@ -236,13 +237,13 @@ export default class MainContent extends Component {
   // 渲染添加步骤按钮
   renderAddProcessStep = () => {
     const { processCurrentEditStep, processEditDatas = [] } = this.props
-    let { is_confirm } = processEditDatas && processEditDatas[processCurrentEditStep] || {}
+    let { is_edit } = processEditDatas && processEditDatas[processCurrentEditStep] || {}
     const { visible } = this.state
     return (
       <div style={{ position: 'relative' }} id="addProcessStep">
         {
           processEditDatas && processEditDatas.length ? (
-            is_confirm == '1' ? (
+            is_edit == '1' ? (
               <div className={`${indexStyles.add_node}`} onClick={(e) => { this.handleAddEditStep(e) }}>
                 <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
                 <ConfigureGuide visible={visible} />
@@ -262,22 +263,39 @@ export default class MainContent extends Component {
               </div>
             )
         }
-        {/* <div className={`${processEditDatas.length ? (is_confirm == '1' ? indexStyles.add_node : indexStyles.add_normal) : indexStyles.add_node}`} onClick={(e) => { this.handleAddEditStep(e) }}>
-          <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
-          <ConfigureGuide />
-        </div> */}
       </div>
     )
   }
 
+  // 渲染展示的内容是什么 配置时 | 编辑时 | 启动时 | 进行时
+  renderDiffContentProcess = (value,key) => {
+    const { processPageFlagStep } = this.props
+    const { is_edit, is_confirm } = value
+    let container = (<div></div>)
+    switch (processPageFlagStep) {
+      case '1': // 表示进入配置界面
+        if (is_edit == '1') {
+          container = <EditProcess  itemKey={key} itemValue={value}/>
+        } else {
+          container = <ConfigureProcess  itemKey={key} itemValue={value}/>
+        }
+        break;
+      case '2':
+        container = <EditProcess itemKey={key} itemValue={value}/>
+        break
+      case '3':
+        container = <ProcessStartConfirm itemKey={key} itemValue={value}/>
+        break
+      default:
+        break;
+    }
+    return container
+  }
+
   render() {
     const { clientHeight } = this.state
-    const { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [] } = this.props
-    // const { currentFlowInstanceName, currentFlowInstanceDescription } = this.state
-    const delHtmlTag = (str) => {
-      return str.replace(/<[^>]+>/g, "")
-    }
-    let saveTempleteDisabled = currentFlowInstanceName == '' || processEditDatas[processEditDatas.length - 1].is_confirm == '0' ? true : false
+    const { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep } = this.props
+    let saveTempleteDisabled = currentFlowInstanceName == '' || processEditDatas[processEditDatas.length - 1].is_edit == '0' ? true : false
     return (
       <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto' }} onScroll={this.onScroll}>
         <div id="container_configureTop" className={indexStyles.configure_top}>
@@ -366,12 +384,11 @@ export default class MainContent extends Component {
         <div className={indexStyles.configure_bottom}>
           {/* <ConfigureProcess {...this.props}/> */}
           {processEditDatas.map((value, key) => {
-            const { is_confirm } = value
             return (
-              <>{is_confirm == '1' ? <EditProcess itemKey={key} itemValue={value}/> : <ConfigureProcess itemKey={key} itemValue={value} />}</>
+              <>{this.renderDiffContentProcess(value,key)}</>
             )
           })}
-          {this.renderAddProcessStep()}
+          {processPageFlagStep == '1' || processPageFlagStep == '2' && this.renderAddProcessStep()}
           {
             processEditDatas.length >= 2 && (
               <div style={{display: 'flex',alignItems: 'center',justifyContent:'center', marginTop: '32px'}}>

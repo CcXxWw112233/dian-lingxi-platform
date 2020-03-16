@@ -38,7 +38,7 @@ export default class EditStepTypeThree extends Component {
   // 编辑点击事件
   handleEnterConfigureProcess = (e) => {
     e && e.stopPropagation()
-    this.updateCorrespondingPrcodessStepWithNodeContent('is_confirm', '0')
+    this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
   }
 
   // 理解成是否是有效的头像

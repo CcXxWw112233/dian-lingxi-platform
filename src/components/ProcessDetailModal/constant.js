@@ -129,6 +129,7 @@ export const processEditDatasItemOneConstant = {
   "assignees": "",//审批人 多个逗号隔开
   "forms": [],
   "is_confirm": '0', // 是否确认
+  "is_edit": '0', // 是否进入编辑
   "form_data": [
   ]
 }
@@ -143,7 +144,8 @@ export const processEditDatasItemTwoConstant = {
   "deadline_time_type": "day",//完成期限类型 hour = 时 day =天 month = 月
   "deadline_value": "",//完成期限值
   "assignees": "",//审批人 多个逗号隔开
-  "is_confirm": "0"
+  "is_confirm": "0",
+  "is_edit": '0', // 是否进入编辑
 }
 
 export const processEditDatasItemThreeConstant = {
@@ -156,7 +158,8 @@ export const processEditDatasItemThreeConstant = {
   "cc_type": "1",//抄送人类型 1=自动抄送 2=手动抄送
   "recipients": "",//抄送人 多个逗号隔开
   "assignees": "",//抄报人 多个逗号隔开
-  "is_confirm": "0"
+  "is_confirm": "0",
+  "is_edit": '0', // 是否进入编辑
 }
 
 export const processEditDatasRecordsItemOneConstant = {

@@ -33,7 +33,8 @@ export default class Process extends Component {
     const { isInOpenFile, filePreviewCurrentFileId, fileType, currentPreviewFileName } = this.props
     return (
       <div className={indexStyles.processOut}>
-        {this.filterPage()}
+        {/* {this.filterPage()} */}
+        <ProcessDefault />
       </div>
     )
   }

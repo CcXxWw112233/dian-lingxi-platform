@@ -12,7 +12,7 @@ export default class TemplateContent extends Component {// 模板组件
     this.props.dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
-        processPageFlagStep: '1',
+        processPageFlagStep: '3',
         process_detail_modal_visible: true
       }
     })

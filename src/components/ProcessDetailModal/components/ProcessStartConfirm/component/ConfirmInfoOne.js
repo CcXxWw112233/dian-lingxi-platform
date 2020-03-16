@@ -3,16 +3,16 @@ import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '../../AvatarList'
 import { principalList } from '../../../constant'
-import EditStepTypeOne_one from './EditStepTypeOne_one'
-import EditStepTypeOne_two from './EditStepTypeOne_two'
-import EditStepTypeOne_three from './EditStepTypeOne_three'
-import EditStepTypeOne_five from './EditStepTypeOne_five'
+import ConfirmInfoOne_one from './ConfirmInfoOne_one'
+import ConfirmInfoOne_two from './ConfirmInfoOne_two'
+import ConfirmInfoOne_three from './ConfirmInfoOne_three'
+import ConfirmInfoOne_five from './ConfirmInfoOne_five'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { Button } from 'antd'
 import { connect } from 'dva'
 
 @connect(mapStateToProps)
-export default class EditStepTypeOne extends Component {
+export default class ConfirmInfoOne extends Component {
 
   state = {
     transPrincipalList: JSON.parse(JSON.stringify(principalList)),
@@ -54,16 +54,16 @@ export default class EditStepTypeOne extends Component {
     let container = (<div></div>)
     switch (field_type) {
       case '1':
-        container = <EditStepTypeOne_one itemKey={key} itemValue={value}/>
+        container = <ConfirmInfoOne_one itemKey={key} itemValue={value}/>
         break;
       case '2':
-        container = <EditStepTypeOne_two itemKey={key} itemValue={value}/>
+        container = <ConfirmInfoOne_two itemKey={key} itemValue={value}/>
         break;
       case '3':
-        container = <EditStepTypeOne_three itemKey={key} itemValue={value}/>
+        container = <ConfirmInfoOne_three itemKey={key} itemValue={value}/>
         break;
       case '5':
-        container = <EditStepTypeOne_five itemKey={key} itemValue={value}/>
+        container = <ConfirmInfoOne_five itemKey={key} itemValue={value}/>
         break;
     
       default:
@@ -100,25 +100,18 @@ export default class EditStepTypeOne extends Component {
             </div>
           )
         }
-        {/* 编辑按钮 */}
-        {
-          (
-            <div style={{marginTop: '16px', paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center'}}>
-              <Button type="primary" onClick={this.handleEnterConfigureProcess}>编辑</Button>
-            </div>
-          )
-        }
       </div>
     )
   }
 
   render() {
-    const { itemKey } = this.props
+    const { itemKey, processEditDatas = [] } = this.props
     const { transPrincipalList = [], is_show_spread_arrow } = this.state
     return (
       <div key={itemKey} style={{ display: 'flex', marginBottom: '45px' }}>
         {/* {node_amount <= itemKey + 1 ? null : <div className={stylLine}></div>} */}
-        <div className={indexStyles.line}></div>
+        
+        {processEditDatas.length <= itemKey + 1 ? null : <div className={indexStyles.completeLine}></div>}
         <div className={indexStyles.circle}> {itemKey + 1}</div>
         <div className={`${indexStyles.popover_card}`}>
           <div className={`${globalStyles.global_vertical_scrollbar}`}>
