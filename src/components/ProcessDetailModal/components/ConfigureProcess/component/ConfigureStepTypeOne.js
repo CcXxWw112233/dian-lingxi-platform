@@ -1,16 +1,14 @@
 import React, { Component } from 'react'
-import { Button, Dropdown, Icon, Menu, Radio, Select, InputNumber, Tooltip } from 'antd'
+import { Button, Dropdown, Icon, Menu, Radio, Tooltip } from 'antd'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import ConfigureStepOne_one from './ConfigureStepOne_one'
 import ConfigureStepOne_two from './ConfigureStepOne_two'
 import ConfigureStepOne_three from './ConfigureStepOne_three'
 import ConfigureStepOne_five from './ConfigureStepOne_five'
-import NameChangeInput from '@/components/NameChangeInput'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
+import MoreOptionsComponent from '../../MoreOptionsComponent'
 import { connect } from 'dva'
-
-const Option = Select.Option;
 
 @connect(mapStateToProps)
 export default class ConfigureStepTypeOne extends Component {
@@ -18,7 +16,7 @@ export default class ConfigureStepTypeOne extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      designatedPersonnelList: []
+      designatedPersonnelList: [], // 指定人员的列表
     }
   }
 
@@ -57,85 +55,51 @@ export default class ConfigureStepTypeOne extends Component {
   assigneeTypeChange = (e) => {
     this.updateConfigureProcess({ value: e.target.value }, 'assignee_type')
   }
-  // 完成期限
-  deadlineValueChange = (value) => {
-    this.updateConfigureProcess({ value: value.toString() }, 'deadline_value')
-  }
-  deadlineTimeTypeValueChange = (value) => {
-    this.updateConfigureProcess({ value: value }, 'deadline_time_type')
-    this.updateConfigureProcess({ value: 1 }, 'deadline_value')
-  }
 
-  // 添加节点备注事件
-  handleRemarksWrapper = (e) => {
-    e && e.stopPropagation()
-    this.updateConfigureProcess({ value: false }, 'is_click_node_description')
-  }
-
-  handleRemarksContent = (e) => {
-    e && e.stopPropagation()
-    this.updateConfigureProcess({ value: true }, 'is_click_node_description')
-  }
-
-  titleTextAreaChangeBlur = (e) => {
-    let val = e.target.value.trimLR()
-    if (val == "" || val == " " || !val) {
-      this.updateConfigureProcess({ value: '' }, 'description')
-      this.updateConfigureProcess({ value: false }, 'is_click_node_description')
-      return
-    }
-    this.updateConfigureProcess({ value: val }, 'description')
-    this.updateConfigureProcess({ value: false }, 'is_click_node_description')
-  }
-
-  titleTextAreaChangeClick = (e) => {
-    e && e.stopPropagation()
-  }
-
-    //修改通知人的回调 S
-    chirldrenTaskChargeChange = (data) => {
-      const { projectDetailInfoData = {} } = this.props;
-      // 多个任务执行人
-      const membersData = projectDetailInfoData['data'] //所有的人
-      // const excutorData = new_userInfo_data //所有的人
-      let newDesignatedPersonnelList = []
-      let assignee_value = []
-      const { selectedKeys = [], type, key } = data
-      for (let i = 0; i < selectedKeys.length; i++) {
-        for (let j = 0; j < membersData.length; j++) {
-          if (selectedKeys[i] === membersData[j]['user_id']) {
-            newDesignatedPersonnelList.push(membersData[j])
-            assignee_value.push(membersData[j].user_id)
-          }
+  //修改通知人的回调 S
+  chirldrenTaskChargeChange = (data) => {
+    const { projectDetailInfoData = {} } = this.props;
+    // 多个任务执行人
+    const membersData = projectDetailInfoData['data'] //所有的人
+    // const excutorData = new_userInfo_data //所有的人
+    let newDesignatedPersonnelList = []
+    let assignee_value = []
+    const { selectedKeys = [], type, key } = data
+    for (let i = 0; i < selectedKeys.length; i++) {
+      for (let j = 0; j < membersData.length; j++) {
+        if (selectedKeys[i] === membersData[j]['user_id']) {
+          newDesignatedPersonnelList.push(membersData[j])
+          assignee_value.push(membersData[j].user_id)
         }
       }
-      this.setState({
-        designatedPersonnelList: newDesignatedPersonnelList
-      });
-      this.updateConfigureProcess({value: assignee_value.join(',')}, 'assignees')
     }
-    // 添加执行人的回调 E
-  
-    // 移除执行人的回调 S
-    handleRemoveExecutors = (e, shouldDeleteItem) => {
-      e && e.stopPropagation()
-      const { itemValue } = this.props
-      const { assignees } = itemValue
-      const { designatedPersonnelList = [] } = this.state
-      let newDesignatedPersonnelList = [...designatedPersonnelList]
-      let newAssigneesArray = assignees && assignees.length ? assignees.split(',') : []
-      newDesignatedPersonnelList.map((item, index) => {
-        if (item.user_id == shouldDeleteItem) {
-          newDesignatedPersonnelList.splice(index, 1)
-          newAssigneesArray.splice(index,1)
-        }
-      })
-      let newAssigneesStr = newAssigneesArray.join(',')
-      this.setState({
-        designatedPersonnelList: newDesignatedPersonnelList
-      })
-      this.updateConfigureProcess({value: newAssigneesStr}, 'assignees')
-    }
+    this.setState({
+      designatedPersonnelList: newDesignatedPersonnelList
+    });
+    this.updateConfigureProcess({ value: assignee_value.join(',') }, 'assignees')
+  }
+  // 添加执行人的回调 E
+
+  // 移除执行人的回调 S
+  handleRemoveExecutors = (e, shouldDeleteItem) => {
+    e && e.stopPropagation()
+    const { itemValue } = this.props
+    const { assignees } = itemValue
+    const { designatedPersonnelList = [] } = this.state
+    let newDesignatedPersonnelList = [...designatedPersonnelList]
+    let newAssigneesArray = assignees && assignees.length ? assignees.split(',') : []
+    newDesignatedPersonnelList.map((item, index) => {
+      if (item.user_id == shouldDeleteItem) {
+        newDesignatedPersonnelList.splice(index, 1)
+        newAssigneesArray.splice(index, 1)
+      }
+    })
+    let newAssigneesStr = newAssigneesArray.join(',')
+    this.setState({
+      designatedPersonnelList: newDesignatedPersonnelList
+    })
+    this.updateConfigureProcess({ value: newAssigneesStr }, 'assignees')
+  }
 
   //表单填写项
   menuAddFormClick = ({ key }) => {
@@ -144,15 +108,15 @@ export default class ConfigureStepTypeOne extends Component {
     //推进人一项
     let newFormsData = [...forms]
     newFormsData = newFormsData.map(item => {
-      
+
       if (item.is_click_currentTextForm) {
         let new_item
-        new_item = {...item, is_click_currentTextForm: false}
+        new_item = { ...item, is_click_currentTextForm: false }
         return new_item
       } else {
         return item
       }
-      
+
     })
     let obj = {}
     switch (key) {
@@ -296,11 +260,11 @@ export default class ConfigureStepTypeOne extends Component {
                     <div style={{ display: 'flex', alignItems: 'center' }} key={user_id}>
                       <div className={`${indexStyles.user_item}`} style={{ position: 'relative', textAlign: 'center', marginBottom: '8px' }} key={user_id}>
                         {avatar ? (
-                          <Tooltip overlayStyle={{minWidth: '62px'}} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
+                          <Tooltip overlayStyle={{ minWidth: '62px' }} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
                             <img className={indexStyles.img_hover} style={{ width: '32px', height: '32px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
                           </Tooltip>
                         ) : (
-                            <Tooltip overlayStyle={{minWidth: '62px'}} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
+                            <Tooltip overlayStyle={{ minWidth: '62px' }} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
                               <div className={indexStyles.default_user_hover} style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
                                 <Icon type={'user'} style={{ fontSize: 14, color: '#8c8c8c' }} />
                               </div>
@@ -338,13 +302,6 @@ export default class ConfigureStepTypeOne extends Component {
     )
   }
 
-  renderMoreSelect = () => {
-
-    return (
-      <div></div>
-    )
-  }
-
   render() {
     const { itemValue, processEditDatas = [], itemKey } = this.props
     const { forms = [] } = processEditDatas[itemKey]
@@ -362,7 +319,7 @@ export default class ConfigureStepTypeOne extends Component {
           </Dropdown>
         </div>
         {/* 填写人 */}
-        <div className={indexStyles.fill_person} style={{flexDirection: 'column'}} onClick={(e) => { e && e.stopPropagation() }}>
+        <div className={indexStyles.fill_person} style={{ flexDirection: 'column' }} onClick={(e) => { e && e.stopPropagation() }}>
           <div>
             <span className={`${globalStyles.authTheme} ${indexStyles.label_person}`}>&#xe7b2; 填写人&nbsp;:</span>
             <Radio.Group style={{ lineHeight: '48px' }} value={assignee_type} onChange={this.assigneeTypeChange}>
@@ -373,52 +330,9 @@ export default class ConfigureStepTypeOne extends Component {
           {assignee_type == '2' && this.renderDesignatedPersonnel()}
         </div>
         {/* 更多选项 */}
-        <div className={indexStyles.more_select}>
-          <span className={indexStyles.more_label}>... 更多选项 &nbsp;:</span>
-          <sapn className={`${indexStyles.select_item}`}>+ 完成期限</sapn>
-          {/* <sapn className={`${indexStyles.select_item}`}>+ 关联内容</sapn> */}
-          <sapn className={`${indexStyles.select_item}`}>+ 备注</sapn>
+        <div>
+          <MoreOptionsComponent itemKey={itemKey} itemValue={itemValue} updateConfigureProcess={this.updateConfigureProcess} />
         </div>
-        {/* 完成期限 */}
-        <div className={`${indexStyles.complet_deadline}`}>
-          <span style={{ fontWeight: 900, marginRight: '2px' }} className={globalStyles.authTheme}>&#xe686;</span>
-          <span>完成期限 &nbsp;: </span>
-          <InputNumber precision="0.1" min={1} max={deadline_time_type == 'hour' ? 24 : deadline_time_type == 'day' ? 30 : 12} value={deadline_value} onChange={this.deadlineValueChange} className={indexStyles.select_number} />
-          <Select className={indexStyles.select_day} value={deadline_time_type} onChange={this.deadlineTimeTypeValueChange}>
-            <Option value="hour">时</Option>
-            <Option value="day">天</Option>
-            <Option value="month">月</Option>
-          </Select>
-          <span className={`${globalStyles.authTheme} ${indexStyles.del_moreIcon}`}>&#xe7fe;</span>
-        </div>
-        {/* 备注 */}
-        <div onClick={this.handleRemarksWrapper} className={`${indexStyles.select_remarks}`}>
-          <span className={globalStyles.authTheme}>&#xe636; 备注 &nbsp;:</span>
-          <span className={`${globalStyles.authTheme} ${indexStyles.del_moreIcon}`}>&#xe7fe;</span>
-          {
-            !is_click_node_description ? (
-              <div onClick={(e) => { this.handleRemarksContent(e) }} className={indexStyles.remarks_content}>{description != '' ? description : '添加备注'}</div>
-            ) : (
-                <NameChangeInput
-                  autosize
-                  onBlur={this.titleTextAreaChangeBlur}
-                  onPressEnter={this.titleTextAreaChangeBlur}
-                  onClick={this.titleTextAreaChangeClick}
-                  autoFocus={true}
-                  goldName={''}
-                  nodeName={'input'}
-                  style={{ display: 'block', fontSize: 12, color: '#262626', resize: 'none', height: '38px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none', marginTop: '4px' }}
-                />
-              )
-          }
-
-        </div>
-        {/* 关联内容 */}
-        {/* <div className={indexStyles.select_related}>
-          <span className={globalStyles.authTheme}>&#xe7f5; 关联内容 &nbsp; :</span>
-          <span className={`${globalStyles.authTheme} ${indexStyles.del_moreIcon}`}>&#xe7fe;</span>
-          <div className={indexStyles.related_content}>添加关联</div>
-        </div> */}
       </div>
     )
   }

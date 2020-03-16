@@ -1,12 +1,10 @@
 import React, { Component } from 'react'
-import { Button, Dropdown, Icon, Menu, Radio, Select, InputNumber, Tooltip } from 'antd'
+import { Dropdown, Icon, Radio, Tooltip } from 'antd'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import NameChangeInput from '@/components/NameChangeInput'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
+import MoreOptionsComponent from '../../MoreOptionsComponent'
 import { connect } from 'dva'
-
-const Option = Select.Option;
 
 @connect(mapStateToProps)
 export default class ConfigureStepTypeThree extends Component {
@@ -295,11 +293,8 @@ export default class ConfigureStepTypeThree extends Component {
           )
         }
         {/* 更多选项 */}
-        <div className={indexStyles.more_select}>
-          <span className={indexStyles.more_label}>... 更多选项 &nbsp;:</span>
-          <sapn className={`${indexStyles.select_item}`}>+ 完成期限</sapn>
-          <sapn className={`${indexStyles.select_item}`}>+ 关联内容</sapn>
-          <sapn className={`${indexStyles.select_item}`}>+ 备注</sapn>
+        <div>
+          <MoreOptionsComponent itemKey={itemKey} itemValue={itemValue} updateConfigureProcess={this.updateConfigureProcess} />
         </div>
       </div>
     )
