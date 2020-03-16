@@ -21,8 +21,12 @@ const Option = Select.Option
       currentSelectOrganize = {},
     }
   },
+  cooperationPush: {
+    new_message = {}
+  }
 }) => ({
   currentSelectOrganize,
+  new_message
 }))
 class InviteOthers extends Component {
   constructor(props) {
@@ -632,7 +636,9 @@ class InviteOthers extends Component {
       })
       this.getGroupList({ _organization_id })
     }
-
+    if (nextProps.new_message != this.props.new_message) { //消息推送查询
+      this.getGroupList({ _organization_id })
+    }
   }
 
   // 渲染没有数据的时候
@@ -752,7 +758,7 @@ class InviteOthers extends Component {
     for (let i = 0; i < seize_a_seat_arr_length; i++) {
       seize_a_seat_arr.push(i)
     }
-  
+
     const isGetData = () => currentSelectOrganize && currentOrgAllMembersList
     if (!isGetData()) {
       return this.renderWhenNoData()

@@ -378,7 +378,7 @@ export const isPaymentOrgUser = (_org_id) => {
 }
 
 // (极简模式下)，点击或选择某个项目时，做项目联动，圈子联动和相关规划统一处理
-export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenIm = true, org_id, is_new_board, group_view_type }) => {
+export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenIm = true, org_id, is_new_board, group_view_type = '4' }) => {
   setBoardIdStorage(board_id, org_id)
   dispatch({
     type: 'simplemode/updateDatas',
@@ -391,28 +391,31 @@ export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenI
     }
   })
 
-  dispatch({
-    type: 'projectDetail/projectDetailInfo',
-    payload: {
-      id: board_id
-    }
-  })
+  if (board_id && board_id != '0') {
+    dispatch({
+      type: 'projectDetail/projectDetailInfo',
+      payload: {
+        id: board_id
+      }
+    })
+  }
+
+  let new_group_view_type = group_view_type
+  if (board_id == '0' || !board_id) {
+    new_group_view_type = '1'
+  }
 
   dispatch({
     type: 'gantt/updateDatas',
     payload: {
       gantt_board_id: board_id || '0',
-      is_new_board
+      is_new_board,
+      list_group: [],
+      outline_tree: [],
+      group_view_type: new_group_view_type
     }
   })
-  if (board_id == '0' || !board_id) {
-    dispatch({
-      type: 'gantt/updateDatas',
-      payload: {
-        group_view_type: group_view_type || '1',
-      }
-    })
-  }
+
   // console.log('sssss', window.location)
   const hash = window.location.hash
   if (hash.indexOf('/technological/simplemode/workbench') != -1) {

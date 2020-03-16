@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { date_area_height } from '../../constants'
-import { Dropdown, Menu, message, Tree, Icon, Spin } from 'antd'
+import { Menu, message, Tree, Icon, Spin, Button } from 'antd'
 import { connect, } from 'dva';
 import { getBoardTemplateList, getBoardTemplateInfo, createCardByTemplate, importBoardTemplate } from '../../../../../../services/technological/gantt'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
@@ -10,7 +10,7 @@ import { createMilestone } from '../../../../../../services/technological/prject
 import { getGlobalData, checkIsHasPermissionInBoard } from '../../../../../../utils/businessFunction'
 import BoardTemplateManager from '@/routes/organizationManager/projectTempleteScheme/index.js'
 import SafeConfirmModal from '../SafeConfirmModal';
-import { PROJECT_TEAM_CARD_CREATE, PROJECT_TEAM_BOARD_MILESTONE } from '../../../../../../globalset/js/constant'
+import { PROJECT_TEAM_CARD_CREATE, PROJECT_TEAM_BOARD_MILESTONE, NOT_HAS_PERMISION_COMFIRN } from '../../../../../../globalset/js/constant'
 
 const MenuItem = Menu.Item
 const TreeNode = Tree.TreeNode;
@@ -34,6 +34,7 @@ export default class BoardTemplate extends Component {
             contain_height: '100%',
             checkedKeys: [], //已选择的key
             checkedKeysObj: [], ////已选择的keyobj
+            selectedTpl: {},
         }
         this.drag_init_inner_html = ''
     }
@@ -107,15 +108,15 @@ export default class BoardTemplate extends Component {
                 })
                 return
             }
-            if (data && data.length) {
-                this.setState({
-                    selected_template_name: data[0].name,
-                    selected_template_id: data[0].id
-                })
-                if (data.length) {
-                    this.getTemplateInfo(data[0].id)
-                }
-            }
+            // if (data && data.length) {
+            //     this.setState({
+            //         selected_template_name: data[0].name,
+            //         selected_template_id: data[0].id
+            //     })
+            //     if (data.length) {
+            //         this.getTemplateInfo(data[0].id)
+            //     }
+            // }
         } else {
             message.error(res.message)
         }
@@ -185,6 +186,23 @@ export default class BoardTemplate extends Component {
             this.getTemplateInfo(key)
         }
     }
+
+    selectBoardTemplate = (id) => {
+        if (id) {
+            const { template_list = [] } = this.state
+            this.setState({
+                selected_template_id: id,
+                selected_template_name: template_list.find(item => item.id == id).name || '请选择模板'
+            })
+            this.getTemplateInfo(id)
+        } else {
+            this.setState({
+                selected_template_id: 0,
+                selected_template_name: ''
+            })
+        }
+
+    }
     // 设置管理模板弹窗是否出现
     setProjectTempleteSchemeModal = () => {
         const { project_templete_scheme_visible } = this.state
@@ -200,7 +218,7 @@ export default class BoardTemplate extends Component {
         const { template_list = [] } = this.state
         return (
             <Menu onClick={this.selectTemplate}>
-                {
+                {/* {
                     this.isShowSetting() &&
                     (
                         <MenuItem key={`0_0`} style={{ color: '#1890FF' }}>
@@ -209,7 +227,7 @@ export default class BoardTemplate extends Component {
                              新建方案
                         </MenuItem>
                     )
-                }
+                } */}
                 {
                     template_list.map(item => {
                         const { id, name } = item
@@ -435,8 +453,12 @@ export default class BoardTemplate extends Component {
     }
     // 创建里程碑
     createMilestone = async ({ end_time }) => {
-        const { drag_node_data: { data_name } } = this.state
         const { dispatch, gantt_board_id } = this.props
+        if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, gantt_board_id)) {
+            message.warn(NOT_HAS_PERMISION_COMFIRN)
+            return
+        }
+        const { drag_node_data: { data_name } } = this.state
         const params = {
             board_id: gantt_board_id,
             deadline: end_time,
@@ -460,6 +482,10 @@ export default class BoardTemplate extends Component {
     // 创建任务
     createCard = async ({ list_id, start_time, end_time }) => {
         const { dispatch, gantt_board_id } = this.props
+        if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id)) {
+            message.warn(NOT_HAS_PERMISION_COMFIRN)
+            return
+        }
         const { drag_node_data: { data_id } } = this.state
 
         const params = {
@@ -590,23 +616,59 @@ export default class BoardTemplate extends Component {
             message.error('引入模板失败')
         })
     }
+
     changeSafeConfirmModalVisible = () => {
         this.setState({
             safeConfirmModalVisible: !this.state.safeConfirmModalVisible
         });
     }
-    onImportBoardTemplate = () => {
-        this.quoteTemplate()
+
+
+    openImportBoardModal = (tplId) => {
+        const { template_list } = this.state;
+        const selectedTpl = template_list.find((item) => item.id == tplId);
+        this.setState({
+            safeConfirmModalVisible: true,
+            selectedTpl,
+        });
+
     }
-    // 
+
+    onImportBoardTemplate = () => {
+        this.quoteTemplate();
+        const { dispatch, outline_tree } = this.props;
+        let startPlanType = 1;
+        if (outline_tree && outline_tree.length > 0) {
+            startPlanType = -1;
+        }
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                startPlanType,
+                get_gantt_data_loaded: false
+            }
+        });
+    }
+
+
+    toggleBoardTemplateDrawer = () => {
+        const { dispatch } = this.props;
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                boardTemplateShow: this.props.boardTemplateShow == 1 ? 2 : 1
+            }
+        });
+    }
+
     render() {
-        const { template_data, show_type, selected_template_name, spinning, project_templete_scheme_visible, contain_height, checkedKeys = [], safeConfirmModalVisible } = this.state
-        const { gantt_board_id } = this.props
+        const { template_data, selected_template_name, spinning, project_templete_scheme_visible, contain_height, checkedKeys = [], safeConfirmModalVisible } = this.state
+        const { gantt_board_id, boardTemplateShow } = this.props
         return (
             gantt_board_id && gantt_board_id != '0' ?
                 (
                     <div
-                        className={`${styles.container_init}   ${show_type == '1' && styles.container_show} ${show_type == '2' && styles.container_hide}`}
+                        className={`${styles.container_init}   ${boardTemplateShow == '1' && styles.container_show} ${boardTemplateShow == '2' && styles.container_hide}`}
                         style={{
                             height: contain_height,
                             // top: date_area_height
@@ -614,18 +676,19 @@ export default class BoardTemplate extends Component {
                         <div
                             style={{ height: date_area_height }}
                             className={styles.top}>
-                            <Dropdown overlay={this.renderTemplateList()}>
+                            <span className={styles.title}>项目模板</span>
+                            {/* <Dropdown overlay={this.renderTemplateList()}>
                                 <div className={styles.top_left}>
                                     <div className={`${globalStyles.global_ellipsis} ${styles.name}`}>{selected_template_name}</div>
                                     <div className={`${globalStyles.authTheme} ${styles.down}`}>&#xe7ee;</div>
                                 </div>
-                            </Dropdown>
-                            {
+                            </Dropdown> */}
+                            {/* {
                                 this.isShowSetting() &&
                                 (
                                     <div className={`${globalStyles.authTheme} ${styles.top_right}`} onClick={this.routingJumpToOrgManager}>&#xe78e;</div>
                                 )
-                            }
+                            } */}
                         </div>
                         {/* 拖拽子任务时，用于存放任务图标的ui,做dom操作 */}
                         <div
@@ -633,58 +696,96 @@ export default class BoardTemplate extends Component {
                             id={'save_child_card_icon'}>
                             <div className={globalStyles.authTheme} style={{ color: '#18B2FF', fontSize: 18, marginRight: 6 }} >&#xe6f0;</div>
                         </div>
-                        <div className={`${styles.list_item} ${styles.temp_ope}`}>
-                            <div className={`${styles.temp_ope_name}`}>流程步骤</div>
-                            {
-                                checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id) && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, gantt_board_id) &&
-                                (
-                                    <div className={`${styles.temp_ope_cop} ${globalStyles.link_mouse}`} onClick={this.changeSafeConfirmModalVisible}>引用到项目</div>
-                                )
-                            }
-                        </div>
-                        {/* 主区 */}
-                        <Spin spinning={spinning}>
-                            <div
-                                style={{ maxHeight: contain_height - date_area_height - 48 }}
-                                onMouseDown={this.outerMouseDown}
-                                className={styles.main}>
-                                <div>
-                                    <Tree
-                                        checkable
-                                        // checkStrictly
-                                        checkedKeys={checkedKeys}
-                                        onCheck={this.onCheck}
-                                        draggable
-                                        onDragStart={this.onDragStart}
-                                    // onDragEnter={this.onDragEnter}
-                                    // onDragLeave={this.onDragLeave}
-                                    // onDragOver={this.onDragOver}
-                                    // onDragEnd={this.onDragEnd}
-                                    // onDrop={this.onDrop}
-                                    // switcherIcon={
-                                    //     <Icon type="caret-down" style={{ fontSize: 20, color: 'rgba(0,0,0,.45)' }} />
-                                    // }
-                                    >
-                                        {this.renderTemplateTree(template_data)}
-                                    </Tree>
+                        {
+                            this.state.selected_template_id ?
+                                <>
+                                    <div className={`${styles.list_item} ${styles.list_item_flex}`} onClick={() => this.selectBoardTemplate(0)}>
+                                        <span className={styles.backBtn}> <i className={globalStyles.authTheme}>&#xe7ec;</i></span>
+                                        <div className={`${styles.lable} ${globalStyles.global_ellipsis}`}>{selected_template_name}</div>
+
+                                    </div>
+                                    {/* 主区 */}
+                                    <Spin spinning={spinning}>
+                                        <div
+                                            style={{ maxHeight: contain_height - date_area_height - 48 }}
+                                            onMouseDown={this.outerMouseDown}
+                                            className={styles.main}>
+                                            <div>
+                                                <Tree
+                                                    checkable
+                                                    // checkStrictly
+                                                    checkedKeys={checkedKeys}
+                                                    onCheck={this.onCheck}
+                                                    draggable
+                                                    onDragStart={this.onDragStart}
+                                                // onDragEnter={this.onDragEnter}
+                                                // onDragLeave={this.onDragLeave}
+                                                // onDragOver={this.onDragOver}
+                                                // onDragEnd={this.onDragEnd}
+                                                // onDrop={this.onDrop}
+                                                // switcherIcon={
+                                                //     <Icon type="caret-down" style={{ fontSize: 20, color: 'rgba(0,0,0,.45)' }} />
+                                                // }
+                                                >
+                                                    {this.renderTemplateTree(template_data)}
+                                                </Tree>
+                                            </div>
+                                        </div>
+                                    </Spin>
+                                    {
+                                        checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id) && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, gantt_board_id) &&
+                                        (
+                                            <div className={styles.footer} >
+                                                <Button type="primary" block onClick={() => this.openImportBoardModal(this.state.selected_template_id)}>引用到项目</Button>
+                                            </div>
+                                        )
+                                    }
+
+                                </>
+                                :
+                                <div style={{ height: '100%' }}>
+                                    {
+                                        this.state.template_list && this.state.template_list.map((item) => {
+                                            const { id, name } = item
+                                            return (
+                                                <div class={styles.boardTplItem} onClick={() => this.selectBoardTemplate(id)}>
+                                                    <span className={`${styles.left} ${globalStyles.global_ellipsis}`}>{name}</span>
+                                                    <span> <i className={globalStyles.authTheme}>&#xe7eb;</i></span>
+                                                </div>
+                                            );
+                                        })
+                                    }
                                 </div>
-                            </div>
-                        </Spin>
-                        <div
-                            onClick={this.setShowType}
-                            className={`${styles.switchSpin_init} ${show_type == '1' && styles.switchSpinShow} ${show_type == '2' && styles.switchSpinClose}`}
+                        }
+
+                        {/* <div
+                            onClick={this.toggleBoardTemplateDrawer}
+                            className={`${styles.switchSpin_init} ${boardTemplateShow == '1' && styles.switchSpinShow} ${boardTemplateShow == '2' && styles.switchSpinClose}`}
                             style={{
                                 top: contain_height / 2
                             }} >
                             <div className={`${styles.switchSpin_top}`}></div>
                             <div className={`${styles.switchSpin_bott}`}></div>
+                        </div> */}
+                        <div
+                            onClick={this.toggleBoardTemplateDrawer}
+                            className={`${styles.switchExpand}`}
+                            style={{
+                                top: contain_height / 2,
+                                right   : boardTemplateShow == 1?'280px':'20px'
+                            }} >
+                            {/* <div className={`${styles.switchExpandOpen} ${globalStyles.authTheme}`}>&#xe687;</div> */}
+                            <div className={`${styles.switchExpandIcon}`}>{boardTemplateShow == 1 ? <span className={globalStyles.authTheme}>&#xe689;</span> : <span className={globalStyles.authTheme}>&#xe687;</span> }</div>
                         </div>
                         <BoardTemplateManager
                             _organization_id={localStorage.getItem('OrganizationId') != '0' ? localStorage.getItem('OrganizationId') : getGlobalData('aboutBoardOrganizationId')}
                             project_templete_scheme_visible={project_templete_scheme_visible}
                             setProjectTempleteSchemeModal={this.setProjectTempleteSchemeModal}></BoardTemplateManager>
-                        <SafeConfirmModal visible={safeConfirmModalVisible} onChangeVisible={this.changeSafeConfirmModalVisible} onOk={this.onImportBoardTemplate} />
 
+                        {
+                            safeConfirmModalVisible &&
+                            <SafeConfirmModal visible={safeConfirmModalVisible} selectedTpl={this.state.selectedTpl} onChangeVisible={this.changeSafeConfirmModalVisible} onOk={this.onImportBoardTemplate} />
+                        }
                     </div >
                 ) : (
                     <></>
@@ -696,7 +797,9 @@ function mapStateToProps({
     gantt: {
         datas: {
             gantt_board_id,
-            is_new_board
+            is_new_board,
+            boardTemplateShow,
+            outline_tree,
         }
     },
     technological: { datas: { userBoardPermissions = [] } },
@@ -705,6 +808,8 @@ function mapStateToProps({
     return {
         gantt_board_id,
         is_new_board,
-        userBoardPermissions
+        userBoardPermissions,
+        boardTemplateShow,
+        outline_tree
     }
 }

@@ -80,17 +80,14 @@ class TreeNode extends Component {
 
     onMouseEnter = () => {
         const { nodeValue = {} } = this.state;
-        const { id } = nodeValue;
-        if (id && nodeValue.tree_type != '0') {
-            this.props.onHover(id, true);
-        }
-
+        const { id, add_id } = nodeValue;
+        this.props.onHover(id || add_id, true, this.props.parentId, add_id ? true : false);
     }
 
     onMouseLeave = () => {
         const { nodeValue = {} } = this.state;
-        const { id } = nodeValue;
-        this.props.onHover(id, false, this.props.parentId);
+        const { id, add_id } = nodeValue;
+        this.props.onHover(id || add_id, false, this.props.parentId, add_id ? true : false);
 
     }
 
@@ -99,9 +96,10 @@ class TreeNode extends Component {
 
         let { nodeValue = {} } = this.state;
         nodeValue.name = e.target.value;
+   
         if (nodeValue.name) {
             let action;
-
+            nodeValue.editing = false;
             if (this.props.placeholder) {
                 action = 'add_' + (this.props.type == '1' ? 'milestone' : 'task');
             } else {
@@ -123,6 +121,17 @@ class TreeNode extends Component {
         } else {
             message.warn('标题不能为空');
             nodeValue.name = (this.props.nodeValue || {}).name || '';
+
+            if(nodeValue.editing){
+                if (this.props.onDataProcess) {
+                    this.props.onDataProcess({
+                        action:'onBlur',
+                        param: { ...nodeValue, parentId: this.props.parentId }
+                    });
+                }
+    
+            }
+          
             this.setState({
                 nodeValue
             });
@@ -144,18 +153,21 @@ class TreeNode extends Component {
     onManHourChange = (value) => {
         const { outline_tree_round = [] } = this.props;
         const { nodeValue = {} } = this.state;
-
+        if (value > 999) {
+            message.warn('设置天数最大支持999天');
+            return;
+        }
         const newNodeValue = { ...nodeValue, time_span: value };
         if (newNodeValue.is_has_start_time && newNodeValue.is_has_end_time) {
             //开始时间不变，截至时间后移
-            newNodeValue.due_time = moment(newNodeValue.start_time).add(value - 1, 'days').valueOf();
+            newNodeValue.due_time = moment(newNodeValue.start_time).add(value-1, 'days').hour(23).minute(59).second(59).valueOf();
 
         } else {
             if (newNodeValue.is_has_start_time) {
-                newNodeValue.due_time = moment(newNodeValue.start_time).add(value - 1, 'days').valueOf();
+                newNodeValue.due_time = moment(newNodeValue.start_time).add(value-1, 'days').hour(23).minute(59).second(59).valueOf();
             }
             if (newNodeValue.is_has_end_time) {
-                newNodeValue.start_time = moment(newNodeValue.start_time).add(value - 1, 'days').valueOf();
+                newNodeValue.start_time = moment(newNodeValue.start_time).add(value-1, 'days').hour(0).minute(0).second(0).valueOf();
             }
         }
 
@@ -205,6 +217,17 @@ class TreeNode extends Component {
         }
     }
 
+    inviteOthersToBoardCalback = ({ users }) => {
+        const { dispatch, gantt_board_id } = this.props
+        const action = 'reloadProjectDetailInfo';
+        if (this.props.onDataProcess) {
+            this.props.onDataProcess({
+                action
+            });
+        }
+    }
+
+
     renderExecutor = (members = [], { user_id }) => {
 
         const currExecutor = members.find((item) => item.user_id == user_id);
@@ -218,7 +241,7 @@ class TreeNode extends Component {
 
     renderTitle = () => {
         const { isTitleHover, isTitleEdit, nodeValue = {} } = this.state;
-        const { id, name: title, tree_type, is_expand, time_span, executors = [], is_focus } = nodeValue;
+        const { id, name: title, tree_type, is_expand, time_span, executors = [], is_focus, editing } = nodeValue;
         const { onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {} } = this.props;
         let type;
         if (tree_type) {
@@ -233,12 +256,13 @@ class TreeNode extends Component {
         return (
             <span className={`${styles.outline_tree_node_label} ${isTitleHover ? styles.hoverTitle : ''}`}>
                 {/*<span><span>确定</span><span>取消</span></span> */}
-                <span className={`${styles.title}`} onMouseEnter={this.onMouseEnterTitle} onMouseLeave={this.onMouseLeaveTitle}>
-                    <Tooltip placement="top" title={title != '0' ? title : ''}>
+                <Tooltip mouseEnterDelay={0.5} mouseLeaveDelay={0} placement="top" title={title != '0' ? title : ''}>
+                    <span className={`${styles.title}`} onMouseEnter={this.onMouseEnterTitle} onMouseLeave={this.onMouseLeaveTitle}>
+
                         {
-                            (isTitleHover || isTitleEdit) ?
+                            editing || (isTitleHover || isTitleEdit) ?
                                 <Input defaultValue={title != '0' ? title : ''}
-                                    //autoFocus={is_focus}
+                                    autoFocus={editing ? true : false}
                                     style={{ width: '100%' }}
                                     onChange={this.onChangeTitle}
                                     placeholder={placeholder ? placeholder : '请填写任务名称'}
@@ -250,9 +274,9 @@ class TreeNode extends Component {
                                 :
                                 (placeholder ? label : (title ? title : '未填写任务名称'))
                         }
-                    </Tooltip>
-                </span>
 
+                    </span>
+                </Tooltip>
                 {/* <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
 
 
@@ -261,13 +285,13 @@ class TreeNode extends Component {
 
                 {
                     tree_type != '0' &&
-                    <>
-                        <Dropdown trigger={['click']}
+                    <div onWheel={e => e.stopPropagation()}>
+                        <Dropdown
                             overlayClassName={styles.selectExecutors}
                             overlay={
                                 <MenuSearchPartner
                                     // isInvitation={true}
-                                    // inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
+                                    inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
 
                                     invitationType={tree_type == '1' ? '1' : '4'}
                                     invitationId={tree_type == '1' ? gantt_board_id : nodeValue.id}
@@ -306,7 +330,7 @@ class TreeNode extends Component {
                             </Popover>
                         }
 
-                    </>
+                    </div>
                 }
 
             </span>
@@ -315,7 +339,7 @@ class TreeNode extends Component {
 
     render() {
         const { isTitleHover, isTitleEdit, nodeValue = {} } = this.state;
-        const { id, name: title, tree_type, is_expand, time_span } = nodeValue;
+        const { id, add_id, name: title, tree_type, is_expand, time_span } = nodeValue;
         const { onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {}, outline_tree_round = [] } = this.props;
         let type;
         if (tree_type) {
@@ -331,7 +355,7 @@ class TreeNode extends Component {
             let isLeaf = false;
             return (
                 <div className={className} key={id}>
-                    <div className={`${styles.outline_tree_node_content} ${hoverItem.id && hoverItem.id == id ? styles.hover : ''}`} style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+                    <div className={`${styles.outline_tree_node_content} ${((hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id)) ? styles.hover : ''}`} style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
                         <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
                         {
                             !isLeaf &&
@@ -370,7 +394,7 @@ class TreeNode extends Component {
             let isLeaf = true;
             return (
                 <div className={className} key={id}>
-                    <div className={`${styles.outline_tree_node_content} ${hoverItem.id && hoverItem.id == id ? styles.hover : ''}`} style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+                    <div className={`${styles.outline_tree_node_content} ${((hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id)) ? styles.hover : ''}`} style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
                         {
                             icon ?
                                 icon
@@ -433,6 +457,30 @@ const getNode = (outline_tree, id) => {
     return nodeValue
 }
 
+const getNodeByname = (outline_tree, key, value) => {
+    let nodeValue = null;
+    if (outline_tree) {
+        nodeValue = outline_tree.find((item) => item[key] == value);
+        if (nodeValue) {
+            return nodeValue;
+        } else {
+            let length = outline_tree.length
+            for (let i = 0; i < length; i++) {
+                let node = outline_tree[i];
+                if (node.children && node.children.length > 0) {
+                    nodeValue = getNodeByname(node.children, key, value);
+                    if (nodeValue) {
+                        return nodeValue;
+                    }
+                } else {
+                    return null;
+                }
+            }
+        }
+    }
+    return nodeValue
+}
+
 const getTreeNodeValue = (outline_tree, id) => {
     if (outline_tree) {
         for (let i = 0; i < outline_tree.length; i++) {
@@ -442,6 +490,53 @@ const getTreeNodeValue = (outline_tree, id) => {
             } else {
                 if (node.children && node.children.length > 0) {
                     let childNode = getNode(node.children, id);
+                    if (childNode) {
+                        return childNode;
+                    }
+                } else {
+                    return null;
+                }
+            }
+        }
+    } else {
+        return null;
+    }
+
+}
+
+const getAddNode = (outline_tree, add_id) => {
+    let nodeValue = null;
+    if (outline_tree) {
+        nodeValue = outline_tree.find((item) => item.add_id == add_id);
+        if (nodeValue) {
+            return nodeValue;
+        } else {
+            for (let i = 0; i < outline_tree.length; i++) {
+                let node = outline_tree[i];
+                if (node.children && node.children.length > 0) {
+                    nodeValue = getAddNode(node.children, add_id);
+                    if (nodeValue) {
+                        return nodeValue;
+                    }
+                } else {
+                    return null;
+                }
+            }
+        }
+    }
+    return nodeValue
+}
+
+
+const getTreeAddNodeValue = (outline_tree, add_id) => {
+    if (outline_tree) {
+        for (let i = 0; i < outline_tree.length; i++) {
+            let node = outline_tree[i];
+            if (node.add_id == add_id) {
+                return node;
+            } else {
+                if (node.children && node.children.length > 0) {
+                    let childNode = getAddNode(node.children, add_id);
                     if (childNode) {
                         return childNode;
                     }
@@ -476,11 +571,35 @@ const filterTreeNode = (tree, id) => {
     return tree
 }
 
+const getTreeNodeValueByName = (outline_tree, key, value) => {
+    if (outline_tree) {
+        let length = outline_tree.length
+        for (let i = 0; i < length; i++) {
+            let node = outline_tree[i];
+            if (node[key] == value) {
+                return node;
+            } else {
+                if (node.children && node.children.length > 0) {
+                    let childNode = getNodeByname(node.children, key, value);
+                    if (childNode) {
+                        return childNode;
+                    }
+                } else {
+                    return null;
+                }
+            }
+        }
+    } else {
+        return null;
+    }
+}
+
 const OutlineTree = MyOutlineTree;
 //树节点
 OutlineTree.TreeNode = TreeNode;
 //树方法
 OutlineTree.getTreeNodeValue = getTreeNodeValue;
+OutlineTree.getTreeAddNodeValue = getTreeAddNodeValue;
 OutlineTree.filterTreeNode = filterTreeNode
-
+OutlineTree.getTreeNodeValueByName = getTreeNodeValueByName
 export default OutlineTree;

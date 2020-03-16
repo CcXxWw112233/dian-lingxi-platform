@@ -5,14 +5,14 @@ import { Icon, message, Tooltip } from 'antd';
 import DropdownSelect from '../DropdownSelect'
 import CreateProject from '@/routes/Technological/components/Project/components/CreateProject/index';
 import { getOrgNameWithOrgIdFilter, setBoardIdStorage, checkIsHasPermission } from "@/utils/businessFunction"
-import { afterChangeBoardUpdateGantt } from "../../../Technological/components/Gantt/ganttBusiness";
+import { afterChangeBoardUpdateGantt, afterCreateBoardUpdateGantt } from "../../../Technological/components/Gantt/ganttBusiness";
 import { beforeChangeCommunicationUpdateFileList } from "../WorkbenchPage/BoardCommunication/components/getCommunicationFileListFn";
 import { isPaymentOrgUser, getOrgIdByBoardId } from "@/utils/businessFunction"
 import { selectBoardToSeeInfo, currentNounPlanFilterName } from "../../../../utils/businessFunction";
 import { isApiResponseOk } from "../../../../utils/handleResponseData";
 import { ORG_TEAM_BOARD_CREATE, PROJECTS, ORGANIZATION } from '../../../../globalset/js/constant'
 class BoardDropdownSelect extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
       addProjectModalVisible: false
@@ -166,32 +166,52 @@ class BoardDropdownSelect extends Component {
   }
 
   handleSubmitNewProject = data => {
+    // const { dispatch } = this.props;
+    // Promise.resolve(
+    //   dispatch({
+    //     type: 'project/addNewProject',
+    //     payload: {
+    //       ...data,
+    //       calback: () => {
+    //         dispatch({
+    //           type: 'workbench/getProjectList',
+    //           payload: {}
+    //         });
+    //       }
+    //     }
+    //   })
+    // )
+    //   .then((res) => {
+    //     if (isApiResponseOk(res)) {
+    //       dispatch({
+    //         type: 'workbench/getProjectList',
+    //         payload: {}
+    //       });
+    //     }
+    //   })
+    //   .then(() => {
+    //     this.setAddProjectModalVisible();
+    //   });
+
     const { dispatch } = this.props;
+    this.setAddProjectModalVisible();
+    const calback = (id, name) => {
+      dispatch({
+        type: 'workbench/getProjectList',
+        payload: {}
+      });
+      selectBoardToSeeInfo({ board_id: id, board_name: name, is_new_board: true, dispatch, org_id: data._organization_id, group_view_type: '4' }) //极简模式项目选择
+      afterCreateBoardUpdateGantt(dispatch)
+    }
     Promise.resolve(
       dispatch({
         type: 'project/addNewProject',
         payload: {
           ...data,
-          calback: () => {
-            dispatch({
-              type: 'workbench/getProjectList',
-              payload: {}
-            });
-          }
+          calback
         }
       })
     )
-      .then((res) => {
-        if (isApiResponseOk(res)) {
-          dispatch({
-            type: 'workbench/getProjectList',
-            payload: {}
-          });
-        }
-      })
-      .then(() => {
-        this.setAddProjectModalVisible();
-      });
   }
 
   // 判断是否有新建项目的权限

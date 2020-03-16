@@ -40,7 +40,7 @@ export default class SafeConfirmModal extends Component {
     }
     render() {
         const { confirmContent, confirmContentInputValue } = this.state;
-        const { visible } = this.props;
+        const { visible, selectedTpl = {} } = this.props;
         return (
             <Modal
                 title={null}
@@ -52,7 +52,7 @@ export default class SafeConfirmModal extends Component {
             >
                 <div style={{ margin: '12px 8px' }}>
                     <span style={{ fontSize: '22px', color: '#FAAD14', marginRight: '16px' }}><Icon type="question-circle" theme="filled" /></span>
-                    <span style={{ fontSize: '16px', fontWeight: '600', color: ':rgba(0,0,0,0.85)' }}>确认要引用项目模版吗？</span>
+                    <span style={{ fontSize: '16px', fontWeight: '600', color: ':rgba(0,0,0,0.85)' }}>确认要引用【{selectedTpl.name}】项目模版吗？</span>
                 </div>
                 <div style={{ margin: '12px 0px 12px 46px', color: 'rgba(0,0,0,0.65)' }}>
                     引用项目模版会覆盖删除项目现有的数据，如需引用请在下方输入“<span style={{ color: '#1890FF' }}>{confirmContent}</span>”。

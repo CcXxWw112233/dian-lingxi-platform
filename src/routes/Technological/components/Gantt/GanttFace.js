@@ -33,6 +33,7 @@ export default class GanttFace extends Component {
       target_scrollLeft: 0, //滚动条位置，用来判断向左还是向右
       gantt_card_out_middle_max_height: 600,
       local_gantt_board_id: '0', //当前项目id（项目tab栏）缓存在组件内，用于判断是否改变然后重新获取数据
+      init_get_outline_tree: false, //大纲视图下初始化是否获取了大纲树
     }
     this.setGanTTCardHeight = this.setGanTTCardHeight.bind(this)
   }
@@ -214,12 +215,28 @@ export default class GanttFace extends Component {
         that.getHoliday()
       }, 300)
     } else {
-      dispatch({
-        type: 'gantt/handleOutLineTreeData',
-        payload: {
-          data: outline_tree
-        }
-      })
+      const { init_get_outline_tree } = this.state
+      if (!outline_tree.length && !init_get_outline_tree) {
+        setTimeout(function () {
+          dispatch({
+            type: getEffectOrReducerByName('getGanttData'),
+            payload: {
+              not_set_loading
+            }
+          })
+          that.setState({
+            init_get_outline_tree: true
+          })
+        }, 200)
+      } else {
+        dispatch({
+          type: 'gantt/handleOutLineTreeData',
+          payload: {
+            data: outline_tree
+          }
+        })
+      }
+      that.getHoliday()
     }
   }
   //拖动日期后预先设置 处理任务排列
@@ -258,7 +275,7 @@ export default class GanttFace extends Component {
   }
   render() {
     const { gantt_card_out_middle_max_height } = this.state
-    const { gantt_card_height, get_gantt_data_loading, is_need_calculate_left_dx, gantt_board_id, is_show_board_file_area } = this.props
+    const { gantt_card_height, get_gantt_data_loading, is_need_calculate_left_dx, gantt_board_id, is_show_board_file_area, group_view_type } = this.props
     const dataAreaRealHeight = this.getDataAreaRealHeight()
 
     return (
@@ -271,7 +288,10 @@ export default class GanttFace extends Component {
             </div>
           )
         }
-        <MiletoneGuide />
+        {
+          group_view_type == '1' && <MiletoneGuide />
+        }
+
         <div className={indexStyles.cardDetail_left}></div>
         <div className={indexStyles.cardDetail_middle}
           // id={'gantt_card_out_middle'}
@@ -363,7 +383,7 @@ function mapStateToProps({ gantt: { datas: {
   group_view_type,
   gantt_board_id,
   is_show_board_file_area,
-  outline_tree
+  outline_tree,
 } } }) {
   return {
     ceilWidth,
@@ -378,7 +398,7 @@ function mapStateToProps({ gantt: { datas: {
     group_view_type,
     gantt_board_id,
     is_show_board_file_area,
-    outline_tree
+    outline_tree,
   }
 }
 GanttFace.defaultProps = {

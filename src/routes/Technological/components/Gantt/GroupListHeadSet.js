@@ -43,22 +43,22 @@ export default class GroupListHeadSet extends Component {
         dispatch({
             type: 'gantt/updateDatas',
             payload: {
-                gantt_board_id: group_view_type_new == '3' ? gantt_board_id : '0',
+                // gantt_board_id: group_view_type_new == '3' ? gantt_board_id : '0',
                 group_view_type: group_view_type_new,
                 list_group: [],
             }
         })
-        if (gantt_board_id != '0') {
-            const { simplemodeCurrentProject } = this.props;
-            selectBoardToSeeInfo({ board_id: gantt_board_id, board_name: simplemodeCurrentProject.board_name, dispatch });
-        } else {
-            selectBoardToSeeInfo({ board_id: '0', dispatch, group_view_type: group_view_type_new })
-        }
+        // if (gantt_board_id != '0') {
+        //     const { simplemodeCurrentProject } = this.props;
+        //     selectBoardToSeeInfo({ board_id: gantt_board_id, board_name: simplemodeCurrentProject.board_name, dispatch, group_view_type: group_view_type_new });
+        // } else {
+        //     selectBoardToSeeInfo({ board_id: '0', dispatch, group_view_type: group_view_type_new })
+        // }
 
-        // dispatch({
-        //     type: 'gantt/getGanttData',
-        //     payload: {}
-        // })
+        dispatch({
+            type: 'gantt/getGanttData',
+            payload: {}
+        })
     }
     onVisibleChange = (bool) => {
         this.setDropdownVisible(bool)
@@ -173,7 +173,7 @@ export default class GroupListHeadSet extends Component {
                     </div>
 
                     <div className={indexStyles.set_content_left}>
-                        {gantt_board_id != '0' && (
+                        {gantt_board_id != '0' && group_view_type != '2' && (
                             <div onClick={this.backClick} className={`${indexStyles.group_back_to_board} ${globalStyles.authTheme}`}>&#xe7ec;</div>
                         )}
                         <div className={indexStyles.set_content_view_type}>

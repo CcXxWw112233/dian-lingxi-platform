@@ -10,7 +10,7 @@ import OutlineTree from './components/OutlineTree';
 
 class Gantt extends Component {
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       TaskDetailModalVisibile: false,
@@ -96,7 +96,7 @@ class Gantt extends Component {
     });
   }
   addNewTask = (data) => {
-    const { dispatch } = this.props
+    const { dispatch, group_view_type } = this.props
     Promise.resolve(
       dispatch({
         type: 'workbench/addTask',
@@ -107,13 +107,11 @@ class Gantt extends Component {
     )
       .then(res => {
         if (res) {
-          // dispatch({
-          //   type: 'gantt/getGanttData',
-          //   payload: {
-          //     not_set_loading: true
-          //   }
-          // })
-          this.insertTaskToListGroup(res)
+          if (!ganttIsOutlineView({ group_view_type })) {
+            this.insertTaskToListGroup(res)
+          } else {
+            this.insertOutLineTreeNode({ res, params: data })
+          }
         } else {
           // message.warn('创建任务失败')
           // if (res.code == 4041) {
@@ -154,14 +152,14 @@ class Gantt extends Component {
     })
   }
   handleGetNewTaskParams = (data) => {
-    const { create_start_time, create_end_time, current_list_group_id, gantt_board_id, group_view_type } = this.props
+    const { create_start_time, create_end_time, current_list_group_id, gantt_board_id, group_view_type, panel_outline_create_card_params } = this.props
 
     //设置截止日期最后一秒
     const create_end_time_date = new Date(create_end_time)
     const create_end_time_final = `${create_end_time_date.getFullYear()}/${create_end_time_date.getMonth() + 1}/${create_end_time_date.getDate()} 23:59:59`
     const create_end_time_final_timestamp = new Date(create_end_time_final).getTime()
 
-    const param = {
+    let param = {
       start_time: create_start_time,
       due_time: create_end_time_final_timestamp, //create_end_time,
       users: data['users'],
@@ -178,7 +176,12 @@ class Gantt extends Component {
         param.list_id = current_list_group_id == '0' ? '' : current_list_group_id
       }
     }
-
+    if (ganttIsOutlineView({ group_view_type })) {
+      param = {
+        ...param,
+        ...panel_outline_create_card_params,
+      }
+    }
     this.addNewTask(param)
     this.setAddTaskModalVisible(false)
   }
@@ -360,8 +363,48 @@ class Gantt extends Component {
       }
     });
   }
+  // 大纲视图插入某个节点
+  insertOutLineTreeNode = ({ res, params }) => {
+    let { dispatch, outline_tree } = this.props;
+    const { milestone_id, parent_id } = params
+    let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, milestone_id || parent_id);
+
+    let addNodeValue = {
+      id: res.id,
+      tree_type: '2',
+      name: params.name,
+      is_expand: true,
+      children: [],
+      ...res
+    };
+
+    let children = nodeValue.children || [];
+    if (children.length > 0) {
+      const index = children.findIndex((item) => item.tree_type == '0');
+      children.splice(index, 0, addNodeValue);
+    } else {
+      children.push(addNodeValue);
+    }
+    nodeValue.children = children;
+    dispatch({
+      type: 'gantt/handleOutLineTreeData',
+      payload: {
+        data: outline_tree
+      }
+    });
+  }
   render() {
     const { addTaskModalVisible, } = this.state
+    const { outline_tree_round } = this.props
+    // if (outline_tree_round.length) {
+    //   console.log(
+    //     'ssssououtline_tree_round1',
+    //     outline_tree_round[1].editing,
+    //     outline_tree_round[1].start_time
+    //   )
+    //   // console.log('ssssououtline_tree_round2', outline_tree_round[3].editing)
+    // }
+
     const {
       about_apps_boards = [],
       gantt_board_id,
@@ -426,7 +469,9 @@ function mapStateToProps({
       about_group_boards = [],
       about_user_boards = [],
       show_board_fold,
-      outline_tree
+      outline_tree,
+      outline_tree_round,
+      panel_outline_create_card_params = {}
     }
   },
   technological: {
@@ -449,7 +494,9 @@ function mapStateToProps({
     about_user_boards,
     show_board_fold,
     page_load_type,
-    outline_tree
+    outline_tree,
+    panel_outline_create_card_params,
+    outline_tree_round
   }
 }
 

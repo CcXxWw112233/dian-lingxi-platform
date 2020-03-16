@@ -24,6 +24,18 @@ import { getProjectGoupList } from '../../../services/technological/task';
 import { handleChangeBoardViewScrollTop, setGantTimeSpan } from '../../../routes/Technological/components/Gantt/ganttBusiness';
 
 let dispatches = null
+const visual_add_item = {
+  "id": "",
+  "name": "",
+  "tree_type": "0",
+  "is_expand": true,
+  "parent_expand": true,
+  "add_id": 'add_milestone', //0表示创建里程碑，其他地创建add_id归纳到父级id
+  "children": [],
+  "editing": false,
+  "due_time": '',
+  "start_time": ''
+}
 const getDigit = (timestamp) => {
   if (!timestamp) {
     return 0
@@ -72,15 +84,20 @@ export default {
       group_view_users_tree: [], //内容过滤成员分组树
       holiday_list: [], //日历列表（包含节假日农历）
       get_gantt_data_loading: false, //是否在请求甘特图数据状态
+      get_gantt_data_loaded: false,
       is_show_board_file_area: '0', //显示文件区域 0默认不显示 1滑入 2滑出
       boards_flies: [], //带根目录文件列表的项目列表
-      show_board_fold: false, //是否显示项目汇总视图 
+      show_board_fold: false, //是否显示项目汇总视图
       folder_seeing_board_id: '0', //查看文件夹所属的项目id
 
       is_new_board: false, //是否刚刚创建的新项目
       outline_hover_obj: {}, //大纲视图下，hover的任务条所属id
       outline_tree: [], //大纲树
       outline_tree_round: [], //大纲树每一级平铺开来
+      panel_outline_create_card_params: {}, //大纲视图下，面板拖拽创建任务通过弹窗创建才需要这个参数
+      boardTemplateShow: 0,
+      startPlanType: 0,
+      outline_current_oprate_add_id: '', //大纲视图下面板拖拽创建任务所属add_id
     },
   },
   subscriptions: {
@@ -209,7 +226,12 @@ export default {
           }
         })
       }, 2000)
-
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          get_gantt_data_loaded: false,
+        }
+      })
       // 查询文件列表
       yield put({
         type: 'getGanttBoardsFiles',
@@ -230,6 +252,7 @@ export default {
         type: 'updateDatas',
         payload: {
           get_gantt_data_loading: false,
+          get_gantt_data_loaded: true,
           folder_seeing_board_id: '0'
         }
       })
@@ -264,12 +287,7 @@ export default {
       const end_date = yield select(workbench_end_date)
       const ceilWidth = yield select(workbench_ceilWidth)
       const date_arr_one_level = yield select(workbench_date_arr_one_level)
-      const visual_add_item = {
-        "id": "",
-        "name": "",
-        "tree_type": "0",
-        "is_expand": true
-      }
+
       let new_outline_tree = [...data]
       const filnaly_outline_tree = new_outline_tree.map(item => {
         let new_item = { ...item, parent_expand: true }
@@ -278,7 +296,7 @@ export default {
         let child_expand_length = 0 //第一级父节点下所有子孙元素展开的总长
         const added = new_item_children.find(item => item.tree_type == '0') //表示是否已经添加过虚拟节点
         if ((tree_type == '1' || tree_type == '2') && !added) { //是里程碑或者一级任务,并且没有添加过
-          new_item_children.push(visual_add_item) //添加虚拟节点
+          new_item_children.push({ ...visual_add_item, add_id: item.id }) //添加虚拟节点
         }
 
         // 时间跨度设置
@@ -325,7 +343,10 @@ export default {
           }
           const added2 = new_item_children2.find(item => item.tree_type == '0') //表示是否已经添加过虚拟节点
           if ((tree_type2 == '1' || tree_type2 == '2') && !added2) { //是里程碑或者一级任务
-            new_item_children2.push(visual_add_item) //添加虚拟节点
+            new_item_children2.push({ ...visual_add_item, add_id: item2.id }) //添加虚拟节点
+          }
+          if (tree_type == '1') { //父元素是里程碑类型
+            new_item2.parent_milestone_id = item.id
           }
           if (tree_type == '1') { //如果第一级是里程碑才有第三级
             new_item_children2 = new_item_children2.map(item3 => {
@@ -392,6 +413,7 @@ export default {
         recusion(val)
       }
       arr = arr.filter(item => item.parent_expand)
+      arr.push({ ...visual_add_item }) //默认有个新建里程碑，占位
       arr = arr.map((item, key) => {
         let new_item = {}
         const { tree_type } = item //  里程碑/任务/子任务/虚拟占位 1/2/3/4
@@ -631,7 +653,9 @@ export default {
         const list_group_item_height = Math.max.apply(null, list_height_arr) + 2 * ceiHeight - after_group_height
 
         group_rows[i] = (list_group_item_height / ceiHeight) < 3 ? 3 : list_group_item_height / ceiHeight // 原来是5，现在是1
-
+        if (list_group[i].list_id == '0') { //默认分组要设置得很高
+          group_rows[i] = group_rows[i] + 30
+        }
         // 设置项目汇总的top和left,width
         if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) { // 全项目视图下，为收缩状态
           group_rows[i] = group_rows_fold

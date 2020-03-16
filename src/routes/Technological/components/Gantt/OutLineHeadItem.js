@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { message, Menu, Dropdown, Modal } from 'antd';
+import { message, Menu, Dropdown, Modal, Button } from 'antd';
 import styles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less';
 import OutlineTree from './components/OutlineTree';
@@ -23,6 +23,7 @@ import DetailInfo from '@/routes/Technological/components/ProjectDetail/DetailIn
 import { PROJECT_TEAM_BOARD_MEMBER, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_CREATE, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_BOARD_MILESTONE } from '@/globalset/js/constant';
 import ShowAddMenberModal from '../../../../routes/Technological/components/Project/ShowAddMenberModal';
 import SafeConfirmModal from './components/SafeConfirmModal';
+
 const { SubMenu } = Menu;
 const { TreeNode } = OutlineTree;
 const { confirm } = Modal;
@@ -34,7 +35,8 @@ export default class OutLineHeadItem extends Component {
         board_info_visible: false,
         show_add_menber_visible: false,
         safeConfirmModalVisible: false,
-        tplId: 0,
+        selectedTpl: null,
+
     }
     componentDidMount() {
         const OrganizationId = localStorage.getItem('OrganizationId')
@@ -63,9 +65,11 @@ export default class OutLineHeadItem extends Component {
         const { dispatch, gantt_board_id } = this.props;
         if (key.indexOf('importTpl') != -1) {
             let tplId = key.replace("importTpl_", "");
+            const { template_list = [] } = this.state;
+            const selectedTpl = template_list.find((item) => item.id == tplId);
             this.setState({
                 safeConfirmModalVisible: true,
-                tplId
+                selectedTpl,
             });
 
         } else {
@@ -82,9 +86,9 @@ export default class OutLineHeadItem extends Component {
         const { template_list = [] } = this.state;
         return (
             <Menu onClick={this.handleProjectMenu}>
-                <Menu.Item key="publishTpl" disabled>将项目内容发布为模版</Menu.Item>
-                <Menu.Item key="saveTpl" disabled>将项目内容保存为模版</Menu.Item>
-                {
+                {/* <Menu.Item key="publishTpl" disabled>将项目内容发布为模版</Menu.Item>
+                <Menu.Item key="saveTpl" disabled>将项目内容保存为模版</Menu.Item> */}
+                {/* {
                     checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id) && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, gantt_board_id) &&
                     <SubMenu title="引用项目模版" >
                         {
@@ -95,7 +99,7 @@ export default class OutLineHeadItem extends Component {
                             })
                         }
                     </SubMenu>
-                }
+                } */}
 
 
                 <Menu.Item key="boardInfo">项目信息</Menu.Item>
@@ -116,16 +120,20 @@ export default class OutLineHeadItem extends Component {
         //console.log('selected', selectedKeys, info);
     };
 
-    onHover = (id, hover, parentId) => {
+    onHover = (id, hover, parentId, is_add_node) => {
         //console.log("大纲:onHover", id, hover);
         const { dispatch, outline_tree } = this.props;
         let nodeValue = {};
         if (hover) {
-            nodeValue = OutlineTree.getTreeNodeValue(outline_tree, id) || {};
+            if (is_add_node) {
+                nodeValue = OutlineTree.getTreeAddNodeValue(outline_tree, id) || {};
+            } else {
+                nodeValue = OutlineTree.getTreeNodeValue(outline_tree, id) || {};
+            }
+
         } else {
-            if (id == '0') {
-                let parent = OutlineTree.getTreeNodeValue(outline_tree, parentId) || {};
-                let placeholderNodeValue = parent.children.find((item) => item.tree_type == '0');
+            if (is_add_node) {
+                let placeholderNodeValue = OutlineTree.getTreeAddNodeValue(outline_tree, id) || {};
                 placeholderNodeValue.is_focus = false;
             }
 
@@ -229,6 +237,9 @@ export default class OutLineHeadItem extends Component {
 
                     updateParams.name = param.name;
                     updateParams.board_id = gantt_board_id;
+                    updateParams.start_time = param.start_time;
+                    updateParams.due_time = param.due_time;
+
 
                     let paraseNodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.parentId);
                     if (paraseNodeValue && paraseNodeValue.tree_type == '1') {
@@ -248,6 +259,7 @@ export default class OutLineHeadItem extends Component {
                                     name: param.name,
                                     is_expand: true,
                                     children: [],
+                                    time_span:0,
                                     ...res.data
                                 };
 
@@ -261,8 +273,16 @@ export default class OutLineHeadItem extends Component {
 
                                 nodeValue.children = children;
                                 this.setCreateAfterInputFous(paraseNodeValue, outline_tree);
-                                this.updateOutLineTreeData(outline_tree);
 
+
+                                //当前的添加按钮
+                                let addInputNodeValue = OutlineTree.getTreeAddNodeValue(outline_tree, param.add_id);
+                                addInputNodeValue.start_time = null;
+                                addInputNodeValue.due_time = null;
+                                addInputNodeValue.time_span = 1;
+                                addInputNodeValue.name = '';
+                                addInputNodeValue.editing = false;
+                                this.updateOutLineTreeData(outline_tree);
                             } else {
 
                                 message.error(res.message)
@@ -288,9 +308,15 @@ export default class OutLineHeadItem extends Component {
                     // if(){
 
                     // }
-                    updateParams.start_time = param.start_time;
-                    updateParams.due_time = param.due_time;
+
                     updateParams.time_span = param.time_span;
+                    if (param.time_span == 0) {
+                        updateParams.start_time = null;
+                        updateParams.due_time = null;
+                    } else {
+                        updateParams.start_time = param.start_time;
+                        updateParams.due_time = param.due_time;
+                    }
                     updateTask({ ...updateParams }, { isNotLoading: false })
                         .then(res => {
                             if (isApiResponseOk(res)) {
@@ -299,8 +325,13 @@ export default class OutLineHeadItem extends Component {
 
                                     nodeValue.name = param.name;
                                     nodeValue.time_span = param.time_span;
-                                    nodeValue.start_time = param.start_time;
-                                    nodeValue.due_time = param.due_time;
+                                    if (param.time_span == 0) {
+                                        nodeValue.start_time = null;
+                                        nodeValue.due_time = null;
+                                    } else {
+                                        nodeValue.start_time = param.start_time;
+                                        nodeValue.due_time = param.due_time;
+                                    }
                                     this.updateOutLineTreeData(outline_tree);
                                 } else {
                                     console.error("OutlineTree.getTreeNodeValue:未查询到节点");
@@ -435,6 +466,37 @@ export default class OutLineHeadItem extends Component {
 
                 }
                 break;
+            case 'reloadProjectDetailInfo':
+                {
+                    dispatch({
+                        type: 'gantt/getAboutUsersBoards',
+                        payload: {
+
+                        }
+                    });
+                    dispatch({
+                        type: 'projectDetail/projectDetailInfo',
+                        payload: {
+                            id: gantt_board_id,
+                        }
+                    });
+                }
+                break;
+            case 'onBlur':{
+                let nodeValue = OutlineTree.getTreeAddNodeValue(outline_tree, param.add_id);
+                if (nodeValue) {
+
+                    // nodeValue.name = param.name;
+                    nodeValue.editing = false;
+                    nodeValue.time_span = 0;
+                    nodeValue.start_time = null;
+                    nodeValue.due_time = null;
+        
+                    this.updateOutLineTreeData(outline_tree);
+                } else {
+                    console.error("OutlineTree.getTreeNodeValue:未查询到节点");
+                }
+            }
             default:
                 ;
 
@@ -453,7 +515,7 @@ export default class OutLineHeadItem extends Component {
             placeholder.is_focus = true;
         }
     }
-    renderGanttOutLineTree = (outline_tree, level,parentNode) => {
+    renderGanttOutLineTree = (outline_tree, level, parentNode) => {
         if (!outline_tree) {
             return null;
         }
@@ -463,7 +525,7 @@ export default class OutLineHeadItem extends Component {
                 if (item.children && item.children.length > 0) {
                     return (
                         <TreeNode key={index} nodeValue={item} level={level}>
-                            {this.renderGanttOutLineTree(item.children, level + 1,item)}
+                            {this.renderGanttOutLineTree(item.children, level + 1, item)}
                         </TreeNode>
                     );
                 } else {
@@ -473,9 +535,9 @@ export default class OutLineHeadItem extends Component {
                                 level={level}
                                 nodeValue={item}
                                 type={'2'}
-                                placeholder={parentNode && parentNode.tree_type == '2'?'新建子任务':'新建任务'}
+                                placeholder={parentNode && parentNode.tree_type == '2' ? '新建子任务' : '新建任务'}
                                 icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
-                                label={<span className={styles.addTask}>{parentNode && parentNode.tree_type == '2'?'新建子任务':'新建任务'}</span>} key={`addTask_${item.index}`}>
+                                label={<span className={styles.addTask}>{parentNode && parentNode.tree_type == '2' ? '新建子任务' : '新建任务'}</span>} key={`addTask_${item.index}`}>
                             </TreeNode>
                         );
                     } else {
@@ -499,13 +561,14 @@ export default class OutLineHeadItem extends Component {
                     id: gantt_board_id
                 }
             })
-            // dispatch({
-            //     type: 'projectDetail/getProjectRoles',
-            //     payload: {
-            //         type: '2',
-            //         _organization_id: org_id
-            //     }
-            // })
+            let _organization_id = localStorage.getItem('OrganizationId')
+            dispatch({
+                type: 'projectDetail/getProjectRoles',
+                payload: {
+                    type: '2',
+                    _organization_id: (!_organization_id || _organization_id) == '0' ? getGlobalData('aboutBoardOrganizationId') : _organization_id
+                }
+            })
         }
         this.setState({
             board_info_visible: !board_info_visible
@@ -520,6 +583,7 @@ export default class OutLineHeadItem extends Component {
     }
 
     addMenbersInProject = (values) => {
+        const { gantt_board_id } = this.props;
         const { dispatch } = this.props
         addMenbersInProject({ ...values }).then(res => {
             if (isApiResponseOk(res)) {
@@ -529,6 +593,14 @@ export default class OutLineHeadItem extends Component {
                         type: 'gantt/getAboutUsersBoards',
                         payload: {
 
+                        }
+                    })
+                }, 1000)
+                setTimeout(() => {
+                    dispatch({
+                        type: 'projectDetail/projectDetailInfo',
+                        payload: {
+                            id: gantt_board_id
                         }
                     })
                 }, 1000)
@@ -556,8 +628,8 @@ export default class OutLineHeadItem extends Component {
 
     onImportBoardTemplate = () => {
         const { dispatch, gantt_board_id } = this.props;
-        const { tplId } = this.state;
-        importBoardTemplate({ "board_id": gantt_board_id, 'template_id': tplId }).then(res => {
+        const { selectedTpl = {} } = this.state;
+        importBoardTemplate({ "board_id": gantt_board_id, 'template_id': selectedTpl.id }).then(res => {
             if (isApiResponseOk(res)) {
                 //console.log("importBoardTemplate", res);
                 dispatch({
@@ -599,6 +671,7 @@ export default class OutLineHeadItem extends Component {
                     <TreeNode
                         type={'1'}
                         placeholder={'新建里程碑'}
+                        nodeValue={{ add_id: 'add_milestone', 'tree_type': '0' }}
                         icon={<span className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
                         label={<span className={styles.addMilestone}>新建里程碑</span>} key="addMilestone">
                     </TreeNode>
@@ -616,27 +689,30 @@ export default class OutLineHeadItem extends Component {
                     </Dropdown>
 
                 </div>
-
-                {
-                    show_add_menber_visible && (
-                        <ShowAddMenberModal
-                            invitationType='1'
-                            invitationId={gantt_board_id}
-                            invitationOrg={getOrgIdByBoardId(gantt_board_id)}
-                            show_wechat_invite={true}
-                            _organization_id={getOrgIdByBoardId(gantt_board_id)}
-                            board_id={gantt_board_id}
-                            addMenbersInProject={this.addMenbersInProject}
-                            modalVisible={show_add_menber_visible}
-                            setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile}
-                        />
-                    )
-                }
-                <DetailInfo setProjectDetailInfoModalVisible={this.setBoardInfoVisible} modalVisible={board_info_visible} invitationType='1' invitationId={gantt_board_id} />
-                {
-                    safeConfirmModalVisible &&
-                    <SafeConfirmModal visible={safeConfirmModalVisible} onChangeVisible={this.changeSafeConfirmModalVisible} onOk={this.onImportBoardTemplate} />
-                }
+                <div onWheel={e => e.stopPropagation()}>
+                    {
+                        show_add_menber_visible && (
+                            <ShowAddMenberModal
+                                invitationType='1'
+                                invitationId={gantt_board_id}
+                                invitationOrg={getOrgIdByBoardId(gantt_board_id)}
+                                show_wechat_invite={true}
+                                _organization_id={getOrgIdByBoardId(gantt_board_id)}
+                                board_id={gantt_board_id}
+                                addMenbersInProject={this.addMenbersInProject}
+                                modalVisible={show_add_menber_visible}
+                                setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile}
+                            />
+                        )
+                    }
+                </div>
+                <div onWheel={e => e.stopPropagation()}>
+                    <DetailInfo setProjectDetailInfoModalVisible={this.setBoardInfoVisible} modalVisible={board_info_visible} invitationType='1' invitationId={gantt_board_id} />
+                    {
+                        safeConfirmModalVisible &&
+                        <SafeConfirmModal selectedTpl={this.state.selectedTpl} visible={safeConfirmModalVisible} onChangeVisible={this.changeSafeConfirmModalVisible} onOk={this.onImportBoardTemplate} />
+                    }
+                </div>
             </div>
         );
     }
