@@ -19,11 +19,30 @@ export default class EditStepTypeOne extends Component {
     is_show_spread_arrow: false,
   }
 
+    // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
+    updateCorrespondingPrcodessStepWithNodeContent = (data, value) => {
+      const { itemValue, processEditDatas = [], itemKey, dispatch } = this.props
+      let newProcessEditDatas = [...processEditDatas]
+      newProcessEditDatas[itemKey][data] = value
+      dispatch({
+        type: 'publicProcessDetailModal/updateDatas',
+        payload: {
+          processEditDatas: newProcessEditDatas,
+        }
+      })
+    }
+
   handleSpreadArrow = (e) => {
     e && e.stopPropagation()
     this.setState({
       is_show_spread_arrow: !this.state.is_show_spread_arrow
     })
+  }
+
+  // 编辑点击事件
+  handleEnterConfigureProcess = (e) => {
+    e && e.stopPropagation()
+    this.updateCorrespondingPrcodessStepWithNodeContent('is_confirm', '0')
   }
 
   // 理解成是否是有效的头像
@@ -85,7 +104,7 @@ export default class EditStepTypeOne extends Component {
         {
           (
             <div style={{marginTop: '16px', paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center'}}>
-              <Button type="primary">编辑</Button>
+              <Button type="primary" onClick={this.handleEnterConfigureProcess}>编辑</Button>
             </div>
           )
         }
