@@ -61,8 +61,8 @@ export default class ConfigureStepTypeOne extends Component {
   deadlineValueChange = (value) => {
     this.updateConfigureProcess({ value: value.toString() }, 'deadline_value')
   }
-  deadlineTypeValueChange = (value) => {
-    this.updateConfigureProcess({ value: value }, 'deadline_type')
+  deadlineTimeTypeValueChange = (value) => {
+    this.updateConfigureProcess({ value: value }, 'deadline_time_type')
     this.updateConfigureProcess({ value: 1 }, 'deadline_value')
   }
 
@@ -348,7 +348,7 @@ export default class ConfigureStepTypeOne extends Component {
   render() {
     const { itemValue, processEditDatas = [], itemKey } = this.props
     const { forms = [] } = processEditDatas[itemKey]
-    const { assignee_type, deadline_type, deadline_value, description, is_click_node_description } = itemValue
+    const { assignee_type, deadline_time_type, deadline_value, description, is_click_node_description } = itemValue
     return (
       <div style={{ position: 'relative' }}>
         <div style={{ paddingBottom: '16px', borderBottom: '1px solid #e8e8e8' }} onClick={(e) => { e && e.stopPropagation() }}>
@@ -383,8 +383,8 @@ export default class ConfigureStepTypeOne extends Component {
         <div className={`${indexStyles.complet_deadline}`}>
           <span style={{ fontWeight: 900, marginRight: '2px' }} className={globalStyles.authTheme}>&#xe686;</span>
           <span>完成期限 &nbsp;: </span>
-          <InputNumber precision="0.1" min={1} max={deadline_type == 'h' ? 24 : deadline_type == 'd' ? 30 : 12} value={deadline_value} onChange={this.deadlineValueChange} className={indexStyles.select_number} />
-          <Select className={indexStyles.select_day} value={deadline_type} onChange={this.deadlineTypeValueChange}>
+          <InputNumber precision="0.1" min={1} max={deadline_time_type == 'hour' ? 24 : deadline_time_type == 'day' ? 30 : 12} value={deadline_value} onChange={this.deadlineValueChange} className={indexStyles.select_number} />
+          <Select className={indexStyles.select_day} value={deadline_time_type} onChange={this.deadlineTimeTypeValueChange}>
             <Option value="hour">时</Option>
             <Option value="day">天</Option>
             <Option value="month">月</Option>

@@ -23,6 +23,7 @@ export default class MainContent extends Component {
       currentFlowInstanceDescription: '', // 当前的实例描述内容
       isEditCurrentFlowInstanceName: true, // 是否正在编辑当前实例的名称
       isEditCurrentFlowInstanceDescription: false, // 是否正在编辑当前实例的描述
+      visible: false, // 控制引导窗口的显示隐藏
     }
   }
 
@@ -202,6 +203,7 @@ export default class MainContent extends Component {
   // 添加步骤
   handleAddEditStep = (e) => {
     e && e.stopPropagation()
+    let that = this
     const { processEditDatas = [], dispatch } = this.props
     const nodeObj = JSON.parse(JSON.stringify(processEditDatasItemOneConstant))
     processEditDatas.length == '0' ?  processEditDatas.push(nodeObj) : processEditDatas.push({name: ''})
@@ -225,7 +227,9 @@ export default class MainContent extends Component {
           node_type: '1'
         }
       })
-
+      that.setState({
+        visible: true
+      })
     })
   }
 
@@ -233,6 +237,7 @@ export default class MainContent extends Component {
   renderAddProcessStep = () => {
     const { processCurrentEditStep, processEditDatas = [] } = this.props
     let { is_confirm } = processEditDatas && processEditDatas[processCurrentEditStep] || {}
+    const { visible } = this.state
     return (
       <div style={{ position: 'relative' }} id="addProcessStep">
         {
@@ -240,13 +245,13 @@ export default class MainContent extends Component {
             is_confirm == '1' ? (
               <div className={`${indexStyles.add_node}`} onClick={(e) => { this.handleAddEditStep(e) }}>
                 <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
-                <ConfigureGuide />
+                <ConfigureGuide visible={visible} />
               </div>
             ) : (
                 <Tooltip getPopupContainer={() => document.getElementById('addProcessStep')} placement="topLeft" title="完成上一步骤才能添加">
                   <div><div className={`${indexStyles.add_normal}`}>
                     <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
-                    <ConfigureGuide />
+                    <ConfigureGuide visible={visible}/>
                   </div></div>
                 </Tooltip>
               )
@@ -289,7 +294,7 @@ export default class MainContent extends Component {
               fontWeight: 400,
               color: 'rgba(140,140,140,1)',
               lineHeight: '17px'
-            }}>{this.props.processCurrentEditStep ? Number(this.props.processCurrentEditStep) + 1 : 0}/{this.props.processCurrentEditStep ? Number(this.props.processCurrentEditStep) + 1 : 0}</span>
+            }}>{processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0}/{processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0}</span>
             <span style={{
               position: 'absolute',
               top: '110px',
@@ -300,7 +305,7 @@ export default class MainContent extends Component {
               fontWeight: 400,
               color: 'rgba(89,89,89,1)',
               lineHeight: '30px'
-            }}>新建{this.props.processCurrentEditStep ? Number(this.props.processCurrentEditStep) + 1 : 0}步</span>
+            }}>新建{processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0}步</span>
             <div style={{ paddingTop: '32px', paddingRight: '32px', flex: 1, float: 'left', width: '977px', height: '210px' }}>
               {/* 显示流程名称 */}
               <div style={{ marginBottom: '12px' }}>

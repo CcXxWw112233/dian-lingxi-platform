@@ -134,9 +134,9 @@ export default class ConfigureProcess extends Component {
 
     let newAssignees = assignees ? assignees.split(',') : []
     let newRecipients = recipients ? recipients.split(',') : []
-    console.log(newAssignees, 'ssssssssssssssssss_new')
+    // console.log(newAssignees, 'ssssssssssssssssss_new')
     const lengh = newAssignees.length
-    console.log(lengh, typeof lengh, !!(lengh), 'ssssssssssssssssssssssssss_assignees')
+    // console.log(lengh, typeof lengh, !!(lengh), 'ssssssssssssssssssssssssss_assignees')
     switch (node_type) {
       case '1':
         if (assignee_type == '1') { // 表示在任何人的情况下
@@ -249,7 +249,6 @@ export default class ConfigureProcess extends Component {
   }
 
   renderContent = () => {
-    console.log('sssssssssssssssssssssssssss_父组件render')
     const { itemKey, itemValue, processEditDatasRecords = [], processCurrentEditStep, processEditDatas = [] } = this.props
     const { name, node_type, description, is_click_node_name } = itemValue
     // let node_amount = this.props && this.props.processInfo && this.props.processInfo.node_amount

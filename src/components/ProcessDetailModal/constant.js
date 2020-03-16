@@ -122,6 +122,7 @@ export const processEditDatasItemOneConstant = {
   "node_type": "1",//流程节点类型 1=资料收集 2=审批 3=抄送
   "name": "",//流程节点名称
   "description": "",//描述 备注
+  "deadline_type": "", // 期限类型 1=不限制时间 2=限制时间
   "deadline_time_type": "day",//完成期限类型 hour = 时 day =天 month = 月
   "deadline_value": "",//完成期限值
   "assignee_type": "1",//审批人类型 1=任何人 2=指定人员
@@ -138,7 +139,8 @@ export const processEditDatasItemTwoConstant = {
   "description": "",//描述 备注
   "approve_type": "1",//审批类型 1=串签 2=并签 3=汇签
   "approve_value": "",// 当为 汇签时需填的值
-  "deadline_time_type": "",//完成期限类型 hour = 时 day =天 month = 月
+  "deadline_type": "", // 期限类型 1=不限制时间 2=限制时间
+  "deadline_time_type": "day",//完成期限类型 hour = 时 day =天 month = 月
   "deadline_value": "",//完成期限值
   "assignees": "",//审批人 多个逗号隔开
   "is_confirm": "0"
@@ -148,7 +150,8 @@ export const processEditDatasItemThreeConstant = {
   "node_type": "3",//流程节点类型 1=资料收集 2=审批 3=抄送
   "name": "",//流程节点名称
   "description": "",//描述 备注
-  "deadline_time_type": "",//完成期限类型 hour = 时 day =天 month = 月
+  "deadline_type": "", // 期限类型 1=不限制时间 2=限制时间
+  "deadline_time_type": "day",//完成期限类型 hour = 时 day =天 month = 月
   "deadline_value": "",//完成期限值
   "cc_type": "1",//抄送人类型 1=自动抄送 2=手动抄送
   "recipients": "",//抄送人 多个逗号隔开
@@ -257,64 +260,91 @@ export const processDoingListMatch = [
 ]
 
 export const processInfoMatch = {
-  "id": "1235511262679535616",
-  "name": "Señorita",
-  "description": "<p></p>",
-  "status": "1",
-  "create_user_id": "1135840292222668800",
-  "create_user_name": "",
-  "create_user_avatar": "",
-  "create_time": "1583403814",
-  "content_link": "1235511262692118528",
-  "curr_node_id": "1235511262692118528",
-  "nodes": [
+  "board_id": "1238724358210457600",//项目ID
+  "name": "床前明月光",//模板名称
+  "description": "第一个流程模板",//模板描述
+  "is_retain": "1",//是否保留 1=保留 0=不保留,默认保留
+  "nodes": [//模板节点 json数组
     {
-      "id": "1235511262692118528",
-      "name": "I love it when you call me señorita",
-      "description": "",
-      "node_type": "1",
-      "deadlined_timeout": "0",
-      "assignee_type": "1",
-      "assignees": [
-
-      ],
-      "transfer_mode": "2",
-      "enable_revocation": "1",
-      "enable_opinion": "1",
-      "sort": "1",
-      "content_link": [
-
+      "node_type": "1",//流程节点类型 1=资料收集 2=审批 3=抄送
+      "name": "资料收集节点",//流程节点名称
+      "description": "描述",//描述 备注
+      "deadline_type": "2",//期限类型 1=不限制时间 2=限制时间
+      "deadline_time_type": "day",//完成期限类型 hour = 时 day =天 month = 月
+      "deadline_value": "1",//完成期限值
+      "assignee_type": "2",//审批人类型 1=任何人 2=指定人员
+      "assignees": "1110064610620346368",//审批人 多个逗号隔开
+      "forms": [//表单数据
+        {
+          "field_type": "1",//类型 1=文本 2=选择 3=日期 4=表格 5=附件
+          "title": "文本标题",//标题
+          "prompt_content": "请填写",//提示内容
+          "is_required": "0",//是否必填 1=必须 0=不是必须
+          "verification_rule": "shuzi",//校验规则
+          "val_min_length": "10",//最小长度
+          "val_max_length": "20"//最大长度
+        },
+        {
+          "field_type": "2",//类型 1=文本 2=选择 3=日期 4=表格 5=附件
+          "title": "性别",//标题
+          "prompt_content": "请选择",//提示内容
+          "is_required": "1",//是否必填 1=必须 0=不是必须
+          "is_multiple_choice": "0",//是否多选 1=是 0=否
+          "options": [//选择项
+            {
+              "label_name": "男",
+              "label_value": "男"
+            },
+            {
+              "label_name": "女",
+              "label_value": "女"
+            }
+          ]
+        },
+        {
+          "field_type": "3",//类型 1=文本 2=选择 3=日期 4=表格 5=附件
+          "title": "生日",//标题
+          "prompt_content": "您的出生日期",//提示内容
+          "is_required": "1",//是否必填 1=必须 0=不是必须
+          "date_range": "1",//日期范围 1=单个日期 2=开始日期~截止日期
+          "date_precision": "1"//日期精度 1=仅日期 2=日期+时间
+        },
+        {
+          "field_type": "5",//类型 1=文本 2=选择 3=日期 4=表格 5=附件
+          "title": "简历",//标题
+          "prompt_content": "请上传简历",//提示内容
+          "is_required": "1",//是否必填 1=必须 0=不是必须
+          "limit_file_num": "1",//上传数量
+          "limit_file_type": [//限制上传类型(文件格式) document=文档 image=图像 audio=音频 video=视频
+            "document", "image", "audio", "video"
+          ],
+          "limit_file_size": "10"//上传大小限制
+        }
       ]
     },
     {
-      "id": "1235511262708895744",
-      "name": "I wish it wasn't so d**n hard to leave ya",
-      "description": "",
-      "node_type": "1",
-      "deadlined_timeout": "0",
-      "assignee_type": "1",
-      "assignees": [
-
-      ],
-      "transfer_mode": "2",
-      "enable_revocation": "1",
-      "enable_opinion": "1",
-      "sort": "2",
-      "content_link": [
-
-      ]
+      "node_type": "2",//流程节点类型 1=资料收集 2=审批 3=抄送
+      "name": "审批节点",//流程节点名称
+      "description": "备注",//描述 备注
+      "approve_type": "1",//审批类型 1=串签 2=并签 3=汇签
+      "approve_value": "",// 当为 汇签时需填的值
+      "deadline_type": "2",//期限类型 1=不限制时间 2=限制时间
+      "deadline_time_type": "hour",//完成期限类型 hour = 时 day =天 month = 月
+      "deadline_value": "10",//完成期限值
+      "assignees": "1110064610620346368,1110381102486392832"//审批人 多个逗号隔开
+    },
+    {
+      "node_type": "3",//流程节点类型 1=资料收集 2=审批 3=抄送
+      "name": "抄送节点",//流程节点名称
+      "description": "需要抄送了",//描述 备注
+      "deadline_type": "1",//期限类型 1=不限制时间 2=限制时间
+      "deadline_time_type": "",//完成期限类型 hour = 时 day =天 month = 月
+      "deadline_value": "",//完成期限值
+      "cc_type": "2",//抄送人类型 1=自动抄送 2=手动抄送
+      "recipients": "1110064610620346368,1110381102486392832",//抄送人 多个逗号隔开
+      "assignees": "1110064610620346368"//抄报人 多个逗号隔开
     }
-  ],
-  "completed_amount": "0",
-  "node_amount": "2",
-  "is_privilege": "0",
-  "privileges": [
-
-  ],
-  "privileges_extend": [
-
-  ],
-  "is_shared": "0"
+  ]
 }
 
 export const principalList = [
