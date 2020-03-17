@@ -1,0 +1,167 @@
+.main_wapper {
+    position     : relative;
+    margin       : 0 auto;
+    top          : 124px;
+    width        : 864px;
+    border-radius: 6px;
+    border-radius: 0px 8px 8px 0px;
+    filter       : blur(0px);
+    min-height   : 552px;
+    display      : flex;
+
+    >div {
+        height    : 552px;
+        max-height: 552px;
+        overflow  : auto;
+    }
+
+    .main_lf_wapper {
+        width        : 248px;
+        background   : rgba(0, 0, 0, 0.55);
+        border-radius: 6px 0 0 6px;
+
+        .create {
+            position : relative;
+            top      : 50%;
+            left     : 50%;
+            transform: translate(-50%, -50%);
+            padding  : 0 12px;
+
+            >div {
+                text-align: center;
+            }
+
+            .create_top {
+                height     : 64px;
+                color      : #788991;
+                font-size  : 64px;
+                line-height: 64px;
+            }
+
+            .create_middle {
+                color     : #ffffff;
+                margin-top: 10px;
+            }
+
+
+        }
+
+        .board_area {
+            display        : flex;
+            flex-direction : column;
+            justify-content: space-between;
+            padding        : 8px 0;
+            height         : 552px;
+            box-sizing     : border-box;
+            color          : #ffffff;
+
+            .board_area_top {
+                height : 48px;
+                padding: 0 12px;
+                display: flex;
+                color  : #ffffff;
+
+                .board_area_top_lf {
+                    flex       : 1;
+                    line-height: 48px;
+                    font-size  : 18px;
+
+
+                }
+
+                .board_area_top_rt {
+                    flex       : 1;
+                    line-height: 48px;
+
+                    :global {
+                        .ant-checkbox-inner {
+                            background: rgba(0, 0, 0, 0);
+                        }
+                    }
+
+                    text-align: right;
+                }
+            }
+
+            .board_area_middle {
+                flex      : 1;
+                overflow-y: auto;
+
+                .board_area_middle_item {
+                    height     : 48px;
+                    padding    : 0 12px 0 0;
+                    line-height: 48px;
+                    cursor     : pointer;
+                    display    : flex;
+
+                    .board_area_middle_item_lf {
+                        height          : 48px;
+                        width           : 4px;
+                        background-color: #ffffff;
+                        display         : none;
+                    }
+
+                    .board_area_middle_item_middle {
+                        max-width  : 200px;
+                        margin-left: 12px;
+                    }
+
+                    .board_area_middle_item_rt {
+                        margin-left: 8px;
+                    }
+                }
+
+                .board_area_middle_item:hover,
+                .board_area_middle_item_choose {
+                    background: rgba(255, 255, 255, 0.15);
+
+                    .board_area_middle_item_middle {
+                        margin-left: 12px;
+                    }
+                }
+
+                .board_area_middle_item_choose {
+                    .board_area_middle_item_lf {
+                        display: block;
+                    }
+
+                    .board_area_middle_item_middle {
+                        margin-left: 8px !important;
+                    }
+                }
+            }
+
+            .board_area_bott {
+                margin: 0 12px;
+            }
+        }
+
+
+
+        .create_btn {
+            height       : 32px;
+            margin-top   : 16px;
+            background   : rgba(255, 255, 255, 0.35);
+            color        : #ffffff;
+            line-height  : 32px;
+            border-radius: 4px;
+            cursor       : pointer;
+            text-align   : center;
+
+            span {
+                margin-left: 4px;
+            }
+        }
+
+        .create_btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+    }
+
+    .main_rt_Wapper {
+        flex         : 1;
+        background   : rgba(0, 0, 0, 0.35);
+        border-radius: 0 6px 6px 0;
+    }
+}

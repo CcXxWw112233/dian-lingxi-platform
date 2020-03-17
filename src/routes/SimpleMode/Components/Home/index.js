@@ -5,6 +5,7 @@ import SimpleHeader from '../SimpleHeader/index'
 import MyWorkbenchBoxs from '../MyWorkbenchBoxs/index'
 import WallpaperSelect from '../WallpaperSelect/index'
 import WorkbenchBoxSelect from '../WorkbenchBoxSelect/index'
+import HomeMain from './HomeMain'
 
 const getEffectOrReducerByName = name => `technological/${name}`
 
@@ -90,7 +91,8 @@ class Home extends Component {
 
     return (
       <div>
-        {myWorkbenchBoxsVisiable && <MyWorkbenchBoxs {...this.state} setHomeVisible={this.setHomeVisible} />}
+        <HomeMain />
+        {/* {myWorkbenchBoxsVisiable && <MyWorkbenchBoxs {...this.state} setHomeVisible={this.setHomeVisible} />} */}
 
         {wallpaperSelectVisiable && <WallpaperSelect {...this.state} setHomeVisible={this.setHomeVisible} />}
 
