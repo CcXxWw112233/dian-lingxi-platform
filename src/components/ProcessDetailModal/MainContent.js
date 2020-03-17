@@ -281,7 +281,12 @@ export default class MainContent extends Component {
         }
         break;
       case '2':
-        container = <EditProcess itemKey={key} itemValue={value}/>
+        if (is_edit == '1') {
+          container = <EditProcess  itemKey={key} itemValue={value}/>
+        } else {
+          container = <ConfigureProcess  itemKey={key} itemValue={value}/>
+        }
+        // container = <EditProcess itemKey={key} itemValue={value}/>
         break
       case '3':
         container = <ProcessStartConfirm itemKey={key} itemValue={value}/>
