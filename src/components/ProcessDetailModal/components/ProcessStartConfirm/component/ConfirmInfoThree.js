@@ -169,10 +169,10 @@ export default class ConfirmInfoThree extends Component {
                   {`${transPrincipalList.length}位抄送人`}
                 </span>
                 <span style={{position: 'relative'}}>
-                  <AmendComponent updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle={cc_type == '1' ? '抄送人' : '抄送人/抄报人'} data={data} itemKey={itemKey} itemValue={itemValue} />
+                  <AmendComponent type="3" updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle={cc_type == '1' ? '抄送人' : '抄送人/抄报人'} data={data} itemKey={itemKey} itemValue={itemValue} />
                 </span>
               </div>
-              <div>
+              <div style={{marginRight: '16px'}}>
                 {
                   cc_type == '1' ? (
                     <span>自动触发</span>
@@ -180,6 +180,9 @@ export default class ConfirmInfoThree extends Component {
                       <>
                         <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '14px' }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
                         <span className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : 步骤开始后1天内</span>
+                        <span style={{position: 'relative'}}>
+                          <AmendComponent updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="完成期限" data={data} itemKey={itemKey} itemValue={itemValue} />
+                        </span>
                       </>
                     )
                 }

@@ -4,6 +4,7 @@ import indexStyles from '../index.less'
 import FillInPersonContent from './FillInPersonContent'
 import ExamineAndApproveContent from './ExamineAndApproveContent'
 import DuplicateAndReportPerson from './DuplicateAndReportPerson'
+import CompleteDeadlineContent from './CompleteDeadlineContent'
 
 export default class index extends Component {
 
@@ -11,29 +12,30 @@ export default class index extends Component {
   renderDiffTypeContent = (type) => {
     let container = (<div></div>)
     switch (type) {
-      case '1':
+      case '1': // 资料收集中的填写人
         container = <FillInPersonContent {...this.props}/>
         break;
-      case '2':
+      case '2': // 审批类型中的审批人
         container = <ExamineAndApproveContent {...this.props} />
-      case '3':
+      case '3': // 抄送中的抄送人 | 抄报人
         container = <DuplicateAndReportPerson {...this.props}/>
         break
-      default:
+      default: // 其他的显示完成期限
+        container = <CompleteDeadlineContent {...this.props}/>
         break;
     }
     return container
   }
 
   render() {
-    const { placementTitle, itemValue } = this.props
+    const { placementTitle, itemValue, type } = this.props
     const { node_type } = itemValue
     return (
       <span>
         <Popover
           trigger="click"
           title={<div className={indexStyles.mini_title}>{placementTitle}</div>}
-          content={this.renderDiffTypeContent(node_type)}
+          content={this.renderDiffTypeContent(type)}
           getPopupContainer={triggerNode => triggerNode.parentNode}
           placement={'bottomLeft'}
           className={`${indexStyles.mini_popover_card}`}
