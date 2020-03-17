@@ -44,27 +44,7 @@ export default class BoardItem extends Component {
             message.error('数据异常，请刷新后重试');
             return;
         }
-        if (board_id == '0') {
-            dispatch({
-                type: 'simplemode/updateDatas',
-                payload: {
-                    simplemodeCurrentProject: {}
-                }
-            });
-            dispatch({
-                type: 'accountSet/updateUserSet',
-                payload: {
-                    current_board: {}
-                }
-            });
-            dispatch({
-                type: 'technological/updateDatas',
-                payload: {
-                    currentSelectedProjectOrgIdByBoardId: ''
-                }
-            })
-            selectBoardToSeeInfo({ board_id: '0', dispatch })
-        }
+        this.props.setLocalSelectedBoard(selectBoard[0])
         //设置当前选中的项目
         setBoardIdStorage(board_id);
         dispatch({
@@ -192,7 +172,6 @@ export default class BoardItem extends Component {
      * @param {Array} users_arr 添加成员的数组
      */
     handleVisitControlAddNewMember = (users_arr = []) => {
-        debugger
         if (!users_arr.length) return
 
         this.handleSetContentPrivilege(users_arr, 'read')
@@ -456,7 +435,7 @@ export default class BoardItem extends Component {
                         {board_name}
                     </div>
                     <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={this.renderMenuOperateListName({ board_id })}>
-                        <div className={`${styles.board_area_middle_item_rt} ${globalStyles.authTheme}`}>&#xe66f;</div>
+                        <div className={`${styles.board_area_middle_item_rt} ${globalStyles.authTheme}`} onClick={(e) => e.stopPropagation()}>&#xe66f;</div>
                     </Dropdown>
                 </div>
                 <DetailInfo setProjectDetailInfoModalVisible={this.setBoardInfoVisible} modalVisible={board_info_visible} invitationType='1' invitationId={board_id} />

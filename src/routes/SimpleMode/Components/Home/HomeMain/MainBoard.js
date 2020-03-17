@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import styles from './index.less'
-import { Checkbox,  } from 'antd'
+import { Checkbox, } from 'antd'
 import { connect } from 'dva'
 import { selectBoardToSeeInfo, getOrgIdByBoardId, setBoardIdStorage, getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
 import CreateProject from '@/routes/Technological/components/Project/components/CreateProject/index';
@@ -13,7 +13,7 @@ export default class MainBoard extends Component {
     constructor(props) {
         super(props)
         this.state = {
-
+            local_selected_board: {}
         }
     }
     componentDidMount() {
@@ -22,62 +22,6 @@ export default class MainBoard extends Component {
             type: 'workbench/getProjectList',
             payload: {}
         })
-    }
-
-    onSelectBoard = (board_id) => {
-        const { projectList, dispatch } = this.props
-        const selectBoard = projectList.filter(item => item.board_id === board_id);
-        const selectOrgId = getOrgIdByBoardId(board_id)
-        if (!selectBoard && selectBoard.length == 0) {
-            message.error('数据异常，请刷新后重试');
-            return;
-        }
-        if (board_id == '0') {
-            dispatch({
-                type: 'simplemode/updateDatas',
-                payload: {
-                    simplemodeCurrentProject: {}
-                }
-            });
-            dispatch({
-                type: 'accountSet/updateUserSet',
-                payload: {
-                    current_board: {}
-                }
-            });
-            dispatch({
-                type: 'technological/updateDatas',
-                payload: {
-                    currentSelectedProjectOrgIdByBoardId: ''
-                }
-            })
-            selectBoardToSeeInfo({ board_id: '0', dispatch })
-        }
-        //设置当前选中的项目
-        setBoardIdStorage(board_id);
-        dispatch({
-            type: 'simplemode/updateDatas',
-            payload: {
-                simplemodeCurrentProject: { ...selectBoard[0] }
-            }
-        });
-
-        dispatch({
-            type: 'accountSet/updateUserSet',
-            payload: {
-                current_board: board_id
-            }
-        });
-
-        dispatch({
-            type: 'technological/updateDatas',
-            payload: {
-                currentSelectedProjectOrgIdByBoardId: selectOrgId
-            }
-        })
-
-        selectBoardToSeeInfo({ board_id: selectBoard[0] && selectBoard[0].board_id, board_name: selectBoard[0] && selectBoard[0].board_name, dispatch })
-
     }
     setAddProjectModalVisible = () => {
         this.setState({
@@ -117,15 +61,99 @@ export default class MainBoard extends Component {
             })
         )
     }
+    // 缓存上一个选择的项目
+    setLocalSelectedBoard = (data = {}) => {
+        this.setState({
+            local_selected_board: data
+        })
+    }
+    checkBoxChange = (e) => {
+        const checked = e.target.checked
+        const { local_selected_board = {} } = this.state
+        const { projectList = [], dispatch } = this.props
 
+        if (checked) {
+            dispatch({
+                type: 'simplemode/updateDatas',
+                payload: {
+                    simplemodeCurrentProject: {}
+                }
+            });
+            dispatch({
+                type: 'accountSet/updateUserSet',
+                payload: {
+                    current_board: '0'
+                }
+            });
+            dispatch({
+                type: 'technological/updateDatas',
+                payload: {
+                    currentSelectedProjectOrgIdByBoardId: ''
+                }
+            })
+            selectBoardToSeeInfo({ board_id: '0', dispatch })
+        } else {
+            //设置当前选中的项目
+            if (local_selected_board.board_id) {
+                setBoardIdStorage(local_selected_board.board_id);
+                dispatch({
+                    type: 'simplemode/updateDatas',
+                    payload: {
+                        simplemodeCurrentProject: { local_selected_board }
+                    }
+                });
+                dispatch({
+                    type: 'accountSet/updateUserSet',
+                    payload: {
+                        current_board: local_selected_board.board_id
+                    }
+                });
+                dispatch({
+                    type: 'technological/updateDatas',
+                    payload: {
+                        currentSelectedProjectOrgIdByBoardId: local_selected_board.board_id
+                    }
+                })
+                selectBoardToSeeInfo({ board_id: local_selected_board && local_selected_board.board_id, board_name: local_selected_board && local_selected_board.board_name, dispatch })
+            } else {
+                setBoardIdStorage(projectList[0].board_id);
+                dispatch({
+                    type: 'simplemode/updateDatas',
+                    payload: {
+                        simplemodeCurrentProject: { ...projectList[0] }
+                    }
+                });
+
+                dispatch({
+                    type: 'accountSet/updateUserSet',
+                    payload: {
+                        current_board: projectList[0].board_id
+                    }
+                });
+
+                dispatch({
+                    type: 'technological/updateDatas',
+                    payload: {
+                        currentSelectedProjectOrgIdByBoardId: projectList[0].board_id
+                    }
+                })
+                selectBoardToSeeInfo({ board_id: projectList[0] && projectList[0].board_id, board_name: projectList[0] && projectList[0].board_name, dispatch })
+            }
+
+        }
+    }
     // 渲染主区域
     renderBoardArea = () => {
+        const { simplemodeCurrentProject = {}, local_selected_board = {} } = this.props
         return (
             <div className={styles.board_area}>
                 <div className={styles.board_area_top}>
                     <div className={styles.board_area_top_lf}>我的项目</div>
                     <div className={styles.board_area_top_rt}>
-                        <Checkbox style={{ color: '#fff' }}>全选</Checkbox>
+                        <Checkbox
+                            checked={(simplemodeCurrentProject.board_id == '0' || !simplemodeCurrentProject.board_id) && !local_selected_board.board_id}
+                            onChange={this.checkBoxChange}
+                            style={{ color: '#fff' }}>全选</Checkbox>
                     </div>
                 </div>
                 <div className={`${styles.board_area_middle} ${globalStyles.global_vertical_scrollbar}`}>
@@ -162,7 +190,7 @@ export default class MainBoard extends Component {
             projectList.map(value => {
                 const { board_id } = value
                 return (
-                    <BoardItem key={board_id} itemValue={value} />
+                    <BoardItem key={board_id} itemValue={value} setLocalSelectedBoard={this.setLocalSelectedBoard} />
                 )
             })
         )
