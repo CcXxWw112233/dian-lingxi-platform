@@ -84,7 +84,7 @@ export default class MainContent extends Component {
         circle.beginPath();//开始一个新的路径
         circle.save()
         circle.lineWidth = lineWidth;
-        let color = 'rgba(0,0,0,0.45)'
+        let color = 'rgba(0,0,0,0.04)'
         if (Number(curr_node_sort) === Number(processEditDatas[i].sort)) {
           color = 'rgba(24,144,255,1)' // 蓝色
         } else if (Number(processEditDatas[i].sort) < Number(curr_node_sort)) {
@@ -388,12 +388,16 @@ export default class MainContent extends Component {
               <>{this.renderDiffContentProcess(value,key)}</>
             )
           })}
-          {processPageFlagStep == '1' || processPageFlagStep == '2' && this.renderAddProcessStep()}
+          {(processPageFlagStep == '1' || processPageFlagStep == '2') && this.renderAddProcessStep()}
           {
             processEditDatas.length >= 2 && (
               <div style={{display: 'flex',alignItems: 'center',justifyContent:'center', marginTop: '32px'}}>
                 <Button disabled={saveTempleteDisabled} style={{marginRight: '24px', height: '40px', color: '#1890FF'}}>开始流程</Button>
-                <Button disabled={saveTempleteDisabled} type="primary" style={{height: '40px'}}>保存模板</Button>
+                {
+                  processPageFlagStep != '3' && (
+                    <Button disabled={saveTempleteDisabled} type="primary" style={{height: '40px'}}>保存模板</Button>
+                  )
+                }
               </div>
             )
           }

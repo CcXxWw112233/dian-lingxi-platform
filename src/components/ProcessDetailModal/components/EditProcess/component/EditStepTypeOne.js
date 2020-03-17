@@ -116,7 +116,7 @@ export default class EditStepTypeOne extends Component {
     const { itemKey } = this.props
     const { transPrincipalList = [], is_show_spread_arrow } = this.state
     return (
-      <div key={itemKey} style={{ display: 'flex', marginBottom: '45px' }}>
+      <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }}>
         {/* {node_amount <= itemKey + 1 ? null : <div className={stylLine}></div>} */}
         <div className={indexStyles.line}></div>
         <div className={indexStyles.circle}> {itemKey + 1}</div>

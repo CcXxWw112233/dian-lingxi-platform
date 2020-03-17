@@ -279,7 +279,7 @@ export default class ConfigureProcess extends Component {
     }
     // const alltypedata = processEditDatasRecords[processCurrentEditStep]['alltypedata']
     return (
-      <div key={itemKey} style={{ display: 'flex', marginBottom: '45px' }} onClick={(e) => { this.handleCancelNodeName(e) }}>
+      <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }} onClick={(e) => { this.handleCancelNodeName(e) }}>
         {/* {node_amount <= itemKey + 1 ? null : <div className={stylLine}></div>} */}
         <div className={indexStyles.doingLine}></div>
         <div className={indexStyles.doingCircle}> {itemKey + 1}</div>

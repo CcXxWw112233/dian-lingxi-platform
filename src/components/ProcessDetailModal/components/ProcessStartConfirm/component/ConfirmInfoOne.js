@@ -7,6 +7,7 @@ import ConfirmInfoOne_one from './ConfirmInfoOne_one'
 import ConfirmInfoOne_two from './ConfirmInfoOne_two'
 import ConfirmInfoOne_three from './ConfirmInfoOne_three'
 import ConfirmInfoOne_five from './ConfirmInfoOne_five'
+import AmendComponent from '../AmendComponent'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { Button } from 'antd'
 import { connect } from 'dva'
@@ -105,10 +106,10 @@ export default class ConfirmInfoOne extends Component {
   }
 
   render() {
-    const { itemKey, processEditDatas = [] } = this.props
+    const { itemKey, itemValue, processEditDatas = [], projectDetailInfoData: { data = [] } } = this.props
     const { transPrincipalList = [], is_show_spread_arrow } = this.state
     return (
-      <div key={itemKey} style={{ display: 'flex', marginBottom: '45px' }}>
+      <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }}>
         {/* {node_amount <= itemKey + 1 ? null : <div className={stylLine}></div>} */}
         
         {processEditDatas.length <= itemKey + 1 ? null : <div className={indexStyles.completeLine}></div>}
@@ -153,6 +154,9 @@ export default class ConfirmInfoOne extends Component {
                 <span className={indexStyles.content__principalList_info}>
                   {`${transPrincipalList.length}位填写人`}
                 </span>
+                <span style={{position: 'relative'}}>
+                  <AmendComponent updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="填写人" data={data} itemKey={itemKey} itemValue={itemValue} />
+                </span>
               </div>
               <div>
                 <span style={{fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '14px'}} className={`${globalStyles.authTheme}`}>&#xe686;</span>
@@ -167,6 +171,6 @@ export default class ConfirmInfoOne extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [] } }) {
-  return { processEditDatas }
+function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [] }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
+  return { processEditDatas, projectDetailInfoData }
 }

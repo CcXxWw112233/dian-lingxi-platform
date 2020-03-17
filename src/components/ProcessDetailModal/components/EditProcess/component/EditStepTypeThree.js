@@ -128,7 +128,7 @@ export default class EditStepTypeThree extends Component {
     const { cc_type } = itemValue
     const { transPrincipalList = [], is_show_spread_arrow } = this.state
     return (
-      <div key={itemKey} style={{ display: 'flex', marginBottom: '45px' }}>
+      <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }}>
         <div className={indexStyles.line}></div>
         <div className={indexStyles.circle}> {itemKey + 1}</div>
         <div className={`${indexStyles.popover_card}`}>
@@ -169,7 +169,7 @@ export default class EditStepTypeThree extends Component {
                   ))}
                 </AvatarList>
                 <span className={indexStyles.content__principalList_info}>
-                  {`${transPrincipalList.length}位填写人`}
+                  {`${transPrincipalList.length}位抄送人`}
                 </span>
               </div>
               <div>
