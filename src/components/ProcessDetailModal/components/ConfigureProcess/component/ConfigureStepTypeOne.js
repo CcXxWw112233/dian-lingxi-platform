@@ -303,7 +303,7 @@ export default class ConfigureStepTypeOne extends Component {
   }
 
   render() {
-    const { itemValue, processEditDatas = [], itemKey } = this.props
+    const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [] } } = this.props
     const { forms = [] } = processEditDatas[itemKey]
     const { assignee_type, deadline_time_type, deadline_value, description, is_click_node_description } = itemValue
     return (
@@ -331,7 +331,7 @@ export default class ConfigureStepTypeOne extends Component {
         </div>
         {/* 更多选项 */}
         <div>
-          <MoreOptionsComponent itemKey={itemKey} itemValue={itemValue} updateConfigureProcess={this.updateConfigureProcess} />
+          <MoreOptionsComponent itemKey={itemKey} itemValue={itemValue} updateConfigureProcess={this.updateConfigureProcess} data={data}/>
         </div>
       </div>
     )

@@ -239,7 +239,7 @@ export default class ConfigureProcess extends Component {
         container = <ConfigureStepTypeTwo itemValue={itemValue} itemKey={itemKey} />
         break
       case '3': // 表示抄送
-        container = <ConfigureStepTypeThree itemValue={itemValue} itemKey={itemKey} />
+        // container = <ConfigureStepTypeThree itemValue={itemValue} itemKey={itemKey} />
         break
       default:
         container = <div></div>
@@ -318,7 +318,7 @@ export default class ConfigureProcess extends Component {
                     itemKey != '0' && (
                       <>
                         <Radio value="2">审批</Radio>
-                        <Radio value="3">抄送</Radio>
+                        {/* <Radio value="3">抄送</Radio> */}
                       </>
                     )
                   }
