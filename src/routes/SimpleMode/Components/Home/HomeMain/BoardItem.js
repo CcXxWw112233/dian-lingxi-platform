@@ -36,7 +36,7 @@ export default class BoardItem extends Component {
         ]
     }
 
-    onSelectBoard = (board_id) => {
+    onSelectBoard = (board_id, org_id) => {
         const { projectList, dispatch } = this.props
         const selectBoard = projectList.filter(item => item.board_id === board_id);
         const selectOrgId = getOrgIdByBoardId(board_id)
@@ -67,7 +67,13 @@ export default class BoardItem extends Component {
                 currentSelectedProjectOrgIdByBoardId: selectOrgId
             }
         })
-
+        dispatch({
+            type: 'simplemode/getBoardsTodoList',
+            payload: {
+                _organization_id: org_id,
+                board_ids: board_id
+            }
+        })
         selectBoardToSeeInfo({ board_id: selectBoard[0] && selectBoard[0].board_id, board_name: selectBoard[0] && selectBoard[0].board_name, dispatch })
 
     }
@@ -429,7 +435,7 @@ export default class BoardItem extends Component {
         return (
             <>
                 <div
-                    onClick={() => this.onSelectBoard(board_id)}
+                    onClick={() => this.onSelectBoard(board_id, org_id)}
                     className={`${!isAllOrg ? styles.board_area_middle_item : styles.board_area_middle_item2} ${simplemodeCurrentProject.board_id == board_id && styles.board_area_middle_item_choose}`} key={board_id}>
                     <div className={`${styles.board_area_middle_item_lf}`}></div>
                     <div className={`${styles.board_area_middle_item_middle} ${globalStyles.global_ellipsis}`}>

@@ -22,6 +22,18 @@ export default class MainBoard extends Component {
             type: 'workbench/getProjectList',
             payload: {}
         })
+        this.initGetTodoList()
+    }
+    // 初始化获取待办事项
+    initGetTodoList = () => {
+        const { dispatch, currentSelectOrganize } = this.props
+        dispatch({
+            type: 'simplemode/getBoardsTodoList',
+            payload: {
+                _organization_id: currentSelectOrganize.id || localStorage.getItem('OrganizationId'),
+                // board_ids: '0'
+            }
+        })
     }
     setAddProjectModalVisible = () => {
         this.setState({
@@ -92,6 +104,13 @@ export default class MainBoard extends Component {
                 }
             })
             selectBoardToSeeInfo({ board_id: '0', dispatch })
+            dispatch({
+                type: 'simplemode/getBoardsTodoList',
+                payload: {
+                    _organization_id: localStorage.getItem('OrganizationId'),
+                    // board_ids: '0'
+                }
+            })
         } else {
             //设置当前选中的项目
             if (local_selected_board.board_id) {
@@ -112,6 +131,13 @@ export default class MainBoard extends Component {
                     type: 'technological/updateDatas',
                     payload: {
                         currentSelectedProjectOrgIdByBoardId: local_selected_board.board_id
+                    }
+                })
+                dispatch({
+                    type: 'simplemode/getBoardsTodoList',
+                    payload: {
+                        _organization_id: local_selected_board.org_id,
+                        board_ids: local_selected_board.board_id
                     }
                 })
                 selectBoardToSeeInfo({ board_id: local_selected_board && local_selected_board.board_id, board_name: local_selected_board && local_selected_board.board_name, dispatch })
@@ -135,6 +161,13 @@ export default class MainBoard extends Component {
                     type: 'technological/updateDatas',
                     payload: {
                         currentSelectedProjectOrgIdByBoardId: projectList[0].board_id
+                    }
+                })
+                dispatch({
+                    type: 'simplemode/getBoardsTodoList',
+                    payload: {
+                        _organization_id: projectList[0].org_id,
+                        board_ids: projectList[0].board_id
                     }
                 })
                 selectBoardToSeeInfo({ board_id: projectList[0] && projectList[0].board_id, board_name: projectList[0] && projectList[0].board_name, dispatch })
@@ -237,7 +270,8 @@ function mapStateToProps(
             datas: {
                 currentUserOrganizes,
                 currentSelectedProjectOrgIdByBoardId,
-                userOrgPermissions
+                userOrgPermissions,
+                currentSelectOrganize
             }
         },
     }) {
@@ -249,6 +283,7 @@ function mapStateToProps(
         currentUserOrganizes,
         currentSelectedProjectOrgIdByBoardId,
         userOrgPermissions,
-        projectInitLoaded
+        projectInitLoaded,
+        currentSelectOrganize
     }
 }

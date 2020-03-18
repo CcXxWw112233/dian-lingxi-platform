@@ -3,18 +3,36 @@ import { connect } from 'dva'
 import BoardFeaturesItem from './BoardFeaturesItem'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import styles from './featurebox.less'
+import TaskDetailModal from '@/components/TaskDetailModal'
 
 @connect(mapStateToProps)
 export default class BoardFeatures extends Component {
+    // 修改任务
+    handleCard = ({ card_id, drawContent }) => {
+        const { dispatch, board_todo_list = [] } = this.props
+        const new_board_todo_list = [...board_todo_list]
+        const index = new_board_todo_list.findIndex(item => item.id == card_id)
+        if (index == -1) {
+            return
+        }
+        new_board_todo_list[index] = { ...new_board_todo_list[index], ...drawContent, name: drawContent.card_name }
+        dispatch({
+            type: 'simplemode/updateDatas',
+            payload: {
+                board_todo_list: new_board_todo_list
+            }
+        })
+    }
     render() {
-        const { board_statics_list = [] } = this.props
+        const { drawerVisible, board_todo_list = [] } = this.props
         return (
             <div>
                 {
-                    board_statics_list.length ? (
-                        board_statics_list.map(value => {
+                    board_todo_list.length ? (
+                        board_todo_list.map(value => {
+                            const { id } = value
                             return (
-                                <BoardFeaturesItem itemValue={value} />
+                                <BoardFeaturesItem key={id} itemValue={value} />
                             )
                         })
                     ) : (
@@ -25,6 +43,11 @@ export default class BoardFeatures extends Component {
                         )
                 }
                 <div className={styles.feature_item}></div>
+                <TaskDetailModal
+                    task_detail_modal_visible={drawerVisible}
+                    // setTaskDetailModalVisible={this.setDrawerVisibleClose} //关闭任务弹窗回调
+                    handleTaskDetailChange={this.handleCard}
+                />
             </div>
         )
     }
@@ -35,15 +58,22 @@ function mapStateToProps(
     {
         simplemode: {
             simplemodeCurrentProject,
-            board_statics_list
+            board_todo_list = []
+        },
+        workbench: {
+            datas: { projectList }
         },
         technological: {
             datas: { currentUserOrganizes, currentSelectOrganize = {} }
         },
+        publicTaskDetailModal: { drawerVisible }
     }) {
     return {
         simplemodeCurrentProject,
         currentUserOrganizes,
-        currentSelectOrganize
+        currentSelectOrganize,
+        board_todo_list,
+        drawerVisible,
+        projectList
     }
 }
