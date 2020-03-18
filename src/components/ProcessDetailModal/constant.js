@@ -281,7 +281,10 @@ export const processInfoMatch = {
       "deadline_value": "1",//完成期限值
       "assignee_type": "2",//审批人类型 1=任何人 2=指定人员
       "assignees": "1110064610620346368",//审批人 多个逗号隔开
-      "forms": [//表单数据
+      "cc_type": "1",//抄送人类型 1=设置抄送人 0=不设置抄送人
+      "cc_locking": "1",//抄送人锁定 1=锁定抄送人 0=不锁定抄送人
+      "recipients": "",//抄送人
+      "froms": [//表单数据
         {
           "field_type": "1",//类型 1=文本 2=选择 3=日期 4=表格 5=附件
           "title": "文本标题",//标题
@@ -338,18 +341,10 @@ export const processInfoMatch = {
       "deadline_type": "2",//期限类型 1=不限制时间 2=限制时间
       "deadline_time_type": "hour",//完成期限类型 hour = 时 day =天 month = 月
       "deadline_value": "10",//完成期限值
-      "assignees": "1110064610620346368,1110381102486392832"//审批人 多个逗号隔开
-    },
-    {
-      "node_type": "3",//流程节点类型 1=资料收集 2=审批 3=抄送
-      "name": "抄送节点",//流程节点名称
-      "description": "需要抄送了",//描述 备注
-      "deadline_type": "1",//期限类型 1=不限制时间 2=限制时间
-      "deadline_time_type": "",//完成期限类型 hour = 时 day =天 month = 月
-      "deadline_value": "",//完成期限值
-      "cc_type": "2",//抄送人类型 1=自动抄送 2=手动抄送
-      "recipients": "1110064610620346368,1110381102486392832",//抄送人 多个逗号隔开
-      "assignees": "1110064610620346368"//抄报人 多个逗号隔开
+      "assignees": "1110064610620346368,1110381102486392832",//审批人 多个逗号隔开
+      "cc_type": "1",//抄送人类型 1=设置抄送人 0=不设置抄送人
+      "cc_locking": "1",//抄送人锁定 1=锁定抄送人 0=不锁定抄送人
+      "recipients": ""//抄送人
     }
   ]
 }

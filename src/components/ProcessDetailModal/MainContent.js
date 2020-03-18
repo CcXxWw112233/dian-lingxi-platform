@@ -6,6 +6,7 @@ import NameChangeInput from '@/components/NameChangeInput'
 import ConfigureProcess from './components/ConfigureProcess'
 import EditProcess from './components/EditProcess'
 import ProcessStartConfirm from './components/ProcessStartConfirm'
+import BeginningProcess from './components/BeginningProcess'
 import ConfigureGuide from './ConfigureGuide'
 import { processEditDatasItemOneConstant, processEditDatasRecordsItemOneConstant } from './constant'
 import { Tooltip, Button } from 'antd'
@@ -290,6 +291,9 @@ export default class MainContent extends Component {
         break
       case '3':
         container = <ProcessStartConfirm itemKey={key} itemValue={value}/>
+        break
+      case '4':
+        container = <BeginningProcess itemKey={key} itemValue={value}/>
         break
       default:
         break;

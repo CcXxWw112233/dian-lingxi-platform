@@ -18,7 +18,7 @@ export default class ProcessStartConfirm extends Component {
         container = <ConfirmInfoTwo itemKey={key} itemValue={value} />
         break;
       case '3':
-        container = <ConfirmInfoThree itemKey={key} itemValue={value} />
+        // container = <ConfirmInfoThree itemKey={key} itemValue={value} />
         break;
       default:
         container = <div></div>

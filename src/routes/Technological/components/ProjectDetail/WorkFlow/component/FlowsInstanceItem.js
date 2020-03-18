@@ -1,11 +1,15 @@
 import React, { Component } from 'react'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import indexStyles from '../index.less'
-
 export default class FlowsInstanceItem extends Component {
+
+  handleProcessInfo = () => {
+    this.props.handleProcessInfo && this.props.handleProcessInfo()
+  }
+
   render() {
     return (
-      <div className={indexStyles.flowsInstanceItemContent}>
+      <div onClick={this.handleProcessInfo} className={indexStyles.flowsInstanceItemContent}>
         <div className={indexStyles.flowsInstanceItem_left}>
           <span style={{color: '#40A9FF'}} className={`${globalStyles.authTheme}`}>&#xe68c;</span>
           <span className={indexStyles.flow_instance_name}>流程实例名称</span>
