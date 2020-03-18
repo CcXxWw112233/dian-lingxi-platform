@@ -109,8 +109,8 @@ export default class MainContent extends Component {
     let ele = document.getElementById('suspensionFlowInstansNav')
     if (scrollTop >= 200) {
       ele.style.display = 'block'
-      ele.style.position = 'sticky'
-      ele.style.bottom = '815px'
+      ele.style.position = 'absolute'
+      ele.style.top = scrollTop + 'px'
       ele.style.zIndex = 1
     } else {
       ele.style.display = 'none'
@@ -122,7 +122,7 @@ export default class MainContent extends Component {
     e && e.stopPropagation()
     timer = setInterval(() => {
       let speedTop = 50
-      let currentTop =  document.getElementById('container_configureProcessOut').scrollTop
+      let currentTop = document.getElementById('container_configureProcessOut').scrollTop
       document.getElementById('container_configureProcessOut').scrollTop = currentTop - speedTop
       if (currentTop == 0) {
         clearInterval(timer)
@@ -208,7 +208,7 @@ export default class MainContent extends Component {
     let that = this
     const { processEditDatas = [], dispatch } = this.props
     const nodeObj = JSON.parse(JSON.stringify(processEditDatasItemOneConstant))
-    processEditDatas.length == '0' ?  processEditDatas.push(nodeObj) : processEditDatas.push({name: ''})
+    processEditDatas.length == '0' ? processEditDatas.push(nodeObj) : processEditDatas.push({ name: '' })
     // processEditDatas.push(nodeObj)
     new Promise((resolve) => {
       dispatch({
@@ -253,7 +253,7 @@ export default class MainContent extends Component {
                 <Tooltip getPopupContainer={() => document.getElementById('addProcessStep')} placement="topLeft" title="完成上一步骤才能添加">
                   <div><div className={`${indexStyles.add_normal}`}>
                     <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
-                    <ConfigureGuide visible={visible}/>
+                    <ConfigureGuide visible={visible} />
                   </div></div>
                 </Tooltip>
               )
@@ -269,31 +269,31 @@ export default class MainContent extends Component {
   }
 
   // 渲染展示的内容是什么 配置时 | 编辑时 | 启动时 | 进行时
-  renderDiffContentProcess = (value,key) => {
+  renderDiffContentProcess = (value, key) => {
     const { processPageFlagStep } = this.props
     const { is_edit, is_confirm } = value
     let container = (<div></div>)
     switch (processPageFlagStep) {
       case '1': // 表示进入配置界面
         if (is_edit == '1') {
-          container = <EditProcess  itemKey={key} itemValue={value}/>
+          container = <EditProcess itemKey={key} itemValue={value} />
         } else {
-          container = <ConfigureProcess  itemKey={key} itemValue={value}/>
+          container = <ConfigureProcess itemKey={key} itemValue={value} />
         }
         break;
       case '2':
         if (is_edit == '1') {
-          container = <EditProcess  itemKey={key} itemValue={value}/>
+          container = <EditProcess itemKey={key} itemValue={value} />
         } else {
-          container = <ConfigureProcess  itemKey={key} itemValue={value}/>
+          container = <ConfigureProcess itemKey={key} itemValue={value} />
         }
         // container = <EditProcess itemKey={key} itemValue={value}/>
         break
       case '3':
-        container = <ProcessStartConfirm itemKey={key} itemValue={value}/>
+        container = <ProcessStartConfirm itemKey={key} itemValue={value} />
         break
       case '4':
-        container = <BeginningProcess itemKey={key} itemValue={value}/>
+        container = <BeginningProcess itemKey={key} itemValue={value} />
         break
       default:
         break;
@@ -306,7 +306,7 @@ export default class MainContent extends Component {
     const { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep } = this.props
     let saveTempleteDisabled = currentFlowInstanceName == '' || processEditDatas[processEditDatas.length - 1].is_edit == '0' ? true : false
     return (
-      <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto' }} onScroll={this.onScroll}>
+      <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto' }} onScroll={this.onScroll} >
         <div id="container_configureTop" className={indexStyles.configure_top}>
           <div style={{ display: 'flex', position: 'relative' }}>
             <canvas id="time_graph_canvas" width={210} height={210} style={{ float: 'left' }}></canvas>
@@ -381,12 +381,12 @@ export default class MainContent extends Component {
                 }
               </div>
               {/* <div style={{ color: '#262626', fontSize: '20px' }}>{this.props.processInfo && this.props.processInfo.name}</div>
-              <div style={{
-                fontSize: '12px',
-                fontFamily: 'PingFangSC-Regular',
-                fontWeight: '400',
-                color: 'rgba(89,89,89,1)'
-              }}>{this.props.processInfo && this.props.processInfo.description ? delHtmlTag(this.props.processInfo && this.props.processInfo.description) : '暂无描述'}</div> */}
+          <div style={{
+            fontSize: '12px',
+            fontFamily: 'PingFangSC-Regular',
+            fontWeight: '400',
+            color: 'rgba(89,89,89,1)'
+          }}>{this.props.processInfo && this.props.processInfo.description ? delHtmlTag(this.props.processInfo && this.props.processInfo.description) : '暂无描述'}</div> */}
             </div>
           </div>
         </div>
@@ -394,17 +394,17 @@ export default class MainContent extends Component {
           {/* <ConfigureProcess {...this.props}/> */}
           {processEditDatas.map((value, key) => {
             return (
-              <>{this.renderDiffContentProcess(value,key)}</>
+              <>{this.renderDiffContentProcess(value, key)}</>
             )
           })}
           {(processPageFlagStep == '1' || processPageFlagStep == '2') && this.renderAddProcessStep()}
           {
             processEditDatas.length >= 2 && (
-              <div style={{display: 'flex',alignItems: 'center',justifyContent:'center', marginTop: '32px'}}>
-                <Button disabled={saveTempleteDisabled} style={{marginRight: '24px', height: '40px', color: '#1890FF'}}>开始流程</Button>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '32px' }}>
+                <Button disabled={saveTempleteDisabled} style={{ marginRight: '24px', height: '40px', color: '#1890FF' }}>开始流程</Button>
                 {
                   processPageFlagStep != '3' && (
-                    <Button disabled={saveTempleteDisabled} type="primary" style={{height: '40px'}}>保存模板</Button>
+                    <Button disabled={saveTempleteDisabled} type="primary" style={{ height: '40px' }}>保存模板</Button>
                   )
                 }
               </div>
@@ -414,10 +414,10 @@ export default class MainContent extends Component {
         <div id="suspensionFlowInstansNav" className={`${indexStyles.suspensionFlowInstansNav}`}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
-              <span style={{color: 'rgba(0,0,0,0.85)', fontSize: '16px', fontWeight: 500}}>投资论证流程 (1/2)</span>
+              <span style={{ color: 'rgba(0,0,0,0.85)', fontSize: '16px', fontWeight: 500 }}>投资论证流程 (1/2)</span>
             </div>
             <div>
-              <span onClick={this.handleBackToTop} style={{color: '#1890FF', cursor: 'pointer'}} className={globalStyles.authTheme}>&#xe63d; 回到顶部</span>
+              <span onClick={this.handleBackToTop} style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe63d; 回到顶部</span>
             </div>
           </div>
         </div>

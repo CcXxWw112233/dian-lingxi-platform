@@ -89,6 +89,41 @@
       height: 32px;
       border: 0 none;
     }
+    .file_item {
+      // width:842px;
+      height:38px;
+      background:rgba(0,0,0,0.02);
+      border-radius:4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 2px 8px;
+      margin-top: 8px;
+      .file_theme_code {
+        font-size: 24px;
+        color: #1890FF;
+        vertical-align: middle;
+      }
+      .file_name {
+        font-size:14px;
+        font-family:PingFangSC-Regular,PingFang SC;
+        font-weight:400;
+        color:rgba(0,0,0,0.65);
+        vertical-align: middle;
+        cursor: pointer;
+        margin: 0 8px;
+        display: flex;
+        align-items: center;
+      }
+      .del_name {
+        font-size:14px;
+        font-family:PingFangSC-Regular,PingFang SC;
+        font-weight:400;
+        color:rgba(245,34,45,1);
+        flex-shrink: 0;
+        cursor: pointer;
+      }
+    }
   }
   // 上传
   .upload_static {
