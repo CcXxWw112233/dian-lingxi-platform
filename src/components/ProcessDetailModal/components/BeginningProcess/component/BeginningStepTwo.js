@@ -4,9 +4,10 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '../../AvatarList'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { principalList } from '../../../constant'
-import { Button } from 'antd'
+import { Button, Popconfirm, Input } from 'antd'
 import { connect } from 'dva'
 
+const TextArea = Input.TextArea
 @connect(mapStateToProps)
 export default class BeginningStepTwo extends Component {
 
@@ -38,7 +39,7 @@ export default class BeginningStepTwo extends Component {
 
    // 编辑点击事件
    handleEnterConfigureProcess = (e) => {
-    e && e.stopPropagation()
+    // e && e.stopPropagation()
     // this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
     // this.props.dispatch({
     //   type: 'publicProcessDetailModal/updateDatas',
@@ -51,6 +52,14 @@ export default class BeginningStepTwo extends Component {
   // 理解成是否是有效的头像
   isValidAvatar = (avatarUrl = '') =>
     avatarUrl.includes('http://') || avatarUrl.includes('https://');
+  
+    renderPopConfirmContent = () => {
+      return (
+        <div className={indexStyles.popcontent}>
+          <TextArea placeholder="填写审批意见（选填）" className={indexStyles.c_area}/>
+        </div>
+      )
+    }
 
   renderEditDetailContent = () => {
     const { itemValue } = this.props
@@ -79,9 +88,11 @@ export default class BeginningStepTwo extends Component {
           <span className={globalStyles.authTheme}>&#xe616; 审批类型 : &nbsp;&nbsp;&nbsp;{diffType()}</span>
         </div>
         {/* 编辑按钮 */}
-        <div style={{ paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center'}}>
+        <div className={indexStyles.button_wrapper} style={{ paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center', position: 'relative'}}>
           <Button onClick={this.handleEnterConfigureProcess} style={{color: '#fff', background: '#FF7875', marginRight:'8px'}}>驳回</Button>
-          <Button onClick={this.handleEnterConfigureProcess} type="primary">通过</Button>
+          <Popconfirm className={indexStyles.confirm_wrapper} icon={<></>} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={this.renderPopConfirmContent()}>
+            <Button type="primary">通过</Button>
+          </Popconfirm>
         </div>
       </div>
     )
