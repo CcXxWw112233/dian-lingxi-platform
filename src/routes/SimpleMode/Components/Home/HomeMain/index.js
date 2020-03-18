@@ -11,8 +11,6 @@ export default class index extends Component {
         prop: PropTypes
     }
 
-
-
     render() {
         return (
             <div className={styles.main_wapper}>

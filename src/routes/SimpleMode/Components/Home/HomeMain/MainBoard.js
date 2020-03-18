@@ -199,10 +199,18 @@ export default class MainBoard extends Component {
 
     render() {
         const { addProjectModalVisible } = this.state
+        const { projectList = [], projectInitLoaded } = this.props
         return (
             <>
-                {/* {this.renderCreate()} */}
-                {this.renderBoardArea()}
+                {
+                    projectInitLoaded ? (
+                        projectList.length ? (
+                            this.renderBoardArea()
+                        ) : (
+                                this.renderCreate()
+                            )
+                    ) : ('')
+                }
                 <CreateProject
                     setAddProjectModalVisible={this.setAddProjectModalVisible}
                     addProjectModalVisible={addProjectModalVisible} //addProjectModalVisible
@@ -218,6 +226,7 @@ function mapStateToProps(
         workbench: {
             datas: {
                 projectList,
+                projectInitLoaded
             } },
         simplemode: {
             myWorkbenchBoxList,
@@ -239,6 +248,7 @@ function mapStateToProps(
         simplemodeCurrentProject,
         currentUserOrganizes,
         currentSelectedProjectOrgIdByBoardId,
-        userOrgPermissions
+        userOrgPermissions,
+        projectInitLoaded
     }
 }

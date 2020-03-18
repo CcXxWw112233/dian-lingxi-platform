@@ -7,19 +7,22 @@ import styles from './featurebox.less'
 @connect(mapStateToProps)
 export default class BoardFeatures extends Component {
     render() {
-        const data = [{}, {}, {}, {}, {}]
+        const { board_statics_list = [] } = this.props
         return (
             <div>
-                {/* <div className={`${globalStyles.authTheme} ${styles.nodataArea}`}>
-                    <div className={`${globalStyles.authTheme} ${styles.alarm}`}>&#xe6fb;</div>
-                    <div className={`${styles.title}`}>暂无待办事项</div>
-                </div> */}
                 {
-                    data.map(value => {
-                        return (
-                            <BoardFeaturesItem itemValue={value} />
+                    board_statics_list.length ? (
+                        board_statics_list.map(value => {
+                            return (
+                                <BoardFeaturesItem itemValue={value} />
+                            )
+                        })
+                    ) : (
+                            <div className={`${globalStyles.authTheme} ${styles.nodataArea}`}>
+                                <div className={`${globalStyles.authTheme} ${styles.alarm}`}>&#xe6fb;</div>
+                                <div className={`${styles.title}`}>暂无待办事项</div>
+                            </div>
                         )
-                    })
                 }
                 <div className={styles.feature_item}></div>
             </div>
@@ -31,7 +34,8 @@ export default class BoardFeatures extends Component {
 function mapStateToProps(
     {
         simplemode: {
-            simplemodeCurrentProject
+            simplemodeCurrentProject,
+            board_statics_list
         },
         technological: {
             datas: { currentUserOrganizes, currentSelectOrganize = {} }

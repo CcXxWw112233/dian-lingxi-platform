@@ -30,6 +30,8 @@ export default {
         guideCategoryList: [], //协作引导类别
         guideArticleList: [], //协作引导文章
         guideCategorySelectedKeys: {}, //选中的协作引导类别
+
+        board_statics_list: [], //用户地日程任务流程列表
     },
     subscriptions: {
         setup({ dispatch, history }) {

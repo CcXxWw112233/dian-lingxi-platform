@@ -169,8 +169,11 @@ class FeatureBox extends Component {
     */
   getIsDisabled = (item) => {
     const { rela_app_id, code } = item
-    const { currentUserOrganizes = [] } = this.props
+    const { currentUserOrganizes = [], projectList = [] } = this.props
     let isDisabled = true
+    if (!projectList.length) {
+      return true
+    }
     if ("regulations" == code || "maps" == code) {
       if (localStorage.getItem('OrganizationId') == '0') {
         let flag = false
@@ -282,9 +285,13 @@ class FeatureBox extends Component {
               return this.renderBoxItem(item, isPaymentUser);
             })
           }
-          <div className={indexStyles.myWorkbenchBox} onClick={this.addMyWorkBoxs} style={{ paddingTop: 10 }}>
-            <i className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_add}`} >&#xe67e;</i>
-          </div>
+          {
+            projectList.length ? (
+              <div className={indexStyles.myWorkbenchBox} onClick={this.addMyWorkBoxs} style={{ paddingTop: 10 }}>
+                <i className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_add}`} >&#xe67e;</i>
+              </div>
+            ) : ''
+          }
         </div>
 
       </div>
