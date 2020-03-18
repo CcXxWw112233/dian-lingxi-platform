@@ -4,6 +4,8 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import styles from './index.less'
 import MainBoard from './MainBoard'
 import FeatureBox from './FeatureBox'
+import BoardFeatures from './BoardFeatures'
+
 export default class index extends Component {
     static propTypes = {
         prop: PropTypes
@@ -20,6 +22,7 @@ export default class index extends Component {
 
                 <div className={styles.main_rt_Wapper}>
                     <FeatureBox setHomeVisible={this.props.setHomeVisible} />
+                    <BoardFeatures />
                 </div>
             </div>
         )
