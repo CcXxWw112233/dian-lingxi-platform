@@ -87,34 +87,59 @@
                 flex      : 1;
                 overflow-y: auto;
 
-                .board_area_middle_item {
-                    height     : 48px;
+                .board_area_middle_item,
+                .board_area_middle_item2 {
                     padding    : 0 12px 0 0;
-                    line-height: 48px;
                     cursor     : pointer;
                     display    : flex;
                     align-items: center;
+                    font-size  : 16px;
+
+                    p {
+                        margin: 0;
+                    }
 
                     .board_area_middle_item_lf {
-                        height          : 48px;
+                        height          : 100%;
                         width           : 4px;
                         background-color: #ffffff;
                         display         : none;
                     }
 
                     .board_area_middle_item_middle {
-                        max-width  : 200px;
-                        margin-left: 12px;
+                        // max-width  : 200px;
+                        margin-left   : 12px;
+                        flex          : 1;
                     }
 
                     .board_area_middle_item_rt {
                         margin-left: 8px;
                         height     : 20px;
                         line-height: 20px;
+                        display    : none;
+                        text-align : right;
+                        width      : 30px;
+                    }
+                }
+
+                .board_area_middle_item {
+                    line-height: 48px;
+                    height     : 48px;
+                }
+
+                .board_area_middle_item2 {
+                    height: 56px;
+
+
+
+                    p:nth-child(2) {
+                        font-size: 12px;
+                        color    : rgba(255, 255, 255, 0.65);
                     }
                 }
 
                 .board_area_middle_item:hover,
+                .board_area_middle_item2:hover,
                 .board_area_middle_item_choose {
 
                     .board_area_middle_item_middle {
@@ -122,8 +147,13 @@
                     }
                 }
 
-                .board_area_middle_item:hover {
+                .board_area_middle_item:hover,
+                .board_area_middle_item2:hover {
                     background: rgba(255, 255, 255, 0.05);
+
+                    .board_area_middle_item_rt {
+                        display: block;
+                    }
                 }
 
                 .board_area_middle_item_choose:hover {

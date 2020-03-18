@@ -3,7 +3,7 @@ import { PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, PROJEC
 import VisitControl from '../../../../Technological/components/VisitControl'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import styles from './index.less'
-import { setBoardIdStorage, checkIsHasPermissionInBoard, getOrgIdByBoardId, selectBoardToSeeInfo } from '../../../../../utils/businessFunction'
+import { setBoardIdStorage, checkIsHasPermissionInBoard, getOrgIdByBoardId, selectBoardToSeeInfo, getOrgNameWithOrgIdFilter } from '../../../../../utils/businessFunction'
 import { Dropdown, Menu, message } from 'antd'
 import { connect } from 'dva'
 import { toggleContentPrivilege, removeContentPrivilege, setContentPrivilege, addMenbersInProject } from '../../../../../services/technological/project'
@@ -423,16 +423,22 @@ export default class BoardItem extends Component {
         )
     }
     render() {
-        const { itemValue: { board_id, board_name, org_id }, simplemodeCurrentProject } = this.props
+        const { itemValue: { board_id, board_name, org_id }, simplemodeCurrentProject, currentUserOrganizes = [], currentSelectOrganize = {} } = this.props
         const { board_info_visible, show_add_menber_visible } = this.state
+        const isAllOrg = !currentSelectOrganize.id || currentSelectOrganize.id == '0'
         return (
             <>
                 <div
                     onClick={() => this.onSelectBoard(board_id)}
-                    className={`${styles.board_area_middle_item} ${simplemodeCurrentProject.board_id == board_id && styles.board_area_middle_item_choose}`} key={board_id}>
+                    className={`${!isAllOrg ? styles.board_area_middle_item : styles.board_area_middle_item2} ${simplemodeCurrentProject.board_id == board_id && styles.board_area_middle_item_choose}`} key={board_id}>
                     <div className={`${styles.board_area_middle_item_lf}`}></div>
                     <div className={`${styles.board_area_middle_item_middle} ${globalStyles.global_ellipsis}`}>
-                        {board_name}
+                        <p>{board_name}</p>
+                        {
+                            isAllOrg && (
+                                <p>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</p>
+                            )
+                        }
                     </div>
                     <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={this.renderMenuOperateListName({ board_id })}>
                         <div className={`${styles.board_area_middle_item_rt} ${globalStyles.authTheme}`} onClick={(e) => e.stopPropagation()}>&#xe66f;</div>
@@ -468,6 +474,9 @@ function mapStateToProps(
         simplemode: {
             simplemodeCurrentProject
         },
+        technological: {
+            datas: { currentUserOrganizes, currentSelectOrganize = {} }
+        },
         projectDetail: {
             datas: {
                 getProjectDetailInfoData = {}
@@ -478,5 +487,7 @@ function mapStateToProps(
         projectList,
         simplemodeCurrentProject,
         getProjectDetailInfoData,
+        currentUserOrganizes,
+        currentSelectOrganize
     }
 }
