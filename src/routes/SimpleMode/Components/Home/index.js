@@ -50,7 +50,7 @@ class Home extends Component {
 
   handleEscKeypress = (e) => {
     // console.log('esc',e.which);
-    
+
     if (e.which == 27) {
       const { workbenchBoxSelectVisiable } = this.state;
       if (workbenchBoxSelectVisiable) {
@@ -91,7 +91,8 @@ class Home extends Component {
 
     return (
       <div>
-        <HomeMain />
+        {myWorkbenchBoxsVisiable && <HomeMain {...this.state} setHomeVisible={this.setHomeVisible} />}
+
         {/* {myWorkbenchBoxsVisiable && <MyWorkbenchBoxs {...this.state} setHomeVisible={this.setHomeVisible} />} */}
 
         {wallpaperSelectVisiable && <WallpaperSelect {...this.state} setHomeVisible={this.setHomeVisible} />}

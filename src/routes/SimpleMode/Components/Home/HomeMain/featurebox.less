@@ -1,0 +1,61 @@
+.mainContentWapper {
+    margin       : 0 auto;
+    height       : 0 auto;
+    padding      : 32px;
+    border-radius: 16px;
+    filter       : blur(0px);
+}
+
+.myWorkbenchBoxWapper {
+    display  : flex;
+    flex-wrap: wrap;
+
+    .myWorkbenchBox {
+        width            : 120px;
+        height           : 120px;
+        // background    : rgba(255, 255, 255, 0.2);
+        border-radius    : 6px;
+        margin-right     : 24px;
+        margin-top       : 24px;
+        padding-top      : 18px;
+        vertical-align   : middle;
+        text-align       : center;
+        cursor           : pointer;
+
+        .myWorkbenchBox_icon {
+            font-style : 'normal';
+            font-size  : 48px;
+            color      : rgba(255, 255, 255, 1);
+            line-height: 48px;
+            margin     : 0px !important;
+        }
+
+        .myWorkbenchBox_title {
+            font-size  : 16px;
+            font-weight: 100;
+            color      : rgba(255, 255, 255, 1);
+            line-height: 24px;
+            margin     : 4px 0 0 0 !important;
+        }
+
+        .myWorkbenchBox_add {
+            font-style : 'normal';
+            font-size  : 48px;
+            color      : rgba(255, 255, 255, 1);
+            line-height: 96px !important;
+        }
+    }
+
+    .myWorkbenchBox:hover {
+        background: rgba(255, 255, 255, 0.25) !important;
+    }
+
+    .myWorkbenchBox:nth-child(4n) {
+        margin-right: 0
+    }
+
+    .myWorkbenchBox[disabled] {
+        opacity: 0.5;
+        cursor : not-allowed;
+    }
+}
