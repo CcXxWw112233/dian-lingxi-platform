@@ -82,11 +82,14 @@ export default class BoardFeaturesItem extends Component {
         }
         return container
     }
-    filterTitle = ({ rela_type }) => {
+    filterTitle = ({ rela_type, parent_id }) => {
         let container = ''
         switch (rela_type) {
             case '1': //任务
                 container = '任务'
+                if (parent_id) {
+                    container = '子任务'
+                }
                 break
             case '2': //日程
                 container = '日程'
@@ -123,20 +126,21 @@ export default class BoardFeaturesItem extends Component {
     render() {
         const { currentSelectOrganize = {}, currentUserOrganizes } = this.props
         const isAllOrg = !currentSelectOrganize.id || currentSelectOrganize.id == '0'
-        const { itemValue: { id, name, rela_type, start_time, due_time, org_id, is_realize } } = this.props
+        const { itemValue: { id, name, rela_type, start_time, due_time, org_id, is_realize, parent_id, parent_name } } = this.props
 
         return (
             <div className={`${isAllOrg ? styles.feature_item2 : styles.feature_item}`} onClick={this.itemClick}>
                 <div className={`${styles.feature_item_lf}`}>
-                    {/* <span className={`${globalStyles.authTheme}`}>&#xe66a;</span> */}
                     {this.filterIcon({ rela_type })}
-                    <span>{this.filterTitle({ rela_type })}</span>
+                    <span>{this.filterTitle({ rela_type, parent_id })}</span>
                 </div>
                 <div className={`${styles.feature_item_middle}  ${globalStyles.global_ellipsis}`}>
                     <div className={`${styles.feature_item_middle_name}  ${globalStyles.global_ellipsis}`}>
-                        {/* <span className={`${globalStyles.authTheme}`}> &#xe661;</span> */}
                         {this.filterIcon2({ rela_type, is_realize })}
-                        <span className={`${globalStyles.global_ellipsis}`}>{name}</span>
+                        <span>
+                            {name}
+                        </span>
+                        <span>{(parent_id && parent_name) && `${parent_name}`}</span>
                     </div>
                     {
                         isAllOrg && (
