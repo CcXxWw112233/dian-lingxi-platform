@@ -123,14 +123,34 @@ export default class BoardFeaturesItem extends Component {
             }
         }
     }
+    renderBelong = () => {
+        const { currentSelectOrganize = {}, currentUserOrganizes, simplemodeCurrentProject = {}, itemValue = {} } = this.props
+        let { board_name, org_id } = itemValue
+        const isAllOrg = !currentSelectOrganize.id || currentSelectOrganize.id == '0'
+        const isAllBoard = !simplemodeCurrentProject.board_id || simplemodeCurrentProject.board_id == '0'
+        let org_name = ''
+        if (isAllBoard) {
+            board_name = `#${board_name}`
+        } else {
+            return ``
+        }
+        if (isAllOrg) {
+            org_name = `(${getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)})`
+        } else {
+            org_name = ''
+        }
+        return `${board_name} ${org_name}`
+    }
     render() {
         const { currentSelectOrganize = {}, currentUserOrganizes, simplemodeCurrentProject = {} } = this.props
         const isAllOrg = !currentSelectOrganize.id || currentSelectOrganize.id == '0'
         const isAllBoard = !simplemodeCurrentProject.board_id || simplemodeCurrentProject.board_id == '0'
         const { itemValue: { id, name, rela_type, start_time, due_time, org_id, is_realize, parent_id, parent_name, board_name } } = this.props
         const use_time = rela_type == '2' ? start_time : due_time
+        const belong_name = this.renderBelong()
+        console.log('belong_name', belong_name, !!belong_name)
         return (
-            <div className={`${isAllOrg ? styles.feature_item2 : styles.feature_item}`} onClick={this.itemClick}>
+            <div className={`${!!belong_name ? styles.feature_item2 : styles.feature_item}`} onClick={this.itemClick}>
                 <div className={`${styles.feature_item_lf}`}>
                     {this.filterIcon({ rela_type })}
                     <span>{this.filterTitle({ rela_type, parent_id })}</span>
@@ -143,26 +163,19 @@ export default class BoardFeaturesItem extends Component {
                         </span>
                         <span>{(parent_id && parent_name) && `${parent_name}`}</span>
                     </div>
-                    {
+                    {/* {
                         isAllOrg && (
                             <div className={`${styles.feature_item_middle_orgname}  ${globalStyles.global_ellipsis}`}>
                                 #{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
                             </div>
                         )
-                    }
-                    {/* <div className={`${styles.feature_item_middle_orgname}  ${globalStyles.global_ellipsis}`}>
-                        <div className={`${globalStyles.global_ellipsis}`}>
-                            {
-                                isAllOrg ?
-                                    `(${getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)})` : ''
-                            }
+                    } */}
+                    {!!belong_name && (
+                        <div className={`${styles.feature_item_middle_orgname} ${globalStyles.global_ellipsis}`} title={belong_name}>
+                            {belong_name}
                         </div>
-                        <div className={`${globalStyles.global_ellipsis}`}>
-                            {
-                                isAllBoard ? board_name : ''
-                            }
-                        </div>
-                    </div> */}
+                    )}
+
                 </div>
                 <div className={`${styles.feature_item_rt}`} style={{ color: timeColor(use_time) }}> {this.renderTime().time} {this.renderTime().dec}</div>
             </div>
