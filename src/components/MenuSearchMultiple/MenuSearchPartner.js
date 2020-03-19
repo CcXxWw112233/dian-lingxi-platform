@@ -87,11 +87,11 @@ export default class MenuSearchPartner extends React.Component {
 		// 	}
 		// }
 		let arr = []
-    if (!!keyWord) {
-      arr = list.filter((item, index) => list[index][searchName].indexOf(keyWord) !== -1)
-    } else {
-      arr = list
-    }
+		if (!!keyWord) {
+			arr = list.filter((item, index) => list[index][searchName].indexOf(keyWord) !== -1)
+		} else {
+			arr = list
+		}
 
 		//添加任务执行人后往前插入
 		const { selectedKeys } = this.state
@@ -128,128 +128,144 @@ export default class MenuSearchPartner extends React.Component {
 		const temp_ids = data.users.split(",")
 		const invitation_org = getOrgIdByBoardId(board_id) || localStorage.getItem('OrganizationId')
 
-        organizationInviteWebJoin({
-            _organization_id: invitation_org,
-            type: invitationType,
-            users: temp_ids
-        }).then(res => {
-            if (res && res.code === '0') {
-                const { users, role_id } = res.data
-                commInviteWebJoin({
-                    id: invitationId,
-                    role_id: role_id,
-                    type: invitationType,
-                    users: users,
-                    rela_condition: rela_Condition,
-                }).then(res => {
-                    if (isApiResponseOk(res)) {
-                        this.props.inviteOthersToBoardCalback && this.props.inviteOthersToBoardCalback({ users })
-                        if (invitationType === '4') {
-                            dispatch({
-                                type: 'projectDetail/projectDetailInfo',
-                                payload: {
-                                    id: board_id
-                                }
-                            })
-                            // dispatch({
-                            //     type: 'projectDetailTask/getCardDetail',
-                            //     payload: {
-                            //         id: invitationId
-                            //     }
-                            // })
-                            dispatch({
-                                type: 'workbenchTaskDetail/projectDetailInfo',
-                                payload: {
-                                    id: board_id
-                                }
-                            })
-                            // dispatch({
-                            //     type: 'workbenchTaskDetail/getCardDetail',
-                            //     payload: {
-                            //         id: board_id,
-                            //         board_id: board_id,
-                            //         calback: function (data) {
-                            //             dispatch({
-                            //                 type: 'workbenchPublicDatas/getRelationsSelectionPre',
-                            //                 payload: {
-                            //                     _organization_id: invitation_org
-                            //                 }
-                            //             })
-                            //         }
-                            //     }
-                            // })
-                        } else if (invitationType === '1') {// 邀请成员直接加入项目
-                            dispatch({
-                                type: 'projectDetail/projectDetailInfo',
-                                payload: {
-                                    id: board_id
-                                }
-                            })
-                            dispatch({
-                                type: 'workbenchTaskDetail/projectDetailInfo',
-                                payload: {
-                                    id: board_id
-                                }
-                            })
-                        } 
-                        else if (invitationType === '7') {
-                            dispatch({
-                                type: 'projectDetail/projectDetailInfo',
-                                payload: {
-                                    id: invitationId
-                                }
-                            })
-                        } else if (invitationType === '8') {
-                            dispatch({
-                                type: 'projectDetail/projectDetailInfo',
-                                payload: {
-                                    id: board_id
-                                }
-                            })
-                            dispatch({
-                                type: 'projectDetailProcess/getProcessInfo',
-                                payload: {
-                                    id: invitationId
-                                }
-                            })
-                            dispatch({
-                                type: 'workbenchDetailProcess/getProcessInfo',
-                                payload: {
-                                    id: board_id
-                                }
-                            })
-                        }
-                    } else {
-                        message.warn(res.message, MESSAGE_DURATION_TIME)
-                    }
-                })
-            } else {
-                message.warn(res.message, MESSAGE_DURATION_TIME)
-            }
-        })
-    }
-    setShowAddMenberModalVisibile() {
-        if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)) {
-            message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-            return false
-        }
-        this.setState({
-            ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
-        })
-    }
+		organizationInviteWebJoin({
+			_organization_id: invitation_org,
+			type: invitationType,
+			users: temp_ids
+		}).then(res => {
+			if (res && res.code === '0') {
+				const { users, role_id } = res.data
+				commInviteWebJoin({
+					id: invitationId,
+					role_id: role_id,
+					type: invitationType,
+					users: users,
+					rela_condition: rela_Condition,
+				}).then(res => {
+					if (isApiResponseOk(res)) {
+						this.props.inviteOthersToBoardCalback && this.props.inviteOthersToBoardCalback({ users })
+						if (invitationType === '4') {
+							dispatch({
+								type: 'projectDetail/projectDetailInfo',
+								payload: {
+									id: board_id
+								}
+							})
+							// dispatch({
+							//     type: 'projectDetailTask/getCardDetail',
+							//     payload: {
+							//         id: invitationId
+							//     }
+							// })
+							dispatch({
+								type: 'workbenchTaskDetail/projectDetailInfo',
+								payload: {
+									id: board_id
+								}
+							})
+							// dispatch({
+							//     type: 'workbenchTaskDetail/getCardDetail',
+							//     payload: {
+							//         id: board_id,
+							//         board_id: board_id,
+							//         calback: function (data) {
+							//             dispatch({
+							//                 type: 'workbenchPublicDatas/getRelationsSelectionPre',
+							//                 payload: {
+							//                     _organization_id: invitation_org
+							//                 }
+							//             })
+							//         }
+							//     }
+							// })
+						} else if (invitationType === '1') {// 邀请成员直接加入项目
+							dispatch({
+								type: 'projectDetail/projectDetailInfo',
+								payload: {
+									id: board_id
+								}
+							})
+							dispatch({
+								type: 'workbenchTaskDetail/projectDetailInfo',
+								payload: {
+									id: board_id
+								}
+							})
+						}
+						else if (invitationType === '7') {
+							dispatch({
+								type: 'projectDetail/projectDetailInfo',
+								payload: {
+									id: invitationId
+								}
+							})
+						} else if (invitationType === '8') {
+							dispatch({
+								type: 'projectDetail/projectDetailInfo',
+								payload: {
+									id: board_id
+								}
+							})
+							dispatch({
+								type: 'projectDetailProcess/getProcessInfo',
+								payload: {
+									id: invitationId
+								}
+							})
+							dispatch({
+								type: 'workbenchDetailProcess/getProcessInfo',
+								payload: {
+									id: board_id
+								}
+							})
+						}
+					} else {
+						message.warn(res.message, MESSAGE_DURATION_TIME)
+					}
+				})
+			} else {
+				message.warn(res.message, MESSAGE_DURATION_TIME)
+			}
+		})
+	}
+	setShowAddMenberModalVisibile() {
+		if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)) {
+			message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+			return false
+		}
+		this.setState({
+			ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
+		})
+	}
 
 	// 点击全体成员的回调
 	handleSelectedAllBtn = () => {
-		const { is_selected_all } = this.props
-		const { selectedKeys = [] } = this.state
-		let type = !is_selected_all ? 'add' : 'remove'
-		this.props.dispatch({
-			type: 'publicTaskDetailModal/updateDatas',
-			payload: {
-				is_selected_all: !is_selected_all
+		const { select_all_type } = this.props
+		if (select_all_type == '0') {
+			const { resultArr = [], selectedKeys } = this.state
+			let arr = resultArr.map(item => item.id || item.user_id)
+			if (selectedKeys.length == resultArr.length) { //长度相等时代表取消
+				arr = []
 			}
-		})
-		this.props.handleSelectedAllBtn && this.props.handleSelectedAllBtn({ selectedKeys, type })
+			this.setState({
+				selectedKeys: arr
+			}, () => {
+				this.props.chirldrenTaskChargeChange && this.props.chirldrenTaskChargeChange({ selectedKeys: arr })
+			})
+			// debugger
+			return
+		} else {
+			// const { is_selected_all } = this.props
+			// const { selectedKeys = [] } = this.state
+			// let type = !is_selected_all ? 'add' : 'remove'
+			// this.props.dispatch({
+			// 	type: 'publicTaskDetailModal/updateDatas',
+			// 	payload: {
+			// 		is_selected_all: !is_selected_all
+			// 	}
+			// })
+			// this.props.handleSelectedAllBtn && this.props.handleSelectedAllBtn({ selectedKeys, type })
+		}
 	}
 
 	// 当自定义图标显示的时候的回调
@@ -305,7 +321,8 @@ export default class MenuSearchPartner extends React.Component {
 			is_selected_all,
 			not_show_wechat_invite,
 			board_id,
-			user_defined_icon
+			user_defined_icon,
+			show_select_all
 		} = this.props
 		// const { Inputlaceholder = '搜索', searchName, menuSearchSingleSpinning, keyCode, invitationType, invitationId, rela_Condition, invitationOrg, board_id } = this.props
 
@@ -337,22 +354,29 @@ export default class MenuSearchPartner extends React.Component {
 								</div>
 							)
 						}
+						{
+							show_select_all && (
+								<div style={{ padding: 0, margin: 0, height: 40, lineHeight: '40px', cursor: 'pointer' }} className={indexStyles.menuItem} onClick={this.handleSelectedAllBtn}>
+									<div style={{ display: 'flex', alignItems: 'center', padding: '0 12px', justifyContent: 'space-between' }} >
+										<div style={{ display: 'flex', alignItems: 'center' }}>
+											<div style={{ width: '28px', height: '28px', backgroundColor: 'rgba(230,247,255,1)', borderRadius: '50%', textAlign: 'center', marginRight: '8px' }}>
+												<span style={{ fontSize: '14px', color: '#1890FF', lineHeight: '28px', display: 'block' }} className={`${globalStyles.authTheme}`}>&#xe7af;</span>
+											</div>
+											<span>
+												{selectedKeys.length == resultArr.length ? '取消全选' : '项目全体成员'}
+											</span>
+										</div>
+										<div
+											style={{ display: selectedKeys.length == resultArr.length ? 'block' : 'none' }}
+										>
+											<Icon type="check" />
+										</div>
+									</div>
+								</div>
+							)
+						}
 						{/* 项目全体成员 */}
-						{/* <div style={{ padding: 0, margin: 0, height: 40, lineHeight: '40px', cursor: 'pointer' }} onClick={this.handleSelectedAllBtn}>
-                            <div style={{ display: 'flex', alignItems: 'center', padding: '6px 12px', justifyContent: 'space-between' }} >
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <div style={{ width: '28px', height: '28px', backgroundColor: 'rgba(230,247,255,1)', borderRadius: '50%', textAlign: 'center', marginRight: '8px' }}>
-                                        <span style={{ fontSize: '14px', color: '#1890FF', lineHeight: '28px', display: 'block' }} className={`${globalStyles.authTheme}`}>&#xe7af;</span>
-                                    </div>
-                                    <span>项目全体成员</span>
-                                </div>
-                                <div
-																	style={{ display: is_selected_all ? 'block' : 'none' }}
-																	>
-                                    <Icon type="check" />
-                                </div>
-                            </div>
-                        </div> */}
+
 						{
 							resultArr.map((value, key) => {
 								const { avatar, name, user_name, user_id } = value
@@ -418,20 +442,21 @@ MenuSearchPartner.deafultProps = {
 	inviteOthersToBoardCalback: function () { //邀请进项目后的回调
 
 	},
+	show_select_all: false, //默认不显示邀请全部
+	select_all_type: '0', //0默认抛出全部key, 1争对任务设置负责人，只能单点一个就调用接口设置或删除。
 }
 
 
 function mapStateToProps({
 	technological,
 	technological: {
-	  datas: {
-		userBoardPermissions
-	  }
+		datas: {
+			userBoardPermissions
+		}
 	},
-	publicTaskDetailModal: { is_selected_all } 
-  }) {
+}) {
 	return {
-		technological,userBoardPermissions,is_selected_all
+		technological, userBoardPermissions
 	}
-  }
-  
+}
+
