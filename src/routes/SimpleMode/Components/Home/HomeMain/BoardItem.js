@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, PROJECT_TEAM_BOARD_EDIT } from '../../../../../globalset/js/constant'
+import { PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, PROJECT_TEAM_BOARD_EDIT, MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN } from '../../../../../globalset/js/constant'
 import VisitControl from '../../../../Technological/components/VisitControl'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import styles from './index.less'
