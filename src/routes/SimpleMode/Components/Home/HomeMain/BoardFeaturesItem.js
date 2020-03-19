@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'dva'
 import styles from './featurebox.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { timestampToTimeNormal } from '../../../../../utils/util'
+import { timestampToTimeNormal, timeColor } from '../../../../../utils/util'
 import { getOrgNameWithOrgIdFilter } from '../../../../../utils/businessFunction'
 
 @connect(mapStateToProps)
@@ -127,7 +127,7 @@ export default class BoardFeaturesItem extends Component {
         const { currentSelectOrganize = {}, currentUserOrganizes } = this.props
         const isAllOrg = !currentSelectOrganize.id || currentSelectOrganize.id == '0'
         const { itemValue: { id, name, rela_type, start_time, due_time, org_id, is_realize, parent_id, parent_name } } = this.props
-
+        const use_time = rela_type == '2' ? start_time : due_time
         return (
             <div className={`${isAllOrg ? styles.feature_item2 : styles.feature_item}`} onClick={this.itemClick}>
                 <div className={`${styles.feature_item_lf}`}>
@@ -150,7 +150,7 @@ export default class BoardFeaturesItem extends Component {
                         )
                     }
                 </div>
-                <div className={`${styles.feature_item_rt}`}> {this.renderTime().time} {this.renderTime().dec}</div>
+                <div className={`${styles.feature_item_rt}`} style={{ color: timeColor(use_time) }}> {this.renderTime().time} {this.renderTime().dec}</div>
             </div>
         )
     }

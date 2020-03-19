@@ -398,7 +398,7 @@ export const timeColor = (timestamp) => {
   const today_last_time = (new Date(today_year, today_month, today_day, '23', '59', '59')).getTime()
   let color = ''
   if (new_timestamp < today_timestamp) { //逾期
-    color = '#F5222D'
+    color = '#FF7875'
   } else {
     if (new_timestamp < today_last_time) { //此刻和今天最后一秒之间
       color = '#FAAD14'
