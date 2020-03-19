@@ -428,3 +428,30 @@ export const principalList = [
   }
 
 ]
+
+export const approvePersonnelSuggestion = [
+  {
+      "type": "1",
+      "user_id": "1195311878813913088",
+      "name": "一只加菲吖",
+      "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-11-22/293c32e5af584288a238cc58d1c6a66f.jpg",
+      "suggestion": "符合报销流程",
+      "create_time": "1584582196000",
+  },
+  {
+      "type": "2",
+      "user_id": "1207501040593801216",
+      "name": "凤烛红纱余生伴君老,伊人红妆不负君之邀,纤手眉间点朱砂,月老掌心种情花,良辰韶华为君嫁,喜帖胭脂伴唇画,珠帘绣幕映桃花,白马纵年少,凤烛红纱余生伴君老",
+      "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2020-01-09/43f14b585cff4de2ae18d23555e72192.jpeg",
+      "suggestion": "资料不完整",
+      "create_time": "1584582196000",
+  },
+  {   
+      "type": "1",
+      "user_id": "1184398454126940160",
+      "name": "13388889999",
+      "avatar": "",
+      "suggestion": "",
+      "create_time": "1584582196000",
+  }
+]

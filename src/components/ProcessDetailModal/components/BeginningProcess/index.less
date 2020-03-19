@@ -241,5 +241,73 @@
     background:rgba(255,255,255,1);
     border-radius:4px;
     border:1px solid rgba(0,0,0,0.15);
+    box-shadow: none;
   }
+}
+
+// 审批人意见以及驳回内容
+.appListWrapper {
+  display: flex;
+  // padding: 0 14px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-bottom: 8px;
+  .app_left {
+    display: flex;
+    // align-items: center;
+    .defaut_avatar {
+      width: 32px;
+      height: 32px;
+      background: #e8e8e8;
+      border-radius: 32px;
+    }
+    .approv_pass {
+      display: inline-block;
+      width:36px;
+      height:20px;
+      background:rgba(230,247,255,1);
+      border-radius:4px;
+      color: #1890FF;
+      font-size: 12px;
+      text-align: center;
+      line-height: 20px;
+      margin-left: 14px;
+    }
+    .approve_reject {
+      display: inline-block;
+      width:36px;
+      height:20px;
+      background:rgba(255,204,199,1);
+      border-radius:4px;
+      color: #F5222D;
+      font-size: 12px;
+      text-align: center;
+      line-height: 20px;
+      margin-left: 14px;
+    }
+    .approve_userIcon {
+      position: absolute;
+      top: -8px;
+      right: -4px;
+      // opacity: 1;
+      color: #1890FF;
+      font-size: 14px;
+    }
+    .approve_reject_userIcon {
+      position: absolute;
+      top: -8px;
+      right: -4px;
+      // opacity: 1;
+      color: #FF4D4F;
+      font-size: 14px;
+    }
+  }
+  .app_right {
+    flex-shrink: 0;
+    margin-left: 8px;
+  }
+  // .approve_user:hover .approve_userIcon{
+  //   opacity: 1;
+  // }
 }
