@@ -148,7 +148,7 @@ export default class BoardFeaturesItem extends Component {
         const { itemValue: { id, name, rela_type, start_time, due_time, org_id, is_realize, parent_id, parent_name, board_name } } = this.props
         const use_time = rela_type == '2' ? start_time : due_time
         const belong_name = this.renderBelong()
-        console.log('belong_name', belong_name, !!belong_name)
+        // console.log('belong_name', belong_name, !!belong_name)
         return (
             <div className={`${!!belong_name ? styles.feature_item2 : styles.feature_item}`} onClick={this.itemClick}>
                 <div className={`${styles.feature_item_lf}`}>
