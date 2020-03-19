@@ -6,7 +6,7 @@
     /* 默认模板列表的样式 S */
     .processDefautOut_top {
       height: 280px;
-      background: pink;
+      // background: pink;
       .title {
         width:54px;
         height:26px;
@@ -29,16 +29,22 @@
           display: inline-block;
           margin-right: 88px;
           .add_icon {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
             width:106px;
             height:136px;
             background:rgba(255,255,255,1);
+            // background: palegoldenrod;
             border:1px solid rgba(0,0,0,0.15);
-            text-align: center;
-            line-height: 106px;
-            font-size: 50px;
-            margin-bottom: 10px;
+            box-shadow:0px 1px 4px 0px rgba(0,0,0,0.15);
+            // margin-bottom: 10px;
+            position: relative;
             cursor: pointer;
+            // margin-left: 25px;
+            margin: 0 auto 10px;
+            flex-direction: column;
           }
           .add_name {
             display: block;
@@ -58,17 +64,26 @@
             width: 154px;
             margin-right: 88px;
             .tem_item {
-              display: block;
+              // display: block;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              text-align: center;
               width:106px;
               height:136px;
-              // background:rgba(255,255,255,1);
-              background: palegoldenrod;
+              background:rgba(255,255,255,1);
+              // background: palegoldenrod;
               border:1px solid rgba(0,0,0,0.15);
+              box-shadow:0px 1px 4px 0px rgba(0,0,0,0.15);
               // margin-bottom: 10px;
               position: relative;
               cursor: pointer;
               // margin-left: 25px;
               margin: 0 auto 10px;
+              .tem_icon {
+                color: #91D5FF;
+                font-size: 24px;
+              }
             }
             .tem_item:hover .hover_icon_display .common_authority_hover {
               // display: block;
@@ -79,6 +94,10 @@
               // display: flex;
               // flex-direction: column;
               // display: none;
+              z-index: 1;
+              position: absolute;
+              left: 0;
+              top: 0;
               transition: all 1s linear;
               .common_authority_hover {// 有权限的人显示的样式
                 opacity: 0;
@@ -121,13 +140,22 @@
               display: block;
               text-align: center;
               min-width:90px;
-              height:20px;
-              background:rgba(24,144,255,1);
+              height:40px;
+              // background:rgba(24,144,255,1);
               border-radius:4px;
-              max-width: 154px;
+              // max-width: 154px;
+              max-width: 90px;
               overflow: hidden;
-              white-space: nowrap;
+              white-space: normal;
               text-overflow: ellipsis;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              display: -webkit-box;
+              /* autoprefixer: off */
+              -webkit-box-orient: vertical;
+               /* autoprefixer: on */
+              -webkit-line-clamp: 2;
+              word-break: break-all;
             }
           }
           
@@ -139,7 +167,8 @@
     /* 流程列表样式 -- PagingnationContent -- S */
     .processDefautOut_bottom {
       // padding: 16px 0;
-      background: thistle;
+      // background: thistle;
+      margin: 0 -20px 0 -40px;
       min-height: 1000px;
       .pagingnationContent {
         .flowsInstanceItemContent {
@@ -147,7 +176,9 @@
           height:46px;
           line-height: 46px;
           // background:rgba(255,255,255,1);
+          padding: 0 46px 0 50px;
           cursor: pointer;
+          border-radius: 4px;
           .flowsInstanceItem_left {
             flex: 1;
             .flow_instance_name {
@@ -183,12 +214,27 @@
            } 
           }
         }
+        .nodata {
+          display: flex;
+          align-items: center;
+          font-size: 16px;
+          color: #8c8c8c;
+          .nodata_inner{
+            margin: 0 auto;
+          }
+          img{
+            width: 75px;
+            height: 70px;
+          }
+          text-align: center;
+          margin-top: 12px;
+        }
       }
       .pagingnationContent .flowsInstanceItemContent:nth-of-type(odd) {
         background-color: #fff;
       }
       .pagingnationContent .flowsInstanceItemContent:nth-of-type(even) {
-        background-color: #e8e8e8;
+        background-color: #F7F7F7;
       }
 
     }

@@ -24,8 +24,10 @@ export default class TemplateContent extends Component {// 模板组件
     return (
         <div className={`${indexStyles.templateContent}`}>
           <div className={indexStyles.addTemplate}>
-            <span className={indexStyles.add_icon} onClick={this.handleAddTemplate}>+</span>
-            <span className={indexStyles.add_name}>新建模板</span>
+            <span className={indexStyles.add_icon} onClick={this.handleAddTemplate}>
+              <span style={{fontSize: '30px'}} className={globalStyles.authTheme}>&#xe8fe;</span>
+              <span className={indexStyles.add_name}>新建模板</span>
+            </span>
           </div>
           <div className={`${indexStyles.templateItemContent} ${globalStyles.global_vertical_scrollbar}`}>
             <TemplateItem handleEditTemplete={this.handleEditTemplete} handleStartProcess={this.handleStartProcess} />

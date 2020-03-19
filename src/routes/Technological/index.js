@@ -209,7 +209,7 @@ export default class Technological extends React.Component {
             margin: '0 16px',
           }}
           >
-            <div className={globalClassNmae.page_style_3} id={'technologicalOut'} >
+            <div className={`${globalClassNmae.page_style_3} ${globalClassNmae.global_vertical_scrollbar}`} id={'technologicalOut'} >
               {
                 routes.map(({ path, ...dynamics }, key) => {
                   return (
@@ -236,7 +236,7 @@ export default class Technological extends React.Component {
       <Layout id='technologicalLayoutWrapper' >
         <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>
           <Content style={{ height: '100vh' }} >
-            <div className={globalClassNmae.page_style_3} id={'technologicalOut'} >
+            <div className={`${globalClassNmae.page_style_3} ${globalClassNmae.global_vertical_scrollbar}`} id={'technologicalOut'} >
               {
                 routes.map(({ path, ...dynamics }, key) => {
                   return (

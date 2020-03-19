@@ -6,6 +6,7 @@ import { MESSAGE_DURATION_TIME, FILES } from "../../../globalset/js/constant";
 import { getSubfixName } from '../../../utils/businessFunction'
 import QueryString from 'querystring'
 import { processEditDatasConstant, processEditDatasRecordsConstant, processDoingListMatch, processInfoMatch } from '../../../components/ProcessDetailModal/constant';
+import { getProcessListByType } from "../../../services/technological/process"
 
 let board_id = null
 let appsSelectKey = null
@@ -118,7 +119,37 @@ export default {
     },
   },
   effects: {
-    
+    // 获取流程列表，类型进行中 已终止 已完成
+    * getProcessListByType({ payload }, { call, put }) {
+      const { status = '1', board_id } = payload
+      const res = yield call(getProcessListByType, { status, board_id })
+      let listName
+      switch (status) {
+        case '1':
+          listName = 'processDoingList'
+          break
+        case '2':
+          listName = 'processStopedList'
+          break
+        case '3':
+          listName = 'processComepletedList'
+          break
+        case '4':
+          listName = 'processNotBeginningList'
+        default:
+          listName = 'processDoingList'
+          break
+      }
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            [listName]: res.data
+          }
+        })
+      } else {
+      }
+    }
   },
   reducers: {
     updateDatas(state, action) {

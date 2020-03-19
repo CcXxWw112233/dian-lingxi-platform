@@ -16,14 +16,17 @@ export default class TemplateItem extends Component {
     return (
       <div className={indexStyles.tempItemWrapper}>
         <span className={indexStyles.tem_item}>
+          <span>
+            <span className={`${globalStyles.authTheme} ${indexStyles.tem_icon}`}>&#xe68c;</span>
+            <span className={indexStyles.temp_item_name}>财务报销模板很长很长很长很长很长很长很长很长很长</span>
+          </span>
           {/* 三种状态 */}
           <span className={indexStyles.hover_icon_display}>
-            <span onClick={this.handleStartProcess} className={`${indexStyles.common_authority_hover}`}><span className={`${indexStyles.hover_icon} ${indexStyles.start_process_icon} ${globalStyles.authTheme}`}>&#xe6b8; 启动流程</span></span>
+            <span onClick={this.handleStartProcess} className={`${indexStyles.common_authority_hover}`}><span className={`${indexStyles.hover_icon} ${indexStyles.start_process_icon} ${globalStyles.authTheme}`}>&#xe796; 启动流程</span></span>
             <span onClick={this.handleEditTemplete} className={`${indexStyles.common_authority_hover}`}><span className={`${indexStyles.hover_icon} ${indexStyles.edit_temp_icon} ${globalStyles.authTheme}`}>&#xe602; 编辑模板</span></span>
             <span className={`${indexStyles.common_authority_hover}`}><span className={`${indexStyles.hover_icon} ${indexStyles.delete_temp_icon} ${globalStyles.authTheme}`}>&#xe7c3; 删除模板</span></span>
           </span>
         </span>
-        <span className={indexStyles.temp_item_name}>财务报销模板很长很长很长很长很长很长很长很长很长</span>
       </div>
     )
   }

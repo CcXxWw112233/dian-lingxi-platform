@@ -18,10 +18,10 @@ export default class ProcessDetailModal extends Component {
         isEditCurrentFlowInstanceDescription: false, // 是否正在编辑当前实例的描述
         processPageFlagStep: '1', // "1", "2", "3", "4" 分别对应 新建， 编辑， 启动
         process_detail_modal_visible: false,
-        processDoingList: [], // 进行中的流程
-        processStopedList: [], // 已中止的流程
-        processComepletedList: [], // 已完成的流程
-        processNotBeginningList: [], // 未开始的流程
+        // processDoingList: [], // 进行中的流程
+        // processStopedList: [], // 已中止的流程
+        // processComepletedList: [], // 已完成的流程
+        // processNotBeginningList: [], // 未开始的流程
         // processEditDatas: JSON.parse(JSON.stringify(processEditDatasConstant)), //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
         processEditDatas:[],
         processEditDatasRecords: [],
