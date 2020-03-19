@@ -53,7 +53,12 @@ export default class BoardItem extends Component {
                 simplemodeCurrentProject: { ...selectBoard[0] }
             }
         });
-
+        dispatch({
+            type: 'projectDetail/projectDetailInfo',
+            payload: {
+                id: selectBoard[0].board_id
+            }
+        })
         dispatch({
             type: 'accountSet/updateUserSet',
             payload: {
@@ -438,11 +443,11 @@ export default class BoardItem extends Component {
                     onClick={() => this.onSelectBoard(board_id, org_id)}
                     className={`${!isAllOrg ? styles.board_area_middle_item : styles.board_area_middle_item2} ${simplemodeCurrentProject.board_id == board_id && styles.board_area_middle_item_choose}`} key={board_id}>
                     <div className={`${styles.board_area_middle_item_lf}`}></div>
-                    <div className={`${styles.board_area_middle_item_middle} ${globalStyles.global_ellipsis}`}>
-                        <p>{board_name}</p>
+                    <div className={`${styles.board_area_middle_item_middle} ${globalStyles.global_ellipsis}`} >
+                        <p title={board_name}>{board_name}</p>
                         {
                             isAllOrg && (
-                                <p>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</p>
+                                <p title={getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</p>
                             )
                         }
                     </div>

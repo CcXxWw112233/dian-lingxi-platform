@@ -8,7 +8,23 @@ import TaskDetailModal from '@/components/TaskDetailModal'
 @connect(mapStateToProps)
 export default class BoardFeatures extends Component {
     // 修改任务
-    handleCard = ({ card_id, drawContent }) => {
+    handleCard = ({ card_id, drawContent = {}, operate_properties_code }) => {
+        const { is_realize } = drawContent
+        // 设置完成或
+        if (is_realize == '1') {
+            this.handleDeleteCard({ card_id })
+            return
+        }
+        // 移除自己
+        if ('EXECUTOR' == operate_properties_code) {
+            const { properties } = drawContent
+            const user_id = (localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}).id
+            const excutors = properties.find(item => item.code == 'EXECUTOR').data || []
+            if (excutors.findIndex(item => item.user_id == user_id) == -1) {
+                this.handleDeleteCard({ card_id })
+                return
+            }
+        }
         const { dispatch, board_todo_list = [] } = this.props
         const new_board_todo_list = [...board_todo_list]
         const index = new_board_todo_list.findIndex(item => item.id == card_id)
@@ -55,6 +71,22 @@ export default class BoardFeatures extends Component {
         )
     }
 
+    // 业务逻辑太复杂时间太紧张，关闭弹窗后再直接拉取接口查询待办事项
+    setTaskDetailModalVisible = () => {
+        const { dispatch, simplemodeCurrentProject = {} } = this.props
+        const { board_id } = simplemodeCurrentProject
+        let params = {
+            _organization_id: localStorage.getItem('OrganizationId'),
+        }
+        if (board_id && board_id != '0') {
+            params.board_ids = board_id
+        }
+        dispatch({
+            type: 'simplemode/getBoardsTodoList',
+            payload: params
+        })
+    }
+
     renderWelcome = () => {
         return (
             <div className={`${globalStyles.authTheme} ${styles.nodataArea2}`}>
@@ -80,7 +112,7 @@ export default class BoardFeatures extends Component {
                 <div className={styles.feature_item} style={{ display: board_todo_list.length ? 'block' : 'none' }}></div>
                 <TaskDetailModal
                     task_detail_modal_visible={drawerVisible}
-                    // setTaskDetailModalVisible={this.setDrawerVisibleClose} //关闭任务弹窗回调
+                    setTaskDetailModalVisible={this.setTaskDetailModalVisible} //关闭任务弹窗回调
                     handleTaskDetailChange={this.handleCard}
                     handleDeleteCard={this.handleDeleteCard}
                 />

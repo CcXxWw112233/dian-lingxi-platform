@@ -13,12 +13,12 @@ export default class BoardFeaturesItem extends Component {
     }
 
     itemClick = () => {
-        const { dispatch, itemValue: { id = '1240203412201672704', board_id = '1240196786681942016' } } = this.props
+        const { dispatch, itemValue: { id = '', board_id = '', parent_id } } = this.props
         dispatch({
             type: 'publicTaskDetailModal/updateDatas',
             payload: {
                 drawerVisible: true,
-                card_id: id,
+                card_id: parent_id || id,
             }
         })
         dispatch({
@@ -124,9 +124,10 @@ export default class BoardFeaturesItem extends Component {
         }
     }
     render() {
-        const { currentSelectOrganize = {}, currentUserOrganizes } = this.props
+        const { currentSelectOrganize = {}, currentUserOrganizes, simplemodeCurrentProject = {} } = this.props
         const isAllOrg = !currentSelectOrganize.id || currentSelectOrganize.id == '0'
-        const { itemValue: { id, name, rela_type, start_time, due_time, org_id, is_realize, parent_id, parent_name } } = this.props
+        const isAllBoard = !simplemodeCurrentProject.board_id || simplemodeCurrentProject.board_id == '0'
+        const { itemValue: { id, name, rela_type, start_time, due_time, org_id, is_realize, parent_id, parent_name, board_name } } = this.props
         const use_time = rela_type == '2' ? start_time : due_time
         return (
             <div className={`${isAllOrg ? styles.feature_item2 : styles.feature_item}`} onClick={this.itemClick}>
@@ -149,6 +150,19 @@ export default class BoardFeaturesItem extends Component {
                             </div>
                         )
                     }
+                    {/* <div className={`${styles.feature_item_middle_orgname}  ${globalStyles.global_ellipsis}`}>
+                        <div className={`${globalStyles.global_ellipsis}`}>
+                            {
+                                isAllOrg ?
+                                    `(${getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)})` : ''
+                            }
+                        </div>
+                        <div className={`${globalStyles.global_ellipsis}`}>
+                            {
+                                isAllBoard ? board_name : ''
+                            }
+                        </div>
+                    </div> */}
                 </div>
                 <div className={`${styles.feature_item_rt}`} style={{ color: timeColor(use_time) }}> {this.renderTime().time} {this.renderTime().dec}</div>
             </div>

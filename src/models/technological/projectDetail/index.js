@@ -76,7 +76,7 @@ export default {
           projectInfoDisplay: false, //项目详情是否出现 projectInfoDisplay 和 isInitEntry 要同时为一个值
           isInitEntry: false, //是否初次进来项目详情
           relations_Prefix: [], //内容关联前部分
-          projectDetailInfoData: {},
+          // projectDetailInfoData: {},
           milestoneList: [],
           projectDynamicsList: [], // 项目动态消息列表
           p_next_id: '', // 项目动态的id,
