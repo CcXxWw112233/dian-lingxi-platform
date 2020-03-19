@@ -120,12 +120,12 @@ export const processEditDatasRecordsConstant = [
 
 export const processEditDatasItemOneConstant = {
   "node_type": "1",//流程节点类型 1=资料收集 2=审批 3=抄送
-  "name": "资料收集节点",//流程节点名称
+  "name": "",//流程节点名称
   "description": "描述",//描述 备注
   "deadline_type": "2",//期限类型 1=不限制时间 2=限制时间
   "deadline_time_type": "day",//完成期限类型 hour = 时 day =天 month = 月
   "deadline_value": "1",//完成期限值
-  "assignee_type": "2",//审批人类型 1=任何人 2=指定人员
+  "assignee_type": "1",//审批人类型 1=任何人 2=指定人员
   "assignees": "1110064610620346368",//审批人 多个逗号隔开
   "cc_type": "",//抄送人类型 1=设置抄送人 0=不设置抄送人
   "cc_locking": "0",//抄送人锁定 1=锁定抄送人 0=不锁定抄送人

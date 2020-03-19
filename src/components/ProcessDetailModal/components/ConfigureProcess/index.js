@@ -134,90 +134,27 @@ export default class ConfigureProcess extends Component {
 
     let newAssignees = assignees ? assignees.split(',') : []
     let newRecipients = recipients ? recipients.split(',') : []
-    // console.log(newAssignees, 'ssssssssssssssssss_new')
     const lengh = newAssignees.length
-    // console.log(lengh, typeof lengh, !!(lengh), 'ssssssssssssssssssssssssss_assignees')
     switch (node_type) {
       case '1':
-        if (assignee_type == '1') { // 表示在任何人的情况下
+        if (assignee_type == '1') { // 表示的是任何人
           if (!name && !(forms && forms.length)) {
-            confirmButtonText = '请填写步骤名称和至少添加一个表项'
+            confirmButtonText = '请输入步骤名称和至少添加一个表项'
             confirmButtonDisabled = true
-            return { confirmButtonText, confirmButtonDisabled }
-          } else
-            if (!name) { // 如果名称不存在
-              confirmButtonText = '请填写步骤名称'
-              confirmButtonDisabled = true
-            } else if (!(forms && forms.length)) {
-              confirmButtonText = '至少添加一个表项'
-              confirmButtonDisabled = true
-            }
-        } else if (assignee_type == '2') { // 表示是指定人员的情况下
-          if (!name && !(forms && forms.length) && !newAssignees.length) {
-            confirmButtonText = '请填写步骤名称、并且至少选择一位填写人和至少添加一个表项'
+          } else if (!name && (forms && forms.length)) {
+            confirmButtonText = '请输入步骤名称'
             confirmButtonDisabled = true
-            return { confirmButtonText, confirmButtonDisabled }
-          } else
-            if (!name) { // 如果名称不存在
-              confirmButtonText = '请填写步骤名称'
-              confirmButtonDisabled = true
-            } else if (!(forms && forms.length)) {
-              confirmButtonText = '至少添加一个表项'
-              confirmButtonDisabled = true
-            } else if (!(newAssignees.lengh)) {
-              // console.log('进来了', 'sssssssssssssssssssssss')
-              confirmButtonText = '至少选择一位填写人'
-              confirmButtonDisabled = true
-            } else {
-              confirmButtonText = ''
-              confirmButtonDisabled = false
-            }
+          } else if (name && !(forms && forms.length)) {
+            confirmButtonText = '至少添加一个表项'
+            confirmButtonDisabled = true
+          }
+        } else if (assignee_type == '2') { // 表示的是指定人员
+          
         }
-
         break;
       case '2':
-        if (!name && !newAssignees.length) {
-          confirmButtonText = '请输入步骤名称和至少添加一位审批人'
-          confirmButtonDisabled = true
-          return { confirmButtonText, confirmButtonDisabled }
-        } else
-          if (!name) {
-            confirmButtonText = '请填写步骤名称'
-            confirmButtonDisabled = true
-          } else if (!newAssignees.length) {
-            confirmButtonText = '至少添加一位审批人'
-            confirmButtonDisabled = true
-          } else {
-            confirmButtonDisabled = false
-          }
         break
       case '3':
-        if (cc_type == '1' && (!name && !newAssignees.length) || cc_type == '2' && ((!name && !newAssignees.length && !newRecipients.length) || (!name && !newAssignees.length) || (!name && !newRecipients.length))) {
-          confirmButtonText = '请填写步骤名称和至少一位抄送人或抄报人'
-          confirmButtonDisabled = true
-          return { confirmButtonText, confirmButtonDisabled }
-        }
-        if (!name) {
-          confirmButtonText = '请填写步骤名称'
-          confirmButtonDisabled = true
-        }
-        if (cc_type == '1') {
-          if (!newAssignees.length) {
-            confirmButtonText = '至少添加一位抄送人'
-            confirmButtonDisabled = true
-          }
-        } else if (cc_type == '2') {
-          if (!newRecipients.length && newAssignees.length) {
-            confirmButtonText = '至少添加一位抄报人'
-            confirmButtonDisabled = true
-          } else if (!newAssignees.length && newRecipients.length) {
-            confirmButtonText = '至少添加一位抄送人'
-            confirmButtonDisabled = true
-          } else if (!newRecipients.length && !newAssignees.length) {
-            confirmButtonText = '至少添加一位抄送人和一位抄报人'
-            confirmButtonDisabled = true
-          }
-        }
         break
       default:
         // confirmButtonText = '确认'
@@ -278,6 +215,7 @@ export default class ConfigureProcess extends Component {
       bordered: false
     }
     // const alltypedata = processEditDatasRecords[processCurrentEditStep]['alltypedata']
+    console.log(this.renderDiffButtonTooltipsText().confirmButtonDisabled,'ssssssssssssssssssssssssss_disabled')
     return (
       <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }} onClick={(e) => { this.handleCancelNodeName(e) }}>
         {/* {node_amount <= itemKey + 1 ? null : <div className={stylLine}></div>} */}
