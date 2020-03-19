@@ -94,7 +94,7 @@ export default class PagingnationContent extends Component {
     const maxContentHeight = clientHeight - 108 - 150
     return (
       <div className={indexStyles.pagingnationContent} style={{ maxHeight: maxContentHeight }}>
-        <FlowsInstanceItem
+        {/* <FlowsInstanceItem
           // itemValue={value}
           // itemKey={key}
           status={status}
@@ -126,8 +126,8 @@ export default class PagingnationContent extends Component {
             processComepletedList,
             processNotBeginningList
           }}
-          handleProcessInfo={this.props.handleProcessInfo} />
-        {/* {
+          handleProcessInfo={this.props.handleProcessInfo} /> */}
+        {
           listData.map((value, key) => {
             return (
               <div>
@@ -145,7 +145,7 @@ export default class PagingnationContent extends Component {
               </div>
             )
           })
-        } */}
+        }
         {!listData.length || !listData ? (
           <div className={indexStyles.nodata} style={{ height: maxContentHeight - 30 }} >
             <div className={indexStyles.nodata_inner}>

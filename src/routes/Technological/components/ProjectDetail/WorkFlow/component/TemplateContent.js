@@ -31,12 +31,14 @@ export default class TemplateContent extends Component {// 模板组件
           </div>
           <div className={`${indexStyles.templateItemContent} ${globalStyles.global_vertical_scrollbar}`}>
             <TemplateItem handleEditTemplete={this.handleEditTemplete} handleStartProcess={this.handleStartProcess} />
-            {/* <TemplateItem />
-            <TemplateItem />
-            <TemplateItem />
-            <TemplateItem />
-            <TemplateItem />
-            <TemplateItem /> */}
+            <TemplateItem handleEditTemplete={this.handleEditTemplete} handleStartProcess={this.handleStartProcess} />
+            <TemplateItem handleEditTemplete={this.handleEditTemplete} handleStartProcess={this.handleStartProcess} />
+            <TemplateItem handleEditTemplete={this.handleEditTemplete} handleStartProcess={this.handleStartProcess} />
+            <TemplateItem handleEditTemplete={this.handleEditTemplete} handleStartProcess={this.handleStartProcess} />
+            <TemplateItem handleEditTemplete={this.handleEditTemplete} handleStartProcess={this.handleStartProcess} />
+            <TemplateItem handleEditTemplete={this.handleEditTemplete} handleStartProcess={this.handleStartProcess} />
+            <TemplateItem handleEditTemplete={this.handleEditTemplete} handleStartProcess={this.handleStartProcess} />
+            <TemplateItem handleEditTemplete={this.handleEditTemplete} handleStartProcess={this.handleStartProcess} />
           </div>
         </div>
     )

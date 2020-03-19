@@ -165,7 +165,7 @@ export default class ConfigureProcess extends Component {
               confirmButtonText = '至少添加一个表项'
               confirmButtonDisabled = true
             } else if (!(newAssignees.lengh)) {
-              console.log('进来了', 'sssssssssssssssssssssss')
+              // console.log('进来了', 'sssssssssssssssssssssss')
               confirmButtonText = '至少选择一位填写人'
               confirmButtonDisabled = true
             } else {

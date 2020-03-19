@@ -27,9 +27,17 @@ export default class ConfigureStepOne_five extends Component {
     this.updateEdit({ value: e.target.value }, 'title')
   }
   limitFileNumValueChange = (value) => {
+    if (!value) {
+      this.updateEdit({ value: '0' }, 'limit_file_num')
+      return
+    }
     this.updateEdit({ value: value.toString() }, 'limit_file_num')
   }
   limitFileSizeValueChange = (value) => {
+    if (!value) {
+      this.updateEdit({ value: '0' }, 'limit_file_size')
+      return
+    }
     this.updateEdit({ value: value.toString() }, 'limit_file_size')
   }
   limilFileTypeValueChange = (values) => {
@@ -75,6 +83,10 @@ export default class ConfigureStepOne_five extends Component {
     const { limit_file_type = [] } = itemValue
     const fileTypeArray = [...limit_file_type]
     let fileTypeArrayText = [] //文档类型转化中文
+    if (!fileTypeArray || !fileTypeArray.length) {
+      let text = '不限制'
+      return text
+    }
     for (let i = 0; i < fileTypeArray.length; i++) {
       if (fileTypeArray[i] === 'document') {
         fileTypeArrayText.push('文档')
