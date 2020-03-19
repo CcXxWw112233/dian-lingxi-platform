@@ -23,30 +23,66 @@ export default class BoardFeatures extends Component {
             }
         })
     }
+    handleDeleteCard = ({ card_id }) => {
+        const { board_todo_list = [], dispatch } = this.props
+        const new_board_todo_list = [...board_todo_list]
+        const index = new_board_todo_list.findIndex(item => item.id == card_id)
+
+        new_board_todo_list.splice(index, 1)
+        dispatch({
+            type: 'simplemode/updateDatas',
+            payload: {
+                board_todo_list: new_board_todo_list
+            }
+        })
+    }
+    renderTodoList = () => {
+        const { board_todo_list = [] } = this.props
+        return (
+            board_todo_list.length ? (
+                board_todo_list.map(value => {
+                    const { id } = value
+                    return (
+                        <BoardFeaturesItem key={id} itemValue={value} />
+                    )
+                })
+            ) : (
+                    <div className={`${globalStyles.authTheme} ${styles.nodataArea}`}>
+                        <div className={`${globalStyles.authTheme} ${styles.alarm}`}>&#xe6fb;</div>
+                        <div className={`${styles.title}`}>暂无待办事项</div>
+                    </div>
+                )
+        )
+    }
+
+    renderWelcome = () => {
+        return (
+            <div className={`${globalStyles.authTheme} ${styles.nodataArea2}`}>
+                <div className={`${globalStyles.authTheme} ${styles.alarm}`}>&#xe6fb;</div>
+                <div className={`${styles.title}`}>欢迎来到聆悉，我们有以上项目功能，赶快新建一个项目体验吧～</div>
+            </div>
+        )
+    }
+
     render() {
-        const { drawerVisible, board_todo_list = [] } = this.props
+        const { drawerVisible, projectList = [], projectInitLoaded, board_todo_list = [] } = this.props
         return (
             <div>
                 {
-                    board_todo_list.length ? (
-                        board_todo_list.map(value => {
-                            const { id } = value
-                            return (
-                                <BoardFeaturesItem key={id} itemValue={value} />
+                    projectInitLoaded ? (
+                        projectList.length ? (
+                            this.renderTodoList()
+                        ) : (
+                                this.renderWelcome()
                             )
-                        })
-                    ) : (
-                            <div className={`${globalStyles.authTheme} ${styles.nodataArea}`}>
-                                <div className={`${globalStyles.authTheme} ${styles.alarm}`}>&#xe6fb;</div>
-                                <div className={`${styles.title}`}>暂无待办事项</div>
-                            </div>
-                        )
+                    ) : ('')
                 }
-                <div className={styles.feature_item}></div>
+                <div className={styles.feature_item} style={{ display: board_todo_list.length ? 'block' : 'none' }}></div>
                 <TaskDetailModal
                     task_detail_modal_visible={drawerVisible}
                     // setTaskDetailModalVisible={this.setDrawerVisibleClose} //关闭任务弹窗回调
                     handleTaskDetailChange={this.handleCard}
+                    handleDeleteCard={this.handleDeleteCard}
                 />
             </div>
         )
@@ -61,7 +97,7 @@ function mapStateToProps(
             board_todo_list = []
         },
         workbench: {
-            datas: { projectList }
+            datas: { projectList, projectInitLoaded }
         },
         technological: {
             datas: { currentUserOrganizes, currentSelectOrganize = {} }
@@ -74,6 +110,7 @@ function mapStateToProps(
         currentSelectOrganize,
         board_todo_list,
         drawerVisible,
-        projectList
+        projectList,
+        projectInitLoaded
     }
 }
