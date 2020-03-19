@@ -135,7 +135,7 @@ class VideoMeetingPopoverContent extends React.Component {
 						})
 					})
 				} else {
-					message.error(res.message)
+					// message.error(res.message)
 				}
 			})
 	}

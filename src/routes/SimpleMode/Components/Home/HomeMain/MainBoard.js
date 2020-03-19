@@ -41,27 +41,29 @@ export default class MainBoard extends Component {
         })
     }
     handleSubmitNewProject = data => {
-        const { dispatch } = this.props;
+        const { dispatch, projectList = [] } = this.props;
         this.setAddProjectModalVisible();
         const calback = (id, name) => {
             dispatch({
                 type: 'workbench/getProjectList',
                 payload: {}
             });
-            selectBoardToSeeInfo({ board_id: id, board_name: name, dispatch, org_id: data._organization_id, group_view_type: '4' }) //极简模式项目选择
-            window.sessionStorage.removeItem('session_currentSelectedWorkbenchBox') //重置当前盒子类型
-            dispatch({//重置当前盒子类型
-                type: 'simplemode/updateDatas',
-                payload: {
-                    currentSelectedWorkbenchBox: {}
-                }
-            });
-            dispatch({
-                type: 'simplemode/routingJump',
-                payload: {
-                    route: '/technological/simplemode/workbench'
-                }
-            });
+            if (!projectList.length) {
+                selectBoardToSeeInfo({ board_id: id, board_name: name, dispatch, org_id: data._organization_id, group_view_type: '4' }) //极简模式项目选择
+                window.sessionStorage.removeItem('session_currentSelectedWorkbenchBox') //重置当前盒子类型
+                dispatch({//重置当前盒子类型
+                    type: 'simplemode/updateDatas',
+                    payload: {
+                        currentSelectedWorkbenchBox: {}
+                    }
+                });
+                dispatch({
+                    type: 'simplemode/routingJump',
+                    payload: {
+                        route: '/technological/simplemode/workbench'
+                    }
+                });
+            }
         }
         Promise.resolve(
             dispatch({
