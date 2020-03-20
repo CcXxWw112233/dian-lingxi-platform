@@ -161,7 +161,7 @@ export default class BoardFeaturesItem extends Component {
                         <span>
                             {name}
                         </span>
-                        <span>{(parent_id && parent_name) && `${parent_name}`}</span>
+                        <span style={{ color: 'rgba(255,255,255,0.65)' }}>{(parent_id && parent_name) && ` (${parent_name})`}</span>
                     </div>
                     {/* {
                         isAllOrg && (

@@ -45,6 +45,19 @@ class Home extends Component {
 
 
   componentWillUnmount() {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'workbench/updateDatas',
+      payload: {
+        projectList: []
+      }
+    })
+    dispatch({
+      type: 'simplemode/updateDatas',
+      payload: {
+        board_todo_list: []
+      }
+    })
     window.removeEventListener('keydown', this.handleEscKeypress.bind(this))
   }
 
