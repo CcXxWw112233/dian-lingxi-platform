@@ -90,7 +90,7 @@ export default class BoardFeatures extends Component {
     renderWelcome = () => {
         return (
             <div className={`${globalStyles.authTheme} ${styles.nodataArea2}`}>
-                <div className={`${globalStyles.authTheme} ${styles.alarm}`}>&#xe6fb;</div>
+                <div className={`${globalStyles.authTheme} ${styles.alarm}`}>&#xe704;</div>
                 <div className={`${styles.title}`}>欢迎来到聆悉，我们有以上项目功能，赶快新建一个项目体验吧～</div>
             </div>
         )

@@ -207,7 +207,7 @@ export default class MainBoard extends Component {
         return (
             <div className={styles.create}>
                 <div className={`${styles.create_top} ${globalStyles.authTheme}`}>
-                    &#xe63a;
+                    &#xe703;
                         </div>
                 <div className={styles.create_middle}>暂无项目，赶快新建一个吧</div>
                 <div className={styles.create_btn} onClick={this.setAddProjectModalVisible}>
