@@ -177,7 +177,7 @@ export default class BoardFeaturesItem extends Component {
                     )}
 
                 </div>
-                <div className={`${styles.feature_item_rt}`} style={{ color: timeColor(use_time) }}> {this.renderTime().time} {this.renderTime().dec}</div>
+                <div className={`${styles.feature_item_rt}`} style={{ color: timeColor(use_time) }}> {this.renderTime().time} {this.renderTime().time ? this.renderTime().dec : ''}</div>
             </div>
         )
     }
