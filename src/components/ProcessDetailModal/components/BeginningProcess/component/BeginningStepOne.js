@@ -7,6 +7,7 @@ import BeginningStepOne_one from './BeginningStepOne_one'
 import BeginningStepOne_two from './BeginningStepOne_two'
 import BeginningStepOne_three from './BeginningStepOne_three'
 import BeginningStepOne_five from './BeginningStepOne_five'
+import { validateTel, validateEmail, validatePassword, validateFixedTel, validateIdCard, validateChineseName, validatePostalCode, validateWebsite, validateQQ, validatePositiveInt, validateNegative, validateTwoDecimal, } from '../../../../../utils/verify'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { Button } from 'antd'
 import { connect } from 'dva'
@@ -39,6 +40,70 @@ export default class BeginningStepOne extends Component {
     })
   }
 
+  setCompleteButtonDisabled = () => {
+    const { itemValue, itemKey, processEditDatas = [] } = this.props
+    const { forms = [] } = processEditDatas[itemKey]
+    const { val_min_length, val_max_length } = forms[itemKey]
+    let valiResult = true
+    for (let i = 0; i < forms.length; i++) {
+      if (forms[i]['is_required'] == '1') { //必填的情况下
+        const verification_rule = forms[i]['verification_rule']
+        const value = forms[i]['value']
+        // console.log(i, verification_rule, validateTel(''))
+        switch (verification_rule) {
+          case "":
+            if ( value.length >= val_min_length && value.length <= val_max_length) {
+              valiResult = true
+            } else {
+              valiResult = false
+            }
+            break
+          case 'mobile':
+            valiResult = validateTel(value)
+            break;
+          case 'tel':
+            valiResult = validateFixedTel(value)
+            break;
+          case 'ID_card':
+            valiResult = validateIdCard(value)
+            break;
+          case 'chinese_name':
+            valiResult = validateChineseName(value)
+            break;
+          case 'url':
+            valiResult = validateWebsite(value)
+            break;
+          case 'qq':
+            valiResult = validateQQ(value)
+            break;
+          case 'postal_code':
+            valiResult = validatePostalCode(value)
+            break;
+          case 'positive_integer':
+            valiResult = validatePositiveInt(value)
+            break;
+          case 'negative':
+            valiResult = validateNegative(value)
+            break;
+          case 'two_decimal_places':
+            valiResult = validateTwoDecimal(value)
+            break;
+          default:
+            if (!!value) {
+              valiResult = true
+            } else {
+              valiResult = false
+            }
+            break
+        }
+        if (!valiResult) {
+          break
+        }
+      }
+    }
+    return valiResult
+  }
+
   // 编辑点击事件
   handleEnterConfigureProcess = (e) => {
     e && e.stopPropagation()
@@ -57,19 +122,20 @@ export default class BeginningStepOne extends Component {
 
   filterForm = (value,key) => {
     const { field_type } = value
+    const { itemKey } = this.props
     let container = (<div></div>)
     switch (field_type) {
       case '1':
-        container = <BeginningStepOne_one itemKey={key} itemValue={value}/>
+        container = <BeginningStepOne_one parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
         break;
       case '2':
-        container = <BeginningStepOne_two itemKey={key} itemValue={value}/>
+        container = <BeginningStepOne_two parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
         break;
       case '3':
-        container = <BeginningStepOne_three itemKey={key} itemValue={value}/>
+        container = <BeginningStepOne_three parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
         break;
       case '5':
-        container = <BeginningStepOne_five itemKey={key} itemValue={value}/>
+        container = <BeginningStepOne_five parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
         break;
       default:
         break;
@@ -109,7 +175,7 @@ export default class BeginningStepOne extends Component {
         {
           (
             <div style={{marginTop: '16px', paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center'}}>
-              <Button type="primary" onClick={this.handleEnterConfigureProcess}>完成</Button>
+              <Button type="primary" disabled={!this.setCompleteButtonDisabled()} onClick={this.handleEnterConfigureProcess}>完成</Button>
             </div>
           )
         }

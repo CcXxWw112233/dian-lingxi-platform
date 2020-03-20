@@ -138,7 +138,9 @@ export default class BeginningStepOne_five extends Component {
     const { title, limit_file_num, limit_file_type, limit_file_size, is_required } = itemValue
     return (
       <div className={indexStyles.text_form}>
-        <p>{title}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</p>
+        <p>
+          <span>{title}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</span>
+        </p>
         <div className={indexStyles.upload_static}>
           <span style={{ color: '#1890FF', fontSize: '28px', marginTop: '-6px' }} className={`${globalStyles.authTheme}`}>&#xe692;</span>
           <div style={{ flex: 1, marginLeft: '12px' }}>

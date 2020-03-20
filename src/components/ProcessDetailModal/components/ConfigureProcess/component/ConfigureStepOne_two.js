@@ -46,8 +46,8 @@ export default class ConfigureStepOne_two extends Component {
     const { itemValue } = this.props
     const { options_data = [], options = [] } = itemValue
     let obj = {
-      key: (Number(options.length)).toString(),
-      value: `选项${(Number(options.length) + 1)}`
+      label_value: (Number(options.length)).toString(),
+      label_name: `选项${(Number(options.length) + 1)}`
     }
     options.push(obj)
     // options.push(`选项${(Number(options.length) + 1)}`)
@@ -126,7 +126,7 @@ export default class ConfigureStepOne_two extends Component {
             {
               options.map((item, index) => {
                 return (
-                  <div key={item} style={{ position: 'relative' }}><Input style={{ marginBottom: '4px', transition: 'all .5s' }} key={item.key} value={item.value} onChange={(e) => { this.optionsValueChange(e, item.key) }} />{index != '0' && <span onClick={() => { this.handleDelOptionsSelect(index) }} style={{ marginLeft: '4px', position: 'absolute', top: '6px' }} className={`${globalStyles.authTheme} ${indexStyles.del_optionsIcon}`}>&#xe7fe;</span>}</div>
+                  <div key={item} style={{ position: 'relative' }}><Input style={{ marginBottom: '4px', transition: 'all .5s' }} key={item.label_value} value={item.label_name} onChange={(e) => { this.optionsValueChange(e, item.label_value) }} />{index != '0' && <span onClick={() => { this.handleDelOptionsSelect(index) }} style={{ marginLeft: '4px', position: 'absolute', top: '6px' }} className={`${globalStyles.authTheme} ${indexStyles.del_optionsIcon}`}>&#xe7fe;</span>}</div>
                 )
               })
             }

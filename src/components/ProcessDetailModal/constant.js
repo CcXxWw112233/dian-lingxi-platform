@@ -267,86 +267,154 @@ export const processDoingListMatch = [
 ]
 
 export const processInfoMatch = {
-  "board_id": "1238724358210457600",//项目ID
-  "name": "床前明月光",//模板名称
-  "description": "第一个流程模板",//模板描述
-  "is_retain": "1",//是否保留 1=保留 0=不保留,默认保留
-  "nodes": [//模板节点 json数组
+  "id": "1240120246988312576",
+  "name": "标准流程启动（2）",
+  "description": "这是第二个流程启动",
+  "status": "1",
+  "nodes": [
     {
-      "node_type": "1",//流程节点类型 1=资料收集 2=审批 3=抄送
-      "name": "资料收集节点",//流程节点名称
-      "description": "描述",//描述 备注
-      "deadline_type": "2",//期限类型 1=不限制时间 2=限制时间
-      "deadline_time_type": "day",//完成期限类型 hour = 时 day =天 month = 月
-      "deadline_value": "1",//完成期限值
-      "assignee_type": "2",//审批人类型 1=任何人 2=指定人员
-      "assignees": "1110064610620346368",//审批人 多个逗号隔开
-      "cc_type": "1",//抄送人类型 1=设置抄送人 0=不设置抄送人
-      "cc_locking": "1",//抄送人锁定 1=锁定抄送人 0=不锁定抄送人
-      "recipients": "",//抄送人
-      "froms": [//表单数据
+      "id": "1240120247009284096",
+      "assignees": [
         {
-          "field_type": "1",//类型 1=文本 2=选择 3=日期 4=表格 5=附件
-          "title": "文本标题",//标题
-          "prompt_content": "请填写",//提示内容
-          "is_required": "0",//是否必填 1=必须 0=不是必须
-          "verification_rule": "shuzi",//校验规则
-          "val_min_length": "10",//最小长度
-          "val_max_length": "20"//最大长度
+          "id": "1110064610620346368",
+          "name": "钟先生",
+          "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-06-19/cecc1c8a2dcf4a3590da3ce2b889f828.jpg",
+          "processed": "2",
+          "time": "1584521312",
+          "comment": "wo tong yi l"
+        }
+      ],
+      "recipients": [
+        {
+          "id": "1110064610620346368",
+          "name": "钟先生",
+          "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-06-19/cecc1c8a2dcf4a3590da3ce2b889f828.jpg"
+        }
+      ],
+      "status": "2",
+      "forms": [
+        {
+          "id": "1240115038702931968",
+          "title": "文本标题",
+          "sort": "1",
+          "value": "我是文本标题哈我是文本标题哈",
+          "form_id": "1240115038329638912",
+          "field_type": "1",
+          "prompt_content": "请填写",
+          "is_required": "0",
+          "is_multiple_choice": "0",
+          "val_min_length": "10",
+          "val_max_length": "20",
+          "date_range": "1",
+          "date_precision": "1",
+          "verification_rule": "qq"
         },
         {
-          "field_type": "2",//类型 1=文本 2=选择 3=日期 4=表格 5=附件
-          "title": "性别",//标题
-          "prompt_content": "请选择",//提示内容
-          "is_required": "1",//是否必填 1=必须 0=不是必须
-          "is_multiple_choice": "0",//是否多选 1=是 0=否
-          "options": [//选择项
+          "id": "1240115039084613632",
+          "title": "性别",
+          "sort": "2",
+          "options": [
             {
+              "id": "1240115039088807936",
               "label_name": "男",
               "label_value": "男"
             },
             {
+              "id": "1240115039088807937",
               "label_name": "女",
               "label_value": "女"
             }
-          ]
-        },
-        {
-          "field_type": "3",//类型 1=文本 2=选择 3=日期 4=表格 5=附件
-          "title": "生日",//标题
-          "prompt_content": "您的出生日期",//提示内容
-          "is_required": "1",//是否必填 1=必须 0=不是必须
-          "date_range": "1",//日期范围 1=单个日期 2=开始日期~截止日期
-          "date_precision": "1"//日期精度 1=仅日期 2=日期+时间
-        },
-        {
-          "field_type": "5",//类型 1=文本 2=选择 3=日期 4=表格 5=附件
-          "title": "简历",//标题
-          "prompt_content": "请上传简历",//提示内容
-          "is_required": "1",//是否必填 1=必须 0=不是必须
-          "limit_file_num": "1",//上传数量
-          "limit_file_type": [//限制上传类型(文件格式) document=文档 image=图像 audio=音频 video=视频
-            "document", "image", "audio", "video"
           ],
-          "limit_file_size": "10"//上传大小限制
+          "value": "男",
+          "form_id": "1240115038329638912",
+          "field_type": "2",
+          "prompt_content": "请选择",
+          "is_required": "1",
+          "is_multiple_choice": "0",
+          "date_range": "1",
+          "date_precision": "1"
+        },
+        {
+          "id": "1240115039860559872",
+          "title": "生日",
+          "sort": "3",
+          "value": "",
+          "form_id": "1240115038329638912",
+          "field_type": "3",
+          "prompt_content": "您的出生日期",
+          "is_required": "1",
+          "is_multiple_choice": "0",
+          "date_range": "1",
+          "date_precision": "1"
+        },
+        {
+          "id": "1240115040238047232",
+          "title": "简历",
+          "sort": "4",
+          "form_id": "1240115038329638912",
+          "field_type": "5",
+          "prompt_content": "请上传简历",
+          "is_required": "1",
+          "is_multiple_choice": "0",
+          "date_range": "1",
+          "date_precision": "1",
+          "limit_file_num": "1",
+          "limit_file_type": [
+            "document",
+            "image",
+            "audio",
+            "video"
+          ],
+          "limit_file_size": "10"
         }
-      ]
+      ],
+      "node_type": "1",
+      "assignee_type": "2",
+      "deadline_type": "2",
+      "deadline_time_type": "day",
+      "deadline_value": "1",
+      "cc_type": "1"
     },
     {
-      "node_type": "2",//流程节点类型 1=资料收集 2=审批 3=抄送
-      "name": "审批节点",//流程节点名称
-      "description": "备注",//描述 备注
-      "approve_type": "1",//审批类型 1=串签 2=并签 3=汇签
-      "approve_value": "",// 当为 汇签时需填的值
-      "deadline_type": "2",//期限类型 1=不限制时间 2=限制时间
-      "deadline_time_type": "hour",//完成期限类型 hour = 时 day =天 month = 月
-      "deadline_value": "10",//完成期限值
-      "assignees": "1110064610620346368,1110381102486392832",//审批人 多个逗号隔开
-      "cc_type": "1",//抄送人类型 1=设置抄送人 0=不设置抄送人
-      "cc_locking": "1",//抄送人锁定 1=锁定抄送人 0=不锁定抄送人
-      "recipients": ""//抄送人
+      "id": "1240120247390965760",
+      "assignees": [
+        {
+          "id": "1110064610620346368",
+          "name": "钟先生",
+          "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-06-19/cecc1c8a2dcf4a3590da3ce2b889f828.jpg",
+          "processed": "2"
+        },
+        {
+          "id": "1110381102486392832",
+          "name": "fengabner聯通號",
+          "avatar": "",
+          "processed": "1"
+        }
+      ],
+      "recipients": [
+        {
+          "id": "1110064610620346368",
+          "name": "钟先生",
+          "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-06-19/cecc1c8a2dcf4a3590da3ce2b889f828.jpg"
+        }
+      ],
+      "status": "1",
+      "node_type": "2",
+      "deadline_type": "2",
+      "deadline_time_type": "hour",
+      "deadline_value": "10",
+      "cc_type": "1"
     }
-  ]
+  ],
+  "flow_template_id": "1240115038321250304",
+  "board_id": "1173834815573725184",
+  "create_by": "1110064610620346368",
+  "curr_node_id": "1240120247390965760",
+  "create_time": "1584502682",
+  "is_privilege": "0",
+  "privileges": [],
+  "privileges_extend": [],
+  "is_shared": "0"
 }
 
 export const principalList = [

@@ -141,8 +141,8 @@ export default class ConfigureStepTypeOne extends Component {
           "is_multiple_choice": "0",//是否多选 1=是 0=否
           "options": [
             {
-              "key": '0',
-              "value": '选项1',
+              "label_value": '0',
+              "label_name": '选项1',
             }
           ],
           "is_click_currentTextForm": true

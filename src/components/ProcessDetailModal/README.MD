@@ -157,6 +157,165 @@
 
 ```
 
+# processInfo 实例详情
+
+- 第一层的status: 流程实例状态 3=结束(完成) 2=中止 1=运行中 0=未开始
+- 然后每个节点的 status: 0:未开始  1:进行中 2:完成
+- processed 审批人状态 2=完成 1=进行中 0=未开始
+
+```json
+{
+    "id": "1240120246988312576",
+    "name": "标准流程启动（2）",
+    "description": "这是第二个流程启动",
+    "status": "1",
+    "nodes": [
+      {
+        "id": "1240120247009284096",
+        "assignees": [
+          {
+            "id": "1110064610620346368",
+            "name": "钟先生",
+            "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-06-19/cecc1c8a2dcf4a3590da3ce2b889f828.jpg",
+            "processed": "2",
+            "time": "1584521312",
+            "comment": "wo tong yi l"
+          }
+        ],
+        "recipients": [
+          {
+            "id": "1110064610620346368",
+            "name": "钟先生",
+            "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-06-19/cecc1c8a2dcf4a3590da3ce2b889f828.jpg"
+          }
+        ],
+        "status": "2",
+        "forms": [
+          {
+            "id": "1240115038702931968",
+            "title": "文本标题",
+            "sort": "1",
+            "value": "我是文本标题哈我是文本标题哈",
+            "form_id": "1240115038329638912",
+            "field_type": "1",
+            "prompt_content": "请填写",
+            "is_required": "0",
+            "is_multiple_choice": "0",
+            "val_min_length": "10",
+            "val_max_length": "20",
+            "date_range": "1",
+            "date_precision": "1",
+            "verification_rule": "number"
+          },
+          {
+            "id": "1240115039084613632",
+            "title": "性别",
+            "sort": "2",
+            "options": [
+              {
+                "id": "1240115039088807936",
+                "label_name": "男",
+                "label_value": "男"
+              },
+              {
+                "id": "1240115039088807937",
+                "label_name": "女",
+                "label_value": "女"
+              }
+            ],
+            "value": "男",
+            "form_id": "1240115038329638912",
+            "field_type": "2",
+            "prompt_content": "请选择",
+            "is_required": "1",
+            "is_multiple_choice": "0",
+            "date_range": "1",
+            "date_precision": "1"
+          },
+          {
+            "id": "1240115039860559872",
+            "title": "生日",
+            "sort": "3",
+            "value": "1584519956",
+            "form_id": "1240115038329638912",
+            "field_type": "3",
+            "prompt_content": "您的出生日期",
+            "is_required": "1",
+            "is_multiple_choice": "0",
+            "date_range": "1",
+            "date_precision": "1"
+          },
+          {
+            "id": "1240115040238047232",
+            "title": "简历",
+            "sort": "4",
+            "form_id": "1240115038329638912",
+            "field_type": "5",
+            "prompt_content": "请上传简历",
+            "is_required": "1",
+            "is_multiple_choice": "0",
+            "date_range": "1",
+            "date_precision": "1",
+            "limit_file_num": "1",
+            "limit_file_type": [
+              "document",
+              "image",
+              "audio",
+              "video"
+            ],
+            "limit_file_size": "10"
+          }
+        ],
+        "node_type": "1",
+        "assignee_type": "2",
+        "deadline_type": "2",
+        "deadline_time_type": "day",
+        "deadline_value": "1",
+        "cc_type": "1"
+      },
+      {
+        "id": "1240120247390965760",
+        "assignees": [
+          {
+            "id": "1110064610620346368",
+            "name": "钟先生",
+            "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-06-19/cecc1c8a2dcf4a3590da3ce2b889f828.jpg",
+            "processed": "2"
+          },
+          {
+            "id": "1110381102486392832",
+            "name": "fengabner聯通號",
+            "avatar": "",
+            "processed": "1"
+          }
+        ],
+        "recipients": [
+          {
+            "id": "1110064610620346368",
+            "name": "钟先生",
+            "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-06-19/cecc1c8a2dcf4a3590da3ce2b889f828.jpg"
+          }
+        ],
+        "status": "1",
+        "node_type": "2",
+        "deadline_type": "2",
+        "deadline_time_type": "hour",
+        "deadline_value": "10",
+        "cc_type": "1"
+      }
+    ],
+    "flow_template_id": "1240115038321250304",
+    "board_id": "1173834815573725184",
+    "create_by": "1110064610620346368",
+    "curr_node_id": "1240120247390965760",
+    "create_time": "1584502682",
+    "is_privilege": "0",
+    "privileges": [],
+    "privileges_extend": [],
+    "is_shared": "0"
+  }
+  ```
+
 公子啊 白马纵年少
 凤烛红纱余生伴君老
 伊人红妆不负君之邀

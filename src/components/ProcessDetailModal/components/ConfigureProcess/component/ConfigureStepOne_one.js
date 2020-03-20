@@ -23,21 +23,21 @@ export default class ConfigureStepOne_one extends Component {
     super(props)
     this.state = {
       popoverVisible: null,
-      form_item: compareACoupleOfObjects(temp_item,props.itemValue) ? temp_item : props.itemValue
+      form_item: compareACoupleOfObjects(temp_item, props.itemValue) ? temp_item : props.itemValue
     }
   }
 
   onVisibleChange = (visible) => {
     const { is_click_confirm_btn, form_item } = this.state
     const { itemKey, parentKey, processEditDatas = [], itemValue } = this.props
-    let temp_item = {...form_item}
+    let temp_item = { ...form_item }
     if (!is_click_confirm_btn) {// 判断是否点击了确定按钮,否 那么就保存回原来的状态
       if (visible == false)
-      this.setState({
-        form_item: temp_item
-      })
+        this.setState({
+          form_item: temp_item
+        })
       const { forms = [] } = processEditDatas[parentKey]
-      forms[itemKey] = {...temp_item}
+      forms[itemKey] = { ...temp_item }
       this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
     }
     this.setState({
@@ -59,7 +59,7 @@ export default class ConfigureStepOne_one extends Component {
   //   else if ((typeof x == "object" && x != null) && (typeof y == "object" && y != null)) {
   //     if (Object.keys(x).length != Object.keys(y).length)
   //       return false;
-   
+
   //     for (var prop in x) {
   //       if (y.hasOwnProperty(prop))
   //       {  
@@ -69,12 +69,12 @@ export default class ConfigureStepOne_one extends Component {
   //       else
   //         return false;
   //     }
-   
+
   //     return true;
   //   }
   //   else 
   //     return false;
-  
+
   // }
   updateEdit = (data, key) => {
     const { itemKey, parentKey, processEditDatas = [] } = this.props
@@ -122,7 +122,7 @@ export default class ConfigureStepOne_one extends Component {
     newFormsData = newFormsData.map(item => {
       if (item.is_click_currentTextForm) {
         let new_item
-        new_item = {...item, is_click_currentTextForm: false}
+        new_item = { ...item, is_click_currentTextForm: false }
         return new_item
       } else {
         return item
@@ -178,10 +178,14 @@ export default class ConfigureStepOne_one extends Component {
               <Option value="two_decimal_places">精确到两位小数</Option>
             </Select>
           </div>
-          <div>
-            <p>限制字数:</p>
-            <InputNumber min={1} precision="0.1" onChange={this.valMinLengthChange} style={{ width: 174, marginRight: '8px' }} /> ~ <InputNumber onChange={this.valMaxLengthChange} precision="0.1" min={1} style={{ width: 174, marginLeft: '8px' }} />
-          </div>
+          {
+            verification_rule == '' && (
+              <div>
+                <p>限制字数:</p>
+                <InputNumber min={1} precision="0.1" onChange={this.valMinLengthChange} style={{ width: 174, marginRight: '8px' }} /> ~ <InputNumber onChange={this.valMaxLengthChange} precision="0.1" min={1} style={{ width: 174, marginLeft: '8px' }} />
+              </div>
+            )
+          }
           <div className={indexStyles.layout_style}>
             <p style={{ marginRight: '16px' }}>是否为必填项:</p>
             <Radio.Group onChange={this.isRequiredCheck} value={is_required}>
