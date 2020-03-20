@@ -13,7 +13,7 @@ class DropdownMultipleSelectWithSearch extends Component {
   constructor(props) {
     super(props)
     const currentUser = this.getCurrentUserFromLocalStorage('userInfo')
-    const { list, handleSelectedItemChange, currentSelectedProjectMember } = props;
+    const { list, handleSelectedItemChange, currentSelectedProjectMember, use_default_member } = props;
     const findUserInList = list.find(item => item.id === currentUser.id)
     if (findUserInList) {
       handleSelectedItemChange([findUserInList])
@@ -26,12 +26,13 @@ class DropdownMultipleSelectWithSearch extends Component {
       id: userInfo.id,
       user_id: userInfo.id
     }
+    const selectedList = !use_default_member ? [userInfo_simple] : currentSelectedProjectMember
     this.state = {
-      selectedList: [userInfo_simple],//currentSelectedProjectMember ? currentSelectedProjectMember : (findUserInList ? [findUserInList] : []),
+      selectedList,//currentSelectedProjectMember ? currentSelectedProjectMember : (findUserInList ? [findUserInList] : []),
       searchValue: "",
       dropdownOptionVisible: false
     }
-    handleSelectedItemChange([userInfo_simple])
+    handleSelectedItemChange(selectedList)
   }
   getCurrentUserFromLocalStorage = key => {
     try {
@@ -80,13 +81,18 @@ class DropdownMultipleSelectWithSearch extends Component {
     });
   };
   handleDeleteSelectedItemAll = () => {
+    const { use_default_member_ids = [], use_default_member, list = [] } = this.props
+    let arr = []
+    if (use_default_member) {
+      arr = list.filter(item => use_default_member_ids.indexOf(item.id) != -1)
+    }
     this.setState(() => {
       return {
-        selectedList: []
+        selectedList: arr
       };
     }, () => {
       const { handleSelectedItemChange } = this.props
-      handleSelectedItemChange([])
+      handleSelectedItemChange(arr)
     });
   };
   handleClickedSelectAllBtn = () => {
@@ -244,6 +250,7 @@ class DropdownMultipleSelectWithSearch extends Component {
   };
   renderSelectedItem = selectedItem => {
     const { isSelectedAll } = this.handleList();
+    const { use_default_member_ids = [] } = this.props
     if (isSelectedAll) {
       return (
         <div className={styles.contentListItemWrapper}>
@@ -287,10 +294,14 @@ class DropdownMultipleSelectWithSearch extends Component {
                 className={styles.contentListItemImg}
               />
             )}
-          <span
-            className={styles.contentListItemDeleBtn}
-            onClick={() => this.handleDeleteSelectedItem(item)}
-          />
+          {
+            use_default_member_ids.indexOf(item.id) == -1 && (
+              <span
+                className={styles.contentListItemDeleBtn}
+                onClick={() => this.handleDeleteSelectedItem(item)}
+              />
+            )
+          }
         </span>
       </div>
     ));
@@ -307,7 +318,7 @@ class DropdownMultipleSelectWithSearch extends Component {
     return true;
   };
   componentWillReceiveProps(nextProps) {
-    const { board_id, handleSelectedItemChange } = this.props
+    const { board_id, handleSelectedItemChange, currentSelectedProjectMember, use_default_member } = this.props
     const { board_id: next_board_id } = nextProps
     if (board_id != next_board_id) {
       const userInfo = this.getCurrentUserFromLocalStorage('userInfo')
@@ -318,11 +329,17 @@ class DropdownMultipleSelectWithSearch extends Component {
         id: userInfo.id,
         user_id: userInfo.id
       }
+      let arr = []
+      if (use_default_member) {
+        arr = currentSelectedProjectMember
+      } else {
+        arr = [userInfo_simple]
+      }
       this.setState({
-        selectedList: [userInfo_simple],
+        selectedList: arr,
         searchValue: ""
       });
-      handleSelectedItemChange([userInfo_simple])
+      handleSelectedItemChange(arr)
     }
     // const { list, handleSelectedItemChange, currentSelectedProjectMember = [] } = this.props;
     // const isReceiveSameListFromProps = this.comparePropsList(
@@ -400,8 +417,12 @@ class DropdownMultipleSelectWithSearch extends Component {
 
   render() {
     const { dropdownOptionVisible, selectedList } = this.state;
-    const { itemTitle } = this.props;
+    const { itemTitle, use_default_member, use_default_member_ids } = this.props;
     const { board_id, list } = this.props
+    // console.log('currentSelectedProjectMember', {
+    //   selectedList,
+    //   currentSelectedProjectMember
+    // })
     return (
       <div className={styles.wrapper}>
         <div className={styles.content}>
@@ -417,7 +438,7 @@ class DropdownMultipleSelectWithSearch extends Component {
                   not_show_wechat_invite={true}
                   invitationType='1'
                   invitationId={board_id}
-                  listData={list}
+                  listData={!use_default_member ? list : list.filter(item => use_default_member_ids.indexOf(item.id) == -1)}
                   keyCode={'user_id'}
                   searchName={'name'}
                   currentSelect={selectedList}
@@ -438,6 +459,11 @@ class DropdownMultipleSelectWithSearch extends Component {
       </div>
     );
   }
+}
+
+DropdownMultipleSelectWithSearch.defaultProps = {
+  use_default_member: false, //会传递默认选择的用户进来
+  use_default_member_ids: [], //会传递默认选择的用户进来的id列表
 }
 
 export default DropdownMultipleSelectWithSearch;

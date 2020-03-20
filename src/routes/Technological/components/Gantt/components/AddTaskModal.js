@@ -214,7 +214,6 @@ class AddTaskModal extends Component {
       board_card_group_id,
       current_list_group_id
     } = this.props;
-
     const isHasTaskTitle = () => addTaskTitle && String(addTaskTitle).trim();
     const isHasSelectedProject = () =>
       currentSelectedProject && currentSelectedProject.board_id;
@@ -322,6 +321,8 @@ class AddTaskModal extends Component {
                 list={currentSelectedProjectMembersList}
                 handleSelectedItemChange={this.handleSelectedItemChange}
                 currentSelectedProjectMember={currentSelectedProjectMember}
+                use_default_member={group_view_type == '2'}
+                use_default_member_ids={[current_list_group_id]}
                 dispatch={this.props.dispatch}
                 board_id={currentSelectedProject.board_id}
                 inviteOthersToBoardCalbackRequest={this.inviteOthersToBoardCalbackRequest}
@@ -331,7 +332,7 @@ class AddTaskModal extends Component {
               <Button
                 type="primary"
                 disabled={
-                  !isShouldNotDisableSubmitBtn() 
+                  !isShouldNotDisableSubmitBtn()
                   // || !isHasSelectedProjectMember()
                 }
                 onClick={this.handleClickedSubmitBtn}
