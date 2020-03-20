@@ -401,15 +401,30 @@ export default class GroupListHeadItem extends Component {
       }
     })
   }
+  updateProjectList = ({ board_id, name }) => {
+    const { projectList = [], dispatch } = this.props
+    const new_arr = [...projectList]
+    const index = new_arr.findIndex(item => item.board_id == board_id)
+    new_arr[index].board_name = name
+    // debugger
+    dispatch({
+      type: 'workbench/updateDatas',
+      payload: {
+        projectList: new_arr
+      }
+    })
+  }
   // 请求更新项目名称
   requestUpdateBoard = (data = {}) => {
     updateProject({ ...data }).then(res => {
       if (isApiResponseOk(res)) {
         this.setLocalListName(this.state.edit_input_value)
+        // debugger
         message.success('已成功更新项目名称')
         global.constants.lx_utils.editBoardName({ board_id: data.board_id, name: data.name }) //更新圈子
         this.updateBoardFiles(data)
         this.updateBoardsName()
+        this.updateProjectList(data)
       } else {
         message.error(res.message)
       }
@@ -1077,7 +1092,11 @@ export default class GroupListHeadItem extends Component {
 function mapStateToProps({
   gantt: { datas: { boards_flies, group_rows = [], ceiHeight, gantt_board_id, group_view_type, get_gantt_data_loading, list_group, show_board_fold } },
   technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, userBoardPermissions } },
-  projectDetail: { datas: { projectDetailInfoData = {} } }
+  projectDetail: { datas: { projectDetailInfoData = {} } },
+  workbench: {
+    datas: {
+      projectList,
+    } },
 }) {
-  return { boards_flies, list_group, ceiHeight, group_rows, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, get_gantt_data_loading, show_board_fold, projectDetailInfoData, userBoardPermissions }
+  return { projectList, boards_flies, list_group, ceiHeight, group_rows, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, get_gantt_data_loading, show_board_fold, projectDetailInfoData, userBoardPermissions }
 }
