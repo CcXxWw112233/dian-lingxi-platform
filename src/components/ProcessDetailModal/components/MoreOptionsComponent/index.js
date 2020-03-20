@@ -27,6 +27,8 @@ export default class MoreOptionsComponent extends Component {
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: moreOptionsList }, 'options_data')
     if (code == 'DUPLICATED') {
       this.props.updateConfigureProcess && this.props.updateConfigureProcess({value: '1'}, 'cc_type')
+    } else if (code == 'COMPLETION_DEADLINE') {
+      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '2' }, 'deadline_type')
     }
   }
 
@@ -41,6 +43,22 @@ export default class MoreOptionsComponent extends Component {
         return item
       }
     })
+    switch (code) {
+      case 'COMPLETION_DEADLINE':
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '1' }, 'deadline_type')
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: 'day' }, 'deadline_time_type')
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '1' }, 'deadline_value')
+        break
+      case 'DUPLICATED': // 抄送
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '0' }, 'cc_type')
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '' }, 'recipients')
+        break;
+      case 'REMARKS':
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '' }, 'description')
+        break
+      default:
+        break;
+    }
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: moreOptionsList }, 'options_data')
   }
 

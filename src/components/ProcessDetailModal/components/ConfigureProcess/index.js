@@ -134,23 +134,121 @@ export default class ConfigureProcess extends Component {
 
     let newAssignees = assignees ? assignees.split(',') : []
     let newRecipients = recipients ? recipients.split(',') : []
-    const lengh = newAssignees.length
     switch (node_type) {
       case '1':
-        if (assignee_type == '1') { // 表示的是任何人
-          if (!name && !(forms && forms.length)) {
-            confirmButtonText = '请输入步骤名称和至少添加一个表项'
-            confirmButtonDisabled = true
-          } else if (!name && (forms && forms.length)) {
-            confirmButtonText = '请输入步骤名称'
-            confirmButtonDisabled = true
-          } else if (name && !(forms && forms.length)) {
-            confirmButtonText = '至少添加一个表项'
-            confirmButtonDisabled = true
+        if (cc_type == '0' || cc_type == '') { // 没有选择抄送人的时候
+          if (assignee_type == '1') { // 表示的是任何人
+            if (!name && !(forms && forms.length)) {
+              confirmButtonText = '请输入步骤名称和至少添加一个表项'
+              confirmButtonDisabled = true
+            } else if (!name && (forms && forms.length)) {
+              confirmButtonText = '请输入步骤名称'
+              confirmButtonDisabled = true
+            } else if (name && !(forms && forms.length)) {
+              confirmButtonText = '至少添加一个表项'
+              confirmButtonDisabled = true
+            }
+          } else if (assignee_type == '2') { // 表示的是指定人员
+            if (!name && !(forms && forms.length) && !(newAssignees && newAssignees.length)) {
+              confirmButtonText = '请输入步骤名称、至少添加一个表项以及至少添加一位填写人'
+              confirmButtonDisabled = true
+            } else if (!name && (forms && forms.length) && (newAssignees && newAssignees.length)) {
+              confirmButtonText = '请输入步骤名称'
+              confirmButtonDisabled = true
+            } else if (name && !(forms && forms.length) && (newAssignees && newAssignees.length)) {
+              confirmButtonText = '至少添加一个表项'
+              confirmButtonDisabled = true
+            } else if (name && (forms && forms.length) && !(newAssignees && newAssignees.length)) {
+              confirmButtonText = '至少添加一位填写人'
+              confirmButtonDisabled = true
+            } else if (!name && !(forms && forms.length) && (newAssignees && newAssignees.length)) {
+              confirmButtonText = '请输入步骤名称和至少添加一个表项'
+              confirmButtonDisabled = true
+            } else if (!name && (forms && forms.length) && !(newAssignees && newAssignees.length)) {
+              confirmButtonText = '请输入步骤名称和至少添加一位填写人'
+              confirmButtonDisabled = true
+            } else if (name && !(forms && forms.length) && !(newAssignees && newAssignees.length)) {
+              confirmButtonText = '至少添加一个表项以及至少添加一位填写人'
+              confirmButtonDisabled = true
+            }
           }
-        } else if (assignee_type == '2') { // 表示的是指定人员
-          
+        } else if (cc_type == '1') { // 表示选择了抄送人
+          if (assignee_type == '1') { // 表示的是任何人
+            if (!name && !(forms && forms.length) && !(newRecipients && newRecipients.length)) {
+              confirmButtonText = '请输入步骤名称、至少添加一个表项和至少选择一位抄送人'
+              confirmButtonDisabled = true
+            } else if (!name && (forms && forms.length) && (newRecipients && newRecipients.length)) {
+              confirmButtonText = '请输入步骤名称'
+              confirmButtonDisabled = true
+            } else if (name && !(forms && forms.length) && (newRecipients && newRecipients.length)) {
+              confirmButtonText = '至少添加一个表项'
+              confirmButtonDisabled = true
+            } else if (name && (forms && forms.length) && !(newRecipients && newRecipients.length)) {
+              confirmButtonText = '至少添加一位抄送人'
+              confirmButtonDisabled = true
+            } else if (!name && !(forms && forms.length) && (newRecipients && newRecipients.length)) {
+              confirmButtonText = '请输入步骤名称和至少添加一个表项'
+              confirmButtonDisabled = true
+            } else if (!name && (forms && forms.length) && !(newRecipients && newRecipients.length)) {
+              confirmButtonText = '请输入步骤名称和至少添加一位抄送人'
+              confirmButtonDisabled = true
+            } else if (name && !(forms && forms.length) && !(newRecipients && newRecipients.length)) {
+              confirmButtonText = '至少添加一个表项以及至少添加一位抄送人'
+              confirmButtonDisabled = true
+            }
+          } else if (assignee_type == '2') {
+            if (!name && !(forms && forms.length) && !(newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+              confirmButtonText = '请输入步骤名称、至少添加一个表项以及至少添加一位填写人和至少一位抄送人'
+              confirmButtonDisabled = true
+            } else if (!name && (forms && forms.length) && (newAssignees && newAssignees.length) && (newRecipients && newRecipients.length)) {
+              confirmButtonText = '请输入步骤名称'
+              confirmButtonDisabled = true
+            } else if (name && !(forms && forms.length) && !(newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+              confirmButtonText = '请至少添加一个表项以及至少添加一位填写人和至少一位抄送人'
+              confirmButtonDisabled = true
+            } else if (name && (forms && forms.length) && !(newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+              confirmButtonText = '至少添加一位填写人和至少一位抄送人'
+              confirmButtonDisabled = true
+            } else if (name && !(forms && forms.length) && (newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+              confirmButtonText = '至少添加一个表项和至少一位抄送人'
+              confirmButtonDisabled = true
+            } else if (name && (forms && forms.length) && (newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+              confirmButtonText = '至少添加一位抄送人'
+              confirmButtonDisabled = true
+            } else if (name && !(forms && forms.length) && (newAssignees && newAssignees.length) && (newRecipients && newRecipients.length)) {
+              confirmButtonText = '至少添加一个表项'
+              confirmButtonDisabled = true
+            } else if (name && (forms && forms.length) && !(newAssignees && newAssignees.length) && (newRecipients && newRecipients.length)) {
+              confirmButtonText = '至少添加一位填写人'
+              confirmButtonDisabled = true
+            } else if (!name && (forms && forms.length) && !(newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+              confirmButtonText = '请输入步骤名称、至少添加一位填写人以及至少一位抄送人'
+              confirmButtonDisabled = true
+            } else if (!name && (forms && forms.length) && (newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+              confirmButtonText = '请输入步骤名称以及至少添加一位抄送人'
+              confirmButtonDisabled = true
+            } else if (!name && (forms && forms.length) && !(newAssignees && newAssignees.length) && (newRecipients && newRecipients.length)) {
+              confirmButtonText = '请输入步骤名称以及至少添加一位填写人'
+              confirmButtonDisabled = true
+            } else if (!name && !(forms && forms.length) && (newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+              confirmButtonText = '请输入步骤名称、至少添加一个表项以及至少一位抄送人'
+              confirmButtonDisabled = true
+            } else if (!name && !(forms && forms.length) && !(newAssignees && newAssignees.length) && (newRecipients && newRecipients.length)) {
+              confirmButtonText = '请输入步骤名称、至少添加一个表项以及至少一位填写人'
+              confirmButtonDisabled = true
+            } else if (!name && !(forms && forms.length) && (newAssignees && newAssignees.length) && (newRecipients && newRecipients.length)) {
+              confirmButtonText = '请输入步骤名称和至少添加一个表项'
+              confirmButtonDisabled = true
+            } else if (!name && (forms && forms.length) && (newAssignees && newAssignees.length) && (newRecipients && newRecipients.length)) {
+              confirmButtonText = '请输入步骤名称'
+              confirmButtonDisabled = true
+            } else if (name && !(forms && forms.length) && !(newAssignees && newAssignees.length) && (newRecipients && newRecipients.length)) {
+              confirmButtonText = '至少添加一个表项以及至少一位填写人'
+              confirmButtonDisabled = true
+            }
+          }
         }
+
         break;
       case '2':
         break
@@ -215,7 +313,6 @@ export default class ConfigureProcess extends Component {
       bordered: false
     }
     // const alltypedata = processEditDatasRecords[processCurrentEditStep]['alltypedata']
-    console.log(this.renderDiffButtonTooltipsText().confirmButtonDisabled,'ssssssssssssssssssssssssss_disabled')
     return (
       <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }} onClick={(e) => { this.handleCancelNodeName(e) }}>
         {/* {node_amount <= itemKey + 1 ? null : <div className={stylLine}></div>} */}
