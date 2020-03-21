@@ -18,7 +18,6 @@ export default class BeginningStepTwo extends Component {
     approvePersonnelList: JSON.parse(JSON.stringify(approvePersonnelSuggestion))
   }
 
-
   // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
   updateCorrespondingPrcodessStepWithNodeContent = (data, value) => {
     const { itemValue, processEditDatas = [], itemKey, dispatch } = this.props
@@ -162,12 +161,15 @@ export default class BeginningStepTwo extends Component {
     )
   }
 
-  render() {
-    const { itemKey, processEditDatas = [] } = this.props
+  /**
+   * 渲染悬浮状态的审批节点
+   * 根据 container_configureProcessOut 容器作为父元素来定位的
+   */
+  renderAbsoluteContent = () => {
+    const { itemKey, processEditDatas = [], itemValue } = this.props
     const { transPrincipalList = [], is_show_spread_arrow } = this.state
     return (
-      <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }}>
-        {processEditDatas.length <= itemKey + 1 ? null : <div className={indexStyles.doingLine}></div>}
+      <div id="currentAbsoluteApproveContainer" key={itemKey} style={{ display: 'flex', marginBottom: '48px', marginRight: '32px', position: 'absolute', top: '478px', zIndex: 1 }}>
         <div className={indexStyles.doingCircle}> {itemKey + 1}</div>
         <div className={`${indexStyles.popover_card}`}>
           <div className={`${globalStyles.global_vertical_scrollbar}`}>
@@ -219,6 +221,72 @@ export default class BeginningStepTwo extends Component {
           </div>
         </div>
       </div>
+    )
+  }
+
+  render() {
+    const { itemKey, processEditDatas = [], itemValue } = this.props
+    const { status } = itemValue
+    const { transPrincipalList = [], is_show_spread_arrow } = this.state
+    return (
+      <>
+        <div id={status == '1' && 'currentStaticApproveContainer'} key={itemKey} style={{ display: 'flex', marginBottom: '48px', position:'relative' }}>
+          {processEditDatas.length <= itemKey + 1 ? null : <div className={indexStyles.doingLine}></div>}
+          <div className={indexStyles.doingCircle}> {itemKey + 1}</div>
+          <div className={`${indexStyles.popover_card}`}>
+            <div className={`${globalStyles.global_vertical_scrollbar}`}>
+              {/* 步骤名称 */}
+              <div style={{ marginBottom: '16px' }}>
+                <div className={`${indexStyles.node_name}`}>
+                  <div>
+                    <span className={`${globalStyles.authTheme} ${indexStyles.stepTypeIcon}`}>&#xe616;</span>
+                    <span>建设部门审批</span>
+                  </div>
+                  <div>
+                    <span onClick={this.handleSpreadArrow} className={`${indexStyles.spreadIcon}`}>
+                      {
+                        !is_show_spread_arrow ? <span className={`${globalStyles.authTheme} ${indexStyles.spread_arrow}`}>&#xe7ee;</span> : <span className={`${globalStyles.authTheme} ${indexStyles.spread_arrow}`}>&#xe7ed;</span>
+                      }
+                    </span>
+                  </div>
+                </div>
+              </div>
+              {/* 下 */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div className={indexStyles.content__principalList_icon}>
+                  <AvatarList
+                    size="small"
+                    maxLength={10}
+                    excessItemsStyle={{
+                      color: '#f56a00',
+                      backgroundColor: '#fde3cf'
+                    }}
+                  >
+                    {transPrincipalList && transPrincipalList.map(({ name, avatar }, index) => (
+                      <AvatarList.Item
+                        key={index}
+                        tips={name}
+                        src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                      />
+                    ))}
+                  </AvatarList>
+                  <span className={indexStyles.content__principalList_info}>
+                    {`${transPrincipalList.length}位审批人`}
+                  </span>
+                </div>
+                <div>
+                  <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '14px' }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
+                  <span className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : 步骤开始后1天内</span>
+                </div>
+              </div>
+              {is_show_spread_arrow && this.renderEditDetailContent()}
+            </div>
+          </div>
+        </div>
+        <div>
+         {status == '1' && this.renderAbsoluteContent()}
+        </div>
+      </>
     )
   }
 }

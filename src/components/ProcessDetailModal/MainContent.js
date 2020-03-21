@@ -107,6 +107,28 @@ export default class MainContent extends Component {
   onScroll = (e) => {
     let scrollTop = document.getElementById('container_configureProcessOut').scrollTop
     let ele = document.getElementById('suspensionFlowInstansNav')
+    
+    // 当前处于悬浮审批状态节点
+    let currentAbsoluteApproveElement = document.getElementById('currentAbsoluteApproveContainer')
+    // 获取当前处于原本位置的审批节点
+    let currentStaticApproveElement = document.getElementById('currentStaticApproveContainer')
+    /**
+     * 设置审批悬浮状态
+     * 1.获取当前处于悬浮状态的对象(currentAbsoluteApproveElement)的offsetTop
+     * 2.获取当前滚动的距离 scrollTop  0 ↑
+     * 3.获取当前处于原本处位置（currentStaticApproveElement）的 offsetTop
+     * 4.满足条件：当滚动的距离（scrollTop）+ currentAbsoluteApproveElement的top值 大于等于 currentStaticApproveElement的offsetTop的时候进行隐藏，否则就显示
+     */
+    if (currentAbsoluteApproveElement && currentStaticApproveElement) {
+      if (scrollTop + 478 >= currentStaticApproveElement.offsetTop) {
+        currentAbsoluteApproveElement.style.display = 'none'
+        currentAbsoluteApproveElement.style.top = 478 + 'px'
+      } else {
+        currentAbsoluteApproveElement.style.top = scrollTop + 478 + 'px'
+        currentAbsoluteApproveElement.style.display = 'flex'
+      }
+    }
+
     if (scrollTop >= 200) {
       ele.style.display = 'block'
       ele.style.position = 'absolute'

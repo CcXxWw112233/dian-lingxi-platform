@@ -350,6 +350,139 @@ export default class ProcessDefault extends Component {
             "deadline_time_type": "hour",
             "deadline_value": "10",
             "cc_type": "1"
+          },
+          {
+            "id": "1240120247009284096",
+            "assignees": [
+              {
+                "id": "1110064610620346368",
+                "name": "钟先生",
+                "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-06-19/cecc1c8a2dcf4a3590da3ce2b889f828.jpg",
+                "processed": "2",
+                "time": "1584521312",
+                "comment": "wo tong yi l"
+              }
+            ],
+            "recipients": [
+              {
+                "id": "1110064610620346368",
+                "name": "钟先生",
+                "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-06-19/cecc1c8a2dcf4a3590da3ce2b889f828.jpg"
+              }
+            ],
+            "status": "0",
+            "forms": [
+              {
+                "id": "1240115038702931968",
+                "title": "文本标题",
+                "sort": "1",
+                "value": "",
+                "form_id": "1240115038329638912",
+                "field_type": "1",
+                "prompt_content": "请填写",
+                "is_required": "1",
+                "is_multiple_choice": "0",
+                "val_min_length": "10",
+                "val_max_length": "20",
+                "date_range": "1",
+                "date_precision": "1",
+                "verification_rule": ""
+              },
+              {
+                "id": "1240115039084613632",
+                "title": "性别",
+                "sort": "2",
+                "options": [
+                  {
+                    "id": "1240115039088807936",
+                    "label_name": "男",
+                    "label_value": "0"
+                  },
+                  {
+                    "id": "1240115039088807937",
+                    "label_name": "女",
+                    "label_value": "1"
+                  }
+                ],
+                "value": "1240115039088807936",
+                "form_id": "1240115038329638912",
+                "field_type": "2",
+                "prompt_content": "请选择",
+                "is_required": "1",
+                "is_multiple_choice": "1",
+                "date_range": "1",
+                "date_precision": "1"
+              },
+              {
+                "id": "1240115039860559872",
+                "title": "生日",
+                "sort": "3",
+                "value": "",
+                "form_id": "1240115038329638912",
+                "field_type": "3",
+                "prompt_content": "您的出生日期",
+                "is_required": "0",
+                "is_multiple_choice": "0",
+                "date_range": "2",
+                "date_precision": "1"
+              },
+              {
+                "id": "1240115040238047232",
+                "title": "简历",
+                "sort": "4",
+                "form_id": "1240115038329638912",
+                "field_type": "5",
+                "prompt_content": "请上传简历",
+                "is_required": "0",
+                "is_multiple_choice": "0",
+                "date_range": "1",
+                "date_precision": "1",
+                "limit_file_num": "1",
+                "limit_file_type": [
+                  "document",
+                  "image",
+                  "audio",
+                  "video"
+                ],
+                "limit_file_size": "10"
+              }
+            ],
+            "node_type": "1",
+            "assignee_type": "2",
+            "deadline_type": "2",
+            "deadline_time_type": "day",
+            "deadline_value": "1",
+            "cc_type": "1"
+          },
+          {
+            "id": "1240120247390965760",
+            "assignees": [
+              {
+                "id": "1110064610620346368",
+                "name": "钟先生",
+                "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-06-19/cecc1c8a2dcf4a3590da3ce2b889f828.jpg",
+                "processed": "2"
+              },
+              {
+                "id": "1110381102486392832",
+                "name": "fengabner聯通號",
+                "avatar": "",
+                "processed": "1"
+              }
+            ],
+            "recipients": [
+              {
+                "id": "1110064610620346368",
+                "name": "钟先生",
+                "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-06-19/cecc1c8a2dcf4a3590da3ce2b889f828.jpg"
+              }
+            ],
+            "status": "0",
+            "node_type": "2",
+            "deadline_type": "2",
+            "deadline_time_type": "hour",
+            "deadline_value": "10",
+            "cc_type": "1"
           }
         ]
       }
