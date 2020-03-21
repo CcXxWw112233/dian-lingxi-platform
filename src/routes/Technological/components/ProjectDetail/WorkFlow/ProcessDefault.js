@@ -319,7 +319,8 @@ export default class ProcessDefault extends Component {
             "deadline_type": "2",
             "deadline_time_type": "day",
             "deadline_value": "1",
-            "cc_type": "1"
+            "cc_type": "1",
+            "is_confirm": "1"
           },
           {
             "id": "1240120247390965760",
@@ -376,7 +377,7 @@ export default class ProcessDefault extends Component {
                 "id": "1240115038702931968",
                 "title": "文本标题",
                 "sort": "1",
-                "value": "",
+                "value": "我的天",
                 "form_id": "1240115038329638912",
                 "field_type": "1",
                 "prompt_content": "请填写",
@@ -452,7 +453,8 @@ export default class ProcessDefault extends Component {
             "deadline_type": "2",
             "deadline_time_type": "day",
             "deadline_value": "1",
-            "cc_type": "1"
+            "cc_type": "1",
+            "is_confirm": "1"
           },
           {
             "id": "1240120247390965760",

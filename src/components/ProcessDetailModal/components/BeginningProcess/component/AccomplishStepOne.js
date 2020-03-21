@@ -3,17 +3,17 @@ import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '../../AvatarList'
 import { principalList } from '../../../constant'
-import BeginningStepOne_one from './BeginningStepOne_one'
-import BeginningStepOne_two from './BeginningStepOne_two'
-import BeginningStepOne_three from './BeginningStepOne_three'
-import BeginningStepOne_five from './BeginningStepOne_five'
+import AccomplishStepOne_one from './AccomplishStepOne_one'
+import AccomplishStepOne_two from './AccomplishStepOne_two'
+import AccomplishStepOne_three from './AccomplishStepOne_three'
+import AccomplishStepOne_five from './AccomplishStepOne_five'
 import { validateTel, validateEmail, validatePassword, validateFixedTel, validateIdCard, validateChineseName, validatePostalCode, validateWebsite, validateQQ, validatePositiveInt, validateNegative, validateTwoDecimal, } from '../../../../../utils/verify'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { Button } from 'antd'
 import { connect } from 'dva'
 
 @connect(mapStateToProps)
-export default class BeginningStepOne extends Component {
+export default class AccomplishStepOne extends Component {
 
   constructor(props) {
     super(props)
@@ -21,12 +21,6 @@ export default class BeginningStepOne extends Component {
       transPrincipalList: JSON.parse(JSON.stringify(principalList)),
       is_show_spread_arrow: props.itemValue.status != '1' ? false : true,
     }
-  }
-
-  // 判断是否展开详情内容
-  whetherShowSpreadArrow = () => {
-    const { itemValue, processEditDatas = [] } = this.props
-
   }
 
     // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
@@ -135,16 +129,16 @@ export default class BeginningStepOne extends Component {
     let container = (<div></div>)
     switch (field_type) {
       case '1':
-        container = <BeginningStepOne_one parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
+        container = <AccomplishStepOne_one parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
         break;
       case '2':
-        container = <BeginningStepOne_two parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
+        container = <AccomplishStepOne_two parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
         break;
       case '3':
-        container = <BeginningStepOne_three parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
+        container = <AccomplishStepOne_three parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
         break;
       case '5':
-        container = <BeginningStepOne_five parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
+        container = <AccomplishStepOne_five parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
         break;
       default:
         break;

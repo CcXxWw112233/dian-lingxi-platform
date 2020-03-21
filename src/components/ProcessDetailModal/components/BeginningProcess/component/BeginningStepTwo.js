@@ -121,7 +121,7 @@ export default class BeginningStepTwo extends Component {
   renderEditDetailContent = () => {
     const { itemValue } = this.props
     const { approvePersonnelList = [] } = this.state
-    const { approve_type } = itemValue
+    const { approve_type, status } = itemValue
     let type_name = ''
     const diffType = () => {
       switch (approve_type) {
@@ -152,14 +152,18 @@ export default class BeginningStepTwo extends Component {
           }
         </div>
         {/* 编辑按钮 */}
-        <div className={indexStyles.button_wrapper} style={{ paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center', position: 'relative' }}>
-          <Popconfirm className={indexStyles.confirm_wrapper} icon={<></>} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={this.renderPopRjectContent()} okText="驳回">
-            <Button onClick={this.handleEnterConfigureProcess} style={{ color: '#fff', background: '#FF7875', marginRight: '8px' }}>驳回</Button>
-          </Popconfirm>
-          <Popconfirm className={indexStyles.confirm_wrapper} icon={<></>} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={this.renderPopConfirmContent()} okText="通过">
-            <Button type="primary">通过</Button>
-          </Popconfirm>
-        </div>
+        {
+          status == '1' && (
+            <div className={indexStyles.button_wrapper} style={{ paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center', position: 'relative' }}>
+              <Popconfirm className={indexStyles.confirm_wrapper} icon={<></>} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={this.renderPopRjectContent()} okText="驳回">
+                <Button onClick={this.handleEnterConfigureProcess} style={{ color: '#fff', background: '#FF7875', marginRight: '8px' }}>驳回</Button>
+              </Popconfirm>
+              <Popconfirm className={indexStyles.confirm_wrapper} icon={<></>} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={this.renderPopConfirmContent()} okText="通过">
+                <Button type="primary">通过</Button>
+              </Popconfirm>
+            </div>
+          )
+        }
       </div>
     )
   }
@@ -233,7 +237,7 @@ export default class BeginningStepTwo extends Component {
     const { transPrincipalList = [], is_show_spread_arrow } = this.state
     return (
       <>
-        <div id={status == '1' && 'currentStaticApproveContainer'} key={itemKey} style={{ display: 'flex', marginBottom: '48px', position:'relative' }}>
+        <div id={status == '1' && 'currentStaticApproveContainer'} key={itemKey} style={{ display: 'flex', marginBottom: '48px', position: 'relative' }}>
           {processEditDatas.length <= itemKey + 1 ? null : <div className={indexStyles.doingLine}></div>}
           <div className={indexStyles.doingCircle}> {itemKey + 1}</div>
           <div className={`${indexStyles.popover_card}`}>
@@ -287,7 +291,7 @@ export default class BeginningStepTwo extends Component {
           </div>
         </div>
         <div>
-         {/* {status == '1' && this.renderAbsoluteContent()} */}
+          {/* {status == '1' && this.renderAbsoluteContent()} */}
         </div>
       </>
     )
