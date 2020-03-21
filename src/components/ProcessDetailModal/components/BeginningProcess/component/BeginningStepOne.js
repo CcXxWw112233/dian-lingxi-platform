@@ -15,9 +15,18 @@ import { connect } from 'dva'
 @connect(mapStateToProps)
 export default class BeginningStepOne extends Component {
 
-  state = {
-    transPrincipalList: JSON.parse(JSON.stringify(principalList)),
-    is_show_spread_arrow: true,
+  constructor(props) {
+    super(props)
+    this.state = {
+      transPrincipalList: JSON.parse(JSON.stringify(principalList)),
+      is_show_spread_arrow: props.itemValue.status != '1' ? false : true,
+    }
+  }
+
+  // 判断是否展开详情内容
+  whetherShowSpreadArrow = () => {
+    const { itemValue, processEditDatas = [] } = this.props
+
   }
 
     // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
@@ -184,10 +193,11 @@ export default class BeginningStepOne extends Component {
   }
 
   render() {
-    const { itemKey, processEditDatas = [] } = this.props
+    const { itemKey, processEditDatas = [], itemValue } = this.props
+    const { status } = itemValue
     const { transPrincipalList = [], is_show_spread_arrow } = this.state
     return (
-      <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }}>
+      <div id={status == '1' && 'currentDataCollectionItem'} key={itemKey} style={{ display: 'flex', marginBottom: '48px' }}>
         {processEditDatas.length <= itemKey + 1 ? null : <div className={indexStyles.doingLine}></div>}
         {/* <div className={indexStyles.doingLine}></div> */}
         <div className={indexStyles.doingCircle}> {itemKey + 1}</div>

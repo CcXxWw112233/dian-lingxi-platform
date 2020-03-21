@@ -32,9 +32,30 @@ export default class MainContent extends Component {
   componentDidMount() {
     this.initCanvas()
     window.addEventListener('resize', this.resizeTTY)
+    window.addEventListener('scroll',this.onScroll)
+    // 采用锚点方式对元素进行定位
+    let scrollElement = document.getElementById('container_configureProcessOut')
+    let currentDoingDataCollectionItem = document.getElementById('currentDataCollectionItem')
+    let currentDoingApproveItem = document.getElementById('currentStaticApproveContainer')
+    // 表示进行中的资料收集节点
+    if (currentDoingDataCollectionItem) {
+      scrollElement.scrollTo({
+        top: currentDoingDataCollectionItem.offsetTop - 68,
+        behavior: 'smooth'
+      });
+    }
+    // 表示进行中的审批节点
+    if (currentDoingApproveItem) {
+      scrollElement.scrollTo({
+        top: currentDoingApproveItem.offsetTop - 68,
+        behavior: 'smooth'
+      });
+    }
+    
   }
   componentWillUnmount() {
     window.removeEventListener("resize", this.resizeTTY);
+    window.removeEventListener('scroll',this.onScroll)
   }
   resizeTTY = () => {
     const clientHeight = document.documentElement.clientHeight;//获取页面可见高度
@@ -107,27 +128,35 @@ export default class MainContent extends Component {
   onScroll = (e) => {
     let scrollTop = document.getElementById('container_configureProcessOut').scrollTop
     let ele = document.getElementById('suspensionFlowInstansNav')
+    // -------------------- 关于资料收集节点定位  ----------------------------
+    // 关于资料收集节点的定位
     
+    
+
+    // -------------------- 关于审批节点定位  ----------------------------
     // 当前处于悬浮审批状态节点
-    let currentAbsoluteApproveElement = document.getElementById('currentAbsoluteApproveContainer')
-    // 获取当前处于原本位置的审批节点
-    let currentStaticApproveElement = document.getElementById('currentStaticApproveContainer')
-    /**
-     * 设置审批悬浮状态
-     * 1.获取当前处于悬浮状态的对象(currentAbsoluteApproveElement)的offsetTop
-     * 2.获取当前滚动的距离 scrollTop  0 ↑
-     * 3.获取当前处于原本处位置（currentStaticApproveElement）的 offsetTop
-     * 4.满足条件：当滚动的距离（scrollTop）+ currentAbsoluteApproveElement的top值 大于等于 currentStaticApproveElement的offsetTop的时候进行隐藏，否则就显示
-     */
-    if (currentAbsoluteApproveElement && currentStaticApproveElement) {
-      if (scrollTop + 478 >= currentStaticApproveElement.offsetTop) {
-        currentAbsoluteApproveElement.style.display = 'none'
-        currentAbsoluteApproveElement.style.top = 478 + 'px'
-      } else {
-        currentAbsoluteApproveElement.style.top = scrollTop + 478 + 'px'
-        currentAbsoluteApproveElement.style.display = 'flex'
-      }
-    }
+    // let currentAbsoluteApproveElement = document.getElementById('currentAbsoluteApproveContainer')
+    // // 获取当前处于原本位置的审批节点
+    // let currentStaticApproveElement = document.getElementById('currentStaticApproveContainer')
+
+    // // 关于审批节点的悬浮
+    // if (currentAbsoluteApproveElement && currentStaticApproveElement) {
+      
+    //   /**
+    //    * 设置审批悬浮状态
+    //    * 1.获取当前处于悬浮状态的对象(currentAbsoluteApproveElement)的offsetTop
+    //    * 2.获取当前滚动的距离 scrollTop  0 ↑
+    //    * 3.获取当前处于原本处位置（currentStaticApproveElement）的 offsetTop
+    //    * 4.满足条件：当滚动的距离（scrollTop）+ currentAbsoluteApproveElement的top值 大于等于 currentStaticApproveElement的offsetTop的时候进行隐藏，否则就显示
+    //    */
+    //   if (scrollTop + 478 >= currentStaticApproveElement.offsetTop) {
+    //     currentAbsoluteApproveElement.style.display = 'none'
+    //     currentAbsoluteApproveElement.style.top = 478 + 'px'
+    //   } else {
+    //     currentAbsoluteApproveElement.style.top = scrollTop + 478 + 'px'
+    //     currentAbsoluteApproveElement.style.display = 'flex'
+    //   }
+    // }
 
     if (scrollTop >= 200) {
       ele.style.display = 'block'
@@ -328,7 +357,7 @@ export default class MainContent extends Component {
     const { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep } = this.props
     let saveTempleteDisabled = currentFlowInstanceName == '' || processEditDatas[processEditDatas.length - 1].is_edit == '0' ? true : false
     return (
-      <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto' }} onScroll={this.onScroll} >
+      <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto',position: 'relative' }} onScroll={this.onScroll} >
         <div id="container_configureTop" className={indexStyles.configure_top}>
           <div style={{ display: 'flex', position: 'relative' }}>
             <canvas id="time_graph_canvas" width={210} height={210} style={{ float: 'left' }}></canvas>

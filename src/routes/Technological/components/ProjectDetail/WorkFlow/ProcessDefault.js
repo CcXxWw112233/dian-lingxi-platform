@@ -344,7 +344,7 @@ export default class ProcessDefault extends Component {
                 "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-06-19/cecc1c8a2dcf4a3590da3ce2b889f828.jpg"
               }
             ],
-            "status": "1",
+            "status": "2",
             "node_type": "2",
             "deadline_type": "2",
             "deadline_time_type": "hour",
@@ -477,7 +477,7 @@ export default class ProcessDefault extends Component {
                 "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-06-19/cecc1c8a2dcf4a3590da3ce2b889f828.jpg"
               }
             ],
-            "status": "0",
+            "status": "1",
             "node_type": "2",
             "deadline_type": "2",
             "deadline_time_type": "hour",

@@ -12,10 +12,13 @@ const TextArea = Input.TextArea
 @connect(mapStateToProps)
 export default class BeginningStepTwo extends Component {
 
-  state = {
-    transPrincipalList: JSON.parse(JSON.stringify(principalList)),
-    is_show_spread_arrow: true,
-    approvePersonnelList: JSON.parse(JSON.stringify(approvePersonnelSuggestion))
+  constructor(props) {
+    super(props)
+    this.state = {
+      transPrincipalList: JSON.parse(JSON.stringify(principalList)),
+      is_show_spread_arrow: props.itemValue.status != '1' ? false : true,
+      approvePersonnelList: JSON.parse(JSON.stringify(approvePersonnelSuggestion))
+    }
   }
 
   // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
@@ -169,7 +172,7 @@ export default class BeginningStepTwo extends Component {
     const { itemKey, processEditDatas = [], itemValue } = this.props
     const { transPrincipalList = [], is_show_spread_arrow } = this.state
     return (
-      <div id="currentAbsoluteApproveContainer" key={itemKey} style={{ display: 'flex', marginBottom: '48px', marginRight: '32px', position: 'absolute', top: '478px', zIndex: 1 }}>
+      <div id="currentAbsoluteApproveContainer" key={itemKey} style={{ display: 'flex', marginBottom: '48px', marginRight: '32px', left: '32px', right: 0, position: 'absolute', top: '478px', zIndex: 1 }}>
         <div className={indexStyles.doingCircle}> {itemKey + 1}</div>
         <div className={`${indexStyles.popover_card}`}>
           <div className={`${globalStyles.global_vertical_scrollbar}`}>
@@ -217,7 +220,7 @@ export default class BeginningStepTwo extends Component {
                 <span className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : 步骤开始后1天内</span>
               </div>
             </div>
-            {is_show_spread_arrow && this.renderEditDetailContent()}
+            {/* {is_show_spread_arrow && this.renderEditDetailContent()} */}
           </div>
         </div>
       </div>
@@ -284,7 +287,7 @@ export default class BeginningStepTwo extends Component {
           </div>
         </div>
         <div>
-         {status == '1' && this.renderAbsoluteContent()}
+         {/* {status == '1' && this.renderAbsoluteContent()} */}
         </div>
       </>
     )
