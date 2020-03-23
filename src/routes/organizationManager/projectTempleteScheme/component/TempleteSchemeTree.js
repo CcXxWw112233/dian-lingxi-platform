@@ -960,7 +960,7 @@ export default class TempleteSchemeTree extends Component {
   renderEmptyTreeData = () => {
     return (
       <div>
-        <div onClick={this.handleInitTemplete} className={indexStyles.empty_data}><span className={globalStyles.authTheme}>&#xe6e9;</span> 添加项目第一阶段里程碑</div>
+        {/* <div onClick={this.handleInitTemplete} className={indexStyles.empty_data}><span className={globalStyles.authTheme}>&#xe6e9;</span> 添加项目第一阶段里程碑</div> */}
       </div>
     )
   }
