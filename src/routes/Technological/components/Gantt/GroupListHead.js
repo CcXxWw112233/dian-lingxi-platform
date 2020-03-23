@@ -7,7 +7,8 @@ import OutLineHeadItem from './OutLineHeadItem'
 import { ganttIsOutlineView } from './constants';
 import emptyBoxImageUrl from '@/assets/gantt/empty-box.png';
 import { Button } from 'antd';
-import OutlineGuideModal from './components/OutlineGuideModal'
+import OutlineGuideModal from './components/OutlineGuideModal';
+import { milestoneInit } from '@/services/technological/task.js';
 @connect(mapStateToProps)
 export default class GroupListHead extends Component {
   constructor(props) {
@@ -88,28 +89,39 @@ export default class GroupListHead extends Component {
   guideModalHandleClose = () => {
     const { dispatch } = this.props;
     dispatch({
-      type:'gantt/updateDatas',
-      payload:{
-        startPlanType:-1
+      type: 'gantt/updateDatas',
+      payload: {
+        startPlanType: -1
       }
     });
   }
 
-  openGuideModal = ()=>{
+  openGuideModal = (boardId) => {
     const { dispatch } = this.props;
-    dispatch({
-      type:'gantt/updateDatas',
-      payload:{
-        startPlanType:1
-      }
+
+    milestoneInit({ board_id: boardId }).then((res) => {
+      dispatch({
+        type: 'gantt/getGanttData',
+        payload: {
+
+        }
+      });
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          startPlanType: 1
+        }
+      });
     });
+
+
   }
 
   render() {
-    const { list_group = [], group_rows = [], ceiHeight, target_scrollLeft, target_scrollTop, group_view_type, outline_tree = [],get_gantt_data_loaded} = this.props;
+    const { list_group = [], group_rows = [], ceiHeight, target_scrollLeft, target_scrollTop, group_view_type, outline_tree = [], get_gantt_data_loaded, gantt_board_id } = this.props;
     const { startPlanType } = this.props;
     const isNewProject = (!outline_tree || outline_tree.length == 0) ? true : false;
-    if(get_gantt_data_loaded == false){
+    if (get_gantt_data_loaded == false) {
       return (
         <div></div>
       );
@@ -123,8 +135,9 @@ export default class GroupListHead extends Component {
             <div>还没有计划，赶快新建一个吧</div>
           </div>
           <div className={indexStyles.guideButtons}>
-            <Button type="primary" block className={indexStyles.selectTpfBtn} onClick={this.openBoardTemplateDrawer}>选择项目模版</Button>
-            <Button block onClick={() => { this.openGuideModal() }}>直接新建计划</Button>
+
+            <Button type="primary" className={indexStyles.selectMakePlanBtn} block onClick={() => { this.openGuideModal(gantt_board_id) }}>制定计划</Button>
+            <Button block onClick={this.openBoardTemplateDrawer}>选择模版</Button>
           </div>
         </div>
       )
@@ -187,6 +200,7 @@ function mapStateToProps({ gantt: {
     outline_tree,
     startPlanType,
     get_gantt_data_loaded,
+    gantt_board_id
   }
 } }) {
   return {
@@ -201,5 +215,6 @@ function mapStateToProps({ gantt: {
     outline_tree,
     startPlanType,
     get_gantt_data_loaded,
+    gantt_board_id
   }
 }

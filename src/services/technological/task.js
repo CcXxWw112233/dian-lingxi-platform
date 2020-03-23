@@ -541,3 +541,14 @@ export async function removeMilestoneExcutos(data) {
     data
   })
 }
+//移除里程碑负责人
+export async function milestoneInit(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone/init`,
+    method: 'GET',
+    params
+  })
+}
+
+
+
