@@ -97,7 +97,7 @@ export default class ProjectTempleteSchemeModal extends Component {
     //     })
     //   }
     // });
-    
+
   }
 
   // 渲染初始列表状态
@@ -119,9 +119,9 @@ export default class ProjectTempleteSchemeModal extends Component {
                 </div>
               ) : (
                   <div key={item.id} style={{ position: 'relative' }} className={`${indexStyles.margin_right} ${indexStyles.others_list}`} onClick={() => { this.handleOperatorSchemeList({ id, name }) }}>
-                    <Tooltip autoAdjustOverflow={false} title="删除模板" placement="top">
+                    {/* <Tooltip autoAdjustOverflow={false} title="删除模板" placement="top">
                       <span onClick={(e) => { this.handleDeleteTemplete(e, item.id) }} className={`${globalStyles.authTheme} ${indexStyles.del_temp}`}>&#xe7c3;</span>
-                    </Tooltip>
+                    </Tooltip> */}
                     <Tooltip placement="bottom" title={item.name} getPopupContainer={triggerNode => triggerNode.parentNode}>
                       <span className={indexStyles.plan_name}>{item.name}</span>
                     </Tooltip>
@@ -139,7 +139,7 @@ export default class ProjectTempleteSchemeModal extends Component {
     let { projectSchemeBreadCrumbList, current_templete_id, current_templete_name } = this.state
     const { _organization_id } = this.props
     return (current_templete_id == '0' ?
-      <CreateTempleteScheme 
+      <CreateTempleteScheme
         updateStateDatas={this.updateStateDatas}
         _organization_id={_organization_id}
       /> :
