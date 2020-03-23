@@ -269,6 +269,7 @@ class FeatureBox extends Component {
   }
 
   renderBoxItem = (item, isPaymentUser) => {
+    const { projectList = [] } = this.props
     let tipTitle;
     let isDisabled = this.getIsDisabled(item);
     if (isDisabled) {
@@ -298,7 +299,7 @@ class FeatureBox extends Component {
       <>
         {tipTitle ? (
           <Tooltip title={tipTitle} key={item.id}>
-            <div key={item.id} className={indexStyles.myWorkbenchBox} onClick={(e) => this.goWorkbenchBox(item, isDisabled, tipTitle)} disabled={isDisabled}>
+            <div key={item.id} className={`${indexStyles.myWorkbenchBox} ${!projectList.length && indexStyles.myWorkbenchBox2}`} onClick={(e) => this.goWorkbenchBox(item, isDisabled, tipTitle)} disabled={isDisabled}>
               {/* <i dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme} ${indexStyles.myWorkbenchBox_icon}`} ></i><br /> */}
               <div>
                 {this.renderIconSVG(item.code)}

@@ -14,16 +14,16 @@
     flex-wrap: wrap;
 
     .myWorkbenchBox {
-        width            : 136px;
-        height           : 136px;
-        // background    : rgba(255, 255, 255, 0.2);
-        border-radius    : 6px;
-        margin-right     : 32px;
-        margin-top       : 32px;
-        padding-top      : 18px;
-        vertical-align   : middle;
-        text-align       : center;
-        cursor           : pointer;
+        width               : 136px;
+        height              : 136px;
+        // background       : rgba(255, 255, 255, 0.2);
+        border-radius       : 6px;
+        margin-right        : 32px;
+        margin-top          : 32px;
+        padding-top         : 18px;
+        vertical-align      : middle;
+        text-align          : center;
+        cursor              : pointer;
         background       : rgba(255, 255, 255, 0.1);
 
         .myWorkbenchBox_icon {
@@ -68,6 +68,14 @@
         opacity   : 0.5;
         cursor    : not-allowed;
         background: rgba(255, 255, 255, 0.1)
+    }
+
+    .myWorkbenchBox2[disabled] {
+        background: none !important;
+    }
+
+    .myWorkbenchBox2[disabled]:hover {
+        background: none !important;
     }
 }
 
@@ -148,7 +156,7 @@
 .nodataArea2 {
 
     display        : flex;
-    width          : 552px;
+    width          : 748px;
     height         : 92px;
     justify-content: center;
     align-items    : center;
@@ -156,6 +164,7 @@
     background     : rgba(255, 255, 255, 0.1);
     color          : #ffffff;
     border-radius  : 6px;
+    margin-bottom  : 20px;
 
     .alarm {
         font-size  : 40px;
@@ -180,5 +189,9 @@
         .myWorkbenchBox:nth-child(3n) {
             margin-right: 0
         }
+    }
+
+    .nodataArea2 {
+        width: 472px;
     }
 }
