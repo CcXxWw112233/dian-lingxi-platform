@@ -1,13 +1,17 @@
 .main_wapper {
-    position     : relative;
-    margin       : 0 auto;
-    top          : 124px;
-    width        : 864px;
-    border-radius: 6px;
-    border-radius: 0px 8px 8px 0px;
-    filter       : blur(0px);
-    min-height   : 552px;
-    display      : flex;
+    position           : relative;
+    margin             : 0 auto;
+    top                : 124px;
+    width              : 864px;
+    border-radius      : 6px;
+    border-radius      : 0px 8px 8px 0px;
+    height             : 552px;
+    display            : flex;
+    background-position: center top;
+    background-size    : cover;
+    // filter          : blur(0);
+    overflow           : hidden;
+    z-index            : 1;
 
     >div {
         height    : 552px;
@@ -203,6 +207,28 @@
 
 
 }
+
+// .main_wapper:after,
+.main_wapper_after {
+    content              : '';
+    position             : absolute;
+    top                  : 0;
+    left                 : 0;
+    right                : 0;
+    bottom               : 0;
+    -webkit-filter       : blur(20px);
+    -moz-filter          : blur(20px);
+    -ms-filter           : blur(20px);
+    -o-filter            : blur(20px);
+    filter               : blur(20px);
+    z-index              : -3;
+    margin               : -30px;
+    // background-image     : url('https://newdi-test-public.oss-cn-beijing.aliyuncs.com/wallpapers/wallpaper7.jpg');
+    background-position  : center top;
+    background-size      : cover;
+    background-attachment: fixed;
+}
+
 
 .main_rt_Wapper {
     flex         : 1;
