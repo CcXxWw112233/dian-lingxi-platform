@@ -1,11 +1,5 @@
 export const afterCreateBoardUpdateGantt = (dispatch) => {
-    dispatch({
-        type: 'gantt/updateDatas',
-        payload: {
-            outline_tree: [],
-            startPlanType: 0,
-        }
-    })
+    afterClearGanttData({ dispatch })
     dispatch({
         type: 'gantt/getGanttData',
         payload: {
@@ -48,6 +42,15 @@ export const afterCreateBoardUpdateGantt = (dispatch) => {
         payload: {}
     });
     // lx_utils.updateUserList()
+}
+export const afterClearGanttData = ({ dispatch }) => {
+    dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+            outline_tree: [],
+            startPlanType: 0,
+        }
+    })
 }
 export const afterChangeBoardUpdateGantt = ({ dispatch, board_id }) => {
     dispatch({

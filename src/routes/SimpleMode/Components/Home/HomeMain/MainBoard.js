@@ -7,6 +7,7 @@ import { selectBoardToSeeInfo, getOrgIdByBoardId, setBoardIdStorage, getOrgNameW
 import CreateProject from '@/routes/Technological/components/Project/components/CreateProject/index';
 
 import BoardItem from './BoardItem'
+import { afterClearGanttData } from '../../../../Technological/components/Gantt/ganttBusiness'
 
 @connect(mapStateToProps)
 export default class MainBoard extends Component {
@@ -48,22 +49,23 @@ export default class MainBoard extends Component {
                 type: 'workbench/getProjectList',
                 payload: {}
             });
-            if (!projectList.length) {
-                selectBoardToSeeInfo({ board_id: id, board_name: name, dispatch, org_id: data._organization_id, group_view_type: '4' }) //极简模式项目选择
-                window.sessionStorage.removeItem('session_currentSelectedWorkbenchBox') //重置当前盒子类型
-                dispatch({//重置当前盒子类型
-                    type: 'simplemode/updateDatas',
-                    payload: {
-                        currentSelectedWorkbenchBox: {}
-                    }
-                });
-                dispatch({
-                    type: 'simplemode/routingJump',
-                    payload: {
-                        route: '/technological/simplemode/workbench'
-                    }
-                });
-            }
+            afterClearGanttData({ dispatch })
+            // if (!projectList.length) {
+            selectBoardToSeeInfo({ board_id: id, board_name: name, dispatch, org_id: data._organization_id, group_view_type: '4' }) //极简模式项目选择
+            window.sessionStorage.removeItem('session_currentSelectedWorkbenchBox') //重置当前盒子类型
+            dispatch({//重置当前盒子类型
+                type: 'simplemode/updateDatas',
+                payload: {
+                    currentSelectedWorkbenchBox: {}
+                }
+            });
+            dispatch({
+                type: 'simplemode/routingJump',
+                payload: {
+                    route: '/technological/simplemode/workbench'
+                }
+            });
+            // }
         }
         Promise.resolve(
             dispatch({
