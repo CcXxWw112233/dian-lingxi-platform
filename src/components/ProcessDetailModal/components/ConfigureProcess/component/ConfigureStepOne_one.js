@@ -4,6 +4,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { Popover, Input, Button, Radio, Select, InputNumber } from 'antd'
 import { connect } from 'dva'
 import { compareACoupleOfObjects } from '../../../../../utils/util'
+import ConfigureNapeGuide from '../../../ConfigureNapeGuide'
 const Option = Select.Option;
 
 let temp_item = {
@@ -242,6 +243,7 @@ export default class ConfigureStepOne_one extends Component {
               </>
             )
           }
+          { itemKey == '0' && <ConfigureNapeGuide visible={false} /> }
         </div>
       </div>
 

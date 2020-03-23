@@ -3,6 +3,7 @@ import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { Popover, Input, Button, Radio, Select, InputNumber, Icon } from 'antd'
 import { connect } from 'dva'
+import ConfigureNapeGuide from '../../../ConfigureNapeGuide'
 const Option = Select.Option;
 @connect(mapStateToProps)
 export default class ConfigureStepOne_two extends Component {
@@ -189,6 +190,7 @@ export default class ConfigureStepOne_two extends Component {
               </>
             )
           }
+          { itemKey == '0' && <ConfigureNapeGuide visible={false} /> }
         </div>
       </div>
     )
