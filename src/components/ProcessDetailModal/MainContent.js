@@ -287,8 +287,9 @@ export default class MainContent extends Component {
   }
 
   // 保存模板的点击事件
-  handleSaveProcessTemplate = (e) => {
+   handleSaveProcessTemplate = (e) => {
     e && e.stopPropagation()
+    const { processPageFlagStep, currentTempleteInfoId } = this.props
     if (this.state.isSaveTempleteIng) {
       message.warn('正在保存模板中...')
       return
@@ -297,21 +298,41 @@ export default class MainContent extends Component {
       isSaveTempleteIng: true
     })
     const { projectDetailInfoData: { board_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [] } = this.props
-    this.props.dispatch({
-      type: 'publicProcessDetailModal/saveProcessTemplate',
-      payload: {
-        board_id,
-        name: currentFlowInstanceName,
-        description: currentFlowInstanceDescription,
-        nodes: processEditDatas,
-        calback: () => {
-          this.setState({
-            isSaveTempleteIng: false
-          })
-          this.props.onCancel && this.props.onCancel()
+    if (processPageFlagStep == '1') {// 表示的是新建的时候
+      this.props.dispatch({
+        type: 'publicProcessDetailModal/saveProcessTemplate',
+        payload: {
+          board_id,
+          name: currentFlowInstanceName,
+          description: currentFlowInstanceDescription,
+          nodes: processEditDatas,
+          calback: () => {
+            this.setState({
+              isSaveTempleteIng: false
+            })
+            this.props.onCancel && this.props.onCancel()
+          }
         }
-      }
-    })
+      })
+    } else if (processPageFlagStep == '2') {// 表示的是编辑的时候
+      this.props.dispatch({
+        type: 'publicProcessDetailModal/saveEditProcessTemplete',
+        payload: {
+          board_id,
+          name: currentFlowInstanceName,
+          description: currentFlowInstanceDescription,
+          nodes: processEditDatas,
+          template_no: currentTempleteInfoId,
+          calback: () => {
+            this.setState({
+              isSaveTempleteIng: false
+            })
+            this.props.onCancel && this.props.onCancel()
+          }
+        }
+      })
+    }
+
   }
 
   // 渲染添加步骤按钮
@@ -481,12 +502,12 @@ export default class MainContent extends Component {
             processEditDatas.length >= 2 && (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '32px' }}>
                 {
-                  processPageFlagStep == '1' && (
+                  (processPageFlagStep == '1' || processPageFlagStep == '3') && (
                     <Button disabled={saveTempleteDisabled} style={{ marginRight: '24px', height: '40px', color: '#1890FF' }}>开始流程</Button>
                   )
                 }
                 {
-                  processPageFlagStep != '3' && (
+                  (processPageFlagStep == '1' || processPageFlagStep == '2') && (
                     <Button onClick={this.handleSaveProcessTemplate} disabled={saveTempleteDisabled} type="primary" style={{ height: '40px' }}>保存模板</Button>
                   )
                 }
@@ -509,6 +530,6 @@ export default class MainContent extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList = [], processEditDatas = [], processInfo = {}, processCurrentCompleteStep, node_type, processCurrentEditStep },  projectDetail: { datas: { projectDetailInfoData = {} } } }) {
-  return { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList, processEditDatas, processInfo, processCurrentCompleteStep, node_type, processCurrentEditStep, projectDetailInfoData }
+function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteInfoId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList = [], processEditDatas = [], processInfo = {}, processCurrentCompleteStep, node_type, processCurrentEditStep },  projectDetail: { datas: { projectDetailInfoData = {} } } }) {
+  return { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteInfoId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList, processEditDatas, processInfo, processCurrentCompleteStep, node_type, processCurrentEditStep, projectDetailInfoData }
 }

@@ -33,7 +33,7 @@ export async function getProcessTemplateList(params) {
  * @param {String} description 描述内容
  * @param {String} is_retain 是否是直接启动(即是否保留) 1=保留 0=不保留(默认)
  * @param {String} name 流程名称
- * @param {Array} nodes 每一个节点的内容 ===> 转成JSON格式
+ * @param {Array} nodes 每一个节点的内容 ===> processEditDatas
  */
 export async function saveProcessTemplate(data) {
   return request({
@@ -44,7 +44,6 @@ export async function saveProcessTemplate(data) {
 }
 
 /**
- * 1241936924281802752
  * 获取模板信息
  * @param {String} id 当前保存模板的ID
  */
@@ -55,6 +54,24 @@ export async function getTemplateInfo(params) {
     params
   })
 }
+
+/**
+ * 保存编辑时流程模板信息
+ * @param {String} board_id 项目ID
+ * @param {String} description 描述内容
+ * @param {String} is_retain 是否是直接启动(即是否保留) 1=保留 0=不保留(默认)
+ * @param {String} name 流程名称
+ * @param {Array} nodes 每一个节点的内容 ===> processEditDatas
+ * @param {String} template_no 模板编号
+ */
+export async function saveEditProcessTemplete(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/template`,
+    method: 'PUT',
+    data
+  })
+}
+
 
 /**
  * 删除流程模板

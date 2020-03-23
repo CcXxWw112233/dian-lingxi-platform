@@ -225,7 +225,7 @@ export default class AccomplishStepOne extends Component {
                     backgroundColor: '#fde3cf'
                   }}
                 >
-                  {transPrincipalList && transPrincipalList.map(({ name, avatar }, index) => (
+                  {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
                     <AvatarList.Item
                       key={index}
                       tips={name}

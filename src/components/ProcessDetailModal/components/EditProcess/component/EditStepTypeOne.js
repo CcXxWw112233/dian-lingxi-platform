@@ -64,7 +64,7 @@ export default class EditStepTypeOne extends Component {
     const { projectDetailInfoData: { data = [] } } = this.props
     const { transPrincipalList = [] } = this.state
     let newData = [...data]
-    newData = newData.map(item => {
+    newData = newData.filter(item => {
       if (transPrincipalList.indexOf(item.user_id) != -1) {
         return item
       }
@@ -77,7 +77,7 @@ export default class EditStepTypeOne extends Component {
     const { projectDetailInfoData: { data = [] } } = this.props
     const { transCopyPersonnelList = [] } = this.state
     let newData = [...data]
-    newData = newData.map(item => {
+    newData = newData.filter(item => {
       if (transCopyPersonnelList.indexOf(item.user_id) != -1) {
         return item
       }
@@ -131,7 +131,7 @@ export default class EditStepTypeOne extends Component {
           description != '' &&
           (
             <div className={indexStyles.select_remarks}>
-              <span style={{color: 'rgba(0,0,0,0.45)'}} className={globalStyles.authTheme}>&#xe636; 备注 :</span>
+              <span style={{ color: 'rgba(0,0,0,0.45)' }} className={globalStyles.authTheme}>&#xe636; 备注 :</span>
               <div>{description}</div>
             </div>
           )
@@ -151,7 +151,7 @@ export default class EditStepTypeOne extends Component {
   render() {
     const { itemKey, processEditDatas = [], itemValue } = this.props
     const { is_show_spread_arrow } = this.state
-    const { id, name, description, deadline_type, deadline_value, deadline_time_type, cc_type } = itemValue
+    const { id, name, description, deadline_type, deadline_value, deadline_time_type, cc_type, assignee_type } = itemValue
     let transPrincipalList = this.filterAssignees()
     let transCopyPersonnelList = this.filterRecipients()
     return (
@@ -176,35 +176,15 @@ export default class EditStepTypeOne extends Component {
                 </div>
               </div>
             </div>
+
             {/* 下 */}
+
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
                 {/* 填写人 */}
-                <div style={{display: 'inline-block'}} className={indexStyles.content__principalList_icon}>
-                  <AvatarList
-                    size="small"
-                    maxLength={10}
-                    excessItemsStyle={{
-                      color: '#f56a00',
-                      backgroundColor: '#fde3cf'
-                    }}
-                  >
-                    {transPrincipalList && transPrincipalList.map(({ name, avatar }, index) => (
-                      <AvatarList.Item
-                        key={index}
-                        tips={name}
-                        src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
-                      />
-                    ))}
-                  </AvatarList>
-                  <span className={indexStyles.content__principalList_info}>
-                    {`${transPrincipalList.length}位填写人`}
-                  </span>
-                </div>
-                {/* 抄送人 */}
                 {
-                  cc_type == '1' && (
-                    <div style={{marginLeft: '8px', display: 'inline-block'}} className={indexStyles.content__principalList_icon}>
+                  assignee_type == '2' ? (
+                    <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
                       <AvatarList
                         size="small"
                         maxLength={10}
@@ -213,10 +193,41 @@ export default class EditStepTypeOne extends Component {
                           backgroundColor: '#fde3cf'
                         }}
                       >
-                        {transCopyPersonnelList && transCopyPersonnelList.map(({ name, avatar }, index) => (
+                        {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
                           <AvatarList.Item
                             key={index}
-                            tips={name}
+                            tips={name || '佚名'}
+                            src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                          />
+                        ))}
+                      </AvatarList>
+                      <span className={indexStyles.content__principalList_info}>
+                        {`${transPrincipalList.length}位填写人`}
+                      </span>
+                    </div>
+                  ) : (
+                    <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
+                      <span style={{color: '#1890FF'}} className={globalStyles.authTheme}>&#xe7b2;</span>
+                      <span>任何人</span>
+                    </div>
+                  )
+                }
+                {/* 抄送人 */}
+                {
+                  cc_type == '1' && (
+                    <div style={{ marginLeft: '8px', display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
+                      <AvatarList
+                        size="small"
+                        maxLength={10}
+                        excessItemsStyle={{
+                          color: '#f56a00',
+                          backgroundColor: '#fde3cf'
+                        }}
+                      >
+                        {(transCopyPersonnelList && transCopyPersonnelList.length) && transCopyPersonnelList.map(({ name, avatar }, index) => (
+                          <AvatarList.Item
+                            key={index}
+                            tips={name || '佚名'}
                             src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
                           />
                         ))}

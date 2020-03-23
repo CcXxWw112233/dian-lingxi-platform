@@ -68,6 +68,12 @@ export default class ConfigureProcess extends Component {
   handleConfirmButton = (e) => {
     e && e.stopPropagation()
     this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '1')
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        processPageFlagStep: '2'
+      }
+    })
   }
 
   // 删除的点击事件

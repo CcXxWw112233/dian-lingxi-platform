@@ -59,24 +59,43 @@ export default class ConfigureStepTypeOne extends Component {
   //修改通知人的回调 S
   chirldrenTaskChargeChange = (data) => {
     const { projectDetailInfoData = {} } = this.props;
-    // 多个任务执行人
-    const membersData = projectDetailInfoData['data'] //所有的人
-    // const excutorData = new_userInfo_data //所有的人
-    let newDesignatedPersonnelList = []
-    let assignee_value = []
     const { selectedKeys = [], type, key } = data
-    for (let i = 0; i < selectedKeys.length; i++) {
-      for (let j = 0; j < membersData.length; j++) {
-        if (selectedKeys[i] === membersData[j]['user_id']) {
-          newDesignatedPersonnelList.push(membersData[j])
-          assignee_value.push(membersData[j].user_id)
+    if (type == 'add') { // 表示添加的操作
+      let assignee_value = []
+      // 多个任务执行人
+      const membersData = projectDetailInfoData['data'] //所有的人
+      for (let i = 0; i < selectedKeys.length; i++) {
+        for (let j = 0; j < membersData.length; j++) {
+          if (selectedKeys[i] === membersData[j]['user_id']) {
+            assignee_value.push(membersData[j].user_id)
+          }
         }
       }
+      this.setState({
+        designatedPersonnelList: assignee_value
+      });
+      this.updateConfigureProcess({ value: assignee_value.join(',') }, 'assignees')
     }
-    this.setState({
-      designatedPersonnelList: newDesignatedPersonnelList
-    });
-    this.updateConfigureProcess({ value: assignee_value.join(',') }, 'assignees')
+
+    if (type == 'remove') { // 表示移除的操作
+      const { itemValue } = this.props
+      const { assignees } = itemValue
+      const { designatedPersonnelList = [] } = this.state
+      let newDesignatedPersonnelList = [...designatedPersonnelList]
+      let newAssigneesArray = assignees && assignees.length ? assignees.split(',') : []
+      newDesignatedPersonnelList.map((item, index) => {
+        if (item == key) {
+          newDesignatedPersonnelList.splice(index, 1)
+          newAssigneesArray.splice(index, 1)
+        }
+      })
+      let newAssigneesStr = newAssigneesArray.join(',')
+      this.setState({
+        designatedPersonnelList: newAssigneesArray
+      })
+      this.updateConfigureProcess({ value: newAssigneesStr }, 'assignees')
+    }
+
   }
   // 添加执行人的回调 E
 
@@ -89,14 +108,14 @@ export default class ConfigureStepTypeOne extends Component {
     let newDesignatedPersonnelList = [...designatedPersonnelList]
     let newAssigneesArray = assignees && assignees.length ? assignees.split(',') : []
     newDesignatedPersonnelList.map((item, index) => {
-      if (item.user_id == shouldDeleteItem) {
+      if (item == shouldDeleteItem) {
         newDesignatedPersonnelList.splice(index, 1)
         newAssigneesArray.splice(index, 1)
       }
     })
     let newAssigneesStr = newAssigneesArray.join(',')
     this.setState({
-      designatedPersonnelList: newDesignatedPersonnelList
+      designatedPersonnelList: newAssigneesArray
     })
     this.updateConfigureProcess({ value: newAssigneesStr }, 'assignees')
   }
@@ -211,12 +230,12 @@ export default class ConfigureStepTypeOne extends Component {
     return container
   }
 
-   // 把assignees中的执行人,在项目中的所有成员过滤出来
-   filterAssignees = () => {
+  // 把assignees中的执行人,在项目中的所有成员过滤出来
+  filterAssignees = () => {
     const { projectDetailInfoData: { data = [] } } = this.props
     const { designatedPersonnelList = [] } = this.state
     let newData = [...data]
-    newData = newData.map(item => {
+    newData = newData.filter(item => {
       if (designatedPersonnelList.indexOf(item.user_id) != -1) {
         return item
       }
@@ -345,7 +364,7 @@ export default class ConfigureStepTypeOne extends Component {
         </div>
         {/* 更多选项 */}
         <div>
-          <MoreOptionsComponent itemKey={itemKey} itemValue={itemValue} updateConfigureProcess={this.updateConfigureProcess} data={data}/>
+          <MoreOptionsComponent itemKey={itemKey} itemValue={itemValue} updateConfigureProcess={this.updateConfigureProcess} data={data} />
         </div>
       </div>
     )

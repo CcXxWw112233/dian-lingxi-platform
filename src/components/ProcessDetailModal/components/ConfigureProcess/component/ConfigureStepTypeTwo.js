@@ -29,28 +29,45 @@ export default class ConfigureStepTypeTwo extends Component {
     })
   }
 
-  //修改通知人的回调 S
+  //修改通知人的回调 S approvalsList
   chirldrenTaskChargeChange = (data) => {
     const { projectDetailInfoData = {} } = this.props;
-    // 多个任务执行人
-    const membersData = projectDetailInfoData['data'] //所有的人
-    // const excutorData = new_userInfo_data //所有的人
-    let newApprovalsList = []
-    let assignee_value = []
     const { selectedKeys = [], type, key } = data
-    for (let i = 0; i < selectedKeys.length; i++) {
-      for (let j = 0; j < membersData.length; j++) {
-        if (selectedKeys[i] === membersData[j]['user_id']) {
-          newApprovalsList.push(membersData[j])
-          assignee_value.push(membersData[j].user_id)
+    if (type == 'add') { // 表示添加的操作
+      let assignee_value = []
+      // 多个任务执行人
+      const membersData = projectDetailInfoData['data'] //所有的人
+      for (let i = 0; i < selectedKeys.length; i++) {
+        for (let j = 0; j < membersData.length; j++) {
+          if (selectedKeys[i] === membersData[j]['user_id']) {
+            assignee_value.push(membersData[j].user_id)
+          }
         }
       }
+      this.setState({
+        approvalsList: assignee_value
+      });
+      this.updateConfigureProcess({ value: assignee_value.join(',') }, 'assignees')
     }
 
-    this.setState({
-      approvalsList: newApprovalsList
-    });
-    this.updateConfigureProcess({value: assignee_value.join(',')}, 'assignees')
+    if (type == 'remove') { // 表示移除的操作
+      const { itemValue } = this.props
+      const { assignees } = itemValue
+      const { approvalsList = [] } = this.state
+      let newDesignatedPersonnelList = [...approvalsList]
+      let newAssigneesArray = assignees && assignees.length ? assignees.split(',') : []
+      newDesignatedPersonnelList.map((item, index) => {
+        if (item == key) {
+          newDesignatedPersonnelList.splice(index, 1)
+          newAssigneesArray.splice(index, 1)
+        }
+      })
+      let newAssigneesStr = newAssigneesArray.join(',')
+      this.setState({
+        approvalsList: newAssigneesArray
+      })
+      this.updateConfigureProcess({ value: newAssigneesStr }, 'assignees')
+    }
   }
   // 添加执行人的回调 E
 
@@ -63,14 +80,14 @@ export default class ConfigureStepTypeTwo extends Component {
     let newApprovalsList = [...approvalsList]
     let newAssigneesArray = assignees && assignees.length ? assignees.split(',') : []
     newApprovalsList.map((item, index) => {
-      if (item.user_id == shouldDeleteItem) {
+      if (item == shouldDeleteItem) {
         newApprovalsList.splice(index, 1)
         newAssigneesArray.splice(index,1)
       }
     })
     let newAssigneesStr = newAssigneesArray.join(',')
     this.setState({
-      approvalsList: newApprovalsList
+      approvalsList: newAssigneesArray
     })
     this.updateConfigureProcess({value: newAssigneesStr}, 'assignees')
   }
@@ -80,7 +97,7 @@ export default class ConfigureStepTypeTwo extends Component {
       const { projectDetailInfoData: { data = [] } } = this.props
       const { approvalsList = [] } = this.state
       let newData = [...data]
-      newData = newData.map(item => {
+      newData = newData.filter(item => {
         if (approvalsList.indexOf(item.user_id) != -1) {
           return item
         }

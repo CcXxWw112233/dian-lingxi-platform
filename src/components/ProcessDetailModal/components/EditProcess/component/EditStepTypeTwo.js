@@ -61,7 +61,7 @@ export default class EditStepTypeTwo extends Component {
     const { projectDetailInfoData: { data = [] } } = this.props
     const { transPrincipalList = [] } = this.state
     let newData = [...data]
-    newData = newData.map(item => {
+    newData = newData.filter(item => {
       if (transPrincipalList.indexOf(item.user_id) != -1) {
         return item
       }
@@ -74,7 +74,7 @@ export default class EditStepTypeTwo extends Component {
     const { projectDetailInfoData: { data = [] } } = this.props
     const { transCopyPersonnelList = [] } = this.state
     let newData = [...data]
-    newData = newData.map(item => {
+    newData = newData.filter(item => {
       if (transCopyPersonnelList.indexOf(item.user_id) != -1) {
         return item
       }
@@ -168,16 +168,16 @@ export default class EditStepTypeTwo extends Component {
                       backgroundColor: '#fde3cf'
                     }}
                   >
-                    {transPrincipalList && transPrincipalList.map(({ name, avatar }, index) => (
+                    {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
                       <AvatarList.Item
                         key={index}
-                        tips={name}
+                        tips={name || '佚名'}
                         src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
                       />
                     ))}
                   </AvatarList>
                   <span className={indexStyles.content__principalList_info}>
-                    {`${transPrincipalList.length}位填写人`}
+                    {`${transPrincipalList.length}位审批人`}
                   </span>
                 </div>
                 {/* 抄送人 */}
@@ -192,10 +192,10 @@ export default class EditStepTypeTwo extends Component {
                           backgroundColor: '#fde3cf'
                         }}
                       >
-                        {transCopyPersonnelList && transCopyPersonnelList.map(({ name, avatar }, index) => (
+                        {(transCopyPersonnelList && transCopyPersonnelList.length) && transCopyPersonnelList.map(({ name, avatar }, index) => (
                           <AvatarList.Item
                             key={index}
-                            tips={name}
+                            tips={name || '佚名'}
                             src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
                           />
                         ))}

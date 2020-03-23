@@ -52,7 +52,7 @@ export default class MoreOptionsComponent extends Component {
     const { data = [] } = this.props
     const { makeCopyPersonList = [] } = this.state
     let newData = [...data]
-    newData = newData.map(item => {
+    newData = newData.filter(item => {
       if (makeCopyPersonList.indexOf(item.user_id) != -1) {
         return item
       }
@@ -150,22 +150,41 @@ export default class MoreOptionsComponent extends Component {
     // 多个任务执行人
     // const membersData = projectDetailInfoData['data'] //所有的人
     // const excutorData = new_userInfo_data //所有的人
-    let newMakeCopyPersonList = []
-    let assignee_value = []
     const { selectedKeys = [], type, key } = data
-    for (let i = 0; i < selectedKeys.length; i++) {
-      for (let j = 0; j < membersData.length; j++) {
-        if (selectedKeys[i] === membersData[j]['user_id']) {
-          newMakeCopyPersonList.push(membersData[j])
-          assignee_value.push(membersData[j].user_id)
+    if (type == 'add') { // 表示添加的操作
+      let assignee_value = []
+      // 多个任务执行人
+      for (let i = 0; i < selectedKeys.length; i++) {
+        for (let j = 0; j < membersData.length; j++) {
+          if (selectedKeys[i] === membersData[j]['user_id']) {
+            assignee_value.push(membersData[j].user_id)
+          }
         }
       }
+      this.setState({
+        makeCopyPersonList: assignee_value
+      });
+      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: assignee_value.join(',') }, 'recipients')
     }
 
-    this.setState({
-      makeCopyPersonList: newMakeCopyPersonList
-    });
-    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: assignee_value.join(',') }, 'recipients')
+    if (type == 'remove') { // 表示移除的操作
+      const { itemValue } = this.props
+      const { recipients } = itemValue
+      const { makeCopyPersonList = [] } = this.state
+      let newDesignatedPersonnelList = [...makeCopyPersonList]
+      let newAssigneesArray = recipients && recipients.length ? recipients.split(',') : []
+      newDesignatedPersonnelList.map((item, index) => {
+        if (item == key) {
+          newDesignatedPersonnelList.splice(index, 1)
+          newAssigneesArray.splice(index, 1)
+        }
+      })
+      let newAssigneesStr = newAssigneesArray.join(',')
+      this.setState({
+        makeCopyPersonList: newAssigneesArray
+      })
+      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: newAssigneesStr }, 'recipients')
+    }
   }
   // 添加执行人的回调 E
 
@@ -178,14 +197,14 @@ export default class MoreOptionsComponent extends Component {
     let newMakeCopyPersonList = [...makeCopyPersonList]
     let newAssigneesArray = recipients && recipients.length ? recipients.split(',') : []
     newMakeCopyPersonList.map((item, index) => {
-      if (item.user_id == shouldDeleteItem) {
+      if (item == shouldDeleteItem) {
         newMakeCopyPersonList.splice(index, 1)
         newAssigneesArray.splice(index, 1)
       }
     })
     let newRecipientsStr = newAssigneesArray.join(',')
     this.setState({
-      makeCopyPersonList: newMakeCopyPersonList
+      makeCopyPersonList: newAssigneesArray
     })
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: newRecipientsStr }, 'recipients')
   }

@@ -48,12 +48,13 @@ export default class ProcessDefault extends Component {
 
   // 编辑模板的点击事件
   handleEditTemplete = (item) => {
-    const { id } = item
+    const { id, template_no} = item
     this.props.dispatch({
       type: 'publicProcessDetailModal/getTemplateInfo',
       payload: {
         id,
-        processPageFlagStep: '2'
+        processPageFlagStep: '2',
+        currentTempleteInfoId: template_no
       }
     })
   }

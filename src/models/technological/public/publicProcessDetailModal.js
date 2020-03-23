@@ -6,7 +6,7 @@ import { MESSAGE_DURATION_TIME, FILES } from "../../../globalset/js/constant";
 import { getSubfixName } from '../../../utils/businessFunction'
 import QueryString from 'querystring'
 import { processEditDatasConstant, processEditDatasRecordsConstant, processDoingListMatch, processInfoMatch } from '../../../components/ProcessDetailModal/constant';
-import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, deleteProcessTemplete } from "../../../services/technological/workFlow"
+import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete } from "../../../services/technological/workFlow"
 
 let board_id = null
 let appsSelectKey = null
@@ -33,6 +33,7 @@ export default {
     templateInfo: {}, // 模板信息
     processInfo: JSON.parse(JSON.stringify(processInfoMatch)), // 流程实例信息
     currentProcessInstanceId: '', // 当前查看的流程实例名称
+    currentTempleteInfoId: '', // 当前查看的模板ID
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -87,7 +88,7 @@ export default {
 
     // 获取模板信息内容
     * getTemplateInfo({ payload }, { call, put }) {
-      const { id, processPageFlagStep } = payload
+      const { id, processPageFlagStep, currentTempleteInfoId } = payload
       let res = yield call(getTemplateInfo, { id })
       if (isApiResponseOk(res)) {
         let newProcessEditDatas = [...res.data.nodes]
@@ -104,7 +105,8 @@ export default {
             processEditDatas: newProcessEditDatas,
             currentFlowInstanceName: res.data.name,
             isEditCurrentFlowInstanceName:false,
-            currentFlowInstanceDescription: res.data.description
+            currentFlowInstanceDescription: res.data.description,
+            currentTempleteInfoId: currentTempleteInfoId
           }
         })
       }
@@ -131,6 +133,30 @@ export default {
       } else {
         message.warn(res.message)
       }
+    },
+
+    // 点击编辑流程时对已经保存模板接口
+    * saveEditProcessTemplete({ payload }, { call, put }) {
+      const { calback } = payload
+      let newPayload = {...payload}
+      newPayload.calback ? delete newPayload.calback : ''
+      let res = yield call(saveEditProcessTemplete,newPayload)
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success(`保存模板成功`,MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getProcessTemplateList',
+          payload: {
+            id: payload.board_id,
+            board_id: payload.board_id
+          }
+        })
+        if (calback && typeof calback == 'function') calback()
+      } else {
+        message.warn(res.message)
+      }
+
     },
 
     // 删除流程模板
