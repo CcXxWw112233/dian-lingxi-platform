@@ -1,5 +1,12 @@
 export const afterCreateBoardUpdateGantt = (dispatch) => {
     dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+            outline_tree: [],
+            startPlanType: 0,
+        }
+    })
+    dispatch({
         type: 'gantt/getGanttData',
         payload: {
 
