@@ -10,12 +10,16 @@ import { connect } from 'dva'
 @connect(mapStateToProps)
 export default class EditStepTypeTwo extends Component {
 
-  state = {
-    transPrincipalList: JSON.parse(JSON.stringify(principalList)),
-    is_show_spread_arrow: false,
+  constructor(props) {
+    super(props)
+    this.state = {
+      transPrincipalList: props.itemValue.assignees ? props.itemValue.assignees.split(',') : [], // 表示当前的执行人
+      transCopyPersonnelList: props.itemValue.recipients ? props.itemValue.recipients.split(',') : [], // 表示当前选择的抄送人
+      is_show_spread_arrow: false,
+    }
   }
 
-  
+
   // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
   updateCorrespondingPrcodessStepWithNodeContent = (data, value) => {
     const { itemValue, processEditDatas = [], itemKey, dispatch } = this.props
@@ -36,8 +40,8 @@ export default class EditStepTypeTwo extends Component {
     })
   }
 
-   // 编辑点击事件
-   handleEnterConfigureProcess = (e) => {
+  // 编辑点击事件
+  handleEnterConfigureProcess = (e) => {
     e && e.stopPropagation()
     this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
     this.props.dispatch({
@@ -52,9 +56,35 @@ export default class EditStepTypeTwo extends Component {
   isValidAvatar = (avatarUrl = '') =>
     avatarUrl.includes('http://') || avatarUrl.includes('https://');
 
+  // 把assignees中的执行人,在项目中的所有成员过滤出来
+  filterAssignees = () => {
+    const { projectDetailInfoData: { data = [] } } = this.props
+    const { transPrincipalList = [] } = this.state
+    let newData = [...data]
+    newData = newData.map(item => {
+      if (transPrincipalList.indexOf(item.user_id) != -1) {
+        return item
+      }
+    })
+    return newData
+  }
+
+  // 把recipients中的抄送人在项目中的所有成员过滤出来
+  filterRecipients = () => {
+    const { projectDetailInfoData: { data = [] } } = this.props
+    const { transCopyPersonnelList = [] } = this.state
+    let newData = [...data]
+    newData = newData.map(item => {
+      if (transCopyPersonnelList.indexOf(item.user_id) != -1) {
+        return item
+      }
+    })
+    return newData
+  }
+
   renderEditDetailContent = () => {
     const { itemValue } = this.props
-    const { approve_type } = itemValue
+    const { approve_type, description } = itemValue
     let type_name = ''
     const diffType = () => {
       switch (approve_type) {
@@ -75,11 +105,22 @@ export default class EditStepTypeTwo extends Component {
     return (
       <div>
         {/* 审批类型 */}
-        <div style={{ minHeight: '64px', padding: '20px 14px', color: 'rgba(0,0,0,0.45)', borderTop: '1px solid #e8e8e8', marginTop: '15px' }}>
-          <span className={globalStyles.authTheme}>&#xe616; 审批类型 : &nbsp;&nbsp;&nbsp;{diffType()}</span>
+        <div style={{ minHeight: '64px', padding: '20px 14px', borderTop: '1px solid #e8e8e8', marginTop: '15px' }}>
+          <span style={{color: 'rgba(0,0,0,0.45)'}} className={globalStyles.authTheme}>&#xe616; 审批类型 : &nbsp;&nbsp;&nbsp;</span>
+          <span>{diffType()}</span>
         </div>
+        {/* 备注 */}
+        {
+          description != '' &&
+          (
+            <div className={indexStyles.select_remarks}>
+              <span style={{color: 'rgba(0,0,0,0.45)'}} className={globalStyles.authTheme}>&#xe636; 备注 :</span>
+              <div>{description}</div>
+            </div>
+          )
+        }
         {/* 编辑按钮 */}
-        <div style={{ paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center'}}>
+        <div style={{ paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center' }}>
           <Button onClick={this.handleEnterConfigureProcess} type="primary">编辑</Button>
         </div>
       </div>
@@ -87,8 +128,11 @@ export default class EditStepTypeTwo extends Component {
   }
 
   render() {
-    const { itemKey} = this.props
-    const { transPrincipalList = [], is_show_spread_arrow } = this.state
+    const { itemKey, itemValue } = this.props
+    const { is_show_spread_arrow } = this.state
+    const { name, cc_type } = itemValue
+    let transPrincipalList = this.filterAssignees()
+    let transCopyPersonnelList = this.filterRecipients()
     return (
       <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }}>
         <div className={indexStyles.line}></div>
@@ -100,7 +144,7 @@ export default class EditStepTypeTwo extends Component {
               <div className={`${indexStyles.node_name}`}>
                 <div>
                   <span className={`${globalStyles.authTheme} ${indexStyles.stepTypeIcon}`}>&#xe616;</span>
-                  <span>建设部门审批</span>
+                  <span>{name}</span>
                 </div>
                 <div>
                   <span onClick={this.handleSpreadArrow} className={`${indexStyles.spreadIcon}`}>
@@ -113,26 +157,55 @@ export default class EditStepTypeTwo extends Component {
             </div>
             {/* 下 */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div className={indexStyles.content__principalList_icon}>
-                <AvatarList
-                  size="small"
-                  maxLength={10}
-                  excessItemsStyle={{
-                    color: '#f56a00',
-                    backgroundColor: '#fde3cf'
-                  }}
-                >
-                  {transPrincipalList && transPrincipalList.map(({ name, avatar }, index) => (
-                    <AvatarList.Item
-                      key={index}
-                      tips={name}
-                      src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
-                    />
-                  ))}
-                </AvatarList>
-                <span className={indexStyles.content__principalList_info}>
-                  {`${transPrincipalList.length}位审批人`}
-                </span>
+              <div>
+                {/* 填写人 */}
+                <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
+                  <AvatarList
+                    size="small"
+                    maxLength={10}
+                    excessItemsStyle={{
+                      color: '#f56a00',
+                      backgroundColor: '#fde3cf'
+                    }}
+                  >
+                    {transPrincipalList && transPrincipalList.map(({ name, avatar }, index) => (
+                      <AvatarList.Item
+                        key={index}
+                        tips={name}
+                        src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                      />
+                    ))}
+                  </AvatarList>
+                  <span className={indexStyles.content__principalList_info}>
+                    {`${transPrincipalList.length}位填写人`}
+                  </span>
+                </div>
+                {/* 抄送人 */}
+                {
+                  cc_type == '1' && (
+                    <div style={{ marginLeft: '8px', display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
+                      <AvatarList
+                        size="small"
+                        maxLength={10}
+                        excessItemsStyle={{
+                          color: '#f56a00',
+                          backgroundColor: '#fde3cf'
+                        }}
+                      >
+                        {transCopyPersonnelList && transCopyPersonnelList.map(({ name, avatar }, index) => (
+                          <AvatarList.Item
+                            key={index}
+                            tips={name}
+                            src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                          />
+                        ))}
+                      </AvatarList>
+                      <span className={indexStyles.content__principalList_info}>
+                        {`${transCopyPersonnelList.length}位抄送人`}
+                      </span>
+                    </div>
+                  )
+                }
               </div>
               <div>
                 <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '14px' }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
@@ -147,6 +220,6 @@ export default class EditStepTypeTwo extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [] } }) {
-  return { processEditDatas }
+function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [] }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
+  return { processEditDatas, projectDetailInfoData }
 }

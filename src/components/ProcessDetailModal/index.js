@@ -17,7 +17,6 @@ export default class ProcessDetailModal extends Component {
         isEditCurrentFlowInstanceName: true, // 是否正在编辑当前实例的名称
         isEditCurrentFlowInstanceDescription: false, // 是否正在编辑当前实例的描述
         processPageFlagStep: '1', // "1", "2", "3", "4" 分别对应 新建， 编辑， 启动
-        process_detail_modal_visible: false,
         // processDoingList: [], // 进行中的流程
         // processStopedList: [], // 已中止的流程
         // processComepletedList: [], // 已完成的流程
@@ -74,7 +73,7 @@ export default class ProcessDetailModal extends Component {
           modalVisible={process_detail_modal_visible}
           onCancel={this.onCancel}
           isNotShowFileDetailContentRightVisible={true}
-          mainContent={<MainContent />}
+          mainContent={<MainContent onCancel={this.onCancel}/>}
           headerContent={<HeaderContent />}
           commonDrawerContentOutClick={this.commonDrawerContentOutClick}
           isNotShowFileDetailContentLeftScrollBar={true}

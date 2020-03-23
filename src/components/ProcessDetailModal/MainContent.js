@@ -9,7 +9,7 @@ import ProcessStartConfirm from './components/ProcessStartConfirm'
 import BeginningProcess from './components/BeginningProcess'
 import ConfigureGuide from './ConfigureGuide'
 import { processEditDatasItemOneConstant, processEditDatasRecordsItemOneConstant } from './constant'
-import { Tooltip, Button } from 'antd'
+import { Tooltip, Button, message } from 'antd'
 
 let timer
 @connect(mapStateToProps)
@@ -289,6 +289,13 @@ export default class MainContent extends Component {
   // 保存模板的点击事件
   handleSaveProcessTemplate = (e) => {
     e && e.stopPropagation()
+    if (this.state.isSaveTempleteIng) {
+      message.warn('正在保存模板中...')
+      return
+    }
+    this.setState({
+      isSaveTempleteIng: true
+    })
     const { projectDetailInfoData: { board_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [] } = this.props
     this.props.dispatch({
       type: 'publicProcessDetailModal/saveProcessTemplate',
@@ -296,7 +303,13 @@ export default class MainContent extends Component {
         board_id,
         name: currentFlowInstanceName,
         description: currentFlowInstanceDescription,
-        nodes: processEditDatas
+        nodes: processEditDatas,
+        calback: () => {
+          this.setState({
+            isSaveTempleteIng: false
+          })
+          this.props.onCancel && this.props.onCancel()
+        }
       }
     })
   }
@@ -370,7 +383,7 @@ export default class MainContent extends Component {
   render() {
     const { clientHeight } = this.state
     const { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep } = this.props
-    let saveTempleteDisabled = currentFlowInstanceName == '' || (processEditDatas && processEditDatas.length) && processEditDatas[processEditDatas.length - 1].is_edit == '0' ? true : false
+    let saveTempleteDisabled = currentFlowInstanceName == '' || (processEditDatas && processEditDatas.length) && processEditDatas[processEditDatas.length - 1].is_edit == '0' || (processEditDatas && processEditDatas.length) && !(processEditDatas[processEditDatas.length - 1].node_type) ? true : false
     return (
       <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto',position: 'relative' }} onScroll={this.onScroll} >
         <div id="container_configureTop" className={indexStyles.configure_top}>
@@ -467,7 +480,11 @@ export default class MainContent extends Component {
           {
             processEditDatas.length >= 2 && (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '32px' }}>
-                <Button disabled={saveTempleteDisabled} style={{ marginRight: '24px', height: '40px', color: '#1890FF' }}>开始流程</Button>
+                {
+                  processPageFlagStep == '1' && (
+                    <Button disabled={saveTempleteDisabled} style={{ marginRight: '24px', height: '40px', color: '#1890FF' }}>开始流程</Button>
+                  )
+                }
                 {
                   processPageFlagStep != '3' && (
                     <Button onClick={this.handleSaveProcessTemplate} disabled={saveTempleteDisabled} type="primary" style={{ height: '40px' }}>保存模板</Button>

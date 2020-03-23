@@ -16,7 +16,7 @@ export default class ConfigureStepTypeOne extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      designatedPersonnelList: [], // 指定人员的列表
+      designatedPersonnelList: props.itemValue.assignees ? props.itemValue.assignees.split(',') : [], // 指定人员的列表
     }
   }
 
@@ -211,6 +211,19 @@ export default class ConfigureStepTypeOne extends Component {
     return container
   }
 
+   // 把assignees中的执行人,在项目中的所有成员过滤出来
+   filterAssignees = () => {
+    const { projectDetailInfoData: { data = [] } } = this.props
+    const { designatedPersonnelList = [] } = this.state
+    let newData = [...data]
+    newData = newData.map(item => {
+      if (designatedPersonnelList.indexOf(item.user_id) != -1) {
+        return item
+      }
+    })
+    return newData
+  }
+
   renderFieldType = () => {
     return (
       <div>
@@ -227,7 +240,8 @@ export default class ConfigureStepTypeOne extends Component {
   // 渲染指定人员
   renderDesignatedPersonnel = () => {
     const { projectDetailInfoData: { data = [] } } = this.props
-    const { designatedPersonnelList = [] } = this.state
+    // const { designatedPersonnelList = [] } = this.state
+    let designatedPersonnelList = this.filterAssignees()
     return (
       <div style={{ flex: 1, padding: '8px 0' }}>
         {

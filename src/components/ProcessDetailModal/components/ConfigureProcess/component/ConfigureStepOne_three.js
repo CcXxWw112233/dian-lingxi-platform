@@ -33,8 +33,8 @@ export default class ConfigureStepOne_three extends Component {
   dateRangeValueChange = (e) => {
     this.updateEdit({ value: e.target.value }, 'date_range')
   }
-  datePrecisionValueChange = (value) => {
-    this.updateEdit({ value: value }, 'date_precision')
+  datePrecisionValueChange = (e) => {
+    this.updateEdit({ value: e.target.value }, 'date_precision')
   }
   isRequiredCheck = (e) => {
     this.updateEdit({ value: e.target.value }, 'is_required')

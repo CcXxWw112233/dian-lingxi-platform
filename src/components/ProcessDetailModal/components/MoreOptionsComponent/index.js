@@ -9,8 +9,55 @@ const Option = Select.Option;
 
 export default class MoreOptionsComponent extends Component {
 
-  state = {
-    makeCopyPersonList: [], // 抄送人列表
+  constructor(props) {
+    super(props)
+    this.state = {
+      makeCopyPersonList: props.itemValue.recipients ? props.itemValue.recipients.split(',') : [], // 表示当前选择的抄送人
+    }
+  }
+
+  componentDidMount() {
+    const { itemValue } = this.props
+    const { cc_type, description, deadline_type } = itemValue
+    const { options_data = [] } = itemValue
+    let moreOptionsList = [...options_data] || []
+    if (cc_type == '1') {
+      let obj = {}
+      obj = {
+        code: 'DUPLICATED'
+      }
+      moreOptionsList.push(obj)
+      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: moreOptionsList }, 'options_data')
+    }
+    if (deadline_type == '2') {
+      let obj = {}
+      obj = {
+        code: 'COMPLETION_DEADLINE'
+      }
+      moreOptionsList.push(obj)
+      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: moreOptionsList }, 'options_data')
+    }
+    if (description != '') {
+      let obj = {}
+      obj = {
+        code: 'REMARKS'
+      }
+      moreOptionsList.push(obj)
+      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: moreOptionsList }, 'options_data')
+    }
+  }
+
+  // 把recipients中的抄送人在项目中的所有成员过滤出来
+  filterRecipients = () => {
+    const { data = [] } = this.props
+    const { makeCopyPersonList = [] } = this.state
+    let newData = [...data]
+    newData = newData.map(item => {
+      if (makeCopyPersonList.indexOf(item.user_id) != -1) {
+        return item
+      }
+    })
+    return newData
   }
 
   // 更多选项的点击事件
@@ -26,7 +73,7 @@ export default class MoreOptionsComponent extends Component {
     moreOptionsList.push(obj)
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: moreOptionsList }, 'options_data')
     if (code == 'DUPLICATED') {
-      this.props.updateConfigureProcess && this.props.updateConfigureProcess({value: '1'}, 'cc_type')
+      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '1' }, 'cc_type')
     } else if (code == 'COMPLETION_DEADLINE') {
       this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '2' }, 'deadline_type')
     }
@@ -154,8 +201,8 @@ export default class MoreOptionsComponent extends Component {
     const { deadline_time_type, deadline_value, description, } = itemValue
     return (
       <div className={`${indexStyles.complet_deadline}`}>
-        <span style={{ fontWeight: 900, marginRight: '2px', color: 'rgba(0,0,0,0.45)'}} className={globalStyles.authTheme}>&#xe686;</span>
-        <span style={{color: 'rgba(0,0,0,0.45)'}}>完成期限 &nbsp;: </span>
+        <span style={{ fontWeight: 900, marginRight: '2px', color: 'rgba(0,0,0,0.45)' }} className={globalStyles.authTheme}>&#xe686;</span>
+        <span style={{ color: 'rgba(0,0,0,0.45)' }}>完成期限 &nbsp;: </span>
         <InputNumber precision="0.1" min={1} max={deadline_time_type == 'hour' ? 24 : deadline_time_type == 'day' ? 30 : 12} value={deadline_value} onChange={this.deadlineValueChange} onClick={(e) => e.stopPropagation()} className={indexStyles.select_number} />
         <Select className={indexStyles.select_day} value={deadline_time_type} onChange={this.deadlineTimeTypeValueChange}>
           <Option value="hour">时</Option>
@@ -169,15 +216,16 @@ export default class MoreOptionsComponent extends Component {
 
   // 渲染抄报人
   renderDuplicatedPerson = () => {
-    const { makeCopyPersonList = [], makeCopyNewsPaperPersonList = [] } = this.state
+    const { makeCopyNewsPaperPersonList = [] } = this.state
     const { data = [] } = this.props
+    let makeCopyPersonList = this.filterRecipients()
     return (
       <div className={indexStyles.fill_person}>
-        <div style={{display: 'flex', alignItems: 'center'}}>
-          <span className={`${indexStyles.label_person}`} style={{ fontSize: '14px', color:'rgba(0,0,0,0.45)' }}><span className={`${globalStyles.authTheme}`}>&#xe618;</span> 抄送人 (必填)&nbsp;:</span>
-          <span style={{marginRight: '8px'}}><Switch style={{marginRight: '8px'}} size="small" onChange={this.handleCCLocking}/> 锁定抄送人</span>
-          <span style={{ position: 'relative',marginRight: '25px' }}>
-            <Tooltip overlayStyle={{minWidth: '250px'}} getPopupContainer={triggerNode => triggerNode.parentNode} title="锁定抄送人后启动流程时不可修改抄送人" placement="top"><span style={{fontSize: '16px', color:'rgba(217,217,217,1)', cursor: 'pointer'}} className={`${globalStyles.authTheme}`}>&#xe845;</span></Tooltip>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <span className={`${indexStyles.label_person}`} style={{ fontSize: '14px', color: 'rgba(0,0,0,0.45)' }}><span className={`${globalStyles.authTheme}`}>&#xe618;</span> 抄送人 (必填)&nbsp;:</span>
+          <span style={{ marginRight: '8px' }}><Switch style={{ marginRight: '8px' }} size="small" onChange={this.handleCCLocking} /> 锁定抄送人</span>
+          <span style={{ position: 'relative', marginRight: '25px' }}>
+            <Tooltip overlayStyle={{ minWidth: '250px' }} getPopupContainer={triggerNode => triggerNode.parentNode} title="锁定抄送人后启动流程时不可修改抄送人" placement="top"><span style={{ fontSize: '16px', color: 'rgba(217,217,217,1)', cursor: 'pointer' }} className={`${globalStyles.authTheme}`}>&#xe845;</span></Tooltip>
           </span>
           <span onClick={this.handleDelMoreIcon.bind(this, 'DUPLICATED')} className={`${globalStyles.authTheme} ${indexStyles.del_moreIcon}`}>&#xe7fe;</span>
         </div>
@@ -261,7 +309,7 @@ export default class MoreOptionsComponent extends Component {
     const { description, is_click_node_description } = itemValue
     return (
       <div onClick={this.handleRemarksWrapper} className={`${indexStyles.select_remarks}`}>
-        <span style={{color: 'rgba(0,0,0,0.45)'}} className={globalStyles.authTheme}>&#xe636; 备注 &nbsp;:</span>
+        <span style={{ color: 'rgba(0,0,0,0.45)' }} className={globalStyles.authTheme}>&#xe636; 备注 &nbsp;:</span>
         <span onClick={this.handleDelMoreIcon.bind(this, 'REMARKS')} className={`${globalStyles.authTheme} ${indexStyles.del_moreIcon}`}>&#xe7fe;</span>
         {
           !is_click_node_description ? (
@@ -305,7 +353,7 @@ export default class MoreOptionsComponent extends Component {
 
   render() {
     const { itemValue } = this.props
-    const { options_data = [], node_type, cc_type } = itemValue
+    const { options_data = [], node_type, cc_type, description } = itemValue
     let deadlineCode = (options_data && options_data.length && (options_data.filter(item => item.code == 'COMPLETION_DEADLINE') || {})[0] || []).code || ''
     let remarksCode = (options_data && options_data.length && (options_data.filter(item => item.code == 'REMARKS') || {})[0] || []).code || ''
     let duplicatedCode = (options_data && options_data.length && (options_data.filter(item => item.code == 'DUPLICATED') || {})[0] || []).code || ''
@@ -343,17 +391,17 @@ export default class MoreOptionsComponent extends Component {
                 <span className={indexStyles.more_label}>... 更多选项 &nbsp;:</span>
                 {
                   !deadlineCode && (node_type == '3' ? cc_type == '1' ? false : true : true) && (
-                    <sapn onClick={this.handleSelectedMoreOptions.bind(this, 'COMPLETION_DEADLINE')} className={`${indexStyles.select_item}`}>+ 完成期限</sapn>
+                    <sapn onClick={(e) => { this.handleSelectedMoreOptions('COMPLETION_DEADLINE', e) }} className={`${indexStyles.select_item}`}>+ 完成期限</sapn>
                   )
                 }
                 {
                   !duplicatedCode && (
-                    <span onClick={this.handleSelectedMoreOptions.bind(this, 'DUPLICATED')} className={`${indexStyles.select_item}`}>+ 抄送</span>
+                    <span onClick={(e) => { this.handleSelectedMoreOptions('DUPLICATED', e) }} className={`${indexStyles.select_item}`}>+ 抄送</span>
                   )
                 }
                 {
                   !remarksCode && (
-                    <sapn onClick={this.handleSelectedMoreOptions.bind(this, 'REMARKS')} className={`${indexStyles.select_item}`}>+ 备注</sapn>
+                    <sapn onClick={(e) => { this.handleSelectedMoreOptions('REMARKS', e) }} className={`${indexStyles.select_item}`}>+ 备注</sapn>
                   )
                 }
               </div>

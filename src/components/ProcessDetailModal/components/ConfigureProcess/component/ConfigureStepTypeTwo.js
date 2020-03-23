@@ -9,8 +9,11 @@ import { connect } from 'dva'
 @connect(mapStateToProps)
 export default class ConfigureStepTypeTwo extends Component {
 
-  state = {
-    approvalsList: []
+  constructor(props) {
+    super(props)
+    this.state = {
+      approvalsList: props.itemValue.assignees ? props.itemValue.assignees.split(',') : [], // 指定人员的列表
+    }
   }
 
   updateConfigureProcess = (data, key) => { //更新单个数组单个属性
@@ -72,6 +75,19 @@ export default class ConfigureStepTypeTwo extends Component {
     this.updateConfigureProcess({value: newAssigneesStr}, 'assignees')
   }
 
+     // 把assignees中的执行人,在项目中的所有成员过滤出来
+     filterAssignees = () => {
+      const { projectDetailInfoData: { data = [] } } = this.props
+      const { approvalsList = [] } = this.state
+      let newData = [...data]
+      newData = newData.map(item => {
+        if (approvalsList.indexOf(item.user_id) != -1) {
+          return item
+        }
+      })
+      return newData
+    }
+
   // 审批类型
   approveTypeChange = (e) => {
     e && e.stopPropagation()
@@ -79,10 +95,10 @@ export default class ConfigureStepTypeTwo extends Component {
   }
 
   render() {
-    const { approvalsList = [] } = this.state
     const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData = {} } = this.props
     const { data, board_id } = projectDetailInfoData
     const { assignee_type, deadline_type, deadline_value, description, is_click_node_description, approve_type } = itemValue
+    let approvalsList = this.filterAssignees()
     return (
       <div>
         {/* 审批类型 */}

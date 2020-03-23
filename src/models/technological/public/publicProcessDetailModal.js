@@ -27,7 +27,7 @@ export default {
     processNotBeginningList: [], // 未开始的流程
     processEditDatas:[],
     processEditDatasRecords: [],
-    node_type: '1', // 当前的节点类型
+    node_type: '', // 当前的节点类型
     processCurrentEditStep: 0, // 当前的编辑步骤 第几步
     processCurrentCompleteStep: 0, // 当前处于的操作步骤
     templateInfo: {}, // 模板信息
@@ -112,18 +112,24 @@ export default {
 
     // 新建流程模板中的保存模板(即保存新的流程模板)
     * saveProcessTemplate({ payload }, { call, put }) {
-      let res = yield call(saveProcessTemplate,payload)
+      const { calback } = payload
+      let newPayload = {...payload}
+      newPayload.calback ? delete newPayload.calback : ''
+      let res = yield call(saveProcessTemplate,newPayload)
       if (isApiResponseOk(res)) {
-      console.log(res,'ssssssssssssss_res')
         setTimeout(() => {
           message.success(`保存模板成功`,MESSAGE_DURATION_TIME)
         }, 200)
         yield put({
-          type: 'getTemplateInfo',
+          type: 'getProcessTemplateList',
           payload: {
-            id: res.data
+            id: payload.board_id,
+            board_id: payload.board_id
           }
         })
+        if (calback && typeof calback == 'function') calback()
+      } else {
+        message.warn(res.message)
       }
     },
 

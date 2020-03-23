@@ -338,7 +338,7 @@ export default class ConfigureProcess extends Component {
                       placeholder={'步骤名称(必填)'}
                       maxLength={101}
                       nodeName={'input'}
-                      style={{ display: 'block', fontSize: 20, color: '#262626', resize: 'none', height: '44px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none' }}
+                      style={{ display: 'block', fontSize: 16, color: '#262626', resize: 'none', height: '44px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none' }}
                     />
                   )
               }
