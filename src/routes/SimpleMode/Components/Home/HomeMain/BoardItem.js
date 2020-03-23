@@ -444,7 +444,7 @@ export default class BoardItem extends Component {
                     className={`${!isAllOrg ? styles.board_area_middle_item : styles.board_area_middle_item2} ${simplemodeCurrentProject.board_id == board_id && styles.board_area_middle_item_choose}`} key={board_id}>
                     <div className={`${styles.board_area_middle_item_lf}`}></div>
                     <div className={`${styles.board_area_middle_item_middle} ${globalStyles.global_ellipsis}`} >
-                        <p title={board_name}>{board_name}</p>
+                        <p title={board_name} className={`${styles.board_area_middle_item_board_name}`}>{board_name}</p>
                         {
                             isAllOrg && (
                                 <p title={getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</p>

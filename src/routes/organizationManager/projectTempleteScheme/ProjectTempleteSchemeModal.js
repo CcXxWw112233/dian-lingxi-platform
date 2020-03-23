@@ -105,9 +105,9 @@ export default class ProjectTempleteSchemeModal extends Component {
     const { projectTemplateList = [] } = this.props
     return (
       <div className={indexStyles.plan_list_wrapper}>
-        <div className={`${indexStyles.add_plan} ${indexStyles.margin_right}`} onClick={() => { this.handleOperatorSchemeList({ id:'0', name:'全部方案' }) }}>
+        {/* <div className={`${indexStyles.add_plan} ${indexStyles.margin_right}`} onClick={() => { this.handleOperatorSchemeList({ id:'0', name:'全部方案' }) }}>
           <span className={`${globalStyles.authTheme} ${indexStyles._add_plan_name}`}>&#xe8fe; 新建方案</span>
-        </div>
+        </div> */}
         {
           projectTemplateList && projectTemplateList.map(item => {
             let { template_type, id, name } = item

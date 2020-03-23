@@ -1,9 +1,12 @@
 .mainContentWapper {
-    margin       : 0 auto;
-    height       : 0 auto;
-    padding      : 32px;
-    border-radius: 16px;
-    filter       : blur(0px);
+    margin          : 0 auto;
+    height          : 0 auto;
+    // padding      : 32px;
+    padding         : 4px 0 36px 0;
+    border-radius   : 16px;
+    filter          : blur(0px);
+    width           : 810px;
+
 }
 
 .myWorkbenchBoxWapper {
@@ -11,16 +14,17 @@
     flex-wrap: wrap;
 
     .myWorkbenchBox {
-        width            : 120px;
-        height           : 120px;
-        // background    : rgba(255, 255, 255, 0.2);
-        border-radius    : 6px;
-        margin-right     : 20px;
-        margin-top       : 24px;
-        padding-top      : 18px;
-        vertical-align   : middle;
-        text-align       : center;
-        cursor           : pointer;
+        width               : 136px;
+        height              : 136px;
+        // background       : rgba(255, 255, 255, 0.2);
+        border-radius       : 6px;
+        margin-right        : 32px;
+        margin-top          : 32px;
+        padding-top         : 18px;
+        vertical-align      : middle;
+        text-align          : center;
+        cursor              : pointer;
+        background       : rgba(255, 255, 255, 0.1);
 
         .myWorkbenchBox_icon {
             font-style : 'normal';
@@ -47,16 +51,31 @@
     }
 
     .myWorkbenchBox:hover {
-        background: rgba(255, 255, 255, 0.25) !important;
+        background: rgba(255, 255, 255, 0.25);
     }
 
-    .myWorkbenchBox:nth-child(4n) {
+    .myWorkbenchBox:nth-child(5n) {
         margin-right: 0
     }
 
     .myWorkbenchBox[disabled] {
-        opacity: 0.5;
-        cursor : not-allowed;
+        opacity   : 0.5;
+        cursor    : not-allowed;
+        background: rgba(255, 255, 255, 0.1)
+    }
+
+    .myWorkbenchBox[disabled]:hover {
+        opacity   : 0.5;
+        cursor    : not-allowed;
+        background: rgba(255, 255, 255, 0.1)
+    }
+
+    .myWorkbenchBox2[disabled] {
+        background: none !important;
+    }
+
+    .myWorkbenchBox2[disabled]:hover {
+        background: none !important;
     }
 }
 
@@ -137,7 +156,7 @@
 .nodataArea2 {
 
     display        : flex;
-    width          : 552px;
+    width          : 748px;
     height         : 92px;
     justify-content: center;
     align-items    : center;
@@ -145,6 +164,7 @@
     background     : rgba(255, 255, 255, 0.1);
     color          : #ffffff;
     border-radius  : 6px;
+    margin-bottom  : 20px;
 
     .alarm {
         font-size  : 40px;
@@ -155,5 +175,23 @@
     .title {
         font-size  : 14px;
         margin-left: 10px;
+    }
+}
+
+@media screen and(max-width:1200px) {
+    .mainContentWapper {
+        width: 472px;
+
+        .myWorkbenchBox:nth-child(5n) {
+            margin-right: 32px
+        }
+
+        .myWorkbenchBox:nth-child(3n) {
+            margin-right: 0
+        }
+    }
+
+    .nodataArea2 {
+        width: 472px;
     }
 }
