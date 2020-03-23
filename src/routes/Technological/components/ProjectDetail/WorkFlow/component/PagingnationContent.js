@@ -15,7 +15,7 @@ export default class PagingnationContent extends Component {
   }
 
   componentDidMount() {
-    this.getProcessListByType()
+    // this.getProcessListByType()
   }
 
   //分页逻辑

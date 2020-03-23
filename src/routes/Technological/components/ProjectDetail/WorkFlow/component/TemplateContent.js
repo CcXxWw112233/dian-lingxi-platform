@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import indexStyles from '../index.less'
 import TemplateItem from './TemplateItem'
 import globalStyles from '@/globalset/css/globalClassName.less'
+import { connect } from 'dva'
+@connect(mapStateToProps)
 export default class TemplateContent extends Component {// 模板组件
 
   // 新增模板点击事件
@@ -10,17 +12,22 @@ export default class TemplateContent extends Component {// 模板组件
   }
 
   // 编辑模板的点击事件
-  handleEditTemplete = () => {
-    this.props.handleEditTemplete && this.props.handleEditTemplete()
+  handleEditTemplete = (item) => {
+    this.props.handleEditTemplete && this.props.handleEditTemplete(item)
   }
 
   // 启动流程的点击事件
-  handleStartProcess = () => {
-    this.props.handleStartProcess && this.props.handleStartProcess()
+  handleStartProcess = (item) => {
+    this.props.handleStartProcess && this.props.handleStartProcess(item)
+  }
+
+  // 删除流程的点击事件
+  handleDelteTemplete = (item) => {
+    this.props.handleDelteTemplete && this.props.handleDelteTemplete(item)
   }
 
   render() {
-    const { process_detail_modal_visible } = this.props
+    const { processTemplateList = [] } = this.props
     return (
         <div className={`${indexStyles.templateContent}`}>
           <div className={indexStyles.addTemplate}>
@@ -30,15 +37,19 @@ export default class TemplateContent extends Component {// 模板组件
             </span>
           </div>
           <div className={`${indexStyles.templateItemContent} ${globalStyles.global_vertical_scrollbar}`}>
-            <TemplateItem handleEditTemplete={this.handleEditTemplete} handleStartProcess={this.handleStartProcess} />
-            <TemplateItem handleEditTemplete={this.handleEditTemplete} handleStartProcess={this.handleStartProcess} />
-            <TemplateItem handleEditTemplete={this.handleEditTemplete} handleStartProcess={this.handleStartProcess} />
-            <TemplateItem handleEditTemplete={this.handleEditTemplete} handleStartProcess={this.handleStartProcess} />
-            <TemplateItem handleEditTemplete={this.handleEditTemplete} handleStartProcess={this.handleStartProcess} />
-            <TemplateItem handleEditTemplete={this.handleEditTemplete} handleStartProcess={this.handleStartProcess} />
-            <TemplateItem handleEditTemplete={this.handleEditTemplete} handleStartProcess={this.handleStartProcess} />
-            <TemplateItem handleEditTemplete={this.handleEditTemplete} handleStartProcess={this.handleStartProcess} />
-            <TemplateItem handleEditTemplete={this.handleEditTemplete} handleStartProcess={this.handleStartProcess} />
+            {
+              processTemplateList && processTemplateList.map((item, key) => {
+                return (
+                  <TemplateItem
+                    itemValue={item} 
+                    itemKey={key}
+                    handleEditTemplete={this.handleEditTemplete} 
+                    handleStartProcess={this.handleStartProcess}
+                    handleDelteTemplete={this.handleDelteTemplete}
+                  />
+                )
+              })
+            }
           </div>
         </div>
     )
@@ -48,4 +59,14 @@ export default class TemplateContent extends Component {// 模板组件
 // 模板组件
 TemplateContent.defaultProps = {
 
+}
+
+function mapStateToProps({
+  publicProcessDetailModal: {
+    processTemplateList = []
+  }
+}) {
+  return {
+    processTemplateList
+  }
 }

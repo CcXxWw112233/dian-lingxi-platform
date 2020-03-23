@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import indexStyles from '../index.less'
+import { Input } from 'antd'
 
 export default class EditStepTypeOne_one extends Component {
   render() {
@@ -8,9 +9,7 @@ export default class EditStepTypeOne_one extends Component {
     return (
       <div className={indexStyles.text_form}>
         <p>{title}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</p>
-        <div className={indexStyles.text_fillOut}>
-          <span>{prompt_content}</span>
-        </div>
+        <Input placeholder={prompt_content} disabled={true} />
       </div>
     )
   }

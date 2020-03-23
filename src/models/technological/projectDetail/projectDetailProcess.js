@@ -97,13 +97,14 @@ export default modelExtend(projectDetail, {
                 processCurrentCompleteStep: 0
               }
             })
-            dispatch({
-              type: 'getProcessTemplateList',
-              payload: {
-                id: board_id
-              }
-            })
-
+            if (board_id) {
+              dispatch({
+                type: 'getProcessTemplateList',
+                payload: {
+                  id: board_id
+                }
+              })
+            }
             // dispatch({
             //   type: 'getProcessInfoByUrl',
             //   payload: {

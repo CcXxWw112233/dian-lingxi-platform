@@ -119,8 +119,9 @@ export default class EditStepTypeOne extends Component {
   }
 
   render() {
-    const { itemKey, processEditDatas = [] } = this.props
+    const { itemKey, processEditDatas = [], itemValue } = this.props
     const { transPrincipalList = [], is_show_spread_arrow } = this.state
+    const { id, name, description, deadline_type, deadline_value, deadline_time_type } = itemValue
     return (
       <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }}>
         <div className={indexStyles.line}></div>
@@ -132,7 +133,7 @@ export default class EditStepTypeOne extends Component {
               <div className={`${indexStyles.node_name}`}>
                 <div>
                   <span className={`${globalStyles.authTheme} ${indexStyles.stepTypeIcon}`}>&#xe7b1;</span>
-                  <span>前期资料整理</span>
+                  <span>{name}</span>
                 </div>
                 <div>
                   <span onClick={this.handleSpreadArrow} className={`${indexStyles.spreadIcon}`}>

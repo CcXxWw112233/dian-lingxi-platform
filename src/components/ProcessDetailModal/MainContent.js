@@ -286,6 +286,21 @@ export default class MainContent extends Component {
     })
   }
 
+  // 保存模板的点击事件
+  handleSaveProcessTemplate = (e) => {
+    e && e.stopPropagation()
+    const { projectDetailInfoData: { board_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [] } = this.props
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/saveProcessTemplate',
+      payload: {
+        board_id,
+        name: currentFlowInstanceName,
+        description: currentFlowInstanceDescription,
+        nodes: processEditDatas
+      }
+    })
+  }
+
   // 渲染添加步骤按钮
   renderAddProcessStep = () => {
     const { processCurrentEditStep, processEditDatas = [] } = this.props
@@ -355,7 +370,7 @@ export default class MainContent extends Component {
   render() {
     const { clientHeight } = this.state
     const { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep } = this.props
-    let saveTempleteDisabled = currentFlowInstanceName == '' || processEditDatas[processEditDatas.length - 1].is_edit == '0' ? true : false
+    let saveTempleteDisabled = currentFlowInstanceName == '' || (processEditDatas && processEditDatas.length) && processEditDatas[processEditDatas.length - 1].is_edit == '0' ? true : false
     return (
       <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto',position: 'relative' }} onScroll={this.onScroll} >
         <div id="container_configureTop" className={indexStyles.configure_top}>
@@ -455,7 +470,7 @@ export default class MainContent extends Component {
                 <Button disabled={saveTempleteDisabled} style={{ marginRight: '24px', height: '40px', color: '#1890FF' }}>开始流程</Button>
                 {
                   processPageFlagStep != '3' && (
-                    <Button disabled={saveTempleteDisabled} type="primary" style={{ height: '40px' }}>保存模板</Button>
+                    <Button onClick={this.handleSaveProcessTemplate} disabled={saveTempleteDisabled} type="primary" style={{ height: '40px' }}>保存模板</Button>
                   )
                 }
               </div>
@@ -477,6 +492,6 @@ export default class MainContent extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList = [], processEditDatas = [], processEditDatasRecords = [], processInfo = {}, processCurrentCompleteStep, node_type, processCurrentEditStep } }) {
-  return { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList, processEditDatas, processEditDatasRecords, processInfo, processCurrentCompleteStep, node_type, processCurrentEditStep }
+function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList = [], processEditDatas = [], processInfo = {}, processCurrentCompleteStep, node_type, processCurrentEditStep },  projectDetail: { datas: { projectDetailInfoData = {} } } }) {
+  return { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList, processEditDatas, processInfo, processCurrentCompleteStep, node_type, processCurrentEditStep, projectDetailInfoData }
 }
