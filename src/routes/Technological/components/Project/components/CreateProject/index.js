@@ -325,13 +325,13 @@ class CreateProject extends React.Component {
   renderOrgMenu = () => {
     const { currentUserOrganizes = [] } = this.props
     return (
-      <Menu onClick={this.orgOnChange}>
+      <Menu onClick={this.orgOnChange} style={{ maxHeight: 240, overflow: 'auto' }}>
         {
           currentUserOrganizes.map(value => {
             const { name, id } = value
             return (
               <Menu.Item key={`${id}__${name}`} style={{ width: 248 }}>
-                <div style={{ maxWidth: 232 }} className={`${globalStyles.global_ellipsis}`}>
+                <div style={{ maxWidth: 232 }} className={`${globalStyles.global_ellipsis}`} title={name}>
                   {name}
                 </div>
               </Menu.Item>
