@@ -1,9 +1,12 @@
 .mainContentWapper {
-    margin       : 0 auto;
-    height       : 0 auto;
-    padding      : 32px;
-    border-radius: 16px;
-    filter       : blur(0px);
+    margin          : 0 auto;
+    height          : 0 auto;
+    // padding      : 32px;
+    padding         : 4px 0 36px 0;
+    border-radius   : 16px;
+    filter          : blur(0px);
+    width           : 810px;
+
 }
 
 .myWorkbenchBoxWapper {
@@ -163,5 +166,19 @@
     .title {
         font-size  : 14px;
         margin-left: 10px;
+    }
+}
+
+@media screen and(max-width:1200px) {
+    .mainContentWapper {
+        width: 472px;
+
+        .myWorkbenchBox:nth-child(5n) {
+            margin-right: 32px
+        }
+
+        .myWorkbenchBox:nth-child(3n) {
+            margin-right: 0
+        }
     }
 }
