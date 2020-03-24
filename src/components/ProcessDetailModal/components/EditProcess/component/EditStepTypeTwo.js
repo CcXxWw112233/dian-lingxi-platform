@@ -83,8 +83,13 @@ export default class EditStepTypeTwo extends Component {
   }
 
   renderEditDetailContent = () => {
-    const { itemValue } = this.props
+    const { itemValue, processEditDatas = [] } = this.props
     const { approve_type, description } = itemValue
+    let newData = processEditDatas.find(item => item.is_edit == '0')
+    let flag = false
+    if (newData && Object.keys(newData).length) {
+      flag = true
+    }
     let type_name = ''
     const diffType = () => {
       switch (approve_type) {
@@ -121,7 +126,7 @@ export default class EditStepTypeTwo extends Component {
         }
         {/* 编辑按钮 */}
         <div style={{ paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center' }}>
-          <Button onClick={this.handleEnterConfigureProcess} type="primary">编辑</Button>
+          <Button disabled={flag} onClick={this.handleEnterConfigureProcess} type="primary">编辑</Button>
         </div>
       </div>
     )

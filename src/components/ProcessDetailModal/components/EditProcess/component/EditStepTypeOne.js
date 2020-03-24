@@ -110,8 +110,13 @@ export default class EditStepTypeOne extends Component {
 
   // 渲染编辑详情的内容  
   renderEditDetailContent = () => {
-    const { itemValue } = this.props
+    const { itemValue, processEditDatas = [] } = this.props
     const { forms = [], description, deadline_value } = itemValue
+    let newData = processEditDatas.find(item => item.is_edit == '0')
+    let flag = false
+    if (newData && Object.keys(newData).length) {
+      flag = true
+    }
     return (
       <div>
         {/* 表单内容 */}
@@ -140,7 +145,7 @@ export default class EditStepTypeOne extends Component {
         {
           (
             <div style={{ marginTop: '16px', paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center' }}>
-              <Button type="primary" onClick={this.handleEnterConfigureProcess}>编辑</Button>
+              <Button disabled={flag} type="primary" onClick={this.handleEnterConfigureProcess}>编辑</Button>
             </div>
           )
         }
