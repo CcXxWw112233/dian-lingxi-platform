@@ -636,6 +636,33 @@ export const compareACoupleOfObjects = (obj1, obj2) => {
   return flag;
 }
 
+/**
+ * 比较两个数组是否相等
+ * @param {Array} arrya1 数组1
+ * @param {Array} array2 数组2
+ * @returns {Boolean} 该方法返回一个布尔值, false 表示不相等 true表示相等
+ */
+export const isArrayEqual = (arrya1, array2) => {
+  if (!arrya1 || !array2)
+    return false;
+  // 比较长度
+  if (arrya1.length != array2.length)
+    return false;
+  for (let i = 0, l = arrya1.length; i < l; i++) {
+    // 检查是否是嵌套数组
+    if (arrya1[i] instanceof Array && array2[i] instanceof Array) {
+      // 这里递归判断嵌套数组
+      if (!this.isArrayEqual.call(this, arrya1[i], array2[i]))
+        return false;
+    }
+    else if (arrya1[i] != array2[i]) {
+      // 注意: 对象不等于对象
+      return false;
+    }
+  }
+  return true;
+}
+
 // 将时间戳统一转化成13位
 export const transformTimestamp = (timestamp) => {
   if (!timestamp) {

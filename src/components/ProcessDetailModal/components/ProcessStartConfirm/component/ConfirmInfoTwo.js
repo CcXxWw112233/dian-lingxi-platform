@@ -10,12 +10,22 @@ import { connect } from 'dva'
 @connect(mapStateToProps)
 export default class ConfirmInfoTwo extends Component {
 
-  state = {
-    transPrincipalList: JSON.parse(JSON.stringify(principalList)),
+ constructor(props) {
+   super(props)
+   this.state = {
+    transPrincipalList: props.itemValue.assignees ? props.itemValue.assignees.split(',') : [], // 表示当前的执行人
+    transCopyPersonnelList: props.itemValue.recipients ? props.itemValue.recipients.split(',') : [], // 表示当前选择的抄送人
     is_show_spread_arrow: false,
   }
+ }
 
-  
+  updateParentsAssigneesOrCopyPersonnel = (data, key) => {
+    const { value } = data
+    this.setState({
+      [key]: value
+    })
+  }
+
   // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
   updateCorrespondingPrcodessStepWithNodeContent = (data, value) => {
     const { itemValue, processEditDatas = [], itemKey, dispatch } = this.props
@@ -36,8 +46,8 @@ export default class ConfirmInfoTwo extends Component {
     })
   }
 
-   // 编辑点击事件
-   handleEnterConfigureProcess = (e) => {
+  // 编辑点击事件
+  handleEnterConfigureProcess = (e) => {
     e && e.stopPropagation()
     this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
   }
@@ -46,9 +56,35 @@ export default class ConfirmInfoTwo extends Component {
   isValidAvatar = (avatarUrl = '') =>
     avatarUrl.includes('http://') || avatarUrl.includes('https://');
 
+  // 把assignees中的执行人,在项目中的所有成员过滤出来
+  filterAssignees = () => {
+    const { projectDetailInfoData: { data = [] } } = this.props
+    const { transPrincipalList = [] } = this.state
+    let newData = [...data]
+    newData = newData.filter(item => {
+      if (transPrincipalList.indexOf(item.user_id) != -1) {
+        return item
+      }
+    })
+    return newData
+  }
+
+  // 把recipients中的抄送人在项目中的所有成员过滤出来
+  filterRecipients = () => {
+    const { projectDetailInfoData: { data = [] } } = this.props
+    const { transCopyPersonnelList = [] } = this.state
+    let newData = [...data]
+    newData = newData.filter(item => {
+      if (transCopyPersonnelList.indexOf(item.user_id) != -1) {
+        return item
+      }
+    })
+    return newData
+  }
+
   renderEditDetailContent = () => {
     const { itemValue } = this.props
-    const { approve_type } = itemValue
+    const { approve_type, description } = itemValue
     let type_name = ''
     const diffType = () => {
       switch (approve_type) {
@@ -72,13 +108,26 @@ export default class ConfirmInfoTwo extends Component {
         <div style={{ minHeight: '64px', padding: '20px 14px', color: 'rgba(0,0,0,0.45)', borderTop: '1px solid #e8e8e8', marginTop: '15px' }}>
           <span className={globalStyles.authTheme}>&#xe616; 审批类型 : &nbsp;&nbsp;&nbsp;{diffType()}</span>
         </div>
+        {/* 备注 */}
+        {
+          description != '' &&
+          (
+            <div className={indexStyles.select_remarks}>
+              <span style={{color: 'rgba(0,0,0,0.45)'}} className={globalStyles.authTheme}>&#xe636; 备注 :</span>
+              <div>{description}</div>
+            </div>
+          )
+        }
       </div>
     )
   }
 
   render() {
     const { itemKey, itemValue, processEditDatas = [], projectDetailInfoData: { data = [] } } = this.props
-    const { transPrincipalList = [], is_show_spread_arrow } = this.state
+    const { is_show_spread_arrow } = this.state
+    let transPrincipalList = this.filterAssignees()
+    let transCopyPersonnelList = this.filterRecipients()
+    const { name, assignee_type, cc_type, cc_locking } = itemValue
     return (
       <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }}>
         {processEditDatas.length <= itemKey + 1 ? null : <div className={indexStyles.completeLine}></div>}
@@ -90,7 +139,7 @@ export default class ConfirmInfoTwo extends Component {
               <div className={`${indexStyles.node_name}`}>
                 <div>
                   <span className={`${globalStyles.authTheme} ${indexStyles.stepTypeIcon}`}>&#xe616;</span>
-                  <span>建设部门审批</span>
+                  <span>{name}</span>
                 </div>
                 <div>
                   <span onClick={this.handleSpreadArrow} className={`${indexStyles.spreadIcon}`}>
@@ -104,34 +153,73 @@ export default class ConfirmInfoTwo extends Component {
             {/* 下 */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div className={indexStyles.content__principalList_icon}>
-                <AvatarList
-                  size="small"
-                  maxLength={10}
-                  excessItemsStyle={{
-                    color: '#f56a00',
-                    backgroundColor: '#fde3cf'
-                  }}
-                >
-                  {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
-                    <AvatarList.Item
-                      key={index}
-                      tips={name}
-                      src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
-                    />
-                  ))}
-                </AvatarList>
-                <span className={indexStyles.content__principalList_info}>
-                  {`${transPrincipalList.length}位审批人`}
-                </span>
-                {/* 审批人 */}
-                <span style={{position: 'relative'}}>
-                  <AmendComponent type="2" updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="审批人" data={data} itemKey={itemKey} itemValue={itemValue}/>
-                </span>
+                <div style={{ display: 'inline-block' }}>
+                  {/* 填写人 */}
+                  <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
+                    <AvatarList
+                      size="small"
+                      maxLength={10}
+                      excessItemsStyle={{
+                        color: '#f56a00',
+                        backgroundColor: '#fde3cf'
+                      }}
+                    >
+                      {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
+                        <AvatarList.Item
+                          key={index}
+                          tips={name || '佚名'}
+                          src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                        />
+                      ))}
+                    </AvatarList>
+                    <span className={indexStyles.content__principalList_info}>
+                      {`${transPrincipalList.length}位审批人`}
+                    </span>
+                    <span style={{ position: 'relative' }}>
+                      <AmendComponent type="2"
+                      updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="审批人" data={data} itemKey={itemKey} itemValue={itemValue} />
+                    </span>
+                  </div>
+                  {/* 抄送人 */}
+                  {
+                    cc_type == '1' && (
+                      <div style={{ marginLeft: '8px', display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
+                        <AvatarList
+                          size="small"
+                          maxLength={10}
+                          excessItemsStyle={{
+                            color: '#f56a00',
+                            backgroundColor: '#fde3cf'
+                          }}
+                        >
+                          {(transCopyPersonnelList && transCopyPersonnelList.length) && transCopyPersonnelList.map(({ name, avatar }, index) => (
+                            <AvatarList.Item
+                              key={index}
+                              tips={name || '佚名'}
+                              src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                            />
+                          ))}
+                        </AvatarList>
+                        <span className={indexStyles.content__principalList_info}>
+                          {`${transCopyPersonnelList.length}位抄送人`}
+                        </span>
+                        {
+                          cc_locking == '0' && (
+                            <span style={{ position: 'relative' }}>
+                              <AmendComponent type="3"
+                              updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="抄送人" data={data} itemKey={itemKey} itemValue={itemValue} />
+                            </span>
+                          )
+                        }
+                      </div>
+                    )
+                  }
+                </div>
               </div>
-              <div style={{marginRight: '16px'}}>
+              <div style={{ marginRight: '16px' }}>
                 <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '14px' }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
                 <span className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : 步骤开始后1天内</span>
-                <span style={{position: 'relative'}}>
+                <span style={{ position: 'relative' }}>
                   <AmendComponent updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="完成期限" data={data} itemKey={itemKey} itemValue={itemValue} />
                 </span>
               </div>

@@ -3,6 +3,7 @@ import { Button, Dropdown, Tooltip, Icon, Tabs } from 'antd'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
+import { compareACoupleOfObjects, isArrayEqual } from '../../../../../utils/util'
 
 const { TabPane } = Tabs;
 
@@ -11,8 +12,21 @@ export default class DuplicateAndReportPerson extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      designatedPersonnelList: [], // 指定人员的列表
+      designatedPersonnelList: props.itemValue.recipients ? props.itemValue.recipients.split(',') : [], // 表示当前的执行人
     }
+  }
+
+  // 把recipients中的抄送人在项目中的所有成员过滤出来
+  filterRecipients = () => {
+    const { data = [] } = this.props
+    const { designatedPersonnelList = [] } = this.state
+    let newData = [...data]
+    newData = newData.filter(item => {
+      if (designatedPersonnelList.indexOf(item.user_id) != -1) {
+        return item
+      }
+    })
+    return newData
   }
 
   //修改通知人的回调 S
@@ -21,21 +35,40 @@ export default class DuplicateAndReportPerson extends Component {
     // 多个任务执行人
     // const membersData = [...data] //所有的人
     // const excutorData = new_userInfo_data //所有的人
-    let newDesignatedPersonnelList = []
-    let assignee_value = []
     const { selectedKeys = [], type, key } = data
-    for (let i = 0; i < selectedKeys.length; i++) {
-      for (let j = 0; j < membersData.length; j++) {
-        if (selectedKeys[i] === membersData[j]['user_id']) {
-          newDesignatedPersonnelList.push(membersData[j])
-          assignee_value.push(membersData[j].user_id)
+    if (type == 'add') {
+      let assignee_value = []
+      for (let i = 0; i < selectedKeys.length; i++) {
+        for (let j = 0; j < membersData.length; j++) {
+          if (selectedKeys[i] === membersData[j]['user_id']) {
+            assignee_value.push(membersData[j].user_id)
+          }
         }
       }
+      this.setState({
+        designatedPersonnelList: assignee_value
+      });
+      // this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('assignees', assignee_value.join(','))
     }
-    this.setState({
-      designatedPersonnelList: newDesignatedPersonnelList
-    });
-    this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('assignees', assignee_value.join(','))
+
+    if (type == 'remove') {
+      const { itemValue } = this.props
+      const { assignees } = itemValue
+      const { designatedPersonnelList = [] } = this.state
+      let newDesignatedPersonnelList = [...designatedPersonnelList]
+      // let newAssigneesArray = assignees && assignees.length ? assignees.split(',') : []
+      newDesignatedPersonnelList.map((item, index) => {
+        if (item == key) {
+          newDesignatedPersonnelList.splice(index, 1)
+          // newAssigneesArray.splice(index, 1)
+        }
+      })
+      // let newAssigneesStr = newAssigneesArray.join(',')
+      this.setState({
+        designatedPersonnelList: newDesignatedPersonnelList
+      })
+      // this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('assignees', newAssigneesStr)
+    }
   }
   // 添加执行人的回调 E
 
@@ -43,27 +76,38 @@ export default class DuplicateAndReportPerson extends Component {
   handleRemoveExecutors = (e, shouldDeleteItem) => {
     e && e.stopPropagation()
     const { itemValue } = this.props
-    const { assignees } = itemValue
+    // const { assignees } = itemValue
     const { designatedPersonnelList = [] } = this.state
     let newDesignatedPersonnelList = [...designatedPersonnelList]
-    let newAssigneesArray = assignees && assignees.length ? assignees.split(',') : []
+    // let newAssigneesArray = assignees && assignees.length ? assignees.split(',') : []
     newDesignatedPersonnelList.map((item, index) => {
-      if (item.user_id == shouldDeleteItem) {
+      if (item == shouldDeleteItem) {
         newDesignatedPersonnelList.splice(index, 1)
-        newAssigneesArray.splice(index, 1)
+        // newAssigneesArray.splice(index, 1)
       }
     })
-    let newAssigneesStr = newAssigneesArray.join(',')
+    // let newAssigneesStr = newAssigneesArray.join(',')
     this.setState({
       designatedPersonnelList: newDesignatedPersonnelList
     })
-    this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('assignees', newAssigneesStr)
+    // this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('assignees', newAssigneesStr)
+  }
+
+  // 确定的点击事件
+  handleConfirmChangeAssignees = async () => {
+    const { designatedPersonnelList = [], assignee_type } = this.state
+    let newDesignatedPersonnelList = [...designatedPersonnelList]
+    await this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('recipients', newDesignatedPersonnelList.join(','))
+    await this.props.updateParentsAssigneesOrCopyPersonnel && this.props.updateParentsAssigneesOrCopyPersonnel({ value: newDesignatedPersonnelList.join(',') }, 'transCopyPersonnelList')
+    await this.props.onVisibleChange && this.props.onVisibleChange(false)
+
   }
 
   // 渲染指定人员
   renderDesignatedPersonnel = () => {
     const { data = [] } = this.props
-    const { designatedPersonnelList = [] } = this.state
+    // const { designatedPersonnelList = [] } = this.state
+    let designatedPersonnelList = this.filterRecipients()
     return (
       <div style={{ flex: 1, padding: '8px 0' }}>
         {
@@ -158,16 +202,18 @@ export default class DuplicateAndReportPerson extends Component {
 
   render() {
     const { itemValue } = this.props
-    const { cc_type } = itemValue
+    const { cc_type, recipients } = itemValue
+    const { designatedPersonnelList } = this.state
+    let disabledRecipients = (designatedPersonnelList && designatedPersonnelList.length) ? isArrayEqual(recipients.split(','), designatedPersonnelList) : true
     return (
       <div className={indexStyles.mini_content}>
         <div className={`${indexStyles.mini_top} ${globalStyles.global_vertical_scrollbar}`}>
           <div>
-            {cc_type == '1' ? this.renderDesignatedPersonnel() : this.renderHandReportPersonnel() }
+            {cc_type == '1' ? this.renderDesignatedPersonnel() : this.renderHandReportPersonnel()}
           </div>
         </div>
         <div className={indexStyles.mini_bottom}>
-          <Button type="primary">确定</Button>
+          <Button disabled={disabledRecipients ? true : false} onClick={this.handleConfirmChangeAssignees} type="primary">确定</Button>
         </div>
       </div>
     )
