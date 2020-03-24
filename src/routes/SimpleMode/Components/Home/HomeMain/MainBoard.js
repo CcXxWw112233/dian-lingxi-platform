@@ -198,7 +198,7 @@ export default class MainBoard extends Component {
                 </div>
                 <div className={styles.board_area_bott}>
                     <div className={`${styles.create_btn}`} onClick={this.setAddProjectModalVisible}>
-                        <i className={`${globalStyles.authTheme}`}>&#xe846;</i>
+                        <i className={`${globalStyles.authTheme}`} style={{ fontSize: 16 }}>&#xe846;</i>
                         <span>新建项目</span>
                     </div>
                 </div>
@@ -213,7 +213,7 @@ export default class MainBoard extends Component {
                         </div>
                 <div className={styles.create_middle}>暂无项目，赶快新建一个吧</div>
                 <div className={styles.create_btn} onClick={this.setAddProjectModalVisible}>
-                    <i className={`${globalStyles.authTheme}`}>&#xe846;</i>
+                    <i className={`${globalStyles.authTheme}`} style={{ fontSize: 16 }}>&#xe846;</i>
                     <span>新建项目</span>
                 </div>
             </div>
