@@ -42,7 +42,6 @@ let defaultDelayDueTime // 默认的结束时间
 let currentDelayStartTime // 具有年月日的开始时间
 let currentDelayDueTime // 默认的持续时间
 let remind_time_value = '5' // 设置的提醒时间
-let timer
 
 @connect(({ technological, workbench }) => {
 	return {
@@ -59,41 +58,46 @@ let timer
 	};
 })
 class VideoMeetingPopoverContent extends React.Component {
-	state = {
-		saveToProject: null, // 用来保存存入的项目
-		saveProjectName: null,// 用来保存项目名称
-		meetingTitle: "", // 会议名称
-		videoMeetingDefaultSuggesstions: [], //mention 原始数据
-		selectedSuggestions: [], //自定义的mention选择列表
-		suggestionValue: toContentState(""), //mention的值
-		videoMeetingPopoverVisible: false,// 视频会议的显示隐藏
-		currentSelectedProjectMembersList: [], //当前选择项目的项目成员
-		currentOrgAllMembers: [], //当前组织的职员
-		org_id: '0',
-		dueTimeList: [
-			{ remind_time_type: 'm', txtVal: '5' },
-			{ remind_time_type: 'm', txtVal: '15' },
-			{ remind_time_type: 'm', txtVal: '30' },
-			{ remind_time_type: 'm', txtVal: '45' },
-			// { remind_time_type: 'm', txtVal: '30' },
-			// { remind_time_type: 'h', txtVal: '1' },
-			// { remind_time_type: 'm', txtVal: '90' },
-			// { remind_time_type: 'h', txtVal: '2' },
-			// { remind_time_type: 'h', txtVal: '3' },
-			// { remind_time_type: 'h', txtVal: '4' },
-			// { remind_time_type: 'h', txtVal: '5' },
-			// { remind_time_type: 'h', txtVal: '6' },
-		], // 持续结束时间
-		remindTimeList: [
-			{ remind_time_value: '5' },
-			{ remind_time_value: '15' },
-			{ remind_time_value: '30' },
-			{ remind_time_value: '45' },
-		],// 设置的提醒时间
-		toNoticeList: [], // 当前通知的用户
-		defaultValue: '30', // 当前选择的持续时间
-		providerDefault: null, // 默认选中的提供商
+	constructor(props) {
+		super(props)
+		this.timer = null
+		this.state = {
+			saveToProject: null, // 用来保存存入的项目
+			saveProjectName: null,// 用来保存项目名称
+			meetingTitle: "", // 会议名称
+			videoMeetingDefaultSuggesstions: [], //mention 原始数据
+			selectedSuggestions: [], //自定义的mention选择列表
+			suggestionValue: toContentState(""), //mention的值
+			videoMeetingPopoverVisible: false,// 视频会议的显示隐藏
+			currentSelectedProjectMembersList: [], //当前选择项目的项目成员
+			currentOrgAllMembers: [], //当前组织的职员
+			org_id: '0',
+			dueTimeList: [
+				{ remind_time_type: 'm', txtVal: '5' },
+				{ remind_time_type: 'm', txtVal: '15' },
+				{ remind_time_type: 'm', txtVal: '30' },
+				{ remind_time_type: 'm', txtVal: '45' },
+				// { remind_time_type: 'm', txtVal: '30' },
+				// { remind_time_type: 'h', txtVal: '1' },
+				// { remind_time_type: 'm', txtVal: '90' },
+				// { remind_time_type: 'h', txtVal: '2' },
+				// { remind_time_type: 'h', txtVal: '3' },
+				// { remind_time_type: 'h', txtVal: '4' },
+				// { remind_time_type: 'h', txtVal: '5' },
+				// { remind_time_type: 'h', txtVal: '6' },
+			], // 持续结束时间
+			remindTimeList: [
+				{ remind_time_value: '5' },
+				{ remind_time_value: '15' },
+				{ remind_time_value: '30' },
+				{ remind_time_value: '45' },
+			],// 设置的提醒时间
+			toNoticeList: [], // 当前通知的用户
+			defaultValue: '30', // 当前选择的持续时间
+			providerDefault: null, // 默认选中的提供商
+		}
 	}
+
 
 	// 获取项目用户
 	getProjectUsers = ({ projectId }) => {
@@ -125,7 +129,7 @@ class VideoMeetingPopoverContent extends React.Component {
 						this.getCurrentRemindUser()
 						setTimeout(() => {
 							if (this.state.isNotUpdateShowTime) {
-								clearTimeout(timer)
+								clearTimeout(this.timer)
 								return false
 							}
 							this.setState({
@@ -257,7 +261,7 @@ class VideoMeetingPopoverContent extends React.Component {
 			// isShowNowTime: true,
 			meeting_start_time: timeToTimestamp(new Date())
 		})
-		timer = setTimeout(() => {
+		this.timer = setTimeout(() => {
 			this.showTime()
 		}, 1000)
 	}
@@ -303,7 +307,7 @@ class VideoMeetingPopoverContent extends React.Component {
 		remind_time_value = '5'
 		defaultSaveToProject = ''
 		defaultSaveProjectName = ''
-		// clearTimeout(timer)
+		// clearTimeout(this.timer )
 	};
 
 	// 获取项目权限
@@ -520,8 +524,8 @@ class VideoMeetingPopoverContent extends React.Component {
 		let nextOrPrevDate = new Date(timestampToTimeNormal(start_timeStamp)).getDate()
 		let currentDate = new Date().getDate()
 		// console.log(parseInt(start_timeStamp / 1000), parseInt(nowDate / 1000), 'sssssssss')
-		if (timer) {
-			clearTimeout(timer)
+		if (this.timer) {
+			clearTimeout(this.timer)
 		}
 		// 如果是点击的今天，那么提醒什么的都要隐藏
 		// 如果点击的是今天之前或者之后，那么就要显示
@@ -535,8 +539,8 @@ class VideoMeetingPopoverContent extends React.Component {
 					isExeecedTime: false
 				})
 			} else {
-				if (timer) {
-					clearTimeout(timer)
+				if (this.timer) {
+					clearTimeout(this.timer)
 				}
 				this.setState({
 					start_time: timestampToTime(start_timeStamp, true),
@@ -558,8 +562,8 @@ class VideoMeetingPopoverContent extends React.Component {
 				isExeecedTime: true
 			})
 		} else {
-			if (timer) {
-				clearTimeout(timer)
+			if (this.timer) {
+				clearTimeout(this.timer)
 			}
 			this.setState({
 				start_time: timestampToTime(start_timeStamp, true),

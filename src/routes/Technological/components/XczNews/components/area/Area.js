@@ -10,7 +10,6 @@ import NoMatch from './NoMatch'
 
 const { Option } = Select;
 const Search = Input.Search;
-let timer;
 
 @connect(({ xczNews = [] }) => ({
     xczNews,

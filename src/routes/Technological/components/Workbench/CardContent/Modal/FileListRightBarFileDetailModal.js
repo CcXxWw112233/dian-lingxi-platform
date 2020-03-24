@@ -2,7 +2,6 @@ import React from 'react';
 import BoardCommuicationFileDetailContainer from './component/BoardCommuicationFileDetailContainer'
 import styles from './FileListRightBarFileDetailModal.less';
 import { connect } from 'dva'
-let timer
 @connect(mapStateToProps)
 class FileListRightBarFileDetailModal extends React.Component {
 

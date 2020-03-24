@@ -24,7 +24,7 @@ import queryString from 'query-string';
 import PayUpgrade from '@/routes/Technological/components/PayUpgrade/index'
 import { CUSTOMIZATION_ORGNIZATIONS } from '../../../../../../globalset/js/constant';
 const { SubMenu } = Menu;
-let timer;
+// let timer;
 @connect(mapStateToProps)
 export default class SimpleNavigation extends Component {
 
@@ -41,6 +41,7 @@ export default class SimpleNavigation extends Component {
             payUpgradeModalVisible: false,
 
         }
+        this.timer = null
     }
     componentDidMount() {
         const { dispatch } = this.props
@@ -342,10 +343,10 @@ export default class SimpleNavigation extends Component {
                 this.handleShowAllOrg
                 break
             case 'subInfoSet':
-                if (!timer) {
-                    clearTimeout(timer)
+                if (this.timer) {
+                    clearTimeout(this.timer)
                 }
-                timer = setTimeout(() => {
+                this.timer = setTimeout(() => {
                     this.setNotificationSettingsModalVisible()
                 }, 300)
 
@@ -729,7 +730,7 @@ export default class SimpleNavigation extends Component {
     }
 }
 function mapStateToProps({ technological: { datas: {
-    menuList = [], naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org, is_show_simple,userOrgPermissions
+    menuList = [], naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org, is_show_simple, userOrgPermissions
 } } }) {
-    return { menuList, naviHeadTabIndex, currentUserOrganizes, currentSelectOrganize, is_show_org_name, is_all_org, is_show_simple,userOrgPermissions}
+    return { menuList, naviHeadTabIndex, currentUserOrganizes, currentSelectOrganize, is_show_org_name, is_all_org, is_show_simple, userOrgPermissions }
 }
