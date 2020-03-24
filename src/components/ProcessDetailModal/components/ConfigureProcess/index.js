@@ -249,6 +249,41 @@ export default class ConfigureProcess extends Component {
         }
         break;
       case '2':
+        if (cc_type == '0' || cc_type == '') { // 表示没有选择抄送人
+          if (!name && !(newAssignees && newAssignees.length)) {
+            confirmButtonText = '请输入步骤名称和至少添加一位审批人'
+            confirmButtonDisabled = true
+          } else if (!name && (newAssignees && newAssignees.length)) {
+            confirmButtonText = '请输入步骤名称'
+            confirmButtonDisabled = true
+          } else if (name && !(newAssignees && newAssignees.length)) {
+            confirmButtonText = '至少添加一位审批人'
+            confirmButtonDisabled = true
+          }
+        } else if (cc_type == '1') { // 表示选择了抄送人
+          if (!name &&  !(newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+            confirmButtonText = '请输入步骤名称、至少添加一位审批人以及至少添加一位抄送人'
+            confirmButtonDisabled = true
+          } else if (name &&  !(newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+            confirmButtonText = '至少添加一位审批人和至少添加一位抄送人'
+            confirmButtonDisabled = true
+          } else if (!name &&  (newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+            confirmButtonText = '请输入步骤名称以及至少添加一位抄送人'
+            confirmButtonDisabled = true
+          } else if (!name &&  !(newAssignees && newAssignees.length) && (newRecipients && newRecipients.length)) {
+            confirmButtonText = '请输入步骤名称以及至少添加一位审批人'
+            confirmButtonDisabled = true
+          } else if (!name &&  (newAssignees && newAssignees.length) && (newRecipients && newRecipients.length)) {
+            confirmButtonText = '请输入步骤名称'
+            confirmButtonDisabled = true
+          } else if (name && !(newAssignees && newAssignees.length) && (newRecipients && newRecipients.length)) {
+            confirmButtonText = '至少添加一位审批人'
+            confirmButtonDisabled = true
+          } else if (name && (newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+            confirmButtonText = '至少添加一位抄送人'
+            confirmButtonDisabled = true
+          }
+        }
         break
       case '3':
         break
