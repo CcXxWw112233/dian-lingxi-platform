@@ -258,7 +258,7 @@ export default class ConfigureStepTypeOne extends Component {
 
   // 渲染指定人员
   renderDesignatedPersonnel = () => {
-    const { projectDetailInfoData: { data = [] } } = this.props
+    const { projectDetailInfoData: { data = [], board_id, org_id } } = this.props
     // const { designatedPersonnelList = [] } = this.state
     let designatedPersonnelList = this.filterAssignees()
     return (
@@ -271,10 +271,10 @@ export default class ConfigureStepTypeOne extends Component {
                 overlay={
                   <MenuSearchPartner
                     listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={designatedPersonnelList}
-                    // board_id={board_id}
-                    // invitationType='1'
-                    // invitationId={board_id}
-                    // invitationOrg={org_id}
+                    board_id={board_id}
+                    invitationType='1'
+                    invitationId={board_id}
+                    invitationOrg={org_id}
                     chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
                 }
               >
@@ -303,7 +303,6 @@ export default class ConfigureStepTypeOne extends Component {
                               </div>
                             </Tooltip>
                           )}
-                        {/* <div style={{ marginRight: 8, fontSize: '14px' }}>{name || user_name || '佚名'}</div> */}
                         <span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${indexStyles.userItemDeleBtn}`}></span>
                       </div>
                     </div>
@@ -314,10 +313,10 @@ export default class ConfigureStepTypeOne extends Component {
                   overlay={
                     <MenuSearchPartner
                       listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={designatedPersonnelList}
-                      // board_id={board_id}
-                      // invitationType='1'
-                      // invitationId={board_id}
-                      // invitationOrg={org_id}
+                      board_id={board_id}
+                      invitationType='1'
+                      invitationId={board_id}
+                      invitationOrg={org_id}
                       chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
                   }
                 >
@@ -336,9 +335,9 @@ export default class ConfigureStepTypeOne extends Component {
   }
 
   render() {
-    const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [] } } = this.props
+    const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id } } = this.props
     const { forms = [] } = processEditDatas[itemKey]
-    const { assignee_type, deadline_time_type, deadline_value, description, is_click_node_description } = itemValue
+    const { assignee_type } = itemValue
     return (
       <div style={{ position: 'relative' }}>
         <div style={{ paddingBottom: '16px', borderBottom: '1px solid #e8e8e8' }} onClick={(e) => { e && e.stopPropagation() }}>
@@ -364,7 +363,7 @@ export default class ConfigureStepTypeOne extends Component {
         </div>
         {/* 更多选项 */}
         <div>
-          <MoreOptionsComponent itemKey={itemKey} itemValue={itemValue} updateConfigureProcess={this.updateConfigureProcess} data={data} />
+          <MoreOptionsComponent itemKey={itemKey} itemValue={itemValue} updateConfigureProcess={this.updateConfigureProcess} data={data} board_id={board_id} org_id={org_id} />
         </div>
       </div>
     )

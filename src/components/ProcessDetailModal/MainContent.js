@@ -450,7 +450,7 @@ export default class MainContent extends Component {
                         // onClick={this.setTitleEdit}
                         setIsEdit={this.setTitleEdit}
                         autoFocus={true}
-                        goldName={''}
+                        goldName={currentFlowInstanceName}
                         placeholder={'流程名称(必填)'}
                         maxLength={101}
                         nodeName={'input'}
@@ -471,7 +471,8 @@ export default class MainContent extends Component {
                         onBlur={this.descriptionTextAreaChangeBlur}
                         autosize
                         autoFocus={true}
-                        goldName={''}
+                        onClick={(e) => e.stopPropagation()}
+                        goldName={currentFlowInstanceDescription}
                         placeholder={'添加描述'}
                         maxLength={1000}
                         nodeName={'textarea'}

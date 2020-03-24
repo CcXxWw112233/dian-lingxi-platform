@@ -1,22 +1,54 @@
 import React, { Component } from 'react'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { Popover, Input, Button, Radio, Select, InputNumber, Icon } from 'antd'
+import { Popover, Input, Button, Radio, Select } from 'antd'
 import { connect } from 'dva'
+import { compareACoupleOfObjects } from '../../../../../utils/util'
 import ConfigureNapeGuide from '../../../ConfigureNapeGuide'
-const Option = Select.Option;
+
+let temp_item = {
+  "field_type": "2",//类型 1=文本 2=选择 3=日期 4=表格 5=附件
+  "title": "下拉选择",//标题
+  "prompt_content": "请选择内容",//提示内容
+  "is_required": "0",//是否必填 1=必须 0=不是必须
+  "is_multiple_choice": "0",//是否多选 1=是 0=否
+  "options": [
+    {
+      "label_value": '0',
+      "label_name": '选项1',
+    }
+  ],
+  "is_click_currentTextForm": true
+}
 @connect(mapStateToProps)
 export default class ConfigureStepOne_two extends Component {
 
-  state = {
-    popoverVisible: false
+  constructor(props) {
+    super(props)
+    this.state = {
+      popoverVisible: null,
+      form_item: compareACoupleOfObjects(temp_item, props.itemValue) ? temp_item : props.itemValue
+    }
   }
 
-  handelPopoverVisible = () => {
+  onVisibleChange = (visible) => {
+    const { is_click_confirm_btn, form_item } = this.state
+    const { itemKey, parentKey, processEditDatas = [], itemValue } = this.props
+    let temp_item = { ...form_item }
+    if (!is_click_confirm_btn) {// 判断是否点击了确定按钮,否 那么就保存回原来的状态
+      if (visible == false)
+        this.setState({
+          form_item: temp_item
+        })
+      const { forms = [] } = processEditDatas[parentKey]
+      forms[itemKey] = { ...temp_item }
+      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
+    }
     this.setState({
-      popoverVisible: !this.state.popoverVisible
+      popoverVisible: visible
     })
   }
+
   updateEdit = (data, key) => {
     const { itemKey, parentKey, processEditDatas = [] } = this.props
     const { forms = [] } = processEditDatas[parentKey]
@@ -31,12 +63,7 @@ export default class ConfigureStepOne_two extends Component {
   }
   optionsValueChange = (e, key) => {
     const { itemValue } = this.props
-    let { options_data = [], options = [] } = itemValue
-    // this.setState({
-    //   local_name: e.target.value,
-    //   key
-    // })
-    // options_data[key]['value'] = e.target.value
+    let { options = [] } = itemValue
     let newOptionsData = [...options]
     newOptionsData[key]['label_name'] = e.target.value
     this.updateEdit({ value: newOptionsData }, 'options')
@@ -45,19 +72,18 @@ export default class ConfigureStepOne_two extends Component {
   // 添加选项的点击事件
   handleAddOptionsSelect = () => {
     const { itemValue } = this.props
-    const { options_data = [], options = [] } = itemValue
+    const { options = [] } = itemValue
     let obj = {
       label_value: (Number(options.length)).toString(),
       label_name: `选项${(Number(options.length) + 1)}`
     }
     options.push(obj)
-    // options.push(`选项${(Number(options.length) + 1)}`)
     this.updateEdit({ value: options }, 'options')
   }
   // 删除选项的点击事件 (这里是根据下标来)
   handleDelOptionsSelect = (key) => {
     const { itemValue } = this.props
-    const { options_data = [], options = [] } = itemValue
+    const { options = [] } = itemValue
     let newOptionsData = [...options]
     for (var i = 0; i < newOptionsData.length; i++) {
       if (i == key) {
@@ -66,7 +92,6 @@ export default class ConfigureStepOne_two extends Component {
         break
       }
     }
-    // newOptionsData.splice(key,1)
     this.updateEdit({ value: newOptionsData }, 'options')
   }
   isRequiredCheck = (e) => {
@@ -81,7 +106,6 @@ export default class ConfigureStepOne_two extends Component {
     e && e.stopPropagation()
     const { processEditDatas = [], parentKey = 0, itemKey } = this.props
     const { forms = [] } = processEditDatas[parentKey]
-    let new_processEditDatas = [...processEditDatas]
     let new_form_data = [...forms]
     new_form_data.splice(itemKey, 1)
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: new_form_data }, 'forms')
@@ -106,10 +130,28 @@ export default class ConfigureStepOne_two extends Component {
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: newFormsData }, 'forms')
     this.updateEdit({ value: !is_click_currentTextForm }, 'is_click_currentTextForm')
   }
+  
+  // 每个配置表项的确定的点击事件
+  handleConfirmFormItem = () => {
+    const { popoverVisible } = this.state
+    const { itemValue } = this.props
+    this.setState({
+      is_click_confirm_btn: true
+    })
+    if (popoverVisible) {
+      this.setState({
+        form_item: JSON.parse(JSON.stringify(itemValue))
+      },() => {
+        this.onVisibleChange(false)
+      })
+    }
+  }
 
   renderContent = () => {
-    const { itemKey, itemValue, processEditDatas = [], parentKey } = this.props
-    const { title, prompt_content, is_multiple_choice, val_length, is_required, options_data = [], options = [] } = itemValue
+    const { itemValue } = this.props
+    const { title, prompt_content, is_multiple_choice, is_required, options = [] } = itemValue
+    const { form_item } = this.state
+    let disabledFlag = compareACoupleOfObjects(form_item, itemValue)
     return (
       <div className={indexStyles.popover_content}>
         <div className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
@@ -123,7 +165,6 @@ export default class ConfigureStepOne_two extends Component {
           </div>
           <div>
             <p>添加选项: <span onClick={this.handleAddOptionsSelect} style={{ color: '#1890FF', marginLeft: '5px', cursor: 'pointer', fontSize: '16px' }} className={`${globalStyles.authTheme}`}>&#xe846;</span></p>
-            {/* <Input value="空"/> */}
             {
               options.map((item, index) => {
                 return (
@@ -148,20 +189,20 @@ export default class ConfigureStepOne_two extends Component {
           </div>
         </div>
         <div className={indexStyles.pop_btn}>
-          <Button disabled={title && title != '' && title.trimLR() != '' ? false : true} style={{ width: '100%' }} type="primary">确定</Button>
+          <Button onClick={this.handleConfirmFormItem} disabled={(title && title != '' && title.trimLR() != '') && !disabledFlag ? false : true} style={{ width: '100%' }} type="primary">确定</Button>
         </div>
       </div>
     )
   }
 
   render() {
-    const { itemKey, itemValue, processEditDatas = [], parentKey } = this.props
-    const { title, prompt_content, is_multiple_choice, val_length, is_required, is_click_currentTextForm } = itemValue
+    const { itemKey, itemValue } = this.props
+    const { title, prompt_content, is_required, is_click_currentTextForm } = itemValue
     return (
       <div>
         <div className={`${indexStyles.text_form}`} style={{ background: is_click_currentTextForm ? 'rgba(230,247,255,1)' : 'rgba(0,0,0,0.02)' }} onClick={this.handleChangeTextFormColor}>
           <p>{title}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</p>
-          <Select className={indexStyles.option_select}  placeholder={prompt_content} disabled={true} />
+          <Select className={indexStyles.option_select} placeholder={prompt_content} disabled={true} />
           {
             is_click_currentTextForm && (
               <>
@@ -172,14 +213,14 @@ export default class ConfigureStepOne_two extends Component {
                   <Popover
                     title={<div className={indexStyles.popover_title}>配置表项</div>}
                     trigger="click"
-                    // visible={this.state.popoverVisible}
+                    visible={this.state.popoverVisible}
                     content={this.renderContent()}
                     getPopupContainer={triggerNode => triggerNode.parentNode}
-                    // placement={itemKey == '0' || itemKey == '1' ? 'bottomRight' : 'topRight'}
                     placement={'bottomRight'}
                     zIndex={1010}
                     className={indexStyles.popoverWrapper}
                     autoAdjustOverflow={false}
+                    onVisibleChange={this.onVisibleChange}
                   >
                     <div onClick={this.handelPopoverVisible} className={`${globalStyles.authTheme} ${indexStyles.setting_icon}`}>
                       <span>&#xe78e;</span>
@@ -190,7 +231,7 @@ export default class ConfigureStepOne_two extends Component {
               </>
             )
           }
-          { itemKey == '0' && <ConfigureNapeGuide visible={false} /> }
+          {itemKey == '0' && <ConfigureNapeGuide visible={false} />}
         </div>
       </div>
     )

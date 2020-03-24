@@ -46,37 +46,6 @@ export default class ConfigureStepOne_one extends Component {
     })
   }
 
-  // handelPopoverVisible = () => {
-  //   this.setState({
-  //     popoverVisible: !this.state.popoverVisible,
-  //   })
-  // }
-
-  //  deepEqual =  (x, y) => {
-  //   // 指向同一内存时
-  //   if (x === y) {
-  //     return true;
-  //   }
-  //   else if ((typeof x == "object" && x != null) && (typeof y == "object" && y != null)) {
-  //     if (Object.keys(x).length != Object.keys(y).length)
-  //       return false;
-
-  //     for (var prop in x) {
-  //       if (y.hasOwnProperty(prop))
-  //       {  
-  //         if (!this.deepEqual(x[prop], y[prop]))
-  //           return false;
-  //       }
-  //       else
-  //         return false;
-  //     }
-
-  //     return true;
-  //   }
-  //   else 
-  //     return false;
-
-  // }
   updateEdit = (data, key) => {
     const { itemKey, parentKey, processEditDatas = [] } = this.props
     const { forms = [] } = processEditDatas[parentKey]
@@ -143,14 +112,16 @@ export default class ConfigureStepOne_one extends Component {
     if (popoverVisible) {
       this.setState({
         form_item: JSON.parse(JSON.stringify(itemValue))
+      },() => {
+        this.onVisibleChange(false)
       })
     }
   }
 
   renderContent = () => {
-    const { itemKey, itemValue, processEditDatas = [], parentKey } = this.props
-    const { title, prompt_content, verification_rule, val_length, is_required } = itemValue
-    const { form_item, popoverVisible } = this.state
+    const { itemValue } = this.props
+    const { title, prompt_content, verification_rule, is_required } = itemValue
+    const { form_item } = this.state
     let disabledFlag = compareACoupleOfObjects(form_item, itemValue)
     return (
       <div key={itemValue} className={indexStyles.popover_content}>
@@ -204,7 +175,7 @@ export default class ConfigureStepOne_one extends Component {
 
   render() {
     const { itemKey, itemValue } = this.props
-    const { title, prompt_content, verification_rule, val_length, is_required, is_click_currentTextForm } = itemValue
+    const { title, prompt_content, is_required, is_click_currentTextForm } = itemValue
     return (
       <div>
         <div className={indexStyles.text_form} style={{ background: is_click_currentTextForm ? 'rgba(230,247,255,1)' : 'rgba(0,0,0,0.02)' }} onClick={this.handleChangeTextFormColor}>
@@ -223,11 +194,10 @@ export default class ConfigureStepOne_one extends Component {
                     key={`${itemKey}-${itemValue}`}
                     title={<div className={indexStyles.popover_title}>配置表项</div>}
                     trigger="click"
-                    // visible={this.state.popoverVisible}
+                    visible={this.state.popoverVisible}
                     onClick={(e) => e.stopPropagation()}
                     content={this.renderContent()}
                     getPopupContainer={triggerNode => triggerNode.parentNode}
-                    // placement={itemKey == '0' || itemKey == '1' ? 'bottomRight' : 'topRight'}
                     placement={'bottomRight'}
                     zIndex={1010}
                     className={indexStyles.popoverWrapper}

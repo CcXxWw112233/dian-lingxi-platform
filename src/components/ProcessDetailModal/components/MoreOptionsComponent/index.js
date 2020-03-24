@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Select, InputNumber, Dropdown, Icon, Radio, Tooltip, Switch } from 'antd'
+import { Select, InputNumber, Dropdown, Icon, Tooltip, Switch } from 'antd'
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
@@ -148,8 +148,6 @@ export default class MoreOptionsComponent extends Component {
   chirldrenTaskChargeChange = (data) => {
     const { data: membersData } = this.props;
     // 多个任务执行人
-    // const membersData = projectDetailInfoData['data'] //所有的人
-    // const excutorData = new_userInfo_data //所有的人
     const { selectedKeys = [], type, key } = data
     if (type == 'add') { // 表示添加的操作
       let assignee_value = []
@@ -217,7 +215,7 @@ export default class MoreOptionsComponent extends Component {
   // 渲染完成期限
   renderCompletionDeadline = () => {
     const { itemValue } = this.props
-    const { deadline_time_type, deadline_value, description, } = itemValue
+    const { deadline_time_type, deadline_value, } = itemValue
     return (
       <div className={`${indexStyles.complet_deadline}`}>
         <span style={{ fontWeight: 900, marginRight: '2px', color: 'rgba(0,0,0,0.45)' }} className={globalStyles.authTheme}>&#xe686;</span>
@@ -235,8 +233,7 @@ export default class MoreOptionsComponent extends Component {
 
   // 渲染抄报人
   renderDuplicatedPerson = () => {
-    const { makeCopyNewsPaperPersonList = [] } = this.state
-    const { data = [] } = this.props
+    const { data = [], org_id, board_id } = this.props
     let makeCopyPersonList = this.filterRecipients()
     return (
       <div className={indexStyles.fill_person}>
@@ -257,10 +254,10 @@ export default class MoreOptionsComponent extends Component {
                   overlay={
                     <MenuSearchPartner
                       listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={makeCopyPersonList}
-                      // board_id={board_id}
-                      // invitationType='1'
-                      // invitationId={board_id}
-                      // invitationOrg={org_id}
+                      board_id={board_id}
+                      invitationType='1'
+                      invitationId={board_id}
+                      invitationOrg={org_id}
                       chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
                   }
                 >
@@ -289,7 +286,6 @@ export default class MoreOptionsComponent extends Component {
                                 </div>
                               </Tooltip>
                             )}
-                          {/* <div style={{ marginRight: 8, fontSize: '14px' }}>{name || user_name || '佚名'}</div> */}
                           <span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${indexStyles.userItemDeleBtn}`}></span>
                         </div>
                       </div>
@@ -300,10 +296,10 @@ export default class MoreOptionsComponent extends Component {
                     overlay={
                       <MenuSearchPartner
                         listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={makeCopyPersonList}
-                        // board_id={board_id}
-                        // invitationType='1'
-                        // invitationId={board_id}
-                        // invitationOrg={org_id}
+                        board_id={board_id}
+                        invitationType='1'
+                        invitationId={board_id}
+                        invitationOrg={org_id}
                         chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
                     }
                   >

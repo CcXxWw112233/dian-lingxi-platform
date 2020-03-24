@@ -1,20 +1,49 @@
 import React, { Component } from 'react'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { Popover, Input, Button, Radio, Select, InputNumber, Checkbox } from 'antd'
+import { Popover, Input, Button, Radio, InputNumber, Checkbox } from 'antd'
 import { connect } from 'dva'
+import { compareACoupleOfObjects } from '../../../../../utils/util'
 import ConfigureNapeGuide from '../../../ConfigureNapeGuide'
-const Option = Select.Option;
+
+let temp_item = {
+  "field_type": "5",//类型 1=文本 2=选择 3=日期 4=表格 5=附件
+  "title": "附件上传",//标题
+  "prompt_content": "",//提示内容
+  "is_required": "0",//是否必填 1=必须 0=不是必须
+  "limit_file_num": "10",//上传数量
+  "limit_file_type": [//限制上传类型(文件格式) document=文档 image=图像 audio=音频 video=视频
+    "document", "image", "audio", "video"
+  ],
+  "limit_file_size": "20",//上传大小限制
+  "is_click_currentTextForm": true
+}
 @connect(mapStateToProps)
 export default class ConfigureStepOne_five extends Component {
 
-  state = {
-    popoverVisible: false
+  constructor(props) {
+    super(props)
+    this.state = {
+      popoverVisible: null,
+      form_item: compareACoupleOfObjects(temp_item, props.itemValue) ? temp_item : props.itemValue
+    }
   }
 
-  handelPopoverVisible = () => {
+  onVisibleChange = (visible) => {
+    const { is_click_confirm_btn, form_item } = this.state
+    const { itemKey, parentKey, processEditDatas = [], itemValue } = this.props
+    let temp_item = { ...form_item }
+    if (!is_click_confirm_btn) {// 判断是否点击了确定按钮,否 那么就保存回原来的状态
+      if (visible == false)
+        this.setState({
+          form_item: temp_item
+        })
+      const { forms = [] } = processEditDatas[parentKey]
+      forms[itemKey] = { ...temp_item }
+      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
+    }
     this.setState({
-      popoverVisible: !this.state.popoverVisible
+      popoverVisible: visible
     })
   }
 
@@ -53,7 +82,6 @@ export default class ConfigureStepOne_five extends Component {
     e && e.stopPropagation()
     const { processEditDatas = [], parentKey = 0, itemKey } = this.props
     const { forms = [] } = processEditDatas[parentKey]
-    let new_processEditDatas = [...processEditDatas]
     let new_form_data = [...forms]
     new_form_data.splice(itemKey, 1)
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: new_form_data }, 'forms')
@@ -79,6 +107,22 @@ export default class ConfigureStepOne_five extends Component {
     this.updateEdit({ value: !is_click_currentTextForm }, 'is_click_currentTextForm')
   }
 
+    // 每个配置表项的确定的点击事件
+    handleConfirmFormItem = () => {
+      const { popoverVisible } = this.state
+      const { itemValue } = this.props
+      this.setState({
+        is_click_confirm_btn: true
+      })
+      if (popoverVisible) {
+        this.setState({
+          form_item: JSON.parse(JSON.stringify(itemValue))
+        },() => {
+          this.onVisibleChange(false)
+        })
+      }
+    }
+
   renderFileTypeArrayText = () => {
     const { itemValue } = this.props
     const { limit_file_type = [] } = itemValue
@@ -103,9 +147,11 @@ export default class ConfigureStepOne_five extends Component {
   }
 
   renderContent = () => {
-    const { itemKey, itemValue, processEditDatas = [], parentKey } = this.props
+    const { itemValue } = this.props
     const { title, limit_file_num, limit_file_type = [], limit_file_size, is_required } = itemValue
     const limit_file_type_default = limit_file_type ? limit_file_type : []
+    const { form_item } = this.state
+    let disabledFlag = compareACoupleOfObjects(form_item, itemValue)
     return (
       <div className={indexStyles.popover_content}>
         <div className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
@@ -139,7 +185,7 @@ export default class ConfigureStepOne_five extends Component {
           </div>
         </div>
         <div className={indexStyles.pop_btn}>
-          <Button disabled={title && title != '' && title.trimLR() != '' ? false : true} style={{ width: '100%' }} type="primary">确定</Button>
+          <Button onClick={this.handleConfirmFormItem} disabled={(title && title != '' && title.trimLR() != '') && !disabledFlag ? false : true} style={{ width: '100%' }} type="primary">确定</Button>
         </div>
       </div>
     )
@@ -147,12 +193,11 @@ export default class ConfigureStepOne_five extends Component {
 
   render() {
     const { itemKey, itemValue } = this.props
-    const { title, limit_file_num, limit_file_type, limit_file_size, is_required, is_click_currentTextForm } = itemValue
+    const { title, limit_file_num, limit_file_size, is_required, is_click_currentTextForm } = itemValue
     return (
       <div>
         <div className={indexStyles.text_form} style={{ background: is_click_currentTextForm ? 'rgba(230,247,255,1)' : 'rgba(0,0,0,0.02)' }} onClick={this.handleChangeTextFormColor}>
           <p>{title}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</p>
-          {/* <div className={indexStyles.text_fillOut}></div> */}
           <div className={indexStyles.upload_static}>
             <span style={{ color: '#1890FF', fontSize: '28px', marginTop: '-6px' }} className={`${globalStyles.authTheme}`}>&#xe692;</span>
             <div style={{ flex: 1, marginLeft: '12px' }}>
@@ -170,14 +215,14 @@ export default class ConfigureStepOne_five extends Component {
                   <Popover
                     title={<div className={indexStyles.popover_title}>配置表项</div>}
                     trigger="click"
-                    // visible={this.state.popoverVisible}
+                    visible={this.state.popoverVisible}
                     content={this.renderContent()}
                     getPopupContainer={triggerNode => triggerNode.parentNode}
-                    // placement={itemKey == '0' || itemKey == '1' ? 'bottomRight' : 'topRight'}
                     placement={'bottomRight'}
                     zIndex={1010}
                     className={indexStyles.popoverWrapper}
                     autoAdjustOverflow={false}
+                    onVisibleChange={this.onVisibleChange}
                   >
                     <div onClick={this.handelPopoverVisible} className={`${globalStyles.authTheme} ${indexStyles.setting_icon}`}>
                       <span>&#xe78e;</span>
@@ -188,7 +233,7 @@ export default class ConfigureStepOne_five extends Component {
               </>
             )
           }
-          { itemKey == '0' && <ConfigureNapeGuide visible={false} /> }
+          {itemKey == '0' && <ConfigureNapeGuide visible={false} />}
         </div>
       </div>
 

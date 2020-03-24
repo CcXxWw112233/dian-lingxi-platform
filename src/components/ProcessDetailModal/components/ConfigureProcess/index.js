@@ -30,7 +30,6 @@ export default class ConfigureProcess extends Component {
 
   // 外部点击事件是否取消节点名称输入框
   handleCancelNodeName = (e) => {
-    console.log('进来了', 'sssssssssssssssssssssssssss_外部点击事件')
     e && e.stopPropagation()
     const { itemValue, itemKey, processEditDatas = [] } = this.props
     const { name } = itemValue
@@ -82,7 +81,6 @@ export default class ConfigureProcess extends Component {
     const { processEditDatas = [], processCurrentEditStep, dispatch, itemKey } = this.props
     let newProcessEditDatas = null
     if (processEditDatas.length) {
-      // processEditDatas.splice(processCurrentEditStep, 1)
       newProcessEditDatas = JSON.parse(JSON.stringify(processEditDatas))
       newProcessEditDatas.splice(itemKey, 1)
 
@@ -91,7 +89,6 @@ export default class ConfigureProcess extends Component {
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
         processEditDatas: newProcessEditDatas,
-        // node_type: processEditDatas[itemKey > 1 ? itemKey - 1 : 0]['node_type'],
         processCurrentEditStep: processCurrentEditStep >= 1 ? processCurrentEditStep - 1 : 0,
       }
     })
@@ -112,7 +109,6 @@ export default class ConfigureProcess extends Component {
         break;
       case '2':
         nodeObj = Object.assign({}, JSON.parse(JSON.stringify(processEditDatasItemTwoConstant)), { name: name })
-
         break
       case '3':
         nodeObj = Object.assign({}, JSON.parse(JSON.stringify(processEditDatasItemThreeConstant)), { name: name })
@@ -125,10 +121,8 @@ export default class ConfigureProcess extends Component {
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
         processEditDatas: newProcessEditDatas,
-        // node_type: key
       }
     })
-    // this.updateCorrespondingPrcodessStepWithNodeContent('node_type', key)
   }
 
   // 渲染不同种Button确认按钮的提示文案
@@ -137,7 +131,6 @@ export default class ConfigureProcess extends Component {
     let confirmButtonDisabled
     const { itemValue } = this.props
     const { node_type, name, forms = [], assignee_type, assignees, cc_type, recipients } = itemValue
-
     let newAssignees = assignees ? assignees.split(',') : []
     let newRecipients = recipients ? recipients.split(',') : []
     switch (node_type) {
@@ -254,7 +247,6 @@ export default class ConfigureProcess extends Component {
             }
           }
         }
-
         break;
       case '2':
         break
@@ -315,13 +307,8 @@ export default class ConfigureProcess extends Component {
     } else {
       check_line = indexStyles.normal_check
     }
-    let juge = {
-      bordered: false
-    }
-    // const alltypedata = processEditDatasRecords[processCurrentEditStep]['alltypedata']
     return (
       <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }} onClick={(e) => { this.handleCancelNodeName(e) }}>
-        {/* {node_amount <= itemKey + 1 ? null : <div className={stylLine}></div>} */}
         <div className={indexStyles.doingLine}></div>
         <div className={indexStyles.doingCircle}> {itemKey + 1}</div>
         <div className={`${indexStyles.popover_card}`}>
@@ -340,7 +327,7 @@ export default class ConfigureProcess extends Component {
                       onPressEnter={this.titleTextAreaChangeBlur}
                       onClick={this.titleTextAreaChangeClick}
                       autoFocus={true}
-                      goldName={''}
+                      goldName={name}
                       placeholder={'步骤名称(必填)'}
                       maxLength={101}
                       nodeName={'input'}
@@ -369,7 +356,6 @@ export default class ConfigureProcess extends Component {
               {/* 根据点击的不同步骤类型显示的不同配置内容 */}
               {this.renderDiffStepTypeContent()}
             </div>
-            {/* <span className={indexStyles.dynamicTime}></span> */}
             {/* 删除 | 确认 */}
             <div className={indexStyles.step_btn}>
               <Button onClick={this.handleDeleteButton} style={{ color: itemKey != '0' && '#FF7875' }} disabled={itemKey == '0' ? true : false}>删除</Button>

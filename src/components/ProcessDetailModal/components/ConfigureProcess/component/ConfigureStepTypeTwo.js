@@ -112,9 +112,9 @@ export default class ConfigureStepTypeTwo extends Component {
   }
 
   render() {
-    const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData = {} } = this.props
-    const { data, board_id } = projectDetailInfoData
-    const { assignee_type, deadline_type, deadline_value, description, is_click_node_description, approve_type } = itemValue
+    const { itemValue, itemKey, projectDetailInfoData = {} } = this.props
+    const { data, board_id, org_id } = projectDetailInfoData
+    const { approve_type } = itemValue
     let approvalsList = this.filterAssignees()
     return (
       <div>
@@ -143,10 +143,10 @@ export default class ConfigureStepTypeTwo extends Component {
                     overlay={
                       <MenuSearchPartner
                         listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={approvalsList}
-                        // board_id={board_id}
-                        // invitationType='1'
-                        // invitationId={board_id}
-                        // invitationOrg={org_id}
+                        board_id={board_id}
+                        invitationType='1'
+                        invitationId={board_id}
+                        invitationOrg={org_id}
                         chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
                     }
                   >
@@ -189,10 +189,10 @@ export default class ConfigureStepTypeTwo extends Component {
                       overlay={
                         <MenuSearchPartner
                           listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={approvalsList}
-                          // board_id={board_id}
-                          // invitationType='1'
-                          // invitationId={board_id}
-                          // invitationOrg={org_id}
+                          board_id={board_id}
+                          invitationType='1'
+                          invitationId={board_id}
+                          invitationOrg={org_id}
                           chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
                       }
                     >
