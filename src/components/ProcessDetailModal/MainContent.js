@@ -401,6 +401,26 @@ export default class MainContent extends Component {
     return container
   }
 
+  // 渲染不同时候对应步骤的状态
+  renderDiffStepStatus = () => {
+    const { processPageFlagStep, processEditDatas = [], processInfo = {} } = this.props
+    let totalStep = ''
+    let currentStep = ''
+    switch (processPageFlagStep) {
+      case '1': // 表示是配置的时候
+        totalStep = processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0 
+        currentStep = processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0
+        break;
+      case '2':
+        totalStep = processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0 
+        currentStep = processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0
+        break
+      default:
+        break;
+    }
+    return {totalStep, currentStep, length: processEditDatas.length, processPageFlagStep}
+  }
+
   render() {
     const { clientHeight } = this.state
     const { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep } = this.props
@@ -519,13 +539,13 @@ export default class MainContent extends Component {
         <div id="suspensionFlowInstansNav" className={`${indexStyles.suspensionFlowInstansNav}`}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
-              <span style={{ color: 'rgba(0,0,0,0.85)', fontSize: '16px', fontWeight: 500 }}>投资论证流程 (1/2)</span>
+              <span style={{ color: 'rgba(0,0,0,0.85)', fontSize: '16px', fontWeight: 500 }}>{currentFlowInstanceName} (1/2)</span>
             </div>
             <div>
               <span onClick={this.handleBackToTop} style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe63d; 回到顶部</span>
             </div>
           </div>
-        </div>
+        </div>                                                                                                                                            
       </div>
     )
   }
