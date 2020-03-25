@@ -70,7 +70,7 @@ export default class ConfigureProcess extends Component {
     this.props.dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
-        processPageFlagStep: '2'
+        processPageFlagStep: '1'
       }
     })
   }

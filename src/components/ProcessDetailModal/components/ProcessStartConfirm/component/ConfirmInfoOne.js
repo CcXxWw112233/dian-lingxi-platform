@@ -206,7 +206,9 @@ export default class ConfirmInfoOne extends Component {
                       </div>
                     ) : (
                         <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
-                          <span style={{ color: '#1890FF' }} className={globalStyles.authTheme}>&#xe7b2;</span>
+                          <span style={{display: 'inline-block',width: '24px', height: '24px',background:'rgba(230,247,255,1)',borderRadius: '20px',textAlign: 'center', marginRight: '5px'}}>
+                            <span style={{ color: '#1890FF' }} className={globalStyles.authTheme}>&#xe7b2;</span>
+                          </span>
                           <span>任何人</span>
                           <span style={{ position: 'relative' }}>
                             <AmendComponent type="1"

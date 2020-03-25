@@ -114,10 +114,10 @@ export default class FillInPersonContent extends Component {
       await this.props.onVisibleChange && this.props.onVisibleChange(false)
     } else if (assignee_type == '2') {
       let newDesignatedPersonnelList = [...designatedPersonnelList]
-      await this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('assignee_type', assignee_type)
-      await this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('assignees', newDesignatedPersonnelList.join(','))
-      await this.props.updateParentsAssigneesOrCopyPersonnel && this.props.updateParentsAssigneesOrCopyPersonnel({value: newDesignatedPersonnelList.join(',')}, 'transPrincipalList')
-      await this.props.onVisibleChange && this.props.onVisibleChange(false)
+       this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('assignee_type', assignee_type)
+       this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('assignees', newDesignatedPersonnelList.join(','))
+       this.props.updateParentsAssigneesOrCopyPersonnel && this.props.updateParentsAssigneesOrCopyPersonnel({value: newDesignatedPersonnelList.join(',')}, 'transPrincipalList')
+       this.props.onVisibleChange && this.props.onVisibleChange(false)
     }
     
   }
@@ -208,7 +208,7 @@ export default class FillInPersonContent extends Component {
     const { itemValue } = this.props
     const { assignee_type, assignees } = itemValue
     const { designatedPersonnelList } = this.state
-    let disabledAssignees = (designatedPersonnelList && designatedPersonnelList.length) ? isArrayEqual(assignees.split(','), designatedPersonnelList) : true
+    let disabledAssignees = assignee_type == '2' ? (designatedPersonnelList && designatedPersonnelList.length) ? assignees ? isArrayEqual(assignees.split(','), designatedPersonnelList) : false : true : true
     let disabledAssigneeType = assignee_type != this.state.assignee_type && (designatedPersonnelList && designatedPersonnelList.length) ? false : true
     return (
       <div className={indexStyles.mini_content}>

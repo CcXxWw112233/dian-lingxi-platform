@@ -10,6 +10,8 @@ import BeginningProcess from './components/BeginningProcess'
 import ConfigureGuide from './ConfigureGuide'
 import { processEditDatasItemOneConstant, processEditDatasRecordsItemOneConstant } from './constant'
 import { Tooltip, Button, message, Popconfirm, Popover, Calendar, DatePicker } from 'antd'
+import { timeToTimestamp } from '../../utils/util'
+import moment from 'moment'
 @connect(mapStateToProps)
 export default class MainContent extends Component {
   constructor(props) {
@@ -337,7 +339,7 @@ export default class MainContent extends Component {
   // 开始流程的点击事件
   
   // 立即开始
-  handleCreateProcess = (e) => {
+  handleCreateProcess = (e, start_time) => {
     e && e.stopPropagation()
     this.setState({
       isCreateProcessIng: true
@@ -353,7 +355,8 @@ export default class MainContent extends Component {
         name: currentFlowInstanceName,
         description: currentFlowInstanceDescription,
         nodes: processEditDatas,
-        start_up_type: '1',
+        start_up_type: start_time ? '2' : '1',
+        plan_start_time: start_time ? start_time : '',
         flow_template_id: id,
         calback: () => {
           this.setState({
@@ -369,6 +372,36 @@ export default class MainContent extends Component {
           this.props.onCancel && this.props.onCancel()
         }
       }
+    })
+  }
+
+  // 预约开始时间
+  startDatePickerChange = (timeString) => {
+    this.setState({
+      start_time: timeToTimestamp(timeString)
+    }, () => {
+       this.handleStartOpenChange(false)
+       this.handleCreateProcess('',timeToTimestamp(timeString))
+    })
+    
+  }
+
+  disabledStartTime = (current) => {
+    return current && current < moment().subtract(1, "days")
+  }
+  
+  handleStartOpenChange = (open) => {
+    // this.setState({ endOpen: true });
+    this.setState({
+      startOpen: open
+    })
+  }
+
+  handleStartDatePickerChange = (timeString) => {
+    this.setState({
+      start_time: timeToTimestamp(timeString)
+    }, () => {
+      this.handleStartOpenChange(true)
     })
   }
 
@@ -468,9 +501,11 @@ export default class MainContent extends Component {
           <span style={{ position: 'relative', zIndex: 1, minWidth: '80px', lineHeight: '38px', width: '100%', display: 'inline-block', textAlign: 'center' }}>
             <Button style={{ color: '#1890FF', width: '100%' }}>预约开始时间</Button>
             <DatePicker
-              // disabledDate={this.disabledStartTime.bind(this)}
-              // onOk={this.startDatePickerChange.bind(this)}
-              // onChange={this.startDatePickerChange.bind(this)}
+              disabledDate={this.disabledStartTime.bind(this)}
+              onOk={this.startDatePickerChange.bind(this)}
+              onChange={this.handleStartDatePickerChange.bind(this)}
+              onOpenChange={this.handleStartOpenChange}
+              open={this.state.startOpen}
               getPopupContainer={triggerNode => triggerNode.parentNode}
               placeholder={'开始时间'}
               format="YYYY/MM/DD HH:mm"
