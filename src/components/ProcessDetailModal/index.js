@@ -31,7 +31,7 @@ export default class ProcessDetailModal extends Component {
         templateInfo: {}, // 模板信息
         processInfo: [], // 流程实例信息
         currentProcessInstanceId: '', // 当前查看的流程实例名称
-        currentTempleteInfoId: '', // 当前查看的模板ID
+        currentTempleteIdentifyId: '', // 当前查看的模板ID
       }
     })
   }

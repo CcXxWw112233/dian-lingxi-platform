@@ -2,11 +2,11 @@
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { currentNounPlanFilterName } from "../../../utils/businessFunction";
-import { MESSAGE_DURATION_TIME, FILES } from "../../../globalset/js/constant";
+import { MESSAGE_DURATION_TIME, FILES, FLOWS } from "../../../globalset/js/constant";
 import { getSubfixName } from '../../../utils/businessFunction'
 import QueryString from 'querystring'
 import { processEditDatasConstant, processEditDatasRecordsConstant, processDoingListMatch, processInfoMatch } from '../../../components/ProcessDetailModal/constant';
-import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete } from "../../../services/technological/workFlow"
+import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType } from "../../../services/technological/workFlow"
 
 let board_id = null
 let appsSelectKey = null
@@ -21,7 +21,7 @@ export default {
     isEditCurrentFlowInstanceDescription: false, // 是否正在编辑当前实例的描述
     processPageFlagStep: '1', // "1", "2", "3", "4" 分别对应 新建， 编辑， 启动
     process_detail_modal_visible: false,
-    processDoingList: JSON.parse(JSON.stringify(processDoingListMatch)), // 进行中的流程
+    processDoingList: [], // 进行中的流程
     processStopedList: [], // 已中止的流程
     processComepletedList: [], // 已完成的流程
     processNotBeginningList: [], // 未开始的流程
@@ -31,9 +31,9 @@ export default {
     processCurrentEditStep: 0, // 当前的编辑步骤 第几步
     processCurrentCompleteStep: 0, // 当前处于的操作步骤
     templateInfo: {}, // 模板信息
-    processInfo: JSON.parse(JSON.stringify(processInfoMatch)), // 流程实例信息
+    processInfo: {}, // 流程实例信息
     currentProcessInstanceId: '', // 当前查看的流程实例名称
-    currentTempleteInfoId: '', // 当前查看的模板ID
+    currentTempleteIdentifyId: '', // 当前查看的模板编号凭证ID
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -88,7 +88,7 @@ export default {
 
     // 获取模板信息内容
     * getTemplateInfo({ payload }, { call, put }) {
-      const { id, processPageFlagStep, currentTempleteInfoId } = payload
+      const { id, processPageFlagStep, currentTempleteIdentifyId } = payload
       let res = yield call(getTemplateInfo, { id })
       if (isApiResponseOk(res)) {
         let newProcessEditDatas = [...res.data.nodes]
@@ -106,7 +106,7 @@ export default {
             currentFlowInstanceName: res.data.name,
             isEditCurrentFlowInstanceName:false,
             currentFlowInstanceDescription: res.data.description,
-            currentTempleteInfoId: currentTempleteInfoId
+            currentTempleteIdentifyId: currentTempleteIdentifyId
           }
         })
       }
@@ -179,10 +179,53 @@ export default {
       }
     },
 
+    // 开始流程
+    * createProcess({ payload }, { call, put }) {
+      const { calback } = payload
+      let newPayload = {...payload}
+      newPayload.calback ? delete newPayload.calback : ''
+      let res = yield call(createProcess,newPayload)
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success(`启动${currentNounPlanFilterName(FLOWS)}成功`,MESSAGE_DURATION_TIME)
+        }, 200)
+        if (calback && typeof calback == 'function') calback()
+      } else {
+        message.warn(res.message)
+      }
+    },
+
+    // 获取流程实例信息
+    * getProcessInfo({ payload }, { call, put }) {
+      const { id, calback } = payload
+      let res = yield call(getProcessInfo, {id})
+      if (isApiResponseOk(res)) {
+        //设置当前节点排行,数据返回只返回当前节点id,要根据id来确认当前走到哪一步
+        const curr_node_id = res.data.curr_node_id
+        let curr_node_sort
+        for (let i = 0; i < res.data.nodes.length; i++) {
+          if (curr_node_id === res.data.nodes[i].id) {
+            curr_node_sort = res.data.nodes[i].sort
+            break
+          }
+        }
+        curr_node_sort = curr_node_sort || res.data.nodes.length + 1 //如果已全部完成了会是一个undefind,所以给定一个值
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            currentFlowInstanceName: res.data.name,
+            currentFlowInstanceDescription: res.data.description,
+            processEditDatas: res.data.nodes,
+            processInfo: {...res.data, curr_node_sort: curr_node_sort}
+          }
+        })
+        if (calback && typeof calback == 'function') calback()
+      }
+    },
+
     // 获取流程列表，类型进行中 已终止 已完成
     * getProcessListByType({ payload }, { call, put }) {
-      const { status = '1', board_id } = payload
-      return
+      const { status, board_id } = payload
       const res = yield call(getProcessListByType, { status, board_id })
       let listName
       switch (status) {
@@ -195,7 +238,7 @@ export default {
         case '3':
           listName = 'processComepletedList'
           break
-        case '4':
+        case '0':
           listName = 'processNotBeginningList'
         default:
           listName = 'processDoingList'

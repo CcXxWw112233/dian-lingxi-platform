@@ -14,6 +14,8 @@ const createHeaderContentDataByFlowInstantId = (flowInstantId) => {
   }
 }
 
+// ----------------------- 流程模板接口 -------------------------
+
 /**
  * 获取流程模板列表
  * @param {String} board_id 项目ID 
@@ -72,7 +74,6 @@ export async function saveEditProcessTemplete(data) {
   })
 }
 
-
 /**
  * 删除流程模板
  * @param {String} id 模板ID
@@ -81,6 +82,51 @@ export async function deleteProcessTemplete(params) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/template`,
     method: 'DELETE',
+    params
+  })
+}
+
+// ---------------- 流程实例接口 -------------------------
+
+/**
+ * 开始流程
+ * @param {String} board_id 项目ID
+ * @param {String} description 描述内容
+ * @param {String} name 流程名称
+ * @param {Array} nodes 每一个节点的内容 ===> processEditDatas
+ * @param {String} flow_template_id 流程模板ID
+ * @param {String} plan_start_time 时间戳 延时启动的时间值
+ * @param {String} start_up_type 1=立即开始 2=预约开始时间 不传默认为立即开始
+ */
+export async function createProcess(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/workflow`,
+    method: 'POST',
+    data
+  })
+}
+
+/**
+ * 获取流程实例信息
+ * @param {String} id 流程实例ID
+ */
+export async function getProcessInfo(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/workflow`,
+    method: 'GET',
+    params
+  })
+}
+
+/**
+ * 获取流程实例列表
+ * @param {String} board_id 当前项目ID
+ * @param {String} status 0=未开始, 1=进行中, 2=已中止, 3=已结束(完成)
+ */
+export async function getProcessListByType(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/workflow/instances`,
+    method: 'GET',
     params
   })
 }

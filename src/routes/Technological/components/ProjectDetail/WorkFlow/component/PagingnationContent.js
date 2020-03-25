@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import indexStyles from '../index.less'
 import FlowsInstanceItem from './FlowsInstanceItem'
-import { getProcessListByType } from "../../../../../../services/technological/process";
+import { getProcessListByType } from "../../../../../../services/technological/workFlow";
 import nodataImg from '../../../../../../assets/projectDetail/process/empty-box.png'
 import { connect } from 'dva'
 @connect(mapStateToProps)
@@ -15,12 +15,12 @@ export default class PagingnationContent extends Component {
   }
 
   componentDidMount() {
-    // this.getProcessListByType()
+    this.getProcessListByType()
   }
 
   //分页逻辑
   async getProcessListByType() {
-    const { board_id = "1235378754189135872", processDoingList = [], processStopedList = [], processComepletedList = [] } = this.props
+    const { projectDetailInfoData: { board_id }, processDoingList = [], processStopedList = [], processComepletedList = [], processNotBeginningList = [] } = this.props
     const { page_number, page_size, } = this.state
     const { listData = [], status, dispatch } = this.props
     const obj = {
@@ -51,6 +51,10 @@ export default class PagingnationContent extends Component {
           listName = 'processComepletedList'
           selectList = processComepletedList
           break
+        case '0':
+          listName = 'processNotBeginningList'
+          selectList = processNotBeginningList
+          break
         default:
           listName = 'processDoingList'
           selectList = processDoingList
@@ -58,7 +62,7 @@ export default class PagingnationContent extends Component {
       }
 
       dispatch({
-        type: 'projectDetailProcess/updateDatas',
+        type: 'publicProcessDetailModal/updateDatas',
         payload: {
           [listName]: page_number == 1 ? data : [].concat(listData, data)
         }
@@ -94,55 +98,20 @@ export default class PagingnationContent extends Component {
     const maxContentHeight = clientHeight - 108 - 150
     return (
       <div className={indexStyles.pagingnationContent} style={{ maxHeight: maxContentHeight }}>
-        {/* <FlowsInstanceItem
-          // itemValue={value}
-          // itemKey={key}
-          status={status}
-          listDataObj={{
-            processDoingList,
-            processStopedList,
-            processComepletedList,
-            processNotBeginningList
-          }}
-          handleProcessInfo={this.props.handleProcessInfo} />
-        <FlowsInstanceItem
-          // itemValue={value}
-          // itemKey={key}
-          status={status}
-          listDataObj={{
-            processDoingList,
-            processStopedList,
-            processComepletedList,
-            processNotBeginningList
-          }}
-          handleProcessInfo={this.props.handleProcessInfo} />
-        <FlowsInstanceItem
-          // itemValue={value}
-          // itemKey={key}
-          status={status}
-          listDataObj={{
-            processDoingList,
-            processStopedList,
-            processComepletedList,
-            processNotBeginningList
-          }}
-          handleProcessInfo={this.props.handleProcessInfo} /> */}
         {
           listData.map((value, key) => {
             return (
-              <div>
-                <FlowsInstanceItem
-                  itemValue={value}
-                  itemKey={key}
-                  status={status}
-                  listDataObj={{
-                    processDoingList,
-                    processStopedList,
-                    processComepletedList,
-                    processNotBeginningList
-                  }}
-                  handleProcessInfo={this.props.handleProcessInfo} />
-              </div>
+              <FlowsInstanceItem
+                itemValue={value}
+                itemKey={key}
+                status={status}
+                listDataObj={{
+                  processDoingList,
+                  processStopedList,
+                  processComepletedList,
+                  processNotBeginningList
+                }}
+                handleProcessInfo={this.props.handleProcessInfo} />
             )
           })
         }
@@ -166,13 +135,15 @@ function mapStateToProps({
     processStopedList = [],
     processComepletedList = [],
     processNotBeginningList = []
-  }
+  },
+  projectDetail: { datas: { projectDetailInfoData = {} } }
 }) {
   return {
     process_detail_modal_visible,
     processDoingList,
     processStopedList,
     processComepletedList,
-    processNotBeginningList
+    processNotBeginningList,
+    projectDetailInfoData
   }
 }

@@ -9,9 +9,7 @@ import ProcessStartConfirm from './components/ProcessStartConfirm'
 import BeginningProcess from './components/BeginningProcess'
 import ConfigureGuide from './ConfigureGuide'
 import { processEditDatasItemOneConstant, processEditDatasRecordsItemOneConstant } from './constant'
-import { Tooltip, Button, message } from 'antd'
-
-let timer
+import { Tooltip, Button, message, Popconfirm, Popover, Calendar, DatePicker } from 'antd'
 @connect(mapStateToProps)
 export default class MainContent extends Component {
   constructor(props) {
@@ -27,12 +25,13 @@ export default class MainContent extends Component {
       isEditCurrentFlowInstanceDescription: false, // 是否正在编辑当前实例的描述
       visible: false, // 控制引导窗口的显示隐藏
     }
+    this.timer = null
   }
 
   componentDidMount() {
     this.initCanvas()
     window.addEventListener('resize', this.resizeTTY)
-    window.addEventListener('scroll',this.onScroll)
+    window.addEventListener('scroll', this.onScroll)
     // 采用锚点方式对元素进行定位
     let scrollElement = document.getElementById('container_configureProcessOut')
     let currentDoingDataCollectionItem = document.getElementById('currentDataCollectionItem')
@@ -51,11 +50,11 @@ export default class MainContent extends Component {
         behavior: 'smooth'
       });
     }
-    
+
   }
   componentWillUnmount() {
     window.removeEventListener("resize", this.resizeTTY);
-    window.removeEventListener('scroll',this.onScroll)
+    window.removeEventListener('scroll', this.onScroll)
   }
   resizeTTY = () => {
     const clientHeight = document.documentElement.clientHeight;//获取页面可见高度
@@ -130,8 +129,8 @@ export default class MainContent extends Component {
     let ele = document.getElementById('suspensionFlowInstansNav')
     // -------------------- 关于资料收集节点定位  ----------------------------
     // 关于资料收集节点的定位
-    
-    
+
+
 
     // -------------------- 关于审批节点定位  ----------------------------
     // 当前处于悬浮审批状态节点
@@ -141,7 +140,7 @@ export default class MainContent extends Component {
 
     // // 关于审批节点的悬浮
     // if (currentAbsoluteApproveElement && currentStaticApproveElement) {
-      
+
     //   /**
     //    * 设置审批悬浮状态
     //    * 1.获取当前处于悬浮状态的对象(currentAbsoluteApproveElement)的offsetTop
@@ -171,12 +170,12 @@ export default class MainContent extends Component {
   // 返回顶部
   handleBackToTop = (e) => {
     e && e.stopPropagation()
-    timer = setInterval(() => {
+    this.timer = setInterval(() => {
       let speedTop = 50
       let currentTop = document.getElementById('container_configureProcessOut').scrollTop
       document.getElementById('container_configureProcessOut').scrollTop = currentTop - speedTop
       if (currentTop == 0) {
-        clearInterval(timer)
+        clearInterval(this.timer)
       }
     }, 30)
   }
@@ -287,9 +286,9 @@ export default class MainContent extends Component {
   }
 
   // 保存模板的点击事件
-   handleSaveProcessTemplate = (e) => {
+  handleSaveProcessTemplate = (e) => {
     e && e.stopPropagation()
-    const { processPageFlagStep, currentTempleteInfoId } = this.props
+    const { processPageFlagStep, currentTempleteIdentifyId } = this.props
     if (this.state.isSaveTempleteIng) {
       message.warn('正在保存模板中...')
       return
@@ -322,7 +321,7 @@ export default class MainContent extends Component {
           name: currentFlowInstanceName,
           description: currentFlowInstanceDescription,
           nodes: processEditDatas,
-          template_no: currentTempleteInfoId,
+          template_no: currentTempleteIdentifyId,
           calback: () => {
             this.setState({
               isSaveTempleteIng: false
@@ -333,6 +332,44 @@ export default class MainContent extends Component {
       })
     }
 
+  }
+
+  // 开始流程的点击事件
+  
+  // 立即开始
+  handleCreateProcess = (e) => {
+    e && e.stopPropagation()
+    this.setState({
+      isCreateProcessIng: true
+    })
+    if (this.state.isCreateProcessIng) {
+      message.warn('正在启动流程中...')
+      return
+    }
+    const { projectDetailInfoData: { board_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { id } } = this.props
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/createProcess',
+      payload: {
+        name: currentFlowInstanceName,
+        description: currentFlowInstanceDescription,
+        nodes: processEditDatas,
+        start_up_type: '1',
+        flow_template_id: id,
+        calback: () => {
+          this.setState({
+            isCreateProcessIng: false
+          })
+          this.props.dispatch({
+            type: 'publicProcessDetailModal/getProcessListByType',
+            payload: {
+              status: '1',
+              board_id: board_id
+            }
+          })
+          this.props.onCancel && this.props.onCancel()
+        }
+      }
+    })
   }
 
   // 渲染添加步骤按钮
@@ -408,17 +445,41 @@ export default class MainContent extends Component {
     let currentStep = ''
     switch (processPageFlagStep) {
       case '1': // 表示是配置的时候
-        totalStep = processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0 
+        totalStep = processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0
         currentStep = processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0
         break;
       case '2':
-        totalStep = processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0 
+        totalStep = processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0
         currentStep = processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0
         break
       default:
         break;
     }
-    return {totalStep, currentStep, length: processEditDatas.length, processPageFlagStep}
+    return { totalStep, currentStep, length: processEditDatas.length, processPageFlagStep }
+  }
+
+  // 渲染开始流程的气泡框
+  renderProcessStartConfirm = () => {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', width: '248px', height: '112px', justifyContent: 'space-around' }}>
+        <Button onClick={this.handleCreateProcess} type="primary">立即开始</Button>
+        <div>
+          {/* <Button style={{ color: '#1890FF' }}>预约开始时间</Button> */}
+          <span style={{ position: 'relative', zIndex: 1, minWidth: '80px', lineHeight: '38px', width: '100%', display: 'inline-block', textAlign: 'center' }}>
+            <Button style={{ color: '#1890FF', width: '100%' }}>预约开始时间</Button>
+            <DatePicker
+              // disabledDate={this.disabledStartTime.bind(this)}
+              // onOk={this.startDatePickerChange.bind(this)}
+              // onChange={this.startDatePickerChange.bind(this)}
+              getPopupContainer={triggerNode => triggerNode.parentNode}
+              placeholder={'开始时间'}
+              format="YYYY/MM/DD HH:mm"
+              showTime={{ format: 'HH:mm' }}
+              style={{ opacity: 0, zIndex: 1, background: '#000000', position: 'absolute', left: 0, width: '100%' }} />
+          </span>
+        </div>
+      </div>
+    )
   }
 
   render() {
@@ -426,7 +487,7 @@ export default class MainContent extends Component {
     const { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep } = this.props
     let saveTempleteDisabled = currentFlowInstanceName == '' || (processEditDatas && processEditDatas.length) && processEditDatas[processEditDatas.length - 1].is_edit == '0' || (processEditDatas && processEditDatas.length) && !(processEditDatas[processEditDatas.length - 1].node_type) ? true : false
     return (
-      <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto',position: 'relative' }} onScroll={this.onScroll} >
+      <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto', position: 'relative' }} onScroll={this.onScroll} >
         <div id="container_configureTop" className={indexStyles.configure_top}>
           <div style={{ display: 'flex', position: 'relative' }}>
             <canvas id="time_graph_canvas" width={210} height={210} style={{ float: 'left' }}></canvas>
@@ -521,10 +582,12 @@ export default class MainContent extends Component {
           {(processPageFlagStep == '1' || processPageFlagStep == '2') && this.renderAddProcessStep()}
           {
             processEditDatas.length >= 2 && (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '32px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '32px', position: 'relative' }}>
                 {
                   (processPageFlagStep == '1' || processPageFlagStep == '3') && (
-                    <Button disabled={saveTempleteDisabled} style={{ marginRight: '24px', height: '40px', color: '#1890FF' }}>开始流程</Button>
+                    <Popover trigger="click" title={null} content={this.renderProcessStartConfirm()} icon={<></>} getPopupContainer={triggerNode => triggerNode.parentNode}>
+                      <Button type="primary" disabled={saveTempleteDisabled} style={{ marginRight: '24px', height: '40px' }}>开始流程</Button>
+                    </Popover>
                   )
                 }
                 {
@@ -545,12 +608,12 @@ export default class MainContent extends Component {
               <span onClick={this.handleBackToTop} style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe63d; 回到顶部</span>
             </div>
           </div>
-        </div>                                                                                                                                            
+        </div>
       </div>
     )
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteInfoId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList = [], processEditDatas = [], processInfo = {}, processCurrentCompleteStep, node_type, processCurrentEditStep },  projectDetail: { datas: { projectDetailInfoData = {} } } }) {
-  return { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteInfoId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList, processEditDatas, processInfo, processCurrentCompleteStep, node_type, processCurrentEditStep, projectDetailInfoData }
+function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList = [], processEditDatas = [], processInfo = {}, processCurrentCompleteStep, node_type, processCurrentEditStep, templateInfo = {} }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
+  return { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList, processEditDatas, processInfo, processCurrentCompleteStep, node_type, processCurrentEditStep, templateInfo, projectDetailInfoData }
 }

@@ -48,13 +48,13 @@ export default class ProcessDefault extends Component {
 
   // 编辑模板的点击事件
   handleEditTemplete = (item) => {
-    const { id, template_no} = item
+    const { id, template_no } = item
     this.props.dispatch({
       type: 'publicProcessDetailModal/getTemplateInfo',
       payload: {
         id,
         processPageFlagStep: '2',
-        currentTempleteInfoId: template_no
+        currentTempleteIdentifyId: template_no
       }
     })
   }
@@ -75,7 +75,7 @@ export default class ProcessDefault extends Component {
   handleDelteTemplete = (item) => {
     const { projectDetailInfoData: { board_id } } = this.props
     const { id } = item
-    const processTempleteDelete = async() => {
+    const processTempleteDelete = async () => {
       await this.props.dispatch({
         type: 'publicProcessDetailModal/deleteProcessTemplete',
         payload: {
@@ -88,285 +88,23 @@ export default class ProcessDefault extends Component {
   }
 
   // 流程实例的点击事件
-  handleProcessInfo = () => {
+  handleProcessInfo = (id) => {
     this.props.dispatch({
-      type: 'publicProcessDetailModal/updateDatas',
+      type: 'publicProcessDetailModal/getProcessInfo',
       payload: {
-        processPageFlagStep: '4',
-        process_detail_modal_visible: true,
-        processInfo: JSON.parse(JSON.stringify(processInfoMatch)),
-        processEditDatas: [
-          {
-            "id": "1240120247009284096",
-            "assignees": [
-              {
-                "id": "1110064610620346368",
-                "name": "钟先生",
-                "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-06-19/cecc1c8a2dcf4a3590da3ce2b889f828.jpg",
-                "processed": "2",
-                "time": "1584521312",
-                "comment": "wo tong yi l"
-              }
-            ],
-            "recipients": [
-              {
-                "id": "1110064610620346368",
-                "name": "钟先生",
-                "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-06-19/cecc1c8a2dcf4a3590da3ce2b889f828.jpg"
-              }
-            ],
-            "status": "2",
-            "forms": [
-              {
-                "id": "1240115038702931968",
-                "title": "文本标题",
-                "sort": "1",
-                "value": "",
-                "form_id": "1240115038329638912",
-                "field_type": "1",
-                "prompt_content": "请填写",
-                "is_required": "1",
-                "is_multiple_choice": "0",
-                "val_min_length": "10",
-                "val_max_length": "20",
-                "date_range": "1",
-                "date_precision": "1",
-                "verification_rule": ""
-              },
-              {
-                "id": "1240115039084613632",
-                "title": "性别",
-                "sort": "2",
-                "options": [
-                  {
-                    "id": "1240115039088807936",
-                    "label_name": "男",
-                    "label_value": "0"
-                  },
-                  {
-                    "id": "1240115039088807937",
-                    "label_name": "女",
-                    "label_value": "1"
-                  }
-                ],
-                "value": "1240115039088807936",
-                "form_id": "1240115038329638912",
-                "field_type": "2",
-                "prompt_content": "请选择",
-                "is_required": "1",
-                "is_multiple_choice": "1",
-                "date_range": "1",
-                "date_precision": "1"
-              },
-              {
-                "id": "1240115039860559872",
-                "title": "生日",
-                "sort": "3",
-                "value": "",
-                "form_id": "1240115038329638912",
-                "field_type": "3",
-                "prompt_content": "您的出生日期",
-                "is_required": "0",
-                "is_multiple_choice": "0",
-                "date_range": "2",
-                "date_precision": "1"
-              },
-              {
-                "id": "1240115040238047232",
-                "title": "简历",
-                "sort": "4",
-                "form_id": "1240115038329638912",
-                "field_type": "5",
-                "prompt_content": "请上传简历",
-                "is_required": "0",
-                "is_multiple_choice": "0",
-                "date_range": "1",
-                "date_precision": "1",
-                "limit_file_num": "1",
-                "limit_file_type": [
-                  "document",
-                  "image",
-                  "audio",
-                  "video"
-                ],
-                "limit_file_size": "10"
-              }
-            ],
-            "node_type": "1",
-            "assignee_type": "2",
-            "deadline_type": "2",
-            "deadline_time_type": "day",
-            "deadline_value": "1",
-            "cc_type": "1",
-            "is_confirm": "1"
-          },
-          {
-            "id": "1240120247390965760",
-            "assignees": [
-              {
-                "id": "1110064610620346368",
-                "name": "钟先生",
-                "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-06-19/cecc1c8a2dcf4a3590da3ce2b889f828.jpg",
-                "processed": "2"
-              },
-              {
-                "id": "1110381102486392832",
-                "name": "fengabner聯通號",
-                "avatar": "",
-                "processed": "1"
-              }
-            ],
-            "recipients": [
-              {
-                "id": "1110064610620346368",
-                "name": "钟先生",
-                "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-06-19/cecc1c8a2dcf4a3590da3ce2b889f828.jpg"
-              }
-            ],
-            "status": "2",
-            "node_type": "2",
-            "deadline_type": "2",
-            "deadline_time_type": "hour",
-            "deadline_value": "10",
-            "cc_type": "1"
-          },
-          {
-            "id": "1240120247009284096",
-            "assignees": [
-              {
-                "id": "1110064610620346368",
-                "name": "钟先生",
-                "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-06-19/cecc1c8a2dcf4a3590da3ce2b889f828.jpg",
-                "processed": "2",
-                "time": "1584521312",
-                "comment": "wo tong yi l"
-              }
-            ],
-            "recipients": [
-              {
-                "id": "1110064610620346368",
-                "name": "钟先生",
-                "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-06-19/cecc1c8a2dcf4a3590da3ce2b889f828.jpg"
-              }
-            ],
-            "status": "0",
-            "forms": [
-              {
-                "id": "1240115038702931968",
-                "title": "文本标题",
-                "sort": "1",
-                "value": "我的天",
-                "form_id": "1240115038329638912",
-                "field_type": "1",
-                "prompt_content": "请填写",
-                "is_required": "1",
-                "is_multiple_choice": "0",
-                "val_min_length": "10",
-                "val_max_length": "20",
-                "date_range": "1",
-                "date_precision": "1",
-                "verification_rule": ""
-              },
-              {
-                "id": "1240115039084613632",
-                "title": "性别",
-                "sort": "2",
-                "options": [
-                  {
-                    "id": "1240115039088807936",
-                    "label_name": "男",
-                    "label_value": "0"
-                  },
-                  {
-                    "id": "1240115039088807937",
-                    "label_name": "女",
-                    "label_value": "1"
-                  }
-                ],
-                "value": "1240115039088807936",
-                "form_id": "1240115038329638912",
-                "field_type": "2",
-                "prompt_content": "请选择",
-                "is_required": "1",
-                "is_multiple_choice": "1",
-                "date_range": "1",
-                "date_precision": "1"
-              },
-              {
-                "id": "1240115039860559872",
-                "title": "生日",
-                "sort": "3",
-                "value": "",
-                "form_id": "1240115038329638912",
-                "field_type": "3",
-                "prompt_content": "您的出生日期",
-                "is_required": "0",
-                "is_multiple_choice": "0",
-                "date_range": "2",
-                "date_precision": "1"
-              },
-              {
-                "id": "1240115040238047232",
-                "title": "简历",
-                "sort": "4",
-                "form_id": "1240115038329638912",
-                "field_type": "5",
-                "prompt_content": "请上传简历",
-                "is_required": "0",
-                "is_multiple_choice": "0",
-                "date_range": "1",
-                "date_precision": "1",
-                "limit_file_num": "1",
-                "limit_file_type": [
-                  "document",
-                  "image",
-                  "audio",
-                  "video"
-                ],
-                "limit_file_size": "10"
-              }
-            ],
-            "node_type": "1",
-            "assignee_type": "2",
-            "deadline_type": "2",
-            "deadline_time_type": "day",
-            "deadline_value": "1",
-            "cc_type": "1",
-            "is_confirm": "1"
-          },
-          {
-            "id": "1240120247390965760",
-            "assignees": [
-              {
-                "id": "1110064610620346368",
-                "name": "钟先生",
-                "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-06-19/cecc1c8a2dcf4a3590da3ce2b889f828.jpg",
-                "processed": "2"
-              },
-              {
-                "id": "1110381102486392832",
-                "name": "fengabner聯通號",
-                "avatar": "",
-                "processed": "1"
-              }
-            ],
-            "recipients": [
-              {
-                "id": "1110064610620346368",
-                "name": "钟先生",
-                "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-06-19/cecc1c8a2dcf4a3590da3ce2b889f828.jpg"
-              }
-            ],
-            "status": "1",
-            "node_type": "2",
-            "deadline_type": "2",
-            "deadline_time_type": "hour",
-            "deadline_value": "10",
-            "cc_type": "1"
-          }
-        ]
+        id,
+        calback: () => {
+          this.props.dispatch({
+            type: 'publicProcessDetailModal/updateDatas',
+            payload: {
+              processPageFlagStep: '4',
+              process_detail_modal_visible: true,
+            }
+          })
+        }
       }
     })
+
   }
 
   renderFlowTabs = () => {
@@ -376,9 +114,9 @@ export default class ProcessDefault extends Component {
       <div>
         <Tabs defaultActiveKey="1" onChange={this.tabsChange} tabBarStyle={{ width: '100%', paddingTop: 0, fontSize: 16, background: 'rgba(216,216,216,0)', border: '1px solid #e8e8e8', padding: '0 46px 0 50px' }}>
           <TabPane tab={<div style={{ padding: 0, fontSize: 16 }}>进行中的流程 </div>} key="1">{<PagingnationContent handleProcessInfo={this.handleProcessInfo} listData={processDoingList} status={'1'} clientHeight={clientHeight} />}</TabPane>
-          <TabPane tab={<div style={{ padding: 0, fontSize: 16 }}>已中止的流程 </div>} key="2">{<PagingnationContent listData={processStopedList} status={'2'} clientHeight={clientHeight} />}</TabPane>
-          <TabPane tab={<div style={{ padding: 0, fontSize: 16 }}>已完成的流程 </div>} key="3">{<PagingnationContent listData={processComepletedList} status={'3'} clientHeight={clientHeight} />}</TabPane>
-          <TabPane tab={<div style={{ padding: 0, fontSize: 16 }}>未开始的流程 </div>} key="4">{<PagingnationContent listData={processNotBeginningList} status={'4'} clientHeight={clientHeight} />}</TabPane>
+          <TabPane tab={<div style={{ padding: 0, fontSize: 16 }}>已中止的流程 </div>} key="2">{<PagingnationContent handleProcessInfo={this.handleProcessInfo} listData={processStopedList} status={'2'} clientHeight={clientHeight} />}</TabPane>
+          <TabPane tab={<div style={{ padding: 0, fontSize: 16 }}>已完成的流程 </div>} key="3">{<PagingnationContent handleProcessInfo={this.handleProcessInfo} listData={processComepletedList} status={'3'} clientHeight={clientHeight} />}</TabPane>
+          <TabPane tab={<div style={{ padding: 0, fontSize: 16 }}>未开始的流程 </div>} key="0">{<PagingnationContent handleProcessInfo={this.handleProcessInfo} listData={processNotBeginningList} status={'0'} clientHeight={clientHeight} />}</TabPane>
         </Tabs>
       </div>
     )

@@ -61,10 +61,12 @@ export default class BeginningStepOne extends Component {
         // console.log(i, verification_rule, validateTel(''))
         switch (verification_rule) {
           case "":
-            if ( value.length >= val_min_length && value.length <= val_max_length) {
-              valiResult = true
-            } else {
-              valiResult = false
+            if (value) {
+              if ( value.length >= val_min_length && value.length <= val_max_length) {
+                valiResult = true
+              } else {
+                valiResult = false
+              }
             }
             break
           case 'mobile':
