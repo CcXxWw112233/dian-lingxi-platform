@@ -20,9 +20,9 @@ class Gantt extends Component {
   }
 
   componentDidMount() {
-    this.getProjectGoupLists()
-    this.getProjectAppsLists()
-    this.getAboutUsersBoards()
+    // this.getProjectGoupLists()
+    // this.getProjectAppsLists()
+    // this.getAboutUsersBoards()
   }
 
   componentWillReceiveProps(nextProps) {
@@ -52,35 +52,35 @@ class Gantt extends Component {
 
   //用来实现创建任务弹窗方法
   // 获取带app的项目列表
-  getProjectAppsLists = () => {
-    const { dispatch } = this.props
-    dispatch({
-      type: 'gantt/getAboutAppsBoards',
-      payload: {
+  // getProjectAppsLists = () => {
+  //   const { dispatch } = this.props
+  //   dispatch({
+  //     type: 'gantt/getAboutAppsBoards',
+  //     payload: {
 
-      }
-    })
-  }
-  // 获取带分组的项目列表
-  getProjectGoupLists = () => {
-    const { dispatch } = this.props
-    dispatch({
-      type: 'gantt/getAboutGroupBoards',
-      payload: {
+  //     }
+  //   })
+  // }
+  // // 获取带分组的项目列表
+  // getProjectGoupLists = () => {
+  //   const { dispatch } = this.props
+  //   dispatch({
+  //     type: 'gantt/getAboutGroupBoards',
+  //     payload: {
 
-      }
-    })
-  }
-  // 获取带用户的项目列表
-  getAboutUsersBoards = () => {
-    const { dispatch } = this.props
-    dispatch({
-      type: 'gantt/getAboutUsersBoards',
-      payload: {
+  //     }
+  //   })
+  // }
+  // // 获取带用户的项目列表
+  // getAboutUsersBoards = () => {
+  //   const { dispatch } = this.props
+  //   dispatch({
+  //     type: 'gantt/getAboutUsersBoards',
+  //     payload: {
 
-      }
-    })
-  }
+  //     }
+  //   })
+  // }
 
   // 点击设置卡片类型（未排期/已排期)
   setTaskDetailModalVisibile = (card_time_type) => {

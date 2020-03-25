@@ -4,10 +4,7 @@ import indexStyles from './index.less'
 import GetRowGantt from './GetRowGantt'
 import DateList from './DateList'
 import GroupListHead from './GroupListHead'
-import { getMonthDate, getNextMonthDatePush, isSamDay, getLastMonthDateShift } from './getDate'
-import { INPUT_CHANGE_SEARCH_TIME } from "../../../../globalset/js/constant";
-import { getGanttData } from "../../../../services/technological/gantt";
-import { isApiResponseOk } from "../../../../utils/handleResponseData";
+import { getMonthDate, getNextMonthDatePush } from './getDate'
 import { date_area_height, ganttIsOutlineView } from './constants'
 import GroupListHeadSet from './GroupListHeadSet.js'
 import GroupListHeadSetBottom from './GroupListHeadSetBottom'
@@ -46,7 +43,48 @@ export default class GanttFace extends Component {
     this.setGoldDateArr({ init: true })
     this.initSetScrollPosition()
     this.setGanTTCardHeight()
+    this.getBoardListFeature()
     window.addEventListener('resize', this.setGanTTCardHeight, false)
+  }
+
+  // 获取项目列表的users apps groups
+  getBoardListFeature = () => {
+    setTimeout(() => {
+      this.getProjectGoupLists()
+      this.getProjectAppsLists()
+      this.getAboutUsersBoards()
+    }, 300)
+  }
+
+  // 获取带app的项目列表
+  getProjectAppsLists = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/getAboutAppsBoards',
+      payload: {
+
+      }
+    })
+  }
+  // 获取带分组的项目列表
+  getProjectGoupLists = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/getAboutGroupBoards',
+      payload: {
+
+      }
+    })
+  }
+  // 获取带用户的项目列表
+  getAboutUsersBoards = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/getAboutUsersBoards',
+      payload: {
+
+      }
+    })
   }
 
   componentWillUnmount() {
@@ -130,7 +168,7 @@ export default class GanttFace extends Component {
       delX,
       ceilWidth,
       bool: scrollLeft < 3 * ceilWidth,
-      
+
     })
     if (searchTimer) {
       clearTimeout(searchTimer)
@@ -227,7 +265,7 @@ export default class GanttFace extends Component {
           }
         })
         that.getHoliday()
-      }, 300)
+      }, 0)
     } else {
       const { init_get_outline_tree } = this.state
       if (!outline_tree.length && !init_get_outline_tree) {
@@ -241,7 +279,7 @@ export default class GanttFace extends Component {
           that.setState({
             init_get_outline_tree: true
           })
-        }, 200)
+        }, 0)
       } else {
         dispatch({
           type: 'gantt/handleOutLineTreeData',
