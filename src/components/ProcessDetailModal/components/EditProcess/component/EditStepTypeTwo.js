@@ -44,12 +44,12 @@ export default class EditStepTypeTwo extends Component {
   handleEnterConfigureProcess = (e) => {
     e && e.stopPropagation()
     this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
-    this.props.dispatch({
-      type: 'publicProcessDetailModal/updateDatas',
-      payload: {
-        processPageFlagStep: '1'
-      }
-    })
+    // this.props.dispatch({
+    //   type: 'publicProcessDetailModal/updateDatas',
+    //   payload: {
+    //     processPageFlagStep: '1'
+    //   }
+    // })
   }
 
   // 理解成是否是有效的头像

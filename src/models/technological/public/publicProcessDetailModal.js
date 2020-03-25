@@ -214,6 +214,7 @@ export default {
           type: 'updateDatas',
           payload: {
             currentFlowInstanceName: res.data.name,
+            isEditCurrentFlowInstanceName: false,
             currentFlowInstanceDescription: res.data.description,
             processEditDatas: res.data.nodes,
             processInfo: {...res.data, curr_node_sort: curr_node_sort}

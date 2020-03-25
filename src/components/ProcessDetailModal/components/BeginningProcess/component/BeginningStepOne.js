@@ -18,29 +18,24 @@ export default class BeginningStepOne extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      transPrincipalList: JSON.parse(JSON.stringify(principalList)),
+      transPrincipalList: props.itemValue.assignees ? [...props.itemValue.assignees] : [], // 表示当前的执行人
+      transCopyPersonnelList: props.itemValue.recipients ? [...props.itemValue.recipients] : [], // 表示当前选择的抄送人
       is_show_spread_arrow: props.itemValue.status != '1' ? false : true,
     }
   }
 
-  // 判断是否展开详情内容
-  whetherShowSpreadArrow = () => {
-    const { itemValue, processEditDatas = [] } = this.props
-
+  // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
+  updateCorrespondingPrcodessStepWithNodeContent = (data, value) => {
+    const { itemValue, processEditDatas = [], itemKey, dispatch } = this.props
+    let newProcessEditDatas = [...processEditDatas]
+    newProcessEditDatas[itemKey][data] = value
+    dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        processEditDatas: newProcessEditDatas,
+      }
+    })
   }
-
-    // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
-    updateCorrespondingPrcodessStepWithNodeContent = (data, value) => {
-      const { itemValue, processEditDatas = [], itemKey, dispatch } = this.props
-      let newProcessEditDatas = [...processEditDatas]
-      newProcessEditDatas[itemKey][data] = value
-      dispatch({
-        type: 'publicProcessDetailModal/updateDatas',
-        payload: {
-          processEditDatas: newProcessEditDatas,
-        }
-      })
-    }
 
   handleSpreadArrow = (e) => {
     e && e.stopPropagation()
@@ -62,7 +57,7 @@ export default class BeginningStepOne extends Component {
         switch (verification_rule) {
           case "":
             if (value) {
-              if ( value.length >= val_min_length && value.length <= val_max_length) {
+              if (value.length >= val_min_length && value.length <= val_max_length) {
                 valiResult = true
               } else {
                 valiResult = false
@@ -131,27 +126,48 @@ export default class BeginningStepOne extends Component {
   isValidAvatar = (avatarUrl = '') =>
     avatarUrl.includes('http://') || avatarUrl.includes('https://');
 
-  filterForm = (value,key) => {
+  filterForm = (value, key) => {
     const { field_type } = value
     const { itemKey } = this.props
     let container = (<div></div>)
     switch (field_type) {
       case '1':
-        container = <BeginningStepOne_one parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
+        container = <BeginningStepOne_one parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
         break;
       case '2':
-        container = <BeginningStepOne_two parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
+        container = <BeginningStepOne_two parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
         break;
       case '3':
-        container = <BeginningStepOne_three parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
+        container = <BeginningStepOne_three parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
         break;
       case '5':
-        container = <BeginningStepOne_five parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
+        container = <BeginningStepOne_five parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
         break;
       default:
         break;
     }
     return container
+  }
+
+  // 渲染不同状态时步骤的样式
+  renderDiffStatusStepStyles = () => {
+    const { itemValue } = this.props
+    const { status } = itemValue
+    let stylLine, stylCircle
+    if (status == '0') { // 未开始
+      stylLine = indexStyles.hasnotCompetedLine
+      stylCircle = indexStyles.hasnotCompetedCircle
+    } else if (status == '1') { // 进行中
+      stylLine = indexStyles.doingLine
+      stylCircle = indexStyles.doingCircle
+    } else if (status == '2') { // 已完成
+      stylLine = indexStyles.line
+      stylCircle = indexStyles.circle
+    } else {
+      stylLine = indexStyles.doingLine
+      stylCircle = indexStyles.doingCircle
+    }
+    return { stylCircle, stylLine }
   }
 
   // 渲染编辑详情的内容  
@@ -163,10 +179,10 @@ export default class BeginningStepOne extends Component {
         {/* 表单内容 */}
         {
           forms && forms.length ? (
-            <div style={{padding: '16px 0 8px 0', marginTop: '16px', borderTop: '1px solid #e8e8e8'}}>
+            <div style={{ padding: '16px 0 8px 0', marginTop: '16px', borderTop: '1px solid #e8e8e8' }}>
               {
-                forms.map((item,key) => {
-                  return this.filterForm(item,key)
+                forms.map((item, key) => {
+                  return this.filterForm(item, key)
                 })
               }
             </div>
@@ -174,7 +190,7 @@ export default class BeginningStepOne extends Component {
         }
         {/* 备注 */}
         {
-          description != '' && 
+          description != '' &&
           (
             <div className={indexStyles.select_remarks}>
               <span className={globalStyles.authTheme}>&#xe636; 备注 :</span>
@@ -184,9 +200,9 @@ export default class BeginningStepOne extends Component {
         }
         {/* 编辑按钮 */}
         {
-          status == "1" && 
+          status == "1" &&
           (
-            <div style={{marginTop: '16px', paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center'}}>
+            <div style={{ marginTop: '16px', paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center' }}>
               <Button type="primary" disabled={!this.setCompleteButtonDisabled()} onClick={this.handleEnterConfigureProcess}>完成</Button>
             </div>
           )
@@ -197,13 +213,13 @@ export default class BeginningStepOne extends Component {
 
   render() {
     const { itemKey, processEditDatas = [], itemValue } = this.props
-    const { status } = itemValue
-    const { transPrincipalList = [], is_show_spread_arrow } = this.state
+    const { status, name, assignee_type, cc_type } = itemValue
+    const { transPrincipalList = [], transCopyPersonnelList = [], is_show_spread_arrow } = this.state
     return (
-      <div id={status == '1' && 'currentDataCollectionItem'} key={itemKey} style={{ display: 'flex', marginBottom: '48px' }}>
-        {processEditDatas.length <= itemKey + 1 ? null : <div className={indexStyles.doingLine}></div>}
+      <div id={status == '1' && 'currentDataCollectionItem'} key={itemKey} style={{ display: 'flex', marginBottom: '46px' }}>
+        {processEditDatas.length <= itemKey + 1 ? null : <div className={this.renderDiffStatusStepStyles().stylLine}></div>}
         {/* <div className={indexStyles.doingLine}></div> */}
-        <div className={indexStyles.doingCircle}> {itemKey + 1}</div>
+        <div className={this.renderDiffStatusStepStyles().stylCircle}> {itemKey + 1}</div>
         <div className={`${indexStyles.popover_card}`}>
           <div className={`${globalStyles.global_vertical_scrollbar}`}>
             {/* 上 */}
@@ -211,7 +227,7 @@ export default class BeginningStepOne extends Component {
               <div className={`${indexStyles.node_name}`}>
                 <div>
                   <span className={`${globalStyles.authTheme} ${indexStyles.stepTypeIcon}`}>&#xe7b1;</span>
-                  <span>前期资料整理</span>
+                  <span>{name}</span>
                 </div>
                 <div>
                   <span onClick={this.handleSpreadArrow} className={`${indexStyles.spreadIcon}`}>
@@ -223,34 +239,72 @@ export default class BeginningStepOne extends Component {
               </div>
             </div>
             {/* 下 */}
-            <div style={{display:'flex',alignItems: 'center',justifyContent: 'space-between'}}>
-              <div className={indexStyles.content__principalList_icon}>
-                <AvatarList
-                  size="small"
-                  maxLength={10}
-                  excessItemsStyle={{
-                    color: '#f56a00',
-                    backgroundColor: '#fde3cf'
-                  }}
-                >
-                  {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
-                    <AvatarList.Item
-                      key={index}
-                      tips={name}
-                      src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
-                    />
-                  ))}
-                </AvatarList>
-                <span className={indexStyles.content__principalList_info}>
-                  {`${transPrincipalList.length}位填写人`}
-                </span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                {/* 填写人 */}
+                {
+                  assignee_type == '2' ? (
+                    <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
+                      <AvatarList
+                        size="small"
+                        maxLength={10}
+                        excessItemsStyle={{
+                          color: '#f56a00',
+                          backgroundColor: '#fde3cf'
+                        }}
+                      >
+                        {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
+                          <AvatarList.Item
+                            key={index}
+                            tips={name || '佚名'}
+                            src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                          />
+                        ))}
+                      </AvatarList>
+                      <span className={indexStyles.content__principalList_info}>
+                        {`${transPrincipalList.length}位填写人`}
+                      </span>
+                    </div>
+                  ) : (
+                      <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
+                        <span style={{ display: 'inline-block', width: '24px', height: '24px', background: 'rgba(230,247,255,1)', borderRadius: '20px', textAlign: 'center', marginRight: '5px' }}><span style={{ color: '#1890FF' }} className={globalStyles.authTheme}>&#xe7b2;</span></span>
+                        <span>任何人</span>
+                      </div>
+                    )
+                }
+                {/* 抄送人 */}
+                {
+                  cc_type == '1' && (
+                    <div style={{ marginLeft: '8px', display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
+                      <AvatarList
+                        size="small"
+                        maxLength={10}
+                        excessItemsStyle={{
+                          color: '#f56a00',
+                          backgroundColor: '#fde3cf'
+                        }}
+                      >
+                        {(transCopyPersonnelList && transCopyPersonnelList.length) && transCopyPersonnelList.map(({ name, avatar }, index) => (
+                          <AvatarList.Item
+                            key={index}
+                            tips={name || '佚名'}
+                            src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                          />
+                        ))}
+                      </AvatarList>
+                      <span className={indexStyles.content__principalList_info}>
+                        {`${transCopyPersonnelList.length}位抄送人`}
+                      </span>
+                    </div>
+                  )
+                }
               </div>
               <div>
-                <span style={{fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '14px'}} className={`${globalStyles.authTheme}`}>&#xe686;</span>
+                <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '14px' }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
                 <span className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : 步骤开始后1天内</span>
               </div>
             </div>
-            { is_show_spread_arrow && this.renderEditDetailContent()}
+            {is_show_spread_arrow && this.renderEditDetailContent()}
           </div>
         </div>
       </div>
