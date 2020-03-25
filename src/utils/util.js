@@ -55,7 +55,9 @@ export const timestampToTimeNormal = (timestamp, split, flag) => {
   let D = date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' ';
   let h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
   let m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
-  return flag ? Y + M + D + h + m : Y + M + D;
+
+  const date_ = date.getFullYear() == new Date().getFullYear() ? M + D : Y + M + D
+  return flag ? date_ + h + m : date_
 }
 export const timestampToTimeNormal2 = (timestamp, split, flag) => {
   if (!timestamp) {
@@ -69,7 +71,8 @@ export const timestampToTimeNormal2 = (timestamp, split, flag) => {
   let D = date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' ';
   let h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
   let m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
-  return !flag ? Y + M + D + h + m : Y + M + D;
+  const date_ = date.getFullYear() == new Date().getFullYear() ? M + D : Y + M + D
+  return !flag ? date_ + h + m : date_;
 }
 
 //时间戳转日期
@@ -85,7 +88,9 @@ export const timestampToTime = (timestamp, flag) => {
   let D = date.getDate() < 10 ? '0' + date.getDate() + '日 ' : date.getDate() + '日 ';
   let h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
   let m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
-  return flag ? Y + M + D + h + m : Y + M + D;
+  const date_ = date.getFullYear() == new Date().getFullYear() ? M + D : Y + M + D
+  return !flag ? date_ + h + m : date_;
+  // return flag ? Y + M + D + h + m : Y + M + D;
 }
 
 //时间戳转日期
@@ -393,7 +398,7 @@ export const timeColor = (timestamp) => {
   const today_last_time = (new Date(today_year, today_month, today_day, '23', '59', '59')).getTime()
   let color = ''
   if (new_timestamp < today_timestamp) { //逾期
-    color = '#F5222D'
+    color = '#FF7875'
   } else {
     if (new_timestamp < today_last_time) { //此刻和今天最后一秒之间
       color = '#FAAD14'

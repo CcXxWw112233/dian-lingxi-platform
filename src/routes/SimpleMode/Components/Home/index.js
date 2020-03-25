@@ -5,6 +5,7 @@ import SimpleHeader from '../SimpleHeader/index'
 import MyWorkbenchBoxs from '../MyWorkbenchBoxs/index'
 import WallpaperSelect from '../WallpaperSelect/index'
 import WorkbenchBoxSelect from '../WorkbenchBoxSelect/index'
+import HomeMain from './HomeMain'
 
 const getEffectOrReducerByName = name => `technological/${name}`
 
@@ -44,12 +45,25 @@ class Home extends Component {
 
 
   componentWillUnmount() {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'workbench/updateDatas',
+      payload: {
+        projectList: []
+      }
+    })
+    dispatch({
+      type: 'simplemode/updateDatas',
+      payload: {
+        board_todo_list: []
+      }
+    })
     window.removeEventListener('keydown', this.handleEscKeypress.bind(this))
   }
 
   handleEscKeypress = (e) => {
     // console.log('esc',e.which);
-    
+
     if (e.which == 27) {
       const { workbenchBoxSelectVisiable } = this.state;
       if (workbenchBoxSelectVisiable) {
@@ -90,7 +104,9 @@ class Home extends Component {
 
     return (
       <div>
-        {myWorkbenchBoxsVisiable && <MyWorkbenchBoxs {...this.state} setHomeVisible={this.setHomeVisible} />}
+        {myWorkbenchBoxsVisiable && <HomeMain {...this.state} setHomeVisible={this.setHomeVisible} />}
+
+        {/* {myWorkbenchBoxsVisiable && <MyWorkbenchBoxs {...this.state} setHomeVisible={this.setHomeVisible} />} */}
 
         {wallpaperSelectVisiable && <WallpaperSelect {...this.state} setHomeVisible={this.setHomeVisible} />}
 

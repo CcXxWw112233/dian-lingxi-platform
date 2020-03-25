@@ -1,5 +1,5 @@
 import { routerRedux } from 'dva/router';
-import { getUserBoxs, getAllBoxs, boxSet, boxCancel, getWallpaperList, getGuideCategoryList, getGuideArticle, } from '@/services/technological/simplemode'
+import { getUserBoxs, getAllBoxs, boxSet, boxCancel, getWallpaperList, getGuideCategoryList, getGuideArticle, getBoardsTodoList } from '@/services/technological/simplemode'
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { getModelSelectState } from '@/models/utils'
@@ -30,6 +30,8 @@ export default {
         guideCategoryList: [], //协作引导类别
         guideArticleList: [], //协作引导文章
         guideCategorySelectedKeys: {}, //选中的协作引导类别
+
+        board_todo_list: [], //用户地日程任务流程列表
     },
     subscriptions: {
         setup({ dispatch, history }) {
@@ -241,6 +243,21 @@ export default {
                 message.warn(res.message, MESSAGE_DURATION_TIME)
             }
         },
+        * getBoardsTodoList({ payload }, { call, put, select }) {
+            let res = yield call(getBoardsTodoList, payload);
+            // debugger
+            if (isApiResponseOk(res)) {
+                yield put({
+                    type: 'updateDatas',
+                    payload: {
+                        board_todo_list: res.data,
+                    }
+                });
+            } else {
+                message.warn(res.message, MESSAGE_DURATION_TIME)
+            }
+        },
+
     },
     reducers: {
         updateDatas(state, action) {

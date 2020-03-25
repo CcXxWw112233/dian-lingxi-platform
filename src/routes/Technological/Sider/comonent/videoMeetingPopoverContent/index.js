@@ -54,8 +54,8 @@ let timer
 			workbench.datas && workbench.datas.projectTabCurrentSelectedProject
 				? workbench.datas.projectTabCurrentSelectedProject
 				: "0",
-				videoConferenceProviderList:
-					technological.datas && technological.datas.videoConferenceProviderList ? technological.datas.videoConferenceProviderList : []
+		videoConferenceProviderList:
+			technological.datas && technological.datas.videoConferenceProviderList ? technological.datas.videoConferenceProviderList : []
 	};
 })
 class VideoMeetingPopoverContent extends React.Component {
@@ -135,7 +135,7 @@ class VideoMeetingPopoverContent extends React.Component {
 						})
 					})
 				} else {
-					message.error(res.message)
+					// message.error(res.message)
 				}
 			})
 	}
@@ -1112,6 +1112,8 @@ class VideoMeetingPopoverContent extends React.Component {
 												overlay={
 													<MenuSearchPartner
 														isInvitation={true}
+														show_select_all={true}
+														select_all_type={'0'}
 														listData={currentSelectedProjectMembersList} keyCode={'user_id'} searchName={'name'} currentSelect={newToNoticeList}
 														board_id={board_id}
 														user_defined_icon={<span>&#xe846;</span>}
@@ -1132,6 +1134,8 @@ class VideoMeetingPopoverContent extends React.Component {
 														<MenuSearchPartner
 															isInvitation={true}
 															Inputlaceholder="输入手机号"
+															show_select_all={true}
+															select_all_type={'0'}
 															listData={currentSelectedProjectMembersList} keyCode={'user_id'} searchName={'name'} currentSelect={newToNoticeList}
 															board_id={board_id}
 															user_defined_icon={<span>&#xe846;</span>}
@@ -1182,14 +1186,14 @@ class VideoMeetingPopoverContent extends React.Component {
 
 						<div>
 							<span>聆悉推荐使用以下方式开展远程会议: </span>
-							<div style={{display: 'flex'}}> 
+							<div style={{ display: 'flex' }}>
 								{
 									videoConferenceProviderList && videoConferenceProviderList.map(item => {
 										return (
-											<Radio.Group style={{marginBottom: '12px'}} onChange={this.onVideoProviderChange} value={this.state.providerDefault ? this.state.providerDefault : item.is_default == '1' ? item.id : ''}>
-												<div key={`${item.id}-${item.icon}`} style={{textAlign: 'center', marginTop: '12px'}}>
+											<Radio.Group style={{ marginBottom: '12px' }} onChange={this.onVideoProviderChange} value={this.state.providerDefault ? this.state.providerDefault : item.is_default == '1' ? item.id : ''}>
+												<div key={`${item.id}-${item.icon}`} style={{ textAlign: 'center', marginTop: '12px' }}>
 													<div className={indexStyles.video_provider}>{this.getImgLogo(item)}</div>
-													<div><Radio value={item.id}/></div>
+													<div><Radio value={item.id} /></div>
 												</div>
 											</Radio.Group>
 										)

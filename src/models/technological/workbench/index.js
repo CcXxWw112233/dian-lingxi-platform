@@ -23,6 +23,7 @@ export default modelExtend(technological, {
       projectList: [],
       boxList: [],
       workbench_show_gantt_card: '0', //工作台是否显示甘特图卡片，0默认不显示，1显示
+      projectInitLoaded: false, //初始化完成
     }
   },
   subscriptions: {
@@ -264,7 +265,8 @@ export default modelExtend(technological, {
         yield put({
           type: 'updateDatas',
           payload: {
-            projectList: res.data
+            projectList: res.data,
+            projectInitLoaded: true
           }
         })
       } else {

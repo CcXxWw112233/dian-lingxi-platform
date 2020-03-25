@@ -921,7 +921,7 @@ export default class TempleteSchemeTree extends Component {
               <>
                 {icon}
                 <span>{name}</span>
-                <div className={indexStyles.icon_list}>
+                {/* <div className={indexStyles.icon_list}>
                   {
                     operatorIconList.map(item => (
                       <Tooltip autoAdjustOverflow={false} placement={firstEleId == id ? 'bottom' : 'top'} title={item.toolTipText} getPopupContainer={triggerNode => triggerNode.parentNode}>
@@ -929,7 +929,7 @@ export default class TempleteSchemeTree extends Component {
                       </Tooltip>
                     ))
                   }
-                </div>
+                </div> */}
               </>
             )
         }
@@ -960,7 +960,7 @@ export default class TempleteSchemeTree extends Component {
   renderEmptyTreeData = () => {
     return (
       <div>
-        <div onClick={this.handleInitTemplete} className={indexStyles.empty_data}><span className={globalStyles.authTheme}>&#xe6e9;</span> 添加项目第一阶段里程碑</div>
+        {/* <div onClick={this.handleInitTemplete} className={indexStyles.empty_data}><span className={globalStyles.authTheme}>&#xe6e9;</span> 添加项目第一阶段里程碑</div> */}
       </div>
     )
   }
@@ -992,7 +992,7 @@ export default class TempleteSchemeTree extends Component {
     return (
       <div className={indexStyles.planningSchemeItemWrapper}>
         {/* 顶部工具栏 */}
-        <div className={indexStyles.planningSchemeItem_top}>
+        {/* <div className={indexStyles.planningSchemeItem_top}>
           <div>
             <span onClick={this.handleWrapperAddSibiling} className={`${globalStyles.authTheme} ${flag ? indexStyles.pub_hover : indexStyles.disabled}`}>&#xe6f1; 添加同级</span>
             <span onClick={this.handleWrapperAddChildren} style={{ marginLeft: '18px' }} className={`${globalStyles.authTheme} ${flag ? indexStyles.pub_hover : indexStyles.disabled} ${whetherCreateChildTask && indexStyles.is_add_children}`}>&#xe6f2; 添加子级</span>
@@ -1001,7 +1001,7 @@ export default class TempleteSchemeTree extends Component {
             <span onClick={this.handleWrapperRename} style={{ marginRight: '18px' }} className={`${globalStyles.authTheme} ${flag ? indexStyles.pub_hover : indexStyles.disabled}`}>&#xe602; 重命名</span>
             <span onClick={this.handleWrapperDeleteItem} className={`${globalStyles.authTheme} ${flag ? indexStyles.del_hover : indexStyles.disabled}`}>&#xe7c3; 删除</span>
           </div>
-        </div>
+        </div> */}
         {
           currentTempleteListContainer && currentTempleteListContainer.length ? (
             this.renderNotEmptyTreeData()

@@ -1,42 +1,42 @@
 import request from "../../utils/requestAxios";
-import {REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN, REQUEST_DOMAIN_ARTICLE} from "../../globalset/js/constant";
+import { REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN, REQUEST_DOMAIN_ARTICLE, REQUEST_DOMAIN_BOARD } from "../../globalset/js/constant";
 
-export async function getUserBoxs(){
-    return request({
-        url: `${REQUEST_DOMAIN_WORK_BENCH}/simple/user/box`,
-        method: 'GET'
-      });
+export async function getUserBoxs() {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/simple/user/box`,
+    method: 'GET'
+  });
 }
 
-export async function getAllBoxs(){
+export async function getAllBoxs() {
   return request({
-      url: `${REQUEST_DOMAIN_WORK_BENCH}/simple/box`,
-      method: 'GET'
-      
-    });
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/simple/box`,
+    method: 'GET'
+
+  });
 }
 
-export async function boxSet(data){
+export async function boxSet(data) {
   return request({
-      url: `${REQUEST_DOMAIN_WORK_BENCH}/simple/user/box/set`,
-      method: 'POST',
-      data: {id: data.id}
-    });
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/simple/user/box/set`,
+    method: 'POST',
+    data: { id: data.id }
+  });
 }
 
-export async function boxCancel(data){
+export async function boxCancel(data) {
   return request({
-      url: `${REQUEST_DOMAIN_WORK_BENCH}/simple/user/box/cancel`,
-      method: 'PUT',
-      data: {id: data.id}
-    });
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/simple/user/box/cancel`,
+    method: 'PUT',
+    data: { id: data.id }
+  });
 }
 
-export async function getWallpaperList(data){
+export async function getWallpaperList(data) {
   return request({
-      url: `${REQUEST_DOMAIN}/wallpaper`,
-      method: 'GET'
-    });
+    url: `${REQUEST_DOMAIN}/wallpaper`,
+    method: 'GET'
+  });
 }
 
 export async function getGuideCategoryList(data) {
@@ -46,10 +46,18 @@ export async function getGuideCategoryList(data) {
   });
 }
 
-export async function getGuideArticle(data) {  
+export async function getGuideArticle(data) {
   return request({
     url: `${REQUEST_DOMAIN_ARTICLE}/api/guide/article?category_id=${data.id}`,
     method: 'GET',
   })
 }
 
+//获取项目的流程任务列表
+export async function getBoardsTodoList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/comm/todo_list`,
+    method: 'GET',
+    params
+  });
+}
