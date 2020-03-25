@@ -62,7 +62,7 @@ export default {
       ceilWidth: 44, //单元格的宽度
       ceiHeight: ceil_height_fold, //单元格高度 40 + 12的外边距
       date_total: 0, //总天数
-      group_rows: [], //每一个分组默认行数 [7, 7, 7]
+      group_rows: [3, 3, 3], //每一个分组默认行数 [7, 7, 7]
       group_list_area: [], //分组高度区域 [组一行数 * ceiHeight，组二行数 * ceiHeight]
       group_list_area_section_height: [], //分组高度区域总高度 [组一行数 * ceiHeight，(组一行数 + 组二行数) * ceiHeight， ...]
       isDragging: false, //甘特图是否在拖拽中
@@ -103,18 +103,18 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       dispatches = dispatch
-      history.listen((location) => {
-        if (location.pathname.indexOf('/technological') != -1) {
-          dispatch({
-            type: 'updateDatas',
-            payload: {
-              list_group: [],
-              group_rows: [3, 3, 3], // [5, 5, 5]
-            }
-          })
-        } else {
-        }
-      })
+      // history.listen((location) => {
+      //   if (location.pathname.indexOf('/technological') != -1) {
+      //     dispatch({
+      //       type: 'updateDatas',
+      //       payload: {
+      //         list_group: [],
+      //         group_rows: [3, 3, 3], // [5, 5, 5]
+      //       }
+      //     })
+      //   } else {
+      //   }
+      // })
     },
   },
   effects: {

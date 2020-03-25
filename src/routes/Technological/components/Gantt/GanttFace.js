@@ -91,50 +91,16 @@ export default class GanttFace extends Component {
     e.stopPropagation();
     if ('gantt_card_out_middle' != e.target.getAttribute("id")) return
     const that = this
-    const { searchTimer } = this.state
-    if (searchTimer) {
-      clearTimeout(searchTimer)
-    }
-    const { target_scrollLeft } = this.state
-    const scrollTop = e.target.scrollTop
-    const scrollLeft = e.target.scrollLeft
-    const scrollWidth = e.target.scrollWidth
-    const clientWidth = e.target.clientWidth
-    const { ceilWidth, gold_date_arr = [], date_total } = this.props
-    let delX = target_scrollLeft - scrollLeft //判断向左还是向右
 
-    if (scrollLeft < 3 * ceilWidth && delX > 0) { //3为分组头部占用三个单元格的长度
-      const { timestamp } = gold_date_arr[0]['date_inner'][0]
-      this.setState({
-        searchTimer: setTimeout(function () {
-          that.setGoldDateArr({ timestamp, not_set_loading: true }) //取左边界日期来做日期更新的基准
-          that.setScrollPosition({ delay: 300, position: 4 * ceilWidth }) //大概移动四天的位置
-        }, INPUT_CHANGE_SEARCH_TIME)
-      })
-
-    } else if ((scrollWidth - scrollLeft - clientWidth < ceilWidth) && delX < 0) {
-      const { timestamp } = gold_date_arr[gold_date_arr.length - 1]['date_inner'][gold_date_arr[gold_date_arr.length - 1]['date_inner'].length - 1]
-      this.setState({
-        searchTimer: setTimeout(function () {
-          that.setGoldDateArr({ timestamp, to_right: 'to_right', not_set_loading: true }) //取有边界日期来做更新日期的基准
-          that.setScrollPosition({ delay: 300, position: scrollWidth - clientWidth - 2 * ceilWidth }) //移动到最新视觉
-        }, INPUT_CHANGE_SEARCH_TIME)
-      })
-    }
-
-    this.setState({
-      target_scrollLeft: scrollLeft
-    })
-    const { dispatch } = this.props
-    dispatch({
-      type: getEffectOrReducerByName('updateDatas'),
-      payload: {
-        target_scrollLeft: scrollLeft
-      }
-    })
-
-    const { target_scrollTop, gantt_board_id, group_view_type } = this.props
+    const { scrollTop, scrollLeft, scrollWidth, clientWidth } = e.target
+    this.handleScrollVertical({ scrollTop })
+    this.handelScrollHorizontal({ scrollLeft, scrollWidth, clientWidth, })
+  }
+  // 处理上下滚动
+  handleScrollVertical = ({ scrollTop }) => {
+    const { group_view_type, gantt_board_id, target_scrollTop, dispatch } = this.props
     if (target_scrollTop != scrollTop) {
+      console.log('sssssscroll', '垂直')
       dispatch({
         type: getEffectOrReducerByName('updateDatas'),
         payload: {
@@ -150,7 +116,55 @@ export default class GanttFace extends Component {
         })
       }
     }
-    // console.log('sssssss', scrollLeft)
+  }
+  // 处理水平滚动
+  handelScrollHorizontal = ({ scrollLeft, scrollWidth, clientWidth, }) => {
+    const { target_scrollLeft, searchTimer } = this.state
+    const { gold_date_arr, dispatch, ceilWidth } = this.props
+    const delX = target_scrollLeft - scrollLeft //判断向左还是向右
+    if (target_scrollLeft == scrollLeft) {
+      return
+    }
+    console.log('sssssscroll', '水平', {
+      scrollLeft,
+      delX,
+      ceilWidth,
+      bool: scrollLeft < 3 * ceilWidth,
+      
+    })
+    if (searchTimer) {
+      clearTimeout(searchTimer)
+    }
+    if (scrollLeft < 10 * ceilWidth && delX > 0) { //3为分组头部占用三个单元格的长度
+      const { timestamp } = gold_date_arr[0]['date_inner'][0] //取第一天
+      this.setState({
+        searchTimer: setTimeout(() => {
+          this.setGoldDateArr({ timestamp, not_set_loading: true }) //取左边界日期来做日期更新的基准
+          this.setScrollPosition({ delay: 300, position: 4 * ceilWidth }) //大概移动四天的位置
+        }, 100)
+      })
+
+    } else if ((scrollWidth - scrollLeft - clientWidth < ceilWidth) && delX < 0) {
+      const gold_date_arr_length = gold_date_arr.length
+      const date_inner = gold_date_arr[gold_date_arr_length - 1]['date_inner']
+      const date_inner_length = date_inner.length
+      const { timestamp } = date_inner[date_inner_length - 1] // 取最后一天
+      this.setState({
+        searchTimer: setTimeout(() => {
+          this.setGoldDateArr({ timestamp, to_right: 'to_right', not_set_loading: true }) //取有边界日期来做更新日期的基准
+          this.setScrollPosition({ delay: 300, position: scrollWidth - clientWidth - 2 * ceilWidth }) //移动到最新视觉
+        }, 100)
+      })
+    }
+    dispatch({
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: {
+        target_scrollLeft: scrollLeft
+      }
+    })
+    this.setState({
+      target_scrollLeft: scrollLeft
+    })
   }
 
   //更新日期,日期更新后做相应的数据请求
