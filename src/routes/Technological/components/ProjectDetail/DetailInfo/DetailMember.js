@@ -13,7 +13,7 @@ import { isApiResponseOk } from '../../../../../utils/handleResponseData';
 import { organizationInviteWebJoin, commInviteWebJoin, } from '../../../../../services/technological/index'
 import globalsetStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
-let timer;
+// let timer;
 @connect(mapStateToProps)
 export default class DetailMember extends Component {
 

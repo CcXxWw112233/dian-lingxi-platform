@@ -30,7 +30,8 @@ export default class GroupListHeadItem extends Component {
       edit_input_value: '',
       local_list_name: '',
       show_add_menber_visible: false,
-      board_info_visible: false
+      board_info_visible: false,
+      menu_oprate_visible: false, //菜单项显示状态（仅作标记）
     }
     this.visitControlOtherPersonOperatorMenuItem = [
       {
@@ -474,7 +475,8 @@ export default class GroupListHeadItem extends Component {
   }
   dropdwonVisibleChange = (bool) => {
     this.setState({
-      renderVistorContorlVisible: bool
+      renderVistorContorlVisible: bool,
+      menu_oprate_visible: bool
     })
   }
   // 项目归档---
@@ -959,7 +961,7 @@ export default class GroupListHeadItem extends Component {
     const { currentUserOrganizes = [], gantt_board_id = [], ceiHeight, is_show_org_name, is_all_org, rows = 5, show_board_fold, group_view_type, get_gantt_data_loading } = this.props
     const { itemValue = {}, itemKey } = this.props
     const { is_star, list_name, org_id, list_no_time_data = [], list_id, lane_icon, board_id, is_privilege = '0', privileges, create_by = {}, lane_overdue_count } = itemValue
-    const { isShowBottDetail, show_edit_input, local_list_name, edit_input_value, show_add_menber_visible, board_info_visible } = this.state
+    const { isShowBottDetail, show_edit_input, local_list_name, edit_input_value, show_add_menber_visible, board_info_visible, menu_oprate_visible } = this.state
     const board_create_user = create_by.name
     const { list_data } = itemValue
     return (
@@ -1024,7 +1026,7 @@ export default class GroupListHeadItem extends Component {
               {
                 // 只有在项目视图下，且如果在分组id == 0（未分组的情况下不能显示）
                 group_view_type == '1' && list_id != '0' && (
-                  <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={group_view_type == '1' ? this.renderMenuOperateListName() : <span></span>}>
+                  <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={(group_view_type == '1' && menu_oprate_visible) ? this.renderMenuOperateListName() : <span></span>}>
                     <span className={`${globalStyles.authTheme} ${indexStyles.operator}`}>&#xe7fd;</span>
                   </Dropdown>
                 )

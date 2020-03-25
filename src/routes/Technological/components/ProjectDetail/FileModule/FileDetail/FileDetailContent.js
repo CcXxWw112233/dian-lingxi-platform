@@ -33,7 +33,7 @@ import ShareAndInvite from './../../../ShareAndInvite/index'
 import { connect } from 'dva';
 import CirclePreviewLoadingComponent from '@/components/CirclePreviewLoadingComponent'
 import { isApiResponseOk } from "@/utils/handleResponseData";
-let timer
+// let timer
 
 @connect(mapStateToProps)
 class FileDetailContent extends React.Component {
@@ -108,6 +108,7 @@ class FileDetailContent extends React.Component {
     this.y1 = 0
     this.isDragging = false
     this.SelectedRect = { x: 0, y: 0 }
+    this.timer = null
   }
 
   componentWillMount() {
@@ -455,7 +456,7 @@ class FileDetailContent extends React.Component {
     this.setState({
       percent: 0
     })
-    clearTimeout(timer)
+    clearTimeout(this.timer)
   }
   zoomFrame() {
     if (this.checkWhetherEntryCircleEvaluation()) {
@@ -463,7 +464,7 @@ class FileDetailContent extends React.Component {
       return false
     }
     this.setState({ isZoomPictureFullScreenMode: !this.state.isZoomPictureFullScreenMode, percent: 0 });
-    clearTimeout(timer)
+    clearTimeout(this.timer)
   }
   fileDownload({ filePreviewCurrentId, filePreviewCurrentFileId, pdfDownLoadSrc }) {
     if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
@@ -1126,7 +1127,7 @@ class FileDetailContent extends React.Component {
       isZoomPictureFullScreenMode: flag,
       percent: 0
     })
-    clearTimeout(timer)
+    clearTimeout(this.timer)
   }
 
   //pdf文件和普通文件区别时做不同地处理预览
@@ -1275,7 +1276,7 @@ class FileDetailContent extends React.Component {
     let percent = this.state.percent + 10;
     // return
     if (percent > 100) {
-      if (timer) clearTimeout(timer)
+      if (this.timer) clearTimeout(this.timer)
       this.setState({
         percent: 100
       })
@@ -1320,7 +1321,7 @@ class FileDetailContent extends React.Component {
         isEntryCirclePreviewLoading: true
       }
     })
-    timer = setTimeout(() => {
+    this.timer = setTimeout(() => {
       this.updateProcessPercent()
     }, 500)
   }
@@ -1342,7 +1343,7 @@ class FileDetailContent extends React.Component {
       return false
     }
     this.setState({ isZoomPictureFullScreenMode: false, percent: 0 })
-    clearTimeout(timer)
+    clearTimeout(this.timer)
   }
 
   // 显示/隐藏右侧实时圈图信息
@@ -1859,10 +1860,10 @@ class FileDetailContent extends React.Component {
             </div>
           </div>
 
-          <div className={indexStyles.fileDetailHeadRight} style={{position: 'relative'}}>
-          {
+          <div className={indexStyles.fileDetailHeadRight} style={{ position: 'relative' }}>
+            {
               this.checkWhetherEntryCircleEvaluation() && (
-                <div style={{position: 'absolute', left: '0', right: '0', top: '0', bottom: '0', margin: '0 auto', zIndex: 1}} onClick={this.handleNotClick}></div>
+                <div style={{ position: 'absolute', left: '0', right: '0', top: '0', bottom: '0', margin: '0 auto', zIndex: 1 }} onClick={this.handleNotClick}></div>
               )
             }
             <div style={{ position: 'relative' }}>
@@ -1885,8 +1886,8 @@ class FileDetailContent extends React.Component {
               {
                 seeFileInput === 'fileModule' && (
                   <Dropdown overlay={saveAsMenu()}>
-                      <Button style={{ height: 24, marginLeft: 14 }} >
-                        <span className={`${globalStyles.authTheme} ${indexStyles.right__shareIndicator_icon}`}>&#xe6dd;</span>
+                    <Button style={{ height: 24, marginLeft: 14 }} >
+                      <span className={`${globalStyles.authTheme} ${indexStyles.right__shareIndicator_icon}`}>&#xe6dd;</span>
                         另存为
                       </Button>
                   </Dropdown>
@@ -2117,7 +2118,7 @@ function mapStateToProps({
   technological: {
     datas: {
       userOrgPermissions,
-  	  userBoardPermissions
+      userBoardPermissions
     }
   }
 }) {

@@ -32,38 +32,20 @@ export const getGlobalData = (name) => {
 export const checkIsHasPermission = (code, param_org_id) => {
   const OrganizationId = localStorage.getItem('OrganizationId')
   const organizationMemberPermissions = JSON.parse(localStorage.getItem('userOrgPermissions')) || []
-  if (OrganizationId == '0') {
-    if (!param_org_id) {
-      return true
-    } else {
-      let currentOrgPermission = []
-      for (let val of organizationMemberPermissions) {
-        if (param_org_id == val['org_id']) {
-          currentOrgPermission = val['permissions']
-          break
-        }
-      }
-      let flag = false
-      for (let i = 0; i < currentOrgPermission.length; i++) {
-        if (code === currentOrgPermission[i]['code']) {
-          flag = true
-          break
-        }
-      }
-      return flag
-    }
-  }
   if (!Array.isArray(organizationMemberPermissions)) {
     return false
   }
-  let flag = false
-  for (let i = 0; i < organizationMemberPermissions.length; i++) {
-    if (code === organizationMemberPermissions[i]['code']) {
-      flag = true
-      break
+  if (OrganizationId == '0') { //全组织下需要取出传入组织对应的权限
+    if (!param_org_id) {
+      return true
+    } else {
+      const currentOrgPermissions = organizationMemberPermissions[param_org_id] || []
+      return currentOrgPermissions.includes(code)
     }
+  } else {
+    return organizationMemberPermissions.includes(code)
   }
-  return flag
+
 }
 
 /**
@@ -149,32 +131,20 @@ export const checkIsHasPermissionInVisitControl = (code, privileges, is_privileg
   })
   return flag
 }
-
 //在当前项目中检查是否有权限操作
 export const checkIsHasPermissionInBoard = (code, params_board_id) => {
   const userBoardPermissions = JSON.parse(localStorage.getItem('userBoardPermissions')) || []
   const board_id = params_board_id || getGlobalData('storageCurrentOperateBoardId')
-  if (!Array.isArray(userBoardPermissions)) {
-    return false
-  }
+
   if (!board_id || board_id == '0') {
     return true
   }
-  let currentBoardPermission = []
-  for (let val of userBoardPermissions) {
-    if (board_id == val['board_id']) {
-      currentBoardPermission = val['permissions']
-      break
-    }
+  const currentBoardPermission = userBoardPermissions[params_board_id] || []
+  if (!Array.isArray(currentBoardPermission)) {
+    return false
   }
-  let flag = false
-  for (let i = 0; i < currentBoardPermission.length; i++) {
-    if (code === currentBoardPermission[i]['code']) {
-      flag = true
-      break
-    }
-  }
-  return flag
+  const bool = currentBoardPermission.includes(code)
+  return bool
 }
 
 //返回当前名词定义对应名称

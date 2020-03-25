@@ -481,18 +481,14 @@ export default {
         const { current_org = {} } = JSON.parse(userInfo)
         const current_org_id = current_org['id']
         //返回的全部数据遍历和当前的org_id一致，则赋值权限
-        for (let val of res.data) {
-          if (val['org_id'] == current_org_id) {
-            localStorage.setItem('userOrgPermissions', JSON.stringify(val['permissions'] || []))
-            yield put({
-              type: 'updateDatas',
-              payload: {
-                userOrgPermissions: val['permissions'] || []
-              }
-            })
-            break
+        const permissions = res.data[current_org_id] || []
+        localStorage.setItem('userOrgPermissions', JSON.stringify(permissions || []))
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            userOrgPermissions: permissions || []
           }
-        }
+        })
       } else {
         localStorage.setItem('userOrgPermissions', JSON.stringify([]))
         yield put({
@@ -589,7 +585,7 @@ export default {
     },
     // 获取视频会议提供商列表
     * getVideoConferenceProviderList({ payload }, { call, put }) {
-      const res = yield call(getVideoConferenceProviderList,payload)
+      const res = yield call(getVideoConferenceProviderList, payload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',

@@ -312,6 +312,22 @@ export default class DateList extends Component {
                           </div>
                         </Tooltip>
                       ) : (
+                          // <DropMilestone
+                          //   key={`${month}/${date_no}`}
+                          //   renderLCBList={this.renderLCBList}
+                          //   getDateNoHolidaylunar={this.getDateNoHolidaylunar}
+                          //   setMiletonesColor={this.setMiletonesColor}
+                          //   timestamp={timestamp}
+                          //   current_date_miletones={current_date_miletones}
+                          //   timestampEnd={timestampEnd}
+                          //   itemKey={`${month}/${date_no}`}
+                          //   key2={key2}
+                          //   week_day={week_day}
+                          //   date_no={date_no}
+                          //   is_over_duetime={is_over_duetime}
+                          //   has_lcb={has_lcb}
+                          //   is_all_realized={is_all_realized}
+                          // />
                           <Dropdown overlay={this.renderLCBList(current_date_miletones, timestampEnd)} key={`${month}/${date_no}`}>
                             <Tooltip title={`${this.getDateNoHolidaylunar(timestamp).lunar} ${this.getDateNoHolidaylunar(timestamp).holiday || ' '}`}>
                               <div>
@@ -369,6 +385,66 @@ export default class DateList extends Component {
   }
 
 }
+
+class DropMilestone extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      menu_oprate_visible: false
+    }
+  }
+  dropdwonVisibleChange = (bool) => {
+    this.setState({
+      menu_oprate_visible: bool
+    })
+  }
+  render() {
+    const { menu_oprate_visible } = this.state
+    const {
+      renderLCBList,
+      getDateNoHolidaylunar,
+      setMiletonesColor,
+      timestamp,
+      current_date_miletones,
+      timestampEnd,
+      itemKey,
+      key2,
+      week_day,
+      date_no,
+      is_over_duetime,
+      has_lcb,
+      is_all_realized
+    } = this.props
+    return (
+      <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={menu_oprate_visible ? renderLCBList(current_date_miletones, timestampEnd) : (<span />)} key={itemKey}>
+        <Tooltip title={`${getDateNoHolidaylunar(timestamp).lunar} ${getDateNoHolidaylunar(timestamp).holiday || ' '}`}>
+          <div>
+            <div className={`${indexStyles.dateDetailItem}`} key={key2}>
+              <div className={`${indexStyles.dateDetailItem_date_no} 
+              ${indexStyles.nomal_date_no}
+              ${((week_day == 0 || week_day == 6)) && indexStyles.weekly_date_no} 
+              ${getDateNoHolidaylunar(timestamp).festival_status == '1' && indexStyles.holiday_date_no}
+              ${has_lcb && indexStyles.has_moletones_date_no}`}
+                style={{ background: setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized }) }}
+              // style={{ background: is_over_duetime && has_lcb ? '#FF7875' : '' }}
+              >
+                {
+                  getDateNoHolidaylunar(timestamp).holiday && (
+                    <div style={{ position: 'absolute', zIndex: 2, top: -24, left: -18, width: 60, height: 20 }} >
+                      {getDateNoHolidaylunar(timestamp).holiday}
+                    </div>
+                  )
+                }
+                {date_no}
+              </div>
+            </div>
+          </div>
+        </Tooltip>
+      </Dropdown>
+    )
+  }
+}
+
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps(
   {
