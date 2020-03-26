@@ -18,10 +18,13 @@ export default class AccomplishStepOne_three extends Component {
         }
         break;
       case '2': // 表示日期 + 时间
+      const timeArray = value && value.split(',') || []
+      const startTime = timeArray[0]
+      const endTime = timeArray[1]
         if (date_precision == '1') { // 表示仅日期
-
+          containerText = `${timestampToTime(startTime)} ~ ${timestampToTime(endTime)}`
         } else if (date_precision == '2') { // 表示日期 + 时间
-
+          containerText = `${timestampToTime(startTime)} ~ ${timestampToTime(endTime)}`
         }
         break
       default:

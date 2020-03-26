@@ -133,7 +133,7 @@ export default class EditStepTypeOne extends Component {
         }
         {/* 备注 */}
         {
-          description != '' &&
+          description && description != '' &&
           (
             <div className={indexStyles.select_remarks}>
               <span style={{ color: 'rgba(0,0,0,0.45)' }} className={globalStyles.authTheme}>&#xe636; 备注 :</span>

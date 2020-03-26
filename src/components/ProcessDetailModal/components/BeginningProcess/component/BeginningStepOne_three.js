@@ -2,13 +2,17 @@ import React, { Component } from 'react'
 import { Input, DatePicker } from 'antd'
 import indexStyles from '../index.less'
 import moment from 'moment'
-import { timeToTimestamp } from '../../../../../utils/util'
+import { timeToTimestamp, timestampToTime } from '../../../../../utils/util'
 import { connect } from 'dva'
 
 const { MonthPicker, RangePicker } = DatePicker
 
 @connect(mapStateToProps)
 export default class BeginningStepOne_three extends Component {
+
+  state = {
+    startOpen: false
+  }
 
   updateEdit = (data, key) => {
     const { itemKey, parentKey, processEditDatas = [] } = this.props
@@ -19,21 +23,73 @@ export default class BeginningStepOne_three extends Component {
 
     // 预约开始时间
     startDatePickerChange = (timeString) => {
+      // 这里是如果清空了时间 会变为0
+      if (!timeToTimestamp(timeString)) {
+        this.updateEdit({value: ''}, 'value')
+        return
+      }
       this.updateEdit({value: timeToTimestamp(timeString)}, 'value')
+    }
+
+    handleStartOpenChange = (open) => {
+      // this.setState({ endOpen: true });
+      this.setState({
+        startOpen: open
+      })
+    }
+
+    handleStartDatePickerChange = (timeString) => {
+      // 这里是如果清空了时间 会变为0
+      if (!timeToTimestamp(timeString)) {
+        this.updateEdit({value: ''}, 'value')
+        return
+      }
+      this.setState({
+        start_time: timeToTimestamp(timeString)
+      }, () => {
+        this.handleStartOpenChange(true)
+      })
+    }
+
+    rangePickerChange = (date, dateString) => {
+      if(dateString[0] == '' && dateString[1] == '') {
+        this.updateEdit({value: ''}, 'value')
+        return
+      }
+      this.updateEdit({ value: `${timeToTimestamp(dateString[0])},${timeToTimestamp(dateString[1])}` }, 'value')
+    }
+
+    rangePickerChange2 = (date, dateString) => {
+      console.log(date, dateString,'sssssssssssssssssss_dateString')
+      if(!dateString) {
+        this.updateEdit({value: ''}, 'value')
+        return
+      }
+      this.updateEdit({ value: `${timeToTimestamp(dateString[0])},${timeToTimestamp(dateString[1])}` }, 'value')
     }
 
   renderDiffDateRangeAndDatePrecision = () => {
     const { itemValue } = this.props
-    const { date_range, date_precision, prompt_content } = itemValue
+    const { date_range, date_precision, prompt_content, value } = itemValue
     let container = (<div></div>)
+    console.log(value,'ssssssssssssssss_value')
     switch (date_range) {
       case '1':// 表示单个日期
         if (date_precision == '1') { // 表示仅日期
-          container = <DatePicker onChange={this.startDatePickerChange.bind(this)} format={'YYYY/MM/DD'} style={{ width: '100%' }} placeholder={prompt_content} />
+          container = (
+            <DatePicker 
+              onChange={this.startDatePickerChange.bind(this)} 
+              format={'YYYY/MM/DD'} 
+              style={{ width: '100%' }} 
+              placeholder={prompt_content} />
+          )
         } else if (date_precision == '2') { // 表示日期 + 时间
           container = (
             <DatePicker
               onOk={this.startDatePickerChange.bind(this)}
+              onChange={this.handleStartDatePickerChange.bind(this)}
+              onOpenChange={this.handleStartOpenChange}
+              open={this.state.startOpen}
               format="YYYY-MM-DD HH:mm"
               showTime={{ format: 'HH:mm' }}
               style={{ width: '100%' }} placeholder={prompt_content} />
@@ -41,17 +97,20 @@ export default class BeginningStepOne_three extends Component {
         }
         break;
       case '2': // 表示日期 + 时间
+      const timeArray = value && value.split(',') || []
+      const startTime = timeArray[0]
+      const endTime = timeArray[1]
         if (date_precision == '1') { // 表示仅日期
           container = <RangePicker
             format="YYYY-MM-DD"
-            // placeholder={prompt_content}
             style={{ width: '100%' }}
+            onChange={this.rangePickerChange}
           />
         } else if (date_precision == '2') { // 表示日期 + 时间
           container = <RangePicker
             showTime={{ format: 'HH:mm' }}
             format="YYYY-MM-DD HH:mm"
-            // placeholder={prompt_content}
+            onChange={this.rangePickerChange2}
             style={{ width: '100%' }}
           />
         }

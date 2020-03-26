@@ -112,7 +112,7 @@ export default class AccomplishStepOne extends Component {
         }
         {/* 备注 */}
         {
-          description != '' &&
+          description && description != '' &&
           (
             <div className={indexStyles.select_remarks}>
               <span className={globalStyles.authTheme}>&#xe636; 备注 :</span>
