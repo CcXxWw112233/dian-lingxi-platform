@@ -177,21 +177,21 @@ export default class GanttFace extends Component {
       const { timestamp } = gold_date_arr[0]['date_inner'][0] //取第一天
       this.setState({
         searchTimer: setTimeout(() => {
+          this.setScrollPosition({ delay: 1, position: 16 * ceilWidth }) //大概移动四天的位置
           this.setGoldDateArr({ timestamp, not_set_loading: true }) //取左边界日期来做日期更新的基准
-          this.setScrollPosition({ delay: 300, position: 4 * ceilWidth }) //大概移动四天的位置
-        }, 100)
+        }, 50)
       })
 
-    } else if ((scrollWidth - scrollLeft - clientWidth < ceilWidth) && delX < 0) {
+    } else if ((scrollWidth - scrollLeft - clientWidth < 6 * ceilWidth) && delX < 0) {
       const gold_date_arr_length = gold_date_arr.length
       const date_inner = gold_date_arr[gold_date_arr_length - 1]['date_inner']
       const date_inner_length = date_inner.length
       const { timestamp } = date_inner[date_inner_length - 1] // 取最后一天
       this.setState({
         searchTimer: setTimeout(() => {
+          this.setScrollPosition({ delay: 1, position: scrollWidth - clientWidth - 16 * ceilWidth }) //移动到最新视觉
           this.setGoldDateArr({ timestamp, to_right: 'to_right', not_set_loading: true }) //取有边界日期来做更新日期的基准
-          this.setScrollPosition({ delay: 300, position: scrollWidth - clientWidth - 2 * ceilWidth }) //移动到最新视觉
-        }, 100)
+        }, 50)
       })
     }
     dispatch({
