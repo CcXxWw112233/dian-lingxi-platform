@@ -2,10 +2,25 @@ import React, { Component } from 'react'
 import { Input, DatePicker } from 'antd'
 import indexStyles from '../index.less'
 import moment from 'moment'
+import { timeToTimestamp } from '../../../../../utils/util'
+import { connect } from 'dva'
 
 const { MonthPicker, RangePicker } = DatePicker
 
+@connect(mapStateToProps)
 export default class BeginningStepOne_three extends Component {
+
+  updateEdit = (data, key) => {
+    const { itemKey, parentKey, processEditDatas = [] } = this.props
+    const { forms = [] } = processEditDatas[parentKey]
+    forms[itemKey][key] = data.value
+    this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('forms', forms)
+  }
+
+    // 预约开始时间
+    startDatePickerChange = (timeString) => {
+      this.updateEdit({value: timeToTimestamp(timeString)}, 'value')
+    }
 
   renderDiffDateRangeAndDatePrecision = () => {
     const { itemValue } = this.props
@@ -14,10 +29,11 @@ export default class BeginningStepOne_three extends Component {
     switch (date_range) {
       case '1':// 表示单个日期
         if (date_precision == '1') { // 表示仅日期
-          container = <DatePicker format={'YYYY/MM/DD'} style={{ width: '100%' }} placeholder={prompt_content} />
+          container = <DatePicker onChange={this.startDatePickerChange.bind(this)} format={'YYYY/MM/DD'} style={{ width: '100%' }} placeholder={prompt_content} />
         } else if (date_precision == '2') { // 表示日期 + 时间
           container = (
             <DatePicker
+              onOk={this.startDatePickerChange.bind(this)}
               format="YYYY-MM-DD HH:mm"
               showTime={{ format: 'HH:mm' }}
               style={{ width: '100%' }} placeholder={prompt_content} />
@@ -62,6 +78,10 @@ export default class BeginningStepOne_three extends Component {
       </div>
     )
   }
+}
+
+function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [] } }) {
+  return { processEditDatas }
 }
 
 /**

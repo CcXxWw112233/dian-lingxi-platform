@@ -6,7 +6,7 @@ import { MESSAGE_DURATION_TIME, FILES, FLOWS } from "../../../globalset/js/const
 import { getSubfixName } from '../../../utils/businessFunction'
 import QueryString from 'querystring'
 import { processEditDatasConstant, processEditDatasRecordsConstant, processDoingListMatch, processInfoMatch } from '../../../components/ProcessDetailModal/constant';
-import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType } from "../../../services/technological/workFlow"
+import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete } from "../../../services/technological/workFlow"
 
 let board_id = null
 let appsSelectKey = null
@@ -200,6 +200,16 @@ export default {
       const { id, calback } = payload
       let res = yield call(getProcessInfo, {id})
       if (isApiResponseOk(res)) {
+        let newProcessEditDatas = [...res.data.nodes]
+        newProcessEditDatas = newProcessEditDatas.map(item => {
+         if (item.status == '2') { // 表示找到已完成的节点
+          let new_item = {...item, is_confirm: '1'}
+          return new_item
+         } else {
+           let new_item = item
+           return new_item
+         }
+        })
         //设置当前节点排行,数据返回只返回当前节点id,要根据id来确认当前走到哪一步
         const curr_node_id = res.data.curr_node_id
         let curr_node_sort
@@ -216,7 +226,7 @@ export default {
             currentFlowInstanceName: res.data.name,
             isEditCurrentFlowInstanceName: false,
             currentFlowInstanceDescription: res.data.description,
-            processEditDatas: res.data.nodes,
+            processEditDatas: newProcessEditDatas,
             processInfo: {...res.data, curr_node_sort: curr_node_sort}
           }
         })
@@ -254,7 +264,24 @@ export default {
         })
       } else {
       }
-    }
+    },
+
+    // 流程节点步骤的完成
+    * fillFormComplete({ payload }, { call, put }) {
+      const { flow_instance_id } = payload
+      let res = yield call(fillFormComplete,payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'getProcessInfo',
+          payload: {
+            id:flow_instance_id,
+            calback: () => {
+              message.success('已完成节点', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+      }
+    },
   },
   reducers: {
     updateDatas(state, action) {

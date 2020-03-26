@@ -6,7 +6,7 @@ import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { principalList, approvePersonnelSuggestion } from '../../../constant'
 import { Button, Popconfirm, Input } from 'antd'
 import { connect } from 'dva'
-import { timestampToTimeNormal } from '../../../../../utils/util';
+import { timestampToTimeNormal, compareACoupleOfObjects } from '../../../../../utils/util';
 
 const TextArea = Input.TextArea
 @connect(mapStateToProps)
@@ -17,8 +17,17 @@ export default class BeginningStepTwo extends Component {
     this.state = {
       transPrincipalList: props.itemValue.assignees ? [...props.itemValue.assignees] : [], // 表示当前的执行人
       transCopyPersonnelList: props.itemValue.recipients ? [...props.itemValue.recipients] : [], // 表示当前选择的抄送人
-      is_show_spread_arrow: props.itemValue.status != '1' ? false : true,
+      is_show_spread_arrow: props.itemValue.status == '1' ? true : false,
       approvePersonnelList: JSON.parse(JSON.stringify(approvePersonnelSuggestion))
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // 需要更新箭头的状态
+    if (!compareACoupleOfObjects(this.props, nextProps)) {
+      this.setState({
+          is_show_spread_arrow: nextProps.itemValue.status == '1' ? true : false,
+        })
     }
   }
 

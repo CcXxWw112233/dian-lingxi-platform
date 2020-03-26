@@ -15,7 +15,7 @@ export default class BeginningStepOne_one extends Component {
     const { itemKey, parentKey, processEditDatas = [] } = this.props
     const { forms = [] } = processEditDatas[parentKey]
     forms[itemKey][key] = data.value
-    this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent({ value: forms }, 'forms')
+    this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('forms', forms)
   }
 
   defaultValueChange(e, verification_rule) {
@@ -148,7 +148,7 @@ export default class BeginningStepOne_one extends Component {
         </p>
 
         <div className={indexStyles.text_fillOut}>
-          <Input style={{ border: verificationIsTrue ? '' : '1px solid #F5222D' }} defaultValue={prompt_content} value={value} onChange={(e) => { this.defaultValueChange(e, verification_rule) }}/>
+          <Input style={{ border: verificationIsTrue ? '' : '1px solid #F5222D' }} placeholder={prompt_content} value={value} onChange={(e) => { this.defaultValueChange(e, verification_rule) }}/>
         </div>
       </div>
     )

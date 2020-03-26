@@ -11,6 +11,7 @@ import { validateTel, validateEmail, validatePassword, validateFixedTel, validat
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { Button } from 'antd'
 import { connect } from 'dva'
+import { timestampToTimeNormal, compareACoupleOfObjects } from '../../../../../utils/util';
 
 @connect(mapStateToProps)
 export default class BeginningStepOne extends Component {
@@ -20,8 +21,37 @@ export default class BeginningStepOne extends Component {
     this.state = {
       transPrincipalList: props.itemValue.assignees ? [...props.itemValue.assignees] : [], // 表示当前的执行人
       transCopyPersonnelList: props.itemValue.recipients ? [...props.itemValue.recipients] : [], // 表示当前选择的抄送人
-      is_show_spread_arrow: props.itemValue.status != '1' ? false : true,
+      is_show_spread_arrow: props.itemValue.status == '1' ? true : false,
+      form_values: []
     }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // 需要更新箭头的状态
+    if (!compareACoupleOfObjects(this.props, nextProps)) {
+      this.setState({
+          is_show_spread_arrow: nextProps.itemValue.status == '1' ? true : false,
+        })
+    }
+  }
+
+  // 判断是否有完成按钮
+  whetherShowCompleteButton = () => {
+    const { itemValue } = this.props
+    const { assignee_type, assignees } = itemValue
+    const { id} = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    let flag = false
+    if (assignee_type == '2') { // 表示只有在指定人员的情况下才会有判断情况
+      let newAssignees = [...assignees]
+      newAssignees.find(item => {
+        if (item.id == id) {
+          flag = true
+        }
+      })
+    } else if (assignee_type == '1') {
+      flag = true
+    }
+    return flag
   }
 
   // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
@@ -110,16 +140,37 @@ export default class BeginningStepOne extends Component {
     return valiResult
   }
 
+  // 获取当前节点中表单数据(所有表单数据)
+  getAllNodesFormsData = () => {
+    const { itemValue, itemKey, processEditDatas = [] } = this.props
+    const { forms = [] } = processEditDatas[itemKey]
+    let newFormsData = [...forms]
+    let form_values = []
+    newFormsData.map(item => {
+      let obj = {
+        field_id: item.id || '',
+        field_value: item.value || ''
+      }
+      form_values.push(obj)
+    })
+    return form_values
+  }
+
   // 编辑点击事件
   handleEnterConfigureProcess = (e) => {
     e && e.stopPropagation()
     // this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
-    // this.props.dispatch({
-    //   type: 'publicProcessDetailModal/updateDatas',
-    //   payload: {
-    //     processPageFlagStep: '1'
-    //   }
-    // })
+    const { processInfo: { id: flow_instance_id }, itemValue } = this.props
+    const { id: flow_node_instance_id } = itemValue
+    let form_values = this.getAllNodesFormsData()
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/fillFormComplete',
+      payload: {
+        flow_instance_id,
+        flow_node_instance_id,
+        form_values: form_values
+      }
+    })
   }
 
   // 理解成是否是有效的头像
@@ -175,7 +226,13 @@ export default class BeginningStepOne extends Component {
     const { itemValue } = this.props
     const { forms = [], description, deadline_value, status } = itemValue
     return (
-      <div>
+      <div style={{position: 'relative'}}>
+        {/* 有一个蒙层表示不是该填写人不能操作 */}
+        {
+          !this.whetherShowCompleteButton() && (
+            <div className={indexStyles.nonOperatorPerson}></div>
+          )
+        }
         {/* 表单内容 */}
         {
           forms && forms.length ? (
@@ -200,7 +257,7 @@ export default class BeginningStepOne extends Component {
         }
         {/* 编辑按钮 */}
         {
-          status == "1" &&
+          this.whetherShowCompleteButton() && status == "1" &&
           (
             <div style={{ marginTop: '16px', paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center' }}>
               <Button type="primary" disabled={!this.setCompleteButtonDisabled()} onClick={this.handleEnterConfigureProcess}>完成</Button>
@@ -312,6 +369,6 @@ export default class BeginningStepOne extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [] } }) {
-  return { processEditDatas }
+function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [], processInfo = {} } }) {
+  return { processEditDatas, processInfo }
 }

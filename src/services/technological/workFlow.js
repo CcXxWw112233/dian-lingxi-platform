@@ -130,3 +130,20 @@ export async function getProcessListByType(params) {
     params
   })
 }
+
+// --------------- 流程实例中节点完成交互 ----------------------
+
+/**
+ * 完成流程任务
+ * @param {String} flow_instance_id 当前流程的ID 
+ * @param {String} flow_node_instance_id 当前流程节点的ID 
+ * @param {String} message 审批意见
+ * @param {Array} form_values 提交表单的数据
+ */
+export async function fillFormComplete(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/flow/task/complete`,
+    method: 'PUT',
+    data
+  })
+}
