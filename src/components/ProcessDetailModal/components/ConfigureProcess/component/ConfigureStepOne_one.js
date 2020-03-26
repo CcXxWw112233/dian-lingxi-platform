@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { Popover, Input, Button, Radio, Select, InputNumber } from 'antd'
+import { Popover, Input, Button, Radio, Select, InputNumber, message } from 'antd'
 import { connect } from 'dva'
 import { compareACoupleOfObjects } from '../../../../../utils/util'
 import ConfigureNapeGuide from '../../../ConfigureNapeGuide'
@@ -59,10 +59,18 @@ export default class ConfigureStepOne_one extends Component {
     this.updateEdit({ value: e.target.value }, 'prompt_content')
   }
   valMinLengthChange = (value) => {
-    this.updateEdit({ value: value.toString() }, 'val_min_length')
+    if (isNaN(value)) {
+      message.warn('请输入数字')
+      return
+    }
+    this.updateEdit({ value: value }, 'val_min_length')
   }
   valMaxLengthChange = (value) => {
-    this.updateEdit({ value: value.toString() }, 'val_max_length')
+    if (isNaN(value)) {
+      message.warn('请输入数字')
+      return
+    }
+    this.updateEdit({ value: value }, 'val_max_length')
   }
   isRequiredCheck = (e) => {
     this.updateEdit({ value: e.target.value }, 'is_required')
@@ -120,7 +128,7 @@ export default class ConfigureStepOne_one extends Component {
 
   renderContent = () => {
     const { itemValue } = this.props
-    const { title, prompt_content, verification_rule, is_required } = itemValue
+    const { title, prompt_content, verification_rule, is_required, val_min_length, val_max_length } = itemValue
     const { form_item } = this.state
     let disabledFlag = compareACoupleOfObjects(form_item, itemValue)
     return (
@@ -154,7 +162,7 @@ export default class ConfigureStepOne_one extends Component {
             verification_rule == '' && (
               <div>
                 <p>限制字数:</p>
-                <InputNumber min={1} precision="0.1" onChange={this.valMinLengthChange} style={{ width: 174, marginRight: '8px' }} /> ~ <InputNumber onChange={this.valMaxLengthChange} precision="0.1" min={1} style={{ width: 174, marginLeft: '8px' }} />
+                <InputNumber min={1} precision="0.1" value={val_min_length} onChange={this.valMinLengthChange} style={{ width: 174, marginRight: '8px' }} /> ~ <InputNumber value={val_max_length} onChange={this.valMaxLengthChange} precision="0.1" min={1} style={{ width: 174, marginLeft: '8px' }} />
               </div>
             )
           }

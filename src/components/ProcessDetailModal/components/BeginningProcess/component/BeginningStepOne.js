@@ -77,7 +77,7 @@ export default class BeginningStepOne extends Component {
   setCompleteButtonDisabled = () => {
     const { itemValue, itemKey, processEditDatas = [] } = this.props
     const { forms = [] } = processEditDatas[itemKey]
-    const { val_min_length, val_max_length } = forms[itemKey]
+    const { val_min_length = '', val_max_length = '' } = forms[itemKey] || []
     let valiResult = true
     for (let i = 0; i < forms.length; i++) {
       if (forms[i]['is_required'] == '1') { //必填的情况下
@@ -87,11 +87,29 @@ export default class BeginningStepOne extends Component {
         switch (verification_rule) {
           case "":
             if (value) {
-              if (value.length >= val_min_length && value.length <= val_max_length) {
+              if (val_min_length && val_max_length) { // 表示限制了最小长度以及最大长度
+                if (value.length >= val_min_length && value.length <= val_max_length) {
+                  valiResult = true
+                } else {
+                  valiResult = false
+                }
+              } else if (val_min_length && !val_max_length) { // 表示只限制了最小长度
+                if (value.length >= val_min_length) {
+                  valiResult = true
+                } else {
+                  valiResult = false
+                }
+              } else if (val_max_length && !val_min_length) { // 表示只限制了最大长度
+                if (value.length <= val_max_length) {
+                  valiResult = true
+                } else {
+                  valiResult = false
+                }
+              } else if (!val_min_length && !val_max_length){ // 表示什么都没有限制的时候
                 valiResult = true
-              } else {
-                valiResult = false
               }
+            } else if (!value) {
+              valiResult = false
             }
             break
           case 'mobile':

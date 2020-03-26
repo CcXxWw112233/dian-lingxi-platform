@@ -356,7 +356,7 @@ export default class MainContent extends Component {
       message.warn('正在启动流程中...')
       return
     }
-    const { projectDetailInfoData: { board_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { id } } = this.props
+    const { projectDetailInfoData: { board_id }, processPageFlagStep, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { id } } = this.props
     this.props.dispatch({
       type: 'publicProcessDetailModal/createProcess',
       payload: {
