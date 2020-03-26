@@ -142,7 +142,7 @@ export const checkIsHasPermissionInBoard = (code, params_board_id) => {
   if (!board_id || board_id == '0') {
     return true
   }
-  const currentBoardPermission = userBoardPermissions[params_board_id] || []
+  const currentBoardPermission = userBoardPermissions[board_id] || []
   if (!Array.isArray(currentBoardPermission)) {
     return false
   }
