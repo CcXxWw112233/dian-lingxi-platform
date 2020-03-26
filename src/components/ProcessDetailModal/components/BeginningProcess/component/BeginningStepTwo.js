@@ -51,17 +51,94 @@ export default class BeginningStepTwo extends Component {
     })
   }
 
-  // 编辑点击事件
-  handleEnterConfigureProcess = (e) => {
-    // e && e.stopPropagation()
-    // this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
-    // this.props.dispatch({
-    //   type: 'publicProcessDetailModal/updateDatas',
-    //   payload: {
-    //     processPageFlagStep: '1'
-    //   }
-    // })
+  // -------- 审批通过气泡弹窗事件 ---------
+
+  // 气泡消失清空内容
+  onVisibleChange = (visible) => {
+    if (!visible) {
+      this.setState({
+        successfulMessage:'',
+        rejectMessage: ''
+      })
+    }
   }
+  // 文本输入框的change事件
+  handleChangeTextAreaValue = (e) => {
+    e && e.stopPropagation()
+    this.setState({
+      successfulMessage: e.target.value
+    })
+  }
+
+  // 审批通过的点击事件
+  handlePassProcess = (e) => {
+    e && e.stopPropagation()
+    // this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
+    const { processInfo: { id: flow_instance_id }, itemValue } = this.props
+    const { id: flow_node_instance_id } = itemValue
+    const { successfulMessage } = this.state
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/fillFormComplete',
+      payload: {
+        flow_instance_id,
+        flow_node_instance_id,
+        message:successfulMessage ? successfulMessage : '通过。',
+        calback: () => {
+          this.setState({
+            successfulMessage:''
+          })
+        }
+      }
+    })
+  }
+
+  // 审批意见取消的点击事件
+  handleCancelSuccessProcess = (e) => {
+    e && e.stopPropagation()
+    this.setState({
+      successfulMessage:'',
+    })
+  }
+
+  // -------------- 审批通过气泡弹窗事件 -------------
+
+  // ------------- 审批驳回气泡弹框事件 --------
+  handleRejectTextAreaValue = (e) => {
+    e && e.stopPropagation()
+    this.setState({
+      rejectMessage:'',
+    })
+  }
+
+  handleCancelRejectProcess = (e) => {
+    e && e.stopPropagation()
+    this.updateCorrespondingPrcodessStepWithNodeContent('rejectMessage', '')
+  }
+
+  handleRejectProcess = (e) => {
+    e && e.stopPropagation()
+    // this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
+    const { processInfo: { id: flow_instance_id }, itemValue } = this.props
+    const { id: flow_node_instance_id } = itemValue
+    const { rejectMessage } = this.state
+    if (!rejectMessage) return
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/rejectProcessTask',
+      payload: {
+        flow_instance_id,
+        flow_node_instance_id,
+        message: rejectMessage,
+        calback: () => {
+          this.setState({
+            rejectMessage: ''
+          })
+        }
+      }
+    })
+  }
+
+
+  // ------------- 审批驳回气泡弹框事件 --------
 
   // 理解成是否是有效的头像
   isValidAvatar = (avatarUrl = '') =>
@@ -88,70 +165,118 @@ export default class BeginningStepTwo extends Component {
     return { stylCircle, stylLine }
   }
 
-  // 渲染通过 | 驳回 的成员以及内容
-  renderApprovePersonnelSuggestion = (item) => {
-    const { type, user_id, avatar, name, suggestion, create_time } = item
-    return (
-      <div>
-        <div className={indexStyles.appListWrapper}>
-          <div className={indexStyles.app_left}>
-            <div className={indexStyles.approve_user} style={{ position: 'relative', marginRight: '16px' }}>
-              {/* <div className={indexStyles.defaut_avatar}></div> */}
-              {
-                avatar ? (
-                  <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar} />
-                ) : (
-                    <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={defaultUserAvatar} />
+    // 渲染通过 | 驳回 的成员以及内容
+    renderApprovePersonnelSuggestion = (item) => {
+      const { type, id, comment, user_id, processed, avatar, name, suggestion, create_time, time } = item
+      return (
+        <div>
+          <div className={indexStyles.appListWrapper}>
+            <div className={indexStyles.app_left}>
+              <div className={indexStyles.approve_user} style={{ position: 'relative', marginRight: '16px' }}>
+                {/* <div className={indexStyles.defaut_avatar}></div> */}
+                {
+                  avatar ? (
+                    <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar} />
+                  ) : (
+                      <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={defaultUserAvatar} />
+                    )
+                }
+                {
+                  processed == '2' && (
+                    <span className={`${globalStyles.authTheme} ${indexStyles.approve_userIcon}`}>&#xe849;</span>
                   )
-              }
-              {
-                type == '1' ? (
-                  <span className={`${globalStyles.authTheme} ${indexStyles.approve_userIcon}`}>&#xe849;</span>
-                ) : (
-                    <span className={`${globalStyles.authTheme} ${indexStyles.approve_reject_userIcon}`}>&#xe844;</span>
-                  )
-              }
-
+                }
+  
+              </div>
+              <div>
+                <span>{name}</span>
+                {/* {
+                  type == '1' ? (
+                    <span className={indexStyles.approv_pass}>通过</span>
+                  ) : (
+                      <span className={indexStyles.approve_reject}>驳回</span>
+                    )
+                } */}
+                <div>{comment ? comment : '未填写意见'}</div>
+              </div>
             </div>
-            <div>
-              <span>{name}</span>
-              {
-                type == '1' ? (
-                  <span className={indexStyles.approv_pass}>通过</span>
-                ) : (
-                    <span className={indexStyles.approve_reject}>驳回</span>
-                  )
-              }
-              <div>{suggestion ? suggestion : '未填写意见'}</div>
-            </div>
+            <div className={indexStyles.app_right}>{timestampToTimeNormal(time, '/', true) || ''}</div>
           </div>
-          <div className={indexStyles.app_right}>{timestampToTimeNormal(create_time, '/', true)}</div>
         </div>
-      </div>
-    )
-  }
+      )
+    }
+
+  // // 渲染通过 | 驳回 的成员以及内容
+  // renderApprovePersonnelSuggestion = (item) => {
+  //   const { type, user_id, avatar, name, suggestion, create_time } = item
+  //   return (
+  //     <div>
+  //       <div className={indexStyles.appListWrapper}>
+  //         <div className={indexStyles.app_left}>
+  //           <div className={indexStyles.approve_user} style={{ position: 'relative', marginRight: '16px' }}>
+  //             {/* <div className={indexStyles.defaut_avatar}></div> */}
+  //             {
+  //               avatar ? (
+  //                 <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar} />
+  //               ) : (
+  //                   <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={defaultUserAvatar} />
+  //                 )
+  //             }
+  //             {
+  //               type == '1' ? (
+  //                 <span className={`${globalStyles.authTheme} ${indexStyles.approve_userIcon}`}>&#xe849;</span>
+  //               ) : (
+  //                   <span className={`${globalStyles.authTheme} ${indexStyles.approve_reject_userIcon}`}>&#xe844;</span>
+  //                 )
+  //             }
+
+  //           </div>
+  //           <div>
+  //             <span>{name}</span>
+  //             {
+  //               type == '1' ? (
+  //                 <span className={indexStyles.approv_pass}>通过</span>
+  //               ) : (
+  //                   <span className={indexStyles.approve_reject}>驳回</span>
+  //                 )
+  //             }
+  //             <div>{suggestion ? suggestion : '未填写意见'}</div>
+  //           </div>
+  //         </div>
+  //         <div className={indexStyles.app_right}>{timestampToTimeNormal(create_time, '/', true)}</div>
+  //       </div>
+  //     </div>
+  //   )
+  // }
+
+
 
   // 渲染驳回的内容
   renderPopRjectContent = () => {
+    const { itemValue } = this.props
+    const { rejectMessage } = this.state
     return (
       <div className={indexStyles.popcontent}>
-        <TextArea placeholder="驳回请填写驳回理由（必填）" className={indexStyles.c_area} />
+        <TextArea onChange={this.handleRejectTextAreaValue} value={rejectMessage || ''} placeholder="驳回请填写驳回理由（必填）" className={indexStyles.c_area} />
       </div>
     )
   }
 
   // 渲染通过的内容
   renderPopConfirmContent = () => {
+    const { itemValue } = this.props
+    // const { successfulMessage } = itemValue
+    const { successfulMessage } = this.state
     return (
       <div className={indexStyles.popcontent}>
-        <TextArea placeholder="填写审批意见（选填）" className={indexStyles.c_area} />
+        <TextArea onChange={this.handleChangeTextAreaValue} value={successfulMessage || ''} placeholder="填写审批意见（选填）" className={indexStyles.c_area} />
       </div>
     )
   }
 
   renderEditDetailContent = () => {
     const { itemValue } = this.props
-    const { approvePersonnelList = [] } = this.state
+    const { approvePersonnelList = [], rejectMessage, transPrincipalList = [] } = this.state
     const { approve_type, status } = itemValue
     let type_name = ''
     const diffType = () => {
@@ -177,7 +302,7 @@ export default class BeginningStepTwo extends Component {
           <span className={globalStyles.authTheme}>&#xe616; 审批方式 : &nbsp;&nbsp;&nbsp;{diffType()}</span>
           {/* {this.renderApprovePersonnelSuggestion()} */}
           {
-            approvePersonnelList.map(item => {
+            status == '2' && transPrincipalList.map(item => {
               return (this.renderApprovePersonnelSuggestion(item))
             })
           }
@@ -186,10 +311,27 @@ export default class BeginningStepTwo extends Component {
         {
           status == '1' && (
             <div className={indexStyles.button_wrapper} style={{ paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center', position: 'relative' }}>
-              <Popconfirm className={indexStyles.confirm_wrapper} icon={<></>} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={this.renderPopRjectContent()} okText="驳回">
-                <Button onClick={this.handleEnterConfigureProcess} style={{ color: '#fff', background: '#FF7875', marginRight: '8px' }}>驳回</Button>
+              <Popconfirm 
+                className={indexStyles.confirm_wrapper} icon={<></>} 
+                getPopupContainer={triggerNode => triggerNode.parentNode} 
+                placement="top" title={this.renderPopRjectContent()} 
+                okText="驳回" 
+                okButtonProps={{disabled: rejectMessage ? false : true}} 
+                onCancel={this.handleCancelRejectProcess} 
+                onConfirm={this.handleRejectProcess}
+                onVisibleChange={this.onVisibleChange}
+              >
+                <Button style={{ color: '#fff', background: '#FF7875', marginRight: '8px', border: 'none' }}>驳回</Button>
               </Popconfirm>
-              <Popconfirm className={indexStyles.confirm_wrapper} icon={<></>} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={this.renderPopConfirmContent()} okText="通过">
+              <Popconfirm 
+                onVisibleChange={this.onVisibleChange} 
+                className={indexStyles.confirm_wrapper} icon={<></>} 
+                getPopupContainer={triggerNode => triggerNode.parentNode} 
+                placement="top" title={this.renderPopConfirmContent()} 
+                okText="通过" 
+                onCancel={this.handleCancelSuccessProcess} 
+                onConfirm={this.handlePassProcess}
+              >
                 <Button type="primary">通过</Button>
               </Popconfirm>
             </div>
@@ -205,6 +347,7 @@ export default class BeginningStepTwo extends Component {
    */
   renderAbsoluteContent = () => {
     const { itemKey, processEditDatas = [], itemValue } = this.props
+    const { name } = itemValue
     const { transPrincipalList = [], is_show_spread_arrow } = this.state
     return (
       <div id="currentAbsoluteApproveContainer" key={itemKey} style={{ display: 'flex', marginBottom: '46px', marginRight: '32px', left: '32px', right: 0, position: 'absolute', top: '478px', zIndex: 1 }}>
@@ -217,7 +360,7 @@ export default class BeginningStepTwo extends Component {
               <div className={`${indexStyles.node_name}`}>
                 <div>
                   <span className={`${globalStyles.authTheme} ${indexStyles.stepTypeIcon}`}>&#xe616;</span>
-                  <span>建设部门审批</span>
+                  <span>{name}</span>
                 </div>
                 <div>
                   <span onClick={this.handleSpreadArrow} className={`${indexStyles.spreadIcon}`}>
@@ -359,6 +502,6 @@ export default class BeginningStepTwo extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [] } }) {
-  return { processEditDatas }
+function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [], processInfo = {} } }) {
+  return { processEditDatas, processInfo }
 }

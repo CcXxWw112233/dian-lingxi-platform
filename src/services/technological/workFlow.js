@@ -147,3 +147,17 @@ export async function fillFormComplete(data) {
     data
   })
 }
+
+/**
+ * 驳回
+ * @param {String} flow_instance_id 当前流程的ID 
+ * @param {String} flow_node_instance_id 当前流程节点的ID 
+ * @param {String} message 驳回意见
+ */
+export async function rejectProcessTask(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/flow/task/reject`,
+    method: 'PUT',
+    data
+  })
+}

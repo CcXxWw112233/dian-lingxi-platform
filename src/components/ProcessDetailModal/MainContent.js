@@ -108,12 +108,20 @@ export default class MainContent extends Component {
         circle.save()
         circle.lineWidth = lineWidth;
         let color = 'rgba(0,0,0,0.04)'
-        if (Number(curr_node_sort) === Number(processEditDatas[i].sort)) {
+        // if (Number(curr_node_sort) === Number(processEditDatas[i].sort)) {
+        //   color = 'rgba(24,144,255,1)' // 蓝色
+        // } else if (Number(processEditDatas[i].sort) < Number(curr_node_sort)) {
+        //   color = 'rgba(24,144,255,1)' // 蓝色
+        //   color = 'rgba(83,196,26,1)' // 绿色
+        // } else if (Number(processEditDatas[i].sort) > Number(curr_node_sort)) {
+        //   color = '#f2f2f2'
+        // }
+        if (processEditDatas[i].status == '2') {// 表示完成
           color = 'rgba(24,144,255,1)' // 蓝色
-        } else if (Number(processEditDatas[i].sort) < Number(curr_node_sort)) {
-          color = 'rgba(83,196,26,1)' // 绿色
-        } else if (Number(processEditDatas[i].sort) > Number(curr_node_sort)) {
-          color = '#f2f2f2'
+        } else if (processEditDatas[i].status == '1') { // 表示进行中
+          color = 'rgba(0,0,0,0.04)'
+        } else if (processEditDatas[i].status == '0') { // 表示未开始
+          color = 'rgba(0,0,0,0.04)'
         }
         circle.strokeStyle = color; //curr_node_sort
         circle.arc(x0, y0, r, 0.6 * Math.PI + i * 1.83 / length * Math.PI, 0.6 * Math.PI + i * 1.83 / length * Math.PI + 1.83 / length * Math.PI - 0.03 * Math.PI, false);///用于绘制圆弧context.arc(x坐标，y坐标，半径，起始角度，终止角度，顺时针/逆时针)
@@ -521,6 +529,7 @@ export default class MainContent extends Component {
     const { clientHeight } = this.state
     const { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep } = this.props
     let saveTempleteDisabled = currentFlowInstanceName == '' || (processEditDatas && processEditDatas.length) && processEditDatas[processEditDatas.length - 1].is_edit == '0' || (processEditDatas && processEditDatas.length) && !(processEditDatas[processEditDatas.length - 1].node_type) ? true : false
+    let curr_node_sort = (processEditDatas && processEditDatas.length) && processEditDatas.findIndex(item => item.status == '1')
     return (
       <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto', position: 'relative' }} onScroll={this.onScroll} >
         <div id="container_configureTop" className={indexStyles.configure_top}>
@@ -538,7 +547,7 @@ export default class MainContent extends Component {
               fontWeight: 400,
               color: 'rgba(140,140,140,1)',
               lineHeight: '17px'
-            }}>{processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0}/{processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0}</span>
+            }}>{Number(curr_node_sort) + 1 ? Number(curr_node_sort) + 1 : processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0}/{processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0}</span>
             <span style={{
               position: 'absolute',
               top: '110px',
@@ -549,7 +558,7 @@ export default class MainContent extends Component {
               fontWeight: 400,
               color: 'rgba(89,89,89,1)',
               lineHeight: '30px'
-            }}>新建{processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0}步</span>
+            }}>{processPageFlagStep == '4' ? '剩余' : '新建'}{processPageFlagStep == '4' ? Number(processEditDatas.length) - (Number(curr_node_sort)) : processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0}步</span>
             <div style={{ paddingTop: '32px', paddingRight: '32px', flex: 1, float: 'left', width: '977px', height: '210px' }}>
               {/* 显示流程名称 */}
               <div style={{ marginBottom: '12px' }}>

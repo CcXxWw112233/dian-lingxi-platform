@@ -6,7 +6,7 @@ import { MESSAGE_DURATION_TIME, FILES, FLOWS } from "../../../globalset/js/const
 import { getSubfixName } from '../../../utils/businessFunction'
 import QueryString from 'querystring'
 import { processEditDatasConstant, processEditDatasRecordsConstant, processDoingListMatch, processInfoMatch } from '../../../components/ProcessDetailModal/constant';
-import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete } from "../../../services/technological/workFlow"
+import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete, rejectProcessTask } from "../../../services/technological/workFlow"
 
 let board_id = null
 let appsSelectKey = null
@@ -268,8 +268,10 @@ export default {
 
     // 流程节点步骤的完成
     * fillFormComplete({ payload }, { call, put }) {
-      const { flow_instance_id } = payload
-      let res = yield call(fillFormComplete,payload)
+      const { flow_instance_id, calback } = payload
+      let newPayload = {...payload}
+      newPayload.calback ? delete newPayload.calback : ''
+      let res = yield call(fillFormComplete,newPayload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'getProcessInfo',
@@ -280,6 +282,27 @@ export default {
             }
           }
         })
+        if (calback && typeof calback == 'function') calback()
+      }
+    },
+
+    // 驳回节点
+    * rejectProcessTask({ payload }, { call, put }) {
+      const { flow_instance_id, calback } = payload
+      let newPayload = {...payload}
+      newPayload.calback ? delete newPayload.calback : ''
+      let res = yield call(rejectProcessTask,newPayload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'getProcessInfo',
+          payload: {
+            id:flow_instance_id,
+            calback: () => {
+              message.success('已驳回节点', MESSAGE_DURATION_TIME)
+            }
+          }
+        })
+        if (calback && typeof calback == 'function') calback()
       }
     },
   },

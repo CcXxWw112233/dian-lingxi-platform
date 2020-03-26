@@ -116,7 +116,7 @@ export default class AccomplishStepOne extends Component {
           (
             <div className={indexStyles.select_remarks}>
               <span className={globalStyles.authTheme}>&#xe636; 备注 :</span>
-              <div>Ant Design是一个服务于企业级产品的设计体系，基于『确定』和『自然』的设计价值观和模块化的解决方案，让设计者专注于更好的用户体验。</div>
+              <div>{description}</div>
             </div>
           )
         }
