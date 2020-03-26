@@ -111,10 +111,14 @@ export default class ConfigureStepTypeTwo extends Component {
     this.updateConfigureProcess({ value: e.target.value }, 'approve_type')
   }
 
+  approveValueChange = (value) => {
+    this.updateConfigureProcess({ value: Number(value) }, 'approve_value')
+  }
+
   render() {
     const { itemValue, itemKey, projectDetailInfoData = {} } = this.props
     const { data, board_id, org_id } = projectDetailInfoData
-    const { approve_type } = itemValue
+    const { approve_type, approve_value } = itemValue
     let approvalsList = this.filterAssignees()
     return (
       <div>
@@ -127,7 +131,7 @@ export default class ConfigureStepTypeTwo extends Component {
             <Radio value="2">并签</Radio>
             <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title="所有审批人员可同时审批"><span className={`${globalStyles.authTheme} ${indexStyles.approve_tips}`}>&#xe845;</span></Tooltip>
             <Radio value="3">汇签 ≥</Radio>
-            <span style={{ marginRight: '4px' }}><InputNumber precision="0.1" min={1} max={100} />&nbsp;&nbsp;%&nbsp;&nbsp;通过</span>
+            <span style={{ marginRight: '4px' }}><InputNumber value={approve_value} disabled={approve_type == '3' ? false : true} onChange={this.approveValueChange} precision="0.1" min={1} max={100} />&nbsp;&nbsp;%&nbsp;&nbsp;通过</span>
             <Tooltip overlayStyle={{ minWidth: '418px' }} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title="审批过程不公开其他审批人的意见，所有审批人审批后，公开所有审批意见，如通过率达到设定的标准，则审批通过。"><span className={`${globalStyles.authTheme} ${indexStyles.approve_tips}`}>&#xe845;</span></Tooltip>
           </Radio.Group>
         </div>
@@ -179,7 +183,7 @@ export default class ConfigureStepTypeTwo extends Component {
                             <span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${indexStyles.userItemDeleBtn}`}></span>
                           </div>
                           {
-                            <span style={{ color: 'rgba(0,0,0,0.25)' }} className={globalStyles.authTheme}>&#xe61f;</span>
+                            approve_type == '1' && <span style={{ color: 'rgba(0,0,0,0.25)' }} className={globalStyles.authTheme}>&#xe61f;</span>
                           }
                         </div>
                       )

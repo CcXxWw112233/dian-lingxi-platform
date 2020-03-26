@@ -646,7 +646,7 @@ export default class MainContent extends Component {
         <div id="suspensionFlowInstansNav" className={`${indexStyles.suspensionFlowInstansNav}`}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
-              <span style={{ color: 'rgba(0,0,0,0.85)', fontSize: '16px', fontWeight: 500 }}>{currentFlowInstanceName} (1/2)</span>
+            <span style={{ color: 'rgba(0,0,0,0.85)', fontSize: '16px', fontWeight: 500 }}>{currentFlowInstanceName} {Number(curr_node_sort) + 1 ? Number(curr_node_sort) + 1 : processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0}/{processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0}</span>
             </div>
             <div>
               <span onClick={this.handleBackToTop} style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe63d; 回到顶部</span>

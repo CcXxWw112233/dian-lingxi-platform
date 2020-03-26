@@ -99,7 +99,7 @@ export default class EditStepTypeTwo extends Component {
         case '2':
           type_name = '并签'
           break;
-        case '1':
+        case '3':
           type_name = '汇签'
           break;
         default:
