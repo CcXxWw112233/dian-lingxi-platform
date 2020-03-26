@@ -43,6 +43,9 @@ export const checkIsHasPermission = (code, param_org_id) => {
       return currentOrgPermissions.includes(code)
     }
   } else {
+    if (!Array.isArray(organizationMemberPermissions)) {
+      return false
+    }
     return organizationMemberPermissions.includes(code)
   }
 
