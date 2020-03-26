@@ -253,7 +253,7 @@ export default class GanttFace extends Component {
       })
     }
     //更新任务位置信息
-    this.beforeHandListGroup()
+    // this.beforeHandListGroup()
     const that = this
     const { group_view_type, outline_tree } = this.props
     if (!ganttIsOutlineView({ group_view_type })) { //非大纲视图

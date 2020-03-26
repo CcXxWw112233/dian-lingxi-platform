@@ -32,14 +32,14 @@ export const getGlobalData = (name) => {
 export const checkIsHasPermission = (code, param_org_id) => {
   const OrganizationId = localStorage.getItem('OrganizationId')
   const organizationMemberPermissions = JSON.parse(localStorage.getItem('userOrgPermissions')) || []
-  if (!Array.isArray(organizationMemberPermissions)) {
-    return false
-  }
   if (OrganizationId == '0') { //全组织下需要取出传入组织对应的权限
     if (!param_org_id) {
       return true
     } else {
       const currentOrgPermissions = organizationMemberPermissions[param_org_id] || []
+      if (!Array.isArray(currentOrgPermissions)) {
+        return false
+      }
       return currentOrgPermissions.includes(code)
     }
   } else {
