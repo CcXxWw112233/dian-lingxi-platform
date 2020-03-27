@@ -129,10 +129,10 @@ export default {
         payload: {}
       })
       //获取当前的用户当前组织的项目列表,
-      yield put({
-        type: 'getCurrentOrgProjectList',
-        payload: {}
-      })
+      // yield put({
+      //   type: 'getCurrentOrgProjectList',
+      //   payload: {}
+      // })
       //获取用户当前组织的组织成员(如果非全组织，而是具有确认组织的情况下调用)
       if (localStorage.getItem('OrganizationId') != '0') {
         yield put({
@@ -596,21 +596,21 @@ export default {
       }
     },
 
-    * getCurrentOrgProjectList({ payload }, { select, call, put }) {
+    // * getCurrentOrgProjectList({ payload }, { select, call, put }) {
 
-      let res = yield call(getProjectList, payload)
-      if (isApiResponseOk(res)) {
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            currentOrgProjectList: res.data
-          }
-        })
-      } else {
+    //   let res = yield call(getProjectList, payload)
+    //   if (isApiResponseOk(res)) {
+    //     yield put({
+    //       type: 'updateDatas',
+    //       payload: {
+    //         currentOrgProjectList: res.data
+    //       }
+    //     })
+    //   } else {
 
-      }
-      return res || {}
-    },
+    //   }
+    //   return res || {}
+    // },
     * fetchCurrentOrgAllMembers({ payload }, { call, put }) {
       let res = yield call(getCurrentOrgAllMembers, { ...payload })
       // console.log(res, 'fetchCurrentOrgAllMembers+++++++++++')
