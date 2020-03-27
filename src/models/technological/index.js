@@ -13,7 +13,7 @@ import {
   setShowSimpleModel,
 } from '../../services/technological/organizationMember'
 import { getMenuList } from '../../services/technological/getMenuList'
-import { getProjectList, getCurrentOrgAllMembers, createMeeting, getVideoConferenceProviderList } from './../../services/technological/workbench'
+import { getCurrentOrgAllMembers, createMeeting, getVideoConferenceProviderList } from './../../services/technological/workbench'
 import { getCurrentNounPlan } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
@@ -129,10 +129,10 @@ export default {
         payload: {}
       })
       //获取当前的用户当前组织的项目列表,
-      // yield put({
-      //   type: 'getCurrentOrgProjectList',
-      //   payload: {}
-      // })
+      yield put({
+        type: 'workbench/getProjectList',
+        payload: {}
+      })
       //获取用户当前组织的组织成员(如果非全组织，而是具有确认组织的情况下调用)
       if (localStorage.getItem('OrganizationId') != '0') {
         yield put({

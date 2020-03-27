@@ -83,10 +83,6 @@ export default modelExtend(technological, {
                 init_load: true
               }
             }),
-            dispatch({
-              type: 'getProjectList',
-              payload: {}
-            }),
               // dispatch({
               //   type: 'getBoxUsableList',
               //   payload: {}

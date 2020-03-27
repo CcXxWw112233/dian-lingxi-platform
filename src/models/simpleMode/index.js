@@ -59,10 +59,6 @@ export default {
 
             if (initFlag) {
                 yield put({
-                    type: 'getProjectList',
-                    payload: {}
-                });
-                yield put({
                     type: 'getOrgBoardData'
                 });
                 // yield put({

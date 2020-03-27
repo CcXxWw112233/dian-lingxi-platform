@@ -166,33 +166,6 @@ class BoardDropdownSelect extends Component {
   }
 
   handleSubmitNewProject = data => {
-    // const { dispatch } = this.props;
-    // Promise.resolve(
-    //   dispatch({
-    //     type: 'project/addNewProject',
-    //     payload: {
-    //       ...data,
-    //       calback: () => {
-    //         dispatch({
-    //           type: 'workbench/getProjectList',
-    //           payload: {}
-    //         });
-    //       }
-    //     }
-    //   })
-    // )
-    //   .then((res) => {
-    //     if (isApiResponseOk(res)) {
-    //       dispatch({
-    //         type: 'workbench/getProjectList',
-    //         payload: {}
-    //       });
-    //     }
-    //   })
-    //   .then(() => {
-    //     this.setAddProjectModalVisible();
-    //   });
-
     const { dispatch } = this.props;
     this.setAddProjectModalVisible();
     const calback = (id, name) => {
@@ -228,10 +201,6 @@ class BoardDropdownSelect extends Component {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    dispatch({
-      type: 'workbench/getProjectList',
-      payload: {}
-    })
   }
 
   getMenuItemList(projectList) {
