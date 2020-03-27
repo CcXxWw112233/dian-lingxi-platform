@@ -189,3 +189,15 @@ export async function workflowDelete(params) {
     headers: createHeaderContentDataByFlowInstantId(params.id)
   })
 }
+
+/**
+ * 重启流程实例
+ */
+export async function restartProcess(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/workflow/restart`,
+    method: 'GET',
+    params,
+    headers: createHeaderContentDataByFlowInstantId(params.id)
+  })
+}

@@ -6,7 +6,7 @@ import { MESSAGE_DURATION_TIME, FILES, FLOWS } from "../../../globalset/js/const
 import { getSubfixName } from '../../../utils/businessFunction'
 import QueryString from 'querystring'
 import { processEditDatasConstant, processEditDatasRecordsConstant, processDoingListMatch, processInfoMatch } from '../../../components/ProcessDetailModal/constant';
-import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete, rejectProcessTask, workflowEnd, workflowDelete } from "../../../services/technological/workFlow"
+import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete, rejectProcessTask, workflowEnd, workflowDelete, restartProcess } from "../../../services/technological/workFlow"
 import {public_selectCurrentFlowTabsStatus} from './select'
 
 let board_id = null
@@ -346,6 +346,25 @@ export default {
         message.warn(res.message)
       }
     },
+
+    // 重启流程
+    * restartProcess({ payload }, { call, select, put }) {
+      const { id, board_id, calback } = payload
+      let status = yield select(public_selectCurrentFlowTabsStatus) || '1'
+      let res = yield call(restartProcess, {id})
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'getProcessListByType',
+          payload: {
+            status,
+            board_id
+          }
+        })
+        if (calback && typeof calback == 'function') calback()
+      } else {
+        message.warn(res.message)
+      }
+    }
   },
   reducers: {
     updateDatas(state, action) {

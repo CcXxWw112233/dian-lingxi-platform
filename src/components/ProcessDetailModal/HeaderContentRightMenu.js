@@ -399,6 +399,24 @@ export default class HeaderContentRightMenu extends Component {
     });
   }
 
+  // 重启流程的点击事件
+  handleReStartProcess = () => {
+    const { projectDetailInfoData: { board_id }, processInfo: { id } } = this.props
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/restartProcess',
+      payload: {
+        id,
+        board_id,
+        calback: () => {
+          setTimeout(() => {
+            message.success(`重启${currentNounPlanFilterName(FLOWS)}成功`)
+          }, 200)
+          this.props.onCancel && this.props.onCancel()
+        }
+      }
+    })
+  }
+
 
   handleSelectMenuItem = (e) => {
     const { key } = e
@@ -410,6 +428,7 @@ export default class HeaderContentRightMenu extends Component {
         this.handleDeletProcess()
         break
       case 'restart': // 表示匹配重启
+        this.handleReStartProcess()
         break
       default:
         break;
