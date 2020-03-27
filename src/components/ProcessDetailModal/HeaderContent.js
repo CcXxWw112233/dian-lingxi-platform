@@ -9,7 +9,8 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 @connect(mapStateToProps)
 export default class HeaderContent extends Component {
   render() {
-    const { is_show_org_name, is_all_org, currentUserOrganizes = [], org_id, processPageFlagStep } = this.props
+    const { projectDetailInfoData: { org_id, board_id, board_name } } = this.props
+    const { is_show_org_name, is_all_org, currentUserOrganizes = [], processPageFlagStep, currentFlowInstanceName } = this.props
     return (
       <div className={indexStyles.detail_head}>
         {/* 这里是头部左边 */}
@@ -26,7 +27,7 @@ export default class HeaderContent extends Component {
          
           {/* 这里是小导航 */}
           <span className={indexStyles.bread_nav}>
-            <span className={indexStyles.bread_board_name}>我的天</span>
+            <span className={indexStyles.bread_board_name}>{board_name}</span>
             {
               is_show_org_name && is_all_org && (
                 <span className={indexStyles.bread_org_name}>
@@ -35,7 +36,7 @@ export default class HeaderContent extends Component {
               )
             }
             <span className={indexStyles.arrow_right}></span>
-            <span className={indexStyles.current_name}>{processPageFlagStep == '1' ? '新建模板' : ''}</span>
+            <span className={indexStyles.current_name}>{processPageFlagStep == '1' ? '新建模板' :`${currentFlowInstanceName}`}</span>
           </span>
         </div>
         {/* 这里是头部右边 */}
@@ -48,6 +49,6 @@ export default class HeaderContent extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { processPageFlagStep }, technological: { datas: { currentUserOrganizes = [], is_all_org, is_show_org_name } } }) {
-  return { processPageFlagStep, currentUserOrganizes, is_show_org_name, is_all_org }
+function mapStateToProps({ publicProcessDetailModal: { processPageFlagStep, currentFlowInstanceName }, projectDetail: { datas: { projectDetailInfoData = {} } }, technological: { datas: { currentUserOrganizes = [], is_all_org, is_show_org_name } } }) {
+  return { processPageFlagStep, currentFlowInstanceName, projectDetailInfoData, currentUserOrganizes, is_show_org_name, is_all_org }
 }
