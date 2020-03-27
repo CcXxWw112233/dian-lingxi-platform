@@ -303,7 +303,7 @@ export default class GetRowGanttItem extends Component {
                         data-start_time={timestamp}
                         data-end_time={timestampEnd}
                         key={timestamp}
-                        style={{ backgroundColor: (week_day == 0 || week_day == 6) ? 'rgba(0, 0, 0, 0.04)' : (isToday(timestamp) ? 'rgb(242, 251, 255)' : 'rgba(0,0,0,.02)') }}
+                        style={{ backgroundColor: isToday(timestamp) ? 'rgb(242, 251, 255)' : ((week_day == 0 || week_day == 6) ? 'rgba(0, 0, 0, 0.04)' : 'rgba(0,0,0,.02)') }}
                       >
                         {/* 12为上下margin的总和 */}
                         {

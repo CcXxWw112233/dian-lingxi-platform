@@ -385,9 +385,15 @@ export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenI
       is_new_board,
       list_group: [],
       outline_tree: [],
-      group_view_type: new_group_view_type
+      group_view_type: new_group_view_type,
+      target_scrollTop: 0
     }
   })
+
+  const target = document.getElementById('gantt_card_out_middle')
+  if (target) {
+    target.scrollTop = 0
+  }
 
   // console.log('sssss', window.location)
   const hash = window.location.hash

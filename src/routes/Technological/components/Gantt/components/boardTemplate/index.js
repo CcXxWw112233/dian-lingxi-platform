@@ -663,7 +663,7 @@ export default class BoardTemplate extends Component {
 
     render() {
         const { template_data, selected_template_name, spinning, project_templete_scheme_visible, contain_height, checkedKeys = [], safeConfirmModalVisible } = this.state
-        const { gantt_board_id, boardTemplateShow } = this.props
+        const { gantt_board_id, boardTemplateShow, group_view_type } = this.props
         return (
             gantt_board_id && gantt_board_id != '0' ?
                 (
@@ -672,6 +672,7 @@ export default class BoardTemplate extends Component {
                         style={{
                             height: contain_height,
                             // top: date_area_height
+                            visibility: group_view_type != '2' ? 'visible' : 'hidden'
                         }}>
                         <div
                             style={{ height: date_area_height }}
@@ -772,10 +773,10 @@ export default class BoardTemplate extends Component {
                             className={`${styles.switchExpand}`}
                             style={{
                                 top: contain_height / 2,
-                                right   : boardTemplateShow == 1?'280px':'20px'
+                                right: boardTemplateShow == 1 ? '280px' : '20px'
                             }} >
                             {/* <div className={`${styles.switchExpandOpen} ${globalStyles.authTheme}`}>&#xe687;</div> */}
-                            <div className={`${styles.switchExpandIcon}`}>{boardTemplateShow == 1 ? <span className={globalStyles.authTheme}>&#xe689;</span> : <span className={globalStyles.authTheme}>&#xe687;</span> }</div>
+                            <div className={`${styles.switchExpandIcon}`}>{boardTemplateShow == 1 ? <span className={globalStyles.authTheme}>&#xe689;</span> : <span className={globalStyles.authTheme}>&#xe687;</span>}</div>
                         </div>
                         <BoardTemplateManager
                             _organization_id={localStorage.getItem('OrganizationId') != '0' ? localStorage.getItem('OrganizationId') : getGlobalData('aboutBoardOrganizationId')}
@@ -800,6 +801,7 @@ function mapStateToProps({
             is_new_board,
             boardTemplateShow,
             outline_tree,
+            group_view_type
         }
     },
     technological: { datas: { userBoardPermissions = [] } },
@@ -810,6 +812,7 @@ function mapStateToProps({
         is_new_board,
         userBoardPermissions,
         boardTemplateShow,
-        outline_tree
+        outline_tree,
+        group_view_type
     }
 }
