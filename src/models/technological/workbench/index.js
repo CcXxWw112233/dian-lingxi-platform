@@ -96,6 +96,12 @@ export default modelExtend(technological, {
             // })
           }
           initData()
+          dispatch({
+            type: 'getProjectList',
+            payload: {
+
+            }
+          })
         }
       })
     },

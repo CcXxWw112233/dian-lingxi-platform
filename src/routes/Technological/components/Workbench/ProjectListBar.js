@@ -101,23 +101,21 @@ class ProjectListBar extends Component {
 
   handleSubmitNewProject = data => {
     const { dispatch } = this.props;
-    Promise.resolve(
+    const calback = () => {
       dispatch({
-        type: 'project/addNewProject',
-        payload: data
-      })
-    )
-      .then(() => {
-        dispatch({
-          type: 'workbench/getProjectList',
-          payload: {}
-        });
-      })
-      .then(() => {
-        // this.setAddProjectModalVisible();
-        const { workbench_show_gantt_card } = this.props
-        workbench_show_gantt_card == '1' && afterCreateBoardUpdateGantt(dispatch) //新建项目后，如果是在甘特图页面，则查询下甘特图数据
+        type: 'workbench/getProjectList',
+        payload: {}
       });
+      const { workbench_show_gantt_card } = this.props
+      workbench_show_gantt_card == '1' && afterCreateBoardUpdateGantt(dispatch) //新建项目后，如果是在甘特图页面，则查询下甘特图数据
+    }
+    dispatch({
+      type: 'project/addNewProject',
+      payload: {
+        ...data,
+        calback
+      }
+    })
   };
   isVisitor = param => {
     //是否访客 1不是 0是
@@ -154,7 +152,7 @@ class ProjectListBar extends Component {
     return
     const { dispatch, workbench_show_gantt_card } = this.props
     const { projectTabCurrentSelectedProject } = this.props
-    if(workbench_show_gantt_card != '1') {
+    if (workbench_show_gantt_card != '1') {
       return
     }
     dispatch({
@@ -169,7 +167,7 @@ class ProjectListBar extends Component {
         tab_board_id: id
       }
     })
-    if(id !== '0') {
+    if (id !== '0') {
       dispatch({
         type: 'workbench/fetchCurrentSelectedProjectMembersList',
         payload: {
@@ -179,10 +177,10 @@ class ProjectListBar extends Component {
     }
   }
   renderProjectListBarCreateNewProject = () => {
-    return(
+    return (
       <span onClick={e => this.handleCreateNewProject(e)} className={styles.createProject_cell}>
-      <i className={`${globalStyles.authTheme}`}>&#xe782;</i>
-    <span style={{marginLeft: '3px'}}>新建项目</span></span>
+        <i className={`${globalStyles.authTheme}`}>&#xe782;</i>
+        <span style={{ marginLeft: '3px' }}>新建项目</span></span>
     )
   }
   componentDidMount() {
@@ -226,43 +224,43 @@ class ProjectListBar extends Component {
         // })
       }, 500)
     }
-    
+
   }
 
-    // 观察者模式
-    listenProjectListBarItemWrapper() {
-      const that = this;
-      // Firefox和Chrome早期版本中带有前缀
-      const MutationObserver =
-        window.MutationObserver ||
-        window.WebKitMutationObserver ||
-        window.MozMutationObserver;
-      // 选择目标节点
-      const target = this.listRef && this.listRef.current;
-      if (!target) {
-        return
-      }
-      // 创建观察者对象
-      const observer = new MutationObserver(function (mutations) {
-        target.childNodes.forEach(childNode => {
-          console.log(childNode.offsetTop, 'ssssssss')
-        })
-        // mutations.forEach(function (mutation) {
-          
-        // });
-      });
-      // 配置观察选项:
-      const config = {
-        attributes: true, //检测属性变动
-        subtree: true,
-        childList: true,//检测子节点变动
-        characterData: true//节点内容或节点文本的变动。
-      };
-      // 传入目标节点和观察选项
-      observer.observe(target, config);
-      // /停止观察
-      // observer.disconnect();
+  // 观察者模式
+  listenProjectListBarItemWrapper() {
+    const that = this;
+    // Firefox和Chrome早期版本中带有前缀
+    const MutationObserver =
+      window.MutationObserver ||
+      window.WebKitMutationObserver ||
+      window.MozMutationObserver;
+    // 选择目标节点
+    const target = this.listRef && this.listRef.current;
+    if (!target) {
+      return
     }
+    // 创建观察者对象
+    const observer = new MutationObserver(function (mutations) {
+      target.childNodes.forEach(childNode => {
+        console.log(childNode.offsetTop, 'ssssssss')
+      })
+      // mutations.forEach(function (mutation) {
+
+      // });
+    });
+    // 配置观察选项:
+    const config = {
+      attributes: true, //检测属性变动
+      subtree: true,
+      childList: true,//检测子节点变动
+      characterData: true//节点内容或节点文本的变动。
+    };
+    // 传入目标节点和观察选项
+    observer.observe(target, config);
+    // /停止观察
+    // observer.disconnect();
+  }
 
   handleWinResize = () => {
     const { projectList } = this.props;
@@ -301,7 +299,7 @@ class ProjectListBar extends Component {
           });
         }
       }, 200)
-      
+
     }
   };
 
@@ -310,10 +308,10 @@ class ProjectListBar extends Component {
       <div className={styles.dropDownMenuWrapper}>
         <Menu onClick={this.onClick} style={{ minWidth: '120px' }}>
           {(dropDownMenuItemList && dropDownMenuItemList.length) && dropDownMenuItemList.map(item => (
-            <Menu.Item key={item.board_id}><span style={{userSelect: 'none'}}>{item.board_name}</span></Menu.Item>
+            <Menu.Item key={item.board_id}><span style={{ userSelect: 'none' }}>{item.board_name}</span></Menu.Item>
           ))}
           {/* {!isVisitor && checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && <Menu.Item key='create_project'><span style={{userSelect: 'none'}}><i className={`${globalStyles.authTheme}`}>&#xe782;</i>新建项目</span></Menu.Item>} */}
-          {checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && <Menu.Item key='create_project'><span style={{userSelect: 'none'}}><i className={`${globalStyles.authTheme}`}>&#xe782;</i>新建项目</span></Menu.Item>}
+          {checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && <Menu.Item key='create_project'><span style={{ userSelect: 'none' }}><i className={`${globalStyles.authTheme}`}>&#xe782;</i>新建项目</span></Menu.Item>}
         </Menu>
       </div>
     )
@@ -321,7 +319,7 @@ class ProjectListBar extends Component {
 
   render() {
     const { project, projectList, projectTabCurrentSelectedProject, workbench_show_gantt_card } = this.props;
-    const { datas = { }} = project
+    const { datas = {} } = project
     const { appsList = [] } = datas
     const { dropDownMenuItemList, addNewProjectModalVisible, addProjectModalVisible, is_show_new_project } = this.state;
     let projectListBarAllClass = cx({
@@ -367,21 +365,21 @@ class ProjectListBar extends Component {
                 </div>
               </Dropdown>
             ) : (
-              is_show_new_project && !isVisitor && checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && this.renderProjectListBarCreateNewProject()
-            )
+                is_show_new_project && !isVisitor && checkIsHasPermission(ORG_TEAM_BOARD_CREATE) && this.renderProjectListBarCreateNewProject()
+              )
           )
         }
         {/*{addNewProjectModalVisible && (*/}
-          {/*<AddModalFormWithExplicitProps*/}
-            {/*addNewProjectModalVisible={addNewProjectModalVisible}*/}
-            {/*key="1"*/}
-            {/*hideModal={this.hideModal}*/}
-            {/*showModal={this.showModal}*/}
-            {/*project={project}*/}
-            {/*handleSubmitNewProject={this.handleSubmitNewProject}*/}
-          {/*/>*/}
+        {/*<AddModalFormWithExplicitProps*/}
+        {/*addNewProjectModalVisible={addNewProjectModalVisible}*/}
+        {/*key="1"*/}
+        {/*hideModal={this.hideModal}*/}
+        {/*showModal={this.showModal}*/}
+        {/*project={project}*/}
+        {/*handleSubmitNewProject={this.handleSubmitNewProject}*/}
+        {/*/>*/}
         {/*)}*/}
-        {addProjectModalVisible && workbench_show_gantt_card == '0' &&(
+        {addProjectModalVisible && workbench_show_gantt_card == '0' && (
           <CreateProject
             setAddProjectModalVisible={this.setAddProjectModalVisible}
             addProjectModalVisible={addProjectModalVisible}

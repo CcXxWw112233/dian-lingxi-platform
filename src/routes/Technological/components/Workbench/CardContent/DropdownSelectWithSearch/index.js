@@ -35,8 +35,8 @@ class DropdownSelectWithSearch extends Component {
     };
   }
   handleVisibleChange = flag => {
-    const {isShouldDisableDropdown} = this.props
-    if(isShouldDisableDropdown) return
+    const { isShouldDisableDropdown } = this.props
+    if (isShouldDisableDropdown) return
     this.setState({
       visible: flag
     });
@@ -67,7 +67,7 @@ class DropdownSelectWithSearch extends Component {
       return;
     }
     const { board_id } = item;
-    setBoardIdStorage( board_id);
+    setBoardIdStorage(board_id);
     handleSelectedItem(item);
     this.setState({
       inputValue: '',
@@ -135,22 +135,22 @@ class DropdownSelectWithSearch extends Component {
     );
   };
   handleSubmitNewProject = data => {
-    const { dispatch } = this.props;
-    Promise.resolve(
+    const calback = () => {
       dispatch({
-        type: 'project/addNewProject',
-        payload: data
-      })
-    )
-      .then(() => {
-        dispatch({
-          type: 'workbench/getProjectList',
-          payload: {}
-        });
-      })
-      .then(() => {
-        this.hideModal();
+        type: 'workbench/getProjectList',
+        payload: {}
       });
+      this.hideModal();
+
+    }
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'project/addNewProject',
+      payload: {
+        ...data,
+        calback
+      }
+    })
   };
   hideModal = () => {
     this.setState({
@@ -180,12 +180,12 @@ class DropdownSelectWithSearch extends Component {
   content = () => {
     const { list, selectedItem, isSearch, isShouldDisableDropdown } = this.props;
     const { filteredList, inputValue } = this.state;
-    if(isShouldDisableDropdown) {
+    if (isShouldDisableDropdown) {
       return (<div></div>)
     }
     if (!list || !list.length) {
       return <>
-      {this.renderNoContent()}
+        {this.renderNoContent()}
       </>;
     }
     return (
@@ -254,8 +254,8 @@ class DropdownSelectWithSearch extends Component {
                 )}
                 <div>
                   {selectedItem && selectedItem.board_name
-                        ? selectedItem.board_name
-                        : initSearchTitle}
+                    ? selectedItem.board_name
+                    : initSearchTitle}
                 </div>
                 <div className={`${globalStyles.authTheme} ${styles.down_logo}`}>&#xe7ee;</div>
               </div>
@@ -329,7 +329,7 @@ function mapStateToProps({ modal, project, loading,
     }
   }
 }) {
-  return { modal, project,userOrgPermissions,userBoardPermissions};
+  return { modal, project, userOrgPermissions, userBoardPermissions };
 }
 
 export default connect(mapStateToProps)(DropdownSelectWithSearch);
