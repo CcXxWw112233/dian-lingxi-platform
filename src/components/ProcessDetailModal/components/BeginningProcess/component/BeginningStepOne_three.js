@@ -60,7 +60,6 @@ export default class BeginningStepOne_three extends Component {
     }
 
     rangePickerChange2 = (date, dateString) => {
-      console.log(date, dateString,'sssssssssssssssssss_dateString')
       if(!dateString) {
         this.updateEdit({value: ''}, 'value')
         return
@@ -72,7 +71,6 @@ export default class BeginningStepOne_three extends Component {
     const { itemValue } = this.props
     const { date_range, date_precision, prompt_content, value } = itemValue
     let container = (<div></div>)
-    console.log(value,'ssssssssssssssss_value')
     switch (date_range) {
       case '1':// 表示单个日期
         if (date_precision == '1') { // 表示仅日期

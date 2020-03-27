@@ -9,7 +9,7 @@ import BeginningStepOne_three from './BeginningStepOne_three'
 import BeginningStepOne_five from './BeginningStepOne_five'
 import { validateTel, validateEmail, validatePassword, validateFixedTel, validateIdCard, validateChineseName, validatePostalCode, validateWebsite, validateQQ, validatePositiveInt, validateNegative, validateTwoDecimal, } from '../../../../../utils/verify'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
-import { Button } from 'antd'
+import { Button, message } from 'antd'
 import { connect } from 'dva'
 import { timestampToTimeNormal, compareACoupleOfObjects } from '../../../../../utils/util';
 
@@ -177,8 +177,16 @@ export default class BeginningStepOne extends Component {
   // 编辑点击事件
   handleEnterConfigureProcess = (e) => {
     e && e.stopPropagation()
+    this.setState({
+      isAccomplishNodesIng: true, // 表示正在完成中
+    })
+    if (this.state.isAccomplishNodesIng) {
+      message.warn('正在完成中...')
+      return
+    }
+    
     // this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
-    const { processInfo: { id: flow_instance_id }, itemValue } = this.props
+    const { processInfo: { id: flow_instance_id, board_id }, itemValue } = this.props
     const { id: flow_node_instance_id } = itemValue
     let form_values = this.getAllNodesFormsData()
     this.props.dispatch({
@@ -186,7 +194,19 @@ export default class BeginningStepOne extends Component {
       payload: {
         flow_instance_id,
         flow_node_instance_id,
-        form_values: form_values
+        form_values: form_values,
+        calback: () => {
+          this.setState({
+            isAccomplishNodesIng: false
+          })
+          this.props.dispatch({
+            type: 'publicProcessDetailModal/getProcessListByType',
+            payload: {
+              board_id,
+              status: '1'
+            }
+          })
+        }
       }
     })
   }
