@@ -27,6 +27,7 @@ import { isApiResponseOk } from '@/utils/handleResponseData'
 import { organizationInviteWebJoin, commInviteWebJoin } from '@/services/technological'
 import { MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant';
 import moment from 'moment';
+import { checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction';
 const Option = Select.Option;
 const { TextArea } = Input;
 const { getMentions, toString, toContentState } = Mention;
@@ -46,8 +47,8 @@ let remind_time_value = '5' // 设置的提醒时间
 @connect(({ technological, workbench }) => {
 	return {
 		projectList:
-			technological.datas && technological.datas.currentOrgProjectList
-				? technological.datas.currentOrgProjectList
+			workbench.datas && workbench.datas.projectList
+				? workbench.datas.projectList
 				: [],
 		projectTabCurrentSelectedProject:
 			workbench.datas && workbench.datas.projectTabCurrentSelectedProject
@@ -146,12 +147,12 @@ class VideoMeetingPopoverContent extends React.Component {
 
 	componentWillMount() {
 		const { dispatch } = this.props
-		dispatch({
-			type: 'technological/getCurrentOrgProjectList',
-			payload: {
+		// dispatch({
+		// 	type: 'technological/getCurrentOrgProjectList',
+		// 	payload: {
 
-			}
-		})
+		// 	}
+		// })
 		dispatch({
 			type: 'technological/getVideoConferenceProviderList',
 			payload: {
@@ -312,14 +313,7 @@ class VideoMeetingPopoverContent extends React.Component {
 
 	// 获取项目权限
 	getProjectPermission = (permissionType, board_id) => {
-		const userBoardPermissions = this.getInfoFromLocalStorage('userBoardPermissions')
-		if (!userBoardPermissions || !userBoardPermissions.length) {
-			return false
-		}
-		const isFindedBoard = userBoardPermissions.find(board => board.board_id === board_id)
-		if (!isFindedBoard) return false
-		const { permissions = [] } = isFindedBoard
-		return !!permissions.find(permission => permission.code === permissionType && permission.type === '1')
+		return checkIsHasPermissionInBoard(permissionType, board_id)
 	}
 	// 查询当前用户是否有权限
 	filterProjectWhichCurrentUserHasEditPermission = (projectList = []) => {
@@ -943,12 +937,12 @@ class VideoMeetingPopoverContent extends React.Component {
 				if (flag === false) {
 					this.initVideoMeetingPopover();
 				} else { // 为true的时候调用设置当前通知对象
-					dispatch({
-						type: 'technological/getCurrentOrgProjectList',
-						payload: {
+					// dispatch({
+					// 	type: 'technological/getCurrentOrgProjectList',
+					// 	payload: {
 
-						}
-					})
+					// 	}
+					// })
 				}
 			}
 		);
@@ -1020,8 +1014,11 @@ class VideoMeetingPopoverContent extends React.Component {
 			remindDropdownVisible
 		} = this.state;
 		let { projectList, board_id, videoConferenceProviderList = [] } = this.props;
+		// console.log('ssssssssssssprojectList', projectList)
 		//过滤出来当前用户有编辑权限的项目
 		projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
+		// console.log('ssssssssssssprojectList2', projectList)
+
 		let newToNoticeList = [].concat(...toNoticeList, ...othersPeople)
 		let { defaultSaveToProject, defaultMeetingTitle, currentDelayStartTime } = this.getVideoMeetingPopoverContentNoramlDatas()
 		const videoMeetingPopoverContent_ = (
