@@ -88,7 +88,7 @@ export default {
 
     // 获取模板信息内容
     * getTemplateInfo({ payload }, { call, put }) {
-      const { id, processPageFlagStep, currentTempleteIdentifyId } = payload
+      const { id, processPageFlagStep, currentTempleteIdentifyId, process_detail_modal_visible, calback } = payload
       let res = yield call(getTemplateInfo, { id })
       if (isApiResponseOk(res)) {
         let newProcessEditDatas = [...res.data.nodes]
@@ -101,7 +101,7 @@ export default {
           payload: {
             templateInfo: res.data,
             processPageFlagStep,
-            process_detail_modal_visible: true,
+            process_detail_modal_visible: process_detail_modal_visible,
             processEditDatas: newProcessEditDatas,
             currentFlowInstanceName: res.data.name,
             isEditCurrentFlowInstanceName:false,
@@ -109,19 +109,18 @@ export default {
             currentTempleteIdentifyId: currentTempleteIdentifyId
           }
         })
+        if (calback && typeof calback == 'function') calback(res.data)
       }
+      return res || {}
     },
 
     // 新建流程模板中的保存模板(即保存新的流程模板)
-    * saveProcessTemplate({ payload }, { call, put }) {
+    * saveProcessTemplate({ payload }, { call, select, put }) {
       const { calback } = payload
       let newPayload = {...payload}
       newPayload.calback ? delete newPayload.calback : ''
       let res = yield call(saveProcessTemplate,newPayload)
       if (isApiResponseOk(res)) {
-        setTimeout(() => {
-          message.success(`保存模板成功`,MESSAGE_DURATION_TIME)
-        }, 200)
         yield put({
           type: 'getProcessTemplateList',
           payload: {
@@ -129,10 +128,11 @@ export default {
             board_id: payload.board_id
           }
         })
-        if (calback && typeof calback == 'function') calback()
+        if (calback && typeof calback == 'function') calback(res.data)
       } else {
         message.warn(res.message)
       }
+      return res || {}
     },
 
     // 点击编辑流程时对已经保存模板接口
@@ -232,6 +232,7 @@ export default {
         })
         if (calback && typeof calback == 'function') calback()
       }
+      return res || {}
     },
 
     // 获取流程列表，类型进行中 已终止 已完成

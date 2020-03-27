@@ -54,7 +54,8 @@ export default class ProcessDefault extends Component {
       payload: {
         id,
         processPageFlagStep: '2',
-        currentTempleteIdentifyId: template_no
+        currentTempleteIdentifyId: template_no,
+        process_detail_modal_visible: true
       }
     })
   }
@@ -67,6 +68,7 @@ export default class ProcessDefault extends Component {
       payload: {
         id,
         processPageFlagStep: '3',
+        process_detail_modal_visible: true
       }
     })
   }

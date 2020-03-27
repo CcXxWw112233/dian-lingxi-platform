@@ -12,6 +12,10 @@ import { processEditDatasItemOneConstant, processEditDatasRecordsItemOneConstant
 import { Tooltip, Button, message, Popconfirm, Popover, Calendar, DatePicker } from 'antd'
 import { timeToTimestamp } from '../../utils/util'
 import moment from 'moment'
+import { MESSAGE_DURATION_TIME, FLOWS } from '../../globalset/js/constant'
+import { saveProcessTemplate, getTemplateInfo, createProcess } from '../../services/technological/workFlow'
+import { isApiResponseOk } from '../../utils/handleResponseData'
+import { currentNounPlanFilterName } from "@/utils/businessFunction";
 @connect(mapStateToProps)
 export default class MainContent extends Component {
   constructor(props) {
@@ -316,6 +320,9 @@ export default class MainContent extends Component {
           description: currentFlowInstanceDescription,
           nodes: processEditDatas,
           calback: () => {
+            setTimeout(() => {
+              message.success('保存模板成功', MESSAGE_DURATION_TIME)
+            }, 200)
             this.setState({
               isSaveTempleteIng: false
             })
@@ -345,18 +352,70 @@ export default class MainContent extends Component {
   }
 
   // 开始流程的点击事件
-  
-  // 立即开始
-  handleCreateProcess = (e, start_time) => {
-    e && e.stopPropagation()
-    this.setState({
-      isCreateProcessIng: true
+  //操作配置时的启动---需要先调用保存模板 (只不过不保存)
+  handleOperateConfigureConfirmCalbackProcess = async (start_time) => {
+    this.handleOperateConfigureConfirmProcessOne(start_time)
+      .then((flow_template_id,start_time) => this.handleOperateConfigureConfirmProcessTwo(flow_template_id, start_time))
+      .then(payload => this.handleOperateConfigureConfirmProcessThree(payload))
+  }
+  // 第一步: 先保存模板 ==> 返回模板ID
+  handleOperateConfigureConfirmProcessOne = async (start_time) => {
+    const { projectDetailInfoData: { board_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [], dispatch } = this.props
+    let res = await saveProcessTemplate({
+      board_id,
+      name: currentFlowInstanceName,
+      description: currentFlowInstanceDescription,
+      nodes: processEditDatas,
+      is_retain: '0',
     })
-    if (this.state.isCreateProcessIng) {
-      message.warn('正在启动流程中...')
-      return
+    if (!isApiResponseOk(res)) {
+      return Promise.resolve([]);
     }
-    const { projectDetailInfoData: { board_id }, processPageFlagStep, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { id } } = this.props
+    let flow_template_id = res.data
+    return Promise.resolve(flow_template_id)
+  }
+  // 第二步: 调用模板详情 ==> 返回对应模板信息内容
+  handleOperateConfigureConfirmProcessTwo = async (id, start_time) => {
+    
+    let res = await getTemplateInfo({id})
+    if (!isApiResponseOk(res)) {
+      return Promise.resolve([]);
+    }
+    let payload = {
+      name: res.data.name,
+      description: res.data.description,
+      nodes: res.data.nodes,
+      start_up_type: start_time ? '2' : '1',
+      plan_start_time: start_time ? start_time : '',
+      flow_template_id: res.data.id,
+    }
+    return Promise.resolve(payload)
+  }
+  // 第三步: 调用列表并关闭弹窗 ==> 回调
+  handleOperateConfigureConfirmProcessThree = async(payload) => {
+    let res = await createProcess(payload)
+    if (!isApiResponseOk(res)) {
+      return Promise.resolve([]);
+    }
+    setTimeout(() => {
+      message.success(`启动${currentNounPlanFilterName(FLOWS)}成功`)
+    },200)
+    this.setState({
+      isCreateProcessIng: false
+    })
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/getProcessListByType',
+      payload: {
+        status: '1',
+        board_id: res.data.board_id
+      }
+    })
+    this.props.onCancel && this.props.onCancel()
+  }
+
+  // 表示是在启动的时候调永立即开始流程
+  handleOperateStartConfirmProcess = (start_time) => {
+    const { projectDetailInfoData: { board_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { id } } = this.props
     this.props.dispatch({
       type: 'publicProcessDetailModal/createProcess',
       payload: {
@@ -383,21 +442,45 @@ export default class MainContent extends Component {
     })
   }
 
+  // 立即开始
+  handleCreateProcess = (e, start_time) => {
+    e && e.stopPropagation()
+    this.setState({
+      isCreateProcessIng: true
+    })
+    if (this.state.isCreateProcessIng) {
+      message.warn('正在启动流程中...')
+      return
+    }
+    const { processPageFlagStep } = this.props
+    switch (processPageFlagStep) {
+      case '1': // 表示是配置的时候显示的开始流程
+        this.handleOperateConfigureConfirmCalbackProcess(start_time)
+        break;
+      case '3': // 表示是启动的时候显示的开始流程
+        this.handleOperateStartConfirmProcess(start_time)
+        break
+      default:
+        break;
+    }
+
+  }
+
   // 预约开始时间
   startDatePickerChange = (timeString) => {
     this.setState({
       start_time: timeToTimestamp(timeString)
     }, () => {
-       this.handleStartOpenChange(false)
-       this.handleCreateProcess('',timeToTimestamp(timeString))
+      this.handleStartOpenChange(false)
+      this.handleCreateProcess('',timeToTimestamp(timeString))
     })
-    
+
   }
 
   disabledStartTime = (current) => {
     return current && current < moment().subtract(1, "days")
   }
-  
+
   handleStartOpenChange = (open) => {
     // this.setState({ endOpen: true });
     this.setState({
@@ -646,7 +729,7 @@ export default class MainContent extends Component {
         <div id="suspensionFlowInstansNav" className={`${indexStyles.suspensionFlowInstansNav}`}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
-            <span style={{ color: 'rgba(0,0,0,0.85)', fontSize: '16px', fontWeight: 500 }}>{currentFlowInstanceName} {Number(curr_node_sort) + 1 ? Number(curr_node_sort) + 1 : processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0}/{processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0}</span>
+              <span style={{ color: 'rgba(0,0,0,0.85)', fontSize: '16px', fontWeight: 500 }}>{currentFlowInstanceName} {Number(curr_node_sort) + 1 ? Number(curr_node_sort) + 1 : processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0}/{processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0}</span>
             </div>
             <div>
               <span onClick={this.handleBackToTop} style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe63d; 回到顶部</span>
