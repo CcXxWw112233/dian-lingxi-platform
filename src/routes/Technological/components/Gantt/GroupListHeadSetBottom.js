@@ -101,39 +101,26 @@ export default class GroupListHeadSet extends Component {
             if (!!!id) {
                 return
             }
-            // dispatch({
-            //     type: 'gantt/updateDatas',
-            //     payload: {
-            //         gantt_board_id: id,
-            //         list_group: [],
-            //     }
-            // })
-            selectBoardToSeeInfo({ board_id: id, board_name: data.board_name, dispatch, org_id: data._organization_id, is_new_board: true })
-        }
-        Promise.resolve(
             dispatch({
-                type: 'project/addNewProject',
+                type: 'workbench/getProjectList',
+                payload: {}
+            });
+            dispatch({
+                type: 'gantt/updateDatas',
                 payload: {
-                    ...data,
-                    calback
+                    group_view_type: '4'
                 }
             })
-        )
-            .then(() => {
-                dispatch({
-                    type: 'workbench/getProjectList',
-                    payload: {}
-                });
-            })
-            .then(() => {
-                dispatch({
-                    type: 'gantt/updateDatas',
-                    payload: {
-                        group_view_type: '4'
-                    }
-                })
-                afterCreateBoardUpdateGantt(dispatch)
-            });
+            afterCreateBoardUpdateGantt(dispatch)
+            selectBoardToSeeInfo({ board_id: id, board_name: data.board_name, dispatch, org_id: data._organization_id, is_new_board: true })
+        }
+        dispatch({
+            type: 'project/addNewProject',
+            payload: {
+                ...data,
+                calback
+            }
+        })
     };
 
     createBoard = () => {

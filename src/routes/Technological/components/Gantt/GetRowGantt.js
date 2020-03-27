@@ -568,17 +568,19 @@ export default class GetRowGantt extends Component {
           dasheRectShow
           && !this.task_is_dragging
           && (
-            <div className={indexStyles.dasheRect} style={{
-              left: currentRect.x + 1, top: currentRect.y,
-              width: currentRect.width, height: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? task_item_height_fold : task_item_height,//currentRect.height,
-              boxSizing: 'border-box',
-              marginTop: !ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? task_item_margin_top : (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2, //task_item_margin_top,//
-              color: 'rgba(0,0,0,0.45)',
-              textAlign: 'right',
-              lineHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? `${task_item_height_fold}px` : `${ceiHeight - task_item_margin_top}px`,
-              paddingRight: 8,
-              zIndex: this.isDragging ? 2 : 1
-            }} >
+            <div
+              title={'点击或向右拖拽创建任务'}
+              className={indexStyles.dasheRect} style={{
+                left: currentRect.x + 1, top: currentRect.y,
+                width: currentRect.width, height: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? task_item_height_fold : task_item_height,//currentRect.height,
+                boxSizing: 'border-box',
+                marginTop: !ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? task_item_margin_top : (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2, //task_item_margin_top,//
+                color: 'rgba(0,0,0,0.45)',
+                textAlign: 'right',
+                lineHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? `${task_item_height_fold}px` : `${ceiHeight - task_item_margin_top}px`,
+                paddingRight: 8,
+                zIndex: this.isDragging ? 2 : 1
+              }} >
               {Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth) - drag_holiday_count}
               {Math.ceil(currentRect.width / ceilWidth) != 1 && (drag_holiday_count > 0 ? `+${drag_holiday_count}` : '')}
             </div>

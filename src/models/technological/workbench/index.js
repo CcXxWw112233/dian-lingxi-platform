@@ -42,7 +42,7 @@ export default modelExtend(technological, {
                 previewAticle: {}, //预览的文章
                 spinning: false, //文章加载中状态
                 // boxList: [], //工作台盒子列表
-                projectList: [], //项目列表
+                // projectList: [], //项目列表
                 projectStarList: [],
                 projectUserList: [], //项目列表（只返回用户信息）
                 orgMembers: [], //组织用户列表
@@ -83,10 +83,6 @@ export default modelExtend(technological, {
                 init_load: true
               }
             }),
-            dispatch({
-              type: 'getProjectList',
-              payload: {}
-            }),
               // dispatch({
               //   type: 'getBoxUsableList',
               //   payload: {}
@@ -100,6 +96,12 @@ export default modelExtend(technological, {
             // })
           }
           initData()
+          dispatch({
+            type: 'getProjectList',
+            payload: {
+
+            }
+          })
         }
       })
     },

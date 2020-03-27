@@ -215,11 +215,6 @@ class MyWorkbenchBoxs extends Component {
 
     const { dispatch } = this.props;
     dispatch({
-      type: 'workbench/getProjectList',
-      payload: {}
-    })
-
-    dispatch({
       type: 'investmentMap/getMapsQueryUser',
       payload: {}
     })

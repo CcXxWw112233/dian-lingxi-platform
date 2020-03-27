@@ -13,7 +13,7 @@ import {
   setShowSimpleModel,
 } from '../../services/technological/organizationMember'
 import { getMenuList } from '../../services/technological/getMenuList'
-import { getProjectList, getCurrentOrgAllMembers, createMeeting, getVideoConferenceProviderList } from './../../services/technological/workbench'
+import { getCurrentOrgAllMembers, createMeeting, getVideoConferenceProviderList } from './../../services/technological/workbench'
 import { getCurrentNounPlan } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
@@ -130,7 +130,7 @@ export default {
       })
       //获取当前的用户当前组织的项目列表,
       yield put({
-        type: 'getCurrentOrgProjectList',
+        type: 'workbench/getProjectList',
         payload: {}
       })
       //获取用户当前组织的组织成员(如果非全组织，而是具有确认组织的情况下调用)
@@ -596,21 +596,21 @@ export default {
       }
     },
 
-    * getCurrentOrgProjectList({ payload }, { select, call, put }) {
+    // * getCurrentOrgProjectList({ payload }, { select, call, put }) {
 
-      let res = yield call(getProjectList, payload)
-      if (isApiResponseOk(res)) {
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            currentOrgProjectList: res.data
-          }
-        })
-      } else {
+    //   let res = yield call(getProjectList, payload)
+    //   if (isApiResponseOk(res)) {
+    //     yield put({
+    //       type: 'updateDatas',
+    //       payload: {
+    //         currentOrgProjectList: res.data
+    //       }
+    //     })
+    //   } else {
 
-      }
-      return res || {}
-    },
+    //   }
+    //   return res || {}
+    // },
     * fetchCurrentOrgAllMembers({ payload }, { call, put }) {
       let res = yield call(getCurrentOrgAllMembers, { ...payload })
       // console.log(res, 'fetchCurrentOrgAllMembers+++++++++++')

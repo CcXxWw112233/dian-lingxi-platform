@@ -86,7 +86,7 @@ export default class DragDropContentComponent extends Component {
     return new_properties
   }
 
-   // 里程碑选择回调 S
+  // 里程碑选择回调 S
   onMilestoneSelectedChange = (data) => {
     const { dispatch, drawContent } = this.props;
     const { card_id, type, due_time } = drawContent
@@ -111,7 +111,7 @@ export default class DragDropContentComponent extends Component {
           ...params
         }
       }).then(res => {
-        if(isApiResponseOk(res)) {
+        if (isApiResponseOk(res)) {
           this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, operate_properties_code: 'MILESTONE' })
         }
       });
@@ -136,7 +136,7 @@ export default class DragDropContentComponent extends Component {
           ...params
         }
       }).then(res => {
-        if(isApiResponseOk(res)) {
+        if (isApiResponseOk(res)) {
           this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, operate_properties_code: 'MILESTONE' })
         }
       });
@@ -171,7 +171,7 @@ export default class DragDropContentComponent extends Component {
           removeParams
         }
       }).then(res => {
-        if(isApiResponseOk(res)) {
+        if (isApiResponseOk(res)) {
           this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, operate_properties_code: 'MILESTONE' })
         }
       });
@@ -519,7 +519,7 @@ export default class DragDropContentComponent extends Component {
     const that = this
     const { drawContent = {}, dispatch } = this.props
     const { data: attachment_data } = drawContent['properties'].filter(item => item.code == 'ATTACHMENT')[0]
-
+    data.attachment_id = '1'
     Modal.confirm({
       title: `确认要删除这个附件吗？`,
       zIndex: 1007,
@@ -533,7 +533,7 @@ export default class DragDropContentComponent extends Component {
           deleteTaskFile(data).then((value) => {
 
             if (value.code !== '0') {
-              message.warn('删除失败，请重新删除。1')
+              message.error(value.message)
               resolve()
             } else {
               let atta_arr = attachment_data;
@@ -664,7 +664,7 @@ export default class DragDropContentComponent extends Component {
                 shouldDeleteId: '',
                 showDelColor: ''
               })
-              that.props.updateParentPropertiesList && that.props.updateParentPropertiesList({shouldDeleteId, new_selectedKeys})
+              that.props.updateParentPropertiesList && that.props.updateParentPropertiesList({ shouldDeleteId, new_selectedKeys })
               dispatch({
                 type: 'publicTaskDetailModal/updateDatas',
                 payload: {
@@ -672,7 +672,7 @@ export default class DragDropContentComponent extends Component {
                 }
               })
               if (!(gold_label && gold_label.length)) {
-                that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({card_id, drawContent: new_drawContent, operate_properties_code: 'LABEL'})
+                that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({ card_id, drawContent: new_drawContent, operate_properties_code: 'LABEL' })
               }
             }
           })
@@ -698,7 +698,7 @@ export default class DragDropContentComponent extends Component {
             shouldDeleteId: '',
             showDelColor: ''
           })
-          that.props.updateParentPropertiesList && that.props.updateParentPropertiesList({shouldDeleteId, new_selectedKeys})
+          that.props.updateParentPropertiesList && that.props.updateParentPropertiesList({ shouldDeleteId, new_selectedKeys })
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',
             payload: {
@@ -706,7 +706,7 @@ export default class DragDropContentComponent extends Component {
             }
           })
           if (!(gold_label && gold_label.length)) {
-            that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({card_id, drawContent: new_drawContent, operate_properties_code: 'LABEL'})
+            that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({ card_id, drawContent: new_drawContent, operate_properties_code: 'LABEL' })
           }
         }
       })
@@ -988,7 +988,7 @@ export default class DragDropContentComponent extends Component {
                         <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={() => this.openFileDetailModal(fileInfo)} >
                           <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span><span>{fileInfo.name}</span></div>
                           <div className={mainContentStyles.file_info}>{this.showMemberName(fileInfo.create_by)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
-                          <div className={mainContentStyles.breadNav} style={{position: 'relative'}}>
+                          <div className={mainContentStyles.breadNav} style={{ position: 'relative' }}>
                             <Breadcrumb className={mainContentStyles.Breadcrumb} separator=">">
                               {breadcrumbList.map((value, key) => {
                                 return (
@@ -1083,7 +1083,7 @@ export default class DragDropContentComponent extends Component {
     if (!destination) {
       return;
     }
-   
+
     if (source.droppableId === destination.droppableId) {
       const property_item = new_drawContent['properties'].find((item, index) => index == source.index)
       const target_property_item = new_drawContent['properties'].find((item, index) => index == destination.index)
@@ -1122,23 +1122,23 @@ export default class DragDropContentComponent extends Component {
     let messageValue = (<div></div>)
     messageValue = (
       <div>
-      <DragDropContext getPopupContainer={triggerNode => triggerNode.parentNode} onDragEnd={this.onDragEnd}>
-        <Droppable droppableId="droppable">
-          {(provided, snapshot) => (
-            <div ref={provided.innerRef} {...provided.droppableProps}>
-              {properties && properties.map((item, index) => (
-                <Draggable key={item.id} index={index} draggableId={item.id}>
-                  {(provided, snapshot) => (
-                    <div ref={provided.innerRef} {...provided.draggableProps}
-                      {...provided.dragHandleProps}>{this.filterDiffPropertiesField(item)}</div>
-                  )}
-                </Draggable>
-              ))}
-              {/* {provided.placeholder} */}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+        <DragDropContext getPopupContainer={triggerNode => triggerNode.parentNode} onDragEnd={this.onDragEnd}>
+          <Droppable droppableId="droppable">
+            {(provided, snapshot) => (
+              <div ref={provided.innerRef} {...provided.droppableProps}>
+                {properties && properties.map((item, index) => (
+                  <Draggable key={item.id} index={index} draggableId={item.id}>
+                    {(provided, snapshot) => (
+                      <div ref={provided.innerRef} {...provided.draggableProps}
+                        {...provided.dragHandleProps}>{this.filterDiffPropertiesField(item)}</div>
+                    )}
+                  </Draggable>
+                ))}
+                {/* {provided.placeholder} */}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       </div>
     )
     return messageValue
@@ -1182,5 +1182,5 @@ function mapStateToProps({
     }
   }
 }) {
-  return { drawContent, is_edit_title, card_id, boardTagList, projectDetailInfoData ,userBoardPermissions}
+  return { drawContent, is_edit_title, card_id, boardTagList, projectDetailInfoData, userBoardPermissions }
 }

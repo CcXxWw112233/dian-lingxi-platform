@@ -20,6 +20,7 @@ export default class BoardItem extends Component {
             renderVistorContorlVisible: false,
             board_info_visible: false,
             show_add_menber_visible: false,
+            menu_oprate_visible: false,
         }
         this.visitControlOtherPersonOperatorMenuItem = [
             {
@@ -86,7 +87,8 @@ export default class BoardItem extends Component {
     // 操作项
     dropdwonVisibleChange = (bool) => {
         this.setState({
-            renderVistorContorlVisible: bool
+            renderVistorContorlVisible: bool,
+            menu_oprate_visible: bool
         })
     }
     // --------------访问控制statrt
@@ -435,7 +437,7 @@ export default class BoardItem extends Component {
     }
     render() {
         const { itemValue: { board_id, board_name, org_id }, simplemodeCurrentProject, currentUserOrganizes = [], currentSelectOrganize = {} } = this.props
-        const { board_info_visible, show_add_menber_visible } = this.state
+        const { board_info_visible, show_add_menber_visible, menu_oprate_visible } = this.state
         const isAllOrg = !currentSelectOrganize.id || currentSelectOrganize.id == '0'
         return (
             <>
@@ -451,7 +453,7 @@ export default class BoardItem extends Component {
                             )
                         }
                     </div>
-                    <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={this.renderMenuOperateListName({ board_id })}>
+                    <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={menu_oprate_visible ? this.renderMenuOperateListName({ board_id }) : (<span></span>)}>
                         <div className={`${styles.board_area_middle_item_rt} ${globalStyles.authTheme}`} onClick={(e) => e.stopPropagation()}>&#xe66f;</div>
                     </Dropdown>
                 </div>

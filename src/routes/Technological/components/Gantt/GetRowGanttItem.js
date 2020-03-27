@@ -287,9 +287,9 @@ export default class GetRowGanttItem extends Component {
 
         <div className={indexStyles.ganttArea} >
           {gold_date_arr.map((value, key) => {
-            const { date_inner = [] } = value
+            const { date_inner = [], date_top } = value
             return (
-              <div className={indexStyles.ganttAreaItem} key={key}>
+              <div className={indexStyles.ganttAreaItem} key={date_top}>
                 <div className={indexStyles.ganttDetail} style={{ height: item_height }}>
                   {date_inner.map((value2, key2) => {
                     const { week_day, timestamp, timestampEnd } = value2
@@ -302,8 +302,8 @@ export default class GetRowGanttItem extends Component {
                         data-list_id={list_id}
                         data-start_time={timestamp}
                         data-end_time={timestampEnd}
-                        key={key2}
-                        style={{ backgroundColor: (week_day == 0 || week_day == 6) ? 'rgba(0, 0, 0, 0.04)' : (isToday(timestamp) ? 'rgb(242, 251, 255)' : 'rgba(0,0,0,.02)') }}
+                        key={timestamp}
+                        style={{ backgroundColor: isToday(timestamp) ? 'rgb(242, 251, 255)' : ((week_day == 0 || week_day == 6) ? 'rgba(0, 0, 0, 0.04)' : 'rgba(0,0,0,.02)') }}
                       >
                         {/* 12为上下margin的总和 */}
                         {

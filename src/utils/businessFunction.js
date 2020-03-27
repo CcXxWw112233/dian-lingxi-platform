@@ -32,17 +32,20 @@ export const getGlobalData = (name) => {
 export const checkIsHasPermission = (code, param_org_id) => {
   const OrganizationId = localStorage.getItem('OrganizationId')
   const organizationMemberPermissions = JSON.parse(localStorage.getItem('userOrgPermissions')) || []
-  if (!Array.isArray(organizationMemberPermissions)) {
-    return false
-  }
   if (OrganizationId == '0') { //全组织下需要取出传入组织对应的权限
     if (!param_org_id) {
       return true
     } else {
       const currentOrgPermissions = organizationMemberPermissions[param_org_id] || []
+      if (!Array.isArray(currentOrgPermissions)) {
+        return false
+      }
       return currentOrgPermissions.includes(code)
     }
   } else {
+    if (!Array.isArray(organizationMemberPermissions)) {
+      return false
+    }
     return organizationMemberPermissions.includes(code)
   }
 
@@ -139,7 +142,7 @@ export const checkIsHasPermissionInBoard = (code, params_board_id) => {
   if (!board_id || board_id == '0') {
     return true
   }
-  const currentBoardPermission = userBoardPermissions[params_board_id] || []
+  const currentBoardPermission = userBoardPermissions[board_id] || []
   if (!Array.isArray(currentBoardPermission)) {
     return false
   }
@@ -382,9 +385,15 @@ export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenI
       is_new_board,
       list_group: [],
       outline_tree: [],
-      group_view_type: new_group_view_type
+      group_view_type: new_group_view_type,
+      target_scrollTop: 0
     }
   })
+
+  const target = document.getElementById('gantt_card_out_middle')
+  if (target) {
+    target.scrollTop = 0
+  }
 
   // console.log('sssss', window.location)
   const hash = window.location.hash

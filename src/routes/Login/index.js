@@ -154,8 +154,8 @@ class Login extends React.Component {
                 borderRadius: '4px'
               }}>
                 <TopContent text={'欢迎来到'} productName={'聆悉'} />
-                <div>
-                  <iframe id='wechatCode' style={{ marginLeft: '120px' }} frameBorder="0" src={src} width='211px' height='212px'></iframe>
+                <div style={{ width: '100%', textAlign: 'center' }}>
+                  <iframe id='wechatCode' frameBorder="0" src={src} height='212px'></iframe>
                   <div style={{
                     margin: '8px auto 16px',
                     width: '212px',

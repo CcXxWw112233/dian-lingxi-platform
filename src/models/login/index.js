@@ -67,39 +67,24 @@ export default {
   effects: {
     // 登录成功重定向
     * loginRouteJump({ payload }, { select, call, put }) {
-      const res = yield call(getUSerInfo, payload)
-      const { has_org } = res.data
-      const { is_simple_model, current_org } = res.data.user_set
-      // console.log(is_simple_model, 'sssssss')
+      clearAboutLocalstorage() //清掉所有localstorage缓存
+      const simplGetUserInfo = yield put({
+        type: 'technological/simplGetUserInfo',
+      })
+      const simplGetUserInfoSync = () => new Promise(resolve => {
+        resolve(simplGetUserInfo.then())
+      })
+      // 内容过滤处理end
+      const res = yield call(simplGetUserInfoSync) || {}
       //如果存在组织， 否则跳到指引页面
       if (isApiResponseOk(res)) {
-        clearAboutLocalstorage() //清掉所有localstorage缓存
+        const { has_org } = res.data
+        const { is_simple_model, current_org } = res.data.user_set
         if (has_org == '1') {
-          // 已废弃--------start
-          // if (redirectLocation.indexOf('/technological/simplemode') == -1) {
-          //   const model_is_import = yield select(getModelIsImport('technological'))
-          //   if (model_is_import) { //在该模块注入之后才调用，否则就只是调用简单跳转
-          //     yield put({
-          //       type: 'technological/setShowSimpleModel',
-          //       payload: {
-          //         is_simple_model: '0',
-          //         redirectLocation
-          //       }
-          //     })
-          //   } else {
-          //     yield put(routerRedux.push('/technological/simplemode/home'))
-          //   }
-          // } else {
-          //   if (is_simple_model == '0') {
-          //     yield put(routerRedux.push('/technological/workbench'))
-          //   } else if (is_simple_model == '1') {
-          //     yield put(routerRedux.push('/technological/simplemode/home'))
-          //   } else {
-
-          //   }
-          // }
-          // 已废弃--------end
-
+          const delay = (ms) => new Promise(resolve => {
+            setTimeout(resolve, ms)
+          })
+          yield call(delay, 500)
           // 正常逻辑------start
           // if (redirectLocation) {
           //   yield put(routerRedux.push(redirectLocation))

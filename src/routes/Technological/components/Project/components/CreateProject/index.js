@@ -488,8 +488,8 @@ class CreateProject extends React.Component {
 export default Form.create()(CreateProject)
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ technological: { datas: { currentUserOrganizes = [], currentOrgProjectList = [], userOrgPermissions } } }) {
-  return { currentUserOrganizes, currentOrgProjectList, userOrgPermissions };
+function mapStateToProps({ technological: { datas: { currentUserOrganizes = [], userOrgPermissions } } }) {
+  return { currentUserOrganizes, userOrgPermissions };
 }
 
 CreateProject.defaultProps = {
