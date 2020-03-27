@@ -144,7 +144,8 @@ export async function fillFormComplete(data) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/flow/task/complete`,
     method: 'PUT',
-    data
+    data,
+    headers: createHeaderContentDataByFlowInstantId(data.flow_instance_id),
   })
 }
 
@@ -158,6 +159,33 @@ export async function rejectProcessTask(data) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/flow/task/reject`,
     method: 'PUT',
-    data
+    data,
+    headers: createHeaderContentDataByFlowInstantId(data.flow_instance_id),
+  })
+}
+
+/**
+ * 中止流程
+ * @param {String} id 对应的流程实例ID
+ */
+export async function workflowEnd(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/workflow/end`,
+    method: 'GET',
+    params,
+    headers: createHeaderContentDataByFlowInstantId(params.id)
+  })
+}
+
+/**
+ * 删除流程
+ * @param {String} id 当前流程实例的ID
+ */
+export async function workflowDelete(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/workflow`,
+    method: 'DELETE',
+    params,
+    headers: createHeaderContentDataByFlowInstantId(params.id)
   })
 }

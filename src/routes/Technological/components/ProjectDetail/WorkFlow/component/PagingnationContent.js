@@ -22,11 +22,11 @@ export default class PagingnationContent extends Component {
   async getProcessListByType() {
     const { projectDetailInfoData: { board_id }, processDoingList = [], processStopedList = [], processComepletedList = [], processNotBeginningList = [] } = this.props
     const { page_number, page_size, } = this.state
-    const { listData = [], status, dispatch } = this.props
+    const { listData = [], currentFlowTabsStatus, dispatch } = this.props
     const obj = {
       // page_number,
       // page_size,
-      status,
+      status: currentFlowTabsStatus || '1',
       board_id
     }
     this.setState({
@@ -38,7 +38,7 @@ export default class PagingnationContent extends Component {
       const data = res.data
       let listName
       let selectList = []
-      switch (status) {
+      switch (currentFlowTabsStatus) {
         case '1':
           listName = 'processDoingList'
           selectList = processDoingList
@@ -134,7 +134,8 @@ function mapStateToProps({
     processDoingList = [],
     processStopedList = [],
     processComepletedList = [],
-    processNotBeginningList = []
+    processNotBeginningList = [],
+    currentFlowTabsStatus
   },
   projectDetail: { datas: { projectDetailInfoData = {} } }
 }) {
@@ -144,6 +145,7 @@ function mapStateToProps({
     processStopedList,
     processComepletedList,
     processNotBeginningList,
-    projectDetailInfoData
+    projectDetailInfoData,
+    currentFlowTabsStatus
   }
 }

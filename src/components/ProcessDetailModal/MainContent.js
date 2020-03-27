@@ -73,14 +73,14 @@ export default class MainContent extends Component {
 
   initCanvas() {
     const { processInfo = {}, processEditDatas = [] } = this.props
-    const { curr_node_sort } = processInfo
+    const { curr_node_sort, status: parentStatus } = processInfo
     const defaultProps = {
       canvaswidth: 138, // 画布宽度
       canvasheight: 138, // 画布高度
       x0: 102,
       y0: 103,
       r: 69,
-      lineWidth: 14,
+      lineWidth: 8,
       strokeStyle: '#ffffff',
       LinearGradientColor1: '#3EECED',
       LinearGradientColor2: '#499BE6'
@@ -120,12 +120,24 @@ export default class MainContent extends Component {
         // } else if (Number(processEditDatas[i].sort) > Number(curr_node_sort)) {
         //   color = '#f2f2f2'
         // }
-        if (processEditDatas[i].status == '2') {// 表示完成
-          color = 'rgba(24,144,255,1)' // 蓝色
-        } else if (processEditDatas[i].status == '1') { // 表示进行中
+        if (parentStatus == '2') { // 表示中止时
+          if (processEditDatas[i].status == '2') {// 表示完成
+            color = 'rgba(0,0,0,0.25)' // 蓝色
+          } else if (processEditDatas[i].status == '1') { // 表示进行中
+            color = 'rgba(0,0,0,0.25)'
+          } else if (processEditDatas[i].status == '0') { // 表示未开始
+            color = 'rgba(0,0,0,0.04)'
+          }
+        } else if (parentStatus == '0') { // 表示未开始
           color = 'rgba(0,0,0,0.04)'
-        } else if (processEditDatas[i].status == '0') { // 表示未开始
-          color = 'rgba(0,0,0,0.04)'
+        } else {
+          if (processEditDatas[i].status == '2') {// 表示完成
+            color = 'rgba(24,144,255,1)' // 蓝色
+          } else if (processEditDatas[i].status == '1') { // 表示进行中
+            color = 'rgba(0,0,0,0.04)'
+          } else if (processEditDatas[i].status == '0') { // 表示未开始
+            color = 'rgba(0,0,0,0.04)'
+          }
         }
         circle.strokeStyle = color; //curr_node_sort
         circle.arc(x0, y0, r, 0.6 * Math.PI + i * 1.83 / length * Math.PI, 0.6 * Math.PI + i * 1.83 / length * Math.PI + 1.83 / length * Math.PI - 0.03 * Math.PI, false);///用于绘制圆弧context.arc(x坐标，y坐标，半径，起始角度，终止角度，顺时针/逆时针)
@@ -564,22 +576,65 @@ export default class MainContent extends Component {
 
   // 渲染不同时候对应步骤的状态
   renderDiffStepStatus = () => {
-    const { processPageFlagStep, processEditDatas = [], processInfo = {} } = this.props
-    let totalStep = ''
-    let currentStep = ''
-    switch (processPageFlagStep) {
-      case '1': // 表示是配置的时候
-        totalStep = processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0
-        currentStep = processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0
+    const { processPageFlagStep, processEditDatas = [], processInfo: { status } } = this.props
+    let currentText = ''
+    switch (status) {
+      case '1':
+        currentText = '剩 余'
         break;
       case '2':
-        totalStep = processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0
-        currentStep = processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0
+        currentText = '已 中 止'
+        break
+      case '3':
+        currentText = '已 完 成'
+        break
+      case '0':
+        currentText = '未开始'
         break
       default:
         break;
     }
-    return { totalStep, currentStep, length: processEditDatas.length, processPageFlagStep }
+    return currentText
+  }
+
+  // 渲染当前步骤数量
+  renderCurrentStepNumber = () => {
+    const { processPageFlagStep, processInfo: { status, curr_node_sort, nodes = [] }, processEditDatas = [] } = this.props
+    let gold_status = ''
+    let totalStep = ''
+    let currentStep = '' // 表示当前的步骤
+    switch (processPageFlagStep) {
+      case '4': // 表示是实例详情中的内容
+        switch (status) {
+          case '1': // 表示进行中;
+          case '2': // 表示中止
+            gold_status = Number(nodes.findIndex(item => item.status == '1')) + 1
+            currentStep = gold_status
+            totalStep = nodes.length
+            break
+          case '3': // 表示已完成
+            currentStep = nodes.length
+            totalStep = nodes.length
+            break
+          case '0': // 表示未开始
+            gold_status = Number(nodes.findIndex(item => item.status == '0')) + 1
+            currentStep = gold_status
+            totalStep = nodes.length
+            break
+          default:
+            break;
+        }
+        break;
+      case '1': // 表示配置的页面
+        case '2':
+          case '3':
+        currentStep = (processEditDatas && processEditDatas.length) ? processEditDatas.length : 0
+        totalStep = (processEditDatas && processEditDatas.length) ? processEditDatas.length : 0
+      break
+      default:
+        break;
+    }
+    return { totalStep, currentStep }
   }
 
   // 渲染开始流程的气泡框
@@ -610,9 +665,8 @@ export default class MainContent extends Component {
 
   render() {
     const { clientHeight } = this.state
-    const { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep } = this.props
+    const { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep, processInfo: { status } } = this.props
     let saveTempleteDisabled = currentFlowInstanceName == '' || (processEditDatas && processEditDatas.length) && processEditDatas[processEditDatas.length - 1].is_edit == '0' || (processEditDatas && processEditDatas.length) && !(processEditDatas[processEditDatas.length - 1].node_type) ? true : false
-    let curr_node_sort = (processEditDatas && processEditDatas.length) && processEditDatas.findIndex(item => item.status == '1')
     return (
       <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto', position: 'relative' }} onScroll={this.onScroll} >
         <div id="container_configureTop" className={indexStyles.configure_top}>
@@ -623,31 +677,31 @@ export default class MainContent extends Component {
             <span style={{
               position: 'absolute',
               top: '70px',
-              left: '85px',
+              left: '80px',
               height: 17,
               fontSize: 20,
               fontFamily: 'PingFangSC-Regular',
               fontWeight: 400,
               color: 'rgba(140,140,140,1)',
               lineHeight: '17px'
-            }}>{Number(curr_node_sort) + 1 ? Number(curr_node_sort) + 1 : processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0}/{processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0}</span>
+            }}>{`${this.renderCurrentStepNumber().currentStep} / ${this.renderCurrentStepNumber().totalStep}`}</span>
             <span style={{
               position: 'absolute',
               top: '110px',
-              left: '72px',
+              left: '76px',
               height: 30,
               fontSize: 14,
               fontFamily: 'PingFangSC-Regular',
               fontWeight: 400,
               color: 'rgba(89,89,89,1)',
               lineHeight: '30px'
-            }}>{processPageFlagStep == '4' ? '剩余' : '新建'}{processPageFlagStep == '4' ? Number(processEditDatas.length) - (Number(curr_node_sort)) : processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0}步</span>
+            }}>{processPageFlagStep == '4' ? this.renderDiffStepStatus() : '新 建'} {processPageFlagStep == '4' ? status == '1' ? `${this.renderCurrentStepNumber().currentStep} 步`: '' : `${this.renderCurrentStepNumber().currentStep} 步`}</span>
             <div style={{ paddingTop: '32px', paddingRight: '32px', flex: 1, float: 'left', width: '977px', height: '210px' }}>
               {/* 显示流程名称 */}
               <div style={{ marginBottom: '12px' }}>
                 {
                   !isEditCurrentFlowInstanceName ? (
-                    <div onClick={this.handleChangeFlowInstanceName} className={`${indexStyles.flow_name}`}>
+                    <div onClick={processPageFlagStep == '4' ? '' : this.handleChangeFlowInstanceName} className={`${processPageFlagStep == '4' ? indexStyles.normal_flow_name : indexStyles.flow_name}`}>
                       <span style={{ wordBreak: 'break-all' }}>{currentFlowInstanceName}</span>
                     </div>
                   ) : (
@@ -671,7 +725,7 @@ export default class MainContent extends Component {
               <div>
                 {
                   !isEditCurrentFlowInstanceDescription ? (
-                    <div className={indexStyles.flow_description} onClick={this.handleChangeFlowInstanceDescription}>
+                    <div className={processPageFlagStep == '4' ? indexStyles.normal_flow_description  : indexStyles.flow_description} onClick={ processPageFlagStep == '4' ? '' : this.handleChangeFlowInstanceDescription}>
                       {currentFlowInstanceDescription != '' ? currentFlowInstanceDescription : '添加描述'}
                     </div>
                   ) : (
@@ -713,7 +767,7 @@ export default class MainContent extends Component {
                 {
                   (processPageFlagStep == '1' || processPageFlagStep == '3') && (
                     <Popover trigger="click" title={null} content={this.renderProcessStartConfirm()} icon={<></>} getPopupContainer={triggerNode => triggerNode.parentNode}>
-                      <Button type="primary" disabled={saveTempleteDisabled} style={{ marginRight: '24px', height: '40px' }}>开始流程</Button>
+                      <Button disabled={saveTempleteDisabled} style={{ marginRight: '24px', height: '40px', border: '1px solid rgba(24,144,255,1)', color: '#1890FF' }}>开始流程</Button>
                     </Popover>
                   )
                 }
@@ -729,7 +783,7 @@ export default class MainContent extends Component {
         <div id="suspensionFlowInstansNav" className={`${indexStyles.suspensionFlowInstansNav}`}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
-              <span style={{ color: 'rgba(0,0,0,0.85)', fontSize: '16px', fontWeight: 500 }}>{currentFlowInstanceName} {Number(curr_node_sort) + 1 ? Number(curr_node_sort) + 1 : processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0}/{processEditDatas && processEditDatas.length ? Number(processEditDatas.length) : 0}</span>
+              <span style={{ color: 'rgba(0,0,0,0.85)', fontSize: '16px', fontWeight: 500 }}>{currentFlowInstanceName} ({`${this.renderCurrentStepNumber().currentStep} / ${this.renderCurrentStepNumber().totalStep}`})</span>
             </div>
             <div>
               <span onClick={this.handleBackToTop} style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe63d; 回到顶部</span>

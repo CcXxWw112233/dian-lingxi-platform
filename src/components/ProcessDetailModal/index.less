@@ -79,6 +79,80 @@
     margin: 0 12px;
   }
 }
+
+.detail_action_list {
+  display            : -webkit-flex;
+  display            : -ms-flexbox;
+  display            : flex;
+  -webkit-align-items: center;
+  -ms-flex-align     : center;
+  align-items        : center;
+  margin-right: 10px;
+  .action {
+    margin-left: 12px;
+    color: rgba(0, 0, 0, 0.45);
+    margin-right: 12px;
+  }
+}
+
+
+
+.right_menu {
+  display: inline-block;
+
+  &:hover {
+    background   : rgba(230, 247, 255, 1);
+    border-radius: 4px;
+  }
+}
+
+.visit_icon {
+  margin-right: 12px;
+}
+
+.more_icon {
+  display    : inline-block;
+  width      : 24px;
+  height     : 24px;
+  text-align : center;
+  line-height: 24px;
+  cursor     : pointer;
+
+  &:hover {
+    background   : rgba(230, 247, 255, 1);
+    border-radius: 4px;
+  }
+
+  .more {
+    font-size: 20px;
+  }
+}
+
+.more_icon:hover .more {
+  color: #1890FF;
+}
+
+.dele_icon {
+  display    : inline-block;
+  width      : 24px;
+  height     : 24px;
+  text-align : center;
+  line-height: 24px;
+  cursor     : pointer;
+
+  &:hover {
+    background   : rgba(255, 241, 240, 1);
+    border-radius: 4px;
+  }
+
+  .dele {
+    font-size: 20px;
+  }
+}
+
+.dele_icon:hover .dele {
+  color: #FF7875;
+}
 /* HeaderContent 样式合集 E*/
 
 /* MainContent 样式合集 */
@@ -121,12 +195,30 @@
       border:1px solid rgba(0,0,0,0.15);
       padding: 8px 12px;
     }
+    .normal_flow_name {
+      font-size:20px;
+      font-family:PingFangSC-Medium,PingFang SC;
+      font-weight:500;
+      color:rgba(0,0,0,0.85);
+      line-height:28px;
+      height:44px;
+      background:rgba(255,255,255,1);
+      border-radius:4px;
+      // border:1px solid rgba(0,0,0,0.15);
+      padding: 8px 12px;
+    }
     .flow_description {
-      // width:820px;
       height:92px;
       background:rgba(255,255,255,1);
       border-radius:4px;
       border:1px solid rgba(0,0,0,0.15);
+      padding: 8px 0 0 12px;
+    }
+    .normal_flow_description {
+      height:92px;
+      background:rgba(255,255,255,1);
+      border-radius:4px;
+      // border:1px solid rgba(0,0,0,0.15);
       padding: 8px 0 0 12px;
     }
   }

@@ -75,7 +75,7 @@ export default class ProcessDetailModal extends Component {
           onCancel={this.onCancel}
           isNotShowFileDetailContentRightVisible={true}
           mainContent={<MainContent onCancel={this.onCancel}/>}
-          headerContent={<HeaderContent />}
+          headerContent={<HeaderContent onCancel={this.onCancel}/>}
           commonDrawerContentOutClick={this.commonDrawerContentOutClick}
           isNotShowFileDetailContentLeftScrollBar={true}
         />

@@ -6,7 +6,8 @@ import { MESSAGE_DURATION_TIME, FILES, FLOWS } from "../../../globalset/js/const
 import { getSubfixName } from '../../../utils/businessFunction'
 import QueryString from 'querystring'
 import { processEditDatasConstant, processEditDatasRecordsConstant, processDoingListMatch, processInfoMatch } from '../../../components/ProcessDetailModal/constant';
-import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete, rejectProcessTask } from "../../../services/technological/workFlow"
+import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete, rejectProcessTask, workflowEnd, workflowDelete } from "../../../services/technological/workFlow"
+import {public_selectCurrentFlowTabsStatus} from './select'
 
 let board_id = null
 let appsSelectKey = null
@@ -34,6 +35,7 @@ export default {
     processInfo: {}, // 流程实例信息
     currentProcessInstanceId: '', // 当前查看的流程实例名称
     currentTempleteIdentifyId: '', // 当前查看的模板编号凭证ID
+    currentFlowTabsStatus: '1'
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -252,6 +254,7 @@ export default {
           break
         case '0':
           listName = 'processNotBeginningList'
+          break
         default:
           listName = 'processDoingList'
           break
@@ -304,6 +307,43 @@ export default {
           }
         })
         if (calback && typeof calback == 'function') calback()
+      }
+    },
+
+    // 中止流程
+    * workflowEnd({ payload }, { call, select, put }) {
+      const { id, board_id, calback } = payload
+      let status = yield select(public_selectCurrentFlowTabsStatus) || '1'
+      let res = yield call(workflowEnd, {id})
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'getProcessListByType',
+          payload: {
+            status,
+            board_id
+          }
+        })
+        if (calback && typeof calback == 'function') calback()
+      } else {
+        message.warn(res.message)
+      }
+    },
+    // 删除流程
+    * workflowDelete({ payload }, { call, select, put }) {
+      const { id, board_id, calback } = payload
+      let status = yield select(public_selectCurrentFlowTabsStatus) || '1'
+      let res = yield call(workflowDelete, {id})
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'getProcessListByType',
+          payload: {
+            status,
+            board_id
+          }
+        })
+        if (calback && typeof calback == 'function') calback()
+      } else {
+        message.warn(res.message)
       }
     },
   },

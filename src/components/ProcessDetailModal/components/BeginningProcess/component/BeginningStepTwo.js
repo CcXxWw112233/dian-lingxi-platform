@@ -146,22 +146,36 @@ export default class BeginningStepTwo extends Component {
 
   // 渲染不同状态时步骤的样式
   renderDiffStatusStepStyles = () => {
-    const { itemValue } = this.props
+    const { itemValue, processInfo: { status: parentStatus } } = this.props
     const { status } = itemValue
     let stylLine, stylCircle
-    if (status == '0') { // 未开始
-      stylLine = indexStyles.hasnotCompetedLine
-      stylCircle = indexStyles.hasnotCompetedCircle
-    } else if (status == '1') { // 进行中
-      stylLine = indexStyles.doingLine
-      stylCircle = indexStyles.doingCircle
-    } else if (status == '2') { // 已完成
-      stylLine = indexStyles.line
-      stylCircle = indexStyles.circle
+    if (parentStatus == '2') { // 表示已中止
+      if (status == '1') { // 进行中
+        stylLine = indexStyles.hasnotCompetedLine
+        stylCircle = indexStyles.hasnotCompetedCircle
+      } else {
+        stylLine = indexStyles.stopLine
+        stylCircle = indexStyles.stopCircle
+      }
+    } else if (parentStatus == '0') { // 表示未开始
+      stylLine = indexStyles.stopLine
+      stylCircle = indexStyles.stopCircle
     } else {
-      stylLine = indexStyles.doingLine
-      stylCircle = indexStyles.doingCircle
+      if (status == '0') { // 未开始
+        stylLine = indexStyles.hasnotCompetedLine
+        stylCircle = indexStyles.hasnotCompetedCircle
+      } else if (status == '1') { // 进行中
+        stylLine = indexStyles.doingLine
+        stylCircle = indexStyles.doingCircle
+      } else if (status == '2') { // 已完成
+        stylLine = indexStyles.line
+        stylCircle = indexStyles.circle
+      } else {
+        stylLine = indexStyles.doingLine
+        stylCircle = indexStyles.doingCircle
+      }
     }
+    
     return { stylCircle, stylLine }
   }
 
@@ -275,7 +289,7 @@ export default class BeginningStepTwo extends Component {
   }
 
   renderEditDetailContent = () => {
-    const { itemValue } = this.props
+    const { itemValue, processInfo: { status: parentStatus } } = this.props
     const { approvePersonnelList = [], rejectMessage, transPrincipalList = [] } = this.state
     const { approve_type, status } = itemValue
     let type_name = ''
@@ -309,7 +323,7 @@ export default class BeginningStepTwo extends Component {
         </div>
         {/* 编辑按钮 */}
         {
-          status == '1' && (
+          (parentStatus == '1' && status == '1') && (
             <div className={indexStyles.button_wrapper} style={{ paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center', position: 'relative' }}>
               <Popconfirm 
                 className={indexStyles.confirm_wrapper} icon={<></>} 

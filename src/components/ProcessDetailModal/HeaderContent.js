@@ -41,7 +41,7 @@ export default class HeaderContent extends Component {
         </div>
         {/* 这里是头部右边 */}
         <div className={indexStyles.detail_head_right}>
-          <HeaderContentRightMenu />
+          <HeaderContentRightMenu onCancel={this.props.onCancel}/>
         </div>
         
       </div>

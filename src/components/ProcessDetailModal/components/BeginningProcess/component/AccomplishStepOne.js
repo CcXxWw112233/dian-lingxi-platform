@@ -46,22 +46,36 @@ export default class AccomplishStepOne extends Component {
 
   // 渲染不同状态时步骤的样式
   renderDiffStatusStepStyles = () => {
-    const { itemValue } = this.props
+    const { itemValue, processInfo: { status: parentStatus } } = this.props
     const { status } = itemValue
     let stylLine, stylCircle
-    if (status == '0') { // 未开始
-      stylLine = indexStyles.hasnotCompetedLine
-      stylCircle = indexStyles.hasnotCompetedCircle
-    } else if (status == '1') { // 进行中
-      stylLine = indexStyles.doingLine
-      stylCircle = indexStyles.doingCircle
-    } else if (status == '2') { // 已完成
-      stylLine = indexStyles.line
-      stylCircle = indexStyles.circle
+    if (parentStatus == '2') { // 表示已中止
+      if (status == '1') { // 进行中
+        stylLine = indexStyles.hasnotCompetedLine
+        stylCircle = indexStyles.hasnotCompetedCircle
+      } else {
+        stylLine = indexStyles.stopLine
+        stylCircle = indexStyles.stopCircle
+      }
+    } else if (parentStatus == '0') { // 表示未开始
+      stylLine = indexStyles.stopLine
+      stylCircle = indexStyles.stopCircle
     } else {
-      stylLine = indexStyles.doingLine
-      stylCircle = indexStyles.doingCircle
+      if (status == '0') { // 未开始
+        stylLine = indexStyles.hasnotCompetedLine
+        stylCircle = indexStyles.hasnotCompetedCircle
+      } else if (status == '1') { // 进行中
+        stylLine = indexStyles.doingLine
+        stylCircle = indexStyles.doingCircle
+      } else if (status == '2') { // 已完成
+        stylLine = indexStyles.line
+        stylCircle = indexStyles.circle
+      } else {
+        stylLine = indexStyles.doingLine
+        stylCircle = indexStyles.doingCircle
+      }
     }
+    
     return { stylCircle, stylLine }
   }
 
@@ -225,6 +239,6 @@ export default class AccomplishStepOne extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [] } }) {
-  return { processEditDatas }
+function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [], processInfo = {} } }) {
+  return { processEditDatas, processInfo }
 }
