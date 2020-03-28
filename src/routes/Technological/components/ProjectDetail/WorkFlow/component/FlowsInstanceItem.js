@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import indexStyles from '../index.less'
 import { Tooltip } from 'antd'
+import DifferenceDeadlineType from '../../../../../../components/ProcessDetailModal/components/DifferenceDeadlineType'
 export default class FlowsInstanceItem extends Component {
 
   handleProcessInfo = (id) => {
@@ -32,7 +33,7 @@ export default class FlowsInstanceItem extends Component {
         </div>
         <div className={indexStyles.flowsInstanceItem_right}>
           <span className={indexStyles.current_step}>当前步骤完成期限 : </span>
-          <span className={indexStyles.date_line}>剩余1天</span>
+          <span className={indexStyles.date_line}><DifferenceDeadlineType itemValue={itemValue}/></span>
         </div>
       </div>
     )

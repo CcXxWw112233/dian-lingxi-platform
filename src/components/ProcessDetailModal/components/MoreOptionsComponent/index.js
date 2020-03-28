@@ -76,6 +76,8 @@ export default class MoreOptionsComponent extends Component {
       this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '1' }, 'cc_type')
     } else if (code == 'COMPLETION_DEADLINE') {
       this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '2' }, 'deadline_type')
+      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '1' }, 'deadline_value')
+      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: 'day' }, 'deadline_time_type')
     }
   }
 
@@ -93,8 +95,8 @@ export default class MoreOptionsComponent extends Component {
     switch (code) {
       case 'COMPLETION_DEADLINE':
         this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '1' }, 'deadline_type')
-        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: 'day' }, 'deadline_time_type')
-        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '1' }, 'deadline_value')
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '' }, 'deadline_time_type')
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '' }, 'deadline_value')
         break
       case 'DUPLICATED': // 抄送
         this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '0' }, 'cc_type')
