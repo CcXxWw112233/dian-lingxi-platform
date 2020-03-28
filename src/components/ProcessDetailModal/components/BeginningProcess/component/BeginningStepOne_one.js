@@ -21,6 +21,9 @@ export default class BeginningStepOne_one extends Component {
   defaultValueChange(e, verification_rule) {
     const { itemValue } = this.props
     const { val_min_length, val_max_length } = itemValue
+    if (e.target.value.trimLR() == '') {
+      return
+    }
     if (verification_rule == '') {
       if (e.target.value.length < val_min_length) {
         message.warn(`最少不能少于${val_min_length}字`)

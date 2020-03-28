@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '../../AvatarList'
-import { principalList } from '../../../constant'
+// import { principalList } from '../../../constant'
 import BeginningStepOne_one from './BeginningStepOne_one'
 import BeginningStepOne_two from './BeginningStepOne_two'
 import BeginningStepOne_three from './BeginningStepOne_three'
@@ -12,6 +12,9 @@ import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { Button, message } from 'antd'
 import { connect } from 'dva'
 import { timestampToTimeNormal, compareACoupleOfObjects } from '../../../../../utils/util';
+import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard  } from '../../../../../utils/businessFunction'
+import { PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
+import { genPrincipalListFromAssignees } from '../../handleOperateModal'
 
 @connect(mapStateToProps)
 export default class BeginningStepOne extends Component {
@@ -21,7 +24,7 @@ export default class BeginningStepOne extends Component {
     this.state = {
       transPrincipalList: props.itemValue.assignees ? [...props.itemValue.assignees] : [], // 表示当前的执行人
       transCopyPersonnelList: props.itemValue.recipients ? [...props.itemValue.recipients] : [], // 表示当前选择的抄送人
-      is_show_spread_arrow: props.itemValue.status == '1' ? true : false,
+      is_show_spread_arrow: props.itemValue.status == '1' ? true : false, // 是否展开箭头 详情 true表示展开
       form_values: []
     }
   }
@@ -35,7 +38,10 @@ export default class BeginningStepOne extends Component {
     }
   }
 
-  // 判断是否有完成按钮
+  /**
+   * 判断是否有完成按钮
+   * @returns {Boolean} true 表示显示 false表示不能显示
+   */
   whetherShowCompleteButton = () => {
     const { itemValue } = this.props
     const { assignee_type, assignees } = itemValue
@@ -74,6 +80,7 @@ export default class BeginningStepOne extends Component {
     })
   }
 
+  // 设置表单是否可以提交
   setCompleteButtonDisabled = () => {
     const { itemValue, itemKey, processEditDatas = [] } = this.props
     const { forms = [] } = processEditDatas[itemKey]
@@ -177,6 +184,10 @@ export default class BeginningStepOne extends Component {
   // 编辑点击事件
   handleEnterConfigureProcess = (e) => {
     e && e.stopPropagation()
+    if (!this.whetherIsHasPermission()) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return 
+    }
     this.setState({
       isAccomplishNodesIng: true, // 表示正在完成中
     })
@@ -209,6 +220,21 @@ export default class BeginningStepOne extends Component {
         }
       }
     })
+  }
+
+  /**
+   * 判断是否有权限
+   * @returns {Boolean} true 表示有权限 false 表示没有权限
+   */
+  whetherIsHasPermission = () => {
+    const { processInfo = {} } = this.props
+    const { privileges = [], is_privilege, board_id, nodes = [] } = processInfo
+    const principalList = genPrincipalListFromAssignees(nodes);
+    let flag = false
+    if (checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, principalList, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id))) {
+      flag = true
+    }
+    return flag
   }
 
   // 理解成是否是有效的头像

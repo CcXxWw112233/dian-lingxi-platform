@@ -4,9 +4,12 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '../../AvatarList'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { principalList, approvePersonnelSuggestion } from '../../../constant'
-import { Button, Popconfirm, Input } from 'antd'
+import { Button, Popconfirm, Input, message } from 'antd'
 import { connect } from 'dva'
 import { timestampToTimeNormal, compareACoupleOfObjects } from '../../../../../utils/util';
+import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard  } from '../../../../../utils/businessFunction'
+import { PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
+import { genPrincipalListFromAssignees } from '../../handleOperateModal'
 
 const TextArea = Input.TextArea
 @connect(mapStateToProps)
@@ -65,6 +68,12 @@ export default class BeginningStepTwo extends Component {
   // 文本输入框的change事件
   handleChangeTextAreaValue = (e) => {
     e && e.stopPropagation()
+    if (e.target.value.trimLR() == '') {
+      this.setState({
+        successfulMessage: ''
+      })
+      return 
+    }
     this.setState({
       successfulMessage: e.target.value
     })
@@ -73,6 +82,10 @@ export default class BeginningStepTwo extends Component {
   // 审批通过的点击事件
   handlePassProcess = (e) => {
     e && e.stopPropagation()
+    if (!this.whetherIsHasPermission()) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return 
+    }
     this.setState({
       isPassNodesIng: true, // 表示正在通过审批中
     })
@@ -120,8 +133,14 @@ export default class BeginningStepTwo extends Component {
   // ------------- 审批驳回气泡弹框事件 --------
   handleRejectTextAreaValue = (e) => {
     e && e.stopPropagation()
+    if (e.target.value.trimLR() == '') {
+      this.setState({
+        rejectMessage:''
+      })
+      return 
+    }
     this.setState({
-      rejectMessage: '',
+      rejectMessage: e.target.value,
     })
   }
 
@@ -132,6 +151,10 @@ export default class BeginningStepTwo extends Component {
 
   handleRejectProcess = (e) => {
     e && e.stopPropagation()
+    if (!this.whetherIsHasPermission()) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return 
+    }
     this.setState({
       isRejectNodesIng: true, // 表示正在驳回节点中
     })
@@ -183,6 +206,21 @@ export default class BeginningStepTwo extends Component {
     let newAssignees = [...assignees]
     let gold_processed = (newAssignees.filter(item => item.id == id)[0] || []).processed || ''
     return gold_processed
+  }
+
+    /**
+   * 判断是否有权限
+   * @returns {Boolean} true 表示有权限 false 表示没有权限
+   */
+  whetherIsHasPermission = () => {
+    const { processInfo = {} } = this.props
+    const { privileges = [], is_privilege, board_id, nodes = [] } = processInfo
+    const principalList = genPrincipalListFromAssignees(nodes);
+    let flag = false
+    if (checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, principalList, checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id))) {
+      flag = true
+    }
+    return flag
   }
 
   // 判断是否有完成按钮

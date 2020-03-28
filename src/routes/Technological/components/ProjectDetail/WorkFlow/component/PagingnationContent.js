@@ -4,6 +4,7 @@ import FlowsInstanceItem from './FlowsInstanceItem'
 import { getProcessListByType } from "../../../../../../services/technological/workFlow";
 import nodataImg from '../../../../../../assets/projectDetail/process/empty-box.png'
 import { connect } from 'dva'
+import globalStyles from '@/globalset/css/globalClassName.less'
 @connect(mapStateToProps)
 export default class PagingnationContent extends Component {
 
@@ -78,8 +79,10 @@ export default class PagingnationContent extends Component {
     }
   }
 
-  contentBodyScroll(e) {
+  contentBodyScroll = (e) => {
+    return
     if (e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < 20) {
+      console.log('进来了','sssssssssssssssssss_我的天')
       const { scrollBlock } = this.state
       if (!scrollBlock) {
         return false
@@ -97,7 +100,7 @@ export default class PagingnationContent extends Component {
     const { clientHeight, listData = [], status, processDoingList = [], processStopedList = [], processComepletedList = [], processNotBeginningList = [] } = this.props
     const maxContentHeight = clientHeight - 108 - 150
     return (
-      <div className={indexStyles.pagingnationContent} style={{ maxHeight: maxContentHeight }}>
+      <div className={`${indexStyles.pagingnationContent} ${globalStyles.global_vertical_scrollbar}`} onScroll={this.contentBodyScroll} style={{ maxHeight: maxContentHeight, overflowY:'auto' }}>
         {
           listData.map((value, key) => {
             return (
