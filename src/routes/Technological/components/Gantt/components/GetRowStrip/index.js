@@ -665,7 +665,7 @@ export default class GetRowStrip extends PureComponent {
     }
 
     render() {
-        const { itemValue = {}, ceilWidth } = this.props
+        const { itemValue = {}, ceilWidth, projectDetailInfoData } = this.props
         const { tree_type } = itemValue
 
         const { currentSelectedProjectMembersList = [], currentRectDashed = {}, dasheRectShow, drag_holiday_count } = this.state
@@ -712,7 +712,7 @@ export default class GetRowStrip extends PureComponent {
                 </div >
                 <MilestoneDetail
                     handleMiletonesChange={this.handleMiletonsChangeMountInGantt}
-                    users={currentSelectedProjectMembersList}
+                    users={projectDetailInfoData.data || []}
                     miletone_detail_modal_visible={this.state.miletone_detail_modal_visible}
                     set_miletone_detail_modal_visible={this.set_miletone_detail_modal_visible}
                     deleteMiletone={this.deleteMiletone}
@@ -745,6 +745,11 @@ function mapStateToProps({ gantt: {
     } },
     milestoneDetail: {
         milestone_detail = {}
+    },
+    projectDetail: {
+        datas: {
+            projectDetailInfoData = {}
+        }
     }
 }) {
     return {
@@ -763,6 +768,7 @@ function mapStateToProps({ gantt: {
         group_view_type,
         group_list_area_section_height,
         show_board_fold,
-        outline_tree_round
+        outline_tree_round,
+        projectDetailInfoData
     }
 }
