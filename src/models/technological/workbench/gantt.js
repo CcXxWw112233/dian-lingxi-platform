@@ -60,7 +60,7 @@ export default {
       create_end_time: '', //创建任务截至时间
       list_group: [], //分组列表
       ceilWidth: 44, //单元格的宽度
-      ceiHeight: ceil_height_fold, //单元格高度 40 + 12的外边距
+      ceiHeight: ceil_height, //单元格高度 40 + 12的外边距
       date_total: 0, //总天数
       group_rows: [3, 3, 3], //每一个分组默认行数 [7, 7, 7]
       group_list_area: [], //分组高度区域 [组一行数 * ceiHeight，组二行数 * ceiHeight]
