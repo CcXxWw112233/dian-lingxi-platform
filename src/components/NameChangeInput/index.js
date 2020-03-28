@@ -57,7 +57,7 @@ export default class NameChangeInput extends React.Component{
     let val = e.target.value
     const { maxLength } = this.props
     if (val.length > maxLength - 1) {
-      message.error(`标题字符数最大限制为${maxLength - 1}字`)
+      message.error(`字符数最大限制为${maxLength - 1}字`)
       this.setState({
         isOverFlowText: true, // 是否超出最大字数
       })
@@ -108,6 +108,7 @@ export default class NameChangeInput extends React.Component{
                    onBlur={this.inputonBlur.bind(this)}
                    onClick={onClick}
                    style={{...style}}
+                   maxLength={maxLength}
             />
           ) :(
             <TextArea placeholder={placeholder}

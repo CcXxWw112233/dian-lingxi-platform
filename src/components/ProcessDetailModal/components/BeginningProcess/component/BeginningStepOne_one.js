@@ -148,7 +148,7 @@ export default class BeginningStepOne_one extends Component {
         </p>
 
         <div className={indexStyles.text_fillOut}>
-          <Input style={{ border: verification_rule == '' || verificationIsTrue ? '' : '1px solid #F5222D' }} placeholder={prompt_content} value={value} onChange={(e) => { this.defaultValueChange(e, verification_rule) }}/>
+          <Input maxLength={50} style={{ border: verification_rule == '' || verificationIsTrue ? '' : '1px solid #F5222D' }} placeholder={prompt_content} value={value} onChange={(e) => { this.defaultValueChange(e, verification_rule) }}/>
         </div>
       </div>
     )

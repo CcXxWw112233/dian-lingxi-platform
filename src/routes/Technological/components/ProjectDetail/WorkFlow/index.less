@@ -181,15 +181,21 @@
           border-radius: 4px;
           .flowsInstanceItem_left {
             flex: 1;
+            display: flex;
+            align-items: center;
             .flow_instance_name {
-              // min-width:84px;
-              // height:22px;
               font-size:14px;
               font-family:PingFangSC-Medium,PingFang SC;
               font-weight:500;
               color:rgba(89,89,89,1);
               line-height:22px;
               margin: 0 24px 0 5px;
+              max-width: 200px;
+              overflow: hidden;
+              display: block;
+              width: 200px;
+              white-space: nowrap;
+              text-overflow: ellipsis;
             }
             .current_step {
               font-size:14px;
@@ -205,6 +211,12 @@
               font-weight:400;
               color:rgba(24,144,255,1);
               line-height:22px;
+              width: 200px;
+              word-break: break-all;
+              overflow: hidden;
+              /* display: block; */
+              white-space: nowrap;
+              text-overflow: ellipsis;
             }
           }
           .flowsInstanceItem_right {

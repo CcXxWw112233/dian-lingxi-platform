@@ -157,18 +157,18 @@ export default class ConfigureStepOne_two extends Component {
         <div className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
           <div>
             <p>标题:</p>
-            <Input value={title} onChange={this.propertyNameChange} />
+            <Input value={title} maxLength={50} onChange={this.propertyNameChange} />
           </div>
           <div>
             <p>请选择标题:</p>
-            <Input value={prompt_content} onChange={this.defaultValueChange} />
+            <Input value={prompt_content} maxLength={50} onChange={this.defaultValueChange} />
           </div>
           <div>
             <p>添加选项: <span onClick={this.handleAddOptionsSelect} style={{ color: '#1890FF', marginLeft: '5px', cursor: 'pointer', fontSize: '16px' }} className={`${globalStyles.authTheme}`}>&#xe846;</span></p>
             {
               options.map((item, index) => {
                 return (
-                  <div key={item} style={{ position: 'relative' }}><Input style={{ marginBottom: '4px', transition: 'all .5s' }} key={item.label_value} value={item.label_name} onChange={(e) => { this.optionsValueChange(e, item.label_value) }} />{index != '0' && <span onClick={() => { this.handleDelOptionsSelect(index) }} style={{ marginLeft: '4px', position: 'absolute', top: '6px' }} className={`${globalStyles.authTheme} ${indexStyles.del_optionsIcon}`}>&#xe7fe;</span>}</div>
+                  <div key={item} style={{ position: 'relative' }}><Input maxLength={50} style={{ marginBottom: '4px', transition: 'all .5s' }} key={item.label_value} value={item.label_name} onChange={(e) => { this.optionsValueChange(e, item.label_value) }} />{index != '0' && <span onClick={() => { this.handleDelOptionsSelect(index) }} style={{ marginLeft: '4px', position: 'absolute', top: '6px' }} className={`${globalStyles.authTheme} ${indexStyles.del_optionsIcon}`}>&#xe7fe;</span>}</div>
                 )
               })
             }

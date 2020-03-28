@@ -314,7 +314,7 @@ export default class MainContent extends Component {
   // 保存模板的点击事件
   handleSaveProcessTemplate = (e) => {
     e && e.stopPropagation()
-    const { processPageFlagStep, currentTempleteIdentifyId } = this.props
+    const { processPageFlagStep, currentTempleteIdentifyId, dispatch } = this.props
     if (this.state.isSaveTempleteIng) {
       message.warn('正在保存模板中...')
       return
@@ -324,43 +324,59 @@ export default class MainContent extends Component {
     })
     const { projectDetailInfoData: { board_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [] } = this.props
     if (processPageFlagStep == '1') {// 表示的是新建的时候
-      this.props.dispatch({
-        type: 'publicProcessDetailModal/saveProcessTemplate',
-        payload: {
-          board_id,
-          name: currentFlowInstanceName,
-          description: currentFlowInstanceDescription,
-          nodes: processEditDatas,
-          calback: () => {
-            setTimeout(() => {
-              message.success('保存模板成功', MESSAGE_DURATION_TIME)
-            }, 200)
-            this.setState({
-              isSaveTempleteIng: false
-            })
-            this.props.onCancel && this.props.onCancel()
+      Promise.resolve(
+        dispatch({
+          type: 'publicProcessDetailModal/saveProcessTemplate',
+          payload: {
+            board_id,
+            name: currentFlowInstanceName,
+            description: currentFlowInstanceDescription,
+            nodes: processEditDatas,
           }
+        })
+      ).then(res => {
+        if (isApiResponseOk(res)) {
+          setTimeout(() => {
+            message.success('保存模板成功', MESSAGE_DURATION_TIME)
+          }, 200)
+          this.setState({
+            isSaveTempleteIng: false
+          })
+          this.props.onCancel && this.props.onCancel()
+        } else {
+          this.setState({
+            isSaveTempleteIng: false
+          })
         }
       })
     } else if (processPageFlagStep == '2') {// 表示的是编辑的时候
-      this.props.dispatch({
-        type: 'publicProcessDetailModal/saveEditProcessTemplete',
-        payload: {
-          board_id,
-          name: currentFlowInstanceName,
-          description: currentFlowInstanceDescription,
-          nodes: processEditDatas,
-          template_no: currentTempleteIdentifyId,
-          calback: () => {
-            this.setState({
-              isSaveTempleteIng: false
-            })
-            this.props.onCancel && this.props.onCancel()
+      Promise.resolve(
+        dispatch({
+          type: 'publicProcessDetailModal/saveEditProcessTemplete',
+          payload: {
+            board_id,
+            name: currentFlowInstanceName,
+            description: currentFlowInstanceDescription,
+            nodes: processEditDatas,
+            template_no: currentTempleteIdentifyId,
           }
+        })
+      ).then(res => {
+        if (isApiResponseOk(res)) {
+          setTimeout(() => {
+            message.success(`保存模板成功`,MESSAGE_DURATION_TIME)
+          }, 200)
+          this.setState({
+            isSaveTempleteIng: false
+          })
+          this.props.onCancel && this.props.onCancel()
+        } else {
+          this.setState({
+            isSaveTempleteIng: false
+          })
         }
       })
     }
-
   }
 
   // 开始流程的点击事件
@@ -427,29 +443,37 @@ export default class MainContent extends Component {
 
   // 表示是在启动的时候调永立即开始流程
   handleOperateStartConfirmProcess = (start_time) => {
-    const { projectDetailInfoData: { board_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { id } } = this.props
-    this.props.dispatch({
-      type: 'publicProcessDetailModal/createProcess',
-      payload: {
-        name: currentFlowInstanceName,
-        description: currentFlowInstanceDescription,
-        nodes: processEditDatas,
-        start_up_type: start_time ? '2' : '1',
-        plan_start_time: start_time ? start_time : '',
-        flow_template_id: id,
-        calback: () => {
-          this.setState({
-            isCreateProcessIng: false
-          })
-          this.props.dispatch({
-            type: 'publicProcessDetailModal/getProcessListByType',
-            payload: {
-              status: '1',
-              board_id: board_id
-            }
-          })
-          this.props.onCancel && this.props.onCancel()
+    let that = this
+    const { dispatch, projectDetailInfoData: { board_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { id } } = this.props
+    Promise.resolve(
+      dispatch({
+        type: 'publicProcessDetailModal/createProcess',
+        payload: {
+          name: currentFlowInstanceName,
+          description: currentFlowInstanceDescription,
+          nodes: processEditDatas,
+          start_up_type: start_time ? '2' : '1',
+          plan_start_time: start_time ? start_time : '',
+          flow_template_id: id,
         }
+      })
+    ).then(res => {
+      if (isApiResponseOk(res)) {
+        that.setState({
+          isCreateProcessIng: false
+        })
+        that.props.dispatch({
+          type: 'publicProcessDetailModal/getProcessListByType',
+          payload: {
+            status: '1',
+            board_id: board_id
+          }
+        })
+        that.props.onCancel && that.props.onCancel()
+      } else {
+        that.setState({
+          isCreateProcessIng: false
+        })
       }
     })
   }
@@ -671,7 +695,7 @@ export default class MainContent extends Component {
       <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto', position: 'relative' }} onScroll={this.onScroll} >
         <div id="container_configureTop" className={indexStyles.configure_top}>
           <div style={{ display: 'flex', position: 'relative' }}>
-            <canvas id="time_graph_canvas" width={210} height={210} style={{ float: 'left' }}></canvas>
+            <div><canvas id="time_graph_canvas" width={210} height={210} style={{ float: 'left' }}></canvas></div>
             {/* <img id="node_img" src={sssimg} style={{position: 'relative', width: 20, height: 20, top: 155, right: 118}}/> */}
             {parseInt(this.props.processCurrentCompleteStep) === parseInt(this.props.processInfo && this.props.processInfo.node_amount) ? <span className={globalStyles.authTheme} style={{ color: '#73D13C', position: 'absolute', top: 155, left: 92 }} >&#xe605;</span> : <span className={globalStyles.authTheme} style={{ color: '#D9D9D9', position: 'absolute', top: 155, left: 92 }} >&#xe605;</span>}
             <span style={{
@@ -696,7 +720,7 @@ export default class MainContent extends Component {
               color: 'rgba(89,89,89,1)',
               lineHeight: '30px'
             }}>{processPageFlagStep == '4' ? this.renderDiffStepStatus() : '新 建'} {processPageFlagStep == '4' ? status == '1' ? `${this.renderCurrentStepNumber().currentStep} 步`: '' : `${this.renderCurrentStepNumber().currentStep} 步`}</span>
-            <div style={{ paddingTop: '32px', paddingRight: '32px', flex: 1, float: 'left', width: '977px', height: '210px' }}>
+            <div style={{ paddingTop: '32px', paddingRight: '32px', flex: 1, float: 'left', width: '977px', minHeight: '210px' }}>
               {/* 显示流程名称 */}
               <div style={{ marginBottom: '12px' }}>
                 {
@@ -714,9 +738,9 @@ export default class MainContent extends Component {
                         autoFocus={true}
                         goldName={currentFlowInstanceName}
                         placeholder={'流程名称(必填)'}
-                        maxLength={101}
+                        maxLength={50}
                         nodeName={'input'}
-                        style={{ display: 'block', fontSize: 20, color: '#262626', resize: 'none', height: '44px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none' }}
+                        style={{ display: 'block', fontSize: 20, color: '#262626', resize: 'none', minHeight: '44px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none' }}
                       />
                     )
                 }
@@ -736,7 +760,7 @@ export default class MainContent extends Component {
                         onClick={(e) => e.stopPropagation()}
                         goldName={currentFlowInstanceDescription}
                         placeholder={'添加描述'}
-                        maxLength={1000}
+                        maxLength={101}
                         nodeName={'textarea'}
                         style={{ display: 'block', fontSize: 14, color: '#262626', resize: 'none', minHeight: '92px', maxHeight: '92px', height: '92px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none' }}
                       />
@@ -785,7 +809,7 @@ export default class MainContent extends Component {
             <div>
               <span style={{ color: 'rgba(0,0,0,0.85)', fontSize: '16px', fontWeight: 500 }}>{currentFlowInstanceName} ({`${this.renderCurrentStepNumber().currentStep} / ${this.renderCurrentStepNumber().totalStep}`})</span>
             </div>
-            <div>
+            <div style={{flexShrink: 0}}>
               <span onClick={this.handleBackToTop} style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe63d; 回到顶部</span>
             </div>
           </div>

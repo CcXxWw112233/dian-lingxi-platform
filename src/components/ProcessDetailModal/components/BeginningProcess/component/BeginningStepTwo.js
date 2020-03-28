@@ -328,7 +328,7 @@ export default class BeginningStepTwo extends Component {
     const { rejectMessage } = this.state
     return (
       <div className={indexStyles.popcontent}>
-        <TextArea onChange={this.handleRejectTextAreaValue} value={rejectMessage || ''} placeholder="驳回请填写驳回理由（必填）" className={indexStyles.c_area} />
+        <TextArea maxLength={100} onChange={this.handleRejectTextAreaValue} value={rejectMessage || ''} placeholder="驳回请填写驳回理由（必填）" className={indexStyles.c_area} />
       </div>
     )
   }
@@ -340,7 +340,7 @@ export default class BeginningStepTwo extends Component {
     const { successfulMessage } = this.state
     return (
       <div className={indexStyles.popcontent}>
-        <TextArea onChange={this.handleChangeTextAreaValue} value={successfulMessage || ''} placeholder="填写审批意见（选填）" className={indexStyles.c_area} />
+        <TextArea maxLength={100} onChange={this.handleChangeTextAreaValue} value={successfulMessage || ''} placeholder="填写审批意见（选填）" className={indexStyles.c_area} />
       </div>
     )
   }

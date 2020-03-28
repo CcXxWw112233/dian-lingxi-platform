@@ -136,11 +136,11 @@ export default class ConfigureStepOne_one extends Component {
         <div className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
           <div>
             <p>标题:</p>
-            <Input value={title} onChange={this.propertyNameChange} />
+            <Input value={title} maxLength={50} onChange={this.propertyNameChange} />
           </div>
           <div>
             <p>提示内容:</p>
-            <Input value={prompt_content} onChange={this.defaultValueChange} />
+            <Input value={prompt_content} maxLength={50} onChange={this.defaultValueChange} />
           </div>
           <div>
             <p>校验规则:</p>

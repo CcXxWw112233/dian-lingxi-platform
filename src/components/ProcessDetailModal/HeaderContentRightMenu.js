@@ -23,33 +23,35 @@ export default class HeaderContentRightMenu extends Component {
    * 访问控制的开关切换
    * @param {Boolean} flag 开关切换
    */
-  handleVisitControlChange = (flag) => {
-    const { drawContent = {} } = this.props
-    const { is_privilege = '0', card_id } = drawContent
-    const toBool = str => !!Number(str)
-    const is_privilege_bool = toBool(is_privilege)
+  handleVisitControlChange = flag => {
+    const { processInfo = {} } = this.props
+    const { id, is_privilege } = processInfo
+    const toBool = str => !!Number(str);
+    const is_privilege_bool = toBool(is_privilege);
     if (flag === is_privilege_bool) {
-      return
+      return;
     }
     //toggle权限
     const data = {
-      content_id: card_id,
-      content_type: 'card',
+      content_id: id,
+      content_type: 'flow',
       is_open: flag ? 1 : 0
-    }
+    };
     toggleContentPrivilege(data).then(res => {
       if (res && res.code === '0') {
-        // message.success('设置成功', MESSAGE_DURATION_TIME)
         setTimeout(() => {
           message.success('设置成功')
         }, 500)
         let temp_arr = res && res.data
-        this.visitControlUpdateCurrentModalData({ is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr }, flag)
+        this.visitControlUpdateCurrentModalData(
+          { is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr },
+          flag
+        );
       } else {
-        message.warning(res.message)
+        message.warning(res.message);
       }
-    })
-  }
+    });
+  };
 
   // 数组去重
   arrayNonRepeatfy = arr => {
@@ -64,76 +66,33 @@ export default class HeaderContentRightMenu extends Component {
     return temp_arr
   }
 
-  // 访问控制的更新model中的数据
-  visitControlUpdateCurrentModalData = (obj = {}) => {
-    // console.log(obj, 'sssss_obj')
-    const { drawContent = {} } = this.props
-    const { dispatch } = this.props
-    const { privileges = [], board_id, card_id } = drawContent
-    // 这是移除的操作
-    if (obj && obj.type && obj.type == 'remove') {
-      let new_privileges = [...privileges]
-      new_privileges.map((item, index) => {
-        if (item.id == obj.removeId) {
-          new_privileges.splice(index, 1)
-        }
-      })
-      let new_drawContent = { ...drawContent, privileges: new_privileges }
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent: new_drawContent
-        }
-      })
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
-    }
-    // 这是添加成员的操作
-    // 这是更新弹窗中的priveleges
-    if (obj && obj.type && obj.type == 'add') {
-      let new_privileges = []
-      for (let item in obj) {
-        if (item == 'privileges') {
-          obj[item].map(val => {
-            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
-            return new_privileges = [...temp_arr]
-          })
-        }
+  commonProcessVisitControlUpdateCurrentModalData = (newProcessInfo, type) => {
+    const { dispatch, processInfo = {} } = this.props
+    const { status, board_id } = processInfo
+    dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        processInfo: newProcessInfo
       }
-      let new_drawContent = { ...drawContent, privileges: new_privileges }
+    })
+    if (type) {
       dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
+        type: 'publicProcessDetailModal/getProcessListByType',
         payload: {
-          drawContent: new_drawContent
+          status: status,
+          board_id: board_id
         }
       })
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
-    }
+    }     
+  }
 
-    // 这是更新type类型
-    if (obj && obj.type && obj.type == 'change') {
-      let { id } = obj.temp_arr
-      let new_privileges = [...privileges]
-      new_privileges = new_privileges.map((item) => {
-        let new_item = item
-        if (item.id == id) {
-          new_item = { ...item, content_privilege_code: obj.code }
-        } else {
-          new_item = { ...item }
-        }
-        return new_item
-      })
-      let new_drawContent = { ...drawContent, privileges: new_privileges }
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent: new_drawContent
-        }
-      })
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
-    }
+  // 访问控制的更新model中的数据
+  visitControlUpdateCurrentModalData = obj => {
+    const { processInfo = {} } = this.props
+    const { privileges = [] } = processInfo
 
-    // 访问控制的切换
-    if (obj && obj.type == 'privilege') {
+    // 访问控制开关
+    if (obj && obj.type && obj.type == 'privilege') {
       let new_privileges = [...privileges]
       for (let item in obj) {
         if (item == 'privileges') {
@@ -144,27 +103,58 @@ export default class HeaderContentRightMenu extends Component {
           })
         }
       }
-      let new_drawContent = { ...drawContent, is_privilege: obj.is_privilege, privileges: new_privileges }
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent: new_drawContent
+      let newProcessInfo = {...processInfo, privileges: new_privileges, is_privilege: obj.is_privilege}
+      // this.props.updateDatasProcess({
+      //   processInfo: newProcessInfo
+      // });
+      // 这是需要获取一下流程列表 区分工作台和项目列表
+      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo, obj.type)
+      
+    };
+
+    // 访问控制添加
+    if (obj && obj.type && obj.type == 'add') {
+      let new_privileges = []
+      for (let item in obj) {
+        if (item == 'privileges') {
+          obj[item].map(val => {
+            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            return new_privileges = [...temp_arr]
+          })
         }
-      })
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id, name: 'is_privilege', value: obj.is_privilege })
-      this.props.updateParentTaskList && this.props.updateParentTaskList()
+      }
+      let newProcessInfo = {...processInfo, privileges: new_privileges}
+      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
     }
 
-    // 需要调用父级的列表
-    // this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+    // 访问控制移除
+    if (obj && obj.type && obj.type == 'remove') {
+      let new_privileges = [...privileges]
+      new_privileges.map((item, index) => {
+        if (item.id == obj.removeId) {
+          new_privileges.splice(index, 1)
+        }
+      })
+      let newProcessInfo = {...processInfo, privileges: new_privileges}
+      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
+    }
 
-    // 调用更新项目列表
-    dispatch({
-      type: 'projectDetail/projectDetailInfo',
-      payload: {
-        id: board_id
-      }
-    })
+    // 这是更新type类型
+    if (obj && obj.type && obj.type == 'change') {
+      let { id, content_privilege_code, user_info } = obj.temp_arr
+      let new_privileges = [...privileges]
+      new_privileges = new_privileges.map((item) => {
+        let new_item = item
+        if (item.id == id) {
+          new_item = {...item, content_privilege_code: obj.code}
+        } else {
+          new_item = {...item}
+        }
+        return new_item
+      })
+      let newProcessInfo = {...processInfo, privileges: new_privileges}
+      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
+    }
 
   }
 
@@ -176,18 +166,18 @@ export default class HeaderContentRightMenu extends Component {
     if (!users_arr.length) return
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     const { user_id } = user_set
-    const { drawContent = {} } = this.props
-    const { card_id, privileges = [] } = drawContent
-    const content_id = card_id
-    const content_type = 'card'
+    const { processInfo = {} } = this.props
+    const { id, privileges = [] } = processInfo
+    const content_id = id
+    const content_type = 'flow'
     let temp_ids = [] // 用来保存添加用户的id
     let new_ids = [] // 用来保存权限列表中用户id
     let new_privileges = [...privileges]
-
     // 这是所有添加成员的id列表
     users_arr && users_arr.map(item => {
       temp_ids.push(item.id)
     })
+
     let flag
     // 权限列表中的id
     new_privileges = new_privileges && new_privileges.map(item => {
@@ -211,12 +201,11 @@ export default class HeaderContentRightMenu extends Component {
         }
       })
     }
-
     setContentPrivilege({
       content_id,
       content_type,
       privilege_code: 'read',
-      user_ids: temp_ids,
+      user_ids: temp_ids
     }).then(res => {
       if (res && res.code === '0') {
         setTimeout(() => {
@@ -226,7 +215,7 @@ export default class HeaderContentRightMenu extends Component {
         temp_arr.push(res.data)
         this.visitControlUpdateCurrentModalData({ privileges: temp_arr, type: 'add' })
       } else {
-        message.warn(res.message)
+        message.warning(res.message)
       }
     })
   }
@@ -236,8 +225,6 @@ export default class HeaderContentRightMenu extends Component {
    * @param {String} id 移除成员对应的id
    */
   handleVisitControlRemoveContentPrivilege = id => {
-    let temp_id = []
-    temp_id.push(id)
     removeContentPrivilege({ id: id }).then(res => {
       const isResOk = res => res && res.code === '0'
       if (isResOk(res)) {
@@ -246,24 +233,22 @@ export default class HeaderContentRightMenu extends Component {
         }, 500)
         this.visitControlUpdateCurrentModalData({ removeId: id, type: 'remove' })
       } else {
-        message.warn(res.message)
+        message.warning(res.message)
       }
     })
   }
-
   /**
    * 访问控制设置更新成员
    * @param {String} id 设置成员对应的id
    * @param {String} type 设置成员对应的字段
    */
   handleVisitControlChangeContentPrivilege = (id, type) => {
-    const { drawContent = {} } = this.props
-    const { card_id } = drawContent
+    const { processInfo: { id: content_id, privileges } } = this.props
     let temp_id = []
     temp_id.push(id)
     const obj = {
-      content_id: card_id,
-      content_type: 'card',
+      content_id: content_id,
+      content_type: 'flow',
       privilege_code: type,
       user_ids: temp_id
     }
@@ -277,11 +262,10 @@ export default class HeaderContentRightMenu extends Component {
         temp_arr = res && res.data[0]
         this.visitControlUpdateCurrentModalData({ temp_arr: temp_arr, type: 'change', code: type })
       } else {
-        message.warn(res.message)
+        message.warning(res.message)
       }
     })
   }
-
   /**
    * 其他成员的下拉回调
    * @param {String} id 这是用户的user_id
@@ -475,11 +459,11 @@ export default class HeaderContentRightMenu extends Component {
                     <VisitControl
                       board_id={board_id}
                       isPropVisitControl={is_privilege === '0' ? false : true}
-                      // handleVisitControlChange={this.handleVisitControlChange}
+                      handleVisitControlChange={this.handleVisitControlChange}
                       principalList={data}
                       otherPrivilege={privileges}
-                      // handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
-                      // handleAddNewMember={this.handleVisitControlAddNewMember}
+                      handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+                      handleAddNewMember={this.handleVisitControlAddNewMember}
                     />
                   )
                 }

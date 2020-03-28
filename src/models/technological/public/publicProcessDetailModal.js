@@ -158,7 +158,7 @@ export default {
       } else {
         message.warn(res.message)
       }
-
+      return res || {}
     },
 
     // 删除流程模板
@@ -195,6 +195,7 @@ export default {
       } else {
         message.warn(res.message)
       }
+      return res || {}
     },
 
     // 获取流程实例信息

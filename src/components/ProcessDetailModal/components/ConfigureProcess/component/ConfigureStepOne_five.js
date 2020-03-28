@@ -157,7 +157,7 @@ export default class ConfigureStepOne_five extends Component {
         <div className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
           <div>
             <p>标题:</p>
-            <Input value={title} onChange={this.propertyNameChange} />
+            <Input value={title} maxLength={50} onChange={this.propertyNameChange} />
           </div>
           <div>
             <p>限制附件上传数量(0为不限制）:</p>

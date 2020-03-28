@@ -23,13 +23,14 @@
     // overflow-x: hidden;
     .node_name {
       // width:866px;
-      height:40px;
+      min-height:40px;
       line-height: 40px;
       font-size:16px;
       font-family:PingFangSC-Medium,PingFang SC;
       font-weight:900;
       color:rgba(0,0,0,0.65);
       padding: 0 14px;
+      word-break: break-all;
     }
   }
   .add_tabsItem {
@@ -69,6 +70,7 @@
       font-weight:500;
       color:rgba(0,0,0,0.65);
       line-height:22px;
+      margin-right: 20px;
     }
   }
   .upload_static {
@@ -176,11 +178,14 @@
 // 填写内容的框框
 .text_fillOut {
   // width:810px;
-  height:32px;
+  min-height:32px;
   background:rgba(255,255,255,1);
   border-radius:4px;
   border:1px solid rgba(0,0,0,0.15);
   padding: 5px 8px;
+  >span {
+    word-break: break-all;
+  }
 }
 
 // 下拉选项的配置

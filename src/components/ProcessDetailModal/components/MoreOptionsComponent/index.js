@@ -338,7 +338,8 @@ export default class MoreOptionsComponent extends Component {
                 autoFocus={true}
                 goldName={''}
                 nodeName={'input'}
-                style={{ display: 'block', fontSize: 12, color: '#262626', resize: 'none', height: '38px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none', marginTop: '4px' }}
+                maxLength={101}
+                style={{ display: 'block', fontSize: 12, color: '#262626', resize: 'none', minHeight: '38px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none', marginTop: '4px' }}
               />
             )
         }
