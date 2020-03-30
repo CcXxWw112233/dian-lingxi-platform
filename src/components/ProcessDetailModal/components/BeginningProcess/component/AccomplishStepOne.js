@@ -11,6 +11,7 @@ import { validateTel, validateEmail, validatePassword, validateFixedTel, validat
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { Button } from 'antd'
 import { connect } from 'dva'
+import DifferenceDeadlineType from '../../DifferenceDeadlineType'
 
 @connect(mapStateToProps)
 export default class AccomplishStepOne extends Component {
@@ -226,9 +227,8 @@ export default class AccomplishStepOne extends Component {
                   )
                 }
               </div>
-              <div>
-                <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '14px' }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
-                <span className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : 步骤开始后1天内</span>
+              <div style={{marginRight: '14px'}}>
+                <DifferenceDeadlineType type="nodesStepItem" itemValue={itemValue} />
               </div>
             </div>
             {is_show_spread_arrow && this.renderEditDetailContent()}

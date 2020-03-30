@@ -12,9 +12,10 @@ import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { Button, message } from 'antd'
 import { connect } from 'dva'
 import { timestampToTimeNormal, compareACoupleOfObjects } from '../../../../../utils/util';
-import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard  } from '../../../../../utils/businessFunction'
+import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
 import { PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
 import { genPrincipalListFromAssignees } from '../../handleOperateModal'
+import DifferenceDeadlineType from '../../DifferenceDeadlineType'
 
 @connect(mapStateToProps)
 export default class BeginningStepOne extends Component {
@@ -33,8 +34,8 @@ export default class BeginningStepOne extends Component {
     // 需要更新箭头的状态
     if (!compareACoupleOfObjects(this.props, nextProps)) {
       this.setState({
-          is_show_spread_arrow: nextProps.itemValue.status == '1' ? true : false,
-        })
+        is_show_spread_arrow: nextProps.itemValue.status == '1' ? true : false,
+      })
     }
   }
 
@@ -45,7 +46,7 @@ export default class BeginningStepOne extends Component {
   whetherShowCompleteButton = () => {
     const { itemValue } = this.props
     const { assignee_type, assignees } = itemValue
-    const { id} = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     let flag = false
     if (assignee_type == '2') { // 表示只有在指定人员的情况下才会有判断情况
       let newAssignees = [...assignees]
@@ -112,7 +113,7 @@ export default class BeginningStepOne extends Component {
                 } else {
                   valiResult = false
                 }
-              } else if (!val_min_length && !val_max_length){ // 表示什么都没有限制的时候
+              } else if (!val_min_length && !val_max_length) { // 表示什么都没有限制的时候
                 valiResult = true
               }
             } else if (!value) {
@@ -186,7 +187,7 @@ export default class BeginningStepOne extends Component {
     e && e.stopPropagation()
     if (!this.whetherIsHasPermission()) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return 
+      return
     }
     this.setState({
       isAccomplishNodesIng: true, // 表示正在完成中
@@ -195,7 +196,7 @@ export default class BeginningStepOne extends Component {
       message.warn('正在完成中...')
       return
     }
-    
+
     // this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
     const { processInfo: { id: flow_instance_id, board_id }, itemValue } = this.props
     const { id: flow_node_instance_id } = itemValue
@@ -295,8 +296,28 @@ export default class BeginningStepOne extends Component {
         stylCircle = indexStyles.doingCircle
       }
     }
-    
+
     return { stylCircle, stylLine }
+  }
+
+  // 渲染不同时候的时间状态
+  renderDiffDeadlineStatus = () => {
+    const { itemValue } = this.props
+    const { status } = itemValue
+    let container = (<span></span>)
+    switch (status) {
+      case '1':
+        container = <DifferenceDeadlineType itemValue={itemValue} />
+        break;
+      case '2':
+        break
+      case '3':
+        break
+      case '0':
+        break
+      default:
+        break;
+    }
   }
 
   // 渲染编辑详情的内容  
@@ -304,7 +325,7 @@ export default class BeginningStepOne extends Component {
     const { itemValue, processInfo: { status: parentStatus } } = this.props
     const { forms = [], description, deadline_value, status } = itemValue
     return (
-      <div style={{position: 'relative'}}>
+      <div style={{ position: 'relative' }}>
         {/* 有一个蒙层表示不是该填写人不能操作 */}
         {
           (parentStatus != '1' || !this.whetherShowCompleteButton() || status != '1') && (
@@ -348,7 +369,7 @@ export default class BeginningStepOne extends Component {
 
   render() {
     const { itemKey, processEditDatas = [], itemValue } = this.props
-    const { status, name, assignee_type, cc_type } = itemValue
+    const { status, name, assignee_type, cc_type, deadline_value, deadline_time_type, deadline_type } = itemValue
     const { transPrincipalList = [], transCopyPersonnelList = [], is_show_spread_arrow } = this.state
     return (
       <div id={status == '1' && 'currentDataCollectionItem'} key={itemKey} style={{ display: 'flex', marginBottom: '46px' }}>
@@ -434,10 +455,10 @@ export default class BeginningStepOne extends Component {
                   )
                 }
               </div>
-              <div>
-                <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '14px' }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
-                <span className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : 步骤开始后1天内</span>
+              <div style={{marginRight: '14px'}}>
+                <DifferenceDeadlineType type="nodesStepItem" itemValue={itemValue} />
               </div>
+
             </div>
             {is_show_spread_arrow && this.renderEditDetailContent()}
           </div>

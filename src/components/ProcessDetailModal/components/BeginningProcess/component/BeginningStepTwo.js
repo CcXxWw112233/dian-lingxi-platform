@@ -10,6 +10,7 @@ import { timestampToTimeNormal, compareACoupleOfObjects } from '../../../../../u
 import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard  } from '../../../../../utils/businessFunction'
 import { PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
 import { genPrincipalListFromAssignees } from '../../handleOperateModal'
+import DifferenceDeadlineType from '../../DifferenceDeadlineType';
 
 const TextArea = Input.TextArea
 @connect(mapStateToProps)
@@ -596,9 +597,8 @@ export default class BeginningStepTwo extends Component {
                     )
                   }
                 </div>
-                <div>
-                  <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '14px' }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
-                  <span className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : 步骤开始后1天内</span>
+                <div style={{marginRight: '14px'}}>
+                  <DifferenceDeadlineType type="nodesStepItem" itemValue={itemValue} />
                 </div>
               </div>
               {is_show_spread_arrow && this.renderEditDetailContent()}
