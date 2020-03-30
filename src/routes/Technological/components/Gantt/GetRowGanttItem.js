@@ -8,6 +8,7 @@ import { isSamDay } from './getDate'
 import { Dropdown, Menu } from 'antd'
 import { ganttIsFold } from './constants';
 import { caldiffDays } from '../../../../utils/util';
+import { setBoardIdStorage } from '../../../../utils/businessFunction';
 const MenuItem = Menu.Item
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -225,6 +226,8 @@ export default class GetRowGanttItem extends Component {
     // this.getMilestoneDetail(id)
     //更新里程碑id,在里程碑的生命周期会监听到id改变，发生请求
     const { dispatch } = this.props
+    setBoardIdStorage(board_id)
+
     dispatch({
       type: 'milestoneDetail/updateDatas',
       payload: {
