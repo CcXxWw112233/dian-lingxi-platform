@@ -1,6 +1,6 @@
 import { PROJECT_FLOWS_FLOW_ABORT, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../globalset/js/constant'
-import { checkIsHasPermissionInBoard } from '../../../../utils/businessFunction'
-import { Modal,message } from 'antd'
+import { checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl } from '../../../../utils/businessFunction'
+import { Modal, message } from 'antd'
 
 // 渲染删除模板信息confirm
 const showDeleteTempleteConfirm = (processTempleteDelete) => {
@@ -21,12 +21,12 @@ const showDeleteTempleteConfirm = (processTempleteDelete) => {
   });
 }
 
-  /**
- * 获取流程执行人列表
- * 因为这个弹窗是共用的, 所以需要从外部接收一个 principalList执行人列表
- * 思路: 如果返回的 assignee_type == 1 那么表示需要获取项目列表中的成员
- * @param {Array} nodes 当前弹窗中所有节点的推进人
- */
+/**
+* 获取流程执行人列表
+* 因为这个弹窗是共用的, 所以需要从外部接收一个 principalList执行人列表
+* 思路: 如果返回的 assignee_type == 1 那么表示需要获取项目列表中的成员
+* @param {Array} nodes 当前弹窗中所有节点的推进人
+*/
 const genPrincipalListFromAssignees = (nodes = []) => {
   return nodes.reduce((acc, curr) => {
     if (curr.assignees && curr.assignees.length) { // 表示当前节点中存在推进人
@@ -66,8 +66,41 @@ const genPrincipalListFromAssignees = (nodes = []) => {
   }, []);
 };
 
+// 渲染时、天、月
+const renderTimeType = (type) => {
+  let description = ''
+  switch (type) {
+    case 'hour':
+      description = '小时'
+      break;
+    case 'day':
+      description = '天'
+      break
+    case 'month':
+      description = '月'
+      break
+    default:
+      break;
+  }
+  return description
+}
+
+/**
+ * 判断是否有权限 ---- 以最小权限为主 ==> 访问控制
+ * @returns {Boolean} 该方法返回一个布尔类型的值 true 表示有权限 false 表示没有权限
+ */
+const whetherIsHasProcessPermission = ({privileges, is_privilege, principalList, permissionsValue}) => {
+  let flag = false
+  if (checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, principalList, permissionsValue)) {
+    flag = true
+  }
+  return flag
+}
+
 export {
   showDeleteTempleteConfirm,
-  genPrincipalListFromAssignees
+  genPrincipalListFromAssignees,
+  renderTimeType,
+  whetherIsHasProcessPermission
 }
 

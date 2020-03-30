@@ -10,6 +10,7 @@ import EditStepTypeOne_five from './EditStepTypeOne_five'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { Button } from 'antd'
 import { connect } from 'dva'
+import { renderTimeType } from '../../handleOperateModal'
 
 @connect(mapStateToProps)
 export default class EditStepTypeOne extends Component {
@@ -185,7 +186,7 @@ export default class EditStepTypeOne extends Component {
             {/* 下 */}
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{display: 'flex', alignItems: 'center'}}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
                 {/* 填写人 */}
                 {
                   assignee_type == '2' ? (
@@ -211,11 +212,11 @@ export default class EditStepTypeOne extends Component {
                       </span>
                     </div>
                   ) : (
-                    <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
-                      <span style={{display: 'inline-block',width: '24px', height: '24px',background:'rgba(230,247,255,1)',borderRadius: '20px',textAlign: 'center', marginRight: '5px'}}><span style={{color: '#1890FF'}} className={globalStyles.authTheme}>&#xe7b2;</span></span>
-                      <span>任何人</span>
-                    </div>
-                  )
+                      <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
+                        <span style={{ display: 'inline-block', width: '24px', height: '24px', background: 'rgba(230,247,255,1)', borderRadius: '20px', textAlign: 'center', marginRight: '5px' }}><span style={{ color: '#1890FF' }} className={globalStyles.authTheme}>&#xe7b2;</span></span>
+                        <span>任何人</span>
+                      </div>
+                    )
                 }
                 {/* 抄送人 */}
                 {
@@ -246,7 +247,16 @@ export default class EditStepTypeOne extends Component {
               </div>
               <div>
                 <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '14px' }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
-                <span className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : 步骤开始后1天内</span>
+                <span className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : </span>
+                {
+                  deadline_type == '1' ? (
+                    <span style={{color: 'rgba(0,0,0,0.45)'}}>未限制时间</span>
+                  ) : (
+                    <span style={{color: 'rgba(0,0,0,0.45)'}}>
+                      步骤开始后{`${deadline_value}${renderTimeType(deadline_time_type)}`}内
+                    </span>
+                  )
+                }
               </div>
             </div>
             {is_show_spread_arrow && this.renderEditDetailContent()}

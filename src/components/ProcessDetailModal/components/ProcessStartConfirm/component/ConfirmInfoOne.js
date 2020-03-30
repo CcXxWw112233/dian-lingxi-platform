@@ -11,6 +11,7 @@ import AmendComponent from '../AmendComponent'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { Button } from 'antd'
 import { connect } from 'dva'
+import { renderTimeType } from '../../handleOperateModal'
 
 @connect(mapStateToProps)
 export default class ConfirmInfoOne extends Component {
@@ -133,7 +134,7 @@ export default class ConfirmInfoOne extends Component {
           description && description != '' &&
           (
             <div className={indexStyles.select_remarks}>
-              <span style={{color: 'rgba(0,0,0,0.45)'}} className={globalStyles.authTheme}>&#xe636; 备注 :</span>
+              <span style={{ color: 'rgba(0,0,0,0.45)' }} className={globalStyles.authTheme}>&#xe636; 备注 :</span>
               <div>{description}</div>
             </div>
           )
@@ -147,7 +148,7 @@ export default class ConfirmInfoOne extends Component {
     const { is_show_spread_arrow } = this.state
     let transPrincipalList = this.filterAssignees()
     let transCopyPersonnelList = this.filterRecipients()
-    const { name, assignee_type, cc_type, cc_locking } = itemValue
+    const { name, assignee_type, cc_type, cc_locking, deadline_type, deadline_value, deadline_time_type, } = itemValue
     return (
       <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }}>
         {/* {node_amount <= itemKey + 1 ? null : <div className={stylLine}></div>} */}
@@ -201,18 +202,18 @@ export default class ConfirmInfoOne extends Component {
                         </span>
                         <span style={{ position: 'relative' }}>
                           <AmendComponent type="1"
-                          updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="填写人" data={data} itemKey={itemKey} itemValue={itemValue} />
+                            updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="填写人" data={data} itemKey={itemKey} itemValue={itemValue} />
                         </span>
                       </div>
                     ) : (
                         <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
-                          <span style={{display: 'inline-block',width: '24px', height: '24px',background:'rgba(230,247,255,1)',borderRadius: '20px',textAlign: 'center', marginRight: '5px'}}>
+                          <span style={{ display: 'inline-block', width: '24px', height: '24px', background: 'rgba(230,247,255,1)', borderRadius: '20px', textAlign: 'center', marginRight: '5px' }}>
                             <span style={{ color: '#1890FF' }} className={globalStyles.authTheme}>&#xe7b2;</span>
                           </span>
                           <span>任何人</span>
                           <span style={{ position: 'relative' }}>
                             <AmendComponent type="1"
-                            updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="填写人" data={data} itemKey={itemKey} itemValue={itemValue} />
+                              updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="填写人" data={data} itemKey={itemKey} itemValue={itemValue} />
                           </span>
                         </div>
                       )
@@ -243,10 +244,10 @@ export default class ConfirmInfoOne extends Component {
                         {
                           cc_locking == '0' && (
                             <span style={{ position: 'relative' }}>
-                            <AmendComponent type="3" 
-                            updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel}
-                            updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="抄送人" data={data} itemKey={itemKey} itemValue={itemValue} />
-                          </span>
+                              <AmendComponent type="3"
+                                updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel}
+                                updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="抄送人" data={data} itemKey={itemKey} itemValue={itemValue} />
+                            </span>
                           )
                         }
                       </div>
@@ -256,7 +257,16 @@ export default class ConfirmInfoOne extends Component {
               </div>
               <div style={{ marginRight: '16px' }}>
                 <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '14px' }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
-                <span className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : 步骤开始后1天内</span>
+                <span className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : </span>
+                {
+                  deadline_type == '1' ? (
+                    <span style={{color: 'rgba(0,0,0,0.45)'}}>未限制时间</span>
+                  ) : (
+                    <span style={{color: 'rgba(0,0,0,0.45)'}}>
+                      步骤开始后{`${deadline_value}${renderTimeType(deadline_time_type)}`}内
+                    </span>
+                  )
+                }
                 <span style={{ position: 'relative' }}>
                   <AmendComponent updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="完成期限" data={data} itemKey={itemKey} itemValue={itemValue} />
                 </span>

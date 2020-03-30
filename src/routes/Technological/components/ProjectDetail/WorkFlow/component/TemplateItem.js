@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
+import {
+  PROJECT_FLOWS_FLOW_TEMPLATE,PROJECT_FLOW_FLOW_ACCESS
+} from "../../../../../../globalset/js/constant";
+import { checkIsHasPermissionInBoard } from "../../../../../../utils/businessFunction";
 
 export default class TemplateItem extends Component {
 
@@ -13,7 +17,7 @@ export default class TemplateItem extends Component {
   handleEditTemplete = (item) => {
     this.props.handleEditTemplete && this.props.handleEditTemplete(item)
   }
-  
+
   // 删除流程的点击事件
   handleDelteTemplete = (item) => {
     this.props.handleDelteTemplete && this.props.handleDelteTemplete(item)
@@ -21,7 +25,7 @@ export default class TemplateItem extends Component {
 
   render() {
     const { itemValue } = this.props
-    const { id, name } = itemValue
+    const { id, name, board_id } = itemValue
     return (
       <div className={indexStyles.tempItemWrapper}>
         <span className={indexStyles.tem_item}>
@@ -31,9 +35,21 @@ export default class TemplateItem extends Component {
           </span>
           {/* 三种状态 */}
           <span className={indexStyles.hover_icon_display}>
-            <span onClick={() => { this.handleStartProcess(itemValue) }} className={`${indexStyles.common_authority_hover}`}><span className={`${indexStyles.hover_icon} ${indexStyles.start_process_icon} ${globalStyles.authTheme}`}>&#xe796; 启动流程</span></span>
-            <span onClick={() => { this.handleEditTemplete(itemValue) }} className={`${indexStyles.common_authority_hover}`}><span className={`${indexStyles.hover_icon} ${indexStyles.edit_temp_icon} ${globalStyles.authTheme}`}>&#xe602; 编辑模板</span></span>
-            <span onClick={() => { this.handleDelteTemplete(itemValue) }} className={`${indexStyles.common_authority_hover}`}><span className={`${indexStyles.hover_icon} ${indexStyles.delete_temp_icon} ${globalStyles.authTheme}`}>&#xe7c3; 删除模板</span></span>
+            {
+              checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id) && (
+                <span onClick={() => { this.handleStartProcess(itemValue) }} className={`${indexStyles.common_authority_hover}`}><span className={`${indexStyles.hover_icon} ${indexStyles.start_process_icon} ${globalStyles.authTheme}`}>&#xe796; 启动流程</span></span>
+              )
+            }
+            {
+              checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE, board_id) && (
+                <span onClick={() => { this.handleEditTemplete(itemValue) }} className={`${indexStyles.common_authority_hover}`}><span className={`${indexStyles.hover_icon} ${indexStyles.edit_temp_icon} ${globalStyles.authTheme}`}>&#xe602; 编辑模板</span></span>
+              )
+            }
+            {
+              checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE, board_id) && (
+                <span onClick={() => { this.handleDelteTemplete(itemValue) }} className={`${indexStyles.common_authority_hover}`}><span className={`${indexStyles.hover_icon} ${indexStyles.delete_temp_icon} ${globalStyles.authTheme}`}>&#xe7c3; 删除模板</span></span>
+              )
+            }
           </span>
         </span>
       </div>

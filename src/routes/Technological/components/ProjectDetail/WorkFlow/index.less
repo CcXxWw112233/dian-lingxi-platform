@@ -99,6 +99,9 @@
               left: 0;
               top: 0;
               transition: all 1s linear;
+              display: flex;
+              flex-direction: column;
+              bottom: 0;
               .common_authority_hover {// 有权限的人显示的样式
                 opacity: 0;
                 display: block;
@@ -108,8 +111,13 @@
                 box-shadow:0px -1px 0px 0px rgba(255,255,255,1);
                 text-align: center;
                 line-height: 45px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
                 .hover_icon {
-                  width:48px;
+                  // width:48px;
                   height:20px;
                   font-size:16px;
                   // font-family:PingFangSC-Medium,PingFang SC;

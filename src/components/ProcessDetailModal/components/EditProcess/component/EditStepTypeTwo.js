@@ -6,6 +6,7 @@ import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { principalList } from '../../../constant'
 import { Button } from 'antd'
 import { connect } from 'dva'
+import { renderTimeType } from '../../handleOperateModal'
 
 @connect(mapStateToProps)
 export default class EditStepTypeTwo extends Component {
@@ -135,7 +136,7 @@ export default class EditStepTypeTwo extends Component {
   render() {
     const { itemKey, itemValue } = this.props
     const { is_show_spread_arrow } = this.state
-    const { name, cc_type } = itemValue
+    const { name, cc_type, deadline_type, deadline_value, deadline_time_type } = itemValue
     let transPrincipalList = this.filterAssignees()
     let transCopyPersonnelList = this.filterRecipients()
     return (
@@ -214,7 +215,16 @@ export default class EditStepTypeTwo extends Component {
               </div>
               <div>
                 <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '14px' }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
-                <span className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : 步骤开始后1天内</span>
+                <span className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : </span>
+                {
+                  deadline_type == '1' ? (
+                    <span style={{color: 'rgba(0,0,0,0.45)'}}>未限制时间</span>
+                  ) : (
+                    <span style={{color: 'rgba(0,0,0,0.45)'}}>
+                      步骤开始后{`${deadline_value}${renderTimeType(deadline_time_type)}`}内
+                    </span>
+                  )
+                }
               </div>
             </div>
             {is_show_spread_arrow && this.renderEditDetailContent()}

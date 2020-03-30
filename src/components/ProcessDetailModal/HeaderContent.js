@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import indexStyles from './index.less'
 import HeaderContentRightMenu from './HeaderContentRightMenu'
-import { currentNounPlanFilterName, getOrgNameWithOrgIdFilter, checkIsHasPermissionInVisitControl } from '@/utils/businessFunction.js'
+import { currentNounPlanFilterName, getOrgNameWithOrgIdFilter } from '@/utils/businessFunction.js'
 import { FLOWS } from '../../globalset/js/constant'
 import { connect } from 'dva'
 import globalStyles from '@/globalset/css/globalClassName.less'

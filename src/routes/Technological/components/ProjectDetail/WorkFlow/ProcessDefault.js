@@ -5,7 +5,6 @@ import PagingnationContent from './component/PagingnationContent'
 import { Tabs } from 'antd';
 import { connect } from 'dva'
 import ProcessDetailModal from '../../../../../components/ProcessDetailModal'
-import { processInfoMatch } from '../../../../../components/ProcessDetailModal/constant';
 import { showDeleteTempleteConfirm } from '../../../../../components/ProcessDetailModal/components/handleOperateModal';
 
 const changeClientHeight = () => {
@@ -73,7 +72,7 @@ export default class ProcessDefault extends Component {
     })
   }
 
-  // 删除流程的点击事件
+  // 删除流程模板的点击事件
   handleDelteTemplete = (item) => {
     const { projectDetailInfoData: { board_id } } = this.props
     const { id } = item

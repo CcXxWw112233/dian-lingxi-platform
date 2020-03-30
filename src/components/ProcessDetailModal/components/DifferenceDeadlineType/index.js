@@ -4,6 +4,7 @@ import { timeToTimestamp, timestampToTimeNormal } from '../../../../utils/util';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { currentNounPlanFilterName } from '../../../../utils/businessFunction';
 import { FLOWS } from '../../../../globalset/js/constant';
+import { renderTimeType } from '../handleOperateModal'
 
 @connect(mapStateToProps)
 export default class DifferenceDeadlineType extends Component {
@@ -119,25 +120,6 @@ export default class DifferenceDeadlineType extends Component {
     return description
   }
 
-  // 渲染时、天、月
-  renderTimeType = (type) => {
-    let description = ''
-    switch (type) {
-      case 'hour':
-        description = '小时'
-        break;
-      case 'day':
-        description = '天'
-        break
-      case 'month':
-        description = '月'
-        break
-      default:
-        break;
-    }
-    return description
-  }
-
 
   // 渲染流程实例列表内容
   renderFlowInstanceItemContent = () => {
@@ -188,7 +170,7 @@ export default class DifferenceDeadlineType extends Component {
         if (deadline_type == '1') {
           container = <span><span className={globalStyles.authTheme}>&#xe686; 完成期限: </span> {this.renderNotRestrictionsTime()}</span>
         } else if (deadline_type == '2') {
-          container = <span><span className={globalStyles.authTheme}>&#xe686; 完成期限: </span> 步骤开始后{`${deadline_value}${this.renderTimeType(deadline_time_type)}内`}</span>
+          container = <span><span className={globalStyles.authTheme}>&#xe686; 完成期限: </span> 步骤开始后{`${deadline_value}${renderTimeType(deadline_time_type)}内`}</span>
         }
         break
       default:

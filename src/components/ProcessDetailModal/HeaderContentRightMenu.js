@@ -9,7 +9,10 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { currentNounPlanFilterName, checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl } from "@/utils/businessFunction";
 import {
   MESSAGE_DURATION_TIME,
-  NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_FILE_UPDATE, PROJECT_FILES_FILE_EDIT, UPLOAD_FILE_SIZE, REQUEST_DOMAIN_FILE, PROJECT_FILES_FILE_DOWNLOAD
+  PROJECT_FLOWS_FLOW_ABORT,
+  PROJECT_FLOWS_FLOW_DELETE,
+  PROJECT_FLOW_FLOW_ACCESS,
+  NOT_HAS_PERMISION_COMFIRN,
 } from "@/globalset/js/constant";
 import { FLOWS } from '../../globalset/js/constant'
 import { genPrincipalListFromAssignees } from './components/handleOperateModal'
@@ -84,7 +87,7 @@ export default class HeaderContentRightMenu extends Component {
           board_id: board_id
         }
       })
-    }     
+    }
   }
 
   // 访问控制的更新model中的数据
@@ -104,13 +107,13 @@ export default class HeaderContentRightMenu extends Component {
           })
         }
       }
-      let newProcessInfo = {...processInfo, privileges: new_privileges, is_privilege: obj.is_privilege}
+      let newProcessInfo = { ...processInfo, privileges: new_privileges, is_privilege: obj.is_privilege }
       // this.props.updateDatasProcess({
       //   processInfo: newProcessInfo
       // });
       // 这是需要获取一下流程列表 区分工作台和项目列表
       this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo, obj.type)
-      
+
     };
 
     // 访问控制添加
@@ -124,7 +127,7 @@ export default class HeaderContentRightMenu extends Component {
           })
         }
       }
-      let newProcessInfo = {...processInfo, privileges: new_privileges}
+      let newProcessInfo = { ...processInfo, privileges: new_privileges }
       this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
     }
 
@@ -136,7 +139,7 @@ export default class HeaderContentRightMenu extends Component {
           new_privileges.splice(index, 1)
         }
       })
-      let newProcessInfo = {...processInfo, privileges: new_privileges}
+      let newProcessInfo = { ...processInfo, privileges: new_privileges }
       this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
     }
 
@@ -147,13 +150,13 @@ export default class HeaderContentRightMenu extends Component {
       new_privileges = new_privileges.map((item) => {
         let new_item = item
         if (item.id == id) {
-          new_item = {...item, content_privilege_code: obj.code}
+          new_item = { ...item, content_privilege_code: obj.code }
         } else {
-          new_item = {...item}
+          new_item = { ...item }
         }
         return new_item
       })
-      let newProcessInfo = {...processInfo, privileges: new_privileges}
+      let newProcessInfo = { ...processInfo, privileges: new_privileges }
       this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
     }
 
@@ -283,9 +286,28 @@ export default class HeaderContentRightMenu extends Component {
 
   // 访问控制操作 E
 
+  /**
+ * 判断是否有权限
+ * @returns {Boolean} true 表示有权限 false 表示没有权限
+ */
+  whetherIsHasPermission = (permissionValue) => {
+    const { processInfo = {} } = this.props
+    const { privileges = [], is_privilege, board_id, nodes = [] } = processInfo
+    const principalList = genPrincipalListFromAssignees(nodes);
+    let flag = false
+    if (checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, principalList, checkIsHasPermissionInBoard(permissionValue, board_id))) {
+      flag = true
+    }
+    return flag
+  }
+
   // 中止流程的点击事件
   handleDiscontinueProcess = () => {
     const { projectDetailInfoData: { board_id }, processInfo: { id } } = this.props
+    if (!this.whetherIsHasPermission(PROJECT_FLOWS_FLOW_ABORT)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return
+    }
     this.props.dispatch({
       type: 'publicProcessDetailModal/workflowEnd',
       payload: {
@@ -304,11 +326,15 @@ export default class HeaderContentRightMenu extends Component {
   // 删除流程的点击事件
   handleDeletProcess = () => {
     const { projectDetailInfoData: { board_id }, processInfo: { id } } = this.props
+    if (!this.whetherIsHasPermission(PROJECT_FLOWS_FLOW_DELETE)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return
+    }
     if (!id) return false
-    this.confirm({id, board_id})
+    this.confirm({ id, board_id })
   }
 
-  confirm({id, board_id}) {
+  confirm({ id, board_id }) {
     const that = this
     const { dispatch } = that.props
     const modal = Modal.confirm();
@@ -317,7 +343,7 @@ export default class HeaderContentRightMenu extends Component {
       okText: '确认',
       cancelText: '取消',
       getContainer: () => document.getElementById('container_fileDetailContentOut'),
-      zIndex:1010,
+      zIndex: 1010,
       onOk() {
         dispatch({
           type: 'publicProcessDetailModal/workflowDelete',
@@ -342,6 +368,10 @@ export default class HeaderContentRightMenu extends Component {
   // 重启流程的点击事件
   handleReStartProcess = () => {
     const { projectDetailInfoData: { board_id }, processInfo: { id } } = this.props
+    if (!this.whetherIsHasPermission(PROJECT_FLOWS_FLOW_ABORT)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return
+    }
     this.props.dispatch({
       type: 'publicProcessDetailModal/restartProcess',
       payload: {
@@ -389,7 +419,7 @@ export default class HeaderContentRightMenu extends Component {
           )
         }
         {
-          (status == '2' || status == '3' || status == '0')&& (
+          (status == '2' || status == '3' || status == '0') && (
             <Menu.Item style={{ color: '#FF4D4F' }} key="delete">删除{currentNounPlanFilterName(FLOWS)}</Menu.Item>
           )
         }
@@ -427,7 +457,7 @@ export default class HeaderContentRightMenu extends Component {
               </span>
               {/* 通知提醒 */}
               {
-                checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) && (
+                checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)) && (
                   <div className={indexStyles.margin_right10} style={{ marginTop: '4px' }}>
                     <InformRemind processPrincipalList={principalList} rela_id={id} rela_type={'3'} user_remind_info={data} />
                   </div>
