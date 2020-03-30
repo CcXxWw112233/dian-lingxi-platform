@@ -35,11 +35,11 @@ export default class TaskDetailModal extends Component {
     })
     this.props.setTaskDetailModalVisible && this.props.setTaskDetailModalVisible()
     // 圈子关闭联动
-    global.constants.lx_utils && global.constants.lx_utils.setCommentData( this.props.card_id || null) 
+    global.constants.lx_utils && global.constants.lx_utils.setCommentData(this.props.card_id || null)
   }
 
-   // 检测不同类型的权限控制类型的是否显示
-   checkDiffCategoriesAuthoritiesIsVisible = (code) => {
+  // 检测不同类型的权限控制类型的是否显示
+  checkDiffCategoriesAuthoritiesIsVisible = (code) => {
     const { drawContent = {} } = this.props
     const { is_realize = '0', card_id, privileges = [], board_id, is_privilege, executors = [] } = drawContent
     let flag
@@ -47,7 +47,7 @@ export default class TaskDetailModal extends Component {
       'visit_control_edit': function () {// 是否是有编辑权限
         return checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(code, board_id))
       },
-      'visit_control_comment': function() {
+      'visit_control_comment': function () {
         return checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, executors, checkIsHasPermissionInBoard(code, board_id))
       },
     }
@@ -103,7 +103,7 @@ export default class TaskDetailModal extends Component {
   }
 
   render() {
-    const { task_detail_modal_visible, users, handleTaskDetailChange, updateParentTaskList, setTaskDetailModalVisible, handleDeleteCard, card_id } = this.props
+    const { task_detail_modal_visible, users, handleTaskDetailChange, updateParentTaskList, setTaskDetailModalVisible, handleDeleteCard, card_id, handleChildTaskChange } = this.props
     // const siderRightWidth = document.getElementById('siderRight').clientWidth
     // const commentUseParams = { //公共评论模块所需要的参数
     //   commentSubmitPost: this.commentSubmitPost,
@@ -112,7 +112,7 @@ export default class TaskDetailModal extends Component {
     //   origin_type: '1', //	string评论来源类型 1=任务 2=流程 3=文件 4=里程碑
     //   // flag: '1', //0或不传：评论和动态，1只显示评论，2只动态
     // }
-    
+
     return (
       <div>
         <PublicDetailModal
@@ -123,12 +123,12 @@ export default class TaskDetailModal extends Component {
           onCancel={this.onCancel}
           // commentUseParams={commentUseParams}
           isNotShowFileDetailContentRightVisible={true}
-          mainContent={<MainContent users={users} handleTaskDetailChange={handleTaskDetailChange} />}
+          mainContent={<MainContent users={users} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} />}
           headerContent={
-          <HeaderContent users={users}
-            handleDeleteCard={handleDeleteCard}
-            setTaskDetailModalVisible={setTaskDetailModalVisible} handleTaskDetailChange={handleTaskDetailChange} updateParentTaskList={updateParentTaskList} 
-          />}
+            <HeaderContent users={users}
+              handleDeleteCard={handleDeleteCard}
+              setTaskDetailModalVisible={setTaskDetailModalVisible} handleTaskDetailChange={handleTaskDetailChange} updateParentTaskList={updateParentTaskList}
+            />}
           commonDrawerContentOutClick={this.commonDrawerContentOutClick}
         />
       </div>
@@ -138,20 +138,21 @@ export default class TaskDetailModal extends Component {
 
 TaskDetailModal.defaultProps = {
   task_detail_modal_visible: false, // 设置任务详情弹窗是否显示, 默认为 false 不显示
-  setTaskDetailModalVisible: function() { }, // 设置任务详情弹窗是否显示
+  setTaskDetailModalVisible: function () { }, // 设置任务详情弹窗是否显示
   users: [], // 用户列表
-  handleTaskDetailChange: function() { }, // 外部修改内部弹窗数据的回调
-  updateParentTaskList: function() { }, // 内部数据修改后用来更新外部数据的回调
-  handleDeleteCard: function() { }, // 删除某条任务
+  handleTaskDetailChange: function () { }, // 外部修改内部弹窗数据的回调
+  updateParentTaskList: function () { }, // 内部数据修改后用来更新外部数据的回调
+  handleDeleteCard: function () { }, // 删除某条任务
+  handleChildTaskChange: function () { }, // 子任务更新或删除回调
 }
 
 //  只关联public中弹窗内的数据
-function mapStateToProps({ publicTaskDetailModal: { drawContent = {}, card_id }, publicModalComment: { isShowAllDynamic }, 
-   technological: {
-      datas: {
-        userBoardPermissions
-      }
+function mapStateToProps({ publicTaskDetailModal: { drawContent = {}, card_id }, publicModalComment: { isShowAllDynamic },
+  technological: {
+    datas: {
+      userBoardPermissions
     }
- } ) {
-  return { drawContent, card_id, isShowAllDynamic,userBoardPermissions}
+  }
+}) {
+  return { drawContent, card_id, isShowAllDynamic, userBoardPermissions }
 }

@@ -393,6 +393,16 @@ class Gantt extends Component {
       }
     });
   }
+  // 
+  handleChildTaskChange = ({ action, card_id, data }) => {
+    if (action == 'delete') {
+
+    } else if (action == 'update') {
+
+    } else {
+
+    }
+  }
   render() {
     const { addTaskModalVisible, } = this.state
     const { outline_tree_round } = this.props
@@ -432,6 +442,7 @@ class Gantt extends Component {
           // setTaskDetailModalVisible={this.setDrawerVisibleClose} //关闭任务弹窗回调
           handleTaskDetailChange={this.handleChangeCard}
           handleDeleteCard={this.handleDeleteCard}
+          handleChildTaskChange={this.handleChildTaskChange}
         />
 
         {addTaskModalVisible && (
