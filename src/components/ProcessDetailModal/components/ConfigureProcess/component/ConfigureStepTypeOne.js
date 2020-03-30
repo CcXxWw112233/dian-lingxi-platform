@@ -185,10 +185,10 @@ export default class ConfigureStepTypeOne extends Component {
           "prompt_content": "",//提示内容
           "is_required": "0",//是否必填 1=必须 0=不是必须
           "limit_file_num": "10",//上传数量
+          "limit_file_size": "20",//上传大小限制
           "limit_file_type": [//限制上传类型(文件格式) document=文档 image=图像 audio=音频 video=视频
             "document", "image", "audio", "video"
           ],
-          "limit_file_size": "20",//上传大小限制
           "is_click_currentTextForm": true
         }
       default:

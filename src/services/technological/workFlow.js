@@ -201,3 +201,27 @@ export async function restartProcess(params) {
     headers: createHeaderContentDataByFlowInstantId(params.id)
   })
 }
+
+/**
+ * 流程文件上传
+ */
+export async function processFileUpload(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/flow/task/upload`,
+    method: 'POST',
+    params,
+    // headers: createHeaderContentDataByFlowInstantId(params.id)
+  })
+}
+
+/**
+ * 流程文件删除
+ */
+export async function deleteProcessFile(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/flow/task/file`,
+    method: 'DELETE',
+    // headers: createHeaderContentDataByFlowInstantId(data.flow_instance_id),
+    params,
+  });
+}

@@ -91,6 +91,11 @@ export default class BeginningStepOne extends Component {
       if (forms[i]['is_required'] == '1') { //必填的情况下
         const verification_rule = forms[i]['verification_rule']
         const value = forms[i]['value']
+        const files = forms[i]['files']
+        const field_type = forms[i]['file_type']
+        const limit_file_num = forms[i]['limit_file_num']
+        const limit_file_size = forms[i]['limit_file_size']
+        // console.log(files,'sssssssssssssssssssssssssssssssssssss_files')
         // console.log(i, verification_rule, validateTel(''))
         switch (verification_rule) {
           case "":
@@ -156,6 +161,19 @@ export default class BeginningStepOne extends Component {
             } else {
               valiResult = false
             }
+            // if (field_type == '5') {
+            //   if (!!(files && files.length) || ((files && files.length) && files.length) != limit_file_num) {
+            //     valiResult = true
+            //   } else {
+            //     valiResult = false
+            //   }
+            // } else {
+            //   if (!!value) {
+            //     valiResult = true
+            //   } else {
+            //     valiResult = false
+            //   }
+            // }
             break
         }
         if (!valiResult) {
@@ -298,26 +316,6 @@ export default class BeginningStepOne extends Component {
     }
 
     return { stylCircle, stylLine }
-  }
-
-  // 渲染不同时候的时间状态
-  renderDiffDeadlineStatus = () => {
-    const { itemValue } = this.props
-    const { status } = itemValue
-    let container = (<span></span>)
-    switch (status) {
-      case '1':
-        container = <DifferenceDeadlineType itemValue={itemValue} />
-        break;
-      case '2':
-        break
-      case '3':
-        break
-      case '0':
-        break
-      default:
-        break;
-    }
   }
 
   // 渲染编辑详情的内容  

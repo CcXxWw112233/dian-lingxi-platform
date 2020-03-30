@@ -6,7 +6,7 @@ import { MESSAGE_DURATION_TIME, FILES, FLOWS } from "../../../globalset/js/const
 import { getSubfixName } from '../../../utils/businessFunction'
 import QueryString from 'querystring'
 import { processEditDatasConstant, processEditDatasRecordsConstant, processDoingListMatch, processInfoMatch } from '../../../components/ProcessDetailModal/constant';
-import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete, rejectProcessTask, workflowEnd, workflowDelete, restartProcess } from "../../../services/technological/workFlow"
+import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete, rejectProcessTask, workflowEnd, workflowDelete, restartProcess, processFileUpload, deleteProcessFile } from "../../../services/technological/workFlow"
 import {public_selectCurrentFlowTabsStatus} from './select'
 
 let board_id = null

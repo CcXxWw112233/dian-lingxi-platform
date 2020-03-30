@@ -60,14 +60,14 @@ export default class ConfigureStepOne_one extends Component {
   }
   valMinLengthChange = (value) => {
     if (isNaN(value)) {
-      message.warn('请输入数字')
+      // message.warn('请输入数字')
       return
     }
     this.updateEdit({ value: value }, 'val_min_length')
   }
   valMaxLengthChange = (value) => {
     if (isNaN(value)) {
-      message.warn('请输入数字')
+      // message.warn('请输入数字')
       return
     }
     this.updateEdit({ value: value }, 'val_max_length')
@@ -131,6 +131,7 @@ export default class ConfigureStepOne_one extends Component {
     const { title, prompt_content, verification_rule, is_required, val_min_length, val_max_length } = itemValue
     const { form_item } = this.state
     let disabledFlag = compareACoupleOfObjects(form_item, itemValue)
+    console.log(form_item,itemValue,disabledFlag,'ssssssssssssssssss_文本')
     return (
       <div key={itemValue} className={indexStyles.popover_content}>
         <div className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
