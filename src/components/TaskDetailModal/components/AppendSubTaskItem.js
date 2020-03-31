@@ -403,6 +403,7 @@ export default class AppendSubTaskItem extends Component {
                   <div>
                     <input
                       autosize={true}
+                      value={local_card_name}
                       onBlur={this.setchildTaskNameBlur}
                       onChange={this.setchildTaskNameChange}
                       onKeyDown={this.handlePressEnter}
