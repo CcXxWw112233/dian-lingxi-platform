@@ -102,6 +102,7 @@ export default class AppendSubTask extends Component {
       tempData.unshift({ ...obj, card_id: res.data.card_id })
       drawContent['properties'] = this.filterCurrentUpdateDatasField('SUBTASK', tempData)
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
+      this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: card_id, data: res.data, action: 'add' })
       this.setState({
         is_add_sub_task: false,
         sub_executors: [],

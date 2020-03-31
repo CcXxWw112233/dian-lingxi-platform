@@ -393,12 +393,30 @@ class Gantt extends Component {
       }
     });
   }
-  // 
-  handleChildTaskChange = ({ action, card_id, data }) => {
+  // 子任务增删改
+  handleChildTaskChange = ({ action, parent_card_id, card_id, data }) => {
+    const { group_view_type } = this.props
+    if (!ganttIsOutlineView({ group_view_type })) {
+      return
+    }
     if (action == 'delete') {
-
+      this.deleteOutLineTreeNode(card_id)
+    } else if (action == 'add') {
+      const params = {
+        parent_id: parent_card_id,
+        name: data.card_name
+      }
+      const res = {
+        id: data.card_id
+      }
+      this.insertOutLineTreeNode({ res, params })
     } else if (action == 'update') {
-
+      if (data.card_name) {
+        data.name = data.card_name
+      }
+      setTimeout(() => {
+        this.changeOutLineTreeNodeProto(card_id, data)
+      }, 500)
     } else {
 
     }
