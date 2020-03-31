@@ -105,7 +105,7 @@ export default class MainContent extends Component {
     } = defaultProps
     let ele = document.getElementById("time_graph_canvas")
     let circle = ele.getContext("2d");
-    circle.clearRect(0, 0, 138, 138);//清空
+    circle.clearRect(0, 0, 210, 210);//清空
     //创建多个圆弧
     const length = processEditDatas.length
     if (length == '0') {

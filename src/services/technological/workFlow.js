@@ -216,6 +216,7 @@ export async function processFileUpload(data) {
 
 /**
  * 流程文件删除
+ * @param {String} id 流程文件ID
  */
 export async function deleteProcessFile(params) {
   return request({

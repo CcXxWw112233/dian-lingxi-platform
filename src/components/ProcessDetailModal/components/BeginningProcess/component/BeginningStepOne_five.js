@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { Upload, message } from 'antd'
-import { connect } from 'dva'
+import { connect, Spin, Progress, Icon } from 'dva'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import {
@@ -12,6 +12,8 @@ import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, PROJECT_FILES_FILE_INTERVIEW, UPLOAD_FILE_SIZE
 } from "@/globalset/js/constant";
 import _ from "lodash";
+import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
+import { FILES } from '../../../../../globalset/js/constant'
 
 let uploadMaxFileSize = []
 @connect(mapStateToProps)
@@ -23,6 +25,17 @@ export default class BeginningStepOne_five extends Component {
       fileList: []
     }
   }
+  componentDidMount() {
+    const { itemValue = {} } = this.props
+    let { files: fileList } = itemValue
+    fileList = fileList && fileList.map(item => {
+      item.uid = item.file_id
+      return item
+    })
+    this.setState({
+      fileList
+    })
+  }
 
   updateEdit = (data, key) => {
     const { itemKey, parentKey, processEditDatas = [] } = this.props
@@ -33,12 +46,12 @@ export default class BeginningStepOne_five extends Component {
 
   onBeforeUpload = (file, fileList) => {
     const { board_id, limit_file_num } = this.props
-    console.log(fileList.length,'sssssssssssssssssssssssssss_length')
     this.setState({
       uploading: true,
     });
     if (fileList.length > limit_file_num) {
       message.warn(`最多为${limit_file_num}个文件`)
+      file.status = 'error'
       return false
     }
     // if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD, board_id)) {
@@ -57,67 +70,29 @@ export default class BeginningStepOne_five extends Component {
       return false
     } else if (sum > UPLOAD_FILE_SIZE * 1024 * 1024) {
       message.error(`上传文件不能超过${UPLOAD_FILE_SIZE}MB`)
+      file.status = 'error'
       setTimeout(() => {
         uploadMaxFileSize = []
       }, 50)
       return false
     } else {
-      let gold_item = fileList.find(item => item.status == 'error')
-      if (gold_item && Object.keys(gold_item).length) {
-        message.error((gold_item.response && gold_item.response.message) && gold_item.response.message || `上传失败。`);
-        that.setState({
-          uploading: false
-        })
-        return false
-      } else {
-        this.setState(state => ({
-          fileList: [...state.fileList, file],
-        }));
-      }
+      let { fileList = [] } = this.state
+      let file_flow = []
+      file_flow.push(file)
+      this.setState(state => ({
+        fileList: [].concat(...fileList, ...file_flow),
+        fileFlow: file_flow
+      }));
     }
   }
 
   handleChange = ({ file, fileList, event }) => {
+    console.log('fileList', fileList)
     let that = this
-    // console.log(file, fileList,'ssssssssssssssssssssssssss_file')
-    if (file.status === 'uploading') {
-      that.setState({
-        uploading: true
-      })
-    }
-    if (file.status !== 'uploading') {
-      that.setState({
-        uploading: false
-      })
-    }
-    let gold_item = fileList.find(item => item.status == 'error')
-    // console.log(gold_item, 'ssssssssssssssssssss_gold_item')
-    if (gold_item && Object.keys(gold_item).length) {
-      message.error((gold_item.response && gold_item.response.message) && gold_item.response.message || `上传失败。`);
-      that.setState({
-        uploading: false
-      })
-      return false
-    } else if (file.status === 'done' && file.response && file.response.code === '0') {
-      const { itemKey, parentKey, processEditDatas = [] } = this.props
-      const { forms = [] } = processEditDatas[parentKey]
-      message.success(`上传成功。`);
-      that.setState({
-        uploading: false
-      })
-    }
-    // if (file.status === 'error' || (file.response && file.response.code !== '0')) {
-    //   message.error((file.response && file.response.message) && file.response.message || `上传失败。`);
-    //   that.setState({
-    //     uploading: false
-    //   })
-    //   return false
-    // } else if (file.status === 'done'&& file.response && file.response.code === '0') {
-    //   message.success(`上传成功。`);
-    //   that.setState({
-    //     uploading: false
-    //   })
-    // }
+    that.setState({
+      fileList
+    })
+    return
   }
 
   getUploadProps = () => {
@@ -144,10 +119,61 @@ export default class BeginningStepOne_five extends Component {
       fileList: fileList,
       withCredentials: true,
       multiple: true,
-      showUploadList: false,
-      // beforeUpload: this.onBeforeUpload,
-      // onChange: this.handleChange,
+      showUploadList: true,
+      beforeUpload: $that.onBeforeUpload,
+      // function (file, fileList, ) {
+
+      // },
+      onChange: $that.handleChange
+      //  function ({ file, fileList, }) {
+      //   that.setState({
+      //     fileList
+      //   })
+      // }
     };
+  }
+
+  // 删除文件
+  handleDeleteProcessFile = (shouldDeleteItem, UID) => {
+    const { dispatch } = this.props
+    let that = this
+    this.setState({
+      isDeleteProcessFile: true
+    })
+    if (this.state.isDeleteProcessFile) {
+      message.warn(`正在删除${currentNounPlanFilterName(FILES)}中...`)
+      return
+    }
+
+    const filterData = (shouldDeleteItem, UID) => {
+      const { itemKey, parentKey, processEditDatas = [] } = this.props
+      const { forms = [] } = processEditDatas[parentKey]
+      const { fileList = [], fileFlow = [] } = this.state
+      // let newFilesData = [...forms[itemKey]['files']] || []
+      let newFilesData = [...fileList] || []
+      newFilesData = newFilesData.filter(item => item.uid != UID)
+      // this.updateEdit({ value: newFilesData }, 'files')
+      this.setState({
+        fileList: newFilesData
+      })
+    }
+    setTimeout(() => {
+      dispatch({
+        type: 'publicProcessDetailModal/deleteProcessFile',
+        payload: {
+          id: shouldDeleteItem,
+          calback: () => {
+            setTimeout(() => {
+              message.success(`删除${currentNounPlanFilterName(FILES)}成功`)
+              that.setState({
+                isDeleteProcessFile: false
+              })
+              filterData(shouldDeleteItem, UID)
+            }, 50)
+          }
+        }
+      })
+    })
   }
 
   judgeFileType(fileName) {
@@ -264,22 +290,34 @@ export default class BeginningStepOne_five extends Component {
   }
 
   renderFileList = (item) => {
+    let gold_item_id = (item.status && item.status == 'done' && item.response && item.response.code == '0') && item.response.data.flow_file_id
+
     return (
-      <div key={item.file_id} className={indexStyles.file_item}>
-        <div style={{ display: 'flex', alignItems: 'center', flex: '1' }}>
-          <span className={`${globalStyles.authTheme} ${indexStyles.file_theme_code}`}>&#xe64d;</span>
-          <span className={indexStyles.file_name}><span style={{ maxWidth: '874px', display: 'inline-block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{this.getEllipsisFileName(item.file_name)}</span>{getSubfixName(item.file_name)}</span>
+      <>
+        <div key={item.uid} className={indexStyles.file_item}>
+          <div style={{ display: 'flex', alignItems: 'center', flex: '1' }} title=''>
+            <span className={`${globalStyles.authTheme} ${indexStyles.file_theme_code}`}>&#xe64d;</span>
+            <span className={indexStyles.file_name}><span style={{
+              maxWidth: '874px', display: 'inline-block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
+              color: item.status && item.status == 'error' ? 'red' : 'inherit'
+            }}>{this.getEllipsisFileName(item.file_name || item.name)}</span>{getSubfixName(item.file_name || item.name)}</span>
+          </div>
+          <div style={{ flexShrink: 0 }}>
+            <span onClick={() => { this.handleDeleteProcessFile(item.flow_file_id || gold_item_id, item.uid) }} className={indexStyles.del_name}>删除</span>
+          </div>
         </div>
-        <div style={{ flexShrink: 0 }}>
-          <span className={indexStyles.del_name}>删除</span>
-        </div>
-      </div>
+        <div className={indexStyles.file_percent}></div>
+        {/* <div>
+          <Progress percent={0}/>
+        </div> */}
+      </>
     )
   }
 
   render() {
     const { itemValue } = this.props
-    const { title, limit_file_num, limit_file_type, limit_file_size, is_required, files: fileList = [] } = itemValue
+    const { title, limit_file_num, limit_file_type, limit_file_size, is_required, } = itemValue
+    const { fileList } = this.state
     return (
       <div className={indexStyles.text_form}>
         <p>

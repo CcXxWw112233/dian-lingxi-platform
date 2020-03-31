@@ -9,7 +9,7 @@ import BeginningStepOne_three from './BeginningStepOne_three'
 import BeginningStepOne_five from './BeginningStepOne_five'
 import { validateTel, validateEmail, validatePassword, validateFixedTel, validateIdCard, validateChineseName, validatePostalCode, validateWebsite, validateQQ, validatePositiveInt, validateNegative, validateTwoDecimal, } from '../../../../../utils/verify'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
-import { Button, message } from 'antd'
+import { Button, message, Progress } from 'antd'
 import { connect } from 'dva'
 import { timestampToTimeNormal, compareACoupleOfObjects } from '../../../../../utils/util';
 import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
@@ -216,10 +216,10 @@ export default class BeginningStepOne extends Component {
     }
 
     // this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
-    const { processInfo: { id: flow_instance_id, board_id }, itemValue } = this.props
+    const { processInfo: { id: flow_instance_id, board_id }, itemValue, dispatch } = this.props
     const { id: flow_node_instance_id } = itemValue
     let form_values = this.getAllNodesFormsData()
-    this.props.dispatch({
+    dispatch({
       type: 'publicProcessDetailModal/fillFormComplete',
       payload: {
         flow_instance_id,
@@ -229,7 +229,7 @@ export default class BeginningStepOne extends Component {
           this.setState({
             isAccomplishNodesIng: false
           })
-          this.props.dispatch({
+          dispatch({
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {
               board_id,

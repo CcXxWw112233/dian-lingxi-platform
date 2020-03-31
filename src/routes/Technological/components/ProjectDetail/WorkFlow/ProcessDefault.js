@@ -91,12 +91,13 @@ export default class ProcessDefault extends Component {
   // 流程实例的点击事件
   handleProcessInfo = (id) => {
     let that = this
-    this.props.dispatch({
+    const { dispatch } = that.props
+    dispatch({
       type: 'publicProcessDetailModal/getProcessInfo',
       payload: {
         id,
         calback: () => {
-          that.props.dispatch({
+          dispatch({
             type: 'publicProcessDetailModal/updateDatas',
             payload: {
               processPageFlagStep: '4',

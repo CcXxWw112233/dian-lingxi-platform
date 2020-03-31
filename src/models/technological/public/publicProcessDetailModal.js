@@ -366,6 +366,17 @@ export default {
       } else {
         message.warn(res.message)
       }
+    },
+
+    // 删除流程文件
+    * deleteProcessFile({ payload },{ call, put }) {
+      const { id, calback } = payload
+      let res = yield call(deleteProcessFile,{id})
+      if (isApiResponseOk(res)) {
+        if (calback && typeof calback == 'function') calback()
+      } else {
+
+      }
     }
   },
   reducers: {
