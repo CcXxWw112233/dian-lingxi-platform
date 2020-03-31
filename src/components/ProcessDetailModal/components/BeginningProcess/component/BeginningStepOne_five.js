@@ -22,21 +22,33 @@ export default class BeginningStepOne_five extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      fileList: [],
-      percent: 0
+      fileList: []
     }
-    this.timer = null
+    // const { itemValue = {} } = props
+    // let { files: fileList } = itemValue
+    // fileList = fileList && fileList.map(item => {
+    //   item.uid = item.file_id
+    //   return item
+    // })
+    // this.state = {
+    //   fileList: props.itemValue && props.itemValue.files ? fileList : [],
+    // }
   }
   componentDidMount() {
     const { itemValue = {} } = this.props
     let { files: fileList } = itemValue
     fileList = fileList && fileList.map(item => {
       item.uid = item.file_id
-      item.percent = 0
       return item
     })
     this.setState({
       fileList
+    })
+  }
+
+  componentWillUnmount() {
+    this.setState({
+      fileList: []
     })
   }
 
@@ -47,94 +59,50 @@ export default class BeginningStepOne_five extends Component {
     this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('forms', forms)
   }
 
-  // updateProcessPercent = () => {
-  //   let percent = this.state.percent + 10;
-  //   // return
-  //   if (percent > 100) {
-  //     if (this.timer) clearTimeout(this.timer)
-  //     this.setState({
-  //       percent: 100
-  //     })
-  //     return
-  //   }
-  //   this.setState({
-  //     percent
-  //   })
-  //   this.timer = setTimeout(() => {
-  //     this.updateProcessPercent()
-  //   }, 500)
-  // }
+
 
   onBeforeUpload = (file, fileList) => {
-    console.log('后进来', 'sssssssssssssssssssssss_222222')
     const { board_id, itemValue } = this.props
     const { limit_file_num, limit_file_size } = itemValue
-    // this.setState({
-    //   uploading: true,
-    // });
-    // if (fileList.length > limit_file_num) {
-    //   message.warn(`最多为${limit_file_num}个文件`)
-    //   file.status = 'error'
+    // if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD, board_id)) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
     //   return false
     // }
-    // // if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD, board_id)) {
-    // //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-    // //   return false
-    // // }
-    // const { size } = file
-    // uploadMaxFileSize.push(size)
-    // let sum = 0
-    // for (let i = 0; i < uploadMaxFileSize.length; i++) {
-    //   sum += uploadMaxFileSize[i];
-    // }
-    // if (sum == 0) {
-    //   message.error(`不能上传空文件`)
-    //   uploadMaxFileSize = []
-    //   return false
-    // }
-    // // else if (sum > UPLOAD_FILE_SIZE * 1024 * 1024) {
-    // //   message.error(`上传文件不能超过${UPLOAD_FILE_SIZE}MB`)
-    // //   file.status = 'error'
-    // //   setTimeout(() => {
-    // //     uploadMaxFileSize = []
-    // //   }, 50)
-    // //   return false
-    // // }
-    // else {
-    //   let { fileList = [] } = this.state
-    //   this.setState(state => ({
-    //     fileList: [].concat(...fileList, file),
-    //   }));
-    // }
+    const { fileList: state_filelist } = this.state
+
+    const { size } = file
+    if (size == 0) {
+      file.status = 'error'
+      file.errorMsg = `不能上传空文件`
+      return false
+    }
+    else if (size > UPLOAD_FILE_SIZE * 1024 * 1024 || size > limit_file_size * 1024 * 1024) {
+      file.status = 'error'
+      file.errorMsg = `上传文件不能超过${UPLOAD_FILE_SIZE > limit_file_size ? limit_file_size : UPLOAD_FILE_SIZE}MB`
+      return false
+    } else {
+
+    }
+    const effective_file_list = fileList.filter(item => item.status != 'error') || []
+    const effective_state_file_list = state_filelist && state_filelist.filter(item => item.status != 'error') || []
+
+    if (limit_file_num != 0 && ((effective_file_list.length + effective_state_file_list.length) > limit_file_num)) {
+      file.status = 'up_limit'
+      message.warn(`上传文件总数不能超过${limit_file_num}`)
+      return false
+    }
   }
 
   handleChange = ({ file, fileList, event }) => {
-    console.log('sssssssssssssssssssssssssssss_fileList', fileList)
-    let that = this
-    that.setState({
-      fileList
+    const new_filelist = fileList.filter(item => item.status != 'up_limit')
+    this.setState({
+      fileList: new_filelist
     })
-    return
+    this.updateEdit({value: new_filelist},'files')
   }
 
-  handleOnProgress = (e) => {
-    console.log('先进来了', 'ssssssssssssssssssssss_11111')
-    const { percent } = e
-    if (percent >= 100) {
-      setTimeout(() => {
-        this.setState({
-          percent: 0
-        })
-      },200)
-      return
-    }
-    this.setState({
-      percent
-    })
-  }
 
   getUploadProps = () => {
-    let $that = this;
     const { fileList } = this.state;
     const { processInfo = {}, itemValue, processEditDatas = [], parentKey } = this.props;
     const { id: flow_node_instance_id } = processEditDatas[parentKey]
@@ -158,9 +126,51 @@ export default class BeginningStepOne_five extends Component {
       withCredentials: true,
       multiple: true,
       showUploadList: false,
-      // onProgress: $that.handleOnProgress,
-      // beforeUpload: $that.onBeforeUpload,
-      // onChange: $that.handleChange,
+      beforeUpload: this.onBeforeUpload,
+      onChange: this.handleChange,
+      customRequest: this.customRequest
+    };
+  }
+
+  // 自定义上传
+  customRequest = async (e) => {
+    let {
+      action,
+      data,
+      file,
+      filename,
+      headers,
+      onError,
+      onProgress,
+      onSuccess,
+      withCredentials,
+    } = e
+    const formData = new FormData();
+    formData.append(filename, file);
+    // 小文件上传
+    if (data) {
+      Object.keys(data).forEach(key => {
+        formData.append(key, data[key]);
+      });
+    }
+    // 进行文件上传
+    axios
+      .post(action, formData, {
+        withCredentials,
+        headers,
+        timeout: 0,
+        onUploadProgress: ({ total, loaded }) => {
+          onProgress({ percent: Math.round(loaded / total * 100).toFixed(0) }, file);
+        },
+      })
+      .then(({ data: response }) => {
+        onSuccess(response, file);
+      })
+      .catch(onError);
+
+    return {
+      abort() {
+      },
     };
   }
 
@@ -171,11 +181,15 @@ export default class BeginningStepOne_five extends Component {
     this.setState({
       isDeleteProcessFile: true
     })
+    if (!!shouldDeleteItem) {
+      this.setState({
+        isDeleteProcessFile: false
+      })
+    }
     if (this.state.isDeleteProcessFile) {
       message.warn(`正在删除${currentNounPlanFilterName(FILES)}中...`)
       return
     }
-
     const filterData = (shouldDeleteItem, UID) => {
       const { itemKey, parentKey, processEditDatas = [] } = this.props
       const { forms = [] } = processEditDatas[parentKey]
@@ -185,6 +199,7 @@ export default class BeginningStepOne_five extends Component {
       this.setState({
         fileList: newFilesData
       })
+      this.updateEdit({value: newFilesData},'files')
     }
     setTimeout(() => {
       dispatch({
@@ -320,13 +335,21 @@ export default class BeginningStepOne_five extends Component {
 
   renderFileList = (item) => {
     let gold_item_id = (item.status && item.status == 'done' && item.response && item.response.code == '0') && item.response.data.flow_file_id
-    let gold_percent = (item.status && item.status == 'done' && item.response && item.response.code == '0') && item.percent
+    const { percent, status, errorMsg } = item
+    const alrm_obj = {}
+    if (status == 'error') {
+      if (errorMsg) {
+        alrm_obj.title = errorMsg
+      } else {
+        alrm_obj.title = '文件上传错误'
+      }
+    }
     return (
       <>
         <div key={item.uid} className={indexStyles.file_item}>
-          <div style={{ display: 'flex', alignItems: 'center', flex: '1' }}>
+          <div style={{ display: 'flex', alignItems: 'center', flex: '1' }} {...alrm_obj}>
             <span className={`${globalStyles.authTheme} ${indexStyles.file_theme_code}`}>&#xe64d;</span>
-            <span className={indexStyles.file_name}><span style={{
+            <span style={{color: item.status && item.status == 'error' ? 'red' : 'inherit'}} className={indexStyles.file_name}><span style={{
               maxWidth: '874px', display: 'inline-block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
               color: item.status && item.status == 'error' ? 'red' : 'inherit'
             }}>{this.getEllipsisFileName(item.file_name || item.name)}</span>{getSubfixName(item.file_name || item.name)}</span>
@@ -336,9 +359,17 @@ export default class BeginningStepOne_five extends Component {
           </div>
         </div>
         {/* <div className={indexStyles.file_percent}></div> */}
-        <span className={indexStyles.upload_file_progress}>
-          <Progress style={{ top: '-12px', height: '2px' }} showInfo={false} percent={this.state.percent} />
-        </span>
+        {
+          (
+            percent &&
+            Number(percent) != 0 &&
+            Number(percent) != 100
+          ) ? (
+              <span className={indexStyles.upload_file_progress}>
+                <Progress style={{ top: '-12px', height: '2px' }} showInfo={false} percent={percent} />
+              </span>
+            ) : ''
+        }
       </>
     )
   }

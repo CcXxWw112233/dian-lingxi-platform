@@ -6,7 +6,7 @@ import { MESSAGE_DURATION_TIME, FILES, FLOWS } from "../../../globalset/js/const
 import { getSubfixName } from '../../../utils/businessFunction'
 import QueryString from 'querystring'
 import { processEditDatasConstant, processEditDatasRecordsConstant, processDoingListMatch, processInfoMatch } from '../../../components/ProcessDetailModal/constant';
-import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete, rejectProcessTask, workflowEnd, workflowDelete, restartProcess, processFileUpload, deleteProcessFile } from "../../../services/technological/workFlow"
+import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete, rejectProcessTask, workflowEnd, workflowDelete, restartProcess, processFileUpload, deleteProcessFile, fileDownload } from "../../../services/technological/workFlow"
 import {public_selectCurrentFlowTabsStatus} from './select'
 
 let board_id = null
@@ -376,6 +376,32 @@ export default {
         if (calback && typeof calback == 'function') calback()
       } else {
 
+      }
+    },
+
+    // 文件下载
+    * fileDownload({ payload }, { call, put }) {
+      function openWin(url) {
+        var element1 = document.createElement("a");
+        element1.href = url;
+        element1.download = url // 需要加上download属性 
+        element1.id = 'openWin'
+        document.querySelector('body').appendChild(element1)
+        document.getElementById("openWin").click();//点击事件
+        document.getElementById("openWin").parentNode.removeChild(document.getElementById("openWin"))
+      }
+
+      let res = yield call(fileDownload, payload)
+      if (isApiResponseOk(res)) {
+        const data = res.data
+        if (data && data.length) {
+          // 循环延时控制
+          for (let i = 0; i < data.length; i++) {
+            setTimeout(() => openWin(data[i]), i * 500)
+          }
+        }
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     }
   },

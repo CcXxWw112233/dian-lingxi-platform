@@ -92,7 +92,7 @@ export default class BeginningStepOne extends Component {
         const verification_rule = forms[i]['verification_rule']
         const value = forms[i]['value']
         const files = forms[i]['files']
-        const field_type = forms[i]['file_type']
+        const field_type = forms[i]['field_type']
         const limit_file_num = forms[i]['limit_file_num']
         const limit_file_size = forms[i]['limit_file_size']
         // console.log(files,'sssssssssssssssssssssssssssssssssssss_files')
@@ -156,24 +156,24 @@ export default class BeginningStepOne extends Component {
             valiResult = validateTwoDecimal(value)
             break;
           default:
-            if (!!value) {
-              valiResult = true
-            } else {
-              valiResult = false
-            }
-            // if (field_type == '5') {
-            //   if (!!(files && files.length) || ((files && files.length) && files.length) != limit_file_num) {
-            //     valiResult = true
-            //   } else {
-            //     valiResult = false
-            //   }
+            // if (!!value) {
+            //   valiResult = true
             // } else {
-            //   if (!!value) {
-            //     valiResult = true
-            //   } else {
-            //     valiResult = false
-            //   }
+            //   valiResult = false
             // }
+            if (field_type == '5') {
+              if (!!(files && files.length) || (limit_file_num != 0 && (((files && files.length) && files.length) < limit_file_num))) {
+                valiResult = true
+              } else {
+                valiResult = false
+              }
+            } else {
+              if (!!value) {
+                valiResult = true
+              } else {
+                valiResult = false
+              }
+            }
             break
         }
         if (!valiResult) {
@@ -190,10 +190,20 @@ export default class BeginningStepOne extends Component {
     const { forms = [] } = processEditDatas[itemKey]
     let newFormsData = [...forms]
     let form_values = []
+    let filesStr = []
+    let filterFilesData = (fileList) => {
+      let newFileList = [...fileList]
+      newFileList.map(item => {
+        filesStr.push(item.flow_file_id)
+      })
+      return filesStr.join(',')
+    }
     newFormsData.map(item => {
+      let field_type = item.field_type
+      let files = (item.files && item.files.length)&& item.files
       let obj = {
         field_id: item.id || '',
-        field_value: item.value || ''
+        field_value: field_type == '5' ? filterFilesData(files) : item.value || ''
       }
       form_values.push(obj)
     })
@@ -326,7 +336,7 @@ export default class BeginningStepOne extends Component {
       <div style={{ position: 'relative' }}>
         {/* 有一个蒙层表示不是该填写人不能操作 */}
         {
-          (parentStatus != '1' || !this.whetherShowCompleteButton() || status != '1') && (
+          (parentStatus != '1' || !this.whetherShowCompleteButton() || status != '1' || this.state.isAccomplishNodesIng) && (
             <div className={indexStyles.nonOperatorPerson}></div>
           )
         }

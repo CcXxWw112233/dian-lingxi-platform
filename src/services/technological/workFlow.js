@@ -1,4 +1,4 @@
-import {REQUEST_DOMAIN_FLOWS, CONTENT_DATA_TYPE_FLOW, REQUEST_INTERGFACE_VERSIONN} from "../../globalset/js/constant";
+import {REQUEST_DOMAIN_FLOWS, REQUEST_DOMAIN_FILE, CONTENT_DATA_TYPE_FLOW, REQUEST_INTERGFACE_VERSIONN} from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
 
 const createHeaderContentDataByFlowInstantId = (flowInstantId) => {
@@ -224,5 +224,17 @@ export async function deleteProcessFile(params) {
     method: 'DELETE',
     // headers: createHeaderContentDataByFlowInstantId(data.flow_instance_id),
     params,
+  });
+}
+
+//文件下载
+export async function fileDownload(params) {
+  // debugger
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/download`,
+    method: 'GET',
+    params: {
+      ...params,
+    },
   });
 }

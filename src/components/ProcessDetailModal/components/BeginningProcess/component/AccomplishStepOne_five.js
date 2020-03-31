@@ -2,8 +2,28 @@ import React, { Component } from 'react'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { getSubfixName } from "@/utils/businessFunction";
+import { connect } from 'dva'
+import { getOrgIdByBoardId } from '../../../../../utils/businessFunction';
 
+@connect(mapStateToProps)
 export default class AccomplishStepOne_five extends Component {
+
+  constructor(props) {
+    super(props)
+  }
+
+  handleFileDownload = ({file_resource_id,file_id}) => {
+    const { processInfo: { board_id } } = this.props
+    let org_id = getOrgIdByBoardId(board_id)
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/fileDownload',
+      payload: {
+        ids: file_resource_id,
+        fileIds: file_id,
+        _organization_id: org_id,
+      }
+    })
+  }
 
   getEllipsisFileName = (name) => {
     // wx6535e025f795dca9.o6zAJs5_pqZsbrr7sJng7qkxKKbM.ZhMftVUvAIJ9b5dcb721199c1b8f4f84b0954a80e589.png
@@ -35,36 +55,48 @@ export default class AccomplishStepOne_five extends Component {
     return fileTypeArrayText.join('、')
   }
 
-  renderFileList = () => {
-    let file_name = '资料收集详细要求求.doc'
+  renderFileList = (item) => {
     return (
-      <div className={indexStyles.file_item}>
-        <div style={{display: 'flex', alignItems: 'center', flex: '1'}}>
-          <span className={`${globalStyles.authTheme} ${indexStyles.file_theme_code}`}>&#xe64d;</span>
-          <span className={indexStyles.file_name}><span style={{maxWidth: '874px', display: 'inline-block', overflow: 'hidden',  whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{this.getEllipsisFileName(file_name)}</span>{getSubfixName(file_name)}</span>
-        </div>
-        <div style={{flexShrink: 0}}>
-          <span className={indexStyles.down_name}>下载</span>
-        </div>
+      <div key={item.uid} className={indexStyles.file_item}>
+      <div style={{ display: 'flex', alignItems: 'center', flex: '1' }}>
+        <span className={`${globalStyles.authTheme} ${indexStyles.file_theme_code}`}>&#xe64d;</span>
+        <span className={indexStyles.file_name}><span style={{
+          maxWidth: '874px', display: 'inline-block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'
+        }}>{this.getEllipsisFileName(item.file_name || item.name)}</span>{getSubfixName(item.file_name || item.name)}</span>
       </div>
+      <div style={{ flexShrink: 0 }}>
+        <span onClick={() => { this.handleFileDownload({file_resource_id: item.file_resource_id, file_id: item.file_id}) }} className={indexStyles.down_name}>下载</span>
+      </div>
+    </div>
     )
   }
 
   render() {
     const { itemValue } = this.props
-    const { title, limit_file_num, limit_file_type, limit_file_size, is_required } = itemValue
+    const { title, limit_file_num, limit_file_type, limit_file_size, is_required, files: fileList = [] } = itemValue
     return (
       <div className={indexStyles.text_form}>
-        <p>{title}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</p>
-        <div className={indexStyles.upload_static}>
+        <p>
+          <span>{title}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</span>
+        </p>
+        {/* <div className={indexStyles.upload_static}>
           <span style={{ color: '#1890FF', fontSize: '28px', marginTop: '-6px' }} className={`${globalStyles.authTheme}`}>&#xe692;</span>
           <div style={{ flex: 1, marginLeft: '12px' }}>
             <div className={indexStyles.file_drap_tips}>点击或拖拽文件到此开始上传</div>
             <div className={indexStyles.file_layout}>{limit_file_size == 0 ? `不限制大小` : `${limit_file_size}MB以内`}、{limit_file_num == 0 ? `不限制数量` : `最多${limit_file_num}个`}、 {this.renderFileTypeArrayText()}格式</div>
           </div>
-        </div>
-        {this.renderFileList()}
+        </div> */}
+        {
+          fileList && fileList.map(item => {
+            return this.renderFileList(item)
+          })
+        }
       </div>
     )
   }
 }
+
+function mapStateToProps({ publicProcessDetailModal: { processInfo = {} } }) {
+  return { processInfo }
+}
+
