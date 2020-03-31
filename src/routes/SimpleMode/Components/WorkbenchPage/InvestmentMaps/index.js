@@ -101,7 +101,7 @@ export default class index extends React.Component {
                     })
                 })
             }
-            
+
         }
     }
 
@@ -111,7 +111,7 @@ export default class index extends React.Component {
      * @param {Array} arr2 对应的项目列表
      */
     getCorrespondingBoardListByOrgId = (arr1, arr2) => {
-        let arr = arr1.reduce((acc,cur) => {
+        let arr = arr1.reduce((acc, cur) => {
             let obj = {
                 ...cur,
                 data: []
@@ -119,7 +119,7 @@ export default class index extends React.Component {
             arr2.forEach(i => i.org_id == cur.id && obj.data.push(i))
             acc.push(obj)
             return acc
-        },[])
+        }, [])
         return arr
     }
 
@@ -141,8 +141,8 @@ export default class index extends React.Component {
                             item.data && item.data.length ? item.data.map(val => {
                                 return board_name(val)
                             }) : (
-                                <span style={{color:'rgba(0,0,0,0.25)'}}>暂无项目</span>
-                            )
+                                    <span style={{ color: 'rgba(0,0,0,0.25)' }}>暂无项目</span>
+                                )
                         }
                     </div>
                 </div>
@@ -166,18 +166,18 @@ export default class index extends React.Component {
         let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : 0;
 
         let investmentMapsList = this.getCorrespondingBoardListByOrgId(mapOrganizationList, projectList)
-
+        const iframe_rendering = user_set.current_org === '0' && selectOrganizationVisible === false && investmentMapsList && investmentMapsList.length
         return (
-            <div className={`${indexStyles.mapsContainer} ${globalStyles.global_vertical_scrollbar}`} style={{ height: contentHeight + 'px',padding:'48px',  overflowY: 'auto'}}>
-                 {
-                     user_set.current_org === '0' && selectOrganizationVisible === false && investmentMapsList && investmentMapsList.length ? (
+            <div className={`${indexStyles.mapsContainer} ${globalStyles.global_vertical_scrollbar}`} style={{ height: contentHeight + 'px', padding: `${iframe_rendering ? 48 : 4}px`, overflowY: 'auto' }}>
+                {
+                    iframe_rendering ? (
                         <>{investmentMapsList.map(item => {
                             return this.renderMapOrganizationList(item)
                         })}</>
-                     ) : (
-                        <iframe src={src_url} scrolling='no' frameborder="0" width='100%' height={'100%'}></iframe>
-                     )
-                 }
+                    ) : (
+                            <iframe src={src_url} scrolling='no' frameborder="0" width='100%' height={'100%'}></iframe>
+                        )
+                }
                 {/* {user_set.current_org === '0' && selectOrganizationVisible === false && mapOrganizationList.length > 1 ? (
                     <div className={indexStyles.boardSelectWapperOut}>
                         <div className={indexStyles.boardSelectWapper}>

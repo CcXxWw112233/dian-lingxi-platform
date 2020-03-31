@@ -8,7 +8,7 @@ import DateListLCBItem from './DateListLCBItem'
 import AddLCBModal from './components/AddLCBModal'
 import { isSamDay } from './getDate'
 import MilestoneDetail from './components/milestoneDetail'
-import { checkIsHasPermissionInBoard } from '../../../../utils/businessFunction';
+import { checkIsHasPermissionInBoard, setBoardIdStorage } from '../../../../utils/businessFunction';
 import { PROJECT_TEAM_BOARD_MILESTONE } from "@/globalset/js/constant";
 
 const MenuItem = Menu.Item
@@ -85,6 +85,7 @@ export default class DateList extends Component {
     // this.getMilestoneDetail(id)
     //更新里程碑id,在里程碑的生命周期会监听到id改变，发生请求
     const { dispatch } = this.props
+    setBoardIdStorage(board_id)
     dispatch({
       type: 'milestoneDetail/updateDatas',
       payload: {
