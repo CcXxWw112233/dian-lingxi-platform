@@ -269,6 +269,7 @@ export default {
         })
       } else {
       }
+      return res || {}
     },
 
     // 流程节点步骤的完成

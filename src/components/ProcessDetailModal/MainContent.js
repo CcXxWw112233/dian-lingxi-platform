@@ -71,6 +71,18 @@ export default class MainContent extends Component {
     })
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { processInfo: { curr_node_sort } } = nextProps
+    const { processInfo: { curr_node_sort: old_curr_node_sort } } = this.props
+    if (old_curr_node_sort && curr_node_sort) {
+      if (curr_node_sort != old_curr_node_sort) {
+        setTimeout(() => {
+          this.initCanvas()
+        },50)
+      }
+    }
+  }
+
   initCanvas() {
     const { processInfo = {}, processEditDatas = [] } = this.props
     const { curr_node_sort, status: parentStatus } = processInfo
@@ -113,16 +125,15 @@ export default class MainContent extends Component {
         circle.lineWidth = lineWidth;
         let color = 'rgba(0,0,0,0.04)'
         // if (Number(curr_node_sort) === Number(processEditDatas[i].sort)) {
-        //   color = 'rgba(24,144,255,1)' // 蓝色
+        //   color = 'rgba(0,0,0,0.04)'
         // } else if (Number(processEditDatas[i].sort) < Number(curr_node_sort)) {
         //   color = 'rgba(24,144,255,1)' // 蓝色
-        //   color = 'rgba(83,196,26,1)' // 绿色
         // } else if (Number(processEditDatas[i].sort) > Number(curr_node_sort)) {
-        //   color = '#f2f2f2'
+        //   color = 'rgba(0,0,0,0.04)'
         // }
         if (parentStatus == '2') { // 表示中止时
           if (processEditDatas[i].status == '2') {// 表示完成
-            color = 'rgba(0,0,0,0.25)' // 蓝色
+            color = 'rgba(0,0,0,0.25)'
           } else if (processEditDatas[i].status == '1') { // 表示进行中
             color = 'rgba(0,0,0,0.25)'
           } else if (processEditDatas[i].status == '0') { // 表示未开始
@@ -422,6 +433,7 @@ export default class MainContent extends Component {
   // 第三步: 调用列表并关闭弹窗 ==> 回调
   handleOperateConfigureConfirmProcessThree = async(payload) => {
     let res = await createProcess(payload)
+    const { currentFlowTabsStatus }= this.props
     if (!isApiResponseOk(res)) {
       return Promise.resolve([]);
     }
@@ -434,7 +446,7 @@ export default class MainContent extends Component {
     this.props.dispatch({
       type: 'publicProcessDetailModal/getProcessListByType',
       payload: {
-        status: '1',
+        status: currentFlowTabsStatus || '1',
         board_id: res.data.board_id
       }
     })
@@ -444,7 +456,7 @@ export default class MainContent extends Component {
   // 表示是在启动的时候调永立即开始流程
   handleOperateStartConfirmProcess = (start_time) => {
     let that = this
-    const { dispatch, projectDetailInfoData: { board_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { id } } = this.props
+    const { dispatch, projectDetailInfoData: { board_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [], currentFlowTabsStatus, processDoingList = [], templateInfo: { id } } = this.props
     Promise.resolve(
       dispatch({
         type: 'publicProcessDetailModal/createProcess',
@@ -459,13 +471,16 @@ export default class MainContent extends Component {
       })
     ).then(res => {
       if (isApiResponseOk(res)) {
+        // let data = res.data
+        // let newDoingList = [...processDoingList]
+        // newDoingList.push(data)
         that.setState({
           isCreateProcessIng: false
         })
         that.props.dispatch({
           type: 'publicProcessDetailModal/getProcessListByType',
           payload: {
-            status: '1',
+            status: currentFlowTabsStatus || '1',
             board_id: board_id
           }
         })
@@ -625,8 +640,9 @@ export default class MainContent extends Component {
   renderCurrentStepNumber = () => {
     const { processPageFlagStep, processInfo: { status, curr_node_sort, nodes = [] }, processEditDatas = [] } = this.props
     let gold_status = ''
-    let totalStep = ''
+    let totalStep = '' // 总步骤
     let currentStep = '' // 表示当前的步骤
+    let surplusStep = '' // 剩余步骤
     switch (processPageFlagStep) {
       case '4': // 表示是实例详情中的内容
         switch (status) {
@@ -635,15 +651,18 @@ export default class MainContent extends Component {
             gold_status = Number(nodes.findIndex(item => item.status == '1')) + 1
             currentStep = gold_status
             totalStep = nodes.length
+            surplusStep = totalStep - Number(nodes.findIndex(item => item.status == '1'))
             break
           case '3': // 表示已完成
             currentStep = nodes.length
             totalStep = nodes.length
+            surplusStep = 0
             break
           case '0': // 表示未开始
             gold_status = Number(nodes.findIndex(item => item.status == '0')) + 1
             currentStep = gold_status
             totalStep = nodes.length
+            surplusStep = totalStep - Number(nodes.findIndex(item => item.status == '0'))
             break
           default:
             break;
@@ -658,7 +677,7 @@ export default class MainContent extends Component {
       default:
         break;
     }
-    return { totalStep, currentStep }
+    return { totalStep, currentStep, surplusStep }
   }
 
   // 渲染开始流程的气泡框
@@ -719,7 +738,7 @@ export default class MainContent extends Component {
               fontWeight: 400,
               color: 'rgba(89,89,89,1)',
               lineHeight: '30px'
-            }}>{processPageFlagStep == '4' ? this.renderDiffStepStatus() : '新 建'} {processPageFlagStep == '4' ? status == '1' ? `${this.renderCurrentStepNumber().currentStep} 步`: '' : `${this.renderCurrentStepNumber().currentStep} 步`}</span>
+            }}>{processPageFlagStep == '4' ? this.renderDiffStepStatus() : '新 建'} {processPageFlagStep == '4' ? status == '1' ? `${this.renderCurrentStepNumber().surplusStep} 步`: '' : `${this.renderCurrentStepNumber().currentStep} 步`}</span>
             <div style={{ paddingTop: '32px', paddingRight: '32px', flex: 1, float: 'left', width: '977px', minHeight: '210px' }}>
               {/* 显示流程名称 */}
               <div style={{ marginBottom: '12px' }}>
@@ -819,6 +838,6 @@ export default class MainContent extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList = [], processEditDatas = [], processInfo = {}, processCurrentCompleteStep, node_type, processCurrentEditStep, templateInfo = {} }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
-  return { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList, processEditDatas, processInfo, processCurrentCompleteStep, node_type, processCurrentEditStep, templateInfo, projectDetailInfoData }
+function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList = [], processEditDatas = [], processInfo = {}, processCurrentCompleteStep, node_type, processCurrentEditStep, templateInfo = {}, currentFlowTabsStatus }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
+  return { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList, processEditDatas, processInfo, processCurrentCompleteStep, node_type, processCurrentEditStep, templateInfo, currentFlowTabsStatus, projectDetailInfoData }
 }
