@@ -91,7 +91,7 @@ export default class BeginningStepTwo extends Component {
       isPassNodesIng: true, // 表示正在通过审批中
     })
     if (this.state.isPassNodesIng) {
-      message.warn('正在审批通过中...')
+      // message.warn('正在审批通过中...')
       return
     }
     // this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
@@ -160,7 +160,7 @@ export default class BeginningStepTwo extends Component {
       isRejectNodesIng: true, // 表示正在驳回节点中
     })
     if (this.state.isRejectNodesIng) {
-      message.warn('正在驳回节点中...')
+      // message.warn('正在驳回节点中...')
       return
     }
     // this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
@@ -386,10 +386,11 @@ export default class BeginningStepTwo extends Component {
 
   renderEditDetailContent = () => {
     const { itemValue, processInfo: { status: parentStatus } } = this.props
-    const { approvePersonnelList = [], rejectMessage, transPrincipalList = [] } = this.state
+    const { approvePersonnelList = [], rejectMessage, transPrincipalList = [], isRejectNodesIng, isPassNodesIng } = this.state
     const { approve_type, status, assignees } = itemValue
     // 保存父级的状态是进行中 ==> 在保证当前节点是进行中 ==> 在保证是当前执行人 ==> 在保证当前执行人状态为1
     let showApproveButton = parentStatus == '1' && status == '1' && this.whetherShowCompleteButton() && this.getCurrentPersonApproveStatus() == '1'
+    let whetherIsComplete = isRejectNodesIng || isPassNodesIng ? false : true
     let type_name = ''
     const diffType = () => {
       switch (approve_type) {
@@ -428,7 +429,7 @@ export default class BeginningStepTwo extends Component {
                 getPopupContainer={triggerNode => triggerNode.parentNode}
                 placement="top" title={this.renderPopRjectContent()}
                 okText="驳回"
-                okButtonProps={{ disabled: rejectMessage ? false : true }}
+                okButtonProps={{ disabled: rejectMessage ? (isRejectNodesIng || isPassNodesIng ? true : false) : true }}
                 onCancel={this.handleCancelRejectProcess}
                 onConfirm={this.handleRejectProcess}
                 onVisibleChange={this.onVisibleChange}
@@ -439,7 +440,9 @@ export default class BeginningStepTwo extends Component {
                 onVisibleChange={this.onVisibleChange}
                 className={indexStyles.confirm_wrapper} icon={<></>}
                 getPopupContainer={triggerNode => triggerNode.parentNode}
+                okButtonProps={{ disabled: isRejectNodesIng || isPassNodesIng ? true : false }}
                 placement="top" title={this.renderPopConfirmContent()}
+                okButtonProps={{ disabled: whetherIsComplete ? false : true }}
                 okText="通过"
                 onCancel={this.handleCancelSuccessProcess}
                 onConfirm={this.handlePassProcess}

@@ -124,8 +124,8 @@ export default class ConfigureStepTypeTwo extends Component {
       <div>
         {/* 审批类型 */}
         <div className={indexStyles.approve_content} onClick={(e) => { e && e.stopPropagation() }}>
-          <span style={{ marginRight: '20px' }} className={globalStyles.authTheme}>&#xe616; 审批类型 :</span>
-          <Radio.Group style={{ display: 'flex', alignItems: 'center', position: 'relative' }} value={approve_type} onChange={(e) => {this.approveTypeChange(e)}}>
+          <span style={{ marginRight: '20px',flexShrink:0 }} className={globalStyles.authTheme}>&#xe616; 审批类型 :</span>
+          <Radio.Group style={{ display: 'flex', alignItems: 'center', position: 'relative', flexShrink: 0 }} value={approve_type} onChange={(e) => {this.approveTypeChange(e)}}>
             <Radio value="1">串签</Radio>
             <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title="依照审批人员的排序依次审批"><span className={`${globalStyles.authTheme} ${indexStyles.approve_tips}`}>&#xe845;</span></Tooltip>
             <Radio value="2">并签</Radio>

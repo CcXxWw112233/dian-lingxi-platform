@@ -44,17 +44,21 @@ export default class MainContent extends Component {
     let currentDoingApproveItem = document.getElementById('currentStaticApproveContainer')
     // 表示进行中的资料收集节点
     if (currentDoingDataCollectionItem) {
-      scrollElement.scrollTo({
-        top: currentDoingDataCollectionItem.offsetTop - 68,
-        behavior: 'smooth'
-      });
+      if (scrollElement.scrollTo) {
+        scrollElement.scrollTo({
+          top: currentDoingDataCollectionItem.offsetTop - 68,
+          behavior: 'smooth'
+        });
+      }
     }
     // 表示进行中的审批节点
     if (currentDoingApproveItem) {
-      scrollElement.scrollTo({
-        top: currentDoingApproveItem.offsetTop - 68,
-        behavior: 'smooth'
-      });
+      if (scrollElement.scrollTo) {
+        scrollElement.scrollTo({
+          top: currentDoingApproveItem.offsetTop - 68,
+          behavior: 'smooth'
+        });
+      }
     }
 
   }

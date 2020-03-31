@@ -200,7 +200,7 @@ export default class BeginningStepOne extends Component {
     }
     newFormsData.map(item => {
       let field_type = item.field_type
-      let files = (item.files && item.files.length)&& item.files
+      let files = (item.files && item.files.length) && item.files
       let obj = {
         field_id: item.id || '',
         field_value: field_type == '5' ? filterFilesData(files) : item.value || ''
@@ -221,7 +221,7 @@ export default class BeginningStepOne extends Component {
       isAccomplishNodesIng: true, // 表示正在完成中
     })
     if (this.state.isAccomplishNodesIng) {
-      message.warn('正在完成中...')
+      // message.warn('正在完成中...')
       return
     }
 
@@ -229,6 +229,7 @@ export default class BeginningStepOne extends Component {
     const { processInfo: { id: flow_instance_id, board_id }, itemValue, dispatch } = this.props
     const { id: flow_node_instance_id } = itemValue
     let form_values = this.getAllNodesFormsData()
+    let that = this
     dispatch({
       type: 'publicProcessDetailModal/fillFormComplete',
       payload: {
@@ -236,9 +237,6 @@ export default class BeginningStepOne extends Component {
         flow_node_instance_id,
         form_values: form_values,
         calback: () => {
-          this.setState({
-            isAccomplishNodesIng: false
-          })
           dispatch({
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {
@@ -246,6 +244,11 @@ export default class BeginningStepOne extends Component {
               status: '1'
             }
           })
+          setTimeout(() => {
+            that.setState({
+              isAccomplishNodesIng: false
+            })
+          },500)
         }
       }
     })
@@ -266,6 +269,18 @@ export default class BeginningStepOne extends Component {
     return flag
   }
 
+  // 判断表单是否能编辑
+
+  FormCanEdit = () => { //表单是否可编辑
+    let noCando = true
+    const { itemValue } = this.props
+    const { status } = itemValue
+    if (status != '1') {
+      noCando = false
+    }
+    return noCando
+  }
+
   // 理解成是否是有效的头像
   isValidAvatar = (avatarUrl = '') =>
     avatarUrl.includes('http://') || avatarUrl.includes('https://');
@@ -276,16 +291,16 @@ export default class BeginningStepOne extends Component {
     let container = (<div></div>)
     switch (field_type) {
       case '1':
-        container = <BeginningStepOne_one parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
+        container = <BeginningStepOne_one parentKey={itemKey} FormCanEdit={this.FormCanEdit()} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
         break;
       case '2':
-        container = <BeginningStepOne_two parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
+        container = <BeginningStepOne_two parentKey={itemKey} FormCanEdit={this.FormCanEdit()} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
         break;
       case '3':
-        container = <BeginningStepOne_three parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
+        container = <BeginningStepOne_three parentKey={itemKey} FormCanEdit={this.FormCanEdit()} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
         break;
       case '5':
-        container = <BeginningStepOne_five parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
+        container = <BeginningStepOne_five parentKey={itemKey} FormCanEdit={this.FormCanEdit()} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
         break;
       default:
         break;
@@ -367,7 +382,7 @@ export default class BeginningStepOne extends Component {
           (parentStatus == '1' && this.whetherShowCompleteButton() && status == "1") &&
           (
             <div style={{ marginTop: '16px', paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center' }}>
-              <Button type="primary" disabled={!this.setCompleteButtonDisabled()} onClick={this.handleEnterConfigureProcess}>完成</Button>
+              <Button type="primary" disabled={!this.setCompleteButtonDisabled() || this.state.isAccomplishNodesIng} onClick={this.handleEnterConfigureProcess}>完成</Button>
             </div>
           )
         }
@@ -463,7 +478,7 @@ export default class BeginningStepOne extends Component {
                   )
                 }
               </div>
-              <div style={{marginRight: '14px'}}>
+              <div style={{ marginRight: '14px' }}>
                 <DifferenceDeadlineType type="nodesStepItem" itemValue={itemValue} />
               </div>
 

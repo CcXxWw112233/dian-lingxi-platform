@@ -140,10 +140,15 @@ export default class BeginningStepOne_one extends Component {
 
   render() {
     const { verificationIsTrue } = this.state
-    const { itemValue } = this.props
+    const { itemValue, FormCanEdit } = this.props
     const { title, prompt_content, is_required, value, val_min_length, val_max_length, verification_rule } = itemValue
     return (
       <div className={indexStyles.text_form}>
+        {/* {
+          !FormCanEdit && (
+            <div style={{position: 'absolute',top: '0',bottom: '0',left: '0',right: '0',margin: 'auto',zIndex:1}}></div>
+          )
+        } */}
         <p>
           <span>
             {title}{verification_rule == '' ? '' : <span style={{ color: 'rgba(0,0,0,0.45)', fontSize: '12px' }}>&nbsp;[{this.filterVerificationName(verification_rule)}]</span>}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}
