@@ -129,10 +129,10 @@ export default class DifferenceDeadlineType extends Component {
     switch (status) {
       case '1':
         if (deadline_type == '1') {
-          container = <span>当前步骤完成期限: <span style={{color:'rgba(24,144,255,1)',marginLeft: '5px'}}>{this.renderNotRestrictionsTime()}</span></span>
+          return container = <span>当前步骤完成期限: <span style={{color:'rgba(24,144,255,1)',marginLeft: '5px'}}>{this.renderNotRestrictionsTime()}</span></span>
           break
         } else if (deadline_type == '2') {
-          container = <span>当前步骤完成期限: <span style={{color:'rgba(24,144,255,1)',marginLeft: '5px'}}>{this.renderRestrictionsTime()}</span></span>
+        return container = <span>当前步骤完成期限: <span style={{color:'rgba(24,144,255,1)',marginLeft: '5px'}}>{this.renderRestrictionsTime() == '已逾期' ? <span style={{color: '#F5222D'}}>{this.renderRestrictionsTime()}</span> : <span>{this.renderRestrictionsTime()}</span>}</span></span>
           break;
         }
       case '2':

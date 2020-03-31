@@ -395,7 +395,7 @@ export default class MainContent extends Component {
   handleOperateConfigureConfirmCalbackProcess = async (start_time) => {
     this.handleOperateConfigureConfirmProcessOne(start_time)
       .then((flow_template_id,start_time) => this.handleOperateConfigureConfirmProcessTwo(flow_template_id, start_time))
-      .then(payload => this.handleOperateConfigureConfirmProcessThree(payload))
+      .then((payload, start_time) => this.handleOperateConfigureConfirmProcessThree(payload, start_time ))
   }
   // 第一步: 先保存模板 ==> 返回模板ID
   handleOperateConfigureConfirmProcessOne = async (start_time) => {
@@ -431,12 +431,15 @@ export default class MainContent extends Component {
     return Promise.resolve(payload)
   }
   // 第三步: 调用列表并关闭弹窗 ==> 回调
-  handleOperateConfigureConfirmProcessThree = async(payload) => {
+  handleOperateConfigureConfirmProcessThree = async(payload, start_time) => {
     let res = await createProcess(payload)
-    const { currentFlowTabsStatus }= this.props
+    const { currentFlowTabsStatus, processNotBeginningList = [] }= this.props
     if (!isApiResponseOk(res)) {
       return Promise.resolve([]);
     }
+    const data = res.data
+    let newNotBeginningList = [...processNotBeginningList]
+    newNotBeginningList.push(data)
     setTimeout(() => {
       message.success(`启动${currentNounPlanFilterName(FLOWS)}成功`)
     },200)
@@ -444,9 +447,15 @@ export default class MainContent extends Component {
       isCreateProcessIng: false
     })
     this.props.dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        processNotBeginningList: newNotBeginningList
+      }
+    })
+    this.props.dispatch({
       type: 'publicProcessDetailModal/getProcessListByType',
       payload: {
-        status: currentFlowTabsStatus || '1',
+        status: start_time ? '0' : '1',
         board_id: res.data.board_id
       }
     })
@@ -471,16 +480,13 @@ export default class MainContent extends Component {
       })
     ).then(res => {
       if (isApiResponseOk(res)) {
-        // let data = res.data
-        // let newDoingList = [...processDoingList]
-        // newDoingList.push(data)
         that.setState({
           isCreateProcessIng: false
         })
         that.props.dispatch({
           type: 'publicProcessDetailModal/getProcessListByType',
           payload: {
-            status: currentFlowTabsStatus || '1',
+            status: start_time ? '0' : '1',
             board_id: board_id
           }
         })
@@ -838,6 +844,6 @@ export default class MainContent extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList = [], processEditDatas = [], processInfo = {}, processCurrentCompleteStep, node_type, processCurrentEditStep, templateInfo = {}, currentFlowTabsStatus }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
-  return { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList, processEditDatas, processInfo, processCurrentCompleteStep, node_type, processCurrentEditStep, templateInfo, currentFlowTabsStatus, projectDetailInfoData }
+function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList = [], processNotBeginningList = [], processEditDatas = [], processInfo = {}, processCurrentCompleteStep, node_type, processCurrentEditStep, templateInfo = {}, currentFlowTabsStatus }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
+  return { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList, processNotBeginningList, processEditDatas, processInfo, processCurrentCompleteStep, node_type, processCurrentEditStep, templateInfo, currentFlowTabsStatus, projectDetailInfoData }
 }

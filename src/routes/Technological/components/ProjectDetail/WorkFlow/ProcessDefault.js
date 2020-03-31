@@ -111,13 +111,13 @@ export default class ProcessDefault extends Component {
 
   tabsChange = (key) => {
     const { projectDetailInfoData: { board_id } } = this.props
-    // this.props.dispatch({
-    //   type: 'publicProcessDetailModal/getProcessListByType',
-    //   payload: {
-    //     status: key,
-    //     board_id
-    //   }
-    // })
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/getProcessListByType',
+      payload: {
+        status: key,
+        board_id
+      }
+    })
     this.props.dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {

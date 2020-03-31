@@ -407,8 +407,10 @@
   // }
 }
 
-.file_percent {
-  width: 100%;
-  height: 2px;
-  border: 1px solid turquoise;
+.upload_file_progress {
+  :global {
+    .ant-progress-bg {
+      height: 2px !important;
+    }
+  }
 }

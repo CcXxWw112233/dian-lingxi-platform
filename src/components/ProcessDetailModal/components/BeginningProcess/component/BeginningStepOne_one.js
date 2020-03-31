@@ -22,6 +22,7 @@ export default class BeginningStepOne_one extends Component {
     const { itemValue } = this.props
     const { val_min_length, val_max_length } = itemValue
     if (e.target.value.trimLR() == '') {
+      this.updateEdit({ value: '' }, 'value')
       return
     }
     if (verification_rule == '') {
