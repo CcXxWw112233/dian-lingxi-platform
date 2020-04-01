@@ -81,8 +81,8 @@ export default class AppendSubTaskItem extends Component {
     return temp_arr
   }
 
-   // 获取 currentDrawerContent 数据
-   getCurrentDrawerContentPropsModelDatasExecutors = () => {
+  // 获取 currentDrawerContent 数据
+  getCurrentDrawerContentPropsModelDatasExecutors = () => {
     const { drawContent: { properties = [] } } = this.props
     const pricipleInfo = properties.filter(item => item.code == 'EXECUTOR')[0]
     return pricipleInfo || {}
@@ -105,8 +105,8 @@ export default class AppendSubTaskItem extends Component {
         new_executors.push(item)
       }
     })
-    let new_drawContent = {...drawContent}
-    
+    let new_drawContent = { ...drawContent }
+
     if (type == 'add') {
       Promise.resolve(
         dispatch({
@@ -126,7 +126,7 @@ export default class AppendSubTaskItem extends Component {
               drawContent: new_drawContent
             }
           })
-          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: drawContent, card_id, name: 'executors', value: new_executors, overlay_sub_pricipal: 'EXECUTOR'})
+          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: drawContent, card_id, name: 'executors', value: new_executors, overlay_sub_pricipal: 'EXECUTOR' })
         }
       })
     } else if (type == 'remove') {
@@ -137,7 +137,9 @@ export default class AppendSubTaskItem extends Component {
           executor: key
         }
       })
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: drawContent, card_id, name: 'executors', value: new_executors, overlay_sub_pricipal: 'EXECUTOR'})
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: drawContent, card_id, name: 'executors', value: new_executors, overlay_sub_pricipal: 'EXECUTOR' })
+      this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: drawContent.card_id, data: { ...childTaskItemValue, executors: new_executors }, card_id, action: 'update' })
+
     }
     this.setState({
       local_executor: sub_executors
@@ -168,7 +170,7 @@ export default class AppendSubTaskItem extends Component {
       }
       this.setChildTaskIndrawContent({ name: 'is_realize', value: is_realize === '1' ? '0' : '1' }, card_id)
     })
-    
+
   }
 
   // 修改子任务名称
@@ -235,8 +237,8 @@ export default class AppendSubTaskItem extends Component {
   // 子任务更新弹窗数据
   setChildTaskIndrawContent = ({ name, value }, card_id) => {
     const { childDataIndex } = this.props
-    const { drawContent = {}, dispatch } = this.props
-    let new_drawContent = {...drawContent}
+    const { drawContent = {}, dispatch, childTaskItemValue } = this.props
+    let new_drawContent = { ...drawContent }
     const { data = [] } = drawContent['properties'].filter(item => item.code == 'SUBTASK')[0]
     let new_data = [...data]
     // new_drawContent['child_data'][childDataIndex][name] = value
@@ -250,6 +252,8 @@ export default class AppendSubTaskItem extends Component {
     })
     if (name && value) {
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id: drawContent.card_id, name: 'card_data', value: new_data })
+      this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: drawContent.card_id, data: { ...childTaskItemValue, [name]: value }, card_id, action: 'update' })
+
     }
   }
 
@@ -266,7 +270,7 @@ export default class AppendSubTaskItem extends Component {
     // const { child_data = [] } = drawContent
     const { data: child_data = [] } = drawContent['properties'].filter(item => item.code == 'SUBTASK')[0]
     let newChildData = [...child_data]
-    let new_drawContent = {...drawContent}
+    let new_drawContent = { ...drawContent }
     newChildData.map((item, index) => {
       if (item.card_id == card_id) {
         newChildData.splice(index, 1)
@@ -286,13 +290,14 @@ export default class AppendSubTaskItem extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
+      this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: drawContent.card_id, card_id, action: 'delete' })
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
           drawContent: new_drawContent
         }
       })
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({drawContent: new_drawContent, card_id: drawContent.card_id, name: 'card_data', value: newChildData})
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id: drawContent.card_id, name: 'card_data', value: newChildData })
     })
   }
 
@@ -371,13 +376,13 @@ export default class AppendSubTaskItem extends Component {
 
 
     return (
-      <div style={{display: 'flex', position: 'relative'}} className={appendSubTaskStyles.active_icon}>
+      <div style={{ display: 'flex', position: 'relative' }} className={appendSubTaskStyles.active_icon}>
         {/* <Tooltip title="删除">
           <div className={`${appendSubTaskStyles.del_icon}`}>
             <span className={`${globalStyles.authTheme}`}>&#xe7c3;</span>
           </div>
         </Tooltip> */}
-        <Popconfirm getPopupContainer={triggerNode => triggerNode.parentNode} onConfirm={() => { this.deleteConfirm({card_id, childDataIndex}) }} title={'删除该子任务？'}>
+        <Popconfirm getPopupContainer={triggerNode => triggerNode.parentNode} onConfirm={() => { this.deleteConfirm({ card_id, childDataIndex }) }} title={'删除该子任务？'}>
           <div className={`${appendSubTaskStyles.del_icon}`}>
             <span className={`${globalStyles.authTheme}`}>&#xe7c3;</span>
           </div>
@@ -388,27 +393,28 @@ export default class AppendSubTaskItem extends Component {
             <Icon type="check" style={{ color: '#FFFFFF', fontSize: 10, fontWeight: 'bold', position: 'absolute', top: '0', right: '0', left: '0', bottom: '0', margin: '1px auto' }} />
           </div>
           {/* 名字 */}
-          <div style={{flex: '1', cursor: 'pointer'}}>
+          <div style={{ flex: '1', cursor: 'pointer' }}>
             {
               !is_edit_sub_name ? (
                 <div onClick={this.handleSubTaskName} className={appendSubTaskStyles.card_name}>
                   <span>{local_card_name}</span>
                 </div>
               ) : (
-                <div>
-                  <input
-                    autosize={true}
-                    onBlur={this.setchildTaskNameBlur}
-                    onChange={this.setchildTaskNameChange}
-                    onKeyDown={this.handlePressEnter}
-                    autoFocus={true}
-                    // goldName={card_name}
-                    maxLength={100}
-                    nodeName={'input'}
-                    style={{ width: '100%', display: 'block', fontSize: 14, color: '#262626', resize: 'none', height: '38px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none', outline: 'none', paddingLeft: '12px' }}
-                  />
-                </div>
-              )
+                  <div>
+                    <input
+                      autosize={true}
+                      value={local_card_name}
+                      onBlur={this.setchildTaskNameBlur}
+                      onChange={this.setchildTaskNameChange}
+                      onKeyDown={this.handlePressEnter}
+                      autoFocus={true}
+                      // goldName={card_name}
+                      maxLength={100}
+                      nodeName={'input'}
+                      style={{ width: '100%', display: 'block', fontSize: 14, color: '#262626', resize: 'none', height: '38px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none', outline: 'none', paddingLeft: '12px' }}
+                    />
+                  </div>
+                )
             }
           </div>
           {/* 时间 */}
@@ -418,7 +424,7 @@ export default class AppendSubTaskItem extends Component {
                 <div className={appendSubTaskStyles.due_time}>
                   <div>
                     <span>{timestampToTimeNormal3(local_due_time, true)}</span>
-                    <span onClick={this.handleDelDueTime} className={`${ local_due_time && appendSubTaskStyles.timeDeleBtn}`}></span>
+                    <span onClick={this.handleDelDueTime} className={`${local_due_time && appendSubTaskStyles.timeDeleBtn}`}></span>
                   </div>
                   <DatePicker
                     onChange={this.endDatePickerChange.bind(this)}
@@ -428,23 +434,23 @@ export default class AppendSubTaskItem extends Component {
                     style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '12px', zIndex: 2 }} />
                 </div>
               ) : (
-                <Tooltip title="截止时间" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                  <div className={`${appendSubTaskStyles.add_due_time}`}>
-                    <div>
-                      <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_icon}`}>&#xe686;</span>
+                  <Tooltip title="截止时间" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                    <div className={`${appendSubTaskStyles.add_due_time}`}>
+                      <div>
+                        <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_icon}`}>&#xe686;</span>
+                      </div>
+                      <DatePicker
+                        onChange={this.endDatePickerChange.bind(this)}
+                        placeholder={local_due_time ? timestampToTimeNormal(local_due_time, '/', true) : '截止时间'}
+                        format="YYYY/MM/DD HH:mm"
+                        showTime={{ format: 'HH:mm' }}
+                        style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '12px', zIndex: 2 }} />
                     </div>
-                    <DatePicker
-                      onChange={this.endDatePickerChange.bind(this)}
-                      placeholder={local_due_time ? timestampToTimeNormal(local_due_time, '/', true) : '截止时间'}
-                      format="YYYY/MM/DD HH:mm"
-                      showTime={{ format: 'HH:mm' }}
-                      style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '12px', zIndex: 2 }} />
-                  </div>
-                </Tooltip>
-              )
+                  </Tooltip>
+                )
             }
           </div>
-          
+
           {/* 执行人 */}
           <div>
             <span style={{ position: 'relative', cursor: 'pointer' }} className={appendSubTaskStyles.user_pr}>
@@ -473,11 +479,11 @@ export default class AppendSubTaskItem extends Component {
                             tips={name}
                             src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
                           />
-                        )) :(
-                          <Tooltip title="执行人">
-                            <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_executor}`}>&#xe7b2;</span>
-                          </Tooltip>
-                        )}
+                        )) : (
+                            <Tooltip title="执行人">
+                              <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_executor}`}>&#xe7b2;</span>
+                            </Tooltip>
+                          )}
                       </AvatarList>
                     </div>
                   ) : (
