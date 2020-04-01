@@ -76,8 +76,8 @@ export default {
       about_group_boards: [], //带分组的项目列表
       about_user_boards: [], //带用户的项目列表
 
-      gantt_board_id: '0', //"1192342431761305600",//, //甘特图查看的项目id
-      group_view_type: '1', //分组视图1项目， 2成员, 4大纲
+      gantt_board_id: '1245161397235617792', //"1192342431761305600",//, //甘特图查看的项目id
+      group_view_type: '4', //分组视图1项目， 2成员, 4大纲
       group_view_filter_boards: [], //内容过滤项目id 列表
       group_view_filter_users: [], //内容过滤职员id 列表
       group_view_boards_tree: [], //内容过滤项目分组树
