@@ -4,6 +4,7 @@ import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import { compareACoupleOfObjects, isArrayEqual } from '../../../../../utils/util'
+import { getOrgIdByBoardId } from '../../../../../utils/businessFunction'
 
 export default class ExamineAndApproveContent extends Component {
 
@@ -103,9 +104,10 @@ export default class ExamineAndApproveContent extends Component {
 
   // 渲染指定人员
   renderDesignatedPersonnel = () => {
-    const { data = [] } = this.props
+    const { data = [], board_id } = this.props
     // const { designatedPersonnelList = [] } = this.state
     let designatedPersonnelList = this.filterAssignees()
+    let org_id = getOrgIdByBoardId(board_id) || '0'
     return (
       <div style={{ flex: 1, padding: '8px 0' }}>
         {
@@ -117,10 +119,10 @@ export default class ExamineAndApproveContent extends Component {
                 overlay={
                   <MenuSearchPartner
                     listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={designatedPersonnelList}
-                    // board_id={board_id}
-                    // invitationType='1'
-                    // invitationId={board_id}
-                    // invitationOrg={org_id}
+                    board_id={board_id}
+                    invitationType='1'
+                    invitationId={board_id}
+                    invitationOrg={org_id}
                     chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
                 }
               >
@@ -164,10 +166,10 @@ export default class ExamineAndApproveContent extends Component {
                   overlay={
                     <MenuSearchPartner
                       listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={designatedPersonnelList}
-                      // board_id={board_id}
-                      // invitationType='1'
-                      // invitationId={board_id}
-                      // invitationOrg={org_id}
+                      board_id={board_id}
+                      invitationType='1'
+                      invitationId={board_id}
+                      invitationOrg={org_id}
                       chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
                   }
                 >

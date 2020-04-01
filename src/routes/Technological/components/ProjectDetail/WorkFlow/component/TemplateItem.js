@@ -5,7 +5,9 @@ import {
   PROJECT_FLOWS_FLOW_TEMPLATE,PROJECT_FLOW_FLOW_ACCESS
 } from "../../../../../../globalset/js/constant";
 import { checkIsHasPermissionInBoard } from "../../../../../../utils/businessFunction";
+import { connect } from 'dva'
 
+@connect(mapStateToProps)
 export default class TemplateItem extends Component {
 
   // 启动流程的点击事件
@@ -60,4 +62,16 @@ export default class TemplateItem extends Component {
 // 每一个模板选项结构
 TemplateItem.defaultProps = {
 
+}
+
+function mapStateToProps({
+  technological: {
+    datas: {
+      userBoardPermissions = []
+    }
+  }
+}) {
+  return {
+    userBoardPermissions
+  }
 }

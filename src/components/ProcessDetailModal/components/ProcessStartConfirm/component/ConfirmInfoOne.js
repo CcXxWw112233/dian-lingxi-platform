@@ -144,7 +144,7 @@ export default class ConfirmInfoOne extends Component {
   }
 
   render() {
-    const { itemKey, itemValue, processEditDatas = [], projectDetailInfoData: { data = [] } } = this.props
+    const { itemKey, itemValue, processEditDatas = [], projectDetailInfoData: { data = [], board_id } } = this.props
     const { is_show_spread_arrow } = this.state
     let transPrincipalList = this.filterAssignees()
     let transCopyPersonnelList = this.filterRecipients()
@@ -202,7 +202,7 @@ export default class ConfirmInfoOne extends Component {
                         </span>
                         <span style={{ position: 'relative' }}>
                           <AmendComponent type="1"
-                            updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="填写人" data={data} itemKey={itemKey} itemValue={itemValue} />
+                            updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="填写人" data={data} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
                         </span>
                       </div>
                     ) : (
@@ -213,7 +213,7 @@ export default class ConfirmInfoOne extends Component {
                           <span>任何人</span>
                           <span style={{ position: 'relative' }}>
                             <AmendComponent type="1"
-                              updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="填写人" data={data} itemKey={itemKey} itemValue={itemValue} />
+                              updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="填写人" data={data} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
                           </span>
                         </div>
                       )
@@ -246,7 +246,7 @@ export default class ConfirmInfoOne extends Component {
                             <span style={{ position: 'relative' }}>
                               <AmendComponent type="3"
                                 updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel}
-                                updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="抄送人" data={data} itemKey={itemKey} itemValue={itemValue} />
+                                updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="抄送人" data={data} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
                             </span>
                           )
                         }
@@ -268,7 +268,7 @@ export default class ConfirmInfoOne extends Component {
                   )
                 }
                 <span style={{ position: 'relative' }}>
-                  <AmendComponent updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="完成期限" data={data} itemKey={itemKey} itemValue={itemValue} />
+                  <AmendComponent updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="完成期限" data={data}  itemKey={itemKey} itemValue={itemValue} />
                 </span>
               </div>
             </div>

@@ -486,7 +486,11 @@ export default class HeaderContentRightMenu extends Component {
 }
 
 //  只关联public中弹窗内的数据
-function mapStateToProps({ publicProcessDetailModal: { processInfo = {}, processPageFlagStep }, projectDetail: { datas: { projectDetailInfoData = {} } }
+function mapStateToProps({ publicProcessDetailModal: { processInfo = {}, processPageFlagStep }, projectDetail: { datas: { projectDetailInfoData = {} } },  technological: {
+    datas: {
+      userBoardPermissions = []
+    }
+  }
 }) {
-  return { processInfo, processPageFlagStep, projectDetailInfoData }
+  return { processInfo, processPageFlagStep, projectDetailInfoData, userBoardPermissions }
 }

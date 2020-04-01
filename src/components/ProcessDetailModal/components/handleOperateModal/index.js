@@ -1,6 +1,4 @@
-import { PROJECT_FLOWS_FLOW_ABORT, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../globalset/js/constant'
-import { checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl } from '../../../../utils/businessFunction'
-import { Modal, message } from 'antd'
+import { Modal } from 'antd'
 
 // 渲染删除模板信息confirm
 const showDeleteTempleteConfirm = (processTempleteDelete) => {
@@ -85,22 +83,9 @@ const renderTimeType = (type) => {
   return description
 }
 
-/**
- * 判断是否有权限 ---- 以最小权限为主 ==> 访问控制
- * @returns {Boolean} 该方法返回一个布尔类型的值 true 表示有权限 false 表示没有权限
- */
-const whetherIsHasProcessPermission = ({privileges, is_privilege, principalList, permissionsValue}) => {
-  let flag = false
-  if (checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, principalList, permissionsValue)) {
-    flag = true
-  }
-  return flag
-}
-
 export {
   showDeleteTempleteConfirm,
   genPrincipalListFromAssignees,
   renderTimeType,
-  whetherIsHasProcessPermission
 }
 

@@ -31,11 +31,11 @@ export default class TemplateContent extends Component {// 模板组件
   }
 
   render() {
-    const { processTemplateList = [] } = this.props
+    const { processTemplateList = [], projectDetailInfoData: { board_id } } = this.props
     return (
       <div className={`${indexStyles.templateContent}`}>
         {
-          checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE) && (
+          checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE, board_id) && (
             <div className={indexStyles.addTemplate}>
               <span className={indexStyles.add_icon} onClick={this.handleAddTemplate}>
                 <span style={{ fontSize: '30px' }} className={globalStyles.authTheme}>&#xe8fe;</span>
@@ -72,9 +72,17 @@ TemplateContent.defaultProps = {
 function mapStateToProps({
   publicProcessDetailModal: {
     processTemplateList = []
+  },
+  projectDetail: { datas: { projectDetailInfoData = {} } },
+  technological: {
+    datas: {
+      userBoardPermissions = []
+    }
   }
 }) {
   return {
-    processTemplateList
+    processTemplateList,
+    projectDetailInfoData,
+    userBoardPermissions
   }
 }

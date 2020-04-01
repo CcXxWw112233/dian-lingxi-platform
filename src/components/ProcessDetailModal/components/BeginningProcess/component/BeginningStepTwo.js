@@ -616,6 +616,13 @@ export default class BeginningStepTwo extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [], processInfo = {} } }) {
-  return { processEditDatas, processInfo }
+function mapStateToProps({ 
+  publicProcessDetailModal: { processEditDatas = [], processInfo = {} },
+  technological: {
+    datas: {
+      userBoardPermissions = []
+    }
+  }
+}) {
+  return { processEditDatas, processInfo, userBoardPermissions }
 }

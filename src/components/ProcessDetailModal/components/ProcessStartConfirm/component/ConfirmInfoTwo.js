@@ -124,7 +124,7 @@ export default class ConfirmInfoTwo extends Component {
   }
 
   render() {
-    const { itemKey, itemValue, processEditDatas = [], projectDetailInfoData: { data = [] } } = this.props
+    const { itemKey, itemValue, processEditDatas = [], projectDetailInfoData: { data = [], board_id } } = this.props
     const { is_show_spread_arrow } = this.state
     let transPrincipalList = this.filterAssignees()
     let transCopyPersonnelList = this.filterRecipients()
@@ -178,7 +178,7 @@ export default class ConfirmInfoTwo extends Component {
                     </span>
                     <span style={{ position: 'relative' }}>
                       <AmendComponent type="2"
-                      updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="审批人" data={data} itemKey={itemKey} itemValue={itemValue} />
+                      updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="审批人" data={data} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
                     </span>
                   </div>
                   {/* 抄送人 */}
@@ -208,7 +208,7 @@ export default class ConfirmInfoTwo extends Component {
                           cc_locking == '0' && (
                             <span style={{ position: 'relative' }}>
                               <AmendComponent type="3"
-                              updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="抄送人" data={data} itemKey={itemKey} itemValue={itemValue} />
+                              updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="抄送人" data={data} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
                             </span>
                           )
                         }
