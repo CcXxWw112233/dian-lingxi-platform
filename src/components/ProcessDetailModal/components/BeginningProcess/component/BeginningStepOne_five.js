@@ -98,7 +98,7 @@ export default class BeginningStepOne_five extends Component {
     this.setState({
       fileList: new_filelist
     })
-    this.updateEdit({value: new_filelist},'files')
+    this.updateEdit({ value: new_filelist }, 'files')
   }
 
 
@@ -181,11 +181,11 @@ export default class BeginningStepOne_five extends Component {
     this.setState({
       isDeleteProcessFile: true
     })
-    if (!!shouldDeleteItem) {
-      this.setState({
-        isDeleteProcessFile: false
-      })
-    }
+    // if (!shouldDeleteItem) {
+    //   this.setState({
+    //     isDeleteProcessFile: false
+    //   })
+    // }
     if (this.state.isDeleteProcessFile) {
       message.warn(`正在删除${currentNounPlanFilterName(FILES)}中...`)
       return
@@ -199,24 +199,32 @@ export default class BeginningStepOne_five extends Component {
       this.setState({
         fileList: newFilesData
       })
-      this.updateEdit({value: newFilesData},'files')
+      this.updateEdit({ value: newFilesData }, 'files')
     }
     setTimeout(() => {
-      dispatch({
-        type: 'publicProcessDetailModal/deleteProcessFile',
-        payload: {
-          id: shouldDeleteItem,
-          calback: () => {
-            setTimeout(() => {
-              message.success(`删除${currentNounPlanFilterName(FILES)}成功`)
-              that.setState({
-                isDeleteProcessFile: false
-              })
-              filterData(shouldDeleteItem, UID)
-            }, 50)
+      if (!shouldDeleteItem && UID) { // 表示是文件上传失败之后
+        this.setState({
+          isDeleteProcessFile: false
+        })
+        filterData(shouldDeleteItem, UID)
+        return
+      } else {
+        dispatch({
+          type: 'publicProcessDetailModal/deleteProcessFile',
+          payload: {
+            id: shouldDeleteItem,
+            calback: () => {
+              setTimeout(() => {
+                message.success(`删除${currentNounPlanFilterName(FILES)}成功`)
+                that.setState({
+                  isDeleteProcessFile: false
+                })
+                filterData(shouldDeleteItem, UID)
+              }, 50)
+            }
           }
-        }
-      })
+        })
+      }
     })
   }
 
@@ -349,7 +357,7 @@ export default class BeginningStepOne_five extends Component {
         <div key={item.uid} className={indexStyles.file_item}>
           <div style={{ display: 'flex', alignItems: 'center', flex: '1' }} {...alrm_obj}>
             <span className={`${globalStyles.authTheme} ${indexStyles.file_theme_code}`}>&#xe64d;</span>
-            <span style={{color: item.status && item.status == 'error' ? 'red' : 'inherit'}} className={indexStyles.file_name}><span style={{
+            <span style={{ color: item.status && item.status == 'error' ? 'red' : 'inherit' }} className={indexStyles.file_name}><span style={{
               maxWidth: '874px', display: 'inline-block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
               color: item.status && item.status == 'error' ? 'red' : 'inherit'
             }}>{this.getEllipsisFileName(item.file_name || item.name)}</span>{getSubfixName(item.file_name || item.name)}</span>
