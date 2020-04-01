@@ -10,6 +10,7 @@ import { message } from 'antd';
 import MilestoneDetail from '../milestoneDetail'
 import { checkIsHasPermission, checkIsHasPermissionInBoard } from '../../../../../../utils/businessFunction';
 import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_CREATE } from '../../../../../../globalset/js/constant';
+import { isSamDay } from '../../../../../../utils/util';
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
 const getEffectOrReducerByName = name => `gantt/${name}`
@@ -335,7 +336,6 @@ export default class GetRowStrip extends PureComponent {
         })
     }
     //渲染里程碑设置---end
-
 
     // 空条拖拽事件--------------------------------------------------------------------------start
     setTaskIsDragging = (bool) => { //设置任务是否在拖拽中的状态
@@ -664,12 +664,100 @@ export default class GetRowStrip extends PureComponent {
         }
     }
 
+    // 设置出现将具有时间的里程碑或任务定位到视觉区域内------start
+    // 定位
+    navigateToVisualArea = () => {
+        const { date_arr_one_level = [], ceilWidth, itemValue = {} } = this.props
+        const { start_time, due_time, tree_type } = itemValue
+        const gold_time = tree_type == '1' ? due_time : start_time
+        const date = new Date(gold_time).getDate()
+        const toDayIndex = date_arr_one_level.findIndex(item => isSamDay(item.timestamp, gold_time))
+        const target = document.getElementById('gantt_card_out_middle')
+
+        if (toDayIndex != -1) { //如果今天在当前日期面板内 
+            const nomal_position = toDayIndex * ceilWidth - 248 + 16 //248为左边面板宽度,16为左边header的宽度和withCeil * n的 %值
+            const max_position = target.scrollWidth - target.clientWidth - 2 * ceilWidth//最大值,保持在这个值的范围内，滚动条才能不滚动到触发更新的区域
+            const position = max_position > nomal_position ? nomal_position : max_position
+
+            this.setScrollPosition({
+                position
+            })
+        } else {
+            this.props.setGoldDateArr && this.props.setGoldDateArr({ timestamp: gold_time })
+            this.props.setScrollPosition && this.props.setScrollPosition({ delay: 300, position: ceilWidth * (30 - 4 + date - 1) - 16 })
+        }
+
+    }
+    //设置滚动条位置
+    setScrollPosition = ({ delay = 300, position = 200 }) => {
+        const target = document.getElementById('gantt_card_out_middle')
+        setTimeout(function () {
+            if (target.scrollTo) {
+                target.scrollTo(position, target.scrollTop)
+            } else {
+                target.scrollLeft = position
+            }
+        }, delay)
+    }
+    // 任务或里程碑  位置是否在可见区域
+    filterIsInViewArea = () => {
+        const target = document.getElementById('gantt_card_out_middle')
+        if (!target) {
+            return
+        }
+        const { itemValue = {} } = this.props
+        const { start_time, end_time, due_time, tree_type, left } = itemValue
+        if (!start_time && !end_time && !due_time) {
+            // return false
+            return {
+                isInViewArea: false
+            }
+        }
+
+        const { date_arr_one_level, } = this.props
+        const width = target.clientWidth
+        const scrollLeft = target.scrollLeft
+        const gold_time = tree_type == '1' ? due_time : start_time
+        const index = date_arr_one_level.findIndex(item => isSamDay(item.timestamp, gold_time)) //当天所在位置index
+        let isInViewArea = false //是否在可视区域
+        let direction = '' //在右还是在左
+        // console.log('sssssssssssara', scrollLeft, left, width, left - width, index)
+        if (scrollLeft < left && scrollLeft > left - width) {//在可视区域。
+            isInViewArea = true
+        } else { //在不可视区域
+            isInViewArea = false
+            if (index != -1) { //当前日期列表包含目标时间
+                if (scrollLeft > left) { //在视图区域左侧
+                    direction = 'left'
+                } else { //在视图区域右侧
+                    direction = 'right'
+                }
+            } else { //目标时间不包含在列表内
+                console.log('leftleftleft', left)
+                if (left) { //在区间左侧
+                    direction = 'left'
+                } else { //在区间右侧
+                    direction = 'right'
+                }
+            }
+        }
+        const result = {
+            isInViewArea,
+            direction,
+            add_width: width
+        }
+        // console.log('ssssssssssresult', result)
+        return result
+    }
+    // 设置出现将具有时间的里程碑或任务定位到视觉区域内------end
+
     render() {
-        const { itemValue = {}, ceilWidth, projectDetailInfoData } = this.props
+        const { itemValue = {}, ceilWidth, projectDetailInfoData, target_scrollLeft } = this.props
         const { tree_type } = itemValue
 
-        const { currentSelectedProjectMembersList = [], currentRectDashed = {}, dasheRectShow, drag_holiday_count } = this.state
-        console.log('sssseeeee2', dasheRectShow, !this.task_is_dragging, currentRectDashed)
+        const { is_item_has_time, currentRectDashed = {}, dasheRectShow, drag_holiday_count } = this.state
+        // 定位
+        const { isInViewArea, direction, add_width } = this.filterIsInViewArea()
 
         return (
             <div>
@@ -681,6 +769,25 @@ export default class GetRowStrip extends PureComponent {
                     // onMouseOver={this.stripMouseOver}
                     // onMouseLeave={this.stripMouseLeave}
                     style={{ ...this.renderStyles() }}>
+                    {
+                        is_item_has_time && !isInViewArea ? (
+                            <div
+                                onClick={this.navigateToVisualArea}
+                                className={styles.navi_position}
+                                style={{
+                                    transform: `translateX(${direction == 'right' ? target_scrollLeft + add_width - 40 : target_scrollLeft + 16}px)`
+                                }}
+                            >
+                                {
+                                    direction == 'left' ? (
+                                        <i className={`${globalStyles.authTheme}`}> &#xe7ef;</i>
+                                    ) : (
+                                            <i className={`${globalStyles.authTheme}`}> &#xe7f0;</i>
+                                        )
+                                }
+                            </div>
+                        ) : ''
+                    }
                     {
                         dasheRectShow
                         && !this.task_is_dragging
@@ -741,7 +848,8 @@ function mapStateToProps({ gantt: {
         group_view_type,
         group_list_area_section_height,
         show_board_fold,
-        outline_tree_round
+        outline_tree_round,
+        target_scrollLeft
     } },
     milestoneDetail: {
         milestone_detail = {}
@@ -769,6 +877,7 @@ function mapStateToProps({ gantt: {
         group_list_area_section_height,
         show_board_fold,
         outline_tree_round,
-        projectDetailInfoData
+        projectDetailInfoData,
+        target_scrollLeft
     }
 }
