@@ -259,7 +259,7 @@ export default class OutLineHeadItem extends Component {
                                     name: param.name,
                                     is_expand: true,
                                     children: [],
-                                    time_span:0,
+                                    time_span: 0,
                                     ...res.data
                                 };
 
@@ -482,7 +482,7 @@ export default class OutLineHeadItem extends Component {
                     });
                 }
                 break;
-            case 'onBlur':{
+            case 'onBlur': {
                 let nodeValue = OutlineTree.getTreeAddNodeValue(outline_tree, param.add_id);
                 if (nodeValue) {
 
@@ -491,7 +491,7 @@ export default class OutLineHeadItem extends Component {
                     nodeValue.time_span = 0;
                     nodeValue.start_time = null;
                     nodeValue.due_time = null;
-        
+
                     this.updateOutLineTreeData(outline_tree);
                 } else {
                     console.error("OutlineTree.getTreeNodeValue:未查询到节点");
@@ -646,7 +646,51 @@ export default class OutLineHeadItem extends Component {
         })
     }
 
-
+    // 一键折叠或一键展开
+    recusionSetFold = (data, fold_state) => {
+        if (data) {
+            data = data.map(item => {
+                item.parent_expand = fold_state
+                item.is_expand = fold_state
+                let { children } = item
+                if (children && children.length) {
+                    this.recusionSetFold(children, fold_state)
+                }
+                return item
+            })
+        }
+    }
+    outlineTreeFold = (action) => {
+        const { outline_tree, dispatch } = this.props
+        let new_outline_tree = JSON.parse(JSON.stringify(outline_tree))
+        const fold_state = action == 'fold' ? false : true
+        this.recusionSetFold(new_outline_tree, fold_state)
+        dispatch({
+            type: 'gantt/handleOutLineTreeData',
+            payload: {
+                data: new_outline_tree
+            }
+        })
+    }
+    isExistExpand = () => { //是否存在已经展开的树
+        const { outline_tree } = this.props
+        let flag = false
+        const recusionCheck = (data) => {
+            for (let val of data) {
+                if (val['is_expand']) { //存在展开了
+                    flag = true
+                    break
+                } else {
+                    const { children = [] } = val
+                    if (children.length) {
+                        recusionCheck(children)
+                    }
+                }
+            }
+        }
+        recusionCheck(outline_tree)
+        return flag
+    }
 
     render() {
         const { board_info_visible, show_add_menber_visible, safeConfirmModalVisible } = this.state;
@@ -680,14 +724,23 @@ export default class OutLineHeadItem extends Component {
 
                 <div className={styles.outlineFooter}>
                     {
-                        checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, gantt_board_id) &&
-                        <span className={`${styles.actionIcon} ${globalStyles.authTheme}`} onClick={this.invitationJoin}>&#xe7ae;</span>
+                        !this.isExistExpand() ? (
+                            <div onClick={() => this.outlineTreeFold('expand')}>展开全部</div>
+                        ) : (
+                                <div onClick={() => this.outlineTreeFold('fold')}>收起全部</div>
+                            )
                     }
 
-                    <Dropdown overlay={this.ganttProjectMenus()} trigger={['click']} placement={'topCenter'}>
-                        <span className={`${styles.actionIcon} ${globalStyles.authTheme}`}>&#xe66f;</span>
-                    </Dropdown>
+                    <div>
+                        {
+                            checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, gantt_board_id) &&
+                            <span className={`${styles.actionIcon} ${globalStyles.authTheme}`} onClick={this.invitationJoin}>&#xe7ae;</span>
+                        }
 
+                        <Dropdown overlay={this.ganttProjectMenus()} trigger={['click']} placement={'topCenter'}>
+                            <span className={`${styles.actionIcon} ${globalStyles.authTheme}`}>&#xe66f;</span>
+                        </Dropdown>
+                    </div>
                 </div>
                 <div onWheel={e => e.stopPropagation()}>
                     {

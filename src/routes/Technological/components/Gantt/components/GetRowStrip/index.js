@@ -703,7 +703,9 @@ export default class GetRowStrip extends PureComponent {
     filterIsInViewArea = () => {
         const target = document.getElementById('gantt_card_out_middle')
         if (!target) {
-            return
+            return {
+                isInViewArea: false
+            }
         }
         const { itemValue = {} } = this.props
         const { start_time, end_time, due_time, tree_type, left } = itemValue
