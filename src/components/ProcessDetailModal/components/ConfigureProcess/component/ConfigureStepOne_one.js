@@ -222,7 +222,7 @@ export default class ConfigureStepOne_one extends Component {
               </>
             )
           }
-          { itemKey == '0' && <ConfigureNapeGuide visible={false} /> }
+          {/* { itemKey == '0' && <ConfigureNapeGuide visible={false} /> } */}
         </div>
       </div>
 

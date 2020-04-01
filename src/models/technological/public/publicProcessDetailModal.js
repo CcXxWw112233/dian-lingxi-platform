@@ -27,8 +27,6 @@ export default {
     processComepletedList: [], // 已完成的流程
     processNotBeginningList: [], // 未开始的流程
     processEditDatas:[],
-    processEditDatasRecords: [],
-    node_type: '', // 当前的节点类型
     processCurrentEditStep: 0, // 当前的编辑步骤 第几步
     processCurrentCompleteStep: 0, // 当前处于的操作步骤
     templateInfo: {}, // 模板信息
@@ -51,6 +49,17 @@ export default {
               payload: {
                 //流程
                 processPageFlagStep: '1', //"1""2""3""4"分别对应新建，编辑，启动，详情界面,默认1
+                templateInfo: {}, //所选择的流程模板的信息数据
+                processInfo: {}, //所选中的流程的信息
+                currentProcessInstanceId: '', // 当前查看的流程实例名称
+                currentTempleteIdentifyId: '', // 当前查看的模板编号凭证ID
+                currentFlowTabsStatus: '1',
+                process_detail_modal_visible: false,
+                processDoingList: [], // 进行中的流程
+                processStopedList: [], // 已中止的流程
+                processComepletedList: [], // 已完成的流程
+                processNotBeginningList: [], // 未开始的流程
+                processEditDatas:[],
               }
             })
             if (board_id) {
@@ -61,6 +70,27 @@ export default {
                   board_id
                 }
               })
+              dispatch({
+                type: 'projectDetail/projectDetailInfo',
+                payload: {
+                  id: board_id
+                }
+              })
+            }
+            if (flow_id) {
+              // dispatch({
+              //   type: 'getProcessInfoByUrl',
+              //   payload: {
+              //     currentProcessInstanceId: flow_id
+              //   }
+              // })
+              // dispatch({
+              //   type: 'updateDatas',
+              //   payload: {
+              //     process_detail_modal_visible: true,
+              //     currentProcessInstanceId: flow_id
+              //   }
+              // })
             }
           }
 

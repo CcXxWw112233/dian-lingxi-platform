@@ -569,20 +569,20 @@ export default class MainContent extends Component {
             is_edit == '1' ? (
               <div className={`${indexStyles.add_node}`} onClick={(e) => { this.handleAddEditStep(e) }}>
                 <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
-                <ConfigureGuide visible={visible} />
+                {/* <ConfigureGuide visible={visible} /> */}
               </div>
             ) : (
                 <Tooltip getPopupContainer={() => document.getElementById('addProcessStep')} placement="topLeft" title="完成上一步骤才能添加">
                   <div><div className={`${indexStyles.add_normal}`}>
                     <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
-                    <ConfigureGuide visible={visible} />
+                    {/* <ConfigureGuide visible={visible} /> */}
                   </div></div>
                 </Tooltip>
               )
           ) : (
               <div className={`${indexStyles.add_node}`} onClick={(e) => { this.handleAddEditStep(e) }}>
                 <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
-                <ConfigureGuide />
+                {/* <ConfigureGuide /> */}
               </div>
             )
         }

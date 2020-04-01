@@ -196,7 +196,7 @@ export default class ConfigureStepOne_three extends Component {
               </>
             )
           }
-          {itemKey == '0' && <ConfigureNapeGuide visible={false} />}
+          {/* {itemKey == '0' && <ConfigureNapeGuide visible={false} />} */}
         </div>
       </div>
     )
