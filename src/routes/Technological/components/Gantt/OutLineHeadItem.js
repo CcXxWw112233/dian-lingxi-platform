@@ -688,6 +688,10 @@ export default class OutLineHeadItem extends Component {
                 }
             }
         }
+        const levelone_tree = outline_tree.filter(item => item.is_expand)
+        if (!levelone_tree.length) { //最外层都是收起状态则是收起
+            return false
+        }
         recusionCheck(outline_tree)
         return flag
     }
