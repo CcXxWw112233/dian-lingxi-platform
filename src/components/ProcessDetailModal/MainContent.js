@@ -783,8 +783,8 @@ export default class MainContent extends Component {
                         autosize
                         onBlur={this.titleTextAreaChangeBlur}
                         onPressEnter={this.titleTextAreaChangeBlur}
-                        // onClick={this.setTitleEdit}
-                        setIsEdit={this.setTitleEdit}
+                        onClick={(e) => e && e.stopPropagation()}
+                        // setIsEdit={this.setTitleEdit}
                         autoFocus={true}
                         goldName={currentFlowInstanceName}
                         placeholder={'流程名称(必填)'}
