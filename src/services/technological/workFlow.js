@@ -209,7 +209,7 @@ export async function processFileUpload(data) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/flow/task/upload`,
     method: 'POST',
-    params,
+    data,
     // headers: createHeaderContentDataByFlowInstantId(params.id)
   })
 }
