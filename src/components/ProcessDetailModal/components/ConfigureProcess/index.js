@@ -131,8 +131,24 @@ export default class ConfigureProcess extends Component {
     let confirmButtonDisabled
     const { itemValue } = this.props
     const { node_type, name, forms = [], assignee_type, assignees, cc_type, recipients } = itemValue
-    let newAssignees = assignees ? assignees.split(',') : []
-    let newRecipients = recipients ? recipients.split(',') : []
+    let newAssignees
+    let newRecipients
+    if (!assignees || assignees == '') {
+      newAssignees = []
+    } else if (assignees instanceof Array) {
+      newAssignees = [...assignees]
+    } else {
+      newAssignees = assignees.split(',')
+    }
+    if (!recipients || recipients == '') {
+      newRecipients = []
+    } else if (recipients instanceof Array) {
+      newRecipients = [...recipients]
+    } else {
+      newRecipients = recipients.split(',')
+    }
+    // let newAssignees = assignees != 'undefined' && (assignees && assignees != '') ? assignees.split(',') : []
+    // let newRecipients = recipients != 'undefined' && (recipients && recipients != '') ? recipients.split(',') : []
     switch (node_type) {
       case '1':
         if (cc_type == '0' || cc_type == '') { // 没有选择抄送人的时候

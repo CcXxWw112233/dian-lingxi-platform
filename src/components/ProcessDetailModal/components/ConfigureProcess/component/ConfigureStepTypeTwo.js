@@ -11,8 +11,18 @@ export default class ConfigureStepTypeTwo extends Component {
 
   constructor(props) {
     super(props)
+    let newApprovalsList
+    if (props.itemValue && props.itemValue.assignees) {
+      if (props.itemValue.assignees instanceof Array) {
+        newApprovalsList = [...props.itemValue.assignees]
+      } else {
+        newApprovalsList = props.itemValue.assignees.split(',')
+      }
+    } else {
+      newApprovalsList = []
+    }
     this.state = {
-      approvalsList: props.itemValue.assignees ? props.itemValue.assignees.split(',') : [], // 指定人员的列表
+      approvalsList: newApprovalsList, // 指定人员的列表
     }
   }
 

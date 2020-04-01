@@ -9,6 +9,7 @@ import { processEditDatasConstant, processEditDatasRecordsConstant, processDoing
 import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete, rejectProcessTask, workflowEnd, workflowDelete, restartProcess, processFileUpload, deleteProcessFile, fileDownload } from "../../../services/technological/workFlow"
 import {public_selectCurrentFlowTabsStatus} from './select'
 
+let dispatchEvent = null
 let board_id = null
 let appsSelectKey = null
 let flow_id = null
@@ -40,6 +41,7 @@ export default {
       history.listen((location) => {
         if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
           const param = QueryString.parse(location.search.replace('?', ''))
+          dispatchEvent = dispatch
           board_id = param.board_id
           appsSelectKey = param.appsSelectKey
           flow_id = param.flow_id
@@ -78,12 +80,12 @@ export default {
               })
             }
             if (flow_id) {
-              // dispatch({
-              //   type: 'getProcessInfoByUrl',
-              //   payload: {
-              //     currentProcessInstanceId: flow_id
-              //   }
-              // })
+              dispatch({
+                type: 'getProcessInfoByUrl',
+                payload: {
+                  currentProcessInstanceId: flow_id
+                }
+              })
               // dispatch({
               //   type: 'updateDatas',
               //   payload: {
@@ -226,6 +228,32 @@ export default {
         message.warn(res.message)
       }
       return res || {}
+    },
+
+    // 从URL进来获取流程详情信息
+    * getProcessInfoByUrl({ payload }, { call, put }) {
+      const { currentProcessInstanceId } = payload
+      yield put({
+        type: 'publicProcessDetailModal/updateDatas',
+        payload: {
+          processPageFlagStep: '4'
+        }
+      })
+      yield put({
+        type: 'getProcessInfo',
+        payload: {
+          id: currentProcessInstanceId,
+          calback: () => {
+            dispatchEvent({
+              type: 'publicProcessDetailModal/updateDatas',
+              payload: {
+                process_detail_modal_visible: true,
+                currentProcessInstanceId: currentProcessInstanceId,
+              }
+            })
+          }
+        }
+      })
     },
 
     // 获取流程实例信息

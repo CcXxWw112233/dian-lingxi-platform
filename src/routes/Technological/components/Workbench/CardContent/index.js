@@ -15,7 +15,8 @@ import React from 'react';
 import MenuSearchMultiple from '../CardContent/MenuSearchMultiple';
 import TaskDetailModal from '@/components/TaskDetailModal'
 import FileDetailModal from '@/components/FileDetailModal'
-import ProccessDetailModal from './Modal/ProccessDetailModal';
+import ProcessDetailModal from '@/components/ProcessDetailModal'
+// import ProccessDetailModal from './Modal/ProccessDetailModal';
 import AddTaskModal from './Modal/AddTaskModal';
 import AddProgressModal from './Modal/AddProgressModal';
 import { connect } from 'dva';
@@ -52,6 +53,10 @@ const SubMenu = Menu.SubMenu;
       isInOpenFile,
       isInAttachmentFile
     },
+    publicProcessDetailModal: {
+      process_detail_modal_visible,
+      processInfo: publicProcessInfo = {}
+    },
     technological: {
       datas: {
         userBoardPermissions
@@ -60,7 +65,7 @@ const SubMenu = Menu.SubMenu;
   
   }) => ({
     workbench, processInfo, projectDetailInfoData, drawerVisible, drawContent,
-    filePreviewCurrentFileId, fileType, isInOpenFile, isInAttachmentFile,userBoardPermissions
+    filePreviewCurrentFileId, fileType, isInOpenFile, process_detail_modal_visible, publicProcessInfo, isInAttachmentFile,userBoardPermissions
   }))
 class CardContent extends React.Component {
   state = {
@@ -248,6 +253,37 @@ class CardContent extends React.Component {
   async setPreviewProccessModalVisibile(id) {
     let flowID = this.props.model.datas.totalId.flow;
     let board_id = this.props.model.datas.totalId.board;
+    let that = this
+    await that.props.dispatch({
+      type: 'projectDetail/projectDetailInfo',
+      payload: {
+        id: board_id
+      }
+    })
+    await that.props.dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        processPageFlagStep:'4'
+      }
+    })
+    await that.props.dispatch({
+      type: 'publicProcessDetailModal/getProcessInfo',
+      payload: {
+        id: flowID,
+        calback: () => {
+          that.props.dispatch({
+            type: 'publicProcessDetailModal/updateDatas',
+            payload: {
+              process_detail_modal_visible: true,
+              currentProcessInstanceId: flowID,
+              // processPageFlagStep: '4'
+            }
+          })
+        }
+
+      }
+    })
+    return
     await this.props.getProcessInfo({ id: flowID });
     await this.props.dispatch({
       type: 'workbenchTaskDetail/projectDetailInfo',
@@ -614,6 +650,41 @@ class CardContent extends React.Component {
     })
   }
 
+  whetherUpdateWorkbenchPorcessListData = ({is_privilege, type}) => {
+    const { publicProcessInfo = {}, } = this.props
+    const { board_id, id: flow_instance_id } = publicProcessInfo
+    const { datas: { backLogProcessList = [] } } = this.props.model
+    let newBackLogProcessList = [...backLogProcessList]
+    if (is_privilege) {
+      newBackLogProcessList = newBackLogProcessList.map(item => {
+        if (item.board_id == board_id && item.flow_instance_id == flow_instance_id) {
+          let new_item = item
+          new_item = {...item, is_privilege: is_privilege}
+          return new_item
+        } else {
+          let new_item = item
+          return new_item
+        }
+      })
+      this.props.dispatch({
+        type: 'workbench/updateDatas',
+        payload: {
+          backLogProcessList: newBackLogProcessList
+        }
+      })
+    }
+    if (type) {
+      newBackLogProcessList = newBackLogProcessList.filter(item => (item.flow_instance_id != flow_instance_id))
+      this.props.dispatch({
+        type: 'workbench/updateDatas',
+        payload: {
+          backLogProcessList: newBackLogProcessList
+        }
+      })
+    }
+    
+  }
+
   // 数组去重
   arrayNonRepeatfy = arr => {
     let temp_arr = []
@@ -966,16 +1037,23 @@ class CardContent extends React.Component {
           )}
         /> */}
         {/* 我的流程 */}
-        <ProccessDetailModal
-          {...this.props}
-          close={this.close.bind(this)}
-          modalVisible={this.state.previewProccessModalVisibile}
-          setPreviewProccessModalVisibile={this.setPreviewProccessModalVisibile.bind(
-            this
-          )}
-          visitControlUpdateCurrentModalData={this.visitControlUpdateCurrentModalData}
-          principalList={data}
-        />
+        {
+          CardContentType == 'EXAMINE_PROGRESS' && this.props.process_detail_modal_visible && (
+            <ProcessDetailModal
+              process_detail_modal_visible={this.props.process_detail_modal_visible}
+              whetherUpdateWorkbenchPorcessListData={this.whetherUpdateWorkbenchPorcessListData}
+              // {...this.props}
+              // close={this.close.bind(this)}
+              // modalVisible={this.state.previewProccessModalVisibile}
+              // setPreviewProccessModalVisibile={this.setPreviewProccessModalVisibile.bind(
+              //   this
+              // )}
+              // visitControlUpdateCurrentModalData={this.visitControlUpdateCurrentModalData}
+              // principalList={data}
+            />
+          )
+
+        }
         {
           CardContentType == 'RESPONSIBLE_TASK' && (
             <TaskDetailModal

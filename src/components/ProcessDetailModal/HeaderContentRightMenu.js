@@ -113,6 +113,7 @@ export default class HeaderContentRightMenu extends Component {
       // });
       // 这是需要获取一下流程列表 区分工作台和项目列表
       this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo, obj.type)
+      this.props.whetherUpdateWorkbenchPorcessListData && this.props.whetherUpdateWorkbenchPorcessListData({is_privilege: obj.is_privilege})
 
     };
 
@@ -303,6 +304,7 @@ export default class HeaderContentRightMenu extends Component {
 
   // 中止流程的点击事件
   handleDiscontinueProcess = () => {
+    let that = this
     const { projectDetailInfoData: { board_id }, processInfo: { id } } = this.props
     if (!this.whetherIsHasPermission(PROJECT_FLOWS_FLOW_ABORT)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -317,7 +319,9 @@ export default class HeaderContentRightMenu extends Component {
           setTimeout(() => {
             message.success(`中止${currentNounPlanFilterName(FLOWS)}成功`)
           }, 200)
-          this.props.onCancel && this.props.onCancel()
+          that.props.whetherUpdateWorkbenchPorcessListData && that.props.whetherUpdateWorkbenchPorcessListData({type: 'workflowEnd'})
+          that.props.onCancel && that.props.onCancel()
+          
         }
       }
     })
@@ -354,6 +358,7 @@ export default class HeaderContentRightMenu extends Component {
               setTimeout(() => {
                 message.success(`删除${currentNounPlanFilterName(FLOWS)}成功`)
               }, 200)
+              that.props.whetherUpdateWorkbenchPorcessListData && that.props.whetherUpdateWorkbenchPorcessListData({type: 'deleteProcess'})
               that.props.onCancel && that.props.onCancel()
             }
           }

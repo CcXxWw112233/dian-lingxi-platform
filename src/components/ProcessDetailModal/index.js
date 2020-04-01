@@ -67,7 +67,7 @@ export default class ProcessDetailModal extends Component {
   }
 
   render() {
-    const { process_detail_modal_visible } = this.props
+    const { process_detail_modal_visible, whetherUpdateWorkbenchPorcessListData } = this.props
     return (
       <div>
         <PublicDetailModal
@@ -75,7 +75,7 @@ export default class ProcessDetailModal extends Component {
           onCancel={this.onCancel}
           isNotShowFileDetailContentRightVisible={true}
           mainContent={<MainContent onCancel={this.onCancel}/>}
-          headerContent={<HeaderContent onCancel={this.onCancel}/>}
+          headerContent={<HeaderContent onCancel={this.onCancel} whetherUpdateWorkbenchPorcessListData={whetherUpdateWorkbenchPorcessListData}/>}
           commonDrawerContentOutClick={this.commonDrawerContentOutClick}
           isNotShowFileDetailContentLeftScrollBar={true}
         />
