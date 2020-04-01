@@ -193,7 +193,8 @@ export default class ConfigureStepOne_five extends Component {
   }
 
   render() {
-    const { itemKey, itemValue } = this.props
+    const { itemKey, itemValue, parentKey, processEditDatas = [] } = this.props
+    const { forms = [] } = processEditDatas[parentKey]
     const { title, limit_file_num, limit_file_size, is_required, is_click_currentTextForm } = itemValue
     return (
       <div>
@@ -234,7 +235,7 @@ export default class ConfigureStepOne_five extends Component {
               </>
             )
           }
-          {/* {itemKey == '0' && <ConfigureNapeGuide visible={false} />} */}
+          { itemKey == ((forms && forms.length) && forms.length - 1) && <ConfigureNapeGuide visible={false} /> }
         </div>
       </div>
 

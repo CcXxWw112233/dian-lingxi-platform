@@ -131,7 +131,6 @@ export default class ConfigureStepOne_one extends Component {
     const { title, prompt_content, verification_rule, is_required, val_min_length, val_max_length } = itemValue
     const { form_item } = this.state
     let disabledFlag = compareACoupleOfObjects(form_item, itemValue)
-    console.log(form_item,itemValue,disabledFlag,'ssssssssssssssssss_文本')
     return (
       <div key={itemValue} className={indexStyles.popover_content}>
         <div className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
@@ -183,7 +182,8 @@ export default class ConfigureStepOne_one extends Component {
   }
 
   render() {
-    const { itemKey, itemValue } = this.props
+    const { itemKey, itemValue, parentKey, processEditDatas = [] } = this.props
+    const { forms = [] } = processEditDatas[parentKey]
     const { title, prompt_content, is_required, is_click_currentTextForm } = itemValue
     return (
       <div>
@@ -222,7 +222,7 @@ export default class ConfigureStepOne_one extends Component {
               </>
             )
           }
-          {/* { itemKey == '0' && <ConfigureNapeGuide visible={false} /> } */}
+          { itemKey == ((forms && forms.length) && forms.length - 1) && <ConfigureNapeGuide /> }
         </div>
       </div>
 

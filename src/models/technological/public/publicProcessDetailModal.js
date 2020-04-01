@@ -6,7 +6,7 @@ import { MESSAGE_DURATION_TIME, FILES, FLOWS } from "../../../globalset/js/const
 import { getSubfixName } from '../../../utils/businessFunction'
 import QueryString from 'querystring'
 import { processEditDatasConstant, processEditDatasRecordsConstant, processDoingListMatch, processInfoMatch } from '../../../components/ProcessDetailModal/constant';
-import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete, rejectProcessTask, workflowEnd, workflowDelete, restartProcess, processFileUpload, deleteProcessFile, fileDownload } from "../../../services/technological/workFlow"
+import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete, rejectProcessTask, workflowEnd, workflowDelete, restartProcess, processFileUpload, deleteProcessFile, fileDownload, configurePorcessGuide } from "../../../services/technological/workFlow"
 import {public_selectCurrentFlowTabsStatus} from './select'
 
 let dispatchEvent = null
@@ -34,7 +34,9 @@ export default {
     processInfo: {}, // 流程实例信息
     currentProcessInstanceId: '', // 当前查看的流程实例名称
     currentTempleteIdentifyId: '', // 当前查看的模板编号凭证ID
-    currentFlowTabsStatus: '1'
+    currentFlowTabsStatus: '1',
+    not_show_create_node_guide: '1',
+    not_show_create_form_guide: '1',
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -62,6 +64,8 @@ export default {
                 processComepletedList: [], // 已完成的流程
                 processNotBeginningList: [], // 未开始的流程
                 processEditDatas:[],
+                not_show_create_node_guide: '1',
+                not_show_create_form_guide: '1',
               }
             })
             if (board_id) {
@@ -460,6 +464,22 @@ export default {
         }
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
+    // 引导接口
+    * configurePorcessGuide({ payload }, { call, put }) {
+      let res = yield call(configurePorcessGuide,payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            not_show_create_node_guide: res.data.flow_template_node,
+            not_show_create_form_guide: res.data.flow_template_form,
+          }
+        })
+      } else {
+
       }
     }
   },

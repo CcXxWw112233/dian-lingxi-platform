@@ -1,4 +1,4 @@
-import {REQUEST_DOMAIN_FLOWS, REQUEST_DOMAIN_FILE, CONTENT_DATA_TYPE_FLOW, REQUEST_INTERGFACE_VERSIONN} from "../../globalset/js/constant";
+import {REQUEST_DOMAIN_FLOWS, REQUEST_DOMAIN_FILE, CONTENT_DATA_TYPE_FLOW, REQUEST_INTERGFACE_VERSIONN, REQUEST_DOMAIN} from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
 
 const createHeaderContentDataByFlowInstantId = (flowInstantId) => {
@@ -236,5 +236,14 @@ export async function fileDownload(params) {
     params: {
       ...params,
     },
+  });
+}
+
+// 关于引导的接口
+export async function configurePorcessGuide(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/user/guide`,
+    method: 'POST',
+    data
   });
 }

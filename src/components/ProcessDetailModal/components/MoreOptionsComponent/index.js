@@ -22,28 +22,35 @@ export default class MoreOptionsComponent extends Component {
     const { options_data = [] } = itemValue
     let moreOptionsList = [...options_data] || []
     if (cc_type == '1') {
-      let obj = {}
-      obj = {
-        code: 'DUPLICATED'
+      if (!moreOptionsList.find(item => item.code == 'DUPLICATED')) {
+        let obj = {}
+        obj = {
+          code: 'DUPLICATED'
+        }
+        moreOptionsList.push(obj)
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: moreOptionsList }, 'options_data')
       }
-      moreOptionsList.push(obj)
-      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: moreOptionsList }, 'options_data')
+      
     }
     if (deadline_type == '2') {
-      let obj = {}
-      obj = {
-        code: 'COMPLETION_DEADLINE'
+      if (!moreOptionsList.find(item => item.code == 'COMPLETION_DEADLINE')) {
+        let obj = {}
+        obj = {
+          code: 'COMPLETION_DEADLINE'
+        }
+        moreOptionsList.push(obj)
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: moreOptionsList }, 'options_data')
       }
-      moreOptionsList.push(obj)
-      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: moreOptionsList }, 'options_data')
     }
     if (description != '') {
-      let obj = {}
-      obj = {
-        code: 'REMARKS'
+      if (!moreOptionsList.find(item => item.code == 'REMARKS')) {
+        let obj = {}
+        obj = {
+          code: 'REMARKS'
+        }
+        moreOptionsList.push(obj)
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: moreOptionsList }, 'options_data')
       }
-      moreOptionsList.push(obj)
-      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: moreOptionsList }, 'options_data')
     }
   }
 

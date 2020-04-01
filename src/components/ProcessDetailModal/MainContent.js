@@ -34,6 +34,16 @@ export default class MainContent extends Component {
     this.timer = null
   }
 
+  componentWillMount() {
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/configurePorcessGuide',
+      payload: {
+        flow_template_node: '',
+        flow_template_form: ''
+      }
+    })
+  }
+
   componentDidMount() {
     this.initCanvas()
     window.addEventListener('resize', this.resizeTTY)
@@ -297,7 +307,7 @@ export default class MainContent extends Component {
   handleAddEditStep = (e) => {
     e && e.stopPropagation()
     let that = this
-    const { processEditDatas = [], dispatch } = this.props
+    const { processEditDatas = [], dispatch, not_show_create_node_guide } = this.props
     const nodeObj = JSON.parse(JSON.stringify(processEditDatasItemOneConstant))
     processEditDatas.length == '0' ? processEditDatas.push(nodeObj) : processEditDatas.push({ name: '' })
     // processEditDatas.push(nodeObj)
@@ -320,7 +330,15 @@ export default class MainContent extends Component {
           node_type: '1'
         }
       })
-      that.setState({
+      if (not_show_create_node_guide != '1') {
+        dispatch({
+          type: 'publicProcessDetailModal/configurePorcessGuide',
+          payload: {
+            flow_template_node: '1'
+          }
+        })
+      }
+       that.setState({
         visible: true
       })
     })
@@ -559,7 +577,7 @@ export default class MainContent extends Component {
 
   // 渲染添加步骤按钮
   renderAddProcessStep = () => {
-    const { processCurrentEditStep, processEditDatas = [] } = this.props
+    const { processCurrentEditStep, processEditDatas = [], not_show_create_node_guide } = this.props
     let { is_edit } = processEditDatas && processEditDatas[processCurrentEditStep] || {}
     const { visible } = this.state
     return (
@@ -569,20 +587,20 @@ export default class MainContent extends Component {
             is_edit == '1' ? (
               <div className={`${indexStyles.add_node}`} onClick={(e) => { this.handleAddEditStep(e) }}>
                 <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
-                {/* <ConfigureGuide visible={visible} /> */}
+                {not_show_create_node_guide != '1' && <ConfigureGuide />}
               </div>
             ) : (
                 <Tooltip getPopupContainer={() => document.getElementById('addProcessStep')} placement="topLeft" title="完成上一步骤才能添加">
                   <div><div className={`${indexStyles.add_normal}`}>
                     <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
-                    {/* <ConfigureGuide visible={visible} /> */}
+                    {not_show_create_node_guide != '1' && <ConfigureGuide />}
                   </div></div>
                 </Tooltip>
               )
           ) : (
               <div className={`${indexStyles.add_node}`} onClick={(e) => { this.handleAddEditStep(e) }}>
                 <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
-                {/* <ConfigureGuide /> */}
+                {not_show_create_node_guide != '1' && <ConfigureGuide />}
               </div>
             )
         }
@@ -692,14 +710,17 @@ export default class MainContent extends Component {
 
   // 渲染开始流程的气泡框
   renderProcessStartConfirm = () => {
+    const { currentFlowInstanceName, processEditDatas = [] } = this.props
+    let saveTempleteDisabled = currentFlowInstanceName == '' || (processEditDatas && processEditDatas.length) && processEditDatas[processEditDatas.length - 1].is_edit == '0' || (processEditDatas && processEditDatas.length) && !(processEditDatas[processEditDatas.length - 1].node_type) ? true : false
     return (
       <div style={{ display: 'flex', flexDirection: 'column', width: '248px', height: '112px', justifyContent: 'space-around' }}>
-        <Button onClick={this.handleCreateProcess} type="primary">立即开始</Button>
+        <Button disabled={saveTempleteDisabled} onClick={this.handleCreateProcess} type="primary">立即开始</Button>
         <div>
           {/* <Button style={{ color: '#1890FF' }}>预约开始时间</Button> */}
           <span style={{ position: 'relative', zIndex: 1, minWidth: '80px', lineHeight: '38px', width: '100%', display: 'inline-block', textAlign: 'center' }}>
-            <Button style={{ color: '#1890FF', width: '100%' }}>预约开始时间</Button>
+            <Button disabled={saveTempleteDisabled} style={{ color: '#1890FF', width: '100%' }}>预约开始时间</Button>
             <DatePicker
+              disabled={saveTempleteDisabled}
               disabledDate={this.disabledStartTime.bind(this)}
               onOk={this.startDatePickerChange.bind(this)}
               onChange={this.handleStartDatePickerChange.bind(this)}
@@ -848,6 +869,6 @@ export default class MainContent extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList = [], processNotBeginningList = [], processEditDatas = [], processInfo = {}, processCurrentCompleteStep, node_type, processCurrentEditStep, templateInfo = {}, currentFlowTabsStatus }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
-  return { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList, processNotBeginningList, processEditDatas, processInfo, processCurrentCompleteStep, node_type, processCurrentEditStep, templateInfo, currentFlowTabsStatus, projectDetailInfoData }
+function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList = [], processNotBeginningList = [], processEditDatas = [], processInfo = {}, processCurrentCompleteStep, node_type, processCurrentEditStep, templateInfo = {}, currentFlowTabsStatus, not_show_create_node_guide }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
+  return { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList, processNotBeginningList, processEditDatas, processInfo, processCurrentCompleteStep, node_type, processCurrentEditStep, templateInfo, currentFlowTabsStatus, not_show_create_node_guide, projectDetailInfoData }
 }

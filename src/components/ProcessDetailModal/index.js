@@ -17,14 +17,7 @@ export default class ProcessDetailModal extends Component {
         isEditCurrentFlowInstanceName: true, // 是否正在编辑当前实例的名称
         isEditCurrentFlowInstanceDescription: false, // 是否正在编辑当前实例的描述
         processPageFlagStep: '1', // "1", "2", "3", "4" 分别对应 新建， 编辑， 启动
-        // processDoingList: [], // 进行中的流程
-        // processStopedList: [], // 已中止的流程
-        // processComepletedList: [], // 已完成的流程
-        // processNotBeginningList: [], // 未开始的流程
-        // processEditDatas: JSON.parse(JSON.stringify(processEditDatasConstant)), //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
         processEditDatas:[],
-        processEditDatasRecords: [],
-        // processEditDatasRecords: JSON.parse(JSON.stringify(processEditDatasRecordsConstant)), //每一步的每一个类型，记录，数组的全部数据step * type
         node_type: '1', // 当前的节点类型
         processCurrentEditStep: 0, // 当前的编辑步骤 第几步
         processCurrentCompleteStep: 0, // 当前处于的操作步骤
@@ -32,6 +25,8 @@ export default class ProcessDetailModal extends Component {
         processInfo: [], // 流程实例信息
         currentProcessInstanceId: '', // 当前查看的流程实例名称
         currentTempleteIdentifyId: '', // 当前查看的模板ID
+        not_show_create_node_guide: '1',
+        not_show_create_form_guide: '1',
       }
     })
   }

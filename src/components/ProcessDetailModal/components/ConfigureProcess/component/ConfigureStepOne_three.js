@@ -158,7 +158,8 @@ export default class ConfigureStepOne_three extends Component {
   }
 
   render() {
-    const { itemKey, itemValue } = this.props
+    const { itemKey, itemValue, parentKey, processEditDatas = [] } = this.props
+    const { forms = [] } = processEditDatas[parentKey]
     const { title, prompt_content, is_required, is_click_currentTextForm } = itemValue
     return (
       <div>
@@ -196,7 +197,7 @@ export default class ConfigureStepOne_three extends Component {
               </>
             )
           }
-          {/* {itemKey == '0' && <ConfigureNapeGuide visible={false} />} */}
+          { itemKey == ((forms && forms.length) && forms.length - 1) && <ConfigureNapeGuide /> }
         </div>
       </div>
     )
