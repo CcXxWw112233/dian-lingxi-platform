@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { Select } from 'antd'
 import indexStyles from '../index.less'
 import { connect } from 'dva'
+
+const { Option } = Select;
 @connect(mapStateToProps)
 export default class BeginningStepOne_two extends Component {
 
