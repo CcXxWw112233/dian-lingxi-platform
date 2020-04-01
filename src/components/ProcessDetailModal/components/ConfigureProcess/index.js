@@ -130,7 +130,7 @@ export default class ConfigureProcess extends Component {
     let confirmButtonText = ''
     let confirmButtonDisabled
     const { itemValue } = this.props
-    const { node_type, name, forms = [], assignee_type, assignees, cc_type, recipients } = itemValue
+    const { node_type, name, forms = [], assignee_type, assignees, cc_type, recipients, approve_value, approve_type } = itemValue
     let newAssignees
     let newRecipients
     if (!assignees || assignees == '') {
@@ -297,6 +297,12 @@ export default class ConfigureProcess extends Component {
             confirmButtonDisabled = true
           } else if (name && (newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
             confirmButtonText = '至少添加一位抄送人'
+            confirmButtonDisabled = true
+          }
+        }
+        if (approve_type == '3') {
+          if (approve_value == '') {
+            confirmButtonText = '请输入汇签值'
             confirmButtonDisabled = true
           }
         }

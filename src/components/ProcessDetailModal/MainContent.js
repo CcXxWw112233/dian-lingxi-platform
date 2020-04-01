@@ -8,8 +8,8 @@ import EditProcess from './components/EditProcess'
 import ProcessStartConfirm from './components/ProcessStartConfirm'
 import BeginningProcess from './components/BeginningProcess'
 import ConfigureGuide from './ConfigureGuide'
-import { processEditDatasItemOneConstant, processEditDatasRecordsItemOneConstant } from './constant'
-import { Tooltip, Button, message, Popconfirm, Popover, Calendar, DatePicker } from 'antd'
+import { processEditDatasItemOneConstant } from './constant'
+import { Tooltip, Button, message, Popover, DatePicker } from 'antd'
 import { timeToTimestamp } from '../../utils/util'
 import moment from 'moment'
 import { MESSAGE_DURATION_TIME, FLOWS } from '../../globalset/js/constant'
@@ -29,7 +29,6 @@ export default class MainContent extends Component {
       currentFlowInstanceDescription: '', // 当前的实例描述内容
       isEditCurrentFlowInstanceName: true, // 是否正在编辑当前实例的名称
       isEditCurrentFlowInstanceDescription: false, // 是否正在编辑当前实例的描述
-      visible: false, // 控制引导窗口的显示隐藏
     }
     this.timer = null
   }
@@ -84,7 +83,7 @@ export default class MainContent extends Component {
       clientWidth
     })
   }
-
+  // 用来更新canvas中的步骤
   componentWillReceiveProps(nextProps) {
     const { processInfo: { curr_node_sort } } = nextProps
     const { processInfo: { curr_node_sort: old_curr_node_sort } } = this.props
@@ -149,7 +148,7 @@ export default class MainContent extends Component {
           if (processEditDatas[i].status == '2') {// 表示完成
             color = 'rgba(0,0,0,0.25)'
           } else if (processEditDatas[i].status == '1') { // 表示进行中
-            color = 'rgba(0,0,0,0.25)'
+            color = 'rgba(0,0,0,0.04)'
           } else if (processEditDatas[i].status == '0') { // 表示未开始
             color = 'rgba(0,0,0,0.04)'
           }
@@ -330,6 +329,7 @@ export default class MainContent extends Component {
           node_type: '1'
         }
       })
+      // 更新引导
       if (not_show_create_node_guide != '1') {
         dispatch({
           type: 'publicProcessDetailModal/configurePorcessGuide',
@@ -338,9 +338,6 @@ export default class MainContent extends Component {
           }
         })
       }
-       that.setState({
-        visible: true
-      })
     })
   }
 
@@ -416,12 +413,12 @@ export default class MainContent extends Component {
   //操作配置时的启动---需要先调用保存模板 (只不过不保存)
   handleOperateConfigureConfirmCalbackProcess = async (start_time) => {
     this.handleOperateConfigureConfirmProcessOne(start_time)
-      .then((flow_template_id,start_time) => this.handleOperateConfigureConfirmProcessTwo(flow_template_id, start_time))
-      .then((payload, start_time) => this.handleOperateConfigureConfirmProcessThree(payload, start_time ))
+      .then(({id,temp_time}) => this.handleOperateConfigureConfirmProcessTwo({id, temp_time}))
+      .then(({payload, temp_time2}) => this.handleOperateConfigureConfirmProcessThree({payload, temp_time2}))
   }
   // 第一步: 先保存模板 ==> 返回模板ID
   handleOperateConfigureConfirmProcessOne = async (start_time) => {
-    const { projectDetailInfoData: { board_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [], dispatch } = this.props
+    const { projectDetailInfoData: { board_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [] } = this.props
     let res = await saveProcessTemplate({
       board_id,
       name: currentFlowInstanceName,
@@ -432,12 +429,12 @@ export default class MainContent extends Component {
     if (!isApiResponseOk(res)) {
       return Promise.resolve([]);
     }
-    let flow_template_id = res.data
-    return Promise.resolve(flow_template_id)
+    let id = res.data
+    let temp_time = start_time
+    return Promise.resolve({id, temp_time})
   }
   // 第二步: 调用模板详情 ==> 返回对应模板信息内容
-  handleOperateConfigureConfirmProcessTwo = async (id, start_time) => {
-    
+  handleOperateConfigureConfirmProcessTwo = async ({id, temp_time}) => {    
     let res = await getTemplateInfo({id})
     if (!isApiResponseOk(res)) {
       return Promise.resolve([]);
@@ -446,22 +443,19 @@ export default class MainContent extends Component {
       name: res.data.name,
       description: res.data.description,
       nodes: res.data.nodes,
-      start_up_type: start_time ? '2' : '1',
-      plan_start_time: start_time ? start_time : '',
+      start_up_type: temp_time ? '2' : '1',
+      plan_start_time: temp_time ? temp_time : '',
       flow_template_id: res.data.id,
     }
-    return Promise.resolve(payload)
+    let temp_time2 = temp_time
+    return Promise.resolve({payload, temp_time2})
   }
   // 第三步: 调用列表并关闭弹窗 ==> 回调
-  handleOperateConfigureConfirmProcessThree = async(payload, start_time) => {
+  handleOperateConfigureConfirmProcessThree = async({payload, temp_time2}) => {
     let res = await createProcess(payload)
-    const { currentFlowTabsStatus, processNotBeginningList = [] }= this.props
     if (!isApiResponseOk(res)) {
       return Promise.resolve([]);
     }
-    const data = res.data
-    let newNotBeginningList = [...processNotBeginningList]
-    newNotBeginningList.push(data)
     setTimeout(() => {
       message.success(`启动${currentNounPlanFilterName(FLOWS)}成功`)
     },200)
@@ -469,15 +463,9 @@ export default class MainContent extends Component {
       isCreateProcessIng: false
     })
     this.props.dispatch({
-      type: 'publicProcessDetailModal/updateDatas',
-      payload: {
-        processNotBeginningList: newNotBeginningList
-      }
-    })
-    this.props.dispatch({
       type: 'publicProcessDetailModal/getProcessListByType',
       payload: {
-        status: start_time ? '0' : '1',
+        status: temp_time2 ? '0' : '1',
         board_id: res.data.board_id
       }
     })
@@ -487,7 +475,7 @@ export default class MainContent extends Component {
   // 表示是在启动的时候调永立即开始流程
   handleOperateStartConfirmProcess = (start_time) => {
     let that = this
-    const { dispatch, projectDetailInfoData: { board_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [], currentFlowTabsStatus, processDoingList = [], templateInfo: { id } } = this.props
+    const { dispatch, projectDetailInfoData: { board_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { id } } = this.props
     Promise.resolve(
       dispatch({
         type: 'publicProcessDetailModal/createProcess',
@@ -555,11 +543,11 @@ export default class MainContent extends Component {
     })
 
   }
-
+  // 禁用的时间段
   disabledStartTime = (current) => {
     return current && current < moment().subtract(1, "days")
   }
-
+  // 这是保存一个点击此刻时不让日期面板关闭
   handleStartOpenChange = (open) => {
     // this.setState({ endOpen: true });
     this.setState({
@@ -579,7 +567,6 @@ export default class MainContent extends Component {
   renderAddProcessStep = () => {
     const { processCurrentEditStep, processEditDatas = [], not_show_create_node_guide } = this.props
     let { is_edit } = processEditDatas && processEditDatas[processCurrentEditStep] || {}
-    const { visible } = this.state
     return (
       <div style={{ position: 'relative' }} id="addProcessStep">
         {
@@ -611,7 +598,7 @@ export default class MainContent extends Component {
   // 渲染展示的内容是什么 配置时 | 编辑时 | 启动时 | 进行时
   renderDiffContentProcess = (value, key) => {
     const { processPageFlagStep } = this.props
-    const { is_edit, is_confirm } = value
+    const { is_edit } = value
     let container = (<div></div>)
     switch (processPageFlagStep) {
       case '1': // 表示进入配置界面
@@ -627,7 +614,6 @@ export default class MainContent extends Component {
         } else {
           container = <ConfigureProcess itemKey={key} itemValue={value} />
         }
-        // container = <EditProcess itemKey={key} itemValue={value}/>
         break
       case '3':
         container = <ProcessStartConfirm itemKey={key} itemValue={value} />
@@ -643,7 +629,7 @@ export default class MainContent extends Component {
 
   // 渲染不同时候对应步骤的状态
   renderDiffStepStatus = () => {
-    const { processPageFlagStep, processEditDatas = [], processInfo: { status } } = this.props
+    const { processInfo: { status } } = this.props
     let currentText = ''
     switch (status) {
       case '1':
@@ -666,7 +652,7 @@ export default class MainContent extends Component {
 
   // 渲染当前步骤数量
   renderCurrentStepNumber = () => {
-    const { processPageFlagStep, processInfo: { status, curr_node_sort, nodes = [] }, processEditDatas = [] } = this.props
+    const { processPageFlagStep, processInfo: { status, nodes = [] }, processEditDatas = [] } = this.props
     let gold_status = ''
     let totalStep = '' // 总步骤
     let currentStep = '' // 表示当前的步骤
@@ -711,12 +697,12 @@ export default class MainContent extends Component {
   // 渲染开始流程的气泡框
   renderProcessStartConfirm = () => {
     const { currentFlowInstanceName, processEditDatas = [] } = this.props
+    // 禁用开始流程的按钮逻辑 1.判断流程名称是否输入 ==> 2. 是否有步骤 并且步骤都不是配置的样子 ==> 3. 并且上一个节点有选择类型 都是或者的关系 只要有一个不满足返回 true 表示 禁用 false 表示不禁用
     let saveTempleteDisabled = currentFlowInstanceName == '' || (processEditDatas && processEditDatas.length) && processEditDatas[processEditDatas.length - 1].is_edit == '0' || (processEditDatas && processEditDatas.length) && !(processEditDatas[processEditDatas.length - 1].node_type) ? true : false
     return (
       <div style={{ display: 'flex', flexDirection: 'column', width: '248px', height: '112px', justifyContent: 'space-around' }}>
         <Button disabled={saveTempleteDisabled} onClick={this.handleCreateProcess} type="primary">立即开始</Button>
         <div>
-          {/* <Button style={{ color: '#1890FF' }}>预约开始时间</Button> */}
           <span style={{ position: 'relative', zIndex: 1, minWidth: '80px', lineHeight: '38px', width: '100%', display: 'inline-block', textAlign: 'center' }}>
             <Button disabled={saveTempleteDisabled} style={{ color: '#1890FF', width: '100%' }}>预约开始时间</Button>
             <DatePicker
@@ -747,7 +733,7 @@ export default class MainContent extends Component {
           <div style={{ display: 'flex', position: 'relative' }}>
             <div><canvas id="time_graph_canvas" width={210} height={210} style={{ float: 'left' }}></canvas></div>
             {/* <img id="node_img" src={sssimg} style={{position: 'relative', width: 20, height: 20, top: 155, right: 118}}/> */}
-            {parseInt(this.props.processCurrentCompleteStep) === parseInt(this.props.processInfo && this.props.processInfo.node_amount) ? <span className={globalStyles.authTheme} style={{ color: '#73D13C', position: 'absolute', top: 155, left: 92 }} >&#xe605;</span> : <span className={globalStyles.authTheme} style={{ color: '#D9D9D9', position: 'absolute', top: 155, left: 92 }} >&#xe605;</span>}
+            <span className={globalStyles.authTheme} style={{ color: '#D9D9D9', position: 'absolute', top: 158, left: 92,fontSize: '14px' }} >&#xe605;</span>
             <span style={{
               position: 'absolute',
               top: '70px',
@@ -817,18 +803,10 @@ export default class MainContent extends Component {
                     )
                 }
               </div>
-              {/* <div style={{ color: '#262626', fontSize: '20px' }}>{this.props.processInfo && this.props.processInfo.name}</div>
-          <div style={{
-            fontSize: '12px',
-            fontFamily: 'PingFangSC-Regular',
-            fontWeight: '400',
-            color: 'rgba(89,89,89,1)'
-          }}>{this.props.processInfo && this.props.processInfo.description ? delHtmlTag(this.props.processInfo && this.props.processInfo.description) : '暂无描述'}</div> */}
             </div>
           </div>
         </div>
         <div className={indexStyles.configure_bottom}>
-          {/* <ConfigureProcess {...this.props}/> */}
           {processEditDatas.map((value, key) => {
             return (
               <>{this.renderDiffContentProcess(value, key)}</>
@@ -869,6 +847,6 @@ export default class MainContent extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList = [], processNotBeginningList = [], processEditDatas = [], processInfo = {}, processCurrentCompleteStep, node_type, processCurrentEditStep, templateInfo = {}, currentFlowTabsStatus, not_show_create_node_guide }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
-  return { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processDoingList, processNotBeginningList, processEditDatas, processInfo, processCurrentCompleteStep, node_type, processCurrentEditStep, templateInfo, currentFlowTabsStatus, not_show_create_node_guide, projectDetailInfoData }
+function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas = [], processInfo = {}, node_type, processCurrentEditStep, templateInfo = {}, currentFlowTabsStatus, not_show_create_node_guide }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
+  return { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas, processInfo, node_type, processCurrentEditStep, templateInfo, currentFlowTabsStatus, not_show_create_node_guide, projectDetailInfoData }
 }

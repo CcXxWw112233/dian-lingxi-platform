@@ -19,6 +19,34 @@ export default class BeginningStepOne_one extends Component {
   }
 
   defaultValueChange(e, verification_rule) {
+    // const { itemValue } = this.props
+    // const { val_min_length, val_max_length } = itemValue
+    // if (e.target.value.trimLR() == '') {
+    //   this.updateEdit({ value: '' }, 'value')
+    //   return
+    // }
+    // if (verification_rule == '') {
+    //   if (e.target.value.length < val_min_length) {
+    //     message.warn(`最少不能少于${val_min_length}字`)
+    //   } else if (e.target.value.length > val_min_length && e.target.value.length < val_max_length) {
+    //     this.setState({
+    //       verificationIsTrue: this.validate(verification_rule, e.target.value)
+    //     })
+    //     this.updateEdit({ value: e.target.value }, 'value')
+    //     return
+    //   } else if (e.target.value.length > val_max_length) {
+    //     message.warn(`最多不能超过${val_max_length}字`)
+    //     return
+    //   }
+    // }
+    // this.setState({
+    //   verificationIsTrue: this.validate(verification_rule, e.target.value)
+    // })
+
+    this.updateEdit({ value: e.target.value }, 'value')
+  }
+
+  handleOnBlur = (e, verification_rule) => {
     const { itemValue } = this.props
     const { val_min_length, val_max_length } = itemValue
     if (e.target.value.trimLR() == '') {
@@ -157,7 +185,7 @@ export default class BeginningStepOne_one extends Component {
         </p>
 
         <div className={indexStyles.text_fillOut}>
-          <Input maxLength={50} style={{ border: verification_rule == '' || verificationIsTrue ? '' : '1px solid #F5222D' }} placeholder={prompt_content} value={value} onChange={(e) => { this.defaultValueChange(e, verification_rule) }}/>
+          <Input maxLength={50} style={{ border: verification_rule == '' || verificationIsTrue ? '' : '1px solid #F5222D' }} placeholder={prompt_content} value={value} onChange={(e) => { this.defaultValueChange(e, verification_rule) }} onBlur={(e) => { this.handleOnBlur(e, verification_rule) }}/>
         </div>
       </div>
     )

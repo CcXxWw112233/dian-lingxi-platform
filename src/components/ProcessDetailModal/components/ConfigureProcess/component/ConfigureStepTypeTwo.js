@@ -119,9 +119,17 @@ export default class ConfigureStepTypeTwo extends Component {
   approveTypeChange = (e) => {
     e && e.stopPropagation()
     this.updateConfigureProcess({ value: e.target.value }, 'approve_type')
+    this.updateConfigureProcess({ value: '' }, 'approve_value')
   }
 
   approveValueChange = (value) => {
+    if (isNaN(value)) {
+      // message.warn('请输入数字')
+      return
+    } else if (value == 0) {
+      this.updateConfigureProcess({ value: '' }, 'approve_value')
+      return
+    }
     this.updateConfigureProcess({ value: Number(value) }, 'approve_value')
   }
 
