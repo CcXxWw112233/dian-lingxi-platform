@@ -73,12 +73,13 @@ export default class ConfigureStepOne_two extends Component {
   handleAddOptionsSelect = () => {
     const { itemValue } = this.props
     const { options = [] } = itemValue
+    let newOptionsData = [...options]
     let obj = {
-      label_value: (Number(options.length)).toString(),
-      label_name: `选项${(Number(options.length) + 1)}`
+      label_value: (Number(newOptionsData.length)).toString(),
+      label_name: `选项${(Number(newOptionsData.length) + 1)}`
     }
-    options.push(obj)
-    this.updateEdit({ value: options }, 'options')
+    newOptionsData.push(obj)
+    this.updateEdit({ value: newOptionsData }, 'options')
   }
   // 删除选项的点击事件 (这里是根据下标来)
   handleDelOptionsSelect = (key) => {
@@ -147,6 +148,20 @@ export default class ConfigureStepOne_two extends Component {
     }
   }
 
+  // 查找所有的选项内容不能为空 true 表示存在空值
+  whetherIsEmptyValue = () => {
+    const { itemValue } = this.props
+    const { options = [] } = itemValue
+    let newOptionsData = [...options]
+    let flag = false
+    newOptionsData = newOptionsData.find(item => {
+      if (item.label_name == '') {
+        flag = true
+      }
+    })
+    return flag
+  }
+
   renderContent = () => {
     const { itemValue } = this.props
     const { title, prompt_content, is_multiple_choice, is_required, options = [] } = itemValue
@@ -189,7 +204,7 @@ export default class ConfigureStepOne_two extends Component {
           </div>
         </div>
         <div className={indexStyles.pop_btn}>
-          <Button onClick={this.handleConfirmFormItem} disabled={(title && title != '' && title.trimLR() != '') && !disabledFlag ? false : true} style={{ width: '100%' }} type="primary">确定</Button>
+          <Button onClick={this.handleConfirmFormItem} disabled={(title && title != '' && title.trimLR() != '') && !disabledFlag && !this.whetherIsEmptyValue() ? false : true} style={{ width: '100%' }} type="primary">确定</Button>
         </div>
       </div>
     )
