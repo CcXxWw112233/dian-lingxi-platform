@@ -11,7 +11,7 @@ export default class AccomplishStepOne_one extends Component {
           <span>{title}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</span>
         </p>
         <div className={indexStyles.text_fillOut}>
-          <span>{value || prompt_content}</span>
+          <span style={{marginLeft: '12px'}}>{value || '暂无内容'}</span>
         </div>
       </div>
     )

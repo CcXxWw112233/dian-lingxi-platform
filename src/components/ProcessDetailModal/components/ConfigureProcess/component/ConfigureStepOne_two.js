@@ -36,13 +36,14 @@ export default class ConfigureStepOne_two extends Component {
     const { itemKey, parentKey, processEditDatas = [], itemValue } = this.props
     let temp_item = { ...form_item }
     if (!is_click_confirm_btn) {// 判断是否点击了确定按钮,否 那么就保存回原来的状态
-      if (visible == false)
+      if (visible == false) {
         this.setState({
           form_item: temp_item
         })
-      const { forms = [] } = processEditDatas[parentKey]
-      forms[itemKey] = { ...temp_item }
-      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
+        const { forms = [] } = processEditDatas[parentKey]
+        forms[itemKey] = { ...temp_item }
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
+      }
     }
     this.setState({
       popoverVisible: visible
@@ -65,7 +66,9 @@ export default class ConfigureStepOne_two extends Component {
     const { itemValue } = this.props
     let { options = [] } = itemValue
     let newOptionsData = [...options]
-    newOptionsData[key]['label_name'] = e.target.value
+    if (newOptionsData && newOptionsData[key]) {
+      newOptionsData[key]['label_name'] = e.target.value
+    }
     this.updateEdit({ value: newOptionsData }, 'options')
   }
 

@@ -21,7 +21,7 @@ export default class AccomplishStepOne_two extends Component {
         containerText = arr.join(',')
         break;
       case '0': // 表示不是多选
-        let temp_value2 = options.filter(item => item.id == value)[0].label_name || ''
+        let temp_value2 = ((options && options.filter(item => item.id == value) && options.filter(item => item.id == value).length) && options.filter(item => item.id == value)[0] || []).label_name || ''
         containerText = temp_value2
         break
 
@@ -40,7 +40,7 @@ export default class AccomplishStepOne_two extends Component {
           <span>{title}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</span>
         </p>
         <div className={indexStyles.text_fillOut}>
-          <span>{this.renderWhetherMultipleValue() || prompt_content}</span>
+          <span style={{marginLeft: '12px'}}>{this.renderWhetherMultipleValue() || '暂无内容'}</span>
         </div>
       </div>
     )

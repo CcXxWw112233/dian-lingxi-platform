@@ -17,6 +17,9 @@ export default class CompleteDeadlineContent extends Component {
 
   // 完成期限
   deadlineValueChange = (value) => {
+    if (value == '') {
+      return
+    }
     this.setState({
       deadlineValue: value
     })
@@ -24,13 +27,15 @@ export default class CompleteDeadlineContent extends Component {
   }
   // 是否限制时间事件
   deadlineTypeChange = (e) => {
+    const { itemValue } = this.props
+    const { deadline_time_type, deadline_value } = itemValue
     this.setState({
       deadlineType: e.target.value
     })
     if (e.target.value == '2') {
       this.setState({
-        deadlineTimeType: 'day',
-        deadlineValue: '1'
+        deadlineTimeType: deadline_time_type ? deadline_time_type : 'day',
+        deadlineValue: deadline_value ? deadline_value : '1'
       })
     }
     // this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: value }, 'deadline_type')
@@ -42,13 +47,24 @@ export default class CompleteDeadlineContent extends Component {
     })
   }
 
+  // 判断是否有变化
   whetherIsHasChange = () => {
     const { itemValue } = this.props
     const { deadline_time_type, deadline_value, deadline_type } = itemValue
     const { deadlineType, deadlineTimeType, deadlineValue } = this.state
     let flag = false
-    if ((deadlineType != deadline_type) || (deadlineTimeType != deadline_time_type) || (deadlineValue != deadline_value)) {
-      flag = true
+    if (deadline_type == '1' || deadline_type == '') {
+      if (deadlineType != deadline_type) {
+        flag = true
+      } else {
+        flag = false
+      }
+    } else if (deadline_type == '2') {
+      if ((deadlineType != deadline_type) || (deadlineTimeType != deadline_time_type) || (deadlineValue != deadline_value)) {
+        flag = true
+      } else {
+        flag = false
+      }
     }
     return flag
   }

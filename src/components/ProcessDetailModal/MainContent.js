@@ -34,13 +34,13 @@ export default class MainContent extends Component {
   }
 
   componentWillMount() {
-    this.props.dispatch({
-      type: 'publicProcessDetailModal/configurePorcessGuide',
-      payload: {
-        flow_template_node: '',
-        flow_template_form: ''
-      }
-    })
+    // this.props.dispatch({
+    //   type: 'publicProcessDetailModal/configurePorcessGuide',
+    //   payload: {
+    //     flow_template_node: '',
+    //     flow_template_form: ''
+    //   }
+    // })
   }
 
   componentDidMount() {
@@ -68,6 +68,17 @@ export default class MainContent extends Component {
           behavior: 'smooth'
         });
       }
+    }
+
+    const { processPageFlagStep } = this.props
+    if (processPageFlagStep == '1' || processPageFlagStep == '2') {
+      this.props.dispatch({
+        type: 'publicProcessDetailModal/configurePorcessGuide',
+        payload: {
+          flow_template_node: '',
+          flow_template_form: ''
+        }
+      })
     }
 
   }

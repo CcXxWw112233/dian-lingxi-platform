@@ -141,11 +141,11 @@ export default class ExamineAndApproveContent extends Component {
                     <div style={{ display: 'flex', alignItems: 'center' }} key={user_id}>
                       <div className={`${indexStyles.user_item}`} style={{ position: 'relative', textAlign: 'center', marginBottom: '8px' }} key={user_id}>
                         {avatar ? (
-                          <Tooltip overlayStyle={{ minWidth: '62px' }} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
+                          <Tooltip getPopupContainer={() => document.getElementById('approveMiniTopContainer')} overlayStyle={{ minWidth: '62px', zIndex: 1 }} placement="top" title={name || user_name || '佚名'}>
                             <img className={indexStyles.img_hover} style={{ width: '32px', height: '32px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
                           </Tooltip>
                         ) : (
-                            <Tooltip overlayStyle={{ minWidth: '62px' }} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
+                            <Tooltip getPopupContainer={() => document.getElementById('approveMiniTopContainer')} overlayStyle={{ minWidth: '62px', zIndex: 1 }} placement="top" title={name || user_name || '佚名'}>
                               <div className={indexStyles.default_user_hover} style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
                                 <Icon type={'user'} style={{ fontSize: 14, color: '#8c8c8c' }} />
                               </div>
@@ -194,7 +194,7 @@ export default class ExamineAndApproveContent extends Component {
     let disabledAssignees = (designatedPersonnelList && designatedPersonnelList.length) ? isArrayEqual(assignees.split(','), designatedPersonnelList) : true
     return (
       <div className={indexStyles.mini_content}>
-        <div className={`${indexStyles.mini_top} ${globalStyles.global_vertical_scrollbar}`}>
+        <div id="approveMiniTopContainer" className={`${indexStyles.mini_top} ${globalStyles.global_vertical_scrollbar}`}>
           <div>
             {this.renderDesignatedPersonnel()}
           </div>
