@@ -71,23 +71,6 @@ export async function getGanttBoardsFiles(data) {
   })
 }
 
-//获取甘特图带根目录文件的项目列表
-export async function miletonesUserGuide(data) {
-  return request({
-    url: `${REQUEST_DOMAIN}/user/guide`,
-    method: 'POST',
-    data
-  })
-}
-//设置甘特图里程碑设置提示不再提醒
-export async function setAlarmMiletonesUserGuide(data) {
-  return request({
-    url: `${REQUEST_DOMAIN}/user/guide`,
-    method: 'POST',
-    data
-  })
-}
-
 // 模板
 //获取项目模板列表
 export async function getBoardTemplateList(params) {
