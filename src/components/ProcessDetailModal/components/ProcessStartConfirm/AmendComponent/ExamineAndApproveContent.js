@@ -123,7 +123,7 @@ export default class ExamineAndApproveContent extends Component {
 
   // 渲染指定人员
   renderDesignatedPersonnel = () => {
-    const { data = [], board_id } = this.props
+    const { data = [], board_id, itemValue: { approve_type } } = this.props
     // const { designatedPersonnelList = [] } = this.state
     let designatedPersonnelList = this.filterAssignees()
     let org_id = getOrgIdByBoardId(board_id) || '0'
@@ -174,7 +174,7 @@ export default class ExamineAndApproveContent extends Component {
                         <span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${indexStyles.userItemDeleBtn}`}></span>
                       </div>
                       {
-                        <span style={{ color: 'rgba(0,0,0,0.25)' }} className={globalStyles.authTheme}>&#xe61f;</span>
+                        approve_type == '1' && <span style={{ color: 'rgba(0,0,0,0.25)' }} className={globalStyles.authTheme}>&#xe61f;</span>
                       }
                     </div>
                   )

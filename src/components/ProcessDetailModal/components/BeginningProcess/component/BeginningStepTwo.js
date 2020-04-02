@@ -6,8 +6,8 @@ import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { principalList, approvePersonnelSuggestion } from '../../../constant'
 import { Button, Popconfirm, Input, message } from 'antd'
 import { connect } from 'dva'
-import { timestampToTimeNormal, compareACoupleOfObjects } from '../../../../../utils/util';
-import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard  } from '../../../../../utils/businessFunction'
+import { timestampToTimeNormal, compareACoupleOfObjects, isObjectValueEqual } from '../../../../../utils/util';
+import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
 import { PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
 import { genPrincipalListFromAssignees } from '../../handleOperateModal'
 import DifferenceDeadlineType from '../../DifferenceDeadlineType';
@@ -28,9 +28,11 @@ export default class BeginningStepTwo extends Component {
 
   componentWillReceiveProps(nextProps) {
     // 需要更新箭头的状态
-    if (!compareACoupleOfObjects(this.props, nextProps)) {
+    if (!isObjectValueEqual(this.props, nextProps)) {
       this.setState({
         is_show_spread_arrow: nextProps.itemValue.status == '1' ? true : false,
+        transPrincipalList: nextProps.itemValue.assignees ? [...nextProps.itemValue.assignees] : [], // 表示当前的执行人
+        transCopyPersonnelList: nextProps.itemValue.recipients ? [...nextProps.itemValue.recipients] : [], // 表示当前选择的抄送人
       })
     }
   }
@@ -73,7 +75,7 @@ export default class BeginningStepTwo extends Component {
       this.setState({
         successfulMessage: ''
       })
-      return 
+      return
     }
     this.setState({
       successfulMessage: e.target.value
@@ -85,7 +87,7 @@ export default class BeginningStepTwo extends Component {
     e && e.stopPropagation()
     if (!this.whetherIsHasPermission()) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return 
+      return
     }
     this.setState({
       isPassNodesIng: true, // 表示正在通过审批中
@@ -136,9 +138,9 @@ export default class BeginningStepTwo extends Component {
     e && e.stopPropagation()
     if (e.target.value.trimLR() == '') {
       this.setState({
-        rejectMessage:''
+        rejectMessage: ''
       })
-      return 
+      return
     }
     this.setState({
       rejectMessage: e.target.value,
@@ -154,7 +156,7 @@ export default class BeginningStepTwo extends Component {
     e && e.stopPropagation()
     if (!this.whetherIsHasPermission()) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return 
+      return
     }
     this.setState({
       isRejectNodesIng: true, // 表示正在驳回节点中
@@ -209,10 +211,10 @@ export default class BeginningStepTwo extends Component {
     return gold_processed
   }
 
-    /**
-   * 判断是否有权限
-   * @returns {Boolean} true 表示有权限 false 表示没有权限
-   */
+  /**
+ * 判断是否有权限
+ * @returns {Boolean} true 表示有权限 false 表示没有权限
+ */
   whetherIsHasPermission = () => {
     const { processInfo = {} } = this.props
     const { privileges = [], is_privilege, board_id, nodes = [] } = processInfo
@@ -231,11 +233,11 @@ export default class BeginningStepTwo extends Component {
     const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     let flag = false
     let newAssignees = [...assignees]
-      newAssignees.find(item => {
-        if (item.id == id) {
-          flag = true
-        }
-      })
+    newAssignees.find(item => {
+      if (item.id == id) {
+        flag = true
+      }
+    })
     return flag
   }
 
@@ -277,41 +279,55 @@ export default class BeginningStepTwo extends Component {
 
   // 渲染通过 | 驳回 的成员以及内容
   renderApprovePersonnelSuggestion = (item) => {
-    const { type, id, comment, user_id, processed, avatar, name, suggestion, create_time, time } = item
+    const { type, id, comment, pass, user_id, processed, avatar, name, suggestion, create_time, time } = item
     return (
       <div>
-        <div className={indexStyles.appListWrapper}>
-          <div className={indexStyles.app_left}>
-            <div className={indexStyles.approve_user} style={{ position: 'relative', marginRight: '16px' }}>
-              {/* <div className={indexStyles.defaut_avatar}></div> */}
-              {
-                avatar ? (
-                  <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar} />
-                ) : (
-                    <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={defaultUserAvatar} />
-                  )
-              }
-              {
-                processed == '2' && (
-                  <span className={`${globalStyles.authTheme} ${indexStyles.approve_userIcon}`}>&#xe849;</span>
-                )
-              }
+        {
+          item.processed == '2' ? (
+            <div className={indexStyles.appListWrapper}>
+              <div className={indexStyles.app_left}>
+                <div className={indexStyles.approve_user} style={{ position: 'relative', marginRight: '16px' }}>
+                  {/* <div className={indexStyles.defaut_avatar}></div> */}
+                  {
+                    avatar ? (
+                      <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar} />
+                    ) : (
+                        <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={defaultUserAvatar} />
+                      )
+                  }
+                  {
+                    pass == '1' ? (
+                      <span className={`${globalStyles.authTheme} ${indexStyles.approve_userIcon}`}>&#xe849;</span>
+                    ) : (
+                        pass == '0' ? (
+                          <span className={`${globalStyles.authTheme} ${indexStyles.approve_reject_userIcon}`}>&#xe844;</span>
+                        ) : <></>
+                      )
+                  }
+                </div>
+                <div>
+                  <span>{name}</span>
+                  {
+                    pass == '1' ? (
+                      <span className={indexStyles.approv_pass}>通过</span>
+                    ) : (
+                        pass == '0' ? (
+                          <span className={indexStyles.approve_reject}>驳回</span>
+                        ) : (
+                          <></>
+                        )
+                      )
+                  }
+                  <div>{comment ? comment : '未填写意见'}</div>
+                </div>
+              </div>
+              <div className={indexStyles.app_right}>{timestampToTimeNormal(time, '/', true) || ''}</div>
+            </div>
+          ) : (
+              <></>
+            )
+        }
 
-            </div>
-            <div>
-              <span>{name}</span>
-              {/* {
-                  type == '1' ? (
-                    <span className={indexStyles.approv_pass}>通过</span>
-                  ) : (
-                      <span className={indexStyles.approve_reject}>驳回</span>
-                    )
-                } */}
-              <div>{comment ? comment : '未填写意见'}</div>
-            </div>
-          </div>
-          <div className={indexStyles.app_right}>{timestampToTimeNormal(time, '/', true) || ''}</div>
-        </div>
       </div>
     )
   }
@@ -415,7 +431,7 @@ export default class BeginningStepTwo extends Component {
           <span className={globalStyles.authTheme}>&#xe616; 审批方式 : &nbsp;&nbsp;&nbsp;{diffType()}</span>
           {/* {this.renderApprovePersonnelSuggestion()} */}
           {
-            status == '2' && transPrincipalList.map(item => {
+            approve_type == '3' && status == '1' ? ('') : transPrincipalList.map(item => {
               return (this.renderApprovePersonnelSuggestion(item))
             })
           }
@@ -600,7 +616,7 @@ export default class BeginningStepTwo extends Component {
                     )
                   }
                 </div>
-                <div style={{marginRight: '14px'}}>
+                <div style={{ marginRight: '14px' }}>
                   <DifferenceDeadlineType type="nodesStepItem" itemValue={itemValue} />
                 </div>
               </div>
@@ -616,7 +632,7 @@ export default class BeginningStepTwo extends Component {
   }
 }
 
-function mapStateToProps({ 
+function mapStateToProps({
   publicProcessDetailModal: { processEditDatas = [], processInfo = {} },
   technological: {
     datas: {
