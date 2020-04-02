@@ -28,7 +28,7 @@ const visual_add_item = {
   "id": "",
   "name": "",
   "tree_type": "0",
-  "is_expand": true,
+  "is_expand": false,
   "parent_expand": true,
   "add_id": 'add_milestone', //0表示创建里程碑，其他地创建add_id归纳到父级id
   "children": [],

@@ -638,6 +638,8 @@ export default class GetRowGantt extends Component {
                   coperatedX={this.state.coperatedX}
                   deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
                   addTaskModalVisibleChange={this.props.addTaskModalVisibleChange}
+                  setGoldDateArr={this.props.setGoldDateArr}
+                  setScrollPosition={this.props.setScrollPosition}
                 ></GetRowStrip>
               </React.Fragment>
             )
