@@ -96,7 +96,7 @@ class TreeNode extends Component {
 
         let { nodeValue = {} } = this.state;
         nodeValue.name = e.target.value;
-   
+
         if (nodeValue.name) {
             let action;
             nodeValue.editing = false;
@@ -122,16 +122,16 @@ class TreeNode extends Component {
             message.warn('标题不能为空');
             nodeValue.name = (this.props.nodeValue || {}).name || '';
 
-            if(nodeValue.editing){
+            if (nodeValue.editing) {
                 if (this.props.onDataProcess) {
                     this.props.onDataProcess({
-                        action:'onBlur',
+                        action: 'onBlur',
                         param: { ...nodeValue, parentId: this.props.parentId }
                     });
                 }
-    
+
             }
-          
+
             this.setState({
                 nodeValue
             });
@@ -160,14 +160,14 @@ class TreeNode extends Component {
         const newNodeValue = { ...nodeValue, time_span: value };
         if (newNodeValue.is_has_start_time && newNodeValue.is_has_end_time) {
             //开始时间不变，截至时间后移
-            newNodeValue.due_time = moment(newNodeValue.start_time).add(value-1, 'days').hour(23).minute(59).second(59).valueOf();
+            newNodeValue.due_time = moment(newNodeValue.start_time).add(value - 1, 'days').hour(23).minute(59).second(59).valueOf();
 
         } else {
             if (newNodeValue.is_has_start_time) {
-                newNodeValue.due_time = moment(newNodeValue.start_time).add(value-1, 'days').hour(23).minute(59).second(59).valueOf();
+                newNodeValue.due_time = moment(newNodeValue.start_time).add(value - 1, 'days').hour(23).minute(59).second(59).valueOf();
             }
             if (newNodeValue.is_has_end_time) {
-                newNodeValue.start_time = moment(newNodeValue.start_time).add(value-1, 'days').hour(0).minute(0).second(0).valueOf();
+                newNodeValue.start_time = moment(newNodeValue.start_time).add(value - 1, 'days').hour(0).minute(0).second(0).valueOf();
             }
         }
 
@@ -359,7 +359,9 @@ class TreeNode extends Component {
                         <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
                         {
                             !isLeaf &&
-                            <span className={`${styles.outline_tree_node_expand_icon} ${is_expand ? styles.expanded : ''}`} onClick={this.onChangeExpand}></span>
+                            <span className={`${styles.outline_tree_node_expand_icon_out}`} onClick={this.onChangeExpand}>
+                                <span className={`${styles.outline_tree_node_expand_icon} ${is_expand ? styles.expanded : ''}`} ></span>
+                            </span>
                         }
                         {this.renderTitle()}
 
@@ -403,7 +405,9 @@ class TreeNode extends Component {
                         }
                         {
                             !isLeaf &&
-                            <span className={`${styles.outline_tree_node_expand_icon} ${is_expand ? styles.expanded : ''}`}></span>
+                            <span className={`${styles.outline_tree_node_expand_icon_out}`}>
+                                <span className={`${styles.outline_tree_node_expand_icon} ${is_expand ? styles.expanded : ''}`}></span>
+                            </span>
                         }
 
                         {this.renderTitle()}

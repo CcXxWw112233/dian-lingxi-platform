@@ -729,9 +729,15 @@ export default class OutLineHeadItem extends Component {
                 <div className={styles.outlineFooter}>
                     {
                         !this.isExistExpand() ? (
-                            <div onClick={() => this.outlineTreeFold('expand')}>展开全部</div>
+                            <div onClick={() => this.outlineTreeFold('expand')} style={{ color: '#1890FF' }}>
+                                <span className={`${globalStyles.authTheme}`} style={{ fontSize: 16, marginRight: 2 }}>&#xe712;</span>
+                                <span>展开全部</span>
+                            </div>
                         ) : (
-                                <div onClick={() => this.outlineTreeFold('fold')}>收起全部</div>
+                                <div onClick={() => this.outlineTreeFold('fold')} style={{ color: '#1890FF' }}>
+                                    <span className={`${globalStyles.authTheme}`} style={{ fontSize: 16, marginRight: 2 }}>&#xe712;</span>
+                                    <span>收起全部</span>
+                                </div>
                             )
                     }
 
