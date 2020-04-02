@@ -1,4 +1,4 @@
-import { getUSerInfo, logout, getUserAllOrgsAllBoards } from '../../services/technological'
+import { getUSerInfo, logout, getUserAllOrgsAllBoards, getUserGuide, setUserGuide } from '../../services/technological'
 import {
   changeCurrentOrg,
   getSearchOrganizationList,
@@ -41,7 +41,8 @@ export default {
       currentSelectOrganize: {}, //用户当前组织
       userInfo: {}, //用户信息
       userOrgPermissions: [],
-      userBoardPermissions: []
+      userBoardPermissions: [],
+      userGuide: {}, //用户引导存储的值
     }
   },
   subscriptions: {
@@ -143,6 +144,13 @@ export default {
       yield put({
         type: 'getCurrentNounPlan',
         payload: {}
+      })
+      // 获取用户引导
+      yield put({
+        type: 'getUserGuide',
+        payload: {
+
+        }
       })
     },
 
@@ -596,21 +604,32 @@ export default {
       }
     },
 
-    // * getCurrentOrgProjectList({ payload }, { select, call, put }) {
+    // 获取用户引导列表
+    * getUserGuide(_, { call, put }) {
+      let res = yield call(getUserGuide)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            userGuide: res.data
+          }
+        })
+      } else {
 
-    //   let res = yield call(getProjectList, payload)
-    //   if (isApiResponseOk(res)) {
-    //     yield put({
-    //       type: 'updateDatas',
-    //       payload: {
-    //         currentOrgProjectList: res.data
-    //       }
-    //     })
-    //   } else {
-
-    //   }
-    //   return res || {}
-    // },
+      }
+    },
+    // 设置用户引导
+    * setUserGuide({ payload }, { call, put }) {
+      let res = yield call(setUserGuide, payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'getUserGuide',
+          payload: {}
+        })
+      } else {
+        message.error(res.message)
+      }
+    },
     * fetchCurrentOrgAllMembers({ payload }, { call, put }) {
       let res = yield call(getCurrentOrgAllMembers, { ...payload })
       // console.log(res, 'fetchCurrentOrgAllMembers+++++++++++')

@@ -2,12 +2,25 @@ import React from 'react'
 import { Modal, Button } from 'antd';
 import styles from './index.less';
 import outline_guide_img_url from '@/assets/gantt/outline_guide.gif'
-export default function index(props) {
+import { connect } from 'dva'
+
+function Index(props) {
+    const { userGuide = {}, dispatch } = props
+    const { board_gantt_outline } = userGuide
+    const checkQuit = () => {
+        dispatch({
+            type: 'technological/setUserGuide',
+            payload: {
+                board_gantt_outline: '1'
+            }
+        })
+        props.handleClose && props.handleClose()
+    }
     return (
         <Modal
             width={694}
             title={null}
-            visible={true}
+            visible={board_gantt_outline == '0'}
             footer={null}
             centered
 
@@ -19,9 +32,12 @@ export default function index(props) {
                 <img src={outline_guide_img_url} />
             </div>
             <div className={styles.guideButtons}>
-                <Button type="primary" onClick={props.handleClose}>我知道了</Button>
+                <Button type="primary" onClick={checkQuit}>我知道了</Button>
             </div>
 
         </Modal>
     )
 }
+export default connect(({ technological: { datas: {
+    userGuide = {}
+} } }) => ({ userGuide }))(Index)

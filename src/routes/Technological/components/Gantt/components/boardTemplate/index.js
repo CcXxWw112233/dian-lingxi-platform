@@ -663,7 +663,7 @@ export default class BoardTemplate extends Component {
 
     render() {
         const { template_data, selected_template_name, spinning, project_templete_scheme_visible, contain_height, checkedKeys = [], safeConfirmModalVisible } = this.state
-        const { gantt_board_id, boardTemplateShow, group_view_type } = this.props
+        const { gantt_board_id, boardTemplateShow, group_view_type, outline_tree } = this.props
         return (
             gantt_board_id && gantt_board_id != '0' ?
                 (
@@ -734,10 +734,10 @@ export default class BoardTemplate extends Component {
                                         </div>
                                     </Spin>
                                     {
-                                        checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id) && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, gantt_board_id) &&
+                                        checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id) && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, gantt_board_id) && !outline_tree.length &&
                                         (
                                             <div className={styles.footer} >
-                                                <Button type="primary" block onClick={() => this.openImportBoardModal(this.state.selected_template_id)}>引用到项目</Button>
+                                                <Button disabled={outline_tree.length} type="primary" block onClick={() => this.openImportBoardModal(this.state.selected_template_id)}>引用到项目</Button>
                                             </div>
                                         )
                                     }

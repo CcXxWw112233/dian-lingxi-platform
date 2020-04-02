@@ -132,19 +132,24 @@
   z-index    : 2
 }
 
+.outline_tree_node_expand_icon_out {
+  width: 20px; 
+}
 
 .outline_tree_node_expand_icon {
   cursor            : pointer;
   width             : 0;
   height            : 0;
   margin-left       : 6px;
-  border            : 6px solid transparent;
+  border            : 7px solid transparent;
   border-right-width: 0;
   border-left-color : #97a8be;
-  border-left-width : 7px;
+  border-left-width : 9px;
   -ms-transform     : rotate(0);
   transform         : rotate(0);
-  transition        : transform .3s ease-in-out
+  transition        : transform .3s ease-in-out;
+  display: inline-block;
+  margin-top: -4px;
 }
 
 .outline_tree_node_expand_icon:hover {

@@ -135,5 +135,20 @@ export async function commInviteWebJoin(data) {
   });
 }
 
-
+//获取用户引导列表
+export async function getUserGuide() {
+  return request({
+    url: `${REQUEST_DOMAIN}/user/guide`,
+    method: 'POST',
+    // data
+  })
+}
+//设置设置用户引导
+export async function setUserGuide(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/user/guide`,
+    method: 'POST',
+    data
+  })
+}
 
