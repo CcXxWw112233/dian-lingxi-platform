@@ -16,6 +16,23 @@ export default class FillInPersonContent extends Component {
     }
   }
 
+  updateState = () => {
+    this.setState({
+      is_click_confirm_btn: false
+    })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { popoverVisible, itemValue } = nextProps
+    const { is_click_confirm_btn } = this.state
+    if (!popoverVisible && !is_click_confirm_btn && this.props.popoverVisible) {
+      this.setState({
+        designatedPersonnelList: itemValue.assignees ? itemValue.assignees.split(',') : [],
+        assignee_type: itemValue.assignee_type ? itemValue.assignee_type : ''
+      })
+    }
+  }
+
   // 任何人 | 指定人
   assigneeTypeChange = (e) => {
     this.setState({
@@ -105,6 +122,9 @@ export default class FillInPersonContent extends Component {
 
   // 确定的点击事件
   handleConfirmChangeAssignees = async() => {
+    this.setState({
+      is_click_confirm_btn: true
+    })
     const { designatedPersonnelList = [], assignee_type } = this.state
     if (assignee_type == '1') {
       await this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('assignee_type', assignee_type)
@@ -112,13 +132,13 @@ export default class FillInPersonContent extends Component {
       this.setState({
         designatedPersonnelList: []
       })
-      await this.props.onVisibleChange && this.props.onVisibleChange(false)
+      await this.props.onVisibleChange && this.props.onVisibleChange(false, this.updateState)
     } else if (assignee_type == '2') {
       let newDesignatedPersonnelList = [...designatedPersonnelList]
        this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('assignee_type', assignee_type)
        this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('assignees', newDesignatedPersonnelList.join(','))
        this.props.updateParentsAssigneesOrCopyPersonnel && this.props.updateParentsAssigneesOrCopyPersonnel({value: newDesignatedPersonnelList.join(',')}, 'transPrincipalList')
-       this.props.onVisibleChange && this.props.onVisibleChange(false)
+       this.props.onVisibleChange && this.props.onVisibleChange(false, this.updateState)
     }
     
   }

@@ -17,6 +17,23 @@ export default class DuplicateAndReportPerson extends Component {
     }
   }
 
+  updateState = () => {
+    this.setState({
+      is_click_confirm_btn: false
+    })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { popoverVisible, itemValue } = nextProps
+    const { is_click_confirm_btn } = this.state
+    if (!popoverVisible && !is_click_confirm_btn && this.props.popoverVisible) {
+      this.setState({
+        designatedPersonnelList: itemValue.recipients ? itemValue.recipients.split(',') : [],
+        is_click_confirm_btn: false
+      })
+    }
+  }
+
   // 把recipients中的抄送人在项目中的所有成员过滤出来
   filterRecipients = () => {
     const { data = [] } = this.props
@@ -96,11 +113,14 @@ export default class DuplicateAndReportPerson extends Component {
 
   // 确定的点击事件
   handleConfirmChangeAssignees = async () => {
+    this.setState({
+      is_click_confirm_btn: true
+    })
     const { designatedPersonnelList = [], assignee_type } = this.state
     let newDesignatedPersonnelList = [...designatedPersonnelList]
     await this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('recipients', newDesignatedPersonnelList.join(','))
     await this.props.updateParentsAssigneesOrCopyPersonnel && this.props.updateParentsAssigneesOrCopyPersonnel({ value: newDesignatedPersonnelList.join(',') }, 'transCopyPersonnelList')
-    await this.props.onVisibleChange && this.props.onVisibleChange(false)
+    await this.props.onVisibleChange && this.props.onVisibleChange(false, this.updateState)
 
   }
 
@@ -143,11 +163,11 @@ export default class DuplicateAndReportPerson extends Component {
                     <div style={{ display: 'flex', alignItems: 'center' }} key={user_id}>
                       <div className={`${indexStyles.user_item}`} style={{ position: 'relative', textAlign: 'center', marginBottom: '8px' }} key={user_id}>
                         {avatar ? (
-                          <Tooltip overlayStyle={{ minWidth: '62px' }} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
+                          <Tooltip overlayStyle={{ minWidth: '62px' }} getPopupContainer={() => document.getElementById('reportPersonContainer')} placement="top" title={name || user_name || '佚名'}>
                             <img className={indexStyles.img_hover} style={{ width: '32px', height: '32px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
                           </Tooltip>
                         ) : (
-                            <Tooltip overlayStyle={{ minWidth: '62px' }} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
+                            <Tooltip overlayStyle={{ minWidth: '62px' }} getPopupContainer={() => document.getElementById('reportPersonContainer')} placement="top" title={name || user_name || '佚名'}>
                               <div className={indexStyles.default_user_hover} style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
                                 <Icon type={'user'} style={{ fontSize: 14, color: '#8c8c8c' }} />
                               </div>
@@ -209,7 +229,7 @@ export default class DuplicateAndReportPerson extends Component {
     let disabledRecipients = (designatedPersonnelList && designatedPersonnelList.length) ? isArrayEqual(recipients.split(','), designatedPersonnelList) : true
     return (
       <div className={indexStyles.mini_content}>
-        <div className={`${indexStyles.mini_top} ${globalStyles.global_vertical_scrollbar}`}>
+        <div id="reportPersonContainer" className={`${indexStyles.mini_top} ${globalStyles.global_vertical_scrollbar}`}>
           <div>
             {cc_type == '1' ? this.renderDesignatedPersonnel() : this.renderHandReportPersonnel()}
           </div>

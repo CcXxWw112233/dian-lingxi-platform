@@ -15,6 +15,22 @@ export default class ExamineAndApproveContent extends Component {
     }
   }
 
+  updateState = () => {
+    this.setState({
+      is_click_confirm_btn: false
+    })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { popoverVisible, itemValue } = nextProps
+    const { is_click_confirm_btn } = this.state
+    if (!popoverVisible && !is_click_confirm_btn && this.props.popoverVisible) {
+      this.setState({
+        designatedPersonnelList: itemValue.assignees ? itemValue.assignees.split(',') : [],
+      })
+    }
+  }
+
   // 把assignees中的执行人,在项目中的所有成员过滤出来
   filterAssignees = () => {
     const { data = [] } = this.props
@@ -94,11 +110,14 @@ export default class ExamineAndApproveContent extends Component {
 
   // 确定的点击事件
   handleConfirmChangeAssignees = async () => {
+    this.setState({
+      is_click_confirm_btn: true
+    })
     const { designatedPersonnelList = [], assignee_type } = this.state
     let newDesignatedPersonnelList = [...designatedPersonnelList]
     await this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('assignees', newDesignatedPersonnelList.join(','))
     await this.props.updateParentsAssigneesOrCopyPersonnel && this.props.updateParentsAssigneesOrCopyPersonnel({ value: newDesignatedPersonnelList.join(',') }, 'transPrincipalList')
-    await this.props.onVisibleChange && this.props.onVisibleChange(false)
+    await this.props.onVisibleChange && this.props.onVisibleChange(false, this.updateState)
 
   }
 
