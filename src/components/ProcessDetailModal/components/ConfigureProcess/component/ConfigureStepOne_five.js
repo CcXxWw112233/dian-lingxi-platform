@@ -3,7 +3,7 @@ import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { Popover, Input, Button, Radio, InputNumber, Checkbox } from 'antd'
 import { connect } from 'dva'
-import { compareACoupleOfObjects } from '../../../../../utils/util'
+import { compareACoupleOfObjects, isObjectValueEqual } from '../../../../../utils/util'
 import ConfigureNapeGuide from '../../../ConfigureNapeGuide'
 
 let temp_item = {
@@ -25,7 +25,7 @@ export default class ConfigureStepOne_five extends Component {
     super(props)
     this.state = {
       popoverVisible: null,
-      form_item: compareACoupleOfObjects(temp_item, props.itemValue) ? temp_item : props.itemValue
+      form_item: isObjectValueEqual(temp_item, props.itemValue) ? temp_item : props.itemValue
     }
   }
 
@@ -59,7 +59,7 @@ export default class ConfigureStepOne_five extends Component {
   limitFileNumValueChange = (value) => {
     if (!value) {
       // this.updateEdit({ value: '0' }, 'limit_file_num')
-      this.updateEdit({ value: '1' }, 'limit_file_num')
+      this.updateEdit({ value: '0' }, 'limit_file_num')
       return
     }
     this.updateEdit({ value: value.toString() }, 'limit_file_num')
@@ -152,7 +152,7 @@ export default class ConfigureStepOne_five extends Component {
     const { title, limit_file_num, limit_file_type = [], limit_file_size, is_required } = itemValue
     const limit_file_type_default = limit_file_type ? limit_file_type : []
     const { form_item } = this.state
-    let disabledFlag = compareACoupleOfObjects(form_item, itemValue)
+    let disabledFlag = isObjectValueEqual(form_item, itemValue)
     return (
       <div className={indexStyles.popover_content}>
         <div className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
@@ -204,7 +204,7 @@ export default class ConfigureStepOne_five extends Component {
             <span style={{ color: '#1890FF', fontSize: '28px', marginTop: '-6px' }} className={`${globalStyles.authTheme}`}>&#xe692;</span>
             <div style={{ flex: 1, marginLeft: '12px' }}>
               <div className={indexStyles.file_drap_tips}>点击或拖拽文件到此开始上传</div>
-              <div className={indexStyles.file_layout}>{limit_file_size == 0 ? `不限制大小` : `${limit_file_size}MB以内`}、{limit_file_num == 0 ? `不限制数量` : `最多${limit_file_num}个`}、 {this.renderFileTypeArrayText()}格式</div>
+              <div className={indexStyles.file_layout}>{limit_file_size == 0 ? `不限制大小` : `${limit_file_size}MB以内`}、{limit_file_num == 0 ? `不限制数量` : `最多${limit_file_num}个`}、 {`${this.renderFileTypeArrayText()}格式`}</div>
             </div>
           </div>
           {

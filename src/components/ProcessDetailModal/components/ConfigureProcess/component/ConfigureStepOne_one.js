@@ -3,7 +3,7 @@ import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { Popover, Input, Button, Radio, Select, InputNumber, message } from 'antd'
 import { connect } from 'dva'
-import { compareACoupleOfObjects } from '../../../../../utils/util'
+import { compareACoupleOfObjects, isObjectValueEqual } from '../../../../../utils/util'
 import ConfigureNapeGuide from '../../../ConfigureNapeGuide'
 const Option = Select.Option;
 
@@ -24,7 +24,7 @@ export default class ConfigureStepOne_one extends Component {
     super(props)
     this.state = {
       popoverVisible: null,
-      form_item: compareACoupleOfObjects(temp_item, props.itemValue) ? temp_item : props.itemValue
+      form_item: isObjectValueEqual(temp_item, props.itemValue) ? temp_item : props.itemValue
     }
   }
 
@@ -130,7 +130,7 @@ export default class ConfigureStepOne_one extends Component {
     const { itemValue } = this.props
     const { title, prompt_content, verification_rule, is_required, val_min_length, val_max_length } = itemValue
     const { form_item } = this.state
-    let disabledFlag = compareACoupleOfObjects(form_item, itemValue)
+    let disabledFlag = isObjectValueEqual(form_item, itemValue)
     return (
       <div key={itemValue} className={indexStyles.popover_content}>
         <div className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
