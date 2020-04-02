@@ -519,7 +519,6 @@ export default class DragDropContentComponent extends Component {
     const that = this
     const { drawContent = {}, dispatch } = this.props
     const { data: attachment_data } = drawContent['properties'].filter(item => item.code == 'ATTACHMENT')[0]
-    data.attachment_id = '1'
     Modal.confirm({
       title: `确认要删除这个附件吗？`,
       zIndex: 1007,
