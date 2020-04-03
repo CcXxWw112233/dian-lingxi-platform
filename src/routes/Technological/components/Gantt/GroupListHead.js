@@ -153,7 +153,7 @@ export default class GroupListHead extends Component {
     const isNewProject = (!outline_tree || outline_tree.length == 0) ? true : false;
     if (get_gantt_data_loaded == false) {
       return (
-        <div></div>
+        <div className={indexStyles.listHead}></div>
       );
     }
     if (ganttIsOutlineView({ group_view_type }) && isNewProject && startPlanType == 0) {
