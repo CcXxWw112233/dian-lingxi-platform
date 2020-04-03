@@ -138,7 +138,10 @@ export default class GanttFace extends Component {
   handleScrollVertical = ({ scrollTop }) => {
     const { group_view_type, gantt_board_id, target_scrollTop, dispatch } = this.props
     if (target_scrollTop != scrollTop) {
-      console.log('sssssscroll', '垂直')
+      const gantt_group_head = document.getElementById('gantt_group_head')
+      if (gantt_group_head) {
+        gantt_group_head.scrollTop = scrollTop
+      }
       dispatch({
         type: getEffectOrReducerByName('updateDatas'),
         payload: {
@@ -372,8 +375,11 @@ export default class GanttFace extends Component {
               style={{ height: gantt_card_height - 20 }} >
               <DateList />
               <div
+                style={{ height: date_area_height }} //撑住DateList相同高度的底部
+              />
+              <div
                 style={{
-                  height: gantt_card_height - 20,
+                  height: gantt_card_height - 20 - date_area_height,
                 }}
                 className={indexStyles.panel_out}
                 id={'gantt_card_out_middle'}
@@ -381,9 +387,6 @@ export default class GanttFace extends Component {
                 onScroll={this.ganttScroll}
               >
                 <div className={indexStyles.panel}>
-                  <div
-                    style={{ height: date_area_height }} //撑住DateList相同高度的底部
-                  />
                   <GetRowGantt
                     changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
                     deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}

@@ -357,11 +357,11 @@
   width  : 100%;
 
   .board_head {
-    position           : relative;
-    height             : 100px;
-    width              : 280px;
-    // background-color: red;
-    overflow           : hidden;
+    height        : 100px;
+    width         : 280px;
+    overflow      : hidden;
+    display       : flex;
+    flex-direction: column;
   }
 
   .board_body {
@@ -387,10 +387,9 @@
 }
 
 .listHead {
-  position        : absolute;
-  left            : 0;
-  top             : 0;
-  z-index         : 2;
+  overflow-y      : auto;
+  overflow-x      : hidden;
+  flex            : 1;
   background-color: #FFFFFF;
   box-shadow      : 1px 0px 4px 0px rgba(0, 0, 0, 0.15);
   display         : flex;
@@ -694,9 +693,7 @@
   height          : @date_area_height;
   width           : 280px;
   background-color: #ffffff;
-  position        : absolute;
   padding-right   : @group_head_padding;
-  z-index         : 3;
 
   .set_content {
     height         : 100%;
@@ -806,11 +803,11 @@
 }
 
 .groupHeadSetBott {
-  height    : 52px;
-  bottom    : 0;
-  border-top: 1px solid #E8E8E8;
-  box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.09);
-  width     : 277px;
+  height       : 52px;
+  // bottom    : 0;
+  border-top   : 1px solid #E8E8E8;
+  box-shadow   : 0px 1px 0px 0px rgba(0, 0, 0, 0.09);
+  width        : 277px;
 }
 
 .content_filter_out {
@@ -896,9 +893,9 @@
 
 
 .listTree {
-  position: absolute;
-  left    : 0;
-  top     : 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex      : 1;
 
   background-color: #FFFFFF;
   height          : 100%;
@@ -958,26 +955,28 @@
 
 }
 
-.newProjectGuideWrapper{
-  // width: 260px;
-  height: 100%;
-  overflow  : hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.newProjectGuideWrapper {
+  // width       : 260px;
+  height         : 100%;
+  overflow       : hidden;
+  display        : flex;
+  flex-direction : column;
+  align-items    : center;
   justify-content: center;
-  margin-right: 20px;
-  .emptyBox{
-    display: flex;
-    align-items: center;
+  margin-right   : 20px;
+
+  .emptyBox {
+    display       : flex;
+    align-items   : center;
     flex-direction: column;
-    margin-bottom: 24px;
+    margin-bottom : 24px;
   }
-  .guideButtons{
+
+  .guideButtons {
     width: 100%;
-    .selectMakePlanBtn{
+
+    .selectMakePlanBtn {
       margin-bottom: 8px;
     }
   }
 }
-

@@ -116,6 +116,36 @@ export default class GroupListHead extends Component {
 
 
   }
+  headScroll = (e) => {
+    e.stopPropagation();
+    if ('gantt_group_head' != e.target.getAttribute("id")) return
+    const { scrollTop } = e.target
+    this.handleScrollVertical({ scrollTop })
+  }
+  // 处理上下滚动
+  handleScrollVertical = ({ scrollTop }) => {
+    const { group_view_type, gantt_board_id, target_scrollTop, dispatch } = this.props
+    if (target_scrollTop != scrollTop) {
+      const gantt_card_out_middle = document.getElementById('gantt_card_out_middle')
+      if (gantt_card_out_middle) {
+        gantt_card_out_middle.scrollTop = scrollTop
+      }
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          target_scrollTop: scrollTop
+        }
+      })
+      if (group_view_type == '1' && gantt_board_id == '0') {
+        dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            target_scrollTop_board_storage: scrollTop
+          }
+        })
+      }
+    }
+  }
 
   render() {
     const { list_group = [], group_rows = [], ceiHeight, target_scrollLeft, target_scrollTop, group_view_type, outline_tree = [], get_gantt_data_loaded, gantt_board_id } = this.props;
@@ -145,40 +175,47 @@ export default class GroupListHead extends Component {
     } else {
       return (
         <div className={`${ganttIsOutlineView({ group_view_type }) ? indexStyles.listTree : indexStyles.listHead}`}
-          // style={{ left: target_scrollLeft, }}
-          onWheel={this.onWheel}
-          style={{ top: -target_scrollTop + 64, }}
+          onScroll={this.headScroll}
+          id={'gantt_group_head'}
         >
-          {
-            ganttIsOutlineView({ group_view_type }) &&
-            <div style={{ position: 'relative', height: '100%', width: '280px', boxShadow: '1px 0px 4px 0px rgba(0,0,0,0.15);' }}>
-              <OutLineHeadItem />
-              {
-                startPlanType == 1 &&
-                <OutlineGuideModal handleClose={this.guideModalHandleClose} />
-              }
-            </div>
-          }
-          {
-            !ganttIsOutlineView({ group_view_type }) &&
-            <>
-              {
-                list_group.map((value, key) => {
-                  const { list_name, list_id, list_data = [] } = value
-                  return (
-                    <div key={list_id}>
-                      <GroupListHeadItem
-                        list_id={list_id}
-                        setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
-                        itemValue={value} itemKey={key} rows={group_rows[key]} />
-                      {/*<div className={indexStyles.listHeadItem} key={list_id} style={{height: (group_rows[key] || 2) * ceiHeight}}>{list_name}</div>*/}
-                    </div>
-                  )
-                })
-              }
-              <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
-            </>
-          }
+          <div>
+            {
+              ganttIsOutlineView({ group_view_type }) &&
+              <div style={{
+                width: '280px',
+                boxShadow: '1px 0px 4px 0px rgba(0,0,0,0.15);'
+              }}>
+                <OutLineHeadItem
+                  gantt_card_height={this.props.gantt_card_height}
+                  dataAreaRealHeight={this.props.dataAreaRealHeight}
+                />
+                <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
+                {
+                  startPlanType == 1 &&
+                  <OutlineGuideModal handleClose={this.guideModalHandleClose} />
+                }
+              </div>
+            }
+            {
+              !ganttIsOutlineView({ group_view_type }) &&
+              <>
+                {
+                  list_group.map((value, key) => {
+                    const { list_name, list_id, list_data = [] } = value
+                    return (
+                      <div key={list_id}>
+                        <GroupListHeadItem
+                          list_id={list_id}
+                          setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
+                          itemValue={value} itemKey={key} rows={group_rows[key]} />
+                      </div>
+                    )
+                  })
+                }
+                <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
+              </>
+            }
+          </div>
         </div>
       )
     }
