@@ -56,7 +56,7 @@ export default class MainContent extends Component {
   handleDynamicComment = (e) => {
     e && e.stopPropagation()
     const { processInfo: { id, name, board_id } } = this.props
-    this.linkImWithFlow({name: name, type: 'card', board_id: board_id, id: id})
+    this.linkImWithFlow({name: name, type: 'flow', board_id: board_id, id: id})
   }
 
   componentDidMount() {

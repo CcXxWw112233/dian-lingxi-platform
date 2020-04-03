@@ -42,7 +42,6 @@ export default class BeginningStepOne_one extends Component {
     //     return
     //   }
     // }
-    console.log(this.validate(verification_rule, e.target.value), 'sssssssssssssssssssss_this.validate(verification_rule, e.target.value)')
     this.setState({
       verificationIsTrue: this.validate(verification_rule, e.target.value)
     })

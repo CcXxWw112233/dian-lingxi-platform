@@ -125,6 +125,23 @@ export default class ConfigureProcess extends Component {
     })
   }
 
+  // 判断是否只有一个资料收集节点 如果有多个可以删除 true 表示可以删除 false 表示不可以
+  whetherIsDeleteNodes = () => {
+    const { processEditDatas = [] } = this.props
+    let arr = []
+    let flag = false
+    let newProcessEditDatas = [...processEditDatas]
+    newProcessEditDatas.map(item => {
+      if (item.node_type == '1') {
+        arr.push(item.node_type)
+      }
+    })
+    if (arr && arr.length != '1') { // 表示不止一个
+      flag = true
+    }
+    return flag
+  }
+
   // 渲染不同种Button确认按钮的提示文案
   renderDiffButtonTooltipsText = () => {
     let confirmButtonText = ''
@@ -341,6 +358,7 @@ export default class ConfigureProcess extends Component {
   renderContent = () => {
     const { itemKey, itemValue, processEditDatasRecords = [], processCurrentEditStep, processEditDatas = [] } = this.props
     const { name, node_type, description, is_click_node_name } = itemValue
+    let deleteBtn = this.whetherIsDeleteNodes()
     // let node_amount = this.props && this.props.processInfo && this.props.processInfo.node_amount
     let stylLine, stylCircle
     // if (this.props.processInfo.completed_amount >= itemKey + 1) { //0 1    1  2 | 1 3 | 1 4
@@ -415,7 +433,7 @@ export default class ConfigureProcess extends Component {
             </div>
             {/* 删除 | 确认 */}
             <div className={indexStyles.step_btn}>
-              <Button onClick={this.handleDeleteButton} style={{ color: itemKey != '0' && '#FF7875' }} disabled={itemKey == '0' ? true : false}>删除</Button>
+              <Button onClick={this.handleDeleteButton} style={{ color: itemKey != '0' && !deleteBtn && '#FF7875' }} disabled={itemKey == '0' && !deleteBtn ? true : false}>删除</Button>
               <Tooltip placement="top" title={this.renderDiffButtonTooltipsText().confirmButtonText}><Button key={itemValue} disabled={this.renderDiffButtonTooltipsText().confirmButtonDisabled} onClick={this.handleConfirmButton} type="primary">确认</Button></Tooltip>
             </div>
           </div>

@@ -94,7 +94,7 @@ export default class BeginningStepOne_five extends Component {
   }
 
   handleChange = ({ file, fileList, event }) => {
-    const new_filelist = fileList.filter(item => item.status != 'up_limit' || item.status != 'error')
+    const new_filelist = fileList.filter(item => item.status != 'up_limit')
     let temp_list = new_filelist.filter(item => item.status != 'error')
     this.setState({ 
       fileList: new_filelist
