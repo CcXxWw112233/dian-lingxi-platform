@@ -567,6 +567,7 @@ export default class GetRowGantt extends Component {
         {
           dasheRectShow
           && !this.task_is_dragging
+          && !ganttIsOutlineView({ group_view_type })
           && (
             <div
               title={'点击或向右拖拽创建任务'}
