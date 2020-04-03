@@ -7,6 +7,7 @@ import {
   PROJECT_FLOWS_FLOW_TEMPLATE
 } from "../../../../../../globalset/js/constant";
 import { checkIsHasPermissionInBoard } from "../../../../../../utils/businessFunction";
+import nodataImg from '../../../../../../assets/projectDetail/process/empty-box.png'
 @connect(mapStateToProps)
 export default class TemplateContent extends Component {// 模板组件
 
@@ -59,6 +60,16 @@ export default class TemplateContent extends Component {// 模板组件
             })
           }
         </div>
+        {!processTemplateList.length && !checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE, board_id) ? (
+          <div className={indexStyles.nodata} >
+            <div className={indexStyles.nodata_inner}>
+              <img src={nodataImg} />
+              <div>暂无数据</div>
+            </div>
+          </div>
+        ) : (
+            ''
+          )}
       </div>
     )
   }
