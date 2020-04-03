@@ -263,6 +263,26 @@ export default class MainContent extends Component {
     }, 30)
   }
 
+  titleInputValueChange = (e) => {
+    if (e.target.value.trimLR() == '') {
+      this.props.dispatch({
+        type: 'publicProcessDetailModal/updateDatas',
+        payload: {
+          // isEditCurrentFlowInstanceName: true,
+          currentFlowInstanceName: ''
+        }
+      })
+      return
+    }
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        // isEditCurrentFlowInstanceName: true,
+        currentFlowInstanceName: e.target.value
+      }
+    })
+  }
+
   // 标题失去焦点回调
   titleTextAreaChangeBlur = (e) => {
     let val = e.target.value.trimLR()
@@ -802,6 +822,7 @@ export default class MainContent extends Component {
                   ) : (
                       <NameChangeInput
                         autosize
+                        onChange={this.titleInputValueChange}
                         onBlur={this.titleTextAreaChangeBlur}
                         onPressEnter={this.titleTextAreaChangeBlur}
                         onClick={(e) => e && e.stopPropagation()}
