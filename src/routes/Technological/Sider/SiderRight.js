@@ -36,6 +36,9 @@ const Nav = Mention.Nav;
     filePreviewCurrentFileId,
     isInOpenFile
   },
+  publicProcessDetailModal: {
+    processInfo = {}
+  }
 }) => {
   return {
     userInfo,
@@ -43,7 +46,8 @@ const Nav = Mention.Nav;
     card_id,
     drawerVisible,
     filePreviewCurrentFileId,
-    isInOpenFile
+    isInOpenFile,
+    processInfo
   };
 })
 class SiderRight extends React.Component {
@@ -76,7 +80,7 @@ class SiderRight extends React.Component {
     const { protocol, host } = window.location
     Im.option({
       baseUrl: `${protocol}//${host}/`,
-      // APPKEY: "c3abea191b7838ff65f9a6a44ff5e45f"
+      // APPKEY: "18268e20ae05c4ac49e4c23644aa38c8"
     })
     const clickDynamicFunc = (data) => {
       setTimeout(() => this.imClickDynamic(data), 100)
@@ -137,6 +141,27 @@ class SiderRight extends React.Component {
               fileType: '',
               isInOpenFile: false,
               currentPreviewFileName: ''
+            }
+          })
+        }
+        if (id == this.props.processInfo.id) {
+          dispatch({
+            type: 'publicProcessDetailModal/updateDatas',
+            payload: {
+              processPageFlagStep: '1', //"1""2""3""4"分别对应新建，编辑，启动，详情界面,默认1
+              templateInfo: {}, //所选择的流程模板的信息数据
+              processInfo: {}, //所选中的流程的信息
+              currentProcessInstanceId: '', // 当前查看的流程实例名称
+              currentTempleteIdentifyId: '', // 当前查看的模板编号凭证ID
+              currentFlowTabsStatus: '1',
+              process_detail_modal_visible: false,
+              processDoingList: [], // 进行中的流程
+              processStopedList: [], // 已中止的流程
+              processComepletedList: [], // 已完成的流程
+              processNotBeginningList: [], // 未开始的流程
+              processEditDatas:[],
+              not_show_create_node_guide: '1',
+              not_show_create_form_guide: '1',
             }
           })
         }

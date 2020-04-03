@@ -16,6 +16,7 @@ import { MESSAGE_DURATION_TIME, FLOWS } from '../../globalset/js/constant'
 import { saveProcessTemplate, getTemplateInfo, createProcess } from '../../services/technological/workFlow'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { currentNounPlanFilterName } from "@/utils/businessFunction";
+const { LingxiIm, Im } = global.constants
 @connect(mapStateToProps)
 export default class MainContent extends Component {
   constructor(props) {
@@ -33,14 +34,29 @@ export default class MainContent extends Component {
     this.timer = null
   }
 
-  componentWillMount() {
-    // this.props.dispatch({
-    //   type: 'publicProcessDetailModal/configurePorcessGuide',
-    //   payload: {
-    //     flow_template_node: '',
-    //     flow_template_form: ''
-    //   }
-    // })
+  linkImWithFlow = (data) => {
+    const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    const { is_simple_model } = user_set;
+    if (!data) {
+      global.constants.lx_utils && global.constants.lx_utils.setCommentData(null) 
+      return false
+    }
+    global.constants.lx_utils && global.constants.lx_utils.setCommentData({...data})
+    // if (is_simple_model == '1') {
+    //   this.props.dispatch({
+    //     type: 'simplemode/updateDatas',
+    //     payload: {
+    //       chatImVisiable: true
+    //     }
+    //   })
+    // }
+  }
+
+  // 圈子动态消息
+  handleDynamicComment = (e) => {
+    e && e.stopPropagation()
+    const { processInfo: { id, name, board_id } } = this.props
+    this.linkImWithFlow({name: name, type: 'card', board_id: board_id, id: id})
   }
 
   componentDidMount() {
@@ -853,6 +869,15 @@ export default class MainContent extends Component {
             </div>
           </div>
         </div>
+        {
+          processPageFlagStep == '4' && (
+            <div onClick={this.handleDynamicComment} id="dynamic_comment" className={indexStyles.dynamic_comment}>
+              <Tooltip overlayStyle={{minWidth: '72px'}} placement="top" title="动态消息" getPopupContainer={() => document.getElementById('dynamic_comment')}>
+                <span className={globalStyles.authTheme}>&#xe8e8;</span>
+              </Tooltip>
+            </div>
+          )
+        }
       </div>
     )
   }
