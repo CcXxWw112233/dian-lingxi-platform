@@ -118,24 +118,27 @@ export default class GroupListHead extends Component {
   }
   headScroll = (e) => {
     e.stopPropagation();
+    if (this.props.scroll_area == 'gantt_body') {
+      return
+    }
     if ('gantt_group_head' != e.target.getAttribute("id")) return
     const { scrollTop } = e.target
-    this.handleScrollVertical({ scrollTop })
+    const gantt_card_out_middle = document.getElementById('gantt_card_out_middle')
+    if (gantt_card_out_middle) {
+      gantt_card_out_middle.scrollTop = scrollTop
+    }
+    // this.handleScrollVertical({ scrollTop })
   }
   // 处理上下滚动
   handleScrollVertical = ({ scrollTop }) => {
     const { group_view_type, gantt_board_id, target_scrollTop, dispatch } = this.props
     if (target_scrollTop != scrollTop) {
-      const gantt_card_out_middle = document.getElementById('gantt_card_out_middle')
-      if (gantt_card_out_middle) {
-        gantt_card_out_middle.scrollTop = scrollTop
-      }
-      dispatch({
-        type: 'gantt/updateDatas',
-        payload: {
-          target_scrollTop: scrollTop
-        }
-      })
+      // dispatch({
+      //   type: 'gantt/updateDatas',
+      //   payload: {
+      //     target_scrollTop: scrollTop
+      //   }
+      // })
       if (group_view_type == '1' && gantt_board_id == '0') {
         dispatch({
           type: 'gantt/updateDatas',
@@ -176,6 +179,7 @@ export default class GroupListHead extends Component {
       return (
         <div className={`${ganttIsOutlineView({ group_view_type }) ? indexStyles.listTree : indexStyles.listHead}`}
           onScroll={this.headScroll}
+          onMouseEnter={() => this.props.setScrollArea('gantt_head')}
           id={'gantt_group_head'}
         >
           <div>

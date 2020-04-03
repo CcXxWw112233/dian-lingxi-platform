@@ -31,6 +31,7 @@ export default class GanttFace extends Component {
       gantt_card_out_middle_max_height: 600,
       local_gantt_board_id: '0', //当前项目id（项目tab栏）缓存在组件内，用于判断是否改变然后重新获取数据
       init_get_outline_tree: false, //大纲视图下初始化是否获取了大纲树
+      scroll_area: 'gantt_body', // gantt_head/gantt_body 头部或右边 滚动事件触发的区域
     }
     this.setGanTTCardHeight = this.setGanTTCardHeight.bind(this)
   }
@@ -123,31 +124,39 @@ export default class GanttFace extends Component {
     }, delay)
   }
 
+  // 设置滚动的区域
+  setScrollArea = (area_type) => {
+    this.setState({
+      scroll_area: area_type
+    })
+  }
   //左右拖动,日期会更新
   ganttScroll = (e) => {
-    console.log('ssssss')
     e.stopPropagation();
+    if (this.state.scroll_area == 'gantt_head') {
+      return
+    }
     if ('gantt_card_out_middle' != e.target.getAttribute("id")) return
     const that = this
 
     const { scrollTop, scrollLeft, scrollWidth, clientWidth } = e.target
-    this.handleScrollVertical({ scrollTop })
-    this.handelScrollHorizontal({ scrollLeft, scrollWidth, clientWidth, })
+    const gantt_group_head = document.getElementById('gantt_group_head')
+    if (gantt_group_head) {
+      gantt_group_head.scrollTop = scrollTop
+    }
+    // this.handleScrollVertical({ scrollTop })
+    // this.handelScrollHorizontal({ scrollLeft, scrollWidth, clientWidth, })
   }
   // 处理上下滚动
   handleScrollVertical = ({ scrollTop }) => {
     const { group_view_type, gantt_board_id, target_scrollTop, dispatch } = this.props
     if (target_scrollTop != scrollTop) {
-      const gantt_group_head = document.getElementById('gantt_group_head')
-      if (gantt_group_head) {
-        gantt_group_head.scrollTop = scrollTop
-      }
-      dispatch({
-        type: getEffectOrReducerByName('updateDatas'),
-        payload: {
-          target_scrollTop: scrollTop
-        }
-      })
+      // dispatch({
+      //   type: getEffectOrReducerByName('updateDatas'),
+      //   payload: {
+      //     target_scrollTop: scrollTop
+      //   }
+      // })
       if (group_view_type == '1' && gantt_board_id == '0') {
         dispatch({
           type: getEffectOrReducerByName('updateDatas'),
@@ -364,6 +373,8 @@ export default class GanttFace extends Component {
               <GroupListHeadSet />
               {/*  //撑住DateList相同高度的底部 */}
               <GroupListHead
+                setScrollArea={this.setScrollArea}
+                scroll_area={this.state.scroll_area}
                 setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
                 gantt_card_height={gantt_card_height}
                 dataAreaRealHeight={dataAreaRealHeight} />
@@ -384,6 +395,7 @@ export default class GanttFace extends Component {
                 className={indexStyles.panel_out}
                 id={'gantt_card_out_middle'}
                 ref={'gantt_card_out_middle'}
+                onMouseEnter={() => this.setScrollArea('gantt_body')}
                 onScroll={this.ganttScroll}
               >
                 <div className={indexStyles.panel}>
