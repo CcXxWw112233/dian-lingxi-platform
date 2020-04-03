@@ -30,6 +30,12 @@ export default class BeginningStepOne extends Component {
     }
   }
 
+  updateState = (flag) => {
+    this.setState({
+      is_uploading: flag
+    })
+  }
+
   componentWillReceiveProps(nextProps) {
     // 需要更新箭头的状态
     if (!isObjectValueEqual(this.props, nextProps)) {
@@ -399,7 +405,7 @@ export default class BeginningStepOne extends Component {
         container = <BeginningStepOne_three parentKey={itemKey} FormCanEdit={this.FormCanEdit()} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
         break;
       case '5':
-        container = <BeginningStepOne_five parentKey={itemKey} FormCanEdit={this.FormCanEdit()} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
+        container = <BeginningStepOne_five updateState={this.updateState} parentKey={itemKey} FormCanEdit={this.FormCanEdit()} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
         break;
       default:
         break;
@@ -446,6 +452,7 @@ export default class BeginningStepOne extends Component {
   renderEditDetailContent = () => {
     const { itemValue, processInfo: { status: parentStatus } } = this.props
     const { forms = [], description, deadline_value, status } = itemValue
+    console.log(this.state.is_uploading,'ssssssssssssssssssssss_isuploading')
     return (
       <div style={{ position: 'relative' }}>
         {/* 有一个蒙层表示不是该填写人不能操作 */}
@@ -481,7 +488,7 @@ export default class BeginningStepOne extends Component {
           (parentStatus == '1' && this.whetherShowCompleteButton() && status == "1") &&
           (
             <div style={{ marginTop: '16px', paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center' }}>
-              <Button type="primary" disabled={!this.setCompleteButtonDisabled() || this.state.isAccomplishNodesIng} onClick={this.handleEnterConfigureProcess}>完成</Button>
+              <Button type="primary" disabled={!this.setCompleteButtonDisabled() || this.state.isAccomplishNodesIng || this.state.is_uploading} onClick={this.handleEnterConfigureProcess}>完成</Button>
             </div>
           )
         }
