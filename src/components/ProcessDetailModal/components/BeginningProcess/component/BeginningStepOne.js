@@ -296,19 +296,19 @@ export default class BeginningStepOne extends Component {
     let newFormsData = [...forms]
     let form_values = []
     let filesStr = []
-    let filterFilesData = (fileList) => {
-      let newFileList = [...fileList]
-      newFileList.map(item => {
-        filesStr.push(item.flow_file_id)
-      })
-      return filesStr.join(',')
-    }
+    // let filterFilesData = (fileList) => {
+    //   let newFileList = [...fileList]
+    //   newFileList.map(item => {
+    //     filesStr.push(item.flow_file_id)
+    //   })
+    //   return filesStr.join(',')
+    // }
     newFormsData.map(item => {
       let field_type = item.field_type
       let files = (item.files && item.files.length) && item.files
       let obj = {
         field_id: item.id || '',
-        field_value: field_type == '5' ? filterFilesData(files) : item.value || ''
+        field_value: field_type == '5' ? '' : item.value || ''
       }
       form_values.push(obj)
     })
