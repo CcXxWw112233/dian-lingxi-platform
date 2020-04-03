@@ -19,12 +19,44 @@ export default class BeginningStepOne_one extends Component {
   }
 
   defaultValueChange(e, verification_rule) {
-    // const { itemValue } = this.props
-    // const { val_min_length, val_max_length } = itemValue
-    // if (e.target.value.trimLR() == '') {
-    //   this.updateEdit({ value: '' }, 'value')
-    //   return
+    const { itemValue } = this.props
+    const { val_min_length, val_max_length } = itemValue
+    if (e.target.value.trimLR() == '') {
+      this.updateEdit({ value: '' }, 'value')
+      return
+    }
+    // if (verification_rule == '') {
+    //   if (e.target.value.length < val_min_length) {
+    //     // message.warn(`最少不能少于${val_min_length}字`)
+    //     return
+    //   } 
+    //   else if (e.target.value.length > val_min_length && e.target.value.length < val_max_length) {
+    //     this.setState({
+    //       verificationIsTrue: this.validate(verification_rule, e.target.value)
+    //     })
+    //     this.updateEdit({ value: e.target.value }, 'value')
+    //     return
+    //   } 
+    //   else if (e.target.value.length > val_max_length) {
+    //     // message.warn(`最多不能超过${val_max_length}字`)
+    //     return
+    //   }
     // }
+    console.log(this.validate(verification_rule, e.target.value), 'sssssssssssssssssssss_this.validate(verification_rule, e.target.value)')
+    this.setState({
+      verificationIsTrue: this.validate(verification_rule, e.target.value)
+    })
+
+    this.updateEdit({ value: e.target.value }, 'value')
+  }
+
+  handleOnBlur = (e, verification_rule) => {
+    const { itemValue } = this.props
+    const { val_min_length, val_max_length } = itemValue
+    if (e.target.value.trimLR() == '') {
+      this.updateEdit({ value: '' }, 'value')
+      return
+    }
     // if (verification_rule == '') {
     //   if (e.target.value.length < val_min_length) {
     //     message.warn(`最少不能少于${val_min_length}字`)
@@ -39,34 +71,6 @@ export default class BeginningStepOne_one extends Component {
     //     return
     //   }
     // }
-    // this.setState({
-    //   verificationIsTrue: this.validate(verification_rule, e.target.value)
-    // })
-
-    this.updateEdit({ value: e.target.value }, 'value')
-  }
-
-  handleOnBlur = (e, verification_rule) => {
-    const { itemValue } = this.props
-    const { val_min_length, val_max_length } = itemValue
-    if (e.target.value.trimLR() == '') {
-      this.updateEdit({ value: '' }, 'value')
-      return
-    }
-    if (verification_rule == '') {
-      if (e.target.value.length < val_min_length) {
-        message.warn(`最少不能少于${val_min_length}字`)
-      } else if (e.target.value.length > val_min_length && e.target.value.length < val_max_length) {
-        this.setState({
-          verificationIsTrue: this.validate(verification_rule, e.target.value)
-        })
-        this.updateEdit({ value: e.target.value }, 'value')
-        return
-      } else if (e.target.value.length > val_max_length) {
-        message.warn(`最多不能超过${val_max_length}字`)
-        return
-      }
-    }
     this.setState({
       verificationIsTrue: this.validate(verification_rule, e.target.value)
     })
@@ -80,9 +84,29 @@ export default class BeginningStepOne_one extends Component {
     const { val_min_length, val_max_length } = itemValue
     switch (verification_rule) {
       case '':
-        if ( value.length >= val_min_length && value.length <= val_max_length) {
-          valiResult = true
-        } else {
+        if (value) {
+          if (val_min_length && val_max_length) { // 表示限制了最小长度以及最大长度
+            if (value.length >= val_min_length && value.length <= val_max_length) {
+              valiResult = true
+            } else {
+              valiResult = false
+            }
+          } else if (val_min_length && !val_max_length) { // 表示只限制了最小长度
+            if (value.length >= val_min_length) {
+              valiResult = true
+            } else {
+              valiResult = false
+            }
+          } else if (val_max_length && !val_min_length) { // 表示只限制了最大长度
+            if (value.length <= val_max_length) {
+              valiResult = true
+            } else {
+              valiResult = false
+            }
+          } else if (!val_min_length && !val_max_length) { // 表示什么都没有限制的时候
+            valiResult = true
+          }
+        } else if (!value) {
           valiResult = false
         }
         break;
@@ -127,6 +151,7 @@ export default class BeginningStepOne_one extends Component {
     let name = '不限格式'
     switch (verification_rule) {
       case '':
+        debugger
         name = ''
         break;
       case 'mobile':
@@ -166,6 +191,75 @@ export default class BeginningStepOne_one extends Component {
     return name
   }
 
+  filterVerificationTips = (verification_rule) => {
+    let tips = '不限格式'
+    const { itemValue } = this.props
+    const { val_min_length, val_max_length, value } = itemValue
+    switch (verification_rule) {
+      case '':
+        tips = ''
+        if (value) {
+          if (val_min_length && val_max_length) { // 表示限制了最小长度以及最大长度
+            if (value.length < val_min_length) {
+              // valiResult = true
+              tips = `字符长度不能小于${val_min_length}`
+            } else if (value.length > val_max_length) {
+              tips = `字符长度不能大于${val_max_length}`
+            }
+          } else if (val_min_length && !val_max_length) { // 表示只限制了最小长度
+            if (value.length > val_min_length) {
+              // valiResult = true
+              tips = `字符长度不能大于${val_min_length}`
+            }
+          } else if (val_max_length && !val_min_length) { // 表示只限制了最大长度
+            if (value.length > val_max_length) {
+              // valiResult = true
+              tips = `字符长度不能大于${val_max_length}`
+            }
+          } else if (!val_min_length && !val_max_length) { // 表示什么都没有限制的时候
+            // valiResult = true
+          }
+        } else if (!value) {
+          // valiResult = false
+        }
+        break;
+      case 'mobile':
+        tips = '请输入正确的手机号码'
+        break;
+      case 'tel':
+        tips = '请输入正确的座机号码'
+        break;
+      case 'ID_card':
+        tips = '请输入正确的身份证号码'
+        break;
+      case 'chinese_name':
+        tips = '请输入2-6位的中文名'
+        break;
+      case 'url':
+        tips = '请输入正确的网址'
+        break;
+      case 'qq':
+        tips = '请输入正确的qq号码'
+        break;
+      case 'postal_code':
+        tips = '请输入正确的邮政编码'
+        break;
+      case 'positive_integer':
+        tips = '请输入正整数'
+        break;
+      case 'negative':
+        tips = '请输入负数'
+        break;
+      case 'two_decimal_places':
+        tips = '精确到两位小数'
+        break;
+      default:
+        tips = ''
+        break
+    }
+    return tips
+  }
+
   render() {
     const { verificationIsTrue } = this.state
     const { itemValue, FormCanEdit } = this.props
@@ -181,11 +275,11 @@ export default class BeginningStepOne_one extends Component {
           <span>
             {title}{verification_rule == '' ? '' : <span style={{ color: 'rgba(0,0,0,0.45)', fontSize: '12px' }}>&nbsp;[{this.filterVerificationName(verification_rule)}]</span>}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}
           </span>
-          {verification_rule != '' && <span style={{ color: '#F5222D', display: verificationIsTrue ? 'none' : 'block' }}>格式错误，请重新填写！</span>}
+          {<span style={{ color: '#F5222D', display: verificationIsTrue || value == '' ? 'none' : 'block' }}>{this.filterVerificationTips(verification_rule)}</span>}
         </p>
 
         <div className={indexStyles.text_fillOut}>
-          <Input maxLength={50} style={{ border: verification_rule == '' || verificationIsTrue ? '' : '1px solid #F5222D' }} placeholder={prompt_content} value={value} onChange={(e) => { this.defaultValueChange(e, verification_rule) }} onBlur={(e) => { this.handleOnBlur(e, verification_rule) }}/>
+          <Input maxLength={50} style={{ border: verificationIsTrue || value == '' ? '' : '1px solid #F5222D' }} placeholder={prompt_content} value={value} onChange={(e) => { this.defaultValueChange(e, verification_rule) }} onBlur={(e) => { this.handleOnBlur(e, verification_rule) }}/>
         </div>
       </div>
     )
