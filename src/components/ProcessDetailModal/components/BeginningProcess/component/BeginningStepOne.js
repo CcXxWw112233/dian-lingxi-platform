@@ -452,7 +452,6 @@ export default class BeginningStepOne extends Component {
   renderEditDetailContent = () => {
     const { itemValue, processInfo: { status: parentStatus } } = this.props
     const { forms = [], description, deadline_value, status } = itemValue
-    console.log(this.state.is_uploading,'ssssssssssssssssssssss_isuploading')
     return (
       <div style={{ position: 'relative' }}>
         {/* 有一个蒙层表示不是该填写人不能操作 */}
