@@ -45,13 +45,21 @@ export default class FillInPersonContent extends Component {
   filterAssignees = () => {
     const { data = [] } = this.props
     const { designatedPersonnelList = [] } = this.state
-    let newData = [...data]
-    newData = newData.filter(item => {
-      if (designatedPersonnelList.indexOf(item.user_id) != -1) {
-        return item
-      }
+    let new_data = [...data]
+    let newDesignatedPersonnelList = designatedPersonnelList && designatedPersonnelList.map(item => {
+      return new_data.find(item2 => item2.user_id == item) || {}
     })
-    return newData
+    newDesignatedPersonnelList = newDesignatedPersonnelList.filter(item => item.user_id)
+    // let arr = []
+    // newDesignatedPersonnelList = newData.filter((item,index) => {
+    //   if (approvalsList.indexOf(item.user_id) != -1) {
+    //     arr.push(item)
+    //     return item
+    //   }
+    // })
+
+    return newDesignatedPersonnelList
+
   }
 
   //修改通知人的回调 S
@@ -137,7 +145,7 @@ export default class FillInPersonContent extends Component {
       let newDesignatedPersonnelList = [...designatedPersonnelList]
        this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('assignee_type', assignee_type)
        this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('assignees', newDesignatedPersonnelList.join(','))
-       this.props.updateParentsAssigneesOrCopyPersonnel && this.props.updateParentsAssigneesOrCopyPersonnel({value: newDesignatedPersonnelList.join(',')}, 'transPrincipalList')
+       this.props.updateParentsAssigneesOrCopyPersonnel && this.props.updateParentsAssigneesOrCopyPersonnel({value: newDesignatedPersonnelList }, 'transPrincipalList')
        this.props.onVisibleChange && this.props.onVisibleChange(false, this.updateState)
     }
     

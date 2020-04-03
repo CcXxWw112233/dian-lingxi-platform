@@ -234,13 +234,21 @@ export default class ConfigureStepTypeOne extends Component {
   filterAssignees = () => {
     const { projectDetailInfoData: { data = [] } } = this.props
     const { designatedPersonnelList = [] } = this.state
-    let newData = [...data]
-    newData = newData.filter(item => {
-      if (designatedPersonnelList.indexOf(item.user_id) != -1) {
-        return item
-      }
+    let new_data = [...data]
+    let newDesignatedPersonnelList = designatedPersonnelList && designatedPersonnelList.map(item => {
+      return new_data.find(item2 => item2.user_id == item) || {}
     })
-    return newData
+    newDesignatedPersonnelList = newDesignatedPersonnelList.filter(item => item.user_id)
+    // let arr = []
+    // newDesignatedPersonnelList = newData.filter((item,index) => {
+    //   if (approvalsList.indexOf(item.user_id) != -1) {
+    //     arr.push(item)
+    //     return item
+    //   }
+    // })
+
+    return newDesignatedPersonnelList
+
   }
 
   renderFieldType = () => {

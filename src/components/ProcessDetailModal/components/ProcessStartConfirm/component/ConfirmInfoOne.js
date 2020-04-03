@@ -66,13 +66,12 @@ export default class ConfirmInfoOne extends Component {
   filterAssignees = () => {
     const { projectDetailInfoData: { data = [] } } = this.props
     const { transPrincipalList = [] } = this.state
-    let newData = [...data]
-    newData = newData.filter(item => {
-      if (transPrincipalList.indexOf(item.user_id) != -1) {
-        return item
-      }
+    let new_data = [...data]
+    let newTransPrincipalList= transPrincipalList && transPrincipalList.map(item => {
+      return new_data.find(item2 => item2.user_id == item) || {}
     })
-    return newData
+    newTransPrincipalList = newTransPrincipalList.filter(item => item.user_id)  
+    return newTransPrincipalList
   }
 
   // 把recipients中的抄送人在项目中的所有成员过滤出来
@@ -80,12 +79,11 @@ export default class ConfirmInfoOne extends Component {
     const { projectDetailInfoData: { data = [] } } = this.props
     const { transCopyPersonnelList = [] } = this.state
     let newData = [...data]
-    newData = newData.filter(item => {
-      if (transCopyPersonnelList.indexOf(item.user_id) != -1) {
-        return item
-      }
+    let newTransCopyPersonnelList= transCopyPersonnelList && transCopyPersonnelList.map(item => {
+      return newData.find(item2 => item2.user_id == item) || {}
     })
-    return newData
+    newTransCopyPersonnelList = newTransCopyPersonnelList.filter(item => item.user_id)  
+    return newTransCopyPersonnelList
   }
 
   filterForm = (value, key) => {
