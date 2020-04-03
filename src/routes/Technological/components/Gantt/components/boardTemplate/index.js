@@ -734,10 +734,11 @@ export default class BoardTemplate extends Component {
                                         </div>
                                     </Spin>
                                     {
-                                        checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id) && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, gantt_board_id) && !outline_tree.length &&
+                                        checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id) && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, gantt_board_id) &&
+                                        // !outline_tree.length &&
                                         (
                                             <div className={styles.footer} >
-                                                <Button disabled={outline_tree.length} type="primary" block onClick={() => this.openImportBoardModal(this.state.selected_template_id)}>引用到项目</Button>
+                                                <Button type="primary" block onClick={() => this.openImportBoardModal(this.state.selected_template_id)}>引用到项目</Button>
                                             </div>
                                         )
                                     }

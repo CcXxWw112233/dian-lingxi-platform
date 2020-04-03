@@ -11,7 +11,7 @@ import { validateTel, validateEmail, validatePassword, validateFixedTel, validat
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { Button, message, Progress } from 'antd'
 import { connect } from 'dva'
-import { timestampToTimeNormal, compareACoupleOfObjects } from '../../../../../utils/util';
+import { timestampToTimeNormal, compareACoupleOfObjects, isObjectValueEqual } from '../../../../../utils/util';
 import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
 import { PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
 import { genPrincipalListFromAssignees } from '../../handleOperateModal'
@@ -30,9 +30,15 @@ export default class BeginningStepOne extends Component {
     }
   }
 
+  updateState = (flag) => {
+    this.setState({
+      is_uploading: flag
+    })
+  }
+
   componentWillReceiveProps(nextProps) {
     // 需要更新箭头的状态
-    if (!compareACoupleOfObjects(this.props, nextProps)) {
+    if (!isObjectValueEqual(this.props, nextProps)) {
       this.setState({
         is_show_spread_arrow: nextProps.itemValue.status == '1' ? true : false,
       })
@@ -85,7 +91,6 @@ export default class BeginningStepOne extends Component {
   setCompleteButtonDisabled = () => {
     const { itemValue, itemKey, processEditDatas = [] } = this.props
     const { forms = [] } = processEditDatas[itemKey]
-    const { val_min_length = '', val_max_length = '' } = forms[itemKey] || []
     let valiResult = true
     for (let i = 0; i < forms.length; i++) {
       if (forms[i]['is_required'] == '1') { //必填的情况下
@@ -95,6 +100,8 @@ export default class BeginningStepOne extends Component {
         const field_type = forms[i]['field_type']
         const limit_file_num = forms[i]['limit_file_num']
         const limit_file_size = forms[i]['limit_file_size']
+        const val_min_length = forms[i]['val_min_length']
+        const val_max_length = forms[i]['val_max_length']
         // console.log(files,'sssssssssssssssssssssssssssssssssssss_files')
         // console.log(i, verification_rule, validateTel(''))
         switch (verification_rule) {
@@ -162,7 +169,7 @@ export default class BeginningStepOne extends Component {
             //   valiResult = false
             // }
             if (field_type == '5') {
-              if (!!(files && files.length) || (limit_file_num != 0 && (((files && files.length) && files.length) < limit_file_num))) {
+              if (!!(files && files.length) || (limit_file_num != 0 && ((files && files.length != '0') && files.length < limit_file_num))) {
                 valiResult = true
               } else {
                 valiResult = false
@@ -179,6 +186,104 @@ export default class BeginningStepOne extends Component {
         if (!valiResult) {
           break
         }
+      } else {
+        const verification_rule = forms[i]['verification_rule']
+        const value = forms[i]['value']
+        const files = forms[i]['files']
+        const field_type = forms[i]['field_type']
+        const limit_file_num = forms[i]['limit_file_num']
+        const limit_file_size = forms[i]['limit_file_size']
+        const val_min_length = forms[i]['val_min_length']
+        const val_max_length = forms[i]['val_max_length']
+        // console.log(files,'sssssssssssssssssssssssssssssssssssss_files')
+        // console.log(i, verification_rule, validateTel(''))
+        if (value) {
+          switch (verification_rule) {
+            case "":
+              if (value) {
+                if (val_min_length && val_max_length) { // 表示限制了最小长度以及最大长度
+                  if (value.length < val_min_length) {
+                    valiResult = false
+                  } else if (value.length > val_max_length) {
+                    valiResult = false
+                  } else {
+                    valiResult = true
+                  }
+                } else if (val_min_length && !val_max_length) { // 表示只限制了最小长度
+                  if (value.length > val_min_length) {
+                    valiResult = false
+                  } else {
+                    valiResult = true
+                  }
+                } else if (val_max_length && !val_min_length) { // 表示只限制了最大长度
+                  if (value.length > val_max_length) {
+                    valiResult = false
+                  } else {
+                    valiResult = true
+                  }
+                } else if (!val_min_length && !val_max_length) { // 表示什么都没有限制的时候
+                  valiResult = true
+                }
+              } else if (!value) {
+                valiResult = true
+              }
+              break
+            case 'mobile':
+              valiResult = validateTel(value)
+              break;
+            case 'tel':
+              valiResult = validateFixedTel(value)
+              break;
+            case 'ID_card':
+              valiResult = validateIdCard(value)
+              break;
+            case 'chinese_name':
+              valiResult = validateChineseName(value)
+              break;
+            case 'url':
+              valiResult = validateWebsite(value)
+              break;
+            case 'qq':
+              valiResult = validateQQ(value)
+              break;
+            case 'postal_code':
+              valiResult = validatePostalCode(value)
+              break;
+            case 'positive_integer':
+              valiResult = validatePositiveInt(value)
+              break;
+            case 'negative':
+              valiResult = validateNegative(value)
+              break;
+            case 'two_decimal_places':
+              valiResult = validateTwoDecimal(value)
+              break;
+            default:
+              // if (!!value) {
+              //   valiResult = true
+              // } else {
+              //   valiResult = false
+              // }
+              if (field_type == '5') {
+                if (!!(files && files.length) || (limit_file_num != 0 && ((files && files.length != '0') && files.length < limit_file_num))) {
+                  valiResult = true
+                } else {
+                  valiResult = false
+                }
+              } else {
+                if (!!value) { // 表示不存在的时候
+                  valiResult = true
+                }
+              }
+              break
+          }
+          if (!valiResult) {
+            break
+          }
+        } else {
+          valiResult = true
+        }
+
       }
     }
     return valiResult
@@ -300,7 +405,7 @@ export default class BeginningStepOne extends Component {
         container = <BeginningStepOne_three parentKey={itemKey} FormCanEdit={this.FormCanEdit()} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
         break;
       case '5':
-        container = <BeginningStepOne_five parentKey={itemKey} FormCanEdit={this.FormCanEdit()} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
+        container = <BeginningStepOne_five updateState={this.updateState} parentKey={itemKey} FormCanEdit={this.FormCanEdit()} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
         break;
       default:
         break;
@@ -382,7 +487,7 @@ export default class BeginningStepOne extends Component {
           (parentStatus == '1' && this.whetherShowCompleteButton() && status == "1") &&
           (
             <div style={{ marginTop: '16px', paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center' }}>
-              <Button type="primary" disabled={!this.setCompleteButtonDisabled() || this.state.isAccomplishNodesIng} onClick={this.handleEnterConfigureProcess}>完成</Button>
+              <Button type="primary" disabled={!this.setCompleteButtonDisabled() || this.state.isAccomplishNodesIng || this.state.is_uploading} onClick={this.handleEnterConfigureProcess}>完成</Button>
             </div>
           )
         }

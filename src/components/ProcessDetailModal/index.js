@@ -29,6 +29,8 @@ export default class ProcessDetailModal extends Component {
         not_show_create_form_guide: '1',
       }
     })
+     // 圈子关闭联动
+     global.constants.lx_utils && global.constants.lx_utils.setCommentData(this.props.processInfo.id || null)
   }
 
   commonDrawerContentOutClick = () => {
@@ -80,8 +82,8 @@ export default class ProcessDetailModal extends Component {
 }
 
 //  只关联public中弹窗内的数据
-function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription } 
+function mapStateToProps({ publicProcessDetailModal: { processInfo = {}, currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription } 
   
 } ) {
- return { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription}
+ return { processInfo, currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription}
 }

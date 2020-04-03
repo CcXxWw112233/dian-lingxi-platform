@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import {
-  PROJECT_FLOWS_FLOW_TEMPLATE,PROJECT_FLOW_FLOW_ACCESS
+  PROJECT_FLOWS_FLOW_TEMPLATE,PROJECT_FLOW_FLOW_ACCESS, PROJECT_FLOWS_FLOW_CREATE
 } from "../../../../../../globalset/js/constant";
 import { checkIsHasPermissionInBoard } from "../../../../../../utils/businessFunction";
 import { connect } from 'dva'
@@ -38,7 +38,7 @@ export default class TemplateItem extends Component {
           {/* 三种状态 */}
           <span className={indexStyles.hover_icon_display}>
             {
-              checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id) && (
+              checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, board_id) && (
                 <span onClick={() => { this.handleStartProcess(itemValue) }} className={`${indexStyles.common_authority_hover}`}><span className={`${indexStyles.hover_icon} ${indexStyles.start_process_icon} ${globalStyles.authTheme}`}>&#xe796; 启动流程</span></span>
               )
             }

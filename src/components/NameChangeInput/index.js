@@ -32,6 +32,7 @@ export default class NameChangeInput extends React.Component{
     this.setState({
       localName: e.target.value
     })
+    this.props.onChange && this.props.onChange(e)
   }
   inputonPressEnter(e) {
     const { localName } = this.state

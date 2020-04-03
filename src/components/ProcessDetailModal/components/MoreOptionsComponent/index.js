@@ -242,13 +242,14 @@ export default class MoreOptionsComponent extends Component {
 
   // 渲染抄报人
   renderDuplicatedPerson = () => {
-    const { data = [], org_id, board_id } = this.props
+    const { data = [], org_id, board_id, itemValue } = this.props
+    const { cc_locking } = itemValue
     let makeCopyPersonList = this.filterRecipients()
     return (
       <div className={indexStyles.fill_person}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <span className={`${indexStyles.label_person}`} style={{ fontSize: '14px', color: 'rgba(0,0,0,0.45)' }}><span className={`${globalStyles.authTheme}`}>&#xe618;</span> 抄送人 (必填)&nbsp;:</span>
-          <span style={{ marginRight: '8px' }}><Switch style={{ marginRight: '8px' }} size="small" onChange={this.handleCCLocking} /> 锁定抄送人</span>
+          <span style={{ marginRight: '8px' }}><Switch checked={cc_locking == '1'} style={{ marginRight: '8px' }} size="small" onChange={this.handleCCLocking} /> 锁定抄送人</span>
           <span style={{ position: 'relative', marginRight: '25px' }}>
             <Tooltip overlayStyle={{ minWidth: '250px' }} getPopupContainer={triggerNode => triggerNode.parentNode} title="锁定抄送人后启动流程时不可修改抄送人" placement="top"><span style={{ fontSize: '16px', color: 'rgba(217,217,217,1)', cursor: 'pointer' }} className={`${globalStyles.authTheme}`}>&#xe845;</span></Tooltip>
           </span>

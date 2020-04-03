@@ -62,6 +62,7 @@ export default class BeginningStepOne_five extends Component {
 
 
   onBeforeUpload = (file, fileList) => {
+    this.props.updateState && this.props.updateState(true)
     const { board_id, itemValue } = this.props
     const { limit_file_num, limit_file_size } = itemValue
     // if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD, board_id)) {
@@ -88,17 +89,22 @@ export default class BeginningStepOne_five extends Component {
 
     if (limit_file_num != 0 && ((effective_file_list.length + effective_state_file_list.length) > limit_file_num)) {
       file.status = 'up_limit'
-      message.warn(`上传文件总数不能超过${limit_file_num}`)
+      message.warn(`上传文件总数不能超过${limit_file_num}个`)
       return false
     }
   }
 
   handleChange = ({ file, fileList, event }) => {
     const new_filelist = fileList.filter(item => item.status != 'up_limit')
-    this.setState({
+    let temp_list = new_filelist.filter(item => item.status != 'error')
+    this.setState({ 
       fileList: new_filelist
+    }, () => {
+      setTimeout(() => {
+        this.props.updateState && this.props.updateState(false)
+      }, 500)
     })
-    this.updateEdit({ value: new_filelist }, 'files')
+    this.updateEdit({ value: temp_list }, 'files')
   }
 
 

@@ -608,7 +608,7 @@ export const filterFileFormatType = (fileName) => {
 }
 
 /**
- * 比较两个对象是否相等
+ * 比较两个对象是否相等 (属性)
  * @return {Boolean} 该方法返回一个布尔值, fasle 表示不相等, true表示相等
  * @param {Object} obj1 对象1
  * @param {Object} obj2 对象2
@@ -640,6 +640,35 @@ export const compareACoupleOfObjects = (obj1, obj2) => {
   flag = true
   return flag;
 }
+
+/**
+ * 比较两个对象是否相等 (值)
+ * @param {*} arrya1 
+ * @param {*} array2 
+ */
+export const isObjectValueEqual = (obj1, obj2) => {
+  let aProps = Object.getOwnPropertyNames(obj1);
+  let bProps = Object.getOwnPropertyNames(obj2);
+   if (aProps.length != bProps.length) {
+        return false;
+   }
+   for (let i = 0; i < aProps.length; i++) {
+     let propName = aProps[i]
+
+     let propA = obj1[propName]
+     let propB = obj2[propName]
+     if ((typeof (propA) === 'object')) {
+       if (isObjectValueEqual(propA, propB)) {
+           // return true     这里不能return ,后面的对象还没判断
+         } else {
+           return false
+         }
+     } else if (propA !== propB) {
+       return false
+     } else { }
+   }
+  return true
+ }
 
 /**
  * 比较两个数组是否相等

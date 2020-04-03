@@ -16,6 +16,7 @@ import { MESSAGE_DURATION_TIME, FLOWS } from '../../globalset/js/constant'
 import { saveProcessTemplate, getTemplateInfo, createProcess } from '../../services/technological/workFlow'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { currentNounPlanFilterName } from "@/utils/businessFunction";
+const { LingxiIm, Im } = global.constants
 @connect(mapStateToProps)
 export default class MainContent extends Component {
   constructor(props) {
@@ -33,14 +34,29 @@ export default class MainContent extends Component {
     this.timer = null
   }
 
-  componentWillMount() {
-    // this.props.dispatch({
-    //   type: 'publicProcessDetailModal/configurePorcessGuide',
-    //   payload: {
-    //     flow_template_node: '',
-    //     flow_template_form: ''
-    //   }
-    // })
+  linkImWithFlow = (data) => {
+    const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    const { is_simple_model } = user_set;
+    if (!data) {
+      global.constants.lx_utils && global.constants.lx_utils.setCommentData(null) 
+      return false
+    }
+    global.constants.lx_utils && global.constants.lx_utils.setCommentData({...data})
+    // if (is_simple_model == '1') {
+    //   this.props.dispatch({
+    //     type: 'simplemode/updateDatas',
+    //     payload: {
+    //       chatImVisiable: true
+    //     }
+    //   })
+    // }
+  }
+
+  // 圈子动态消息
+  handleDynamicComment = (e) => {
+    e && e.stopPropagation()
+    const { processInfo: { id, name, board_id } } = this.props
+    this.linkImWithFlow({name: name, type: 'flow', board_id: board_id, id: id})
   }
 
   componentDidMount() {
@@ -111,8 +127,8 @@ export default class MainContent extends Component {
     const { processInfo = {}, processEditDatas = [] } = this.props
     const { curr_node_sort, status: parentStatus } = processInfo
     const defaultProps = {
-      canvaswidth: 138, // 画布宽度
-      canvasheight: 138, // 画布高度
+      canvaswidth: 140, // 画布宽度
+      canvasheight: 140, // 画布高度
       x0: 102,
       y0: 103,
       r: 69,
@@ -188,6 +204,12 @@ export default class MainContent extends Component {
   onScroll = (e) => {
     let scrollTop = document.getElementById('container_configureProcessOut').scrollTop
     let ele = document.getElementById('suspensionFlowInstansNav')
+
+    const { processPageFlagStep } = this.props
+    if (processPageFlagStep == '4') {
+      let dynamic_ele = document.getElementById('dynamic_comment')
+      dynamic_ele.style.bottom = 40 - scrollTop + 'px'
+    }
     // -------------------- 关于资料收集节点定位  ----------------------------
     // 关于资料收集节点的定位
 
@@ -239,6 +261,26 @@ export default class MainContent extends Component {
         clearInterval(this.timer)
       }
     }, 30)
+  }
+
+  titleInputValueChange = (e) => {
+    if (e.target.value.trimLR() == '') {
+      this.props.dispatch({
+        type: 'publicProcessDetailModal/updateDatas',
+        payload: {
+          // isEditCurrentFlowInstanceName: true,
+          currentFlowInstanceName: ''
+        }
+      })
+      return
+    }
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        // isEditCurrentFlowInstanceName: true,
+        currentFlowInstanceName: e.target.value
+      }
+    })
   }
 
   // 标题失去焦点回调
@@ -743,30 +785,32 @@ export default class MainContent extends Component {
         <div id="container_configureTop" className={indexStyles.configure_top}>
           <div style={{ display: 'flex', position: 'relative' }}>
             <div><canvas id="time_graph_canvas" width={210} height={210} style={{ float: 'left' }}></canvas></div>
-            {/* <img id="node_img" src={sssimg} style={{position: 'relative', width: 20, height: 20, top: 155, right: 118}}/> */}
-            <span className={globalStyles.authTheme} style={{ color: '#D9D9D9', position: 'absolute', top: 158, left: 92,fontSize: '14px' }} >&#xe605;</span>
-            <span style={{
-              position: 'absolute',
-              top: '70px',
-              left: '80px',
-              height: 17,
-              fontSize: 20,
-              fontFamily: 'PingFangSC-Regular',
-              fontWeight: 400,
-              color: 'rgba(140,140,140,1)',
-              lineHeight: '17px'
-            }}>{`${this.renderCurrentStepNumber().currentStep} / ${this.renderCurrentStepNumber().totalStep}`}</span>
-            <span style={{
-              position: 'absolute',
-              top: '110px',
-              left: '76px',
-              height: 30,
-              fontSize: 14,
-              fontFamily: 'PingFangSC-Regular',
-              fontWeight: 400,
-              color: 'rgba(89,89,89,1)',
-              lineHeight: '30px'
-            }}>{processPageFlagStep == '4' ? this.renderDiffStepStatus() : '新 建'} {processPageFlagStep == '4' ? status == '1' ? `${this.renderCurrentStepNumber().surplusStep} 步`: '' : `${this.renderCurrentStepNumber().currentStep} 步`}</span>
+            <div style={{position: 'absolute',display: 'flex', flexDirection: 'column', width: '210px', height: '210px', alignItems: 'center', justifyContent: 'center'}}>
+              <span className={globalStyles.authTheme} style={{ color: '#D9D9D9', position: 'absolute', top: 158, left: 92,fontSize: '14px' }} >&#xe605;</span>
+              <span style={{
+                // position: 'absolute',
+                top: '70px',
+                left: processEditDatas && processEditDatas.length > 10 ? '67px' : '80px' ,
+                height: 17,
+                fontSize: 20,
+                fontFamily: 'PingFangSC-Regular',
+                fontWeight: 400,
+                color: 'rgba(140,140,140,1)',
+                lineHeight: '17px'
+              }}>{`${this.renderCurrentStepNumber().currentStep} / ${this.renderCurrentStepNumber().totalStep}`}</span>
+              <span style={{
+                // position: 'absolute',
+                top: '110px',
+                left: processEditDatas && processEditDatas.length > 10 ? '67px' : '76px',
+                height: 30,
+                fontSize: 14,
+                fontFamily: 'PingFangSC-Regular',
+                fontWeight: 400,
+                color: 'rgba(89,89,89,1)',
+                lineHeight: '30px',
+                marginTop: '12px'
+              }}>{processPageFlagStep == '4' ? this.renderDiffStepStatus() : '新 建'} {processPageFlagStep == '4' ? status == '1' ? `${this.renderCurrentStepNumber().surplusStep} 步`: '' : `${this.renderCurrentStepNumber().currentStep} 步`}</span>
+            </div>
             <div style={{ paddingTop: '32px', paddingRight: '32px', flex: 1, float: 'left', width: '977px', minHeight: '210px' }}>
               {/* 显示流程名称 */}
               <div style={{ marginBottom: '12px' }}>
@@ -778,6 +822,7 @@ export default class MainContent extends Component {
                   ) : (
                       <NameChangeInput
                         autosize
+                        onChange={this.titleInputValueChange}
                         onBlur={this.titleTextAreaChangeBlur}
                         onPressEnter={this.titleTextAreaChangeBlur}
                         onClick={(e) => e && e.stopPropagation()}
@@ -853,6 +898,15 @@ export default class MainContent extends Component {
             </div>
           </div>
         </div>
+        {
+          processPageFlagStep == '4' && (
+            <div onClick={this.handleDynamicComment} id="dynamic_comment" className={indexStyles.dynamic_comment}>
+              <Tooltip overlayStyle={{minWidth: '72px'}} placement="top" title="动态消息" getPopupContainer={() => document.getElementById('dynamic_comment')}>
+                <span className={globalStyles.authTheme}>&#xe8e8;</span>
+              </Tooltip>
+            </div>
+          )
+        }
       </div>
     )
   }

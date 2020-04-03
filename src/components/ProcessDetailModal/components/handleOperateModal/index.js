@@ -19,6 +19,19 @@ const showDeleteTempleteConfirm = (processTempleteDelete) => {
   });
 }
 
+// 数组去重
+const arrayNonRepeatfy = arr => {
+  let temp_arr = []
+  let temp_id = []
+  for (let i = 0; i < arr.length; i++) {
+    if (!temp_id.includes(arr[i]['user_id'])) {//includes 检测数组是否有某个值
+      temp_arr.push(arr[i]);
+      temp_id.push(arr[i]['user_id'])
+    }
+  }
+  return temp_arr
+}
+
 /**
 * 获取流程执行人列表
 * 因为这个弹窗是共用的, 所以需要从外部接收一个 principalList执行人列表
@@ -41,18 +54,6 @@ const genPrincipalListFromAssignees = (nodes = []) => {
           user_id: user.user_id
         }));
       };
-      // 数组去重
-      const arrayNonRepeatfy = arr => {
-        let temp_arr = []
-        let temp_id = []
-        for (let i = 0; i < arr.length; i++) {
-          if (!temp_id.includes(arr[i]['user_id'])) {//includes 检测数组是否有某个值
-            temp_arr.push(arr[i]);
-            temp_id.push(arr[i]['user_id'])
-          }
-        }
-        return temp_arr
-      }
       // 执行人去重
       const newPersonList = genNewPersonList(arrayNonRepeatfy(curr.assignees));
       return [...acc, ...newPersonList.filter(i => !acc.find(a => a.name === i.name))];
@@ -87,5 +88,6 @@ export {
   showDeleteTempleteConfirm,
   genPrincipalListFromAssignees,
   renderTimeType,
+  arrayNonRepeatfy
 }
 
