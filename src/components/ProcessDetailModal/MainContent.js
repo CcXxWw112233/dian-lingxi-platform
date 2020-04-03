@@ -598,7 +598,7 @@ export default class MainContent extends Component {
   }
   // 禁用的时间段
   disabledStartTime = (current) => {
-    return current && current < moment().subtract(1, "days")
+    return current && current < moment().subtract("days")
   }
   // 这是保存一个点击此刻时不让日期面板关闭
   handleStartOpenChange = (open) => {
