@@ -62,7 +62,7 @@ export default class BeginningStepOne_five extends Component {
 
 
   onBeforeUpload = (file, fileList) => {
-    this.props.updateState && this.props.updateState(true)
+    // this.props.updateState && this.props.updateState(true)
     const { board_id, itemValue } = this.props
     const { limit_file_num, limit_file_size } = itemValue
     // if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD, board_id)) {
@@ -100,9 +100,9 @@ export default class BeginningStepOne_five extends Component {
     this.setState({ 
       fileList: new_filelist
     }, () => {
-      setTimeout(() => {
-        this.props.updateState && this.props.updateState(false)
-      }, 500)
+      // setTimeout(() => {
+      //   this.props.updateState && this.props.updateState(false)
+      // }, 3000)
     })
     this.updateEdit({ value: temp_list }, 'files')
   }
@@ -130,7 +130,7 @@ export default class BeginningStepOne_five extends Component {
       },
       fileList: fileList,
       withCredentials: true,
-      multiple: true,
+      multiple: false,
       showUploadList: false,
       beforeUpload: this.onBeforeUpload,
       onChange: this.handleChange,
@@ -205,7 +205,8 @@ export default class BeginningStepOne_five extends Component {
       this.setState({
         fileList: newFilesData
       })
-      this.updateEdit({ value: newFilesData }, 'files')
+      let temp_list = newFilesData && newFilesData.filter(item => item.status != 'error') || []
+      this.updateEdit({ value: temp_list }, 'files')
     }
     setTimeout(() => {
       if (!shouldDeleteItem && UID) { // 表示是文件上传失败之后
@@ -268,6 +269,13 @@ export default class BeginningStepOne_five extends Component {
     let gold_item_id = (item.status && item.status == 'done' && item.response && item.response.code == '0') && item.response.data.flow_file_id
     let gold_item_error_messaage = (item.status && item.status == 'error' && item.error && item.error.response && item.error.response.data && item.error.response.data.code == '1') && item.error.response.data.message
     const { percent, status, errorMsg } = item
+    if (percent &&
+      Number(percent) != 0 &&
+      Number(percent) != 100) {
+      this.props.updateState && this.props.updateState(true)
+    } else {
+      this.props.updateState && this.props.updateState(false)
+    }
     const alrm_obj = {}
     if (status == 'error') {
       if (errorMsg) {

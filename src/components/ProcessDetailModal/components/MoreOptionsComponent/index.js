@@ -59,12 +59,11 @@ export default class MoreOptionsComponent extends Component {
     const { data = [] } = this.props
     const { makeCopyPersonList = [] } = this.state
     let newData = [...data]
-    newData = newData.filter(item => {
-      if (makeCopyPersonList.indexOf(item.user_id) != -1) {
-        return item
-      }
+    let newTransCopyPersonnelList= makeCopyPersonList && makeCopyPersonList.map(item => {
+      return newData.find(item2 => item2.user_id == item) || {}
     })
-    return newData
+    newTransCopyPersonnelList = newTransCopyPersonnelList.filter(item => item.user_id)  
+    return newTransCopyPersonnelList
   }
 
   // 更多选项的点击事件

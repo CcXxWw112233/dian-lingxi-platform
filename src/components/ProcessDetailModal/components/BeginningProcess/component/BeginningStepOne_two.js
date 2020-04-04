@@ -22,6 +22,34 @@ export default class BeginningStepOne_two extends Component {
     this.updateEdit({value: newValue}, 'value')
   }
 
+    // 判断是多选还是单选所渲染的不同value内容
+    renderWhetherMultipleValue = () => {
+      const { itemValue } = this.props
+      const { value, options = [], is_multiple_choice } = itemValue
+      let containerText = ''
+      switch (is_multiple_choice) {
+        case '1': // 表示是多选
+          let temp_value = value ? value.split(',') : []
+          let newOptionsData = [...options]
+          let arr = []
+          newOptionsData.map(item => {
+            if (temp_value.indexOf(item.id) != -1) {
+              arr.push(item.id)
+            }
+          })
+          containerText = arr.join(',')
+          break;
+        case '0': // 表示不是多选
+          let temp_value2 = ((options && options.filter(item => item.id == value) && options.filter(item => item.id == value).length) && options.filter(item => item.id == value)[0] || []).id || ''
+          containerText = temp_value2
+          break
+  
+        default:
+          break;
+      }
+      return containerText
+    }
+
   render() {
     const { itemValue } = this.props
     const { title, prompt_content, is_required, options = [], value, is_multiple_choice } = itemValue
@@ -34,6 +62,7 @@ export default class BeginningStepOne_two extends Component {
           <Select 
             mode={is_multiple_choice === '1' ? 'multiple' : ''}
             // value={is_multiple_choice === '1'? value.split(',').filter(d=>d):value} 
+            value={this.renderWhetherMultipleValue()}
             style={{width: '100%'}} placeholder={prompt_content}
             onChange={this.defaultValueChange.bind(this)}
           >

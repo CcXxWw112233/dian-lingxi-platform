@@ -43,21 +43,27 @@ export default class ConfigureStepTypeTwo extends Component {
   chirldrenTaskChargeChange = (data) => {
     const { projectDetailInfoData = {} } = this.props;
     const { selectedKeys = [], type, key } = data
+    const { approvalsList = [] } = this.state
     if (type == 'add') { // 表示添加的操作
       let assignee_value = []
       // 多个任务执行人
+      let newApprovalsList = [...approvalsList]
       const membersData = projectDetailInfoData['data'] //所有的人
-      for (let i = 0; i < selectedKeys.length; i++) {
-        for (let j = 0; j < membersData.length; j++) {
-          if (selectedKeys[i] === membersData[j]['user_id']) {
-            assignee_value.push(membersData[j].user_id)
-          }
-        }
+      if (newApprovalsList.indexOf(key) == -1) { // 表示找到选中不存在的哪一个
+        newApprovalsList.push(key)
       }
+      // for (let i = 0; i < selectedKeys.length; i++) {
+      //   for (let j = 0; j < membersData.length; j++) {
+
+      //     if (selectedKeys[i] === membersData[j]['user_id']) {
+      //       assignee_value.push(membersData[j].user_id)
+      //     }
+      //   }
+      // }
       this.setState({
-        approvalsList: assignee_value
+        approvalsList: newApprovalsList
       });
-      this.updateConfigureProcess({ value: assignee_value.join(',') }, 'assignees')
+      this.updateConfigureProcess({ value: newApprovalsList.join(',') }, 'assignees')
     }
 
     if (type == 'remove') { // 表示移除的操作
@@ -86,34 +92,41 @@ export default class ConfigureStepTypeTwo extends Component {
     e && e.stopPropagation()
     const { approvalsList = [] } = this.state
     const { itemValue } = this.props
-      const { assignees } = itemValue
+    const { assignees } = itemValue
     let newApprovalsList = [...approvalsList]
     let newAssigneesArray = assignees && assignees.length ? assignees.split(',') : []
     newApprovalsList.map((item, index) => {
       if (item == shouldDeleteItem) {
         newApprovalsList.splice(index, 1)
-        newAssigneesArray.splice(index,1)
+        newAssigneesArray.splice(index, 1)
       }
     })
     let newAssigneesStr = newAssigneesArray.join(',')
     this.setState({
       approvalsList: newAssigneesArray
     })
-    this.updateConfigureProcess({value: newAssigneesStr}, 'assignees')
+    this.updateConfigureProcess({ value: newAssigneesStr }, 'assignees')
   }
 
-     // 把assignees中的执行人,在项目中的所有成员过滤出来
-     filterAssignees = () => {
-      const { projectDetailInfoData: { data = [] } } = this.props
-      const { approvalsList = [] } = this.state
-      let newData = [...data]
-      newData = newData.filter(item => {
-        if (approvalsList.indexOf(item.user_id) != -1) {
-          return item
-        }
-      })
-      return newData
-    }
+  // 把assignees中的执行人,在项目中的所有成员过滤出来
+  filterAssignees = () => {
+    const { projectDetailInfoData: { data = [] } } = this.props
+    const { approvalsList = [] } = this.state
+    let new_data = [...data]
+    let newApprovalsList = approvalsList && approvalsList.map(item => {
+      return new_data.find(item2 => item2.user_id == item) || {}
+    })
+    newApprovalsList = newApprovalsList.filter(item => item.user_id)
+    // let arr = []
+    // newData = newData.filter((item,index) => {
+    //   if (approvalsList.indexOf(item.user_id) != -1) {
+    //     arr.push(item)
+    //     return item
+    //   }
+    // })
+
+    return newApprovalsList
+  }
 
   // 审批类型
   approveTypeChange = (e) => {
@@ -136,14 +149,16 @@ export default class ConfigureStepTypeTwo extends Component {
   render() {
     const { itemValue, itemKey, projectDetailInfoData = {} } = this.props
     const { data, board_id, org_id } = projectDetailInfoData
+    const new_data = JSON.parse(JSON.stringify(data))
     const { approve_type, approve_value } = itemValue
     let approvalsList = this.filterAssignees()
+    // const { approvalsList = [] } = this.state
     return (
       <div>
         {/* 审批类型 */}
         <div className={indexStyles.approve_content} onClick={(e) => { e && e.stopPropagation() }}>
-          <span style={{ marginRight: '20px',flexShrink:0 }} className={globalStyles.authTheme}>&#xe616; 审批类型 :</span>
-          <Radio.Group style={{ display: 'flex', alignItems: 'center', position: 'relative', flexShrink: 0 }} value={approve_type} onChange={(e) => {this.approveTypeChange(e)}}>
+          <span style={{ marginRight: '20px', flexShrink: 0 }} className={globalStyles.authTheme}>&#xe616; 审批类型 :</span>
+          <Radio.Group style={{ display: 'flex', alignItems: 'center', position: 'relative', flexShrink: 0 }} value={approve_type} onChange={(e) => { this.approveTypeChange(e) }}>
             <Radio value="1">串签</Radio>
             <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title="依照审批人员的排序依次审批"><span className={`${globalStyles.authTheme} ${indexStyles.approve_tips}`}>&#xe845;</span></Tooltip>
             <Radio value="2">并签</Radio>
@@ -164,7 +179,7 @@ export default class ConfigureStepTypeTwo extends Component {
                     overlayStyle={{ maxWidth: '200px' }}
                     overlay={
                       <MenuSearchPartner
-                        listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={approvalsList}
+                        listData={new_data} keyCode={'user_id'} searchName={'name'} currentSelect={approvalsList}
                         board_id={board_id}
                         invitationType='1'
                         invitationId={board_id}
@@ -180,18 +195,18 @@ export default class ConfigureStepTypeTwo extends Component {
                   </Dropdown>
                 </div>
               ) : (
-                  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', flexWrap: 'wrap',lineHeight: '22px' }}>
+                  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', flexWrap: 'wrap', lineHeight: '22px' }}>
                     {approvalsList.map((value, index) => {
                       const { avatar, name, user_name, user_id } = value
                       return (
                         <div style={{ display: 'flex', alignItems: 'center' }} key={user_id}>
                           <div className={`${indexStyles.user_item}`} style={{ position: 'relative', textAlign: 'center', marginBottom: '8px' }} key={user_id}>
                             {avatar ? (
-                              <Tooltip overlayStyle={{minWidth: '62px'}} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
+                              <Tooltip overlayStyle={{ minWidth: '62px' }} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
                                 <img className={indexStyles.img_hover} style={{ width: '32px', height: '32px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
                               </Tooltip>
                             ) : (
-                                <Tooltip overlayStyle={{minWidth: '62px'}} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
+                                <Tooltip overlayStyle={{ minWidth: '62px' }} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
                                   <div className={indexStyles.default_user_hover} style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
                                     <Icon type={'user'} style={{ fontSize: 14, color: '#8c8c8c' }} />
                                   </div>
@@ -210,7 +225,7 @@ export default class ConfigureStepTypeTwo extends Component {
                       overlayStyle={{ maxWidth: '200px' }}
                       overlay={
                         <MenuSearchPartner
-                          listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={approvalsList}
+                          listData={new_data} keyCode={'user_id'} searchName={'name'} currentSelect={approvalsList}
                           board_id={board_id}
                           invitationType='1'
                           invitationId={board_id}
@@ -232,7 +247,7 @@ export default class ConfigureStepTypeTwo extends Component {
         </div>
         {/* 更多选项 */}
         <div>
-          <MoreOptionsComponent itemKey={itemKey} itemValue={itemValue} updateConfigureProcess={this.updateConfigureProcess} data={data}/>
+          <MoreOptionsComponent itemKey={itemKey} itemValue={itemValue} updateConfigureProcess={this.updateConfigureProcess} data={data} />
         </div>
       </div>
     )

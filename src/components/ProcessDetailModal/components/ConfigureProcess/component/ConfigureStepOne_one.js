@@ -24,7 +24,7 @@ export default class ConfigureStepOne_one extends Component {
     super(props)
     this.state = {
       popoverVisible: null,
-      form_item: isObjectValueEqual(temp_item, props.itemValue) ? temp_item : props.itemValue
+      form_item: compareACoupleOfObjects(temp_item, props.itemValue) ? temp_item : props.itemValue
     }
   }
 
@@ -76,6 +76,10 @@ export default class ConfigureStepOne_one extends Component {
     this.updateEdit({ value: e.target.value }, 'is_required')
   }
   verificationRuleChange = (value) => {
+    if (value != '') {
+      this.updateEdit({ value: '' }, 'val_min_length')
+      this.updateEdit({ value: '' }, 'val_max_length')
+    }
     this.updateEdit({ value: value }, 'verification_rule')
   }
 
@@ -122,6 +126,9 @@ export default class ConfigureStepOne_one extends Component {
         form_item: JSON.parse(JSON.stringify(itemValue))
       },() => {
         this.onVisibleChange(false)
+        this.setState({
+          is_click_confirm_btn: false
+        })
       })
     }
   }
@@ -130,7 +137,7 @@ export default class ConfigureStepOne_one extends Component {
     const { itemValue } = this.props
     const { title, prompt_content, verification_rule, is_required, val_min_length, val_max_length } = itemValue
     const { form_item } = this.state
-    let disabledFlag = isObjectValueEqual(form_item, itemValue)
+    let disabledFlag = compareACoupleOfObjects(form_item, itemValue)
     return (
       <div key={itemValue} className={indexStyles.popover_content}>
         <div className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>

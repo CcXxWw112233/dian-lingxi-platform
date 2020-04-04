@@ -39,12 +39,11 @@ export default class DuplicateAndReportPerson extends Component {
     const { data = [] } = this.props
     const { designatedPersonnelList = [] } = this.state
     let newData = [...data]
-    newData = newData.filter(item => {
-      if (designatedPersonnelList.indexOf(item.user_id) != -1) {
-        return item
-      }
+    let newTransCopyPersonnelList= designatedPersonnelList && designatedPersonnelList.map(item => {
+      return newData.find(item2 => item2.user_id == item) || {}
     })
-    return newData
+    newTransCopyPersonnelList = newTransCopyPersonnelList.filter(item => item.user_id)  
+    return newTransCopyPersonnelList
   }
 
   //修改通知人的回调 S
@@ -119,7 +118,7 @@ export default class DuplicateAndReportPerson extends Component {
     const { designatedPersonnelList = [], assignee_type } = this.state
     let newDesignatedPersonnelList = [...designatedPersonnelList]
     await this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('recipients', newDesignatedPersonnelList.join(','))
-    await this.props.updateParentsAssigneesOrCopyPersonnel && this.props.updateParentsAssigneesOrCopyPersonnel({ value: newDesignatedPersonnelList.join(',') }, 'transCopyPersonnelList')
+    await this.props.updateParentsAssigneesOrCopyPersonnel && this.props.updateParentsAssigneesOrCopyPersonnel({ value: newDesignatedPersonnelList }, 'transCopyPersonnelList')
     await this.props.onVisibleChange && this.props.onVisibleChange(false, this.updateState)
 
   }

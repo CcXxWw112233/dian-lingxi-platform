@@ -35,7 +35,16 @@ export default class CompleteDeadlineContent extends Component {
 
   // 完成期限
   deadlineValueChange = (value) => {
+    if (isNaN(value)) {
+      this.setState({
+        deadlineValue: ''
+      })
+      return
+    }
     if (value == '') {
+      this.setState({
+        deadlineValue: ''
+      })
       return
     }
     this.setState({
@@ -71,17 +80,35 @@ export default class CompleteDeadlineContent extends Component {
     const { deadline_time_type, deadline_value, deadline_type } = itemValue
     const { deadlineType, deadlineTimeType, deadlineValue } = this.state
     let flag = false
-    if (deadline_type == '1' || deadline_type == '') {
+    if (deadlineType == '1' || deadlineType == '') {
       if (deadlineType != deadline_type) {
         flag = true
       } else {
         flag = false
       }
-    } else if (deadline_type == '2') {
-      if ((deadlineType != deadline_type) || (deadlineTimeType != deadline_time_type) || (deadlineValue != deadline_value)) {
+    } else if (deadlineType == '2') {
+      if (deadlineValue && deadlineValue != deadline_value) {
         flag = true
       } else {
         flag = false
+      }
+      if (!flag) {
+        return
+      } else {
+        if (deadlineType && deadlineType != deadline_type) {
+          flag = true
+        } else {
+          flag = false
+        } 
+      }
+      if (!flag) {
+        return
+      } else {
+        if (deadlineTimeType && deadlineTimeType != deadline_time_type) {
+          flag = true
+        } else {
+          flag = false
+        }
       }
     }
     return flag

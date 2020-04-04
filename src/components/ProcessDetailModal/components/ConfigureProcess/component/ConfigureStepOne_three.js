@@ -108,6 +108,9 @@ export default class ConfigureStepOne_three extends Component {
           form_item: JSON.parse(JSON.stringify(itemValue))
         },() => {
           this.onVisibleChange(false)
+          this.setState({
+            is_click_confirm_btn: false
+          })
         })
       }
     }
