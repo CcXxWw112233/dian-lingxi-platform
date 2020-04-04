@@ -17,7 +17,7 @@ const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
 export default class DateList extends Component {
 
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       add_lcb_modal_visible: false,
@@ -277,7 +277,8 @@ export default class DateList extends Component {
     return (
       <div>
         <div className={indexStyles.dateArea}
-          style={{ left: -target_scrollLeft, }}
+          id={'gantt_date_area'}
+        // style={{ left: -target_scrollLeft, }}
         >
           {gold_date_arr.map((value, key) => {
             const { date_top, date_inner = [] } = value
@@ -388,7 +389,7 @@ export default class DateList extends Component {
 }
 
 class DropMilestone extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       menu_oprate_visible: false

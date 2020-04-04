@@ -22,7 +22,7 @@ import GetRowGanttItemElse from './GetRowGanttItemElse'
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
 export default class GanttFace extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       timer: null,
@@ -145,27 +145,31 @@ export default class GanttFace extends Component {
       gantt_group_head.scrollTop = scrollTop
     }
     // this.handleScrollVertical({ scrollTop })
-    // this.handelScrollHorizontal({ scrollLeft, scrollWidth, clientWidth, })
+    const gantt_date_area = document.getElementById('gantt_date_area')
+    if (gantt_date_area) {
+      gantt_date_area.style.left = `-${scrollLeft}px`
+    }
+    this.handelScrollHorizontal({ scrollLeft, scrollWidth, clientWidth, })
   }
   // 处理上下滚动
   handleScrollVertical = ({ scrollTop }) => {
     const { group_view_type, gantt_board_id, target_scrollTop, dispatch } = this.props
-    if (target_scrollTop != scrollTop) {
-      // dispatch({
-      //   type: getEffectOrReducerByName('updateDatas'),
-      //   payload: {
-      //     target_scrollTop: scrollTop
-      //   }
-      // })
-      if (group_view_type == '1' && gantt_board_id == '0') {
-        dispatch({
-          type: getEffectOrReducerByName('updateDatas'),
-          payload: {
-            target_scrollTop_board_storage: scrollTop
-          }
-        })
-      }
+    // if (target_scrollTop != scrollTop) {
+    // dispatch({
+    //   type: getEffectOrReducerByName('updateDatas'),
+    //   payload: {
+    //     target_scrollTop: scrollTop
+    //   }
+    // })
+    if (group_view_type == '1' && gantt_board_id == '0') {
+      dispatch({
+        type: getEffectOrReducerByName('updateDatas'),
+        payload: {
+          target_scrollTop_board_storage: scrollTop
+        }
+      })
     }
+    // }
   }
   // 处理水平滚动
   handelScrollHorizontal = ({ scrollLeft, scrollWidth, clientWidth, }) => {
@@ -175,13 +179,6 @@ export default class GanttFace extends Component {
     if (target_scrollLeft == scrollLeft) {
       return
     }
-    console.log('sssssscroll', '水平', {
-      scrollLeft,
-      delX,
-      ceilWidth,
-      bool: scrollLeft < 3 * ceilWidth,
-
-    })
     if (searchTimer) {
       clearTimeout(searchTimer)
     }
@@ -206,12 +203,12 @@ export default class GanttFace extends Component {
         }, 50)
       })
     }
-    dispatch({
-      type: getEffectOrReducerByName('updateDatas'),
-      payload: {
-        target_scrollLeft: scrollLeft
-      }
-    })
+    // dispatch({
+    //   type: getEffectOrReducerByName('updateDatas'),
+    //   payload: {
+    //     target_scrollLeft: scrollLeft
+    //   }
+    // })
     this.setState({
       target_scrollLeft: scrollLeft
     })
