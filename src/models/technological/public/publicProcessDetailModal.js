@@ -6,7 +6,7 @@ import { MESSAGE_DURATION_TIME, FILES, FLOWS } from "../../../globalset/js/const
 import { getSubfixName } from '../../../utils/businessFunction'
 import QueryString from 'querystring'
 import { processEditDatasConstant, processEditDatasRecordsConstant, processDoingListMatch, processInfoMatch } from '../../../components/ProcessDetailModal/constant';
-import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete, rejectProcessTask, workflowEnd, workflowDelete, restartProcess, processFileUpload, deleteProcessFile, fileDownload, configurePorcessGuide } from "../../../services/technological/workFlow"
+import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete, rejectProcessTask, workflowEnd, workflowDelete, restartProcess, processFileUpload, deleteProcessFile, fileDownload, configurePorcessGuide, rebackProcessTask } from "../../../services/technological/workFlow"
 import {public_selectCurrentFlowTabsStatus} from './select'
 
 let dispatchEvent = null
@@ -467,6 +467,27 @@ export default {
         })
       } else {
 
+      }
+    },
+
+    // 撤回任务
+    * rebackProcessTask({ payload }, { call, put }) {
+      const { flow_instance_id, flow_node_instance_id, board_id, calback } = payload
+      let res = yield call(rebackProcessTask, {flow_instance_id, flow_node_instance_id})
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('撤回步骤成功',MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getProcessListByType',
+          payload: {
+            status: '1',
+            board_id
+          }
+        })
+        if (calback && typeof calback == 'function') calback()
+      } else {
+        message.warn(res.message)
       }
     }
   },

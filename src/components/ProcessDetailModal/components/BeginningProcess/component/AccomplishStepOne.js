@@ -45,6 +45,23 @@ export default class AccomplishStepOne extends Component {
     })
   }
 
+  // 撤回步骤
+  handleRebackProcessNodes = () => {
+    const { itemValue: { id: flow_node_instance_id }, processInfo: { id: flow_instance_id, board_id }, dispatch } = this.props
+    dispatch({
+      type: 'publicProcessDetailModal/rebackProcessTask',
+      payload: {
+        flow_node_instance_id,
+        flow_instance_id,
+        board_id,
+        calback: () => {
+          this.updateCorrespondingPrcodessStepWithNodeContent('status','1')
+          this.updateCorrespondingPrcodessStepWithNodeContent('is_confirm','0')
+        }
+      }
+    })
+  }
+
   // 渲染不同状态时步骤的样式
   renderDiffStatusStepStyles = () => {
     const { itemValue, processInfo: { status: parentStatus } } = this.props
@@ -134,6 +151,11 @@ export default class AccomplishStepOne extends Component {
               <div>{description}</div>
             </div>
           )
+        }
+        {
+          <div className={indexStyles.reback_btn}>
+            <Button onClick={this.handleRebackProcessNodes}>撤回</Button>
+          </div>
         }
       </div>
     )
