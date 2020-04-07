@@ -42,69 +42,52 @@ export default {
     setup({ dispatch, history }) {
       history.listen((location) => {
         if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
-          const param = QueryString.parse(location.search.replace('?', ''))
           dispatchEvent = dispatch
-          board_id = param.board_id
-          appsSelectKey = param.appsSelectKey
-          flow_id = param.flow_id
-          if (appsSelectKey == '2') {
-            dispatch({
-              type: 'updateDatas',
-              payload: {
-                //流程
-                processPageFlagStep: '1', //"1""2""3""4"分别对应新建，编辑，启动，详情界面,默认1
-                templateInfo: {}, //所选择的流程模板的信息数据
-                processInfo: {}, //所选中的流程的信息
-                currentProcessInstanceId: '', // 当前查看的流程实例名称
-                currentTempleteIdentifyId: '', // 当前查看的模板编号凭证ID
-                currentFlowTabsStatus: '1',
-                process_detail_modal_visible: false,
-                processDoingList: [], // 进行中的流程
-                processStopedList: [], // 已中止的流程
-                processComepletedList: [], // 已完成的流程
-                processNotBeginningList: [], // 未开始的流程
-                processEditDatas:[],
-                not_show_create_node_guide: '1',
-                not_show_create_form_guide: '1',
-              }
-            })
-            if (board_id) {
-              dispatch({
-                type: 'getProcessTemplateList',
-                payload: {
-                  id: board_id,
-                  board_id
-                }
-              })
-              dispatch({
-                type: 'projectDetail/projectDetailInfo',
-                payload: {
-                  id: board_id
-                }
-              })
-            }
-            if (flow_id) {
-              dispatch({
-                type: 'getProcessInfoByUrl',
-                payload: {
-                  currentProcessInstanceId: flow_id
-                }
-              })
-              // dispatch({
-              //   type: 'updateDatas',
-              //   payload: {
-              //     process_detail_modal_visible: true,
-              //     currentProcessInstanceId: flow_id
-              //   }
-              // })
-            }
-          }
-
         }
       })
     },
   },
   effects: {
+    // 初始化数据
+    * initData({ payload }, { call, put }) {
+      const { board_id, flow_id } = payload
+      // yield put({
+      //   type: 'updateDatas',
+      //   payload: {
+      //     //流程
+      //     templateInfo: {}, //所选择的流程模板的信息数据
+      //     processInfo: {}, //所选中的流程的信息
+      //     currentProcessInstanceId: '', // 当前查看的流程实例名称
+      //     currentTempleteIdentifyId: '', // 当前查看的模板编号凭证ID
+      //     currentFlowTabsStatus: '1',
+      //     processDoingList: [], // 进行中的流程
+      //     processStopedList: [], // 已中止的流程
+      //     processComepletedList: [], // 已完成的流程
+      //     processNotBeginningList: [], // 未开始的流程
+      //     processEditDatas:[],
+      //     not_show_create_node_guide: '1',
+      //     not_show_create_form_guide: '1',
+      //   }
+      // })
+      if (board_id) {
+        yield put({
+          type: 'getProcessTemplateList',
+          payload: {
+            id: board_id,
+            board_id
+          }
+        })
+      }
+      if (flow_id) {
+        yield put({
+          type: 'getProcessInfoByUrl',
+          payload: {
+            currentProcessInstanceId: flow_id
+          }
+        })
+      }
+    },
+
     // 获取流程模板列表
     * getProcessTemplateList({ payload }, { call, put }) {
       const { id, board_id, calback } = payload

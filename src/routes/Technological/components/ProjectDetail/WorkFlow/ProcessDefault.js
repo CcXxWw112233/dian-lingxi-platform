@@ -6,6 +6,8 @@ import { Tabs } from 'antd';
 import { connect } from 'dva'
 import ProcessDetailModal from '../../../../../components/ProcessDetailModal'
 import { showDeleteTempleteConfirm } from '../../../../../components/ProcessDetailModal/components/handleOperateModal';
+import { withRouter } from 'react-router-dom'
+import QueryString from 'querystring'
 
 const changeClientHeight = () => {
   const clientHeight = document.documentElement.clientHeight;//获取页面可见高度
@@ -13,7 +15,7 @@ const changeClientHeight = () => {
 }
 const TabPane = Tabs.TabPane
 @connect(mapStateToProps)
-export default class ProcessDefault extends Component {
+class ProcessDefault extends Component {
   state = {
     clientHeight: changeClientHeight()
   }
@@ -21,8 +23,21 @@ export default class ProcessDefault extends Component {
     super()
     this.resizeTTY.bind(this)
   }
+
+  // 初始化数据
+  initData = () => {
+    const { dispatch, projectDetailInfoData: { board_id } } = this.props
+    dispatch({
+      type: 'publicProcessDetailModal/initData',
+      payload: {
+        board_id,
+      }
+    })
+  }
+
   componentDidMount() {
     window.addEventListener('resize', this.resizeTTY)
+    this.initData()
   }
   componentWillUnmount() {
     window.removeEventListener('resize', this.resizeTTY)
@@ -170,6 +185,8 @@ export default class ProcessDefault extends Component {
     )
   }
 }
+
+export default withRouter(ProcessDefault)
 
 function mapStateToProps({
   publicProcessDetailModal: {

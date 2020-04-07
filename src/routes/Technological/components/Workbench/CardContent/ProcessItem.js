@@ -50,6 +50,13 @@ export default class ProcessItem extends React.Component {
     })
 
     await this.props.routingJump(`/technological/projectDetail?board_id=${obj.board}&appsSelectKey=2&flow_id=${obj.flow}`)
+    await this.props.dispatch({
+      type: 'publicProcessDetailModal/initData',
+      payload: {
+        flow_id: obj.flow,
+        board_id: obj.board_id
+      }
+    })
   }
   async click(obj) {
     //用于缓存做权限调用

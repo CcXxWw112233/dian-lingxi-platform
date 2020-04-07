@@ -5,7 +5,6 @@ import NameChangeInput from '@/components/NameChangeInput'
 import { Radio, Button, Tooltip } from 'antd'
 import ConfigureStepTypeOne from './component/ConfigureStepTypeOne'
 import ConfigureStepTypeTwo from './component/ConfigureStepTypeTwo'
-import ConfigureStepTypeThree from './component/ConfigureStepTypeThree'
 import { processEditDatasItemOneConstant, processEditDatasItemTwoConstant, processEditDatasItemThreeConstant } from '../../constant'
 import { connect } from 'dva'
 @connect(mapStateToProps)
@@ -17,7 +16,7 @@ export default class ConfigureProcess extends Component {
 
   // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
   updateCorrespondingPrcodessStepWithNodeContent = (data, value) => {
-    const { itemValue, processEditDatas = [], itemKey, dispatch } = this.props
+    const { processEditDatas = [], itemKey, dispatch } = this.props
     let newProcessEditDatas = [...processEditDatas]
     newProcessEditDatas[itemKey][data] = value
     dispatch({
@@ -31,7 +30,7 @@ export default class ConfigureProcess extends Component {
   // 外部点击事件是否取消节点名称输入框
   handleCancelNodeName = (e) => {
     e && e.stopPropagation()
-    const { itemValue, itemKey, processEditDatas = [] } = this.props
+    const { itemValue } = this.props
     const { name } = itemValue
     const { localName } = this.state
     if (localName == name) { // 表示如果当前的名称没有修改的话就不出现输入框
@@ -67,12 +66,6 @@ export default class ConfigureProcess extends Component {
   handleConfirmButton = (e) => {
     e && e.stopPropagation()
     this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '1')
-    // this.props.dispatch({
-    //   type: 'publicProcessDetailModal/updateDatas',
-    //   payload: {
-    //     processPageFlagStep: '1'
-    //   }
-    // })
   }
 
   // 删除的点击事件
@@ -344,9 +337,6 @@ export default class ConfigureProcess extends Component {
         break;
       case '2': // 表示审批
         container = <ConfigureStepTypeTwo itemValue={itemValue} itemKey={itemKey} />
-        break
-      case '3': // 表示抄送
-        // container = <ConfigureStepTypeThree itemValue={itemValue} itemKey={itemKey} />
         break
       default:
         container = <div></div>
