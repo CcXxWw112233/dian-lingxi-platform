@@ -8,9 +8,8 @@ import BoardPlan from './BoardPlan/index'
 import InvestmentMaps from './InvestmentMaps/index'
 import XczNews from './XczNews/index'
 import Zhichengshe from './Zhichengshe/index'
-// import LingxiIm, { Im } from 'lingxi-im'
+import Workglows from './Workflows'
 import { isPaymentOrgUser } from "@/utils/businessFunction"
-const { LingxiIm } = global.constants
 class WorkbenchPage extends Component {
     constructor(props) {
         // console.log("WorkbenchPage组件初始化");
@@ -84,8 +83,6 @@ class WorkbenchPage extends Component {
         }
     }
 
-
-
     render() {
         const { workbenchBoxContentWapperModalStyle, currentSelectedWorkbenchBox, simplemodeCurrentProject } = this.props;
         const { code: select_box_code } = currentSelectedWorkbenchBox
@@ -102,7 +99,8 @@ class WorkbenchPage extends Component {
             <div className={indexStyles.workbenchBoxContentModalContainer}>
                 <MiniBoxNavigations currentSelectedWorkbenchBox={currentSelectedWorkbenchBox} />
                 <div id='container_workbenchBoxContent' className={indexStyles.workbenchBoxContentModalWapper} style={workbenchBoxContentWapperModalStyle ? workbenchBoxContentWapperModalStyle : {}}>
-                    <div className={indexStyles.workbenchBoxContentWapper}>
+                    <div className={indexStyles.workbenchBoxContentWapper}
+                        style={{ background: select_box_code == 'mine:flows' ? 'rgba(245, 245, 245, 1)' : '' }}>
 
                         {
                             'board:plans' == select_box_code &&
@@ -126,13 +124,17 @@ class WorkbenchPage extends Component {
                         }
 
                         {
-                            isPaymentUser && 'regulations' == select_box_code &&
+                            isPaymentUser && 'cases' == select_box_code &&
                             <XczNews {...this.props} />
                         }
                         {
-                            isPaymentUser && 'cases' == select_box_code && <Zhichengshe {...this.props} />
+                            isPaymentUser && 'regulations' == select_box_code &&
+                            <Zhichengshe {...this.props} />
                         }
-
+                        {
+                            'mine:flows' == select_box_code &&
+                            <Workglows />
+                        }
                     </div>
                 </div>
             </div>
