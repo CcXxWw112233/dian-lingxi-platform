@@ -16,12 +16,6 @@ class WorkbenchPage extends Component {
         // console.log("WorkbenchPage组件初始化");
         super(props);
         this.state = {
-            BoardPlanVisible: false,
-            BoardCommunicationVisible: false,
-            BoardFilesVisible: false,
-            InvestmentMapsVisible: false,
-            XczNewsVisible: false,
-            ZhichengsheVisible: false,
         }
     }
     componentWillMount() {
@@ -83,113 +77,10 @@ class WorkbenchPage extends Component {
                     }
                 });
             }
+            this.setState({
+                currentSelectedWorkbenchBox
+            })
 
-            switch (currentSelectedWorkbenchBox.code) {
-                case 'board:archives': {
-                    this.setState({
-                        BoardCommunicationVisible: false,
-                        BoardFilesVisible: false,
-                        BoardPlanVisible: false,
-                        InvestmentMapsVisible: false,
-                        XczNewsVisible: false,
-                        ZhichengsheVisible: false,
-                    });
-                }
-                    break;
-                case 'board:plans': {
-                    this.setState({
-                        BoardCommunicationVisible: false,
-                        BoardFilesVisible: false,
-                        InvestmentMapsVisible: false,
-                        XczNewsVisible: false,
-                        ZhichengsheVisible: false,
-                    }, () => {
-                        setTimeout(() => {
-                            this.setState({
-                                BoardPlanVisible: true,
-                            })
-                        }, 100)
-                    });
-                }
-                    break;
-                case 'board:chat': {
-                    this.setState({
-                        BoardCommunicationVisible: true,
-                        BoardFilesVisible: false,
-                        BoardPlanVisible: false,
-                        InvestmentMapsVisible: false,
-                        XczNewsVisible: false,
-                        ZhichengsheVisible: false,
-                    });
-                    const width = document.body.scrollWidth;
-                    let workbenchBoxContentWapperModalStyle = { width: (width - 400) + 'px' }
-                    dispatch({
-                        type: 'simplemode/updateDatas',
-                        payload: {
-                            chatImVisiable: true,
-                            workbenchBoxContentWapperModalStyle: workbenchBoxContentWapperModalStyle
-                        }
-                    });
-                    LingxiIm.show();
-
-                }
-                    break;
-                case 'board:files': {
-                    this.setState({
-                        BoardCommunicationVisible: false,
-                        BoardFilesVisible: true,
-                        BoardPlanVisible: false,
-                        InvestmentMapsVisible: false,
-                        XczNewsVisible: false,
-                        ZhichengsheVisible: false,
-                    });
-                }
-                    break;
-                case 'maps': {
-                    this.setState({
-                        BoardCommunicationVisible: false,
-                        BoardFilesVisible: false,
-                        BoardPlanVisible: false,
-                        InvestmentMapsVisible: true,
-                        XczNewsVisible: false,
-                        ZhichengsheVisible: false,
-                    })
-                }
-                    break;
-                case 'regulations': {
-                    this.setState({
-                        BoardCommunicationVisible: false,
-                        BoardFilesVisible: false,
-                        BoardPlanVisible: false,
-                        InvestmentMapsVisible: false,
-                        XczNewsVisible: true,
-                        ZhichengsheVisible: false,
-                    });
-                }
-                    break;
-                case 'cases': {
-                    this.setState({
-                        BoardCommunicationVisible: false,
-                        BoardFilesVisible: false,
-                        BoardPlanVisible: false,
-                        InvestmentMapsVisible: false,
-                        XczNewsVisible: false,
-                        ZhichengsheVisible: true,
-                    });
-                }
-                    break;
-                default: {
-                    this.setState({
-                        BoardCommunicationVisible: false,
-                        BoardFilesVisible: false,
-                        BoardPlanVisible: false,
-                        InvestmentMapsVisible: false,
-                        XczNewsVisible: false,
-                        ZhichengsheVisible: false,
-                    });
-                }
-
-            }
         }
     }
 
@@ -197,6 +88,7 @@ class WorkbenchPage extends Component {
 
     render() {
         const { workbenchBoxContentWapperModalStyle, currentSelectedWorkbenchBox, simplemodeCurrentProject } = this.props;
+        const { code: select_box_code } = currentSelectedWorkbenchBox
         let isPaymentUser = false;
         console.log("simplemodeCurrentProject", simplemodeCurrentProject);
         if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
@@ -206,7 +98,6 @@ class WorkbenchPage extends Component {
             isPaymentUser = isPaymentOrgUser();
         }
 
-        console.log("isPaymentUser1", isPaymentUser);
         return (
             <div className={indexStyles.workbenchBoxContentModalContainer}>
                 <MiniBoxNavigations currentSelectedWorkbenchBox={currentSelectedWorkbenchBox} />
@@ -214,32 +105,32 @@ class WorkbenchPage extends Component {
                     <div className={indexStyles.workbenchBoxContentWapper}>
 
                         {
-                            this.state.BoardPlanVisible &&
+                            'board:plans' == select_box_code &&
                             <BoardPlan />
                         }
 
 
                         {
-                            isPaymentUser && this.state.BoardCommunicationVisible &&
+                            isPaymentUser && 'board:chat' == select_box_code &&
                             <BoardCommunication />
                         }
 
                         {
-                            isPaymentUser && this.state.BoardFilesVisible &&
+                            isPaymentUser && 'board:files' == select_box_code &&
                             <BoardFiles />
                         }
 
                         {
-                            isPaymentUser && this.state.InvestmentMapsVisible &&
+                            isPaymentUser && 'maps' == select_box_code &&
                             <InvestmentMaps />
                         }
 
                         {
-                            isPaymentUser && this.state.XczNewsVisible &&
+                            isPaymentUser && 'regulations' == select_box_code &&
                             <XczNews {...this.props} />
                         }
                         {
-                            isPaymentUser && this.state.ZhichengsheVisible && <Zhichengshe {...this.props} />
+                            isPaymentUser && 'cases' == select_box_code && <Zhichengshe {...this.props} />
                         }
 
                     </div>
