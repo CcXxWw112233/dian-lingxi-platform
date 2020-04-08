@@ -4,7 +4,8 @@ import styles from './index.less'
 import { Tooltip, Button, Popconfirm } from 'antd'
 import { connect } from 'dva'
 import { checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
-import { PROJECT_FLOWS_FLOW_TEMPLATE } from '../../../../../globalset/js/constant'
+import { PROJECT_FLOWS_FLOW_TEMPLATE, PROJECT_FLOWS_FLOW_CREATE } from '../../../../../globalset/js/constant'
+import ProcessDetailModal from '../../../../../components/ProcessDetailModal'
 
 @connect(mapStateToProps)
 export default class Templates extends Component {
@@ -38,9 +39,59 @@ export default class Templates extends Component {
             }
         })
     }
-    deleteTemplate = (id) => {
-        debugger
+    // 新增模板点击事件
+    handleAddTemplate = () => {
+        const { dispatch } = this.props
+        dispatch({
+            type: 'publicProcessDetailModal/updateDatas',
+            payload: {
+                processPageFlagStep: '1',
+                process_detail_modal_visible: true
+            }
+        })
     }
+    // 编辑模板的点击事件
+    handleEditTemplete = (item) => {
+        const { id, template_no } = item
+        const { dispatch } = this.props
+        dispatch({
+            type: 'publicProcessDetailModal/getTemplateInfo',
+            payload: {
+                id,
+                processPageFlagStep: '2',
+                currentTempleteIdentifyId: template_no,
+                process_detail_modal_visible: true
+            }
+        })
+    }
+
+    // 启动流程的点击事件
+    handleStartProcess = (item) => {
+        const { dispatch } = this.props
+        const { id } = item
+        dispatch({
+            type: 'publicProcessDetailModal/getTemplateInfo',
+            payload: {
+                id,
+                processPageFlagStep: '3',
+                process_detail_modal_visible: true
+            }
+        })
+    }
+
+    // 删除流程模板的点击事件
+    handleDelteTemplete = (item) => {
+        const { id, board_id } = item
+        const { dispatch } = this.props
+        dispatch({
+            type: 'publicProcessDetailModal/deleteProcessTemplete',
+            payload: {
+                id,
+                board_id
+            }
+        })
+    }
+
     renderTemplateList = () => {
         const { processTemplateList = [] } = this.props
         return (
@@ -65,13 +116,21 @@ export default class Templates extends Component {
                             </div>
                         </div>
                         <div className={styles.template_item_bott}>
-                            <Tooltip title={'开始流程'}>
-                                <div className={`${globalStyles.authTheme} ${styles.template_operate}`}>&#xe796;</div>
-                            </Tooltip>
+                            {
+                                checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, board_id) && (
+                                    <Tooltip title={'开始流程'}>
+                                        <div className={`${globalStyles.authTheme} ${styles.template_operate}`}
+                                            onClick={() => this.handleStartProcess(value)}>&#xe796;</div>
+                                    </Tooltip>
+                                )
+                            }
+
                             {
                                 checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE, board_id) && (
                                     <Tooltip title={'编辑模板'}>
-                                        <div className={`${globalStyles.authTheme} ${styles.template_operate} ${styles.template_operate_split}`}>&#xe7e1;</div>
+                                        <div className={`${globalStyles.authTheme} ${styles.template_operate} ${styles.template_operate_split}`}
+                                            onClick={() => this.handleEditTemplete(value)}
+                                        >&#xe7e1;</div>
                                     </Tooltip>
                                 )
                             }
@@ -80,7 +139,7 @@ export default class Templates extends Component {
                                 checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE, board_id) && (
                                     <Popconfirm
                                         title="确认删除该模板？"
-                                        onConfirm={() => this.deleteTemplate(id)}
+                                        onConfirm={() => this.handleDelteTemplete(value)}
                                         okText="确认"
                                         cancelText="取消"
                                     >
@@ -91,7 +150,7 @@ export default class Templates extends Component {
                                 )
                             }
                         </div>
-                    </div>
+                    </div >
                 )
             })
         )
@@ -102,18 +161,25 @@ export default class Templates extends Component {
                 <div className={`${globalStyles.authTheme} ${styles.tempalte_nodata_logo}`} >&#xe703;</div>
                 <div className={styles.tempalte_nodata_dec}>还没有模版，赶快新建一个吧</div>
                 <div className={styles.tempalte_nodata_operate}>
-                    <Button type="primary" style={{ width: 182 }} ghost>新建模板</Button>
+                    <Button type="primary" style={{ width: 182 }} ghost onClick={this.handleAddTemplate}>新建模板</Button>
                 </div>
             </div>
         )
     }
+    request_flows_templates_params = () => {
+        const { board_id } = this.props.simplemodeCurrentProject
+        return {
+            request_board_id: board_id || '0',
+            _organization_id: localStorage.getItem('OrganizationId')
+        }
+    }
     render() {
-        const { processTemplateList = [] } = this.props
+        const { processTemplateList = [], process_detail_modal_visible } = this.props
         return (
             <>
                 <div className={styles.templates_top}>
                     <div className={`${styles.templates_top_title}`}>流程模板</div>
-                    <div className={`${globalStyles.authTheme} ${styles.templates_top_add}`}>&#xe8fe;</div>
+                    <div className={`${globalStyles.authTheme} ${styles.templates_top_add}`} onClick={this.handleAddTemplate}>&#xe8fe;</div>
                 </div>
                 <div className={`${styles.templates_contain} ${globalStyles.global_vertical_scrollbar}`}>
                     {
@@ -124,6 +190,11 @@ export default class Templates extends Component {
                             )
                     }
                 </div>
+                {
+                    process_detail_modal_visible && (
+                        <ProcessDetailModal process_detail_modal_visible={process_detail_modal_visible} request_template_flows_params={this.request_flows_templates_params()} />
+                    )
+                }
             </>
         )
     }
@@ -140,11 +211,15 @@ function mapStateToProps({
         datas: {
             currentSelectOrganize = {}
         }
+    },
+    publicProcessDetailModal: {
+        process_detail_modal_visible
     }
 }) {
     return {
         processTemplateList,
         simplemodeCurrentProject,
-        currentSelectOrganize
+        currentSelectOrganize,
+        process_detail_modal_visible
     }
 }
