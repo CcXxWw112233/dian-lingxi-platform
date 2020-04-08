@@ -302,8 +302,8 @@ export default {
 
     // 获取流程列表，类型进行中 已终止 已完成
     * getProcessListByType({ payload }, { call, put }) {
-      const { status, board_id } = payload
-      const res = yield call(getProcessListByType, { status, board_id })
+      const { status, board_id, _organization_id } = payload
+      const res = yield call(getProcessListByType, { status, board_id, _organization_id })
       let listName
       switch (status) {
         case '1':
