@@ -305,11 +305,12 @@ export default class BeginningStepTwo extends Component {
 
   // 判断是否有撤回按钮
   whetherIsHasRebackNodesBtn = () => {
-    const { itemValue } = this.props
-    const { assignees = [] } = itemValue
+    // const { itemValue } = this.props
+    // const { assignees = [] } = itemValue
+    const { transPrincipalList = [] } = this.state
     const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     let flag = false
-    let newAssignees = [...assignees]
+    let newAssignees = [...transPrincipalList]
     newAssignees.find(item => {
       if (item.id == id && item.processed == '2') { // 找到当前的 并且已经审批完成的时候
         flag = true

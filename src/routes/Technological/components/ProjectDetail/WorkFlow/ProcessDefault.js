@@ -25,20 +25,41 @@ class ProcessDefault extends Component {
   }
 
   // 初始化数据
-  initData = () => {
-    const { dispatch, projectDetailInfoData: { board_id } } = this.props
+  initData = (props) => {
+    const { dispatch, projectDetailInfoData: { board_id } } = props
     dispatch({
-      type: 'publicProcessDetailModal/initData',
+      type: 'publicProcessDetailModal/getProcessTemplateList',
       payload: {
-        board_id,
+        id: board_id,
+        board_id: board_id
       }
     })
   }
 
   componentDidMount() {
     window.addEventListener('resize', this.resizeTTY)
-    this.initData()
+    this.initData(this.props)
   }
+
+  componentWillReceiveProps(nextProps) {
+    const { projectDetailInfoData: { board_id: oldBoardId } } = this.props
+    const { projectDetailInfoData: { board_id } } = nextProps
+    if (board_id && oldBoardId) {
+      if (board_id != oldBoardId) {
+        this.initData(nextProps)
+        return
+        this.props.dispatch({
+          type: 'publicProcessDetailModal/initData',
+          payload: {
+            calback: () => {
+              setTimeout(() => { this.initData(nextProps) }, 200)
+            }
+          }
+        })
+      }
+    }
+  }
+
   componentWillUnmount() {
     window.removeEventListener('resize', this.resizeTTY)
   }
