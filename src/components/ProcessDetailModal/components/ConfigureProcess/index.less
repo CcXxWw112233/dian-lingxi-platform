@@ -6,6 +6,36 @@
   }
 }
 
+.delet_node_icon {
+  width:28px;
+  height:28px;
+  background:rgba(255,255,255,1);
+  box-shadow:0px 0px 8px 1px rgba(0,0,0,0.15);
+  position: absolute;
+  right: -12px;
+  top: -12px;
+  z-index: 1;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  > span {
+    // color: #FF7875;
+    font-size: 20px;
+  }
+}
+
+.delet_node_icon:hover span{
+  color: #FF7875;
+}
+
+.disabled_node_icon {
+  cursor: not-allowed;
+}
+
+
 .configureProcessOut_1 {
   position: relative;
   .popover_card {

@@ -38,6 +38,29 @@ export default class AccomplishStepOne extends Component {
     })
   }
 
+    /**
+   * 判断是否有撤回按钮
+   * @returns {Boolean} true 表示显示 false表示不能显示
+   */
+  whetherShowRebackButton = () => {
+    const { itemValue } = this.props
+    const { assignee_type, assignees } = itemValue
+    const { transPrincipalList = [] } = this.props
+    const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    let flag = false
+    if (assignee_type == '2') { // 表示只有在指定人员的情况下才会有判断情况
+      let newAssignees = [...transPrincipalList]
+      newAssignees.find(item => {
+        if (item.id == id) {
+          flag = true
+        }
+      })
+    } else if (assignee_type == '1') {
+      flag = true
+    }
+    return flag
+  }
+
   handleSpreadArrow = (e) => {
     e && e.stopPropagation()
     this.setState({
@@ -153,9 +176,11 @@ export default class AccomplishStepOne extends Component {
           )
         }
         {
-          <div className={indexStyles.reback_btn}>
-            <Button onClick={this.handleRebackProcessNodes}>撤回</Button>
-          </div>
+          this.whetherShowRebackButton() && (
+            <div className={indexStyles.reback_btn}>
+              <Button onClick={this.handleRebackProcessNodes}>撤回</Button>
+            </div>
+          )
         }
       </div>
     )

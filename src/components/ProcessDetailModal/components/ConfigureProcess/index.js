@@ -7,11 +7,19 @@ import ConfigureStepTypeOne from './component/ConfigureStepTypeOne'
 import ConfigureStepTypeTwo from './component/ConfigureStepTypeTwo'
 import { processEditDatasItemOneConstant, processEditDatasItemTwoConstant, processEditDatasItemThreeConstant } from '../../constant'
 import { connect } from 'dva'
+import { isArrayEqual, isObjectValueEqual } from '../../../../utils/util'
 @connect(mapStateToProps)
 export default class ConfigureProcess extends Component {
 
-  state = {
-    localName: '', // 当前节点步骤的名称
+  constructor(props) {
+    super(props)
+    const { processPageFlagStep, processEditDatas = [] } = props
+    let currentEditNodeItem = (processEditDatas && processEditDatas.length) && processEditDatas.filter(item => item.is_edit == '0')[0] || {}
+    this.state = {
+      localName: '', // 当前节点步骤的名称
+      currentEditNodeItem: processPageFlagStep == '2' ? currentEditNodeItem : {},
+      isDisabled: true // 是否禁用取消按钮 false 表示不禁用 true 表示禁用 ==> 有变化才进行取消 没有变化不取消
+    }
   }
 
   // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
@@ -25,6 +33,57 @@ export default class ConfigureProcess extends Component {
         processEditDatas: newProcessEditDatas,
       }
     })
+  }
+
+  // 维护更新数据
+  handleServiceData = (props) => {
+    const { itemValue, templateInfo: { nodes = [] }, itemKey, processPageFlagStep, processEditDatas = [] } = props
+    const { currentEditNodeItem = {} } = this.state
+    if (processPageFlagStep == '2' && ((nodes && nodes.length) && nodes.length  == (processEditDatas && processEditDatas.length) && processEditDatas.length)) { // 表示是进去编辑的时候 并且节点长度相等的时候, 如果不相等 那么就不比较 表示进行了删除或者添加 
+      let newStateItemValue = JSON.parse(JSON.stringify(currentEditNodeItem || {}))
+      let newModelItemValue = JSON.parse(JSON.stringify(nodes[itemKey] || {}))
+      newStateItemValue['forms'] = newStateItemValue['forms'] && newStateItemValue['forms'].map(item => {
+        if (item.is_click_currentTextForm == false || item.is_click_currentTextForm) {
+          let new_item = { ...item }
+          delete new_item.is_click_currentTextForm
+          return new_item
+        } else {
+          let new_item = { ...item }
+          return new_item
+        }
+      })
+      newModelItemValue['forms'] = newModelItemValue['forms'] && newModelItemValue['forms'].map(item => {
+        if (item.is_click_currentTextForm == false || item.is_click_currentTextForm) {
+          let new_item = { ...item }
+          delete new_item.is_click_currentTextForm
+          return new_item
+        } else {
+          let new_item = { ...item }
+          return new_item
+        }
+      })
+      newStateItemValue.is_edit ? delete newStateItemValue.is_edit : ''
+      newStateItemValue.is_click_node_name == false || newStateItemValue.is_click_node_name ? delete newStateItemValue.is_click_node_name : ''
+      newModelItemValue.is_edit ? delete newModelItemValue.is_edit : ''
+      newModelItemValue.is_click_node_name == false || newModelItemValue.is_click_node_name ? delete newModelItemValue.is_click_node_name : ''
+      if (isObjectValueEqual(newStateItemValue, newModelItemValue)) { // 表示没有变化
+        this.setState({
+          isDisabled: true
+        })
+      } else {
+        this.setState({
+          isDisabled: false
+        })
+      }
+    } else {
+      this.setState({
+        isDisabled: false
+      })
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.handleServiceData(nextProps)
   }
 
   // 外部点击事件是否取消节点名称输入框
@@ -76,7 +135,6 @@ export default class ConfigureProcess extends Component {
     if (processEditDatas.length) {
       newProcessEditDatas = JSON.parse(JSON.stringify(processEditDatas))
       newProcessEditDatas.splice(itemKey, 1)
-
     }
     dispatch({
       type: 'publicProcessDetailModal/updateDatas',
@@ -85,6 +143,74 @@ export default class ConfigureProcess extends Component {
         processCurrentEditStep: processCurrentEditStep >= 1 ? processCurrentEditStep - 1 : 0,
       }
     })
+  }
+
+  // 编辑中的删除icon点击事件
+  handleEditDeleteButton = () => {
+    const { templateInfo = {}, templateInfo: { nodes = [] }, itemKey, processEditDatas = [], dispatch, processCurrentEditStep } = this.props
+    let newNodes = [...nodes]
+    let newProcessEditDatas = null
+    if (processEditDatas.length) {
+      newProcessEditDatas = JSON.parse(JSON.stringify(processEditDatas))
+      newProcessEditDatas.splice(itemKey, 1)
+    }
+    dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        templateInfo: { ...templateInfo, nodes: newProcessEditDatas },
+        processEditDatas: newProcessEditDatas,
+        processCurrentEditStep: processCurrentEditStep >= 1 ? processCurrentEditStep - 1 : 0,
+      }
+    })
+  }
+
+  /**
+   * 取消逻辑维护
+   * 1. 如果是配置 那么取消就直接是删除
+   * 2. 如果是编辑 ==> 如果是取消的已经有ID 的元素 那么就是修改当前的这个
+   *  ==> 如果说两份数据长度一样 那么取消也是修改当前的
+   *  ==> 如果说长度不一样 表示进行了添加节点, 那么就应该是截取
+   */
+  handleCancleEditContent = (e) => {
+    e && e.stopPropagation()
+    const { templateInfo: { nodes = [] }, itemKey, processEditDatas = [], dispatch, processCurrentEditStep, processPageFlagStep } = this.props
+    let newProcessEditDatas = [...processEditDatas]
+    if (processPageFlagStep == '1') {
+      newProcessEditDatas.splice(itemKey, 1)
+    } else if (processPageFlagStep == '2') {
+      if (newProcessEditDatas[itemKey] && newProcessEditDatas[itemKey].id) {
+        newProcessEditDatas[itemKey] = { ...nodes[itemKey], is_edit: '1' }
+      } else {
+        if ((nodes && nodes.length) && nodes.length == (newProcessEditDatas && newProcessEditDatas.length) && newProcessEditDatas.length) {
+          newProcessEditDatas[itemKey] = { ...nodes[itemKey], is_edit: '1' }
+        } else {
+          newProcessEditDatas.splice(itemKey, 1)
+        }
+      }
+    }
+    
+    dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        processEditDatas: newProcessEditDatas,
+        processCurrentEditStep: processCurrentEditStep >= 1 ? processCurrentEditStep - 1 : 0,
+      }
+    })
+  }
+
+  // 确认修改的编辑内容点击事件
+  handleConfirmEditContent = (e) => {
+    e && e.stopPropagation()
+    const { templateInfo = {}, templateInfo: { nodes = [] }, itemKey, processEditDatas = [], dispatch } = this.props
+    let newNodes = [...nodes]
+    newNodes[itemKey] = { ...processEditDatas[itemKey] }
+    dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        templateInfo: { ...templateInfo, nodes: newNodes },
+      }
+    })
+    this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '1')
   }
 
   // 当先选择的节点类型
@@ -120,17 +246,19 @@ export default class ConfigureProcess extends Component {
 
   // 判断是否只有一个资料收集节点 如果有多个可以删除 true 表示可以删除 false 表示不可以
   whetherIsDeleteNodes = () => {
-    const { processEditDatas = [] } = this.props
+    const { processEditDatas = [], itemKey } = this.props
     let arr = []
-    let flag = false
+    let flag = true
     let newProcessEditDatas = [...processEditDatas]
-    newProcessEditDatas.map(item => {
-      if (item.node_type == '1') {
-        arr.push(item.node_type)
+
+    const node_second_ = newProcessEditDatas[1]
+    if (itemKey == 0 && node_second_) {
+      if (node_second_['node_type'] == '2') {
+        flag = false
       }
-    })
-    if (arr && arr.length != '1') { // 表示不止一个
-      flag = true
+    }
+    if (!node_second_) {
+      flag = false
     }
     return flag
   }
@@ -287,19 +415,19 @@ export default class ConfigureProcess extends Component {
             confirmButtonDisabled = true
           }
         } else if (cc_type == '1') { // 表示选择了抄送人
-          if (!name &&  !(newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+          if (!name && !(newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
             confirmButtonText = '请输入步骤名称、至少添加一位审批人以及至少添加一位抄送人'
             confirmButtonDisabled = true
-          } else if (name &&  !(newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+          } else if (name && !(newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
             confirmButtonText = '至少添加一位审批人和至少添加一位抄送人'
             confirmButtonDisabled = true
-          } else if (!name &&  (newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+          } else if (!name && (newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
             confirmButtonText = '请输入步骤名称以及至少添加一位抄送人'
             confirmButtonDisabled = true
-          } else if (!name &&  !(newAssignees && newAssignees.length) && (newRecipients && newRecipients.length)) {
+          } else if (!name && !(newAssignees && newAssignees.length) && (newRecipients && newRecipients.length)) {
             confirmButtonText = '请输入步骤名称以及至少添加一位审批人'
             confirmButtonDisabled = true
-          } else if (!name &&  (newAssignees && newAssignees.length) && (newRecipients && newRecipients.length)) {
+          } else if (!name && (newAssignees && newAssignees.length) && (newRecipients && newRecipients.length)) {
             confirmButtonText = '请输入步骤名称'
             confirmButtonDisabled = true
           } else if (name && !(newAssignees && newAssignees.length) && (newRecipients && newRecipients.length)) {
@@ -346,9 +474,10 @@ export default class ConfigureProcess extends Component {
   }
 
   renderContent = () => {
-    const { itemKey, itemValue, processEditDatasRecords = [], processCurrentEditStep, processEditDatas = [] } = this.props
+    const { itemKey, itemValue, processEditDatasRecords = [], processCurrentEditStep, processEditDatas = [], processPageFlagStep } = this.props
     const { name, node_type, description, is_click_node_name } = itemValue
     let deleteBtn = this.whetherIsDeleteNodes()
+    let editConfirmBtn = this.state.isDisabled ? this.renderDiffButtonTooltipsText().confirmButtonDisabled ? true : false : this.renderDiffButtonTooltipsText().confirmButtonDisabled ? true : false
     // let node_amount = this.props && this.props.processInfo && this.props.processInfo.node_amount
     let stylLine, stylCircle
     // if (this.props.processInfo.completed_amount >= itemKey + 1) { //0 1    1  2 | 1 3 | 1 4
@@ -376,7 +505,7 @@ export default class ConfigureProcess extends Component {
       <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }} onClick={(e) => { this.handleCancelNodeName(e) }}>
         <div className={indexStyles.doingLine}></div>
         <div className={indexStyles.doingCircle}> {itemKey + 1}</div>
-        <div className={`${indexStyles.popover_card}`}>
+        <div id={`popover_card-${itemKey}-${node_type}`} className={`${indexStyles.popover_card}`}>
           <div className={`${globalStyles.global_vertical_scrollbar}`}>
             {/* 步骤名称 */}
             <div style={{ marginBottom: '16px' }}>
@@ -422,10 +551,36 @@ export default class ConfigureProcess extends Component {
               {this.renderDiffStepTypeContent()}
             </div>
             {/* 删除 | 确认 */}
-            <div className={indexStyles.step_btn}>
-              <Button onClick={this.handleDeleteButton} style={{ color: itemKey != '0' && !deleteBtn && '#FF7875' }} disabled={itemKey == '0' && !deleteBtn ? true : false}>删除</Button>
-              <Tooltip placement="top" title={this.renderDiffButtonTooltipsText().confirmButtonText}><Button key={itemValue} disabled={this.renderDiffButtonTooltipsText().confirmButtonDisabled} onClick={this.handleConfirmButton} type="primary">确认</Button></Tooltip>
-            </div>
+            {
+              processPageFlagStep == '1' ? (
+                <div className={indexStyles.step_btn}>
+                  <Button onClick={this.handleDeleteButton} style={{color: itemKey == '0' && !deleteBtn ? '' : '#FF7875', border: itemKey == '0' && !deleteBtn ? '' : '1px solid rgba(255,120,117,1)'}} disabled={itemKey == '0' && !deleteBtn ? true : false}>删除</Button>
+                  <Tooltip placement="top" title={this.renderDiffButtonTooltipsText().confirmButtonText}><Button key={itemValue} disabled={this.renderDiffButtonTooltipsText().confirmButtonDisabled} onClick={this.handleConfirmButton} type="primary">确认</Button></Tooltip>
+                </div>
+              ) : ('')
+            }
+            {
+              processPageFlagStep == '2' ? (
+                <div className={indexStyles.step_btn}>
+                  <Button onClick={this.handleCancleEditContent} style={{color: '#1890FF', border: '1px solid rgba(24,144,255,1)'}}>取消</Button>
+                  <Tooltip placement="top" title={this.renderDiffButtonTooltipsText().confirmButtonText}><Button key={itemValue} disabled={editConfirmBtn} onClick={this.handleConfirmEditContent} type="primary">确认</Button></Tooltip>
+                </div>
+              ) : ('')
+            }
+            {
+              processPageFlagStep == '2' && (
+                <Tooltip overlayStyle={{ minWidth: '76px' }} title="删除步骤" placement="top" getPopupContainer={() => document.getElementById(`popover_card-${itemKey}-${node_type}`)}>
+                  {
+                    itemKey == '0' && !deleteBtn ? (
+                      <span className={`${indexStyles.delet_node_icon} ${indexStyles.disabled_node_icon}`}><span className={globalStyles.authTheme}>&#xe68d;</span></span>
+                    ) : (
+                        <span onClick={this.handleEditDeleteButton} disabled={itemKey == '0' && !deleteBtn ? true : false} className={indexStyles.delet_node_icon}><span className={globalStyles.authTheme}>&#xe68d;</span></span>
+                      )
+                  }
+
+                </Tooltip>
+              )
+            }
           </div>
         </div>
       </div>
@@ -441,6 +596,6 @@ export default class ConfigureProcess extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [] } }) {
-  return { processEditDatas }
+function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [], processPageFlagStep, templateInfo = {} } }) {
+  return { processEditDatas, processPageFlagStep, templateInfo }
 }
