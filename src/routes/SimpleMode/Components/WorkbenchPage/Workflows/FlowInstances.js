@@ -14,8 +14,6 @@ export default class FlowInstances extends Component {
     }
     render() {
         const { list_type } = this.state
-        console.log('list_type0', list_type)
-
         return (
             <>
                 <div className={styles.flows_top}>

@@ -36,14 +36,14 @@ export default class FlowTables extends Component {
                 width: 164
             },
             {
-                title: '流程状态',
+                title: this.renderTitle(list_type).state_title,
                 dataIndex: 'state',
                 key: 'state',
                 ellipsis: true,
                 width: 164
             },
             {
-                title: this.renderTimeTitle(list_type),
+                title: this.renderTitle(list_type).time_title,
                 dataIndex: 'time',
                 key: 'time',
                 ellipsis: true,
@@ -62,24 +62,29 @@ export default class FlowTables extends Component {
             dataSource
         })
     }
-    renderTimeTitle = (list_type) => {
-        let title = '步骤完成期限'
+    renderTitle = (list_type) => {
+        let time_title = '步骤完成期限'
+        let state_title = '流程状态'
         switch (list_type) {
             case '1':
-                title = '步骤完成期限'
+                time_title = '步骤完成期限'
+                state_title = '当前步骤'
                 break
             case '2':
-                title = '流程中止时间'
+                time_title = '流程中止时间'
                 break
             case '3':
-                title = '流程完成时间'
+                time_title = '流程完成时间'
                 break
             case '0':
-                title = '流程开始时间'
+                time_title = '流程开始时间'
                 break
             default: break
         }
-        return title
+        return {
+            time_title,
+            state_title
+        }
     }
     renderListHandle = (item) => {
         const { list_type } = this.props
