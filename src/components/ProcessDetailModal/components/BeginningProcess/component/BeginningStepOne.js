@@ -51,8 +51,8 @@ export default class BeginningStepOne extends Component {
    */
   whetherShowCompleteButton = () => {
     const { itemValue } = this.props
-    const { assignee_type, assignees } = itemValue
-    const { transPrincipalList = [] } = this.props
+    const { assignee_type,  } = itemValue
+    const { transPrincipalList = [] } = this.state
     const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     let flag = false
     if (assignee_type == '2') { // 表示只有在指定人员的情况下才会有判断情况

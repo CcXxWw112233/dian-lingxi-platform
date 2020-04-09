@@ -292,9 +292,10 @@ export default class BeginningStepTwo extends Component {
   whetherShowCompleteButton = () => {
     const { itemValue } = this.props
     const { assignees } = itemValue
+    const { transPrincipalList = [] } = this.state
     const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     let flag = false
-    let newAssignees = [...assignees]
+    let newAssignees = [...transPrincipalList]
     newAssignees.find(item => {
       if (item.id == id) {
         flag = true
