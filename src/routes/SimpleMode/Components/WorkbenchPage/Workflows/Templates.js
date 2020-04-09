@@ -5,24 +5,28 @@ import { Tooltip, Button, Popconfirm } from 'antd'
 import { connect } from 'dva'
 import { checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
 import { PROJECT_FLOWS_FLOW_TEMPLATE, PROJECT_FLOWS_FLOW_CREATE } from '../../../../../globalset/js/constant'
-import ProcessDetailModal from '../../../../../components/ProcessDetailModal'
-
+import SelectBoardModal from './SelectBoardModal'
 @connect(mapStateToProps)
 export default class Templates extends Component {
     constructor(props) {
         super(props)
         this.state = {
-
+            local_board_id: '', //用于做流程模板创建的board_id,当全部项目场景下会用到
+            board_select_visible: false,//全项目下
         }
     }
     componentDidMount() {
-        this.getTemplateList(this.props.simplemodeCurrentProject)
+        const { simplemodeCurrentProject = {} } = this.props
+        const { board_id } = simplemodeCurrentProject
+        this.getTemplateList(simplemodeCurrentProject)
+        this.setLocalBoardId(board_id)
     }
     componentWillReceiveProps(nextProps) {
         const { board_id } = this.props.simplemodeCurrentProject
         const { board_id: next_board_id } = nextProps.simplemodeCurrentProject
         if (board_id != next_board_id) { //切换项目时做请求
             this.getTemplateList(nextProps.simplemodeCurrentProject)
+            this.setLocalBoardId(next_board_id)
         }
     }
     // 获取流程列表
@@ -39,6 +43,45 @@ export default class Templates extends Component {
             }
         })
     }
+
+    // 和创建模板想关-----------start
+    setLocalBoardId = (board_id) => {
+        this.setState({
+            local_board_id: board_id
+        })
+    }
+    // 弹窗选择项目id回调
+    selectModalBoardIdCalback = (board_id) => {
+        const { dispatch } = this.props
+        this.setLocalBoardId(board_id)
+        dispatch({
+            type: 'projectDetail/projectDetailInfo',
+            payload: {
+                id: board_id
+            }
+        })
+    }
+    // 
+    setBoardSelectVisible = (visible) => {
+        this.setState({
+            board_select_visible: visible
+        })
+    }
+    modalOkCalback = () => { //确认回调
+        this.setBoardSelectVisible(false)
+        this.handleAddTemplate()
+    }
+    // 新增模板点击的确认
+    beforeAddTemplateConfirm = () => {
+        const { local_board_id } = this.state
+        if (local_board_id == '0' || !local_board_id) {
+            this.setBoardSelectVisible(true)
+        } else {
+            this.handleAddTemplate()
+        }
+    }
+    // 和创建模板想关-----------end
+
     // 新增模板点击事件
     handleAddTemplate = () => {
         const { dispatch } = this.props
@@ -64,7 +107,6 @@ export default class Templates extends Component {
             }
         })
     }
-
     // 启动流程的点击事件
     handleStartProcess = (item) => {
         const { dispatch } = this.props
@@ -78,7 +120,6 @@ export default class Templates extends Component {
             }
         })
     }
-
     // 删除流程模板的点击事件
     handleDelteTemplete = (item) => {
         const { id, board_id } = item
@@ -91,7 +132,6 @@ export default class Templates extends Component {
             }
         })
     }
-
     renderTemplateList = () => {
         const { processTemplateList = [] } = this.props
         return (
@@ -161,25 +201,20 @@ export default class Templates extends Component {
                 <div className={`${globalStyles.authTheme} ${styles.tempalte_nodata_logo}`} >&#xe703;</div>
                 <div className={styles.tempalte_nodata_dec}>还没有模版，赶快新建一个吧</div>
                 <div className={styles.tempalte_nodata_operate}>
-                    <Button type="primary" style={{ width: 182 }} ghost onClick={this.handleAddTemplate}>新建模板</Button>
+                    <Button type="primary" style={{ width: 182 }} ghost onClick={this.beforeAddTemplateConfirm}>新建模板</Button>
                 </div>
             </div>
         )
     }
-    request_flows_templates_params = () => {
-        const { board_id } = this.props.simplemodeCurrentProject
-        return {
-            request_board_id: board_id || '0',
-            _organization_id: localStorage.getItem('OrganizationId')
-        }
-    }
+
     render() {
-        const { processTemplateList = [], process_detail_modal_visible } = this.props
+        const { processTemplateList = [] } = this.props
+        const { local_board_id, board_select_visible } = this.state
         return (
             <>
                 <div className={styles.templates_top}>
                     <div className={`${styles.templates_top_title}`}>流程模板</div>
-                    <div className={`${globalStyles.authTheme} ${styles.templates_top_add}`} onClick={this.handleAddTemplate}>&#xe8fe;</div>
+                    <div className={`${globalStyles.authTheme} ${styles.templates_top_add}`} onClick={this.beforeAddTemplateConfirm}>&#xe8fe;</div>
                 </div>
                 <div className={`${styles.templates_contain} ${globalStyles.global_vertical_scrollbar}`}>
                     {
@@ -190,11 +225,13 @@ export default class Templates extends Component {
                             )
                     }
                 </div>
-                {
-                    process_detail_modal_visible && (
-                        <ProcessDetailModal process_detail_modal_visible={process_detail_modal_visible} request_template_flows_params={this.request_flows_templates_params()} />
-                    )
-                }
+                <SelectBoardModal
+                    selectModalBoardIdCalback={this.selectModalBoardIdCalback}
+                    setBoardSelectVisible={this.setBoardSelectVisible}
+                    modalOkCalback={this.modalOkCalback}
+                    visible={board_select_visible}
+                    board_id={local_board_id}
+                />
             </>
         )
     }

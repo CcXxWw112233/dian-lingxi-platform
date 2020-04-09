@@ -279,11 +279,43 @@ export default class FlowTables extends Component {
         return description
     }
 
+    // 流程实例的点击事件
+    handleProcessInfo = (id) => {
+        const { dispatch } = this.props
+        dispatch({
+            type: 'publicProcessDetailModal/getProcessInfo',
+            payload: {
+                id,
+                calback: () => {
+                    dispatch({
+                        type: 'publicProcessDetailModal/updateDatas',
+                        payload: {
+                            processPageFlagStep: '4',
+                            process_detail_modal_visible: true,
+                        }
+                    })
+                }
+            }
+        })
+    }
+    tableRowClick = (record) => {
+        const { id } = record
+        this.handleProcessInfo(id)
+    }
     render() {
         const { dataSource, columns } = this.state
         return (
             <div>
-                <Table dataSource={dataSource} columns={columns} pagination={false} scroll={{ y: 600, }} />
+                <Table
+                    onRow={record => {
+                        return {
+                            onClick: e => this.tableRowClick(record), // 点击行
+                        };
+                    }}
+                    dataSource={dataSource}
+                    columns={columns}
+                    pagination={false}
+                    scroll={{ y: 600, }} />
             </div>
         )
     }

@@ -1,11 +1,22 @@
 import React, { Component } from 'react'
 import Templates from './Templates'
 import FlowInstances from './FlowInstances'
-import globalStyles from '@/globalset/css/globalClassName.less'
 import styles from './index.less'
+import { connect } from 'dva'
+import ProcessDetailModal from '../../../../../components/ProcessDetailModal'
 
+@connect(mapStateToProps)
 export default class index extends Component {
+    request_flows_params = () => {
+        const { board_id } = this.props.simplemodeCurrentProject
+        return {
+            request_board_id: board_id || '0',
+            _organization_id: localStorage.getItem('OrganizationId') || '0'
+        }
+    }
+
     render() {
+        const { process_detail_modal_visible } = this.props
         const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
         let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : 0;
         return (
@@ -22,8 +33,31 @@ export default class index extends Component {
                         </div>
                     </div>
                 </div>
+                {
+                    process_detail_modal_visible && (
+                        <ProcessDetailModal
+                            request_flows_params={this.request_flows_params()}
+                            process_detail_modal_visible={process_detail_modal_visible}
+                        />
+                    )
+                }
             </div>
 
         )
+    }
+}
+
+//  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
+function mapStateToProps({
+    simplemode: {
+        simplemodeCurrentProject = {}
+    },
+    publicProcessDetailModal: {
+        process_detail_modal_visible
+    }
+}) {
+    return {
+        simplemodeCurrentProject,
+        process_detail_modal_visible
     }
 }
