@@ -1,7 +1,11 @@
 import React, { Component } from 'react'
 import { Table } from 'antd';
 import { timestampToTimeNormal } from '../../../../../utils/util';
+import { getOrgNameWithOrgIdFilter } from '../../../../../utils/businessFunction';
+import { connect } from 'dva';
+import globalStyles from '@/globalset/css/globalClassName.less'
 
+@connect(mapStateToProps)
 export default class FlowTables extends Component {
     constructor(props) {
         super(props)
@@ -54,7 +58,7 @@ export default class FlowTables extends Component {
                 key: 'name',
                 ellipsis: true,
                 width: 164,
-                render: (item) => {
+                render: (text, item) => {
                     return this.renderKeyName(item)
                 }
             },
@@ -117,7 +121,28 @@ export default class FlowTables extends Component {
     }
     renderKeyName = (item) => {
         let name_dec = item
-        return name_dec
+        const { name, board_name, org_id } = item
+        const { currentUserOrganizes = [], simplemodeCurrentProject = {} } = this.props
+        const { board_id } = simplemodeCurrentProject
+        const select_org_id = localStorage.getItem('OrganizationId')
+        const org_dec = (select_org_id == '0' || !select_org_id) ? `(${getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)})` : ''
+        const board_dec = (board_id == '0' || !board_id) ? `#${board_name}` : ''
+        return (
+            <div>
+                <p style={{ marginBottom: 0 }}>
+                    <span className={`${globalStyles.authTheme}`} style={{ fontSize: 16, color: '#40A9FF', marginRight: 4 }}>&#xe682;</span>
+                    <span>{name}</span>
+                </p>
+                {
+                    (board_id == '0' || !board_id) && (
+                        <p style={{ color: 'rgba(0,0,0,0.45)', marginBottom: 4, marginLeft: 20 }}>
+                            {board_dec}
+                            {org_dec}
+                        </p>
+                    )
+                }
+            </div>
+        )
     }
     renderKeyState = (item) => {
         const { list_type } = this.props
@@ -299,7 +324,7 @@ export default class FlowTables extends Component {
         })
     }
     tableRowClick = (record) => {
-        const { id } = record
+        const { id, } = record
         this.handleProcessInfo(id)
     }
     render() {
@@ -318,5 +343,22 @@ export default class FlowTables extends Component {
                     scroll={{ y: 600, }} />
             </div>
         )
+    }
+}
+
+//  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
+function mapStateToProps({
+    simplemode: {
+        simplemodeCurrentProject = {}
+    },
+    technological: {
+        datas: {
+            currentUserOrganizes = [],
+        }
+    }
+}) {
+    return {
+        simplemodeCurrentProject,
+        currentUserOrganizes
     }
 }

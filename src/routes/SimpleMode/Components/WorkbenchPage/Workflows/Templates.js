@@ -3,7 +3,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import styles from './index.less'
 import { Tooltip, Button, Popconfirm } from 'antd'
 import { connect } from 'dva'
-import { checkIsHasPermissionInBoard, setBoardIdStorage } from '../../../../../utils/businessFunction'
+import { checkIsHasPermissionInBoard, setBoardIdStorage, getOrgNameWithOrgIdFilter } from '../../../../../utils/businessFunction'
 import { PROJECT_FLOWS_FLOW_TEMPLATE, PROJECT_FLOWS_FLOW_CREATE } from '../../../../../globalset/js/constant'
 import SelectBoardModal from './SelectBoardModal'
 @connect(mapStateToProps)
@@ -98,6 +98,7 @@ export default class Templates extends Component {
     handleEditTemplete = (item) => {
         const { id, template_no, board_id } = item
         const { dispatch } = this.props
+        setBoardIdStorage(board_id)
         dispatch({
             type: 'projectDetail/projectDetailInfo',
             payload: {
@@ -118,15 +119,24 @@ export default class Templates extends Component {
     // 启动流程的点击事件
     handleStartProcess = (item) => {
         const { dispatch } = this.props
-        const { id } = item
+        const { id, board_id } = item
+        setBoardIdStorage(board_id)
         dispatch({
-            type: 'publicProcessDetailModal/getTemplateInfo',
+            type: 'projectDetail/projectDetailInfo',
             payload: {
-                id,
-                processPageFlagStep: '3',
-                process_detail_modal_visible: true
+                id: board_id
             }
+        }).then(res => {
+            dispatch({
+                type: 'publicProcessDetailModal/getTemplateInfo',
+                payload: {
+                    id,
+                    processPageFlagStep: '3',
+                    process_detail_modal_visible: true
+                }
+            })
         })
+
     }
     // 删除流程模板的点击事件
     handleDelteTemplete = (item) => {
@@ -146,9 +156,17 @@ export default class Templates extends Component {
     }
     renderTemplateList = () => {
         const { processTemplateList = [] } = this.props
+
+        const { currentUserOrganizes = [], simplemodeCurrentProject = {} } = this.props
+        const { board_id: select_board_id } = simplemodeCurrentProject
+        const select_org_id = localStorage.getItem('OrganizationId')
+
+
         return (
             processTemplateList.map(value => {
-                const { id, name, board_id } = value
+                const { id, name, board_id, org_id, board_name, node_num } = value
+                const org_dec = (select_org_id == '0' || !select_org_id) ? `(${getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)})` : ''
+                const board_dec = (select_board_id == '0' || !select_board_id) ? `#${board_name}` : ''
                 return (
                     <div className={styles.template_item} key={id}>
                         <div className={styles.template_item_top}>
@@ -157,14 +175,19 @@ export default class Templates extends Component {
                             </div>
                             <div className={`${globalStyles.authTheme} ${styles.template_dec}`}>
                                 <div className={`${styles.template_dec_title}`}>
-                                    <span className={`${styles.template_dec_title_instance} `}>{name}</span>
+                                    <span className={`${styles.template_dec_title_instance} `} title={name}>
+                                        {name.length > 10 ? name.substr(0, 7) + '...' : name}
+                                    </span>
                                     {
-                                        localStorage.getItem('OrganizationId') == '0' && (
-                                            <span className={`${styles.template_dec_title_org}`}>#组织名称真的很长很长，长到我也不知道么搞了</span>
+                                        (select_board_id == '0' || !select_board_id) && (
+                                            <span className={`${styles.template_dec_title_org}`} title={`${board_dec}${org_dec}`}>
+                                                {board_dec}
+                                                {org_dec}
+                                            </span>
                                         )
                                     }
                                 </div>
-                                <div className={`${styles.template_dec_step}`}>共3步</div>
+                                <div className={`${styles.template_dec_step}`}>共{node_num}步</div>
                             </div>
                         </div>
                         <div className={styles.template_item_bott}>
@@ -258,6 +281,7 @@ function mapStateToProps({
     },
     technological: {
         datas: {
+            currentUserOrganizes = [],
             currentSelectOrganize = {}
         }
     },
@@ -269,6 +293,7 @@ function mapStateToProps({
         processTemplateList,
         simplemodeCurrentProject,
         currentSelectOrganize,
+        currentUserOrganizes,
         process_detail_modal_visible
     }
 }
