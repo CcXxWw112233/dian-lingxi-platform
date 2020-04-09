@@ -60,7 +60,7 @@ export default class MainContent extends Component {
   }
 
   componentDidMount() {
-    this.initCanvas()
+    this.initCanvas(this.props)
     window.addEventListener('resize', this.resizeTTY)
     window.addEventListener('scroll', this.onScroll)
     // 采用锚点方式对元素进行定位
@@ -113,18 +113,20 @@ export default class MainContent extends Component {
   // 用来更新canvas中的步骤
   componentWillReceiveProps(nextProps) {
     const { processInfo: { curr_node_sort } } = nextProps
+    console.log(nextProps,'ssssssssssssssssssssssssssss_nextprops')
     const { processInfo: { curr_node_sort: old_curr_node_sort } } = this.props
     if (old_curr_node_sort && curr_node_sort) {
+      console.log('进来了',curr_node_sort != old_curr_node_sort,'sssssssssssssssssssssssssssssssssssss_111111')
       if (curr_node_sort != old_curr_node_sort) {
         setTimeout(() => {
-          this.initCanvas()
+          this.initCanvas(nextProps)
         },50)
       }
     }
   }
 
-  initCanvas() {
-    const { processInfo = {}, processEditDatas = [] } = this.props
+  initCanvas(props) {
+    const { processInfo = {}, processEditDatas = [] } = props
     const { curr_node_sort, status: parentStatus } = processInfo
     const defaultProps = {
       canvaswidth: 140, // 画布宽度

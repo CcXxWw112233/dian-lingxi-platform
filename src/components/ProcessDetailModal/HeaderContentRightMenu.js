@@ -398,7 +398,7 @@ export default class HeaderContentRightMenu extends Component {
     let newNodes = [...nodes]
     newNodes = newNodes.map(item => {
       let new_item = {...item}
-      new_item = {...item, is_edit: '1', assignees: transformNewAssigneesToString(item).join(','), recipients: transformNewRecipientsToString(item).join(',')}
+      new_item = {...item, status: '', is_edit: '1', assignees: transformNewAssigneesToString(item).join(','), recipients: transformNewRecipientsToString(item).join(',')}
       return new_item
     })
     // return
