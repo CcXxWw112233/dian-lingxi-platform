@@ -80,8 +80,8 @@ export default {
 
     // 获取流程模板列表
     * getProcessTemplateList({ payload }, { call, put }) {
-      const { id, board_id, calback } = payload
-      let res = yield call(getProcessTemplateList, { id, board_id })
+      const { id, board_id, calback, _organization_id } = payload
+      let res = yield call(getProcessTemplateList, { id, board_id, _organization_id })
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -286,8 +286,8 @@ export default {
 
     // 获取流程列表，类型进行中 已终止 已完成
     * getProcessListByType({ payload }, { call, put }) {
-      const { status, board_id } = payload
-      const res = yield call(getProcessListByType, { status, board_id })
+      const { status, board_id, _organization_id } = payload
+      const res = yield call(getProcessListByType, { status, board_id, _organization_id })
       let listName
       switch (status) {
         case '1':
