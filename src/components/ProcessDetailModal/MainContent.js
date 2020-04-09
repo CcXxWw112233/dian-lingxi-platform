@@ -113,10 +113,8 @@ export default class MainContent extends Component {
   // 用来更新canvas中的步骤
   componentWillReceiveProps(nextProps) {
     const { processInfo: { curr_node_sort } } = nextProps
-    console.log(nextProps,'ssssssssssssssssssssssssssss_nextprops')
     const { processInfo: { curr_node_sort: old_curr_node_sort } } = this.props
     if (old_curr_node_sort && curr_node_sort) {
-      console.log('进来了',curr_node_sort != old_curr_node_sort,'sssssssssssssssssssssssssssssssssssss_111111')
       if (curr_node_sort != old_curr_node_sort) {
         setTimeout(() => {
           this.initCanvas(nextProps)
@@ -519,6 +517,7 @@ export default class MainContent extends Component {
       is_retain: '0',
     })
     if (!isApiResponseOk(res)) {
+      setTimeout(() => {message.warn(res.message,MESSAGE_DURATION_TIME)},200)
       return Promise.resolve([]);
     }
     let id = res.data
@@ -548,6 +547,7 @@ export default class MainContent extends Component {
     const { request_flows_params = {}, projectDetailInfoData: { board_id, org_id } } = this.props
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     if (!isApiResponseOk(res)) {
+      setTimeout(() => { message.warn(res.message,MESSAGE_DURATION_TIME) },200)
       return Promise.resolve([]);
     }
     setTimeout(() => {
