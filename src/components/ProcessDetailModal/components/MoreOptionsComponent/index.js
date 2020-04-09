@@ -42,7 +42,7 @@ export default class MoreOptionsComponent extends Component {
         this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: moreOptionsList }, 'options_data')
       }
     }
-    if (description != '') {
+    if (description && description != '') {
       if (!moreOptionsList.find(item => item.code == 'REMARKS')) {
         let obj = {}
         obj = {

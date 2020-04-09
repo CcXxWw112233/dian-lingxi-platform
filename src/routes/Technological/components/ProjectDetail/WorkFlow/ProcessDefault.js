@@ -26,7 +26,23 @@ class ProcessDefault extends Component {
 
   // 初始化数据
   initData = (props) => {
-    const { dispatch, projectDetailInfoData: { board_id } } = props
+    const { dispatch, projectDetailInfoData: { board_id }, location } = props
+    // 兼容从工作台动态点击进入
+    if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
+      const param = QueryString.parse(location.search.replace('?', ''))
+      let board_id = param.board_id
+      let appsSelectKey = param.appsSelectKey
+      let flow_id = param.flow_id
+      if (appsSelectKey == '2' && flow_id) {
+        dispatch({
+          type: 'publicProcessDetailModal/getProcessInfoByUrl',
+          payload: {
+            currentProcessInstanceId: flow_id
+          }
+        })
+      }
+    }
+    
     dispatch({
       type: 'publicProcessDetailModal/getProcessTemplateList',
       payload: {
@@ -45,7 +61,7 @@ class ProcessDefault extends Component {
     const { projectDetailInfoData: { board_id: oldBoardId } } = this.props
     const { projectDetailInfoData: { board_id } } = nextProps
     if (board_id && oldBoardId) {
-      if (board_id != oldBoardId) {
+      if ( board_id && oldBoardId && board_id != oldBoardId) {
         this.initData(nextProps)
         return
         this.props.dispatch({
@@ -183,10 +199,10 @@ class ProcessDefault extends Component {
 
   renderFlowTabs = () => {
     const { clientHeight } = this.state
-    const { processDoingList = [], processStopedList = [], processComepletedList = [], processNotBeginningList = [] } = this.props
+    const { processDoingList = [], processStopedList = [], processComepletedList = [], processNotBeginningList = [], currentFlowTabsStatus } = this.props
     return (
       <div>
-        <Tabs defaultActiveKey="1" onChange={this.tabsChange} tabBarStyle={{ width: '100%', paddingTop: 0, fontSize: 16, background: 'rgba(216,216,216,0)', border: '1px solid #e8e8e8', padding: '0 46px 0 50px' }}>
+        <Tabs defaultActiveKey="1" activeKey={currentFlowTabsStatus} onChange={this.tabsChange} tabBarStyle={{ width: '100%', paddingTop: 0, fontSize: 16, background: 'rgba(216,216,216,0)', border: '1px solid #e8e8e8', padding: '0 46px 0 50px' }}>
           <TabPane tab={<div style={{ padding: 0, fontSize: 16 }}>进行中的流程 </div>} key="1">{<PagingnationContent handleProcessInfo={this.handleProcessInfo} listData={processDoingList} status={'1'} clientHeight={clientHeight} />}</TabPane>
           <TabPane tab={<div style={{ padding: 0, fontSize: 16 }}>已中止的流程 </div>} key="2">{<PagingnationContent handleProcessInfo={this.handleProcessInfo} listData={processStopedList} status={'2'} clientHeight={clientHeight} />}</TabPane>
           <TabPane tab={<div style={{ padding: 0, fontSize: 16 }}>已完成的流程 </div>} key="3">{<PagingnationContent handleProcessInfo={this.handleProcessInfo} listData={processComepletedList} status={'3'} clientHeight={clientHeight} />}</TabPane>
@@ -234,7 +250,8 @@ function mapStateToProps({
     processDoingList = [],
     processStopedList = [],
     processComepletedList = [],
-    processNotBeginningList = []
+    processNotBeginningList = [],
+    currentFlowTabsStatus
   },
   projectDetail: { datas: { projectDetailInfoData = {} } }
 }) {
@@ -244,6 +261,7 @@ function mapStateToProps({
     processStopedList,
     processComepletedList,
     processNotBeginningList,
-    projectDetailInfoData
+    projectDetailInfoData,
+    currentFlowTabsStatus
   }
 }

@@ -477,7 +477,8 @@ export default class ConfigureProcess extends Component {
     const { itemKey, itemValue, processEditDatasRecords = [], processCurrentEditStep, processEditDatas = [], processPageFlagStep } = this.props
     const { name, node_type, description, is_click_node_name } = itemValue
     let deleteBtn = this.whetherIsDeleteNodes()
-    let editConfirmBtn = this.state.isDisabled ? this.renderDiffButtonTooltipsText().confirmButtonDisabled ? true : false : this.renderDiffButtonTooltipsText().confirmButtonDisabled ? true : false
+    // let editConfirmBtn = this.state.isDisabled ? this.renderDiffButtonTooltipsText().confirmButtonDisabled ? true : false : this.renderDiffButtonTooltipsText().confirmButtonDisabled ? true : false
+    let editConfirmBtn = this.renderDiffButtonTooltipsText().confirmButtonDisabled ? this.state.isDisabled ? true : false : this.state.isDisabled ? true : false
     // let node_amount = this.props && this.props.processInfo && this.props.processInfo.node_amount
     let stylLine, stylCircle
     // if (this.props.processInfo.completed_amount >= itemKey + 1) { //0 1    1  2 | 1 3 | 1 4

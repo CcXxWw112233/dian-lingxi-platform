@@ -405,11 +405,10 @@ export default class MainContent extends Component {
       }
     })
   }
-
-  // 保存模板的点击事件
+// 保存模板的点击事件
   handleSaveProcessTemplate = (e) => {
     e && e.stopPropagation()
-    const { processPageFlagStep, currentTempleteIdentifyId, dispatch } = this.props
+    const { processPageFlagStep } = this.props
     if (this.state.isSaveTempleteIng) {
       message.warn('正在保存模板中...')
       return
@@ -417,36 +416,57 @@ export default class MainContent extends Component {
     this.setState({
       isSaveTempleteIng: true
     })
+    switch (processPageFlagStep) {
+      case '1': // 表示是配置的时候的点击保存模板
+        this.handleSaveConfigureProcessTemplete()
+        break;
+      case '2': // 表示是编辑的时候保存模板
+        this.handleSaveEditProcessTemplete()
+      break
+      default:
+        break;
+    }
+  }
+
+  // 表示是配置的时候保存模板
+  handleSaveConfigureProcessTemplete = () => {
     const { currentFlowInstanceName } = this.state
-    const { projectDetailInfoData: { board_id }, currentFlowInstanceDescription, processEditDatas = [] } = this.props
-    if (processPageFlagStep == '1') {// 表示的是新建的时候
-      Promise.resolve(
-        dispatch({
-          type: 'publicProcessDetailModal/saveProcessTemplate',
-          payload: {
-            board_id,
-            name: currentFlowInstanceName,
-            description: currentFlowInstanceDescription,
-            nodes: processEditDatas,
-          }
-        })
-      ).then(res => {
-        if (isApiResponseOk(res)) {
-          setTimeout(() => {
-            message.success('保存模板成功', MESSAGE_DURATION_TIME)
-          }, 200)
-          this.props.updateParentProcessTempleteList && this.props.updateParentProcessTempleteList()
-          this.setState({
-            isSaveTempleteIng: false
-          })
-          this.props.onCancel && this.props.onCancel()
-        } else {
-          this.setState({
-            isSaveTempleteIng: false
-          })
+    const { dispatch, projectDetailInfoData: { board_id }, currentFlowInstanceDescription, processEditDatas = [] } = this.props
+    Promise.resolve(
+      dispatch({
+        type: 'publicProcessDetailModal/saveProcessTemplate',
+        payload: {
+          board_id,
+          name: currentFlowInstanceName,
+          description: currentFlowInstanceDescription,
+          nodes: processEditDatas,
         }
       })
-    } else if (processPageFlagStep == '2') {// 表示的是编辑的时候
+    ).then(res => {
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('保存模板成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        this.props.updateParentProcessTempleteList && this.props.updateParentProcessTempleteList()
+        this.setState({
+          isSaveTempleteIng: false
+        })
+        this.props.onCancel && this.props.onCancel()
+      } else {
+        this.setState({
+          isSaveTempleteIng: false
+        })
+      }
+    })
+  }
+  
+  // 表示是编辑时保存模板 ==> 是需要带上凭证的
+  handleSaveEditProcessTemplete = () => {
+    const { currentFlowInstanceName } = this.state
+    const { dispatch, currentTempleteIdentifyId, projectDetailInfoData: { board_id }, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { id, is_covert_template } } = this.props
+    if (is_covert_template && is_covert_template == '1') {
+      this.handleSaveConfigureProcessTemplete()
+    } else {
       Promise.resolve(
         dispatch({
           type: 'publicProcessDetailModal/saveEditProcessTemplete',

@@ -266,10 +266,20 @@ export default {
             isEditCurrentFlowInstanceName: false,
             currentFlowInstanceDescription: res.data.description,
             processEditDatas: newProcessEditDatas,
-            processInfo: {...res.data, curr_node_sort: curr_node_sort}
+            processInfo: {...res.data, curr_node_sort: curr_node_sort},
+            currentFlowTabsStatus: res.data.status
           }
         })
         if (calback && typeof calback == 'function') calback()
+      } else {
+        // 兼容弹窗调用失败 需关闭
+        message.warn(res.message,MESSAGE_DURATION_TIME)
+        yield put({
+          type: 'initData',
+          payload: {
+            
+          }
+        })
       }
       return res || {}
     },
