@@ -435,6 +435,7 @@ export default class MainContent extends Component {
           setTimeout(() => {
             message.success('保存模板成功', MESSAGE_DURATION_TIME)
           }, 200)
+          this.props.updateParentProcessTempleteList && this.props.updateParentProcessTempleteList()
           this.setState({
             isSaveTempleteIng: false
           })
@@ -462,6 +463,7 @@ export default class MainContent extends Component {
           setTimeout(() => {
             message.success(`保存模板成功`,MESSAGE_DURATION_TIME)
           }, 200)
+          this.props.updateParentProcessTempleteList && this.props.updateParentProcessTempleteList()
           this.setState({
             isSaveTempleteIng: false
           })

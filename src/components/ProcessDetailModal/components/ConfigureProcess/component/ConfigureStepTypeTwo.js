@@ -148,8 +148,8 @@ export default class ConfigureStepTypeTwo extends Component {
 
   render() {
     const { itemValue, itemKey, projectDetailInfoData = {} } = this.props
-    const { data, board_id, org_id } = projectDetailInfoData
-    const new_data = JSON.parse(JSON.stringify(data))
+    const { data = [], board_id, org_id } = projectDetailInfoData
+    const new_data = JSON.parse(JSON.stringify(data) || [])
     const { approve_type, approve_value } = itemValue
     let approvalsList = this.filterAssignees()
     // const { approvalsList = [] } = this.state

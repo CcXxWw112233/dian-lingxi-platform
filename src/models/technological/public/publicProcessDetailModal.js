@@ -132,13 +132,13 @@ export default {
       newPayload.calback ? delete newPayload.calback : ''
       let res = yield call(saveProcessTemplate,newPayload)
       if (isApiResponseOk(res)) {
-        yield put({
-          type: 'getProcessTemplateList',
-          payload: {
-            id: payload.board_id,
-            board_id: payload.board_id
-          }
-        })
+        // yield put({
+        //   type: 'getProcessTemplateList',
+        //   payload: {
+        //     id: payload.board_id,
+        //     board_id: payload.board_id
+        //   }
+        // })
         if (calback && typeof calback == 'function') calback(res.data)
       } else {
         message.warn(res.message)
@@ -156,13 +156,13 @@ export default {
         setTimeout(() => {
           message.success(`保存模板成功`,MESSAGE_DURATION_TIME)
         }, 200)
-        yield put({
-          type: 'getProcessTemplateList',
-          payload: {
-            id: payload.board_id,
-            board_id: payload.board_id
-          }
-        })
+        // yield put({
+        //   type: 'getProcessTemplateList',
+        //   payload: {
+        //     id: payload.board_id,
+        //     board_id: payload.board_id
+        //   }
+        // })
         if (calback && typeof calback == 'function') calback()
       } else {
         message.warn(res.message)
@@ -172,19 +172,20 @@ export default {
 
     // 删除流程模板
     * deleteProcessTemplete({ payload }, { call, put }) {
-      const { id, board_id } = payload
+      const { id, calback } = payload
       let res = yield call(deleteProcessTemplete,{id})
       if (isApiResponseOk(res)) {
         setTimeout(() => {
           message.success('删除模板成功')
         },200)
-        yield put({
-          type: 'getProcessTemplateList',
-          payload: {
-            id: board_id,
-            board_id
-          }
-        })
+        // yield put({
+        //   type: 'getProcessTemplateList',
+        //   payload: {
+        //     id: board_id,
+        //     board_id
+        //   }
+        // })
+        if (calback && typeof calback == 'function') calback()
       } else {
         message.warn(res.message)
       }

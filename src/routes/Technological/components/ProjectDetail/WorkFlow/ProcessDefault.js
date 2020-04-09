@@ -70,6 +70,17 @@ class ProcessDefault extends Component {
     })
   }
 
+  updateParentProcessTempleteList = () => {
+    const { dispatch, projectDetailInfoData: { board_id } } = this.props
+    dispatch({
+      type: 'publicProcessDetailModal/getProcessTemplateList',
+      payload: {
+        id: board_id,
+        board_id: board_id
+      }
+    })
+  }
+
   // 新增模板点击事件
   handleAddTemplate = () => {
     this.props.dispatch({
@@ -110,14 +121,22 @@ class ProcessDefault extends Component {
 
   // 删除流程模板的点击事件
   handleDelteTemplete = (item) => {
-    const { projectDetailInfoData: { board_id } } = this.props
+    const { projectDetailInfoData: { board_id }, dispatch } = this.props
     const { id } = item
     const processTempleteDelete = async () => {
-      await this.props.dispatch({
+      await dispatch({
         type: 'publicProcessDetailModal/deleteProcessTemplete',
         payload: {
           id,
-          board_id
+          calback: () => {
+            dispatch({
+              type: 'publicProcessDetailModal/getProcessTemplateList',
+              payload: {
+                id: board_id,
+                board_id: board_id
+              }
+            })
+          }
         }
       })
     }
@@ -199,7 +218,7 @@ class ProcessDefault extends Component {
         </div>
         {
           process_detail_modal_visible && (
-            <ProcessDetailModal process_detail_modal_visible={process_detail_modal_visible} />
+            <ProcessDetailModal process_detail_modal_visible={process_detail_modal_visible} updateParentProcessTempleteList={this.updateParentProcessTempleteList} />
           )
         }
       </>

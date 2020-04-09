@@ -64,14 +64,14 @@ export default class ProcessDetailModal extends Component {
   }
 
   render() {
-    const { process_detail_modal_visible, whetherUpdateWorkbenchPorcessListData } = this.props
+    const { process_detail_modal_visible, whetherUpdateWorkbenchPorcessListData, updateParentProcessTempleteList } = this.props
     return (
       <div>
         <PublicDetailModal
           modalVisible={process_detail_modal_visible}
           onCancel={this.onCancel}
           isNotShowFileDetailContentRightVisible={true}
-          mainContent={<MainContent onCancel={this.onCancel}/>}
+          mainContent={<MainContent onCancel={this.onCancel} updateParentProcessTempleteList={updateParentProcessTempleteList}/>}
           headerContent={<HeaderContent onCancel={this.onCancel} whetherUpdateWorkbenchPorcessListData={whetherUpdateWorkbenchPorcessListData}/>}
           commonDrawerContentOutClick={this.commonDrawerContentOutClick}
           isNotShowFileDetailContentLeftScrollBar={true}
@@ -79,6 +79,12 @@ export default class ProcessDetailModal extends Component {
       </div>
     )
   }
+}
+
+ProcessDetailModal.defaultProps = {
+  process_detail_modal_visible: false, // 设置流程弹窗是否显示, 默认为false 不显示
+  whetherUpdateWorkbenchPorcessListData: function(){}, // 修改访问控制后需要更新工作台中的代办列表 的回调
+  updateParentProcessTempleteList: function(){}, // 内部数据修改后用来更新外部数据的回调
 }
 
 //  只关联public中弹窗内的数据
