@@ -65,6 +65,71 @@ const genPrincipalListFromAssignees = (nodes = []) => {
   }, []);
 };
 
+/**
+ * 获取都是ID的执行人数组
+ * @param {*} type 
+ */
+const transformNewAssigneesToString = (item) => {
+  if (!!!item) return []
+  let tempItem
+  if (item instanceof Array) {
+    tempItem = [...item]
+  } else {
+    tempItem = new Array(item)
+  }
+  return tempItem.reduce((acc, curr) => {
+    if (curr.assignee_type == '2' && curr.assignees && curr.assignees.length) {
+      const genNewPersonList = (arr = []) => { // 得到一个新的person列表
+        let temp = []
+        arr.map(user => {
+          temp.push(user.id)
+        });
+        return temp
+      };
+      // 执行人去重
+      const newPersonList = genNewPersonList(curr.assignees);
+      return [...new Set([...acc, ...newPersonList])];
+    } else if (!curr.assignee_type || curr.assignee_type == '1') {
+      const newPersonList = []
+      return [...newPersonList]
+    }
+    return acc
+  }, [])
+}
+
+/**
+ * 获取都是ID的抄送人列表
+ * @param {*} type 
+ */
+
+const transformNewRecipientsToString = (item) => {
+  if (!!!item) return []
+  let tempItem
+  if (item instanceof Array) {
+    tempItem = [...item]
+  } else {
+    tempItem = new Array(item)
+  }
+  return tempItem.reduce((acc, curr) => {
+    if (curr.cc_type == '1' && curr.recipients && curr.recipients.length) {
+      const genNewPersonList = (arr = []) => { // 得到一个新的person列表
+        let temp = []
+        arr.map(user => {
+          temp.push(user.id)
+        });
+        return temp
+      };
+      // 执行人去重
+      const newPersonList = genNewPersonList(curr.recipients);
+      return [...new Set([...acc, ...newPersonList])];
+    } else if (!curr.cc_type || curr.cc_type == '0') {
+      const newPersonList = []
+      return [...newPersonList]
+    }
+    return acc
+  }, [])
+}
+
 // 渲染时、天、月
 const renderTimeType = (type) => {
   let description = ''
@@ -88,6 +153,8 @@ export {
   showDeleteTempleteConfirm,
   genPrincipalListFromAssignees,
   renderTimeType,
-  arrayNonRepeatfy
+  arrayNonRepeatfy,
+  transformNewAssigneesToString,
+  transformNewRecipientsToString
 }
 
