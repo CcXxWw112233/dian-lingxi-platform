@@ -7,6 +7,21 @@ import ProcessDetailModal from '../../../../../components/ProcessDetailModal'
 
 @connect(mapStateToProps)
 export default class index extends Component {
+    constructor(props) {
+        super(props)
+        const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
+        let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : '600';
+        this.state = {
+            contentHeight: contentHeight
+        }
+    }
+    componentDidMount() {
+        const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
+        let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : '600';
+        this.setState({
+            contentHeight: contentHeight
+        })
+    }
     request_flows_params = () => {
         const { board_id } = this.props.simplemodeCurrentProject
         return {
@@ -27,8 +42,7 @@ export default class index extends Component {
     }
     render() {
         const { process_detail_modal_visible } = this.props
-        const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
-        let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : 0;
+        const { contentHeight } = this.state
         return (
             <div className={styles.main_out}
                 style={contentHeight > 0 ? { height: contentHeight + 'px' } : {}}>
