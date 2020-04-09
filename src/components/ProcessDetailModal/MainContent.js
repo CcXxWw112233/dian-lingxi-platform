@@ -487,9 +487,10 @@ export default class MainContent extends Component {
   // 第一步: 先保存模板 ==> 返回模板ID
   handleOperateConfigureConfirmProcessOne = async (start_time) => {
     const { currentFlowInstanceName } = this.state
-    const { projectDetailInfoData: { board_id }, currentFlowInstanceDescription, processEditDatas = [] } = this.props
+    const { projectDetailInfoData: { board_id }, currentFlowInstanceDescription, processEditDatas = [], request_flows_params = {} } = this.props
+    let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     let res = await saveProcessTemplate({
-      board_id,
+      board_id: BOARD_ID,
       name: currentFlowInstanceName,
       description: currentFlowInstanceDescription,
       nodes: processEditDatas,
@@ -522,6 +523,8 @@ export default class MainContent extends Component {
   // 第三步: 调用列表并关闭弹窗 ==> 回调
   handleOperateConfigureConfirmProcessThree = async({payload, temp_time2}) => {
     let res = await createProcess(payload)
+    const { request_flows_params = {}, projectDetailInfoData: { board_id, org_id } } = this.props
+    let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     if (!isApiResponseOk(res)) {
       return Promise.resolve([]);
     }
@@ -535,7 +538,8 @@ export default class MainContent extends Component {
       type: 'publicProcessDetailModal/getProcessListByType',
       payload: {
         status: temp_time2 ? '0' : '1',
-        board_id: res.data.board_id
+        board_id: BOARD_ID || res.data.board_id,
+        _organization_id: request_flows_params._organization_id || org_id
       }
     })
     this.props.onCancel && this.props.onCancel()
@@ -545,7 +549,8 @@ export default class MainContent extends Component {
   handleOperateStartConfirmProcess = (start_time) => {
     let that = this
     const { currentFlowInstanceName } = this.state
-    const { dispatch, projectDetailInfoData: { board_id }, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { id } } = this.props
+    const { dispatch, projectDetailInfoData: { board_id, org_id }, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { id }, request_flows_params = {} } = this.props
+    let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     Promise.resolve(
       dispatch({
         type: 'publicProcessDetailModal/createProcess',
@@ -567,7 +572,8 @@ export default class MainContent extends Component {
           type: 'publicProcessDetailModal/getProcessListByType',
           payload: {
             status: start_time ? '0' : '1',
-            board_id: board_id
+            board_id: BOARD_ID,
+            _organization_id: request_flows_params._organization_id || org_id
           }
         })
         that.props.onCancel && that.props.onCancel()

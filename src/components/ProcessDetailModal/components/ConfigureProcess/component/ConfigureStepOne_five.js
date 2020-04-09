@@ -111,7 +111,7 @@ export default class ConfigureStepOne_five extends Component {
     // 每个配置表项的确定的点击事件
     handleConfirmFormItem = () => {
       const { popoverVisible } = this.state
-      const { itemValue } = this.props
+      const { itemValue = {} } = this.props
       this.setState({
         is_click_confirm_btn: true
       })

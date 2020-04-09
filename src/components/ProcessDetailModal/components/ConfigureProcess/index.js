@@ -133,7 +133,7 @@ export default class ConfigureProcess extends Component {
     const { processEditDatas = [], processCurrentEditStep, dispatch, itemKey } = this.props
     let newProcessEditDatas = null
     if (processEditDatas.length) {
-      newProcessEditDatas = JSON.parse(JSON.stringify(processEditDatas))
+      newProcessEditDatas = JSON.parse(JSON.stringify(processEditDatas || []))
       newProcessEditDatas.splice(itemKey, 1)
     }
     dispatch({
@@ -151,7 +151,7 @@ export default class ConfigureProcess extends Component {
     let newNodes = [...nodes]
     let newProcessEditDatas = null
     if (processEditDatas.length) {
-      newProcessEditDatas = JSON.parse(JSON.stringify(processEditDatas))
+      newProcessEditDatas = JSON.parse(JSON.stringify(processEditDatas || []))
       newProcessEditDatas.splice(itemKey, 1)
     }
     dispatch({
