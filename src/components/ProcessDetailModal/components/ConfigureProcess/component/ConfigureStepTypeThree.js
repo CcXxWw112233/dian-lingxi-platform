@@ -301,6 +301,6 @@ export default class ConfigureStepTypeThree extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [], processCurrentEditStep }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
-  return { processEditDatas, processCurrentEditStep, projectDetailInfoData }
+function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [] }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
+  return { processEditDatas, projectDetailInfoData }
 }

@@ -6,6 +6,8 @@ import { Tabs } from 'antd';
 import { connect } from 'dva'
 import ProcessDetailModal from '../../../../../components/ProcessDetailModal'
 import { showDeleteTempleteConfirm } from '../../../../../components/ProcessDetailModal/components/handleOperateModal';
+import { withRouter } from 'react-router-dom'
+import QueryString from 'querystring'
 
 const changeClientHeight = () => {
   const clientHeight = document.documentElement.clientHeight;//获取页面可见高度
@@ -13,7 +15,7 @@ const changeClientHeight = () => {
 }
 const TabPane = Tabs.TabPane
 @connect(mapStateToProps)
-export default class ProcessDefault extends Component {
+class ProcessDefault extends Component {
   state = {
     clientHeight: changeClientHeight()
   }
@@ -21,9 +23,43 @@ export default class ProcessDefault extends Component {
     super()
     this.resizeTTY.bind(this)
   }
+
+  // 初始化数据
+  initData = (props) => {
+    const { dispatch, projectDetailInfoData: { board_id } } = props
+    dispatch({
+      type: 'publicProcessDetailModal/getProcessTemplateList',
+      payload: {
+        id: board_id,
+        board_id: board_id
+      }
+    })
+  }
+
   componentDidMount() {
     window.addEventListener('resize', this.resizeTTY)
+    this.initData(this.props)
   }
+
+  componentWillReceiveProps(nextProps) {
+    const { projectDetailInfoData: { board_id: oldBoardId } } = this.props
+    const { projectDetailInfoData: { board_id } } = nextProps
+    if (board_id && oldBoardId) {
+      if (board_id != oldBoardId) {
+        this.initData(nextProps)
+        return
+        this.props.dispatch({
+          type: 'publicProcessDetailModal/initData',
+          payload: {
+            calback: () => {
+              setTimeout(() => { this.initData(nextProps) }, 200)
+            }
+          }
+        })
+      }
+    }
+  }
+
   componentWillUnmount() {
     window.removeEventListener('resize', this.resizeTTY)
   }
@@ -31,6 +67,17 @@ export default class ProcessDefault extends Component {
     const clientHeight = changeClientHeight();//获取页面可见高度
     this.setState({
       clientHeight
+    })
+  }
+
+  updateParentProcessTempleteList = () => {
+    const { dispatch, projectDetailInfoData: { board_id } } = this.props
+    dispatch({
+      type: 'publicProcessDetailModal/getProcessTemplateList',
+      payload: {
+        id: board_id,
+        board_id: board_id
+      }
     })
   }
 
@@ -74,14 +121,22 @@ export default class ProcessDefault extends Component {
 
   // 删除流程模板的点击事件
   handleDelteTemplete = (item) => {
-    const { projectDetailInfoData: { board_id } } = this.props
+    const { projectDetailInfoData: { board_id }, dispatch } = this.props
     const { id } = item
     const processTempleteDelete = async () => {
-      await this.props.dispatch({
+      await dispatch({
         type: 'publicProcessDetailModal/deleteProcessTemplete',
         payload: {
           id,
-          board_id
+          calback: () => {
+            dispatch({
+              type: 'publicProcessDetailModal/getProcessTemplateList',
+              payload: {
+                id: board_id,
+                board_id: board_id
+              }
+            })
+          }
         }
       })
     }
@@ -163,13 +218,15 @@ export default class ProcessDefault extends Component {
         </div>
         {
           process_detail_modal_visible && (
-            <ProcessDetailModal process_detail_modal_visible={process_detail_modal_visible} />
+            <ProcessDetailModal process_detail_modal_visible={process_detail_modal_visible} updateParentProcessTempleteList={this.updateParentProcessTempleteList} />
           )
         }
       </>
     )
   }
 }
+
+export default withRouter(ProcessDefault)
 
 function mapStateToProps({
   publicProcessDetailModal: {

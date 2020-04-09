@@ -22,7 +22,7 @@ export default class BeginningStepTwo extends Component {
       transPrincipalList: props.itemValue.assignees ? [...props.itemValue.assignees] : [], // 表示当前的执行人
       transCopyPersonnelList: props.itemValue.recipients ? [...props.itemValue.recipients] : [], // 表示当前选择的抄送人
       is_show_spread_arrow: props.itemValue.status == '1' ? true : false,
-      approvePersonnelList: JSON.parse(JSON.stringify(approvePersonnelSuggestion))
+      historyCommentsList: props.itemValue.his_comments ? [...props.itemValue.his_comments] : []
     }
   }
 
@@ -33,6 +33,7 @@ export default class BeginningStepTwo extends Component {
         is_show_spread_arrow: nextProps.itemValue.status == '1' ? true : false,
         transPrincipalList: nextProps.itemValue.assignees ? [...nextProps.itemValue.assignees] : [], // 表示当前的执行人
         transCopyPersonnelList: nextProps.itemValue.recipients ? [...nextProps.itemValue.recipients] : [], // 表示当前选择的抄送人
+        historyCommentsList: nextProps.itemValue.his_comments ? [...nextProps.itemValue.his_comments] : []
       })
     }
   }
@@ -54,6 +55,68 @@ export default class BeginningStepTwo extends Component {
     e && e.stopPropagation()
     this.setState({
       is_show_spread_arrow: !this.state.is_show_spread_arrow
+    })
+  }
+
+  updateAssigneesList = () => {
+    const { itemValue: { assignees = [], approve_type } } = this.props
+    let newAssignees = [...assignees]
+    switch (approve_type) {
+      case '1': // 表示串签 然后将第一个人的审批状态改为进行中
+        newAssignees = newAssignees.map((item, index) => {
+          if (index == 0) {
+            let new_item = { ...item }
+            new_item = { ...item, processed: '1' }
+            return new_item
+          } else {
+            let new_item = { ...item }
+            new_item = { ...item, processed: '0' }
+            return new_item
+          }
+        })
+        break;
+      case '2':
+      case '3':
+        newAssignees = newAssignees.map(item => {
+          let new_item = { ...item }
+          new_item = { ...item, processed: '1' }
+          return new_item
+        })
+        break;
+      default:
+        break;
+    }
+    return newAssignees
+  }
+
+  updateRebackNodesStatus = () => {
+    const { itemValue: { id: flow_node_instance_id, assignees, his_comments = [] }, processInfo: { id: flow_instance_id, board_id }, dispatch } = this.props
+    let temp_comments = [...his_comments]
+    temp_comments.push(...assignees)
+    let newAssignees = this.updateAssigneesList()
+    this.updateCorrespondingPrcodessStepWithNodeContent('status', '1')
+    this.updateCorrespondingPrcodessStepWithNodeContent('is_confirm', '0')
+    this.setState({
+      historyCommentsList: temp_comments,
+      transPrincipalList: newAssignees
+    })
+  }
+
+  // 撤回步骤
+  handleRebackProcessNodes = () => {
+    const { itemValue: { id: flow_node_instance_id, assignees, his_comments = [] }, processInfo: { id: flow_instance_id, board_id }, dispatch } = this.props
+    dispatch({
+      type: 'publicProcessDetailModal/rebackProcessTask',
+      payload: {
+        flow_node_instance_id,
+        flow_instance_id,
+        board_id,
+        calback: () => {
+          this.updateRebackNodesStatus()
+          // this.updateCorrespondingPrcodessStepWithNodeContent('his_comments',temp_comments)
+          // this.updateCorrespondingPrcodessStepWithNodeContent('assignees',newAssignees)
+        }
+      }
     })
   }
 
@@ -203,10 +266,9 @@ export default class BeginningStepTwo extends Component {
    * 获取当前审批人的状态
    */
   getCurrentPersonApproveStatus = () => {
-    const { itemValue } = this.props
-    const { assignees, approve_type } = itemValue
+    const { transPrincipalList = [] } = this.state
     const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
-    let newAssignees = [...assignees]
+    let newAssignees = [...transPrincipalList]
     let gold_processed = (newAssignees.filter(item => item.id == id)[0] || []).processed || ''
     return gold_processed
   }
@@ -235,6 +297,22 @@ export default class BeginningStepTwo extends Component {
     let newAssignees = [...assignees]
     newAssignees.find(item => {
       if (item.id == id) {
+        flag = true
+      }
+    })
+    return flag
+  }
+
+  // 判断是否有撤回按钮
+  whetherIsHasRebackNodesBtn = () => {
+    // const { itemValue } = this.props
+    // const { assignees = [] } = itemValue
+    const { transPrincipalList = [] } = this.state
+    const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    let flag = false
+    let newAssignees = [...transPrincipalList]
+    newAssignees.find(item => {
+      if (item.id == id && item.processed == '2') { // 找到当前的 并且已经审批完成的时候
         flag = true
       }
     })
@@ -279,11 +357,11 @@ export default class BeginningStepTwo extends Component {
 
   // 渲染通过 | 驳回 的成员以及内容
   renderApprovePersonnelSuggestion = (item) => {
-    const { type, id, comment, pass, user_id, processed, avatar, name, suggestion, create_time, time } = item
+    const { comment, pass, processed, avatar, name, time } = item
     return (
       <div>
         {
-          item.processed == '2' ? (
+          processed == '2' ? (
             <div className={indexStyles.appListWrapper}>
               <div className={indexStyles.app_left}>
                 <div className={indexStyles.approve_user} style={{ position: 'relative', marginRight: '16px' }}>
@@ -314,8 +392,8 @@ export default class BeginningStepTwo extends Component {
                         pass == '0' ? (
                           <span className={indexStyles.approve_reject}>驳回</span>
                         ) : (
-                          <></>
-                        )
+                            <></>
+                          )
                       )
                   }
                   <div>{comment ? comment : '未填写意见'}</div>
@@ -332,50 +410,53 @@ export default class BeginningStepTwo extends Component {
     )
   }
 
-  // // 渲染通过 | 驳回 的成员以及内容
-  // renderApprovePersonnelSuggestion = (item) => {
-  //   const { type, user_id, avatar, name, suggestion, create_time } = item
-  //   return (
-  //     <div>
-  //       <div className={indexStyles.appListWrapper}>
-  //         <div className={indexStyles.app_left}>
-  //           <div className={indexStyles.approve_user} style={{ position: 'relative', marginRight: '16px' }}>
-  //             {/* <div className={indexStyles.defaut_avatar}></div> */}
-  //             {
-  //               avatar ? (
-  //                 <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar} />
-  //               ) : (
-  //                   <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={defaultUserAvatar} />
-  //                 )
-  //             }
-  //             {
-  //               type == '1' ? (
-  //                 <span className={`${globalStyles.authTheme} ${indexStyles.approve_userIcon}`}>&#xe849;</span>
-  //               ) : (
-  //                   <span className={`${globalStyles.authTheme} ${indexStyles.approve_reject_userIcon}`}>&#xe844;</span>
-  //                 )
-  //             }
 
-  //           </div>
-  //           <div>
-  //             <span>{name}</span>
-  //             {
-  //               type == '1' ? (
-  //                 <span className={indexStyles.approv_pass}>通过</span>
-  //               ) : (
-  //                   <span className={indexStyles.approve_reject}>驳回</span>
-  //                 )
-  //             }
-  //             <div>{suggestion ? suggestion : '未填写意见'}</div>
-  //           </div>
-  //         </div>
-  //         <div className={indexStyles.app_right}>{timestampToTimeNormal(create_time, '/', true)}</div>
-  //       </div>
-  //     </div>
-  //   )
-  // }
-
-
+  // 渲染通过 | 驳回 的成员以及内容
+  renderHistorySuggestion = (item) => {
+    const { comment, pass, avatar, name, time } = item
+    return (
+      <div>
+        <div className={indexStyles.appListWrapper}>
+          <div className={indexStyles.app_left}>
+            <div className={indexStyles.approve_user} style={{ position: 'relative', marginRight: '16px' }}>
+              {
+                avatar ? (
+                  <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar} />
+                ) : (
+                    <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={defaultUserAvatar} />
+                  )
+              }
+              {
+                pass == '1' ? (
+                  <span className={`${globalStyles.authTheme} ${indexStyles.approve_userIcon}`}>&#xe849;</span>
+                ) : (
+                    pass == '0' ? (
+                      <span className={`${globalStyles.authTheme} ${indexStyles.approve_reject_userIcon}`}>&#xe844;</span>
+                    ) : <></>
+                  )
+              }
+            </div>
+            <div>
+              <span>{name}</span>
+              {
+                pass == '1' ? (
+                  <span className={indexStyles.approv_pass}>通过</span>
+                ) : (
+                    pass == '0' ? (
+                      <span className={indexStyles.approve_reject}>驳回</span>
+                    ) : (
+                        <></>
+                      )
+                  )
+              }
+              <div>{comment ? comment : '未填写意见'}</div>
+            </div>
+          </div>
+          <div className={indexStyles.app_right}>{timestampToTimeNormal(time, '/', true) || ''}</div>
+        </div>
+      </div>
+    )
+  }
 
   // 渲染驳回的内容
   renderPopRjectContent = () => {
@@ -402,7 +483,7 @@ export default class BeginningStepTwo extends Component {
 
   renderEditDetailContent = () => {
     const { itemValue, processInfo: { status: parentStatus } } = this.props
-    const { approvePersonnelList = [], rejectMessage, transPrincipalList = [], isRejectNodesIng, isPassNodesIng } = this.state
+    const { rejectMessage, transPrincipalList = [], isRejectNodesIng, isPassNodesIng, historyCommentsList = [] } = this.state
     const { approve_type, status, assignees } = itemValue
     // 保存父级的状态是进行中 ==> 在保证当前节点是进行中 ==> 在保证是当前执行人 ==> 在保证当前执行人状态为1
     let showApproveButton = parentStatus == '1' && status == '1' && this.whetherShowCompleteButton() && this.getCurrentPersonApproveStatus() == '1'
@@ -429,12 +510,32 @@ export default class BeginningStepTwo extends Component {
         {/* 审批类型 */}
         <div style={{ minHeight: '64px', padding: '20px 14px', color: 'rgba(0,0,0,0.45)', borderTop: '1px solid #e8e8e8', marginTop: '15px' }}>
           <span className={globalStyles.authTheme}>&#xe616; 审批方式 : &nbsp;&nbsp;&nbsp;{diffType()}</span>
-          {/* {this.renderApprovePersonnelSuggestion()} */}
-          {
-            approve_type == '3' && status == '1' ? ('') : transPrincipalList.map(item => {
-              return (this.renderApprovePersonnelSuggestion(item))
-            })
-          }
+          <div style={{ marginTop: '12px' }}>
+            {
+              approve_type == '3' && status == '1' || !((transPrincipalList && transPrincipalList.length) && transPrincipalList.find(item => item.processed == '2')) ? ('') : (
+                <div>
+                  最新审批:
+                </div>
+              )
+            }
+            {
+              approve_type == '3' && status == '1' ? ('') : transPrincipalList.map(item => {
+                return (this.renderApprovePersonnelSuggestion(item))
+              })
+            }
+            {
+              (historyCommentsList && historyCommentsList.length != 0) && (
+                <div>
+                  历史审批:
+                </div>
+              )
+            }
+            {
+              (historyCommentsList && historyCommentsList.length != 0) && historyCommentsList.map(item => {
+                return (this.renderHistorySuggestion(item))
+              })
+            }
+          </div>
         </div>
         {/* 编辑按钮 */}
         {
@@ -465,6 +566,14 @@ export default class BeginningStepTwo extends Component {
               >
                 <Button type="primary">通过</Button>
               </Popconfirm>
+            </div>
+          )
+        }
+        {/* 撤回按钮 */}
+        {
+          this.whetherIsHasRebackNodesBtn() && status == '2' && parentStatus == '1' &&  (
+            <div style={{ paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center' }}>
+              <Button onClick={this.handleRebackProcessNodes} style={{ border: '1px solid rgba(24,144,255,1)', color: '#1890FF' }}>撤回</Button>
             </div>
           )
         }

@@ -16,14 +16,24 @@ export default class PagingnationContent extends Component {
   }
 
   componentDidMount() {
-    this.getProcessListByType()
+    this.getProcessListByType(this.props)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { projectDetailInfoData: { board_id: oldBoardId } } = this.props
+    const { projectDetailInfoData: { board_id } } = nextProps
+    if (board_id && oldBoardId) {
+      if (board_id != oldBoardId) {
+        this.getProcessListByType(nextProps)
+      }
+    }
   }
 
   //分页逻辑
-  async getProcessListByType() {
-    const { projectDetailInfoData: { board_id }, processDoingList = [], processStopedList = [], processComepletedList = [], processNotBeginningList = [] } = this.props
+  async getProcessListByType(props) {
+    const { projectDetailInfoData: { board_id }, processDoingList = [], processStopedList = [], processComepletedList = [], processNotBeginningList = [] } = props
     const { page_number, page_size, } = this.state
-    const { listData = [], currentFlowTabsStatus, dispatch } = this.props
+    const { listData = [], currentFlowTabsStatus, dispatch } = props
     const obj = {
       // page_number,
       // page_size,

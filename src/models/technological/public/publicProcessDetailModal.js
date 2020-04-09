@@ -6,7 +6,7 @@ import { MESSAGE_DURATION_TIME, FILES, FLOWS } from "../../../globalset/js/const
 import { getSubfixName } from '../../../utils/businessFunction'
 import QueryString from 'querystring'
 import { processEditDatasConstant, processEditDatasRecordsConstant, processDoingListMatch, processInfoMatch } from '../../../components/ProcessDetailModal/constant';
-import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete, rejectProcessTask, workflowEnd, workflowDelete, restartProcess, processFileUpload, deleteProcessFile, fileDownload, configurePorcessGuide } from "../../../services/technological/workFlow"
+import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete, rejectProcessTask, workflowEnd, workflowDelete, restartProcess, processFileUpload, deleteProcessFile, fileDownload, configurePorcessGuide, rebackProcessTask } from "../../../services/technological/workFlow"
 import {public_selectCurrentFlowTabsStatus} from './select'
 
 let dispatchEvent = null
@@ -42,69 +42,42 @@ export default {
     setup({ dispatch, history }) {
       history.listen((location) => {
         if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
-          const param = QueryString.parse(location.search.replace('?', ''))
           dispatchEvent = dispatch
-          board_id = param.board_id
-          appsSelectKey = param.appsSelectKey
-          flow_id = param.flow_id
-          if (appsSelectKey == '2') {
-            dispatch({
-              type: 'updateDatas',
-              payload: {
-                //流程
-                processPageFlagStep: '1', //"1""2""3""4"分别对应新建，编辑，启动，详情界面,默认1
-                templateInfo: {}, //所选择的流程模板的信息数据
-                processInfo: {}, //所选中的流程的信息
-                currentProcessInstanceId: '', // 当前查看的流程实例名称
-                currentTempleteIdentifyId: '', // 当前查看的模板编号凭证ID
-                currentFlowTabsStatus: '1',
-                process_detail_modal_visible: false,
-                processDoingList: [], // 进行中的流程
-                processStopedList: [], // 已中止的流程
-                processComepletedList: [], // 已完成的流程
-                processNotBeginningList: [], // 未开始的流程
-                processEditDatas:[],
-                not_show_create_node_guide: '1',
-                not_show_create_form_guide: '1',
-              }
-            })
-            if (board_id) {
-              dispatch({
-                type: 'getProcessTemplateList',
-                payload: {
-                  id: board_id,
-                  board_id
-                }
-              })
-              dispatch({
-                type: 'projectDetail/projectDetailInfo',
-                payload: {
-                  id: board_id
-                }
-              })
-            }
-            if (flow_id) {
-              dispatch({
-                type: 'getProcessInfoByUrl',
-                payload: {
-                  currentProcessInstanceId: flow_id
-                }
-              })
-              // dispatch({
-              //   type: 'updateDatas',
-              //   payload: {
-              //     process_detail_modal_visible: true,
-              //     currentProcessInstanceId: flow_id
-              //   }
-              // })
-            }
-          }
-
         }
       })
     },
   },
   effects: {
+    // 初始化数据
+    * initData({ payload }, { call, put }) {
+      const { board_id, flow_id, calback } = payload
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          //流程
+          currentFlowInstanceName: '', // 当前流程实例的名称
+          currentFlowInstanceDescription: '', // 当前的实例描述内容
+          isEditCurrentFlowInstanceName: true, // 是否正在编辑当前实例的名称
+          isEditCurrentFlowInstanceDescription: false, // 是否正在编辑当前实例的描述
+          processPageFlagStep: '1', // "1", "2", "3", "4" 分别对应 新建， 编辑， 启动
+          process_detail_modal_visible: false,
+          templateInfo: {}, //所选择的流程模板的信息数据
+          processInfo: {}, //所选中的流程的信息
+          currentProcessInstanceId: '', // 当前查看的流程实例名称
+          currentTempleteIdentifyId: '', // 当前查看的模板编号凭证ID
+          currentFlowTabsStatus: '1',
+          processDoingList: [], // 进行中的流程
+          processStopedList: [], // 已中止的流程
+          processComepletedList: [], // 已完成的流程
+          processNotBeginningList: [], // 未开始的流程
+          processEditDatas:[],
+          not_show_create_node_guide: '1',
+          not_show_create_form_guide: '1',
+        }
+      })
+      if (calback && typeof calback == 'function') calback()
+    },
+
     // 获取流程模板列表
     * getProcessTemplateList({ payload }, { call, put }) {
       const { id, board_id, calback } = payload
@@ -159,13 +132,13 @@ export default {
       newPayload.calback ? delete newPayload.calback : ''
       let res = yield call(saveProcessTemplate,newPayload)
       if (isApiResponseOk(res)) {
-        yield put({
-          type: 'getProcessTemplateList',
-          payload: {
-            id: payload.board_id,
-            board_id: payload.board_id
-          }
-        })
+        // yield put({
+        //   type: 'getProcessTemplateList',
+        //   payload: {
+        //     id: payload.board_id,
+        //     board_id: payload.board_id
+        //   }
+        // })
         if (calback && typeof calback == 'function') calback(res.data)
       } else {
         message.warn(res.message)
@@ -183,13 +156,13 @@ export default {
         setTimeout(() => {
           message.success(`保存模板成功`,MESSAGE_DURATION_TIME)
         }, 200)
-        yield put({
-          type: 'getProcessTemplateList',
-          payload: {
-            id: payload.board_id,
-            board_id: payload.board_id
-          }
-        })
+        // yield put({
+        //   type: 'getProcessTemplateList',
+        //   payload: {
+        //     id: payload.board_id,
+        //     board_id: payload.board_id
+        //   }
+        // })
         if (calback && typeof calback == 'function') calback()
       } else {
         message.warn(res.message)
@@ -199,19 +172,20 @@ export default {
 
     // 删除流程模板
     * deleteProcessTemplete({ payload }, { call, put }) {
-      const { id, board_id } = payload
+      const { id, calback } = payload
       let res = yield call(deleteProcessTemplete,{id})
       if (isApiResponseOk(res)) {
         setTimeout(() => {
           message.success('删除模板成功')
         },200)
-        yield put({
-          type: 'getProcessTemplateList',
-          payload: {
-            id: board_id,
-            board_id
-          }
-        })
+        // yield put({
+        //   type: 'getProcessTemplateList',
+        //   payload: {
+        //     id: board_id,
+        //     board_id
+        //   }
+        // })
+        if (calback && typeof calback == 'function') calback()
       } else {
         message.warn(res.message)
       }
@@ -484,6 +458,33 @@ export default {
         })
       } else {
 
+      }
+    },
+
+    // 撤回任务
+    * rebackProcessTask({ payload }, { call, put }) {
+      const { flow_instance_id, flow_node_instance_id, board_id, calback } = payload
+      let res = yield call(rebackProcessTask, {flow_instance_id, flow_node_instance_id})
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('撤回步骤成功',MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getProcessInfo',
+          payload: {
+            id: flow_instance_id
+          }
+        })
+        yield put({
+          type: 'getProcessListByType',
+          payload: {
+            status: '1',
+            board_id
+          }
+        })
+        if (calback && typeof calback == 'function') calback()
+      } else {
+        message.warn(res.message)
       }
     }
   },
