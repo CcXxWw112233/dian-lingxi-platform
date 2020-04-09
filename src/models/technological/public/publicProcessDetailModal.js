@@ -76,23 +76,6 @@ export default {
         }
       })
       if (calback && typeof calback == 'function') calback()
-      // if (board_id) {
-      //   yield put({
-      //     type: 'getProcessTemplateList',
-      //     payload: {
-      //       id: board_id,
-      //       board_id
-      //     }
-      //   })
-      // }
-      // if (flow_id) {
-      //   yield put({
-      //     type: 'getProcessInfoByUrl',
-      //     payload: {
-      //       currentProcessInstanceId: flow_id
-      //     }
-      //   })
-      // }
     },
 
     // 获取流程模板列表
@@ -485,6 +468,12 @@ export default {
         setTimeout(() => {
           message.success('撤回步骤成功',MESSAGE_DURATION_TIME)
         }, 200)
+        yield put({
+          type: 'getProcessInfo',
+          payload: {
+            id: flow_instance_id
+          }
+        })
         yield put({
           type: 'getProcessListByType',
           payload: {

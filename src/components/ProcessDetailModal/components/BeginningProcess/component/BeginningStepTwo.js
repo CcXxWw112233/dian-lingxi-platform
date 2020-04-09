@@ -571,7 +571,7 @@ export default class BeginningStepTwo extends Component {
         }
         {/* 撤回按钮 */}
         {
-          this.whetherIsHasRebackNodesBtn() && status == '2' && (
+          this.whetherIsHasRebackNodesBtn() && status == '2' && parentStatus == '1' &&  (
             <div style={{ paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center' }}>
               <Button onClick={this.handleRebackProcessNodes} style={{ border: '1px solid rgba(24,144,255,1)', color: '#1890FF' }}>撤回</Button>
             </div>

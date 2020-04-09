@@ -149,7 +149,7 @@ export default class AccomplishStepOne extends Component {
 
   // 渲染编辑详情的内容  
   renderEditDetailContent = () => {
-    const { itemValue } = this.props
+    const { itemValue, processInfo: { status: parentStatus } } = this.props
     const { forms = [], description, deadline_value, status } = itemValue
     return (
       <div>
@@ -176,7 +176,7 @@ export default class AccomplishStepOne extends Component {
           )
         }
         {
-          this.whetherShowRebackButton() && (
+          this.whetherShowRebackButton() && status == '2' && parentStatus == '1' && (
             <div className={indexStyles.reback_btn}>
               <Button onClick={this.handleRebackProcessNodes}>撤回</Button>
             </div>
