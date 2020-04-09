@@ -3,7 +3,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import styles from './index.less'
 import { Tooltip, Button, Popconfirm } from 'antd'
 import { connect } from 'dva'
-import { checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
+import { checkIsHasPermissionInBoard, setBoardIdStorage } from '../../../../../utils/businessFunction'
 import { PROJECT_FLOWS_FLOW_TEMPLATE, PROJECT_FLOWS_FLOW_CREATE } from '../../../../../globalset/js/constant'
 import SelectBoardModal from './SelectBoardModal'
 @connect(mapStateToProps)
@@ -64,8 +64,9 @@ export default class Templates extends Component {
     // 
     setBoardSelectVisible = (visible) => {
         this.setState({
-            board_select_visible: visible
+            board_select_visible: visible,
         })
+        this.setLocalBoardId('0')
     }
     modalOkCalback = () => { //确认回调
         this.setBoardSelectVisible(false)
@@ -95,16 +96,23 @@ export default class Templates extends Component {
     }
     // 编辑模板的点击事件
     handleEditTemplete = (item) => {
-        const { id, template_no } = item
+        const { id, template_no, board_id } = item
         const { dispatch } = this.props
         dispatch({
-            type: 'publicProcessDetailModal/getTemplateInfo',
+            type: 'projectDetail/projectDetailInfo',
             payload: {
-                id,
-                processPageFlagStep: '2',
-                currentTempleteIdentifyId: template_no,
-                process_detail_modal_visible: true
+                id: board_id
             }
+        }).then(res => {
+            dispatch({
+                type: 'publicProcessDetailModal/getTemplateInfo',
+                payload: {
+                    id,
+                    processPageFlagStep: '2',
+                    currentTempleteIdentifyId: template_no,
+                    process_detail_modal_visible: true
+                }
+            })
         })
     }
     // 启动流程的点击事件
@@ -123,12 +131,16 @@ export default class Templates extends Component {
     // 删除流程模板的点击事件
     handleDelteTemplete = (item) => {
         const { id, board_id } = item
-        const { dispatch } = this.props
+        const { dispatch, updateParentProcessTempleteList } = this.props
+        setBoardIdStorage(board_id)
         dispatch({
             type: 'publicProcessDetailModal/deleteProcessTemplete',
             payload: {
                 id,
-                board_id
+                board_id,
+                calback: function () {
+                    updateParentProcessTempleteList && updateParentProcessTempleteList()
+                }
             }
         })
     }
@@ -230,7 +242,7 @@ export default class Templates extends Component {
                     setBoardSelectVisible={this.setBoardSelectVisible}
                     modalOkCalback={this.modalOkCalback}
                     visible={board_select_visible}
-                    board_id={local_board_id}
+                    local_board_id={local_board_id}
                 />
             </>
         )

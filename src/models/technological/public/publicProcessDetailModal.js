@@ -80,8 +80,8 @@ export default {
 
     // 获取流程模板列表
     * getProcessTemplateList({ payload }, { call, put }) {
-      const { id, board_id, calback } = payload
-      let res = yield call(getProcessTemplateList, { id, board_id })
+      const { id, board_id, calback, _organization_id } = payload
+      let res = yield call(getProcessTemplateList, { id, board_id, _organization_id })
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',

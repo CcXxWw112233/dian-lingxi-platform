@@ -14,7 +14,17 @@ export default class index extends Component {
             _organization_id: localStorage.getItem('OrganizationId') || '0'
         }
     }
-
+    updateParentProcessTempleteList = () => {
+        const { dispatch } = this.props
+        const { board_id } = this.props.simplemodeCurrentProject
+        dispatch({
+            type: 'publicProcessDetailModal/getProcessTemplateList',
+            payload: {
+                board_id: board_id || '0',
+                _organization_id: localStorage.getItem('OrganizationId') || '0'
+            }
+        })
+    }
     render() {
         const { process_detail_modal_visible } = this.props
         const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
@@ -26,7 +36,7 @@ export default class index extends Component {
                     <div className={styles.main_top}></div>
                     <div className={styles.main_contain}>
                         <div className={styles.contain_left}>
-                            <Templates />
+                            <Templates updateParentProcessTempleteList={this.updateParentProcessTempleteList} />
                         </div>
                         <div className={styles.contain_right}>
                             <FlowInstances />
@@ -36,6 +46,7 @@ export default class index extends Component {
                 {
                     process_detail_modal_visible && (
                         <ProcessDetailModal
+                            updateParentProcessTempleteList={this.updateParentProcessTempleteList}
                             request_flows_params={this.request_flows_params()}
                             process_detail_modal_visible={process_detail_modal_visible}
                         />
