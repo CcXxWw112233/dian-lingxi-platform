@@ -71,8 +71,9 @@ export default class HeaderContentRightMenu extends Component {
   }
 
   commonProcessVisitControlUpdateCurrentModalData = (newProcessInfo, type) => {
-    const { dispatch, processInfo = {} } = this.props
+    const { dispatch, processInfo = {}, request_flows_params = {} } = this.props
     const { status, board_id } = processInfo
+    let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
@@ -84,7 +85,7 @@ export default class HeaderContentRightMenu extends Component {
         type: 'publicProcessDetailModal/getProcessListByType',
         payload: {
           status: status,
-          board_id: board_id
+          board_id: BOARD_ID
         }
       })
     }
@@ -405,8 +406,8 @@ export default class HeaderContentRightMenu extends Component {
     dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
-        processEditDatas: [...newNodes],
-        templateInfo: {...templateInfo, id, nodes: [...newNodes], is_covert_template},
+        processEditDatas: JSON.parse(JSON.stringify([...newNodes] || [])),
+        templateInfo: {...templateInfo, id, nodes: JSON.parse(JSON.stringify([...newNodes] || [])), is_covert_template},
         processPageFlagStep: '2',
       }
     })

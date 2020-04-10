@@ -41,7 +41,7 @@ export default class HeaderContent extends Component {
         </div>
         {/* 这里是头部右边 */}
         <div className={indexStyles.detail_head_right}>
-          <HeaderContentRightMenu onCancel={this.props.onCancel} whetherUpdateWorkbenchPorcessListData={this.props.whetherUpdateWorkbenchPorcessListData}/>
+          <HeaderContentRightMenu request_flows_params={this.props.request_flows_params} onCancel={this.props.onCancel} whetherUpdateWorkbenchPorcessListData={this.props.whetherUpdateWorkbenchPorcessListData}/>
         </div>
         
       </div>

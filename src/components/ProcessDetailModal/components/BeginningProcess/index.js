@@ -13,13 +13,13 @@ export default class BeginningProcess extends Component {
     switch (node_type) {
       case '1':
         if (is_confirm == '1') {
-          container = <AccomplishStepOne itemKey={key} itemValue={value} />
+          container = <AccomplishStepOne request_flows_params={this.props.request_flows_params} itemKey={key} itemValue={value} />
         } else {
-          container = <BeginningStepOne itemKey={key} itemValue={value} />
+          container = <BeginningStepOne request_flows_params={this.props.request_flows_params} itemKey={key} itemValue={value} />
         }
         break;
       case '2':
-        container = <BeginningStepTwo itemKey={key} itemValue={value} />
+        container = <BeginningStepTwo request_flows_params={this.props.request_flows_params} itemKey={key} itemValue={value} />
         break;
       default:
         container = <div></div>

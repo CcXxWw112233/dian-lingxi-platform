@@ -485,13 +485,13 @@ export default {
             id: flow_instance_id
           }
         })
-        yield put({
-          type: 'getProcessListByType',
-          payload: {
-            status: '1',
-            board_id
-          }
-        })
+        // yield put({
+        //   type: 'getProcessListByType',
+        //   payload: {
+        //     status: '1',
+        //     board_id
+        //   }
+        // })
         if (calback && typeof calback == 'function') calback()
       } else {
         message.warn(res.message)
