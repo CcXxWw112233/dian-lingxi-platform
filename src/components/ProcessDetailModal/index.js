@@ -3,6 +3,7 @@ import PublicDetailModal from '@/components/PublicDetailModal'
 import MainContent from './MainContent'
 import HeaderContent from './HeaderContent'
 import { connect } from 'dva'
+// import { revealRequestFlowsParams } from './components/handleOperateModal'
 
 @connect(mapStateToProps)
 export default class ProcessDetailModal extends Component {
@@ -22,7 +23,7 @@ export default class ProcessDetailModal extends Component {
         processCurrentEditStep: 0, // 当前的编辑步骤 第几步
         processCurrentCompleteStep: 0, // 当前处于的操作步骤
         templateInfo: {}, // 模板信息
-        processInfo: [], // 流程实例信息
+        processInfo: {}, // 流程实例信息
         currentProcessInstanceId: '', // 当前查看的流程实例名称
         currentTempleteIdentifyId: '', // 当前查看的模板ID
         not_show_create_node_guide: '1',
@@ -63,22 +64,38 @@ export default class ProcessDetailModal extends Component {
     
   }
 
+  // whetherReceiveRequestFlowsParams = () => {
+  //   const { request_flows_params = {} } = this.props
+  //   if (request_flows_params && Object.keys(request_flows_params).length) {
+  //     return revealRequestFlowsParams({...request_flows_params})
+  //   } else {
+  //     return {}
+  //   }
+  // }
+
   render() {
-    const { process_detail_modal_visible, whetherUpdateWorkbenchPorcessListData } = this.props
+    const { process_detail_modal_visible, whetherUpdateWorkbenchPorcessListData, updateParentProcessTempleteList, request_flows_params = {} } = this.props
     return (
       <div>
         <PublicDetailModal
           modalVisible={process_detail_modal_visible}
           onCancel={this.onCancel}
           isNotShowFileDetailContentRightVisible={true}
-          mainContent={<MainContent onCancel={this.onCancel}/>}
-          headerContent={<HeaderContent onCancel={this.onCancel} whetherUpdateWorkbenchPorcessListData={whetherUpdateWorkbenchPorcessListData}/>}
+          mainContent={<MainContent request_flows_params={request_flows_params} onCancel={this.onCancel} updateParentProcessTempleteList={updateParentProcessTempleteList}/>}
+          headerContent={<HeaderContent request_flows_params={request_flows_params} onCancel={this.onCancel} whetherUpdateWorkbenchPorcessListData={whetherUpdateWorkbenchPorcessListData}/>}
           commonDrawerContentOutClick={this.commonDrawerContentOutClick}
           isNotShowFileDetailContentLeftScrollBar={true}
         />
       </div>
     )
   }
+}
+
+ProcessDetailModal.defaultProps = {
+  process_detail_modal_visible: false, // 设置流程弹窗是否显示, 默认为false 不显示
+  whetherUpdateWorkbenchPorcessListData: function(){}, // 修改访问控制后需要更新工作台中的代办列表 的回调
+  updateParentProcessTempleteList: function(){}, // 内部数据修改后用来更新外部数据的回调
+  request_flows_params: {}, // 接收的外部参数
 }
 
 //  只关联public中弹窗内的数据

@@ -12,10 +12,11 @@ import { processEditDatasItemOneConstant } from './constant'
 import { Tooltip, Button, message, Popover, DatePicker } from 'antd'
 import { timeToTimestamp } from '../../utils/util'
 import moment from 'moment'
-import { MESSAGE_DURATION_TIME, FLOWS } from '../../globalset/js/constant'
+import { MESSAGE_DURATION_TIME, FLOWS, NOT_HAS_PERMISION_COMFIRN, PROJECT_FLOWS_FLOW_CREATE } from '../../globalset/js/constant'
 import { saveProcessTemplate, getTemplateInfo, createProcess } from '../../services/technological/workFlow'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { currentNounPlanFilterName } from "@/utils/businessFunction";
+import { checkIsHasPermissionInBoard, setBoardIdStorage, getGlobalData } from '../../utils/businessFunction'
 const { LingxiIm, Im } = global.constants
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -26,7 +27,7 @@ export default class MainContent extends Component {
     this.state = {
       clientHeight: document.documentElement.clientHeight,
       clientWidth: document.documentElement.clientWidth,
-      currentFlowInstanceName: '', // 当前流程实例的名称
+      currentFlowInstanceName: props.currentFlowInstanceName ? props.currentFlowInstanceName : '', // 当前流程实例的名称
       currentFlowInstanceDescription: '', // 当前的实例描述内容
       isEditCurrentFlowInstanceName: true, // 是否正在编辑当前实例的名称
       isEditCurrentFlowInstanceDescription: false, // 是否正在编辑当前实例的描述
@@ -60,7 +61,7 @@ export default class MainContent extends Component {
   }
 
   componentDidMount() {
-    this.initCanvas()
+    this.initCanvas(this.props)
     window.addEventListener('resize', this.resizeTTY)
     window.addEventListener('scroll', this.onScroll)
     // 采用锚点方式对元素进行定位
@@ -117,14 +118,14 @@ export default class MainContent extends Component {
     if (old_curr_node_sort && curr_node_sort) {
       if (curr_node_sort != old_curr_node_sort) {
         setTimeout(() => {
-          this.initCanvas()
+          this.initCanvas(nextProps)
         },50)
       }
     }
   }
 
-  initCanvas() {
-    const { processInfo = {}, processEditDatas = [] } = this.props
+  initCanvas(props) {
+    const { processInfo = {}, processEditDatas = [] } = props
     const { curr_node_sort, status: parentStatus } = processInfo
     const defaultProps = {
       canvaswidth: 140, // 画布宽度
@@ -265,22 +266,28 @@ export default class MainContent extends Component {
 
   titleInputValueChange = (e) => {
     if (e.target.value.trimLR() == '') {
-      this.props.dispatch({
-        type: 'publicProcessDetailModal/updateDatas',
-        payload: {
-          // isEditCurrentFlowInstanceName: true,
-          currentFlowInstanceName: ''
-        }
+      this.setState({
+        currentFlowInstanceName: ''
       })
+      // this.props.dispatch({
+      //   type: 'publicProcessDetailModal/updateDatas',
+      //   payload: {
+      //     // isEditCurrentFlowInstanceName: true,
+      //     currentFlowInstanceName: ''
+      //   }
+      // })
       return
     }
-    this.props.dispatch({
-      type: 'publicProcessDetailModal/updateDatas',
-      payload: {
-        // isEditCurrentFlowInstanceName: true,
-        currentFlowInstanceName: e.target.value
-      }
-    })
+    // this.setState({
+    //   currentFlowInstanceName: e.target.value
+    // })
+    // // this.props.dispatch({
+    // //   type: 'publicProcessDetailModal/updateDatas',
+    // //   payload: {
+    // //     // isEditCurrentFlowInstanceName: true,
+    // //     currentFlowInstanceName: e.target.value
+    // //   }
+    // // })
   }
 
   // 标题失去焦点回调
@@ -288,15 +295,21 @@ export default class MainContent extends Component {
     let val = e.target.value.trimLR()
     // let reStr = val.trim()
     if (val == "" || val == " " || !val) {
-      this.props.dispatch({
-        type: 'publicProcessDetailModal/updateDatas',
-        payload: {
-          // isEditCurrentFlowInstanceName: true,
-          currentFlowInstanceName: ''
-        }
+      this.setState({
+        currentFlowInstanceName: ''
       })
+      // this.props.dispatch({
+      //   type: 'publicProcessDetailModal/updateDatas',
+      //   payload: {
+      //     isEditCurrentFlowInstanceName: true,
+      //     currentFlowInstanceName: ''
+      //   }
+      // })
       return
     }
+    this.setState({
+      currentFlowInstanceName: val
+    })
     this.props.dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
@@ -393,11 +406,10 @@ export default class MainContent extends Component {
       }
     })
   }
-
-  // 保存模板的点击事件
+// 保存模板的点击事件
   handleSaveProcessTemplate = (e) => {
     e && e.stopPropagation()
-    const { processPageFlagStep, currentTempleteIdentifyId, dispatch } = this.props
+    const { processPageFlagStep } = this.props
     if (this.state.isSaveTempleteIng) {
       message.warn('正在保存模板中...')
       return
@@ -405,34 +417,57 @@ export default class MainContent extends Component {
     this.setState({
       isSaveTempleteIng: true
     })
-    const { projectDetailInfoData: { board_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [] } = this.props
-    if (processPageFlagStep == '1') {// 表示的是新建的时候
-      Promise.resolve(
-        dispatch({
-          type: 'publicProcessDetailModal/saveProcessTemplate',
-          payload: {
-            board_id,
-            name: currentFlowInstanceName,
-            description: currentFlowInstanceDescription,
-            nodes: processEditDatas,
-          }
-        })
-      ).then(res => {
-        if (isApiResponseOk(res)) {
-          setTimeout(() => {
-            message.success('保存模板成功', MESSAGE_DURATION_TIME)
-          }, 200)
-          this.setState({
-            isSaveTempleteIng: false
-          })
-          this.props.onCancel && this.props.onCancel()
-        } else {
-          this.setState({
-            isSaveTempleteIng: false
-          })
+    switch (processPageFlagStep) {
+      case '1': // 表示是配置的时候的点击保存模板
+        this.handleSaveConfigureProcessTemplete()
+        break;
+      case '2': // 表示是编辑的时候保存模板
+        this.handleSaveEditProcessTemplete()
+      break
+      default:
+        break;
+    }
+  }
+
+  // 表示是配置的时候保存模板
+  handleSaveConfigureProcessTemplete = () => {
+    const { currentFlowInstanceName } = this.state
+    const { dispatch, projectDetailInfoData: { board_id }, currentFlowInstanceDescription, processEditDatas = [] } = this.props
+    Promise.resolve(
+      dispatch({
+        type: 'publicProcessDetailModal/saveProcessTemplate',
+        payload: {
+          board_id,
+          name: currentFlowInstanceName,
+          description: currentFlowInstanceDescription,
+          nodes: processEditDatas,
         }
       })
-    } else if (processPageFlagStep == '2') {// 表示的是编辑的时候
+    ).then(res => {
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('保存模板成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        this.props.updateParentProcessTempleteList && this.props.updateParentProcessTempleteList()
+        this.setState({
+          isSaveTempleteIng: false
+        })
+        this.props.onCancel && this.props.onCancel()
+      } else {
+        this.setState({
+          isSaveTempleteIng: false
+        })
+      }
+    })
+  }
+  
+  // 表示是编辑时保存模板 ==> 是需要带上凭证的
+  handleSaveEditProcessTemplete = () => {
+    const { currentFlowInstanceName } = this.state
+    const { dispatch, currentTempleteIdentifyId, projectDetailInfoData: { board_id }, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { id, is_covert_template } } = this.props
+    if (is_covert_template && is_covert_template == '1') {
+      this.handleSaveConfigureProcessTemplete()
+    } else {
       Promise.resolve(
         dispatch({
           type: 'publicProcessDetailModal/saveEditProcessTemplete',
@@ -449,6 +484,7 @@ export default class MainContent extends Component {
           setTimeout(() => {
             message.success(`保存模板成功`,MESSAGE_DURATION_TIME)
           }, 200)
+          this.props.updateParentProcessTempleteList && this.props.updateParentProcessTempleteList()
           this.setState({
             isSaveTempleteIng: false
           })
@@ -471,15 +507,22 @@ export default class MainContent extends Component {
   }
   // 第一步: 先保存模板 ==> 返回模板ID
   handleOperateConfigureConfirmProcessOne = async (start_time) => {
-    const { projectDetailInfoData: { board_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [] } = this.props
+    const { currentFlowInstanceName } = this.state
+    const { projectDetailInfoData: { board_id }, currentFlowInstanceDescription, processEditDatas = [], request_flows_params = {} } = this.props
+    let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
+    let REAUEST_BOARD_ID = getGlobalData('storageCurrentOperateBoardId') || board_id
     let res = await saveProcessTemplate({
-      board_id,
+      board_id: REAUEST_BOARD_ID,
       name: currentFlowInstanceName,
       description: currentFlowInstanceDescription,
       nodes: processEditDatas,
       is_retain: '0',
     })
     if (!isApiResponseOk(res)) {
+      setTimeout(() => {message.warn(res.message,MESSAGE_DURATION_TIME)},500)
+      this.setState({
+        isCreateProcessIng: false
+      })
       return Promise.resolve([]);
     }
     let id = res.data
@@ -488,8 +531,13 @@ export default class MainContent extends Component {
   }
   // 第二步: 调用模板详情 ==> 返回对应模板信息内容
   handleOperateConfigureConfirmProcessTwo = async ({id, temp_time}) => {    
+    if (!id) return Promise.resolve([]);
     let res = await getTemplateInfo({id})
     if (!isApiResponseOk(res)) {
+      setTimeout(() => {message.warn(res.message,MESSAGE_DURATION_TIME)},500)
+      this.setState({
+        isCreateProcessIng: false
+      })
       return Promise.resolve([]);
     }
     let payload = {
@@ -505,8 +553,15 @@ export default class MainContent extends Component {
   }
   // 第三步: 调用列表并关闭弹窗 ==> 回调
   handleOperateConfigureConfirmProcessThree = async({payload, temp_time2}) => {
+    if (!payload) return Promise.resolve([]);
+    const { request_flows_params = {}, projectDetailInfoData: { board_id, org_id } } = this.props
+    let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     let res = await createProcess(payload)
     if (!isApiResponseOk(res)) {
+      setTimeout(() => { message.warn(res.message,MESSAGE_DURATION_TIME) },500)
+      this.setState({
+        isCreateProcessIng: false
+      })
       return Promise.resolve([]);
     }
     setTimeout(() => {
@@ -519,7 +574,8 @@ export default class MainContent extends Component {
       type: 'publicProcessDetailModal/getProcessListByType',
       payload: {
         status: temp_time2 ? '0' : '1',
-        board_id: res.data.board_id
+        board_id: BOARD_ID || res.data.board_id,
+        _organization_id: request_flows_params._organization_id || org_id
       }
     })
     this.props.onCancel && this.props.onCancel()
@@ -528,7 +584,10 @@ export default class MainContent extends Component {
   // 表示是在启动的时候调永立即开始流程
   handleOperateStartConfirmProcess = (start_time) => {
     let that = this
-    const { dispatch, projectDetailInfoData: { board_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { id } } = this.props
+    const { currentFlowInstanceName } = this.state
+    const { dispatch, projectDetailInfoData: { board_id, org_id }, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { id }, request_flows_params = {} } = this.props
+    let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
+    let REAUEST_BOARD_ID = getGlobalData('storageCurrentOperateBoardId') || board_id
     Promise.resolve(
       dispatch({
         type: 'publicProcessDetailModal/createProcess',
@@ -539,6 +598,7 @@ export default class MainContent extends Component {
           start_up_type: start_time ? '2' : '1',
           plan_start_time: start_time ? start_time : '',
           flow_template_id: id,
+          board_id: REAUEST_BOARD_ID
         }
       })
     ).then(res => {
@@ -550,7 +610,8 @@ export default class MainContent extends Component {
           type: 'publicProcessDetailModal/getProcessListByType',
           payload: {
             status: start_time ? '0' : '1',
-            board_id: board_id
+            board_id: BOARD_ID,
+            _organization_id: request_flows_params._organization_id || org_id
           }
         })
         that.props.onCancel && that.props.onCancel()
@@ -565,9 +626,18 @@ export default class MainContent extends Component {
   // 立即开始
   handleCreateProcess = (e, start_time) => {
     e && e.stopPropagation()
+    const { projectDetailInfoData: { board_id } } = this.props
+    // setBoardIdStorage(board_id)
     this.setState({
       isCreateProcessIng: true
     })
+    if (!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, board_id)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN,MESSAGE_DURATION_TIME)
+      this.setState({
+        isCreateProcessIng: false
+      })
+      return
+    }
     if (this.state.isCreateProcessIng) {
       message.warn('正在启动流程中...')
       return
@@ -672,7 +742,7 @@ export default class MainContent extends Component {
         container = <ProcessStartConfirm itemKey={key} itemValue={value} />
         break
       case '4':
-        container = <BeginningProcess itemKey={key} itemValue={value} />
+        container = <BeginningProcess request_flows_params={this.props.request_flows_params} itemKey={key} itemValue={value} />
         break
       default:
         break;
@@ -777,9 +847,9 @@ export default class MainContent extends Component {
   }
 
   render() {
-    const { clientHeight } = this.state
-    const { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep, processInfo: { status } } = this.props
-    let saveTempleteDisabled = currentFlowInstanceName == '' || (processEditDatas && processEditDatas.length) && processEditDatas[processEditDatas.length - 1].is_edit == '0' || (processEditDatas && processEditDatas.length) && !(processEditDatas[processEditDatas.length - 1].node_type) ? true : false
+    const { clientHeight, currentFlowInstanceName } = this.state
+    const { currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep, processInfo: { status } } = this.props
+    let saveTempleteDisabled = currentFlowInstanceName == '' || (processEditDatas && processEditDatas.length) && processEditDatas.find(item => item.is_edit == '0') || (processEditDatas && processEditDatas.length) && !(processEditDatas[processEditDatas.length - 1].node_type) ? true : false
     return (
       <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto', position: 'relative' }} onScroll={this.onScroll} >
         <div id="container_configureTop" className={indexStyles.configure_top}>
@@ -912,6 +982,10 @@ export default class MainContent extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas = [], processInfo = {}, node_type, processCurrentEditStep, templateInfo = {}, currentFlowTabsStatus, not_show_create_node_guide }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
-  return { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas, processInfo, node_type, processCurrentEditStep, templateInfo, currentFlowTabsStatus, not_show_create_node_guide, projectDetailInfoData }
+function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas = [], processInfo = {}, node_type, processCurrentEditStep, templateInfo = {}, currentFlowTabsStatus, not_show_create_node_guide }, projectDetail: { datas: { projectDetailInfoData = {} } }, technological: {
+  datas: {
+    userBoardPermissions = []
+  }
+} }) {
+  return { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas, processInfo, node_type, processCurrentEditStep, templateInfo, currentFlowTabsStatus, not_show_create_node_guide, projectDetailInfoData, userBoardPermissions }
 }

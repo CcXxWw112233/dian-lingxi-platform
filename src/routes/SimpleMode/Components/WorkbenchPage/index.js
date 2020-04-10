@@ -8,20 +8,13 @@ import BoardPlan from './BoardPlan/index'
 import InvestmentMaps from './InvestmentMaps/index'
 import XczNews from './XczNews/index'
 import Zhichengshe from './Zhichengshe/index'
-// import LingxiIm, { Im } from 'lingxi-im'
+import Workglows from './Workflows'
 import { isPaymentOrgUser } from "@/utils/businessFunction"
-const { LingxiIm } = global.constants
 class WorkbenchPage extends Component {
     constructor(props) {
         // console.log("WorkbenchPage组件初始化");
         super(props);
         this.state = {
-            BoardPlanVisible: false,
-            BoardCommunicationVisible: false,
-            BoardFilesVisible: false,
-            InvestmentMapsVisible: false,
-            XczNewsVisible: false,
-            ZhichengsheVisible: false,
         }
     }
     componentWillMount() {
@@ -50,10 +43,13 @@ class WorkbenchPage extends Component {
                 allOrgBoardTreeList: []
             }
         })
+        window.removeEventListener('resize', this.setWorkbenchBoxContentHeight)
     }
     componentDidMount() {
         const { currentSelectedWorkbenchBox = {} } = this.props;
         this.setWorkbenchVisible(currentSelectedWorkbenchBox);
+        this.setWorkbenchBoxContentHeight()
+        window.addEventListener('resize', this.setWorkbenchBoxContentHeight)
     }
     componentWillReceiveProps(nextProps) {
         const { currentSelectedWorkbenchBox } = this.props;
@@ -62,6 +58,13 @@ class WorkbenchPage extends Component {
             this.setWorkbenchVisible(newCurrentSelectedWorkbenchBox);
         }
 
+    }
+    // 保存区域高度
+    setWorkbenchBoxContentHeight = () => {
+        const height = document.getElementById('container_workbenchBoxContent').clientHeight
+        this.setState({
+            workbenchBoxContent_height: height
+        })
     }
     initSimpleWorkbenchboxCommData(dispatch) {
         dispatch({
@@ -83,120 +86,16 @@ class WorkbenchPage extends Component {
                     }
                 });
             }
+            this.setState({
+                currentSelectedWorkbenchBox
+            })
 
-            switch (currentSelectedWorkbenchBox.code) {
-                case 'board:archives': {
-                    this.setState({
-                        BoardCommunicationVisible: false,
-                        BoardFilesVisible: false,
-                        BoardPlanVisible: false,
-                        InvestmentMapsVisible: false,
-                        XczNewsVisible: false,
-                        ZhichengsheVisible: false,
-                    });
-                }
-                    break;
-                case 'board:plans': {
-                    this.setState({
-                        BoardCommunicationVisible: false,
-                        BoardFilesVisible: false,
-                        InvestmentMapsVisible: false,
-                        XczNewsVisible: false,
-                        ZhichengsheVisible: false,
-                    }, () => {
-                        setTimeout(() => {
-                            this.setState({
-                                BoardPlanVisible: true,
-                            })
-                        }, 100)
-                    });
-                }
-                    break;
-                case 'board:chat': {
-                    this.setState({
-                        BoardCommunicationVisible: true,
-                        BoardFilesVisible: false,
-                        BoardPlanVisible: false,
-                        InvestmentMapsVisible: false,
-                        XczNewsVisible: false,
-                        ZhichengsheVisible: false,
-                    });
-                    const width = document.body.scrollWidth;
-                    let workbenchBoxContentWapperModalStyle = { width: (width - 400) + 'px' }
-                    dispatch({
-                        type: 'simplemode/updateDatas',
-                        payload: {
-                            chatImVisiable: true,
-                            workbenchBoxContentWapperModalStyle: workbenchBoxContentWapperModalStyle
-                        }
-                    });
-                    LingxiIm.show();
-
-                }
-                    break;
-                case 'board:files': {
-                    this.setState({
-                        BoardCommunicationVisible: false,
-                        BoardFilesVisible: true,
-                        BoardPlanVisible: false,
-                        InvestmentMapsVisible: false,
-                        XczNewsVisible: false,
-                        ZhichengsheVisible: false,
-                    });
-                }
-                    break;
-                case 'maps': {
-                    this.setState({
-                        BoardCommunicationVisible: false,
-                        BoardFilesVisible: false,
-                        BoardPlanVisible: false,
-                        InvestmentMapsVisible: true,
-                        XczNewsVisible: false,
-                        ZhichengsheVisible: false,
-                    })
-                }
-                    break;
-                case 'regulations': {
-                    this.setState({
-                        BoardCommunicationVisible: false,
-                        BoardFilesVisible: false,
-                        BoardPlanVisible: false,
-                        InvestmentMapsVisible: false,
-                        XczNewsVisible: true,
-                        ZhichengsheVisible: false,
-                    });
-                }
-                    break;
-                case 'cases': {
-                    this.setState({
-                        BoardCommunicationVisible: false,
-                        BoardFilesVisible: false,
-                        BoardPlanVisible: false,
-                        InvestmentMapsVisible: false,
-                        XczNewsVisible: false,
-                        ZhichengsheVisible: true,
-                    });
-                }
-                    break;
-                default: {
-                    this.setState({
-                        BoardCommunicationVisible: false,
-                        BoardFilesVisible: false,
-                        BoardPlanVisible: false,
-                        InvestmentMapsVisible: false,
-                        XczNewsVisible: false,
-                        ZhichengsheVisible: false,
-                    });
-                }
-
-            }
         }
     }
 
-
-
     render() {
         const { workbenchBoxContentWapperModalStyle, currentSelectedWorkbenchBox, simplemodeCurrentProject } = this.props;
+        const { code: select_box_code } = currentSelectedWorkbenchBox
         let isPaymentUser = false;
         console.log("simplemodeCurrentProject", simplemodeCurrentProject);
         if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
@@ -205,43 +104,47 @@ class WorkbenchPage extends Component {
         } else {
             isPaymentUser = isPaymentOrgUser();
         }
-
-        console.log("isPaymentUser1", isPaymentUser);
+        const { workbenchBoxContent_height } = this.state
         return (
             <div className={indexStyles.workbenchBoxContentModalContainer}>
                 <MiniBoxNavigations currentSelectedWorkbenchBox={currentSelectedWorkbenchBox} />
                 <div id='container_workbenchBoxContent' className={indexStyles.workbenchBoxContentModalWapper} style={workbenchBoxContentWapperModalStyle ? workbenchBoxContentWapperModalStyle : {}}>
-                    <div className={indexStyles.workbenchBoxContentWapper}>
+                    <div className={indexStyles.workbenchBoxContentWapper}
+                        style={{ background: select_box_code == 'mine:flows' ? 'rgba(245, 245, 245, 1)' : '' }}>
 
                         {
-                            this.state.BoardPlanVisible &&
+                            'board:plans' == select_box_code &&
                             <BoardPlan />
                         }
 
 
                         {
-                            isPaymentUser && this.state.BoardCommunicationVisible &&
+                            isPaymentUser && 'board:chat' == select_box_code &&
                             <BoardCommunication />
                         }
 
                         {
-                            isPaymentUser && this.state.BoardFilesVisible &&
+                            isPaymentUser && 'board:files' == select_box_code &&
                             <BoardFiles />
                         }
 
                         {
-                            isPaymentUser && this.state.InvestmentMapsVisible &&
+                            isPaymentUser && 'maps' == select_box_code &&
                             <InvestmentMaps />
                         }
 
                         {
-                            isPaymentUser && this.state.XczNewsVisible &&
+                            isPaymentUser && 'cases' == select_box_code &&
                             <XczNews {...this.props} />
                         }
                         {
-                            isPaymentUser && this.state.ZhichengsheVisible && <Zhichengshe {...this.props} />
+                            isPaymentUser && 'regulations' == select_box_code &&
+                            <Zhichengshe {...this.props} />
                         }
-
+                        {
+                            'mine:flows' == select_box_code &&
+                            <Workglows workbenchBoxContent_height={workbenchBoxContent_height} />
+                        }
                     </div>
                 </div>
             </div>

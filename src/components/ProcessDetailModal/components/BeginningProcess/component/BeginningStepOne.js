@@ -2,16 +2,15 @@ import React, { Component } from 'react'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '../../AvatarList'
-// import { principalList } from '../../../constant'
 import BeginningStepOne_one from './BeginningStepOne_one'
 import BeginningStepOne_two from './BeginningStepOne_two'
 import BeginningStepOne_three from './BeginningStepOne_three'
 import BeginningStepOne_five from './BeginningStepOne_five'
-import { validateTel, validateEmail, validatePassword, validateFixedTel, validateIdCard, validateChineseName, validatePostalCode, validateWebsite, validateQQ, validatePositiveInt, validateNegative, validateTwoDecimal, } from '../../../../../utils/verify'
+import { validateTel, validateFixedTel, validateIdCard, validateChineseName, validatePostalCode, validateWebsite, validateQQ, validatePositiveInt, validateNegative, validateTwoDecimal, } from '../../../../../utils/verify'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
-import { Button, message, Progress } from 'antd'
+import { Button, message } from 'antd'
 import { connect } from 'dva'
-import { timestampToTimeNormal, compareACoupleOfObjects, isObjectValueEqual } from '../../../../../utils/util';
+import { compareACoupleOfObjects, isObjectValueEqual } from '../../../../../utils/util';
 import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
 import { PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
 import { genPrincipalListFromAssignees } from '../../handleOperateModal'
@@ -51,11 +50,12 @@ export default class BeginningStepOne extends Component {
    */
   whetherShowCompleteButton = () => {
     const { itemValue } = this.props
-    const { assignee_type, assignees } = itemValue
+    const { assignee_type,  } = itemValue
+    const { transPrincipalList = [] } = this.state
     const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     let flag = false
     if (assignee_type == '2') { // 表示只有在指定人员的情况下才会有判断情况
-      let newAssignees = [...assignees]
+      let newAssignees = [...transPrincipalList]
       newAssignees.find(item => {
         if (item.id == id) {
           flag = true
@@ -331,10 +331,11 @@ export default class BeginningStepOne extends Component {
     }
 
     // this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
-    const { processInfo: { id: flow_instance_id, board_id }, itemValue, dispatch } = this.props
+    const { processInfo: { id: flow_instance_id, board_id }, itemValue, dispatch, request_flows_params = {} } = this.props
     const { id: flow_node_instance_id } = itemValue
     let form_values = this.getAllNodesFormsData()
     let that = this
+    let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     dispatch({
       type: 'publicProcessDetailModal/fillFormComplete',
       payload: {
@@ -345,7 +346,7 @@ export default class BeginningStepOne extends Component {
           dispatch({
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {
-              board_id,
+              board_id: BOARD_ID,
               status: '1'
             }
           })

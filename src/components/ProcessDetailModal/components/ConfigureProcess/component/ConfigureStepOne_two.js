@@ -27,7 +27,7 @@ export default class ConfigureStepOne_two extends Component {
     super(props)
     this.state = {
       popoverVisible: null,
-      form_item: isObjectValueEqual(temp_item, props.itemValue) ? temp_item : props.itemValue
+      form_item: compareACoupleOfObjects(temp_item, props.itemValue) ? temp_item : props.itemValue
     }
   }
 
@@ -138,7 +138,7 @@ export default class ConfigureStepOne_two extends Component {
   // 每个配置表项的确定的点击事件
   handleConfirmFormItem = () => {
     const { popoverVisible } = this.state
-    const { itemValue } = this.props
+    const { itemValue = {} } = this.props
     this.setState({
       is_click_confirm_btn: true
     })
@@ -172,7 +172,7 @@ export default class ConfigureStepOne_two extends Component {
     const { itemValue } = this.props
     const { title, prompt_content, is_multiple_choice, is_required, options = [] } = itemValue
     const { form_item } = this.state
-    let disabledFlag = isObjectValueEqual(form_item, itemValue)
+    let disabledFlag = compareACoupleOfObjects(form_item, itemValue)
     return (
       <div className={indexStyles.popover_content}>
         <div className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
@@ -189,7 +189,7 @@ export default class ConfigureStepOne_two extends Component {
             {
               options.map((item, index) => {
                 return (
-                  <div key={item} style={{ position: 'relative' }}><Input maxLength={50} style={{ marginBottom: '4px', transition: 'all .5s' }} key={item.label_value} value={item.label_name} onChange={(e) => { this.optionsValueChange(e, item.label_value) }} />{index != '0' && <span onClick={() => { this.handleDelOptionsSelect(index) }} style={{ marginLeft: '4px', position: 'absolute', top: '6px' }} className={`${globalStyles.authTheme} ${indexStyles.del_optionsIcon}`}>&#xe7fe;</span>}</div>
+                  <div key={item} style={{ position: 'relative' }}><Input maxLength={50} style={{ marginBottom: '4px', transition: 'all .5s' }} key={item.label_value} value={item.label_name} onChange={(e) => { this.optionsValueChange(e, index) }} />{index != '0' && <span onClick={() => { this.handleDelOptionsSelect(index) }} style={{ marginLeft: '4px', position: 'absolute', top: '6px' }} className={`${globalStyles.authTheme} ${indexStyles.del_optionsIcon}`}>&#xe7fe;</span>}</div>
                 )
               })
             }

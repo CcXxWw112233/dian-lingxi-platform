@@ -323,7 +323,7 @@ export default class GetRowTaskItem extends Component {
 
     }
     overDragCompleteHandleRight = () => { //右侧增减时间
-        const { itemValue: { id, end_time, start_time, board_id }, group_view_type } = this.props
+        const { itemValue: { id, end_time, start_time, board_id, is_has_start_time }, group_view_type } = this.props
         const { local_left, local_width, local_width_origin } = this.state
         const { date_arr_one_level, ceilWidth } = this.props
         const updateData = {}
@@ -334,7 +334,7 @@ export default class GetRowTaskItem extends Component {
         const start_time_index = Math.floor(local_left / ceilWidth)
         const start_date = date_arr_one_level[start_time_index]
         const start_time_timestamp = parseInt(start_date.timestamp)
-        updateData.start_time = parseInt(start_time_timestamp)
+        updateData.start_time = !is_has_start_time ? '' : parseInt(start_time_timestamp)
         updateData.due_time = parseInt(end_time_timestamp)
         if (isSamDay(end_time, end_time_timestamp)) { //向右拖动时，如果是在同一天，则不去更新
             const time_span_ = (Math.floor((end_time - start_time) / (24 * 3600 * 1000))) + 1

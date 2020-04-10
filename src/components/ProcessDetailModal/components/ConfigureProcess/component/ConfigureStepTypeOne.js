@@ -122,7 +122,7 @@ export default class ConfigureStepTypeOne extends Component {
 
   //表单填写项
   menuAddFormClick = ({ key }) => {
-    const { processEditDatas = [], processCurrentEditStep = 0, itemValue, itemKey } = this.props
+    const { processEditDatas = [], itemValue, itemKey } = this.props
     const { forms = [] } = processEditDatas[itemKey]
     //推进人一项
     let newFormsData = [...forms]

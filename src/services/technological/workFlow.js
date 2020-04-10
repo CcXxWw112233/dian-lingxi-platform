@@ -247,3 +247,12 @@ export async function configurePorcessGuide(data) {
     data
   });
 }
+
+// 关于撤回按钮
+export async function rebackProcessTask(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/flow/task/recall`,
+    method: 'PUT',
+    data
+  });
+}

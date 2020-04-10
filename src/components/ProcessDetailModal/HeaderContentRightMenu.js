@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Tooltip, message, Modal, Dropdown, Menu } from 'antd'
+import { Tooltip, message, Modal, Dropdown, Menu, Button } from 'antd'
 import { connect } from 'dva'
 import indexStyles from './index.less'
 import VisitControl from '../../routes/Technological/components/VisitControl/index'
@@ -15,7 +15,7 @@ import {
   NOT_HAS_PERMISION_COMFIRN,
 } from "@/globalset/js/constant";
 import { FLOWS } from '../../globalset/js/constant'
-import { genPrincipalListFromAssignees } from './components/handleOperateModal'
+import { genPrincipalListFromAssignees, transformNewAssigneesToString, transformNewRecipientsToString } from './components/handleOperateModal'
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
 
@@ -71,8 +71,9 @@ export default class HeaderContentRightMenu extends Component {
   }
 
   commonProcessVisitControlUpdateCurrentModalData = (newProcessInfo, type) => {
-    const { dispatch, processInfo = {} } = this.props
+    const { dispatch, processInfo = {}, request_flows_params = {} } = this.props
     const { status, board_id } = processInfo
+    let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
@@ -84,7 +85,7 @@ export default class HeaderContentRightMenu extends Component {
         type: 'publicProcessDetailModal/getProcessListByType',
         payload: {
           status: status,
-          board_id: board_id
+          board_id: BOARD_ID
         }
       })
     }
@@ -392,6 +393,26 @@ export default class HeaderContentRightMenu extends Component {
     })
   }
 
+  // 转为模板
+  handleCovertTemplete = () => {
+    const { dispatch, templateInfo = {}, processInfo: { nodes = [], id, is_covert_template } } = this.props
+    let newNodes = [...nodes]
+    newNodes = newNodes.map(item => {
+      let new_item = {...item}
+      new_item = {...item, status: '', is_edit: '1', assignees: transformNewAssigneesToString(item).join(','), recipients: transformNewRecipientsToString(item).join(',')}
+      return new_item
+    })
+    // return
+    dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        processEditDatas: JSON.parse(JSON.stringify([...newNodes] || [])),
+        templateInfo: {...templateInfo, id, nodes: JSON.parse(JSON.stringify([...newNodes] || [])), is_covert_template},
+        processPageFlagStep: '2',
+      }
+    })
+  }
+
 
   handleSelectMenuItem = (e) => {
     const { key } = e
@@ -435,13 +456,23 @@ export default class HeaderContentRightMenu extends Component {
 
   render() {
     const { projectDetailInfoData: { board_id, data = [] }, processInfo = {}, processPageFlagStep } = this.props
-    const { is_privilege, privileges = [], assignees, id, nodes = [], status } = processInfo
+    const { is_privilege, privileges = [], assignees, id, nodes = [], status, is_covert_template } = processInfo
     const principalList = genPrincipalListFromAssignees(nodes);
     return (
       <div>
         {
           processPageFlagStep == '4' ? (
             <div className={indexStyles.detail_action_list}>
+
+              {/* 转为模板 */}
+              {
+                is_covert_template == '1' && (
+                  <Button onClick={this.handleCovertTemplete} className={indexStyles.covert_templete}>
+                    <span style={{marginRight: '4px'}} className={globalStyles.authTheme}>&#xe714;</span>
+                    转为{`${currentNounPlanFilterName(FLOWS)}`}模板
+                  </Button>
+                )
+              }
 
               {/* 访问控制 */}
               <span className={`${indexStyles.action} ${indexStyles.visit_wrap}`}>
@@ -486,11 +517,11 @@ export default class HeaderContentRightMenu extends Component {
 }
 
 //  只关联public中弹窗内的数据
-function mapStateToProps({ publicProcessDetailModal: { processInfo = {}, processPageFlagStep }, projectDetail: { datas: { projectDetailInfoData = {} } },  technological: {
+function mapStateToProps({ publicProcessDetailModal: { processInfo = {}, processPageFlagStep, templateInfo = {} }, projectDetail: { datas: { projectDetailInfoData = {} } },  technological: {
     datas: {
       userBoardPermissions = []
     }
   }
 }) {
-  return { processInfo, processPageFlagStep, projectDetailInfoData, userBoardPermissions }
+  return { processInfo, processPageFlagStep, templateInfo, projectDetailInfoData, userBoardPermissions }
 }

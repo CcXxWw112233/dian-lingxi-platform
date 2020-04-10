@@ -174,7 +174,12 @@ class BoardDropdownSelect extends Component {
         payload: {}
       });
       selectBoardToSeeInfo({ board_id: id, board_name: name, is_new_board: true, dispatch, org_id: data._organization_id, group_view_type: '4' }) //极简模式项目选择
-      afterCreateBoardUpdateGantt(dispatch)
+      const sessionStorage_item = window.sessionStorage.getItem('session_currentSelectedWorkbenchBox')
+      const session_currentSelectedWorkbenchBox = JSON.parse(sessionStorage_item || '{}')
+      const { code } = session_currentSelectedWorkbenchBox
+      if (code == 'board:plans') { //项目计划
+        afterCreateBoardUpdateGantt(dispatch)
+      }
     }
     Promise.resolve(
       dispatch({

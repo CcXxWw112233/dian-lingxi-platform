@@ -3,7 +3,6 @@ import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '../../AvatarList'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
-import { principalList } from '../../../constant'
 import AmendComponent from '../AmendComponent'
 import { connect } from 'dva'
 import { renderTimeType } from '../../handleOperateModal'

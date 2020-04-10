@@ -287,6 +287,7 @@ export default modelExtend(projectDetail, {
     },
 
     * getProcessInfoByUrl({ payload }, { select, call, put }) {
+      return
       const { currentProcessInstanceId } = payload
       yield put({
         type: 'updateDatas',
