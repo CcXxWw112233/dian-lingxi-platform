@@ -178,7 +178,7 @@ export default class FlowTables extends Component {
         switch (list_type) {
             case '1':
                 time_dec = (
-                    <span style={{ color: '#1890FF' }}>{this.setDoingTimeDec(value)}</span>
+                    <span style={{ color: this.setDoingTimeDec(value) != '已逾期' ? '#1890FF' : '#F5222D' }}>{this.setDoingTimeDec(value)}</span>
                 )
                 break
             case '2':
