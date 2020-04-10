@@ -204,15 +204,20 @@ export default class ConfigureProcess extends Component {
     e && e.stopPropagation()
     const { templateInfo = {}, templateInfo: { nodes = [] }, itemKey, processEditDatas = [], dispatch } = this.props
     let newNodes = [...nodes]
+    let node_type = processEditDatas[itemKey]['node_type']
+    if (node_type == '1') { // 对应清空选择指定人员后的数据
+      if (processEditDatas[itemKey]['assignee_type'] == '1') { // 表示是任何人
+        processEditDatas[itemKey]['assignees'] = ''
+      }
+    }
     newNodes[itemKey] = { ...processEditDatas[itemKey] }
     dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
-        templateInfo: { ...templateInfo, nodes: newNodes },
+        templateInfo: { ...templateInfo, nodes: JSON.parse(JSON.stringify(newNodes || [])) },
       }
     })
     this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '1')
-    this.updateCorrespondingPrcodessStepWithNodeContent('assignees', '')
   }
 
   // 当先选择的节点类型
