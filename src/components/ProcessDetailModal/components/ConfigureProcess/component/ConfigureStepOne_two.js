@@ -189,7 +189,7 @@ export default class ConfigureStepOne_two extends Component {
             {
               options.map((item, index) => {
                 return (
-                  <div key={item} style={{ position: 'relative' }}><Input maxLength={50} style={{ marginBottom: '4px', transition: 'all .5s' }} key={item.label_value} value={item.label_name} onChange={(e) => { this.optionsValueChange(e, item.label_value) }} />{index != '0' && <span onClick={() => { this.handleDelOptionsSelect(index) }} style={{ marginLeft: '4px', position: 'absolute', top: '6px' }} className={`${globalStyles.authTheme} ${indexStyles.del_optionsIcon}`}>&#xe7fe;</span>}</div>
+                  <div key={item} style={{ position: 'relative' }}><Input maxLength={50} style={{ marginBottom: '4px', transition: 'all .5s' }} key={item.label_value} value={item.label_name} onChange={(e) => { this.optionsValueChange(e, index) }} />{index != '0' && <span onClick={() => { this.handleDelOptionsSelect(index) }} style={{ marginLeft: '4px', position: 'absolute', top: '6px' }} className={`${globalStyles.authTheme} ${indexStyles.del_optionsIcon}`}>&#xe7fe;</span>}</div>
                 )
               })
             }
