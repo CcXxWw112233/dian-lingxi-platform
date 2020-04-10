@@ -530,7 +530,7 @@ export default class MainContent extends Component {
   }
   // 第二步: 调用模板详情 ==> 返回对应模板信息内容
   handleOperateConfigureConfirmProcessTwo = async ({id, temp_time}) => {    
-    if (!id) return
+    if (!id) return Promise.resolve([]);
     let res = await getTemplateInfo({id})
     if (!isApiResponseOk(res)) {
       setTimeout(() => {message.warn(res.message,MESSAGE_DURATION_TIME)},500)
@@ -552,7 +552,7 @@ export default class MainContent extends Component {
   }
   // 第三步: 调用列表并关闭弹窗 ==> 回调
   handleOperateConfigureConfirmProcessThree = async({payload, temp_time2}) => {
-    if (!payload) return
+    if (!payload) return Promise.resolve([]);
     let res = await createProcess(payload)
     const { request_flows_params = {}, projectDetailInfoData: { board_id, org_id } } = this.props
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
