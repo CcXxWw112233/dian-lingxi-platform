@@ -43,10 +43,13 @@ class WorkbenchPage extends Component {
                 allOrgBoardTreeList: []
             }
         })
+        window.removeEventListener('resize', this.setWorkbenchBoxContentHeight)
     }
     componentDidMount() {
         const { currentSelectedWorkbenchBox = {} } = this.props;
         this.setWorkbenchVisible(currentSelectedWorkbenchBox);
+        this.setWorkbenchBoxContentHeight()
+        window.addEventListener('resize', this.setWorkbenchBoxContentHeight)
     }
     componentWillReceiveProps(nextProps) {
         const { currentSelectedWorkbenchBox } = this.props;
@@ -55,6 +58,13 @@ class WorkbenchPage extends Component {
             this.setWorkbenchVisible(newCurrentSelectedWorkbenchBox);
         }
 
+    }
+    // 保存区域高度
+    setWorkbenchBoxContentHeight = () => {
+        const height = document.getElementById('container_workbenchBoxContent').clientHeight
+        this.setState({
+            workbenchBoxContent_height: height
+        })
     }
     initSimpleWorkbenchboxCommData(dispatch) {
         dispatch({
@@ -94,7 +104,7 @@ class WorkbenchPage extends Component {
         } else {
             isPaymentUser = isPaymentOrgUser();
         }
-
+        const { workbenchBoxContent_height } = this.state
         return (
             <div className={indexStyles.workbenchBoxContentModalContainer}>
                 <MiniBoxNavigations currentSelectedWorkbenchBox={currentSelectedWorkbenchBox} />
@@ -133,7 +143,7 @@ class WorkbenchPage extends Component {
                         }
                         {
                             'mine:flows' == select_box_code &&
-                            <Workglows />
+                            <Workglows workbenchBoxContent_height={workbenchBoxContent_height} />
                         }
                     </div>
                 </div>

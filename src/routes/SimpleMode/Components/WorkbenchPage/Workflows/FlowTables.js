@@ -329,6 +329,8 @@ export default class FlowTables extends Component {
     }
     render() {
         const { dataSource, columns } = this.state
+        const { workbenchBoxContent_height = 700 } = this.props
+        const scroll_height = workbenchBoxContent_height - 200
         return (
             <div>
                 <Table
@@ -340,7 +342,7 @@ export default class FlowTables extends Component {
                     dataSource={dataSource}
                     columns={columns}
                     pagination={false}
-                    scroll={{ y: 600, }} />
+                    scroll={{ y: scroll_height, }} />
             </div>
         )
     }
