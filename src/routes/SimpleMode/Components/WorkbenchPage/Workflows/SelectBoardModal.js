@@ -22,6 +22,9 @@ export default class SelectBoardModal extends Component {
     }
     render() {
         const { visible, projectList = [], currentUserOrganizes = [], local_board_id } = this.props
+        const target_projectList = projectList.filter(item => //过滤掉没有流程应用的
+            item.apps.findIndex(item2 => item2.code == 'Flows') != -1
+        )
         return (
             <div>
                 <Modal
@@ -41,7 +44,7 @@ export default class SelectBoardModal extends Component {
                         style={{ width: '100%' }}
                         value={(!local_board_id || local_board_id == '0') ? undefined : local_board_id} onChange={this.handleChange}>
                         {
-                            projectList.map(item => {
+                            target_projectList.map(item => {
                                 const { board_id, board_name, org_id } = item
                                 return (
                                     <Option key={board_id} >
