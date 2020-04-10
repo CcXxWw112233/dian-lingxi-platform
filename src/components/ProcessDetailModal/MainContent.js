@@ -12,10 +12,11 @@ import { processEditDatasItemOneConstant } from './constant'
 import { Tooltip, Button, message, Popover, DatePicker } from 'antd'
 import { timeToTimestamp } from '../../utils/util'
 import moment from 'moment'
-import { MESSAGE_DURATION_TIME, FLOWS } from '../../globalset/js/constant'
+import { MESSAGE_DURATION_TIME, FLOWS, NOT_HAS_PERMISION_COMFIRN, PROJECT_FLOWS_FLOW_CREATE } from '../../globalset/js/constant'
 import { saveProcessTemplate, getTemplateInfo, createProcess } from '../../services/technological/workFlow'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { currentNounPlanFilterName } from "@/utils/businessFunction";
+import { checkIsHasPermissionInBoard } from '../../utils/businessFunction'
 const { LingxiIm, Im } = global.constants
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -517,7 +518,10 @@ export default class MainContent extends Component {
       is_retain: '0',
     })
     if (!isApiResponseOk(res)) {
-      setTimeout(() => {message.warn(res.message,MESSAGE_DURATION_TIME)},200)
+      setTimeout(() => {message.warn(res.message,MESSAGE_DURATION_TIME)},500)
+      this.setState({
+        isCreateProcessIng: false
+      })
       return Promise.resolve([]);
     }
     let id = res.data
@@ -526,8 +530,13 @@ export default class MainContent extends Component {
   }
   // 第二步: 调用模板详情 ==> 返回对应模板信息内容
   handleOperateConfigureConfirmProcessTwo = async ({id, temp_time}) => {    
+    if (!id) return
     let res = await getTemplateInfo({id})
     if (!isApiResponseOk(res)) {
+      setTimeout(() => {message.warn(res.message,MESSAGE_DURATION_TIME)},500)
+      this.setState({
+        isCreateProcessIng: false
+      })
       return Promise.resolve([]);
     }
     let payload = {
@@ -543,11 +552,15 @@ export default class MainContent extends Component {
   }
   // 第三步: 调用列表并关闭弹窗 ==> 回调
   handleOperateConfigureConfirmProcessThree = async({payload, temp_time2}) => {
+    if (!payload) return
     let res = await createProcess(payload)
     const { request_flows_params = {}, projectDetailInfoData: { board_id, org_id } } = this.props
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     if (!isApiResponseOk(res)) {
-      setTimeout(() => { message.warn(res.message,MESSAGE_DURATION_TIME) },200)
+      setTimeout(() => { message.warn(res.message,MESSAGE_DURATION_TIME) },500)
+      this.setState({
+        isCreateProcessIng: false
+      })
       return Promise.resolve([]);
     }
     setTimeout(() => {
@@ -610,9 +623,17 @@ export default class MainContent extends Component {
   // 立即开始
   handleCreateProcess = (e, start_time) => {
     e && e.stopPropagation()
+    const { projectDetailInfoData: { board_id } } = this.props
     this.setState({
       isCreateProcessIng: true
     })
+    if (!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, board_id)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN,MESSAGE_DURATION_TIME)
+      this.setState({
+        isCreateProcessIng: false
+      })
+      return
+    }
     if (this.state.isCreateProcessIng) {
       message.warn('正在启动流程中...')
       return
@@ -957,6 +978,10 @@ export default class MainContent extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas = [], processInfo = {}, node_type, processCurrentEditStep, templateInfo = {}, currentFlowTabsStatus, not_show_create_node_guide }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
-  return { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas, processInfo, node_type, processCurrentEditStep, templateInfo, currentFlowTabsStatus, not_show_create_node_guide, projectDetailInfoData }
+function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas = [], processInfo = {}, node_type, processCurrentEditStep, templateInfo = {}, currentFlowTabsStatus, not_show_create_node_guide }, projectDetail: { datas: { projectDetailInfoData = {} } }, technological: {
+  datas: {
+    userBoardPermissions = []
+  }
+} }) {
+  return { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas, processInfo, node_type, processCurrentEditStep, templateInfo, currentFlowTabsStatus, not_show_create_node_guide, projectDetailInfoData, userBoardPermissions }
 }
