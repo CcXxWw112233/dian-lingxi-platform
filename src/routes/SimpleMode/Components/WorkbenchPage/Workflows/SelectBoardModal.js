@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-import { Modal, Select } from 'antd';
+import { Modal, Select, message } from 'antd';
 import { connect } from 'dva'
-import { getOrgNameWithOrgIdFilter, setBoardIdStorage } from '../../../../../utils/businessFunction';
+import { getOrgNameWithOrgIdFilter, setBoardIdStorage, checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction';
 import globalStyles from '@/globalset/css/globalClassName.less'
+import { PROJECT_FLOWS_FLOW_CREATE, PROJECT_FLOWS_FLOW_TEMPLATE, NOT_HAS_PERMISION_COMFIRN } from '../../../../../globalset/js/constant';
 
 const { Option } = Select;
 
@@ -20,6 +21,13 @@ export default class SelectBoardModal extends Component {
         const { selectModalBoardIdCalback, projectList = [] } = this.props
         const org_id = (projectList.find(item => value == item.board_id) || {}).org_id
         setBoardIdStorage(value, org_id)
+        if (
+            !checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, value) &&
+            !checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE, value)
+        ) {
+            message.warn(NOT_HAS_PERMISION_COMFIRN)
+            return false
+        }
         selectModalBoardIdCalback(value)
     }
     render() {
