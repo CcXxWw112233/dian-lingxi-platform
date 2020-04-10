@@ -3,7 +3,6 @@ import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '../../AvatarList'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
-import { principalList, approvePersonnelSuggestion } from '../../../constant'
 import { Button, Popconfirm, Input, message } from 'antd'
 import { connect } from 'dva'
 import { timestampToTimeNormal, compareACoupleOfObjects, isObjectValueEqual } from '../../../../../utils/util';
