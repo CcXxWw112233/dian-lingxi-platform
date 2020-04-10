@@ -440,7 +440,8 @@ class CreateProject extends React.Component {
       }
       this.props.addNewProject ? this.props.addNewProject(params) : false
     } else {
-      let apps = appsList.filter(item => 'Tasks' == item.code || 'Files' == item.code).map(item => item.id).join(',')
+      // let apps = appsList.filter(item => 'Tasks' == item.code || 'Files' == item.code).map(item => item.id).join(',')
+      let apps = appsList.map(item => item.id).join(',')
       const params = {
         apps,
         users: this.handleUsersToUsersStr(users),
