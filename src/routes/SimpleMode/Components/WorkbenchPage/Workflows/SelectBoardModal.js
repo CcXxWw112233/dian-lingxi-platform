@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-import { Modal, Select } from 'antd';
+import { Modal, Select, message } from 'antd';
 import { connect } from 'dva'
-import { getOrgNameWithOrgIdFilter, setBoardIdStorage } from '../../../../../utils/businessFunction';
+import { getOrgNameWithOrgIdFilter, setBoardIdStorage, checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction';
 import globalStyles from '@/globalset/css/globalClassName.less'
+import { PROJECT_FLOWS_FLOW_CREATE, PROJECT_FLOWS_FLOW_TEMPLATE, NOT_HAS_PERMISION_COMFIRN } from '../../../../../globalset/js/constant';
 
 const { Option } = Select;
 
@@ -20,10 +21,20 @@ export default class SelectBoardModal extends Component {
         const { selectModalBoardIdCalback, projectList = [] } = this.props
         const org_id = (projectList.find(item => value == item.board_id) || {}).org_id
         setBoardIdStorage(value, org_id)
+        if (
+            !checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, value) &&
+            !checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE, value)
+        ) {
+            message.warn(NOT_HAS_PERMISION_COMFIRN)
+            return false
+        }
         selectModalBoardIdCalback(value)
     }
     render() {
         const { visible, projectList = [], currentUserOrganizes = [], local_board_id } = this.props
+        const target_projectList = projectList.filter(item => //过滤掉没有流程应用的
+            item.apps.findIndex(item2 => item2.code == 'Flows') != -1
+        )
         return (
             <div>
                 <Modal
@@ -43,7 +54,7 @@ export default class SelectBoardModal extends Component {
                         style={{ width: '100%' }}
                         value={(!local_board_id || local_board_id == '0') ? undefined : local_board_id} onChange={this.handleChange}>
                         {
-                            projectList.map(item => {
+                            target_projectList.map(item => {
                                 const { board_id, board_name, org_id } = item
                                 return (
                                     <Option key={board_id} >

@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import styles from './index.less'
-import { Tooltip, Button, Popconfirm } from 'antd'
+import { Tooltip, Button, Popconfirm, message } from 'antd'
 import { connect } from 'dva'
 import { checkIsHasPermissionInBoard, setBoardIdStorage, getOrgNameWithOrgIdFilter } from '../../../../../utils/businessFunction'
-import { PROJECT_FLOWS_FLOW_TEMPLATE, PROJECT_FLOWS_FLOW_CREATE } from '../../../../../globalset/js/constant'
+import { PROJECT_FLOWS_FLOW_TEMPLATE, PROJECT_FLOWS_FLOW_CREATE, NOT_HAS_PERMISION_COMFIRN } from '../../../../../globalset/js/constant'
 import SelectBoardModal from './SelectBoardModal'
 @connect(mapStateToProps)
 export default class Templates extends Component {
@@ -78,6 +78,13 @@ export default class Templates extends Component {
         if (local_board_id == '0' || !local_board_id) {
             this.setBoardSelectVisible(true)
         } else {
+            if (
+                !checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, local_board_id) &&
+                !checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE, local_board_id)
+            ) {
+                message.warn(NOT_HAS_PERMISION_COMFIRN)
+                return false
+            }
             this.handleAddTemplate()
         }
     }
