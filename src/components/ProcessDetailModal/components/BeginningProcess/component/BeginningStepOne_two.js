@@ -62,14 +62,15 @@ export default class BeginningStepOne_two extends Component {
           <Select 
             mode={is_multiple_choice === '1' ? 'multiple' : ''}
             // value={is_multiple_choice === '1'? value.split(',').filter(d=>d):value} 
-            value={this.renderWhetherMultipleValue()}
+            optionLabelProp="label"
+            // value={this.renderWhetherMultipleValue()}
             style={{width: '100%'}} placeholder={prompt_content}
             onChange={this.defaultValueChange.bind(this)}
           >
             {
               options.map(item => {
                 return (
-                  <Option value={item.id}>{item.label_name}</Option>
+                  <Option label={item.label_name} value={item.id}>{item.label_name}</Option>
                 )
               })
             }

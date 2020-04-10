@@ -25,13 +25,15 @@ export default class ConfigureStepOne_five extends Component {
     super(props)
     this.state = {
       popoverVisible: null,
-      form_item: isObjectValueEqual(temp_item, props.itemValue) ? temp_item : props.itemValue
+      form_item: compareACoupleOfObjects(temp_item, props.itemValue) ? temp_item : props.itemValue,
+      limit_file_num: props.itemValue.limit_file_num ? props.itemValue.limit_file_num : '',
+      limit_file_size: props.itemValue.limit_file_size ? props.itemValue.limit_file_size : '',
     }
   }
 
   onVisibleChange = (visible) => {
     const { is_click_confirm_btn, form_item } = this.state
-    const { itemKey, parentKey, processEditDatas = [], itemValue } = this.props
+    const { itemKey, parentKey, processEditDatas = [], itemValue: { limit_file_num, limit_file_size  } } = this.props
     let temp_item = { ...form_item }
     if (!is_click_confirm_btn) {// 判断是否点击了确定按钮,否 那么就保存回原来的状态
       if (visible == false)
@@ -43,7 +45,9 @@ export default class ConfigureStepOne_five extends Component {
       this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
     }
     this.setState({
-      popoverVisible: visible
+      popoverVisible: visible,
+      limit_file_num: limit_file_num,
+      limit_file_size: limit_file_size,
     })
   }
 
@@ -57,19 +61,49 @@ export default class ConfigureStepOne_five extends Component {
     this.updateEdit({ value: e.target.value }, 'title')
   }
   limitFileNumValueChange = (value) => {
-    if (!value) {
+    const { itemValue: { limit_file_num } } = this.props
+    if (!value || isNaN(value)) {
+      this.setState({
+        limit_file_num: ''
+      })
+      this.updateEdit({ value: limit_file_num ? limit_file_num : '0' }, 'limit_file_num')
       // this.updateEdit({ value: '0' }, 'limit_file_num')
-      this.updateEdit({ value: '0' }, 'limit_file_num')
       return
     }
-    this.updateEdit({ value: value.toString() }, 'limit_file_num')
+    this.setState({
+      limit_file_num: parseInt(value).toString()
+    })
+    // this.updateEdit({ value: parseInt(value).toString() }, 'limit_file_num')
+  }
+  limitFileNumValueBlur = (e) => {
+    const { itemValue: { limit_file_num } } = this.props
+    if (!e.target.value || isNaN(e.target.value)) {
+      this.updateEdit({ value: limit_file_num ? limit_file_num : '0' }, 'limit_file_num')
+      return
+    }
+    this.updateEdit({ value: e.target.value.toString() }, 'limit_file_num')
   }
   limitFileSizeValueChange = (value) => {
-    if (!value) {
-      this.updateEdit({ value: '0' }, 'limit_file_size')
+    const { itemValue: { limit_file_size } } = this.props
+    if (!value || isNaN(value)) {
+      this.setState({
+        limit_file_size: ''
+      })
+      this.updateEdit({ value: limit_file_size ? limit_file_size : '0' }, 'limit_file_size')
       return
     }
-    this.updateEdit({ value: value.toString() }, 'limit_file_size')
+    this.setState({
+      limit_file_size: parseInt(value).toString()
+    })
+    // this.updateEdit({ value: parseInt(value).toString() }, 'limit_file_size')
+  }
+  limitFileSizeValueBlur = (e) => {
+    const { itemValue: { limit_file_size } } = this.props
+    if (!e.target.value || isNaN(e.target.value)) {
+      this.updateEdit({ value: limit_file_size ? limit_file_size : '0' }, 'limit_file_size')
+      return
+    }
+    this.updateEdit({ value: e.target.value.toString() }, 'limit_file_size')
   }
   limilFileTypeValueChange = (values) => {
     this.updateEdit({ value: values }, 'limit_file_type')
@@ -152,10 +186,10 @@ export default class ConfigureStepOne_five extends Component {
 
   renderContent = () => {
     const { itemValue } = this.props
-    const { title, limit_file_num, limit_file_type = [], limit_file_size, is_required } = itemValue
+    const { title, limit_file_type = [], is_required, limit_file_num: old_limit_file_num, limit_file_size: old_limit_file_size } = itemValue
     const limit_file_type_default = limit_file_type ? limit_file_type : []
-    const { form_item } = this.state
-    let disabledFlag = isObjectValueEqual(form_item, itemValue)
+    const { form_item, limit_file_num, limit_file_size } = this.state
+    let disabledFlag = compareACoupleOfObjects(form_item, itemValue) || limit_file_num != old_limit_file_num || limit_file_size != old_limit_file_size
     return (
       <div className={indexStyles.popover_content}>
         <div className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
@@ -165,11 +199,11 @@ export default class ConfigureStepOne_five extends Component {
           </div>
           <div>
             <p>限制附件上传数量(0为不限制）:</p>
-            <InputNumber precision="0.1" onChange={this.limitFileNumValueChange} min={0} value={limit_file_num} style={{ width: '330px' }} /><span style={{ marginLeft: '8px', fontSize: '16px' }}>个</span>
+            <InputNumber precision="0.1" onChange={this.limitFileNumValueChange} onBlur={this.limitFileNumValueBlur} min={0} value={limit_file_num} style={{ width: '330px' }} /><span style={{ marginLeft: '8px', fontSize: '16px' }}>个</span>
           </div>
           <div>
             <p>限制附件上传大小（最多99MB）:</p>
-            <InputNumber precision="0.1" onChange={this.limitFileSizeValueChange} min={1} max={99} style={{ width: '322px' }} value={limit_file_size} /><span style={{ marginLeft: '8px', fontSize: '16px' }}>MB</span>
+            <InputNumber precision="0.1" onChange={this.limitFileSizeValueChange} onBlur={this.limitFileSizeValueBlur} min={1} max={99} style={{ width: '322px' }} value={limit_file_size} /><span style={{ marginLeft: '8px', fontSize: '16px' }}>MB</span>
           </div>
           <div>
             <p>限制附件上传格式&nbsp;:</p>

@@ -27,7 +27,7 @@ export default class ConfigureStepOne_two extends Component {
     super(props)
     this.state = {
       popoverVisible: null,
-      form_item: isObjectValueEqual(temp_item, props.itemValue) ? temp_item : props.itemValue
+      form_item: compareACoupleOfObjects(temp_item, props.itemValue) ? temp_item : props.itemValue
     }
   }
 
@@ -172,7 +172,7 @@ export default class ConfigureStepOne_two extends Component {
     const { itemValue } = this.props
     const { title, prompt_content, is_multiple_choice, is_required, options = [] } = itemValue
     const { form_item } = this.state
-    let disabledFlag = isObjectValueEqual(form_item, itemValue)
+    let disabledFlag = compareACoupleOfObjects(form_item, itemValue)
     return (
       <div className={indexStyles.popover_content}>
         <div className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
