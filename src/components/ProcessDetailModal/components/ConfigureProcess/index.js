@@ -38,7 +38,7 @@ export default class ConfigureProcess extends Component {
   // 维护更新数据
   handleServiceData = (props) => {
     const { itemValue, templateInfo: { nodes = [] }, itemKey, processPageFlagStep, processEditDatas = [] } = props
-    const { currentEditNodeItem = {} } = this.state
+    let currentEditNodeItem = (processEditDatas && processEditDatas.length) && processEditDatas.filter(item => item.is_edit == '0')[0] || {}
     if (processPageFlagStep == '2' && ((nodes && nodes.length) && nodes.length  == (processEditDatas && processEditDatas.length) && processEditDatas.length)) { // 表示是进去编辑的时候 并且节点长度相等的时候, 如果不相等 那么就不比较 表示进行了删除或者添加 
       let newStateItemValue = JSON.parse(JSON.stringify(currentEditNodeItem || {}))
       let newModelItemValue = JSON.parse(JSON.stringify(nodes[itemKey] || {}))
@@ -146,7 +146,8 @@ export default class ConfigureProcess extends Component {
   }
 
   // 编辑中的删除icon点击事件
-  handleEditDeleteButton = () => {
+  handleEditDeleteButton = (e) => {
+    e && e.stopPropagation()
     const { templateInfo = {}, templateInfo: { nodes = [] }, itemKey, processEditDatas = [], dispatch, processCurrentEditStep } = this.props
     let newNodes = [...nodes]
     let newProcessEditDatas = null
@@ -157,8 +158,8 @@ export default class ConfigureProcess extends Component {
     dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
-        templateInfo: { ...templateInfo, nodes: newProcessEditDatas },
-        processEditDatas: newProcessEditDatas,
+        templateInfo: { ...templateInfo, nodes: JSON.parse(JSON.stringify(newProcessEditDatas || [])) },
+        processEditDatas: JSON.parse(JSON.stringify(newProcessEditDatas || [])),
         processCurrentEditStep: processCurrentEditStep >= 1 ? processCurrentEditStep - 1 : 0,
       }
     })
@@ -211,6 +212,7 @@ export default class ConfigureProcess extends Component {
       }
     })
     this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '1')
+    this.updateCorrespondingPrcodessStepWithNodeContent('assignees', '')
   }
 
   // 当先选择的节点类型
@@ -477,8 +479,8 @@ export default class ConfigureProcess extends Component {
     const { itemKey, itemValue, processEditDatasRecords = [], processCurrentEditStep, processEditDatas = [], processPageFlagStep } = this.props
     const { name, node_type, description, is_click_node_name } = itemValue
     let deleteBtn = this.whetherIsDeleteNodes()
-    // let editConfirmBtn = this.state.isDisabled ? this.renderDiffButtonTooltipsText().confirmButtonDisabled ? true : false : this.renderDiffButtonTooltipsText().confirmButtonDisabled ? true : false
-    let editConfirmBtn = this.renderDiffButtonTooltipsText().confirmButtonDisabled ? this.state.isDisabled ? true : false : this.state.isDisabled ? true : false
+    let editConfirmBtn = this.state.isDisabled ? this.renderDiffButtonTooltipsText().confirmButtonDisabled ? true : false : this.renderDiffButtonTooltipsText().confirmButtonDisabled ? true : false
+    // let editConfirmBtn = this.renderDiffButtonTooltipsText().confirmButtonDisabled ? this.state.isDisabled ? true : false : this.state.isDisabled ? true : false
     // let node_amount = this.props && this.props.processInfo && this.props.processInfo.node_amount
     let stylLine, stylCircle
     // if (this.props.processInfo.completed_amount >= itemKey + 1) { //0 1    1  2 | 1 3 | 1 4
