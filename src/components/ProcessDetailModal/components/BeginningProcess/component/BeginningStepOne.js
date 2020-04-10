@@ -332,10 +332,11 @@ export default class BeginningStepOne extends Component {
     }
 
     // this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
-    const { processInfo: { id: flow_instance_id, board_id }, itemValue, dispatch } = this.props
+    const { processInfo: { id: flow_instance_id, board_id }, itemValue, dispatch, request_flows_params = {} } = this.props
     const { id: flow_node_instance_id } = itemValue
     let form_values = this.getAllNodesFormsData()
     let that = this
+    let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     dispatch({
       type: 'publicProcessDetailModal/fillFormComplete',
       payload: {
@@ -346,7 +347,7 @@ export default class BeginningStepOne extends Component {
           dispatch({
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {
-              board_id,
+              board_id: BOARD_ID,
               status: '1'
             }
           })

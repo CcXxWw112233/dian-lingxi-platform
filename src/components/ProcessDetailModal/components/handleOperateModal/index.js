@@ -149,12 +149,22 @@ const renderTimeType = (type) => {
   return description
 }
 
+const revealRequestFlowsParams = (params = {}) => {
+  if (!params) return {}
+  if (params && Object.keys(params).length) {
+    return {
+      ...params
+    }
+  }
+}
+
 export {
   showDeleteTempleteConfirm,
   genPrincipalListFromAssignees,
   renderTimeType,
   arrayNonRepeatfy,
   transformNewAssigneesToString,
-  transformNewRecipientsToString
+  transformNewRecipientsToString,
+  revealRequestFlowsParams
 }
 

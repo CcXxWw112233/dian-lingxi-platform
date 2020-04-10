@@ -717,7 +717,7 @@ export default class MainContent extends Component {
         container = <ProcessStartConfirm itemKey={key} itemValue={value} />
         break
       case '4':
-        container = <BeginningProcess itemKey={key} itemValue={value} />
+        container = <BeginningProcess request_flows_params={this.props.request_flows_params} itemKey={key} itemValue={value} />
         break
       default:
         break;

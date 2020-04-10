@@ -70,7 +70,8 @@ export default class AccomplishStepOne extends Component {
 
   // 撤回步骤
   handleRebackProcessNodes = () => {
-    const { itemValue: { id: flow_node_instance_id }, processInfo: { id: flow_instance_id, board_id }, dispatch } = this.props
+    const { itemValue: { id: flow_node_instance_id }, processInfo: { id: flow_instance_id, board_id }, dispatch, request_flows_params = {} } = this.props
+    let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     dispatch({
       type: 'publicProcessDetailModal/rebackProcessTask',
       payload: {
@@ -78,8 +79,15 @@ export default class AccomplishStepOne extends Component {
         flow_instance_id,
         board_id,
         calback: () => {
-          this.updateCorrespondingPrcodessStepWithNodeContent('status','1')
-          this.updateCorrespondingPrcodessStepWithNodeContent('is_confirm','0')
+          // this.updateCorrespondingPrcodessStepWithNodeContent('status','1')
+          // this.updateCorrespondingPrcodessStepWithNodeContent('is_confirm','0')
+          dispatch({
+            type: 'publicProcessDetailModal/getProcessListByType',
+            payload: {
+              board_id:BOARD_ID,
+              status: '1'
+            }
+          })
         }
       }
     })

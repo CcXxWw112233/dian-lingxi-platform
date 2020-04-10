@@ -104,7 +104,8 @@ export default class BeginningStepTwo extends Component {
 
   // 撤回步骤
   handleRebackProcessNodes = () => {
-    const { itemValue: { id: flow_node_instance_id, assignees, his_comments = [] }, processInfo: { id: flow_instance_id, board_id }, dispatch } = this.props
+    const { itemValue: { id: flow_node_instance_id, assignees, his_comments = [] }, processInfo: { id: flow_instance_id, board_id }, dispatch, request_flows_params = {} } = this.props
+    let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     dispatch({
       type: 'publicProcessDetailModal/rebackProcessTask',
       payload: {
@@ -112,7 +113,14 @@ export default class BeginningStepTwo extends Component {
         flow_instance_id,
         board_id,
         calback: () => {
-          this.updateRebackNodesStatus()
+          // this.updateRebackNodesStatus()
+          dispatch({
+            type: 'publicProcessDetailModal/getProcessListByType',
+            payload: {
+              board_id:BOARD_ID,
+              status: '1'
+            }
+          })
           // this.updateCorrespondingPrcodessStepWithNodeContent('his_comments',temp_comments)
           // this.updateCorrespondingPrcodessStepWithNodeContent('assignees',newAssignees)
         }
@@ -160,9 +168,10 @@ export default class BeginningStepTwo extends Component {
       return
     }
     // this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
-    const { processInfo: { id: flow_instance_id, board_id }, itemValue } = this.props
+    const { processInfo: { id: flow_instance_id, board_id }, itemValue, request_flows_params = {} } = this.props
     const { id: flow_node_instance_id } = itemValue
     const { successfulMessage } = this.state
+    let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     this.props.dispatch({
       type: 'publicProcessDetailModal/fillFormComplete',
       payload: {
@@ -177,7 +186,7 @@ export default class BeginningStepTwo extends Component {
           this.props.dispatch({
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {
-              board_id,
+              board_id: BOARD_ID,
               status: '1'
             }
           })
@@ -229,9 +238,10 @@ export default class BeginningStepTwo extends Component {
       return
     }
     // this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
-    const { processInfo: { id: flow_instance_id, board_id }, itemValue } = this.props
+    const { processInfo: { id: flow_instance_id, board_id }, itemValue, request_flows_params = {} } = this.props
     const { id: flow_node_instance_id } = itemValue
     const { rejectMessage } = this.state
+    let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     if (!rejectMessage) return
     this.props.dispatch({
       type: 'publicProcessDetailModal/rejectProcessTask',
@@ -247,7 +257,7 @@ export default class BeginningStepTwo extends Component {
           this.props.dispatch({
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {
-              board_id,
+              board_id: BOARD_ID,
               status: '1'
             }
           })
