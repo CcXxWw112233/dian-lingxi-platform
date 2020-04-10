@@ -178,7 +178,7 @@ export default class FlowTables extends Component {
         switch (list_type) {
             case '1':
                 time_dec = (
-                    <span style={{ color: '#1890FF' }}>{this.setDoingTimeDec(value)}</span>
+                    <span style={{ color: this.setDoingTimeDec(value) != '已逾期' ? '#1890FF' : '#F5222D' }}>{this.setDoingTimeDec(value)}</span>
                 )
                 break
             case '2':
@@ -324,8 +324,20 @@ export default class FlowTables extends Component {
         })
     }
     tableRowClick = (record) => {
-        const { id, } = record
-        this.handleProcessInfo(id)
+        const { id, board_id } = record
+        const { dispatch, simplemodeCurrentProject = {} } = this.props
+        if (!simplemodeCurrentProject.board_id || simplemodeCurrentProject.board_id == '0') {
+            dispatch({
+                type: 'projectDetail/projectDetailInfo',
+                payload: {
+                    id: board_id
+                }
+            }).then(res => {
+                this.handleProcessInfo(id)
+            })
+        } else {
+            this.handleProcessInfo(id)
+        }
     }
     render() {
         const { dataSource, columns } = this.state
