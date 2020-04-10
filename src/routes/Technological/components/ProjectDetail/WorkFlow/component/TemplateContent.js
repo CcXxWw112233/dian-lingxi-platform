@@ -60,7 +60,7 @@ export default class TemplateContent extends Component {// 模板组件
             })
           }
         </div>
-        {!processTemplateList.length || !checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE, board_id) ? (
+        {!processTemplateList.length ? (
           <div className={indexStyles.nodata} >
             <div className={indexStyles.nodata_inner}>
               <img src={nodataImg} />
