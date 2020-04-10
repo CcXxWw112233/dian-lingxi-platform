@@ -324,8 +324,20 @@ export default class FlowTables extends Component {
         })
     }
     tableRowClick = (record) => {
-        const { id, } = record
-        this.handleProcessInfo(id)
+        const { id, board_id } = record
+        const { dispatch, simplemodeCurrentProject = {} } = this.props
+        if (!simplemodeCurrentProject.board_id || simplemodeCurrentProject.board_id == '0') {
+            dispatch({
+                type: 'projectDetail/projectDetailInfo',
+                payload: {
+                    id: board_id
+                }
+            }).then(res => {
+                this.handleProcessInfo(id)
+            })
+        } else {
+            this.handleProcessInfo(id)
+        }
     }
     render() {
         const { dataSource, columns } = this.state
