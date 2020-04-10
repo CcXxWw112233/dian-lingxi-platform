@@ -41,8 +41,9 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
+        dispatchEvent = dispatch
         if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
-          dispatchEvent = dispatch
+          
         }
       })
     },
@@ -212,7 +213,7 @@ export default {
     * getProcessInfoByUrl({ payload }, { call, put }) {
       const { currentProcessInstanceId } = payload
       yield put({
-        type: 'publicProcessDetailModal/updateDatas',
+        type: 'updateDatas',
         payload: {
           processPageFlagStep: '4'
         }
@@ -223,7 +224,7 @@ export default {
           id: currentProcessInstanceId,
           calback: () => {
             dispatchEvent({
-              type: 'publicProcessDetailModal/updateDatas',
+              type: 'updateDatas',
               payload: {
                 process_detail_modal_visible: true,
                 currentProcessInstanceId: currentProcessInstanceId,
