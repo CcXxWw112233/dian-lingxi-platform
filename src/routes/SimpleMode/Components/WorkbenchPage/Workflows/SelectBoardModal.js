@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Modal, Select } from 'antd';
 import { connect } from 'dva'
-import { getOrgNameWithOrgIdFilter } from '../../../../../utils/businessFunction';
+import { getOrgNameWithOrgIdFilter, setBoardIdStorage } from '../../../../../utils/businessFunction';
 import globalStyles from '@/globalset/css/globalClassName.less'
 
 const { Option } = Select;
@@ -17,7 +17,9 @@ export default class SelectBoardModal extends Component {
         setBoardSelectVisible && setBoardSelectVisible(false)
     }
     handleChange = (value) => {
-        const { selectModalBoardIdCalback } = this.props
+        const { selectModalBoardIdCalback, projectList = [] } = this.props
+        const org_id = (projectList.find(item => value == item.board_id) || {}).org_id
+        setBoardIdStorage(value, org_id)
         selectModalBoardIdCalback(value)
     }
     render() {

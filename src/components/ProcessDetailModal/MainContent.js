@@ -16,7 +16,7 @@ import { MESSAGE_DURATION_TIME, FLOWS, NOT_HAS_PERMISION_COMFIRN, PROJECT_FLOWS_
 import { saveProcessTemplate, getTemplateInfo, createProcess } from '../../services/technological/workFlow'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { currentNounPlanFilterName } from "@/utils/businessFunction";
-import { checkIsHasPermissionInBoard } from '../../utils/businessFunction'
+import { checkIsHasPermissionInBoard, setBoardIdStorage, getGlobalData } from '../../utils/businessFunction'
 const { LingxiIm, Im } = global.constants
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -510,8 +510,9 @@ export default class MainContent extends Component {
     const { currentFlowInstanceName } = this.state
     const { projectDetailInfoData: { board_id }, currentFlowInstanceDescription, processEditDatas = [], request_flows_params = {} } = this.props
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
+    let REAUEST_BOARD_ID = getGlobalData('storageCurrentOperateBoardId') || board_id
     let res = await saveProcessTemplate({
-      board_id: BOARD_ID,
+      board_id: REAUEST_BOARD_ID,
       name: currentFlowInstanceName,
       description: currentFlowInstanceDescription,
       nodes: processEditDatas,
@@ -553,9 +554,9 @@ export default class MainContent extends Component {
   // 第三步: 调用列表并关闭弹窗 ==> 回调
   handleOperateConfigureConfirmProcessThree = async({payload, temp_time2}) => {
     if (!payload) return Promise.resolve([]);
-    let res = await createProcess(payload)
     const { request_flows_params = {}, projectDetailInfoData: { board_id, org_id } } = this.props
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
+    let res = await createProcess(payload)
     if (!isApiResponseOk(res)) {
       setTimeout(() => { message.warn(res.message,MESSAGE_DURATION_TIME) },500)
       this.setState({
@@ -586,6 +587,7 @@ export default class MainContent extends Component {
     const { currentFlowInstanceName } = this.state
     const { dispatch, projectDetailInfoData: { board_id, org_id }, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { id }, request_flows_params = {} } = this.props
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
+    let REAUEST_BOARD_ID = getGlobalData('storageCurrentOperateBoardId') || board_id
     Promise.resolve(
       dispatch({
         type: 'publicProcessDetailModal/createProcess',
@@ -596,6 +598,7 @@ export default class MainContent extends Component {
           start_up_type: start_time ? '2' : '1',
           plan_start_time: start_time ? start_time : '',
           flow_template_id: id,
+          board_id: REAUEST_BOARD_ID
         }
       })
     ).then(res => {
@@ -624,6 +627,7 @@ export default class MainContent extends Component {
   handleCreateProcess = (e, start_time) => {
     e && e.stopPropagation()
     const { projectDetailInfoData: { board_id } } = this.props
+    // setBoardIdStorage(board_id)
     this.setState({
       isCreateProcessIng: true
     })
