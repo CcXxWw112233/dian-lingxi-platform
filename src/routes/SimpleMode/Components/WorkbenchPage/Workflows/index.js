@@ -9,18 +9,9 @@ import ProcessDetailModal from '../../../../../components/ProcessDetailModal'
 export default class index extends Component {
     constructor(props) {
         super(props)
-        const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
-        let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : '600';
-        this.state = {
-            contentHeight: contentHeight
-        }
     }
     componentDidMount() {
-        const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
-        let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : '600';
-        this.setState({
-            contentHeight: contentHeight
-        })
+
     }
     request_flows_params = () => {
         const { board_id } = this.props.simplemodeCurrentProject
@@ -41,11 +32,10 @@ export default class index extends Component {
         })
     }
     render() {
-        const { process_detail_modal_visible } = this.props
-        const { contentHeight } = this.state
+        const { process_detail_modal_visible, workbenchBoxContent_height } = this.props
         return (
             <div className={styles.main_out}
-                style={contentHeight > 0 ? { height: contentHeight + 'px' } : {}}>
+                style={workbenchBoxContent_height > 0 ? { height: workbenchBoxContent_height + 'px' } : {}}>
                 <div className={styles.main}>
                     <div className={styles.main_top}></div>
                     <div className={styles.main_contain}>
@@ -53,7 +43,7 @@ export default class index extends Component {
                             <Templates updateParentProcessTempleteList={this.updateParentProcessTempleteList} />
                         </div>
                         <div className={styles.contain_right}>
-                            <FlowInstances />
+                            <FlowInstances workbenchBoxContent_height={workbenchBoxContent_height} />
                         </div>
                     </div>
                 </div>
