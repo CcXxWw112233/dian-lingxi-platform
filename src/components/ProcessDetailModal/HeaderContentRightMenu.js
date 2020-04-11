@@ -16,6 +16,7 @@ import {
 } from "@/globalset/js/constant";
 import { FLOWS } from '../../globalset/js/constant'
 import { genPrincipalListFromAssignees, transformNewAssigneesToString, transformNewRecipientsToString } from './components/handleOperateModal'
+import { getGlobalData } from '../../utils/businessFunction'
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
 
@@ -316,7 +317,7 @@ export default class HeaderContentRightMenu extends Component {
       type: 'publicProcessDetailModal/workflowEnd',
       payload: {
         id,
-        board_id,
+        board_id: getGlobalData('storageCurrentOperateBoardId') || board_id,
         calback: () => {
           setTimeout(() => {
             message.success(`中止${currentNounPlanFilterName(FLOWS)}成功`)
@@ -363,7 +364,7 @@ export default class HeaderContentRightMenu extends Component {
           type: 'publicProcessDetailModal/workflowDelete',
           payload: {
             id,
-            board_id,
+            board_id: getGlobalData('storageCurrentOperateBoardId') || board_id,
             calback: () => {
               setTimeout(() => {
                 message.success(`删除${currentNounPlanFilterName(FLOWS)}成功`)
@@ -400,7 +401,7 @@ export default class HeaderContentRightMenu extends Component {
       type: 'publicProcessDetailModal/restartProcess',
       payload: {
         id,
-        board_id,
+        board_id: getGlobalData('storageCurrentOperateBoardId') || board_id,
         calback: () => {
           setTimeout(() => {
             message.success(`重启${currentNounPlanFilterName(FLOWS)}成功`)

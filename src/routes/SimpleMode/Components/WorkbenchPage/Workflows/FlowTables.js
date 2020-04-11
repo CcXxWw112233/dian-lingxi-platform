@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Table } from 'antd';
 import { timestampToTimeNormal } from '../../../../../utils/util';
-import { getOrgNameWithOrgIdFilter } from '../../../../../utils/businessFunction';
+import { getOrgNameWithOrgIdFilter, setBoardIdStorage } from '../../../../../utils/businessFunction';
 import { connect } from 'dva';
 import globalStyles from '@/globalset/css/globalClassName.less'
 
@@ -324,8 +324,9 @@ export default class FlowTables extends Component {
         })
     }
     tableRowClick = (record) => {
-        const { id, board_id } = record
+        const { id, board_id, org_id } = record
         const { dispatch, simplemodeCurrentProject = {} } = this.props
+        setBoardIdStorage(board_id, org_id)
         if (!simplemodeCurrentProject.board_id || simplemodeCurrentProject.board_id == '0') {
             dispatch({
                 type: 'projectDetail/projectDetailInfo',
