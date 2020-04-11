@@ -306,7 +306,8 @@ export default class HeaderContentRightMenu extends Component {
   // 中止流程的点击事件
   handleDiscontinueProcess = () => {
     let that = this
-    const { projectDetailInfoData: { board_id }, processInfo: { id } } = this.props
+    const { processInfo: { id, board_id }, request_flows_params = {}, currentFlowTabsStatus } = this.props
+    let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     if (!this.whetherIsHasPermission(PROJECT_FLOWS_FLOW_ABORT)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return
@@ -320,6 +321,13 @@ export default class HeaderContentRightMenu extends Component {
           setTimeout(() => {
             message.success(`中止${currentNounPlanFilterName(FLOWS)}成功`)
           }, 200)
+          that.props.dispatch({
+            type: 'publicProcessDetailModal/getProcessListByType',
+            payload: {
+              board_id: BOARD_ID,
+              status: currentFlowTabsStatus || '1'
+            }
+          })
           that.props.whetherUpdateWorkbenchPorcessListData && that.props.whetherUpdateWorkbenchPorcessListData({type: 'workflowEnd'})
           that.props.onCancel && that.props.onCancel()
           
@@ -330,17 +338,18 @@ export default class HeaderContentRightMenu extends Component {
 
   // 删除流程的点击事件
   handleDeletProcess = () => {
-    const { projectDetailInfoData: { board_id }, processInfo: { id } } = this.props
+    const { processInfo: { id, board_id }, currentFlowTabsStatus, request_flows_params = {} } = this.props
     if (!this.whetherIsHasPermission(PROJECT_FLOWS_FLOW_DELETE)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return
     }
     if (!id) return false
-    this.confirm({ id, board_id })
+    this.confirm({ id, board_id, currentFlowTabsStatus, request_flows_params })
   }
 
-  confirm({ id, board_id }) {
+  confirm({ id, board_id, currentFlowTabsStatus, request_flows_params = {} }) {
     const that = this
+    let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     const { dispatch } = that.props
     const modal = Modal.confirm();
     modal.update({
@@ -359,6 +368,13 @@ export default class HeaderContentRightMenu extends Component {
               setTimeout(() => {
                 message.success(`删除${currentNounPlanFilterName(FLOWS)}成功`)
               }, 200)
+              that.props.dispatch({
+                type: 'publicProcessDetailModal/getProcessListByType',
+                payload: {
+                  board_id: BOARD_ID,
+                  status: currentFlowTabsStatus || '1'
+                }
+              })
               that.props.whetherUpdateWorkbenchPorcessListData && that.props.whetherUpdateWorkbenchPorcessListData({type: 'deleteProcess'})
               that.props.onCancel && that.props.onCancel()
             }
@@ -373,7 +389,9 @@ export default class HeaderContentRightMenu extends Component {
 
   // 重启流程的点击事件
   handleReStartProcess = () => {
-    const { projectDetailInfoData: { board_id }, processInfo: { id } } = this.props
+    let that = this
+    const { processInfo: { id, board_id }, currentFlowTabsStatus, request_flows_params = {} } = this.props
+    let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     if (!this.whetherIsHasPermission(PROJECT_FLOWS_FLOW_ABORT)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return
@@ -387,6 +405,13 @@ export default class HeaderContentRightMenu extends Component {
           setTimeout(() => {
             message.success(`重启${currentNounPlanFilterName(FLOWS)}成功`)
           }, 200)
+          that.props.dispatch({
+            type: 'publicProcessDetailModal/getProcessListByType',
+            payload: {
+              board_id: BOARD_ID,
+              status: currentFlowTabsStatus || '1'
+            }
+          })
           this.props.onCancel && this.props.onCancel()
         }
       }
@@ -517,11 +542,11 @@ export default class HeaderContentRightMenu extends Component {
 }
 
 //  只关联public中弹窗内的数据
-function mapStateToProps({ publicProcessDetailModal: { processInfo = {}, processPageFlagStep, templateInfo = {} }, projectDetail: { datas: { projectDetailInfoData = {} } },  technological: {
+function mapStateToProps({ publicProcessDetailModal: { processInfo = {}, processPageFlagStep, templateInfo = {}, currentFlowTabsStatus }, projectDetail: { datas: { projectDetailInfoData = {} } },  technological: {
     datas: {
       userBoardPermissions = []
     }
   }
 }) {
-  return { processInfo, processPageFlagStep, templateInfo, projectDetailInfoData, userBoardPermissions }
+  return { processInfo, processPageFlagStep, templateInfo, currentFlowTabsStatus, projectDetailInfoData, userBoardPermissions }
 }
