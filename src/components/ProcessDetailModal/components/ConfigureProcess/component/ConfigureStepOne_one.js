@@ -24,13 +24,25 @@ export default class ConfigureStepOne_one extends Component {
     super(props)
     this.state = {
       popoverVisible: null,
-      form_item: compareACoupleOfObjects(temp_item, props.itemValue) ? temp_item : props.itemValue
+      form_item: compareACoupleOfObjects(temp_item, props.itemValue) ? temp_item : props.itemValue,
+      val_min_length: props.itemValue.val_min_length ? props.itemValue.val_min_length : '',
+      val_max_length: props.itemValue.val_max_length ? props.itemValue.val_max_length : '',
     }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { itemValue: { val_min_length, val_max_length } } = nextProps
+    this.setState({
+      // popoverVisible: visible,
+      val_min_length: val_min_length,
+      val_max_length: val_max_length,
+    })
   }
 
   onVisibleChange = (visible) => {
     const { is_click_confirm_btn, form_item } = this.state
     const { itemKey, parentKey, processEditDatas = [], itemValue } = this.props
+    const { val_min_length, val_max_length } = itemValue
     let temp_item = { ...form_item }
     if (!is_click_confirm_btn) {// 判断是否点击了确定按钮,否 那么就保存回原来的状态
       if (visible == false)
@@ -42,7 +54,9 @@ export default class ConfigureStepOne_one extends Component {
       this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
     }
     this.setState({
-      popoverVisible: visible
+      popoverVisible: visible,
+      val_min_length: val_min_length,
+      val_max_length: val_max_length,
     })
   }
 
@@ -59,18 +73,58 @@ export default class ConfigureStepOne_one extends Component {
     this.updateEdit({ value: e.target.value }, 'prompt_content')
   }
   valMinLengthChange = (value) => {
-    if (isNaN(value)) {
+    const { itemValue: { val_min_length } } = this.props
+    if (isNaN(value) || !value) {
       // message.warn('请输入数字')
+      this.setState({
+        val_min_length: val_min_length
+      })
+      this.updateEdit({ value: val_min_length }, 'val_min_length')
       return
     }
-    this.updateEdit({ value: value }, 'val_min_length')
+    this.setState({
+      val_min_length: value
+    })
+    // this.updateEdit({ value: value }, 'val_min_length')
+  }
+  valMinLengthBlur = (e) => {
+    const { itemValue: { val_min_length } } = this.props
+    if (isNaN(e.target.value) || !e.target.value) {
+      // message.warn('请输入数字')
+      this.setState({
+        val_min_length: val_min_length
+      })
+      this.updateEdit({ value: val_min_length }, 'val_min_length')
+      return
+    }
+    this.updateEdit({ value: e.target.value.toString() }, 'val_min_length')
   }
   valMaxLengthChange = (value) => {
-    if (isNaN(value)) {
+    const { itemValue: { val_max_length } } = this.props
+    if (isNaN(value) || !value) {
       // message.warn('请输入数字')
+      this.setState({
+        val_max_length: val_max_length
+      })
+      this.updateEdit({ value: val_max_length }, 'val_max_length')
       return
     }
-    this.updateEdit({ value: value }, 'val_max_length')
+    this.setState({
+      val_max_length: value
+    })
+    // this.updateEdit({ value: value }, 'val_max_length')
+  }
+  valMaxLengthBlur = (e) => {
+    const { itemValue: { val_max_length } } = this.props
+    if (isNaN(e.target.value) || !e.target.value) {
+      // message.warn('请输入数字')
+      this.setState({
+        val_max_length: val_max_length
+      })
+      this.updateEdit({ value: val_max_length }, 'val_max_length')
+      return
+    }
+    this.updateEdit({ value: e.target.value.toString() }, 'val_max_length')
   }
   isRequiredCheck = (e) => {
     this.updateEdit({ value: e.target.value }, 'is_required')
@@ -135,9 +189,9 @@ export default class ConfigureStepOne_one extends Component {
 
   renderContent = () => {
     const { itemValue } = this.props
-    const { title, prompt_content, verification_rule, is_required, val_min_length, val_max_length } = itemValue
-    const { form_item } = this.state
-    let disabledFlag = compareACoupleOfObjects(form_item, itemValue)
+    const { title, prompt_content, verification_rule, is_required, val_min_length: old_val_min_length, val_max_length: old_val_max_length } = itemValue
+    const { form_item, val_min_length, val_max_length  } = this.state
+    let disabledFlag = compareACoupleOfObjects(form_item, itemValue) || val_min_length != old_val_min_length || val_max_length != old_val_max_length
     return (
       <div key={itemValue} className={indexStyles.popover_content}>
         <div className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
@@ -169,7 +223,7 @@ export default class ConfigureStepOne_one extends Component {
             verification_rule == '' && (
               <div>
                 <p>限制字数:</p>
-                <InputNumber min={1} precision="0.1" value={val_min_length} onChange={this.valMinLengthChange} style={{ width: 174, marginRight: '8px' }} /> ~ <InputNumber value={val_max_length} onChange={this.valMaxLengthChange} precision="0.1" min={1} style={{ width: 174, marginLeft: '8px' }} />
+                <InputNumber min={1} max={200} precision="0.1" value={val_min_length} onChange={this.valMinLengthChange} onBlur={this.valMinLengthBlur} style={{ width: 174, marginRight: '8px' }} /> ~ <InputNumber value={val_max_length} onChange={this.valMaxLengthChange} onBlur={this.valMaxLengthBlur} precision="0.1" min={1} max={200} style={{ width: 174, marginLeft: '8px' }} />
               </div>
             )
           }

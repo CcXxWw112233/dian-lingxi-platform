@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Input, DatePicker } from 'antd'
 import indexStyles from '../index.less'
 import moment from 'moment'
-import { timeToTimestamp } from '../../../../../utils/util'
+import { timeToTimestamp, compareACoupleOfObjects, isObjectValueEqual } from '../../../../../utils/util'
 import { connect } from 'dva'
 
 const { MonthPicker, RangePicker } = DatePicker
@@ -10,8 +10,20 @@ const { MonthPicker, RangePicker } = DatePicker
 @connect(mapStateToProps)
 export default class BeginningStepOne_three extends Component {
 
-  state = {
-    startOpen: false
+  constructor(props) {
+    super(props)
+    this.state = {
+      startOpen: false,
+      localItem: props.itemValue ? props.itemValue : {}
+    }
+  }
+
+  updateState = (data,key) => {
+    const { localItem = {} } = this.state
+    localItem[key] = data.value
+    this.setState({
+      localItem: {...localItem}
+    })
   }
 
   updateEdit = (data, key) => {
@@ -26,8 +38,10 @@ export default class BeginningStepOne_three extends Component {
       // 这里是如果清空了时间 会变为0
       if (!timeToTimestamp(timeString)) {
         this.updateEdit({value: ''}, 'value')
+        this.updateState({value: ''}, 'value')
         return
       }
+      this.updateState({value: timeToTimestamp(timeString)}, 'value')
       this.updateEdit({value: timeToTimestamp(timeString)}, 'value')
     }
 
@@ -42,8 +56,11 @@ export default class BeginningStepOne_three extends Component {
       // 这里是如果清空了时间 会变为0
       if (!timeToTimestamp(timeString)) {
         this.updateEdit({value: ''}, 'value')
+        this.updateState({value: ''}, 'value')
         return
       }
+      this.updateState({value: timeToTimestamp(timeString)}, 'value')
+      this.updateEdit({value: timeToTimestamp(timeString)}, 'value')
       this.setState({
         start_time: timeToTimestamp(timeString)
       }, () => {
@@ -54,22 +71,27 @@ export default class BeginningStepOne_three extends Component {
     rangePickerChange = (date, dateString) => {
       if(dateString[0] == '' && dateString[1] == '') {
         this.updateEdit({value: ''}, 'value')
+        this.updateState({value: ''}, 'value')
         return
       }
       this.updateEdit({ value: `${timeToTimestamp(dateString[0])},${timeToTimestamp(dateString[1])}` }, 'value')
+      this.updateState({ value: `${timeToTimestamp(dateString[0])},${timeToTimestamp(dateString[1])}` }, 'value')
     }
 
     rangePickerChange2 = (date, dateString) => {
-      if(!dateString) {
+      if(dateString[0] == '' && dateString[1] == '') {
         this.updateEdit({value: ''}, 'value')
+        this.updateState({value: ''}, 'value')
         return
       }
       this.updateEdit({ value: `${timeToTimestamp(dateString[0])},${timeToTimestamp(dateString[1])}` }, 'value')
+      this.updateState({ value: `${timeToTimestamp(dateString[0])},${timeToTimestamp(dateString[1])}` }, 'value')
     }
 
   renderDiffDateRangeAndDatePrecision = () => {
     const { itemValue } = this.props
-    const { date_range, date_precision, prompt_content, value } = itemValue
+    const { localItem = {} } = this.state
+    const { date_range, date_precision, prompt_content, value } = localItem
     let container = (<div></div>)
     switch (date_range) {
       case '1':// 表示单个日期

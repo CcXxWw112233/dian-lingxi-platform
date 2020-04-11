@@ -278,7 +278,9 @@ export default class BeginningStepOne_one extends Component {
         </p>
 
         <div className={indexStyles.text_fillOut}>
-          <Input maxLength={50} style={{ border: verificationIsTrue || value == '' ? '' : '1px solid #F5222D' }} placeholder={prompt_content} value={value} onChange={(e) => { this.defaultValueChange(e, verification_rule) }} onBlur={(e) => { this.handleOnBlur(e, verification_rule) }}/>
+          <div className={indexStyles.prompt_content}>
+            <Input maxLength={200} style={{ minHeight: '32px', border: verificationIsTrue || value == '' ? '' : '1px solid #F5222D', overflow: 'hidden', resize: 'none' }} placeholder={prompt_content} value={value} onChange={(e) => { this.defaultValueChange(e, verification_rule) }} onBlur={(e) => { this.handleOnBlur(e, verification_rule) }}/>
+          </div>
         </div>
       </div>
     )
