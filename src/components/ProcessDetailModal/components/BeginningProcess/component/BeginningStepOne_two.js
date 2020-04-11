@@ -61,7 +61,7 @@ export default class BeginningStepOne_two extends Component {
         <div className={indexStyles.text_fillOut}>
           <Select 
             mode={is_multiple_choice === '1' ? 'multiple' : ''}
-            // value={is_multiple_choice === '1'? value.split(',').filter(d=>d):value} 
+            value={is_multiple_choice === '1' && value ? value.split(',').filter(d=>d) || '':value} 
             optionLabelProp="label"
             // value={this.renderWhetherMultipleValue()}
             style={{width: '100%'}} placeholder={prompt_content}

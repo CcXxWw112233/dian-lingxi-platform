@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Input, DatePicker } from 'antd'
 import indexStyles from '../index.less'
 import moment from 'moment'
-import { timeToTimestamp, timestampToTime } from '../../../../../utils/util'
+import { timeToTimestamp } from '../../../../../utils/util'
 import { connect } from 'dva'
 
 const { MonthPicker, RangePicker } = DatePicker
@@ -79,7 +79,9 @@ export default class BeginningStepOne_three extends Component {
               onChange={this.startDatePickerChange.bind(this)} 
               format={'YYYY/MM/DD'} 
               style={{ width: '100%' }} 
-              placeholder={prompt_content} />
+              placeholder={prompt_content}
+              value={value ? moment(new Date(Number(value))) : undefined}
+            />
           )
         } else if (date_precision == '2') { // 表示日期 + 时间
           container = (
@@ -90,7 +92,9 @@ export default class BeginningStepOne_three extends Component {
               open={this.state.startOpen}
               format="YYYY-MM-DD HH:mm"
               showTime={{ format: 'HH:mm' }}
-              style={{ width: '100%' }} placeholder={prompt_content} />
+              style={{ width: '100%' }} placeholder={prompt_content} 
+              value={value ? moment(new Date(Number(value))) : undefined}
+            />
           )
         }
         break;
@@ -103,6 +107,7 @@ export default class BeginningStepOne_three extends Component {
             format="YYYY-MM-DD"
             style={{ width: '100%' }}
             onChange={this.rangePickerChange}
+            value={ (startTime && endTime) ? [moment(new Date(Number(startTime))), moment(new Date(Number(endTime)))] : undefined}
           />
         } else if (date_precision == '2') { // 表示日期 + 时间
           container = <RangePicker
@@ -110,6 +115,7 @@ export default class BeginningStepOne_three extends Component {
             format="YYYY-MM-DD HH:mm"
             onChange={this.rangePickerChange2}
             style={{ width: '100%' }}
+            value={ (startTime && endTime) ? [moment(new Date(Number(startTime))), moment(new Date(Number(endTime)))] : undefined}
           />
         }
         break

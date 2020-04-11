@@ -224,7 +224,7 @@ export default class ConfigureStepOne_two extends Component {
       <div>
         <div className={`${indexStyles.text_form}`} style={{ background: is_click_currentTextForm ? 'rgba(230,247,255,1)' : 'rgba(0,0,0,0.02)' }} onClick={this.handleChangeTextFormColor}>
           <p>{title}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</p>
-          <Select className={indexStyles.option_select} placeholder={prompt_content} disabled={true} />
+          <Select className={indexStyles.option_select} style={{width: '100%'}} placeholder={prompt_content} disabled={true} />
           {
             is_click_currentTextForm && (
               <>
