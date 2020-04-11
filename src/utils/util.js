@@ -647,6 +647,9 @@ export const compareACoupleOfObjects = (obj1, obj2) => {
  * @param {*} array2 
  */
 export const isObjectValueEqual = (obj1, obj2) => {
+  if (!obj1 || !obj2) {
+    return obj1 === obj2
+  }
   let aProps = Object.getOwnPropertyNames(obj1);
   let bProps = Object.getOwnPropertyNames(obj2);
    if (aProps.length != bProps.length) {
