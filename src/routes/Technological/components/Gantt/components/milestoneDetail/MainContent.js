@@ -11,6 +11,7 @@ import globalStyle from '../../../../../../globalset/css/globalClassName.less'
 import { timestampToTimeNormal, timeToTimestamp, compareTwoTimestamp } from "../../../../../../utils/util";
 import { REQUEST_DOMAIN_FILE } from "../../../../../../globalset/js/constant";
 import { connect, } from 'dva';
+import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 
 const getEffectOrReducerByName = name => `milestoneDetail/${name}`
 @connect(mapStateToProps)
@@ -74,6 +75,28 @@ export default class MainContent extends React.Component {
     })
   }
 
+  inviteOthersToBoardCalback = ({ users }) => { //邀请外部人员加入回调
+    const { dispatch, milestone_detail = {} } = this.props
+    const { board_id, principals } = milestone_detail
+    const calback = (res) => { //将原始的负责人和新的执行人合并
+      let add_executors = users.map(item => res.data.find(item2 => item2.user_id == item)) //新添加的执行人通过新的项目成员遍历信息
+      add_executors = add_executors.filter(item => item.user_id)
+      milestone_detail.principals = [].concat(principals, add_executors)
+      dispatch({
+        type: 'milestoneDetail/updateDatas',
+        payload: {
+          milestone_detail
+        }
+      })
+    }
+    dispatch({
+      type: 'projectDetail/projectDetailInfo',
+      payload: {
+        id: board_id,
+        calback
+      }
+    })
+  }
   chirldrenTaskChargeChange = (data) => {
     const { key, type } = data
     const { dispatch, milestone_detail = {} } = this.props
@@ -277,7 +300,7 @@ export default class MainContent extends React.Component {
       users = [],
       milestone_detail = {},
     } = this.props
-    const { board_id, complete_num, total_num, name, deadline, remarks, principals = [], id, content_list = [] } = milestone_detail
+    const { board_id, complete_num, total_num, name, deadline, remarks, principals = [], id, content_list = [], org_id } = milestone_detail
     const executors = principals
     const new_users = users.map(item => {
       if (!item['user_id']) {
@@ -348,12 +371,45 @@ export default class MainContent extends React.Component {
               <span>负责人</span>
             </div>
             {!executors.length ? (
-              <Dropdown overlay={<MeusearMutiple listData={new_users} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+              <Dropdown overlay={
+                <MenuSearchPartner
+                  // isInvitation={true}
+                  inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
+                  invitationType='1'
+                  invitationId={id}
+                  invitationOrg={org_id}
+                  listData={new_users}
+                  keyCode={'user_id'}
+                  searchName={'name'}
+                  currentSelect={executors}
+                  chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                  board_id={board_id} />
+              }>
                 <div className={`${indexStyles.contain2_item_right} ${indexStyles.pub_hover}`}>添加负责人</div>
               </Dropdown>
             ) : (
                 <div className={`${indexStyles.contain2_item_right} ${indexStyles.pub_hover} ${indexStyles.excutorsOut}`}>
-                  <Dropdown overlay={<MeusearMutiple listData={new_users} keyCode={'user_id'} searchName={'name'} currentSelect={executors} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} />}>
+                  <Dropdown overlay={
+                    <MenuSearchPartner
+                      // isInvitation={true}
+                      inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
+                      invitationType='1'
+                      invitationId={id}
+                      invitationOrg={org_id}
+                      listData={new_users}
+                      keyCode={'user_id'}
+                      searchName={'name'}
+                      currentSelect={executors}
+                      chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                      board_id={board_id} />
+                    // <MeusearMutiple
+                    //   listData={new_users}
+                    //   keyCode={'user_id'}
+                    //   searchName={'name'}
+                    //   currentSelect={executors}
+                    //   chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
+                    // />
+                  }>
                     <div className={indexStyles.excutorsOut_left} ref={this.excutors_out_left_ref}>
                       {executors.map((value, key) => {
                         const { avatar, name, user_name, user_id } = value
