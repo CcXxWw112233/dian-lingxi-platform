@@ -5,7 +5,7 @@ import VisitControl from '../../routes/Technological/components/VisitControl'
 import InformRemind from '@/components/InformRemind'
 import VersionSwitching from '@/components/VersionSwitching'
 import { connect } from 'dva'
-import { compareACoupleOfObjects } from '@/utils/util'
+import { compareACoupleOfObjects, isArrayEqual } from '@/utils/util'
 import { checkIsHasPermissionInBoard, getSubfixName, checkIsHasPermissionInVisitControl } from "@/utils/businessFunction";
 import {
   MESSAGE_DURATION_TIME,
@@ -37,7 +37,8 @@ export default class HeaderContentRightMenu extends Component {
   // 这里是更新版本列表添加一个编辑的字段
   componentWillReceiveProps(nextProps) {
     const { filePreviewCurrentVersionList = [], filePreviewCurrentFileId } = nextProps
-    if (!compareACoupleOfObjects(this.props, nextProps)) {
+    const { filePreviewCurrentVersionList: old_filePreviewCurrentVersionList = [] } = this.props
+    if (!isArrayEqual(old_filePreviewCurrentVersionList, filePreviewCurrentVersionList)) {
       let new_filePreviewCurrentVersionList = [...filePreviewCurrentVersionList]
       new_filePreviewCurrentVersionList = new_filePreviewCurrentVersionList.map(item => {
         let new_item = item
