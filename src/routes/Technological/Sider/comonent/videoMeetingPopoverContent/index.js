@@ -1028,11 +1028,12 @@ class VideoMeetingPopoverContent extends React.Component {
 						<div className={indexStyles.videoMeeting__topic}>
 							<div className={indexStyles.videoMeeting__topic_content}>
 								{/* 项目选择 S */}
-								<span className={indexStyles.videoMeeting__topic_content_save}>
+								<span style={{position: 'relative'}} className={indexStyles.videoMeeting__topic_content_save}>
 									<Select
 										defaultValue={saveToProject ? saveToProject : defaultSaveToProject}
 										onChange={this.handleVideoMeetingSaveSelectChange}
 										style={{ width: "100%" }}
+										getPopupContainer={triggerNode => triggerNode.parentNode}
 									>
 										{/* <Option value={null}>不存入项目</Option> */}
 										{projectList.length !== 0 &&
