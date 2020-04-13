@@ -152,7 +152,7 @@ export default class GroupListHead extends Component {
           {
             ganttIsOutlineView({ group_view_type }) &&
             <div style={{ position: 'relative', height: '100%', width: '280px', boxShadow: '1px 0px 4px 0px rgba(0,0,0,0.15);' }}>
-              <OutLineHeadItem />
+              <OutLineHeadItem changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto} />
               {
                 startPlanType == 1 &&
                 <OutlineGuideModal handleClose={this.guideModalHandleClose} />

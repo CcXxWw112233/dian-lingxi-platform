@@ -160,7 +160,7 @@ export default class OutLineHeadItem extends Component {
         }
 
     }
-    onDataProcess = ({ action, param }) => {
+    onDataProcess = ({ action, param, calback }) => {
         //console.log("大纲:onDataProcess", action, param);
         const { dispatch, gantt_board_id, } = this.props;
         let { outline_tree = [] } = this.props;
@@ -479,6 +479,12 @@ export default class OutLineHeadItem extends Component {
                         payload: {
                             id: gantt_board_id,
                         }
+                    }).then(res => {
+                        if (isApiResponseOk(res)) {
+                            if (calback) {
+                                calback({ user_data: res.data.data })
+                            }
+                        }
                     });
                 }
                 break;
@@ -698,9 +704,9 @@ export default class OutLineHeadItem extends Component {
 
     render() {
         const { board_info_visible, show_add_menber_visible, safeConfirmModalVisible } = this.state;
-        const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData, outline_tree_round } = this.props;
+        const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData, outline_tree_round, changeOutLineTreeNodeProto } = this.props;
         //console.log("刷新了数据", outline_tree);
-        console.log("刷新了数据", checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, gantt_board_id));
+        console.log("刷新了数据", changeOutLineTreeNodeProto);
         return (
             <div className={styles.outline_wrapper}>
 
@@ -714,6 +720,7 @@ export default class OutLineHeadItem extends Component {
                     hoverItem={outline_hover_obj}
                     outline_tree_round={outline_tree_round}
                     projectDetailInfoData={projectDetailInfoData}
+                    changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
                 >
                     {this.renderGanttOutLineTree(outline_tree, 0)}
                     <TreeNode

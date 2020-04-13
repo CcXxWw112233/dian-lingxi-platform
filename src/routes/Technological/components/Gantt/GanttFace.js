@@ -361,6 +361,7 @@ export default class GanttFace extends Component {
               <GroupListHeadSet />
               {/*  //撑住DateList相同高度的底部 */}
               <GroupListHead
+                changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
                 setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
                 gantt_card_height={gantt_card_height}
                 dataAreaRealHeight={dataAreaRealHeight} />
