@@ -741,7 +741,7 @@ export default class OutLineHeadItem extends Component {
                             )
                     }
 
-                    <div>
+                    {/* <div>
                         {
                             checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, gantt_board_id) &&
                             <span className={`${styles.actionIcon} ${globalStyles.authTheme}`} onClick={this.invitationJoin}>&#xe7ae;</span>
@@ -750,7 +750,7 @@ export default class OutLineHeadItem extends Component {
                         <Dropdown overlay={this.ganttProjectMenus()} trigger={['click']} placement={'topCenter'}>
                             <span className={`${styles.actionIcon} ${globalStyles.authTheme}`}>&#xe66f;</span>
                         </Dropdown>
-                    </div>
+                    </div> */}
                 </div>
                 <div onWheel={e => e.stopPropagation()}>
                     {

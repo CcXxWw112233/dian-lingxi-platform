@@ -79,7 +79,7 @@ export default class GetRowSummary extends Component {
                 list_group: []
             }
         })
-        selectBoardToSeeInfo({ board_id: list_id, board_name: lane_name, dispatch })
+        selectBoardToSeeInfo({ board_id: list_id, board_name: lane_name, dispatch, group_view_type: '1' })
         // dispatch({
         //     type: 'gantt/getGanttData',
         //     payload: {

@@ -7,6 +7,7 @@ import { Popover, Avatar } from 'antd';
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import { getOrgIdByBoardId } from '@/utils/businessFunction';
 import moment from 'moment';
+import AvatarList from '@/components/avatarList'
 
 class TreeNode extends Component {
     constructor(props) {
@@ -307,12 +308,17 @@ class TreeNode extends Component {
                         >
                             {
                                 executors && executors.length > 0 ?
-                                    <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>
-                                        {
-                                            this.renderExecutor(projectDetailInfoData.data, executors[0])
+                                    (
+                                        <div style={{ display: 'inline-block' }}>
+                                            <AvatarList users={executors} size={20} />
+                                        </div>
+                                    )
+                                    // <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>
+                                    //     {
+                                    //         this.renderExecutor(projectDetailInfoData.data, executors[0])
 
-                                        }
-                                    </span>
+                                    //     }
+                                    // </span>
                                     :
                                     <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
                             }

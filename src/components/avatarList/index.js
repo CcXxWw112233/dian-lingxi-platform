@@ -76,7 +76,7 @@ export default class AvatarList extends React.Component {
         {
           users.map((value, key) => {
             const { avatar, name, id, user_id } = value
-            return key < 3 && (
+            return key < 1 && (
               <React.Fragment key={id || user_id}>
                 {this.renderAvatar({ avatar, name, key })}
               </React.Fragment>
@@ -95,10 +95,10 @@ export default class AvatarList extends React.Component {
           })
         }
         {
-          users.length > 3 && (
+          users.length > 1 && (
             <div
               data-targetclassname={targetclassname}
-              className={styles.more_number} style={{ ...this.more_style(), marginLeft: -(this.getSizeNum() / 2) }}>+{users.length - 3}</div>
+              className={styles.more_number} style={{ ...this.more_style(), marginLeft: -(this.getSizeNum() / 2) }}>+{users.length - 1}</div>
           )
         }
       </div>
