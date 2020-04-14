@@ -18,7 +18,7 @@ import {
 } from './selects'
 import { createMilestone } from "../../../services/technological/prjectDetail";
 import { getGlobalData } from '../../../utils/businessFunction';
-import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, visual_item, mock_gantt_data, ganttIsOutlineView, mock_outline_tree } from '../../../routes/Technological/components/Gantt/constants';
+import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, mock_gantt_data, ganttIsOutlineView, mock_outline_tree } from '../../../routes/Technological/components/Gantt/constants';
 import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
 import { handleChangeBoardViewScrollTop, setGantTimeSpan } from '../../../routes/Technological/components/Gantt/ganttBusiness';
@@ -76,8 +76,8 @@ export default {
       about_group_boards: [], //带分组的项目列表
       about_user_boards: [], //带用户的项目列表
 
-      gantt_board_id: '0', //"1192342431761305600",//, //甘特图查看的项目id
-      group_view_type: '1', //分组视图1项目， 2成员, 4大纲
+      gantt_board_id: '1248488908396826624', //"1192342431761305600",//, //甘特图查看的项目id
+      group_view_type: '4', //分组视图1项目， 2成员, 4大纲
       group_view_filter_boards: [], //内容过滤项目id 列表
       group_view_filter_users: [], //内容过滤职员id 列表
       group_view_boards_tree: [], //内容过滤项目分组树
@@ -97,7 +97,7 @@ export default {
       panel_outline_create_card_params: {}, //大纲视图下，面板拖拽创建任务通过弹窗创建才需要这个参数
       boardTemplateShow: 0,
       startPlanType: 0,
-      outline_current_oprate_add_id: '', //大纲视图下面板拖拽创建任务所属add_id
+      // outline_current_oprate_add_id: '', //大纲视图下面板拖拽创建任务所属add_id
     },
   },
   subscriptions: {
@@ -296,7 +296,7 @@ export default {
         let child_expand_length = 0 //第一级父节点下所有子孙元素展开的总长
         const added = new_item_children.find(item => item.tree_type == '0') //表示是否已经添加过虚拟节点
         if ((tree_type == '1' || tree_type == '2') && !added) { //是里程碑或者一级任务,并且没有添加过
-          new_item_children.push({ ...visual_add_item, add_id: item.id }) //添加虚拟节点
+          // new_item_children.push({ ...visual_add_item, add_id: item.id }) //添加虚拟节点
         }
 
         // 时间跨度设置
@@ -343,7 +343,7 @@ export default {
           }
           const added2 = new_item_children2.find(item => item.tree_type == '0') //表示是否已经添加过虚拟节点
           if ((tree_type2 == '1' || tree_type2 == '2') && !added2) { //是里程碑或者一级任务
-            new_item_children2.push({ ...visual_add_item, add_id: item2.id }) //添加虚拟节点
+            // new_item_children2.push({ ...visual_add_item, add_id: item2.id }) //添加虚拟节点
           }
           if (tree_type == '1') { //父元素是里程碑类型
             new_item2.parent_milestone_id = item.id

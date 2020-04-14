@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import styles from './index.less';
-import { Input, Dropdown, message, Tooltip } from 'antd';
+import { Input, Dropdown, message, Tooltip, Menu } from 'antd';
 import globalStyles from '@/globalset/css/globalClassName.less';
 import ManhourSet from './ManhourSet.js';
 import { Popover, Avatar } from 'antd';
@@ -8,7 +8,7 @@ import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner
 import { getOrgIdByBoardId } from '@/utils/businessFunction';
 import moment from 'moment';
 import AvatarList from '@/components/avatarList'
-
+import NodeOperate from './NodeOperate'
 class TreeNode extends Component {
     constructor(props) {
         //console.log("TreeNode", props);
@@ -354,8 +354,16 @@ class TreeNode extends Component {
         );
     }
 
+    // 操作项点击------start
+    operateVisibleChange = (bool) => {
+        this.setState({
+            operateVisible: bool
+        })
+    }
+    // 操作项点击------end
+
     render() {
-        const { isTitleHover, isTitleEdit, nodeValue = {} } = this.state;
+        const { isTitleHover, isTitleEdit, nodeValue = {}, operateVisible } = this.state;
         const { id, add_id, name: title, tree_type, is_expand, time_span } = nodeValue;
         const { changeOutLineTreeNodeProto, onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {}, outline_tree_round = [] } = this.props;
         let type;
@@ -365,7 +373,7 @@ class TreeNode extends Component {
             type = this.props.type;
         }
         //console.log("更新节点", nodeValue);
-
+        const menu = <NodeOperate node_id={id} setVisble={this.operateVisibleChange} />
         if (this.props.children && this.props.children.length > 0) {
 
             let className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;
@@ -373,7 +381,17 @@ class TreeNode extends Component {
             return (
                 <div className={className} key={id}>
                     <div className={`${styles.outline_tree_node_content} ${((hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id)) ? styles.hover : ''}`} style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
-                        <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
+                        {
+                            (hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id || operateVisible) ? (
+                                <Dropdown overlay={menu}
+                                    visible={operateVisible}
+                                    trigger={['click']} onVisibleChange={this.operateVisibleChange}>
+                                    <div className={`${styles.node_opeator} ${globalStyles.authTheme}`}>&#xe7fd;</div>
+                                </Dropdown>
+                            ) : (
+                                    <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
+                                )
+                        }
                         {
                             !isLeaf &&
                             <span className={`${styles.outline_tree_node_expand_icon_out}`} onClick={this.onChangeExpand}>
@@ -421,8 +439,14 @@ class TreeNode extends Component {
                         {
                             icon ?
                                 icon
-                                :
-                                <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
+                                : (
+                                    (hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id) ? (
+                                        <div className={`${styles.node_opeator} ${globalStyles.authTheme}`}>&#xe7fd;</div>
+                                    ) : (
+                                            <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
+                                        )
+                                )
+                            // <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
                         }
                         {
                             !isLeaf &&
