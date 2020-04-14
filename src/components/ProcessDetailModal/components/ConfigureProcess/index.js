@@ -5,6 +5,7 @@ import NameChangeInput from '@/components/NameChangeInput'
 import { Radio, Button, Tooltip } from 'antd'
 import ConfigureStepTypeOne from './component/ConfigureStepTypeOne'
 import ConfigureStepTypeTwo from './component/ConfigureStepTypeTwo'
+import ConfigureStepTypeThree from './component/ConfigureStepTypeThree'
 import { processEditDatasItemOneConstant, processEditDatasItemTwoConstant, processEditDatasItemThreeConstant } from '../../constant'
 import { connect } from 'dva'
 import { isArrayEqual, isObjectValueEqual } from '../../../../utils/util'
@@ -473,6 +474,9 @@ export default class ConfigureProcess extends Component {
       case '2': // 表示审批
         container = <ConfigureStepTypeTwo itemValue={itemValue} itemKey={itemKey} />
         break
+      case '3': // 表示评分
+        container = <ConfigureStepTypeThree itemValue={itemValue} itemKey={itemKey} />
+        break
       default:
         container = <div></div>
         break;
@@ -505,7 +509,7 @@ export default class ConfigureProcess extends Component {
     } else if (node_type == '2') {
       check_line = indexStyles.examine_approve
     } else if (node_type == '3') {
-      check_line = indexStyles.make_copy
+      check_line = indexStyles.make_grade
     } else {
       check_line = indexStyles.normal_check
     }
@@ -540,7 +544,7 @@ export default class ConfigureProcess extends Component {
             </div>
             <div style={{ paddingLeft: '14px', paddingRight: '14px', position: 'relative' }}>
               {/* 步骤类型 */}
-              <div style={{ paddingBottom: '14px', borderBottom: '1px #e8e8e8' }} onClick={(e) => { e && e.stopPropagation() }}>
+              <div style={{ paddingBottom: '14px', borderBottom: '1px #e8e8e8', position: 'relative' }} onClick={(e) => { e && e.stopPropagation() }}>
                 <span style={{ color: 'rgba(0,0,0,0.45)' }} className={globalStyles.authTheme}>&#xe7f4; &nbsp;步骤类型 :&nbsp;&nbsp;&nbsp;</span>
                 <Radio.Group onChange={this.handleChangeStepType} value={node_type}>
                   <Radio value="1">资料收集</Radio>
@@ -549,6 +553,17 @@ export default class ConfigureProcess extends Component {
                       <>
                         <Radio value="2">审批</Radio>
                         {/* <Radio value="3">抄送</Radio> */}
+                      </>
+                    )
+                  }
+                  {
+                    // itemKey != '0' && 
+                    (
+                      <>
+                      <Radio value="3">评分</Radio>
+                      <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} title="指定评分人进行评分，最终分值会导向某一结果" placement="top">
+                        <span style={{color: '#D9D9D9', cursor: 'pointer'}} className={globalStyles.authTheme}>&#xe845;</span>
+                      </Tooltip>
                       </>
                     )
                   }

@@ -1,300 +1,226 @@
 import React, { Component } from 'react'
-import { Dropdown, Icon, Radio, Tooltip } from 'antd'
+import { Dropdown, Icon, Radio, Tooltip, Popover, Switch, Select, InputNumber } from 'antd'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import MoreOptionsComponent from '../../MoreOptionsComponent'
 import { connect } from 'dva'
+import { principalList } from '../../../constant'
 
 @connect(mapStateToProps)
 export default class ConfigureStepTypeThree extends Component {
 
-  state = {
-    makeCopyPersonList: [], // 抄送人列表
-    makeCopyNewsPaperPersonList: [], // 抄报人列表
-  }
-
-  updateConfigureProcess = (data, key) => { //更新单个数组单个属性
-    const { value } = data
-    const { processEditDatas = [], itemKey, itemValue, dispatch } = this.props
-    const new_processEditDatas = [...processEditDatas]
-    new_processEditDatas[itemKey][key] = value
-    dispatch({
-      type: 'publicProcessDetailModal/updateDatas',
-      payload: {
-        processEditDatas: new_processEditDatas,
-      }
-    })
-  }
-
-  ccTypeChange = (e) => {
-    this.updateConfigureProcess({ value: e.target.value }, 'cc_type')
-  }
-
-  //修改通知人的回调 S
-  chirldrenTaskChargeChange = (data) => {
-    const { projectDetailInfoData = {} } = this.props;
-    // 多个任务执行人
-    const membersData = projectDetailInfoData['data'] //所有的人
-    // const excutorData = new_userInfo_data //所有的人
-    let newMakeCopyPersonList = []
-    let assignee_value = []
-    const { selectedKeys = [], type, key } = data
-    for (let i = 0; i < selectedKeys.length; i++) {
-      for (let j = 0; j < membersData.length; j++) {
-        if (selectedKeys[i] === membersData[j]['user_id']) {
-          newMakeCopyPersonList.push(membersData[j])
-          assignee_value.push(membersData[j].user_id)
-        }
-      }
+  constructor(props) {
+    super(props)
+    this.state = {
+      // principalList
+      designatedPersonnelList: []
     }
-
-    this.setState({
-      makeCopyPersonList: newMakeCopyPersonList
-    });
-    this.updateConfigureProcess({value: assignee_value.join(',')}, 'assignees')
-  }
-  // 添加执行人的回调 E
-
-  // 移除执行人的回调 S
-  handleRemoveExecutors = (e, shouldDeleteItem) => {
-    e && e.stopPropagation()
-    const { makeCopyPersonList = [] } = this.state
-    const { itemValue } = this.props
-    const { recipients } = itemValue
-    let newMakeCopyPersonList = [...makeCopyPersonList]
-    let newAssigneesArray = recipients && recipients.length ? recipients.split(',') : []
-    newMakeCopyPersonList.map((item, index) => {
-      if (item.user_id == shouldDeleteItem) {
-        newMakeCopyPersonList.splice(index, 1)
-        newAssigneesArray.splice(index,1)
-      }
-    })
-    let newRecipientsStr = newAssigneesArray.join(',')
-    this.setState({
-      makeCopyPersonList: newMakeCopyPersonList
-    })
-    this.updateConfigureProcess({value: newRecipientsStr}, 'assignees')
   }
 
-  //修改通知人的回调 S
-  chirldrenTaskChargeChangeTwo = (data) => {
-    const { projectDetailInfoData = {} } = this.props;
-    // 多个任务执行人
-    const membersData = projectDetailInfoData['data'] //所有的人
-    // const excutorData = new_userInfo_data //所有的人
-    let newMakeCopyNewsPaperPersonList = []
-    let recipient_value = []
-    const { selectedKeys = [], type, key } = data
-    for (let i = 0; i < selectedKeys.length; i++) {
-      for (let j = 0; j < membersData.length; j++) {
-        if (selectedKeys[i] === membersData[j]['user_id']) {
-          newMakeCopyNewsPaperPersonList.push(membersData[j])
-          recipient_value.push(membersData[j].user_id)
+  // 把assignees中的执行人,在项目中的所有成员过滤出来
+  filterAssignees = () => {
+    const { projectDetailInfoData: { data = [] } } = this.props
+    const { designatedPersonnelList = [] } = this.state
+    let new_data = [...data]
+    let newDesignatedPersonnelList = designatedPersonnelList && designatedPersonnelList.map(item => {
+      return new_data.find(item2 => item2.user_id == item) || {}
+    })
+    newDesignatedPersonnelList = newDesignatedPersonnelList.filter(item => item.user_id)
+    return newDesignatedPersonnelList
+
+  }
+
+  renderContent = () => {
+    return (
+      <div>
+        我的天
+      </div>
+    )
+  }
+
+  // 渲染指定人员
+  renderDesignatedPersonnel = () => {
+    const { projectDetailInfoData: { data = [], board_id, org_id } } = this.props
+    // const { designatedPersonnelList = [] } = this.state
+    let designatedPersonnelList = this.filterAssignees()
+    return (
+      <div style={{ flex: 1, padding: '8px 0' }}>
+        {
+          !designatedPersonnelList.length ? (
+            <div style={{ position: 'relative' }}>
+              <Dropdown trigger={['click']} overlayClassName={indexStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                overlayStyle={{ maxWidth: '200px' }}
+                overlay={
+                  <MenuSearchPartner
+                    listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={designatedPersonnelList}
+                    board_id={board_id}
+                    invitationType='1'
+                    invitationId={board_id}
+                    invitationOrg={org_id}
+                    chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
+                }
+              >
+                {/* 添加通知人按钮 */}
+
+                <div className={indexStyles.addNoticePerson}>
+                  <span className={`${globalStyles.authTheme} ${indexStyles.plus_icon}`}>&#xe8fe;</span>
+                </div>
+              </Dropdown>
+            </div>
+          ) : (
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center', flexWrap: 'wrap', lineHeight: '22px' }}>
+                {designatedPersonnelList.map((value, index) => {
+                  const { avatar, name, user_name, user_id } = value
+                  return (
+                    <div style={{ display: 'flex', alignItems: 'center' }} key={user_id}>
+                      <div className={`${indexStyles.user_item}`} style={{ position: 'relative', textAlign: 'center', marginBottom: '8px' }} key={user_id}>
+                        {avatar ? (
+                          <Tooltip overlayStyle={{ minWidth: '62px' }} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
+                            <img className={indexStyles.img_hover} style={{ width: '32px', height: '32px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
+                          </Tooltip>
+                        ) : (
+                            <Tooltip overlayStyle={{ minWidth: '62px' }} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
+                              <div className={indexStyles.default_user_hover} style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
+                                <Icon type={'user'} style={{ fontSize: 14, color: '#8c8c8c' }} />
+                              </div>
+                            </Tooltip>
+                          )}
+                        <span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${indexStyles.userItemDeleBtn}`}></span>
+                      </div>
+                    </div>
+                  )
+                })}
+                <Dropdown trigger={['click']} overlayClassName={indexStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                  overlayStyle={{ maxWidth: '200px' }}
+                  overlay={
+                    <MenuSearchPartner
+                      listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={designatedPersonnelList}
+                      board_id={board_id}
+                      invitationType='1'
+                      invitationId={board_id}
+                      invitationOrg={org_id}
+                      chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
+                  }
+                >
+                  {/* 添加通知人按钮 */}
+
+                  <div className={indexStyles.addNoticePerson} style={{ marginTop: '-6px' }}>
+                    <span className={`${globalStyles.authTheme} ${indexStyles.plus_icon}`}>&#xe8fe;</span>
+                  </div>
+                </Dropdown>
+              </div>
+            )
         }
-      }
-    }
 
-    this.setState({
-      makeCopyNewsPaperPersonList: newMakeCopyNewsPaperPersonList
-    });
-    this.updateConfigureProcess({value: recipient_value.join(',')}, 'recipients')
-  }
-  // 添加执行人的回调 E
-
-  // 移除执行人的回调 S
-  handleRemoveExecutorsTwo = (e, shouldDeleteItem) => {
-    e && e.stopPropagation()
-    const { itemValue } = this.props
-    const { assignees } = itemValue
-    const { makeCopyNewsPaperPersonList = [] } = this.state
-    let newMakeCopyNewsPaperPersonList = [...makeCopyNewsPaperPersonList]
-    let newRecipientsArray = assignees && assignees.length ? assignees.split(',') : []
-    newMakeCopyNewsPaperPersonList.map((item, index) => {
-      if (item.user_id == shouldDeleteItem) {
-        newMakeCopyNewsPaperPersonList.splice(index, 1)
-        newRecipientsArray.splice(index,1)
-      }
-    })
-    let newRecipientsStr = newRecipientsArray.join(',')
-    this.setState({
-      makeCopyNewsPaperPersonList: newMakeCopyNewsPaperPersonList
-    })
-    this.updateConfigureProcess({value: newRecipientsStr}, 'recipients')
+      </div>
+    )
   }
 
   render() {
-    const { makeCopyPersonList = [], makeCopyNewsPaperPersonList = [] } = this.state
-    const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData = {} } = this.props
-    const { data, board_id } = projectDetailInfoData
-    const { cc_type, deadline_type, deadline_value, description, is_click_node_description } = itemValue
+    const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id } } = this.props
     return (
       <div>
-        {/* 审批类型 */}
-        <div className={indexStyles.approve_content} onClick={(e) => { e && e.stopPropagation() }}>
-          <span style={{ marginRight: '20px' }} className={globalStyles.authTheme}>&#xe618; 抄送方式 :</span>
-          <Radio.Group value={cc_type} onChange={this.ccTypeChange} style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-            <Radio value="1">自动抄送</Radio>
-            <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title="无需指派执行人,上一步骤完成后自动抄送"><span className={`${globalStyles.authTheme} ${indexStyles.approve_tips}`}>&#xe845;</span></Tooltip>
-            <Radio value="2">手动抄送</Radio>
-            <Tooltip overlayStyle={{ minWidth: '156px' }} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title="需指定抄报人手动抄送"><span className={`${globalStyles.authTheme} ${indexStyles.approve_tips}`}>&#xe845;</span></Tooltip>
-          </Radio.Group>
-        </div>
-        {/* 抄送人 */}
-        <div className={indexStyles.fill_person}>
-          <span className={`${indexStyles.label_person}`}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe6f5;</span> 抄送人 (必填)&nbsp;:</span>
-          <div style={{ flex: 1, padding: '8px 0' }}>
-            {
-              !makeCopyPersonList.length ? (
-                <div style={{ position: 'relative' }}>
-                  <Dropdown trigger={['click']} overlayClassName={indexStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
-                    overlayStyle={{ maxWidth: '200px' }}
-                    overlay={
-                      <MenuSearchPartner
-                        listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={makeCopyPersonList}
-                        // board_id={board_id}
-                        // invitationType='1'
-                        // invitationId={board_id}
-                        // invitationOrg={org_id}
-                        chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
-                    }
-                  >
-                    {/* 添加通知人按钮 */}
-
-                    <div className={indexStyles.addNoticePerson}>
-                      <span className={`${globalStyles.authTheme} ${indexStyles.plus_icon}`}>&#xe8fe;</span>
-                    </div>
-                  </Dropdown>
-                </div>
-              ) : (
-                  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', flexWrap: 'wrap', lineHeight: '22px' }}>
-                    {makeCopyPersonList.map((value, index) => {
-                      const { avatar, name, user_name, user_id } = value
-                      return (
-                        <div style={{ display: 'flex', alignItems: 'center' }} key={user_id}>
-                          <div className={`${indexStyles.user_item}`} style={{ position: 'relative', textAlign: 'center', marginBottom: '8px' }} key={user_id}>
-                            {avatar ? (
-                              <Tooltip overlayStyle={{minWidth: '62px'}} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
-                                <img className={indexStyles.img_hover} style={{ width: '32px', height: '32px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
-                              </Tooltip>
-                            ) : (
-                                <Tooltip overlayStyle={{minWidth: '62px'}} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
-                                  <div className={indexStyles.default_user_hover} style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
-                                    <Icon type={'user'} style={{ fontSize: 14, color: '#8c8c8c' }} />
-                                  </div>
-                                </Tooltip>
-                              )}
-                            {/* <div style={{ marginRight: 8, fontSize: '14px' }}>{name || user_name || '佚名'}</div> */}
-                            <span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${indexStyles.userItemDeleBtn}`}></span>
-                          </div>
-                        </div>
-                      )
-                    })}
-                    <Dropdown trigger={['click']} overlayClassName={indexStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
-                      overlayStyle={{ maxWidth: '200px' }}
-                      overlay={
-                        <MenuSearchPartner
-                          listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={makeCopyPersonList}
-                          // board_id={board_id}
-                          // invitationType='1'
-                          // invitationId={board_id}
-                          // invitationOrg={org_id}
-                          chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
-                      }
-                    >
-                      {/* 添加通知人按钮 */}
-
-                      <div className={indexStyles.addNoticePerson} style={{ marginTop: '-6px' }}>
-                        <span className={`${globalStyles.authTheme} ${indexStyles.plus_icon}`}>&#xe8fe;</span>
-                      </div>
-                    </Dropdown>
-                  </div>
-                )
-            }
-
-          </div>
-        </div>
-        {/* 抄报人 */}
-        {
-          cc_type == '2' && (
-            <div className={indexStyles.fill_person}>
-              <span className={`${indexStyles.label_person}`}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe6f6;</span> 抄报人 (必填)&nbsp;:</span>
-              <div style={{ flex: 1, padding: '8px 0' }}>
-                {
-                  !makeCopyNewsPaperPersonList.length ? (
-                    <div style={{ position: 'relative' }}>
-                      <Dropdown trigger={['click']} overlayClassName={indexStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
-                        overlayStyle={{ maxWidth: '200px' }}
-                        overlay={
-                          <MenuSearchPartner
-                            listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={makeCopyNewsPaperPersonList}
-                            // board_id={board_id}
-                            // invitationType='1'
-                            // invitationId={board_id}
-                            // invitationOrg={org_id}
-                            chirldrenTaskChargeChange={this.chirldrenTaskChargeChangeTwo} />
-                        }
-                      >
-                        {/* 添加通知人按钮 */}
-
-                        <div className={indexStyles.addNoticePerson}>
-                          <span className={`${globalStyles.authTheme} ${indexStyles.plus_icon}`}>&#xe8fe;</span>
-                        </div>
-                      </Dropdown>
-                    </div>
-                  ) : (
-                      <div style={{ position: 'relative', display: 'flex', alignItems: 'center', flexWrap: 'wrap', lineHeight: '22px' }}>
-                        {makeCopyNewsPaperPersonList.map((value, index) => {
-                          const { avatar, name, user_name, user_id } = value
-                          return (
-                            <div style={{ display: 'flex', alignItems: 'center' }} key={user_id}>
-                              <div className={`${indexStyles.user_item}`} style={{ position: 'relative', textAlign: 'center', marginBottom: '8px' }} key={user_id}>
-                                {avatar ? (
-                                  <Tooltip overlayStyle={{minWidth: '62px'}} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
-                                    <img className={indexStyles.img_hover} style={{ width: '32px', height: '32px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
-                                  </Tooltip>
-                                ) : (
-                                    <Tooltip overlayStyle={{minWidth: '62px'}} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
-                                      <div className={indexStyles.default_user_hover} style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
-                                        <Icon type={'user'} style={{ fontSize: 14, color: '#8c8c8c' }} />
-                                      </div>
-                                    </Tooltip>
-                                  )}
-                                {/* <div style={{ marginRight: 8, fontSize: '14px' }}>{name || user_name || '佚名'}</div> */}
-                                <span onClick={(e) => { this.handleRemoveExecutorsTwo(e, user_id) }} className={`${indexStyles.userItemDeleBtn}`}></span>
-                              </div>
-                            </div>
-                          )
-                        })}
-                        <Dropdown trigger={['click']} overlayClassName={indexStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
-                          overlayStyle={{ maxWidth: '200px' }}
-                          overlay={
-                            <MenuSearchPartner
-                              listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={makeCopyNewsPaperPersonList}
-                              // board_id={board_id}
-                              // invitationType='1'
-                              // invitationId={board_id}
-                              // invitationOrg={org_id}
-                              chirldrenTaskChargeChange={this.chirldrenTaskChargeChangeTwo} />
-                          }
-                        >
-                          {/* 添加通知人按钮 */}
-
-                          <div className={indexStyles.addNoticePerson} style={{ marginTop: '-6px' }}>
-                            <span className={`${globalStyles.authTheme} ${indexStyles.plus_icon}`}>&#xe8fe;</span>
-                          </div>
-                        </Dropdown>
-                      </div>
-                    )
-                }
-
+        {/* 评分项 */}
+        <div style={{ borderBottom: '1px solid rgba(0,0,0,0.09)' }}>
+          <div className={indexStyles.ratingItems}>
+            <div className={indexStyles.rating_itemsValue}>
+              <p>
+                <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer' }}>
+                  <Tooltip title="评分项" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                    <span style={{ marginRight: '9px' }}>评分项:</span>
+                  </Tooltip>
+                  <Tooltip overlayStyle={{ minWidth: '110px' }} title="权重占比: 90%" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                    <span className={indexStyles.rating_weight}>*90%</span>
+                  </Tooltip>
+                </span>
+                <span className={globalStyles.authTheme}>&#xe785;</span>
+              </p>
+              <div className={indexStyles.rating_grade}>
+                <span>最高<span className={indexStyles.rating_grade_value}>100</span>分</span>
               </div>
             </div>
-          )
-        }
+            <div>
+              <div onClick={(e) => e.stopPropagation()} className={indexStyles.popoverContainer} style={{ position: 'absolute', left: 0, top: 0 }}>
+                <Popover
+                  // key={`${itemKey}-${itemValue}`}
+                  title={<div className={indexStyles.popover_title}>配置表项</div>}
+                  trigger="click"
+                  // visible={this.state.popoverVisible}
+                  onClick={(e) => e.stopPropagation()}
+                  content={this.renderContent()}
+                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                  placement={'bottomLeft'}
+                  zIndex={1010}
+                  className={indexStyles.popoverWrapper}
+                  autoAdjustOverflow={false}
+                // onVisibleChange={this.onVisibleChange}
+                >
+                  <span onClick={this.handleDelFormDataItem} className={`${indexStyles.delet_iconCircle}`}>
+                    <span style={{ color: '#1890FF' }} className={`${globalStyles.authTheme} ${indexStyles.deletet_icon}`}>&#xe78e;</span>
+                  </span>
+                </Popover>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* 评分人 */}
+        <div>
+          <div style={{ paddingTop: '18px', minHeight: '98px', borderBottom: '1px solid rgba(0,0,0,0.09)' }}>
+            <div>
+              <span style={{ color: 'rgba(0,0,0,0.45)' }}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7b2;</span> 评分人&nbsp;:</span>
+              <span style={{ display: 'inline-block', marginRight: '36px', marginLeft: '18px', position: 'relative' }}>
+                <Switch size="small" />
+                <span style={{ margin: '0 8px', color: 'rgba(0,0,0,0.65)', verticalAlign: 'middle' }}>锁定评分人</span>
+                <Tooltip overlayStyle={{ minWidth: '270px' }} title="锁定评分人后启动流程时不可修改评分人" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                  <span style={{ color: '#D9D9D9', fontSize: '16px', verticalAlign: 'middle', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe845;</span>
+                </Tooltip>
+              </span>
+              <span style={{ display: 'inline-block', position: 'relative' }}>
+                <Switch size="small" />
+                <span style={{ margin: '0 8px', color: 'rgba(0,0,0,0.65)', verticalAlign: 'middle' }}>评分时相互不可见</span>
+                <Tooltip overlayStyle={{ minWidth: '400px' }} title="2人以上的评分过程中，各评分人的评分值互相不可见，待所有评分人完成评分后，显示各评分人的评分值" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                  <span style={{ color: '#D9D9D9', fontSize: '16px', verticalAlign: 'middle', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe845;</span>
+                </Tooltip>
+              </span>
+            </div>
+            <div>
+              {this.renderDesignatedPersonnel()}
+            </div>
+          </div>
+        </div>
+        {/* 评分结果判定 */}
+        <div>
+          <div style={{minHeight:'210px', padding: '16px 0px', borderBottom: '1px solid rgba(0,0,0,0.09)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
+            <div style={{color: 'rgba(0,0,0,0.45)'}}>
+              <span className={globalStyles.authTheme}>&#xe7bf;</span>
+              <span style={{marginLeft: '4px'}}>评分结果判定：</span>
+            </div>
+            <div>
+              <span className={indexStyles.rating_label_name}>计算方式</span>
+              <span>
+                <Select style={{width: '114px', height: '40px'}}>
+
+                </Select>
+              </span>
+            </div>
+            <div>
+              <span className={indexStyles.rating_label_name}>结果分数</span>
+              <span>
+                <Select style={{width: '114px', height: '40px'}}></Select>
+                <InputNumber style={{width: '114px', height: '32px', margin: '0px 8px'}} />
+                <Select style={{width: '114px', height: '40px'}}></Select>
+              </span>
+            </div>
+            <div>
+              <span className={indexStyles.rating_label_name}>其余情况</span>
+              <Select style={{width: '114px', height: '40px'}}></Select>
+            </div>
+          </div>
+        </div>
         {/* 更多选项 */}
         <div>
-          <MoreOptionsComponent itemKey={itemKey} itemValue={itemValue} updateConfigureProcess={this.updateConfigureProcess} />
+          <MoreOptionsComponent itemKey={itemKey} itemValue={itemValue} updateConfigureProcess={this.updateConfigureProcess} data={data} board_id={board_id} org_id={org_id} />
         </div>
       </div>
     )
