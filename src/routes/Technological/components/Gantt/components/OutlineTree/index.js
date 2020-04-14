@@ -7,6 +7,7 @@ import { Popover, Avatar } from 'antd';
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import { getOrgIdByBoardId } from '@/utils/businessFunction';
 import moment from 'moment';
+import AvatarList from '@/components/avatarList'
 
 class TreeNode extends Component {
     constructor(props) {
@@ -222,9 +223,20 @@ class TreeNode extends Component {
         const action = 'reloadProjectDetailInfo';
         if (this.props.onDataProcess) {
             this.props.onDataProcess({
-                action
+                action,
+                calback: ({ user_data }) => this.inviteOthersToBoardCalbackFn({ user_data, users })
             });
         }
+    }
+    inviteOthersToBoardCalbackFn = ({ user_data = [], users }) => { //遍历找到user,将执行人添加到树
+        const { nodeValue = {} } = this.state
+        const { start_time, due_time, id, executors } = nodeValue
+        let add_executors = users.map(item => user_data.find(item2 => item2.user_id == item))
+        add_executors = add_executors.filter(item => item.user_id)
+        this.props.changeOutLineTreeNodeProto(id, {
+            start_time, due_time, executors: [].concat(executors, add_executors)
+        })
+
     }
 
 
@@ -293,8 +305,8 @@ class TreeNode extends Component {
                                     // isInvitation={true}
                                     inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
 
-                                    invitationType={tree_type == '1' ? '1' : '4'}
-                                    invitationId={tree_type == '1' ? gantt_board_id : nodeValue.id}
+                                    invitationType={tree_type == '1' ? '13' : '4'}
+                                    invitationId={nodeValue.id}
                                     invitationOrg={getOrgIdByBoardId(gantt_board_id)}
                                     listData={projectDetailInfoData.data}
                                     keyCode={'user_id'}
@@ -307,12 +319,17 @@ class TreeNode extends Component {
                         >
                             {
                                 executors && executors.length > 0 ?
-                                    <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>
-                                        {
-                                            this.renderExecutor(projectDetailInfoData.data, executors[0])
+                                    (
+                                        <div style={{ display: 'inline-block' }}>
+                                            <AvatarList users={executors} size={20} />
+                                        </div>
+                                    )
+                                    // <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>
+                                    //     {
+                                    //         this.renderExecutor(projectDetailInfoData.data, executors[0])
 
-                                        }
-                                    </span>
+                                    //     }
+                                    // </span>
                                     :
                                     <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
                             }
@@ -340,7 +357,7 @@ class TreeNode extends Component {
     render() {
         const { isTitleHover, isTitleEdit, nodeValue = {} } = this.state;
         const { id, add_id, name: title, tree_type, is_expand, time_span } = nodeValue;
-        const { onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {}, outline_tree_round = [] } = this.props;
+        const { changeOutLineTreeNodeProto, onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {}, outline_tree_round = [] } = this.props;
         let type;
         if (tree_type) {
             type = tree_type;
@@ -374,13 +391,17 @@ class TreeNode extends Component {
                                     //child.props['leve'] = leve + 1;
                                     if (child && child.props && child.props.children && child.props.children.length > 0) {
                                         return (
-                                            <TreeNode {...child.props} leve={leve + 1} isLeaf={false} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round}>
+                                            <TreeNode {...child.props}
+                                                changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
+                                                leve={leve + 1} isLeaf={false} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round}>
                                                 {child.props.children}
                                             </TreeNode>
                                         );
                                     } else {
                                         return (
-                                            <TreeNode {...child.props} leve={leve + 1} isLeaf={true} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round} />
+                                            <TreeNode {...child.props}
+                                                changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
+                                                leve={leve + 1} isLeaf={true} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round} />
                                         );
                                     }
                                 })
@@ -420,14 +441,16 @@ class TreeNode extends Component {
 
 class MyOutlineTree extends Component {
     render() {
-        const { onDataProcess, onExpand, onHover, hoverItem, gantt_board_id, projectDetailInfoData, outline_tree_round } = this.props;
+        const { onDataProcess, onExpand, onHover, hoverItem, gantt_board_id, projectDetailInfoData, outline_tree_round, changeOutLineTreeNodeProto } = this.props;
 
         return (
             <div className={styles.outline_tree}>
                 {
                     React.Children.map(this.props.children, (child, i) => {
                         return (
-                            <TreeNode {...child.props} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round}>
+                            <TreeNode {...child.props}
+                                changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
+                                onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round}>
                                 {child.props.children}
                             </TreeNode>
                         );
