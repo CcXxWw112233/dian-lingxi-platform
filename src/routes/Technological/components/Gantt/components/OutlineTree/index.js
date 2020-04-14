@@ -305,8 +305,8 @@ class TreeNode extends Component {
                                     // isInvitation={true}
                                     inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
 
-                                    invitationType={tree_type == '1' ? '1' : '4'}
-                                    invitationId={tree_type == '1' ? gantt_board_id : nodeValue.id}
+                                    invitationType={tree_type == '1' ? '13' : '4'}
+                                    invitationId={nodeValue.id}
                                     invitationOrg={getOrgIdByBoardId(gantt_board_id)}
                                     listData={projectDetailInfoData.data}
                                     keyCode={'user_id'}

@@ -78,14 +78,15 @@ export default class MainContent extends React.Component {
   inviteOthersToBoardCalback = ({ users }) => { //邀请外部人员加入回调
     const { dispatch, milestone_detail = {} } = this.props
     const { board_id, principals } = milestone_detail
+    const new_milestone_detail = JSON.parse(JSON.stringify(milestone_detail))
     const calback = (res) => { //将原始的负责人和新的执行人合并
       let add_executors = users.map(item => res.data.find(item2 => item2.user_id == item)) //新添加的执行人通过新的项目成员遍历信息
       add_executors = add_executors.filter(item => item.user_id)
-      milestone_detail.principals = [].concat(principals, add_executors)
+      new_milestone_detail.principals = [].concat(principals, add_executors)
       dispatch({
         type: 'milestoneDetail/updateDatas',
         payload: {
-          milestone_detail
+          milestone_detail: new_milestone_detail
         }
       })
     }
@@ -375,7 +376,7 @@ export default class MainContent extends React.Component {
                 <MenuSearchPartner
                   // isInvitation={true}
                   inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
-                  invitationType='1'
+                  invitationType={'13'}
                   invitationId={id}
                   invitationOrg={org_id}
                   listData={new_users}
@@ -393,7 +394,7 @@ export default class MainContent extends React.Component {
                     <MenuSearchPartner
                       // isInvitation={true}
                       inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
-                      invitationType='1'
+                      invitationType={'13'}
                       invitationId={id}
                       invitationOrg={org_id}
                       listData={new_users}
