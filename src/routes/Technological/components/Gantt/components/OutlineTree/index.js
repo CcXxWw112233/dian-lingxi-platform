@@ -320,7 +320,7 @@ class TreeNode extends Component {
                             {
                                 executors && executors.length > 0 ?
                                     (
-                                        <div style={{ display: 'inline-block' }}>
+                                        <div style={{ display: 'inline-block', verticalAlign: 'text-bottom' }}>
                                             <AvatarList users={executors} size={20} />
                                         </div>
                                     )
