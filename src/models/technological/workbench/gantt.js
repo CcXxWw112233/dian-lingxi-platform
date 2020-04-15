@@ -76,8 +76,8 @@ export default {
       about_group_boards: [], //带分组的项目列表
       about_user_boards: [], //带用户的项目列表
 
-      gantt_board_id: '1248488305620815872', //"1192342431761305600",//, //甘特图查看的项目id
-      group_view_type: '4', //分组视图1项目， 2成员, 4大纲
+      gantt_board_id: '0', //"1192342431761305600",//, //甘特图查看的项目id
+      group_view_type: '1', //分组视图1项目， 2成员, 4大纲
       group_view_filter_boards: [], //内容过滤项目id 列表
       group_view_filter_users: [], //内容过滤职员id 列表
       group_view_boards_tree: [], //内容过滤项目分组树
@@ -316,7 +316,7 @@ export default {
         new_item.time_span = time_span
 
         new_item_children = new_item_children.map(item2 => {
-          let new_item2 = { ...item2, parent_expand: is_expand }
+          let new_item2 = { ...item2, parent_expand: is_expand, parent_type: tree_type }
           const tree_type2 = item2.tree_type
           const children2 = item2.children || []
           let new_item_children2 = [...children2]
@@ -350,7 +350,7 @@ export default {
           }
           if (tree_type == '1') { //如果第一级是里程碑才有第三级
             new_item_children2 = new_item_children2.map(item3 => {
-              let new_item3 = { ...item3, parent_expand: new_item2.parent_expand && new_item2.is_expand }
+              let new_item3 = { ...item3, parent_expand: new_item2.parent_expand && new_item2.is_expand, parent_type: tree_type2 }
               if (is_expand && is_expand2) {
                 child_expand_length += 1
               }

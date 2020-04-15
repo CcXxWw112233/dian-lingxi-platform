@@ -5,6 +5,8 @@ import globalStyles from '@/globalset/css/globalClassName.less';
 import { connect } from 'dva';
 import { addTaskGroup, changeTaskType } from '../../../../../../services/technological/task';
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
+import OutlineTree from '.';
+import { visual_add_item } from '../../constants';
 
 @connect(mapStateToProps)
 export default class NodeOperate extends Component {
@@ -87,30 +89,6 @@ export default class NodeOperate extends Component {
             group_value: value
         })
     }
-    // ----------分组逻辑--------end+
-    // 选择项点击
-    menuItemClick = (key) => {
-        const { setDropVisble = function () { } } = this.props
-        setDropVisble(false)
-        this.setGroupSubShow(false)
-        this.setCreateGroupVisible(false)
-        switch (key) {
-            case 'create_card':
-                break
-            case 'create_child_card':
-                break
-            case 'delete':
-                break
-            case 'create_card':
-                break
-            default:
-                if (/^group_id_+/.test(key)) {//选择任务分组
-                    const list_id = key.replace('group_id_', '')
-                    this.relationGroup(list_id)
-                }
-                break
-        }
-    }
     addGroup = () => {
         const { gantt_board_id } = this.props
         const { group_value } = this.state
@@ -161,10 +139,74 @@ export default class NodeOperate extends Component {
                 }
             })
     }
+    // ----------分组逻辑--------end+
+    // 选择项点击
+    menuItemClick = (key) => {
+        const { setDropVisble = function () { } } = this.props
+        setDropVisble(false)
+        this.setGroupSubShow(false)
+        this.setCreateGroupVisible(false)
+        switch (key) {
+            case 'create_card':
+                this.createCard()
+                break
+            case 'create_child_card':
+                this.createCard(true)
+                break
+            case 'delete':
+                this.delete()
+                break
+            case 'create_card':
+                break
+            default:
+                if (/^group_id_+/.test(key)) {//选择任务分组
+                    const list_id = key.replace('group_id_', '')
+                    this.relationGroup(list_id)
+                }
+                break
+        }
+    }
+
+    delete = () => {
+        const { nodeValue: { id } } = this.props
+        this.props.deleteOutLineTreeNode(id)
+    }
+    createCard = (create_child) => { //创建任务分为里程碑创建任务和任务创建同级任务
+        const { nodeValue: { id, parent_id, tree_type, parent_type, children = [] }, outline_tree = [], dispatch } = this.props
+        let target_id = id
+        let target_name
+        // debugger
+        if (create_child) { //如果是创建子任务
+
+        } else {
+            if (tree_type == '1') {//如果是里程碑节点创建任务，则是操作children, 否则操作的是父级
+                console.log('sssssssss', 1)
+            } else {
+                console.log('sssssssss', 2)
+                target_id = parent_id //创建任务都是创建父级节点里的任务
+            }
+        }
+
+        let node = OutlineTree.getTreeNodeValue(outline_tree, target_id);
+        // debugger
+        if (!node) {
+            return
+        }
+        let new_children = node.children || [];
+        new_children.push({ ...visual_add_item, editing: true, add_id: parent_id || id }) //插入创建的虚拟节点
+        node.children = new_children;
+        // debugger
+        dispatch({
+            type: 'gantt/handleOutLineTreeData',
+            payload: {
+                data: outline_tree
+            }
+        });
+    }
     render() {
         const { group_sub_visible, create_group_visible } = this.state
         const { nodeValue = {} } = this.props
-        const { tree_type } = nodeValue
+        const { tree_type, parent_type } = nodeValue
         return (
             <div className={styles.menu} onWheel={e => e.stopPropagation()}>
                 {
@@ -193,9 +235,13 @@ export default class NodeOperate extends Component {
                 <div className={styles.menu_item} onClick={() => this.menuItemClick('create_card')}>
                     新建任务
                 </div>
-                <div className={styles.menu_item} onClick={() => this.menuItemClick('create_child_card')} >
-                    新建子任务
-                </div>
+                {
+                    parent_type == '1' && (
+                        <div className={styles.menu_item} onClick={() => this.menuItemClick('create_child_card')} >
+                            新建子任务
+                        </div>
+                    )
+                }
                 <div className={styles.menu_item} style={{ color: '#F5222D' }} onClick={() => this.menuItemClick('delete')} >
                     删除
                 </div>
@@ -206,8 +252,8 @@ export default class NodeOperate extends Component {
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
-    gantt: { datas: { gantt_board_id, about_group_boards = [] } },
+    gantt: { datas: { gantt_board_id, about_group_boards = [], outline_tree = [] } },
     projectDetail: { datas: { projectDetailInfoData = {} } }
 }) {
-    return { gantt_board_id, projectDetailInfoData, about_group_boards }
+    return { gantt_board_id, projectDetailInfoData, about_group_boards, outline_tree }
 }

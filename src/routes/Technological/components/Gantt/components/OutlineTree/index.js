@@ -121,7 +121,7 @@ class TreeNode extends Component {
                 });
             }
         } else {
-            message.warn('标题不能为空');
+            // message.warn('标题不能为空');
             nodeValue.name = (this.props.nodeValue || {}).name || '';
 
             if (nodeValue.editing) {
@@ -143,7 +143,9 @@ class TreeNode extends Component {
             isTitleHover: false,
             isTitleEdit: false
         });
-
+        setTimeout(() => {
+            this.props.deleteOutLineTreeNode('', nodeValue.add_id) //失焦就没了
+        }, 300)
     }
     onChangeTitle = (e) => {
         const { nodeValue = {} } = this.state;
@@ -366,7 +368,7 @@ class TreeNode extends Component {
     render() {
         const { isTitleHover, isTitleEdit, nodeValue = {}, operateVisible } = this.state;
         const { id, add_id, name: title, tree_type, is_expand, time_span } = nodeValue;
-        const { changeOutLineTreeNodeProto, onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {}, outline_tree_round = [] } = this.props;
+        const { changeOutLineTreeNodeProto, deleteOutLineTreeNode, onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {}, outline_tree_round = [] } = this.props;
         let type;
         if (tree_type) {
             type = tree_type;
@@ -374,7 +376,7 @@ class TreeNode extends Component {
             type = this.props.type;
         }
         //console.log("更新节点", nodeValue);
-        const menu = <NodeOperate nodeValue={nodeValue} setDropVisble={this.operateVisibleChange} changeOutLineTreeNodeProto={changeOutLineTreeNodeProto} />
+        const menu = <NodeOperate nodeValue={nodeValue} setDropVisble={this.operateVisibleChange} changeOutLineTreeNodeProto={changeOutLineTreeNodeProto} deleteOutLineTreeNode={deleteOutLineTreeNode} />
         if (this.props.children && this.props.children.length > 0) {
 
             let className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;
@@ -412,6 +414,7 @@ class TreeNode extends Component {
                                         return (
                                             <TreeNode {...child.props}
                                                 changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
+                                                deleteOutLineTreeNode={deleteOutLineTreeNode}
                                                 leve={leve + 1} isLeaf={false} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round}>
                                                 {child.props.children}
                                             </TreeNode>
@@ -420,6 +423,7 @@ class TreeNode extends Component {
                                         return (
                                             <TreeNode {...child.props}
                                                 changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
+                                                deleteOutLineTreeNode={deleteOutLineTreeNode}
                                                 leve={leve + 1} isLeaf={true} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round} />
                                         );
                                     }
@@ -474,7 +478,7 @@ class TreeNode extends Component {
 
 class MyOutlineTree extends Component {
     render() {
-        const { onDataProcess, onExpand, onHover, hoverItem, gantt_board_id, projectDetailInfoData, outline_tree_round, changeOutLineTreeNodeProto } = this.props;
+        const { onDataProcess, onExpand, onHover, hoverItem, gantt_board_id, projectDetailInfoData, outline_tree_round, changeOutLineTreeNodeProto, deleteOutLineTreeNode } = this.props;
 
         return (
             <div className={styles.outline_tree}>
@@ -483,6 +487,7 @@ class MyOutlineTree extends Component {
                         return (
                             <TreeNode {...child.props}
                                 changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
+                                deleteOutLineTreeNode={deleteOutLineTreeNode}
                                 onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round}>
                                 {child.props.children}
                             </TreeNode>
@@ -630,7 +635,25 @@ const filterTreeNode = (tree, id) => {
     }
     return tree
 }
-
+// 过滤掉指定的树节点(删除树节点)(通过指定属性)
+const filterTreeNodeByName = (tree, key, value) => {
+    if (!(tree instanceof Array)) {
+        return tree
+    }
+    const length = tree.length
+    for (let i = 0; i < length; i++) {
+        let el = tree[i]
+        if (el[key] == value) {
+            tree.splice(i, 1)
+            break
+        } else {
+            if (el.children && el.children.length) {
+                filterTreeNodeByName(el.children, key, value)
+            }
+        }
+    }
+    return tree
+}
 const getTreeNodeValueByName = (outline_tree, key, value) => {
     if (outline_tree) {
         let length = outline_tree.length
@@ -662,4 +685,5 @@ OutlineTree.getTreeNodeValue = getTreeNodeValue;
 OutlineTree.getTreeAddNodeValue = getTreeAddNodeValue;
 OutlineTree.filterTreeNode = filterTreeNode
 OutlineTree.getTreeNodeValueByName = getTreeNodeValueByName
+OutlineTree.filterTreeNodeByName = filterTreeNodeByName
 export default OutlineTree;

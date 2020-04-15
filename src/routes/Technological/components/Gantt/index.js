@@ -353,9 +353,14 @@ class Gantt extends Component {
     }
   }
   // 大纲视图删除某个节点
-  deleteOutLineTreeNode = (id) => {
+  deleteOutLineTreeNode = (id, add_id) => {
     let { dispatch, outline_tree } = this.props;
-    outline_tree = OutlineTree.filterTreeNode(outline_tree, id);
+    if (!!id) {
+      outline_tree = OutlineTree.filterTreeNode(outline_tree, id);
+    }
+    if (!!add_id) {
+      outline_tree = OutlineTree.filterTreeNodeByName(outline_tree, 'add_id', add_id);
+    }
     dispatch({
       type: 'gantt/handleOutLineTreeData',
       payload: {
