@@ -42,6 +42,19 @@ export const processEditDatasItemThreeConstant = {
   "cc_type": "1",//抄送人类型 1=自动抄送 2=手动抄送
   "recipients": "",//抄送人 多个逗号隔开
   "assignees": "",//抄报人 多个逗号隔开
+  "weight_coefficient": "", // 是否开启权重
+  "computing mode": "", // 计算方式
+  "results_score": "", // 结果分数
+  "remaining_circumstances": "", // 其余情况
+  "scoreList": [
+    {
+      "key": "0",
+      "title": "评分项",
+      "weight_value": '',
+      "grade_value": '100',
+      "description": '',
+    }
+  ], // 评分项
   "is_confirm": "0",
   "is_edit": '0', // 是否进入编辑
 }
@@ -65,4 +78,22 @@ export const principalList = [
     "name": "加菲猫",
     "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2020-01-10/4e5a59a2afad4c79a11429bd1771c12c.jpg"
   }
+]
+
+// 表格数据
+export const tableList = [
+  {
+    "key": '0',
+    "title": '标题1',
+    "weight_value": '',
+    "grade_value": '',
+    "description": '',
+  },
+  {
+    "key": '1',
+    "title": '标题2',
+    "weight_value": '',
+    "grade_value": '',
+    "description": '',
+  },
 ]

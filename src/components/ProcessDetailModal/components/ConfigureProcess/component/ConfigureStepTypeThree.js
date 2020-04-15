@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import { Dropdown, Icon, Radio, Tooltip, Popover, Switch, Select, InputNumber, Button, Input } from 'antd'
+import { Dropdown, Icon, Radio, Tooltip, Popover, Switch, Select, InputNumber, Button, Input, Menu } from 'antd'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import MoreOptionsComponent from '../../MoreOptionsComponent'
 import { connect } from 'dva'
-import { principalList } from '../../../constant'
+import { principalList, tableList } from '../../../constant'
+import ConfigureStepTypeThree_one from './ConfigureStepTypeThree_one'
 
 @connect(mapStateToProps)
 export default class ConfigureStepTypeThree extends Component {
@@ -15,7 +16,7 @@ export default class ConfigureStepTypeThree extends Component {
     super(props)
     this.state = {
       // principalList
-      designatedPersonnelList: []
+      designatedPersonnelList: [],
     }
   }
 
@@ -30,166 +31,6 @@ export default class ConfigureStepTypeThree extends Component {
     newDesignatedPersonnelList = newDesignatedPersonnelList.filter(item => item.user_id)
     return newDesignatedPersonnelList
 
-  }
-
-  componentDidMount() {
-    // this.resize()
-  }
-
-  titleResize = () => {
-    if (!this.refs && !this.refs.autoTitleTextArea) return
-    //关键是先设置为auto，目的为了重设高度（如果字数减少）
-    // this.refs.autoTitleTextArea.style.height = 'auto';  
-
-    // 如果高度不够，再重新设置
-    if (this.refs.autoTitleTextArea.scrollHeight >= this.refs.autoTitleTextArea.offsetHeight) {
-      this.refs.autoTitleTextArea.style.height = this.refs.autoTitleTextArea.scrollHeight + 'px'
-    }
-  }
-
-  gradeResize = () => {
-    if (!this.refs && !this.refs.autoGradeTextArea) return
-    //关键是先设置为auto，目的为了重设高度（如果字数减少）
-    // this.refs.autoTitleTextArea.style.height = 'auto';  
-
-    // 如果高度不够，再重新设置
-    if (this.refs.autoGradeTextArea.scrollHeight >= this.refs.autoGradeTextArea.offsetHeight) {
-      this.refs.autoGradeTextArea.style.height = this.refs.autoGradeTextArea.scrollHeight + 'px'
-    }
-  }
-
-  weightResize = () => {
-    if (!this.refs && !this.refs.autoWeightTextArea) return
-    //关键是先设置为auto，目的为了重设高度（如果字数减少）
-    // this.refs.autoTitleTextArea.style.height = 'auto';  
-
-    // 如果高度不够，再重新设置
-    if (this.refs.autoWeightTextArea.scrollHeight >= this.refs.autoWeightTextArea.offsetHeight) {
-      this.refs.autoWeightTextArea.style.height = this.refs.autoWeightTextArea.scrollHeight + 'px'
-    }
-  }
-
-  handleChangeAutoTextArea = (e) => {
-    e && e.stopPropagation()
-    // console.log(this.refs, 'ssssssssssssssssssssss_thi.refs')
-    // console.log(e.target.value, 'sssssssssssssssssssssssss_value')
-    // if (e.keyCode >=48 && e.keyCode <= 57) {
-    //   console.log(e.target.value,'ssssssssssssssssssssss_value')
-    // }
-    // 表示执行的是title的文本框
-    if (this.refs && this.refs.autoTitleTextArea) {
-      this.titleResize()
-    }
-    // 表示执行的是 分值文本框
-    if (this.refs && this.refs.autoGradeTextArea) {
-      this.gradeResize()
-    }
-
-    if (this.refs && this.refs.autoWeightTextArea) {
-      this.weightResize()
-    }
-
-    // let height = parseInt(getComputedStyle(e.target).height.slice(0, -2), 10);
-    // return
-    //关键是先设置为auto，目的为了重设高度（如果字数减少）
-    // this.refs.myTA.style.height = 'auto';  
-
-    //如果高度不够，再重新设置
-    // if(this.refs.myTA.scrollHeight >= this.refs.myTA.offsetHeight){
-    //     this.refs.myTA.style.height = this.refs.myTA.scrollHeight + 'px'
-    // }
-  }
-
-  // 渲染默认的table表格, 即没有开启权重评分
-  renderDefaultTableContent = () => {
-    return (
-      <table className={indexStyles.popover_tableContent} border={1} style={{ borderColor: '#E9E9E9' }} width="352px">
-        <tr style={{ width: '352px', height: '38px', border: '1px solid #E9E9E9', textAlign: 'center', background: '#FAFAFA' }}>
-          <th style={{ width: '260px' }}>标题</th>
-          <th>最高分值</th>
-        </tr>
-        <tr style={{ width: '352px', height: '38px', border: '1px solid #E9E9E9', textAlign: 'center' }}>
-          <th style={{ width: '260px' }}>
-            {/* <div className={`${indexStyles.rating_editTable} ${globalStyles.global_vertical_scrollbar}`} contentEditable={true}></div> */}
-            <textarea onChange={this.handleChangeAutoTextArea} ref="autoTitleTextArea" />
-          </th>
-          <th style={{ position: 'relative' }}>
-            {/* <div className={indexStyles.rating_editTable} contentEditable={true}></div> */}
-            <textarea onChange={this.handleChangeAutoTextArea} ref="autoGradeTextArea" />
-            <div className={indexStyles.rating_moreBox}>
-              <span className={indexStyles.rating_more_icon}><span className={globalStyles.authTheme}>&#xe7fd;</span></span>
-            </div>
-          </th>
-        </tr>
-        {/* <tr style={{ width: '352px', height: '38px', border: '1px solid #E9E9E9', textAlign: 'center' }}>
-          <th style={{ width: '260px' }}>
-            <textarea onChange={this.handleChangeAutoTextArea} ref="autoTitleTextArea" />
-          </th>
-          <th style={{ position: 'relative' }}>
-            <textarea onChange={this.handleChangeAutoTextArea} ref="autoGradeTextArea" />
-            <div className={indexStyles.rating_moreBox}>
-              <span className={indexStyles.rating_more_icon}><span className={globalStyles.authTheme}>&#xe7fd;</span></span>
-            </div>
-          </th>
-        </tr> */}
-      </table>
-    )
-  }
-
-  // 渲染具有权重的表格
-  renderWeightTableContent = () => {
-    return (
-      <table className={indexStyles.popover_tableContent} border={1} style={{ borderColor: '#E9E9E9' }} width="352px">
-        <tr style={{ width: '352px', height: '38px', border: '1px solid #E9E9E9', textAlign: 'center', background: '#FAFAFA' }}>
-          <th style={{ width: '170px' }}>标题</th>
-          <th style={{width: '90px'}}>权重占比%</th>
-          <th style={{width: '90px'}}>最高分值</th>
-        </tr>
-        <tr style={{ width: '352px', height: '38px', border: '1px solid #E9E9E9', textAlign: 'center' }}>
-          <th style={{ width: '170px' }}>
-            {/* <div className={`${indexStyles.rating_editTable} ${globalStyles.global_vertical_scrollbar}`} contentEditable={true}></div> */}
-            <textarea onChange={this.handleChangeAutoTextArea} ref="autoTitleTextArea" />
-          </th>
-          <th style={{ width: '90px' }}>
-            {/* <div className={`${indexStyles.rating_editTable} ${globalStyles.global_vertical_scrollbar}`} contentEditable={true}></div> */}
-            <textarea onChange={this.handleChangeAutoTextArea} ref="autoWeightTextArea" />
-          </th>
-          <th style={{ position: 'relative', width: '90px' }}>
-            {/* <div className={indexStyles.rating_editTable} contentEditable={true}></div> */}
-            <textarea onChange={this.handleChangeAutoTextArea} ref="autoGradeTextArea" />
-            <div className={indexStyles.rating_moreBox}>
-              <span className={indexStyles.rating_more_icon}><span className={globalStyles.authTheme}>&#xe7fd;</span></span>
-            </div>
-          </th>
-        </tr>
-      </table>
-    )
-  }
-
-
-  renderContent = () => {
-    return (
-      <div className={indexStyles.popover_content}>
-        <div style={{ minHeight: '352px' }} className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', width: '352px', color: 'rgba(0,0,0,0.45)' }}>
-            <span>评分内容：</span>
-            <span style={{ display: 'inline-block' }}>
-              <span style={{ verticalAlign: 'middle' }}>权重评分 <span style={{ fontSize: '16px' }} className={globalStyles.authTheme}>&#xe845;&nbsp;&nbsp;</span>:&nbsp;&nbsp;&nbsp;</span>
-              <span><Switch size="small" /></span>
-            </span>
-          </div>
-          {/* {this.renderDefaultTableContent()} */}
-          {this.renderWeightTableContent()}
-          <Button className={indexStyles.rating_button}>
-            <span className={globalStyles.authTheme}>&#xe782;</span>
-            <span>添加评分</span>
-          </Button>
-        </div>
-        <div className={indexStyles.pop_btn}>
-          <Button type="primary" style={{ width: '100%' }}>确定</Button>
-        </div>
-      </div>
-    )
   }
 
   // 渲染指定人员
@@ -275,47 +116,8 @@ export default class ConfigureStepTypeThree extends Component {
     return (
       <div>
         {/* 评分项 */}
-        <div style={{ borderBottom: '1px solid rgba(0,0,0,0.09)' }}>
-          <div className={indexStyles.ratingItems}>
-            <div className={indexStyles.rating_itemsValue}>
-              <p>
-                <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer' }}>
-                  <Tooltip title="评分项" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                    <span style={{ marginRight: '9px' }}>评分项:</span>
-                  </Tooltip>
-                  <Tooltip overlayStyle={{ minWidth: '110px' }} title="权重占比: 90%" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                    <span className={indexStyles.rating_weight}>*90%</span>
-                  </Tooltip>
-                </span>
-                <span className={globalStyles.authTheme}>&#xe785;</span>
-              </p>
-              <div className={indexStyles.rating_grade}>
-                <span>最高<span className={indexStyles.rating_grade_value}>100</span>分</span>
-              </div>
-            </div>
-            <div>
-              <div onClick={(e) => e.stopPropagation()} className={indexStyles.popoverContainer} style={{ position: 'absolute', right: 0, top: 0 }}>
-                <Popover
-                  // key={`${itemKey}-${itemValue}`}
-                  title={<div className={indexStyles.popover_title}>配置评分</div>}
-                  trigger="click"
-                  // visible={this.state.popoverVisible}
-                  onClick={(e) => e.stopPropagation()}
-                  content={this.renderContent()}
-                  getPopupContainer={triggerNode => triggerNode.parentNode}
-                  placement={'bottomRight'}
-                  zIndex={1010}
-                  className={indexStyles.popoverWrapper}
-                  autoAdjustOverflow={false}
-                // onVisibleChange={this.onVisibleChange}
-                >
-                  <span onClick={this.handleDelFormDataItem} className={`${indexStyles.delet_iconCircle}`}>
-                    <span style={{ color: '#1890FF' }} className={`${globalStyles.authTheme} ${indexStyles.deletet_icon}`}>&#xe78e;</span>
-                  </span>
-                </Popover>
-              </div>
-            </div>
-          </div>
+        <div>
+          <ConfigureStepTypeThree_one itemValue={itemValue} itemKey={itemKey} />
         </div>
         {/* 评分人 */}
         <div>
