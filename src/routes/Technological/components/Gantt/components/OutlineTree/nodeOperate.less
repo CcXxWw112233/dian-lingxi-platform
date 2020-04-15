@@ -19,6 +19,17 @@
     .submenu {
         position: relative;
 
+        .menu_item_title {
+            position: relative;
+
+            .menu_item_title_go {
+                position: absolute;
+                top     : 0;
+                right   : 12px;
+            }
+        }
+
+
         .submenu_area {
             width        : 184px;
             height       : auto;
@@ -45,6 +56,45 @@
 
                 span {
                     margin-right: 4px;
+                }
+            }
+
+            .create_group {
+                >div {
+                    padding   : 0 12px;
+                    text-align: center;
+                }
+
+                .create_group_top {
+                    height       : 40px;
+                    line-height  : 40px;
+                    border-bottom: 1px solid #f5f5ff;
+                    color        : rgba(0, 0, 0, .85);
+                    font-weight  : bold;
+                    position     : relative;
+
+                    .create_group_top_go {
+                        position   : absolute;
+                        top        : 0;
+                        left       : 12px;
+                        width      : 20px;
+                        text-align : left;
+                        font-weight: normal;
+                    }
+
+                    .create_group_top_go:hover {
+                        color: #1890FF;
+                    }
+                }
+
+                .create_group_middle {
+                    padding: 20px 12px;
+                }
+
+                .create_group_bott {
+                    height     : 48px;
+                    padding-top: 8px;
+                    border-top : 1px solid #f5f5ff;
                 }
             }
         }

@@ -373,7 +373,7 @@ class TreeNode extends Component {
             type = this.props.type;
         }
         //console.log("更新节点", nodeValue);
-        const menu = <NodeOperate node_id={id} setVisble={this.operateVisibleChange} />
+        const menu = <NodeOperate nodeValue={nodeValue} setDropVisble={this.operateVisibleChange} changeOutLineTreeNodeProto={changeOutLineTreeNodeProto} />
         if (this.props.children && this.props.children.length > 0) {
 
             let className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;
@@ -440,8 +440,12 @@ class TreeNode extends Component {
                             icon ?
                                 icon
                                 : (
-                                    (hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id) ? (
-                                        <div className={`${styles.node_opeator} ${globalStyles.authTheme}`}>&#xe7fd;</div>
+                                    (hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id) || operateVisible ? (
+                                        <Dropdown overlay={menu}
+                                            visible={operateVisible}
+                                            trigger={['click']} onVisibleChange={this.operateVisibleChange}>
+                                            <div className={`${styles.node_opeator} ${globalStyles.authTheme}`}>&#xe7fd;</div>
+                                        </Dropdown>
                                     ) : (
                                             <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
                                         )
