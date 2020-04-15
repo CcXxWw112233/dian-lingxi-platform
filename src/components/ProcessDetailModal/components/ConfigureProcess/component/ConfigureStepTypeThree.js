@@ -20,6 +20,19 @@ export default class ConfigureStepTypeThree extends Component {
     }
   }
 
+  updateConfigureProcess = (data, key) => { //更新单个数组单个属性
+    const { value } = data
+    const { processEditDatas = [], itemKey, itemValue, dispatch } = this.props
+    const new_processEditDatas = [...processEditDatas]
+    new_processEditDatas[itemKey][key] = value
+    dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        processEditDatas: new_processEditDatas,
+      }
+    })
+  }
+
   // 把assignees中的执行人,在项目中的所有成员过滤出来
   filterAssignees = () => {
     const { projectDetailInfoData: { data = [] } } = this.props
@@ -117,7 +130,7 @@ export default class ConfigureStepTypeThree extends Component {
       <div>
         {/* 评分项 */}
         <div>
-          <ConfigureStepTypeThree_one itemValue={itemValue} itemKey={itemKey} />
+          <ConfigureStepTypeThree_one updateConfigureProcess={this.updateConfigureProcess} itemValue={itemValue} itemKey={itemKey} />
         </div>
         {/* 评分人 */}
         <div>

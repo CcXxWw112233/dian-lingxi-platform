@@ -10,8 +10,14 @@ export default class ConfigureStepTypeThree_one extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      localItemValue: props.itemValue ? JSON.parse(JSON.stringify(props.itemValue || {})) : {},
       scoreList: props.itemValue && props.itemValue.scoreList ? JSON.parse(JSON.stringify(props.itemValue.scoreList || [])) : []
     }
+  }
+
+  // 是否开启权重
+  handleWeightChange = (checked) => {
+    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: checked ? '1' : '0' }, 'weight_coefficient')
   }
 
   titleResize = (key) => {
@@ -93,15 +99,15 @@ export default class ConfigureStepTypeThree_one extends Component {
     this.setState({
       scoreList: new_data
     })
+    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: new_data }, 'scoreList')
   }
 
   handleChangeMenuItem = (e, index) => {
     const { key, domEvent } = e
     domEvent.stopPropagation()
-    console.log(e, 'ssssssssssssssssssssssss_e')
     switch (key) {
       case '1': // 表示添加说明
-
+        this.handleAddDescription(index)
         break;
       case '2': // 表示删除此项
         this.handleDeleteItem(index)
@@ -111,6 +117,15 @@ export default class ConfigureStepTypeThree_one extends Component {
     }
   }
 
+  // 添加说明
+  handleAddDescription = (key) => {
+    this.setState({
+      is_add_description: true
+    })
+  }
+
+
+  // 删除选项
   handleDeleteItem = (index) => {
     const { scoreList = [] } = this.state
     let new_data = [...scoreList]
@@ -124,6 +139,7 @@ export default class ConfigureStepTypeThree_one extends Component {
     this.setState({
       scoreList: new_data
     })
+    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: new_data }, 'scoreList')
   }
 
   renderMoreSelect = (index) => {
@@ -143,26 +159,37 @@ export default class ConfigureStepTypeThree_one extends Component {
 
   // 渲染默认的table表格, 即没有开启权重评分
   renderDefaultTableContent = () => {
+    const { scoreList = [] } = this.state
     return (
       <table className={indexStyles.popover_tableContent} border={1} style={{ borderColor: '#E9E9E9' }} width="100%">
         <tr style={{ height: '38px', border: '1px solid #E9E9E9', textAlign: 'center', background: '#FAFAFA' }}>
           <th style={{ width: '260px' }}>标题</th>
           <th>最高分值</th>
         </tr>
-        <tr style={{ height: '38px', border: '1px solid #E9E9E9', textAlign: 'center' }}>
-          <th style={{ width: '260px' }}>
-            {/* <div className={`${indexStyles.rating_editTable} ${globalStyles.global_vertical_scrollbar}`} contentEditable={true}></div> */}
-            <textarea onChange={this.handleChangeAutoTextArea} ref="autoTitleTextArea" />
-          </th>
-          <th style={{ position: 'relative' }}>
-            {/* <div className={indexStyles.rating_editTable} contentEditable={true}></div> */}
-            <textarea onChange={this.handleChangeAutoTextArea} ref="autoGradeTextArea" />
-            <div className={indexStyles.rating_moreBox}>
-              <span className={indexStyles.rating_more_icon}><span className={globalStyles.authTheme}>&#xe7fd;</span></span>
-            </div>
-          </th>
-        </tr>
-        {/* <tr style={{ width: '352px', height: '38px', border: '1px solid #E9E9E9', textAlign: 'center' }}>
+        {
+          scoreList && scoreList.map((item, index) => {
+            const { key } = item
+            return (
+              <tr style={{ height: '38px', border: '1px solid #E9E9E9', textAlign: 'center' }}>
+                <td style={{ width: '170px' }}>
+                  {/* <div className={`${indexStyles.rating_editTable} ${globalStyles.global_vertical_scrollbar}`} contentEditable={true}></div> */}
+                  <textarea value={item.title} onChange={(e) => { this.handleChangeAutoTextArea(e, key) }} ref={`autoTitleTextArea_${key}`} />
+                </td>
+                <td style={{ position: 'relative', width: '90px' }}>
+                  {/* <div className={indexStyles.rating_editTable} contentEditable={true}></div> */}
+                  <textarea onChange={(e) => { this.handleChangeAutoTextArea(e, key) }} ref={`autoGradeTextArea_${key}`} />
+                  <Dropdown overlay={this.renderMoreSelect(index)} getPopupContainer={triggerNode => triggerNode.parentNode} trigger={['click']}>
+                    <div className={indexStyles.rating_moreBox}>
+                      <span className={indexStyles.rating_more_icon}><span className={globalStyles.authTheme}>&#xe7fd;</span></span>
+                    </div>
+                  </Dropdown>
+
+                </td>
+              </tr>
+            )
+          })
+        }
+        {/* <tr style={{ height: '38px', border: '1px solid #E9E9E9', textAlign: 'center' }}>
           <th style={{ width: '260px' }}>
             <textarea onChange={this.handleChangeAutoTextArea} ref="autoTitleTextArea" />
           </th>
@@ -221,18 +248,20 @@ export default class ConfigureStepTypeThree_one extends Component {
 
 
   renderContent = () => {
+    const { itemValue: { weight_coefficient } } = this.props
     return (
       <div className={indexStyles.popover_content}>
         <div style={{ minHeight: '352px' }} className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', width: '352px', color: 'rgba(0,0,0,0.45)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'rgba(0,0,0,0.45)' }}>
             <span>评分内容：</span>
             <span style={{ display: 'inline-block' }}>
               <span style={{ verticalAlign: 'middle' }}>权重评分 <span style={{ fontSize: '16px' }} className={globalStyles.authTheme}>&#xe845;&nbsp;&nbsp;</span>:&nbsp;&nbsp;&nbsp;</span>
-              <span><Switch size="small" /></span>
+              <span><Switch size="small" onChange={this.handleWeightChange} checked={weight_coefficient == '1'} /></span>
             </span>
           </div>
+          {weight_coefficient == '1' ? this.renderWeightTableContent() : this.renderDefaultTableContent()}
           {/* {this.renderDefaultTableContent()} */}
-          {this.renderWeightTableContent()}
+          {/* {this.renderWeightTableContent()} */}
           <Button onClick={this.handleAddTableItems} className={indexStyles.rating_button}>
             <span className={globalStyles.authTheme}>&#xe782;</span>
             <span>添加评分</span>
@@ -249,10 +278,10 @@ export default class ConfigureStepTypeThree_one extends Component {
     const { scoreList = [] } = this.state
     let flag = false
     for (let i = 0; i < scoreList.length; i++) {
-      if (i % 4 || i % 2) {
+      if (i % 4 == 0 || i % 2 == 0) {
         flag = true
         break
-      }     
+      }
     }
     return flag
   }
@@ -266,7 +295,29 @@ export default class ConfigureStepTypeThree_one extends Component {
         {/* 评分项 */}
         <div style={{ borderBottom: '1px solid rgba(0,0,0,0.09)' }}>
           <div className={indexStyles.ratingItems}>
-            <div className={`${indexStyles.rating_itemsValue} ${flag ? indexStyles.rating_active_width : indexStyles.rating_normal_width}`}>
+            {
+              scoreList && scoreList.map((item, index) => {
+                return (
+                  <div key={item} className={`${indexStyles.rating_itemsValue} ${flag && scoreList.length > 1 ? indexStyles.rating_active_width : indexStyles.rating_normal_width}`}>
+                    <p>
+                      <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer' }}>
+                        <Tooltip title="评分项" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                          <span style={{ marginRight: '9px' }}>评分项:</span>
+                        </Tooltip>
+                        <Tooltip overlayStyle={{ minWidth: '110px' }} title="权重占比: 90%" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                          <span className={indexStyles.rating_weight}>*90%</span>
+                        </Tooltip>
+                      </span>
+                      <span className={globalStyles.authTheme}>&#xe785;</span>
+                    </p>
+                    <div className={indexStyles.rating_grade}>
+                      <span>最高<span className={indexStyles.rating_grade_value}>100</span>分</span>
+                    </div>
+                  </div>
+                )
+              })
+            }
+            {/* <div className={`${indexStyles.rating_itemsValue} ${flag ? indexStyles.rating_active_width : indexStyles.rating_normal_width}`}>
               <p>
                 <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer' }}>
                   <Tooltip title="评分项" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
@@ -281,7 +332,7 @@ export default class ConfigureStepTypeThree_one extends Component {
               <div className={indexStyles.rating_grade}>
                 <span>最高<span className={indexStyles.rating_grade_value}>100</span>分</span>
               </div>
-            </div>
+            </div> */}
             <div>
               <div onClick={(e) => e.stopPropagation()} className={indexStyles.popoverContainer} style={{ position: 'absolute', right: 0, top: 0 }}>
                 <Popover
