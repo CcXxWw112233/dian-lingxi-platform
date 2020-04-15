@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import { Menu, Button, Input, message } from 'antd';
+import { Menu, Button, Input, message, Modal } from 'antd';
 import styles from './nodeOperate.less'
 import globalStyles from '@/globalset/css/globalClassName.less';
 import { connect } from 'dva';
-import { addTaskGroup, changeTaskType } from '../../../../../../services/technological/task';
+import { addTaskGroup, changeTaskType, deleteTask, requestDeleteMiletone } from '../../../../../../services/technological/task';
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
 import OutlineTree from '.';
 import { visual_add_item } from '../../constants';
@@ -168,8 +168,41 @@ export default class NodeOperate extends Component {
     }
 
     delete = () => {
-        const { nodeValue: { id } } = this.props
-        this.props.deleteOutLineTreeNode(id)
+        const { nodeValue: { id, tree_type } } = this.props
+        // this.props.deleteOutLineTreeNode(id)
+
+        Modal.confirm({
+            title: '提示',
+            content: '确认删除该节点？',
+            okText: '确认',
+            cancelText: '取消',
+            onOk: () => {
+                if (tree_type == '1') {
+                    this.deleteMilestone(id)
+                } else if (tree_type == '2') {
+                    this.deleteCard(id)
+                }
+            }
+        });
+
+    }
+    deleteCard = (id) => {
+        deleteTask(id).then(res => {
+            if (isApiResponseOk(res)) {
+                this.props.deleteOutLineTreeNode(id)
+            } else {
+                message.error(res.message)
+            }
+        })
+    }
+    deleteMilestone = (id, calback) => {
+        requestDeleteMiletone({ id }).then(res => {
+            if (isApiResponseOk(res)) {
+                this.props.deleteOutLineTreeNode(id)
+            } else {
+                message.error(res.message)
+            }
+        })
     }
     createCard = (create_child) => { //创建任务分为里程碑创建任务和任务创建同级任务
         const { nodeValue: { id, parent_id, tree_type, parent_type, children = [] }, outline_tree = [], dispatch } = this.props
@@ -183,7 +216,7 @@ export default class NodeOperate extends Component {
                 console.log('sssssssss', 1)
             } else {
                 console.log('sssssssss', 2)
-                target_id = parent_id //创建任务都是创建父级节点里的任务
+                target_id = parent_id//创建任务都是创建父级节点里的任务
             }
         }
 
@@ -206,7 +239,7 @@ export default class NodeOperate extends Component {
     render() {
         const { group_sub_visible, create_group_visible } = this.state
         const { nodeValue = {} } = this.props
-        const { tree_type, parent_type } = nodeValue
+        const { tree_type, parent_type, parent_id } = nodeValue
         return (
             <div className={styles.menu} onWheel={e => e.stopPropagation()}>
                 {
@@ -232,9 +265,14 @@ export default class NodeOperate extends Component {
                         </div>
                     )
                 }
-                <div className={styles.menu_item} onClick={() => this.menuItemClick('create_card')}>
-                    新建任务
-                </div>
+                { //一级任务是顶级则没有
+                    tree_type == '2' && !parent_id ? ('') : (
+                        <div className={styles.menu_item} onClick={() => this.menuItemClick('create_card')}>
+                            新建任务
+                        </div>
+                    )
+                }
+
                 {
                     parent_type == '1' && (
                         <div className={styles.menu_item} onClick={() => this.menuItemClick('create_child_card')} >

@@ -352,13 +352,23 @@ class Gantt extends Component {
       console.error("OutlineTree.getTreeNodeValue:未查询到节点");
     }
   }
-  // 大纲视图删除某个节点
+  // 大纲视图删除某个节点（如果是删除任务则删除挂载的全部节点， 如果是删除里程碑， 则释放任务到无归属区域）
   deleteOutLineTreeNode = (id, add_id) => {
     let { dispatch, outline_tree } = this.props;
-    if (!!id) {
-      outline_tree = OutlineTree.filterTreeNode(outline_tree, id);
+    let node = {}
+    if (!!id) { //删除实际节点
+      node = OutlineTree.getTreeNodeValue(outline_tree, id)
+      if (node) {
+        const { tree_type, children = [] } = node
+        outline_tree = OutlineTree.filterTreeNode(outline_tree, id); //删除节点
+        if (tree_type == '1') { //删除掉里程碑，但保留挂载的节点释放
+          outline_tree = [].concat(outline_tree, children)
+        } else if (tree_type == '2') { //删除任务
+        }
+      }
+      // outline_tree = OutlineTree.filterTreeNode(outline_tree, id); //删除节点
     }
-    if (!!add_id) {
+    if (!!add_id) { //删除添加占位节点
       outline_tree = OutlineTree.filterTreeNodeByName(outline_tree, 'add_id', add_id);
     }
     dispatch({
