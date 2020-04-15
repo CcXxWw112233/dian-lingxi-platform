@@ -1,16 +1,18 @@
 import React, { Component } from 'react'
-import { Menu, Button, Input } from 'antd';
+import { Menu, Button, Input, message } from 'antd';
 import styles from './nodeOperate.less'
 import globalStyles from '@/globalset/css/globalClassName.less';
 import { connect } from 'dva';
+import { addTaskGroup } from '../../../../../../services/technological/task';
+import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
 
 @connect(mapStateToProps)
 export default class NodeOperate extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            group_sub_visible: false,
-            create_group_visible: false,
+            group_sub_visible: false, //分组
+            create_group_visible: false,//新建分组
             group_value: '',
         }
     }
@@ -23,6 +25,15 @@ export default class NodeOperate extends Component {
         this.setState({
             create_group_visible: bool
         })
+    }
+
+    // ---------分组逻辑-------start
+    // 获取任务分组列表
+    getCardGroups = () => {
+        const { gantt_board_id, about_group_boards = [] } = this.props
+        const item = about_group_boards.find(item => item.board_id == gantt_board_id) || {}
+        const { list_data = [] } = item
+        return list_data
     }
 
     // 创建分组的区域
@@ -38,7 +49,7 @@ export default class NodeOperate extends Component {
                     <Input placeholder={'请输入分组标题'} value={group_value} onChange={this.groupValueChange} />
                 </div>
                 <div className={styles.create_group_bott}>
-                    <Button disabled={!!!group_value} style={{ width: '100%' }} type={'primary'}>确认</Button>
+                    <Button disabled={!!!group_value} style={{ width: '100%' }} type={'primary'} onClick={() => this.addGroup()}>确认</Button>
                 </div>
             </div>
         )
@@ -46,14 +57,26 @@ export default class NodeOperate extends Component {
 
     // 分组列表
     renderGroupList = () => {
+        const groups = this.getCardGroups()
         return (
             <>
                 <div className={`${styles.submenu_area_item} ${styles.submenu_area_item_create}`} onClick={() => this.setCreateGroupVisible(true)}>
                     <span className={`${globalStyles.authTheme}`}>&#xe782;</span>
                     <span>新建分组</span>
                 </div>
-                <div className={`${styles.submenu_area_item}`}>分组12</div>
-                <div className={`${styles.submenu_area_item}`}>分组2</div>
+                {
+                    groups.map(item => {
+                        const { list_id, list_name } = item
+                        return (
+                            <div
+                                onClick={() => this.menuItemClick(`group_id_${list_id}`)}
+                                className={`${styles.submenu_area_item}`}
+                                key={list_id}>
+                                {list_name}
+                            </div>
+                        )
+                    })
+                }
             </>
         )
     }
@@ -64,6 +87,7 @@ export default class NodeOperate extends Component {
             group_value: value
         })
     }
+    // ----------分组逻辑--------end+
     // 选择项点击
     menuItemClick = (key) => {
         const { setDropVisble = function () { } } = this.props
@@ -79,18 +103,53 @@ export default class NodeOperate extends Component {
                 break
             case 'create_card':
                 break
-            case /^group_id_+/:  //选择任务分组
-
             default:
+                if (/^group_id_+/.test(key)) {//选择任务分组
+
+                }
                 break
         }
+    }
+    addGroup = () => {
+        const { gantt_board_id } = this.props
+        const { group_value } = this.state
+        const params = {
+            board_id: gantt_board_id,
+            name: group_value
+        }
+        addTaskGroup({ ...params }).then(res => {
+            if (isApiResponseOk(res)) {
+                const { id, name } = res.data
+                const obj = {
+                    list_id: id,
+                    list_name: name,
+                }
+                this.addGroupCalback(obj)
+                message.success('创建分组成功')
+                this.setCreateGroupVisible(false)
+            } else {
+                message.error(res.message)
+            }
+        })
+    }
+    addGroupCalback = (arg) => {
+        const { dispatch, about_group_boards = [], gantt_board_id } = this.props
+        const arr = [...about_group_boards]
+        const index = arr.findIndex(item => item.board_id == gantt_board_id)
+        arr[index].list_data.push({ ...arg })
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                about_group_boards: arr
+            }
+        })
     }
     render() {
         const { group_sub_visible, create_group_visible } = this.state
         const { nodeValue = {} } = this.props
         const { tree_type } = nodeValue
         return (
-            <div className={styles.menu}>
+            <div className={styles.menu} onWheel={e => e.stopPropagation()}>
                 {
                     tree_type == '2' && (
                         <div className={`${styles.menu_item} ${styles.submenu}`}>
@@ -130,8 +189,8 @@ export default class NodeOperate extends Component {
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
-    gantt: { datas: { gantt_board_id } },
+    gantt: { datas: { gantt_board_id, about_group_boards = [] } },
     projectDetail: { datas: { projectDetailInfoData = {} } }
 }) {
-    return { gantt_board_id, projectDetailInfoData, }
+    return { gantt_board_id, projectDetailInfoData, about_group_boards }
 }
