@@ -291,6 +291,9 @@ export default class OutLineHeadItem extends Component {
                                 addInputNodeValue.name = '';
                                 addInputNodeValue.editing = false;
                                 this.updateOutLineTreeData(outline_tree);
+                                if (typeof calback == 'function') {
+                                    calback()
+                                }
                             } else {
 
                                 message.error(res.message)

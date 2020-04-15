@@ -111,7 +111,12 @@ class TreeNode extends Component {
             if (this.props.onDataProcess) {
                 this.props.onDataProcess({
                     action,
-                    param: { ...nodeValue, parentId: this.props.parentId }
+                    param: { ...nodeValue, parentId: this.props.parentId },
+                    calback: () => {
+                        setTimeout(() => {
+                            this.props.deleteOutLineTreeNode('', nodeValue.add_id) //失焦就没了
+                        }, 300)
+                    }
                 });
             }
             //清空
@@ -128,7 +133,12 @@ class TreeNode extends Component {
                 if (this.props.onDataProcess) {
                     this.props.onDataProcess({
                         action: 'onBlur',
-                        param: { ...nodeValue, parentId: this.props.parentId }
+                        param: { ...nodeValue, parentId: this.props.parentId },
+                        calback: () => {
+                            setTimeout(() => {
+                                this.props.deleteOutLineTreeNode('', nodeValue.add_id) //失焦就没了
+                            }, 300)
+                        }
                     });
                 }
 
@@ -143,9 +153,7 @@ class TreeNode extends Component {
             isTitleHover: false,
             isTitleEdit: false
         });
-        setTimeout(() => {
-            this.props.deleteOutLineTreeNode('', nodeValue.add_id) //失焦就没了
-        }, 300)
+
     }
     onChangeTitle = (e) => {
         const { nodeValue = {} } = this.state;

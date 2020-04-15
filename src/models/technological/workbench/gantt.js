@@ -316,7 +316,7 @@ export default {
         new_item.time_span = time_span
 
         new_item_children = new_item_children.map(item2 => {
-          let new_item2 = { ...item2, parent_expand: is_expand, parent_type: tree_type }
+          let new_item2 = { ...item2, parent_expand: is_expand, parent_type: tree_type, parent_id: item.id }
           const tree_type2 = item2.tree_type
           const children2 = item2.children || []
           let new_item_children2 = [...children2]
@@ -350,7 +350,7 @@ export default {
           }
           if (tree_type == '1') { //如果第一级是里程碑才有第三级
             new_item_children2 = new_item_children2.map(item3 => {
-              let new_item3 = { ...item3, parent_expand: new_item2.parent_expand && new_item2.is_expand, parent_type: tree_type2 }
+              let new_item3 = { ...item3, parent_expand: new_item2.parent_expand && new_item2.is_expand, parent_type: tree_type2, parent_id: item2.id }
               if (is_expand && is_expand2) {
                 child_expand_length += 1
               }
