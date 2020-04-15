@@ -3,7 +3,7 @@ import { Menu, Button, Input, message } from 'antd';
 import styles from './nodeOperate.less'
 import globalStyles from '@/globalset/css/globalClassName.less';
 import { connect } from 'dva';
-import { addTaskGroup } from '../../../../../../services/technological/task';
+import { addTaskGroup, changeTaskType } from '../../../../../../services/technological/task';
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
 
 @connect(mapStateToProps)
@@ -105,7 +105,8 @@ export default class NodeOperate extends Component {
                 break
             default:
                 if (/^group_id_+/.test(key)) {//选择任务分组
-
+                    const list_id = key.replace('group_id_', '')
+                    this.relationGroup(list_id)
                 }
                 break
         }
@@ -143,6 +144,22 @@ export default class NodeOperate extends Component {
                 about_group_boards: arr
             }
         })
+    }
+    relationGroup = (list_id) => {
+        const { gantt_board_id, nodeValue: { id }, } = this.props
+        const params = {
+            list_id,
+            board_id: gantt_board_id,
+            card_id: id
+        }
+        changeTaskType({ ...params }, { isNotLoading: false })
+            .then(res => {
+                if (isApiResponseOk) {
+                    message.success('关联分组成功')
+                } else {
+                    message.error(res.message)
+                }
+            })
     }
     render() {
         const { group_sub_visible, create_group_visible } = this.state

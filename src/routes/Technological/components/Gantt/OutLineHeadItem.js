@@ -124,6 +124,13 @@ export default class OutLineHeadItem extends Component {
         //console.log("大纲:onHover", id, hover);
         const { dispatch, outline_tree } = this.props;
         let nodeValue = {};
+        // 设置hover状态
+        let outline_hover_obj = {}
+        if (is_add_node) {
+            outline_hover_obj.add_id = id
+        } else {
+            outline_hover_obj.id = id
+        }
         if (hover) {
             if (is_add_node) {
                 nodeValue = OutlineTree.getTreeAddNodeValue(outline_tree, id) || {};
@@ -136,12 +143,13 @@ export default class OutLineHeadItem extends Component {
                 let placeholderNodeValue = OutlineTree.getTreeAddNodeValue(outline_tree, id) || {};
                 placeholderNodeValue.is_focus = false;
             }
-
+            outline_hover_obj = {}
         }
+
         dispatch({
             type: 'gantt/updateDatas',
             payload: {
-                outline_hover_obj: nodeValue
+                outline_hover_obj: outline_hover_obj//nodeValue
             }
         });
         this.updateOutLineTreeData(outline_tree);
@@ -530,7 +538,7 @@ export default class OutLineHeadItem extends Component {
             outline_tree.map((item, index) => {
                 if (item.children && item.children.length > 0) {
                     return (
-                        <TreeNode key={index} nodeValue={item} level={level}>
+                        <TreeNode key={index} nodeValue={item} level={level} onHover={this.onHover}>
                             {this.renderGanttOutLineTree(item.children, level + 1, item)}
                         </TreeNode>
                     );
@@ -541,13 +549,14 @@ export default class OutLineHeadItem extends Component {
                                 level={level}
                                 nodeValue={item}
                                 type={'2'}
+                                onHover={this.onHover}
                                 placeholder={parentNode && parentNode.tree_type == '2' ? '新建子任务' : '新建任务'}
                                 icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
                                 label={<span className={styles.addTask}>{parentNode && parentNode.tree_type == '2' ? '新建子任务' : '新建任务'}</span>} key={`addTask_${item.index}`}>
                             </TreeNode>
                         );
                     } else {
-                        return (<TreeNode key={index} nodeValue={item} level={level}></TreeNode>);
+                        return (<TreeNode key={index} nodeValue={item} level={level} onHover={this.onHover}></TreeNode>);
                     }
 
                 }
@@ -726,6 +735,7 @@ export default class OutLineHeadItem extends Component {
                     <TreeNode
                         type={'1'}
                         placeholder={'新建里程碑'}
+                        onHover={this.onHover}
                         nodeValue={{ add_id: 'add_milestone', 'tree_type': '0' }}
                         icon={<span className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
                         label={<span className={styles.addMilestone}>新建里程碑</span>} key="addMilestone">

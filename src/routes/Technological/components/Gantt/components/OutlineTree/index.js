@@ -82,7 +82,8 @@ class TreeNode extends Component {
     onMouseEnter = () => {
         const { nodeValue = {} } = this.state;
         const { id, add_id } = nodeValue;
-        this.props.onHover(id || add_id, true, this.props.parentId, add_id ? true : false);
+        const { onHover, parentId } = this.props
+        onHover(id || add_id, true, parentId, add_id ? true : false);
     }
 
     onMouseLeave = () => {
@@ -437,9 +438,14 @@ class TreeNode extends Component {
                 <div className={className} key={id}>
                     <div className={`${styles.outline_tree_node_content} ${((hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id)) ? styles.hover : ''}`} style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
                         {
-                            icon ?
-                                icon
-                                : (
+                            add_id ?
+                                (icon ?
+                                    icon
+                                    : (
+                                        <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
+                                    )
+                                ) :
+                                (
                                     (hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id) || operateVisible ? (
                                         <Dropdown overlay={menu}
                                             visible={operateVisible}
@@ -450,7 +456,6 @@ class TreeNode extends Component {
                                             <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
                                         )
                                 )
-                            // <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
                         }
                         {
                             !isLeaf &&
