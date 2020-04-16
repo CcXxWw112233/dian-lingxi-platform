@@ -478,7 +478,7 @@ class VisitControl extends Component {
     const { otherPersonOperatorMenuItem } = this.props;
     const { othersPersonList } = this.state;
     return (
-      <div className={styles.content__othersPersonList_wrapper}>
+      <div id={'content__othersPersonList_wrapper'} className={styles.content__othersPersonList_wrapper}>
         {othersPersonList && othersPersonList.map(({ id, user_id, name, avatar, privilege }) => (
           <div
             key={id}
@@ -497,6 +497,8 @@ class VisitControl extends Component {
               </span>
             </span>
             <Dropdown
+              autoAdjustOverflow={false}
+              getPopupContainer={() => document.getElementById('content__othersPersonList_wrapper')}
               trigger={['click']}
               overlay={this.renderOtherPersonOperatorMenu(privilege)}
             >

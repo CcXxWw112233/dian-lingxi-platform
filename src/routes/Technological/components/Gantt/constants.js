@@ -67,6 +67,18 @@ export const test_card_item = [
         label_data: [],
     },
 ]
+export const visual_add_item = {
+    "id": "",
+    "name": "",
+    "tree_type": "0",
+    "is_expand": false,
+    "parent_expand": true,
+    "add_id": 'add_milestone', //0表示创建里程碑，其他地创建add_id归纳到父级id
+    "children": [],
+    "editing": false,
+    "due_time": '',
+    "start_time": ''
+}
 
 const list_group = [//大分组
     {
@@ -84,13 +96,6 @@ const list_group = [//大分组
 
     }
 ]
-
-export const visual_item = {
-    id: "1232147328316608asd0",
-    name: "里程碑头",
-    board_id: "1230737131983474688",
-    is_group_head: true
-}
 
 
 export const mock_gantt_data = [
@@ -486,7 +491,7 @@ export const mock_outline_tree = [
         "tree_type": "2",
         "children": [],
         "is_expand": true
-    }, 
+    },
     {
         "id": "222333",
         "name": "里程碑3",

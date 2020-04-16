@@ -61,7 +61,6 @@ export default class MainContent extends Component {
   }
 
   componentDidMount() {
-    this.initCanvas(this.props)
     window.addEventListener('resize', this.resizeTTY)
     window.addEventListener('scroll', this.onScroll)
     // 采用锚点方式对元素进行定位
@@ -97,7 +96,7 @@ export default class MainContent extends Component {
         }
       })
     }
-
+    this.initCanvas(this.props)
   }
   componentWillUnmount() {
     window.removeEventListener("resize", this.resizeTTY);
@@ -144,7 +143,9 @@ export default class MainContent extends Component {
       r, // 半径
       lineWidth, // 画笔宽度
     } = defaultProps
-    let ele = document.getElementById("time_graph_canvas")
+    // let ele = document.getElementById("time_graph_canvas")
+    let e = document.querySelectorAll('#time_graph_canvas');
+    let ele =  e[e.length - 1];
     let circle = ele.getContext("2d");
     circle.clearRect(0, 0, 210, 210);//清空
     //创建多个圆弧

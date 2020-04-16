@@ -124,6 +124,13 @@ export default class OutLineHeadItem extends Component {
         //console.log("大纲:onHover", id, hover);
         const { dispatch, outline_tree } = this.props;
         let nodeValue = {};
+        // 设置hover状态
+        let outline_hover_obj = {}
+        if (is_add_node) {
+            outline_hover_obj.add_id = id
+        } else {
+            outline_hover_obj.id = id
+        }
         if (hover) {
             if (is_add_node) {
                 nodeValue = OutlineTree.getTreeAddNodeValue(outline_tree, id) || {};
@@ -136,12 +143,13 @@ export default class OutLineHeadItem extends Component {
                 let placeholderNodeValue = OutlineTree.getTreeAddNodeValue(outline_tree, id) || {};
                 placeholderNodeValue.is_focus = false;
             }
-
+            outline_hover_obj = {}
         }
+
         dispatch({
             type: 'gantt/updateDatas',
             payload: {
-                outline_hover_obj: nodeValue
+                outline_hover_obj: outline_hover_obj//nodeValue
             }
         });
         this.updateOutLineTreeData(outline_tree);
@@ -160,7 +168,7 @@ export default class OutLineHeadItem extends Component {
         }
 
     }
-    onDataProcess = ({ action, param }) => {
+    onDataProcess = ({ action, param, calback }) => {
         //console.log("大纲:onDataProcess", action, param);
         const { dispatch, gantt_board_id, } = this.props;
         let { outline_tree = [] } = this.props;
@@ -181,7 +189,8 @@ export default class OutLineHeadItem extends Component {
                                     tree_type: '1',
                                     name: param.name,
                                     is_expand: true,
-                                    children: []
+                                    children: [],
+                                    executors: []
                                 };
 
                                 outline_tree.push(addNodeValue);
@@ -283,6 +292,9 @@ export default class OutLineHeadItem extends Component {
                                 addInputNodeValue.name = '';
                                 addInputNodeValue.editing = false;
                                 this.updateOutLineTreeData(outline_tree);
+                                if (typeof calback == 'function') {
+                                    calback()
+                                }
                             } else {
 
                                 message.error(res.message)
@@ -479,6 +491,12 @@ export default class OutLineHeadItem extends Component {
                         payload: {
                             id: gantt_board_id,
                         }
+                    }).then(res => {
+                        if (isApiResponseOk(res)) {
+                            if (calback) {
+                                calback({ user_data: res.data.data })
+                            }
+                        }
                     });
                 }
                 break;
@@ -493,6 +511,9 @@ export default class OutLineHeadItem extends Component {
                     nodeValue.due_time = null;
 
                     this.updateOutLineTreeData(outline_tree);
+                    if (typeof calback == 'function') {
+                        calback()
+                    }
                 } else {
                     console.error("OutlineTree.getTreeNodeValue:未查询到节点");
                 }
@@ -524,7 +545,7 @@ export default class OutLineHeadItem extends Component {
             outline_tree.map((item, index) => {
                 if (item.children && item.children.length > 0) {
                     return (
-                        <TreeNode key={index} nodeValue={item} level={level}>
+                        <TreeNode key={index} nodeValue={item} level={level} onHover={this.onHover}>
                             {this.renderGanttOutLineTree(item.children, level + 1, item)}
                         </TreeNode>
                     );
@@ -535,13 +556,14 @@ export default class OutLineHeadItem extends Component {
                                 level={level}
                                 nodeValue={item}
                                 type={'2'}
+                                onHover={this.onHover}
                                 placeholder={parentNode && parentNode.tree_type == '2' ? '新建子任务' : '新建任务'}
                                 icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
                                 label={<span className={styles.addTask}>{parentNode && parentNode.tree_type == '2' ? '新建子任务' : '新建任务'}</span>} key={`addTask_${item.index}`}>
                             </TreeNode>
                         );
                     } else {
-                        return (<TreeNode key={index} nodeValue={item} level={level}></TreeNode>);
+                        return (<TreeNode key={index} nodeValue={item} level={level} onHover={this.onHover}></TreeNode>);
                     }
 
                 }
@@ -698,9 +720,8 @@ export default class OutLineHeadItem extends Component {
 
     render() {
         const { board_info_visible, show_add_menber_visible, safeConfirmModalVisible } = this.state;
-        const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData, outline_tree_round } = this.props;
+        const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData, outline_tree_round, changeOutLineTreeNodeProto, deleteOutLineTreeNode } = this.props;
         //console.log("刷新了数据", outline_tree);
-        console.log("刷新了数据", checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, gantt_board_id));
         return (
             <div className={styles.outline_wrapper}>
 
@@ -714,11 +735,14 @@ export default class OutLineHeadItem extends Component {
                     hoverItem={outline_hover_obj}
                     outline_tree_round={outline_tree_round}
                     projectDetailInfoData={projectDetailInfoData}
+                    changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
+                    deleteOutLineTreeNode={deleteOutLineTreeNode}
                 >
                     {this.renderGanttOutLineTree(outline_tree, 0)}
                     <TreeNode
                         type={'1'}
                         placeholder={'新建里程碑'}
+                        onHover={this.onHover}
                         nodeValue={{ add_id: 'add_milestone', 'tree_type': '0' }}
                         icon={<span className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
                         label={<span className={styles.addMilestone}>新建里程碑</span>} key="addMilestone">
@@ -741,7 +765,7 @@ export default class OutLineHeadItem extends Component {
                             )
                     }
 
-                    <div>
+                    {/* <div>
                         {
                             checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, gantt_board_id) &&
                             <span className={`${styles.actionIcon} ${globalStyles.authTheme}`} onClick={this.invitationJoin}>&#xe7ae;</span>
@@ -750,7 +774,7 @@ export default class OutLineHeadItem extends Component {
                         <Dropdown overlay={this.ganttProjectMenus()} trigger={['click']} placement={'topCenter'}>
                             <span className={`${styles.actionIcon} ${globalStyles.authTheme}`}>&#xe66f;</span>
                         </Dropdown>
-                    </div>
+                    </div> */}
                 </div>
                 <div onWheel={e => e.stopPropagation()}>
                     {

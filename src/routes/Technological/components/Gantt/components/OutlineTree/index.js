@@ -1,13 +1,14 @@
 import React, { Component } from 'react'
 import styles from './index.less';
-import { Input, Dropdown, message, Tooltip } from 'antd';
+import { Input, Dropdown, message, Tooltip, Menu } from 'antd';
 import globalStyles from '@/globalset/css/globalClassName.less';
 import ManhourSet from './ManhourSet.js';
 import { Popover, Avatar } from 'antd';
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import { getOrgIdByBoardId } from '@/utils/businessFunction';
 import moment from 'moment';
-
+import AvatarList from '@/components/avatarList'
+import NodeOperate from './NodeOperate'
 class TreeNode extends Component {
     constructor(props) {
         //console.log("TreeNode", props);
@@ -81,7 +82,8 @@ class TreeNode extends Component {
     onMouseEnter = () => {
         const { nodeValue = {} } = this.state;
         const { id, add_id } = nodeValue;
-        this.props.onHover(id || add_id, true, this.props.parentId, add_id ? true : false);
+        const { onHover, parentId } = this.props
+        onHover(id || add_id, true, parentId, add_id ? true : false);
     }
 
     onMouseLeave = () => {
@@ -109,7 +111,12 @@ class TreeNode extends Component {
             if (this.props.onDataProcess) {
                 this.props.onDataProcess({
                     action,
-                    param: { ...nodeValue, parentId: this.props.parentId }
+                    param: { ...nodeValue, parentId: this.props.parentId },
+                    calback: () => {
+                        setTimeout(() => {
+                            this.props.deleteOutLineTreeNode('', nodeValue.add_id) //失焦就没了
+                        }, 300)
+                    }
                 });
             }
             //清空
@@ -119,14 +126,19 @@ class TreeNode extends Component {
                 });
             }
         } else {
-            message.warn('标题不能为空');
+            // message.warn('标题不能为空');
             nodeValue.name = (this.props.nodeValue || {}).name || '';
 
             if (nodeValue.editing) {
                 if (this.props.onDataProcess) {
                     this.props.onDataProcess({
                         action: 'onBlur',
-                        param: { ...nodeValue, parentId: this.props.parentId }
+                        param: { ...nodeValue, parentId: this.props.parentId },
+                        calback: () => {
+                            setTimeout(() => {
+                                this.props.deleteOutLineTreeNode('', nodeValue.add_id) //失焦就没了
+                            }, 300)
+                        }
                     });
                 }
 
@@ -222,9 +234,20 @@ class TreeNode extends Component {
         const action = 'reloadProjectDetailInfo';
         if (this.props.onDataProcess) {
             this.props.onDataProcess({
-                action
+                action,
+                calback: ({ user_data }) => this.inviteOthersToBoardCalbackFn({ user_data, users })
             });
         }
+    }
+    inviteOthersToBoardCalbackFn = ({ user_data = [], users }) => { //遍历找到user,将执行人添加到树
+        const { nodeValue = {} } = this.state
+        const { start_time, due_time, id, executors } = nodeValue
+        let add_executors = users.map(item => user_data.find(item2 => item2.user_id == item))
+        add_executors = add_executors.filter(item => item.user_id)
+        this.props.changeOutLineTreeNodeProto(id, {
+            start_time, due_time, executors: [].concat(executors, add_executors)
+        })
+
     }
 
 
@@ -293,8 +316,8 @@ class TreeNode extends Component {
                                     // isInvitation={true}
                                     inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
 
-                                    invitationType={tree_type == '1' ? '1' : '4'}
-                                    invitationId={tree_type == '1' ? gantt_board_id : nodeValue.id}
+                                    invitationType={tree_type == '1' ? '13' : '4'}
+                                    invitationId={nodeValue.id}
                                     invitationOrg={getOrgIdByBoardId(gantt_board_id)}
                                     listData={projectDetailInfoData.data}
                                     keyCode={'user_id'}
@@ -307,12 +330,17 @@ class TreeNode extends Component {
                         >
                             {
                                 executors && executors.length > 0 ?
-                                    <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>
-                                        {
-                                            this.renderExecutor(projectDetailInfoData.data, executors[0])
+                                    (
+                                        <div style={{ display: 'inline-block', verticalAlign: 'text-bottom' }}>
+                                            <AvatarList users={executors} size={20} />
+                                        </div>
+                                    )
+                                    // <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>
+                                    //     {
+                                    //         this.renderExecutor(projectDetailInfoData.data, executors[0])
 
-                                        }
-                                    </span>
+                                    //     }
+                                    // </span>
                                     :
                                     <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
                             }
@@ -337,10 +365,18 @@ class TreeNode extends Component {
         );
     }
 
+    // 操作项点击------start
+    operateVisibleChange = (bool) => {
+        this.setState({
+            operateVisible: bool
+        })
+    }
+    // 操作项点击------end
+
     render() {
-        const { isTitleHover, isTitleEdit, nodeValue = {} } = this.state;
+        const { isTitleHover, isTitleEdit, nodeValue = {}, operateVisible } = this.state;
         const { id, add_id, name: title, tree_type, is_expand, time_span } = nodeValue;
-        const { onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {}, outline_tree_round = [] } = this.props;
+        const { changeOutLineTreeNodeProto, deleteOutLineTreeNode, onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {}, outline_tree_round = [] } = this.props;
         let type;
         if (tree_type) {
             type = tree_type;
@@ -348,7 +384,7 @@ class TreeNode extends Component {
             type = this.props.type;
         }
         //console.log("更新节点", nodeValue);
-
+        const menu = <NodeOperate nodeValue={nodeValue} setDropVisble={this.operateVisibleChange} onExpand={onExpand} changeOutLineTreeNodeProto={changeOutLineTreeNodeProto} deleteOutLineTreeNode={deleteOutLineTreeNode} />
         if (this.props.children && this.props.children.length > 0) {
 
             let className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;
@@ -356,7 +392,17 @@ class TreeNode extends Component {
             return (
                 <div className={className} key={id}>
                     <div className={`${styles.outline_tree_node_content} ${((hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id)) ? styles.hover : ''}`} style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
-                        <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
+                        {
+                            (hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id || operateVisible) ? (
+                                <Dropdown overlay={menu}
+                                    visible={operateVisible}
+                                    trigger={['click']} onVisibleChange={this.operateVisibleChange}>
+                                    <div className={`${styles.node_opeator} ${globalStyles.authTheme}`}>&#xe7fd;</div>
+                                </Dropdown>
+                            ) : (
+                                    <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
+                                )
+                        }
                         {
                             !isLeaf &&
                             <span className={`${styles.outline_tree_node_expand_icon_out}`} onClick={this.onChangeExpand}>
@@ -374,13 +420,19 @@ class TreeNode extends Component {
                                     //child.props['leve'] = leve + 1;
                                     if (child && child.props && child.props.children && child.props.children.length > 0) {
                                         return (
-                                            <TreeNode {...child.props} leve={leve + 1} isLeaf={false} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round}>
+                                            <TreeNode {...child.props}
+                                                changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
+                                                deleteOutLineTreeNode={deleteOutLineTreeNode}
+                                                leve={leve + 1} isLeaf={false} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round}>
                                                 {child.props.children}
                                             </TreeNode>
                                         );
                                     } else {
                                         return (
-                                            <TreeNode {...child.props} leve={leve + 1} isLeaf={true} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round} />
+                                            <TreeNode {...child.props}
+                                                changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
+                                                deleteOutLineTreeNode={deleteOutLineTreeNode}
+                                                leve={leve + 1} isLeaf={true} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round} />
                                         );
                                     }
                                 })
@@ -398,10 +450,24 @@ class TreeNode extends Component {
                 <div className={className} key={id}>
                     <div className={`${styles.outline_tree_node_content} ${((hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id)) ? styles.hover : ''}`} style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
                         {
-                            icon ?
-                                icon
-                                :
-                                <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
+                            add_id ?
+                                (icon ?
+                                    icon
+                                    : (
+                                        <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
+                                    )
+                                ) :
+                                (
+                                    (hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id) || operateVisible ? (
+                                        <Dropdown overlay={menu}
+                                            visible={operateVisible}
+                                            trigger={['click']} onVisibleChange={this.operateVisibleChange}>
+                                            <div className={`${styles.node_opeator} ${globalStyles.authTheme}`}>&#xe7fd;</div>
+                                        </Dropdown>
+                                    ) : (
+                                            <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
+                                        )
+                                )
                         }
                         {
                             !isLeaf &&
@@ -420,14 +486,17 @@ class TreeNode extends Component {
 
 class MyOutlineTree extends Component {
     render() {
-        const { onDataProcess, onExpand, onHover, hoverItem, gantt_board_id, projectDetailInfoData, outline_tree_round } = this.props;
+        const { onDataProcess, onExpand, onHover, hoverItem, gantt_board_id, projectDetailInfoData, outline_tree_round, changeOutLineTreeNodeProto, deleteOutLineTreeNode } = this.props;
 
         return (
             <div className={styles.outline_tree}>
                 {
                     React.Children.map(this.props.children, (child, i) => {
                         return (
-                            <TreeNode {...child.props} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round}>
+                            <TreeNode {...child.props}
+                                changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
+                                deleteOutLineTreeNode={deleteOutLineTreeNode}
+                                onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round}>
                                 {child.props.children}
                             </TreeNode>
                         );
@@ -498,7 +567,8 @@ const getTreeNodeValue = (outline_tree, id) => {
                         return childNode;
                     }
                 } else {
-                    return null;
+                    continue
+                    // return null;
                 }
             }
         }
@@ -545,7 +615,8 @@ const getTreeAddNodeValue = (outline_tree, add_id) => {
                         return childNode;
                     }
                 } else {
-                    return null;
+                    continue
+                    // return null;
                 }
             }
         }
@@ -574,7 +645,25 @@ const filterTreeNode = (tree, id) => {
     }
     return tree
 }
-
+// 过滤掉指定的树节点(删除树节点)(通过指定属性)
+const filterTreeNodeByName = (tree, key, value) => {
+    if (!(tree instanceof Array)) {
+        return tree
+    }
+    const length = tree.length
+    for (let i = 0; i < length; i++) {
+        let el = tree[i]
+        if (el[key] == value) {
+            tree.splice(i, 1)
+            break
+        } else {
+            if (el.children && el.children.length) {
+                filterTreeNodeByName(el.children, key, value)
+            }
+        }
+    }
+    return tree
+}
 const getTreeNodeValueByName = (outline_tree, key, value) => {
     if (outline_tree) {
         let length = outline_tree.length
@@ -589,7 +678,8 @@ const getTreeNodeValueByName = (outline_tree, key, value) => {
                         return childNode;
                     }
                 } else {
-                    return null;
+                    continue
+                    // return null;
                 }
             }
         }
@@ -606,4 +696,5 @@ OutlineTree.getTreeNodeValue = getTreeNodeValue;
 OutlineTree.getTreeAddNodeValue = getTreeAddNodeValue;
 OutlineTree.filterTreeNode = filterTreeNode
 OutlineTree.getTreeNodeValueByName = getTreeNodeValueByName
+OutlineTree.filterTreeNodeByName = filterTreeNodeByName
 export default OutlineTree;

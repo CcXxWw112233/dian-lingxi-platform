@@ -223,9 +223,12 @@ export default class GetRowTaskItem extends Component {
         })
 
         // 在分组和特定高度下才能设置高度
-        const { gantt_board_id, group_list_area_section_height = [], ceiHeight } = this.props
+        const { gantt_board_id, group_list_area_section_height = [], ceiHeight, group_view_type } = this.props
         const item_height = (ceiHeight + task_item_margin_top) / 2
-        if (gantt_board_id != '0' && nt < group_list_area_section_height[group_list_area_section_height.length - 1] - item_height) { //只有在分组的情况下才能拖上下
+        if (gantt_board_id != '0' &&
+            nt < group_list_area_section_height[group_list_area_section_height.length - 1] - item_height &&
+            !ganttIsOutlineView({ group_view_type })
+        ) { //只有在分组的情况下才能拖上下
             this.setState({
                 local_top: nt,
             })

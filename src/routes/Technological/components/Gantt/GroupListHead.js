@@ -192,6 +192,7 @@ export default class GroupListHead extends Component {
                 <OutLineHeadItem
                   gantt_card_height={this.props.gantt_card_height}
                   dataAreaRealHeight={this.props.dataAreaRealHeight}
+                  changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto} deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
                 />
                 <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
                 {

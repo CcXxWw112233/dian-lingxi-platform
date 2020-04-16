@@ -41,8 +41,9 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
+        dispatchEvent = dispatch
         if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
-          dispatchEvent = dispatch
+          
         }
       })
     },
@@ -212,7 +213,7 @@ export default {
     * getProcessInfoByUrl({ payload }, { call, put }) {
       const { currentProcessInstanceId } = payload
       yield put({
-        type: 'publicProcessDetailModal/updateDatas',
+        type: 'updateDatas',
         payload: {
           processPageFlagStep: '4'
         }
@@ -223,7 +224,7 @@ export default {
           id: currentProcessInstanceId,
           calback: () => {
             dispatchEvent({
-              type: 'publicProcessDetailModal/updateDatas',
+              type: 'updateDatas',
               payload: {
                 process_detail_modal_visible: true,
                 currentProcessInstanceId: currentProcessInstanceId,
@@ -368,13 +369,13 @@ export default {
       let status = yield select(public_selectCurrentFlowTabsStatus) || '1'
       let res = yield call(workflowEnd, {id})
       if (isApiResponseOk(res)) {
-        yield put({
-          type: 'getProcessListByType',
-          payload: {
-            status,
-            board_id
-          }
-        })
+        // yield put({
+        //   type: 'getProcessListByType',
+        //   payload: {
+        //     status,
+        //     board_id
+        //   }
+        // })
         if (calback && typeof calback == 'function') calback()
       } else {
         message.warn(res.message)
@@ -386,13 +387,13 @@ export default {
       let status = yield select(public_selectCurrentFlowTabsStatus) || '1'
       let res = yield call(workflowDelete, {id})
       if (isApiResponseOk(res)) {
-        yield put({
-          type: 'getProcessListByType',
-          payload: {
-            status,
-            board_id
-          }
-        })
+        // yield put({
+        //   type: 'getProcessListByType',
+        //   payload: {
+        //     status,
+        //     board_id
+        //   }
+        // })
         if (calback && typeof calback == 'function') calback()
       } else {
         message.warn(res.message)
@@ -405,13 +406,13 @@ export default {
       let status = yield select(public_selectCurrentFlowTabsStatus) || '1'
       let res = yield call(restartProcess, {id})
       if (isApiResponseOk(res)) {
-        yield put({
-          type: 'getProcessListByType',
-          payload: {
-            status,
-            board_id
-          }
-        })
+        // yield put({
+        //   type: 'getProcessListByType',
+        //   payload: {
+        //     status,
+        //     board_id
+        //   }
+        // })
         if (calback && typeof calback == 'function') calback()
       } else {
         message.warn(res.message)

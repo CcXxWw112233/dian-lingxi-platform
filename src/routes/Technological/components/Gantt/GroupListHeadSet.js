@@ -166,7 +166,9 @@ export default class GroupListHeadSet extends Component {
 
                     <div className={indexStyles.set_content_right}>
                         <div className={indexStyles.set_content_dec}>
-                            {group_view_type == '1' && '项目列表'}
+                            {group_view_type == '1' && (
+                                gantt_board_id == '0' ? '项目列表' : '分组列表'
+                            )}
                             {group_view_type == '2' && '成员列表'}
                             {group_view_type == '4' && '我的计划'}
                         </div>

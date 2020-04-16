@@ -13,6 +13,7 @@ import TaskDetailModal from '@/components/TaskDetailModal'
 import { setBoardIdStorage, getSubfixName } from "../../../../utils/businessFunction";
 import Organization from '@/routes/organizationManager'
 import FileDetailModal from '@/components/FileDetailModal'
+import ProcessDetailModal from '@/components/ProcessDetailModal'
 import Guide from '../Guide/index'
 const { LingxiIm } = global.constants
 
@@ -24,6 +25,7 @@ class SimpleHeader extends Component {
         simpleDrawerTitle: '',
         whetherShowTaskDetailModalVisible: false, // 控制引用的任务弹窗多次渲染
         whetherShowFileDetailModalVisible: false,
+        whetherShowProcessDetailModalVisible: false, // 控制引用的流程弹窗多次渲染
         guideImageMoadlVisible: false,  //协作引导图片全屏预览
         guideImgSrc: '', //协作引导图片全屏预览资源
     }
@@ -121,7 +123,7 @@ class SimpleHeader extends Component {
         Im.option({
             baseUrl: `${protocol}//${host}/`,
             // APPKEY: 'ab3db8f71133efc21085a278db04e7e7',//'6b5d044ca33c559b9b91f02e29573f79',//ceshi//"ab3db8f71133efc21085a278db04e7e7", //
-            // APPKEY: "c3abea191b7838ff65f9a6a44ff5e45f"
+            // APPKEY: "18268e20ae05c4ac49e4c23644aa38c8"
         })
         const clickDynamicFunc = (data) => {
             // 需要延时打开，因为IM先调用关闭，在打开的，而关闭比打开的走的慢
@@ -204,7 +206,7 @@ class SimpleHeader extends Component {
     // 圈子点击
     imClickDynamic = (data = {}) => {
         const { dispatch } = this.props
-        const { orgId, boardId, type, relaDataId, cardId, relaDataName } = data
+        const { orgId, boardId, type, relaDataId, cardId, relaDataName, relaDataId2, relaDataName2 } = data
         // console.log('ssss', data)
         dispatch({
             type: 'projectDetail/updateDatas',
@@ -245,12 +247,22 @@ class SimpleHeader extends Component {
                         whetherShowTaskDetailModalVisible: false
                     })
                 }
-                dispatch({
-                    type: 'projectDetail/updateDatas',
-                    payload: {
-                        projectDetailInfoData: { board_id: boardId }
-                    }
-                })
+                if (this.props.process_detail_modal_visible) {
+                    dispatch({
+                        type: 'publicProcessDetailModal/updateDatas',
+                        payload: {
+                            process_detail_modal_visible: false,
+                            processInfo: {},
+                            currentProcessInstanceId: ''
+                        }
+                    })
+                }
+                // dispatch({
+                //     type: 'projectDetail/projectDetailInfo',
+                //     payload: {
+                //         id: boardId
+                //     }
+                // })
                 // dispatch({
                 //     type: 'projectDetail/getRelationsSelectionPre',
                 //     payload: {
@@ -342,12 +354,22 @@ class SimpleHeader extends Component {
                         whetherShowFileDetailModalVisible: false
                     })
                 }
-                dispatch({
-                    type: 'projectDetail/updateDatas',
-                    payload: {
-                        projectDetailInfoData: { board_id: boardId }
-                    }
-                })
+                if (this.props.process_detail_modal_visible) {
+                    dispatch({
+                        type: 'publicProcessDetailModal/updateDatas',
+                        payload: {
+                            process_detail_modal_visible: false,
+                            processInfo: {},
+                            currentProcessInstanceId: ''
+                        }
+                    })
+                }
+                // dispatch({
+                //     type: 'projectDetail/updateDatas',
+                //     payload: {
+                //         projectDetailInfoData: { board_id: boardId }
+                //     }
+                // })
                 setTimeout(() => {
                     dispatch({
                         type: 'publicTaskDetailModal/updateDatas',
@@ -362,6 +384,63 @@ class SimpleHeader extends Component {
                 }, 200)
                 break;
             case 'flow':
+                if (this.props.process_detail_modal_visible) {
+                    dispatch({
+                        type: 'publicProcessDetailModal/updateDatas',
+                        payload: {
+                            process_detail_modal_visible: false,
+                            processInfo: {},
+                            currentProcessInstanceId: ''
+                        }
+                    })
+                }
+                if (this.props.drawerVisible) {
+                    dispatch({
+                        type: 'publicTaskDetailModal/updateDatas',
+                        payload: {
+                            drawerVisible: false,
+                            card_id: ''
+                        }
+                    })
+                    this.setState({
+                        whetherShowTaskDetailModalVisible: false
+                    })
+                }
+                if (this.props.isInOpenFile) { // 防止弹窗多层覆盖
+                    dispatch({
+                        type: 'publicFileDetailModal/updateDatas',
+                        payload: {
+                            isInOpenFile: false,
+                            filePreviewCurrentFileId: '',
+                            fileType: '',
+                            currentPreviewFileName: ''
+                        }
+                    })
+                    this.setState({
+                        whetherShowFileDetailModalVisible: false
+                    })
+                }
+               setTimeout(() => {
+                    dispatch({
+                        type: 'publicProcessDetailModal/getProcessInfo',
+                        payload: {
+                            id: relaDataId,
+                            calback: () => {
+                                dispatch({
+                                    type: 'publicProcessDetailModal/updateDatas',
+                                    payload: {
+                                        process_detail_modal_visible: true,
+                                        currentProcessInstanceId: relaDataId,
+                                        processPageFlagStep: '4'
+                                    }
+                                })
+                            }
+                        }
+                    })
+                    this.setState({
+                        whetherShowProcessDetailModalVisible: true
+                    })
+               }, 200)
                 break
             default:
                 break
@@ -473,7 +552,7 @@ class SimpleHeader extends Component {
     }
 
     render() {
-        const { chatImVisiable = false, leftMainNavVisible = false, leftMainNavIconVisible, drawerVisible, isInOpenFile, filePreviewCurrentFileId, fileType, dispatch, im_alarm_no_reads_total, guideModalVisiable } = this.props;
+        const { chatImVisiable = false, leftMainNavVisible = false, leftMainNavIconVisible, drawerVisible, isInOpenFile, filePreviewCurrentFileId, fileType, process_detail_modal_visible, dispatch, im_alarm_no_reads_total, guideModalVisiable } = this.props;
         const { simpleDrawerVisible, simpleDrawerContent, leftNavigationVisible, simpleDrawerTitle, guideImgSrc } = this.state;
         return (
             <div className={indexStyles.headerWapper}>
@@ -558,6 +637,13 @@ class SimpleHeader extends Component {
                     )
                 }
                 {
+                    process_detail_modal_visible && this.state.whetherShowProcessDetailModalVisible && (
+                        <ProcessDetailModal
+                            process_detail_modal_visible={process_detail_modal_visible}
+                        />
+                    )
+                }
+                {
                     guideModalVisiable && <Guide opGuiImage={this.opGuiImage.bind(this)} />
                 }
 
@@ -593,6 +679,10 @@ function mapStateToProps({
         fileType,
         isInOpenFile
     },
+    publicProcessDetailModal: {
+        processInfo = {},
+        process_detail_modal_visible
+    },
     imCooperation: {
         im_alarm_no_reads_total = 0
     },
@@ -602,6 +692,6 @@ function mapStateToProps({
         }
     }
 }) {
-    return { OrganizationId, chatImVisiable, leftMainNavVisible, guideModalVisiable, leftMainNavIconVisible, modal, loading, drawerVisible, card_id, isInOpenFile, filePreviewCurrentFileId, fileType, im_alarm_no_reads_total }
+    return { OrganizationId, chatImVisiable, leftMainNavVisible, guideModalVisiable, leftMainNavIconVisible, modal, loading, drawerVisible, card_id, isInOpenFile, filePreviewCurrentFileId, fileType, processInfo, process_detail_modal_visible, im_alarm_no_reads_total }
 }
 export default connect(mapStateToProps)(SimpleHeader)

@@ -372,6 +372,8 @@ export default class GanttFace extends Component {
               <GroupListHead
                 setScrollArea={this.setScrollArea}
                 scroll_area={this.state.scroll_area}
+                changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
+                deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
                 setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
                 gantt_card_height={gantt_card_height}
                 dataAreaRealHeight={dataAreaRealHeight} />

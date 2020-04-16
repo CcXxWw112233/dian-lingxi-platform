@@ -27,7 +27,7 @@ export default class ConfigureStepOne_two extends Component {
     super(props)
     this.state = {
       popoverVisible: null,
-      form_item: compareACoupleOfObjects(temp_item, props.itemValue) ? temp_item : props.itemValue
+      form_item: isObjectValueEqual(temp_item, props.itemValue) ? JSON.parse(JSON.stringify(temp_item || {})) : JSON.parse(JSON.stringify(props.itemValue || {}))
     }
   }
 
@@ -38,10 +38,10 @@ export default class ConfigureStepOne_two extends Component {
     if (!is_click_confirm_btn) {// 判断是否点击了确定按钮,否 那么就保存回原来的状态
       if (visible == false) {
         this.setState({
-          form_item: temp_item
+          form_item: JSON.parse(JSON.stringify(temp_item || {}))
         })
         const { forms = [] } = processEditDatas[parentKey]
-        forms[itemKey] = { ...temp_item }
+        forms[itemKey] = JSON.parse(JSON.stringify(temp_item || {}))
         this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
       }
     }
@@ -172,7 +172,7 @@ export default class ConfigureStepOne_two extends Component {
     const { itemValue } = this.props
     const { title, prompt_content, is_multiple_choice, is_required, options = [] } = itemValue
     const { form_item } = this.state
-    let disabledFlag = compareACoupleOfObjects(form_item, itemValue)
+    let disabledFlag = isObjectValueEqual(form_item, itemValue)
     return (
       <div className={indexStyles.popover_content}>
         <div className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
@@ -224,7 +224,7 @@ export default class ConfigureStepOne_two extends Component {
       <div>
         <div className={`${indexStyles.text_form}`} style={{ background: is_click_currentTextForm ? 'rgba(230,247,255,1)' : 'rgba(0,0,0,0.02)' }} onClick={this.handleChangeTextFormColor}>
           <p>{title}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</p>
-          <Select className={indexStyles.option_select} placeholder={prompt_content} disabled={true} />
+          <Select className={indexStyles.option_select} style={{width: '100%'}} placeholder={prompt_content} disabled={true} />
           {
             is_click_currentTextForm && (
               <>
