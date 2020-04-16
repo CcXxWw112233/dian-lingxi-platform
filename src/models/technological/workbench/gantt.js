@@ -22,6 +22,7 @@ import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_row
 import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
 import { handleChangeBoardViewScrollTop, setGantTimeSpan } from '../../../routes/Technological/components/Gantt/ganttBusiness';
+import { jsonArrayCompareSort, transformTimestamp } from '../../../utils/util';
 
 let dispatches = null
 const visual_add_item = {
@@ -289,6 +290,10 @@ export default {
       const date_arr_one_level = yield select(workbench_date_arr_one_level)
 
       let new_outline_tree = [...data]
+      const tree_arr_1 = data.filter(item => item.tree_type == '1').sort(jsonArrayCompareSort('due_time', transformTimestamp)) //里程碑截止时间由近及远
+      const tree_arr_2 = data.filter(item => item.tree_type != '1').sort(jsonArrayCompareSort('start_time', transformTimestamp))
+      new_outline_tree = [].concat(tree_arr_1, tree_arr_2)//先把里程碑排进去，再排没有归属的任务
+
       const filnaly_outline_tree = new_outline_tree.map(item => {
         let new_item = { ...item, parent_expand: true }
         const { tree_type, children = [], is_expand } = item
