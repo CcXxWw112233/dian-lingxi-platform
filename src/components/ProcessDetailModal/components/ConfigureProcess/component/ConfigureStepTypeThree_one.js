@@ -27,7 +27,7 @@ export default class ConfigureStepTypeThree_one extends Component {
     })
   }
 
-  updateState = (data,index) => {
+  updateState = (data, index) => {
     const { value, key, isNotUpdateModelDatas } = data
     const { scoreList = [] } = this.state
     let new_data = [...scoreList]
@@ -82,10 +82,10 @@ export default class ConfigureStepTypeThree_one extends Component {
   handleAutoTitleTextArea = (e, key, i) => {
     let val = e.target.value
     if (val.trimLR() == '') {
-      this.updateState({value: '', key: 'title'}, i)
-      return 
+      this.updateState({ value: '', key: 'title' }, i)
+      return
     }
-    this.updateState({value: val, key: 'title'}, i)
+    this.updateState({ value: val, key: 'title' }, i)
     if (this.refs && this.refs[`autoTitleTextArea_${key}`]) {
       this.titleResize(key)
     }
@@ -103,7 +103,7 @@ export default class ConfigureStepTypeThree_one extends Component {
         val = e.target.value
       }
     }
-    this.updateState({value: val, key: 'grade_value'}, i)
+    this.updateState({ value: val, key: 'grade_value' }, i)
     if (this.refs && this.refs[`autoGradeTextArea_${key}`]) {
       this.gradeResize(key)
     }
@@ -117,7 +117,7 @@ export default class ConfigureStepTypeThree_one extends Component {
     } else {
       val = e.target.value
     }
-    this.updateState({value: val, key: 'weight_value'}, i)
+    this.updateState({ value: val, key: 'weight_value' }, i)
     if (this.refs && this.refs[`autoWeightTextArea_${key}`]) {
       this.weightResize(key)
     }
@@ -169,7 +169,7 @@ export default class ConfigureStepTypeThree_one extends Component {
     e && e.stopPropagation()
     const { currentSelectItemIndex } = this.state
     if (e.target.value.trimLR() == '') {
-      this.updateState({value: '', key: 'description', isNotUpdateModelDatas: true},currentSelectItemIndex)
+      this.updateState({ value: '', key: 'description', isNotUpdateModelDatas: true }, currentSelectItemIndex)
       this.setState({
         currentSelectItemDescription: ''
       })
@@ -178,16 +178,16 @@ export default class ConfigureStepTypeThree_one extends Component {
     this.setState({
       currentSelectItemDescription: e.target.value
     })
-    this.updateState({value: e.target.value, key: 'description', isNotUpdateModelDatas: true},currentSelectItemIndex)
+    this.updateState({ value: e.target.value, key: 'description', isNotUpdateModelDatas: true }, currentSelectItemIndex)
   }
 
   // 确认更新描述事件
   handleConfirmDescription = (e) => {
     e && e.stopPropagation()
     const { currentSelectItemIndex, currentSelectItemDescription } = this.state
-    this.updateState({value: currentSelectItemDescription, key: 'description'},currentSelectItemIndex)
+    this.updateState({ value: currentSelectItemDescription, key: 'description' }, currentSelectItemIndex)
     // 更新一个字段表示更新了
-    this.updateState({value: true, key: 'is_update_description'},currentSelectItemIndex)
+    this.updateState({ value: true, key: 'is_update_description' }, currentSelectItemIndex)
     this.setState({
       is_add_description: false
     })
@@ -200,11 +200,11 @@ export default class ConfigureStepTypeThree_one extends Component {
     let gold_update = (scoreList.find((item, index) => index == currentSelectItemIndex) || {}).is_update_description || ''
     if (gold_update) {
       let gold_description = (scoreList.find((item, index) => index == currentSelectItemIndex) || {}).description || ''
-      this.updateState({value: gold_description != '' ? gold_description : '', key: 'description'},currentSelectItemIndex)
+      this.updateState({ value: gold_description != '' ? gold_description : '', key: 'description' }, currentSelectItemIndex)
     } else {
-      this.updateState({value: '', key: 'description'},currentSelectItemIndex)
+      this.updateState({ value: '', key: 'description' }, currentSelectItemIndex)
     }
-    
+
     this.setState({
       is_add_description: false
     })
@@ -290,9 +290,9 @@ export default class ConfigureStepTypeThree_one extends Component {
           <th style={{ width: '170px' }}>标题</th>
           <th style={{ width: '90px' }}>
             权重占比%
-            <div style={{color: '#F5222D', fontSize: '12px'}}>{this.whetherTheAllWeightValueGreaterThanHundred() ? '(总和不能超过100%)' : ''}</div>
+            <div style={{ color: '#F5222D', fontSize: '12px' }}>{this.whetherTheAllWeightValueGreaterThanHundred() ? '(总和不能超过100%)' : ''}</div>
           </th>
-          <th style={{width: '90px'}}>
+          <th style={{ width: '90px' }}>
             最高分值
             <div style={{ color: 'rgba(0,0,0,0.25)', fontSize: '12px' }}>(最高1000分)</div>
           </th>
@@ -361,7 +361,7 @@ export default class ConfigureStepTypeThree_one extends Component {
   }
 
   renderConfigurationScore = () => {
-    const { itemValue: { weight_coefficient } } = this.props
+    const { itemValue: { weight_coefficient }, itemKey } = this.props
     const { localScoreList = [], scoreList = [] } = this.state
     let disabledFlag = isObjectValueEqual(localScoreList, scoreList) || this.whetherIsEmptyContent() || (weight_coefficient == '1' && this.whetherTheAllWeightValueGreaterThanHundred())
     return (
@@ -370,7 +370,13 @@ export default class ConfigureStepTypeThree_one extends Component {
           <div style={{ display: 'flex', justifyContent: 'space-between', color: 'rgba(0,0,0,0.45)' }}>
             <span>评分内容：</span>
             <span style={{ display: 'inline-block' }}>
-              <span style={{ verticalAlign: 'middle' }}>权重评分 <span style={{ fontSize: '16px' }} className={globalStyles.authTheme}>&#xe845;&nbsp;&nbsp;</span>:&nbsp;&nbsp;&nbsp;</span>
+              <span style={{ verticalAlign: 'middle', position: 'relative' }}>
+                权重评分
+                <Tooltip autoAdjustOverflow={false} overlayStyle={{minWidth: '228px'}} title="2个以上评分时可以开启权重评分，设置评分值所在总分值中的占比（总占比之和须等于100%）" placement="top" getPopupContainer={() => document.getElementById(`popoverContainer_${itemKey}`)}>
+                  <span style={{ fontSize: '16px', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe845;&nbsp;&nbsp;</span>
+                </Tooltip>
+                :&nbsp;&nbsp;&nbsp;
+              </span>
               <span><Switch size="small" onChange={this.handleWeightChange} checked={weight_coefficient == '1'} /></span>
             </span>
           </div>
@@ -435,6 +441,7 @@ export default class ConfigureStepTypeThree_one extends Component {
 
   render() {
     const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id } } = this.props
+    const { weight_coefficient } = itemValue
     const { scoreList = [], is_add_description } = this.state
     let flag = this.whetherShowDiffWidth()
     return (
@@ -444,28 +451,39 @@ export default class ConfigureStepTypeThree_one extends Component {
           <div className={indexStyles.ratingItems}>
             {
               scoreList && scoreList.map((item, index) => {
+                const { title, description, grade_value, weight_value } = item
                 return (
                   <div key={item} className={`${indexStyles.rating_itemsValue} ${flag && scoreList.length > 1 ? indexStyles.rating_active_width : indexStyles.rating_normal_width}`}>
                     <p>
                       <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer' }}>
-                        <Tooltip title="评分项" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                          <span style={{ marginRight: '9px' }}>评分项:</span>
+                        <Tooltip title={title} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                          <span style={{ marginRight: '9px' }}>{title}:</span>
                         </Tooltip>
-                        <Tooltip overlayStyle={{ minWidth: '110px' }} title="权重占比: 90%" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                          <span className={indexStyles.rating_weight}>*90%</span>
-                        </Tooltip>
+                        {
+                          weight_coefficient == '1' && (
+                            <Tooltip overlayStyle={{ minWidth: '116px' }} title={`权重占比: ${weight_value}%`} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                              <span className={indexStyles.rating_weight}>{`*${weight_value}%`}</span>
+                            </Tooltip>
+                          )
+                        }
                       </span>
-                      <span className={globalStyles.authTheme}>&#xe785;</span>
+                      {
+                        description != '' ? (
+                          <Popover title={title} content={<div style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}>{description}</div>} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                            <span style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe785;</span>
+                          </Popover>
+                        ) : ('')
+                      }
                     </p>
                     <div className={indexStyles.rating_grade}>
-                      <span>最高<span className={indexStyles.rating_grade_value}>100</span>分</span>
+                      <span>最高<span className={indexStyles.rating_grade_value}>{grade_value}</span>分</span>
                     </div>
                   </div>
                 )
               })
             }
             <div>
-              <div onClick={(e) => e.stopPropagation()} className={indexStyles.popoverContainer} style={{ position: 'absolute', right: 0, top: 0 }}>
+              <div id={`popoverContainer_${itemKey}`} onClick={(e) => e.stopPropagation()} className={indexStyles.popoverContainer} style={{ position: 'absolute', right: 0, top: 0 }}>
                 <Popover
                   // key={`${itemKey}-${itemValue}`}
                   title={is_add_description ? this.renderAddDescriptionTitle() : <div className={indexStyles.popover_title}>配置评分</div>}
