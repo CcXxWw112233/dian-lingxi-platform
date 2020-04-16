@@ -6,6 +6,14 @@
   }
 }
 
+textarea::-webkit-input-placeholder {
+  font-size:14px;
+  font-family:PingFangSC-Regular,PingFang SC;
+  font-weight:400;
+  color:rgba(0,0,0,0.25);
+  line-height:20px;
+}
+
 .delet_node_icon {
   width:28px;
   height:28px;
@@ -297,6 +305,13 @@
   color:rgba(0,0,0,0.85);
   line-height:48px;
   text-align: center;
+  .back_icon {
+    color: rgba(0,0,0,0.45);
+    cursor: pointer;
+    &:hover {
+      color: rgba(0,0,0,0.65);
+    }
+  }
 }
 
 .popover_content {

@@ -8,7 +8,7 @@ import ConfigureStepTypeTwo from './component/ConfigureStepTypeTwo'
 import ConfigureStepTypeThree from './component/ConfigureStepTypeThree'
 import { processEditDatasItemOneConstant, processEditDatasItemTwoConstant, processEditDatasItemThreeConstant } from '../../constant'
 import { connect } from 'dva'
-import { isArrayEqual, isObjectValueEqual } from '../../../../utils/util'
+import { isObjectValueEqual } from '../../../../utils/util'
 @connect(mapStateToProps)
 export default class ConfigureProcess extends Component {
 

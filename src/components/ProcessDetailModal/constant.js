@@ -50,7 +50,7 @@ export const processEditDatasItemThreeConstant = {
     {
       "key": "0",
       "title": "评分项",
-      "weight_value": '',
+      "weight_value": '100',
       "grade_value": '100',
       "description": '',
     }
