@@ -160,7 +160,7 @@ export default class ConfigureStepTypeThree extends Component {
           </div>
         </div>
         {/* 评分结果判定 */}
-        <div>
+        <div className={indexStyles.result_judge}>
           <div style={{ minHeight: '210px', padding: '16px 0px', borderBottom: '1px solid rgba(0,0,0,0.09)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div style={{ color: 'rgba(0,0,0,0.45)' }}>
               <span className={globalStyles.authTheme}>&#xe7bf;</span>
@@ -185,8 +185,8 @@ export default class ConfigureStepTypeThree extends Component {
                   <Option value="4">大于或等于</Option>
                   <Option value="5">小于或等于</Option>
                 </Select>
-                <InputNumber style={{ width: '114px', height: '32px', margin: '0px 8px' }} />
-                <Select style={{ width: '114px', height: '40px' }}>
+                <InputNumber style={{ width: '114px', height: '40px', margin: '0px 8px', lineHeight: '40px' }} />
+                <Select style={{ width: '168px', height: '40px' }}>
                   <Option value="1">{`${currentNounPlanFilterName(FLOWS)}流转到上一步`}</Option>
                   <Option value="2">{`${currentNounPlanFilterName(FLOWS)}流转到下一步`}</Option>
                   <Option value="3">{`${currentNounPlanFilterName(FLOWS)}中止`}</Option>
@@ -195,7 +195,7 @@ export default class ConfigureStepTypeThree extends Component {
             </div>
             <div>
               <span className={indexStyles.rating_label_name}>其余情况</span>
-              <Select style={{ width: '114px', height: '40px' }}>
+              <Select style={{ width: '168px', height: '40px' }}>
                 <Option value="1">{`${currentNounPlanFilterName(FLOWS)}流转到上一步`}</Option>
                 <Option value="2">{`${currentNounPlanFilterName(FLOWS)}流转到下一步`}</Option>
                 <Option value="3">{`${currentNounPlanFilterName(FLOWS)}中止`}</Option>

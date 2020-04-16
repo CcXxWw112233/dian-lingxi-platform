@@ -36,7 +36,7 @@ export const processEditDatasItemThreeConstant = {
   "node_type": "3",//流程节点类型 1=资料收集 2=审批 3=抄送
   "name": "",//流程节点名称
   "description": "",//描述 备注
-  "deadline_type": "", // 期限类型 1=不限制时间 2=限制时间
+  "deadline_type": "1", // 期限类型 1=不限制时间 2=限制时间
   "deadline_time_type": "",//完成期限类型 hour = 时 day =天 month = 月
   "deadline_value": "",//完成期限值
   "cc_type": "",//抄送人类型 1=自动抄送 2=手动抄送
