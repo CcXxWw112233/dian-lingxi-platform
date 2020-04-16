@@ -8,6 +8,8 @@ import MoreOptionsComponent from '../../MoreOptionsComponent'
 import { connect } from 'dva'
 import { principalList, tableList } from '../../../constant'
 import ConfigureStepTypeThree_one from './ConfigureStepTypeThree_one'
+import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
+import { FLOWS } from '../../../../../globalset/js/constant'
 
 @connect(mapStateToProps)
 export default class ConfigureStepTypeThree extends Component {
@@ -166,23 +168,38 @@ export default class ConfigureStepTypeThree extends Component {
             </div>
             <div>
               <span className={indexStyles.rating_label_name}>计算方式</span>
-              <span>
-                <Select style={{ width: '114px', height: '40px' }}>
-
+              <span style={{ position: 'relative' }}>
+                <Select getPopupContainer={triggerNode => triggerNode.parentNode} style={{ width: '114px', height: '40px' }}>
+                  <Option value="1">各分项相加</Option>
+                  <Option value="2">总分值平均</Option>
                 </Select>
               </span>
             </div>
             <div>
               <span className={indexStyles.rating_label_name}>结果分数</span>
               <span>
-                <Select style={{ width: '114px', height: '40px' }}></Select>
+                <Select style={{ width: '114px', height: '40px' }}>
+                  <Option value="1">大于</Option>
+                  <Option value="2">小于</Option>
+                  <Option value="3">等于</Option>
+                  <Option value="4">大于或等于</Option>
+                  <Option value="5">小于或等于</Option>
+                </Select>
                 <InputNumber style={{ width: '114px', height: '32px', margin: '0px 8px' }} />
-                <Select style={{ width: '114px', height: '40px' }}></Select>
+                <Select style={{ width: '114px', height: '40px' }}>
+                  <Option value="1">{`${currentNounPlanFilterName(FLOWS)}流转到上一步`}</Option>
+                  <Option value="2">{`${currentNounPlanFilterName(FLOWS)}流转到下一步`}</Option>
+                  <Option value="3">{`${currentNounPlanFilterName(FLOWS)}中止`}</Option>
+                </Select>
               </span>
             </div>
             <div>
               <span className={indexStyles.rating_label_name}>其余情况</span>
-              <Select style={{ width: '114px', height: '40px' }}></Select>
+              <Select style={{ width: '114px', height: '40px' }}>
+                <Option value="1">{`${currentNounPlanFilterName(FLOWS)}流转到上一步`}</Option>
+                <Option value="2">{`${currentNounPlanFilterName(FLOWS)}流转到下一步`}</Option>
+                <Option value="3">{`${currentNounPlanFilterName(FLOWS)}中止`}</Option>
+              </Select>
             </div>
           </div>
         </div>

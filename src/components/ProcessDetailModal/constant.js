@@ -43,7 +43,7 @@ export const processEditDatasItemThreeConstant = {
   "recipients": "",//抄送人 多个逗号隔开
   "assignees": "",//抄报人 多个逗号隔开
   "weight_coefficient": "", // 是否开启权重
-  "computing mode": "", // 计算方式
+  "computing_mode": "", // 计算方式
   "results_score": "", // 结果分数
   "remaining_circumstances": "", // 其余情况
   "scoreList": [
