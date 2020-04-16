@@ -500,7 +500,8 @@ export default class OutLineHeadItem extends Component {
                 }
                 break;
             case 'onBlur': {
-                let nodeValue = OutlineTree.getTreeAddNodeValue(outline_tree, param.add_id);
+                // let nodeValue = OutlineTree.getTreeAddNodeValue(outline_tree, param.add_id);
+                let nodeValue = OutlineTree.getTreeNodeValueByName(outline_tree, 'add_id', param.add_id);
                 if (nodeValue) {
 
                     // nodeValue.name = param.name;
