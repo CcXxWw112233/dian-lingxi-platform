@@ -113,9 +113,9 @@ class TreeNode extends Component {
                     action,
                     param: { ...nodeValue, parentId: this.props.parentId },
                     calback: () => {
-                        setTimeout(() => {
-                            this.props.deleteOutLineTreeNode('', nodeValue.add_id) //失焦就没了
-                        }, 300)
+                        // setTimeout(() => {
+                        //     this.props.deleteOutLineTreeNode('', nodeValue.add_id) //失焦就没了
+                        // }, 300)
                     }
                 });
             }
@@ -135,9 +135,9 @@ class TreeNode extends Component {
                         action: 'onBlur',
                         param: { ...nodeValue, parentId: this.props.parentId },
                         calback: () => {
-                            setTimeout(() => {
-                                this.props.deleteOutLineTreeNode('', nodeValue.add_id) //失焦就没了
-                            }, 300)
+                            // setTimeout(() => {
+                            //     this.props.deleteOutLineTreeNode('', nodeValue.add_id) //失焦就没了
+                            // }, 300)
                         }
                     });
                 }
@@ -546,7 +546,8 @@ const getNodeByname = (outline_tree, key, value) => {
                         return nodeValue;
                     }
                 } else {
-                    return null;
+                    continue
+                    // return null;
                 }
             }
         }
