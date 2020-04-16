@@ -103,7 +103,34 @@ class ProcessDefault extends Component {
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
         processPageFlagStep: '1',
-        process_detail_modal_visible: true
+        // processPageFlagStep: '3',
+        process_detail_modal_visible: true,
+        // processEditDatas: [{
+        //   "node_type": "3",//流程节点类型 1=资料收集 2=审批 3=抄送
+        //   "name": "",//流程节点名称
+        //   "description": "",//描述 备注
+        //   "deadline_type": "1", // 期限类型 1=不限制时间 2=限制时间
+        //   "deadline_time_type": "",//完成期限类型 hour = 时 day =天 month = 月
+        //   "deadline_value": "",//完成期限值
+        //   "cc_type": "",//抄送人类型 1=自动抄送 2=手动抄送
+        //   "recipients": "",//抄送人 多个逗号隔开
+        //   "assignees": "",//抄报人 多个逗号隔开
+        //   "weight_coefficient": "", // 是否开启权重
+        //   "computing_mode": "", // 计算方式
+        //   "results_score": "", // 结果分数
+        //   "remaining_circumstances": "", // 其余情况
+        //   "scoreList": [
+        //     {
+        //       "key": "0",
+        //       "title": "评分项",
+        //       "weight_value": '100',
+        //       "grade_value": '100',
+        //       "description": '',
+        //     }
+        //   ], // 评分项
+        //   "is_confirm": "0",
+        //   "is_edit": '0', // 是否进入编辑
+        // }]
       }
     })
   }
