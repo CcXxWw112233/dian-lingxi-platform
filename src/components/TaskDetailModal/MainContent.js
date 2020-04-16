@@ -35,10 +35,10 @@ export default class MainContent extends Component {
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     const { is_simple_model } = user_set;
     if (!data) {
-      global.constants.lx_utils && global.constants.lx_utils.setCommentData(null) 
+      global.constants.lx_utils && global.constants.lx_utils.setCommentData(null)
       return false
     }
-    global.constants.lx_utils && global.constants.lx_utils.setCommentData({...data})
+    global.constants.lx_utils && global.constants.lx_utils.setCommentData({ ...data })
     if (is_simple_model == '1') {
       this.props.dispatch({
         type: 'simplemode/updateDatas',
@@ -135,7 +135,7 @@ export default class MainContent extends Component {
         }
         this.getMilestone(res.data.board_id)
         this.filterCurrentExistenceField(res.data)// 初始化获取字段信息
-        this.linkImWithCard({name: res.data.card_name, type: 'card', board_id: res.data.board_id, id: res.data.card_id})
+        this.linkImWithCard({ name: res.data.card_name, type: 'card', board_id: res.data.board_id, id: res.data.card_id })
       } else {
         setTimeout(() => {
           dispatch({
@@ -1244,7 +1244,7 @@ export default class MainContent extends Component {
                                   placeholder={start_time ? timestampToTimeNormal(start_time, '/', true) : '开始时间'}
                                   format="YYYY/MM/DD HH:mm"
                                   showTime={{ format: 'HH:mm' }}
-                                  style={{ opacity: 0, background: '#000000', position: 'absolute', left: 0, width: 'auto' }} />
+                                  style={{ opacity: 0, height: '100%', background: '#000000', position: 'absolute', left: 0, top: 0, width: 'auto' }} />
                               </span>
                               <span onClick={this.handleDelStartTime} className={`${mainContentStyles.userItemDeleBtn} ${start_time && mainContentStyles.timeDeleBtn}`}></span>
                             </div>
@@ -1275,7 +1275,7 @@ export default class MainContent extends Component {
                                   showTime={{ format: 'HH:mm' }}
                                   // onOk={this.endDatePickerChange.bind(this)}
                                   onChange={this.endDatePickerChange.bind(this)}
-                                  style={{ opacity: 0, background: '#000000', position: 'absolute', left: 0, width: 'auto' }} />
+                                  style={{ opacity: 0, height: '100%', background: '#000000', position: 'absolute', left: 0, top: 0, width: 'auto' }} />
                               </span>
                               <span onClick={this.handleDelDueTime} className={`${mainContentStyles.userItemDeleBtn} ${due_time && mainContentStyles.timeDeleBtn}`}></span>
                             </div>
@@ -1374,5 +1374,5 @@ function mapStateToProps({
     }
   }
 }) {
-  return { drawerVisible, drawContent, is_edit_title, card_id, boardTagList, attributesList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType, currentPreviewFileName,userBoardPermissions }
+  return { drawerVisible, drawContent, is_edit_title, card_id, boardTagList, attributesList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType, currentPreviewFileName, userBoardPermissions }
 }
