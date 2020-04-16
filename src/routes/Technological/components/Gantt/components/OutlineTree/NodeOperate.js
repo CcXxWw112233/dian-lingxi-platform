@@ -210,18 +210,17 @@ export default class NodeOperate extends Component {
         let target_name
         // debugger
         if (create_child) { //如果是创建子任务
-
+            console.log('sssssssssasdx', 0)
         } else {
             if (tree_type == '1') {//如果是里程碑节点创建任务，则是操作children, 否则操作的是父级
-                console.log('sssssssss', 1)
+                console.log('sssssssssasdx', 1)
             } else {
-                console.log('sssssssss', 2)
+                console.log('sssssssssasdx', 2)
                 target_id = parent_id//创建任务都是创建父级节点里的任务
             }
         }
 
         let node = OutlineTree.getTreeNodeValue(outline_tree, target_id);
-        // debugger
         if (!node) {
             return
         }
@@ -274,7 +273,7 @@ export default class NodeOperate extends Component {
                 }
 
                 {
-                    parent_type == '1' && (
+                    (parent_type == '1' || !parent_type) && tree_type == '2' && ( //一级任务才有创建子任务功能
                         <div className={styles.menu_item} onClick={() => this.menuItemClick('create_child_card')} >
                             新建子任务
                         </div>

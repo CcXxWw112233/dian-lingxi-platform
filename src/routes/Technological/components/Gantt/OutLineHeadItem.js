@@ -510,6 +510,9 @@ export default class OutLineHeadItem extends Component {
                     nodeValue.due_time = null;
 
                     this.updateOutLineTreeData(outline_tree);
+                    if (typeof calback == 'function') {
+                        calback()
+                    }
                 } else {
                     console.error("OutlineTree.getTreeNodeValue:未查询到节点");
                 }

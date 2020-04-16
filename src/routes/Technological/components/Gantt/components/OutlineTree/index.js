@@ -567,7 +567,8 @@ const getTreeNodeValue = (outline_tree, id) => {
                         return childNode;
                     }
                 } else {
-                    return null;
+                    continue
+                    // return null;
                 }
             }
         }
@@ -614,7 +615,8 @@ const getTreeAddNodeValue = (outline_tree, add_id) => {
                         return childNode;
                     }
                 } else {
-                    return null;
+                    continue
+                    // return null;
                 }
             }
         }
@@ -676,7 +678,8 @@ const getTreeNodeValueByName = (outline_tree, key, value) => {
                         return childNode;
                     }
                 } else {
-                    return null;
+                    continue
+                    // return null;
                 }
             }
         }
