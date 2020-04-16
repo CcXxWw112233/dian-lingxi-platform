@@ -384,7 +384,7 @@ class TreeNode extends Component {
             type = this.props.type;
         }
         //console.log("更新节点", nodeValue);
-        const menu = <NodeOperate nodeValue={nodeValue} setDropVisble={this.operateVisibleChange} changeOutLineTreeNodeProto={changeOutLineTreeNodeProto} deleteOutLineTreeNode={deleteOutLineTreeNode} />
+        const menu = <NodeOperate nodeValue={nodeValue} setDropVisble={this.operateVisibleChange} onExpand={onExpand} changeOutLineTreeNodeProto={changeOutLineTreeNodeProto} deleteOutLineTreeNode={deleteOutLineTreeNode} />
         if (this.props.children && this.props.children.length > 0) {
 
             let className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;

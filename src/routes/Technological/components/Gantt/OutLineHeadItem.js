@@ -189,7 +189,8 @@ export default class OutLineHeadItem extends Component {
                                     tree_type: '1',
                                     name: param.name,
                                     is_expand: true,
-                                    children: []
+                                    children: [],
+                                    executors: []
                                 };
 
                                 outline_tree.push(addNodeValue);

@@ -219,7 +219,7 @@ export default class NodeOperate extends Component {
                 target_id = parent_id//创建任务都是创建父级节点里的任务
             }
         }
-
+        this.props.onExpand(target_id, true) //展开
         let node = OutlineTree.getTreeNodeValue(outline_tree, target_id);
         if (!node) {
             return
