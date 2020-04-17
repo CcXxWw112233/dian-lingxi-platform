@@ -261,7 +261,6 @@ export default class OutLineHeadItem extends Component {
                         .then(res => {
                             if (isApiResponseOk(res)) {
                                 let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.parentId);
-
                                 let addNodeValue = {
                                     id: res.id,
                                     tree_type: '2',
@@ -285,12 +284,12 @@ export default class OutLineHeadItem extends Component {
 
 
                                 //当前的添加按钮
-                                let addInputNodeValue = OutlineTree.getTreeAddNodeValue(outline_tree, param.add_id);
+                                let addInputNodeValue = OutlineTree.getTreeNodeValueByName(outline_tree, 'add_id', param.add_id);
                                 addInputNodeValue.start_time = null;
                                 addInputNodeValue.due_time = null;
                                 addInputNodeValue.time_span = 1;
                                 addInputNodeValue.name = '';
-                                addInputNodeValue.editing = false;
+                                addInputNodeValue.editing = true;
                                 this.updateOutLineTreeData(outline_tree);
                                 if (typeof calback == 'function') {
                                     calback()
@@ -501,7 +500,8 @@ export default class OutLineHeadItem extends Component {
                 }
                 break;
             case 'onBlur': {
-                let nodeValue = OutlineTree.getTreeAddNodeValue(outline_tree, param.add_id);
+                // let nodeValue = OutlineTree.getTreeAddNodeValue(outline_tree, param.add_id);
+                let nodeValue = OutlineTree.getTreeNodeValueByName(outline_tree, 'add_id', param.add_id);
                 if (nodeValue) {
 
                     // nodeValue.name = param.name;

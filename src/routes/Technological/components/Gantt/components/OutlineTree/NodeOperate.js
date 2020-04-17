@@ -225,7 +225,8 @@ export default class NodeOperate extends Component {
             return
         }
         let new_children = node.children || [];
-        new_children.push({ ...visual_add_item, editing: true, add_id: parent_id || id }) //插入创建的虚拟节点
+        // add_id: create_child ? id : parent_id || id 
+        new_children.push({ ...visual_add_item, editing: true, add_id: create_child ? id : parent_id || id }) //插入创建的虚拟节点
         node.children = new_children;
         // debugger
         dispatch({

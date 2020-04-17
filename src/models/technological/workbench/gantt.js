@@ -297,7 +297,7 @@ export default {
       const filnaly_outline_tree = new_outline_tree.map(item => {
         let new_item = { ...item, parent_expand: true }
         const { tree_type, children = [], is_expand } = item
-        let new_item_children = [...item.children]
+        let new_item_children = [...item.children].filter(item => item.id || (item.add_id && item.editing)) //一般项和正在编辑的输入框占位
         let child_expand_length = 0 //第一级父节点下所有子孙元素展开的总长
         const added = new_item_children.find(item => item.tree_type == '0') //表示是否已经添加过虚拟节点
         if ((tree_type == '1' || tree_type == '2') && !added) { //是里程碑或者一级任务,并且没有添加过
@@ -323,7 +323,7 @@ export default {
         new_item_children = new_item_children.map(item2 => {
           let new_item2 = { ...item2, parent_expand: is_expand, parent_type: tree_type, parent_id: item.id }
           const tree_type2 = item2.tree_type
-          const children2 = item2.children || []
+          const children2 = (item2.children || []).filter(item => item.id || (item.add_id && item.editing))
           let new_item_children2 = [...children2]
           const is_expand2 = item2.is_expand
 
