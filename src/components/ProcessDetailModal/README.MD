@@ -323,3 +323,29 @@ flow_file_id: "1244573880069263360"
 file_id: "1244573879729524736"
 file_resource_id: "1199652429776424960"
 file_name: "1.jpg"
+
+```
+# 评分人列表
+
+```json
+[
+  {
+    "passed": "2",
+    "user_id": "1195311878813913088",
+    "name": "一只加菲吖",
+    "avatar": "https://newdi-test-public.oss-cn-beijing.aliyuncs.com/2019-11-22/293c32e5af584288a238cc58d1c6a66f.jpg",
+    "suggestion": "符合报销流程",
+    "create_time": "1584582196000",
+    "ratingDetail": [
+      {
+        "key": "0",
+        "title": "评分项",
+        "weight_value": '100',
+        "grade_value": '100',
+        "description": '楼下老爷爷',
+      }
+    ]
+  },
+]
+
+
