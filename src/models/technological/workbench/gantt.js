@@ -446,12 +446,15 @@ export default {
           height: task_item_height,
         }
         let time_belong_area = false
+        let date_arr_one_level_length = date_arr_one_level.length
         if (getDigit(new_item[cal_left_field]) < getDigit(date_arr_one_level[0]['timestamp'])) { //如果该任务的起始日期在当前查看面板日期之前，就从最左边开始摆放
           new_item.left = -500
         } else {
-          for (let k = 0; k < date_arr_one_level.length; k++) {
+          for (let k = 0; k < date_arr_one_level_length; k++) {
             if (isSamDay(new_item[cal_left_field], date_arr_one_level[k]['timestamp'])) { //是同一天
+              const max_width = (date_arr_one_level_length - k) * ceilWidth //剩余最大可放长度
               new_item.left = k * ceilWidth
+              new_item.width = Math.min.apply(Math, [max_width, time_span * ceilWidth]) //取最小可放的
               time_belong_area = true
               break
             }
