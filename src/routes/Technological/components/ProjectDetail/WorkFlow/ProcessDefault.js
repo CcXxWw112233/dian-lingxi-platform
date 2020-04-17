@@ -125,7 +125,7 @@ class ProcessDefault extends Component {
               "title": "评分项",
               "weight_value": '100',
               "grade_value": '100',
-              "description": '楼下老爷爷',
+              "description": '有些爱像断线纸鸢,结局悲于手中线,有些爱像断线纸鸢,结局悲于手中线,有些爱像断线纸鸢,结局悲于手中线',
             },
             {
               "key": "1",
