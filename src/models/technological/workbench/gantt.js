@@ -267,6 +267,13 @@ export default {
               data: data//res.data
             }
           })
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              outline_tree: [],
+              outline_tree_round: []
+            }
+          })
         } else {
           yield put({
             type: 'handleOutLineTreeData',
