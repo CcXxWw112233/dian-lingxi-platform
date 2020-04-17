@@ -445,14 +445,21 @@ export default {
           width: time_span * ceilWidth,
           height: task_item_height,
         }
+        let time_belong_area = false
         if (getDigit(new_item[cal_left_field]) < getDigit(date_arr_one_level[0]['timestamp'])) { //如果该任务的起始日期在当前查看面板日期之前，就从最左边开始摆放
           new_item.left = -500
         } else {
           for (let k = 0; k < date_arr_one_level.length; k++) {
             if (isSamDay(new_item[cal_left_field], date_arr_one_level[k]['timestamp'])) { //是同一天
               new_item.left = k * ceilWidth
+              time_belong_area = true
               break
             }
+          }
+          if (!time_belong_area) {//如果在当前视图右期间外
+            new_item.width = 0
+            new_item.time_span = 0
+            new_item.left = 0
           }
         }
         return new_item
