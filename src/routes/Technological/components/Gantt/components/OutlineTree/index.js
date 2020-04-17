@@ -522,7 +522,8 @@ const getNode = (outline_tree, id) => {
                         return nodeValue;
                     }
                 } else {
-                    return null;
+                    continue
+                    // return null;
                 }
             }
         }
@@ -594,7 +595,8 @@ const getAddNode = (outline_tree, add_id) => {
                         return nodeValue;
                     }
                 } else {
-                    return null;
+                    continue
+                    // return null;
                 }
             }
         }
