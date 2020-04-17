@@ -9,6 +9,7 @@ import { getOrgIdByBoardId } from '@/utils/businessFunction';
 import moment from 'moment';
 import AvatarList from '@/components/avatarList'
 import NodeOperate from './NodeOperate'
+import { validatePositiveInt } from '../../../../../../utils/verify';
 class TreeNode extends Component {
     constructor(props) {
         //console.log("TreeNode", props);
@@ -165,21 +166,25 @@ class TreeNode extends Component {
     onManHourChange = (value) => {
         const { outline_tree_round = [] } = this.props;
         const { nodeValue = {} } = this.state;
-        if (value > 999) {
+        if(!validatePositiveInt(value)) {
+            return
+        }
+        const new_value = Number(value)
+        if (new_value > 999) {
             message.warn('设置天数最大支持999天');
             return;
         }
-        const newNodeValue = { ...nodeValue, time_span: value };
+        const newNodeValue = { ...nodeValue, time_span: new_value };
         if (newNodeValue.is_has_start_time && newNodeValue.is_has_end_time) {
             //开始时间不变，截至时间后移
-            newNodeValue.due_time = moment(newNodeValue.start_time).add(value - 1, 'days').hour(23).minute(59).second(59).valueOf();
+            newNodeValue.due_time = moment(newNodeValue.start_time).add(new_value - 1, 'days').hour(23).minute(59).second(59).valueOf();
 
         } else {
             if (newNodeValue.is_has_start_time) {
-                newNodeValue.due_time = moment(newNodeValue.start_time).add(value - 1, 'days').hour(23).minute(59).second(59).valueOf();
+                newNodeValue.due_time = moment(newNodeValue.start_time).add(new_value - 1, 'days').hour(23).minute(59).second(59).valueOf();
             }
             if (newNodeValue.is_has_end_time) {
-                newNodeValue.start_time = moment(newNodeValue.start_time).add(value - 1, 'days').hour(0).minute(0).second(0).valueOf();
+                newNodeValue.start_time = moment(newNodeValue.start_time).add(new_value - 1, 'days').hour(0).minute(0).second(0).valueOf();
             }
         }
 
