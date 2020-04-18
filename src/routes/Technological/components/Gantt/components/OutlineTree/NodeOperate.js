@@ -110,6 +110,9 @@ export default class NodeOperate extends Component {
                 message.error(res.message)
             }
         })
+        this.setState({
+            group_value: ''
+        })
     }
     addGroupCalback = (arg) => {
         const { dispatch, about_group_boards = [], gantt_board_id } = this.props

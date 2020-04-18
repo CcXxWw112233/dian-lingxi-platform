@@ -737,3 +737,17 @@ export const jsonArrayCompareSort = function (prop, handleValue) {
     }
   }
 }
+
+// 将时间戳转换成所需要的时间戳
+export const getDigit = (timestamp) => {
+  if (!timestamp) {
+    return 0
+  }
+  let new_timestamp = timestamp.toString()
+  if (new_timestamp.length == 10) {
+    new_timestamp = Number(new_timestamp) * 1000
+  } else {
+    new_timestamp = Number(new_timestamp)
+  }
+  return new_timestamp
+}

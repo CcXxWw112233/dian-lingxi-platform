@@ -10,7 +10,7 @@ import { message } from 'antd';
 import MilestoneDetail from '../milestoneDetail'
 import { checkIsHasPermission, checkIsHasPermissionInBoard } from '../../../../../../utils/businessFunction';
 import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_CREATE } from '../../../../../../globalset/js/constant';
-import { isSamDay } from '../../../../../../utils/util';
+import { isSamDay, getDigit } from '../../../../../../utils/util';
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
 const getEffectOrReducerByName = name => `gantt/${name}`
@@ -224,7 +224,7 @@ export default class GetRowStrip extends PureComponent {
                 paddingLeft = ceilWidth / 2 - 2
             }
         }
-
+        console.log('paddingLeft', paddingLeft)
         return (
             <div
                 onClick={() => this.miletonesClick(due_time)}
@@ -232,7 +232,8 @@ export default class GetRowStrip extends PureComponent {
                 style={{
                     display,
                     marginLeft,
-                    paddingLeft
+                    paddingLeft,
+                    display: paddingLeft == 42 ? 'none' : 'flex'
                 }}>
                 <div
                     style={{
@@ -723,6 +724,7 @@ export default class GetRowStrip extends PureComponent {
         const index = date_arr_one_level.findIndex(item => isSamDay(item.timestamp, gold_time)) //当天所在位置index
         let isInViewArea = false //是否在可视区域
         let direction = '' //在右还是在左
+        let date_arr_one_level_length = date_arr_one_level.length
         // console.log('sssssssssssara', scrollLeft, left, width, left - width, index)
         if (scrollLeft < left && scrollLeft > left - width) {//在可视区域。
             isInViewArea = true
@@ -736,10 +738,20 @@ export default class GetRowStrip extends PureComponent {
                 }
             } else { //目标时间不包含在列表内
                 console.log('leftleftleft', left)
-                if (left) { //在区间左侧
-                    direction = 'left'
-                } else { //在区间右侧
+                // if (left) { //在区间左侧
+                //     direction = 'left'
+                // } else { //在区间右侧
+                //     direction = 'right'
+                // }
+                if (
+                    tree_type == '1' && getDigit(due_time) > getDigit(date_arr_one_level[date_arr_one_level_length - 1]['timestamp']) ||
+                    tree_type == '2' && ( //任务或里程碑在可视区域右区间外
+                        getDigit(start_time) > getDigit(date_arr_one_level[date_arr_one_level_length - 1]['timestamp'])
+                    )
+                ) {//任务或里程碑在可视区域左区间外
                     direction = 'right'
+                } else {
+                    direction = 'left'
                 }
             }
         }
