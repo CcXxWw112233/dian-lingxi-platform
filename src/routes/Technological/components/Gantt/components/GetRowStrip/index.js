@@ -224,7 +224,10 @@ export default class GetRowStrip extends PureComponent {
                 paddingLeft = ceilWidth / 2 - 2
             }
         }
-        console.log('paddingLeft', paddingLeft)
+        if(left == '0') {
+            display = 'none'
+        }
+        console.log('marginLeft', marginLeft)
         return (
             <div
                 onClick={() => this.miletonesClick(due_time)}
@@ -233,7 +236,6 @@ export default class GetRowStrip extends PureComponent {
                     display,
                     marginLeft,
                     paddingLeft,
-                    display: paddingLeft == 42 ? 'none' : 'flex'
                 }}>
                 <div
                     style={{

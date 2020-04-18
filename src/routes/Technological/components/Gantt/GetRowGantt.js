@@ -606,7 +606,7 @@ export default class GetRowGantt extends Component {
             const { end_time, left, top, id, start_time, tree_type, parent_expand, is_expand } = value
             const juge_expand = (tree_type == '0' || tree_type == '3') ? parent_expand : (parent_expand && is_expand)
             return (
-              (tree_type == '2' || tree_type == "3") && parent_expand && (
+              (tree_type == '2' || tree_type == "3") && parent_expand && !!left && (
                 <GetRowTaskItem
                   key={`${id}_${start_time}_${end_time}_${left}_${top}`}
                   itemValue={value}
