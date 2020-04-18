@@ -224,7 +224,7 @@ export default class GetRowStrip extends PureComponent {
                 paddingLeft = ceilWidth / 2 - 2
             }
         }
-        if(left == '0') {
+        if(marginLeft == '0') {
             display = 'none'
         }
         console.log('marginLeft', marginLeft)
