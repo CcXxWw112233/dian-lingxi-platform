@@ -47,7 +47,7 @@ const CardDropDetail = ({ list }) => {
                             <div className={styles.time_area}
                                 style={{ background: filterDueTimeSpan(cal_time_span_params).is_overdue && is_realize != '1' ? '#FF7875' : '#69C0FF' }}>
                                 {handleTimeStampToDate(new_start_time)}
-                                {due_time && '—'}
+                                {(due_time && due_time != '0') ? '—' : ''}
                                 {handleTimeStampToDate(new_due_time)}
                                 <span style={{ marginLeft: 6 }}>
                                     {filterDueTimeSpan(cal_time_span_params).due_description}

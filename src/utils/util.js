@@ -652,26 +652,26 @@ export const isObjectValueEqual = (obj1, obj2) => {
   }
   let aProps = Object.getOwnPropertyNames(obj1);
   let bProps = Object.getOwnPropertyNames(obj2);
-   if (aProps.length != bProps.length) {
-        return false;
-   }
-   for (let i = 0; i < aProps.length; i++) {
-     let propName = aProps[i]
+  if (aProps.length != bProps.length) {
+    return false;
+  }
+  for (let i = 0; i < aProps.length; i++) {
+    let propName = aProps[i]
 
-     let propA = obj1[propName]
-     let propB = obj2[propName]
-     if ((typeof (propA) === 'object')) {
-       if (isObjectValueEqual(propA, propB)) {
-           // return true     这里不能return ,后面的对象还没判断
-         } else {
-           return false
-         }
-     } else if (propA !== propB) {
-       return false
-     } else { }
-   }
+    let propA = obj1[propName]
+    let propB = obj2[propName]
+    if ((typeof (propA) === 'object')) {
+      if (isObjectValueEqual(propA, propB)) {
+        // return true     这里不能return ,后面的对象还没判断
+      } else {
+        return false
+      }
+    } else if (propA !== propB) {
+      return false
+    } else { }
+  }
   return true
- }
+}
 
 /**
  * 比较两个数组是否相等
@@ -713,6 +713,44 @@ export const isArrayEqual = (arrya1, array2) => {
 
 // 将时间戳统一转化成13位
 export const transformTimestamp = (timestamp) => {
+  if (!timestamp) {
+    return 0
+  }
+  let new_timestamp = timestamp.toString()
+  if (new_timestamp.length == 10) {
+    new_timestamp = Number(new_timestamp) * 1000
+  } else {
+    new_timestamp = Number(new_timestamp)
+  }
+  return new_timestamp
+}
+
+
+// json对象数组排序 arr.sort(jsonArrayCompareSort(key))
+export const jsonArrayCompareSort = function (prop, handleValue) {
+  return function (obj1, obj2) {
+    let val1 = obj1[prop]
+    let val2 = obj2[prop]
+    if (!isNaN(Number(val1)) && !isNaN(Number(val2))) {
+      val1 = Number(val1)
+      val2 = Number(val2)
+    }
+    if (typeof handleValue == 'function') { //数据需要再进一步处理
+      val1 = handleValue(val1)
+      val2 = handleValue(val2)
+    }
+    if (val1 < val2) {
+      return -1
+    } else if (val1 > val2) {
+      return 1
+    } else {
+      return 0
+    }
+  }
+}
+
+// 将时间戳转换成所需要的时间戳
+export const getDigit = (timestamp) => {
   if (!timestamp) {
     return 0
   }

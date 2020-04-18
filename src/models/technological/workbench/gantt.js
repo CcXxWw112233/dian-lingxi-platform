@@ -18,10 +18,11 @@ import {
 } from './selects'
 import { createMilestone } from "../../../services/technological/prjectDetail";
 import { getGlobalData } from '../../../utils/businessFunction';
-import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, visual_item, mock_gantt_data, ganttIsOutlineView, mock_outline_tree } from '../../../routes/Technological/components/Gantt/constants';
+import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, mock_gantt_data, ganttIsOutlineView, mock_outline_tree } from '../../../routes/Technological/components/Gantt/constants';
 import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
 import { handleChangeBoardViewScrollTop, setGantTimeSpan } from '../../../routes/Technological/components/Gantt/ganttBusiness';
+import { jsonArrayCompareSort, transformTimestamp } from '../../../utils/util';
 
 let dispatches = null
 const visual_add_item = {
@@ -97,7 +98,7 @@ export default {
       panel_outline_create_card_params: {}, //大纲视图下，面板拖拽创建任务通过弹窗创建才需要这个参数
       boardTemplateShow: 0,
       startPlanType: 0,
-      outline_current_oprate_add_id: '', //大纲视图下面板拖拽创建任务所属add_id
+      // outline_current_oprate_add_id: '', //大纲视图下面板拖拽创建任务所属add_id
     },
   },
   subscriptions: {
@@ -266,6 +267,13 @@ export default {
               data: data//res.data
             }
           })
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              outline_tree: [],
+              outline_tree_round: []
+            }
+          })
         } else {
           yield put({
             type: 'handleOutLineTreeData',
@@ -289,14 +297,18 @@ export default {
       const date_arr_one_level = yield select(workbench_date_arr_one_level)
 
       let new_outline_tree = [...data]
+      const tree_arr_1 = data.filter(item => item.tree_type == '1').sort(jsonArrayCompareSort('due_time', transformTimestamp)) //里程碑截止时间由近及远
+      const tree_arr_2 = data.filter(item => item.tree_type != '1').sort(jsonArrayCompareSort('start_time', transformTimestamp))
+      new_outline_tree = [].concat(tree_arr_1, tree_arr_2)//先把里程碑排进去，再排没有归属的任务
+
       const filnaly_outline_tree = new_outline_tree.map(item => {
         let new_item = { ...item, parent_expand: true }
         const { tree_type, children = [], is_expand } = item
-        let new_item_children = [...item.children]
+        let new_item_children = [...item.children].filter(item => item.id || (item.add_id && item.editing)) //一般项和正在编辑的输入框占位
         let child_expand_length = 0 //第一级父节点下所有子孙元素展开的总长
         const added = new_item_children.find(item => item.tree_type == '0') //表示是否已经添加过虚拟节点
         if ((tree_type == '1' || tree_type == '2') && !added) { //是里程碑或者一级任务,并且没有添加过
-          new_item_children.push({ ...visual_add_item, add_id: item.id }) //添加虚拟节点
+          // new_item_children.push({ ...visual_add_item, add_id: item.id }) //添加虚拟节点
         }
 
         // 时间跨度设置
@@ -316,9 +328,9 @@ export default {
         new_item.time_span = time_span
 
         new_item_children = new_item_children.map(item2 => {
-          let new_item2 = { ...item2, parent_expand: is_expand }
+          let new_item2 = { ...item2, parent_expand: is_expand, parent_type: tree_type, parent_id: item.id }
           const tree_type2 = item2.tree_type
-          const children2 = item2.children || []
+          const children2 = (item2.children || []).filter(item => item.id || (item.add_id && item.editing))
           let new_item_children2 = [...children2]
           const is_expand2 = item2.is_expand
 
@@ -343,14 +355,14 @@ export default {
           }
           const added2 = new_item_children2.find(item => item.tree_type == '0') //表示是否已经添加过虚拟节点
           if ((tree_type2 == '1' || tree_type2 == '2') && !added2) { //是里程碑或者一级任务
-            new_item_children2.push({ ...visual_add_item, add_id: item2.id }) //添加虚拟节点
+            // new_item_children2.push({ ...visual_add_item, add_id: item2.id }) //添加虚拟节点
           }
           if (tree_type == '1') { //父元素是里程碑类型
             new_item2.parent_milestone_id = item.id
           }
           if (tree_type == '1') { //如果第一级是里程碑才有第三级
             new_item_children2 = new_item_children2.map(item3 => {
-              let new_item3 = { ...item3, parent_expand: new_item2.parent_expand && new_item2.is_expand }
+              let new_item3 = { ...item3, parent_expand: new_item2.parent_expand && new_item2.is_expand, parent_type: tree_type2, parent_id: item2.id }
               if (is_expand && is_expand2) {
                 child_expand_length += 1
               }
@@ -433,15 +445,41 @@ export default {
           width: time_span * ceilWidth,
           height: task_item_height,
         }
-        if (getDigit(new_item[cal_left_field]) < getDigit(date_arr_one_level[0]['timestamp'])) { //如果该任务的起始日期在当前查看面板日期之前，就从最左边开始摆放
-          new_item.left = -500
+        let time_belong_area = false
+        let date_arr_one_level_length = date_arr_one_level.length
+        if (
+          (
+            tree_type == '1' && (
+              getDigit(new_item['due_time']) < getDigit(date_arr_one_level[0]['timestamp']) ||
+              getDigit(new_item['due_time']) > getDigit(date_arr_one_level[date_arr_one_level_length - 1]['timestamp'])
+            )
+          ) || //里程碑只需考虑截止在区间外
+          (
+            tree_type == '2' && ( //任务在可视区域左右区间外
+              (getDigit(new_item['due_time']) < getDigit(date_arr_one_level[0]['timestamp'])) &&
+              (getDigit(start_time) < getDigit(date_arr_one_level[0]['timestamp']))
+            ) ||
+            getDigit(new_item['start_time']) > getDigit(date_arr_one_level[date_arr_one_level_length - 1]['timestamp'])
+          )
+        ) { //如果该任务的起始日期在当前查看面板日期之前，就从最左边开始摆放
+          // new_item.left = -500
+          new_item.width = 60
+          new_item.left = 0
         } else {
-          for (let k = 0; k < date_arr_one_level.length; k++) {
+          for (let k = 0; k < date_arr_one_level_length; k++) {
             if (isSamDay(new_item[cal_left_field], date_arr_one_level[k]['timestamp'])) { //是同一天
+              const max_width = (date_arr_one_level_length - k) * ceilWidth //剩余最大可放长度
               new_item.left = k * ceilWidth
+              new_item.width = Math.min.apply(Math, [max_width, (time_span || 1) * ceilWidth]) //取最小可放的
+              time_belong_area = true
               break
             }
           }
+          // if (!time_belong_area) {//如果在当前视图右期间外
+          //   new_item.width = 0
+          //   new_item.time_span = 0
+          //   new_item.left = 0
+          // }
         }
         return new_item
       })

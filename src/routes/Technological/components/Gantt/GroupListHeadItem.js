@@ -527,8 +527,8 @@ export default class GroupListHeadItem extends Component {
   // 项目删除 --- S
   deleteProject = ({ board_id }) => {
     const that = this
-    const modal = Modal.confirm();
-    modal.update({
+    // const modal = Modal.confirm();
+    Modal.confirm({
       title: `确认要删除该${currentNounPlanFilterName(PROJECTS)}吗？`,
       content: <div style={{ color: 'rgba(0,0,0, .8)', fontSize: 14 }}>
         <span >删除后将无法获取该{currentNounPlanFilterName(PROJECTS)}的相关动态</span>
@@ -545,14 +545,14 @@ export default class GroupListHeadItem extends Component {
               type: 'workbench/getProjectList',
               payload: {}
             });
-            modal.destroy();
+            // modal.destroy();
           } else {
             message.warn(res.message)
           }
         })
       },
       onCancel: () => {
-        modal.destroy();
+        // modal.destroy();
       }
     });
   }
@@ -976,6 +976,16 @@ export default class GroupListHeadItem extends Component {
               {
                 group_view_type == '2' && !get_gantt_data_loading && (
                   <Avatar src={lane_icon} icon="user" style={{ marginTop: '-4px', marginRight: 8 }}></Avatar>
+                )
+              }
+              {
+                group_view_type == '1' && (
+                  gantt_board_id == '0' ? (
+                    <div className={`${globalStyles.authTheme}`} style={{ fontSize: 15, color: '#1890FF', lineHeight: '24px', marginRight: 4 }}>&#xe67d;</div>
+                  ) : (
+                      list_id != '0' &&
+                      <div className={`${globalStyles.authTheme}`} style={{ fontSize: 15, color: '#1890FF', lineHeight: '24px', marginRight: 4 }}>&#xe899;</div>
+                    )
                 )
               }
               {

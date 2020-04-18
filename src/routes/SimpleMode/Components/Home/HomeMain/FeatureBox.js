@@ -14,41 +14,41 @@ class FeatureBox extends Component {
 
   componentWillMount() { }
 
-  componentWillReceiveProps(nextProps) {
-    const { projectList: old_projectList } = this.props;
-    const { dispatch, projectList } = nextProps;
-    if ((!old_projectList || old_projectList.length == 0) && projectList.length > 0) {
-      const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
-      const { user_set = {} } = userInfo
-      const selectBoard = projectList.filter(item => item.board_id === user_set.current_board && item.org_id === user_set.current_org);
+  // componentWillReceiveProps(nextProps) {
+  //   const { projectList: old_projectList } = this.props;
+  //   const { dispatch, projectList } = nextProps;
+  //   if ((!old_projectList || old_projectList.length == 0) && projectList.length > 0) {
+  //     const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
+  //     const { user_set = {} } = userInfo
+  //     const selectBoard = projectList.filter(item => item.board_id === user_set.current_board && item.org_id === user_set.current_org);
 
-      if (selectBoard && selectBoard.length > 0) {
-        //设置当前选中的项目
-        setBoardIdStorage(user_set.current_board);
-        dispatch({
-          type: 'simplemode/updateDatas',
-          payload: {
-            simplemodeCurrentProject: { ...selectBoard[0] }
-          }
-        });
-        // dispatch({
-        //   type: 'technological/updateDatas',
-        //   payload: {
-        //     currentSelectedProjectOrgIdByBoardId: selectBoard[0].board_id
-        //   }
-        // })
-      } else {
-        dispatch({
-          type: 'simplemode/updateDatas',
-          payload: {
-            simplemodeCurrentProject: {}
-          }
-        });
-      }
-    }
+  //     if (selectBoard && selectBoard.length > 0) {
+  //       //设置当前选中的项目
+  //       setBoardIdStorage(user_set.current_board);
+  //       dispatch({
+  //         type: 'simplemode/updateDatas',
+  //         payload: {
+  //           simplemodeCurrentProject: { ...selectBoard[0] }
+  //         }
+  //       });
+  //       // dispatch({
+  //       //   type: 'technological/updateDatas',
+  //       //   payload: {
+  //       //     currentSelectedProjectOrgIdByBoardId: selectBoard[0].board_id
+  //       //   }
+  //       // })
+  //     } else {
+  //       dispatch({
+  //         type: 'simplemode/updateDatas',
+  //         payload: {
+  //           simplemodeCurrentProject: {}
+  //         }
+  //       });
+  //     }
+  //   }
 
 
-  }
+  // }
 
   addMyWorkBoxs = () => {
     this.props.setHomeVisible({
