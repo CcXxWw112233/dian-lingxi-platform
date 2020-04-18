@@ -45,7 +45,7 @@ export default class ConfirmInfoThree_one extends Component {
                     <p>
                       <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer' }}>
                         <Tooltip title={title} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                          <span style={{ marginRight: '9px' }}>{title}:</span>
+                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: '130px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{title}:</span>
                         </Tooltip>
                         {
                           weight_coefficient == '1' && (
