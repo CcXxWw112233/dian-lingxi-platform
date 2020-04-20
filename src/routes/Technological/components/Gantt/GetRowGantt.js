@@ -582,8 +582,9 @@ export default class GetRowGantt extends Component {
                 paddingRight: 8,
                 zIndex: this.isDragging ? 2 : 1
               }} >
-              {Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth) - drag_holiday_count}
-              {Math.ceil(currentRect.width / ceilWidth) != 1 && (drag_holiday_count > 0 ? `+${drag_holiday_count}` : '')}
+              {Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth)}
+              {/* {Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth) - drag_holiday_count}
+              {Math.ceil(currentRect.width / ceilWidth) != 1 && (drag_holiday_count > 0 ? `+${drag_holiday_count}` : '')} */}
             </div>
           )
         }

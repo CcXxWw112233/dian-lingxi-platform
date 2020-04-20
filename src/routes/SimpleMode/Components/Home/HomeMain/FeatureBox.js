@@ -107,6 +107,13 @@ class FeatureBox extends Component {
           }
         })
       }
+    } else if (code == 'board:plans') {
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          group_view_type: '1'
+        }
+      });
     }
 
     dispatch({

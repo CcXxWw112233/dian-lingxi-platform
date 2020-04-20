@@ -63,7 +63,7 @@ export default {
       ceilWidth: 44, //单元格的宽度
       ceiHeight: ceil_height, //单元格高度 40 + 12的外边距
       date_total: 0, //总天数
-      group_rows: [3, 3, 3], //每一个分组默认行数 [7, 7, 7]
+      group_rows: [2, 2, 2], //每一个分组默认行数 [7, 7, 7]
       group_list_area: [], //分组高度区域 [组一行数 * ceiHeight，组二行数 * ceiHeight]
       group_list_area_section_height: [], //分组高度区域总高度 [组一行数 * ceiHeight，(组一行数 + 组二行数) * ceiHeight， ...]
       isDragging: false, //甘特图是否在拖拽中
@@ -690,7 +690,7 @@ export default {
         const list_height_arr = list_group[i]['list_data'].map(item => item.top)
         const list_group_item_height = Math.max.apply(null, list_height_arr) + 2 * ceiHeight - after_group_height
 
-        group_rows[i] = (list_group_item_height / ceiHeight) < 3 ? 3 : list_group_item_height / ceiHeight // 原来是5，现在是1
+        group_rows[i] = (list_group_item_height / ceiHeight) < 2 ? 2 : list_group_item_height / ceiHeight // 原来是3，现在是2
         if (list_group[i].list_id == '0') { //默认分组要设置得很高
           group_rows[i] = group_rows[i] + 30
         }

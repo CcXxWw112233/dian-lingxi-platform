@@ -627,12 +627,12 @@ export default class GroupListHeadItem extends Component {
 
     return (
       <Menu onClick={this.handleMenuSelect} onOpenChange={this.onOpenChange}>
-        {
+        {/* {
           checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, params_board_id) &&
           <Menu.Item key={'invitation'}>
             邀请成员加入
           </Menu.Item>
-        }
+        } */}
         {/* 渲染分组|项目对应的访问控制 */}
         {
           checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, params_board_id) && renderVistorContorlVisible && (
@@ -650,11 +650,11 @@ export default class GroupListHeadItem extends Component {
           checkIsHasPermissionInBoard(rename_permission_code, params_board_id) &&
           <Menu.Item key={'rename'}>重命名</Menu.Item>
         }
-        {
+        {/* {
           gantt_board_id == '0' && (
             <Menu.Item key={'board_info'}>项目信息</Menu.Item>
           )
-        }
+        } */}
         {
           gantt_board_id == '0' && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_ARCHIVE, params_board_id) && (
             <Menu.Item key={'archived'}>归档</Menu.Item>
@@ -1018,7 +1018,7 @@ export default class GroupListHeadItem extends Component {
               {/* 逾期任务 */}
               {
                 ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) && Number(lane_overdue_count) > 0 && (
-                  <div className={indexStyles.due_time_card_total} title={`存在${lane_overdue_count}条逾期未完成任务`} >{lane_overdue_count}</div>
+                  <div className={indexStyles.due_time_card_total} title={`存在${lane_overdue_count}条逾期任务`} >{lane_overdue_count}</div>
                 )
               }
               {/* 置顶 */}

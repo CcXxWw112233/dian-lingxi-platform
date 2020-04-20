@@ -274,9 +274,10 @@ export default class ProjectRole extends React.Component {
                   <div className={indexStyles.parrentPanaelHeader_l}>
                     <div>{name}</div>
                     {system_role === '1'? (
-                      <div>系统角色</div>
+                      ''
+                      // <div> 系统角色 </div>
                     ):(
-                      is_default === '1' ? (<div>默认角色</div>) : ('')
+                      is_default === '1' ? (<div>默认</div>) : ('')
                     )}
                   </div>
                   <div className={indexStyles.parrentPanaelHeader_r} style={{display: 'block'}}>
@@ -287,7 +288,7 @@ export default class ProjectRole extends React.Component {
                     ):('')}
                   </div>
                 </div>} key={parentKey}>
-                <div style={{color: '#8c8c8c'}}>可行使权限：</div>
+                {/* <div style={{color: '#8c8c8c'}}>可行使权限：</div> */}
                 <Collapse bordered={false} >
                   {/*二级折叠*/}
                   {function_tree_data.map((value, childKey) => {
@@ -323,7 +324,7 @@ export default class ProjectRole extends React.Component {
                     )
                   })}
                 </Collapse>
-                <div style={{color: '#8c8c8c', marginTop: 16}}>可访问内容：</div>
+                {/* <div style={{color: '#8c8c8c', marginTop: 16}}>可访问内容：</div> */}
                 <div style={{marginTop: 10}}>
                   {/*<TreeSelect*/}
                     {/*treeData={canVisittreeData}*/}
