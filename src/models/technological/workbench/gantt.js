@@ -267,6 +267,13 @@ export default {
               data: data//res.data
             }
           })
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              outline_tree: [],
+              outline_tree_round: []
+            }
+          })
         } else {
           yield put({
             type: 'handleOutLineTreeData',
@@ -438,15 +445,41 @@ export default {
           width: time_span * ceilWidth,
           height: task_item_height,
         }
-        if (getDigit(new_item[cal_left_field]) < getDigit(date_arr_one_level[0]['timestamp'])) { //如果该任务的起始日期在当前查看面板日期之前，就从最左边开始摆放
-          new_item.left = -500
+        let time_belong_area = false
+        let date_arr_one_level_length = date_arr_one_level.length
+        if (
+          (
+            tree_type == '1' && (
+              getDigit(new_item['due_time']) < getDigit(date_arr_one_level[0]['timestamp']) ||
+              getDigit(new_item['due_time']) > getDigit(date_arr_one_level[date_arr_one_level_length - 1]['timestamp'])
+            )
+          ) || //里程碑只需考虑截止在区间外
+          (
+            tree_type == '2' && ( //任务在可视区域左右区间外
+              (getDigit(new_item['due_time']) < getDigit(date_arr_one_level[0]['timestamp'])) &&
+              (getDigit(start_time) < getDigit(date_arr_one_level[0]['timestamp']))
+            ) ||
+            getDigit(new_item['start_time']) > getDigit(date_arr_one_level[date_arr_one_level_length - 1]['timestamp'])
+          )
+        ) { //如果该任务的起始日期在当前查看面板日期之前，就从最左边开始摆放
+          // new_item.left = -500
+          new_item.width = 60
+          new_item.left = 0
         } else {
-          for (let k = 0; k < date_arr_one_level.length; k++) {
+          for (let k = 0; k < date_arr_one_level_length; k++) {
             if (isSamDay(new_item[cal_left_field], date_arr_one_level[k]['timestamp'])) { //是同一天
+              const max_width = (date_arr_one_level_length - k) * ceilWidth //剩余最大可放长度
               new_item.left = k * ceilWidth
+              new_item.width = Math.min.apply(Math, [max_width, (time_span || 1) * ceilWidth]) //取最小可放的
+              time_belong_area = true
               break
             }
           }
+          // if (!time_belong_area) {//如果在当前视图右期间外
+          //   new_item.width = 0
+          //   new_item.time_span = 0
+          //   new_item.left = 0
+          // }
         }
         return new_item
       })

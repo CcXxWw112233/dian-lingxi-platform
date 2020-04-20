@@ -195,10 +195,10 @@ export default class GroupListHead extends Component {
                   changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto} deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
                 />
                 <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
-                {
+                {/* {
                   startPlanType == 1 &&
                   <OutlineGuideModal handleClose={this.guideModalHandleClose} />
-                }
+                } */}
               </div>
             }
             {
