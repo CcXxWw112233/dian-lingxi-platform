@@ -141,6 +141,7 @@ textarea::-webkit-input-placeholder {
   }
   // 评分项
   .ratingItems {
+    cursor: pointer;
     width: 100%;
     min-height:138px;
     background:rgba(0,0,0,0.02);
@@ -184,6 +185,7 @@ textarea::-webkit-input-placeholder {
       }
       .rating_weight {
         color: #1890FF;
+        vertical-align: middle;
       }
     }
     .rating_active_width {
@@ -318,6 +320,13 @@ textarea::-webkit-input-placeholder {
   line-height:48px;
   text-align: center;
   .back_icon {
+    color: rgba(0,0,0,0.45);
+    cursor: pointer;
+    &:hover {
+      color: rgba(0,0,0,0.65);
+    }
+  }
+  .rating_close {
     color: rgba(0,0,0,0.45);
     cursor: pointer;
     &:hover {
