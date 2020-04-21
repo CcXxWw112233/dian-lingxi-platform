@@ -45,8 +45,8 @@ export default class EditStepTypeThree_one extends Component {
 
   render() {
     const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id } } = this.props
-    const { weight_coefficient, clientWidth } = itemValue
-    const { scoreList = [] } = this.state
+    const { weight_coefficient } = itemValue
+    const { scoreList = [], clientWidth } = this.state
     let flag = this.whetherShowDiffWidth()
     return (
       <div>
