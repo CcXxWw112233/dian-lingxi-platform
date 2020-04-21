@@ -12,7 +12,23 @@ export default class EditStepTypeThree_one extends Component {
     super(props)
     this.state = {
       scoreList: props.itemValue && props.itemValue.scoreList ? JSON.parse(JSON.stringify(props.itemValue.scoreList || [])) : [],
+      clientWidth: document.getElementById(`ratingItems_${props.itemKey}`) ? document.getElementById(`ratingItems_${props.itemKey}`).clientWidth : 800,
     }
+    this.resizeTTY = this.resizeTTY.bind(this)
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.resizeTTY)
+  }
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.resizeTTY);
+  }
+  resizeTTY = () => {
+    const { itemKey } = this.props
+    const clientWidth = document.getElementById(`ratingItems_${itemKey}`) ? document.getElementById(`ratingItems_${itemKey}`).clientWidth - 200 : document.documentElement.clientWidth
+    this.setState({
+      clientWidth
+    })
   }
 
   whetherShowDiffWidth = () => {
@@ -29,7 +45,7 @@ export default class EditStepTypeThree_one extends Component {
 
   render() {
     const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id } } = this.props
-    const { weight_coefficient } = itemValue
+    const { weight_coefficient, clientWidth } = itemValue
     const { scoreList = [] } = this.state
     let flag = this.whetherShowDiffWidth()
     return (
@@ -45,7 +61,7 @@ export default class EditStepTypeThree_one extends Component {
                     <p>
                       <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer', display: 'inline-block' }}>
                         <Tooltip title={title} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: '130px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>:
+                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: clientWidth && !(flag && scoreList.length > 1) ? clientWidth + 'px' : '130px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>:
                         </Tooltip>
                         {
                           weight_coefficient == '1' && (
@@ -57,7 +73,7 @@ export default class EditStepTypeThree_one extends Component {
                       </span>
                       {
                         description != '' ? (
-                          <Popover title={<div style={{margin:'0 4px', overflow: 'hidden', textOverflow:'ellipsis', maxWidth: '260px', whiteSpace: 'nowrap'}}>{title}</div>} content={<div style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', maxWidth: '260px' }}>{description}</div>} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                          <Popover title={<div style={{margin:'0 4px', overflow: 'hidden', textOverflow:'ellipsis', maxWidth: '130px', whiteSpace: 'nowrap'}}>{title}</div>} content={<div style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', maxWidth: '130px' }}>{description}</div>} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
                             <span style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe84a;</span>
                           </Popover>
                         ) : ('')

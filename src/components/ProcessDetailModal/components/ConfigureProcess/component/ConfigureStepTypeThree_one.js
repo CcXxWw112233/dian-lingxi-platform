@@ -25,9 +25,6 @@ export default class ConfigureStepTypeThree_one extends Component {
   componentDidMount() {
     window.addEventListener('resize', this.resizeTTY)
   }
-  componentWillReceiveProps(nextProps) {
-    window.addEventListener('resize', this.resizeTTY)
-  }
   componentWillUnmount() {
     window.removeEventListener("resize", this.resizeTTY);
   }
@@ -296,7 +293,7 @@ export default class ConfigureStepTypeThree_one extends Component {
       }
     }
     new_data = new_data.map((item, i) => {
-      let new_item = {...item, key: i}
+      let new_item = {...item, key: String(i)}
       return new_item
     })
     this.setState({
