@@ -193,18 +193,36 @@ export default class GroupListHeadItem extends Component {
   listNameClick = () => {
     const { itemValue, gantt_board_id, dispatch, group_view_type } = this.props
     const { local_list_name } = this.state
-    if (group_view_type != '1' || gantt_board_id != '0') { //必须要在项目视图才能看
+    if (group_view_type != '1') { //必须要在项目视图 或项目分组才能看
       return
     }
     const { list_id } = itemValue
-    dispatch({
-      type: 'gantt/updateDatas',
-      payload: {
-        gantt_board_id: list_id,
-        list_group: [],
-      }
-    })
-    selectBoardToSeeInfo({ board_id: list_id, board_name: local_list_name, dispatch })
+    if (gantt_board_id == '0') {
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          gantt_board_id: list_id,
+          list_group: [],
+        }
+      })
+      selectBoardToSeeInfo({ board_id: list_id, board_name: local_list_name, dispatch })
+    } else {
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          group_view_type: '5',
+          gantt_board_list_id: list_id,
+          list_group: [],
+        }
+      })
+      dispatch({
+        type: 'gantt/getGanttData',
+        payload: {
+
+        }
+      })
+    }
+
     // dispatch({
     //   type: 'gantt/getGanttData',
     //   payload: {
