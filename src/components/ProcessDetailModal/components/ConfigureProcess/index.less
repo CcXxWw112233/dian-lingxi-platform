@@ -53,6 +53,7 @@ textarea::-webkit-input-placeholder {
   .popover_card {
     margin: 0 12px 0 26px;
     flex: 1;
+    flex-shrink: 0;
     min-height:192px;
     background:rgba(255,255,255,1);
     box-shadow:0px 0px 0px 2px rgba(230,247,255,1),0px 0px 8px 2px rgba(24,144,255,0.15);
@@ -617,6 +618,7 @@ textarea::-webkit-input-placeholder {
   left: 24px;
   // bottom: 0;
   z-index: -1;
+  flex-shrink: 0;
 }
 .circle{
   width:48px;
@@ -628,6 +630,7 @@ textarea::-webkit-input-placeholder {
   text-align: center;
   line-height: 48px;
   color: #1890FF;
+  flex-shrink: 0;
 }
 .hasnotCompetedLine{ // 理解成还没有开始时的样式
   width: 2px;
@@ -635,6 +638,7 @@ textarea::-webkit-input-placeholder {
   position: relative;
   top: 48px;
   left: 24px;
+  flex-shrink: 0;
   // bottom: 0;
   /* z-index: -30; */
 }
@@ -649,6 +653,7 @@ textarea::-webkit-input-placeholder {
   line-height: 48px;
   z-index: 1;
   font-size: 20px;
+  flex-shrink: 0;
 }
 .doingCircle{ // 正在进行中的步骤圈样式
   width: 48px;
@@ -662,6 +667,7 @@ textarea::-webkit-input-placeholder {
   color: #f5f5f5;
   z-index: 1;
   font-size: 20px;
+  flex-shrink: 0;
 }
 .doingLine{ // 正在进行中的步骤线的样式
   width: 2px;
@@ -669,6 +675,7 @@ textarea::-webkit-input-placeholder {
   position: relative;
   top: 46px;
   left: 24px;
+  flex-shrink: 0;
 }
 
 // 以下是配置卡片上以及步骤类型上的三角形

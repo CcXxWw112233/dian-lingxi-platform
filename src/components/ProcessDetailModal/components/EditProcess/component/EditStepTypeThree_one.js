@@ -43,22 +43,22 @@ export default class EditStepTypeThree_one extends Component {
                 return (
                   <div key={item} className={`${indexStyles.rating_itemsValue} ${flag && scoreList.length > 1 ? indexStyles.rating_active_width : indexStyles.rating_normal_width}`}>
                     <p>
-                      <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer' }}>
+                      <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer', display: 'inline-block' }}>
                         <Tooltip title={title} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: '130px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{title}:</span>
+                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: '130px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>:
                         </Tooltip>
                         {
                           weight_coefficient == '1' && (
                             <Tooltip overlayStyle={{ minWidth: '116px' }} title={`权重占比: ${weight_value}%`} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                              <span className={indexStyles.rating_weight}>{`*${weight_value}%`}</span>
+                              <span className={indexStyles.rating_weight}>&nbsp;&nbsp;{`*${weight_value}%`}</span>
                             </Tooltip>
                           )
                         }
                       </span>
                       {
                         description != '' ? (
-                          <Popover title={title} content={<div style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', width: '260px' }}>{description}</div>} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                            <span style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe785;</span>
+                          <Popover title={<div style={{margin:'0 4px', overflow: 'hidden', textOverflow:'ellipsis', maxWidth: '260px', whiteSpace: 'nowrap'}}>{title}</div>} content={<div style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', maxWidth: '260px' }}>{description}</div>} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                            <span style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe84a;</span>
                           </Popover>
                         ) : ('')
                       }

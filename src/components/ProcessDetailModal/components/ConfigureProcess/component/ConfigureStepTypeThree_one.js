@@ -17,7 +17,26 @@ export default class ConfigureStepTypeThree_one extends Component {
       currentSelectItemIndex: '', // 当前选中的元素下标
       currentSelectItemDescription: '', // 当前选择的元素的描述内容
       popoverVisible: false, // 配置的气泡框是否可见 false 为不可见
+      clientWidth: document.getElementById(`ratingItems_${props.itemKey}`) ? document.getElementById(`ratingItems_${props.itemKey}`).clientWidth : 800,
     }
+    this.resizeTTY = this.resizeTTY.bind(this)
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.resizeTTY)
+  }
+  componentWillReceiveProps(nextProps) {
+    window.addEventListener('resize', this.resizeTTY)
+  }
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.resizeTTY);
+  }
+  resizeTTY = () => {
+    const { itemKey } = this.props
+    const clientWidth = document.getElementById(`ratingItems_${itemKey}`) ? document.getElementById(`ratingItems_${itemKey}`).clientWidth - 200 : document.documentElement.clientWidth
+    this.setState({
+      clientWidth
+    })
   }
 
   initData = () => {
@@ -78,7 +97,7 @@ export default class ConfigureStepTypeThree_one extends Component {
   }
 
   gradeResize = (key) => {
-    if (!this.refs && !this.refs[`autoGradeTextArea_${key}`]) return
+    if ((!this.refs && !Object.keys(this.refs).length) && !this.refs[`autoGradeTextArea_${key}`]) return
     //关键是先设置为auto，目的为了重设高度（如果字数减少）
     this.refs[`autoGradeTextArea_${key}`].style.height = '38px';
 
@@ -89,7 +108,7 @@ export default class ConfigureStepTypeThree_one extends Component {
   }
 
   weightResize = (key) => {
-    if (!this.refs && !this.refs[`autoWeightTextArea_${key}`]) return
+    if ((!this.refs && !Object.keys(this.refs).length) && !this.refs[`autoWeightTextArea_${key}`]) return
     //关键是先设置为auto，目的为了重设高度（如果字数减少）
     this.refs[`autoWeightTextArea_${key}`].style.height = '38px';
 
@@ -285,8 +304,9 @@ export default class ConfigureStepTypeThree_one extends Component {
     })
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: new_data }, 'scoreList')
     // 这是因为删除后 需要延时去更新状态
+    let temp_index = index == new_data.length ? new_data.length - 1 : index
     setTimeout(() => {
-      this.titleResize(index)
+      this.titleResize(temp_index)
     }, 200)
   }
 
@@ -524,13 +544,13 @@ export default class ConfigureStepTypeThree_one extends Component {
   render() {
     const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id } } = this.props
     const { weight_coefficient } = itemValue
-    const { scoreList = [], is_add_description, popoverVisible } = this.state
+    const { scoreList = [], is_add_description, popoverVisible, clientWidth } = this.state
     let flag = this.whetherShowDiffWidth()
     return (
       <div>
         {/* 评分项 */}
         <div style={{ borderBottom: '1px solid rgba(0,0,0,0.09)' }}>
-          <div onClick={this.handleClickRatingItems} className={indexStyles.ratingItems} style={{ background: popoverVisible ? '#E6F7FF' : 'rgba(0, 0, 0, 0.02)' }}>
+          <div id={`ratingItems_${itemKey}`} onClick={this.handleClickRatingItems} className={indexStyles.ratingItems} style={{ background: popoverVisible ? '#E6F7FF' : 'rgba(0, 0, 0, 0.02)' }}>
             {
               scoreList && scoreList.map((item, index) => {
                 const { title, description, grade_value, weight_value } = item
@@ -539,7 +559,7 @@ export default class ConfigureStepTypeThree_one extends Component {
                     <p>
                       <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer', display: 'inline-block' }}>
                         <Tooltip title={title} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: '130px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>:
+                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: clientWidth && !(flag && scoreList.length > 1) ? clientWidth + 'px' : '130px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>:
                         </Tooltip>
                         {
                           weight_coefficient == '1' && (
@@ -551,7 +571,7 @@ export default class ConfigureStepTypeThree_one extends Component {
                       </span>
                       {
                         description != '' ? (
-                          <Popover title={<div style={{margin:'0 4px', overflow: 'hidden', textOverflow:'ellipsis', width: '260px', whiteSpace: 'nowrap'}}>{title}</div>} content={<div style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', maxWidth: '260px' }}>{description}</div>} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                          <Popover title={<div style={{margin:'0 4px', overflow: 'hidden', textOverflow:'ellipsis', maxWidth: '130px', whiteSpace: 'nowrap'}}>{title}</div>} content={<div style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', maxWidth: '130px' }}>{description}</div>} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
                             <span style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe84a;</span>
                           </Popover>
                         ) : ('')
@@ -580,7 +600,7 @@ export default class ConfigureStepTypeThree_one extends Component {
                   autoAdjustOverflow={false}
                   onVisibleChange={this.onVisibleChange}
                 >
-                  <span className={`${indexStyles.delet_iconCircle}`}>
+                  <span onClick={(e) => e && e.stopPropagation()} className={`${indexStyles.delet_iconCircle}`}>
                     <span style={{ color: '#1890FF' }} className={`${globalStyles.authTheme} ${indexStyles.deletet_icon}`}>&#xe78e;</span>
                   </span>
                 </Popover>
