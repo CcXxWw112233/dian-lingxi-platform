@@ -38,6 +38,13 @@ export default class Technological extends React.Component {
       net.send('close')
       net = null
     }
+    const { dispatch } = this.props
+    dispatch({ //清除用户数据
+      type: 'technological/updateDatas',
+      payload: {
+        userInfo: {}
+      }
+    })
   }
 
   customOrgRouting = (nextProps) => {
