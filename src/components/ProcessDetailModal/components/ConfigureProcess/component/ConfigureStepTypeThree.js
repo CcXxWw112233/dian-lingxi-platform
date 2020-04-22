@@ -19,6 +19,7 @@ export default class ConfigureStepTypeThree extends Component {
     this.state = {
       // principalList
       designatedPersonnelList: [],
+      local_result_score_value: props.itemValue && props.itemValue.result_score_value ? props.itemValue.result_score_value : '60'
     }
   }
 
@@ -47,6 +48,188 @@ export default class ConfigureStepTypeThree extends Component {
     return newDesignatedPersonnelList
 
   }
+
+    //修改通知人的回调 S
+    chirldrenTaskChargeChange = (data) => {
+      const { projectDetailInfoData = {} } = this.props;
+      const { selectedKeys = [], type, key } = data
+      if (type == 'add') { // 表示添加的操作
+        let assignee_value = []
+        // 多个任务执行人
+        const membersData = projectDetailInfoData['data'] //所有的人
+        for (let i = 0; i < selectedKeys.length; i++) {
+          for (let j = 0; j < membersData.length; j++) {
+            if (selectedKeys[i] === membersData[j]['user_id']) {
+              assignee_value.push(membersData[j].user_id)
+            }
+          }
+        }
+        this.setState({
+          designatedPersonnelList: assignee_value
+        });
+        this.updateConfigureProcess({ value: assignee_value.join(',') }, 'assignees')
+      }
+  
+      if (type == 'remove') { // 表示移除的操作
+        const { itemValue } = this.props
+        const { assignees } = itemValue
+        const { designatedPersonnelList = [] } = this.state
+        let newDesignatedPersonnelList = [...designatedPersonnelList]
+        let newAssigneesArray = assignees && assignees.length ? assignees.split(',') : []
+        newDesignatedPersonnelList.map((item, index) => {
+          if (item == key) {
+            newDesignatedPersonnelList.splice(index, 1)
+            newAssigneesArray.splice(index, 1)
+          }
+        })
+        let newAssigneesStr = newAssigneesArray.join(',')
+        this.setState({
+          designatedPersonnelList: newAssigneesArray
+        })
+        this.updateConfigureProcess({ value: newAssigneesStr }, 'assignees')
+      }
+  
+    }
+    // 添加执行人的回调 E
+  
+    // 移除执行人的回调 S
+    handleRemoveExecutors = (e, shouldDeleteItem) => {
+      e && e.stopPropagation()
+      const { itemValue } = this.props
+      const { assignees } = itemValue
+      const { designatedPersonnelList = [] } = this.state
+      let newDesignatedPersonnelList = [...designatedPersonnelList]
+      let newAssigneesArray = assignees && assignees.length ? assignees.split(',') : []
+      newDesignatedPersonnelList.map((item, index) => {
+        if (item == shouldDeleteItem) {
+          newDesignatedPersonnelList.splice(index, 1)
+          newAssigneesArray.splice(index, 1)
+        }
+      })
+      let newAssigneesStr = newAssigneesArray.join(',')
+      this.setState({
+        designatedPersonnelList: newAssigneesArray
+      })
+      this.updateConfigureProcess({ value: newAssigneesStr }, 'assignees')
+    }
+
+  // 计算方式
+  handleComputingModeChange = (value) => {
+    switch (value) {
+      case "1":
+        this.updateConfigureProcess({ value: '1' }, 'computing_mode')
+        break;
+      case "average":
+        // 默认选择第一个
+        this.updateConfigureProcess({ value: '2' }, 'computing_mode')
+        break
+      case '2':
+        this.updateConfigureProcess({ value: '2' }, 'computing_mode')
+        break
+      case '3':
+        this.updateConfigureProcess({ value: '3' }, 'computing_mode')
+        break
+      default:
+        break;
+    }
+  }
+
+  // 结果分数选项
+  handleResultScoreOptionChange = (value) => {
+    switch (value) {
+      case '1': // 表示大于
+        this.updateConfigureProcess({ value: '1' }, 'results_score_option')
+        break;
+      case '2': // 表示小于
+        this.updateConfigureProcess({ value: '2' }, 'results_score_option')
+        break
+      case '3': // 表示等于
+        this.updateConfigureProcess({ value: '3' }, 'results_score_option')
+        break
+      case '4': // 表示大于或等于
+        this.updateConfigureProcess({ value: '4' }, 'results_score_option')
+        break
+      case '5': // 表示小于或等于
+        this.updateConfigureProcess({ value: '5' }, 'results_score_option')
+        break
+      default:
+        break;
+    }
+  }
+
+  // 结果分数导向
+  handleResultScoreFallThrough = (value) => {
+    switch (value) {
+      case '1': // 表示大于
+        this.updateConfigureProcess({ value: '1' }, 'result_score_fall_through')
+        break;
+      case '2': // 表示小于
+        this.updateConfigureProcess({ value: '2' }, 'result_score_fall_through')
+        break
+      case '3': // 表示等于
+        this.updateConfigureProcess({ value: '3' }, 'result_score_fall_through')
+        break
+      default:
+        break;
+    }
+  }
+
+  // 其余情况
+  handleRemainingCircumstances = (value) => {
+    switch (value) {
+      case '1': // 表示大于
+        this.updateConfigureProcess({ value: '1' }, 'remaining_circumstances')
+        break;
+      case '2': // 表示小于
+        this.updateConfigureProcess({ value: '2' }, 'remaining_circumstances')
+        break
+      case '3': // 表示等于
+        this.updateConfigureProcess({ value: '3' }, 'remaining_circumstances')
+        break
+      default:
+        break;
+    }
+  }
+
+  // 结果分数值   /^([1-9]\d{0,}(\.\d{1,2})?|1000)$/
+  // /^([1-9]\d{0,}(\.\d{1,2})?)$/
+  //  /^([0-9]\d*(\.\d{1,2})?)$/
+  handleResultScoreValue = (value) => {
+    this.setState({
+      local_result_score_value: String(value)
+    })    
+    // if (reg.test(value)) {
+    //   this.updateConfigureProcess({ value: String(value) }, 'result_score_value')
+    // } else {
+    //   this.updateConfigureProcess({ value: '' }, 'result_score_value')
+    // }
+  }
+
+  handleResultScoreBlur = (e) => {
+    e && e.stopPropagation()
+    let value = e.target.value
+    const reg = /^([0-9]\d{0,3}(\.\d{1,2})?|10000)$/
+    let point_index = String(value).indexOf('.')
+    if (reg.test(value)) {
+      this.setState({
+        local_result_score_value: String(value)
+      })
+      this.updateConfigureProcess({ value: String(value) }, 'result_score_value')
+    } else {
+      if (point_index > 0) {
+        this.setState({
+          local_result_score_value: String(value).substring(0,point_index + 1)
+        })
+        this.updateConfigureProcess({ value: String(value).substring(0,point_index + 1) }, 'result_score_value')
+      } else {
+        this.setState({
+          local_result_score_value: ''
+        })
+        this.updateConfigureProcess({ value: '' }, 'result_score_value')
+      }
+    }
+  }
+
 
   // 渲染指定人员
   renderDesignatedPersonnel = () => {
@@ -128,6 +311,8 @@ export default class ConfigureStepTypeThree extends Component {
 
   render() {
     const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id } } = this.props
+    const { computing_mode, results_score_option, result_score_value, result_score_fall_through, remaining_circumstances } = itemValue
+    const { local_result_score_value } = this.state
     return (
       <div>
         {/* 评分项 */}
@@ -168,25 +353,35 @@ export default class ConfigureStepTypeThree extends Component {
             </div>
             <div>
               <span className={indexStyles.rating_label_name}>计算方式</span>
-              <span style={{ position: 'relative' }}>
-                <Select getPopupContainer={triggerNode => triggerNode.parentNode} style={{ width: '114px', height: '40px' }}>
+              <span style={{ position: 'relative', marginRight: '8px' }}>
+                <Select defaultValue={'1'} onChange={this.handleComputingModeChange} getPopupContainer={triggerNode => triggerNode.parentNode} style={{ width: '114px', height: '40px' }}>
                   <Option value="1">各分项相加</Option>
-                  <Option value="2">总分值平均</Option>
+                  <Option value="average">总分值平均</Option>
                 </Select>
               </span>
+              {
+                (computing_mode == '2' || computing_mode == '3') && (
+                  <span style={{ position: 'relative' }}>
+                    <Select value={computing_mode} onChange={this.handleComputingModeChange} getPopupContainer={triggerNode => triggerNode.parentNode} style={{ width: '168px', height: '40px' }}>
+                      <Option value="2">总分值/评分项数</Option>
+                      <Option value="3">总分值/评分人数</Option>
+                    </Select>
+                  </span>
+                )
+              }
             </div>
             <div>
               <span className={indexStyles.rating_label_name}>结果分数</span>
               <span>
-                <Select style={{ width: '114px', height: '40px' }}>
+                <Select value={results_score_option} onChange={this.handleResultScoreOptionChange} style={{ width: '114px', height: '40px' }}>
                   <Option value="1">大于</Option>
                   <Option value="2">小于</Option>
                   <Option value="3">等于</Option>
                   <Option value="4">大于或等于</Option>
                   <Option value="5">小于或等于</Option>
                 </Select>
-                <InputNumber style={{ width: '114px', height: '40px', margin: '0px 8px', lineHeight: '40px' }} />
-                <Select style={{ width: '168px', height: '40px' }}>
+                <InputNumber min={0} value={local_result_score_value} onBlur={this.handleResultScoreBlur} onChange={this.handleResultScoreValue} style={{ width: '114px', height: '40px', margin: '0px 8px', lineHeight: '40px' }} />
+                <Select value={result_score_fall_through} onChange={this.handleResultScoreFallThrough} style={{ width: '168px', height: '40px' }}>
                   <Option value="1">{`${currentNounPlanFilterName(FLOWS)}流转到上一步`}</Option>
                   <Option value="2">{`${currentNounPlanFilterName(FLOWS)}流转到下一步`}</Option>
                   <Option value="3">{`${currentNounPlanFilterName(FLOWS)}中止`}</Option>
@@ -195,7 +390,7 @@ export default class ConfigureStepTypeThree extends Component {
             </div>
             <div>
               <span className={indexStyles.rating_label_name}>其余情况</span>
-              <Select style={{ width: '168px', height: '40px' }}>
+              <Select value={remaining_circumstances} onChange={this.handleRemainingCircumstances} style={{ width: '168px', height: '40px' }}>
                 <Option value="1">{`${currentNounPlanFilterName(FLOWS)}流转到上一步`}</Option>
                 <Option value="2">{`${currentNounPlanFilterName(FLOWS)}流转到下一步`}</Option>
                 <Option value="3">{`${currentNounPlanFilterName(FLOWS)}中止`}</Option>
