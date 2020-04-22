@@ -1009,68 +1009,25 @@ class VideoMeetingPopoverContent extends React.Component {
 		})
 	}
 
-	move = () => {
-		let speed = -10
-		let currentElem = document.getElementById('video_provider')
-		this.videoProviderImgTimer = setInterval(() => {
-			currentElem.style.left = currentElem.offsetLeft + speed + 'px'
-			if (parseInt(currentElem.style.left) >= 92) {
-				clearInterval(this.videoProviderImgTimer)
-			}
-		}, 20)
-	}
-
 	handleVideoArrow = (type) => {
+		const { videoConferenceProviderList = [] } = this.props
 		let currentElem = document.getElementById('video_provider')
 		if (!currentElem) return
-		currentElem.innerHTML = currentElem.innerHTML + currentElem.innerHTML;//将轮播内容复制一份
-		let speed
-		const move = (moveType, s) => {
-			if (moveType == 'right') {
-				let currentElem = document.getElementById('video_provider')
-				console.log(parseInt(currentElem.style.left), s, 'ssssssssssssssssssssssssss_px')
-					// return
-					this.videoProviderImgTimer = setInterval(() => {
-						currentElem.style.left = currentElem.offsetLeft + s + 'px'
-						if (parseInt(currentElem.style.left) <= 92) {
-							console.log('进来了','sssssssssssssssss_stop')
-							clearInterval(this.videoProviderImgTimer)
-						}
-					}, 20)
-			} else if (moveType == 'left') {
-				let currentElem = document.getElementById('video_provider')
-				console.log(parseInt(currentElem.style.left), s, 'ssssssssssssssssssssssssss_px')
-					// return
-					this.videoProviderImgTimer = setInterval(() => {
-						currentElem.style.left = currentElem.offsetLeft + s + 'px'
-						if (parseInt(currentElem.style.left) >= 92) {
-							console.log('进来了','sssssssssssssssss_stop')
-							clearInterval(this.videoProviderImgTimer)
-						}
-					}, 20)
-			}
+		// currentElem.innerHTML = currentElem.innerHTML + currentElem.innerHTML;//将轮播内容复制一份
 
-		}
 		if (type == 'right') {
-			if (stepIndex == 0) {
-				stepIndex = 4;
-				currentElem.style.left = -currentElem.offsetWidth / 4 + "px";
-				speed = 0
-			} else {
-				stepIndex--;
-				speed = -10;
+			if (stepIndex + 4 == videoConferenceProviderList.length) {
+				return
 			}
-			move('right',speed);
+			stepIndex++;
+			currentElem.style.left = -stepIndex * 93 + "px";
+
 		} else if (type == 'left') {
-			if (stepIndex == 4) {
-				stepIndex = 1;
-				currentElem.style.left = "0px";
-				speed = 0
-			} else {
-				stepIndex++;
-				speed = 10;
+			if (stepIndex == 0) {
+				return
 			}
-			move('left', speed);
+			stepIndex--;
+			currentElem.style.left = stepIndex * 93 + "px";
 		}
 	}
 
@@ -1291,9 +1248,13 @@ class VideoMeetingPopoverContent extends React.Component {
 						{/* 设置通知提醒 E */}
 
 						<div id={'videoProviderWrapper'} style={{ width: '400px', position: 'relative', marginRight: '-16px', margin: 'auto', paddingLeft: '8px' }}>
-							{/* <div onClick={() => { this.handleVideoArrow('left') }} className={`${indexStyles.video_arrow} ${indexStyles.video_arrow_left}`}>
-								<span className={globalStyles.authTheme}>&#xe7ec;</span>
-							</div> */}
+							{
+								(videoConferenceProviderList && videoConferenceProviderList.length > 4) && stepIndex > 0 && (
+									<div onClick={() => { this.handleVideoArrow('left') }} className={`${indexStyles.video_arrow} ${indexStyles.video_arrow_left}`}>
+										<span className={globalStyles.authTheme}>&#xe7ec;</span>
+									</div>
+								)
+							}
 							<span>聆悉推荐使用以下方式开展远程会议: </span>
 							<div style={{ position: 'relative', width: '372px', overflow: 'hidden' }}>
 								<div id={'video_provider'} style={{ display: 'flex', position: 'relative' }}>
@@ -1313,9 +1274,13 @@ class VideoMeetingPopoverContent extends React.Component {
 									}
 								</div>
 							</div>
-							{/* <div onClick={() => { this.handleVideoArrow('right') }} className={`${indexStyles.video_arrow} ${indexStyles.video_arrow_right}`}>
-								<span className={globalStyles.authTheme}>&#xe7eb;</span>
-							</div> */}
+							{
+								(videoConferenceProviderList && videoConferenceProviderList.length > 4) && (stepIndex + 4 < videoConferenceProviderList.length)  && (
+									<div onClick={() => { this.handleVideoArrow('right') }} className={`${indexStyles.video_arrow} ${indexStyles.video_arrow_right}`}>
+										<span className={globalStyles.authTheme}>&#xe7eb;</span>
+									</div>
+								)
+							}
 						</div>
 						<div className={indexStyles.videoMeeting__submitBtn}>
 							<Button disabled={!defaultSaveToProject || this.state.notProjectList || (this.state.meetingTitle == '' && this.state.changeValue)} type="primary" onClick={this.handleVideoMeetingSubmit}>
