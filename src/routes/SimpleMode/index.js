@@ -9,7 +9,7 @@ import { isColor } from '@/utils/util'
 import defaultWallpaperSrc from '@/assets/simplemode/acd42051256454f9b070300b8121eae2.png'
 
 const getEffectOrReducerByName = name => `technological/${name}`
-
+// 待重构，将路由和其它分离出来
 class SimpleMode extends Component {
 
   constructor(props) {
@@ -40,7 +40,7 @@ class SimpleMode extends Component {
           type: 'gantt/updateDatas',
           payload: {
             gantt_board_id: current_board_id,
-            group_view_type: '4'
+            // group_view_type: '4'
           }
         })
         setTimeout(() => {
