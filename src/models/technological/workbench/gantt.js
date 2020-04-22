@@ -78,7 +78,8 @@ export default {
       about_user_boards: [], //带用户的项目列表
 
       gantt_board_id: '0', //"1192342431761305600",//, //甘特图查看的项目id
-      group_view_type: '1', //分组视图1项目， 2成员, 4大纲
+      gantt_board_list_id: '0', //项目分组的操作id
+      group_view_type: '1', //分组视图1项目， 2成员, 4大纲, 5项目分组再分组成成员
       group_view_filter_boards: [], //内容过滤项目id 列表
       group_view_filter_users: [], //内容过滤职员id 列表
       group_view_boards_tree: [], //内容过滤项目分组树
@@ -187,7 +188,7 @@ export default {
       const end_date = yield select(workbench_end_date)
       const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
       const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
-
+      const gantt_board_list_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_list_id'))
       //内容过滤处理
       const Aa = yield put({
         type: 'returnContentFilterFinalParams',
@@ -217,6 +218,9 @@ export default {
 
       if (gantt_board_id != '0' && gantt_board_id) {
         params.board_id = gantt_board_id
+        if (group_view_type == '5') { //分组点击
+          params.list_id = gantt_board_list_id
+        }
       }
 
       const timer = setTimeout(() => {
@@ -691,7 +695,7 @@ export default {
         const list_group_item_height = Math.max.apply(null, list_height_arr) + 2 * ceiHeight - after_group_height
 
         group_rows[i] = (list_group_item_height / ceiHeight) < 2 ? 2 : list_group_item_height / ceiHeight // 原来是3，现在是2
-        if (list_group[i].list_id == '0') { //默认分组要设置得很高
+        if (list_group[i].list_id == '0' && group_view_type == '1' && gantt_board_id != '0') { //默认分组要设置得很高
           group_rows[i] = group_rows[i] + 30
         }
         // 设置项目汇总的top和left,width

@@ -23,12 +23,17 @@ export default class MainBoard extends Component {
     }
     // 初始化获取待办事项
     initGetTodoList = () => {
-        const { dispatch, currentSelectOrganize } = this.props
+        const { dispatch, currentSelectOrganize, simplemodeCurrentProject: { board_id } } = this.props
+        const params = {
+            _organization_id: currentSelectOrganize.id || localStorage.getItem('OrganizationId'),
+        }
+        if (board_id && board_id != '0') {
+            params.board_ids = board_id
+        }
         dispatch({
             type: 'simplemode/getBoardsTodoList',
             payload: {
-                _organization_id: currentSelectOrganize.id || localStorage.getItem('OrganizationId'),
-                // board_ids: '0'
+                ...params
             }
         })
     }
@@ -264,7 +269,7 @@ function mapStateToProps(
         simplemode: {
             myWorkbenchBoxList,
             workbenchBoxList,
-            simplemodeCurrentProject
+            simplemodeCurrentProject = {}
         },
         technological: {
             datas: {

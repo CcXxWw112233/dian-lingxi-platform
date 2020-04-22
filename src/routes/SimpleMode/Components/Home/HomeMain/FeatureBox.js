@@ -20,11 +20,11 @@ class FeatureBox extends Component {
   //   if ((!old_projectList || old_projectList.length == 0) && projectList.length > 0) {
   //     const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
   //     const { user_set = {} } = userInfo
-  //     const selectBoard = projectList.filter(item => item.board_id === user_set.current_board && item.org_id === user_set.current_org);
+  //     const selectBoard = projectList.filter(item => item.board_id === user_set.current_board_id && item.org_id === user_set.current_org);
 
   //     if (selectBoard && selectBoard.length > 0) {
   //       //设置当前选中的项目
-  //       setBoardIdStorage(user_set.current_board);
+  //       setBoardIdStorage(user_set.current_board_id);
   //       dispatch({
   //         type: 'simplemode/updateDatas',
   //         payload: {
