@@ -992,7 +992,7 @@ export default class GroupListHeadItem extends Component {
           <div className={`${indexStyles.list_head_top}`}>
             <div className={`${indexStyles.list_head_top_left}`}>
               {
-                group_view_type == '2' && !get_gantt_data_loading && (
+                (group_view_type == '2' || group_view_type == '5') && !get_gantt_data_loading && (
                   <Avatar src={lane_icon} icon="user" style={{ marginTop: '-4px', marginRight: 8 }}></Avatar>
                 )
               }
@@ -1062,7 +1062,7 @@ export default class GroupListHeadItem extends Component {
             </div>
           </div>
           {/* 没有排期任务列表 */}
-          <div className={`${indexStyles.list_head_body}`}>
+          <div className={`${indexStyles.list_head_body}`} onWheel={(e) => e.stopPropagation()}>
             <div className={`${indexStyles.list_head_body_inner} ${isShowBottDetail == '0' && indexStyles.list_head_body_inner_init} ${isShowBottDetail == '2' && indexStyles.animate_hide} ${isShowBottDetail == '1' && indexStyles.animate_show}`} >
               {this.renderTaskItem()}
             </div>
@@ -1086,7 +1086,7 @@ export default class GroupListHeadItem extends Component {
                 </div>
               </div>
             ) : (
-                <div className={indexStyles.list_head_footer} onClick={this.setIsShowBottDetail}>
+                <div className={indexStyles.list_head_footer} onClick={this.setIsShowBottDetail} style={{ display: list_no_time_data.length ? 'flex' : 'none' }}>
                   <div className={`${globalStyles.authTheme} ${indexStyles.list_head_footer_tip} ${isShowBottDetail == '2' && indexStyles.spin_hide} ${isShowBottDetail == '1' && indexStyles.spin_show}`}>&#xe61f;</div>
                   <div className={indexStyles.list_head_footer_dec}>{list_no_time_data.length}个未排期事项</div>
                 </div>
