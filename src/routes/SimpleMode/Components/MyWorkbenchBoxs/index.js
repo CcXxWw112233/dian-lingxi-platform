@@ -84,7 +84,7 @@ class MyWorkbenchBoxs extends Component {
         dispatch({
           type: 'accountSet/updateUserSet',
           payload: {
-            current_board_id: {}
+            current_board: {}
           }
         });
         dispatch({

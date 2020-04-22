@@ -389,7 +389,13 @@ export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenI
       target_scrollTop: 0
     }
   })
-
+  dispatch({
+    type: 'technological/setUserInfoAbout',
+    payload: {
+      current_board_id: board_id,
+      current_board_name: board_name
+    }
+  });
   const target = document.getElementById('gantt_card_out_middle')
   if (target) {
     target.scrollTop = 0
