@@ -992,8 +992,15 @@ export default class GroupListHeadItem extends Component {
           <div className={`${indexStyles.list_head_top}`}>
             <div className={`${indexStyles.list_head_top_left}`}>
               {
-                (group_view_type == '2' || group_view_type == '5') && !get_gantt_data_loading && (
+                (group_view_type == '2' || (group_view_type == '5' && list_id != '0')) && !get_gantt_data_loading && (
                   <Avatar src={lane_icon} icon="user" style={{ marginTop: '-4px', marginRight: 8 }}></Avatar>
+                )
+              }
+              {
+                group_view_type == '5' && list_id == '0' && (
+                  <div>
+                    未分配的任务
+                  </div>
                 )
               }
               {
