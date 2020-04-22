@@ -1021,7 +1021,7 @@ export default class GroupListHeadItem extends Component {
                     value={edit_input_value}
                     onChange={this.inputOnchange}
                     onPressEnter={this.inputOnPressEnter}
-                    onBlur={this.inputOnBlur}
+                    onBlur={this.inputOnPressEnter}
                   />
                 ) : (
                     list_id == '0' ? (
