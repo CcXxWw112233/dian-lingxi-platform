@@ -21,6 +21,7 @@ import kty from '@/assets/sider_right/kty.png'
 import zoom from '@/assets/sider_right/zoom.png'
 import zhumu from '@/assets/sider_right/zhumu.png'
 import zyy from '@/assets/sider_right/zyy.png'
+import tx from '@/assets/sider_right/tx.png'
 import { currentNounPlanFilterName } from "@/utils/businessFunction";
 import { PROJECTS } from '@/globalset/js/constant'
 import { isApiResponseOk } from '@/utils/handleResponseData'
@@ -44,6 +45,8 @@ let currentDelayStartTime // 具有年月日的开始时间
 let currentDelayDueTime // 默认的持续时间
 let remind_time_value = '5' // 设置的提醒时间
 
+let stepIndex = 0
+
 @connect(({ technological, workbench }) => {
 	return {
 		projectList:
@@ -59,9 +62,11 @@ let remind_time_value = '5' // 设置的提醒时间
 	};
 })
 class VideoMeetingPopoverContent extends React.Component {
+
 	constructor(props) {
 		super(props)
 		this.timer = null
+		this.videoProviderImgTimer = null
 		this.state = {
 			saveToProject: null, // 用来保存存入的项目
 			saveProjectName: null,// 用来保存项目名称
@@ -308,6 +313,7 @@ class VideoMeetingPopoverContent extends React.Component {
 		remind_time_value = '5'
 		defaultSaveToProject = ''
 		defaultSaveProjectName = ''
+		stepIndex = 0
 		// clearTimeout(this.timer )
 	};
 
@@ -981,6 +987,9 @@ class VideoMeetingPopoverContent extends React.Component {
 			case "4":
 				img = <img src={zyy} width={37} height={31} />
 				break
+			case '5':
+				img = <img src={tx} width={72} height={26} />
+				break
 			default:
 				break;
 		}
@@ -993,6 +1002,101 @@ class VideoMeetingPopoverContent extends React.Component {
 		})
 	}
 
+	handleSelectVideoProvider = (e, id) => {
+		e && e.stopPropagation()
+		this.setState({
+			providerDefault: id
+		})
+	}
+
+	move = () => {
+		let speed = -10
+		let currentElem = document.getElementById('video_provider')
+		this.videoProviderImgTimer = setInterval(() => {
+			currentElem.style.left = currentElem.offsetLeft + speed + 'px'
+			if (parseInt(currentElem.style.left) >= 92) {
+				clearInterval(this.videoProviderImgTimer)
+			}
+		}, 20)
+	}
+
+	handleVideoArrow = (type) => {
+		let currentElem = document.getElementById('video_provider')
+		if (!currentElem) return
+		currentElem.innerHTML = currentElem.innerHTML + currentElem.innerHTML;//将轮播内容复制一份
+		let speed
+		const move = (moveType, s) => {
+			if (moveType == 'right') {
+				let currentElem = document.getElementById('video_provider')
+				console.log(parseInt(currentElem.style.left), s, 'ssssssssssssssssssssssssss_px')
+					// return
+					this.videoProviderImgTimer = setInterval(() => {
+						currentElem.style.left = currentElem.offsetLeft + s + 'px'
+						if (parseInt(currentElem.style.left) <= 92) {
+							console.log('进来了','sssssssssssssssss_stop')
+							clearInterval(this.videoProviderImgTimer)
+						}
+					}, 20)
+			} else if (moveType == 'left') {
+				let currentElem = document.getElementById('video_provider')
+				console.log(parseInt(currentElem.style.left), s, 'ssssssssssssssssssssssssss_px')
+					// return
+					this.videoProviderImgTimer = setInterval(() => {
+						currentElem.style.left = currentElem.offsetLeft + s + 'px'
+						if (parseInt(currentElem.style.left) >= 92) {
+							console.log('进来了','sssssssssssssssss_stop')
+							clearInterval(this.videoProviderImgTimer)
+						}
+					}, 20)
+			}
+
+		}
+		if (type == 'right') {
+			if (stepIndex == 0) {
+				stepIndex = 4;
+				currentElem.style.left = -currentElem.offsetWidth / 4 + "px";
+				speed = 0
+			} else {
+				stepIndex--;
+				speed = -10;
+			}
+			move('right',speed);
+		} else if (type == 'left') {
+			if (stepIndex == 4) {
+				stepIndex = 1;
+				currentElem.style.left = "0px";
+				speed = 0
+			} else {
+				stepIndex++;
+				speed = 10;
+			}
+			move('left', speed);
+		}
+	}
+
+	renderVideoProviderTitle = (id) => {
+		let title = ""
+		switch (id) {
+			case '1': // 表示zoom
+				title = 'zoom会议'
+				break;
+			case '2': // 表示zoom
+				title = '科天云会议'
+				break;
+			case '3': // 表示zoom
+				title = '瞩目会议'
+				break;
+			case '4': // 表示zoom
+				title = '章鱼云会议'
+				break;
+			case '5': // 表示zoom
+				title = '腾讯会议'
+				break;
+			default:
+				break;
+		}
+		return title
+	}
 
 	renderPopover = () => {
 		const {
@@ -1028,7 +1132,7 @@ class VideoMeetingPopoverContent extends React.Component {
 						<div className={indexStyles.videoMeeting__topic}>
 							<div className={indexStyles.videoMeeting__topic_content}>
 								{/* 项目选择 S */}
-								<span style={{position: 'relative'}} className={indexStyles.videoMeeting__topic_content_save}>
+								<span style={{ position: 'relative' }} className={indexStyles.videoMeeting__topic_content_save}>
 									<Select
 										defaultValue={saveToProject ? saveToProject : defaultSaveToProject}
 										onChange={this.handleVideoMeetingSaveSelectChange}
@@ -1079,7 +1183,7 @@ class VideoMeetingPopoverContent extends React.Component {
 
 											getPopupContainer={triggerNode => triggerNode.parentNode} dropdownClassName={`${indexStyles.select_overlay} ${globalStyles.global_vertical_scrollbar}`} style={{ width: '136px' }} value={[defaultValue]}>
 											{
-												dueTimeList && dueTimeList.map((item, index) => (
+												dueTimeList && dueTimeList.map((item, stepIndex) => (
 													<Option
 														onClick={(e) => { this.endDatePickerChange(e, item.remind_time_type) }}
 														value={item.txtVal}>{`持续 ${item.txtVal} ${item.remind_time_type == 'm' ? '分钟' : '小时'}`}</Option>
@@ -1186,24 +1290,33 @@ class VideoMeetingPopoverContent extends React.Component {
 						</div>
 						{/* 设置通知提醒 E */}
 
-						<div>
+						<div id={'videoProviderWrapper'} style={{ width: '400px', position: 'relative', marginRight: '-16px', margin: 'auto', paddingLeft: '8px' }}>
+							{/* <div onClick={() => { this.handleVideoArrow('left') }} className={`${indexStyles.video_arrow} ${indexStyles.video_arrow_left}`}>
+								<span className={globalStyles.authTheme}>&#xe7ec;</span>
+							</div> */}
 							<span>聆悉推荐使用以下方式开展远程会议: </span>
-							<div style={{ display: 'flex' }}>
-								{
-									videoConferenceProviderList && videoConferenceProviderList.map(item => {
-										return (
-											<Radio.Group style={{ marginBottom: '12px' }} onChange={this.onVideoProviderChange} value={this.state.providerDefault ? this.state.providerDefault : item.is_default == '1' ? item.id : ''}>
-												<div key={`${item.id}-${item.icon}`} style={{ textAlign: 'center', marginTop: '12px' }}>
-													<div className={indexStyles.video_provider}>{this.getImgLogo(item)}</div>
-													<div><Radio value={item.id} /></div>
-												</div>
-											</Radio.Group>
-										)
-									})
-								}
+							<div style={{ position: 'relative', width: '372px', overflow: 'hidden' }}>
+								<div id={'video_provider'} style={{ display: 'flex', position: 'relative' }}>
+									{
+										videoConferenceProviderList && videoConferenceProviderList.map(item => {
+											return (
+												<Radio.Group style={{ marginBottom: '12px' }} onChange={this.onVideoProviderChange} value={this.state.providerDefault ? this.state.providerDefault : item.is_default == '1' ? item.id : ''}>
+													<div key={`${item.id}-${item.icon}`} style={{ textAlign: 'center', marginTop: '12px' }}>
+														<Tooltip overlayStyle={{ minWidth: '86px' }} autoAdjustOverflow={false} getPopupContainer={() => document.getElementById(`videoProviderWrapper`)} title={this.renderVideoProviderTitle(item.id)} placement="top">
+															<div onClick={(e) => { this.handleSelectVideoProvider(e, item.id) }} className={indexStyles.video_provider}>{this.getImgLogo(item)}</div>
+														</Tooltip>
+														<div><Radio value={item.id} /></div>
+													</div>
+												</Radio.Group>
+											)
+										})
+									}
+								</div>
 							</div>
+							{/* <div onClick={() => { this.handleVideoArrow('right') }} className={`${indexStyles.video_arrow} ${indexStyles.video_arrow_right}`}>
+								<span className={globalStyles.authTheme}>&#xe7eb;</span>
+							</div> */}
 						</div>
-
 						<div className={indexStyles.videoMeeting__submitBtn}>
 							<Button disabled={!defaultSaveToProject || this.state.notProjectList || (this.state.meetingTitle == '' && this.state.changeValue)} type="primary" onClick={this.handleVideoMeetingSubmit}>
 								{isShowNowTime ? '发起会议' : '预约会议'}

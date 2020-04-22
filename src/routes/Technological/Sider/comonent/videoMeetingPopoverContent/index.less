@@ -70,6 +70,8 @@
     font-weight: 400;
     color: rgba(89, 89, 89, 1);
     line-height: 20px;
+    padding-left: 8px;
+    overflow-x: hidden;
     .videoMeeting__topic {
       margin-bottom: 24px;
     }
@@ -230,6 +232,34 @@
   border:1px solid rgba(0,0,0,0.09);
   line-height: 44px;
   margin-bottom: 8px;
+  cursor: pointer;
+  &:hover {
+    border:1px solid rgba(24,144,255,1);
+  }
+}
+.video_arrow {
+  width:14px;
+  height:28px;
+  background:rgba(0,0,0,0.04);
+  border-radius:1px;
+  display: flex;
+  align-items: center;
+  position: absolute;
+  cursor: pointer;
+  > span {
+    color: #b1b1b1;
+    &:hover {
+      color: #1890FF;
+    }
+  }
+}
+.video_arrow_right {
+  right: 14px;
+  top: 42px;
+}
+.video_arrow_left {
+  left: -6px;
+  top: 42px;
 }
 
 .dropdownWrapper {
