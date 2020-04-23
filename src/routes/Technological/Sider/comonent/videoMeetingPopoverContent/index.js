@@ -98,7 +98,7 @@ class VideoMeetingPopoverContent extends React.Component {
 				{ remind_time_value: '30' },
 				{ remind_time_value: '45' },
 			],// 设置的提醒时间
-			toNoticeList: [], // 当前通知的用户
+			// toNoticeList: [], // 当前通知的用户
 			defaultValue: '30', // 当前选择的持续时间
 			providerDefault: null, // 默认选中的提供商
 		}
@@ -126,7 +126,7 @@ class VideoMeetingPopoverContent extends React.Component {
 						user_phone: [],
 						selectedKeys: null,
 						defaultValue: '30',
-						toNoticeList: this.getCurrentRemindUser(),
+						// toNoticeList: this.getCurrentRemindUser(),
 						isShowNowTime: true,
 						changeValue: false, // 保存一个正在修改文本框的状态
 						remindDropdownVisible: false
@@ -261,7 +261,6 @@ class VideoMeetingPopoverContent extends React.Component {
 	showTime = () => {
 		if (!this.state.isShowNowTime) return
 		let nowDate = timestampToTime(timeToTimestamp(new Date()), true)
-		// console.log(nowDate, 'ssssssss')
 		this.setState({
 			start_time: nowDate,
 			// isShowNowTime: true,
@@ -300,12 +299,13 @@ class VideoMeetingPopoverContent extends React.Component {
 			meeting_start_time: '',
 			selectedKeys: null,
 			othersPeople: [],
-			userIds: [],
+			// userIds: [],
+			user_phone: [],
 			isShowNowTime: true,
 			isExeecedTime: false,
 			defaultValue: '30', // 当前选择的持续时间
 			changeValue: false,
-			toNoticeList: this.getCurrentRemindUser(),
+			// toNoticeList: this.getCurrentRemindUser(),
 			remindDropdownVisible: false,
 			providerDefault: null
 
@@ -314,7 +314,7 @@ class VideoMeetingPopoverContent extends React.Component {
 		defaultSaveToProject = ''
 		defaultSaveProjectName = ''
 		stepIndex = 0
-		// clearTimeout(this.timer )
+		clearTimeout(this.timer)
 	};
 
 	// 获取项目权限
@@ -465,7 +465,6 @@ class VideoMeetingPopoverContent extends React.Component {
 	handleVideoMeetingSaveSelectChange = (value, option) => {
 		const { props: { children } } = option
 		const { projectList = [] } = this.props
-		// console.log('ssssssss__',{ value,  projectList, option})
 		this.getProjectUsers({ projectId: value })
 		this.setState({
 			saveToProject: value,
@@ -523,7 +522,6 @@ class VideoMeetingPopoverContent extends React.Component {
 		const nowDate = timeToTimestamp(new Date())
 		let nextOrPrevDate = new Date(timestampToTimeNormal(start_timeStamp)).getDate()
 		let currentDate = new Date().getDate()
-		// console.log(parseInt(start_timeStamp / 1000), parseInt(nowDate / 1000), 'sssssssss')
 		if (this.timer) {
 			clearTimeout(this.timer)
 		}
@@ -576,16 +574,10 @@ class VideoMeetingPopoverContent extends React.Component {
 				})
 			})
 		}
-		// this.setState({
-		// 	start_time: timestampToTime(start_timeStamp, true),
-		// 	meeting_start_time: start_timeStamp,
-		// 	isShowNowTime: parseInt(start_timeStamp / 1000) > parseInt(nowDate / 1000) ? false : true,
-		// })
 	}
 
 	// 设置会议的结束时间
 	endDatePickerChange = (e, type) => {
-		// console.log(e, type, 'ssssssss')
 		e && e.domEvent && e.domEvent.stopPropagation()
 		const { key } = e
 		if (type == 'm') {
@@ -596,21 +588,6 @@ class VideoMeetingPopoverContent extends React.Component {
 		this.setState({
 			defaultValue: key
 		})
-		// const { meeting_start_time } = this.state
-		// const { defaultAppointStartTime } = this.getVideoMeetingPopoverContentNoramlDatas()
-		// if (meeting_start_time) { // 如果选择了时间
-		// 	if (type == 'm') {
-		// 		currentDelayDueTime = meeting_start_time + key * 60000
-		// 	} else if (type == 'h') {
-		// 		currentDelayDueTime = meeting_start_time + key * 3600000
-		// 	}
-		// } else { // 否则在默认的基础上
-		// 	if (type == 'm') {
-		// 		currentDelayDueTime = defaultAppointStartTime + key * 60000
-		// 	} else if (type == 'h') {
-		// 		currentDelayDueTime = defaultAppointStartTime + key * 3600000
-		// 	}
-		// }
 	}
 
 	// 执行人列表去重
@@ -711,19 +688,12 @@ class VideoMeetingPopoverContent extends React.Component {
 
 	// 现在的点击事件
 	handleChangeNowTime = () => {
-		// console.log('进来了', 'sssssss')
 		const { isShowNowTime } = this.state
 		if (isShowNowTime) {
 			return false
 		}
-		// this.showTime() // 点击现在之后开启定时器
-		const nowDate = timestampToTime(timeToTimestamp(new Date()), true)
-		const timestamp = timeToTimestamp(new Date())
-		// console.log(nowDate, timeToTimestamp(new Date()) / 1000, 'sssssssss')
 		this.setState({
 			isShowNowTime: true, // 显示当前时间
-			// start_time: nowDate,
-			// meeting_start_time: timestamp
 		}, () => {
 			this.showTime() // 点击现在之后开启定时器
 		})
@@ -731,7 +701,6 @@ class VideoMeetingPopoverContent extends React.Component {
 
 	// 提醒的下拉回调
 	handleVisibleChange = (visible) => {
-		// console.log(visible, 'ssssss')
 		this.setState({
 			remindDropdownVisible: visible
 		})
@@ -824,8 +793,6 @@ class VideoMeetingPopoverContent extends React.Component {
 				}
 			)
 			this.openWinNiNewTabWithATag(start_url)
-			// window.open(`#/videoMeeting/target?url=${start_url}`)
-			// window.open(start_url)
 			dispatch({
 				type: 'workbench/getMeetingList',
 				payload: {
@@ -857,8 +824,6 @@ class VideoMeetingPopoverContent extends React.Component {
 						}
 					)
 					this.openWinNiNewTabWithATag(start_url)
-					// window.open(`#/videoMeeting/target?url=${start_url}`)
-					// window.open(start_url)
 					dispatch({
 						type: 'workbench/getMeetingList',
 						payload: {
@@ -872,11 +837,11 @@ class VideoMeetingPopoverContent extends React.Component {
 
 	// 发起会议
 	handleVideoMeetingSubmit = () => {
-		const { dispatch } = this.props;
+		const { dispatch, videoConferenceProviderList = [] } = this.props;
 		const { saveToProject, org_id, meetingTitle, meeting_start_time, userIds = [], user_phone = [], isShowNowTime = true, isExeecedTime, providerDefault } = this.state;
 		const { defaultMeetingTitle, defaultSaveToProject, defaultAppointStartTime, defaultDelayDueTime } = this.getVideoMeetingPopoverContentNoramlDatas()
 		const time2 = currentDelayDueTime ? (meeting_start_time ? (meeting_start_time + currentDelayDueTime) : (defaultAppointStartTime + currentDelayDueTime)) : (defaultDelayDueTime)
-
+		let gold_provider_id = (videoConferenceProviderList && (videoConferenceProviderList.filter(item => item.is_default == '1')[0] || []).id) || ''
 		const data = {
 			_organization_id: org_id,
 			board_id: saveToProject ? saveToProject : defaultSaveToProject,
@@ -887,7 +852,7 @@ class VideoMeetingPopoverContent extends React.Component {
 			end_time: time2,
 			user_for: user_phone && user_phone.join(',') || '',
 			user_ids: (userIds && userIds.join(',')) || '',
-			provider_id: providerDefault
+			provider_id: providerDefault ? providerDefault : gold_provider_id
 		};
 
 		Promise.resolve(
@@ -1075,10 +1040,8 @@ class VideoMeetingPopoverContent extends React.Component {
 			remindDropdownVisible
 		} = this.state;
 		let { projectList, board_id, videoConferenceProviderList = [] } = this.props;
-		// console.log('ssssssssssssprojectList', projectList)
 		//过滤出来当前用户有编辑权限的项目
 		projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
-		// console.log('ssssssssssssprojectList2', projectList)
 
 		let newToNoticeList = [].concat(...toNoticeList, ...othersPeople)
 		let { defaultSaveToProject, defaultMeetingTitle, currentDelayStartTime } = this.getVideoMeetingPopoverContentNoramlDatas()
@@ -1212,7 +1175,6 @@ class VideoMeetingPopoverContent extends React.Component {
 														</div>
 
 														{newToNoticeList.map((value) => {
-															// console.log(value, 'ssssss_value')
 															const { avatar, name, user_name, user_id } = value
 															let tempValue = Object.keys(value)
 															if (!tempValue) return
