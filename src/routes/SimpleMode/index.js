@@ -7,6 +7,7 @@ import WorkbenchPage from './Components/WorkbenchPage'
 import Home from './Components/Home'
 import { isColor } from '@/utils/util'
 import defaultWallpaperSrc from '@/assets/simplemode/acd42051256454f9b070300b8121eae2.png'
+import { setBoardIdStorage } from "../../utils/businessFunction";
 
 const getEffectOrReducerByName = name => `technological/${name}`
 // 待重构，将路由和其它分离出来
@@ -49,6 +50,7 @@ class SimpleMode extends Component {
             id: current_board_id
           }
         })
+        setBoardIdStorage(current_board_id, current_board_belong_org)
         setTimeout(() => {
           this.setState({
             show: true
