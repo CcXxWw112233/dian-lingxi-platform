@@ -144,7 +144,7 @@ class AddTaskModal extends Component {
   // 如果是成员视图，则默认设置已选用户,同时设置已选项目为‘个人事务’
   setDefaultExcuser = () => {
     const { list_group, group_view_type, current_list_group_id, about_apps_boards = [] } = this.props
-    if (group_view_type == '2') {
+    if (group_view_type == '2' || group_view_type == '5') {
       const group = list_group.find(item => current_list_group_id == item.lane_id)
       const user = {
         full_name: group['lane_name'],
@@ -245,7 +245,7 @@ class AddTaskModal extends Component {
         item.apps //&& item.apps.find(i => i.code === 'Tasks')
       );
     });
-    if (group_view_type == '2') { //如果是用户视图，则需要过滤掉没有该操作 用户id的项目
+    if (group_view_type == '2' || group_view_type == '5') { //如果是用户视图，则需要过滤掉没有该操作 用户id的项目
       filteredNoThatTypeProject = about_user_boards.filter(item => {
         return (
           item.users && item.users.find(i => i.id == current_list_group_id)
@@ -270,7 +270,7 @@ class AddTaskModal extends Component {
           <div className={styles.addTaskModalSelectProject}>
             <div className={styles.addTaskModalSelectProject_and_groupList}>
               {/*在项目视图下，必须选择了具体的项目*/}
-              {(group_view_type == '1' && !!current_operate_board_id) ? (
+              {((group_view_type == '1' || group_view_type == '5') && !!current_operate_board_id) ? (
                 <div className={styles.groupList__wrapper}>
                   {currentSelectedProject.board_name}
                 </div>
@@ -321,7 +321,7 @@ class AddTaskModal extends Component {
                 list={currentSelectedProjectMembersList}
                 handleSelectedItemChange={this.handleSelectedItemChange}
                 currentSelectedProjectMember={currentSelectedProjectMember}
-                use_default_member={group_view_type == '2'}
+                use_default_member={group_view_type == '2' || group_view_type == '5'}
                 use_default_member_ids={[current_list_group_id]}
                 dispatch={this.props.dispatch}
                 board_id={currentSelectedProject.board_id}

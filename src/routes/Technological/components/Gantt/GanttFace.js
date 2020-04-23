@@ -367,7 +367,7 @@ export default class GanttFace extends Component {
                 gantt_card_height={gantt_card_height}
                 dataAreaRealHeight={dataAreaRealHeight} />
               {/* <GroupListHeadElse gantt_card_height={gantt_card_height} dataAreaRealHeight={dataAreaRealHeight} /> */}
-              <GroupListHeadSetBottom />
+              {/* <GroupListHeadSetBottom /> */}
             </div>
             <div
               className={indexStyles.board_body}

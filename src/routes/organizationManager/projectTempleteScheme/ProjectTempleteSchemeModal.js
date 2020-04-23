@@ -158,7 +158,7 @@ export default class ProjectTempleteSchemeModal extends Component {
         {/* title 标题 */}
         <div className={indexStyles.title}>
           <div className={`${globalStyles.authTheme} ${indexStyles.title_icon}`}>&#xe684;</div>
-          <div style={{ fontSize: '20px', fontWeight: 900, color: 'rgba(0,0,0,0.65)', letterSpacing: '4px' }}>{`${currentNounPlanFilterName(PROJECTS)}解决方案`}</div>
+          <div style={{ fontSize: '20px', fontWeight: 900, color: 'rgba(0,0,0,0.65)', letterSpacing: '4px' }}>{`${currentNounPlanFilterName(PROJECTS)}模板`}</div>
         </div>
         {
           whetherShowSchemeDetail ? this.renderEverySchemeItem() : this.renderInitTempleteList()

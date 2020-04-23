@@ -291,9 +291,9 @@ class Organization extends Component {
         <Menu.Item key="1">基本信息</Menu.Item>
         <Menu.Item key="2">{`${currentNounPlanFilterName(ORGANIZATION)}角色`}</Menu.Item>
         <Menu.Item key="3">{`${currentNounPlanFilterName(PROJECTS)}角色`}</Menu.Item>
-        <Menu.Item key="4">名词定义</Menu.Item>
-        <Menu.Item key="5">功能管理</Menu.Item>
-        <Menu.Item key="6">{`${currentNounPlanFilterName(PROJECTS)}解决方案`}</Menu.Item>
+        {/* <Menu.Item key="4">名词定义</Menu.Item> */}
+        {/* <Menu.Item key="5">功能管理</Menu.Item> */}
+        <Menu.Item key="6">{`${currentNounPlanFilterName(PROJECTS)}模板`}</Menu.Item>
       </Menu>
     )
   }

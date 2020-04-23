@@ -148,12 +148,13 @@ export default {
           message.error(res.message)
           return
         }
+        const finally_no = res.data.length - 1
         yield put({
           type: 'updateDatas',
           payload: {
-            triggerList: res.data,
-            remind_trigger: res.data[0].type_code,
-            remind_edit_type: res.data[0].remind_edit_type
+            triggerList: [res.data[finally_no]],
+            remind_trigger: res.data[finally_no].type_code,
+            remind_edit_type: res.data[finally_no].remind_edit_type
           }
         })
       },

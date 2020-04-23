@@ -9,12 +9,58 @@ import { isColor } from '@/utils/util'
 import defaultWallpaperSrc from '@/assets/simplemode/acd42051256454f9b070300b8121eae2.png'
 
 const getEffectOrReducerByName = name => `technological/${name}`
-
+// 待重构，将路由和其它分离出来
 class SimpleMode extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {}
+    this.state = {
+      show: false
+    }
+  }
+
+  // 用户信息请求完成后才显示
+  setShowByUserInfo = (props) => {
+    const { userInfo: { id, user_set = {} } } = props
+    const { dispatch } = this.props
+    const { current_org, current_board_id, current_board_name, current_board_belong_org } = user_set
+    if (id) {
+      if (current_board_id && current_board_id != '0') { //选择了一个项目
+        dispatch({
+          type: 'simplemode/updateDatas',
+          payload: {
+            simplemodeCurrentProject: {
+              board_id: current_board_id,
+              board_name: current_board_name,
+              org_id: current_board_belong_org
+            }
+          }
+        })
+        dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            gantt_board_id: current_board_id,
+            // group_view_type: '4'
+          }
+        })
+        dispatch({
+          type: 'projectDetail/projectDetailInfo',
+          payload: {
+            id: current_board_id
+          }
+        })
+        setTimeout(() => {
+          this.setState({
+            show: true
+          })
+        })
+      } else {
+        this.setState({
+          show: true
+        })
+      }
+
+    }
   }
 
   // 初始化极简模式数据
@@ -34,6 +80,11 @@ class SimpleMode extends Component {
     this.initGetSimpleModeData()
     window.addEventListener('scroll', this.handleScroll, false) //监听滚动
     window.addEventListener('resize', this.handleResize, false) //监听窗口大小改变
+    this.setShowByUserInfo(this.props)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setShowByUserInfo(nextProps)
   }
 
   componentWillUnmount() { //一定要最后移除监听器，以防多个组件之间导致this的指向紊乱
@@ -93,7 +144,7 @@ class SimpleMode extends Component {
       currentUserWallpaperContent,
       userInfo = {},
     } = this.props;
-
+    const { show } = this.state
     const { wallpaper = defaultWallpaperSrc } = userInfo;
     const wallpaperContent = currentUserWallpaperContent ? currentUserWallpaperContent : wallpaper;
     let bgStyle = {}
@@ -105,7 +156,7 @@ class SimpleMode extends Component {
     return (
       <div className={`${indexStyles.wapper} ${indexStyles.wapperBg} ${setWapperCenter ? indexStyles.wapper_center : ''}`} onClick={this.handleHiddenNav} style={bgStyle}>
         {simpleHeaderVisiable && <SimpleHeader />}
-        {this.renderRoutes()}
+        {show && this.renderRoutes()}
       </div>
 
     )

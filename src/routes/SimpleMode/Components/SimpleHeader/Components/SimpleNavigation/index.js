@@ -577,7 +577,7 @@ export default class SimpleNavigation extends Component {
                                     <div className={indexStyles.bank}>
                                         <div className={`${globalStyles.authTheme} ${indexStyles.bank_icon}`}>&#xe719;</div>
                                         <span className={indexStyles.middle_text}>组织管理后台</span>
-                                        <div className={indexStyles.payUpgrade} onClick={(e) => { this.openPayUpgradeModal(e) }} >升级</div>
+                                        <div className={indexStyles.payUpgrade} onClick={(e) => { this.openPayUpgradeModal(e) }} >申请升级</div>
                                     </div>
                                 </div>
                             </Menu.Item>

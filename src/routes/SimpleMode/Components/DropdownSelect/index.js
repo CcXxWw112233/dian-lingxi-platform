@@ -188,7 +188,7 @@ class DropdownSelect extends Component {
                             {(simplemodeCurrentProject && simplemodeCurrentProject.board_id) ?
                                 simplemodeCurrentProject.board_name
                                 :
-                                '我参与的项目'
+                                '所有项目'
                             }
                             <Icon type="down" style={{ fontSize: '12px' }} />
                         </span>

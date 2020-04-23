@@ -948,7 +948,7 @@ export default class DragDropContentComponent extends Component {
               }
               <div className={mainContentStyles.field_hover}>
                 <span className={`${globalStyles.authTheme}`}>&#xe6b9;</span>
-                <span>附件</span>
+                <span>上传</span>
               </div>
             </div>
             <div className={`${mainContentStyles.field_right}`}>
