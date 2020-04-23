@@ -12,7 +12,7 @@ export default class BeginningStepThree_one extends Component {
     super(props)
     this.state = {
       score_items: props.itemValue && props.itemValue.score_items ? JSON.parse(JSON.stringify(props.itemValue.score_items || [])) : [],
-      clientWidth: document.getElementById(`ratingItems_${props.itemKey}`) ? document.getElementById(`ratingItems_${props.itemKey}`).clientWidth : 800,
+      clientWidth: document.getElementById(`ratingItems_${props.itemKey}`) ? document.getElementById(`ratingItems_${props.itemKey}`).clientWidth : 420,
     }
     this.resizeTTY = this.resizeTTY.bind(this)
   }
@@ -25,7 +25,7 @@ export default class BeginningStepThree_one extends Component {
   }
   resizeTTY = () => {
     const { itemKey } = this.props
-    const clientWidth = document.getElementById(`ratingItems_${itemKey}`) ? document.getElementById(`ratingItems_${itemKey}`).clientWidth - 200 : document.documentElement.clientWidth
+    const clientWidth = document.getElementById(`ratingItems_${itemKey}`) ? document.getElementById(`ratingItems_${itemKey}`).clientWidth - 200 : 420
     this.setState({
       clientWidth
     })
@@ -168,20 +168,24 @@ export default class BeginningStepThree_one extends Component {
     const { enable_weight, score_display } = itemValue
     const { score_items = [], clientWidth } = this.state
     let flag = this.whetherShowDiffWidth()
+    let autoWidth = clientWidth ? clientWidth / 4 - 45 : 130
     return (
       <div>
         {/* 评分项 */}
         <div style={{ borderTop: '1px solid rgba(0,0,0,0.09)', marginTop: '16px', padding: '16px 14px' }}>
-          <div className={indexStyles.ratingItems}>
+          <div id={`ratingItems_${itemKey}`} className={indexStyles.ratingItems}>
             {
               score_items && score_items.map((item, index) => {
                 const { title, description, max_score, weight_ratio, is_click_rating_grade, value } = item
                 return (
                   <div key={item} className={`${indexStyles.rating_itemsValue} ${flag && score_items.length > 1 ? indexStyles.rating_active_width : indexStyles.rating_normal_width}`}>
                     <p>
-                      <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer', display: 'inline-block' }}>
+                      <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer', display: 'inline-block', display: 'flex', flex: 1 }}>
                         <Tooltip title={title} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: clientWidth && !(flag && score_items.length > 1) ? clientWidth + 'px' : '130px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>:
+                        <span style={{display: 'flex'}}>
+                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: clientWidth && !(flag && score_items.length > 1) ? clientWidth + 'px' : autoWidth, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>
+                          <span>:</span>
+                         </span>
                         </Tooltip>
                         {
                           enable_weight == '1' && (
@@ -194,7 +198,7 @@ export default class BeginningStepThree_one extends Component {
                       {
                         description != '' ? (
                           <Popover title={<div style={{ margin: '0 4px', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '130px', whiteSpace: 'nowrap' }}>{title}</div>} content={<div style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', maxWidth: '130px' }}>{description}</div>} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                            <span style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe84a;</span>
+                            <span style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe845;</span>
                           </Popover>
                         ) : ('')
                       }

@@ -12,12 +12,13 @@ export default class ConfigureStepTypeThree_one extends Component {
     super(props)
     this.state = {
       localScoreList: props.itemValue && props.itemValue.score_items ? JSON.parse(JSON.stringify(props.itemValue.score_items || [])) : [],
+      local_enable_weight: props.itemValue && props.itemValue.enable_weight ? props.itemValue.enable_weight : '',
       score_items: props.itemValue && props.itemValue.score_items ? JSON.parse(JSON.stringify(props.itemValue.score_items || [])) : [],
       is_add_description: false, // 是否是在添加说明 false 表示不在 true表示进入说明状态
       currentSelectItemIndex: '', // 当前选中的元素下标
       currentSelectItemDescription: '', // 当前选择的元素的描述内容
       popoverVisible: false, // 配置的气泡框是否可见 false 为不可见
-      clientWidth: document.getElementById(`ratingItems_${props.itemKey}`) ? document.getElementById(`ratingItems_${props.itemKey}`).clientWidth : 800,
+      clientWidth: document.getElementById(`ratingItems_${props.itemKey}`) ? document.getElementById(`ratingItems_${props.itemKey}`).clientWidth : 420,
     }
     this.resizeTTY = this.resizeTTY.bind(this)
   }
@@ -25,12 +26,21 @@ export default class ConfigureStepTypeThree_one extends Component {
   componentDidMount() {
     window.addEventListener('resize', this.resizeTTY)
   }
+  componentWillReceiveProps(nextProps) {
+    if (!isObjectValueEqual(this.props, nextProps)) {
+      console.log(nextProps.itemValue.score_items, 'sssssssss_我的天')
+      this.setState({
+        localScoreList: nextProps.itemValue && nextProps.itemValue.score_items ? JSON.parse(JSON.stringify(nextProps.itemValue.score_items || [])) : [],
+        score_items: nextProps.itemValue && nextProps.itemValue.score_items ? JSON.parse(JSON.stringify(nextProps.itemValue.score_items || [])) : [],
+      })
+    }
+  }
   componentWillUnmount() {
     window.removeEventListener("resize", this.resizeTTY);
   }
   resizeTTY = () => {
     const { itemKey } = this.props
-    const clientWidth = document.getElementById(`ratingItems_${itemKey}`) ? document.getElementById(`ratingItems_${itemKey}`).clientWidth - 200 : document.documentElement.clientWidth
+    const clientWidth = document.getElementById(`ratingItems_${itemKey}`) ? document.getElementById(`ratingItems_${itemKey}`).clientWidth - 200 : 420
     this.setState({
       clientWidth
     })
@@ -48,7 +58,7 @@ export default class ConfigureStepTypeThree_one extends Component {
   }
 
   onVisibleChange = (visible) => {
-    const { is_score_rating, score_items: scoreList = [], localScoreList = [] } = this.state
+    const { is_score_rating, score_items: scoreList = [], localScoreList = [], local_enable_weight } = this.state
     const { itemKey, parentKey, processEditDatas = [], itemValue } = this.props
     const { enable_weight } = itemValue
     if (!is_score_rating) { // 判断是否点击了确定
@@ -57,7 +67,7 @@ export default class ConfigureStepTypeThree_one extends Component {
           score_items: JSON.parse(JSON.stringify(localScoreList || []))
         })
         this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: JSON.parse(JSON.stringify(localScoreList || [])) }, 'score_items')
-        if (enable_weight == '1') {
+        if (local_enable_weight != enable_weight && local_enable_weight == '1') {
           this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '0' }, 'enable_weight')
         }
 
@@ -98,7 +108,10 @@ export default class ConfigureStepTypeThree_one extends Component {
     if (score_items && score_items.length <= 1) {
       return
     }
-    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: checked ? '1' : '0' }, 'enable_weight')
+    this.setState({
+      local_enable_weight: checked ? '1' : '0'
+    })
+    // this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: checked ? '1' : '0' }, 'enable_weight')
   }
 
   titleResize = (key) => {
@@ -335,15 +348,32 @@ export default class ConfigureStepTypeThree_one extends Component {
   // 确认事件
   handleComfirmScoreRating = (e) => {
     e && e.stopPropagation()
-    const { score_items = [] } = this.state
+    const { score_items = [], local_enable_weight } = this.state
+    const { itemValue: { enable_weight } } = this.props
+    let new_data = [...score_items]    
+    new_data = new_data.map(item => {
+      let new_item = {...item}
+      new_item = {...item, weight_ratio: '100'}
+      return new_item
+    })
     this.setState({
       is_score_rating: true,
       localScoreList: JSON.parse(JSON.stringify(score_items || []))
     }, () => {
       this.onVisibleChange(false)
       this.setState({
-        is_score_rating: false
+        is_score_rating: false,
       })
+      if (enable_weight != local_enable_weight) {
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: local_enable_weight }, 'enable_weight')
+        if (local_enable_weight == '0') {
+          this.setState({
+            score_items: JSON.parse(JSON.stringify(new_data || [])),
+            localScoreList: JSON.parse(JSON.stringify(new_data || [])),
+          })
+          this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: JSON.parse(JSON.stringify(new_data || [])) }, 'score_items')
+        }
+      }
     })
 
 
@@ -484,8 +514,35 @@ export default class ConfigureStepTypeThree_one extends Component {
 
   renderConfigurationScore = () => {
     const { itemValue: { enable_weight }, itemKey } = this.props
-    const { localScoreList = [], score_items = [] } = this.state
-    let disabledFlag = isObjectValueEqual(localScoreList, score_items) || this.whetherIsEmptyContent() || (enable_weight == '1' && this.whetherTheAllWeightValueGreaterThanHundred())
+    const { localScoreList = [], score_items = [], local_enable_weight } = this.state
+    // let disabledFlag = isObjectValueEqual(localScoreList, score_items) || this.whetherIsEmptyContent() || (local_enable_weight == '1' && this.whetherTheAllWeightValueGreaterThanHundred()) || ((local_enable_weight == enable_weight) && this.whetherTheAllWeightValueGreaterThanHundred())
+    let disabledFlag
+    if (local_enable_weight == '0') {
+      if (local_enable_weight != enable_weight) {
+        if (isObjectValueEqual(localScoreList, score_items) || this.whetherIsEmptyContent()) {
+          disabledFlag = false
+        } else {
+          disabledFlag = false
+        }
+      } else {
+        if (isObjectValueEqual(localScoreList, score_items) || this.whetherIsEmptyContent()) {
+          disabledFlag = true
+        }
+      }
+    } else if (local_enable_weight == '1') {
+      if (local_enable_weight != enable_weight) {
+        if (this.whetherTheAllWeightValueGreaterThanHundred() || isObjectValueEqual(localScoreList, score_items) || this.whetherIsEmptyContent()) {
+          disabledFlag = true
+        } else {
+          disabledFlag = false
+        }
+      } else {
+        if (this.whetherTheAllWeightValueGreaterThanHundred() || isObjectValueEqual(localScoreList, score_items) || this.whetherIsEmptyContent()) {
+          disabledFlag = true
+        }
+      }
+    }
+    
     return (
       <div className={indexStyles.popover_content}>
         <div style={{ minHeight: '352px' }} className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
@@ -499,10 +556,10 @@ export default class ConfigureStepTypeThree_one extends Component {
                 </Tooltip>
                 :&nbsp;&nbsp;&nbsp;
               </span>
-              <span><Switch style={{ cursor: score_items && score_items.length <= 1 ? 'not-allowed' : 'pointer' }} size="small" onChange={this.handleWeightChange} checked={enable_weight == '1'} /></span>
+              <span><Switch style={{ cursor: score_items && score_items.length <= 1 ? 'not-allowed' : 'pointer' }} size="small" onChange={this.handleWeightChange} checked={local_enable_weight == '1'} /></span>
             </span>
           </div>
-          {enable_weight == '1' ? this.renderWeightTableContent() : this.renderDefaultTableContent()}
+          {local_enable_weight == '1' ? this.renderWeightTableContent() : this.renderDefaultTableContent()}
           {/* {this.renderDefaultTableContent()} */}
           {/* {this.renderWeightTableContent()} */}
           <Button onClick={this.handleAddTableItems} className={indexStyles.rating_button}>
@@ -577,8 +634,9 @@ export default class ConfigureStepTypeThree_one extends Component {
   render() {
     const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id } } = this.props
     const { enable_weight, score_display } = itemValue
-    const { score_items = [], is_add_description, popoverVisible, clientWidth } = this.state
+    const { score_items = [], is_add_description, popoverVisible, clientWidth, local_enable_weight } = this.state
     let flag = this.whetherShowDiffWidth()
+    let autoWidth = clientWidth ? clientWidth / 4 - 45 : 130
     return (
       <div>
         {/* 评分项 */}
@@ -590,12 +648,16 @@ export default class ConfigureStepTypeThree_one extends Component {
                 return (
                   <div key={item} className={`${indexStyles.rating_itemsValue} ${flag && score_items.length > 1 ? indexStyles.rating_active_width : indexStyles.rating_normal_width}`}>
                     <p>
-                      <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer', display: 'inline-block' }}>
+                      <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer', display: 'inline-block', display: 'flex', flex: 1 }}>
                         <Tooltip title={title} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: clientWidth && !(flag && score_items.length > 1) ? clientWidth + 'px' : '130px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>:
+                         <span style={{display: 'flex'}}>
+                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: clientWidth && !(flag && score_items.length > 1) ? clientWidth + 'px' : autoWidth, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>
+                          <span>:</span>
+                         </span>
+                          
                         </Tooltip>
                         {
-                          enable_weight == '1' && (
+                          local_enable_weight == '1' && (
                             <Tooltip overlayStyle={{ minWidth: '116px' }} title={`权重占比: ${weight_ratio}%`} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
                               <span className={indexStyles.rating_weight}>&nbsp;&nbsp;{`*${weight_ratio}%`}</span>
                             </Tooltip>
@@ -605,7 +667,7 @@ export default class ConfigureStepTypeThree_one extends Component {
                       {
                         description != '' ? (
                           <Popover title={<div style={{ margin: '0 4px', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '130px', whiteSpace: 'nowrap' }}>{title}</div>} content={<div style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', maxWidth: '130px' }}>{description}</div>} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                            <span style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe84a;</span>
+                            <span style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe845;</span>
                           </Popover>
                         ) : ('')
                       }
