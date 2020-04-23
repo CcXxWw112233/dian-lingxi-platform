@@ -175,7 +175,7 @@ class Gantt extends Component {
         param.board_id = gantt_board_id
         param.list_id = current_list_group_id == '0' ? '' : current_list_group_id
       }
-    } else if (group_view_type == '5') {
+    } else if (group_view_type == '5' || group_view_type == '2') {
       param.list_id = data['list_id']
     } else {
 
