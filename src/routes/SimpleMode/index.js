@@ -43,6 +43,12 @@ class SimpleMode extends Component {
             // group_view_type: '4'
           }
         })
+        dispatch({
+          type: 'projectDetail/projectDetailInfo',
+          payload: {
+            id: current_board_id
+          }
+        })
         setTimeout(() => {
           this.setState({
             show: true
