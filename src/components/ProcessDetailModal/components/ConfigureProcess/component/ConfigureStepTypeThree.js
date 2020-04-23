@@ -207,7 +207,8 @@ export default class ConfigureStepTypeThree extends Component {
   handleResultScoreValue = (value) => {
     this.setState({
       local_result_score_value: String(value)
-    })    
+    })
+    this.updateConfigureProcess({ value: String(value) }, 'result_value')    
     // if (reg.test(value)) {
     //   this.updateConfigureProcess({ value: String(value) }, 'result_value')
     // } else {
@@ -217,6 +218,7 @@ export default class ConfigureStepTypeThree extends Component {
 
   handleResultScoreBlur = (e) => {
     e && e.stopPropagation()
+    return
     let value = e.target.value
     const reg = /^([0-9]\d{0,3}(\.\d{1,2})?|10000)$/
     let point_index = String(value).indexOf('.')

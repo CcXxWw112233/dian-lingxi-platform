@@ -276,7 +276,9 @@ export default class ConfigureProcess extends Component {
     let confirmButtonText = ''
     let confirmButtonDisabled
     const { itemValue } = this.props
-    const { node_type, name, forms = [], assignee_type, assignees, cc_type, recipients, approve_value, approve_type } = itemValue
+    const { node_type, name, forms = [], assignee_type, assignees, 
+      cc_type, recipients, approve_value, approve_type,  result_value
+    } = itemValue
     let newAssignees
     let newRecipients
     if (!assignees || assignees == '') {
@@ -454,6 +456,50 @@ export default class ConfigureProcess extends Component {
         }
         break
       case '3':
+        const reg = /^([0-9]\d{0,3}(\.\d{1,2})?|10000)$/
+        if (cc_type == '0' || cc_type == '') { // 表示没有选择抄送人
+          if (!name && !(newAssignees && newAssignees.length)) {
+            confirmButtonText = '请输入步骤名称以及至少添加一位评分人'
+            confirmButtonDisabled = true
+          } else if (!name && (newAssignees && newAssignees.length)) {
+            confirmButtonText = '请输入步骤名称'
+            confirmButtonDisabled = true
+          } else if (name && !(newAssignees && newAssignees.length)) {
+            confirmButtonText = '至少添加一位评分人'
+            confirmButtonDisabled = true
+          }
+          if (!reg.test(result_value)) {
+            confirmButtonText = '请输入正确的结果分数值(小于10000的数字)'
+            confirmButtonDisabled = true
+          }
+        } else if (cc_type == '1') {
+          if (!name && !(newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+            confirmButtonText = '请输入步骤名称、至少添加一位评分人以及至少添加一位抄送人'
+            confirmButtonDisabled = true
+          } else if (name && !(newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+            confirmButtonText = '至少添加一位评分人以及至少添加一位抄送人'
+            confirmButtonDisabled = true
+          } else if (!name && (newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+            confirmButtonText = '请输入步骤名称以及至少添加一位抄送人'
+            confirmButtonDisabled = true
+          } else if (!name && !(newAssignees && newAssignees.length) && (newRecipients && newRecipients.length)) {
+            confirmButtonText = '请输入步骤名称以及至少添加一位评分人'
+            confirmButtonDisabled = true
+          } else if (!name && (newAssignees && newAssignees.length) && (newRecipients && newRecipients.length)) {
+            confirmButtonText = '请输入步骤名称'
+            confirmButtonDisabled = true
+          } else if (name && !(newAssignees && newAssignees.length) && (newRecipients && newRecipients.length)) {
+            confirmButtonText = '至少添加一位评分人'
+            confirmButtonDisabled = true
+          } else if (name && (newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+            confirmButtonText = '至少添加一位抄送人'
+            confirmButtonDisabled = true
+          }
+          if (!reg.test(result_value)) {
+            confirmButtonText = '请输入正确的结果分数值(小于10000的数字)'
+            confirmButtonDisabled = true
+          }
+        }
         break
       default:
         // confirmButtonText = '确认'

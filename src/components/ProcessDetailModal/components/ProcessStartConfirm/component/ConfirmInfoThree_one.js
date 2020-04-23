@@ -45,7 +45,7 @@ export default class ConfirmInfoThree_one extends Component {
 
   render() {
     const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id } } = this.props
-    const { enable_weight } = itemValue
+    const { enable_weight, score_display } = itemValue
     const { score_items = [], clientWidth } = this.state
     let flag = this.whetherShowDiffWidth()
     return (
@@ -60,8 +60,9 @@ export default class ConfirmInfoThree_one extends Component {
                   <div key={item} className={`${indexStyles.rating_itemsValue} ${flag && score_items.length > 1 ? indexStyles.rating_active_width : indexStyles.rating_normal_width}`}>
                     <p>
                       <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer', display: 'inline-block' }}>
-                        <Tooltip title={title} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: clientWidth && !(flag && score_items.length > 1) ? clientWidth + 'px' : '130px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>:
+                        <Tooltip overlayStyle={{minWidth: '58px'}} title={title} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: clientWidth && !(flag && score_items.length > 1) ? clientWidth + 'px' : '130px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>
+                          <span style={{flexShrink: 0}}>:</span>
                         </Tooltip>
                         {
                           enable_weight == '1' && (
@@ -73,7 +74,7 @@ export default class ConfirmInfoThree_one extends Component {
                       </span>
                       {
                         description != '' ? (
-                          <Popover title={<div style={{margin:'0 4px', overflow: 'hidden', textOverflow:'ellipsis', maxWidth: '130px', whiteSpace: 'nowrap'}}>{title}</div>} content={<div style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', maxWidth: '130px' }}>{description}</div>} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                          <Popover title={<div style={{ margin: '0 4px', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '130px', whiteSpace: 'nowrap' }}>{title}</div>} content={<div style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', maxWidth: '130px' }}>{description}</div>} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
                             <span style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe84a;</span>
                           </Popover>
                         ) : ('')
@@ -85,6 +86,14 @@ export default class ConfirmInfoThree_one extends Component {
                   </div>
                 )
               })
+            }
+            {
+              score_display == '1' && (
+                <div style={{ color: 'rgba(0,0,0,0.45)', fontWeight: 500, position: 'absolute', bottom: '0' }}>
+                  <span className={globalStyles.authTheme}>&#xe66c;</span>
+                  <span>&nbsp;&nbsp;评分过程中各评分人的评分信息互相不可见</span>
+                </div>
+              )
             }
           </div>
         </div>

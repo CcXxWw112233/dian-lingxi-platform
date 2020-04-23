@@ -123,7 +123,7 @@ export default class BeginningStepThree_one extends Component {
             </th>
           </tr>
           <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>
-            <td style={{maxWidth: '78px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>lover lover lover lover</td>
+            <td style={{ maxWidth: '78px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>lover lover lover lover</td>
             <td>70%</td>
             <td>98.5</td>
           </tr>
@@ -165,7 +165,7 @@ export default class BeginningStepThree_one extends Component {
 
   render() {
     const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id } } = this.props
-    const { enable_weight } = itemValue
+    const { enable_weight, score_display } = itemValue
     const { score_items = [], clientWidth } = this.state
     let flag = this.whetherShowDiffWidth()
     return (
@@ -220,6 +220,14 @@ export default class BeginningStepThree_one extends Component {
                   </div>
                 )
               })
+            }
+            {
+              score_display == '1' && (
+                <div style={{ color: 'rgba(0,0,0,0.45)', fontWeight: 500, position: 'absolute', bottom: '0' }}>
+                  <span className={globalStyles.authTheme}>&#xe66c;</span>
+                  <span>&nbsp;&nbsp;评分过程中各评分人的评分信息互相不可见</span>
+                </div>
+              )
             }
           </div>
           {/* 评分人意见以及分数详情 */}

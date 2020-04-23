@@ -7,7 +7,7 @@ import EditStepTypeOne_two from './EditStepTypeOne_two'
 import EditStepTypeOne_three from './EditStepTypeOne_three'
 import EditStepTypeOne_five from './EditStepTypeOne_five'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
-import { Button } from 'antd'
+import { Button, Tooltip } from 'antd'
 import { connect } from 'dva'
 import { renderTimeType } from '../../handleOperateModal'
 
@@ -154,7 +154,7 @@ export default class EditStepTypeOne extends Component {
   render() {
     const { itemKey, processEditDatas = [], itemValue } = this.props
     const { is_show_spread_arrow } = this.state
-    const { id, name, description, deadline_type, deadline_value, deadline_time_type, cc_type, assignee_type } = itemValue
+    const { id, name, description, deadline_type, deadline_value, deadline_time_type, cc_type, assignee_type, cc_locking } = itemValue
     let transPrincipalList = this.filterAssignees()
     let transCopyPersonnelList = this.filterRecipients()
     return (
@@ -238,6 +238,13 @@ export default class EditStepTypeOne extends Component {
                       <span className={indexStyles.content__principalList_info}>
                         {`${transCopyPersonnelList.length}位抄送人`}
                       </span>
+                      {
+                        cc_locking == '1' && (
+                          <Tooltip title="已锁定抄送人" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                            <span style={{cursor: 'pointer', color: 'rgba(0,0,0,0.25)', marginLeft: '4px'}} className={globalStyles.authTheme}>&#xe86a;</span>
+                          </Tooltip>
+                        )
+                      }
                     </div>
                   )
                 }

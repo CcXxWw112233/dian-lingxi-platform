@@ -58,9 +58,9 @@ export default class ConfigureStepTypeThree_one extends Component {
         })
         this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: JSON.parse(JSON.stringify(localScoreList || [])) }, 'score_items')
         if (enable_weight == '1') {
-          this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '0'}, 'enable_weight')
+          this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '0' }, 'enable_weight')
         }
-        
+
       }
     }
     this.setState({
@@ -95,7 +95,7 @@ export default class ConfigureStepTypeThree_one extends Component {
   // 是否开启权重
   handleWeightChange = (checked) => {
     const { score_items = [] } = this.state
-    if (score_items && score_items.length <=1) {
+    if (score_items && score_items.length <= 1) {
       return
     }
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: checked ? '1' : '0' }, 'enable_weight')
@@ -312,7 +312,7 @@ export default class ConfigureStepTypeThree_one extends Component {
       }
     }
     new_data = new_data.map((item, i) => {
-      let new_item = {...item, key: String(i)}
+      let new_item = { ...item, key: String(i) }
       return new_item
     })
     this.setState({
@@ -328,7 +328,7 @@ export default class ConfigureStepTypeThree_one extends Component {
 
   onFocus = (e, key, i) => {
     e && e.stopPropagation()
-    e && e. preventDefault()
+    e && e.preventDefault()
     this.handleAutoTitleTextAreaBlur(key)
   }
 
@@ -342,10 +342,10 @@ export default class ConfigureStepTypeThree_one extends Component {
     }, () => {
       this.onVisibleChange(false)
       this.setState({
-        is_score_rating:false
+        is_score_rating: false
       })
     })
-    
+
 
   }
 
@@ -499,7 +499,7 @@ export default class ConfigureStepTypeThree_one extends Component {
                 </Tooltip>
                 :&nbsp;&nbsp;&nbsp;
               </span>
-              <span><Switch style={{cursor: score_items && score_items.length <= 1 ? 'not-allowed' : 'pointer'}} size="small" onChange={this.handleWeightChange} checked={enable_weight == '1'} /></span>
+              <span><Switch style={{ cursor: score_items && score_items.length <= 1 ? 'not-allowed' : 'pointer' }} size="small" onChange={this.handleWeightChange} checked={enable_weight == '1'} /></span>
             </span>
           </div>
           {enable_weight == '1' ? this.renderWeightTableContent() : this.renderDefaultTableContent()}
@@ -546,7 +546,7 @@ export default class ConfigureStepTypeThree_one extends Component {
     return (
       <div className={indexStyles.popover_title} style={{ display: 'flex' }}>
         <span onClick={this.handleCancleDescription} className={`${indexStyles.back_icon} ${globalStyles.authTheme}`}>&#xe7ec;</span>
-        <span style={{ flex: '1', margin:'0 4px', overflow: 'hidden', textOverflow:'ellipsis', width: '360px', whiteSpace: 'nowrap' }}>{gold_title}</span>
+        <span style={{ flex: '1', margin: '0 4px', overflow: 'hidden', textOverflow: 'ellipsis', width: '360px', whiteSpace: 'nowrap' }}>{gold_title}</span>
         <span onClick={this.handleClosePopoverVisible} className={`${globalStyles.authTheme} ${indexStyles.rating_close}`}>&#xe7fe;</span>
       </div>
     )
@@ -555,7 +555,7 @@ export default class ConfigureStepTypeThree_one extends Component {
   // 渲染配置评分title
   renderConfigurationScoreTitile = () => {
     return (
-      <div className={indexStyles.popover_title} style={{display: 'flex'}}>
+      <div className={indexStyles.popover_title} style={{ display: 'flex' }}>
         <span style={{ flex: '1' }}>配置评分</span>
         <span onClick={this.handleClosePopoverVisible} className={`${globalStyles.authTheme} ${indexStyles.rating_close}`}>&#xe7fe;</span>
       </div>
@@ -576,7 +576,7 @@ export default class ConfigureStepTypeThree_one extends Component {
 
   render() {
     const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id } } = this.props
-    const { enable_weight } = itemValue
+    const { enable_weight, score_display } = itemValue
     const { score_items = [], is_add_description, popoverVisible, clientWidth } = this.state
     let flag = this.whetherShowDiffWidth()
     return (
@@ -604,7 +604,7 @@ export default class ConfigureStepTypeThree_one extends Component {
                       </span>
                       {
                         description != '' ? (
-                          <Popover title={<div style={{margin:'0 4px', overflow: 'hidden', textOverflow:'ellipsis', maxWidth: '130px', whiteSpace: 'nowrap'}}>{title}</div>} content={<div style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', maxWidth: '130px' }}>{description}</div>} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                          <Popover title={<div style={{ margin: '0 4px', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '130px', whiteSpace: 'nowrap' }}>{title}</div>} content={<div style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', maxWidth: '130px' }}>{description}</div>} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
                             <span style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe84a;</span>
                           </Popover>
                         ) : ('')
@@ -616,6 +616,14 @@ export default class ConfigureStepTypeThree_one extends Component {
                   </div>
                 )
               })
+            }
+            {
+              score_display == '1' && (
+                <div style={{ color: 'rgba(0,0,0,0.45)', fontWeight: 500, position: 'absolute', bottom: '0' }}>
+                  <span className={globalStyles.authTheme}>&#xe66c;</span>
+                  <span>&nbsp;&nbsp;评分过程中各评分人的评分信息互相不可见</span>
+                </div>
+              )
             }
             <div>
               <div id={`popoverContainer_${itemKey}`} onClick={(e) => e.stopPropagation()} className={indexStyles.popoverContainer} style={{ position: 'absolute', right: 0, top: 0 }}>

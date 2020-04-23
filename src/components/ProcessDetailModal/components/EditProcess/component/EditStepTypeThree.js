@@ -128,7 +128,7 @@ export default class EditStepTypeThree extends Component {
   render() {
     const { itemKey, itemValue } = this.props
     const { is_show_spread_arrow, transPrincipalList = [] } = this.state
-    const { name, cc_type, deadline_type, deadline_value, deadline_time_type } = itemValue
+    const { name, cc_type, cc_locking, deadline_type, deadline_value, deadline_time_type, score_locked } = itemValue
     // let transPrincipalList = this.filterAssignees()
     let transCopyPersonnelList = this.filterRecipients()
     return (
@@ -154,7 +154,7 @@ export default class EditStepTypeThree extends Component {
               </div>
             </div>
             {/* 下 */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position:' relative' }}>
               <div>
                 {/* 填写人 */}
                 <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
@@ -177,6 +177,13 @@ export default class EditStepTypeThree extends Component {
                   <span className={indexStyles.content__principalList_info}>
                     {`${transPrincipalList.length}位评分人`}
                   </span>
+                  {
+                    score_locked == '1' && (
+                      <Tooltip arrowPointAtCenter={true} title="已锁定评分人" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                        <span style={{cursor: 'pointer', color: 'rgba(0,0,0,0.25)', marginLeft: '4px'}} className={globalStyles.authTheme}>&#xe86a;</span>
+                      </Tooltip>
+                    )
+                  }
                 </div>
                 {/* 抄送人 */}
                 {
@@ -201,6 +208,13 @@ export default class EditStepTypeThree extends Component {
                       <span className={indexStyles.content__principalList_info}>
                         {`${transCopyPersonnelList.length}位抄送人`}
                       </span>
+                      {
+                        cc_locking == '1' && (
+                          <Tooltip title="已锁定抄送人" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                            <span style={{cursor: 'pointer', color: 'rgba(0,0,0,0.25)', marginLeft: '4px'}} className={globalStyles.authTheme}>&#xe86a;</span>
+                          </Tooltip>
+                        )
+                      }
                     </div>
                   )
                 }

@@ -4,11 +4,11 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '../../AvatarList'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { principalList } from '../../../constant'
-import { Button, Tooltip, Icon } from 'antd'
+import { Button, Tooltip, Icon, Popconfirm, Input } from 'antd'
 import { connect } from 'dva'
-import { renderTimeType } from '../../handleOperateModal'
+import { renderTimeType, computing_mode, result_score_option, result_score_fall_through_with_others } from '../../handleOperateModal'
 import BeginningStepThree_one from './BeginningStepThree_one';
-
+const TextArea = Input.TextArea
 @connect(mapStateToProps)
 export default class BeginningStepThree extends Component {
 
@@ -76,8 +76,55 @@ export default class BeginningStepThree extends Component {
     return newTransCopyPersonnelList
   }
 
+    // 渲染不同状态时步骤的样式
+    renderDiffStatusStepStyles = () => {
+      const { itemValue, processInfo: { status: parentStatus } } = this.props
+      const { status } = itemValue
+      let stylLine, stylCircle
+      if (parentStatus == '2') { // 表示已中止
+        if (status == '1') { // 进行中
+          stylLine = indexStyles.hasnotCompetedLine
+          stylCircle = indexStyles.hasnotCompetedCircle
+        } else {
+          stylLine = indexStyles.stopLine
+          stylCircle = indexStyles.stopCircle
+        }
+      } else if (parentStatus == '0') { // 表示未开始
+        stylLine = indexStyles.stopLine
+        stylCircle = indexStyles.stopCircle
+      } else {
+        if (status == '0') { // 未开始
+          stylLine = indexStyles.hasnotCompetedLine
+          stylCircle = indexStyles.hasnotCompetedCircle
+        } else if (status == '1') { // 进行中
+          stylLine = indexStyles.doingLine
+          stylCircle = indexStyles.doingCircle
+        } else if (status == '2') { // 已完成
+          stylLine = indexStyles.line
+          stylCircle = indexStyles.circle
+        } else {
+          stylLine = indexStyles.doingLine
+          stylCircle = indexStyles.doingCircle
+        }
+      }
+  
+      return { stylCircle, stylLine }
+    }
+
+  renderPopConfirmContent = () => {
+    const { itemValue } = this.props
+    // const { successfulMessage } = itemValue
+    const { successfulMessage } = this.state
+    return (
+      <div className={indexStyles.popcontent}>
+        <TextArea maxLength={200} onChange={this.handleChangeTextAreaValue} value={successfulMessage || ''} placeholder="填写评分意见（选填）" className={indexStyles.c_area} />
+      </div>
+    )
+  }
+
   renderEditDetailContent = () => {
     const { itemValue, itemKey } = this.props
+    const { count_type, result_condition_type, result_case_pass, result_case_other, result_value } = itemValue
     return (
       <div>
         {/* 渲染评分项 */}
@@ -93,36 +140,59 @@ export default class BeginningStepThree extends Component {
             </div>
             <div>
               <span className={indexStyles.rating_label_name}>计算方式</span>
-              <span className={indexStyles.select_item} style={{ minWidth: '94px' }}>总分值相加</span>
+              {
+                (count_type == '2' || count_type == '3') ? (
+                  <>
+                    <span className={indexStyles.select_item} style={{ minWidth: '94px' }}>总分值平均</span>
+                    <span className={indexStyles.select_item} style={{ minWidth: '136px' }}>{computing_mode(count_type)}</span>
+                  </>
+                ) : (
+                    <span className={indexStyles.select_item} style={{ minWidth: '94px' }}>{computing_mode(count_type)}</span>
+                  )
+              }
             </div>
             <div>
               <span className={indexStyles.rating_label_name}>结果分数</span>
-              <span className={indexStyles.select_item} style={{ minWidth: '94px' }}>大于或等于</span>
-              <span className={indexStyles.select_item} style={{ minWidth: '40px' }}>60</span>
-              <span className={indexStyles.select_item} style={{ minWidth: '136px' }}>流程流转到下一步</span>
+              <span className={indexStyles.select_item} style={{ minWidth: '94px' }}>{result_score_option(result_condition_type)}</span>
+              <span className={indexStyles.select_item} style={{ minWidth: '40px' }}>{result_value}</span>
+              <span className={indexStyles.select_item} style={{ minWidth: '136px' }}>{result_score_fall_through_with_others(result_case_pass)}</span>
             </div>
             <div>
               <span className={indexStyles.rating_label_name}>其余情况</span>
-              <span className={indexStyles.select_item} style={{ minWidth: '136px' }}>流程流转到上一步</span>
+              <span className={indexStyles.select_item} style={{ minWidth: '136px' }}>{result_score_fall_through_with_others(result_case_other)}</span>
             </div>
           </div>
         </div>
         {/* 编辑按钮 */}
-        <div style={{ paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center' }}>
-          <Button onClick={this.handleEnterConfigureProcess} type="primary">完成</Button>
+
+        <div className={indexStyles.button_wrapper} style={{ paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center' }}>
+          
+          <Popconfirm
+            onVisibleChange={this.onVisibleChange}
+            className={indexStyles.confirm_wrapper} icon={<></>}
+            getPopupContainer={triggerNode => triggerNode.parentNode}
+            placement="top" title={this.renderPopConfirmContent()}
+            okText="通过"
+            onCancel={this.handleCancelSuccessProcess}
+            onConfirm={this.handlePassProcess}
+          >
+            <Button onClick={this.handleEnterConfigureProcess} type="primary">完成</Button>
+          </Popconfirm>
         </div>
       </div>
     )
   }
 
   render() {
-    const { itemKey, itemValue } = this.props
+    const { itemKey, itemValue, processEditDatas = [] } = this.props
     const { is_show_spread_arrow, transPrincipalList = [] } = this.state
     const { name, cc_type, deadline_type, deadline_value, deadline_time_type } = itemValue
     // let transPrincipalList = this.filterAssignees()
     let transCopyPersonnelList = this.filterRecipients()
     return (
       <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }}>
+        {/* {processEditDatas.length <= itemKey + 1 ? null : <div className={this.renderDiffStatusStepStyles().stylLine}></div>}
+        <div className={this.renderDiffStatusStepStyles().stylCircle}> {itemKey + 1}</div> */}
         <div className={indexStyles.line}></div>
         <div className={indexStyles.circle}> {itemKey + 1}</div>
         <div className={`${indexStyles.popover_card}`}>

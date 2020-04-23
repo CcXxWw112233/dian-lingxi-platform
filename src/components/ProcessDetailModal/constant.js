@@ -40,6 +40,7 @@ export const processEditDatasItemThreeConstant = {
   "deadline_time_type": "",//完成期限类型 hour = 时 day =天 month = 月
   "deadline_value": "",//完成期限值
   "cc_type": "",//抄送人类型 1=自动抄送 2=手动抄送
+  "cc_locking": "0",
   "recipients": "",//抄送人 多个逗号隔开
   "assignees": "",//抄报人 多个逗号隔开
   "score_locked": '0', // 锁定评分人 1=锁定评分人 0=不锁定

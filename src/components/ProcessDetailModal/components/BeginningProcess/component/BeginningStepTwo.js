@@ -567,7 +567,7 @@ export default class BeginningStepTwo extends Component {
                 onVisibleChange={this.onVisibleChange}
                 className={indexStyles.confirm_wrapper} icon={<></>}
                 getPopupContainer={triggerNode => triggerNode.parentNode}
-                okButtonProps={{ disabled: isRejectNodesIng || isPassNodesIng ? true : false }}
+                // okButtonProps={{ disabled: isRejectNodesIng || isPassNodesIng ? true : false }}
                 placement="top" title={this.renderPopConfirmContent()}
                 okButtonProps={{ disabled: whetherIsComplete ? false : true }}
                 okText="通过"
