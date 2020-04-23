@@ -178,7 +178,7 @@ class VideoMeetingPopoverContent extends React.Component {
 		const { user_set } = this.getInfoFromLocalStorage("userInfo") || {}
 		if (!user_set) return
 		const { current_board } = user_set
-		projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
+		// projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
 		let new_projectList = [...projectList]
 		if (projectList && projectList.length) {
 			//过滤出来当前用户有编辑权限的项目
@@ -214,7 +214,7 @@ class VideoMeetingPopoverContent extends React.Component {
 		// 	}
 		// })
 		let { projectList = [] } = nextProps
-		projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
+		// projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
 		let new_projectList = [...projectList]
 		if (projectList && projectList.length) {
 			if (new_projectList.find(item => item.is_my_private == '1')) {
@@ -343,7 +343,7 @@ class VideoMeetingPopoverContent extends React.Component {
 		if (!user_set) return
 		const { current_board } = user_set
 		//过滤出来当前用户有编辑权限的项目
-		projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
+		// projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
 		if (projectList && projectList.length) {
 			let new_projectList = [...projectList]
 			if (new_projectList.find(item => item.is_my_private == '1')) {
@@ -1041,7 +1041,7 @@ class VideoMeetingPopoverContent extends React.Component {
 		} = this.state;
 		let { projectList, board_id, videoConferenceProviderList = [] } = this.props;
 		//过滤出来当前用户有编辑权限的项目
-		projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
+		// projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
 
 		let newToNoticeList = [].concat(...toNoticeList, ...othersPeople)
 		let { defaultSaveToProject, defaultMeetingTitle, currentDelayStartTime } = this.getVideoMeetingPopoverContentNoramlDatas()
