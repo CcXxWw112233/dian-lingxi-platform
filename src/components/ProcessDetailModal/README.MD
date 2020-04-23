@@ -340,8 +340,8 @@ file_name: "1.jpg"
       {
         "key": "0",
         "title": "评分项",
-        "weight_value": '100',
-        "grade_value": '100',
+        "weight_ratio": '100',
+        "max_score": '100',
         "description": '楼下老爷爷',
       }
     ]

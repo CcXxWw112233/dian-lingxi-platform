@@ -19,7 +19,7 @@ export default class ConfigureStepTypeThree extends Component {
     this.state = {
       // principalList
       designatedPersonnelList: [],
-      local_result_score_value: props.itemValue && props.itemValue.result_score_value ? props.itemValue.result_score_value : '60'
+      local_result_score_value: props.itemValue && props.itemValue.result_value ? props.itemValue.result_value : '60'
     }
   }
 
@@ -117,17 +117,17 @@ export default class ConfigureStepTypeThree extends Component {
   handleComputingModeChange = (value) => {
     switch (value) {
       case "1":
-        this.updateConfigureProcess({ value: '1' }, 'computing_mode')
+        this.updateConfigureProcess({ value: '1' }, 'count_type')
         break;
       case "average":
         // 默认选择第一个
-        this.updateConfigureProcess({ value: '2' }, 'computing_mode')
+        this.updateConfigureProcess({ value: '2' }, 'count_type')
         break
       case '2':
-        this.updateConfigureProcess({ value: '2' }, 'computing_mode')
+        this.updateConfigureProcess({ value: '2' }, 'count_type')
         break
       case '3':
-        this.updateConfigureProcess({ value: '3' }, 'computing_mode')
+        this.updateConfigureProcess({ value: '3' }, 'count_type')
         break
       default:
         break;
@@ -138,19 +138,19 @@ export default class ConfigureStepTypeThree extends Component {
   handleResultScoreOptionChange = (value) => {
     switch (value) {
       case '1': // 表示大于
-        this.updateConfigureProcess({ value: '1' }, 'results_score_option')
+        this.updateConfigureProcess({ value: '1' }, 'result_condition_type')
         break;
       case '2': // 表示小于
-        this.updateConfigureProcess({ value: '2' }, 'results_score_option')
+        this.updateConfigureProcess({ value: '2' }, 'result_condition_type')
         break
       case '3': // 表示等于
-        this.updateConfigureProcess({ value: '3' }, 'results_score_option')
+        this.updateConfigureProcess({ value: '3' }, 'result_condition_type')
         break
       case '4': // 表示大于或等于
-        this.updateConfigureProcess({ value: '4' }, 'results_score_option')
+        this.updateConfigureProcess({ value: '4' }, 'result_condition_type')
         break
       case '5': // 表示小于或等于
-        this.updateConfigureProcess({ value: '5' }, 'results_score_option')
+        this.updateConfigureProcess({ value: '5' }, 'result_condition_type')
         break
       default:
         break;
@@ -161,13 +161,13 @@ export default class ConfigureStepTypeThree extends Component {
   handleResultScoreFallThrough = (value) => {
     switch (value) {
       case '1': // 表示大于
-        this.updateConfigureProcess({ value: '1' }, 'result_score_fall_through')
+        this.updateConfigureProcess({ value: '1' }, 'result_case_pass')
         break;
       case '2': // 表示小于
-        this.updateConfigureProcess({ value: '2' }, 'result_score_fall_through')
+        this.updateConfigureProcess({ value: '2' }, 'result_case_pass')
         break
       case '3': // 表示等于
-        this.updateConfigureProcess({ value: '3' }, 'result_score_fall_through')
+        this.updateConfigureProcess({ value: '3' }, 'result_case_pass')
         break
       default:
         break;
@@ -178,13 +178,13 @@ export default class ConfigureStepTypeThree extends Component {
   handleRemainingCircumstances = (value) => {
     switch (value) {
       case '1': // 表示大于
-        this.updateConfigureProcess({ value: '1' }, 'remaining_circumstances')
+        this.updateConfigureProcess({ value: '1' }, 'result_case_other')
         break;
       case '2': // 表示小于
-        this.updateConfigureProcess({ value: '2' }, 'remaining_circumstances')
+        this.updateConfigureProcess({ value: '2' }, 'result_case_other')
         break
       case '3': // 表示等于
-        this.updateConfigureProcess({ value: '3' }, 'remaining_circumstances')
+        this.updateConfigureProcess({ value: '3' }, 'result_case_other')
         break
       default:
         break;
@@ -199,9 +199,9 @@ export default class ConfigureStepTypeThree extends Component {
       local_result_score_value: String(value)
     })    
     // if (reg.test(value)) {
-    //   this.updateConfigureProcess({ value: String(value) }, 'result_score_value')
+    //   this.updateConfigureProcess({ value: String(value) }, 'result_value')
     // } else {
-    //   this.updateConfigureProcess({ value: '' }, 'result_score_value')
+    //   this.updateConfigureProcess({ value: '' }, 'result_value')
     // }
   }
 
@@ -214,18 +214,18 @@ export default class ConfigureStepTypeThree extends Component {
       this.setState({
         local_result_score_value: String(value)
       })
-      this.updateConfigureProcess({ value: String(value) }, 'result_score_value')
+      this.updateConfigureProcess({ value: String(value) }, 'result_value')
     } else {
       if (point_index > 0) {
         this.setState({
           local_result_score_value: String(value).substring(0,point_index + 1)
         })
-        this.updateConfigureProcess({ value: String(value).substring(0,point_index + 1) }, 'result_score_value')
+        this.updateConfigureProcess({ value: String(value).substring(0,point_index + 1) }, 'result_value')
       } else {
         this.setState({
           local_result_score_value: ''
         })
-        this.updateConfigureProcess({ value: '' }, 'result_score_value')
+        this.updateConfigureProcess({ value: '' }, 'result_value')
       }
     }
   }
@@ -311,7 +311,7 @@ export default class ConfigureStepTypeThree extends Component {
 
   render() {
     const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id } } = this.props
-    const { computing_mode, results_score_option, result_score_value, result_score_fall_through, remaining_circumstances } = itemValue
+    const { count_type, result_condition_type, result_value, result_case_pass, result_case_other } = itemValue
     const { local_result_score_value } = this.state
     return (
       <div>
@@ -360,9 +360,9 @@ export default class ConfigureStepTypeThree extends Component {
                 </Select>
               </span>
               {
-                (computing_mode == '2' || computing_mode == '3') && (
+                (count_type == '2' || count_type == '3') && (
                   <span style={{ position: 'relative' }}>
-                    <Select value={computing_mode} onChange={this.handleComputingModeChange} getPopupContainer={triggerNode => triggerNode.parentNode} style={{ width: '168px', height: '40px' }}>
+                    <Select value={count_type} onChange={this.handleComputingModeChange} getPopupContainer={triggerNode => triggerNode.parentNode} style={{ width: '168px', height: '40px' }}>
                       <Option value="2">总分值/评分项数</Option>
                       <Option value="3">总分值/评分人数</Option>
                     </Select>
@@ -373,7 +373,7 @@ export default class ConfigureStepTypeThree extends Component {
             <div>
               <span className={indexStyles.rating_label_name}>结果分数</span>
               <span>
-                <Select value={results_score_option} onChange={this.handleResultScoreOptionChange} style={{ width: '114px', height: '40px' }}>
+                <Select value={result_condition_type} onChange={this.handleResultScoreOptionChange} style={{ width: '114px', height: '40px' }}>
                   <Option value="1">大于</Option>
                   <Option value="2">小于</Option>
                   <Option value="3">等于</Option>
@@ -381,7 +381,7 @@ export default class ConfigureStepTypeThree extends Component {
                   <Option value="5">小于或等于</Option>
                 </Select>
                 <InputNumber min={0} value={local_result_score_value} onBlur={this.handleResultScoreBlur} onChange={this.handleResultScoreValue} style={{ width: '114px', height: '40px', margin: '0px 8px', lineHeight: '40px' }} />
-                <Select value={result_score_fall_through} onChange={this.handleResultScoreFallThrough} style={{ width: '168px', height: '40px' }}>
+                <Select value={result_case_pass} onChange={this.handleResultScoreFallThrough} style={{ width: '168px', height: '40px' }}>
                   <Option value="1">{`${currentNounPlanFilterName(FLOWS)}流转到上一步`}</Option>
                   <Option value="2">{`${currentNounPlanFilterName(FLOWS)}流转到下一步`}</Option>
                   <Option value="3">{`${currentNounPlanFilterName(FLOWS)}中止`}</Option>
@@ -390,7 +390,7 @@ export default class ConfigureStepTypeThree extends Component {
             </div>
             <div>
               <span className={indexStyles.rating_label_name}>其余情况</span>
-              <Select value={remaining_circumstances} onChange={this.handleRemainingCircumstances} style={{ width: '168px', height: '40px' }}>
+              <Select value={result_case_other} onChange={this.handleRemainingCircumstances} style={{ width: '168px', height: '40px' }}>
                 <Option value="1">{`${currentNounPlanFilterName(FLOWS)}流转到上一步`}</Option>
                 <Option value="2">{`${currentNounPlanFilterName(FLOWS)}流转到下一步`}</Option>
                 <Option value="3">{`${currentNounPlanFilterName(FLOWS)}中止`}</Option>

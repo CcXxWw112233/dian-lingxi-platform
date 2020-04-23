@@ -42,19 +42,21 @@ export const processEditDatasItemThreeConstant = {
   "cc_type": "",//抄送人类型 1=自动抄送 2=手动抄送
   "recipients": "",//抄送人 多个逗号隔开
   "assignees": "",//抄报人 多个逗号隔开
-  "weight_coefficient": "", // 是否开启权重
-  "computing_mode": "1", // 计算方式
-  "results_score_option": "4", // 结果分数选项
-  "result_score_value": "60", // 结果分数值
-  "result_score_fall_through": "2", // 结果分数导向
-  "remaining_circumstances": "1", // 其余情况
-  "scoreList": [
-    {
+  "score_locked": '0', // 锁定评分人 1=锁定评分人 0=不锁定
+  "score_display": '1', // 锁定评分人 1=评分时互相可见 0=不可见
+  "enable_weight": "", // 是否开启权重
+  "count_type": "1", // 计算方式
+  "result_condition_type": "4", // 结果分数选项
+  "result_value": "60", // 结果分数值
+  "result_case_pass": "2", // 结果分数导向
+  "result_case_other": "1", // 其余情况
+  "score_items": [
+    {      
       "key": "0",
-      "title": "评分项",
-      "weight_value": '100',
-      "grade_value": '100',
-      "description": '',
+      "title": "评分项",//标题
+      "max_score": "100",//最大分值
+      "description": "",//描述
+      "weight_ratio": "100"//权重占比
     }
   ], // 评分项
   "is_confirm": "0",
@@ -87,15 +89,15 @@ export const tableList = [
   {
     "key": '0',
     "title": '标题1',
-    "weight_value": '',
-    "grade_value": '',
+    "weight_ratio": '',
+    "max_score": '',
     "description": '',
   },
   {
     "key": '1',
     "title": '标题2',
-    "weight_value": '',
-    "grade_value": '',
+    "weight_ratio": '',
+    "max_score": '',
     "description": '',
   },
 ]
@@ -113,8 +115,8 @@ export const ratingsList = [
       {
         "key": "0",
         "title": "评分项",
-        "weight_value": '100',
-        "grade_value": '100',
+        "weight_ratio": '100',
+        "max_score": '100',
         "description": '楼下老爷爷',
       }
     ]

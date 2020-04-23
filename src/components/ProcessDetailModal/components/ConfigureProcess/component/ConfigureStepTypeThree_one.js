@@ -11,8 +11,8 @@ export default class ConfigureStepTypeThree_one extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      localScoreList: props.itemValue && props.itemValue.scoreList ? JSON.parse(JSON.stringify(props.itemValue.scoreList || [])) : [],
-      scoreList: props.itemValue && props.itemValue.scoreList ? JSON.parse(JSON.stringify(props.itemValue.scoreList || [])) : [],
+      localScoreList: props.itemValue && props.itemValue.score_items ? JSON.parse(JSON.stringify(props.itemValue.score_items || [])) : [],
+      score_items: props.itemValue && props.itemValue.score_items ? JSON.parse(JSON.stringify(props.itemValue.score_items || [])) : [],
       is_add_description: false, // 是否是在添加说明 false 表示不在 true表示进入说明状态
       currentSelectItemIndex: '', // 当前选中的元素下标
       currentSelectItemDescription: '', // 当前选择的元素的描述内容
@@ -37,13 +37,13 @@ export default class ConfigureStepTypeThree_one extends Component {
   }
 
   initData = () => {
-    const { localScoreList = [], scoreList = [] } = this.state
+    const { localScoreList = [], score_items = [] } = this.state
     this.setState({
       is_add_description: false, // 是否是在添加说明 false 表示不在 true表示进入说明状态
       currentSelectItemIndex: '', // 当前选中的元素下标
       currentSelectItemDescription: '', // 当前选择的元素的描述内容
       localScoreList: JSON.parse(JSON.stringify(localScoreList || [])),
-      scoreList: JSON.parse(JSON.stringify(scoreList || [])),
+      score_items: JSON.parse(JSON.stringify(score_items || [])),
     })
   }
 
@@ -66,20 +66,20 @@ export default class ConfigureStepTypeThree_one extends Component {
 
   updateState = (data, index) => {
     const { value, key, isNotUpdateModelDatas } = data
-    const { scoreList = [] } = this.state
-    let new_data = [...scoreList]
+    const { score_items = [] } = this.state
+    let new_data = [...score_items]
     new_data[index][key] = value
     this.setState({
-      scoreList: new_data
+      score_items: new_data
     })
     if (!isNotUpdateModelDatas) {
-      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: new_data }, 'scoreList')
+      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: new_data }, 'score_items')
     }
   }
 
   // 是否开启权重
   handleWeightChange = (checked) => {
-    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: checked ? '1' : '0' }, 'weight_coefficient')
+    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: checked ? '1' : '0' }, 'enable_weight')
   }
 
   titleResize = (key) => {
@@ -141,10 +141,10 @@ export default class ConfigureStepTypeThree_one extends Component {
     const reg = /^([1-9]\d{0,2}?|1000)$/
     // /^([1-9]\d{0,2}?|1000)$/
     if (value == '' || value.trimLR() == '' || !reg.test(value)) {
-      this.updateState({ value: '', key: 'grade_value', isNotUpdateModelDatas: true }, i)
+      this.updateState({ value: '', key: 'max_score', isNotUpdateModelDatas: true }, i)
       return
     }
-    this.updateState({ value: value, key: 'grade_value', isNotUpdateModelDatas: true }, i)
+    this.updateState({ value: value, key: 'max_score', isNotUpdateModelDatas: true }, i)
     if (this.refs && this.refs[`autoGradeTextArea_${key}`]) {
       this.gradeResize(key)
     }
@@ -155,9 +155,9 @@ export default class ConfigureStepTypeThree_one extends Component {
     let value = e.target.value
     const reg = /^([1-9]\d{0,2}?|1000)$/
     if (reg.test(value) && value != '' && String(value).trimLR() != '') {
-      this.updateState({ value: value, key: 'grade_value' }, i)
+      this.updateState({ value: value, key: 'max_score' }, i)
     } else {
-      this.updateState({ value: '', key: 'grade_value' }, i)
+      this.updateState({ value: '', key: 'max_score' }, i)
     }
     if (this.refs && this.refs[`autoGradeTextArea_${key}`]) {
       this.gradeResize(key)
@@ -171,10 +171,10 @@ export default class ConfigureStepTypeThree_one extends Component {
     const reg = /^([1-9]\d{0,1}?|100)$/
     // /^([1-9]\d{0,2}?|1000)$/
     if (value == '' || value.trimLR() == '' || !reg.test(value)) {
-      this.updateState({ value: '', key: 'weight_value', isNotUpdateModelDatas: true }, i)
+      this.updateState({ value: '', key: 'weight_ratio', isNotUpdateModelDatas: true }, i)
       return
     }
-    this.updateState({ value: value, key: 'weight_value', isNotUpdateModelDatas: true }, i)
+    this.updateState({ value: value, key: 'weight_ratio', isNotUpdateModelDatas: true }, i)
     if (this.refs && this.refs[`autoWeightTextArea_${key}`]) {
       this.weightResize(key)
     }
@@ -185,9 +185,9 @@ export default class ConfigureStepTypeThree_one extends Component {
     let value = e.target.value
     const reg = /^([1-9]\d{0,1}?|100)$/
     if (reg.test(value) && value != '' && String(value).trimLR() != '') {
-      this.updateState({ value: value, key: 'weight_value' }, i)
+      this.updateState({ value: value, key: 'weight_ratio' }, i)
     } else {
-      this.updateState({ value: '', key: 'weight_value' }, i)
+      this.updateState({ value: '', key: 'weight_ratio' }, i)
     }
     if (this.refs && this.refs[`autoWeightTextArea_${key}`]) {
       this.weightResize(key)
@@ -196,20 +196,20 @@ export default class ConfigureStepTypeThree_one extends Component {
 
   handleAddTableItems = (e) => {
     e && e.stopPropagation()
-    const { scoreList = [] } = this.state
-    let new_data = [...scoreList]
+    const { score_items = [] } = this.state
+    let new_data = [...score_items]
     let obj = {
       "key": new_data.length.toString(),
       "title": "评分项",
-      "weight_value": '100',
-      "grade_value": '100',
+      "weight_ratio": '100',
+      "max_score": '100',
       "description": '',
     }
     new_data.push(obj)
     this.setState({
-      scoreList: new_data
+      score_items: new_data
     })
-    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: new_data }, 'scoreList')
+    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: new_data }, 'score_items')
   }
 
   handleChangeMenuItem = (e, index) => {
@@ -267,10 +267,10 @@ export default class ConfigureStepTypeThree_one extends Component {
   // 取消更新描述事件
   handleCancleDescription = (e) => {
     e && e.stopPropagation()
-    const { currentSelectItemIndex, scoreList = [] } = this.state
-    let gold_update = (scoreList.find((item, index) => index == currentSelectItemIndex) || {}).is_update_description || ''
+    const { currentSelectItemIndex, score_items = [] } = this.state
+    let gold_update = (score_items.find((item, index) => index == currentSelectItemIndex) || {}).is_update_description || ''
     if (gold_update) {
-      let gold_description = (scoreList.find((item, index) => index == currentSelectItemIndex) || {}).description || ''
+      let gold_description = (score_items.find((item, index) => index == currentSelectItemIndex) || {}).description || ''
       this.updateState({ value: gold_description != '' ? gold_description : '', key: 'description' }, currentSelectItemIndex)
     } else {
       this.updateState({ value: '', key: 'description' }, currentSelectItemIndex)
@@ -283,8 +283,8 @@ export default class ConfigureStepTypeThree_one extends Component {
 
   // 删除选项
   handleDeleteItem = (index) => {
-    const { scoreList = [] } = this.state
-    let new_data = [...scoreList]
+    const { score_items = [] } = this.state
+    let new_data = [...score_items]
     for (var i = 0; i < new_data.length; i++) {
       if (i == index) {
         new_data.splice(index, 1); // 将使后面的元素依次前移，数组长度减1
@@ -297,9 +297,9 @@ export default class ConfigureStepTypeThree_one extends Component {
       return new_item
     })
     this.setState({
-      scoreList: new_data
+      score_items: new_data
     })
-    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: new_data }, 'scoreList')
+    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: new_data }, 'score_items')
     // 这是因为删除后 需要延时去更新状态
     let temp_index = index == new_data.length ? new_data.length - 1 : index
     setTimeout(() => {
@@ -314,8 +314,8 @@ export default class ConfigureStepTypeThree_one extends Component {
   }
 
   renderMoreSelect = (index) => {
-    const { scoreList = [] } = this.state
-    let flag = scoreList && scoreList.length > '1'
+    const { score_items = [] } = this.state
+    let flag = score_items && score_items.length > '1'
     return (
       <Menu onClick={(e) => { this.handleChangeMenuItem(e, index) }}>
         <Menu.Item key="1">添加说明</Menu.Item>
@@ -330,7 +330,7 @@ export default class ConfigureStepTypeThree_one extends Component {
 
   // 渲染默认的table表格, 即没有开启权重评分
   renderDefaultTableContent = () => {
-    const { scoreList = [], currentSelectItemIndex } = this.state
+    const { score_items = [], currentSelectItemIndex } = this.state
     return (
       <table className={indexStyles.popover_tableContent} border={1} style={{ borderColor: '#E9E9E9' }} width="100%">
         <tr style={{ height: '38px', border: '1px solid #E9E9E9', textAlign: 'center', background: '#FAFAFA' }}>
@@ -341,8 +341,8 @@ export default class ConfigureStepTypeThree_one extends Component {
           </th>
         </tr>
         {
-          scoreList && scoreList.map((item, index) => {
-            const { key, grade_value, title } = item
+          score_items && score_items.map((item, index) => {
+            const { key, max_score, title } = item
             return (
               <tr style={{ height: '38px', border: '1px solid #E9E9E9', textAlign: 'center' }}>
                 <td style={{ width: '170px' }}>
@@ -351,7 +351,7 @@ export default class ConfigureStepTypeThree_one extends Component {
                 </td>
                 <td style={{ position: 'relative', width: '90px' }}>
                   {/* <div className={indexStyles.rating_editTable} contentEditable={true}></div> */}
-                  <textarea value={grade_value} onBlur={(e) => { this.handleAutoGradeTextAreaBlur(e, key, index) }} onChange={(e) => { this.handleAutoGradeTextAreaValue(e, key, index) }} ref={`autoGradeTextArea_${key}`} />
+                  <textarea value={max_score} onBlur={(e) => { this.handleAutoGradeTextAreaBlur(e, key, index) }} onChange={(e) => { this.handleAutoGradeTextAreaValue(e, key, index) }} ref={`autoGradeTextArea_${key}`} />
                   <Dropdown overlay={this.renderMoreSelect(index)} getPopupContainer={triggerNode => triggerNode.parentNode} trigger={['click']}>
                     <div className={indexStyles.rating_moreBox}>
                       <span className={indexStyles.rating_more_icon}><span className={globalStyles.authTheme}>&#xe7fd;</span></span>
@@ -369,7 +369,7 @@ export default class ConfigureStepTypeThree_one extends Component {
 
   // 渲染具有权重的表格
   renderWeightTableContent = () => {
-    const { scoreList = [] } = this.state
+    const { score_items = [] } = this.state
     return (
       <table className={indexStyles.popover_tableContent} border={1} style={{ borderColor: '#E9E9E9' }} width="100%">
         <tr style={{ height: '38px', border: '1px solid #E9E9E9', textAlign: 'center', background: '#FAFAFA' }}>
@@ -384,8 +384,8 @@ export default class ConfigureStepTypeThree_one extends Component {
           </th>
         </tr>
         {
-          scoreList && scoreList.map((item, index) => {
-            const { key, title, grade_value, weight_value } = item
+          score_items && score_items.map((item, index) => {
+            const { key, title, max_score, weight_ratio } = item
             return (
               <tr style={{ height: '38px', border: '1px solid #E9E9E9', textAlign: 'center' }}>
                 <td style={{ width: '170px' }}>
@@ -394,11 +394,11 @@ export default class ConfigureStepTypeThree_one extends Component {
                 </td>
                 <td style={{ width: '90px' }}>
                   {/* <div className={`${indexStyles.rating_editTable} ${globalStyles.global_vertical_scrollbar}`} contentEditable={true}></div> */}
-                  <textarea value={weight_value} onBlur={(e) => { this.handleChangeAutoWeightTextAreaBlur(e, key, index) }} onChange={(e) => { this.handleChangeAutoWeightTextAreaValue(e, key, index) }} ref={`autoWeightTextArea_${key}`} />
+                  <textarea value={weight_ratio} onBlur={(e) => { this.handleChangeAutoWeightTextAreaBlur(e, key, index) }} onChange={(e) => { this.handleChangeAutoWeightTextAreaValue(e, key, index) }} ref={`autoWeightTextArea_${key}`} />
                 </td>
                 <td style={{ position: 'relative', width: '90px' }}>
                   {/* <div className={indexStyles.rating_editTable} contentEditable={true}></div> */}
-                  <textarea value={grade_value} onChange={(e) => { this.handleAutoGradeTextAreaValue(e, key, index) }} ref={`autoGradeTextArea_${key}`} />
+                  <textarea value={max_score} onChange={(e) => { this.handleAutoGradeTextAreaValue(e, key, index) }} ref={`autoGradeTextArea_${key}`} />
                   <Dropdown overlay={this.renderMoreSelect(index)} getPopupContainer={triggerNode => triggerNode.parentNode} trigger={['click']}>
                     <div className={indexStyles.rating_moreBox}>
                       <span className={indexStyles.rating_more_icon}><span className={globalStyles.authTheme}>&#xe7fd;</span></span>
@@ -417,11 +417,11 @@ export default class ConfigureStepTypeThree_one extends Component {
 
   // 判断是否有内容为空 true 表示存在内容为空
   whetherIsEmptyContent = () => {
-    const { scoreList = [] } = this.state
-    let new_data = [...scoreList]
+    const { score_items = [] } = this.state
+    let new_data = [...score_items]
     let flag
     new_data.find(item => {
-      if (item.title == '' || item.grade_value == '' || item.weight_value == '') {
+      if (item.title == '' || item.max_score == '' || item.weight_ratio == '') {
         flag = true
       }
     })
@@ -430,14 +430,14 @@ export default class ConfigureStepTypeThree_one extends Component {
 
   // 判断所有内容的权重是否大于100 true 表示大于100 禁用
   whetherTheAllWeightValueGreaterThanHundred = () => {
-    const { scoreList = [] } = this.state
-    let new_data = [...scoreList]
+    const { score_items = [] } = this.state
+    let new_data = [...score_items]
     let flag
     let compare_value = 100
     let total_value = new_data.reduce((acc, curr) => {
 
-      let weight_value = curr.weight_value
-      acc += Number(weight_value)
+      let weight_ratio = curr.weight_ratio
+      acc += Number(weight_ratio)
       return acc
     }, 0)
     if (total_value > compare_value) {
@@ -447,9 +447,9 @@ export default class ConfigureStepTypeThree_one extends Component {
   }
 
   renderConfigurationScore = () => {
-    const { itemValue: { weight_coefficient }, itemKey } = this.props
-    const { localScoreList = [], scoreList = [] } = this.state
-    let disabledFlag = isObjectValueEqual(localScoreList, scoreList) || this.whetherIsEmptyContent() || (weight_coefficient == '1' && this.whetherTheAllWeightValueGreaterThanHundred())
+    const { itemValue: { enable_weight }, itemKey } = this.props
+    const { localScoreList = [], score_items = [] } = this.state
+    let disabledFlag = isObjectValueEqual(localScoreList, score_items) || this.whetherIsEmptyContent() || (enable_weight == '1' && this.whetherTheAllWeightValueGreaterThanHundred())
     return (
       <div className={indexStyles.popover_content}>
         <div style={{ minHeight: '352px' }} className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
@@ -463,15 +463,15 @@ export default class ConfigureStepTypeThree_one extends Component {
                 </Tooltip>
                 :&nbsp;&nbsp;&nbsp;
               </span>
-              <span><Switch size="small" onChange={this.handleWeightChange} checked={weight_coefficient == '1'} /></span>
+              <span><Switch size="small" onChange={this.handleWeightChange} checked={enable_weight == '1'} /></span>
             </span>
           </div>
-          {weight_coefficient == '1' ? this.renderWeightTableContent() : this.renderDefaultTableContent()}
+          {enable_weight == '1' ? this.renderWeightTableContent() : this.renderDefaultTableContent()}
           {/* {this.renderDefaultTableContent()} */}
           {/* {this.renderWeightTableContent()} */}
           <Button onClick={this.handleAddTableItems} className={indexStyles.rating_button}>
             <span className={globalStyles.authTheme}>&#xe782;</span>
-            <span>添加评分</span>
+            <span>&nbsp;&nbsp;添加评分</span>
           </Button>
         </div>
         <div className={indexStyles.pop_btn}>
@@ -483,8 +483,8 @@ export default class ConfigureStepTypeThree_one extends Component {
 
   // 添加说明
   renderAddDescription = () => {
-    const { scoreList = [], currentSelectItemIndex } = this.state
-    let gold_description = (scoreList.find((item, index) => index == currentSelectItemIndex) || {}).description || ''
+    const { score_items = [], currentSelectItemIndex } = this.state
+    let gold_description = (score_items.find((item, index) => index == currentSelectItemIndex) || {}).description || ''
     return (
       <div className={indexStyles.popover_content} style={{ textAlign: 'center' }}>
         <Input.TextArea
@@ -505,8 +505,8 @@ export default class ConfigureStepTypeThree_one extends Component {
 
   // 渲染添加说明的头部
   renderAddDescriptionTitle = () => {
-    const { scoreList = [], currentSelectItemIndex } = this.state
-    let gold_title = (scoreList.find((item, index) => index == currentSelectItemIndex) || {}).title || ''
+    const { score_items = [], currentSelectItemIndex } = this.state
+    let gold_title = (score_items.find((item, index) => index == currentSelectItemIndex) || {}).title || ''
     return (
       <div className={indexStyles.popover_title} style={{ display: 'flex' }}>
         <span onClick={this.handleCancleDescription} className={`${indexStyles.back_icon} ${globalStyles.authTheme}`}>&#xe7ec;</span>
@@ -527,9 +527,9 @@ export default class ConfigureStepTypeThree_one extends Component {
   }
 
   whetherShowDiffWidth = () => {
-    const { scoreList = [] } = this.state
+    const { score_items = [] } = this.state
     let flag = false
-    for (let i = 0; i < scoreList.length; i++) {
+    for (let i = 0; i < score_items.length; i++) {
       if (i % 4 == 0 || i % 2 == 0) {
         flag = true
         break
@@ -540,8 +540,8 @@ export default class ConfigureStepTypeThree_one extends Component {
 
   render() {
     const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id } } = this.props
-    const { weight_coefficient } = itemValue
-    const { scoreList = [], is_add_description, popoverVisible, clientWidth } = this.state
+    const { enable_weight } = itemValue
+    const { score_items = [], is_add_description, popoverVisible, clientWidth } = this.state
     let flag = this.whetherShowDiffWidth()
     return (
       <div>
@@ -549,19 +549,19 @@ export default class ConfigureStepTypeThree_one extends Component {
         <div style={{ borderBottom: '1px solid rgba(0,0,0,0.09)' }}>
           <div id={`ratingItems_${itemKey}`} onClick={this.handleClickRatingItems} className={indexStyles.ratingItems} style={{ background: popoverVisible ? '#E6F7FF' : 'rgba(0, 0, 0, 0.02)' }}>
             {
-              scoreList && scoreList.map((item, index) => {
-                const { title, description, grade_value, weight_value } = item
+              score_items && score_items.map((item, index) => {
+                const { title, description, max_score, weight_ratio } = item
                 return (
-                  <div key={item} className={`${indexStyles.rating_itemsValue} ${flag && scoreList.length > 1 ? indexStyles.rating_active_width : indexStyles.rating_normal_width}`}>
+                  <div key={item} className={`${indexStyles.rating_itemsValue} ${flag && score_items.length > 1 ? indexStyles.rating_active_width : indexStyles.rating_normal_width}`}>
                     <p>
                       <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer', display: 'inline-block' }}>
                         <Tooltip title={title} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: clientWidth && !(flag && scoreList.length > 1) ? clientWidth + 'px' : '130px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>:
+                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: clientWidth && !(flag && score_items.length > 1) ? clientWidth + 'px' : '130px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>:
                         </Tooltip>
                         {
-                          weight_coefficient == '1' && (
-                            <Tooltip overlayStyle={{ minWidth: '116px' }} title={`权重占比: ${weight_value}%`} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                              <span className={indexStyles.rating_weight}>&nbsp;&nbsp;{`*${weight_value}%`}</span>
+                          enable_weight == '1' && (
+                            <Tooltip overlayStyle={{ minWidth: '116px' }} title={`权重占比: ${weight_ratio}%`} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                              <span className={indexStyles.rating_weight}>&nbsp;&nbsp;{`*${weight_ratio}%`}</span>
                             </Tooltip>
                           )
                         }
@@ -575,7 +575,7 @@ export default class ConfigureStepTypeThree_one extends Component {
                       }
                     </p>
                     <div className={indexStyles.rating_grade}>
-                      <span>最高<span className={indexStyles.rating_grade_value}>{grade_value}</span>分</span>
+                      <span>最高<span className={indexStyles.rating_grade_value}>{max_score}</span>分</span>
                     </div>
                   </div>
                 )

@@ -11,7 +11,7 @@ export default class BeginningStepThree_one extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      scoreList: props.itemValue && props.itemValue.scoreList ? JSON.parse(JSON.stringify(props.itemValue.scoreList || [])) : [],
+      score_items: props.itemValue && props.itemValue.score_items ? JSON.parse(JSON.stringify(props.itemValue.score_items || [])) : [],
       clientWidth: document.getElementById(`ratingItems_${props.itemKey}`) ? document.getElementById(`ratingItems_${props.itemKey}`).clientWidth : 800,
     }
     this.resizeTTY = this.resizeTTY.bind(this)
@@ -34,22 +34,22 @@ export default class BeginningStepThree_one extends Component {
 
   updateState = (data, index) => {
     const { value, key, isNotUpdateModelDatas } = data
-    const { scoreList = [] } = this.state
-    let new_data = [...scoreList]
+    const { score_items = [] } = this.state
+    let new_data = [...score_items]
     new_data[index][key] = value
     this.setState({
-      scoreList: new_data
+      score_items: new_data
     })
     if (!isNotUpdateModelDatas) {
-      this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('scoreList', new_data)
+      this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('score_items', new_data)
     }
   }
 
   // 分数点击事件
   handleChangeRatingGrade = (e, i) => {
     e && e.stopPropagation()
-    const { scoreList = [] } = this.state
-    let new_data = [...scoreList]
+    const { score_items = [] } = this.state
+    let new_data = [...score_items]
     new_data = new_data.map((item, index) => {
       let new_item = { ...item }
       if (i == index) {
@@ -60,9 +60,9 @@ export default class BeginningStepThree_one extends Component {
       return new_item
     })
     this.setState({
-      scoreList: new_data
+      score_items: new_data
     })
-    this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('scoreList', new_data)
+    this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('score_items', new_data)
     // this.updateState({ value: true, key: 'is_click_rating_grade' }, i)
   }
 
@@ -76,7 +76,7 @@ export default class BeginningStepThree_one extends Component {
     let value = e.target.value
     // if ((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 105)) {
     //   console.log(e.target.value,'sssssssssssssssssssss_value')
-    //   this.updateState({ value: e.target.value, key: 'grade_value', isNotUpdateModelDatas: true }, i)
+    //   this.updateState({ value: e.target.value, key: 'max_score', isNotUpdateModelDatas: true }, i)
     // }
     if (value == '' || value.trimLR() == '') {
       this.updateState({ value: '', key: 'value', isNotUpdateModelDatas: true }, i)
@@ -98,9 +98,9 @@ export default class BeginningStepThree_one extends Component {
   }
 
   whetherShowDiffWidth = () => {
-    const { scoreList = [] } = this.state
+    const { score_items = [] } = this.state
     let flag = false
-    for (let i = 0; i < scoreList.length; i++) {
+    for (let i = 0; i < score_items.length; i++) {
       if (i % 4 == 0 || i % 2 == 0) {
         flag = true
         break
@@ -165,8 +165,8 @@ export default class BeginningStepThree_one extends Component {
 
   render() {
     const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id } } = this.props
-    const { weight_coefficient } = itemValue
-    const { scoreList = [], clientWidth } = this.state
+    const { enable_weight } = itemValue
+    const { score_items = [], clientWidth } = this.state
     let flag = this.whetherShowDiffWidth()
     return (
       <div>
@@ -174,19 +174,19 @@ export default class BeginningStepThree_one extends Component {
         <div style={{ borderTop: '1px solid rgba(0,0,0,0.09)', marginTop: '16px', padding: '16px 14px' }}>
           <div className={indexStyles.ratingItems}>
             {
-              scoreList && scoreList.map((item, index) => {
-                const { title, description, grade_value, weight_value, is_click_rating_grade, value } = item
+              score_items && score_items.map((item, index) => {
+                const { title, description, max_score, weight_ratio, is_click_rating_grade, value } = item
                 return (
-                  <div key={item} className={`${indexStyles.rating_itemsValue} ${flag && scoreList.length > 1 ? indexStyles.rating_active_width : indexStyles.rating_normal_width}`}>
+                  <div key={item} className={`${indexStyles.rating_itemsValue} ${flag && score_items.length > 1 ? indexStyles.rating_active_width : indexStyles.rating_normal_width}`}>
                     <p>
                       <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer', display: 'inline-block' }}>
                         <Tooltip title={title} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: clientWidth && !(flag && scoreList.length > 1) ? clientWidth + 'px' : '130px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>:
+                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: clientWidth && !(flag && score_items.length > 1) ? clientWidth + 'px' : '130px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>:
                         </Tooltip>
                         {
-                          weight_coefficient == '1' && (
-                            <Tooltip overlayStyle={{ minWidth: '116px' }} title={`权重占比: ${weight_value}%`} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                              <span className={indexStyles.rating_weight}>&nbsp;&nbsp;{`*${weight_value}%`}</span>
+                          enable_weight == '1' && (
+                            <Tooltip overlayStyle={{ minWidth: '116px' }} title={`权重占比: ${weight_ratio}%`} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                              <span className={indexStyles.rating_weight}>&nbsp;&nbsp;{`*${weight_ratio}%`}</span>
                             </Tooltip>
                           )
                         }
@@ -211,7 +211,7 @@ export default class BeginningStepThree_one extends Component {
                             </div>
                           ) : (
                               <div onClick={(e) => { this.handleChangeRatingGrade(e, index) }} className={indexStyles.rating_grade}>
-                                <span>最高<span className={indexStyles.rating_grade_value}>{grade_value}</span>分</span>
+                                <span>最高<span className={indexStyles.rating_grade_value}>{max_score}</span>分</span>
                               </div>
                             )
                         )
