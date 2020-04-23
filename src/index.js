@@ -19,6 +19,7 @@ Object.setPrototypeOf = require('setprototypeof');
 //   alert(trim_Version);
 // }
 // 1. Initialize
+let initialState = {}
 const app = dva({
   // history: createHistory(), //参考自https://www.jianshu.com/p/2e9e45e9a880
   onError(e, dispatch) {
@@ -29,6 +30,14 @@ const app = dva({
       alert('当前服务器文件有更新，正在获取中...')
       window.location.reload()
     }
+  },
+  onReducer: r => (state, action) => {
+    const newState = r(state, action);
+    // 'app/logout' 为 models 目录文件中 effect 中的方法名
+    if (action.type == 'technological/reducerLogout') { //退出登录后清除所有和用户相关的数据
+      return r(initialState, action);
+    }
+    return newState;
   },
 });
 

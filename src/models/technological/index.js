@@ -561,6 +561,12 @@ export default {
 
     * logout({ payload }, { select, call, put }) { //提交表单
       clearnImAuth()
+      yield put({
+        type: 'reducerLogout',
+        payload: {
+
+        }
+      })
       if (!Cookies.get('Authorization') || !Cookies.get('refreshToken')) {
         Cookies.remove('Authorization')
         Cookies.remove('refreshToken')
@@ -674,6 +680,12 @@ export default {
         ...state,
         datas: { ...state.datas, ...action.payload },
       }
-    }
+    },
+    reducerLogout(state, action) {
+      return {
+        ...state,
+        datas: { ...state.datas, ...action.payload },
+      }
+    },
   },
 };
