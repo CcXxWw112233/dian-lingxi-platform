@@ -14,6 +14,8 @@ import {
 } from "./selects";
 import { filePreview, fileDownload } from "../../../services/technological/file";
 import { postCommentToDynamics } from "../../../services/technological/library";
+import { getModelSelectDatasState } from '../../utils'
+import { jsonArrayCompareSort, timestampFormat, transformTimestamp } from '../../../utils/util'
 
 let naviHeadTabIndex //导航栏naviTab选项
 export default modelExtend(technological, {
@@ -837,6 +839,27 @@ export default modelExtend(technological, {
         yield cond[code]()
       } else {
         message.error('筛选内容失败')
+      }
+    },
+    // 排序项目列表
+    * sortProjectList({ payload = {} }, { call, put, select }) {
+      const { data } = payload
+      let project_list = []
+      if (data) {
+        project_list = data
+      } else {
+        project_list = yield select(getModelSelectDatasState('workbench', 'projectList'))
+      }
+      if (Object.prototype.toString.call(project_list) == '[object Array]') {
+        let star_arr = project_list.filter(item => item.is_star == '1')
+        let no_star_arr = project_list.filter(item => item.is_star != '1')
+        no_star_arr = no_star_arr.sort(jsonArrayCompareSort('join_board_time', transformTimestamp))
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            projectList: [].concat(star_arr, no_star_arr)
+          }
+        })
       }
     }
   },

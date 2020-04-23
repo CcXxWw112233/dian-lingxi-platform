@@ -124,12 +124,28 @@
 
                     .board_area_middle_item_rt {
                         margin-left: 8px;
-                        height     : 20px;
+                        height     : 100%;
                         line-height: 20px;
-                        display    : none;
+                        display    : flex;
                         text-align : right;
-                        width      : 30px;
+
+                        >div {
+                            height     : 100%;
+                            line-height: 48px;
+                        }
+
+                        .board_area_middle_item_rt_operate {
+                            // width: 30px;
+                        }
+
+                        .board_area_middle_item_rt_roofTop {
+                            width       : 20px;
+                            font-size   : 16px;
+                            margin-right: 8px;
+                        }
                     }
+
+
                 }
 
                 .board_area_middle_item {
@@ -162,7 +178,7 @@
                     background: rgba(255, 255, 255, 0.05);
 
                     .board_area_middle_item_rt {
-                        display: block;
+                        display: flex;
                     }
                 }
 
