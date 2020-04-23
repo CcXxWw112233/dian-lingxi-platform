@@ -57,50 +57,6 @@ export default class BeginningStepTwo extends Component {
     })
   }
 
-  updateAssigneesList = () => {
-    const { itemValue: { assignees = [], approve_type } } = this.props
-    let newAssignees = [...assignees]
-    switch (approve_type) {
-      case '1': // 表示串签 然后将第一个人的审批状态改为进行中
-        newAssignees = newAssignees.map((item, index) => {
-          if (index == 0) {
-            let new_item = { ...item }
-            new_item = { ...item, processed: '1' }
-            return new_item
-          } else {
-            let new_item = { ...item }
-            new_item = { ...item, processed: '0' }
-            return new_item
-          }
-        })
-        break;
-      case '2':
-      case '3':
-        newAssignees = newAssignees.map(item => {
-          let new_item = { ...item }
-          new_item = { ...item, processed: '1' }
-          return new_item
-        })
-        break;
-      default:
-        break;
-    }
-    return newAssignees
-  }
-
-  updateRebackNodesStatus = () => {
-    const { itemValue: { id: flow_node_instance_id, assignees, his_comments = [] }, processInfo: { id: flow_instance_id, board_id }, dispatch } = this.props
-    let temp_comments = [...his_comments]
-    temp_comments.push(...assignees)
-    let newAssignees = this.updateAssigneesList()
-    this.updateCorrespondingPrcodessStepWithNodeContent('status', '1')
-    this.updateCorrespondingPrcodessStepWithNodeContent('is_confirm', '0')
-    this.setState({
-      historyCommentsList: temp_comments,
-      transPrincipalList: newAssignees
-    })
-  }
-
   // 撤回步骤
   handleRebackProcessNodes = () => {
     const { itemValue: { id: flow_node_instance_id, assignees, his_comments = [] }, processInfo: { id: flow_instance_id, board_id }, dispatch, request_flows_params = {} } = this.props
@@ -112,7 +68,6 @@ export default class BeginningStepTwo extends Component {
         flow_instance_id,
         board_id,
         calback: () => {
-          // this.updateRebackNodesStatus()
           dispatch({
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {
@@ -120,8 +75,6 @@ export default class BeginningStepTwo extends Component {
               status: '1'
             }
           })
-          // this.updateCorrespondingPrcodessStepWithNodeContent('his_comments',temp_comments)
-          // this.updateCorrespondingPrcodessStepWithNodeContent('assignees',newAssignees)
         }
       }
     })

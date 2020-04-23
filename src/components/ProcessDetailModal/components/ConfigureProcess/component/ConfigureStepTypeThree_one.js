@@ -617,14 +617,14 @@ export default class ConfigureStepTypeThree_one extends Component {
                 )
               })
             }
-            {
+            {/* {
               score_display == '1' && (
                 <div style={{ color: 'rgba(0,0,0,0.45)', fontWeight: 500, position: 'absolute', bottom: '0' }}>
                   <span className={globalStyles.authTheme}>&#xe66c;</span>
                   <span>&nbsp;&nbsp;评分过程中各评分人的评分信息互相不可见</span>
                 </div>
               )
-            }
+            } */}
             <div>
               <div id={`popoverContainer_${itemKey}`} onClick={(e) => e.stopPropagation()} className={indexStyles.popoverContainer} style={{ position: 'absolute', right: 0, top: 0 }}>
                 <Popover
