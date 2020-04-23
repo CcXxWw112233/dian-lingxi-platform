@@ -3,7 +3,6 @@ import PublicDetailModal from '@/components/PublicDetailModal'
 import MainContent from './MainContent'
 import HeaderContent from './HeaderContent'
 import { connect } from 'dva'
-// import { revealRequestFlowsParams } from './components/handleOperateModal'
 
 @connect(mapStateToProps)
 export default class ProcessDetailModal extends Component {
@@ -63,15 +62,6 @@ export default class ProcessDetailModal extends Component {
     }
     
   }
-
-  // whetherReceiveRequestFlowsParams = () => {
-  //   const { request_flows_params = {} } = this.props
-  //   if (request_flows_params && Object.keys(request_flows_params).length) {
-  //     return revealRequestFlowsParams({...request_flows_params})
-  //   } else {
-  //     return {}
-  //   }
-  // }
 
   render() {
     const { process_detail_modal_visible, whetherUpdateWorkbenchPorcessListData, updateParentProcessTempleteList, request_flows_params = {} } = this.props

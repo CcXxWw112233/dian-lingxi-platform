@@ -48,6 +48,21 @@ export default class ConfigureStepTypeThree_one extends Component {
   }
 
   onVisibleChange = (visible) => {
+    const { is_score_rating, score_items: scoreList = [], localScoreList = [] } = this.state
+    const { itemKey, parentKey, processEditDatas = [], itemValue } = this.props
+    const { enable_weight } = itemValue
+    if (!is_score_rating) { // 判断是否点击了确定
+      if (visible == false) {
+        this.setState({
+          score_items: JSON.parse(JSON.stringify(localScoreList || []))
+        })
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: JSON.parse(JSON.stringify(localScoreList || [])) }, 'score_items')
+        if (enable_weight == '1') {
+          this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '0'}, 'enable_weight')
+        }
+        
+      }
+    }
     this.setState({
       popoverVisible: visible
     })
@@ -79,6 +94,10 @@ export default class ConfigureStepTypeThree_one extends Component {
 
   // 是否开启权重
   handleWeightChange = (checked) => {
+    const { score_items = [] } = this.state
+    if (score_items && score_items.length <=1) {
+      return
+    }
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: checked ? '1' : '0' }, 'enable_weight')
   }
 
@@ -313,6 +332,23 @@ export default class ConfigureStepTypeThree_one extends Component {
     this.handleAutoTitleTextAreaBlur(key)
   }
 
+  // 确认事件
+  handleComfirmScoreRating = (e) => {
+    e && e.stopPropagation()
+    const { score_items = [] } = this.state
+    this.setState({
+      is_score_rating: true,
+      localScoreList: JSON.parse(JSON.stringify(score_items || []))
+    }, () => {
+      this.onVisibleChange(false)
+      this.setState({
+        is_score_rating:false
+      })
+    })
+    
+
+  }
+
   renderMoreSelect = (index) => {
     const { score_items = [] } = this.state
     let flag = score_items && score_items.length > '1'
@@ -463,7 +499,7 @@ export default class ConfigureStepTypeThree_one extends Component {
                 </Tooltip>
                 :&nbsp;&nbsp;&nbsp;
               </span>
-              <span><Switch size="small" onChange={this.handleWeightChange} checked={enable_weight == '1'} /></span>
+              <span><Switch style={{cursor: score_items && score_items.length <= 1 ? 'not-allowed' : 'pointer'}} size="small" onChange={this.handleWeightChange} checked={enable_weight == '1'} /></span>
             </span>
           </div>
           {enable_weight == '1' ? this.renderWeightTableContent() : this.renderDefaultTableContent()}
@@ -475,7 +511,7 @@ export default class ConfigureStepTypeThree_one extends Component {
           </Button>
         </div>
         <div className={indexStyles.pop_btn}>
-          <Button disabled={disabledFlag} type="primary" style={{ width: '100%' }}>确定</Button>
+          <Button onClick={this.handleComfirmScoreRating} disabled={disabledFlag} type="primary" style={{ width: '100%' }}>确定</Button>
         </div>
       </div>
     )

@@ -36,6 +36,16 @@ export default class ConfigureStepTypeThree extends Component {
     })
   }
 
+  // 锁定评分人
+  handleScoreLocked = (checked) => {
+    this.updateConfigureProcess({value: checked ? '1' : '0'},'score_locked')
+  }
+
+  // 评分是否可见
+  handleScoreDisplay = (checked) => {
+    this.updateConfigureProcess({value: checked ? '1' : '0'},'score_display')
+  }
+
   // 把assignees中的执行人,在项目中的所有成员过滤出来
   filterAssignees = () => {
     const { projectDetailInfoData: { data = [] } } = this.props
@@ -311,7 +321,7 @@ export default class ConfigureStepTypeThree extends Component {
 
   render() {
     const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id } } = this.props
-    const { count_type, result_condition_type, result_value, result_case_pass, result_case_other } = itemValue
+    const { count_type, result_condition_type, result_value, result_case_pass, result_case_other, score_locked, score_display } = itemValue
     const { local_result_score_value } = this.state
     return (
       <div>
@@ -325,14 +335,14 @@ export default class ConfigureStepTypeThree extends Component {
             <div>
               <span style={{ color: 'rgba(0,0,0,0.45)' }}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7b2;</span> 评分人&nbsp;:</span>
               <span style={{ display: 'inline-block', marginRight: '36px', marginLeft: '18px', position: 'relative' }}>
-                <Switch size="small" />
+                <Switch onChange={this.handleScoreLocked} checked={score_locked == '1'} size="small" />
                 <span style={{ margin: '0 8px', color: 'rgba(0,0,0,0.65)', verticalAlign: 'middle' }}>锁定评分人</span>
                 <Tooltip overlayStyle={{ minWidth: '270px' }} title="锁定评分人后启动流程时不可修改评分人" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
                   <span style={{ color: '#D9D9D9', fontSize: '16px', verticalAlign: 'middle', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe845;</span>
                 </Tooltip>
               </span>
               <span style={{ display: 'inline-block', position: 'relative' }}>
-                <Switch size="small" />
+                <Switch onChange={this.handleScoreDisplay} checked={score_display == '1'} size="small" />
                 <span style={{ margin: '0 8px', color: 'rgba(0,0,0,0.65)', verticalAlign: 'middle' }}>评分时相互不可见</span>
                 <Tooltip overlayStyle={{ minWidth: '400px' }} title="2人以上的评分过程中，各评分人的评分值互相不可见，待所有评分人完成评分后，显示各评分人的评分值" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
                   <span style={{ color: '#D9D9D9', fontSize: '16px', verticalAlign: 'middle', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe845;</span>
