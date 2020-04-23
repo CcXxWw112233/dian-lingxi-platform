@@ -165,7 +165,8 @@ class Gantt extends Component {
       users: data['users'],
       name: data['name'],
       type: data['type'],
-      board_id: data['board_id']
+      board_id: data['board_id'],
+      milestone_id: data['milestone_id']
     }
     if (group_view_type == '1') {
       if (gantt_board_id == '0') {
