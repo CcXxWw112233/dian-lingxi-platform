@@ -11,6 +11,7 @@ import DropdownSelectWithSearch from './../../Workbench/CardContent/DropdownSele
 import DropdownMultipleSelectWithSearch from './../../Workbench/CardContent/DropdownMultipleSelectWithSearch/index';
 import { isApiResponseOk } from '../../../../../utils/handleResponseData';
 import { getMilestoneList } from '../../../../../services/technological/prjectDetail';
+import globalStyles from '@/globalset/css/globalClassName.less'
 
 /* eslint-disable */
 @connect(({ gantt: { datas: { list_group } } }) => ({ list_group }))
@@ -304,7 +305,8 @@ class AddTaskModal extends Component {
             <div className={styles.addTaskModalSelectProject_and_groupList}>
               {/*在项目视图下，必须选择了具体的项目*/}
               {((group_view_type == '1' || group_view_type == '5') && !!current_operate_board_id) ? (
-                <div className={styles.groupList__wrapper}>
+                <div className={styles.groupList__wrapper} style={{ paddingTop: 2, marginRight: 16 }}>
+                  <span className={globalStyles.authTheme} style={{ fontSize: '16px' }}>&#xe60a;</span>
                   {currentSelectedProject.board_name}
                 </div>
               ) : (
@@ -316,11 +318,13 @@ class AddTaskModal extends Component {
                     board_id={currentSelectedProject.board_id}
                     handleSelectedItem={this.handleSelectedItem}
                     isShouldDisableDropdown={false}
+                    iconNode={<span>&#xe60a;</span>}
                   />
                 )}
               {/*在项目视图下，必须选择了具体的项目,在任务分组下创建任务*/}
               {(group_view_type == '1' && !!current_operate_board_id && !!board_card_group_id) ? (
-                <div className={styles.groupList__wrapper}>
+                <div className={styles.groupList__wrapper} style={{ paddingTop: 2, marginRight: 16 }}>
+                  <span className={globalStyles.authTheme} style={{ fontSize: '16px' }}>&#xe604;</span>
                   {currentSelectedProjectGroupListItem.list_name}
                 </div>
               ) : (
@@ -330,11 +334,12 @@ class AddTaskModal extends Component {
                       initSearchTitle="任务分组"
                       selectedItem={currentSelectedProjectGroupListItem}
                       handleSelectedItem={this.handleSelectedProjectGroupItem}
-                      isShowIcon={false}
+                      isShowIcon={true}
                       isSearch={false}
                       isCanCreateNew={false}
                       isProjectGroupMode={true}
                       isShouldDisableDropdown={currentSelectedProjectGroupListItem && currentSelectedProjectGroupListItem.id}
+                      iconNode={<span>&#xe604;</span>}
                     />
                   </div>
                 )}
@@ -346,11 +351,12 @@ class AddTaskModal extends Component {
                   initSearchTitle="里程碑"
                   selectedItem={selected_milestone}
                   handleSelectedItem={this.handleSelectedMilestone}
-                  isShowIcon={false}
+                  isShowIcon={true}
                   isSearch={false}
                   isCanCreateNew={false}
                   isProjectGroupMode={true}
                   isShouldDisableDropdown={currentSelectedProjectGroupListItem && currentSelectedProjectGroupListItem.id}
+                  iconNode={<span>&#xe713;</span>}
                 />
               </div>
             </div>
