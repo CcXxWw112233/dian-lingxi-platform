@@ -126,6 +126,7 @@ class VideoMeetingPopoverContent extends React.Component {
 						user_phone: [],
 						selectedKeys: null,
 						defaultValue: '30',
+						// userIds: [],
 						// toNoticeList: this.getCurrentRemindUser(),
 						isShowNowTime: true,
 						changeValue: false, // 保存一个正在修改文本框的状态
@@ -280,13 +281,13 @@ class VideoMeetingPopoverContent extends React.Component {
 			meeting_start_time: '',
 			selectedKeys: null,
 			othersPeople: [],
-			// userIds: [],
+			userIds: [],
 			user_phone: [],
 			isShowNowTime: true,
 			isExeecedTime: false,
 			defaultValue: '30', // 当前选择的持续时间
 			changeValue: false,
-			// toNoticeList: this.getCurrentRemindUser(),
+			toNoticeList: [],
 			remindDropdownVisible: false,
 			providerDefault: null
 
@@ -707,9 +708,9 @@ class VideoMeetingPopoverContent extends React.Component {
 				{
 					videoMeetingPopoverVisible: false,
 				},
-				() => {
-					this.initVideoMeetingPopover();
-					this.getCurrentRemindUser()
+				async () => {
+					await this.initVideoMeetingPopover();
+					await this.getCurrentRemindUser()
 				}
 			)
 			this.openWinNiNewTabWithATag(start_url)
