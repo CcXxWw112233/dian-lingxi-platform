@@ -8,14 +8,18 @@ import AmendComponent from '../AmendComponent'
 import { Tooltip, Icon } from 'antd'
 import { connect } from 'dva'
 import ConfirmInfoThree_one from './ConfirmInfoThree_one'
+import { renderTimeType } from '../../handleOperateModal'
 
 @connect(mapStateToProps)
 export default class ConfirmInfoThree extends Component {
 
-  state = {
-    transPrincipalList: JSON.parse(JSON.stringify(principalList)),
-    transCopyPersonnelList: [],
-    is_show_spread_arrow: false,
+  constructor(props) {
+    super(props)
+    this.state = {
+      transPrincipalList: props.itemValue.assignees ? props.itemValue.assignees.split(',') : [], // 表示当前的执行人
+      transCopyPersonnelList: props.itemValue.recipients ? props.itemValue.recipients.split(',') : [], // 表示当前选择的抄送人
+      is_show_spread_arrow: false,
+    }
   }
 
   // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
@@ -29,6 +33,30 @@ export default class ConfirmInfoThree extends Component {
         processEditDatas: newProcessEditDatas,
       }
     })
+  }
+
+  // 把assignees中的执行人,在项目中的所有成员过滤出来
+  filterAssignees = () => {
+    const { projectDetailInfoData: { data = [] } } = this.props
+    const { transPrincipalList = [] } = this.state
+    let new_data = [...data]
+    let newTransPrincipalList = transPrincipalList && transPrincipalList.map(item => {
+      return new_data.find(item2 => item2.user_id == item) || {}
+    })
+    newTransPrincipalList = newTransPrincipalList.filter(item => item.user_id)
+    return newTransPrincipalList
+  }
+
+  // 把recipients中的抄送人在项目中的所有成员过滤出来
+  filterRecipients = () => {
+    const { projectDetailInfoData: { data = [] } } = this.props
+    const { transCopyPersonnelList = [] } = this.state
+    let newData = [...data]
+    let newTransCopyPersonnelList = transCopyPersonnelList && transCopyPersonnelList.map(item => {
+      return newData.find(item2 => item2.user_id == item) || {}
+    })
+    newTransCopyPersonnelList = newTransCopyPersonnelList.filter(item => item.user_id)
+    return newTransCopyPersonnelList
   }
 
   handleSpreadArrow = (e) => {
@@ -79,10 +107,10 @@ export default class ConfirmInfoThree extends Component {
 
   render() {
     const { itemKey, itemValue, projectDetailInfoData: { data = [], board_id } } = this.props
-    const { is_show_spread_arrow, transPrincipalList = [], transCopyPersonnelList = [] } = this.state
+    const { is_show_spread_arrow } = this.state
     const { name, cc_type, deadline_type, deadline_value, deadline_time_type } = itemValue
-    // let transPrincipalList = this.filterAssignees()
-    // let transCopyPersonnelList = this.filterRecipients()
+    let transPrincipalList = this.filterAssignees()
+    let transCopyPersonnelList = this.filterRecipients()
     return (
       <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }}>
         <div className={indexStyles.line}></div>
@@ -110,53 +138,67 @@ export default class ConfirmInfoThree extends Component {
               <div>
                 {/* 填写人 */}
                 <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
-                  <AvatarList
-                    size="small"
-                    maxLength={10}
-                    excessItemsStyle={{
-                      color: '#f56a00',
-                      backgroundColor: '#fde3cf'
-                    }}
-                  >
-                    {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
-                      <AvatarList.Item
-                        key={index}
-                        tips={name || '佚名'}
-                        src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
-                      />
-                    ))}
-                  </AvatarList>
-                  <span className={indexStyles.content__principalList_info}>
-                    {`${transPrincipalList.length}位评分人`}
-                  </span>
-                  <span style={{ position: 'relative' }}>
-                    <AmendComponent type="2"
-                    updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="评分人" data={data} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
-                  </span>
+                  {
+                    !(transPrincipalList && transPrincipalList.length) ? ('') : (
+                      <>
+                        <AvatarList
+                          size="small"
+                          maxLength={10}
+                          excessItemsStyle={{
+                            color: '#f56a00',
+                            backgroundColor: '#fde3cf'
+                          }}
+                        >
+                          {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
+                            <AvatarList.Item
+                              key={index}
+                              tips={name || '佚名'}
+                              src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                            />
+                          ))}
+                        </AvatarList>
+                        <span className={indexStyles.content__principalList_info}>
+                          {`${transPrincipalList.length}位评分人`}
+                        </span>
+                        <span style={{ position: 'relative' }}>
+                          <AmendComponent type="2"
+                            updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="评分人" data={data} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
+                        </span>
+                      </>
+                    )
+                  }
+
                 </div>
                 {/* 抄送人 */}
                 {
                   cc_type == '1' && (
                     <div style={{ marginLeft: '8px', display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
-                      <AvatarList
-                        size="small"
-                        maxLength={10}
-                        excessItemsStyle={{
-                          color: '#f56a00',
-                          backgroundColor: '#fde3cf'
-                        }}
-                      >
-                        {(transCopyPersonnelList && transCopyPersonnelList.length) && transCopyPersonnelList.map(({ name, avatar }, index) => (
-                          <AvatarList.Item
-                            key={index}
-                            tips={name || '佚名'}
-                            src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
-                          />
-                        ))}
-                      </AvatarList>
-                      <span className={indexStyles.content__principalList_info}>
-                        {`${transCopyPersonnelList.length}位抄送人`}
-                      </span>
+                      {
+                        !(transCopyPersonnelList && transCopyPersonnelList.length) ? ('') : (
+                          <>
+                            <AvatarList
+                              size="small"
+                              maxLength={10}
+                              excessItemsStyle={{
+                                color: '#f56a00',
+                                backgroundColor: '#fde3cf'
+                              }}
+                            >
+                              {(transCopyPersonnelList && transCopyPersonnelList.length) && transCopyPersonnelList.map(({ name, avatar }, index) => (
+                                <AvatarList.Item
+                                  key={index}
+                                  tips={name || '佚名'}
+                                  src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                                />
+                              ))}
+                            </AvatarList>
+                            <span className={indexStyles.content__principalList_info}>
+                              {`${transCopyPersonnelList.length}位抄送人`}
+                            </span>
+                          </>
+                        )
+                      }
+
                     </div>
                   )
                 }

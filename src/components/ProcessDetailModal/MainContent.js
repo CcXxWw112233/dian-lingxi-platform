@@ -690,18 +690,19 @@ export default class MainContent extends Component {
   // 渲染添加步骤按钮
   renderAddProcessStep = () => {
     const { processCurrentEditStep, processEditDatas = [], not_show_create_node_guide } = this.props
-    let { is_edit } = processEditDatas && processEditDatas[processCurrentEditStep] || {}
+    // let { is_edit } = processEditDatas && processEditDatas[processCurrentEditStep] || {}
+    let gold_item = (processEditDatas && processEditDatas.length) && processEditDatas.find(item => item.is_edit == '0') || {}
     return (
       <div style={{ position: 'relative' }} id="addProcessStep">
         {
           processEditDatas && processEditDatas.length ? (
-            is_edit == '1' ? (
+            (gold_item && !Object.keys(gold_item).length) ? (
               <div className={`${indexStyles.add_node}`} onClick={(e) => { this.handleAddEditStep(e) }}>
                 <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
                 {not_show_create_node_guide != '1' && <ConfigureGuide />}
               </div>
             ) : (
-                <Tooltip getPopupContainer={() => document.getElementById('addProcessStep')} placement="topLeft" title="完成上一步骤才能添加">
+                <Tooltip getPopupContainer={() => document.getElementById('addProcessStep')} placement="topLeft" title="完成节点步骤才能添加">
                   <div><div className={`${indexStyles.add_normal}`}>
                     <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
                     {not_show_create_node_guide != '1' && <ConfigureGuide />}

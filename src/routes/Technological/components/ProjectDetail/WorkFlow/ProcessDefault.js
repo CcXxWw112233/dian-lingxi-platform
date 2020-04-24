@@ -103,7 +103,7 @@ class ProcessDefault extends Component {
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
         processPageFlagStep: '1',
-        // processPageFlagStep: '3',
+        // processPageFlagStep: '4',
         process_detail_modal_visible: true,
         // processEditDatas: [{
         //   "node_type": "3",//流程节点类型 1=资料收集 2=审批 3=抄送

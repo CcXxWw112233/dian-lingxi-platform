@@ -29,6 +29,7 @@ export default class ProcessDetailModal extends Component {
         not_show_create_form_guide: '1',
       }
     })
+    this.props.setProcessDetailModalVisibile && this.props.setProcessDetailModalVisibile()
      // 圈子关闭联动
      global.constants.lx_utils && global.constants.lx_utils.setCommentData(this.props.processInfo.id || null)
   }
@@ -86,6 +87,7 @@ ProcessDetailModal.defaultProps = {
   whetherUpdateWorkbenchPorcessListData: function(){}, // 修改访问控制后需要更新工作台中的代办列表 的回调
   updateParentProcessTempleteList: function(){}, // 内部数据修改后用来更新外部数据的回调
   request_flows_params: {}, // 接收的外部参数
+  setProcessDetailModalVisibile: function(){}, // 关闭弹窗的回调
 }
 
 //  只关联public中弹窗内的数据

@@ -15,8 +15,8 @@ export default class EditStepTypeThree extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      transPrincipalList: JSON.parse(JSON.stringify(principalList || [])),
-      // transPrincipalList: props.itemValue.assignees ? props.itemValue.assignees.split(',') : [], // 表示当前的执行人
+      // transPrincipalList: JSON.parse(JSON.stringify(principalList || [])),
+      transPrincipalList: props.itemValue.assignees ? props.itemValue.assignees.split(',') : [], // 表示当前的执行人
       transCopyPersonnelList: props.itemValue.recipients ? props.itemValue.recipients.split(',') : [], // 表示当前选择的抄送人
       is_show_spread_arrow: false,
     }
@@ -127,9 +127,9 @@ export default class EditStepTypeThree extends Component {
 
   render() {
     const { itemKey, itemValue } = this.props
-    const { is_show_spread_arrow, transPrincipalList = [] } = this.state
+    const { is_show_spread_arrow } = this.state
     const { name, cc_type, cc_locking, deadline_type, deadline_value, deadline_time_type, score_locked } = itemValue
-    // let transPrincipalList = this.filterAssignees()
+    let transPrincipalList = this.filterAssignees()
     let transCopyPersonnelList = this.filterRecipients()
     return (
       <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }}>

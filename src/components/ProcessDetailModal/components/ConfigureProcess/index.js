@@ -605,7 +605,7 @@ export default class ConfigureProcess extends Component {
                     )
                   }
                   {
-                    // itemKey != '0' && 
+                    itemKey != '0' && 
                     (
                       <>
                       <Radio value="3">评分</Radio>

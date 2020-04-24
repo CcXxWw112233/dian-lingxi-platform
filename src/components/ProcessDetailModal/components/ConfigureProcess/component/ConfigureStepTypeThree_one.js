@@ -28,7 +28,6 @@ export default class ConfigureStepTypeThree_one extends Component {
   }
   componentWillReceiveProps(nextProps) {
     if (!isObjectValueEqual(this.props, nextProps)) {
-      console.log(nextProps.itemValue.score_items, 'sssssssss_我的天')
       this.setState({
         localScoreList: nextProps.itemValue && nextProps.itemValue.score_items ? JSON.parse(JSON.stringify(nextProps.itemValue.score_items || [])) : [],
         score_items: nextProps.itemValue && nextProps.itemValue.score_items ? JSON.parse(JSON.stringify(nextProps.itemValue.score_items || [])) : [],
@@ -639,7 +638,7 @@ export default class ConfigureStepTypeThree_one extends Component {
     const { enable_weight, score_display } = itemValue
     const { score_items = [], is_add_description, popoverVisible, clientWidth, local_enable_weight } = this.state
     let flag = this.whetherShowDiffWidth()
-    let autoWidth = clientWidth ? clientWidth / 4 - 45 : 130
+    let autoWidth = clientWidth ? clientWidth / score_items.length - 45 > 130 ? 130 : clientWidth / score_items.length - 45 : 130
     return (
       <div>
         {/* 评分项 */}

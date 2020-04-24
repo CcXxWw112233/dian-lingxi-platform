@@ -15,8 +15,8 @@ export default class BeginningStepThree extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      transPrincipalList: JSON.parse(JSON.stringify(principalList || [])),
-      // transPrincipalList: props.itemValue.assignees ? [...props.itemValue.assignees] : [], // 表示当前的执行人
+      // transPrincipalList: JSON.parse(JSON.stringify(principalList || [])),
+      transPrincipalList: props.itemValue.assignees ? [...props.itemValue.assignees] : [], // 表示当前的执行人
       transCopyPersonnelList: props.itemValue.recipients ? [...props.itemValue.recipients] : [], // 表示当前选择的抄送人
       is_show_spread_arrow: props.itemValue.status == '1' ? true : false, // 是否展开箭头 详情 true表示展开
     }
@@ -74,6 +74,11 @@ export default class BeginningStepThree extends Component {
     })
     newTransCopyPersonnelList = newTransCopyPersonnelList.filter(item => item.user_id)
     return newTransCopyPersonnelList
+  }
+
+  // 判断是否可以完成
+  whetherIsComplete = () => {
+    const {  } = this.state
   }
 
     // 渲染不同状态时步骤的样式
@@ -185,9 +190,9 @@ export default class BeginningStepThree extends Component {
 
   render() {
     const { itemKey, itemValue, processEditDatas = [] } = this.props
-    const { is_show_spread_arrow, transPrincipalList = [] } = this.state
+    const { is_show_spread_arrow } = this.state
     const { name, cc_type, deadline_type, deadline_value, deadline_time_type } = itemValue
-    // let transPrincipalList = this.filterAssignees()
+    let transPrincipalList = this.filterAssignees()
     let transCopyPersonnelList = this.filterRecipients()
     return (
       <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }}>
