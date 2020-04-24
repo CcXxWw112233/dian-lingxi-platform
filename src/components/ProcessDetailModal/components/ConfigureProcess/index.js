@@ -535,6 +535,8 @@ export default class ConfigureProcess extends Component {
     const { name, node_type, description, is_click_node_name } = itemValue
     let deleteBtn = this.whetherIsDeleteNodes()
     let editConfirmBtn = this.state.isDisabled ? this.renderDiffButtonTooltipsText().confirmButtonDisabled ? true : false : this.renderDiffButtonTooltipsText().confirmButtonDisabled ? true : false
+    let is_edit
+    let gold_index = (processEditDatas && processEditDatas.length) && processEditDatas.findIndex(item => item.is_edit == '0')
     // let editConfirmBtn = this.renderDiffButtonTooltipsText().confirmButtonDisabled ? this.state.isDisabled ? true : false : this.state.isDisabled ? true : false
     // let node_amount = this.props && this.props.processInfo && this.props.processInfo.node_amount
     let stylLine, stylCircle
@@ -563,7 +565,7 @@ export default class ConfigureProcess extends Component {
       <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }} onClick={(e) => { this.handleCancelNodeName(e) }}>
         <div className={indexStyles.doingLine}></div>
         <div className={indexStyles.doingCircle}> {itemKey + 1}</div>
-        <div id={`popover_card-${itemKey}-${node_type}`} className={`${indexStyles.popover_card}`}>
+        <div id={`popover_card-${itemKey}-${node_type}`} className={`${itemKey == gold_index ? indexStyles.popover_card : indexStyles.default_popover_card}`}>
           <div className={`${globalStyles.global_vertical_scrollbar}`}>
             {/* 步骤名称 */}
             <div style={{ marginBottom: '16px' }}>

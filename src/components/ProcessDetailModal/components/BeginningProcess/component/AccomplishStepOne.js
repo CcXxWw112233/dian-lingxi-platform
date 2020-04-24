@@ -207,7 +207,7 @@ export default class AccomplishStepOne extends Component {
         {processEditDatas.length <= itemKey + 1 ? null : <div className={this.renderDiffStatusStepStyles().stylLine}></div>}
         {/* <div className={indexStyles.doingLine}></div> */}
         <div className={this.renderDiffStatusStepStyles().stylCircle}> {itemKey + 1}</div>
-        <div className={`${indexStyles.popover_card}`}>
+        <div className={`${status == '1' ? indexStyles.popover_card : indexStyles.default_popover_card}`}>
           <div className={`${globalStyles.global_vertical_scrollbar}`}>
             {/* 上 */}
             <div style={{ marginBottom: '16px' }}>

@@ -1,4 +1,4 @@
-.popover_card {
+.popover_card, .default_popover_card {
   margin: 0 12px 0 26px;
   flex: 1;
   flex-shrink: 0;
@@ -212,6 +212,11 @@
   }
 }
 
+.default_popover_card {
+  border:1px solid rgba(0,0,0,0.15);
+  box-shadow: none;
+}
+
 // 以下是配置卡片上以及步骤类型上的三角形
 .popover_card:before {
   content: '';
@@ -226,6 +231,28 @@
 }
 
 .popover_card:after {
+  content: '';
+  position: absolute;
+  top: 16px;
+  left: -9px;
+  width: 0;
+  height: 0;
+  border-bottom: 9px solid transparent;
+  border-right: 9px solid #fff;
+  border-top: 9px solid transparent; 
+}
+.default_popover_card::before {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: -10px;
+  width: 0;
+  height: 0;
+  border-right: 10px solid rgba(0,0,0,0.15);
+  border-bottom: 10px solid transparent;
+  border-top: 10px solid transparent; 
+}
+.default_popover_card::after {
   content: '';
   position: absolute;
   top: 16px;

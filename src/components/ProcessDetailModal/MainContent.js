@@ -946,7 +946,7 @@ export default class MainContent extends Component {
                 {
                   (processPageFlagStep == '1' || processPageFlagStep == '3') && (
                     <Popover trigger="click" title={null} content={this.renderProcessStartConfirm()} icon={<></>} getPopupContainer={triggerNode => triggerNode.parentNode}>
-                      <Button disabled={saveTempleteDisabled} style={{ marginRight: '24px', height: '40px', border: '1px solid rgba(24,144,255,1)', color: '#1890FF' }}>开始流程</Button>
+                      <Button type={processPageFlagStep == '3' && 'primary'} disabled={saveTempleteDisabled} style={{ marginRight: '24px', height: '40px', border: '1px solid rgba(24,144,255,1)', color: processPageFlagStep == '3' ? '#fff': '#1890FF' }}>开始流程</Button>
                     </Popover>
                   )
                 }

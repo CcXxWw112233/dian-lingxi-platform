@@ -550,13 +550,13 @@ export default class BeginningStepTwo extends Component {
    */
   renderAbsoluteContent = () => {
     const { itemKey, processEditDatas = [], itemValue } = this.props
-    const { name } = itemValue
+    const { name, status } = itemValue
     const { transPrincipalList = [], is_show_spread_arrow } = this.state
     return (
       <div id="currentAbsoluteApproveContainer" key={itemKey} style={{ display: 'flex', marginBottom: '46px', marginRight: '32px', left: '32px', right: 0, position: 'absolute', top: '478px', zIndex: 1 }}>
         {processEditDatas.length <= itemKey + 1 ? null : <div className={this.renderDiffStatusStepStyles().stylLine}></div>}
         <div className={this.renderDiffStatusStepStyles().stylCircle}> {itemKey + 1}</div>
-        <div className={`${indexStyles.popover_card}`}>
+        <div className={`${status == '1' ? indexStyles.popover_card : indexStyles.default_popover_card}`}>
           <div className={`${globalStyles.global_vertical_scrollbar}`}>
             {/* 步骤名称 */}
             <div style={{ marginBottom: '16px' }}>
@@ -618,7 +618,7 @@ export default class BeginningStepTwo extends Component {
         <div id={status == '1' && 'currentStaticApproveContainer'} key={itemKey} style={{ display: 'flex', marginBottom: '48px', position: 'relative' }}>
           {processEditDatas.length <= itemKey + 1 ? null : <div className={this.renderDiffStatusStepStyles().stylLine}></div>}
           <div className={this.renderDiffStatusStepStyles().stylCircle}> {itemKey + 1}</div>
-          <div className={`${indexStyles.popover_card}`}>
+          <div className={`${status == '1' ? indexStyles.popover_card : indexStyles.default_popover_card}`}>
             <div className={`${globalStyles.global_vertical_scrollbar}`}>
               {/* 步骤名称 */}
               <div style={{ marginBottom: '16px' }}>

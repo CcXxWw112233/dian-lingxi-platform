@@ -130,7 +130,7 @@ export default class ConfirmInfoTwo extends Component {
       <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }}>
         {processEditDatas.length <= itemKey + 1 ? null : <div className={indexStyles.completeLine}></div>}
         <div className={indexStyles.circle}> {itemKey + 1}</div>
-        <div className={`${indexStyles.popover_card}`}>
+        <div className={`${indexStyles.default_popover_card}`}>
           <div className={`${globalStyles.global_vertical_scrollbar}`}>
             {/* 步骤名称 */}
             <div style={{ marginBottom: '16px' }}>
