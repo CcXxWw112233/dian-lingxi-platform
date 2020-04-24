@@ -40,7 +40,7 @@ export default class ConfigureProcess extends Component {
   handleServiceData = (props) => {
     const { itemValue, templateInfo: { nodes = [] }, itemKey, processPageFlagStep, processEditDatas = [] } = props
     let currentEditNodeItem = (processEditDatas && processEditDatas.length) && processEditDatas.filter(item => item.is_edit == '0')[0] || {}
-    if (processPageFlagStep == '2' && ((nodes && nodes.length) && nodes.length  == (processEditDatas && processEditDatas.length) && processEditDatas.length)) { // 表示是进去编辑的时候 并且节点长度相等的时候, 如果不相等 那么就不比较 表示进行了删除或者添加 
+    if (processPageFlagStep == '2' && (nodes.length  == processEditDatas.length)) { // 表示是进去编辑的时候 并且节点长度相等的时候, 如果不相等 那么就不比较 表示进行了删除或者添加 
       let newStateItemValue = JSON.parse(JSON.stringify(currentEditNodeItem || {}))
       let newModelItemValue = JSON.parse(JSON.stringify(nodes[itemKey] || {}))
       newStateItemValue['forms'] = newStateItemValue['forms'] && newStateItemValue['forms'].map(item => {
@@ -67,6 +67,8 @@ export default class ConfigureProcess extends Component {
       newStateItemValue.is_click_node_name == false || newStateItemValue.is_click_node_name ? delete newStateItemValue.is_click_node_name : ''
       newModelItemValue.is_edit ? delete newModelItemValue.is_edit : ''
       newModelItemValue.is_click_node_name == false || newModelItemValue.is_click_node_name ? delete newModelItemValue.is_click_node_name : ''
+      newStateItemValue.options_data ? delete newStateItemValue.options_data : ''
+      newModelItemValue.options_data ? delete newModelItemValue.options_data : ''
       if (isObjectValueEqual(newStateItemValue, newModelItemValue)) { // 表示没有变化
         this.setState({
           isDisabled: true
@@ -534,8 +536,7 @@ export default class ConfigureProcess extends Component {
     const { itemKey, itemValue, processEditDatasRecords = [], processCurrentEditStep, processEditDatas = [], processPageFlagStep } = this.props
     const { name, node_type, description, is_click_node_name } = itemValue
     let deleteBtn = this.whetherIsDeleteNodes()
-    let editConfirmBtn = this.state.isDisabled ? this.renderDiffButtonTooltipsText().confirmButtonDisabled ? true : false : this.renderDiffButtonTooltipsText().confirmButtonDisabled ? true : false
-    let is_edit
+    let editConfirmBtn = this.state.isDisabled ? true : this.renderDiffButtonTooltipsText().confirmButtonDisabled ? true : false
     let gold_index = (processEditDatas && processEditDatas.length) && processEditDatas.findIndex(item => item.is_edit == '0')
     // let editConfirmBtn = this.renderDiffButtonTooltipsText().confirmButtonDisabled ? this.state.isDisabled ? true : false : this.state.isDisabled ? true : false
     // let node_amount = this.props && this.props.processInfo && this.props.processInfo.node_amount

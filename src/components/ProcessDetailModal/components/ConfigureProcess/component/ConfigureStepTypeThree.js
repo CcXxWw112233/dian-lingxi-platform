@@ -18,7 +18,7 @@ export default class ConfigureStepTypeThree extends Component {
     super(props)
     this.state = {
       // principalList
-      designatedPersonnelList: [],
+      designatedPersonnelList: props.itemValue.assignees ? props.itemValue.assignees.split(',') : [], // 指定人员的列表
       local_result_score_value: props.itemValue && props.itemValue.result_value ? props.itemValue.result_value : '60'
     }
   }
