@@ -57,6 +57,16 @@ class SimpleMode extends Component {
           })
         })
       } else {
+        dispatch({
+          type: 'simplemode/updateDatas',
+          payload: {
+            simplemodeCurrentProject: {
+              board_id: '0',
+              board_name: '',
+              org_id: ''
+            }
+          }
+        })
         this.setState({
           show: true
         })

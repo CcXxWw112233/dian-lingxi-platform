@@ -223,17 +223,21 @@ export default class GroupListHeadSet extends Component {
                             {group_view_type == '2' && '成员列表'}
                             {group_view_type == '4' && '我的计划'}
                         </div> */}
-                        <Tooltip title={'内容过滤'}>
-                            <Dropdown
-                                overlay={<ContentFilter dropdownVisible={dropdownVisible} setDropdownVisible={this.setDropdownVisible} />}
-                                trigger={['click']}
-                                visible={dropdownVisible}
-                                zIndex={500}>
-                                <div className={`${indexStyles.set_content_right_left} ${globalStyles.authTheme} 
-                                ${(group_view_filter_boards.length || group_view_filter_users.length) && indexStyles.has_filter_content}`}
-                                    onClick={() => this.setDropdownVisible(true)} >&#xe8bd;</div>
-                            </Dropdown>
-                        </Tooltip>
+                        {
+                            !ganttIsOutlineView({ group_view_type }) && (
+                                <Tooltip title={'内容过滤'}>
+                                    <Dropdown
+                                        overlay={<ContentFilter dropdownVisible={dropdownVisible} setDropdownVisible={this.setDropdownVisible} />}
+                                        trigger={['click']}
+                                        visible={dropdownVisible}
+                                        zIndex={500}>
+                                        <div className={`${indexStyles.set_content_right_left} ${globalStyles.authTheme} 
+                                    ${(group_view_filter_boards.length || group_view_filter_users.length) && indexStyles.has_filter_content}`}
+                                            onClick={() => this.setDropdownVisible(true)} >&#xe8bd;</div>
+                                    </Dropdown>
+                                </Tooltip>
+                            )
+                        }
                     </div>
                 </div>
                 {addProjectModalVisible && (

@@ -19,6 +19,7 @@ const TreeNode = Tree.TreeNode;
 export default class BoardTemplate extends Component {
     constructor(props) {
         super(props)
+        const { gantt_card_height } = this.props
         this.state = {
             show_type: '0', // 0 1 2 //默认关闭 / 出现动画 / 隐藏动画
             drag_node_data: {
@@ -31,7 +32,7 @@ export default class BoardTemplate extends Component {
             selected_template_name: '请选择模板',
             template_list: [],
             template_data: [], //模板数据
-            contain_height: '100%',
+            contain_height: gantt_card_height,
             checkedKeys: [], //已选择的key
             checkedKeysObj: [], ////已选择的keyobj
             selectedTpl: {},
@@ -45,8 +46,11 @@ export default class BoardTemplate extends Component {
         //     // return target.clientHeight - date_area_height
         // }
         // return '100%'
+        const { gantt_card_height } = this.props
+        console.log('gantt_card_height', gantt_card_height)
         this.setState({
-            contain_height: target ? target.clientHeight + 30 : '100%'
+            // contain_height: target ? target.clientHeight + 30 : '100%'
+            contain_height: gantt_card_height || '100%'
         })
     }
     // 初始化数据
@@ -662,15 +666,15 @@ export default class BoardTemplate extends Component {
     }
 
     render() {
-        const { template_data, selected_template_name, spinning, project_templete_scheme_visible, contain_height, checkedKeys = [], safeConfirmModalVisible } = this.state
-        const { gantt_board_id, boardTemplateShow, group_view_type, outline_tree } = this.props
+        const { template_data, selected_template_name, spinning, project_templete_scheme_visible, checkedKeys = [], safeConfirmModalVisible } = this.state
+        const { gantt_board_id, boardTemplateShow, group_view_type, outline_tree, gantt_card_height } = this.props
         return (
             gantt_board_id && gantt_board_id != '0' ?
                 (
                     <div
                         className={`${styles.container_init}   ${boardTemplateShow == '1' && styles.container_show} ${boardTemplateShow == '2' && styles.container_hide}`}
                         style={{
-                            height: contain_height,
+                            height: gantt_card_height,
                             // top: date_area_height
                             visibility: group_view_type != '2' ? 'visible' : 'hidden'
                         }}>
@@ -708,7 +712,7 @@ export default class BoardTemplate extends Component {
                                     {/* 主区 */}
                                     <Spin spinning={spinning}>
                                         <div
-                                            style={{ maxHeight: contain_height - date_area_height - 48 }}
+                                            style={{ maxHeight: gantt_card_height - date_area_height - 48 }}
                                             onMouseDown={this.outerMouseDown}
                                             className={styles.main}>
                                             <div>
@@ -773,7 +777,7 @@ export default class BoardTemplate extends Component {
                             onClick={this.toggleBoardTemplateDrawer}
                             className={`${styles.switchExpand}`}
                             style={{
-                                top: contain_height / 2,
+                                top: gantt_card_height / 2,
                                 right: boardTemplateShow == 1 ? '280px' : '20px'
                             }} >
                             {/* <div className={`${styles.switchExpandOpen} ${globalStyles.authTheme}`}>&#xe687;</div> */}

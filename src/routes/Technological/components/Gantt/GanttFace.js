@@ -399,7 +399,7 @@ export default class GanttFace extends Component {
                   />
                   {
                     gantt_board_id && gantt_board_id != '0' && (
-                      <BoardTemplate insertTaskToListGroup={this.props.insertTaskToListGroup} />
+                      <BoardTemplate insertTaskToListGroup={this.props.insertTaskToListGroup} gantt_card_height={gantt_card_height} />
                     )
                   }
                 </div>
