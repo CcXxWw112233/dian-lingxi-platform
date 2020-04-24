@@ -72,8 +72,8 @@ export default class ConfigureStepTypeThree_one extends Component {
           })
           this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '0' }, 'enable_weight')
         }
-
       }
+
     }
     this.setState({
       popoverVisible: visible
@@ -82,7 +82,14 @@ export default class ConfigureStepTypeThree_one extends Component {
 
   handleClickRatingItems = (e) => {
     e && e.stopPropagation()
+    return
+    console.log(this.state.popoverVisible,'ssssssssssssssssssssssss_visible')
+    if (this.state.popoverVisible) return
+    // 保存一个点击的状态
     this.onVisibleChange(true)
+    // this.setState({
+    //   popoverVisible: true
+    // })
   }
 
   // 关闭气泡事件
