@@ -82,6 +82,19 @@ class Gantt extends Component {
   //   })
   // }
 
+  // 任务详情弹窗关闭回调
+  setDrawerVisibleClose = () => {
+    const { group_view_type, dispatch } = this.props
+    if (group_view_type == '5') {
+      dispatch({
+        type: 'gantt/getGanttData',
+        payload: {
+
+        }
+      })
+    }
+  }
+
   // 点击设置卡片类型（未排期/已排期)
   setTaskDetailModalVisibile = (card_time_type) => {
     this.card_time_type = card_time_type
@@ -476,7 +489,7 @@ class Gantt extends Component {
         />
         <TaskDetailModal
           task_detail_modal_visible={drawerVisible}
-          // setTaskDetailModalVisible={this.setDrawerVisibleClose} //关闭任务弹窗回调
+          setTaskDetailModalVisible={this.setDrawerVisibleClose} //关闭任务弹窗回调
           handleTaskDetailChange={this.handleChangeCard}
           handleDeleteCard={this.handleDeleteCard}
           handleChildTaskChange={this.handleChildTaskChange}
