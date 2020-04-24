@@ -67,7 +67,10 @@ export default class ConfigureStepTypeThree_one extends Component {
           score_items: JSON.parse(JSON.stringify(localScoreList || []))
         })
         this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: JSON.parse(JSON.stringify(localScoreList || [])) }, 'score_items')
-        if (local_enable_weight != enable_weight && local_enable_weight == '1') {
+        if (local_enable_weight == '1') {
+          this.setState({
+            local_enable_weight: '0'
+          })
           this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '0' }, 'enable_weight')
         }
 
