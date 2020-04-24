@@ -4,7 +4,8 @@ import indexStyles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import FileModule from '@/routes/Technological/components/ProjectDetail/FileModule'
 import { Modal, Dropdown, Button, Select, Icon, TreeSelect, Tree } from 'antd';
-import { getSubfixName,
+import {
+  getSubfixName,
   openPDF, setBoardIdStorage, getOrgNameWithOrgIdFilter,
   isPaymentOrgUser,
   selectBoardToSeeInfo
@@ -272,6 +273,8 @@ class BoardFiles extends Component {
   }
 
   fileModuleBack = () => {
+    const { dispatch } = this.props
+    selectBoardToSeeInfo({ board_id: '0', dispatch })
     this.setState({
       boardSelectVisible: true,
       boardFileContentVisible: false

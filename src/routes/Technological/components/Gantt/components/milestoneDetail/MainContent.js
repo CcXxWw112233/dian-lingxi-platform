@@ -298,8 +298,11 @@ export default class MainContent extends React.Component {
     } = this.state
     description = (!description || description == '<p></p>') ? '<p>添加备注</p>' : description
     const {
-      users = [],
+      // users = [],
       milestone_detail = {},
+      projectDetailInfoData: {
+        data: users = []
+      }
     } = this.props
     const { board_id, complete_num, total_num, name, deadline, remarks, principals = [], id, content_list = [], org_id } = milestone_detail
     const executors = principals.filter(item => item)
@@ -505,8 +508,15 @@ export default class MainContent extends React.Component {
 }
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ milestoneDetail: { milestone_detail = {} } }) {
-  return { milestone_detail }
+function mapStateToProps({
+  milestoneDetail: { milestone_detail = {} },
+  projectDetail: {
+    datas: {
+      projectDetailInfoData = {}
+    }
+  }
+}) {
+  return { milestone_detail, projectDetailInfoData }
 }
 
 // const executors = [
