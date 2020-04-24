@@ -1248,7 +1248,6 @@ class VideoMeetingPopoverContent extends React.Component {
 
 	renderPopoverHeader = () => {
 		const { videoMeetingPopoverVisible, saveProjectName, saveToProject } = this.state;
-		console.log(saveProjectName, defaultSaveProjectName,'ssssssssssssssssssssssss_defaultSaveProjectName')
 		const videoMeetingPopoverContent_ = (
 			<div>
 				{videoMeetingPopoverVisible && (
