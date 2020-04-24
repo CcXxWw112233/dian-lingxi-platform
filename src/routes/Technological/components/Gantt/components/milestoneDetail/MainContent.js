@@ -302,7 +302,7 @@ export default class MainContent extends React.Component {
       milestone_detail = {},
     } = this.props
     const { board_id, complete_num, total_num, name, deadline, remarks, principals = [], id, content_list = [], org_id } = milestone_detail
-    const executors = principals
+    const executors = principals.filter(item => item)
     const new_users = users.map(item => {
       if (!item['user_id']) {
         item['user_id'] = item['id']
