@@ -153,10 +153,10 @@ export default class ConfigureStepTypeThree_one extends Component {
   handleAutoTitleTextArea = (e, key, i) => {
     let val = e.target.value
     if (val.trimLR() == '') {
-      this.updateState({ value: '', key: 'title' }, i)
+      this.updateState({ value: '', key: 'title' , isNotUpdateModelDatas: true}, i)
       return
     }
-    this.updateState({ value: val, key: 'title' }, i)
+    this.updateState({ value: val, key: 'title', isNotUpdateModelDatas: true }, i)
     if (this.refs && this.refs[`autoTitleTextArea_${key}`]) {
       this.titleResize(key)
     }
@@ -175,10 +175,10 @@ export default class ConfigureStepTypeThree_one extends Component {
     const reg = /^([1-9]\d{0,2}?|1000)$/
     // /^([1-9]\d{0,2}?|1000)$/
     if (value == '' || value.trimLR() == '' || !reg.test(value)) {
-      this.updateState({ value: '', key: 'max_score', isNotUpdateModelDatas: true }, i)
+      this.updateState({ value: '', key: 'max_score', isNotUpdateModelDatas: true}, i)
       return
     }
-    this.updateState({ value: value, key: 'max_score', isNotUpdateModelDatas: true }, i)
+    this.updateState({ value: value, key: 'max_score', isNotUpdateModelDatas: true}, i)
     if (this.refs && this.refs[`autoGradeTextArea_${key}`]) {
       this.gradeResize(key)
     }
@@ -186,6 +186,7 @@ export default class ConfigureStepTypeThree_one extends Component {
 
   handleAutoGradeTextAreaBlur = (e, key, i) => {
     e && e.stopPropagation()
+    return
     let value = e.target.value
     const reg = /^([1-9]\d{0,2}?|1000)$/
     if (reg.test(value) && value != '' && String(value).trimLR() != '') {
@@ -198,11 +199,23 @@ export default class ConfigureStepTypeThree_one extends Component {
     }
   }
 
+  handleAutoGradeTextAreaValue2 = (e, key, i) => {
+    e && e.stopPropagation()
+    if (value == '' || value.trimLR() == '' || !reg.test(value)) {
+      this.updateState({ value: '', key: 'max_score', isNotUpdateModelDatas: true }, i)
+      return
+    }
+    this.updateState({ value: value, key: 'max_score', isNotUpdateModelDatas: true }, i)
+    if (this.refs && this.refs[`autoGradeTextArea_${key}`]) {
+      this.gradeResize(key)
+    }
+  }
+
   // 表示是输入权重的内容变化
   handleChangeAutoWeightTextAreaValue = (e, key, i) => {
     e && e.stopPropagation()
     let value = e.target.value
-    const reg = /^([1-9]\d{0,1}?|100)$/
+    const reg = /^([0-9]\d{0,1}?|100)$/
     // /^([1-9]\d{0,2}?|1000)$/
     if (value == '' || value.trimLR() == '' || !reg.test(value)) {
       this.updateState({ value: '', key: 'weight_ratio', isNotUpdateModelDatas: true }, i)
@@ -216,6 +229,7 @@ export default class ConfigureStepTypeThree_one extends Component {
 
   handleChangeAutoWeightTextAreaBlur = (e, key, i) => {
     e && e.stopPropagation()
+    return
     let value = e.target.value
     const reg = /^([1-9]\d{0,1}?|100)$/
     if (reg.test(value) && value != '' && String(value).trimLR() != '') {
@@ -243,7 +257,7 @@ export default class ConfigureStepTypeThree_one extends Component {
     this.setState({
       score_items: new_data
     })
-    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: new_data }, 'score_items')
+    // this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: new_data }, 'score_items')
   }
 
   handleChangeMenuItem = (e, index) => {
@@ -444,7 +458,7 @@ export default class ConfigureStepTypeThree_one extends Component {
           <th style={{ width: '170px' }}>标题</th>
           <th style={{ width: '90px' }}>
             权重占比%
-            <div style={{ color: '#F5222D', fontSize: '12px' }}>{this.whetherTheAllWeightValueGreaterThanHundred() ? '(总和不能超过100%)' : ''}</div>
+            <div style={{ color: '#F5222D', fontSize: '12px' }}>{this.whetherTheAllWeightValueGreaterThanHundred() ? '(总和需等于100%)' : ''}</div>
           </th>
           <th style={{ width: '90px' }}>
             最高分值
@@ -466,7 +480,7 @@ export default class ConfigureStepTypeThree_one extends Component {
                 </td>
                 <td style={{ position: 'relative', width: '90px' }}>
                   {/* <div className={indexStyles.rating_editTable} contentEditable={true}></div> */}
-                  <textarea value={max_score} onChange={(e) => { this.handleAutoGradeTextAreaValue(e, key, index) }} ref={`autoGradeTextArea_${key}`} />
+                  <textarea value={max_score} onChange={(e) => { this.handleAutoGradeTextAreaValue2(e, key, index) }} ref={`autoGradeTextArea_${key}`} />
                   <Dropdown overlay={this.renderMoreSelect(index)} getPopupContainer={triggerNode => triggerNode.parentNode} trigger={['click']}>
                     <div className={indexStyles.rating_moreBox}>
                       <span className={indexStyles.rating_more_icon}><span className={globalStyles.authTheme}>&#xe7fd;</span></span>
@@ -496,7 +510,7 @@ export default class ConfigureStepTypeThree_one extends Component {
     return flag
   }
 
-  // 判断所有内容的权重是否大于100 true 表示大于100 禁用
+  // 判断所有内容的权重是否大于100 true 表示如果不等于100 禁用
   whetherTheAllWeightValueGreaterThanHundred = () => {
     const { score_items = [] } = this.state
     let new_data = [...score_items]
@@ -508,7 +522,7 @@ export default class ConfigureStepTypeThree_one extends Component {
       acc += Number(weight_ratio)
       return acc
     }, 0)
-    if (total_value > compare_value) {
+    if (total_value != compare_value) {
       flag = true
     }
     return flag
