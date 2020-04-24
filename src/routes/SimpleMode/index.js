@@ -62,7 +62,7 @@ class SimpleMode extends Component {
           payload: {
             simplemodeCurrentProject: {
               board_id: '0',
-              board_name: '',
+              board_name: '所有项目',
               org_id: ''
             }
           }
