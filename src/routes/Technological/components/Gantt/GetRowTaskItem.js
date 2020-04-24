@@ -94,7 +94,11 @@ export default class GetRowTaskItem extends Component {
     setSpecilTaskExample = (data) => {
         const { task_is_dragging } = this.props
         const { is_moved } = this.state
-        if (is_moved || task_is_dragging) {
+        console.log('这是什么', '松开回调', task_is_dragging, is_moved)
+        if (
+            is_moved
+            // || task_is_dragging
+        ) {
             this.props.setTaskIsDragging && this.props.setTaskIsDragging(false) //当拖动完成后，释放创建任务的锁，让可以正常创建任务
             return
         }
@@ -140,7 +144,9 @@ export default class GetRowTaskItem extends Component {
 
         document.addEventListener('ontouchmove', this.onTouchMove, false);
         document.addEventListener('ontouchend', this.onTouchEnd, false);
-        this.props.setTaskIsDragging && this.props.setTaskIsDragging(true) //当拖动时，有可能会捕获到创建任务的动作，阻断
+        setTimeout(() => {
+            this.props.setTaskIsDragging && this.props.setTaskIsDragging(true) //当拖动时，有可能会捕获到创建任务的动作，阻断
+        }, 500)
         // target.onmouseleave = this.onMouseUp.bind(this);
     }
 
@@ -164,6 +170,11 @@ export default class GetRowTaskItem extends Component {
     }
 
     onTouchStart = (e) => {
+        this.setState({
+            drag_type: 'position'
+        }, () => {
+
+        })
         this.onMouseDown(e)
         // this.touchCanScroll('hidden')
     }
@@ -618,13 +629,31 @@ export default class GetRowTaskItem extends Component {
                         background: this.setLableColor(label_data, is_realize), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
                     }}
                     // 拖拽
-                    onMouseDown={(e) => this.onMouseDown(e)}
-                    onMouseMove={(e) => this.onMouseMove(e)}
-                    onMouseUp={() => this.setSpecilTaskExample({ id: parent_card_id || id, top, board_id })} //查看子任务是查看父任务
+                    onMouseDown={(e) => {
+                        console.log('这是什么', '鼠标按下')
+                        this.onMouseDown(e)
+                    }}
+                    onMouseMove={(e) => {
+                        console.log('这是什么', '鼠标移动')
+                        this.onMouseMove(e)
+                    }}
+                    onMouseUp={() => {
+                        console.log('这是什么', '鼠标松开')
+                        this.setSpecilTaskExample({ id: parent_card_id || id, top, board_id })
+                    }} //查看子任务是查看父任务
 
-                    onTouchStart={(e) => this.onTouchStart(e)}
-                    onTouchMove={(e) => this.onTouchMove(e)}
-                    onTouchEnd={(e) => this.onTouchEnd(e)} //查看子任务是查看父任务
+                    onTouchStart={(e) => {
+                        console.log('这是什么', '手指按下')
+                        this.onTouchStart(e)
+                    }}
+                    onTouchMove={(e) => {
+                        console.log('这是什么', '手指移动')
+                        this.onTouchMove(e)
+                    }}
+                    onTouchEnd={(e) => {
+                        console.log('这是什么', '手指松开')
+                        this.onTouchEnd(e)
+                    }} //查看子任务是查看父任务
                 // 不拖拽
                 // onMouseMove={(e) => e.stopPropagation()}
                 // onClick={() => this.setSpecilTaskExample({ id, top, board_id })}
