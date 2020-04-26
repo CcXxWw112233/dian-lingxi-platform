@@ -70,22 +70,32 @@ export default class GroupListHeadSet extends Component {
     }
     //返回
     backClick = () => {
-        const { dispatch } = this.props
-        dispatch({
-            type: 'gantt/updateDatas',
-            payload: {
-                gantt_board_id: '0',
-                group_view_type: '1',
-                list_group: [],
-            }
-        })
-        selectBoardToSeeInfo({ board_id: '0', dispatch })
-        // dispatch({
-        //     type: 'gantt/getGanttData',
-        //     payload: {
+        const { dispatch, group_view_type } = this.props
+        if (group_view_type == '5') {
+            dispatch({
+                type: 'gantt/updateDatas',
+                payload: {
+                    group_view_type: '1',
+                    list_group: [],
+                }
+            })
+            dispatch({
+                type: 'gantt/getGanttData',
+                payload: {
 
-        //     }
-        // })
+                }
+            })
+        } else {
+            dispatch({
+                type: 'gantt/updateDatas',
+                payload: {
+                    gantt_board_id: '0',
+                    group_view_type: '1',
+                    list_group: [],
+                }
+            })
+            selectBoardToSeeInfo({ board_id: '0', dispatch })
+        }
     }
     // 添加项目
     setAddProjectModalVisible = (data) => {
@@ -164,32 +174,70 @@ export default class GroupListHeadSet extends Component {
             >
                 <div className={indexStyles.set_content}>
 
-                    <div className={indexStyles.set_content_right}>
-                        <div className={indexStyles.set_content_dec}>
-                            {group_view_type == '1' && (
-                                gantt_board_id == '0' ? '项目列表' : '分组列表'
-                            )}
-                            {group_view_type == '2' && '成员列表'}
-                            {group_view_type == '4' && '我的计划'}
-                        </div>
-                    </div>
-
                     <div className={indexStyles.set_content_left}>
                         {gantt_board_id != '0' && group_view_type != '2' && (
                             <div onClick={this.backClick} className={`${indexStyles.group_back_to_board} ${globalStyles.authTheme}`}>&#xe7ec;</div>
                         )}
                         <div className={indexStyles.set_content_view_type}>
                             <Tooltip title={gantt_board_id != '0' ? '大纲视图' : '请先进入单个项目'}>
-                                <div onClick={() => { if (gantt_board_id != '0') this.setGroupViewType('4') }} className={`${indexStyles.set_content_left_left} ${globalStyles.authTheme} ${ganttIsOutlineView({ group_view_type }) && selected} ${gantt_board_id == '0' ? indexStyles.disabled : ''}`}>&#xe7f9;</div>
+                                <div
+                                    onClick={() => { if (gantt_board_id != '0') this.setGroupViewType('4') }}
+                                    className={`${indexStyles.set_content_left_left} ${globalStyles.authTheme} ${ganttIsOutlineView({ group_view_type }) && selected} ${gantt_board_id == '0' ? indexStyles.disabled : ''}`}
+                                    style={{ display: gantt_board_id == '0' ? 'none' : 'block' }} >
+                                    &#xe7f9;
+                                </div>
                             </Tooltip>
 
-                            <Tooltip title={'项目视图'}>
-                                <div onClick={() => this.setGroupViewType('1')} className={`${indexStyles.set_content_left_center} ${globalStyles.authTheme} ${group_view_type == '1' && selected}`}>&#xe604;</div>
+                            <Tooltip title={gantt_board_id == '0' ? '项目视图' : '分组视图'}>
+                                <div
+                                    style={{
+                                        borderRadius: gantt_board_id == '0' ? '4px 0 0 4px' : '0 4px 4px 0'
+                                    }}
+                                    onClick={() => this.setGroupViewType('1')} className={`${indexStyles.set_content_left_center} ${globalStyles.authTheme} 
+                                    ${(group_view_type == '1' || group_view_type == '5') && selected}`}
+                                >
+                                    {
+                                        gantt_board_id == '0' ? (
+                                            <span>&#xe6ae;</span>
+                                        ) : (
+                                                <span>&#xe604;</span>
+                                            )
+                                    }
+                                </div>
                             </Tooltip>
                             <Tooltip title={'人员视图'}>
-                                <div onClick={() => this.setGroupViewType('2')} className={`${indexStyles.set_content_left_right} ${globalStyles.authTheme}  ${group_view_type == '2' && selected}`}>&#xe7b2;</div>
+                                <div
+                                    onClick={() => this.setGroupViewType('2')}
+                                    className={`${indexStyles.set_content_left_right} ${globalStyles.authTheme}  ${group_view_type == '2' && selected}`}
+                                    style={{ display: gantt_board_id == '0' ? 'block' : 'none' }} >
+                                    &#xe7b2;
+                                </div>
                             </Tooltip>
                         </div>
+                    </div>
+                    <div className={indexStyles.set_content_right}>
+                        {/* <div className={indexStyles.set_content_dec}>
+                            {group_view_type == '1' && (
+                                gantt_board_id == '0' ? '项目列表' : '分组列表'
+                            )}
+                            {group_view_type == '2' && '成员列表'}
+                            {group_view_type == '4' && '我的计划'}
+                        </div> */}
+                        {
+                            !ganttIsOutlineView({ group_view_type }) && (
+                                <Tooltip title={'内容过滤'}>
+                                    <Dropdown
+                                        overlay={<ContentFilter dropdownVisible={dropdownVisible} setDropdownVisible={this.setDropdownVisible} />}
+                                        trigger={['click']}
+                                        visible={dropdownVisible}
+                                        zIndex={500}>
+                                        <div className={`${indexStyles.set_content_right_left} ${globalStyles.authTheme} 
+                                    ${(group_view_filter_boards.length || group_view_filter_users.length) && indexStyles.has_filter_content}`}
+                                            onClick={() => this.setDropdownVisible(true)} >&#xe8bd;</div>
+                                    </Dropdown>
+                                </Tooltip>
+                            )
+                        }
                     </div>
                 </div>
                 {addProjectModalVisible && (

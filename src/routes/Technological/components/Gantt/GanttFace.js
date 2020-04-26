@@ -378,7 +378,7 @@ export default class GanttFace extends Component {
                 gantt_card_height={gantt_card_height}
                 dataAreaRealHeight={dataAreaRealHeight} />
               {/* <GroupListHeadElse gantt_card_height={gantt_card_height} dataAreaRealHeight={dataAreaRealHeight} /> */}
-              <GroupListHeadSetBottom />
+              {/* <GroupListHeadSetBottom /> */}
             </div>
             <div
               className={indexStyles.board_body}
@@ -411,7 +411,7 @@ export default class GanttFace extends Component {
                   />
                   {
                     gantt_board_id && gantt_board_id != '0' && (
-                      <BoardTemplate insertTaskToListGroup={this.props.insertTaskToListGroup} />
+                      <BoardTemplate insertTaskToListGroup={this.props.insertTaskToListGroup} gantt_card_height={gantt_card_height} />
                     )
                   }
                 </div>

@@ -6,7 +6,7 @@ import styles from './index.less'
 import { setBoardIdStorage, checkIsHasPermissionInBoard, getOrgIdByBoardId, selectBoardToSeeInfo, getOrgNameWithOrgIdFilter } from '../../../../../utils/businessFunction'
 import { Dropdown, Menu, message } from 'antd'
 import { connect } from 'dva'
-import { toggleContentPrivilege, removeContentPrivilege, setContentPrivilege, addMenbersInProject } from '../../../../../services/technological/project'
+import { toggleContentPrivilege, removeContentPrivilege, setContentPrivilege, addMenbersInProject, cancelCollection, collectionProject } from '../../../../../services/technological/project'
 import DetailInfo from '@/routes/Technological/components/ProjectDetail/DetailInfo/index'
 import ShowAddMenberModal from '@/routes/Technological/components/Project/ShowAddMenberModal'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
@@ -376,6 +376,51 @@ export default class BoardItem extends Component {
             }
         })
     }
+    // 置顶
+    roofTop = (e) => {
+        e.stopPropagation()
+        const { dispatch, itemValue: { board_id, org_id, is_star }, } = this.props
+        const { projectList = [] } = this.props
+        const _arr_new = JSON.parse(JSON.stringify(projectList))
+        const _index = _arr_new.findIndex(item => item.board_id == board_id)
+        if (is_star == '1') { //取消置顶
+            cancelCollection({ org_id, board_id }).then(res => {
+                if (isApiResponseOk(res)) {
+                    _arr_new[_index].is_star = '0'
+                    // dispatch({
+                    //     type: 'workbench/updateDatas',
+                    //     payload: {
+                    //         projectList: _arr_new
+                    //     }
+                    // })
+                    dispatch({
+                        type: 'workbench/sortProjectList',
+                        payload: {
+                            data: _arr_new
+                        }
+                    })
+                } else {
+                    message.error(res.message)
+                }
+            })
+        } else {
+            collectionProject({ org_id, board_id }).then(res => {
+                if (isApiResponseOk(res)) {
+                    _arr_new[_index].is_star = '1'
+                    _arr_new.unshift(_arr_new[_index]) //将该项往第一插入
+                    _arr_new.splice(_index + 1, 1) //删除掉该项
+                    dispatch({
+                        type: 'workbench/updateDatas',
+                        payload: {
+                            projectList: _arr_new
+                        }
+                    })
+                } else {
+                    message.error(res.message)
+                }
+            })
+        }
+    }
     // 操作项点击
     handleMenuSelect = (e) => {
         e.domEvent.stopPropagation();
@@ -385,6 +430,9 @@ export default class BoardItem extends Component {
         // 点击的时候需要更新baseInfo
         setBoardIdStorage(board_id, org_id)
         switch (key) {
+            case 'rooftop':
+                this.roofTop()
+                break;
             case 'invitation':
                 if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, board_id)) {
                     message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -403,10 +451,15 @@ export default class BoardItem extends Component {
                 break
         }
     }
-    renderMenuOperateListName = ({ board_id }) => {
+    renderMenuOperateListName = ({ board_id, is_star }) => {
         const { renderVistorContorlVisible } = this.state
         return (
             <Menu onClick={this.handleMenuSelect} >
+                {/* {
+                    <Menu.Item key={'rooftop'}>
+                        {is_star == '1' ? '取消置顶' : '置顶'}
+                    </Menu.Item>
+                } */}
                 {
                     checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, board_id) &&
                     <Menu.Item key={'invitation'}>
@@ -436,7 +489,7 @@ export default class BoardItem extends Component {
         )
     }
     render() {
-        const { itemValue: { board_id, board_name, org_id }, simplemodeCurrentProject, currentUserOrganizes = [], currentSelectOrganize = {} } = this.props
+        const { itemValue: { board_id, board_name, org_id, is_star }, simplemodeCurrentProject, currentUserOrganizes = [], currentSelectOrganize = {} } = this.props
         const { board_info_visible, show_add_menber_visible, menu_oprate_visible } = this.state
         const isAllOrg = !currentSelectOrganize.id || currentSelectOrganize.id == '0'
         return (
@@ -453,9 +506,25 @@ export default class BoardItem extends Component {
                             )
                         }
                     </div>
-                    <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={menu_oprate_visible ? this.renderMenuOperateListName({ board_id }) : (<span></span>)}>
-                        <div className={`${styles.board_area_middle_item_rt} ${globalStyles.authTheme}`} onClick={(e) => e.stopPropagation()}>&#xe66f;</div>
-                    </Dropdown>
+
+                    <div className={`${styles.board_area_middle_item_rt}`}>
+                        <div className={`${globalStyles.authTheme} ${styles.board_area_middle_item_rt_roofTop}`}
+                            onClick={this.roofTop}
+                            title={is_star == '1' ? '取消置顶' : '置顶'}
+                        >
+                            {
+                                is_star == '1' ? (
+                                    <span>&#xe86e;</span>
+                                ) :
+                                    (
+                                        <span>&#xe7e3;</span>
+                                    )
+                            }
+                        </div>
+                        <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={menu_oprate_visible ? this.renderMenuOperateListName({ board_id, is_star }) : (<span></span>)}>
+                            <div className={`${styles.board_area_middle_item_rt_operate} ${globalStyles.authTheme}`} onClick={(e) => e.stopPropagation()}>&#xe66f;</div>
+                        </Dropdown>
+                    </div>
                 </div>
                 <DetailInfo setProjectDetailInfoModalVisible={this.setBoardInfoVisible} modalVisible={board_info_visible} invitationType='1' invitationId={board_id} />
                 {

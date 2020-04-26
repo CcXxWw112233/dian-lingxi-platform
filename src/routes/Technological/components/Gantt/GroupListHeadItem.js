@@ -193,18 +193,36 @@ export default class GroupListHeadItem extends Component {
   listNameClick = () => {
     const { itemValue, gantt_board_id, dispatch, group_view_type } = this.props
     const { local_list_name } = this.state
-    if (group_view_type != '1' || gantt_board_id != '0') { //必须要在项目视图才能看
+    if (group_view_type != '1') { //必须要在项目视图 或项目分组才能看
       return
     }
     const { list_id } = itemValue
-    dispatch({
-      type: 'gantt/updateDatas',
-      payload: {
-        gantt_board_id: list_id,
-        list_group: [],
-      }
-    })
-    selectBoardToSeeInfo({ board_id: list_id, board_name: local_list_name, dispatch })
+    if (gantt_board_id == '0') {
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          gantt_board_id: list_id,
+          list_group: [],
+        }
+      })
+      selectBoardToSeeInfo({ board_id: list_id, board_name: local_list_name, dispatch })
+    } else {
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          group_view_type: '5',
+          gantt_board_list_id: list_id,
+          list_group: [],
+        }
+      })
+      dispatch({
+        type: 'gantt/getGanttData',
+        payload: {
+
+        }
+      })
+    }
+
     // dispatch({
     //   type: 'gantt/getGanttData',
     //   payload: {
@@ -627,12 +645,12 @@ export default class GroupListHeadItem extends Component {
 
     return (
       <Menu onClick={this.handleMenuSelect} onOpenChange={this.onOpenChange}>
-        {
+        {/* {
           checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, params_board_id) &&
           <Menu.Item key={'invitation'}>
             邀请成员加入
           </Menu.Item>
-        }
+        } */}
         {/* 渲染分组|项目对应的访问控制 */}
         {
           checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, params_board_id) && renderVistorContorlVisible && (
@@ -650,11 +668,11 @@ export default class GroupListHeadItem extends Component {
           checkIsHasPermissionInBoard(rename_permission_code, params_board_id) &&
           <Menu.Item key={'rename'}>重命名</Menu.Item>
         }
-        {
+        {/* {
           gantt_board_id == '0' && (
             <Menu.Item key={'board_info'}>项目信息</Menu.Item>
           )
-        }
+        } */}
         {
           gantt_board_id == '0' && checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_ARCHIVE, params_board_id) && (
             <Menu.Item key={'archived'}>归档</Menu.Item>
@@ -922,16 +940,30 @@ export default class GroupListHeadItem extends Component {
     const { list_group = [] } = this.props
     const list_group_new = [...list_group]
     const group_index = list_group_new.findIndex(item => item.lane_id == list_id)
+    //排序项目列表
+    const { projectList = [] } = this.props
+    const _arr_new = JSON.parse(JSON.stringify(projectList))
+    const _index = _arr_new.findIndex(item => item.board_id == list_id)
+
     if (type == '0') { //取消置顶
       cancelCollection({ org_id, board_id: list_id }).then(res => {
         if (isApiResponseOk(res)) {
+          // 排序甘特图分组
           list_group_new[group_index].is_star = '0'
-          // list_group_new.push(list_group_new[group_index]) //将该项往最后插入
-          // list_group_new.splice(group_index, 1) //删除掉该项
+          _arr_new[_index].is_star = '0'
+          list_group_new.push(list_group_new[group_index]) //将该项往最后插入
+          list_group_new.splice(group_index, 1) //删除掉该项
           dispatch({
             type: 'gantt/handleListGroup',
             payload: {
               data: list_group_new
+            }
+          })
+          // 排序项目列表
+          dispatch({
+            type: 'workbench/sortProjectList',
+            payload: {
+              data: _arr_new
             }
           })
         } else {
@@ -941,6 +973,7 @@ export default class GroupListHeadItem extends Component {
     } else {
       collectionProject({ org_id, board_id: list_id }).then(res => {
         if (isApiResponseOk(res)) {
+          // 排序甘特图分组
           list_group_new[group_index].is_star = '1'
           list_group_new.unshift(list_group_new[group_index]) //将该项往第一插入
           list_group_new.splice(group_index + 1, 1) //删除掉该项
@@ -948,6 +981,16 @@ export default class GroupListHeadItem extends Component {
             type: 'gantt/handleListGroup',
             payload: {
               data: list_group_new
+            }
+          })
+          // 排序项目列表
+          _arr_new[_index].is_star = '1'
+          _arr_new.unshift(_arr_new[_index]) //将该项往第一插入
+          _arr_new.splice(_index + 1, 1) //删除掉该项
+          dispatch({
+            type: 'workbench/updateDatas',
+            payload: {
+              projectList: _arr_new
             }
           })
         } else {
@@ -974,8 +1017,15 @@ export default class GroupListHeadItem extends Component {
           <div className={`${indexStyles.list_head_top}`}>
             <div className={`${indexStyles.list_head_top_left}`}>
               {
-                group_view_type == '2' && !get_gantt_data_loading && (
+                (group_view_type == '2' || (group_view_type == '5' && list_id != '0')) && !get_gantt_data_loading && (
                   <Avatar src={lane_icon} icon="user" style={{ marginTop: '-4px', marginRight: 8 }}></Avatar>
+                )
+              }
+              {
+                group_view_type == '5' && list_id == '0' && (
+                  <div>
+                    未分配的任务
+                  </div>
                 )
               }
               {
@@ -996,7 +1046,7 @@ export default class GroupListHeadItem extends Component {
                     value={edit_input_value}
                     onChange={this.inputOnchange}
                     onPressEnter={this.inputOnPressEnter}
-                    onBlur={this.inputOnBlur}
+                    onBlur={this.inputOnPressEnter}
                   />
                 ) : (
                     list_id == '0' ? (
@@ -1018,7 +1068,7 @@ export default class GroupListHeadItem extends Component {
               {/* 逾期任务 */}
               {
                 ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) && Number(lane_overdue_count) > 0 && (
-                  <div className={indexStyles.due_time_card_total} title={`存在${lane_overdue_count}条逾期未完成任务`} >{lane_overdue_count}</div>
+                  <div className={indexStyles.due_time_card_total} title={`存在${lane_overdue_count}条逾期任务`} >{lane_overdue_count}</div>
                 )
               }
               {/* 置顶 */}
@@ -1044,7 +1094,7 @@ export default class GroupListHeadItem extends Component {
             </div>
           </div>
           {/* 没有排期任务列表 */}
-          <div className={`${indexStyles.list_head_body}`}>
+          <div className={`${indexStyles.list_head_body}`} onWheel={(e) => e.stopPropagation()}>
             <div className={`${indexStyles.list_head_body_inner} ${isShowBottDetail == '0' && indexStyles.list_head_body_inner_init} ${isShowBottDetail == '2' && indexStyles.animate_hide} ${isShowBottDetail == '1' && indexStyles.animate_show}`} >
               {this.renderTaskItem()}
             </div>
@@ -1068,7 +1118,7 @@ export default class GroupListHeadItem extends Component {
                 </div>
               </div>
             ) : (
-                <div className={indexStyles.list_head_footer} onClick={this.setIsShowBottDetail}>
+                <div className={indexStyles.list_head_footer} onClick={this.setIsShowBottDetail} style={{ display: list_no_time_data.length ? 'flex' : 'none' }}>
                   <div className={`${globalStyles.authTheme} ${indexStyles.list_head_footer_tip} ${isShowBottDetail == '2' && indexStyles.spin_hide} ${isShowBottDetail == '1' && indexStyles.spin_show}`}>&#xe61f;</div>
                   <div className={indexStyles.list_head_footer_dec}>{list_no_time_data.length}个未排期事项</div>
                 </div>

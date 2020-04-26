@@ -1167,6 +1167,9 @@ export default class MainContent extends Component {
 
           {/* 各种字段的不同状态 S */}
           <div>
+            {/* 负责人区域 S */}
+            {this.whetherExistencePriciple() && this.renderPriciple()}
+            {/* 负责人区域 E */}
             {/* 状态区域 */}
             <div>
               <div style={{ position: 'relative' }} className={mainContentStyles.field_content} style={{ cursor: 'pointer' }}>
@@ -1209,9 +1212,6 @@ export default class MainContent extends Component {
 
               </div>
             </div>
-            {/* 负责人区域 S */}
-            {this.whetherExistencePriciple() && this.renderPriciple()}
-            {/* 负责人区域 E */}
             {/* 时间区域 */}
             <div>
               <div className={mainContentStyles.field_content} style={{ cursor: 'pointer' }}>

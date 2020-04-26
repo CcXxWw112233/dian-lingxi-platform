@@ -94,7 +94,15 @@ class DropdownSelectWithSearch extends Component {
   };
   renderNoContent = () => {
     const { isCanCreateNew } = this.props;
-    if (!isCanCreateNew) return null;
+    if (!isCanCreateNew) {
+      return (
+        <div className={styles.menuWrapper}>
+          <div className={styles.menu_item} style={{ height: 40, fontSize: 12, lineHeight: '40px' }}>
+            无更多选项
+          </div>
+        </div>
+      )
+    };
     const { current_org: { identity_type } = {} } = this.getUerInfoFromCookie();
     const isVisitor = this.isVisitor(identity_type);
     return (
@@ -231,7 +239,7 @@ class DropdownSelectWithSearch extends Component {
     return condMap.get(param);
   };
   render() {
-    const { initSearchTitle, selectedItem, project = {}, isShowIcon, isShouldDisableDropdown } = this.props;
+    const { initSearchTitle, selectedItem, project = {}, isShowIcon, isShouldDisableDropdown, iconNode } = this.props;
     const { datas: { appsList } } = project
     const { visible, addNewProjectModalVisible } = this.state;
     let titleClassName = cx({
@@ -250,7 +258,10 @@ class DropdownSelectWithSearch extends Component {
             <div className={titleClassName}>
               <div className={styles.org_selected_out}>
                 {isShowIcon && (
-                  <div className={`${globalStyles.authTheme} ${styles.type_logo}`}>&#xe60a;</div>
+                  <div className={`${globalStyles.authTheme} ${styles.type_logo}`}>
+                    {/* &#xe60a; */}
+                    {iconNode}
+                  </div>
                 )}
                 <div>
                   {selectedItem && selectedItem.board_name

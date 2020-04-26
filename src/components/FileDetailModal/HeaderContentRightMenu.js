@@ -456,17 +456,17 @@ export default class HeaderContentRightMenu extends Component {
         <Menu.Item key="2"
         onClick={this.handleSaveAsNewVersion}
         >
-          保存为新版本
+          保存
         </Menu.Item>
         <Menu.Item key="3"
         onClick={this.handleSaveAsOthersNewVersion}
         >
-          另存为新文件
+          另存为
         </Menu.Item>
         <Menu.Item key="1"
         onClick={this.handleFileDownload.bind(this, { filePreviewCurrentResourceId, pdfDownLoadSrc })}
         >
-          下载到本地
+          下载
         </Menu.Item>
       </Menu>
     )

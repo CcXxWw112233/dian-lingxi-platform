@@ -45,6 +45,7 @@ export default class GetRowGanttItem extends Component {
       ganttIsOutlineView({ group_view_type }) ||
       (group_view_type == '1' && gantt_board_id == '0') ||
       group_view_type == '2' ||
+      group_view_type == '5' ||
       (group_view_type == '1' && gantt_board_id != '0' && !list_group.length)
     ) {
       return this.getElseHeight()

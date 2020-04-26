@@ -353,7 +353,7 @@ export const isPaymentOrgUser = (_org_id) => {
 // (极简模式下)，点击或选择某个项目时，做项目联动，圈子联动和相关规划统一处理
 export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenIm = true, org_id, is_new_board, group_view_type = '4' }) => {
   setBoardIdStorage(board_id, org_id)
-  dispatch({
+  dispatch({ //设置极简模式的已选项目
     type: 'simplemode/updateDatas',
     payload: {
       simplemodeCurrentProject: board_id == '0' ? '' : {
@@ -364,7 +364,7 @@ export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenI
     }
   })
 
-  if (board_id && board_id != '0') {
+  if (board_id && board_id != '0') { //请求项目详情
     dispatch({
       type: 'projectDetail/projectDetailInfo',
       payload: {
@@ -378,7 +378,7 @@ export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenI
     new_group_view_type = '1'
   }
 
-  dispatch({
+  dispatch({ //更新甘特图
     type: 'gantt/updateDatas',
     payload: {
       gantt_board_id: board_id || '0',
@@ -389,7 +389,19 @@ export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenI
       target_scrollTop: 0
     }
   })
-
+  dispatch({ //更新用户信息中已选项目（接口）
+    type: 'accountSet/updateUserSet',
+    payload: {
+      current_board: board_id || '0'
+    }
+  });
+  dispatch({ //更新用户信息中已选项目
+    type: 'technological/setUserInfoAbout',
+    payload: {
+      current_board_id: board_id,
+      current_board_name: board_name
+    }
+  });
   const target = document.getElementById('gantt_card_out_middle')
   if (target) {
     target.scrollTop = 0

@@ -23,7 +23,23 @@ import Cookies from "js-cookie";
 import QueryString from 'querystring'
 import { currentNounPlanFilterName, setOrganizationIdStorage } from "../../utils/businessFunction";
 import { clearnImAuth } from '../../utils/businessFunction'
+import { getModelSelectDatasState } from '../utils'
 
+const clearAboutLocalstorage = () => { //清掉当前相关业务逻辑的用户数据
+  const names_arr = [
+    'OrganizationId',
+    'userInfo',
+    'userOrgPermissions',
+    'userAllOrgsAllBoards',
+    'currentUserOrganizes',
+    'userBoardPermissions',
+    'currentSelectOrganize',
+    'currentNounPlan',
+  ]
+  for (let val of names_arr) {
+    localStorage.removeItem(val)
+  }
+}
 // 该model用于存放公用的 组织/权限/偏好设置/侧边栏的数据 (权限目前存放于localstorage, 未来会迁移到model中做统一)
 let naviHeadTabIndex //导航栏naviTab选项
 let locallocation //保存location在组织切换
@@ -129,11 +145,11 @@ export default {
         type: 'getUserBoardPermissions',
         payload: {}
       })
-      //获取当前的用户当前组织的项目列表,
-      yield put({
-        type: 'workbench/getProjectList',
-        payload: {}
-      })
+      // //获取当前的用户当前组织的项目列表,
+      // yield put({
+      //   type: 'workbench/getProjectList',
+      //   payload: {}
+      // })
       //获取用户当前组织的组织成员(如果非全组织，而是具有确认组织的情况下调用)
       if (localStorage.getItem('OrganizationId') != '0') {
         yield put({
@@ -198,6 +214,11 @@ export default {
             }
           })
           return
+        } else {
+          yield put({
+            type: 'workbench/getProjectList',
+            payload: {}
+          })
         }
         // if (is_simple_model == '0' && locallocation.pathname.indexOf('/technological/simplemode') != -1) {
         //   // 如果用户设置的是高效模式, 但是路由中存在极简模式, 则以模式为准
@@ -453,6 +474,19 @@ export default {
         calback()
       }
     },
+    // 设置userInfo里面的user_set
+    * setUserInfoAbout({ payload = {} }, { select, call, put }) {
+      let userInfo = yield select(getModelSelectDatasState('technological', 'userInfo'))
+      let { user_set = {} } = userInfo
+      user_set = { ...user_set, ...payload }
+      userInfo.user_set = user_set
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          userInfo
+        }
+      })
+    },
 
     //组织 -----------end
 
@@ -547,6 +581,12 @@ export default {
 
     * logout({ payload }, { select, call, put }) { //提交表单
       clearnImAuth()
+      yield put({
+        type: 'reducerLogout',
+        payload: {
+
+        }
+      })
       if (!Cookies.get('Authorization') || !Cookies.get('refreshToken')) {
         Cookies.remove('Authorization')
         Cookies.remove('refreshToken')
@@ -660,6 +700,13 @@ export default {
         ...state,
         datas: { ...state.datas, ...action.payload },
       }
-    }
+    },
+    reducerLogout(state, action) {
+      clearAboutLocalstorage()
+      return {
+        ...state,
+        datas: { ...state.datas, ...action.payload },
+      }
+    },
   },
 };

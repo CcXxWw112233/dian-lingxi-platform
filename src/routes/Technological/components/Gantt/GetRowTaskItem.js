@@ -94,7 +94,11 @@ export default class GetRowTaskItem extends Component {
     setSpecilTaskExample = (data) => {
         const { task_is_dragging } = this.props
         const { is_moved } = this.state
-        if (is_moved || task_is_dragging) {
+        console.log('这是什么', '松开回调', task_is_dragging, is_moved)
+        if (
+            is_moved
+            // || task_is_dragging
+        ) {
             this.props.setTaskIsDragging && this.props.setTaskIsDragging(false) //当拖动完成后，释放创建任务的锁，让可以正常创建任务
             return
         }
@@ -117,7 +121,7 @@ export default class GetRowTaskItem extends Component {
 
     onMouseDown = (e) => {
         e.stopPropagation()
-        e.preventDefault() //解决拖拽卡顿？(尚未明确)
+        e.preventDefault && e.preventDefault() //解决拖拽卡顿？(尚未明确)
         const target = this.out_ref.current
         setTimeout(() => {
             this.is_down = true;
@@ -126,8 +130,8 @@ export default class GetRowTaskItem extends Component {
         if ('position' == drag_type) { //在中间
             target.style.cursor = 'move';
         }
-        this.x = e.clientX;
-        this.y = e.clientY
+        this.x = e.clientX || e.changedTouches[0].clientX;
+        this.y = e.clientY || e.changedTouches[0].clientY
         //获取左部和顶部的偏移量
         this.l = target.offsetLeft;
         this.t = target.offsetTop;
@@ -137,7 +141,12 @@ export default class GetRowTaskItem extends Component {
 
         window.onmousemove = this.onMouseMove.bind(this);
         window.onmouseup = this.onMouseUp.bind(this);
-        this.props.setTaskIsDragging && this.props.setTaskIsDragging(true) //当拖动时，有可能会捕获到创建任务的动作，阻断
+
+        document.addEventListener('ontouchmove', this.onTouchMove, false);
+        document.addEventListener('ontouchend', this.onTouchEnd, false);
+        setTimeout(() => {
+            this.props.setTaskIsDragging && this.props.setTaskIsDragging(true) //当拖动时，有可能会捕获到创建任务的动作，阻断
+        }, 500)
         // target.onmouseleave = this.onMouseUp.bind(this);
     }
 
@@ -160,6 +169,35 @@ export default class GetRowTaskItem extends Component {
         }
     }
 
+    onTouchStart = (e) => {
+        this.setState({
+            drag_type: 'position'
+        }, () => {
+
+        })
+        this.onMouseDown(e)
+        // this.touchCanScroll('hidden')
+    }
+
+    onTouchMove = (e) => {
+        e.preventDefault && e.preventDefault();
+        e.stopPropagation && e.stopPropagation();
+        // console.log('ssssapreventDefault', e.preventDefault)
+        this.onMouseMove(e)
+    }
+
+    onTouchEnd = (e) => {
+        this.onMouseUp(e)
+        // this.touchCanScroll('scroll')
+    }
+
+    // 触屏是否可以滚动
+    touchCanScroll = (style_attr) => {
+        const ele = document.getElementById('gantt_card_out_middle')
+        if (ele) {
+            ele.style.overflow = style_attr
+        }
+    }
     // 拖动到边界时，设置滚动条的位置
     // dragToBoundaryExpand = ({ delay = 300, position = 200 }) => {
     //     const that = this
@@ -175,7 +213,7 @@ export default class GetRowTaskItem extends Component {
 
     // 延展左边
     extentionLeft = (e) => {
-        const nx = e.clientX;
+        const nx = e.clientX || e.changedTouches[0].clientX;
         //计算移动后的左偏移量和顶部的偏移量
         const nl = nx - (this.x - this.l);
         const nw = this.x - nx //宽度
@@ -187,7 +225,7 @@ export default class GetRowTaskItem extends Component {
 
     // 延展右边
     extentionRight = (e) => {
-        const nx = e.clientX;
+        const nx = e.clientX || e.changedTouches[0].clientX;
         const { local_width_flag } = this.state
 
         //计算移动后的左偏移量和顶部的偏移量
@@ -212,8 +250,8 @@ export default class GetRowTaskItem extends Component {
         // const y = e.pageY - target.offsetTop + target_1.scrollTop - dateAreaHeight
 
         //获取x和y
-        const nx = e.clientX;
-        const ny = e.clientY;
+        const nx = e.clientX || e.changedTouches[0].clientX;
+        const ny = e.clientY || e.changedTouches[0].clientY;
         //计算移动后的左偏移量和顶部的偏移量
         const nl = nx - (this.x - this.l);
         const nt = ny - (this.y - this.t);
@@ -226,6 +264,7 @@ export default class GetRowTaskItem extends Component {
         const { gantt_board_id, group_list_area_section_height = [], ceiHeight, group_view_type } = this.props
         const item_height = (ceiHeight + task_item_margin_top) / 2
         if (gantt_board_id != '0' &&
+            group_view_type == '1' &&
             nt < group_list_area_section_height[group_list_area_section_height.length - 1] - item_height &&
             !ganttIsOutlineView({ group_view_type })
         ) { //只有在分组的情况下才能拖上下
@@ -241,7 +280,8 @@ export default class GetRowTaskItem extends Component {
         if (this.is_down || ganttPanelDashedDrag) { //准备拖动时不再处理, 拖拽生成一条任务时也不再处理
             return
         }
-        const { currentTarget, clientX, clientY } = event
+        const { currentTarget } = event
+        const clientX = event.clientX || event.changedTouches[0].clientX
         const { clientWidth } = currentTarget
         const oDiv = currentTarget
         const target_1 = document.getElementById('gantt_card_out_middle')
@@ -303,8 +343,10 @@ export default class GetRowTaskItem extends Component {
             local_width_flag: this.state.local_width,
         })
         window.onmousemove = null;
-        window.onmuseup = null;
+        window.onmouseup = null;
 
+        document.removeEventListener('ontouchmove', this.onTouchMove, false);
+        document.removeEventListener('ontouchend', this.onTouchEnd, false);
         setTimeout(() => {
             this.setState({
                 is_moved: false
@@ -413,8 +455,9 @@ export default class GetRowTaskItem extends Component {
 
         const date_span = local_width / ceilWidth
         const start_time_index = Math.floor(local_left / ceilWidth)
-        const start_date = date_arr_one_level[start_time_index]
+        const start_date = date_arr_one_level[start_time_index] || {}
         const start_time_timestamp = parseInt(start_date.timestamp)
+        if (!start_time_timestamp) return
         //截至时间为起始时间 加上间隔天数的毫秒数, - 60 * 1000为一分钟的毫秒数，意为截至日期的23:59
         const end_time_timestamp = parseInt(start_time_timestamp + ((24 * 60 * 60) * 1000) * date_span - 60 * 1000)
         updateData.start_time = parseInt(start_time_timestamp)
@@ -457,8 +500,9 @@ export default class GetRowTaskItem extends Component {
 
         const date_span = local_width / ceilWidth
         const start_time_index = Math.floor(local_left / ceilWidth)
-        const start_date = date_arr_one_level[start_time_index]
+        const start_date = date_arr_one_level[start_time_index] || {}
         const start_time_timestamp = start_date.timestamp
+        if (!start_time_timestamp) return
         //截至时间为起始时间 加上间隔天数的毫秒数, - 60 * 1000为一分钟的毫秒数，意为截至日期的23:59
         const end_time_timestamp = start_time_timestamp + ((24 * 60 * 60) * 1000) * date_span - 60 * 1000
         updateData.start_time = start_time_timestamp
@@ -577,6 +621,7 @@ export default class GetRowTaskItem extends Component {
                     // draggable
                     ref={this.out_ref}
                     style={{
+                        touchAction: 'none',
                         zIndex: this.is_down ? 2 : 1,
                         left: local_left, top: local_top,
                         width: (local_width || 6) - 6, height: (height || task_item_height),
@@ -584,9 +629,31 @@ export default class GetRowTaskItem extends Component {
                         background: this.setLableColor(label_data, is_realize), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
                     }}
                     // 拖拽
-                    onMouseDown={(e) => this.onMouseDown(e)}
-                    onMouseMove={(e) => this.onMouseMove(e)}
-                    onMouseUp={() => this.setSpecilTaskExample({ id: parent_card_id || id, top, board_id })} //查看子任务是查看父任务
+                    onMouseDown={(e) => {
+                        console.log('这是什么', '鼠标按下')
+                        this.onMouseDown(e)
+                    }}
+                    onMouseMove={(e) => {
+                        console.log('这是什么', '鼠标移动')
+                        this.onMouseMove(e)
+                    }}
+                    onMouseUp={() => {
+                        console.log('这是什么', '鼠标松开')
+                        this.setSpecilTaskExample({ id: parent_card_id || id, top, board_id })
+                    }} //查看子任务是查看父任务
+
+                    onTouchStart={(e) => {
+                        console.log('这是什么', '手指按下')
+                        this.onTouchStart(e)
+                    }}
+                    onTouchMove={(e) => {
+                        console.log('这是什么', '手指移动')
+                        this.onTouchMove(e)
+                    }}
+                    onTouchEnd={(e) => {
+                        console.log('这是什么', '手指松开')
+                        this.onTouchEnd(e)
+                    }} //查看子任务是查看父任务
                 // 不拖拽
                 // onMouseMove={(e) => e.stopPropagation()}
                 // onClick={() => this.setSpecilTaskExample({ id, top, board_id })}

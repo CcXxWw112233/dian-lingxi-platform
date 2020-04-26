@@ -64,13 +64,13 @@ const MiniBoxNavigations = (props) => {
                 route: '/technological/simplemode/home'
             }
         })
-        selectBoardToSeeInfo({ board_id: '0', dispatch })
-        dispatch({
-            type: 'technological/updateDatas',
-            payload: {
-                currentSelectedProjectOrgIdByBoardId: ''
-            }
-        })
+        // selectBoardToSeeInfo({ board_id: '0', dispatch })
+        // dispatch({
+        //     type: 'technological/updateDatas',
+        //     payload: {
+        //         currentSelectedProjectOrgIdByBoardId: ''
+        //     }
+        // })
         // dispatch({ //解决组织切换时，由于调用了甘特图查看具体id而报错
         //     type: 'gantt/updateDatas',
         //     payload: {

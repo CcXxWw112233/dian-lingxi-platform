@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'dva'
 import styles from './featurebox.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { timestampToTimeNormal, timeColor } from '../../../../../utils/util'
+import { timestampToTimeNormal, timeColor, isSamDay, transformTimestamp, timestampToHM } from '../../../../../utils/util'
 import { getOrgNameWithOrgIdFilter } from '../../../../../utils/businessFunction'
 
 @connect(mapStateToProps)
@@ -110,15 +110,16 @@ export default class BoardFeaturesItem extends Component {
         if (!due_time && !start_time) {
             return {}
         }
+        const is_today = (timestamp) => isSamDay(new Date().getTime(), timestamp) && transformTimestamp(timestamp) > new Date().getTime()//今天截止但未过期
         if (rela_type == '2') {
             return {
-                time: timestampToTimeNormal(start_time, '/', true),
+                time: is_today(due_time) ? `今天 ${timestampToHM(start_time)}` : timestampToTimeNormal(start_time, '/', true),
                 dec: '开始'
             }
 
         } else {
             return {
-                time: timestampToTimeNormal(due_time, '/', true),
+                time: is_today(due_time) ? `今天 ${timestampToHM(due_time)}` : timestampToTimeNormal(due_time, '/', true),
                 dec: '截止'
             }
         }
