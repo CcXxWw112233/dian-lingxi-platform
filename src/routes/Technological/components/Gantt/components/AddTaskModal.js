@@ -322,7 +322,7 @@ class AddTaskModal extends Component {
                   />
                 )}
               {/*在项目视图下，必须选择了具体的项目,在任务分组下创建任务*/}
-              {(group_view_type == '1' && !!current_operate_board_id && !!board_card_group_id) ? (
+              {((group_view_type == '1' || group_view_type == '5') && !!current_operate_board_id && !!board_card_group_id) ? (
                 <div className={styles.groupList__wrapper} style={{ paddingTop: 2, marginRight: 16 }}>
                   <span className={globalStyles.authTheme} style={{ fontSize: '16px' }}>&#xe604;</span>
                   {currentSelectedProjectGroupListItem.list_name}

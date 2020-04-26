@@ -82,6 +82,19 @@ class Gantt extends Component {
   //   })
   // }
 
+  // 任务详情弹窗关闭回调
+  setDrawerVisibleClose = () => {
+    const { group_view_type, dispatch } = this.props
+    if (group_view_type == '5') {
+      dispatch({
+        type: 'gantt/getGanttData',
+        payload: {
+
+        }
+      })
+    }
+  }
+
   // 点击设置卡片类型（未排期/已排期)
   setTaskDetailModalVisibile = (card_time_type) => {
     this.card_time_type = card_time_type
@@ -152,7 +165,7 @@ class Gantt extends Component {
     })
   }
   handleGetNewTaskParams = (data) => {
-    const { create_start_time, create_end_time, current_list_group_id, gantt_board_id, group_view_type, panel_outline_create_card_params } = this.props
+    const { create_start_time, create_end_time, current_list_group_id, gantt_board_id, group_view_type, panel_outline_create_card_params, gantt_board_list_id } = this.props
 
     //设置截止日期最后一秒
     const create_end_time_date = new Date(create_end_time)
@@ -177,7 +190,7 @@ class Gantt extends Component {
         param.list_id = current_list_group_id == '0' ? '' : current_list_group_id
       }
     } else if (group_view_type == '5' || group_view_type == '2') {
-      param.list_id = data['list_id']
+      param.list_id = data['list_id'] || gantt_board_list_id
     } else {
 
     }
@@ -461,6 +474,7 @@ class Gantt extends Component {
       about_group_boards = [],
       about_user_boards = [],
       drawerVisible,
+      gantt_board_list_id,
     } = this.props;
 
     return (
@@ -477,7 +491,7 @@ class Gantt extends Component {
         />
         <TaskDetailModal
           task_detail_modal_visible={drawerVisible}
-          // setTaskDetailModalVisible={this.setDrawerVisibleClose} //关闭任务弹窗回调
+          setTaskDetailModalVisible={this.setDrawerVisibleClose} //关闭任务弹窗回调
           handleTaskDetailChange={this.handleChangeCard}
           handleDeleteCard={this.handleDeleteCard}
           handleChildTaskChange={this.handleChildTaskChange}
@@ -485,7 +499,7 @@ class Gantt extends Component {
 
         {addTaskModalVisible && (
           <AddTaskModal
-            board_card_group_id={gantt_board_id == '0' ? '' : current_list_group_id}
+            board_card_group_id={gantt_board_id == '0' ? '' : (group_view_type == '5' ? gantt_board_list_id : current_list_group_id)}
             handleGetNewTaskParams={this.handleGetNewTaskParams}
             current_operate_board_id={gantt_board_id == '0' ? current_list_group_id : gantt_board_id}
             current_list_group_id={current_list_group_id}
@@ -520,7 +534,8 @@ function mapStateToProps({
       show_board_fold,
       outline_tree,
       outline_tree_round,
-      panel_outline_create_card_params = {}
+      panel_outline_create_card_params = {},
+      gantt_board_list_id
     }
   },
   technological: {
@@ -545,7 +560,8 @@ function mapStateToProps({
     page_load_type,
     outline_tree,
     panel_outline_create_card_params,
-    outline_tree_round
+    outline_tree_round,
+    gantt_board_list_id
   }
 }
 

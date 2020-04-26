@@ -940,16 +940,30 @@ export default class GroupListHeadItem extends Component {
     const { list_group = [] } = this.props
     const list_group_new = [...list_group]
     const group_index = list_group_new.findIndex(item => item.lane_id == list_id)
+    //排序项目列表
+    const { projectList = [] } = this.props
+    const _arr_new = JSON.parse(JSON.stringify(projectList))
+    const _index = _arr_new.findIndex(item => item.board_id == list_id)
+
     if (type == '0') { //取消置顶
       cancelCollection({ org_id, board_id: list_id }).then(res => {
         if (isApiResponseOk(res)) {
+          // 排序甘特图分组
           list_group_new[group_index].is_star = '0'
-          // list_group_new.push(list_group_new[group_index]) //将该项往最后插入
-          // list_group_new.splice(group_index, 1) //删除掉该项
+          _arr_new[_index].is_star = '0'
+          list_group_new.push(list_group_new[group_index]) //将该项往最后插入
+          list_group_new.splice(group_index, 1) //删除掉该项
           dispatch({
             type: 'gantt/handleListGroup',
             payload: {
               data: list_group_new
+            }
+          })
+          // 排序项目列表
+          dispatch({
+            type: 'workbench/sortProjectList',
+            payload: {
+              data: _arr_new
             }
           })
         } else {
@@ -959,6 +973,7 @@ export default class GroupListHeadItem extends Component {
     } else {
       collectionProject({ org_id, board_id: list_id }).then(res => {
         if (isApiResponseOk(res)) {
+          // 排序甘特图分组
           list_group_new[group_index].is_star = '1'
           list_group_new.unshift(list_group_new[group_index]) //将该项往第一插入
           list_group_new.splice(group_index + 1, 1) //删除掉该项
@@ -966,6 +981,16 @@ export default class GroupListHeadItem extends Component {
             type: 'gantt/handleListGroup',
             payload: {
               data: list_group_new
+            }
+          })
+          // 排序项目列表
+          _arr_new[_index].is_star = '1'
+          _arr_new.unshift(_arr_new[_index]) //将该项往第一插入
+          _arr_new.splice(_index + 1, 1) //删除掉该项
+          dispatch({
+            type: 'workbench/updateDatas',
+            payload: {
+              projectList: _arr_new
             }
           })
         } else {

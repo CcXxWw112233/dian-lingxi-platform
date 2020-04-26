@@ -3,6 +3,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import indexStyles from '../../index.less'
 import { TreeSelect, Button } from 'antd'
 import { connect } from 'dva'
+import { resetGanttScrollTop } from '../../ganttBusiness'
 
 const { SHOW_PARENT } = TreeSelect;
   
@@ -147,6 +148,7 @@ export default class ContentFilter extends Component {
             type: 'gantt/getGanttData',
             payload: {}
         })
+        resetGanttScrollTop()
         this.closeContent(false)
     }
     closeContent = () => {
