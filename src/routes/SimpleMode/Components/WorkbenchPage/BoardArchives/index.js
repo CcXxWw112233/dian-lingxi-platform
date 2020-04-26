@@ -11,6 +11,7 @@ import {
 import BoarderfilesHeader from '@/routes/Technological/components/ProjectDetail/BoarderfilesHeader'
 import { setShowSimpleModel } from '../../../../../services/technological/organizationMember';
 import CommunicationFirstScreenHeader from '../BoardCommunication/components/FirstScreen/CommunicationFirstScreenHeader';
+import CatalogTables from './CatalogTables'
 class BoardArchives extends Component {
   constructor(props) {
     super(props)
@@ -204,6 +205,7 @@ class BoardArchives extends Component {
               </div>
             )
           }
+          <CatalogTables />
         </div>
       </div>
     );
