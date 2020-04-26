@@ -285,7 +285,7 @@ export default class BeginningStepTwo extends Component {
 
   // 渲染不同状态时步骤的样式
   renderDiffStatusStepStyles = () => {
-    const { itemValue, processInfo: { status: parentStatus } } = this.props
+    const { itemValue = {}, processInfo: { status: parentStatus } } = this.props
     const { status } = itemValue
     let stylLine, stylCircle
     if (parentStatus == '2') { // 表示已中止

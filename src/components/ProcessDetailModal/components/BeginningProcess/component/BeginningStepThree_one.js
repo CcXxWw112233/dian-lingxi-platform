@@ -71,22 +71,26 @@ export default class BeginningStepThree_one extends Component {
     return Math.round(value * Math.pow(10, n)) / Math.pow(10, n);
   }
 
-  handleChangeRatingGradeValue = (e, i) => {
+  handleChangeRatingGradeValue = (e, max_score, i) => {
     e && e.stopPropagation()
     let value = e.target.value
-    // if ((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 105)) {
-    //   console.log(e.target.value,'sssssssssssssssssssss_value')
-    //   this.updateState({ value: e.target.value, key: 'max_score', isNotUpdateModelDatas: true }, i)
+    // const reg = /^([1-9]\d{0,2}(\.\d{1,2})?|1000)$/
+    // if (reg.test(value) && value != '' && String(value).trimLR() != '') {
+    //   this.updateState({ value: value, key: 'value' }, i)
+    //   this.updateState({ value: false, key: 'is_click_rating_grade' }, i)
+    // } else {
+    //   this.updateState({ value: '', key: 'value' }, i)
     // }
-    if (value == '' || value.trimLR() == '') {
-      this.updateState({ value: '', key: 'value', isNotUpdateModelDatas: true }, i)
+    if ((value == '' || value.trimLR() == '') || Number(value) > Number(max_score)) {
+      this.updateState({ value: '', key: 'value' }, i)
       return
     }
-    this.updateState({ value: value, key: 'value', isNotUpdateModelDatas: true }, i)
+    this.updateState({ value: value, key: 'value' }, i)
   }
 
   handleChangeRatingGradeBlur = (e, i) => {
     e && e.stopPropagation()
+    return
     let value = e.target.value
     const reg = /^([1-9]\d{0,2}(\.\d{1,2})?|1000)$/
     if (reg.test(value) && value != '' && String(value).trimLR() != '') {
@@ -196,7 +200,7 @@ export default class BeginningStepThree_one extends Component {
                         }
                       </span>
                       {
-                        description != '' ? (
+                        description && description != '' ? (
                           <Popover title={<div style={{ margin: '0 4px', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '130px', whiteSpace: 'nowrap' }}>{title}</div>} content={<div style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', maxWidth: '130px' }}>{description}</div>} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
                             <span style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe845;</span>
                           </Popover>
@@ -206,10 +210,10 @@ export default class BeginningStepThree_one extends Component {
                     {
                       is_click_rating_grade ? (
                         <div>
-                          <Input autoFocus={true} value={value} onBlur={(e) => { this.handleChangeRatingGradeBlur(e, index) }} onChange={(e) => { this.handleChangeRatingGradeValue(e, index) }} className={indexStyles.rating_input} />
+                          <Input autoFocus={true} value={value} onBlur={(e) => { this.handleChangeRatingGradeBlur(e, index) }} onChange={(e) => { this.handleChangeRatingGradeValue(e, max_score, index) }} className={indexStyles.rating_input} />
                         </div>
                       ) : (
-                          value ? (
+                          value && value != '' ? (
                             <div onClick={(e) => { this.handleChangeRatingGrade(e, index) }} className={indexStyles.rating_grade}>
                               <span className={indexStyles.rating_input}>{value}</span>
                             </div>
