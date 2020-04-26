@@ -10,6 +10,8 @@ import { getCurrentSelectedProjectMembersList } from '@/services/technological/w
 import DropdownSelectWithSearch from './../../Workbench/CardContent/DropdownSelectWithSearch/index';
 import DropdownMultipleSelectWithSearch from './../../Workbench/CardContent/DropdownMultipleSelectWithSearch/index';
 import { isApiResponseOk } from '../../../../../utils/handleResponseData';
+import { getMilestoneList } from '../../../../../services/technological/prjectDetail';
+import globalStyles from '@/globalset/css/globalClassName.less'
 
 /* eslint-disable */
 @connect(({ gantt: { datas: { list_group } } }) => ({ list_group }))
@@ -55,7 +57,9 @@ class AddTaskModal extends Component {
       ),
       currentSelectedProjectMembersList: [], //所选项目的成员列表
       currentSelectedProjectMember: [], //已选项目的已选职员列表
-      currentSelectedProjectGroupListItem: getCurrentSelectedProjectGroupListItem(board_card_group_id, about_group_boards, current_operate_board_id)
+      currentSelectedProjectGroupListItem: getCurrentSelectedProjectGroupListItem(board_card_group_id, about_group_boards, current_operate_board_id),
+      selected_milestone: {}, //当前选中里程碑
+      milestones: [], //里程碑列表
     };
   }
   handleAddTaskModalOk = () => { };
@@ -69,20 +73,45 @@ class AddTaskModal extends Component {
       currentSelectedProjectGroupListItem: item
     });
   };
+  // 选择里程碑
+  handleSelectedMilestone = item => {
+    this.setState({
+      selected_milestone: item
+    });
+  };
   // 选择项目
   handleSelectedItem = item => {
 
     this.setState(
       {
         currentSelectedProject: item,
-        currentSelectedProjectGroupListItem: {}
+        currentSelectedProjectGroupListItem: {},
+        milestones: [],
+        selected_milestone: {}
       },
       () => {
         this.getCurrentSelectedProjectMembersList({ projectId: item.board_id })
+        this.getMilestoneList(item.board_id)
         //更新任务分组信息，修复如果是直接新创建的项目，不能马上拿到分组信息的 bug
       }
     );
   };
+  getMilestoneList = (id) => {
+    getMilestoneList({ id }).then(res => {
+      if (isApiResponseOk(res)) {
+        const arr = res.data.map(item => {
+          return {
+            ...item,
+            board_id: item.id,
+            board_name: item.name
+          }
+        })
+        this.setState({
+          milestones: arr
+        })
+      }
+    })
+  }
   // 获取项目成员
   getCurrentSelectedProjectMembersList = (data) => {
     getCurrentSelectedProjectMembersList(data).then(res => {
@@ -98,7 +127,8 @@ class AddTaskModal extends Component {
       addTaskTitle,
       currentSelectedProject,
       currentSelectedProjectMember,
-      currentSelectedProjectGroupListItem
+      currentSelectedProjectGroupListItem,
+      selected_milestone = {}
     } = this.state;
     const taskObj = {
       add_type: 1, //默认0， 按分组1
@@ -110,7 +140,8 @@ class AddTaskModal extends Component {
       }, ''),
       list_id: currentSelectedProjectGroupListItem.board_id
         ? currentSelectedProjectGroupListItem.board_id
-        : ''
+        : '',
+      milestone_id: selected_milestone.id
     };
     return taskObj;
   };
@@ -136,6 +167,7 @@ class AddTaskModal extends Component {
     const { current_operate_board_id, group_view_type } = this.props
     if (group_view_type == '1') { //在项目视图下创建任务才会去主动拉取用户列表
       this.getCurrentSelectedProjectMembersList({ projectId: current_operate_board_id })
+      this.getMilestoneList(current_operate_board_id)
     } else {
       this.setDefaultExcuser()
     }
@@ -204,6 +236,8 @@ class AddTaskModal extends Component {
       currentSelectedProjectGroupListItem,
       selectedOrg = {},
       currentSelectedProjectMembersList,
+      selected_milestone = {},
+      milestones = [],
     } = this.state;
     const {
       about_apps_boards,
@@ -253,7 +287,7 @@ class AddTaskModal extends Component {
       })
     }
 
-    // console.log('ssss', {filteredNoThatTypeProject})
+    console.log('ssssasdad', { currentSelectedProjectGroupList, milestones })
 
     return (
       <Modal
@@ -271,7 +305,8 @@ class AddTaskModal extends Component {
             <div className={styles.addTaskModalSelectProject_and_groupList}>
               {/*在项目视图下，必须选择了具体的项目*/}
               {((group_view_type == '1' || group_view_type == '5') && !!current_operate_board_id) ? (
-                <div className={styles.groupList__wrapper}>
+                <div className={styles.groupList__wrapper} style={{ paddingTop: 2, marginRight: 16 }}>
+                  <span className={globalStyles.authTheme} style={{ fontSize: '16px' }}>&#xe60a;</span>
                   {currentSelectedProject.board_name}
                 </div>
               ) : (
@@ -283,11 +318,13 @@ class AddTaskModal extends Component {
                     board_id={currentSelectedProject.board_id}
                     handleSelectedItem={this.handleSelectedItem}
                     isShouldDisableDropdown={false}
+                    iconNode={<span>&#xe60a;</span>}
                   />
                 )}
               {/*在项目视图下，必须选择了具体的项目,在任务分组下创建任务*/}
               {((group_view_type == '1' || group_view_type == '5') && !!current_operate_board_id && !!board_card_group_id) ? (
-                <div className={styles.groupList__wrapper}>
+                <div className={styles.groupList__wrapper} style={{ paddingTop: 2, marginRight: 16 }}>
+                  <span className={globalStyles.authTheme} style={{ fontSize: '16px' }}>&#xe604;</span>
                   {currentSelectedProjectGroupListItem.list_name}
                 </div>
               ) : (
@@ -297,14 +334,31 @@ class AddTaskModal extends Component {
                       initSearchTitle="任务分组"
                       selectedItem={currentSelectedProjectGroupListItem}
                       handleSelectedItem={this.handleSelectedProjectGroupItem}
-                      isShowIcon={false}
+                      isShowIcon={true}
                       isSearch={false}
                       isCanCreateNew={false}
                       isProjectGroupMode={true}
                       isShouldDisableDropdown={currentSelectedProjectGroupListItem && currentSelectedProjectGroupListItem.id}
+                      iconNode={<span>&#xe604;</span>}
                     />
                   </div>
                 )}
+
+              {/*里程碑选项*/}
+              <div className={styles.groupList__wrapper}>
+                <DropdownSelectWithSearch
+                  list={milestones}
+                  initSearchTitle="里程碑"
+                  selectedItem={selected_milestone}
+                  handleSelectedItem={this.handleSelectedMilestone}
+                  isShowIcon={true}
+                  isSearch={false}
+                  isCanCreateNew={false}
+                  isProjectGroupMode={true}
+                  isShouldDisableDropdown={currentSelectedProjectGroupListItem && currentSelectedProjectGroupListItem.id}
+                  iconNode={<span>&#xe713;</span>}
+                />
+              </div>
             </div>
 
           </div>
