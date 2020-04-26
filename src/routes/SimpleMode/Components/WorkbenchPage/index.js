@@ -3,7 +3,7 @@ import { connect } from "dva/index"
 import indexStyles from './index.less'
 import MiniBoxNavigations from '../MiniBoxNavigations/index'
 import BoardCommunication from './BoardCommunication/index'
-import BoardFiles from './BoardFiles/index'
+import BoardArchives from './BoardArchives/index'
 import BoardPlan from './BoardPlan/index'
 import InvestmentMaps from './InvestmentMaps/index'
 import XczNews from './XczNews/index'
@@ -105,12 +105,13 @@ class WorkbenchPage extends Component {
             isPaymentUser = isPaymentOrgUser();
         }
         const { workbenchBoxContent_height } = this.state
+        const special_backgroud = ['mine:flows', 'board:files']
         return (
             <div className={indexStyles.workbenchBoxContentModalContainer}>
                 <MiniBoxNavigations currentSelectedWorkbenchBox={currentSelectedWorkbenchBox} />
                 <div id='container_workbenchBoxContent' className={indexStyles.workbenchBoxContentModalWapper} style={workbenchBoxContentWapperModalStyle ? workbenchBoxContentWapperModalStyle : {}}>
                     <div className={indexStyles.workbenchBoxContentWapper}
-                        style={{ background: select_box_code == 'mine:flows' ? 'rgba(245, 245, 245, 1)' : '' }}>
+                        style={{ background: special_backgroud.includes(select_box_code) ? 'rgba(245, 245, 245, 1)' : '' }}>
 
                         {
                             'board:plans' == select_box_code &&
@@ -125,7 +126,7 @@ class WorkbenchPage extends Component {
 
                         {
                             isPaymentUser && 'board:files' == select_box_code &&
-                            <BoardFiles />
+                            <BoardArchives workbenchBoxContent_height={workbenchBoxContent_height} />
                         }
 
                         {
