@@ -4,6 +4,7 @@ import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
 import { isObjectValueEqual } from '../../../../../utils/util'
+import ConfigureRatingGuide from '../../../ConfigureRatingGuide'
 
 @connect(mapStateToProps)
 export default class ConfigureStepTypeThree_one extends Component {
@@ -419,9 +420,9 @@ export default class ConfigureStepTypeThree_one extends Component {
       this.setState({
         is_score_rating: false,
       })
+      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: JSON.parse(JSON.stringify(score_items || [])) }, 'score_items')
       if (enable_weight != local_enable_weight) {
         this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: local_enable_weight }, 'enable_weight')
-        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: JSON.parse(JSON.stringify(score_items || [])) }, 'score_items')
         if (local_enable_weight == '0') {
           this.setState({
             score_items: JSON.parse(JSON.stringify(new_data || [])),
@@ -764,6 +765,9 @@ export default class ConfigureStepTypeThree_one extends Component {
                   </span>
                 </Popover>
               </div>
+            </div>
+            <div>
+              <ConfigureRatingGuide />
             </div>
           </div>
         </div>
