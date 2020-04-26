@@ -44,7 +44,7 @@ class BoardFiles extends Component {
       }
     })
     let currentBoardDetail = {}
-    if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
+    if ((simplemodeCurrentProject && simplemodeCurrentProject.board_id) && simplemodeCurrentProject.board_id != '0') {
       currentBoardDetail = { ...simplemodeCurrentProject }
       dispatch({
         type: 'simpleWorkbenchbox/updateDatas',

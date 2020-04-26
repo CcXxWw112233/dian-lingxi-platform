@@ -231,7 +231,10 @@ class FileDetailContent extends Component {
           filePreviewUrl: res.data.edit_url,
           pdfDownLoadSrc: res.data.download_annotation_url,
           filePreviewIsRealImage: false,
-          currentPreviewFileData: { ...currentPreviewFileData, id: id }
+          currentPreviewFileData: { ...currentPreviewFileData, id: id },
+          isPdfLoaded: false,
+          is_petty_loading: false,
+          is_large_loading: false
         })
         // this.linkImWithFile({name: this.props.currentPreviewFileName, type: 'file', board_id: this.props.board_id, id: this.props.filePreviewCurrentFileId, currentPreviewFileVersionId: currentPreviewFileVersionId})
       } else {
