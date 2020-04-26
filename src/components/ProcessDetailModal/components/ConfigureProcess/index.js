@@ -562,9 +562,11 @@ export default class ConfigureProcess extends Component {
     } else {
       check_line = indexStyles.normal_check
     }
+    let gold_item = (processEditDatas && processEditDatas.length) && processEditDatas.find(item => item.is_edit == '0') || {}
+    let lineFlag = itemKey == processEditDatas.length -1 ? gold_item && Object.keys(gold_item).length ? true : false : false
     return (
       <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }} onClick={(e) => { this.handleCancelNodeName(e) }}>
-        <div className={indexStyles.doingLine}></div>
+        <div className={lineFlag ? indexStyles.doingLine : indexStyles.hasnotCompetedLine}></div>
         <div className={indexStyles.doingCircle}> {itemKey + 1}</div>
         <div id={`popover_card-${itemKey}-${node_type}`} className={`${itemKey == gold_index ? indexStyles.popover_card : indexStyles.default_popover_card}`}>
           <div className={`${globalStyles.global_vertical_scrollbar}`}>

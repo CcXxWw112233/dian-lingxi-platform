@@ -117,9 +117,21 @@ export default class ConfigureStepTypeThree_one extends Component {
     if (score_items && score_items.length <= 1) {
       return
     }
+    let new_data = JSON.parse(JSON.stringify(score_items || []))
+    new_data = new_data.map(item => {
+      let new_item = {...item}
+      new_item = {...item, max_score: '100'}
+      return new_item
+    })
     this.setState({
       local_enable_weight: checked ? '1' : '0'
     })
+    if (checked) {
+      this.setState({
+        score_items: new_data
+      })
+      // this.props.updateConfigureProcess && this.props.updateConfigureProcess({value: new_data}, 'score_items')
+    }
     // this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: checked ? '1' : '0' }, 'enable_weight')
   }
 
@@ -208,11 +220,31 @@ export default class ConfigureStepTypeThree_one extends Component {
 
   handleAutoGradeTextAreaValue2 = (e, key, i) => {
     e && e.stopPropagation()
+    const reg = /^([1-9]\d{0,2}?|1000)$/
+    const { score_items = [] } = this.state
+    let new_data = JSON.parse(JSON.stringify(score_items || []))
+    let value = e.target.value
     if (value == '' || value.trimLR() == '' || !reg.test(value)) {
-      this.updateState({ value: '', key: 'max_score', isNotUpdateModelDatas: true }, i)
+      new_data = new_data.map(item => {
+        let new_item = {...item}
+        new_item = {...item, max_score: ''}
+        return new_item
+      })
+      this.setState({
+        score_items: new_data
+      })
+      // this.updateState({ value: '', key: 'max_score', isNotUpdateModelDatas: true }, i)
       return
     }
-    this.updateState({ value: value, key: 'max_score', isNotUpdateModelDatas: true }, i)
+    new_data = new_data.map(item => {
+      let new_item = {...item}
+      new_item = {...item, max_score: value}
+      return new_item
+    })
+    this.setState({
+      score_items: new_data
+    })
+    // this.updateState({ value: value, key: 'max_score', isNotUpdateModelDatas: true }, i)
     if (this.refs && this.refs[`autoGradeTextArea_${key}`]) {
       this.gradeResize(key)
     }
@@ -389,6 +421,7 @@ export default class ConfigureStepTypeThree_one extends Component {
       })
       if (enable_weight != local_enable_weight) {
         this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: local_enable_weight }, 'enable_weight')
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: JSON.parse(JSON.stringify(score_items || [])) }, 'score_items')
         if (local_enable_weight == '0') {
           this.setState({
             score_items: JSON.parse(JSON.stringify(new_data || [])),

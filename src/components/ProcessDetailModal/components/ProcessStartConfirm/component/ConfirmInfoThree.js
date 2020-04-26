@@ -22,6 +22,13 @@ export default class ConfirmInfoThree extends Component {
     }
   }
 
+  updateParentsAssigneesOrCopyPersonnel = (data, key) => {
+    const { value } = data
+    this.setState({
+      [key]: value
+    })
+  }
+
   // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
   updateCorrespondingPrcodessStepWithNodeContent = (data, value) => {
     const { itemValue, processEditDatas = [], itemKey, dispatch } = this.props
@@ -106,14 +113,14 @@ export default class ConfirmInfoThree extends Component {
   }
 
   render() {
-    const { itemKey, itemValue, projectDetailInfoData: { data = [], board_id } } = this.props
+    const { itemKey, itemValue, projectDetailInfoData: { data = [], board_id }, processEditDatas = [] } = this.props
     const { is_show_spread_arrow } = this.state
-    const { name, cc_type, deadline_type, deadline_value, deadline_time_type } = itemValue
+    const { name, cc_type, deadline_type, deadline_value, deadline_time_type, score_locked, cc_locking } = itemValue
     let transPrincipalList = this.filterAssignees()
     let transCopyPersonnelList = this.filterRecipients()
     return (
       <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }}>
-        <div className={indexStyles.line}></div>
+        {processEditDatas.length <= itemKey + 1 ? null : <div className={indexStyles.completeLine}></div>}
         <div className={indexStyles.circle}> {itemKey + 1}</div>
         <div className={`${indexStyles.default_popover_card}`}>
           <div className={`${globalStyles.global_vertical_scrollbar}`}>
@@ -122,7 +129,7 @@ export default class ConfirmInfoThree extends Component {
               <div className={`${indexStyles.node_name}`}>
                 <div>
                   <span className={`${globalStyles.authTheme} ${indexStyles.stepTypeIcon}`}>&#xe7b6;</span>
-                  <span>项目评分</span>
+                  <span>{name}</span>
                 </div>
                 <div>
                   <span onClick={this.handleSpreadArrow} className={`${indexStyles.spreadIcon}`}>
@@ -160,10 +167,19 @@ export default class ConfirmInfoThree extends Component {
                         <span className={indexStyles.content__principalList_info}>
                           {`${transPrincipalList.length}位评分人`}
                         </span>
-                        <span style={{ position: 'relative' }}>
-                          <AmendComponent type="2"
-                            updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="评分人" data={data} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
-                        </span>
+                        {
+                          score_locked == '0' ? (
+                            <span style={{ position: 'relative' }}>
+                              <AmendComponent type="2"
+                                updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="评分人" data={data} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
+                            </span>
+                          ) : (
+                              <Tooltip arrowPointAtCenter={true} title="已锁定评分人" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                                <span style={{ cursor: 'pointer', color: 'rgba(0,0,0,0.25)', marginLeft: '4px' }} className={globalStyles.authTheme}>&#xe86a;</span>
+                              </Tooltip>
+                            )
+                        }
+
                       </>
                     )
                   }
@@ -195,6 +211,18 @@ export default class ConfirmInfoThree extends Component {
                             <span className={indexStyles.content__principalList_info}>
                               {`${transCopyPersonnelList.length}位抄送人`}
                             </span>
+                            {
+                              cc_locking == '0' ? (
+                                <span style={{ position: 'relative' }}>
+                                  <AmendComponent type="3"
+                                    updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="抄送人" data={data} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
+                                </span>
+                              ) : (
+                                  <Tooltip title="已锁定抄送人" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                                    <span style={{ cursor: 'pointer', color: 'rgba(0,0,0,0.25)', marginLeft: '4px' }} className={globalStyles.authTheme}>&#xe86a;</span>
+                                  </Tooltip>
+                                )
+                            }
                           </>
                         )
                       }
@@ -203,7 +231,7 @@ export default class ConfirmInfoThree extends Component {
                   )
                 }
               </div>
-              <div>
+              <div style={{ marginRight: '16px' }}>
                 <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '14px' }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
                 <span className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : </span>
                 {
@@ -215,6 +243,9 @@ export default class ConfirmInfoThree extends Component {
                       </span>
                     )
                 }
+                <span style={{ position: 'relative' }}>
+                  <AmendComponent updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="完成期限" data={data} itemKey={itemKey} itemValue={itemValue} />
+                </span>
               </div>
             </div>
             {is_show_spread_arrow && this.renderEditDetailContent()}

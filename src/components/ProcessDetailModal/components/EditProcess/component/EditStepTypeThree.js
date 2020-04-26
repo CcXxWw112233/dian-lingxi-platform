@@ -142,7 +142,7 @@ export default class EditStepTypeThree extends Component {
               <div className={`${indexStyles.node_name}`}>
                 <div>
                   <span className={`${globalStyles.authTheme} ${indexStyles.stepTypeIcon}`}>&#xe7b6;</span>
-                  <span>项目评分</span>
+                  <span>{name}</span>
                 </div>
                 <div>
                   <span onClick={this.handleSpreadArrow} className={`${indexStyles.spreadIcon}`}>
