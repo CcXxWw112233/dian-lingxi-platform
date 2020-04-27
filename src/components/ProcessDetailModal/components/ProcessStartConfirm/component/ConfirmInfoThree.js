@@ -8,7 +8,7 @@ import AmendComponent from '../AmendComponent'
 import { Tooltip, Icon } from 'antd'
 import { connect } from 'dva'
 import ConfirmInfoThree_one from './ConfirmInfoThree_one'
-import { renderTimeType } from '../../handleOperateModal'
+import { renderTimeType, computing_mode, result_score_option, result_score_fall_through_with_others } from '../../handleOperateModal'
 
 @connect(mapStateToProps)
 export default class ConfirmInfoThree extends Component {
@@ -79,6 +79,7 @@ export default class ConfirmInfoThree extends Component {
 
   renderEditDetailContent = () => {
     const { itemValue, itemKey } = this.props
+    const { count_type, result_condition_type, result_case_pass, result_case_other, result_value } = itemValue
     return (
       <div>
         {/* 渲染评分项 */}
@@ -94,17 +95,26 @@ export default class ConfirmInfoThree extends Component {
             </div>
             <div>
               <span className={indexStyles.rating_label_name}>计算方式</span>
-              <span className={indexStyles.select_item} style={{ minWidth: '94px' }}>总分值相加</span>
+              {
+                (count_type == '2' || count_type == '3') ? (
+                  <>
+                    <span className={indexStyles.select_item} style={{ minWidth: '94px' }}>总分值平均</span>
+                    <span className={indexStyles.select_item} style={{ minWidth: '136px' }}>{computing_mode(count_type)}</span>
+                  </>
+                ) : (
+                    <span className={indexStyles.select_item} style={{ minWidth: '94px' }}>{computing_mode(count_type)}</span>
+                  )
+              }
             </div>
             <div>
               <span className={indexStyles.rating_label_name}>结果分数</span>
-              <span className={indexStyles.select_item} style={{ minWidth: '94px' }}>大于或等于</span>
-              <span className={indexStyles.select_item} style={{ minWidth: '40px' }}>60</span>
-              <span className={indexStyles.select_item} style={{ minWidth: '136px' }}>流程流转到下一步</span>
+              <span className={indexStyles.select_item} style={{ minWidth: '94px' }}>{result_score_option(result_condition_type)}</span>
+              <span className={indexStyles.select_item} style={{ minWidth: '40px' }}>{result_value}</span>
+              <span className={indexStyles.select_item} style={{ minWidth: '136px' }}>{result_score_fall_through_with_others(result_case_pass)}</span>
             </div>
             <div>
               <span className={indexStyles.rating_label_name}>其余情况</span>
-              <span className={indexStyles.select_item} style={{ minWidth: '136px' }}>流程流转到上一步</span>
+              <span className={indexStyles.select_item} style={{ minWidth: '136px' }}>{result_score_fall_through_with_others(result_case_other)}</span>
             </div>
           </div>
         </div>

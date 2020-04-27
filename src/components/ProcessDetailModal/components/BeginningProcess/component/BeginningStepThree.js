@@ -213,6 +213,29 @@ export default class BeginningStepThree extends Component {
     })
   }
 
+  // 撤回步骤
+  handleRebackProcessNodes = () => {
+    const { itemValue: { id: flow_node_instance_id, assignees, his_comments = [] }, processInfo: { id: flow_instance_id, board_id }, dispatch, request_flows_params = {} } = this.props
+    let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
+    dispatch({
+      type: 'publicProcessDetailModal/rebackProcessTask',
+      payload: {
+        flow_node_instance_id,
+        flow_instance_id,
+        board_id,
+        calback: () => {
+          dispatch({
+            type: 'publicProcessDetailModal/getProcessListByType',
+            payload: {
+              board_id: BOARD_ID,
+              status: '1'
+            }
+          })
+        }
+      }
+    })
+  }
+
   // 渲染不同状态时步骤的样式
   renderDiffStatusStepStyles = () => {
     const { itemValue = {}, processInfo: { status: parentStatus } } = this.props
@@ -260,7 +283,7 @@ export default class BeginningStepThree extends Component {
   }
 
   renderEditDetailContent = () => {
-    const { isPassNodesIng, successfulMessage } = this.state
+    const { isPassNodesIng, successfulMessage, transPrincipalList = [] } = this.state
     const { itemValue, itemKey, processInfo: { status: parentStatus } } = this.props
     const { score_node_set: { count_type, result_condition_type, result_case_pass, result_case_other, result_value }, status, score_result_value } = itemValue
     let showApproveButton = parentStatus == '1' && status == '1' && this.whetherShowCompleteButton() && this.getCurrentPersonApproveStatus() == '1'
@@ -269,7 +292,7 @@ export default class BeginningStepThree extends Component {
       <div>
         {/* 渲染评分项 */}
         <div style={{ position: 'relative' }}>
-          <BeginningStepThree_one showApproveButton={showApproveButton} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemValue={itemValue} itemKey={itemKey} />
+          <BeginningStepThree_one transPrincipalList={transPrincipalList} showApproveButton={showApproveButton} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemValue={itemValue} itemKey={itemKey} />
           {/* {
             !showApproveButton && (
               <div style={{position: 'absolute', left: 0, right: 0, bottom: 0, top: 0, margin: 'auto', zIndex: 2}}></div>
@@ -278,7 +301,7 @@ export default class BeginningStepThree extends Component {
         </div>
         {/* 评分结果判定 */}
         <div>
-          <div style={{ minHeight: score_result_value && score_result_value != '' ? '258px': '210px', padding: '16px 14px', borderTop: '1px solid rgba(0,0,0,0.09)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div style={{ minHeight: score_result_value && score_result_value != '' ? '258px' : '210px', padding: '16px 14px', borderTop: '1px solid rgba(0,0,0,0.09)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div style={{ color: 'rgba(0,0,0,0.45)' }}>
               <span className={globalStyles.authTheme}>&#xe7bf;</span>
               <span style={{ marginLeft: '4px' }}>评分结果判定：</span>
@@ -287,9 +310,9 @@ export default class BeginningStepThree extends Component {
               score_result_value && score_result_value != '' && (
                 <div>
                   <span className={indexStyles.rating_label_name}>结果分数:</span>
-                  <span style={{fontSize: '20px', color: '#1890FF'}}>{score_result_value}</span>
+                  <span style={{ fontSize: '20px', color: '#1890FF' }}>{score_result_value}</span>
                 </div>
-              ) 
+              )
             }
             <div>
               <span className={indexStyles.rating_label_name}>计算方式</span>

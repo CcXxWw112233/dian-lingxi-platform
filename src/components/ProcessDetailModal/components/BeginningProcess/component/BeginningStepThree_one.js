@@ -4,7 +4,7 @@ import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
-import { isObjectValueEqual } from '../../../../../utils/util'
+import { timestampToTimeNormal, compareACoupleOfObjects, isObjectValueEqual } from '../../../../../utils/util';
 
 @connect(mapStateToProps)
 export default class BeginningStepThree_one extends Component {
@@ -17,6 +17,10 @@ export default class BeginningStepThree_one extends Component {
     }
     this.resizeTTY = this.resizeTTY.bind(this)
   }
+
+  // 理解成是否是有效的头像
+  isValidAvatar = (avatarUrl = '') =>
+    avatarUrl.includes('http://') || avatarUrl.includes('https://');
 
   componentDidMount() {
     window.addEventListener('resize', this.resizeTTY)
@@ -125,73 +129,164 @@ export default class BeginningStepThree_one extends Component {
     return flag
   }
 
-  renderRatingDetailContent = () => {
+  // 判断分数
+  getCurrentUserScoreList = () => {
+    const { transPrincipalList = [] } = this.props
+    const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    let newAssignees = [...transPrincipalList]
+    let current_socre = newAssignees.find(item => {
+      if (item.id == id) {
+        return item
+      }
+    })
+    return current_socre.score_items || []
+  }
+
+  renderRatingDetailDewfaultContent = (score_items = []) => {
+    return (
+      <div style={{ width: '260px', height: '206px', overflowY: 'auto' }} className={globalStyles.global_vertical_scrollbar}>
+        <table border={1} style={{ borderColor: '#E9E9E9' }} width="100%">
+          <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', background: '#FAFAFA', color: 'rgba(0,0,0,0.45)' }}>
+            <th style={{ width: '196px' }}>标题</th>
+            <th style={{ width: '58px' }}>
+              最高分值
+            </th>
+          </tr>
+          {
+            score_items && score_items.length && score_items.map(item => {
+              return (
+                <>
+                  {
+                    item.is_total == '0' ? (
+                      <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>
+                        <td style={{ maxWidth: '78px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.title}</td>
+                        <td style={{ color: '#1890FF' }}>{item.max_score}</td>
+                      </tr>
+                    ) : (
+                        <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>
+                          <td style={{ maxWidth: '156px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: '#1890FF' }}>{item.title}</td>
+                          <td style={{ color: '#1890FF' }}>{item.value}</td>
+                        </tr>
+                      )
+                  }
+                </>
+              )
+            })
+          }
+
+        </table>
+      </div>
+    )
+  }
+
+  renderRatingDetailWeightContent = (score_items = []) => {
     return (
       <div style={{ width: '260px', height: '206px', overflowY: 'auto' }} className={globalStyles.global_vertical_scrollbar}>
         <table border={1} style={{ borderColor: '#E9E9E9' }} width="100%">
           <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', background: '#FAFAFA', color: 'rgba(0,0,0,0.45)' }}>
             <th style={{ width: '98px' }}>标题</th>
             <th style={{ width: '70px' }}>
-              权重占比
+              权重占比%
             </th>
             <th style={{ width: '58px' }}>
               最高分值
             </th>
           </tr>
-          <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>
-            <td style={{ maxWidth: '78px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>lover lover lover lover</td>
-            <td>70%</td>
-            <td>98.5</td>
-          </tr>
+          {
+            score_items && score_items.length && score_items.map(item => {
+              return (
+                <>
+                  {
+                    item.is_total == '0' ? (
+                      <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>
+                        <td style={{ maxWidth: '78px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.title}</td>
+                        <td>{item.weight_ratio}</td>
+                        <td style={{ color: '#1890FF' }}>{item.max_score}</td>
+                      </tr>
+                    ) : (
+                        <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>
+                          <td style={{ maxWidth: '78px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: '#1890FF' }}>{item.title}</td>
+                          <td>{item.weight_ratio}</td>
+                          <td style={{ color: '#1890FF' }}>{item.value}</td>
+                        </tr>
+                      )
+                  }
+                </>
+              )
+            })
+          }
+
         </table>
       </div>
     )
   }
 
-  renderRatingPersonSuggestion = () => {
-    const { avatar } = this.props
+  renderRatingPersonSuggestion = (item) => {
+    const { itemValue: { enable_weight, score_node_set: { score_display }, status } } = this.props
+    const { comment, pass, processed, avatar, name, time, score_items = [] } = item
+    let last_total = score_items && score_items.find(item => item.is_total == '1') || {}
     return (
       <div>
-        <div className={indexStyles.appListWrapper}>
-          <div className={indexStyles.app_left}>
-            <div className={indexStyles.approve_user} style={{ position: 'relative', marginRight: '16px' }}>
-              {/* <div className={indexStyles.defaut_avatar}></div> */}
-              {
-                avatar ? (
-                  <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar} />
-                ) : (
-                    <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={defaultUserAvatar} />
-                  )
-              }
+        {
+          processed == '2' ? (
+            <div className={indexStyles.appListWrapper}>
+              <div className={indexStyles.app_left}>
+                <div className={indexStyles.approve_user} style={{ position: 'relative', marginRight: '16px' }}>
+                  {/* <div className={indexStyles.defaut_avatar}></div> */}
+                  {
+                    avatar ? (
+                      <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar} />
+                    ) : (
+                        <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={defaultUserAvatar} />
+                      )
+                  }
+                </div>
+                <div style={{ position: 'relative' }}>
+                  <span>{name}</span>
+                  {
+                    score_display == '0' && status == '1' ? (
+                      <span style={{ color: '#1890FF', margin: '0 8px' }}>分数暂不可见</span>
+                    ) : (
+                        <>
+                          <span style={{ color: '#1890FF', margin: '0 8px' }}>{last_total.value}</span>
+                          <Popover getPopupContainer={triggerNode => triggerNode.parentNode} placement="rightTop" content={enable_weight == '1' ? this.renderRatingDetailWeightContent(score_items) : this.renderRatingDetailDewfaultContent(score_items)} title={<div>评分详情</div>}>
+                            <span style={{ color: '#1890FF', fontSize: '16px', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe7b4;</span>
+                          </Popover>
+                        </>
+                      )
+                  }
+                  {
+                    score_display == '0' && status == '1' ? (
+                      <div style={{ color: 'rgba(0,0,0,0.25)' }}>(评分意见暂不可见，待所有评分人完成评分后公开)</div>
+                    ) : (
+                        <div style={{ color: comment == '无意见。' ? 'rgba(0,0,0,0.25)' : 'rgba(0,0,0,0.65)' }}>{comment}</div>
+                      )
+                  }
+                </div>
+              </div>
+              <div className={indexStyles.app_right}>{timestampToTimeNormal(time, '/', true) || ''}</div>
             </div>
-            <div style={{ position: 'relative' }}>
-              <span>{'刘晓华'}</span>
-              <span style={{ color: '#1890FF', margin: '0 8px' }}>95.21</span>
-              <Popover getPopupContainer={triggerNode => triggerNode.parentNode} placement="rightTop" content={this.renderRatingDetailContent()} title={<div>评分详情</div>}>
-                <span style={{ color: '#1890FF', fontSize: '16px', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe7b4;</span>
-              </Popover>
-              <div style={{ color: 'rgba(0,0,0,0.25)' }}>(未填写意见)</div>
-            </div>
-          </div>
-          <div className={indexStyles.app_right}>2020/04/02 09:20</div>
-        </div>
+          ) : ('')
+        }
+
       </div>
     )
   }
 
   render() {
-    const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id } } = this.props
-    const { score_node_set = {} } = itemValue
-    const { enable_weight, score_display, } = score_node_set
+    const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id }, transPrincipalList = [] } = this.props
+    const { score_node_set = {}, enable_weight, status } = itemValue
+    const { score_display } = score_node_set
     const { score_items = [], clientWidth } = this.state
     let flag = this.whetherShowDiffWidth()
-    let last_total = score_items && score_items.find(item => item.is_total == '1') || {}
+    let current_score_list = this.getCurrentUserScoreList()
+    let last_total = current_score_list && current_score_list.find(item => item.is_total == '1') || {}
     let autoWidth = clientWidth ? clientWidth / 4 - 45 : 130
     return (
       <div>
         {/* 评分项 */}
         <div style={{ borderTop: '1px solid rgba(0,0,0,0.09)', marginTop: '16px', padding: '16px 14px' }}>
-          <div id={`ratingItems_${itemKey}`} className={indexStyles.ratingItems} style={{ paddingBottom: last_total && Object.keys(last_total).length != '0' ? '50px' : '16px' }}>
+          <div id={`ratingItems_${itemKey}`} className={indexStyles.ratingItems} style={{ paddingBottom: last_total && Object.keys(last_total).length != '0' || score_display == '0' ? '50px' : '16px' }}>
             {
               score_items && score_items.map((item, index) => {
                 const { title, description, max_score, weight_ratio, is_click_rating_grade, value } = item
@@ -256,21 +351,27 @@ export default class BeginningStepThree_one extends Component {
                     <span style={{ color: 'rgba(0,0,0,0.65)' }}>合计:&nbsp;&nbsp;</span>
                     <span style={{ fontSize: '20px', color: '#1890FF' }}>{last_total.value}</span>
                   </div>
-                  {
-                    score_display == '1' && (
-                      <div>
-                        <span>&nbsp;&nbsp;（暂时仅自己可见，待所有人评分人评分完成后公开）</span>
-                      </div>
-                    )
-                  }
+                </div>
+              )
+            }
+            {
+              score_display == '0' && status == '1' && (
+                <div style={{ color: 'rgba(0,0,0,0.45)', fontWeight: 500, position: 'absolute', bottom: '16px', left: last_total && Object.keys(last_total).length != '0' ? '102px' : '0px', display: 'flex', alignItems: 'center' }}>
+                  <div>
+                    <span>&nbsp;&nbsp;（暂时仅自己可见，待所有人评分人评分完成后公开）</span>
+                  </div>
                 </div>
               )
             }
           </div>
           {/* 评分人意见以及分数详情 */}
-          {/* <div>
-            {this.renderRatingPersonSuggestion()}
-          </div> */}
+          <div>
+            {
+              transPrincipalList && transPrincipalList.length && transPrincipalList.map(item => {
+                return <>{this.renderRatingPersonSuggestion(item)}</>
+              })
+            }
+          </div>
         </div>
       </div>
     )

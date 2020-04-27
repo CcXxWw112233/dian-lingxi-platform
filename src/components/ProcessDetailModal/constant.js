@@ -44,7 +44,7 @@ export const processEditDatasItemThreeConstant = {
   "recipients": "",//抄送人 多个逗号隔开
   "assignees": "",//抄报人 多个逗号隔开
   "score_locked": '0', // 锁定评分人 1=锁定评分人 0=不锁定
-  "score_display": '0', // 锁定评分人 1=评分时互相可见 0=不可见
+  "score_display": '1', // 锁定评分人 1=评分时互相可见 0=不可见
   "enable_weight": "0", // 是否开启权重
   "count_type": "1", // 计算方式
   "result_condition_type": "4", // 结果分数选项

@@ -53,7 +53,7 @@ export default class EditStepTypeThree_one extends Component {
       <div>
         {/* 评分项 */}
         <div style={{ borderTop: '1px solid rgba(0,0,0,0.09)', marginTop: '16px', padding: '16px 14px' }}>
-          <div id={`ratingItems_${itemKey}`} className={indexStyles.ratingItems}>
+          <div id={`ratingItems_${itemKey}`} className={indexStyles.ratingItems} style={{paddingBottom: score_display == '0' ? '56px' : '16px'}}>
             {
               score_items && score_items.map((item, index) => {
                 const { title, description, max_score, weight_ratio } = item
@@ -91,8 +91,8 @@ export default class EditStepTypeThree_one extends Component {
               })
             }
             {
-              score_display == '1' && (
-                <div style={{ color: 'rgba(0,0,0,0.45)', fontWeight: 500, position: 'absolute', bottom: '0' }}>
+              score_display == '0' && (
+                <div style={{ color: 'rgba(0,0,0,0.45)', fontWeight: 500, position: 'absolute', bottom: '16px' }}>
                   <span className={globalStyles.authTheme}>&#xe66c;</span>
                   <span>&nbsp;&nbsp;评分过程中各评分人的评分信息互相不可见</span>
                 </div>

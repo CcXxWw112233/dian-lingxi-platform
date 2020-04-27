@@ -43,7 +43,7 @@ export default class ConfigureStepTypeThree extends Component {
 
   // 评分是否可见
   handleScoreDisplay = (checked) => {
-    this.updateConfigureProcess({value: checked ? '1' : '0'},'score_display')
+    this.updateConfigureProcess({value: checked ? '0' : '1'},'score_display')
   }
 
   // 把assignees中的执行人,在项目中的所有成员过滤出来
@@ -344,7 +344,7 @@ export default class ConfigureStepTypeThree extends Component {
                 </Tooltip>
               </span>
               <span style={{ display: 'inline-block', position: 'relative' }}>
-                <Switch onChange={this.handleScoreDisplay} checked={score_display == '1'} size="small" />
+                <Switch onChange={this.handleScoreDisplay} checked={score_display == '0'} size="small" />
                 <span style={{ margin: '0 8px', color: 'rgba(0,0,0,0.65)', verticalAlign: 'middle' }}>评分时相互不可见</span>
                 <Tooltip overlayStyle={{ minWidth: '400px' }} title="2人以上的评分过程中，各评分人的评分值互相不可见，待所有评分人完成评分后，显示各评分人的评分值" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
                   <span style={{ color: '#D9D9D9', fontSize: '16px', verticalAlign: 'middle', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe845;</span>
