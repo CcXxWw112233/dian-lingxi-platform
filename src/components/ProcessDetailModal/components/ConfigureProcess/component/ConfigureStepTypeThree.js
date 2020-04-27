@@ -396,7 +396,7 @@ export default class ConfigureStepTypeThree extends Component {
                 <Select value={result_case_pass} onChange={this.handleResultScoreFallThrough} style={{ width: '168px', height: '40px' }}>
                   <Option value="1">{`${currentNounPlanFilterName(FLOWS)}流转到上一步`}</Option>
                   <Option value="2">{`${currentNounPlanFilterName(FLOWS)}流转到下一步`}</Option>
-                  <Option value="3">{`${currentNounPlanFilterName(FLOWS)}中止`}</Option>
+                  {/* <Option value="3">{`${currentNounPlanFilterName(FLOWS)}中止`}</Option> */}
                 </Select>
               </span>
             </div>
@@ -405,7 +405,7 @@ export default class ConfigureStepTypeThree extends Component {
               <Select value={result_case_other} onChange={this.handleRemainingCircumstances} style={{ width: '168px', height: '40px' }}>
                 <Option value="1">{`${currentNounPlanFilterName(FLOWS)}流转到上一步`}</Option>
                 <Option value="2">{`${currentNounPlanFilterName(FLOWS)}流转到下一步`}</Option>
-                <Option value="3">{`${currentNounPlanFilterName(FLOWS)}中止`}</Option>
+                {/* <Option value="3">{`${currentNounPlanFilterName(FLOWS)}中止`}</Option> */}
               </Select>
             </div>
           </div>
