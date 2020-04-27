@@ -48,6 +48,8 @@ export default class BeginningStepThree_one extends Component {
   // 分数点击事件
   handleChangeRatingGrade = (e, i) => {
     e && e.stopPropagation()
+    const { showApproveButton } = this.props
+    if (!showApproveButton) return
     const { score_items = [] } = this.state
     let new_data = [...score_items]
     new_data = new_data.map((item, index) => {
@@ -90,6 +92,7 @@ export default class BeginningStepThree_one extends Component {
 
   handleChangeRatingGradeBlur = (e, i) => {
     e && e.stopPropagation()
+    this.updateState({ value: false, key: 'is_click_rating_grade' }, i)
     return
     let value = e.target.value
     const reg = /^([1-9]\d{0,2}(\.\d{1,2})?|1000)$/
@@ -169,79 +172,96 @@ export default class BeginningStepThree_one extends Component {
 
   render() {
     const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id } } = this.props
-    const { enable_weight, score_display } = itemValue
+    const { score_node_set = {} } = itemValue
+    const { enable_weight, score_display, } = score_node_set
     const { score_items = [], clientWidth } = this.state
     let flag = this.whetherShowDiffWidth()
+    let last_total = score_items && score_items.find(item => item.is_total == '1') || {}
     let autoWidth = clientWidth ? clientWidth / 4 - 45 : 130
     return (
       <div>
         {/* 评分项 */}
         <div style={{ borderTop: '1px solid rgba(0,0,0,0.09)', marginTop: '16px', padding: '16px 14px' }}>
-          <div id={`ratingItems_${itemKey}`} className={indexStyles.ratingItems}>
+          <div id={`ratingItems_${itemKey}`} className={indexStyles.ratingItems} style={{paddingBottom: score_display == '1' ? '50px' : '16px'}}>
             {
               score_items && score_items.map((item, index) => {
                 const { title, description, max_score, weight_ratio, is_click_rating_grade, value } = item
                 return (
-                  <div key={item} className={`${indexStyles.rating_itemsValue} ${flag && score_items.length > 1 ? indexStyles.rating_active_width : indexStyles.rating_normal_width}`}>
-                    <p>
-                      <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer', display: 'inline-block', display: 'flex', flex: 1 }}>
-                        <Tooltip title={title} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                        <span style={{display: 'flex'}}>
-                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: clientWidth && !(flag && score_items.length > 1) ? clientWidth + 'px' : autoWidth, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>
-                          <span>:</span>
-                         </span>
-                        </Tooltip>
-                        {
-                          enable_weight == '1' && (
-                            <Tooltip overlayStyle={{ minWidth: '116px' }} title={`权重占比: ${weight_ratio}%`} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                              <span className={indexStyles.rating_weight}>&nbsp;&nbsp;{`*${weight_ratio}%`}</span>
-                            </Tooltip>
-                          )
-                        }
-                      </span>
-                      {
-                        description && description != '' ? (
-                          <Popover title={<div style={{ margin: '0 4px', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '130px', whiteSpace: 'nowrap' }}>{title}</div>} content={<div style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', maxWidth: '130px' }}>{description}</div>} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                            <span style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe845;</span>
-                          </Popover>
-                        ) : ('')
-                      }
-                    </p>
+                  <>
                     {
-                      is_click_rating_grade ? (
-                        <div>
-                          <Input autoFocus={true} value={value} onBlur={(e) => { this.handleChangeRatingGradeBlur(e, index) }} onChange={(e) => { this.handleChangeRatingGradeValue(e, max_score, index) }} className={indexStyles.rating_input} />
-                        </div>
-                      ) : (
-                          value && value != '' ? (
-                            <div onClick={(e) => { this.handleChangeRatingGrade(e, index) }} className={indexStyles.rating_grade}>
-                              <span className={indexStyles.rating_input}>{value}</span>
-                            </div>
-                          ) : (
-                              <div onClick={(e) => { this.handleChangeRatingGrade(e, index) }} className={indexStyles.rating_grade}>
-                                <span>最高<span className={indexStyles.rating_grade_value}>{max_score}</span>分</span>
+                      item.is_total == '0' && (
+                        <div key={item} className={`${indexStyles.rating_itemsValue} ${flag && score_items.length > 1 ? indexStyles.rating_active_width : indexStyles.rating_normal_width}`}>
+                          <p>
+                            <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer', display: 'inline-block', display: 'flex', flex: 1 }}>
+                              <Tooltip title={title} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                                <span style={{ display: 'flex' }}>
+                                  <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: clientWidth && !(flag && score_items.length > 1) ? clientWidth + 'px' : autoWidth, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>
+                                  <span>:</span>
+                                </span>
+                              </Tooltip>
+                              {
+                                enable_weight == '1' && (
+                                  <Tooltip overlayStyle={{ minWidth: '116px' }} title={`权重占比: ${weight_ratio}%`} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                                    <span className={indexStyles.rating_weight}>&nbsp;&nbsp;{`*${weight_ratio}%`}</span>
+                                  </Tooltip>
+                                )
+                              }
+                            </span>
+                            {
+                              description && description != '' ? (
+                                <Popover title={<div style={{ margin: '0 4px', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '130px', whiteSpace: 'nowrap' }}>{title}</div>} content={<div style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', maxWidth: '130px' }}>{description}</div>} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                                  <span style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe845;</span>
+                                </Popover>
+                              ) : ('')
+                            }
+                          </p>
+                          {
+                            is_click_rating_grade ? (
+                              <div>
+                                <Input autoFocus={true} value={value} onBlur={(e) => { this.handleChangeRatingGradeBlur(e, index) }} onChange={(e) => { this.handleChangeRatingGradeValue(e, max_score, index) }} className={indexStyles.rating_input} />
                               </div>
-                            )
-                        )
-                    }
+                            ) : (
+                                value && value != '' ? (
+                                  <div onClick={(e) => { this.handleChangeRatingGrade(e, index) }} className={indexStyles.rating_grade}>
+                                    <span className={indexStyles.rating_input}>{value}</span>
+                                  </div>
+                                ) : (
+                                    <div onClick={(e) => { this.handleChangeRatingGrade(e, index) }} className={indexStyles.rating_grade}>
+                                      <span>最高<span className={indexStyles.rating_grade_value}>{max_score}</span>分</span>
+                                    </div>
+                                  )
+                              )
+                          }
 
-                  </div>
+                        </div>
+                      )
+                    }
+                  </>
                 )
               })
             }
             {
               score_display == '1' && (
-                <div style={{ color: 'rgba(0,0,0,0.45)', fontWeight: 500, position: 'absolute', bottom: '0' }}>
-                  <span className={globalStyles.authTheme}>&#xe66c;</span>
-                  <span>&nbsp;&nbsp;评分过程中各评分人的评分信息互相不可见</span>
+                <div style={{ color: 'rgba(0,0,0,0.45)', fontWeight: 500, position: 'absolute', bottom: '16px', display: 'flex', alignItems: 'center' }}>
+                  {
+                    last_total && Object.keys(last_total).length != '0' && (
+                      <div>
+                        <span style={{color: 'rgba(0,0,0,0.65)'}}>合计:&nbsp;&nbsp;</span>
+                        <span style={{fontSize: '20px', color: '#1890FF'}}>{last_total.value}</span>
+                      </div>
+                    )
+                  }
+                  <div>
+                    <span>&nbsp;&nbsp;（暂时仅自己可见，待所有人评分人评分完成后公开）</span>
+                  </div>
                 </div>
               )
             }
           </div>
           {/* 评分人意见以及分数详情 */}
-          <div>
+          {/* <div>
             {this.renderRatingPersonSuggestion()}
-          </div>
+          </div> */}
         </div>
       </div>
     )

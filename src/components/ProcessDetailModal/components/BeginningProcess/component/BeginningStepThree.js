@@ -66,18 +66,12 @@ export default class BeginningStepThree extends Component {
 
   // 判断是否可以完成 true 表示可以完成
   whetherIsComplete = () => {
-    const { processEditDatas = [] } = this.props
+    const { processEditDatas = [], itemKey } = this.props
     let flag
+    let temp_item
     const reg = /^([1-9]\d{0,2}(\.\d{1,2})?|1000)$/
-    let newProcessEditDatas = [...processEditDatas]
-    newProcessEditDatas.reduce((acc, curr) => {
-      console.log(curr,'ssssssssssssssssssss_curr')
-      if (curr && curr.value) {
-        if (reg.test(curr.value)) {
-          flag = true
-        }
-      }
-    })
+    let new_data = processEditDatas[itemKey]['score_items'] || []
+    flag = new_data.every(item => reg.test(item.value))
     return flag
   }
 
@@ -117,6 +111,22 @@ export default class BeginningStepThree extends Component {
     let newAssignees = [...transPrincipalList]
     newAssignees.find(item => {
       if (item.id == id) {
+        flag = true
+      }
+    })
+    return flag
+  }
+
+  // 判断是否有撤回按钮
+  whetherIsHasRebackNodesBtn = () => {
+    // const { itemValue } = this.props
+    // const { assignees = [] } = itemValue
+    const { transPrincipalList = [] } = this.state
+    const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    let flag = false
+    let newAssignees = [...transPrincipalList]
+    newAssignees.find(item => {
+      if (item.id == id && item.processed == '2') { // 找到当前的 并且已经审批完成的时候
         flag = true
       }
     })
@@ -252,28 +262,35 @@ export default class BeginningStepThree extends Component {
   renderEditDetailContent = () => {
     const { isPassNodesIng, successfulMessage } = this.state
     const { itemValue, itemKey, processInfo: { status: parentStatus } } = this.props
-    const { score_node_set: { count_type, result_condition_type, result_case_pass, result_case_other, result_value }, status } = itemValue
+    const { score_node_set: { count_type, result_condition_type, result_case_pass, result_case_other, result_value }, status, score_result_value } = itemValue
     let showApproveButton = parentStatus == '1' && status == '1' && this.whetherShowCompleteButton() && this.getCurrentPersonApproveStatus() == '1'
-    let whetherIsComplete = successfulMessage ? false : true
-    // console.log(this.whetherIsComplete(),'ssssssssssssssssssssss_whetherIsComplete')
+    let whetherIsComplete = this.whetherIsComplete() ? false : true
     return (
       <div>
         {/* 渲染评分项 */}
-        <div style={{position: 'relative'}}>
-          <BeginningStepThree_one updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemValue={itemValue} itemKey={itemKey} />
-          {
+        <div style={{ position: 'relative' }}>
+          <BeginningStepThree_one showApproveButton={showApproveButton} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemValue={itemValue} itemKey={itemKey} />
+          {/* {
             !showApproveButton && (
               <div style={{position: 'absolute', left: 0, right: 0, bottom: 0, top: 0, margin: 'auto', zIndex: 2}}></div>
             )
-          }
+          } */}
         </div>
         {/* 评分结果判定 */}
         <div>
-          <div style={{ minHeight: '210px', padding: '16px 14px', borderTop: '1px solid rgba(0,0,0,0.09)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div style={{ minHeight: score_result_value && score_result_value != '' ? '258px': '210px', padding: '16px 14px', borderTop: '1px solid rgba(0,0,0,0.09)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div style={{ color: 'rgba(0,0,0,0.45)' }}>
               <span className={globalStyles.authTheme}>&#xe7bf;</span>
               <span style={{ marginLeft: '4px' }}>评分结果判定：</span>
             </div>
+            {
+              score_result_value && score_result_value != '' && (
+                <div>
+                  <span className={indexStyles.rating_label_name}>结果分数:</span>
+                  <span style={{fontSize: '20px', color: '#1890FF'}}>{score_result_value}</span>
+                </div>
+              ) 
+            }
             <div>
               <span className={indexStyles.rating_label_name}>计算方式</span>
               {
@@ -309,12 +326,28 @@ export default class BeginningStepThree extends Component {
                 getPopupContainer={triggerNode => triggerNode.parentNode}
                 placement="top" title={this.renderPopConfirmContent()}
                 okText="通过"
-                okButtonProps={{ disabled: whetherIsComplete ? false : true }}
+                okButtonProps={{ disabled: whetherIsComplete }}
                 onCancel={this.handleCancelSuccessProcess}
                 onConfirm={this.handlePassProcess}
               >
-                <Button onClick={this.handleEnterConfigureProcess} type="primary">完成</Button>
+                <Button disabled={whetherIsComplete} onClick={this.handleEnterConfigureProcess} type="primary">完成</Button>
               </Popconfirm>
+            </div>
+          )
+        }
+        {/* 已完成按钮 */}
+        {
+          parentStatus == '1' && status == '1' && this.getCurrentPersonApproveStatus() == '2' && (
+            <div style={{ paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center' }}>
+              <Button disabled={true}>已完成</Button>
+            </div>
+          )
+        }
+        {/* 撤回按钮 */}
+        {
+          this.whetherIsHasRebackNodesBtn() && status == '2' && parentStatus == '1' && (
+            <div style={{ paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center' }}>
+              <Button onClick={this.handleRebackProcessNodes} style={{ border: '1px solid rgba(24,144,255,1)', color: '#1890FF' }}>撤回</Button>
             </div>
           )
         }
@@ -325,14 +358,14 @@ export default class BeginningStepThree extends Component {
   render() {
     const { itemKey, itemValue, processEditDatas = [] } = this.props
     const { is_show_spread_arrow, transPrincipalList = [], transCopyPersonnelList = [] } = this.state
-    const { name, cc_type, deadline_type, deadline_value, deadline_time_type } = itemValue
+    const { name, cc_type, deadline_type, deadline_value, deadline_time_type, status } = itemValue
     return (
       <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }}>
         {processEditDatas.length <= itemKey + 1 ? null : <div className={this.renderDiffStatusStepStyles().stylLine}></div>}
         <div className={this.renderDiffStatusStepStyles().stylCircle}> {itemKey + 1}</div>
         {/* <div className={indexStyles.line}></div>
         <div className={indexStyles.circle}> {itemKey + 1}</div> */}
-        <div className={`${indexStyles.popover_card}`}>
+        <div className={`${status == '1' ? indexStyles.popover_card : indexStyles.default_popover_card}`}>
           <div className={`${globalStyles.global_vertical_scrollbar}`}>
             {/* 步骤名称 */}
             <div style={{ marginBottom: '16px' }}>
