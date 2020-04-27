@@ -4,6 +4,7 @@ import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
+import { isObjectValueEqual } from '../../../../../utils/util'
 
 @connect(mapStateToProps)
 export default class BeginningStepThree_one extends Component {
@@ -19,6 +20,14 @@ export default class BeginningStepThree_one extends Component {
 
   componentDidMount() {
     window.addEventListener('resize', this.resizeTTY)
+  }
+  componentWillReceiveProps(nextProps) {
+    if (!isObjectValueEqual(this.props, nextProps)) {
+      this.state = {
+        score_items: nextProps.itemValue && nextProps.itemValue.score_items ? JSON.parse(JSON.stringify(nextProps.itemValue.score_items || [])) : [],
+        clientWidth: document.getElementById(`ratingItems_${nextProps.itemKey}`) ? document.getElementById(`ratingItems_${nextProps.itemKey}`).clientWidth : 420,
+      }
+    }
   }
   componentWillUnmount() {
     window.removeEventListener("resize", this.resizeTTY);
@@ -182,7 +191,7 @@ export default class BeginningStepThree_one extends Component {
       <div>
         {/* 评分项 */}
         <div style={{ borderTop: '1px solid rgba(0,0,0,0.09)', marginTop: '16px', padding: '16px 14px' }}>
-          <div id={`ratingItems_${itemKey}`} className={indexStyles.ratingItems} style={{paddingBottom: score_display == '1' ? '50px' : '16px'}}>
+          <div id={`ratingItems_${itemKey}`} className={indexStyles.ratingItems} style={{ paddingBottom: last_total && Object.keys(last_total).length != '0' ? '50px' : '16px' }}>
             {
               score_items && score_items.map((item, index) => {
                 const { title, description, max_score, weight_ratio, is_click_rating_grade, value } = item
@@ -241,19 +250,19 @@ export default class BeginningStepThree_one extends Component {
               })
             }
             {
-              score_display == '1' && (
+              last_total && Object.keys(last_total).length != '0' && (
                 <div style={{ color: 'rgba(0,0,0,0.45)', fontWeight: 500, position: 'absolute', bottom: '16px', display: 'flex', alignItems: 'center' }}>
+                  <div>
+                    <span style={{ color: 'rgba(0,0,0,0.65)' }}>合计:&nbsp;&nbsp;</span>
+                    <span style={{ fontSize: '20px', color: '#1890FF' }}>{last_total.value}</span>
+                  </div>
                   {
-                    last_total && Object.keys(last_total).length != '0' && (
+                    score_display == '1' && (
                       <div>
-                        <span style={{color: 'rgba(0,0,0,0.65)'}}>合计:&nbsp;&nbsp;</span>
-                        <span style={{fontSize: '20px', color: '#1890FF'}}>{last_total.value}</span>
+                        <span>&nbsp;&nbsp;（暂时仅自己可见，待所有人评分人评分完成后公开）</span>
                       </div>
                     )
                   }
-                  <div>
-                    <span>&nbsp;&nbsp;（暂时仅自己可见，待所有人评分人评分完成后公开）</span>
-                  </div>
                 </div>
               )
             }
