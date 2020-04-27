@@ -21,8 +21,11 @@ class BoardArchives extends Component {
       currentSearchValue: '', // 搜索框输入值
       currentFileDataType: '0', // 当前文件数据类型 '0' 全部文件 '1' 项目下全部文件 '2' 文件夹下全部文件
       currentSelectBoardId: '0',
-      currentFolderId: ''
+      currentFolderId: '',
+      view_type: '0', //0项目视图 1文件列表视图, 2混合视图
+
     }
+    this.timer = null
   }
   // 处理传值
   getParams = () => {
@@ -75,7 +78,10 @@ class BoardArchives extends Component {
       isSearchDetailOnfocusOrOnblur: value,
       currentSearchValue: searchValue,
     }, () => {
-      this.searchCommunicationFilelist();
+      if (this.timer) clearTimeout(this.timer)
+      this.timer = setTimeout(() => {
+        this.searchCommunicationFilelist();
+      }, 300)
     });
   }
   // 获取右侧缩略图展示列表显示
@@ -97,7 +103,6 @@ class BoardArchives extends Component {
   }
   // 搜索
   searchCommunicationFilelist = () => {
-    // console.log('搜索');
     const { dispatch } = this.props;
     const params = this.getParams();
     const { boardId, folderId, queryConditions, currentSearchValue } = params;
@@ -164,7 +169,7 @@ class BoardArchives extends Component {
   }
   render() {
     const { workbenchBoxContent_height = 600 } = this.props
-    const { currentSearchValue, bread_paths = [], isSearchDetailOnfocusOrOnblur, currentFileDataType } = this.state
+    const { currentSearchValue, bread_paths = [], isSearchDetailOnfocusOrOnblur, currentFileDataType, view_type } = this.state
     const currentIayerFolderName = bread_paths && bread_paths.length && (bread_paths[bread_paths.length - 1].board_name || bread_paths[bread_paths.length - 1].folder_name);
 
     return (
@@ -205,14 +210,13 @@ class BoardArchives extends Component {
               </div>
             )
           }
-          <CatalogTables workbenchBoxContent_height />
+          <CatalogTables workbenchBoxContent_height view_type={view_type} />
         </div>
       </div>
     );
   }
 
 }
-
 
 function mapStateToProps({
   // modal, projectDetail, projectDetailTask, projectDetailFile, projectDetailProcess, loading,

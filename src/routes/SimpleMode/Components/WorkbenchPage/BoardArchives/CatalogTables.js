@@ -7,6 +7,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import indexStyles from './index.less';
 const dataSource = [
     {
+        id: '00',
         name: '档案1',
         originator: '吴彦祖',
         updateTime: '1587894708',
@@ -14,6 +15,7 @@ const dataSource = [
         type: '0',
     },
     {
+        id: '01',
         name: '档案2',
         originator: '金城武',
         updateTime: '1587894708',
@@ -21,6 +23,15 @@ const dataSource = [
         type: '1'
     },
     {
+        id: '012',
+        name: '档案3',
+        originator: '金城武',
+        updateTime: '1587894708',
+        operate: '',
+        type: '1'
+    },
+    {
+        id: '02',
         name: '这是文件.jpg',
         originator: '吴彦祖',
         updateTime: '1587894708',
@@ -29,34 +40,13 @@ const dataSource = [
         type: '2'
     },
     {
-        name: '档案2',
-        originator: '金城武',
-        updateTime: '1587894708',
-        operate: ''
-    },
-    {
-        name: '档案1',
+        id: '03',
+        name: '这是文件2.jpg',
         originator: '吴彦祖',
         updateTime: '1587894708',
-        operate: ''
-    },
-    {
-        name: '档案2',
-        originator: '金城武',
-        updateTime: '1587894708',
-        operate: ''
-    },
-    {
-        name: '档案1',
-        originator: '吴彦祖',
-        updateTime: '1587894708',
-        operate: ''
-    },
-    {
-        name: '档案2',
-        originator: '金城武',
-        updateTime: '1587894708',
-        operate: ''
+        operate: '',
+        size: '120MB',
+        type: '2'
     },
 ]
 @connect(mapStateToProps)
@@ -64,11 +54,19 @@ export default class CatalogTables extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            view_type: '0', //0项目视图 1文件列表视图
             columns: [],
             dataSource: [], //{ type: '',} //type 0/1/2表示项目/文件夹/文件
+            selectedRows: [], //已选列表
         }
-        this.columns = [
+    }
+    componentDidMount() {
+        this.setTableData()
+    }
+    tableRowClick = () => {
+
+    }
+    setTableData = () => {
+        const columns = [
             {
                 title: this.renderTitleName(),
                 dataIndex: 'name',
@@ -123,17 +121,8 @@ export default class CatalogTables extends Component {
                 }
             },
         ]
-
-    }
-    componentDidMount() {
-        this.setTableData()
-    }
-    tableRowClick = () => {
-
-    }
-    setTableData = () => {
         this.setState({
-            columns: this.columns,
+            columns,
             dataSource
         })
     }
@@ -194,18 +183,43 @@ export default class CatalogTables extends Component {
     }
     // 表头name
     renderTitleName = (item) => {
-        const { view_type } = this.state
+        const { selectedRows = [] } = this.state
+        const { view_type } = this.props
         let name = ''
         if (view_type == '0') {
             name = '档案'
         } else if (view_type == '1') {
             name = '文件'
         }
-        return `${name}名称`
+        const length = selectedRows.length
+        return (
+            <div>
+                <div style={{ display: 'flex', paddingRight: 20 }}>
+                    <div style={{ lineHeight: '27px' }}> {`${name}名称`}</div>
+                    {
+                        length > 0 && (
+                            <>
+                                <div style={{ color: '#1890FF', lineHeight: '27px', fontWeight: 'normal' }}>（已选{length}项）</div>
+                                {
+                                    view_type == '0' && (
+                                        <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate}`} >&#xe717;</div>
+                                    )
+                                }
+                                {
+                                    view_type == '1' && (
+                                        <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate}`} style={{ marginLeft: 16 }}>&#xe7f1;</div>
+                                    )
+                                }
+                            </>
+                        )
+                    }
+                </div>
+            </div>
+        )
     }
     // 表头上传人
     renderOriginator = () => {
-        const { view_type } = this.state
+        const { view_type } = this.props
         if (view_type == '0') {
             return '上传人'
         } else if (view_type == '1') {
@@ -242,20 +256,23 @@ export default class CatalogTables extends Component {
         )
     }
     rowSelection = () => {
+        const { columns } = this.state
         return {
             onChange: (selectedRowKeys, selectedRows) => {
-                console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+                console.log('onChange', selectedRowKeys, selectedRows);
+                this.setState({
+                    selectedRows
+                }, () => {
+                    this.setTableData()
+                })
             },
-            onSelect: (record, selected, selectedRows) => {
-                console.log(record, selected, selectedRows);
-            },
-            onSelectAll: (selected, selectedRows, changeRows) => {
-                console.log(selected, selectedRows, changeRows);
-            },
+            getCheckboxProps: record => ({
+                disabled: record.type == '1', // Column configuration not to be checked
+            }),
         }
     };
     render() {
-        const { workbenchBoxContent_height = 700 } = this.props
+        const { workbenchBoxContent_height = 700, view_type } = this.props
         const scroll_height = workbenchBoxContent_height - 200
         const { dataSource = [], columns = [] } = this.state
 
@@ -269,6 +286,8 @@ export default class CatalogTables extends Component {
                     }}
                     dataSource={dataSource}
                     columns={columns}
+                    rowKey={'id'}
+                    showHeader={view_type != '2'}
                     pagination={false}
                     rowSelection={this.rowSelection()}
                     scroll={{ y: scroll_height, }} />
