@@ -142,7 +142,7 @@ export default class BeginningStepThree_one extends Component {
     return current_socre.score_items || []
   }
 
-  renderRatingDetailDewfaultContent = (score_items = []) => {
+  renderRatingDetailDefaultContent = (score_items = []) => {
     return (
       <div style={{ width: '260px', height: '206px', overflowY: 'auto' }} className={globalStyles.global_vertical_scrollbar}>
         <table border={1} style={{ borderColor: '#E9E9E9' }} width="100%">
@@ -249,7 +249,7 @@ export default class BeginningStepThree_one extends Component {
                     ) : (
                         <>
                           <span style={{ color: '#1890FF', margin: '0 8px' }}>{last_total.value}</span>
-                          <Popover getPopupContainer={triggerNode => triggerNode.parentNode} placement="rightTop" content={enable_weight == '1' ? this.renderRatingDetailWeightContent(score_items) : this.renderRatingDetailDewfaultContent(score_items)} title={<div>评分详情</div>}>
+                          <Popover getPopupContainer={triggerNode => triggerNode.parentNode} placement="rightTop" content={enable_weight == '1' ? this.renderRatingDetailWeightContent(score_items) : this.renderRatingDetailDefaultContent(score_items)} title={<div>评分详情</div>}>
                             <span style={{ color: '#1890FF', fontSize: '16px', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe7b4;</span>
                           </Popover>
                         </>

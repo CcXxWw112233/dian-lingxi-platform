@@ -3,13 +3,13 @@ import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '../../AvatarList'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
-import { Button, Tooltip, Icon, Popconfirm, Input } from 'antd'
+import { Button, Tooltip, Icon, Popconfirm, Input, Popover } from 'antd'
 import { connect } from 'dva'
 import { renderTimeType, computing_mode, result_score_option, result_score_fall_through_with_others, genPrincipalListFromAssignees } from '../../handleOperateModal'
-import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
+import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard  } from '../../../../../utils/businessFunction'
 import { PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
 import BeginningStepThree_one from './BeginningStepThree_one';
-import { isObjectValueEqual } from '../../../../../utils/util';
+import { isObjectValueEqual, timestampToTimeNormal } from '../../../../../utils/util';
 const TextArea = Input.TextArea
 @connect(mapStateToProps)
 export default class BeginningStepThree extends Component {
@@ -20,6 +20,7 @@ export default class BeginningStepThree extends Component {
       transPrincipalList: props.itemValue.assignees ? [...props.itemValue.assignees] : [], // 表示当前的执行人
       transCopyPersonnelList: props.itemValue.recipients ? [...props.itemValue.recipients] : [], // 表示当前选择的抄送人
       is_show_spread_arrow: props.itemValue.status == '1' ? true : false, // 是否展开箭头 详情 true表示展开
+      historyCommentsList: props.itemValue.his_comments ? [...props.itemValue.his_comments] : []
     }
   }
 
@@ -30,6 +31,7 @@ export default class BeginningStepThree extends Component {
         is_show_spread_arrow: nextProps.itemValue.status == '1' ? true : false,
         transPrincipalList: nextProps.itemValue.assignees ? [...nextProps.itemValue.assignees] : [], // 表示当前的执行人
         transCopyPersonnelList: nextProps.itemValue.recipients ? [...nextProps.itemValue.recipients] : [], // 表示当前选择的抄送人
+        historyCommentsList: nextProps.itemValue.his_comments ? [...nextProps.itemValue.his_comments] : []
       })
     }
   }
@@ -282,8 +284,118 @@ export default class BeginningStepThree extends Component {
     )
   }
 
+  renderRatingDetailDefaultContent = (score_items = []) => {
+    return (
+      <div style={{ width: '260px', height: '206px', overflowY: 'auto' }} className={globalStyles.global_vertical_scrollbar}>
+        <table border={1} style={{ borderColor: '#E9E9E9' }} width="100%">
+          <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', background: '#FAFAFA', color: 'rgba(0,0,0,0.45)' }}>
+            <th style={{ width: '196px' }}>标题</th>
+            <th style={{ width: '58px' }}>
+              最高分值
+            </th>
+          </tr>
+          {
+            score_items && score_items.length && score_items.map(item => {
+              return (
+                <>
+                  {
+                    item.is_total == '0' ? (
+                      <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>
+                        <td style={{ maxWidth: '78px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.title}</td>
+                        <td style={{ color: '#1890FF' }}>{item.max_score}</td>
+                      </tr>
+                    ) : (
+                        <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>
+                          <td style={{ maxWidth: '156px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: '#1890FF' }}>{item.title}</td>
+                          <td style={{ color: '#1890FF' }}>{item.value}</td>
+                        </tr>
+                      )
+                  }
+                </>
+              )
+            })
+          }
+
+        </table>
+      </div>
+    )
+  }
+
+  renderRatingDetailWeightContent = (score_items = []) => {
+    return (
+      <div style={{ width: '260px', height: '206px', overflowY: 'auto' }} className={globalStyles.global_vertical_scrollbar}>
+        <table border={1} style={{ borderColor: '#E9E9E9' }} width="100%">
+          <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', background: '#FAFAFA', color: 'rgba(0,0,0,0.45)' }}>
+            <th style={{ width: '98px' }}>标题</th>
+            <th style={{ width: '70px' }}>
+              权重占比%
+            </th>
+            <th style={{ width: '58px' }}>
+              最高分值
+            </th>
+          </tr>
+          {
+            score_items && score_items.length && score_items.map(item => {
+              return (
+                <>
+                  {
+                    item.is_total == '0' ? (
+                      <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>
+                        <td style={{ maxWidth: '78px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.title}</td>
+                        <td>{item.weight_ratio}</td>
+                        <td style={{ color: '#1890FF' }}>{item.max_score}</td>
+                      </tr>
+                    ) : (
+                        <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>
+                          <td style={{ maxWidth: '78px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: '#1890FF' }}>{item.title}</td>
+                          <td>{item.weight_ratio}</td>
+                          <td style={{ color: '#1890FF' }}>{item.value}</td>
+                        </tr>
+                      )
+                  }
+                </>
+              )
+            })
+          }
+
+        </table>
+      </div>
+    )
+  }
+
+  renderHistorySuggestion = (item) => {
+    const { itemValue: { enable_weight, score_node_set: { score_display }, status } } = this.props
+    const { comment, pass, processed, avatar, name, time, score_items = [] } = item
+    let last_total = score_items && score_items.find(item => item.is_total == '1') || {}
+    return (
+      <div className={indexStyles.appListWrapper}>
+        <div className={indexStyles.app_left}>
+          <div className={indexStyles.approve_user} style={{ position: 'relative', marginRight: '16px' }}>
+            {/* <div className={indexStyles.defaut_avatar}></div> */}
+            {
+              avatar ? (
+                <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar} />
+              ) : (
+                  <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={defaultUserAvatar} />
+                )
+            }
+          </div>
+          <div style={{ position: 'relative' }}>
+            <span>{name}</span>
+            <span style={{ color: '#1890FF', margin: '0 8px' }}>{last_total.value}</span>
+            <Popover getPopupContainer={triggerNode => triggerNode.parentNode} placement="rightTop" content={enable_weight == '1' ? this.renderRatingDetailWeightContent(score_items) : this.renderRatingDetailDefaultContent(score_items)} title={<div>评分详情</div>}>
+              <span style={{ color: '#1890FF', fontSize: '16px', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe7b4;</span>
+            </Popover>
+            <div style={{ color: comment == '无意见。' ? 'rgba(0,0,0,0.25)' : 'rgba(0,0,0,0.65)' }}>{comment}</div>
+          </div>
+        </div>
+        <div className={indexStyles.app_right}>{timestampToTimeNormal(time, '/', true) || ''}</div>
+      </div>
+    )
+  }
+
   renderEditDetailContent = () => {
-    const { isPassNodesIng, successfulMessage, transPrincipalList = [] } = this.state
+    const { isPassNodesIng, successfulMessage, transPrincipalList = [], historyCommentsList = [] } = this.state
     const { itemValue, itemKey, processInfo: { status: parentStatus } } = this.props
     const { score_node_set: { count_type, result_condition_type, result_case_pass, result_case_other, result_value }, status, score_result_value } = itemValue
     let showApproveButton = parentStatus == '1' && status == '1' && this.whetherShowCompleteButton() && this.getCurrentPersonApproveStatus() == '1'
@@ -339,6 +451,22 @@ export default class BeginningStepThree extends Component {
             </div>
           </div>
         </div>
+        {/* 历史评分 */}
+        {
+          historyCommentsList && historyCommentsList.length != 0 && (
+            <div style={{ minHeight: '170px', borderTop: '1px solid rgba(0,0,0,0.09)', padding: '16px 14px' }}>
+              <div>
+                <span style={{ color: 'rgba(0,0,0,0.65)', fontSize: '16px', marginRight: '4px', fontWeight: 500 }} className={globalStyles.authTheme}>&#xe90e;</span>
+                <span>历史评分&nbsp;:</span>
+              </div>
+              {
+                historyCommentsList.map(item => {
+                  return <div>{this.renderHistorySuggestion(item)}</div>
+                })
+              }
+            </div>
+          )
+        }
         {/* 编辑按钮 */}
         {
           showApproveButton && (
