@@ -10,7 +10,7 @@ import { principalList, tableList } from '../../../constant'
 import ConfigureStepTypeThree_one from './ConfigureStepTypeThree_one'
 import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import { FLOWS } from '../../../../../globalset/js/constant'
-
+const Option = Select.Option;
 @connect(mapStateToProps)
 export default class ConfigureStepTypeThree extends Component {
 

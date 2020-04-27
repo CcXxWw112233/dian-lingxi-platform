@@ -3,7 +3,7 @@ import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '../../AvatarList'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
-import { Button, Tooltip, Icon, Popconfirm, Input, Popover } from 'antd'
+import { Button, Tooltip, Icon, Popconfirm, Input, message, Popover } from 'antd'
 import { connect } from 'dva'
 import { renderTimeType, computing_mode, result_score_option, result_score_fall_through_with_others, genPrincipalListFromAssignees } from '../../handleOperateModal'
 import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard  } from '../../../../../utils/businessFunction'
