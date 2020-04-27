@@ -205,7 +205,7 @@ class BoardArchives extends Component {
               </div>
             )
           }
-          <CatalogTables />
+          <CatalogTables workbenchBoxContent_height />
         </div>
       </div>
     );

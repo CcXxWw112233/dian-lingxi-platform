@@ -1,44 +1,76 @@
 import React, { Component } from 'react'
 import { Table } from 'antd';
-import { timestampToTimeNormal } from '../../../../../utils/util';
+import { timestampToTimeNormal, filterFileFormatType } from '../../../../../utils/util';
 import { connect } from 'dva';
-import { getOrgNameWithOrgIdFilter } from '../../../../../utils/businessFunction';
+import { getOrgNameWithOrgIdFilter, getSubfixName } from '../../../../../utils/businessFunction';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import indexStyles from './index.less';
-
+const dataSource = [
+    {
+        name: '档案1',
+        originator: '吴彦祖',
+        updateTime: '1587894708',
+        operate: '',
+        type: '0',
+    },
+    {
+        name: '档案2',
+        originator: '金城武',
+        updateTime: '1587894708',
+        operate: '',
+        type: '1'
+    },
+    {
+        name: '这是文件.jpg',
+        originator: '吴彦祖',
+        updateTime: '1587894708',
+        operate: '',
+        size: '120MB',
+        type: '2'
+    },
+    {
+        name: '档案2',
+        originator: '金城武',
+        updateTime: '1587894708',
+        operate: ''
+    },
+    {
+        name: '档案1',
+        originator: '吴彦祖',
+        updateTime: '1587894708',
+        operate: ''
+    },
+    {
+        name: '档案2',
+        originator: '金城武',
+        updateTime: '1587894708',
+        operate: ''
+    },
+    {
+        name: '档案1',
+        originator: '吴彦祖',
+        updateTime: '1587894708',
+        operate: ''
+    },
+    {
+        name: '档案2',
+        originator: '金城武',
+        updateTime: '1587894708',
+        operate: ''
+    },
+]
 @connect(mapStateToProps)
 export default class CatalogTables extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            view_type: '0', //0项目视图 1文件列表视图
             columns: [],
-            dataSource: []
+            dataSource: [], //{ type: '',} //type 0/1/2表示项目/文件夹/文件
         }
-    }
-    componentDidMount() {
-        this.setTableData()
-    }
-    tableRowClick = () => {
-
-    }
-    setTableData = () => {
-        const dataSource = [
+        this.columns = [
             {
-                name: '档案1',
-                originator: '吴彦祖',
-                updateTime: '1587894708',
-                operate: ''
-            },
-            {
-                name: '档案2',
-                originator: '金城武',
-                updateTime: '1587894708',
-                operate: ''
-            }
-        ]
-        const columns = [
-            {
-                title: '档案名称',
+                title: this.renderTitleName(),
                 dataIndex: 'name',
                 key: 'name',
                 ellipsis: true,
@@ -48,11 +80,23 @@ export default class CatalogTables extends Component {
                 }
             },
             {
-                title: '上传人',
+                title: this.renderOriginator(),
                 dataIndex: 'originator',
                 key: 'originator',
                 ellipsis: true,
                 width: 230,
+                render: (_, item) => {
+                    const { originator, size, type } = item
+                    if (type == '0' || !type) {
+                        return originator
+                    } else if (type == '1') {
+                        return ''
+                    } else if (type == '2') {
+                        return size
+                    } else {
+
+                    }
+                }
             },
             {
                 title: '更新时间',
@@ -79,49 +123,116 @@ export default class CatalogTables extends Component {
                 }
             },
         ]
+
+    }
+    componentDidMount() {
+        this.setTableData()
+    }
+    tableRowClick = () => {
+
+    }
+    setTableData = () => {
         this.setState({
-            columns,
+            columns: this.columns,
             dataSource
         })
     }
 
+    // 列表name
     renderKeyName = (item) => {
         let name_dec = item
-        const { name, board_name, org_id, board_id } = item
+        const { name, board_name, org_id, board_id, type } = item
         const { currentUserOrganizes = [], } = this.props
         const select_org_id = localStorage.getItem('OrganizationId')
         const org_dec = (select_org_id == '0' || !select_org_id) ? `(${getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)})` : ''
         const board_dec = `#${board_name}`
+        const is_board = type == '0' || !type
+        const is_folder = type == '1'
+        const is_file = type == '2'
+
         return (
             <div style={{ display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
-                <div>
-                    <span className={`${globalStyles.authTheme}`} style={{ fontSize: 30, color: '#40A9FF', marginRight: 4 }}>&#xe716;</span>
-                </div>
+                <>
+                    <div style={{ marginRight: 4 }}>
+                        {
+                            is_board && (
+                                <span className={`${globalStyles.authTheme}`} style={{ fontSize: 30, color: '#40A9FF', marginRight: 4 }}>&#xe716;</span>
+                            )
+                        }
+                        {
+                            is_folder && (
+                                <span className={`${globalStyles.authTheme}`} style={{ fontSize: 24, color: '#40A9FF', marginRight: 4 }}>&#xe6c4;</span>
+                            )
+                        }
+                        {
+                            is_file && (
+                                <span className={`${globalStyles.authTheme}`}
+                                    dangerouslySetInnerHTML={{ __html: filterFileFormatType(getSubfixName(name)) }}
+                                    style={{ fontSize: 30, color: '#40A9FF', marginRight: 4 }}
+                                >
+                                </span>
+                            )
+                        }
+                    </div>
+                    {
+                        select_org_id == '0' ? (
+                            <div>
+                                <p style={{ marginBottom: 0 }}>
+                                    <span>{name}</span>
+                                </p>
+                                <p style={{ color: 'rgba(0,0,0,0.45)', marginBottom: 4 }}>
+                                    {org_dec}
+                                </p>
+                            </div>
+                        ) : (
+                                name
+                            )
+                    }
+                </>
+            </div>
+        )
+    }
+    // 表头name
+    renderTitleName = (item) => {
+        const { view_type } = this.state
+        let name = ''
+        if (view_type == '0') {
+            name = '档案'
+        } else if (view_type == '1') {
+            name = '文件'
+        }
+        return `${name}名称`
+    }
+    // 表头上传人
+    renderOriginator = () => {
+        const { view_type } = this.state
+        if (view_type == '0') {
+            return '上传人'
+        } else if (view_type == '1') {
+            return '大小'
+        } else {
+
+        }
+    }
+    // 列表操作
+    renderKeyOperate = (item) => {
+        const { type } = item
+        return (
+            <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: 20 }}>
                 {
-                    select_org_id == '0' ? (
-                        <div>
-                            <p style={{ marginBottom: 0 }}>
-                                <span>{name}</span>
-                            </p>
-                            <p style={{ color: 'rgba(0,0,0,0.45)', marginBottom: 4 }}>
-                                {org_dec}
-                            </p>
-                        </div>
-                    ) : (
-                            name
-                        )
+                    type == '0' && (
+                        <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate}`} >&#xe717;</div>
+                    )
+                }
+                {
+                    type == '2' && (
+                        <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate}`} style={{ marginLeft: 16 }}>&#xe7f1;</div>
+                    )
                 }
             </div>
         )
     }
-    renderKeyOperate = () => {
-        return (
-            <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: 20 }}>
-                <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate}`} style={{ marginRight: 16 }}>&#xe717;</div>
-                <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate}`} >&#xe7f1;</div>
-            </div>
-        )
-    }
+    // 表头操作
     renderTitleOperate = () => {
         return (
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
