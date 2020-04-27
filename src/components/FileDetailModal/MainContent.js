@@ -114,12 +114,21 @@ class MainContent extends Component {
           if (isPDF) {
             setCurrentVersionFile({ id: res.data.id, set_major_version: '1' }).then(result => {
               if (isApiResponseOk(result)) {
-                this.props.delayUpdatePdfDatas && this.props.delayUpdatePdfDatas({ id: res.data.id })
+                this.props.delayUpdatePdfDatas && this.props.delayUpdatePdfDatas({ 
+                  id: res.data.id, 
+                  calback: () => {
+                    this.setState({
+                      percent: 0,
+                      is_petty_loading: !isZoomPictureFullScreenMode && false,
+                      is_large_loading: isZoomPictureFullScreenMode && false,
+                    })
+                  } 
+                })
                 this.props.updateStateDatas && this.props.updateStateDatas({ filePreviewCurrentFileId: res.data.id, currentPreviewFileData: { ...currentPreviewFileData, id: res.data.id }, currentPreviewFileName: res.data.file_name, fileType: getSubfixName(res.data.file_name) })
                 this.setState({
                   is_petty_loading: !isZoomPictureFullScreenMode ? isPdfLoaded ? true : false : false,
                   is_large_loading: isZoomPictureFullScreenMode ? isPdfLoaded ? true : false : false,
-                  percent: 0
+                  // percent: 0
                 })
                 // 用来保存在父元素中管理起来
                 this.props.updateStateDatas && this.props.updateStateDatas({
@@ -141,6 +150,16 @@ class MainContent extends Component {
           message.warn(res.message, MESSAGE_DURATION_TIME)
           if (res.code == 4047) { // 表示转换失败
             message.error(res.message, MESSAGE_DURATION_TIME)
+            this.setState({
+              is_petty_loading: !isZoomPictureFullScreenMode && false,
+              is_large_loading: isZoomPictureFullScreenMode && false,
+              percent: 0
+            })
+            this.props.updateStateDatas && this.props.updateStateDatas({
+              is_petty_loading: !isZoomPictureFullScreenMode && false,
+              is_large_loading: isZoomPictureFullScreenMode && false,
+              selectedKeys: []
+            })
           }
           this.setState({
             is_petty_loading: !isZoomPictureFullScreenMode && false,
@@ -208,16 +227,16 @@ class MainContent extends Component {
     })
     await this.fetchConvertPdfAlsoUpdateVersion({ file_id: id, file_name: file_name, folder_id: folder_id })
     await this.updateProcessPercent()
-    this.setState({
-      is_petty_loading: !isZoomPictureFullScreenMode,
-      is_large_loading: isZoomPictureFullScreenMode,
-      percent: 0
-    })
-    this.props.updateStateDatas && this.props.updateStateDatas({
-      is_petty_loading: !isZoomPictureFullScreenMode,
-      is_large_loading: isZoomPictureFullScreenMode,
-      selectedKeys: []
-    })
+    // this.setState({
+    //   is_petty_loading: !isZoomPictureFullScreenMode,
+    //   is_large_loading: isZoomPictureFullScreenMode,
+    //   percent: 0
+    // })
+    // this.props.updateStateDatas && this.props.updateStateDatas({
+    //   is_petty_loading: !isZoomPictureFullScreenMode,
+    //   is_large_loading: isZoomPictureFullScreenMode,
+    //   selectedKeys: []
+    // })
   }
 
   // 渲染非全屏模式圈评图片
