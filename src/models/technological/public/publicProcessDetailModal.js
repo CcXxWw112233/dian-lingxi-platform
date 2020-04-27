@@ -37,6 +37,7 @@ export default {
     currentFlowTabsStatus: '1',
     not_show_create_node_guide: '1',
     not_show_create_form_guide: '1',
+    not_show_create_rating_guide: '1'
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -74,6 +75,7 @@ export default {
           processEditDatas:[],
           not_show_create_node_guide: '1',
           not_show_create_form_guide: '1',
+          not_show_create_rating_guide: '1'
         }
       })
       if (calback && typeof calback == 'function') calback()
@@ -465,6 +467,7 @@ export default {
           payload: {
             not_show_create_node_guide: res.data.flow_template_node,
             not_show_create_form_guide: res.data.flow_template_form,
+            not_show_create_rating_guide: res.data.flow_template_score
           }
         })
       } else {

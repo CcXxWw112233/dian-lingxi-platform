@@ -76,6 +76,14 @@ export default class ConfigureStepTypeThree_one extends Component {
       }
 
     }
+    if (visible) {
+      this.props.dispatch({
+        type: 'publicProcessDetailModal/updateDatas',
+        payload: {
+          not_show_create_rating_guide: '1'
+        }
+      })
+    }
     this.setState({
       popoverVisible: visible
     })
