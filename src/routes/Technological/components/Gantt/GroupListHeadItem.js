@@ -1171,7 +1171,7 @@ export default class GroupListHeadItem extends Component {
           <DetailInfo setProjectDetailInfoModalVisible={this.setBoardInfoVisible} modalVisible={board_info_visible} invitationType='1' invitationId={gantt_board_id == '0' ? list_id : gantt_board_id} />
         </div>
         <div onWheel={e => e.stopPropagation()}>
-          <ArchiveSelect board_id={list_id} board_name={list_name} visble={arhcived_modal_visible} setVisible={this.set_arhcived_modal_visible} onOk={this.archivedProjectCalback} />
+          <ArchiveSelect board_id={list_id} board_name={list_name} visible={arhcived_modal_visible} setVisible={this.set_arhcived_modal_visible} onOk={this.archivedProjectCalback} />
         </div>
       </div >
     )

@@ -329,3 +329,12 @@ export async function uploadToOssCalback(data) {
     data
   })
 }
+
+// 根目录下所有文件，所有文件夹包括子文件夹（文件夹不包含文件）(项目归档保存)
+export async function getFolderTreeWithArchives(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/archived/file/tree`,
+    method: 'GET',
+    params
+  })
+}
