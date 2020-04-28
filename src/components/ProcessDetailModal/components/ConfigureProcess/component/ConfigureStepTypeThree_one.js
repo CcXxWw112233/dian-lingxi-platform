@@ -129,7 +129,7 @@ export default class ConfigureStepTypeThree_one extends Component {
     let new_data = JSON.parse(JSON.stringify(score_items || []))
     new_data = new_data.map(item => {
       let new_item = {...item}
-      new_item = {...item, max_score: '100'}
+      new_item = {...item, max_score: '100', weight_ratio: '100'}
       return new_item
     })
     this.setState({

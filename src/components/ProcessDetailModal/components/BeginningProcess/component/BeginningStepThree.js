@@ -454,7 +454,7 @@ export default class BeginningStepThree extends Component {
         {/* 历史评分 */}
         {
           historyCommentsList && historyCommentsList.length != 0 && (
-            <div style={{ minHeight: '170px', borderTop: '1px solid rgba(0,0,0,0.09)', padding: '16px 14px' }}>
+            <div style={{ minHeight: '54px', borderTop: '1px solid rgba(0,0,0,0.09)', padding: '16px 14px' }}>
               <div>
                 <span style={{ color: 'rgba(0,0,0,0.65)', fontSize: '16px', marginRight: '4px', fontWeight: 500 }} className={globalStyles.authTheme}>&#xe90e;</span>
                 <span>历史评分&nbsp;:</span>
