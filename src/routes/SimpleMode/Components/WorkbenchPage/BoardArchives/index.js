@@ -52,10 +52,11 @@ class BoardArchives extends Component {
     } else { //
       new_bread_paths = bread_paths.slice(0, index + 1)
     }
-    this.setState({
-      bread_paths: new_bread_paths
-    })
     const length = new_bread_paths.length
+    this.setState({
+      bread_paths: new_bread_paths,
+      view_type: length > 0 ? '1' : '0'
+    })
     if (length == 0) {
 
     } else if (length == 1) {
@@ -237,6 +238,7 @@ class BoardArchives extends Component {
     this.setState({
       bread_paths: [],
       currentSearchValue: '',
+      view_type: '0',
       isSearchDetailOnfocusOrOnblur: false,
     }, () => {
       // this.queryCommunicationFileData();
