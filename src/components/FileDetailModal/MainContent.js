@@ -225,8 +225,8 @@ class MainContent extends Component {
     await this.props.updateStateDatas({
       isPdfLoaded: true
     })
-    await this.fetchConvertPdfAlsoUpdateVersion({ file_id: id, file_name: file_name, folder_id: folder_id })
     await this.updateProcessPercent()
+    await this.fetchConvertPdfAlsoUpdateVersion({ file_id: id, file_name: file_name, folder_id: folder_id })
     // this.setState({
     //   is_petty_loading: !isZoomPictureFullScreenMode,
     //   is_large_loading: isZoomPictureFullScreenMode,
