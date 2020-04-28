@@ -139,7 +139,7 @@ export default class BeginningStepThree_one extends Component {
         return item
       }
     })
-    if (!current_socre || (current_socre && current_socre.score_items.length == '0')) return []
+    if (!current_socre || (current_socre && current_socre.score_items && current_socre.score_items.length == '0')) return []
     return current_socre.score_items || []
   }
 
