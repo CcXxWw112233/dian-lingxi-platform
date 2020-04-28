@@ -96,7 +96,7 @@ export default class BeginningStepThree_one extends Component {
     // } else {
     //   this.updateState({ value: '', key: 'value' }, i)
     // }
-    if ((value == '' || value.trimLR() == '') || Number(value) > Number(max_score)) {
+    if ((value == '' || value.trimLR() == '') || Number(value) > Number(max_score) || isNaN(value)) {
       this.updateState({ value: '', key: 'value' }, i)
       return
     }

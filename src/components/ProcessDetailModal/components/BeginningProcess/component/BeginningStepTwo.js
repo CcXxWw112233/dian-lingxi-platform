@@ -323,8 +323,9 @@ export default class BeginningStepTwo extends Component {
     const { comment, pass, processed, avatar, name, time } = item
     return (
       <div>
+        {/* 明星说暂时方案用comment判断 */}
         {
-          processed == '2' ? (
+          comment && comment != '' ? (
             <div className={indexStyles.appListWrapper}>
               <div className={indexStyles.app_left}>
                 <div className={indexStyles.approve_user} style={{ position: 'relative', marginRight: '16px' }}>
@@ -474,15 +475,15 @@ export default class BeginningStepTwo extends Component {
         <div style={{ minHeight: '64px', padding: '20px 14px', color: 'rgba(0,0,0,0.45)', borderTop: '1px solid #e8e8e8', marginTop: '15px' }}>
           <span className={globalStyles.authTheme}>&#xe616; 审批方式 : &nbsp;&nbsp;&nbsp;{diffType()}</span>
           <div style={{ marginTop: '12px' }}>
-            {
+            {/* {
               approve_type == '3' && status == '1' || !((transPrincipalList && transPrincipalList.length) && transPrincipalList.find(item => item.processed == '2')) ? ('') : (
                 <div>
                   最新审批:
                 </div>
               )
-            }
+            } */}
             {
-              approve_type == '3' && status == '1' ? ('') : transPrincipalList.map(item => {
+              approve_type == '3' ? ('') : transPrincipalList.map(item => {
                 return (this.renderApprovePersonnelSuggestion(item))
               })
             }
