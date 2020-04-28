@@ -149,7 +149,7 @@ export default class BeginningStepThree_one extends Component {
           <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', background: '#FAFAFA', color: 'rgba(0,0,0,0.45)' }}>
             <th style={{ width: '196px' }}>标题</th>
             <th style={{ width: '58px' }}>
-              最高分值
+              分值
             </th>
           </tr>
           {
@@ -160,7 +160,7 @@ export default class BeginningStepThree_one extends Component {
                     item.is_total == '0' ? (
                       <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>
                         <td style={{ maxWidth: '78px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.title}</td>
-                        <td style={{ color: '#1890FF' }}>{item.max_score}</td>
+                        <td style={{ color: '#1890FF' }}>{item.value}</td>
                       </tr>
                     ) : (
                         <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>
@@ -201,7 +201,7 @@ export default class BeginningStepThree_one extends Component {
                       <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>
                         <td style={{ maxWidth: '78px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.title}</td>
                         <td>{item.weight_ratio}</td>
-                        <td style={{ color: '#1890FF' }}>{item.max_score}</td>
+                        <td style={{ color: '#1890FF' }}>{item.value}</td>
                       </tr>
                     ) : (
                         <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>
@@ -228,7 +228,7 @@ export default class BeginningStepThree_one extends Component {
     return (
       <div>
         {
-          processed == '2' ? (
+          (
             <div className={indexStyles.appListWrapper}>
               <div className={indexStyles.app_left}>
                 <div className={indexStyles.approve_user} style={{ position: 'relative', marginRight: '16px' }}>
@@ -266,7 +266,7 @@ export default class BeginningStepThree_one extends Component {
               </div>
               <div className={indexStyles.app_right}>{timestampToTimeNormal(time, '/', true) || ''}</div>
             </div>
-          ) : ('')
+          )
         }
 
       </div>
@@ -368,7 +368,11 @@ export default class BeginningStepThree_one extends Component {
           <div>
             {
               transPrincipalList && transPrincipalList.length && transPrincipalList.map(item => {
-                return <>{this.renderRatingPersonSuggestion(item)}</>
+                if (item.score_items && item.score_items.length != '0') {
+                  return <>{this.renderRatingPersonSuggestion(item)}</>
+                } else {
+                  return <></>
+                }
               })
             }
           </div>
