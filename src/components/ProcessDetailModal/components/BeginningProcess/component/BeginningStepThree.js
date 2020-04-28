@@ -419,7 +419,7 @@ export default class BeginningStepThree extends Component {
               <span style={{ marginLeft: '4px' }}>评分结果判定：</span>
             </div>
             {
-              (String(score_result_value) && score_result_value != '') && (
+              (String(score_result_value) && score_result_value != '') && score_result_value != '0' && score_result_value && (
                 <div>
                   <span className={indexStyles.rating_label_name}>结果分数:</span>
                   <span style={{ fontSize: '20px', color: '#1890FF' }}>{score_result_value}</span>
