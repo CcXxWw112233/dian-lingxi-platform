@@ -4,6 +4,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import styles from './index.less'
 import { getFolderTreeWithArchives } from '../../../../../../services/technological/file';
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
+import { archiveBoardSaveFile } from '../../../../../../services/technological/project';
 
 const TreeNode = Tree.TreeNode;
 
@@ -37,11 +38,12 @@ export default class ArchiveSelect extends React.Component {
     getFolderTreeWithArchives({ board_id }).then(res => {
       if (isApiResponseOk(res)) {
         const { folder_data = [], file_data = [], board_id, board_name } = res.data
-        const child_data = [].concat(folder_data, file_data)
+        let child_data = [].concat(folder_data, file_data)
+        this.handleTreeData(child_data)
         this.setState({
           treeData: {
             board_name,
-            board_id,
+            board_id: `board_${board_id}`,
             child_data
           }
         })
@@ -49,6 +51,17 @@ export default class ArchiveSelect extends React.Component {
         message.error(res.message)
       }
     })
+  }
+
+  handleTreeData = (data) => { //为每个id前加个类型
+    if (!data) return []
+    for (let val of data) {
+      let { child_data = [], folder_id, file_id } = val
+      if (folder_id) val.folder_id = `folder_${folder_id}`
+      else if (file_id) val.file_id = `file_${file_id}`
+      else ''
+      if (child_data.length) this.handleTreeData(child_data)
+    }
   }
 
   onCancel = () => {
@@ -61,10 +74,29 @@ export default class ArchiveSelect extends React.Component {
 
   onOk = () => {
     const { board_id } = this.props
+    const { checkedKeys = [] } = this.state
+    const is_archived_all = checkedKeys.find(item => item.indexOf('board') != -1) //是否全选
     const params = {
-      board_id
+      board_id,
+      is_archived_all: '0',
+      file_ids: [],
+      folder_ids: []
     }
-    this.props.onOk(params)
+    if (is_archived_all) {
+      params.is_archived_all = '1'
+    } else {
+      params.is_archived_all = '0'
+      params.file_ids = checkedKeys.filter(item => item.indexOf('file') != -1).map(item => item.split('_')[1])
+      params.folder_ids = checkedKeys.filter(item => item.indexOf('folder') != -1).map(item => item.split('_')[1])
+    }
+    // debugger
+    archiveBoardSaveFile(params).then(res => {
+      if (isApiResponseOk(res)) {
+        this.props.onOk(params)
+      } else {
+        message.error(res.message)
+      }
+    })
     this.setState({
       checkedKeys: []
     })
@@ -160,6 +192,7 @@ export default class ArchiveSelect extends React.Component {
   render() {
     const { treeData = {}, checkedKeys = [] } = this.state
     const { visible, board_id, board_name } = this.props
+    console.log('checkedKeys_treeData', treeData)
     return (
       <div >
         <Modal
@@ -181,11 +214,11 @@ export default class ArchiveSelect extends React.Component {
               checkedKeys={checkedKeys}
               onCheck={this.onCheck}
               // checkStrictly
-              defaultExpandedKeys={[board_id]}
+              defaultExpandedKeys={[`board_${board_id}`]}
               checkable>
               <TreeNode
                 icon={<Icon type="caret-down" style={{ fontSize: 20, color: 'rgba(0,0,0,.45)' }} />}
-                key={board_id}
+                key={`board_${board_id}`}
                 title={board_name}>
                 {this.loop(treeData.child_data)}
               </TreeNode>

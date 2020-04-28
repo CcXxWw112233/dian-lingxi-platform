@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
-import { Table, Popconfirm } from 'antd';
+import { Table, Popconfirm, message } from 'antd';
 import { timestampToTimeNormal, filterFileFormatType } from '../../../../../utils/util';
 import { connect } from 'dva';
 import { getOrgNameWithOrgIdFilter, getSubfixName, setBoardIdStorage } from '../../../../../utils/businessFunction';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import indexStyles from './index.less';
+import { archivedProject } from '../../../../../services/technological/project';
+import { isApiResponseOk } from '../../../../../utils/handleResponseData';
 @connect(mapStateToProps)
 export default class CatalogTables extends Component {
     constructor(props) {
@@ -25,7 +27,7 @@ export default class CatalogTables extends Component {
                 dataIndex: 'name',
                 key: 'name',
                 ellipsis: true,
-                width: 230,
+                width: 260,
                 render: (text, item) => {
                     return this.renderKeyName(item)
                 }
@@ -35,11 +37,11 @@ export default class CatalogTables extends Component {
                 dataIndex: 'originator',
                 key: 'originator',
                 ellipsis: true,
-                width: 230,
+                width: 200,
                 render: (_, item) => {
-                    const { originator, size, type } = item
+                    const { archived_by = {}, size, type } = item
                     if (type == '0' || !type) {
-                        return originator
+                        return archived_by.name
                     } else if (type == '1') {
                         return ''
                     } else if (type == '2') {
@@ -51,10 +53,10 @@ export default class CatalogTables extends Component {
             },
             {
                 title: '更新时间',
-                dataIndex: 'updateTime',
-                key: 'updateTime',
+                dataIndex: 'archived_time',
+                key: 'archived_time',
                 ellipsis: true,
-                width: 230,
+                width: 200,
                 render: (text) => {
                     return (
                         timestampToTimeNormal(text)
@@ -66,7 +68,7 @@ export default class CatalogTables extends Component {
                 dataIndex: 'operate',
                 key: 'operate',
                 ellipsis: true,
-                width: 230,
+                width: 200,
                 render: (_, item) => {
                     return (
                         this.renderKeyOperate(item)
@@ -81,10 +83,19 @@ export default class CatalogTables extends Component {
 
     // 操作项合集
     actionsManager = (action, data, event) => {
+        event.stopPropagation()
         const { dispatch } = this.props
         const { type, board_id, id, org_id, file_name, name } = data
         const actionHandles = {
             confirmArchives: () => { //项目归档
+                archivedProject({ board_id, is_archived: '0' }).then(res => {
+                    if (isApiResponseOk(res)) {
+                        message.success('已成功归档该项目')
+                        this.props.deleteDataSourceItem(board_id)
+                    } else {
+                        message.error(res.message)
+                    }
+                })
                 console.log('ssssssssss', 'confirmArchives')
             },
             tableRowClick: () => {
@@ -228,13 +239,13 @@ export default class CatalogTables extends Component {
             <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: 20 }}>
                 <Popconfirm
                     title="你确定要恢复项目吗？"
-                    onConfirm={() => this.actionsManager('confirmArchives', item)}
+                    onConfirm={(e) => this.actionsManager('confirmArchives', item, e)}
                     okText="确定"
                     cancelText="取消"
                 >
                     {
                         type == '0' || !type && (
-                            <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate}`} >&#xe717;</div>
+                            <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate}`} title={'恢复归档'} >&#xe717;</div>
                         )
                     }
                 </Popconfirm>
@@ -257,7 +268,10 @@ export default class CatalogTables extends Component {
         )
     }
     rowSelection = () => {
-        const { columns } = this.state
+        const { view_type } = this.props
+        if (view_type != '1') { //只有在查询项目文件和文件夹列表下才有选择
+            return false
+        }
         return {
             onChange: (selectedRowKeys, selectedRows) => {
                 console.log('onChange', selectedRowKeys, selectedRows);
@@ -276,13 +290,13 @@ export default class CatalogTables extends Component {
         const { workbenchBoxContent_height = 700, view_type, data_source = [] } = this.props
         const scroll_height = workbenchBoxContent_height - 200
         const { columns = [] } = this.state
-
+        console.log('sdasdworkbenchBoxContent_height', workbenchBoxContent_height)
         return (
             <div>
                 <Table
                     onRow={record => {
                         return {
-                            onClick: e => this.actionsManager('tableRowClick', record), // 点击行
+                            onClick: e => this.actionsManager('tableRowClick', record, e), // 点击行
                         };
                     }}
                     dataSource={data_source}

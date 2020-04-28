@@ -62,7 +62,8 @@ export default class CommunicationFirstScreenHeader extends Component {
             currentSelectBoardId,
             currentItemLayerId,
             currentSearchValue,
-            descriptionTitle
+            descriptionTitle,
+            disabled
         } = this.props;
         return (
             <div className={styles.communicationFirstScreenHeader}>
@@ -112,6 +113,7 @@ export default class CommunicationFirstScreenHeader extends Component {
                         style={{ width: '100%', resize: 'none' }}
                         autoFocus={true}
                         autosize={true}
+                        disabled={disabled}
                         // onChange={(e) => { this.inputOnChange(e) }}
                         onChange={this.inputOnChange.bind(this)}
                         onBlur={() => { this.inputOnBlur() }}

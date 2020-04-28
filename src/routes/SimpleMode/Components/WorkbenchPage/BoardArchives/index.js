@@ -15,6 +15,7 @@ import CatalogTables from './CatalogTables'
 import { getGanttBoardsFiles } from '../../../../../services/technological/gantt';
 import { isApiResponseOk } from '../../../../../utils/handleResponseData';
 import { message } from 'antd';
+import { getArchivesBoards } from '../../../../../services/technological/project';
 class BoardArchives extends Component {
   constructor(props) {
     super(props)
@@ -26,14 +27,12 @@ class BoardArchives extends Component {
       currentFileDataType: '0', // 当前文件数据类型 '0' 全部文件 '1' 项目下全部文件 '2' 文件夹下全部文件
       currentSelectBoardId: '0',
       currentFolderId: '',
-      view_type: '0', //0项目视图 1文件列表视图, 2混合视图
+      view_type: '1', //0项目视图 1文件列表视图, 2混合视图
     }
     this.timer = null
   }
   componentDidMount() {
     const params = {
-      board_id: "",
-      query_board_ids: [],
       _organization_id: localStorage.getItem('OrganizationId'),
     }
     this.getArchivesList(params)
@@ -56,7 +55,7 @@ class BoardArchives extends Component {
   }
   // 请求位置------------start
   getArchivesList = (params) => { //获取归档的列表
-    getGanttBoardsFiles(params).then(res => {
+    getArchivesBoards(params).then(res => {
       if (isApiResponseOk(res)) {
         const data_source = res.data.map(item => {
           const new_item = { ...item }
@@ -79,6 +78,12 @@ class BoardArchives extends Component {
       } else {
         message.error(res.message)
       }
+    })
+  }
+  deleteDataSourceItem = (id) => {
+    const { data_source = [] } = this.state
+    this.setState({
+      data_source: data_source.filter(item => item.id != id)
     })
   }
   //请求位置--------------end
@@ -236,6 +241,7 @@ class BoardArchives extends Component {
           {/* 首屏-文件路径面包屑/搜索 */}
           {
             <CommunicationFirstScreenHeader
+              disabled
               descriptionTitle={'档案'}
               bread_paths={bread_paths}
               currentSearchValue={currentSearchValue}
@@ -270,7 +276,12 @@ class BoardArchives extends Component {
               </div>
             )
           }
-          <CatalogTables workbenchBoxContent_height view_type={view_type} data_source={data_source} setBreadPaths={this.setBreadPaths} />
+          <CatalogTables
+            deleteDataSourceItem={this.deleteDataSourceItem}
+            workbenchBoxContent_height={workbenchBoxContent_height}
+            view_type={view_type}
+            data_source={data_source}
+            setBreadPaths={this.setBreadPaths} />
         </div>
       </div>
     );
