@@ -77,8 +77,13 @@ export default class EditStepTypeThree extends Component {
   }
 
   renderEditDetailContent = () => {
-    const { itemValue, itemKey } = this.props
+    const { itemValue, itemKey, processEditDatas = [] } = this.props
     const { count_type, result_condition_type, result_case_pass, result_case_other, result_value } = itemValue
+    let newData = processEditDatas.find(item => item.is_edit == '0')
+    let flag = false
+    if (newData && Object.keys(newData).length) {
+      flag = true
+    }
     return (
       <div>
         {/* 渲染评分项 */}
@@ -119,7 +124,7 @@ export default class EditStepTypeThree extends Component {
         </div>
         {/* 编辑按钮 */}
         <div style={{ paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center' }}>
-          <Button onClick={this.handleEnterConfigureProcess} type="primary">编辑</Button>
+          <Button disabled={flag} onClick={this.handleEnterConfigureProcess} type="primary">编辑</Button>
         </div>
       </div>
     )
