@@ -71,7 +71,7 @@ export default class BeginningStepThree extends Component {
     const { processEditDatas = [], itemKey } = this.props
     let flag
     let temp_item
-    const reg = /^([1-9]\d{0,2}(\.\d{1,2})?|1000)$/
+    const reg = /^([0-9]\d{0,2}(\.\d{1,2})?|1000)$/
     let new_data = processEditDatas[itemKey]['score_items'] || []
     flag = new_data.every(item => reg.test(item.value))
     return flag
