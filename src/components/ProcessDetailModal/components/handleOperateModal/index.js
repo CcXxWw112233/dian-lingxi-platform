@@ -130,6 +130,19 @@ const transformNewRecipientsToString = (item) => {
   }, [])
 }
 
+// 去除评分节点中的最终分数以及value值
+const wipeOffSomeDataWithScoreNodes = (item) => {
+  if (!!!item) return []
+  const { score_items = [] } = item
+  let newScoreItems = JSON.parse(JSON.stringify(score_items || []))
+  newScoreItems = (newScoreItems.filter(val => val.is_total != '1') || []).map(item => {
+    let new_item = {...item}
+    new_item && new_item.value ? delete new_item.value : ''
+    return new_item
+  })
+  return newScoreItems || []
+}
+
 // 渲染时、天、月
 const renderTimeType = (type) => {
   let description = ''
@@ -219,6 +232,7 @@ export {
   arrayNonRepeatfy,
   transformNewAssigneesToString,
   transformNewRecipientsToString,
+  wipeOffSomeDataWithScoreNodes,
   computing_mode,
   result_score_option,
   result_score_fall_through_with_others,

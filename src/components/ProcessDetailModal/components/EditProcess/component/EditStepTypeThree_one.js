@@ -10,8 +10,12 @@ export default class EditStepTypeThree_one extends Component {
 
   constructor(props) {
     super(props)
+    let temp_items = []
+    if (props.itemValue && props.itemValue.score_items) {
+      temp_items = props.itemValue.score_items.filter(item => item.is_total != '1') || []
+    }
     this.state = {
-      score_items: props.itemValue && props.itemValue.score_items ? JSON.parse(JSON.stringify(props.itemValue.score_items || [])) : [],
+      score_items: props.itemValue && props.itemValue.score_items ? JSON.parse(JSON.stringify(temp_items || [])) : [],
       clientWidth: document.getElementById(`ratingItems_${props.itemKey}`) ? document.getElementById(`ratingItems_${props.itemKey}`).clientWidth : 420,
     }
     this.resizeTTY = this.resizeTTY.bind(this)

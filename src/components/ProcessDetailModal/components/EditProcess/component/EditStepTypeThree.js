@@ -78,7 +78,7 @@ export default class EditStepTypeThree extends Component {
 
   renderEditDetailContent = () => {
     const { itemValue, itemKey, processEditDatas = [] } = this.props
-    const { count_type, result_condition_type, result_case_pass, result_case_other, result_value } = itemValue
+    const { score_node_set: { count_type, result_condition_type, result_case_pass, result_case_other, result_value } } = itemValue
     let newData = processEditDatas.find(item => item.is_edit == '0')
     let flag = false
     if (newData && Object.keys(newData).length) {

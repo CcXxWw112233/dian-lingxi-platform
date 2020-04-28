@@ -19,7 +19,8 @@ export default class ConfigureStepTypeThree extends Component {
     this.state = {
       // principalList
       designatedPersonnelList: props.itemValue.assignees ? props.itemValue.assignees.split(',') : [], // 指定人员的列表
-      local_result_score_value: props.itemValue && props.itemValue.result_value ? props.itemValue.result_value : '60'
+      local_score_node_set: props.itemValue && props.itemValue.score_node_set ? props.itemValue.score_node_set : {},
+      local_result_score_value: props.itemValue && props.itemValue.score_node_set ? props.itemValue.score_node_set.result_value : '60'
     }
   }
 
@@ -36,14 +37,24 @@ export default class ConfigureStepTypeThree extends Component {
     })
   }
 
+  updateScoreNodeSet = (data, key) => {
+    const { value } = data
+    const { local_score_node_set = {} } = this.state
+    local_score_node_set[key] = value
+    this.setState({
+      local_score_node_set
+    })
+    this.updateConfigureProcess({ value: local_score_node_set }, 'score_node_set')
+  }
+
   // 锁定评分人
   handleScoreLocked = (checked) => {
-    this.updateConfigureProcess({value: checked ? '1' : '0'},'score_locked')
+    this.updateScoreNodeSet({value: checked ? '1' : '0'},'score_locked')
   }
 
   // 评分是否可见
   handleScoreDisplay = (checked) => {
-    this.updateConfigureProcess({value: checked ? '0' : '1'},'score_display')
+    this.updateScoreNodeSet({value: checked ? '0' : '1'},'score_display')
   }
 
   // 把assignees中的执行人,在项目中的所有成员过滤出来
@@ -127,17 +138,17 @@ export default class ConfigureStepTypeThree extends Component {
   handleComputingModeChange = (value) => {
     switch (value) {
       case "1":
-        this.updateConfigureProcess({ value: '1' }, 'count_type')
+        this.updateScoreNodeSet({ value: '1' }, 'count_type')
         break;
       case "average":
         // 默认选择第一个
-        this.updateConfigureProcess({ value: '2' }, 'count_type')
+        this.updateScoreNodeSet({ value: '2' }, 'count_type')
         break
       case '2':
-        this.updateConfigureProcess({ value: '2' }, 'count_type')
+        this.updateScoreNodeSet({ value: '2' }, 'count_type')
         break
       case '3':
-        this.updateConfigureProcess({ value: '3' }, 'count_type')
+        this.updateScoreNodeSet({ value: '3' }, 'count_type')
         break
       default:
         break;
@@ -148,19 +159,19 @@ export default class ConfigureStepTypeThree extends Component {
   handleResultScoreOptionChange = (value) => {
     switch (value) {
       case '1': // 表示大于
-        this.updateConfigureProcess({ value: '1' }, 'result_condition_type')
+        this.updateScoreNodeSet({ value: '1' }, 'result_condition_type')
         break;
       case '2': // 表示小于
-        this.updateConfigureProcess({ value: '2' }, 'result_condition_type')
+        this.updateScoreNodeSet({ value: '2' }, 'result_condition_type')
         break
       case '3': // 表示等于
-        this.updateConfigureProcess({ value: '3' }, 'result_condition_type')
+        this.updateScoreNodeSet({ value: '3' }, 'result_condition_type')
         break
       case '4': // 表示大于或等于
-        this.updateConfigureProcess({ value: '4' }, 'result_condition_type')
+        this.updateScoreNodeSet({ value: '4' }, 'result_condition_type')
         break
       case '5': // 表示小于或等于
-        this.updateConfigureProcess({ value: '5' }, 'result_condition_type')
+        this.updateScoreNodeSet({ value: '5' }, 'result_condition_type')
         break
       default:
         break;
@@ -171,13 +182,13 @@ export default class ConfigureStepTypeThree extends Component {
   handleResultScoreFallThrough = (value) => {
     switch (value) {
       case '1': // 表示大于
-        this.updateConfigureProcess({ value: '1' }, 'result_case_pass')
+        this.updateScoreNodeSet({ value: '1' }, 'result_case_pass')
         break;
       case '2': // 表示小于
-        this.updateConfigureProcess({ value: '2' }, 'result_case_pass')
+        this.updateScoreNodeSet({ value: '2' }, 'result_case_pass')
         break
       case '3': // 表示等于
-        this.updateConfigureProcess({ value: '3' }, 'result_case_pass')
+        this.updateScoreNodeSet({ value: '3' }, 'result_case_pass')
         break
       default:
         break;
@@ -188,13 +199,13 @@ export default class ConfigureStepTypeThree extends Component {
   handleRemainingCircumstances = (value) => {
     switch (value) {
       case '1': // 表示大于
-        this.updateConfigureProcess({ value: '1' }, 'result_case_other')
+        this.updateScoreNodeSet({ value: '1' }, 'result_case_other')
         break;
       case '2': // 表示小于
-        this.updateConfigureProcess({ value: '2' }, 'result_case_other')
+        this.updateScoreNodeSet({ value: '2' }, 'result_case_other')
         break
       case '3': // 表示等于
-        this.updateConfigureProcess({ value: '3' }, 'result_case_other')
+        this.updateScoreNodeSet({ value: '3' }, 'result_case_other')
         break
       default:
         break;
@@ -208,38 +219,12 @@ export default class ConfigureStepTypeThree extends Component {
     this.setState({
       local_result_score_value: String(value)
     })
-    this.updateConfigureProcess({ value: String(value) }, 'result_value')    
-    // if (reg.test(value)) {
-    //   this.updateConfigureProcess({ value: String(value) }, 'result_value')
-    // } else {
-    //   this.updateConfigureProcess({ value: '' }, 'result_value')
-    // }
+    this.updateScoreNodeSet({ value: String(value) }, 'result_value')    
   }
 
   handleResultScoreBlur = (e) => {
     e && e.stopPropagation()
     return
-    let value = e.target.value
-    const reg = /^([0-9]\d{0,3}(\.\d{1,2})?|10000)$/
-    let point_index = String(value).indexOf('.')
-    if (reg.test(value)) {
-      this.setState({
-        local_result_score_value: String(value)
-      })
-      this.updateConfigureProcess({ value: String(value) }, 'result_value')
-    } else {
-      if (point_index > 0) {
-        this.setState({
-          local_result_score_value: String(value).substring(0,point_index + 1)
-        })
-        this.updateConfigureProcess({ value: String(value).substring(0,point_index + 1) }, 'result_value')
-      } else {
-        this.setState({
-          local_result_score_value: ''
-        })
-        this.updateConfigureProcess({ value: '' }, 'result_value')
-      }
-    }
   }
 
 
@@ -323,8 +308,8 @@ export default class ConfigureStepTypeThree extends Component {
 
   render() {
     const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id } } = this.props
-    const { count_type, result_condition_type, result_value, result_case_pass, result_case_other, score_locked, score_display } = itemValue
-    const { local_result_score_value } = this.state
+    const { local_score_node_set = {}, local_result_score_value } = this.state
+    const { count_type, result_condition_type, result_value, result_case_pass, result_case_other, score_locked, score_display } = local_score_node_set
     return (
       <div>
         {/* 评分项 */}

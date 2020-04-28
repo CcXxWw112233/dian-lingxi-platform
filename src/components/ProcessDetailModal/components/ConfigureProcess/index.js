@@ -279,8 +279,9 @@ export default class ConfigureProcess extends Component {
     let confirmButtonDisabled
     const { itemValue } = this.props
     const { node_type, name, forms = [], assignee_type, assignees, 
-      cc_type, recipients, approve_value, approve_type,  result_value
+      cc_type, recipients, approve_value, approve_type,  score_node_set = {}
     } = itemValue
+    let result_value = score_node_set && Object.keys(score_node_set).length ? score_node_set.result_value : ''
     let newAssignees
     let newRecipients
     if (!assignees || assignees == '') {

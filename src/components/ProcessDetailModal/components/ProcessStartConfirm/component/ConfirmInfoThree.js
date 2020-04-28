@@ -79,7 +79,7 @@ export default class ConfirmInfoThree extends Component {
 
   renderEditDetailContent = () => {
     const { itemValue, itemKey } = this.props
-    const { count_type, result_condition_type, result_case_pass, result_case_other, result_value } = itemValue
+    const { score_node_set: { count_type, result_condition_type, result_case_pass, result_case_other, result_value } } = itemValue
     return (
       <div>
         {/* 渲染评分项 */}
