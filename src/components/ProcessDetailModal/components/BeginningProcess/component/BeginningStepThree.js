@@ -291,7 +291,7 @@ export default class BeginningStepThree extends Component {
           <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', background: '#FAFAFA', color: 'rgba(0,0,0,0.45)' }}>
             <th style={{ width: '196px' }}>标题</th>
             <th style={{ width: '58px' }}>
-              最高分值
+              分值
             </th>
           </tr>
           {
@@ -301,13 +301,13 @@ export default class BeginningStepThree extends Component {
                   {
                     item.is_total == '0' ? (
                       <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>
-                        <td style={{ maxWidth: '78px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.title}</td>
-                        <td style={{ color: '#1890FF' }}>{item.max_score}</td>
+                        <td style={{ maxWidth: '78px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.title || ''}</td>
+                        <td style={{ color: '#1890FF' }}>{item.value || ''}</td>
                       </tr>
                     ) : (
                         <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>
-                          <td style={{ maxWidth: '156px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: '#1890FF' }}>{item.title}</td>
-                          <td style={{ color: '#1890FF' }}>{item.value}</td>
+                          <td style={{ maxWidth: '156px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: '#1890FF' }}>{item.title || ''}</td>
+                          <td style={{ color: '#1890FF' }}>{item.value || ''}</td>
                         </tr>
                       )
                   }
@@ -331,7 +331,7 @@ export default class BeginningStepThree extends Component {
               权重占比%
             </th>
             <th style={{ width: '58px' }}>
-              最高分值
+              分值
             </th>
           </tr>
           {
@@ -341,15 +341,15 @@ export default class BeginningStepThree extends Component {
                   {
                     item.is_total == '0' ? (
                       <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>
-                        <td style={{ maxWidth: '78px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.title}</td>
-                        <td>{item.weight_ratio}</td>
-                        <td style={{ color: '#1890FF' }}>{item.max_score}</td>
+                        <td style={{ maxWidth: '78px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.title || ''}</td>
+                        <td>{item.weight_ratio || ''}</td>
+                        <td style={{ color: '#1890FF' }}>{item.value || ''}</td>
                       </tr>
                     ) : (
                         <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>
-                          <td style={{ maxWidth: '78px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: '#1890FF' }}>{item.title}</td>
-                          <td>{item.weight_ratio}</td>
-                          <td style={{ color: '#1890FF' }}>{item.value}</td>
+                          <td style={{ maxWidth: '78px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: '#1890FF' }}>{item.title || ''}</td>
+                          <td>{item.weight_ratio || ''}</td>
+                          <td style={{ color: '#1890FF' }}>{item.value || ''}</td>
                         </tr>
                       )
                   }
