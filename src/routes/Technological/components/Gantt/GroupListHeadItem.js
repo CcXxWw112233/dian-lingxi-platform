@@ -513,6 +513,12 @@ export default class GroupListHeadItem extends Component {
       }
     })
     dispatch({
+      type: 'workbench/getProjectList',
+      payload: {
+
+      }
+    })
+    dispatch({
       type: 'gantt/getGttMilestoneList',
       payload: {
       }

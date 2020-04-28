@@ -7,6 +7,8 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import indexStyles from './index.less';
 import { archivedProject } from '../../../../../services/technological/project';
 import { isApiResponseOk } from '../../../../../utils/handleResponseData';
+import FileDetailModal from '@/components/FileDetailModal'
+
 @connect(mapStateToProps)
 export default class CatalogTables extends Component {
     constructor(props) {
@@ -88,9 +90,16 @@ export default class CatalogTables extends Component {
         const { type, board_id, id, org_id, file_name, name } = data
         const actionHandles = {
             confirmArchives: () => { //项目归档
+                event.stopPropagation()
                 archivedProject({ board_id, is_archived: '0' }).then(res => {
                     if (isApiResponseOk(res)) {
                         message.success('已成功归档该项目')
+                        dispatch({
+                            type: 'workbench/getProjectList',
+                            payload: {
+
+                            }
+                        })
                         this.props.deleteDataSourceItem(board_id)
                     } else {
                         message.error(res.message)
@@ -240,12 +249,13 @@ export default class CatalogTables extends Component {
                 <Popconfirm
                     title="你确定要恢复项目吗？"
                     onConfirm={(e) => this.actionsManager('confirmArchives', item, e)}
+                    onCancel={e => e.stopPropagation()}
                     okText="确定"
                     cancelText="取消"
                 >
                     {
                         type == '0' || !type && (
-                            <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate}`} title={'恢复归档'} >&#xe717;</div>
+                            <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate}`} onClick={e => e.stopPropagation()} title={'恢复归档'} >&#xe717;</div>
                         )
                     }
                 </Popconfirm>

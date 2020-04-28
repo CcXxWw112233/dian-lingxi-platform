@@ -16,6 +16,9 @@ import { getGanttBoardsFiles } from '../../../../../services/technological/gantt
 import { isApiResponseOk } from '../../../../../utils/handleResponseData';
 import { message } from 'antd';
 import { getArchivesBoards } from '../../../../../services/technological/project';
+import { getFileList } from '../../../../../services/technological/file';
+import FileDetailModal from '@/components/FileDetailModal'
+
 class BoardArchives extends Component {
   constructor(props) {
     super(props)
@@ -27,7 +30,7 @@ class BoardArchives extends Component {
       currentFileDataType: '0', // 当前文件数据类型 '0' 全部文件 '1' 项目下全部文件 '2' 文件夹下全部文件
       currentSelectBoardId: '0',
       currentFolderId: '',
-      view_type: '1', //0项目视图 1文件列表视图, 2混合视图
+      view_type: '0', //0项目视图 1文件列表视图, 2混合视图
     }
     this.timer = null
   }
@@ -36,6 +39,7 @@ class BoardArchives extends Component {
       _organization_id: localStorage.getItem('OrganizationId'),
     }
     this.getArchivesList(params)
+    // this.getFList()
   }
 
   setBreadPaths = ({ path_item = {} }) => { //面包屑设置路径
@@ -51,7 +55,14 @@ class BoardArchives extends Component {
     this.setState({
       bread_paths: new_bread_paths
     })
+    const length = new_bread_paths.length
+    if (length == 0) {
 
+    } else if (length == 1) {
+      this.getFList({ folder_id: '1255070691447934978' })
+    } else {
+      this.getFList({ folder_id: new_bread_paths[length - 1].folder_id })
+    }
   }
   // 请求位置------------start
   getArchivesList = (params) => { //获取归档的列表
@@ -86,8 +97,35 @@ class BoardArchives extends Component {
       data_source: data_source.filter(item => item.id != id)
     })
   }
-  //请求位置--------------end
+  getFList = ({ folder_id }) => {
+    getFileList({
+      folder_id: folder_id || '1255070691447934978',
+      board_id: '1255070689694715904'
+    }).then(res => {
+      if (isApiResponseOk(res)) {
+        const { file_data = [], folder_data = [] } = res.data
+        const _folder_data = folder_data.map(item => { return { ...item, id: item.folder_id, name: item.folder_name } })
+        const _file_data = file_data.map(item => { return { ...item, name: item.file_name } })
 
+        const data_source = [].concat(_folder_data, _file_data)
+        this.setState({
+          data_source
+        })
+      }
+    })
+  }
+  //请求位置--------------end
+  setPreviewFileModalVisibile = () => {
+    this.props.dispatch({
+      type: 'publicFileDetailModal/updateDatas',
+      payload: {
+        isInOpenFile: false,
+        filePreviewCurrentFileId: '',
+        fileType: '',
+        currentPreviewFileName: ''
+      }
+    })
+  }
 
 
   // 处理传值
@@ -202,7 +240,11 @@ class BoardArchives extends Component {
       isSearchDetailOnfocusOrOnblur: false,
     }, () => {
       // this.queryCommunicationFileData();
-      this.getThumbnailFilesData();
+      // this.getThumbnailFilesData();
+      const params = {
+        _organization_id: localStorage.getItem('OrganizationId'),
+      }
+      this.getArchivesList(params)
     });
   }
   // 搜索-全部文件/当前文件点击
@@ -231,10 +273,10 @@ class BoardArchives extends Component {
     });
   }
   render() {
-    const { workbenchBoxContent_height = 600 } = this.props
+    const { workbenchBoxContent_height = 600, isInOpenFile, fileType, filePreviewCurrentFileId } = this.props
     const { currentSearchValue, bread_paths = [], isSearchDetailOnfocusOrOnblur, currentFileDataType, view_type, data_source = [] } = this.state
     const currentIayerFolderName = bread_paths && bread_paths.length && (bread_paths[bread_paths.length - 1].board_name || bread_paths[bread_paths.length - 1].folder_name);
-    console.log('sssssssssss_data_source', data_source)
+    console.log('sssssssssss_data_source', isInOpenFile)
     return (
       <div className={indexStyles.main_out} style={{ height: workbenchBoxContent_height }}>
         <div className={indexStyles.main} >
@@ -282,6 +324,17 @@ class BoardArchives extends Component {
             view_type={view_type}
             data_source={data_source}
             setBreadPaths={this.setBreadPaths} />
+          {
+            isInOpenFile && (
+              <FileDetailModal
+                fileType={fileType} filePreviewCurrentFileId={filePreviewCurrentFileId}
+                file_detail_modal_visible={isInOpenFile}
+                setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
+              // whetherUpdateFolderListData={this.whetherUpdateFolderListData}
+              />
+            )
+          }
+
         </div>
       </div>
     );
@@ -300,6 +353,7 @@ function mapStateToProps({
     allOrgBoardTreeList,
     simplemodeCurrentProject
   },
+  publicFileDetailModal: { isInOpenFile, fileType, filePreviewCurrentFileId },
   projectDetailFile: {
     datas: {
       selectedRowKeys
@@ -312,7 +366,8 @@ function mapStateToProps({
     currentBoardDetail,
     boardFileListData,
     allOrgBoardTreeList,
-    simplemodeCurrentProject
+    simplemodeCurrentProject,
+    isInOpenFile, fileType, filePreviewCurrentFileId,
   }
 }
 export default connect(mapStateToProps)(BoardArchives)
