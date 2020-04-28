@@ -12,21 +12,79 @@ import BoarderfilesHeader from '@/routes/Technological/components/ProjectDetail/
 import { setShowSimpleModel } from '../../../../../services/technological/organizationMember';
 import CommunicationFirstScreenHeader from '../BoardCommunication/components/FirstScreen/CommunicationFirstScreenHeader';
 import CatalogTables from './CatalogTables'
+import { getGanttBoardsFiles } from '../../../../../services/technological/gantt';
+import { isApiResponseOk } from '../../../../../utils/handleResponseData';
+import { message } from 'antd';
 class BoardArchives extends Component {
   constructor(props) {
     super(props)
     this.state = {
       bread_paths: [], // 面包屑路径
+      data_source: [], //列表数据
       isSearchDetailOnfocusOrOnblur: false, // 搜索框聚焦显示当前搜索条件详情
       currentSearchValue: '', // 搜索框输入值
       currentFileDataType: '0', // 当前文件数据类型 '0' 全部文件 '1' 项目下全部文件 '2' 文件夹下全部文件
       currentSelectBoardId: '0',
       currentFolderId: '',
       view_type: '0', //0项目视图 1文件列表视图, 2混合视图
-
     }
     this.timer = null
   }
+  componentDidMount() {
+    const params = {
+      board_id: "",
+      query_board_ids: [],
+      _organization_id: localStorage.getItem('OrganizationId'),
+    }
+    this.getArchivesList(params)
+  }
+
+  setBreadPaths = ({ path_item = {} }) => { //面包屑设置路径
+    const { bread_paths = [] } = this.state
+    const { id } = path_item
+    let new_bread_paths = []
+    const index = bread_paths.findIndex(item => item.id == id)
+    if (index == -1) { //如果路径中不包含就往后添加
+      new_bread_paths = [].concat(bread_paths, [path_item])
+    } else { //
+      new_bread_paths = bread_paths.slice(0, index + 1)
+    }
+    this.setState({
+      bread_paths: new_bread_paths
+    })
+
+  }
+  // 请求位置------------start
+  getArchivesList = (params) => { //获取归档的列表
+    getGanttBoardsFiles(params).then(res => {
+      if (isApiResponseOk(res)) {
+        const data_source = res.data.map(item => {
+          const new_item = { ...item }
+          const { type, board_id, folder_id, file_id, id, board_name, file_name, folder_name, name } = item // type undefine/1,2 项目/文件夹/文件
+          if (type == '1') {
+            new_item.name = name || folder_name
+            new_item.id = id || folder_id
+          } else if (type == '2') {
+            new_item.name = name || file_name
+            new_item.id = id || file_id
+          } else {
+            new_item.name = name || board_name
+            new_item.id = id || board_id
+          }
+          return new_item
+        })
+        this.setState({
+          data_source
+        })
+      } else {
+        message.error(res.message)
+      }
+    })
+  }
+  //请求位置--------------end
+
+
+
   // 处理传值
   getParams = () => {
     const {
@@ -75,7 +133,7 @@ class BoardArchives extends Component {
   // 触发搜索框，是否选择搜索详情
   isShowSearchOperationDetail = (value, searchValue) => {
     this.setState({
-      isSearchDetailOnfocusOrOnblur: value,
+      isSearchDetailOnfocusOrOnblur: !!value,
       currentSearchValue: searchValue,
     }, () => {
       if (this.timer) clearTimeout(this.timer)
@@ -169,21 +227,23 @@ class BoardArchives extends Component {
   }
   render() {
     const { workbenchBoxContent_height = 600 } = this.props
-    const { currentSearchValue, bread_paths = [], isSearchDetailOnfocusOrOnblur, currentFileDataType, view_type } = this.state
+    const { currentSearchValue, bread_paths = [], isSearchDetailOnfocusOrOnblur, currentFileDataType, view_type, data_source = [] } = this.state
     const currentIayerFolderName = bread_paths && bread_paths.length && (bread_paths[bread_paths.length - 1].board_name || bread_paths[bread_paths.length - 1].folder_name);
-
+    console.log('sssssssssss_data_source', data_source)
     return (
       <div className={indexStyles.main_out} style={{ height: workbenchBoxContent_height }}>
         <div className={indexStyles.main} >
           {/* 首屏-文件路径面包屑/搜索 */}
           {
             <CommunicationFirstScreenHeader
+              descriptionTitle={'档案'}
               bread_paths={bread_paths}
               currentSearchValue={currentSearchValue}
               isShowSearchOperationDetail={this.isShowSearchOperationDetail}
               getThumbnailFilesData={this.getThumbnailFilesData}
               searchCommunicationFilelist={this.searchCommunicationFilelist}
               goAllFileStatus={this.goAllFileStatus}
+              setBreadPaths={this.setBreadPaths}
             />
           }
           {
@@ -210,7 +270,7 @@ class BoardArchives extends Component {
               </div>
             )
           }
-          <CatalogTables workbenchBoxContent_height view_type={view_type} />
+          <CatalogTables workbenchBoxContent_height view_type={view_type} data_source={data_source} setBreadPaths={this.setBreadPaths} />
         </div>
       </div>
     );

@@ -1,70 +1,23 @@
 import React, { Component } from 'react'
-import { Table } from 'antd';
+import { Table, Popconfirm } from 'antd';
 import { timestampToTimeNormal, filterFileFormatType } from '../../../../../utils/util';
 import { connect } from 'dva';
-import { getOrgNameWithOrgIdFilter, getSubfixName } from '../../../../../utils/businessFunction';
+import { getOrgNameWithOrgIdFilter, getSubfixName, setBoardIdStorage } from '../../../../../utils/businessFunction';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import indexStyles from './index.less';
-const dataSource = [
-    {
-        id: '00',
-        name: '档案1',
-        originator: '吴彦祖',
-        updateTime: '1587894708',
-        operate: '',
-        type: '0',
-    },
-    {
-        id: '01',
-        name: '档案2',
-        originator: '金城武',
-        updateTime: '1587894708',
-        operate: '',
-        type: '1'
-    },
-    {
-        id: '012',
-        name: '档案3',
-        originator: '金城武',
-        updateTime: '1587894708',
-        operate: '',
-        type: '1'
-    },
-    {
-        id: '02',
-        name: '这是文件.jpg',
-        originator: '吴彦祖',
-        updateTime: '1587894708',
-        operate: '',
-        size: '120MB',
-        type: '2'
-    },
-    {
-        id: '03',
-        name: '这是文件2.jpg',
-        originator: '吴彦祖',
-        updateTime: '1587894708',
-        operate: '',
-        size: '120MB',
-        type: '2'
-    },
-]
 @connect(mapStateToProps)
 export default class CatalogTables extends Component {
     constructor(props) {
         super(props)
         this.state = {
             columns: [],
-            dataSource: [], //{ type: '',} //type 0/1/2表示项目/文件夹/文件
             selectedRows: [], //已选列表
         }
     }
     componentDidMount() {
         this.setTableData()
     }
-    tableRowClick = () => {
 
-    }
     setTableData = () => {
         const columns = [
             {
@@ -123,8 +76,48 @@ export default class CatalogTables extends Component {
         ]
         this.setState({
             columns,
-            dataSource
         })
+    }
+
+    // 操作项合集
+    actionsManager = (action, data, event) => {
+        const { dispatch } = this.props
+        const { type, board_id, id, org_id, file_name, name } = data
+        const actionHandles = {
+            confirmArchives: () => { //项目归档
+                console.log('ssssssssss', 'confirmArchives')
+            },
+            tableRowClick: () => {
+                if (type == '1') {
+                    const new_item_value = { ...data }
+                    this.props.setBreadPaths && this.props.setBreadPaths({ path_item: new_item_value })
+                } else if (type == '2') {
+                    setBoardIdStorage(board_id, org_id)
+                    dispatch({
+                        type: 'projectDetail/projectDetailInfo',
+                        payload: {
+                            id: board_id
+                        }
+                    })
+                    dispatch({
+                        type: 'publicFileDetailModal/updateDatas',
+                        payload: {
+                            filePreviewCurrentFileId: id,
+                            fileType: getSubfixName(name || file_name),
+                            isInOpenFile: true,
+                            currentPreviewFileName: name || file_name
+                        }
+                    })
+                } else if (!!!type || type == '0') {
+                    const new_item_value = { ...data }
+                    this.props.setBreadPaths && this.props.setBreadPaths({ path_item: new_item_value })
+                } else {
+
+                }
+            },
+
+        }
+        if (typeof actionHandles[action] == 'function') return actionHandles[action]()
     }
 
     // 列表name
@@ -233,11 +226,19 @@ export default class CatalogTables extends Component {
         const { type } = item
         return (
             <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: 20 }}>
-                {
-                    type == '0' && (
-                        <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate}`} >&#xe717;</div>
-                    )
-                }
+                <Popconfirm
+                    title="你确定要恢复项目吗？"
+                    onConfirm={() => this.actionsManager('confirmArchives', item)}
+                    okText="确定"
+                    cancelText="取消"
+                >
+                    {
+                        type == '0' || !type && (
+                            <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate}`} >&#xe717;</div>
+                        )
+                    }
+                </Popconfirm>
+
                 {
                     type == '2' && (
                         <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate}`} style={{ marginLeft: 16 }}>&#xe7f1;</div>
@@ -250,8 +251,8 @@ export default class CatalogTables extends Component {
     renderTitleOperate = () => {
         return (
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate_2} ${indexStyles.table_operate_2_selected}`} style={{ marginRight: 16 }}>&#xe7f5;</div>
-                <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate_2}`} >&#xe6c5;</div>
+                <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate_2} ${indexStyles.table_operate_2_selected}`} >&#xe7f5;</div>
+                {/* <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate_2}`} style={{ marginLeft: 16 }}>&#xe6c5;</div> */}
             </div>
         )
     }
@@ -272,19 +273,19 @@ export default class CatalogTables extends Component {
         }
     };
     render() {
-        const { workbenchBoxContent_height = 700, view_type } = this.props
+        const { workbenchBoxContent_height = 700, view_type, data_source = [] } = this.props
         const scroll_height = workbenchBoxContent_height - 200
-        const { dataSource = [], columns = [] } = this.state
+        const { columns = [] } = this.state
 
         return (
             <div>
                 <Table
                     onRow={record => {
                         return {
-                            onClick: e => this.tableRowClick(record), // 点击行
+                            onClick: e => this.actionsManager('tableRowClick', record), // 点击行
                         };
                     }}
-                    dataSource={dataSource}
+                    dataSource={data_source}
                     columns={columns}
                     rowKey={'id'}
                     showHeader={view_type != '2'}
