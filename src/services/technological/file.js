@@ -69,7 +69,7 @@ export async function fileDownload(params) {
     headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.ids),
     params: {
       ...params,
-      _organization_id: getGlobalData('aboutBoardOrganizationId')
+      _organization_id: params._organization_id || getGlobalData('aboutBoardOrganizationId')
     },
   });
 }

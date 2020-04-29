@@ -31,6 +31,7 @@ class BoardArchives extends Component {
       currentSelectBoardId: '0',
       currentFolderId: '',
       view_type: '0', //0项目视图 1文件列表视图, 2混合视图
+      loading: false,
     }
     this.timer = null
   }
@@ -42,7 +43,7 @@ class BoardArchives extends Component {
     // this.getFList()
   }
 
-  setBreadPaths = ({ path_item = {} }) => { //面包屑设置路径
+  setBreadPaths = ({ path_item = {} }) => { //面包屑设置路径 ，无长度是归档项目列表， 下标0是项目下文件（夹）列表
     const { bread_paths = [] } = this.state
     const { id } = path_item
     let new_bread_paths = []
@@ -53,6 +54,10 @@ class BoardArchives extends Component {
       new_bread_paths = bread_paths.slice(0, index + 1)
     }
     const length = new_bread_paths.length
+    // 设置当前操作项目缓存
+    if (length > 0) {
+      setBoardIdStorage(new_bread_paths[0].board_id, new_bread_paths[0].org_id)
+    }
     this.setState({
       bread_paths: new_bread_paths,
       view_type: length > 0 ? '1' : '0'
@@ -64,10 +69,18 @@ class BoardArchives extends Component {
     } else {
       this.getFList({ folder_id: new_bread_paths[length - 1].folder_id })
     }
+
+
   }
   // 请求位置------------start
   getArchivesList = (params) => { //获取归档的列表
+    this.setState({
+      loading: true
+    })
     getArchivesBoards(params).then(res => {
+      this.setState({
+        loading: false
+      })
       if (isApiResponseOk(res)) {
         const data_source = res.data.map(item => {
           const new_item = { ...item }
@@ -90,6 +103,10 @@ class BoardArchives extends Component {
       } else {
         message.error(res.message)
       }
+    }).catch(err => {
+      this.setState({
+        loading: false
+      })
     })
   }
   deleteDataSourceItem = (id) => {
@@ -99,10 +116,16 @@ class BoardArchives extends Component {
     })
   }
   getFList = ({ folder_id }) => {
+    this.setState({
+      loading: true
+    })
     getFileList({
       folder_id: folder_id || '1255070691447934978',
       board_id: '1255070689694715904'
     }).then(res => {
+      this.setState({
+        loading: false
+      })
       if (isApiResponseOk(res)) {
         const { file_data = [], folder_data = [] } = res.data
         const _folder_data = folder_data.map(item => { return { ...item, id: item.folder_id, name: item.folder_name } })
@@ -113,6 +136,10 @@ class BoardArchives extends Component {
           data_source
         })
       }
+    }).catch(err => {
+      this.setState({
+        loading: false
+      })
     })
   }
   //请求位置--------------end
@@ -276,7 +303,7 @@ class BoardArchives extends Component {
   }
   render() {
     const { workbenchBoxContent_height = 600, isInOpenFile, fileType, filePreviewCurrentFileId } = this.props
-    const { currentSearchValue, bread_paths = [], isSearchDetailOnfocusOrOnblur, currentFileDataType, view_type, data_source = [] } = this.state
+    const { currentSearchValue, bread_paths = [], isSearchDetailOnfocusOrOnblur, currentFileDataType, view_type, data_source = [], loading } = this.state
     const currentIayerFolderName = bread_paths && bread_paths.length && (bread_paths[bread_paths.length - 1].board_name || bread_paths[bread_paths.length - 1].folder_name);
     console.log('sssssssssss_data_source', isInOpenFile)
     return (
@@ -324,6 +351,7 @@ class BoardArchives extends Component {
             deleteDataSourceItem={this.deleteDataSourceItem}
             workbenchBoxContent_height={workbenchBoxContent_height}
             view_type={view_type}
+            loading={loading}
             data_source={data_source}
             setBreadPaths={this.setBreadPaths} />
           {

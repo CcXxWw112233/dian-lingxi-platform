@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Table, Popconfirm, message } from 'antd';
+import { Table, Popconfirm, message, Tooltip } from 'antd';
 import { timestampToTimeNormal, filterFileFormatType } from '../../../../../utils/util';
 import { connect } from 'dva';
 import { getOrgNameWithOrgIdFilter, getSubfixName, setBoardIdStorage } from '../../../../../utils/businessFunction';
@@ -21,7 +21,9 @@ export default class CatalogTables extends Component {
     componentDidMount() {
         this.setTableData()
     }
-
+    componentWillReceiveProps() {
+        this.setTableData()
+    }
     setTableData = () => {
         const columns = [
             {
@@ -87,7 +89,8 @@ export default class CatalogTables extends Component {
     actionsManager = (action, data, event) => {
         event.stopPropagation()
         const { dispatch } = this.props
-        const { type, board_id, id, org_id, file_name, name } = data
+        const { selectedRows = [] } = this.state
+        const { type, board_id, id, org_id, file_name, name, file_resource_id, file_id } = data
         const actionHandles = {
             confirmArchives: () => { //项目归档
                 event.stopPropagation()
@@ -135,6 +138,28 @@ export default class CatalogTables extends Component {
 
                 }
             },
+            download: () => {
+                dispatch({
+                    type: 'projectDetailFile/fileDownload',
+                    payload: {
+                        ids: file_resource_id,
+                        fileIds: file_id,
+                        _organization_id: '1204601022929047552'
+                    }
+                })
+            },
+            downloadMultiple: () => {
+                const ids = selectedRows.map(item => item.file_resource_id).join(',')
+                const fileIds = selectedRows.map(item => item.file_id).join(',')
+                dispatch({
+                    type: 'projectDetailFile/fileDownload',
+                    payload: {
+                        ids,
+                        fileIds,
+                        _organization_id: '1204601022929047552'
+                    }
+                })
+            }
 
         }
         if (typeof actionHandles[action] == 'function') return actionHandles[action]()
@@ -195,7 +220,7 @@ export default class CatalogTables extends Component {
         )
     }
     // 表头name
-    renderTitleName = (item) => {
+    renderTitleName = (item = {}) => {
         const { selectedRows = [] } = this.state
         const { view_type } = this.props
         let name = ''
@@ -210,7 +235,7 @@ export default class CatalogTables extends Component {
                 <div style={{ display: 'flex', paddingRight: 20 }}>
                     <div style={{ lineHeight: '27px' }}> {`${name}名称`}</div>
                     {
-                        length > 0 && (
+                        length > 0 && view_type == '1' && (
                             <>
                                 <div style={{ color: '#1890FF', lineHeight: '27px', fontWeight: 'normal' }}>（已选{length}项）</div>
                                 {
@@ -218,11 +243,16 @@ export default class CatalogTables extends Component {
                                         <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate}`} >&#xe717;</div>
                                     )
                                 }
-                                {
-                                    view_type == '1' && (
-                                        <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate}`} style={{ marginLeft: 16 }}>&#xe7f1;</div>
-                                    )
-                                }
+                                <Tooltip title='下载'>
+                                    {
+                                        view_type == '1' ? (
+                                            <div
+                                                className={`${globalStyles.authTheme}  ${indexStyles.table_operate}`}
+                                                onClick={(e) => this.actionsManager('downloadMultiple', item, e)}
+                                                style={{ marginLeft: 16 }}>&#xe7f1;</div>
+                                        ) : (<i></i>)
+                                    }
+                                </Tooltip>
                             </>
                         )
                     }
@@ -253,18 +283,25 @@ export default class CatalogTables extends Component {
                     okText="确定"
                     cancelText="取消"
                 >
-                    {
-                        type == '0' || !type && (
-                            <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate}`} onClick={e => e.stopPropagation()} title={'恢复归档'} >&#xe717;</div>
-                        )
-                    }
+                    <Tooltip title={'恢复归档'}>
+                        {
+                            (type == '0' || !type) ? (
+                                <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate}`} onClick={e => e.stopPropagation()}  >&#xe717;</div>
+                            ) : (<i></i>)
+                        }
+                    </Tooltip>
                 </Popconfirm>
-
-                {
-                    type == '2' && (
-                        <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate}`} style={{ marginLeft: 16 }}>&#xe7f1;</div>
-                    )
-                }
+                <Tooltip title={'下载'}>
+                    {
+                        type == '2' ? (
+                            <div
+                                className={`${globalStyles.authTheme}  ${indexStyles.table_operate}`}
+                                style={{ marginLeft: 16 }}
+                                onClick={(e) => this.actionsManager('download', item, e)}
+                            >&#xe7f1;</div>
+                        ) : (<i></i>)
+                    }
+                </Tooltip>
             </div>
         )
     }
@@ -292,18 +329,19 @@ export default class CatalogTables extends Component {
                 })
             },
             getCheckboxProps: record => ({
-                disabled: record.type == '1', // Column configuration not to be checked
+                disabled: record.type != '2', // Column configuration not to be checked
             }),
         }
     };
     render() {
-        const { workbenchBoxContent_height = 700, view_type, data_source = [] } = this.props
+        const { workbenchBoxContent_height = 700, view_type, data_source = [], loading } = this.props
         const scroll_height = workbenchBoxContent_height - 200
         const { columns = [] } = this.state
         console.log('sdasdworkbenchBoxContent_height', workbenchBoxContent_height)
         return (
             <div>
                 <Table
+                    loading={loading}
                     onRow={record => {
                         return {
                             onClick: e => this.actionsManager('tableRowClick', record, e), // 点击行
