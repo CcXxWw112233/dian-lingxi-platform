@@ -88,10 +88,11 @@ export default class CommunicationFirstScreenHeader extends Component {
                                                 return (
                                                     <BreadcrumbItem key={id || folder_id} onClick={() => this.chooseBreadItem(item)}>
                                                         <span
+                                                            title={board_name || folder_name}
                                                             style={{
                                                                 color: 'rgba(0,0,0,.65)',
-                                                                // display: 'inline-block',
-                                                                maxWidth: '500px',
+                                                                display: 'inline-block',
+                                                                maxWidth: 100,
                                                                 overflow: 'hidden',
                                                                 textOverflow: 'ellipsis',
                                                                 whiteSpace: 'nowrap'

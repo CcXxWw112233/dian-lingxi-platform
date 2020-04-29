@@ -63,7 +63,7 @@ export default class CatalogTables extends Component {
                 width: 200,
                 render: (text) => {
                     return (
-                        timestampToTimeNormal(text)
+                        timestampToTimeNormal(text, '/', true)
                     )
                 }
             },
@@ -103,6 +103,13 @@ export default class CatalogTables extends Component {
 
                             }
                         })
+                        dispatch({
+                            type: 'technological/getUserBoardPermissions',
+                            payload: {
+
+                            }
+                        })
+                        
                         this.props.deleteDataSourceItem(board_id)
                     } else {
                         message.error(res.message)
@@ -169,7 +176,7 @@ export default class CatalogTables extends Component {
     renderKeyName = (item) => {
         let name_dec = item
         const { name, board_name, org_id, board_id, type } = item
-        const { currentUserOrganizes = [], } = this.props
+        const { currentUserOrganizes = [], view_type } = this.props
         const select_org_id = localStorage.getItem('OrganizationId')
         const org_dec = (select_org_id == '0' || !select_org_id) ? `(${getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)})` : ''
         const board_dec = `#${board_name}`
@@ -207,9 +214,13 @@ export default class CatalogTables extends Component {
                                 <p style={{ marginBottom: 0 }}>
                                     <span>{name}</span>
                                 </p>
-                                <p style={{ color: 'rgba(0,0,0,0.45)', marginBottom: 4 }}>
-                                    {org_dec}
-                                </p>
+                                {
+                                    view_type != '1' && ( //非项目视图下
+                                        <p style={{ color: 'rgba(0,0,0,0.45)', marginBottom: 4 }}>
+                                            {org_dec}
+                                        </p>
+                                    )
+                                }
                             </div>
                         ) : (
                                 name
