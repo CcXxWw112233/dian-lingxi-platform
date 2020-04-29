@@ -685,18 +685,29 @@ export const isArrayEqual = (arrya1, array2) => {
   // 比较长度
   if (arrya1.length != array2.length)
     return false;
-  for (let i = 0, l = arrya1.length; i < l; i++) {
-    // 检查是否是嵌套数组
+  for (let i in arrya1) {
     if (arrya1[i] instanceof Array && array2[i] instanceof Array) {
       // 这里递归判断嵌套数组
-      if (!this.isArrayEqual.call(this, arrya1[i], array2[i]))
+      if (!isArrayEqual.call(this, arrya1[i], array2[i]))
         return false;
-    }
+    } 
     else if (arrya1[i] != array2[i]) {
       // 注意: 对象不等于对象
-      return false;
+      return false
     }
   }
+  // for (let i = 0, l = arrya1.length; i < l; i++) {
+  //   // 检查是否是嵌套数组
+  //   if (arrya1[i] instanceof Array && array2[i] instanceof Array) {
+  //     // 这里递归判断嵌套数组
+  //     if (!isArrayEqual.call(this, arrya1[i], array2[i]))
+  //       return false;
+  //   }
+  //   else if (arrya1[i] != array2[i]) {
+  //     // 注意: 对象不等于对象
+  //     return false;
+  //   }
+  // }
   return true;
 }
 

@@ -93,23 +93,28 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     // }
   }
 
-  delayUpdatePdfDatas = async ({ id }) => {
+  delayUpdatePdfDatas = async ({ id, calback }) => {
     let res = await fileInfoByUrl({ id })
+    let currentPreviewFileVersionId = this.getCurrentFilePreviewVersionId()
     if (isApiResponseOk(res)) {
       this.initStateDatas({ data: res.data })
       let flag = checkIsHasPermissionInVisitControl('edit', res.data.base_info.privileges, res.data.base_info.is_privilege,[], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, res.data.base_info.board_id))
       if (flag) {
-        await this.getFilePDFInfo({ id })
+        await this.getFilePDFInfo({ id, calback })
       }
       // await this.getFilePDFInfo({ id })
       this.linkImWithFile({name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id})
     } else {
       message.warn(res.message, MESSAGE_DURATION_TIME)
+      setTimeout(() => {
+        this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
+        global.constants.lx_utils && global.constants.lx_utils.setCommentData(currentPreviewFileVersionId || id || null)
+      }, 200)
     }
   }
 
   // PDF文件预览的特殊处理
-  getFilePDFInfo = ({ id }) => {
+  getFilePDFInfo = ({ id, calback }) => {
     const { currentPreviewFileData = {} } = this.state
     let currentPreviewFileVersionId = this.getCurrentFilePreviewVersionId()
     getFilePDFInfo({ id }).then(res => {
@@ -119,8 +124,12 @@ export default class BoardCommuicationFileDetailContainer extends Component {
           filePreviewUrl: res.data.edit_url,
           pdfDownLoadSrc: res.data.download_annotation_url,
           filePreviewIsRealImage: false,
-          currentPreviewFileData: { ...currentPreviewFileData, id: id }
+          currentPreviewFileData: { ...currentPreviewFileData, id: id },
+          isPdfLoaded: false,
+          is_petty_loading: false,
+          is_large_loading: false
         })
+        if (calback && typeof calback == 'function') calback()
         // this.linkImWithFile({name: this.props.currentPreviewFileName, type: 'file', board_id: this.props.board_id, id: this.props.filePreviewCurrentFileId, currentPreviewFileVersionId: currentPreviewFileVersionId})
       } else {
         message.warn(res.message)

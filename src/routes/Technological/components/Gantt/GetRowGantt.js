@@ -34,6 +34,7 @@ export default class GetRowGantt extends Component {
       due_time: '',
       specific_example_arr: [], //任务实例列表
       drag_holiday_count: 0, // //拖拽生成虚线框的节假日总天数
+      task_is_dragging: false, //任务实例是否在拖拽中
     }
     this.x1 = 0 //用于做拖拽生成一条任务
     this.y1 = 0
@@ -41,14 +42,15 @@ export default class GetRowGantt extends Component {
     this.isMouseDown = false //是否鼠标按下
     this.SelectedRect = { x: 0, y: 0 }
 
-    this.task_is_dragging = false //任务实例是否在拖拽中
 
     this.dashedMousedown = this.dashedMousedown.bind(this)//用来做拖拽虚线框
     this.dashedMouseMove = this.dashedMouseMove.bind(this)
     this.dashedMouseLeave = this.dashedMouseLeave.bind(this)
   }
-  setTaskIsDragging = (bool) => { //设置任务是否在拖拽中的状态
-    this.task_is_dragging = bool
+  setTaskIsDragging = (bool, flag) => { //设置任务是否在拖拽中的状态
+    this.setState({
+      task_is_dragging: bool
+    })
     const target = this.refs.gantt_operate_area_panel
     if (!target) return
     if (!target.style) return
@@ -103,7 +105,7 @@ export default class GetRowGantt extends Component {
 
   // 在任务实例上点击到特定的位置，阻断，是能够不出现创建任务弹窗
   stopPropagationEle = (e) => {
-    if (this.task_is_dragging) {//在做单条任务拖动的时候，不能创建
+    if (this.state.task_is_dragging) {//在做单条任务拖动的时候，不能创建
       return true
     }
     if (
@@ -487,7 +489,7 @@ export default class GetRowGantt extends Component {
             ganttPanelDashedDrag={this.isDragging}
             getCurrentGroup={this.getCurrentGroup}
             list_id={list_id}
-            task_is_dragging={this.task_is_dragging}
+            task_is_dragging={this.state.task_is_dragging}
             setGoldDateArr={this.props.setGoldDateArr}
             setScrollPosition={this.props.setScrollPosition}
             setIsDragging={this.setIsDragging}
@@ -555,7 +557,7 @@ export default class GetRowGantt extends Component {
       show_board_fold,
       outline_tree_round
     } = this.props
-
+    // console.log('task_is_dragging', this.state.task_is_dragging)
     return (
       <div className={indexStyles.gantt_operate_top}
         // onMouseDown={this.dashedMousedown.bind(this)} //用来做拖拽虚线框
@@ -566,7 +568,7 @@ export default class GetRowGantt extends Component {
         ref={'gantt_operate_area_panel'}>
         {
           dasheRectShow
-          && !this.task_is_dragging
+          && !this.state.task_is_dragging
           && !ganttIsOutlineView({ group_view_type })
           && (
             <div
@@ -616,7 +618,7 @@ export default class GetRowGantt extends Component {
                   getCurrentGroup={this.getCurrentGroup}
                   // list_id={list_id}
                   changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
-                  task_is_dragging={this.task_is_dragging}
+                  task_is_dragging={this.state.task_is_dragging}
                   setGoldDateArr={this.props.setGoldDateArr}
                   setScrollPosition={this.props.setScrollPosition}
                   setIsDragging={this.setIsDragging}

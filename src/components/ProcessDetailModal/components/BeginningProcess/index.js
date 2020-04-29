@@ -3,6 +3,7 @@ import { connect } from 'dva'
 import BeginningStepOne from './component/BeginningStepOne'
 import BeginningStepTwo from './component/BeginningStepTwo'
 import AccomplishStepOne from './component/AccomplishStepOne'
+import BeginningStepThree from './component/BeginningStepThree'
 
 @connect(mapStateToProps)
 export default class BeginningProcess extends Component {
@@ -21,6 +22,9 @@ export default class BeginningProcess extends Component {
       case '2':
         container = <BeginningStepTwo request_flows_params={this.props.request_flows_params} itemKey={key} itemValue={value} />
         break;
+      case '3':
+        container = <BeginningStepThree request_flows_params={this.props.request_flows_params} itemKey={key} itemValue={value} />
+        break
       default:
         container = <div></div>
         break;

@@ -7,13 +7,26 @@ import { principalList } from '../../../constant'
 import AmendComponent from '../AmendComponent'
 import { Tooltip, Icon } from 'antd'
 import { connect } from 'dva'
+import ConfirmInfoThree_one from './ConfirmInfoThree_one'
+import { renderTimeType, computing_mode, result_score_option, result_score_fall_through_with_others } from '../../handleOperateModal'
 
 @connect(mapStateToProps)
 export default class ConfirmInfoThree extends Component {
 
-  state = {
-    transPrincipalList: JSON.parse(JSON.stringify(principalList)),
-    is_show_spread_arrow: false,
+  constructor(props) {
+    super(props)
+    this.state = {
+      transPrincipalList: props.itemValue.assignees ? props.itemValue.assignees.split(',') : [], // 表示当前的执行人
+      transCopyPersonnelList: props.itemValue.recipients ? props.itemValue.recipients.split(',') : [], // 表示当前选择的抄送人
+      is_show_spread_arrow: false,
+    }
+  }
+
+  updateParentsAssigneesOrCopyPersonnel = (data, key) => {
+    const { value } = data
+    this.setState({
+      [key]: value
+    })
   }
 
   // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
@@ -29,6 +42,30 @@ export default class ConfirmInfoThree extends Component {
     })
   }
 
+  // 把assignees中的执行人,在项目中的所有成员过滤出来
+  filterAssignees = () => {
+    const { projectDetailInfoData: { data = [] } } = this.props
+    const { transPrincipalList = [] } = this.state
+    let new_data = [...data]
+    let newTransPrincipalList = transPrincipalList && transPrincipalList.map(item => {
+      return new_data.find(item2 => item2.user_id == item) || {}
+    })
+    newTransPrincipalList = newTransPrincipalList.filter(item => item.user_id)
+    return newTransPrincipalList
+  }
+
+  // 把recipients中的抄送人在项目中的所有成员过滤出来
+  filterRecipients = () => {
+    const { projectDetailInfoData: { data = [] } } = this.props
+    const { transCopyPersonnelList = [] } = this.state
+    let newData = [...data]
+    let newTransCopyPersonnelList = transCopyPersonnelList && transCopyPersonnelList.map(item => {
+      return newData.find(item2 => item2.user_id == item) || {}
+    })
+    newTransCopyPersonnelList = newTransCopyPersonnelList.filter(item => item.user_id)
+    return newTransCopyPersonnelList
+  }
+
   handleSpreadArrow = (e) => {
     e && e.stopPropagation()
     this.setState({
@@ -36,106 +73,73 @@ export default class ConfirmInfoThree extends Component {
     })
   }
 
-  // 编辑点击事件
-  handleEnterConfigureProcess = (e) => {
-    e && e.stopPropagation()
-    this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
-  }
-
   // 理解成是否是有效的头像
   isValidAvatar = (avatarUrl = '') =>
     avatarUrl.includes('http://') || avatarUrl.includes('https://');
 
-  // 渲染抄报人
-  renderRecipientsList = () => {
-    const { itemValue, projectDetailInfoData: { data = [] } } = this.props
-    const { recipients } = itemValue
-    let reArray = recipients ? recipients.split(',') : []
-    let newData = [...data]
-    newData = newData.filter(item => {
-      if (reArray.indexOf(item.user_id) != -1) {
-        return item
-      }
-    })
-    return newData
-  }
-
   renderEditDetailContent = () => {
-    const { itemValue } = this.props
-    const { cc_type, recipients } = itemValue
-    let type_name = ''
-    let recipientsList = this.renderRecipientsList()
-    const diffType = () => {
-      switch (cc_type) {
-        case '1':
-          type_name = '自动抄送'
-          break;
-        case '2':
-          type_name = '手动抄送'
-          break
-        default:
-          break;
-      }
-      return type_name
-    }
+    const { itemValue, itemKey } = this.props
+    const { score_node_set: { count_type, result_condition_type, result_case_pass, result_case_other, result_value } } = itemValue
     return (
       <div>
-        {/* 抄送方式 */}
-        <div style={{ minHeight: '64px', padding: '20px 14px', color: 'rgba(0,0,0,0.45)', borderTop: '1px solid #e8e8e8', marginTop: '15px' }}>
-          <span className={globalStyles.authTheme}>&#xe618; 抄送方式 : &nbsp;&nbsp;&nbsp;{diffType()}</span>
+        {/* 渲染评分项 */}
+        <div>
+          <ConfirmInfoThree_one itemValue={itemValue} itemKey={itemKey} />
         </div>
-        {/* 手动抄送显示抄报人 */}
-        {
-          recipientsList && recipientsList.length != '0' && (
-            <div style={{ minHeight: '64px', padding: '20px 14px', color: 'rgba(0,0,0,0.45)', borderTop: '1px solid #e8e8e8', marginTop: '15px', display: 'flex', flexWrap: 'wrap' }}>
-              <span style={{marginRight: '16px', flexShrink: 0}} className={globalStyles.authTheme}>&#xe6f6; 抄报人 (必填) : </span>
+        {/* 评分结果判定 */}
+        <div>
+          <div style={{ minHeight: '210px', padding: '16px 14px', borderTop: '1px solid rgba(0,0,0,0.09)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div style={{ color: 'rgba(0,0,0,0.45)' }}>
+              <span className={globalStyles.authTheme}>&#xe7bf;</span>
+              <span style={{ marginLeft: '4px' }}>评分结果判定：</span>
+            </div>
+            <div>
+              <span className={indexStyles.rating_label_name}>计算方式</span>
               {
-                recipientsList.map(item => {
-                  const { avatar, name, user_name, user_id } = item
-                  return (
-                    <span>
-                      <div style={{ display: 'flex', alignItems: 'center' }} key={user_id}>
-                        <div className={`${indexStyles.user_item}`} style={{ position: 'relative', textAlign: 'center', marginBottom: '8px' }} key={user_id}>
-                          {avatar ? (
-                            <Tooltip overlayStyle={{ minWidth: '62px' }} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
-                              <img className={indexStyles.img_hover} style={{ width: '32px', height: '32px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
-                            </Tooltip>
-                          ) : (
-                              <Tooltip overlayStyle={{ minWidth: '62px' }} getPopupContainer={triggerNode => triggerNode.parentNode} placement="top" title={name || user_name || '佚名'}>
-                                <div className={indexStyles.default_user_hover} style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
-                                  <Icon type={'user'} style={{ fontSize: 14, color: '#8c8c8c' }} />
-                                </div>
-                              </Tooltip>
-                            )}
-                        </div>
-                      </div>
-                    </span>
+                (count_type == '2' || count_type == '3') ? (
+                  <>
+                    <span className={indexStyles.select_item} style={{ minWidth: '94px' }}>总分值平均</span>
+                    <span className={indexStyles.select_item} style={{ minWidth: '136px' }}>{computing_mode(count_type)}</span>
+                  </>
+                ) : (
+                    <span className={indexStyles.select_item} style={{ minWidth: '94px' }}>{computing_mode(count_type)}</span>
                   )
-                })
               }
             </div>
-          )
-        }
+            <div>
+              <span className={indexStyles.rating_label_name}>结果分数</span>
+              <span className={indexStyles.select_item} style={{ minWidth: '94px' }}>{result_score_option(result_condition_type)}</span>
+              <span className={indexStyles.select_item} style={{ minWidth: '40px' }}>{result_value}</span>
+              <span className={indexStyles.select_item} style={{ minWidth: '136px' }}>{result_score_fall_through_with_others(result_case_pass)}</span>
+            </div>
+            <div>
+              <span className={indexStyles.rating_label_name}>其余情况</span>
+              <span className={indexStyles.select_item} style={{ minWidth: '136px' }}>{result_score_fall_through_with_others(result_case_other)}</span>
+            </div>
+          </div>
+        </div>
       </div>
     )
   }
 
   render() {
-    const { itemKey, itemValue, projectDetailInfoData: { data = [] } } = this.props
-    const { cc_type } = itemValue
-    const { transPrincipalList = [], is_show_spread_arrow } = this.state
+    const { itemKey, itemValue, projectDetailInfoData: { data = [], board_id }, processEditDatas = [] } = this.props
+    const { is_show_spread_arrow } = this.state
+    const { name, cc_type, deadline_type, deadline_value, deadline_time_type, score_locked, cc_locking } = itemValue
+    let transPrincipalList = this.filterAssignees()
+    let transCopyPersonnelList = this.filterRecipients()
     return (
       <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }}>
-        <div className={indexStyles.line}></div>
+        {processEditDatas.length <= itemKey + 1 ? null : <div className={indexStyles.completeLine}></div>}
         <div className={indexStyles.circle}> {itemKey + 1}</div>
-        <div className={`${indexStyles.popover_card}`}>
+        <div className={`${indexStyles.default_popover_card}`}>
           <div className={`${globalStyles.global_vertical_scrollbar}`}>
             {/* 步骤名称 */}
             <div style={{ marginBottom: '16px' }}>
               <div className={`${indexStyles.node_name}`}>
                 <div>
-                  <span className={`${globalStyles.authTheme} ${indexStyles.stepTypeIcon}`}>&#xe618;</span>
-                  <span>部门经理查阅</span>
+                  <span className={`${globalStyles.authTheme} ${indexStyles.stepTypeIcon}`}>&#xe7b6;</span>
+                  <span>{name}</span>
                 </div>
                 <div>
                   <span onClick={this.handleSpreadArrow} className={`${indexStyles.spreadIcon}`}>
@@ -148,44 +152,110 @@ export default class ConfirmInfoThree extends Component {
             </div>
             {/* 下 */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div className={indexStyles.content__principalList_icon}>
-                <AvatarList
-                  size="small"
-                  maxLength={10}
-                  excessItemsStyle={{
-                    color: '#f56a00',
-                    backgroundColor: '#fde3cf'
-                  }}
-                >
-                  {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
-                    <AvatarList.Item
-                      key={index}
-                      tips={name}
-                      src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
-                    />
-                  ))}
-                </AvatarList>
-                <span className={indexStyles.content__principalList_info}>
-                  {`${transPrincipalList.length}位抄送人`}
-                </span>
-                <span style={{position: 'relative'}}>
-                  <AmendComponent type="3" updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle={cc_type == '1' ? '抄送人' : '抄送人/抄报人'} data={data} itemKey={itemKey} itemValue={itemValue} />
-                </span>
-              </div>
-              <div style={{marginRight: '16px'}}>
-                {
-                  cc_type == '1' ? (
-                    <span>自动触发</span>
-                  ) : (
+              <div>
+                {/* 填写人 */}
+                <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
+                  {
+                    !(transPrincipalList && transPrincipalList.length) ? ('') : (
                       <>
-                        <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '14px' }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
-                        <span className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : 步骤开始后1天内</span>
-                        <span style={{position: 'relative'}}>
-                          <AmendComponent updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="完成期限" data={data} itemKey={itemKey} itemValue={itemValue} />
+                        <AvatarList
+                          size="small"
+                          maxLength={10}
+                          excessItemsStyle={{
+                            color: '#f56a00',
+                            backgroundColor: '#fde3cf'
+                          }}
+                        >
+                          {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
+                            <AvatarList.Item
+                              key={index}
+                              tips={name || '佚名'}
+                              src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                            />
+                          ))}
+                        </AvatarList>
+                        <span className={indexStyles.content__principalList_info}>
+                          {`${transPrincipalList.length}位评分人`}
                         </span>
+                        {
+                          score_locked == '0' ? (
+                            <span style={{ position: 'relative' }}>
+                              <AmendComponent type="2"
+                                updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="评分人" data={data} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
+                            </span>
+                          ) : (
+                              <Tooltip arrowPointAtCenter={true} title="已锁定评分人" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                                <span style={{ cursor: 'pointer', color: 'rgba(0,0,0,0.25)', marginLeft: '4px' }} className={globalStyles.authTheme}>&#xe86a;</span>
+                              </Tooltip>
+                            )
+                        }
+
                       </>
                     )
+                  }
+
+                </div>
+                {/* 抄送人 */}
+                {
+                  cc_type == '1' && (
+                    <div style={{ marginLeft: '8px', display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
+                      {
+                        !(transCopyPersonnelList && transCopyPersonnelList.length) ? ('') : (
+                          <>
+                            <AvatarList
+                              size="small"
+                              maxLength={10}
+                              excessItemsStyle={{
+                                color: '#f56a00',
+                                backgroundColor: '#fde3cf'
+                              }}
+                            >
+                              {(transCopyPersonnelList && transCopyPersonnelList.length) && transCopyPersonnelList.map(({ name, avatar }, index) => (
+                                <AvatarList.Item
+                                  key={index}
+                                  tips={name || '佚名'}
+                                  src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                                />
+                              ))}
+                            </AvatarList>
+                            <span className={indexStyles.content__principalList_info}>
+                              {`${transCopyPersonnelList.length}位抄送人`}
+                            </span>
+                            {
+                              cc_locking == '0' ? (
+                                <span style={{ position: 'relative' }}>
+                                  <AmendComponent type="3"
+                                    updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="抄送人" data={data} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
+                                </span>
+                              ) : (
+                                  <Tooltip title="已锁定抄送人" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                                    <span style={{ cursor: 'pointer', color: 'rgba(0,0,0,0.25)', marginLeft: '4px' }} className={globalStyles.authTheme}>&#xe86a;</span>
+                                  </Tooltip>
+                                )
+                            }
+                          </>
+                        )
+                      }
+
+                    </div>
+                  )
                 }
+              </div>
+              <div style={{ marginRight: '16px' }}>
+                <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '14px' }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
+                <span className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : </span>
+                {
+                  deadline_type == '1' || deadline_type == '' ? (
+                    <span style={{ color: 'rgba(0,0,0,0.45)' }}>未限制时间</span>
+                  ) : (
+                      <span style={{ color: 'rgba(0,0,0,0.45)' }}>
+                        步骤开始后{`${deadline_value}${renderTimeType(deadline_time_type)}`}内
+                      </span>
+                    )
+                }
+                <span style={{ position: 'relative' }}>
+                  <AmendComponent updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="完成期限" data={data} itemKey={itemKey} itemValue={itemValue} />
+                </span>
               </div>
             </div>
             {is_show_spread_arrow && this.renderEditDetailContent()}

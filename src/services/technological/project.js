@@ -5,10 +5,11 @@ import { getGlobalData } from "../../utils/businessFunction";
 //开启关闭特权
 export async function toggleContentPrivilege(data) {
   const { content_id, content_type, is_open, board_id } = data
-  const headers = !!board_id?{
+  const headers = !!board_id ? {
     BaseInfo: {
       boardId: board_id
-    }} : {}
+    }
+  } : {}
   //content_id 内容ID（如 board_id,card_id 等）
   //content_type 内容类型（如 board , list, card, file, folder,flow等）
   //is_open  1: 开启 || 0：关闭
@@ -47,10 +48,11 @@ export async function setContentPrivilege(data) {
 //移除内容访问特权
 export async function removeContentPrivilege(data) {
   const { id, board_id } = data
-  const headers = !!board_id?{
+  const headers = !!board_id ? {
     BaseInfo: {
       boardId: board_id
-    }} : {}
+    }
+  } : {}
   //contend_id 内容ID（如 board_id,card_id 等）
   //content_type 内容类型（如 board , list, card, file, folder,flow等）
   //user_id 用户id
@@ -261,8 +263,8 @@ export async function collectionProject({ org_id, board_id }) {
     data: {
       id: board_id
     }
-  }, 
-  // { isNotLoading: true }
+  },
+    // { isNotLoading: true }
   );
 }
 
@@ -301,5 +303,20 @@ export async function getProjectDynamicsList(data) {
   })
 }
 
+// 获取归档项目列表
+export async function getArchivesBoards(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/archived/board`,
+    method: 'GET',
+    params
+  })
+}
 
-
+// 归档前保存文件
+export async function archiveBoardSaveFile(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/archived/file`,
+    method: 'POST',
+    data
+  })
+}
