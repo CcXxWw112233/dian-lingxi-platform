@@ -61,16 +61,15 @@ class BoardArchives extends Component {
     this.setState({
       bread_paths: new_bread_paths,
       view_type: length > 0 ? '1' : '0'
+    }, () => {
+      if (length == 0) {
+
+      } else if (length == 1) {
+        this.getFList({})
+      } else {
+        this.getFList({ folder_id: new_bread_paths[length - 1].folder_id })
+      }
     })
-    if (length == 0) {
-
-    } else if (length == 1) {
-      this.getFList({ folder_id: '1255070691447934978' })
-    } else {
-      this.getFList({ folder_id: new_bread_paths[length - 1].folder_id })
-    }
-
-
   }
   // 请求位置------------start
   getArchivesList = (params) => { //获取归档的列表
@@ -115,13 +114,16 @@ class BoardArchives extends Component {
       data_source: data_source.filter(item => item.id != id)
     })
   }
+  // 获取项目文件（夹）列表
   getFList = ({ folder_id }) => {
+    const { bread_paths = [] } = this.state
+    const board_id = bread_paths[0].board_id
     this.setState({
       loading: true
     })
     getArchiveBoardFileList({
-      folder_id: folder_id || '1255070691447934978',
-      board_id: '1255070689694715904'
+      folder_id,
+      board_id
     }).then(res => {
       this.setState({
         loading: false
@@ -141,6 +143,12 @@ class BoardArchives extends Component {
         loading: false
       })
     })
+  }
+  // 是否需要更新文件列表, 当访问控制设置时
+  whetherUpdateFolderListData = () => {
+    const { bread_paths = [] } = this.state
+    const folder_id = bread_paths[bread_paths.length - 1].folder_id
+    this.getFList({ folder_id })
   }
   //请求位置--------------end
   setPreviewFileModalVisibile = () => {
@@ -359,8 +367,9 @@ class BoardArchives extends Component {
               <FileDetailModal
                 fileType={fileType} filePreviewCurrentFileId={filePreviewCurrentFileId}
                 file_detail_modal_visible={isInOpenFile}
+                board_id={bread_paths.length ? bread_paths[0].board_id : '0'}
                 setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
-              // whetherUpdateFolderListData={this.whetherUpdateFolderListData}
+                whetherUpdateFolderListData={this.whetherUpdateFolderListData}
               />
             )
           }

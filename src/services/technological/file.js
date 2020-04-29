@@ -342,7 +342,7 @@ export async function getFolderTreeWithArchives(params) {
 //获取已归档项目的文件（文件夹）列表
 export async function getArchiveBoardFileList(params) {
   return request({
-    url: `${REQUEST_DOMAIN_FILE}${REQUEST_INTERGFACE_VERSIONN}/file`,
+    url: `${REQUEST_DOMAIN_FILE}/archived/file`,
     method: 'GET',
     headers: params.folder_id ? createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.folder_id) : {},
     params,

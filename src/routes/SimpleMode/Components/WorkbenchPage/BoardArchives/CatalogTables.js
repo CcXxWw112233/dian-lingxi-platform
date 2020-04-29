@@ -144,7 +144,7 @@ export default class CatalogTables extends Component {
                     payload: {
                         ids: file_resource_id,
                         fileIds: file_id,
-                        _organization_id: '1204601022929047552'
+                        // _organization_id: '1204601022929047552'
                     }
                 })
             },
@@ -156,7 +156,7 @@ export default class CatalogTables extends Component {
                     payload: {
                         ids,
                         fileIds,
-                        _organization_id: '1204601022929047552'
+                        // _organization_id: '1204601022929047552'
                     }
                 })
             }
