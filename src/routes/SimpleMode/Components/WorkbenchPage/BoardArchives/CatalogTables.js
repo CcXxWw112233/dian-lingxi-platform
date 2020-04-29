@@ -63,7 +63,7 @@ export default class CatalogTables extends Component {
                 width: 200,
                 render: (text) => {
                     return (
-                        timestampToTimeNormal(text)
+                        timestampToTimeNormal(text, '/', true)
                     )
                 }
             },
