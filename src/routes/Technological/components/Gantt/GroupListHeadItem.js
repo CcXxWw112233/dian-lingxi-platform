@@ -19,6 +19,7 @@ import DetailInfo from '@/routes/Technological/components/ProjectDetail/DetailIn
 import { deleteBoardFollow } from './ganttBusiness';
 import { currentNounPlanFilterName, setBoardIdStorage } from "@/utils/businessFunction";
 import AddGroupSection from './components/AddGroupsection'
+import ArchiveSelect from './components/ArchiveSelect'
 
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
@@ -32,6 +33,7 @@ export default class GroupListHeadItem extends Component {
       show_add_menber_visible: false,
       board_info_visible: false,
       menu_oprate_visible: false, //菜单项显示状态（仅作标记）
+      arhcived_modal_visible: false, //归档树弹窗是否可见
     }
     this.visitControlOtherPersonOperatorMenuItem = [
       {
@@ -310,7 +312,9 @@ export default class GroupListHeadItem extends Component {
         this.requestDeleteGroup()
         break
       case 'archived':
-        this.archivedProject({ board_id: params_board_id })
+        // this.archivedProjectCalback({ board_id: params_board_id })
+        this.set_arhcived_modal_visible()
+        // this.archivedProject({ board_id: params_board_id })
         break
       case 'visitorControl':
         // this.set
@@ -509,8 +513,35 @@ export default class GroupListHeadItem extends Component {
       }
     })
     dispatch({
+      type: 'workbench/getProjectList',
+      payload: {
+
+      }
+    })
+    dispatch({
       type: 'gantt/getGttMilestoneList',
       payload: {
+      }
+    })
+  }
+  set_arhcived_modal_visible = () => {
+    const { arhcived_modal_visible } = this.state
+    this.setState({
+      arhcived_modal_visible: !arhcived_modal_visible
+    })
+  }
+  // 选择归档后的回调
+  archivedProjectCalback = (data) => {
+    const { board_id } = data
+    this.set_arhcived_modal_visible()
+    const that = this
+    archivedProject({ is_archived: '1', board_id }).then(res => {
+      if (isApiResponseOk(res)) {
+        message.success('已成功归档该项目')
+        that.handleArchivedBoard()
+        deleteBoardFollow()
+      } else {
+        message.error(res.message)
       }
     })
   }
@@ -1004,7 +1035,7 @@ export default class GroupListHeadItem extends Component {
     const { currentUserOrganizes = [], gantt_board_id = [], ceiHeight, is_show_org_name, is_all_org, rows = 5, show_board_fold, group_view_type, get_gantt_data_loading } = this.props
     const { itemValue = {}, itemKey } = this.props
     const { is_star, list_name, org_id, list_no_time_data = [], list_id, lane_icon, board_id, is_privilege = '0', privileges, create_by = {}, lane_overdue_count } = itemValue
-    const { isShowBottDetail, show_edit_input, local_list_name, edit_input_value, show_add_menber_visible, board_info_visible, menu_oprate_visible } = this.state
+    const { isShowBottDetail, show_edit_input, local_list_name, edit_input_value, show_add_menber_visible, board_info_visible, menu_oprate_visible, arhcived_modal_visible } = this.state
     const board_create_user = create_by.name
     const { list_data } = itemValue
     return (
@@ -1144,6 +1175,9 @@ export default class GroupListHeadItem extends Component {
         </div>
         <div onWheel={e => e.stopPropagation()}>
           <DetailInfo setProjectDetailInfoModalVisible={this.setBoardInfoVisible} modalVisible={board_info_visible} invitationType='1' invitationId={gantt_board_id == '0' ? list_id : gantt_board_id} />
+        </div>
+        <div onWheel={e => e.stopPropagation()}>
+          <ArchiveSelect board_id={list_id} board_name={list_name} visible={arhcived_modal_visible} setVisible={this.set_arhcived_modal_visible} onOk={this.archivedProjectCalback} />
         </div>
       </div >
     )
