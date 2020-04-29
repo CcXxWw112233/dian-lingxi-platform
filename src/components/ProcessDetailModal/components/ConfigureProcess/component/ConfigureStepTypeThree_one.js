@@ -473,16 +473,16 @@ export default class ConfigureStepTypeThree_one extends Component {
         </tr>
         {
           score_items && score_items.map((item, index) => {
-            const { key, max_score, title } = item
+            const { key, max_score, title, id } = item
             return (
               <tr style={{ height: '38px', border: '1px solid #E9E9E9', textAlign: 'center' }}>
                 <td style={{ width: '170px' }}>
                   {/* <div className={`${indexStyles.rating_editTable} ${globalStyles.global_vertical_scrollbar}`} contentEditable={true}></div> */}
-                  <textarea onFocus={(e) => { this.onFocus(e, key, index) }} maxLength={200} value={title} onBlur={(e) => { this.handleAutoTitleTextAreaBlur(key) }} onChange={(e) => { this.handleAutoTitleTextArea(e, key, index) }} ref={`autoTitleTextArea_${key}`} />
+                  <textarea onFocus={(e) => { this.onFocus(e, key || id || index, index) }} maxLength={200} value={title} onBlur={(e) => { this.handleAutoTitleTextAreaBlur(key || id || index) }} onChange={(e) => { this.handleAutoTitleTextArea(e, key || id || index, index) }} ref={`autoTitleTextArea_${key||id||index}`} />
                 </td>
                 <td style={{ position: 'relative', width: '90px' }}>
                   {/* <div className={indexStyles.rating_editTable} contentEditable={true}></div> */}
-                  <textarea value={max_score} onBlur={(e) => { this.handleAutoGradeTextAreaBlur(e, key, index) }} onChange={(e) => { this.handleAutoGradeTextAreaValue(e, key, index) }} ref={`autoGradeTextArea_${key}`} />
+                  <textarea value={max_score} onBlur={(e) => { this.handleAutoGradeTextAreaBlur(e, key||id||index, index) }} onChange={(e) => { this.handleAutoGradeTextAreaValue(e, key||id||index, index) }} ref={`autoGradeTextArea_${key||id||index}`} />
                   <Dropdown overlay={this.renderMoreSelect(index)} getPopupContainer={triggerNode => triggerNode.parentNode} trigger={['click']}>
                     <div className={indexStyles.rating_moreBox}>
                       <span className={indexStyles.rating_more_icon}><span className={globalStyles.authTheme}>&#xe7fd;</span></span>
@@ -516,20 +516,20 @@ export default class ConfigureStepTypeThree_one extends Component {
         </tr>
         {
           score_items && score_items.map((item, index) => {
-            const { key, title, max_score, weight_ratio } = item
+            const { key, title, max_score, weight_ratio, id } = item
             return (
               <tr style={{ height: '38px', border: '1px solid #E9E9E9', textAlign: 'center' }}>
                 <td style={{ width: '170px' }}>
                   {/* <div className={`${indexStyles.rating_editTable} ${globalStyles.global_vertical_scrollbar}`} contentEditable={true}></div> */}
-                  <textarea onFocus={(e) => { this.onFocus(e, key, index) }} onBlur={(e) => { this.handleAutoTitleTextAreaBlur(key) }} maxLength={200} value={title} onChange={(e) => { this.handleAutoTitleTextArea(e, key, index) }} ref={`autoTitleTextArea_${key}`} />
+                  <textarea onFocus={(e) => { this.onFocus(e, key||id||index, index) }} onBlur={(e) => { this.handleAutoTitleTextAreaBlur(key||id||index) }} maxLength={200} value={title} onChange={(e) => { this.handleAutoTitleTextArea(e, key||id||index, index) }} ref={`autoTitleTextArea_${key||id||index}`} />
                 </td>
                 <td style={{ width: '90px' }}>
                   {/* <div className={`${indexStyles.rating_editTable} ${globalStyles.global_vertical_scrollbar}`} contentEditable={true}></div> */}
-                  <textarea value={weight_ratio} onBlur={(e) => { this.handleChangeAutoWeightTextAreaBlur(e, key, index) }} onChange={(e) => { this.handleChangeAutoWeightTextAreaValue(e, key, index) }} ref={`autoWeightTextArea_${key}`} />
+                  <textarea value={weight_ratio} onBlur={(e) => { this.handleChangeAutoWeightTextAreaBlur(e, key||id||index, index) }} onChange={(e) => { this.handleChangeAutoWeightTextAreaValue(e, key||id||index, index) }} ref={`autoWeightTextArea_${key||id||index}`} />
                 </td>
                 <td style={{ position: 'relative', width: '90px' }}>
                   {/* <div className={indexStyles.rating_editTable} contentEditable={true}></div> */}
-                  <textarea value={max_score} onChange={(e) => { this.handleAutoGradeTextAreaValue2(e, key, index) }} ref={`autoGradeTextArea_${key}`} />
+                  <textarea value={max_score} onChange={(e) => { this.handleAutoGradeTextAreaValue2(e, key||id||index, index) }} ref={`autoGradeTextArea_${key||id||index}`} />
                   <Dropdown overlay={this.renderMoreSelect(index)} getPopupContainer={triggerNode => triggerNode.parentNode} trigger={['click']}>
                     <div className={indexStyles.rating_moreBox}>
                       <span className={indexStyles.rating_more_icon}><span className={globalStyles.authTheme}>&#xe7fd;</span></span>
@@ -716,7 +716,7 @@ export default class ConfigureStepTypeThree_one extends Component {
                       <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer', display: 'inline-block', display: 'flex', flex: 1 }}>
                         <Tooltip title={title} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
                          <span style={{display: 'flex'}}>
-                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: clientWidth && !(flag && score_items.length > 1) ? clientWidth + 'px' : autoWidth, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>
+                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: clientWidth && !(flag && score_items.length > 1) ? clientWidth + 'px' : autoWidth, minWidth: '50px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>
                           <span>:</span>
                          </span>
                           
@@ -731,7 +731,7 @@ export default class ConfigureStepTypeThree_one extends Component {
                       </span>
                       {
                         description != '' ? (
-                          <Popover title={<div style={{ margin: '0 4px', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '130px', whiteSpace: 'nowrap' }}>{title}</div>} content={<div style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', maxWidth: '130px' }}>{description}</div>} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                          <Popover autoAdjustOverflow={false} title={<div style={{ margin: '0 4px', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '130px', whiteSpace: 'nowrap' }}>{title}</div>} content={<div className={globalStyles.global_vertical_scrollbar} style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', width: '210px', maxHeight: '205px', overflowY: 'auto' }}>{description}</div>} placement="top" getPopupContainer={() => document.getElementById(`ratingItems_${itemKey}`)}>
                             <span style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe845;</span>
                           </Popover>
                         ) : ('')
