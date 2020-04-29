@@ -283,6 +283,7 @@ export default class BeginningStepThree_one extends Component {
     let current_score_list = this.getCurrentUserScoreList()
     let last_total = current_score_list && current_score_list.find(item => item.is_total == '1') || {}
     let autoWidth = clientWidth ? clientWidth / 4 - 45 : 130
+    
     return (
       <div>
         {/* 评分项 */}
@@ -295,7 +296,7 @@ export default class BeginningStepThree_one extends Component {
                   <>
                     {
                       item.is_total == '0' && (
-                        <div key={item} className={`${indexStyles.rating_itemsValue} ${flag && score_items.length > 1 ? indexStyles.rating_active_width : indexStyles.rating_normal_width}`}>
+                        <div key={item} className={`${indexStyles.rating_itemsValue} ${flag && score_items.length > 1 ? indexStyles.rating_active_width : indexStyles.rating_normal_width}`} style={{width: clientWidth ? clientWidth / 4 : '23%', minWidth: '220px'}}>
                           <p>
                             <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer', display: 'inline-block', display: 'flex', flex: 1 }}>
                               <Tooltip title={title} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
