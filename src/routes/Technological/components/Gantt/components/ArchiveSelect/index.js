@@ -56,11 +56,12 @@ export default class ArchiveSelect extends React.Component {
   handleTreeData = (data) => { //为每个id前加个类型
     if (!data) return []
     for (let val of data) {
-      let { child_data = [], folder_id, file_id } = val
+      let { child_data = [], folder_id, file_id, file_data = [] } = val
+      val.child_data = [].concat(child_data, file_data)
       if (folder_id) val.folder_id = `folder_${folder_id}`
       else if (file_id) val.file_id = `file_${file_id}`
       else ''
-      if (child_data.length) this.handleTreeData(child_data)
+      if (val.child_data.length) this.handleTreeData(val.child_data)
     }
   }
 
@@ -89,7 +90,6 @@ export default class ArchiveSelect extends React.Component {
       params.file_ids = checkedKeys.filter(item => item.indexOf('file') != -1).map(item => item.split('_')[1])
       params.folder_ids = checkedKeys.filter(item => item.indexOf('folder') != -1).map(item => item.split('_')[1])
     }
-    // debugger
     archiveBoardSaveFile(params).then(res => {
       if (isApiResponseOk(res)) {
         this.props.onOk(params)
