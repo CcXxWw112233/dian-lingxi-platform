@@ -115,7 +115,7 @@ export default class CatalogTables extends Component {
                     const new_item_value = { ...data }
                     this.props.setBreadPaths && this.props.setBreadPaths({ path_item: new_item_value })
                 } else if (type == '2') {
-                    setBoardIdStorage(board_id, org_id)
+                    // setBoardIdStorage(board_id, org_id)
                     dispatch({
                         type: 'projectDetail/projectDetailInfo',
                         payload: {
@@ -339,7 +339,7 @@ export default class CatalogTables extends Component {
         const { columns = [] } = this.state
         console.log('sdasdworkbenchBoxContent_height', workbenchBoxContent_height)
         return (
-            <div>
+            <div style={{ cursor: 'pointer' }}>
                 <Table
                     loading={loading}
                     onRow={record => {

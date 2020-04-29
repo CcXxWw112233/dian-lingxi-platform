@@ -68,7 +68,7 @@ export default class CommunicationFirstScreenHeader extends Component {
         return (
             <div className={styles.communicationFirstScreenHeader}>
                 {/* 面包屑 */}
-                <div className={styles.breadPath}>
+                <div className={styles.breadPath} style={{ cursor: 'pointer' }}>
                     {
                         bread_paths && bread_paths.length ?
                             (

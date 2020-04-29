@@ -16,7 +16,7 @@ import { getGanttBoardsFiles } from '../../../../../services/technological/gantt
 import { isApiResponseOk } from '../../../../../utils/handleResponseData';
 import { message } from 'antd';
 import { getArchivesBoards } from '../../../../../services/technological/project';
-import { getFileList } from '../../../../../services/technological/file';
+import { getFileList, getArchiveBoardFileList } from '../../../../../services/technological/file';
 import FileDetailModal from '@/components/FileDetailModal'
 
 class BoardArchives extends Component {
@@ -119,7 +119,7 @@ class BoardArchives extends Component {
     this.setState({
       loading: true
     })
-    getFileList({
+    getArchiveBoardFileList({
       folder_id: folder_id || '1255070691447934978',
       board_id: '1255070689694715904'
     }).then(res => {
