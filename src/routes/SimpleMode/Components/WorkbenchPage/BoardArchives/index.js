@@ -344,7 +344,7 @@ class BoardArchives extends Component {
                   currentIayerFolderName ? (
                     <span
                       className={currentFileDataType !== '0' ? indexStyles.currentFile : ''}
-                      onClick={() => this.changeChooseType('sub_files', currentIayerSearch)}
+                      onClick={() => this.changeChooseType('sub_files', 'currentIayerSearch')}
                     >
                       {currentIayerFolderName}
                     </span>
