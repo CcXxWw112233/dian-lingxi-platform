@@ -57,50 +57,6 @@ export default class BeginningStepTwo extends Component {
     })
   }
 
-  updateAssigneesList = () => {
-    const { itemValue: { assignees = [], approve_type } } = this.props
-    let newAssignees = [...assignees]
-    switch (approve_type) {
-      case '1': // 表示串签 然后将第一个人的审批状态改为进行中
-        newAssignees = newAssignees.map((item, index) => {
-          if (index == 0) {
-            let new_item = { ...item }
-            new_item = { ...item, processed: '1' }
-            return new_item
-          } else {
-            let new_item = { ...item }
-            new_item = { ...item, processed: '0' }
-            return new_item
-          }
-        })
-        break;
-      case '2':
-      case '3':
-        newAssignees = newAssignees.map(item => {
-          let new_item = { ...item }
-          new_item = { ...item, processed: '1' }
-          return new_item
-        })
-        break;
-      default:
-        break;
-    }
-    return newAssignees
-  }
-
-  updateRebackNodesStatus = () => {
-    const { itemValue: { id: flow_node_instance_id, assignees, his_comments = [] }, processInfo: { id: flow_instance_id, board_id }, dispatch } = this.props
-    let temp_comments = [...his_comments]
-    temp_comments.push(...assignees)
-    let newAssignees = this.updateAssigneesList()
-    this.updateCorrespondingPrcodessStepWithNodeContent('status', '1')
-    this.updateCorrespondingPrcodessStepWithNodeContent('is_confirm', '0')
-    this.setState({
-      historyCommentsList: temp_comments,
-      transPrincipalList: newAssignees
-    })
-  }
-
   // 撤回步骤
   handleRebackProcessNodes = () => {
     const { itemValue: { id: flow_node_instance_id, assignees, his_comments = [] }, processInfo: { id: flow_instance_id, board_id }, dispatch, request_flows_params = {} } = this.props
@@ -112,7 +68,6 @@ export default class BeginningStepTwo extends Component {
         flow_instance_id,
         board_id,
         calback: () => {
-          // this.updateRebackNodesStatus()
           dispatch({
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {
@@ -120,8 +75,6 @@ export default class BeginningStepTwo extends Component {
               status: '1'
             }
           })
-          // this.updateCorrespondingPrcodessStepWithNodeContent('his_comments',temp_comments)
-          // this.updateCorrespondingPrcodessStepWithNodeContent('assignees',newAssignees)
         }
       }
     })
@@ -332,7 +285,7 @@ export default class BeginningStepTwo extends Component {
 
   // 渲染不同状态时步骤的样式
   renderDiffStatusStepStyles = () => {
-    const { itemValue, processInfo: { status: parentStatus } } = this.props
+    const { itemValue = {}, processInfo: { status: parentStatus } } = this.props
     const { status } = itemValue
     let stylLine, stylCircle
     if (parentStatus == '2') { // 表示已中止
@@ -370,8 +323,9 @@ export default class BeginningStepTwo extends Component {
     const { comment, pass, processed, avatar, name, time } = item
     return (
       <div>
+        {/* 明星说暂时方案用comment判断 */}
         {
-          processed == '2' ? (
+          comment && comment != '' ? (
             <div className={indexStyles.appListWrapper}>
               <div className={indexStyles.app_left}>
                 <div className={indexStyles.approve_user} style={{ position: 'relative', marginRight: '16px' }}>
@@ -521,15 +475,15 @@ export default class BeginningStepTwo extends Component {
         <div style={{ minHeight: '64px', padding: '20px 14px', color: 'rgba(0,0,0,0.45)', borderTop: '1px solid #e8e8e8', marginTop: '15px' }}>
           <span className={globalStyles.authTheme}>&#xe616; 审批方式 : &nbsp;&nbsp;&nbsp;{diffType()}</span>
           <div style={{ marginTop: '12px' }}>
-            {
+            {/* {
               approve_type == '3' && status == '1' || !((transPrincipalList && transPrincipalList.length) && transPrincipalList.find(item => item.processed == '2')) ? ('') : (
                 <div>
                   最新审批:
                 </div>
               )
-            }
+            } */}
             {
-              approve_type == '3' && status == '1' ? ('') : transPrincipalList.map(item => {
+              approve_type == '3' ? ('') : transPrincipalList.map(item => {
                 return (this.renderApprovePersonnelSuggestion(item))
               })
             }
@@ -567,7 +521,7 @@ export default class BeginningStepTwo extends Component {
                 onVisibleChange={this.onVisibleChange}
                 className={indexStyles.confirm_wrapper} icon={<></>}
                 getPopupContainer={triggerNode => triggerNode.parentNode}
-                okButtonProps={{ disabled: isRejectNodesIng || isPassNodesIng ? true : false }}
+                // okButtonProps={{ disabled: isRejectNodesIng || isPassNodesIng ? true : false }}
                 placement="top" title={this.renderPopConfirmContent()}
                 okButtonProps={{ disabled: whetherIsComplete ? false : true }}
                 okText="通过"
@@ -597,13 +551,13 @@ export default class BeginningStepTwo extends Component {
    */
   renderAbsoluteContent = () => {
     const { itemKey, processEditDatas = [], itemValue } = this.props
-    const { name } = itemValue
+    const { name, status } = itemValue
     const { transPrincipalList = [], is_show_spread_arrow } = this.state
     return (
       <div id="currentAbsoluteApproveContainer" key={itemKey} style={{ display: 'flex', marginBottom: '46px', marginRight: '32px', left: '32px', right: 0, position: 'absolute', top: '478px', zIndex: 1 }}>
         {processEditDatas.length <= itemKey + 1 ? null : <div className={this.renderDiffStatusStepStyles().stylLine}></div>}
         <div className={this.renderDiffStatusStepStyles().stylCircle}> {itemKey + 1}</div>
-        <div className={`${indexStyles.popover_card}`}>
+        <div className={`${status == '1' ? indexStyles.popover_card : indexStyles.default_popover_card}`}>
           <div className={`${globalStyles.global_vertical_scrollbar}`}>
             {/* 步骤名称 */}
             <div style={{ marginBottom: '16px' }}>
@@ -665,7 +619,7 @@ export default class BeginningStepTwo extends Component {
         <div id={status == '1' && 'currentStaticApproveContainer'} key={itemKey} style={{ display: 'flex', marginBottom: '48px', position: 'relative' }}>
           {processEditDatas.length <= itemKey + 1 ? null : <div className={this.renderDiffStatusStepStyles().stylLine}></div>}
           <div className={this.renderDiffStatusStepStyles().stylCircle}> {itemKey + 1}</div>
-          <div className={`${indexStyles.popover_card}`}>
+          <div className={`${status == '1' ? indexStyles.popover_card : indexStyles.default_popover_card}`}>
             <div className={`${globalStyles.global_vertical_scrollbar}`}>
               {/* 步骤名称 */}
               <div style={{ marginBottom: '16px' }}>

@@ -18,7 +18,7 @@ export default class EditProcess extends Component {
         container = <EditStepTypeTwo itemKey={key} itemValue={value} />
         break;
       case '3':
-        // container = <EditStepTypeThree itemKey={key} itemValue={value} />
+        container = <EditStepTypeThree itemKey={key} itemValue={value} />
         break;
       default:
         container = <div></div>

@@ -341,7 +341,7 @@ export default class BeginningStepOne extends Component {
       payload: {
         flow_instance_id,
         flow_node_instance_id,
-        form_values: form_values,
+        content_values: form_values,
         calback: () => {
           dispatch({
             type: 'publicProcessDetailModal/getProcessListByType',
@@ -416,7 +416,7 @@ export default class BeginningStepOne extends Component {
 
   // 渲染不同状态时步骤的样式
   renderDiffStatusStepStyles = () => {
-    const { itemValue, processInfo: { status: parentStatus } } = this.props
+    const { itemValue = {}, processInfo: { status: parentStatus } } = this.props
     const { status } = itemValue
     let stylLine, stylCircle
     if (parentStatus == '2') { // 表示已中止
@@ -505,7 +505,7 @@ export default class BeginningStepOne extends Component {
         {processEditDatas.length <= itemKey + 1 ? null : <div className={this.renderDiffStatusStepStyles().stylLine}></div>}
         {/* <div className={indexStyles.doingLine}></div> */}
         <div className={this.renderDiffStatusStepStyles().stylCircle}> {itemKey + 1}</div>
-        <div className={`${indexStyles.popover_card}`}>
+        <div className={`${status == '1' ? indexStyles.popover_card : indexStyles.default_popover_card}`}>
           <div className={`${globalStyles.global_vertical_scrollbar}`}>
             {/* 上 */}
             <div style={{ marginBottom: '16px' }}>

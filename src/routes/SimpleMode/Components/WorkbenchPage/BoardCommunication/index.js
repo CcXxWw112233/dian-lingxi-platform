@@ -235,7 +235,7 @@ class BoardCommunication extends Component {
         dispatch({
             type: getEffectOrReducerByName_8('getOnlyFileList'),
             payload: {
-                board_id: board_id || boardId,
+                board_id: ((board_id && board_id != '0') && board_id) || boardId,
                 folder_id: folderId,
             }
         });

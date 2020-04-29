@@ -10,6 +10,7 @@ import AmendComponent from '../AmendComponent'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { connect } from 'dva'
 import { renderTimeType } from '../../handleOperateModal'
+import { Tooltip } from 'antd'
 
 @connect(mapStateToProps)
 export default class ConfirmInfoOne extends Component {
@@ -151,7 +152,7 @@ export default class ConfirmInfoOne extends Component {
 
         {processEditDatas.length <= itemKey + 1 ? null : <div className={indexStyles.completeLine}></div>}
         <div className={indexStyles.circle}> {itemKey + 1}</div>
-        <div className={`${indexStyles.popover_card}`}>
+        <div className={`${indexStyles.default_popover_card}`}>
           <div className={`${globalStyles.global_vertical_scrollbar}`}>
             {/* 上 */}
             <div style={{ marginBottom: '16px' }}>
@@ -238,12 +239,16 @@ export default class ConfirmInfoOne extends Component {
                           {`${transCopyPersonnelList.length}位抄送人`}
                         </span>
                         {
-                          cc_locking == '0' && (
+                          cc_locking == '0' ? (
                             <span style={{ position: 'relative' }}>
                               <AmendComponent type="3"
                                 updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel}
                                 updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="抄送人" data={data} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
                             </span>
+                          ) : (
+                            <Tooltip title="已锁定抄送人" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                              <span style={{cursor: 'pointer', color: 'rgba(0,0,0,0.25)', marginLeft: '4px'}} className={globalStyles.authTheme}>&#xe86a;</span>
+                            </Tooltip>
                           )
                         }
                       </div>

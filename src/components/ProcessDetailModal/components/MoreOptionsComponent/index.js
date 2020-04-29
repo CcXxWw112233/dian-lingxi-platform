@@ -409,13 +409,13 @@ export default class MoreOptionsComponent extends Component {
         }
         {/* 更多选项 */}
         {
-          options_data.length == '3' || (node_type == '3' && cc_type == '1') && options_data.length == '2' ? (
+          options_data.length == '3' ? (
             <></>
           ) : (
               <div className={indexStyles.more_select}>
                 <span className={indexStyles.more_label}>... 更多选项 &nbsp;:</span>
                 {
-                  !deadlineCode && (node_type == '3' ? cc_type == '1' ? false : true : true) && (
+                  !deadlineCode && (
                     <sapn onClick={(e) => { this.handleSelectedMoreOptions('COMPLETION_DEADLINE', e) }} className={`${indexStyles.select_item}`}>+ 完成期限</sapn>
                   )
                 }

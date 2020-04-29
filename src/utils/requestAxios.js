@@ -9,6 +9,12 @@ function messageLoading() {
     message.loading('加载中...', 0)
   )
 }
+const openNotification = (message) => {
+  notification.error({
+    message: '提示',
+    description: message,
+  });
+};
 axios.interceptors.request.use(
   config => {
     return config;
@@ -87,18 +93,15 @@ export default function request(options = {}, elseSet = {}) {
             default:
               const { data = {} } = error.response || {}
               const { message } = data
-              const openNotification = () => {
-                notification.error({
-                  message: '提示',
-                  description: message,
-                });
-              };
-              openNotification()
+              openNotification(message)
               resolve(data)
               break
           }
         } else {
-          message.error('系统繁忙，请稍后重试！')
+          openNotification('系统繁忙，请稍后重试！')
+          resolve({
+            message: '系统繁忙，请稍后重试！'
+          })
         }
       })
   })

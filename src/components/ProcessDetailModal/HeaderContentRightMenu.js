@@ -15,7 +15,7 @@ import {
   NOT_HAS_PERMISION_COMFIRN,
 } from "@/globalset/js/constant";
 import { FLOWS } from '../../globalset/js/constant'
-import { genPrincipalListFromAssignees, transformNewAssigneesToString, transformNewRecipientsToString } from './components/handleOperateModal'
+import { genPrincipalListFromAssignees, transformNewAssigneesToString, transformNewRecipientsToString, wipeOffSomeDataWithScoreNodes } from './components/handleOperateModal'
 import { getGlobalData } from '../../utils/businessFunction'
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
@@ -424,10 +424,17 @@ export default class HeaderContentRightMenu extends Component {
     const { dispatch, templateInfo = {}, processInfo: { nodes = [], id, is_covert_template } } = this.props
     let newNodes = [...nodes]
     newNodes = newNodes.map(item => {
-      let new_item = {...item}
-      new_item = {...item, status: '', is_edit: '1', assignees: transformNewAssigneesToString(item).join(','), recipients: transformNewRecipientsToString(item).join(',')}
-      return new_item
+      if (item.node_type == '3') {
+        let new_item = {...item}
+        new_item = {...item, status: '', is_edit: '1', assignees: transformNewAssigneesToString(item).join(','), recipients: transformNewRecipientsToString(item).join(','), score_items: wipeOffSomeDataWithScoreNodes(item || {})}
+        return new_item
+      } else {
+        let new_item = {...item}
+        new_item = {...item, status: '', is_edit: '1', assignees: transformNewAssigneesToString(item).join(','), recipients: transformNewRecipientsToString(item).join(',')}
+        return new_item
+      }
     })
+    
     // return
     dispatch({
       type: 'publicProcessDetailModal/updateDatas',
