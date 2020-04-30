@@ -358,8 +358,8 @@ export default class BeginningStepThree_one extends Component {
             }
             {
               score_display == '0' && status == '1' && (
-                <div style={{ color: 'rgba(0,0,0,0.45)', fontWeight: 500, position: 'absolute', bottom: '16px', left: last_total && Object.keys(last_total).length != '0' ? '102px' : '0px', display: 'flex', alignItems: 'center' }}>
-                  <div>
+                <div style={{ color: 'rgba(0,0,0,0.45)', fontWeight: 500, position: 'absolute', bottom: '16px', left: last_total && Object.keys(last_total).length != '0' ? '158px' : '0px', display: 'flex', alignItems: 'center' }}>
+                  <div style={{flexShrink: 0}}>
                     <span>&nbsp;&nbsp;（暂时仅自己可见，待所有人评分人评分完成后公开）</span>
                   </div>
                 </div>
