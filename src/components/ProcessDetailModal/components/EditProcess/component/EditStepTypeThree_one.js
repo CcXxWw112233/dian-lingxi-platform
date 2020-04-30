@@ -49,7 +49,8 @@ export default class EditStepTypeThree_one extends Component {
 
   render() {
     const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id } } = this.props
-    const { enable_weight, score_display } = itemValue
+    const { enable_weight, score_node_set = {} } = itemValue
+    const { score_display } = score_node_set
     const { score_items = [], clientWidth } = this.state
     let flag = this.whetherShowDiffWidth()
     let autoWidth = clientWidth ? clientWidth / 4 - 45 : 130

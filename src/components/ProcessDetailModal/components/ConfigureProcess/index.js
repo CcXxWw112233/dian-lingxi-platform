@@ -69,14 +69,27 @@ export default class ConfigureProcess extends Component {
       newModelItemValue.is_click_node_name == false || newModelItemValue.is_click_node_name ? delete newModelItemValue.is_click_node_name : ''
       newStateItemValue.options_data ? delete newStateItemValue.options_data : ''
       newModelItemValue.options_data ? delete newModelItemValue.options_data : ''
+      console.log(newStateItemValue, newModelItemValue,'sssssssssssssss_newStateItemValue')
       if (isObjectValueEqual(newStateItemValue, newModelItemValue)) { // 表示没有变化
         this.setState({
           isDisabled: true
         })
-      } else {
+      } 
+      else {
         this.setState({
           isDisabled: false
         })
+      }
+      if (newStateItemValue.node_type == '3' && newModelItemValue.node_type == '3') {
+        if (isObjectValueEqual(newStateItemValue['score_node_set'], newModelItemValue['score_node_set'])) {
+          this.setState({
+            isDisabled: true
+          })
+        } else {
+          this.setState({
+            isDisabled: false
+          })
+        }
       }
     } else {
       this.setState({
