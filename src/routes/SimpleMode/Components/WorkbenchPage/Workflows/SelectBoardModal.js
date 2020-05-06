@@ -89,11 +89,12 @@ function mapStateToProps({
         }
     },
     technological: {
-        datas: { currentUserOrganizes }
+        datas: { currentUserOrganizes = {}, userBoardPermissions = []}
     }
 }) {
     return {
         projectList,
-        currentUserOrganizes
+        currentUserOrganizes,
+        userBoardPermissions
     }
 }

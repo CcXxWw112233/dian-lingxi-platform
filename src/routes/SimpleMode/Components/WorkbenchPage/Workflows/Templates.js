@@ -289,7 +289,8 @@ function mapStateToProps({
     technological: {
         datas: {
             currentUserOrganizes = [],
-            currentSelectOrganize = {}
+            currentSelectOrganize = {},
+            userBoardPermissions = []
         }
     },
     publicProcessDetailModal: {
@@ -301,6 +302,7 @@ function mapStateToProps({
         simplemodeCurrentProject,
         currentSelectOrganize,
         currentUserOrganizes,
+        userBoardPermissions,
         process_detail_modal_visible
     }
 }

@@ -416,7 +416,7 @@ export default class BeginningStepThree extends Component {
         <div>
           <div style={{ minHeight: score_result_value && score_result_value != '' ? '258px' : '210px', padding: '16px 14px', borderTop: '1px solid rgba(0,0,0,0.09)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div style={{ color: 'rgba(0,0,0,0.45)' }}>
-              <span className={globalStyles.authTheme}>&#xe7bf;</span>
+              <span style={{fontSize: '16px'}} className={globalStyles.authTheme}>&#xe7bf;</span>
               <span style={{ marginLeft: '4px' }}>评分结果判定：</span>
             </div>
             {
