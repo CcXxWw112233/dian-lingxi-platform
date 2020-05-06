@@ -22,11 +22,16 @@ export default class ConfigureStepOne_one extends Component {
 
   constructor(props) {
     super(props)
+    let compare_item1 = JSON.parse(JSON.stringify(temp_item || {}))
+    let compare_item2 = JSON.parse(JSON.stringify(props.itemValue || {}))
+    compare_item1.is_click_currentTextForm ? delete temp_item.is_click_currentTextForm : ''
+    compare_item2.is_click_currentTextForm ? delete temp_item.is_click_currentTextForm : ''
     this.state = {
       popoverVisible: null,
-      form_item: compareACoupleOfObjects(temp_item, props.itemValue) ? temp_item : props.itemValue,
-      val_min_length: props.itemValue.val_min_length ? props.itemValue.val_min_length : '',
-      val_max_length: props.itemValue.val_max_length ? props.itemValue.val_max_length : '',
+      form_item: compareACoupleOfObjects(compare_item1, compare_item2) ? temp_item : props.itemValue,
+      local_item: compareACoupleOfObjects(compare_item1, compare_item2) ? temp_item : props.itemValue,
+      // val_min_length: props.itemValue.val_min_length ? props.itemValue.val_min_length : '',
+      // val_max_length: props.itemValue.val_max_length ? props.itemValue.val_max_length : '',
     }
   }
 
@@ -34,29 +39,29 @@ export default class ConfigureStepOne_one extends Component {
     const { itemValue: { val_min_length, val_max_length } } = nextProps
     this.setState({
       // popoverVisible: visible,
-      val_min_length: val_min_length,
-      val_max_length: val_max_length,
+      // val_min_length: val_min_length,
+      // val_max_length: val_max_length,
     })
   }
 
   onVisibleChange = (visible) => {
-    const { is_click_confirm_btn, form_item } = this.state
+    const { is_click_confirm_btn, form_item, local_item = {} } = this.state
     const { itemKey, parentKey, processEditDatas = [], itemValue } = this.props
     const { val_min_length, val_max_length } = itemValue
-    let temp_item = { ...form_item }
+    let update_item = JSON.parse(JSON.stringify(local_item || {}))
     if (!is_click_confirm_btn) {// 判断是否点击了确定按钮,否 那么就保存回原来的状态
       if (visible == false)
         this.setState({
-          form_item: temp_item
+          form_item: update_item
         })
       const { forms = [] } = processEditDatas[parentKey]
-      forms[itemKey] = { ...temp_item }
+      forms[itemKey] = JSON.parse(JSON.stringify(update_item || {}))
       this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
     }
     this.setState({
       popoverVisible: visible,
-      val_min_length: val_min_length,
-      val_max_length: val_max_length,
+      // val_min_length: val_min_length,
+      // val_max_length: val_max_length,
     })
   }
 
@@ -66,75 +71,87 @@ export default class ConfigureStepOne_one extends Component {
     forms[itemKey][key] = data.value
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
   }
+  updateState = (data,key) => {
+    const { form_item = {} } = this.state
+    let update_item = JSON.parse(JSON.stringify(form_item || {}))
+    update_item[key] = data.value
+    this.setState({
+      form_item: update_item
+    })
+  }
   propertyNameChange = (e) => {
-    this.updateEdit({ value: e.target.value }, 'title')
+    this.updateState({ value: e.target.value }, 'title')
   }
   defaultValueChange = (e) => {
-    this.updateEdit({ value: e.target.value }, 'prompt_content')
+    this.updateState({ value: e.target.value }, 'prompt_content')
   }
   valMinLengthChange = (value) => {
     const { itemValue: { val_min_length } } = this.props
     if (isNaN(value) || !value) {
       // message.warn('请输入数字')
-      this.setState({
-        val_min_length: val_min_length
-      })
-      this.updateEdit({ value: val_min_length }, 'val_min_length')
+      // this.setState({
+      //   val_min_length: val_min_length
+      // })
+      this.updateState({ value: val_min_length }, 'val_min_length')
       return
     }
-    this.setState({
-      val_min_length: value
-    })
-    // this.updateEdit({ value: value }, 'val_min_length')
+    // this.setState({
+    //   val_min_length: value
+    // })
+    this.updateState({ value: value }, 'val_min_length')
   }
   valMinLengthBlur = (e) => {
+    e && e.stopPropagation()
+    return
     const { itemValue: { val_min_length } } = this.props
     if (isNaN(e.target.value) || !e.target.value) {
       // message.warn('请输入数字')
       this.setState({
         val_min_length: val_min_length
       })
-      this.updateEdit({ value: val_min_length }, 'val_min_length')
+      this.updateState({ value: val_min_length }, 'val_min_length')
       return
     }
-    this.updateEdit({ value: e.target.value.toString() }, 'val_min_length')
+    this.updateState({ value: e.target.value.toString() }, 'val_min_length')
   }
   valMaxLengthChange = (value) => {
     const { itemValue: { val_max_length } } = this.props
     if (isNaN(value) || !value) {
       // message.warn('请输入数字')
-      this.setState({
-        val_max_length: val_max_length
-      })
-      this.updateEdit({ value: val_max_length }, 'val_max_length')
+      // this.setState({
+      //   val_max_length: val_max_length
+      // })
+      this.updateState({ value: val_max_length }, 'val_max_length')
       return
     }
-    this.setState({
-      val_max_length: value
-    })
-    // this.updateEdit({ value: value }, 'val_max_length')
+    // this.setState({
+    //   val_max_length: value
+    // })
+    this.updateState({ value: value }, 'val_max_length')
   }
   valMaxLengthBlur = (e) => {
+    e && e.stopPropagation()
+    return
     const { itemValue: { val_max_length } } = this.props
     if (isNaN(e.target.value) || !e.target.value) {
       // message.warn('请输入数字')
       this.setState({
         val_max_length: val_max_length
       })
-      this.updateEdit({ value: val_max_length }, 'val_max_length')
+      this.updateState({ value: val_max_length }, 'val_max_length')
       return
     }
-    this.updateEdit({ value: e.target.value.toString() }, 'val_max_length')
+    this.updateState({ value: e.target.value.toString() }, 'val_max_length')
   }
   isRequiredCheck = (e) => {
-    this.updateEdit({ value: e.target.value }, 'is_required')
+    this.updateState({ value: e.target.value }, 'is_required')
   }
   verificationRuleChange = (value) => {
     if (value != '') {
-      this.updateEdit({ value: '' }, 'val_min_length')
-      this.updateEdit({ value: '' }, 'val_max_length')
+      this.updateState({ value: '' }, 'val_min_length')
+      this.updateState({ value: '' }, 'val_max_length')
     }
-    this.updateEdit({ value: value }, 'verification_rule')
+    this.updateState({ value: value }, 'verification_rule')
   }
 
   // 删除对应字段的表项
@@ -170,28 +187,38 @@ export default class ConfigureStepOne_one extends Component {
 
   // 每个配置表项的确定的点击事件
   handleConfirmFormItem = () => {
-    const { popoverVisible } = this.state
+    const { popoverVisible, form_item = {} } = this.state
     const { itemValue = {} } = this.props
     this.setState({
       is_click_confirm_btn: true
     })
     if (popoverVisible) {
       this.setState({
-        form_item: JSON.parse(JSON.stringify(itemValue))
+        form_item: JSON.parse(JSON.stringify(form_item || {})),
+        local_item: JSON.parse(JSON.stringify(form_item || {})),
       },() => {
+        const { itemKey, parentKey, processEditDatas = [] } = this.props
+        const { forms = [] } = processEditDatas[parentKey]
+        forms[itemKey] = JSON.parse(JSON.stringify(form_item || {}))
         this.onVisibleChange(false)
         this.setState({
           is_click_confirm_btn: false
         })
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
       })
     }
   }
 
   renderContent = () => {
-    const { itemValue } = this.props
-    const { title, prompt_content, verification_rule, is_required, val_min_length: old_val_min_length, val_max_length: old_val_max_length } = itemValue
-    const { form_item, val_min_length, val_max_length  } = this.state
-    let disabledFlag = compareACoupleOfObjects(form_item, itemValue) || val_min_length != old_val_min_length || val_max_length != old_val_max_length
+    const { itemValue = {} } = this.props
+    const { form_item = {} } = this.state
+    const { title, prompt_content, verification_rule, is_required, val_min_length, val_max_length } = form_item
+    let compare_item1 = JSON.parse(JSON.stringify(form_item || {}))
+    let compare_item2 = JSON.parse(JSON.stringify(itemValue || {}))
+    compare_item1.is_click_currentTextForm ? delete compare_item1.is_click_currentTextForm : ''
+    compare_item2.is_click_currentTextForm ? delete compare_item2.is_click_currentTextForm : ''
+    let disabledFlag = isObjectValueEqual(compare_item1, compare_item2) 
+    // || val_min_length != old_val_min_length || val_max_length != old_val_max_length
     return (
       <div key={itemValue} className={indexStyles.popover_content}>
         <div className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
@@ -244,8 +271,10 @@ export default class ConfigureStepOne_one extends Component {
 
   render() {
     const { itemKey, itemValue, parentKey, processEditDatas = [] } = this.props
+    const { form_item = {} } = this.state
     const { forms = [] } = processEditDatas[parentKey]
-    const { title, prompt_content, is_required, is_click_currentTextForm } = itemValue
+    const { title, prompt_content, is_required } = form_item
+    const { is_click_currentTextForm } = itemValue
     return (
       <div>
         <div className={indexStyles.text_form} style={{ background: is_click_currentTextForm ? 'rgba(230,247,255,1)' : 'rgba(0,0,0,0.02)' }} onClick={this.handleChangeTextFormColor}>
