@@ -201,13 +201,13 @@ export default class BeginningStepThree_one extends Component {
                     item.is_total == '0' ? (
                       <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>
                         <td style={{ maxWidth: '78px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.title || ''}</td>
-                        <td>{item.weight_ratio || ''}</td>
+                        <td>{`${item.weight_ratio}%` || ''}</td>
                         <td style={{ color: '#1890FF' }}>{item.value || ''}</td>
                       </tr>
                     ) : (
                         <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>
                           <td style={{ maxWidth: '78px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: '#1890FF' }}>{item.title || ''}</td>
-                          <td>{item.weight_ratio}</td>
+                          <td>{`${item.weight_ratio}%` || ''}</td>
                           <td style={{ color: '#1890FF' }}>{item.value || ''}</td>
                         </tr>
                       )
@@ -301,7 +301,7 @@ export default class BeginningStepThree_one extends Component {
                             <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer', display: 'inline-block', display: 'flex', flex: 1 }}>
                               <Tooltip title={title} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
                                 <span style={{ display: 'flex' }}>
-                                  <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: clientWidth && !(flag && score_items.length > 1) ? clientWidth + 'px' : autoWidth, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>
+                                  <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: clientWidth && !(flag && score_items.length > 1) ? clientWidth + 'px' : autoWidth, minWidth: '50px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>
                                   <span>:</span>
                                 </span>
                               </Tooltip>
@@ -315,7 +315,7 @@ export default class BeginningStepThree_one extends Component {
                             </span>
                             {
                               description && description != '' ? (
-                                <Popover title={<div style={{ margin: '0 4px', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '130px', whiteSpace: 'nowrap' }}>{title}</div>} content={<div style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', maxWidth: '130px' }}>{description}</div>} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                                <Popover autoAdjustOverflow={false} title={<div style={{ margin: '0 4px', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '130px', whiteSpace: 'nowrap' }}>{title}</div>} content={<div className={globalStyles.global_vertical_scrollbar} style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', width: '210px', maxHeight: '205px', overflowY: 'auto' }}>{description}</div>} placement="top" getPopupContainer={() => document.getElementById(`ratingItems_${itemKey}`)}>
                                   <span style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe845;</span>
                                 </Popover>
                               ) : ('')
@@ -350,7 +350,7 @@ export default class BeginningStepThree_one extends Component {
               last_total && Object.keys(last_total).length != '0' && (
                 <div style={{ color: 'rgba(0,0,0,0.45)', fontWeight: 500, position: 'absolute', bottom: '16px', display: 'flex', alignItems: 'center' }}>
                   <div>
-                    <span style={{ color: 'rgba(0,0,0,0.65)' }}>合计:&nbsp;&nbsp;</span>
+                    <span style={{ color: 'rgba(0,0,0,0.65)' }}>我的最终评分:&nbsp;&nbsp;</span>
                     <span style={{ fontSize: '20px', color: '#1890FF' }}>{last_total.value}</span>
                   </div>
                 </div>
@@ -358,8 +358,8 @@ export default class BeginningStepThree_one extends Component {
             }
             {
               score_display == '0' && status == '1' && (
-                <div style={{ color: 'rgba(0,0,0,0.45)', fontWeight: 500, position: 'absolute', bottom: '16px', left: last_total && Object.keys(last_total).length != '0' ? '102px' : '0px', display: 'flex', alignItems: 'center' }}>
-                  <div>
+                <div style={{ color: 'rgba(0,0,0,0.45)', fontWeight: 500, position: 'absolute', bottom: '16px', left: last_total && Object.keys(last_total).length != '0' ? '158px' : '0px', display: 'flex', alignItems: 'center' }}>
+                  <div style={{flexShrink: 0}}>
                     <span>&nbsp;&nbsp;（暂时仅自己可见，待所有人评分人评分完成后公开）</span>
                   </div>
                 </div>

@@ -40,11 +40,12 @@ export default class ConfigureStepTypeThree extends Component {
   updateScoreNodeSet = (data, key) => {
     const { value } = data
     const { local_score_node_set = {} } = this.state
-    local_score_node_set[key] = value
+    let temp_set = JSON.parse(JSON.stringify(local_score_node_set || {}))
+    temp_set[key] = value
     this.setState({
-      local_score_node_set
+      local_score_node_set: temp_set
     })
-    this.updateConfigureProcess({ value: local_score_node_set }, 'score_node_set')
+    this.updateConfigureProcess({ value: temp_set }, 'score_node_set')
   }
 
   // 锁定评分人

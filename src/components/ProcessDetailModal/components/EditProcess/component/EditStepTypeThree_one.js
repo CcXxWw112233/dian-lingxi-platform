@@ -49,7 +49,8 @@ export default class EditStepTypeThree_one extends Component {
 
   render() {
     const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id } } = this.props
-    const { enable_weight, score_display } = itemValue
+    const { enable_weight, score_node_set = {} } = itemValue
+    const { score_display } = score_node_set
     const { score_items = [], clientWidth } = this.state
     let flag = this.whetherShowDiffWidth()
     let autoWidth = clientWidth ? clientWidth / 4 - 45 : 130
@@ -67,7 +68,7 @@ export default class EditStepTypeThree_one extends Component {
                       <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer', display: 'inline-block', display: 'flex', flex: 1 }}>
                         <Tooltip title={title} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
                         <span style={{display: 'flex'}}>
-                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: clientWidth && !(flag && score_items.length > 1) ? clientWidth + 'px' : autoWidth, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>
+                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: clientWidth && !(flag && score_items.length > 1) ? clientWidth + 'px' : autoWidth, minWidth: '50px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>
                           <span>:</span>
                          </span>
                         </Tooltip>
@@ -81,7 +82,7 @@ export default class EditStepTypeThree_one extends Component {
                       </span>
                       {
                         description != '' ? (
-                          <Popover title={<div style={{ margin: '0 4px', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '130px', whiteSpace: 'nowrap' }}>{title}</div>} content={<div style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', maxWidth: '130px' }}>{description}</div>} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                          <Popover autoAdjustOverflow={false} title={<div style={{ margin: '0 4px', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '130px', whiteSpace: 'nowrap' }}>{title}</div>} content={<div className={globalStyles.global_vertical_scrollbar} style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', width: '210px', maxHeight: '205px', overflowY: 'auto' }}>{description}</div>} placement="top" getPopupContainer={() => document.getElementById(`ratingItems_${itemKey}`)}>
                             <span style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe845;</span>
                           </Popover>
                         ) : ('')

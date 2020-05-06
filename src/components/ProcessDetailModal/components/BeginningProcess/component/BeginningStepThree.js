@@ -342,13 +342,13 @@ export default class BeginningStepThree extends Component {
                     item.is_total == '0' ? (
                       <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>
                         <td style={{ maxWidth: '78px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{item.title || ''}</td>
-                        <td>{item.weight_ratio || ''}</td>
+                        <td>{`${item.weight_ratio}%` || ''}</td>
                         <td style={{ color: '#1890FF' }}>{item.value || ''}</td>
                       </tr>
                     ) : (
                         <tr style={{ height: '32px', border: '1px solid #E9E9E9', textAlign: 'center', fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>
                           <td style={{ maxWidth: '78px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: '#1890FF' }}>{item.title || ''}</td>
-                          <td>{item.weight_ratio || ''}</td>
+                          <td>{`${item.weight_ratio}%` || ''}</td>
                           <td style={{ color: '#1890FF' }}>{item.value || ''}</td>
                         </tr>
                       )

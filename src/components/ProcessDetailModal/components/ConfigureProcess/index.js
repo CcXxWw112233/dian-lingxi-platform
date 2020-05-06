@@ -68,15 +68,47 @@ export default class ConfigureProcess extends Component {
       newModelItemValue.is_edit ? delete newModelItemValue.is_edit : ''
       newModelItemValue.is_click_node_name == false || newModelItemValue.is_click_node_name ? delete newModelItemValue.is_click_node_name : ''
       newStateItemValue.options_data ? delete newStateItemValue.options_data : ''
-      newModelItemValue.options_data ? delete newModelItemValue.options_data : ''
-      if (isObjectValueEqual(newStateItemValue, newModelItemValue)) { // 表示没有变化
-        this.setState({
-          isDisabled: true
-        })
+      newModelItemValue.options_data ? delete newModelItemValue.options_data : ''      
+      if (newStateItemValue.node_type == '3' && newModelItemValue.node_type == '3') { 
+        if (isObjectValueEqual(newStateItemValue['score_node_set'], newModelItemValue['score_node_set'])) {
+          if (isObjectValueEqual(newStateItemValue, newModelItemValue)) {
+            this.setState({
+              isDisabled: true
+            })
+          } else {
+            this.setState({
+              isDisabled: false
+            })
+          }
+        } else {
+          this.setState({
+            isDisabled: false
+          })
+        }
+        // if (isObjectValueEqual(newStateItemValue, newModelItemValue)) { // 表示没有变化
+        //   this.setState({
+        //     isDisabled: true
+        //   })
+        // } else if (isObjectValueEqual(newStateItemValue['score_node_set'], newModelItemValue['score_node_set'])) {
+        //   this.setState({
+        //     isDisabled: true
+        //   })
+        // } else {
+        //   this.setState({
+        //     isDisabled: false
+        //   })
+        // }
       } else {
-        this.setState({
-          isDisabled: false
-        })
+        if (isObjectValueEqual(newStateItemValue, newModelItemValue)) { // 表示没有变化
+          this.setState({
+            isDisabled: true
+          })
+        } 
+        else {
+          this.setState({
+            isDisabled: false
+          })
+        }
       }
     } else {
       this.setState({
