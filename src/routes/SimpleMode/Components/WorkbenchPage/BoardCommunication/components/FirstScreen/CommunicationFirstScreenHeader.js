@@ -11,7 +11,7 @@ const BreadcrumbItem = Breadcrumb.Item
 // @connect()
 
 export default class CommunicationFirstScreenHeader extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             searchValue: '', // 搜索框输入值
@@ -23,12 +23,12 @@ export default class CommunicationFirstScreenHeader extends Component {
 
     // 改变面包屑路径
     chooseBreadItem = (item) => {
-        // this.props.setBreadPaths && this.props.setBreadPaths({ path_item: item })
+        this.props.setBreadPaths && this.props.setBreadPaths({ path_item: item })
     }
 
     // 获取焦点时触发
     selectOnblur = () => {
-        
+
     }
 
     // onChange
@@ -47,7 +47,7 @@ export default class CommunicationFirstScreenHeader extends Component {
 
 
     // 失去input search焦点
-    inputOnBlur= () => {
+    inputOnBlur = () => {
         // console.log('失去焦点了');
     }
 
@@ -56,36 +56,55 @@ export default class CommunicationFirstScreenHeader extends Component {
         this.props.searchCommunicationFilelist();
     }
 
-    render(){
+    render() {
         const {
             bread_paths,
             currentSelectBoardId,
             currentItemLayerId,
-            currentSearchValue
+            currentSearchValue,
+            descriptionTitle,
+            disabled
         } = this.props;
-        return(
+        return (
             <div className={styles.communicationFirstScreenHeader}>
                 {/* 面包屑 */}
-                <div className={styles.breadPath}>
+                <div className={styles.breadPath} style={{ cursor: 'pointer' }}>
                     {
                         bread_paths && bread_paths.length ?
-                        (
-                            <Breadcrumb separator={this.showSeparator()} style={{display: 'flex'}}>
-                                <BreadcrumbItem key={'allFiles'} onClick={()=>this.props.goAllFileStatus()}>
-                                    全部文件
-                                </BreadcrumbItem>
-                                {
-                                    bread_paths.map((item, index) => {
-                                        const { id, folder_id, board_name, folder_name, type } = item
-                                        return (
-                                            <BreadcrumbItem key={ id || folder_id } onClick={() => this.chooseBreadItem(item)}>
-                                                <span style={{color: 'rgba(0,0,0,.65)', display: 'inline-block', maxWidth: '500px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{board_name || folder_name}</span>
-                                            </BreadcrumbItem>
-                                        )
-                                    })
-                                }
-                            </Breadcrumb>
-                        ) : ( <div className={styles.projectName}>项目文件</div> )
+                            (
+                                <div style={{ marginTop: -9 }}>
+                                    <Breadcrumb
+                                        // separator={this.showSeparator()}
+                                        style={{
+                                            display: 'flex',
+                                            fontSize: 18
+                                        }}>
+                                        <BreadcrumbItem key={'allFiles'} onClick={() => this.props.goAllFileStatus()}>
+                                            全部{descriptionTitle || '文件'}
+                                        </BreadcrumbItem>
+                                        {
+                                            bread_paths.map((item, index) => {
+                                                const { id, folder_id, board_name, folder_name, type } = item
+                                                return (
+                                                    <BreadcrumbItem key={id || folder_id} onClick={() => this.chooseBreadItem(item)}>
+                                                        <span
+                                                            title={board_name || folder_name}
+                                                            style={{
+                                                                color: 'rgba(0,0,0,.65)',
+                                                                display: 'inline-block',
+                                                                maxWidth: 100,
+                                                                overflow: 'hidden',
+                                                                textOverflow: 'ellipsis',
+                                                                whiteSpace: 'nowrap'
+                                                            }}
+                                                        >{board_name || folder_name}</span>
+                                                    </BreadcrumbItem>
+                                                )
+                                            })
+                                        }
+                                    </Breadcrumb>
+                                </div>
+                            ) : (<div className={styles.projectName}>项目{descriptionTitle || '文件'}</div>)
                     }
                 </div>
 
@@ -95,17 +114,18 @@ export default class CommunicationFirstScreenHeader extends Component {
                         style={{ width: '100%', resize: 'none' }}
                         autoFocus={true}
                         autosize={true}
+                        disabled={disabled}
                         // onChange={(e) => { this.inputOnChange(e) }}
                         onChange={this.inputOnChange.bind(this)}
                         onBlur={() => { this.inputOnBlur() }}
-                        onFocus={()=>{ this.inputOnFocus()}}
+                        onFocus={() => { this.inputOnFocus() }}
                         // onClick={(e) => { this.handleStopPro(e) }}
                         // onKeyDown={(e) => { this.handleKeyDown(list, file_id, e) }}
                         // maxLength={50}
-                        onSearch={()=>this.onSearch()}
+                        onSearch={() => this.onSearch()}
                         value={currentSearchValue}
                         allowClear={true}
-                        // onSearch={(inputValue) => this.onSearch(inputValue, onSearchButton)}
+                    // onSearch={(inputValue) => this.onSearch(inputValue, onSearchButton)}
                     />
                 </div>
             </div>

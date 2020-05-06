@@ -99,11 +99,19 @@ export default class GetRowTaskItem extends Component {
             is_moved
             // || task_is_dragging
         ) {
-            this.props.setTaskIsDragging && this.props.setTaskIsDragging(false) //当拖动完成后，释放创建任务的锁，让可以正常创建任务
+            this.props.setTaskIsDragging && this.props.setTaskIsDragging(false, 1) //当拖动完成后，释放创建任务的锁，让可以正常创建任务
             return
         }
         const { setSpecilTaskExample } = this.props
         setSpecilTaskExample(data)
+        // 恢复最初状态
+        setTimeout(() => {
+            this.setState({
+                is_moved: false
+            })
+            this.props.setTaskIsDragging && this.props.setTaskIsDragging(false, 2) //当拖动完成后，释放创建任务的锁，让可以正常创建任务
+        }, 700)
+
 
         // 设置已读
         const { dispatch, im_all_latest_unread_messages } = this.props
@@ -145,8 +153,8 @@ export default class GetRowTaskItem extends Component {
         document.addEventListener('ontouchmove', this.onTouchMove, false);
         document.addEventListener('ontouchend', this.onTouchEnd, false);
         setTimeout(() => {
-            this.props.setTaskIsDragging && this.props.setTaskIsDragging(true) //当拖动时，有可能会捕获到创建任务的动作，阻断
-        }, 500)
+            this.props.setTaskIsDragging && this.props.setTaskIsDragging(true, 3) //当拖动时，有可能会捕获到创建任务的动作，阻断
+        }, 300)
         // target.onmouseleave = this.onMouseUp.bind(this);
     }
 
@@ -351,7 +359,7 @@ export default class GetRowTaskItem extends Component {
             this.setState({
                 is_moved: false
             })
-            this.props.setTaskIsDragging && this.props.setTaskIsDragging(false) //当拖动完成后，释放创建任务的锁，让可以正常创建任务
+            this.props.setTaskIsDragging && this.props.setTaskIsDragging(false, 4) //当拖动完成后，释放创建任务的锁，让可以正常创建任务
         }, 300)
     }
 

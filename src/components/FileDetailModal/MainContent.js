@@ -14,13 +14,14 @@ import {
   NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_FILE_UPDATE
 } from "@/globalset/js/constant";
 import NotSupportImg from '@/assets/projectDetail/fileDetail/not_support.png'
-let timer
+// let this.timer
 
 @connect(mapStateToProps)
 class MainContent extends Component {
 
   constructor(props) {
     super(props)
+    this.timer = null
     this.state = {
       // isZoomPictureFullScreenMode: false, //图评全屏模式
 
@@ -70,8 +71,8 @@ class MainContent extends Component {
   }
 
   componentWillUnmount() {
-    if (timer) {
-      clearTimeout(timer)
+    if (this.timer) {
+      clearTimeout(this.timer)
     }
   }
 
@@ -97,12 +98,12 @@ class MainContent extends Component {
       percent: 0
     })
     this.props.updateStateDatas && this.props.updateStateDatas({ isZoomPictureFullScreenMode: flag })
-    clearTimeout(timer)
+    clearTimeout(this.timer)
   }
 
   // PDF圈评转换事件
   fetchConvertPdfAlsoUpdateVersion = ({ file_name, file_id, folder_id }) => {
-    const { currentPreviewFileData = {}, isZoomPictureFullScreenMode } = this.props
+    const { currentPreviewFileData = {}, isZoomPictureFullScreenMode, isPdfLoaded } = this.props
     const { supportFileTypeArray = [] } = this.state
     let FILE_NAME = getSubfixName(file_name)
     if (supportFileTypeArray.indexOf(FILE_NAME) != -1) {
@@ -113,17 +114,26 @@ class MainContent extends Component {
           if (isPDF) {
             setCurrentVersionFile({ id: res.data.id, set_major_version: '1' }).then(result => {
               if (isApiResponseOk(result)) {
-                this.props.delayUpdatePdfDatas && this.props.delayUpdatePdfDatas({ id: res.data.id })
+                this.props.delayUpdatePdfDatas && this.props.delayUpdatePdfDatas({ 
+                  id: res.data.id, 
+                  calback: () => {
+                    this.setState({
+                      percent: 0,
+                      is_petty_loading: !isZoomPictureFullScreenMode && false,
+                      is_large_loading: isZoomPictureFullScreenMode && false,
+                    })
+                  } 
+                })
                 this.props.updateStateDatas && this.props.updateStateDatas({ filePreviewCurrentFileId: res.data.id, currentPreviewFileData: { ...currentPreviewFileData, id: res.data.id }, currentPreviewFileName: res.data.file_name, fileType: getSubfixName(res.data.file_name) })
                 this.setState({
-                  is_petty_loading: !isZoomPictureFullScreenMode && false,
-                  is_large_loading: isZoomPictureFullScreenMode && false,
-                  percent: 0
+                  is_petty_loading: !isZoomPictureFullScreenMode ? isPdfLoaded ? true : false : false,
+                  is_large_loading: isZoomPictureFullScreenMode ? isPdfLoaded ? true : false : false,
+                  // percent: 0
                 })
                 // 用来保存在父元素中管理起来
                 this.props.updateStateDatas && this.props.updateStateDatas({
-                  is_petty_loading: !isZoomPictureFullScreenMode && false,
-                  is_large_loading: isZoomPictureFullScreenMode && false,
+                  // is_petty_loading: !isZoomPictureFullScreenMode && !isPdfLoaded ? false : true,
+                  // is_large_loading: isZoomPictureFullScreenMode && isPdfLoaded ? true :false,
                   selectedKeys: [res.data.id]
                 })
                 this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({ folder_id })
@@ -140,6 +150,16 @@ class MainContent extends Component {
           message.warn(res.message, MESSAGE_DURATION_TIME)
           if (res.code == 4047) { // 表示转换失败
             message.error(res.message, MESSAGE_DURATION_TIME)
+            this.setState({
+              is_petty_loading: !isZoomPictureFullScreenMode && false,
+              is_large_loading: isZoomPictureFullScreenMode && false,
+              percent: 0
+            })
+            this.props.updateStateDatas && this.props.updateStateDatas({
+              is_petty_loading: !isZoomPictureFullScreenMode && false,
+              is_large_loading: isZoomPictureFullScreenMode && false,
+              selectedKeys: []
+            })
           }
           this.setState({
             is_petty_loading: !isZoomPictureFullScreenMode && false,
@@ -159,57 +179,75 @@ class MainContent extends Component {
 
   // 加载进度条
   updateProcessPercent = () => {
-    const { currentPreviewFileData = {} } = this.props
+    const { currentPreviewFileData = {}, isPdfLoaded } = this.props
     const { id, board_id, file_name, folder_id } = currentPreviewFileData
     let percent = this.state.percent + 10;
     // return
-    if (percent > 100) {
-      if (timer) clearTimeout(timer)
-      this.setState({
-        percent: 100
-      })
-      this.fetchConvertPdfAlsoUpdateVersion({ file_id: id, file_name: file_name, folder_id: folder_id })
+
+    if (percent >= 100) {
+      if (isPdfLoaded) {
+        // if (this.timer) clearTimeout(this.timer)
+        this.setState({
+          percent: 100
+        })
+      } else {
+        if (this.timer) clearTimeout(this.timer)
+        this.setState({
+          percent: 100
+        })
+        this.props.updateStateDatas && this.props.updateStateDatas({
+          isPdfLoaded: false
+        })
+      }
+      // this.fetchConvertPdfAlsoUpdateVersion({ file_id: id, file_name: file_name, folder_id: folder_id })
       return
     }
     this.setState({
       percent
     })
-    timer = setTimeout(() => {
+    this.timer = setTimeout(() => {
       this.updateProcessPercent()
-    }, 500)
+    }, 200)
   }
 
   // 除pdf外的其他文件进入圈评
-  handleEnterCirclePointComment = () => {
+  handleEnterCirclePointComment = async () => {
     const { isZoomPictureFullScreenMode } = this.props
     const { currentPreviewFileData = {} } = this.props
-    const { board_id, privileges = [], is_privilege } = currentPreviewFileData
+    const { board_id, privileges = [], is_privilege, id, file_name, folder_id } = currentPreviewFileData
     if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      this.props.updateStateDatas({
+        isPdfLoaded: false
+      })
       return false
     }
-    this.updateProcessPercent()
-    this.setState({
-      is_petty_loading: !isZoomPictureFullScreenMode,
-      is_large_loading: isZoomPictureFullScreenMode,
-      percent: 0
+    await this.props.updateStateDatas({
+      isPdfLoaded: true
     })
-    this.props.updateStateDatas && this.props.updateStateDatas({
-      is_petty_loading: !isZoomPictureFullScreenMode,
-      is_large_loading: isZoomPictureFullScreenMode,
-      selectedKeys: []
-    })
+    await this.updateProcessPercent()
+    await this.fetchConvertPdfAlsoUpdateVersion({ file_id: id, file_name: file_name, folder_id: folder_id })
+    // this.setState({
+    //   is_petty_loading: !isZoomPictureFullScreenMode,
+    //   is_large_loading: isZoomPictureFullScreenMode,
+    //   percent: 0
+    // })
+    // this.props.updateStateDatas && this.props.updateStateDatas({
+    //   is_petty_loading: !isZoomPictureFullScreenMode,
+    //   is_large_loading: isZoomPictureFullScreenMode,
+    //   selectedKeys: []
+    // })
   }
 
   // 渲染非全屏模式圈评图片
   renderPunctuateDom() {
-    const { clientHeight, filePreviewUrl, filePreviewCurrentFileId, isZoomPictureFullScreenMode, componentWidth, componentHeight } = this.props
+    const { clientHeight, filePreviewUrl, filePreviewCurrentFileId, isZoomPictureFullScreenMode, componentWidth, componentHeight, isPdfLoaded } = this.props
     const { currentZoomPictureComponetWidth, currentZoomPictureComponetHeight, is_petty_loading, percent, } = this.state
 
     return (
       <>
         {
-          is_petty_loading ? (
+          is_petty_loading && isPdfLoaded ? (
             <CirclePreviewLoadingComponent
               height={currentZoomPictureComponetHeight}
               percent={percent}
@@ -241,13 +279,13 @@ class MainContent extends Component {
 
   // 渲染非全屏模式其他文件格式图片
   renderIframeDom() {
-    const { clientHeight, filePreviewUrl, fileType, componentHeight } = this.props
+    const { clientHeight, filePreviewUrl, fileType, componentHeight, isPdfLoaded } = this.props
     const { is_petty_loading, percent, supportFileTypeArray = [], currentZoomPictureComponetHeight } = this.state
 
     return (
       <>
         {
-          is_petty_loading ? (
+          is_petty_loading && isPdfLoaded ? (
             <CirclePreviewLoadingComponent
               height={currentZoomPictureComponetHeight}
               percent={percent}
@@ -280,9 +318,9 @@ class MainContent extends Component {
         content = (
           <div style={{ textAlign: 'center' }}>
             <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe65b;</i>
-            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ fontSize: '14px', color: 'rgba(89,89,89,1)' }}>暂不支持该格式预览</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
-              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              <img src={NotSupportImg} style={{ margin: 'auto' }} />
               {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
@@ -295,9 +333,9 @@ class MainContent extends Component {
         content = (
           <div style={{ textAlign: 'center' }}>
             <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe6e0;</i>
-            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ fontSize: '14px', color: 'rgba(89,89,89,1)' }}>暂不支持该格式预览</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
-              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              <img src={NotSupportImg} style={{ margin: 'auto' }} />
               {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
@@ -310,9 +348,9 @@ class MainContent extends Component {
         content = (
           <div style={{ textAlign: 'center' }}>
             <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe658;</i>
-            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ fontSize: '14px', color: 'rgba(89,89,89,1)' }}>暂不支持该格式预览</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
-              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              <img src={NotSupportImg} style={{ margin: 'auto' }} />
               {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
@@ -325,9 +363,9 @@ class MainContent extends Component {
         content = (
           <div style={{ textAlign: 'center' }}>
             <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe65f;</i>
-            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ fontSize: '14px', color: 'rgba(89,89,89,1)' }}>暂不支持该格式预览</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
-              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              <img src={NotSupportImg} style={{ margin: 'auto' }} />
               {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
@@ -340,9 +378,9 @@ class MainContent extends Component {
         content = (
           <div style={{ textAlign: 'center' }}>
             <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe64f;</i>
-            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ fontSize: '14px', color: 'rgba(89,89,89,1)' }}>暂不支持该格式预览</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
-              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              <img src={NotSupportImg} style={{ margin: 'auto' }} />
               {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
@@ -355,9 +393,9 @@ class MainContent extends Component {
         content = (
           <div style={{ textAlign: 'center' }}>
             <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe6e8;</i>
-            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ fontSize: '14px', color: 'rgba(89,89,89,1)' }}>暂不支持该格式预览</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
-              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              <img src={NotSupportImg} style={{ margin: 'auto' }} />
               {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
@@ -370,9 +408,9 @@ class MainContent extends Component {
         content = (
           <div style={{ textAlign: 'center' }}>
             <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe64c;</i>
-            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ fontSize: '14px', color: 'rgba(89,89,89,1)' }}>暂不支持该格式预览</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
-              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              <img src={NotSupportImg} style={{ margin: 'auto' }} />
               {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
@@ -385,9 +423,9 @@ class MainContent extends Component {
         content = (
           <div style={{ textAlign: 'center' }}>
             <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe65d;</i>
-            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ fontSize: '14px', color: 'rgba(89,89,89,1)' }}>暂不支持该格式预览</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
-              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              <img src={NotSupportImg} style={{ margin: 'auto' }} />
               {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
@@ -400,9 +438,9 @@ class MainContent extends Component {
         content = (
           <div style={{ textAlign: 'center' }}>
             <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe6e4;</i>
-            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ fontSize: '14px', color: 'rgba(89,89,89,1)' }}>暂不支持该格式预览</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
-              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              <img src={NotSupportImg} style={{ margin: 'auto' }} />
               {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
@@ -415,9 +453,9 @@ class MainContent extends Component {
         content = (
           <div style={{ textAlign: 'center' }}>
             <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe6e5;</i>
-            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ fontSize: '14px', color: 'rgba(89,89,89,1)' }}>暂不支持该格式预览</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
-              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              <img src={NotSupportImg} style={{ margin: 'auto' }} />
               {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
@@ -430,9 +468,9 @@ class MainContent extends Component {
         content = (
           <div style={{ textAlign: 'center' }}>
             <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe6e6;</i>
-            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ fontSize: '14px', color: 'rgba(89,89,89,1)' }}>暂不支持该格式预览</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
-              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              <img src={NotSupportImg} style={{ margin: 'auto' }} />
               {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
@@ -445,9 +483,9 @@ class MainContent extends Component {
         content = (
           <div style={{ textAlign: 'center' }}>
             <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe6e7;</i>
-            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ fontSize: '14px', color: 'rgba(89,89,89,1)' }}>暂不支持该格式预览</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
-              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              <img src={NotSupportImg} style={{ margin: 'auto' }} />
               {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
@@ -460,9 +498,9 @@ class MainContent extends Component {
         content = (
           <div style={{ textAlign: 'center' }}>
             <i className={globalStyles.authTheme} style={{ fontSize: '80px', color: '#5CA8F8' }}>&#xe64e;</i>
-            <div style={{fontSize: '14px', color: 'rgba(89,89,89,1)'}}>暂不支持该格式预览</div>
+            <div style={{ fontSize: '14px', color: 'rgba(89,89,89,1)' }}>暂不支持该格式预览</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', margin: '20px auto' }}>
-              <img src={NotSupportImg} style={{margin: 'auto'}}/>
+              <img src={NotSupportImg} style={{ margin: 'auto' }} />
               {/* <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe6e4;</i>
                 <i className={globalStyles.authTheme} style={{ fontSize: '58px' }}>&#xe651;</i> */}
@@ -479,18 +517,23 @@ class MainContent extends Component {
 
   // 全屏的取消事件
   cancelZoomFrame = () => {
+    const { is_petty_loading, is_large_loading } = this.props
+    if (is_petty_loading || is_large_loading) {
+      message.warn('正在进入圈评,请勿退出', MESSAGE_DURATION_TIME)
+      return false
+    }
     this.props.updateStateDatas && this.props.updateStateDatas({ isZoomPictureFullScreenMode: !this.props.isZoomPictureFullScreenMode });
   }
 
   // 渲染全屏模式的图片
   renderFullScreenModePunctuateDom() {
-    const { filePreviewUrl, filePreviewCurrentFileId, bodyClientHeight, bodyClientWidth, isZoomPictureFullScreenMode } = this.props
+    const { filePreviewUrl, filePreviewCurrentFileId, bodyClientHeight, bodyClientWidth, isZoomPictureFullScreenMode, isPdfLoaded } = this.props
     const { is_large_loading, percent, } = this.state
 
     return (
       <Modal zIndex={1010} style={{ top: 0, left: 0, height: bodyClientHeight - 200 + 'px' }} footer={null} title={null} width={bodyClientWidth} visible={isZoomPictureFullScreenMode} onCancel={this.cancelZoomFrame}>
         {
-          is_large_loading ? (
+          is_large_loading && isPdfLoaded ? (
             <div style={{ height: bodyClientHeight, marginTop: '20px', background: 'rgba(0,0,0,0.15)' }}>
               <CirclePreviewLoadingComponent
                 percent={percent}
@@ -521,7 +564,7 @@ class MainContent extends Component {
 
   // 渲染全屏时其他格式文件
   renderFullScreenModeIframeDom() {
-    const { filePreviewUrl, bodyClientHeight, bodyClientWidth, isZoomPictureFullScreenMode, fileType } = this.props
+    const { filePreviewUrl, bodyClientHeight, bodyClientWidth, isZoomPictureFullScreenMode, fileType, isPdfLoaded } = this.props
     const { is_large_loading, percent, supportFileTypeArray = [] } = this.state
     return (
       <Modal wrapClassName={mainContentStyles.overlay_iframBigDom} zIndex={1010} style={{ top: 0, left: 0, minWidth: bodyClientWidth + 'px', minHeight: bodyClientHeight + 'px' }} width={bodyClientWidth} height={bodyClientHeight} footer={null} title={null} visible={isZoomPictureFullScreenMode} onCancel={this.cancelZoomFrame}>
@@ -530,7 +573,7 @@ class MainContent extends Component {
         dangerouslySetInnerHTML={{ __html: getIframe(filePreviewUrl) }}></div>
         <> */}
         {
-          is_large_loading ? (
+          is_large_loading && isPdfLoaded ? (
             <div style={{ height: bodyClientHeight, marginTop: '20px', background: 'rgba(0,0,0,0.15)' }}>
               <CirclePreviewLoadingComponent
                 percent={percent}

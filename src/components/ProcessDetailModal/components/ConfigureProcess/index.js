@@ -5,9 +5,10 @@ import NameChangeInput from '@/components/NameChangeInput'
 import { Radio, Button, Tooltip } from 'antd'
 import ConfigureStepTypeOne from './component/ConfigureStepTypeOne'
 import ConfigureStepTypeTwo from './component/ConfigureStepTypeTwo'
+import ConfigureStepTypeThree from './component/ConfigureStepTypeThree'
 import { processEditDatasItemOneConstant, processEditDatasItemTwoConstant, processEditDatasItemThreeConstant } from '../../constant'
 import { connect } from 'dva'
-import { isArrayEqual, isObjectValueEqual } from '../../../../utils/util'
+import { isObjectValueEqual } from '../../../../utils/util'
 @connect(mapStateToProps)
 export default class ConfigureProcess extends Component {
 
@@ -39,7 +40,7 @@ export default class ConfigureProcess extends Component {
   handleServiceData = (props) => {
     const { itemValue, templateInfo: { nodes = [] }, itemKey, processPageFlagStep, processEditDatas = [] } = props
     let currentEditNodeItem = (processEditDatas && processEditDatas.length) && processEditDatas.filter(item => item.is_edit == '0')[0] || {}
-    if (processPageFlagStep == '2' && ((nodes && nodes.length) && nodes.length  == (processEditDatas && processEditDatas.length) && processEditDatas.length)) { // 表示是进去编辑的时候 并且节点长度相等的时候, 如果不相等 那么就不比较 表示进行了删除或者添加 
+    if (processPageFlagStep == '2' && (nodes.length  == processEditDatas.length)) { // 表示是进去编辑的时候 并且节点长度相等的时候, 如果不相等 那么就不比较 表示进行了删除或者添加 
       let newStateItemValue = JSON.parse(JSON.stringify(currentEditNodeItem || {}))
       let newModelItemValue = JSON.parse(JSON.stringify(nodes[itemKey] || {}))
       newStateItemValue['forms'] = newStateItemValue['forms'] && newStateItemValue['forms'].map(item => {
@@ -66,14 +67,48 @@ export default class ConfigureProcess extends Component {
       newStateItemValue.is_click_node_name == false || newStateItemValue.is_click_node_name ? delete newStateItemValue.is_click_node_name : ''
       newModelItemValue.is_edit ? delete newModelItemValue.is_edit : ''
       newModelItemValue.is_click_node_name == false || newModelItemValue.is_click_node_name ? delete newModelItemValue.is_click_node_name : ''
-      if (isObjectValueEqual(newStateItemValue, newModelItemValue)) { // 表示没有变化
-        this.setState({
-          isDisabled: true
-        })
+      newStateItemValue.options_data ? delete newStateItemValue.options_data : ''
+      newModelItemValue.options_data ? delete newModelItemValue.options_data : ''      
+      if (newStateItemValue.node_type == '3' && newModelItemValue.node_type == '3') { 
+        if (isObjectValueEqual(newStateItemValue['score_node_set'], newModelItemValue['score_node_set'])) {
+          if (isObjectValueEqual(newStateItemValue, newModelItemValue)) {
+            this.setState({
+              isDisabled: true
+            })
+          } else {
+            this.setState({
+              isDisabled: false
+            })
+          }
+        } else {
+          this.setState({
+            isDisabled: false
+          })
+        }
+        // if (isObjectValueEqual(newStateItemValue, newModelItemValue)) { // 表示没有变化
+        //   this.setState({
+        //     isDisabled: true
+        //   })
+        // } else if (isObjectValueEqual(newStateItemValue['score_node_set'], newModelItemValue['score_node_set'])) {
+        //   this.setState({
+        //     isDisabled: true
+        //   })
+        // } else {
+        //   this.setState({
+        //     isDisabled: false
+        //   })
+        // }
       } else {
-        this.setState({
-          isDisabled: false
-        })
+        if (isObjectValueEqual(newStateItemValue, newModelItemValue)) { // 表示没有变化
+          this.setState({
+            isDisabled: true
+          })
+        } 
+        else {
+          this.setState({
+            isDisabled: false
+          })
+        }
       }
     } else {
       this.setState({
@@ -275,7 +310,10 @@ export default class ConfigureProcess extends Component {
     let confirmButtonText = ''
     let confirmButtonDisabled
     const { itemValue } = this.props
-    const { node_type, name, forms = [], assignee_type, assignees, cc_type, recipients, approve_value, approve_type } = itemValue
+    const { node_type, name, forms = [], assignee_type, assignees, 
+      cc_type, recipients, approve_value, approve_type,  score_node_set = {}
+    } = itemValue
+    let result_value = score_node_set && Object.keys(score_node_set).length ? score_node_set.result_value : ''
     let newAssignees
     let newRecipients
     if (!assignees || assignees == '') {
@@ -453,6 +491,50 @@ export default class ConfigureProcess extends Component {
         }
         break
       case '3':
+        const reg = /^([0-9]\d{0,3}(\.\d{1,2})?|10000)$/
+        if (cc_type == '0' || cc_type == '') { // 表示没有选择抄送人
+          if (!name && !(newAssignees && newAssignees.length)) {
+            confirmButtonText = '请输入步骤名称以及至少添加一位评分人'
+            confirmButtonDisabled = true
+          } else if (!name && (newAssignees && newAssignees.length)) {
+            confirmButtonText = '请输入步骤名称'
+            confirmButtonDisabled = true
+          } else if (name && !(newAssignees && newAssignees.length)) {
+            confirmButtonText = '至少添加一位评分人'
+            confirmButtonDisabled = true
+          }
+          if (!reg.test(result_value)) {
+            confirmButtonText = '请输入正确的结果分数值(小于10000的数字)'
+            confirmButtonDisabled = true
+          }
+        } else if (cc_type == '1') {
+          if (!name && !(newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+            confirmButtonText = '请输入步骤名称、至少添加一位评分人以及至少添加一位抄送人'
+            confirmButtonDisabled = true
+          } else if (name && !(newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+            confirmButtonText = '至少添加一位评分人以及至少添加一位抄送人'
+            confirmButtonDisabled = true
+          } else if (!name && (newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+            confirmButtonText = '请输入步骤名称以及至少添加一位抄送人'
+            confirmButtonDisabled = true
+          } else if (!name && !(newAssignees && newAssignees.length) && (newRecipients && newRecipients.length)) {
+            confirmButtonText = '请输入步骤名称以及至少添加一位评分人'
+            confirmButtonDisabled = true
+          } else if (!name && (newAssignees && newAssignees.length) && (newRecipients && newRecipients.length)) {
+            confirmButtonText = '请输入步骤名称'
+            confirmButtonDisabled = true
+          } else if (name && !(newAssignees && newAssignees.length) && (newRecipients && newRecipients.length)) {
+            confirmButtonText = '至少添加一位评分人'
+            confirmButtonDisabled = true
+          } else if (name && (newAssignees && newAssignees.length) && !(newRecipients && newRecipients.length)) {
+            confirmButtonText = '至少添加一位抄送人'
+            confirmButtonDisabled = true
+          }
+          if (!reg.test(result_value)) {
+            confirmButtonText = '请输入正确的结果分数值(小于10000的数字)'
+            confirmButtonDisabled = true
+          }
+        }
         break
       default:
         // confirmButtonText = '确认'
@@ -473,6 +555,9 @@ export default class ConfigureProcess extends Component {
       case '2': // 表示审批
         container = <ConfigureStepTypeTwo itemValue={itemValue} itemKey={itemKey} />
         break
+      case '3': // 表示评分
+        container = <ConfigureStepTypeThree itemValue={itemValue} itemKey={itemKey} />
+        break
       default:
         container = <div></div>
         break;
@@ -484,7 +569,8 @@ export default class ConfigureProcess extends Component {
     const { itemKey, itemValue, processEditDatasRecords = [], processCurrentEditStep, processEditDatas = [], processPageFlagStep } = this.props
     const { name, node_type, description, is_click_node_name } = itemValue
     let deleteBtn = this.whetherIsDeleteNodes()
-    let editConfirmBtn = this.state.isDisabled ? this.renderDiffButtonTooltipsText().confirmButtonDisabled ? true : false : this.renderDiffButtonTooltipsText().confirmButtonDisabled ? true : false
+    let editConfirmBtn = this.state.isDisabled ? true : this.renderDiffButtonTooltipsText().confirmButtonDisabled ? true : false
+    let gold_index = (processEditDatas && processEditDatas.length) && processEditDatas.findIndex(item => item.is_edit == '0')
     // let editConfirmBtn = this.renderDiffButtonTooltipsText().confirmButtonDisabled ? this.state.isDisabled ? true : false : this.state.isDisabled ? true : false
     // let node_amount = this.props && this.props.processInfo && this.props.processInfo.node_amount
     let stylLine, stylCircle
@@ -505,15 +591,17 @@ export default class ConfigureProcess extends Component {
     } else if (node_type == '2') {
       check_line = indexStyles.examine_approve
     } else if (node_type == '3') {
-      check_line = indexStyles.make_copy
+      check_line = indexStyles.make_grade
     } else {
       check_line = indexStyles.normal_check
     }
+    let gold_item = (processEditDatas && processEditDatas.length) && processEditDatas.find(item => item.is_edit == '0') || {}
+    let lineFlag = itemKey == processEditDatas.length -1 ? gold_item && Object.keys(gold_item).length ? true : false : false
     return (
       <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }} onClick={(e) => { this.handleCancelNodeName(e) }}>
-        <div className={indexStyles.doingLine}></div>
+        <div className={lineFlag ? indexStyles.doingLine : indexStyles.hasnotCompetedLine}></div>
         <div className={indexStyles.doingCircle}> {itemKey + 1}</div>
-        <div id={`popover_card-${itemKey}-${node_type}`} className={`${indexStyles.popover_card}`}>
+        <div id={`popover_card-${itemKey}-${node_type}`} className={`${itemKey == gold_index ? indexStyles.popover_card : indexStyles.default_popover_card}`}>
           <div className={`${globalStyles.global_vertical_scrollbar}`}>
             {/* 步骤名称 */}
             <div style={{ marginBottom: '16px' }}>
@@ -540,7 +628,7 @@ export default class ConfigureProcess extends Component {
             </div>
             <div style={{ paddingLeft: '14px', paddingRight: '14px', position: 'relative' }}>
               {/* 步骤类型 */}
-              <div style={{ paddingBottom: '14px', borderBottom: '1px #e8e8e8' }} onClick={(e) => { e && e.stopPropagation() }}>
+              <div style={{ paddingBottom: '14px', borderBottom: '1px #e8e8e8', position: 'relative' }} onClick={(e) => { e && e.stopPropagation() }}>
                 <span style={{ color: 'rgba(0,0,0,0.45)' }} className={globalStyles.authTheme}>&#xe7f4; &nbsp;步骤类型 :&nbsp;&nbsp;&nbsp;</span>
                 <Radio.Group onChange={this.handleChangeStepType} value={node_type}>
                   <Radio value="1">资料收集</Radio>
@@ -549,6 +637,17 @@ export default class ConfigureProcess extends Component {
                       <>
                         <Radio value="2">审批</Radio>
                         {/* <Radio value="3">抄送</Radio> */}
+                      </>
+                    )
+                  }
+                  {
+                    itemKey != '0' && 
+                    (
+                      <>
+                      <Radio value="3">评分</Radio>
+                      <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} title="指定评分人进行评分，最终分值会导向某一结果" placement="top">
+                        <span style={{color: '#D9D9D9', cursor: 'pointer'}} className={globalStyles.authTheme}>&#xe845;</span>
+                      </Tooltip>
                       </>
                     )
                   }

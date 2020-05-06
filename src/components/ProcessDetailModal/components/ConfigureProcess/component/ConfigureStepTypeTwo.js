@@ -247,7 +247,7 @@ export default class ConfigureStepTypeTwo extends Component {
         </div>
         {/* 更多选项 */}
         <div>
-          <MoreOptionsComponent itemKey={itemKey} itemValue={itemValue} updateConfigureProcess={this.updateConfigureProcess} data={data} />
+          <MoreOptionsComponent itemKey={itemKey} itemValue={itemValue} updateConfigureProcess={this.updateConfigureProcess} data={data} board_id={board_id} org_id={org_id} />
         </div>
       </div>
     )

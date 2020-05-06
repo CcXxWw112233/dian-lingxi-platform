@@ -69,7 +69,7 @@ export async function fileDownload(params) {
     headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.ids),
     params: {
       ...params,
-      _organization_id: getGlobalData('aboutBoardOrganizationId')
+      _organization_id: params._organization_id || getGlobalData('aboutBoardOrganizationId')
     },
   });
 }
@@ -328,4 +328,23 @@ export async function uploadToOssCalback(data) {
     method: 'POST',
     data
   })
+}
+
+// 根目录下所有文件，所有文件夹包括子文件夹（文件夹不包含文件）(项目归档保存)
+export async function getFolderTreeWithArchives(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/archived/file/tree`,
+    method: 'GET',
+    params
+  })
+}
+
+//获取已归档项目的文件（文件夹）列表
+export async function getArchiveBoardFileList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/archived/file`,
+    method: 'GET',
+    headers: params.folder_id ? createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.folder_id) : {},
+    params,
+  });
 }

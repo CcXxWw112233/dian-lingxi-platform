@@ -130,6 +130,19 @@ const transformNewRecipientsToString = (item) => {
   }, [])
 }
 
+// 去除评分节点中的最终分数以及value值
+const wipeOffSomeDataWithScoreNodes = (item) => {
+  if (!!!item) return []
+  const { score_items = [] } = item
+  let newScoreItems = JSON.parse(JSON.stringify(score_items || []))
+  newScoreItems = (newScoreItems.filter(val => val.is_total != '1') || []).map(item => {
+    let new_item = {...item}
+    new_item && new_item.value ? delete new_item.value : ''
+    return new_item
+  })
+  return newScoreItems || []
+}
+
 // 渲染时、天、月
 const renderTimeType = (type) => {
   let description = ''
@@ -149,13 +162,67 @@ const renderTimeType = (type) => {
   return description
 }
 
-const revealRequestFlowsParams = (params = {}) => {
-  if (!params) return {}
-  if (params && Object.keys(params).length) {
-    return {
-      ...params
-    }
+// 渲染计算方式
+const computing_mode = (type) => {
+  let field_text = ''
+  switch (type) {
+    case '1': // 表示各分项相加
+      field_text = '各分项相加'
+      break;
+    case '2':
+      field_text = '总分值/评分项数'
+      break
+    case '3':
+      field_text = '总分值/评分人数'
+      break
+    default:
+      break;
   }
+  return field_text
+}
+
+// 渲染结果分数选项内容
+const result_score_option = (type) => {
+  let field_text = ''
+  switch (type) {
+    case '1':
+      field_text = '大于'
+      break;
+    case '2':
+      field_text = '小于'
+      break;
+    case '3':
+      field_text = '等于'
+      break;
+    case '4':
+      field_text = '大于或等于'
+      break;
+    case '5':
+      field_text = '小于或等于'
+      break;
+    default:
+      break;
+  }
+  return field_text
+}
+
+// 渲染结果导向 以及其余情况
+const result_score_fall_through_with_others = (type) => {
+  let field_text = ''
+  switch (type) {
+    case '1':
+      field_text = '流程流转到上一步'
+      break;
+    case '2':
+      field_text = '流程流转到下一步'
+      break;
+    case '3':
+      field_text = '流程中止'
+      break;
+    default:
+      break;
+  }
+  return field_text
 }
 
 export {
@@ -165,6 +232,9 @@ export {
   arrayNonRepeatfy,
   transformNewAssigneesToString,
   transformNewRecipientsToString,
-  revealRequestFlowsParams
+  wipeOffSomeDataWithScoreNodes,
+  computing_mode,
+  result_score_option,
+  result_score_fall_through_with_others,
 }
 

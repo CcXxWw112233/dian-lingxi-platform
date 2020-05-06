@@ -253,6 +253,7 @@ class CreateProject extends React.Component {
         }
       }
     }
+    return arr
     let permissionArr = this.filterProjectWhichCurrentUserHasAccessFlowsPermission(arr)
     return permissionArr
     // console.log(newProjects, 'sssssssssssss_newProjects')
@@ -388,15 +389,15 @@ class CreateProject extends React.Component {
               style={{ height: 40, marginBottom: 16 }} />
             <div className={indexStyles.setelse}>
               <div className={indexStyles.setelse_left}>
-                {
-                  is_simple_model == '0' && (
-                    <div className={indexStyles.setelse_item} onClick={this.setCopyFlowTemplateVisible}>
-                      <div className={`${globalStyles.authTheme} ${indexStyles.addUSer}`}>&#xe68b;</div>
-                      <div className={indexStyles.setelse_item_name}>复制流程模板</div>
-                      <div className={`${globalStyles.authTheme} ${indexStyles.spin} ${!copy_flow_template_visible && indexStyles.spin_down}`}>&#xe66b;</div>
-                    </div>
-                  )
-                }
+                {/* {
+                  is_simple_model == '0' && ( */}
+                <div className={indexStyles.setelse_item} onClick={this.setCopyFlowTemplateVisible}>
+                  <div className={`${globalStyles.authTheme} ${indexStyles.addUSer}`}>&#xe68b;</div>
+                  <div className={indexStyles.setelse_item_name}>复制流程模板</div>
+                  <div className={`${globalStyles.authTheme} ${indexStyles.spin} ${!copy_flow_template_visible && indexStyles.spin_down}`}>&#xe66b;</div>
+                </div>
+                {/* )
+                } */}
                 <div className={indexStyles.setelse_item} onClick={this.setInviteOthersVisible}>
                   <div className={`${globalStyles.authTheme} ${indexStyles.addUSer}`}>&#xe685;</div>
                   <div className={indexStyles.setelse_item_name}>邀请他人加入项目</div>

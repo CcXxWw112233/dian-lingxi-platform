@@ -3,7 +3,6 @@ import PublicDetailModal from '@/components/PublicDetailModal'
 import MainContent from './MainContent'
 import HeaderContent from './HeaderContent'
 import { connect } from 'dva'
-// import { revealRequestFlowsParams } from './components/handleOperateModal'
 
 @connect(mapStateToProps)
 export default class ProcessDetailModal extends Component {
@@ -26,10 +25,12 @@ export default class ProcessDetailModal extends Component {
         processInfo: {}, // 流程实例信息
         currentProcessInstanceId: '', // 当前查看的流程实例名称
         currentTempleteIdentifyId: '', // 当前查看的模板ID
-        not_show_create_node_guide: '1',
-        not_show_create_form_guide: '1',
+        not_show_create_node_guide: '1', // 添加节点步骤的引导
+        not_show_create_form_guide: '1', // 配置表项的引导
+        not_show_create_rating_guide: '0', // 配置评分节点的引导
       }
     })
+    this.props.setProcessDetailModalVisibile && this.props.setProcessDetailModalVisibile()
      // 圈子关闭联动
      global.constants.lx_utils && global.constants.lx_utils.setCommentData(this.props.processInfo.id || null)
   }
@@ -64,15 +65,6 @@ export default class ProcessDetailModal extends Component {
     
   }
 
-  // whetherReceiveRequestFlowsParams = () => {
-  //   const { request_flows_params = {} } = this.props
-  //   if (request_flows_params && Object.keys(request_flows_params).length) {
-  //     return revealRequestFlowsParams({...request_flows_params})
-  //   } else {
-  //     return {}
-  //   }
-  // }
-
   render() {
     const { process_detail_modal_visible, whetherUpdateWorkbenchPorcessListData, updateParentProcessTempleteList, request_flows_params = {} } = this.props
     return (
@@ -96,6 +88,7 @@ ProcessDetailModal.defaultProps = {
   whetherUpdateWorkbenchPorcessListData: function(){}, // 修改访问控制后需要更新工作台中的代办列表 的回调
   updateParentProcessTempleteList: function(){}, // 内部数据修改后用来更新外部数据的回调
   request_flows_params: {}, // 接收的外部参数
+  setProcessDetailModalVisibile: function(){}, // 关闭弹窗的回调
 }
 
 //  只关联public中弹窗内的数据
