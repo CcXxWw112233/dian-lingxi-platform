@@ -268,6 +268,7 @@ class MainContent extends Component {
                     filePreviewCurrentFileId={filePreviewCurrentFileId}
                     handleEnterCirclePointComment={this.handleEnterCirclePointComment}
                     isShow_textArea={true}
+                    isOpenAttachmentFile={this.props.isOpenAttachmentFile}
                   />
                 )}
               </div>
@@ -297,7 +298,7 @@ class MainContent extends Component {
                   dangerouslySetInnerHTML={{ __html: this.getIframe(filePreviewUrl) }}>
                 </div>
                 {
-                  fileType != '.pdf' && (supportFileTypeArray.indexOf(fileType) != -1) && (
+                  !this.props.isOpenAttachmentFile && fileType != '.pdf' && (supportFileTypeArray.indexOf(fileType) != -1) && (
                     <div className={mainContentStyles.otherFilesOperator}>
                       <span onClick={this.handleEnterCirclePointComment} className={mainContentStyles.operator_bar}><span className={`${globalStyles.authTheme} ${mainContentStyles.circle_icon}`}>&#xe664;</span>圈点评论</span>
                     </div>
@@ -553,6 +554,7 @@ class MainContent extends Component {
                     filePreviewCurrentFileId={filePreviewCurrentFileId}
                     handleEnterCirclePointComment={this.handleEnterCirclePointComment}
                     isShow_textArea={true}
+                    isOpenAttachmentFile={this.props.isOpenAttachmentFile}
                   />
                 )}
               </div>
@@ -587,7 +589,7 @@ class MainContent extends Component {
                   style={{ height: bodyClientHeight, marginTop: '20px' }}
                   dangerouslySetInnerHTML={{ __html: this.getIframe(filePreviewUrl) }}></div>
                 {
-                  fileType != '.pdf' && (supportFileTypeArray.indexOf(fileType) != -1) && (
+                  !this.props.isOpenAttachmentFile && fileType != '.pdf' && (supportFileTypeArray.indexOf(fileType) != -1) && (
                     <div className={mainContentStyles.otherFilesOperator} style={{ bottom: '100px' }}>
                       <span onClick={this.handleEnterCirclePointComment} className={mainContentStyles.operator_bar}><span className={`${globalStyles.authTheme} ${mainContentStyles.circle_icon}`}>&#xe664;</span>圈点评论</span>
                     </div>

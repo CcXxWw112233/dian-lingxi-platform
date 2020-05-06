@@ -1543,7 +1543,7 @@ class ZoomPicture extends Component {
       //   onClick: () => this.handleOperator('showAllCircleReview')
       // },
 
-      isShow_textArea == true ?
+      isShow_textArea == true && !this.props.isOpenAttachmentFile ?
         {
           label: '添加圈点评论',
           icon: <span>&#xe664;</span>,
@@ -1617,7 +1617,7 @@ class ZoomPicture extends Component {
             </Tooltip>
           ))} */}
         {
-          !isCommentMode && (
+          !this.props.isOpenAttachmentFile && !isCommentMode && (
             <div className={styles.commentMode_line}>|</div>
           )
         }

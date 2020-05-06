@@ -45,7 +45,7 @@ export default class FileDetailModal extends Component {
           filePreviewCurrentFileId={filePreviewCurrentFileId}
           currentPreviewFileName={currentPreviewFileName} 
           fileType={fileType}
-          board_id={board_id}
+          // board_id={board_id}
           {...this.props}
           />
       </div>
@@ -58,7 +58,8 @@ function mapStateToProps({
     filePreviewCurrentFileId,
     fileType,
     isInOpenFile,
-    currentPreviewFileName
+    currentPreviewFileName,
+    isOpenAttachmentFile
   },
   projectDetail: {
     datas: {
@@ -71,6 +72,7 @@ function mapStateToProps({
     fileType,
     isInOpenFile,
     currentPreviewFileName,
+    isOpenAttachmentFile,
     projectDetailInfoData
   }
 }

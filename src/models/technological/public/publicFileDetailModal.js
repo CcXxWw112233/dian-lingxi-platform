@@ -18,7 +18,7 @@ export default {
     filePreviewCurrentFileId: '',
     fileType: '',
     isInOpenFile: false,
-    // isOpenAttachmentFile: false
+    isOpenAttachmentFile: false, // 是否打开附件或其他文件
   },
   subscriptions: {
     setup({ dispatch, history }) {

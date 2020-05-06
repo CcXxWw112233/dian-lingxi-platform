@@ -14,6 +14,7 @@ import {
 import _ from "lodash";
 import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import { FILES } from '../../../../../globalset/js/constant'
+import FileListRightBarFileDetailModal from '../../../../../routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal'
 
 let uploadMaxFileSize = []
 @connect(mapStateToProps)
@@ -107,6 +108,35 @@ export default class BeginningStepOne_five extends Component {
     this.updateEdit({ value: temp_list }, 'files')
   }
 
+  onFilePreview = (e, item) => {
+    e && e.stopPropagation()
+    const file_id = item.file_id || ((item.response && item.response.data) && item.response.data.file_id) || ''
+    const file_name = item.file_name || ((item.response && item.response.data) && item.response.data.file_name) || ''
+    if (!file_id) return
+    this.props.dispatch({
+      type: 'publicFileDetailModal/updateDatas',
+      payload: {
+        isInOpenFile: true,
+        filePreviewCurrentFileId: file_id,
+        fileType: getSubfixName(file_name),
+        currentPreviewFileName: file_name,
+        isOpenAttachmentFile: true
+      }
+    })
+  }
+
+  setPreviewFileModalVisibile = () => {
+    this.props.dispatch({
+      type: 'publicFileDetailModal/updateDatas',
+      payload: {
+        filePreviewCurrentFileId: '',
+        fileType: '',
+        isInOpenFile: false,
+        isOpenAttachmentFile: false
+      }
+    })
+  }
+
 
   getUploadProps = () => {
     const { fileList } = this.state;
@@ -181,7 +211,8 @@ export default class BeginningStepOne_five extends Component {
   }
 
   // 删除文件
-  handleDeleteProcessFile = (shouldDeleteItem, UID) => {
+  handleDeleteProcessFile = (e,shouldDeleteItem, UID) => {
+    e && e.stopPropagation()
     const { dispatch } = this.props
     let that = this
     this.setState({
@@ -286,7 +317,7 @@ export default class BeginningStepOne_five extends Component {
     }
     return (
       <>
-        <div key={item.uid} className={indexStyles.file_item}>
+        <div key={item.uid} className={indexStyles.file_item} onClick={(e) => { this.onFilePreview(e, item) }}>
           <div style={{ display: 'flex', alignItems: 'center', flex: '1' }} {...alrm_obj}>
             <span className={`${globalStyles.authTheme} ${indexStyles.file_theme_code}`}>&#xe64d;</span>
             <span style={{ color: item.status && item.status == 'error' ? 'red' : 'inherit' }} className={indexStyles.file_name}><span style={{
@@ -295,7 +326,7 @@ export default class BeginningStepOne_five extends Component {
             }}>{this.getEllipsisFileName(item.file_name || item.name)}</span>{getSubfixName(item.file_name || item.name)}</span>
           </div>
           <div style={{ flexShrink: 0 }}>
-            <span onClick={() => { this.handleDeleteProcessFile(item.flow_file_id || gold_item_id, item.uid) }} className={indexStyles.del_name}>删除</span>
+            <span onClick={(e) => { this.handleDeleteProcessFile(e,item.flow_file_id || gold_item_id, item.uid) }} className={indexStyles.del_name}>删除</span>
           </div>
         </div>
         {/* <div className={indexStyles.file_percent}></div> */}
@@ -315,7 +346,7 @@ export default class BeginningStepOne_five extends Component {
   }
 
   render() {
-    const { itemValue } = this.props
+    const { itemValue, isInOpenFile, fileType, filePreviewCurrentFileId, currentPreviewFileName  } = this.props
     const { title, limit_file_num, limit_file_type, limit_file_size, is_required, } = itemValue
     const { fileList } = this.state
     return (
@@ -337,6 +368,17 @@ export default class BeginningStepOne_five extends Component {
             return this.renderFileList(item)
           })
         }
+        {
+          isInOpenFile && (
+            <FileListRightBarFileDetailModal 
+              filePreviewCurrentFileId={filePreviewCurrentFileId}
+              fileType={fileType}
+              currentPreviewFileName={currentPreviewFileName}
+              file_detail_modal_visible={isInOpenFile}
+              setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
+            />
+          )
+        }
         {/* {
           this.state.fileList && this.state.fileList.map(item => {
             return this.renderFileList(item)
@@ -347,6 +389,19 @@ export default class BeginningStepOne_five extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [], processInfo = {} } }) {
-  return { processEditDatas, processInfo }
+function mapStateToProps({ 
+  publicProcessDetailModal: { processEditDatas = [], processInfo = {} },
+  publicFileDetailModal: {
+    filePreviewCurrentFileId,
+    fileType,
+    isInOpenFile,
+    currentPreviewFileName
+  },
+}) {
+  return { 
+    processEditDatas, processInfo, 
+    filePreviewCurrentFileId,
+    fileType,
+    isInOpenFile,
+    currentPreviewFileName }
 }

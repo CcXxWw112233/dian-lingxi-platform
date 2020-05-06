@@ -26,7 +26,8 @@ class FileDetailContent extends Component {
       onlyReadingShareModalVisible: false, //只读分享model
       onlyReadingShareData: {},
       file_detail_modal_visible: props.file_detail_modal_visible,
-      fileType: props.fileType
+      fileType: props.fileType,
+      isOpenAttachmentFile: props.isOpenAttachmentFile
     }
   }
 
@@ -98,7 +99,7 @@ class FileDetailContent extends Component {
       if (file_type == '.pdf' && flag) {
         await this.getFilePDFInfo({ id, calback })
       }
-      this.linkImWithFile({ name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id, currentPreviewFileVersionId: res.data.base_info.version_id })
+      !this.props.isOpenAttachmentFile && this.linkImWithFile({ name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id, currentPreviewFileVersionId: res.data.base_info.version_id })
     } else {
       message.warn(res.message, MESSAGE_DURATION_TIME)
       setTimeout(() => {
@@ -203,7 +204,7 @@ class FileDetailContent extends Component {
     fileInfoByUrl({ id }).then(res => {// 获取详情的接口
       if (isApiResponseOk(res)) {
         this.initStateDatas({ data: res.data })
-        this.linkImWithFile({ name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id, currentPreviewFileVersionId: res.data.base_info.version_id })
+        !this.props.isOpenAttachmentFile && this.linkImWithFile({ name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id, currentPreviewFileVersionId: res.data.base_info.version_id })
       } else {
         message.warn(res.message)
         let currentPreviewFileVersionId = this.getCurrentFilePreviewVersionId()
