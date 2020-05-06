@@ -1,29 +1,22 @@
 import base_utils from './base_utils'
 
 const _obj = {
-  getMonthDate: (timestamp) => {
+  getMonthDate: (timestamp) => { //获取月视图数据
     return base_utils.getAroundDate(timestamp)
   },
-  getNextMonthDatePush: (timestamp) => { //日期累加
+  getNextMonthDatePush: (timestamp) => { //获取传入时间戳，获取下一个月的数据，用于日期累加（月视图）
     return base_utils.getNextMonthDate(timestamp)
   },
-  getLastMonthDateShift: (timestamp) => {
+  getLastMonthDateShift: (timestamp) => { //获取传入时间戳，获取上一个月的数据，用于日期累加（月视图）
     return base_utils.getLastMonthDate(timestamp)
   },
-  getDateInfo: base_utils.getNeedDate
+  getDateInfo: (timestring) => base_utils.getNeedDate(timestring), //获取传入日期的详细信息
+
+  // 年视图所需要数据
+  getYearDate: (timestamp) => {
+    return base_utils.getYearDateData(timestamp)
+  },
+
 }
 
 module.exports = _obj
-
-// isToday: (timestamp) => {
-//   return new Date(timestamp).toDateString() === new Date().toDateString()
-// },
-
-// isSamDay: (timestamp, timestamp2) => {
-//   if (!!!timestamp || !!!timestamp2) {
-//     return false
-//   }
-//   const new_time_a = timestamp.toString().length < 13 ? Number(timestamp) * 1000 : Number(timestamp)
-//   const new_time_b = timestamp2.toString().length < 13 ? Number(timestamp2) * 1000 : Number(timestamp2)
-//   return new Date(new_time_a).toDateString() == new Date(new_time_b).toDateString()
-// },

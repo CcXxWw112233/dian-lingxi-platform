@@ -104,14 +104,14 @@ class base_utils {
         const {
             year,
             month,
-        } = getNeedDate(timestamp_trans)
+        } = this.getNeedDategetNeedDate(timestamp_trans)
         //后一个月
         const behind_one_year = month == 12 ? year + 1 : year
         const behind_one_month = month == 12 ? 1 : month + 1
         const behind_month_date = this.getOneMonthDateDetail(behind_one_year, behind_one_month)
         const gold_date_arr = [
             {
-                date_top: getDateTop(behind_one_year, behind_one_month),
+                date_top: this.getDateTop(behind_one_year, behind_one_month),
                 date_inner: behind_month_date,
             },
         ]
@@ -142,6 +142,58 @@ class base_utils {
         return new Date(timestamp).toDateString() === new Date().toDateString()
     }
 
-}
+    // 年视图------------start
+    static getYearQuater(quater_index) { //获取年视图的季度信息
 
+        return quater_month
+    }
+    static getYearQuaterMonthsDetail(quater_index, year) { //获取年视图的季度信息
+        const quater_arr = [
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9],
+            [10, 11, 12]
+        ]
+        const quater_month = quater_arr[quater_index] //获取季度的月份
+
+        const months_detail = quater_month.map(item => { //获取传入季度每个月份的详情
+            const last_day = this.getDaysNumInMonth(year, item)
+            return {
+                year,
+                month: item,
+                last_day,
+                timestamp: new Date(`${year}/${item}/1`).getTime(),
+                timestampEnd: new Date(`${year}/${item}/${last_day} 23:59`).getTime(),
+            }
+        })
+        return months_detail
+    }
+    static getYearDateData(timestamp) { //获取timestamp前 今 后 三年的信息
+        const tran_time = timestamp || current_date_timestamp
+        const year = new Date(tran_time).getFullYear()
+        const year_arr = [year - 1, year, year + 1]
+        const quaters = ['第一季度', '第二季度', '第三季度', '第四季度']
+
+        let year_date_arr =
+            year_arr.map(item_1 => {
+                return quaters.map((item_2, key) => {
+                    return {
+                        date_top: `${item_1}${item_2}`,
+                        date_inner: this.getYearQuaterMonthsDetail(
+                            key,
+                            item_1
+                        )
+                    }
+                })
+            }) //得到一个二维数组
+
+        let gold_date_arr = []
+        for (let val of year_date_arr) { //平铺成一个一维数组
+            gold_date_arr = [].concat(gold_date_arr, val)
+        }
+        console.log('gold_date_arr', gold_date_arr)
+        return gold_date_arr
+    }
+}
+base_utils.getYearDateData()
 module.exports = base_utils
