@@ -158,19 +158,19 @@ export default class DifferenceDeadlineType extends Component {
     switch (status) {
       case '1':
         if (deadline_type == '1') {
-          return container = <span><span className={globalStyles.authTheme}>&#xe686; 完成期限: </span> <span>{this.renderNotRestrictionsTime()}</span></span>
+          return container = <span style={{color: 'rgba(0,0,0,0.45)', display: 'flex'}}><span style={{display: 'flex', flexShrink: 0, lineHeight: '16px', marginRight: '5px'}} className={globalStyles.authTheme}><span style={{fontSize: '16px', fontWeight: 900, marginRight: '5px'}}>&#xe686;</span> 完成期限: </span> <span style={{flexShrink: 0, lineHeight: '16px'}}>{this.renderNotRestrictionsTime()}</span></span>
         } else if (deadline_type == '2') {
-          return container = <span><span className={globalStyles.authTheme}>&#xe686; 完成期限: </span><span>{this.renderRestrictionsTime()}</span></span>
+          return container = <span style={{color: 'rgba(0,0,0,0.45)', display: 'flex'}}><span style={{display: 'flex', flexShrink: 0, lineHeight: '16px', marginRight: '5px'}} className={globalStyles.authTheme}><span style={{fontSize: '16px', fontWeight: 900, marginRight: '5px'}}>&#xe686;</span> 完成期限: </span><span style={{flexShrink: 0, lineHeight: '16px'}}>{this.renderRestrictionsTime()}</span></span>
         }
         break
       case '2': // 表示已完成
-        container = <span>已完成</span>
+        container = <span style={{color: 'rgba(0,0,0,0.45)', display: 'flex'}}>已完成</span>
         break
       case '0': // 表示未开始
         if (deadline_type == '1') {
-          container = <span><span className={globalStyles.authTheme}>&#xe686; 完成期限: </span> {this.renderNotRestrictionsTime()}</span>
+          container = <span style={{color: 'rgba(0,0,0,0.45)', display: 'flex'}}><span style={{display: 'flex', flexShrink: 0, lineHeight: '16px', marginRight: '5px'}} className={globalStyles.authTheme}><span style={{fontSize: '16px', fontWeight: 900, marginRight: '5px'}}>&#xe686;</span> 完成期限: </span> <span style={{flexShrink: 0, lineHeight: '16px'}}>{this.renderNotRestrictionsTime()}</span></span>
         } else if (deadline_type == '2') {
-          container = <span><span className={globalStyles.authTheme}>&#xe686; 完成期限: </span> 步骤开始后{`${deadline_value}${renderTimeType(deadline_time_type)}内`}</span>
+          container = <span style={{color: 'rgba(0,0,0,0.45)', display: 'flex'}}><span style={{display: 'flex', flexShrink: 0, lineHeight: '16px', marginRight: '5px'}} className={globalStyles.authTheme}><span style={{fontSize: '16px', fontWeight: 900, marginRight: '5px'}}>&#xe686;</span> 完成期限: </span> <span style={{flexShrink: 0, lineHeight: '16px'}}>步骤开始后{`${deadline_value}${renderTimeType(deadline_time_type)}内`}</span></span>
         }
         break
       default:

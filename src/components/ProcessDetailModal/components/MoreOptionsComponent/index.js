@@ -225,8 +225,8 @@ export default class MoreOptionsComponent extends Component {
     const { itemValue } = this.props
     const { deadline_time_type, deadline_value, } = itemValue
     return (
-      <div className={`${indexStyles.complet_deadline}`}>
-        <span style={{ fontWeight: 900, marginRight: '2px', color: 'rgba(0,0,0,0.45)' }} className={globalStyles.authTheme}>&#xe686;</span>
+      <div style={{display: 'flex', alignItems: 'center'}} className={`${indexStyles.complet_deadline}`}>
+        <span style={{ fontWeight: 900, marginRight: '2px', color: 'rgba(0,0,0,0.45)', fontSize: '16px' }} className={globalStyles.authTheme}>&#xe686;</span>
         <span style={{ color: 'rgba(0,0,0,0.45)' }}>完成期限 &nbsp;: </span>
         <InputNumber precision="0.1" min={1} max={deadline_time_type == 'hour' ? 24 : deadline_time_type == 'day' ? 30 : 12} value={deadline_value} onChange={this.deadlineValueChange} onClick={(e) => e.stopPropagation()} className={indexStyles.select_number} />
         <Select className={indexStyles.select_day} value={deadline_time_type} onChange={this.deadlineTimeTypeValueChange}>

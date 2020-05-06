@@ -241,9 +241,9 @@ export default class ConfirmInfoThree extends Component {
                   )
                 }
               </div>
-              <div style={{ marginRight: '16px' }}>
-                <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '14px' }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
-                <span className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : </span>
+              <div style={{ marginRight: '16px', display: 'flex' }}>
+                <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '16px', marginRight: '5px', flexShrink: 0 }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
+                <span style={{marginRight: '5px', flexShrink: 0}} className={`${indexStyles.deadline_time}`}>完成期限 : </span>
                 {
                   deadline_type == '1' || deadline_type == '' ? (
                     <span style={{ color: 'rgba(0,0,0,0.45)' }}>未限制时间</span>

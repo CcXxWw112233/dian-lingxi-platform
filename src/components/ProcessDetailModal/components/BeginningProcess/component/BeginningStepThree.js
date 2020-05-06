@@ -10,6 +10,7 @@ import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard  } from
 import { PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
 import BeginningStepThree_one from './BeginningStepThree_one';
 import { isObjectValueEqual, timestampToTimeNormal } from '../../../../../utils/util';
+import DifferenceDeadlineType from '../../DifferenceDeadlineType';
 const TextArea = Input.TextArea
 @connect(mapStateToProps)
 export default class BeginningStepThree extends Component {
@@ -599,18 +600,8 @@ export default class BeginningStepThree extends Component {
                   )
                 }
               </div>
-              <div>
-                <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '14px' }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
-                <span className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : </span>
-                {
-                  deadline_type == '1' || deadline_type == '' ? (
-                    <span style={{ color: 'rgba(0,0,0,0.45)' }}>未限制时间</span>
-                  ) : (
-                      <span style={{ color: 'rgba(0,0,0,0.45)' }}>
-                        步骤开始后{`${deadline_value}${renderTimeType(deadline_time_type)}`}内
-                      </span>
-                    )
-                }
+              <div style={{ marginRight: '14px' }}>
+                <DifferenceDeadlineType type="nodesStepItem" itemValue={itemValue} />
               </div>
             </div>
             {is_show_spread_arrow && this.renderEditDetailContent()}
