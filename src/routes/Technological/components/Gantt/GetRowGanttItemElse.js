@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect, } from 'dva';
 import indexStyles from './index.less'
-import { isToday } from './getDate'
+import { isToday } from './base_utils'
 import { ganttIsOutlineView } from './constants';
 // 这是一个甘特图面板尾部的日期列表
 const getEffectOrReducerByName = name => `gantt/${name}`

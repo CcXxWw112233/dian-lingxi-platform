@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import styles from './index.less'
 import { connect, } from 'dva';
-import { isSamDay } from '../../getDate';
 import { ceil_height_fold, ceil_height } from '../../constants';
+import { isSamDay } from '../../../../../../utils/util';
 
 @connect(mapStateToProps)
 export default class FaceRightButton extends Component {

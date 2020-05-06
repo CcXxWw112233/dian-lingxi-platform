@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import { connect, } from 'dva';
 import indexStyles from './index.less'
-import { isToday } from './getDate'
+import { isToday } from './base_utils'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import MilestoneDetail from './components/milestoneDetail'
-import { isSamDay } from './getDate'
 import { Dropdown, Menu } from 'antd'
 import { ganttIsFold } from './constants';
-import { caldiffDays } from '../../../../utils/util';
+import { caldiffDays, isSamDay } from '../../../../utils/util';
 import { setBoardIdStorage } from '../../../../utils/businessFunction';
 const MenuItem = Menu.Item
 const getEffectOrReducerByName = name => `gantt/${name}`

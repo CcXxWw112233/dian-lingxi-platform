@@ -5,13 +5,12 @@ import AvatarList from '@/components/avatarList'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
 import { task_item_height, task_item_margin_top, date_area_height, ganttIsOutlineView } from './constants'
-import { isSamDay } from './getDate'
 import { updateTask, changeTaskType } from '../../../../services/technological/task'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import { message, Dropdown, Popover, Tooltip } from 'antd'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import { filterDueTimeSpan, cardIsHasUnRead, cardItemIsHasUnRead } from './ganttBusiness'
-import { transformTimestamp } from '../../../../utils/util'
+import { transformTimestamp, isSamDay } from '../../../../utils/util'
 
 // 参考自http://www.jq22.com/webqd1348
 

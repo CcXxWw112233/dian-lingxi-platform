@@ -3,10 +3,9 @@ import { connect, } from 'dva';
 import indexStyles from './index.less'
 import globalStyles from '../../../../globalset/css/globalClassName.less'
 import { Tooltip, Dropdown, Menu } from 'antd'
-import { handleTimeDetailReturn } from '@/utils/util.js'
+import { handleTimeDetailReturn, isSamDay } from '@/utils/util.js'
 import DateListLCBItem from './DateListLCBItem'
 import AddLCBModal from './components/AddLCBModal'
-import { isSamDay } from './getDate'
 import MilestoneDetail from './components/milestoneDetail'
 import { checkIsHasPermissionInBoard, setBoardIdStorage } from '../../../../utils/businessFunction';
 import { PROJECT_TEAM_BOARD_MILESTONE } from "@/globalset/js/constant";
