@@ -22,12 +22,11 @@ import GetRowGanttItemElse from './GetRowGanttItemElse'
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
 export default class GanttFace extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       timer: null,
       viewModal: '2', //视图模式1周，2月，3年
-      target_scrollLeft: 0, //滚动条位置，用来判断向左还是向右
       gantt_card_out_middle_max_height: 600,
       local_gantt_board_id: '0', //当前项目id（项目tab栏）缓存在组件内，用于判断是否改变然后重新获取数据
       init_get_outline_tree: false, //大纲视图下初始化是否获取了大纲树
@@ -165,7 +164,8 @@ export default class GanttFace extends Component {
       dispatch({
         type: getEffectOrReducerByName('updateDatas'),
         payload: {
-          target_scrollTop_board_storage: scrollTop
+          target_scrollTop_board_storage: scrollTop,
+          target_scrollTop: scrollTop
         }
       })
     }
@@ -173,8 +173,8 @@ export default class GanttFace extends Component {
   }
   // 处理水平滚动
   handelScrollHorizontal = ({ scrollLeft, scrollWidth, clientWidth, }) => {
-    const { target_scrollLeft, searchTimer } = this.state
-    const { gold_date_arr, dispatch, ceilWidth } = this.props
+    const { searchTimer } = this.state
+    const { gold_date_arr, dispatch, ceilWidth, target_scrollLeft } = this.props
     const delX = target_scrollLeft - scrollLeft //判断向左还是向右
     if (target_scrollLeft == scrollLeft) {
       return
@@ -203,14 +203,11 @@ export default class GanttFace extends Component {
         }, 50)
       })
     }
-    // dispatch({
-    //   type: getEffectOrReducerByName('updateDatas'),
-    //   payload: {
-    //     target_scrollLeft: scrollLeft
-    //   }
-    // })
-    this.setState({
-      target_scrollLeft: scrollLeft
+    dispatch({
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: {
+        target_scrollLeft: scrollLeft
+      }
     })
   }
 
@@ -450,6 +447,7 @@ function mapStateToProps({ gantt: { datas: {
   gantt_board_id,
   is_show_board_file_area,
   outline_tree,
+  target_scrollLeft
 } } }) {
   return {
     ceilWidth,
@@ -465,6 +463,7 @@ function mapStateToProps({ gantt: { datas: {
     gantt_board_id,
     is_show_board_file_area,
     outline_tree,
+    target_scrollLeft
   }
 }
 GanttFace.defaultProps = {
