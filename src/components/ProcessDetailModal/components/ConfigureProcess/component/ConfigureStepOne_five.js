@@ -16,33 +16,38 @@ let temp_item = {
   "limit_file_type": [//限制上传类型(文件格式) document=文档 image=图像 audio=音频 video=视频
     "document", "image", "audio", "video"
   ],
-  "is_click_currentTextForm": true
+  // "is_click_currentTextForm": true
 }
 @connect(mapStateToProps)
 export default class ConfigureStepOne_five extends Component {
 
   constructor(props) {
     super(props)
+    let compare_item1 = JSON.parse(JSON.stringify(temp_item || {}))
+    let compare_item2 = JSON.parse(JSON.stringify(props.itemValue || {}))
+    compare_item1.is_click_currentTextForm ? delete compare_item1.is_click_currentTextForm : ''
+    compare_item2.is_click_currentTextForm ? delete compare_item2.is_click_currentTextForm : ''
     this.state = {
       popoverVisible: null,
-      form_item: compareACoupleOfObjects(temp_item, props.itemValue) ? temp_item : props.itemValue,
-      limit_file_num: props.itemValue.limit_file_num ? props.itemValue.limit_file_num : '',
-      limit_file_size: props.itemValue.limit_file_size ? props.itemValue.limit_file_size : '',
+      form_item: compareACoupleOfObjects(compare_item1, compare_item2) ? JSON.parse(JSON.stringify(temp_item || {})) : JSON.parse(JSON.stringify(props.itemValue || {})),
+      local_item: compareACoupleOfObjects(compare_item1, compare_item2) ? JSON.parse(JSON.stringify(temp_item || {})) : JSON.parse(JSON.stringify(props.itemValue || {})),
     }
   }
 
   onVisibleChange = (visible) => {
-    const { is_click_confirm_btn, form_item } = this.state
+    const { is_click_confirm_btn, form_item = {}, local_item = {} } = this.state
     const { itemKey, parentKey, processEditDatas = [], itemValue: { limit_file_num, limit_file_size  } } = this.props
-    let temp_item = { ...form_item }
+    let update_item = JSON.parse(JSON.stringify(local_item || {}))
     if (!is_click_confirm_btn) {// 判断是否点击了确定按钮,否 那么就保存回原来的状态
-      if (visible == false)
+      if (visible == false) {
         this.setState({
-          form_item: temp_item
+          form_item: update_item
         })
-      const { forms = [] } = processEditDatas[parentKey]
-      forms[itemKey] = { ...temp_item }
-      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
+        const { forms = [] } = processEditDatas[parentKey]
+        forms[itemKey] = JSON.parse(JSON.stringify(update_item || {}))
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
+        this.updateEdit({ value: false }, 'is_click_currentTextForm')
+      }
     }
     this.setState({
       popoverVisible: visible,
@@ -53,63 +58,50 @@ export default class ConfigureStepOne_five extends Component {
 
   updateEdit = (data, key) => {
     const { itemKey, parentKey, processEditDatas = [] } = this.props
-    const { forms = [] } = processEditDatas[parentKey]
+    const { forms = [] } = JSON.parse(JSON.stringify(processEditDatas[parentKey] || {}))
     forms[itemKey][key] = data.value
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
   }
+  updateState = (data,key) => {
+    const { form_item = {} } = this.state
+    let update_item = JSON.parse(JSON.stringify(form_item || {}))
+    update_item[key] = data.value
+    this.setState({
+      form_item: update_item
+    })
+  }
   propertyNameChange = (e) => {
-    this.updateEdit({ value: e.target.value }, 'title')
+    this.updateState({ value: e.target.value }, 'title')
   }
   limitFileNumValueChange = (value) => {
-    const { itemValue: { limit_file_num } } = this.props
-    if (!value || isNaN(value)) {
-      this.setState({
-        limit_file_num: ''
-      })
-      this.updateEdit({ value: limit_file_num ? limit_file_num : '0' }, 'limit_file_num')
-      // this.updateEdit({ value: '0' }, 'limit_file_num')
+    const { form_item: { limit_file_num } } = this.state
+    if (!value) {
+      this.updateState({ value: limit_file_num ? limit_file_num : '0' }, 'limit_file_num')
       return
     }
-    this.setState({
-      limit_file_num: parseInt(value).toString()
-    })
-    // this.updateEdit({ value: parseInt(value).toString() }, 'limit_file_num')
+    this.updateState({ value: String(value) }, 'limit_file_num')
   }
   limitFileNumValueBlur = (e) => {
-    const { itemValue: { limit_file_num } } = this.props
-    if (!e.target.value || isNaN(e.target.value)) {
-      this.updateEdit({ value: limit_file_num ? limit_file_num : '0' }, 'limit_file_num')
-      return
-    }
-    this.updateEdit({ value: e.target.value.toString() }, 'limit_file_num')
+    e && e.stopPropagation()
+    return
   }
   limitFileSizeValueChange = (value) => {
-    const { itemValue: { limit_file_size } } = this.props
-    if (!value || isNaN(value)) {
-      this.setState({
-        limit_file_size: ''
-      })
-      this.updateEdit({ value: limit_file_size ? limit_file_size : '0' }, 'limit_file_size')
+    const { form_item: { limit_file_size } } = this.state
+    if (!value) {
+      this.updateState({ value: limit_file_size ? limit_file_size : '0' }, 'limit_file_size')
       return
     }
-    this.setState({
-      limit_file_size: parseInt(value).toString()
-    })
-    // this.updateEdit({ value: parseInt(value).toString() }, 'limit_file_size')
+    this.updateState({ value: String(value) }, 'limit_file_size')
   }
   limitFileSizeValueBlur = (e) => {
-    const { itemValue: { limit_file_size } } = this.props
-    if (!e.target.value || isNaN(e.target.value)) {
-      this.updateEdit({ value: limit_file_size ? limit_file_size : '0' }, 'limit_file_size')
-      return
-    }
-    this.updateEdit({ value: e.target.value.toString() }, 'limit_file_size')
+    e && e.stopPropagation()
+    return
   }
   limilFileTypeValueChange = (values) => {
-    this.updateEdit({ value: values }, 'limit_file_type')
+    this.updateState({ value: values }, 'limit_file_type')
   }
   isRequiredCheck = (e) => {
-    this.updateEdit({ value: e.target.value }, 'is_required')
+    this.updateState({ value: e.target.value }, 'is_required')
   }
 
   // 删除对应字段的表项
@@ -128,7 +120,7 @@ export default class ConfigureStepOne_five extends Component {
     const { itemValue, parentKey, processEditDatas = [] } = this.props
     const { forms = [] } = processEditDatas[parentKey]
     const { is_click_currentTextForm } = itemValue
-    let newFormsData = [...forms]
+    let newFormsData = JSON.parse(JSON.stringify(forms || []))
     newFormsData = newFormsData.map(item => {
       if (item.is_click_currentTextForm) {
         let new_item
@@ -144,19 +136,23 @@ export default class ConfigureStepOne_five extends Component {
 
     // 每个配置表项的确定的点击事件
     handleConfirmFormItem = () => {
-      const { popoverVisible } = this.state
-      const { itemValue = {} } = this.props
+      const { popoverVisible, form_item = {} } = this.state
       this.setState({
         is_click_confirm_btn: true
       })
       if (popoverVisible) {
         this.setState({
-          form_item: JSON.parse(JSON.stringify(itemValue))
+          form_item: JSON.parse(JSON.stringify(form_item || {})),
+          local_item: JSON.parse(JSON.stringify(form_item || {})),
         },() => {
+          const { itemKey, parentKey, processEditDatas = [] } = this.props
+          const { forms = [] } = processEditDatas[parentKey]
+          forms[itemKey] = JSON.parse(JSON.stringify(form_item || {}))
           this.onVisibleChange(false)
           this.setState({
             is_click_confirm_btn: false
           })
+          this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
         })
       }
     }
@@ -186,10 +182,21 @@ export default class ConfigureStepOne_five extends Component {
 
   renderContent = () => {
     const { itemValue } = this.props
-    const { title, limit_file_type = [], is_required, limit_file_num: old_limit_file_num, limit_file_size: old_limit_file_size } = itemValue
+    const { form_item = {} } = this.state
+    const { title, limit_file_type = [], is_required, limit_file_num, limit_file_size } = form_item
     const limit_file_type_default = limit_file_type ? limit_file_type : []
-    const { form_item, limit_file_num, limit_file_size } = this.state
-    let disabledFlag = compareACoupleOfObjects(form_item, itemValue) || limit_file_num != old_limit_file_num || limit_file_size != old_limit_file_size
+    
+    let compare_item1 = JSON.parse(JSON.stringify(form_item || {}))
+    let compare_item2 = JSON.parse(JSON.stringify(itemValue || {}))
+    compare_item1.is_click_currentTextForm ? delete compare_item1.is_click_currentTextForm : ''
+    compare_item2.is_click_currentTextForm ? delete compare_item2.is_click_currentTextForm : ''
+    let disabledFlag = false
+    // isObjectValueEqual(compare_item1, compare_item2)
+    if (isObjectValueEqual(compare_item1, compare_item2)) {
+      disabledFlag = true
+    } else if (isNaN(limit_file_num) || isNaN(limit_file_size)) {
+      disabledFlag = true
+    }
     return (
       <div className={indexStyles.popover_content}>
         <div className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
@@ -230,9 +237,11 @@ export default class ConfigureStepOne_five extends Component {
   }
 
   render() {
+    const { form_item = {} } = this.state
     const { itemKey, itemValue, parentKey, processEditDatas = [] } = this.props
     const { forms = [] } = processEditDatas[parentKey]
-    const { title, limit_file_num, limit_file_size, is_required, is_click_currentTextForm } = itemValue
+    const { title, limit_file_num, limit_file_size, is_required } = form_item
+    const { is_click_currentTextForm } = itemValue
     return (
       <div>
         <div className={indexStyles.text_form} style={{ background: is_click_currentTextForm ? 'rgba(230,247,255,1)' : 'rgba(0,0,0,0.02)' }} onClick={this.handleChangeTextFormColor}>
@@ -241,7 +250,7 @@ export default class ConfigureStepOne_five extends Component {
             <span style={{ color: '#1890FF', fontSize: '28px', marginTop: '-6px' }} className={`${globalStyles.authTheme}`}>&#xe692;</span>
             <div style={{ flex: 1, marginLeft: '12px' }}>
               <div className={indexStyles.file_drap_tips}>点击或拖拽文件到此开始上传</div>
-              <div className={indexStyles.file_layout}>{limit_file_size == 0 ? `不限制大小` : `${limit_file_size}MB以内`}、{limit_file_num == 0 ? `不限制数量` : `最多${limit_file_num}个`}、 {`${this.renderFileTypeArrayText()}格式`}</div>
+              <div className={indexStyles.file_layout}>{limit_file_size == 0 ? `不限制大小` : `${parseInt(limit_file_size)}MB以内`}、{limit_file_num == 0 ? `不限制数量` : `最多${parseInt(limit_file_num)}个`}、 {`${this.renderFileTypeArrayText()}格式`}</div>
             </div>
           </div>
           {

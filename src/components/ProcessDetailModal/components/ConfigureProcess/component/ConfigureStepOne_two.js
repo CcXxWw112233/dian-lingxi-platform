@@ -18,7 +18,7 @@ let temp_item = {
       "label_name": '选项1',
     }
   ],
-  "is_click_currentTextForm": true
+  // "is_click_currentTextForm": true
 }
 @connect(mapStateToProps)
 export default class ConfigureStepOne_two extends Component {
@@ -27,8 +27,8 @@ export default class ConfigureStepOne_two extends Component {
     super(props)
     let compare_item1 = JSON.parse(JSON.stringify(temp_item || {}))
     let compare_item2 = JSON.parse(JSON.stringify(props.itemValue || {}))
-    compare_item1.is_click_currentTextForm ? delete temp_item.is_click_currentTextForm : ''
-    compare_item2.is_click_currentTextForm ? delete temp_item.is_click_currentTextForm : ''
+    compare_item1.is_click_currentTextForm ? delete compare_item1.is_click_currentTextForm : ''
+    compare_item2.is_click_currentTextForm ? delete compare_item2.is_click_currentTextForm : ''
     this.state = {
       popoverVisible: null,
       form_item: isObjectValueEqual(compare_item1, compare_item2) ? JSON.parse(JSON.stringify(temp_item || {})) : JSON.parse(JSON.stringify(props.itemValue || {})), // 该组件中的所有数据从state中来
@@ -57,7 +57,7 @@ export default class ConfigureStepOne_two extends Component {
 
   updateEdit = (data, key) => {
     const { itemKey, parentKey, processEditDatas = [] } = this.props
-    const { forms = [] } = processEditDatas[parentKey]
+    const { forms = [] } = JSON.parse(JSON.stringify(processEditDatas[parentKey] || {}))
     forms[itemKey][key] = data.value
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
   }
@@ -77,7 +77,8 @@ export default class ConfigureStepOne_two extends Component {
   }
   optionsValueChange = (e, key) => {
     const { itemValue } = this.props
-    let { options = [] } = itemValue
+    const { form_item = {} } = this.state
+    let { options = [] } = form_item
     let newOptionsData = [...options]
     if (newOptionsData && newOptionsData[key]) {
       newOptionsData[key]['label_name'] = e.target.value
@@ -88,7 +89,8 @@ export default class ConfigureStepOne_two extends Component {
   // 添加选项的点击事件
   handleAddOptionsSelect = () => {
     const { itemValue } = this.props
-    const { options = [] } = itemValue
+    const { form_item = {} } = this.state
+    const { options = [] } = form_item
     let newOptionsData = [...options]
     let obj = {
       label_value: (Number(newOptionsData.length)).toString(),
@@ -100,7 +102,8 @@ export default class ConfigureStepOne_two extends Component {
   // 删除选项的点击事件 (这里是根据下标来)
   handleDelOptionsSelect = (key) => {
     const { itemValue } = this.props
-    const { options = [] } = itemValue
+    const { form_item = {} } = this.state
+    const { options = [] } = form_item
     let newOptionsData = [...options]
     for (var i = 0; i < newOptionsData.length; i++) {
       if (i == key) {
@@ -134,7 +137,7 @@ export default class ConfigureStepOne_two extends Component {
     const { itemValue, parentKey, processEditDatas = [] } = this.props
     const { forms = [] } = processEditDatas[parentKey]
     const { is_click_currentTextForm } = itemValue
-    let newFormsData = [...forms]
+    let newFormsData = JSON.parse(JSON.stringify(forms || []))
     newFormsData = newFormsData.map(item => {
       if (item.is_click_currentTextForm) {
         let new_item
@@ -151,7 +154,6 @@ export default class ConfigureStepOne_two extends Component {
   // 每个配置表项的确定的点击事件
   handleConfirmFormItem = () => {
     const { popoverVisible } = this.state
-    // const { itemValue = {} } = this.props
     const { form_item = {} } = this.state
     this.setState({
       is_click_confirm_btn: true
@@ -175,8 +177,8 @@ export default class ConfigureStepOne_two extends Component {
 
   // 查找所有的选项内容不能为空 true 表示存在空值
   whetherIsEmptyValue = () => {
-    const { itemValue } = this.props
-    const { options = [] } = itemValue
+    const { form_item = {} } = this.state
+    const { options = [] } = form_item
     let newOptionsData = [...options]
     let flag = false
     newOptionsData = newOptionsData.find(item => {

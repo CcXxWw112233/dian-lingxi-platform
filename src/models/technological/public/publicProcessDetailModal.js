@@ -105,7 +105,7 @@ export default {
       const { id, processPageFlagStep, currentTempleteIdentifyId, process_detail_modal_visible, calback } = payload
       let res = yield call(getTemplateInfo, { id })
       if (isApiResponseOk(res)) {
-        let newProcessEditDatas = [...res.data.nodes]
+        let newProcessEditDatas = JSON.parse(JSON.stringify([...res.data.nodes] || []))
         newProcessEditDatas = newProcessEditDatas.map(item => {
           let new_item ={...item, is_edit: '1'}
           return new_item
@@ -242,7 +242,7 @@ export default {
       const { id, calback } = payload
       let res = yield call(getProcessInfo, {id})
       if (isApiResponseOk(res)) {
-        let newProcessEditDatas = [...res.data.nodes]
+        let newProcessEditDatas = JSON.parse(JSON.stringify([...res.data.nodes] || []))
         newProcessEditDatas = newProcessEditDatas.map(item => {
          if (item.status == '2') { // 表示找到已完成的节点
           let new_item = {...item, is_confirm: '1'}
