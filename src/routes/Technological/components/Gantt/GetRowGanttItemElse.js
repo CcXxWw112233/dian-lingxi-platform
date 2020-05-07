@@ -69,8 +69,48 @@ export default class GetRowGanttItem extends Component {
     }
   }
 
+  renderMonthView = (date_inner = []) => {
+    return (
+      <>
+        {date_inner.map((value2, key2) => {
+          const { week_day, timestamp } = value2
+          return (
+            <div className={`${indexStyles.ganttDetailItem}`}
+              key={key2}
+              style={{
+                backgroundColor: isToday(timestamp) ? 'rgb(242, 251, 255)' : ((week_day == 0 || week_day == 6) ? 'rgba(0, 0, 0, 0.04)' : 'rgba(0,0,0,.02)'),
+                ...this.setBorderTop()
+              }}
+            >
+            </div>
+          )
+        })}
+      </>
+    )
+  }
+  renderYearView = (date_inner = []) => {
+    const { ceilWidth } = this.props
+    return (
+      <>
+        {date_inner.map((value2, key2) => {
+          const { month, last_date, week_day, timestamp, timestampEnd, description } = value2
+          return (
+            <div className={`${indexStyles.ganttDetailItem}`}
+              key={key2}
+              style={{
+                width: last_date * ceilWidth,
+                backgroundColor: 'rgba(0,0,0,.02)',
+                ...this.setBorderTop()
+              }}
+            >
+            </div>
+          )
+        })}
+      </>
+    )
+  }
   render() {
-    const { gold_date_arr = [], } = this.props
+    const { gold_date_arr = [], gantt_view_mode } = this.props
     return (
       <div className={indexStyles.ganttAreaOut}>
         <div className={indexStyles.ganttArea} >
@@ -80,19 +120,16 @@ export default class GetRowGanttItem extends Component {
               <div className={indexStyles.ganttAreaItem} key={key}>
                 <div className={indexStyles.ganttDetail}
                   style={{ height: this.filterHeight(), }}>
-                  {date_inner.map((value2, key2) => {
-                    const { week_day, timestamp } = value2
-                    return (
-                      <div className={`${indexStyles.ganttDetailItem}`}
-                        key={key2}
-                        style={{
-                          backgroundColor: isToday(timestamp) ? 'rgb(242, 251, 255)' : ((week_day == 0 || week_day == 6) ? 'rgba(0, 0, 0, 0.04)' : 'rgba(0,0,0,.02)'),
-                          ...this.setBorderTop()
-                        }}
-                      >
-                      </div>
+                  {
+                    gantt_view_mode == 'year' && (
+                      this.renderYearView(date_inner)
                     )
-                  })}
+                  }
+                  {
+                    gantt_view_mode == 'month' && (
+                      this.renderMonthView(date_inner)
+                    )
+                  }
                 </div>
               </div>
             )
@@ -104,6 +141,6 @@ export default class GetRowGanttItem extends Component {
 
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ gantt: { datas: { gold_date_arr = [], gantt_board_id, group_view_type, outline_tree_round, ceiHeight, group_rows = [], list_group = [] } } }) {
-  return { gold_date_arr, ceiHeight, group_rows, list_group, group_view_type, outline_tree_round, gantt_board_id }
+function mapStateToProps({ gantt: { datas: { gantt_view_mode, ceilWidth, gold_date_arr = [], gantt_board_id, group_view_type, outline_tree_round, ceiHeight, group_rows = [], list_group = [] } } }) {
+  return { gantt_view_mode, ceilWidth, gold_date_arr, ceiHeight, group_rows, list_group, group_view_type, outline_tree_round, gantt_board_id }
 }

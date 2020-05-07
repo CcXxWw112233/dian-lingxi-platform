@@ -279,8 +279,115 @@ export default class GetRowGanttItem extends Component {
       }
     })
   }
-  render() {
+
+  // 渲染月视图日期
+  renderMonthView = (date_inner = []) => {
     const { rows = 7, itemKey } = this.props
+    const { ceiHeight, gantt_board_id, group_view_type, show_board_fold, group_list_area_section_height, list_id } = this.props
+    const item_height = rows * ceiHeight
+    return (
+      <>
+        {date_inner.map((value2, key2) => {
+          const { week_day, timestamp, timestampEnd } = value2
+          const has_lcb = this.isHasMiletoneList(Number(timestampEnd)).flag
+          const current_date_board_miletones = this.isHasMiletoneList(Number(timestampEnd)).current_date_board_miletones
+          const is_over_duetime = this.isHasMiletoneList(Number(timestampEnd)).is_over_duetime
+          const is_all_realized = this.isHasMiletoneList(Number(timestampEnd)).is_all_realized
+          return (
+            <div className={`${indexStyles.ganttDetailItem}`}
+              data-list_id={list_id}
+              data-start_time={timestamp}
+              data-end_time={timestampEnd}
+              key={timestamp}
+              style={{ backgroundColor: isToday(timestamp) ? 'rgb(242, 251, 255)' : ((week_day == 0 || week_day == 6) ? 'rgba(0, 0, 0, 0.04)' : 'rgba(0,0,0,.02)') }}
+            >
+              {/* 12为上下margin的总和 */}
+              {
+                group_view_type == '1' &&
+                (gantt_board_id == '0' || (gantt_board_id != '0' && itemKey == 0)) &&
+                has_lcb && (
+                  // <Dropdown overlay={this.renderLCBList(current_date_board_miletones, timestamp)}>
+                  <div style={{ position: 'relative' }}>
+                    {/* 旗帜 */}
+                    <div className={`${indexStyles.board_miletiones_flag} ${globalStyles.authTheme}`}
+                      data-targetclassname="specific_example"
+                      onClick={this.seeMiletones}
+                      onMouseDown={e => e.stopPropagation()}
+                      style={{
+                        color: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized })
+                      }}
+                    >&#xe6a0;</div>
+                    {/* 渲染里程碑名称铺开 */}
+                    <Dropdown overlay={this.renderLCBList(current_date_board_miletones, timestamp)}>
+                      <div className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
+                        data-targetclassname="specific_example"
+                        style={{
+                          top: this.setMiletonesNamesPostionTop(),
+                          maxWidth: this.setMiletonesNamesWidth(timestampEnd) - 30,
+                          color: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized })
+                        }}>
+                        {this.renderMiletonesNames(current_date_board_miletones)}
+                      </div>
+                    </Dropdown>
+                  </div>
+                  // </Dropdown>
+                )
+              }
+              {
+                group_view_type == '1' &&
+                (gantt_board_id == '0' || (gantt_board_id != '0' && itemKey == 0)) &&
+                has_lcb && (
+                  // <Dropdown placement={'topRight'} overlay={this.renderLCBList(current_date_board_miletones, timestamp)}>
+                  <div
+                    data-targetclassname="specific_example"
+                    className={`${indexStyles.board_miletiones_flagpole}`}
+                    style={{
+                      height: gantt_board_id != '0' ? group_list_area_section_height[group_list_area_section_height.length - 1] - 11 : //在任务分组视图下
+                        (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? 29 : item_height - 12),//,
+                      //  backgroundColor: is_over_duetime ? '#FFA39E' : '#FFC069' ,
+                      background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized })
+                    }}
+                    onClick={this.seeMiletones}
+                    onMouseDown={e => e.stopPropagation()}
+                    onMouseOver={e => e.stopPropagation()}
+                  // onMouseMove
+                  />
+                  // </Dropdown>
+                )
+              }
+            </div>
+          )
+        })}
+      </>
+    )
+  }
+  // 渲染年视图日期
+  renderYearView = (date_inner = []) => {
+    const { list_id, ceilWidth } = this.props
+    return (
+      <>
+        {date_inner.map((value2, key2) => {
+          const { month, last_date, week_day, timestamp, timestampEnd, description } = value2
+          const has_lcb = this.isHasMiletoneList(Number(timestampEnd)).flag
+          const current_date_board_miletones = this.isHasMiletoneList(Number(timestampEnd)).current_date_board_miletones
+          const is_over_duetime = this.isHasMiletoneList(Number(timestampEnd)).is_over_duetime
+          const is_all_realized = this.isHasMiletoneList(Number(timestampEnd)).is_all_realized
+          return (
+            <div className={`${indexStyles.ganttDetailItem}`}
+              data-list_id={list_id}
+              data-start_time={timestamp}
+              data-end_time={timestampEnd}
+              key={timestamp}
+              style={{ backgroundColor: 'rgba(0,0,0,.02)', width: ceilWidth * last_date }}
+            >
+            </div>
+          )
+        })}
+      </>
+    )
+  }
+  render() {
+    const { rows = 7, itemKey, gantt_view_mode } = this.props
     const { gold_date_arr = [], ceiHeight, gantt_board_id, group_view_type, show_board_fold, group_list_area_section_height, list_id } = this.props
     const { currentSelectedProjectMembersList } = this.state
     const item_height = rows * ceiHeight
@@ -293,77 +400,16 @@ export default class GetRowGanttItem extends Component {
             return (
               <div className={indexStyles.ganttAreaItem} key={date_top}>
                 <div className={indexStyles.ganttDetail} style={{ height: item_height }}>
-                  {date_inner.map((value2, key2) => {
-                    const { week_day, timestamp, timestampEnd } = value2
-                    const has_lcb = this.isHasMiletoneList(Number(timestampEnd)).flag
-                    const current_date_board_miletones = this.isHasMiletoneList(Number(timestampEnd)).current_date_board_miletones
-                    const is_over_duetime = this.isHasMiletoneList(Number(timestampEnd)).is_over_duetime
-                    const is_all_realized = this.isHasMiletoneList(Number(timestampEnd)).is_all_realized
-                    return (
-                      <div className={`${indexStyles.ganttDetailItem}`}
-                        data-list_id={list_id}
-                        data-start_time={timestamp}
-                        data-end_time={timestampEnd}
-                        key={timestamp}
-                        style={{ backgroundColor: isToday(timestamp) ? 'rgb(242, 251, 255)' : ((week_day == 0 || week_day == 6) ? 'rgba(0, 0, 0, 0.04)' : 'rgba(0,0,0,.02)') }}
-                      >
-                        {/* 12为上下margin的总和 */}
-                        {
-                          group_view_type == '1' &&
-                          (gantt_board_id == '0' || (gantt_board_id != '0' && itemKey == 0)) &&
-                          has_lcb && (
-                            // <Dropdown overlay={this.renderLCBList(current_date_board_miletones, timestamp)}>
-                            <div style={{ position: 'relative' }}>
-                              {/* 旗帜 */}
-                              <div className={`${indexStyles.board_miletiones_flag} ${globalStyles.authTheme}`}
-                                data-targetclassname="specific_example"
-                                onClick={this.seeMiletones}
-                                onMouseDown={e => e.stopPropagation()}
-                                style={{
-                                  color: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized })
-                                }}
-                              >&#xe6a0;</div>
-                              {/* 渲染里程碑名称铺开 */}
-                              <Dropdown overlay={this.renderLCBList(current_date_board_miletones, timestamp)}>
-                                <div className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
-                                  data-targetclassname="specific_example"
-                                  style={{
-                                    top: this.setMiletonesNamesPostionTop(),
-                                    maxWidth: this.setMiletonesNamesWidth(timestampEnd) - 30,
-                                    color: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized })
-                                  }}>
-                                  {this.renderMiletonesNames(current_date_board_miletones)}
-                                </div>
-                              </Dropdown>
-                            </div>
-                            // </Dropdown>
-                          )
-                        }
-                        {
-                          group_view_type == '1' &&
-                          (gantt_board_id == '0' || (gantt_board_id != '0' && itemKey == 0)) &&
-                          has_lcb && (
-                            // <Dropdown placement={'topRight'} overlay={this.renderLCBList(current_date_board_miletones, timestamp)}>
-                            <div
-                              data-targetclassname="specific_example"
-                              className={`${indexStyles.board_miletiones_flagpole}`}
-                              style={{
-                                height: gantt_board_id != '0' ? group_list_area_section_height[group_list_area_section_height.length - 1] - 11 : //在任务分组视图下
-                                  (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? 29 : item_height - 12),//,
-                                //  backgroundColor: is_over_duetime ? '#FFA39E' : '#FFC069' ,
-                                background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized })
-                              }}
-                              onClick={this.seeMiletones}
-                              onMouseDown={e => e.stopPropagation()}
-                              onMouseOver={e => e.stopPropagation()}
-                            // onMouseMove
-                            />
-                            // </Dropdown>
-                          )
-                        }
-                      </div>
+                  {
+                    gantt_view_mode == 'year' && (
+                      this.renderYearView(date_inner)
                     )
-                  })}
+                  }
+                  {
+                    gantt_view_mode == 'month' && (
+                      this.renderMonthView(date_inner)
+                    )
+                  }
                 </div>
               </div>
             )
@@ -385,9 +431,11 @@ export default class GetRowGanttItem extends Component {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({ gantt: { datas: {
   // target_scrollTop,
+  gantt_view_mode,
   gold_date_arr = [], group_list_area_section_height, ceiHeight, gantt_board_id, about_user_boards, milestoneMap, group_view_type, show_board_fold, ceilWidth } } }) {
   return {
     // target_scrollTop,
+    gantt_view_mode,
     gold_date_arr, ceiHeight, gantt_board_id, about_user_boards, milestoneMap, group_view_type, show_board_fold, group_list_area_section_height, ceilWidth
   }
 }

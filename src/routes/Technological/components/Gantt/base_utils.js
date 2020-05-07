@@ -154,18 +154,19 @@ class base_utils {
             [7, 8, 9],
             [10, 11, 12]
         ]
+        const year_arr = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二']
         const quater_month = quater_arr[quater_index] //获取季度的月份
 
         const months_detail = quater_month.map(item => { //获取传入季度每个月份的详情
-            const last_day = this.getDaysNumInMonth(year, item)
+            const last_date = this.getDaysNumInMonth(year, item)
             return {
                 year,
                 month: item,
-                last_day,
+                last_date,
                 date_no: item,
-                description: `${year}年${item}月`,
+                description: year_arr[item - 1],
                 timestamp: new Date(`${year}/${item}/1`).getTime(),
-                timestampEnd: new Date(`${year}/${item}/${last_day} 23:59`).getTime(),
+                timestampEnd: new Date(`${year}/${item}/${last_date} 23:59`).getTime(),
             }
         })
         return months_detail

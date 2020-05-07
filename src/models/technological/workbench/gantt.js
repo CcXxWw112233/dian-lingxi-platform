@@ -53,7 +53,7 @@ export default {
   namespace: 'gantt',
   state: {
     datas: {
-      gantt_view_mode: 'year', //week / month /year
+      gantt_view_mode: 'month', //week / month /year
       gold_date_arr: [], //所需要的日期数据
       date_arr_one_level: [], //所有日期数据扁平成一级数组
       start_date: {}, //日期最开始的那一天

@@ -4,7 +4,7 @@ import indexStyles from './index.less'
 import GetRowGantt from './GetRowGantt'
 import DateList from './DateList'
 import GroupListHead from './GroupListHead'
-import { getMonthDate, getNextMonthDatePush, getGoldDateData } from './getDate'
+import { getMonthDate, getNextMonthDatePush, getGoldDateData, getYearDate } from './getDate'
 import { date_area_height, ganttIsOutlineView } from './constants'
 import GroupListHeadSet from './GroupListHeadSet.js'
 import GroupListHeadSetBottom from './GroupListHeadSetBottom'
@@ -220,6 +220,7 @@ export default class GanttFace extends Component {
       date_arr = [].concat(gold_date_arr, getNextMonthDatePush(timestamp))
     } else {
       date_arr = getMonthDate(timestamp)
+      // date_arr = getYearDate(timestamp)
       // date_arr = getGoldDateData({ gantt_view_mode, timestamp })
     }
     // if (!!to_right) { //如果是拖拽虚线框向右则是累加，否则是取基数前后
