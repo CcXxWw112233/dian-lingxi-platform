@@ -113,7 +113,7 @@ export default class BeginningStepOne_five extends Component {
     const { processInfo = {}, itemValue, processEditDatas = [], parentKey } = this.props;
     const { id: flow_node_instance_id } = processEditDatas[parentKey]
     const { org_id, board_id, folder_id, id: flow_instance_id } = processInfo
-
+    const { id: field_id } = itemValue
     return {
       name: 'file',
       action: '/api/projects/v2/flow/task/upload',
@@ -126,7 +126,8 @@ export default class BeginningStepOne_five extends Component {
       method: 'post',
       data: {
         flow_instance_id,
-        flow_node_instance_id
+        flow_node_instance_id,
+        field_id
       },
       fileList: fileList,
       withCredentials: true,
