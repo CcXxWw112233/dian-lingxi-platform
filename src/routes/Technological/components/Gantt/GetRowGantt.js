@@ -11,13 +11,12 @@ import { date_area_height, task_item_height, task_item_margin_top, ganttIsFold, 
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import QueueAnim from 'rc-queue-anim'
 import GetRowTaskItem from './GetRowTaskItem'
-import { filterDueTimeSpan } from './ganttBusiness'
+import { filterDueTimeSpan, setDateWidthPositionInYearView } from './ganttBusiness'
 import { checkIsHasPermissionInBoard } from '../../../../utils/businessFunction';
 import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE } from '../../../../globalset/js/constant';
 import GetRowSummary from './components/gattFaceCardItem/GetRowSummary.js'
 import GetRowGanttVirtual from './GetRowGanttVirtual'
 import GetRowStrip from './components/GetRowStrip'
-import base_utils from './base_utils'
 
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
@@ -310,12 +309,7 @@ export default class GetRowGantt extends Component {
     let counter = 0
     let date = {} //月视图操作的日期数据
 
-    let month_data = { //年视图操作的月份数据
-      month: {}, //所计数的月份
-      month_date_length_total: 0,  //所计数月份前的所有月份总天数
-      month_count: 0, //所计数月份的所有月份总数(当前+之前)
-      date_no: 1
-    }
+
     if (gantt_view_mode == 'month') { //月视图下定位到相符的日期
       for (let val of date_arr_one_level) {
         ++counter
@@ -325,37 +319,45 @@ export default class GetRowGantt extends Component {
         }
       }
     } else if (gantt_view_mode == 'year') { //年视图下定位到相符的月，然后在该月份下定位日期
-      for (let val of date_arr_one_level) {
-        month_data.month_date_length_total += val['last_date']  //每个月累加天数
-        month_data.month_count += 1 //月份数累加
-        if (month_data.month_date_length_total * ceilWidth > x + width) {
-          month_data.month = val //获得当前月份
-          break
-        }
+      const _position = start_end == '1' ? x : x + width //所取点的位置
+      date = setDateWidthPositionInYearView({
+        _position,
+        ceilWidth,
+        date_arr_one_level,
+        width,
+        x: start_end == '1' ? x : x - 6 //截止日期总是往后一天，故减1做魔法兼容
+      })
+      // for (let val of date_arr_one_level) {
+      //   month_data.month_date_length_total += val['last_date']  //每个月累加天数
+      //   month_data.month_count += 1 //月份数累加
+      //   if (month_data.month_date_length_total * ceilWidth > x + width) {
+      //     month_data.month = val //获得当前月份
+      //     break
+      //   }
 
-      }
-      // console.log('asdasdasd00', month_data.month.last_date, month_data.month_date_length_total, x / ceilWidth)
-      //当前月份天数长度 - (所属月份和之前月份的总天数长度 - 当前点的位置（x(x是经过单元格乘以单元格长度转换而来)）) = 该月份日期
-      const position_ = start_end == '1' ? x : x + width //所取点的位置
-      month_data.date_no = month_data.month.last_date - (month_data.month_date_length_total - position_ / ceilWidth)
-      let _year = month_data.month.year
-      let _month = month_data.month.month
-      //由于计算紧凑，会出现2010/02/0 或者2010/02/-1等日期号不正常情况，这种情况将日期设置为上一个月的最后一天
-      if (month_data.date_no <= 0) {
-        if (_month == 1) {
-          _month = 12
-          _year = _year - 1
-        } else {
-          _month = _month - 1
-        }
-        month_data.date_no = base_utils.getDaysNumInMonth(_month, _year)
-      }
-      let date_string = `${_year}/${_month}/${month_data.date_no}`
-      date = {
-        timestamp: new Date(`${date_string} 00:00:00`).getTime(),
-        timestampEnd: new Date(`${date_string} 23:59:59`).getTime()
-      }
-      console.log('asdasdasd', date_string)
+      // }
+      // // console.log('asdasdasd00', month_data.month.last_date, month_data.month_date_length_total, x / ceilWidth)
+      // //当前月份天数长度 - (所属月份和之前月份的总天数长度 - 当前点的位置（x(x是经过单元格乘以单元格长度转换而来)）) = 该月份日期
+      // const position_ = start_end == '1' ? x : x + width //所取点的位置
+      // month_data.date_no = month_data.month.last_date - (month_data.month_date_length_total - position_ / ceilWidth)
+      // let _year = month_data.month.year
+      // let _month = month_data.month.month
+      // //由于计算紧凑，会出现2010/02/0 或者2010/02/-1等日期号不正常情况，这种情况将日期设置为上一个月的最后一天
+      // if (month_data.date_no <= 0) {
+      //   if (_month == 1) {
+      //     _month = 12
+      //     _year = _year - 1
+      //   } else {
+      //     _month = _month - 1
+      //   }
+      //   month_data.date_no = base_utils.getDaysNumInMonth(_month, _year)
+      // }
+      // let date_string = `${_year}/${_month}/${month_data.date_no}`
+      // date = {
+      //   timestamp: new Date(`${date_string} 00:00:00`).getTime(),
+      //   timestampEnd: new Date(`${date_string} 23:59:59`).getTime()
+      // }
+      // console.log('asdasdasd', date_string)
     } else {
 
     }

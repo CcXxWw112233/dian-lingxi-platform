@@ -1,3 +1,5 @@
+import base_utils from './base_utils'
+
 export const afterCreateBoardUpdateGantt = (dispatch) => {
     afterClearGanttData({ dispatch })
     dispatch({
@@ -305,4 +307,44 @@ export const resetGanttScrollTop = () => {
     if (target) {
         target.scrollTop = 0
     }
+}
+
+// 获取到鼠标点的日期数据（年视图）
+export const setDateWidthPositionInYearView = ({ _position, date_arr_one_level, ceilWidth, width, x }) => {
+    let month_data = { //年视图操作的月份数据
+        month: {}, //所计数的月份
+        month_date_length_total: 0,  //所计数月份前的所有月份总天数
+        month_count: 0, //所计数月份的所有月份总数(当前+之前)
+        date_no: 1
+    }
+    let date = {}
+    for (let val of date_arr_one_level) {
+        month_data.month_date_length_total += val['last_date']  //每个月累加天数
+        month_data.month_count += 1 //月份数累加
+        if (month_data.month_date_length_total * ceilWidth > x + width) {
+            month_data.month = val //获得当前月份
+            break
+        }
+
+    }
+    //当前月份天数长度 - (所属月份和之前月份的总天数长度 - 当前点的位置（x(x是经过单元格乘以单元格长度转换而来)）) = 该月份日期
+    month_data.date_no = month_data.month.last_date - (month_data.month_date_length_total - _position / ceilWidth) 
+    let _year = month_data.month.year
+    let _month = month_data.month.month
+    //由于计算紧凑，会出现2010/02/0 或者2010/02/-1等日期号不正常情况，这种情况将日期设置为上一个月的最后一天
+    if (month_data.date_no <= 0) {
+        if (_month == 1) {
+            _month = 12
+            _year = _year - 1
+        } else {
+            _month = _month - 1
+        }
+        month_data.date_no = base_utils.getDaysNumInMonth(_month, _year)
+    }
+    let date_string = `${_year}/${_month}/${month_data.date_no}`
+    date = {
+        timestamp: new Date(`${date_string} 00:00:00`).getTime(),
+        timestampEnd: new Date(`${date_string} 23:59:59`).getTime()
+    }
+    return date
 }
