@@ -298,7 +298,7 @@ export default class GetRowGantt extends Component {
 
   //记录起始时间，做创建任务工作
   handleCreateTask = ({ start_end, top, not_create }) => {
-    const { dataAreaRealHeight } = this.props
+    const { dataAreaRealHeight, gantt_view_mode } = this.props
     if (top >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
 
     const { dispatch } = this.props
@@ -306,16 +306,49 @@ export default class GetRowGantt extends Component {
     const { currentRect = {} } = this.state
     const { x, y, width, height } = currentRect
     let counter = 0
-    let date = {}
-    for (let val of date_arr_one_level) {
-      counter += 1
-      if (counter * ceilWidth > x + width) {
-        date = val
-        break
-      }
+    let date = {} //月视图操作的日期数据
+
+    let month_data = { //年视图操作的月份数据
+      month: {}, //所计数的月份
+      month_date_length_total: 0,  //所计数月份前的所有月份总天数
+      month_count: 0, //所计数月份的所有月份总数(当前+之前)
+      date_no: 1
     }
+    if (gantt_view_mode == 'month') { //月视图下定位到相符的日期
+      for (let val of date_arr_one_level) {
+        ++counter
+        if (counter * ceilWidth > x + width) {
+          date = val
+          break
+        }
+      }
+    } else if (gantt_view_mode == 'year') { //年视图下定位到相符的月，然后在该月份下定位日期
+      for (let val of date_arr_one_level) {
+        month_data.month_date_length_total += val['last_date']  //每个月累加天数
+        month_data.month_count += 1 //月份数累加
+        if (month_data.month_date_length_total * ceilWidth > x + width) {
+          month_data.month = val //获得当前月份
+          break
+        }
+
+      }
+      // console.log('asdasdasd00', month_data.month.last_date, month_data.month_date_length_total, x / ceilWidth)
+      //当前月份天数长度 - (所属月份和之前月份的总天数长度 - 当前点的位置（x(x是经过单元格乘以单元格长度转换而来)）) = 该月份日期
+      const position_ = start_end == '1' ? x : x + width //所取点的位置
+      month_data.date_no = month_data.month.last_date - (month_data.month_date_length_total - position_ / ceilWidth)
+      date = {
+        timestamp: new Date(`${month_data.month.year}/${month_data.month.month}/${month_data.date_no} 00:00:00`).getTime(),
+        timestampEnd: new Date(`${month_data.month.year}/${month_data.month.month}/${month_data.date_no} 23:59:59`).getTime()
+      }
+    } else {
+
+    }
+
     const { timestamp, timestampEnd } = date
     const update_name = start_end == '1' ? 'create_start_time' : 'create_end_time'
+
+    console.log('asdasdasd', date, month_data.date_no)
+
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: {
@@ -678,7 +711,8 @@ function mapStateToProps({ gantt: {
     group_view_type,
     group_list_area_section_height,
     show_board_fold,
-    outline_tree_round
+    outline_tree_round,
+    gantt_view_mode
   } },
   technological: {
     datas: {
@@ -702,7 +736,8 @@ function mapStateToProps({ gantt: {
     group_list_area_section_height,
     show_board_fold,
     userBoardPermissions,
-    outline_tree_round
+    outline_tree_round,
+    gantt_view_mode
   }
 }
 
