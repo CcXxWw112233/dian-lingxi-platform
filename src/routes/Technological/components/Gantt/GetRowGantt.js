@@ -17,6 +17,8 @@ import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE } from '../../../..
 import GetRowSummary from './components/gattFaceCardItem/GetRowSummary.js'
 import GetRowGanttVirtual from './GetRowGanttVirtual'
 import GetRowStrip from './components/GetRowStrip'
+import base_utils from './base_utils'
+
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
 const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
@@ -183,7 +185,7 @@ export default class GetRowGantt extends Component {
     this.setState({
       currentRect: property
     }, () => {
-      this.handleCreateTask({ start_end: '2', top: property.y, not_create: true })
+      // this.handleCreateTask({ start_end: '2', top: property.y, not_create: true })
       this.setDragDashedRectHolidayNo()
     })
   }
@@ -336,10 +338,24 @@ export default class GetRowGantt extends Component {
       //当前月份天数长度 - (所属月份和之前月份的总天数长度 - 当前点的位置（x(x是经过单元格乘以单元格长度转换而来)）) = 该月份日期
       const position_ = start_end == '1' ? x : x + width //所取点的位置
       month_data.date_no = month_data.month.last_date - (month_data.month_date_length_total - position_ / ceilWidth)
-      date = {
-        timestamp: new Date(`${month_data.month.year}/${month_data.month.month}/${month_data.date_no} 00:00:00`).getTime(),
-        timestampEnd: new Date(`${month_data.month.year}/${month_data.month.month}/${month_data.date_no} 23:59:59`).getTime()
+      let _year = month_data.month.year
+      let _month = month_data.month.month
+      //由于计算紧凑，会出现2010/02/0 或者2010/02/-1等日期号不正常情况，这种情况将日期设置为上一个月的最后一天
+      if (month_data.date_no <= 0) {
+        if (_month == 1) {
+          _month = 12
+          _year = _year - 1
+        } else {
+          _month = _month - 1
+        }
+        month_data.date_no = base_utils.getDaysNumInMonth(_month, _year)
       }
+      let date_string = `${_year}/${_month}/${month_data.date_no}`
+      date = {
+        timestamp: new Date(`${date_string} 00:00:00`).getTime(),
+        timestampEnd: new Date(`${date_string} 23:59:59`).getTime()
+      }
+      console.log('asdasdasd', date_string)
     } else {
 
     }
@@ -347,7 +363,6 @@ export default class GetRowGantt extends Component {
     const { timestamp, timestampEnd } = date
     const update_name = start_end == '1' ? 'create_start_time' : 'create_end_time'
 
-    console.log('asdasdasd', date, month_data.date_no)
 
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
@@ -615,10 +630,10 @@ export default class GetRowGantt extends Component {
                 color: 'rgba(0,0,0,0.45)',
                 textAlign: 'right',
                 lineHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? `${task_item_height_fold}px` : `${ceiHeight - task_item_margin_top}px`,
-                paddingRight: 8,
+                paddingRight: Math.ceil(currentRect.width / ceilWidth) > 1 ? 8 : 0,
                 zIndex: this.isDragging ? 2 : 1
               }} >
-              {Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth)}
+              {Math.ceil(currentRect.width / ceilWidth) > 1 ? Math.ceil(currentRect.width / ceilWidth) : ''}
               {/* {Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth) - drag_holiday_count}
               {Math.ceil(currentRect.width / ceilWidth) != 1 && (drag_holiday_count > 0 ? `+${drag_holiday_count}` : '')} */}
             </div>
