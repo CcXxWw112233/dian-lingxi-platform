@@ -4,7 +4,7 @@ import indexStyles from './index.less'
 import GetRowGantt from './GetRowGantt'
 import DateList from './DateList'
 import GroupListHead from './GroupListHead'
-import { getMonthDate, getNextMonthDatePush } from './getDate'
+import { getMonthDate, getNextMonthDatePush, getGoldDateData } from './getDate'
 import { date_area_height, ganttIsOutlineView } from './constants'
 import GroupListHeadSet from './GroupListHeadSet.js'
 import GroupListHeadSetBottom from './GroupListHeadSetBottom'
@@ -208,12 +208,13 @@ export default class GanttFace extends Component {
   //更新日期,日期更新后做相应的数据请求
   setGoldDateArr = ({ timestamp, to_right, init, not_set_loading }) => {
     const { dispatch } = this.props
-    const { gold_date_arr = [], isDragging } = this.props
+    const { gold_date_arr = [], isDragging, gantt_view_mode } = this.props
     let date_arr = []
     if (!!to_right && isDragging) { //如果是拖拽虚线框向右则是累加，否则是取基数前后
       date_arr = [].concat(gold_date_arr, getNextMonthDatePush(timestamp))
     } else {
       date_arr = getMonthDate(timestamp)
+      // date_arr = getGoldDateData({ gantt_view_mode, timestamp })
     }
     // if (!!to_right) { //如果是拖拽虚线框向右则是累加，否则是取基数前后
     //   date_arr = [].concat(gold_date_arr, getNextMonthDatePush(timestamp))
@@ -438,6 +439,7 @@ function mapStateToProps({ gantt: { datas: {
   gantt_board_id,
   is_show_board_file_area,
   outline_tree,
+  gantt_view_mode
 } } }) {
   return {
     ceilWidth,
@@ -453,6 +455,7 @@ function mapStateToProps({ gantt: { datas: {
     gantt_board_id,
     is_show_board_file_area,
     outline_tree,
+    gantt_view_mode
   }
 }
 GanttFace.defaultProps = {

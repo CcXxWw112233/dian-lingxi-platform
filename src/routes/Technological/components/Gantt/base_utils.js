@@ -162,6 +162,8 @@ class base_utils {
                 year,
                 month: item,
                 last_day,
+                date_no: item,
+                description: `${year}年${item}月`,
                 timestamp: new Date(`${year}/${item}/1`).getTime(),
                 timestampEnd: new Date(`${year}/${item}/${last_day} 23:59`).getTime(),
             }

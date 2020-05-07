@@ -17,6 +17,17 @@ const _obj = {
     return base_utils.getYearDateData(timestamp)
   },
 
-}
+  // 获取目标数据
+  getGoldDateData: ({ timestamp, gantt_view_mode }) => {
+    if ('year' == gantt_view_mode) {
+      return _obj.getYearDate(timestamp)
+    } else if ('month' == gantt_view_mode) {
+      return _obj.getMonthDate(timestamp)
+    } else if ('week' == gantt_view_mode) {
 
+    } else {
+      return _obj.getMonthDate(timestamp)
+    }
+  }
+}
 module.exports = _obj
