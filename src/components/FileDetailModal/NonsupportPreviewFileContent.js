@@ -12,19 +12,16 @@ export default class NonsupportPreviewFileContent extends Component {
   }
 
   fileDownload = () => {
-    const { filePreviewCurrentFileResourceId, filePreviewCurrentFileId, pdfDownLoadSrc } = this.props
+    const { filePreviewCurrentFileResourceId, filePreviewCurrentFileId } = this.props
     //如果时pdf
-    if (pdfDownLoadSrc) {
-      window.open(pdfDownLoadSrc)
-    } else {
-      const { dispatch } = this.props
-      dispatch({
-        type: 'publicFileDetailModal/fileDownload',
-        payload: {
-          ids: filePreviewCurrentFileResourceId, fileIds: filePreviewCurrentFileId
-        }
-      })
-    }
+    const { dispatch } = this.props
+    if (!filePreviewCurrentFileResourceId) return
+    dispatch({
+      type: 'publicFileDetailModal/fileDownload',
+      payload: {
+        ids: filePreviewCurrentFileResourceId, fileIds: filePreviewCurrentFileId
+      }
+    })
   }
 
   render() {

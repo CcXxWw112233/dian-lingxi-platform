@@ -152,6 +152,19 @@ const wipeOffSomeDataWithScoreNodes = (item) => {
 //   }, {})
 // }
 
+const findCurrentFileInfo = (forms = []) => {
+  let flag = false
+  if (!!!forms) return {}
+  let newData = JSON.parse(JSON.stringify(forms || []))
+  let arr = []
+  newData.map((item) => {
+    arr.push(...item.files)
+  })
+  let temp = arr.find(item => item.percent && item.percent != 0 && item.percent != 100)
+  if (temp && Object.keys(temp).length) flag = true
+  return flag
+}
+
 // 渲染时、天、月
 const renderTimeType = (type) => {
   let description = ''
@@ -242,6 +255,7 @@ export {
   transformNewAssigneesToString,
   transformNewRecipientsToString,
   wipeOffSomeDataWithScoreNodes,
+  findCurrentFileInfo,
   computing_mode,
   result_score_option,
   result_score_fall_through_with_others,

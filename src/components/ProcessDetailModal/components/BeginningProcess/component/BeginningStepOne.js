@@ -13,7 +13,7 @@ import { connect } from 'dva'
 import { compareACoupleOfObjects, isObjectValueEqual } from '../../../../../utils/util';
 import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
 import { PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
-import { genPrincipalListFromAssignees } from '../../handleOperateModal'
+import { genPrincipalListFromAssignees, findCurrentFileInfo } from '../../handleOperateModal'
 import DifferenceDeadlineType from '../../DifferenceDeadlineType'
 
 @connect(mapStateToProps)
@@ -451,8 +451,9 @@ export default class BeginningStepOne extends Component {
 
   // 渲染编辑详情的内容  
   renderEditDetailContent = () => {
-    const { itemValue, processInfo: { status: parentStatus } } = this.props
+    const { itemValue, itemKey, processInfo: { status: parentStatus }, processEditDatas = [] } = this.props
     const { forms = [], description, deadline_value, status } = itemValue
+    let flag = findCurrentFileInfo(processEditDatas[itemKey]['forms'])
     return (
       <div style={{ position: 'relative' }}>
         {/* 有一个蒙层表示不是该填写人不能操作 */}
@@ -488,7 +489,7 @@ export default class BeginningStepOne extends Component {
           (parentStatus == '1' && this.whetherShowCompleteButton() && status == "1") &&
           (
             <div style={{ marginTop: '16px', paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center' }}>
-              <Button type="primary" disabled={!this.setCompleteButtonDisabled() || this.state.isAccomplishNodesIng || this.state.is_uploading} onClick={this.handleEnterConfigureProcess}>完成</Button>
+              <Button type="primary" disabled={!this.setCompleteButtonDisabled() || this.state.isAccomplishNodesIng || flag} onClick={this.handleEnterConfigureProcess}>完成</Button>
             </div>
           )
         }
@@ -498,8 +499,9 @@ export default class BeginningStepOne extends Component {
 
   render() {
     const { itemKey, processEditDatas = [], itemValue } = this.props
-    const { status, name, assignee_type, cc_type, deadline_value, deadline_time_type, deadline_type } = itemValue
+    const { status, name, assignee_type, cc_type, deadline_value, deadline_time_type, deadline_type, forms = [] } = itemValue
     const { transPrincipalList = [], transCopyPersonnelList = [], is_show_spread_arrow } = this.state
+
     return (
       <div id={status == '1' && 'currentDataCollectionItem'} key={itemKey} style={{ display: 'flex', marginBottom: '46px' }}>
         {processEditDatas.length <= itemKey + 1 ? null : <div className={this.renderDiffStatusStepStyles().stylLine}></div>}
