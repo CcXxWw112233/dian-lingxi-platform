@@ -60,8 +60,6 @@ export default class BeginningStepOne_five extends Component {
     this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('forms', forms)
   }
 
-
-
   onBeforeUpload = (file, fileList) => {
     // this.props.updateState && this.props.updateState(true)
     const { board_id, itemValue } = this.props
@@ -112,6 +110,8 @@ export default class BeginningStepOne_five extends Component {
     e && e.stopPropagation()
     const file_id = item.file_id || ((item.response && item.response.data) && item.response.data.file_id) || ''
     const file_name = item.file_name || ((item.response && item.response.data) && item.response.data.file_name) || ''
+    const file_size = item.file_size || ((item.response && item.response.data) && item.response.data.file_size) || ''
+    const file_resource_id = item.file_resource_id || ((item.response && item.response.data) && item.response.data.file_resource_id) || ''
     if (!file_id) return
     this.props.dispatch({
       type: 'publicFileDetailModal/updateDatas',
@@ -119,7 +119,9 @@ export default class BeginningStepOne_five extends Component {
         isInOpenFile: true,
         filePreviewCurrentFileId: file_id,
         fileType: getSubfixName(file_name),
-        currentPreviewFileName: file_name,
+        filePreviewCurrentName: file_name,
+        filePreviewCurrentSize: file_size,
+        filePreviewCurrentFileResourceId: file_resource_id,
         isOpenAttachmentFile: true
       }
     })
@@ -132,7 +134,10 @@ export default class BeginningStepOne_five extends Component {
         filePreviewCurrentFileId: '',
         fileType: '',
         isInOpenFile: false,
-        isOpenAttachmentFile: false
+        isOpenAttachmentFile: false,
+        filePreviewCurrentSize: '',
+        filePreviewCurrentName: '',
+        filePreviewCurrentFileResourceId: ''
       }
     })
   }
@@ -143,6 +148,7 @@ export default class BeginningStepOne_five extends Component {
     const { processInfo = {}, itemValue, processEditDatas = [], parentKey } = this.props;
     const { id: flow_node_instance_id } = processEditDatas[parentKey]
     const { org_id, board_id, folder_id, id: flow_instance_id } = processInfo
+    const { id: field_id } = itemValue
 
     return {
       name: 'file',
@@ -156,7 +162,8 @@ export default class BeginningStepOne_five extends Component {
       method: 'post',
       data: {
         flow_instance_id,
-        flow_node_instance_id
+        flow_node_instance_id,
+        field_id
       },
       fileList: fileList,
       withCredentials: true,
@@ -346,7 +353,7 @@ export default class BeginningStepOne_five extends Component {
   }
 
   render() {
-    const { itemValue, isInOpenFile, fileType, filePreviewCurrentFileId, currentPreviewFileName  } = this.props
+    const { itemValue, isInOpenFile, fileType, filePreviewCurrentFileId, filePreviewCurrentName  } = this.props
     const { title, limit_file_num, limit_file_type, limit_file_size, is_required, } = itemValue
     const { fileList } = this.state
     return (
@@ -373,17 +380,12 @@ export default class BeginningStepOne_five extends Component {
             <FileListRightBarFileDetailModal 
               filePreviewCurrentFileId={filePreviewCurrentFileId}
               fileType={fileType}
-              currentPreviewFileName={currentPreviewFileName}
+              filePreviewCurrentName={filePreviewCurrentName}
               file_detail_modal_visible={isInOpenFile}
               setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
             />
           )
         }
-        {/* {
-          this.state.fileList && this.state.fileList.map(item => {
-            return this.renderFileList(item)
-          })
-        } */}
       </div>
     )
   }
@@ -395,7 +397,7 @@ function mapStateToProps({
     filePreviewCurrentFileId,
     fileType,
     isInOpenFile,
-    currentPreviewFileName
+    filePreviewCurrentName,
   },
 }) {
   return { 
@@ -403,5 +405,5 @@ function mapStateToProps({
     filePreviewCurrentFileId,
     fileType,
     isInOpenFile,
-    currentPreviewFileName }
+    filePreviewCurrentName }
 }

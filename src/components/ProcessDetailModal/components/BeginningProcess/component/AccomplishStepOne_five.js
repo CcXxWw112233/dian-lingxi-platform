@@ -38,7 +38,7 @@ export default class AccomplishStepOne_five extends Component {
         isInOpenFile: true,
         filePreviewCurrentFileId: file_id,
         fileType: getSubfixName(file_name),
-        currentPreviewFileName: file_name,
+        filePreviewCurrentName: file_name,
         isOpenAttachmentFile: true
       }
     })
@@ -103,7 +103,7 @@ export default class AccomplishStepOne_five extends Component {
   }
 
   render() {
-    const { itemValue, isInOpenFile, fileType, filePreviewCurrentFileId, currentPreviewFileName } = this.props
+    const { itemValue, isInOpenFile, fileType, filePreviewCurrentFileId, filePreviewCurrentName } = this.props
     const { title, limit_file_num, limit_file_type, limit_file_size, is_required, files: fileList = [] } = itemValue
     return (
       <div className={indexStyles.text_form}>
@@ -128,7 +128,7 @@ export default class AccomplishStepOne_five extends Component {
             <FileListRightBarFileDetailModal
               filePreviewCurrentFileId={filePreviewCurrentFileId}
               fileType={fileType}
-              currentPreviewFileName={currentPreviewFileName}
+              filePreviewCurrentName={filePreviewCurrentName}
               file_detail_modal_visible={isInOpenFile}
               setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
             />
@@ -145,7 +145,7 @@ function mapStateToProps({
     filePreviewCurrentFileId,
     fileType,
     isInOpenFile,
-    currentPreviewFileName
+    filePreviewCurrentName
   },
 }) {
   return {
@@ -153,7 +153,7 @@ function mapStateToProps({
     filePreviewCurrentFileId,
     fileType,
     isInOpenFile,
-    currentPreviewFileName
+    filePreviewCurrentName
   }
 }
 

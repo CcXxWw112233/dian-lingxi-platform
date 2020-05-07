@@ -146,7 +146,7 @@ export default class CommunicationThumbnailFiles extends Component {
                 filePreviewCurrentFileId: id,
                 fileType: getSubfixName(file_name),
                 // isInOpenFile: true
-                currentPreviewFileName: file_name
+                filePreviewCurrentName: file_name
             }
         })
         dispatch({

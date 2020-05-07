@@ -135,7 +135,7 @@ export default class CatalogTables extends Component {
                             filePreviewCurrentFileId: id,
                             fileType: getSubfixName(name || file_name),
                             isInOpenFile: true,
-                            currentPreviewFileName: name || file_name
+                            filePreviewCurrentName: name || file_name
                         }
                     })
                 } else if (!!!type || type == '0') {

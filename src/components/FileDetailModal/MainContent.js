@@ -124,7 +124,7 @@ class MainContent extends Component {
                     })
                   } 
                 })
-                this.props.updateStateDatas && this.props.updateStateDatas({ filePreviewCurrentFileId: res.data.id, currentPreviewFileData: { ...currentPreviewFileData, id: res.data.id }, currentPreviewFileName: res.data.file_name, fileType: getSubfixName(res.data.file_name) })
+                this.props.updateStateDatas && this.props.updateStateDatas({ filePreviewCurrentFileId: res.data.id, currentPreviewFileData: { ...currentPreviewFileData, id: res.data.id }, filePreviewCurrentName: res.data.file_name, fileType: getSubfixName(res.data.file_name) })
                 this.setState({
                   is_petty_loading: !isZoomPictureFullScreenMode ? isPdfLoaded ? true : false : false,
                   is_large_loading: isZoomPictureFullScreenMode ? isPdfLoaded ? true : false : false,

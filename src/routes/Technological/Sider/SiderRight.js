@@ -140,7 +140,7 @@ class SiderRight extends React.Component {
               filePreviewCurrentFileId: '',
               fileType: '',
               isInOpenFile: false,
-              currentPreviewFileName: ''
+              filePreviewCurrentName: ''
             }
           })
         }

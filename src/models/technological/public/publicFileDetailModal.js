@@ -5,7 +5,7 @@ import { currentNounPlanFilterName } from "../../../utils/businessFunction";
 import { MESSAGE_DURATION_TIME, FILES } from "../../../globalset/js/constant";
 import { getSubfixName } from '../../../utils/businessFunction'
 import {
-  fileInfoByUrl, fileConvertPdfAlsoUpdateVersion
+  fileDownload
 } from '../../../services/technological/file'
 
 let board_id = null
@@ -37,9 +37,34 @@ export default {
          filePreviewCurrentFileId: file_id,
          fileType: getSubfixName(file_name),
          isInOpenFile: true,
-         currentPreviewFileName: file_name
+         filePreviewCurrentName: file_name
         }
       })
+    },
+
+    * fileDownload({ payload }, { select, call, put }) {
+      function openWin(url) {
+        var element1 = document.createElement("a");
+        element1.href = url;
+        element1.download = url // 需要加上download属性 
+        element1.id = 'openWin'
+        document.querySelector('body').appendChild(element1)
+        document.getElementById("openWin").click();//点击事件
+        document.getElementById("openWin").parentNode.removeChild(document.getElementById("openWin"))
+      }
+
+      let res = yield call(fileDownload, payload)
+      if (isApiResponseOk(res)) {
+        const data = res.data
+        if (data && data.length) {
+          // 循环延时控制
+          for (let i = 0; i < data.length; i++) {
+            setTimeout(() => openWin(data[i]), i * 500)
+          }
+        }
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
     },
   },
   reducers: {

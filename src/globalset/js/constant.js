@@ -75,6 +75,8 @@ export const INT_REQUEST_OK = 0 //接口返回常量定义
 
 export const UPLOAD_PROCESS_FILE_SIZE = 99 //流程上传文件MB限制
 
+export const PREVIEW_FILE_FILE_SIZE = 20 // 预览文件MB限制
+
 export const NOT_HAS_PERMISION_COMFIRN = '您没有该访问权限'
 
 export const PAGINATION_PAGE_SIZE = 12 //分页每页条数

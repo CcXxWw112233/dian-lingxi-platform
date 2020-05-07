@@ -4,12 +4,14 @@ import MainContent from './MainContent'
 import HeaderContent from './HeaderContent'
 import { fileInfoByUrl, getFilePDFInfo } from '@/services/technological/file'
 import { isApiResponseOk } from '../../utils/handleResponseData'
-import { FILES, MESSAGE_DURATION_TIME, PROJECT_FILES_FILE_UPDATE } from '../../globalset/js/constant'
+import { FILES, MESSAGE_DURATION_TIME, PROJECT_FILES_FILE_UPDATE, PREVIEW_FILE_FILE_SIZE } from '../../globalset/js/constant'
 import { connect } from 'dva'
 import { message } from 'antd'
 import { currentNounPlanFilterName, getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl, getSubfixName } from '@/utils/businessFunction.js'
 import { compareACoupleOfObjects } from '@/utils/util'
 import QueryString from 'querystring'
+import NonsupportPreviewFileContent from './NonsupportPreviewFileContent'
+import NonsupportPreviewFileHeader from './NonsupportPreviewFileHeader'
 let board_id = null
 let appsSelectKey = null
 let file_id = null
@@ -62,7 +64,7 @@ class FileDetailContent extends Component {
       filePreviewIsUsable: data.preview_info.is_usable,
       filePreviewUrl: data.preview_info.url, // 文件路径
       filePreviewIsRealImage: data.preview_info.is_real_image, // 是否是真的图片
-      currentPreviewFileName: data.base_info.file_name, // 当前文件的名称
+      filePreviewCurrentName: data.base_info.file_name, // 当前文件的名称
       fileType: getSubfixName(data.base_info.file_name), // 文件的后缀名
       targetFilePath: data.target_path, // 当前文件路径
       filePreviewCurrentVersionList: data.version_list, // 文件的版本列表
@@ -103,60 +105,24 @@ class FileDetailContent extends Component {
     } else {
       message.warn(res.message, MESSAGE_DURATION_TIME)
       setTimeout(() => {
-        this.props.dispatch({
-          type: 'publicFileDetailModal/updateDatas',
-          payload: {
-            isInOpenFile: false
-          }
-        })
+        this.onCancel()
         global.constants.lx_utils && global.constants.lx_utils.setCommentData(id || null)
       }, 200)
     }
   }
 
   componentDidMount() {
-    const { filePreviewCurrentFileId: newFilePreviewCurrentFileId, file_detail_modal_visible, fileType, currentPreviewFileName, board_id } = this.props
+    const { filePreviewCurrentFileId: newFilePreviewCurrentFileId, file_detail_modal_visible, fileType, filePreviewCurrentSize, filePreviewCurrentName, board_id } = this.props
+    let not_support_file_preview = filePreviewCurrentSize && filePreviewCurrentSize > PREVIEW_FILE_FILE_SIZE * 1024 * 1024
     if (file_detail_modal_visible) {
+      if (not_support_file_preview) return
       if (fileType == '.pdf') {
+        if (not_support_file_preview) return
         this.delayUpdatePdfDatas({ id: newFilePreviewCurrentFileId })
-        // this.linkImWithFile({name: currentPreviewFileName, type: 'file', board_id: board_id, id: newFilePreviewCurrentFileId})
         return
       }
       this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
-      // this.linkImWithFile({name: currentPreviewFileName, type: 'file', board_id: board_id, id: newFilePreviewCurrentFileId})
-      let that = this
-      // if (Im) {
-      //   Im.on('fileCancel',function({id}){
-      //     if (id == that.props.filePreviewCurrentFileId) {
-      //       that.props.dispatch({
-      //         type: 'publicFileDetailModal/updateDatas',
-      //         payload: {
-      //           filePreviewCurrentFileId: '',
-      //           fileType: '',
-      //           isInOpenFile: false
-      //         }
-      //       })
-      //     }
-      //   })
-      // }
     }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // const { fileType, clientHeight = '' } = this.props
-    // const { filePreviewCurrentFileId: newFilePreviewCurrentFileId, clientHeight: newClientHeight, file_detail_modal_visible } = nextProps
-    // if (clientHeight != newClientHeight) return
-    // if (compareACoupleOfObjects(this.props, nextProps)) return
-    // // this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
-    // if (file_detail_modal_visible) {
-    //   if (fileType == '.pdf') {
-    //     // this.getFilePDFInfo({ id: newFilePreviewCurrentFileId })
-    //     this.delayUpdatePdfDatas({ id: newFilePreviewCurrentFileId })
-    //     return
-    //   }
-    //   this.getCurrentFilePreviewData({ id: newFilePreviewCurrentFileId })
-    //   // this.getFilePreviewInfoByUrl()
-    // }
   }
 
   // 是否需要更新项目详情中的面包屑路径
@@ -209,12 +175,7 @@ class FileDetailContent extends Component {
         message.warn(res.message)
         let currentPreviewFileVersionId = this.getCurrentFilePreviewVersionId()
         setTimeout(() => {
-          this.props.dispatch({
-            type: 'publicFileDetailModal/updateDatas',
-            payload: {
-              isInOpenFile: false
-            }
-          })
+          this.onCancel()
           global.constants.lx_utils && global.constants.lx_utils.setCommentData(currentPreviewFileVersionId || id || null)
         }, 500)
       }
@@ -238,17 +199,10 @@ class FileDetailContent extends Component {
           is_large_loading: false
         })
         if (calback && typeof calback == 'function') calback()
-        // this.linkImWithFile({name: this.props.currentPreviewFileName, type: 'file', board_id: this.props.board_id, id: this.props.filePreviewCurrentFileId, currentPreviewFileVersionId: currentPreviewFileVersionId})
       } else {
         message.warn(res.message)
         setTimeout(() => {
-          this.props.dispatch({
-            type: 'publicFileDetailModal/updateDatas',
-            payload: {
-              isInOpenFile: false
-            }
-          })
-          // this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
+          this.onCancel()
           global.constants.lx_utils && global.constants.lx_utils.setCommentData(currentPreviewFileVersionId || id || null)
         }, 200)
       }
@@ -256,15 +210,19 @@ class FileDetailContent extends Component {
   }
 
   render() {
-    const { clientWidth, clientHeight } = this.props
+    const { clientWidth, clientHeight, filePreviewCurrentSize, isOpenAttachmentFile, filePreviewCurrentName } = this.props
     const { filePreviewCurrentFileId, fileType, file_detail_modal_visible } = this.state
+    let not_support_file_preview = filePreviewCurrentSize && filePreviewCurrentSize > PREVIEW_FILE_FILE_SIZE * 1024 * 1024
     return (
       <div>
         <PublicDetailModal
           modalVisible={file_detail_modal_visible}
           onCancel={this.onCancel}
           mainContent={
-            <MainContent
+            not_support_file_preview ? (
+              <NonsupportPreviewFileContent />
+            ) : (
+              <MainContent
               clientWidth={clientWidth}
               clientHeight={clientHeight}
               {...this.state}
@@ -272,18 +230,25 @@ class FileDetailContent extends Component {
               delayUpdatePdfDatas={this.delayUpdatePdfDatas}
               getCurrentFilePreviewData={this.getCurrentFilePreviewData}
               updateStateDatas={this.updateStateDatas}
-              filePreviewCurrentFileId={filePreviewCurrentFileId} fileType={fileType} />}
+              filePreviewCurrentFileId={filePreviewCurrentFileId} fileType={fileType} />
+            )
+          }
           isNotShowFileDetailContentRightVisible={true}
           headerContent={
-            <HeaderContent
-              delayUpdatePdfDatas={this.delayUpdatePdfDatas}
-              getCurrentFilePreviewData={this.getCurrentFilePreviewData}
-              updateStateDatas={this.updateStateDatas}
-              {...this.state}
-              shouldUpdateAllFolderListData={this.props.shouldUpdateAllFolderListData}
-              whetherUpdateFolderListData={this.props.whetherUpdateFolderListData}
-              filePreviewCurrentFileId={filePreviewCurrentFileId}
-              fileType={fileType} />}
+            not_support_file_preview && isOpenAttachmentFile ? (
+              <NonsupportPreviewFileHeader filePreviewCurrentName={filePreviewCurrentName}/>
+            ) : (
+              <HeaderContent
+                delayUpdatePdfDatas={this.delayUpdatePdfDatas}
+                getCurrentFilePreviewData={this.getCurrentFilePreviewData}
+                updateStateDatas={this.updateStateDatas}
+                {...this.state}
+                shouldUpdateAllFolderListData={this.props.shouldUpdateAllFolderListData}
+                whetherUpdateFolderListData={this.props.whetherUpdateFolderListData}
+                filePreviewCurrentFileId={filePreviewCurrentFileId}
+                fileType={fileType} />
+            )
+          }
         />
       </div>
     )
@@ -294,7 +259,7 @@ export default FileDetailContent
 
 FileDetailContent.defaultProps = {
   board_id: '', // 当前项目ID
-  currentPreviewFileName: '', // 当前预览文件的名称
+  filePreviewCurrentName: '', // 当前预览文件的名称
   filePreviewCurrentFileId: '', // 需要一个当前的文件ID, !!!
   fileType: '', // 当前文件的后缀名, !!!
   file_detail_modal_visible: false, // 设置文件详情弹窗是否显示, 默认为 false 不显示

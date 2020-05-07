@@ -143,6 +143,15 @@ const wipeOffSomeDataWithScoreNodes = (item) => {
   return newScoreItems || []
 }
 
+// 获取当前需要下载文件的信息内容
+// const getCurrentDownloadFileInfo = (forms = []) => {
+//   if (!!!forms) return {}
+//   let newData = JSON.parse(JSON.parse(forms || []))
+//   newData = newData.reduce((acc, curr) => {
+//     let fileInfo = curr.files
+//   }, {})
+// }
+
 // 渲染时、天、月
 const renderTimeType = (type) => {
   let description = ''

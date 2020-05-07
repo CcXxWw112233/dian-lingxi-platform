@@ -262,7 +262,7 @@ const { board_id } = projectDetailInfoData
         fileType: getSubfixName(file_name),
         isInOpenFile: true,
         isInAttachmentFile: true,
-        currentPreviewFileName: file_name
+        filePreviewCurrentName: file_name
       }
     })
    
@@ -662,7 +662,7 @@ const { board_id } = projectDetailInfoData
             fileType: getSubfixName(file_name),
             isInOpenFile: true,
             isInAttachmentFile: true,
-            currentPreviewFileName: file_name
+            filePreviewCurrentName: file_name
           }
         })
   

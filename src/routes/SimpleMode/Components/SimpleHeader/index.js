@@ -193,7 +193,7 @@ class SimpleHeader extends Component {
                             filePreviewCurrentFileId: '',
                             fileType: '',
                             isInOpenFile: false,
-                            currentPreviewFileName: ''
+                            filePreviewCurrentName: ''
                         }
                     })
                 }
@@ -228,7 +228,7 @@ class SimpleHeader extends Component {
                             isInOpenFile: false,
                             filePreviewCurrentFileId: '',
                             fileType: '',
-                            currentPreviewFileName: ''
+                            filePreviewCurrentName: ''
                         }
                     })
                     this.setState({
@@ -276,7 +276,7 @@ class SimpleHeader extends Component {
                             isInOpenFile: true,
                             filePreviewCurrentFileId: relaDataId,
                             fileType: getSubfixName(relaDataName),
-                            currentPreviewFileName: relaDataName
+                            filePreviewCurrentName: relaDataName
                         }
                     })
                     this.setState({
@@ -347,7 +347,7 @@ class SimpleHeader extends Component {
                             isInOpenFile: false,
                             filePreviewCurrentFileId: '',
                             fileType: '',
-                            currentPreviewFileName: ''
+                            filePreviewCurrentName: ''
                         }
                     })
                     this.setState({
@@ -413,7 +413,7 @@ class SimpleHeader extends Component {
                             isInOpenFile: false,
                             filePreviewCurrentFileId: '',
                             fileType: '',
-                            currentPreviewFileName: ''
+                            filePreviewCurrentName: ''
                         }
                     })
                     this.setState({
@@ -455,7 +455,7 @@ class SimpleHeader extends Component {
                 filePreviewCurrentFileId: '',
                 fileType: '',
                 isInOpenFile: false,
-                currentPreviewFileName: ''
+                filePreviewCurrentName: ''
             }
         })
     }

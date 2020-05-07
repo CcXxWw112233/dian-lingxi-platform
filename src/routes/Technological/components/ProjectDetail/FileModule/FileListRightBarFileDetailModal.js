@@ -24,26 +24,14 @@ class FileListRightBarFileDetailModal extends React.Component {
 		return (
 			<div id="projectList_FileListRightBarFileDetailModal" style={{ width: '100%', height: '100%' }}>
 				<FileDetailModal
-					// componentHeight={currentZoomPictureComponetHeight}
-					// componentWidth={currentZoomPictureComponetWidth}
-					filePreviewCurrentFileId={filePreviewCurrentFileId}
 					fileType={fileType}
 					board_id={board_id}
-					currentPreviewFileName={this.props.currentPreviewFileName}
+					filePreviewCurrentName={this.props.filePreviewCurrentName}
 					file_detail_modal_visible={this.props.file_detail_modal_visible}
 					setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
 					whetherUpdateFolderListData={this.props.whetherUpdateFolderListData}
 					shouldUpdateAllFolderListData={this.props.shouldUpdateAllFolderListData} // 这是用来区分项目详情中的详情列表更新状态
 				/>
-				{/* <FileDetailModal
-					{...this.props}
-					{...this.props.fileDetailModalDatas}
-					componentHeight={currentZoomPictureComponetHeight}
-					componentWidth={currentZoomPictureComponetWidth}
-					setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
-					updateCommunicationFolderListData={this.props.updateCommunicationFolderListData}
-					modalTop={20}
-				/> */}
 			</div>
 		);
 	}

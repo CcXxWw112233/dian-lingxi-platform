@@ -22,7 +22,7 @@ export default class BoardsFilesArea extends Component {
                 isInOpenFile: false,
                 filePreviewCurrentFileId: '',
                 fileType: '',
-                currentPreviewFileName: ''
+                filePreviewCurrentName: ''
             }
         })
     }
