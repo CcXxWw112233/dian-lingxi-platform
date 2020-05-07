@@ -54,12 +54,12 @@ export default class GetRowStrip extends PureComponent {
     }
 
     renderStyles = () => {
-        const { itemValue = {}, date_arr_one_level = [], ceilWidth } = this.props
+        const { itemValue = {}, date_arr_one_level = [], ceilWidth, date_total } = this.props
         const { height, top, left } = itemValue
         return {
             height,
             top: top + task_item_margin_top,
-            width: date_arr_one_level.length * ceilWidth,
+            width: date_total * ceilWidth,
         }
     }
     // 长条鼠标事件---start
@@ -224,7 +224,7 @@ export default class GetRowStrip extends PureComponent {
                 paddingLeft = ceilWidth / 2 - 2
             }
         }
-        if(marginLeft == '0') {
+        if (marginLeft == '0') {
             display = 'none'
         }
         console.log('marginLeft', marginLeft)
@@ -865,7 +865,8 @@ function mapStateToProps({ gantt: {
         group_list_area_section_height,
         show_board_fold,
         outline_tree_round,
-        target_scrollLeft
+        target_scrollLeft,
+        date_total
     } },
     milestoneDetail: {
         milestone_detail = {}
@@ -894,6 +895,7 @@ function mapStateToProps({ gantt: {
         show_board_fold,
         outline_tree_round,
         projectDetailInfoData,
-        target_scrollLeft
+        target_scrollLeft,
+        date_total
     }
 }

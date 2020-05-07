@@ -53,7 +53,7 @@ export default {
   namespace: 'gantt',
   state: {
     datas: {
-      gantt_view_mode: 'month', //week / month /year
+      gantt_view_mode: 'year', //week / month /year
       gold_date_arr: [], //所需要的日期数据
       date_arr_one_level: [], //所有日期数据扁平成一级数组
       start_date: {}, //日期最开始的那一天
@@ -61,7 +61,7 @@ export default {
       create_start_time: '', //创建任务开始时间
       create_end_time: '', //创建任务截至时间
       list_group: [], //分组列表
-      ceilWidth: ceil_width, //单元格的宽度
+      ceilWidth: ceil_width_year, //单元格的宽度
       ceiHeight: ceil_height, //单元格高度 40 + 12的外边距
       date_total: 0, //总天数
       group_rows: [2, 2, 2], //每一个分组默认行数 [7, 7, 7]
@@ -300,6 +300,7 @@ export default {
       const end_date = yield select(workbench_end_date)
       const ceilWidth = yield select(workbench_ceilWidth)
       const date_arr_one_level = yield select(workbench_date_arr_one_level)
+      const gantt_view_mode = yield select(getModelSelectDatasState('gantt', 'gantt_view_mode'))
 
       let new_outline_tree = [...data]
       const tree_arr_1 = data.filter(item => item.tree_type == '1')//.sort(jsonArrayCompareSort('due_time', transformTimestamp)) //里程碑截止时间由近及远
@@ -472,12 +473,34 @@ export default {
           new_item.left = 0
         } else {
           for (let k = 0; k < date_arr_one_level_length; k++) {
-            if (isSamDay(new_item[cal_left_field], date_arr_one_level[k]['timestamp'])) { //是同一天
-              const max_width = (date_arr_one_level_length - k) * ceilWidth //剩余最大可放长度
-              new_item.left = k * ceilWidth
-              new_item.width = Math.min.apply(Math, [max_width, (time_span || 1) * ceilWidth]) //取最小可放的
-              time_belong_area = true
-              break
+            // if (isSamDay(new_item[cal_left_field], date_arr_one_level[k]['timestamp'])) { //是同一天
+            //   const max_width = (date_arr_one_level_length - k) * ceilWidth //剩余最大可放长度
+            //   new_item.left = k * ceilWidth
+            //   new_item.width = Math.min.apply(Math, [max_width, (time_span || 1) * ceilWidth]) //取最小可放的
+            //   time_belong_area = true
+            //   break
+            // }
+            if (gantt_view_mode == 'month') { //月视图下遍历得到和开始时间对的上的日期
+              if (isSamDay(new_item[cal_left_field], date_arr_one_level[k]['timestamp'])) { //是同一天
+                const max_width = (date_arr_one_level_length - k) * ceilWidth //剩余最大可放长度
+                new_item.left = k * ceilWidth
+                new_item.width = Math.min.apply(Math, [max_width, (time_span || 1) * ceilWidth]) //取最小可放的
+                time_belong_area = true
+                break
+              }
+            } else if (gantt_view_mode == 'year') { //年视图下遍历时间，如果时间戳在某个月的区间内，定位到该位置
+              if (new_item[cal_left_field] < date_arr_one_level[k]['timestampEnd'] && new_item[cal_left_field] > date_arr_one_level[k]['timestamp']) {
+                // 该月之前每个月的天数+这一条的日期 = 所在的位置索引（需要再乘以单位长度才是真实位置）
+                const all_date_length = date_arr_one_level.slice().map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
+                const date_length = date_arr_one_level.slice(0, k).map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
+                const date_no = new Date(item['start_time']).getDate() //所属该月几号
+                const max_width = (all_date_length - date_length - date_no) * ceilWidth //剩余最大可放长度
+                new_item.left = (date_length + date_no) * ceilWidth
+                new_item.width = Math.min.apply(Math, [max_width, (time_span || 1) * ceilWidth]) //取最小可放的
+                time_belong_area = true
+              }
+            } else {
+
             }
           }
           // if (!time_belong_area) {//如果在当前视图右期间外
@@ -603,6 +626,7 @@ export default {
       const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
       const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
       const show_board_fold = yield select(getModelSelectDatasState('gantt', 'show_board_fold'))
+      const gantt_view_mode = yield select(getModelSelectDatasState('gantt', 'gantt_view_mode'))
 
       const group_list_area = [] //分组高度区域
 
@@ -627,10 +651,6 @@ export default {
         for (let k = 0; k < i; k++) {
           after_group_height += group_list_area[k]
         }
-        // console.log('ssssssssss', {
-        //   i,
-        //   after_group_height
-        // })
         for (let j = 0; j < list_data.length; j++) { //设置每一个实例的位置
           const item = list_data[j]
           item.width = item.time_span * ceilWidth
@@ -638,13 +658,29 @@ export default {
 
           //设置横坐标
           if (item['start_time'] < date_arr_one_level[0]['timestamp']) { //如果该任务的起始日期在当前查看面板日期之前，就从最左边开始摆放
-            item.left == 0
+            item.left = 0
           } else {
             for (let k = 0; k < date_arr_one_level.length; k++) {
-              if (isSamDay(item['start_time'], date_arr_one_level[k]['timestamp'])) { //是同一天
-                item.left = k * ceilWidth
-                break
+              // if (isSamDay(item['start_time'], date_arr_one_level[k]['timestamp'])) { //是同一天
+              //   item.left = k * ceilWidth
+              //   break
+              // }
+              if (gantt_view_mode == 'month') { //月视图下遍历得到和开始时间对的上的日期
+                if (isSamDay(item['start_time'], date_arr_one_level[k]['timestamp'])) { //是同一天
+                  item.left = k * ceilWidth
+                  break
+                }
+              } else if (gantt_view_mode == 'year') { //年视图下遍历时间，如果时间戳在某个月的区间内，定位到该位置
+                if (item['start_time'] < date_arr_one_level[k]['timestampEnd'] && item['start_time'] > date_arr_one_level[k]['timestamp']) {
+                  // 该月之前每个月的天数+这一条的日期 = 所在的位置索引（需要再乘以单位长度才是真实位置）
+                  const date_length = date_arr_one_level.slice(0, k).map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
+                  const date_no = new Date(item['start_time']).getDate() //所属该月几号
+                  item.left = (date_length + date_no) * ceilWidth
+                }
+              } else {
+
               }
+
             }
           }
 
@@ -705,9 +741,24 @@ export default {
           list_group[i].board_fold_data.width = list_group[i].board_fold_data.time_span * ceilWidth
           list_group[i].board_fold_data.top = after_group_height + (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2 //上下居中 (96-24)/2
           for (let k = 0; k < date_arr_one_level.length; k++) {
-            if (isSamDay(list_group[i].board_fold_data['start_time'], date_arr_one_level[k]['timestamp'])) { //是同一天
-              list_group[i].board_fold_data.left = k * ceilWidth
-              break
+            // if (isSamDay(list_group[i].board_fold_data['start_time'], date_arr_one_level[k]['timestamp'])) { //是同一天
+            //   list_group[i].board_fold_data.left = k * ceilWidth
+            //   break
+            // }
+            if (gantt_view_mode == 'month') { //月视图下遍历得到和开始时间对的上的日期
+              if (isSamDay(list_group[i].board_fold_data['start_time'], date_arr_one_level[k]['timestamp'])) { //是同一天
+                list_group[i].board_fold_data.left = k * ceilWidth
+                break
+              }
+            } else if (gantt_view_mode == 'year') { //年视图下遍历时间，如果时间戳在某个月的区间内，定位到该位置
+              if (list_group[i].board_fold_data['start_time'] < date_arr_one_level[k]['timestampEnd'] && list_group[i].board_fold_data['start_time'] > date_arr_one_level[k]['timestamp']) {
+                // 该月之前每个月的天数+这一条的日期 = 所在的位置索引（需要再乘以单位长度才是真实位置）
+                const date_length = date_arr_one_level.slice(0, k).map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
+                const date_no = new Date(list_group[i].board_fold_data['start_time']).getDate() //所属该月几号
+                list_group[i].board_fold_data.left = (date_length + date_no) * ceilWidth
+              }
+            } else {
+
             }
           }
         }

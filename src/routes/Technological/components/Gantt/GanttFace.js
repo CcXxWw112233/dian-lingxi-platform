@@ -216,12 +216,12 @@ export default class GanttFace extends Component {
     const { dispatch } = this.props
     const { gold_date_arr = [], isDragging, gantt_view_mode } = this.props
     let date_arr = []
-    if (!!to_right && isDragging) { //如果是拖拽虚线框向右则是累加，否则是取基数前后
+    if (!!to_right && isDragging && gantt_view_mode == 'month') { //如果是拖拽虚线框向右则是累加，否则是取基数前后
       date_arr = [].concat(gold_date_arr, getNextMonthDatePush(timestamp))
     } else {
-      date_arr = getMonthDate(timestamp)
+      // date_arr = getMonthDate(timestamp)
       // date_arr = getYearDate(timestamp)
-      // date_arr = getGoldDateData({ gantt_view_mode, timestamp })
+      date_arr = getGoldDateData({ gantt_view_mode, timestamp })
     }
     // if (!!to_right) { //如果是拖拽虚线框向右则是累加，否则是取基数前后
     //   date_arr = [].concat(gold_date_arr, getNextMonthDatePush(timestamp))
@@ -236,6 +236,9 @@ export default class GanttFace extends Component {
         date_total += 1
         date_arr_one_level.push(val2)
       }
+    }
+    if (gantt_view_mode == 'year') {
+      date_total = date_arr_one_level.slice().map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
     }
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
