@@ -481,13 +481,14 @@ export default class GetRowTaskItem extends Component {
 
         }
         const start_time_timestamp = parseInt(start_date.timestamp)
+        console.log('ssssssssssaaaa', 0, start_date.timestamp)
         if (!start_time_timestamp) return
         //截至时间为起始时间 加上间隔天数的毫秒数, - 60 * 1000为一分钟的毫秒数，意为截至日期的23:59
         const end_time_timestamp = parseInt(start_time_timestamp + ((24 * 60 * 60) * 1000) * date_span - 60 * 1000)
 
         updateData.start_time = parseInt(start_time_timestamp)
         updateData.due_time = parseInt(end_time_timestamp)
-
+        console.log('ssssssssssaaaa', 1)
         if (isSamDay(start_time, start_time_timestamp)) { //向右拖动时，如果是在同一天，则不去更新
             this.setState({
                 local_left: left,
@@ -495,9 +496,11 @@ export default class GetRowTaskItem extends Component {
             })
             return
         }
+        console.log('ssssssssssaaaa', 2)
         updateTask({ card_id: id, due_time: end_time_timestamp, start_time: start_time_timestamp, board_id }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
+                    console.log('ssssssssssaaaa', 3)
                     if (ganttIsOutlineView({ group_view_type })) {
                         this.props.changeOutLineTreeNodeProto(id, updateData)
                     } else {
