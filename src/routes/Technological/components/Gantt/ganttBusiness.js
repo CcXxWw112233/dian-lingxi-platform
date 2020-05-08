@@ -310,7 +310,7 @@ export const resetGanttScrollTop = () => {
 }
 
 // 获取到鼠标点的日期数据（年视图）
-export const setDateWidthPositionInYearView = ({ _position, date_arr_one_level, ceilWidth, width, x }) => {
+export const setDateWithPositionInYearView = ({ _position, date_arr_one_level, ceilWidth, width, x, flag }) => {
     let month_data = { //年视图操作的月份数据
         month: {}, //所计数的月份
         month_date_length_total: 0,  //所计数月份前的所有月份总天数
@@ -321,30 +321,36 @@ export const setDateWidthPositionInYearView = ({ _position, date_arr_one_level, 
     for (let val of date_arr_one_level) {
         month_data.month_date_length_total += val['last_date']  //每个月累加天数
         month_data.month_count += 1 //月份数累加
-        if (month_data.month_date_length_total * ceilWidth > x + width) {
+        if (month_data.month_date_length_total * ceilWidth >= x + width) {
             month_data.month = val //获得当前月份
             break
         }
 
     }
     //当前月份天数长度 - (所属月份和之前月份的总天数长度 - 当前点的位置（x(x是经过单元格乘以单元格长度转换而来)）) = 该月份日期
-    month_data.date_no = month_data.month.last_date - (month_data.month_date_length_total - _position / ceilWidth) 
+    month_data.date_no = Math.floor(month_data.month.last_date - (month_data.month_date_length_total - Math.floor(_position / ceilWidth)))
+    // console.log('date_string_nl_0', month_data.date_no, month_data.month.last_date, month_data.month_date_length_total, Math.floor(_position / ceilWidth), _position)
     let _year = month_data.month.year
     let _month = month_data.month.month
     //由于计算紧凑，会出现2010/02/0 或者2010/02/-1等日期号不正常情况，这种情况将日期设置为上一个月的最后一天
-    if (month_data.date_no <= 0) {
+    if (month_data.date_no < 0) {
         if (_month == 1) {
             _month = 12
             _year = _year - 1
         } else {
             _month = _month - 1
         }
-        month_data.date_no = base_utils.getDaysNumInMonth(_month, _year)
+        month_data.date_no = base_utils.getDaysNumInMonth(_month, _year) + month_data.date_no //出现负数的时候将当月天数份加上负数就是日期号
+    } else if (month_data.date_no == 0) {
+        month_data.date_no = 1
+    } else {
+
     }
     let date_string = `${_year}/${_month}/${month_data.date_no}`
     date = {
         timestamp: new Date(`${date_string} 00:00:00`).getTime(),
         timestampEnd: new Date(`${date_string} 23:59:59`).getTime()
     }
+    // console.log('date_string_nl', date_string, flag)
     return date
 }

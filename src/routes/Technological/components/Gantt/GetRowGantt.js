@@ -11,7 +11,7 @@ import { date_area_height, task_item_height, task_item_margin_top, ganttIsFold, 
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import QueueAnim from 'rc-queue-anim'
 import GetRowTaskItem from './GetRowTaskItem'
-import { filterDueTimeSpan, setDateWidthPositionInYearView } from './ganttBusiness'
+import { filterDueTimeSpan, setDateWithPositionInYearView } from './ganttBusiness'
 import { checkIsHasPermissionInBoard } from '../../../../utils/businessFunction';
 import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE } from '../../../../globalset/js/constant';
 import GetRowSummary from './components/gattFaceCardItem/GetRowSummary.js'
@@ -312,20 +312,21 @@ export default class GetRowGantt extends Component {
 
     if (gantt_view_mode == 'month') { //月视图下定位到相符的日期
       for (let val of date_arr_one_level) {
-        ++counter
-        if (counter * ceilWidth > x + width) {
+        counter += 1
+        if (counter * ceilWidth >= x + width) {
           date = val
           break
         }
       }
     } else if (gantt_view_mode == 'year') { //年视图下定位到相符的月，然后在该月份下定位日期
       const _position = start_end == '1' ? x : x + width //所取点的位置
-      date = setDateWidthPositionInYearView({
+      date = setDateWithPositionInYearView({
         _position,
         ceilWidth,
         date_arr_one_level,
         width,
-        x: start_end == '1' ? x : x - 6 //截止日期总是往后一天，故减1做魔法兼容
+        // x: start_end == '1' ? x : x - 6 //截止日期总是往后一天，故减1做魔法兼容
+        x: start_end == '1' ? x + 6 : x,
       })
       // for (let val of date_arr_one_level) {
       //   month_data.month_date_length_total += val['last_date']  //每个月累加天数
@@ -364,7 +365,7 @@ export default class GetRowGantt extends Component {
 
     const { timestamp, timestampEnd } = date
     const update_name = start_end == '1' ? 'create_start_time' : 'create_end_time'
-
+    console.log('ssssssdate', date)
 
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),

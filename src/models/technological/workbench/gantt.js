@@ -489,15 +489,16 @@ export default {
                 break
               }
             } else if (gantt_view_mode == 'year') { //年视图下遍历时间，如果时间戳在某个月的区间内，定位到该位置
-              if (new_item[cal_left_field] < date_arr_one_level[k]['timestampEnd'] && new_item[cal_left_field] > date_arr_one_level[k]['timestamp']) {
+              if (new_item[cal_left_field] < date_arr_one_level[k]['timestampEnd'] && new_item[cal_left_field] >= date_arr_one_level[k]['timestamp']) {
                 // 该月之前每个月的天数+这一条的日期 = 所在的位置索引（需要再乘以单位长度才是真实位置）
                 const all_date_length = date_arr_one_level.slice().map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
-                const date_length = date_arr_one_level.slice(0, k).map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
+                const date_length = date_arr_one_level.slice(0, k < 1 ? 1 : k).map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
                 const date_no = new Date(item['start_time']).getDate() //所属该月几号
                 const max_width = (all_date_length - date_length - date_no) * ceilWidth //剩余最大可放长度
-                new_item.left = (date_length + date_no) * ceilWidth
+                new_item.left = (date_length + date_no - 1) * ceilWidth
                 new_item.width = Math.min.apply(Math, [max_width, (time_span || 1) * ceilWidth]) //取最小可放的
                 time_belong_area = true
+                break
               }
             } else {
 
@@ -671,11 +672,12 @@ export default {
                   break
                 }
               } else if (gantt_view_mode == 'year') { //年视图下遍历时间，如果时间戳在某个月的区间内，定位到该位置
-                if (item['start_time'] < date_arr_one_level[k]['timestampEnd'] && item['start_time'] > date_arr_one_level[k]['timestamp']) {
+                if (item['start_time'] < date_arr_one_level[k]['timestampEnd'] && item['start_time'] >= date_arr_one_level[k]['timestamp']) {
                   // 该月之前每个月的天数+这一条的日期 = 所在的位置索引（需要再乘以单位长度才是真实位置）
-                  const date_length = date_arr_one_level.slice(0, k).map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
+                  const date_length = date_arr_one_level.slice(0, k < 1 ? 1 : k).map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
                   const date_no = new Date(item['start_time']).getDate() //所属该月几号
-                  item.left = (date_length + date_no) * ceilWidth
+                  item.left = (date_length + date_no - 1) * ceilWidth
+                  break
                 }
               } else {
 
@@ -751,11 +753,12 @@ export default {
                 break
               }
             } else if (gantt_view_mode == 'year') { //年视图下遍历时间，如果时间戳在某个月的区间内，定位到该位置
-              if (list_group[i].board_fold_data['start_time'] < date_arr_one_level[k]['timestampEnd'] && list_group[i].board_fold_data['start_time'] > date_arr_one_level[k]['timestamp']) {
+              if (list_group[i].board_fold_data['start_time'] < date_arr_one_level[k]['timestampEnd'] && list_group[i].board_fold_data['start_time'] >= date_arr_one_level[k]['timestamp']) {
                 // 该月之前每个月的天数+这一条的日期 = 所在的位置索引（需要再乘以单位长度才是真实位置）
-                const date_length = date_arr_one_level.slice(0, k).map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
+                const date_length = date_arr_one_level.slice(0, k < 1 ? 1 : k).map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
                 const date_no = new Date(list_group[i].board_fold_data['start_time']).getDate() //所属该月几号
-                list_group[i].board_fold_data.left = (date_length + date_no) * ceilWidth
+                list_group[i].board_fold_data.left = (date_length + date_no - 1) * ceilWidth
+                break
               }
             } else {
 

@@ -9,7 +9,7 @@ import { updateTask, changeTaskType } from '../../../../services/technological/t
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import { message, Dropdown, Popover, Tooltip } from 'antd'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
-import { filterDueTimeSpan, cardIsHasUnRead, cardItemIsHasUnRead } from './ganttBusiness'
+import { filterDueTimeSpan, cardIsHasUnRead, cardItemIsHasUnRead, setDateWithPositionInYearView } from './ganttBusiness'
 import { transformTimestamp, isSamDay } from '../../../../utils/util'
 
 // 参考自http://www.jq22.com/webqd1348
@@ -234,7 +234,7 @@ export default class GetRowTaskItem extends Component {
     extentionRight = (e) => {
         const nx = e.clientX || e.changedTouches[0].clientX;
         const { local_width_flag } = this.state
-
+        const { ceilWidth } = this.props
         //计算移动后的左偏移量和顶部的偏移量
         const nw = nx - this.x + local_width_flag //宽度
         // console.log('sssss', {
@@ -243,7 +243,7 @@ export default class GetRowTaskItem extends Component {
         //     pageX: e.pageX
         // })
         this.setState({
-            local_width: nw < 44 ? 44 : nw
+            local_width: nw < ceilWidth ? ceilWidth : nw
         })
     }
 
@@ -375,19 +375,30 @@ export default class GetRowTaskItem extends Component {
 
     }
     overDragCompleteHandleRight = () => { //右侧增减时间
-        const { itemValue: { id, end_time, start_time, board_id, is_has_start_time }, group_view_type } = this.props
+        const { itemValue: { id, end_time, start_time, board_id, is_has_start_time }, group_view_type, gantt_view_mode } = this.props
         const { local_left, local_width, local_width_origin } = this.state
         const { date_arr_one_level, ceilWidth } = this.props
         const updateData = {}
         const end_time_position = local_left + local_width
-        const end_time_index = Math.floor((end_time_position - 6) / ceilWidth)
-        const date = date_arr_one_level[end_time_index]
-        const end_time_timestamp = parseInt(date.timestampEnd)
-        const start_time_index = Math.floor(local_left / ceilWidth)
-        const start_date = date_arr_one_level[start_time_index]
+        let start_date = {}
+        let end_date = {}
+        if (gantt_view_mode == 'month') {
+            const end_time_index = Math.floor((end_time_position - 6) / ceilWidth)
+            const start_time_index = Math.floor(local_left / ceilWidth)
+            start_date = date_arr_one_level[start_time_index] || {}
+            end_date = date_arr_one_level[end_time_index]
+        } else if (gantt_view_mode == 'year') {
+            start_date = setDateWithPositionInYearView({ _position: local_left, date_arr_one_level, ceilWidth, width: local_width, x: local_left, flag: 1 })
+            end_date = setDateWithPositionInYearView({ _position: end_time_position, date_arr_one_level, ceilWidth, width: local_width, x: local_left, flag: 2 })
+        } else {
+
+        }
         const start_time_timestamp = parseInt(start_date.timestamp)
-        updateData.start_time = !is_has_start_time ? '' : parseInt(start_time_timestamp)
+        const end_time_timestamp = parseInt(end_date.timestampEnd)
+        updateData.start_time = start_time //!is_has_start_time ? '' : parseInt(start_time_timestamp)
         updateData.due_time = parseInt(end_time_timestamp)
+        // console.log('date_string', updateData)
+
         if (isSamDay(end_time, end_time_timestamp)) { //向右拖动时，如果是在同一天，则不去更新
             const time_span_ = (Math.floor((end_time - start_time) / (24 * 3600 * 1000))) + 1
             const time_width = time_span_ * ceilWidth
@@ -455,20 +466,28 @@ export default class GetRowTaskItem extends Component {
     }
     // 不在项目分组内，左右移动
     overDragCompleteHandlePositonAbout = () => {
-        const { itemValue: { id, top, start_time, board_id, left }, group_view_type } = this.props
+        const { itemValue: { id, top, start_time, board_id, left }, group_view_type, gantt_view_mode } = this.props
         const { local_left, local_width, local_width_origin } = this.state
         const { date_arr_one_level, ceilWidth } = this.props
         const updateData = {}
-
         const date_span = local_width / ceilWidth
         const start_time_index = Math.floor(local_left / ceilWidth)
-        const start_date = date_arr_one_level[start_time_index] || {}
+        let start_date = {}
+        if (gantt_view_mode == 'month') {
+            start_date = date_arr_one_level[start_time_index] || {}
+        } else if (gantt_view_mode == 'year') {
+            start_date = setDateWithPositionInYearView({ _position: local_left, date_arr_one_level, ceilWidth, width: local_width, x: local_left })
+        } else {
+
+        }
         const start_time_timestamp = parseInt(start_date.timestamp)
         if (!start_time_timestamp) return
         //截至时间为起始时间 加上间隔天数的毫秒数, - 60 * 1000为一分钟的毫秒数，意为截至日期的23:59
         const end_time_timestamp = parseInt(start_time_timestamp + ((24 * 60 * 60) * 1000) * date_span - 60 * 1000)
+
         updateData.start_time = parseInt(start_time_timestamp)
         updateData.due_time = parseInt(end_time_timestamp)
+
         if (isSamDay(start_time, start_time_timestamp)) { //向右拖动时，如果是在同一天，则不去更新
             this.setState({
                 local_left: left,
@@ -500,14 +519,22 @@ export default class GetRowTaskItem extends Component {
     }
     // 在项目分组内，上下左右移动
     overDragCompleteHandlePositonAround = (data = {}) => {
-        const { itemValue: { id, end_time, start_time, board_id, left, top }, gantt_board_id } = this.props
+        const { itemValue: { id, end_time, start_time, board_id, left, top }, gantt_board_id, gantt_view_mode } = this.props
         const { local_left, local_width, local_width_origin } = this.state
         const { date_arr_one_level, ceilWidth } = this.props
         const updateData = {}
-
         const date_span = local_width / ceilWidth
-        const start_time_index = Math.floor(local_left / ceilWidth)
-        const start_date = date_arr_one_level[start_time_index] || {}
+        // const start_date = date_arr_one_level[start_time_index] || {}
+
+        let start_date = {}
+        if (gantt_view_mode == 'month') {
+            const start_time_index = Math.floor(local_left / ceilWidth)
+            start_date = date_arr_one_level[start_time_index] || {}
+        } else if (gantt_view_mode == 'year') {
+            start_date = setDateWithPositionInYearView({ _position: local_left, date_arr_one_level, ceilWidth, width: local_width, x: local_left })
+        } else {
+
+        }
         const start_time_timestamp = start_date.timestamp
         if (!start_time_timestamp) return
         //截至时间为起始时间 加上间隔天数的毫秒数, - 60 * 1000为一分钟的毫秒数，意为截至日期的23:59
@@ -617,7 +644,6 @@ export default class GetRowTaskItem extends Component {
         } = itemValue
         const { local_left, local_top, local_width } = this.state
         const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
-        // console.log('sssss', { id, im_all_latest_unread_messages })
         return (
             <Popover
                 getPopupContainer={() => document.getElementById('gantt_card_out_middle')}
@@ -739,7 +765,8 @@ function mapStateToProps({ gantt: {
         group_list_area,
         current_list_group_id,
         group_list_area_section_height = [],
-        group_view_type
+        group_view_type,
+        gantt_view_mode
     }
 },
     imCooperation: {
@@ -756,6 +783,7 @@ function mapStateToProps({ gantt: {
         current_list_group_id,
         group_list_area_section_height,
         im_all_latest_unread_messages,
-        group_view_type
+        group_view_type,
+        gantt_view_mode
     }
 }
