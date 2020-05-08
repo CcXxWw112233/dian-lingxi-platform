@@ -74,12 +74,16 @@ export default class DuplicateAndReportPerson extends Component {
       const { designatedPersonnelList = [] } = this.state
       let newDesignatedPersonnelList = [...designatedPersonnelList]
       // let newAssigneesArray = assignees && assignees.length ? assignees.split(',') : []
-      newDesignatedPersonnelList.map((item, index) => {
-        if (item == key) {
-          newDesignatedPersonnelList.splice(index, 1)
-          // newAssigneesArray.splice(index, 1)
-        }
-      })
+      if (selectedKeys.length == '0') {
+        newDesignatedPersonnelList = []
+      } else {
+        newDesignatedPersonnelList.map((item, index) => {
+          if (item == key) {
+            newDesignatedPersonnelList.splice(index, 1)
+            // newAssigneesArray.splice(index, 1)
+          }
+        })
+      }
       // let newAssigneesStr = newAssigneesArray.join(',')
       this.setState({
         designatedPersonnelList: newDesignatedPersonnelList
@@ -139,6 +143,8 @@ export default class DuplicateAndReportPerson extends Component {
                 overlayStyle={{ maxWidth: '200px' }}
                 overlay={
                   <MenuSearchPartner
+                    show_select_all={true}
+                    select_all_type={'0'}
                     listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={designatedPersonnelList}
                     board_id={board_id}
                     invitationType='1'
@@ -183,6 +189,8 @@ export default class DuplicateAndReportPerson extends Component {
                   overlayStyle={{ maxWidth: '200px' }}
                   overlay={
                     <MenuSearchPartner
+                      show_select_all={true}
+                      select_all_type={'0'}
                       listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={designatedPersonnelList}
                       board_id={board_id}
                       invitationType='1'

@@ -158,9 +158,10 @@ const findCurrentFileInfo = (forms = []) => {
   let newData = JSON.parse(JSON.stringify(forms || []))
   let arr = []
   newData.map((item) => {
+    if(!item.files) return
     arr.push(...item.files)
   })
-  let temp = arr.find(item => item.percent && item.percent != 0 && item.percent != 100)
+  let temp = arr.find(item => item.percent && item.percent != 0 && item.percent != 100) || {}
   if (temp && Object.keys(temp).length) flag = true
   return flag
 }

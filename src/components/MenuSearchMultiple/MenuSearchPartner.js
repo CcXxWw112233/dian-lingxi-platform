@@ -250,7 +250,7 @@ export default class MenuSearchPartner extends React.Component {
 			this.setState({
 				selectedKeys: arr
 			}, () => {
-				this.props.chirldrenTaskChargeChange && this.props.chirldrenTaskChargeChange({ selectedKeys: arr })
+				this.props.chirldrenTaskChargeChange && this.props.chirldrenTaskChargeChange({ selectedKeys: arr, type: selectedKeys.length == resultArr.length ? 'remove' : 'add' })
 			})
 			// debugger
 			return

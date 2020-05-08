@@ -125,7 +125,7 @@ export default class ConfirmInfoThree extends Component {
   render() {
     const { itemKey, itemValue, projectDetailInfoData: { data = [], board_id }, processEditDatas = [] } = this.props
     const { is_show_spread_arrow } = this.state
-    const { name, cc_type, deadline_type, deadline_value, deadline_time_type, score_locked, cc_locking } = itemValue
+    const { name, cc_type, deadline_type, deadline_value, deadline_time_type, score_node_set: { score_locked } , cc_locking } = itemValue
     let transPrincipalList = this.filterAssignees()
     let transCopyPersonnelList = this.filterRecipients()
     return (

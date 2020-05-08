@@ -31,6 +31,8 @@ export default class AccomplishStepOne_five extends Component {
     e && e.stopPropagation()
     const file_id = item.file_id || ((item.response && item.response.data) && item.response.data.file_id) || ''
     const file_name = item.file_name || ((item.response && item.response.data) && item.response.data.file_name) || ''
+    const file_size = item.file_size || ((item.response && item.response.data) && item.response.data.file_size) || ''
+    const file_resource_id = item.file_resource_id || ((item.response && item.response.data) && item.response.data.file_resource_id) || ''
     if (!file_id) return
     this.props.dispatch({
       type: 'publicFileDetailModal/updateDatas',
@@ -39,6 +41,8 @@ export default class AccomplishStepOne_five extends Component {
         filePreviewCurrentFileId: file_id,
         fileType: getSubfixName(file_name),
         filePreviewCurrentName: file_name,
+        filePreviewCurrentSize: file_size,
+        filePreviewCurrentFileResourceId: file_resource_id,
         isOpenAttachmentFile: true
       }
     })
@@ -51,7 +55,10 @@ export default class AccomplishStepOne_five extends Component {
         filePreviewCurrentFileId: '',
         fileType: '',
         isInOpenFile: false,
-        isOpenAttachmentFile: false
+        isOpenAttachmentFile: false,
+        filePreviewCurrentSize: '',
+        filePreviewCurrentName: '',
+        filePreviewCurrentFileResourceId: ''
       }
     })
   }

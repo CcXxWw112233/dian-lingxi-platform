@@ -133,7 +133,7 @@ export default class EditStepTypeThree extends Component {
   render() {
     const { itemKey, itemValue } = this.props
     const { is_show_spread_arrow } = this.state
-    const { name, cc_type, cc_locking, deadline_type, deadline_value, deadline_time_type, score_locked } = itemValue
+    const { name, cc_type, cc_locking, deadline_type, deadline_value, deadline_time_type, score_node_set: { score_locked }  } = itemValue
     let transPrincipalList = this.filterAssignees()
     let transCopyPersonnelList = this.filterRecipients()
     return (
