@@ -266,7 +266,7 @@ textarea::-webkit-input-placeholder {
 .delet_iconCircle {
   position: absolute;
   top: -10px;
-  left: -12px;
+  right: -12px;
   width:24px;
   height:24px;
   background:rgba(255,255,255,1);
@@ -325,6 +325,7 @@ textarea::-webkit-input-placeholder {
   color:rgba(0,0,0,0.85);
   line-height:48px;
   text-align: center;
+  flex: 1;
   .back_icon {
     color: rgba(0,0,0,0.45);
     cursor: pointer;
@@ -333,11 +334,21 @@ textarea::-webkit-input-placeholder {
     }
   }
   .rating_close {
+    font-size: 20px;
     color: rgba(0,0,0,0.45);
     cursor: pointer;
     &:hover {
       color: rgba(0,0,0,0.65);
     }
+  }
+}
+
+.popover_close_icon {
+  color: rgba(0,0,0,0.45);
+  font-size: 20px;
+  cursor: pointer;
+  &:hover {
+    color: rgba(0,0,0,0.65);
   }
 }
 

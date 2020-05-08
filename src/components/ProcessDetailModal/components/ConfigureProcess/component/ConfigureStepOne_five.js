@@ -36,7 +36,7 @@ export default class ConfigureStepOne_five extends Component {
 
   onVisibleChange = (visible) => {
     const { is_click_confirm_btn, form_item = {}, local_item = {} } = this.state
-    const { itemKey, parentKey, processEditDatas = [], itemValue: { limit_file_num, limit_file_size  } } = this.props
+    const { itemKey, parentKey, processEditDatas = [], itemValue: { limit_file_num, limit_file_size } } = this.props
     let update_item = JSON.parse(JSON.stringify(local_item || {}))
     if (!is_click_confirm_btn) {// 判断是否点击了确定按钮,否 那么就保存回原来的状态
       if (visible == false) {
@@ -56,13 +56,18 @@ export default class ConfigureStepOne_five extends Component {
     })
   }
 
+  handlePopoverClose = (e) => {
+    e && e.stopPropagation()
+    this.onVisibleChange(false)
+  }
+
   updateEdit = (data, key) => {
     const { itemKey, parentKey, processEditDatas = [] } = this.props
     const { forms = [] } = JSON.parse(JSON.stringify(processEditDatas[parentKey] || {}))
     forms[itemKey][key] = data.value
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
   }
-  updateState = (data,key) => {
+  updateState = (data, key) => {
     const { form_item = {} } = this.state
     let update_item = JSON.parse(JSON.stringify(form_item || {}))
     update_item[key] = data.value
@@ -117,45 +122,66 @@ export default class ConfigureStepOne_five extends Component {
   // 每一个表项的点击事件
   handleChangeTextFormColor = (e) => {
     e && e.stopPropagation()
-    const { itemValue, parentKey, processEditDatas = [] } = this.props
+    const { popoverVisible } = this.state
+    const { itemValue, parentKey, processEditDatas = [], itemKey } = this.props
     const { forms = [] } = processEditDatas[parentKey]
     const { is_click_currentTextForm } = itemValue
     let newFormsData = JSON.parse(JSON.stringify(forms || []))
-    newFormsData = newFormsData.map(item => {
-      if (item.is_click_currentTextForm) {
-        let new_item
-        new_item = { ...item, is_click_currentTextForm: false }
-        return new_item
-      } else {
-        return item
+    if (newFormsData && newFormsData.length > 1) {
+      newFormsData = newFormsData.map((item, index) => {
+        if (item.is_click_currentTextForm && index != itemKey) {
+          let new_item
+          new_item = { ...item, is_click_currentTextForm: false }
+          return new_item
+        } else if (item.is_click_currentTextForm && index == itemKey) {
+          let new_item
+          new_item = { ...item, is_click_currentTextForm: !popoverVisible ? true : false }
+          return new_item
+        } else if (!item.is_click_currentTextForm && index == itemKey) {
+          let new_item
+          new_item = { ...item, is_click_currentTextForm: !popoverVisible ? true : false }
+          return new_item
+        } else if (!item.is_click_currentTextForm && index != itemKey){
+          return item
+        }
+      })
+      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: newFormsData }, 'forms')
+      // this.updateEdit({ value: !is_click_currentTextForm }, 'is_click_currentTextForm')
+    } else {
+      
+      this.updateEdit({ value: !popoverVisible ? true : false }, 'is_click_currentTextForm')
+    }
+    
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        not_show_create_form_guide: '1'
       }
     })
-    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: newFormsData }, 'forms')
-    this.updateEdit({ value: !is_click_currentTextForm }, 'is_click_currentTextForm')
   }
 
-    // 每个配置表项的确定的点击事件
-    handleConfirmFormItem = () => {
-      const { popoverVisible, form_item = {} } = this.state
+  // 每个配置表项的确定的点击事件
+  handleConfirmFormItem = () => {
+    const { popoverVisible, form_item = {} } = this.state
+    this.setState({
+      is_click_confirm_btn: true
+    })
+    if (popoverVisible) {
       this.setState({
-        is_click_confirm_btn: true
-      })
-      if (popoverVisible) {
+        form_item: JSON.parse(JSON.stringify(form_item || {})),
+        local_item: JSON.parse(JSON.stringify(form_item || {})),
+      }, () => {
+        const { itemKey, parentKey, processEditDatas = [] } = this.props
+        const { forms = [] } = processEditDatas[parentKey]
+        forms[itemKey] = JSON.parse(JSON.stringify(form_item || {}))
+        this.onVisibleChange(false)
         this.setState({
-          form_item: JSON.parse(JSON.stringify(form_item || {})),
-          local_item: JSON.parse(JSON.stringify(form_item || {})),
-        },() => {
-          const { itemKey, parentKey, processEditDatas = [] } = this.props
-          const { forms = [] } = processEditDatas[parentKey]
-          forms[itemKey] = JSON.parse(JSON.stringify(form_item || {}))
-          this.onVisibleChange(false)
-          this.setState({
-            is_click_confirm_btn: false
-          })
-          this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
+          is_click_confirm_btn: false
         })
-      }
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
+      })
     }
+  }
 
   renderFileTypeArrayText = () => {
     const { itemValue } = this.props
@@ -185,7 +211,7 @@ export default class ConfigureStepOne_five extends Component {
     const { form_item = {} } = this.state
     const { title, limit_file_type = [], is_required, limit_file_num, limit_file_size } = form_item
     const limit_file_type_default = limit_file_type ? limit_file_type : []
-    
+
     let compare_item1 = JSON.parse(JSON.stringify(form_item || {}))
     let compare_item2 = JSON.parse(JSON.stringify(itemValue || {}))
     compare_item1.is_click_currentTextForm ? delete compare_item1.is_click_currentTextForm : ''
@@ -198,7 +224,7 @@ export default class ConfigureStepOne_five extends Component {
       disabledFlag = true
     }
     return (
-      <div className={indexStyles.popover_content}>
+      <div onClick={(e) => e && e.stopPropagation()} className={indexStyles.popover_content}>
         <div className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
           <div>
             <p>标题:</p>
@@ -244,45 +270,52 @@ export default class ConfigureStepOne_five extends Component {
     const { is_click_currentTextForm } = itemValue
     return (
       <div>
-        <div className={indexStyles.text_form} style={{ background: is_click_currentTextForm ? 'rgba(230,247,255,1)' : 'rgba(0,0,0,0.02)' }} onClick={this.handleChangeTextFormColor}>
-          <p>{title}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</p>
-          <div className={indexStyles.upload_static}>
-            <span style={{ color: '#1890FF', fontSize: '28px', marginTop: '-6px' }} className={`${globalStyles.authTheme}`}>&#xe692;</span>
-            <div style={{ flex: 1, marginLeft: '12px' }}>
-              <div className={indexStyles.file_drap_tips}>点击或拖拽文件到此开始上传</div>
-              <div className={indexStyles.file_layout}>{limit_file_size == 0 ? `不限制大小` : `${parseInt(limit_file_size)}MB以内`}、{limit_file_num == 0 ? `不限制数量` : `最多${parseInt(limit_file_num)}个`}、 {`${this.renderFileTypeArrayText()}格式`}</div>
+        <Popover
+          title={
+            <div onClick={(e) => e && e.stopPropagation()} style={{display: 'flex', alignItems: 'center'}}>
+              <div className={indexStyles.popover_title}>配置表项</div>
+              <div onClick={this.handlePopoverClose} className={`${globalStyles.authTheme} ${indexStyles.popover_close_icon}`}>&#xe7fe;</div>
             </div>
-          </div>
-          {
-            is_click_currentTextForm && (
-              <>
-                <span onClick={this.handleDelFormDataItem} className={`${indexStyles.delet_iconCircle}`}>
-                  <span className={`${globalStyles.authTheme} ${indexStyles.deletet_icon}`}>&#xe68d;</span>
-                </span>
-                <div onClick={(e) => e && e.stopPropagation()} className={indexStyles.popoverContainer} style={{ position: 'absolute', right: 0, top: 0 }}>
-                  <Popover
-                    title={<div className={indexStyles.popover_title}>配置表项</div>}
-                    trigger="click"
-                    visible={this.state.popoverVisible}
-                    content={this.renderContent()}
-                    getPopupContainer={triggerNode => triggerNode.parentNode}
-                    placement={'bottomRight'}
-                    zIndex={1010}
-                    className={indexStyles.popoverWrapper}
-                    autoAdjustOverflow={false}
-                    onVisibleChange={this.onVisibleChange}
-                  >
+          }
+          trigger="click"
+          visible={this.state.popoverVisible}
+          content={this.renderContent()}
+          getPopupContainer={triggerNode => triggerNode.parentNode}
+          placement={'bottomRight'}
+          zIndex={1010}
+          className={indexStyles.popoverWrapper}
+          autoAdjustOverflow={false}
+          onVisibleChange={this.onVisibleChange}
+        >
+          <div className={indexStyles.text_form} style={{ background: is_click_currentTextForm ? 'rgba(230,247,255,1)' : 'rgba(0,0,0,0.02)' }} onClick={this.handleChangeTextFormColor}>
+            <p>{title}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</p>
+            <div className={indexStyles.upload_static}>
+              <span style={{ color: '#1890FF', fontSize: '28px', marginTop: '-6px' }} className={`${globalStyles.authTheme}`}>&#xe692;</span>
+              <div style={{ flex: 1, marginLeft: '12px' }}>
+                <div className={indexStyles.file_drap_tips}>点击或拖拽文件到此开始上传</div>
+                <div className={indexStyles.file_layout}>{limit_file_size == 0 ? `不限制大小` : `${parseInt(limit_file_size)}MB以内`}、{limit_file_num == 0 ? `不限制数量` : `最多${parseInt(limit_file_num)}个`}、 {`${this.renderFileTypeArrayText()}格式`}</div>
+              </div>
+            </div>
+            {
+              is_click_currentTextForm && (
+                <>
+                  <span onClick={this.handleDelFormDataItem} className={`${indexStyles.delet_iconCircle}`}>
+                    <span className={`${globalStyles.authTheme} ${indexStyles.deletet_icon}`}>&#xe720;</span>
+                  </span>
+                  {/* <div onClick={(e) => e && e.stopPropagation()} className={indexStyles.popoverContainer} style={{ position: 'absolute', right: 0, top: 0 }}>
+
                     <div onClick={this.handelPopoverVisible} className={`${globalStyles.authTheme} ${indexStyles.setting_icon}`}>
                       <span>&#xe78e;</span>
                     </div>
-                  </Popover>
 
-                </div>
-              </>
-            )
-          }
-          { itemKey == ((forms && forms.length) && forms.length - 1) && <ConfigureNapeGuide visible={false} /> }
-        </div>
+
+                  </div> */}
+                </>
+              )
+            }
+            {itemKey == 0 && <ConfigureNapeGuide />}
+          </div>
+        </Popover>
       </div>
 
     )

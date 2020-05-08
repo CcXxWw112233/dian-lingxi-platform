@@ -53,13 +53,18 @@ export default class ConfigureStepOne_one extends Component {
     })
   }
 
+  handlePopoverClose = (e) => {
+    e && e.stopPropagation()
+    this.onVisibleChange(false)
+  }
+
   updateEdit = (data, key) => {
     const { itemKey, parentKey, processEditDatas = [] } = this.props
     const { forms = [] } = JSON.parse(JSON.stringify(processEditDatas[parentKey] || {}))
     forms[itemKey][key] = data.value
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
   }
-  updateState = (data,key) => {
+  updateState = (data, key) => {
     const { form_item = {} } = this.state
     let update_item = JSON.parse(JSON.stringify(form_item || {}))
     update_item[key] = data.value
@@ -121,21 +126,42 @@ export default class ConfigureStepOne_one extends Component {
   // 每一个表项的点击事件
   handleChangeTextFormColor = (e) => {
     e && e.stopPropagation()
-    const { itemValue, parentKey, processEditDatas = [] } = this.props
+    const { popoverVisible } = this.state
+    const { itemValue, parentKey, processEditDatas = [], itemKey } = this.props
     const { forms = [] } = processEditDatas[parentKey]
     const { is_click_currentTextForm } = itemValue
     let newFormsData = JSON.parse(JSON.stringify(forms || []))
-    newFormsData = newFormsData.map(item => {
-      if (item.is_click_currentTextForm) {
-        let new_item
-        new_item = { ...item, is_click_currentTextForm: false }
-        return new_item
-      } else {
-        return item
+    if (newFormsData && newFormsData.length > 1) {
+      newFormsData = newFormsData.map((item, index) => {
+        if (item.is_click_currentTextForm && index != itemKey) {
+          let new_item
+          new_item = { ...item, is_click_currentTextForm: false }
+          return new_item
+        } else if (item.is_click_currentTextForm && index == itemKey) {
+          let new_item
+          new_item = { ...item, is_click_currentTextForm: !popoverVisible ? true : false }
+          return new_item
+        } else if (!item.is_click_currentTextForm && index == itemKey) {
+          let new_item
+          new_item = { ...item, is_click_currentTextForm: !popoverVisible ? true : false }
+          return new_item
+        } else if (!item.is_click_currentTextForm && index != itemKey){
+          return item
+        }
+      })
+      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: newFormsData }, 'forms')
+      // this.updateEdit({ value: !is_click_currentTextForm }, 'is_click_currentTextForm')
+    } else {
+      
+      this.updateEdit({ value: !popoverVisible ? true : false }, 'is_click_currentTextForm')
+    }
+    
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        not_show_create_form_guide: '1'
       }
     })
-    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: newFormsData }, 'forms')
-    this.updateEdit({ value: !is_click_currentTextForm }, 'is_click_currentTextForm')
   }
 
   // 每个配置表项的确定的点击事件
@@ -148,7 +174,7 @@ export default class ConfigureStepOne_one extends Component {
       this.setState({
         form_item: JSON.parse(JSON.stringify(form_item || {})),
         local_item: JSON.parse(JSON.stringify(form_item || {})),
-      },() => {
+      }, () => {
         const { itemKey, parentKey, processEditDatas = [] } = this.props
         const { forms = [] } = processEditDatas[parentKey]
         forms[itemKey] = JSON.parse(JSON.stringify(form_item || {}))
@@ -183,12 +209,12 @@ export default class ConfigureStepOne_one extends Component {
         disabledFlag = true
       }
     } else if (!val_min_length && !val_max_length) { // 表示没有最大值和最小值时
-      if (isObjectValueEqual(compare_item1,compare_item2)) {
+      if (isObjectValueEqual(compare_item1, compare_item2)) {
         disabledFlag = true
       }
     }
     return (
-      <div key={itemValue} className={indexStyles.popover_content}>
+      <div onClick={(e) => e && e.stopPropagation()} key={itemValue} className={indexStyles.popover_content}>
         <div className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
           <div>
             <p>标题:</p>
@@ -244,42 +270,50 @@ export default class ConfigureStepOne_one extends Component {
     const { title, prompt_content, is_required } = form_item
     const { is_click_currentTextForm } = itemValue
     return (
-      <div>
-        <div className={indexStyles.text_form} style={{ background: is_click_currentTextForm ? 'rgba(230,247,255,1)' : 'rgba(0,0,0,0.02)' }} onClick={this.handleChangeTextFormColor}>
-          <p>{title}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</p>
-          <div className={indexStyles.text_fillOut}>
-            <span>{prompt_content}</span>
-          </div>
-          {
-            is_click_currentTextForm && (
-              <>
-                <span onClick={this.handleDelFormDataItem} className={`${indexStyles.delet_iconCircle}`}>
-                  <span className={`${globalStyles.authTheme} ${indexStyles.deletet_icon}`}>&#xe68d;</span>
-                </span>
-                <div onClick={(e) => e.stopPropagation()} className={indexStyles.popoverContainer} style={{ position: 'absolute', right: 0, top: 0 }}>
-                  <Popover
-                    title={<div className={indexStyles.popover_title}>配置表项</div>}
-                    trigger="click"
-                    visible={this.state.popoverVisible}
-                    content={this.renderContent()}
-                    getPopupContainer={triggerNode => triggerNode.parentNode}
-                    placement={'bottomRight'}
-                    zIndex={1010}
-                    className={indexStyles.popoverWrapper}
-                    autoAdjustOverflow={false}
-                    onVisibleChange={this.onVisibleChange}
-                  >
+      <div onClick={this.handleChangeTextFormColor}>
+        <Popover
+          title={
+            <div onClick={(e) => e && e.stopPropagation()} style={{display: 'flex', alignItems: 'center'}}>
+              <div className={indexStyles.popover_title}>配置表项</div>
+              <div onClick={this.handlePopoverClose} className={`${globalStyles.authTheme} ${indexStyles.popover_close_icon}`}>&#xe7fe;</div>
+            </div>
+          }
+          trigger="click"
+          visible={this.state.popoverVisible}
+          content={this.renderContent()}
+          getPopupContainer={triggerNode => triggerNode.parentNode}
+          placement={'bottomRight'}
+          zIndex={1010}
+          className={indexStyles.popoverWrapper}
+          autoAdjustOverflow={false}
+          onVisibleChange={this.onVisibleChange}
+        >
+          <div className={indexStyles.text_form} style={{ background: is_click_currentTextForm ? 'rgba(230,247,255,1)' : 'rgba(0,0,0,0.02)' }} >
+            <p>{title}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</p>
+            <div className={indexStyles.text_fillOut}>
+              <span>{prompt_content}</span>
+            </div>
+            {
+              is_click_currentTextForm && (
+                <>
+                  <span onClick={this.handleDelFormDataItem} className={`${indexStyles.delet_iconCircle}`}>
+                    <span className={`${globalStyles.authTheme} ${indexStyles.deletet_icon}`}>&#xe720;</span>
+                  </span>
+                  {/* <div onClick={(e) => e.stopPropagation()} className={indexStyles.popoverContainer} style={{ position: 'absolute', right: 0, top: 0 }}>
+
                     <div onClick={this.handelPopoverVisible} className={`${globalStyles.authTheme} ${indexStyles.setting_icon}`}>
                       <span>&#xe78e;</span>
                     </div>
-                  </Popover>
 
-                </div>
-              </>
-            )
-          }
-          { itemKey == ((forms && forms.length) && forms.length - 1) && <ConfigureNapeGuide /> }
-        </div>
+
+                  </div> */}
+                </>
+              )
+            }
+            {/* {itemKey == ((forms && forms.length) && forms.length - 1) && <ConfigureNapeGuide />} */}
+            {itemKey == 0 && <ConfigureNapeGuide />}
+          </div>
+        </Popover>
       </div>
 
     )

@@ -204,6 +204,7 @@ export default class ConfigureStepTypeOne extends Component {
 
   // 渲染不同的表项
   filterForm = (value, key) => {
+    if (!value) return <></>
     const { field_type } = value
     const { itemKey, itemValue } = this.props
     let container = (<div></div>)

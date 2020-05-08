@@ -92,7 +92,7 @@ export default class ConfigureStepTypeThree_one extends Component {
   handleClickRatingItems = (e) => {
     e && e.stopPropagation()
     return
-    console.log(this.state.popoverVisible,'ssssssssssssssssssssssss_visible')
+    console.log(this.state.popoverVisible, 'ssssssssssssssssssssssss_visible')
     if (this.state.popoverVisible) return
     // 保存一个点击的状态
     this.onVisibleChange(true)
@@ -128,8 +128,8 @@ export default class ConfigureStepTypeThree_one extends Component {
     }
     let new_data = JSON.parse(JSON.stringify(score_items || []))
     new_data = new_data.map(item => {
-      let new_item = {...item}
-      new_item = {...item, max_score: '100', weight_ratio: '100'}
+      let new_item = { ...item }
+      new_item = { ...item, max_score: '100', weight_ratio: '100' }
       return new_item
     })
     this.setState({
@@ -181,7 +181,7 @@ export default class ConfigureStepTypeThree_one extends Component {
   handleAutoTitleTextArea = (e, key, i) => {
     let val = e.target.value
     if (val.trimLR() == '') {
-      this.updateState({ value: '', key: 'title' , isNotUpdateModelDatas: true}, i)
+      this.updateState({ value: '', key: 'title', isNotUpdateModelDatas: true }, i)
       return
     }
     this.updateState({ value: val, key: 'title', isNotUpdateModelDatas: true }, i)
@@ -203,10 +203,10 @@ export default class ConfigureStepTypeThree_one extends Component {
     const reg = /^([1-9]\d{0,2}?|1000)$/
     // /^([1-9]\d{0,2}?|1000)$/
     if (value == '' || value.trimLR() == '' || !reg.test(value)) {
-      this.updateState({ value: '', key: 'max_score', isNotUpdateModelDatas: true}, i)
+      this.updateState({ value: '', key: 'max_score', isNotUpdateModelDatas: true }, i)
       return
     }
-    this.updateState({ value: value, key: 'max_score', isNotUpdateModelDatas: true}, i)
+    this.updateState({ value: value, key: 'max_score', isNotUpdateModelDatas: true }, i)
     if (this.refs && this.refs[`autoGradeTextArea_${key}`]) {
       this.gradeResize(key)
     }
@@ -235,8 +235,8 @@ export default class ConfigureStepTypeThree_one extends Component {
     let value = e.target.value
     if (value == '' || value.trimLR() == '' || !reg.test(value)) {
       new_data = new_data.map(item => {
-        let new_item = {...item}
-        new_item = {...item, max_score: ''}
+        let new_item = { ...item }
+        new_item = { ...item, max_score: '' }
         return new_item
       })
       this.setState({
@@ -246,8 +246,8 @@ export default class ConfigureStepTypeThree_one extends Component {
       return
     }
     new_data = new_data.map(item => {
-      let new_item = {...item}
-      new_item = {...item, max_score: value}
+      let new_item = { ...item }
+      new_item = { ...item, max_score: value }
       return new_item
     })
     this.setState({
@@ -414,10 +414,10 @@ export default class ConfigureStepTypeThree_one extends Component {
     e && e.stopPropagation()
     const { score_items = [], local_enable_weight } = this.state
     const { itemValue: { enable_weight } } = this.props
-    let new_data = [...score_items]    
+    let new_data = [...score_items]
     new_data = new_data.map(item => {
-      let new_item = {...item}
-      new_item = {...item, weight_ratio: '100'}
+      let new_item = { ...item }
+      new_item = { ...item, weight_ratio: '100' }
       return new_item
     })
     this.setState({
@@ -478,11 +478,11 @@ export default class ConfigureStepTypeThree_one extends Component {
               <tr style={{ height: '38px', border: '1px solid #E9E9E9', textAlign: 'center' }}>
                 <td style={{ width: '170px' }}>
                   {/* <div className={`${indexStyles.rating_editTable} ${globalStyles.global_vertical_scrollbar}`} contentEditable={true}></div> */}
-                  <textarea onFocus={(e) => { this.onFocus(e, key || id || index, index) }} maxLength={200} value={title} onBlur={(e) => { this.handleAutoTitleTextAreaBlur(key || id || index) }} onChange={(e) => { this.handleAutoTitleTextArea(e, key || id || index, index) }} ref={`autoTitleTextArea_${key||id||index}`} />
+                  <textarea onFocus={(e) => { this.onFocus(e, key || id || index, index) }} maxLength={200} value={title} onBlur={(e) => { this.handleAutoTitleTextAreaBlur(key || id || index) }} onChange={(e) => { this.handleAutoTitleTextArea(e, key || id || index, index) }} ref={`autoTitleTextArea_${key || id || index}`} />
                 </td>
                 <td style={{ position: 'relative', width: '90px' }}>
                   {/* <div className={indexStyles.rating_editTable} contentEditable={true}></div> */}
-                  <textarea value={max_score} onBlur={(e) => { this.handleAutoGradeTextAreaBlur(e, key||id||index, index) }} onChange={(e) => { this.handleAutoGradeTextAreaValue(e, key||id||index, index) }} ref={`autoGradeTextArea_${key||id||index}`} />
+                  <textarea value={max_score} onBlur={(e) => { this.handleAutoGradeTextAreaBlur(e, key || id || index, index) }} onChange={(e) => { this.handleAutoGradeTextAreaValue(e, key || id || index, index) }} ref={`autoGradeTextArea_${key || id || index}`} />
                   <Dropdown overlay={this.renderMoreSelect(index)} getPopupContainer={triggerNode => triggerNode.parentNode} trigger={['click']}>
                     <div className={indexStyles.rating_moreBox}>
                       <span className={indexStyles.rating_more_icon}><span className={globalStyles.authTheme}>&#xe7fd;</span></span>
@@ -521,15 +521,15 @@ export default class ConfigureStepTypeThree_one extends Component {
               <tr style={{ height: '38px', border: '1px solid #E9E9E9', textAlign: 'center' }}>
                 <td style={{ width: '170px' }}>
                   {/* <div className={`${indexStyles.rating_editTable} ${globalStyles.global_vertical_scrollbar}`} contentEditable={true}></div> */}
-                  <textarea onFocus={(e) => { this.onFocus(e, key||id||index, index) }} onBlur={(e) => { this.handleAutoTitleTextAreaBlur(key||id||index) }} maxLength={200} value={title} onChange={(e) => { this.handleAutoTitleTextArea(e, key||id||index, index) }} ref={`autoTitleTextArea_${key||id||index}`} />
+                  <textarea onFocus={(e) => { this.onFocus(e, key || id || index, index) }} onBlur={(e) => { this.handleAutoTitleTextAreaBlur(key || id || index) }} maxLength={200} value={title} onChange={(e) => { this.handleAutoTitleTextArea(e, key || id || index, index) }} ref={`autoTitleTextArea_${key || id || index}`} />
                 </td>
                 <td style={{ width: '90px' }}>
                   {/* <div className={`${indexStyles.rating_editTable} ${globalStyles.global_vertical_scrollbar}`} contentEditable={true}></div> */}
-                  <textarea value={weight_ratio} onBlur={(e) => { this.handleChangeAutoWeightTextAreaBlur(e, key||id||index, index) }} onChange={(e) => { this.handleChangeAutoWeightTextAreaValue(e, key||id||index, index) }} ref={`autoWeightTextArea_${key||id||index}`} />
+                  <textarea value={weight_ratio} onBlur={(e) => { this.handleChangeAutoWeightTextAreaBlur(e, key || id || index, index) }} onChange={(e) => { this.handleChangeAutoWeightTextAreaValue(e, key || id || index, index) }} ref={`autoWeightTextArea_${key || id || index}`} />
                 </td>
                 <td style={{ position: 'relative', width: '90px' }}>
                   {/* <div className={indexStyles.rating_editTable} contentEditable={true}></div> */}
-                  <textarea value={max_score} onChange={(e) => { this.handleAutoGradeTextAreaValue2(e, key||id||index, index) }} ref={`autoGradeTextArea_${key||id||index}`} />
+                  <textarea value={max_score} onChange={(e) => { this.handleAutoGradeTextAreaValue2(e, key || id || index, index) }} ref={`autoGradeTextArea_${key || id || index}`} />
                   <Dropdown overlay={this.renderMoreSelect(index)} getPopupContainer={triggerNode => triggerNode.parentNode} trigger={['click']}>
                     <div className={indexStyles.rating_moreBox}>
                       <span className={indexStyles.rating_more_icon}><span className={globalStyles.authTheme}>&#xe7fd;</span></span>
@@ -607,7 +607,7 @@ export default class ConfigureStepTypeThree_one extends Component {
         }
       }
     }
-    
+
     return (
       <div className={indexStyles.popover_content}>
         <div style={{ minHeight: '352px' }} className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
@@ -706,45 +706,59 @@ export default class ConfigureStepTypeThree_one extends Component {
       <div>
         {/* 评分项 */}
         <div style={{ borderBottom: '1px solid rgba(0,0,0,0.09)' }}>
-          <div id={`ratingItems_${itemKey}`} onClick={this.handleClickRatingItems} className={indexStyles.ratingItems} style={{ background: popoverVisible ? '#E6F7FF' : 'rgba(0, 0, 0, 0.02)' }}>
-            {
-              score_items && score_items.map((item, index) => {
-                const { title, description, max_score, weight_ratio } = item
-                return (
-                  <div key={item} className={`${indexStyles.rating_itemsValue} ${flag && score_items.length > 1 ? indexStyles.rating_active_width : indexStyles.rating_normal_width}`}>
-                    <p>
-                      <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer', display: 'inline-block', display: 'flex', flex: 1 }}>
-                        <Tooltip title={title} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                         <span style={{display: 'flex'}}>
-                          <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: clientWidth && !(flag && score_items.length > 1) ? clientWidth + 'px' : autoWidth, minWidth: '50px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>
-                          <span>:</span>
-                         </span>
-                          
-                        </Tooltip>
+          <Popover
+            // key={`${itemKey}-${itemValue}`}
+            title={is_add_description ? this.renderAddDescriptionTitle() : this.renderConfigurationScoreTitile()}
+            trigger="click"
+            visible={this.state.popoverVisible}
+            onClick={(e) => e.stopPropagation()}
+            content={is_add_description ? this.renderAddDescription() : this.renderConfigurationScore()}
+            getPopupContainer={triggerNode => triggerNode.parentNode}
+            placement={'bottomRight'}
+            zIndex={1010}
+            className={indexStyles.popoverWrapper}
+            autoAdjustOverflow={false}
+            onVisibleChange={this.onVisibleChange}
+          >
+            <div id={`ratingItems_${itemKey}`} onClick={this.handleClickRatingItems} className={indexStyles.ratingItems} style={{ background: popoverVisible ? '#E6F7FF' : 'rgba(0, 0, 0, 0.02)' }}>
+              {
+                score_items && score_items.map((item, index) => {
+                  const { title, description, max_score, weight_ratio } = item
+                  return (
+                    <div key={item} className={`${indexStyles.rating_itemsValue} ${flag && score_items.length > 1 ? indexStyles.rating_active_width : indexStyles.rating_normal_width}`}>
+                      <p>
+                        <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer', display: 'inline-block', display: 'flex', flex: 1 }}>
+                          <Tooltip title={title} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                            <span style={{ display: 'flex' }}>
+                              <span style={{ marginRight: '9px', display: 'inline-block', maxWidth: clientWidth && !(flag && score_items.length > 1) ? clientWidth + 'px' : autoWidth, minWidth: '50px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', verticalAlign: 'middle' }}>{title}</span>
+                              <span>:</span>
+                            </span>
+
+                          </Tooltip>
+                          {
+                            local_enable_weight == '1' && (
+                              <Tooltip overlayStyle={{ minWidth: '116px' }} title={`权重占比: ${weight_ratio}%`} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                                <span className={indexStyles.rating_weight}>&nbsp;&nbsp;{`*${weight_ratio}%`}</span>
+                              </Tooltip>
+                            )
+                          }
+                        </span>
                         {
-                          local_enable_weight == '1' && (
-                            <Tooltip overlayStyle={{ minWidth: '116px' }} title={`权重占比: ${weight_ratio}%`} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                              <span className={indexStyles.rating_weight}>&nbsp;&nbsp;{`*${weight_ratio}%`}</span>
-                            </Tooltip>
-                          )
+                          description != '' ? (
+                            <Popover autoAdjustOverflow={false} title={<div style={{ margin: '0 4px', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '130px', whiteSpace: 'nowrap' }}>{title}</div>} content={<div className={globalStyles.global_vertical_scrollbar} style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', width: '210px', maxHeight: '205px', overflowY: 'auto' }}>{description}</div>} placement="top" getPopupContainer={() => document.getElementById(`ratingItems_${itemKey}`)}>
+                              <span style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe845;</span>
+                            </Popover>
+                          ) : ('')
                         }
-                      </span>
-                      {
-                        description != '' ? (
-                          <Popover autoAdjustOverflow={false} title={<div style={{ margin: '0 4px', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '130px', whiteSpace: 'nowrap' }}>{title}</div>} content={<div className={globalStyles.global_vertical_scrollbar} style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap', width: '210px', maxHeight: '205px', overflowY: 'auto' }}>{description}</div>} placement="top" getPopupContainer={() => document.getElementById(`ratingItems_${itemKey}`)}>
-                            <span style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe845;</span>
-                          </Popover>
-                        ) : ('')
-                      }
-                    </p>
-                    <div className={indexStyles.rating_grade}>
-                      <span>最高<span className={indexStyles.rating_grade_value}>{max_score}</span>分</span>
+                      </p>
+                      <div className={indexStyles.rating_grade}>
+                        <span>最高<span className={indexStyles.rating_grade_value}>{max_score}</span>分</span>
+                      </div>
                     </div>
-                  </div>
-                )
-              })
-            }
-            {/* {
+                  )
+                })
+              }
+              {/* {
               score_display == '1' && (
                 <div style={{ color: 'rgba(0,0,0,0.45)', fontWeight: 500, position: 'absolute', bottom: '0' }}>
                   <span className={globalStyles.authTheme}>&#xe66c;</span>
@@ -752,32 +766,20 @@ export default class ConfigureStepTypeThree_one extends Component {
                 </div>
               )
             } */}
-            <div>
-              <div id={`popoverContainer_${itemKey}`} onClick={(e) => e.stopPropagation()} className={indexStyles.popoverContainer} style={{ position: 'absolute', right: 0, top: 0 }}>
-                <Popover
-                  // key={`${itemKey}-${itemValue}`}
-                  title={is_add_description ? this.renderAddDescriptionTitle() : this.renderConfigurationScoreTitile()}
-                  trigger="click"
-                  visible={this.state.popoverVisible}
-                  onClick={(e) => e.stopPropagation()}
-                  content={is_add_description ? this.renderAddDescription() : this.renderConfigurationScore()}
-                  getPopupContainer={triggerNode => triggerNode.parentNode}
-                  placement={'bottomRight'}
-                  zIndex={1010}
-                  className={indexStyles.popoverWrapper}
-                  autoAdjustOverflow={false}
-                  onVisibleChange={this.onVisibleChange}
-                >
+              {/* <div>
+                <div id={`popoverContainer_${itemKey}`} onClick={(e) => e.stopPropagation()} className={indexStyles.popoverContainer} style={{ position: 'absolute', right: 0, top: 0 }}>
+
                   <span onClick={(e) => e && e.stopPropagation()} className={`${indexStyles.delet_iconCircle}`}>
                     <span style={{ color: '#1890FF' }} className={`${globalStyles.authTheme} ${indexStyles.deletet_icon}`}>&#xe78e;</span>
                   </span>
-                </Popover>
+
+                </div>
+              </div> */}
+              <div>
+                <ConfigureRatingGuide />
               </div>
             </div>
-            <div>
-              <ConfigureRatingGuide />
-            </div>
-          </div>
+          </Popover>
         </div>
       </div>
     )
