@@ -53,7 +53,7 @@ export default {
   namespace: 'gantt',
   state: {
     datas: {
-      gantt_view_mode: 'year', //week / month /year
+      gantt_view_mode: 'month', //week / month /year
       gold_date_arr: [], //所需要的日期数据
       date_arr_one_level: [], //所有日期数据扁平成一级数组
       start_date: {}, //日期最开始的那一天
@@ -61,7 +61,7 @@ export default {
       create_start_time: '', //创建任务开始时间
       create_end_time: '', //创建任务截至时间
       list_group: [], //分组列表
-      ceilWidth: ceil_width_year, //单元格的宽度
+      ceilWidth: ceil_width, //单元格的宽度
       ceiHeight: ceil_height, //单元格高度 40 + 12的外边距
       date_total: 0, //总天数
       group_rows: [2, 2, 2], //每一个分组默认行数 [7, 7, 7]
@@ -87,6 +87,7 @@ export default {
       group_view_users_tree: [], //内容过滤成员分组树
       holiday_list: [], //日历列表（包含节假日农历）
       get_gantt_data_loading: false, //是否在请求甘特图数据状态
+      get_gantt_data_loading_other: false, //为其它操作想要阻断页面做loading(应用于难以解决的切换显示延迟)
       get_gantt_data_loaded: false,
       is_show_board_file_area: '0', //显示文件区域 0默认不显示 1滑入 2滑出
       boards_flies: [], //带根目录文件列表的项目列表

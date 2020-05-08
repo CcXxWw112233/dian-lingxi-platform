@@ -338,15 +338,15 @@ export default class GanttFace extends Component {
   }
   render() {
     const { gantt_card_out_middle_max_height } = this.state
-    const { gantt_card_height, get_gantt_data_loading, is_need_calculate_left_dx, gantt_board_id, is_show_board_file_area, group_view_type } = this.props
+    const { gantt_card_height, get_gantt_data_loading, is_need_calculate_left_dx, gantt_board_id, is_show_board_file_area, group_view_type, get_gantt_data_loading_other } = this.props
     const dataAreaRealHeight = this.getDataAreaRealHeight()
 
     return (
       <div className={indexStyles.cardDetail} id={'gantt_card_out'} style={{ height: gantt_card_height, width: '100%' }}>
         {
-          get_gantt_data_loading && (
+          (get_gantt_data_loading || get_gantt_data_loading_other) && (
             <div className={indexStyles.cardDetailMask} style={{ height: gantt_card_height }}>
-              <Spin spinning={get_gantt_data_loading} tip={'甘特图数据正在加载中...'} >
+              <Spin spinning={get_gantt_data_loading || get_gantt_data_loading_other} tip={'甘特图数据正在加载中...'} >
               </Spin>
             </div>
           )
@@ -453,7 +453,8 @@ function mapStateToProps({ gantt: { datas: {
   is_show_board_file_area,
   outline_tree,
   gantt_view_mode,
-  target_scrollLeft
+  target_scrollLeft,
+  get_gantt_data_loading_other
 } } }) {
   return {
     ceilWidth,
@@ -470,7 +471,8 @@ function mapStateToProps({ gantt: { datas: {
     is_show_board_file_area,
     outline_tree,
     gantt_view_mode,
-    target_scrollLeft
+    target_scrollLeft,
+    get_gantt_data_loading_other
   }
 }
 GanttFace.defaultProps = {

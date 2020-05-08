@@ -342,7 +342,7 @@ export default class DateList extends Component {
           const is_all_realized = this.isHasMiletoneList(Number(timestampEnd)).is_all_realized
           // /gantt_board_id == '0' ||
           return (
-            <div key={`${month}`}>
+            <div key={`${month}/${timestamp}`}>
               <div className={`${indexStyles.dateDetailItem}`} key={key2} style={{ width: ceilWidth * last_date }}>
                 <div className={`${indexStyles.dateDetailItem_date_no}`} >
                   {description}
