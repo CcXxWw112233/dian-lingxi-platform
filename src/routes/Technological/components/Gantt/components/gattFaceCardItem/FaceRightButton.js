@@ -20,14 +20,24 @@ export default class FaceRightButton extends Component {
     }
 
     checkToday = () => {
-        const { dispatch, date_arr_one_level = [], ceilWidth } = this.props
+        const { dispatch, date_arr_one_level = [], ceilWidth, gantt_view_mode } = this.props
         const now = new Date().getTime()
         const date = new Date().getDate()
-        const toDayIndex = date_arr_one_level.findIndex(item => isSamDay(item.timestamp, now))
+        let toDayIndex = -1
+        if (gantt_view_mode == 'month') {
+            toDayIndex = date_arr_one_level.findIndex(item => isSamDay(item.timestamp, now)) //当天所在位置index
+        } else if (gantt_view_mode == 'year') {
+            toDayIndex = date_arr_one_level.findIndex(item => now > item.timestamp && now < item.timestampEnd) //当天所在月位置index
+        }
+
         const target = document.getElementById('gantt_card_out_middle')
 
         if (toDayIndex != -1) { //如果今天在当前日期面板内 
-            const nomal_position = toDayIndex * ceilWidth - 248 + 16 //248为左边面板宽度,16为左边header的宽度和withCeil * n的 %值
+            let nomal_position = toDayIndex * ceilWidth - 248 + 16 //248为左边面板宽度,16为左边header的宽度和withCeil * n的 %值
+            if (gantt_view_mode == 'year') {
+                const date_position = date_arr_one_level.slice(0, toDayIndex).map(item => item.last_date).reduce((total, num) => total + num) //索引月份总天数
+                nomal_position = date_position * ceilWidth - 248 + 16//当天所在位置index
+            }
             const max_position = target.scrollWidth - target.clientWidth - 2 * ceilWidth//最大值,保持在这个值的范围内，滚动条才能不滚动到触发更新的区域
             const position = max_position > nomal_position ? nomal_position : max_position
 
@@ -100,7 +110,7 @@ export default class FaceRightButton extends Component {
                     !this.filterIsInViewArea() && (
                         <div className={styles.card_button} onClick={this.checkToday}>
                             今天
-                         </div>
+                        </div>
                     )
                 }
                 {
@@ -123,6 +133,7 @@ function mapStateToProps({ gantt: { datas: {
     gantt_board_id,
     group_view_type,
     list_group = [],
+    gantt_view_mode
 } } }) {
     return {
         date_arr_one_level,
@@ -131,6 +142,7 @@ function mapStateToProps({ gantt: { datas: {
         show_board_fold,
         gantt_board_id,
         group_view_type,
-        list_group
+        list_group,
+        gantt_view_mode
     }
 }
