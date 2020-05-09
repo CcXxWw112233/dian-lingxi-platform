@@ -667,7 +667,7 @@ export default class BoardTemplate extends Component {
 
     render() {
         const { template_data, selected_template_name, spinning, project_templete_scheme_visible, checkedKeys = [], safeConfirmModalVisible } = this.state
-        const { gantt_board_id, boardTemplateShow, group_view_type, outline_tree, gantt_card_height } = this.props
+        const { gantt_board_id, boardTemplateShow, group_view_type, outline_tree, gantt_card_height, gantt_view_mode } = this.props
         return (
             gantt_board_id && gantt_board_id != '0' ?
                 (
@@ -721,7 +721,7 @@ export default class BoardTemplate extends Component {
                                                     // checkStrictly
                                                     checkedKeys={checkedKeys}
                                                     onCheck={this.onCheck}
-                                                    draggable
+                                                    draggable={gantt_view_mode == 'month'}
                                                     onDragStart={this.onDragStart}
                                                 // onDragEnter={this.onDragEnter}
                                                 // onDragLeave={this.onDragLeave}
@@ -806,7 +806,8 @@ function mapStateToProps({
             is_new_board,
             boardTemplateShow,
             outline_tree,
-            group_view_type
+            group_view_type,
+            gantt_view_mode
         }
     },
     technological: { datas: { userBoardPermissions = [] } },
@@ -818,6 +819,7 @@ function mapStateToProps({
         userBoardPermissions,
         boardTemplateShow,
         outline_tree,
-        group_view_type
+        group_view_type,
+        gantt_view_mode
     }
 }

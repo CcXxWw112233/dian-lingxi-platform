@@ -103,6 +103,59 @@ export default class GetRowGanttItem extends Component {
       current_date_board_miletones,
     }
   }
+  isHasMiletoneListYear = ({ year, month, last_date, timestamp, timestampEnd }) => {
+    const { milestoneMap = [], list_id, gantt_board_id, group_view_type } = this.props
+    let flag = false
+    let current_date_miletones = [] //当前日期的所有里程碑列表
+    let current_date_board_miletones = [] //当前日期对应的项目的所有里程碑列表
+    let is_over_duetime = false
+    let is_all_realized = '1'
+    if (!timestamp || group_view_type != '1' || !timestampEnd) { //只有在项目视图才可以看
+      return {
+        flag,
+        current_date_board_miletones
+      }
+    }
+    for (let key in milestoneMap) {
+      const cal_timestamp = Number(key) * 1000
+      if (cal_timestamp >= timestamp && cal_timestamp <= timestampEnd) { //在该月份区间内
+        current_date_miletones = current_date_miletones.concat(milestoneMap[key])
+      }
+
+    }
+
+    if (Number(timestampEnd) < new Date().getTime()) { //小于今天算逾期
+      is_over_duetime = true
+    }
+
+    if (gantt_board_id == '0') {
+      for (let val of current_date_miletones) {
+        if (val['board_id'] == list_id) {
+          flag = true
+          current_date_board_miletones.push(val)
+        }
+      }
+    } else {
+      if (current_date_miletones.length) {
+        flag = true
+      }
+      current_date_board_miletones = current_date_miletones
+    }
+
+
+    for (let val of current_date_board_miletones) {
+      if (val['is_all_realized'] == '0') {
+        is_all_realized = '0'
+        break
+      }
+    }
+    return {
+      is_over_duetime,
+      flag,
+      is_all_realized,
+      current_date_board_miletones,
+    }
+  }
 
   // 根据下一个里程碑日期，来获取当前里程碑日期的‘name1,name2,name3...’应该有的宽度
   setMiletonesNamesWidth = (timestamp) => {
@@ -363,15 +416,16 @@ export default class GetRowGanttItem extends Component {
   }
   // 渲染年视图日期
   renderYearView = (date_inner = []) => {
-    const { list_id, ceilWidth } = this.props
+    const { list_id, ceiHeight, ceilWidth, group_view_type, gantt_board_id, itemKey, show_board_fold, group_list_area_section_height, rows } = this.props
+    const item_height = rows * ceiHeight
+
     return (
       <>
         {date_inner.map((value2, key2) => {
-          const { month, last_date, week_day, timestamp, timestampEnd, description } = value2
-          const has_lcb = this.isHasMiletoneList(Number(timestampEnd)).flag
-          const current_date_board_miletones = this.isHasMiletoneList(Number(timestampEnd)).current_date_board_miletones
-          const is_over_duetime = this.isHasMiletoneList(Number(timestampEnd)).is_over_duetime
-          const is_all_realized = this.isHasMiletoneList(Number(timestampEnd)).is_all_realized
+          const { month, last_date, year, timestamp, timestampEnd, description } = value2
+          const { flag: has_lcb, current_date_board_miletones = [], is_over_duetime, is_all_realized } = this.isHasMiletoneListYear({
+            year, month, last_date, timestamp, timestampEnd
+          })
           return (
             <div className={`${indexStyles.ganttDetailItem}`}
               data-list_id={list_id}
@@ -380,6 +434,60 @@ export default class GetRowGanttItem extends Component {
               key={timestamp}
               style={{ backgroundColor: 'rgba(0,0,0,.02)', width: ceilWidth * last_date }}
             >
+              <>
+                {
+                  group_view_type == '1' &&
+                  (gantt_board_id == '0' || (gantt_board_id != '0' && itemKey == 0)) &&
+                  has_lcb && (
+                    // <Dropdown overlay={this.renderLCBList(current_date_board_miletones, timestamp)}>
+                    <div style={{ position: 'relative' }}>
+                      {/* 旗帜 */}
+                      <div className={`${indexStyles.board_miletiones_flag} ${globalStyles.authTheme}`}
+                        data-targetclassname="specific_example"
+                        onClick={this.seeMiletones}
+                        onMouseDown={e => e.stopPropagation()}
+                        style={{
+                          left: ceilWidth * last_date - 1,
+                          color: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized })
+                        }}
+                      >&#xe6a0;</div>
+                      {/* 渲染里程碑名称铺开 */}
+                      <Dropdown overlay={this.renderLCBList(current_date_board_miletones, timestamp)}>
+                        <div className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
+                          data-targetclassname="specific_example"
+                          style={{
+                            top: this.setMiletonesNamesPostionTop(),
+                            maxWidth: this.setMiletonesNamesWidth(timestampEnd) - 30,
+                            color: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized }),
+                            left: ceilWidth * last_date + 20,
+                          }}>
+                          {this.renderMiletonesNames(current_date_board_miletones)}
+                        </div>
+                      </Dropdown>
+                    </div>
+                  )
+                }
+                {
+                  group_view_type == '1' &&
+                  (gantt_board_id == '0' || (gantt_board_id != '0' && itemKey == 0)) &&
+                  has_lcb && (
+                    <div
+                      data-targetclassname="specific_example"
+                      className={`${indexStyles.board_miletiones_flagpole}`}
+                      style={{
+                        height: gantt_board_id != '0' ? group_list_area_section_height[group_list_area_section_height.length - 1] - 11 : //在任务分组视图下
+                          (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? 29 : item_height - 12),//,
+                        //  backgroundColor: is_over_duetime ? '#FFA39E' : '#FFC069' ,
+                        background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized }),
+                        left: ceilWidth * last_date - 4,
+                      }}
+                      onClick={this.seeMiletones}
+                      onMouseDown={e => e.stopPropagation()}
+                      onMouseOver={e => e.stopPropagation()}
+                    />
+                  )
+                }
+              </>
             </div>
           )
         })}

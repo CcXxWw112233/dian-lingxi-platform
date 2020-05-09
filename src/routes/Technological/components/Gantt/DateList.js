@@ -381,8 +381,12 @@ export default class DateList extends Component {
           })
           return (
             group_view_type != '1' ? (
-              <div className={`${indexStyles.dateDetailItem_date_no}`} >
-                {description}
+              <div key={`${month}/${timestamp}`}>
+                <div className={`${indexStyles.dateDetailItem}`} key={key2} style={{ width: ceilWidth * last_date }}>
+                  <div className={`${indexStyles.dateDetailItem_date_no} `}>
+                    {description}
+                  </div>
+                </div>
               </div>
             ) : (
                 <Dropdown overlay={this.renderLCBList(current_date_miletones)} key={`${month}/${timestamp}`} >
