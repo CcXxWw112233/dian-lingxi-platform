@@ -38,7 +38,7 @@ export default class DateList extends Component {
   }
 
   // 里程碑详情和列表
-  renderLCBList = (current_date_miletones, timestamp) => {
+  renderLCBList = (current_date_miletones = [], timestamp) => {
     const { gantt_board_id } = this.props;
     const params_board_id = gantt_board_id;
     //console.log("里程碑", checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, params_board_id),params_board_id);
@@ -135,42 +135,81 @@ export default class DateList extends Component {
     })
   }
 
-  isHasMiletoneList = (timestamp) => {
+  // 判断日期是否有里程碑
+  isHasMiletoneList = () => {
+    let flag = false //是否具有里程碑
+    let current_date_miletones = [] //计算日期的里程碑列表
+    let is_over_duetime = false //是否超出截止时间
+    let is_all_realized = '1' //全部关联的任务已完成 1 / 0 =>完成 / 未完成
     const { milestoneMap = [] } = this.props
-    let flag = false
-    let current_date_miletones = []
-    let is_over_duetime = false
-    let is_all_realized = '1'
-    if (!timestamp) {
-      return {
-        flag,
-        current_date_miletones
-      }
-    }
-    if (Number(timestamp) < new Date().getTime()) { //小于今天算逾期
-      is_over_duetime = true
-    }
-    for (let key in milestoneMap) {
-      if (isSamDay(Number(timestamp), Number(key) * 1000)) {
-        current_date_miletones = current_date_miletones.concat(milestoneMap[key])
-        if (milestoneMap[key].length) {
-          flag = true
-        }
-        for (let val of milestoneMap[key]) {
-          if (val['is_all_realized'] == '0') {
-            is_all_realized = '0'
-            break
+    return {
+      handleMonthMode: (timestamp) => {
+        if (!timestamp) {
+          return {
+            flag,
+            current_date_miletones
           }
+        }
+        if (Number(timestamp) < new Date().getTime()) { //小于今天算逾期
+          is_over_duetime = true
+        }
+        for (let key in milestoneMap) {
+          if (isSamDay(Number(timestamp), Number(key) * 1000)) {
+            current_date_miletones = current_date_miletones.concat(milestoneMap[key])
+            if (milestoneMap[key].length) {
+              flag = true
+            }
+            for (let val of milestoneMap[key]) {
+              if (val['is_all_realized'] == '0') {
+                is_all_realized = '0'
+                break
+              }
+            }
+          }
+        }
+
+        return {
+          is_over_duetime,
+          flag,
+          is_all_realized,
+          current_date_miletones,
+        }
+      },
+      handleYearMode: ({ year, month, last_date, timestamp, timestampEnd }) => {
+        if (!timestamp || !timestampEnd) {
+          return {
+            flag,
+            current_date_miletones
+          }
+        }
+        if (Number(timestampEnd) < new Date().getTime()) { //小于今天算逾期
+          is_over_duetime = true
+        }
+        for (let key in milestoneMap) {
+          const cal_timestamp = Number(key) * 1000
+          if (cal_timestamp >= timestamp && cal_timestamp <= timestampEnd) { //在该月份区间内
+            current_date_miletones = current_date_miletones.concat(milestoneMap[key])
+            if (milestoneMap[key].length) {
+              flag = true
+            }
+            for (let val of milestoneMap[key]) {
+              if (val['is_all_realized'] == '0') {
+                is_all_realized = '0'
+                break
+              }
+            }
+          }
+        }
+
+        return {
+          is_over_duetime,
+          flag,
+          is_all_realized,
+          current_date_miletones,
         }
       }
     }
 
-    return {
-      is_over_duetime,
-      flag,
-      is_all_realized,
-      current_date_miletones,
-    }
   }
 
   // 里程碑是否过期的颜色设置
@@ -271,10 +310,11 @@ export default class DateList extends Component {
       <div className={indexStyles.dateDetail} >
         {date_inner.map((value2, key2) => {
           const { month, date_no, week_day, timestamp, timestampEnd } = value2
-          const has_lcb = this.isHasMiletoneList(Number(timestampEnd)).flag
-          const current_date_miletones = this.isHasMiletoneList(Number(timestampEnd)).current_date_miletones
-          const is_over_duetime = this.isHasMiletoneList(Number(timestampEnd)).is_over_duetime
-          const is_all_realized = this.isHasMiletoneList(Number(timestampEnd)).is_all_realized
+          // const has_lcb = this.isHasMiletoneList().handleMonthMode(Number(timestampEnd)).flag
+          // const current_date_miletones = this.isHasMiletoneList().handleMonthMode(Number(timestampEnd)).current_date_miletones
+          // const is_over_duetime = this.isHasMiletoneList().handleMonthMode(Number(timestampEnd)).is_over_duetime
+          // const is_all_realized = this.isHasMiletoneList().handleMonthMode(Number(timestampEnd)).is_all_realized
+          const { flag: has_lcb, current_date_miletones = [], is_over_duetime, is_all_realized } = this.isHasMiletoneList().handleMonthMode(Number(timestampEnd))
           // /gantt_board_id == '0' ||
           return (
             group_view_type != '1' ? (
@@ -331,24 +371,35 @@ export default class DateList extends Component {
 
   // 渲染年视图日期数据
   renderYearViewDate = (date_inner = []) => {
-    const { ceilWidth } = this.props
+    const { ceilWidth, group_view_type } = this.props
     return (
       <div className={indexStyles.dateDetail} >
         {date_inner.map((value2, key2) => {
-          const { month, last_date, week_day, timestamp, timestampEnd, description } = value2
-          const has_lcb = this.isHasMiletoneList(Number(timestampEnd)).flag
-          const current_date_miletones = this.isHasMiletoneList(Number(timestampEnd)).current_date_miletones
-          const is_over_duetime = this.isHasMiletoneList(Number(timestampEnd)).is_over_duetime
-          const is_all_realized = this.isHasMiletoneList(Number(timestampEnd)).is_all_realized
-          // /gantt_board_id == '0' ||
+          const { month, last_date, year, timestamp, timestampEnd, description } = value2
+          const { flag: has_lcb, current_date_miletones, is_over_duetime, is_all_realized } = this.isHasMiletoneList().handleYearMode({
+            year, month, last_date, timestamp, timestampEnd
+          })
           return (
-            <div key={`${month}/${timestamp}`}>
-              <div className={`${indexStyles.dateDetailItem}`} key={key2} style={{ width: ceilWidth * last_date }}>
-                <div className={`${indexStyles.dateDetailItem_date_no}`} >
-                  {description}
-                </div>
+            group_view_type != '1' ? (
+              <div className={`${indexStyles.dateDetailItem_date_no}`} >
+                {description}
               </div>
-            </div>
+            ) : (
+                <Dropdown overlay={this.renderLCBList(current_date_miletones)} key={`${month}/${timestamp}`} >
+                  <div key={`${month}/${timestamp}`}>
+                    <div className={`${indexStyles.dateDetailItem}`} key={key2} style={{ width: ceilWidth * last_date }}>
+                      <div className={`${indexStyles.dateDetailItem_date_no} 
+                                    ${indexStyles.nomal_date_no}
+                                    ${has_lcb && indexStyles.has_moletones_date_no}`}
+                        style={{ background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized }) }}
+                      >
+                        {description}
+                      </div>
+
+                    </div>
+                  </div>
+                </Dropdown>
+              )
           )
         })}
       </div>
