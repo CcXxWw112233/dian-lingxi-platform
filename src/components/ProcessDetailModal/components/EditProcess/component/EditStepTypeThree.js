@@ -229,7 +229,7 @@ export default class EditStepTypeThree extends Component {
                 <span style={{marginRight: '5px', flexShrink: 0}} className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : </span>
                 {
                   deadline_type == '1' || deadline_type == '' ? (
-                    <span style={{ color: 'rgba(0,0,0,0.45)' }}>未限制时间</span>
+                    <span style={{ color: 'rgba(0,0,0,0.45)' }}>未限制</span>
                   ) : (
                       <span style={{ color: 'rgba(0,0,0,0.45)' }}>
                         步骤开始后{`${deadline_value}${renderTimeType(deadline_time_type)}`}内

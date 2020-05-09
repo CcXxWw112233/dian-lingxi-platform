@@ -36,10 +36,10 @@ export default class DifferenceDeadlineType extends Component {
     return thisMonthDays.length;
   }
 
-  // 未限制时间
+  // 未限制
   renderNotRestrictionsTime = () => {
     let description = ''
-    description = '未限制时间'
+    description = '未限制'
     return description
   }
 

@@ -224,7 +224,7 @@ export default class ConfirmInfoTwo extends Component {
                 <span style={{marginRight: '5px', flexShrink: 0}} className={`${indexStyles.deadline_time}`}>完成期限 : </span>
                 {
                   deadline_type == '1' ? (
-                    <span style={{color: 'rgba(0,0,0,0.45)'}}>未限制时间</span>
+                    <span style={{color: 'rgba(0,0,0,0.45)'}}>未限制</span>
                   ) : (
                     <span style={{color: 'rgba(0,0,0,0.45)'}}>
                       步骤开始后{`${deadline_value}${renderTimeType(deadline_time_type)}`}内
