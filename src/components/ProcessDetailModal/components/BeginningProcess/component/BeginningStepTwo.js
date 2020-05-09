@@ -8,7 +8,7 @@ import { connect } from 'dva'
 import { timestampToTimeNormal, compareACoupleOfObjects, isObjectValueEqual } from '../../../../../utils/util';
 import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
 import { PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
-import { genPrincipalListFromAssignees } from '../../handleOperateModal'
+import { genPrincipalListFromAssignees, findCurrentApproveNodesPosition } from '../../handleOperateModal'
 import DifferenceDeadlineType from '../../DifferenceDeadlineType';
 
 const TextArea = Input.TextArea
@@ -17,10 +17,11 @@ export default class BeginningStepTwo extends Component {
 
   constructor(props) {
     super(props)
+    let curr_position = findCurrentApproveNodesPosition(props['processEditDatas'])
     this.state = {
       transPrincipalList: props.itemValue.assignees ? [...props.itemValue.assignees] : [], // 表示当前的执行人
       transCopyPersonnelList: props.itemValue.recipients ? [...props.itemValue.recipients] : [], // 表示当前选择的抄送人
-      is_show_spread_arrow: props.itemValue.status == '1' ? true : false,
+      is_show_spread_arrow: props.itemValue.status == '1' || (props.itemKey == curr_position - 1) ? true : false,
       historyCommentsList: props.itemValue.his_comments ? [...props.itemValue.his_comments] : [],
       currentSelectArrow: ''
     }
@@ -29,8 +30,10 @@ export default class BeginningStepTwo extends Component {
   componentWillReceiveProps(nextProps) {
     // 需要更新箭头的状态
     if (!isObjectValueEqual(this.props, nextProps)) {
+      let curr_position
+      if (nextProps) curr_position = findCurrentApproveNodesPosition(nextProps['processEditDatas'])
       this.setState({
-        is_show_spread_arrow: nextProps.itemValue.status == '1' ? true : false,
+        is_show_spread_arrow: nextProps.itemValue.status == '1' || (nextProps.itemKey == curr_position - 1) ? true : false,
         transPrincipalList: nextProps.itemValue.assignees ? [...nextProps.itemValue.assignees] : [], // 表示当前的执行人
         transCopyPersonnelList: nextProps.itemValue.recipients ? [...nextProps.itemValue.recipients] : [], // 表示当前选择的抄送人
         historyCommentsList: nextProps.itemValue.his_comments ? [...nextProps.itemValue.his_comments] : [],
@@ -409,6 +412,68 @@ export default class BeginningStepTwo extends Component {
     )
   }
 
+  // 渲染汇签内容
+  renderRemittancePersonnelSuggestion = (item) => {
+    const { comment, pass, processed, avatar, name, time } = item
+    return (
+      <div>
+        {/* 明星说暂时方案用comment判断 */}
+        {
+          comment && comment != '' ? (
+            <div className={indexStyles.appListWrapper}>
+              <div className={indexStyles.app_left}>
+                <div className={indexStyles.approve_user} style={{ position: 'relative', marginRight: '16px' }}>
+                  {/* <div className={indexStyles.defaut_avatar}></div> */}
+                  {
+                    avatar ? (
+                      <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar} />
+                    ) : (
+                        <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={defaultUserAvatar} />
+                      )
+                  }
+                </div>
+                <div>
+                  <span>{name}</span>
+                  <span className={indexStyles.approv_rating}>已审批</span>
+                  <div style={{color: 'rgba(0,0,0,0.25)'}}>{'(待所有审批人完成审批后显示审批意见)'}</div>
+                </div>
+              </div>
+              <div className={indexStyles.app_right}>{timestampToTimeNormal(time, '/', true) || ''}</div>
+            </div>
+          ) : (
+              <>
+                {
+                  processed != '2' && (
+                    <div className={indexStyles.appListWrapper}>
+                      <div className={indexStyles.app_left}>
+                        <div className={indexStyles.approve_user} style={{ position: 'relative', marginRight: '16px' }}>
+                          {/* <div className={indexStyles.defaut_avatar}></div> */}
+                          {
+                            avatar ? (
+                              <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar} />
+                            ) : (
+                                <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={defaultUserAvatar} />
+                              )
+                          }
+                        </div>
+                        <div>
+                          <span>{name}</span>
+                          <span className={indexStyles.default_status}>未审批</span>
+                          <div style={{ color: 'rgba(0,0,0,0.25)' }}>{'(暂未审批)'}</div>
+                        </div>
+                      </div>
+                      <div className={indexStyles.app_right}>{timestampToTimeNormal(time, '/', true) || ''}</div>
+                    </div>
+                  )
+                }
+              </>
+            )
+        }
+
+      </div>
+    )
+  }
+
 
   // 渲染通过 | 驳回 的成员以及内容
   renderHistorySuggestion = (item) => {
@@ -518,14 +583,16 @@ export default class BeginningStepTwo extends Component {
               )
             } */}
             {
-              approve_type == '3' ? ('') : transPrincipalList.map(item => {
+              approve_type == '3' ? (transPrincipalList && transPrincipalList.length) && transPrincipalList.map(item => {
+                return (this.renderRemittancePersonnelSuggestion(item))
+              }) : (transPrincipalList && transPrincipalList.length) && transPrincipalList.map(item => {
                 return (this.renderApprovePersonnelSuggestion(item))
               })
             }
             {
               (historyCommentsList && historyCommentsList.length != 0) && (
                 <div>
-                  <span><span style={{fontSize: '16px'}} className={globalStyles.authTheme}>&#xe90e;</span> 历史审批:</span>
+                  <span><span style={{ fontSize: '16px' }} className={globalStyles.authTheme}>&#xe90e;</span> 历史审批:</span>
                   {
                     this.state.currentSelectArrow == itemKey ? (
                       <span onClick={(e) => { this.handleShowMoreHisSuggestion(e, '') }} style={{ marginLeft: '16px', color: '#1890FF', cursor: 'pointer' }}>收起 <span className={globalStyles.authTheme}>&#xe7ed;</span></span>

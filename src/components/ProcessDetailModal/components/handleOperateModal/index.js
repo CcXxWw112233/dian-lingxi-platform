@@ -152,6 +152,7 @@ const wipeOffSomeDataWithScoreNodes = (item) => {
 //   }, {})
 // }
 
+// 找到当前的文件信息
 const findCurrentFileInfo = (forms = []) => {
   let flag = false
   if (!!!forms) return {}
@@ -164,6 +165,15 @@ const findCurrentFileInfo = (forms = []) => {
   let temp = arr.find(item => item.percent && item.percent != 0 && item.percent != 100) || {}
   if (temp && Object.keys(temp).length) flag = true
   return flag
+}
+
+// 找到当前审批节点进行中的位置
+const findCurrentApproveNodesPosition = (data = []) => {
+  if (!data.length) return ''
+  let findData = JSON.parse(JSON.stringify(data || []))
+  let curr_position = findData.findIndex(item => item.status == '1' && item.node_type == '2') || ''
+  if (curr_position < 0) return ''
+  return curr_position
 }
 
 // 渲染时、天、月
@@ -257,6 +267,7 @@ export {
   transformNewRecipientsToString,
   wipeOffSomeDataWithScoreNodes,
   findCurrentFileInfo,
+  findCurrentApproveNodesPosition,
   computing_mode,
   result_score_option,
   result_score_fall_through_with_others,

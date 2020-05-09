@@ -60,13 +60,12 @@ export default class MainContent extends Component {
     this.linkImWithFlow({name: name, type: 'flow', board_id: board_id, id: id})
   }
 
-  componentDidMount() {
-    window.addEventListener('resize', this.resizeTTY)
-    window.addEventListener('scroll', this.onScroll)
-    // 采用锚点方式对元素进行定位
+  // 利用锚点方式对元素进行定位
+  handleAnchorPointElement = () => {
     let scrollElement = document.getElementById('container_configureProcessOut')
     let currentDoingDataCollectionItem = document.getElementById('currentDataCollectionItem')
     let currentDoingApproveItem = document.getElementById('currentStaticApproveContainer')
+    let currentStaticRatingScoreItem = document.getElementById('currentStaticRatingScoreContainer')
     // 表示进行中的资料收集节点
     if (currentDoingDataCollectionItem) {
       if (scrollElement.scrollTo) {
@@ -86,6 +85,20 @@ export default class MainContent extends Component {
       }
     }
 
+    if (currentStaticRatingScoreItem) {
+      if (scrollElement.scrollTo) {
+        scrollElement.scrollTo({
+          top: currentStaticRatingScoreItem.offsetTop - 68,
+          behavior: 'smooth'
+        });
+      }
+    }
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.resizeTTY)
+    window.addEventListener('scroll', this.onScroll)
+    this.handleAnchorPointElement()
     const { processPageFlagStep } = this.props
     if (processPageFlagStep == '1' || processPageFlagStep == '2') {
       this.props.dispatch({
@@ -146,6 +159,7 @@ export default class MainContent extends Component {
     // let ele = document.getElementById("time_graph_canvas")
     let e = document.querySelectorAll('#time_graph_canvas');
     let ele =  e[e.length - 1];
+    if (!ele) return
     let circle = ele.getContext("2d");
     circle.clearRect(0, 0, 210, 210);//清空
     //创建多个圆弧
@@ -890,7 +904,11 @@ export default class MainContent extends Component {
                   !isEditCurrentFlowInstanceName ? (
                     <div onClick={processPageFlagStep == '4' ? '' : this.handleChangeFlowInstanceName} className={`${processPageFlagStep == '4' ? indexStyles.normal_flow_name : indexStyles.flow_name}`}>
                       <span style={{ wordBreak: 'break-all', flex: 1 }}>{currentFlowInstanceName}</span>
-                      <span style={{flexShrink: 0, color: 'rgba(0,0,0,0.45)', fontSize: '14px'}}>{timestampToTimeNormal(create_time,'/',true)} 开始</span>
+                      {
+                        processPageFlagStep == '4' && (
+                          <span style={{flexShrink: 0, color: 'rgba(0,0,0,0.45)', fontSize: '14px'}}>{timestampToTimeNormal(create_time,'/',true)} 开始</span>
+                        )
+                      }
                     </div>
                   ) : (
                       <NameChangeInput
@@ -965,7 +983,11 @@ export default class MainContent extends Component {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '36px'}}>
               <span style={{ color: 'rgba(0,0,0,0.85)', fontSize: '16px', fontWeight: 500, flex: 1, flexShrink: 0 }}>{currentFlowInstanceName} ({`${this.renderCurrentStepNumber().currentStep} / ${this.renderCurrentStepNumber().totalStep}`})</span>
-              <span style={{flexShrink: 0, color: 'rgba(0,0,0,0.45)'}}>{timestampToTimeNormal(create_time,'/',true)} 开始</span>
+              {
+                processPageFlagStep == '4' && (
+                  <span style={{flexShrink: 0, color: 'rgba(0,0,0,0.45)'}}>{timestampToTimeNormal(create_time,'/',true)} 开始</span>
+                )
+              }
             </div>
             <div style={{flexShrink: 0}}>
               <span onClick={this.handleBackToTop} style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe63d; 回到顶部</span>

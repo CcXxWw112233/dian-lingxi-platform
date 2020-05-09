@@ -12,16 +12,30 @@ import { connect } from 'dva'
 import DifferenceDeadlineType from '../../DifferenceDeadlineType'
 import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import { FLOWS } from '../../../../../globalset/js/constant'
+import { isObjectValueEqual } from '../../../../../utils/util';
+import { findCurrentApproveNodesPosition } from '../../handleOperateModal'
 
 @connect(mapStateToProps)
 export default class AccomplishStepOne extends Component {
 
   constructor(props) {
     super(props)
+    let curr_position = findCurrentApproveNodesPosition(props['processEditDatas'])
     this.state = {
       transPrincipalList: props.itemValue.assignees ? [...props.itemValue.assignees] : [], // 表示当前的执行人
       transCopyPersonnelList: props.itemValue.recipients ? [...props.itemValue.recipients] : [], // 表示当前选择的抄送人
-      is_show_spread_arrow: props.itemValue.status != '1' ? false : true,
+      is_show_spread_arrow: props.itemValue.status == '1'  || (props.itemKey == curr_position -1) ? true : false,
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // 需要更新箭头的状态
+    if (!isObjectValueEqual(this.props, nextProps)) {
+      let curr_position
+      if (nextProps) curr_position = findCurrentApproveNodesPosition(nextProps['processEditDatas'])
+      this.setState({
+        is_show_spread_arrow: nextProps.itemValue.status == '1' || (nextProps.itemKey == curr_position -1) ? true : false,
+      })
     }
   }
 
