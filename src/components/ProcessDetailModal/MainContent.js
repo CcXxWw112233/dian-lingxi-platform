@@ -10,7 +10,7 @@ import BeginningProcess from './components/BeginningProcess'
 import ConfigureGuide from './ConfigureGuide'
 import { processEditDatasItemOneConstant } from './constant'
 import { Tooltip, Button, message, Popover, DatePicker } from 'antd'
-import { timeToTimestamp } from '../../utils/util'
+import { timeToTimestamp, timestampToTimeNormal } from '../../utils/util'
 import moment from 'moment'
 import { MESSAGE_DURATION_TIME, FLOWS, NOT_HAS_PERMISION_COMFIRN, PROJECT_FLOWS_FLOW_CREATE } from '../../globalset/js/constant'
 import { saveProcessTemplate, getTemplateInfo, createProcess } from '../../services/technological/workFlow'
@@ -850,7 +850,7 @@ export default class MainContent extends Component {
 
   render() {
     const { clientHeight, currentFlowInstanceName } = this.state
-    const { currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep, processInfo: { status } } = this.props
+    const { currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep, processInfo: { status, create_time } } = this.props
     let saveTempleteDisabled = currentFlowInstanceName == '' || (processEditDatas && processEditDatas.length) && processEditDatas.find(item => item.is_edit == '0') || (processEditDatas && processEditDatas.length) && !(processEditDatas[processEditDatas.length - 1].node_type) ? true : false
     return (
       <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto', position: 'relative' }} onScroll={this.onScroll} >
@@ -889,7 +889,8 @@ export default class MainContent extends Component {
                 {
                   !isEditCurrentFlowInstanceName ? (
                     <div onClick={processPageFlagStep == '4' ? '' : this.handleChangeFlowInstanceName} className={`${processPageFlagStep == '4' ? indexStyles.normal_flow_name : indexStyles.flow_name}`}>
-                      <span style={{ wordBreak: 'break-all' }}>{currentFlowInstanceName}</span>
+                      <span style={{ wordBreak: 'break-all', flex: 1 }}>{currentFlowInstanceName}</span>
+                      <span style={{flexShrink: 0, color: 'rgba(0,0,0,0.45)', fontSize: '14px'}}>{timestampToTimeNormal(create_time,'/',true)} 开始</span>
                     </div>
                   ) : (
                       <NameChangeInput
@@ -962,8 +963,9 @@ export default class MainContent extends Component {
         </div>
         <div id="suspensionFlowInstansNav" className={`${indexStyles.suspensionFlowInstansNav}`}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div>
-              <span style={{ color: 'rgba(0,0,0,0.85)', fontSize: '16px', fontWeight: 500 }}>{currentFlowInstanceName} ({`${this.renderCurrentStepNumber().currentStep} / ${this.renderCurrentStepNumber().totalStep}`})</span>
+            <div style={{flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '36px'}}>
+              <span style={{ color: 'rgba(0,0,0,0.85)', fontSize: '16px', fontWeight: 500, flex: 1, flexShrink: 0 }}>{currentFlowInstanceName} ({`${this.renderCurrentStepNumber().currentStep} / ${this.renderCurrentStepNumber().totalStep}`})</span>
+              <span style={{flexShrink: 0, color: 'rgba(0,0,0,0.45)'}}>{timestampToTimeNormal(create_time,'/',true)} 开始</span>
             </div>
             <div style={{flexShrink: 0}}>
               <span onClick={this.handleBackToTop} style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe63d; 回到顶部</span>

@@ -10,6 +10,8 @@ import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { Button, Tooltip } from 'antd'
 import { connect } from 'dva'
 import { renderTimeType } from '../../handleOperateModal'
+import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
+import { FLOWS } from '../../../../../globalset/js/constant'
 
 @connect(mapStateToProps)
 export default class EditStepTypeOne extends Component {
@@ -211,7 +213,7 @@ export default class EditStepTypeOne extends Component {
                   ) : (
                       <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
                         <span style={{ display: 'inline-block', width: '24px', height: '24px', background: 'rgba(230,247,255,1)', borderRadius: '20px', textAlign: 'center', marginRight: '5px' }}><span style={{ color: '#1890FF' }} className={globalStyles.authTheme}>&#xe7b2;</span></span>
-                        <span>任何人</span>
+                        <span>{`${currentNounPlanFilterName(FLOWS)}发起人`}</span>
                       </div>
                     )
                 }

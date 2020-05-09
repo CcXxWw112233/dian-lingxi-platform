@@ -11,8 +11,8 @@ import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { Button, message } from 'antd'
 import { connect } from 'dva'
 import { compareACoupleOfObjects, isObjectValueEqual } from '../../../../../utils/util';
-import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
-import { PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
+import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard, currentNounPlanFilterName } from '../../../../../utils/businessFunction'
+import { PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, FLOWS } from '../../../../../globalset/js/constant'
 import { genPrincipalListFromAssignees, findCurrentFileInfo } from '../../handleOperateModal'
 import DifferenceDeadlineType from '../../DifferenceDeadlineType'
 
@@ -555,7 +555,7 @@ export default class BeginningStepOne extends Component {
                   ) : (
                       <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
                         <span style={{ display: 'inline-block', width: '24px', height: '24px', background: 'rgba(230,247,255,1)', borderRadius: '20px', textAlign: 'center', marginRight: '5px' }}><span style={{ color: '#1890FF' }} className={globalStyles.authTheme}>&#xe7b2;</span></span>
-                        <span>任何人</span>
+                        <span>{`${currentNounPlanFilterName(FLOWS)}发起人`}</span>
                       </div>
                     )
                 }

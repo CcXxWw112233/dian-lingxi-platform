@@ -153,7 +153,7 @@ export default class DifferenceDeadlineType extends Component {
   // 渲染步骤详情中的内容
   renderNodesStepItemContent = () => {
     const { itemValue } = this.props
-    const { status, deadline_type, deadline_value, deadline_time_type } = itemValue
+    const { status, deadline_type, deadline_value, deadline_time_type, complete_time  } = itemValue
     let container = (<span></span>)
     switch (status) {
       case '1':
@@ -164,7 +164,7 @@ export default class DifferenceDeadlineType extends Component {
         }
         break
       case '2': // 表示已完成
-        container = <span style={{color: 'rgba(0,0,0,0.45)', display: 'flex'}}>已完成</span>
+        container = <span style={{color: 'rgba(0,0,0,0.45)', display: 'flex'}}><span style={{display: 'flex', flexShrink: 0, lineHeight: '16px', marginRight: '5px'}} className={globalStyles.authTheme}><span style={{fontSize: '16px', fontWeight: 900, marginRight: '5px'}}>&#xe686;</span> 完成时间: </span><span style={{flexShrink: 0, lineHeight: '16px'}}>{timestampToTimeNormal(complete_time, '/',true)}</span></span>
         break
       case '0': // 表示未开始
         if (deadline_type == '1') {

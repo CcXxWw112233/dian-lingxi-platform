@@ -11,6 +11,8 @@ import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { connect } from 'dva'
 import { renderTimeType } from '../../handleOperateModal'
 import { Tooltip } from 'antd'
+import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
+import { FLOWS } from '../../../../../globalset/js/constant'
 
 @connect(mapStateToProps)
 export default class ConfirmInfoOne extends Component {
@@ -207,7 +209,7 @@ export default class ConfirmInfoOne extends Component {
                           <span style={{ display: 'inline-block', width: '24px', height: '24px', background: 'rgba(230,247,255,1)', borderRadius: '20px', textAlign: 'center', marginRight: '5px' }}>
                             <span style={{ color: '#1890FF' }} className={globalStyles.authTheme}>&#xe7b2;</span>
                           </span>
-                          <span>任何人</span>
+                          <span>{`${currentNounPlanFilterName(FLOWS)}发起人`}</span>
                           <span style={{ position: 'relative' }}>
                             <AmendComponent type="1"
                               updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="填写人" data={data} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />

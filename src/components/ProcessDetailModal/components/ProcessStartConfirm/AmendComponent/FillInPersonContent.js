@@ -4,7 +4,8 @@ import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import { compareACoupleOfObjects, isArrayEqual } from '../../../../../utils/util'
-import { getOrgIdByBoardId } from '../../../../../utils/businessFunction'
+import { getOrgIdByBoardId, currentNounPlanFilterName } from '../../../../../utils/businessFunction'
+import { FLOWS } from '../../../../../globalset/js/constant'
 
 export default class FillInPersonContent extends Component {
 
@@ -252,7 +253,7 @@ export default class FillInPersonContent extends Component {
       <div className={indexStyles.mini_content}>
         <div className={`${indexStyles.mini_top} ${globalStyles.global_vertical_scrollbar}`}>
           <Radio.Group style={{ display: 'flex', flexDirection: 'column' }} value={this.state.assignee_type} onChange={this.assigneeTypeChange}>
-            <Radio style={{ marginBottom: '12px' }} value="1">任何人</Radio>
+            <Radio style={{ marginBottom: '12px' }} value="1">{`${currentNounPlanFilterName(FLOWS)}发起人`}</Radio>
             <Radio style={{ marginBottom: '12px' }} value="2">指定人员</Radio>
           </Radio.Group>
           {
