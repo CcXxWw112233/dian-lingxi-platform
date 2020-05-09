@@ -4,6 +4,7 @@ import { timestampToTimeNormal } from '../../../../../utils/util';
 import { getOrgNameWithOrgIdFilter, setBoardIdStorage } from '../../../../../utils/businessFunction';
 import { connect } from 'dva';
 import globalStyles from '@/globalset/css/globalClassName.less'
+import AvatarList from '@/components/avatarList/executorAvatarList'
 
 @connect(mapStateToProps)
 export default class FlowTables extends Component {
@@ -23,7 +24,7 @@ export default class FlowTables extends Component {
     setTabledata = (props) => { //设置列和数据源
         const { list_source = [], list_type } = props
         const dataSource = list_source.map(item => {
-            const { id, total_node_name, total_node_num, completed_node_num, plan_start_time, last_complete_time, update_time, create_time, creator = {} } = item
+            const { id, total_node_name, total_node_num, completed_node_num, plan_start_time, last_complete_time, update_time, create_time, creator = {}, curr_executors = [] } = item
             const new_item = { ...item, key: id }
             let key_time
             let key_state
@@ -45,7 +46,7 @@ export default class FlowTables extends Component {
             } else {
 
             }
-            new_item.originator = '吴彦祖'
+            // new_item.originator = '吴彦祖'
             new_item.time = key_time
             new_item.state = key_state
             new_item.originator = creator.name
@@ -83,11 +84,14 @@ export default class FlowTables extends Component {
                 }
             },
             {
-                title: '发起人',
+                title: list_type == '1' ? '步骤执行人' : '发起人',
                 dataIndex: 'originator',
                 key: 'originator',
                 ellipsis: true,
-                width: 164
+                width: 164,
+                render: (item, value) => {
+                    return this.renderKeyOriginator(item,value)
+                }
             },
         ];
         this.setState({
@@ -200,11 +204,32 @@ export default class FlowTables extends Component {
         }
         return time_dec
     }
+    renderKeyOriginator = (item, value) => {
+        const { curr_executors = [], creator = {} } = value
+        const { list_type } = this.props
+        let  executor_dec = <div></div>
+        switch (list_type) {
+            case '1':
+                executor_dec = 
+                <div>
+                    <AvatarList users={curr_executors} size={'small'} />
+                </div>
+                break;
+            case '2':
+            case '3':
+            case '0':
+                executor_dec = <div>{creator && creator.name || ''}</div>
+                break;
+            default:
+                break;
+        }
+        return executor_dec
+    }
     // 设置进行中的期限描述
     setDoingTimeDec = (value) => {
         const { deadline_type } = value
         if (deadline_type == '1') {
-            return '未限制时间'
+            return '未限制'
         } else if (deadline_type == '2') {
             return this.renderRestrictionsTime(value)
         } else {
