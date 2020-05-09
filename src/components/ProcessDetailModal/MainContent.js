@@ -982,7 +982,13 @@ export default class MainContent extends Component {
         <div id="suspensionFlowInstansNav" className={`${indexStyles.suspensionFlowInstansNav}`}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '36px'}}>
-              <span style={{ color: 'rgba(0,0,0,0.85)', fontSize: '16px', fontWeight: 500, flex: 1, flexShrink: 0 }}>{currentFlowInstanceName} ({`${this.renderCurrentStepNumber().currentStep} / ${this.renderCurrentStepNumber().totalStep}`})</span>
+              <span style={{ color: 'rgba(0,0,0,0.85)', fontSize: '16px', fontWeight: 500, flex: 1, flexShrink: 0 }}>{currentFlowInstanceName} ({`${this.renderCurrentStepNumber().currentStep} / ${this.renderCurrentStepNumber().totalStep}`})
+                {
+                  status == '2' && (
+                    <span style={{display: 'inline-block', width: '58px', height: '28px', background: '#F5F5F5', marginLeft: '16px', borderRadius: '4px', textAlign: 'center', lineHeight: '28px', fontSize: '14px', color: 'rgba(0,0,0,0.25)'}}>已中止</span>
+                  )
+                }
+              </span>
               {
                 processPageFlagStep == '4' && (
                   <span style={{flexShrink: 0, color: 'rgba(0,0,0,0.45)'}}>{timestampToTimeNormal(create_time,'/',true)} 开始</span>
