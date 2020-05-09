@@ -345,7 +345,10 @@ export default class GanttFace extends Component {
       <div className={indexStyles.cardDetail} id={'gantt_card_out'} style={{ height: gantt_card_height, width: '100%' }}>
         {
           (get_gantt_data_loading || get_gantt_data_loading_other) && (
-            <div className={indexStyles.cardDetailMask} style={{ height: gantt_card_height }}>
+            <div className={indexStyles.cardDetailMask} style={{
+              height: gantt_card_height,
+              backgroundColor: get_gantt_data_loading_other ? 'rgba(255,255,255,.7)' : '',
+            }}>
               <Spin spinning={get_gantt_data_loading || get_gantt_data_loading_other} tip={'甘特图数据正在加载中...'} >
               </Spin>
             </div>
@@ -432,7 +435,7 @@ export default class GanttFace extends Component {
           isPaymentOrgUser() && is_show_board_file_area != '1' && <ShowFileSlider />
         }
         <BoardsFilesArea />
-      </div>
+      </div >
     )
   }
 

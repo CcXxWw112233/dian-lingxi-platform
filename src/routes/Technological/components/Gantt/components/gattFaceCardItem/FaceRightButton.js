@@ -133,6 +133,9 @@ export default class FaceRightButton extends Component {
         setTimeout(() => {
             this.checkToday()
         }, 600)
+        // setTimeout(() => {
+        //     this.checkToday()
+        // }, 1000)
         setTimeout(() => {
             dispatch({
                 type: 'gantt/updateDatas',
@@ -140,8 +143,7 @@ export default class FaceRightButton extends Component {
                     get_gantt_data_loading_other: false
                 }
             })
-            this.checkToday()
-        }, 1500)
+        }, 2000)
 
     }
     render() {

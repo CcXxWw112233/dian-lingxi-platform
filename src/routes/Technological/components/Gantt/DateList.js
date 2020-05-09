@@ -20,7 +20,8 @@ export default class DateList extends Component {
     super(props)
     this.state = {
       add_lcb_modal_visible: false,
-      create_lcb_time: '',
+      create_lcb_time: '', //创建里程碑具体日期
+      create_lcb_time_arr: [], //创建里程碑日期区间
       miletone_detail_modal_visible: false,
       currentSelectedProjectMembersList: [],
     }
@@ -38,13 +39,13 @@ export default class DateList extends Component {
   }
 
   // 里程碑详情和列表
-  renderLCBList = (current_date_miletones = [], timestamp) => {
+  renderLCBList = (current_date_miletones = [], { timestamp, timestampEnd }) => {
     const { gantt_board_id } = this.props;
     const params_board_id = gantt_board_id;
     //console.log("里程碑", checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, params_board_id),params_board_id);
     const flag = (params_board_id != 0 && !checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MILESTONE, params_board_id));
     return (
-      <Menu onClick={(e) => this.selectLCB(e, timestamp)}>
+      <Menu onClick={(e) => this.selectLCB(e, { timestamp, timestampEnd })}>
         {
 
           <MenuItem key={`${0}__${0}`} style={flag ? {} : { color: '#1890FF' }} disabled={flag}>
@@ -70,14 +71,14 @@ export default class DateList extends Component {
     )
   }
   // 选择里程碑
-  selectLCB = (e, timestamp) => {
+  selectLCB = (e, { timestamp, timestampEnd }) => {
     const idarr = e.key.split('__')
     const id = idarr[1]
     const board_id = idarr[0]
     this.setCurrentSelectedProjectMembersList({ board_id })
     if (id == '0') {
       this.setAddLCBModalVisibile()
-      this.setCreateLcbTime(timestamp)
+      this.setCreateLcbTime({ timestamp, timestampEnd })
       return
     }
     this.set_miletone_detail_modal_visible()
@@ -119,20 +120,32 @@ export default class DateList extends Component {
   }
 
   setAddLCBModalVisibile = () => {
+    const { add_lcb_modal_visible } = this.state
     this.setState({
-      add_lcb_modal_visible: !this.state.add_lcb_modal_visible
+      add_lcb_modal_visible: !add_lcb_modal_visible
     });
+    if (!add_lcb_modal_visible) { //关闭弹窗清除状态
+      this.setState({
+        create_lcb_time: '',
+        create_lcb_time_arr: [],
+      })
+    }
   }
   // 设置创建里程碑的时间
-  setCreateLcbTime = (timestamp) => {
-    if (!timestamp) {
-      return
+  setCreateLcbTime = ({ timestamp, timestampEnd }) => {
+    const { gantt_view_mode } = this.props
+    if (gantt_view_mode == 'month') {
+      this.setState({
+        create_lcb_time: timestampEnd
+      })
+    } else if (gantt_view_mode == 'year') {
+      this.setState({
+        create_lcb_time_arr: [timestamp, timestampEnd]
+      })
+    } else {
+
     }
-    // const { year, month, date } = handleTimeDetailReturn(timestamp)
-    // const new_tmp = new Date(`${year}/${month}/${date} 23:59`).getTime()
-    this.setState({
-      create_lcb_time: timestamp
-    })
+
   }
 
   // 判断日期是否有里程碑
@@ -337,7 +350,7 @@ export default class DateList extends Component {
                 </div>
               </Tooltip>
             ) : (
-                <Dropdown overlay={this.renderLCBList(current_date_miletones, timestampEnd)} key={`${month}/${date_no}`}>
+                <Dropdown overlay={this.renderLCBList(current_date_miletones, { timestampEnd })} key={`${month}/${date_no}`}>
                   <Tooltip title={`${this.getDateNoHolidaylunar(timestamp).lunar} ${this.getDateNoHolidaylunar(timestamp).holiday || ' '}`}>
                     <div>
                       <div className={`${indexStyles.dateDetailItem}`} key={key2}>
@@ -389,7 +402,7 @@ export default class DateList extends Component {
                 </div>
               </div>
             ) : (
-                <Dropdown overlay={this.renderLCBList(current_date_miletones)} key={`${month}/${timestamp}`} >
+                <Dropdown overlay={this.renderLCBList(current_date_miletones, { timestamp, timestampEnd })} key={`${month}/${timestamp}`} >
                   <div key={`${month}/${timestamp}`}>
                     <div className={`${indexStyles.dateDetailItem}`} key={key2} style={{ width: ceilWidth * last_date }}>
                       <div className={`${indexStyles.dateDetailItem_date_no} 
@@ -417,6 +430,8 @@ export default class DateList extends Component {
       gantt_view_mode,
       about_user_boards,
     } = this.props
+
+    const { create_lcb_time_arr = [] } = this.state
 
     const { add_lcb_modal_visible, create_lcb_time, currentSelectedProjectMembersList = [] } = this.state
 
@@ -454,6 +469,9 @@ export default class DateList extends Component {
           add_lcb_modal_visible={add_lcb_modal_visible}
           setAddLCBModalVisibile={this.setAddLCBModalVisibile.bind(this)}
           submitCreatMilestone={this.submitCreatMilestone}
+          // 给一个区间但不是具体时间需要处理
+          availableDate={create_lcb_time_arr}
+          defaultPickerValue={create_lcb_time_arr[0]}
         />
         {/* )} */}
         <MilestoneDetail
@@ -500,7 +518,7 @@ class DropMilestone extends React.Component {
       is_all_realized
     } = this.props
     return (
-      <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={menu_oprate_visible ? renderLCBList(current_date_miletones, timestampEnd) : (<span />)} key={itemKey}>
+      <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={menu_oprate_visible ? renderLCBList(current_date_miletones, { timestampEnd }) : (<span />)} key={itemKey}>
         <Tooltip title={`${getDateNoHolidaylunar(timestamp).lunar} ${getDateNoHolidaylunar(timestamp).holiday || ' '}`}>
           <div>
             <div className={`${indexStyles.dateDetailItem}`} key={key2}>
