@@ -319,14 +319,16 @@ export default class GetRowGantt extends Component {
         }
       }
     } else if (gantt_view_mode == 'year') { //年视图下定位到相符的月，然后在该月份下定位日期
-      const _position = start_end == '1' ? x : x + width //所取点的位置
+      const max_width = Math.max(width, ceilWidth) //width不能小于最小单元
+      const _position = start_end == '1' ? x + width : x + max_width //所取点的位置
       date = setDateWithPositionInYearView({
         _position,
         ceilWidth,
         date_arr_one_level,
-        width,
-        // x: start_end == '1' ? x : x - 6 //截止日期总是往后一天，故减1做魔法兼容
-        x: start_end == '1' ? x + 6 : x,
+        width: max_width,
+        x,
+        // x: start_end == '1' ? x : x - max_width //截止日期总是往后一天，故减1做魔法兼容
+        // x: start_end == '1' ? x + ceilWidth : x,
       })
       // for (let val of date_arr_one_level) {
       //   month_data.month_date_length_total += val['last_date']  //每个月累加天数

@@ -53,7 +53,7 @@ export default {
   namespace: 'gantt',
   state: {
     datas: {
-      gantt_view_mode: 'year', //week / month /year
+      gantt_view_mode: 'month', //week / month /year
       gold_date_arr: [], //所需要的日期数据
       date_arr_one_level: [], //所有日期数据扁平成一级数组
       start_date: {}, //日期最开始的那一天
@@ -61,7 +61,7 @@ export default {
       create_start_time: '', //创建任务开始时间
       create_end_time: '', //创建任务截至时间
       list_group: [], //分组列表
-      ceilWidth: ceil_width_year, //单元格的宽度
+      ceilWidth: ceil_width, //单元格的宽度
       ceiHeight: ceil_height, //单元格高度 40 + 12的外边距
       date_total: 0, //总天数
       group_rows: [2, 2, 2], //每一个分组默认行数 [7, 7, 7]
