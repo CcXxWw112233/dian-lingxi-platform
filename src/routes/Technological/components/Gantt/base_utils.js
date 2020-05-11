@@ -145,7 +145,7 @@ class base_utils {
     // 年视图------------start
     static getYearQuater(quater_index) { //获取年视图的季度信息
 
-        return quater_month
+        return 'quater_month'
     }
     static getYearQuaterMonthsDetail(quater_index, year) { //获取年视图的季度信息
         const quater_arr = [
