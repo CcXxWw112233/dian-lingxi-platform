@@ -9,7 +9,7 @@ import ProcessStartConfirm from './components/ProcessStartConfirm'
 import BeginningProcess from './components/BeginningProcess'
 import ConfigureGuide from './ConfigureGuide'
 import { processEditDatasItemOneConstant } from './constant'
-import { Tooltip, Button, message, Popover, DatePicker } from 'antd'
+import { Tooltip, Button, message, Popover, DatePicker, Checkbox } from 'antd'
 import { timeToTimestamp, timestampToTimeNormal } from '../../utils/util'
 import moment from 'moment'
 import { MESSAGE_DURATION_TIME, FLOWS, NOT_HAS_PERMISION_COMFIRN, PROJECT_FLOWS_FLOW_CREATE } from '../../globalset/js/constant'
@@ -671,6 +671,17 @@ export default class MainContent extends Component {
 
   }
 
+  // 开始时间气泡弹窗显示
+  handleProcessStartConfirmVisible = (visible) => {
+    if (!visible) {
+      const { startOpen } = this.state
+      if (!startOpen) return
+      this.setState({
+        startOpen: false
+      })
+    }
+  }
+
   // 预约开始时间
   startDatePickerChange = (timeString) => {
     this.setState({
@@ -683,7 +694,7 @@ export default class MainContent extends Component {
   }
   // 禁用的时间段
   disabledStartTime = (current) => {
-    return current && current < moment().subtract("days")
+    return current && current < moment().endOf('day')
   }
   // 这是保存一个点击此刻时不让日期面板关闭
   handleStartOpenChange = (open) => {
@@ -851,7 +862,7 @@ export default class MainContent extends Component {
               onChange={this.handleStartDatePickerChange.bind(this)}
               onOpenChange={this.handleStartOpenChange}
               open={this.state.startOpen}
-              getPopupContainer={triggerNode => triggerNode.parentNode}
+              getPopupContainer={() => document.getElementById('processStartConfirmContainer')}
               placeholder={'开始时间'}
               format="YYYY/MM/DD HH:mm"
               showTime={{ format: 'HH:mm' }}
@@ -962,11 +973,11 @@ export default class MainContent extends Component {
           {(processPageFlagStep == '1' || processPageFlagStep == '2') && this.renderAddProcessStep()}
           {
             processEditDatas.length >= 2 && (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '32px', position: 'relative' }}>
+              <div id={"processStartConfirmContainer"} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '32px', position: 'relative' }}>
                 {
                   (processPageFlagStep == '1' || processPageFlagStep == '3') && (
-                    <Popover trigger="click" title={null} content={this.renderProcessStartConfirm()} icon={<></>} getPopupContainer={triggerNode => triggerNode.parentNode}>
-                      <Button type={processPageFlagStep == '3' && 'primary'} disabled={saveTempleteDisabled} style={{ marginRight: '24px', height: '40px', border: '1px solid rgba(24,144,255,1)', color: processPageFlagStep == '3' ? '#fff': '#1890FF' }}>开始流程</Button>
+                    <Popover trigger="click" title={null} onVisibleChange={this.handleProcessStartConfirmVisible} content={this.renderProcessStartConfirm()} icon={<></>} getPopupContainer={triggerNode => triggerNode.parentNode}>
+                      <Button type={processPageFlagStep == '3' && 'primary'} disabled={saveTempleteDisabled} style={{ marginRight: '24px', height: '40px', border: '1px solid rgba(24,144,255,1)', color: processPageFlagStep == '3' ? '#fff': '#1890FF' }}>开始{`${currentNounPlanFilterName(FLOWS)}`}</Button>
                     </Popover>
                   )
                 }
@@ -979,6 +990,13 @@ export default class MainContent extends Component {
             )
           }
         </div>
+        {
+          (processPageFlagStep == '1' || processPageFlagStep == '2') && processEditDatas.length >= 2 && (
+            <div className={indexStyles.conclude_sign}>
+              <Checkbox>启用此模版时不能修改步骤执行人和步骤完成期限</Checkbox>
+            </div>
+          )
+        }
         <div id="suspensionFlowInstansNav" className={`${indexStyles.suspensionFlowInstansNav}`}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '36px'}}>

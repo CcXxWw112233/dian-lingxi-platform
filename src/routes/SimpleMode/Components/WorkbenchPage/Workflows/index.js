@@ -40,7 +40,7 @@ export default class index extends Component {
                     <div className={styles.main_top}></div>
                     <div className={styles.main_contain}>
                         <div className={styles.contain_left}>
-                            <Templates updateParentProcessTempleteList={this.updateParentProcessTempleteList} />
+                            <Templates request_flows_params={this.request_flows_params()} updateParentProcessTempleteList={this.updateParentProcessTempleteList} />
                         </div>
                         <div className={styles.contain_right}>
                             <FlowInstances workbenchBoxContent_height={workbenchBoxContent_height} />
