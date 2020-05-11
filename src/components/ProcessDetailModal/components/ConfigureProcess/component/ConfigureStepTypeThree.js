@@ -98,12 +98,16 @@ export default class ConfigureStepTypeThree extends Component {
         const { designatedPersonnelList = [] } = this.state
         let newDesignatedPersonnelList = [...designatedPersonnelList]
         let newAssigneesArray = assignees && assignees.length ? assignees.split(',') : []
-        newDesignatedPersonnelList.map((item, index) => {
-          if (item == key) {
-            newDesignatedPersonnelList.splice(index, 1)
-            newAssigneesArray.splice(index, 1)
-          }
-        })
+        if (selectedKeys.length == '0') { // 表示取消全选
+          newAssigneesArray = []
+        } else {
+          newDesignatedPersonnelList.map((item, index) => {
+            if (item == key) {
+              newDesignatedPersonnelList.splice(index, 1)
+              newAssigneesArray.splice(index, 1)
+            }
+          })
+        }
         let newAssigneesStr = newAssigneesArray.join(',')
         this.setState({
           designatedPersonnelList: newAssigneesArray
@@ -243,6 +247,8 @@ export default class ConfigureStepTypeThree extends Component {
                 overlayStyle={{ maxWidth: '200px' }}
                 overlay={
                   <MenuSearchPartner
+                    show_select_all={true}
+                    select_all_type={'0'}
                     listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={designatedPersonnelList}
                     board_id={board_id}
                     invitationType='1'
@@ -285,6 +291,8 @@ export default class ConfigureStepTypeThree extends Component {
                   overlayStyle={{ maxWidth: '200px' }}
                   overlay={
                     <MenuSearchPartner
+                      show_select_all={true}
+                      select_all_type={'0'}
                       listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={designatedPersonnelList}
                       board_id={board_id}
                       invitationType='1'
@@ -346,7 +354,7 @@ export default class ConfigureStepTypeThree extends Component {
         <div className={indexStyles.result_judge}>
           <div style={{ minHeight: '210px', padding: '16px 0px', borderBottom: '1px solid rgba(0,0,0,0.09)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div style={{ color: 'rgba(0,0,0,0.45)' }}>
-              <span className={globalStyles.authTheme}>&#xe7bf;</span>
+              <span style={{fontSize: '16px'}} className={globalStyles.authTheme}>&#xe7bf;</span>
               <span style={{ marginLeft: '4px' }}>评分结果判定：</span>
             </div>
             <div>

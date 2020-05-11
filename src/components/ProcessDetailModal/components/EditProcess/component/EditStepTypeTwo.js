@@ -217,12 +217,12 @@ export default class EditStepTypeTwo extends Component {
                   )
                 }
               </div>
-              <div>
-                <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '14px' }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
-                <span className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : </span>
+              <div style={{display: 'flex'}}>
+                <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '16px', marginRight: '5px', flexShrink: 0 }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
+                <span style={{marginRight: '5px', flexShrink: 0}} className={`${indexStyles.deadline_time}`}>完成期限 : </span>
                 {
                   deadline_type == '1' ? (
-                    <span style={{color: 'rgba(0,0,0,0.45)'}}>未限制时间</span>
+                    <span style={{color: 'rgba(0,0,0,0.45)'}}>未限制</span>
                   ) : (
                     <span style={{color: 'rgba(0,0,0,0.45)'}}>
                       步骤开始后{`${deadline_value}${renderTimeType(deadline_time_type)}`}内

@@ -311,7 +311,8 @@ export default class ConfigureProcess extends Component {
     let confirmButtonDisabled
     const { itemValue } = this.props
     const { node_type, name, forms = [], assignee_type, assignees, 
-      cc_type, recipients, approve_value, approve_type,  score_node_set = {}
+      cc_type, recipients, approve_value, approve_type,  score_node_set = {},
+      deadline_type, deadline_value
     } = itemValue
     let result_value = score_node_set && Object.keys(score_node_set).length ? score_node_set.result_value : ''
     let newAssignees
@@ -446,6 +447,11 @@ export default class ConfigureProcess extends Component {
             }
           }
         }
+        if (deadline_type == '2') {
+          if (isNaN(deadline_value)) {
+            confirmButtonDisabled = true
+          }
+        }
         break;
       case '2':
         if (cc_type == '0' || cc_type == '') { // 表示没有选择抄送人
@@ -486,6 +492,11 @@ export default class ConfigureProcess extends Component {
         if (approve_type == '3') {
           if (approve_value == '') {
             confirmButtonText = '请输入汇签值'
+            confirmButtonDisabled = true
+          }
+        }
+        if (deadline_type == '2') {
+          if (isNaN(deadline_value)) {
             confirmButtonDisabled = true
           }
         }
@@ -532,6 +543,11 @@ export default class ConfigureProcess extends Component {
           }
           if (!reg.test(result_value)) {
             confirmButtonText = '请输入正确的结果分数值(小于10000的数字)'
+            confirmButtonDisabled = true
+          }
+        }
+        if (deadline_type == '2') {
+          if (isNaN(deadline_value)) {
             confirmButtonDisabled = true
           }
         }

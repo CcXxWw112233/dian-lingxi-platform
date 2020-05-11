@@ -60,7 +60,7 @@ export const WEBSOCKET_URL = (function (NODE_ENV, location) {
 })(NODE_ENV, window.location)
 
 // export const MAP_URL = 'https://map.di-an.com' //投资地图-正式环境
-export const MAP_URL = window.location.host.indexOf('lingxi.di-an') != -1 ? 'https://map.di-an.com/' : 'http://192.168.1.33' //投资地图-测试环境
+export const MAP_URL = window.location.host.indexOf('lingxi.di-an') != -1 ? 'https://map.di-an.com/' : 'http://60.205.252.199/' //投资地图-测试环境
 
 export const WEBSOCKET_PATH = '192.168.1.16' //'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
 export const WEBSOCKET_PORT = '9326' //WS链接地址
@@ -74,6 +74,8 @@ export const UPLOAD_FILE_SIZE = 99 //上传文件MB限制
 export const INT_REQUEST_OK = 0 //接口返回常量定义
 
 export const UPLOAD_PROCESS_FILE_SIZE = 99 //流程上传文件MB限制
+
+export const PREVIEW_FILE_FILE_SIZE = 20 // 预览文件MB限制
 
 export const NOT_HAS_PERMISION_COMFIRN = '您没有该访问权限'
 

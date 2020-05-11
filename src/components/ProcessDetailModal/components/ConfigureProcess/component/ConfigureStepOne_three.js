@@ -13,57 +13,77 @@ let temp_item = {
   "is_required": "0",//是否必填 1=必须 0=不是必须
   "date_range": "1",//日期范围 1=单个日期 2=开始日期~截止日期
   "date_precision": "2",//日期精度 1=仅日期 2=日期+时间
-  "is_click_currentTextForm": true
+  // "is_click_currentTextForm": true
 }
 @connect(mapStateToProps)
 export default class ConfigureStepOne_three extends Component {
 
   constructor(props) {
     super(props)
+    let compare_item1 = JSON.parse(JSON.stringify(temp_item || {}))
+    let compare_item2 = JSON.parse(JSON.stringify(props.itemValue || {}))
+    compare_item1.is_click_currentTextForm ? delete compare_item1.is_click_currentTextForm : ''
+    compare_item2.is_click_currentTextForm ? delete compare_item2.is_click_currentTextForm : ''
     this.state = {
       popoverVisible: null,
-      form_item: compareACoupleOfObjects(temp_item, props.itemValue) ? temp_item : props.itemValue
+      form_item: compareACoupleOfObjects(compare_item1, compare_item2) ? JSON.parse(JSON.stringify(temp_item || {})) : JSON.parse(JSON.stringify(props.itemValue || {})),
+      local_item: compareACoupleOfObjects(compare_item1, compare_item2) ? JSON.parse(JSON.stringify(temp_item || {})) : JSON.parse(JSON.stringify(props.itemValue || {})),
     }
   }
 
   onVisibleChange = (visible) => {
-    const { is_click_confirm_btn, form_item } = this.state
+    const { is_click_confirm_btn, form_item = {}, local_item = {} } = this.state
     const { itemKey, parentKey, processEditDatas = [], itemValue } = this.props
-    let temp_item = { ...form_item }
+    let update_item = JSON.parse(JSON.stringify(local_item || {}))
     if (!is_click_confirm_btn) {// 判断是否点击了确定按钮,否 那么就保存回原来的状态
-      if (visible == false)
+      if (visible == false) {
         this.setState({
-          form_item: temp_item
+          form_item: update_item
         })
-      const { forms = [] } = processEditDatas[parentKey]
-      forms[itemKey] = { ...temp_item }
-      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
+        const { forms = [] } = processEditDatas[parentKey]
+        forms[itemKey] = JSON.parse(JSON.stringify(update_item || {}))
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
+        this.updateEdit({ value: false }, 'is_click_currentTextForm')
+      }
     }
     this.setState({
       popoverVisible: visible
     })
   }
 
+  handlePopoverClose = (e) => {
+    e && e.stopPropagation()
+    this.onVisibleChange(false)
+  }
+
   updateEdit = (data, key) => {
     const { itemKey, parentKey, processEditDatas = [] } = this.props
-    const { forms = [] } = processEditDatas[parentKey]
+    const { forms = [] } = JSON.parse(JSON.stringify(processEditDatas[parentKey] || {}))
     forms[itemKey][key] = data.value
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
   }
+  updateState = (data, key) => {
+    const { form_item = {} } = this.state
+    let update_item = JSON.parse(JSON.stringify(form_item || {}))
+    update_item[key] = data.value
+    this.setState({
+      form_item: update_item
+    })
+  }
   propertyNameChange = (e) => {
-    this.updateEdit({ value: e.target.value }, 'title')
+    this.updateState({ value: e.target.value }, 'title')
   }
   defaultValueChange = (e) => {
-    this.updateEdit({ value: e.target.value }, 'prompt_content')
+    this.updateState({ value: e.target.value }, 'prompt_content')
   }
   dateRangeValueChange = (e) => {
-    this.updateEdit({ value: e.target.value }, 'date_range')
+    this.updateState({ value: e.target.value }, 'date_range')
   }
   datePrecisionValueChange = (e) => {
-    this.updateEdit({ value: e.target.value }, 'date_precision')
+    this.updateState({ value: e.target.value }, 'date_precision')
   }
   isRequiredCheck = (e) => {
-    this.updateEdit({ value: e.target.value }, 'is_required')
+    this.updateState({ value: e.target.value }, 'is_required')
   }
 
   // 删除对应字段的表项
@@ -79,49 +99,78 @@ export default class ConfigureStepOne_three extends Component {
   // 每一个表项的点击事件
   handleChangeTextFormColor = (e) => {
     e && e.stopPropagation()
-    const { itemValue, parentKey, processEditDatas = [] } = this.props
+    const { popoverVisible } = this.state
+    const { itemValue, parentKey, processEditDatas = [], itemKey } = this.props
     const { forms = [] } = processEditDatas[parentKey]
     const { is_click_currentTextForm } = itemValue
-    let newFormsData = [...forms]
-    newFormsData = newFormsData.map(item => {
-      if (item.is_click_currentTextForm) {
-        let new_item
-        new_item = { ...item, is_click_currentTextForm: false }
-        return new_item
-      } else {
-        return item
+    let newFormsData = JSON.parse(JSON.stringify(forms || []))
+    if (newFormsData && newFormsData.length > 1) {
+      newFormsData = newFormsData.map((item, index) => {
+        if (item.is_click_currentTextForm && index != itemKey) {
+          let new_item
+          new_item = { ...item, is_click_currentTextForm: false }
+          return new_item
+        } else if (item.is_click_currentTextForm && index == itemKey) {
+          let new_item
+          new_item = { ...item, is_click_currentTextForm: !popoverVisible ? true : false }
+          return new_item
+        } else if (!item.is_click_currentTextForm && index == itemKey) {
+          let new_item
+          new_item = { ...item, is_click_currentTextForm: !popoverVisible ? true : false }
+          return new_item
+        } else if (!item.is_click_currentTextForm && index != itemKey){
+          return item
+        }
+      })
+      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: newFormsData }, 'forms')
+      // this.updateEdit({ value: !is_click_currentTextForm }, 'is_click_currentTextForm')
+    } else {
+      
+      this.updateEdit({ value: !popoverVisible ? true : false }, 'is_click_currentTextForm')
+    }
+    
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        not_show_create_form_guide: '1'
       }
     })
-    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: newFormsData }, 'forms')
-    this.updateEdit({ value: !is_click_currentTextForm }, 'is_click_currentTextForm')
   }
 
-    // 每个配置表项的确定的点击事件
-    handleConfirmFormItem = () => {
-      const { popoverVisible } = this.state
-      const { itemValue = {} } = this.props
+  // 每个配置表项的确定的点击事件
+  handleConfirmFormItem = () => {
+    const { popoverVisible, form_item = {} } = this.state
+    this.setState({
+      is_click_confirm_btn: true
+    })
+    if (popoverVisible) {
       this.setState({
-        is_click_confirm_btn: true
-      })
-      if (popoverVisible) {
+        form_item: JSON.parse(JSON.stringify(form_item || {})),
+        local_item: JSON.parse(JSON.stringify(form_item || {})),
+      }, () => {
+        const { itemKey, parentKey, processEditDatas = [] } = this.props
+        const { forms = [] } = processEditDatas[parentKey]
+        forms[itemKey] = JSON.parse(JSON.stringify(form_item || {}))
+        this.onVisibleChange(false)
         this.setState({
-          form_item: JSON.parse(JSON.stringify(itemValue))
-        },() => {
-          this.onVisibleChange(false)
-          this.setState({
-            is_click_confirm_btn: false
-          })
+          is_click_confirm_btn: false
         })
-      }
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: forms }, 'forms')
+      })
     }
+  }
 
   renderContent = () => {
-    const { itemValue } = this.props
-    const { title, prompt_content, date_precision, date_range, is_required } = itemValue
-    const { form_item } = this.state
-    let disabledFlag = compareACoupleOfObjects(form_item, itemValue)
+    const { form_item = {} } = this.state
+    const { itemValue = {} } = this.props
+    const { title, prompt_content, date_precision, date_range, is_required } = form_item
+    let compare_item1 = JSON.parse(JSON.stringify(form_item || {}))
+    let compare_item2 = JSON.parse(JSON.stringify(itemValue || {}))
+    compare_item1.is_click_currentTextForm ? delete compare_item1.is_click_currentTextForm : ''
+    compare_item2.is_click_currentTextForm ? delete compare_item2.is_click_currentTextForm : ''
+    let disabledFlag = compareACoupleOfObjects(compare_item1, compare_item2)
     return (
-      <div className={indexStyles.popover_content}>
+      <div onClick={(e) => e && e.stopPropagation()} className={indexStyles.popover_content}>
         <div className={`${indexStyles.pop_elem} ${globalStyles.global_vertical_scrollbar}`}>
           <div>
             <p>标题:</p>
@@ -161,47 +210,56 @@ export default class ConfigureStepOne_three extends Component {
   }
 
   render() {
+    const { form_item = {} } = this.state
     const { itemKey, itemValue, parentKey, processEditDatas = [] } = this.props
     const { forms = [] } = processEditDatas[parentKey]
-    const { title, prompt_content, is_required, is_click_currentTextForm } = itemValue
+    const { title, prompt_content, is_required } = form_item
+    const { is_click_currentTextForm } = itemValue
     return (
-      <div>
-        <div className={indexStyles.text_form} style={{ background: is_click_currentTextForm ? 'rgba(230,247,255,1)' : 'rgba(0,0,0,0.02)' }} onClick={this.handleChangeTextFormColor}>
-          <p>{title}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</p>
-          <div className={indexStyles.text_fillOut}>
-            <span className={globalStyles.authTheme}>&#xe7d3;&nbsp;&nbsp;</span>
-            <span style={{ color: 'rgba(0,0,0,0.25)' }}>{prompt_content}</span>
-          </div>
-          {
-            is_click_currentTextForm && (
-              <>
-                <span onClick={this.handleDelFormDataItem} className={`${indexStyles.delet_iconCircle}`}>
-                  <span className={`${globalStyles.authTheme} ${indexStyles.deletet_icon}`}>&#xe68d;</span>
-                </span>
-                <div onClick={(e) => e && e.stopPropagation()} className={indexStyles.popoverContainer} style={{ position: 'absolute', right: 0, top: 0 }}>
-                  <Popover
-                    title={<div className={indexStyles.popover_title}>配置表项</div>}
-                    trigger="click"
-                    visible={this.state.popoverVisible}
-                    content={this.renderContent()}
-                    getPopupContainer={triggerNode => triggerNode.parentNode}
-                    placement={'bottomRight'}
-                    zIndex={1010}
-                    className={indexStyles.popoverWrapper}
-                    autoAdjustOverflow={false}
-                    onVisibleChange={this.onVisibleChange}
-                  >
-                    <div onClick={this.handelPopoverVisible} className={`${globalStyles.authTheme} ${indexStyles.setting_icon}`}>
-                      <span>&#xe78e;</span>
-                    </div>
-                  </Popover>
-
-                </div>
-              </>
-            )
+      <div onClick={this.handleChangeTextFormColor}>
+        <Popover
+          title={
+            <div onClick={(e) => e && e.stopPropagation()} style={{display: 'flex', alignItems: 'center'}}>
+              <div className={indexStyles.popover_title}>配置表项</div>
+              <div onClick={this.handlePopoverClose} className={`${globalStyles.authTheme} ${indexStyles.popover_close_icon}`}>&#xe7fe;</div>
+            </div>
           }
-          { itemKey == ((forms && forms.length) && forms.length - 1) && <ConfigureNapeGuide /> }
-        </div>
+          trigger="click"
+          visible={this.state.popoverVisible}
+          content={this.renderContent()}
+          getPopupContainer={triggerNode => triggerNode.parentNode}
+          placement={'bottomRight'}
+          zIndex={1010}
+          className={indexStyles.popoverWrapper}
+          autoAdjustOverflow={false}
+          onVisibleChange={this.onVisibleChange}
+        >
+          <div className={indexStyles.text_form} style={{ background: is_click_currentTextForm ? 'rgba(230,247,255,1)' : 'rgba(0,0,0,0.02)' }}>
+            <p>{title}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</p>
+            <div className={indexStyles.text_fillOut}>
+              <span className={globalStyles.authTheme}>&#xe7d3;&nbsp;&nbsp;</span>
+              <span style={{ color: 'rgba(0,0,0,0.25)' }}>{prompt_content}</span>
+            </div>
+            {
+              is_click_currentTextForm && (
+                <>
+                  <span onClick={this.handleDelFormDataItem} className={`${indexStyles.delet_iconCircle}`}>
+                    <span className={`${globalStyles.authTheme} ${indexStyles.deletet_icon}`}>&#xe68d;</span>
+                  </span>
+                  {/* <div onClick={(e) => e && e.stopPropagation()} className={indexStyles.popoverContainer} style={{ position: 'absolute', right: 0, top: 0 }}>
+
+                    <div onClick={this.handelPopoverVisible} className={`${globalStyles.authTheme} ${indexStyles.setting_icon}`}>
+                      <span>&#xe720;</span>
+                    </div>
+
+
+                  </div> */}
+                </>
+              )
+            }
+            {itemKey == 0 && <ConfigureNapeGuide />}
+          </div>
+        </Popover>
       </div>
     )
   }

@@ -476,7 +476,7 @@ export default class DragDropContentComponent extends Component {
         fileType: getSubfixName(file_name),
         isInOpenFile: true,
         isInAttachmentFile: true,
-        currentPreviewFileName: file_name
+        filePreviewCurrentName: file_name
       }
     })
 

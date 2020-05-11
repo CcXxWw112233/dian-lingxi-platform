@@ -83,12 +83,16 @@ export default class ConfigureStepTypeOne extends Component {
       const { designatedPersonnelList = [] } = this.state
       let newDesignatedPersonnelList = [...designatedPersonnelList]
       let newAssigneesArray = assignees && assignees.length ? assignees.split(',') : []
-      newDesignatedPersonnelList.map((item, index) => {
-        if (item == key) {
-          newDesignatedPersonnelList.splice(index, 1)
-          newAssigneesArray.splice(index, 1)
-        }
-      })
+      if (selectedKeys.length == '0') { // 表示取消全选
+        newAssigneesArray = []
+      } else {
+        newDesignatedPersonnelList.map((item, index) => {
+          if (item == key) {
+            newDesignatedPersonnelList.splice(index, 1)
+            newAssigneesArray.splice(index, 1)
+          }
+        })
+      }
       let newAssigneesStr = newAssigneesArray.join(',')
       this.setState({
         designatedPersonnelList: newAssigneesArray
@@ -200,6 +204,7 @@ export default class ConfigureStepTypeOne extends Component {
 
   // 渲染不同的表项
   filterForm = (value, key) => {
+    if (!value) return <></>
     const { field_type } = value
     const { itemKey, itemValue } = this.props
     let container = (<div></div>)
@@ -278,6 +283,8 @@ export default class ConfigureStepTypeOne extends Component {
                 overlayStyle={{ maxWidth: '200px' }}
                 overlay={
                   <MenuSearchPartner
+                    show_select_all={true}
+                    select_all_type={'0'}
                     listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={designatedPersonnelList}
                     board_id={board_id}
                     invitationType='1'
@@ -320,6 +327,8 @@ export default class ConfigureStepTypeOne extends Component {
                   overlayStyle={{ maxWidth: '200px' }}
                   overlay={
                     <MenuSearchPartner
+                      show_select_all={true}
+                      select_all_type={'0'}
                       listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={designatedPersonnelList}
                       board_id={board_id}
                       invitationType='1'
@@ -361,9 +370,9 @@ export default class ConfigureStepTypeOne extends Component {
         {/* 填写人 */}
         <div className={indexStyles.fill_person} style={{ flexDirection: 'column' }} onClick={(e) => { e && e.stopPropagation() }}>
           <div>
-            <span className={`${globalStyles.authTheme} ${indexStyles.label_person}`}>&#xe7b2; 填写人&nbsp;:</span>
+            <span className={`${globalStyles.authTheme} ${indexStyles.label_person}`}><span style={{fontSize: '16px'}}>&#xe7b2;</span> 填写人&nbsp;:</span>
             <Radio.Group style={{ lineHeight: '48px' }} value={assignee_type} onChange={this.assigneeTypeChange}>
-              <Radio value="1">任何人</Radio>
+              <Radio value="1">流程发起人</Radio>
               <Radio value="2">指定人员</Radio>
             </Radio.Group>
           </div>

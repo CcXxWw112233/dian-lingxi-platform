@@ -47,23 +47,23 @@ export default class ConfigureStepTypeTwo extends Component {
     if (type == 'add') { // 表示添加的操作
       let assignee_value = []
       // 多个任务执行人
-      let newApprovalsList = [...approvalsList]
+      // let newApprovalsList = [...approvalsList]
       const membersData = projectDetailInfoData['data'] //所有的人
-      if (newApprovalsList.indexOf(key) == -1) { // 表示找到选中不存在的哪一个
-        newApprovalsList.push(key)
-      }
-      // for (let i = 0; i < selectedKeys.length; i++) {
-      //   for (let j = 0; j < membersData.length; j++) {
-
-      //     if (selectedKeys[i] === membersData[j]['user_id']) {
-      //       assignee_value.push(membersData[j].user_id)
-      //     }
-      //   }
+      // if (newApprovalsList.indexOf(key) == -1) { // 表示找到选中不存在的哪一个
+      //   newApprovalsList.push(key)
       // }
+      for (let i = 0; i < selectedKeys.length; i++) {
+        for (let j = 0; j < membersData.length; j++) {
+
+          if (selectedKeys[i] === membersData[j]['user_id']) {
+            assignee_value.push(membersData[j].user_id)
+          }
+        }
+      }
       this.setState({
-        approvalsList: newApprovalsList
+        approvalsList: assignee_value
       });
-      this.updateConfigureProcess({ value: newApprovalsList.join(',') }, 'assignees')
+      this.updateConfigureProcess({ value: assignee_value.join(',') }, 'assignees')
     }
 
     if (type == 'remove') { // 表示移除的操作
@@ -72,12 +72,16 @@ export default class ConfigureStepTypeTwo extends Component {
       const { approvalsList = [] } = this.state
       let newDesignatedPersonnelList = [...approvalsList]
       let newAssigneesArray = assignees && assignees.length ? assignees.split(',') : []
-      newDesignatedPersonnelList.map((item, index) => {
-        if (item == key) {
-          newDesignatedPersonnelList.splice(index, 1)
-          newAssigneesArray.splice(index, 1)
-        }
-      })
+      if (selectedKeys.length == '0') {
+        newAssigneesArray = []
+      } else {
+        newDesignatedPersonnelList.map((item, index) => {
+          if (item == key) {
+            newDesignatedPersonnelList.splice(index, 1)
+            newAssigneesArray.splice(index, 1)
+          }
+        })
+      }
       let newAssigneesStr = newAssigneesArray.join(',')
       this.setState({
         approvalsList: newAssigneesArray
@@ -179,6 +183,8 @@ export default class ConfigureStepTypeTwo extends Component {
                     overlayStyle={{ maxWidth: '200px' }}
                     overlay={
                       <MenuSearchPartner
+                        show_select_all={true}
+                        select_all_type={'0'}
                         listData={new_data} keyCode={'user_id'} searchName={'name'} currentSelect={approvalsList}
                         board_id={board_id}
                         invitationType='1'
@@ -225,6 +231,8 @@ export default class ConfigureStepTypeTwo extends Component {
                       overlayStyle={{ maxWidth: '200px' }}
                       overlay={
                         <MenuSearchPartner
+                          show_select_all={true}
+                          select_all_type={'0'}
                           listData={new_data} keyCode={'user_id'} searchName={'name'} currentSelect={approvalsList}
                           board_id={board_id}
                           invitationType='1'

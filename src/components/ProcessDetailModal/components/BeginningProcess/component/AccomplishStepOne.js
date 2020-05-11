@@ -10,16 +10,32 @@ import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { Button } from 'antd'
 import { connect } from 'dva'
 import DifferenceDeadlineType from '../../DifferenceDeadlineType'
+import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
+import { FLOWS } from '../../../../../globalset/js/constant'
+import { isObjectValueEqual } from '../../../../../utils/util';
+import { findCurrentApproveNodesPosition } from '../../handleOperateModal'
 
 @connect(mapStateToProps)
 export default class AccomplishStepOne extends Component {
 
   constructor(props) {
     super(props)
+    let curr_position = findCurrentApproveNodesPosition(props['processEditDatas'])
     this.state = {
       transPrincipalList: props.itemValue.assignees ? [...props.itemValue.assignees] : [], // 表示当前的执行人
       transCopyPersonnelList: props.itemValue.recipients ? [...props.itemValue.recipients] : [], // 表示当前选择的抄送人
-      is_show_spread_arrow: props.itemValue.status != '1' ? false : true,
+      is_show_spread_arrow: props.itemValue.status == '1'  || (props.itemKey == curr_position -1) ? true : false,
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // 需要更新箭头的状态
+    if (!isObjectValueEqual(this.props, nextProps)) {
+      let curr_position
+      if (nextProps) curr_position = findCurrentApproveNodesPosition(nextProps['processEditDatas'])
+      this.setState({
+        is_show_spread_arrow: nextProps.itemValue.status == '1' || (nextProps.itemKey == curr_position -1) ? true : false,
+      })
     }
   }
 
@@ -255,7 +271,7 @@ export default class AccomplishStepOne extends Component {
                   ) : (
                       <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
                         <span style={{ display: 'inline-block', width: '24px', height: '24px', background: 'rgba(230,247,255,1)', borderRadius: '20px', textAlign: 'center', marginRight: '5px' }}><span style={{ color: '#1890FF' }} className={globalStyles.authTheme}>&#xe7b2;</span></span>
-                        <span>任何人</span>
+                        <span>{`${currentNounPlanFilterName(FLOWS)}发起人`}</span>
                       </div>
                     )
                 }

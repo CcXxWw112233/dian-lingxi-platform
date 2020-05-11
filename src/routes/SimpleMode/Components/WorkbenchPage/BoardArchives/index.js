@@ -166,7 +166,7 @@ class BoardArchives extends Component {
         isInOpenFile: false,
         filePreviewCurrentFileId: '',
         fileType: '',
-        currentPreviewFileName: ''
+        filePreviewCurrentName: ''
       }
     })
   }

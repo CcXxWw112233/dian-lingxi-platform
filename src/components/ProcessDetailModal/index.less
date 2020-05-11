@@ -207,6 +207,7 @@
       border-radius:4px;
       // border:1px solid rgba(0,0,0,0.15);
       padding: 8px 12px;
+      display: flex;
     }
     .flow_description {
       min-height:92px;
@@ -225,6 +226,17 @@
   }
   .configure_bottom {
     padding: 24px 32px 0 32px;
+  }
+  .conclude_sign {
+    margin-top: 16px;
+    text-align: center;
+    letter-spacing: 2px;
+    :global {
+      .ant-checkbox-inner {
+        width: 14px;
+        height: 14px;
+      }
+    }
   }
 }
 
@@ -304,7 +316,7 @@
     }
 }
 .guide_position_2 {
-  right: 0;
+  right: 38%;
   top: -98px;
   display: flex;
   flex-direction: column;
@@ -316,13 +328,13 @@
     border-top: 8px solid #ffffff;
     position: absolute;
     top: 96px;
-    right: 20px;
+    right: 45%;
     filter:drop-shadow(0px 0px 0px rgba(0,0,0,.25)),
   }
 }
 
 .guide_position_3 {
-  right: -25px;
+  right: 38%;
   top: -115px;
   z-index: 2;
 }

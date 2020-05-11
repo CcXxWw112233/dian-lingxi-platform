@@ -14,6 +14,7 @@ import {
 import _ from "lodash";
 import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import { FILES } from '../../../../../globalset/js/constant'
+import FileListRightBarFileDetailModal from '../../../../../routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal'
 
 let uploadMaxFileSize = []
 @connect(mapStateToProps)
@@ -59,16 +60,9 @@ export default class BeginningStepOne_five extends Component {
     this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('forms', forms)
   }
 
-
-
   onBeforeUpload = (file, fileList) => {
-    // this.props.updateState && this.props.updateState(true)
     const { board_id, itemValue } = this.props
     const { limit_file_num, limit_file_size } = itemValue
-    // if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD, board_id)) {
-    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-    //   return false
-    // }
     const { fileList: state_filelist } = this.state
 
     const { size } = file
@@ -99,12 +93,44 @@ export default class BeginningStepOne_five extends Component {
     let temp_list = new_filelist.filter(item => item.status != 'error')
     this.setState({ 
       fileList: new_filelist
-    }, () => {
-      // setTimeout(() => {
-      //   this.props.updateState && this.props.updateState(false)
-      // }, 3000)
     })
     this.updateEdit({ value: temp_list }, 'files')
+  }
+
+  onFilePreview = (e, item) => {
+    e && e.stopPropagation()
+    const file_id = item.file_id || ((item.response && item.response.data) && item.response.data.file_id) || ''
+    const file_name = item.file_name || ((item.response && item.response.data) && item.response.data.file_name) || ''
+    const file_size = item.file_size || ((item.response && item.response.data) && item.response.data.file_size) || ''
+    const file_resource_id = item.file_resource_id || ((item.response && item.response.data) && item.response.data.file_resource_id) || ''
+    if (!file_id) return
+    this.props.dispatch({
+      type: 'publicFileDetailModal/updateDatas',
+      payload: {
+        isInOpenFile: true,
+        filePreviewCurrentFileId: file_id,
+        fileType: getSubfixName(file_name),
+        filePreviewCurrentName: file_name,
+        filePreviewCurrentSize: file_size,
+        filePreviewCurrentFileResourceId: file_resource_id,
+        isOpenAttachmentFile: true
+      }
+    })
+  }
+
+  setPreviewFileModalVisibile = () => {
+    this.props.dispatch({
+      type: 'publicFileDetailModal/updateDatas',
+      payload: {
+        filePreviewCurrentFileId: '',
+        fileType: '',
+        isInOpenFile: false,
+        isOpenAttachmentFile: false,
+        filePreviewCurrentSize: '',
+        filePreviewCurrentName: '',
+        filePreviewCurrentFileResourceId: ''
+      }
+    })
   }
 
 
@@ -182,7 +208,8 @@ export default class BeginningStepOne_five extends Component {
   }
 
   // 删除文件
-  handleDeleteProcessFile = (shouldDeleteItem, UID) => {
+  handleDeleteProcessFile = (e,shouldDeleteItem, UID) => {
+    e && e.stopPropagation()
     const { dispatch } = this.props
     let that = this
     this.setState({
@@ -267,16 +294,17 @@ export default class BeginningStepOne_five extends Component {
   }
 
   renderFileList = (item) => {
+    const { fileList = [] } = this.state
     let gold_item_id = (item.status && item.status == 'done' && item.response && item.response.code == '0') && item.response.data.flow_file_id
     let gold_item_error_messaage = (item.status && item.status == 'error' && item.error && item.error.response && item.error.response.data && item.error.response.data.code == '1') && item.error.response.data.message
     const { percent, status, errorMsg } = item
-    if (percent &&
-      Number(percent) != 0 &&
-      Number(percent) != 100) {
-      this.props.updateState && this.props.updateState(true)
-    } else {
-      this.props.updateState && this.props.updateState(false)
-    }
+    // let flag = fileList && fileList.find(item => item.percent && Number(item.percent) != 0 && Number(item.percent) != 100)
+    // console.log(flag,'sssssssssssssss_flag')
+    // if (flag) {
+    //   this.props.updateState && this.props.updateState(true)
+    // } else {
+    //   this.props.updateState && this.props.updateState(false)
+    // }
     const alrm_obj = {}
     if (status == 'error') {
       if (errorMsg) {
@@ -287,7 +315,7 @@ export default class BeginningStepOne_five extends Component {
     }
     return (
       <>
-        <div key={item.uid} className={indexStyles.file_item}>
+        <div key={item.uid} className={indexStyles.file_item} onClick={(e) => { this.onFilePreview(e, item) }}>
           <div style={{ display: 'flex', alignItems: 'center', flex: '1' }} {...alrm_obj}>
             <span className={`${globalStyles.authTheme} ${indexStyles.file_theme_code}`}>&#xe64d;</span>
             <span style={{ color: item.status && item.status == 'error' ? 'red' : 'inherit' }} className={indexStyles.file_name}><span style={{
@@ -296,7 +324,7 @@ export default class BeginningStepOne_five extends Component {
             }}>{this.getEllipsisFileName(item.file_name || item.name)}</span>{getSubfixName(item.file_name || item.name)}</span>
           </div>
           <div style={{ flexShrink: 0 }}>
-            <span onClick={() => { this.handleDeleteProcessFile(item.flow_file_id || gold_item_id, item.uid) }} className={indexStyles.del_name}>删除</span>
+            <span onClick={(e) => { this.handleDeleteProcessFile(e,item.flow_file_id || gold_item_id, item.uid) }} className={indexStyles.del_name}>删除</span>
           </div>
         </div>
         {/* <div className={indexStyles.file_percent}></div> */}
@@ -316,9 +344,9 @@ export default class BeginningStepOne_five extends Component {
   }
 
   render() {
-    const { itemValue } = this.props
+    const { itemValue, isInOpenFile, fileType, filePreviewCurrentFileId, filePreviewCurrentName  } = this.props
     const { title, limit_file_num, limit_file_type, limit_file_size, is_required, } = itemValue
-    const { fileList } = this.state
+    const { fileList = [] } = this.state
     return (
       <div className={indexStyles.text_form}>
         <p>
@@ -338,16 +366,35 @@ export default class BeginningStepOne_five extends Component {
             return this.renderFileList(item)
           })
         }
-        {/* {
-          this.state.fileList && this.state.fileList.map(item => {
-            return this.renderFileList(item)
-          })
-        } */}
+        {
+          isInOpenFile && (
+            <FileListRightBarFileDetailModal 
+              filePreviewCurrentFileId={filePreviewCurrentFileId}
+              fileType={fileType}
+              filePreviewCurrentName={filePreviewCurrentName}
+              file_detail_modal_visible={isInOpenFile}
+              setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
+            />
+          )
+        }
       </div>
     )
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [], processInfo = {} } }) {
-  return { processEditDatas, processInfo }
+function mapStateToProps({ 
+  publicProcessDetailModal: { processEditDatas = [], processInfo = {} },
+  publicFileDetailModal: {
+    filePreviewCurrentFileId,
+    fileType,
+    isInOpenFile,
+    filePreviewCurrentName,
+  },
+}) {
+  return { 
+    processEditDatas, processInfo, 
+    filePreviewCurrentFileId,
+    fileType,
+    isInOpenFile,
+    filePreviewCurrentName }
 }

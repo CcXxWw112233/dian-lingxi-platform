@@ -11,9 +11,9 @@ import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { Button, message } from 'antd'
 import { connect } from 'dva'
 import { compareACoupleOfObjects, isObjectValueEqual } from '../../../../../utils/util';
-import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
-import { PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
-import { genPrincipalListFromAssignees } from '../../handleOperateModal'
+import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard, currentNounPlanFilterName } from '../../../../../utils/businessFunction'
+import { PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, FLOWS } from '../../../../../globalset/js/constant'
+import { genPrincipalListFromAssignees, findCurrentFileInfo } from '../../handleOperateModal'
 import DifferenceDeadlineType from '../../DifferenceDeadlineType'
 
 @connect(mapStateToProps)
@@ -50,7 +50,7 @@ export default class BeginningStepOne extends Component {
    */
   whetherShowCompleteButton = () => {
     const { itemValue } = this.props
-    const { assignee_type,  } = itemValue
+    const { assignee_type } = itemValue
     const { transPrincipalList = [] } = this.state
     const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     let flag = false
@@ -354,7 +354,7 @@ export default class BeginningStepOne extends Component {
             that.setState({
               isAccomplishNodesIng: false
             })
-          },500)
+          }, 500)
         }
       }
     })
@@ -451,8 +451,9 @@ export default class BeginningStepOne extends Component {
 
   // 渲染编辑详情的内容  
   renderEditDetailContent = () => {
-    const { itemValue, processInfo: { status: parentStatus } } = this.props
+    const { itemValue, itemKey, processInfo: { status: parentStatus }, processEditDatas = [] } = this.props
     const { forms = [], description, deadline_value, status } = itemValue
+    let flag = findCurrentFileInfo(processEditDatas[itemKey]['forms'])
     return (
       <div style={{ position: 'relative' }}>
         {/* 有一个蒙层表示不是该填写人不能操作 */}
@@ -488,7 +489,7 @@ export default class BeginningStepOne extends Component {
           (parentStatus == '1' && this.whetherShowCompleteButton() && status == "1") &&
           (
             <div style={{ marginTop: '16px', paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center' }}>
-              <Button type="primary" disabled={!this.setCompleteButtonDisabled() || this.state.isAccomplishNodesIng || this.state.is_uploading} onClick={this.handleEnterConfigureProcess}>完成</Button>
+              <Button type="primary" disabled={!this.setCompleteButtonDisabled() || this.state.isAccomplishNodesIng || flag} onClick={this.handleEnterConfigureProcess}>完成</Button>
             </div>
           )
         }
@@ -498,8 +499,9 @@ export default class BeginningStepOne extends Component {
 
   render() {
     const { itemKey, processEditDatas = [], itemValue } = this.props
-    const { status, name, assignee_type, cc_type, deadline_value, deadline_time_type, deadline_type } = itemValue
+    const { status, name, assignee_type, cc_type, deadline_value, deadline_time_type, deadline_type, forms = [] } = itemValue
     const { transPrincipalList = [], transCopyPersonnelList = [], is_show_spread_arrow } = this.state
+
     return (
       <div id={status == '1' && 'currentDataCollectionItem'} key={itemKey} style={{ display: 'flex', marginBottom: '46px' }}>
         {processEditDatas.length <= itemKey + 1 ? null : <div className={this.renderDiffStatusStepStyles().stylLine}></div>}
@@ -527,7 +529,28 @@ export default class BeginningStepOne extends Component {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 {/* 填写人 */}
-                {
+                <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
+                  <AvatarList
+                    size="small"
+                    maxLength={10}
+                    excessItemsStyle={{
+                      color: '#f56a00',
+                      backgroundColor: '#fde3cf'
+                    }}
+                  >
+                    {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
+                      <AvatarList.Item
+                        key={index}
+                        tips={name || '佚名'}
+                        src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                      />
+                    ))}
+                  </AvatarList>
+                  <span className={indexStyles.content__principalList_info}>
+                    {`${transPrincipalList.length}位填写人`}
+                  </span>
+                </div>
+                {/* {
                   assignee_type == '2' ? (
                     <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
                       <AvatarList
@@ -553,10 +576,10 @@ export default class BeginningStepOne extends Component {
                   ) : (
                       <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
                         <span style={{ display: 'inline-block', width: '24px', height: '24px', background: 'rgba(230,247,255,1)', borderRadius: '20px', textAlign: 'center', marginRight: '5px' }}><span style={{ color: '#1890FF' }} className={globalStyles.authTheme}>&#xe7b2;</span></span>
-                        <span>任何人</span>
+                        <span>{`${currentNounPlanFilterName(FLOWS)}发起人`}</span>
                       </div>
                     )
-                }
+                } */}
                 {/* 抄送人 */}
                 {
                   cc_type == '1' && (

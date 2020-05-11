@@ -5,33 +5,41 @@ import AvatarList from '../../AvatarList'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { Button, Tooltip, Icon, Popconfirm, Input, message, Popover } from 'antd'
 import { connect } from 'dva'
-import { renderTimeType, computing_mode, result_score_option, result_score_fall_through_with_others, genPrincipalListFromAssignees } from '../../handleOperateModal'
-import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard  } from '../../../../../utils/businessFunction'
+import { renderTimeType, computing_mode, result_score_option, result_score_fall_through_with_others, genPrincipalListFromAssignees, findCurrentApproveNodesPosition } from '../../handleOperateModal'
+import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
 import { PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
 import BeginningStepThree_one from './BeginningStepThree_one';
 import { isObjectValueEqual, timestampToTimeNormal } from '../../../../../utils/util';
+import DifferenceDeadlineType from '../../DifferenceDeadlineType';
 const TextArea = Input.TextArea
 @connect(mapStateToProps)
 export default class BeginningStepThree extends Component {
 
   constructor(props) {
     super(props)
+    let curr_position = findCurrentApproveNodesPosition(props['processEditDatas'])
     this.state = {
       transPrincipalList: props.itemValue.assignees ? [...props.itemValue.assignees] : [], // 表示当前的执行人
       transCopyPersonnelList: props.itemValue.recipients ? [...props.itemValue.recipients] : [], // 表示当前选择的抄送人
-      is_show_spread_arrow: props.itemValue.status == '1' ? true : false, // 是否展开箭头 详情 true表示展开
-      historyCommentsList: props.itemValue.his_comments ? [...props.itemValue.his_comments] : []
+      is_show_spread_arrow: props.itemValue.status == '1' || (props.itemKey == curr_position -1) ? true : false, // 是否展开箭头 详情 true表示展开
+      historyCommentsList: props.itemValue.his_comments ? [...props.itemValue.his_comments] : [],
+      currentSelectJudgeArrow: '',
+      currentSelectHisArrow: ''
     }
   }
 
   componentWillReceiveProps(nextProps) {
     // 需要更新箭头的状态
     if (!isObjectValueEqual(this.props, nextProps)) {
+      let curr_position
+      if (nextProps) curr_position = findCurrentApproveNodesPosition(nextProps['processEditDatas'])
       this.setState({
-        is_show_spread_arrow: nextProps.itemValue.status == '1' ? true : false,
+        is_show_spread_arrow: nextProps.itemValue.status == '1' || (nextProps.itemKey == curr_position -1) ? true : false,
         transPrincipalList: nextProps.itemValue.assignees ? [...nextProps.itemValue.assignees] : [], // 表示当前的执行人
         transCopyPersonnelList: nextProps.itemValue.recipients ? [...nextProps.itemValue.recipients] : [], // 表示当前选择的抄送人
-        historyCommentsList: nextProps.itemValue.his_comments ? [...nextProps.itemValue.his_comments] : []
+        historyCommentsList: nextProps.itemValue.his_comments ? [...nextProps.itemValue.his_comments] : [],
+        currentSelectJudgeArrow: nextProps.itemValue.status == '1' ? '' : nextProps.itemKey,
+        currentSelectHisArrow: ''
       })
     }
   }
@@ -52,7 +60,7 @@ export default class BeginningStepThree extends Component {
   // 编辑点击事件
   handleEnterConfigureProcess = (e) => {
     e && e.stopPropagation()
-    this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
+    // this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
   }
 
   handleSpreadArrow = (e) => {
@@ -186,7 +194,7 @@ export default class BeginningStepThree extends Component {
       return
     }
     // this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
-    const { processInfo: { id: flow_instance_id, board_id }, itemValue, request_flows_params = {} } = this.props
+    const { processInfo: { id: flow_instance_id, board_id }, itemValue, request_flows_params = {}, itemKey } = this.props
     const { id: flow_node_instance_id } = itemValue
     let score_values = this.getCurrentAllNodesScoreValues()
     const { successfulMessage } = this.state
@@ -201,7 +209,7 @@ export default class BeginningStepThree extends Component {
         calback: () => {
           this.setState({
             successfulMessage: '',
-            isPassNodesIng: false
+            isPassNodesIng: false,
           })
           this.props.dispatch({
             type: 'publicProcessDetailModal/getProcessListByType',
@@ -235,6 +243,20 @@ export default class BeginningStepThree extends Component {
           })
         }
       }
+    })
+  }
+
+  // 展开收起
+  handleShowMoreJudge = (e, key) => {
+    e && e.stopPropagation()
+    this.setState({
+      currentSelectJudgeArrow: key
+    })
+  }
+
+  handleShowMoreHisSuggestion = (e, key) => {
+    this.setState({
+      currentSelectHisArrow: key
     })
   }
 
@@ -413,42 +435,59 @@ export default class BeginningStepThree extends Component {
         </div>
         {/* 评分结果判定 */}
         <div>
-          <div style={{ minHeight: score_result_value && score_result_value != '' ? '258px' : '210px', padding: '16px 14px', borderTop: '1px solid rgba(0,0,0,0.09)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div style={{ minHeight: score_result_value && score_result_value != '' ? this.state.currentSelectJudgeArrow == itemKey ? '258px' : '54px' : this.state.currentSelectJudgeArrow == itemKey ? '210px' : '54px', padding: '16px 14px', borderTop: '1px solid rgba(0,0,0,0.09)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div style={{ color: 'rgba(0,0,0,0.45)' }}>
-              <span className={globalStyles.authTheme}>&#xe7bf;</span>
-              <span style={{ marginLeft: '4px' }}>评分结果判定：</span>
+              <span style={{ fontSize: '16px' }} className={globalStyles.authTheme}>&#xe7bf;</span>
+              <span style={{ marginLeft: '4px' }}>
+                评分结果判定：
+                {
+                  this.state.currentSelectJudgeArrow == itemKey ? (
+                    <span onClick={(e) => { this.handleShowMoreJudge(e, '') }} style={{ marginLeft: '16px', color: '#1890FF', cursor: 'pointer' }}>收起 <span className={globalStyles.authTheme}>&#xe7ed;</span></span>
+                  ) : (
+                      <span onClick={(e) => { this.handleShowMoreJudge(e, itemKey) }} style={{ marginLeft: '16px', color: '#1890FF', cursor: 'pointer' }}>展开 <span className={globalStyles.authTheme}>&#xe7ee;</span></span>
+                    )
+                }
+              </span>
             </div>
-            {
-              (String(score_result_value) && score_result_value != '') && score_result_value != '0' && score_result_value && (
-                <div>
-                  <span className={indexStyles.rating_label_name}>结果分数:</span>
-                  <span style={{ fontSize: '20px', color: '#1890FF' }}>{score_result_value}</span>
-                </div>
-              )
-            }
-            <div>
-              <span className={indexStyles.rating_label_name}>计算方式</span>
+            <>
               {
-                (count_type == '2' || count_type == '3') ? (
+                this.state.currentSelectJudgeArrow == itemKey && (
                   <>
-                    <span className={indexStyles.select_item} style={{ minWidth: '94px' }}>总分值平均</span>
-                    <span className={indexStyles.select_item} style={{ minWidth: '136px' }}>{computing_mode(count_type)}</span>
+                    {
+                      (String(score_result_value) && score_result_value != '') && score_result_value != '0' && score_result_value && (
+                        <div>
+                          <span className={indexStyles.rating_label_name}>结果分数:</span>
+                          <span style={{ fontSize: '20px', color: '#1890FF' }}>{score_result_value}</span>
+                        </div>
+                      )
+                    }
+                    <div>
+                      <span className={indexStyles.rating_label_name}>计算方式</span>
+                      {
+                        (count_type == '2' || count_type == '3') ? (
+                          <>
+                            <span className={indexStyles.select_item} style={{ minWidth: '94px' }}>总分值平均</span>
+                            <span className={indexStyles.select_item} style={{ minWidth: '136px' }}>{computing_mode(count_type)}</span>
+                          </>
+                        ) : (
+                            <span className={indexStyles.select_item} style={{ minWidth: '94px' }}>{computing_mode(count_type)}</span>
+                          )
+                      }
+                    </div>
+                    <div>
+                      <span className={indexStyles.rating_label_name}>结果分数</span>
+                      <span className={indexStyles.select_item} style={{ minWidth: '94px' }}>{result_score_option(result_condition_type)}</span>
+                      <span className={indexStyles.select_item} style={{ minWidth: '40px' }}>{result_value}</span>
+                      <span className={indexStyles.select_item} style={{ minWidth: '136px' }}>{result_score_fall_through_with_others(result_case_pass)}</span>
+                    </div>
+                    <div>
+                      <span className={indexStyles.rating_label_name}>其余情况</span>
+                      <span className={indexStyles.select_item} style={{ minWidth: '136px' }}>{result_score_fall_through_with_others(result_case_other)}</span>
+                    </div>
                   </>
-                ) : (
-                    <span className={indexStyles.select_item} style={{ minWidth: '94px' }}>{computing_mode(count_type)}</span>
-                  )
+                )
               }
-            </div>
-            <div>
-              <span className={indexStyles.rating_label_name}>结果分数</span>
-              <span className={indexStyles.select_item} style={{ minWidth: '94px' }}>{result_score_option(result_condition_type)}</span>
-              <span className={indexStyles.select_item} style={{ minWidth: '40px' }}>{result_value}</span>
-              <span className={indexStyles.select_item} style={{ minWidth: '136px' }}>{result_score_fall_through_with_others(result_case_pass)}</span>
-            </div>
-            <div>
-              <span className={indexStyles.rating_label_name}>其余情况</span>
-              <span className={indexStyles.select_item} style={{ minWidth: '136px' }}>{result_score_fall_through_with_others(result_case_other)}</span>
-            </div>
+            </>
           </div>
         </div>
         {/* 历史评分 */}
@@ -457,10 +496,17 @@ export default class BeginningStepThree extends Component {
             <div style={{ minHeight: '54px', borderTop: '1px solid rgba(0,0,0,0.09)', padding: '16px 14px' }}>
               <div>
                 <span style={{ color: 'rgba(0,0,0,0.65)', fontSize: '16px', marginRight: '4px', fontWeight: 500 }} className={globalStyles.authTheme}>&#xe90e;</span>
-                <span>历史评分&nbsp;:</span>
+                <span style={{color: 'rgba(0,0,0,0.45)'}}>历史评分&nbsp;:</span>
+                {
+                  this.state.currentSelectHisArrow == itemKey ? (
+                    <span onClick={(e) => { this.handleShowMoreHisSuggestion(e, '') }} style={{ marginLeft: '16px', color: '#1890FF', cursor: 'pointer' }}>收起 <span className={globalStyles.authTheme}>&#xe7ed;</span></span>
+                  ) : (
+                      <span onClick={(e) => { this.handleShowMoreHisSuggestion(e, itemKey) }} style={{ marginLeft: '16px', color: '#1890FF', cursor: 'pointer' }}>展开 <span className={globalStyles.authTheme}>&#xe7ee;</span></span>
+                    )
+                }
               </div>
               {
-                historyCommentsList.map(item => {
+                this.state.currentSelectHisArrow == itemKey && historyCommentsList.map(item => {
                   return <div>{this.renderHistorySuggestion(item)}</div>
                 })
               }
@@ -511,7 +557,7 @@ export default class BeginningStepThree extends Component {
     const { is_show_spread_arrow, transPrincipalList = [], transCopyPersonnelList = [] } = this.state
     const { name, cc_type, deadline_type, deadline_value, deadline_time_type, status } = itemValue
     return (
-      <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }}>
+      <div id={status == '1' && 'currentStaticRatingScoreContainer'} key={itemKey} style={{ display: 'flex', marginBottom: '48px', position: 'relative' }}>
         {processEditDatas.length <= itemKey + 1 ? null : <div className={this.renderDiffStatusStepStyles().stylLine}></div>}
         <div className={this.renderDiffStatusStepStyles().stylCircle}> {itemKey + 1}</div>
         {/* <div className={indexStyles.line}></div>
@@ -599,18 +645,8 @@ export default class BeginningStepThree extends Component {
                   )
                 }
               </div>
-              <div>
-                <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '14px' }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
-                <span className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : </span>
-                {
-                  deadline_type == '1' || deadline_type == '' ? (
-                    <span style={{ color: 'rgba(0,0,0,0.45)' }}>未限制时间</span>
-                  ) : (
-                      <span style={{ color: 'rgba(0,0,0,0.45)' }}>
-                        步骤开始后{`${deadline_value}${renderTimeType(deadline_time_type)}`}内
-                      </span>
-                    )
-                }
+              <div style={{ marginRight: '14px' }}>
+                <DifferenceDeadlineType type="nodesStepItem" itemValue={itemValue} />
               </div>
             </div>
             {is_show_spread_arrow && this.renderEditDetailContent()}

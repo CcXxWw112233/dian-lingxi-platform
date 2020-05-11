@@ -67,7 +67,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
       filePreviewIsUsable: data.preview_info.is_usable,
       filePreviewUrl: data.preview_info.url, // 文件路径
       filePreviewIsRealImage: data.preview_info.is_real_image, // 是否是真的图片
-      currentPreviewFileName: data.base_info.file_name, // 当前文件的名称
+      filePreviewCurrentName: data.base_info.file_name, // 当前文件的名称
       fileType: getSubfixName(data.base_info.file_name), // 文件的后缀名
       targetFilePath: data.target_path, // 当前文件路径
       filePreviewCurrentVersionList: data.version_list, // 文件的版本列表
@@ -130,7 +130,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
           is_large_loading: false
         })
         if (calback && typeof calback == 'function') calback()
-        // this.linkImWithFile({name: this.props.currentPreviewFileName, type: 'file', board_id: this.props.board_id, id: this.props.filePreviewCurrentFileId, currentPreviewFileVersionId: currentPreviewFileVersionId})
+        // this.linkImWithFile({name: this.props.filePreviewCurrentName, type: 'file', board_id: this.props.board_id, id: this.props.filePreviewCurrentFileId, currentPreviewFileVersionId: currentPreviewFileVersionId})
       } else {
         message.warn(res.message)
         setTimeout(() => {
@@ -164,11 +164,11 @@ export default class BoardCommuicationFileDetailContainer extends Component {
   }
 
   componentDidMount() {
-    const { filePreviewCurrentFileId, fileType, file_detail_modal_visible, currentPreviewFileName, board_id } = this.props
+    const { filePreviewCurrentFileId, fileType, file_detail_modal_visible, filePreviewCurrentName, board_id } = this.props
     if (filePreviewCurrentFileId && file_detail_modal_visible) {
       if (fileType == '.pdf') {
         this.delayUpdatePdfDatas({ id: filePreviewCurrentFileId })
-        // this.linkImWithFile({name: currentPreviewFileName, type: 'file', board_id: board_id, id: filePreviewCurrentFileId})
+        // this.linkImWithFile({name: filePreviewCurrentName, type: 'file', board_id: board_id, id: filePreviewCurrentFileId})
         return
       }
       this.getCurrentFilePreviewData({ id: filePreviewCurrentFileId })
@@ -180,7 +180,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
           }
         })
       }
-      // this.linkImWithFile({name: currentPreviewFileName, type: 'file', board_id: board_id, id: filePreviewCurrentFileId})
+      // this.linkImWithFile({name: filePreviewCurrentName, type: 'file', board_id: board_id, id: filePreviewCurrentFileId})
     }
   }
 

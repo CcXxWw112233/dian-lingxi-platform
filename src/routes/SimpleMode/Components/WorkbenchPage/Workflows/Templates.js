@@ -1,11 +1,14 @@
 import React, { Component } from 'react'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import styles from './index.less'
-import { Tooltip, Button, Popconfirm, message } from 'antd'
+import { Tooltip, Button, Popconfirm, message, DatePicker, Popover } from 'antd'
 import { connect } from 'dva'
-import { checkIsHasPermissionInBoard, setBoardIdStorage, getOrgNameWithOrgIdFilter } from '../../../../../utils/businessFunction'
+import { checkIsHasPermissionInBoard, setBoardIdStorage, getOrgNameWithOrgIdFilter, getGlobalData } from '../../../../../utils/businessFunction'
 import { PROJECT_FLOWS_FLOW_TEMPLATE, PROJECT_FLOWS_FLOW_CREATE, NOT_HAS_PERMISION_COMFIRN } from '../../../../../globalset/js/constant'
 import SelectBoardModal from './SelectBoardModal'
+import { timeToTimestamp } from '../../../../../utils/util'
+import moment from 'moment'
+import { isApiResponseOk } from "../../../../../utils/handleResponseData";
 @connect(mapStateToProps)
 export default class Templates extends Component {
     constructor(props) {
@@ -161,6 +164,110 @@ export default class Templates extends Component {
             }
         })
     }
+    handleOperateStartConfirmProcess = (e,item,start_time) => {
+        e && e.stopPropagation()
+        let that = this
+        const { id, board_id, org_id } = item
+        const { dispatch, request_flows_params = {} } = this.props
+        let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
+        let REAUEST_BOARD_ID = getGlobalData('storageCurrentOperateBoardId') || board_id
+        return
+        Promise.resolve(
+          dispatch({
+            type: 'publicProcessDetailModal/createProcess',
+            payload: {
+              start_up_type: start_time ? '2' : '1',
+              plan_start_time: start_time ? start_time : '',
+              flow_template_id: id,
+              board_id: REAUEST_BOARD_ID
+            }
+          })
+        ).then(res => {
+          if (isApiResponseOk(res)) {
+            that.props.dispatch({
+              type: 'publicProcessDetailModal/getProcessListByType',
+              payload: {
+                status: start_time ? '0' : '1',
+                board_id: BOARD_ID,
+                _organization_id: request_flows_params._organization_id || org_id
+              }
+            })
+          } else {
+          }
+        })
+      }
+     // 开始时间气泡弹窗显示
+    handleProcessStartConfirmVisible = (visible) => {
+        if (!visible) {
+        const { startOpen } = this.state
+        if (!startOpen) return
+        this.setState({
+            startOpen: false
+        })
+        }
+    }
+
+    // 预约开始时间
+    startDatePickerChange = (timeString, item) => {
+        this.setState({
+        start_time: timeToTimestamp(timeString)
+        }, () => {
+        this.handleStartOpenChange(false)
+        this.handleOperateStartConfirmProcess('', item,timeToTimestamp(timeString))
+        })
+
+    }
+    range = (start, end) => {
+        const result = [];
+        for (let i = start; i < end; i++) {
+          result.push(i);
+        }
+        return result;
+      }
+    // 禁用的时间段
+    disabledStartTime = (current) => {
+        return current && current < moment().endOf('day')
+    }
+    // 这是保存一个点击此刻时不让日期面板关闭
+    handleStartOpenChange = (open) => {
+        // this.setState({ endOpen: true });
+        this.setState({
+        startOpen: open
+        })
+    }
+
+    handleStartDatePickerChange = (timeString) => {
+        this.setState({
+        start_time: timeToTimestamp(timeString)
+        }, () => {
+        this.handleStartOpenChange(true)
+        })
+    }
+     // 渲染开始流程的气泡框
+    renderProcessStartConfirm = (value) => {
+        // 禁用开始流程的按钮逻辑 1.判断流程名称是否输入 ==> 2. 是否有步骤 并且步骤都不是配置的样子 ==> 3. 并且上一个节点有选择类型 都是或者的关系 只要有一个不满足返回 true 表示 禁用 false 表示不禁用
+        return (
+        <div style={{ display: 'flex', flexDirection: 'column', width: '248px', height: '112px', justifyContent: 'space-around' }}>
+            <Button onClick={(e) => { this.handleOperateStartConfirmProcess(e,value) }} type="primary">立即开始</Button>
+            <div>
+            <span style={{ position: 'relative', zIndex: 1, minWidth: '80px', lineHeight: '38px', width: '100%', display: 'inline-block', textAlign: 'center' }}>
+                <Button style={{ color: '#1890FF', width: '100%' }}>预约开始时间</Button>
+                <DatePicker
+                    disabledDate={this.disabledStartTime}
+                    onOk={(e) => { this.startDatePickerChange(e, value) }}
+                    onChange={this.handleStartDatePickerChange}
+                    onOpenChange={this.handleStartOpenChange}
+                    open={this.state.startOpen}
+                    getPopupContainer={() => document.getElementById('template_item_bott')}
+                    placeholder={'开始时间'}
+                    format="YYYY/MM/DD HH:mm"
+                    showTime={{ format: 'HH:mm' }}
+                    style={{ opacity: 0, zIndex: 1, background: '#000000', position: 'absolute', left: 0, width: '100%' }} />
+            </span>
+            </div>
+        </div>
+        )
+    }
     renderTemplateList = () => {
         const { processTemplateList = [] } = this.props
 
@@ -197,7 +304,7 @@ export default class Templates extends Component {
                                 <div className={`${styles.template_dec_step}`}>共{node_num}步</div>
                             </div>
                         </div>
-                        <div className={styles.template_item_bott}>
+                        <div id={'template_item_bott'} className={styles.template_item_bott}>
                             {
                                 checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, board_id) && (
                                     <Tooltip title={'开始流程'}>
@@ -206,6 +313,11 @@ export default class Templates extends Component {
                                     </Tooltip>
                                 )
                             }
+                            {/* <Tooltip title="开始流程">
+                                <Popover trigger="click" title={null} onVisibleChange={this.handleProcessStartConfirmVisible} content={this.renderProcessStartConfirm(value)} icon={<></>} getPopupContainer={triggerNode => triggerNode.parentNode}>
+                                    <div className={`${globalStyles.authTheme} ${styles.template_operate}`}>&#xe796;</div>
+                                </Popover>
+                            </Tooltip> */}
 
                             {
                                 checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE, board_id) && (
@@ -289,7 +401,8 @@ function mapStateToProps({
     technological: {
         datas: {
             currentUserOrganizes = [],
-            currentSelectOrganize = {}
+            currentSelectOrganize = {},
+            userBoardPermissions = []
         }
     },
     publicProcessDetailModal: {
@@ -301,6 +414,7 @@ function mapStateToProps({
         simplemodeCurrentProject,
         currentSelectOrganize,
         currentUserOrganizes,
+        userBoardPermissions,
         process_detail_modal_visible
     }
 }

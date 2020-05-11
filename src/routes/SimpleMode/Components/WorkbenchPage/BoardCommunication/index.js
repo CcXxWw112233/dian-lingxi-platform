@@ -1100,7 +1100,7 @@ class BoardCommunication extends Component {
                 filePreviewCurrentFileId: '',
                 fileType: '',
                 isInOpenFile: false,
-                currentPreviewFileName: ''
+                filePreviewCurrentName: ''
             }
         })
         global.constants.lx_utils && global.constants.lx_utils.setCommentData(null)
@@ -1596,7 +1596,7 @@ class BoardCommunication extends Component {
                             filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
                             fileType={this.props.fileType}
                             file_detail_modal_visible={this.state.previewFileModalVisibile}
-                            currentPreviewFileName={this.props.currentPreviewFileName}
+                            filePreviewCurrentName={this.props.filePreviewCurrentName}
                             setPreviewFileModalVisibile={this.showUpdatedFileDetail}
                             whetherUpdateFolderListData={this.whetherUpdateFolderListData}
                             // updateCommunicationFolderListData={this.updateCommunicationFolderListData}
@@ -1799,7 +1799,7 @@ function mapStateToProps({
         filePreviewCurrentFileId,
         fileType,
         isInOpenFile,
-        currentPreviewFileName
+        filePreviewCurrentName
     }
 }) {
     // const modelObj = {
@@ -1832,7 +1832,7 @@ function mapStateToProps({
         filePreviewCurrentFileId,
         fileType,
         isInOpenFile,
-        currentPreviewFileName
+        filePreviewCurrentName
     }
 }
 export default connect(mapStateToProps)(BoardCommunication)

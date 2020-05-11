@@ -51,29 +51,29 @@ export default class HeaderContentRightMenu extends Component {
       })
       setTimeout(() => this.judgeWhetherItIsNewVersion(new_filePreviewCurrentVersionList, filePreviewCurrentFileId), 200)
     }
-    
+
   }
 
-    // 判断是否是新版本
-    judgeWhetherItIsNewVersion = (data, id) => {
-      if (!data) return
-      let currentPreviewFile = [...data] // 当前预览的文件
-      let currentPreviewVersionFile = [...data] // 当前的版本文件
-      currentPreviewFile = currentPreviewFile.find(item => item.is_new_version != '1' && item.id == id)
-      currentPreviewVersionFile = currentPreviewVersionFile.find(item => item.is_new_version == '1')
-      if ( currentPreviewFile && Object.keys(currentPreviewFile) && Object.keys(currentPreviewFile).length) {
-        this.props.updateStateDatas && this.props.updateStateDatas({ selectedKeys: [currentPreviewFile.id] })
-        // this.setState({
-        //   selectedKeys: [currentPreviewFile.id]
-        // })
-      }
-      if (currentPreviewVersionFile && Object.keys(currentPreviewVersionFile) && Object.keys(currentPreviewVersionFile).length) {
-        this.props.updateStateDatas && this.props.updateStateDatas({ filePreviewCurrentFileId: currentPreviewVersionFile.id })
-        this.setState({
-          // selectedKeys: [currentPreviewVersionFile.id]
-        })
-      }
+  // 判断是否是新版本
+  judgeWhetherItIsNewVersion = (data, id) => {
+    if (!data) return
+    let currentPreviewFile = [...data] // 当前预览的文件
+    let currentPreviewVersionFile = [...data] // 当前的版本文件
+    currentPreviewFile = currentPreviewFile.find(item => item.is_new_version != '1' && item.id == id)
+    currentPreviewVersionFile = currentPreviewVersionFile.find(item => item.is_new_version == '1')
+    if (currentPreviewFile && Object.keys(currentPreviewFile) && Object.keys(currentPreviewFile).length) {
+      this.props.updateStateDatas && this.props.updateStateDatas({ selectedKeys: [currentPreviewFile.id] })
+      // this.setState({
+      //   selectedKeys: [currentPreviewFile.id]
+      // })
     }
+    if (currentPreviewVersionFile && Object.keys(currentPreviewVersionFile) && Object.keys(currentPreviewVersionFile).length) {
+      this.props.updateStateDatas && this.props.updateStateDatas({ filePreviewCurrentFileId: currentPreviewVersionFile.id })
+      this.setState({
+        // selectedKeys: [currentPreviewVersionFile.id]
+      })
+    }
+  }
 
   /**
    * 检测是否进入圈评
@@ -108,7 +108,7 @@ export default class HeaderContentRightMenu extends Component {
         }, 500)
         this.handleUploadPDForElesFilePreview({ file_name: file_name, id })
         this.props.updateStateDatas && this.props.updateStateDatas({ filePreviewCurrentFileId: id, selectedKeys: [] })
-        this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({folder_id, file_id: id, file_name})
+        this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({ folder_id, file_id: id, file_name })
       } else {
         message.warn(res.message)
       }
@@ -128,7 +128,7 @@ export default class HeaderContentRightMenu extends Component {
         this.setState({
           new_filePreviewCurrentVersionList: res.data
         })
-        this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({folder_id, file_id: file_id, file_name: file_name, create_time: create_time})
+        this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({ folder_id, file_id: file_id, file_name: file_name, create_time: create_time })
         if (calback && typeof calback == 'function') {
           calback()
         }
@@ -180,7 +180,7 @@ export default class HeaderContentRightMenu extends Component {
     })
     const { file_id, file_resource_id, file_name } = temp_filePreviewCurrentVersionList[0]
     this.handleUploadPDForElesFilePreview({ file_name, id: file_id })
-    this.props.updateStateDatas && this.props.updateStateDatas({ fileType: getSubfixName(file_name), selectedKeys: [key], pdfDownLoadSrc:  getSubfixName(file_name) != '.pdf' && ''})
+    this.props.updateStateDatas && this.props.updateStateDatas({ fileType: getSubfixName(file_name), selectedKeys: [key], pdfDownLoadSrc: getSubfixName(file_name) != '.pdf' && '' })
   }
 
   // 每一个Item的点点点 事件
@@ -310,7 +310,7 @@ export default class HeaderContentRightMenu extends Component {
 
   openWin(url) {
     var element1 = document.createElement("a");
-    element1.href= url;
+    element1.href = url;
     element1.id = 'openWin'
     document.querySelector('body').appendChild(element1)
     document.getElementById("openWin").click();//点击事件
@@ -328,10 +328,10 @@ export default class HeaderContentRightMenu extends Component {
       window.open(pdfDownLoadSrc)
     } else {
       const { currentPreviewFileData: { id } } = this.props
-      fileDownload({ids: filePreviewCurrentResourceId,fileIds: id}).then(res => {
+      fileDownload({ ids: filePreviewCurrentResourceId, fileIds: id }).then(res => {
         if (isApiResponseOk(res)) {
           const data = res.data
-          if(data && data.length) {
+          if (data && data.length) {
             // for (let val of data ) {
             //   // window.open(val)
             //   this.openWin(val)
@@ -356,11 +356,11 @@ export default class HeaderContentRightMenu extends Component {
   }
 
   // 保存为新版本的回调
-  handleSaveAsNewVersionButton = ({id,notify_user_ids, folder_id, calback}) => {
-    saveAsNewVersion({id, notify_user_ids}).then(res => {
+  handleSaveAsNewVersionButton = ({ id, notify_user_ids, folder_id, calback }) => {
+    saveAsNewVersion({ id, notify_user_ids }).then(res => {
       if (isApiResponseOk(res)) {
         const { version_id, id } = res.data
-        this.getFileVersionist({version_id, file_id: id, folder_id, calback})
+        this.getFileVersionist({ version_id, file_id: id, folder_id, calback })
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         if (calback && typeof calback == 'function') {
@@ -369,14 +369,14 @@ export default class HeaderContentRightMenu extends Component {
       }
     })
   }
-  
+
   // 另存为新版本的回调
-  handleSaveAsOthersNewVersionButton = ({file_ids, folder_id, notify_user_ids, file_name, calback}) => {
-    fileCopy({file_ids, folder_id, notify_user_ids,is_copy_version:false,file_name}).then(res => {
+  handleSaveAsOthersNewVersionButton = ({ file_ids, folder_id, notify_user_ids, file_name, calback }) => {
+    fileCopy({ file_ids, folder_id, notify_user_ids, is_copy_version: false, file_name }).then(res => {
       if (isApiResponseOk(res)) {
         setTimeout(() => {
           message.success(`另存为${currentNounPlanFilterName(FILES)}成功`)
-        },200)
+        }, 200)
         if (calback && typeof calback == 'function') {
           calback()
         }
@@ -400,13 +400,13 @@ export default class HeaderContentRightMenu extends Component {
     this.setState({
       saveAsNewVersionFileVisible: true,
       saveAsNewVersionFileTitle: '保存为新版本',
-      titleKey:key
+      titleKey: key
     })
     // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE)) {
     //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
     //   return false
     // }
-    
+
     // saveAsNewVersion({id}).then(res => {
     //   if (isApiResponseOk(res)) {
     //     const { version_id, id } = res.data
@@ -418,20 +418,20 @@ export default class HeaderContentRightMenu extends Component {
   }
 
   //获取项目里文件夹列表
-	getProjectFolderList = ({board_id, file_name, key}) => {
-		getFolderList({ board_id }).then((res) => {
-			if (isApiResponseOk(res)) {
-				this.setState({
+  getProjectFolderList = ({ board_id, file_name, key }) => {
+    getFolderList({ board_id }).then((res) => {
+      if (isApiResponseOk(res)) {
+        this.setState({
           boardFolderTreeData: res.data,
           saveAsNewVersionFileVisible: true,
           saveAsNewVersionFileTitle: '另存为新版本',
           titleKey: key,
-				});
-			} else {
-				message.error(res.message)
-			}
-		})
-	}
+        });
+      } else {
+        message.error(res.message)
+      }
+    })
+  }
 
   // 另存文件为新版本
   handleSaveAsOthersNewVersion = (e) => {
@@ -441,7 +441,7 @@ export default class HeaderContentRightMenu extends Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    this.getProjectFolderList({board_id, file_name, key})
+    this.getProjectFolderList({ board_id, file_name, key })
     // this.setState({
     //   saveAsNewVersionFileVisible: true,
     //   saveAsNewVersionFileTitle: '另存新版本',
@@ -454,17 +454,17 @@ export default class HeaderContentRightMenu extends Component {
     return (
       <Menu>
         <Menu.Item key="2"
-        onClick={this.handleSaveAsNewVersion}
+          onClick={this.handleSaveAsNewVersion}
         >
           保存
         </Menu.Item>
         <Menu.Item key="3"
-        onClick={this.handleSaveAsOthersNewVersion}
+          onClick={this.handleSaveAsOthersNewVersion}
         >
           另存为
         </Menu.Item>
         <Menu.Item key="1"
-        onClick={this.handleFileDownload.bind(this, { filePreviewCurrentResourceId, pdfDownLoadSrc })}
+          onClick={this.handleFileDownload.bind(this, { filePreviewCurrentResourceId, pdfDownLoadSrc })}
         >
           下载
         </Menu.Item>
@@ -552,7 +552,7 @@ export default class HeaderContentRightMenu extends Component {
       }
       let newCurrentPreviewFileData = { ...currentPreviewFileData, is_privilege: obj.is_privilege, privileges: new_privileges }
       this.props.updateStateDatas && this.props.updateStateDatas({ currentPreviewFileData: newCurrentPreviewFileData })
-      this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({folder_id})
+      this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({ folder_id })
       // 更新项目交流左侧文件列表
     }
 
@@ -571,7 +571,7 @@ export default class HeaderContentRightMenu extends Component {
       let newCurrentPreviewFileData = { ...currentPreviewFileData, privileges: new_privileges }
 
       this.props.updateStateDatas && this.props.updateStateDatas({ currentPreviewFileData: newCurrentPreviewFileData })
-      this.props.shouldUpdateAllFolderListData && this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({folder_id})
+      this.props.shouldUpdateAllFolderListData && this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({ folder_id })
     }
 
     // 移除成员
@@ -585,7 +585,7 @@ export default class HeaderContentRightMenu extends Component {
       let newCurrentPreviewFileData = { ...currentPreviewFileData, privileges: new_privileges }
 
       this.props.updateStateDatas && this.props.updateStateDatas({ currentPreviewFileData: newCurrentPreviewFileData })
-      this.props.shouldUpdateAllFolderListData && this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({folder_id})
+      this.props.shouldUpdateAllFolderListData && this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({ folder_id })
     }
 
     // 修改成员
@@ -604,7 +604,7 @@ export default class HeaderContentRightMenu extends Component {
       let newCurrentPreviewFileData = { ...currentPreviewFileData, privileges: new_privileges }
 
       this.props.updateStateDatas && this.props.updateStateDatas({ currentPreviewFileData: newCurrentPreviewFileData })
-      this.props.shouldUpdateAllFolderListData && this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({folder_id})
+      this.props.shouldUpdateAllFolderListData && this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({ folder_id })
     }
 
   }
@@ -811,8 +811,8 @@ export default class HeaderContentRightMenu extends Component {
 
   render() {
     const that = this
-    const { currentPreviewFileData = {}, filePreviewCurrentFileId, filePreviewCurrentVersionId, projectDetailInfoData: { data = [], folder_id }, projectDetailInfoData = {}, isZoomPictureFullScreenMode, onlyReadingShareModalVisible, onlyReadingShareData, selectedKeys = [], targetFilePath = {} } = this.props
-    const { new_filePreviewCurrentVersionList = [], is_edit_version_description, editValue, boardFolderTreeData = []} = this.state
+    const { currentPreviewFileData = {}, filePreviewCurrentFileId, filePreviewCurrentVersionId, projectDetailInfoData: { data = [], folder_id }, projectDetailInfoData = {}, isZoomPictureFullScreenMode, onlyReadingShareModalVisible, onlyReadingShareData, selectedKeys = [], targetFilePath = {}, isOpenAttachmentFile } = this.props
+    const { new_filePreviewCurrentVersionList = [], is_edit_version_description, editValue, boardFolderTreeData = [] } = this.state
     const { board_id, is_privilege, privileges = [], id, file_id, is_shared } = currentPreviewFileData
     const params = {
       filePreviewCurrentFileId,
@@ -881,86 +881,92 @@ export default class HeaderContentRightMenu extends Component {
     };
 
     return (
-      <div className={headerStyles.header_rightMenuWrapper} style={{position: 'relative'}}>
+      <div className={headerStyles.header_rightMenuWrapper} style={{ position: 'relative' }}>
         {
           this.checkWhetherEntryCircleEvaluation() && (
-            <div style={{position: 'absolute', top: '0', right: '0', bottom: '0', left: '0', margin: '0 auto', zIndex: 1}} onClick={this.handleDisabledOperator}></div>
+            <div style={{ position: 'absolute', top: '0', right: '0', bottom: '0', left: '0', margin: '0 auto', zIndex: 1 }} onClick={this.handleDisabledOperator}></div>
           )
         }
-        {/* 版本信息 */}
-        <div className={headerStyles.margin_right10}>
-          <VersionSwitching
-            {...params}
-            is_show={true}
-            handleVersionItem={this.handleVersionItem}
-            getVersionItemMenuClick={this.getVersionItemMenuClick}
-            handleFileVersionDecription={this.handleFileVersionDecription}
-            handleFileVersionValue={this.handleFileVersionValue}
-            uploadProps={uploadProps}
-          />
-        </div>
-        {/* 另存为 */}
-        <div className={headerStyles.margin_right10} style={{ position: 'relative' }}>
-          <Dropdown trigger={['click']} overlay={this.saveAsMenu()} getPopupContainer={triggerNode => triggerNode.parentNode}>
-            <Button type={'primary'} style={{ height: 24,lineHeight: '24px' }} >
-              <span style={{marginRight:'4px'}} className={`${globalStyles.authTheme} ${headerStyles.right__shareIndicator_icon}`}>&#xe63b;</span>
-               保存 <span style={{display:'inline-block',verticalAlign:'middle',fontSize:'12px',marginLeft:'2px'}} className={`${globalStyles.authTheme}`}>&#xe7ee;</span>
-                </Button>
-          </Dropdown>
-        </div>
-
-        {/* 分享协作 */}
-        <div className={headerStyles.share_wrapper}>
-          {
-            file_id && (
-              <div style={{ alignItems: 'center', display: 'flex', marginRight: '10px' }}>
-                {/* 分享协作 */}
-                <span>
-                  {is_shared === '1' ? (
-                    <span className={headerStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}>
-                      <span className={`${globalStyles.authTheme} ${headerStyles.right__shareIndicator_icon}`}>&#xe7e7;</span>
-                      <span className={headerStyles.right__shareIndicator_text}>正在分享</span>
-                    </span>
-                  ) : (
-                      <span className={`${headerStyles.share_icon}`} >
-                        <Tooltip title="分享协作" placement="top">
-                          <span onClick={this.handleChangeOnlyReadingShareModalVisible} className={`${globalStyles.authTheme} ${headerStyles.right__share}`} style={{ fontSize: '20px' }}>&#xe7e7;</span>
-                        </Tooltip>
-                      </span>
-                    )}
-                  <ShareAndInvite
-                    onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible}
-                    data={onlyReadingShareData}
-                    handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare}
-                  />
-                </span>
-              </div>
-            )
-          }
-        </div>
-
-        {/* 访问控制 */}
-        <div className={headerStyles.margin_right10}>
-          {
-            board_id && (
-              <VisitControl
-                board_id={board_id}
-                isPropVisitControl={is_privilege === '0' ? false : true}
-                handleVisitControlChange={this.handleVisitControlChange}
-                otherPrivilege={privileges}
-                notShowPrincipal={true}
-                handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
-                handleAddNewMember={this.handleVisitControlAddNewMember}
-              />
-            )
-          }
-        </div>
-        {/* 通知提醒 */}
         {
-          checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) && (
-            <div className={headerStyles.margin_right10} style={{ marginTop: '4px' }}>
-              <InformRemind rela_fileId={filePreviewCurrentFileId} rela_id={filePreviewCurrentVersionId} rela_type={'4'} user_remind_info={data} />
-            </div>
+          !isOpenAttachmentFile && (
+            <>
+              {/* 版本信息 */}
+              <div className={headerStyles.margin_right10}>
+                <VersionSwitching
+                  {...params}
+                  is_show={true}
+                  handleVersionItem={this.handleVersionItem}
+                  getVersionItemMenuClick={this.getVersionItemMenuClick}
+                  handleFileVersionDecription={this.handleFileVersionDecription}
+                  handleFileVersionValue={this.handleFileVersionValue}
+                  uploadProps={uploadProps}
+                />
+              </div>
+              {/* 另存为 */}
+              <div className={headerStyles.margin_right10} style={{ position: 'relative' }}>
+                <Dropdown trigger={['click']} overlay={this.saveAsMenu()} getPopupContainer={triggerNode => triggerNode.parentNode}>
+                  <Button type={'primary'} style={{ height: 24, lineHeight: '24px' }} >
+                    <span style={{ marginRight: '4px' }} className={`${globalStyles.authTheme} ${headerStyles.right__shareIndicator_icon}`}>&#xe63b;</span>
+               保存 <span style={{ display: 'inline-block', verticalAlign: 'middle', fontSize: '12px', marginLeft: '2px' }} className={`${globalStyles.authTheme}`}>&#xe7ee;</span>
+                  </Button>
+                </Dropdown>
+              </div>
+
+              {/* 分享协作 */}
+              <div className={headerStyles.share_wrapper}>
+                {
+                  file_id && (
+                    <div style={{ alignItems: 'center', display: 'flex', marginRight: '10px' }}>
+                      {/* 分享协作 */}
+                      <span>
+                        {is_shared === '1' ? (
+                          <span className={headerStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}>
+                            <span className={`${globalStyles.authTheme} ${headerStyles.right__shareIndicator_icon}`}>&#xe7e7;</span>
+                            <span className={headerStyles.right__shareIndicator_text}>正在分享</span>
+                          </span>
+                        ) : (
+                            <span className={`${headerStyles.share_icon}`} >
+                              <Tooltip title="分享协作" placement="top">
+                                <span onClick={this.handleChangeOnlyReadingShareModalVisible} className={`${globalStyles.authTheme} ${headerStyles.right__share}`} style={{ fontSize: '20px' }}>&#xe7e7;</span>
+                              </Tooltip>
+                            </span>
+                          )}
+                        <ShareAndInvite
+                          onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible}
+                          data={onlyReadingShareData}
+                          handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare}
+                        />
+                      </span>
+                    </div>
+                  )
+                }
+              </div>
+
+              {/* 访问控制 */}
+              <div className={headerStyles.margin_right10}>
+                {
+                  board_id && (
+                    <VisitControl
+                      board_id={board_id}
+                      isPropVisitControl={is_privilege === '0' ? false : true}
+                      handleVisitControlChange={this.handleVisitControlChange}
+                      otherPrivilege={privileges}
+                      notShowPrincipal={true}
+                      handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+                      handleAddNewMember={this.handleVisitControlAddNewMember}
+                    />
+                  )
+                }
+              </div>
+              {/* 通知提醒 */}
+              {
+                checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)) && (
+                  <div className={headerStyles.margin_right10} style={{ marginTop: '4px' }}>
+                    <InformRemind rela_fileId={filePreviewCurrentFileId} rela_id={filePreviewCurrentVersionId} rela_type={'4'} user_remind_info={data} />
+                  </div>
+                )
+              }
+            </>
           )
         }
 
@@ -972,11 +978,11 @@ export default class HeaderContentRightMenu extends Component {
         {/* 另存为Modal */}
         <div>
           <SaveAsNewVersionFile projectDetailInfoData={projectDetailInfoData} currentPreviewFileData={currentPreviewFileData} boardFolderTreeData={boardFolderTreeData} setSaveAsNewVersionVisible={this.setSaveAsNewVersionVisible} visible={this.state.saveAsNewVersionFileVisible} title={this.state.saveAsNewVersionFileTitle}
-          titleKey={this.state.titleKey}
-          handleSaveAsNewVersionButton={this.handleSaveAsNewVersionButton}
-          handleSaveAsOthersNewVersionButton={this.handleSaveAsOthersNewVersionButton}
-          whetherUpdateFolderListData={this.props.whetherUpdateFolderListData}
-          shouldUpdateAllFolderListData={this.props.shouldUpdateAllFolderListData}
+            titleKey={this.state.titleKey}
+            handleSaveAsNewVersionButton={this.handleSaveAsNewVersionButton}
+            handleSaveAsOthersNewVersionButton={this.handleSaveAsOthersNewVersionButton}
+            whetherUpdateFolderListData={this.props.whetherUpdateFolderListData}
+            shouldUpdateAllFolderListData={this.props.shouldUpdateAllFolderListData}
           />
         </div>
       </div>

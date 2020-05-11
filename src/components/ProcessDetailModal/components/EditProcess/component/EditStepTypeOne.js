@@ -10,6 +10,8 @@ import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { Button, Tooltip } from 'antd'
 import { connect } from 'dva'
 import { renderTimeType } from '../../handleOperateModal'
+import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
+import { FLOWS } from '../../../../../globalset/js/constant'
 
 @connect(mapStateToProps)
 export default class EditStepTypeOne extends Component {
@@ -211,7 +213,7 @@ export default class EditStepTypeOne extends Component {
                   ) : (
                       <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
                         <span style={{ display: 'inline-block', width: '24px', height: '24px', background: 'rgba(230,247,255,1)', borderRadius: '20px', textAlign: 'center', marginRight: '5px' }}><span style={{ color: '#1890FF' }} className={globalStyles.authTheme}>&#xe7b2;</span></span>
-                        <span>任何人</span>
+                        <span>{`${currentNounPlanFilterName(FLOWS)}发起人`}</span>
                       </div>
                     )
                 }
@@ -249,12 +251,12 @@ export default class EditStepTypeOne extends Component {
                   )
                 }
               </div>
-              <div>
-                <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '14px' }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
-                <span className={`${indexStyles.deadline_time}`}>&nbsp;完成期限 : </span>
+              <div style={{display: 'flex'}}>
+                <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '16px', marginRight: '5px', flexShrink: 0 }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
+                <span style={{marginRight: '5px', flexShrink: 0}} className={`${indexStyles.deadline_time}`}>完成期限 : </span>
                 {
                   deadline_type == '1' ? (
-                    <span style={{color: 'rgba(0,0,0,0.45)'}}>未限制时间</span>
+                    <span style={{color: 'rgba(0,0,0,0.45)'}}>未限制</span>
                   ) : (
                     <span style={{color: 'rgba(0,0,0,0.45)'}}>
                       步骤开始后{`${deadline_value}${renderTimeType(deadline_time_type)}`}内

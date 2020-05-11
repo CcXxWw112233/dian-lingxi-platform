@@ -183,7 +183,7 @@ class FileItem extends React.Component {
         filePreviewCurrentFileId: id,
         fileType: getSubfixName(file_name),
         isInOpenFile: true,
-        currentPreviewFileName: file_name
+        filePreviewCurrentName: file_name
       }
     })
     this.props.updatePublicDatas({ board_id })

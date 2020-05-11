@@ -9,8 +9,8 @@ import ProcessStartConfirm from './components/ProcessStartConfirm'
 import BeginningProcess from './components/BeginningProcess'
 import ConfigureGuide from './ConfigureGuide'
 import { processEditDatasItemOneConstant } from './constant'
-import { Tooltip, Button, message, Popover, DatePicker } from 'antd'
-import { timeToTimestamp } from '../../utils/util'
+import { Tooltip, Button, message, Popover, DatePicker, Checkbox } from 'antd'
+import { timeToTimestamp, timestampToTimeNormal } from '../../utils/util'
 import moment from 'moment'
 import { MESSAGE_DURATION_TIME, FLOWS, NOT_HAS_PERMISION_COMFIRN, PROJECT_FLOWS_FLOW_CREATE } from '../../globalset/js/constant'
 import { saveProcessTemplate, getTemplateInfo, createProcess } from '../../services/technological/workFlow'
@@ -60,13 +60,12 @@ export default class MainContent extends Component {
     this.linkImWithFlow({name: name, type: 'flow', board_id: board_id, id: id})
   }
 
-  componentDidMount() {
-    window.addEventListener('resize', this.resizeTTY)
-    window.addEventListener('scroll', this.onScroll)
-    // 采用锚点方式对元素进行定位
+  // 利用锚点方式对元素进行定位
+  handleAnchorPointElement = () => {
     let scrollElement = document.getElementById('container_configureProcessOut')
     let currentDoingDataCollectionItem = document.getElementById('currentDataCollectionItem')
     let currentDoingApproveItem = document.getElementById('currentStaticApproveContainer')
+    let currentStaticRatingScoreItem = document.getElementById('currentStaticRatingScoreContainer')
     // 表示进行中的资料收集节点
     if (currentDoingDataCollectionItem) {
       if (scrollElement.scrollTo) {
@@ -86,6 +85,20 @@ export default class MainContent extends Component {
       }
     }
 
+    if (currentStaticRatingScoreItem) {
+      if (scrollElement.scrollTo) {
+        scrollElement.scrollTo({
+          top: currentStaticRatingScoreItem.offsetTop - 68,
+          behavior: 'smooth'
+        });
+      }
+    }
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.resizeTTY)
+    window.addEventListener('scroll', this.onScroll)
+    this.handleAnchorPointElement()
     const { processPageFlagStep } = this.props
     if (processPageFlagStep == '1' || processPageFlagStep == '2') {
       this.props.dispatch({
@@ -146,6 +159,7 @@ export default class MainContent extends Component {
     // let ele = document.getElementById("time_graph_canvas")
     let e = document.querySelectorAll('#time_graph_canvas');
     let ele =  e[e.length - 1];
+    if (!ele) return
     let circle = ele.getContext("2d");
     circle.clearRect(0, 0, 210, 210);//清空
     //创建多个圆弧
@@ -657,6 +671,17 @@ export default class MainContent extends Component {
 
   }
 
+  // 开始时间气泡弹窗显示
+  handleProcessStartConfirmVisible = (visible) => {
+    if (!visible) {
+      const { startOpen } = this.state
+      if (!startOpen) return
+      this.setState({
+        startOpen: false
+      })
+    }
+  }
+
   // 预约开始时间
   startDatePickerChange = (timeString) => {
     this.setState({
@@ -669,7 +694,7 @@ export default class MainContent extends Component {
   }
   // 禁用的时间段
   disabledStartTime = (current) => {
-    return current && current < moment().subtract("days")
+    return current && current < moment().endOf('day')
   }
   // 这是保存一个点击此刻时不让日期面板关闭
   handleStartOpenChange = (open) => {
@@ -837,7 +862,7 @@ export default class MainContent extends Component {
               onChange={this.handleStartDatePickerChange.bind(this)}
               onOpenChange={this.handleStartOpenChange}
               open={this.state.startOpen}
-              getPopupContainer={triggerNode => triggerNode.parentNode}
+              getPopupContainer={() => document.getElementById('processStartConfirmContainer')}
               placeholder={'开始时间'}
               format="YYYY/MM/DD HH:mm"
               showTime={{ format: 'HH:mm' }}
@@ -850,7 +875,7 @@ export default class MainContent extends Component {
 
   render() {
     const { clientHeight, currentFlowInstanceName } = this.state
-    const { currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep, processInfo: { status } } = this.props
+    const { currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep, processInfo: { status, create_time } } = this.props
     let saveTempleteDisabled = currentFlowInstanceName == '' || (processEditDatas && processEditDatas.length) && processEditDatas.find(item => item.is_edit == '0') || (processEditDatas && processEditDatas.length) && !(processEditDatas[processEditDatas.length - 1].node_type) ? true : false
     return (
       <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto', position: 'relative' }} onScroll={this.onScroll} >
@@ -889,7 +914,12 @@ export default class MainContent extends Component {
                 {
                   !isEditCurrentFlowInstanceName ? (
                     <div onClick={processPageFlagStep == '4' ? '' : this.handleChangeFlowInstanceName} className={`${processPageFlagStep == '4' ? indexStyles.normal_flow_name : indexStyles.flow_name}`}>
-                      <span style={{ wordBreak: 'break-all' }}>{currentFlowInstanceName}</span>
+                      <span style={{ wordBreak: 'break-all', flex: 1 }}>{currentFlowInstanceName}</span>
+                      {
+                        processPageFlagStep == '4' && (
+                          <span style={{flexShrink: 0, color: 'rgba(0,0,0,0.45)', fontSize: '14px'}}>{timestampToTimeNormal(create_time,'/',true)} 开始</span>
+                        )
+                      }
                     </div>
                   ) : (
                       <NameChangeInput
@@ -943,11 +973,11 @@ export default class MainContent extends Component {
           {(processPageFlagStep == '1' || processPageFlagStep == '2') && this.renderAddProcessStep()}
           {
             processEditDatas.length >= 2 && (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '32px', position: 'relative' }}>
+              <div id={"processStartConfirmContainer"} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '32px', position: 'relative' }}>
                 {
                   (processPageFlagStep == '1' || processPageFlagStep == '3') && (
-                    <Popover trigger="click" title={null} content={this.renderProcessStartConfirm()} icon={<></>} getPopupContainer={triggerNode => triggerNode.parentNode}>
-                      <Button type={processPageFlagStep == '3' && 'primary'} disabled={saveTempleteDisabled} style={{ marginRight: '24px', height: '40px', border: '1px solid rgba(24,144,255,1)', color: processPageFlagStep == '3' ? '#fff': '#1890FF' }}>开始流程</Button>
+                    <Popover trigger="click" title={null} onVisibleChange={this.handleProcessStartConfirmVisible} content={this.renderProcessStartConfirm()} icon={<></>} getPopupContainer={triggerNode => triggerNode.parentNode}>
+                      <Button type={processPageFlagStep == '3' && 'primary'} disabled={saveTempleteDisabled} style={{ marginRight: '24px', height: '40px', border: '1px solid rgba(24,144,255,1)', color: processPageFlagStep == '3' ? '#fff': '#1890FF' }}>开始{`${currentNounPlanFilterName(FLOWS)}`}</Button>
                     </Popover>
                   )
                 }
@@ -960,10 +990,28 @@ export default class MainContent extends Component {
             )
           }
         </div>
+        {
+          (processPageFlagStep == '1' || processPageFlagStep == '2') && processEditDatas.length >= 2 && (
+            <div className={indexStyles.conclude_sign}>
+              <Checkbox>启用此模版时不能修改步骤执行人和步骤完成期限</Checkbox>
+            </div>
+          )
+        }
         <div id="suspensionFlowInstansNav" className={`${indexStyles.suspensionFlowInstansNav}`}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div>
-              <span style={{ color: 'rgba(0,0,0,0.85)', fontSize: '16px', fontWeight: 500 }}>{currentFlowInstanceName} ({`${this.renderCurrentStepNumber().currentStep} / ${this.renderCurrentStepNumber().totalStep}`})</span>
+            <div style={{flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '36px'}}>
+              <span style={{ color: 'rgba(0,0,0,0.85)', fontSize: '16px', fontWeight: 500, flex: 1, flexShrink: 0 }}>{currentFlowInstanceName} ({`${this.renderCurrentStepNumber().currentStep} / ${this.renderCurrentStepNumber().totalStep}`})
+                {
+                  status == '2' && (
+                    <span style={{display: 'inline-block', width: '58px', height: '28px', background: '#F5F5F5', marginLeft: '16px', borderRadius: '4px', textAlign: 'center', lineHeight: '28px', fontSize: '14px', color: 'rgba(0,0,0,0.25)'}}>已中止</span>
+                  )
+                }
+              </span>
+              {
+                processPageFlagStep == '4' && (
+                  <span style={{flexShrink: 0, color: 'rgba(0,0,0,0.45)'}}>{timestampToTimeNormal(create_time,'/',true)} 开始</span>
+                )
+              }
             </div>
             <div style={{flexShrink: 0}}>
               <span onClick={this.handleBackToTop} style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe63d; 回到顶部</span>

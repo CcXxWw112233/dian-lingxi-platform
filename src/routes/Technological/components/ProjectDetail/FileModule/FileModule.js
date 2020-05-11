@@ -42,7 +42,7 @@ export default class FileIndex extends React.Component {
         isInOpenFile: false,
         filePreviewCurrentFileId: '',
         fileType: '',
-        currentPreviewFileName: ''
+        filePreviewCurrentName: ''
       }
     })
   }

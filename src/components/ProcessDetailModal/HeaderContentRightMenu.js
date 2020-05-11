@@ -472,11 +472,11 @@ export default class HeaderContentRightMenu extends Component {
             <Menu.Item key="discontinue">中止{currentNounPlanFilterName(FLOWS)}</Menu.Item>
           )
         }
-        {
+        {/* {
           status == '2' && (
             <Menu.Item key="restart">重启{currentNounPlanFilterName(FLOWS)}</Menu.Item>
           )
-        }
+        } */}
         {
           (status == '2' || status == '3' || status == '0') && (
             <Menu.Item style={{ color: '#FF4D4F' }} key="delete">删除{currentNounPlanFilterName(FLOWS)}</Menu.Item>
@@ -503,6 +503,14 @@ export default class HeaderContentRightMenu extends Component {
                   <Button onClick={this.handleCovertTemplete} className={indexStyles.covert_templete}>
                     <span style={{marginRight: '4px'}} className={globalStyles.authTheme}>&#xe714;</span>
                     转为{`${currentNounPlanFilterName(FLOWS)}`}模板
+                  </Button>
+                )
+              }
+              {
+                status == '2' && (
+                  <Button onClick={this.handleReStartProcess} className={indexStyles.covert_templete} style={{marginLeft: '20px'}}>
+                    <span style={{marginRight: '4px'}} className={globalStyles.authTheme}>&#xe788;</span>
+                    重启{currentNounPlanFilterName(FLOWS)}
                   </Button>
                 )
               }

@@ -42,13 +42,13 @@ class ProcessIndex extends Component {
         fileType: '',
         isInOpenFile: false,
         isInAttachmentFile: false,
-        currentPreviewFileName: ''
+        filePreviewCurrentName: ''
       }
     })
   }
 
   render() {
-    const { isInOpenFile, filePreviewCurrentFileId, fileType, currentPreviewFileName } = this.props
+    const { isInOpenFile, filePreviewCurrentFileId, fileType, filePreviewCurrentName } = this.props
     return (
       <div className={indexStyles.processOut}>
       {this.filterPage()}
@@ -59,7 +59,7 @@ class ProcessIndex extends Component {
               filePreviewCurrentFileId={filePreviewCurrentFileId}
               fileType={fileType}
               file_detail_modal_visible={isInOpenFile}
-              currentPreviewFileName={currentPreviewFileName}
+              filePreviewCurrentName={filePreviewCurrentName}
               setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
             />
           )
@@ -81,8 +81,8 @@ function mapStateToProps({
     isInOpenFile,
     filePreviewCurrentFileId,
     fileType,
-    currentPreviewFileName
+    filePreviewCurrentName
   }
 }) {
-  return { processPageFlagStep, isInOpenFile, filePreviewCurrentFileId, fileType, currentPreviewFileName }
+  return { processPageFlagStep, isInOpenFile, filePreviewCurrentFileId, fileType, filePreviewCurrentName }
 }

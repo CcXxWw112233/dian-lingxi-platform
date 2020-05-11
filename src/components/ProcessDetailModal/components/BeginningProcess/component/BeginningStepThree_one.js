@@ -246,7 +246,7 @@ export default class BeginningStepThree_one extends Component {
                   <span>{name}</span>
                   {
                     score_display == '0' && status == '1' ? (
-                      <span style={{ color: '#1890FF', margin: '0 8px' }}>分数暂不可见</span>
+                      <span className={indexStyles.approv_rating}>已评分</span>
                     ) : (
                         <>
                           <span style={{ color: '#1890FF', margin: '0 8px' }}>{last_total.value}</span>
@@ -258,11 +258,45 @@ export default class BeginningStepThree_one extends Component {
                   }
                   {
                     score_display == '0' && status == '1' ? (
-                      <div style={{ color: 'rgba(0,0,0,0.25)' }}>(评分意见暂不可见，待所有评分人完成评分后公开)</div>
+                      <div style={{ color: 'rgba(0,0,0,0.25)' }}>(待所有评分人完成评分后显示评分值和评分意见)</div>
                     ) : (
                         <div style={{ color: comment == '无意见。' ? 'rgba(0,0,0,0.25)' : 'rgba(0,0,0,0.65)' }}>{comment}</div>
                       )
                   }
+                </div>
+              </div>
+              <div className={indexStyles.app_right}>{timestampToTimeNormal(time, '/', true) || ''}</div>
+            </div>
+          )
+        }
+
+      </div>
+    )
+  }
+
+  // 渲染未评分状态
+  renderNonRatingPerson = (item) => {
+    const { avatar, name, time } = item
+    return (
+      <div>
+        {
+          (
+            <div className={indexStyles.appListWrapper}>
+              <div className={indexStyles.app_left}>
+                <div className={indexStyles.approve_user} style={{ position: 'relative', marginRight: '16px' }}>
+                  {/* <div className={indexStyles.defaut_avatar}></div> */}
+                  {
+                    avatar ? (
+                      <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar} />
+                    ) : (
+                        <img style={{ width: '32px', height: '32px', borderRadius: '32px' }} src={defaultUserAvatar} />
+                      )
+                  }
+                </div>
+                <div style={{ position: 'relative' }}>
+                  <span>{name}</span>
+                  <span className={indexStyles.default_status}>未评分</span>
+                  <div style={{color: 'rgba(0,0,0,0.25)'}}>{'(暂未评分)'}</div>
                 </div>
               </div>
               <div className={indexStyles.app_right}>{timestampToTimeNormal(time, '/', true) || ''}</div>
@@ -283,7 +317,7 @@ export default class BeginningStepThree_one extends Component {
     let current_score_list = this.getCurrentUserScoreList()
     let last_total = current_score_list && current_score_list.find(item => item.is_total == '1') || {}
     let autoWidth = clientWidth ? clientWidth / 4 - 45 : 130
-    
+
     return (
       <div>
         {/* 评分项 */}
@@ -296,7 +330,7 @@ export default class BeginningStepThree_one extends Component {
                   <>
                     {
                       item.is_total == '0' && (
-                        <div key={item} className={`${indexStyles.rating_itemsValue} ${flag && score_items.length > 1 ? indexStyles.rating_active_width : indexStyles.rating_normal_width}`} style={{width: clientWidth ? clientWidth / 4 : '23%', minWidth: '220px'}}>
+                        <div key={item} className={`${indexStyles.rating_itemsValue} ${flag && score_items.length > 1 ? indexStyles.rating_active_width : indexStyles.rating_normal_width}`} style={{ width: flag && score_items.length > 1 ? clientWidth ? clientWidth / 4 : '23%' : '100%', minWidth: '220px' }}>
                           <p>
                             <span style={{ position: 'relative', marginRight: '9px', cursor: 'pointer', display: 'inline-block', display: 'flex', flex: 1 }}>
                               <Tooltip title={title} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
@@ -359,7 +393,7 @@ export default class BeginningStepThree_one extends Component {
             {
               score_display == '0' && status == '1' && (
                 <div style={{ color: 'rgba(0,0,0,0.45)', fontWeight: 500, position: 'absolute', bottom: '16px', left: last_total && Object.keys(last_total).length != '0' ? '158px' : '0px', display: 'flex', alignItems: 'center' }}>
-                  <div style={{flexShrink: 0}}>
+                  <div style={{ flexShrink: 0 }}>
                     <span>&nbsp;&nbsp;（暂时仅自己可见，待所有人评分人评分完成后公开）</span>
                   </div>
                 </div>
@@ -373,6 +407,9 @@ export default class BeginningStepThree_one extends Component {
                 if (item.score_items && item.score_items.length != '0') {
                   return <>{this.renderRatingPersonSuggestion(item)}</>
                 } else {
+                  if (item.processed != '2') {
+                    return <>{this.renderNonRatingPerson(item)}</>
+                  }
                   return <></>
                 }
               })
