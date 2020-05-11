@@ -4,7 +4,7 @@ import indexStyles from './index.less'
 import GetRowGantt from './GetRowGantt'
 import DateList from './DateList'
 import GroupListHead from './GroupListHead'
-import { getMonthDate, getNextMonthDatePush } from './getDate'
+import { getMonthDate, getNextMonthDatePush, getGoldDateData, getYearDate } from './getDate'
 import { date_area_height, ganttIsOutlineView } from './constants'
 import GroupListHeadSet from './GroupListHeadSet.js'
 import GroupListHeadSetBottom from './GroupListHeadSetBottom'
@@ -27,10 +27,10 @@ export default class GanttFace extends Component {
     this.state = {
       timer: null,
       viewModal: '2', //视图模式1周，2月，3年
-      target_scrollLeft: 0, //滚动条位置，用来判断向左还是向右
       gantt_card_out_middle_max_height: 600,
       local_gantt_board_id: '0', //当前项目id（项目tab栏）缓存在组件内，用于判断是否改变然后重新获取数据
       init_get_outline_tree: false, //大纲视图下初始化是否获取了大纲树
+      scroll_area: 'gantt_body', // gantt_head/gantt_body 头部或右边 滚动事件触发的区域
     }
     this.setGanTTCardHeight = this.setGanTTCardHeight.bind(this)
   }
@@ -123,53 +123,62 @@ export default class GanttFace extends Component {
     }, delay)
   }
 
+  // 设置滚动的区域
+  setScrollArea = (area_type) => {
+    this.setState({
+      scroll_area: area_type
+    })
+  }
   //左右拖动,日期会更新
   ganttScroll = (e) => {
-    console.log('ssssss')
     e.stopPropagation();
+    if (this.state.scroll_area == 'gantt_head') {
+      return
+    }
     if ('gantt_card_out_middle' != e.target.getAttribute("id")) return
     const that = this
 
     const { scrollTop, scrollLeft, scrollWidth, clientWidth } = e.target
-    this.handleScrollVertical({ scrollTop })
+    const gantt_group_head = document.getElementById('gantt_group_head')
+    if (gantt_group_head) {
+      gantt_group_head.scrollTop = scrollTop
+    }
+    // this.handleScrollVertical({ scrollTop })
+    const gantt_date_area = document.getElementById('gantt_date_area')
+    if (gantt_date_area) {
+      gantt_date_area.style.left = `-${scrollLeft}px`
+    }
     this.handelScrollHorizontal({ scrollLeft, scrollWidth, clientWidth, })
   }
   // 处理上下滚动
   handleScrollVertical = ({ scrollTop }) => {
     const { group_view_type, gantt_board_id, target_scrollTop, dispatch } = this.props
-    if (target_scrollTop != scrollTop) {
-      console.log('sssssscroll', '垂直')
+    // if (target_scrollTop != scrollTop) {
+    // dispatch({
+    //   type: getEffectOrReducerByName('updateDatas'),
+    //   payload: {
+    //     target_scrollTop: scrollTop
+    //   }
+    // })
+    if (group_view_type == '1' && gantt_board_id == '0') {
       dispatch({
         type: getEffectOrReducerByName('updateDatas'),
         payload: {
+          target_scrollTop_board_storage: scrollTop,
           target_scrollTop: scrollTop
         }
       })
-      if (group_view_type == '1' && gantt_board_id == '0') {
-        dispatch({
-          type: getEffectOrReducerByName('updateDatas'),
-          payload: {
-            target_scrollTop_board_storage: scrollTop
-          }
-        })
-      }
     }
+    // }
   }
   // 处理水平滚动
   handelScrollHorizontal = ({ scrollLeft, scrollWidth, clientWidth, }) => {
-    const { target_scrollLeft, searchTimer } = this.state
-    const { gold_date_arr, dispatch, ceilWidth } = this.props
+    const { searchTimer } = this.state
+    const { gold_date_arr, dispatch, ceilWidth, target_scrollLeft } = this.props
     const delX = target_scrollLeft - scrollLeft //判断向左还是向右
     if (target_scrollLeft == scrollLeft) {
       return
     }
-    console.log('sssssscroll', '水平', {
-      scrollLeft,
-      delX,
-      ceilWidth,
-      bool: scrollLeft < 3 * ceilWidth,
-
-    })
     if (searchTimer) {
       clearTimeout(searchTimer)
     }
@@ -200,20 +209,19 @@ export default class GanttFace extends Component {
         target_scrollLeft: scrollLeft
       }
     })
-    this.setState({
-      target_scrollLeft: scrollLeft
-    })
   }
 
   //更新日期,日期更新后做相应的数据请求
   setGoldDateArr = ({ timestamp, to_right, init, not_set_loading }) => {
     const { dispatch } = this.props
-    const { gold_date_arr = [], isDragging } = this.props
+    const { gold_date_arr = [], isDragging, gantt_view_mode } = this.props
     let date_arr = []
-    if (!!to_right && isDragging) { //如果是拖拽虚线框向右则是累加，否则是取基数前后
+    if (!!to_right && isDragging && gantt_view_mode == 'month') { //如果是拖拽虚线框向右则是累加，否则是取基数前后
       date_arr = [].concat(gold_date_arr, getNextMonthDatePush(timestamp))
     } else {
-      date_arr = getMonthDate(timestamp)
+      // date_arr = getMonthDate(timestamp)
+      // date_arr = getYearDate(timestamp)
+      date_arr = getGoldDateData({ gantt_view_mode, timestamp })
     }
     // if (!!to_right) { //如果是拖拽虚线框向右则是累加，否则是取基数前后
     //   date_arr = [].concat(gold_date_arr, getNextMonthDatePush(timestamp))
@@ -228,6 +236,9 @@ export default class GanttFace extends Component {
         date_total += 1
         date_arr_one_level.push(val2)
       }
+    }
+    if (gantt_view_mode == 'year') {
+      date_total = date_arr_one_level.slice().map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
     }
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
@@ -327,15 +338,18 @@ export default class GanttFace extends Component {
   }
   render() {
     const { gantt_card_out_middle_max_height } = this.state
-    const { gantt_card_height, get_gantt_data_loading, is_need_calculate_left_dx, gantt_board_id, is_show_board_file_area, group_view_type } = this.props
+    const { gantt_card_height, get_gantt_data_loading, is_need_calculate_left_dx, gantt_board_id, is_show_board_file_area, group_view_type, get_gantt_data_loading_other } = this.props
     const dataAreaRealHeight = this.getDataAreaRealHeight()
 
     return (
       <div className={indexStyles.cardDetail} id={'gantt_card_out'} style={{ height: gantt_card_height, width: '100%' }}>
         {
-          get_gantt_data_loading && (
-            <div className={indexStyles.cardDetailMask} style={{ height: gantt_card_height }}>
-              <Spin spinning={get_gantt_data_loading} tip={'甘特图数据正在加载中...'} >
+          (get_gantt_data_loading || get_gantt_data_loading_other) && (
+            <div className={indexStyles.cardDetailMask} style={{
+              height: gantt_card_height,
+              backgroundColor: get_gantt_data_loading_other ? 'rgba(255,255,255,.7)' : '',
+            }}>
+              <Spin spinning={get_gantt_data_loading || get_gantt_data_loading_other} tip={'甘特图数据正在加载中...'} >
               </Spin>
             </div>
           )
@@ -361,6 +375,8 @@ export default class GanttFace extends Component {
               <GroupListHeadSet />
               {/*  //撑住DateList相同高度的底部 */}
               <GroupListHead
+                setScrollArea={this.setScrollArea}
+                scroll_area={this.state.scroll_area}
                 changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
                 deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
                 setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
@@ -374,18 +390,19 @@ export default class GanttFace extends Component {
               style={{ height: gantt_card_height - 20 }} >
               <DateList />
               <div
+                style={{ height: date_area_height }} //撑住DateList相同高度的底部
+              />
+              <div
                 style={{
-                  height: gantt_card_height - 20,
+                  height: gantt_card_height - 20 - date_area_height,
                 }}
                 className={indexStyles.panel_out}
                 id={'gantt_card_out_middle'}
                 ref={'gantt_card_out_middle'}
+                onMouseEnter={() => this.setScrollArea('gantt_body')}
                 onScroll={this.ganttScroll}
               >
                 <div className={indexStyles.panel}>
-                  <div
-                    style={{ height: date_area_height }} //撑住DateList相同高度的底部
-                  />
                   <GetRowGantt
                     changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
                     deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
@@ -418,7 +435,7 @@ export default class GanttFace extends Component {
           isPaymentOrgUser() && is_show_board_file_area != '1' && <ShowFileSlider />
         }
         <BoardsFilesArea />
-      </div>
+      </div >
     )
   }
 
@@ -438,6 +455,9 @@ function mapStateToProps({ gantt: { datas: {
   gantt_board_id,
   is_show_board_file_area,
   outline_tree,
+  gantt_view_mode,
+  target_scrollLeft,
+  get_gantt_data_loading_other
 } } }) {
   return {
     ceilWidth,
@@ -453,6 +473,9 @@ function mapStateToProps({ gantt: { datas: {
     gantt_board_id,
     is_show_board_file_area,
     outline_tree,
+    gantt_view_mode,
+    target_scrollLeft,
+    get_gantt_data_loading_other
   }
 }
 GanttFace.defaultProps = {

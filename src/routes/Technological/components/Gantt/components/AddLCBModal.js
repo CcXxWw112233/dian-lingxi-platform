@@ -21,6 +21,7 @@ import DropdownSelectWithSearch from './../../../components/Workbench/CardConten
 import DropdownMultipleSelectWithSearch from './../../../components/Workbench/CardContent/DropdownMultipleSelectWithSearch/index';
 import DateRangePicker from './../../../components/Workbench/CardContent/DateRangePicker/index';
 import Cookies from 'js-cookie';
+import moment from 'moment'
 
 import {
   MESSAGE_DURATION_TIME,
@@ -221,6 +222,23 @@ class AddTaskContent extends Component {
       }
     })
   }
+  disabledDate = (current, a, b) => { //如果传进来可用区间
+    const { availableDate } = this.props //availableDate == [start, end]
+    if (Object.prototype.toString.call(availableDate) !== '[object Array]') { //非严格数组区间默认处理成全部可用
+      return false
+    }
+    const current_time = new Date(current._d).getTime()
+    // 在区间外返回true表示禁用
+    return (availableDate[1] > availableDate[0]) && (current_time < availableDate[0] || current_time > availableDate[1])
+  }
+  // 传递进来区间后给默认的日期在区间内
+  defaultPickerValue = (a, b, c) => {
+    const { availableDate } = this.props
+    if (Object.prototype.toString.call(availableDate) !== '[object Array]') { //非严格数组区间默认处理成全部可用
+      return moment(new Date())
+    }
+    return moment(availableDate[0])
+  }
   render() {
     const {
       add_name,
@@ -269,7 +287,11 @@ class AddTaskContent extends Component {
             {create_lcb_time ? timestampToTimeNormal(create_lcb_time, '/', true) : (
               <div style={{ position: 'relative' }}>
                 {timestampToTimeNormal(due_time, '/', true) || '设置截止时间'}
-                <DatePicker onChange={this.datePickerChange.bind(this)}
+                <DatePicker
+                  // defaultValue={() => moment(this.props.availableDate[0])}
+                  defaultPickerValue={this.defaultPickerValue()}
+                  disabledDate={this.disabledDate}
+                  onChange={this.datePickerChange.bind(this)}
                   placeholder={'选择截止时间'}
                   showTime={{ format: 'HH:mm' }}
                   format="YYYY-MM-DD HH:mm"
