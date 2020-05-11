@@ -104,7 +104,7 @@ class base_utils {
         const {
             year,
             month,
-        } = this.getNeedDategetNeedDate(timestamp_trans)
+        } = this.getNeedDate(timestamp_trans)
         //后一个月
         const behind_one_year = month == 12 ? year + 1 : year
         const behind_one_month = month == 12 ? 1 : month + 1
