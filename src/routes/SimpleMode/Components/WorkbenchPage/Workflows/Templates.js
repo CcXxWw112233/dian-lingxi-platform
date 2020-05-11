@@ -8,6 +8,7 @@ import { PROJECT_FLOWS_FLOW_TEMPLATE, PROJECT_FLOWS_FLOW_CREATE, NOT_HAS_PERMISI
 import SelectBoardModal from './SelectBoardModal'
 import { timeToTimestamp } from '../../../../../utils/util'
 import moment from 'moment'
+import { isApiResponseOk } from "../../../../../utils/handleResponseData";
 @connect(mapStateToProps)
 export default class Templates extends Component {
     constructor(props) {
