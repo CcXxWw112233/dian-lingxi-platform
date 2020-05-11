@@ -323,6 +323,8 @@ export default {
       let res = yield call(changeCurrentOrg, { org_id })
       if (isApiResponseOk(res)) {
         setOrganizationIdStorage(org_id)
+        window.location.reload()
+        return
         yield put({
           type: 'getUSerInfo',
           payload: {

@@ -7,16 +7,17 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
 import AvatarList from '@/components/avatarList'
 import { Tooltip, Dropdown, message } from 'antd'
-import { date_area_height, task_item_height, task_item_margin_top, ganttIsFold, ceil_height_fold, task_item_height_fold, group_rows_fold, ganttIsOutlineView } from './constants'
+import { date_area_height, task_item_height, task_item_margin_top, ganttIsFold, ceil_height_fold, task_item_height_fold, group_rows_fold, ganttIsOutlineView, ceil_width } from './constants'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import QueueAnim from 'rc-queue-anim'
 import GetRowTaskItem from './GetRowTaskItem'
-import { filterDueTimeSpan } from './ganttBusiness'
+import { filterDueTimeSpan, setDateWithPositionInYearView } from './ganttBusiness'
 import { checkIsHasPermissionInBoard } from '../../../../utils/businessFunction';
 import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE } from '../../../../globalset/js/constant';
 import GetRowSummary from './components/gattFaceCardItem/GetRowSummary.js'
 import GetRowGanttVirtual from './GetRowGanttVirtual'
 import GetRowStrip from './components/GetRowStrip'
+
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
 const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
@@ -183,7 +184,7 @@ export default class GetRowGantt extends Component {
     this.setState({
       currentRect: property
     }, () => {
-      this.handleCreateTask({ start_end: '2', top: property.y, not_create: true })
+      // this.handleCreateTask({ start_end: '2', top: property.y, not_create: true })
       this.setDragDashedRectHolidayNo()
     })
   }
@@ -257,7 +258,7 @@ export default class GetRowGantt extends Component {
     const property = {
       x: px,
       y: py,
-      width: 40,
+      width: ceilWidth,
       height: task_item_height,
     }
 
@@ -298,7 +299,7 @@ export default class GetRowGantt extends Component {
 
   //记录起始时间，做创建任务工作
   handleCreateTask = ({ start_end, top, not_create }) => {
-    const { dataAreaRealHeight } = this.props
+    const { dataAreaRealHeight, gantt_view_mode } = this.props
     if (top >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
 
     const { dispatch } = this.props
@@ -306,16 +307,68 @@ export default class GetRowGantt extends Component {
     const { currentRect = {} } = this.state
     const { x, y, width, height } = currentRect
     let counter = 0
-    let date = {}
-    for (let val of date_arr_one_level) {
-      counter += 1
-      if (counter * ceilWidth > x + width) {
-        date = val
-        break
+    let date = {} //月视图操作的日期数据
+
+
+    if (gantt_view_mode == 'month') { //月视图下定位到相符的日期
+      for (let val of date_arr_one_level) {
+        counter += 1
+        if (counter * ceilWidth >= x + width) {
+          date = val
+          break
+        }
       }
+    } else if (gantt_view_mode == 'year') { //年视图下定位到相符的月，然后在该月份下定位日期
+      const max_width = Math.max(width, ceilWidth) //width不能小于最小单元
+      const _position = start_end == '1' ? x + width : x + max_width //所取点的位置
+      date = setDateWithPositionInYearView({
+        _position,
+        ceilWidth,
+        date_arr_one_level,
+        width: max_width,
+        x,
+        // x: start_end == '1' ? x : x - max_width //截止日期总是往后一天，故减1做魔法兼容
+        // x: start_end == '1' ? x + ceilWidth : x,
+      })
+      // for (let val of date_arr_one_level) {
+      //   month_data.month_date_length_total += val['last_date']  //每个月累加天数
+      //   month_data.month_count += 1 //月份数累加
+      //   if (month_data.month_date_length_total * ceilWidth > x + width) {
+      //     month_data.month = val //获得当前月份
+      //     break
+      //   }
+
+      // }
+      // // console.log('asdasdasd00', month_data.month.last_date, month_data.month_date_length_total, x / ceilWidth)
+      // //当前月份天数长度 - (所属月份和之前月份的总天数长度 - 当前点的位置（x(x是经过单元格乘以单元格长度转换而来)）) = 该月份日期
+      // const position_ = start_end == '1' ? x : x + width //所取点的位置
+      // month_data.date_no = month_data.month.last_date - (month_data.month_date_length_total - position_ / ceilWidth)
+      // let _year = month_data.month.year
+      // let _month = month_data.month.month
+      // //由于计算紧凑，会出现2010/02/0 或者2010/02/-1等日期号不正常情况，这种情况将日期设置为上一个月的最后一天
+      // if (month_data.date_no <= 0) {
+      //   if (_month == 1) {
+      //     _month = 12
+      //     _year = _year - 1
+      //   } else {
+      //     _month = _month - 1
+      //   }
+      //   month_data.date_no = base_utils.getDaysNumInMonth(_month, _year)
+      // }
+      // let date_string = `${_year}/${_month}/${month_data.date_no}`
+      // date = {
+      //   timestamp: new Date(`${date_string} 00:00:00`).getTime(),
+      //   timestampEnd: new Date(`${date_string} 23:59:59`).getTime()
+      // }
+      // console.log('asdasdasd', date_string)
+    } else {
+
     }
+
     const { timestamp, timestampEnd } = date
     const update_name = start_end == '1' ? 'create_start_time' : 'create_end_time'
+    console.log('ssssssdate', date)
+
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: {
@@ -575,16 +628,17 @@ export default class GetRowGantt extends Component {
               title={'点击或向右拖拽创建任务'}
               className={indexStyles.dasheRect} style={{
                 left: currentRect.x + 1, top: currentRect.y,
-                width: currentRect.width, height: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? task_item_height_fold : task_item_height,//currentRect.height,
+                width: currentRect.width,
+                height: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? task_item_height_fold : task_item_height,//currentRect.height,
                 boxSizing: 'border-box',
                 marginTop: !ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? task_item_margin_top : (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2, //task_item_margin_top,//
                 color: 'rgba(0,0,0,0.45)',
                 textAlign: 'right',
                 lineHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? `${task_item_height_fold}px` : `${ceiHeight - task_item_margin_top}px`,
-                paddingRight: 8,
+                paddingRight: Math.ceil(currentRect.width / ceilWidth) > 1 ? 8 : 0,
                 zIndex: this.isDragging ? 2 : 1
               }} >
-              {Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth)}
+              {Math.ceil(currentRect.width / ceilWidth) > 1 ? Math.ceil(currentRect.width / ceilWidth) : ''}
               {/* {Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth) - drag_holiday_count}
               {Math.ceil(currentRect.width / ceilWidth) != 1 && (drag_holiday_count > 0 ? `+${drag_holiday_count}` : '')} */}
             </div>
@@ -677,7 +731,8 @@ function mapStateToProps({ gantt: {
     group_view_type,
     group_list_area_section_height,
     show_board_fold,
-    outline_tree_round
+    outline_tree_round,
+    gantt_view_mode
   } },
   technological: {
     datas: {
@@ -701,7 +756,8 @@ function mapStateToProps({ gantt: {
     group_list_area_section_height,
     show_board_fold,
     userBoardPermissions,
-    outline_tree_round
+    outline_tree_round,
+    gantt_view_mode
   }
 }
 

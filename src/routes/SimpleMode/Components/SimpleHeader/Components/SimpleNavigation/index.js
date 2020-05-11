@@ -371,14 +371,14 @@ export default class SimpleNavigation extends Component {
                         isNeedRedirectHash: false
                     }
                 })
-                dispatch({
-                    type: 'technological/updateDatas',
-                    payload: {
-                        currentSelectOrganize: {},
-                        is_all_org: true,
-                        is_show_org_name: is_show_org_name ? true : false,
-                    }
-                })
+                // dispatch({
+                //     type: 'technological/updateDatas',
+                //     payload: {
+                //         currentSelectOrganize: {},
+                //         is_all_org: true,
+                //         is_show_org_name: is_show_org_name ? true : false,
+                //     }
+                // })
 
                 dispatch({
                     type: 'simplemode/updateDatas',
@@ -411,12 +411,12 @@ export default class SimpleNavigation extends Component {
                 for (let val of currentUserOrganizes) {
                     if (key === val['id']) {
                         localStorage.setItem('currentSelectOrganize', JSON.stringify(val))
-                        dispatch({
-                            type: 'technological/updateDatas',
-                            payload: {
-                                currentSelectOrganize: val
-                            }
-                        })
+                        // dispatch({
+                        //     type: 'technological/updateDatas',
+                        //     payload: {
+                        //         currentSelectOrganize: val
+                        //     }
+                        // })
                         dispatch({
                             type: 'technological/changeCurrentOrg',
                             payload: {

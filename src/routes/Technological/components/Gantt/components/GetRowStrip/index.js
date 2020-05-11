@@ -11,6 +11,7 @@ import MilestoneDetail from '../milestoneDetail'
 import { checkIsHasPermission, checkIsHasPermissionInBoard } from '../../../../../../utils/businessFunction';
 import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_CREATE } from '../../../../../../globalset/js/constant';
 import { isSamDay, getDigit } from '../../../../../../utils/util';
+import { setDateWithPositionInYearView } from '../../ganttBusiness';
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
 const getEffectOrReducerByName = name => `gantt/${name}`
@@ -54,12 +55,12 @@ export default class GetRowStrip extends PureComponent {
     }
 
     renderStyles = () => {
-        const { itemValue = {}, date_arr_one_level = [], ceilWidth } = this.props
+        const { itemValue = {}, date_arr_one_level = [], ceilWidth, date_total } = this.props
         const { height, top, left } = itemValue
         return {
             height,
             top: top + task_item_margin_top,
-            width: date_arr_one_level.length * ceilWidth,
+            width: date_total * ceilWidth,
         }
     }
     // 长条鼠标事件---start
@@ -122,17 +123,31 @@ export default class GetRowStrip extends PureComponent {
     // 计算当前鼠标滑动位置的时间
     calHoverDate = () => {
         const { currentRect } = this.state
+        const { gantt_view_mode, itemValue: { time_span } } = this.props
         const { x, y, width, height } = currentRect
         const { date_arr_one_level, ceilWidth } = this.props
         let counter = 0
         let date = {}
-        for (let val of date_arr_one_level) {
-            counter += 1
-            if (counter * ceilWidth > x) {
-                date = val
-                break
+        if (gantt_view_mode == 'month') {
+            for (let val of date_arr_one_level) {
+                counter += 1
+                if (counter * ceilWidth > x) {
+                    date = val
+                    break
+                }
             }
+        } else if (gantt_view_mode == 'year') {
+            date = setDateWithPositionInYearView({
+                _position: x,
+                date_arr_one_level,
+                ceilWidth,
+                width: width || ceilWidth,
+                x
+            })
+        } else {
+
         }
+        // debugger
         return date
     }
     // 渲染任务滑块 --start
@@ -149,7 +164,7 @@ export default class GetRowStrip extends PureComponent {
                     marginLeft: currentRect.x
                 }}>
                 <div
-                    style={{ width: time_span ? time_span * ceilWidth - 6 : 40 }}
+                    style={{ width: time_span ? time_span * ceilWidth - 6 : ceilWidth }}
                     className={styles.card_rect}></div>
                 <div className={styles.point}></div>
                 <div className={styles.name}>{name}</div>
@@ -224,7 +239,7 @@ export default class GetRowStrip extends PureComponent {
                 paddingLeft = ceilWidth / 2 - 2
             }
         }
-        if(marginLeft == '0') {
+        if (marginLeft == '0') {
             display = 'none'
         }
         console.log('marginLeft', marginLeft)
@@ -670,15 +685,26 @@ export default class GetRowStrip extends PureComponent {
     // 设置出现将具有时间的里程碑或任务定位到视觉区域内------start
     // 定位
     navigateToVisualArea = () => {
-        const { date_arr_one_level = [], ceilWidth, itemValue = {} } = this.props
+        const { date_arr_one_level = [], ceilWidth, itemValue = {}, gantt_view_mode } = this.props
         const { start_time, due_time, tree_type } = itemValue
         const gold_time = tree_type == '1' ? due_time : start_time
         const date = new Date(gold_time).getDate()
-        const toDayIndex = date_arr_one_level.findIndex(item => isSamDay(item.timestamp, gold_time))
+        let toDayIndex = -1
+        if (gantt_view_mode == 'month') {
+            toDayIndex = date_arr_one_level.findIndex(item => isSamDay(item.timestamp, gold_time)) //当天所在位置index
+        } else if (gantt_view_mode == 'year') {
+            toDayIndex = date_arr_one_level.findIndex(item => gold_time > item.timestamp && gold_time < item.timestampEnd) //当天所在月位置index
+        } else {
+
+        }
         const target = document.getElementById('gantt_card_out_middle')
 
         if (toDayIndex != -1) { //如果今天在当前日期面板内 
-            const nomal_position = toDayIndex * ceilWidth - 248 + 16 //248为左边面板宽度,16为左边header的宽度和withCeil * n的 %值
+            let nomal_position = toDayIndex * ceilWidth - 248 + 16 //248为左边面板宽度,16为左边header的宽度和withCeil * n的 %值
+            if (gantt_view_mode == 'year') {
+                const date_position = date_arr_one_level.slice(0, toDayIndex).map(item => item.last_date).reduce((total, num) => total + num) //索引月份总天数
+                nomal_position = date_position * ceilWidth - 248 + 16//当天所在位置index
+            }
             const max_position = target.scrollWidth - target.clientWidth - 2 * ceilWidth//最大值,保持在这个值的范围内，滚动条才能不滚动到触发更新的区域
             const position = max_position > nomal_position ? nomal_position : max_position
 
@@ -719,11 +745,18 @@ export default class GetRowStrip extends PureComponent {
             }
         }
 
-        const { date_arr_one_level, } = this.props
+        const { date_arr_one_level, gantt_view_mode } = this.props
         const width = target.clientWidth
         const scrollLeft = target.scrollLeft
         const gold_time = tree_type == '1' ? due_time : start_time
-        const index = date_arr_one_level.findIndex(item => isSamDay(item.timestamp, gold_time)) //当天所在位置index
+        let index = -1
+        if (gantt_view_mode == 'month') {
+            index = date_arr_one_level.findIndex(item => isSamDay(item.timestamp, gold_time)) //当天所在位置index
+        } else if (gantt_view_mode == 'year') {
+            index = date_arr_one_level.findIndex(item => gold_time > item.timestamp && gold_time < item.timestampEnd) //当天所在月位置index
+        } else {
+
+        }
         let isInViewArea = false //是否在可视区域
         let direction = '' //在右还是在左
         let date_arr_one_level_length = date_arr_one_level.length
@@ -785,7 +818,7 @@ export default class GetRowStrip extends PureComponent {
                     // onMouseOver={this.stripMouseOver}
                     // onMouseLeave={this.stripMouseLeave}
                     style={{ ...this.renderStyles() }}>
-                    {
+                    { //日期在视图外往左或者往右
                         is_item_has_time && !isInViewArea ? (
                             <div
                                 onClick={this.navigateToVisualArea}
@@ -804,7 +837,7 @@ export default class GetRowStrip extends PureComponent {
                             </div>
                         ) : ''
                     }
-                    {
+                    { //用于拖拽生成任务（已废弃）
                         dasheRectShow
                         && !this.task_is_dragging
                         && (
@@ -865,7 +898,9 @@ function mapStateToProps({ gantt: {
         group_list_area_section_height,
         show_board_fold,
         outline_tree_round,
-        target_scrollLeft
+        target_scrollLeft,
+        date_total,
+        gantt_view_mode
     } },
     milestoneDetail: {
         milestone_detail = {}
@@ -894,6 +929,8 @@ function mapStateToProps({ gantt: {
         show_board_fold,
         outline_tree_round,
         projectDetailInfoData,
-        target_scrollLeft
+        target_scrollLeft,
+        date_total,
+        gantt_view_mode
     }
 }

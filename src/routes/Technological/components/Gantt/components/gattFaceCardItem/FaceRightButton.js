@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import styles from './index.less'
 import { connect, } from 'dva';
-import { isSamDay } from '../../getDate';
-import { ceil_height_fold, ceil_height } from '../../constants';
+import { ceil_height_fold, ceil_height, ceil_width, ceil_width_year } from '../../constants';
+import { isSamDay } from '../../../../../../utils/util';
 
 @connect(mapStateToProps)
 export default class FaceRightButton extends Component {
@@ -20,17 +20,26 @@ export default class FaceRightButton extends Component {
     }
 
     checkToday = () => {
-        const { dispatch, date_arr_one_level = [], ceilWidth } = this.props
+        const { dispatch, date_arr_one_level = [], ceilWidth, gantt_view_mode } = this.props
         const now = new Date().getTime()
         const date = new Date().getDate()
-        const toDayIndex = date_arr_one_level.findIndex(item => isSamDay(item.timestamp, now))
+        let toDayIndex = -1
+        if (gantt_view_mode == 'month') {
+            toDayIndex = date_arr_one_level.findIndex(item => isSamDay(item.timestamp, now)) //当天所在位置index
+        } else if (gantt_view_mode == 'year') {
+            toDayIndex = date_arr_one_level.findIndex(item => now > item.timestamp && now < item.timestampEnd) //当天所在月位置index
+        }
+
         const target = document.getElementById('gantt_card_out_middle')
 
         if (toDayIndex != -1) { //如果今天在当前日期面板内 
-            const nomal_position = toDayIndex * ceilWidth - 248 + 16 //248为左边面板宽度,16为左边header的宽度和withCeil * n的 %值
+            let nomal_position = toDayIndex * ceilWidth - 248 + 16 //248为左边面板宽度,16为左边header的宽度和withCeil * n的 %值
+            if (gantt_view_mode == 'year') {
+                const date_position = date_arr_one_level.slice(0, toDayIndex).map(item => item.last_date).reduce((total, num) => total + num) //索引月份总天数
+                nomal_position = date_position * ceilWidth - 248 + 16//当天所在位置index
+            }
             const max_position = target.scrollWidth - target.clientWidth - 2 * ceilWidth//最大值,保持在这个值的范围内，滚动条才能不滚动到触发更新的区域
             const position = max_position > nomal_position ? nomal_position : max_position
-
             this.setScrollPosition({
                 position
             })
@@ -46,12 +55,15 @@ export default class FaceRightButton extends Component {
         if (!target) {
             return
         }
-        const { date_arr_one_level, ceilWidth = 44 } = this.props
+        const { date_arr_one_level, ceilWidth = 44, gantt_view_mode } = this.props
         const scrollLeft = target.scrollLeft
 
         const width = target.clientWidth
         const now = new Date().getTime()
-        const index = date_arr_one_level.findIndex(item => isSamDay(item.timestamp, now)) //当天所在位置index
+        let index = date_arr_one_level.findIndex(item => isSamDay(item.timestamp, now)) //当天所在位置index
+        if (gantt_view_mode == 'year') {
+            index = date_arr_one_level.findIndex(item => now > item.timestamp && now < item.timestampEnd) //当天所在月位置index
+        }
         const now_position = index * ceilWidth //当天所在位置position
 
         let isInViewArea = false
@@ -92,24 +104,81 @@ export default class FaceRightButton extends Component {
             }
         })
     }
-    render() {
-        const { gantt_board_id, group_view_type, show_board_fold } = this.props
-        return (
-            <div>
-                {
-                    !this.filterIsInViewArea() && (
-                        <div className={styles.card_button} onClick={this.checkToday}>
-                            今天
-                         </div>
-                    )
+    // 视图切换 年/月
+    changeGanttViewMode = (type) => {
+        const { dispatch, gantt_view_mode } = this.props
+        if (!type || gantt_view_mode == type) return
+        const _now = new Date().getTime()
+
+        let ceilWidth = ceil_width
+        if (type == 'year') {
+            ceilWidth = ceil_width_year
+        } else if (type == 'month') {
+            ceilWidth = ceil_width
+        } else {
+
+        }
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                ceilWidth,
+                gantt_view_mode: type,
+                get_gantt_data_loading_other: true
+            }
+        })
+        setTimeout(() => {
+            this.props.setGoldDateArr({ timestamp: _now })
+        }, 200)
+
+        setTimeout(() => {
+            this.checkToday()
+        }, 600)
+        // setTimeout(() => {
+        //     this.checkToday()
+        // }, 1000)
+        setTimeout(() => {
+            dispatch({
+                type: 'gantt/updateDatas',
+                payload: {
+                    get_gantt_data_loading_other: false
                 }
+            })
+        }, 2000)
+
+    }
+    render() {
+        const { gantt_board_id, group_view_type, show_board_fold, gantt_view_mode } = this.props
+        return (
+            <div className={styles.sections}>
                 {
                     gantt_board_id == '0' && group_view_type == '1' && (
-                        <div className={styles.card_button} style={{ right: !this.filterIsInViewArea() ? 106 : 30 }} onClick={this.setShowBoardFold} >
+                        <div className={styles.card_button} onClick={this.setShowBoardFold} >
                             {show_board_fold ? '计划明细' : '进度汇总'}
                         </div>
                     )
                 }
+                {
+                    !this.filterIsInViewArea() && (
+                        <div className={styles.card_button} onClick={this.checkToday}>
+                            今天
+                        </div>
+                    )
+                }
+
+
+                <div
+                    style={{ color: gantt_view_mode == 'month' ? '#1890FF' : '' }}
+                    className={styles.card_button}
+                    onClick={() => this.changeGanttViewMode('month')}
+                >
+                    月
+                </div>
+                <div
+                    style={{ color: gantt_view_mode == 'year' ? '#1890FF' : '' }}
+                    className={styles.card_button}
+                    onClick={() => this.changeGanttViewMode('year')} >
+                    年
+                </div>
             </div>
         )
     }
@@ -123,6 +192,7 @@ function mapStateToProps({ gantt: { datas: {
     gantt_board_id,
     group_view_type,
     list_group = [],
+    gantt_view_mode
 } } }) {
     return {
         date_arr_one_level,
@@ -131,6 +201,7 @@ function mapStateToProps({ gantt: { datas: {
         show_board_fold,
         gantt_board_id,
         group_view_type,
-        list_group
+        list_group,
+        gantt_view_mode
     }
 }

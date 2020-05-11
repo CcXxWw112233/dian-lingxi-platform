@@ -66,7 +66,7 @@
 
   .cardDetail_middle::-webkit-scrollbar {
     /*滚动条整体样式*/
-    width: 0px;
+    width : 0px;
     /*高宽分别对应横竖滚动条的尺寸*/
     height: 12px;
   }
@@ -117,11 +117,14 @@
         color     : rgba(0, 0, 0, .65);
 
         .dateDetailItem_date_no {
-          width        : 24px;
+          min-width    : 24px;
+          padding      : 0 5px;
+          box-sizing   : border-box;
           height       : 24px;
           border-radius: 24px;
           margin       : 0 auto;
           position     : relative;
+          display      : inline-block;
         }
 
         .nomal_date_no {
@@ -213,26 +216,30 @@
 
   .dasheRect {
     position        : absolute;
-    border          : 2px dashed #E8E8E8;
+    border          : 1px dashed rgba(0, 0, 0, 0.25);
     background-color: #ffffff;
+    box-sizing      : border-box;
+    border-radius   : 4px;
+    overflow        : hidden;
   }
 
   .specific_example {
     // background-image: linear-gradient(to right , #7A88FF, #7AFFAF);
-    position           : absolute;
+    position              : absolute;
     // background-color: #1890FF;
-    z-index            : 1;
-    box-sizing         : border-box;
-    border-radius      : 2px;
-    cursor             : pointer;
+    z-index               : 1;
+    box-sizing            : border-box;
+    border-radius         : 2px;
+    cursor                : pointer;
     // background      :rgba(255,255,255,1);
-    box-shadow         : 0px 1px 4px 0px rgba(0, 0, 0, 0.09);
-    border-radius      : 4px;
-    padding            : 2px 2px;
-    display            : flex;
-    justify-content    : space-between;
-    align-items        : center;
-    overflow           : hidden;
+    // box-shadow         : 0px 1px 4px 0px rgba(0, 0, 0, 0.09);
+    box-shadow            : 0px 2px 8px 1px rgba(0, 0, 0, 0.1);
+    border-radius         : 4px;
+    padding               : 2px 2px;
+    display               : flex;
+    justify-content       : space-between;
+    align-items           : center;
+    overflow              : hidden;
 
     // background-image: linear-gradient(to right , #7A88FF, #7AFFAF);
     // background-image:linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%);
@@ -357,11 +364,11 @@
   width  : 100%;
 
   .board_head {
-    position           : relative;
-    height             : 100px;
-    width              : 280px;
-    // background-color: red;
-    overflow           : hidden;
+    height        : 100px;
+    width         : 280px;
+    overflow      : hidden;
+    display       : flex;
+    flex-direction: column;
   }
 
   .board_body {
@@ -386,11 +393,15 @@
 
 }
 
+.listHead::-webkit-scrollbar,
+.listTree::-webkit-scrollbar {
+  display: none !important;
+}
+
 .listHead {
-  position        : absolute;
-  left            : 0;
-  top             : 0;
-  z-index         : 2;
+  overflow-y      : auto;
+  overflow-x      : hidden;
+  flex            : 1;
   background-color: #FFFFFF;
   box-shadow      : 1px 0px 4px 0px rgba(0, 0, 0, 0.15);
   display         : flex;
@@ -584,7 +595,7 @@
 
     .list_head_body_inner::-webkit-scrollbar {
       /*滚动条整体样式*/
-      width: 2px;
+      width : 2px;
       /*高宽分别对应横竖滚动条的尺寸*/
       height: 1px;
     }
@@ -694,9 +705,7 @@
   height          : @date_area_height;
   width           : 280px;
   background-color: #ffffff;
-  position        : absolute;
   padding-right   : @group_head_padding;
-  z-index         : 3;
 
   .set_content {
     height         : 100%;
@@ -721,14 +730,14 @@
       }
 
       .set_content_view_type {
-        display        : flex;
-        justify-content: space-between;
+        display           : flex;
+        justify-content   : space-between;
         // width          : 109px;
-        width: auto;
-        height         : 28px;
-        border-radius  : 4px;
-        border         : 1px solid rgba(247, 247, 247, 1);
-        padding        : 1px;
+        width             : auto;
+        height            : 28px;
+        border-radius     : 4px;
+        border            : 1px solid rgba(247, 247, 247, 1);
+        padding           : 1px;
       }
 
       .set_content_left_left,
@@ -738,7 +747,7 @@
         width      : 35px;
         text-align : center;
         color      : rgba(0, 0, 0, .45);
-        color: #1890FF;
+        color      : #1890FF;
         font-size  : 16px
       }
 
@@ -808,11 +817,11 @@
 }
 
 .groupHeadSetBott {
-  height    : 52px;
-  bottom    : 0;
-  border-top: 1px solid #E8E8E8;
-  box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.09);
-  width     : 277px;
+  height       : 52px;
+  // bottom    : 0;
+  border-top   : 1px solid #E8E8E8;
+  box-shadow   : 0px 1px 0px 0px rgba(0, 0, 0, 0.09);
+  width        : 277px;
 }
 
 .content_filter_out {
@@ -898,9 +907,9 @@
 
 
 .listTree {
-  position: absolute;
-  left    : 0;
-  top     : 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex      : 1;
 
   background-color: #FFFFFF;
   height          : 100%;
@@ -960,26 +969,28 @@
 
 }
 
-.newProjectGuideWrapper{
-  // width: 260px;
-  height: 100%;
-  overflow  : hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.newProjectGuideWrapper {
+  // width       : 260px;
+  height         : 100%;
+  overflow       : hidden;
+  display        : flex;
+  flex-direction : column;
+  align-items    : center;
   justify-content: center;
-  margin-right: 20px;
-  .emptyBox{
-    display: flex;
-    align-items: center;
+  margin-right   : 20px;
+
+  .emptyBox {
+    display       : flex;
+    align-items   : center;
     flex-direction: column;
-    margin-bottom: 24px;
+    margin-bottom : 24px;
   }
-  .guideButtons{
+
+  .guideButtons {
     width: 100%;
-    .selectMakePlanBtn{
+
+    .selectMakePlanBtn {
       margin-bottom: 8px;
     }
   }
 }
-
