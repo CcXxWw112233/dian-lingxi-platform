@@ -109,7 +109,7 @@ export default class CatalogTables extends Component {
 
                             }
                         })
-                        
+
                         this.props.deleteDataSourceItem(board_id)
                     } else {
                         message.error(res.message)
@@ -118,6 +118,7 @@ export default class CatalogTables extends Component {
                 console.log('ssssssssss', 'confirmArchives')
             },
             tableRowClick: () => {
+                setBoardIdStorage(board_id, org_id)
                 if (type == '1') {
                     const new_item_value = { ...data }
                     this.props.setBreadPaths && this.props.setBreadPaths({ path_item: new_item_value })
