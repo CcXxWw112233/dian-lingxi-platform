@@ -147,7 +147,7 @@ export default class GetRowStrip extends PureComponent {
         } else {
 
         }
-        debugger
+        // debugger
         return date
     }
     // 渲染任务滑块 --start
