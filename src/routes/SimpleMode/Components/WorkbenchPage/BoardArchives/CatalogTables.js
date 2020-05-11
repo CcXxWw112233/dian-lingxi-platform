@@ -88,9 +88,9 @@ export default class CatalogTables extends Component {
     // 操作项合集
     actionsManager = (action, data, event) => {
         event.stopPropagation()
-        const { dispatch } = this.props
+        const { dispatch, view_type, bread_paths = [] } = this.props
         const { selectedRows = [] } = this.state
-        const { type, board_id, id, org_id, file_name, name, file_resource_id, file_id } = data
+        const { type, board_id, id, org_id, file_name, name, file_resource_id, file_id, folder_route = [] } = data
         const actionHandles = {
             confirmArchives: () => { //项目归档
                 event.stopPropagation()
@@ -121,7 +121,24 @@ export default class CatalogTables extends Component {
                 setBoardIdStorage(board_id, org_id)
                 if (type == '1') {
                     const new_item_value = { ...data }
-                    this.props.setBreadPaths && this.props.setBreadPaths({ path_item: new_item_value })
+                    if (view_type == '2' && !bread_paths.length) { //根目录下搜索状态下搜出来文件夹需要把全部路径塞进去
+                        let path = folder_route.reverse().map((item, key) => {
+                            const new_item = { ...item }
+                            const { board_id, folder_id, board_name, folder_name } = item // type undefine/1,2 项目/文件夹/文件
+                            if (key == 0) {
+                                new_item.name = board_name || '项目'
+                                new_item.board_name = board_name || '项目'
+                                new_item.id = board_id
+                            } else {
+                                new_item.name = folder_name
+                                new_item.id = folder_id
+                            }
+                            return new_item
+                        })
+                        this.props.setBreadAll && this.props.setBreadAll(path)
+                    } else { //项目目录下将当前item push进路径
+                        this.props.setBreadPaths && this.props.setBreadPaths({ path_item: new_item_value })
+                    }
                 } else if (type == '2') {
                     // setBoardIdStorage(board_id, org_id)
                     dispatch({
@@ -177,7 +194,7 @@ export default class CatalogTables extends Component {
     renderKeyName = (item) => {
         let name_dec = item
         const { name, board_name, org_id, board_id, type } = item
-        const { currentUserOrganizes = [], view_type } = this.props
+        const { currentUserOrganizes = [], view_type, bread_paths } = this.props
         const select_org_id = localStorage.getItem('OrganizationId')
         const org_dec = (select_org_id == '0' || !select_org_id) ? `(${getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)})` : ''
         const board_dec = `#${board_name}`
@@ -209,7 +226,22 @@ export default class CatalogTables extends Component {
                             )
                         }
                     </div>
-                    {
+                    {/* 名称部分 */}
+                    <div>
+                        <p style={{ marginBottom: 0 }}>
+                            <span>{name}</span>
+                        </p>
+                        {
+                            view_type != '1' && ( //非项目视图下
+                                <p style={{ color: 'rgba(0,0,0,0.45)', marginBottom: 4 }}>
+                                    {/* 搜索状态下， 并且当前条不为项目,在没有路径归置下，显示项目名称 */}
+                                    {view_type == '2' && (type || type != '0') && !bread_paths.length && (board_name || '所属项目')}
+                                    {select_org_id == '0' && org_dec}
+                                </p>
+                            )
+                        }
+                    </div>
+                    {/* {
                         select_org_id == '0' ? (
                             <div>
                                 <p style={{ marginBottom: 0 }}>
@@ -226,7 +258,7 @@ export default class CatalogTables extends Component {
                         ) : (
                                 name
                             )
-                    }
+                    } */}
                 </>
             </div>
         )

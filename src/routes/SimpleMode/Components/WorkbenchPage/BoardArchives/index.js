@@ -19,7 +19,6 @@ class BoardArchives extends Component {
       data_source: [], //列表数据
       isSearchDetailOnfocusOrOnblur: false, // 搜索框聚焦显示当前搜索条件详情
       currentSearchValue: '', // 搜索框输入值
-      currentFileDataType: '0', // 当前文件数据类型 '0' 全部文件 '1' 项目下全部文件 '2' 文件夹下全部文件
       view_type: '0', //0项目视图 1文件列表视图, 2混合视图(搜索状态)
       loading: false,
     }
@@ -27,6 +26,15 @@ class BoardArchives extends Component {
   }
   componentDidMount() {
     this.getDataSource()
+  }
+  setBreadAll = (path) => {
+    this.setState({
+      bread_paths: path,
+      view_type: '1',
+      currentSearchValue: ''
+    }, () => {
+      this.getDataSource()
+    })
   }
   setBreadPaths = ({ path_item = {} }) => { //面包屑设置路径 ，无长度是归档项目列表， 下标0是项目下文件（夹）列表
     const { bread_paths = [] } = this.state
@@ -166,7 +174,6 @@ class BoardArchives extends Component {
   // 处理传值
   getSearchParams = () => {
     const {
-      currentFileDataType, // 0 全部（包括项目） 1 项目全部（包括文件夹内） 2 文件Tree的文件夹内
       bread_paths = [],
     } = this.state;
 
@@ -268,7 +275,7 @@ class BoardArchives extends Component {
   }
   render() {
     const { workbenchBoxContent_height = 600, isInOpenFile, fileType, filePreviewCurrentFileId } = this.props
-    const { currentSearchValue, bread_paths = [], isSearchDetailOnfocusOrOnblur, currentFileDataType, view_type, data_source = [], loading } = this.state
+    const { currentSearchValue, bread_paths = [], isSearchDetailOnfocusOrOnblur, view_type, data_source = [], loading } = this.state
     const currentIayerFolderName = bread_paths && bread_paths.length && (bread_paths[bread_paths.length - 1].board_name || bread_paths[bread_paths.length - 1].folder_name);
     console.log('sssssssssss_data_source', view_type, data_source)
     console.log('sssssssssss_data_path', view_type, bread_paths)
@@ -318,6 +325,8 @@ class BoardArchives extends Component {
             view_type={view_type}
             loading={loading}
             data_source={data_source}
+            bread_paths={bread_paths}
+            setBreadAll={this.setBreadAll}
             setBreadPaths={this.setBreadPaths} />
           {
             isInOpenFile && (
