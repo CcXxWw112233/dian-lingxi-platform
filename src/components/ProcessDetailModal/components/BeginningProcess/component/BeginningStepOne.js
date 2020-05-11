@@ -50,7 +50,7 @@ export default class BeginningStepOne extends Component {
    */
   whetherShowCompleteButton = () => {
     const { itemValue } = this.props
-    const { assignee_type,  } = itemValue
+    const { assignee_type } = itemValue
     const { transPrincipalList = [] } = this.state
     const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     let flag = false
@@ -354,7 +354,7 @@ export default class BeginningStepOne extends Component {
             that.setState({
               isAccomplishNodesIng: false
             })
-          },500)
+          }, 500)
         }
       }
     })
@@ -529,7 +529,28 @@ export default class BeginningStepOne extends Component {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 {/* 填写人 */}
-                {
+                <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
+                  <AvatarList
+                    size="small"
+                    maxLength={10}
+                    excessItemsStyle={{
+                      color: '#f56a00',
+                      backgroundColor: '#fde3cf'
+                    }}
+                  >
+                    {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
+                      <AvatarList.Item
+                        key={index}
+                        tips={name || '佚名'}
+                        src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                      />
+                    ))}
+                  </AvatarList>
+                  <span className={indexStyles.content__principalList_info}>
+                    {`${transPrincipalList.length}位填写人`}
+                  </span>
+                </div>
+                {/* {
                   assignee_type == '2' ? (
                     <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
                       <AvatarList
@@ -558,7 +579,7 @@ export default class BeginningStepOne extends Component {
                         <span>{`${currentNounPlanFilterName(FLOWS)}发起人`}</span>
                       </div>
                     )
-                }
+                } */}
                 {/* 抄送人 */}
                 {
                   cc_type == '1' && (

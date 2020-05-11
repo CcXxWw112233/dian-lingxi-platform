@@ -136,7 +136,7 @@ const wipeOffSomeDataWithScoreNodes = (item) => {
   const { score_items = [] } = item
   let newScoreItems = JSON.parse(JSON.stringify(score_items || []))
   newScoreItems = (newScoreItems.filter(val => val.is_total != '1') || []).map(item => {
-    let new_item = {...item}
+    let new_item = { ...item }
     new_item && new_item.value ? delete new_item.value : ''
     return new_item
   })
@@ -159,7 +159,7 @@ const findCurrentFileInfo = (forms = []) => {
   let newData = JSON.parse(JSON.stringify(forms || []))
   let arr = []
   newData.map((item) => {
-    if(!item.files) return
+    if (!item.files) return
     arr.push(...item.files)
   })
   let temp = arr.find(item => item.percent && item.percent != 0 && item.percent != 100) || {}
@@ -258,6 +258,99 @@ const result_score_fall_through_with_others = (type) => {
   return field_text
 }
 
+// 获取当前月份的天数
+const getDaysOfEveryMonth = () => {//返回天数
+  var baseMonthsDay = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];//各月天数
+  var thisYear = new Date().getFullYear();//今年
+  var thisMonth = new Date().getMonth();//今月
+  var thisMonthDays = [];//这个月有多少天
+  //判断是闰年吗？闰年2月29天
+  const isLeapYear = (fullYear) => {
+    return (fullYear % 4 == 0 && (fullYear % 100 != 0 || fullYear % 400 == 0));
+  }
+
+  const getThisMonthDays = (days) => {//传天数，返天数数组
+    var arr = [];
+    for (var i = 1; i <= days; i++) {
+      arr.push(i);
+    }
+    return arr;
+  }
+
+  if (isLeapYear(thisYear) && thisMonth == 1) {//闰年2月29天
+    thisMonthDays = getThisMonthDays(baseMonthsDay[thisMonth] + 1);
+  } else {
+    thisMonthDays = getThisMonthDays(baseMonthsDay[thisMonth]);
+  }
+  return thisMonthDays.length;
+}
+
+// 显示不同类型的时间 时、天、月
+const renderRestrictionsTime = (itemValue) => {
+  if (!itemValue) return ''
+  const { deadline_time_type, deadline_value, deadline_type, last_complete_time } = itemValue
+  let total_time = '' //总时间
+  let surplus_time = '' //剩余时间戳
+  let now = parseInt(new Date().getTime() / 1000)
+  let time_ceil = 60 * 60 //单位(3600秒)
+  const take_time = now - Number(last_complete_time) //花费时间
+  switch (deadline_time_type) {
+    case 'hour': // 天
+      total_time = deadline_value * time_ceil
+      break;
+    case 'day':
+      total_time = deadline_value * 24 * time_ceil
+      break
+    case 'month':
+      total_time = 30 * deadline_value * 24 * time_ceil
+      break
+    default:
+      break;
+  }
+  surplus_time = total_time - take_time //86400
+
+
+  let description = ''
+  let time_dec = surplus_time < 0 ? '已逾期' : '剩余'
+  let month_day_total = getDaysOfEveryMonth() //当前月份总天数
+
+  let month = ''
+  let day = ''
+  let hour = ''
+  let min = ''
+
+  let modulus_time = Math.abs(surplus_time)
+  if (modulus_time <= time_ceil) { //
+    description = `${time_dec}${parseInt(modulus_time / 60)}分钟`
+    // 分
+  } else if (modulus_time > time_ceil && modulus_time <= 24 * time_ceil) {
+    hour = parseInt(modulus_time / time_ceil)
+    min = parseInt((modulus_time % time_ceil) / 60)
+    if (min < 1) {
+      description = `${time_dec}${hour}小时`
+    } else {
+      description = `${time_dec}${hour}小时${min}分钟`
+    }
+    // 时/分
+  } else if (modulus_time > (24 * time_ceil) && modulus_time <= (month_day_total * 24 * time_ceil)) {
+    day = parseInt(modulus_time / (24 * time_ceil))
+    hour = parseInt(((modulus_time % (24 * time_ceil))) / time_ceil)
+    if (hour < 1) {
+      description = `${time_dec}${day}天`
+    } else {
+      description = `${time_dec}${day}天${hour}小时`
+    }
+    // 天/时
+  } else if (modulus_time > month_day_total * 24 * time_ceil) {
+    month = parseInt(modulus_time / (month_day_total * 24 * time_ceil))
+    hour = parseInt((modulus_time % (month_day_total * 24 * time_ceil) / (24 * time_ceil)))
+    description = `${time_dec}${month}月${hour}小时`
+  } else {
+
+  }
+  return description
+}
+
 export {
   showDeleteTempleteConfirm,
   genPrincipalListFromAssignees,
@@ -271,5 +364,7 @@ export {
   computing_mode,
   result_score_option,
   result_score_fall_through_with_others,
+  getDaysOfEveryMonth,
+  renderRestrictionsTime
 }
 
