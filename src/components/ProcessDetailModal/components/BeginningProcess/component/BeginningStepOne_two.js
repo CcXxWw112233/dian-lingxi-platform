@@ -11,7 +11,7 @@ export default class BeginningStepOne_two extends Component {
     const { itemKey, parentKey, processEditDatas = [] } = this.props
     const { forms = [] } = processEditDatas[parentKey]
     forms[itemKey][key] = data.value
-    this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent({ value: forms }, 'forms')
+    this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('forms', forms)
   }
 
   defaultValueChange(value) {
