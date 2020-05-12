@@ -21,7 +21,7 @@ export default class BeginningStepThree extends Component {
     this.state = {
       transPrincipalList: props.itemValue.assignees ? [...props.itemValue.assignees] : [], // 表示当前的执行人
       transCopyPersonnelList: props.itemValue.recipients ? [...props.itemValue.recipients] : [], // 表示当前选择的抄送人
-      is_show_spread_arrow: props.itemValue.status == '1' || (props.itemKey == curr_position -1) ? true : false, // 是否展开箭头 详情 true表示展开
+      is_show_spread_arrow: props.itemValue.status == '1' || (props.itemKey == curr_position -1) || (props.itemValue.runtime_type == '1') ? true : false, // 是否展开箭头 详情 true表示展开
       historyCommentsList: props.itemValue.his_comments ? [...props.itemValue.his_comments] : [],
       currentSelectJudgeArrow: '',
       currentSelectHisArrow: ''
@@ -34,7 +34,7 @@ export default class BeginningStepThree extends Component {
       let curr_position
       if (nextProps) curr_position = findCurrentApproveNodesPosition(nextProps['processEditDatas'])
       this.setState({
-        is_show_spread_arrow: nextProps.itemValue.status == '1' || (nextProps.itemKey == curr_position -1) ? true : false,
+        is_show_spread_arrow: nextProps.itemValue.status == '1' || (nextProps.itemKey == curr_position -1) || (nextProps.itemValue.runtime_type == '1') ? true : false,
         transPrincipalList: nextProps.itemValue.assignees ? [...nextProps.itemValue.assignees] : [], // 表示当前的执行人
         transCopyPersonnelList: nextProps.itemValue.recipients ? [...nextProps.itemValue.recipients] : [], // 表示当前选择的抄送人
         historyCommentsList: nextProps.itemValue.his_comments ? [...nextProps.itemValue.his_comments] : [],
@@ -555,7 +555,7 @@ export default class BeginningStepThree extends Component {
   render() {
     const { itemKey, itemValue, processEditDatas = [] } = this.props
     const { is_show_spread_arrow, transPrincipalList = [], transCopyPersonnelList = [] } = this.state
-    const { name, cc_type, deadline_type, deadline_value, deadline_time_type, status } = itemValue
+    const { name, cc_type, deadline_type, deadline_value, deadline_time_type, status, runtime_type } = itemValue
     return (
       <div id={status == '1' && 'currentStaticRatingScoreContainer'} key={itemKey} style={{ display: 'flex', marginBottom: '48px', position: 'relative' }}>
         {processEditDatas.length <= itemKey + 1 ? null : <div className={this.renderDiffStatusStepStyles().stylLine}></div>}
@@ -570,6 +570,11 @@ export default class BeginningStepThree extends Component {
                 <div>
                   <span className={`${globalStyles.authTheme} ${indexStyles.stepTypeIcon}`}>&#xe7b6;</span>
                   <span>{name}</span>
+                  {
+                    runtime_type == '1' && (
+                      <span style={{color: '#FF5D60', fontSize: '16px', marginLeft: '8px', letterSpacing: '2px'}}>{"(被驳回)"}</span>
+                    )
+                  }
                 </div>
                 <div>
                   <span onClick={this.handleSpreadArrow} className={`${indexStyles.spreadIcon}`}>

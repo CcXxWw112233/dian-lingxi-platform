@@ -24,7 +24,7 @@ export default class BeginningStepOne extends Component {
     this.state = {
       transPrincipalList: props.itemValue.assignees ? [...props.itemValue.assignees] : [], // 表示当前的执行人
       transCopyPersonnelList: props.itemValue.recipients ? [...props.itemValue.recipients] : [], // 表示当前选择的抄送人
-      is_show_spread_arrow: props.itemValue.status == '1' ? true : false, // 是否展开箭头 详情 true表示展开
+      is_show_spread_arrow: props.itemValue.status == '1' || props.itemValue.runtime_type == '1' ? true : false, // 是否展开箭头 详情 true表示展开
       form_values: []
     }
   }
@@ -39,7 +39,7 @@ export default class BeginningStepOne extends Component {
     // 需要更新箭头的状态
     if (!isObjectValueEqual(this.props, nextProps)) {
       this.setState({
-        is_show_spread_arrow: nextProps.itemValue.status == '1' ? true : false,
+        is_show_spread_arrow: nextProps.itemValue.status == '1' || nextProps.itemValue.runtime_type == '1' ? true : false,
       })
     }
   }
@@ -499,7 +499,7 @@ export default class BeginningStepOne extends Component {
 
   render() {
     const { itemKey, processEditDatas = [], itemValue } = this.props
-    const { status, name, assignee_type, cc_type, deadline_value, deadline_time_type, deadline_type, forms = [] } = itemValue
+    const { status, name, assignee_type, cc_type, deadline_value, deadline_time_type, deadline_type, forms = [], runtime_type } = itemValue
     const { transPrincipalList = [], transCopyPersonnelList = [], is_show_spread_arrow } = this.state
 
     return (
@@ -515,6 +515,11 @@ export default class BeginningStepOne extends Component {
                 <div>
                   <span className={`${globalStyles.authTheme} ${indexStyles.stepTypeIcon}`}>&#xe7b1;</span>
                   <span>{name}</span>
+                  {
+                    runtime_type == '1' && (
+                      <span style={{color: '#FF5D60', fontSize: '16px', marginLeft: '8px', letterSpacing: '2px'}}>{"(被驳回)"}</span>
+                    )
+                  }
                 </div>
                 <div>
                   <span onClick={this.handleSpreadArrow} className={`${indexStyles.spreadIcon}`}>

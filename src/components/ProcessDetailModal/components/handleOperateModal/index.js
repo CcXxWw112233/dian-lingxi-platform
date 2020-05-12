@@ -169,12 +169,23 @@ const findCurrentFileInfo = (forms = []) => {
 
 // 找到当前审批节点进行中的位置
 const findCurrentApproveNodesPosition = (data = []) => {
+  if (!data) return
   if (!data.length) return ''
   let findData = JSON.parse(JSON.stringify(data || []))
   let curr_position = findData.findIndex(item => item.status == '1' && item.node_type == '2') || ''
   if (curr_position < 0) return ''
   return curr_position
 }
+
+// 找到当前被驳回的位置
+const findCurrentOverruleNodesPosition = (data = []) => {
+  if (!data) return
+  if (!data.length) return ''
+  let findData = JSON.parse(JSON.stringify(data || []))
+  let overrule_position = findData.findIndex(item => item.status == '1' && item.runtime_type == '1') || ''
+  if (overrule_position < 0) return ''
+  return overrule_position
+} 
 
 // 渲染时、天、月
 const renderTimeType = (type) => {
@@ -361,6 +372,7 @@ export {
   wipeOffSomeDataWithScoreNodes,
   findCurrentFileInfo,
   findCurrentApproveNodesPosition,
+  findCurrentOverruleNodesPosition,
   computing_mode,
   result_score_option,
   result_score_fall_through_with_others,
