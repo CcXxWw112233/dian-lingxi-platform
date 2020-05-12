@@ -348,3 +348,12 @@ export async function getArchiveBoardFileList(params) {
     params,
   });
 }
+
+//搜索归档的列表
+export async function searchArchives(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/archived/search`,
+    method: 'POST',
+    data,
+  });
+}
