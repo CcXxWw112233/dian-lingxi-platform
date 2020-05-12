@@ -420,7 +420,7 @@ class SimpleHeader extends Component {
                         whetherShowFileDetailModalVisible: false
                     })
                 }
-               setTimeout(() => {
+                setTimeout(() => {
                     dispatch({
                         type: 'publicProcessDetailModal/getProcessInfo',
                         payload: {
@@ -440,7 +440,7 @@ class SimpleHeader extends Component {
                     this.setState({
                         whetherShowProcessDetailModalVisible: true
                     })
-               }, 200)
+                }, 200)
                 break
             default:
                 break
@@ -568,6 +568,7 @@ class SimpleHeader extends Component {
                 {
                     leftMainNavIconVisible && (
                         <Dropdown
+                            trigger={['click']}
                             placement="bottomLeft"
                             overlay={<SimpleNavigation updateStates={this.updateStates} dropdownHandleVisibleChange={this.handleVisibleChange} />}
                             onVisibleChange={this.handleVisibleChange}
@@ -577,7 +578,8 @@ class SimpleHeader extends Component {
                                 <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe69f;</i>
                             </div>
                         </Dropdown>
-                    )}
+                    )
+                }
 
                 <Tooltip title="操作指引">
                     <div className={indexStyles.guideButton} onClick={this.openGuideModal}>
@@ -585,14 +587,14 @@ class SimpleHeader extends Component {
                     </div>
                 </Tooltip>
                 <Tooltip title="项目圈">
-                <div style={{ zIndex: !chatImVisiable && 1009 }} className={indexStyles.miniImMessage} onClick={this.openOrCloseImChatModal}>
-                    {
-                        im_alarm_no_reads_total > 0 && (
-                            <div className={indexStyles.no_reads}>{im_alarm_no_reads_total > 99 ? '99+' : im_alarm_no_reads_total}</div>
-                        )
-                    }
-                    <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe6df;</i>
-                </div>
+                    <div style={{ zIndex: !chatImVisiable && 1009 }} className={indexStyles.miniImMessage} onClick={this.openOrCloseImChatModal}>
+                        {
+                            im_alarm_no_reads_total > 0 && (
+                                <div className={indexStyles.no_reads}>{im_alarm_no_reads_total > 99 ? '99+' : im_alarm_no_reads_total}</div>
+                            )
+                        }
+                        <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe6df;</i>
+                    </div>
                 </Tooltip>
 
                 {/* {leftMainNavVisible &&

@@ -648,113 +648,118 @@ export default class GetRowTaskItem extends Component {
         const { local_left, local_top, local_width } = this.state
         const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
         return (
-            <Popover
-                getPopupContainer={() => document.getElementById('gantt_card_out_middle')}
-                placement="bottom" content={<CardDropDetail list={[{ ...itemValue }]} />} key={id}>
-                <div
-                    className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
-                    data-targetclassname="specific_example"
-                    // draggable
-                    ref={this.out_ref}
-                    style={{
-                        touchAction: 'none',
-                        zIndex: this.is_down ? 2 : 1,
-                        left: local_left, top: local_top,
-                        width: (local_width || 6) - 2, height: (height || task_item_height),
-                        marginTop: task_item_margin_top,
-                        background: this.setLableColor(label_data, is_realize), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
-                    }}
-                    // 拖拽
-                    onMouseDown={(e) => {
-                        console.log('这是什么', '鼠标按下')
-                        this.onMouseDown(e)
-                    }}
-                    onMouseMove={(e) => {
-                        console.log('这是什么', '鼠标移动')
-                        this.onMouseMove(e)
-                    }}
-                    onMouseUp={() => {
-                        console.log('这是什么', '鼠标松开')
-                        this.setSpecilTaskExample({ id: parent_card_id || id, top, board_id })
-                    }} //查看子任务是查看父任务
+            // <Popover
+            //     getPopupContainer={() => document.getElementById('gantt_card_out_middle')}
+            //     placement="bottom" content={<CardDropDetail list={[{ ...itemValue }]} />} key={id}>
+            <div
+                className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
+                data-targetclassname="specific_example"
+                // draggable
+                ref={this.out_ref}
+                style={{
+                    touchAction: 'none',
+                    zIndex: this.is_down ? 2 : 1,
+                    left: local_left, top: local_top,
+                    width: (local_width || 6) - 2, height: (height || task_item_height),
+                    marginTop: task_item_margin_top,
+                    background: this.setLableColor(label_data, is_realize), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
+                }}
+                // 拖拽
+                onMouseDown={(e) => {
+                    console.log('这是什么', '鼠标按下')
+                    this.onMouseDown(e)
+                }}
+                onMouseMove={(e) => {
+                    console.log('这是什么', '鼠标移动')
+                    this.onMouseMove(e)
+                }}
+                onMouseUp={() => {
+                    console.log('这是什么', '鼠标松开')
+                    this.setSpecilTaskExample({ id: parent_card_id || id, top, board_id })
+                }} //查看子任务是查看父任务
 
-                    onTouchStart={(e) => {
-                        console.log('这是什么', '手指按下')
-                        this.onTouchStart(e)
-                    }}
-                    onTouchMove={(e) => {
-                        console.log('这是什么', '手指移动')
-                        this.onTouchMove(e)
-                    }}
-                    onTouchEnd={(e) => {
-                        console.log('这是什么', '手指松开')
-                        this.onTouchEnd(e)
-                    }} //查看子任务是查看父任务
-                // 不拖拽
-                // onMouseMove={(e) => e.stopPropagation()}
-                // onClick={() => this.setSpecilTaskExample({ id, top, board_id })}
+                onTouchStart={(e) => {
+                    console.log('这是什么', '手指按下')
+                    this.onTouchStart(e)
+                }}
+                onTouchMove={(e) => {
+                    console.log('这是什么', '手指移动')
+                    this.onTouchMove(e)
+                }}
+                onTouchEnd={(e) => {
+                    console.log('这是什么', '手指松开')
+                    this.onTouchEnd(e)
+                }} //查看子任务是查看父任务
+            // 不拖拽
+            // onMouseMove={(e) => e.stopPropagation()}
+            // onClick={() => this.setSpecilTaskExample({ id, top, board_id })}
+            >
+                <div
+                    data-targetclassname="specific_example"
+                    className={`${indexStyles.specific_example_content} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
+                    // onMouseDown={(e) => e.stopPropagation()} 
+                    onMouseMove={(e) => e.preventDefault()}
+                    style={{ opacity: 1 }}
                 >
-                    <div
-                        data-targetclassname="specific_example"
-                        className={`${indexStyles.specific_example_content} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
+                    <div data-targetclassname="specific_example"
+                        className={`${indexStyles.card_item_status}`}
+                        //  onMouseDown={(e) => e.stopPropagation()} 
+                        onMouseMove={(e) => e.preventDefault()}
+                    >
+                        <CheckItem is_realize={is_realize} card_type={type} styles={{ color: is_realize == '1' ? 'rgba(0,0,0,.25)' : '' }} />
+                    </div>
+                    <div data-targetclassname="specific_example"
+                        className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`}
+                        // onMouseDown={(e) => e.stopPropagation()}
+                        onMouseMove={(e) => e.preventDefault()}
+                        style={{ display: 'flex', color: is_realize == '1' ? 'rgba(0,0,0,.25)' : '' }}
+                    >
+                        {name}
+                        {
+                            is_privilege == '1' && (
+                                <Tooltip title="已开启访问控制" placement="top">
+                                    <span className={`${globalStyles.authTheme}`}
+                                        style={{ color: 'rgba(0,0,0,0.50)', marginLeft: '5px' }}
+                                        data-targetclassname="specific_example">
+                                        &#xe7ca;
+                                        </span>
+                                </Tooltip>
+                            )
+                        }
+                        <span className={indexStyles.due_time_description} data-targetclassname="specific_example">
+                            {
+                                is_overdue && is_realize != '1' && due_description
+                            }
+                        </span>
+
+                    </div>
+                    <div data-targetclassname="specific_example"
                         // onMouseDown={(e) => e.stopPropagation()} 
                         onMouseMove={(e) => e.preventDefault()}
-                        style={{ opacity: 1 }}
+                        style={{
+                            opacity: is_realize == '1' ? 0.5 : 1
+                        }}
                     >
-                        <div data-targetclassname="specific_example"
-                            className={`${indexStyles.card_item_status}`}
-                            //  onMouseDown={(e) => e.stopPropagation()} 
-                            onMouseMove={(e) => e.preventDefault()}
-                        >
-                            <CheckItem is_realize={is_realize} card_type={type} styles={{ color: is_realize == '1' ? 'rgba(0,0,0,.25)' : '' }} />
-                        </div>
-                        <div data-targetclassname="specific_example"
-                            className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`}
-                            // onMouseDown={(e) => e.stopPropagation()}
-                            onMouseMove={(e) => e.preventDefault()}
-                            style={{ display: 'flex', color: is_realize == '1' ? 'rgba(0,0,0,.25)' : '' }}
-                        >
-                            {name}
-                            {
-                                is_privilege == '1' && (
-                                    <Tooltip title="已开启访问控制" placement="top">
-                                        <span className={`${globalStyles.authTheme}`}
-                                            style={{ color: 'rgba(0,0,0,0.50)', marginLeft: '5px' }}
-                                            data-targetclassname="specific_example">
-                                            &#xe7ca;
-                                        </span>
-                                    </Tooltip>
-                                )
-                            }
-                            <span className={indexStyles.due_time_description} data-targetclassname="specific_example">
-                                {
-                                    is_overdue && is_realize != '1' && due_description
-                                }
-                            </span>
-
-                        </div>
-                        <div data-targetclassname="specific_example"
-                            // onMouseDown={(e) => e.stopPropagation()} 
-                            onMouseMove={(e) => e.preventDefault()}
-                            style={{
-                                opacity: is_realize == '1' ? 0.5 : 1
-                            }}
-                        >
-                            <AvatarList users={executors} size={'small'} targetclassname={'specific_example'} />
-                        </div>
+                        <AvatarList users={executors} size={'small'} targetclassname={'specific_example'} />
                     </div>
-                    {/* 存在未读 */}
-                    {
-                        cardItemIsHasUnRead({ relaDataId: id, im_all_latest_unread_messages }) && (
-                            <div
-                                className={indexStyles.has_unread_news}
-                                data-targetclassname="specific_example"
-                                style={{}}
-                            ></div>
-                        )
-                    }
                 </div>
-            </Popover>
+                {/* 存在未读 */}
+                {
+                    cardItemIsHasUnRead({ relaDataId: id, im_all_latest_unread_messages }) && (
+                        <div
+                            className={indexStyles.has_unread_news}
+                            data-targetclassname="specific_example"
+                            style={{}}
+                        ></div>
+                    )
+                }
+                <Popover
+                    getPopupContainer={() => document.getElementById('gantt_card_out_middle')}
+                    placement="bottom" content={<CardDropDetail list={[{ ...itemValue }]} />} key={id}>
+                    <div style={{ position: 'absolute', width: '100%', height: '100%' }}></div>
+                </Popover>
+            </div>
+            // </Popover> 
         )
     }
 }
