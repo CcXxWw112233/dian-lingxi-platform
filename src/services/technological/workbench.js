@@ -146,6 +146,14 @@ export async function createMeeting(payload) {
   //flag: 2 //会议类型，全局调用时，值为：2
 }
 
+export async function appointmentMeeting(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_TEAM_SHOW}/meeting/order`,
+    method: 'POST',
+    data
+  })
+}
+
 // 获取视频会议提供商列表
 export async function getVideoConferenceProviderList(params) {
   return request({

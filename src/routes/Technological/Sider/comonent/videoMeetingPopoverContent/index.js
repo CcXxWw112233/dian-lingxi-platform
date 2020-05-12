@@ -66,6 +66,7 @@ class VideoMeetingPopoverContent extends React.Component {
 	constructor(props) {
 		super(props)
 		this.timer = null
+		this.local_timer = null
 		this.videoProviderImgTimer = null
 		this.state = {
 			saveToProject: null, // 用来保存存入的项目
@@ -142,7 +143,7 @@ class VideoMeetingPopoverContent extends React.Component {
 							this.setState({
 								isShowNowTime: true
 							})
-							this.showTime()
+							
 						})
 					})
 				} else {
@@ -222,26 +223,26 @@ class VideoMeetingPopoverContent extends React.Component {
 		}
 	}
 
-	handleAssemVideoMeetingDefaultSuggesstions = (orgList = []) => {
-		return orgList.reduce((acc, curr) => {
-			const isHasRepeatedNameItem =
-				orgList.filter(item => item.name === curr.name).length >= 2;
-			//如果列表中有重复的名称成员存在，那么附加手机号或者邮箱
-			//形式： name(mobile|email)
-			if (isHasRepeatedNameItem) {
-				const item = `${curr.name}(${
-					curr.mobile ? curr.mobile : curr.email
-					})`;
-				return [...acc, item];
-			}
-			return [...acc, curr.name];
-		}, []);
-	};
+	// handleAssemVideoMeetingDefaultSuggesstions = (orgList = []) => {
+	// 	return orgList.reduce((acc, curr) => {
+	// 		const isHasRepeatedNameItem =
+	// 			orgList.filter(item => item.name === curr.name).length >= 2;
+	// 		//如果列表中有重复的名称成员存在，那么附加手机号或者邮箱
+	// 		//形式： name(mobile|email)
+	// 		if (isHasRepeatedNameItem) {
+	// 			const item = `${curr.name}(${
+	// 				curr.mobile ? curr.mobile : curr.email
+	// 				})`;
+	// 			return [...acc, item];
+	// 		}
+	// 		return [...acc, curr.name];
+	// 	}, []);
+	// };
 
 	// 时钟
 	showTime = () => {
 		if (!this.state.isShowNowTime) return
-		let nowDate = timestampToTime(timeToTimestamp(new Date()), true)
+		let nowDate = timestampToTime(timeToTimestamp(new Date()))
 		this.setState({
 			start_time: nowDate,
 			// isShowNowTime: true,
@@ -251,6 +252,26 @@ class VideoMeetingPopoverContent extends React.Component {
 			this.showTime()
 		}, 1000)
 	}
+
+	// 需要一个一直变化的时间来做比较
+	localShowTime = () => {
+		const { isNotUpdateShowTime } = this.state
+		let nowDate = new Date().getTime()
+		let change_time = new Date(timestampToTimeNormal(nowDate,'/',true))
+		let state_time = new Date(timestampToTimeNormal(this.state.meeting_start_time, '/', true))
+		if (change_time.getDate() == state_time.getDate()) { // 表示还是今天
+			if (change_time.getHours() == state_time.getHours() && change_time.getMinutes() == state_time.getMinutes()) {
+				this.handleChangeNowTime()
+			}
+		}
+		this.setState({
+			local_date_time: nowDate, // 保存了一个时间戳
+		})
+		this.local_timer = setTimeout(() => {
+			this.localShowTime()
+		}, 1000)
+	}
+
 
 	// 设置mention组件提及列表
 	// setVideoMeetingDefaultSuggesstionsByBoardUser = ({ board_users = [] }) => {
@@ -297,6 +318,7 @@ class VideoMeetingPopoverContent extends React.Component {
 		defaultSaveProjectName = ''
 		stepIndex = 0
 		clearTimeout(this.timer)
+		clearTimeout(this.local_timer)
 	};
 
 	// 获取项目权限
@@ -473,36 +495,37 @@ class VideoMeetingPopoverContent extends React.Component {
 	};
 
 	// 提醒时间的选择
-	handleMenuReallySelect = (e) => {
-		const { key, selectedKeys } = e
-		this.setState({
-			selectedKeys: selectedKeys,
+	// handleMenuReallySelect = (e) => {
+	// 	const { key, selectedKeys } = e
+	// 	this.setState({
+	// 		selectedKeys: selectedKeys,
 
-		})
-		remind_time_value = key // 设置的提醒时间
-	}
+	// 	})
+	// 	remind_time_value = key // 设置的提醒时间
+	// }
 
-	// 选择的时间
-	renderSelectedRemindTime = () => {
-		const { remindTimeList = [], selectedKeys = [] } = this.state
-		return (
-			<div>
-				<Menu selectedKeys={selectedKeys} onSelect={this.handleMenuReallySelect.bind(this)}>
-					{
-						remindTimeList.map(item => (
-							<Menu.Item key={item.remind_time_value}>{item.remind_time_value}</Menu.Item>
-						))
-					}
-				</Menu>
-			</div>
-		)
-	}
+	// // 选择的时间
+	// renderSelectedRemindTime = () => {
+	// 	const { remindTimeList = [], selectedKeys = [] } = this.state
+	// 	return (
+	// 		<div>
+	// 			<Menu selectedKeys={selectedKeys} onSelect={this.handleMenuReallySelect.bind(this)}>
+	// 				{
+	// 					remindTimeList.map(item => (
+	// 						<Menu.Item key={item.remind_time_value}>{item.remind_time_value}</Menu.Item>
+	// 					))
+	// 				}
+	// 			</Menu>
+	// 		</div>
+	// 	)
+	// }
 
 	// 设置会议开始时间
 	startDatePickerChange = (timeString) => {
 		const start_timeStamp = timeToTimestamp(timeString)
 		const nowDate = timeToTimestamp(new Date())
 		let nextOrPrevDate = new Date(timestampToTimeNormal(start_timeStamp)).getDate()
+		const { local_date_time, meeting_start_time } = this.state
 		let currentDate = new Date().getDate()
 		if (this.timer) {
 			clearTimeout(this.timer)
@@ -523,7 +546,7 @@ class VideoMeetingPopoverContent extends React.Component {
 					clearTimeout(this.timer)
 				}
 				this.setState({
-					start_time: timestampToTime(start_timeStamp, true),
+					start_time: timestampToTime(start_timeStamp),
 					meeting_start_time: start_timeStamp,
 					isShowNowTime: false,
 					isExeecedTime: false
@@ -536,7 +559,7 @@ class VideoMeetingPopoverContent extends React.Component {
 
 		} else if (nextOrPrevDate < currentDate) { // 表示是今天之前
 			this.setState({
-				start_time: timestampToTime(start_timeStamp, true),
+				start_time: timestampToTime(start_timeStamp),
 				meeting_start_time: start_timeStamp,
 				isShowNowTime: false,
 				isExeecedTime: true
@@ -546,16 +569,15 @@ class VideoMeetingPopoverContent extends React.Component {
 				clearTimeout(this.timer)
 			}
 			this.setState({
-				start_time: timestampToTime(start_timeStamp, true),
+				start_time: timestampToTime(start_timeStamp),
 				meeting_start_time: start_timeStamp,
 				isShowNowTime: false,
-				isExeecedTime: false
-			}, () => {
-				this.setState({
-					isNotUpdateShowTime: true
-				})
+				isExeecedTime: false,
+				isNotUpdateShowTime: true
 			})
 		}
+
+		this.disabledDateTime()
 	}
 
 	// 设置会议的结束时间
@@ -700,9 +722,10 @@ class VideoMeetingPopoverContent extends React.Component {
 
 	// 邀请人加入的回调
 	inviteMemberJoin = ({ card_id, userIds = [], user_phone = [], start_url }) => {
+		const { isShowNowTime } = this.state
 		if (!card_id) {
 			setTimeout(() => {
-				message.success("发起会议成功");
+				message.success(isShowNowTime ? "发起会议成功" : '预约会议成功');
 			}, 500)
 			this.setState(
 				{
@@ -713,7 +736,7 @@ class VideoMeetingPopoverContent extends React.Component {
 					await this.getCurrentRemindUser()
 				}
 			)
-			this.openWinNiNewTabWithATag(start_url)
+			start_url && this.openWinNiNewTabWithATag(start_url)
 			return false
 		}
 		const { org_id } = this.state
@@ -839,7 +862,7 @@ class VideoMeetingPopoverContent extends React.Component {
 
 		Promise.resolve(
 			dispatch({
-				type: "technological/initiateVideoMeeting",
+				type: isShowNowTime ? "technological/initiateVideoMeeting" : 'technological/appointmentVideoMeeting',
 				payload: data
 			})
 		).then(res => {
@@ -867,7 +890,7 @@ class VideoMeetingPopoverContent extends React.Component {
 					}
 				);
 			} else {
-				message.error("发起会议失败");
+				message.error(isShowNowTime ? "发起会议失败" : '预约会议失败');
 				this.setState(
 					{
 						videoMeetingPopoverVisible: false
@@ -890,7 +913,14 @@ class VideoMeetingPopoverContent extends React.Component {
 			() => {
 				if (flag === false) {
 					this.initVideoMeetingPopover();
+					setTimeout(() => {
+						this.getCurrentRemindUser()
+					},50)
+					clearTimeout(this.timer)
+					clearTimeout(this.local_timer)
 				} else { // 为true的时候调用设置当前通知对象
+					this.showTime()
+					this.localShowTime()
 					// dispatch({
 					// 	type: 'technological/getCurrentOrgProjectList',
 					// 	payload: {
@@ -917,6 +947,25 @@ class VideoMeetingPopoverContent extends React.Component {
 	// 禁用日期时间
 	disabledDate = (current) => {
 		return current && current < moment().add(-1, 'day')
+	}
+
+	range = (start, end) => {
+		const result = [];
+		for (let i = start; i < end; i++) {
+			result.push(i);
+		}
+		return result;
+	}
+
+	disabledDateTime = () => {
+		const { meeting_start_time } = this.state
+		let old_hours = new Date().getHours()
+		let old_minutes = new Date().getMinutes()
+		let nextOrPrevDate = new Date(timestampToTimeNormal(meeting_start_time, '/', true)).getHours()
+		return {
+			disabledHours: () => this.range(0, 24).splice(0, old_hours),
+			disabledMinutes: nextOrPrevDate > old_hours ? () => '' : () => this.range(0, old_minutes),
+		};
 	}
 
 	getImgLogo = (item) => {
@@ -1009,6 +1058,7 @@ class VideoMeetingPopoverContent extends React.Component {
 			videoMeetingPopoverVisible,
 			dueTimeList = [],
 			start_time,
+			meeting_start_time,
 			selectedKeys,
 			currentSelectedProjectMembersList = [],
 			toNoticeList = [],
@@ -1063,7 +1113,7 @@ class VideoMeetingPopoverContent extends React.Component {
 								{/* 会议名称 E */}
 
 								{/* 时间选择 S */}
-								{/* <span className={indexStyles.videoMeeting__topic_content_time}>
+								<span id={'videoMeeting__topic_content_time'} style={{zIndex: 1}} className={indexStyles.videoMeeting__topic_content_time}>
 									<span className={indexStyles.videoMeeting__topic_content_datePicker} style={{ position: 'relative', zIndex: 0, minWidth: '200px', lineHeight: '38px', display: 'inline-block', textAlign: 'center' }}>
 										<span>
 											<Input
@@ -1071,14 +1121,16 @@ class VideoMeetingPopoverContent extends React.Component {
 											/>
 										</span>
 										<DatePicker
+											allowClear={false}
 											onChange={this.startDatePickerChange.bind(this)}
-											// getCalendarContainer={triggerNode => triggerNode.parentNode}
+											getCalendarContainer={() => document.getElementById('videoMeeting__topic_content_time')}
 											disabledDate={this.disabledDate}
-											placeholder={start_time ? start_time : currentDelayStartTime}
+											disabledTime={this.disabledDateTime}
+											value={start_time ? moment(new Date(Number(meeting_start_time))) : undefined}
 											format="YYYY/MM/DD HH:mm"
 											showTime={{ format: 'HH:mm' }}
 											style={{ opacity: 0, background: '#000000', position: 'absolute', left: 0, width: 'auto' }} />
-										<span disabled={isShowNowTime ? true : false} style={{ color: isShowNowTime ? 'rgba(0,0,0,0.25)' : '#1890FF' }} onClick={this.handleChangeNowTime} className={indexStyles.videoMeeting__topic_content_rightnow}>现在</span>
+										{/* <span disabled={isShowNowTime ? true : false} style={{ color: isShowNowTime ? 'rgba(0,0,0,0.25)' : '#1890FF' }} onClick={this.handleChangeNowTime} className={indexStyles.videoMeeting__topic_content_rightnow}>现在</span> */}
 									</span>
 									<span style={{ position: 'relative' }}>
 										<Select
@@ -1094,7 +1146,7 @@ class VideoMeetingPopoverContent extends React.Component {
 											}
 										</Select>
 									</span>
-								</span> */}
+								</span>
 								{/* 时间选择 E */}
 							</div>
 						</div>
