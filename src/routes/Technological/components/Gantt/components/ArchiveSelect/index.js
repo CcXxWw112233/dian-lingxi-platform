@@ -102,7 +102,7 @@ export default class ArchiveSelect extends React.Component {
     })
   }
   onCheck = (checkedKeys) => {
-    console.log('checkedKeys', checkedKeys)
+    // console.log('checkedKeys', checkedKeys)
     this.setState({
       checkedKeys
     })
@@ -192,7 +192,7 @@ export default class ArchiveSelect extends React.Component {
   render() {
     const { treeData = {}, checkedKeys = [] } = this.state
     const { visible, board_id, board_name } = this.props
-    console.log('checkedKeys_treeData', treeData)
+    // console.log('checkedKeys_treeData', treeData)
     return (
       <div >
         <Modal

@@ -340,7 +340,7 @@ export const setDateWithPositionInYearView = ({ _position, date_arr_one_level, c
     const inital_month = _month
 
     //由于计算紧凑，会出现2010/02/0 或者2010/02/-1等日期号不正常情况，这种情况将日期设置为上一个月的最后一天
-    console.log('date_no_init', `${_year}/${_month}/${date_no}`)
+    // console.log('date_no_init', `${_year}/${_month}/${date_no}`)
     if (date_no < 0) {
         if (_month == 1) {
             _month = 12
@@ -352,7 +352,7 @@ export const setDateWithPositionInYearView = ({ _position, date_arr_one_level, c
         // 出现 2010/02/-40这种情况
         if (_last_date > Math.abs(date_no)) {
             date_no = _last_date - Math.abs(date_no) //出现负数的时候将当月天数份加上负数就是日期号
-            console.log('date_no_1', date_no)
+            // console.log('date_no_1', date_no)
         } else if (_last_date < Math.abs(date_no)) {
             _month = _month - 1
             if (_month == 1) {
@@ -360,20 +360,20 @@ export const setDateWithPositionInYearView = ({ _position, date_arr_one_level, c
                 _year = _year - 1
             }
             date_no = base_utils.getDaysNumInMonth(_month, _year) - Math.abs(Math.abs(date_no) - Math.abs(base_utils.getDaysNumInMonth(inital_year, inital_month)))
-            console.log('date_no_2', date_no)
+            // console.log('date_no_2', date_no)
             //出现负数的时候将当月天数份加上负数就是日期号
         } else if (_last_date == Math.abs(date_no)) {
             date_no = 1
-            console.log('date_no_3', date_no)
+            // console.log('date_no_3', date_no)
         }
     } else if (date_no == 0) {
         date_no = 1
-        console.log('date_no_4', date_no)
+        // console.log('date_no_4', date_no)
     } else {
 
     }
     let date_string = `${_year}/${_month}/${date_no}`
-    console.log('date_no_end', date_string)
+    // console.log('date_no_end', date_string)
     date = {
         timestamp: new Date(`${date_string} 00:00:00`).getTime(),
         timestampEnd: new Date(`${date_string} 23:59:59`).getTime()

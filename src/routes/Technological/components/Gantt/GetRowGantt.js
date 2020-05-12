@@ -17,6 +17,7 @@ import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE } from '../../../..
 import GetRowSummary from './components/gattFaceCardItem/GetRowSummary.js'
 import GetRowGanttVirtual from './GetRowGanttVirtual'
 import GetRowStrip from './components/GetRowStrip'
+import { isSamDay, timestampToTimeNormal, timestampToTime } from '../../../../utils/util';
 
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
@@ -158,7 +159,7 @@ export default class GetRowGantt extends Component {
     }
     this.setIsDragging(true)
 
-    const { ceiHeight, ceilWidth } = this.props
+    const { gantt_view_mode, ceilWidth } = this.props
 
     const target_0 = document.getElementById('gantt_card_out')
     const target_1 = document.getElementById('gantt_card_out_middle')
@@ -184,7 +185,9 @@ export default class GetRowGantt extends Component {
     this.setState({
       currentRect: property
     }, () => {
-      // this.handleCreateTask({ start_end: '2', top: property.y, not_create: true })
+      if (gantt_view_mode == 'year') {
+        this.handleCreateTask({ start_end: '2', top: property.y, not_create: true })
+      }
       this.setDragDashedRectHolidayNo()
     })
   }
@@ -211,8 +214,7 @@ export default class GetRowGantt extends Component {
 
   //鼠标移动
   dashedMouseMove = (e) => {
-    console.log('sssssssssssssssssaaa', 12)
-    const { dataAreaRealHeight, gantt_board_id, group_view_type, show_board_fold } = this.props
+    const { dataAreaRealHeight, gantt_board_id, group_view_type, show_board_fold, gantt_view_mode } = this.props
     if (e.target.offsetTop >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
     if (
       (e.target.dataset.targetclassname == 'specific_example') //不能滑动到某一个任务实例上
@@ -265,6 +267,11 @@ export default class GetRowGantt extends Component {
     this.setState({
       currentRect: property,
       drag_holiday_count: 0,
+    }, () => {
+      if (gantt_view_mode == 'year') {
+        this.handleCreateTask({ start_end: '1', top: property.y, not_create: true })
+        this.handleCreateTask({ start_end: '2', top: property.y, not_create: true })
+      }
     })
   }
   dashedMouseLeave = (e) => {
@@ -367,7 +374,6 @@ export default class GetRowGantt extends Component {
 
     const { timestamp, timestampEnd } = date
     const update_name = start_end == '1' ? 'create_start_time' : 'create_end_time'
-    console.log('ssssssdate', date)
 
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
@@ -597,6 +603,65 @@ export default class GetRowGantt extends Component {
     }
   }
 
+  // 渲染虚线框
+  renderDashedRect = () => {
+    const { currentRect = {}, dasheRectShow, drag_holiday_count } = this.state
+    const { create_start_time, create_end_time, gantt_view_mode } = this.props
+    const {
+      ceilWidth,
+      ceiHeight,
+      gantt_board_id,
+      group_view_type,
+      show_board_fold,
+    } = this.props
+    const title = (isSamDay(create_start_time, create_end_time) || !create_start_time || !create_end_time) ? timestampToTime(create_end_time, true) : (
+      timestampToTime(create_start_time, true) + '-' + timestampToTime(create_end_time, true)
+    )
+    const contain = (
+      dasheRectShow
+      && !this.state.task_is_dragging
+      && !ganttIsOutlineView({ group_view_type })
+      && (
+        <div
+          // title={'点击或向右拖拽创建任务'}
+          className={indexStyles.dasheRect} style={{
+            left: currentRect.x + 1, top: currentRect.y,
+            width: currentRect.width,
+            height: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? task_item_height_fold : task_item_height,//currentRect.height,
+            boxSizing: 'border-box',
+            marginTop: !ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? task_item_margin_top : (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2, //task_item_margin_top,//
+            color: 'rgba(0,0,0,0.45)',
+            textAlign: 'right',
+            lineHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? `${task_item_height_fold}px` : `${ceiHeight - task_item_margin_top}px`,
+            paddingRight: Math.ceil(currentRect.width / ceilWidth) > 1 ? 8 : 0,
+            zIndex: this.isDragging ? 2 : 1
+          }} >
+          {Math.ceil(currentRect.width / ceilWidth) > 1 ? Math.ceil(currentRect.width / ceilWidth) : ''}
+          {
+            gantt_view_mode == 'year' && (
+              <Tooltip
+                visible
+                title={title}
+                getPopupContainer={() => document.getElementById('gantt_card_out_middle')}
+              >
+                <div style={{
+                  left: 0,
+                  top: 0,
+                  zIndex: 3,
+                  position: 'absolute', width: currentRect.width,
+                  height: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? task_item_height_fold : task_item_height,//currentRect.height,
+                }}></div>
+              </Tooltip>
+            )
+          }
+
+          {/* {Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth) - drag_holiday_count}
+            {Math.ceil(currentRect.width / ceilWidth) != 1 && (drag_holiday_count > 0 ? `+${drag_holiday_count}` : '')} */}
+        </div >
+      )
+    )
+    return contain
+  }
   render() {
     const { currentRect = {}, dasheRectShow, drag_holiday_count } = this.state
     const {
@@ -619,31 +684,7 @@ export default class GetRowGantt extends Component {
         {...this.targetMouseEvent()}
         id={'gantt_operate_area_panel'}
         ref={'gantt_operate_area_panel'}>
-        {
-          dasheRectShow
-          && !this.state.task_is_dragging
-          && !ganttIsOutlineView({ group_view_type })
-          && (
-            <div
-              title={'点击或向右拖拽创建任务'}
-              className={indexStyles.dasheRect} style={{
-                left: currentRect.x + 1, top: currentRect.y,
-                width: currentRect.width,
-                height: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? task_item_height_fold : task_item_height,//currentRect.height,
-                boxSizing: 'border-box',
-                marginTop: !ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? task_item_margin_top : (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2, //task_item_margin_top,//
-                color: 'rgba(0,0,0,0.45)',
-                textAlign: 'right',
-                lineHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? `${task_item_height_fold}px` : `${ceiHeight - task_item_margin_top}px`,
-                paddingRight: Math.ceil(currentRect.width / ceilWidth) > 1 ? 8 : 0,
-                zIndex: this.isDragging ? 2 : 1
-              }} >
-              {Math.ceil(currentRect.width / ceilWidth) > 1 ? Math.ceil(currentRect.width / ceilWidth) : ''}
-              {/* {Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth) - drag_holiday_count}
-              {Math.ceil(currentRect.width / ceilWidth) != 1 && (drag_holiday_count > 0 ? `+${drag_holiday_count}` : '')} */}
-            </div>
-          )
-        }
+        {this.renderDashedRect()}
         {/* 非大纲视图下渲染任务和或者进度 */}
         {
           !ganttIsOutlineView({ group_view_type }) && list_group.map((value, key) => {
