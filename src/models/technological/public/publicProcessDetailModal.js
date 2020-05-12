@@ -6,7 +6,7 @@ import { MESSAGE_DURATION_TIME, FILES, FLOWS } from "../../../globalset/js/const
 import { getSubfixName } from '../../../utils/businessFunction'
 import QueryString from 'querystring'
 import { processEditDatasConstant, processEditDatasRecordsConstant, processDoingListMatch, processInfoMatch } from '../../../components/ProcessDetailModal/constant';
-import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete, rejectProcessTask, workflowEnd, workflowDelete, restartProcess, processFileUpload, deleteProcessFile, fileDownload, configurePorcessGuide, rebackProcessTask } from "../../../services/technological/workFlow"
+import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete, rejectProcessTask, workflowEnd, workflowDelete, restartProcess, processFileUpload, deleteProcessFile, fileDownload, configurePorcessGuide, rebackProcessTask, nonAwayTempleteStartPropcess } from "../../../services/technological/workFlow"
 import {public_selectCurrentFlowTabsStatus} from './select'
 
 let dispatchEvent = null
@@ -500,6 +500,23 @@ export default {
       } else {
         message.warn(res.message)
       }
+    },
+
+    // 不经过模板时启动
+    * nonAwayTempleteStartPropcess({ payload }, { call, put }) {
+      const { calback } = payload
+      let newPayload = {...payload}
+      newPayload.calback ? delete newPayload.calback : ''
+      let res = yield call(nonAwayTempleteStartPropcess,newPayload)
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success(`启动${currentNounPlanFilterName(FLOWS)}成功`,MESSAGE_DURATION_TIME)
+        }, 200)
+        if (calback && typeof calback == 'function') calback()
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
     }
   },
   reducers: {

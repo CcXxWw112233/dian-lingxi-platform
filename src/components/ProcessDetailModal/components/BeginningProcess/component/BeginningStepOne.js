@@ -517,7 +517,7 @@ export default class BeginningStepOne extends Component {
                   <span>{name}</span>
                   {
                     runtime_type == '1' && (
-                      <span style={{color: '#FF5D60', fontSize: '16px', marginLeft: '8px', letterSpacing: '2px'}}>{"(被驳回)"}</span>
+                      <span style={{ color: '#FF5D60', fontSize: '16px', marginLeft: '8px', letterSpacing: '2px' }}>{"(被驳回)"}</span>
                     )
                   }
                 </div>
@@ -535,25 +535,31 @@ export default class BeginningStepOne extends Component {
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 {/* 填写人 */}
                 <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
-                  <AvatarList
-                    size="small"
-                    maxLength={10}
-                    excessItemsStyle={{
-                      color: '#f56a00',
-                      backgroundColor: '#fde3cf'
-                    }}
-                  >
-                    {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
-                      <AvatarList.Item
-                        key={index}
-                        tips={name || '佚名'}
-                        src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
-                      />
-                    ))}
-                  </AvatarList>
-                  <span className={indexStyles.content__principalList_info}>
-                    {`${transPrincipalList.length}位填写人`}
-                  </span>
+                  {
+                    !(transPrincipalList && transPrincipalList.length) ? ('') : (
+                      <>
+                        <AvatarList
+                          size="small"
+                          maxLength={10}
+                          excessItemsStyle={{
+                            color: '#f56a00',
+                            backgroundColor: '#fde3cf'
+                          }}
+                        >
+                          {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
+                            <AvatarList.Item
+                              key={index}
+                              tips={name || '佚名'}
+                              src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                            />
+                          ))}
+                        </AvatarList>
+                        <span className={indexStyles.content__principalList_info}>
+                          {`${transPrincipalList.length}位填写人`}
+                        </span>
+                      </>
+                    )
+                  }
                 </div>
                 {/* {
                   assignee_type == '2' ? (
@@ -589,25 +595,31 @@ export default class BeginningStepOne extends Component {
                 {
                   cc_type == '1' && (
                     <div style={{ marginLeft: '8px', display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
-                      <AvatarList
-                        size="small"
-                        maxLength={10}
-                        excessItemsStyle={{
-                          color: '#f56a00',
-                          backgroundColor: '#fde3cf'
-                        }}
-                      >
-                        {(transCopyPersonnelList && transCopyPersonnelList.length) && transCopyPersonnelList.map(({ name, avatar }, index) => (
-                          <AvatarList.Item
-                            key={index}
-                            tips={name || '佚名'}
-                            src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
-                          />
-                        ))}
-                      </AvatarList>
-                      <span className={indexStyles.content__principalList_info}>
-                        {`${transCopyPersonnelList.length}位抄送人`}
-                      </span>
+                      {
+                        !(transCopyPersonnelList && transCopyPersonnelList.length) ? ('') : (
+                          <>
+                            <AvatarList
+                              size="small"
+                              maxLength={10}
+                              excessItemsStyle={{
+                                color: '#f56a00',
+                                backgroundColor: '#fde3cf'
+                              }}
+                            >
+                              {(transCopyPersonnelList && transCopyPersonnelList.length) && transCopyPersonnelList.map(({ name, avatar }, index) => (
+                                <AvatarList.Item
+                                  key={index}
+                                  tips={name || '佚名'}
+                                  src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                                />
+                              ))}
+                            </AvatarList>
+                            <span className={indexStyles.content__principalList_info}>
+                              {`${transCopyPersonnelList.length}位抄送人`}
+                            </span>
+                          </>
+                        )
+                      }
                     </div>
                   )
                 }

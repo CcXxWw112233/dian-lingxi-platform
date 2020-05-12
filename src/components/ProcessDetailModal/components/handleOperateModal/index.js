@@ -187,6 +187,16 @@ const findCurrentOverruleNodesPosition = (data = []) => {
   return overrule_position
 } 
 
+// 找到当前评分节点的位置
+const findCurrentRatingScoreNodesPosition = (data = []) => {
+  if (!data) return
+  if (!data.length) return ''
+  let findData = JSON.parse(JSON.stringify(data || []))
+  let curr_position = findData.findIndex(item => item.status == '1' && item.node_type == '3') || ''
+  if (curr_position < 0) return ''
+  return curr_position
+}
+
 // 渲染时、天、月
 const renderTimeType = (type) => {
   let description = ''
@@ -373,6 +383,7 @@ export {
   findCurrentFileInfo,
   findCurrentApproveNodesPosition,
   findCurrentOverruleNodesPosition,
+  findCurrentRatingScoreNodesPosition,
   computing_mode,
   result_score_option,
   result_score_fall_through_with_others,

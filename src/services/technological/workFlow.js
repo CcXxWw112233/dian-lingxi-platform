@@ -256,3 +256,12 @@ export async function rebackProcessTask(data) {
     data
   });
 }
+
+// 关于直接启动不经过模板页面
+export async function nonAwayTempleteStartPropcess(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/workflow/start`,
+    method: 'POST',
+    data
+  });
+}

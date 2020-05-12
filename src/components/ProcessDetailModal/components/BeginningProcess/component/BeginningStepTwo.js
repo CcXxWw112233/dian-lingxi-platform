@@ -8,7 +8,7 @@ import { connect } from 'dva'
 import { timestampToTimeNormal, compareACoupleOfObjects, isObjectValueEqual } from '../../../../../utils/util';
 import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
 import { PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
-import { genPrincipalListFromAssignees, findCurrentApproveNodesPosition, findCurrentOverruleNodesPosition } from '../../handleOperateModal'
+import { genPrincipalListFromAssignees, findCurrentApproveNodesPosition, findCurrentOverruleNodesPosition, findCurrentRatingScoreNodesPosition } from '../../handleOperateModal'
 import DifferenceDeadlineType from '../../DifferenceDeadlineType';
 
 const TextArea = Input.TextArea
@@ -19,10 +19,11 @@ export default class BeginningStepTwo extends Component {
     super(props)
     let curr_position = findCurrentApproveNodesPosition(props['processEditDatas']) // 获取当前需要审批的节点位置
     let overrule_position = findCurrentOverruleNodesPosition(props['processEditDatas']) // 获取当前被驳回节点的位置
+    let rating_position = findCurrentRatingScoreNodesPosition(props['processEditDatas'])
     this.state = {
       transPrincipalList: props.itemValue.assignees ? [...props.itemValue.assignees] : [], // 表示当前的执行人
       transCopyPersonnelList: props.itemValue.recipients ? [...props.itemValue.recipients] : [], // 表示当前选择的抄送人
-      is_show_spread_arrow: props.itemValue.status == '1' || (props.itemKey == curr_position - 1) || (props.itemValue.runtime_type == '1') || (props.itemKey == Number(overrule_position) + 1)? true : false,
+      is_show_spread_arrow: props.itemValue.status == '1' || (props.itemKey == curr_position - 1) || (props.itemValue.runtime_type == '1') || (props.itemKey == Number(overrule_position) != '' && Number(overrule_position) + 1) || (props.itemKey == rating_position - 1) ? true : false,
       historyCommentsList: props.itemValue.his_comments ? [...props.itemValue.his_comments] : [],
       currentSelectArrow: ''
     }
@@ -34,8 +35,9 @@ export default class BeginningStepTwo extends Component {
       let curr_position
       if (nextProps) curr_position = findCurrentApproveNodesPosition(nextProps['processEditDatas'])
       let overrule_position = findCurrentOverruleNodesPosition(nextProps['processEditDatas']) // 获取当前被驳回节点的位置
+      let rating_position = findCurrentRatingScoreNodesPosition(nextProps['processEditDatas'])
       this.setState({
-        is_show_spread_arrow: nextProps.itemValue.status == '1' || (nextProps.itemKey == curr_position - 1) || (nextProps.itemValue.runtime_type == '1') || (nextProps.itemKey == Number(overrule_position) + 1) ? true : false,
+        is_show_spread_arrow: nextProps.itemValue.status == '1' || (nextProps.itemKey == curr_position - 1) || (nextProps.itemValue.runtime_type == '1') || (nextProps.itemKey == Number(overrule_position) != '' && Number(overrule_position) + 1) || (nextProps.itemKey == rating_position - 1) ? true : false,
         transPrincipalList: nextProps.itemValue.assignees ? [...nextProps.itemValue.assignees] : [], // 表示当前的执行人
         transCopyPersonnelList: nextProps.itemValue.recipients ? [...nextProps.itemValue.recipients] : [], // 表示当前选择的抄送人
         historyCommentsList: nextProps.itemValue.his_comments ? [...nextProps.itemValue.his_comments] : [],
@@ -437,7 +439,7 @@ export default class BeginningStepTwo extends Component {
                 <div>
                   <span>{name}</span>
                   <span className={indexStyles.approv_rating}>已审批</span>
-                  <div style={{color: 'rgba(0,0,0,0.25)'}}>{'(待所有审批人完成审批后显示审批意见)'}</div>
+                  <div style={{ color: 'rgba(0,0,0,0.25)' }}>{'(待所有审批人完成审批后显示审批意见)'}</div>
                 </div>
               </div>
               <div className={indexStyles.app_right}>{timestampToTimeNormal(time, '/', true) || ''}</div>
@@ -740,7 +742,7 @@ export default class BeginningStepTwo extends Component {
                     <span>{name}</span>
                     {
                       runtime_type == '1' && (
-                        <span style={{color: '#FF5D60', fontSize: '16px', marginLeft: '8px', letterSpacing: '2px'}}>{"(被驳回)"}</span>
+                        <span style={{ color: '#FF5D60', fontSize: '16px', marginLeft: '8px', letterSpacing: '2px' }}>{"(被驳回)"}</span>
                       )
                     }
                   </div>
@@ -758,49 +760,62 @@ export default class BeginningStepTwo extends Component {
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   {/* 填写人 */}
                   <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
-                    <AvatarList
-                      size="small"
-                      maxLength={10}
-                      excessItemsStyle={{
-                        color: '#f56a00',
-                        backgroundColor: '#fde3cf'
-                      }}
-                    >
-                      {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
-                        <AvatarList.Item
-                          key={index}
-                          tips={name || '佚名'}
-                          src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
-                        />
-                      ))}
-                    </AvatarList>
-                    <span className={indexStyles.content__principalList_info}>
-                      {`${transPrincipalList.length}位审批人`}
-                    </span>
+                    {
+                      !(transPrincipalList && transPrincipalList.length) ? ('') : (
+                        <>
+                          <AvatarList
+                            size="small"
+                            maxLength={10}
+                            excessItemsStyle={{
+                              color: '#f56a00',
+                              backgroundColor: '#fde3cf'
+                            }}
+                          >
+                            {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
+                              <AvatarList.Item
+                                key={index}
+                                tips={name || '佚名'}
+                                src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                              />
+                            ))}
+                          </AvatarList>
+                          <span className={indexStyles.content__principalList_info}>
+                            {`${transPrincipalList.length}位审批人`}
+                          </span>
+                        </>
+                      )
+                    }
+
                   </div>
                   {/* 抄送人 */}
                   {
                     cc_type == '1' && (
                       <div style={{ marginLeft: '8px', display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
-                        <AvatarList
-                          size="small"
-                          maxLength={10}
-                          excessItemsStyle={{
-                            color: '#f56a00',
-                            backgroundColor: '#fde3cf'
-                          }}
-                        >
-                          {(transCopyPersonnelList && transCopyPersonnelList.length) && transCopyPersonnelList.map(({ name, avatar }, index) => (
-                            <AvatarList.Item
-                              key={index}
-                              tips={name || '佚名'}
-                              src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
-                            />
-                          ))}
-                        </AvatarList>
-                        <span className={indexStyles.content__principalList_info}>
-                          {`${transCopyPersonnelList.length}位抄送人`}
-                        </span>
+                        {
+                          !(transCopyPersonnelList && transCopyPersonnelList.length) ? ('') : (
+                            <>
+                              <AvatarList
+                                size="small"
+                                maxLength={10}
+                                excessItemsStyle={{
+                                  color: '#f56a00',
+                                  backgroundColor: '#fde3cf'
+                                }}
+                              >
+                                {(transCopyPersonnelList && transCopyPersonnelList.length) && transCopyPersonnelList.map(({ name, avatar }, index) => (
+                                  <AvatarList.Item
+                                    key={index}
+                                    tips={name || '佚名'}
+                                    src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                                  />
+                                ))}
+                              </AvatarList>
+                              <span className={indexStyles.content__principalList_info}>
+                                {`${transCopyPersonnelList.length}位抄送人`}
+                              </span>
+                            </>
+                          )
+                        }
                       </div>
                     )
                   }

@@ -79,7 +79,7 @@ export default class MainContent extends Component {
     if (currentDoingApproveItem) {
       if (scrollElement.scrollTo) {
         scrollElement.scrollTo({
-          top: currentDoingApproveItem.offsetTop - 68,
+          top: currentDoingApproveItem.offsetTop - 500,
           behavior: 'smooth'
         });
       }
@@ -88,7 +88,7 @@ export default class MainContent extends Component {
     if (currentStaticRatingScoreItem) {
       if (scrollElement.scrollTo) {
         scrollElement.scrollTo({
-          top: currentStaticRatingScoreItem.offsetTop - 68,
+          top: currentStaticRatingScoreItem.offsetTop - 300,
           behavior: 'smooth'
         });
       }
@@ -447,7 +447,7 @@ export default class MainContent extends Component {
   // 表示是配置的时候保存模板
   handleSaveConfigureProcessTemplete = () => {
     const { currentFlowInstanceName } = this.state
-    const { dispatch, projectDetailInfoData: { board_id }, currentFlowInstanceDescription, processEditDatas = [] } = this.props
+    const { dispatch, projectDetailInfoData: { board_id }, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { enable_change } } = this.props
     Promise.resolve(
       dispatch({
         type: 'publicProcessDetailModal/saveProcessTemplate',
@@ -456,6 +456,7 @@ export default class MainContent extends Component {
           name: currentFlowInstanceName,
           description: currentFlowInstanceDescription,
           nodes: processEditDatas,
+          enable_change: enable_change
         }
       })
     ).then(res => {
@@ -479,7 +480,7 @@ export default class MainContent extends Component {
   // 表示是编辑时保存模板 ==> 是需要带上凭证的
   handleSaveEditProcessTemplete = () => {
     const { currentFlowInstanceName } = this.state
-    const { dispatch, currentTempleteIdentifyId, projectDetailInfoData: { board_id }, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { id, is_covert_template } } = this.props
+    const { dispatch, currentTempleteIdentifyId, projectDetailInfoData: { board_id }, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { id, is_covert_template, enable_change } } = this.props
     if (is_covert_template && is_covert_template == '1') {
       this.handleSaveConfigureProcessTemplete()
     } else {
@@ -492,6 +493,7 @@ export default class MainContent extends Component {
             description: currentFlowInstanceDescription,
             nodes: processEditDatas,
             template_no: currentTempleteIdentifyId,
+            enable_change: enable_change
           }
         })
       ).then(res => {
@@ -523,7 +525,7 @@ export default class MainContent extends Component {
   // 第一步: 先保存模板 ==> 返回模板ID
   handleOperateConfigureConfirmProcessOne = async (start_time) => {
     const { currentFlowInstanceName } = this.state
-    const { projectDetailInfoData: { board_id }, currentFlowInstanceDescription, processEditDatas = [], request_flows_params = {} } = this.props
+    const { projectDetailInfoData: { board_id }, currentFlowInstanceDescription, processEditDatas = [], request_flows_params = {}, templateInfo: { enable_change } } = this.props
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     let REAUEST_BOARD_ID = getGlobalData('storageCurrentOperateBoardId') || board_id
     let res = await saveProcessTemplate({
@@ -532,6 +534,7 @@ export default class MainContent extends Component {
       description: currentFlowInstanceDescription,
       nodes: processEditDatas,
       is_retain: '0',
+      enable_change: enable_change
     })
     if (!isApiResponseOk(res)) {
       setTimeout(() => {message.warn(res.message,MESSAGE_DURATION_TIME)},500)
@@ -613,7 +616,7 @@ export default class MainContent extends Component {
           start_up_type: start_time ? '2' : '1',
           plan_start_time: start_time ? start_time : '',
           flow_template_id: id,
-          board_id: REAUEST_BOARD_ID
+          board_id: REAUEST_BOARD_ID,
         }
       })
     ).then(res => {
@@ -709,6 +712,19 @@ export default class MainContent extends Component {
       start_time: timeToTimestamp(timeString)
     }, () => {
       this.handleStartOpenChange(true)
+    })
+  }
+
+  handleEnableChange = (e) => {
+    e && e.stopPropagation()
+    const { templateInfo = {} } = this.props
+    let newInfo = JSON.parse(JSON.stringify(templateInfo || {}))
+    newInfo['enable_change'] = newInfo['enable_change'] == '0' ? '1' : '0'
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        templateInfo: newInfo
+      }
     })
   }
 
@@ -875,7 +891,7 @@ export default class MainContent extends Component {
 
   render() {
     const { clientHeight, currentFlowInstanceName } = this.state
-    const { currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep, processInfo: { status, create_time } } = this.props
+    const { currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep, processInfo: { status, create_time }, templateInfo: { enable_change } } = this.props
     let saveTempleteDisabled = currentFlowInstanceName == '' || (processEditDatas && processEditDatas.length) && processEditDatas.find(item => item.is_edit == '0') || (processEditDatas && processEditDatas.length) && !(processEditDatas[processEditDatas.length - 1].node_type) ? true : false
     return (
       <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto', position: 'relative' }} onScroll={this.onScroll} >
@@ -993,7 +1009,7 @@ export default class MainContent extends Component {
         {
           (processPageFlagStep == '1' || processPageFlagStep == '2') && processEditDatas.length >= 2 && (
             <div className={indexStyles.conclude_sign}>
-              <Checkbox>启用此模版时不能修改步骤执行人和步骤完成期限</Checkbox>
+              <Checkbox checked={enable_change == '0'} onChange={this.handleEnableChange}>启用此模版时不能修改步骤执行人和步骤完成期限</Checkbox>
             </div>
           )
         }

@@ -421,7 +421,7 @@ export default class HeaderContentRightMenu extends Component {
 
   // 转为模板
   handleCovertTemplete = () => {
-    const { dispatch, templateInfo = {}, processInfo: { nodes = [], id, is_covert_template } } = this.props
+    const { dispatch, templateInfo = {}, processInfo: { nodes = [], id, is_covert_template, enable_change } } = this.props
     let newNodes = [...nodes]
     newNodes = newNodes.map(item => {
       if (item.node_type == '3') {
@@ -440,7 +440,7 @@ export default class HeaderContentRightMenu extends Component {
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
         processEditDatas: JSON.parse(JSON.stringify([...newNodes] || [])),
-        templateInfo: {...templateInfo, id, nodes: JSON.parse(JSON.stringify([...newNodes] || [])), is_covert_template},
+        templateInfo: {...templateInfo, id, nodes: JSON.parse(JSON.stringify([...newNodes] || [])), is_covert_template, enable_change},
         processPageFlagStep: '2',
       }
     })
