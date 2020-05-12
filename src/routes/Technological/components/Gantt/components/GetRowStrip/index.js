@@ -6,11 +6,11 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import OutlineTree from '../OutlineTree';
 import { updateTask, updateMilestone } from '../../../../../../services/technological/task';
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
-import { message } from 'antd';
+import { message, Tooltip } from 'antd';
 import MilestoneDetail from '../milestoneDetail'
 import { checkIsHasPermission, checkIsHasPermissionInBoard } from '../../../../../../utils/businessFunction';
 import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_CREATE } from '../../../../../../globalset/js/constant';
-import { isSamDay, getDigit } from '../../../../../../utils/util';
+import { isSamDay, getDigit, timestampToTime } from '../../../../../../utils/util';
 import { setDateWithPositionInYearView } from '../../ganttBusiness';
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
@@ -138,7 +138,7 @@ export default class GetRowStrip extends PureComponent {
             }
         } else if (gantt_view_mode == 'year') {
             date = setDateWithPositionInYearView({
-                _position: x,
+                _position: x + ceilWidth,
                 date_arr_one_level,
                 ceilWidth,
                 width: width || ceilWidth,
@@ -152,9 +152,10 @@ export default class GetRowStrip extends PureComponent {
     }
     // 渲染任务滑块 --start
     renderCardRect = () => {
-        const { itemValue = {}, ceilWidth } = this.props
+        const { itemValue = {}, ceilWidth, gantt_view_mode } = this.props
         const { id, name, time_span } = itemValue
         const { is_item_has_time, currentRect = {} } = this.state
+        const timestamp = gantt_view_mode == 'year' ? this.calHoverDate().timestamp : ''
         return (
             <div
                 onClick={this.cardSetClick}
@@ -163,11 +164,19 @@ export default class GetRowStrip extends PureComponent {
                     display: (!is_item_has_time && this.onHoverState()) ? 'flex' : 'none',
                     marginLeft: currentRect.x
                 }}>
-                <div
-                    style={{ width: time_span ? time_span * ceilWidth - 6 : ceilWidth }}
-                    className={styles.card_rect}></div>
-                <div className={styles.point}></div>
-                <div className={styles.name}>{name}</div>
+                <Tooltip
+                    visible={gantt_view_mode == 'year'}
+                    title={timestampToTime(timestamp)}
+                >
+                    <>
+                        <div style={{ width: 10, height: '100%', marginLeft: -6, }}></div>
+                        <div
+                            style={{ width: time_span ? time_span * ceilWidth - 6 : ceilWidth }}
+                            className={styles.card_rect}></div>
+                        <div className={styles.point}></div>
+                        <div className={styles.name}>{name}</div>
+                    </>
+                </Tooltip>
             </div>
         )
     }
@@ -222,7 +231,7 @@ export default class GetRowStrip extends PureComponent {
 
     //渲染里程碑设置---start
     renderMilestoneSet = () => {
-        const { itemValue = {}, group_list_area, list_group_key, ceilWidth } = this.props
+        const { itemValue = {}, group_list_area, list_group_key, ceilWidth, gantt_view_mode } = this.props
         const { id, name, due_time, left, expand_length } = itemValue
         const { is_item_has_time, currentRect = {} } = this.state
         let display = 'none'
@@ -242,8 +251,10 @@ export default class GetRowStrip extends PureComponent {
         if (marginLeft == '0') {
             display = 'none'
         }
-        console.log('marginLeft', marginLeft)
+        // console.log('marginLeft', marginLeft)
+        const timestamp = gantt_view_mode == 'year' ? this.calHoverDate().timestamp : ''
         return (
+
             <div
                 onClick={() => this.miletonesClick(due_time)}
                 className={styles.will_set_item_milestone}
@@ -252,15 +263,24 @@ export default class GetRowStrip extends PureComponent {
                     marginLeft,
                     paddingLeft,
                 }}>
-                <div
-                    style={{
-                        height: (expand_length - 0.5) * ceil_height
-                    }}
-                    className={styles.board_miletiones_flagpole}>
-                </div>
-                <div className={`${styles.board_miletiones_flag} ${globalStyles.authTheme}`}>&#xe6a0;</div>
-                <div className={styles.board_miletiones_names}>{name}</div>
-            </div>
+                <Tooltip
+                    visible={!due_time && gantt_view_mode == 'year'}
+                    title={timestampToTime(timestamp)}
+                >
+                    <>
+                        <div style={{ width: 10, height: '100%', marginLeft: -6 }}></div>
+                        <div
+                            style={{
+                                height: (expand_length - 0.5) * ceil_height
+                            }}
+                            className={styles.board_miletiones_flagpole}>
+                        </div>
+                        <div className={`${styles.board_miletiones_flag} ${globalStyles.authTheme}`}>&#xe6a0;</div>
+                        <div className={styles.board_miletiones_names}>{name}</div>
+                    </>
+                </Tooltip >
+
+            </div >
         )
     }
     miletonesClick = (due_time) => {
