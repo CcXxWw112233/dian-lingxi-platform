@@ -1113,7 +1113,7 @@ class VideoMeetingPopoverContent extends React.Component {
 								{/* 会议名称 E */}
 
 								{/* 时间选择 S */}
-								<span className={indexStyles.videoMeeting__topic_content_time}>
+								<span id={'videoMeeting__topic_content_time'} style={{zIndex: 1}} className={indexStyles.videoMeeting__topic_content_time}>
 									<span className={indexStyles.videoMeeting__topic_content_datePicker} style={{ position: 'relative', zIndex: 0, minWidth: '200px', lineHeight: '38px', display: 'inline-block', textAlign: 'center' }}>
 										<span>
 											<Input
@@ -1123,7 +1123,7 @@ class VideoMeetingPopoverContent extends React.Component {
 										<DatePicker
 											allowClear={false}
 											onChange={this.startDatePickerChange.bind(this)}
-											// getCalendarContainer={triggerNode => triggerNode.parentNode}
+											getCalendarContainer={() => document.getElementById('videoMeeting__topic_content_time')}
 											disabledDate={this.disabledDate}
 											disabledTime={this.disabledDateTime}
 											value={start_time ? moment(new Date(Number(meeting_start_time))) : undefined}
