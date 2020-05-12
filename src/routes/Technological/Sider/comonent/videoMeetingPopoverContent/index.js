@@ -66,6 +66,7 @@ class VideoMeetingPopoverContent extends React.Component {
 	constructor(props) {
 		super(props)
 		this.timer = null
+		this.local_timer = null
 		this.videoProviderImgTimer = null
 		this.state = {
 			saveToProject: null, // 用来保存存入的项目
@@ -142,7 +143,7 @@ class VideoMeetingPopoverContent extends React.Component {
 							this.setState({
 								isShowNowTime: true
 							})
-							this.showTime()
+							
 						})
 					})
 				} else {
@@ -252,6 +253,26 @@ class VideoMeetingPopoverContent extends React.Component {
 		}, 1000)
 	}
 
+	// 需要一个一直变化的时间来做比较
+	localShowTime = () => {
+		const { isNotUpdateShowTime } = this.state
+		let nowDate = new Date().getTime()
+		let change_time = new Date(timestampToTimeNormal(nowDate,'/',true))
+		let state_time = new Date(timestampToTimeNormal(this.state.meeting_start_time, '/', true))
+		if (change_time.getDate() == state_time.getDate()) { // 表示还是今天
+			if (change_time.getHours() == state_time.getHours() && change_time.getMinutes() == state_time.getMinutes()) {
+				this.handleChangeNowTime()
+			}
+		}
+		this.setState({
+			local_date_time: nowDate, // 保存了一个时间戳
+		})
+		this.local_timer = setTimeout(() => {
+			this.localShowTime()
+		}, 1000)
+	}
+
+
 	// 设置mention组件提及列表
 	// setVideoMeetingDefaultSuggesstionsByBoardUser = ({ board_users = [] }) => {
 	// 	const videoMeetingDefaultSuggesstions = this.handleAssemVideoMeetingDefaultSuggesstions(board_users);
@@ -297,6 +318,7 @@ class VideoMeetingPopoverContent extends React.Component {
 		defaultSaveProjectName = ''
 		stepIndex = 0
 		clearTimeout(this.timer)
+		clearTimeout(this.local_timer)
 	};
 
 	// 获取项目权限
@@ -503,6 +525,7 @@ class VideoMeetingPopoverContent extends React.Component {
 		const start_timeStamp = timeToTimestamp(timeString)
 		const nowDate = timeToTimestamp(new Date())
 		let nextOrPrevDate = new Date(timestampToTimeNormal(start_timeStamp)).getDate()
+		const { local_date_time, meeting_start_time } = this.state
 		let currentDate = new Date().getDate()
 		if (this.timer) {
 			clearTimeout(this.timer)
@@ -549,11 +572,8 @@ class VideoMeetingPopoverContent extends React.Component {
 				start_time: timestampToTime(start_timeStamp),
 				meeting_start_time: start_timeStamp,
 				isShowNowTime: false,
-				isExeecedTime: false
-			}, () => {
-				this.setState({
-					isNotUpdateShowTime: true
-				})
+				isExeecedTime: false,
+				isNotUpdateShowTime: true
 			})
 		}
 
@@ -895,7 +915,11 @@ class VideoMeetingPopoverContent extends React.Component {
 					setTimeout(() => {
 						this.getCurrentRemindUser()
 					},50)
+					clearTimeout(this.timer)
+					clearTimeout(this.local_timer)
 				} else { // 为true的时候调用设置当前通知对象
+					this.showTime()
+					this.localShowTime()
 					// dispatch({
 					// 	type: 'technological/getCurrentOrgProjectList',
 					// 	payload: {
@@ -1033,6 +1057,7 @@ class VideoMeetingPopoverContent extends React.Component {
 			videoMeetingPopoverVisible,
 			dueTimeList = [],
 			start_time,
+			meeting_start_time,
 			selectedKeys,
 			currentSelectedProjectMembersList = [],
 			toNoticeList = [],
@@ -1100,7 +1125,7 @@ class VideoMeetingPopoverContent extends React.Component {
 											// getCalendarContainer={triggerNode => triggerNode.parentNode}
 											disabledDate={this.disabledDate}
 											disabledTime={this.disabledDateTime}
-											placeholder={start_time ? start_time : currentDelayStartTime}
+											value={start_time ? moment(new Date(Number(meeting_start_time))) : undefined}
 											format="YYYY/MM/DD HH:mm"
 											showTime={{ format: 'HH:mm' }}
 											style={{ opacity: 0, background: '#000000', position: 'absolute', left: 0, width: 'auto' }} />
