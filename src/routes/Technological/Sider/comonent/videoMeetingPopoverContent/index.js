@@ -162,8 +162,8 @@ class VideoMeetingPopoverContent extends React.Component {
 		})
 	}
 
-	componentDidMount() {
-		let { projectList = [] } = this.props
+	getCurrentProject = (props) => {
+		let { projectList = [] } = props
 		const { user_set } = this.getInfoFromLocalStorage("userInfo") || {}
 		if (!user_set) return
 		const { current_board } = user_set
@@ -194,33 +194,12 @@ class VideoMeetingPopoverContent extends React.Component {
 		}
 	}
 
+	componentDidMount() {
+		this.getCurrentProject(this.props)
+	}
+
 	componentWillReceiveProps(nextProps) {
-		let { projectList = [] } = nextProps
-		// projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
-		let new_projectList = [...projectList]
-		if (projectList && projectList.length) {
-			if (new_projectList.find(item => item.is_my_private == '1')) {
-				let { board_id, org_id } = (new_projectList.find(item => item.is_my_private == '1') || {})
-				this.setState({
-					org_id,
-					notProjectList: false
-				})
-				this.getProjectUsers({ projectId: board_id })
-				return
-			} else {
-				let { board_id, org_id } = (new_projectList.find((item, index) => index == '0') || {})
-				this.setState({
-					org_id,
-					notProjectList: false
-				})
-				this.getProjectUsers({ projectId: board_id })
-				return
-			}
-		} else {
-			this.setState({
-				notProjectList: true
-			})
-		}
+		this.getCurrentProject(nextProps)
 	}
 
 	// handleAssemVideoMeetingDefaultSuggesstions = (orgList = []) => {
@@ -921,6 +900,7 @@ class VideoMeetingPopoverContent extends React.Component {
 				} else { // 为true的时候调用设置当前通知对象
 					this.showTime()
 					this.localShowTime()
+					this.getCurrentProject(this.props)
 					// dispatch({
 					// 	type: 'technological/getCurrentOrgProjectList',
 					// 	payload: {
