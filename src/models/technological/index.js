@@ -13,7 +13,7 @@ import {
   setShowSimpleModel,
 } from '../../services/technological/organizationMember'
 import { getMenuList } from '../../services/technological/getMenuList'
-import { getCurrentOrgAllMembers, createMeeting, getVideoConferenceProviderList } from './../../services/technological/workbench'
+import { getCurrentOrgAllMembers, createMeeting, getVideoConferenceProviderList, appointmentMeeting } from './../../services/technological/workbench'
 import { getCurrentNounPlan } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
@@ -631,6 +631,11 @@ export default {
     // 视频会议集成---start
     * initiateVideoMeeting({ payload }, { call }) {
       const res = yield call(createMeeting, payload)
+      return res || {}
+    },
+    // 预约会议 (新接口)
+    * appointmentVideoMeeting({ payload }, { call }) {
+      const res = yield call(appointmentMeeting, {...payload})
       return res || {}
     },
     // 获取视频会议提供商列表

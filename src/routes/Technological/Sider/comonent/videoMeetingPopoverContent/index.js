@@ -722,9 +722,10 @@ class VideoMeetingPopoverContent extends React.Component {
 
 	// 邀请人加入的回调
 	inviteMemberJoin = ({ card_id, userIds = [], user_phone = [], start_url }) => {
+		const { isShowNowTime } = this.state
 		if (!card_id) {
 			setTimeout(() => {
-				message.success("发起会议成功");
+				message.success(isShowNowTime ? "发起会议成功" : '预约会议成功');
 			}, 500)
 			this.setState(
 				{
@@ -735,7 +736,7 @@ class VideoMeetingPopoverContent extends React.Component {
 					await this.getCurrentRemindUser()
 				}
 			)
-			this.openWinNiNewTabWithATag(start_url)
+			start_url && this.openWinNiNewTabWithATag(start_url)
 			return false
 		}
 		const { org_id } = this.state
@@ -861,7 +862,7 @@ class VideoMeetingPopoverContent extends React.Component {
 
 		Promise.resolve(
 			dispatch({
-				type: "technological/initiateVideoMeeting",
+				type: isShowNowTime ? "technological/initiateVideoMeeting" : 'technological/appointmentVideoMeeting',
 				payload: data
 			})
 		).then(res => {
@@ -889,7 +890,7 @@ class VideoMeetingPopoverContent extends React.Component {
 					}
 				);
 			} else {
-				message.error("发起会议失败");
+				message.error(isShowNowTime ? "发起会议失败" : '预约会议失败');
 				this.setState(
 					{
 						videoMeetingPopoverVisible: false
