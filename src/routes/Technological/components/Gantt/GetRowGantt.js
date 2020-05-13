@@ -37,10 +37,10 @@ export default class GetRowGantt extends Component {
       specific_example_arr: [], //任务实例列表
       drag_holiday_count: 0, // //拖拽生成虚线框的节假日总天数
       task_is_dragging: false, //任务实例是否在拖拽中
+      drag_creating: false, //拖拽生成任务中
     }
     this.x1 = 0 //用于做拖拽生成一条任务
     this.y1 = 0
-    this.isDragging = false //判断是否在拖拽虚线框
     this.isMouseDown = false //是否鼠标按下
     this.SelectedRect = { x: 0, y: 0 }
 
@@ -62,14 +62,9 @@ export default class GetRowGantt extends Component {
       target.style.cursor = 'crosshair';
     }
   }
-  setIsDragging = (isDragging) => {
-    const { dispatch } = this.props
-    this.isDragging = isDragging
-    dispatch({
-      type: getEffectOrReducerByName('updateDatas'),
-      payload: {
-        isDragging
-      }
+  setDragCreating = (drag_creating) => {
+    this.setState({
+      drag_creating
     })
   }
 
@@ -135,7 +130,7 @@ export default class GetRowGantt extends Component {
       return false
     }
     // e.preventDefault() //解决拖拽卡顿？(尚未明确)
-    if (this.isDragging || this.isMouseDown) { //在拖拽中，还有防止重复点击
+    if (this.state.drag_creating || this.isMouseDown) { //在拖拽中，还有防止重复点击
       return
     }
     if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) {
@@ -144,7 +139,7 @@ export default class GetRowGantt extends Component {
     const { currentRect = {} } = this.state
     this.x1 = currentRect.x
     this.y1 = currentRect.y
-    this.setIsDragging(false)
+    this.setDragCreating(false)
     this.isMouseDown = true
     this.handleCreateTask({ start_end: '1', top: currentRect.y })
     const target = this.refs.gantt_operate_area_panel//event.target || event.srcElement;
@@ -157,7 +152,7 @@ export default class GetRowGantt extends Component {
     ) { //不能滑动到某一个任务实例上
       return false
     }
-    this.setIsDragging(true)
+    this.setDragCreating(true)
 
     const { gantt_view_mode, ceilWidth } = this.props
 
@@ -208,7 +203,7 @@ export default class GetRowGantt extends Component {
     const that = this
     setTimeout(function () {
       that.isMouseDown = false
-      that.setIsDragging(false)
+      that.setDragCreating(false)
     }, 1000)
   }
 
@@ -545,13 +540,13 @@ export default class GetRowGantt extends Component {
             key={`${id}_${start_time}_${end_time}_${left}_${top}`}
             itemValue={value2}
             setSpecilTaskExample={this.setSpecilTaskExample}
-            ganttPanelDashedDrag={this.isDragging}
+            ganttPanelDashedDrag={this.state.drag_creating}
             getCurrentGroup={this.getCurrentGroup}
             list_id={list_id}
             task_is_dragging={this.state.task_is_dragging}
             setGoldDateArr={this.props.setGoldDateArr}
             setScrollPosition={this.props.setScrollPosition}
-            setIsDragging={this.setIsDragging}
+            setDragCreating={this.setDragCreating}
             setTaskIsDragging={this.setTaskIsDragging}
           />
         )
@@ -634,7 +629,7 @@ export default class GetRowGantt extends Component {
             textAlign: 'right',
             lineHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? `${task_item_height_fold}px` : `${ceiHeight - task_item_margin_top}px`,
             paddingRight: Math.ceil(currentRect.width / ceilWidth) > 1 ? 8 : 0,
-            zIndex: this.isDragging ? 2 : 1
+            zIndex: this.state.drag_creating ? 2 : 1
           }} >
           {Math.ceil(currentRect.width / ceilWidth) > 1 ? Math.ceil(currentRect.width / ceilWidth) : ''}
           {
@@ -709,14 +704,14 @@ export default class GetRowGantt extends Component {
                   key={`${id}_${start_time}_${end_time}_${left}_${top}`}
                   itemValue={value}
                   setSpecilTaskExample={this.setSpecilTaskExample}
-                  ganttPanelDashedDrag={this.isDragging}
+                  ganttPanelDashedDrag={this.state.drag_creating}
                   getCurrentGroup={this.getCurrentGroup}
                   // list_id={list_id}
                   changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
                   task_is_dragging={this.state.task_is_dragging}
                   setGoldDateArr={this.props.setGoldDateArr}
                   setScrollPosition={this.props.setScrollPosition}
-                  setIsDragging={this.setIsDragging}
+                  setDragCreating={this.setDragCreating}
                   setTaskIsDragging={this.setTaskIsDragging}
                 />)
             )
