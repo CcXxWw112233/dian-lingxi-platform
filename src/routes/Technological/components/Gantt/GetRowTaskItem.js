@@ -91,12 +91,12 @@ export default class GetRowTaskItem extends Component {
 
     // 任务弹窗
     setSpecilTaskExample = (data) => {
-        const { task_is_dragging } = this.props
+        const { task_is_dragging, ganttPanelDashedDrag } = this.props
         const { is_moved } = this.state
-        console.log('这是什么', '松开回调', task_is_dragging, is_moved)
+        console.log('这是什么', '松开回调', task_is_dragging, is_moved, ganttPanelDashedDrag)
         if (
             is_moved
-            // || task_is_dragging
+            || ganttPanelDashedDrag //这是表示创建中
         ) {
             this.props.setTaskIsDragging && this.props.setTaskIsDragging(false, 1) //当拖动完成后，释放创建任务的锁，让可以正常创建任务
             return
