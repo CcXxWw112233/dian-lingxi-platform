@@ -102,6 +102,7 @@ class VideoMeetingPopoverContent extends React.Component {
 			// toNoticeList: [], // 当前通知的用户
 			defaultValue: '30', // 当前选择的持续时间
 			providerDefault: null, // 默认选中的提供商
+			remindDropdownVisible: false
 		}
 	}
 
@@ -122,29 +123,11 @@ class VideoMeetingPopoverContent extends React.Component {
 						currentOrgAllMembers: board_users,// 当前组织所有成员?
 						othersPeople: [],
 						// meetingTitle: '',
-						meeting_start_time: '',
-						start_time: '',
 						user_phone: [],
 						selectedKeys: null,
 						defaultValue: '30',
-						// userIds: [],
-						// toNoticeList: this.getCurrentRemindUser(),
 						isShowNowTime: true,
 						changeValue: false, // 保存一个正在修改文本框的状态
-						remindDropdownVisible: false
-					}, () => {
-						// this.setVideoMeetingDefaultSuggesstionsByBoardUser({ board_users })
-						this.getCurrentRemindUser()
-						setTimeout(() => {
-							if (this.state.isNotUpdateShowTime) {
-								clearTimeout(this.timer)
-								return false
-							}
-							this.setState({
-								isShowNowTime: true
-							})
-							
-						})
 					})
 				} else {
 					// message.error(res.message)
@@ -453,7 +436,7 @@ class VideoMeetingPopoverContent extends React.Component {
 			saveToProject: value,
 			saveProjectName: children,
 			org_id: !value ? '0' : projectList.find(item => item.board_id == value).org_id || '0',
-			isShowNowTime: false
+			// isShowNowTime: false
 		});
 	};
 
@@ -900,7 +883,11 @@ class VideoMeetingPopoverContent extends React.Component {
 				} else { // 为true的时候调用设置当前通知对象
 					this.showTime()
 					this.localShowTime()
+					this.getCurrentRemindUser()
 					this.getCurrentProject(this.props)
+					this.setState({
+						isShowNowTime: true
+					})
 					// dispatch({
 					// 	type: 'technological/getCurrentOrgProjectList',
 					// 	payload: {
