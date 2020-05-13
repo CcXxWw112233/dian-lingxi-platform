@@ -81,7 +81,7 @@ export default class ConfigureStepOne_one extends Component {
   valMinLengthChange = (value) => {
     const { itemValue: { val_min_length } } = this.props
     if (!value) {
-      this.updateState({ value: val_min_length }, 'val_min_length')
+      this.updateState({ value: '' }, 'val_min_length')
       return
     }
     this.updateState({ value: value }, 'val_min_length')
@@ -93,7 +93,7 @@ export default class ConfigureStepOne_one extends Component {
   valMaxLengthChange = (value) => {
     const { itemValue: { val_max_length } } = this.props
     if (!value) {
-      this.updateState({ value: val_max_length }, 'val_max_length')
+      this.updateState({ value: '' }, 'val_max_length')
       return
     }
     this.updateState({ value: value }, 'val_max_length')
@@ -191,24 +191,37 @@ export default class ConfigureStepOne_one extends Component {
     const { itemValue = {} } = this.props
     const { form_item = {} } = this.state
     const { title, prompt_content, verification_rule, is_required, val_min_length, val_max_length } = form_item
+    console.log(val_min_length,'sssssssssssssssssss_valminlength')
     let compare_item1 = JSON.parse(JSON.stringify(form_item || {}))
     let compare_item2 = JSON.parse(JSON.stringify(itemValue || {}))
     compare_item1.is_click_currentTextForm ? delete compare_item1.is_click_currentTextForm : ''
     compare_item2.is_click_currentTextForm ? delete compare_item2.is_click_currentTextForm : ''
     let disabledFlag = false
-    if (val_min_length && val_max_length) { // 表示存在最大值和最小值时
+    if (val_min_length || val_max_length) { // 表示存在最大值和最小值时
       if (isNaN(val_min_length) || isNaN(val_max_length)) {
         disabledFlag = true
+      } else {
+        if (isObjectValueEqual(compare_item1, compare_item2)) {
+          disabledFlag = true
+        }
       }
     } else if (val_min_length && !val_max_length) { // 表示最小值存在
       if (isNaN(val_min_length)) {
         disabledFlag = true
+      } else {
+        if (isObjectValueEqual(compare_item1, compare_item2)) {
+          disabledFlag = true
+        }
       }
     } else if (!val_min_length && val_max_length) { // 表示输入了最大值
-      if (isNaN(val_min_length)) {
+      if (isNaN(val_max_length)) {
         disabledFlag = true
+      } else {
+        if (isObjectValueEqual(compare_item1, compare_item2)) {
+          disabledFlag = true
+        }
       }
-    } else if (!val_min_length && !val_max_length) { // 表示没有最大值和最小值时
+    } else if (!val_min_length || !val_max_length) { // 表示没有最大值和最小值时
       if (isObjectValueEqual(compare_item1, compare_item2)) {
         disabledFlag = true
       }
