@@ -113,6 +113,12 @@ class BoardArchives extends Component {
       })
     })
   }
+
+  deleteLastArrItem = (arr = []) => {
+    let _a = [...arr].slice()
+    _a.pop()
+    return _a
+  }
   // 获取项目文件（夹）列表
   getFList = () => { //{ folder_id }
     const { bread_paths = [] } = this.state
@@ -141,8 +147,17 @@ class BoardArchives extends Component {
         this.setState({
           data_source
         })
+      } else {
+        this.setState({
+          bread_paths: this.deleteLastArrItem(bread_paths)
+        })
+        message.error(res.message)
       }
     }).catch(err => {
+      this.setState({
+        bread_paths: this.deleteLastArrItem(bread_paths)
+      })
+      message.error('请求错误')
       this.setState({
         loading: false
       })

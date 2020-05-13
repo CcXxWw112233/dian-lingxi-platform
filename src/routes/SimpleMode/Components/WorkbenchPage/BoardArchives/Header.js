@@ -84,7 +84,7 @@ export default class Header extends Component {
                                         </BreadcrumbItem>
                                         {
                                             bread_paths.map((item, index) => {
-                                                const { id, folder_id, board_name, folder_name, type } = item
+                                                const { id, folder_id, board_name, folder_name, name } = item
                                                 return (
                                                     <BreadcrumbItem key={id || folder_id} onClick={() => this.chooseBreadItem(item)}>
                                                         <span
@@ -97,7 +97,7 @@ export default class Header extends Component {
                                                                 textOverflow: 'ellipsis',
                                                                 whiteSpace: 'nowrap'
                                                             }}
-                                                        >{board_name || folder_name}</span>
+                                                        >{name || folder_name}</span>
                                                     </BreadcrumbItem>
                                                 )
                                             })
