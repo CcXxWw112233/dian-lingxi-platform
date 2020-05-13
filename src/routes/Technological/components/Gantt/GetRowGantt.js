@@ -199,7 +199,7 @@ export default class GetRowGantt extends Component {
   stopDragging = () => {
     const target = this.refs.gantt_operate_area_panel
     target.onmousemove = null;
-    target.onmuseup = null;
+    target.onmouseup = null;
     const that = this
     setTimeout(function () {
       that.isMouseDown = false
@@ -618,7 +618,7 @@ export default class GetRowGantt extends Component {
       && !ganttIsOutlineView({ group_view_type })
       && (
         <div
-          // title={'点击或向右拖拽创建任务'}
+          title={'点击或向右拖拽创建任务'}
           className={indexStyles.dasheRect} style={{
             left: currentRect.x + 1, top: currentRect.y,
             width: currentRect.width,
