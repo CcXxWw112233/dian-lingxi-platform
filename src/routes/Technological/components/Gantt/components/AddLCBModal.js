@@ -294,7 +294,7 @@ class AddTaskContent extends Component {
                   onChange={this.datePickerChange.bind(this)}
                   placeholder={'选择截止时间'}
                   showTime={{ format: 'HH:mm' }}
-                  format="YYYY-MM-DD HH:mm"
+                  format="YYYY-MM-DD 23:59"
                   style={{ opacity: 0, height: 16, minWidth: 0, maxWidth: '100px', background: '#000000', position: 'absolute', right: 0, zIndex: 2, cursor: 'pointer' }} />
               </div>
             )}

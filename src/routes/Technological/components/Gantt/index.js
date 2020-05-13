@@ -37,7 +37,7 @@ class Gantt extends Component {
         group_view_filter_boards: [],
         group_view_filter_users: [],
         boards_flies: [],
-        group_view_type: 'month'
+        gantt_view_mode: 'month'
       }
     })
     if (page_load_type != 1) {
