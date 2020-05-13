@@ -30,7 +30,8 @@ export default class DifferenceDeadlineType extends Component {
     const { itemValue } = this.props
     const { status, deadline_type } = itemValue
     let container = (<span></span>)
-    let overdue_color = renderRestrictionsTime(itemValue).indexOf('已逾期') != -1
+    let str = renderRestrictionsTime(itemValue)
+    let overdue_color = str.indexOf('已逾期') != -1
     switch (status) {
       case '1':
         if (deadline_type == '1') {

@@ -191,7 +191,6 @@ export default class ConfigureStepOne_one extends Component {
     const { itemValue = {} } = this.props
     const { form_item = {} } = this.state
     const { title, prompt_content, verification_rule, is_required, val_min_length, val_max_length } = form_item
-    console.log(val_min_length,'sssssssssssssssssss_valminlength')
     let compare_item1 = JSON.parse(JSON.stringify(form_item || {}))
     let compare_item2 = JSON.parse(JSON.stringify(itemValue || {}))
     compare_item1.is_click_currentTextForm ? delete compare_item1.is_click_currentTextForm : ''

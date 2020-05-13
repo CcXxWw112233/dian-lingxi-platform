@@ -110,7 +110,8 @@ export default class Templates extends Component {
             type: 'publicProcessDetailModal/updateDatas',
             payload: {
                 processPageFlagStep: '1',
-                process_detail_modal_visible: true
+                process_detail_modal_visible: true,
+                processEditDatas: []
             }
         })
     }

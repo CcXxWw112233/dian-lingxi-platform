@@ -17,6 +17,7 @@ import { FILES } from '../../../../../globalset/js/constant'
 import FileListRightBarFileDetailModal from '../../../../../routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal'
 
 let uploadMaxFileSize = []
+let CancelToken = axios.CancelToken;
 @connect(mapStateToProps)
 export default class BeginningStepOne_five extends Component {
 
@@ -51,6 +52,9 @@ export default class BeginningStepOne_five extends Component {
     this.setState({
       fileList: []
     })
+    if (this.cancelAxios) {
+      this.cancelAxios()
+    }
   }
 
   updateEdit = (data, key) => {
@@ -186,6 +190,7 @@ export default class BeginningStepOne_five extends Component {
         formData.append(key, data[key]);
       });
     }
+    const context = this;
     // 进行文件上传
     axios
       .post(action, formData, {
@@ -195,6 +200,9 @@ export default class BeginningStepOne_five extends Component {
         onUploadProgress: ({ total, loaded }) => {
           onProgress({ percent: Math.round(loaded / total * 100).toFixed(0) }, file);
         },
+        cancelToken: new CancelToken(function executor(c) {
+          context.cancelAxios = c;
+        }),
       })
       .then(({ data: response }) => {
         onSuccess(response, file);
@@ -332,7 +340,7 @@ export default class BeginningStepOne_five extends Component {
           (
             percent &&
             Number(percent) != 0 &&
-            Number(percent) != 100
+            Number(percent) != 100 || status == 'uploading'
           ) ? (
               <span className={indexStyles.upload_file_progress}>
                 <Progress style={{ top: '-12px', height: '2px' }} showInfo={false} percent={percent} />

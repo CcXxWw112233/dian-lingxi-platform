@@ -103,46 +103,8 @@ class ProcessDefault extends Component {
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
         processPageFlagStep: '1',
-        // processPageFlagStep: '4',
         process_detail_modal_visible: true,
-        // processEditDatas: [{
-        //   "node_type": "3",//流程节点类型 1=资料收集 2=审批 3=抄送
-        //   "name": "",//流程节点名称
-        //   "description": "",//描述 备注
-        //   "deadline_type": "1", // 期限类型 1=不限制时间 2=限制时间
-        //   "deadline_time_type": "",//完成期限类型 hour = 时 day =天 month = 月
-        //   "deadline_value": "",//完成期限值
-        //   "cc_type": "",//抄送人类型 1=自动抄送 2=手动抄送
-        //   "cc_locking": "0",
-        //   "recipients": "",//抄送人 多个逗号隔开
-        //   "assignees": "",//抄报人 多个逗号隔开
-        //   "score_locked": '0', // 锁定评分人 1=锁定评分人 0=不锁定
-        //   "score_display": '1', // 锁定评分人 1=评分时互相可见 0=不可见
-        //   "enable_weight": "1", // 是否开启权重
-        //   "count_type": "1", // 计算方式
-        //   "result_condition_type": "4", // 结果分数选项
-        //   "result_value": "60", // 结果分数值
-        //   "result_case_pass": "2", // 结果分数导向
-        //   "result_case_other": "1", // 其余情况
-        //   "score_items": [
-        //     {      
-        //       "key": "0",
-        //       "title": "评分项",//标题
-        //       "max_score": "100",//最大分值
-        //       "description": "",//描述
-        //       "weight_ratio": "100"//权重占比
-        //     },
-        //     {      
-        //       "key": "1",
-        //       "title": "我的天我的天我的天我的天我的天我的天我的天我的天我的天",//标题
-        //       "max_score": "100",//最大分值
-        //       "description": "",//描述
-        //       "weight_ratio": "100"//权重占比
-        //     }
-        //   ], // 评分项
-        //   "is_confirm": "0",
-        //   "is_edit": '0', // 是否进入编辑
-        // }]
+        processEditDatas: []
       }
     })
   }

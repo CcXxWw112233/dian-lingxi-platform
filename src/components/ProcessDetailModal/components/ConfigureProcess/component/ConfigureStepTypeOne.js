@@ -15,9 +15,22 @@ export default class ConfigureStepTypeOne extends Component {
 
   constructor(props) {
     super(props)
-    this.state = {
-      designatedPersonnelList: props.itemValue.assignees ? props.itemValue.assignees.split(',') : [], // 指定人员的列表
+    let newDesignatedPersonnelList
+    if (props.itemValue && props.itemValue.assignees) {
+      if (props.itemValue.assignees instanceof Array) {
+        newDesignatedPersonnelList = [...props.itemValue.assignees]
+      } else {
+        newDesignatedPersonnelList = props.itemValue.assignees.split(',')
+      }
+    } else {
+      newDesignatedPersonnelList = []
     }
+    this.state = {
+      designatedPersonnelList: newDesignatedPersonnelList, // 指定人员的列表
+    }
+    // this.state = {
+    //   designatedPersonnelList: props.itemValue.assignees ? props.itemValue.assignees.split(',') : [], // 指定人员的列表
+    // }
   }
 
   deepCopy = (source) => {

@@ -162,7 +162,7 @@ const findCurrentFileInfo = (forms = []) => {
     if (!item.files) return
     arr.push(...item.files)
   })
-  let temp = arr.find(item => item.percent && item.percent != 0 && item.percent != 100) || {}
+  let temp = arr.find(item => item.status && item.status == 'uploading') || {}
   if (temp && Object.keys(temp).length) flag = true
   return flag
 }
