@@ -248,6 +248,31 @@ export default class AccomplishStepOne extends Component {
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 {/* 填写人 */}
                 {
+                  !(transPrincipalList && transPrincipalList.length) ? ('') : (
+                    <>
+                      <AvatarList
+                        size="small"
+                        maxLength={10}
+                        excessItemsStyle={{
+                          color: '#f56a00',
+                          backgroundColor: '#fde3cf'
+                        }}
+                      >
+                        {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
+                          <AvatarList.Item
+                            key={index}
+                            tips={name || '佚名'}
+                            src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                          />
+                        ))}
+                      </AvatarList>
+                      <span className={indexStyles.content__principalList_info}>
+                        {`${transPrincipalList.length}位填写人`}
+                      </span>
+                    </>
+                  )
+                }
+                {/* {
                   assignee_type == '2' ? (
                     <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
                       <AvatarList
@@ -276,7 +301,7 @@ export default class AccomplishStepOne extends Component {
                         <span>{`${currentNounPlanFilterName(FLOWS)}发起人`}</span>
                       </div>
                     )
-                }
+                } */}
                 {/* 抄送人 */}
                 {
                   cc_type == '1' && (
