@@ -513,6 +513,20 @@ export default class GroupListHeadItem extends Component {
       }
     })
     dispatch({
+      type: 'gantt/getGanttBoardsFiles',
+      payload: {
+        board_id: '',
+        query_board_ids: [],
+      }
+    })
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        folder_seeing_board_id: '0',
+      }
+    })
+
+    dispatch({
       type: 'workbench/getProjectList',
       payload: {
 
