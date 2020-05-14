@@ -93,7 +93,7 @@ export default class GetRowTaskItem extends Component {
     setSpecilTaskExample = (data) => {
         const { task_is_dragging, ganttPanelDashedDrag } = this.props
         const { is_moved } = this.state
-        console.log('这是什么', '松开回调', task_is_dragging, is_moved, ganttPanelDashedDrag)
+        // console.log('这是什么', '松开回调', task_is_dragging, is_moved, ganttPanelDashedDrag)
         if (
             is_moved
             || ganttPanelDashedDrag //这是表示创建中
@@ -198,6 +198,10 @@ export default class GetRowTaskItem extends Component {
         // this.touchCanScroll('scroll')
     }
 
+    onMouseEnter = () => { //在鼠标hover到任务条上，非创建任务时，将虚线框隐藏
+        const { ganttPanelDashedDrag } = this.props
+        this.props.setDasheRectShow && this.props.setDasheRectShow(false)
+    }
     // 触屏是否可以滚动
     touchCanScroll = (style_attr) => {
         const ele = document.getElementById('gantt_card_out_middle')
@@ -481,14 +485,14 @@ export default class GetRowTaskItem extends Component {
 
         }
         const start_time_timestamp = parseInt(start_date.timestamp)
-        console.log('ssssssssssaaaa', 0, start_date.timestamp)
+        // console.log('ssssssssssaaaa', 0, start_date.timestamp)
         if (!start_time_timestamp) return
         //截至时间为起始时间 加上间隔天数的毫秒数, - 60 * 1000为一分钟的毫秒数，意为截至日期的23:59
         const end_time_timestamp = parseInt(start_time_timestamp + ((24 * 60 * 60) * 1000) * date_span - 60 * 1000)
 
         updateData.start_time = parseInt(start_time_timestamp)
         updateData.due_time = parseInt(end_time_timestamp)
-        console.log('ssssssssssaaaa', 1)
+        // console.log('ssssssssssaaaa', 1)
         if (isSamDay(start_time, start_time_timestamp)) { //向右拖动时，如果是在同一天，则不去更新
             this.setState({
                 local_left: left,
@@ -496,11 +500,11 @@ export default class GetRowTaskItem extends Component {
             })
             return
         }
-        console.log('ssssssssssaaaa', 2)
+        // console.log('ssssssssssaaaa', 2)
         updateTask({ card_id: id, due_time: end_time_timestamp, start_time: start_time_timestamp, board_id }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
-                    console.log('ssssssssssaaaa', 3)
+                    // console.log('ssssssssssaaaa', 3)
                     if (ganttIsOutlineView({ group_view_type })) {
                         this.props.changeOutLineTreeNodeProto(id, updateData)
                     } else {
@@ -677,30 +681,33 @@ export default class GetRowTaskItem extends Component {
                 }}
                 // 拖拽
                 onMouseDown={(e) => {
-                    console.log('这是什么', '鼠标按下')
+                    // console.log('这是什么', '鼠标按下')
                     this.onMouseDown(e)
                 }}
                 onMouseMove={(e) => {
-                    console.log('这是什么', '鼠标移动')
+                    // console.log('这是什么', '鼠标移动')
                     this.onMouseMove(e)
                 }}
                 onMouseUp={() => {
-                    console.log('这是什么', '鼠标松开')
+                    // console.log('这是什么', '鼠标松开')
                     this.setSpecilTaskExample({ id: parent_card_id || id, top, board_id })
                 }} //查看子任务是查看父任务
 
                 onTouchStart={(e) => {
-                    console.log('这是什么', '手指按下')
+                    // console.log('这是什么', '手指按下')
                     this.onTouchStart(e)
                 }}
                 onTouchMove={(e) => {
-                    console.log('这是什么', '手指移动')
+                    // console.log('这是什么', '手指移动')
                     this.onTouchMove(e)
                 }}
                 onTouchEnd={(e) => {
-                    console.log('这是什么', '手指松开')
+                    // console.log('这是什么', '手指松开')
                     this.onTouchEnd(e)
                 }} //查看子任务是查看父任务
+                onMouseEnter={() => {
+                    this.onMouseEnter()
+                }}
             // 不拖拽
             // onMouseMove={(e) => e.stopPropagation()}
             // onClick={() => this.setSpecilTaskExample({ id, top, board_id })}
