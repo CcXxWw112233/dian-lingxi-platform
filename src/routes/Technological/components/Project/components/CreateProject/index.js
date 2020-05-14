@@ -145,7 +145,8 @@ class CreateProject extends React.Component {
     this.setState({
       _organization_id: id,
       _organization_name: name,
-      selected_board_template_id: undefined
+      selected_board_template_id: undefined,
+      select_project_id: undefined
     }, () => {
       this.getAppList()
       this.getProjectList()
