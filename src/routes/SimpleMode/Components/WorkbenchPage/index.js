@@ -143,7 +143,7 @@ class WorkbenchPage extends Component {
                             <Zhichengshe {...this.props} />
                         }
                         {
-                            'mine:flows' == select_box_code &&
+                            isPaymentUser && 'mine:flows' == select_box_code &&
                             <Workglows workbenchBoxContent_height={workbenchBoxContent_height} />
                         }
                     </div>

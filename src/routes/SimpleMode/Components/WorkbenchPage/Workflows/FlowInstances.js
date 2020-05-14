@@ -3,6 +3,7 @@ import styles from './index.less'
 import { Radio, Button } from 'antd'
 import FlowTables from './FlowTables'
 import { connect } from 'dva'
+import { isPaymentOrgUser } from '../../../../../utils/businessFunction'
 @connect(mapStateToProps)
 export default class FlowInstances extends Component {
     constructor(props) {
@@ -64,7 +65,7 @@ export default class FlowInstances extends Component {
 
         }
         this.setState({
-            list_source: arr
+            list_source: arr.filter(item => isPaymentOrgUser(item.org_id))
         })
     }
     render() {

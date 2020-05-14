@@ -9,7 +9,7 @@ import { message } from 'antd';
 import { getArchivesBoards } from '../../../../../services/technological/project';
 import { searchArchives, getArchiveBoardFileList } from '../../../../../services/technological/file';
 import FileDetailModal from '@/components/FileDetailModal'
-import { setBoardIdStorage } from '../../../../../utils/businessFunction';
+import { setBoardIdStorage, isPaymentOrgUser } from '../../../../../utils/businessFunction';
 
 class BoardArchives extends Component {
   constructor(props) {
@@ -84,7 +84,7 @@ class BoardArchives extends Component {
         new_item.id = id || board_id
       }
       return new_item
-    })
+    }).filter(item => isPaymentOrgUser(item.org_id))
     return data_source
   }
   // 请求位置------------start
@@ -143,7 +143,7 @@ class BoardArchives extends Component {
         const _folder_data = folder_data.map(item => { return { ...item, id: item.folder_id, name: item.folder_name } })
         const _file_data = file_data.map(item => { return { ...item, name: item.file_name } })
 
-        const data_source = [].concat(_folder_data, _file_data)
+        const data_source = [].concat(_folder_data, _file_data).filter(item => isPaymentOrgUser(item.org_id))
         this.setState({
           data_source
         })

@@ -3,7 +3,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import styles from './index.less'
 import { Tooltip, Button, Popconfirm, message, DatePicker, Popover } from 'antd'
 import { connect } from 'dva'
-import { checkIsHasPermissionInBoard, setBoardIdStorage, getOrgNameWithOrgIdFilter, getGlobalData } from '../../../../../utils/businessFunction'
+import { checkIsHasPermissionInBoard, setBoardIdStorage, getOrgNameWithOrgIdFilter, getGlobalData, isPaymentOrgUser } from '../../../../../utils/businessFunction'
 import { PROJECT_FLOWS_FLOW_TEMPLATE, PROJECT_FLOWS_FLOW_CREATE, NOT_HAS_PERMISION_COMFIRN } from '../../../../../globalset/js/constant'
 import SelectBoardModal from './SelectBoardModal'
 import { timeToTimestamp } from '../../../../../utils/util'
@@ -212,7 +212,7 @@ export default class Templates extends Component {
         })
     }
     // 开始时间气泡弹窗显示
-    handleProcessStartConfirmVisible = (visible, id) => {        
+    handleProcessStartConfirmVisible = (visible, id) => {
         this.setState({
             popoStartConfirmVisible: visible,
             currentVisibleItem: id
@@ -296,7 +296,7 @@ export default class Templates extends Component {
 
 
         return (
-            processTemplateList.map(value => {
+            processTemplateList.filter(item => isPaymentOrgUser(item.org_id)).map(value => {
                 const { id, name, board_id, org_id, board_name, node_num, enable_change } = value
                 const org_dec = (select_org_id == '0' || !select_org_id) ? `(${getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)})` : ''
                 const board_dec = (select_board_id == '0' || !select_board_id) ? `#${board_name}` : ''

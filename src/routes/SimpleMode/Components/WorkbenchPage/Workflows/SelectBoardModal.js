@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Modal, Select, message } from 'antd';
 import { connect } from 'dva'
-import { getOrgNameWithOrgIdFilter, setBoardIdStorage, checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction';
+import { getOrgNameWithOrgIdFilter, setBoardIdStorage, checkIsHasPermissionInBoard, isPaymentOrgUser } from '../../../../../utils/businessFunction';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { PROJECT_FLOWS_FLOW_CREATE, PROJECT_FLOWS_FLOW_TEMPLATE, NOT_HAS_PERMISION_COMFIRN } from '../../../../../globalset/js/constant';
 
@@ -54,7 +54,7 @@ export default class SelectBoardModal extends Component {
                         style={{ width: '100%' }}
                         value={(!local_board_id || local_board_id == '0') ? undefined : local_board_id} onChange={this.handleChange}>
                         {
-                            target_projectList.map(item => {
+                            target_projectList.filter(item => isPaymentOrgUser(item.org_id)).map(item => {
                                 const { board_id, board_name, org_id } = item
                                 return (
                                     <Option key={board_id} >
@@ -89,7 +89,7 @@ function mapStateToProps({
         }
     },
     technological: {
-        datas: { currentUserOrganizes = {}, userBoardPermissions = []}
+        datas: { currentUserOrganizes = {}, userBoardPermissions = [] }
     }
 }) {
     return {
