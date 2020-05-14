@@ -46,6 +46,11 @@ export default class GetRowGantt extends Component {
     this.dashedMouseMove = this.dashedMouseMove.bind(this)
     this.dashedMouseLeave = this.dashedMouseLeave.bind(this)
   }
+  setDasheRectShow = (bool) => {
+    this.setState({
+      dasheRectShow: bool
+    })
+  }
   setTaskIsDragging = (bool, flag) => { //设置任务是否在拖拽中的状态
     this.setState({
       task_is_dragging: bool
@@ -166,7 +171,7 @@ export default class GetRowGantt extends Component {
     let px = this.x1//x < this.x1 ? x : this.x1 //向左向右延申
     let py = this.y1
     let width = (offset_left < ceilWidth) || (x < this.x1) ? ceilWidth : offset_left //小于单位长度或者鼠标相对点击的起始点向左拖动都使用最小单位
-    width = Math.ceil(width / ceilWidth) * ceilWidth - 6 //向上取整 4为微调
+    width = Math.ceil(width / ceilWidth) * ceilWidth - 4 //向上取整 4为微调
     const property = {
       x: px,
       y: py,
@@ -254,7 +259,7 @@ export default class GetRowGantt extends Component {
     const property = {
       x: px,
       y: py,
-      width: ceilWidth,
+      width: ceilWidth - (gantt_view_mode == 'year' ? 0 : 4),
       height: task_item_height,
     }
 
@@ -547,6 +552,7 @@ export default class GetRowGantt extends Component {
             setScrollPosition={this.props.setScrollPosition}
             setDragCreating={this.setDragCreating}
             setTaskIsDragging={this.setTaskIsDragging}
+            setDasheRectShow={this.setDasheRectShow}
           />
         )
       })
@@ -712,6 +718,7 @@ export default class GetRowGantt extends Component {
                   setScrollPosition={this.props.setScrollPosition}
                   setDragCreating={this.setDragCreating}
                   setTaskIsDragging={this.setTaskIsDragging}
+                  setDasheRectShow={this.setDasheRectShow}
                 />)
             )
           })
