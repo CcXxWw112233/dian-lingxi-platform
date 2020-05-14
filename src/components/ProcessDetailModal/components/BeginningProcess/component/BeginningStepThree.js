@@ -5,7 +5,7 @@ import AvatarList from '../../AvatarList'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { Button, Tooltip, Icon, Popconfirm, Input, message, Popover } from 'antd'
 import { connect } from 'dva'
-import { renderTimeType, computing_mode, result_score_option, result_score_fall_through_with_others, genPrincipalListFromAssignees, findCurrentApproveNodesPosition, findCurrentRatingScoreNodesPosition } from '../../handleOperateModal'
+import { renderTimeType, computing_mode, result_score_option, result_score_fall_through_with_others, genPrincipalListFromAssignees, findCurrentApproveNodesPosition, findCurrentRatingScoreNodesPosition, findCurrentOverruleNodesPosition } from '../../handleOperateModal'
 import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
 import { PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
 import BeginningStepThree_one from './BeginningStepThree_one';
@@ -19,10 +19,11 @@ export default class BeginningStepThree extends Component {
     super(props)
     let approve_position = findCurrentApproveNodesPosition(props['processEditDatas'])
     let rating_position = findCurrentRatingScoreNodesPosition(props['processEditDatas'])
+    let overrule_position = findCurrentOverruleNodesPosition(props['processEditDatas']) // 获取当前被驳回节点的位置
     this.state = {
       transPrincipalList: props.itemValue.assignees ? [...props.itemValue.assignees] : [], // 表示当前的执行人
       transCopyPersonnelList: props.itemValue.recipients ? [...props.itemValue.recipients] : [], // 表示当前选择的抄送人
-      is_show_spread_arrow: props.itemValue.status == '1' || (props.itemKey == approve_position -1) || (props.itemValue.runtime_type == '1') || (props.itemKey == rating_position -1) ? true : false, // 是否展开箭头 详情 true表示展开
+      is_show_spread_arrow: props.itemValue.status == '1' || (props.itemKey == approve_position -1) || (props.itemValue.runtime_type == '1') || (props.itemKey == rating_position -1) || (props.itemKey == Number(overrule_position) + 1) ? true : false, // 是否展开箭头 详情 true表示展开
       historyCommentsList: props.itemValue.his_comments ? [...props.itemValue.his_comments] : [],
       currentSelectJudgeArrow: '',
       currentSelectHisArrow: ''
@@ -35,8 +36,9 @@ export default class BeginningStepThree extends Component {
       let approve_position
       if (nextProps) approve_position = findCurrentApproveNodesPosition(nextProps['processEditDatas'])
       let rating_position = findCurrentRatingScoreNodesPosition(nextProps['processEditDatas'])
+      let overrule_position = findCurrentOverruleNodesPosition(nextProps['processEditDatas']) // 获取当前被驳回节点的位置
       this.setState({
-        is_show_spread_arrow: nextProps.itemValue.status == '1' || (nextProps.itemKey == approve_position -1) || (nextProps.itemValue.runtime_type == '1') || (nextProps.itemKey == rating_position -1)  ? true : false,
+        is_show_spread_arrow: nextProps.itemValue.status == '1' || (nextProps.itemKey == approve_position -1) || (nextProps.itemValue.runtime_type == '1') || (nextProps.itemKey == rating_position -1) || (nextProps.itemKey == Number(overrule_position) + 1) ? true : false,
         transPrincipalList: nextProps.itemValue.assignees ? [...nextProps.itemValue.assignees] : [], // 表示当前的执行人
         transCopyPersonnelList: nextProps.itemValue.recipients ? [...nextProps.itemValue.recipients] : [], // 表示当前选择的抄送人
         historyCommentsList: nextProps.itemValue.his_comments ? [...nextProps.itemValue.his_comments] : [],

@@ -205,6 +205,7 @@ export default class Templates extends Component {
                 })
                 this.handleProcessStartConfirmVisible(false)
                 this.initState()
+                this.selectModalBoardIdCalback(BOARD_ID)
             } else {
                 message.warn(res.message)
             }
