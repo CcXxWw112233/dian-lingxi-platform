@@ -23,7 +23,7 @@ export default class BeginningStepTwo extends Component {
     this.state = {
       transPrincipalList: props.itemValue.assignees ? [...props.itemValue.assignees] : [], // 表示当前的执行人
       transCopyPersonnelList: props.itemValue.recipients ? [...props.itemValue.recipients] : [], // 表示当前选择的抄送人
-      is_show_spread_arrow: props.itemValue.status == '1' || (props.itemKey == curr_position - 1) || (props.itemValue.runtime_type == '1') || (props.itemKey == Number(overrule_position) != '' && Number(overrule_position) + 1) || (props.itemKey == rating_position - 1) ? true : false,
+      is_show_spread_arrow: props.itemValue.status == '1' || (props.itemKey == curr_position - 1) || (props.itemValue.runtime_type == '1') || (props.itemKey == Number(overrule_position) + 1) || (props.itemKey == rating_position - 1) ? true : false,
       historyCommentsList: props.itemValue.his_comments ? [...props.itemValue.his_comments] : [],
       currentSelectArrow: ''
     }
@@ -37,7 +37,7 @@ export default class BeginningStepTwo extends Component {
       let overrule_position = findCurrentOverruleNodesPosition(nextProps['processEditDatas']) // 获取当前被驳回节点的位置
       let rating_position = findCurrentRatingScoreNodesPosition(nextProps['processEditDatas'])
       this.setState({
-        is_show_spread_arrow: nextProps.itemValue.status == '1' || (nextProps.itemKey == curr_position - 1) || (nextProps.itemValue.runtime_type == '1') || (nextProps.itemKey == Number(overrule_position) != '' && Number(overrule_position) + 1) || (nextProps.itemKey == rating_position - 1) ? true : false,
+        is_show_spread_arrow: nextProps.itemValue.status == '1' || (nextProps.itemKey == curr_position - 1) || (nextProps.itemValue.runtime_type == '1') || (nextProps.itemKey == Number(overrule_position) + 1) || (nextProps.itemKey == rating_position - 1) ? true : false,
         transPrincipalList: nextProps.itemValue.assignees ? [...nextProps.itemValue.assignees] : [], // 表示当前的执行人
         transCopyPersonnelList: nextProps.itemValue.recipients ? [...nextProps.itemValue.recipients] : [], // 表示当前选择的抄送人
         historyCommentsList: nextProps.itemValue.his_comments ? [...nextProps.itemValue.his_comments] : [],
