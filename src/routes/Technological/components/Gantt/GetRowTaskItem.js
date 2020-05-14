@@ -632,7 +632,7 @@ export default class GetRowTaskItem extends Component {
     }
 
     render() {
-        const { itemValue = {}, im_all_latest_unread_messages } = this.props
+        const { itemValue = {}, im_all_latest_unread_messages, gantt_view_mode } = this.props
         const {
             left,
             top, width,
@@ -643,7 +643,8 @@ export default class GetRowTaskItem extends Component {
             executors = [], label_data = [],
             is_has_start_time, is_has_end_time,
             start_time, due_time, is_privilege,
-            parent_card_id
+            parent_card_id,
+            time_span,
         } = itemValue
         const { local_left, local_top, local_width } = this.state
         const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
@@ -656,11 +657,21 @@ export default class GetRowTaskItem extends Component {
                 data-targetclassname="specific_example"
                 // draggable
                 ref={this.out_ref}
+                // style={{
+                //     touchAction: 'none',
+                //     zIndex: this.is_down ? 2 : 1,
+                //     left: local_left, top: local_top,
+                //     width: (local_width || 6) - 2, height: (height || task_item_height),
+                //     marginTop: task_item_margin_top,
+                //     background: this.setLableColor(label_data, is_realize), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
+                // }}
                 style={{
                     touchAction: 'none',
                     zIndex: this.is_down ? 2 : 1,
-                    left: local_left, top: local_top,
-                    width: (local_width || 6) - 2, height: (height || task_item_height),
+                    left: local_left + (gantt_view_mode == 'year' ? 0 : 4),
+                    top: local_top,
+                    width: (local_width || 6) - (gantt_view_mode == 'year' ? 0 : 8),
+                    height: (height || task_item_height),
                     marginTop: task_item_margin_top,
                     background: this.setLableColor(label_data, is_realize), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
                 }}
@@ -699,7 +710,10 @@ export default class GetRowTaskItem extends Component {
                     className={`${indexStyles.specific_example_content} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
                     // onMouseDown={(e) => e.stopPropagation()} 
                     onMouseMove={(e) => e.preventDefault()}
-                    style={{ opacity: 1 }}
+                    style={{
+                        opacity: 1,
+                        padding: (gantt_view_mode == 'year' && time_span < 4) ? '0' : '0 8px',
+                    }}
                 >
                     <div data-targetclassname="specific_example"
                         className={`${indexStyles.card_item_status}`}
