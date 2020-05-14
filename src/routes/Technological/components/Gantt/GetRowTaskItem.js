@@ -200,7 +200,9 @@ export default class GetRowTaskItem extends Component {
 
     onMouseEnter = () => { //在鼠标hover到任务条上，非创建任务时，将虚线框隐藏
         const { ganttPanelDashedDrag } = this.props
-        this.props.setDasheRectShow && this.props.setDasheRectShow(false)
+        if (!ganttPanelDashedDrag) {
+            this.props.setDasheRectShow && this.props.setDasheRectShow(false)
+        }
     }
     // 触屏是否可以滚动
     touchCanScroll = (style_attr) => {
