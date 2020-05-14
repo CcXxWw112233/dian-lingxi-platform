@@ -248,7 +248,7 @@ export default class GetRowGanttItem extends Component {
           const { id, name, board_id } = value
           return (
             <MenuItem
-              data-targetclassname="specific_example"
+              data-targetclassname="specific_example_milestone"
               className={globalStyles.global_ellipsis}
               style={{ width: 216 }}
               key={`${board_id}__${id}`}>
@@ -363,7 +363,7 @@ export default class GetRowGanttItem extends Component {
                   <div style={{ position: 'relative' }}>
                     {/* 旗帜 */}
                     <div className={`${indexStyles.board_miletiones_flag} ${globalStyles.authTheme}`}
-                      data-targetclassname="specific_example"
+                      data-targetclassname="specific_example_milestone"
                       onClick={this.seeMiletones}
                       onMouseDown={e => e.stopPropagation()}
                       style={{
@@ -373,7 +373,7 @@ export default class GetRowGanttItem extends Component {
                     {/* 渲染里程碑名称铺开 */}
                     <Dropdown overlay={this.renderLCBList(current_date_board_miletones, timestamp)}>
                       <div className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
-                        data-targetclassname="specific_example"
+                        data-targetclassname="specific_example_milestone"
                         style={{
                           top: this.setMiletonesNamesPostionTop(),
                           maxWidth: this.setMiletonesNamesWidth(timestampEnd) - 30,
@@ -392,7 +392,7 @@ export default class GetRowGanttItem extends Component {
                 has_lcb && (
                   // <Dropdown placement={'topRight'} overlay={this.renderLCBList(current_date_board_miletones, timestamp)}>
                   <div
-                    data-targetclassname="specific_example"
+                    data-targetclassname="specific_example_milestone"
                     className={`${indexStyles.board_miletiones_flagpole}`}
                     style={{
                       height: gantt_board_id != '0' ? group_list_area_section_height[group_list_area_section_height.length - 1] - 11 : //在任务分组视图下
@@ -443,7 +443,7 @@ export default class GetRowGanttItem extends Component {
                     <div style={{ position: 'relative' }}>
                       {/* 旗帜 */}
                       <div className={`${indexStyles.board_miletiones_flag} ${globalStyles.authTheme}`}
-                        data-targetclassname="specific_example"
+                        data-targetclassname="specific_example_milestone"
                         onClick={this.seeMiletones}
                         onMouseDown={e => e.stopPropagation()}
                         style={{
@@ -454,7 +454,7 @@ export default class GetRowGanttItem extends Component {
                       {/* 渲染里程碑名称铺开 */}
                       <Dropdown overlay={this.renderLCBList(current_date_board_miletones, timestamp)}>
                         <div className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
-                          data-targetclassname="specific_example"
+                          data-targetclassname="specific_example_milestone"
                           style={{
                             top: this.setMiletonesNamesPostionTop(),
                             maxWidth: this.setMiletonesNamesWidth(timestampEnd) - 30,
@@ -472,7 +472,7 @@ export default class GetRowGanttItem extends Component {
                   (gantt_board_id == '0' || (gantt_board_id != '0' && itemKey == 0)) &&
                   has_lcb && (
                     <div
-                      data-targetclassname="specific_example"
+                      data-targetclassname="specific_example_milestone"
                       className={`${indexStyles.board_miletiones_flagpole}`}
                       style={{
                         height: gantt_board_id != '0' ? group_list_area_section_height[group_list_area_section_height.length - 1] - 11 : //在任务分组视图下

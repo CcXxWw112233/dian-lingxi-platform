@@ -37,14 +37,11 @@ export default class GetRowGantt extends Component {
       specific_example_arr: [], //任务实例列表
       drag_holiday_count: 0, // //拖拽生成虚线框的节假日总天数
       task_is_dragging: false, //任务实例是否在拖拽中
+      isMouseDown: false,
       drag_creating: false, //拖拽生成任务中
     }
     this.x1 = 0 //用于做拖拽生成一条任务
     this.y1 = 0
-    this.isMouseDown = false //是否鼠标按下
-    this.SelectedRect = { x: 0, y: 0 }
-
-
     this.dashedMousedown = this.dashedMousedown.bind(this)//用来做拖拽虚线框
     this.dashedMouseMove = this.dashedMouseMove.bind(this)
     this.dashedMouseLeave = this.dashedMouseLeave.bind(this)
@@ -130,7 +127,7 @@ export default class GetRowGantt extends Component {
       return false
     }
     // e.preventDefault() //解决拖拽卡顿？(尚未明确)
-    if (this.state.drag_creating || this.isMouseDown) { //在拖拽中，还有防止重复点击
+    if (this.state.drag_creating || this.state.isMouseDown) { //在拖拽中，还有防止重复点击
       return
     }
     if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) {
@@ -140,7 +137,7 @@ export default class GetRowGantt extends Component {
     this.x1 = currentRect.x
     this.y1 = currentRect.y
     this.setDragCreating(false)
-    this.isMouseDown = true
+    this.setState({ isMouseDown: true })
     this.handleCreateTask({ start_end: '1', top: currentRect.y })
     const target = this.refs.gantt_operate_area_panel//event.target || event.srcElement;
     target.onmousemove = this.dashedDragMousemove.bind(this);
@@ -202,7 +199,7 @@ export default class GetRowGantt extends Component {
     target.onmouseup = null;
     const that = this
     setTimeout(function () {
-      that.isMouseDown = false
+      that.setState({ isMouseDown: false })
       that.setDragCreating(false)
     }, 1000)
   }
@@ -210,9 +207,11 @@ export default class GetRowGantt extends Component {
   //鼠标移动
   dashedMouseMove = (e) => {
     const { dataAreaRealHeight, gantt_board_id, group_view_type, show_board_fold, gantt_view_mode } = this.props
+    const { drag_creating } = this.state
     if (e.target.offsetTop >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
     if (
       (e.target.dataset.targetclassname == 'specific_example') //不能滑动到某一个任务实例上
+      || (!drag_creating && e.target.dataset.targetclassname == 'specific_example_milestone') //非拖拽的过程中,滑倒里程碑旗子上没问题
     ) {
       this.setState({
         dasheRectShow: false
@@ -226,7 +225,7 @@ export default class GetRowGantt extends Component {
       return
     }
     const { ceiHeight, ceilWidth } = this.props
-    if (this.isMouseDown) { //按下的情况不处理
+    if (this.state.isMouseDown) { //按下的情况不处理
       return false
     }
     const { dasheRectShow, coperatedX } = this.state
@@ -270,7 +269,7 @@ export default class GetRowGantt extends Component {
     })
   }
   dashedMouseLeave = (e) => {
-    if (!this.isMouseDown) {
+    if (!this.state.isMouseDown) {
       this.setState({
         dasheRectShow: false
       })
