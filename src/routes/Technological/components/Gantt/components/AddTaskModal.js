@@ -168,6 +168,9 @@ class AddTaskModal extends Component {
     if (group_view_type == '1' || group_view_type == '5') { //在项目视图下创建任务才会去主动拉取用户列表
       this.getCurrentSelectedProjectMembersList({ projectId: current_operate_board_id })
       this.getMilestoneList(current_operate_board_id)
+      if (group_view_type == '5') {
+        this.setDefaultExcuser()
+      }
     } else {
       this.setDefaultExcuser()
     }
