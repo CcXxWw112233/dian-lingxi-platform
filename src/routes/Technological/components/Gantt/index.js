@@ -5,7 +5,7 @@ import GanttFace from './GanttFace'
 // import TaskDetailModal from '../Workbench/CardContent/Modal/TaskDetailModal';
 import TaskDetailModal from '@/components/TaskDetailModal'
 import AddTaskModal from './components/AddTaskModal';
-import { ganttIsFold, getDigitTime, ganttIsOutlineView } from './constants';
+import { ganttIsFold, getDigitTime, ganttIsOutlineView, ceil_width } from './constants';
 import OutlineTree from './components/OutlineTree';
 
 class Gantt extends Component {
@@ -37,7 +37,8 @@ class Gantt extends Component {
         group_view_filter_boards: [],
         group_view_filter_users: [],
         boards_flies: [],
-        gantt_view_mode: 'month'
+        gantt_view_mode: 'month',
+        ceilWidth: ceil_width,
       }
     })
     if (page_load_type != 1) {
