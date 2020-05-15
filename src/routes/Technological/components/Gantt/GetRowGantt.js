@@ -306,7 +306,7 @@ export default class GetRowGantt extends Component {
   //记录起始时间，做创建任务工作
   handleCreateTask = ({ start_end, top, not_create }) => {
     const { dataAreaRealHeight, gantt_view_mode } = this.props
-    if (top >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
+    // if (top >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
 
     const { dispatch } = this.props
     const { gold_date_arr = [], ceilWidth, date_arr_one_level = [] } = this.props
