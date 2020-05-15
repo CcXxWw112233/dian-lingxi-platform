@@ -259,7 +259,7 @@ export default class GetRowStrip extends PureComponent {
             display = 'none'
         }
         // console.log('marginLeft', marginLeft)
-        const timestamp = gantt_view_mode == 'year' ? this.calHoverDate().timestamp : ''
+        const timestamp = gantt_view_mode == 'year' ? this.calHoverDate().timestampEnd : ''
         return (
 
             <div
@@ -276,7 +276,7 @@ export default class GetRowStrip extends PureComponent {
                 >
                     <>
                         {
-                            gantt_view_mode == 'year' && (
+                            gantt_view_mode == 'year' && !due_time && (
                                 <div style={{ width: 10, height: '100%', marginLeft: -6 }}></div>
                             )
                         }

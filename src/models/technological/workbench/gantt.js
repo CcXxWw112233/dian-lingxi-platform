@@ -490,7 +490,7 @@ export default {
                 break
               }
             } else if (gantt_view_mode == 'year') { //年视图下遍历时间，如果时间戳在某个月的区间内，定位到该位置
-              if (new_item[cal_left_field] < date_arr_one_level[k]['timestampEnd'] && new_item[cal_left_field] >= date_arr_one_level[k]['timestamp']) {
+              if (new_item[cal_left_field] <= date_arr_one_level[k]['timestampEnd'] && new_item[cal_left_field] >= date_arr_one_level[k]['timestamp']) {
                 // 该月之前每个月的天数+这一条的日期 = 所在的位置索引（需要再乘以单位长度才是真实位置）
                 const all_date_length = date_arr_one_level.slice().map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
                 const date_length = date_arr_one_level.slice(0, k < 1 ? 1 : k).map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
