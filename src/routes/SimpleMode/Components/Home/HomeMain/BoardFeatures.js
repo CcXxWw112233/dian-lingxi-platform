@@ -4,6 +4,7 @@ import BoardFeaturesItem from './BoardFeaturesItem'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import styles from './featurebox.less'
 import TaskDetailModal from '@/components/TaskDetailModal'
+import BoardFeaturesProcessItem from './BoardFeaturesProcessItem'
 
 @connect(mapStateToProps)
 export default class BoardFeatures extends Component {
@@ -54,6 +55,9 @@ export default class BoardFeatures extends Component {
     }
     renderTodoList = () => {
         const { board_todo_list = [] } = this.props
+        return (
+            <BoardFeaturesProcessItem />
+        )
         return (
             board_todo_list.length ? (
                 board_todo_list.map(value => {

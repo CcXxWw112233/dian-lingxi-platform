@@ -955,7 +955,13 @@ export default class MainContent extends Component {
                 {
                   !isEditCurrentFlowInstanceName ? (
                     <div onClick={processPageFlagStep == '4' ? '' : this.handleChangeFlowInstanceName} className={`${processPageFlagStep == '4' ? indexStyles.normal_flow_name : indexStyles.flow_name}`}>
-                      <span style={{ wordBreak: 'break-all', flex: 1 }}>{currentFlowInstanceName}</span>
+                      <span style={{ wordBreak: 'break-all', flex: 1 }}>{currentFlowInstanceName} 
+                        {
+                          processPageFlagStep == '4' && (
+                            <span onClick={status == '1' ? this.handleChangeFlowInstanceName : ''} style={{color: '#1890FF', cursor: 'pointer', marginLeft: '10px'}} className={globalStyles.authTheme}>&#xe602;</span>
+                          )
+                        }
+                      </span>
                       {
                         processPageFlagStep == '4' && (
                           <span style={{flexShrink: 0, color: 'rgba(0,0,0,0.45)', fontSize: '14px'}}>{timestampToTimeNormal(create_time,'/',true)} 开始</span>
@@ -985,7 +991,14 @@ export default class MainContent extends Component {
                 {
                   !isEditCurrentFlowInstanceDescription ? (
                     <div className={processPageFlagStep == '4' ? indexStyles.normal_flow_description  : indexStyles.flow_description} onClick={ processPageFlagStep == '4' ? '' : this.handleChangeFlowInstanceDescription}>
-                      {currentFlowInstanceDescription != '' ? currentFlowInstanceDescription : '添加描述'}
+                      <span>
+                        {currentFlowInstanceDescription != '' ? currentFlowInstanceDescription : '添加描述'}
+                        {
+                          processPageFlagStep == '4' && (
+                            <span onClick={status == '1' ? this.handleChangeFlowInstanceDescription : ''} style={{color: '#1890FF', cursor: 'pointer', marginLeft: '10px'}} className={globalStyles.authTheme}>&#xe602;</span>
+                          )
+                        }
+                      </span>
                     </div>
                   ) : (
                       <NameChangeInput
