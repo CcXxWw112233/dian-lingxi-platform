@@ -156,22 +156,29 @@ export default class GetRowStrip extends PureComponent {
         const { id, name, time_span } = itemValue
         const { is_item_has_time, currentRect = {} } = this.state
         const timestamp = gantt_view_mode == 'year' ? this.calHoverDate().timestamp : ''
+        const correct_value = gantt_view_mode == 'year' ? 0 : 6 //校准值
+        const correct_value2 = gantt_view_mode == 'year' ? 6 : 0 //校准值
+
         return (
             <div
                 onClick={this.cardSetClick}
                 className={styles.will_set_item}
                 style={{
                     display: (!is_item_has_time && this.onHoverState()) ? 'flex' : 'none',
-                    marginLeft: currentRect.x
+                    marginLeft: currentRect.x - correct_value2
                 }}>
                 <Tooltip
                     visible={gantt_view_mode == 'year'}
                     title={timestampToTime(timestamp)}
                 >
                     <>
-                        <div style={{ width: 10, height: '100%', marginLeft: -6, }}></div>
+                        {
+                            gantt_view_mode == 'year' && (
+                                <div style={{ width: 10, height: '100%', marginLeft: -6 }}></div>
+                            )
+                        }
                         <div
-                            style={{ width: time_span ? time_span * ceilWidth - 6 : ceilWidth }}
+                            style={{ width: time_span ? time_span * ceilWidth - correct_value : ceilWidth - correct_value }}
                             className={styles.card_rect}></div>
                         <div className={styles.point}></div>
                         <div className={styles.name}>{name}</div>
@@ -268,7 +275,11 @@ export default class GetRowStrip extends PureComponent {
                     title={timestampToTime(timestamp)}
                 >
                     <>
-                        <div style={{ width: 10, height: '100%', marginLeft: -6 }}></div>
+                        {
+                            gantt_view_mode == 'year' && (
+                                <div style={{ width: 10, height: '100%', marginLeft: -6 }}></div>
+                            )
+                        }
                         <div
                             style={{
                                 height: (expand_length - 0.5) * ceil_height
