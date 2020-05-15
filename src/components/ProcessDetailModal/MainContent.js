@@ -361,14 +361,34 @@ export default class MainContent extends Component {
     })
   }
 
+  descriptionTextAreaChange = (e) => {
+    let val = e.target.value.trimLR()
+    if (val == "" || val == " " || !val) {
+      // this.setState({
+      //   currentFlowInstanceDescription: ''
+      // })
+      this.props.dispatch({
+        type: 'publicProcessDetailModal/updateDatas',
+        payload: {
+          // isEditCurrentFlowInstanceName: true,
+          currentFlowInstanceDescription: ''
+        }
+      })
+      return
+    }
+  }
+
   // 描述失去焦点事件
   descriptionTextAreaChangeBlur = (e) => {
     let val = e.target.value.trimLR()
     if (val == "" || val == " " || !val) {
+      // this.setState({
+      //   currentFlowInstanceDescription:''
+      // })
       this.props.dispatch({
         type: 'publicProcessDetailModal/updateDatas',
         payload: {
-          // isEditCurrentFlowInstanceDescription: false,
+          isEditCurrentFlowInstanceDescription: false,
           currentFlowInstanceDescription: ''
         }
       })
@@ -964,6 +984,7 @@ export default class MainContent extends Component {
                     </div>
                   ) : (
                       <NameChangeInput
+                        onChange={this.descriptionTextAreaChange}
                         onBlur={this.descriptionTextAreaChangeBlur}
                         autosize
                         autoFocus={true}
