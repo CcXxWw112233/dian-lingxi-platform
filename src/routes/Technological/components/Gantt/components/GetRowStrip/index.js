@@ -724,7 +724,7 @@ export default class GetRowStrip extends PureComponent {
         if (gantt_view_mode == 'month') {
             toDayIndex = date_arr_one_level.findIndex(item => isSamDay(item.timestamp, gold_time)) //当天所在位置index
         } else if (gantt_view_mode == 'year') {
-            toDayIndex = date_arr_one_level.findIndex(item => gold_time > item.timestamp && gold_time < item.timestampEnd) //当天所在月位置index
+            toDayIndex = date_arr_one_level.findIndex(item => gold_time >= item.timestamp && gold_time <= item.timestampEnd) //当天所在月位置index
         } else {
 
         }
@@ -744,7 +744,9 @@ export default class GetRowStrip extends PureComponent {
             })
         } else {
             this.props.setGoldDateArr && this.props.setGoldDateArr({ timestamp: gold_time })
-            this.props.setScrollPosition && this.props.setScrollPosition({ delay: 300, position: ceilWidth * (30 - 4 + date - 1) - 16 })
+            setTimeout(() => {
+                this.props.setScrollPosition && this.props.setScrollPosition({ delay: 300, position: ceilWidth * (30 - 4 + date - 1) - 16 })
+            }, 300)
         }
 
     }
