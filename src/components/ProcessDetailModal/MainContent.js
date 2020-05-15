@@ -17,6 +17,7 @@ import { saveProcessTemplate, getTemplateInfo, createProcess } from '../../servi
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { currentNounPlanFilterName } from "@/utils/businessFunction";
 import { checkIsHasPermissionInBoard, setBoardIdStorage, getGlobalData } from '../../utils/businessFunction'
+import { cursorMoveEnd } from './components/handleOperateModal'
 const { LingxiIm, Im } = global.constants
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -358,6 +359,10 @@ export default class MainContent extends Component {
       payload: {
         isEditCurrentFlowInstanceDescription: true
       }
+    })
+    setTimeout(() => {
+      let obj = document.getElementById('flowInstanceDescriptionTextArea') || ''
+      cursorMoveEnd(obj)
     })
   }
 
@@ -984,10 +989,12 @@ export default class MainContent extends Component {
                     </div>
                   ) : (
                       <NameChangeInput
+                        id={'flowInstanceDescriptionTextArea'}
                         onChange={this.descriptionTextAreaChange}
                         onBlur={this.descriptionTextAreaChangeBlur}
                         autosize
                         autoFocus={true}
+                        onFocus={this.onFocus}
                         onClick={(e) => e.stopPropagation()}
                         goldName={currentFlowInstanceDescription}
                         placeholder={'添加描述'}

@@ -93,7 +93,7 @@ export default class NameChangeInput extends React.Component{
   render() {
 
     const { localName, isOverFlowText } = this.state
-    const { nodeName, className, autoFocus = true, autosize = true, goldName, onBlur, onPressEnter, onChange, style={}, size, onClick, maxLength = 30, placeholder = '' } = this.props
+    const { id, nodeName, className, autoFocus = true, autosize = true, goldName, onBlur, onPressEnter, onChange, style={}, size, onClick, maxLength = 30, placeholder = '' } = this.props
 
     return (
       <div style={{ width: '100%'}}>
@@ -112,7 +112,9 @@ export default class NameChangeInput extends React.Component{
                    maxLength={maxLength}
             />
           ) :(
-            <TextArea placeholder={placeholder}
+            <TextArea 
+                      id={id}
+                      placeholder={placeholder}
                       value={localName}
                       className={className}
                       autosize={autosize}

@@ -197,6 +197,21 @@ const findCurrentRatingScoreNodesPosition = (data = []) => {
   return curr_position
 }
 
+// 光标移动末尾
+const cursorMoveEnd = (obj) => {
+  if (!obj) return
+  obj.focus();
+  let len = obj.value.length;
+  if (document.selection) {
+      let sel = obj.createTextRange();
+      sel.moveStart('character',len);
+      sel.collapse();
+      sel.select();
+  } else if (typeof obj.selectionStart == 'number' && typeof obj.selectionEnd == 'number') {
+      obj.selectionStart = obj.selectionEnd = len;
+  }
+}
+
 // 渲染时、天、月
 const renderTimeType = (type) => {
   let description = ''
@@ -384,6 +399,7 @@ export {
   findCurrentApproveNodesPosition,
   findCurrentOverruleNodesPosition,
   findCurrentRatingScoreNodesPosition,
+  cursorMoveEnd,
   computing_mode,
   result_score_option,
   result_score_fall_through_with_others,

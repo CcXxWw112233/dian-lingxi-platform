@@ -5,6 +5,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
 import { isObjectValueEqual } from '../../../../../utils/util'
 import ConfigureRatingGuide from '../../../ConfigureRatingGuide'
+import { cursorMoveEnd } from '../../handleOperateModal'
 
 @connect(mapStateToProps)
 export default class ConfigureStepTypeThree_one extends Component {
@@ -434,7 +435,8 @@ export default class ConfigureStepTypeThree_one extends Component {
     if (this.refs && this.refs[`autoTitleTextArea_${key}`]) {
       this.titleResize(key)
     }
-    this.cursorMoveEnd(e, key, i)
+    let obj = this.refs && this.refs[`autoTitleTextArea_${key}`]
+    cursorMoveEnd(obj)
     // this.handleAutoTitleTextAreaBlur(key)
   }
 
@@ -494,21 +496,6 @@ export default class ConfigureStepTypeThree_one extends Component {
     
   }
 
-  // 光标移到末尾
-  cursorMoveEnd(e, key, index){
-    let obj = this.refs && this.refs[`autoTitleTextArea_${key}`]
-    if (!obj) return
-    obj.focus();
-    let len = obj.value.length;
-    if (document.selection) {
-        let sel = obj.createTextRange();
-        sel.moveStart('character',len);
-        sel.collapse();
-        sel.select();
-    } else if (typeof obj.selectionStart == 'number' && typeof obj.selectionEnd == 'number') {
-        obj.selectionStart = obj.selectionEnd = len;
-    }
-  } 
 
   renderMoreSelect = (index) => {
     const { score_items = [] } = this.state
