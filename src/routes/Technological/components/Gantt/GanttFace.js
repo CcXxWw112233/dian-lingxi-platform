@@ -342,7 +342,7 @@ export default class GanttFace extends Component {
     const dataAreaRealHeight = this.getDataAreaRealHeight()
 
     return (
-      <div className={indexStyles.cardDetail} id={'gantt_card_out'} style={{ height: gantt_card_height, width: '100%' }}>
+      <div className={`${indexStyles.cardDetail} ${indexStyles.treeNodeUnselectable}`} id={'gantt_card_out'} style={{ height: gantt_card_height, width: '100%' }}>
         {
           (get_gantt_data_loading || get_gantt_data_loading_other) && (
             <div className={indexStyles.cardDetailMask} style={{
