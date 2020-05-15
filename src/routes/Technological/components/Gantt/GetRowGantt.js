@@ -171,7 +171,7 @@ export default class GetRowGantt extends Component {
     let px = this.x1//x < this.x1 ? x : this.x1 //向左向右延申
     let py = this.y1
     let width = (offset_left < ceilWidth) || (x < this.x1) ? ceilWidth : offset_left //小于单位长度或者鼠标相对点击的起始点向左拖动都使用最小单位
-    width = Math.ceil(width / ceilWidth) * ceilWidth - 4 //向上取整 4为微调
+    width = Math.ceil(width / ceilWidth) * ceilWidth - (gantt_view_mode == 'year' ? 6 : 4) //向上取整 4为微调
     const property = {
       x: px,
       y: py,
@@ -626,6 +626,7 @@ export default class GetRowGantt extends Component {
           title={'点击或向右拖拽创建任务'}
           className={indexStyles.dasheRect} style={{
             left: currentRect.x + 1, top: currentRect.y,
+            minWidth: gantt_view_mode == 'year' ? 6 : 0,
             width: currentRect.width,
             height: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? task_item_height_fold : task_item_height,//currentRect.height,
             boxSizing: 'border-box',
