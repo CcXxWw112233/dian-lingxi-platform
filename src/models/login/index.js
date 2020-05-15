@@ -138,6 +138,10 @@ export default {
       Cookies.set('Authorization', tokenArray[0], { expires: 30, path: '' })
       Cookies.set('refreshToken', tokenArray[1], { expires: 30, path: '' })
       Cookies.set('is401', false, { expires: 30, path: '' })
+      yield put({
+        type: 'loginRouteJump',
+        payload: {}
+      })
     },
     * wechatAccountBind({ payload }, { select, call, put }) {
       let res = yield call(wechatAccountBind, payload)
@@ -153,10 +157,10 @@ export default {
           }
         })
         //做登录成功重定向
-        yield put({
-          type: 'loginRouteJump',
-          payload: {}
-        })
+        // yield put({
+        //   type: 'loginRouteJump',
+        //   payload: {}
+        // })
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -174,10 +178,10 @@ export default {
         }
       })
       //做登录成功重定向
-      yield put({
-        type: 'loginRouteJump',
-        payload: {}
-      })
+      // yield put({
+      //   type: 'loginRouteJump',
+      //   payload: {}
+      // })
 
     },
     * formSubmit({ payload }, { select, call, put }) { //提交表单
@@ -192,10 +196,10 @@ export default {
           }
         })
         //做登录成功重定向
-        yield put({
-          type: 'loginRouteJump',
-          payload: {}
-        })
+        // yield put({
+        //   type: 'loginRouteJump',
+        //   payload: {}
+        // })
       } else {
         if (code == '4005' || code == '4006') {
           yield put({
