@@ -784,7 +784,7 @@ export default class GetRowStrip extends PureComponent {
         if (gantt_view_mode == 'month') {
             index = date_arr_one_level.findIndex(item => isSamDay(item.timestamp, gold_time)) //当天所在位置index
         } else if (gantt_view_mode == 'year') {
-            index = date_arr_one_level.findIndex(item => gold_time > item.timestamp && gold_time < item.timestampEnd) //当天所在月位置index
+            index = date_arr_one_level.findIndex(item => gold_time >= item.timestamp && gold_time <= item.timestampEnd) //当天所在月位置index
         } else {
 
         }
