@@ -14,9 +14,11 @@ import { transformTimestamp, isSamDay } from '../../../../utils/util'
 
 // 参考自http://www.jq22.com/webqd1348
 
-const dateAreaHeight = date_area_height //日期区域高度，作为修正
-const coperatedLeftDiv = 20 //滚动条左边还有一个div的宽度，作为修正
-const coperatedX = 0
+// const dateAreaHeight = date_area_height //日期区域高度，作为修正
+// const coperatedLeftDiv = 20 //滚动条左边还有一个div的宽度，作为修正
+// const coperatedX = 0
+const card_width_diff = 8 //宽度误差微调
+const card_left_diff = 4 //位置误差微调
 @connect(mapStateToProps)
 export default class GetRowTaskItem extends Component {
 
@@ -30,6 +32,11 @@ export default class GetRowTaskItem extends Component {
             local_left: 0,
             drag_type: 'position', // position/left/right 拖动位置/延展左边/延展右边
             is_moved: false, //当前mouseDown后，是否被拖动过
+            parent_card: { //父级任务详细信息
+                ele: null,
+                min_position: 0,
+                max_position: 0
+            },
         }
 
         this.x = 0
@@ -45,6 +52,7 @@ export default class GetRowTaskItem extends Component {
 
     componentDidMount() {
         this.initSetPosition(this.props)
+        this.handleEffectParentCard('getParentCard') //大纲模式下获取父级任务实例
     }
 
     componentWillReceiveProps(nextProps) {
@@ -62,6 +70,7 @@ export default class GetRowTaskItem extends Component {
             local_width: width, //实时变化
             local_width_flag: width, //作为local_width实时变化在拖动松开后的标志宽度
             local_width_origin: width, //记载原始宽度，不变，除非传递进来的改变
+            local_left_origin: left
         })
 
     }
@@ -248,16 +257,19 @@ export default class GetRowTaskItem extends Component {
         //     x: this.x,
         //     pageX: e.pageX
         // })
+        const local_width = Math.max(nw, ceilWidth) //nw < ceilWidth ? ceilWidth : nw
         this.setState({
-            local_width: nw < ceilWidth ? ceilWidth : nw
+            local_width
+        }, () => {
+            this.handleEffectParentCard('handleParentCard')
         })
     }
 
     // 整条拖动
     changePosition = (e) => {
-        const target_0 = document.getElementById('gantt_card_out')
-        const target_1 = document.getElementById('gantt_card_out_middle')
-        const target = this.out_ref.current//event.target || event.srcElement;
+        // const target_0 = document.getElementById('gantt_card_out')
+        // const target_1 = document.getElementById('gantt_card_out_middle')
+        // const target = this.out_ref.current//event.target || event.srcElement;
         // // 取得鼠标位置
         // const x = e.pageX - target_0.offsetLeft + target_1.scrollLeft - coperatedLeftDiv - coperatedX
         // const y = e.pageY - target.offsetTop + target_1.scrollTop - dateAreaHeight
@@ -271,6 +283,8 @@ export default class GetRowTaskItem extends Component {
         this.setState({
             // local_top: nt,
             local_left: nl,
+        }, () => {
+            this.handleEffectParentCard('handleParentCard', { left: nl })
         })
 
         // 在分组和特定高度下才能设置高度
@@ -637,6 +651,79 @@ export default class GetRowTaskItem extends Component {
         })
     }
 
+    // 大纲视图下，如果该条任务是子任务，拖动择会影响父任务位置和长度
+    handleEffectParentCard = (func_name, data) => {
+        const { group_view_type, itemValue: { parent_card_id } } = this.props
+        if (!ganttIsOutlineView({ group_view_type })) return
+        if (!parent_card_id) return
+
+        const obj = {
+            getParentCard: () => { //获取父任务的详细信息
+                const parent_card_ele = document.getElementById(parent_card_id)
+                const { min_position, max_position } = obj.getSameLevelNode()
+                this.setState({
+                    parent_card: {
+                        ele: parent_card_ele,
+                        min_position,
+                        max_position,
+                    }
+                })
+
+            },
+            getSameLevelNode: () => { //获取默认最小和最大点
+                const { outline_tree_round = [] } = this.props
+                const same_leve_node = outline_tree_round.filter(item => item.parent_card_id == parent_card_id)
+                const left_arr = same_leve_node.map(item => item.left).sort()
+                const width_arr = same_leve_node.map(item => item.left + item.width).sort()
+                const min_position = Math.min.apply(null, left_arr)//最左边的位置
+                const max_position = Math.max.apply(null, width_arr)
+                const left_arr_length = left_arr.length
+                const width_arr_length = width_arr.length
+                const second_min_position = left_arr[1]
+                const second_max_position = width_arr[width_arr_length - 2]
+                const o = {
+                    min_position,
+                    max_position,
+                    second_min_position,
+                    second_max_position
+                }
+                console.log('sssssssssssaa0', o)
+                return o
+            },
+            handleParentCard: () => { //移动过程中改变父任务位置和长度
+                const {
+                    parent_card: { ele, min_position, max_position, second_min_position, second_max_position },
+                    local_width, local_left,
+                    local_width_origin,
+                    local_left_origin
+                } = this.state
+                const local_right = local_left + local_width
+                let local_right_origin = local_left_origin + local_width_origin
+                // console.log('sssssssssssaa', { min_position, max_position, second_min_position, second_max_position })
+                if (ele) {
+                    if (local_left_origin <= min_position) {
+                        ele.style.left = `${Math.min(local_left, second_min_position) + card_left_diff}px` //取最左
+                    } else {
+                        ele.style.left = `${Math.min(local_left, min_position) + card_left_diff}px` //取最左
+                    }
+                    if (local_right_origin >= max_position) {
+                        ele.style.width = `${local_right - Math.min(local_left, min_position) - card_left_diff}px` //取最左
+                    } else {
+                        // 取区间最长
+                        const a = local_right >= max_position ? local_right : max_position
+                        ele.style.width = `${
+                            Math.max(
+                                max_position - min_position,
+                                a - Math.min(local_left, min_position),
+                            ) - card_width_diff}px`
+                    }
+
+                }
+            }
+        }
+        return obj[func_name].call(this, data)
+    }
+
     render() {
         const { itemValue = {}, im_all_latest_unread_messages, gantt_view_mode } = this.props
         const {
@@ -661,6 +748,7 @@ export default class GetRowTaskItem extends Component {
             <div
                 className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
                 data-targetclassname="specific_example"
+                id={id} //大纲视图需要获取该id作为父级id来实现子任务拖拽影响父任务位置
                 // draggable
                 ref={this.out_ref}
                 // style={{
@@ -674,9 +762,9 @@ export default class GetRowTaskItem extends Component {
                 style={{
                     touchAction: 'none',
                     zIndex: this.is_down ? 2 : 1,
-                    left: local_left + (gantt_view_mode == 'year' ? 0 : 4),
+                    left: local_left + (gantt_view_mode == 'year' ? 0 : card_left_diff),
                     top: local_top,
-                    width: (local_width || 6) - (gantt_view_mode == 'year' ? 0 : 8),
+                    width: (local_width || 6) - (gantt_view_mode == 'year' ? 0 : card_width_diff),
                     height: (height || task_item_height),
                     marginTop: task_item_margin_top,
                     background: this.setLableColor(label_data, is_realize), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
@@ -797,7 +885,8 @@ function mapStateToProps({ gantt: {
         current_list_group_id,
         group_list_area_section_height = [],
         group_view_type,
-        gantt_view_mode
+        gantt_view_mode,
+        outline_tree_round = []
     }
 },
     imCooperation: {
@@ -815,6 +904,7 @@ function mapStateToProps({ gantt: {
         group_list_area_section_height,
         im_all_latest_unread_messages,
         group_view_type,
-        gantt_view_mode
+        gantt_view_mode,
+        outline_tree_round
     }
 }
