@@ -280,52 +280,80 @@ export default class MainContent extends Component {
     }, 30)
   }
 
+  updateFlowInstanceNameOrDescription = (data, key) => {
+    const { value } = data
+    const { currentSelectType } = this.state
+    const { dispatch, processInfo = {}, processDoingList = [], processNotBeginningList = [], currentFlowTabsStatus } = this.props
+    if (currentSelectType == '2') {
+      const { processInfo: { id } } = this.props
+      let newProcessDoingList = [...processDoingList]
+      let newProcessNotBeginningList = [...processNotBeginningList]
+      let currentListItemPosition = currentFlowTabsStatus == '1' ? newProcessDoingList.findIndex(item => item.id == id) : currentFlowTabsStatus == '2' ? newProcessNotBeginningList.findIndex(item => item.id == id) : ''
+      let obj = {
+        id
+      }
+      obj[key] = value
+      dispatch({
+        type: 'publicProcessDetailModal/updateFlowInstanceNameOrDescription',
+        payload: {
+          ...obj,
+        }
+      }).then(res => {
+        setTimeout(() => {
+          message.success('更新成功',MESSAGE_DURATION_TIME)
+          this.setState({
+            currentSelectType: ''
+          })
+        },200)
+        processInfo[key] = value
+        if (currentFlowTabsStatus == '1') {
+          newProcessDoingList[currentListItemPosition]['name'] = value
+          dispatch({
+            type: 'publicProcessDetailModal/updateDatas',
+            payload: {
+              processDoingList: newProcessDoingList
+            }
+          })
+        } else if (currentFlowTabsStatus == '0') {
+          newProcessNotBeginningList[currentListItemPosition]['name'] = value
+          dispatch({
+            type: 'publicProcessDetailModal/updateDatas',
+            payload: {
+              processNotBeginningList: newProcessNotBeginningList
+            }
+          })
+        }
+      })
+    }
+  }
+
   titleInputValueChange = (e) => {
     if (e.target.value.trimLR() == '') {
-      this.setState({
-        currentFlowInstanceName: ''
+      this.props.dispatch({
+        type: 'publicProcessDetailModal/updateDatas',
+        payload: {
+          currentFlowInstanceName: ''
+        }
       })
-      // this.props.dispatch({
-      //   type: 'publicProcessDetailModal/updateDatas',
-      //   payload: {
-      //     // isEditCurrentFlowInstanceName: true,
-      //     currentFlowInstanceName: ''
-      //   }
-      // })
       return
     }
-    // this.setState({
-    //   currentFlowInstanceName: e.target.value
-    // })
-    // // this.props.dispatch({
-    // //   type: 'publicProcessDetailModal/updateDatas',
-    // //   payload: {
-    // //     // isEditCurrentFlowInstanceName: true,
-    // //     currentFlowInstanceName: e.target.value
-    // //   }
-    // // })
   }
 
   // 标题失去焦点回调
-  titleTextAreaChangeBlur = (e) => {
+  titleTextAreaChangeBlur = async(e) => {
     let val = e.target.value.trimLR()
-    // let reStr = val.trim()
+    const { processInfo = {} } = this.props
+    // const { request_flows_params = {}, projectDetailInfoData: { board_id, org_id }, currentFlowTabsStatus } = this.props
+    // let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     if (val == "" || val == " " || !val) {
-      this.setState({
-        currentFlowInstanceName: ''
+      this.props.dispatch({
+        type: 'publicProcessDetailModal/updateDatas',
+        payload: {
+          currentFlowInstanceName: processInfo && Object.keys(processInfo).length ? processInfo.name : '' 
+        }
       })
-      // this.props.dispatch({
-      //   type: 'publicProcessDetailModal/updateDatas',
-      //   payload: {
-      //     isEditCurrentFlowInstanceName: true,
-      //     currentFlowInstanceName: ''
-      //   }
-      // })
       return
     }
-    this.setState({
-      currentFlowInstanceName: val
-    })
     this.props.dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
@@ -333,23 +361,40 @@ export default class MainContent extends Component {
         currentFlowInstanceName: val
       }
     })
+    if (val == this.props.processInfo.name) return
+    await this.updateFlowInstanceNameOrDescription({value: val},'name')
+    // await this.props.dispatch({
+    //   type: 'publicProcessDetailModal/getProcessListByType',
+    //   payload: {
+    //     status: currentFlowTabsStatus,
+    //     board_id: BOARD_ID,
+    //     _organization_id: request_flows_params._organization_id || org_id
+    //   }
+    // })
+    
   }
   // 编辑标题
-  handleChangeFlowInstanceName = (e) => {
+  handleChangeFlowInstanceName = (e, type) => {
     e && e.stopPropagation()
-    // this.setState({
-    //   isEditCurrentFlowInstanceName: true
-    // })
     this.props.dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
         isEditCurrentFlowInstanceName: true
       }
     })
+    if (type == '2') {
+      this.setState({
+        currentSelectType: type
+      })
+    }
   }
 
-  // 修改描述事件
-  handleChangeFlowInstanceDescription = (e) => {
+  /**
+   * 修改描述事件
+   * @param {Object} e 事件对象
+   * @param {String} type 事件类型 2：表示进行中修改描述
+   */
+  handleChangeFlowInstanceDescription = (e, type) => {
     e && e.stopPropagation()
     // this.setState({
     //   isEditCurrentFlowInstanceDescription: true
@@ -364,19 +409,20 @@ export default class MainContent extends Component {
       let obj = document.getElementById('flowInstanceDescriptionTextArea') || ''
       cursorMoveEnd(obj)
     })
+    if (type == '2') {
+      this.setState({
+        currentSelectType: type
+      })
+    }
   }
 
   descriptionTextAreaChange = (e) => {
     let val = e.target.value.trimLR()
     if (val == "" || val == " " || !val) {
-      // this.setState({
-      //   currentFlowInstanceDescription: ''
-      // })
       this.props.dispatch({
         type: 'publicProcessDetailModal/updateDatas',
         payload: {
-          // isEditCurrentFlowInstanceName: true,
-          currentFlowInstanceDescription: ''
+          currentFlowInstanceDescription: '',
         }
       })
       return
@@ -387,9 +433,6 @@ export default class MainContent extends Component {
   descriptionTextAreaChangeBlur = (e) => {
     let val = e.target.value.trimLR()
     if (val == "" || val == " " || !val) {
-      // this.setState({
-      //   currentFlowInstanceDescription:''
-      // })
       this.props.dispatch({
         type: 'publicProcessDetailModal/updateDatas',
         payload: {
@@ -397,15 +440,20 @@ export default class MainContent extends Component {
           currentFlowInstanceDescription: ''
         }
       })
+      if (val == this.props.processInfo.description) return
+      this.updateFlowInstanceNameOrDescription({ value: '' }, 'description')
       return
+    } else {
+      this.props.dispatch({
+        type: 'publicProcessDetailModal/updateDatas',
+        payload: {
+          isEditCurrentFlowInstanceDescription: false,
+          currentFlowInstanceDescription: val
+        }
+      })
+      if (val == this.props.processInfo.description) return
+      this.updateFlowInstanceNameOrDescription({ value: val }, 'description')
     }
-    this.props.dispatch({
-      type: 'publicProcessDetailModal/updateDatas',
-      payload: {
-        isEditCurrentFlowInstanceDescription: false,
-        currentFlowInstanceDescription: val
-      }
-    })
   }
 
   // 添加步骤
@@ -915,8 +963,8 @@ export default class MainContent extends Component {
   }
 
   render() {
-    const { clientHeight, currentFlowInstanceName } = this.state
-    const { currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep, processInfo: { status, create_time }, templateInfo: { enable_change } } = this.props
+    const { clientHeight} = this.state
+    const { currentFlowInstanceDescription, currentFlowInstanceName, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep, processInfo: { status, create_time }, templateInfo: { enable_change } } = this.props
     let saveTempleteDisabled = currentFlowInstanceName == '' || (processEditDatas && processEditDatas.length) && processEditDatas.find(item => item.is_edit == '0') || (processEditDatas && processEditDatas.length) && !(processEditDatas[processEditDatas.length - 1].node_type) ? true : false
     return (
       <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto', position: 'relative' }} onScroll={this.onScroll} >
@@ -954,11 +1002,11 @@ export default class MainContent extends Component {
               <div style={{ marginBottom: '12px' }}>
                 {
                   !isEditCurrentFlowInstanceName ? (
-                    <div onClick={processPageFlagStep == '4' ? '' : this.handleChangeFlowInstanceName} className={`${processPageFlagStep == '4' ? indexStyles.normal_flow_name : indexStyles.flow_name}`}>
+                    <div onClick={processPageFlagStep == '4' ? '' : (e) => { this.handleChangeFlowInstanceName(e, '1') }} className={`${processPageFlagStep == '4' ? indexStyles.normal_flow_name : indexStyles.flow_name}`}>
                       <span style={{ wordBreak: 'break-all', flex: 1 }}>{currentFlowInstanceName} 
                         {
                           processPageFlagStep == '4' && (
-                            <span onClick={status == '1' ? this.handleChangeFlowInstanceName : ''} style={{color: '#1890FF', cursor: 'pointer', marginLeft: '10px'}} className={globalStyles.authTheme}>&#xe602;</span>
+                            <span onClick={(status == '1' || status == '0') ? (e) => { this.handleChangeFlowInstanceName(e, '2') } : ''} style={{color: (status == '1' || status == '0') ? '#1890FF' : '#D9D9D9', cursor: 'pointer', marginLeft: '10px'}} className={globalStyles.authTheme}>&#xe602;</span>
                           )
                         }
                       </span>
@@ -975,7 +1023,7 @@ export default class MainContent extends Component {
                         onBlur={this.titleTextAreaChangeBlur}
                         onPressEnter={this.titleTextAreaChangeBlur}
                         onClick={(e) => e && e.stopPropagation()}
-                        // setIsEdit={this.setTitleEdit}
+                        setIsEdit={this.titleTextAreaChangeBlur}
                         autoFocus={true}
                         goldName={currentFlowInstanceName}
                         placeholder={'流程名称(必填)'}
@@ -990,12 +1038,12 @@ export default class MainContent extends Component {
               <div>
                 {
                   !isEditCurrentFlowInstanceDescription ? (
-                    <div className={processPageFlagStep == '4' ? indexStyles.normal_flow_description  : indexStyles.flow_description} onClick={ processPageFlagStep == '4' ? '' : this.handleChangeFlowInstanceDescription}>
+                    <div className={processPageFlagStep == '4' ? indexStyles.normal_flow_description  : indexStyles.flow_description} onClick={ processPageFlagStep == '4' ? '' : (e) => { this.handleChangeFlowInstanceDescription(e,'1') }}>
                       <span>
                         {currentFlowInstanceDescription != '' ? currentFlowInstanceDescription : '添加描述'}
                         {
                           processPageFlagStep == '4' && (
-                            <span onClick={status == '1' ? this.handleChangeFlowInstanceDescription : ''} style={{color: '#1890FF', cursor: 'pointer', marginLeft: '10px'}} className={globalStyles.authTheme}>&#xe602;</span>
+                            <span onClick={(status == '1' || status == '0') ? (e) => { this.handleChangeFlowInstanceDescription(e,'2') } : ''} style={{color: (status == '1' || status == '0') ? '#1890FF' : '#D9D9D9', cursor: 'pointer', marginLeft: '10px'}} className={globalStyles.authTheme}>&#xe602;</span>
                           )
                         }
                       </span>
@@ -1005,6 +1053,7 @@ export default class MainContent extends Component {
                         id={'flowInstanceDescriptionTextArea'}
                         onChange={this.descriptionTextAreaChange}
                         onBlur={this.descriptionTextAreaChangeBlur}
+                        setIsEdit={this.descriptionTextAreaChangeBlur}
                         autosize
                         autoFocus={true}
                         onFocus={this.onFocus}
@@ -1089,10 +1138,10 @@ export default class MainContent extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas = [], processInfo = {}, node_type, processCurrentEditStep, templateInfo = {}, currentFlowTabsStatus, not_show_create_node_guide }, projectDetail: { datas: { projectDetailInfoData = {} } }, technological: {
+function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas = [], processInfo = {}, processDoingList = [], processNotBeginningList = [], node_type, processCurrentEditStep, templateInfo = {}, currentFlowTabsStatus, not_show_create_node_guide }, projectDetail: { datas: { projectDetailInfoData = {} } }, technological: {
   datas: {
     userBoardPermissions = []
   }
 } }) {
-  return { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas, processInfo, node_type, processCurrentEditStep, templateInfo, currentFlowTabsStatus, not_show_create_node_guide, projectDetailInfoData, userBoardPermissions }
+  return { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas, processInfo, processDoingList, processNotBeginningList, node_type, processCurrentEditStep, templateInfo, currentFlowTabsStatus, not_show_create_node_guide, projectDetailInfoData, userBoardPermissions }
 }
