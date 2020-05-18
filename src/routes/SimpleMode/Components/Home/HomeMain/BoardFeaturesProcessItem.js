@@ -29,6 +29,7 @@ export default class BoardFeaturesProcessItem extends Component {
                     </div>
                 </div>
                 <div className={`${styles.feature_item_rt}`} style={{ color: '#FAAD14' }}> 04/20 13:30 截止</div>
+                <div className={styles.feature_item_reject}>被驳回</div>
             </div>
         )
     }

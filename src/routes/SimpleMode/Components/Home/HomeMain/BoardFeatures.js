@@ -53,18 +53,26 @@ export default class BoardFeatures extends Component {
             }
         })
     }
+    // 渲染不同类型的代办列表
+    renderDiffRelaTypeFeaturesItem = (value) => {
+        const { id, rela_type } = value
+        switch (rela_type) {
+            case '1': // 表示任务
+                return <BoardFeaturesItem key={id} itemValue={value} />
+            case '2': // 表示流程
+                return <BoardFeaturesProcessItem key={id} itemValue={value} />
+            default:
+                break;
+        }
+    }
     renderTodoList = () => {
         const { board_todo_list = [] } = this.props
-        return (
-            <BoardFeaturesProcessItem />
-        )
         return (
             board_todo_list.length ? (
                 board_todo_list.map(value => {
                     const { id } = value
-                    return (
-                        <BoardFeaturesItem key={id} itemValue={value} />
-                    )
+                    // return <BoardFeaturesProcessItem key={id} itemValue={value} />
+                    return <>{this.renderDiffRelaTypeFeaturesItem(value)}</>
                 })
             ) : (
                     <div className={`${globalStyles.authTheme} ${styles.nodataArea}`}>
