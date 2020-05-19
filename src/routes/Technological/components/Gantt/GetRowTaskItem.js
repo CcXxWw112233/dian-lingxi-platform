@@ -682,9 +682,10 @@ export default class GetRowTaskItem extends Component {
 
     // 大纲视图下，如果该条任务是子任务，拖动择会影响父任务位置和长度
     handleEffectParentCard = (func_name, data) => {
-        const { group_view_type, itemValue: { parent_card_id } } = this.props
+        const { group_view_type, itemValue: { parent_card_id }, gantt_view_mode } = this.props
         if (!ganttIsOutlineView({ group_view_type })) return
         if (!parent_card_id) return
+        const is_year_view = gantt_view_mode == 'year'
         const _self = this
         const obj = {
             getParentCard: () => { //获取父任务的详细信息
@@ -753,8 +754,8 @@ export default class GetRowTaskItem extends Component {
                         } else {
                             max_right = Math.max(local_right, max_position || local_right)// 所拖动不是最右边的任务条， right取当前任务条的最右位置 和 所有的第一靠右比较
                         }
-                        ele.style.left = `${min_left + card_left_diff}px`
-                        ele.style.width = `${(max_right - min_left) - card_width_diff}px`
+                        ele.style.left = `${min_left + (is_year_view ? 0 : card_left_diff)}px`
+                        ele.style.width = `${(max_right - min_left) - (is_year_view ? 0 : card_width_diff)}px`
                         _self.setState({
                             parent_card_max_right: max_right,
                             parent_card_min_left: min_left
@@ -766,12 +767,20 @@ export default class GetRowTaskItem extends Component {
                     }
                 })
             },
-            updateParentCard: () => {
-                const { date_arr_one_level, ceilWidth, itemValue: { board_id } } = _self.props
-                const { parent_card_min_left, parent_card_max_right } = _self.state
-                const width = parseInt((parent_card_max_right - parent_card_min_left) / ceilWidth) * ceilWidth - card_width_diff //实际要计算的宽度
-                const start_time = (date_arr_one_level[parseInt(parent_card_min_left / ceilWidth)] || {}).timestamp
-                const due_time = (date_arr_one_level[parseInt((parent_card_min_left + width) / ceilWidth)] || {}).timestampEnd
+            updateParentCard: () => { //方法废弃。由子任务更新后后台返回区间，父任务更新由返回的时间确认
+                const { date_arr_one_level, ceilWidth, itemValue: { board_id }, gantt_view_mode } = _self.props
+                const { parent_card_min_left, parent_card_max_right, drag_type } = _self.state
+                const width = parseInt((parent_card_max_right - parent_card_min_left) / ceilWidth) * ceilWidth - ((drag_type != 'position') ? 0 : card_width_diff) //实际要计算的宽度
+                let start_time = ''
+                let due_time = ''
+                if (is_year_view) {
+                    start_time = (setDateWithPositionInYearView({ _position: parent_card_min_left, date_arr_one_level, ceilWidth, width, x: parent_card_min_left, flag: 1 }) || {}).timestamp
+                    due_time = (setDateWithPositionInYearView({ _position: parent_card_min_left + width, date_arr_one_level, ceilWidth, width, x: parent_card_min_left, flag: 2 }) || {}).timestampEnd
+                } else {
+                    start_time = (date_arr_one_level[parseInt(parent_card_min_left / ceilWidth)] || {}).timestamp
+                    due_time = (date_arr_one_level[parseInt((parent_card_min_left + width) / ceilWidth)] || {}).timestampEnd
+                }
+                debugger
                 updateTask({ card_id: parent_card_id, due_time, start_time, board_id }, { isNotLoading: false })
                     .then(res => {
                         if (isApiResponseOk(res)) {
