@@ -18,6 +18,7 @@ import { isApiResponseOk } from '../../utils/handleResponseData'
 import { currentNounPlanFilterName } from "@/utils/businessFunction";
 import { checkIsHasPermissionInBoard, setBoardIdStorage, getGlobalData } from '../../utils/businessFunction'
 import { cursorMoveEnd } from './components/handleOperateModal'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 const { LingxiIm, Im } = global.constants
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -521,8 +522,8 @@ export default class MainContent extends Component {
 
   // 表示是配置的时候保存模板
   handleSaveConfigureProcessTemplete = () => {
-    const { currentFlowInstanceName } = this.state
-    const { dispatch, projectDetailInfoData: { board_id }, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { enable_change } } = this.props
+    // const { currentFlowInstanceName } = this.state
+    const { dispatch, projectDetailInfoData: { board_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { enable_change } } = this.props
     Promise.resolve(
       dispatch({
         type: 'publicProcessDetailModal/saveProcessTemplate',
@@ -554,8 +555,8 @@ export default class MainContent extends Component {
   
   // 表示是编辑时保存模板 ==> 是需要带上凭证的
   handleSaveEditProcessTemplete = () => {
-    const { currentFlowInstanceName } = this.state
-    const { dispatch, currentTempleteIdentifyId, projectDetailInfoData: { board_id }, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { id, is_covert_template, enable_change } } = this.props
+    // const { currentFlowInstanceName } = this.state
+    const { dispatch, currentTempleteIdentifyId, projectDetailInfoData: { board_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { id, is_covert_template, enable_change } } = this.props
     if (is_covert_template && is_covert_template == '1') {
       this.handleSaveConfigureProcessTemplete()
     } else {
@@ -599,8 +600,8 @@ export default class MainContent extends Component {
   }
   // 第一步: 先保存模板 ==> 返回模板ID
   handleOperateConfigureConfirmProcessOne = async (start_time) => {
-    const { currentFlowInstanceName } = this.state
-    const { projectDetailInfoData: { board_id }, currentFlowInstanceDescription, processEditDatas = [], request_flows_params = {}, templateInfo: { enable_change } } = this.props
+    // const { currentFlowInstanceName } = this.state
+    const { projectDetailInfoData: { board_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [], request_flows_params = {}, templateInfo: { enable_change } } = this.props
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     let REAUEST_BOARD_ID = getGlobalData('storageCurrentOperateBoardId') || board_id
     let res = await saveProcessTemplate({
@@ -677,8 +678,8 @@ export default class MainContent extends Component {
   // 表示是在启动的时候调永立即开始流程
   handleOperateStartConfirmProcess = (start_time) => {
     let that = this
-    const { currentFlowInstanceName } = this.state
-    const { dispatch, projectDetailInfoData: { board_id, org_id }, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { id }, request_flows_params = {} } = this.props
+    // const { currentFlowInstanceName } = this.state
+    const { dispatch, projectDetailInfoData: { board_id, org_id }, currentFlowInstanceName, currentFlowInstanceDescription, processEditDatas = [], templateInfo: { id }, request_flows_params = {} } = this.props
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     let REAUEST_BOARD_ID = getGlobalData('storageCurrentOperateBoardId') || board_id
     Promise.resolve(
@@ -835,6 +836,65 @@ export default class MainContent extends Component {
       </div>
     )
   }
+
+        // a little function to help us with reordering the result
+        reorder = (list, startIndex, endIndex) => {
+          const result = Array.from(list);
+          const [removed] = result.splice(startIndex, 1);
+          result.splice(endIndex, 0, removed);
+          return result;
+        };
+      
+        onDragEnd = result => {
+          const { source, destination } = result;
+          if (!destination) {
+            return;
+          }
+          const { processEditDatas = [] } = this.props
+          let newPrcessEditDatas = [...processEditDatas]
+          const property_item = newPrcessEditDatas.find((item, index) => index == source.index)
+          const target_property_item = newPrcessEditDatas.find((item, index) => index == destination.index)
+          for (let val in processEditDatas) {
+            newPrcessEditDatas = this.reorder(newPrcessEditDatas, source.index, destination.index)
+          }
+          let flag = newPrcessEditDatas.find((item, index) => (item.node_type == '2' && index == '0') || (item.node_type == '3' && index == '0'))
+          if (flag && Object.keys(flag).length) return message.warn('第一个节点不能为审批或评分节点', MESSAGE_DURATION_TIME)
+          this.props.dispatch({
+            type: 'publicProcessDetailModal/updateDatas',
+            payload: {
+              processEditDatas: newPrcessEditDatas
+            }
+          })
+        };
+    
+      getDragDropContext = () => {
+        const { processEditDatas = [] } = this.props
+        let messageValue = (<div></div>)
+        messageValue = (
+          <div>
+            <DragDropContext getPopupContainer={triggerNode => triggerNode.parentNode} onDragEnd={this.onDragEnd}>
+              <Droppable droppableId="droppable">
+                {(provided, snapshot) => (
+                  <div ref={provided.innerRef} {...provided.droppableProps}>
+                    {processEditDatas.map((value, key) => {
+                      return (
+                          <Draggable key={value.id || key} index={key} draggableId={value.id || `${value.node_type}_${key}`}>
+                          {(provided, snapshot) => (
+                            <div ref={provided.innerRef} {...provided.draggableProps}
+                              {...provided.dragHandleProps}>{this.renderDiffContentProcess(value, key)}</div>
+                          )}
+                        </Draggable>
+                      )
+                    })}
+                    
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </div>
+        )
+        return messageValue
+      }
 
   // 渲染展示的内容是什么 配置时 | 编辑时 | 启动时 | 进行时
   renderDiffContentProcess = (value, key) => {
@@ -1073,6 +1133,21 @@ export default class MainContent extends Component {
           </div>
         </div>
         <div className={indexStyles.configure_bottom}>
+          {/* {
+            processPageFlagStep == '4' ? (
+              <>
+                {processEditDatas.map((value, key) => {
+                    return (
+                      <>{this.renderDiffContentProcess(value, key)}</>
+                    )
+                  })}
+              </>
+            ) : (
+              <>
+                {this.getDragDropContext()}
+              </>
+            )
+          } */}
           {processEditDatas.map((value, key) => {
             return (
               <>{this.renderDiffContentProcess(value, key)}</>
