@@ -4,7 +4,7 @@ import { connect } from 'dva'
 import AvatarList from '@/components/avatarList'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
-import { task_item_height, task_item_margin_top, date_area_height, ganttIsOutlineView } from './constants'
+import { task_item_height, task_item_margin_top, date_area_height, ganttIsOutlineView, ceil_width } from './constants'
 import { updateTask, changeTaskType } from '../../../../services/technological/task'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import { message, Dropdown, Popover, Tooltip } from 'antd'
@@ -56,7 +56,7 @@ export default class GetRowTaskItem extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-
+        this.handleEffectParentCard('getParentCard') //大纲模式下获取父级任务实例
     }
 
     // 设置位置
@@ -439,6 +439,7 @@ export default class GetRowTaskItem extends Component {
                             updateData
                         })
                     }
+                    this.handleEffectParentCard('updateParentCard')
                 } else {
                     this.setState({
                         local_width: local_width_origin,
@@ -529,7 +530,7 @@ export default class GetRowTaskItem extends Component {
                             updateData
                         })
                     }
-
+                    this.handleEffectParentCard('updateParentCard')
                 } else {
                     this.setState({
                         local_left: left
@@ -658,14 +659,18 @@ export default class GetRowTaskItem extends Component {
         if (!parent_card_id) return
 
         const obj = {
+            min_left: '',
+            max_right: '',
             getParentCard: () => { //获取父任务的详细信息
                 const parent_card_ele = document.getElementById(parent_card_id)
-                const { min_position, max_position } = obj.getSameLevelNode()
+                const { min_position, max_position, second_min_position, second_max_position } = obj.getSameLevelNode()
                 this.setState({
                     parent_card: {
                         ele: parent_card_ele,
                         min_position,
                         max_position,
+                        second_min_position,
+                        second_max_position
                     }
                 })
 
@@ -687,7 +692,6 @@ export default class GetRowTaskItem extends Component {
                     second_min_position,
                     second_max_position
                 }
-                console.log('sssssssssssaa0', o)
                 return o
             },
             handleParentCard: () => { //移动过程中改变父任务位置和长度
@@ -698,27 +702,71 @@ export default class GetRowTaskItem extends Component {
                     local_left_origin
                 } = this.state
                 const local_right = local_left + local_width
-                let local_right_origin = local_left_origin + local_width_origin
-                // console.log('sssssssssssaa', { min_position, max_position, second_min_position, second_max_position })
+                const local_right_origin = local_left_origin + local_width_origin
                 if (ele) {
+                    let min_left
+                    let max_right
+                    // 设置最左
                     if (local_left_origin <= min_position) {
-                        ele.style.left = `${Math.min(local_left, second_min_position) + card_left_diff}px` //取最左
+                        min_left = Math.min(local_left, second_min_position || local_left) // 所拖动是最左边的任务条， left取当前任务条的最左位置和所有的第二靠左比
                     } else {
-                        ele.style.left = `${Math.min(local_left, min_position) + card_left_diff}px` //取最左
+                        min_left = Math.min(local_left, min_position || local_left)// 所拖动不是最左边的任务条， left取当前任务条的最左位置和所有的第一靠左比较
                     }
+                    // 设置最右位置
                     if (local_right_origin >= max_position) {
-                        ele.style.width = `${local_right - Math.min(local_left, min_position) - card_left_diff}px` //取最左
+                        max_right = Math.max(local_right, second_max_position || local_right) // 所拖动是最右边的任务条， right取当前任务条的最左位置 和 所有的第二靠右比
                     } else {
-                        // 取区间最长
-                        const a = local_right >= max_position ? local_right : max_position
-                        ele.style.width = `${
-                            Math.max(
-                                max_position - min_position,
-                                a - Math.min(local_left, min_position),
-                            ) - card_width_diff}px`
+                        max_right = Math.max(local_right, max_position || local_right)// 所拖动不是最右边的任务条， right取当前任务条的最右位置 和 所有的第一靠右比较
                     }
+                    ele.style.left = `${min_left + card_left_diff}px`
+                    ele.style.width = `${(max_right - min_left) - card_left_diff}px`
+                    this.setState({
+                        max_right,
+                        min_left
+                    })
+
+                    // const a = local_right >= max_position ? local_right : max_position
+                    // ele.style.width = `${
+                    //     Math.max(
+                    //         max_position - min_position,
+                    //         a - Math.min(local_left, min_position),
+                    //     ) - card_width_diff}px`
+
+                    // if (local_left_origin <= min_position) {
+                    //     ele.style.left = `${Math.min(local_left, second_min_position) + card_left_diff}px` //取最左
+                    // } else {
+                    //     ele.style.left = `${Math.min(local_left, min_position) + card_left_diff}px` //取最左
+                    // }
+                    // if (local_right_origin >= max_position) {
+                    //     ele.style.width = `${local_right - Math.min(local_left, min_position) - card_left_diff}px` //取最左
+                    // } else {
+                    //     // 取区间最长
+                    //     const a = local_right >= max_position ? local_right : max_position
+                    //     ele.style.width = `${
+                    //         Math.max(
+                    //             max_position - min_position,
+                    //             a - Math.min(local_left, min_position),
+                    //         ) - card_width_diff}px`
+                    // }
 
                 }
+            },
+            updateParentCard: () => {
+                const { date_arr_one_level, ceilWidth, itemValue: { board_id } } = this.props
+                const { min_left, max_right } = this.state
+                const width = parseInt((max_right - min_left) / ceilWidth) * ceilWidth - 4 //实际要计算的宽度
+                const start_time = (date_arr_one_level[parseInt(min_left / ceilWidth)] || {}).timestamp
+                const due_time = (date_arr_one_level[parseInt((min_left + width) / ceilWidth)] || {}).timestampEnd
+                updateTask({ card_id: parent_card_id, due_time, start_time, board_id }, { isNotLoading: false })
+                    .then(res => {
+                        if (isApiResponseOk(res)) {
+                            this.props.changeOutLineTreeNodeProto(parent_card_id, { due_time, start_time })
+                        } else {
+                            message.error(res.message)
+                        }
+                    }).catch(err => {
+                        message.error('更新失败')
+                    })
             }
         }
         return obj[func_name].call(this, data)
@@ -864,11 +912,11 @@ export default class GetRowTaskItem extends Component {
                         ></div>
                     )
                 }
-                <Popover
+                {/* <Popover
                     getPopupContainer={() => document.getElementById('gantt_card_out_middle')}
                     placement="bottom" content={<CardDropDetail list={[{ ...itemValue }]} />} key={id}>
                     <div style={{ position: 'absolute', width: '100%', height: '100%' }}></div>
-                </Popover>
+                </Popover> */}
             </div>
             // </Popover> 
         )
