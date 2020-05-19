@@ -284,7 +284,7 @@ export default class GetRowTaskItem extends Component {
             // local_top: nt,
             local_left: nl,
         }, () => {
-            this.handleEffectParentCard('handleParentCard', { left: nl })
+            this.handleEffectParentCard('handleParentCard')
         })
 
         // 在分组和特定高度下才能设置高度
@@ -425,25 +425,39 @@ export default class GetRowTaskItem extends Component {
             this.setState({
                 local_width: time_width,
                 local_width_flag: time_width
+            }, () => {
+                this.handleEffectParentCard('handleParentCard').then(() => {
+                    this.handleEffectParentCard('updateParentCard')
+                })
             })
             return
         }
         updateTask({ card_id: id, due_time: end_time_timestamp, board_id }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
+                    this.handleEffectParentCard('getParentCard').then((res) => {
+                        this.handleEffectParentCard('handleParentCard', {}, true).then(() => {
+                            this.handleEffectParentCard('updateParentCard')
+                        })
+                    })
                     if (ganttIsOutlineView({ group_view_type })) {
-                        this.props.changeOutLineTreeNodeProto(id, updateData)
+                        setTimeout(() => {
+                            this.props.changeOutLineTreeNodeProto(id, updateData)
+                        }, 100)
                     } else {
                         this.handleHasScheduleCard({
                             card_id: id,
                             updateData
                         })
                     }
-                    this.handleEffectParentCard('updateParentCard')
                 } else {
                     this.setState({
                         local_width: local_width_origin,
                         local_width_flag: local_width_origin
+                    }, () => {
+                        this.handleEffectParentCard('handleParentCard').then(() => {
+                            this.handleEffectParentCard('updateParentCard')
+                        })
                     })
                     message.error(res.message)
                 }
@@ -514,6 +528,10 @@ export default class GetRowTaskItem extends Component {
             this.setState({
                 local_left: left,
                 local_top: top
+            }, () => {
+                this.handleEffectParentCard('handleParentCard').then(() => {
+                    this.handleEffectParentCard('updateParentCard')
+                })
             })
             return
         }
@@ -522,18 +540,28 @@ export default class GetRowTaskItem extends Component {
             .then(res => {
                 if (isApiResponseOk(res)) {
                     // console.log('ssssssssssaaaa', 3)
+                    this.handleEffectParentCard('getParentCard').then((res) => {
+                        this.handleEffectParentCard('handleParentCard', {}, true).then(() => {
+                            this.handleEffectParentCard('updateParentCard')
+                        })
+                    })
                     if (ganttIsOutlineView({ group_view_type })) {
-                        this.props.changeOutLineTreeNodeProto(id, updateData)
+                        setTimeout(() => {
+                            this.props.changeOutLineTreeNodeProto(id, updateData)
+                        }, 100)
                     } else {
                         this.handleHasScheduleCard({
                             card_id: id,
                             updateData
                         })
                     }
-                    this.handleEffectParentCard('updateParentCard')
                 } else {
                     this.setState({
                         local_left: left
+                    }, () => {
+                        this.handleEffectParentCard('handleParentCard').then(() => {
+                            this.handleEffectParentCard('updateParentCard')
+                        })
                     })
                     message.error(res.message)
                 }
@@ -657,111 +685,105 @@ export default class GetRowTaskItem extends Component {
         const { group_view_type, itemValue: { parent_card_id } } = this.props
         if (!ganttIsOutlineView({ group_view_type })) return
         if (!parent_card_id) return
-
+        const _self = this
         const obj = {
-            min_left: '',
-            max_right: '',
             getParentCard: () => { //获取父任务的详细信息
                 const parent_card_ele = document.getElementById(parent_card_id)
-                const { min_position, max_position, second_min_position, second_max_position } = obj.getSameLevelNode()
-                this.setState({
-                    parent_card: {
-                        ele: parent_card_ele,
+                return new Promise((resolve, reject) => {
+                    return obj.getSameLevelNode().then(res => {
+                        const { min_position, max_position, second_min_position, second_max_position } = res
+                        resolve(res)
+                        _self.setState({
+                            parent_card: {
+                                ele: parent_card_ele,
+                                min_position,
+                                max_position,
+                                second_min_position,
+                                second_max_position
+                            }
+                        }, () => {
+                            return resolve(res)
+                        })
+                    })
+                })
+            },
+            getSameLevelNode: () => { //获取默认最小和最大点
+                return new Promise((resolve, reject) => {
+                    const { outline_tree_round = [] } = _self.props
+                    const same_leve_node = outline_tree_round.filter(item => item.parent_card_id == parent_card_id)
+                    const left_arr = same_leve_node.map(item => item.left).sort()
+                    const width_arr = same_leve_node.map(item => item.left + item.width).sort()
+                    const min_position = Math.min.apply(null, left_arr)//最左边的位置
+                    const max_position = Math.max.apply(null, width_arr)
+                    const left_arr_length = left_arr.length
+                    const width_arr_length = width_arr.length
+                    const second_min_position = left_arr[1]
+                    const second_max_position = width_arr[width_arr_length - 2]
+                    const o = {
                         min_position,
                         max_position,
                         second_min_position,
                         second_max_position
                     }
+                    resolve(o)
                 })
-
-            },
-            getSameLevelNode: () => { //获取默认最小和最大点
-                const { outline_tree_round = [] } = this.props
-                const same_leve_node = outline_tree_round.filter(item => item.parent_card_id == parent_card_id)
-                const left_arr = same_leve_node.map(item => item.left).sort()
-                const width_arr = same_leve_node.map(item => item.left + item.width).sort()
-                const min_position = Math.min.apply(null, left_arr)//最左边的位置
-                const max_position = Math.max.apply(null, width_arr)
-                const left_arr_length = left_arr.length
-                const width_arr_length = width_arr.length
-                const second_min_position = left_arr[1]
-                const second_max_position = width_arr[width_arr_length - 2]
-                const o = {
-                    min_position,
-                    max_position,
-                    second_min_position,
-                    second_max_position
-                }
-                return o
             },
             handleParentCard: () => { //移动过程中改变父任务位置和长度
-                const {
-                    parent_card: { ele, min_position, max_position, second_min_position, second_max_position },
-                    local_width, local_left,
-                    local_width_origin,
-                    local_left_origin
-                } = this.state
-                const local_right = local_left + local_width
-                const local_right_origin = local_left_origin + local_width_origin
-                if (ele) {
-                    let min_left
-                    let max_right
-                    // 设置最左
-                    if (local_left_origin <= min_position) {
-                        min_left = Math.min(local_left, second_min_position || local_left) // 所拖动是最左边的任务条， left取当前任务条的最左位置和所有的第二靠左比
+                return new Promise((resolve, reject) => {
+                    const {
+                        parent_card: { ele, min_position, max_position, second_min_position, second_max_position },
+                        local_width, local_left,
+                        local_width_origin,
+                        local_left_origin
+                    } = _self.state
+                    const local_right = local_left + local_width
+                    const local_right_origin = local_left_origin + local_width_origin
+                    if (ele) {
+                        let min_left
+                        let max_right
+                        // 设置最左
+                        if (local_left_origin <= min_position) {
+                            min_left = Math.min(local_left, second_min_position || local_left) // 所拖动是最左边的任务条， left取当前任务条的最左位置和所有的第二靠左比
+                        } else {
+                            min_left = Math.min(local_left, min_position || local_left)// 所拖动不是最左边的任务条， left取当前任务条的最左位置和所有的第一靠左比较
+                        }
+                        // 设置最右位置
+                        if (local_right_origin >= max_position) {
+                            max_right = Math.max(local_right, second_max_position || local_right) // 所拖动是最右边的任务条， right取当前任务条的最左位置 和 所有的第二靠右比
+                        } else {
+                            max_right = Math.max(local_right, max_position || local_right)// 所拖动不是最右边的任务条， right取当前任务条的最右位置 和 所有的第一靠右比较
+                        }
+                        ele.style.left = `${min_left + card_left_diff}px`
+                        ele.style.width = `${(max_right - min_left) - card_width_diff}px`
+                        _self.setState({
+                            parent_card_max_right: max_right,
+                            parent_card_min_left: min_left
+                        }, () => {
+                            return resolve()
+                        })
                     } else {
-                        min_left = Math.min(local_left, min_position || local_left)// 所拖动不是最左边的任务条， left取当前任务条的最左位置和所有的第一靠左比较
+                        reject()
                     }
-                    // 设置最右位置
-                    if (local_right_origin >= max_position) {
-                        max_right = Math.max(local_right, second_max_position || local_right) // 所拖动是最右边的任务条， right取当前任务条的最左位置 和 所有的第二靠右比
-                    } else {
-                        max_right = Math.max(local_right, max_position || local_right)// 所拖动不是最右边的任务条， right取当前任务条的最右位置 和 所有的第一靠右比较
-                    }
-                    ele.style.left = `${min_left + card_left_diff}px`
-                    ele.style.width = `${(max_right - min_left) - card_left_diff}px`
-                    this.setState({
-                        parent_card_max_right: max_right,
-                        parent_card_min_left: min_left
-                    })
-
-                    // const a = local_right >= max_position ? local_right : max_position
-                    // ele.style.width = `${
-                    //     Math.max(
-                    //         max_position - min_position,
-                    //         a - Math.min(local_left, min_position),
-                    //     ) - card_width_diff}px`
-
-                    // if (local_left_origin <= min_position) {
-                    //     ele.style.left = `${Math.min(local_left, second_min_position) + card_left_diff}px` //取最左
-                    // } else {
-                    //     ele.style.left = `${Math.min(local_left, min_position) + card_left_diff}px` //取最左
-                    // }
-                    // if (local_right_origin >= max_position) {
-                    //     ele.style.width = `${local_right - Math.min(local_left, min_position) - card_left_diff}px` //取最左
-                    // } else {
-                    //     // 取区间最长
-                    //     const a = local_right >= max_position ? local_right : max_position
-                    //     ele.style.width = `${
-                    //         Math.max(
-                    //             max_position - min_position,
-                    //             a - Math.min(local_left, min_position),
-                    //         ) - card_width_diff}px`
-                    // }
-
-                }
+                })
             },
             updateParentCard: () => {
-                const { date_arr_one_level, ceilWidth, itemValue: { board_id } } = this.props
-                const { parent_card_min_left, parent_card_max_right } = this.state
-                const width = parseInt((parent_card_max_right - parent_card_min_left) / ceilWidth) * ceilWidth - 4 //实际要计算的宽度
+                const { date_arr_one_level, ceilWidth, itemValue: { board_id } } = _self.props
+                const { parent_card_min_left, parent_card_max_right } = _self.state
+                const width = parseInt((parent_card_max_right - parent_card_min_left) / ceilWidth) * ceilWidth - card_width_diff //实际要计算的宽度
                 const start_time = (date_arr_one_level[parseInt(parent_card_min_left / ceilWidth)] || {}).timestamp
                 const due_time = (date_arr_one_level[parseInt((parent_card_min_left + width) / ceilWidth)] || {}).timestampEnd
                 updateTask({ card_id: parent_card_id, due_time, start_time, board_id }, { isNotLoading: false })
                     .then(res => {
                         if (isApiResponseOk(res)) {
-                            this.props.changeOutLineTreeNodeProto(parent_card_id, { due_time, start_time })
+                            setTimeout(() => {
+                                this.props.changeOutLineTreeNodeProto(parent_card_id, { due_time, start_time })
+                            }, 100)
                         } else {
+                            setTimeout(() => {
+                                this.handleEffectParentCard('handleParentCard').then(() => {
+                                    this.handleEffectParentCard('updateParentCard')
+                                })
+                            }, 200)
                             message.error(res.message)
                         }
                     }).catch(err => {
@@ -912,11 +934,16 @@ export default class GetRowTaskItem extends Component {
                         ></div>
                     )
                 }
-                {/* <Popover
-                    getPopupContainer={() => document.getElementById('gantt_card_out_middle')}
-                    placement="bottom" content={<CardDropDetail list={[{ ...itemValue }]} />} key={id}>
-                    <div style={{ position: 'absolute', width: '100%', height: '100%' }}></div>
-                </Popover> */}
+                {
+                    !this.is_down && (
+                        <Popover
+                            getPopupContainer={() => document.getElementById('gantt_card_out_middle')}
+                            placement="bottom" content={<CardDropDetail list={[{ ...itemValue }]} />} key={id}>
+                            <div style={{ position: 'absolute', width: '100%', height: '100%' }}></div>
+                        </Popover>
+                    )
+                }
+
             </div>
             // </Popover> 
         )
