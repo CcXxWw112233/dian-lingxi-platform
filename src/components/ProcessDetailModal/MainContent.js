@@ -288,7 +288,7 @@ export default class MainContent extends Component {
       const { processInfo: { id } } = this.props
       let newProcessDoingList = [...processDoingList]
       let newProcessNotBeginningList = [...processNotBeginningList]
-      let currentListItemPosition = currentFlowTabsStatus == '1' ? newProcessDoingList.findIndex(item => item.id == id) : currentFlowTabsStatus == '2' ? newProcessNotBeginningList.findIndex(item => item.id == id) : ''
+      let currentListItemPosition = currentFlowTabsStatus == '1' ? newProcessDoingList.findIndex(item => item.id == id) : currentFlowTabsStatus == '0' ? newProcessNotBeginningList.findIndex(item => item.id == id) : ''
       let obj = {
         id
       }
@@ -299,29 +299,31 @@ export default class MainContent extends Component {
           ...obj,
         }
       }).then(res => {
-        setTimeout(() => {
-          message.success('更新成功',MESSAGE_DURATION_TIME)
-          this.setState({
-            currentSelectType: ''
-          })
-        },200)
-        processInfo[key] = value
-        if (currentFlowTabsStatus == '1') {
-          newProcessDoingList[currentListItemPosition]['name'] = value
-          dispatch({
-            type: 'publicProcessDetailModal/updateDatas',
-            payload: {
-              processDoingList: newProcessDoingList
-            }
-          })
-        } else if (currentFlowTabsStatus == '0') {
-          newProcessNotBeginningList[currentListItemPosition]['name'] = value
-          dispatch({
-            type: 'publicProcessDetailModal/updateDatas',
-            payload: {
-              processNotBeginningList: newProcessNotBeginningList
-            }
-          })
+        if (isApiResponseOk(res)) {
+          setTimeout(() => {
+            message.success('更新成功',MESSAGE_DURATION_TIME)
+            this.setState({
+              currentSelectType: ''
+            })
+          },200)
+          processInfo[key] = value
+          if (currentFlowTabsStatus == '1') {
+            newProcessDoingList[currentListItemPosition]['name'] = value
+            dispatch({
+              type: 'publicProcessDetailModal/updateDatas',
+              payload: {
+                processDoingList: newProcessDoingList
+              }
+            })
+          } else if (currentFlowTabsStatus == '0') {
+            newProcessNotBeginningList[currentListItemPosition]['name'] = value
+            dispatch({
+              type: 'publicProcessDetailModal/updateDatas',
+              payload: {
+                processNotBeginningList: newProcessNotBeginningList
+              }
+            })
+          }
         }
       })
     }

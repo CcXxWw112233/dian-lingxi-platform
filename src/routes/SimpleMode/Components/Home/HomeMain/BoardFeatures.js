@@ -8,6 +8,20 @@ import BoardFeaturesProcessItem from './BoardFeaturesProcessItem'
 
 @connect(mapStateToProps)
 export default class BoardFeatures extends Component {
+
+    constructor(props) {
+        super(props)
+        this.state = {
+
+        }
+    }
+
+    // 重新排序
+    reorderBoardToDoList = (props) => {
+        const {  } = props
+        
+    }
+
     // 修改任务
     handleCard = ({ card_id, drawContent = {}, operate_properties_code }) => {
         const { is_realize } = drawContent
