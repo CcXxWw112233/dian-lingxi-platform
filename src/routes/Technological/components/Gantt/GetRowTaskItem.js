@@ -721,8 +721,8 @@ export default class GetRowTaskItem extends Component {
                     ele.style.left = `${min_left + card_left_diff}px`
                     ele.style.width = `${(max_right - min_left) - card_left_diff}px`
                     this.setState({
-                        max_right,
-                        min_left
+                        parent_card_max_right: max_right,
+                        parent_card_min_left: min_left
                     })
 
                     // const a = local_right >= max_position ? local_right : max_position
@@ -753,10 +753,10 @@ export default class GetRowTaskItem extends Component {
             },
             updateParentCard: () => {
                 const { date_arr_one_level, ceilWidth, itemValue: { board_id } } = this.props
-                const { min_left, max_right } = this.state
-                const width = parseInt((max_right - min_left) / ceilWidth) * ceilWidth - 4 //实际要计算的宽度
-                const start_time = (date_arr_one_level[parseInt(min_left / ceilWidth)] || {}).timestamp
-                const due_time = (date_arr_one_level[parseInt((min_left + width) / ceilWidth)] || {}).timestampEnd
+                const { parent_card_min_left, parent_card_max_right } = this.state
+                const width = parseInt((parent_card_max_right - parent_card_min_left) / ceilWidth) * ceilWidth - 4 //实际要计算的宽度
+                const start_time = (date_arr_one_level[parseInt(parent_card_min_left / ceilWidth)] || {}).timestamp
+                const due_time = (date_arr_one_level[parseInt((parent_card_min_left + width) / ceilWidth)] || {}).timestampEnd
                 updateTask({ card_id: parent_card_id, due_time, start_time, board_id }, { isNotLoading: false })
                     .then(res => {
                         if (isApiResponseOk(res)) {
