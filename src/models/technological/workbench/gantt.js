@@ -80,7 +80,7 @@ export default {
 
       gantt_board_id: '0', //"1192342431761305600",//, //甘特图查看的项目id
       gantt_board_list_id: '0', //项目分组的操作id
-      group_view_type: '4', //分组视图1项目， 2成员, 4大纲, 5项目分组再分组成成员
+      group_view_type: '1', //分组视图1项目， 2成员, 4大纲, 5项目分组再分组成成员
       group_view_filter_boards: [], //内容过滤项目id 列表
       group_view_filter_users: [], //内容过滤职员id 列表
       group_view_boards_tree: [], //内容过滤项目分组树

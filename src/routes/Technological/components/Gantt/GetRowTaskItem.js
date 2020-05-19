@@ -426,20 +426,24 @@ export default class GetRowTaskItem extends Component {
                 local_width: time_width,
                 local_width_flag: time_width
             }, () => {
-                this.handleEffectParentCard('handleParentCard').then(() => {
-                    this.handleEffectParentCard('updateParentCard')
-                })
+                this.excuteHandleEffectHandleParentCard(['handleParentCard', 'updateParentCard'])
+
+                // this.handleEffectParentCard('handleParentCard').then(() => {
+                //     this.handleEffectParentCard('updateParentCard')
+                // })
             })
             return
         }
         updateTask({ card_id: id, due_time: end_time_timestamp, board_id }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
-                    this.handleEffectParentCard('getParentCard').then((res) => {
-                        this.handleEffectParentCard('handleParentCard', {}, true).then(() => {
-                            this.handleEffectParentCard('updateParentCard')
-                        })
-                    })
+                    this.excuteHandleEffectHandleParentCard(['getParentCard', 'handleParentCard', 'updateParentCard'])
+
+                    // this.handleEffectParentCard('getParentCard').then((res) => {
+                    //     this.handleEffectParentCard('handleParentCard', {}, true).then(() => {
+                    //         this.handleEffectParentCard('updateParentCard')
+                    //     })
+                    // })
                     if (ganttIsOutlineView({ group_view_type })) {
                         setTimeout(() => {
                             this.props.changeOutLineTreeNodeProto(id, updateData)
@@ -455,9 +459,11 @@ export default class GetRowTaskItem extends Component {
                         local_width: local_width_origin,
                         local_width_flag: local_width_origin
                     }, () => {
-                        this.handleEffectParentCard('handleParentCard').then(() => {
-                            this.handleEffectParentCard('updateParentCard')
-                        })
+                        this.excuteHandleEffectHandleParentCard(['handleParentCard', 'updateParentCard'])
+
+                        // this.handleEffectParentCard('handleParentCard').then(() => {
+                        //     this.handleEffectParentCard('updateParentCard')
+                        // })
                     })
                     message.error(res.message)
                 }
@@ -529,9 +535,10 @@ export default class GetRowTaskItem extends Component {
                 local_left: left,
                 local_top: top
             }, () => {
-                this.handleEffectParentCard('handleParentCard').then(() => {
-                    this.handleEffectParentCard('updateParentCard')
-                })
+                this.excuteHandleEffectHandleParentCard(['handleParentCard', 'updateParentCard'])
+                // this.handleEffectParentCard('handleParentCard').then(() => {
+                //     this.handleEffectParentCard('updateParentCard')
+                // })
             })
             return
         }
@@ -540,11 +547,12 @@ export default class GetRowTaskItem extends Component {
             .then(res => {
                 if (isApiResponseOk(res)) {
                     // console.log('ssssssssssaaaa', 3)
-                    this.handleEffectParentCard('getParentCard').then((res) => {
-                        this.handleEffectParentCard('handleParentCard', {}, true).then(() => {
-                            this.handleEffectParentCard('updateParentCard')
-                        })
-                    })
+                    this.excuteHandleEffectHandleParentCard(['getParentCard', 'handleParentCard', 'updateParentCard'])
+                    // this.handleEffectParentCard('getParentCard').then((res) => {
+                    //     this.handleEffectParentCard('handleParentCard', {}, true).then(() => {
+                    //         this.handleEffectParentCard('updateParentCard')
+                    //     })
+                    // })
                     if (ganttIsOutlineView({ group_view_type })) {
                         setTimeout(() => {
                             this.props.changeOutLineTreeNodeProto(id, updateData)
@@ -559,9 +567,10 @@ export default class GetRowTaskItem extends Component {
                     this.setState({
                         local_left: left
                     }, () => {
-                        this.handleEffectParentCard('handleParentCard').then(() => {
-                            this.handleEffectParentCard('updateParentCard')
-                        })
+                        this.excuteHandleEffectHandleParentCard(['handleParentCard', 'updateParentCard'])
+                        // this.handleEffectParentCard('handleParentCard').then(() => {
+                        //     this.handleEffectParentCard('updateParentCard')
+                        // })
                     })
                     message.error(res.message)
                 }
@@ -780,7 +789,6 @@ export default class GetRowTaskItem extends Component {
                     start_time = (date_arr_one_level[parseInt(parent_card_min_left / ceilWidth)] || {}).timestamp
                     due_time = (date_arr_one_level[parseInt((parent_card_min_left + width) / ceilWidth)] || {}).timestampEnd
                 }
-                debugger
                 updateTask({ card_id: parent_card_id, due_time, start_time, board_id }, { isNotLoading: false })
                     .then(res => {
                         if (isApiResponseOk(res)) {
@@ -789,9 +797,10 @@ export default class GetRowTaskItem extends Component {
                             }, 100)
                         } else {
                             setTimeout(() => {
-                                this.handleEffectParentCard('handleParentCard').then(() => {
-                                    this.handleEffectParentCard('updateParentCard')
-                                })
+                                this.excuteHandleEffectHandleParentCard(['handleParentCard', 'updateParentCard'])
+                                // this.handleEffectParentCard('handleParentCard').then(() => {
+                                //     this.handleEffectParentCard('updateParentCard')
+                                // })
                             }, 200)
                             message.error(res.message)
                         }
@@ -801,6 +810,12 @@ export default class GetRowTaskItem extends Component {
             }
         }
         return obj[func_name].call(this, data)
+    }
+
+    excuteHandleEffectHandleParentCard = async (actions = []) => {
+        for (let val of actions) {
+            await this.handleEffectParentCard(val)
+        }
     }
 
     render() {
