@@ -1,5 +1,5 @@
 import request from "../../utils/requestAxios";
-import { REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN, REQUEST_DOMAIN_ARTICLE, REQUEST_DOMAIN_BOARD } from "../../globalset/js/constant";
+import { REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN, REQUEST_DOMAIN_ARTICLE, REQUEST_DOMAIN_BOARD, REQUEST_INTERGFACE_VERSIONN } from "../../globalset/js/constant";
 
 export async function getUserBoxs() {
   return request({
@@ -54,9 +54,18 @@ export async function getGuideArticle(data) {
 }
 
 //获取项目的流程任务列表
-export async function getBoardsTodoList(params) {
+export async function getBoardsTaskTodoList(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/comm/todo_list`,
+    method: 'GET',
+    params
+  });
+}
+
+// 获取项目的流程代办列表
+export async function getBoardsProcessTodoList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/workflow/todo`,
     method: 'GET',
     params
   });

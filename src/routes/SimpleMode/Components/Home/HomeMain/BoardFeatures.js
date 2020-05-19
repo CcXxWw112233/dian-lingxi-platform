@@ -12,8 +12,14 @@ export default class BoardFeatures extends Component {
     constructor(props) {
         super(props)
         this.state = {
-
+            board_todo_list: [].concat(...props.board_card_todo_list, ...props.board_flow_todo_list)
         }
+    }
+
+    componentWillReceiveProps(nextprops) {
+        this.setState({
+            board_todo_list: [].concat(...nextprops.board_card_todo_list, ...nextprops.board_flow_todo_list)
+        })
     }
 
     // 重新排序
@@ -40,30 +46,30 @@ export default class BoardFeatures extends Component {
                 return
             }
         }
-        const { dispatch, board_todo_list = [] } = this.props
-        const new_board_todo_list = [...board_todo_list]
-        const index = new_board_todo_list.findIndex(item => item.id == card_id)
+        const { dispatch, board_card_todo_list = [] } = this.props
+        const new_board_card_todo_list = [...board_card_todo_list]
+        const index = new_board_card_todo_list.findIndex(item => item.id == card_id)
         if (index == -1) {
             return
         }
-        new_board_todo_list[index] = { ...new_board_todo_list[index], ...drawContent, name: drawContent.card_name }
+        new_board_card_todo_list[index] = { ...new_board_card_todo_list[index], ...drawContent, name: drawContent.card_name }
         dispatch({
             type: 'simplemode/updateDatas',
             payload: {
-                board_todo_list: new_board_todo_list
+                board_card_todo_list: new_board_card_todo_list
             }
         })
     }
     handleDeleteCard = ({ card_id }) => {
-        const { board_todo_list = [], dispatch } = this.props
-        const new_board_todo_list = [...board_todo_list]
-        const index = new_board_todo_list.findIndex(item => item.id == card_id)
+        const { board_card_todo_list = [], dispatch } = this.props
+        const new_board_card_todo_list = [...board_card_todo_list]
+        const index = new_board_card_todo_list.findIndex(item => item.id == card_id)
 
-        new_board_todo_list.splice(index, 1)
+        new_board_card_todo_list.splice(index, 1)
         dispatch({
             type: 'simplemode/updateDatas',
             payload: {
-                board_todo_list: new_board_todo_list
+                board_card_todo_list: new_board_card_todo_list
             }
         })
     }
@@ -73,14 +79,17 @@ export default class BoardFeatures extends Component {
         switch (rela_type) {
             case '1': // 表示任务
                 return <BoardFeaturesItem key={id} itemValue={value} />
-            case '2': // 表示流程
+            case '2': // 表示日程
+                return <BoardFeaturesItem key={id} itemValue={value} />
+            case '3': // 表示流程
                 return <BoardFeaturesProcessItem key={id} itemValue={value} />
             default:
                 break;
         }
     }
     renderTodoList = () => {
-        const { board_todo_list = [] } = this.props
+        const { board_card_todo_list = [] } = this.props
+        const { board_todo_list = [] } = this.state
         return (
             board_todo_list.length ? (
                 board_todo_list.map(value => {
@@ -108,7 +117,7 @@ export default class BoardFeatures extends Component {
             params.board_ids = board_id
         }
         dispatch({
-            type: 'simplemode/getBoardsTodoList',
+            type: 'simplemode/getBoardsTaskTodoList',
             payload: params
         })
     }
@@ -123,7 +132,7 @@ export default class BoardFeatures extends Component {
     }
 
     render() {
-        const { drawerVisible, projectList = [], projectInitLoaded, board_todo_list = [] } = this.props
+        const { drawerVisible, projectList = [], projectInitLoaded, board_card_todo_list = [] } = this.props
         return (
             <div>
                 {
@@ -135,7 +144,7 @@ export default class BoardFeatures extends Component {
                             )
                     ) : ('')
                 }
-                <div className={styles.feature_item} style={{ display: board_todo_list.length ? 'block' : 'none' }}></div>
+                <div className={styles.feature_item} style={{ display: board_card_todo_list.length ? 'block' : 'none' }}></div>
                 <TaskDetailModal
                     task_detail_modal_visible={drawerVisible}
                     setTaskDetailModalVisible={this.setTaskDetailModalVisible} //关闭任务弹窗回调
@@ -152,7 +161,8 @@ function mapStateToProps(
     {
         simplemode: {
             simplemodeCurrentProject,
-            board_todo_list = []
+            board_card_todo_list = [],
+            board_flow_todo_list = [],
         },
         workbench: {
             datas: { projectList, projectInitLoaded }
@@ -166,7 +176,8 @@ function mapStateToProps(
         simplemodeCurrentProject,
         currentUserOrganizes,
         currentSelectOrganize,
-        board_todo_list,
+        board_card_todo_list,
+        board_flow_todo_list,
         drawerVisible,
         projectList,
         projectInitLoaded

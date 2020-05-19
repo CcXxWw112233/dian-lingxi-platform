@@ -74,10 +74,17 @@ export default class BoardItem extends Component {
             }
         })
         dispatch({
-            type: 'simplemode/getBoardsTodoList',
+            type: 'simplemode/getBoardsTaskTodoList',
             payload: {
                 _organization_id: org_id,
                 board_ids: board_id
+            }
+        })
+        dispatch({
+            type: 'simplemode/getBoardsProcessTodoList',
+            payload: {
+                _organization_id: org_id,
+                board_id: board_id
             }
         })
         selectBoardToSeeInfo({ board_id: selectBoard[0] && selectBoard[0].board_id, board_name: selectBoard[0] && selectBoard[0].board_name, dispatch })
