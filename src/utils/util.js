@@ -47,7 +47,7 @@ export const timestampToTimeNormal = (timestamp, split, flag) => {
   if (!timestamp) {
     return false
   }
-  const timestampNew = timestamp.length === 10 ? Number(timestamp) * 1000 : Number(timestamp)
+  const timestampNew = timestamp.toString().length === 10 ? Number(timestamp) * 1000 : Number(timestamp)
   const splitNew = split || '/'
   let date = new Date(timestampNew);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
   let Y = date.getFullYear() + splitNew;
@@ -115,7 +115,7 @@ export const timestampToHM = (timestamp) => {
   if (!timestamp) {
     return false
   }
-  const timestampNew = timestamp.length === 10 ? Number(timestamp) * 1000 : Number(timestamp)
+  const timestampNew = timestamp.toString().length === 10 ? Number(timestamp) * 1000 : Number(timestamp)
   let date = new Date(timestampNew);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
   let h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
   let m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
@@ -389,7 +389,7 @@ export const timeColor = (timestamp) => {
   if (!!!timestamp) {
     return ''
   }
-  const new_timestamp = timestamp.length === 10 ? Number(timestamp) * 1000 : Number(timestamp)
+  const new_timestamp = timestamp.toString().length === 10 ? Number(timestamp) * 1000 : Number(timestamp)
   const today = new Date()
   const today_timestamp = today.getTime()
   const today_year = today.getFullYear()

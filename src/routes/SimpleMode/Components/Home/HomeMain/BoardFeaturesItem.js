@@ -108,7 +108,10 @@ export default class BoardFeaturesItem extends Component {
         let time = ''
         let dec = ''
         if (!due_time && !start_time) {
-            return {}
+            return {
+                time: '',
+                dec: '未排期'
+            }
         }
         const is_today = (timestamp) => isSamDay(new Date().getTime(), timestamp) && transformTimestamp(timestamp) > new Date().getTime()//今天截止但未过期
         if (rela_type == '2') {
@@ -178,7 +181,7 @@ export default class BoardFeaturesItem extends Component {
                     )}
 
                 </div>
-                <div className={`${styles.feature_item_rt}`} style={{ color: timeColor(use_time) }}> {this.renderTime().time} {this.renderTime().time ? this.renderTime().dec : ''}</div>
+                <div className={`${styles.feature_item_rt}`} style={{ color: timeColor(use_time) }}> {this.renderTime().time} {this.renderTime().dec}</div>
             </div>
         )
     }
