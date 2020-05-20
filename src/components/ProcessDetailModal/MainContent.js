@@ -1132,7 +1132,7 @@ export default class MainContent extends Component {
         </div>
         <div className={indexStyles.configure_bottom}>
           {
-            processPageFlagStep == '4' ? (
+            processPageFlagStep == '4' || ((processPageFlagStep == '1' || processPageFlagStep == '2') &&(processEditDatas && processEditDatas.length) && processEditDatas.find(item => item.is_edit == '0')) ? (
               <>
                 {processEditDatas.map((value, key) => {
                   return (

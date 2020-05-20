@@ -632,6 +632,7 @@ export default class ConfigureProcess extends Component {
                       onBlur={this.titleTextAreaChangeBlur}
                       onPressEnter={this.titleTextAreaChangeBlur}
                       onClick={this.titleTextAreaChangeClick}
+                      setIsEdit={this.titleTextAreaChangeBlur}
                       autoFocus={true}
                       goldName={name}
                       placeholder={'步骤名称(必填)'}
