@@ -138,6 +138,14 @@ export default class ConfigureProcess extends Component {
     this.updateCorrespondingPrcodessStepWithNodeContent('is_click_node_name', true)
   }
 
+  titleTextAreaChange = (e) => {
+    let val = e.target.value.trimLR()
+    if (val == "" || val == " " || !val) {
+      this.updateCorrespondingPrcodessStepWithNodeContent('name', '')
+      return
+    }
+  }
+
   // 当前节点的步骤名称
   titleTextAreaChangeBlur = (e) => {
     let val = e.target.value.trimLR()
@@ -629,6 +637,7 @@ export default class ConfigureProcess extends Component {
                 ) : (
                     <NameChangeInput
                       autosize
+                      onChange={this.titleTextAreaChange}
                       onBlur={this.titleTextAreaChangeBlur}
                       onPressEnter={this.titleTextAreaChangeBlur}
                       onClick={this.titleTextAreaChangeClick}
