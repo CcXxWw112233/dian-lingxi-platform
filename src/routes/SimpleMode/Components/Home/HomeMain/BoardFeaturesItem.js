@@ -107,7 +107,8 @@ export default class BoardFeaturesItem extends Component {
         const { itemValue: { rela_type, start_time, due_time, } } = this.props
         let time = ''
         let dec = ''
-        if (!due_time && !start_time) {
+        // 一律没有截止时间的都是未排期
+        if (!due_time) {
             return {
                 time: '',
                 dec: '未排期'
@@ -115,7 +116,7 @@ export default class BoardFeaturesItem extends Component {
         }
         const is_today = (timestamp) => isSamDay(new Date().getTime(), timestamp) && transformTimestamp(timestamp) > new Date().getTime()//今天截止但未过期
         if (rela_type == '2') {
-            return {
+            return {// ???? 没看懂 为什么用截止时间比较 然后取得是开始时间
                 time: is_today(due_time) ? `今天 ${timestampToHM(start_time)}` : timestampToTimeNormal(start_time, '/', true),
                 dec: '开始'
             }

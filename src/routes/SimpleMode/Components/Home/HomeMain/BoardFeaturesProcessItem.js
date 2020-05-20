@@ -14,6 +14,31 @@ export default class BoardFeaturesProcessItem extends Component {
         prop: PropTypes
     }
 
+    itemClick = () => {
+        const { dispatch, itemValue: { id = '', board_id = '' } } = this.props
+        dispatch({
+            type: 'publicProcessDetailModal/getProcessInfo',
+            payload: {
+                id,
+                calback: () => {
+                    dispatch({
+                        type: 'publicProcessDetailModal/updateDatas',
+                        payload: {
+                            process_detail_modal_visible: true,
+                            processPageFlagStep: '4'
+                        }
+                    })
+                }
+            }
+        })
+        dispatch({
+            type: 'workbenchPublicDatas/updateDatas',
+            payload: {
+                board_id
+            }
+        })
+    }
+
     renderTime = () => {
         const { itemValue, itemValue: { last_complete_time, deadline_type } } = this.props
         const is_today = (timestamp) => isSamDay(new Date().getTime(), timestamp)//今天截止
@@ -56,7 +81,7 @@ export default class BoardFeaturesProcessItem extends Component {
         const { name, total_node_name, total_node_num, completed_node_num, runtime_type, deadline_type, last_complete_time } = itemValue
         const belong_name = this.renderBelong()
         return (
-            <div className={`${styles.feature_item2}`}>
+            <div className={`${styles.feature_item2}`} onClick={this.itemClick}>
                 <div className={`${styles.feature_item_lf}`}>
                     <span className={`${globalStyles.authTheme}`}>&#xe68c;</span>
                     <span>{currentNounPlanFilterName(FLOWS)}</span>

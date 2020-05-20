@@ -41,10 +41,10 @@ export default class MainContent extends Component {
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     const { is_simple_model } = user_set;
     if (!data) {
-      global.constants.lx_utils && global.constants.lx_utils.setCommentData(null) 
+      global.constants.lx_utils && global.constants.lx_utils.setCommentData(null)
       return false
     }
-    global.constants.lx_utils && global.constants.lx_utils.setCommentData({...data})
+    global.constants.lx_utils && global.constants.lx_utils.setCommentData({ ...data })
     // if (is_simple_model == '1') {
     //   this.props.dispatch({
     //     type: 'simplemode/updateDatas',
@@ -59,7 +59,7 @@ export default class MainContent extends Component {
   handleDynamicComment = (e) => {
     e && e.stopPropagation()
     const { processInfo: { id, name, board_id } } = this.props
-    this.linkImWithFlow({name: name, type: 'flow', board_id: board_id, id: id})
+    this.linkImWithFlow({ name: name, type: 'flow', board_id: board_id, id: id })
   }
 
   // 利用锚点方式对元素进行定位
@@ -133,7 +133,7 @@ export default class MainContent extends Component {
       if (curr_node_sort != old_curr_node_sort) {
         setTimeout(() => {
           this.initCanvas(nextProps)
-        },50)
+        }, 50)
       }
     }
   }
@@ -160,7 +160,7 @@ export default class MainContent extends Component {
     } = defaultProps
     // let ele = document.getElementById("time_graph_canvas")
     let e = document.querySelectorAll('#time_graph_canvas');
-    let ele =  e[e.length - 1];
+    let ele = e[e.length - 1];
     if (!ele) return
     let circle = ele.getContext("2d");
     circle.clearRect(0, 0, 210, 210);//清空
@@ -302,11 +302,11 @@ export default class MainContent extends Component {
       }).then(res => {
         if (isApiResponseOk(res)) {
           setTimeout(() => {
-            message.success('更新成功',MESSAGE_DURATION_TIME)
+            message.success('更新成功', MESSAGE_DURATION_TIME)
             this.setState({
               currentSelectType: ''
             })
-          },200)
+          }, 200)
           processInfo[key] = value
           if (currentFlowTabsStatus == '1') {
             newProcessDoingList[currentListItemPosition]['name'] = value
@@ -343,7 +343,7 @@ export default class MainContent extends Component {
   }
 
   // 标题失去焦点回调
-  titleTextAreaChangeBlur = async(e) => {
+  titleTextAreaChangeBlur = async (e) => {
     let val = e.target.value.trimLR()
     const { processInfo = {} } = this.props
     // const { request_flows_params = {}, projectDetailInfoData: { board_id, org_id }, currentFlowTabsStatus } = this.props
@@ -352,7 +352,7 @@ export default class MainContent extends Component {
       this.props.dispatch({
         type: 'publicProcessDetailModal/updateDatas',
         payload: {
-          currentFlowInstanceName: processInfo && Object.keys(processInfo).length ? processInfo.name : '' 
+          currentFlowInstanceName: processInfo && Object.keys(processInfo).length ? processInfo.name : ''
         }
       })
       return
@@ -365,7 +365,7 @@ export default class MainContent extends Component {
       }
     })
     if (val == this.props.processInfo.name) return
-    await this.updateFlowInstanceNameOrDescription({value: val},'name')
+    await this.updateFlowInstanceNameOrDescription({ value: val }, 'name')
     // await this.props.dispatch({
     //   type: 'publicProcessDetailModal/getProcessListByType',
     //   payload: {
@@ -374,7 +374,7 @@ export default class MainContent extends Component {
     //     _organization_id: request_flows_params._organization_id || org_id
     //   }
     // })
-    
+
   }
   // 编辑标题
   handleChangeFlowInstanceName = (e, type) => {
@@ -497,7 +497,7 @@ export default class MainContent extends Component {
       }
     })
   }
-// 保存模板的点击事件
+  // 保存模板的点击事件
   handleSaveProcessTemplate = (e) => {
     e && e.stopPropagation()
     const { processPageFlagStep } = this.props
@@ -514,7 +514,7 @@ export default class MainContent extends Component {
         break;
       case '2': // 表示是编辑的时候保存模板
         this.handleSaveEditProcessTemplete()
-      break
+        break
       default:
         break;
     }
@@ -552,7 +552,7 @@ export default class MainContent extends Component {
       }
     })
   }
-  
+
   // 表示是编辑时保存模板 ==> 是需要带上凭证的
   handleSaveEditProcessTemplete = () => {
     // const { currentFlowInstanceName } = this.state
@@ -575,7 +575,7 @@ export default class MainContent extends Component {
       ).then(res => {
         if (isApiResponseOk(res)) {
           setTimeout(() => {
-            message.success(`保存模板成功`,MESSAGE_DURATION_TIME)
+            message.success(`保存模板成功`, MESSAGE_DURATION_TIME)
           }, 200)
           this.props.updateParentProcessTempleteList && this.props.updateParentProcessTempleteList()
           this.setState({
@@ -595,8 +595,8 @@ export default class MainContent extends Component {
   //操作配置时的启动---需要先调用保存模板 (只不过不保存)
   handleOperateConfigureConfirmCalbackProcess = async (start_time) => {
     this.handleOperateConfigureConfirmProcessOne(start_time)
-      .then(({id,temp_time}) => this.handleOperateConfigureConfirmProcessTwo({id, temp_time}))
-      .then(({payload, temp_time2}) => this.handleOperateConfigureConfirmProcessThree({payload, temp_time2}))
+      .then(({ id, temp_time }) => this.handleOperateConfigureConfirmProcessTwo({ id, temp_time }))
+      .then(({ payload, temp_time2 }) => this.handleOperateConfigureConfirmProcessThree({ payload, temp_time2 }))
   }
   // 第一步: 先保存模板 ==> 返回模板ID
   handleOperateConfigureConfirmProcessOne = async (start_time) => {
@@ -613,7 +613,7 @@ export default class MainContent extends Component {
       enable_change: enable_change
     })
     if (!isApiResponseOk(res)) {
-      setTimeout(() => {message.warn(res.message,MESSAGE_DURATION_TIME)},500)
+      setTimeout(() => { message.warn(res.message, MESSAGE_DURATION_TIME) }, 500)
       this.setState({
         isCreateProcessIng: false
       })
@@ -621,14 +621,14 @@ export default class MainContent extends Component {
     }
     let id = res.data
     let temp_time = start_time
-    return Promise.resolve({id, temp_time})
+    return Promise.resolve({ id, temp_time })
   }
   // 第二步: 调用模板详情 ==> 返回对应模板信息内容
-  handleOperateConfigureConfirmProcessTwo = async ({id, temp_time}) => {    
+  handleOperateConfigureConfirmProcessTwo = async ({ id, temp_time }) => {
     if (!id) return Promise.resolve([]);
-    let res = await getTemplateInfo({id})
+    let res = await getTemplateInfo({ id })
     if (!isApiResponseOk(res)) {
-      setTimeout(() => {message.warn(res.message,MESSAGE_DURATION_TIME)},500)
+      setTimeout(() => { message.warn(res.message, MESSAGE_DURATION_TIME) }, 500)
       this.setState({
         isCreateProcessIng: false
       })
@@ -643,16 +643,16 @@ export default class MainContent extends Component {
       flow_template_id: res.data.id,
     }
     let temp_time2 = temp_time
-    return Promise.resolve({payload, temp_time2})
+    return Promise.resolve({ payload, temp_time2 })
   }
   // 第三步: 调用列表并关闭弹窗 ==> 回调
-  handleOperateConfigureConfirmProcessThree = async({payload, temp_time2}) => {
+  handleOperateConfigureConfirmProcessThree = async ({ payload, temp_time2 }) => {
     if (!payload) return Promise.resolve([]);
     const { request_flows_params = {}, projectDetailInfoData: { board_id, org_id } } = this.props
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     let res = await createProcess(payload)
     if (!isApiResponseOk(res)) {
-      setTimeout(() => { message.warn(res.message,MESSAGE_DURATION_TIME) },500)
+      setTimeout(() => { message.warn(res.message, MESSAGE_DURATION_TIME) }, 500)
       this.setState({
         isCreateProcessIng: false
       })
@@ -660,7 +660,7 @@ export default class MainContent extends Component {
     }
     setTimeout(() => {
       message.success(`启动${currentNounPlanFilterName(FLOWS)}成功`)
-    },200)
+    }, 200)
     this.setState({
       isCreateProcessIng: false
     })
@@ -726,7 +726,7 @@ export default class MainContent extends Component {
       isCreateProcessIng: true
     })
     if (!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, board_id)) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN,MESSAGE_DURATION_TIME)
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       this.setState({
         isCreateProcessIng: false
       })
@@ -767,7 +767,7 @@ export default class MainContent extends Component {
       start_time: timeToTimestamp(timeString)
     }, () => {
       this.handleStartOpenChange(false)
-      this.handleCreateProcess('',timeToTimestamp(timeString))
+      this.handleCreateProcess('', timeToTimestamp(timeString))
     })
 
   }
@@ -837,64 +837,62 @@ export default class MainContent extends Component {
     )
   }
 
-        // a little function to help us with reordering the result
-        reorder = (list, startIndex, endIndex) => {
-          const result = Array.from(list);
-          const [removed] = result.splice(startIndex, 1);
-          result.splice(endIndex, 0, removed);
-          return result;
-        };
-      
-        onDragEnd = result => {
-          const { source, destination } = result;
-          if (!destination) {
-            return;
-          }
-          const { processEditDatas = [] } = this.props
-          let newPrcessEditDatas = [...processEditDatas]
-          const property_item = newPrcessEditDatas.find((item, index) => index == source.index)
-          const target_property_item = newPrcessEditDatas.find((item, index) => index == destination.index)
-          for (let val in processEditDatas) {
-            newPrcessEditDatas = this.reorder(newPrcessEditDatas, source.index, destination.index)
-          }
-          let flag = newPrcessEditDatas.find((item, index) => (item.node_type == '2' && index == '0') || (item.node_type == '3' && index == '0'))
-          if (flag && Object.keys(flag).length) return message.warn('第一个节点不能为审批或评分节点', MESSAGE_DURATION_TIME)
-          this.props.dispatch({
-            type: 'publicProcessDetailModal/updateDatas',
-            payload: {
-              processEditDatas: newPrcessEditDatas
-            }
-          })
-        };
-    
-      getDragDropContext = () => {
-        const { processEditDatas = [] } = this.props
-        let messageValue = (<div></div>)
-        messageValue = (
-          <div>
-            <DragDropContext getPopupContainer={triggerNode => triggerNode.parentNode} onDragEnd={this.onDragEnd}>
-              <Droppable droppableId="droppable">
-                {(provided, snapshot) => (
-                  <div ref={provided.innerRef} {...provided.droppableProps}>
-                    {processEditDatas.map((value, key) => {
-                      return (
-                          <Draggable key={value.id || key} index={key} draggableId={value.id || `${value.node_type}_${key}`}>
-                          {(provided, snapshot) => (
-                            <div ref={provided.innerRef} {...provided.draggableProps}
-                              {...provided.dragHandleProps}>{this.renderDiffContentProcess(value, key)}</div>
-                          )}
-                        </Draggable>
-                      )
-                    })}
-                    
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
-          </div>
-        )
-        return messageValue
+  // a little function to help us with reordering the result
+  reorder = (list, startIndex, endIndex) => {
+    const result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+    return result;
+  };
+
+  onDragEnd = result => {
+    const { source, destination } = result;
+    if (!destination) {
+      return;
+    }
+    const { processEditDatas = [] } = this.props
+    let newPrcessEditDatas = [...processEditDatas]
+    const property_item = newPrcessEditDatas.find((item, index) => index == source.index)
+    const target_property_item = newPrcessEditDatas.find((item, index) => index == destination.index)
+    newPrcessEditDatas = this.reorder(newPrcessEditDatas, source.index, destination.index)
+    let flag = newPrcessEditDatas.find((item, index) => (item.node_type == '2' && index == '0') || (item.node_type == '3' && index == '0'))
+    if (flag && Object.keys(flag).length) return message.warn('第一个节点不能为审批或评分节点', MESSAGE_DURATION_TIME)
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        processEditDatas: newPrcessEditDatas
       }
+    })
+  };
+
+  getDragDropContext = () => {
+    const { processEditDatas = [] } = this.props
+    let messageValue = (<div></div>)
+    messageValue = (
+      <div>
+        <DragDropContext getPopupContainer={triggerNode => triggerNode.parentNode} onDragEnd={this.onDragEnd}>
+          <Droppable droppableId="droppable">
+            {(provided, snapshot) => (
+              <div ref={provided.innerRef} {...provided.droppableProps}>
+                {processEditDatas.map((value, key) => {
+                  return (
+                    <Draggable key={value.id || key} index={key} draggableId={value.id || `${value.node_type}_${key}`}>
+                      {(provided, snapshot) => (
+                        <div ref={provided.innerRef} {...provided.draggableProps}
+                          {...provided.dragHandleProps}>{this.renderDiffContentProcess(value, key)}</div>
+                      )}
+                    </Draggable>
+                  )
+                })}
+
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </div>
+    )
+    return messageValue
+  }
 
   // 渲染展示的内容是什么 配置时 | 编辑时 | 启动时 | 进行时
   renderDiffContentProcess = (value, key) => {
@@ -984,11 +982,11 @@ export default class MainContent extends Component {
         }
         break;
       case '1': // 表示配置的页面
-        case '2':
-          case '3':
+      case '2':
+      case '3':
         currentStep = (processEditDatas && processEditDatas.length) ? processEditDatas.length : 0
         totalStep = (processEditDatas && processEditDatas.length) ? processEditDatas.length : 0
-      break
+        break
       default:
         break;
     }
@@ -1025,7 +1023,7 @@ export default class MainContent extends Component {
   }
 
   render() {
-    const { clientHeight} = this.state
+    const { clientHeight } = this.state
     const { currentFlowInstanceDescription, currentFlowInstanceName, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep, processInfo: { status, create_time }, templateInfo: { enable_change } } = this.props
     let saveTempleteDisabled = currentFlowInstanceName == '' || (processEditDatas && processEditDatas.length) && processEditDatas.find(item => item.is_edit == '0') || (processEditDatas && processEditDatas.length) && !(processEditDatas[processEditDatas.length - 1].node_type) ? true : false
     return (
@@ -1033,12 +1031,12 @@ export default class MainContent extends Component {
         <div id="container_configureTop" className={indexStyles.configure_top}>
           <div style={{ display: 'flex', position: 'relative' }}>
             <div><canvas id="time_graph_canvas" width={210} height={210} style={{ float: 'left' }}></canvas></div>
-            <div style={{position: 'absolute',display: 'flex', flexDirection: 'column', width: '210px', height: '210px', alignItems: 'center', justifyContent: 'center'}}>
-              <span className={globalStyles.authTheme} style={{ color: '#D9D9D9', position: 'absolute', top: 158, left: 92,fontSize: '14px' }} >&#xe605;</span>
+            <div style={{ position: 'absolute', display: 'flex', flexDirection: 'column', width: '210px', height: '210px', alignItems: 'center', justifyContent: 'center' }}>
+              <span className={globalStyles.authTheme} style={{ color: '#D9D9D9', position: 'absolute', top: 158, left: 92, fontSize: '14px' }} >&#xe605;</span>
               <span style={{
                 // position: 'absolute',
                 top: '70px',
-                left: processEditDatas && processEditDatas.length > 10 ? '67px' : '80px' ,
+                left: processEditDatas && processEditDatas.length > 10 ? '67px' : '80px',
                 height: 17,
                 fontSize: 20,
                 fontFamily: 'PingFangSC-Regular',
@@ -1057,7 +1055,7 @@ export default class MainContent extends Component {
                 color: 'rgba(89,89,89,1)',
                 lineHeight: '30px',
                 marginTop: '12px'
-              }}>{processPageFlagStep == '4' ? this.renderDiffStepStatus() : '新 建'} {processPageFlagStep == '4' ? status == '1' ? `${this.renderCurrentStepNumber().surplusStep} 步`: '' : `${this.renderCurrentStepNumber().currentStep} 步`}</span>
+              }}>{processPageFlagStep == '4' ? this.renderDiffStepStatus() : '新 建'} {processPageFlagStep == '4' ? status == '1' ? `${this.renderCurrentStepNumber().surplusStep} 步` : '' : `${this.renderCurrentStepNumber().currentStep} 步`}</span>
             </div>
             <div style={{ paddingTop: '32px', paddingRight: '32px', flex: 1, float: 'left', width: '977px', minHeight: '210px' }}>
               {/* 显示流程名称 */}
@@ -1065,16 +1063,16 @@ export default class MainContent extends Component {
                 {
                   !isEditCurrentFlowInstanceName ? (
                     <div onClick={processPageFlagStep == '4' ? '' : (e) => { this.handleChangeFlowInstanceName(e, '1') }} className={`${processPageFlagStep == '4' ? indexStyles.normal_flow_name : indexStyles.flow_name}`}>
-                      <span style={{ wordBreak: 'break-all', flex: 1 }}>{currentFlowInstanceName} 
+                      <span style={{ wordBreak: 'break-all', flex: 1 }}>{currentFlowInstanceName}
                         {
                           processPageFlagStep == '4' && (
-                            <span onClick={(status == '1' || status == '0') ? (e) => { this.handleChangeFlowInstanceName(e, '2') } : ''} style={{color: (status == '1' || status == '0') ? '#1890FF' : '#D9D9D9', cursor: 'pointer', marginLeft: '10px'}} className={globalStyles.authTheme}>&#xe602;</span>
+                            <span onClick={(status == '1' || status == '0') ? (e) => { this.handleChangeFlowInstanceName(e, '2') } : ''} style={{ color: (status == '1' || status == '0') ? '#1890FF' : '#D9D9D9', cursor: 'pointer', marginLeft: '10px' }} className={globalStyles.authTheme}>&#xe602;</span>
                           )
                         }
                       </span>
                       {
                         processPageFlagStep == '4' && (
-                          <span style={{flexShrink: 0, color: 'rgba(0,0,0,0.45)', fontSize: '14px'}}>{timestampToTimeNormal(create_time,'/',true)} 开始</span>
+                          <span style={{ flexShrink: 0, color: 'rgba(0,0,0,0.45)', fontSize: '14px' }}>{timestampToTimeNormal(create_time, '/', true)} 开始</span>
                         )
                       }
                     </div>
@@ -1100,12 +1098,12 @@ export default class MainContent extends Component {
               <div>
                 {
                   !isEditCurrentFlowInstanceDescription ? (
-                    <div className={processPageFlagStep == '4' ? indexStyles.normal_flow_description  : indexStyles.flow_description} onClick={ processPageFlagStep == '4' ? '' : (e) => { this.handleChangeFlowInstanceDescription(e,'1') }}>
+                    <div className={processPageFlagStep == '4' ? indexStyles.normal_flow_description : indexStyles.flow_description} onClick={processPageFlagStep == '4' ? '' : (e) => { this.handleChangeFlowInstanceDescription(e, '1') }}>
                       <span>
                         {currentFlowInstanceDescription != '' ? currentFlowInstanceDescription : '添加描述'}
                         {
                           processPageFlagStep == '4' && (
-                            <span onClick={(status == '1' || status == '0') ? (e) => { this.handleChangeFlowInstanceDescription(e,'2') } : ''} style={{color: (status == '1' || status == '0') ? '#1890FF' : '#D9D9D9', cursor: 'pointer', marginLeft: '10px'}} className={globalStyles.authTheme}>&#xe602;</span>
+                            <span onClick={(status == '1' || status == '0') ? (e) => { this.handleChangeFlowInstanceDescription(e, '2') } : ''} style={{ color: (status == '1' || status == '0') ? '#1890FF' : '#D9D9D9', cursor: 'pointer', marginLeft: '10px' }} className={globalStyles.authTheme}>&#xe602;</span>
                           )
                         }
                       </span>
@@ -1133,26 +1131,26 @@ export default class MainContent extends Component {
           </div>
         </div>
         <div className={indexStyles.configure_bottom}>
-          {/* {
+          {
             processPageFlagStep == '4' ? (
               <>
                 {processEditDatas.map((value, key) => {
-                    return (
-                      <>{this.renderDiffContentProcess(value, key)}</>
-                    )
-                  })}
+                  return (
+                    <>{this.renderDiffContentProcess(value, key)}</>
+                  )
+                })}
               </>
             ) : (
-              <>
-                {this.getDragDropContext()}
-              </>
-            )
-          } */}
-          {processEditDatas.map((value, key) => {
+                <>
+                  {this.getDragDropContext()}
+                </>
+              )
+          }
+          {/* {processEditDatas.map((value, key) => {
             return (
               <>{this.renderDiffContentProcess(value, key)}</>
             )
-          })}
+          })} */}
           {(processPageFlagStep == '1' || processPageFlagStep == '2') && this.renderAddProcessStep()}
           {
             processEditDatas.length >= 2 && (
@@ -1160,7 +1158,7 @@ export default class MainContent extends Component {
                 {
                   (processPageFlagStep == '1' || processPageFlagStep == '3') && (
                     <Popover trigger="click" title={null} onVisibleChange={this.handleProcessStartConfirmVisible} content={this.renderProcessStartConfirm()} icon={<></>} getPopupContainer={triggerNode => triggerNode.parentNode}>
-                      <Button type={processPageFlagStep == '3' && 'primary'} disabled={saveTempleteDisabled} style={{ marginRight: '24px', height: '40px', border: '1px solid rgba(24,144,255,1)', color: processPageFlagStep == '3' ? '#fff': '#1890FF' }}>开始{`${currentNounPlanFilterName(FLOWS)}`}</Button>
+                      <Button type={processPageFlagStep == '3' && 'primary'} disabled={saveTempleteDisabled} style={{ marginRight: '24px', height: '40px', border: '1px solid rgba(24,144,255,1)', color: processPageFlagStep == '3' ? '#fff' : '#1890FF' }}>开始{`${currentNounPlanFilterName(FLOWS)}`}</Button>
                     </Popover>
                   )
                 }
@@ -1182,21 +1180,21 @@ export default class MainContent extends Component {
         }
         <div id="suspensionFlowInstansNav" className={`${indexStyles.suspensionFlowInstansNav}`}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '36px'}}>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '36px' }}>
               <span style={{ color: 'rgba(0,0,0,0.85)', fontSize: '16px', fontWeight: 500, flex: 1, flexShrink: 0 }}>{currentFlowInstanceName} ({`${this.renderCurrentStepNumber().currentStep} / ${this.renderCurrentStepNumber().totalStep}`})
                 {
                   status == '2' && (
-                    <span style={{display: 'inline-block', width: '58px', height: '28px', background: '#F5F5F5', marginLeft: '16px', borderRadius: '4px', textAlign: 'center', lineHeight: '28px', fontSize: '14px', color: 'rgba(0,0,0,0.25)'}}>已中止</span>
+                    <span style={{ display: 'inline-block', width: '58px', height: '28px', background: '#F5F5F5', marginLeft: '16px', borderRadius: '4px', textAlign: 'center', lineHeight: '28px', fontSize: '14px', color: 'rgba(0,0,0,0.25)' }}>已中止</span>
                   )
                 }
               </span>
               {
                 processPageFlagStep == '4' && (
-                  <span style={{flexShrink: 0, color: 'rgba(0,0,0,0.45)'}}>{timestampToTimeNormal(create_time,'/',true)} 开始</span>
+                  <span style={{ flexShrink: 0, color: 'rgba(0,0,0,0.45)' }}>{timestampToTimeNormal(create_time, '/', true)} 开始</span>
                 )
               }
             </div>
-            <div style={{flexShrink: 0}}>
+            <div style={{ flexShrink: 0 }}>
               <span onClick={this.handleBackToTop} style={{ color: '#1890FF', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe63d; 回到顶部</span>
             </div>
           </div>
@@ -1204,7 +1202,7 @@ export default class MainContent extends Component {
         {
           processPageFlagStep == '4' && (
             <div onClick={this.handleDynamicComment} id="dynamic_comment" className={indexStyles.dynamic_comment}>
-              <Tooltip overlayStyle={{minWidth: '72px'}} placement="top" title="动态消息" getPopupContainer={() => document.getElementById('dynamic_comment')}>
+              <Tooltip overlayStyle={{ minWidth: '72px' }} placement="top" title="动态消息" getPopupContainer={() => document.getElementById('dynamic_comment')}>
                 <span className={globalStyles.authTheme}>&#xe8e8;</span>
               </Tooltip>
             </div>

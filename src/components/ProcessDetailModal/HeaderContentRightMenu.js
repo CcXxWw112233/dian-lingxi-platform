@@ -488,8 +488,8 @@ export default class HeaderContentRightMenu extends Component {
 
 
   render() {
-    const { projectDetailInfoData: { board_id, data = [] }, processInfo = {}, processPageFlagStep } = this.props
-    const { is_privilege, privileges = [], assignees, id, nodes = [], status, is_covert_template } = processInfo
+    const { projectDetailInfoData: { data = [] }, processInfo = {}, processPageFlagStep } = this.props
+    const { is_privilege, privileges = [], assignees, id, nodes = [], status, is_covert_template, board_id } = processInfo
     const principalList = genPrincipalListFromAssignees(nodes);
     return (
       <div>

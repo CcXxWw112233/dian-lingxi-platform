@@ -4,8 +4,9 @@ import BoardFeaturesItem from './BoardFeaturesItem'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import styles from './featurebox.less'
 import TaskDetailModal from '@/components/TaskDetailModal'
+import ProcessDetailModal from '@/components/ProcessDetailModal'
 import BoardFeaturesProcessItem from './BoardFeaturesProcessItem'
-import { jsonArrayCompareSort, transformTimestamp } from '../../../../../utils/util'
+import { jsonArrayCompareSort, transformTimestamp, isObjectValueEqual } from '../../../../../utils/util'
 import { compareOppositeTimer, removeEmptyArrayEle } from '../../../../../components/ProcessDetailModal/components/handleOperateModal'
 
 @connect(mapStateToProps)
@@ -20,6 +21,9 @@ export default class BoardFeatures extends Component {
 	}
 
 	componentWillReceiveProps(nextprops) {
+		const { board_card_todo_list = [], board_flow_todo_list = [] } = this.props
+		const { board_card_todo_list: new_board_card_todo_list = [], board_flow_todo_list: new_flow_todo_list = [] } = nextprops
+		if (isObjectValueEqual(board_card_todo_list, new_board_card_todo_list) && isObjectValueEqual(board_flow_todo_list, new_flow_todo_list)) return
 		this.reorderBoardToDoList(nextprops)
 	}
 
@@ -28,8 +32,8 @@ export default class BoardFeatures extends Component {
 		let new_arr = [...arr]
 		new_arr = new_arr.map(item => {
 			if (item.rela_type == '3' && item.deadline_type == '2') {
-				let new_item = {...item}
-				new_item = {...item, last_complete_time: compareOppositeTimer(item)}
+				let new_item = { ...item }
+				new_item = { ...item, last_complete_time: compareOppositeTimer(item) }
 				return new_item
 			} else {
 				return item
@@ -59,79 +63,76 @@ export default class BoardFeatures extends Component {
 		return theTimeArr;
 
 	}
-
-	// 对时间数组进行赋值比较
 	compareEvaluationTimeArray = (array) => {
 		if (!array) return []
 		let newArray = JSON.parse(JSON.stringify(array || []))
 		newArray = newArray.map(item => {
 			if (item.rela_type == '1' || item.rela_type == '2') {
-				let new_item = {...item}
-				let compare_time = item.due_time ? item.due_time : item.start_time ? item.start_time : ''
-				new_item = {...item, compare_time: compare_time}
+				let new_item = { ...item }
+				let compare_time = item.due_time ? item.due_time : item.create_time
+				new_item = { ...item, compare_time: compare_time }
 				return new_item
 			} else if (item.rela_type == '3') {
-				let new_item = {...item}
+				let new_item = { ...item }
 				let compare_time = item.last_complete_time
-				new_item = {...item, compare_time: compare_time}
+				new_item = { ...item, compare_time: compare_time }
 				return new_item
 			}
-			
-		})
-		return newArray
-	}
 
-	// 对没有时间数据进行赋值比较
-	compareEvaluationNonTimeArray = (array) => {
-		if (!array) return []
-		let newArray = JSON.parse(JSON.stringify(array || []))
-		newArray = newArray.map(item => {
-			if (item.rela_type == '1' || item.rela_type == '2') {
-				let new_item = {...item}
-				let compare_time = item.create_time
-				new_item = {...item, compare_time: compare_time}
-				return new_item
-			} else if (item.rela_type == '3') {
-				let new_item = {...item}
-				let compare_time = item.last_complete_time
-				new_item = {...item, compare_time: compare_time}
-				return new_item
-			}
-		})
-		return newArray
-	}
-
-	compareEvaluationOverruleArray = (array) => {
-		let newArray = JSON.parse(JSON.stringify(array || []))
-		newArray = newArray.map(item => {
-			if(item.rela_type == '3') {
-				let new_item = {...item}
-				let compare_time = item.last_complete_time
-				new_item = {...item, compare_time: compare_time}
-				return new_item
-			}
 		})
 		return newArray
 	}
 
 	// 重新排序
 	reorderBoardToDoList = (props) => {
-		const { board_card_todo_list = [], board_flow_todo_list = [] } = props 
+		const { board_card_todo_list = [], board_flow_todo_list = [] } = props
 		let new_flow_todo_list = this.updateFlowsOppositeTime(board_flow_todo_list)
 		let new_board_todo_list = [].concat(...board_card_todo_list, ...new_flow_todo_list)
 		// 1. 被驳回列表 并且按照时间排序
 		let temp_overrule_arr = new_board_todo_list.filter(item => item.runtime_type == '1') // 将被驳回列表取出，并进行排序排序
-		let overrule_arr = this.timeSort(this.compareEvaluationOverruleArray(temp_overrule_arr))
-		// 2. 不是驳回列表并且存在时间的 不是创建时间
-		let temp_overrule_time_arr = new_board_todo_list.filter(item => item.runtime_type != '1' && (((item.rela_type == '1' || item.rela_type == '2') && item.start_time || item.due_time) || (item.rela_type == '3' && item.deadline_type == '2')))
+		let overrule_arr = this.timeSort(this.compareEvaluationTimeArray(temp_overrule_arr))
+		// 2. 不是驳回列表并且存在时间（任务则是存在截止时间）的 不是创建时间
+		let temp_overrule_time_arr = new_board_todo_list.filter(item => item.runtime_type != '1' && (((item.rela_type == '1' || item.rela_type == '2') && item.due_time) || (item.rela_type == '3' && item.deadline_type == '2')))
 		let non_overrule_time_arr = this.timeSort(this.compareEvaluationTimeArray(temp_overrule_time_arr))
 		// 3.不是驳回列表并且不存在时间的 采用创建时间
-		let temp_overrule_non_time_arr = new_board_todo_list.filter(item => item.runtime_type != '1' && (((item.rela_type == '1' || item.rela_type == '2') && (!item.start_time && !item.due_time)) || (item.rela_type == '3' && item.deadline_type == '1')))
-		let non_overrule_non_time_arr = this.timeSort(this.compareEvaluationNonTimeArray(temp_overrule_non_time_arr))
+		let temp_overrule_non_time_arr = new_board_todo_list.filter(item => item.runtime_type != '1' && (((item.rela_type == '1' || item.rela_type == '2') && (!item.due_time)) || (item.rela_type == '3' && item.deadline_type == '1')))
+		let non_overrule_non_time_arr = this.timeSort(this.compareEvaluationTimeArray(temp_overrule_non_time_arr))
 		// 想将时间都用一个值来进行比较 比如 任务 可能是 due_time 可能是 start_time, 不知道是否需要create_time, 而流程是 last_complete_time
 		this.setState({
-			board_todo_list: removeEmptyArrayEle([].concat(...overrule_arr,...non_overrule_time_arr, ...non_overrule_non_time_arr))
+			board_todo_list: removeEmptyArrayEle([].concat(...overrule_arr, ...non_overrule_time_arr, ...non_overrule_non_time_arr))
 		})
+	}
+
+	// 关闭弹窗时查询列表
+	setProcessDetailModalVisibile = () => {
+		const { dispatch, simplemodeCurrentProject = {} } = this.props
+		const { board_id } = simplemodeCurrentProject
+		let params = {
+			_organization_id: localStorage.getItem('OrganizationId'),
+		}
+		if (board_id && board_id != '0') {
+			params.board_ids = board_id
+		}
+		dispatch({
+			type: 'simplemode/getBoardsProcessTodoList',
+			payload: {
+				_organization_id: params._organization_id,
+				board_id: params.board_ids
+			}
+		})
+	}
+
+	// 修改流程
+	whetherUpdateWorkbenchPorcessListData = (type) => {
+		if (type) {
+			const { board_todo_list = [] } = this.state
+			const { processInfo: { id: flow_instance_id } } = this.props
+			let new_board_todo_list = [...board_todo_list]
+			new_board_todo_list = new_board_todo_list.filter(item => item.id != flow_instance_id)
+			this.setState({
+				board_todo_list: new_board_todo_list
+			})
+		}
 	}
 
 	// 修改任务
@@ -238,7 +239,7 @@ export default class BoardFeatures extends Component {
 	}
 
 	render() {
-		const { drawerVisible, projectList = [], projectInitLoaded, board_card_todo_list = [] } = this.props
+		const { drawerVisible, projectList = [], projectInitLoaded, board_card_todo_list = [], process_detail_modal_visible } = this.props
 		return (
 			<div>
 				{
@@ -257,6 +258,15 @@ export default class BoardFeatures extends Component {
 					handleTaskDetailChange={this.handleCard}
 					handleDeleteCard={this.handleDeleteCard}
 				/>
+				{
+					process_detail_modal_visible && (
+						<ProcessDetailModal
+							process_detail_modal_visible={process_detail_modal_visible}
+							setProcessDetailModalVisibile={this.setProcessDetailModalVisibile}
+							whetherUpdateWorkbenchPorcessListData={this.whetherUpdateWorkbenchPorcessListData}
+						/>
+					)
+				}
 			</div>
 		)
 	}
@@ -276,7 +286,8 @@ function mapStateToProps(
 		technological: {
 			datas: { currentUserOrganizes, currentSelectOrganize = {} }
 		},
-		publicTaskDetailModal: { drawerVisible }
+		publicTaskDetailModal: { drawerVisible },
+		publicProcessDetailModal: { process_detail_modal_visible, processInfo = {} }
 	}) {
 	return {
 		simplemodeCurrentProject,
@@ -286,6 +297,8 @@ function mapStateToProps(
 		board_flow_todo_list,
 		drawerVisible,
 		projectList,
-		projectInitLoaded
+		projectInitLoaded,
+		process_detail_modal_visible,
+		processInfo
 	}
 }

@@ -387,6 +387,7 @@ const renderRestrictionsTime = (itemValue) => {
   return description
 }
 
+// 获取相对时间
 const compareOppositeTimer = (data) => {
   if (!data) return ''
   const { deadline_time_type, deadline_value, deadline_type, last_complete_time } = data
