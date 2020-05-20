@@ -699,18 +699,20 @@ export default class GetRowTaskItem extends Component {
                 const parent_card_ele = document.getElementById(parent_card_id)
                 return new Promise((resolve, reject) => {
                     return obj.getSameLevelNode().then(res => {
-                        const { min_position, max_position, second_min_position, second_max_position, max_time, min_time, time_span } = res
+                        // const { min_position, max_position, second_min_position, second_max_position, max_time, min_time, time_span, left } = res
                         resolve(res)
                         _self.setState({
                             parent_card: {
                                 ele: parent_card_ele,
-                                min_position,
-                                max_position,
-                                second_min_position,
-                                second_max_position,
-                                max_time,
-                                min_time,
-                                time_span
+                                ...res
+                                // min_position,
+                                // max_position,
+                                // second_min_position,
+                                // second_max_position,
+                                // max_time,
+                                // min_time,
+                                // time_span,
+                                // left
                             }
                         }, () => {
                             return resolve(res)
@@ -721,7 +723,7 @@ export default class GetRowTaskItem extends Component {
             getSameLevelNode: () => { //获取默认最小和最大点
                 return new Promise((resolve, reject) => {
                     const { outline_tree_round = [] } = _self.props
-                    const { time_span } = outline_tree_round.find(item => item.id == parent_card_id)
+                    const { time_span, left } = outline_tree_round.find(item => item.id == parent_card_id)
                     const same_leve_node = outline_tree_round.filter(item => item.parent_card_id == parent_card_id)
                     const left_arr = same_leve_node.map(item => item.left).sort()
                     const width_arr = same_leve_node.map(item => item.left + item.width).sort()
@@ -744,6 +746,7 @@ export default class GetRowTaskItem extends Component {
                         max_time,
                         min_time,
                         time_span,
+                        left
                     }
                     resolve(o)
                 })
@@ -793,11 +796,13 @@ export default class GetRowTaskItem extends Component {
                     this.props.changeOutLineTreeNodeProto(parent_card_id, { due_time: data.due_time, start_time: data.start_time })
                     return
                 }
-                const { parent_card: { max_time, min_time, ele, time_span } } = this.state
+                const { parent_card: { max_time, min_time, ele, time_span, left } } = this.state
                 const { ceilWidth } = this.props
                 const due_time = Math.max(transformTimestamp(data.due_time), transformTimestamp(max_time))
                 const start_time = Math.min(transformTimestamp(data.start_time), transformTimestamp(min_time))
                 ele.style.width = `${(time_span * ceilWidth) - (is_year_view ? 0 : card_width_diff)}px`
+                ele.style.left = `${left + (is_year_view ? 0 : card_left_diff)}px`
+
                 console.log('要更新的父级1', { start_time, due_time })
                 this.props.changeOutLineTreeNodeProto(parent_card_id, {
                     start_time, due_time
