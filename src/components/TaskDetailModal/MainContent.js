@@ -6,7 +6,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import InformRemind from '@/components/InformRemind'
-import { timestampToTime, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal, isSamDay } from '@/utils/util'
+import { timestampToTime, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal, isSamDay, timestampToTimeNormal3, timestampToTimeNormal4 } from '@/utils/util'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_EDIT, PROJECT_FILES_FILE_INTERVIEW
 } from "@/globalset/js/constant";
@@ -19,6 +19,7 @@ import { getFolderList } from '@/services/technological/file'
 import { getMilestoneList } from '@/services/technological/prjectDetail'
 import DragDropContentComponent from './DragDropContentComponent'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
+import { filterOwnSubTaskMaxDueTime } from './handleOperateTaskModal'
 const { LingxiIm, Im } = global.constants
 
 @connect(mapStateToProps)
@@ -27,7 +28,8 @@ export default class MainContent extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      propertiesList: []
+      propertiesList: [],
+      is_change_parent_time: false
     }
   }
 
@@ -135,6 +137,7 @@ export default class MainContent extends Component {
         }
         this.getMilestone(res.data.board_id)
         this.filterCurrentExistenceField(res.data)// 初始化获取字段信息
+        this.whetherUpdateParentTaskTime()
         this.linkImWithCard({ name: res.data.card_name, type: 'card', board_id: res.data.board_id, id: res.data.card_id })
       } else {
         setTimeout(() => {
@@ -1090,6 +1093,33 @@ export default class MainContent extends Component {
 
   }
 
+  // 是否可以修改父任务中的时间
+  whetherUpdateParentTaskTime = (data) => {
+    const { drawContent = {}, dispatch } = this.props
+    const gold_data = (drawContent['properties'] && drawContent['properties'].find(item => item.code == 'SUBTASK') || {}).data
+    if (!gold_data) return false;
+    
+    let newData = [...gold_data]
+    newData = newData.find(item => item.due_time)
+    if (newData && Object.keys(newData).length) {
+      this.setState({
+        is_change_parent_time: true
+      })
+    } else {
+      this.setState({
+        is_change_parent_time: false
+      })
+    }
+    if (data) {
+      const { start_time, card_id, due_time } = data
+      let new_drawContent = {...drawContent}
+      new_drawContent['start_time'] = start_time
+      new_drawContent['due_time'] = due_time
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: start_time })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: due_time })
+    }
+  }
+
   render() {
     const { drawContent = {}, is_edit_title, isInOpenFile, handleTaskDetailChange, handleChildTaskChange } = this.props
     const {
@@ -1224,7 +1254,7 @@ export default class MainContent extends Component {
                     <div style={{ position: 'relative' }}>
                       {/* 开始时间 */}
                       {
-                        (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
+                        (((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) || this.state.is_change_parent_time) ? (
                           (
                             <div className={`${mainContentStyles.start_time}`}>
                               <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
@@ -1255,7 +1285,7 @@ export default class MainContent extends Component {
                       &nbsp;
                       {/* 截止时间 */}
                       {
-                        (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
+                        (((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) || this.state.is_change_parent_time) ? (
                           (
                             <div className={`${mainContentStyles.due_time}`}>
                               <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
@@ -1301,7 +1331,7 @@ export default class MainContent extends Component {
           {/* 各种字段的不同状态 E */}
           {/* 不同字段的渲染 S */}
           <div style={{ position: 'relative' }}>
-            <DragDropContentComponent getMilestone={this.getMilestone} selectedKeys={selectedKeys} updateParentPropertiesList={this.updateParentPropertiesList} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} boardFolderTreeData={boardFolderTreeData} milestoneList={milestoneList} />
+            <DragDropContentComponent getMilestone={this.getMilestone} selectedKeys={selectedKeys} updateParentPropertiesList={this.updateParentPropertiesList} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} boardFolderTreeData={boardFolderTreeData} milestoneList={milestoneList} whetherUpdateParentTaskTime={this.whetherUpdateParentTaskTime} />
           </div>
           {/* 不同字段的渲染 E */}
 

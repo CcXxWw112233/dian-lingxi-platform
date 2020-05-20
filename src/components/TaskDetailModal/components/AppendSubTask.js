@@ -211,7 +211,7 @@ export default class AppendSubTask extends Component {
 
 
   render() {
-    const { children, drawContent = {}, data: dataInfo, dispatch, handleTaskDetailChange, handleChildTaskChange } = this.props
+    const { children, drawContent = {}, data: dataInfo, dispatch, handleTaskDetailChange, handleChildTaskChange, whetherUpdateParentTaskTime } = this.props
     const { card_id, board_id } = drawContent
     const { data: child_data = [] } = drawContent['properties'].filter(item => item.code == 'SUBTASK')[0]
     const { is_add_sub_task, sub_executors = [], saveDisabled, due_time } = this.state
@@ -336,7 +336,7 @@ export default class AppendSubTask extends Component {
             const { card_id, card_name, due_time, executors = [] } = value
             const { user_id } = executors[0] || {}
             return (
-              <AppendSubTaskItem handleChildTaskChange={handleChildTaskChange} handleTaskDetailChange={handleTaskDetailChange} board_id={board_id} data={dataInfo} childTaskItemValue={value} key={`${card_id}-${card_name}-${user_id}-${due_time}`} childDataIndex={key} />
+              <AppendSubTaskItem whetherUpdateParentTaskTime={whetherUpdateParentTaskTime} handleChildTaskChange={handleChildTaskChange} handleTaskDetailChange={handleTaskDetailChange} board_id={board_id} data={dataInfo} childTaskItemValue={value} key={`${card_id}-${card_name}-${user_id}-${due_time}`} childDataIndex={key} />
             )
           })}
         </div>

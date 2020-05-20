@@ -318,7 +318,7 @@ export default class AppendSubTaskItem extends Component {
     }
     Promise.resolve(
       dispatch({
-        type: 'publicTaskDetailModal/updateTask',
+        type: 'publicTaskDetailModal/updateTaskVTwo',
         payload: {
           updateObj
         }
@@ -336,7 +336,9 @@ export default class AppendSubTaskItem extends Component {
       this.setState({
         local_due_time: due_timeStamp
       })
+      const { start_time, due_time, card_id: parent_card_id } = res.data
       this.setChildTaskIndrawContent({ name: 'due_time', value: due_timeStamp }, card_id)
+      this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(res.data)
     })
   }
 
@@ -351,7 +353,7 @@ export default class AppendSubTaskItem extends Component {
     if (!card_id) return false
     Promise.resolve(
       dispatch({
-        type: 'publicTaskDetailModal/updateTask',
+        type: 'publicTaskDetailModal/updateTaskVTwo',
         payload: {
           updateObj
         }
@@ -364,7 +366,8 @@ export default class AppendSubTaskItem extends Component {
       this.setState({
         local_due_time: null
       })
-      this.setChildTaskIndrawContent({ name: due_time, value: '0' }, card_id)
+      this.setChildTaskIndrawContent({ name: 'due_time', value: 0 }, card_id)
+      this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(res.data)
     })
 
   }
@@ -431,7 +434,7 @@ export default class AppendSubTaskItem extends Component {
                     placeholder={local_due_time ? timestampToTimeNormal(local_due_time, '/', true) : '截止时间'}
                     format="YYYY/MM/DD HH:mm"
                     showTime={{ format: 'HH:mm' }}
-                    style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '12px', zIndex: 2 }} />
+                    style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '2px', zIndex: 2 }} />
                 </div>
               ) : (
                   <Tooltip title="截止时间" getPopupContainer={triggerNode => triggerNode.parentNode}>
@@ -444,7 +447,7 @@ export default class AppendSubTaskItem extends Component {
                         placeholder={local_due_time ? timestampToTimeNormal(local_due_time, '/', true) : '截止时间'}
                         format="YYYY/MM/DD HH:mm"
                         showTime={{ format: 'HH:mm' }}
-                        style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '12px', zIndex: 2 }} />
+                        style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '2px', zIndex: 2 }} />
                     </div>
                   </Tooltip>
                 )

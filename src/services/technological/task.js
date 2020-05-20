@@ -135,6 +135,18 @@ export async function updateTask(data, isNotLoading) {
   }, { isNotLoading });
 }
 
+// 更新任务V2
+export async function updateTaskVTwo(data, isNotLoading) {
+  const { card_id } = data
+  delete data.card_id
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/card/${card_id}`,
+    method: 'PUT',
+    headers: createHeaderContentDataByCardId(card_id),
+    data,
+  }, { isNotLoading });
+}
+
 // 删除任务
 export async function deleteTask(id) {
   return request({

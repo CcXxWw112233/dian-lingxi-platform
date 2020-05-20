@@ -6,7 +6,7 @@ import styles from './featurebox.less'
 import TaskDetailModal from '@/components/TaskDetailModal'
 import ProcessDetailModal from '@/components/ProcessDetailModal'
 import BoardFeaturesProcessItem from './BoardFeaturesProcessItem'
-import { jsonArrayCompareSort, transformTimestamp, isObjectValueEqual } from '../../../../../utils/util'
+import { jsonArrayCompareSort, transformTimestamp, isObjectValueEqual, timeSort } from '../../../../../utils/util'
 import { compareOppositeTimer, removeEmptyArrayEle } from '../../../../../components/ProcessDetailModal/components/handleOperateModal'
 
 @connect(mapStateToProps)
@@ -41,28 +41,6 @@ export default class BoardFeatures extends Component {
 		})
 		return new_arr
 	}
-	// 时间冒泡排序
-	timeSort(theTimeArr) {
-		let maxLen = theTimeArr.length;
-		for (let i = 0; i < maxLen; i++) {
-			for (let j = 0; j < maxLen - i - 1; j++) {
-				// if (!theTimeArr[j].compare_time)
-				if (theTimeArr[j].compare_time > theTimeArr[j + 1].compare_time) { // 如果说前面的时间比后面的大, 那么把大的时间放在后面
-
-					let tmplObj = theTimeArr[j];
-
-					theTimeArr[j] = theTimeArr[j + 1];
-
-					theTimeArr[j + 1] = tmplObj;
-				} else { // 如果说前面的时间比后面的小, 保持不变
-					let tmplObj = theTimeArr[j];
-					theTimeArr[j] = tmplObj;
-				}
-			}
-		}
-		return theTimeArr;
-
-	}
 	compareEvaluationTimeArray = (array) => {
 		if (!array) return []
 		let newArray = JSON.parse(JSON.stringify(array || []))
@@ -90,13 +68,13 @@ export default class BoardFeatures extends Component {
 		let new_board_todo_list = [].concat(...board_card_todo_list, ...new_flow_todo_list)
 		// 1. 被驳回列表 并且按照时间排序
 		let temp_overrule_arr = new_board_todo_list.filter(item => item.runtime_type == '1') // 将被驳回列表取出，并进行排序排序
-		let overrule_arr = this.timeSort(this.compareEvaluationTimeArray(temp_overrule_arr))
+		let overrule_arr = timeSort(this.compareEvaluationTimeArray(temp_overrule_arr), 'compare_time')
 		// 2. 不是驳回列表并且存在时间（任务则是存在截止时间）的 不是创建时间
 		let temp_overrule_time_arr = new_board_todo_list.filter(item => item.runtime_type != '1' && (((item.rela_type == '1' || item.rela_type == '2') && item.due_time) || (item.rela_type == '3' && item.deadline_type == '2')))
-		let non_overrule_time_arr = this.timeSort(this.compareEvaluationTimeArray(temp_overrule_time_arr))
+		let non_overrule_time_arr = timeSort(this.compareEvaluationTimeArray(temp_overrule_time_arr), 'compare_time')
 		// 3.不是驳回列表并且不存在时间的 采用创建时间
 		let temp_overrule_non_time_arr = new_board_todo_list.filter(item => item.runtime_type != '1' && (((item.rela_type == '1' || item.rela_type == '2') && (!item.due_time)) || (item.rela_type == '3' && item.deadline_type == '1')))
-		let non_overrule_non_time_arr = this.timeSort(this.compareEvaluationTimeArray(temp_overrule_non_time_arr))
+		let non_overrule_non_time_arr = timeSort(this.compareEvaluationTimeArray(temp_overrule_non_time_arr), 'compare_time')
 		// 想将时间都用一个值来进行比较 比如 任务 可能是 due_time 可能是 start_time, 不知道是否需要create_time, 而流程是 last_complete_time
 		this.setState({
 			board_todo_list: removeEmptyArrayEle([].concat(...overrule_arr, ...non_overrule_time_arr, ...non_overrule_non_time_arr))

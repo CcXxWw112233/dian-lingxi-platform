@@ -205,16 +205,6 @@ export default class AccomplishStepOne extends Component {
             </div>
           ) : (<></>)
         }
-        {/* 备注 */}
-        {
-          description && description != '' &&
-          (
-            <div className={indexStyles.select_remarks}>
-              <span className={globalStyles.authTheme}>&#xe636; 备注 :</span>
-              <div>{description}</div>
-            </div>
-          )
-        }
         {
           this.whetherShowRebackButton() && status == '2' && parentStatus == '1' && (
             <div className={indexStyles.reback_btn}>

@@ -63,7 +63,7 @@ export const timestampToTimeNormal2 = (timestamp, split, flag) => {
   if (!timestamp) {
     return false
   }
-  const timestampNew = timestamp.length === 10 ? Number(timestamp) * 1000 : Number(timestamp)
+  const timestampNew = timestamp.toString().length === 10 ? Number(timestamp) * 1000 : Number(timestamp)
   const splitNew = split || '/'
   let date = new Date(timestampNew);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
   let Y = date.getFullYear() + splitNew;
@@ -80,7 +80,7 @@ export const timestampToTime = (timestamp, flag) => {
   if (!timestamp) {
     return false
   }
-  const timestampNew = timestamp.length === 10 ? Number(timestamp) * 1000 : Number(timestamp)
+  const timestampNew = timestamp.toString().length === 10 ? Number(timestamp) * 1000 : Number(timestamp)
   let date = new Date(timestampNew);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
   const now_year = new Date().getFullYear()
   let Y = now_year == date.getFullYear() ? '' : date.getFullYear() + '年';
@@ -98,11 +98,27 @@ export const timestampToTimeNormal3 = (timestamp, flag, split) => {
   if (!timestamp) {
     return false
   }
-  const timestampNew = timestamp.length === 10 ? Number(timestamp) * 1000 : Number(timestamp)
+  const timestampNew = timestamp.toString().length === 10 ? Number(timestamp) * 1000 : Number(timestamp)
   const splitNew = split || '-'
   let date = new Date(timestampNew);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
   const now_year = new Date().getFullYear()
   let Y = now_year == date.getFullYear() ? '' : date.getFullYear() + splitNew;
+  let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + splitNew;
+  let D = date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' ';
+  let h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
+  let m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
+  return flag ? Y + M + D + h + m : Y + M + D;
+}
+
+//时间戳转日期 需要年, 即使是今年也要显示
+export const timestampToTimeNormal4 = (timestamp,split, flag) => {
+  if (!timestamp) {
+    return false
+  }
+  const timestampNew = timestamp.toString().length === 10 ? Number(timestamp) * 1000 : Number(timestamp)
+  const splitNew = split || '-'
+  let date = new Date(timestampNew);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+  let Y = date.getFullYear() + splitNew;
   let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + splitNew;
   let D = date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' ';
   let h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
@@ -747,6 +763,39 @@ export const jsonArrayCompareSort = function (prop, handleValue) {
       return 0
     }
   }
+}
+
+/**
+ * 时间冒泡排序
+ * 想要根据传入的字段进行排序
+ * @param {Array} theTimeArr 当前需要排序的时间数组
+ * @param {prop} 当前需要用来比较的字段
+ * @returns {Array} 返回了一个从小->大的时间数组
+ */
+// 时间冒泡排序
+export const timeSort = (theTimeArr, prop) => {
+  if (!theTimeArr) return []
+  if (!prop) return theTimeArr
+  let maxLen = theTimeArr.length;
+  for (let i = 0; i < maxLen; i++) {
+    for (let j = 0; j < maxLen - i - 1; j++) {
+      // 如果说不存在这个元素
+      if (!theTimeArr[j][prop]) theTimeArr[j][prop] = ''
+      if (!theTimeArr[j + 1][prop]) theTimeArr[j + 1][prop] = ''
+      if (theTimeArr[j][prop] > theTimeArr[j + 1][prop]) { // 如果说前面的时间比后面的大, 那么把大的时间放在后面
+
+        let tmplObj = theTimeArr[j];
+
+        theTimeArr[j] = theTimeArr[j + 1];
+
+        theTimeArr[j + 1] = tmplObj;
+      } else { // 如果说前面的时间比后面的小, 保持不变
+        let tmplObj = theTimeArr[j];
+        theTimeArr[j] = tmplObj;
+      }
+    }
+  }
+  return theTimeArr;
 }
 
 // 将时间戳转换成所需要的时间戳
