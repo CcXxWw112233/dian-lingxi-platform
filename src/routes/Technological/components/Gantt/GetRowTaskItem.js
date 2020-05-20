@@ -5,7 +5,7 @@ import AvatarList from '@/components/avatarList'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
 import { task_item_height, task_item_margin_top, date_area_height, ganttIsOutlineView, ceil_width } from './constants'
-import { updateTask, changeTaskType } from '../../../../services/technological/task'
+import { updateTaskVTwo, changeTaskType } from '../../../../services/technological/task'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import { message, Dropdown, Popover, Tooltip } from 'antd'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
@@ -426,28 +426,26 @@ export default class GetRowTaskItem extends Component {
                 local_width: time_width,
                 local_width_flag: time_width
             }, () => {
-                this.excuteHandleEffectHandleParentCard(['handleParentCard', 'updateParentCard'])
-
-                // this.handleEffectParentCard('handleParentCard').then(() => {
-                //     this.handleEffectParentCard('updateParentCard')
-                // })
+                this.excuteHandleEffectHandleParentCard([
+                    // 'handleParentCard',
+                    // 'updateParentCard'
+                    { action: 'updateParentCard', payload: { ...updateData } }
+                ])
             })
             return
         }
-        updateTask({ card_id: id, due_time: end_time_timestamp, board_id }, { isNotLoading: false })
+        updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, board_id }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
-                    this.excuteHandleEffectHandleParentCard(['getParentCard', 'handleParentCard', 'updateParentCard'])
-
-                    // this.handleEffectParentCard('getParentCard').then((res) => {
-                    //     this.handleEffectParentCard('handleParentCard', {}, true).then(() => {
-                    //         this.handleEffectParentCard('updateParentCard')
-                    //     })
-                    // })
                     if (ganttIsOutlineView({ group_view_type })) {
+                        this.props.changeOutLineTreeNodeProto(id, updateData)
                         setTimeout(() => {
-                            this.props.changeOutLineTreeNodeProto(id, updateData)
-                        }, 100)
+                            this.excuteHandleEffectHandleParentCard([
+                                // 'getParentCard',
+                                // 'handleParentCard',
+                                { action: 'updateParentCard', payload: { start_time: res.data.start_time, due_time: res.data.due_time, success: '1' } }
+                            ])
+                        }, 200)
                     } else {
                         this.handleHasScheduleCard({
                             card_id: id,
@@ -459,11 +457,11 @@ export default class GetRowTaskItem extends Component {
                         local_width: local_width_origin,
                         local_width_flag: local_width_origin
                     }, () => {
-                        this.excuteHandleEffectHandleParentCard(['handleParentCard', 'updateParentCard'])
-
-                        // this.handleEffectParentCard('handleParentCard').then(() => {
-                        //     this.handleEffectParentCard('updateParentCard')
-                        // })
+                        this.excuteHandleEffectHandleParentCard([
+                            // 'handleParentCard',
+                            // 'updateParentCard'
+                            { action: 'updateParentCard', payload: { ...updateData } }
+                        ])
                     })
                     message.error(res.message)
                 }
@@ -535,28 +533,27 @@ export default class GetRowTaskItem extends Component {
                 local_left: left,
                 local_top: top
             }, () => {
-                this.excuteHandleEffectHandleParentCard(['handleParentCard', 'updateParentCard'])
-                // this.handleEffectParentCard('handleParentCard').then(() => {
-                //     this.handleEffectParentCard('updateParentCard')
-                // })
+                this.excuteHandleEffectHandleParentCard([
+                    // 'handleParentCard',
+                    // 'updateParentCard'
+                    { action: 'updateParentCard', payload: { ...updateData } }
+                ])
             })
             return
         }
         // console.log('ssssssssssaaaa', 2)
-        updateTask({ card_id: id, due_time: end_time_timestamp, start_time: start_time_timestamp, board_id }, { isNotLoading: false })
+        updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, start_time: start_time_timestamp, board_id }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
-                    // console.log('ssssssssssaaaa', 3)
-                    this.excuteHandleEffectHandleParentCard(['getParentCard', 'handleParentCard', 'updateParentCard'])
-                    // this.handleEffectParentCard('getParentCard').then((res) => {
-                    //     this.handleEffectParentCard('handleParentCard', {}, true).then(() => {
-                    //         this.handleEffectParentCard('updateParentCard')
-                    //     })
-                    // })
                     if (ganttIsOutlineView({ group_view_type })) {
+                        this.props.changeOutLineTreeNodeProto(id, updateData)
                         setTimeout(() => {
-                            this.props.changeOutLineTreeNodeProto(id, updateData)
-                        }, 100)
+                            this.excuteHandleEffectHandleParentCard([
+                                // 'getParentCard',
+                                // 'handleParentCard',
+                                { action: 'updateParentCard', payload: { start_time: res.data.start_time, due_time: res.data.due_time, success: '1' } }
+                            ])
+                        }, 200)
                     } else {
                         this.handleHasScheduleCard({
                             card_id: id,
@@ -567,10 +564,11 @@ export default class GetRowTaskItem extends Component {
                     this.setState({
                         local_left: left
                     }, () => {
-                        this.excuteHandleEffectHandleParentCard(['handleParentCard', 'updateParentCard'])
-                        // this.handleEffectParentCard('handleParentCard').then(() => {
-                        //     this.handleEffectParentCard('updateParentCard')
-                        // })
+                        this.excuteHandleEffectHandleParentCard([
+                            // 'handleParentCard',
+                            // 'updateParentCard'
+                            { action: 'updateParentCard', payload: { ...updateData } }
+                        ])
                     })
                     message.error(res.message)
                 }
@@ -701,7 +699,7 @@ export default class GetRowTaskItem extends Component {
                 const parent_card_ele = document.getElementById(parent_card_id)
                 return new Promise((resolve, reject) => {
                     return obj.getSameLevelNode().then(res => {
-                        const { min_position, max_position, second_min_position, second_max_position } = res
+                        const { min_position, max_position, second_min_position, second_max_position, max_time, min_time, time_span } = res
                         resolve(res)
                         _self.setState({
                             parent_card: {
@@ -709,7 +707,10 @@ export default class GetRowTaskItem extends Component {
                                 min_position,
                                 max_position,
                                 second_min_position,
-                                second_max_position
+                                second_max_position,
+                                max_time,
+                                min_time,
+                                time_span
                             }
                         }, () => {
                             return resolve(res)
@@ -720,20 +721,29 @@ export default class GetRowTaskItem extends Component {
             getSameLevelNode: () => { //获取默认最小和最大点
                 return new Promise((resolve, reject) => {
                     const { outline_tree_round = [] } = _self.props
+                    const { time_span } = outline_tree_round.find(item => item.id == parent_card_id)
                     const same_leve_node = outline_tree_round.filter(item => item.parent_card_id == parent_card_id)
                     const left_arr = same_leve_node.map(item => item.left).sort()
                     const width_arr = same_leve_node.map(item => item.left + item.width).sort()
+                    const due_time_arr = same_leve_node.map(item => item.due_time).filter(item => item)
+                    const start_time_arr = same_leve_node.map(item => item.start_time).filter(item => item)
+
                     const min_position = Math.min.apply(null, left_arr)//最左边的位置
                     const max_position = Math.max.apply(null, width_arr)
                     const left_arr_length = left_arr.length
                     const width_arr_length = width_arr.length
                     const second_min_position = left_arr[1]
                     const second_max_position = width_arr[width_arr_length - 2]
+                    const max_time = Math.max.apply(null, due_time_arr)
+                    const min_time = Math.min.apply(null, start_time_arr)
                     const o = {
                         min_position,
                         max_position,
                         second_min_position,
-                        second_max_position
+                        second_max_position,
+                        max_time,
+                        min_time,
+                        time_span,
                     }
                     resolve(o)
                 })
@@ -776,37 +786,39 @@ export default class GetRowTaskItem extends Component {
                     }
                 })
             },
-            updateParentCard: () => { //方法废弃。由子任务更新后后台返回区间，父任务更新由返回的时间确认
-                const { date_arr_one_level, ceilWidth, itemValue: { board_id }, gantt_view_mode } = _self.props
-                const { parent_card_min_left, parent_card_max_right, drag_type } = _self.state
-                const width = parseInt((parent_card_max_right - parent_card_min_left) / ceilWidth) * ceilWidth - ((drag_type != 'position') ? 0 : card_width_diff) //实际要计算的宽度
-                let start_time = ''
-                let due_time = ''
-                if (is_year_view) {
-                    start_time = (setDateWithPositionInYearView({ _position: parent_card_min_left, date_arr_one_level, ceilWidth, width, x: parent_card_min_left, flag: 1 }) || {}).timestamp
-                    due_time = (setDateWithPositionInYearView({ _position: parent_card_min_left + width, date_arr_one_level, ceilWidth, width, x: parent_card_min_left, flag: 2 }) || {}).timestampEnd
-                } else {
-                    start_time = (date_arr_one_level[parseInt(parent_card_min_left / ceilWidth)] || {}).timestamp
-                    due_time = (date_arr_one_level[parseInt((parent_card_min_left + width) / ceilWidth)] || {}).timestampEnd
+            updateParentCard: (data) => { //方法废弃。由子任务更新后后台返回区间，父任务更新由返回的时间确认
+                // console.log('更新的data', data)
+                if (data.success == '1') {
+                    console.log('要更新的父级0', data)
+                    this.props.changeOutLineTreeNodeProto(parent_card_id, { due_time: data.due_time, start_time: data.start_time })
+                    return
                 }
-                updateTask({ card_id: parent_card_id, due_time, start_time, board_id }, { isNotLoading: false })
-                    .then(res => {
-                        if (isApiResponseOk(res)) {
-                            setTimeout(() => {
-                                this.props.changeOutLineTreeNodeProto(parent_card_id, { due_time, start_time })
-                            }, 100)
-                        } else {
-                            setTimeout(() => {
-                                this.excuteHandleEffectHandleParentCard(['handleParentCard', 'updateParentCard'])
-                                // this.handleEffectParentCard('handleParentCard').then(() => {
-                                //     this.handleEffectParentCard('updateParentCard')
-                                // })
-                            }, 200)
-                            message.error(res.message)
-                        }
-                    }).catch(err => {
-                        message.error('更新失败')
-                    })
+                const { parent_card: { max_time, min_time, ele, time_span } } = this.state
+                const { ceilWidth } = this.props
+                const due_time = Math.max(transformTimestamp(data.due_time), transformTimestamp(max_time))
+                const start_time = Math.min(transformTimestamp(data.start_time), transformTimestamp(min_time))
+                ele.style.width = `${(time_span * ceilWidth) - (is_year_view ? 0 : card_width_diff)}px`
+                console.log('要更新的父级1', { start_time, due_time })
+                this.props.changeOutLineTreeNodeProto(parent_card_id, {
+                    start_time, due_time
+                })
+                // debugger
+                // const { date_arr_one_level, ceilWidth, itemValue: { board_id }, gantt_view_mode } = _self.props
+                // const { parent_card_min_left, parent_card_max_right, drag_type } = _self.state
+
+                // const width = parseInt((parent_card_max_right - parent_card_min_left) / ceilWidth) * ceilWidth - ((drag_type != 'position') ? 0 : card_width_diff) //实际要计算的宽度
+                // let start_time = ''
+                // let due_time = ''
+                // if (is_year_view) {
+                //     start_time = (setDateWithPositionInYearView({ _position: parent_card_min_left, date_arr_one_level, ceilWidth, width, x: parent_card_min_left, flag: 1 }) || {}).timestamp
+                //     due_time = (setDateWithPositionInYearView({ _position: parent_card_min_left + width, date_arr_one_level, ceilWidth, width, x: parent_card_min_left, flag: 2 }) || {}).timestampEnd
+                // } else {
+                //     start_time = (date_arr_one_level[parseInt(parent_card_min_left / ceilWidth)] || {}).timestamp
+                //     due_time = (date_arr_one_level[parseInt((parent_card_min_left + width) / ceilWidth)] || {}).timestampEnd
+                // }
+                // // setTimeout(() => {
+                // this.props.changeOutLineTreeNodeProto(parent_card_id, { due_time, start_time })
+                // // }, 300)
             }
         }
         return obj[func_name].call(this, data)
@@ -814,7 +826,12 @@ export default class GetRowTaskItem extends Component {
 
     excuteHandleEffectHandleParentCard = async (actions = []) => {
         for (let val of actions) {
-            await this.handleEffectParentCard(val)
+            if (typeof val == 'object') {
+                await this.handleEffectParentCard(val.action, val.payload)
+            } else {
+                await this.handleEffectParentCard(val)
+
+            }
         }
     }
 
@@ -829,6 +846,10 @@ export default class GetRowTaskItem extends Component {
         } else {
 
         }
+        // const a = ['11', '22', { a: 1, b: { a: 1 } }]
+        // for (let val of a) {
+        //     console.log('更新的。。。', val)
+        // }
         return label_color
     }
     render() {
