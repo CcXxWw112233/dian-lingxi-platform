@@ -818,8 +818,21 @@ export default class GetRowTaskItem extends Component {
         }
     }
 
+    // 获取大纲视图父任务的截止和开始位置的三角形边框颜色
+    setTriangleTreeColor = (label_data = [], index) => {
+        let label_color = '#ffffff'
+        const length = label_data.length
+        if (index == 'start') {
+            label_color = label_data[0] ? label_data[0].label_color : '#ffffff'
+        } else if (index == 'end') {
+            label_color = label_data[length - 1] ? label_data[length - 1].label_color : '#ffffff'
+        } else {
+
+        }
+        return label_color
+    }
     render() {
-        const { itemValue = {}, im_all_latest_unread_messages, gantt_view_mode } = this.props
+        const { itemValue = {}, im_all_latest_unread_messages, gantt_view_mode, group_view_type } = this.props
         const {
             left,
             top, width,
@@ -967,7 +980,23 @@ export default class GetRowTaskItem extends Component {
                         </Popover>
                     )
                 }
-
+                {
+                    ganttIsOutlineView({ group_view_type }) && !parent_card_id &&
+                    (gantt_view_mode == 'year' ? time_span > 4 : true) &&
+                    (
+                        <>
+                            <div className={indexStyles.left_triangle} style={{
+                                borderColor: `${this.setTriangleTreeColor(label_data, 'start')} transparent transparent transparent`
+                            }}></div>
+                            <div className={indexStyles.left_triangle_mask}></div>
+                            <div className={indexStyles.right_triangle}
+                                style={{
+                                    borderColor: `${this.setTriangleTreeColor(label_data, 'end')} transparent transparent transparent`
+                                }}></div>
+                            <div className={indexStyles.right_triangle_mask}></div>
+                        </>
+                    )
+                }
             </div>
             // </Popover> 
         )

@@ -230,21 +230,21 @@
 
   .specific_example {
     // background-image: linear-gradient(to right , #7A88FF, #7AFFAF);
-    position              : absolute;
+    position                 : absolute;
     // background-color: #1890FF;
-    z-index               : 1;
-    box-sizing            : border-box;
-    border-radius         : 2px;
-    cursor                : pointer;
+    z-index                  : 1;
+    box-sizing               : border-box;
+    border-radius            : 2px;
+    cursor                   : pointer;
     // background      :rgba(255,255,255,1);
     // box-shadow         : 0px 1px 4px 0px rgba(0, 0, 0, 0.09);
-    box-shadow            : 0px 2px 8px 1px rgba(0, 0, 0, 0.1);
-    border-radius         : 4px;
-    padding               : 2px 2px;
-    display               : flex;
-    justify-content       : space-between;
-    align-items           : center;
-    overflow              : hidden;
+    box-shadow               : 0px 2px 8px 1px rgba(0, 0, 0, 0.1);
+    border-radius            : 4px;
+    padding                  : 2px 2px;
+    display                  : flex;
+    justify-content          : space-between;
+    align-items              : center;
+    // overflow              : hidden;
 
     // background-image: linear-gradient(to right , #7A88FF, #7AFFAF);
     // background-image:linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%);
@@ -281,6 +281,75 @@
       right           : 0;
       top             : 0;
       // border-radius: 0 4px 0 0;
+    }
+
+    .left_triangle,
+    .right_triangle {
+      position: absolute;
+      height  : 13px;
+      width   : 15px;
+      bottom  : -9px;
+    }
+
+    .left_triangle {
+      left        : 0;
+      width       : 0;
+      height      : 0;
+      border-top  : 13px solid #ffffff;
+      border-right: 15px solid transparent;
+      border-color: rgb(255, 213, 145) transparent transparent transparent;
+    }
+
+    .left_triangle:after {
+      content     : '';
+      left        : 0;
+      width       : 0;
+      height      : 0;
+      border-top  : 13px solid #ffffff;
+      border-right: 15px solid transparent;
+      border-color: #ffffff transparent transparent transparent;
+      position    : absolute;
+      bottom      : 5px;
+      left        : 2px;
+    }
+
+    .left_triangle_mask {
+      position        : absolute;
+      width           : 10px;
+      left            : 10px;
+      height          : 8px;
+      bottom          : 2px;
+      background-color: #ffffff;
+    }
+
+    .right_triangle {
+      right       : 0;
+      width       : 0;
+      height      : 0;
+      border-top  : 13px solid #ffffff;
+      border-left : 15px solid transparent;
+      border-color: rgb(255, 213, 145) transparent transparent transparent;
+    }
+
+    .right_triangle:after {
+      content     : '';
+      width       : 0;
+      height      : 0;
+      border-top  : 13px solid #ffffff;
+      border-left : 15px solid transparent;
+      border-color: #ffffff transparent transparent transparent;
+      position    : absolute;
+      bottom      : 5px;
+      right       : 2px;
+    }
+
+    .right_triangle_mask {
+      position        : absolute;
+      width           : 10px;
+      right           : 10px;
+      height          : 8px;
+      bottom          : 2px;
+      background-color: #ffffff;
     }
   }
 
