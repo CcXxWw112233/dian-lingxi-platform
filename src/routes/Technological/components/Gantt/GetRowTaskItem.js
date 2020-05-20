@@ -823,9 +823,9 @@ export default class GetRowTaskItem extends Component {
         let label_color = '#ffffff'
         const length = label_data.length
         if (index == 'start') {
-            label_color = label_data[0] ? label_data[0].label_color : '#ffffff'
+            label_color = label_data[0] ? `rgb(${label_data[0].label_color})` : '#ffffff'
         } else if (index == 'end') {
-            label_color = label_data[length - 1] ? label_data[length - 1].label_color : '#ffffff'
+            label_color = label_data[length - 1] ? `rgb(${label_data[length - 1].label_color})` : '#ffffff'
         } else {
 
         }
