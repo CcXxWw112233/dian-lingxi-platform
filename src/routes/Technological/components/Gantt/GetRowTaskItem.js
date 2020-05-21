@@ -395,7 +395,7 @@ export default class GetRowTaskItem extends Component {
 
     }
     overDragCompleteHandleRight = () => { //右侧增减时间
-        const { itemValue: { id, end_time, start_time, board_id, is_has_start_time }, group_view_type, gantt_view_mode } = this.props
+        const { itemValue: { id, end_time, start_time, board_id, is_has_start_time }, group_view_type, gantt_view_mode, gantt_board_id } = this.props
         const { local_left, local_width, local_width_origin } = this.state
         const { date_arr_one_level, ceilWidth } = this.props
         const updateData = {}
@@ -434,7 +434,7 @@ export default class GetRowTaskItem extends Component {
             })
             return
         }
-        updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, board_id }, { isNotLoading: false })
+        updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, board_id: board_id || gantt_board_id }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
                     if (ganttIsOutlineView({ group_view_type })) {
@@ -505,7 +505,7 @@ export default class GetRowTaskItem extends Component {
     }
     // 不在项目分组内，左右移动
     overDragCompleteHandlePositonAbout = () => {
-        const { itemValue: { id, top, start_time, board_id, left }, group_view_type, gantt_view_mode } = this.props
+        const { itemValue: { id, top, start_time, board_id, left }, group_view_type, gantt_view_mode, gantt_board_id } = this.props
         const { local_left, local_width, local_width_origin } = this.state
         const { date_arr_one_level, ceilWidth } = this.props
         const updateData = {}
@@ -542,7 +542,7 @@ export default class GetRowTaskItem extends Component {
             return
         }
         // console.log('ssssssssssaaaa', 2)
-        updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, start_time: start_time_timestamp, board_id }, { isNotLoading: false })
+        updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, start_time: start_time_timestamp, board_id: board_id || gantt_board_id }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
                     if (ganttIsOutlineView({ group_view_type })) {

@@ -136,13 +136,15 @@ export async function updateTask(data, isNotLoading) {
 }
 // 更新任务V2
 export async function updateTaskVTwo(data, isNotLoading) {
-  const { card_id } = data
+  const { card_id, board_id } = data
   delete data.card_id
   delete data.board_id
+  const { BaseInfo = {} } = createHeaderContentDataByCardId(card_id)
+  BaseInfo.boardId = board_id
   return request({
     url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/card/${card_id}`,
     method: 'PUT',
-    headers: createHeaderContentDataByCardId(card_id),
+    headers: { BaseInfo },
     data,
   }, { isNotLoading });
 }
