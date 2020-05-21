@@ -18,7 +18,7 @@ import GetRowSummary from './components/gattFaceCardItem/GetRowSummary.js'
 import GetRowGanttVirtual from './GetRowGanttVirtual'
 import GetRowStrip from './components/GetRowStrip'
 import { isSamDay, timestampToTimeNormal, timestampToTime } from '../../../../utils/util';
-
+import SvgArea from './components/SvgArea'
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
 const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
@@ -678,81 +678,84 @@ export default class GetRowGantt extends Component {
     } = this.props
     // console.log('task_is_dragging', this.state.task_is_dragging)
     return (
-      <div className={indexStyles.gantt_operate_top}
-        // onMouseDown={this.dashedMousedown.bind(this)} //用来做拖拽虚线框
-        // onMouseMove={this.dashedMouseMove.bind(this)}
-        // onMouseLeave={this.dashedMouseLeave.bind(this)}
-        {...this.targetMouseEvent()}
-        id={'gantt_operate_area_panel'}
-        ref={'gantt_operate_area_panel'}>
-        {this.renderDashedRect()}
-        {/* 非大纲视图下渲染任务和或者进度 */}
-        {
-          !ganttIsOutlineView({ group_view_type }) && list_group.map((value, key) => {
-            const { list_data = [], list_id, board_fold_data } = value
-            if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) {
-              return (this.renderFoldTaskSummary({ list_id, list_data, board_fold_data, group_index: key }))
-            } else {
+      <>
+        <SvgArea></SvgArea>
+        <div className={indexStyles.gantt_operate_top}
+          // onMouseDown={this.dashedMousedown.bind(this)} //用来做拖拽虚线框
+          // onMouseMove={this.dashedMouseMove.bind(this)}
+          // onMouseLeave={this.dashedMouseLeave.bind(this)}
+          {...this.targetMouseEvent()}
+          id={'gantt_operate_area_panel'}
+          ref={'gantt_operate_area_panel'}>
+          {this.renderDashedRect()}
+          {/* 非大纲视图下渲染任务和或者进度 */}
+          {
+            !ganttIsOutlineView({ group_view_type }) && list_group.map((value, key) => {
+              const { list_data = [], list_id, board_fold_data } = value
+              if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) {
+                return (this.renderFoldTaskSummary({ list_id, list_data, board_fold_data, group_index: key }))
+              } else {
+                return (
+                  this.renderNormalTaskList({ list_id, list_data })
+                )
+              }
+            })
+          }
+          {/* 渲染大纲视图下的任务 */}
+          {
+            ganttIsOutlineView({ group_view_type }) && outline_tree_round.map((value, key) => {
+              const { end_time, left, top, id, start_time, tree_type, parent_expand, is_expand } = value
+              const juge_expand = (tree_type == '0' || tree_type == '3') ? parent_expand : (parent_expand && is_expand)
               return (
-                this.renderNormalTaskList({ list_id, list_data })
+                (tree_type == '2' || tree_type == "3") && parent_expand && !!left && (
+                  <GetRowTaskItem
+                    key={`${id}_${start_time}_${end_time}_${left}_${top}`}
+                    itemValue={value}
+                    setSpecilTaskExample={this.setSpecilTaskExample}
+                    ganttPanelDashedDrag={this.state.drag_creating}
+                    getCurrentGroup={this.getCurrentGroup}
+                    // list_id={list_id}
+                    changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
+                    task_is_dragging={this.state.task_is_dragging}
+                    setGoldDateArr={this.props.setGoldDateArr}
+                    setScrollPosition={this.props.setScrollPosition}
+                    setDragCreating={this.setDragCreating}
+                    setTaskIsDragging={this.setTaskIsDragging}
+                    setDasheRectShow={this.setDasheRectShow}
+                  />)
               )
-            }
-          })
-        }
-        {/* 渲染大纲视图下的任务 */}
-        {
-          ganttIsOutlineView({ group_view_type }) && outline_tree_round.map((value, key) => {
-            const { end_time, left, top, id, start_time, tree_type, parent_expand, is_expand } = value
-            const juge_expand = (tree_type == '0' || tree_type == '3') ? parent_expand : (parent_expand && is_expand)
-            return (
-              (tree_type == '2' || tree_type == "3") && parent_expand && !!left && (
-                <GetRowTaskItem
-                  key={`${id}_${start_time}_${end_time}_${left}_${top}`}
-                  itemValue={value}
-                  setSpecilTaskExample={this.setSpecilTaskExample}
-                  ganttPanelDashedDrag={this.state.drag_creating}
-                  getCurrentGroup={this.getCurrentGroup}
-                  // list_id={list_id}
-                  changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
-                  task_is_dragging={this.state.task_is_dragging}
-                  setGoldDateArr={this.props.setGoldDateArr}
-                  setScrollPosition={this.props.setScrollPosition}
-                  setDragCreating={this.setDragCreating}
-                  setTaskIsDragging={this.setTaskIsDragging}
-                  setDasheRectShow={this.setDasheRectShow}
-                />)
+            })
+          }
+          {/* 渲染大纲视图下的横条 */}
+          {
+            ganttIsOutlineView({ group_view_type }) && outline_tree_round.map((value, key) => {
+              // const { list_data = [], list_id, board_fold_data } = value
+              // return (
+              //   this.renderStripSc({ list_data, list_id, list_group_key: key })
+              // )
+              const { id, top, parent_expand, is_expand, tree_type } = value
+              const juge_expand = (tree_type == '0' || tree_type == '3') ? parent_expand : (parent_expand && is_expand)
+              return parent_expand && (
+                <React.Fragment key={`${id}_${top}`}>
+                  <GetRowStrip itemValue={value}
+                    coperatedX={this.state.coperatedX}
+                    deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
+                    addTaskModalVisibleChange={this.props.addTaskModalVisibleChange}
+                    setGoldDateArr={this.props.setGoldDateArr}
+                    setScrollPosition={this.props.setScrollPosition}
+                  ></GetRowStrip>
+                </React.Fragment>
+              )
+            })
+          }
+          {
+            !ganttIsOutlineView({ group_view_type }) && (
+              <GetRowGanttVirtual />
             )
-          })
-        }
-        {/* 渲染大纲视图下的横条 */}
-        {
-          ganttIsOutlineView({ group_view_type }) && outline_tree_round.map((value, key) => {
-            // const { list_data = [], list_id, board_fold_data } = value
-            // return (
-            //   this.renderStripSc({ list_data, list_id, list_group_key: key })
-            // )
-            const { id, top, parent_expand, is_expand, tree_type } = value
-            const juge_expand = (tree_type == '0' || tree_type == '3') ? parent_expand : (parent_expand && is_expand)
-            return parent_expand && (
-              <React.Fragment key={`${id}_${top}`}>
-                <GetRowStrip itemValue={value}
-                  coperatedX={this.state.coperatedX}
-                  deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
-                  addTaskModalVisibleChange={this.props.addTaskModalVisibleChange}
-                  setGoldDateArr={this.props.setGoldDateArr}
-                  setScrollPosition={this.props.setScrollPosition}
-                ></GetRowStrip>
-              </React.Fragment>
-            )
-          })
-        }
-        {
-          !ganttIsOutlineView({ group_view_type }) && (
-            <GetRowGanttVirtual />
-          )
-        }
-        {/* <GetRowGanttItemElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} /> */}
-      </div>
+          }
+          {/* <GetRowGanttItemElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} /> */}
+        </div>
+      </>
     )
   }
 
