@@ -857,6 +857,55 @@ export default class GetRowTaskItem extends Component {
         // }
         return label_color
     }
+
+    // 是否可以拖动
+    couldChangeCard = () => {
+        const { itemValue: { child_card_status = {} }, group_view_type } = this.props
+        const { has_child, max_due_time, min_start_time } = child_card_status
+        // 大纲视图下的任务，存在子任务并且子任务有时间
+        if (ganttIsOutlineView({ group_view_type }) && has_child == '1' && (!!max_due_time || min_start_time)) {
+            return false
+        }
+        return true
+    }
+    handleObj = () => {
+        const { itemValue = {}, } = this.props
+        const {
+            top,
+            id,
+            board_id,
+            parent_card_id,
+        } = itemValue
+        return {
+            // 拖拽
+            onMouseDown: (e) => {
+                if (!this.couldChangeCard()) return
+                this.onMouseDown(e)
+            },
+            onMouseMove: (e) => {
+                if (!this.couldChangeCard()) return
+                this.onMouseMove(e)
+            },
+            onMouseUp: () => {
+                this.setSpecilTaskExample({ id: parent_card_id || id, top, board_id })
+            }, //查看子任务是查看父任务
+
+            onTouchStart: (e) => {
+                if (!this.couldChangeCard()) return
+                this.onTouchStart(e)
+            },
+            onTouchMove: (e) => {
+                if (!this.couldChangeCard()) return
+                this.onTouchMove(e)
+            },
+            onTouchEnd: (e) => {
+                this.onTouchEnd(e)
+            }, //查看子任务是查看父任务
+            onMouseEnter: () => {
+                this.onMouseEnter()
+            },
+        }
+    }
     render() {
         const { itemValue = {}, im_all_latest_unread_messages, gantt_view_mode, group_view_type } = this.props
         const {
@@ -902,35 +951,36 @@ export default class GetRowTaskItem extends Component {
                     marginTop: task_item_margin_top,
                     background: this.setLableColor(label_data, is_realize), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
                 }}
-                // 拖拽
-                onMouseDown={(e) => {
-                    // console.log('这是什么', '鼠标按下')
-                    this.onMouseDown(e)
-                }}
-                onMouseMove={(e) => {
-                    // console.log('这是什么', '鼠标移动')
-                    this.onMouseMove(e)
-                }}
-                onMouseUp={() => {
-                    // console.log('这是什么', '鼠标松开')
-                    this.setSpecilTaskExample({ id: parent_card_id || id, top, board_id })
-                }} //查看子任务是查看父任务
+                {...this.handleObj()}
+            // // 拖拽
+            // onMouseDown={(e) => {
+            //     // console.log('这是什么', '鼠标按下')
+            //     this.onMouseDown(e)
+            // }}
+            // onMouseMove={(e) => {
+            //     // console.log('这是什么', '鼠标移动')
+            //     this.onMouseMove(e)
+            // }}
+            // onMouseUp={() => {
+            //     // console.log('这是什么', '鼠标松开')
+            //     this.setSpecilTaskExample({ id: parent_card_id || id, top, board_id })
+            // }} //查看子任务是查看父任务
 
-                onTouchStart={(e) => {
-                    // console.log('这是什么', '手指按下')
-                    this.onTouchStart(e)
-                }}
-                onTouchMove={(e) => {
-                    // console.log('这是什么', '手指移动')
-                    this.onTouchMove(e)
-                }}
-                onTouchEnd={(e) => {
-                    // console.log('这是什么', '手指松开')
-                    this.onTouchEnd(e)
-                }} //查看子任务是查看父任务
-                onMouseEnter={() => {
-                    this.onMouseEnter()
-                }}
+            // onTouchStart={(e) => {
+            //     // console.log('这是什么', '手指按下')
+            //     this.onTouchStart(e)
+            // }}
+            // onTouchMove={(e) => {
+            //     // console.log('这是什么', '手指移动')
+            //     this.onTouchMove(e)
+            // }}
+            // onTouchEnd={(e) => {
+            //     // console.log('这是什么', '手指松开')
+            //     this.onTouchEnd(e)
+            // }} //查看子任务是查看父任务
+            // onMouseEnter={() => {
+            //     this.onMouseEnter()
+            // }}
             // 不拖拽
             // onMouseMove={(e) => e.stopPropagation()}
             // onClick={() => this.setSpecilTaskExample({ id, top, board_id })}

@@ -138,6 +138,7 @@ export async function updateTask(data, isNotLoading) {
 export async function updateTaskVTwo(data, isNotLoading) {
   const { card_id } = data
   delete data.card_id
+  delete data.board_id
   return request({
     url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/card/${card_id}`,
     method: 'PUT',
