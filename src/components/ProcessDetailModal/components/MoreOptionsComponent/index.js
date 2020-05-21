@@ -345,7 +345,7 @@ export default class MoreOptionsComponent extends Component {
         <span onClick={this.handleDelMoreIcon.bind(this, 'REMARKS')} className={`${globalStyles.authTheme} ${indexStyles.del_moreIcon}`}>&#xe7fe;</span>
         {
           !is_click_node_description ? (
-            <div onClick={(e) => { this.handleRemarksContent(e) }} className={indexStyles.remarks_content}>{description != '' ? description : '添加备注'}</div>
+            <div onClick={(e) => { this.handleRemarksContent(e) }} style={{color: description && description != '' ? 'rgba(0,0,0,0.65)' : 'rgba(0,0,0,0.45)'}} className={indexStyles.remarks_content}>{description != '' ? description : '添加备注'}</div>
           ) : (
               <NameChangeInput
                 autosize
