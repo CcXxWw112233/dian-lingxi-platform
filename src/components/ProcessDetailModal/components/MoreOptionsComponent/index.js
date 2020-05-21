@@ -137,6 +137,14 @@ export default class MoreOptionsComponent extends Component {
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: true }, 'is_click_node_description')
   }
 
+  titleTextAreaChange = (e) => {
+    let val = e.target.value.trimLR()
+    if (val == "" || val == " " || !val) {
+      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '' }, 'description')
+      return
+    }
+  }
+
   titleTextAreaChangeBlur = (e) => {
     let val = e.target.value.trimLR()
     if (val == "" || val == " " || !val) {
@@ -344,6 +352,8 @@ export default class MoreOptionsComponent extends Component {
                 onBlur={this.titleTextAreaChangeBlur}
                 onPressEnter={this.titleTextAreaChangeBlur}
                 onClick={this.titleTextAreaChangeClick}
+                setIsEdit={this.titleTextAreaChangeBlur}
+                onChange={this.titleTextAreaChange}
                 autoFocus={true}
                 goldName={description}
                 nodeName={'input'}
