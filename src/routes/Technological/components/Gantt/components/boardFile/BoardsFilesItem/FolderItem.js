@@ -405,10 +405,7 @@ export default class FolderItem extends Component {
 	}
 
 	isTheSameVisitControlState = (flag) => {
-		const { itemValue = {} } = this.props
-		const {
-			removeMemberPromptText, is_privilege, privileges = [], fileTypeName, fileOrFolderName, visitControlOtherPersonOperatorMenuItem
-		} = this.genVisitContorlData(itemValue)
+		const { itemValue: { is_privilege }  } = this.props
 		const toBool = str => !!Number(str)
 		const is_privilege_bool = toBool(is_privilege)
 		if (flag == is_privilege_bool) {
@@ -633,7 +630,7 @@ export default class FolderItem extends Component {
 
 	// 渲染访问控制
 	renderVisitControlContent = () => {
-		console.log(this.props.itemValue, 'sssssssssssssssssss_我的天')
+		// console.log(this.props.itemValue, 'sssssssssssssssssss_我的天')
 		const { itemValue = {} } = this.props
 		const {
 			removeMemberPromptText, is_privilege, privileges = [], privileges_extend = [], fileTypeName, fileOrFolderName, visitControlOtherPersonOperatorMenuItem
