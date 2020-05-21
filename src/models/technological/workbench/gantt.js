@@ -80,7 +80,7 @@ export default {
 
       gantt_board_id: '0', //"1192342431761305600",//, //甘特图查看的项目id
       gantt_board_list_id: '0', //项目分组的操作id
-      group_view_type: '4', //分组视图1项目， 2成员, 4大纲, 5项目分组再分组成成员
+      group_view_type: '1', //分组视图1项目， 2成员, 4大纲, 5项目分组再分组成成员
       group_view_filter_boards: [], //内容过滤项目id 列表
       group_view_filter_users: [], //内容过滤职员id 列表
       group_view_boards_tree: [], //内容过滤项目分组树
@@ -470,7 +470,7 @@ export default {
           )
         ) { //如果该任务的起始日期在当前查看面板日期之前，就从最左边开始摆放
           // new_item.left = -500
-          new_item.width = 60
+          new_item.width = 0
           new_item.left = 0
         } else {
           for (let k = 0; k < date_arr_one_level_length; k++) {

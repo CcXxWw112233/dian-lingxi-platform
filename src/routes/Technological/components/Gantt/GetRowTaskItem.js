@@ -725,8 +725,8 @@ export default class GetRowTaskItem extends Component {
                     const { outline_tree_round = [] } = _self.props
                     const { time_span, left } = outline_tree_round.find(item => item.id == parent_card_id)
                     const same_leve_node = outline_tree_round.filter(item => item.parent_card_id == parent_card_id)
-                    const left_arr = same_leve_node.map(item => item.left).sort()
-                    const width_arr = same_leve_node.map(item => item.left + item.width).sort()
+                    const left_arr = same_leve_node.map(item => item.left).filter(item => item).sort()
+                    const width_arr = same_leve_node.map(item => item.left + item.width).filter(item => item).sort()
                     const due_time_arr = same_leve_node.map(item => item.due_time).filter(item => item)
                     const start_time_arr = same_leve_node.map(item => item.start_time).filter(item => item)
 
@@ -778,12 +778,13 @@ export default class GetRowTaskItem extends Component {
                         }
                         ele.style.left = `${min_left + (is_year_view ? 0 : card_left_diff)}px`
                         ele.style.width = `${(max_right - min_left) - (is_year_view ? 0 : card_width_diff)}px`
-                        _self.setState({
-                            parent_card_max_right: max_right,
-                            parent_card_min_left: min_left
-                        }, () => {
-                            return resolve()
-                        })
+                        return resolve()
+                        // _self.setState({
+                        //     parent_card_max_right: max_right,
+                        //     parent_card_min_left: min_left
+                        // }, () => {
+                        //     return resolve()
+                        // })
                     } else {
                         reject()
                     }
@@ -1058,6 +1059,7 @@ export default class GetRowTaskItem extends Component {
                 }
                 {
                     ganttIsOutlineView({ group_view_type }) && !parent_card_id &&
+                    // !this.couldChangeCard() &&
                     (gantt_view_mode == 'year' ? time_span > 4 : true) &&
                     (
                         <>
