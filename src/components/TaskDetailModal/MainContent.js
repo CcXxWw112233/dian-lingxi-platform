@@ -137,7 +137,7 @@ export default class MainContent extends Component {
         }
         this.getMilestone(res.data.board_id)
         this.filterCurrentExistenceField(res.data)// 初始化获取字段信息
-        this.whetherUpdateParentTaskTime()
+        // this.whetherUpdateParentTaskTime()
         this.linkImWithCard({ name: res.data.card_name, type: 'card', board_id: res.data.board_id, id: res.data.card_id })
       } else {
         setTimeout(() => {
@@ -1254,7 +1254,9 @@ export default class MainContent extends Component {
                     <div style={{ position: 'relative' }}>
                       {/* 开始时间 */}
                       {
-                        (((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) || this.state.is_change_parent_time) ? (
+                        (((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) 
+                        // || this.state.is_change_parent_time
+                        ) ? (
                           (
                             <div className={`${mainContentStyles.start_time}`}>
                               <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
@@ -1285,7 +1287,9 @@ export default class MainContent extends Component {
                       &nbsp;
                       {/* 截止时间 */}
                       {
-                        (((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) || this.state.is_change_parent_time) ? (
+                        (((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) 
+                        // || this.state.is_change_parent_time
+                        ) ? (
                           (
                             <div className={`${mainContentStyles.due_time}`}>
                               <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>

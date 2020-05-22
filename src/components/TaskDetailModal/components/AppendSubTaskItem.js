@@ -318,7 +318,7 @@ export default class AppendSubTaskItem extends Component {
     }
     Promise.resolve(
       dispatch({
-        type: 'publicTaskDetailModal/updateTaskVTwo',
+        type: 'publicTaskDetailModal/updateTask',
         payload: {
           updateObj
         }
@@ -336,9 +336,9 @@ export default class AppendSubTaskItem extends Component {
       this.setState({
         local_due_time: due_timeStamp
       })
-      const { start_time, due_time, card_id: parent_card_id } = res.data
-      this.setChildTaskIndrawContent({ name: 'due_time', value: due_timeStamp }, card_id)
-      this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(res.data)
+      // const { start_time, due_time, card_id: parent_card_id } = res.data
+      // this.setChildTaskIndrawContent({ name: 'due_time', value: due_timeStamp }, card_id)
+      // this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(res.data)
     })
   }
 
@@ -353,7 +353,7 @@ export default class AppendSubTaskItem extends Component {
     if (!card_id) return false
     Promise.resolve(
       dispatch({
-        type: 'publicTaskDetailModal/updateTaskVTwo',
+        type: 'publicTaskDetailModal/updateTask',
         payload: {
           updateObj
         }
@@ -367,7 +367,7 @@ export default class AppendSubTaskItem extends Component {
         local_due_time: null
       })
       this.setChildTaskIndrawContent({ name: 'due_time', value: 0 }, card_id)
-      this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(res.data)
+      // this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(res.data)
     })
 
   }
