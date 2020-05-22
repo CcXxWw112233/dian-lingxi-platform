@@ -22,7 +22,8 @@ export default class FolderItem extends Component {
 		this.state = {
 			input_folder_value: '',
 			local_name: name,
-			visitControlModalVisible: false
+			visitControlModalVisible: false,
+			currentVisitControlModalVisibleItem: '', // 表示当前点击的凭证
 		}
 	}
 
@@ -94,22 +95,16 @@ export default class FolderItem extends Component {
 
 	// 访问控制切换的数据
 	toggleVisitControlModal = flag => {
+		const { itemValue: { id } } = this.props
 		this.setState({
 			visitControlModalVisible: flag,
+			currentVisitControlModalVisibleItem: id
 		})
 	}
-
-	// 点击弹窗ok的回调
-	handleVisitControlModalOk = () => {
-		this.toggleVisitControlModal(false)
-	}
-
 	// 点击弹窗取消的回调
 	handleVisitControlModalCancel = () => {
 		this.toggleVisitControlModal(false)
 	}
-
-
 	// 菜单点击
 	menuItemClick = (e) => {
 		e.domEvent.stopPropagation()
@@ -123,7 +118,7 @@ export default class FolderItem extends Component {
 				break
 			case '3':
 				setBoardIdStorage(this.props.itemValue.board_id)
-				this.toggleVisitControlModal(!this.state.visitControlModalVisible)
+				this.toggleVisitControlModal(true)
 				break
 			default:
 				break
@@ -341,7 +336,7 @@ export default class FolderItem extends Component {
 			return {}
 		}
 		const { type, folder_name, file_name, is_privilege, privileges = [],
-			privileges_extend = []
+			privileges_extend = [], id
 			// child_privilegeuser_ids 
 		} = originData
 		const fileTypeName = type == '1' ? '文件夹' : '文件'
@@ -394,6 +389,7 @@ export default class FolderItem extends Component {
 		const visitControlOtherPersonOperatorMenuItem = genVisitControlOtherPersonOperatorMenuItem(type)
 		return {
 			// child_privilegeuser_ids,
+			id,
 			fileTypeName,
 			fileOrFolderName,
 			visitControlOtherPersonOperatorMenuItem,
@@ -405,7 +401,7 @@ export default class FolderItem extends Component {
 	}
 
 	isTheSameVisitControlState = (flag) => {
-		const { itemValue: { is_privilege }  } = this.props
+		const { itemValue: { is_privilege } } = this.props
 		const toBool = str => !!Number(str)
 		const is_privilege_bool = toBool(is_privilege)
 		if (flag == is_privilege_bool) {
@@ -430,11 +426,6 @@ export default class FolderItem extends Component {
 		const { itemValue: { type } } = this.props
 		return type == '1' ? 'folder' : 'file'
 	}
-	getVisitControlModalDataId = () => {
-    const dataType = this.getVisitControlModalDataType()
-    const { itemValue: { id: file_id, belong_folder_id: folder_id } } = this.props
-    return dataType == 'file' ? file_id : folder_id
-  }
 
 	// 执行人列表去重
 	arrayNonRepeatfy = arr => {
@@ -449,40 +440,39 @@ export default class FolderItem extends Component {
 		return temp_arr
 	}
 
-	  /**
-   * 访问控制的开关切换
-   * @param {Boolean} flag 开关切换
-   */
-  handleToggleContentPrivilege = flag => {
-		const { itemValue: { version_id, belong_folder_id  }, current_folder_id, getFolderFileList} = this.props
-    const dataType = this.getVisitControlModalDataType()
-    const data = {
-      content_id: dataType == "file" ? version_id : belong_folder_id,
-      content_type: dataType == 'file' ? 'file' : 'folder',
-      is_open: flag ? 1 : 0
-    }
-    toggleContentPrivilege(data).then(res => {
-      const resOk = res => res && res.code == '0'
-      if (resOk(res)) {
-        setTimeout(() => {
-          message.success('设置成功')
-        }, 500)
-        let temp_arr = res && res.data
-				if (!Array.isArray(temp_arr)) return false
-				getFolderFileList({ id: current_folder_id })
-        // this.visitControlUpdateCurrentProjectData({ is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr })
-      } else {
-        message.warning(res.message)
-      }
-    })
-  }
+	/**
+ * 访问控制的开关切换
+ * @param {Boolean} flag 开关切换
+ */
+	handleToggleContentPrivilege = flag => {
+		const _this = this
+		const { itemValue: { version_id, id }, current_folder_id, getFolderFileList, updateParentFileStateData } = this.props
+		const dataType = this.getVisitControlModalDataType()
+		const data = {
+			content_id: dataType == "file" ? version_id : id,
+			content_type: dataType == 'file' ? 'file' : 'folder',
+			is_open: flag ? 1 : 0
+		}
+		toggleContentPrivilege(data).then(res => {
+			const resOk = res => res && res.code == '0'
+			if (resOk(res)) {
+				setTimeout(() => {
+					message.success('设置成功')
+				}, 500)
+				// getFolderFileList({ id: current_folder_id })
+				updateParentFileStateData({ value: flag ? '1' : '0', id: id }, 'is_privilege')
+			} else {
+				message.warning(res.message)
+			}
+		})
+	}
 
 	/**
 	 * 访问控制移除成员
 	 * @param {String} id 移除成员对应的id
 	 */
 	handleVisitControlRemoveContentPrivilege = id => {
-		const { current_folder_id, getFolderFileList} = this.props
+		const { current_folder_id, getFolderFileList } = this.props
 		removeContentPrivilege({
 			id: id
 		}).then(res => {
@@ -492,7 +482,6 @@ export default class FolderItem extends Component {
 					message.success('移除用户成功')
 				}, 500)
 				getFolderFileList({ id: current_folder_id })
-				// this.visitControlUpdateCurrentProjectData({ removeId: id, type: 'remove' })
 			} else {
 				message.warning(res.message)
 			}
@@ -506,8 +495,8 @@ export default class FolderItem extends Component {
 	*/
 	handleVisitControlChangeContentPrivilege = (id, type, errorText) => {
 		const { itemValue = {} } = this.props
-		const { current_folder_id, getFolderFileList} = this.props
-		const { version_id, belong_folder_id: folder_id } = itemValue
+		const { current_folder_id, getFolderFileList } = this.props
+		const { version_id, belong_folder_id, id: folder_id } = itemValue
 		const dataType = this.getVisitControlModalDataType()
 		const content_id = dataType == 'file' ? version_id : folder_id
 		const content_type = dataType == 'file' ? 'file' : 'folder'
@@ -524,11 +513,7 @@ export default class FolderItem extends Component {
 				setTimeout(() => {
 					message.success('设置成功')
 				}, 500)
-				let temp_arr = []
-				temp_arr = res && res.data[0]
 				getFolderFileList({ id: current_folder_id })
-				// const addedPrivileges = ids.split(',').reduce((acc, curr) => Object.assign({}, acc, { [curr]: type }), {})
-				// this.visitControlUpdateCurrentProjectData({ temp_arr: temp_arr, type: 'change', code: type })
 			} else {
 				message.warning(res.message)
 			}
@@ -555,21 +540,16 @@ export default class FolderItem extends Component {
 	 */
 	handleVisitControlAddNewMember = (users_arr = []) => {
 		if (!users_arr.length) return
-		// const users_arr = ids.reduce((acc, curr) => {
-		//   if (!acc) return curr
-		//   return `${acc},${curr}`
-		// }, '')
 		this.handleSetContentPrivilege(users_arr, 'read')
 	}
 
 	// 访问控制设置成员
 	handleSetContentPrivilege = (users_arr = [], type, errorText = '访问控制添加人员失败，请稍后再试') => {
-
 		const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
 		const { user_id } = user_set
-		const { itemValue = {}, itemValue: { version_id, belong_folder_id: folder_id }, getFolderFileList, current_folder_id } = this.props
+		const { itemValue = {}, itemValue: { version_id, belong_folder_id: folder_id, id, privileges = [] }, getFolderFileList, current_folder_id } = this.props
 		const dataType = this.getVisitControlModalDataType()
-		const content_id = dataType == 'file' ? version_id : folder_id
+		const content_id = dataType == 'file' ? version_id : id
 		const content_type = dataType == 'file' ? 'file' : 'folder'
 		const privilege_code = type
 		let temp_ids = [] // 用来保存添加用户的id
@@ -615,10 +595,7 @@ export default class FolderItem extends Component {
 				setTimeout(() => {
 					message.success('添加用户成功')
 				}, 500)
-				let temp_arr = res && res.data
-				if (!Array.isArray(temp_arr)) return false
 				getFolderFileList({ id: current_folder_id })
-				// this.visitControlUpdateCurrentProjectData({ privileges: temp_arr, type: 'add' })
 			} else {
 				message.warning(res.message)
 			}
@@ -627,30 +604,30 @@ export default class FolderItem extends Component {
 
 	// 渲染访问控制
 	renderVisitControlContent = () => {
-		// console.log(this.props.itemValue, 'sssssssssssssssssss_我的天')
 		const { itemValue = {} } = this.props
 		const {
-			removeMemberPromptText, is_privilege, privileges = [], privileges_extend = [], fileTypeName, fileOrFolderName, visitControlOtherPersonOperatorMenuItem
+			id, removeMemberPromptText, is_privilege, privileges = [], privileges_extend = [], fileTypeName, fileOrFolderName, visitControlOtherPersonOperatorMenuItem
 		} = this.genVisitContorlData(itemValue)
-		const new_projectParticipant = (privileges_extend && privileges_extend.length) ? this.arrayNonRepeatfy([].concat(...privileges, ...privileges_extend)) : []
+		const new_projectParticipant = (privileges_extend && privileges_extend.length) ? this.arrayNonRepeatfy([].concat(...privileges_extend)) : []
+		const { currentVisitControlModalVisibleItem, visitControlModalVisible } = this.state
 		return (
-			<div>
+			<div id={id} onClick={e => e && e.stopPropagation()}>
 				<Modal
 					title={null}
 					width={400}
 					footer={null}
 					destroyOnClose={true}
-					visible={this.state.visitControlModalVisible}
+					visible={visitControlModalVisible && id == currentVisitControlModalVisibleItem}
+					maskClosable={false}
 					onCancel={this.handleVisitControlModalCancel}
-					onOk={this.handleVisitControlModalOk}
 				>
 					<div style={{ paddingTop: '40px', marginLeft: '-7px', marginRight: '-5px' }}>
 						<VisitControl
 							onlyShowPopoverContent={true}
 							isPropVisitControl={is_privilege == '0' ? false : true}
 							principalInfo='位文件访问人'
-              principalList={this.getVisitControlModalDataType() == 'folder' ? new_projectParticipant : [] }
-              notShowPrincipal={this.getVisitControlModalDataType() == 'file' ? true : false}
+							principalList={this.getVisitControlModalDataType() == 'folder' ? new_projectParticipant : []}
+							notShowPrincipal={this.getVisitControlModalDataType() == 'file' ? true : false}
 							otherPrivilege={privileges}
 							otherPersonOperatorMenuItem={visitControlOtherPersonOperatorMenuItem}
 							removeMemberPromptText={removeMemberPromptText}
@@ -667,7 +644,7 @@ export default class FolderItem extends Component {
 	render() {
 		const { itemValue = {}, im_all_latest_unread_messages = [], wil_handle_types = [], board_id } = this.props
 		const { name, id, type, is_privilege, file_name } = itemValue
-		const { is_show_change, input_folder_value, local_name } = this.state
+		const { is_show_change, input_folder_value, local_name, currentVisitControlModalVisibleItem, visitControlModalVisible } = this.state
 		return (
 			<div className={`${styles.folder_item_out}`}>
 				{
@@ -712,7 +689,11 @@ export default class FolderItem extends Component {
 							</div>
 						)
 				}
-				<>{this.renderVisitControlContent()}</>
+				{
+					(visitControlModalVisible && id == currentVisitControlModalVisibleItem) && (
+						<>{this.renderVisitControlContent()}</>
+					)
+				}
 			</div>
 		)
 	}
