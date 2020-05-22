@@ -459,8 +459,8 @@ export default class FolderItem extends Component {
 				setTimeout(() => {
 					message.success('设置成功')
 				}, 500)
-				// getFolderFileList({ id: current_folder_id })
-				updateParentFileStateData({ value: flag ? '1' : '0', id: id }, 'is_privilege')
+				getFolderFileList({ id: current_folder_id })
+				// updateParentFileStateData({ value: flag ? '1' : '0', id: id }, 'is_privilege')
 			} else {
 				message.warning(res.message)
 			}
