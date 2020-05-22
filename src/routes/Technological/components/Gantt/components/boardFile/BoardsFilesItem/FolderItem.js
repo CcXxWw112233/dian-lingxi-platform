@@ -482,8 +482,7 @@ export default class FolderItem extends Component {
 	 * @param {String} id 移除成员对应的id
 	 */
 	handleVisitControlRemoveContentPrivilege = id => {
-		const content_id = this.getVisitControlModalDataId()
-		const content_type = this.getVisitControlModalDataType()
+		const { current_folder_id, getFolderFileList} = this.props
 		removeContentPrivilege({
 			id: id
 		}).then(res => {
@@ -492,6 +491,7 @@ export default class FolderItem extends Component {
 				setTimeout(() => {
 					message.success('移除用户成功')
 				}, 500)
+				getFolderFileList({ id: current_folder_id })
 				// this.visitControlUpdateCurrentProjectData({ removeId: id, type: 'remove' })
 			} else {
 				message.warning(res.message)
@@ -506,10 +506,8 @@ export default class FolderItem extends Component {
 	*/
 	handleVisitControlChangeContentPrivilege = (id, type, errorText) => {
 		const { itemValue = {} } = this.props
+		const { current_folder_id, getFolderFileList} = this.props
 		const { version_id, belong_folder_id: folder_id } = itemValue
-		const {
-			removeMemberPromptText, is_privilege, privileges = [], fileTypeName, fileOrFolderName, visitControlOtherPersonOperatorMenuItem
-		} = this.genVisitContorlData(itemValue)
 		const dataType = this.getVisitControlModalDataType()
 		const content_id = dataType == 'file' ? version_id : folder_id
 		const content_type = dataType == 'file' ? 'file' : 'folder'
@@ -528,6 +526,7 @@ export default class FolderItem extends Component {
 				}, 500)
 				let temp_arr = []
 				temp_arr = res && res.data[0]
+				getFolderFileList({ id: current_folder_id })
 				// const addedPrivileges = ids.split(',').reduce((acc, curr) => Object.assign({}, acc, { [curr]: type }), {})
 				// this.visitControlUpdateCurrentProjectData({ temp_arr: temp_arr, type: 'change', code: type })
 			} else {
@@ -568,10 +567,7 @@ export default class FolderItem extends Component {
 
 		const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
 		const { user_id } = user_set
-		const { itemValue = {}, itemValue: { version_id, belong_folder_id: folder_id } } = this.props
-		const {
-			removeMemberPromptText, is_privilege, privileges = [], fileTypeName, fileOrFolderName, visitControlOtherPersonOperatorMenuItem
-		} = this.genVisitContorlData(itemValue)
+		const { itemValue = {}, itemValue: { version_id, belong_folder_id: folder_id }, getFolderFileList, current_folder_id } = this.props
 		const dataType = this.getVisitControlModalDataType()
 		const content_id = dataType == 'file' ? version_id : folder_id
 		const content_type = dataType == 'file' ? 'file' : 'folder'
@@ -621,6 +617,7 @@ export default class FolderItem extends Component {
 				}, 500)
 				let temp_arr = res && res.data
 				if (!Array.isArray(temp_arr)) return false
+				getFolderFileList({ id: current_folder_id })
 				// this.visitControlUpdateCurrentProjectData({ privileges: temp_arr, type: 'add' })
 			} else {
 				message.warning(res.message)
