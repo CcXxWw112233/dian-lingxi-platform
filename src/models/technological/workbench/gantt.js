@@ -620,7 +620,8 @@ export default {
       const { not_set_scroll_top } = payload
       //根据所获得的分组数据转换所需要的数据
       // const { datas: { list_group = [], group_rows = [], ceiHeight, ceilWidth, date_arr_one_level = [] } } = this.props.model
-      const list_group = yield select(workbench_list_group)
+      let list_group = yield select(workbench_list_group)
+      list_group = JSON.parse(JSON.stringify(list_group))
       const group_rows = yield select(workbench_group_rows)
       const ceiHeight = yield select(workbench_ceiHeight)
       const ceilWidth = yield select(workbench_ceilWidth)
