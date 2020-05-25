@@ -20,7 +20,7 @@ const rely_map = [
     },
 ]
 const width_diff = 8 //宽度误差微调
-const left_diff = 8 //位置误差微调
+const left_diff = 10 //位置误差微调
 const top_diff = 40 //位置误差微调
 const top_diff_60 = 60 //位置误差微调
 const top_diff_30 = 30 //位置误差微调
@@ -92,15 +92,14 @@ export default class index extends Component {
                     L${move_left}, ${line_top + top_diff + top_diff_30},
                     L${line_left}, ${line_top + top_diff + top_diff_30},
                     L${line_left + left_diff}, ${line_top + top_diff + top_diff_30},
-                    L${line_left + left_diff}, ${line_top + top_diff + top_diff_20},
-                    `
+                    ` //最后一个点 L${line_left + left_diff}, ${line_top + top_diff + top_diff_20},
+
                 } else {
                     Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
                     L${move_left}, ${move_top + top_diff}
                     L${move_left}, ${line_top + top_diff + top_diff_30},
                     L${line_left + left_diff}, ${line_top + top_diff + top_diff_30},
-                    L${line_left + left_diff}, ${line_top + top_diff + top_diff_20},
-                    `
+                    ` //最后一个点 L${line_left + left_diff}, ${line_top + top_diff + top_diff_20},
                 }
                 return Move_Line
             }
@@ -111,10 +110,18 @@ export default class index extends Component {
                             L${move_left}, ${line_top + top_diff},
                             L${line_left}, ${line_top + top_diff}`
             } else if (move_left == line_left) {
-                Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
-                            L${move_left - left_diff}, ${move_top + top_diff}
-                            L${move_left - left_diff}, ${line_top + top_diff},
-                            L${line_left + left_diff}, ${line_top + top_diff}`
+                if (move_top < line_top) {
+                    Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
+                    L${move_left}, ${move_top + top_diff}
+                    L${move_left}, ${line_top + top_diff_10},
+                    L${line_left + left_diff}, ${line_top + top_diff_10}`
+                } else {
+                    Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
+                    L${move_left}, ${move_top + top_diff}
+                    L${move_left}, ${line_top + top_diff + top_diff_30},
+                    L${line_left + left_diff}, ${line_top + top_diff + top_diff_30}`
+                }
+
             } else if (move_left > line_left) {
                 Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
                             L${line_left + width_diff}, ${move_top + top_diff}
