@@ -1,4 +1,5 @@
 import { getModelSelectDatasState, getModelSelectState } from '../../utils'
+import { getOrgIdByBoardId } from '../../../utils/businessFunction'
 
 // 该model是圈子推送已读未读的内容
 const model_milestoneDetail = name => `milestoneDetail/${name}`
@@ -319,6 +320,103 @@ export default {
                     break
             }
         },
+        // 处理首页代办(任务|流程)
+        * handleCooperateToDoListAgent({ payload }, { select, call, put }) {
+            const { res } = payload
+            const { data } = res
+            let coperate = data[0] //协作
+            let news = data[1] || {} //消息
+            //获取消息协作类型
+            const coperateName = coperate.e
+            const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
+            const coperateData = JSON.parse(coperate.d)
+            console.log(coperateData, coperateName,'coperateData')
+            let board_card_todo_list = yield select(getModelSelectState('simplemode', 'board_card_todo_list'))
+            let new_board_card_todo_list_ = [...board_card_todo_list]
+            const drawContent = yield select(getModelSelectState('publicTaskDetailModal', 'drawContent')) //任务详情
+            const card_detail_card_id = yield select(getModelSelectState('publicTaskDetailModal', 'card_id')) //任务弹
+            const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}
+            const user_id = userInfo['id']
+            let coop_executors = coperateData.executors || [] // 获取当前任务的执行人
+            let current_user = coop_executors.find(user => user.user_id == user_id) || {}
+            const id_arr_ = getAfterNameId(coperateName).split('/') //name/id1/id2/...
+            let belong_board_id_ = id_arr_[0] //推送过来所属项目id
+            let curr_card_id = '' //对象的任务id
+            let curr_org_id = '' // 对象的组织ID
+            switch (coperateType) {
+                case 'change:cards': // 添加任务
+                    // 1. 判断是否是该执行人的代办
+                    if (!(current_user && Object.keys(current_user).length)) return
+                    // 2. 是该执行人的代办任务, 那么就ping对应结构, 更新数据
+                    belong_board_id_ = id_arr_[0]
+                    curr_org_id = getOrgIdByBoardId(belong_board_id_)
+                    // 得到列表中需要的数据结构
+                    let obj = {
+                        ...coperateData,
+                        board_id: belong_board_id_,
+                        org_id: curr_org_id,
+                        rela_type: '1',
+                        id: coperateData.card_id,
+                        name: coperateData.card_name,
+                    }
+                    new_board_card_todo_list_.push(obj)
+                    dispathes({
+                        type: 'simplemode/updateDatas',
+                        payload: {
+                            board_card_todo_list: new_board_card_todo_list_
+                        }
+                    })
+                    break;
+                case 'delete:cards': // 删除任务
+                    curr_card_id = coperateData.card_id
+                    if (coperateData.is_deleted == '1') {
+                        new_board_card_todo_list_ = new_board_card_todo_list_.filter(item => item.id != curr_card_id)
+                        dispathes({
+                            type: 'simplemode/updateDatas',
+                            payload: {
+                                board_card_todo_list: new_board_card_todo_list_
+                            }
+                        })
+                    }
+                    break;
+                case 'change:card': // 修改任务中相关数据内容 (对于代办来说修改卡片 开始时间 | 截止时间 | 执行人)
+                    curr_card_id = id_arr_[0]
+                    if (current_user && Object.keys(current_user).length) {
+                        let obj = {
+                            id: drawContent.card_id,
+                            name: drawContent.card_name,
+                            org_id: drawContent.org_id,
+                            board_id: drawContent.board_id,
+                            board_name: drawContent.board_name,
+                            start_time: drawContent.start_time,
+                            due_time: drawContent.due_time,
+                            rela_type: '1'
+                        }
+                        new_board_card_todo_list_.push(obj)
+                        dispathes({
+                            type: 'simplemode/updateDatas',
+                            payload: {
+                                board_card_todo_list: new_board_card_todo_list_
+                            }
+                        })
+                    } else {
+                        new_board_card_todo_list_ = new_board_card_todo_list_.filter(item => item.id != curr_card_id)
+                        dispathes({
+                            type: 'simplemode/updateDatas',
+                            payload: {
+                                board_card_todo_list: new_board_card_todo_list_
+                            }
+                        })
+                    }
+                    break;
+                case 'add:flow:instance': // 添加流程实例
+                    break;
+                case 'change:flow:instance': // 修改流程实例
+                    break;
+                default:
+                    break;
+            }
+        }
     },
 
     reducers: {
