@@ -9,19 +9,20 @@ const rely_map = [
             {
                 "id": "1263801172725207040",
                 "name": "土地现状图",
-                "direction": "start_start"
-            },
-            {
-                "id": "1263349271890104320",
-                "name": "城市规划图",
                 "direction": "start_end"
-            }
+            },
+            // {
+            //     "id": "1263349271890104320",
+            //     "name": "城市规划图",
+            //     "direction": "start_end"
+            // }
         ]
     },
 ]
 const width_diff = 8 //宽度误差微调
 const left_diff = 8 //位置误差微调
 const top_diff = 40 //位置误差微调
+const top_diff_60 = 60 //位置误差微调
 const top_diff_30 = 30 //位置误差微调
 const top_diff_20 = 20 //位置误差微调
 const top_diff_10 = 10 //位置误差微调
@@ -48,7 +49,7 @@ export default class index extends Component {
         if (!data.length || !cards_one_level.length) return
         for (let val of data) {
             const { id, next = [] } = val
-            const card_detail = cards_one_level.find(item => item.id == id)
+            const card_detail = cards_one_level.find(item => item.id == id) || {}
             const { left, width, top } = card_detail
             val.left = left
             val.top = top
@@ -121,8 +122,48 @@ export default class index extends Component {
             }
             return Move_Line
         },
-        'start_end': () => {
+        'start_end': ({ move_left, move_top, line_top, line_left, line_right }) => {
+            let Move_Line = ''
+            if (move_top == line_top) {
+                if (move_left < line_left) {
+                    Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
+                    L${move_left}, ${move_top + top_diff}
+                    L${move_left}, ${line_top + top_diff + top_diff_30},
+                    L${line_right - width_diff}, ${line_top + top_diff + top_diff_30},
+                    `
+                } else {
+                    Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
+                    L${line_right - width_diff}, ${line_top + top_diff}
+                    `
+                }
+                return Move_Line
+            }
+            if (move_left < line_right) {
+                if (move_top < line_top) {
+                    Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
+                    L${move_left}, ${move_top + top_diff}
+                    L${move_left}, ${line_top + top_diff_10},
+                    L${line_right - left_diff}, ${line_top + top_diff_10}`
 
+                } else {
+                    Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
+                    L${move_left}, ${move_top + top_diff}
+                    L${move_left}, ${line_top + top_diff_60 + top_diff_10},
+                    L${line_right - left_diff}, ${line_top + top_diff_60 + top_diff_10}`
+                }
+
+            } else if (move_left == line_right) {
+                Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
+                            L${line_right - left_diff}, ${move_top + top_diff}
+                            L${line_right - left_diff}, ${line_top + top_diff},
+                           `
+            } else if (move_left > line_right) {
+                Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
+                            L${line_right - left_diff}, ${move_top + top_diff}
+                            L${line_right - left_diff}, ${line_top + top_diff},
+                            `
+            }
+            return Move_Line
         },
         'end_start': () => {
 
