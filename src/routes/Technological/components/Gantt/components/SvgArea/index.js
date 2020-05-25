@@ -9,7 +9,7 @@ const rely_map = [
             {
                 "id": "1263801172725207040",
                 "name": "土地现状图",
-                "direction": "start_start"
+                "direction": "start_end"
             },
             // {
             //     "id": "1263349271890104320",
@@ -239,6 +239,7 @@ export default class index extends Component {
         },
         'start_end': ({ move_left, move_top, line_top, line_left, line_right }) => {
             let Move_Line = ''
+            let Arrow = ''
             if (move_top == line_top) {
                 if (move_left < line_left) {
                     Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
@@ -246,12 +247,21 @@ export default class index extends Component {
                     L${move_left}, ${line_top + top_diff + top_diff_30},
                     L${line_right - width_diff}, ${line_top + top_diff + top_diff_30},
                     `
+                    Arrow = this.calArrow({
+                        arrow_direction: 'top',
+                        final_point: { x: line_right - width_diff, y: line_top + top_diff + top_diff_30 },
+                        diff_horizontal: 'left'
+                    })
                 } else {
                     Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
-                    L${line_right - width_diff}, ${line_top + top_diff}
+                    L${line_right}, ${line_top + top_diff}
                     `
+                    Arrow = this.calArrow({
+                        arrow_direction: 'left',
+                        final_point: { x: line_right, y: line_top + top_diff },
+                    })
                 }
-                return { Move_Line }
+                return { Move_Line, Arrow }
             }
             if (move_left < line_right) {
                 if (move_top < line_top) {
@@ -259,26 +269,43 @@ export default class index extends Component {
                     L${move_left}, ${move_top + top_diff}
                     L${move_left}, ${line_top + top_diff_10},
                     L${line_right - left_diff}, ${line_top + top_diff_10}`
-
+                    Arrow = this.calArrow({
+                        arrow_direction: 'down',
+                        final_point: { x: line_right - left_diff, y: line_top + top_diff_10 },
+                        diff_horizontal: 'left'
+                    })
                 } else {
                     Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
                     L${move_left}, ${move_top + top_diff}
                     L${move_left}, ${line_top + top_diff_60 + top_diff_10},
                     L${line_right - left_diff}, ${line_top + top_diff_60 + top_diff_10}`
+                    Arrow = this.calArrow({
+                        arrow_direction: 'top',
+                        final_point: { x: line_right - left_diff, y: line_top + top_diff_60 + top_diff_10 },
+                        diff_horizontal: 'left'
+                    })
                 }
 
-            } else if (move_left == line_right) {
+            } else if (move_left == line_right) { //和move_left > line_right一样
                 Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
                             L${line_right - left_diff}, ${move_top + top_diff}
-                            L${line_right - left_diff}, ${line_top + top_diff},
+                            L${line_right - left_diff}, ${line_top + (move_top > line_top ? top_diff_60 : top_diff_20)},
                            `
+                Arrow = this.calArrow({
+                    arrow_direction: move_top > line_top ? 'top' : 'down',
+                    final_point: { x: line_right - left_diff, y: line_top + (move_top > line_top ? top_diff_60 : top_diff_20) },
+                })
             } else if (move_left > line_right) {
                 Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
                             L${line_right - left_diff}, ${move_top + top_diff}
-                            L${line_right - left_diff}, ${line_top + top_diff},
+                            L${line_right - left_diff}, ${line_top + (move_top > line_top ? top_diff_60 : top_diff_20)},
                             `
+                Arrow = this.calArrow({
+                    arrow_direction: move_top > line_top ? 'top' : 'down',
+                    final_point: { x: line_right - left_diff, y: line_top + (move_top > line_top ? top_diff_60 : top_diff_20) },
+                })
             }
-            return { Move_Line }
+            return { Move_Line, Arrow }
         },
         'end_start': ({ move_left, move_top, line_top, line_left, line_right, move_right }) => {
             let Move_Line = ''
