@@ -679,7 +679,7 @@ export default class GetRowGantt extends Component {
     // console.log('task_is_dragging', this.state.task_is_dragging)
     return (
       <>
-        <SvgArea></SvgArea>
+
         <div className={indexStyles.gantt_operate_top}
           // onMouseDown={this.dashedMousedown.bind(this)} //用来做拖拽虚线框
           // onMouseMove={this.dashedMouseMove.bind(this)}
@@ -687,6 +687,7 @@ export default class GetRowGantt extends Component {
           {...this.targetMouseEvent()}
           id={'gantt_operate_area_panel'}
           ref={'gantt_operate_area_panel'}>
+          <SvgArea></SvgArea>
           {this.renderDashedRect()}
           {/* 非大纲视图下渲染任务和或者进度 */}
           {

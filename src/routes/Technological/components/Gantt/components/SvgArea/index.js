@@ -9,7 +9,7 @@ const rely_map = [
             {
                 "id": "1263801172725207040",
                 "name": "土地现状图",
-                "direction": "end_end"
+                "direction": "start_start"
             },
             // {
             //     "id": "1263349271890104320",
@@ -20,7 +20,7 @@ const rely_map = [
     },
 ]
 const width_diff = 8 //宽度误差微调
-const left_diff = 10 //位置误差微调
+const left_diff = 12 //位置误差微调
 const top_diff = 40 //位置误差微调
 const top_diff_60 = 60 //位置误差微调
 const top_diff_30 = 30 //位置误差微调
@@ -82,9 +82,90 @@ export default class index extends Component {
         return arr
     }
 
+    calArrow = ({ arrow_direction, diff_horizontal, diff_vertical, final_point: { x, y } }) => {
+        // arrow_direction箭头方向
+        // "M1662,299 L1666,296 L1666,302 Z"
+        //diff_horizontal向左还是向右偏移
+        let x2 = '', y2 = '', x3 = '', y3 = ''
+        if ('top' == arrow_direction) {
+            if (diff_horizontal == 'right') {
+                x2 = x + 4
+                y2 = y - 6
+                x3 = x + 8
+                y3 = y
+            } else if (diff_horizontal == 'left') {
+                x2 = x - 8
+                y2 = y
+                x3 = x - 4
+                y3 = y - 6
+            } else {
+                x2 = x + 4
+                y2 = y + 6
+                x3 = x - 4
+                y3 = y + 6
+            }
+        } else if ('down' == arrow_direction) {
+            if (diff_horizontal == 'right') {
+                x2 = x + 4
+                y2 = y + 6
+                x3 = x + 8
+                y3 = y
+            } else if (diff_horizontal == 'left') {
+                x2 = x - 4
+                y2 = y + 6
+                x3 = x - 8
+                y3 = y
+            } else {
+                x2 = x - 4
+                y2 = y - 6
+                x3 = x + 4
+                y3 = y - 6
+            }
+
+        } else if ('left' == arrow_direction) {
+            if (diff_vertical == 'top') {
+                x2 = x - 6
+                y2 = y - 4
+                x3 = x
+                y3 = y - 8
+            } else if (diff_vertical == 'down') {
+                x2 = x - 6
+                y2 = y + 4
+                x3 = x
+                y3 = y + 8
+            } else {
+                x2 = x + 6
+                y2 = y - 4
+                x3 = x + 6
+                y3 = y + 4
+            }
+        } else if ('right' == arrow_direction) {
+            if (diff_vertical == 'top') {
+                x2 = x + 6
+                y2 = y - 4
+                x3 = x
+                y3 = y - 8
+            } else if (diff_vertical == 'down') {
+                x2 = x + 6
+                y2 = y + 4
+                x3 = x
+                y3 = y + 8
+            } else {
+                x2 = x - 6
+                y2 = y + 4
+                x3 = x - 6
+                y3 = y - 4
+            }
+        } else {
+
+        }
+        return `M${x},${y} L${x2},${y2} L${x3},${y3} Z`
+    }
+
     pathFunc = {
         'start_start': ({ move_left, move_top, line_top, line_left }) => {
             let Move_Line = ''
+            let Arrow = ''
             if (move_top == line_top) {
                 if (move_left < line_left) {
                     Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
@@ -93,15 +174,24 @@ export default class index extends Component {
                     L${line_left}, ${line_top + top_diff + top_diff_30},
                     L${line_left + left_diff}, ${line_top + top_diff + top_diff_30},
                     ` //最后一个点 L${line_left + left_diff}, ${line_top + top_diff + top_diff_20},
-
+                    Arrow = this.calArrow({
+                        arrow_direction: 'top',
+                        final_point: { x: line_left + left_diff, y: line_top + top_diff + top_diff_30 },
+                        diff_horizontal: 'left'
+                    })
                 } else {
                     Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
                     L${move_left}, ${move_top + top_diff}
                     L${move_left}, ${line_top + top_diff + top_diff_30},
                     L${line_left + left_diff}, ${line_top + top_diff + top_diff_30},
                     ` //最后一个点 L${line_left + left_diff}, ${line_top + top_diff + top_diff_20},
+                    Arrow = this.calArrow({
+                        arrow_direction: 'top',
+                        final_point: { x: line_left + left_diff, y: line_top + top_diff + top_diff_30 },
+                        diff_horizontal: 'right'
+                    })
                 }
-                return Move_Line
+                return { Move_Line, Arrow }
             }
             if (move_left < line_left) {
                 Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
@@ -109,25 +199,43 @@ export default class index extends Component {
                             L${move_left}, ${line_top + top_diff},
                             L${move_left}, ${line_top + top_diff},
                             L${line_left}, ${line_top + top_diff}`
+                Arrow = this.calArrow({
+                    arrow_direction: 'right',
+                    final_point: { x: line_left, y: line_top + top_diff },
+                })
             } else if (move_left == line_left) {
                 if (move_top < line_top) {
                     Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
                     L${move_left}, ${move_top + top_diff}
                     L${move_left}, ${line_top + top_diff_10},
                     L${line_left + left_diff}, ${line_top + top_diff_10}`
+                    Arrow = this.calArrow({
+                        arrow_direction: 'down',
+                        diff_horizontal: 'left',
+                        final_point: { x: line_left + left_diff, y: line_top + top_diff_10 },
+                    })
                 } else {
                     Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
                     L${move_left}, ${move_top + top_diff}
                     L${move_left}, ${line_top + top_diff + top_diff_30},
                     L${line_left + left_diff}, ${line_top + top_diff + top_diff_30}`
+                    Arrow = this.calArrow({
+                        arrow_direction: 'top',
+                        diff_horizontal: 'left',
+                        final_point: { x: line_left + left_diff, y: line_top + top_diff + top_diff_30 },
+                    })
                 }
 
             } else if (move_left > line_left) {
                 Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
                             L${line_left + width_diff}, ${move_top + top_diff}
-                            L${line_left + width_diff}, ${line_top + top_diff}`
+                            L${line_left + width_diff}, ${line_top + (move_top > line_top ? top_diff_60 : top_diff_20)}`
+                Arrow = this.calArrow({
+                    arrow_direction: move_top > line_top ? 'top' : 'down',
+                    final_point: { x: line_left + width_diff, y: line_top + (move_top > line_top ? top_diff_60 : top_diff_20) },
+                })
             }
-            return Move_Line
+            return { Move_Line, Arrow }
         },
         'start_end': ({ move_left, move_top, line_top, line_left, line_right }) => {
             let Move_Line = ''
@@ -143,7 +251,7 @@ export default class index extends Component {
                     L${line_right - width_diff}, ${line_top + top_diff}
                     `
                 }
-                return Move_Line
+                return { Move_Line }
             }
             if (move_left < line_right) {
                 if (move_top < line_top) {
@@ -170,7 +278,7 @@ export default class index extends Component {
                             L${line_right - left_diff}, ${line_top + top_diff},
                             `
             }
-            return Move_Line
+            return { Move_Line }
         },
         'end_start': ({ move_left, move_top, line_top, line_left, line_right, move_right }) => {
             let Move_Line = ''
@@ -185,7 +293,7 @@ export default class index extends Component {
                     L${line_left + left_diff}, ${line_top + top_diff + top_diff_30},
                     `
                 }
-                return Move_Line
+                return { Move_Line }
             }
             if (move_right < line_left) {
                 Move_Line = `M ${move_right - left_diff},${move_top + top_diff}
@@ -209,7 +317,7 @@ export default class index extends Component {
                                 L${line_left + width_diff}, ${line_top + top_diff + top_diff_30}`
                 }
             }
-            return Move_Line
+            return { Move_Line }
         },
         'end_end': ({ move_left, move_top, line_top, line_left, line_right, move_right }) => {
             let Move_Line = ''
@@ -219,7 +327,7 @@ export default class index extends Component {
                     L${move_right}, ${move_top + top_diff + top_diff_30},
                     L${line_right - width_diff}, ${line_top + top_diff + top_diff_30},
                     `
-                return Move_Line
+                return { Move_Line }
             }
             if (move_right < line_right) {
                 if (move_top < line_top) {
@@ -253,7 +361,7 @@ export default class index extends Component {
                     L${move_right}, ${line_top + top_diff}
                     L${line_right - width_diff}, ${line_top + top_diff}`
             }
-            return Move_Line
+            return { Move_Line }
         },
     }
     calPath = (data) => {
@@ -270,21 +378,25 @@ export default class index extends Component {
                         return (
                             next.map(line_item => {
                                 const { left: line_left, right: line_right, top: line_top, direction } = line_item
+                                const { Move_Line, Arrow } = this.calPath({
+                                    move_left,
+                                    move_right,
+                                    move_top,
+                                    line_left,
+                                    line_right,
+                                    line_top,
+                                    direction
+                                })
                                 return (
                                     <g>
                                         <path stroke="#1890FF" zIndex="2" fill="none"
-                                            d={this.calPath({
-                                                move_left,
-                                                move_right,
-                                                move_top,
-                                                line_left,
-                                                line_right,
-                                                line_top,
-                                                direction
-                                            })}
+                                            d={Move_Line}
                                             //  d="M1568,103 L1564,103 L1564,119 L1640,119 L1640,131 L1636,131"
                                             stroke-width="1" class="line__2Kq9"></path>
-                                        <path name="arrow" stroke="#1890FF" stroke-width="1" d="M1662,299 L1666,296 L1666,302 Z" class="arrow__1xeL"></path>
+                                        <path name="arrow" stroke="#1890FF" stroke-width="1"
+                                            fill="#1890FF"
+                                            d={Arrow}
+                                            class="arrow__1xeL"></path>
                                     </g>
                                 )
                             })
