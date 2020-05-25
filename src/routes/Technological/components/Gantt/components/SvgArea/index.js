@@ -9,7 +9,7 @@ const rely_map = [
             {
                 "id": "1263801172725207040",
                 "name": "土地现状图",
-                "direction": "start_end"
+                "direction": "end_start"
             },
             // {
             //     "id": "1263349271890104320",
@@ -165,8 +165,44 @@ export default class index extends Component {
             }
             return Move_Line
         },
-        'end_start': () => {
-
+        'end_start': ({ move_left, move_top, line_top, line_left, line_right, move_right }) => {
+            let Move_Line = ''
+            if (move_top == line_top) {
+                if (move_left < line_left) {
+                    Move_Line = `M ${move_right - left_diff},${move_top + top_diff}
+                    L${line_left}, ${move_top + top_diff}`
+                } else {
+                    Move_Line = `M ${move_right - left_diff},${move_top + top_diff}
+                    L${move_right + left_diff}, ${move_top + top_diff}
+                    L${move_right + left_diff}, ${line_top + top_diff + top_diff_30},
+                    L${line_left + left_diff}, ${line_top + top_diff + top_diff_30},
+                    `
+                }
+                return Move_Line
+            }
+            if (move_right < line_left) {
+                Move_Line = `M ${move_right - left_diff},${move_top + top_diff}
+                            L${line_left + left_diff}, ${move_top + top_diff}
+                            L${line_left + left_diff}, ${line_top + top_diff_20},`
+            } else if (move_right == line_left) {
+                Move_Line = `M ${move_right - left_diff},${move_top + top_diff}
+                            L${line_left + left_diff}, ${move_top + top_diff}
+                            L${line_left + left_diff}, ${line_top + top_diff_20},`
+            } else if (move_right > line_left) {
+                if (move_top < line_top) {
+                    Move_Line = `M ${move_right - left_diff},${move_top + top_diff}
+                                L${move_right + left_diff}, ${move_top + top_diff}
+                                L${move_right + width_diff}, ${line_top + top_diff_10}
+                                L${line_left + width_diff}, ${line_top + top_diff_10}
+                                `
+                } else {
+                    Move_Line = `M ${move_right - left_diff},${move_top + top_diff}
+                                L${move_right + left_diff}, ${move_top + top_diff}
+                                L${move_right + width_diff}, ${line_top + top_diff + top_diff_30}
+                                L${line_left + width_diff}, ${line_top + top_diff + top_diff_30}`
+                }
+            }
+            return Move_Line
         },
         'end_end': () => {
 
