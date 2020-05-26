@@ -1,21 +1,22 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
-
+import styles from './index.less'
+import { Popconfirm } from 'antd'
 const rely_map = [
     {
         "id": "1263055661797871616",
-        "name": "了解土地控规条件",
+        "name": "开始",
         "next": [
             {
                 "id": "1263801172725207040",
-                "name": "土地现状图",
-                "direction": "end_end"
+                "name": "结尾",
+                "direction": "end_start"
             },
-            // {
-            //     "id": "1263349271890104320",
-            //     "name": "城市规划图",
-            //     "direction": "start_end"
-            // }
+            {
+                "id": "1265105776687583232",
+                "name": "结尾2",
+                "direction": "start_end"
+            }
         ]
     },
 ]
@@ -82,6 +83,7 @@ export default class index extends Component {
         return arr
     }
 
+    // 绘制箭头规则
     calArrow = ({ arrow_direction, diff_horizontal, diff_vertical, final_point: { x, y } }) => {
         // arrow_direction箭头方向
         // "M1662,299 L1666,296 L1666,302 Z"
@@ -161,7 +163,7 @@ export default class index extends Component {
         }
         return `M${x},${y} L${x2},${y2} L${x3},${y3} Z`
     }
-
+    // 绘制依赖路线
     pathFunc = {
         'start_start': ({ move_left, move_top, line_top, line_left }) => {
             let Move_Line = ''
@@ -313,10 +315,10 @@ export default class index extends Component {
             if (move_top == line_top) {
                 if (move_left < line_left) {
                     Move_Line = `M ${move_right - left_diff},${move_top + top_diff}
-                    L${line_left}, ${move_top + top_diff}`
+                    L${line_left + width_diff / 2}, ${move_top + top_diff}`
                     Arrow = this.calArrow({
                         arrow_direction: 'right',
-                        final_point: { x: line_left, y: move_top + top_diff },
+                        final_point: { x: line_left + width_diff / 2, y: move_top + top_diff },
                     })
                 } else {
                     Move_Line = `M ${move_right - left_diff},${move_top + top_diff}
@@ -450,16 +452,62 @@ export default class index extends Component {
         const { move_left, move_right, move_top, line_left, line_right, line_top, direction } = data
         return this.pathFunc[direction](data)
     }
+
+    // 
+    pathClick = (e) => {
+    }
+    // 删除依赖
+    deleteRely = ({ move_id, line_id }) => {
+        const { rely_map = [] } = this.state
+        let _re_rely_map = [...rely_map]
+        const move_index = rely_map.findIndex(item => item.id == move_id) //起始点索引
+        const move_item = rely_map.find(item => item.id == move_id) //起始点这一项
+        const move_next = move_item.next //起始点所包含的全部终点信息
+        const line_index = move_next.findIndex(item => item.id == line_id)
+        if (move_next.length > 1) {
+            _re_rely_map[move_index].next.splice(line_index, 1)
+        } else {
+            _re_rely_map.splice(move_index, 1)
+        }
+        this.setState({
+            rely_map: _re_rely_map
+        })
+    }
+    pathMouseEvent = {
+        // 拖拽
+        onMouseDown: (e) => {
+            e.stopPropagation()
+        },
+        onMouseMove: (e) => {
+            e.stopPropagation()
+        },
+        onMouseUp: (e) => {
+            e.stopPropagation()
+        }, //查看子任务是查看父任务
+
+        onTouchStart: (e) => {
+            e.stopPropagation()
+        },
+        onTouchMove: (e) => {
+            e.stopPropagation()
+        },
+        onTouchEnd: (e) => {
+            e.stopPropagation()
+        }, //查看子任务是查看父任务
+        onMouseEnter: (e) => {
+            e.stopPropagation()
+        },
+    }
     renderPaths = () => {
         const { rely_map = [] } = this.state
         return (
             <>
                 {
                     rely_map.map(move_item => {
-                        const { left: move_left, right: move_right, top: move_top, next = [] } = move_item
+                        const { left: move_left, right: move_right, top: move_top, next = [], id: move_id } = move_item
                         return (
                             next.map(line_item => {
-                                const { left: line_left, right: line_right, top: line_top, direction } = line_item
+                                const { left: line_left, right: line_right, top: line_top, direction, id: line_id } = line_item
                                 const { Move_Line, Arrow } = this.calPath({
                                     move_left,
                                     move_right,
@@ -470,15 +518,27 @@ export default class index extends Component {
                                     direction
                                 })
                                 return (
-                                    <g>
-                                        <path stroke="#1890FF" zIndex="2" fill="none"
-                                            d={Move_Line}
-                                            //  d="M1568,103 L1564,103 L1564,119 L1640,119 L1640,131 L1636,131"
-                                            stroke-width="1" class="line__2Kq9"></path>
-                                        <path name="arrow" stroke="#1890FF" stroke-width="1"
+                                    <g data-targetclassname="specific_example" onClick={this.pathClick}>
+                                        <path name="arrow"
+                                            stroke="#1890FF"
+                                            stroke-width="1"
+                                            data-targetclassname="specific_example"
                                             fill="#1890FF"
                                             d={Arrow}
-                                            class="arrow__1xeL"></path>
+                                            onClick={() => this.deleteRely({ move_id, line_id })}
+                                            className={`${styles.path} ${styles.path_arrow}`}
+                                            {...this.pathMouseEvent}
+                                        />
+                                        <path
+                                            stroke="#1890FF"
+                                            fill="none"
+                                            data-targetclassname="specific_example"
+                                            d={Move_Line}
+                                            stroke-width='1'
+                                            onClick={() => this.deleteRely({ move_id, line_id })}
+                                            className={`${styles.path} ${styles.path_line}`}
+                                            {...this.pathMouseEvent}
+                                        />
                                     </g>
                                 )
                             })
@@ -494,15 +554,15 @@ export default class index extends Component {
         const { rely_map = [] } = this.state
         console.log('rely_map', rely_map)
         return (
-            <>
-                <svg id={'gantt_svg_area'} style={{
-                    position: 'absolute', width: date_total * ceilWidth, height: '100%', zIndex: 0,
-                    // backgroundColor: 'yellow'
-                }}>
-                    {/* <path class="dependencies-fake__2JNc" d="M1404 82C1570 82,982 82,1148 82"></path> */}
+            <div onClick={(e) => e.stopPropagation()}>
+                <svg id={'gantt_svg_area'}
+                    onClick={(e) => e.stopPropagation()}
+                    style={{
+                        position: 'absolute', width: date_total * ceilWidth, height: '100%', zIndex: 0,
+                    }}>
                     {this.renderPaths()}
                 </svg>
-            </>
+            </div>
         )
     }
 }
