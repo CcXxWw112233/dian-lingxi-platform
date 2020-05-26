@@ -10,7 +10,7 @@ import { Tooltip, Dropdown, message } from 'antd'
 import { date_area_height, task_item_height, task_item_margin_top, ganttIsFold, ceil_height_fold, task_item_height_fold, group_rows_fold, ganttIsOutlineView, ceil_width } from './constants'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import QueueAnim from 'rc-queue-anim'
-import GetRowTaskItem from './GetRowTaskItem'
+import GetRowTaskItem from './components/CardItem/index'
 import { filterDueTimeSpan, setDateWithPositionInYearView } from './ganttBusiness'
 import { checkIsHasPermissionInBoard } from '../../../../utils/businessFunction';
 import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE } from '../../../../globalset/js/constant';
