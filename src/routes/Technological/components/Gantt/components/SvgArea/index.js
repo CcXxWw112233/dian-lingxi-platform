@@ -2,18 +2,19 @@ import React, { Component } from 'react'
 import { connect } from 'dva'
 import styles from './index.less'
 import { Popconfirm } from 'antd'
+import { ganttIsOutlineView } from '../../constants'
 const rely_map = [
     {
-        "id": "1263055661797871616",
+        "id": "1265111963571195904",
         "name": "开始",
         "next": [
             {
-                "id": "1263801172725207040",
-                "name": "结尾",
+                "id": "1265112077387829248",
+                "name": "结尾1",
                 "direction": "end_start"
             },
             {
-                "id": "1265105776687583232",
+                "id": "1265112137341210624",
                 "name": "结尾2",
                 "direction": "start_end"
             }
@@ -62,9 +63,8 @@ export default class index extends Component {
     }
     // 设置最终依赖关系地图
     setRelyMaps = (props) => {
-        const { list_group = [] } = props
         let { rely_map = [] } = this.state
-        const arr = this.getCardArr(list_group)
+        const arr = this.getCardArr(props)
         this.setState({
             cards_one_level: arr
         }, () => {
@@ -75,11 +75,18 @@ export default class index extends Component {
         })
     }
     // 将所有任务铺开成一维数组
-    getCardArr = (list_group) => {
+    getCardArr = (props) => {
+        const { group_view_type } = props
+        const { list_group = [], outline_tree_round = [] } = props
         let arr = []
-        for (let val of list_group) {
-            arr = [].concat(arr, val.list_data)
+        if (group_view_type == '4') { //大纲
+            arr = outline_tree_round.filter(item => item.tree_type == '2') //大纲树中的任务
+        } else {
+            for (let val of list_group) {
+                arr = [].concat(arr, val.list_data)
+            }
         }
+
         return arr
     }
 
@@ -459,7 +466,7 @@ export default class index extends Component {
     // 删除依赖
     deleteRely = ({ move_id, line_id }) => {
         const { rely_map = [] } = this.state
-        let _re_rely_map = [...rely_map]
+        let _re_rely_map = JSON.parse(JSON.stringify(rely_map))
         const move_index = rely_map.findIndex(item => item.id == move_id) //起始点索引
         const move_item = rely_map.find(item => item.id == move_id) //起始点这一项
         const move_next = move_item.next //起始点所包含的全部终点信息
@@ -497,6 +504,22 @@ export default class index extends Component {
         onMouseEnter: (e) => {
             e.stopPropagation()
         },
+    }
+
+    setSVGHeight = () => {
+        const rows = 7
+        const { ceiHeight, group_view_type, outline_tree_round = [] } = this.props
+
+        if (ganttIsOutlineView({ group_view_type })) {
+            const outline_tree_round_length = outline_tree_round.length
+            if (outline_tree_round_length > rows) {
+                return (outline_tree_round_length + 8) * ceiHeight
+            } else {
+                return (rows + 5) * ceiHeight
+            }
+        } else {
+            return '100%'
+        }
     }
     renderPaths = () => {
         const { rely_map = [] } = this.state
@@ -558,7 +581,10 @@ export default class index extends Component {
                 <svg id={'gantt_svg_area'}
                     onClick={(e) => e.stopPropagation()}
                     style={{
-                        position: 'absolute', width: date_total * ceilWidth, height: '100%', zIndex: 0,
+                        position: 'absolute',
+                        width: date_total * ceilWidth,
+                        height: this.setSVGHeight(),
+                        zIndex: 0,
                     }}>
                     {this.renderPaths()}
                 </svg>
@@ -574,7 +600,8 @@ function mapStateToProps({ gantt: {
         outline_tree_round,
         gantt_view_mode,
         list_group = [],
-        date_total
+        date_total,
+        ceiHeight
     } },
 }) {
     return {
@@ -584,6 +611,7 @@ function mapStateToProps({ gantt: {
         outline_tree_round,
         gantt_view_mode,
         list_group,
-        date_total
+        date_total,
+        ceiHeight
     }
 }
