@@ -8,6 +8,18 @@ const model_publicTaskDetailModal = name => `publicTaskDetailModal/${name}`
 const getAfterNameId = (coperateName) => { //获取跟在名字后面的id
     return coperateName.substring(coperateName.indexOf('/') + 1)
 }
+// 数组去重
+const arrayNonRepeatfy = arr => {
+    let temp_arr = []
+    let temp_id = []
+    for (let i = 0; i < arr.length; i++) {
+        if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
+            temp_arr.push(arr[i]);
+            temp_id.push(arr[i]['id'])
+        }
+    }
+    return temp_arr
+}
 
 let dispathes = null
 export default {
@@ -330,7 +342,7 @@ export default {
             const coperateName = coperate.e
             const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
             const coperateData = JSON.parse(coperate.d)
-            console.log(coperateData, coperateName,'coperateData')
+            console.log(coperateData, coperateName, 'coperateData')
             let board_card_todo_list = yield select(getModelSelectState('simplemode', 'board_card_todo_list'))
             let new_board_card_todo_list_ = [...board_card_todo_list]
             const drawContent = yield select(getModelSelectState('publicTaskDetailModal', 'drawContent')) //任务详情
@@ -382,21 +394,32 @@ export default {
                 case 'change:card': // 修改任务中相关数据内容 (对于代办来说修改卡片 开始时间 | 截止时间 | 执行人)
                     curr_card_id = id_arr_[0]
                     if (current_user && Object.keys(current_user).length) {
+                        if (coperateData.is_realize == '1') {// 表示已完成
+                            new_board_card_todo_list_ = new_board_card_todo_list_.filter(item => item.id != curr_card_id)
+                            dispathes({
+                                type: 'simplemode/updateDatas',
+                                payload: {
+                                    board_card_todo_list: arrayNonRepeatfy(new_board_card_todo_list_)
+                                }
+                            })
+                            return
+                        }
                         let obj = {
-                            id: drawContent.card_id,
-                            name: drawContent.card_name,
-                            org_id: drawContent.org_id,
-                            board_id: drawContent.board_id,
-                            board_name: drawContent.board_name,
-                            start_time: drawContent.start_time,
-                            due_time: drawContent.due_time,
+                            id: coperateData.card_id,
+                            name: coperateData.card_name,
+                            org_id: coperateData.org_id,
+                            board_id: coperateData.board_id,
+                            board_name: coperateData.board_name,
+                            start_time: coperateData.start_time,
+                            due_time: coperateData.due_time,
                             rela_type: '1'
                         }
-                        new_board_card_todo_list_.push(obj)
+                        // 当修改时间会推送多条, 所以应该往前插入保存最新的一条 并且去重
+                        new_board_card_todo_list_.unshift(obj)
                         dispathes({
                             type: 'simplemode/updateDatas',
                             payload: {
-                                board_card_todo_list: new_board_card_todo_list_
+                                board_card_todo_list: arrayNonRepeatfy(new_board_card_todo_list_)
                             }
                         })
                     } else {
@@ -404,7 +427,7 @@ export default {
                         dispathes({
                             type: 'simplemode/updateDatas',
                             payload: {
-                                board_card_todo_list: new_board_card_todo_list_
+                                board_card_todo_list: arrayNonRepeatfy(new_board_card_todo_list_)
                             }
                         })
                     }
