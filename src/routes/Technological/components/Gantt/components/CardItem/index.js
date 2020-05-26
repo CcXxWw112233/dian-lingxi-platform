@@ -983,7 +983,7 @@ export default class CardItem extends Component {
                     )
                 }
                 {/* //hover出现的耳朵效果 */}
-                <HoverEars />
+                <HoverEars label_data={label_data} />
             </div>
         )
     }
