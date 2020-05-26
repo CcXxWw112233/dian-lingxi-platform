@@ -263,11 +263,11 @@ export default class index extends Component {
                     })
                 } else {
                     Move_Line = `M ${move_left + left_diff},${move_top + top_diff}
-                    L${line_right}, ${line_top + top_diff}
+                    L${line_right - width_diff / 2}, ${line_top + top_diff}
                     `
                     Arrow = this.calArrow({
                         arrow_direction: 'left',
-                        final_point: { x: line_right, y: line_top + top_diff },
+                        final_point: { x: line_right - width_diff / 2, y: line_top + top_diff },
                     })
                 }
                 return { Move_Line, Arrow }

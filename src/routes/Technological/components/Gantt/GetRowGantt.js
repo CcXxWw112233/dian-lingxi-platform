@@ -635,7 +635,7 @@ export default class GetRowGantt extends Component {
             textAlign: 'right',
             lineHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? `${task_item_height_fold}px` : `${ceiHeight - task_item_margin_top}px`,
             paddingRight: Math.ceil(currentRect.width / ceilWidth) > 1 ? 8 : 0,
-            zIndex: this.state.drag_creating ? 2 : 1
+            zIndex: this.state.drag_creating ? 2 : 0
           }} >
           {Math.ceil(currentRect.width / ceilWidth) > 1 ? Math.ceil(currentRect.width / ceilWidth) : ''}
           {
@@ -687,8 +687,8 @@ export default class GetRowGantt extends Component {
           {...this.targetMouseEvent()}
           id={'gantt_operate_area_panel'}
           ref={'gantt_operate_area_panel'}>
-          <SvgArea></SvgArea>
           {this.renderDashedRect()}
+          <SvgArea></SvgArea>
           {/* 非大纲视图下渲染任务和或者进度 */}
           {
             !ganttIsOutlineView({ group_view_type }) && list_group.map((value, key) => {

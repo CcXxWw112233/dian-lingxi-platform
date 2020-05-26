@@ -1058,7 +1058,7 @@ export default class GetRowTaskItem extends Component {
                     )
                 }
                 {
-                    ganttIsOutlineView({ group_view_type }) && !parent_card_id &&
+                    ganttIsOutlineView({ group_view_type }) && !parent_card_id && //大纲视图有子任务时间的父任务
                     // !this.couldChangeCard() &&
                     (gantt_view_mode == 'year' ? time_span > 4 : true) &&
                     (
@@ -1074,6 +1074,10 @@ export default class GetRowTaskItem extends Component {
                             <div className={indexStyles.right_triangle_mask}></div>
                         </>
                     )
+                }
+                { //hover出现的耳朵效果
+                    <>
+                    </>
                 }
             </div>
             // </Popover> 
