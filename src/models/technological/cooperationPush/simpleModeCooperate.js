@@ -345,8 +345,6 @@ export default {
             console.log(coperateData, coperateName, 'coperateData')
             let board_card_todo_list = yield select(getModelSelectState('simplemode', 'board_card_todo_list'))
             let new_board_card_todo_list_ = [...board_card_todo_list]
-            const drawContent = yield select(getModelSelectState('publicTaskDetailModal', 'drawContent')) //任务详情
-            const card_detail_card_id = yield select(getModelSelectState('publicTaskDetailModal', 'card_id')) //任务弹
             const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}
             const user_id = userInfo['id']
             let coop_executors = coperateData.executors || [] // 获取当前任务的执行人
@@ -356,6 +354,9 @@ export default {
             let curr_card_id = '' //对象的任务id
             let curr_org_id = '' // 对象的组织ID
             switch (coperateType) {
+                case 'add:board': // 新建项目
+                    
+                    break
                 case 'change:cards': // 添加任务
                     // 1. 判断是否是该执行人的代办
                     if (!(current_user && Object.keys(current_user).length)) return
