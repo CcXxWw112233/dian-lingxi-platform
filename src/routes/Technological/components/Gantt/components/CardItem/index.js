@@ -861,8 +861,7 @@ export default class CardItem extends Component {
 
     // 相关元素绘制点击拖拽中
     setRelyDown = (bool) => {
-        console.log('ssssssasdasd0', bool)
-
+        this.props.setTaskIsDragging(bool)
         this.setState({
             rely_down: bool
         })
@@ -993,7 +992,10 @@ export default class CardItem extends Component {
                     )
                 }
                 {/* //hover出现的耳朵效果 */}
-                <HoverEars itemValue={itemValue} dispatch={this.props.dispatch} setRelyLineDrawing={this.setRelyDown} />
+                <HoverEars itemValue={itemValue}
+                    dispatch={this.props.dispatch}
+                    setRelyLineDrawing={this.setRelyDown}
+                    rely_down={rely_down} />
             </div>
         )
     }

@@ -28,7 +28,7 @@ class HoverEars extends Component {
         const target = this.left_circle_ref.current
         // 取得鼠标位置
         const x = e.pageX - target_0.offsetLeft + target_1.scrollLeft - coperatedLeftDiv - coperatedX
-        const y = e.pageY - target.offsetTop + target_1.scrollTop - dateAreaHeight
+        const y = e.pageY + target_1.scrollTop - dateAreaHeight //- target.offsetTop
         return {
             x, y
         }
@@ -47,6 +47,8 @@ class HoverEars extends Component {
                 transformOrigin: `0 0`
             })
             this.rela_x = x - 10
+            this.rela_y = y + 20
+
         } else if (target_ref == 'right_circle_ref') {
             this.setState({
                 x1: width,
@@ -54,10 +56,11 @@ class HoverEars extends Component {
                 transformOrigin: `${width} ${20}`
             })
             this.rela_x = x + 10
+            this.rela_y = y - 20
+
         } else {
 
         }
-        this.rela_y = y + 20
         setRelyLineDrawing && setRelyLineDrawing(true)
     }
 
@@ -68,7 +71,7 @@ class HoverEars extends Component {
         const y2 = y - this.rela_y
         const { angle, length } = this.calHypotenuse({ x2, y2 })
         this.setState({
-            angle, length
+            angle, length, x2, y2
         })
     }
     onMouseup = (e) => {
@@ -159,8 +162,8 @@ class HoverEars extends Component {
         }
     }
     render() {
-        const { itemValue: { label_data = [] } } = this.props
-        const { x1, y1, length, angle, transformOrigin } = this.state
+        const { itemValue: { label_data = [] }, rely_down } = this.props
+        const { x1, y1, length, angle, transformOrigin, x2, y2 } = this.state
         return (
             <div className={indexStyles.ears_out}>
                 <div
@@ -198,8 +201,18 @@ class HoverEars extends Component {
                         transformOrigin,
                     }}
                     className={indexStyles.line}>
+                    {
+                        rely_down && (
+                            <div className={indexStyles.triangle_down}
+                                style={{
+                                    top: '100%',
+                                    left: '100%',
+                                }} />
+                        )
+                    }
 
                 </div>
+
             </div>
         )
     }
