@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import indexStyles from './index.less'
 import { date_area_height } from '../../constants'
+import { message } from 'antd'
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
 const coperatedX = 0
@@ -14,6 +15,8 @@ class HoverEars extends Component {
             y2: 0,
             length: 0,
             angle: 0,
+            move_to: '', //start/end
+            line_to: '', //start/end
         }
         this.rela_x = 0
         this.rela_y = 0
@@ -44,7 +47,8 @@ class HoverEars extends Component {
             this.setState({
                 x1: -10,
                 y1: 20,
-                transformOrigin: `0 0`
+                transformOrigin: `0 0`,
+                move_to: 'start'
             })
             this.rela_x = x - 10
             this.rela_y = y + 20
@@ -53,7 +57,8 @@ class HoverEars extends Component {
             this.setState({
                 x1: width,
                 y1: 20,
-                transformOrigin: `${width} ${20}`
+                transformOrigin: `${width} ${20}`,
+                move_to: 'end'
             })
             this.rela_x = x + 10
             this.rela_y = y - 20
@@ -67,8 +72,8 @@ class HoverEars extends Component {
     onMousemove = (e) => {
         const { x1, y1 } = this.state
         const { x, y } = this.getXY(e)
-        const x2 = x - this.rela_x
-        const y2 = y - this.rela_y
+        const x2 = x - this.rela_x - 10 // - 10是为了让鼠标不落在箭头上
+        const y2 = y - this.rela_y - 10
         const { angle, length } = this.calHypotenuse({ x2, y2 })
         this.setState({
             angle, length, x2, y2
@@ -77,7 +82,6 @@ class HoverEars extends Component {
     onMouseup = (e) => {
         document.onmousemove = null
         document.onmouseup = null
-        this.handleCreateRely(e)
         const { setRelyLineDrawing } = this.props
         setRelyLineDrawing && setRelyLineDrawing(false)
         this.setState({
@@ -90,6 +94,7 @@ class HoverEars extends Component {
         })
         this.rela_x = 0
         this.rela_y = 0
+        this.handleCreateRely(e)
     }
 
     // 计算三角形 -----start
@@ -112,9 +117,39 @@ class HoverEars extends Component {
 
     // 计算三角形 ----- end
 
-    handleCreateRely = (e) => {
-        console
+    handleCreateRely = (e) => { //当落点在具体任务上
+        const { itemValue: { id: move_id, parent_id } } = this.props
+        const target = e.target
+        const { rely_top, rely_right, rely_left } = e.target.dataset
+        if (!rely_top && !rely_right && !rely_left) return
+        let line_to
+        const line_id = rely_top || rely_right || rely_left
+        if (parent_id == line_id) {
+            message.warn('已和父任务存在依赖')
+            return
+        }
+        if (move_id == line_id) return
+        if (rely_left) { //落点在左耳朵
+            line_to = 'start'
+        } else if (rely_right) {//落点在右耳朵
+            line_to = 'end'
+        } else if (rely_top) {
+            const clientX = e.clientX
+            const { clientWidth } = target
+            const target_1 = document.getElementById('gantt_card_out_middle')
+            const offsetLeft = this.props.getX(target);
+            const rela_left = clientX - offsetLeft - 2 + target_1.scrollLeft //鼠标在该任务内的相对位置
+            if (clientWidth - rela_left < clientWidth / 2) {
+                line_to = 'end'
+            } else {
+                line_to = 'start'
+            }
 
+        } else {
+
+        }
+        const { move_to } = this.state
+        console.log('最终结果', { line_id, move_id, move_to, line_to })
     }
 
     setTriangleTreeColor = (label_data = [], index) => {      // 获取颜色
@@ -162,17 +197,19 @@ class HoverEars extends Component {
         }
     }
     render() {
-        const { itemValue: { label_data = [] }, rely_down } = this.props
+        const { itemValue: { label_data = [], id }, rely_down } = this.props
         const { x1, y1, length, angle, transformOrigin, x2, y2 } = this.state
         return (
             <div className={indexStyles.ears_out} style={{ display: rely_down ? 'block' : '' }}>
                 <div
+                    data-rely_left={id}
                     className={`${indexStyles.ears} ${indexStyles.left_ear}`}
                     style={{ backgroundColor: `${this.setTriangleTreeColor(label_data, 'start') || '#D7D7D7'}` }}>
                     <div />
                     <div />
                 </div>
                 <div
+                    data-rely_right={id}
                     className={`${indexStyles.ears} ${indexStyles.right_ear}`}
                     style={{ backgroundColor: `${this.setTriangleTreeColor(label_data, 'start') || '#D7D7D7'}` }}>
                     <div />

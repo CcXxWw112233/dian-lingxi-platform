@@ -975,7 +975,7 @@ export default class CardItem extends Component {
                         <Popover
                             getPopupContainer={() => document.getElementById('gantt_card_out_middle')}
                             placement="bottom" content={<CardDropDetail list={[{ ...itemValue }]} />} key={id}>
-                            <div style={{ position: 'absolute', width: '100%', height: '100%' }}></div>
+                            <div style={{ position: 'absolute', width: '100%', height: '100%' }} data-rely_top={id}></div>
                         </Popover>
                     )
                 }
@@ -999,6 +999,7 @@ export default class CardItem extends Component {
                 }
                 {/* //hover出现的耳朵效果 */}
                 <HoverEars
+                    getX={this.getX}
                     itemValue={itemValue}
                     dispatch={this.props.dispatch}
                     setRelyLineDrawing={this.setRelyDown}
