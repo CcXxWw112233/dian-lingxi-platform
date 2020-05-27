@@ -72,8 +72,18 @@ class HoverEars extends Component {
     onMousemove = (e) => {
         const { x1, y1 } = this.state
         const { x, y } = this.getXY(e)
-        const x2 = x - this.rela_x - 10 // - 10是为了让鼠标不落在箭头上
-        const y2 = y - this.rela_y - 10
+        let x2 = x - this.rela_x //- 10 // - 10是为了让鼠标不落在箭头上
+        let y2 = y - this.rela_y //- 10
+        if (x2 < 0) {
+            x2 = x2 + 10
+        } else {
+            x2 = x2 - 10
+        }
+        if (y2 < 0) {
+            y2 = y2 + 10
+        } else {
+            y2 = y2 - 10
+        }
         const { angle, length } = this.calHypotenuse({ x2, y2 })
         this.setState({
             angle, length, x2, y2
