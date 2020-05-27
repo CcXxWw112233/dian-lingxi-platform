@@ -12,7 +12,8 @@ class HoverEars extends Component {
             y1: 0,
             x2: 0,
             y2: 0,
-
+            length: 0,
+            angle: 0,
         }
         this.rela_x = 0
         this.rela_y = 0
@@ -37,25 +38,79 @@ class HoverEars extends Component {
         document.onmousemove = this.onMousemove.bind(this);
         document.onmouseup = this.onMouseup.bind(this);
         const { x, y } = this.getXY(e)
-        this.rela_x = x
-        this.rela_y = y
+        const target_ref = e.target.dataset.ref
+        const { itemValue: { width }, setRelyLineDrawing } = this.props
+        if (target_ref == 'left_circle_ref') {
+            this.setState({
+                x1: -10,
+                y1: 20,
+                transformOrigin: `0 0`
+            })
+            this.rela_x = x - 10
+        } else if (target_ref == 'right_circle_ref') {
+            this.setState({
+                x1: width,
+                y1: 20,
+                transformOrigin: `${width} ${20}`
+            })
+            this.rela_x = x + 10
+        } else {
+
+        }
+        this.rela_y = y + 20
+        setRelyLineDrawing && setRelyLineDrawing(true)
     }
 
     onMousemove = (e) => {
+        const { x1, y1 } = this.state
         const { x, y } = this.getXY(e)
+        const x2 = x - this.rela_x
+        const y2 = y - this.rela_y
+        const { angle, length } = this.calHypotenuse({ x2, y2 })
         this.setState({
-            x2: x - this.rela_x,
-            y2: y - this.rela_y
+            angle, length
         })
     }
     onMouseup = (e) => {
         document.onmousemove = null
         document.onmouseup = null
-        this.handleCreateRely()
+        this.handleCreateRely(e)
+        const { setRelyLineDrawing } = this.props
+        setRelyLineDrawing && setRelyLineDrawing(false)
+        this.setState({
+            x1: 0,
+            y1: 0,
+            x2: 0,
+            y2: 0,
+            length: 0,
+            angle: 0,
+        })
+        this.rela_x = 0
+        this.rela_y = 0
     }
 
-    handleCreateRely = () => {
-        const { x1, x2, y1, y2, rela_x, rela_y } = this
+    // 计算三角形 -----start
+    // 计算斜边长度
+    calHypotenuse = ({ x2, y2 }) => {
+        const length = Math.sqrt(Math.pow(x2, 2) + Math.pow(y2, 2)) //勾股定理求出斜边长度
+        let angle = 0 //夹角角度
+        let deg = 0 ////夹角弧度
+        deg = Math.acos(y2 / length)  // 三角函数公式求得
+        // deg = 2 * Math.PI * angle / 360
+        angle = deg * 180 / Math.PI
+        if (x2 > 0) {
+            angle = -angle
+        }
+        return {
+            length,
+            angle
+        }
+    }
+
+    // 计算三角形 ----- end
+
+    handleCreateRely = (e) => {
+        console
 
     }
 
@@ -104,8 +159,8 @@ class HoverEars extends Component {
         }
     }
     render() {
-        const { label_data } = this.props
-        const { x1, y1, x2, y2 } = this.state
+        const { itemValue: { label_data = [] } } = this.props
+        const { x1, y1, length, angle, transformOrigin } = this.state
         return (
             <div className={indexStyles.ears_out}>
                 <div
@@ -121,11 +176,13 @@ class HoverEars extends Component {
                     <div />
                 </div>
                 <div
+                    data-ref={'left_circle_ref'}
                     ref={this.left_circle_ref}
                     {...this.eventObj}
                     className={`${indexStyles.ears_circle} ${indexStyles.left_ear_circle}`}
                 />
                 <div
+                    data-ref={'right_circle_ref'}
                     ref={this.right_circle_ref}
                     {...this.eventObj}
                     className={`${indexStyles.ears_circle} ${indexStyles.right_ear_circle}`}
@@ -133,7 +190,13 @@ class HoverEars extends Component {
                 <div />
 
                 <div
-                    style={{ top: y1, left: x1, height: y2 }}
+                    style={{
+                        top: y1,
+                        left: x1,
+                        height: length,
+                        transform: `rotate(${angle}deg)`,
+                        transformOrigin,
+                    }}
                     className={indexStyles.line}>
 
                 </div>

@@ -186,10 +186,33 @@
     }
 
     .line {
-        position        : absolute;
-        width           : 1px;
-        background-color: #1890FF;
+        position              : absolute;
+        width                 : 1px;
+        border-right          : 1px dashed #1890FF;
+        // background-color   : ;
         // height          : 100px !important;
+        transform             : rotate(0deg);
+        transform-origin      : 0 0;
+
+        -ms-transform       : rotate(0deg);
+        /* IE 9 */
+        -ms-transform-origin: 0 0;
+        /* IE 9 */
+
+        -webkit-transform       : rotate(0deg);
+        /* Safari 和 Chrome */
+        -webkit-transform-origin: 0 0;
+        /* Safari 和 Chrome */
+
+        -moz-transform       : rotate(0deg);
+        /* Firefox */
+        -moz-transform-origin: 0 0;
+        /* Firefox */
+
+        -o-transform       : rotate(0deg);
+        /* Opera */
+        -o-transform-origin: 0 0;
+        /* Opera */
     }
 }
 

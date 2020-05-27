@@ -858,6 +858,16 @@ export default class CardItem extends Component {
             },
         }
     }
+
+    // 相关元素绘制点击拖拽中
+    setRelyDown = (bool) => {
+        console.log('ssssssasdasd0', bool)
+
+        this.setState({
+            rely_down: bool
+        })
+    }
+
     render() {
         const { itemValue = {}, im_all_latest_unread_messages, gantt_view_mode, group_view_type } = this.props
         const {
@@ -873,7 +883,7 @@ export default class CardItem extends Component {
             parent_card_id,
             time_span,
         } = itemValue
-        const { local_left, local_top, local_width } = this.state
+        const { local_left, local_top, local_width, rely_down } = this.state
         const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
         return (
             <div
@@ -883,7 +893,7 @@ export default class CardItem extends Component {
                 ref={this.out_ref}
                 style={{
                     touchAction: 'none',
-                    zIndex: this.is_down ? 2 : 1,
+                    zIndex: rely_down || this.is_down ? 2 : 1,
                     left: local_left + (gantt_view_mode == 'year' ? 0 : card_left_diff),
                     top: local_top,
                     width: (local_width || 6) - (gantt_view_mode == 'year' ? 0 : card_width_diff),
@@ -983,7 +993,7 @@ export default class CardItem extends Component {
                     )
                 }
                 {/* //hover出现的耳朵效果 */}
-                <HoverEars label_data={label_data} />
+                <HoverEars itemValue={itemValue} dispatch={this.props.dispatch} setRelyLineDrawing={this.setRelyDown} />
             </div>
         )
     }
