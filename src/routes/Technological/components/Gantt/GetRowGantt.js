@@ -73,7 +73,7 @@ export default class GetRowGantt extends Component {
     if (!target) return
     if (!target.style) return
     if (bool) {
-      target.style.cursor = 'move';
+      target.style.cursor = this.state.card_rely_draging ? 'pointer' : 'move';
     } else {
       target.style.cursor = 'crosshair';
     }

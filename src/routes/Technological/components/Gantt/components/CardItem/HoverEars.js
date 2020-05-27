@@ -165,7 +165,7 @@ class HoverEars extends Component {
         const { itemValue: { label_data = [] }, rely_down } = this.props
         const { x1, y1, length, angle, transformOrigin, x2, y2 } = this.state
         return (
-            <div className={indexStyles.ears_out}>
+            <div className={indexStyles.ears_out} style={{ display: rely_down ? 'block' : '' }}>
                 <div
                     className={`${indexStyles.ears} ${indexStyles.left_ear}`}
                     style={{ backgroundColor: `${this.setTriangleTreeColor(label_data, 'start') || '#D7D7D7'}` }}>

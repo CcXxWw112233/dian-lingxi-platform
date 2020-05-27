@@ -312,7 +312,10 @@ export default class CardItem extends Component {
         })
         const cursorType = this.drag_type_map[cursorTypeKey]
         const target = this.out_ref.current
-        if (this.props.card_rely_draging) return //拖拽依赖中不做鼠标样式设置
+        if (this.props.card_rely_draging) {
+            target.style.cursor = 'pointer'
+            return
+        } //拖拽依赖中不做鼠标样式设置
         if (target) {
             target.style.cursor = cursorType;
         }
