@@ -312,6 +312,7 @@ export default class CardItem extends Component {
         })
         const cursorType = this.drag_type_map[cursorTypeKey]
         const target = this.out_ref.current
+        if (this.props.card_rely_draging) return //拖拽依赖中不做鼠标样式设置
         if (target) {
             target.style.cursor = cursorType;
         }
@@ -821,7 +822,7 @@ export default class CardItem extends Component {
         return true
     }
     handleObj = () => {
-        const { itemValue = {}, } = this.props
+        const { itemValue = {}, card_rely_draging } = this.props
         const {
             top,
             id,
@@ -835,10 +836,12 @@ export default class CardItem extends Component {
                 this.onMouseDown(e)
             },
             onMouseMove: (e) => {
+                if (card_rely_draging) return
                 if (!this.couldChangeCard()) return
                 this.onMouseMove(e)
             },
             onMouseUp: () => {
+                if (card_rely_draging) return
                 this.setSpecilTaskExample({ id: parent_card_id || id, top, board_id })
             }, //查看子任务是查看父任务
 
@@ -861,7 +864,7 @@ export default class CardItem extends Component {
 
     // 相关元素绘制点击拖拽中
     setRelyDown = (bool) => {
-        this.props.setTaskIsDragging(bool)
+        this.props.setCardRelyDraging(bool)
         this.setState({
             rely_down: bool
         })
@@ -992,7 +995,8 @@ export default class CardItem extends Component {
                     )
                 }
                 {/* //hover出现的耳朵效果 */}
-                <HoverEars itemValue={itemValue}
+                <HoverEars
+                    itemValue={itemValue}
                     dispatch={this.props.dispatch}
                     setRelyLineDrawing={this.setRelyDown}
                     rely_down={rely_down} />

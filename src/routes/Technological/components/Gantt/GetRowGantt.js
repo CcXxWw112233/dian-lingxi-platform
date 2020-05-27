@@ -39,6 +39,7 @@ export default class GetRowGantt extends Component {
       task_is_dragging: false, //任务实例是否在拖拽中
       isMouseDown: false,
       drag_creating: false, //拖拽生成任务中
+      card_rely_draging: false, //任务卡片相关拖拽中
     }
     this.x1 = 0 //用于做拖拽生成一条任务
     this.y1 = 0
@@ -50,6 +51,19 @@ export default class GetRowGantt extends Component {
     this.setState({
       dasheRectShow: bool
     })
+  }
+  setCardRelyDraging = (bool) => { //任务相关拖拽中
+    this.setState({
+      card_rely_draging: bool
+    })
+    const target = this.refs.gantt_operate_area_panel
+    if (!target) return
+    if (!target.style) return
+    if (bool) {
+      target.style.cursor = 'pointer';
+    } else {
+      target.style.cursor = 'crosshair';
+    }
   }
   setTaskIsDragging = (bool, flag) => { //设置任务是否在拖拽中的状态
     this.setState({
@@ -553,6 +567,8 @@ export default class GetRowGantt extends Component {
             setDragCreating={this.setDragCreating}
             setTaskIsDragging={this.setTaskIsDragging}
             setDasheRectShow={this.setDasheRectShow}
+            setCardRelyDraging={this.setCardRelyDraging}
+            card_rely_draging={this.state.card_rely_draging}
           />
         )
       })
@@ -619,6 +635,7 @@ export default class GetRowGantt extends Component {
     )
     const contain = (
       dasheRectShow
+      && !this.state.card_rely_draging
       && !this.state.task_is_dragging
       && !ganttIsOutlineView({ group_view_type })
       && (
@@ -723,6 +740,8 @@ export default class GetRowGantt extends Component {
                     setDragCreating={this.setDragCreating}
                     setTaskIsDragging={this.setTaskIsDragging}
                     setDasheRectShow={this.setDasheRectShow}
+                    setCardRelyDraging={this.setCardRelyDraging}
+                    card_rely_draging={this.state.card_rely_draging}
                   />)
               )
             })
