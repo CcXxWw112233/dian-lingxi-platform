@@ -194,7 +194,7 @@ class base_utils {
         for (let val of year_date_arr) { //平铺成一个一维数组
             gold_date_arr = [].concat(gold_date_arr, val)
         }
-        console.log('gold_date_arr', gold_date_arr)
+        // console.log('gold_date_arr', gold_date_arr)
         return gold_date_arr
     }
 }

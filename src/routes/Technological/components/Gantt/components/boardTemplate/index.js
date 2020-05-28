@@ -47,7 +47,7 @@ export default class BoardTemplate extends Component {
         // }
         // return '100%'
         const { gantt_card_height } = this.props
-        console.log('gantt_card_height', gantt_card_height)
+        // console.log('gantt_card_height', gantt_card_height)
         this.setState({
             // contain_height: target ? target.clientHeight + 30 : '100%'
             contain_height: gantt_card_height || '100%'

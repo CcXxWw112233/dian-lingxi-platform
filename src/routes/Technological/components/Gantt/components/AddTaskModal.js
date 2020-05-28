@@ -290,7 +290,7 @@ class AddTaskModal extends Component {
       })
     }
 
-    console.log('ssssasdad', { currentSelectedProjectGroupList, milestones })
+    // console.log('ssssasdad', { currentSelectedProjectGroupList, milestones })
 
     return (
       <Modal

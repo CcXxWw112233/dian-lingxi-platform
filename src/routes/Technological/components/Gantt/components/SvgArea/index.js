@@ -575,7 +575,7 @@ export default class index extends Component {
     render() {
         const { date_total, ceilWidth } = this.props
         const { rely_map = [] } = this.state
-        console.log('rely_map', rely_map)
+        // console.log('rely_map', rely_map)
         return (
             <div onClick={(e) => e.stopPropagation()}>
                 <svg id={'gantt_svg_area'}
