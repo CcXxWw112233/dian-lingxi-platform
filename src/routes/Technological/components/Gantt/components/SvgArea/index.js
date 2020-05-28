@@ -467,6 +467,11 @@ export default class index extends Component {
 
     // 
     pathClick = (e) => {
+        // debugger
+    }
+    onMouseOver = (e) => {
+        const currentTarget = e.currentTarget
+        document.getElementById('gantt_svg_area').appendChild(currentTarget) //为了让path凸显一层
     }
     // 删除依赖
     deleteRely = ({ move_id, line_id }) => {
@@ -540,7 +545,9 @@ export default class index extends Component {
                                     relation
                                 })
                                 return (
-                                    <g data-targetclassname="specific_example" onClick={this.pathClick}>
+                                    <g data-targetclassname="specific_example"
+                                        className={`${styles.path_g}`}
+                                        onMouseOver={this.onMouseOver}>
                                         <path name="arrow"
                                             stroke="#1890FF"
                                             stroke-width="1"

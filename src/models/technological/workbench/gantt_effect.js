@@ -14,6 +14,8 @@ export default {
             const rely_map = yield select(getModelSelectDatasState('gantt', 'rely_map'))
             let _rely_map = JSON.parse(JSON.stringify(rely_map))
             if (isApiResponseOk(res)) {
+                message.success('已成功添加依赖')
+
                 const index = _rely_map.findIndex(item => item.id == from_card_id)
                 if (index != -1) { //该任务存在和其它的依赖关系则添加新的一条进next [], 反之构建一个新的item
                     _rely_map[index].next.push({ id: to_card_id, relation })
@@ -37,6 +39,8 @@ export default {
             const rely_map = yield select(getModelSelectDatasState('gantt', 'rely_map'))
 
             if (isApiResponseOk(res)) {
+                message.success('已成功删除依赖')
+
                 let _re_rely_map = JSON.parse(JSON.stringify(rely_map))
                 const move_index = rely_map.findIndex(item => item.id == move_id) //起始点索引
                 const move_item = rely_map.find(item => item.id == move_id) //起始点这一项
@@ -75,7 +79,15 @@ export default {
             const _organization_id = localStorage.getItem('OrganizationId')
 
             const res = yield call(getCardRelys, { board_id: gantt_board_id, _organization_id })
-
+            if (gantt_board_id == '0') {
+                yield put({
+                    type: 'updateDatas',
+                    payload: {
+                        rely_map: []
+                    }
+                })
+                return
+            }
             if (isApiResponseOk(res)) {
                 yield put({
                     type: 'updateDatas',
