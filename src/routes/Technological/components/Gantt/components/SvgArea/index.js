@@ -548,7 +548,7 @@ export default class index extends Component {
                                             data-targetclassname="specific_example"
                                             fill="#1890FF"
                                             d={Arrow}
-                                            onClick={() => this.deleteRely({ move_id, line_id })}
+                                            onDoubleClick={() => this.deleteRely({ move_id, line_id })}
                                             className={`${styles.path} ${styles.path_arrow}`}
                                             {...this.pathMouseEvent}
                                         />
@@ -558,7 +558,7 @@ export default class index extends Component {
                                             data-targetclassname="specific_example"
                                             d={Move_Line}
                                             stroke-width='1'
-                                            onClick={() => this.deleteRely({ move_id, line_id })}
+                                            onDoubleClick={() => this.deleteRely({ move_id, line_id })}
                                             className={`${styles.path} ${styles.path_line}`}
                                             {...this.pathMouseEvent}
                                         />
