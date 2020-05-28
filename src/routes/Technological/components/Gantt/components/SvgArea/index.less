@@ -1,13 +1,25 @@
 .path {
     cursor: pointer;
+    position: relative;
+    z-index: 1 !important;
 }
 
 .path_line:hover {
     stroke-width: 2;
+    stroke      : rgb(227, 142, 146);
+    z-index: 2 !important;
+
+    ~.path_arrow {
+        stroke-width: 2;
+        stroke      : rgb(227, 142, 146);
+    }
 }
 
 .path_arrow:hover {
+    stroke: rgb(227, 142, 146);
+
     +.path_line {
         stroke-width: 2;
+        stroke      : rgb(227, 142, 146);
     }
 }

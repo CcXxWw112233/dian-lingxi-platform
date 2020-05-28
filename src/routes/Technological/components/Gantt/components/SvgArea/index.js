@@ -11,12 +11,12 @@ const rely_map = [
             {
                 "id": "1265112077387829248",
                 "name": "结尾1",
-                "direction": "end_start"
+                "relation": "end_start"
             },
             {
                 "id": "1265112137341210624",
                 "name": "结尾2",
-                "direction": "start_end"
+                "relation": "start_end"
             }
         ]
     },
@@ -34,7 +34,7 @@ export default class index extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            rely_map,
+            rely_map: [],
             cards_one_level: [], //所有任务平铺成一维数组
         }
     }
@@ -43,7 +43,12 @@ export default class index extends Component {
         // this.getRelyMaps(this.props)
     }
     componentWillReceiveProps(nextProps) {
-        this.setRelyMaps(nextProps)
+        const { rely_map = [] } = nextProps
+        this.setState({
+            rely_map
+        }, () => {
+            this.setRelyMaps(nextProps)
+        })
     }
 
     // 递归设置点的的位置
@@ -456,8 +461,8 @@ export default class index extends Component {
         },
     }
     calPath = (data) => {
-        const { move_left, move_right, move_top, line_left, line_right, line_top, direction } = data
-        return this.pathFunc[direction](data)
+        const { relation } = data
+        return this.pathFunc[relation](data)
     }
 
     // 
@@ -465,19 +470,13 @@ export default class index extends Component {
     }
     // 删除依赖
     deleteRely = ({ move_id, line_id }) => {
-        const { rely_map = [] } = this.state
-        let _re_rely_map = JSON.parse(JSON.stringify(rely_map))
-        const move_index = rely_map.findIndex(item => item.id == move_id) //起始点索引
-        const move_item = rely_map.find(item => item.id == move_id) //起始点这一项
-        const move_next = move_item.next //起始点所包含的全部终点信息
-        const line_index = move_next.findIndex(item => item.id == line_id)
-        if (move_next.length > 1) {
-            _re_rely_map[move_index].next.splice(line_index, 1)
-        } else {
-            _re_rely_map.splice(move_index, 1)
-        }
-        this.setState({
-            rely_map: _re_rely_map
+        const { dispatch } = this.props
+        dispatch({
+            type: 'gantt/deleteCardRely',
+            payload: {
+                move_id,
+                line_id
+            }
         })
     }
     pathMouseEvent = {
@@ -530,7 +529,7 @@ export default class index extends Component {
                         const { left: move_left, right: move_right, top: move_top, next = [], id: move_id } = move_item
                         return (
                             next.map(line_item => {
-                                const { left: line_left, right: line_right, top: line_top, direction, id: line_id } = line_item
+                                const { left: line_left, right: line_right, top: line_top, relation, id: line_id } = line_item
                                 const { Move_Line, Arrow } = this.calPath({
                                     move_left,
                                     move_right,
@@ -538,7 +537,7 @@ export default class index extends Component {
                                     line_left,
                                     line_right,
                                     line_top,
-                                    direction
+                                    relation
                                 })
                                 return (
                                     <g data-targetclassname="specific_example" onClick={this.pathClick}>
@@ -601,7 +600,8 @@ function mapStateToProps({ gantt: {
         gantt_view_mode,
         list_group = [],
         date_total,
-        ceiHeight
+        ceiHeight,
+        rely_map
     } },
 }) {
     return {
@@ -612,6 +612,7 @@ function mapStateToProps({ gantt: {
         gantt_view_mode,
         list_group,
         date_total,
-        ceiHeight
+        ceiHeight,
+        rely_map
     }
 }
