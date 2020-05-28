@@ -128,7 +128,7 @@ class HoverEars extends Component {
     // 计算三角形 ----- end
 
     handleCreateRely = (e) => { //当落点在具体任务上
-        const { itemValue: { id: move_id, parent_id } } = this.props
+        const { itemValue: { id: move_id, parent_id }, dispatch } = this.props
         const target = e.target
         const { rely_top, rely_right, rely_left } = e.target.dataset
         if (!rely_top && !rely_right && !rely_left) return
@@ -159,6 +159,14 @@ class HoverEars extends Component {
 
         }
         const { move_to } = this.state
+        dispatch({
+            type: 'gantt/addCardRely',
+            payload: {
+                from_card_id: move_id,
+                to_card_id: line_id,
+                relation: `${move_to}_${line_to}`
+            }
+        })
         console.log('最终结果', { line_id, move_id, move_to, line_to })
     }
 

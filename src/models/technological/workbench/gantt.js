@@ -23,7 +23,7 @@ import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
 import { handleChangeBoardViewScrollTop, setGantTimeSpan } from '../../../routes/Technological/components/Gantt/ganttBusiness';
 import { jsonArrayCompareSort, transformTimestamp, isSamDay } from '../../../utils/util';
-
+import gantt_effect from './gantt_effect'
 let dispatches = null
 const visual_add_item = {
   "id": "",
@@ -53,6 +53,7 @@ export default {
   namespace: 'gantt',
   state: {
     datas: {
+      ...gantt_effect.state,
       gantt_view_mode: 'month', //week / month /year
       gold_date_arr: [], //所需要的日期数据
       date_arr_one_level: [], //所有日期数据扁平成一级数组
@@ -122,6 +123,7 @@ export default {
     },
   },
   effects: {
+    ...gantt_effect.effects, //其它定义的事件，模块分出去
     * returnContentFilterFinalParams({ payload }, { select, call, put }) { //返回内容过滤输出成的请求参数 { key: value}
       const group_view_filter_boards = yield select(getModelSelectDatasState('gantt', 'group_view_filter_boards'))
       const group_view_filter_users = yield select(getModelSelectDatasState('gantt', 'group_view_filter_users'))
@@ -249,6 +251,11 @@ export default {
       })
       yield put({
         type: 'getGttMilestoneList',
+        payload: {
+        }
+      })
+      yield put({
+        type: 'getCardRelys',
         payload: {
         }
       })

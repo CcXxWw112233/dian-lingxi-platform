@@ -6,7 +6,8 @@ import {
   CONTENT_DATA_TYPE_FLOW,
   CONTENT_DATA_TYPE_FILE,
   CONTENT_DATA_TYPE_FOLDER,
-  CONTENT_DATA_TYPE_LIST
+  CONTENT_DATA_TYPE_LIST,
+  REQUEST_DOMAIN_WORK_BENCH
 } from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
 import { getGlobalData } from "../../utils/businessFunction";
@@ -566,3 +567,35 @@ export async function milestoneInit(params) {
 
 
 
+//新增任务依赖
+export async function addCardRely(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/dependency`,
+    method: 'POST',
+    data
+  })
+}
+//删除任务依赖
+export async function deleteCardRely(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/dependency`,
+    method: 'DELETE',
+    data
+  })
+}
+//修改任务依赖
+export async function updateCardRely(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/dependency`,
+    method: 'PUT',
+    data
+  })
+}
+//查询任务依赖列表
+export async function getCardRelys(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/card/dependency`,
+    method: 'POST',
+    data
+  })
+}
