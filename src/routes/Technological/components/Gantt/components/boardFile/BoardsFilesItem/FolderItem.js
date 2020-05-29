@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { getSubfixName, setBoardIdStorage, getGlobalData } from '../../../../../../../utils/businessFunction';
+import { getSubfixName, setBoardIdStorage, getGlobalData, checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard } from '../../../../../../../utils/businessFunction';
 import { Input, Menu, Dropdown, message, Tooltip, Modal } from 'antd'
-import { PROJECT_FILES_FILE_INTERVIEW, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../../../globalset/js/constant';
+import { PROJECT_FILES_FILE_INTERVIEW, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_FILES_FILE_UPDATE } from '../../../../../../../globalset/js/constant';
 import { connect } from 'dva';
 import { fileRemove, updateFolder } from '../../../../../../../services/technological/file';
 import { isApiResponseOk } from '../../../../../../../utils/handleResponseData';
@@ -111,6 +111,13 @@ export default class FolderItem extends Component {
 		const { key } = e
 		switch (key) {
 			case '1':
+				const { itemValue: { board_id, privileges = [], is_privilege } } = this.props
+				if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
+					setTimeout(() => {
+						message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+					},50)
+					return
+				}
 				this.setIsShowChange(true)
 				break
 			case '2':
