@@ -2,7 +2,8 @@ import { addCardRely, deleteCardRely, updateCardRely, getCardRelys } from "../..
 import { isApiResponseOk } from "../../../utils/handleResponseData"
 import { getModelSelectDatasState } from "../../utils"
 import { message } from "antd"
-
+import OutlineTree from '@/routes/Technological/components/Gantt/components/OutlineTree';
+// F:\work\newdicolla-platform\src\routes\Technological\components\Gantt\components\OutlineTree\index.js
 export default {
     state: {
         rely_map: []
@@ -98,6 +99,64 @@ export default {
             } else {
 
             }
+        },
+
+        // 分组视图下跟新任务
+        * updateListGroup({ payload = {} }, { select, call, put }) {
+            // return
+            // datas = [
+            //     { id: '1266250771897389056', start_time: '1589990400', due_time: '1590768000' },
+            //     { id: '1266250784136368128', start_time: '1590595200', due_time: '1590854400' }
+            // ]
+
+            const { datas = [] } = payload
+            const list_group = yield select(getModelSelectDatasState('gantt', 'list_group'))
+            const list_group_new = [...list_group]
+            for (let val of datas) {
+                for (let val2 of list_group_new) {
+                    const card_index = val2.lane_data.cards.findIndex(item => item.id == val.id)
+                    const card_item = val2.lane_data.cards.find(item => item.id == val.id)
+                    if (card_index != -1) {
+                        val2.lane_data.cards[card_index] = { ...card_item, ...val }
+                        break
+                    }
+                }
+            }
+            yield put({
+                type: 'gantt/handleListGroup',
+                payload: {
+                    data: list_group_new
+                }
+            })
+
+        },
+
+        * updateOutLineTree({ payload = {} }, { select, call, put }) {
+            const { datas = [] } = payload
+            let outline_tree = yield select(getModelSelectDatasState('gantt', 'outline_tree'))
+            let outline_tree_ = JSON.parse(JSON.stringify(outline_tree))
+            const mapSetProto = (data, nodeValue) => {
+                Object.keys(data).map(item => {
+                    nodeValue[item] = data[item]
+                })
+                // 为了避免删除开始时间后，关闭弹窗再删除截至时间，大纲树结构item的time覆盖问题
+                if (!data.start_time) nodeValue['start_time'] = ''
+                if (!data.due_time) nodeValue['due_time'] = ''
+            }
+            for (let val of datas) {
+                const nodeValue = OutlineTree.getTreeNodeValueByName(outline_tree_, 'id', val.id);
+                if (nodeValue) {
+                    mapSetProto(val, nodeValue)
+                    continue
+                }
+            }
+            yield put({
+                type: 'gantt/handleOutLineTreeData',
+                payload: {
+                    data: outline_tree_
+                }
+            });
+
         },
     }
 
