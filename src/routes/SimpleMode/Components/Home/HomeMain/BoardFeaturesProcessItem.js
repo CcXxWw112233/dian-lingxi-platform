@@ -101,7 +101,7 @@ export default class BoardFeaturesProcessItem extends Component {
                 </div>
                 <div className={`${styles.feature_item_rt}`} style={{ color: deadline_type == '2' && timeColor(last_complete_time) }}> {this.renderTime().time} {this.renderTime().dec}</div>
                 {
-                    runtime_type && runtime_type == '1' && (
+                    !!runtime_type && runtime_type == '1' && (
                         <div className={styles.feature_item_reject}>被驳回</div>
                     )
                 }

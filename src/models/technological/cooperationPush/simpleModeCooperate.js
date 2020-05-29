@@ -343,23 +343,32 @@ export default {
             const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
             const coperateData = JSON.parse(coperate.d)
             // console.log(coperateData, coperateName, 'coperateData')
+            // 代办任务列表
             let board_card_todo_list = yield select(getModelSelectState('simplemode', 'board_card_todo_list'))
             let new_board_card_todo_list_ = [...board_card_todo_list]
+            // 代办流程列表
             let board_flow_todo_list = yield select(getModelSelectState('simplemode', 'board_flow_todo_list'))
             let new_board_flow_todo_list_ = [...board_flow_todo_list]
+            // 项目列表
             let projectList = yield select(getModelSelectDatasState('workbench','projectList'))
             let new_projectList = [...projectList]
+            // 用户信息
             const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}
             const user_id = userInfo['id']
+            // 当前用户执行人
             let coop_executors = coperateData.executors || [] // 获取当前任务的执行人
             let current_user = coop_executors.find(user => user.user_id == user_id) || {}
+
             const id_arr_ = getAfterNameId(coperateName).split('/') //name/id1/id2/...
             let belong_board_id_ = id_arr_[0] //推送过来所属项目id
             let curr_card_id = '' //对象的任务id
+            let curr_flow_id = '' // 对象的流程实例id
             let curr_org_id = '' // 对象的组织ID
+            let obj = {}
             switch (coperateType) {
                 case 'add:board': // 新建项目
                     current_user = (coperateData.data && coperateData.data.length) && coperateData.data.find(item=> item.user_id == user_id) || {}
+                    // 1.判断该项目中是否存在该成员, 如果存在, 那么就添加一条项目, 并且需要去重
                     if (!(current_user && Object.keys(current_user).length)) return false
                     new_projectList.unshift(coperateData)
                     dispathes({
@@ -370,7 +379,7 @@ export default {
                     })
                     break
                 case  'change:board': // 修改项目
-                    if (coperateData.is_deleted == '1' || coperateData.is_archived == '1') {
+                    if (coperateData.is_deleted == '1' || coperateData.is_archived == '1') {// 表示是归档或者删除项目
                         // 删除项目之后, 对应的代办任务|流程也需要删除
                         new_projectList = new_projectList.filter(item => item.board_id != coperateData.board_id)
                         new_board_card_todo_list_ = new_board_card_todo_list_.filter(item => item.board_id != coperateData.board_id)
@@ -388,7 +397,7 @@ export default {
                                 board_flow_todo_list: new_board_flow_todo_list_
                             }
                         })
-                    } else {
+                    } else { // 表示修改项目的一些信息
                         new_projectList = new_projectList.map(item=> {
                             if (item.board_id == coperateData.board_id) {
                                 let new_item = {...item, ...coperateData}
@@ -400,7 +409,7 @@ export default {
                         dispathes({
                             type: 'workbench/updateDatas',
                             payload: {
-                                projectList: new_projectList
+                                projectList: arrayNonRepeatfy(new_projectList, 'board_id')
                             }
                         })
                     }
@@ -412,7 +421,7 @@ export default {
                     belong_board_id_ = id_arr_[0]
                     curr_org_id = getOrgIdByBoardId(belong_board_id_)
                     // 得到列表中需要的数据结构
-                    let obj = {
+                    obj = {
                         ...coperateData,
                         board_id: belong_board_id_,
                         org_id: curr_org_id,
@@ -453,7 +462,7 @@ export default {
                             })
                             return
                         }
-                        let obj = {
+                        obj = {
                             id: coperateData.card_id,
                             name: coperateData.card_name,
                             org_id: coperateData.org_id,
@@ -484,25 +493,44 @@ export default {
                 case 'add:flow:instance': // 添加流程实例
                     break;
                 case 'change:flow:instance': // 修改流程实例
-                    // let assigneesList = coperateData.assignees ? coperateData.assignees.split(',') : []
-                    // current_user = assigneesList.find(item => item == user_id) || {}
-                    // if (!(current_user && Object.keys(current_user).length)) return false
-                    // // 1.需要判断代办列表中是否能够找到这一条, 如果能找到那么替换, 不能则是添加
-                    // let whetherIsExitence = new_board_flow_todo_list_.find(item => item.flow_instance_id == coperateData.flow_instance_id) || {}
-                    // console.log(whetherIsExitence,'sssssssssssssssss_whetherIsExitence')
-                    // if (whetherIsExitence && Object.keys(whetherIsExitence).length) { // 表示能够找到
-                    //     let position_index = new_board_flow_todo_list_.findIndex(item => item.flow_instance_id == coperateData.flow_instance_id)
-                    //     new_board_flow_todo_list_[position_index] = {...coperateData}
-                    // } else { // 表示找不到这一条
-                    //     new_board_flow_todo_list_.unshift(coperateData)
-                    // }
-                    // console.log(new_board_flow_todo_list_,'sssssssssssssss_new_flow')
-                    // dispathes({
-                    //     type: 'simplemode/updateDatas',
-                    //     payload: {
-                    //         board_flow_todo_list: new_board_flow_todo_list_
-                    //     }
-                    // })
+                    curr_flow_id = id_arr_[0] // 表示实例ID
+                    if (coperateData.status != '1') { // 如果状态不是进行中, 则过滤掉
+                        new_board_flow_todo_list_ = new_board_flow_todo_list_.filter(item => item.flow_instance_id != curr_flow_id)
+                        dispathes({
+                            type: 'simplemode/updateDatas',
+                            payload: {
+                                board_flow_todo_list: arrayNonRepeatfy(new_board_flow_todo_list_,'flow_instance_id')
+                            }
+                        })
+                    } else {
+                        let assigneesList = coperateData.assignees ? coperateData.assignees.split(',') : []
+                        current_user = assigneesList.find(item => item == user_id) || {}
+                        if (!(current_user && Object.keys(current_user).length)) return false
+                        // 1.需要判断代办列表中是否能够找到这一条, 如果能找到那么替换, 不能则是添加
+                        let whetherIsExitence = new_board_flow_todo_list_.find(item => item.id == curr_flow_id) || {}
+                        obj = {
+                            ...coperateData,
+                            id : coperateData.flow_instance_id,
+                            name: coperateData.flow_instance_name,
+                            org_id: getOrgIdByBoardId(coperateData.board_id),
+                            total_node_name: coperateData.name,
+                            runtime_type: coperateData.runtime_type,
+                            rela_type: '3'
+                        }
+                        if (whetherIsExitence && Object.keys(whetherIsExitence).length) { // 表示能够找到
+                            let position_index = new_board_flow_todo_list_.findIndex(item => item.id == curr_flow_id)
+                            new_board_flow_todo_list_[position_index] = {...obj}
+                        } else { // 表示找不到这一条
+                            new_board_flow_todo_list_.unshift(obj)
+                        }
+                        dispathes({
+                            type: 'simplemode/updateDatas',
+                            payload: {
+                                board_flow_todo_list: arrayNonRepeatfy(new_board_flow_todo_list_,'id')
+                            }
+                        })
+                    }
+
                     break;
                 default:
                     break;
