@@ -876,7 +876,7 @@ export default class MainContent extends Component {
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {processEditDatas.map((value, key) => {
                   return (
-                    <Draggable key={value.id || key} index={key} draggableId={value.id || `${value.node_type}_${key}`}>
+                    <Draggable key={value.id || `${value.node_type}_${key}`} index={key} draggableId={value.id || `${value.node_type}_${key}`}>
                       {(provided, snapshot) => (
                         <div ref={provided.innerRef} {...provided.draggableProps}
                           {...provided.dragHandleProps}>{this.renderDiffContentProcess(value, key)}</div>

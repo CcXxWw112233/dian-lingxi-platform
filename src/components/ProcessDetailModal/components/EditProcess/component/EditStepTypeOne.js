@@ -12,6 +12,7 @@ import { connect } from 'dva'
 import { renderTimeType } from '../../handleOperateModal'
 import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import { FLOWS } from '../../../../../globalset/js/constant'
+import { isObjectValueEqual } from '../../../../../utils/util'
 
 @connect(mapStateToProps)
 export default class EditStepTypeOne extends Component {
@@ -22,6 +23,16 @@ export default class EditStepTypeOne extends Component {
       transPrincipalList: props.itemValue.assignees ? props.itemValue.assignees.split(',') : [], // 表示当前的执行人
       transCopyPersonnelList: props.itemValue.recipients ? props.itemValue.recipients.split(',') : [], // 表示当前选择的抄送人
       is_show_spread_arrow: false,
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // 需要更新箭头的状态
+    if (!isObjectValueEqual(this.props, nextProps)) {
+      this.setState({
+        transPrincipalList: nextProps.itemValue.assignees ? nextProps.itemValue.assignees.split(',') : [], // 表示当前的执行人
+        transCopyPersonnelList: nextProps.itemValue.recipients ? nextProps.itemValue.recipients.split(',') : [], // 表示当前选择的抄送人
+      })
     }
   }
 
@@ -66,10 +77,10 @@ export default class EditStepTypeOne extends Component {
     const { projectDetailInfoData: { data = [] } } = this.props
     const { transPrincipalList = [] } = this.state
     let new_data = [...data]
-    let newTransPrincipalList= transPrincipalList && transPrincipalList.map(item => {
+    let newTransPrincipalList = transPrincipalList && transPrincipalList.map(item => {
       return new_data.find(item2 => item2.user_id == item) || {}
     })
-    newTransPrincipalList = newTransPrincipalList.filter(item => item.user_id)  
+    newTransPrincipalList = newTransPrincipalList.filter(item => item.user_id)
     return newTransPrincipalList
   }
 
@@ -78,10 +89,10 @@ export default class EditStepTypeOne extends Component {
     const { projectDetailInfoData: { data = [] } } = this.props
     const { transCopyPersonnelList = [] } = this.state
     let newData = [...data]
-    let newTransCopyPersonnelList= transCopyPersonnelList && transCopyPersonnelList.map(item => {
+    let newTransCopyPersonnelList = transCopyPersonnelList && transCopyPersonnelList.map(item => {
       return newData.find(item2 => item2.user_id == item) || {}
     })
-    newTransCopyPersonnelList = newTransCopyPersonnelList.filter(item => item.user_id)  
+    newTransCopyPersonnelList = newTransCopyPersonnelList.filter(item => item.user_id)
     return newTransCopyPersonnelList
   }
 
@@ -190,25 +201,31 @@ export default class EditStepTypeOne extends Component {
                 {
                   assignee_type == '2' ? (
                     <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
-                      <AvatarList
-                        size="small"
-                        maxLength={10}
-                        excessItemsStyle={{
-                          color: '#f56a00',
-                          backgroundColor: '#fde3cf'
-                        }}
-                      >
-                        {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
-                          <AvatarList.Item
-                            key={index}
-                            tips={name || '佚名'}
-                            src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
-                          />
-                        ))}
-                      </AvatarList>
-                      <span className={indexStyles.content__principalList_info}>
-                        {`${transPrincipalList.length}位填写人`}
-                      </span>
+                      {
+                        !(transPrincipalList && transPrincipalList.length) ? ('') : (
+                          <>
+                            <AvatarList
+                              size="small"
+                              maxLength={10}
+                              excessItemsStyle={{
+                                color: '#f56a00',
+                                backgroundColor: '#fde3cf'
+                              }}
+                            >
+                              {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
+                                <AvatarList.Item
+                                  key={index}
+                                  tips={name || '佚名'}
+                                  src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                                />
+                              ))}
+                            </AvatarList>
+                            <span className={indexStyles.content__principalList_info}>
+                              {`${transPrincipalList.length}位填写人`}
+                            </span>
+                          </>
+                        )
+                      }
                     </div>
                   ) : (
                       <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
@@ -243,7 +260,7 @@ export default class EditStepTypeOne extends Component {
                       {
                         cc_locking == '1' && (
                           <Tooltip title="已锁定抄送人" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                            <span style={{cursor: 'pointer', color: 'rgba(0,0,0,0.25)', marginLeft: '4px'}} className={globalStyles.authTheme}>&#xe86a;</span>
+                            <span style={{ cursor: 'pointer', color: 'rgba(0,0,0,0.25)', marginLeft: '4px' }} className={globalStyles.authTheme}>&#xe86a;</span>
                           </Tooltip>
                         )
                       }
@@ -251,17 +268,17 @@ export default class EditStepTypeOne extends Component {
                   )
                 }
               </div>
-              <div style={{display: 'flex'}}>
+              <div style={{ display: 'flex' }}>
                 <span style={{ fontWeight: 500, color: 'rgba(0,0,0,0.65)', fontSize: '16px', marginRight: '5px', flexShrink: 0 }} className={`${globalStyles.authTheme}`}>&#xe686;</span>
-                <span style={{marginRight: '5px', flexShrink: 0}} className={`${indexStyles.deadline_time}`}>完成期限 : </span>
+                <span style={{ marginRight: '5px', flexShrink: 0 }} className={`${indexStyles.deadline_time}`}>完成期限 : </span>
                 {
                   deadline_type == '1' ? (
-                    <span style={{color: 'rgba(0,0,0,0.45)'}}>未限制</span>
+                    <span style={{ color: 'rgba(0,0,0,0.45)' }}>未限制</span>
                   ) : (
-                    <span style={{color: 'rgba(0,0,0,0.45)'}}>
-                      步骤开始后{`${deadline_value}${renderTimeType(deadline_time_type)}`}内
-                    </span>
-                  )
+                      <span style={{ color: 'rgba(0,0,0,0.45)' }}>
+                        步骤开始后{`${deadline_value}${renderTimeType(deadline_time_type)}`}内
+                      </span>
+                    )
                 }
               </div>
             </div>

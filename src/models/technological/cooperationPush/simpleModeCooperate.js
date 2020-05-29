@@ -1,4 +1,5 @@
 import { getModelSelectDatasState, getModelSelectState } from '../../utils'
+import { getOrgIdByBoardId } from '../../../utils/businessFunction'
 
 // 该model是圈子推送已读未读的内容
 const model_milestoneDetail = name => `milestoneDetail/${name}`
@@ -6,6 +7,18 @@ const model_gantt = name => `gantt/${name}`
 const model_publicTaskDetailModal = name => `publicTaskDetailModal/${name}`
 const getAfterNameId = (coperateName) => { //获取跟在名字后面的id
     return coperateName.substring(coperateName.indexOf('/') + 1)
+}
+// 数组去重
+const arrayNonRepeatfy = (arr, key = 'id') => {
+    let temp_arr = []
+    let temp_id = []
+    for (let i = 0; i < arr.length; i++) {
+        if (!temp_id.includes(arr[i][key])) {//includes 检测数组是否有某个值
+            temp_arr.push(arr[i]);
+            temp_id.push(arr[i][key])
+        }
+    }
+    return temp_arr
 }
 
 let dispathes = null
@@ -319,6 +332,182 @@ export default {
                     break
             }
         },
+        // 处理首页代办(任务|流程)
+        * handleCooperateToDoListAgent({ payload }, { select, call, put }) {
+            const { res } = payload
+            const { data } = res
+            let coperate = data[0] //协作
+            let news = data[1] || {} //消息
+            //获取消息协作类型
+            const coperateName = coperate.e
+            const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
+            const coperateData = JSON.parse(coperate.d)
+            // console.log(coperateData, coperateName, 'coperateData')
+            let board_card_todo_list = yield select(getModelSelectState('simplemode', 'board_card_todo_list'))
+            let new_board_card_todo_list_ = [...board_card_todo_list]
+            let board_flow_todo_list = yield select(getModelSelectState('simplemode', 'board_flow_todo_list'))
+            let new_board_flow_todo_list_ = [...board_flow_todo_list]
+            let projectList = yield select(getModelSelectDatasState('workbench','projectList'))
+            let new_projectList = [...projectList]
+            const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}
+            const user_id = userInfo['id']
+            let coop_executors = coperateData.executors || [] // 获取当前任务的执行人
+            let current_user = coop_executors.find(user => user.user_id == user_id) || {}
+            const id_arr_ = getAfterNameId(coperateName).split('/') //name/id1/id2/...
+            let belong_board_id_ = id_arr_[0] //推送过来所属项目id
+            let curr_card_id = '' //对象的任务id
+            let curr_org_id = '' // 对象的组织ID
+            switch (coperateType) {
+                case 'add:board': // 新建项目
+                    current_user = (coperateData.data && coperateData.data.length) && coperateData.data.find(item=> item.user_id == user_id) || {}
+                    if (!(current_user && Object.keys(current_user).length)) return false
+                    new_projectList.unshift(coperateData)
+                    dispathes({
+                        type: 'workbench/updateDatas',
+                        payload: {
+                            projectList: arrayNonRepeatfy(new_projectList, 'board_id')
+                        }
+                    })
+                    break
+                case  'change:board': // 修改项目
+                    if (coperateData.is_deleted == '1' || coperateData.is_archived == '1') {
+                        // 删除项目之后, 对应的代办任务|流程也需要删除
+                        new_projectList = new_projectList.filter(item => item.board_id != coperateData.board_id)
+                        new_board_card_todo_list_ = new_board_card_todo_list_.filter(item => item.board_id != coperateData.board_id)
+                        new_board_flow_todo_list_ = new_board_flow_todo_list_.filter(item => item.board_id != coperateData.board_id)
+                        dispathes({
+                            type: 'workbench/updateDatas',
+                            payload: {
+                                projectList: new_projectList
+                            }
+                        })
+                        dispathes({
+                            type: 'simplemode/updateDatas',
+                            payload: {
+                                board_card_todo_list: new_board_card_todo_list_,
+                                board_flow_todo_list: new_board_flow_todo_list_
+                            }
+                        })
+                    } else {
+                        new_projectList = new_projectList.map(item=> {
+                            if (item.board_id == coperateData.board_id) {
+                                let new_item = {...item, ...coperateData}
+                                return new_item
+                            } else {
+                                return item
+                            }
+                        })
+                        dispathes({
+                            type: 'workbench/updateDatas',
+                            payload: {
+                                projectList: new_projectList
+                            }
+                        })
+                    }
+                    break
+                case 'change:cards': // 添加任务
+                    // 1. 判断是否是该执行人的代办
+                    if (!(current_user && Object.keys(current_user).length)) return
+                    // 2. 是该执行人的代办任务, 那么就ping对应结构, 更新数据
+                    belong_board_id_ = id_arr_[0]
+                    curr_org_id = getOrgIdByBoardId(belong_board_id_)
+                    // 得到列表中需要的数据结构
+                    let obj = {
+                        ...coperateData,
+                        board_id: belong_board_id_,
+                        org_id: curr_org_id,
+                        rela_type: '1',
+                        id: coperateData.card_id,
+                        name: coperateData.card_name,
+                    }
+                    new_board_card_todo_list_.push(obj)
+                    dispathes({
+                        type: 'simplemode/updateDatas',
+                        payload: {
+                            board_card_todo_list: new_board_card_todo_list_
+                        }
+                    })
+                    break;
+                case 'delete:cards': // 删除任务
+                    curr_card_id = coperateData.card_id
+                    if (coperateData.is_deleted == '1') {
+                        new_board_card_todo_list_ = new_board_card_todo_list_.filter(item => item.id != curr_card_id)
+                        dispathes({
+                            type: 'simplemode/updateDatas',
+                            payload: {
+                                board_card_todo_list: new_board_card_todo_list_
+                            }
+                        })
+                    }
+                    break;
+                case 'change:card': // 修改任务中相关数据内容 (对于代办来说修改卡片 开始时间 | 截止时间 | 执行人)
+                    curr_card_id = id_arr_[0]
+                    if (current_user && Object.keys(current_user).length) {
+                        if (coperateData.is_realize == '1') {// 表示已完成
+                            new_board_card_todo_list_ = new_board_card_todo_list_.filter(item => item.id != curr_card_id)
+                            dispathes({
+                                type: 'simplemode/updateDatas',
+                                payload: {
+                                    board_card_todo_list: arrayNonRepeatfy(new_board_card_todo_list_)
+                                }
+                            })
+                            return
+                        }
+                        let obj = {
+                            id: coperateData.card_id,
+                            name: coperateData.card_name,
+                            org_id: coperateData.org_id,
+                            board_id: coperateData.board_id,
+                            board_name: coperateData.board_name,
+                            start_time: coperateData.start_time,
+                            due_time: coperateData.due_time,
+                            rela_type: '1'
+                        }
+                        // 当修改时间会推送多条, 所以应该往前插入保存最新的一条 并且去重
+                        new_board_card_todo_list_.unshift(obj)
+                        dispathes({
+                            type: 'simplemode/updateDatas',
+                            payload: {
+                                board_card_todo_list: arrayNonRepeatfy(new_board_card_todo_list_)
+                            }
+                        })
+                    } else {
+                        new_board_card_todo_list_ = new_board_card_todo_list_.filter(item => item.id != curr_card_id)
+                        dispathes({
+                            type: 'simplemode/updateDatas',
+                            payload: {
+                                board_card_todo_list: arrayNonRepeatfy(new_board_card_todo_list_)
+                            }
+                        })
+                    }
+                    break;
+                case 'add:flow:instance': // 添加流程实例
+                    break;
+                case 'change:flow:instance': // 修改流程实例
+                    // let assigneesList = coperateData.assignees ? coperateData.assignees.split(',') : []
+                    // current_user = assigneesList.find(item => item == user_id) || {}
+                    // if (!(current_user && Object.keys(current_user).length)) return false
+                    // // 1.需要判断代办列表中是否能够找到这一条, 如果能找到那么替换, 不能则是添加
+                    // let whetherIsExitence = new_board_flow_todo_list_.find(item => item.flow_instance_id == coperateData.flow_instance_id) || {}
+                    // console.log(whetherIsExitence,'sssssssssssssssss_whetherIsExitence')
+                    // if (whetherIsExitence && Object.keys(whetherIsExitence).length) { // 表示能够找到
+                    //     let position_index = new_board_flow_todo_list_.findIndex(item => item.flow_instance_id == coperateData.flow_instance_id)
+                    //     new_board_flow_todo_list_[position_index] = {...coperateData}
+                    // } else { // 表示找不到这一条
+                    //     new_board_flow_todo_list_.unshift(coperateData)
+                    // }
+                    // console.log(new_board_flow_todo_list_,'sssssssssssssss_new_flow')
+                    // dispathes({
+                    //     type: 'simplemode/updateDatas',
+                    //     payload: {
+                    //         board_flow_todo_list: new_board_flow_todo_list_
+                    //     }
+                    // })
+                    break;
+                default:
+                    break;
+            }
+        }
     },
 
     reducers: {
