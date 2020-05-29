@@ -17,6 +17,7 @@ import {
 import { FLOWS } from '../../globalset/js/constant'
 import { genPrincipalListFromAssignees, transformNewAssigneesToString, transformNewRecipientsToString, wipeOffSomeDataWithScoreNodes } from './components/handleOperateModal'
 import { getGlobalData } from '../../utils/businessFunction'
+import { arrayNonRepeatfy } from '../../utils/util'
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
 
@@ -58,19 +59,6 @@ export default class HeaderContentRightMenu extends Component {
     });
   };
 
-  // 数组去重
-  arrayNonRepeatfy = arr => {
-    let temp_arr = []
-    let temp_id = []
-    for (let i = 0; i < arr.length; i++) {
-      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
-        temp_arr.push(arr[i]);
-        temp_id.push(arr[i]['id'])
-      }
-    }
-    return temp_arr
-  }
-
   commonProcessVisitControlUpdateCurrentModalData = (newProcessInfo, type) => {
     const { dispatch, processInfo = {}, request_flows_params = {} } = this.props
     const { status, board_id } = processInfo
@@ -103,7 +91,7 @@ export default class HeaderContentRightMenu extends Component {
       for (let item in obj) {
         if (item == 'privileges') {
           obj[item].map(val => {
-            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             if (temp_arr && !temp_arr.length) return false
             return new_privileges = [...temp_arr]
           })
@@ -125,7 +113,7 @@ export default class HeaderContentRightMenu extends Component {
       for (let item in obj) {
         if (item == 'privileges') {
           obj[item].map(val => {
-            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             return new_privileges = [...temp_arr]
           })
         }

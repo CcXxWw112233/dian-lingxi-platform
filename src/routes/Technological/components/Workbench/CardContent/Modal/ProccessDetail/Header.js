@@ -19,6 +19,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import ShareAndInvite from './../../../../ShareAndInvite/index'
 import { createShareLink, modifOrStopShareLink, } from './../../../../../../../services/technological/workbench'
 import { connect } from 'dva'
+import { arrayNonRepeatfy } from '../../../../../../../utils/util'
 
 @connect(({ workbenchDetailProcess = {}, projectDetailProcess = {},
 
@@ -47,18 +48,6 @@ export default class Header extends React.Component {
   }
   close() {
     this.props.close()
-  }
-  // 数组去重
-  arrayNonRepeatfy = arr => {
-    let temp_arr = []
-    let temp_id = []
-    for (let i = 0; i < arr.length; i++) {
-      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
-        temp_arr.push(arr[i]);
-        temp_id.push(arr[i]['id'])
-      }
-    }
-    return temp_arr
   }
 
   // 访问控制蒙层的点击回调
@@ -97,20 +86,8 @@ export default class Header extends React.Component {
             user_id: user.user_id
           }));
         };
-        // 数组去重
-        const arrayNonRepeatfy = arr => {
-          let temp_arr = []
-          let temp_id = []
-          for (let i = 0; i < arr.length; i++) {
-            if (!temp_id.includes(arr[i]['user_id'])) {//includes 检测数组是否有某个值
-              temp_arr.push(arr[i]);
-              temp_id.push(arr[i]['user_id'])
-            }
-          }
-          return temp_arr
-        }
         // 执行人去重
-        const newPersonList = genNewPersonList(arrayNonRepeatfy(curr.assignees));
+        const newPersonList = genNewPersonList(arrayNonRepeatfy(curr.assignees, 'user_id'));
         return [...acc, ...newPersonList.filter(i => !acc.find(a => a.name === i.name))];
       } else if (curr.assignee_type && curr.assignee_type == '1') { // 这里表示是任何人, 那么就是获取项目列表中的成员
         // const newPersonList = genNewPersonList(arrayNonRepeatfy(principalList))

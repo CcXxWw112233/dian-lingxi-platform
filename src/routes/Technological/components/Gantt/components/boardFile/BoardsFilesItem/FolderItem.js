@@ -10,6 +10,7 @@ import { isApiResponseOk } from '../../../../../../../utils/handleResponseData';
 import { fileItemIsHasUnRead, cardItemIsHasUnRead, folderItemHasUnReadNo } from '../../../ganttBusiness';
 import VisitControl from '../../../../VisitControl';
 import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from '../../../../../../../services/technological/project'
+import { arrayNonRepeatfy } from '../../../../../../../utils/util';
 
 
 @connect(mapStateToProps)
@@ -434,19 +435,6 @@ export default class FolderItem extends Component {
 		return type == '1' ? 'folder' : 'file'
 	}
 
-	// 执行人列表去重
-	arrayNonRepeatfy = arr => {
-		let temp_arr = []
-		let temp_id = []
-		for (let i = 0; i < arr.length; i++) {
-			if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
-				temp_arr.push(arr[i]);
-				temp_id.push(arr[i]['id'])
-			}
-		}
-		return temp_arr
-	}
-
 	/**
  * 访问控制的开关切换
  * @param {Boolean} flag 开关切换
@@ -615,7 +603,7 @@ export default class FolderItem extends Component {
 		const {
 			id, removeMemberPromptText, is_privilege, privileges = [], privileges_extend = [], fileTypeName, fileOrFolderName, visitControlOtherPersonOperatorMenuItem
 		} = this.genVisitContorlData(itemValue)
-		const new_projectParticipant = (privileges_extend && privileges_extend.length) ? this.arrayNonRepeatfy([].concat(...privileges_extend)) : []
+		const new_projectParticipant = (privileges_extend && privileges_extend.length) ? arrayNonRepeatfy([].concat(...privileges_extend)) : []
 		const { currentVisitControlModalVisibleItem, visitControlModalVisible } = this.state
 		return (
 			<div id={id} onClick={e => e && e.stopPropagation()}>

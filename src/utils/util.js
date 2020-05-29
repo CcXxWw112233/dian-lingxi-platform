@@ -811,3 +811,20 @@ export const getDigit = (timestamp) => {
   }
   return new_timestamp
 }
+
+/**
+ * 数组去重
+ * @param {Array} arr 需要去重的数组
+ * @param {*} key 需要判断的字段 默认为ID
+ */
+export const arrayNonRepeatfy = (arr, key = 'id') => {
+  let temp_arr = []
+  let temp_id = []
+  for (let i = 0; i < arr.length; i++) {
+      if (!temp_id.includes(arr[i][key])) {//includes 检测数组是否有某个值
+          temp_arr.push(arr[i]);
+          temp_id.push(arr[i][key])
+      }
+  }
+  return temp_arr
+}

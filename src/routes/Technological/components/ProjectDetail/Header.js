@@ -27,6 +27,7 @@ import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 import globalStyle from '@/globalset/css/globalClassName.less'
 import { connect } from "dva/index";
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
+import { arrayNonRepeatfy } from '../../../../utils/util'
 
 let is_starinit = null
 
@@ -818,7 +819,7 @@ export default class Header extends React.Component {
       for (let item in obj) {
         if (item == 'privileges') {
           obj[item].map(val => {
-            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             return new_privileges = [...temp_arr]
           })
         }
@@ -857,19 +858,6 @@ export default class Header extends React.Component {
     })
   }
 
-  // 执行人列表去重
-  arrayNonRepeatfy = arr => {
-    let temp_arr = []
-    let temp_id = []
-    for (let i = 0; i < arr.length; i++) {
-      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
-        temp_arr.push(arr[i]);
-        temp_id.push(arr[i]['id'])
-      }
-    }
-    return temp_arr
-  }
-
   // 邀请人进项目
   addMenbersInProject = (data) => {
     const { dispatch } = this.props
@@ -905,7 +893,7 @@ export default class Header extends React.Component {
       }
       return arr;
     };
-    let new_projectParticipant = this.arrayNonRepeatfy(removeEmptyArrayEle(temp_projectParticipant))
+    let new_projectParticipant = arrayNonRepeatfy(removeEmptyArrayEle(temp_projectParticipant))
     const processName = processInfo.name
     is_starinit = is_star
 

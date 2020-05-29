@@ -10,7 +10,7 @@ import PreviewFileModalRichText from './PreviewFileModalRichText'
 import DCAddChirdrenTask from './DCAddChirdrenTask'
 import Comment from './Comment'
 import Cookies from 'js-cookie'
-import { timestampToTimeNormal, timeToTimestamp, compareTwoTimestamp } from '../../../../../utils/util'
+import { timestampToTimeNormal, timeToTimestamp, compareTwoTimestamp, arrayNonRepeatfy } from '../../../../../utils/util'
 import { Button, Upload } from 'antd'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_DELETE,
@@ -985,19 +985,6 @@ class DrawContent extends React.Component {
     })
   }
 
-  // 数组去重
-  arrayNonRepeatfy = arr => {
-    let temp_arr = []
-    let temp_id = []
-    for (let i = 0; i < arr.length; i++) {
-      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
-        temp_arr.push(arr[i]);
-        temp_id.push(arr[i]['id'])
-      }
-    }
-    return temp_arr
-  }
-
   // 访问控制的更新model中的数据
   visitControlUpdateCurrentModalData = (obj = {}) => {
     // console.log(obj, 'sssss_obj')
@@ -1027,7 +1014,7 @@ class DrawContent extends React.Component {
       for (let item in obj) {
         if (item == 'privileges') {
           obj[item].map(val => {
-            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             return new_privileges = [...temp_arr]
           })
         }
@@ -1069,7 +1056,7 @@ class DrawContent extends React.Component {
       for (let item in obj) {
         if (item == 'privileges') {
           obj[item].map(val => {
-            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             if (temp_arr && !temp_arr.length) return false
             return new_privileges = [...temp_arr]
           })

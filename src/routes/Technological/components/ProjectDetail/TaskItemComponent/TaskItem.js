@@ -6,7 +6,7 @@ import { Icon, Input, message, Dropdown, Menu, Modal, Button, DatePicker, Toolti
 // import ItemOne from './ItemOne'
 import ItemTwo from './ItemTwo'
 import DCMenuItemOne from './DCMenuItemOne'
-import { timeToTimestamp, stopPropagation } from '../../../../../utils/util'
+import { timeToTimestamp, stopPropagation, arrayNonRepeatfy } from '../../../../../utils/util'
 
 import {
   MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_GROUP,
@@ -443,19 +443,6 @@ export default class TaskItem extends React.Component {
     this.hideTaskGroupOperatorDropdownMenuWhenScroll(nextProps)
   }
 
-  // 执行人列表去重
-  arrayNonRepeatfy = arr => {
-    let temp_arr = []
-    let temp_id = []
-    for (let i = 0; i < arr.length; i++) {
-      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
-        temp_arr.push(arr[i]);
-        temp_id.push(arr[i]['id'])
-      }
-    }
-    return temp_arr
-  }
-
   render() {
     const { selectedList = [], isAddEdit, isInEditName, executor = {}, start_time, due_time, addTaskType, addNewTaskName, elseElementHeight, taskGroupOperatorDropdownMenuVisible, shouldHideVisitControlPopover } = this.state
     const { taskItemValue = {}, clientHeight, taskGroupListIndex, setDrawerVisibleOpen } = this.props
@@ -471,7 +458,7 @@ export default class TaskItem extends React.Component {
     // 2. 如果存在extend列表中的成员也要拼接进来, 然后去重
     const extendParticipant = privileges_extend && [...privileges_extend]
     let temp_projectParticipant = [].concat(...projectParticipant, extendParticipant) // 用来保存新的负责人列表
-    let new_projectParticipant = this.arrayNonRepeatfy(temp_projectParticipant)
+    let new_projectParticipant = arrayNonRepeatfy(temp_projectParticipant)
     const visitControlOtherPersonOperatorMenuItem = [
       {
         key: '可访问',

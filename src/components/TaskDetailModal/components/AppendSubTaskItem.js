@@ -11,6 +11,7 @@ import {
   MESSAGE_DURATION_TIME
 } from "@/globalset/js/constant";
 import { connect } from 'dva'
+import { arrayNonRepeatfy } from '../../../utils/util'
 
 @connect(({ publicTaskDetailModal: { drawContent = {} } }) => ({
   drawContent
@@ -68,19 +69,6 @@ export default class AppendSubTaskItem extends Component {
     })
   }
 
-  // 执行人列表去重
-  arrayNonRepeatfy = arr => {
-    let temp_arr = []
-    let temp_id = []
-    for (let i = 0; i < arr.length; i++) {
-      if (!temp_id.includes(arr[i]['user_id'])) {//includes 检测数组是否有某个值
-        temp_arr.push(arr[i]);
-        temp_id.push(arr[i]['user_id'])
-      }
-    }
-    return temp_arr
-  }
-
   // 获取 currentDrawerContent 数据
   getCurrentDrawerContentPropsModelDatasExecutors = () => {
     const { drawContent: { properties = [] } } = this.props
@@ -118,7 +106,7 @@ export default class AppendSubTaskItem extends Component {
         })
       ).then(res => {
         if (isApiResponseOk(res)) {
-          new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', this.arrayNonRepeatfy(new_executors))
+          new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', arrayNonRepeatfy(new_executors, 'user_id'))
           this.setChildTaskIndrawContent({ name: 'executors', value: sub_executors }, card_id)// 先弹窗中子任务执行人中的数据
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',

@@ -33,6 +33,7 @@ import ShareAndInvite from './../../../ShareAndInvite/index'
 import { connect } from 'dva';
 import CirclePreviewLoadingComponent from '@/components/CirclePreviewLoadingComponent'
 import { isApiResponseOk } from "@/utils/handleResponseData";
+import { arrayNonRepeatfy } from '../../../../../../utils/util';
 // let timer
 
 @connect(mapStateToProps)
@@ -709,19 +710,6 @@ class FileDetailContent extends React.Component {
     })
   }
 
-  // 执行人列表去重
-  arrayNonRepeatfy = arr => {
-    let temp_arr = []
-    let temp_id = []
-    for (let i = 0; i < arr.length; i++) {
-      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
-        temp_arr.push(arr[i]);
-        temp_id.push(arr[i]['id'])
-      }
-    }
-    return temp_arr
-  }
-
   // 访问控制权限弹窗
   alarmNoEditPermission = () => {
     message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -942,7 +930,7 @@ class FileDetailContent extends React.Component {
       for (let item in obj) {
         if (item == 'privileges') {
           obj[item].map(val => {
-            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             if (temp_arr && !temp_arr.length) return false
             return new_privileges = [...temp_arr]
           })
@@ -970,7 +958,7 @@ class FileDetailContent extends React.Component {
       for (let item in obj) {
         if (item == 'privileges') {
           obj[item].map(val => {
-            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             if (!Array.isArray(temp_arr)) return false
             return new_privileges = [...temp_arr]
           })

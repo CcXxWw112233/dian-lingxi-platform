@@ -5,7 +5,7 @@ import VisitControl from '../../routes/Technological/components/VisitControl'
 import InformRemind from '@/components/InformRemind'
 import VersionSwitching from '@/components/VersionSwitching'
 import { connect } from 'dva'
-import { compareACoupleOfObjects, isArrayEqual } from '@/utils/util'
+import { compareACoupleOfObjects, isArrayEqual, arrayNonRepeatfy } from '@/utils/util'
 import { checkIsHasPermissionInBoard, getSubfixName, checkIsHasPermissionInVisitControl } from "@/utils/businessFunction";
 import {
   MESSAGE_DURATION_TIME,
@@ -544,7 +544,7 @@ export default class HeaderContentRightMenu extends Component {
       for (let item in obj) {
         if (item == 'privileges') {
           obj[item].map(val => {
-            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             if (temp_arr && !temp_arr.length) return false
             return new_privileges = [...temp_arr]
           })
@@ -562,7 +562,7 @@ export default class HeaderContentRightMenu extends Component {
       for (let item in obj) {
         if (item == 'privileges') {
           obj[item].map(val => {
-            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             if (!Array.isArray(temp_arr)) return false
             return new_privileges = [...temp_arr]
           })
@@ -607,19 +607,6 @@ export default class HeaderContentRightMenu extends Component {
       this.props.shouldUpdateAllFolderListData && this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({ folder_id })
     }
 
-  }
-
-  // 执行人列表去重
-  arrayNonRepeatfy = arr => {
-    let temp_arr = []
-    let temp_id = []
-    for (let i = 0; i < arr.length; i++) {
-      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
-        temp_arr.push(arr[i]);
-        temp_id.push(arr[i]['id'])
-      }
-    }
-    return temp_arr
   }
 
   /**

@@ -20,6 +20,7 @@ import { deleteBoardFollow } from './ganttBusiness';
 import { currentNounPlanFilterName, setBoardIdStorage } from "@/utils/businessFunction";
 import AddGroupSection from './components/AddGroupsection'
 import ArchiveSelect from './components/ArchiveSelect'
+import { arrayNonRepeatfy } from '../../../../utils/util';
 
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
@@ -903,18 +904,6 @@ export default class GroupListHeadItem extends Component {
     })
   }
 
-  // 执行人列表去重
-  arrayNonRepeatfy = arr => {
-    let temp_arr = []
-    let temp_id = []
-    for (let i = 0; i < arr.length; i++) {
-      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
-        temp_arr.push(arr[i]);
-        temp_id.push(arr[i]['id'])
-      }
-    }
-    return temp_arr
-  }
   //设置获取分组中访问控制人的列表
   getProjectParticipant = () => {
     const { itemValue: { privileges_extend = [], lane_data: { card_no_times, cards } } } = this.props
@@ -927,7 +916,7 @@ export default class GroupListHeadItem extends Component {
     // 2. 如果存在extend列表中的成员也要拼接进来, 然后去重
     const extendParticipant = privileges_extend && [...privileges_extend]
     let temp_projectParticipant = [].concat(...projectParticipant, extendParticipant) // 用来保存新的负责人列表
-    let new_projectParticipant = this.arrayNonRepeatfy(temp_projectParticipant)
+    let new_projectParticipant = arrayNonRepeatfy(temp_projectParticipant)
     return new_projectParticipant
   }
 
@@ -947,7 +936,7 @@ export default class GroupListHeadItem extends Component {
       }
       return arr;
     };
-    let new_projectParticipant = this.arrayNonRepeatfy(removeEmptyArrayEle(temp_projectParticipant))
+    let new_projectParticipant = arrayNonRepeatfy(removeEmptyArrayEle(temp_projectParticipant))
     return new_projectParticipant
   }
 
