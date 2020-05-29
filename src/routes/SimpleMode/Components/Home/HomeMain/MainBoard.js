@@ -20,6 +20,10 @@ export default class MainBoard extends Component {
     componentDidMount() {
         const { dispatch } = this.props
         this.initGetTodoList()
+        dispatch({
+            type: 'workbench/getProjectList',
+            payload: {}
+        });
     }
     // 初始化获取待办事项
     initGetTodoList = () => {
