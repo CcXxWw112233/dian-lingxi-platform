@@ -345,6 +345,10 @@ export default {
             console.log(coperateData, coperateName, 'coperateData')
             let board_card_todo_list = yield select(getModelSelectState('simplemode', 'board_card_todo_list'))
             let new_board_card_todo_list_ = [...board_card_todo_list]
+            let board_flow_todo_list = yield select(getModelSelectState('simplemode', 'board_flow_todo_list'))
+            let new_board_flow_todo_list_ = [...board_flow_todo_list]
+            let projectList = yield select(getModelSelectDatasState('workbench','projectList'))
+            let new_projectList = [...projectList]
             const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}
             const user_id = userInfo['id']
             let coop_executors = coperateData.executors || [] // 获取当前任务的执行人
@@ -355,7 +359,28 @@ export default {
             let curr_org_id = '' // 对象的组织ID
             switch (coperateType) {
                 case 'add:board': // 新建项目
-                    
+
+                    break
+                case  'change:board': // 修改项目
+                    if (coperateData.is_deleted == '1') {
+                        // 删除项目之后, 对应的代办任务|流程也需要删除
+                        new_projectList = new_projectList.filter(item => item.board_id != coperateData.board_id)
+                        new_board_card_todo_list_ = new_board_card_todo_list_.filter(item => item.board_id != coperateData.board_id)
+                        new_board_flow_todo_list_ = new_board_flow_todo_list_.filter(item => item.board_id != coperateData.board_id)
+                        dispathes({
+                            type: 'workbench/updateDatas',
+                            payload: {
+                                projectList: new_projectList
+                            }
+                        })
+                        dispathes({
+                            type: 'simplemode/updateDatas',
+                            payload: {
+                                board_card_todo_list: new_board_card_todo_list_,
+                                board_flow_todo_list: new_board_flow_todo_list_
+                            }
+                        })
+                    }
                     break
                 case 'change:cards': // 添加任务
                     // 1. 判断是否是该执行人的代办
