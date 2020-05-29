@@ -269,7 +269,7 @@ export default class Templates extends Component {
             <div style={{ display: 'flex', flexDirection: 'column', width: '248px', height: '112px', justifyContent: 'space-around' }}>
                 <Button onClick={(e) => { this.handleOperateStartConfirmProcess(e, value) }} type="primary">立即开始</Button>
                 <div>
-                    <span style={{ position: 'relative', zIndex: 1, minWidth: '80px', lineHeight: '38px', width: '100%', display: 'inline-block', textAlign: 'center' }}>
+                    <span id={'datepicker_container'} style={{ position: 'relative', zIndex: 1, minWidth: '80px', lineHeight: '38px', width: '100%', display: 'inline-block', textAlign: 'center' }}>
                         <Button style={{ color: '#1890FF', width: '100%' }}>预约开始时间</Button>
                         <DatePicker
                             disabledDate={this.disabledStartTime}
@@ -277,7 +277,7 @@ export default class Templates extends Component {
                             onChange={this.handleStartDatePickerChange}
                             onOpenChange={this.handleStartOpenChange}
                             open={this.state.startOpen}
-                            getPopupContainer={() => document.getElementById('template_item_bott')}
+                            getCalendarContainer={() => document.getElementById('datepicker_container')}
                             placeholder={'开始时间'}
                             format="YYYY/MM/DD HH:mm"
                             showTime={{ format: 'HH:mm' }}
@@ -330,7 +330,7 @@ export default class Templates extends Component {
                                         {
                                             checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, board_id) && (
                                                 <Tooltip title="开始流程">
-                                                    <Popover trigger="click" title={null} visible={this.state.popoStartConfirmVisible && id == this.state.currentVisibleItem} onVisibleChange={(visible) => { this.handleProcessStartConfirmVisible(visible, id) }} content={this.renderProcessStartConfirm(value)} icon={<></>} getPopupContainer={triggerNode => triggerNode.parentNode}>
+                                                    <Popover trigger="click" title={null} visible={this.state.popoStartConfirmVisible && id == this.state.currentVisibleItem} onVisibleChange={(visible) => { this.handleProcessStartConfirmVisible(visible, id) }} content={this.renderProcessStartConfirm(value)} icon={<></>} getPopupContainer={() => document.getElementById('template_item_bott')}>
                                                         <div className={`${globalStyles.authTheme} ${styles.template_operate}`}>&#xe796;</div>
                                                     </Popover>
                                                 </Tooltip>
