@@ -389,7 +389,7 @@ export default {
                     } else { // 表示修改项目的一些信息
                         current_user = (coperateData.data && coperateData.data.length) && coperateData.data.find(item=> item.user_id == user_id) || {}
                         if (!(current_user && Object.keys(current_user).length)) { // 表示该成员不在项目中了
-                            new_projectList = new_projectList.filter(item => item.board_id == coperateData.board_id)
+                            new_projectList = new_projectList.filter(item => item.board_id != coperateData.board_id)
                             dispathes({
                                 type: 'workbench/updateDatas',
                                 payload: {
@@ -415,13 +415,13 @@ export default {
                                     }
                                 })
                             } else { // 否则就是添加项目
-                                // new_projectList.unshift(coperateData)
-                                // dispathes({
-                                //     type: 'workbench/updateDatas',
-                                //     payload: {
-                                //         projectList: arrayNonRepeatfy(new_projectList, 'board_id')
-                                //     }
-                                // })
+                                new_projectList.unshift(coperateData)
+                                dispathes({
+                                    type: 'workbench/updateDatas',
+                                    payload: {
+                                        projectList: arrayNonRepeatfy(new_projectList, 'board_id')
+                                    }
+                                })
                             }
                         }
                         
