@@ -234,12 +234,12 @@ class HoverEars extends Component {
                     <div />
                 </div>
 
-                <div
+                {/* <div
                     // data-ref={'left_circle_ref'}
                     // ref={this.left_circle_ref}
                     // {...this.eventObj}
                     className={`${indexStyles.ears_circle} ${indexStyles.left_ear_circle}`}
-                />
+                /> */}
                 <div
                     // data-ref={'right_circle_ref'}
                     // ref={this.right_circle_ref}
@@ -247,12 +247,12 @@ class HoverEars extends Component {
                     className={`${indexStyles.ears_circle} ${indexStyles.right_ear_circle}`}
                 />
                 <div />
-                <div
+                {/* <div
                     data-ref={'left_circle_ref'}
                     ref={this.left_circle_ref}
                     {...this.eventObj}
                     className={`${indexStyles.ears_circle_mask} ${indexStyles.left_ear_circle_mask}`}
-                />
+                /> */}
                 <div
                     data-ref={'right_circle_ref'}
                     ref={this.right_circle_ref}
