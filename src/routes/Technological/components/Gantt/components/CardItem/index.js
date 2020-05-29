@@ -887,7 +887,9 @@ export default class CardItem extends Component {
             start_time, due_time, is_privilege,
             parent_card_id,
             time_span,
+            child_card_status = {},
         } = itemValue
+        const { has_child, min_start_time: child_min_start_time, max_due_time: child_max_due_time } = child_card_status //子任务状态，实现大纲的父任务三角
         const { local_left, local_top, local_width, rely_down } = this.state
         const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
         return (
@@ -981,7 +983,7 @@ export default class CardItem extends Component {
                 }
                 {//大纲视图有子任务时间的父任务(父任务开始截止位置有 区间标识)
                     ganttIsOutlineView({ group_view_type }) && !parent_card_id &&
-                    // !this.couldChangeCard() &&
+                    has_child == '1' && (child_max_due_time || child_min_start_time) &&
                     (gantt_view_mode == 'year' ? time_span > 4 : true) &&
                     (
                         <>

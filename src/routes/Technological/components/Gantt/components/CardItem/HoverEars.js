@@ -75,14 +75,14 @@ class HoverEars extends Component {
         let x2 = x - this.rela_x //- 10 // - 10是为了让鼠标不落在箭头上
         let y2 = y - this.rela_y //- 10
         if (x2 < 0) {
-            x2 = x2 + 10
+            x2 = x2 + 14
         } else {
-            x2 = x2 - 10
+            x2 = x2 - 14
         }
         if (y2 < 0) {
-            y2 = y2 + 10
+            y2 = y2 + 14
         } else {
-            y2 = y2 - 10
+            y2 = y2 - 14
         }
         const { angle, length } = this.calHypotenuse({ x2, y2 })
         this.setState({
@@ -233,26 +233,32 @@ class HoverEars extends Component {
                     <div />
                     <div />
                 </div>
+
                 <div
-                    className={`${indexStyles.ears_circle_mask} ${indexStyles.left_ear_circle_mask}`}
+                    // data-ref={'left_circle_ref'}
+                    // ref={this.left_circle_ref}
+                    // {...this.eventObj}
+                    className={`${indexStyles.ears_circle} ${indexStyles.left_ear_circle}`}
                 />
                 <div
-                    className={`${indexStyles.ears_circle_mask} ${indexStyles.right_ear_circle_mask}`}
+                    // data-ref={'right_circle_ref'}
+                    // ref={this.right_circle_ref}
+                    // {...this.eventObj}
+                    className={`${indexStyles.ears_circle} ${indexStyles.right_ear_circle}`}
                 />
+                <div />
                 <div
                     data-ref={'left_circle_ref'}
                     ref={this.left_circle_ref}
                     {...this.eventObj}
-                    className={`${indexStyles.ears_circle} ${indexStyles.left_ear_circle}`}
+                    className={`${indexStyles.ears_circle_mask} ${indexStyles.left_ear_circle_mask}`}
                 />
                 <div
                     data-ref={'right_circle_ref'}
                     ref={this.right_circle_ref}
                     {...this.eventObj}
-                    className={`${indexStyles.ears_circle} ${indexStyles.right_ear_circle}`}
+                    className={`${indexStyles.ears_circle_mask} ${indexStyles.right_ear_circle_mask}`}
                 />
-                <div />
-
                 <div
                     style={{
                         top: y1,
