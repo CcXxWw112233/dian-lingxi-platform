@@ -95,16 +95,22 @@ export default class FolderItem extends Component {
 	}
 
 	// 访问控制切换的数据
-	toggleVisitControlModal = flag => {
+	toggleVisitControlModal = (flag, calback) => {
 		const { itemValue: { id } } = this.props
 		this.setState({
 			visitControlModalVisible: flag,
 			currentVisitControlModalVisibleItem: id
+		}, () => {
+			// if (calback && typeof calback == 'function') calback()
 		})
 	}
 	// 点击弹窗取消的回调
 	handleVisitControlModalCancel = () => {
-		this.toggleVisitControlModal(false)
+		const { getFolderFileList, current_folder_id } = this.props
+		const calback = () => {
+			getFolderFileList({ id: current_folder_id })
+		}
+		this.toggleVisitControlModal(false, calback)
 	}
 	// 菜单点击
 	menuItemClick = (e) => {
