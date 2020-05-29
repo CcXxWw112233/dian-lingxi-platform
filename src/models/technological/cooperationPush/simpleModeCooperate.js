@@ -331,7 +331,7 @@ export default {
             const coperateName = coperate.e
             const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
             const coperateData = JSON.parse(coperate.d)
-            console.log(coperateData, coperateName, 'coperateData')
+            // console.log(coperateData, coperateName, 'coperateData')
             // 代办任务列表
             let board_card_todo_list = yield select(getModelSelectState('simplemode', 'board_card_todo_list'))
             let new_board_card_todo_list_ = [...board_card_todo_list]
