@@ -1,0 +1,271 @@
+.specific_example {
+    // background-image: linear-gradient(to right , #7A88FF, #7AFFAF);
+    position                 : absolute;
+    // background-color: #1890FF;
+    z-index                  : 1;
+    box-sizing               : border-box;
+    border-radius            : 2px;
+    cursor                   : pointer;
+    background               : rgba(255, 255, 255, 1);
+    // box-shadow         : 0px 1px 4px 0px rgba(0, 0, 0, 0.09);
+    box-shadow               : 0px 4px 8px 1px rgba(0, 0, 0, 0.1);
+    border-radius            : 4px;
+    padding                  : 2px 2px;
+    display                  : flex;
+    justify-content          : space-between;
+    align-items              : center;
+    // overflow              : hidden;
+
+    // background-image: linear-gradient(to right , #7A88FF, #7AFFAF);
+    // background-image:linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%);
+    .due_time_description {
+        color      : #FF4D4F;
+        font-size  : 14px;
+        margin-left: 5px;
+    }
+
+    .specific_example_content {
+        overflow        : hidden;
+        background-color: #ffffff;
+        padding         : 0 8px;
+        width           : 100%;
+        display         : flex;
+        justify-content : space-between;
+        align-items     : center;
+    }
+
+    .card_item_name {
+        flex       : 1;
+        height     : 36px;
+        line-height: 36px;
+    }
+
+    .has_unread_news {
+        position        : absolute;
+        width           : 0;
+        height          : 0;
+        border-color    : transparent #F76E75;
+        border-width    : 0px 10px 10px 0px;
+        background-color: #ffffff;
+        border-style    : solid;
+        right           : 0;
+        top             : 0;
+        // border-radius: 0 4px 0 0;
+    }
+
+    .left_triangle,
+    .right_triangle {
+        position: absolute;
+        height  : 13px;
+        width   : 15px;
+        bottom  : -9px;
+        z-index : -3;
+    }
+
+    .left_triangle {
+        left        : 0;
+        width       : 0;
+        height      : 0;
+        border-top  : 13px solid #ffffff;
+        border-right: 15px solid transparent;
+        border-color: #ffffff transparent transparent transparent;
+    }
+
+    .left_triangle:after {
+        content     : '';
+        left        : 0;
+        width       : 0;
+        height      : 0;
+        border-top  : 13px solid #ffffff;
+        border-right: 15px solid transparent;
+        border-color: #ffffff transparent transparent transparent;
+        position    : absolute;
+        bottom      : 5px;
+        left        : 2px;
+    }
+
+    .left_triangle_mask {
+        position        : absolute;
+        width           : 10px;
+        left            : 10px;
+        height          : 8px;
+        bottom          : 2px;
+        background-color: #ffffff;
+    }
+
+    .right_triangle {
+        right       : 0;
+        width       : 0;
+        height      : 0;
+        border-top  : 13px solid #ffffff;
+        border-left : 15px solid transparent;
+        border-color: #ffffff transparent transparent transparent;
+    }
+
+    .right_triangle:after {
+        content     : '';
+        width       : 0;
+        height      : 0;
+        border-top  : 13px solid #ffffff;
+        border-left : 15px solid transparent;
+        border-color: #ffffff transparent transparent transparent;
+        position    : absolute;
+        bottom      : 5px;
+        right       : 2px;
+    }
+
+    .right_triangle_mask {
+        position        : absolute;
+        width           : 10px;
+        right           : 10px;
+        height          : 8px;
+        bottom          : 2px;
+        background-color: #ffffff;
+    }
+
+    .ears_out {
+        display: none;
+    }
+
+    .ears {
+        background-color: #D7D7D7;
+        position        : absolute;
+        z-index         : -2;
+        height          : 100%;
+        width           : 14px;
+        top             : 0;
+        display         : flex;
+        justify-content : center;
+        align-items     : center;
+
+        >div {
+            height          : 16px;
+            width           : 1px;
+            background-color: #ffffff;
+        }
+    }
+
+    .left_ear {
+        left         : -10px;
+        border-radius: 4px 0 0 4px;
+
+        >div {
+            margin-right: 2px;
+
+        }
+    }
+
+    .right_ear {
+        right        : -10px;
+        border-radius: 0 4px 4px 0;
+
+        >div {
+            margin-left: 2px;
+        }
+    }
+
+    .ears_circle {
+        position        : absolute;
+        z-index         : -2;
+        background-color: #ffffff;
+        border          : 1px solid #1890FF;
+        width           : 8px;
+        height          : 8px;
+        border-radius   : 8px;
+        cursor          : pointer !important;
+    }
+
+    .ears_circle_mask {
+        position           : absolute;
+        z-index            : -2;
+        // background-color: red;
+        width              : 16px;
+        height             : 12px;
+        cursor             : pointer !important;
+    }
+
+    .left_ear_circle_mask {
+        left: -4px;
+        top : -12px;
+    }
+
+    .right_ear_circle_mask {
+        right : -4px;
+        bottom: -12px;
+    }
+
+    .left_ear_circle {
+        left: 0;
+        top : -8px;
+    }
+
+    .right_ear_circle {
+        right : 0;
+        bottom: -8px;
+    }
+
+    .line {
+        position                 : absolute;
+        width                    : 1px;
+        border-right             : 1px dashed #1890FF;
+        // background-color   : ;
+        // height                : 100px !important;
+        transform                : rotate(0deg);
+        transform-origin         : 0 0;
+
+        -ms-transform       : rotate(0deg);
+        /* IE 9 */
+        -ms-transform-origin: 0 0;
+        /* IE 9 */
+
+        -webkit-transform       : rotate(0deg);
+        /* Safari 和 Chrome */
+        -webkit-transform-origin: 0 0;
+        /* Safari 和 Chrome */
+
+        -moz-transform       : rotate(0deg);
+        /* Firefox */
+        -moz-transform-origin: 0 0;
+        /* Firefox */
+
+        -o-transform       : rotate(0deg);
+        /* Opera */
+        -o-transform-origin: 0 0;
+
+        /* Opera */
+
+    }
+
+    .triangle_down {
+        width       : 0;
+        height      : 0;
+        border-left : 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top  : 8px solid #1890FF;
+        position    : absolute;
+        margin-left : -6px;
+    }
+}
+
+.specific_example:hover {
+    background-color: #D7D7D7;
+
+    .left_triangle,
+    .left_triangle_mask,
+    .right_triangle,
+    .right_triangle_mask {
+        display: none;
+    }
+
+    .ears_out {
+        display: block;
+    }
+}
+
+.specific_example_no_start_time {
+    border-radius: 40px 0 0 40px;
+}
+
+.specific_example_no_due_time {
+    border-radius: 0 40px 40px 0;
+}

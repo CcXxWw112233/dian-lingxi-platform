@@ -4,7 +4,7 @@ import styles from './index.less'
 import { task_item_margin_top, date_area_height, ceil_height, task_item_height, ganttIsFold, ganttIsOutlineView } from '../../constants';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import OutlineTree from '../OutlineTree';
-import { updateTask, updateMilestone } from '../../../../../../services/technological/task';
+import { updateTaskVTwo, updateMilestone } from '../../../../../../services/technological/task';
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
 import { message, Tooltip } from 'antd';
 import MilestoneDetail from '../milestoneDetail'
@@ -56,11 +56,12 @@ export default class GetRowStrip extends PureComponent {
 
     renderStyles = () => {
         const { itemValue = {}, date_arr_one_level = [], ceilWidth, date_total } = this.props
-        const { height, top, left } = itemValue
+        const { height, top, left, start_time, due_time } = itemValue
         return {
             height,
             top: top + task_item_margin_top,
             width: date_total * ceilWidth,
+            zIndex: start_time || due_time ? '0' : '1', //存在时间的就不显性出现了，避免和svg层级冲突
         }
     }
     // 长条鼠标事件---start
@@ -195,12 +196,17 @@ export default class GetRowStrip extends PureComponent {
         }
         const date = this.calHoverDate()
         const { timestamp } = date
-        let { id, time_span = 1 } = itemValue
+        let { id, time_span = 1, parent_card_id } = itemValue
         if (isNaN(time_span) || time_span == 0) time_span = 1
         const due_time = timestamp + time_span * 24 * 60 * 60 * 1000 - 1000
-        updateTask({ card_id: id, due_time, start_time: timestamp, board_id: gantt_board_id }, { isNotLoading: false }).then(res => {
+        updateTaskVTwo({ card_id: id, due_time, start_time: timestamp, board_id: gantt_board_id }, { isNotLoading: false }).then(res => {
             if (isApiResponseOk(res)) {
                 this.changeOutLineTreeNodeProto(id, { start_time: timestamp, due_time })
+                if (parent_card_id) { //如果该任务是子任务，更新完成后更新父任务
+                    setTimeout(() => {
+                        this.changeOutLineTreeNodeProto(parent_card_id, { start_time: res.data.start_time, due_time: res.data.due_time })
+                    }, 200)
+                }
             } else {
                 message.error(res.message)
             }

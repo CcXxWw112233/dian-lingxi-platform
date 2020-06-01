@@ -23,7 +23,7 @@ import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
 import { handleChangeBoardViewScrollTop, setGantTimeSpan } from '../../../routes/Technological/components/Gantt/ganttBusiness';
 import { jsonArrayCompareSort, transformTimestamp, isSamDay } from '../../../utils/util';
-
+import gantt_effect from './gantt_effect'
 let dispatches = null
 const visual_add_item = {
   "id": "",
@@ -53,6 +53,7 @@ export default {
   namespace: 'gantt',
   state: {
     datas: {
+      ...gantt_effect.state,
       gantt_view_mode: 'month', //week / month /year
       gold_date_arr: [], //所需要的日期数据
       date_arr_one_level: [], //所有日期数据扁平成一级数组
@@ -122,6 +123,7 @@ export default {
     },
   },
   effects: {
+    ...gantt_effect.effects, //其它定义的事件，模块分出去
     * returnContentFilterFinalParams({ payload }, { select, call, put }) { //返回内容过滤输出成的请求参数 { key: value}
       const group_view_filter_boards = yield select(getModelSelectDatasState('gantt', 'group_view_filter_boards'))
       const group_view_filter_users = yield select(getModelSelectDatasState('gantt', 'group_view_filter_users'))
@@ -249,6 +251,11 @@ export default {
       })
       yield put({
         type: 'getGttMilestoneList',
+        payload: {
+        }
+      })
+      yield put({
+        type: 'getCardRelys',
         payload: {
         }
       })
@@ -435,7 +442,7 @@ export default {
       arr.push({ ...visual_add_item }) //默认有个新建里程碑，占位
       arr = arr.map((item, key) => {
         let new_item = {}
-        const { tree_type } = item //  里程碑/任务/子任务/虚拟占位 1/2/3/4
+        const { tree_type, children = [], child_card_status = {} } = item //  里程碑/任务/子任务/虚拟占位 1/2/3/4
         const cal_left_field = tree_type == '1' ? 'due_time' : 'start_time' //计算起始位置的字段
         item.top = key * ceil_height
         const due_time = getDigit(item['due_time'])
@@ -443,7 +450,10 @@ export default {
 
         let time_span = item['time_span']
         // time_span = setGantTimeSpan({ time_span, start_time, due_time, start_date, end_date })
-
+        // 获取子任务状态
+        child_card_status.has_child = children.length ? '1' : '0'
+        child_card_status.min_start_time = Math.min.apply(null, children.map(item => item.start_time)) || ''
+        child_card_status.max_due_time = Math.max.apply(null, children.map(item => item.due_time)) || ''
         new_item = {
           ...item,
           start_time,
@@ -451,6 +461,7 @@ export default {
           time_span,
           width: time_span * ceilWidth,
           height: task_item_height,
+          child_card_status
         }
         let time_belong_area = false
         let date_arr_one_level_length = date_arr_one_level.length
@@ -470,7 +481,7 @@ export default {
           )
         ) { //如果该任务的起始日期在当前查看面板日期之前，就从最左边开始摆放
           // new_item.left = -500
-          new_item.width = 60
+          new_item.width = 0
           new_item.left = 0
         } else {
           for (let k = 0; k < date_arr_one_level_length; k++) {
@@ -620,7 +631,8 @@ export default {
       const { not_set_scroll_top } = payload
       //根据所获得的分组数据转换所需要的数据
       // const { datas: { list_group = [], group_rows = [], ceiHeight, ceilWidth, date_arr_one_level = [] } } = this.props.model
-      const list_group = yield select(workbench_list_group)
+      let list_group = yield select(workbench_list_group)
+      list_group = JSON.parse(JSON.stringify(list_group))
       const group_rows = yield select(workbench_group_rows)
       const ceiHeight = yield select(workbench_ceiHeight)
       const ceilWidth = yield select(workbench_ceilWidth)

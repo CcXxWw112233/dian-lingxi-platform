@@ -97,7 +97,7 @@ class WorkbenchPage extends Component {
         const { workbenchBoxContentWapperModalStyle, currentSelectedWorkbenchBox, simplemodeCurrentProject } = this.props;
         const { code: select_box_code } = currentSelectedWorkbenchBox
         let isPaymentUser = false;
-        console.log("simplemodeCurrentProject", simplemodeCurrentProject);
+        // console.log("simplemodeCurrentProject", simplemodeCurrentProject);
         if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
 
             isPaymentUser = isPaymentOrgUser(simplemodeCurrentProject.org_id);
