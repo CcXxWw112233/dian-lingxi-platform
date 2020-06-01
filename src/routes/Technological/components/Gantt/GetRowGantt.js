@@ -705,7 +705,7 @@ export default class GetRowGantt extends Component {
           id={'gantt_operate_area_panel'}
           ref={'gantt_operate_area_panel'}>
           {this.renderDashedRect()}
-          <SvgArea></SvgArea>
+          {/* <SvgArea></SvgArea> */}
           {/* 非大纲视图下渲染任务和或者进度 */}
           {
             !ganttIsOutlineView({ group_view_type }) && list_group.map((value, key) => {
