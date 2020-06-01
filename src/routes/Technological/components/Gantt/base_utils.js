@@ -80,6 +80,17 @@ class base_utils {
         const base_month_date = this.getOneMonthDateDetail(year, month) //基准月份数据
         const front_month_date = this.getOneMonthDateDetail(front_one_year, front_one_month)
         const behind_month_date = this.getOneMonthDateDetail(behind_one_year, behind_one_month)
+
+        //前两月
+        const front_two_year = (month == 1 || month == 2) ? year - 1 : year
+        const front_two_month = month == 1 ? 11 : (month == 2 ? 12 : month - 2)
+        //后两月
+        const behind_two_year = (month == 11 || month == 12) ? year + 1 : year
+        const behind_two_month = month == 11 ? 1 : (month == 12 ? 2 : month + 2)
+        //后三月
+        const behind_three_year = (month == 11 || month == 12 || month == 10) ? year + 1 : year
+        const behind_three_month = month == 10 ? 1 : (month == 11 ? 2 : (month == 12 ? 3 : month + 3))
+
         const gold_date_arr = [
             {
                 date_top: this.getDateTop(front_one_year, front_one_month),
@@ -89,9 +100,17 @@ class base_utils {
                 date_top: this.getDateTop(year, month),
                 date_inner: base_month_date,
             },
-            {
+            { //基准月份
                 date_top: this.getDateTop(behind_one_year, behind_one_month),
                 date_inner: behind_month_date,
+            },
+            {
+                date_top: this.getDateTop(behind_two_year, behind_two_month),
+                date_inner: this.getOneMonthDateDetail(behind_two_year, behind_two_month),
+            },
+            {
+                date_top: this.getDateTop(behind_three_year, behind_three_month),
+                date_inner: this.getOneMonthDateDetail(behind_three_year, behind_three_month),
             },
         ]
         // console.log('gold_date_arr', gold_date_arr)
@@ -198,5 +217,5 @@ class base_utils {
         return gold_date_arr
     }
 }
-base_utils.getYearDateData()
+// base_utils.getYearDateData()
 module.exports = base_utils
