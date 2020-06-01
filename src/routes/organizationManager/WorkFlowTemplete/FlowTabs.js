@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { Table } from 'antd'
 import globalStyles from '@/globalset/css/globalClassName.less'
-
+import { connect } from 'dva'
+@connect(mapStateToProps)
 export default class FlowTabs extends Component {
 
   constructor(props) {
@@ -12,18 +13,18 @@ export default class FlowTabs extends Component {
   }
 
   componentDidMount() {
-    this.initData()
+    this.initData(this.props)
   }
 
-  initData = () => {
-    const dataSource = [
-      {
-        name: '项目拓展模板',
-        key: '1',
-        count: '3',
-        step: '5'
-      }
-    ];
+  componentWillReceiveProps(nextProps) {
+    this.initData(nextProps)
+  }
+
+  initData = (props) => {
+    const { processTemplateList = [] } = props
+    const dataSource = processTemplateList.map(item => {
+      return item
+    })
     const columns = [
       {
         title: '模板名称',
@@ -42,8 +43,8 @@ export default class FlowTabs extends Component {
       },
       {
         title: '模板步骤',
-        dataIndex: 'step',
-        key: 'step',
+        dataIndex: 'node_num',
+        key: 'node_num',
         ellipsis: true,
         width: 148,
         render: (text) => {
@@ -52,8 +53,8 @@ export default class FlowTabs extends Component {
       },
       {
         title: '被引用次数',
-        dataIndex: 'count',
-        key: 'count',
+        dataIndex: 'quote_num',
+        key: 'quote_num',
         ellipsis: true,
         width: 152,
         render: (text) => {
@@ -97,5 +98,23 @@ export default class FlowTabs extends Component {
         />
       </div>
     )
+  }
+}
+
+function mapStateToProps({
+  publicProcessDetailModal: {
+    process_detail_modal_visible,
+    processTemplateList = []
+  },
+  technological: {
+    datas: {
+      userOrgPermissions = []
+    }
+  }
+}) {
+  return {
+    process_detail_modal_visible,
+    processTemplateList,
+    userOrgPermissions
   }
 }

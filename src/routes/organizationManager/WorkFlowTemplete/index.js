@@ -8,6 +8,15 @@ import ProcessDetailModal from '../../../components/ProcessDetailModal'
 @connect(mapStateToProps)
 export default class WorkFlowTemplete extends Component {
 
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/getProcessTemplateList',
+      payload: {
+        _organization_id: localStorage.getItem('OrganizationId')
+      }
+    })
+  }
+
   handleAddTemplete = (e) => {
     e && e.stopPropagation()
     this.props.handleAddTemplete && this.props.handleAddTemplete()
@@ -56,7 +65,8 @@ export default class WorkFlowTemplete extends Component {
 
 function mapStateToProps({
   publicProcessDetailModal: {
-    process_detail_modal_visible
+    process_detail_modal_visible,
+    processTemplateList = []
   },
   technological: {
     datas: {
@@ -66,6 +76,7 @@ function mapStateToProps({
 }) {
   return {
     process_detail_modal_visible,
+    processTemplateList,
     userOrgPermissions
   }
 }

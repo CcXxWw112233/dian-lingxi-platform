@@ -312,9 +312,9 @@ export default class Templates extends Component {
                                         {name.length > 10 ? name.substr(0, 7) + '...' : name}
                                     </span>
                                     {
-                                        (select_board_id == '0' || !select_board_id) && (
-                                            <span className={`${styles.template_dec_title_org}`} title={`${board_dec}${org_dec}`}>
-                                                {board_dec}
+                                        (select_org_id == '0' || !select_org_id) && (
+                                            <span className={`${styles.template_dec_title_org}`} title={`${org_dec}`}>
+                                                {/* {board_dec} */}
                                                 {org_dec}
                                             </span>
                                         )
@@ -353,7 +353,7 @@ export default class Templates extends Component {
 
 
 
-                            {
+                            {/* {
                                 checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE, board_id) && (
                                     <Tooltip title={'编辑模板'}>
                                         <div className={`${globalStyles.authTheme} ${styles.template_operate} ${styles.template_operate_split}`}
@@ -361,9 +361,9 @@ export default class Templates extends Component {
                                         >&#xe7e1;</div>
                                     </Tooltip>
                                 )
-                            }
+                            } */}
 
-                            {
+                            {/* {
                                 checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE, board_id) && (
                                     <Popconfirm
                                         title="确认删除该模板？"
@@ -376,7 +376,7 @@ export default class Templates extends Component {
                                         </Tooltip>
                                     </Popconfirm>
                                 )
-                            }
+                            } */}
                         </div>
                     </div >
                 )
