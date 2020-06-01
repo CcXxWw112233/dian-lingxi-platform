@@ -192,19 +192,20 @@ export default class DragDropContentComponent extends Component {
   saveBrafitEdit = (brafitEditHtml) => {
     const { drawContent = {}, dispatch } = this.props;
 
-    let { card_id } = drawContent
+    let { card_id, board_id } = drawContent
     this.setState({
       isInEdit: false,
     })
     const updateObj = {
       card_id,
+      board_id,
       description: brafitEditHtml,
     }
 
     drawContent['properties'] = this.filterCurrentUpdateDatasField('REMARK', brafitEditHtml)
     Promise.resolve(
       dispatch({
-        type: 'publicTaskDetailModal/updateTask',
+        type: 'publicTaskDetailModal/updateTaskVTwo',
         payload: {
           updateObj
         }

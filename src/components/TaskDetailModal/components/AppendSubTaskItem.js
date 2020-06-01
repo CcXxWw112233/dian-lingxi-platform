@@ -170,7 +170,7 @@ export default class AppendSubTaskItem extends Component {
 
   // 失去焦点事件
   setchildTaskNameBlur = () => {
-    const { dispatch, childTaskItemValue } = this.props
+    const { dispatch, childTaskItemValue, board_id } = this.props
     const { card_id } = childTaskItemValue
     const { local_card_name } = this.state
     if (childTaskItemValue['card_name'] == local_card_name) { // 表示名称没有变化
@@ -189,10 +189,11 @@ export default class AppendSubTaskItem extends Component {
       childTaskItemValue['card_name'] = local_card_name
       const updateObj = {
         card_id,
-        name: local_card_name
+        name: local_card_name,
+        board_id
       }
       dispatch({
-        type: 'publicTaskDetailModal/updateTask',
+        type: 'publicTaskDetailModal/updateTaskVTwo',
         payload: {
           updateObj
         }
@@ -291,14 +292,14 @@ export default class AppendSubTaskItem extends Component {
 
   //截止时间
   endDatePickerChange(timeString) {
-    const { drawContent = {}, childTaskItemValue, dispatch } = this.props
+    const { drawContent = {}, childTaskItemValue, dispatch, board_id } = this.props
     const { milestone_data = {} } = drawContent
     const { data = [] } = drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
     const { card_id } = childTaskItemValue
     const nowTime = timeToTimestamp(new Date())
     const due_timeStamp = timeToTimestamp(timeString)
     const updateObj = {
-      card_id, due_time: due_timeStamp
+      card_id, due_time: due_timeStamp, board_id
     }
     if (!compareTwoTimestamp(data.deadline, due_timeStamp)) {
       message.warn('任务的截止日期不能大于关联里程碑的截止日期')
@@ -306,7 +307,7 @@ export default class AppendSubTaskItem extends Component {
     }
     Promise.resolve(
       dispatch({
-        type: 'publicTaskDetailModal/updateTask',
+        type: 'publicTaskDetailModal/updateTaskVTwo',
         payload: {
           updateObj
         }
@@ -325,23 +326,24 @@ export default class AppendSubTaskItem extends Component {
         local_due_time: due_timeStamp
       })
       // const { start_time, due_time, card_id: parent_card_id } = res.data
-      // this.setChildTaskIndrawContent({ name: 'due_time', value: due_timeStamp }, card_id)
-      // this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(res.data)
+      this.setChildTaskIndrawContent({ name: 'due_time', value: due_timeStamp }, card_id)
+      this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(res.data)
+      
     })
   }
 
   // 删除结束时间
   handleDelDueTime = (e) => {
     e && e.stopPropagation()
-    const { dispatch, childTaskItemValue } = this.props
+    const { dispatch, childTaskItemValue, board_id } = this.props
     const { card_id, due_time } = childTaskItemValue
     const updateObj = {
-      card_id, due_time: '0'
+      card_id, due_time: '0', board_id
     }
     if (!card_id) return false
     Promise.resolve(
       dispatch({
-        type: 'publicTaskDetailModal/updateTask',
+        type: 'publicTaskDetailModal/updateTaskVTwo',
         payload: {
           updateObj
         }
@@ -355,7 +357,7 @@ export default class AppendSubTaskItem extends Component {
         local_due_time: null
       })
       this.setChildTaskIndrawContent({ name: 'due_time', value: 0 }, card_id)
-      // this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(res.data)
+      this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(res.data)
     })
 
   }
