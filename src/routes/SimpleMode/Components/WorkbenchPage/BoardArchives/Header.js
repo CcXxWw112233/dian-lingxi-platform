@@ -112,7 +112,7 @@ export default class Header extends Component {
                 <div className={styles.rightSearch}>
                     <Search
                         style={{ width: '100%', resize: 'none' }}
-                        autoFocus={true}
+                        // autoFocus={true}
                         autosize={true}
                         onChange={this.inputOnChange}
                         onBlur={this.inputOnBlur}
