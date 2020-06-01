@@ -10,6 +10,12 @@ export default class WorkFlowTemplete extends Component {
 
   handleAddTemplete = (e) => {
     e && e.stopPropagation()
+    this.props.handleAddTemplete && this.props.handleAddTemplete()
+    return
+    // this.setState({
+    //   visible: true
+    // })
+    // return
     this.props.dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
@@ -18,7 +24,7 @@ export default class WorkFlowTemplete extends Component {
     })
   }
   render() {
-    const { process_detail_modal_visible } = this.props
+    const { process_detail_modal_visible, isEditCurrentFlowInstanceName } = this.props
     return (
       <div id={'workFlowTempleteContent'} className={`${indexStyles.workFlowTempleteContent} ${globalStyles.global_vertical_scrollbar}`}>
         <div className={indexStyles.wflow_top}>
@@ -31,15 +37,18 @@ export default class WorkFlowTemplete extends Component {
         <div className={indexStyles.wflow_bottom}>
           <FlowTabs />
         </div>
-        <>
+        <div onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
           {
             process_detail_modal_visible && (
               <ProcessDetailModal
                 process_detail_modal_visible={process_detail_modal_visible}
-                getContainer={document.getElementById('workFlowTempleteContent')} />
+                // getContainer={document.getElementById('workFlowTempleteContent')}
+                getContainer={document.querySelector('body')}
+              // getContainer={document.getElementById('org_managementContainer')}
+              />
             )
           }
-        </>
+        </div>
       </div>
     )
   }

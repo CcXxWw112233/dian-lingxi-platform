@@ -359,6 +359,7 @@ export default class MainContent extends Component {
       })
       return
     }
+    // console.log('进来了','sssssssssssssssssss_失焦状态', this.props.isEditCurrentFlowInstanceName)
     this.props.dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
@@ -387,6 +388,7 @@ export default class MainContent extends Component {
         isEditCurrentFlowInstanceName: true
       }
     })
+    // console.log('进来了','sssssssssssssssssss_点击事件', this.props.isEditCurrentFlowInstanceName)
     if (type == '2') {
       this.setState({
         currentSelectType: type

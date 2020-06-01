@@ -279,6 +279,20 @@ class Organization extends Component {
     })
   }
 
+  handleAddTemplete = (e) => {
+    e && e.stopPropagation()
+    // this.setState({
+    //   visible: true
+    // })
+    // return
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        process_detail_modal_visible: true,
+      }
+    })
+  }
+
   // 渲染组织管理后台导航栏
   renderManagementNavList = () => {
     const { model = {} } = this.props
@@ -418,7 +432,7 @@ class Organization extends Component {
         mainContent = (<div><ProjectTempleteScheme /></div>)
         break
       case '7':
-        mainContent = (<div><WorkFlowTemplete /></div>)
+        mainContent = (<div><WorkFlowTemplete handleAddTemplete={this.handleAddTemplete} /></div>)
         break
       default:
         break;
