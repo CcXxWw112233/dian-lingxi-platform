@@ -41,7 +41,10 @@ export async function saveProcessTemplate(data) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/template`,
     method: 'POST',
-    data
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
   })
 }
 
@@ -70,7 +73,10 @@ export async function saveEditProcessTemplete(data) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/template`,
     method: 'PUT',
-    data
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
   })
 }
 

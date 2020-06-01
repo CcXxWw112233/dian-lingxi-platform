@@ -376,7 +376,10 @@ export default class ConfigureStepTypeOne extends Component {
               return (<div key={`${key}-${value}`}>{this.filterForm(value, key)}</div>)
             })}
           </div>
-          <Dropdown overlayClassName={indexStyles.overlay_addTabsItem} overlay={this.renderFieldType()} getPopupContainer={() => document.getElementById('addTabsItem')} trigger={['click']}>
+          <Dropdown overlayClassName={indexStyles.overlay_addTabsItem} overlay={this.renderFieldType()} getPopupContainer={
+            // () => document.getElementById('addTabsItem')
+            triggerNode => triggerNode.parentNode
+            } trigger={['click']}>
             <Button id="addTabsItem" className={indexStyles.add_tabsItem}><span style={{ color: 'rgba(24,144,255,1)' }} className={globalStyles.authTheme}>&#xe782;</span>&nbsp;&nbsp;&nbsp;添加表项</Button>
           </Dropdown>
         </div>

@@ -8,7 +8,8 @@ import ProcessDetailModal from '../../../components/ProcessDetailModal'
 @connect(mapStateToProps)
 export default class WorkFlowTemplete extends Component {
 
-  handleAddTemplete = () => {
+  handleAddTemplete = (e) => {
+    e && e.stopPropagation()
     this.props.dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
@@ -19,7 +20,7 @@ export default class WorkFlowTemplete extends Component {
   render() {
     const { process_detail_modal_visible } = this.props
     return (
-      <div className={`${indexStyles.workFlowTempleteContent} ${globalStyles.global_vertical_scrollbar}`}>
+      <div id={'workFlowTempleteContent'} className={`${indexStyles.workFlowTempleteContent} ${globalStyles.global_vertical_scrollbar}`}>
         <div className={indexStyles.wflow_top}>
           <div className={indexStyles.wflow_name}>工作流模板</div>
           <div className={indexStyles.wflow_add_tem} onClick={this.handleAddTemplete}>
@@ -33,9 +34,9 @@ export default class WorkFlowTemplete extends Component {
         <>
           {
             process_detail_modal_visible && (
-              <ProcessDetailModal 
-                process_detail_modal_visible={process_detail_modal_visible} 
-                getContainer={document.getElementById('org_managementContainer')} />
+              <ProcessDetailModal
+                process_detail_modal_visible={process_detail_modal_visible}
+                getContainer={document.getElementById('workFlowTempleteContent')} />
             )
           }
         </>

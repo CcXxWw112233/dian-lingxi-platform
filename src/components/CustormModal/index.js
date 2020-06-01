@@ -66,7 +66,7 @@ class CustormModal extends React.Component {
       })
     } else {
       const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
-      let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth : clientWidth - 450
+      let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth : clientWidth
       this.setState({
         layoutClientWidth
       })

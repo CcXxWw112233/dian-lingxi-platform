@@ -331,6 +331,7 @@ export default class MainContent extends Component {
   }
 
   titleInputValueChange = (e) => {
+    e && e.stopPropagation()
     if (e.target.value.trimLR() == '') {
       this.props.dispatch({
         type: 'publicProcessDetailModal/updateDatas',
@@ -344,6 +345,7 @@ export default class MainContent extends Component {
 
   // 标题失去焦点回调
   titleTextAreaChangeBlur = async (e) => {
+    e && e.stopPropagation()
     let val = e.target.value.trimLR()
     const { processInfo = {} } = this.props
     // const { request_flows_params = {}, projectDetailInfoData: { board_id, org_id }, currentFlowTabsStatus } = this.props
@@ -420,6 +422,7 @@ export default class MainContent extends Component {
   }
 
   descriptionTextAreaChange = (e) => {
+    e && e.stopPropagation()
     let val = e.target.value.trimLR()
     if (val == "" || val == " " || !val) {
       this.props.dispatch({
@@ -434,6 +437,7 @@ export default class MainContent extends Component {
 
   // 描述失去焦点事件
   descriptionTextAreaChangeBlur = (e) => {
+    e && e.stopPropagation()
     let val = e.target.value.trimLR()
     if (val == "" || val == " " || !val) {
       this.props.dispatch({

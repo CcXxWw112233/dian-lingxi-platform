@@ -139,6 +139,7 @@ export default class ConfigureProcess extends Component {
   }
 
   titleTextAreaChange = (e) => {
+    e && e.stopPropagation()
     let val = e.target.value.trimLR()
     if (val == "" || val == " " || !val) {
       this.updateCorrespondingPrcodessStepWithNodeContent('name', '')
@@ -148,6 +149,7 @@ export default class ConfigureProcess extends Component {
 
   // 当前节点的步骤名称
   titleTextAreaChangeBlur = (e) => {
+    e && e.stopPropagation()
     let val = e.target.value.trimLR()
     if (val == "" || val == " " || !val) {
       this.updateCorrespondingPrcodessStepWithNodeContent('name', '')
