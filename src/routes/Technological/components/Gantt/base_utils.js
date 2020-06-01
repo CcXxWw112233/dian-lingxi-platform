@@ -53,6 +53,7 @@ class base_utils {
             date_no, //: date_no < 10 ? `0${date_no}`: date_no,
             week_day,
             date_string,
+            date_top: this.getDateTop(year, month),
             timestamp: new Date(date_string).getTime(),
             timestampEnd: new Date(`${date_string} 23:59`).getTime(),
             week_day_name: this.getWeekDay(week_day),
