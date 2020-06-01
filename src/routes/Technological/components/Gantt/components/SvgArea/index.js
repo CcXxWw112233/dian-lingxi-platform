@@ -590,7 +590,7 @@ export default class index extends Component {
                         position: 'absolute',
                         width: date_total * ceilWidth,
                         height: this.setSVGHeight(),
-                        zIndex: 0,
+                        zIndex: 1,
                     }}>
                     {this.renderPaths()}
                 </svg>

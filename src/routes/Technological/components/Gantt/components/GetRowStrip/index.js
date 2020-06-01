@@ -56,11 +56,12 @@ export default class GetRowStrip extends PureComponent {
 
     renderStyles = () => {
         const { itemValue = {}, date_arr_one_level = [], ceilWidth, date_total } = this.props
-        const { height, top, left } = itemValue
+        const { height, top, left, start_time, due_time } = itemValue
         return {
             height,
             top: top + task_item_margin_top,
             width: date_total * ceilWidth,
+            zIndex: start_time || due_time ? '0' : '1', //存在时间的就不显性出现了，避免和svg层级冲突
         }
     }
     // 长条鼠标事件---start
