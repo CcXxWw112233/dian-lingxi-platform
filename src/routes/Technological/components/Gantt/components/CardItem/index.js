@@ -1000,12 +1000,12 @@ export default class CardItem extends Component {
                     )
                 }
                 {/* //hover出现的耳朵效果 */}
-                <HoverEars
+                {/* <HoverEars
                     getX={this.getX}
                     itemValue={itemValue}
                     dispatch={this.props.dispatch}
                     setRelyLineDrawing={this.setRelyDown}
-                    rely_down={rely_down} />
+                    rely_down={rely_down} /> */}
             </div>
         )
     }
