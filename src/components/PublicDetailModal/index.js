@@ -36,7 +36,7 @@ export default class DetailModal extends React.Component {
   }
 
   render() {
-    const { modalVisible, width, style, siderRightCollapsed, page_load_type } = this.props;
+    const { modalVisible, width, style, siderRightCollapsed, page_load_type, getContainer } = this.props;
     const { clientWidth, clientHeight } = this.state;
 
     //const modalTop = 20
@@ -69,6 +69,7 @@ export default class DetailModal extends React.Component {
 
     return (
       <CustormModal
+      getContainer={getContainer}
         visible={modalVisible}
         width={modalWidth}
         close={this.props.close}

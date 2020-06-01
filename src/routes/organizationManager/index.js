@@ -13,6 +13,7 @@ import { currentNounPlanFilterName } from "../../utils/businessFunction";
 import FnManagement from './FnManagement';
 import ProjectTempleteScheme from './projectTempleteScheme/ProjectTempleteSchemeModal'
 import globalStyles from '@/globalset/css/globalClassName.less'
+import WorkFlowTemplete from './WorkFlowTemplete/index';
 
 
 const TabPane = Tabs.TabPane
@@ -294,6 +295,7 @@ class Organization extends Component {
         {/* <Menu.Item key="4">名词定义</Menu.Item> */}
         {/* <Menu.Item key="5">功能管理</Menu.Item> */}
         <Menu.Item key="6">{`${currentNounPlanFilterName(PROJECTS)}模板`}</Menu.Item>
+        <Menu.Item key="7">{`工作流模板`}</Menu.Item>
       </Menu>
     )
   }
@@ -414,6 +416,9 @@ class Organization extends Component {
         break
       case '6':
         mainContent = (<div><ProjectTempleteScheme /></div>)
+        break
+      case '7':
+        mainContent = (<div><WorkFlowTemplete /></div>)
         break
       default:
         break;

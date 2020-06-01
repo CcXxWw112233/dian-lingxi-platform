@@ -387,10 +387,11 @@ export default class Templates extends Component {
         return (
             <div className={styles.tempalte_nodata}>
                 <div className={`${globalStyles.authTheme} ${styles.tempalte_nodata_logo}`} >&#xe703;</div>
-                <div className={styles.tempalte_nodata_dec}>还没有模版，赶快新建一个吧</div>
-                <div className={styles.tempalte_nodata_operate}>
+                <div className={styles.tempalte_nodata_dec}>暂无模板数据</div>
+                {/* <div className={styles.tempalte_nodata_dec}>还没有模版，赶快新建一个吧</div> */}
+                {/* <div className={styles.tempalte_nodata_operate}>
                     <Button type="primary" style={{ width: 182 }} ghost onClick={this.beforeAddTemplateConfirm}>新建模板</Button>
-                </div>
+                </div> */}
             </div>
         )
     }
@@ -402,7 +403,7 @@ export default class Templates extends Component {
             <>
                 <div className={styles.templates_top}>
                     <div className={`${styles.templates_top_title}`}>流程模板</div>
-                    <div className={`${globalStyles.authTheme} ${styles.templates_top_add}`} onClick={this.beforeAddTemplateConfirm}>&#xe8fe;</div>
+                    {/* <div className={`${globalStyles.authTheme} ${styles.templates_top_add}`} onClick={this.beforeAddTemplateConfirm}>&#xe8fe;</div> */}
                 </div>
                 <div className={`${styles.templates_contain} ${globalStyles.global_vertical_scrollbar}`}>
                     {

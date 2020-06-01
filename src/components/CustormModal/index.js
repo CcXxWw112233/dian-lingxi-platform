@@ -132,7 +132,7 @@ class CustormModal extends React.Component {
 
 
   render() {
-    const { whetherShowBodyScreenWidth, siderRightCollapsed = false, visible, overInner, width, zIndex = 1006, maskClosable, footer, destroyOnClose, keyboard = true, maskStyle = {}, style = {}, onOk, onCancel, bodyStyle = {}, closable = true, title, page_load_type, chatImVisiable } = this.props;
+    const { whetherShowBodyScreenWidth, siderRightCollapsed = false, visible, overInner, width, zIndex = 1006, maskClosable, footer, destroyOnClose, keyboard = true, maskStyle = {}, style = {}, onOk, onCancel, bodyStyle = {}, closable = true, title, page_load_type, chatImVisiable, getContainer } = this.props;
     const { clientWidth, clientHeight, layoutClientWidth } = this.state
     // const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     // const { is_simple_model } = user_set;
@@ -149,7 +149,7 @@ class CustormModal extends React.Component {
         footer={footer}
         destroyOnClose={destroyOnClose}
         keyboard={keyboard}
-        getContainer={() => document.getElementById('technologicalLayoutWrapper') || document.querySelector('body')}
+        getContainer={() => getContainer || document.getElementById('technologicalLayoutWrapper') || document.querySelector('body')}
         maskStyle={{
           height: clientHeight,
           ...maskStyle,

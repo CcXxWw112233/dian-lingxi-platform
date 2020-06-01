@@ -66,10 +66,11 @@ export default class ProcessDetailModal extends Component {
   }
 
   render() {
-    const { process_detail_modal_visible, whetherUpdateWorkbenchPorcessListData, updateParentProcessTempleteList, request_flows_params = {} } = this.props
+    const { process_detail_modal_visible, whetherUpdateWorkbenchPorcessListData, updateParentProcessTempleteList, request_flows_params = {}, getContainer } = this.props
     return (
       <div>
         <PublicDetailModal
+          getContainer={getContainer}
           modalVisible={process_detail_modal_visible}
           onCancel={this.onCancel}
           isNotShowFileDetailContentRightVisible={true}
@@ -84,6 +85,7 @@ export default class ProcessDetailModal extends Component {
 }
 
 ProcessDetailModal.defaultProps = {
+  getContainer: '', // 对应的选择器对象, 即需要的挂载点
   process_detail_modal_visible: false, // 设置流程弹窗是否显示, 默认为false 不显示
   whetherUpdateWorkbenchPorcessListData: function(){}, // 修改访问控制后需要更新工作台中的代办列表 的回调
   updateParentProcessTempleteList: function(){}, // 内部数据修改后用来更新外部数据的回调
