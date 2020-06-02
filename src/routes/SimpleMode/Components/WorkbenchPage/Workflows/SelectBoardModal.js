@@ -22,8 +22,9 @@ export default class SelectBoardModal extends Component {
         const org_id = (projectList.find(item => value == item.board_id) || {}).org_id
         setBoardIdStorage(value, org_id)
         if (
-            !checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, value) &&
-            !checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE, value)
+            !checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, value) 
+            // &&
+            // !checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE, value)
         ) {
             message.warn(NOT_HAS_PERMISION_COMFIRN)
             return false
@@ -35,6 +36,8 @@ export default class SelectBoardModal extends Component {
         const target_projectList = projectList.filter(item => //过滤掉没有流程应用的
             item.apps.findIndex(item2 => item2.code == 'Flows') != -1
         )
+        // 过滤有权限的项目
+        const isHasPermissionProject = target_projectList.filter(item => checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, item.board_id) == true)
         return (
             <div>
                 <Modal
@@ -55,7 +58,7 @@ export default class SelectBoardModal extends Component {
                         style={{ width: '100%' }}
                         value={(!local_board_id || local_board_id == '0') ? undefined : local_board_id} onChange={this.handleChange}>
                         {
-                            target_projectList.filter(item => isPaymentOrgUser(item.org_id)).map(item => {
+                            isHasPermissionProject.filter(item => isPaymentOrgUser(item.org_id)).map(item => {
                                 const { board_id, board_name, org_id } = item
                                 return (
                                     <Option key={board_id} >

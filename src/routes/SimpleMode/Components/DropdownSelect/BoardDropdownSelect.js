@@ -63,7 +63,7 @@ class BoardDropdownSelect extends Component {
       return this.handleCreateProject();
     } else {
       const { dispatch, projectList } = this.props;
-      if (data.key === 0) {
+      if (data.key === 0) { // 这个表示选择了所有项目
         dispatch({
           type: 'simplemode/updateDatas',
           payload: {

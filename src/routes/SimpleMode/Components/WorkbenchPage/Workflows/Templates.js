@@ -37,24 +37,27 @@ export default class Templates extends Component {
         this.setLocalBoardId(board_id)
     }
     componentWillReceiveProps(nextProps) {
-        const { board_id } = this.props.simplemodeCurrentProject
-        const { board_id: next_board_id } = nextProps.simplemodeCurrentProject
+        const { board_id, org_id } = this.props.simplemodeCurrentProject
+        const { board_id: next_board_id, org_id: next_org_id } = nextProps.simplemodeCurrentProject
         if (board_id != next_board_id) { //切换项目时做请求
             this.getTemplateList(nextProps.simplemodeCurrentProject)
             this.setLocalBoardId(next_board_id)
+        }
+        if (org_id != next_org_id) {
+            this.getTemplateList(nextProps.simplemodeCurrentProject)
         }
     }
     // 获取流程列表
     getTemplateList = (simplemodeCurrentProject = {}) => {
         const { dispatch, currentSelectOrganize } = this.props
-        const { board_id } = simplemodeCurrentProject
-        const { id } = currentSelectOrganize
+        const { board_id, org_id } = simplemodeCurrentProject
+        // const { id } = currentSelectOrganize
         dispatch({
             type: 'publicProcessDetailModal/getProcessTemplateList',
             payload: {
                 id: board_id || '0',
                 board_id: board_id || '0',
-                _organization_id: id || '0'
+                _organization_id: org_id || '0'
             }
         })
     }
