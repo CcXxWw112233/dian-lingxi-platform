@@ -339,7 +339,7 @@ export default class DateList extends Component {
                                     ${this.getDateNoHolidaylunar(timestamp).festival_status == '1' && indexStyles.holiday_date_no}`}>
                       {
                         this.getDateNoHolidaylunar(timestamp).holiday && (
-                          <div style={{ position: 'absolute', zIndex: 2, top: -24, left: -18, width: 60, height: 20 }} >
+                          <div style={{ position: 'absolute', zIndex: 2, top: -24, left: -18, width: 60, height: 20, backgroundColor: '#fff' }} >
                             {this.getDateNoHolidaylunar(timestamp).holiday}
                           </div>
                         )
@@ -364,7 +364,7 @@ export default class DateList extends Component {
                         >
                           {
                             this.getDateNoHolidaylunar(timestamp).holiday && (
-                              <div style={{ position: 'absolute', zIndex: 2, top: -24, left: -18, width: 60, height: 20 }} >
+                              <div style={{ position: 'absolute', zIndex: 2, top: -24, left: -18, width: 60, height: 20, backgroundColor: '#fff' }} >
                                 {this.getDateNoHolidaylunar(timestamp).holiday}
                               </div>
                             )
@@ -565,7 +565,7 @@ class DropMilestone extends React.Component {
               >
                 {
                   getDateNoHolidaylunar(timestamp).holiday && (
-                    <div style={{ position: 'absolute', zIndex: 2, top: -24, left: -18, width: 60, height: 20 }} >
+                    <div style={{ position: 'absolute', zIndex: 2, top: -24, left: -18, width: 60, height: 20, backgroundColor: '#fff' }} >
                       {getDateNoHolidaylunar(timestamp).holiday}
                     </div>
                   )
