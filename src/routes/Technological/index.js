@@ -18,6 +18,7 @@ import { isPaymentOrgUser } from "@/utils/businessFunction"
 import { routerRedux } from "dva/router";
 import UploadNotification from '@/components/UploadNotification'
 import { CUSTOMIZATION_ORGNIZATIONS } from '../../globalset/js/constant';
+import UpdateLog from './components/Workbench/UpdateLog/index'
 
 const { Sider, Content } = Layout;
 let net = null
@@ -285,6 +286,7 @@ export default class Technological extends React.Component {
         {/*minWidth:1440, */}
         <>
           {layout}
+          <UpdateLog />
           <UploadNotification />
         </>
       </LocaleProvider>

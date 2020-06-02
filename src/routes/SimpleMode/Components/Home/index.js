@@ -55,7 +55,8 @@ class Home extends Component {
     dispatch({
       type: 'simplemode/updateDatas',
       payload: {
-        board_todo_list: []
+        board_card_todo_list: [],
+        board_flow_todo_list: []
       }
     })
     window.removeEventListener('keydown', this.handleEscKeypress.bind(this))

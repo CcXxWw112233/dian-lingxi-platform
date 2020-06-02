@@ -16,6 +16,7 @@ import VisitControl from './../../VisitControl/index'
 import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from './../../../../../services/technological/project'
 import { connect } from 'dva';
 import { timestampToTimeNormal } from '@/utils/util'
+import { arrayNonRepeatfy } from '../../../../../utils/util';
 
 const bodyOffsetHeight = document.querySelector('body').offsetHeight
 
@@ -621,19 +622,6 @@ export default class FileList extends React.Component {
     return false
   }
 
-  // 执行人列表去重
-  arrayNonRepeatfy = arr => {
-    let temp_arr = []
-    let temp_id = []
-    for (let i = 0; i < arr.length; i++) {
-      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
-        temp_arr.push(arr[i]);
-        temp_id.push(arr[i]['id'])
-      }
-    }
-    return temp_arr
-  }
-
   /**
    * 访问控制移除成员
    * @param {String} id 移除成员对应的id
@@ -828,7 +816,7 @@ export default class FileList extends React.Component {
       for (let item in obj) {
         if (item == 'privileges') {
           obj[item].map(val => {
-            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             if (!Array.isArray(temp_arr)) return false
             return new_privileges = [...temp_arr]
           })
@@ -857,7 +845,7 @@ export default class FileList extends React.Component {
       for (let item in obj) {
         if (item == 'privileges') {
           obj[item].map(val => {
-            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             if (!Array.isArray(temp_arr)) return false
             return new_privileges = [...temp_arr]
           })
@@ -973,7 +961,7 @@ export default class FileList extends React.Component {
   render() {
     const { selectedRowKeys, selectedRows, fileList = [], board_id } = this.props
     const { nameSort, sizeSort, creatorSort, visitControlModalVisible, visitControlModalData, visitControlModalData: { belong_folder_id, privileges = [], privileges_extend = [] }, shouldHideVisitControlPopover } = this.state;
-    const new_projectParticipant = (privileges_extend && privileges_extend.length) ? this.arrayNonRepeatfy([].concat(...privileges_extend)) : []
+    const new_projectParticipant = (privileges_extend && privileges_extend.length) ? arrayNonRepeatfy([].concat(...privileges_extend)) : []
     // 文件列表的点点点选项
     const operationMenu = (data, board_id) => {
       const { type, is_privilege, privileges, file_id } = data

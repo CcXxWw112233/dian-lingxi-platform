@@ -732,7 +732,7 @@ const Workbench = (props) => {
   // const handleVisitControlChange = flag => console.log(flag, 'ffffffffffffffflag')
   return(
     <div className={indexStyles.wrapper}>
-      <UpdateLog />
+      {/* <UpdateLog /> */}
       < PersonNews {...PersonNewsProps} {...NewsListProps}/>
       {/* <Header {...cardContentListProps} /> */}
       <div className={indexStyles.projectListBarWrapper_index}>

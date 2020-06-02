@@ -6,7 +6,7 @@ import { MESSAGE_DURATION_TIME, FILES, FLOWS } from "../../../globalset/js/const
 import { getSubfixName } from '../../../utils/businessFunction'
 import QueryString from 'querystring'
 import { processEditDatasConstant, processEditDatasRecordsConstant, processDoingListMatch, processInfoMatch } from '../../../components/ProcessDetailModal/constant';
-import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete, rejectProcessTask, workflowEnd, workflowDelete, restartProcess, processFileUpload, deleteProcessFile, fileDownload, configurePorcessGuide, rebackProcessTask, nonAwayTempleteStartPropcess } from "../../../services/technological/workFlow"
+import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete, rejectProcessTask, workflowEnd, workflowDelete, restartProcess, processFileUpload, deleteProcessFile, fileDownload, configurePorcessGuide, rebackProcessTask, nonAwayTempleteStartPropcess, updateFlowInstanceNameOrDescription } from "../../../services/technological/workFlow"
 import {public_selectCurrentFlowTabsStatus} from './select'
 
 let dispatchEvent = null
@@ -515,6 +515,19 @@ export default {
         if (calback && typeof calback == 'function') calback()
       } else {
         message.warn(res.message)
+      }
+      return res || {}
+    },
+    // 进行中修改名称和描述
+    * updateFlowInstanceNameOrDescription({ payload }, { call, put }) {
+      const { calback } = payload
+      let newPayload = {...payload}
+      newPayload.calback ? delete newPayload.calback : ''
+      let res = yield call(updateFlowInstanceNameOrDescription,newPayload)
+      if (isApiResponseOk(res)) {
+        if (calback && typeof calback == 'function') calback()
+      } else {
+        message.warn(res.message,MESSAGE_DURATION_TIME)
       }
       return res || {}
     }

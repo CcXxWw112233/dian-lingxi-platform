@@ -37,7 +37,7 @@ export default class NameChangeInput extends React.Component{
   inputonPressEnter(e) {
     const { localName } = this.state
     const { goldName } = this.props
-    this.props.setIsEdit && this.props.setIsEdit()
+    this.props.setIsEdit && this.props.setIsEdit(e)
     if(localName == goldName) {
       return false
     }
@@ -46,7 +46,7 @@ export default class NameChangeInput extends React.Component{
   inputonBlur(e) {
     const { localName } = this.state
     const { goldName } = this.props
-    this.props.setIsEdit && this.props.setIsEdit()
+    this.props.setIsEdit && this.props.setIsEdit(e)
     if(localName == goldName) {
       return false
     }

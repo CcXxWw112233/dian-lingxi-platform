@@ -10,6 +10,7 @@ import { toggleContentPrivilege, removeContentPrivilege, setContentPrivilege, ad
 import DetailInfo from '@/routes/Technological/components/ProjectDetail/DetailInfo/index'
 import ShowAddMenberModal from '@/routes/Technological/components/Project/ShowAddMenberModal'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
+import { arrayNonRepeatfy } from '../../../../../utils/util'
 
 @connect(mapStateToProps)
 export default class BoardItem extends Component {
@@ -74,10 +75,17 @@ export default class BoardItem extends Component {
             }
         })
         dispatch({
-            type: 'simplemode/getBoardsTodoList',
+            type: 'simplemode/getBoardsTaskTodoList',
             payload: {
                 _organization_id: org_id,
                 board_ids: board_id
+            }
+        })
+        dispatch({
+            type: 'simplemode/getBoardsProcessTodoList',
+            payload: {
+                _organization_id: org_id,
+                board_id: board_id
             }
         })
         selectBoardToSeeInfo({ board_id: selectBoard[0] && selectBoard[0].board_id, board_name: selectBoard[0] && selectBoard[0].board_name, dispatch })
@@ -251,19 +259,6 @@ export default class BoardItem extends Component {
         })
     }
 
-    // 执行人列表去重
-    arrayNonRepeatfy = arr => {
-        let temp_arr = []
-        let temp_id = []
-        for (let i = 0; i < arr.length; i++) {
-            if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
-                temp_arr.push(arr[i]);
-                temp_id.push(arr[i]['id'])
-            }
-        }
-        return temp_arr
-    }
-
     // 获取项目详情中的成员列表
     getProjectDetailInfoData = () => {
         const { projectDetailInfoData = {}, itemValue } = this.props
@@ -280,7 +275,7 @@ export default class BoardItem extends Component {
             }
             return arr;
         };
-        let new_projectParticipant = this.arrayNonRepeatfy(removeEmptyArrayEle(temp_projectParticipant))
+        let new_projectParticipant = arrayNonRepeatfy(removeEmptyArrayEle(temp_projectParticipant))
         return new_projectParticipant
     }
 

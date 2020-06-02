@@ -137,6 +137,14 @@ export default class MoreOptionsComponent extends Component {
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: true }, 'is_click_node_description')
   }
 
+  titleTextAreaChange = (e) => {
+    let val = e.target.value.trimLR()
+    if (val == "" || val == " " || !val) {
+      this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '' }, 'description')
+      return
+    }
+  }
+
   titleTextAreaChangeBlur = (e) => {
     let val = e.target.value.trimLR()
     if (val == "" || val == " " || !val) {
@@ -337,13 +345,15 @@ export default class MoreOptionsComponent extends Component {
         <span onClick={this.handleDelMoreIcon.bind(this, 'REMARKS')} className={`${globalStyles.authTheme} ${indexStyles.del_moreIcon}`}>&#xe7fe;</span>
         {
           !is_click_node_description ? (
-            <div onClick={(e) => { this.handleRemarksContent(e) }} className={indexStyles.remarks_content}>{description != '' ? description : '添加备注'}</div>
+            <div onClick={(e) => { this.handleRemarksContent(e) }} style={{color: description && description != '' ? 'rgba(0,0,0,0.65)' : 'rgba(0,0,0,0.45)'}} className={indexStyles.remarks_content}>{description != '' ? description : '添加备注'}</div>
           ) : (
               <NameChangeInput
                 autosize
                 onBlur={this.titleTextAreaChangeBlur}
                 onPressEnter={this.titleTextAreaChangeBlur}
                 onClick={this.titleTextAreaChangeClick}
+                setIsEdit={this.titleTextAreaChangeBlur}
+                onChange={this.titleTextAreaChange}
                 autoFocus={true}
                 goldName={description}
                 nodeName={'input'}

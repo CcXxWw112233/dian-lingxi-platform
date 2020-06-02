@@ -11,6 +11,7 @@ import {
   MESSAGE_DURATION_TIME
 } from "@/globalset/js/constant";
 import { connect } from 'dva'
+import { arrayNonRepeatfy } from '../../../utils/util'
 
 @connect(({ publicTaskDetailModal: { drawContent = {} } }) => ({
   drawContent
@@ -68,19 +69,6 @@ export default class AppendSubTaskItem extends Component {
     })
   }
 
-  // 执行人列表去重
-  arrayNonRepeatfy = arr => {
-    let temp_arr = []
-    let temp_id = []
-    for (let i = 0; i < arr.length; i++) {
-      if (!temp_id.includes(arr[i]['user_id'])) {//includes 检测数组是否有某个值
-        temp_arr.push(arr[i]);
-        temp_id.push(arr[i]['user_id'])
-      }
-    }
-    return temp_arr
-  }
-
   // 获取 currentDrawerContent 数据
   getCurrentDrawerContentPropsModelDatasExecutors = () => {
     const { drawContent: { properties = [] } } = this.props
@@ -118,7 +106,7 @@ export default class AppendSubTaskItem extends Component {
         })
       ).then(res => {
         if (isApiResponseOk(res)) {
-          new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', this.arrayNonRepeatfy(new_executors))
+          new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', arrayNonRepeatfy(new_executors, 'user_id'))
           this.setChildTaskIndrawContent({ name: 'executors', value: sub_executors }, card_id)// 先弹窗中子任务执行人中的数据
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',
@@ -182,7 +170,7 @@ export default class AppendSubTaskItem extends Component {
 
   // 失去焦点事件
   setchildTaskNameBlur = () => {
-    const { dispatch, childTaskItemValue } = this.props
+    const { dispatch, childTaskItemValue, board_id } = this.props
     const { card_id } = childTaskItemValue
     const { local_card_name } = this.state
     if (childTaskItemValue['card_name'] == local_card_name) { // 表示名称没有变化
@@ -201,10 +189,11 @@ export default class AppendSubTaskItem extends Component {
       childTaskItemValue['card_name'] = local_card_name
       const updateObj = {
         card_id,
-        name: local_card_name
+        name: local_card_name,
+        board_id
       }
       dispatch({
-        type: 'publicTaskDetailModal/updateTask',
+        type: 'publicTaskDetailModal/updateTaskVTwo',
         payload: {
           updateObj
         }
@@ -303,14 +292,14 @@ export default class AppendSubTaskItem extends Component {
 
   //截止时间
   endDatePickerChange(timeString) {
-    const { drawContent = {}, childTaskItemValue, dispatch } = this.props
+    const { drawContent = {}, childTaskItemValue, dispatch, board_id } = this.props
     const { milestone_data = {} } = drawContent
     const { data = [] } = drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
     const { card_id } = childTaskItemValue
     const nowTime = timeToTimestamp(new Date())
     const due_timeStamp = timeToTimestamp(timeString)
     const updateObj = {
-      card_id, due_time: due_timeStamp
+      card_id, due_time: due_timeStamp, board_id
     }
     if (!compareTwoTimestamp(data.deadline, due_timeStamp)) {
       message.warn('任务的截止日期不能大于关联里程碑的截止日期')
@@ -318,7 +307,7 @@ export default class AppendSubTaskItem extends Component {
     }
     Promise.resolve(
       dispatch({
-        type: 'publicTaskDetailModal/updateTask',
+        type: 'publicTaskDetailModal/updateTaskVTwo',
         payload: {
           updateObj
         }
@@ -336,22 +325,25 @@ export default class AppendSubTaskItem extends Component {
       this.setState({
         local_due_time: due_timeStamp
       })
+      // const { start_time, due_time, card_id: parent_card_id } = res.data
       this.setChildTaskIndrawContent({ name: 'due_time', value: due_timeStamp }, card_id)
+      this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(res.data)
+      
     })
   }
 
   // 删除结束时间
   handleDelDueTime = (e) => {
     e && e.stopPropagation()
-    const { dispatch, childTaskItemValue } = this.props
+    const { dispatch, childTaskItemValue, board_id } = this.props
     const { card_id, due_time } = childTaskItemValue
     const updateObj = {
-      card_id, due_time: '0'
+      card_id, due_time: '0', board_id
     }
     if (!card_id) return false
     Promise.resolve(
       dispatch({
-        type: 'publicTaskDetailModal/updateTask',
+        type: 'publicTaskDetailModal/updateTaskVTwo',
         payload: {
           updateObj
         }
@@ -364,7 +356,8 @@ export default class AppendSubTaskItem extends Component {
       this.setState({
         local_due_time: null
       })
-      this.setChildTaskIndrawContent({ name: due_time, value: '0' }, card_id)
+      this.setChildTaskIndrawContent({ name: 'due_time', value: 0 }, card_id)
+      this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(res.data)
     })
 
   }
@@ -431,7 +424,7 @@ export default class AppendSubTaskItem extends Component {
                     placeholder={local_due_time ? timestampToTimeNormal(local_due_time, '/', true) : '截止时间'}
                     format="YYYY/MM/DD HH:mm"
                     showTime={{ format: 'HH:mm' }}
-                    style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '12px', zIndex: 2 }} />
+                    style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '2px', zIndex: 2 }} />
                 </div>
               ) : (
                   <Tooltip title="截止时间" getPopupContainer={triggerNode => triggerNode.parentNode}>
@@ -444,7 +437,7 @@ export default class AppendSubTaskItem extends Component {
                         placeholder={local_due_time ? timestampToTimeNormal(local_due_time, '/', true) : '截止时间'}
                         format="YYYY/MM/DD HH:mm"
                         showTime={{ format: 'HH:mm' }}
-                        style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '12px', zIndex: 2 }} />
+                        style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '2px', zIndex: 2 }} />
                     </div>
                   </Tooltip>
                 )

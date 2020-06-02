@@ -11,6 +11,7 @@ import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { timestampToTimeNormal3, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal, timestampToTime } from '@/utils/util'
 import { MESSAGE_DURATION_TIME } from '@/globalset/js/constant'
 import { connect } from 'dva'
+import { arrayNonRepeatfy } from '../../../utils/util'
 
 @connect(({ publicTaskDetailModal: { drawContent = {} } }) => ({
   drawContent
@@ -111,19 +112,6 @@ export default class AppendSubTask extends Component {
     })
   }
 
-  // 执行人列表去重
-  arrayNonRepeatfy = arr => {
-    let temp_arr = []
-    let temp_id = []
-    for (let i = 0; i < arr.length; i++) {
-      if (!temp_id.includes(arr[i]['user_id'])) {//includes 检测数组是否有某个值
-        temp_arr.push(arr[i]);
-        temp_id.push(arr[i]['user_id'])
-      }
-    }
-    return temp_arr
-  }
-
   // 获取 currentDrawerContent 数据
   getCurrentDrawerContentPropsModelDatasExecutors = () => {
     const { drawContent: { properties = [] } } = this.props
@@ -148,7 +136,7 @@ export default class AppendSubTask extends Component {
     })
     let new_drawContent = { ...drawContent }
     // new_drawContent['executors'] = this.arrayNonRepeatfy(new_executors)
-    new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', this.arrayNonRepeatfy(new_executors))
+    new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', arrayNonRepeatfy(new_executors, 'user_id'))
     dispatch({
       type: 'publicTaskDetailModal/updateDatas',
       payload: {
@@ -211,7 +199,7 @@ export default class AppendSubTask extends Component {
 
 
   render() {
-    const { children, drawContent = {}, data: dataInfo, dispatch, handleTaskDetailChange, handleChildTaskChange } = this.props
+    const { children, drawContent = {}, data: dataInfo, dispatch, handleTaskDetailChange, handleChildTaskChange, whetherUpdateParentTaskTime } = this.props
     const { card_id, board_id } = drawContent
     const { data: child_data = [] } = drawContent['properties'].filter(item => item.code == 'SUBTASK')[0]
     const { is_add_sub_task, sub_executors = [], saveDisabled, due_time } = this.state
@@ -336,7 +324,7 @@ export default class AppendSubTask extends Component {
             const { card_id, card_name, due_time, executors = [] } = value
             const { user_id } = executors[0] || {}
             return (
-              <AppendSubTaskItem handleChildTaskChange={handleChildTaskChange} handleTaskDetailChange={handleTaskDetailChange} board_id={board_id} data={dataInfo} childTaskItemValue={value} key={`${card_id}-${card_name}-${user_id}-${due_time}`} childDataIndex={key} />
+              <AppendSubTaskItem whetherUpdateParentTaskTime={whetherUpdateParentTaskTime} handleChildTaskChange={handleChildTaskChange} handleTaskDetailChange={handleTaskDetailChange} board_id={board_id} data={dataInfo} childTaskItemValue={value} key={`${card_id}-${card_name}-${user_id}-${due_time}`} childDataIndex={key} />
             )
           })}
         </div>

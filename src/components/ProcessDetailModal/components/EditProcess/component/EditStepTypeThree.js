@@ -78,7 +78,7 @@ export default class EditStepTypeThree extends Component {
 
   renderEditDetailContent = () => {
     const { itemValue, itemKey, processEditDatas = [] } = this.props
-    const { score_node_set: { count_type, result_condition_type, result_case_pass, result_case_other, result_value } } = itemValue
+    const { score_node_set: { count_type, result_condition_type, result_case_pass, result_case_other, result_value }, description } = itemValue
     let newData = processEditDatas.find(item => item.is_edit == '0')
     let flag = false
     if (newData && Object.keys(newData).length) {
@@ -122,6 +122,16 @@ export default class EditStepTypeThree extends Component {
             </div>
           </div>
         </div>
+        {/* 备注 */}
+        {
+          description && description != '' &&
+          (
+            <div className={indexStyles.select_remarks}>
+              <span style={{color: 'rgba(0,0,0,0.45)'}} className={globalStyles.authTheme}>&#xe636; 备注 :</span>
+              <div>{description}</div>
+            </div>
+          )
+        }
         {/* 编辑按钮 */}
         <div style={{ paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center' }}>
           <Button disabled={flag} onClick={this.handleEnterConfigureProcess} type="primary">编辑</Button>

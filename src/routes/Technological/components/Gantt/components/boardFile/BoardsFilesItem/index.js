@@ -36,6 +36,24 @@ export default class Index extends Component {
             show_drag: false, //是否显示上传
         }
     }
+    // 更新父组件中的文件列表中某个状态 
+    updateParentFileStateData = (data, key) => {
+        const { value, id, i } = data
+        const { file_data = [] } = this.state
+        let new_file_data = JSON.parse(JSON.stringify(file_data || []))
+        new_file_data = new_file_data.map(item => {
+            if (item.id == id) {
+                let new_item = {...item}
+                new_item[key] = value
+                return new_item
+            } else {
+                return item
+            }
+        })
+        this.setState({
+            file_data: new_file_data,
+        })
+    }
     setBreadPaths = ({ path_item = {} }) => {
         const { bread_paths = [], first_paths_item } = this.state
         const { id, type } = path_item
@@ -246,6 +264,7 @@ export default class Index extends Component {
                     bread_paths={bread_paths}
                     setBreadPaths={this.setBreadPaths}
                     getFolderFileList={this.getFolderFileList}
+                    updateParentFileStateData={this.updateParentFileStateData}
                     setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile} />
                 {/* {show_drag && ( */}
                 <div className={styles.drag_out}
@@ -275,6 +294,7 @@ export default class Index extends Component {
                             fileType={this.props.fileType} filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
                             board_id={board_id}
                             file_detail_modal_visible={this.props.isInOpenFile && getGlobalData('storageCurrentOperateBoardId') == board_id}
+                            shouldUpdateAllFolderListData={true}
                             setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile}
                             whetherUpdateFolderListData={this.whetherUpdateFolderListData}
                         />

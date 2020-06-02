@@ -185,7 +185,7 @@ const findCurrentOverruleNodesPosition = (data = []) => {
   let overrule_position = findData.findIndex(item => item.status == '1' && item.runtime_type == '1') || ''
   if (overrule_position < 0) return ''
   return overrule_position
-} 
+}
 
 // 找到当前评分节点的位置
 const findCurrentRatingScoreNodesPosition = (data = []) => {
@@ -203,12 +203,12 @@ const cursorMoveEnd = (obj) => {
   obj.focus();
   let len = obj.value.length;
   if (document.selection) {
-      let sel = obj.createTextRange();
-      sel.moveStart('character',len);
-      sel.collapse();
-      sel.select();
+    let sel = obj.createTextRange();
+    sel.moveStart('character', len);
+    sel.collapse();
+    sel.select();
   } else if (typeof obj.selectionStart == 'number' && typeof obj.selectionEnd == 'number') {
-      obj.selectionStart = obj.selectionEnd = len;
+    obj.selectionStart = obj.selectionEnd = len;
   }
 }
 
@@ -387,6 +387,43 @@ const renderRestrictionsTime = (itemValue) => {
   return description
 }
 
+// 获取相对时间
+const compareOppositeTimer = (data) => {
+  if (!data) return ''
+  const { deadline_time_type, deadline_value, deadline_type, last_complete_time } = data
+  let total_time = '' //总时间
+  let opposite_time = '' //相对时间
+  let time_ceil = 60 * 60 //单位(3600秒)
+  switch (deadline_time_type) {
+    case 'hour': // 天
+      total_time = deadline_value * time_ceil
+      break;
+    case 'day':
+      total_time = deadline_value * 24 * time_ceil
+      break
+    case 'month':
+      total_time = 30 * deadline_value * 24 * time_ceil
+      break
+    default:
+      break;
+  }
+  opposite_time = Number(last_complete_time) + total_time//86400
+  return opposite_time
+}
+
+// 去除空数组
+const removeEmptyArrayEle = (arr) => {
+  if (!arr) return []
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i] == undefined) {
+      arr.splice(i, 1);
+      i = i - 1; // i - 1 ,因为空元素在数组下标 2 位置，删除空之后，后面的元素要向前补位，
+      // 这样才能真正去掉空元素,觉得这句可以删掉的连续为空试试，然后思考其中逻辑
+    }
+  }
+  return arr;
+};
+
 export {
   showDeleteTempleteConfirm,
   genPrincipalListFromAssignees,
@@ -404,6 +441,8 @@ export {
   result_score_option,
   result_score_fall_through_with_others,
   getDaysOfEveryMonth,
-  renderRestrictionsTime
+  renderRestrictionsTime,
+  compareOppositeTimer,
+  removeEmptyArrayEle
 }
 

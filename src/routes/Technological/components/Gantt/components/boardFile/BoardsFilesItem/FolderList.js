@@ -266,10 +266,11 @@ export default class FolderList extends Component {
                     file_data.map(item => {
                         const { id, is_privilege } = item
                         return (
-                            <div key={`${id}-${is_privilege}`}>
+                            <div key={`${id}`}>
                                 <FolderItem
                                     current_folder_id={current_folder_id}
                                     getFolderFileList={this.props.getFolderFileList}
+                                    updateParentFileStateData={this.props.updateParentFileStateData}
                                     itemValue={item}
                                     board_id={board_id}
                                     setBreadPaths={this.setBreadPaths}

@@ -462,18 +462,6 @@ export default class BeginningStepOne extends Component {
             <div className={indexStyles.nonOperatorPerson}></div>
           )
         }
-        {/* 表单内容 */}
-        {
-          forms && forms.length ? (
-            <div style={{ padding: '16px 0 8px 0', marginTop: '16px', borderTop: '1px solid #e8e8e8' }}>
-              {
-                forms.map((item, key) => {
-                  return this.filterForm(item, key)
-                })
-              }
-            </div>
-          ) : (<></>)
-        }
         {/* 备注 */}
         {
           description && description != '' &&
@@ -483,6 +471,18 @@ export default class BeginningStepOne extends Component {
               <div>{description}</div>
             </div>
           )
+        }
+        {/* 表单内容 */}
+        {
+          forms && forms.length ? (
+            <div style={{ padding: '16px 0 8px 0', marginTop: '16px', borderTop: '1px solid #e8e8e8', paddingBottom: '0px' }}>
+              {
+                forms.map((item, key) => {
+                  return this.filterForm(item, key)
+                })
+              }
+            </div>
+          ) : (<></>)
         }
         {/* 编辑按钮 */}
         {

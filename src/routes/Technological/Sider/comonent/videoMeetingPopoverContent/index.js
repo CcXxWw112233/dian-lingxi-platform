@@ -29,6 +29,7 @@ import { organizationInviteWebJoin, commInviteWebJoin } from '@/services/technol
 import { MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant';
 import moment from 'moment';
 import { checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction';
+import { arrayNonRepeatfy } from '../../../../../utils/util';
 const Option = Select.Option;
 const { TextArea } = Input;
 const { getMentions, toString, toContentState } = Mention;
@@ -556,19 +557,6 @@ class VideoMeetingPopoverContent extends React.Component {
 		})
 	}
 
-	// 执行人列表去重
-	arrayNonRepeatfy = arr => {
-		let temp_arr = []
-		let temp_id = []
-		for (let i = 0; i < arr.length; i++) {
-			if (!temp_id.includes(arr[i]['user_id'])) {//includes 检测数组是否有某个值
-				temp_arr.push(arr[i]);
-				temp_id.push(arr[i]['user_id'])
-			}
-		}
-		return temp_arr
-	}
-
 	// 获取当前用户并且设置为第一个通知对象
 	getCurrentRemindUser = () => {
 		const currentUser = this.getInfoFromLocalStorage("userInfo")
@@ -576,7 +564,7 @@ class VideoMeetingPopoverContent extends React.Component {
 		let new_currentSelectedProjectMembersList = [...currentSelectedProjectMembersList]
 		const gold_item = (new_currentSelectedProjectMembersList.find(item => item.id == currentUser.id) || {})
 		toNoticeList.push(gold_item)
-		let nonRepeatArr = this.arrayNonRepeatfy(toNoticeList)
+		let nonRepeatArr = arrayNonRepeatfy(toNoticeList, 'user_id')
 		this.setState({
 			toNoticeList: nonRepeatArr,
 			userIds: [gold_item.user_id]
@@ -647,7 +635,7 @@ class VideoMeetingPopoverContent extends React.Component {
 		new_othersPeople.push(obj)
 		user_phone.push(obj.mobile)
 		this.setState({
-			othersPeople: this.arrayNonRepeatfy(new_othersPeople),
+			othersPeople: arrayNonRepeatfy(new_othersPeople, 'user_id'),
 			user_phone: this.arrayNonRepeatPhone(user_phone),
 		})
 	}

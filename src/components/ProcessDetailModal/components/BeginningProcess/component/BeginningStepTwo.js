@@ -552,7 +552,7 @@ export default class BeginningStepTwo extends Component {
   renderEditDetailContent = () => {
     const { itemValue, processInfo: { status: parentStatus }, itemKey } = this.props
     const { rejectMessage, transPrincipalList = [], isRejectNodesIng, isPassNodesIng, historyCommentsList = [] } = this.state
-    const { approve_type, status, assignees } = itemValue
+    const { approve_type, status, assignees, description } = itemValue
     // 保存父级的状态是进行中 ==> 在保证当前节点是进行中 ==> 在保证是当前执行人 ==> 在保证当前执行人状态为1
     let showApproveButton = parentStatus == '1' && status == '1' && this.whetherShowCompleteButton() && this.getCurrentPersonApproveStatus() == '1'
     let whetherIsComplete = isRejectNodesIng || isPassNodesIng ? false : true
@@ -575,17 +575,20 @@ export default class BeginningStepTwo extends Component {
     }
     return (
       <div>
+        {/* 备注 */}
+        {
+          description && description != '' &&
+          (
+            <div className={indexStyles.select_remarks}>
+              <span className={globalStyles.authTheme}>&#xe636; 备注 :</span>
+              <div>{description}</div>
+            </div>
+          )
+        }
         {/* 审批类型 */}
         <div style={{ minHeight: '64px', padding: '20px 14px', color: 'rgba(0,0,0,0.45)', borderTop: '1px solid #e8e8e8', marginTop: '15px' }}>
           <span className={globalStyles.authTheme}>&#xe616; 审批方式 : &nbsp;&nbsp;&nbsp;{diffType()}</span>
           <div style={{ marginTop: '12px' }}>
-            {/* {
-              approve_type == '3' && status == '1' || !((transPrincipalList && transPrincipalList.length) && transPrincipalList.find(item => item.processed == '2')) ? ('') : (
-                <div>
-                  最新审批:
-                </div>
-              )
-            } */}
             {
               approve_type == '3' ? (transPrincipalList && transPrincipalList.length) && transPrincipalList.map(item => {
                 return (this.renderRemittancePersonnelSuggestion(item))

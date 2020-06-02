@@ -365,7 +365,7 @@ class VisitControl extends Component {
 
   // 这是popover中的内容头部标题的控制
   renderPopoverTitle = () => {
-    const { isPropVisitControl, type } = this.props;
+    const { isPropVisitControl, type, onlyShowPopoverContent } = this.props;
     const unClockIcon = (
       <i className={`${globalStyles.authTheme} ${styles.title__text_icon}`}>
         &#xe7ca;
@@ -378,7 +378,7 @@ class VisitControl extends Component {
     );
 
     return (
-      <div className={styles.title__wrapper}>
+      <div className={styles.title__wrapper} style={{width: onlyShowPopoverContent && 'auto'}}>
         {
           type && type == 'board_list' ? (
             <span className={styles.title__text_wrapper}>
@@ -656,7 +656,7 @@ class VisitControl extends Component {
         )}
         {/* 这里是直接显示访问控制中的内容 */}
         {onlyShowPopoverContent && (
-          <div style={{ marginLeft: '-40%', textAlign: 'center' }}>
+          <div>
             <div style={{ marginTop: '-24px' }}>{this.renderPopoverTitle()}</div>
             <div>{this.renderPopoverContent()}</div>
           </div>

@@ -1,4 +1,4 @@
-import { getCardWithAttributesDetail, setCardAttributes, getCardAttributesList, removeCardAttributes, sortCardAttribute, getCardDetail, completeTask, updateTask, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask, deleteChirldTask, boardAppRelaMiletones, 
+import { getCardWithAttributesDetail, setCardAttributes, getCardAttributesList, removeCardAttributes, sortCardAttribute, getCardDetail, completeTask, updateTask, updateTaskVTwo, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask, deleteChirldTask, boardAppRelaMiletones, 
   boardAppCancelRelaMiletones, getBoardTagList, addBoardTag, deleteBoardTag, updateBoardTag, addTaskTag, removeTaskTag } from '../../../services/technological/task'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
@@ -344,6 +344,17 @@ export default {
         } else {
           message.success('更新成功', MESSAGE_DURATION_TIME)
         }
+      } else {
+        message.error(res.message, MESSAGE_DURATION_TIME)
+      }
+      return res || {}
+    },
+    * updateTaskVTwo({ payload }, { call }) {
+      const { updateObj } = payload
+      let res = yield call(updateTaskVTwo, updateObj)
+      if (isApiResponseOk(res)) {
+        message.success(`更新成功`, MESSAGE_DURATION_TIME)
+        
       } else {
         message.error(res.message, MESSAGE_DURATION_TIME)
       }

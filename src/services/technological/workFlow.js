@@ -265,3 +265,12 @@ export async function nonAwayTempleteStartPropcess(data) {
     data
   });
 }
+
+// 进行中修改实例名称以及描述
+export async function updateFlowInstanceNameOrDescription(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/workflow `,
+    method: 'PUT',
+    data
+  });
+}

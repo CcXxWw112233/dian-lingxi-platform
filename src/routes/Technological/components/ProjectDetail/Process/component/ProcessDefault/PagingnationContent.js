@@ -15,6 +15,7 @@ import nodataImg from '../../../../../../../assets/projectDetail/process/Empty@2
 import FlowsInstanceItem from './FlowsInstanceItem'
 import { connect } from 'dva';
 import ProcessDetailModalContainer from './ProcessDetailModalContainer'
+import { arrayNonRepeatfy } from '../../../../../../../utils/util';
 const Panel = Collapse.Panel;
 
 @connect(mapStateToProps)
@@ -161,19 +162,6 @@ export default class PagingnationContent extends React.Component {
     });
   }
 
-  // 数组去重
-  arrayNonRepeatfy = arr => {
-    let temp_arr = []
-    let temp_id = []
-    for (let i = 0; i < arr.length; i++) {
-      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
-        temp_arr.push(arr[i]);
-        temp_id.push(arr[i]['id'])
-      }
-    }
-    return temp_arr
-  }
-
   commonProcessVisitControlUpdateCurrentModalData = (newProcessInfo, type) => {
     const { dispatch, board_id, processInfo = {} } = this.props
     const { status } = processInfo
@@ -205,7 +193,7 @@ export default class PagingnationContent extends React.Component {
       for (let item in obj) {
         if (item == 'privileges') {
           obj[item].map(val => {
-            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             if (temp_arr && !temp_arr.length) return false
             return new_privileges = [...temp_arr]
           })
@@ -226,7 +214,7 @@ export default class PagingnationContent extends React.Component {
       for (let item in obj) {
         if (item == 'privileges') {
           obj[item].map(val => {
-            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             return new_privileges = [...temp_arr]
           })
         }

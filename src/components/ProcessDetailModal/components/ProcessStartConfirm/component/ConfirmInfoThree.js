@@ -79,7 +79,7 @@ export default class ConfirmInfoThree extends Component {
 
   renderEditDetailContent = () => {
     const { itemValue, itemKey } = this.props
-    const { score_node_set: { count_type, result_condition_type, result_case_pass, result_case_other, result_value } } = itemValue
+    const { score_node_set: { count_type, result_condition_type, result_case_pass, result_case_other, result_value }, description } = itemValue
     return (
       <div>
         {/* 渲染评分项 */}
@@ -118,6 +118,16 @@ export default class ConfirmInfoThree extends Component {
             </div>
           </div>
         </div>
+        {/* 备注 */}
+        {
+          description && description != '' &&
+          (
+            <div className={indexStyles.select_remarks}>
+              <span style={{color: 'rgba(0,0,0,0.45)'}} className={globalStyles.authTheme}>&#xe636; 备注 :</span>
+              <div>{description}</div>
+            </div>
+          )
+        }
       </div>
     )
   }

@@ -6,7 +6,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import InformRemind from '@/components/InformRemind'
-import { timestampToTime, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal, isSamDay } from '@/utils/util'
+import { timestampToTime, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal, isSamDay, timestampToTimeNormal3, timestampToTimeNormal4 } from '@/utils/util'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_EDIT, PROJECT_FILES_FILE_INTERVIEW
 } from "@/globalset/js/constant";
@@ -19,6 +19,8 @@ import { getFolderList } from '@/services/technological/file'
 import { getMilestoneList } from '@/services/technological/prjectDetail'
 import DragDropContentComponent from './DragDropContentComponent'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
+import { filterOwnSubTaskMaxDueTime } from './handleOperateTaskModal'
+import { arrayNonRepeatfy } from '../../utils/util'
 const { LingxiIm, Im } = global.constants
 
 @connect(mapStateToProps)
@@ -27,7 +29,8 @@ export default class MainContent extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      propertiesList: []
+      propertiesList: [],
+      is_change_parent_time: false
     }
   }
 
@@ -135,6 +138,7 @@ export default class MainContent extends Component {
         }
         this.getMilestone(res.data.board_id)
         this.filterCurrentExistenceField(res.data)// 初始化获取字段信息
+        // this.whetherUpdateParentTaskTime()
         this.linkImWithCard({ name: res.data.card_name, type: 'card', board_id: res.data.board_id, id: res.data.card_id })
       } else {
         setTimeout(() => {
@@ -280,19 +284,20 @@ export default class MainContent extends Component {
   titleTextAreaChangeBlur = (e) => {
     let val = e.target.value
     const { dispatch, drawContent = {} } = this.props
-    const { card_id } = drawContent
+    const { card_id, board_id } = drawContent
     let reStr = val.trim()
     if (reStr == "" || reStr == " " || !reStr) return
     drawContent['card_name'] = reStr
     const updateObj = {
       card_id,
       card_name: val,
-      name: val
+      name: val,
+      board_id
     }
 
     Promise.resolve(
       dispatch({
-        type: 'publicTaskDetailModal/updateTask',
+        type: 'publicTaskDetailModal/updateTaskVTwo',
         payload: {
           updateObj
         }
@@ -365,19 +370,6 @@ export default class MainContent extends Component {
     return new_properties
   }
 
-  // 执行人列表去重
-  arrayNonRepeatfy = arr => {
-    let temp_arr = []
-    let temp_id = []
-    for (let i = 0; i < arr.length; i++) {
-      if (!temp_id.includes(arr[i]['user_id'])) {//includes 检测数组是否有某个值
-        temp_arr.push(arr[i]);
-        temp_id.push(arr[i]['user_id'])
-      }
-    }
-    return temp_arr
-  }
-
   // 邀请他人参与回调 并设置为执行人
   inviteOthersToBoardCalback = ({ users }) => {
     const { dispatch, projectDetailInfoData = {}, drawContent = {} } = this.props
@@ -387,7 +379,7 @@ export default class MainContent extends Component {
     const calback = (res) => {
       const new_users = res.data
       const arr = new_users.filter(item => users.indexOf(item.user_id) != -1)
-      const newExecutors = this.arrayNonRepeatfy([].concat(gold_data, arr))
+      const newExecutors = arrayNonRepeatfy([].concat(gold_data, arr), 'user_id')
       let new_drawContent = { ...drawContent }
       // new_drawContent['executors'] = newExecutors
       new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', newExecutors)
@@ -509,10 +501,11 @@ export default class MainContent extends Component {
     const { drawContent = {}, dispatch } = this.props
     const nowTime = timeToTimestamp(new Date())
     const start_timeStamp = timeToTimestamp(timeString)
-    const { card_id, due_time } = drawContent
+    const { card_id, due_time, board_id } = drawContent
     const { data = [] } = drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
     const updateObj = {
-      card_id, start_time: start_timeStamp
+      card_id, start_time: start_timeStamp,
+      board_id
     }
     if (!this.compareStartDueTime(start_timeStamp, due_time)) {
       message.warn('开始时间不能大于结束时间')
@@ -526,7 +519,7 @@ export default class MainContent extends Component {
     new_drawContent['start_time'] = start_timeStamp
     Promise.resolve(
       dispatch({
-        type: 'publicTaskDetailModal/updateTask',
+        type: 'publicTaskDetailModal/updateTaskVTwo',
         payload: {
           updateObj
         }
@@ -549,12 +542,12 @@ export default class MainContent extends Component {
   // 截止时间 chg事件 S
   endDatePickerChange(timeString) {
     const { drawContent = {}, dispatch } = this.props
-    const { card_id, start_time, milestone_data = {} } = drawContent
+    const { card_id, start_time, milestone_data = {}, board_id } = drawContent
     const { data = [] } = drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
     const nowTime = timeToTimestamp(new Date())
     const due_timeStamp = timeToTimestamp(timeString)
     const updateObj = {
-      card_id, due_time: due_timeStamp
+      card_id, due_time: due_timeStamp, board_id
     }
 
     if (!this.compareStartDueTime(start_time, due_timeStamp)) {
@@ -571,7 +564,7 @@ export default class MainContent extends Component {
     new_drawContent['due_time'] = due_timeStamp
     Promise.resolve(
       dispatch({
-        type: 'publicTaskDetailModal/updateTask',
+        type: 'publicTaskDetailModal/updateTaskVTwo',
         payload: {
           updateObj
         }
@@ -595,15 +588,15 @@ export default class MainContent extends Component {
   handleDelStartTime = (e) => {
     e && e.stopPropagation()
     const { dispatch, drawContent = {} } = this.props
-    const { card_id, start_time } = drawContent
+    const { card_id, start_time, board_id } = drawContent
     const updateObj = {
-      card_id, start_time: '0'
+      card_id, start_time: '0', board_id
     }
     let new_drawContent = { ...drawContent }
     new_drawContent['start_time'] = null
     Promise.resolve(
       dispatch({
-        type: 'publicTaskDetailModal/updateTask',
+        type: 'publicTaskDetailModal/updateTaskVTwo',
         payload: {
           updateObj
         }
@@ -623,16 +616,16 @@ export default class MainContent extends Component {
   handleDelDueTime = (e) => {
     e && e.stopPropagation()
     const { dispatch, drawContent = {} } = this.props
-    const { card_id, due_time } = drawContent
+    const { card_id, due_time, board_id } = drawContent
     const updateObj = {
-      card_id, due_time: '0'
+      card_id, due_time: '0', board_id
     }
     let new_drawContent = { ...drawContent }
     new_drawContent['due_time'] = null
     if (!card_id) return false
     Promise.resolve(
       dispatch({
-        type: 'publicTaskDetailModal/updateTask',
+        type: 'publicTaskDetailModal/updateTaskVTwo',
         payload: {
           updateObj
         }
@@ -1090,6 +1083,33 @@ export default class MainContent extends Component {
 
   }
 
+  // 是否可以修改父任务中的时间
+  whetherUpdateParentTaskTime = (data) => {
+    const { drawContent = {}, dispatch } = this.props
+    const gold_data = (drawContent['properties'] && drawContent['properties'].find(item => item.code == 'SUBTASK') || {}).data
+    if (!gold_data) return false;
+
+    let newData = [...gold_data]
+    newData = newData.find(item => item.due_time)
+    if (newData && Object.keys(newData).length) {
+      this.setState({
+        is_change_parent_time: true
+      })
+    } else {
+      this.setState({
+        is_change_parent_time: false
+      })
+    }
+    if (data) {
+      const { start_time, card_id, due_time } = data
+      let new_drawContent = { ...drawContent }
+      new_drawContent['start_time'] = start_time
+      new_drawContent['due_time'] = due_time
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: start_time })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: due_time })
+    }
+  }
+
   render() {
     const { drawContent = {}, is_edit_title, isInOpenFile, handleTaskDetailChange, handleChildTaskChange } = this.props
     const {
@@ -1224,15 +1244,17 @@ export default class MainContent extends Component {
                     <div style={{ position: 'relative' }}>
                       {/* 开始时间 */}
                       {
-                        (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
-                          (
-                            <div className={`${mainContentStyles.start_time}`}>
-                              <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                                {start_time ? <span className={mainContentStyles.value_text}>{timestampToTime(start_time, true)}</span> : '暂无'}
-                              </span>
-                            </div>
-                          )
-                        ) : (
+                        (((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit())
+                          // || this.state.is_change_parent_time
+                        ) ? (
+                            (
+                              <div className={`${mainContentStyles.start_time}`}>
+                                <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
+                                  {start_time ? <span className={mainContentStyles.value_text}>{timestampToTime(start_time, true)}</span> : '暂无'}
+                                </span>
+                              </div>
+                            )
+                          ) : (
                             <div className={`${mainContentStyles.start_time}`}>
                               <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
                                 {start_time ? <span className={mainContentStyles.value_text}>{timestampToTime(start_time, true)}</span> : '开始时间'}
@@ -1255,15 +1277,17 @@ export default class MainContent extends Component {
                       &nbsp;
                       {/* 截止时间 */}
                       {
-                        (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
-                          (
-                            <div className={`${mainContentStyles.due_time}`}>
-                              <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                                {due_time ? <span className={mainContentStyles.value_text}>{timestampToTime(due_time, true)}</span> : '暂无'}
-                              </span>
-                            </div>
-                          )
-                        ) : (
+                        (((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit())
+                          // || this.state.is_change_parent_time
+                        ) ? (
+                            (
+                              <div className={`${mainContentStyles.due_time}`}>
+                                <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
+                                  {due_time ? <span className={mainContentStyles.value_text}>{timestampToTime(due_time, true)}</span> : '暂无'}
+                                </span>
+                              </div>
+                            )
+                          ) : (
                             <div className={`${mainContentStyles.due_time}`}>
                               <span style={{ position: 'relative', minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
                                 {due_time ? <span className={mainContentStyles.value_text}>{timestampToTime(due_time, true)}</span> : '截止时间'}
@@ -1301,7 +1325,7 @@ export default class MainContent extends Component {
           {/* 各种字段的不同状态 E */}
           {/* 不同字段的渲染 S */}
           <div style={{ position: 'relative' }}>
-            <DragDropContentComponent getMilestone={this.getMilestone} selectedKeys={selectedKeys} updateParentPropertiesList={this.updateParentPropertiesList} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} boardFolderTreeData={boardFolderTreeData} milestoneList={milestoneList} />
+            <DragDropContentComponent getMilestone={this.getMilestone} selectedKeys={selectedKeys} updateParentPropertiesList={this.updateParentPropertiesList} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} boardFolderTreeData={boardFolderTreeData} milestoneList={milestoneList} whetherUpdateParentTaskTime={this.whetherUpdateParentTaskTime} />
           </div>
           {/* 不同字段的渲染 E */}
 

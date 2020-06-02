@@ -423,11 +423,21 @@ export default class BeginningStepThree extends Component {
   renderEditDetailContent = () => {
     const { isPassNodesIng, successfulMessage, transPrincipalList = [], historyCommentsList = [] } = this.state
     const { itemValue, itemKey, processInfo: { status: parentStatus } } = this.props
-    const { score_node_set: { count_type, result_condition_type, result_case_pass, result_case_other, result_value }, status, score_result_value } = itemValue
+    const { score_node_set: { count_type, result_condition_type, result_case_pass, result_case_other, result_value }, status, score_result_value, description } = itemValue
     let showApproveButton = parentStatus == '1' && status == '1' && this.whetherShowCompleteButton() && this.getCurrentPersonApproveStatus() == '1'
     let whetherIsComplete = this.whetherIsComplete() ? false : true
     return (
       <div>
+        {/* 备注 */}
+        {
+          description && description != '' &&
+          (
+            <div className={indexStyles.select_remarks}>
+              <span className={globalStyles.authTheme}>&#xe636; 备注 :</span>
+              <div>{description}</div>
+            </div>
+          )
+        }
         {/* 渲染评分项 */}
         <div style={{ position: 'relative' }}>
           <BeginningStepThree_one transPrincipalList={transPrincipalList} showApproveButton={showApproveButton} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemValue={itemValue} itemKey={itemKey} />

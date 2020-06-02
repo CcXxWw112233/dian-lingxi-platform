@@ -17,6 +17,7 @@ import {
 import { FLOWS } from '../../globalset/js/constant'
 import { genPrincipalListFromAssignees, transformNewAssigneesToString, transformNewRecipientsToString, wipeOffSomeDataWithScoreNodes } from './components/handleOperateModal'
 import { getGlobalData } from '../../utils/businessFunction'
+import { arrayNonRepeatfy } from '../../utils/util'
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
 
@@ -58,22 +59,9 @@ export default class HeaderContentRightMenu extends Component {
     });
   };
 
-  // 数组去重
-  arrayNonRepeatfy = arr => {
-    let temp_arr = []
-    let temp_id = []
-    for (let i = 0; i < arr.length; i++) {
-      if (!temp_id.includes(arr[i]['id'])) {//includes 检测数组是否有某个值
-        temp_arr.push(arr[i]);
-        temp_id.push(arr[i]['id'])
-      }
-    }
-    return temp_arr
-  }
-
   commonProcessVisitControlUpdateCurrentModalData = (newProcessInfo, type) => {
     const { dispatch, processInfo = {}, request_flows_params = {} } = this.props
-    const { status, board_id } = processInfo
+    const { status, board_id, org_id } = processInfo
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     dispatch({
       type: 'publicProcessDetailModal/updateDatas',
@@ -86,7 +74,8 @@ export default class HeaderContentRightMenu extends Component {
         type: 'publicProcessDetailModal/getProcessListByType',
         payload: {
           status: status,
-          board_id: BOARD_ID
+          board_id: BOARD_ID,
+          _organization_id: request_flows_params._organization_id || org_id
         }
       })
     }
@@ -103,7 +92,7 @@ export default class HeaderContentRightMenu extends Component {
       for (let item in obj) {
         if (item == 'privileges') {
           obj[item].map(val => {
-            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             if (temp_arr && !temp_arr.length) return false
             return new_privileges = [...temp_arr]
           })
@@ -125,7 +114,7 @@ export default class HeaderContentRightMenu extends Component {
       for (let item in obj) {
         if (item == 'privileges') {
           obj[item].map(val => {
-            let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
+            let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             return new_privileges = [...temp_arr]
           })
         }
@@ -307,7 +296,7 @@ export default class HeaderContentRightMenu extends Component {
   // 中止流程的点击事件
   handleDiscontinueProcess = () => {
     let that = this
-    const { processInfo: { id, board_id }, request_flows_params = {}, currentFlowTabsStatus } = this.props
+    const { processInfo: { id, board_id, org_id }, request_flows_params = {}, currentFlowTabsStatus } = this.props
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     if (!this.whetherIsHasPermission(PROJECT_FLOWS_FLOW_ABORT)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -326,7 +315,8 @@ export default class HeaderContentRightMenu extends Component {
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {
               board_id: BOARD_ID,
-              status: currentFlowTabsStatus || '1'
+              status: currentFlowTabsStatus || '1',
+              _organization_id: request_flows_params._organization_id || org_id
             }
           })
           that.props.whetherUpdateWorkbenchPorcessListData && that.props.whetherUpdateWorkbenchPorcessListData({type: 'workflowEnd'})
@@ -339,16 +329,16 @@ export default class HeaderContentRightMenu extends Component {
 
   // 删除流程的点击事件
   handleDeletProcess = () => {
-    const { processInfo: { id, board_id }, currentFlowTabsStatus, request_flows_params = {} } = this.props
+    const { processInfo: { id, board_id, org_id }, currentFlowTabsStatus, request_flows_params = {} } = this.props
     if (!this.whetherIsHasPermission(PROJECT_FLOWS_FLOW_DELETE)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return
     }
     if (!id) return false
-    this.confirm({ id, board_id, currentFlowTabsStatus, request_flows_params })
+    this.confirm({ id, board_id, org_id, currentFlowTabsStatus, request_flows_params })
   }
 
-  confirm({ id, board_id, currentFlowTabsStatus, request_flows_params = {} }) {
+  confirm({ id, board_id, org_id, currentFlowTabsStatus, request_flows_params = {} }) {
     const that = this
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     const { dispatch } = that.props
@@ -373,7 +363,8 @@ export default class HeaderContentRightMenu extends Component {
                 type: 'publicProcessDetailModal/getProcessListByType',
                 payload: {
                   board_id: BOARD_ID,
-                  status: currentFlowTabsStatus || '1'
+                  status: currentFlowTabsStatus || '1',
+                  _organization_id: request_flows_params._organization_id || org_id
                 }
               })
               that.props.whetherUpdateWorkbenchPorcessListData && that.props.whetherUpdateWorkbenchPorcessListData({type: 'deleteProcess'})
@@ -391,7 +382,7 @@ export default class HeaderContentRightMenu extends Component {
   // 重启流程的点击事件
   handleReStartProcess = () => {
     let that = this
-    const { processInfo: { id, board_id }, currentFlowTabsStatus, request_flows_params = {} } = this.props
+    const { processInfo: { id, board_id, org_id }, currentFlowTabsStatus, request_flows_params = {} } = this.props
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     if (!this.whetherIsHasPermission(PROJECT_FLOWS_FLOW_ABORT)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -410,7 +401,8 @@ export default class HeaderContentRightMenu extends Component {
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {
               board_id: BOARD_ID,
-              status: currentFlowTabsStatus || '1'
+              status: currentFlowTabsStatus || '1',
+              _organization_id: request_flows_params._organization_id || org_id
             }
           })
           this.props.onCancel && this.props.onCancel()
@@ -488,8 +480,8 @@ export default class HeaderContentRightMenu extends Component {
 
 
   render() {
-    const { projectDetailInfoData: { board_id, data = [] }, processInfo = {}, processPageFlagStep } = this.props
-    const { is_privilege, privileges = [], assignees, id, nodes = [], status, is_covert_template } = processInfo
+    const { projectDetailInfoData: { data = [] }, processInfo = {}, processPageFlagStep } = this.props
+    const { is_privilege, privileges = [], assignees, id, nodes = [], status, is_covert_template, board_id } = processInfo
     const principalList = genPrincipalListFromAssignees(nodes);
     return (
       <div>

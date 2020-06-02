@@ -20,6 +20,10 @@ export default class MainBoard extends Component {
     componentDidMount() {
         const { dispatch } = this.props
         this.initGetTodoList()
+        dispatch({
+            type: 'workbench/getProjectList',
+            payload: {}
+        });
     }
     // 初始化获取待办事项
     initGetTodoList = () => {
@@ -31,9 +35,16 @@ export default class MainBoard extends Component {
             params.board_ids = board_id
         }
         dispatch({
-            type: 'simplemode/getBoardsTodoList',
+            type: 'simplemode/getBoardsTaskTodoList',
             payload: {
                 ...params
+            }
+        })
+        dispatch({
+            type: 'simplemode/getBoardsProcessTodoList',
+            payload: {
+                _organization_id: params._organization_id,
+                board_id: params.board_ids
             }
         })
     }
@@ -110,7 +121,14 @@ export default class MainBoard extends Component {
             })
             selectBoardToSeeInfo({ board_id: '0', dispatch })
             dispatch({
-                type: 'simplemode/getBoardsTodoList',
+                type: 'simplemode/getBoardsTaskTodoList',
+                payload: {
+                    _organization_id: localStorage.getItem('OrganizationId'),
+                    // board_ids: '0'
+                }
+            })
+            dispatch({
+                type: 'simplemode/getBoardsProcessTodoList',
                 payload: {
                     _organization_id: localStorage.getItem('OrganizationId'),
                     // board_ids: '0'
@@ -139,10 +157,17 @@ export default class MainBoard extends Component {
                     }
                 })
                 dispatch({
-                    type: 'simplemode/getBoardsTodoList',
+                    type: 'simplemode/getBoardsTaskTodoList',
                     payload: {
                         _organization_id: local_selected_board.org_id,
                         board_ids: local_selected_board.board_id
+                    }
+                })
+                dispatch({
+                    type: 'simplemode/getBoardsProcessTodoList',
+                    payload: {
+                        _organization_id: local_selected_board.org_id,
+                        board_id: local_selected_board.board_id
                     }
                 })
                 selectBoardToSeeInfo({ board_id: local_selected_board && local_selected_board.board_id, board_name: local_selected_board && local_selected_board.board_name, dispatch })
@@ -169,10 +194,17 @@ export default class MainBoard extends Component {
                     }
                 })
                 dispatch({
-                    type: 'simplemode/getBoardsTodoList',
+                    type: 'simplemode/getBoardsTaskTodoList',
                     payload: {
                         _organization_id: projectList[0].org_id,
                         board_ids: projectList[0].board_id
+                    }
+                })
+                dispatch({
+                    type: 'simplemode/getBoardsProcessTodoList',
+                    payload: {
+                        _organization_id: projectList[0].org_id,
+                        board_id: projectList[0].board_id
                     }
                 })
                 selectBoardToSeeInfo({ board_id: projectList[0] && projectList[0].board_id, board_name: projectList[0] && projectList[0].board_name, dispatch })

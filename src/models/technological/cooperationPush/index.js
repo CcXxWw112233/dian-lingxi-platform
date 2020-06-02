@@ -139,6 +139,7 @@ export default {
       // if(creator_id == user_id || current_org_id != org_id) {
       //   return false
       // }
+      // 判断当前操作人是否是自己,如果是 就不推送
       if (creator_id == user_id) {
         return false
       }
@@ -151,6 +152,8 @@ export default {
         handleType = 'handleWsData_board_list'
       } else if (locationPath.indexOf('/technological/simplemode/workbench') != -1) {
         handleType = 'simpleModeCooperate/handleSimpleModeCooperate'
+      } else if (locationPath.indexOf('/technological/simplemode/home') != -1) { // 极简首页, 处理代办
+        handleType = 'simpleModeCooperate/handleCooperateToDoListAgent'
       }
       yield put({
         type: handleType,

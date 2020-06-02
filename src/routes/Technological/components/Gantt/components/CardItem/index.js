@@ -441,10 +441,11 @@ export default class CardItem extends Component {
                         local_width: local_width_origin,
                         local_width_flag: local_width_origin
                     }, () => {
+                        const payload = res.data || { ...updateData }
                         this.excuteHandleEffectHandleParentCard([
                             // 'handleParentCard',
                             // 'updateParentCard'
-                            { action: 'updateParentCard', payload: { ...updateData } }
+                            { action: 'updateParentCard', payload }
                         ])
                     })
                     message.error(res.message)
@@ -548,10 +549,11 @@ export default class CardItem extends Component {
                     this.setState({
                         local_left: left
                     }, () => {
+                        const payload = res.data || { ...updateData }
                         this.excuteHandleEffectHandleParentCard([
                             // 'handleParentCard',
                             // 'updateParentCard'
-                            { action: 'updateParentCard', payload: { ...updateData } }
+                            { action: 'updateParentCard', payload }
                         ])
                     })
                     message.error(res.message)
@@ -1000,12 +1002,12 @@ export default class CardItem extends Component {
                     )
                 }
                 {/* //hover出现的耳朵效果 */}
-                <HoverEars
+                {/* <HoverEars
                     getX={this.getX}
                     itemValue={itemValue}
                     dispatch={this.props.dispatch}
                     setRelyLineDrawing={this.setRelyDown}
-                    rely_down={rely_down} />
+                    rely_down={rely_down} /> */}
             </div>
         )
     }
