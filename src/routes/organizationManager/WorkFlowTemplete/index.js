@@ -10,6 +10,13 @@ import { showDeleteTempleteConfirm } from '../../../components/ProcessDetailModa
 @connect(mapStateToProps)
 export default class WorkFlowTemplete extends Component {
 
+  constructor(props) {
+    super(props)
+    this.state = {
+      whetherShowProcessDetailModalVisible:false
+    }
+  }
+
   componentDidMount() {
     this.props.dispatch({
       type: 'publicProcessDetailModal/getProcessTemplateList',
@@ -28,6 +35,13 @@ export default class WorkFlowTemplete extends Component {
     })
   }
 
+  // 关闭流程弹窗处理回调
+  setProcessDetailModalVisibile = () => {
+    this.setState({
+      whetherShowProcessDetailModalVisible: false
+    })
+  }
+
   // 新建模板
   handleAddTemplete = (e) => {
     e && e.stopPropagation()
@@ -36,6 +50,9 @@ export default class WorkFlowTemplete extends Component {
       payload: {
         process_detail_modal_visible: true,
       }
+    })
+    this.setState({
+      whetherShowProcessDetailModalVisible: true
     })
   }
 
@@ -53,31 +70,32 @@ export default class WorkFlowTemplete extends Component {
     })
   }
 
-    // 删除流程模板的点击事件
-    handleDelteTemplete = (e,item) => {
-      const { dispatch } = this.props
-      const { id } = item
-      const processTempleteDelete = async () => {
-        await dispatch({
-          type: 'publicProcessDetailModal/deleteProcessTemplete',
-          payload: {
-            id,
-            calback: () => {
-              dispatch({
-                type: 'publicProcessDetailModal/getProcessTemplateList',
-                payload: {
-                  _organization_id: localStorage.getItem('OrganizationId')
-                }
-              })
-            }
+  // 删除流程模板的点击事件
+  handleDelteTemplete = (e,item) => {
+    const { dispatch } = this.props
+    const { id } = item
+    const processTempleteDelete = async () => {
+      await dispatch({
+        type: 'publicProcessDetailModal/deleteProcessTemplete',
+        payload: {
+          id,
+          calback: () => {
+            dispatch({
+              type: 'publicProcessDetailModal/getProcessTemplateList',
+              payload: {
+                _organization_id: localStorage.getItem('OrganizationId')
+              }
+            })
           }
-        })
-      }
-      showDeleteTempleteConfirm(processTempleteDelete)
+        }
+      })
     }
+    showDeleteTempleteConfirm(processTempleteDelete)
+  }
 
   render() {
     const { process_detail_modal_visible, isEditCurrentFlowInstanceName } = this.props
+    const { whetherShowProcessDetailModalVisible } = this.state
     return (
       <div id={'workFlowTempleteContent'} className={`${indexStyles.workFlowTempleteContent} ${globalStyles.global_vertical_scrollbar}`}>
         <div className={indexStyles.wflow_top}>
@@ -92,12 +110,10 @@ export default class WorkFlowTemplete extends Component {
         </div>
         <div onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
           {
-            process_detail_modal_visible && (
+            process_detail_modal_visible && whetherShowProcessDetailModalVisible && (
               <ProcessDetailModal
                 process_detail_modal_visible={process_detail_modal_visible}
-                // getContainer={document.getElementById('workFlowTempleteContent')}
-                // getContainer={document.querySelector('body')}
-              // getContainer={document.getElementById('org_managementContainer')}
+                setProcessDetailModalVisibile={this.setProcessDetailModalVisibile}
                 updateParentProcessTempleteList={this.updateParentProcessTempleteList}
                 getContainer={document.getElementById('organizationOut')}
               />

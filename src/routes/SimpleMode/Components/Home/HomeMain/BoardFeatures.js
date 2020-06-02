@@ -27,6 +27,15 @@ export default class BoardFeatures extends Component {
 		this.reorderBoardToDoList(nextprops)
 	}
 
+	// 更新父组件弹窗显示污染事件
+	whetherShowModalVisible = ({ type, visible }) => {
+		if (type == 'flow') {
+			this.setState({
+				whetherShowProcessDetailModal: visible
+			})
+		}
+	}
+
 	// 先修改流程中的时间为相对时间
 	updateFlowsOppositeTime = (arr) => {
 		let new_arr = [...arr]
@@ -98,6 +107,9 @@ export default class BoardFeatures extends Component {
 				board_id: params.board_ids
 			}
 		})
+		this.setState({
+			whetherShowModalVisible: false
+		})
 	}
 
 	// 修改流程
@@ -167,7 +179,7 @@ export default class BoardFeatures extends Component {
 			case '2': // 表示日程
 				return <BoardFeaturesItem key={id} itemValue={value} />
 			case '3': // 表示流程
-				return <BoardFeaturesProcessItem key={id} itemValue={value} />
+				return <BoardFeaturesProcessItem whetherShowModalVisible={this.whetherShowModalVisible} key={id} itemValue={value} />
 			default:
 				break;
 		}
@@ -218,6 +230,7 @@ export default class BoardFeatures extends Component {
 
 	render() {
 		const { drawerVisible, projectList = [], projectInitLoaded, board_card_todo_list = [], process_detail_modal_visible } = this.props
+		const { whetherShowModalVisible } = this.state
 		return (
 			<div>
 				{
@@ -237,7 +250,7 @@ export default class BoardFeatures extends Component {
 					handleDeleteCard={this.handleDeleteCard}
 				/>
 				{
-					process_detail_modal_visible && (
+					process_detail_modal_visible && whetherShowModalVisible &&  (
 						<ProcessDetailModal
 							process_detail_modal_visible={process_detail_modal_visible}
 							setProcessDetailModalVisibile={this.setProcessDetailModalVisibile}

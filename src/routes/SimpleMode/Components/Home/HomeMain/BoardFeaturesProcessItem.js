@@ -37,6 +37,7 @@ export default class BoardFeaturesProcessItem extends Component {
                 board_id
             }
         })
+        this.props.whetherShowModalVisible && this.props.whetherShowModalVisible({ type: 'flow', visible: true })
     }
 
     renderTime = () => {
