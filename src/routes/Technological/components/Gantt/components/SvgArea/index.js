@@ -590,7 +590,9 @@ export default class index extends Component {
                         position: 'absolute',
                         width: date_total * ceilWidth,
                         height: this.setSVGHeight(),
-                        zIndex: ganttIsOutlineView({ group_view_type }) ? 1 : -1,
+                        display: ganttIsOutlineView({ group_view_type }) ? 'block' : 'none',
+                        zIndex: 1,
+                        // zIndex: ganttIsOutlineView({ group_view_type }) ? 1 : -1,
                     }}>
                     {this.renderPaths()}
                 </svg>
