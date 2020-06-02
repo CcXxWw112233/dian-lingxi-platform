@@ -579,7 +579,7 @@ export default class index extends Component {
         )
     }
     render() {
-        const { date_total, ceilWidth } = this.props
+        const { date_total, ceilWidth, group_view_type } = this.props
         const { rely_map = [] } = this.state
         // console.log('rely_map', rely_map)
         return (
@@ -590,7 +590,7 @@ export default class index extends Component {
                         position: 'absolute',
                         width: date_total * ceilWidth,
                         height: this.setSVGHeight(),
-                        zIndex: 1,
+                        zIndex: ganttIsOutlineView({ group_view_type }) ? 1 : -1,
                     }}>
                     {this.renderPaths()}
                 </svg>
