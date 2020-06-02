@@ -31,13 +31,14 @@ export default class SelectBoardModal extends Component {
         selectModalBoardIdCalback(value)
     }
     render() {
-        const { visible, projectList = [], currentUserOrganizes = [], local_board_id } = this.props
+        const { visible, projectList = [], currentUserOrganizes = [], local_board_id, zIndex } = this.props
         const target_projectList = projectList.filter(item => //过滤掉没有流程应用的
             item.apps.findIndex(item2 => item2.code == 'Flows') != -1
         )
         return (
             <div>
                 <Modal
+                    zIndex={zIndex}
                     destroyOnClose
                     title={<div style={{ textAlign: 'center' }}>选择路径</div>}
                     visible={visible}

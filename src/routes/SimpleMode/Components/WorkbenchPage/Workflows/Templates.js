@@ -69,12 +69,12 @@ export default class Templates extends Component {
     selectModalBoardIdCalback = (board_id) => {
         const { dispatch } = this.props
         this.setLocalBoardId(board_id)
-        dispatch({
-            type: 'projectDetail/projectDetailInfo',
-            payload: {
-                id: board_id
-            }
-        })
+        // dispatch({
+        //     type: 'projectDetail/projectDetailInfo',
+        //     payload: {
+        //         id: board_id
+        //     }
+        // })
     }
     // 
     setBoardSelectVisible = (visible, item, timeString) => {
@@ -87,7 +87,14 @@ export default class Templates extends Component {
     }
     modalOkCalback = () => { //确认回调
         this.setBoardSelectVisible(false)
-        this.handleOperateStartConfirmProcessOne()
+        const { curr_temp_info = {} } = this.state
+        const { enable_change } = curr_temp_info
+        if (enable_change == '0') {
+            this.handleOperateStartConfirmProcessOne()
+        } else if (enable_change == '1'){
+            this.handleStartProcess(curr_temp_info)
+        }
+        
         // this.handleAddTemplate()
     }
     // 新增模板点击的确认
@@ -141,6 +148,17 @@ export default class Templates extends Component {
                 }
             })
         })
+    }
+    // 这个是进入启动页, 那么先选择项目
+    handleStartBoardProcess = (item) => {
+        const { local_board_id } = this.state
+        // 如果是全部项目, 那么需要选择项目
+        if (local_board_id == '0' || !local_board_id) {
+            this.setBoardSelectVisible(true, item)
+        } else {
+            // 表示是具体项目
+            this.handleStartProcess(item)
+        }
     }
     // 启动流程的点击事件
     handleStartProcess = (item) => {
@@ -390,7 +408,7 @@ export default class Templates extends Component {
                                             checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, board_id) && (
                                                 <Tooltip title="启用流程">
                                                     <Popover trigger="click" title={null} visible={this.state.popoStartConfirmVisible && id == this.state.currentVisibleItem} onVisibleChange={(visible) => { this.handleProcessStartConfirmVisible(visible, id) }} content={this.renderProcessStartConfirm(value)} icon={<></>} getPopupContainer={() => document.getElementById('template_item_bott')}>
-                                                        <div className={`${globalStyles.authTheme} ${styles.template_operate}`}>&#xe796;</div>
+                                                        <div className={`${globalStyles.authTheme} ${styles.template_operate}`}>&#xe796; <span style={{fontSize: '12px'}}>启用流程</span></div>
                                                     </Popover>
                                                 </Tooltip>
                                             )
@@ -400,9 +418,9 @@ export default class Templates extends Component {
                                         <>
                                             {
                                                 checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, board_id) && (
-                                                    <Tooltip title={'开始流程'}>
+                                                    <Tooltip title={'启用流程'}>
                                                         <div className={`${globalStyles.authTheme} ${styles.template_operate}`}
-                                                            onClick={() => this.handleStartProcess(value)}>&#xe796;</div>
+                                                            onClick={() => this.handleStartBoardProcess(value)}>&#xe796; <span style={{fontSize: '12px'}}>启用流程</span></div>
                                                     </Tooltip>
                                                 )
                                             }

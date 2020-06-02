@@ -191,7 +191,7 @@ export default class ConfirmInfoThree extends Component {
                           score_locked == '0' ? (
                             <span style={{ position: 'relative' }}>
                               <AmendComponent type="2"
-                                updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="评分人" data={data} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
+                                updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="评分人" data={currentOrgAllMembers} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
                             </span>
                           ) : (
                               <Tooltip arrowPointAtCenter={true} title="已锁定评分人" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
@@ -235,7 +235,7 @@ export default class ConfirmInfoThree extends Component {
                               cc_locking == '0' ? (
                                 <span style={{ position: 'relative' }}>
                                   <AmendComponent type="3"
-                                    updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="抄送人" data={data} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
+                                    updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="抄送人" data={currentOrgAllMembers} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
                                 </span>
                               ) : (
                                   <Tooltip title="已锁定抄送人" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>

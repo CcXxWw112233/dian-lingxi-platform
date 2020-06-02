@@ -180,28 +180,34 @@ export default class ConfirmInfoOne extends Component {
                   {
                     assignee_type == '2' ? (
                       <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
-                        <AvatarList
-                          size="small"
-                          maxLength={10}
-                          excessItemsStyle={{
-                            color: '#f56a00',
-                            backgroundColor: '#fde3cf'
-                          }}
-                        >
-                          {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
-                            <AvatarList.Item
-                              key={index}
-                              tips={name || '佚名'}
-                              src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
-                            />
-                          ))}
-                        </AvatarList>
-                        <span className={indexStyles.content__principalList_info}>
-                          {`${transPrincipalList.length}位填写人`}
-                        </span>
+                        {
+                          !(transPrincipalList && transPrincipalList.length) ? ('') : (
+                            <>
+                              <AvatarList
+                                size="small"
+                                maxLength={10}
+                                excessItemsStyle={{
+                                  color: '#f56a00',
+                                  backgroundColor: '#fde3cf'
+                                }}
+                              >
+                                {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
+                                  <AvatarList.Item
+                                    key={index}
+                                    tips={name || '佚名'}
+                                    src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                                  />
+                                ))}
+                              </AvatarList>
+                              <span className={indexStyles.content__principalList_info}>
+                                {`${transPrincipalList.length}位填写人`}
+                              </span>
+                            </>
+                          )
+                        }
                         <span style={{ position: 'relative' }}>
                           <AmendComponent type="1"
-                            updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="填写人" data={data} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
+                            updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="填写人" data={currentOrgAllMembers} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
                         </span>
                       </div>
                     ) : (
@@ -212,7 +218,7 @@ export default class ConfirmInfoOne extends Component {
                           <span>{`${currentNounPlanFilterName(FLOWS)}发起人`}</span>
                           <span style={{ position: 'relative' }}>
                             <AmendComponent type="1"
-                              updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="填写人" data={data} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
+                              updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="填写人" data={currentOrgAllMembers} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
                           </span>
                         </div>
                       )
@@ -221,31 +227,37 @@ export default class ConfirmInfoOne extends Component {
                   {
                     cc_type == '1' && (
                       <div style={{ marginLeft: '8px', display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
-                        <AvatarList
-                          size="small"
-                          maxLength={10}
-                          excessItemsStyle={{
-                            color: '#f56a00',
-                            backgroundColor: '#fde3cf'
-                          }}
-                        >
-                          {(transCopyPersonnelList && transCopyPersonnelList.length) && transCopyPersonnelList.map(({ name, avatar }, index) => (
-                            <AvatarList.Item
-                              key={index}
-                              tips={name || '佚名'}
-                              src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
-                            />
-                          ))}
-                        </AvatarList>
-                        <span className={indexStyles.content__principalList_info}>
-                          {`${transCopyPersonnelList.length}位抄送人`}
-                        </span>
+                        {
+                          !(transCopyPersonnelList && transCopyPersonnelList.length) ? ('') : (
+                            <>
+                              <AvatarList
+                                size="small"
+                                maxLength={10}
+                                excessItemsStyle={{
+                                  color: '#f56a00',
+                                  backgroundColor: '#fde3cf'
+                                }}
+                              >
+                                {(transCopyPersonnelList && transCopyPersonnelList.length) && transCopyPersonnelList.map(({ name, avatar }, index) => (
+                                  <AvatarList.Item
+                                    key={index}
+                                    tips={name || '佚名'}
+                                    src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                                  />
+                                ))}
+                              </AvatarList>
+                              <span className={indexStyles.content__principalList_info}>
+                                {`${transCopyPersonnelList.length}位抄送人`}
+                              </span>
+                            </>
+                          )
+                        }
                         {
                           cc_locking == '0' ? (
                             <span style={{ position: 'relative' }}>
                               <AmendComponent type="3"
                                 updateParentsAssigneesOrCopyPersonnel={this.updateParentsAssigneesOrCopyPersonnel}
-                                updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="抄送人" data={data} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
+                                updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="抄送人" data={currentOrgAllMembers} itemKey={itemKey} itemValue={itemValue} board_id={board_id} />
                             </span>
                           ) : (
                             <Tooltip title="已锁定抄送人" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>

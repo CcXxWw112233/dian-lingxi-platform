@@ -1184,13 +1184,13 @@ export default class MainContent extends Component {
           {
             processEditDatas.length >= 2 && (
               <div id={"processStartConfirmContainer"} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '32px', position: 'relative' }}>
-                {/* {
-                  (processPageFlagStep == '1' || processPageFlagStep == '3') && (
+                {
+                  (processPageFlagStep == '3') && (
                     <Popover trigger="click" title={null} onVisibleChange={this.handleProcessStartConfirmVisible} content={this.renderProcessStartConfirm()} icon={<></>} getPopupContainer={triggerNode => triggerNode.parentNode}>
                       <Button type={processPageFlagStep == '3' && 'primary'} disabled={saveTempleteDisabled} style={{ marginRight: '24px', height: '40px', border: '1px solid rgba(24,144,255,1)', color: processPageFlagStep == '3' ? '#fff' : '#1890FF' }}>开始{`${currentNounPlanFilterName(FLOWS)}`}</Button>
                     </Popover>
                   )
-                } */}
+                }
                 {
                   (processPageFlagStep == '1' || processPageFlagStep == '2') && (
                     <Button onClick={this.handleSaveProcessTemplate} disabled={saveTempleteDisabled} type="primary" style={{ height: '40px' }}>保存模板</Button>
