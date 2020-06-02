@@ -54,9 +54,9 @@ export default class EditStepTypeThree extends Component {
 
   // 把assignees中的执行人,在项目中的所有成员过滤出来
   filterAssignees = () => {
-    const { projectDetailInfoData: { data = [] } } = this.props
+    const { projectDetailInfoData: { data = [] }, currentOrgAllMembers = [] } = this.props
     const { transPrincipalList = [] } = this.state
-    let new_data = [...data]
+    let new_data = [...currentOrgAllMembers]
     let newTransPrincipalList = transPrincipalList && transPrincipalList.map(item => {
       return new_data.find(item2 => item2.user_id == item) || {}
     })
@@ -66,9 +66,9 @@ export default class EditStepTypeThree extends Component {
 
   // 把recipients中的抄送人在项目中的所有成员过滤出来
   filterRecipients = () => {
-    const { projectDetailInfoData: { data = [] } } = this.props
+    const { projectDetailInfoData: { data = [] }, currentOrgAllMembers =[] } = this.props
     const { transCopyPersonnelList = [] } = this.state
-    let newData = [...data]
+    let newData = [...currentOrgAllMembers]
     let newTransCopyPersonnelList = transCopyPersonnelList && transCopyPersonnelList.map(item => {
       return newData.find(item2 => item2.user_id == item) || {}
     })
@@ -173,25 +173,31 @@ export default class EditStepTypeThree extends Component {
               <div>
                 {/* 填写人 */}
                 <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
-                  <AvatarList
-                    size="small"
-                    maxLength={10}
-                    excessItemsStyle={{
-                      color: '#f56a00',
-                      backgroundColor: '#fde3cf'
-                    }}
-                  >
-                    {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
-                      <AvatarList.Item
-                        key={index}
-                        tips={name || '佚名'}
-                        src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
-                      />
-                    ))}
-                  </AvatarList>
-                  <span className={indexStyles.content__principalList_info}>
-                    {`${transPrincipalList.length}位评分人`}
-                  </span>
+                  {
+                    !(transPrincipalList && transPrincipalList.length) ? ('') : (
+                      <>
+                        <AvatarList
+                          size="small"
+                          maxLength={10}
+                          excessItemsStyle={{
+                            color: '#f56a00',
+                            backgroundColor: '#fde3cf'
+                          }}
+                        >
+                          {(transPrincipalList && transPrincipalList.length) && transPrincipalList.map(({ name, avatar }, index) => (
+                            <AvatarList.Item
+                              key={index}
+                              tips={name || '佚名'}
+                              src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                            />
+                          ))}
+                        </AvatarList>
+                        <span className={indexStyles.content__principalList_info}>
+                          {`${transPrincipalList.length}位评分人`}
+                        </span>
+                      </>
+                    )
+                  }
                   {
                     score_locked == '1' && (
                       <Tooltip arrowPointAtCenter={true} title="已锁定评分人" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
@@ -204,25 +210,31 @@ export default class EditStepTypeThree extends Component {
                 {
                   cc_type == '1' && (
                     <div style={{ marginLeft: '8px', display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
-                      <AvatarList
-                        size="small"
-                        maxLength={10}
-                        excessItemsStyle={{
-                          color: '#f56a00',
-                          backgroundColor: '#fde3cf'
-                        }}
-                      >
-                        {(transCopyPersonnelList && transCopyPersonnelList.length) && transCopyPersonnelList.map(({ name, avatar }, index) => (
-                          <AvatarList.Item
-                            key={index}
-                            tips={name || '佚名'}
-                            src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
-                          />
-                        ))}
-                      </AvatarList>
-                      <span className={indexStyles.content__principalList_info}>
-                        {`${transCopyPersonnelList.length}位抄送人`}
-                      </span>
+                      {
+                        !(transCopyPersonnelList && transCopyPersonnelList.length) ? ('') :(
+                          <>
+                            <AvatarList
+                              size="small"
+                              maxLength={10}
+                              excessItemsStyle={{
+                                color: '#f56a00',
+                                backgroundColor: '#fde3cf'
+                              }}
+                            >
+                              {(transCopyPersonnelList && transCopyPersonnelList.length) && transCopyPersonnelList.map(({ name, avatar }, index) => (
+                                <AvatarList.Item
+                                  key={index}
+                                  tips={name || '佚名'}
+                                  src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                                />
+                              ))}
+                            </AvatarList>
+                            <span className={indexStyles.content__principalList_info}>
+                              {`${transCopyPersonnelList.length}位抄送人`}
+                            </span>
+                          </>
+                        )
+                      }
                       {
                         cc_locking == '1' && (
                           <Tooltip title="已锁定抄送人" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
@@ -256,6 +268,6 @@ export default class EditStepTypeThree extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [] }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
-  return { processEditDatas, projectDetailInfoData }
+function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [], currentOrgAllMembers = [] }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
+  return { processEditDatas, currentOrgAllMembers, projectDetailInfoData }
 }

@@ -112,6 +112,7 @@ export default class MainContent extends Component {
       })
     }
     this.initCanvas(this.props)
+    this.whetherUpdateOrgnazationMemberList(this.props)
   }
   componentWillUnmount() {
     window.removeEventListener("resize", this.resizeTTY);
@@ -124,6 +125,28 @@ export default class MainContent extends Component {
       clientHeight,
       clientWidth
     })
+  }
+  whetherUpdateOrgnazationMemberList = (props) => {
+    const { templateInfo: { org_id } } = props
+    if (props.process_detail_modal_visible) {
+      // localStorage.getItem('OrganizationId')
+      if (props.processPageFlagStep == '3') { // 表示启动时
+        this.props.dispatch({
+          type: 'publicProcessDetailModal/getCurrentOrgAllMembers',
+          payload: {
+            _organization_id: org_id
+          }
+        })
+      } else {
+        if (props.processPageFlagStep == '4') return
+        this.props.dispatch({
+          type: 'publicProcessDetailModal/getCurrentOrgAllMembers',
+          payload: {
+            _organization_id: localStorage.getItem('OrganizationId')
+          }
+        })
+      }
+    }
   }
   // 用来更新canvas中的步骤
   componentWillReceiveProps(nextProps) {
@@ -1161,13 +1184,13 @@ export default class MainContent extends Component {
           {
             processEditDatas.length >= 2 && (
               <div id={"processStartConfirmContainer"} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '32px', position: 'relative' }}>
-                {
+                {/* {
                   (processPageFlagStep == '1' || processPageFlagStep == '3') && (
                     <Popover trigger="click" title={null} onVisibleChange={this.handleProcessStartConfirmVisible} content={this.renderProcessStartConfirm()} icon={<></>} getPopupContainer={triggerNode => triggerNode.parentNode}>
                       <Button type={processPageFlagStep == '3' && 'primary'} disabled={saveTempleteDisabled} style={{ marginRight: '24px', height: '40px', border: '1px solid rgba(24,144,255,1)', color: processPageFlagStep == '3' ? '#fff' : '#1890FF' }}>开始{`${currentNounPlanFilterName(FLOWS)}`}</Button>
                     </Popover>
                   )
-                }
+                } */}
                 {
                   (processPageFlagStep == '1' || processPageFlagStep == '2') && (
                     <Button onClick={this.handleSaveProcessTemplate} disabled={saveTempleteDisabled} type="primary" style={{ height: '40px' }}>保存模板</Button>
@@ -1219,10 +1242,10 @@ export default class MainContent extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas = [], processInfo = {}, processDoingList = [], processNotBeginningList = [], node_type, processCurrentEditStep, templateInfo = {}, currentFlowTabsStatus, not_show_create_node_guide }, projectDetail: { datas: { projectDetailInfoData = {} } }, technological: {
+function mapStateToProps({ publicProcessDetailModal: { process_detail_modal_visible, currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas = [], processInfo = {}, processDoingList = [], processNotBeginningList = [], node_type, processCurrentEditStep, templateInfo = {}, currentFlowTabsStatus, not_show_create_node_guide }, projectDetail: { datas: { projectDetailInfoData = {} } }, technological: {
   datas: {
     userBoardPermissions = []
   }
 } }) {
-  return { currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas, processInfo, processDoingList, processNotBeginningList, node_type, processCurrentEditStep, templateInfo, currentFlowTabsStatus, not_show_create_node_guide, projectDetailInfoData, userBoardPermissions }
+  return { process_detail_modal_visible, currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas, processInfo, processDoingList, processNotBeginningList, node_type, processCurrentEditStep, templateInfo, currentFlowTabsStatus, not_show_create_node_guide, projectDetailInfoData, userBoardPermissions }
 }

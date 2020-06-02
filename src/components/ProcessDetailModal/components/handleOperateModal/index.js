@@ -424,6 +424,17 @@ const removeEmptyArrayEle = (arr) => {
   return arr;
 };
 
+// 将数组添加对应的字段
+const updateNeededFeildList = (arr) => {
+  let new_arr = JSON.parse(JSON.stringify(arr || []))
+  if (!(new_arr && new_arr.length)) return []
+  new_arr = new_arr.map(item => {
+    let new_item = {...item, user_id: item.id}
+    return new_item
+  })
+  return new_arr
+}
+
 export {
   showDeleteTempleteConfirm,
   genPrincipalListFromAssignees,
@@ -443,6 +454,7 @@ export {
   getDaysOfEveryMonth,
   renderRestrictionsTime,
   compareOppositeTimer,
-  removeEmptyArrayEle
+  removeEmptyArrayEle,
+  updateNeededFeildList
 }
 

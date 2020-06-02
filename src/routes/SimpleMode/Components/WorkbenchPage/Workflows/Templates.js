@@ -148,6 +148,15 @@ export default class Templates extends Component {
         const { id, board_id } = item
         setBoardIdStorage(board_id)
         dispatch({
+            type: 'publicProcessDetailModal/getTemplateInfo',
+            payload: {
+                id,
+                processPageFlagStep: '3',
+                process_detail_modal_visible: true
+            }
+        })
+        return
+        dispatch({
             type: 'projectDetail/projectDetailInfo',
             payload: {
                 id: board_id

@@ -28,6 +28,7 @@ export default class ProcessDetailModal extends Component {
         not_show_create_node_guide: '1', // 添加节点步骤的引导
         not_show_create_form_guide: '1', // 配置表项的引导
         not_show_create_rating_guide: '0', // 配置评分节点的引导
+        currentOrgAllMembers: [], // 组织成员
       }
     })
     this.props.setProcessDetailModalVisibile && this.props.setProcessDetailModalVisibile()

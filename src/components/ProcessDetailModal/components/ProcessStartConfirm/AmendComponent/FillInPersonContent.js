@@ -172,13 +172,14 @@ export default class FillInPersonContent extends Component {
                 overlayStyle={{ maxWidth: '200px' }}
                 overlay={
                   <MenuSearchPartner
-                    show_select_all={true}
-                    select_all_type={'0'}
+                    isInvitation={true}
+                    // show_select_all={true}
+                    // select_all_type={'0'}
                     listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={designatedPersonnelList}
-                    board_id={board_id}
-                    invitationType='1'
-                    invitationId={board_id}
-                    invitationOrg={org_id}
+                    // board_id={board_id}
+                    // invitationType='1'
+                    // invitationId={board_id}
+                    // invitationOrg={org_id}
                     chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
                 }
               >
@@ -218,13 +219,14 @@ export default class FillInPersonContent extends Component {
                   overlayStyle={{ maxWidth: '200px' }}
                   overlay={
                     <MenuSearchPartner
-                      show_select_all={true}
-                      select_all_type={'0'}
+                      isInvitation={true}
+                      // show_select_all={true}
+                      // select_all_type={'0'}
                       listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={designatedPersonnelList}
-                      board_id={board_id}
-                      invitationType='1'
-                      invitationId={board_id}
-                      invitationOrg={org_id}
+                      // board_id={board_id}
+                      // invitationType='1'
+                      // invitationId={board_id}
+                      // invitationOrg={org_id}
                       chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
                   }
                 >

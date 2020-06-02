@@ -59,9 +59,9 @@ export default class ConfirmInfoTwo extends Component {
 
   // 把assignees中的执行人,在项目中的所有成员过滤出来
   filterAssignees = () => {
-    const { projectDetailInfoData: { data = [] } } = this.props
+    const { projectDetailInfoData: { data = [] }, currentOrgAllMembers = [] } = this.props
     const { transPrincipalList = [] } = this.state
-    let new_data = [...data]
+    let new_data = [...currentOrgAllMembers]
     let newTransPrincipalList= transPrincipalList && transPrincipalList.map(item => {
       return new_data.find(item2 => item2.user_id == item) || {}
     })
@@ -71,9 +71,9 @@ export default class ConfirmInfoTwo extends Component {
 
   // 把recipients中的抄送人在项目中的所有成员过滤出来
   filterRecipients = () => {
-    const { projectDetailInfoData: { data = [] } } = this.props
+    const { projectDetailInfoData: { data = [] }, currentOrgAllMembers = [] } = this.props
     const { transCopyPersonnelList = [] } = this.state
-    let newData = [...data]
+    let newData = [...currentOrgAllMembers]
     let newTransCopyPersonnelList= transCopyPersonnelList && transCopyPersonnelList.map(item => {
       return newData.find(item2 => item2.user_id == item) || {}
     })
@@ -122,7 +122,7 @@ export default class ConfirmInfoTwo extends Component {
   }
 
   render() {
-    const { itemKey, itemValue, processEditDatas = [], projectDetailInfoData: { data = [], board_id } } = this.props
+    const { itemKey, itemValue, processEditDatas = [], currentOrgAllMembers = [], projectDetailInfoData: { data = [], board_id } } = this.props
     const { is_show_spread_arrow } = this.state
     let transPrincipalList = this.filterAssignees()
     let transCopyPersonnelList = this.filterRecipients()
@@ -232,7 +232,7 @@ export default class ConfirmInfoTwo extends Component {
                   )
                 }
                 <span style={{ position: 'relative' }}>
-                  <AmendComponent updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="完成期限" data={data} itemKey={itemKey} itemValue={itemValue} />
+                  <AmendComponent updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} placementTitle="完成期限" data={currentOrgAllMembers} itemKey={itemKey} itemValue={itemValue} />
                 </span>
               </div>
             </div>
@@ -244,6 +244,6 @@ export default class ConfirmInfoTwo extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [] }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
-  return { processEditDatas, projectDetailInfoData }
+function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [], currentOrgAllMembers = [] }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
+  return { processEditDatas, currentOrgAllMembers, projectDetailInfoData }
 }

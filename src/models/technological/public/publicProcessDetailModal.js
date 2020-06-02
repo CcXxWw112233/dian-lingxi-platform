@@ -7,6 +7,7 @@ import { getSubfixName } from '../../../utils/businessFunction'
 import QueryString from 'querystring'
 import { processEditDatasConstant, processEditDatasRecordsConstant, processDoingListMatch, processInfoMatch } from '../../../components/ProcessDetailModal/constant';
 import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete, rejectProcessTask, workflowEnd, workflowDelete, restartProcess, processFileUpload, deleteProcessFile, fileDownload, configurePorcessGuide, rebackProcessTask, nonAwayTempleteStartPropcess, updateFlowInstanceNameOrDescription } from "../../../services/technological/workFlow"
+import { getCurrentOrgAllMembers } from '../../../services/technological/workbench'
 import {public_selectCurrentFlowTabsStatus} from './select'
 
 let dispatchEvent = null
@@ -530,6 +531,23 @@ export default {
         message.warn(res.message,MESSAGE_DURATION_TIME)
       }
       return res || {}
+    },
+    // 获取组织成员
+    * getCurrentOrgAllMembers({ payload }, { call, put }) {
+      let res = yield call(getCurrentOrgAllMembers, { ...payload })
+      if (isApiResponseOk(res)) {
+        let membersData = [...res.data.users]
+        membersData = membersData.map(item => {
+          let new_item = {...item, user_id: item.id}
+          return new_item
+        })
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            currentOrgAllMembers: membersData
+          }
+        })
+      }
     }
   },
   reducers: {

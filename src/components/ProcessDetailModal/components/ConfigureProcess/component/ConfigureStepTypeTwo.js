@@ -41,14 +41,14 @@ export default class ConfigureStepTypeTwo extends Component {
 
   //修改通知人的回调 S approvalsList
   chirldrenTaskChargeChange = (data) => {
-    const { projectDetailInfoData = {} } = this.props;
+    const { projectDetailInfoData = {}, currentOrgAllMembers= [] } = this.props;
     const { selectedKeys = [], type, key } = data
     const { approvalsList = [] } = this.state
     if (type == 'add') { // 表示添加的操作
       let assignee_value = []
       // 多个任务执行人
       // let newApprovalsList = [...approvalsList]
-      const membersData = projectDetailInfoData['data'] //所有的人
+      const membersData =[...currentOrgAllMembers] //所有的人
       // if (newApprovalsList.indexOf(key) == -1) { // 表示找到选中不存在的哪一个
       //   newApprovalsList.push(key)
       // }
@@ -114,9 +114,9 @@ export default class ConfigureStepTypeTwo extends Component {
 
   // 把assignees中的执行人,在项目中的所有成员过滤出来
   filterAssignees = () => {
-    const { projectDetailInfoData: { data = [] } } = this.props
+    const { projectDetailInfoData: { data = [] }, currentOrgAllMembers = [] } = this.props
     const { approvalsList = [] } = this.state
-    let new_data = [...data]
+    let new_data = [...currentOrgAllMembers]
     let newApprovalsList = approvalsList && approvalsList.map(item => {
       return new_data.find(item2 => item2.user_id == item) || {}
     })
@@ -151,7 +151,7 @@ export default class ConfigureStepTypeTwo extends Component {
   }
 
   render() {
-    const { itemValue, itemKey, projectDetailInfoData = {} } = this.props
+    const { itemValue, itemKey, projectDetailInfoData = {}, currentOrgAllMembers = [] } = this.props
     const { data = [], board_id, org_id } = projectDetailInfoData
     const new_data = JSON.parse(JSON.stringify(data) || [])
     const { approve_type, approve_value } = itemValue
@@ -183,13 +183,14 @@ export default class ConfigureStepTypeTwo extends Component {
                     overlayStyle={{ maxWidth: '200px' }}
                     overlay={
                       <MenuSearchPartner
-                        show_select_all={true}
-                        select_all_type={'0'}
-                        listData={new_data} keyCode={'user_id'} searchName={'name'} currentSelect={approvalsList}
-                        board_id={board_id}
-                        invitationType='1'
-                        invitationId={board_id}
-                        invitationOrg={org_id}
+                        isInvitation={true}
+                      // show_select_all={true}
+                        // select_all_type={'0'}
+                        listData={currentOrgAllMembers} keyCode={'user_id'} searchName={'name'} currentSelect={approvalsList}
+                        // board_id={board_id}
+                        // invitationType='1'
+                        // invitationId={board_id}
+                        // invitationOrg={org_id}
                         chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
                     }
                   >
@@ -231,13 +232,14 @@ export default class ConfigureStepTypeTwo extends Component {
                       overlayStyle={{ maxWidth: '200px' }}
                       overlay={
                         <MenuSearchPartner
-                          show_select_all={true}
-                          select_all_type={'0'}
-                          listData={new_data} keyCode={'user_id'} searchName={'name'} currentSelect={approvalsList}
-                          board_id={board_id}
-                          invitationType='1'
-                          invitationId={board_id}
-                          invitationOrg={org_id}
+                          isInvitation={true}
+                          // show_select_all={true}
+                          // select_all_type={'0'}
+                          listData={currentOrgAllMembers} keyCode={'user_id'} searchName={'name'} currentSelect={approvalsList}
+                          // board_id={board_id}
+                          // invitationType='1'
+                          // invitationId={board_id}
+                          // invitationOrg={org_id}
                           chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
                       }
                     >
@@ -255,13 +257,13 @@ export default class ConfigureStepTypeTwo extends Component {
         </div>
         {/* 更多选项 */}
         <div>
-          <MoreOptionsComponent itemKey={itemKey} itemValue={itemValue} updateConfigureProcess={this.updateConfigureProcess} data={data} board_id={board_id} org_id={org_id} />
+          <MoreOptionsComponent itemKey={itemKey} itemValue={itemValue} updateConfigureProcess={this.updateConfigureProcess} data={currentOrgAllMembers} board_id={board_id} org_id={org_id} />
         </div>
       </div>
     )
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [] }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
-  return { processEditDatas, projectDetailInfoData }
+function mapStateToProps({ publicProcessDetailModal: { processEditDatas = [], currentOrgAllMembers =[] }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
+  return { processEditDatas, currentOrgAllMembers, projectDetailInfoData }
 }

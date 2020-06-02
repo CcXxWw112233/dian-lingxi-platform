@@ -270,11 +270,12 @@ export default class MoreOptionsComponent extends Component {
                   overlayStyle={{ maxWidth: '200px' }}
                   overlay={
                     <MenuSearchPartner
+                      isInvitation={true}
                       listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={makeCopyPersonList}
-                      board_id={board_id}
-                      invitationType='1'
-                      invitationId={board_id}
-                      invitationOrg={org_id}
+                      // board_id={board_id}
+                      // invitationType='1'
+                      // invitationId={board_id}
+                      // invitationOrg={org_id}
                       chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
                   }
                 >
@@ -312,11 +313,12 @@ export default class MoreOptionsComponent extends Component {
                     overlayStyle={{ maxWidth: '200px' }}
                     overlay={
                       <MenuSearchPartner
+                        isInvitation={true}
                         listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={makeCopyPersonList}
-                        board_id={board_id}
-                        invitationType='1'
-                        invitationId={board_id}
-                        invitationOrg={org_id}
+                        // board_id={board_id}
+                        // invitationType='1'
+                        // invitationId={board_id}
+                        // invitationOrg={org_id}
                         chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
                     }
                   >
