@@ -20,30 +20,36 @@ export default class HeaderContent extends Component {
             <span>
               <i className={`${globalStyles.authTheme} ${indexStyles.title_icon}`}>&#xe68c;</i>
             </span>
-            <span style={{fontSize: '14px'}}>
+            <span style={{ fontSize: '14px' }}>
               {currentNounPlanFilterName(FLOWS)}
             </span>
           </div>
-         
+
           {/* 这里是小导航 */}
           <span className={indexStyles.bread_nav}>
-            <span className={indexStyles.bread_board_name}>{board_name}</span>
             {
-              is_show_org_name && is_all_org && (
-                <span className={indexStyles.bread_org_name}>
-                  #{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
-                </span>
+              processPageFlagStep == '4' && (
+                <>
+                  <span className={indexStyles.bread_board_name}>{board_name}</span>
+                  {
+                    is_show_org_name && is_all_org && (
+                      <span className={indexStyles.bread_org_name}>
+                        #{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
+                      </span>
+                    )
+                  }
+                  <span className={indexStyles.arrow_right}></span>
+                </>
               )
             }
-            <span className={indexStyles.arrow_right}></span>
-            <span className={indexStyles.current_name}>{processPageFlagStep == '1' ? '新建模板' :`${currentFlowInstanceName}`}</span>
+            <span className={indexStyles.current_name}>{processPageFlagStep == '1' ? '新建模板' : `${currentFlowInstanceName}`}</span>
           </span>
         </div>
         {/* 这里是头部右边 */}
         <div className={indexStyles.detail_head_right}>
-          <HeaderContentRightMenu request_flows_params={this.props.request_flows_params} onCancel={this.props.onCancel} whetherUpdateWorkbenchPorcessListData={this.props.whetherUpdateWorkbenchPorcessListData}/>
+          <HeaderContentRightMenu request_flows_params={this.props.request_flows_params} onCancel={this.props.onCancel} whetherUpdateWorkbenchPorcessListData={this.props.whetherUpdateWorkbenchPorcessListData} />
         </div>
-        
+
       </div>
     )
   }

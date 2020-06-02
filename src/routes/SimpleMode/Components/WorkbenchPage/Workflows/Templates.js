@@ -25,7 +25,9 @@ export default class Templates extends Component {
             local_board_id: '', //用于做流程模板创建的board_id,当全部项目场景下会用到
             board_select_visible: false,//全项目下
             popoStartConfirmVisible: false,
-            currentVisibleItem: ''
+            currentVisibleItem: '',
+            flow_instance_start_time: '',
+            curr_temp_info: {}
         })
     }
     componentDidMount() {
@@ -75,15 +77,18 @@ export default class Templates extends Component {
         })
     }
     // 
-    setBoardSelectVisible = (visible) => {
+    setBoardSelectVisible = (visible, item, timeString) => {
         this.setState({
             board_select_visible: visible,
+            flow_instance_start_time: timeString,
+            curr_temp_info: item
         })
         this.setLocalBoardId('0')
     }
     modalOkCalback = () => { //确认回调
         this.setBoardSelectVisible(false)
-        this.handleAddTemplate()
+        this.handleOperateStartConfirmProcessOne()
+        // this.handleAddTemplate()
     }
     // 新增模板点击的确认
     beforeAddTemplateConfirm = () => {
@@ -178,7 +183,14 @@ export default class Templates extends Component {
     handleOperateStartConfirmProcess = (e, item, start_time) => {
         e && e.stopPropagation()
         const { id, board_id, org_id, enable_change } = item
+        const { local_board_id } = this.state
         setBoardIdStorage(board_id)
+        if (local_board_id == '0' || !local_board_id) {
+            this.setBoardSelectVisible(true, item, start_time)
+            return
+        }
+        this.handleOperateStartConfirmProcessOne(e, item, start_time)
+        return
         let that = this
         const { dispatch, request_flows_params = {} } = this.props
         let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
@@ -205,6 +217,44 @@ export default class Templates extends Component {
                 })
                 this.handleProcessStartConfirmVisible(false)
                 this.initState()
+                this.selectModalBoardIdCalback(BOARD_ID)
+            } else {
+                message.warn(res.message)
+            }
+        })
+    }
+    handleOperateStartConfirmProcessOne = (e, item, start_time) => {
+        let that = this
+        const { flow_instance_start_time, curr_temp_info = {}, local_board_id } = this.state
+        // console.log(this.state,'sssssssssssssssss_state')
+        // return
+        const { id, board_id, org_id, enable_change } = item ? item : curr_temp_info
+        const { dispatch, request_flows_params = {} } = this.props
+        let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
+        let REAUEST_BOARD_ID = getGlobalData('storageCurrentOperateBoardId') || board_id
+        Promise.resolve(
+            dispatch({
+                type: 'publicProcessDetailModal/nonAwayTempleteStartPropcess',
+                payload: {
+                    start_up_type: start_time ? '2' : flow_instance_start_time ? '2' : '1',
+                    plan_start_time: start_time ? start_time : flow_instance_start_time ? flow_instance_start_time : '',
+                    flow_template_id: id,
+                    board_id: local_board_id
+                }
+            })
+        ).then(res => {
+            if (isApiResponseOk(res)) {
+                that.props.dispatch({
+                    type: 'publicProcessDetailModal/getProcessListByType',
+                    payload: {
+                        status: start_time ? '0' : '1',
+                        board_id: BOARD_ID,
+                        _organization_id: request_flows_params._organization_id || org_id
+                    }
+                })
+                this.handleProcessStartConfirmVisible(false)
+                this.initState()
+                if (local_board_id == '0' || !local_board_id) return
                 this.selectModalBoardIdCalback(BOARD_ID)
             } else {
                 message.warn(res.message)
@@ -329,7 +379,7 @@ export default class Templates extends Component {
                                     <>
                                         {
                                             checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, board_id) && (
-                                                <Tooltip title="开始流程">
+                                                <Tooltip title="启用流程">
                                                     <Popover trigger="click" title={null} visible={this.state.popoStartConfirmVisible && id == this.state.currentVisibleItem} onVisibleChange={(visible) => { this.handleProcessStartConfirmVisible(visible, id) }} content={this.renderProcessStartConfirm(value)} icon={<></>} getPopupContainer={() => document.getElementById('template_item_bott')}>
                                                         <div className={`${globalStyles.authTheme} ${styles.template_operate}`}>&#xe796;</div>
                                                     </Popover>

@@ -6,10 +6,10 @@ const showDeleteTempleteConfirm = (processTempleteDelete) => {
   modal.update({
     title: '删除模板',
     content: '确认删除该模板吗？',
-    // zIndex: 1110,
+    zIndex: 1110,
     okText: '确认',
     cancelText: '取消',
-    // getContainer: () => document.getElementById('org_managementContainer'),
+    // getContainer: getContainer ? getContainer : triggerNode => triggerNode.parentNode,
     onOk: () => {
       processTempleteDelete()
     },

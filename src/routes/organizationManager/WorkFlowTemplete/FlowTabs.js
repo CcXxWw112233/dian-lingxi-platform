@@ -20,6 +20,16 @@ export default class FlowTabs extends Component {
     this.initData(nextProps)
   }
 
+  handleEditTemplete = (e, item) => {
+    e && e.stopPropagation()
+    this.props.handleEditTemplete && this.props.handleEditTemplete(e, item)
+  }
+
+  handleDelteTemplete = (e, item) => {
+    e && e.stopPropagation()
+    this.props.handleDelteTemplete && this.props.handleDelteTemplete(e, item)
+  }
+
   initData = (props) => {
     const { processTemplateList = [] } = props
     const dataSource = processTemplateList.map(item => {
@@ -67,10 +77,10 @@ export default class FlowTabs extends Component {
         key: 'operate',
         ellipsis: true,
         width: 110,
-        render: (item, value) => {
+        render: (text, item) => {
           return <div>
-            <span style={{color: '#1890FF', marginRight: '12px', cursor: 'pointer'}}>编辑</span>
-            <span style={{color: '#F5222D', cursor: 'pointer'}}>删除</span>
+            <span onClick={(e) => { this.handleEditTemplete(e, item) }} style={{color: '#1890FF', marginRight: '12px', cursor: 'pointer'}}>编辑</span>
+            <span onClick={(e) => { this.handleDelteTemplete(e, item) }} style={{color: '#F5222D', cursor: 'pointer'}}>删除</span>
           </div>
         }
       },

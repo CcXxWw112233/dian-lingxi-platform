@@ -29,6 +29,9 @@ import PropTypes from 'prop-types'
 import './components/Message'
 import { Switch, Route, Redirect, routerRedux, Router } from 'dva/router'
 import dynamic from 'dva/dynamic'
+import { LocaleProvider } from 'antd'
+import zh_CN from 'antd/lib/locale-provider/zh_CN';
+
 const { ConnectedRouter } = routerRedux
 
 const Routers = function ({ history, app }) {
@@ -222,24 +225,26 @@ const Routers = function ({ history, app }) {
 
   //去掉exact
   return (
-    <Router history={history}>
-      <Switch>
-        {
-          routes.map(({ path, ...dynamics }, key) => {
-            return (
-              <Route key={key}
-                exact={(path.indexOf('/technological') !== -1 || path.indexOf('/teamShow') !== -1) ? false : true}
-                path={path}
-                component={dynamic({
-                  app,
-                  ...dynamics,
-                })}
-              />
-            )
-          })
-        }
-      </Switch>
-    </Router>
+    <LocaleProvider locale={zh_CN}>
+      <Router history={history}>
+        <Switch>
+          {
+            routes.map(({ path, ...dynamics }, key) => {
+              return (
+                <Route key={key}
+                  exact={(path.indexOf('/technological') !== -1 || path.indexOf('/teamShow') !== -1) ? false : true}
+                  path={path}
+                  component={dynamic({
+                    app,
+                    ...dynamics,
+                  })}
+                />
+              )
+            })
+          }
+        </Switch>
+      </Router>
+    </LocaleProvider>
   )
 }
 
