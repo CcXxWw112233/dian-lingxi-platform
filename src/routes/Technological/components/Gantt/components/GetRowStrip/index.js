@@ -57,11 +57,12 @@ export default class GetRowStrip extends PureComponent {
     renderStyles = () => {
         const { itemValue = {}, date_arr_one_level = [], ceilWidth, date_total } = this.props
         const { height, top, left, start_time, due_time } = itemValue
+        const { isInViewArea, } = this.filterIsInViewArea()
         return {
             height,
             top: top + task_item_margin_top,
             width: date_total * ceilWidth,
-            zIndex: start_time || due_time ? '0' : '1', //存在时间的就不显性出现了，避免和svg层级冲突
+            zIndex: (start_time || due_time) && isInViewArea ? '0' : '1', //存在时间的就不显性出现了，避免和svg层级冲突
         }
     }
     // 长条鼠标事件---start
@@ -776,7 +777,7 @@ export default class GetRowStrip extends PureComponent {
             }
         }
         const { itemValue = {} } = this.props
-        const { start_time, end_time, due_time, tree_type, left } = itemValue
+        const { start_time, end_time, due_time, tree_type, left, width: item_width } = itemValue
         if (!start_time && !end_time && !due_time) {
             // return false
             return {
@@ -800,7 +801,7 @@ export default class GetRowStrip extends PureComponent {
         let direction = '' //在右还是在左
         let date_arr_one_level_length = date_arr_one_level.length
         // console.log('sssssssssssara', scrollLeft, left, width, left - width, index)
-        if (scrollLeft < left && scrollLeft > left - width) {//在可视区域。
+        if (scrollLeft < left + item_width && scrollLeft > left - width) {//在可视区域。
             isInViewArea = true
         } else { //在不可视区域
             isInViewArea = false

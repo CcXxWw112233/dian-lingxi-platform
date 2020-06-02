@@ -1002,12 +1002,16 @@ export default class CardItem extends Component {
                     )
                 }
                 {/* //hover出现的耳朵效果 */}
-                {/* <HoverEars
-                    getX={this.getX}
-                    itemValue={itemValue}
-                    dispatch={this.props.dispatch}
-                    setRelyLineDrawing={this.setRelyDown}
-                    rely_down={rely_down} /> */}
+                {
+                    ganttIsOutlineView({ group_view_type }) && (
+                        <HoverEars
+                            getX={this.getX}
+                            itemValue={itemValue}
+                            dispatch={this.props.dispatch}
+                            setRelyLineDrawing={this.setRelyDown}
+                            rely_down={rely_down} />
+                    )
+                }
             </div>
         )
     }
