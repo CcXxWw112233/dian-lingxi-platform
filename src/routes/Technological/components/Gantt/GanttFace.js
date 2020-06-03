@@ -186,8 +186,10 @@ export default class GanttFace extends Component {
       const { timestamp } = gold_date_arr[0]['date_inner'][0] //取第一天
       this.setState({
         searchTimer: setTimeout(() => {
-          this.setScrollPosition({ delay: 1, position: 16 * ceilWidth }) //大概移动四天的位置
-          this.setGoldDateArr({ timestamp, not_set_loading: true }) //取左边界日期来做日期更新的基准
+          this.setScrollPosition({ delay: 1, position: 36 * ceilWidth }) //大概移动四天的位置
+          setTimeout(() => {
+            this.setGoldDateArr({ timestamp, not_set_loading: true }) //取左边界日期来做日期更新的基准
+          }, 200)
         }, 50)
       })
 
@@ -199,7 +201,9 @@ export default class GanttFace extends Component {
       this.setState({
         searchTimer: setTimeout(() => {
           this.setScrollPosition({ delay: 1, position: scrollWidth - clientWidth - 60 * ceilWidth }) //移动到最新视觉
-          this.setGoldDateArr({ timestamp, to_right: 'to_right', not_set_loading: true }) //取有边界日期来做更新日期的基准
+          setTimeout(() => {
+            this.setGoldDateArr({ timestamp, to_right: 'to_right', not_set_loading: true }) //取有边界日期来做更新日期的基准
+          }, 200)
         }, 50)
       })
     }
