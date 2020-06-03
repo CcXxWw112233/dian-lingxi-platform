@@ -6,7 +6,8 @@ import {
   CONTENT_DATA_TYPE_FLOW,
   CONTENT_DATA_TYPE_FILE,
   CONTENT_DATA_TYPE_FOLDER,
-  CONTENT_DATA_TYPE_LIST
+  CONTENT_DATA_TYPE_LIST,
+  REQUEST_DOMAIN_WORK_BENCH
 } from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
 import { getGlobalData } from "../../utils/businessFunction";
@@ -134,18 +135,21 @@ export async function updateTask(data, isNotLoading) {
     data,
   }, { isNotLoading });
 }
-
 // 更新任务V2
 export async function updateTaskVTwo(data, isNotLoading) {
-  const { card_id } = data
+  const { card_id, board_id } = data
   delete data.card_id
+  delete data.board_id
+  const { BaseInfo = {} } = createHeaderContentDataByCardId(card_id)
+  BaseInfo.boardId = board_id
   return request({
     url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/card/${card_id}`,
     method: 'PUT',
-    headers: createHeaderContentDataByCardId(card_id),
+    headers: { BaseInfo },
     data,
   }, { isNotLoading });
 }
+
 
 // 删除任务
 export async function deleteTask(id) {
@@ -564,3 +568,35 @@ export async function milestoneInit(params) {
 
 
 
+//新增任务依赖
+export async function addCardRely(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/dependency`,
+    method: 'POST',
+    data
+  })
+}
+//删除任务依赖
+export async function deleteCardRely(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/dependency`,
+    method: 'DELETE',
+    data
+  })
+}
+//修改任务依赖
+export async function updateCardRely(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/dependency`,
+    method: 'PUT',
+    data
+  })
+}
+//查询任务依赖列表
+export async function getCardRelys(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/card/dependency`,
+    method: 'POST',
+    data
+  })
+}

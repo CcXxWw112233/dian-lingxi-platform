@@ -284,19 +284,20 @@ export default class MainContent extends Component {
   titleTextAreaChangeBlur = (e) => {
     let val = e.target.value
     const { dispatch, drawContent = {} } = this.props
-    const { card_id } = drawContent
+    const { card_id, board_id } = drawContent
     let reStr = val.trim()
     if (reStr == "" || reStr == " " || !reStr) return
     drawContent['card_name'] = reStr
     const updateObj = {
       card_id,
       card_name: val,
-      name: val
+      name: val,
+      board_id
     }
 
     Promise.resolve(
       dispatch({
-        type: 'publicTaskDetailModal/updateTask',
+        type: 'publicTaskDetailModal/updateTaskVTwo',
         payload: {
           updateObj
         }
@@ -500,10 +501,11 @@ export default class MainContent extends Component {
     const { drawContent = {}, dispatch } = this.props
     const nowTime = timeToTimestamp(new Date())
     const start_timeStamp = timeToTimestamp(timeString)
-    const { card_id, due_time } = drawContent
+    const { card_id, due_time, board_id } = drawContent
     const { data = [] } = drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
     const updateObj = {
-      card_id, start_time: start_timeStamp
+      card_id, start_time: start_timeStamp,
+      board_id
     }
     if (!this.compareStartDueTime(start_timeStamp, due_time)) {
       message.warn('开始时间不能大于结束时间')
@@ -517,7 +519,7 @@ export default class MainContent extends Component {
     new_drawContent['start_time'] = start_timeStamp
     Promise.resolve(
       dispatch({
-        type: 'publicTaskDetailModal/updateTask',
+        type: 'publicTaskDetailModal/updateTaskVTwo',
         payload: {
           updateObj
         }
@@ -540,12 +542,12 @@ export default class MainContent extends Component {
   // 截止时间 chg事件 S
   endDatePickerChange(timeString) {
     const { drawContent = {}, dispatch } = this.props
-    const { card_id, start_time, milestone_data = {} } = drawContent
+    const { card_id, start_time, milestone_data = {}, board_id } = drawContent
     const { data = [] } = drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
     const nowTime = timeToTimestamp(new Date())
     const due_timeStamp = timeToTimestamp(timeString)
     const updateObj = {
-      card_id, due_time: due_timeStamp
+      card_id, due_time: due_timeStamp, board_id
     }
 
     if (!this.compareStartDueTime(start_time, due_timeStamp)) {
@@ -562,7 +564,7 @@ export default class MainContent extends Component {
     new_drawContent['due_time'] = due_timeStamp
     Promise.resolve(
       dispatch({
-        type: 'publicTaskDetailModal/updateTask',
+        type: 'publicTaskDetailModal/updateTaskVTwo',
         payload: {
           updateObj
         }
@@ -586,15 +588,15 @@ export default class MainContent extends Component {
   handleDelStartTime = (e) => {
     e && e.stopPropagation()
     const { dispatch, drawContent = {} } = this.props
-    const { card_id, start_time } = drawContent
+    const { card_id, start_time, board_id } = drawContent
     const updateObj = {
-      card_id, start_time: '0'
+      card_id, start_time: '0', board_id
     }
     let new_drawContent = { ...drawContent }
     new_drawContent['start_time'] = null
     Promise.resolve(
       dispatch({
-        type: 'publicTaskDetailModal/updateTask',
+        type: 'publicTaskDetailModal/updateTaskVTwo',
         payload: {
           updateObj
         }
@@ -614,16 +616,16 @@ export default class MainContent extends Component {
   handleDelDueTime = (e) => {
     e && e.stopPropagation()
     const { dispatch, drawContent = {} } = this.props
-    const { card_id, due_time } = drawContent
+    const { card_id, due_time, board_id } = drawContent
     const updateObj = {
-      card_id, due_time: '0'
+      card_id, due_time: '0', board_id
     }
     let new_drawContent = { ...drawContent }
     new_drawContent['due_time'] = null
     if (!card_id) return false
     Promise.resolve(
       dispatch({
-        type: 'publicTaskDetailModal/updateTask',
+        type: 'publicTaskDetailModal/updateTaskVTwo',
         payload: {
           updateObj
         }
@@ -1086,7 +1088,7 @@ export default class MainContent extends Component {
     const { drawContent = {}, dispatch } = this.props
     const gold_data = (drawContent['properties'] && drawContent['properties'].find(item => item.code == 'SUBTASK') || {}).data
     if (!gold_data) return false;
-    
+
     let newData = [...gold_data]
     newData = newData.find(item => item.due_time)
     if (newData && Object.keys(newData).length) {
@@ -1100,7 +1102,7 @@ export default class MainContent extends Component {
     }
     if (data) {
       const { start_time, card_id, due_time } = data
-      let new_drawContent = {...drawContent}
+      let new_drawContent = { ...drawContent }
       new_drawContent['start_time'] = start_time
       new_drawContent['due_time'] = due_time
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: start_time })
@@ -1242,17 +1244,17 @@ export default class MainContent extends Component {
                     <div style={{ position: 'relative' }}>
                       {/* 开始时间 */}
                       {
-                        (((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) 
-                        // || this.state.is_change_parent_time
+                        (((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit())
+                          // || this.state.is_change_parent_time
                         ) ? (
-                          (
-                            <div className={`${mainContentStyles.start_time}`}>
-                              <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                                {start_time ? <span className={mainContentStyles.value_text}>{timestampToTime(start_time, true)}</span> : '暂无'}
-                              </span>
-                            </div>
-                          )
-                        ) : (
+                            (
+                              <div className={`${mainContentStyles.start_time}`}>
+                                <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
+                                  {start_time ? <span className={mainContentStyles.value_text}>{timestampToTime(start_time, true)}</span> : '暂无'}
+                                </span>
+                              </div>
+                            )
+                          ) : (
                             <div className={`${mainContentStyles.start_time}`}>
                               <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
                                 {start_time ? <span className={mainContentStyles.value_text}>{timestampToTime(start_time, true)}</span> : '开始时间'}
@@ -1275,17 +1277,17 @@ export default class MainContent extends Component {
                       &nbsp;
                       {/* 截止时间 */}
                       {
-                        (((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) 
-                        // || this.state.is_change_parent_time
+                        (((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit())
+                          // || this.state.is_change_parent_time
                         ) ? (
-                          (
-                            <div className={`${mainContentStyles.due_time}`}>
-                              <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                                {due_time ? <span className={mainContentStyles.value_text}>{timestampToTime(due_time, true)}</span> : '暂无'}
-                              </span>
-                            </div>
-                          )
-                        ) : (
+                            (
+                              <div className={`${mainContentStyles.due_time}`}>
+                                <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
+                                  {due_time ? <span className={mainContentStyles.value_text}>{timestampToTime(due_time, true)}</span> : '暂无'}
+                                </span>
+                              </div>
+                            )
+                          ) : (
                             <div className={`${mainContentStyles.due_time}`}>
                               <span style={{ position: 'relative', minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
                                 {due_time ? <span className={mainContentStyles.value_text}>{timestampToTime(due_time, true)}</span> : '截止时间'}
