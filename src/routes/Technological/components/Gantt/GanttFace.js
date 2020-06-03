@@ -198,7 +198,7 @@ export default class GanttFace extends Component {
       const { timestamp } = date_inner[date_inner_length - 1] // 取最后一天
       this.setState({
         searchTimer: setTimeout(() => {
-          this.setScrollPosition({ delay: 1, position: scrollWidth - clientWidth - 16 * ceilWidth }) //移动到最新视觉
+          this.setScrollPosition({ delay: 1, position: scrollWidth - clientWidth - 60 * ceilWidth }) //移动到最新视觉
           this.setGoldDateArr({ timestamp, to_right: 'to_right', not_set_loading: true }) //取有边界日期来做更新日期的基准
         }, 50)
       })

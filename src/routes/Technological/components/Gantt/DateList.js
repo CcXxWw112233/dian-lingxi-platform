@@ -451,6 +451,7 @@ export default class DateList extends Component {
       fontWeight: 'bold',
       backgroundColor: '#fff',
       zIndex: 0,
+      paddingLeft: 6,
       color: 'rgba(0, 0, 0, .45)'
     }}>{title}</div>
   }
