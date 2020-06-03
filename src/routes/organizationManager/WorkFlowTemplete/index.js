@@ -4,8 +4,10 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import FlowTabs from './FlowTabs'
 import { connect } from 'dva'
 import ProcessDetailModal from '../../../components/ProcessDetailModal'
-import { Modal } from 'antd'
+import { Modal, message } from 'antd'
 import { showDeleteTempleteConfirm } from '../../../components/ProcessDetailModal/components/handleOperateModal'
+import { checkIsHasPermission } from '../../../utils/businessFunction'
+import { ORG_TEAM_FLOW_TEMPLETE, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../globalset/js/constant'
 
 @connect(mapStateToProps)
 export default class WorkFlowTemplete extends Component {
@@ -45,6 +47,11 @@ export default class WorkFlowTemplete extends Component {
   // 新建模板
   handleAddTemplete = (e) => {
     e && e.stopPropagation()
+    // 判断是否有组织管理模板
+    if (!checkIsHasPermission(ORG_TEAM_FLOW_TEMPLETE)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN,MESSAGE_DURATION_TIME)
+      return
+    }
     this.props.dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {

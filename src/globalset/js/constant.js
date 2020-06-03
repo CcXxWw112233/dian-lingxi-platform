@@ -102,6 +102,7 @@ export const ORG_UPMS_ORGANIZATION_ROLE_DELETE = 'org:upms:organization:role:del
 export const ORG_TEAM_BOARD_QUERY = 'org:team:board:query' //查看项目 permission_type=1
 export const ORG_TEAM_BOARD_EDIT = 'org:team:board:edit' //编辑项目 permission_type=1
 export const ORG_UPMS_ORGANIZATION_MEMBER_QUERY = 'org:upms:organization:member:query' //查看成员 permission_type=1
+export const ORG_TEAM_FLOW_TEMPLETE = 'org:team:flow:template' //组织管理流程模板 permission_type=1
 export const PROJECT_TEAM_BOARD_MEMBER = 'project:team:board:member' //成员管理 permission_type=2
 export const PROJECT_TEAM_BOARD_EDIT = 'project:team:board:edit' //编辑项目 permission_type=2
 export const PROJECT_TEAM_BOARD_ARCHIVE = 'project:team:board:archive' //归档项目 permission_type=2

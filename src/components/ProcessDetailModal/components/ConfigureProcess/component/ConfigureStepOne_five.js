@@ -81,7 +81,7 @@ export default class ConfigureStepOne_five extends Component {
   limitFileNumValueChange = (value) => {
     const { form_item: { limit_file_num } } = this.state
     if (!value) {
-      this.updateState({ value: limit_file_num ? limit_file_num : '0' }, 'limit_file_num')
+      this.updateState({ value: value == 0 ? String(value) : '' }, 'limit_file_num')
       return
     }
     this.updateState({ value: String(value) }, 'limit_file_num')
@@ -220,7 +220,7 @@ export default class ConfigureStepOne_five extends Component {
     // isObjectValueEqual(compare_item1, compare_item2)
     if (isObjectValueEqual(compare_item1, compare_item2)) {
       disabledFlag = true
-    } else if (isNaN(limit_file_num) || isNaN(limit_file_size)) {
+    } else if ((isNaN(limit_file_num) || limit_file_num == '') || isNaN(limit_file_size)) {
       disabledFlag = true
     }
     return (

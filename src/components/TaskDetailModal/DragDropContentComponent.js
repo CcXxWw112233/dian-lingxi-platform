@@ -626,6 +626,7 @@ export default class DragDropContentComponent extends Component {
     let new_drawContent = { ...drawContent }
     let filter_drawContent = { ...drawContent }
     let new_selectedKeys = [...selectedKeys]
+    // flag 是指判断删除的字段是否存在内容, 如果有那么需要弹框打断, 而对应字段中的数据可能是字符串 数组 对象
     filter_drawContent['properties'].find(item => {
       if (item.id == shouldDeleteId) { // 表示找到当前item
         if (Array.isArray(item.data)) {
@@ -722,6 +723,7 @@ export default class DragDropContentComponent extends Component {
     const { code } = currentItem
     const flag = (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()
     let executors = this.getCurrentDrawerContentPropsModelDatasExecutors()
+    const gold_data = (drawContent['properties'].find(item => item.code == 'SUBTASK') || {}).data
     let messageValue = (<div></div>)
     switch (code) {
       case 'MILESTONE': // 里程碑
@@ -1020,7 +1022,7 @@ export default class DragDropContentComponent extends Component {
           <div className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
             <div className={mainContentStyles.field_left}>
               {
-                !flag && (
+                !flag && !(gold_data && gold_data.length) && (
                   <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
                 )
               }

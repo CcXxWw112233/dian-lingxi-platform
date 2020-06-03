@@ -51,7 +51,7 @@ export default class AppendSubTaskItem extends Component {
   //初始化根据props设置state
   initSet(props) {
     const { childTaskItemValue } = props
-    const { due_time, executors = [], card_name } = childTaskItemValue
+    const { start_time, due_time, executors = [], card_name } = childTaskItemValue
     // let local_executor = [{//任务执行人信息
     //   user_id: '',
     //   user_name: '',
@@ -63,6 +63,7 @@ export default class AppendSubTaskItem extends Component {
     }
 
     this.setState({
+      local_start_time: start_time,
       local_due_time: due_time,
       local_card_name: card_name,
       local_executor
@@ -223,8 +224,8 @@ export default class AppendSubTaskItem extends Component {
     })
   }
 
-  // 子任务更新弹窗数据
-  setChildTaskIndrawContent = ({ name, value }, card_id) => {
+  // 子任务更新弹窗数据 rely_card_datas,更新后返回的相关依赖的更新任务列表
+  setChildTaskIndrawContent = ({ name, value }, card_id, rely_card_datas) => {
     const { childDataIndex } = this.props
     const { drawContent = {}, dispatch, childTaskItemValue } = this.props
     let new_drawContent = { ...drawContent }
@@ -241,8 +242,7 @@ export default class AppendSubTaskItem extends Component {
     })
     if (name && value) {
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id: drawContent.card_id, name: 'card_data', value: new_data })
-      this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: drawContent.card_id, data: { ...childTaskItemValue, [name]: value }, card_id, action: 'update' })
-
+      this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: drawContent.card_id, data: { ...childTaskItemValue, [name]: value }, card_id, action: 'update', rely_card_datas })
     }
   }
 
@@ -269,7 +269,7 @@ export default class AppendSubTaskItem extends Component {
     new_drawContent['properties'] = this.filterCurrentUpdateDatasField('SUBTASK', newChildData)
     Promise.resolve(
       dispatch({
-        type: 'publicTaskDetailModal/deleteChirldTask',
+        type: 'publicTaskDetailModal/deleteTaskVTwo',
         payload: {
           card_id
         }
@@ -279,7 +279,7 @@ export default class AppendSubTaskItem extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: drawContent.card_id, card_id, action: 'delete' })
+      this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: drawContent.card_id, card_id, action: 'delete', rely_card_datas: res.data })
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
@@ -290,10 +290,103 @@ export default class AppendSubTaskItem extends Component {
     })
   }
 
+  // 禁用截止时间
+  disabledDueTime = (due_time) => {
+    const { childTaskItemValue: { start_time } } = this.props
+    if (!start_time || !due_time) {
+      return false;
+    }
+    const newStartTime = start_time.toString().length > 10 ? Number(start_time).valueOf() / 1000 : Number(start_time).valueOf()
+    return Number(due_time.valueOf()) / 1000 < newStartTime;
+  }
+
+  // 禁用开始时间
+  disabledStartTime = (start_time) => {
+    const { childTaskItemValue: { due_time } } = this.props
+    if (!start_time || !due_time) {
+      return false;
+    }
+    const newDueTime = due_time.toString().length > 10 ? Number(due_time).valueOf() / 1000 : Number(due_time).valueOf()
+    return Number(start_time.valueOf()) / 1000 >= newDueTime//Number(due_time).valueOf();
+  }
+
+  startDatePickerChange(timeString) {
+    const { drawContent = {}, childTaskItemValue, dispatch, board_id } = this.props
+    const { milestone_data = {}, card_id: parent_card_id } = drawContent
+    const { data = [] } = drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
+    const { card_id } = childTaskItemValue
+    const nowTime = timeToTimestamp(new Date())
+    const start_timeStamp = timeToTimestamp(timeString)
+    const updateObj = {
+      card_id, start_time: start_timeStamp, board_id
+    }
+    if (!compareTwoTimestamp(data.deadline, start_timeStamp)) {
+      message.warn('任务的开始日期不能大于关联里程碑的截止日期')
+      return false
+    }
+    Promise.resolve(
+      dispatch({
+        type: 'publicTaskDetailModal/updateTaskVTwo',
+        payload: {
+          updateObj
+        }
+      })
+    ).then(res => {
+      if (!isApiResponseOk(res)) {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+        return
+      }
+      if (!compareTwoTimestamp(start_timeStamp, nowTime)) {
+        setTimeout(() => {
+          message.warn(`您设置了一个今天之前的日期: ${timestampToTime(timeString, true)}`)
+        }, 500)
+      }
+      this.setState({
+        local_start_time: start_timeStamp
+      })
+      let new_data = [...res.data]
+      new_data = new_data.filter(item => item.id == parent_card_id) || []
+      this.setChildTaskIndrawContent({ name: 'start_time', value: start_timeStamp }, card_id, res.data)
+      this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
+    })
+  }
+
+  // 删除开始时间
+  handleDelStartTime = (e) => {
+    e && e.stopPropagation()
+    const { dispatch, childTaskItemValue, board_id, drawContent: { card_id: parent_card_id } } = this.props
+    const { card_id } = childTaskItemValue
+    const updateObj = {
+      card_id, start_time: '0', board_id
+    }
+    if (!card_id) return false
+    Promise.resolve(
+      dispatch({
+        type: 'publicTaskDetailModal/updateTaskVTwo',
+        payload: {
+          updateObj
+        }
+      })
+    ).then(res => {
+      if (!isApiResponseOk(res)) {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+        return
+      }
+      this.setState({
+        local_start_time: null
+      })
+      let new_data = [...res.data]
+      new_data = new_data.filter(item => item.id == parent_card_id) || []
+      this.setChildTaskIndrawContent({ name: 'start_time', value: 0 }, card_id, res.data)
+      this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
+    })
+
+  }
+
   //截止时间
   endDatePickerChange(timeString) {
     const { drawContent = {}, childTaskItemValue, dispatch, board_id } = this.props
-    const { milestone_data = {} } = drawContent
+    const { milestone_data = {}, card_id: parent_card_id } = drawContent
     const { data = [] } = drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
     const { card_id } = childTaskItemValue
     const nowTime = timeToTimestamp(new Date())
@@ -325,17 +418,17 @@ export default class AppendSubTaskItem extends Component {
       this.setState({
         local_due_time: due_timeStamp
       })
-      // const { start_time, due_time, card_id: parent_card_id } = res.data
-      this.setChildTaskIndrawContent({ name: 'due_time', value: due_timeStamp }, card_id)
-      this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(res.data)
-      
+      let new_data = [...res.data]
+      new_data = new_data.filter(item => item.id == parent_card_id) || []
+      this.setChildTaskIndrawContent({ name: 'due_time', value: due_timeStamp }, card_id, res.data)
+      this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
     })
   }
 
   // 删除结束时间
   handleDelDueTime = (e) => {
     e && e.stopPropagation()
-    const { dispatch, childTaskItemValue, board_id } = this.props
+    const { dispatch, childTaskItemValue, board_id, drawContent: { card_id: parent_card_id } } = this.props
     const { card_id, due_time } = childTaskItemValue
     const updateObj = {
       card_id, due_time: '0', board_id
@@ -356,8 +449,10 @@ export default class AppendSubTaskItem extends Component {
       this.setState({
         local_due_time: null
       })
-      this.setChildTaskIndrawContent({ name: 'due_time', value: 0 }, card_id)
-      this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(res.data)
+      let new_data = [...res.data]
+      new_data = new_data.filter(item => item.id == parent_card_id) || []
+      this.setChildTaskIndrawContent({ name: 'due_time', value: 0 }, card_id, res.data)
+      this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
     })
 
   }
@@ -365,7 +460,7 @@ export default class AppendSubTaskItem extends Component {
   render() {
     const { childTaskItemValue, childDataIndex, dispatch, data = {}, drawContent = {}, board_id } = this.props
     const { card_id, is_realize = '0' } = childTaskItemValue
-    const { local_card_name, local_executor = [], local_due_time, is_edit_sub_name } = this.state
+    const { local_card_name, local_executor = [], local_start_time, local_due_time, is_edit_sub_name } = this.state
 
 
     return (
@@ -410,7 +505,47 @@ export default class AppendSubTaskItem extends Component {
                 )
             }
           </div>
-          {/* 时间 */}
+          {/* 开始时间 */}
+          <div>
+            {
+              local_start_time ? (
+                <div className={appendSubTaskStyles.due_time}>
+                  <div>
+                    <span>{timestampToTimeNormal3(local_start_time, true)}</span>
+                    <span onClick={this.handleDelStartTime} className={`${local_start_time && appendSubTaskStyles.timeDeleBtn}`}></span>
+                  </div>
+                  <DatePicker
+                    disabledDate={this.disabledStartTime.bind(this)}
+                    // onOk={this.startDatePickerChange.bind(this)}
+                    onChange={this.startDatePickerChange.bind(this)}
+                    // getCalendarContainer={triggerNode => triggerNode.parentNode}
+                    placeholder={local_start_time ? timestampToTimeNormal(local_start_time, '/', true) : '开始时间'}
+                    format="YYYY/MM/DD HH:mm"
+                    showTime={{ format: 'HH:mm' }}
+                    style={{ opacity: 0, height: '100%', background: '#000000', position: 'absolute', left: 0, top: 0, width: 'auto' }} />
+                </div>
+              ) : (
+                  <div className={`${appendSubTaskStyles.start_time}`}>
+                    <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
+                      开始时间
+                      <DatePicker
+                        disabledDate={this.disabledStartTime.bind(this)}
+                        // onOk={this.startDatePickerChange.bind(this)}
+                        onChange={this.startDatePickerChange.bind(this)}
+                        // getCalendarContainer={triggerNode => triggerNode.parentNode}
+                        placeholder={local_start_time ? timestampToTimeNormal(local_start_time, '/', true) : '开始时间'}
+                        format="YYYY/MM/DD HH:mm"
+                        showTime={{ format: 'HH:mm' }}
+                        style={{ opacity: 0, height: '100%', background: '#000000', position: 'absolute', left: 0, top: 0, width: 'auto' }} />
+                    </span>
+                  </div>
+                )
+            }
+          </div>
+          &nbsp;
+          <span style={{ color: '#bfbfbf' }}> ~ </span>
+          &nbsp;
+          {/* 截止时间 */}
           <div>
             {
               local_due_time ? (
@@ -420,6 +555,7 @@ export default class AppendSubTaskItem extends Component {
                     <span onClick={this.handleDelDueTime} className={`${local_due_time && appendSubTaskStyles.timeDeleBtn}`}></span>
                   </div>
                   <DatePicker
+                    disabledDate={this.disabledDueTime.bind(this)}
                     onChange={this.endDatePickerChange.bind(this)}
                     placeholder={local_due_time ? timestampToTimeNormal(local_due_time, '/', true) : '截止时间'}
                     format="YYYY/MM/DD HH:mm"
@@ -427,19 +563,15 @@ export default class AppendSubTaskItem extends Component {
                     style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '2px', zIndex: 2 }} />
                 </div>
               ) : (
-                  <Tooltip title="截止时间" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                    <div className={`${appendSubTaskStyles.add_due_time}`}>
-                      <div>
-                        <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_icon}`}>&#xe686;</span>
-                      </div>
-                      <DatePicker
-                        onChange={this.endDatePickerChange.bind(this)}
-                        placeholder={local_due_time ? timestampToTimeNormal(local_due_time, '/', true) : '截止时间'}
-                        format="YYYY/MM/DD HH:mm"
-                        showTime={{ format: 'HH:mm' }}
-                        style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '2px', zIndex: 2 }} />
-                    </div>
-                  </Tooltip>
+                  <div className={`${appendSubTaskStyles.add_due_time}`}>
+                    <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>截止时间</span>
+                    <DatePicker
+                      onChange={this.endDatePickerChange.bind(this)}
+                      placeholder={local_due_time ? timestampToTimeNormal(local_due_time, '/', true) : '截止时间'}
+                      format="YYYY/MM/DD HH:mm"
+                      showTime={{ format: 'HH:mm' }}
+                      style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '2px', zIndex: 2 }} />
+                  </div>
                 )
             }
           </div>

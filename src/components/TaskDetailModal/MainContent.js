@@ -138,7 +138,7 @@ export default class MainContent extends Component {
         }
         this.getMilestone(res.data.board_id)
         this.filterCurrentExistenceField(res.data)// 初始化获取字段信息
-        // this.whetherUpdateParentTaskTime()
+        this.whetherUpdateParentTaskTime()
         this.linkImWithCard({ name: res.data.card_name, type: 'card', board_id: res.data.board_id, id: res.data.card_id })
       } else {
         setTimeout(() => {
@@ -219,7 +219,7 @@ export default class MainContent extends Component {
   }
 
   // 更新drawContent中的数据以及调用父级列表更新数据
-  updateDrawContentWithUpdateParentListDatas = ({ drawContent, card_id, name, value, operate_properties_code }) => {
+  updateDrawContentWithUpdateParentListDatas = ({ drawContent, card_id, name, value, operate_properties_code, rely_card_datas }) => {
     const { dispatch } = this.props
     dispatch({
       type: 'publicTaskDetailModal/updateDatas',
@@ -228,7 +228,7 @@ export default class MainContent extends Component {
       }
     })
     if (name && value) {
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, name, value, operate_properties_code })
+      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, name, value, operate_properties_code, rely_card_datas })
     }
   }
 
@@ -534,7 +534,7 @@ export default class MainContent extends Component {
           message.warn(`您设置了一个今天之前的日期: ${timestampToTime(timeString, true)}`)
         }, 500)
       }
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: start_timeStamp })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: start_timeStamp, rely_card_datas: res.data })
     })
   }
   // 开始时间 chg事件 E
@@ -579,7 +579,7 @@ export default class MainContent extends Component {
           message.warn(`您设置了一个今天之前的日期: ${timestampToTime(timeString, true)}`, MESSAGE_DURATION_TIME)
         }, 500)
       }
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: due_timeStamp })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: due_timeStamp, rely_card_datas: res.data })
     })
   }
   // 截止时间 chg事件 E
@@ -606,7 +606,7 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: '0' })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: '0', rely_card_datas: res.data })
     })
 
   }
@@ -1090,7 +1090,7 @@ export default class MainContent extends Component {
     if (!gold_data) return false;
 
     let newData = [...gold_data]
-    newData = newData.find(item => item.due_time)
+    newData = newData.find(item => item.due_time || item.start_time)
     if (newData && Object.keys(newData).length) {
       this.setState({
         is_change_parent_time: true
@@ -1101,8 +1101,9 @@ export default class MainContent extends Component {
       })
     }
     if (data) {
-      const { start_time, card_id, due_time } = data
-      let new_drawContent = { ...drawContent }
+      if (!(data && data.length)) return
+      const { start_time, id:card_id, due_time } = data[0]
+      let new_drawContent = { ...drawContent }      
       new_drawContent['start_time'] = start_time
       new_drawContent['due_time'] = due_time
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: start_time })
@@ -1245,7 +1246,7 @@ export default class MainContent extends Component {
                       {/* 开始时间 */}
                       {
                         (((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit())
-                          // || this.state.is_change_parent_time
+                          || this.state.is_change_parent_time
                         ) ? (
                             (
                               <div className={`${mainContentStyles.start_time}`}>
@@ -1278,7 +1279,7 @@ export default class MainContent extends Component {
                       {/* 截止时间 */}
                       {
                         (((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit())
-                          // || this.state.is_change_parent_time
+                          || this.state.is_change_parent_time
                         ) ? (
                             (
                               <div className={`${mainContentStyles.due_time}`}>
