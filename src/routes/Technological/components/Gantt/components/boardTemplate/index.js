@@ -11,6 +11,7 @@ import { getGlobalData, checkIsHasPermissionInBoard } from '../../../../../../ut
 import BoardTemplateManager from '@/routes/organizationManager/projectTempleteScheme/index.js'
 import SafeConfirmModal from '../SafeConfirmModal';
 import { PROJECT_TEAM_CARD_CREATE, PROJECT_TEAM_BOARD_MILESTONE, NOT_HAS_PERMISION_COMFIRN } from '../../../../../../globalset/js/constant'
+import { transformTimestamp } from '../../../../../../utils/util'
 
 const MenuItem = Menu.Item
 const TreeNode = Tree.TreeNode;
@@ -273,7 +274,7 @@ export default class BoardTemplate extends Component {
         const is_child_task = parent_type == '2'
         return (
             data.map(item => {
-                const { name, template_data_type, child_content = [], id } = item
+                const { name, template_data_type, child_content = [], id, time_spand } = item
                 const params = {
                     template_data_type,
                     name,
@@ -286,6 +287,7 @@ export default class BoardTemplate extends Component {
                             data_type={template_data_type}
                             data_id={is_child_task ? parrent_id : id} //当父级是任务的时候，默认存储的是父类任务
                             data_name={is_child_task ? parrent_name : name}
+                            data_time_spand={time_spand}
                             icon={<i className={globalStyles.authTheme}>&#xe6f0;</i>}
                             key={id}
                             title={this.renderTreeItemName(params)}
@@ -298,6 +300,7 @@ export default class BoardTemplate extends Component {
                     data_type={template_data_type}
                     data_id={id}
                     data_name={is_child_task ? parrent_name : name}
+                    data_time_spand={time_spand}
                     key={id}
                     title={this.renderTreeItemName(params)}
                     selectable={false}
@@ -369,12 +372,13 @@ export default class BoardTemplate extends Component {
         document.body.removeEventListener("drop", this.drop);
     }
     onDragStart = ({ node }) => {
-        const { data_id, data_type, data_name } = node.props
+        const { data_id, data_type, data_name, data_time_spand } = node.props
         this.setState({
             drag_node_data: {
                 data_id,
                 data_type,
                 data_name,
+                data_time_spand
             }
         })
     }
@@ -490,12 +494,12 @@ export default class BoardTemplate extends Component {
             message.warn(NOT_HAS_PERMISION_COMFIRN)
             return
         }
-        const { drag_node_data: { data_id } } = this.state
-
+        const { drag_node_data: { data_id, data_time_spand = 1 } } = this.state
+        const due_time = transformTimestamp(start_time) + data_time_spand * 24 * 60 * 60 * 1000 - 1000
         const params = {
             board_id: gantt_board_id,
             content_id: data_id,
-            due_time: end_time,
+            due_time,
             start_time,
             list_id: list_id != '0' ? list_id : ''
         }

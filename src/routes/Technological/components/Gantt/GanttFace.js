@@ -250,7 +250,7 @@ export default class GanttFace extends Component {
         end_date: date_arr[date_arr.length - 1]['date_inner'][date_arr[date_arr.length - 1]['date_inner'].length - 1],
       }
     })
-
+    this.setWidthArea({ date_arr })
     //  做数据请求
     if (gold_date_arr[0]) {
       const start_time = gold_date_arr[0]['date_inner'][0]['timestamp']
@@ -301,6 +301,27 @@ export default class GanttFace extends Component {
       }
       that.getHoliday()
     }
+  }
+  //设置月份日期宽度区间
+  setWidthArea = ({ date_arr }) => {
+    const { ceilWidth, gantt_view_mode, dispatch } = this.props
+    if (gantt_view_mode != 'month') return
+    const width_area = date_arr.map(item => item.date_inner.length * ceilWidth)
+    const width_area_section = width_area.map((item, index) => {
+      const list_arr = width_area.slice(0, index + 1)
+      let width = 0
+      for (let val of list_arr) {
+        width += val
+      }
+      return width
+    })
+    dispatch({
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: {
+        width_area,
+        width_area_section
+      }
+    })
   }
   //拖动日期后预先设置 处理任务排列
   beforeHandListGroup = () => {
