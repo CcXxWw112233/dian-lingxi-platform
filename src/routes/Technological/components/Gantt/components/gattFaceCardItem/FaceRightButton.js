@@ -45,7 +45,7 @@ export default class FaceRightButton extends Component {
             })
         } else {
             this.props.setGoldDateArr && this.props.setGoldDateArr({ timestamp: now })
-            this.props.setScrollPosition && this.props.setScrollPosition({ delay: 300, position: ceilWidth * (30 - 4 + date - 1) - 16 })
+            this.props.setScrollPosition && this.props.setScrollPosition({ delay: 300, position: ceilWidth * (60 - 4 + date - 1) - 16 })
         }
 
     }
