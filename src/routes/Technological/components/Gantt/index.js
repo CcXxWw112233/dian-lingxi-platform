@@ -210,12 +210,12 @@ class Gantt extends Component {
   // 添加任务 -----------end
 
   //修改某一个任务
-  handleChangeCard = ({ card_id, drawContent, operate_properties_code }) => {
+  handleChangeCard = ({ card_id, drawContent, operate_properties_code, ...other_params }) => {
     // operate_properties_code为新任务接口下properties数组的操作code,用来判断执行人和标签更新
     if (this.card_time_type == 'no_schedule') {
       this.handleNoHasScheduleCard({ card_id, drawContent, operate_properties_code })
     } else {
-      this.handleHasScheduleCard({ card_id, drawContent, operate_properties_code })
+      this.handleHasScheduleCard({ card_id, drawContent, operate_properties_code, ...other_params })
     }
   }
   // 修改某一任务针对项目详情接口结构的数据变化处理
@@ -280,11 +280,21 @@ class Gantt extends Component {
   }
 
   // 修改有排期的任务
-  handleHasScheduleCard = ({ card_id, drawContent, operate_properties_code }) => {
+  handleHasScheduleCard = ({ card_id, drawContent, operate_properties_code, ...other_params }) => {
     const { group_view_type } = this.props
     const new_drawContent = this.cardPropertiesPromote({ drawContent, operate_properties_code })
     if (ganttIsOutlineView({ group_view_type })) {
       this.changeOutLineTreeNodeProto(card_id, { ...new_drawContent, name: drawContent.card_name })
+      setTimeout(() => {
+        if (Object.prototype.toString.call(other_params.rely_card_datas) == '[object Array]') {
+          dispatch({
+            type: 'gantt/updateOutLineTree',
+            payload: {
+              datas: other_params.rely_card_datas
+            }
+          });
+        }
+      }, 1000)
       return
     }
     const { dispatch } = this.props
@@ -440,7 +450,7 @@ class Gantt extends Component {
     });
   }
   // 子任务增删改
-  handleChildTaskChange = ({ action, parent_card_id, card_id, data }) => {
+  handleChildTaskChange = ({ action, parent_card_id, card_id, data, rely_card_datas }) => {
     const { group_view_type } = this.props
     if (!ganttIsOutlineView({ group_view_type })) {
       return
@@ -463,6 +473,17 @@ class Gantt extends Component {
       setTimeout(() => {
         this.changeOutLineTreeNodeProto(card_id, data)
       }, 500)
+      //修改相关任务
+      setTimeout(() => {
+        if (Object.prototype.toString.call(rely_card_datas) == '[object Array]') {
+          dispatch({
+            type: 'gantt/updateOutLineTree',
+            payload: {
+              datas: rely_card_datas
+            }
+          });
+        }
+      }, 1000)
     } else {
 
     }
