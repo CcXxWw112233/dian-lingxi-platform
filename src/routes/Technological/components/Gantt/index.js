@@ -473,19 +473,19 @@ class Gantt extends Component {
       setTimeout(() => {
         this.changeOutLineTreeNodeProto(card_id, data)
       }, 500)
-      //修改相关任务
-      setTimeout(() => {
-        if (Object.prototype.toString.call(rely_card_datas) == '[object Array]') {
-          dispatch({
-            type: 'gantt/updateOutLineTree',
-            payload: {
-              datas: rely_card_datas
-            }
-          });
-        }
-      }, 1000)
     } else {
 
+    }
+    //修改相关任务
+    if (Object.prototype.toString.call(rely_card_datas) == '[object Array]') {
+      setTimeout(() => {
+        dispatch({
+          type: 'gantt/updateOutLineTree',
+          payload: {
+            datas: rely_card_datas
+          }
+        });
+      }, 1000)
     }
   }
   render() {

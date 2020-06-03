@@ -94,14 +94,18 @@ class base_utils {
 
         const gold_date_arr = [
             {
+                date_top: this.getDateTop(front_two_year, front_two_month),
+                date_inner: this.getOneMonthDateDetail(front_two_year, front_two_month),
+            },
+            {
                 date_top: this.getDateTop(front_one_year, front_one_month),
                 date_inner: front_month_date,
             },
-            {
+            {//基准月份
                 date_top: this.getDateTop(year, month),
                 date_inner: base_month_date,
             },
-            { //基准月份
+            {
                 date_top: this.getDateTop(behind_one_year, behind_one_month),
                 date_inner: behind_month_date,
             },
@@ -109,10 +113,10 @@ class base_utils {
                 date_top: this.getDateTop(behind_two_year, behind_two_month),
                 date_inner: this.getOneMonthDateDetail(behind_two_year, behind_two_month),
             },
-            {
-                date_top: this.getDateTop(behind_three_year, behind_three_month),
-                date_inner: this.getOneMonthDateDetail(behind_three_year, behind_three_month),
-            },
+            // {
+            //     date_top: this.getDateTop(behind_three_year, behind_three_month),
+            //     date_inner: this.getOneMonthDateDetail(behind_three_year, behind_three_month),
+            // },
         ]
         // console.log('gold_date_arr', gold_date_arr)
         return gold_date_arr

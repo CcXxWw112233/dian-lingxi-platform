@@ -760,7 +760,7 @@ export default class GetRowStrip extends PureComponent {
         } else {
             this.props.setGoldDateArr && this.props.setGoldDateArr({ timestamp: gold_time })
             setTimeout(() => {
-                this.props.setScrollPosition && this.props.setScrollPosition({ delay: 300, position: ceilWidth * (30 - 4 + date - 1) - 16 })
+                this.props.setScrollPosition && this.props.setScrollPosition({ delay: 300, position: ceilWidth * (60 - 4 + date - 1) - 16 })
             }, 300)
         }
 

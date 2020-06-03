@@ -61,7 +61,7 @@ export default class Index extends React.Component {
     const { height } = this.state
     return (
       <div>
-        <iframe src={src_url} scrolling='no' frameborder="0" width='100%' height={height}></iframe>
+        <iframe src={src_url} webkitAllowFullScreen mozallowfullscreen allowFullScreen scrolling='no' frameborder="0" width='100%' height={height}></iframe>
       </div>
     );
   }

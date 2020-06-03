@@ -175,7 +175,7 @@ export default class index extends React.Component {
                             return this.renderMapOrganizationList(item)
                         })}</>
                     ) : (
-                            <iframe src={src_url} scrolling='no' frameborder="0" width='100%' height={'100%'}></iframe>
+                            <iframe src={src_url} webkitAllowFullScreen mozallowfullscreen allowFullScreen scrolling='no' frameborder="0" width='100%' height={'100%'}></iframe>
                         )
                 }
                 {/* {user_set.current_org === '0' && selectOrganizationVisible === false && mapOrganizationList.length > 1 ? (
