@@ -162,6 +162,16 @@ export async function deleteTask(id) {
     },
   });
 }
+export async function deleteTaskVTwo(id) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/card/${id}`,
+    method: 'DELETE',
+    headers: createHeaderContentDataByCardId(id),
+    data: {
+      id
+    },
+  });
+}
 
 // r任务归档
 export async function archivedTask(data) {

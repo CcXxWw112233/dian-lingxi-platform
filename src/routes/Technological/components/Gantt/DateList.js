@@ -339,7 +339,7 @@ export default class DateList extends Component {
                                     ${this.getDateNoHolidaylunar(timestamp).festival_status == '1' && indexStyles.holiday_date_no}`}>
                       {
                         this.getDateNoHolidaylunar(timestamp).holiday && (
-                          <div style={{ position: 'absolute', zIndex: 2, top: -24, left: -18, width: 60, height: 20 }} >
+                          <div style={{ position: 'absolute', zIndex: 2, top: -24, left: -18, width: 60, height: 20, backgroundColor: '#fff' }} >
                             {this.getDateNoHolidaylunar(timestamp).holiday}
                           </div>
                         )
@@ -364,7 +364,7 @@ export default class DateList extends Component {
                         >
                           {
                             this.getDateNoHolidaylunar(timestamp).holiday && (
-                              <div style={{ position: 'absolute', zIndex: 2, top: -24, left: -18, width: 60, height: 20 }} >
+                              <div style={{ position: 'absolute', zIndex: 2, top: -24, left: -18, width: 60, height: 20, backgroundColor: '#fff' }} >
                                 {this.getDateNoHolidaylunar(timestamp).holiday}
                               </div>
                             )
@@ -423,6 +423,37 @@ export default class DateList extends Component {
     )
   }
 
+  // 渲染月份或年份
+  renderDateTop = (date_top) => {
+    const { gantt_view_mode } = this.props
+
+    let contain = <></>
+    if (gantt_view_mode == 'month') {
+      contain = (
+        <div className={indexStyles.dateTitle}>{date_top}</div>
+      )
+    } else {
+      contain = (
+        <div className={indexStyles.dateTitle_2}>{date_top}</div>
+      )
+    }
+    return contain
+  }
+  renderFixedDateTop = () => {
+    const { target_scrollLeft, gold_date_arr, gantt_view_mode, width_area_section = [] } = this.props
+    if (gantt_view_mode != 'month') return <></>
+    const index = width_area_section.findIndex(item => target_scrollLeft < item)
+    const title = (gold_date_arr[index] || {}).date_top
+    return <div style={{
+      position: 'absolute',
+      left: target_scrollLeft,
+      top: 9,
+      fontWeight: 'bold',
+      backgroundColor: '#fff',
+      zIndex: 0,
+      color: 'rgba(0, 0, 0, .45)'
+    }}>{title}</div>
+  }
   render() {
     const {
       gold_date_arr = [],
@@ -441,11 +472,13 @@ export default class DateList extends Component {
           id={'gantt_date_area'}
         // style={{ left: -target_scrollLeft, }}
         >
+          {this.renderFixedDateTop()}
           {gold_date_arr.map((value, key) => {
             const { date_top, date_inner = [] } = value
             return (
               <div className={indexStyles.dateAreaItem} key={key}>
-                <div className={indexStyles.dateTitle}>{date_top}</div>
+                {/* <div className={indexStyles.dateTitle}>{date_top}</div> */}
+                {this.renderDateTop(date_top)}
                 {
                   gantt_view_mode == 'year' && (
                     this.renderYearViewDate(date_inner)
@@ -532,7 +565,7 @@ class DropMilestone extends React.Component {
               >
                 {
                   getDateNoHolidaylunar(timestamp).holiday && (
-                    <div style={{ position: 'absolute', zIndex: 2, top: -24, left: -18, width: 60, height: 20 }} >
+                    <div style={{ position: 'absolute', zIndex: 2, top: -24, left: -18, width: 60, height: 20, backgroundColor: '#fff' }} >
                       {getDateNoHolidaylunar(timestamp).holiday}
                     </div>
                   )
@@ -551,7 +584,7 @@ class DropMilestone extends React.Component {
 function mapStateToProps(
   {
     gantt: { datas: {
-      target_scrollLeft,
+      target_scrollLeft, width_area_section = [],
       gold_date_arr = [], about_user_boards = [],
       target_scrollTop = [],
       milestoneMap = [], holiday_list = [],
@@ -560,7 +593,7 @@ function mapStateToProps(
     technological: { datas: { userBoardPermissions } }
   }) {
   return {
-    target_scrollLeft,
+    target_scrollLeft, width_area_section,
     gold_date_arr,
     target_scrollTop, milestoneMap,
     holiday_list, gantt_board_id,
