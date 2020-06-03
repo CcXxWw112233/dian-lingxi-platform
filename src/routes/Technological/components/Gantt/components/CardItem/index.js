@@ -427,7 +427,8 @@ export default class CardItem extends Component {
                             this.excuteHandleEffectHandleParentCard([
                                 // 'getParentCard',
                                 // 'handleParentCard',
-                                { action: 'updateParentCard', payload: { start_time: res.data.start_time, due_time: res.data.due_time, success: '1' } }
+                                { action: 'updateParentCard', payload: { data: res.data, success: '1' } }
+                                // { action: 'updateParentCard', payload: { start_time: res.data.start_time, due_time: res.data.due_time, success: '1' } }
                             ])
                         }, 200)
                     } else {
@@ -536,7 +537,8 @@ export default class CardItem extends Component {
                             this.excuteHandleEffectHandleParentCard([
                                 // 'getParentCard',
                                 // 'handleParentCard',
-                                { action: 'updateParentCard', payload: { start_time: res.data.start_time, due_time: res.data.due_time, success: '1' } }
+                                { action: 'updateParentCard', payload: { data: res.data, success: '1' } },
+                                // { action: 'updateParentCard', payload: { start_time: res.data.start_time, due_time: res.data.due_time, success: '1' } }
                             ])
                         }, 200)
                     } else {
@@ -675,7 +677,7 @@ export default class CardItem extends Component {
 
     // 大纲视图下，如果该条任务是子任务，拖动择会影响父任务位置和长度
     handleEffectParentCard = (func_name, data) => {
-        const { group_view_type, itemValue: { parent_card_id }, gantt_view_mode } = this.props
+        const { group_view_type, itemValue: { parent_card_id }, gantt_view_mode, dispatch } = this.props
         if (!ganttIsOutlineView({ group_view_type })) return
         if (!parent_card_id) return
         const is_year_view = gantt_view_mode == 'year'
@@ -771,8 +773,16 @@ export default class CardItem extends Component {
             updateParentCard: (data) => { //方法废弃。由子任务更新后后台返回区间，父任务更新由返回的时间确认
                 // console.log('更新的data', data)
                 if (data.success == '1') {
-                    console.log('要更新的父级0', data)
-                    this.props.changeOutLineTreeNodeProto(parent_card_id, { due_time: data.due_time, start_time: data.start_time })
+                    console.log('要更新的父级0', data, Object.prototype.toString.call(data))
+                    // this.props.changeOutLineTreeNodeProto(parent_card_id, { due_time: data.due_time, start_time: data.start_time })
+                    if (Object.prototype.toString.call(data.data) == '[object Array]') {
+                        dispatch({
+                            type: 'gantt/updateOutLineTree',
+                            payload: {
+                                datas: data.data
+                            }
+                        });
+                    }
                     return
                 }
                 const { parent_card: { max_time, min_time, ele, time_span, left } } = this.state

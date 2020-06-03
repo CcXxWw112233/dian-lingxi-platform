@@ -3,7 +3,7 @@ import { Menu, Button, Input, message, Modal } from 'antd';
 import styles from './nodeOperate.less'
 import globalStyles from '@/globalset/css/globalClassName.less';
 import { connect } from 'dva';
-import { addTaskGroup, changeTaskType, deleteTask, requestDeleteMiletone } from '../../../../../../services/technological/task';
+import { addTaskGroup, changeTaskType, deleteTask, requestDeleteMiletone, deleteTaskVTwo } from '../../../../../../services/technological/task';
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
 import OutlineTree from '.';
 import { visual_add_item } from '../../constants';
@@ -190,9 +190,9 @@ export default class NodeOperate extends Component {
 
     }
     deleteCard = (id) => {
-        deleteTask(id).then(res => {
+        deleteTaskVTwo(id).then(res => {
             if (isApiResponseOk(res)) {
-                this.props.deleteOutLineTreeNode(id)
+                this.props.deleteOutLineTreeNode(id, undefined, res.data)
             } else {
                 message.error(res.message)
             }

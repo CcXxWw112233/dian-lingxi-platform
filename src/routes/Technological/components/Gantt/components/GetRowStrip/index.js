@@ -56,13 +56,13 @@ export default class GetRowStrip extends PureComponent {
 
     renderStyles = () => {
         const { itemValue = {}, date_arr_one_level = [], ceilWidth, date_total } = this.props
-        const { height, top, left, start_time, due_time } = itemValue
+        const { height, top, left, start_time, due_time, tree_type } = itemValue
         const { isInViewArea, } = this.filterIsInViewArea()
         return {
             height,
             top: top + task_item_margin_top,
             width: date_total * ceilWidth,
-            zIndex: (start_time || due_time) && isInViewArea ? '0' : '1', //存在时间的就不显性出现了，避免和svg层级冲突
+            zIndex: (start_time || due_time) && isInViewArea && tree_type != '1' ? '0' : '1', //存在时间的就不显性出现了，避免和svg层级冲突,（里程碑正常）
         }
     }
     // 长条鼠标事件---start
@@ -190,7 +190,7 @@ export default class GetRowStrip extends PureComponent {
         )
     }
     cardSetClick = () => {
-        const { itemValue = {}, gantt_board_id } = this.props
+        const { itemValue = {}, gantt_board_id, dispatch } = this.props
         if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, gantt_board_id)) {
             message.warn(NOT_HAS_PERMISION_COMFIRN)
             return
@@ -205,7 +205,15 @@ export default class GetRowStrip extends PureComponent {
                 this.changeOutLineTreeNodeProto(id, { start_time: timestamp, due_time })
                 if (parent_card_id) { //如果该任务是子任务，更新完成后更新父任务
                     setTimeout(() => {
-                        this.changeOutLineTreeNodeProto(parent_card_id, { start_time: res.data.start_time, due_time: res.data.due_time })
+                        // this.changeOutLineTreeNodeProto(parent_card_id, { start_time: res.data.start_time, due_time: res.data.due_time })
+                        if (Object.prototype.toString.call(res.data) == '[object Array]') {
+                            dispatch({
+                                type: 'gantt/updateOutLineTree',
+                                payload: {
+                                    datas: res.data
+                                }
+                            });
+                        }
                     }, 200)
                 }
             } else {

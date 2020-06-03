@@ -375,7 +375,7 @@ class Gantt extends Component {
     }
   }
   // 大纲视图删除某个节点（如果是删除任务则删除挂载的全部节点， 如果是删除里程碑， 则释放任务到无归属区域）
-  deleteOutLineTreeNode = (id, add_id) => {
+  deleteOutLineTreeNode = (id, add_id, change_node_data) => {
     let { dispatch, outline_tree } = this.props;
     let node = {}
     if (!!id) { //删除实际节点
@@ -399,6 +399,15 @@ class Gantt extends Component {
         data: outline_tree
       }
     });
+    // 删除之后会返回相关依赖的变动
+    if (Object.prototype.toString.call(change_node_data) == '[object Array]') {
+      dispatch({
+        type: 'gantt/updateOutLineTree',
+        payload: {
+          datas: change_node_data
+        }
+      });
+    }
   }
   // 大纲视图插入某个节点
   insertOutLineTreeNode = ({ res, params }) => {
