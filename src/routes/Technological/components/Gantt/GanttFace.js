@@ -107,8 +107,8 @@ export default class GanttFace extends Component {
   initSetScrollPosition() {
     const { ceilWidth } = this.props
     const date = new Date().getDate()
-    //30为一个月长度，3为遮住的部分长度，date为当前月到今天为止的长度,1为偏差修复, 16为左边header的宽度和withCeil * n的 %值
-    this.setScrollPosition({ delay: 300, position: ceilWidth * (30 - 4 - 4 + date - 1) - 16 }) //第一为左边头部宽度，第二个4为距离头部距离
+    //60为一个月长度，3为遮住的部分长度，date为当前月到今天为止的长度,1为偏差修复, 16为左边header的宽度和withCeil * n的 %值
+    this.setScrollPosition({ delay: 300, position: ceilWidth * (60 - 4 - 4 + date - 1) - 16 }) //第一为左边头部宽度，第二个4为距离头部距离
   }
   //设置滚动条位置
   setScrollPosition = ({ delay = 300, position = 200 }) => {
@@ -182,7 +182,7 @@ export default class GanttFace extends Component {
     if (searchTimer) {
       clearTimeout(searchTimer)
     }
-    if (scrollLeft < 10 * ceilWidth && delX > 0) { //3为分组头部占用三个单元格的长度
+    if (scrollLeft < 2 * ceilWidth && delX > 0) { //3为分组头部占用三个单元格的长度
       const { timestamp } = gold_date_arr[0]['date_inner'][0] //取第一天
       this.setState({
         searchTimer: setTimeout(() => {
@@ -191,7 +191,7 @@ export default class GanttFace extends Component {
         }, 50)
       })
 
-    } else if ((scrollWidth - scrollLeft - clientWidth < 6 * ceilWidth) && delX < 0) {
+    } else if ((scrollWidth - scrollLeft - clientWidth < 2 * ceilWidth) && delX < 0) {
       const gold_date_arr_length = gold_date_arr.length
       const date_inner = gold_date_arr[gold_date_arr_length - 1]['date_inner']
       const date_inner_length = date_inner.length
