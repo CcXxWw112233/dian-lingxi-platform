@@ -451,7 +451,7 @@ class Gantt extends Component {
   }
   // 子任务增删改
   handleChildTaskChange = ({ action, parent_card_id, card_id, data, rely_card_datas }) => {
-    const { group_view_type } = this.props
+    const { group_view_type, dispatch } = this.props
     if (!ganttIsOutlineView({ group_view_type })) {
       return
     }
