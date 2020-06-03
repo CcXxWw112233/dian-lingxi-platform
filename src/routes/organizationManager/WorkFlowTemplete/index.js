@@ -68,6 +68,9 @@ export default class WorkFlowTemplete extends Component {
         process_detail_modal_visible: true
       }
     })
+    this.setState({
+      whetherShowProcessDetailModalVisible: true
+    })
   }
 
   // 删除流程模板的点击事件
