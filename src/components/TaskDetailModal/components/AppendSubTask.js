@@ -79,7 +79,8 @@ export default class AppendSubTask extends Component {
       user_ids.push(item.user_id)
     })
     const obj = {
-      card_id,
+      parent_id: card_id,
+      // card_id,
       board_id,
       list_id,
       name: inputValue,
@@ -91,7 +92,7 @@ export default class AppendSubTask extends Component {
     }
     Promise.resolve(
       dispatch({
-        type: 'publicTaskDetailModal/addChirldTask',
+        type: 'publicTaskDetailModal/addChirldTaskVTwo',
         payload: {
           ...obj
         }
@@ -101,14 +102,15 @@ export default class AppendSubTask extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      // let new_data = [...res.data]
-      // new_data = new_data.filter(item => item.id == card_id) || []
+      let { card_info = {}, dependencys = [] } = res.data
+      let new_data = [...dependencys]
+      new_data = new_data.filter(item => item.id == card_id) || []
       // drawContent['child_data'] && drawContent['child_data'].unshift({...obj, card_id: res.data.card_id})
-      tempData.unshift({ ...obj, card_id: res.data.card_id })
+      tempData.unshift({ ...obj, card_id: card_info.card_id })
       drawContent['properties'] = this.filterCurrentUpdateDatasField('SUBTASK', tempData)
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
-      this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: card_id, data: res.data, action: 'add', rely_card_datas: res.data })
-      // this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
+      this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: card_id, data: card_info, action: 'add', rely_card_datas: dependencys })
+      this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
       this.setState({
         is_add_sub_task: false,
         sub_executors: [],

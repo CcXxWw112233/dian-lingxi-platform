@@ -1,4 +1,4 @@
-import { getCardWithAttributesDetail, setCardAttributes, getCardAttributesList, removeCardAttributes, sortCardAttribute, getCardDetail, completeTask, updateTask, updateTaskVTwo, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask, deleteChirldTask, deleteTaskVTwo, boardAppRelaMiletones, 
+import { getCardWithAttributesDetail, setCardAttributes, getCardAttributesList, removeCardAttributes, sortCardAttribute, getCardDetail, completeTask, updateTask, updateTaskVTwo, addTaskExecutor, removeTaskExecutor, deleteTask, addChirldTask, addChirldTaskVTwo,deleteChirldTask, deleteTaskVTwo, boardAppRelaMiletones, 
   boardAppCancelRelaMiletones, getBoardTagList, addBoardTag, deleteBoardTag, updateBoardTag, addTaskTag, removeTaskTag } from '../../../services/technological/task'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
@@ -397,6 +397,19 @@ export default {
       let newPayload = { ...payload }
       newPayload.executors ? delete newPayload.executors : '' //去掉不需要的数据
       let res = yield call(addChirldTask, newPayload)
+      if (isApiResponseOk(res)) {
+        message.success(`添加成功`, MESSAGE_DURATION_TIME)
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+      return res || {}
+    },
+    // 添加子任务V2
+    * addChirldTaskVTwo({ payload }, { select, call, put }) { //
+      let newPayload = { ...payload }
+      newPayload.executors ? delete newPayload.executors : '' //去掉不需要的数据
+      newPayload.card_name ? delete newPayload.card_name : '' //去掉不需要的数据
+      let res = yield call(addChirldTaskVTwo, newPayload)
       if (isApiResponseOk(res)) {
         message.success(`添加成功`, MESSAGE_DURATION_TIME)
       } else {

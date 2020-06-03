@@ -426,7 +426,7 @@ class Gantt extends Component {
     let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, milestone_id || parent_id);
 
     let addNodeValue = {
-      id: res.id,
+      // id: res.id,
       tree_type: '2',
       name: params.name,
       is_expand: true,
@@ -463,7 +463,8 @@ class Gantt extends Component {
         name: data.card_name
       }
       const res = {
-        id: data.card_id
+        id: data.card_id,
+        ...data
       }
       this.insertOutLineTreeNode({ res, params })
     } else if (action == 'update') {

@@ -204,6 +204,16 @@ export async function addChirldTask(data) {
   });
 }
 
+// 新增子任务V2
+export async function addChirldTaskVTwo(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/card`,
+    method: 'POST',
+    headers: createHeaderContentDataByCardId(data.parent_id),
+    data,
+  });
+}
+
 // 添加任务执行人
 export async function addTaskExecutor(data) {
   //debugger
