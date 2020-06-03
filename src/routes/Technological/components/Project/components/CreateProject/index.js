@@ -392,11 +392,11 @@ class CreateProject extends React.Component {
               <div className={indexStyles.setelse_left}>
                 {/* {
                   is_simple_model == '0' && ( */}
-                <div className={indexStyles.setelse_item} onClick={this.setCopyFlowTemplateVisible}>
+                {/* <div className={indexStyles.setelse_item} onClick={this.setCopyFlowTemplateVisible}>
                   <div className={`${globalStyles.authTheme} ${indexStyles.addUSer}`}>&#xe68b;</div>
                   <div className={indexStyles.setelse_item_name}>复制流程模板</div>
                   <div className={`${globalStyles.authTheme} ${indexStyles.spin} ${!copy_flow_template_visible && indexStyles.spin_down}`}>&#xe66b;</div>
-                </div>
+                </div> */}
                 {/* )
                 } */}
                 <div className={indexStyles.setelse_item} onClick={this.setInviteOthersVisible}>
