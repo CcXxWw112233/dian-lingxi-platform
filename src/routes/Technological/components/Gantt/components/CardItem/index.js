@@ -1013,7 +1013,7 @@ export default class CardItem extends Component {
                 }
                 {/* //hover出现的耳朵效果 */}
                 {
-                    ganttIsOutlineView({ group_view_type }) && (
+                    ganttIsOutlineView({ group_view_type }) && !parent_card_id && (
                         <HoverEars
                             getX={this.getX}
                             itemValue={itemValue}
