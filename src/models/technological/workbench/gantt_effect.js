@@ -30,6 +30,12 @@ export default {
                         rely_map: _rely_map
                     }
                 })
+                yield put({
+                    type: 'updateOutLineTree',
+                    payload: {
+                        datas: res.data
+                    }
+                })
             } else {
                 message.error(res.message)
             }
@@ -156,7 +162,6 @@ export default {
                     data: outline_tree_
                 }
             });
-
         },
     }
 
