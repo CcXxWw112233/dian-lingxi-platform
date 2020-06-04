@@ -16,6 +16,7 @@ export default class BoardFeaturesProcessItem extends Component {
 
     itemClick = () => {
         const { dispatch, itemValue: { id = '', board_id = '' } } = this.props
+        this.props.whetherShowModalVisible && this.props.whetherShowModalVisible({ type: 'flow', visible: true })
         dispatch({
             type: 'publicProcessDetailModal/getProcessInfo',
             payload: {
@@ -37,7 +38,6 @@ export default class BoardFeaturesProcessItem extends Component {
                 board_id
             }
         })
-        this.props.whetherShowModalVisible && this.props.whetherShowModalVisible({ type: 'flow', visible: true })
     }
 
     renderTime = () => {

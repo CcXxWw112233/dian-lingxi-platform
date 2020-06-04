@@ -230,7 +230,7 @@ export default class BoardFeatures extends Component {
 
 	render() {
 		const { drawerVisible, projectList = [], projectInitLoaded, board_card_todo_list = [], process_detail_modal_visible } = this.props
-		const { whetherShowModalVisible } = this.state
+		const { whetherShowProcessDetailModal } = this.state
 		return (
 			<div>
 				{
@@ -250,7 +250,7 @@ export default class BoardFeatures extends Component {
 					handleDeleteCard={this.handleDeleteCard}
 				/>
 				{
-					process_detail_modal_visible && whetherShowModalVisible &&  (
+					process_detail_modal_visible && whetherShowProcessDetailModal &&  (
 						<ProcessDetailModal
 							process_detail_modal_visible={process_detail_modal_visible}
 							setProcessDetailModalVisibile={this.setProcessDetailModalVisibile}
