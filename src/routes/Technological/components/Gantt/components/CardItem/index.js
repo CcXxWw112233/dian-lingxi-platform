@@ -379,7 +379,7 @@ export default class CardItem extends Component {
 
     }
     overDragCompleteHandleRight = () => { //右侧增减时间
-        const { itemValue: { id, end_time, start_time, board_id, is_has_start_time }, group_view_type, gantt_view_mode, gantt_board_id } = this.props
+        const { itemValue: { id, end_time, start_time, board_id, is_has_start_time, parent_card_id }, group_view_type, gantt_view_mode, gantt_board_id, dispatch } = this.props
         const { local_left, local_width, local_width_origin } = this.state
         const { date_arr_one_level, ceilWidth } = this.props
         const updateData = {}
@@ -410,11 +410,12 @@ export default class CardItem extends Component {
                 local_width: time_width,
                 local_width_flag: time_width
             }, () => {
-                this.excuteHandleEffectHandleParentCard([
-                    // 'handleParentCard',
-                    // 'updateParentCard'
-                    { action: 'updateParentCard', payload: { ...updateData } }
-                ])
+                this.excuteHandleEffectHandleParentCard(['recoveryParentCard'])
+                // this.excuteHandleEffectHandleParentCard([
+                //     // 'handleParentCard',
+                //     // 'updateParentCard'
+                //     { action: 'updateParentCard', payload: { ...updateData } }
+                // ])
             })
             return
         }
@@ -423,14 +424,20 @@ export default class CardItem extends Component {
                 if (isApiResponseOk(res)) {
                     if (ganttIsOutlineView({ group_view_type })) {
                         this.props.changeOutLineTreeNodeProto(id, updateData)
-                        setTimeout(() => {
-                            this.excuteHandleEffectHandleParentCard([
-                                // 'getParentCard',
-                                // 'handleParentCard',
-                                { action: 'updateParentCard', payload: { data: res.data, success: '1' } }
-                                // { action: 'updateParentCard', payload: { start_time: res.data.start_time, due_time: res.data.due_time, success: '1' } }
-                            ])
-                        }, 200)
+                        // setTimeout(() => {
+                        //     this.excuteHandleEffectHandleParentCard([
+                        //         // 'getParentCard',
+                        //         // 'handleParentCard',
+                        //         { action: 'updateParentCard', payload: { data: res.data, success: '1' } }
+                        //         // { action: 'updateParentCard', payload: { start_time: res.data.start_time, due_time: res.data.due_time, success: '1' } }
+                        //     ])
+                        // }, 200)
+                        dispatch({
+                            type: 'gantt/updateOutLineTree',
+                            payload: {
+                                datas: [{ id, ...updateData }, ...res.data.filter(item => item.id != id)]
+                            }
+                        })
                     } else {
                         this.handleHasScheduleCard({
                             card_id: id,
@@ -442,14 +449,15 @@ export default class CardItem extends Component {
                         local_width: local_width_origin,
                         local_width_flag: local_width_origin
                     }, () => {
-                        const payload = res.data || { ...updateData }
-                        this.excuteHandleEffectHandleParentCard([
-                            // 'handleParentCard',
-                            // 'updateParentCard'
-                            { action: 'updateParentCard', payload }
-                        ])
+                        this.excuteHandleEffectHandleParentCard(['recoveryParentCard'])
+                        // const payload = res.data || { ...updateData }
+                        // this.excuteHandleEffectHandleParentCard([
+                        //     // 'handleParentCard',
+                        //     // 'updateParentCard'
+                        //     { action: 'updateParentCard', payload }
+                        // ])
                     })
-                    message.error(res.message)
+                    message.warn(res.message)
                 }
             }).catch(err => {
                 message.error('更新失败')
@@ -491,7 +499,7 @@ export default class CardItem extends Component {
     }
     // 不在项目分组内，左右移动
     overDragCompleteHandlePositonAbout = () => {
-        const { itemValue: { id, top, start_time, board_id, left }, group_view_type, gantt_view_mode, gantt_board_id } = this.props
+        const { itemValue: { id, top, start_time, board_id, left, parent_card_id }, group_view_type, gantt_view_mode, gantt_board_id, dispatch } = this.props
         const { local_left, local_width, local_width_origin } = this.state
         const { date_arr_one_level, ceilWidth } = this.props
         const updateData = {}
@@ -519,11 +527,12 @@ export default class CardItem extends Component {
                 local_left: left,
                 local_top: top
             }, () => {
-                this.excuteHandleEffectHandleParentCard([
-                    // 'handleParentCard',
-                    // 'updateParentCard'
-                    { action: 'updateParentCard', payload: { ...updateData } }
-                ])
+                this.excuteHandleEffectHandleParentCard(['recoveryParentCard'])
+                // this.excuteHandleEffectHandleParentCard([
+                //     // 'handleParentCard',
+                //     // 'updateParentCard'
+                //     { action: 'updateParentCard', payload: { ...updateData } }
+                // ])
             })
             return
         }
@@ -532,15 +541,21 @@ export default class CardItem extends Component {
             .then(res => {
                 if (isApiResponseOk(res)) {
                     if (ganttIsOutlineView({ group_view_type })) {
-                        this.props.changeOutLineTreeNodeProto(id, updateData)
-                        setTimeout(() => {
-                            this.excuteHandleEffectHandleParentCard([
-                                // 'getParentCard',
-                                // 'handleParentCard',
-                                { action: 'updateParentCard', payload: { data: res.data, success: '1' } },
-                                // { action: 'updateParentCard', payload: { start_time: res.data.start_time, due_time: res.data.due_time, success: '1' } }
-                            ])
-                        }, 200)
+                        // this.props.changeOutLineTreeNodeProto(id, updateData)
+                        // setTimeout(() => {
+                        //     this.excuteHandleEffectHandleParentCard([
+                        //         // 'getParentCard',
+                        //         // 'handleParentCard',
+                        //         { action: 'updateParentCard', payload: { data: res.data, success: '1' } },
+                        //         // { action: 'updateParentCard', payload: { start_time: res.data.start_time, due_time: res.data.due_time, success: '1' } }
+                        //     ])
+                        // }, 200)
+                        dispatch({
+                            type: 'gantt/updateOutLineTree',
+                            payload: {
+                                datas: [{ id, ...updateData }, ...res.data.filter(item => item.id != id)]
+                            }
+                        });
                     } else {
                         this.handleHasScheduleCard({
                             card_id: id,
@@ -551,14 +566,15 @@ export default class CardItem extends Component {
                     this.setState({
                         local_left: left
                     }, () => {
-                        const payload = res.data || { ...updateData }
-                        this.excuteHandleEffectHandleParentCard([
-                            // 'handleParentCard',
-                            // 'updateParentCard'
-                            { action: 'updateParentCard', payload }
-                        ])
+                        this.excuteHandleEffectHandleParentCard(['recoveryParentCard'])
+                        // const payload = res.data || { ...updateData }
+                        // this.excuteHandleEffectHandleParentCard([
+                        //     // 'handleParentCard',
+                        //     // 'updateParentCard'
+                        //     { action: 'updateParentCard', payload }
+                        // ])
                     })
-                    message.error(res.message)
+                    message.warn(res.message)
                 }
             }).catch(err => {
                 message.error('更新失败')
@@ -796,6 +812,25 @@ export default class CardItem extends Component {
                 this.props.changeOutLineTreeNodeProto(parent_card_id, {
                     start_time, due_time
                 })
+            },
+            recoveryParentCard: () => {
+                const { parent_card: { ele, left } } = this.state
+                const { ceilWidth, outline_tree_round } = this.props
+                const { start_time, due_time, time_span } = outline_tree_round.find(item => item.id == parent_card_id) || {}
+                ele.style.width = `${(time_span * ceilWidth) - (is_year_view ? 0 : card_width_diff)}px`
+                ele.style.left = `${left + (is_year_view ? 0 : card_left_diff)}px`
+                dispatch({
+                    type: 'gantt/updateOutLineTree',
+                    payload: {
+                        datas: [
+                            {
+                                id: parent_card_id,
+                                start_time,
+                                due_time
+                            }
+                        ]
+                    }
+                });
             }
         }
         return obj[func_name].call(this, data)

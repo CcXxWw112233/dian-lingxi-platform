@@ -157,7 +157,7 @@ export default {
                 }
             }
             yield put({
-                type: 'gantt/handleOutLineTreeData',
+                type: 'handleOutLineTreeData',
                 payload: {
                     data: outline_tree_
                 }

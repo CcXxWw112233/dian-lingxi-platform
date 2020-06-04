@@ -312,7 +312,7 @@ export default {
 
       let new_outline_tree = [...data]
       const tree_arr_1 = data.filter(item => item.tree_type == '1')//.sort(jsonArrayCompareSort('due_time', transformTimestamp)) //里程碑截止时间由近及远
-      const tree_arr_2 = data.filter(item => item.tree_type != '1').sort(jsonArrayCompareSort('start_time', transformTimestamp))
+      const tree_arr_2 = data.filter(item => item.tree_type != '1')//.sort(jsonArrayCompareSort('start_time', transformTimestamp))
       new_outline_tree = [].concat(tree_arr_1, tree_arr_2)//先把里程碑排进去，再排没有归属的任务
 
       const filnaly_outline_tree = new_outline_tree.map(item => {
