@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Modal, Select, message } from 'antd';
 import { connect } from 'dva'
-import { getOrgNameWithOrgIdFilter, setBoardIdStorage, checkIsHasPermissionInBoard, isPaymentOrgUser } from '../../../../../utils/businessFunction';
+import { getOrgNameWithOrgIdFilter, setBoardIdStorage, checkIsHasPermissionInBoard, isPaymentOrgUser, getGlobalData } from '../../../../../utils/businessFunction';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { PROJECT_FLOWS_FLOW_CREATE, PROJECT_FLOWS_FLOW_TEMPLATE, NOT_HAS_PERMISION_COMFIRN } from '../../../../../globalset/js/constant';
 
@@ -36,8 +36,9 @@ export default class SelectBoardModal extends Component {
         const target_projectList = projectList.filter(item => //过滤掉没有流程应用的
             item.apps.findIndex(item2 => item2.code == 'Flows') != -1
         )
+        const aboutBoardOrganizationId = getGlobalData('aboutBoardOrganizationId')
         // 过滤有权限的项目
-        const isHasPermissionProject = target_projectList.filter(item => checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, item.board_id) == true)
+        const isHasPermissionProject = target_projectList.filter(item => checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, item.board_id) == true && item.org_id == aboutBoardOrganizationId)
         return (
             <div>
                 <Modal

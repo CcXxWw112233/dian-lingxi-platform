@@ -3,7 +3,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import styles from './index.less'
 import { Tooltip, Button, Popconfirm, message, DatePicker, Popover } from 'antd'
 import { connect } from 'dva'
-import { checkIsHasPermissionInBoard, setBoardIdStorage, getOrgNameWithOrgIdFilter, getGlobalData, isPaymentOrgUser } from '../../../../../utils/businessFunction'
+import { checkIsHasPermissionInBoard, setBoardIdStorage, setOrganizationIdStorage, getOrgNameWithOrgIdFilter, getGlobalData, isPaymentOrgUser } from '../../../../../utils/businessFunction'
 import { PROJECT_FLOWS_FLOW_TEMPLATE, PROJECT_FLOWS_FLOW_CREATE, NOT_HAS_PERMISION_COMFIRN } from '../../../../../globalset/js/constant'
 import SelectBoardModal from './SelectBoardModal'
 import { timeToTimestamp } from '../../../../../utils/util'
@@ -156,6 +156,8 @@ export default class Templates extends Component {
     }
     // 这个是进入启动页, 那么先选择项目
     handleStartBoardProcess = (item) => {
+        const { id, board_id, org_id } = item
+        setBoardIdStorage(board_id, org_id)
         const { local_board_id } = this.state
         // 如果是全部项目, 那么需要选择项目
         if (local_board_id == '0' || !local_board_id) {
@@ -168,8 +170,8 @@ export default class Templates extends Component {
     // 启动流程的点击事件
     handleStartProcess = (item) => {
         const { dispatch } = this.props
-        const { id, board_id } = item
-        setBoardIdStorage(board_id)
+        // const { id, board_id } = item
+        // setBoardIdStorage(board_id)
         dispatch({
             type: 'publicProcessDetailModal/getTemplateInfo',
             payload: {
@@ -216,7 +218,7 @@ export default class Templates extends Component {
         e && e.stopPropagation()
         const { id, board_id, org_id, enable_change } = item
         const { local_board_id } = this.state
-        setBoardIdStorage(board_id)
+        setBoardIdStorage(board_id, org_id)
         if (local_board_id == '0' || !local_board_id) {
             this.setBoardSelectVisible(true, item, start_time)
             return
