@@ -229,6 +229,10 @@ export default {
         type: 'technological/getUserBoardPermissions',
         payload: {}
       });
+      yield put({
+        type: 'workbench/getProjectList',
+        payload: {}
+      });
     },
     * collectionProject({ payload }, { select, call, put }) {
       const { org_id, board_id } = payload
