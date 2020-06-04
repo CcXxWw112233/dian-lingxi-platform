@@ -27,6 +27,17 @@ export default class AppendSubTask extends Component {
     start_time: '', // 开始时间选择
   }
 
+  initState = () => {
+    this.setState({
+      is_add_sub_task: false, // 是否添加子任务, 默认为 false
+      sub_executors: [], // 子任务的执行人
+      saveDisabled: true, // 是否可以点击确定按钮
+      inputValue: '', // 用来保存子任务的名称
+      due_time: '', // 截止时间选择
+      start_time: '', // 开始时间选择
+    })
+  }
+
   // 过滤那些需要更新的字段
   filterCurrentUpdateDatasField = (code, value) => {
     const { drawContent: { properties = [] } } = this.props
@@ -59,10 +70,7 @@ export default class AppendSubTask extends Component {
   // 点击取消
   handleCancel(e) {
     e && e.stopPropagation();
-    this.setState({
-      is_add_sub_task: false,
-      sub_executors: []
-    })
+    this.initState()
   }
 
   // 点击确定
@@ -111,12 +119,7 @@ export default class AppendSubTask extends Component {
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
       this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: card_id, data: card_info, action: 'add', rely_card_datas: dependencys })
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
-      this.setState({
-        is_add_sub_task: false,
-        sub_executors: [],
-        due_time: null,
-        start_time: null
-      })
+      this.initState()
     })
   }
 

@@ -4,7 +4,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { Select } from 'antd'
 import { currentNounPlanFilterName } from '../../utils/businessFunction';
 import { TASKS, FLOWS } from '../../globalset/js/constant';
-import { timestampToTimeNormal } from '../../utils/util';
+import { timestampToTimeNormal, isObjectValueEqual } from '../../utils/util';
 const { Option } = Select;
 
 export default class RelyOnRelationship extends Component {
@@ -18,9 +18,11 @@ export default class RelyOnRelationship extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      relationshipList: nextProps.relationshipList
-    })
+    if (!isObjectValueEqual(nextProps, this.props)) {
+      this.setState({
+        relationshipList: nextProps.relationshipList
+      })
+    }
   }
 
   // 展开收起
