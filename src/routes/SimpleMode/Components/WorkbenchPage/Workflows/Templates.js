@@ -170,7 +170,7 @@ export default class Templates extends Component {
     // 启动流程的点击事件
     handleStartProcess = (item) => {
         const { dispatch } = this.props
-        // const { id, board_id } = item
+        const { id, board_id } = item
         // setBoardIdStorage(board_id)
         dispatch({
             type: 'publicProcessDetailModal/getTemplateInfo',

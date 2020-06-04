@@ -21,7 +21,7 @@ import DragDropContentComponent from './DragDropContentComponent'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
 import { filterOwnSubTaskMaxDueTime } from './handleOperateTaskModal'
 import { arrayNonRepeatfy } from '../../utils/util'
-import RelyOnRelationship from './RelyOnRelationship'
+import RelyOnRelationship from '../RelyOnRelationship'
 const { LingxiIm, Im } = global.constants
 
 @connect(mapStateToProps)
@@ -1121,6 +1121,7 @@ export default class MainContent extends Component {
       is_realize = '0',
       start_time,
       due_time,
+      dependences = []
     } = drawContent
     const { properties = [] } = drawContent
     const executors = this.getCurrentDrawerContentPropsModelDatasExecutors()
@@ -1147,7 +1148,7 @@ export default class MainContent extends Component {
 
     return (
       <div className={mainContentStyles.main_wrap}>
-        <RelyOnRelationship />
+        <RelyOnRelationship relationshipList={dependences}/>
         <div className={mainContentStyles.main_content}>
           {/* 标题 S */}
           <div>

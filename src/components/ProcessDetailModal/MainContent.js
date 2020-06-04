@@ -593,7 +593,7 @@ export default class MainContent extends Component {
         dispatch({
           type: 'publicProcessDetailModal/saveEditProcessTemplete',
           payload: {
-            board_id,
+            // board_id,
             name: currentFlowInstanceName,
             description: currentFlowInstanceDescription,
             nodes: processEditDatas,

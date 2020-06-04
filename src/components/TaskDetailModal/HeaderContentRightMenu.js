@@ -388,7 +388,7 @@ export default class HeaderContentRightMenu extends Component {
       zIndex: 2000,
       onOk() {
         dispatch({
-          type: 'publicTaskDetailModal/deleteTask',
+          type: 'publicTaskDetailModal/deleteTaskVTwo',
           payload: {
             id: card_id,
             calback: function () {
