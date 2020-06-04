@@ -557,7 +557,7 @@ export default class MainContent extends Component {
       dispatch({
         type: 'publicProcessDetailModal/saveProcessTemplate',
         payload: {
-          board_id,
+          // board_id,
           name: currentFlowInstanceName,
           description: currentFlowInstanceDescription,
           nodes: processEditDatas,
@@ -634,7 +634,7 @@ export default class MainContent extends Component {
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     let REAUEST_BOARD_ID = getGlobalData('storageCurrentOperateBoardId') || board_id
     let res = await saveProcessTemplate({
-      board_id: REAUEST_BOARD_ID,
+      // board_id: REAUEST_BOARD_ID,
       name: currentFlowInstanceName,
       description: currentFlowInstanceDescription,
       nodes: processEditDatas,
