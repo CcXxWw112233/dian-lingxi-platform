@@ -348,6 +348,7 @@ export default class AppendSubTaskItem extends Component {
       new_data = new_data.filter(item => item.id == parent_card_id) || []
       this.setChildTaskIndrawContent({ name: 'start_time', value: start_timeStamp }, card_id, res.data)
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
+      this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data)
     })
   }
 
@@ -379,6 +380,7 @@ export default class AppendSubTaskItem extends Component {
       new_data = new_data.filter(item => item.id == parent_card_id) || []
       this.setChildTaskIndrawContent({ name: 'start_time', value: 0 }, card_id, res.data)
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
+      this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data)
     })
 
   }
@@ -422,6 +424,7 @@ export default class AppendSubTaskItem extends Component {
       new_data = new_data.filter(item => item.id == parent_card_id) || []
       this.setChildTaskIndrawContent({ name: 'due_time', value: due_timeStamp }, card_id, res.data)
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
+      this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data)
     })
   }
 
@@ -453,8 +456,8 @@ export default class AppendSubTaskItem extends Component {
       new_data = new_data.filter(item => item.id == parent_card_id) || []
       this.setChildTaskIndrawContent({ name: 'due_time', value: 0 }, card_id, res.data)
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
+      this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data)
     })
-
   }
 
   render() {

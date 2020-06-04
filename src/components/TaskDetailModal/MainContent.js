@@ -1112,6 +1112,42 @@ export default class MainContent extends Component {
     }
   }
 
+  // 更新对应的依赖项
+  updateRelyOnRationList = (change_data) => {
+    const { drawContent = {}, drawContent: { dependences = {} }, dispatch } = this.props
+    if (!dependences) return
+    if (!(dependences['last'] && dependences['last'].length) && !(dependences['next'] && dependences['next'].length)) return
+    let obj = {}
+    let new_drawContent = {...drawContent}
+    let preposeList = dependences['last'] // 前置
+    let postpositionList = dependences['next'] // 后置
+    
+    preposeList = preposeList.map(item => {
+      let new_item = {}
+      const node = change_data.find(n => n.id == item.id) || {}
+      new_item = {...item, ...node}
+      return new_item
+    })
+    postpositionList = postpositionList.map(item => {
+      let new_item = {}
+      const node = change_data.find(n => n.id == item.id) || {}
+      new_item = {...item, ...node}
+      return new_item
+    })
+    obj = {
+      ...dependences,
+      last: preposeList,
+      next: postpositionList
+    }
+    new_drawContent['dependences'] = obj
+    dispatch({
+      type: 'publicTaskDetailModal/updateDatas',
+      payload: {
+        drawContent: new_drawContent
+      }
+    })
+  }
+
   render() {
     const { drawContent = {}, is_edit_title, isInOpenFile, handleTaskDetailChange, handleChildTaskChange } = this.props
     const {
@@ -1148,7 +1184,7 @@ export default class MainContent extends Component {
 
     return (
       <div className={mainContentStyles.main_wrap}>
-        <RelyOnRelationship relationshipList={dependences}/>
+        <RelyOnRelationship relationshipList={dependences} updateRelyOnRationList={this.updateRelyOnRationList}/>
         <div className={mainContentStyles.main_content}>
           {/* 标题 S */}
           <div>
@@ -1329,7 +1365,7 @@ export default class MainContent extends Component {
           {/* 各种字段的不同状态 E */}
           {/* 不同字段的渲染 S */}
           <div style={{ position: 'relative' }}>
-            <DragDropContentComponent getMilestone={this.getMilestone} selectedKeys={selectedKeys} updateParentPropertiesList={this.updateParentPropertiesList} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} boardFolderTreeData={boardFolderTreeData} milestoneList={milestoneList} whetherUpdateParentTaskTime={this.whetherUpdateParentTaskTime} />
+            <DragDropContentComponent getMilestone={this.getMilestone} selectedKeys={selectedKeys} updateParentPropertiesList={this.updateParentPropertiesList} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} boardFolderTreeData={boardFolderTreeData} milestoneList={milestoneList} whetherUpdateParentTaskTime={this.whetherUpdateParentTaskTime} updateRelyOnRationList={this.updateRelyOnRationList} />
           </div>
           {/* 不同字段的渲染 E */}
 

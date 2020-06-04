@@ -13,7 +13,7 @@ export default class RelyOnRelationship extends Component {
     super(props)
     this.state = {
       show_unflod_or_packup_arrow: false, // 是否展开 还是收起, true 表示点击展开(即收起状态, 箭头朝上)
-      relationshipList: props.relationshipList
+      relationshipList: props.relationshipList || {}
     }
   }
 
@@ -29,11 +29,6 @@ export default class RelyOnRelationship extends Component {
     this.setState({
       show_unflod_or_packup_arrow: !this.state.show_unflod_or_packup_arrow
     })
-  }
-
-  updateRelyOnRationList = (data) => {
-    const { relationshipList = [] } = this.state
-
   }
 
   // 渲染不同完成状态
@@ -105,7 +100,7 @@ export default class RelyOnRelationship extends Component {
 
   // 显示详情依赖关系
   renderDetailRelyOnContent = () => {
-    const { relationshipList = [] } = this.state
+    const { relationshipList = {} } = this.state
     const preposeList = relationshipList['last']
     const postpositionList = relationshipList['next']
     return (
@@ -190,7 +185,7 @@ export default class RelyOnRelationship extends Component {
   }
 
   render() {
-    const { show_unflod_or_packup_arrow, relationshipList = [] } = this.state
+    const { show_unflod_or_packup_arrow, relationshipList = {} } = this.state
     const number = relationshipList['number']
     return (
       <>
