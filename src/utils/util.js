@@ -111,7 +111,7 @@ export const timestampToTimeNormal3 = (timestamp, flag, split) => {
 }
 
 //时间戳转日期 需要年, 即使是今年也要显示
-export const timestampToTimeNormal4 = (timestamp,split, flag) => {
+export const timestampToTimeNormal4 = (timestamp, split, flag) => {
   if (!timestamp) {
     return false
   }
@@ -431,7 +431,7 @@ export const handleTimeStampToDate = (timeStamp) => {
   const now = new Date();
   const year_ = now.getFullYear()
   const month_ = now.getMonth() + 1
-  const date_ = now.getDate()
+  const date_ = now.getDate() == '1' ? '2' : now.getDate()
   const nowTime = now.getTime();
   const new_now_time = new Date(`${year_}/${month_}/${date_} 0:0`).getTime()
 
@@ -706,7 +706,7 @@ export const isArrayEqual = (arrya1, array2) => {
       // 这里递归判断嵌套数组
       if (!isArrayEqual.call(this, arrya1[i], array2[i]))
         return false;
-    } 
+    }
     else if (arrya1[i] != array2[i]) {
       // 注意: 对象不等于对象
       return false
@@ -821,10 +821,10 @@ export const arrayNonRepeatfy = (arr, key = 'id') => {
   let temp_arr = []
   let temp_id = []
   for (let i = 0; i < arr.length; i++) {
-      if (!temp_id.includes(arr[i][key])) {//includes 检测数组是否有某个值
-          temp_arr.push(arr[i]);
-          temp_id.push(arr[i][key])
-      }
+    if (!temp_id.includes(arr[i][key])) {//includes 检测数组是否有某个值
+      temp_arr.push(arr[i]);
+      temp_id.push(arr[i][key])
+    }
   }
   return temp_arr
 }
