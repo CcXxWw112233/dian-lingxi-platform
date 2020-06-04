@@ -44,10 +44,12 @@ export default class FlowTabs extends Component {
         width: 228,
         render: (text, item) => {
           return <div style={{ overflow: 'hidden' }}>
-            <span style={{ width: '32px', height: '32px', borderRadius: '4px', background: '#69C0FF', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', marginRight: '8px', float: 'left' }}>
-              <span style={{ fontSize: '16px', color: '#fff' }} className={globalStyles.authTheme}>&#xe68c;</span>
-            </span>
-            <span style={{ fontSize: '14px', fontWeight: 400, float: 'left', lineHeight: '32px' }}>{text}</span>
+            <p style={{marginBottom: '0px'}}>
+              <span style={{ width: '32px', height: '32px', borderRadius: '4px', background: '#69C0FF', display: 'inline-block', textAlign: 'center', marginRight: '8px', }}>
+                <span style={{ fontSize: '16px', color: '#fff', lineHeight: '32px' }} className={globalStyles.authTheme}>&#xe68c;</span>
+              </span>
+              <span style={{ fontSize: '14px', fontWeight: 400, lineHeight: '32px' }}>{text}</span>
+            </p>
           </div>
         }
       },
@@ -58,7 +60,7 @@ export default class FlowTabs extends Component {
         ellipsis: true,
         width: 148,
         render: (text) => {
-          return <div style={{marginLeft: '8px'}}>共 <span style={{ color: '#1890FF' }}>{text}</span> 步</div>
+          return <div style={{ marginLeft: '8px' }}>共 <span style={{ color: '#1890FF' }}>{text}</span> 步</div>
         }
       },
       {
@@ -68,7 +70,7 @@ export default class FlowTabs extends Component {
         ellipsis: true,
         width: 152,
         render: (text) => {
-          return <div style={{marginLeft: '8px'}}><span style={{ color: '#1890FF' }}>{text}</span> 次</div>
+          return <div style={{ marginLeft: '8px' }}><span style={{ color: '#1890FF' }}>{text}</span> 次</div>
         }
       },
       {
@@ -79,8 +81,8 @@ export default class FlowTabs extends Component {
         width: 110,
         render: (text, item) => {
           return <div>
-            <span onClick={(e) => { this.handleEditTemplete(e, item) }} style={{color: '#1890FF', marginRight: '12px', cursor: 'pointer'}}>编辑</span>
-            <span onClick={(e) => { this.handleDelteTemplete(e, item) }} style={{color: '#F5222D', cursor: 'pointer'}}>删除</span>
+            <span onClick={(e) => { this.handleEditTemplete(e, item) }} style={{ color: '#1890FF', marginRight: '12px', cursor: 'pointer' }}>编辑</span>
+            <span onClick={(e) => { this.handleDelteTemplete(e, item) }} style={{ color: '#F5222D', cursor: 'pointer' }}>删除</span>
           </div>
         }
       },
