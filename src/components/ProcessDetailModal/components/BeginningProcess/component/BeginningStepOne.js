@@ -347,7 +347,8 @@ export default class BeginningStepOne extends Component {
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {
               board_id: BOARD_ID,
-              status: '1'
+              status: '1',
+              _organization_id: request_flows_params._organization_id
             }
           })
           setTimeout(() => {
