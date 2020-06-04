@@ -564,7 +564,8 @@ export default class CardItem extends Component {
                     }
                 } else {
                     this.setState({
-                        local_left: left
+                        local_left: left,
+                        local_top: top
                     }, () => {
                         this.excuteHandleEffectHandleParentCard(['recoveryParentCard'])
                         // const payload = res.data || { ...updateData }
