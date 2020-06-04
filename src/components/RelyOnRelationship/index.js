@@ -32,6 +32,7 @@ export default class RelyOnRelationship extends Component {
   }
 
   updateRelyOnRationList = (data) => {
+    const { relationshipList = [] } = this.state
 
   }
 
@@ -129,9 +130,9 @@ export default class RelyOnRelationship extends Component {
                       <div className={indexStyles.task_info_left}>
                         {this.rendetDiffIconContent(type)}
                         <div className={`${indexStyles.task_info_name} ${is_realize == '1' && indexStyles.line_through}`}>{name}</div>
-                        <div style={{ color: this.renderCompleteStatus(type, is_realize).color,  flexShrink: 0 }}>{this.renderCompleteStatus(type, is_realize).dec ? `(${this.renderCompleteStatus(type, is_realize).dec})` : ''}</div>
+                        <div style={{ color: this.renderCompleteStatus(type, is_realize).color, flexShrink: 0 }}>{this.renderCompleteStatus(type, is_realize).dec ? `(${this.renderCompleteStatus(type, is_realize).dec})` : ''}</div>
                       </div>
-                      <div className={indexStyles.date_info}>{timestampToTimeNormal(start_time, '/', true)}{(start_time && due_time) &&  '~'} {timestampToTimeNormal(due_time, '/', true)}</div>
+                      <div className={indexStyles.date_info}>{timestampToTimeNormal(start_time, '/', true)}{(start_time && due_time) && '~'} {timestampToTimeNormal(due_time, '/', true)}</div>
                     </div>
                   </div>
                   {/* 选择框 */}
@@ -176,7 +177,7 @@ export default class RelyOnRelationship extends Component {
                         <div className={`${indexStyles.task_info_name} ${is_realize == '1' && indexStyles.line_through}`}>{name}</div>
                         <div style={{ color: this.renderCompleteStatus(type, is_realize).color, flexShrink: 0 }}>{this.renderCompleteStatus(type, is_realize).dec ? `(${this.renderCompleteStatus(type, is_realize).dec})` : ''}</div>
                       </div>
-                      <div className={indexStyles.date_info}>{timestampToTimeNormal(start_time, '/', true)}{(start_time && due_time) &&  '~'} {timestampToTimeNormal(due_time, '/', true)}</div>
+                      <div className={indexStyles.date_info}>{timestampToTimeNormal(start_time, '/', true)}{(start_time && due_time) && '~'} {timestampToTimeNormal(due_time, '/', true)}</div>
                     </div>
                   </div>
                 </div>
@@ -192,26 +193,33 @@ export default class RelyOnRelationship extends Component {
     const { show_unflod_or_packup_arrow, relationshipList = [] } = this.state
     const number = relationshipList['number']
     return (
-      <div className={indexStyles.relyOnContainer}>
-        <div className={indexStyles.re_top}>
-          <div className={indexStyles.re_left}>
-            <span className={globalStyles.authTheme}>&#xe6ed;</span>
-            <span>依赖关系: 存在<span style={{ color: '#1890ff' }}>{number}</span>条依赖关系</span>
-          </div>
-          <div onClick={this.handleSpreadArrow} className={indexStyles.re_right}>
-            {
-              show_unflod_or_packup_arrow ? (
-                <span>收起 <span className={globalStyles.authTheme}>&#xe7ed;</span></span>
-              ) : (
-                  <span>展开 <span className={globalStyles.authTheme}>&#xe7ee;</span></span>
-                )
-            }
-          </div>
-        </div>
+      <>
         {
-          show_unflod_or_packup_arrow ? this.renderDetailRelyOnContent() : ('')
+          (!(relationshipList['last'] && relationshipList['last'].length) && !(relationshipList['next'] && relationshipList['next'].length)) ? ('') : (
+            <div className={indexStyles.relyOnContainer}>
+              <div className={indexStyles.re_top}>
+                <div className={indexStyles.re_left}>
+                  <span className={globalStyles.authTheme}>&#xe6ed;</span>
+                  <span>依赖关系: 存在<span style={{ color: '#1890ff' }}>{number}</span>条依赖关系</span>
+                </div>
+                <div onClick={this.handleSpreadArrow} className={indexStyles.re_right}>
+                  {
+                    show_unflod_or_packup_arrow ? (
+                      <span>收起 <span className={globalStyles.authTheme}>&#xe7ed;</span></span>
+                    ) : (
+                        <span>展开 <span className={globalStyles.authTheme}>&#xe7ee;</span></span>
+                      )
+                  }
+                </div>
+              </div>
+              {
+                show_unflod_or_packup_arrow ? this.renderDetailRelyOnContent() : ('')
+              }
+            </div>
+          )
         }
-      </div>
+      </>
+
     )
   }
 }

@@ -419,8 +419,8 @@ export default {
     },
     // 删除子任务
     * deleteChirldTask({ payload }, { select, call, put }) { //
-      const { card_id } = payload
-      let res = yield call(deleteTask, card_id)
+      const { id } = payload
+      let res = yield call(deleteTask, id)
       if (isApiResponseOk(res)) {
         message.success('删除成功', MESSAGE_DURATION_TIME)
       } else {
@@ -430,9 +430,10 @@ export default {
     },
     // 删除子任务
     * deleteTaskVTwo({ payload }, { select, call, put }) { //
-      const { card_id } = payload
-      let res = yield call(deleteTaskVTwo, card_id)
+      const { id, calback } = payload
+      let res = yield call(deleteTaskVTwo, id)
       if (isApiResponseOk(res)) {
+        if (calback && typeof calback == 'function') calback()
         message.success('删除成功', MESSAGE_DURATION_TIME)
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
