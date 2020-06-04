@@ -21,6 +21,7 @@ import DragDropContentComponent from './DragDropContentComponent'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
 import { filterOwnSubTaskMaxDueTime } from './handleOperateTaskModal'
 import { arrayNonRepeatfy } from '../../utils/util'
+import RelyOnRelationship from './RelyOnRelationship'
 const { LingxiIm, Im } = global.constants
 
 @connect(mapStateToProps)
@@ -1146,6 +1147,7 @@ export default class MainContent extends Component {
 
     return (
       <div className={mainContentStyles.main_wrap}>
+        <RelyOnRelationship />
         <div className={mainContentStyles.main_content}>
           {/* 标题 S */}
           <div>
