@@ -79,24 +79,24 @@ export default class AppendSubTaskItem extends Component {
 
   // 执行人下拉回调
   chirldrenTaskChargeChange = (dataInfo) => {
-    let sub_executors = []
+    // let sub_executors = []
     const { data = [], drawContent = {}, dispatch, childTaskItemValue } = this.props
     // const { executors = [] } = drawContent
     const { data: executors = [] } = this.getCurrentDrawerContentPropsModelDatasExecutors()
-    const { card_id } = childTaskItemValue
+    const { card_id, executors: sub_executors = [] } = childTaskItemValue
     const { selectedKeys = [], type, key } = dataInfo
     let new_data = [...data]
     let new_executors = [...executors]
-    // 这里是将选中的人添加进子任务执行人以及更新父级任务执行人
-    new_data.map(item => {
-      if (selectedKeys.indexOf(item.user_id) != -1) {
-        sub_executors.push(item)
-        new_executors.push(item)
-      }
-    })
     let new_drawContent = { ...drawContent }
-
+    let new_sub_executors = [...sub_executors]
     if (type == 'add') {
+      // 这里是将选中的人添加进子任务执行人以及更新父级任务执行人
+      new_data.map(item => {
+        if (selectedKeys.indexOf(item.user_id) != -1) {
+          new_sub_executors.push(item)
+          new_executors.push(item)
+        }
+      })
       Promise.resolve(
         dispatch({
           type: 'publicTaskDetailModal/addTaskExecutor',
@@ -108,7 +108,7 @@ export default class AppendSubTaskItem extends Component {
       ).then(res => {
         if (isApiResponseOk(res)) {
           new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', arrayNonRepeatfy(new_executors, 'user_id'))
-          this.setChildTaskIndrawContent({ name: 'executors', value: sub_executors }, card_id)// 先弹窗中子任务执行人中的数据
+          this.setChildTaskIndrawContent({ name: 'executors', value: new_sub_executors }, card_id)// 先弹窗中子任务执行人中的数据
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',
             payload: {
@@ -119,6 +119,7 @@ export default class AppendSubTaskItem extends Component {
         }
       })
     } else if (type == 'remove') {
+      new_sub_executors = new_sub_executors.filter(i => i.user_id != key) || []
       dispatch({
         type: 'publicTaskDetailModal/removeTaskExecutor',
         payload: {
@@ -126,12 +127,13 @@ export default class AppendSubTaskItem extends Component {
           executor: key
         }
       })
+      this.setChildTaskIndrawContent({ name: 'executors', value: new_sub_executors }, card_id)
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: drawContent, card_id, name: 'executors', value: new_executors, overlay_sub_pricipal: 'EXECUTOR' })
-      this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: drawContent.card_id, data: { ...childTaskItemValue, executors: new_executors }, card_id, action: 'update' })
+      // this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: drawContent.card_id, data: { ...childTaskItemValue, executors: new_sub_executors }, card_id, action: 'update' })
 
     }
     this.setState({
-      local_executor: sub_executors
+      local_executor: new_sub_executors
     })
   }
 
