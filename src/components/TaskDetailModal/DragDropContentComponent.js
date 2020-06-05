@@ -1170,7 +1170,7 @@ export default class DragDropContentComponent extends Component {
 
 // 只关联public弹窗内的数据
 function mapStateToProps({
-  publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id, boardTagList = [] },
+  publicTaskDetailModal: { drawContent = {}, card_id, boardTagList = [] },
   projectDetail: { datas: { projectDetailInfoData = {} } },
   technological: {
     datas: {
@@ -1178,5 +1178,5 @@ function mapStateToProps({
     }
   }
 }) {
-  return { drawContent, is_edit_title, card_id, boardTagList, projectDetailInfoData, userBoardPermissions }
+  return { drawContent, card_id, boardTagList, projectDetailInfoData, userBoardPermissions }
 }

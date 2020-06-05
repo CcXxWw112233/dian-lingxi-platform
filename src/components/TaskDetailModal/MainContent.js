@@ -30,9 +30,23 @@ export default class MainContent extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      propertiesList: [],
-      is_change_parent_time: false
+      propertiesList: [], // 添加的属性字段
+      is_change_parent_time: false, // 是否可以修改父任务时间
+      local_card_name: '', // 当前任务的名称
     }
+  }
+
+  initState = () => {
+    this.setState({
+      propertiesList: [], // 添加的属性字段
+      is_change_parent_time: false, // 是否可以修改父任务时间
+      local_card_name: '', // 当前任务的名称
+    })
+  }
+
+  // 卸载时清空私有数据
+  componentWillUnmount() {
+    this.initState()
   }
 
   linkImWithCard = (data) => {
@@ -113,6 +127,7 @@ export default class MainContent extends Component {
     })
   }
 
+  // 获取任务详情数据
   getInitCardDetailDatas = () => {
     const { card_id, dispatch } = this.props
     if (!card_id) return false
@@ -121,25 +136,24 @@ export default class MainContent extends Component {
       dispatch({
         type: 'publicTaskDetailModal/getCardWithAttributesDetail',
         payload: {
-          id: card_id,
-          // calback: function (data) {
-          //   if (checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW, data.board_id)) {
-          //     that.getProjectFolderList(data.board_id)
-          //   }
-          //   that.getMilestone(data.board_id)
-          //   that.filterCurrentExistenceField(data)// 初始化获取字段信息
-          //   that.linkImWithCard({name: data.card_name, type: 'card', board_id: data.board_id, id: data.card_id})
-          // }
+          id: card_id
         }
       })
     ).then(res => {
       if (isApiResponseOk(res)) {
-        if (checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW, res.data.board_id)) {
+        // 检测 该组织是否付费 --> 是否有访问文件权限--> 有 则调接口获取
+        if (
+          isPaymentOrgUser(res.data.org_id) && 
+          checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW, res.data.board_id)
+          ) {
           this.getProjectFolderList(res.data.board_id)
         }
         this.getMilestone(res.data.board_id)
-        this.filterCurrentExistenceField(res.data)// 初始化获取字段信息
+        // 初始化获取字段信息 (需过滤已经存现在的字段)
+        this.filterCurrentExistenceField(res.data)
+        // 是否可以修改父任务时间
         this.whetherUpdateParentTaskTime()
+        // 联动圈子打开
         this.linkImWithCard({ name: res.data.card_name, type: 'card', board_id: res.data.board_id, id: res.data.card_id })
       } else {
         setTimeout(() => {
@@ -157,25 +171,12 @@ export default class MainContent extends Component {
 
   componentDidMount() {
     this.getInitCardDetailDatas()
-    // this.props.dispatch({
-    //   type: 'publicTaskDetailModal/getCardWithAttributesDetail',
-    //   payload: {
-    //     id: card_id,
-    //     calback: function (data) {
-    //       if (checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW, data.board_id)) {
-    //         that.getProjectFolderList(data.board_id)
-    //       }
-    //       that.getMilestone(data.board_id)
-    //       that.filterCurrentExistenceField(data)// 初始化获取字段信息
-    //       that.linkImWithCard({name: data.card_name, type: 'card', board_id: data.board_id, id: data.card_id})
-    //     }
-    //   }
-    // })
   }
 
   componentWillReceiveProps(nextProps) {
     const { drawerVisible } = nextProps
     const { drawerVisible: oldDrawerVisible } = this.props
+    // 忘记这步操作是在干嘛
     if (oldDrawerVisible == false && drawerVisible == true) {
       Promise.resolve(
         this.props.dispatch({
@@ -258,28 +259,57 @@ export default class MainContent extends Component {
   }
   // 设置卡片是否完成 E
 
-  // 设置标题textarea区域修改 S
-  setTitleEdit = (e) => {
-    e && e.stopPropagation();
+  // 点击设置标题事件 S
+  handleChangeTaskTitle = (e) => {
+    e && e.stopPropagation()
     if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) {
       return false
     }
-    this.props.dispatch({
-      type: 'publicTaskDetailModal/updateDatas',
-      payload: {
-        is_edit_title: true
-      }
+    const { drawContent: { card_name } } = this.props
+    // 点击的时候设置一个本地名称
+    this.setState({
+      is_edit_title: true,
+      local_card_name: card_name
     })
   }
-  // 设置标题文本内容修改 E
+  // 点击设置标题事件 E
+
+  // 设置标题文本内容change事件 S
+  titleTextAreaChange = (e) => {
+    e && e.stopPropagation()
+    let val = e.target.value
+    const { dispatch, drawContent = {}, drawContent: { card_id } } = this.props
+    let reStr = val.trim()
+    if (reStr == "" || reStr == " " || !reStr) return
+    drawContent['card_name'] = reStr
+    this.updateDrawContentWithUpdateParentListDatas({ drawContent, card_id })
+  }
+  // 设置标题文本内容change事件 E
 
   // 设置标题文本失去焦点回调 S
   titleTextAreaChangeBlur = (e) => {
+    e && e.stopPropagation()
     let val = e.target.value
     const { dispatch, drawContent = {} } = this.props
-    const { card_id, board_id } = drawContent
+    const { card_id, board_id, card_name } = drawContent
+    const { local_card_name } = this.state
     let reStr = val.trim()
-    if (reStr == "" || reStr == " " || !reStr) return
+    // 如果名称为空, 那么不修改名称 还是为原来名称
+    if (reStr == "" || reStr == " " || !reStr) {
+      drawContent['card_name'] = local_card_name
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent, card_id })
+      this.setState({
+        is_edit_title: false
+      })
+      return
+    }
+    // 如果本地名称和修改的名称相等也不需要调用接口
+    if (local_card_name == card_name) {
+      this.setState({
+        is_edit_title: false
+      })
+      return
+    }
     drawContent['card_name'] = reStr
     const updateObj = {
       card_id,
@@ -287,7 +317,6 @@ export default class MainContent extends Component {
       name: val,
       board_id
     }
-
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/updateTaskVTwo',
@@ -300,13 +329,10 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          is_edit_title: false,
-          drawContent,
-        }
+      this.setState({
+        is_edit_title: false
       })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent, card_id })
       // 需要调用父级的列表
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, name: 'card_name', value: val })
     })
@@ -872,6 +898,7 @@ export default class MainContent extends Component {
     }
     let new_propertiesList = [...propertiesList]
     new_propertiesList = new_propertiesList.filter(item => item.code != 'CONTENTLINK')
+    // 上传附件需要钱,所以需判断是否付费
     if (!isPaymentOrgUser(org_id)) {
       new_propertiesList = new_propertiesList.filter(item => item.code != 'ATTACHMENT')
     }
@@ -1141,7 +1168,7 @@ export default class MainContent extends Component {
   }
 
   render() {
-    const { drawContent = {}, is_edit_title, isInOpenFile, handleTaskDetailChange, handleChildTaskChange } = this.props
+    const { drawContent = {}, isInOpenFile, handleTaskDetailChange, handleChildTaskChange } = this.props
     const {
       card_id,
       card_name,
@@ -1153,7 +1180,7 @@ export default class MainContent extends Component {
       properties = []
     } = drawContent
     const { data = [] } = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
-    const { boardFolderTreeData = [], milestoneList = [], selectedKeys = [] } = this.state
+    const { boardFolderTreeData = [], milestoneList = [], selectedKeys = [], is_edit_title } = this.state
     // 状态
     const filedEdit = (
       <Menu onClick={this.handleFiledIsComplete} getPopupContainer={triggerNode => triggerNode.parentNode} selectedKeys={is_realize == '0' ? ['incomplete'] : ['complete']}>
@@ -1196,15 +1223,16 @@ export default class MainContent extends Component {
               </div>
               {
                 !is_edit_title ? (
-                  <div onClick={this.setTitleEdit} className={`${mainContentStyles.card_name} ${mainContentStyles.pub_hover}`}>
+                  <div onClick={this.handleChangeTaskTitle} className={`${mainContentStyles.card_name} ${mainContentStyles.pub_hover}`}>
                     <span style={{ wordBreak: 'break-all' }}>{card_name}</span>
                   </div>
                 ) : (
                     <NameChangeInput
                       autosize
+                      onChange={this.titleTextAreaChange}
                       onBlur={this.titleTextAreaChangeBlur}
-                      onClick={this.setTitleEdit}
-                      setIsEdit={this.setTitleEdit}
+                      // onClick={this.setTitleEdit}
+                      setIsEdit={this.titleTextAreaChangeBlur}
                       autoFocus={true}
                       goldName={card_name}
                       maxLength={101}
@@ -1416,7 +1444,7 @@ export default class MainContent extends Component {
 
 // 只关联public弹窗内的数据
 function mapStateToProps({
-  publicTaskDetailModal: { drawerVisible, drawContent = {}, is_edit_title, card_id, boardTagList = [], attributesList = [] },
+  publicTaskDetailModal: { drawerVisible, drawContent = {}, card_id, boardTagList = [], attributesList = [] },
   projectDetail: { datas: { projectDetailInfoData = {} } },
   publicFileDetailModal: {
     isInOpenFile,
@@ -1430,5 +1458,5 @@ function mapStateToProps({
     }
   }
 }) {
-  return { drawerVisible, drawContent, is_edit_title, card_id, boardTagList, attributesList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType, filePreviewCurrentName, userBoardPermissions }
+  return { drawerVisible, drawContent, card_id, boardTagList, attributesList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType, filePreviewCurrentName, userBoardPermissions }
 }
