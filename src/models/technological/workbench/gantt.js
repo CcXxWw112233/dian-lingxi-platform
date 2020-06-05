@@ -21,7 +21,7 @@ import { getGlobalData } from '../../../utils/businessFunction';
 import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, mock_gantt_data, ganttIsOutlineView, mock_outline_tree, ceil_width, ceil_width_year } from '../../../routes/Technological/components/Gantt/constants';
 import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
-import { handleChangeBoardViewScrollTop, setGantTimeSpan } from '../../../routes/Technological/components/Gantt/ganttBusiness';
+import { handleChangeBoardViewScrollTop, setGantTimeSpan, diffGanttTimeSpan } from '../../../routes/Technological/components/Gantt/ganttBusiness';
 import { jsonArrayCompareSort, transformTimestamp, isSamDay } from '../../../utils/util';
 import gantt_effect from './gantt_effect'
 let dispatches = null
@@ -572,6 +572,7 @@ export default {
               // console.log('sssssss', val_1.name, time_span)
               // time_span = time_span > date_arr_one_level.length?  date_arr_one_level.length: time_span
             }
+            time_span = diffGanttTimeSpan({ time_span, start_time, due_time })
             let list_data_item = {
               ...val_1,
               start_time,
