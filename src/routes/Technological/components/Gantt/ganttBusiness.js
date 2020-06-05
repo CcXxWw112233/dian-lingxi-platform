@@ -1,4 +1,5 @@
 import base_utils from './base_utils'
+import { isSamDay } from '../../../../utils/util'
 
 export const afterCreateBoardUpdateGantt = (dispatch) => {
     afterClearGanttData({ dispatch })
@@ -279,6 +280,22 @@ export const currentFolderJudegeFileUpload = ({ folder_id, im_all_latest_unread_
     return false
 }
 
+// 修复开始时间和截止时间之差在24h之内但是跨天了，然而只显示一天
+export const diffGanttTimeSpan = ({ time_span, start_time, due_time }) => {
+    if (!start_time || !due_time) return time_span || 1
+    if (isSamDay(start_time, due_time)) return 1
+    const start_date = new Date(start_time)
+    const due_date = new Date(due_time)
+    const s_h = start_date.getHours()
+    const s_m = start_date.getMinutes()
+    const e_h = due_date.getHours()
+    const e_m = due_date.getMinutes()
+    // 截止的时分比开始的时分要小
+    if ((e_h < s_h) || (e_h == s_h && e_m < s_m)) {
+        return time_span + 1
+    }
+    return time_span
+}
 // 计算任务时间长度对应在甘特图上的跨度
 export const setGantTimeSpan = ({ time_span, start_time, due_time, start_date, end_date }) => {
     let new_time_span = 0
@@ -287,6 +304,7 @@ export const setGantTimeSpan = ({ time_span, start_time, due_time, start_date, e
     } else {
         if (!!due_time && !!start_time) {
             new_time_span = (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1
+            new_time_span = diffGanttTimeSpan({ time_span: new_time_span, start_time, due_time })
             return new_time_span
         } else {
             return 1// Number(time_span)

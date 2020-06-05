@@ -281,7 +281,7 @@ class Gantt extends Component {
 
   // 修改有排期的任务
   handleHasScheduleCard = ({ card_id, drawContent, operate_properties_code, ...other_params }) => {
-    const { group_view_type } = this.props
+    const { group_view_type, dispatch } = this.props
     const new_drawContent = this.cardPropertiesPromote({ drawContent, operate_properties_code })
     if (ganttIsOutlineView({ group_view_type })) {
       this.changeOutLineTreeNodeProto(card_id, { ...new_drawContent, name: drawContent.card_name })
@@ -297,7 +297,6 @@ class Gantt extends Component {
       }, 1000)
       return
     }
-    const { dispatch } = this.props
     if (operate_properties_code == 'MILESTONE') { //修改的是里程碑
       dispatch({
         type: 'gantt/getGttMilestoneList',
