@@ -240,7 +240,7 @@ export default class AppendSubTaskItem extends Component {
         drawContent: new_drawContent
       }
     })
-    if (name && value) {
+    if ((name && value) || (name && value == null)) {
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id: drawContent.card_id, name: 'card_data', value: new_data })
       this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: drawContent.card_id, data: { ...childTaskItemValue, [name]: value }, card_id, action: 'update', rely_card_datas })
     }
@@ -271,7 +271,7 @@ export default class AppendSubTaskItem extends Component {
       dispatch({
         type: 'publicTaskDetailModal/deleteTaskVTwo',
         payload: {
-          card_id
+          id: card_id
         }
       })
     ).then(res => {
@@ -356,7 +356,12 @@ export default class AppendSubTaskItem extends Component {
   handleDelStartTime = (e) => {
     e && e.stopPropagation()
     const { dispatch, childTaskItemValue, board_id, drawContent: { card_id: parent_card_id } } = this.props
-    const { card_id } = childTaskItemValue
+    const { card_id, due_time } = childTaskItemValue
+    let update_child_item = {
+      id: card_id,
+      start_time: '',
+      due_time: due_time
+    }
     const updateObj = {
       card_id, start_time: '0', board_id
     }
@@ -376,9 +381,11 @@ export default class AppendSubTaskItem extends Component {
       this.setState({
         local_start_time: null
       })
+      let update_data = [].concat(update_child_item,...res.data)
+      console.log(update_data,'update_data')
       let new_data = [...res.data]
       new_data = new_data.filter(item => item.id == parent_card_id) || []
-      this.setChildTaskIndrawContent({ name: 'start_time', value: 0 }, card_id, res.data)
+      this.setChildTaskIndrawContent({ name: 'start_time', value: null }, card_id, update_data)
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
       this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data)
     })
@@ -422,7 +429,7 @@ export default class AppendSubTaskItem extends Component {
       })
       let new_data = [...res.data]
       new_data = new_data.filter(item => item.id == parent_card_id) || []
-      this.setChildTaskIndrawContent({ name: 'due_time', value: due_timeStamp }, card_id, res.data)
+      this.setChildTaskIndrawContent({ name: 'due_time', value: due_timeStamp }, card_id, update_data)
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
       this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data)
     })
@@ -432,7 +439,12 @@ export default class AppendSubTaskItem extends Component {
   handleDelDueTime = (e) => {
     e && e.stopPropagation()
     const { dispatch, childTaskItemValue, board_id, drawContent: { card_id: parent_card_id } } = this.props
-    const { card_id, due_time } = childTaskItemValue
+    const { card_id, start_time } = childTaskItemValue
+    let update_child_item = {
+      id: card_id,
+      start_time: start_time,
+      due_time: ''
+    }
     const updateObj = {
       card_id, due_time: '0', board_id
     }
@@ -452,9 +464,10 @@ export default class AppendSubTaskItem extends Component {
       this.setState({
         local_due_time: null
       })
+      let update_data = [].concat(update_child_item,...res.data)
       let new_data = [...res.data]
       new_data = new_data.filter(item => item.id == parent_card_id) || []
-      this.setChildTaskIndrawContent({ name: 'due_time', value: 0 }, card_id, res.data)
+      this.setChildTaskIndrawContent({ name: 'due_time', value: null }, card_id, update_data)
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
       this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data)
     })
