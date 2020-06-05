@@ -100,6 +100,22 @@ export default class RelyOnRelationship extends Component {
     return container
   }
 
+  // 渲染不同文案
+  renderDiffCompleteText = (type) => {
+    let text = ''
+    switch (type) {
+      case 'end_start': // 表示完成才开始
+        text = '完成才开始'
+        break;
+      case 'end_end':
+        text = '完成才完成'
+        break
+      default:
+        break;
+    }
+    return text
+  }
+
   // 显示详情依赖关系
   renderDetailRelyOnContent = () => {
     const { relationshipList = {} } = this.state
@@ -118,7 +134,7 @@ export default class RelyOnRelationship extends Component {
           }
           {
             !(preposeList && preposeList.length) ? ('') : preposeList.map(item => {
-              const { id, due_time, start_time, name, type, is_realize } = item
+              const { id, due_time, start_time, name, type, is_realize, relation } = item
               return (
                 <div key={id} className={indexStyles.re_task_dependency_item}>
                   {/* 关联的任务内容 */}
@@ -135,7 +151,7 @@ export default class RelyOnRelationship extends Component {
                   {/* 选择框 */}
                   <div>
                     <div className={indexStyles.re_task_select}>
-                      <div className={`${indexStyles.select_t_title} ${indexStyles.matter_right}`}>完成才开始</div>
+                    <div className={`${indexStyles.select_t_title} ${indexStyles.matter_right}`}>{this.renderDiffCompleteText(relation)}</div>
                       <div className={indexStyles.select_t_curr}>当前任务</div>
                       {/* <Select showArrow={false} className={indexStyles.select_wrapper}></Select> */}
                     </div>
@@ -156,14 +172,14 @@ export default class RelyOnRelationship extends Component {
           }
           {
             !(postpositionList && postpositionList.length) ? ('') : postpositionList.map(item => {
-              const { id, due_time, start_time, name, type, is_realize } = item
+              const { id, due_time, start_time, name, type, is_realize, relation } = item
               return (
                 <div className={indexStyles.re_task_dependency_item}>
                   {/* 选择框 */}
                   <div>
                     <div className={indexStyles.re_task_select}>
                       <div className={indexStyles.select_t_curr}>当前任务</div>
-                      <div className={`${indexStyles.select_t_title} ${indexStyles.matter_left}`}>完成才开始</div>
+                      <div className={`${indexStyles.select_t_title} ${indexStyles.matter_left}`}>{this.renderDiffCompleteText(relation)}</div>
                     </div>
                   </div>
                   {/* 关联的任务内容 */}
