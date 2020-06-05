@@ -12,7 +12,7 @@ import { timestampToTimeNormal3, compareTwoTimestamp, timeToTimestamp, timestamp
 import { MESSAGE_DURATION_TIME } from '@/globalset/js/constant'
 import { connect } from 'dva'
 import { arrayNonRepeatfy } from '../../../utils/util'
-import { getCurrentDrawerContentPropsModelFieldData } from '../handleOperateModal'
+import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField } from '../handleOperateModal'
 
 @connect(({ publicTaskDetailModal: { drawContent = {} } }) => ({
   drawContent
@@ -37,23 +37,6 @@ export default class AppendSubTask extends Component {
       due_time: '', // 截止时间选择
       start_time: '', // 开始时间选择
     })
-  }
-
-  // 过滤那些需要更新的字段
-  filterCurrentUpdateDatasField = (code, value) => {
-    const { drawContent: { properties = [] } } = this.props
-    let new_properties = [...properties]
-    new_properties = new_properties.map(item => {
-      if (item.code == code) {
-        let new_item = item
-        new_item = { ...item, data: value }
-        return new_item
-      } else {
-        let new_item = item
-        return new_item
-      }
-    })
-    return new_properties
   }
 
   // 是否是有效的头像
@@ -116,7 +99,7 @@ export default class AppendSubTask extends Component {
       new_data = new_data.filter(item => item.id == card_id) || []
       // drawContent['child_data'] && drawContent['child_data'].unshift({...obj, card_id: res.data.card_id})
       tempData.unshift({ ...obj, card_id: card_info.card_id })
-      drawContent['properties'] = this.filterCurrentUpdateDatasField('SUBTASK', tempData)
+      drawContent['properties'] = filterCurrentUpdateDatasField({ properties:drawContent['properties'], code: 'SUBTASK', value: tempData})
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
       this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: card_id, data: card_info, action: 'add', rely_card_datas: dependencys })
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
@@ -141,7 +124,7 @@ export default class AppendSubTask extends Component {
     })
     let new_drawContent = { ...drawContent }
     // new_drawContent['executors'] = this.arrayNonRepeatfy(new_executors)
-    new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', arrayNonRepeatfy(new_executors, 'user_id'))
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties:drawContent['properties'], code: 'EXECUTOR', value: arrayNonRepeatfy(new_executors, 'user_id')})
     dispatch({
       type: 'publicTaskDetailModal/updateDatas',
       payload: {

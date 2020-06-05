@@ -12,7 +12,7 @@ import {
 } from "@/globalset/js/constant";
 import { connect } from 'dva'
 import { arrayNonRepeatfy } from '../../../utils/util'
-import { getCurrentDrawerContentPropsModelFieldData } from '../handleOperateModal'
+import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField } from '../handleOperateModal'
 
 @connect(({ publicTaskDetailModal: { drawContent = {} } }) => ({
   drawContent
@@ -26,23 +26,6 @@ export default class AppendSubTaskItem extends Component {
   componentWillMount() {
     //设置默认项目名称
     this.initSet(this.props)
-  }
-
-  // 过滤那些需要更新的字段
-  filterCurrentUpdateDatasField = (code, value) => {
-    const { drawContent: { properties = [] } } = this.props
-    let new_properties = [...properties]
-    new_properties = new_properties.map(item => {
-      if (item.code == code) {
-        let new_item = item
-        new_item = { ...item, data: value }
-        return new_item
-      } else {
-        let new_item = item
-        return new_item
-      }
-    })
-    return new_properties
   }
 
   // 是否是有效的头像
@@ -101,7 +84,7 @@ export default class AppendSubTaskItem extends Component {
         })
       ).then(res => {
         if (isApiResponseOk(res)) {
-          new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', arrayNonRepeatfy(new_executors, 'user_id'))
+          new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties:drawContent['properties'], code: 'EXECUTOR', value: arrayNonRepeatfy(new_executors, 'user_id')})
           this.setChildTaskIndrawContent({ name: 'executors', value: new_sub_executors }, card_id)// 先弹窗中子任务执行人中的数据
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',
@@ -229,7 +212,7 @@ export default class AppendSubTaskItem extends Component {
     let new_data = [...data]
     // new_drawContent['child_data'][childDataIndex][name] = value
     new_data[childDataIndex][name] = value
-    new_drawContent['properties'] = this.filterCurrentUpdateDatasField('SUBTASK', new_data)
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties:drawContent['properties'], code: 'SUBTASK', value: new_data})
     dispatch({
       type: 'projectDetailTask/updateDatas',
       payload: {
@@ -262,7 +245,7 @@ export default class AppendSubTaskItem extends Component {
       }
     })
     // new_drawContent['child_data'] = newChildData
-    new_drawContent['properties'] = this.filterCurrentUpdateDatasField('SUBTASK', newChildData)
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties:drawContent['properties'], code: 'SUBTASK', value: newChildData})
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/deleteTaskVTwo',

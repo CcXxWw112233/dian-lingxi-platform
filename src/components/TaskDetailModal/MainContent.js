@@ -21,7 +21,7 @@ import DragDropContentComponent from './DragDropContentComponent'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
 import { arrayNonRepeatfy } from '../../utils/util'
 import RelyOnRelationship from '../RelyOnRelationship'
-import { getCurrentDrawerContentPropsModelFieldData } from './handleOperateModal'
+import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField } from './handleOperateModal'
 const { LingxiIm, Im } = global.constants
 
 @connect(mapStateToProps)
@@ -354,7 +354,7 @@ export default class MainContent extends Component {
     }
 
     // 阻止重复点击
-    if (!temp_realize) return false
+    if (is_realize == temp_realize || !temp_realize) return false
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/completeTask',
@@ -372,23 +372,6 @@ export default class MainContent extends Component {
   }
   // 设置是否完成状态的下拉回调 E
 
-  // 过滤那些需要更新的字段
-  filterCurrentUpdateDatasField = (code, value) => {
-    const { drawContent: { properties = [] } } = this.props
-    let new_properties = [...properties]
-    new_properties = new_properties.map(item => {
-      if (item.code == code) {
-        let new_item = item
-        new_item = { ...item, data: value }
-        return new_item
-      } else {
-        let new_item = item
-        return new_item
-      }
-    })
-    return new_properties
-  }
-
   // 邀请他人参与回调 并设置为执行人
   inviteOthersToBoardCalback = ({ users }) => {
     const { dispatch, projectDetailInfoData = {}, drawContent = {} } = this.props
@@ -401,7 +384,7 @@ export default class MainContent extends Component {
       const newExecutors = arrayNonRepeatfy([].concat(gold_data, arr), 'user_id')
       let new_drawContent = { ...drawContent }
       // new_drawContent['executors'] = newExecutors
-      new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', newExecutors)
+      new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties:drawContent['properties'], code: 'EXECUTOR', value: newExecutors})
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'executors', value: newExecutors, operate_properties_code: 'EXECUTOR' })
     }
     dispatch({
@@ -432,7 +415,7 @@ export default class MainContent extends Component {
     }
     let new_drawContent = { ...drawContent }
     // new_drawContent['executors'] = newExecutors
-    new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', newExecutors)
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'EXECUTOR', value: newExecutors})
     if (type == 'add') {
       addTaskExecutor({ card_id, executor: key }).then(res => {
         if (isApiResponseOk(res)) {
@@ -468,7 +451,7 @@ export default class MainContent extends Component {
         new_executors.splice(index, 1)
       }
     })
-    new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', new_executors)
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'EXECUTOR', value: new_executors})
     removeTaskExecutor({ card_id, executor: shouldDeleteItem }).then(res => {
       if (isApiResponseOk(res)) {
         message.success(`已成功删除执行人`, MESSAGE_DURATION_TIME)
@@ -1092,7 +1075,7 @@ export default class MainContent extends Component {
           return new_item
         }
       })
-      drawContent['properties'] = this.filterCurrentUpdateDatasField('ATTACHMENT', newData)
+      drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'ATTACHMENT', value: newData})
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {

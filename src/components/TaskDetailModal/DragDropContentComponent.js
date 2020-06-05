@@ -20,7 +20,7 @@ import { deleteTaskFile } from '../../services/technological/task'
 import {
   checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
 } from "@/utils/businessFunction";
-import { getCurrentDrawerContentPropsModelFieldData } from './handleOperateModal';
+import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField } from './handleOperateModal';
 
 @connect(mapStateToProps)
 export default class DragDropContentComponent extends Component {
@@ -111,7 +111,7 @@ export default class DragDropContentComponent extends Component {
       });
 
       // drawContent['milestone_data'] = info;
-      drawContent['properties'] = this.filterCurrentUpdateDatasField('MILESTONE', info)
+      drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'MILESTONE', value: info})
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
@@ -135,7 +135,7 @@ export default class DragDropContentComponent extends Component {
         }
       });
       // drawContent['milestone_data'] = [];
-      drawContent['properties'] = this.filterCurrentUpdateDatasField('MILESTONE', [])
+      drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'MILESTONE', value: []})
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
@@ -170,7 +170,7 @@ export default class DragDropContentComponent extends Component {
         }
       });
       // drawContent['milestone_data'] = info;
-      drawContent['properties'] = this.filterCurrentUpdateDatasField('MILESTONE', info)
+      drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'MILESTONE', value: info})
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
@@ -196,7 +196,7 @@ export default class DragDropContentComponent extends Component {
       description: brafitEditHtml,
     }
 
-    drawContent['properties'] = this.filterCurrentUpdateDatasField('REMARK', brafitEditHtml)
+    drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'REMARK', value: brafitEditHtml})
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/updateTaskVTwo',
@@ -251,7 +251,7 @@ export default class DragDropContentComponent extends Component {
     ).then(res => {
       if (isApiResponseOk(res)) {
         temp.push(res.data)
-        new_drawContent['properties'] = this.filterCurrentUpdateDatasField('LABEL', temp)
+        new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'LABEL', value: temp})
         this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'label_data', value: temp, operate_properties_code: 'LABEL' })
         dispatch({
           type: 'publicTaskDetailModal/addTaskTag',
@@ -287,7 +287,7 @@ export default class DragDropContentComponent extends Component {
     })
     let new_drawContent = { ...drawContent }
     // new_drawContent['label_data'] = new_labelData
-    new_drawContent['properties'] = this.filterCurrentUpdateDatasField('LABEL', new_labelData)
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'LABEL', value: new_labelData})
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/updateBoardTag',
@@ -320,7 +320,7 @@ export default class DragDropContentComponent extends Component {
     })
     let new_drawContent = { ...drawContent }
     // new_drawContent['label_data'] = new_labelData
-    new_drawContent['properties'] = this.filterCurrentUpdateDatasField('LABEL', new_labelData)
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'LABEL', value: new_labelData})
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/deleteBoardTag',
@@ -541,7 +541,7 @@ export default class DragDropContentComponent extends Component {
               })
               const drawContentNew = { ...drawContent }
               // drawContentNew['attachment_data'] = atta_arr
-              drawContentNew['properties'] = that.filterCurrentUpdateDatasField('ATTACHMENT', atta_arr)
+              new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'ATTACHMENT', value: atta_arr})
               dispatch({
                 type: 'projectDetailTask/updateDatas',
                 payload: {
