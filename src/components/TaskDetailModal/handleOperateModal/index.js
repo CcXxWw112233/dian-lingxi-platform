@@ -1,6 +1,18 @@
 // 用来封装弹窗中公用方法
 
 /**
+ * 获取对应属性的data列表
+ * @param {Array} arr 需要获取数据的列表
+ * @param {String} code 需要查找的data元素
+ * @returns 该方法返回需要查询的data
+ */
+export const getCurrentPropertiesData = (arr,code) => {
+  if (!arr || !code) return
+  const gold_data = (arr.find(item => item.code == code) || {}).data
+  return gold_data
+}
+
+/**
  * 获取弹窗中需要查询的对应字段数据
  * 这个 getCurrentDrawerContentPropsModelDatasExecutors 方法
  * 需要用该方法代替的

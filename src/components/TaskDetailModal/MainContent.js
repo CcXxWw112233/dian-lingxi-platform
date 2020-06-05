@@ -21,7 +21,7 @@ import DragDropContentComponent from './DragDropContentComponent'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
 import { arrayNonRepeatfy } from '../../utils/util'
 import RelyOnRelationship from '../RelyOnRelationship'
-import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField } from './handleOperateModal'
+import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField, getCurrentPropertiesData } from './handleOperateModal'
 const { LingxiIm, Im } = global.constants
 
 @connect(mapStateToProps)
@@ -373,11 +373,12 @@ export default class MainContent extends Component {
   // 设置是否完成状态的下拉回调 E
 
   // 邀请他人参与回调 并设置为执行人
-  inviteOthersToBoardCalback = ({ users }) => {
+  inviteOthersToBoardCalback = ({ users = [] }) => {
+    if (!users) return
     const { dispatch, projectDetailInfoData = {}, drawContent = {} } = this.props
     const { board_id, data = [] } = projectDetailInfoData
     const { card_id } = drawContent
-    const gold_data = (drawContent['properties'].find(item => item.code == 'EXECUTOR') || {}).data
+    const gold_data = getCurrentPropertiesData(drawContent['properties'],'EXECUTOR')
     const calback = (res) => {
       const new_users = res.data
       const arr = new_users.filter(item => users.indexOf(item.user_id) != -1)
@@ -1063,7 +1064,7 @@ export default class MainContent extends Component {
   whetherUpdateFolderListData = ({ folder_id, file_id, file_name, create_time }) => {
     if (file_name) {
       const { drawContent = {}, dispatch } = this.props
-      const gold_data = (drawContent['properties'].find(item => item.code == 'ATTACHMENT') || {}).data
+      const gold_data = getCurrentPropertiesData(drawContent['properties'],'ATTACHMENT')
       let newData = [...gold_data]
       newData = newData && newData.map(item => {
         if (item.file_id == this.props.filePreviewCurrentFileId) {
@@ -1089,9 +1090,8 @@ export default class MainContent extends Component {
   // 是否可以修改父任务中的时间
   whetherUpdateParentTaskTime = (data) => {
     const { drawContent = {}, dispatch } = this.props
-    const gold_data = (drawContent['properties'] && drawContent['properties'].find(item => item.code == 'SUBTASK') || {}).data
+    const gold_data = getCurrentPropertiesData(drawContent['properties'],'SUBTASK')
     if (!gold_data) return false;
-
     let newData = [...gold_data]
     newData = newData.find(item => item.due_time || item.start_time)
     if (newData && Object.keys(newData).length) {

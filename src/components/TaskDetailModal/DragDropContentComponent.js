@@ -20,7 +20,7 @@ import { deleteTaskFile } from '../../services/technological/task'
 import {
   checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
 } from "@/utils/businessFunction";
-import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField } from './handleOperateModal';
+import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField, getCurrentPropertiesData } from './handleOperateModal';
 
 @connect(mapStateToProps)
 export default class DragDropContentComponent extends Component {
@@ -146,7 +146,7 @@ export default class DragDropContentComponent extends Component {
 
     if (actionType === 'update') {
       // const { data } = drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
-      const gold_data = (drawContent['properties'].find(item => item.code == 'MILESTONE') || {}).data
+      const gold_data = getCurrentPropertiesData(drawContent['properties'],'MILESTONE')
       const removeParams = {
         rela_id: card_id,
         id: gold_data.id,
@@ -717,7 +717,7 @@ export default class DragDropContentComponent extends Component {
     const { code, id } = currentItem
     const flag = (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()
     const executors = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
-    const gold_data = (drawContent['properties'].find(item => item.code == 'SUBTASK') || {}).data
+    const gold_data = getCurrentPropertiesData(drawContent['properties'],'SUBTASK')
     let messageValue = (<div></div>)
     switch (code) {
       case 'MILESTONE': // 里程碑
