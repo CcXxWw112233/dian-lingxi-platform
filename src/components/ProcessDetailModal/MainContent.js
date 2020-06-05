@@ -749,12 +749,14 @@ export default class MainContent extends Component {
   // 立即开始
   handleCreateProcess = (e, start_time) => {
     e && e.stopPropagation()
-    const { projectDetailInfoData: { board_id } } = this.props
+    const { projectDetailInfoData: { board_id }, request_flows_params = {} } = this.props
     // setBoardIdStorage(board_id)
+    // let BOARD_ID = request_flows_params && request_flows_params.request_board_id
+    // let REAUEST_BOARD_ID = getGlobalData('storageCurrentOperateBoardId')
     this.setState({
       isCreateProcessIng: true
     })
-    if (!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, board_id)) {
+    if (!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       this.setState({
         isCreateProcessIng: false
