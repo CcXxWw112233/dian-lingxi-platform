@@ -1153,6 +1153,7 @@ export default class MainContent extends Component {
       properties = []
     } = drawContent
     const { data = [] } = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
+    const { boardFolderTreeData = [], milestoneList = [], selectedKeys = [] } = this.state
     // 状态
     const filedEdit = (
       <Menu onClick={this.handleFiledIsComplete} getPopupContainer={triggerNode => triggerNode.parentNode} selectedKeys={is_realize == '0' ? ['incomplete'] : ['complete']}>
