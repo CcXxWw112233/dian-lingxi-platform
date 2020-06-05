@@ -382,7 +382,7 @@ export default class AppendSubTaskItem extends Component {
         local_start_time: null
       })
       let update_data = [].concat(update_child_item,...res.data)
-      console.log(update_data,'update_data')
+      // console.log(update_data,'update_data')
       let new_data = [...res.data]
       new_data = new_data.filter(item => item.id == parent_card_id) || []
       this.setChildTaskIndrawContent({ name: 'start_time', value: null }, card_id, update_data)
@@ -429,7 +429,7 @@ export default class AppendSubTaskItem extends Component {
       })
       let new_data = [...res.data]
       new_data = new_data.filter(item => item.id == parent_card_id) || []
-      this.setChildTaskIndrawContent({ name: 'due_time', value: due_timeStamp }, card_id, update_data)
+      this.setChildTaskIndrawContent({ name: 'due_time', value: due_timeStamp }, card_id, res.data)
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
       this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data)
     })
