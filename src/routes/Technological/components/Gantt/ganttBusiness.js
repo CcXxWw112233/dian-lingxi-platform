@@ -283,12 +283,13 @@ export const currentFolderJudegeFileUpload = ({ folder_id, im_all_latest_unread_
 export const setGantTimeSpan = ({ time_span, start_time, due_time, start_date, end_date }) => {
     let new_time_span = 0
     if (!!!due_time && !!!start_time) {
-        return Number(time_span)
+        return 0//Number(time_span)
     } else {
         if (!!due_time && !!start_time) {
-            return new_time_span = (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1
+            new_time_span = (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1
+            return new_time_span
         } else {
-            return Number(time_span)
+            return 1// Number(time_span)
         }
         // if (due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
         //     new_time_span = (Math.floor((end_date.timestamp - start_time) / (24 * 3600 * 1000))) + 1
