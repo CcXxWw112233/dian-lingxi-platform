@@ -279,6 +279,12 @@ export default class AppendSubTaskItem extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
+      let new_data = []
+      if (!(res.data instanceof Array)) {
+        new_data = []
+      } else {
+        new_data = [...res.data]
+      }
       this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: drawContent.card_id, card_id, action: 'delete', rely_card_datas: res.data })
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
@@ -286,6 +292,7 @@ export default class AppendSubTaskItem extends Component {
           drawContent: new_drawContent
         }
       })
+      this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id: drawContent.card_id, name: 'card_data', value: newChildData })
     })
   }
