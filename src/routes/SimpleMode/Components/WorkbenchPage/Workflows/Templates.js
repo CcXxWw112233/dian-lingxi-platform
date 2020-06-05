@@ -378,7 +378,6 @@ export default class Templates extends Component {
         const { board_id: select_board_id } = simplemodeCurrentProject
         const select_org_id = localStorage.getItem('OrganizationId')
 
-
         return (
             processTemplateList.filter(item => isPaymentOrgUser(item.org_id)).map(value => {
                 const { id, name, board_id, org_id, board_name, node_num, enable_change } = value
@@ -412,7 +411,7 @@ export default class Templates extends Component {
                                 enable_change == '0' ? (
                                     <>
                                         {
-                                            checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, board_id) && (
+                                            (checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, select_board_id) || (select_board_id == '0' || !select_board_id)) && (
                                                 <Tooltip title="启用流程">
                                                     <Popover trigger="click" title={null} visible={this.state.popoStartConfirmVisible && id == this.state.currentVisibleItem} onVisibleChange={(visible) => { this.handleProcessStartConfirmVisible(visible, id) }} content={this.renderProcessStartConfirm(value)} icon={<></>} getPopupContainer={() => document.getElementById('template_item_bott')}>
                                                         <div className={`${globalStyles.authTheme} ${styles.template_operate}`}>&#xe796; <span style={{fontSize: '12px'}}>启用流程</span></div>
@@ -424,7 +423,7 @@ export default class Templates extends Component {
                                 ) : (
                                         <>
                                             {
-                                                checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, board_id) && (
+                                                (checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, select_board_id) || (select_board_id == '0' || !select_board_id)) && (
                                                     <Tooltip title={'启用流程'}>
                                                         <div className={`${globalStyles.authTheme} ${styles.template_operate}`}
                                                             onClick={() => this.handleStartBoardProcess(value)}>&#xe796; <span style={{fontSize: '12px'}}>启用流程</span></div>
