@@ -12,6 +12,7 @@ import {
 } from "@/globalset/js/constant";
 import { connect } from 'dva'
 import { arrayNonRepeatfy } from '../../../utils/util'
+import { getCurrentDrawerContentPropsModelFieldData } from '../handleOperateModal'
 
 @connect(({ publicTaskDetailModal: { drawContent = {} } }) => ({
   drawContent
@@ -70,19 +71,12 @@ export default class AppendSubTaskItem extends Component {
     })
   }
 
-  // 获取 currentDrawerContent 数据
-  getCurrentDrawerContentPropsModelDatasExecutors = () => {
-    const { drawContent: { properties = [] } } = this.props
-    const pricipleInfo = properties.filter(item => item.code == 'EXECUTOR')[0]
-    return pricipleInfo || {}
-  }
-
   // 执行人下拉回调
   chirldrenTaskChargeChange = (dataInfo) => {
     // let sub_executors = []
     const { data = [], drawContent = {}, dispatch, childTaskItemValue } = this.props
     // const { executors = [] } = drawContent
-    const { data: executors = [] } = this.getCurrentDrawerContentPropsModelDatasExecutors()
+    const { data: executors = [] } = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
     const { card_id, executors: sub_executors = [] } = childTaskItemValue
     const { selectedKeys = [], type, key } = dataInfo
     let new_data = [...data]

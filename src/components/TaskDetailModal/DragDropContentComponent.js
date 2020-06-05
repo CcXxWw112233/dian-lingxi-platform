@@ -20,6 +20,7 @@ import { deleteTaskFile } from '../../services/technological/task'
 import {
   checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
 } from "@/utils/businessFunction";
+import { getCurrentDrawerContentPropsModelFieldData } from './handleOperateModal';
 
 @connect(mapStateToProps)
 export default class DragDropContentComponent extends Component {
@@ -32,17 +33,10 @@ export default class DragDropContentComponent extends Component {
     }
   }
 
-  // 获取 currentDrawerContent 数据
-  getCurrentDrawerContentPropsModelDatasExecutors = () => {
-    const { drawContent: { properties = [] } } = this.props
-    const pricipleInfo = properties.filter(item => item.code == 'EXECUTOR')[0]
-    return pricipleInfo || {}
-  }
-
   // 检测不同类型的权限控制类型的是否显示
   checkDiffCategoriesAuthoritiesIsVisible = (code) => {
-    const { drawContent = {} } = this.props
-    const { data } = this.getCurrentDrawerContentPropsModelDatasExecutors()
+    const { drawContent = {}, drawContent: { properties = [] } } = this.props
+    const { data = [] } = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
 
     const { privileges = [], board_id, is_privilege } = drawContent
     return {
@@ -719,10 +713,10 @@ export default class DragDropContentComponent extends Component {
   filterDiffPropertiesField = (currentItem) => {
     const { visible = false, showDelColor, currentDelId } = this.state
     const { drawContent = {}, projectDetailInfoData = {}, projectDetailInfoData: { data = [] }, boardTagList = [], handleTaskDetailChange, boardFolderTreeData = [], milestoneList = [], handleChildTaskChange, whetherUpdateParentTaskTime, updateRelyOnRationList } = this.props
-    const { org_id, card_id, board_id, board_name, due_time, start_time } = drawContent
+    const { org_id, card_id, board_id, board_name, due_time, start_time, properties = [] } = drawContent
     const { code, id } = currentItem
     const flag = (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()
-    let executors = this.getCurrentDrawerContentPropsModelDatasExecutors()
+    const executors = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
     const gold_data = (drawContent['properties'].find(item => item.code == 'SUBTASK') || {}).data
     let messageValue = (<div></div>)
     switch (code) {

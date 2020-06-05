@@ -19,9 +19,9 @@ import { getFolderList } from '@/services/technological/file'
 import { getMilestoneList } from '@/services/technological/prjectDetail'
 import DragDropContentComponent from './DragDropContentComponent'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
-import { filterOwnSubTaskMaxDueTime } from './handleOperateTaskModal'
 import { arrayNonRepeatfy } from '../../utils/util'
 import RelyOnRelationship from '../RelyOnRelationship'
+import { getCurrentDrawerContentPropsModelFieldData } from './handleOperateModal'
 const { LingxiIm, Im } = global.constants
 
 @connect(mapStateToProps)
@@ -196,18 +196,10 @@ export default class MainContent extends Component {
     }
   }
 
-  // 获取 currentDrawerContent 数据
-  getCurrentDrawerContentPropsModelDatasExecutors = () => {
-    const { drawContent: { properties = [] } } = this.props
-    const pricipleInfo = properties.filter(item => item.code == 'EXECUTOR')[0]
-    return pricipleInfo || {}
-  }
-
   // 检测不同类型的权限控制类型的是否显示
   checkDiffCategoriesAuthoritiesIsVisible = (code) => {
-    const { drawContent = {} } = this.props
-    const { data } = this.getCurrentDrawerContentPropsModelDatasExecutors()
-
+    const { drawContent = {}, drawContent: { properties = [] } } = this.props
+    const { data = [] } = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
     const { privileges = [], board_id, is_privilege } = drawContent
     return {
       'visit_control_edit': function () {// 是否是有编辑权限
@@ -441,8 +433,8 @@ export default class MainContent extends Component {
   handleRemoveExecutors = (e, shouldDeleteItem) => {
     e && e.stopPropagation()
     const { drawContent = {}, dispatch } = this.props
-    const { card_id } = drawContent
-    const { data } = this.getCurrentDrawerContentPropsModelDatasExecutors()
+    const { card_id, properties = [] } = drawContent
+    const { data = [] } = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
     let new_executors = [...data]
     let new_drawContent = { ...drawContent }
     new_executors.map((item, index) => {
@@ -909,8 +901,8 @@ export default class MainContent extends Component {
   renderPriciple = () => {
     const { drawContent = {}, projectDetailInfoData } = this.props
     const { showDelColor, currentDelId } = this.state
-    const { card_id, board_id, org_id } = drawContent
-    const { data = [], id } = this.getCurrentDrawerContentPropsModelDatasExecutors()
+    const { card_id, board_id, org_id, properties = [] } = drawContent
+    const { data = [], id } = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
     const flag = (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()
     return (
       <div>
@@ -1157,11 +1149,10 @@ export default class MainContent extends Component {
       is_realize = '0',
       start_time,
       due_time,
-      dependences = []
+      dependences = [],
+      properties = []
     } = drawContent
-    const { properties = [] } = drawContent
-    const executors = this.getCurrentDrawerContentPropsModelDatasExecutors()
-    const { boardFolderTreeData = [], milestoneList = [], selectedKeys = [] } = this.state
+    const { data = [] } = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
     // 状态
     const filedEdit = (
       <Menu onClick={this.handleFiledIsComplete} getPopupContainer={triggerNode => triggerNode.parentNode} selectedKeys={is_realize == '0' ? ['incomplete'] : ['complete']}>
@@ -1352,7 +1343,7 @@ export default class MainContent extends Component {
                         ''
                       ) : (
                           <span style={{ position: 'relative' }}>
-                            <InformRemind commonExecutors={executors.data} style={{ display: 'inline-block', minWidth: '72px', height: '38px', borderRadius: '4px', textAlign: 'center' }} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} />
+                            <InformRemind commonExecutors={data} style={{ display: 'inline-block', minWidth: '72px', height: '38px', borderRadius: '4px', textAlign: 'center' }} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} />
                           </span>
                         )
                     }

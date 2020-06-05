@@ -12,18 +12,13 @@ import {
   MESSAGE_DURATION_TIME, TASKS,
 } from "@/globalset/js/constant";
 import { arrayNonRepeatfy } from '../../utils/util'
+import { getCurrentDrawerContentPropsModelFieldData } from './handleOperateModal'
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
 
   state = {
     onlyReadingShareModalVisible: false, //只读分享modal
     onlyReadingShareData: {},
-  }
-
-  getCurrentDrawerContentPropsModelDatasExecutors = () => {
-    const { drawContent: { properties = [] } } = this.props
-    const pricipleInfo = properties.filter(item => item.code == 'EXECUTOR')[0]
-    return pricipleInfo || {}
   }
 
   // 访问控制的操作 S
@@ -416,9 +411,9 @@ export default class HeaderContentRightMenu extends Component {
 
   render() {
     const { drawContent = {} } = this.props
-    const { board_id, card_id, is_privilege, privileges = [], executors = [], is_shared } = drawContent
+    const { properties = [], board_id, card_id, is_privilege, privileges = [], executors = [], is_shared } = drawContent
     const { onlyReadingShareData, onlyReadingShareModalVisible } = this.state
-    const { data } = this.getCurrentDrawerContentPropsModelDatasExecutors()
+    const { data = [] } = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
     return (
 
       <div className={headerStyles.detail_action_list}>

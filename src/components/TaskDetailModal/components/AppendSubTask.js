@@ -12,6 +12,7 @@ import { timestampToTimeNormal3, compareTwoTimestamp, timeToTimestamp, timestamp
 import { MESSAGE_DURATION_TIME } from '@/globalset/js/constant'
 import { connect } from 'dva'
 import { arrayNonRepeatfy } from '../../../utils/util'
+import { getCurrentDrawerContentPropsModelFieldData } from '../handleOperateModal'
 
 @connect(({ publicTaskDetailModal: { drawContent = {} } }) => ({
   drawContent
@@ -123,19 +124,12 @@ export default class AppendSubTask extends Component {
     })
   }
 
-  // 获取 currentDrawerContent 数据
-  getCurrentDrawerContentPropsModelDatasExecutors = () => {
-    const { drawContent: { properties = [] } } = this.props
-    const pricipleInfo = properties.filter(item => item.code == 'EXECUTOR')[0]
-    return pricipleInfo || {}
-  }
-
   // 子 执行人的下拉回调
   chirldrenTaskChargeChange = (dataInfo) => {
     let sub_executors = []
     const { data, drawContent = {}, dispatch } = this.props
-    const { card_id } = drawContent
-    const { data: executors = [] } = this.getCurrentDrawerContentPropsModelDatasExecutors()
+    const { card_id, properties = [] } = drawContent
+    const { data: executors = [] } = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
     const { selectedKeys = [] } = dataInfo
     let new_data = [...data]
     let new_executors = [...executors]
