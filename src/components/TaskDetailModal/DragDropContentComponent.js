@@ -720,7 +720,7 @@ export default class DragDropContentComponent extends Component {
     const { visible = false, showDelColor, currentDelId } = this.state
     const { drawContent = {}, projectDetailInfoData = {}, projectDetailInfoData: { data = [] }, boardTagList = [], handleTaskDetailChange, boardFolderTreeData = [], milestoneList = [], handleChildTaskChange, whetherUpdateParentTaskTime, updateRelyOnRationList } = this.props
     const { org_id, card_id, board_id, board_name, due_time, start_time } = drawContent
-    const { code } = currentItem
+    const { code, id } = currentItem
     const flag = (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()
     let executors = this.getCurrentDrawerContentPropsModelDatasExecutors()
     const gold_data = (drawContent['properties'].find(item => item.code == 'SUBTASK') || {}).data
@@ -729,7 +729,7 @@ export default class DragDropContentComponent extends Component {
       case 'MILESTONE': // 里程碑
         messageValue = (
           // <div className={mainContentStyles.moveWrapper}>
-          <div style={{ position: 'relative' }} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
+          <div key={id} style={{ position: 'relative' }} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
             <div className={mainContentStyles.field_left}>
               {
                 !flag && (
@@ -775,7 +775,7 @@ export default class DragDropContentComponent extends Component {
       case 'REMARK': // 备注
         messageValue = (
           // <div className={mainContentStyles.moveWrapper}>
-          <div style={{ position: 'relative' }} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
+          <div key={id} style={{ position: 'relative' }} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
             <div className={mainContentStyles.field_left}>
               {
                 !flag && (
@@ -826,7 +826,7 @@ export default class DragDropContentComponent extends Component {
         messageValue = (
           // <div className={mainContentStyles.moveWrapper}>
           // <>
-          <div className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
+          <div key={id} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
             <div className={mainContentStyles.field_left}>
               {
                 !flag && (
@@ -942,7 +942,7 @@ export default class DragDropContentComponent extends Component {
         messageValue = (
           // <div className={mainContentStyles.moveWrapper}>
           // <>
-          <div className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
+          <div key={id} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
             <div className={mainContentStyles.field_left}>
               {
                 !flag && (
@@ -1019,7 +1019,7 @@ export default class DragDropContentComponent extends Component {
         messageValue = (
           // <div className={mainContentStyles.moveWrapper}>
           // <>
-          <div className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
+          <div key={id} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
             <div className={mainContentStyles.field_left}>
               {
                 !flag && !(gold_data && gold_data.length) && (
@@ -1131,7 +1131,7 @@ export default class DragDropContentComponent extends Component {
                 {properties && properties.map((item, index) => (
                   <Draggable key={item.id} index={index} draggableId={item.id}>
                     {(provided, snapshot) => (
-                      <div ref={provided.innerRef} {...provided.draggableProps}
+                      <div key={item.id} ref={provided.innerRef} {...provided.draggableProps}
                         {...provided.dragHandleProps}>{this.filterDiffPropertiesField(item)}</div>
                     )}
                   </Draggable>
@@ -1157,7 +1157,7 @@ export default class DragDropContentComponent extends Component {
               <>
                 {
                   properties && properties.map(item => {
-                    return this.filterDiffPropertiesField(item)
+                    return <div key={item.id}>{this.filterDiffPropertiesField(item)}</div>
                   })
                 }
               </>
