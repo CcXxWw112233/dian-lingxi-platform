@@ -290,7 +290,7 @@ class Gantt extends Component {
           dispatch({
             type: 'gantt/updateOutLineTree',
             payload: {
-              datas: other_params.rely_card_datas
+              datas: other_params.rely_card_datas.filter(item => item.id != card_id)
             }
           });
         }
@@ -362,7 +362,8 @@ class Gantt extends Component {
   // 大纲视图的修改
   changeOutLineTreeNodeProto = (id, data = {}) => {
     let { dispatch, outline_tree } = this.props;
-    let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, id);
+    let outline_tree_ = JSON.parse(JSON.stringify(outline_tree))
+    let nodeValue = OutlineTree.getTreeNodeValue(outline_tree_, id);
     const mapSetProto = (data) => {
       Object.keys(data).map(item => {
         nodeValue[item] = data[item]
@@ -376,7 +377,7 @@ class Gantt extends Component {
       dispatch({
         type: 'gantt/handleOutLineTreeData',
         payload: {
-          data: outline_tree
+          data: outline_tree_
         }
       });
     } else {
