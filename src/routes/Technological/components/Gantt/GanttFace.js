@@ -44,9 +44,18 @@ export default class GanttFace extends Component {
     this.initSetScrollPosition()
     this.setGanTTCardHeight()
     this.getBoardListFeature()
+    this.getProcessTemplateList()
     window.addEventListener('resize', this.setGanTTCardHeight, false)
   }
+  getProcessTemplateList() {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/getProcessTemplateList',
+      payload: {
 
+      }
+    })
+  }
   // 获取项目列表的users apps groups
   getBoardListFeature = () => {
     setTimeout(() => {

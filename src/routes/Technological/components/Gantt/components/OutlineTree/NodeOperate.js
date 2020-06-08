@@ -16,8 +16,16 @@ export default class NodeOperate extends Component {
             group_sub_visible: false, //分组
             create_group_visible: false,//新建分组
             group_value: '',
+            templist_visible: false,
         }
     }
+
+    setTemplistVisible = (bool) => { //流程模板列表显示
+        this.setState({
+            templist_visible: bool
+        })
+    }
+
     setGroupSubShow = (bool) => { //设置选择分组二级菜单是否显示
         this.setState({
             group_sub_visible: bool
@@ -144,22 +152,27 @@ export default class NodeOperate extends Component {
     }
     // ----------分组逻辑--------end+
     // 选择项点击
-    menuItemClick = (key) => {
+    menuItemClick = (key, data) => {
         const { setDropVisble = function () { } } = this.props
         setDropVisble(false)
         this.setGroupSubShow(false)
         this.setCreateGroupVisible(false)
+        this.setTemplistVisible(false)
         switch (key) {
-            case 'create_card':
-                this.createCard()
+            case 'add_card':
+                this.addCard()
                 break
-            case 'create_child_card':
-                this.createCard(true)
+            case 'add_child_card':
+                this.addCard(true)
                 break
             case 'delete':
                 this.delete()
                 break
-            case 'create_card':
+            case 'insert_card':
+                this.insertItem({ type: 'card' })
+                break
+            case 'insert_flow':
+                this.insertItem({ type: 'flow', data })
                 break
             default:
                 if (/^group_id_+/.test(key)) {//选择任务分组
@@ -207,7 +220,50 @@ export default class NodeOperate extends Component {
             }
         })
     }
-    createCard = (create_child) => { //创建任务分为里程碑创建任务和任务创建同级任务
+    // 插入
+    insertItem = async ({ type, data = {} }) => {
+        const { nodeValue: { parent_id, id }, outline_tree = [], dispatch } = this.props
+        let target_id = parent_id
+        this.props.onExpand(target_id, true) //展开
+        let node = OutlineTree.getTreeNodeValue(outline_tree, target_id);
+        if (!node) {
+            return
+        }
+        let new_children = node.children || [];
+        const index = new_children.findIndex(item => item.id == id)
+        if (type == 'card') { //插入任务
+            new_children.splice(index + 1, 0,
+                { ...visual_add_item, editing: true, add_id: id }
+            )
+        } else if (type == 'flow') { //插入流程
+            const { id: temp_id, name: temp_name } = data
+            const { id: flow_id, name: flow_name } = await this.insertFlow({ temp_id, temp_name })
+            if (!id) {
+                return
+            }
+            new_children.splice(index + 1, 0,
+                { ...visual_add_item, tree_type: '3', id: flow_id, name: flow_name }
+            )
+        } else {
+
+        }
+        node.children = new_children;
+        dispatch({
+            type: 'gantt/handleOutLineTreeData',
+            payload: {
+                data: outline_tree
+            }
+        });
+    }
+    insertFlow = ({ temp_id, temp_name }) => {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                resolve({ id: temp_id, name: temp_name })
+            }, 2000)
+        })
+    }
+    // 往后添加
+    addCard = (create_child) => { //创建任务分为里程碑创建任务和任务创建同级任务
         const { nodeValue: { id, parent_id, tree_type, parent_type, children = [] }, outline_tree = [], dispatch } = this.props
         let target_id = id
         let target_name
@@ -269,16 +325,34 @@ export default class NodeOperate extends Component {
                     )
                 }
                 { //一级任务是顶级则没有
-                    tree_type == '2' && !parent_id ? ('') : (
-                        <div className={styles.menu_item} onClick={() => this.menuItemClick('create_card')}>
+                    tree_type == '1' && (
+                        <div className={styles.menu_item} onClick={() => this.menuItemClick('add_card')}>
                             新建任务
                         </div>
                     )
                 }
 
+                { //一级任务是顶级则没有
+                    tree_type == '2' && (
+                        <div className={styles.menu_item} onClick={() => this.menuItemClick('insert_card')}>
+                            插入任务
+                        </div>
+                    )
+                }
+                { //一级任务是顶级则没有
+                    tree_type == '2' && (
+                        <InsertFlows
+                            menuItemClick={this.menuItemClick}
+                            templist_visible={this.state.templist_visible}
+                            setTemplistVisible={this.setTemplistVisible} />
+                        // <div className={styles.menu_item} onClick={() => this.menuItemClick('insert_flow')}>
+                        //     插入流程
+                        // </div>
+                    )
+                }
                 {
                     (parent_type == '1' || !parent_type) && tree_type == '2' && ( //一级任务才有创建子任务功能
-                        <div className={styles.menu_item} onClick={() => this.menuItemClick('create_child_card')} >
+                        <div className={styles.menu_item} onClick={() => this.menuItemClick('add_child_card')} >
                             新建子任务
                         </div>
                     )
@@ -297,4 +371,57 @@ function mapStateToProps({
     projectDetail: { datas: { projectDetailInfoData = {} } }
 }) {
     return { gantt_board_id, projectDetailInfoData, about_group_boards, outline_tree }
+}
+
+@connect(({ gantt: { datas: { proccess_templates = [] } } }) => ({ proccess_templates }))
+class InsertFlows extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+
+        }
+    }
+
+    selectTemp = ({ name, id }) => {
+        this.props.menuItemClick('insert_flow', { name, id })
+    }
+    // 模板列表
+    renderTempList = () => {
+        const { proccess_templates = [] } = this.props
+        return (
+            <>
+                {
+                    proccess_templates.map(item => {
+                        const { id, name } = item
+                        return (
+                            <div
+                                onClick={() => this.selectTemp({ id, name })}
+                                className={`${styles.submenu_area_item}`}
+                                key={id}>
+                                {name}
+                            </div>
+                        )
+                    })
+                }
+            </>
+        )
+    }
+    render() {
+        const { templist_visible } = this.props
+        return (
+            <div className={`${styles.menu_item} ${styles.submenu}`}>
+                <div className={`${styles.menu_item_title}`} onClick={() => this.props.setTemplistVisible(true)}>
+                    插入流程
+                    <div className={`${globalStyles.authTheme} ${styles.menu_item_title_go}`}>&#xe7eb;</div>
+                </div>
+                {
+                    templist_visible && (
+                        <div className={`${styles.submenu_area}`}>
+                            {this.renderTempList()}
+                        </div>
+                    )
+                }
+            </div>
+        )
+    }
 }
