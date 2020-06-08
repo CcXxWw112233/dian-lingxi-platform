@@ -3,10 +3,11 @@ import { Menu, Button, Input, message, Modal } from 'antd';
 import styles from './nodeOperate.less'
 import globalStyles from '@/globalset/css/globalClassName.less';
 import { connect } from 'dva';
-import { addTaskGroup, changeTaskType, deleteTask, requestDeleteMiletone, deleteTaskVTwo } from '../../../../../../services/technological/task';
+import { addTaskGroup, changeTaskType, deleteTask, requestDeleteMiletone, deleteTaskVTwo, boardAppRelaMiletones } from '../../../../../../services/technological/task';
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
 import OutlineTree from '.';
 import { visual_add_item } from '../../constants';
+import { nonAwayTempleteStartPropcess } from '../../../../../../services/technological/workFlow';
 
 @connect(mapStateToProps)
 export default class NodeOperate extends Component {
@@ -220,10 +221,10 @@ export default class NodeOperate extends Component {
             }
         })
     }
-    // 插入
+    // 插入节点
     insertItem = async ({ type, data = {} }) => {
         const { nodeValue: { parent_id, id }, outline_tree = [], dispatch } = this.props
-        let target_id = parent_id
+        let target_id = parent_id || id
         this.props.onExpand(target_id, true) //展开
         let node = OutlineTree.getTreeNodeValue(outline_tree, target_id);
         if (!node) {
@@ -236,13 +237,14 @@ export default class NodeOperate extends Component {
                 { ...visual_add_item, editing: true, add_id: id }
             )
         } else if (type == 'flow') { //插入流程
-            const { id: temp_id, name: temp_name } = data
-            const { id: flow_id, name: flow_name } = await this.insertFlow({ temp_id, temp_name })
-            if (!id) {
+            const { id: flow_template_id } = data
+            const { id: flow_id, name: flow_name } = await this.insertFlow({ flow_template_id })
+
+            if (!flow_id) {
                 return
             }
             new_children.splice(index + 1, 0,
-                { ...visual_add_item, tree_type: '3', id: flow_id, name: flow_name }
+                { ...visual_add_item, add_id: '', tree_type: '3', id: flow_id, name: flow_name }
             )
         } else {
 
@@ -255,12 +257,33 @@ export default class NodeOperate extends Component {
             }
         });
     }
-    insertFlow = ({ temp_id, temp_name }) => {
-        return new Promise(resolve => {
-            setTimeout(() => {
-                resolve({ id: temp_id, name: temp_name })
-            }, 2000)
-        })
+    // 插入流程节点
+    insertFlow = async ({ flow_template_id }) => {
+        const { gantt_board_id, nodeValue: { parent_milestone_id } } = this.props
+        // 插入先预先启动流程，再将流程和里程碑关联上
+        const res = await nonAwayTempleteStartPropcess({ flow_template_id, board_id: gantt_board_id, start_up_type: '3' })
+        if (isApiResponseOk(res)) {
+            const { id, name } = res.data
+            if (!parent_milestone_id) { //如果不是挂载在里程碑下面
+                return { id, name }
+            } else {
+                const res2 = await boardAppRelaMiletones({
+                    id: parent_milestone_id,
+                    rela_id: id,
+                    origin_type: '3',
+                })
+                if (isApiResponseOk(res2)) {
+                    return { id, name }
+                } else {
+                    message.error(res.message)
+                    return {}
+                }
+            }
+        } else {
+            message.error(res.message)
+            return {}
+        }
+
     }
     // 往后添加
     addCard = (create_child) => { //创建任务分为里程碑创建任务和任务创建同级任务
@@ -298,7 +321,7 @@ export default class NodeOperate extends Component {
     render() {
         const { group_sub_visible, create_group_visible } = this.state
         const { nodeValue = {} } = this.props
-        const { tree_type, parent_type, parent_id } = nodeValue
+        const { tree_type, parent_type, parent_id, parent_card_id } = nodeValue
         return (
             <div className={styles.menu} onWheel={e => e.stopPropagation()}>
                 {
@@ -340,7 +363,7 @@ export default class NodeOperate extends Component {
                     )
                 }
                 { //一级任务是顶级则没有
-                    tree_type == '2' && (
+                    ((tree_type == '2' && !parent_card_id) || tree_type == '3') && (
                         <InsertFlows
                             menuItemClick={this.menuItemClick}
                             templist_visible={this.state.templist_visible}

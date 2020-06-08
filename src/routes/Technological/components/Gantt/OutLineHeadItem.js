@@ -23,6 +23,7 @@ import DetailInfo from '@/routes/Technological/components/ProjectDetail/DetailIn
 import { PROJECT_TEAM_BOARD_MEMBER, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_CREATE, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_BOARD_MILESTONE } from '@/globalset/js/constant';
 import ShowAddMenberModal from '../../../../routes/Technological/components/Project/ShowAddMenberModal';
 import SafeConfirmModal from './components/SafeConfirmModal';
+import { updateFlowInstanceNameOrDescription } from '../../../../services/technological/workFlow';
 
 const { SubMenu } = Menu;
 const { TreeNode } = OutlineTree;
@@ -518,8 +519,34 @@ export default class OutLineHeadItem extends Component {
                     console.error("OutlineTree.getTreeNodeValue:未查询到节点");
                 }
             }
+                break
+            case 'edit_flow':
+
+                let updateParams = {};
+                updateParams.id = param.id;
+                updateParams.name = param.name;
+
+                updateFlowInstanceNameOrDescription({ ...updateParams }, { isNotLoading: false })
+                    .then(res => {
+                        if (isApiResponseOk(res)) {
+                            let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
+
+                            if (nodeValue) {
+                                nodeValue.name = param.name;
+                                this.updateOutLineTreeData(outline_tree);
+                            } else {
+                                console.error("OutlineTree.getTreeNodeValue:未查询到节点");
+                            }
+                        } else {
+
+                            message.error(res.message)
+                        }
+                    }).catch(err => {
+                        message.error('更新失败')
+                    })
+                break
             default:
-                ;
+                break;
 
         }
     }

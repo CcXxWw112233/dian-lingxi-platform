@@ -99,16 +99,22 @@ class TreeNode extends Component {
 
         let { nodeValue = {} } = this.state;
         nodeValue.name = e.target.value;
-
+        const actions = (type) => {
+            const obj = {
+                '1': 'milestone',
+                '2': 'task',
+                '3': 'flow'
+            }
+            return obj[type]
+        }
         if (nodeValue.name) {
             let action;
             nodeValue.editing = false;
             if (this.props.placeholder) {
-                action = 'add_' + (this.props.type == '1' ? 'milestone' : 'task');
+                action = 'add_' + actions(this.props.type) //(this.props.type == '1' ? 'milestone' : 'task');
             } else {
-                action = 'edit_' + (nodeValue.tree_type == '1' ? 'milestone' : 'task');
+                action = 'edit_' + actions(nodeValue.tree_type)//(nodeValue.tree_type == '1' ? 'milestone' : 'task');
             }
-
             if (this.props.onDataProcess) {
                 this.props.onDataProcess({
                     action,
@@ -166,7 +172,7 @@ class TreeNode extends Component {
     onManHourChange = (value) => {
         const { outline_tree_round = [] } = this.props;
         const { nodeValue = {} } = this.state;
-        if(!validatePositiveInt(value)) {
+        if (!validatePositiveInt(value)) {
             return
         }
         const new_value = Number(value)
@@ -378,6 +384,12 @@ class TreeNode extends Component {
     }
     // 操作项点击------end
 
+    setDotStyle = { //dot的样式
+        '1': styles.milestoneNode,
+        '2': styles.taskNode,
+        '3': styles.flowNode
+    }
+
     render() {
         const { isTitleHover, isTitleEdit, nodeValue = {}, operateVisible } = this.state;
         const { id, add_id, name: title, tree_type, is_expand, time_span } = nodeValue;
@@ -405,7 +417,7 @@ class TreeNode extends Component {
                                     <div className={`${styles.node_opeator} ${globalStyles.authTheme}`}>&#xe7fd;</div>
                                 </Dropdown>
                             ) : (
-                                    <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
+                                    <span className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}></span>
                                 )
                         }
                         {
@@ -459,7 +471,7 @@ class TreeNode extends Component {
                                 (icon ?
                                     icon
                                     : (
-                                        <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
+                                        <span className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}></span>
                                     )
                                 ) :
                                 (
@@ -470,7 +482,7 @@ class TreeNode extends Component {
                                             <div className={`${styles.node_opeator} ${globalStyles.authTheme}`}>&#xe7fd;</div>
                                         </Dropdown>
                                     ) : (
-                                            <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
+                                            <span className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}></span>
                                         )
                                 )
                         }
