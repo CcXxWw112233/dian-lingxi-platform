@@ -270,7 +270,7 @@ export default class NodeOperate extends Component {
                 const res2 = await boardAppRelaMiletones({
                     id: parent_milestone_id,
                     rela_id: id,
-                    origin_type: '3',
+                    origin_type: '2',
                 })
                 if (isApiResponseOk(res2)) {
                     return { id, name }
