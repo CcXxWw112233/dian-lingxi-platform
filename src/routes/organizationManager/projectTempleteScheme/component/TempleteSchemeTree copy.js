@@ -1,12 +1,11 @@
 import React, { Component } from 'react'
-import { Tree, Menu, Tooltip, Input, Button, message, Dropdown } from 'antd'
+import { Tree, Menu, Tooltip, Input, Button, message } from 'antd'
 import { MESSAGE_DURATION_TIME } from '@/globalset/js/constant'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
 import { isApiResponseOk } from '@/utils/handleResponseData'
 const { TreeNode } = Tree;
-const { SubMenu } = Menu;
 @connect(mapStateToProps)
 export default class TempleteSchemeTree extends Component {
 
@@ -803,7 +802,7 @@ export default class TempleteSchemeTree extends Component {
       return false
     }
     if (e.target.value.length > 19) {
-      message.warn('最多只能输入20个字符')
+      message.warn('最多只能输入20个字符哦~')
       // return
     }
     this.setState({
@@ -861,78 +860,6 @@ export default class TempleteSchemeTree extends Component {
 
   // --------------------------  新增元素的输入框等事件 E -------------------------------------
 
-  handleSelectOptions = ({e, type,id}) => {
-    const { key, domEvent } = e
-    const { currentTempleteListContainer = [] } = this.props
-    const { is_add_sibiling, is_add_children, is_add_rename, is_wrapper_add_sibiling, is_wrapper_add_children, is_wrapper_add_rename } = this.state
-    if (is_add_sibiling || is_add_children || is_add_rename || is_wrapper_add_sibiling || is_wrapper_add_children || is_wrapper_add_rename) return
-    // if (id) {
-    //   let currentSelectedItemInfo = this.recursion(currentTempleteListContainer, id)
-    //   this.props.dispatch({
-    //     type: 'organizationManager/updateDatas',
-    //     payload: {
-    //       currentSelectedItemInfo // 需要点击的时候保存一个当前对象
-    //     }
-    //   })
-    // }
-    switch (key) {
-      case 'milepost': // 表示插入里程碑
-        this.handleAddSibiling(domEvent,id)
-        break;
-      case 'task':
-        if (type == '1') { // 表示里程碑中添加任务
-          this.handleAddChildren(domEvent,id)
-          return
-        } else if (type == '2') { // 表示任务中添加任务
-          this.handleAddSibiling(domEvent,id)
-          return
-        }
-        break
-      case 'sub_task':
-        if (type == '2') { // 表示任务中添加子任务
-          this.handleAddChildren(domEvent,id)
-        }
-        break
-      case 'rename': // 重命名
-        this.handleRename(domEvent,id)
-        break
-      case 'delete':
-        this.handleDeleteItem(domEvent,id)
-      default:
-        break;
-    }
-    return
-    setTimeout(() => {
-      switch (key) {
-        case 'milepost': // 表示插入里程碑
-          this.handleAddSibiling(domEvent,id)
-          break;
-        case 'task':
-          if (type == '1') { // 表示里程碑中添加任务
-            this.handleAddChildren(domEvent,id)
-            return
-          } else if (type == '2') { // 表示任务中添加任务
-            this.handleAddSibiling(domEvent,id)
-            return
-          }
-          break
-        case 'sub_task':
-          if (type == '2') { // 表示任务中添加子任务
-            this.handleAddChildren(domEvent,id)
-          }
-          break
-        case 'rename': // 重命名
-          this.handleRename(domEvent,id)
-          break
-        case 'delete':
-          this.handleDeleteItem(domEvent,id)
-        default:
-          break;
-      }
-    },200)
-    
-  }
-
   // 每一个Icon小图标的操作
   renderOperatorIconList = (id) => {
     const operatorIconList = [
@@ -964,56 +891,6 @@ export default class TempleteSchemeTree extends Component {
     return operatorIconList
   }
 
-  // 渲染点点点
-  renderSelectMoreOptions = ({type, id}) => {
-    const { currentTempleteListContainer = [] } = this.props
-    let flag = this.judgeWhetherCreateChildTask(currentTempleteListContainer, id)
-    return (
-      <Menu onClick={(e) => { this.handleSelectOptions({e,type,id}) }} getPopupContainer={triggerNode => triggerNode.parentNode}>
-        {
-          type == '1' && (
-            <Menu.Item key={'milepost'}>插入里程碑</Menu.Item>
-          )
-        }
-        <Menu.Item key={'task'}>插入任务</Menu.Item>
-        {
-          type == '2' && (
-            <Menu.Item key={'sub_task'}>插入子任务</Menu.Item>
-          )
-        }
-        {
-          <Menu.Item key={'rename'}>重命名</Menu.Item>
-        }
-        {
-          (type == '1' || type == '2') && (!flag) && (
-            <SubMenu key={'4'}
-              title={
-                <span>插入流程</span>
-              }
-            >
-              <Menu.Item key="1">Option 1</Menu.Item>
-              <Menu.Item key="2">Option 2</Menu.Item>
-            </SubMenu>
-          )
-        }
-        <Menu.Item style={{color: '#F5222D'}} key={'delete'}>删除</Menu.Item>
-      </Menu>
-    )
-  }
-
-  // 渲染dropdown内容
-  renderSpotDropdownContent = ({type, id}) => {
-    return (
-      <div 
-      // onClick={e => e.stopPropagation()}
-      >
-        <Dropdown trigger={['click']} overlayClassName={indexStyles.tempMoreOptionsWrapper} getPopupContainer={() => document.getElementById('planningSchemeItemWrapper')} overlay={this.renderSelectMoreOptions({type, id})}>
-          <span style={{fontSize: '16px', color: '#1890FF'}} className={globalStyles.authTheme}>&#xe679;</span>
-        </Dropdown>
-      </div>
-    )
-  }
-
   // 渲染树状列表的title
   renderPlanTreeTitle = ({ type, name, is_rename, id }) => {
     const { is_add_sibiling, is_add_children, is_add_rename, is_wrapper_add_sibiling, is_wrapper_add_children, is_wrapper_add_rename } = this.state
@@ -1043,10 +920,7 @@ export default class TempleteSchemeTree extends Component {
           ) : (
               <>
                 {icon}
-                <span style={{flex: 1, marginRight: '24px', overflow: 'hidden', textOverflow: 'ellipsis'}}>{name}</span>
-                <div className={indexStyles.icon_list}>
-                  {this.renderSpotDropdownContent({ type, id })}
-                </div>
+                <span>{name}</span>
                 {/* <div className={indexStyles.icon_list}>
                   {
                     operatorIconList.map(item => (
@@ -1078,6 +952,7 @@ export default class TempleteSchemeTree extends Component {
       } else {
         return <TreeNode title={this.renderPlanTreeTitle({ type: template_data_type, name, id, is_rename })} key={item.id} dataRef={item} />;
       }
+
     });
   }
 
@@ -1115,7 +990,7 @@ export default class TempleteSchemeTree extends Component {
     let flag = selectedKeys && selectedKeys.length && !is_wrapper_add_rename
     let whetherCreateChildTask = selectedKeys && selectedKeys.length && this.judgeWhetherCreateChildTask(currentTempleteListContainer, selectedKeys[0])
     return (
-      <div id={'planningSchemeItemWrapper'} className={indexStyles.planningSchemeItemWrapper}>
+      <div className={indexStyles.planningSchemeItemWrapper}>
         {/* 顶部工具栏 */}
         {/* <div className={indexStyles.planningSchemeItem_top}>
           <div>
