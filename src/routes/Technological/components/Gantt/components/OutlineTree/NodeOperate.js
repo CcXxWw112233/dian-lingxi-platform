@@ -223,14 +223,16 @@ export default class NodeOperate extends Component {
     }
     // 插入节点
     insertItem = async ({ type, data = {} }) => {
-        const { nodeValue: { parent_id, id }, outline_tree = [], dispatch } = this.props
-        let target_id = parent_id || id
+        let { nodeValue: { parent_id, id }, outline_tree = [], dispatch } = this.props
+        let target_id = parent_id //|| id
         this.props.onExpand(target_id, true) //展开
         let node = OutlineTree.getTreeNodeValue(outline_tree, target_id);
+        let new_children = [];
         if (!node) {
-            return
+            new_children = outline_tree
+        } else {
+            new_children = node.children
         }
-        let new_children = node.children || [];
         const index = new_children.findIndex(item => item.id == id)
         if (type == 'card') { //插入任务
             new_children.splice(index + 1, 0,
@@ -249,7 +251,11 @@ export default class NodeOperate extends Component {
         } else {
 
         }
-        node.children = new_children;
+        if (node) {
+            node.children = new_children;
+        } else {
+            outline_tree = new_children
+        }
         dispatch({
             type: 'gantt/handleOutLineTreeData',
             payload: {
@@ -356,7 +362,7 @@ export default class NodeOperate extends Component {
                 }
 
                 { //一级任务是顶级则没有
-                    tree_type == '2' && (
+                    (tree_type == '2' || tree_type == '3') && (
                         <div className={styles.menu_item} onClick={() => this.menuItemClick('insert_card')}>
                             插入任务
                         </div>

@@ -24,7 +24,7 @@ import { PROJECT_TEAM_BOARD_MEMBER, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_
 import ShowAddMenberModal from '../../../../routes/Technological/components/Project/ShowAddMenberModal';
 import SafeConfirmModal from './components/SafeConfirmModal';
 import { updateFlowInstanceNameOrDescription } from '../../../../services/technological/workFlow';
-
+import SaveBoardTemplate from './components/Modal/SaveBoardTemplate'
 const { SubMenu } = Menu;
 const { TreeNode } = OutlineTree;
 const { confirm } = Modal;
@@ -37,7 +37,7 @@ export default class OutLineHeadItem extends Component {
         show_add_menber_visible: false,
         safeConfirmModalVisible: false,
         selectedTpl: null,
-
+        save_board_template_visible: false,
     }
     componentDidMount() {
         const OrganizationId = localStorage.getItem('OrganizationId')
@@ -272,16 +272,26 @@ export default class OutLineHeadItem extends Component {
                                     ...res.data
                                 };
 
-                                let children = nodeValue.children || [];
+                                let children = [];
+                                if (nodeValue) {
+                                    children = nodeValue.children
+                                } else {
+                                    children = outline_tree
+                                }
                                 if (children.length > 0) {
                                     const index = children.findIndex((item) => item.tree_type == '0');
                                     children.splice(index, 0, addNodeValue);
                                 } else {
                                     children.push(addNodeValue);
                                 }
-
-                                nodeValue.children = children;
-                                this.setCreateAfterInputFous(paraseNodeValue, outline_tree);
+                                if (nodeValue) {
+                                    nodeValue.children = children;
+                                } else {
+                                    outline_tree = children
+                                }
+                                if (nodeValue) {
+                                    this.setCreateAfterInputFous(paraseNodeValue, outline_tree);
+                                }
 
 
                                 //当前的添加按钮
@@ -300,7 +310,7 @@ export default class OutLineHeadItem extends Component {
                                 message.error(res.message)
                             }
                         }).catch(err => {
-                            console.error(err);
+                            console.error('sssasd', err);
 
                             message.error('更新失败')
                         })
@@ -745,6 +755,14 @@ export default class OutLineHeadItem extends Component {
         return flag
     }
 
+    // 设置保存模板弹窗------start
+    saveBoardTemplateVisible = (bool) => {
+        this.setState({
+            save_board_template_visible: bool
+        })
+    }
+
+    // 设置保存模板弹窗------end
     render() {
         const { board_info_visible, show_add_menber_visible, safeConfirmModalVisible } = this.state;
         const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData, outline_tree_round, changeOutLineTreeNodeProto, deleteOutLineTreeNode } = this.props;
@@ -786,22 +804,26 @@ export default class OutLineHeadItem extends Component {
                             </div>
                         ) : (
                                 <div onClick={() => this.outlineTreeFold('fold')} style={{ color: '#1890FF' }}>
-                                    <span className={`${globalStyles.authTheme}`} style={{ fontSize: 16, marginRight: 2 }}>&#xe712;</span>
+                                    <span className={`${globalStyles.authTheme}`} style={{ fontSize: 16, marginRight: 4 }}>&#xe712;</span>
                                     <span>收起全部</span>
                                 </div>
                             )
                     }
 
-                    {/* <div>
-                        {
+                    <div>
+                        <div style={{ color: '#1890FF' }} onClick={() => this.saveBoardTemplateVisible(true)}>
+                            <span className={`${globalStyles.authTheme}`} style={{ fontSize: 16, marginRight: 4 }}>&#xe6b5;</span>
+                            <span style={{ marginRight: 16 }}>保存为项目模版</span>
+                        </div>
+                        {/* {
                             checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, gantt_board_id) &&
                             <span className={`${styles.actionIcon} ${globalStyles.authTheme}`} onClick={this.invitationJoin}>&#xe7ae;</span>
                         }
 
                         <Dropdown overlay={this.ganttProjectMenus()} trigger={['click']} placement={'topCenter'}>
                             <span className={`${styles.actionIcon} ${globalStyles.authTheme}`}>&#xe66f;</span>
-                        </Dropdown>
-                    </div> */}
+                        </Dropdown> */}
+                    </div>
                 </div>
                 <div onWheel={e => e.stopPropagation()}>
                     {
@@ -827,6 +849,12 @@ export default class OutLineHeadItem extends Component {
                         <SafeConfirmModal selectedTpl={this.state.selectedTpl} visible={safeConfirmModalVisible} onChangeVisible={this.changeSafeConfirmModalVisible} onOk={this.onImportBoardTemplate} />
                     }
                 </div>
+                <>
+                    <SaveBoardTemplate
+                        setVisible={this.saveBoardTemplateVisible}
+                        visible={this.state.save_board_template_visible}
+                    />
+                </>
             </div>
         );
     }
