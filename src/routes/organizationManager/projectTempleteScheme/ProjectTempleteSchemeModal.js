@@ -24,7 +24,8 @@ export default class ProjectTempleteSchemeModal extends Component {
     this.props.dispatch({
       type: 'organizationManager/getTemplateList',
       payload: {
-        _organization_id
+        _organization_id,
+        type: '2', // 私有模板
       }
     })
   }

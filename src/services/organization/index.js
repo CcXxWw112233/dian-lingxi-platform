@@ -231,6 +231,7 @@ export async function getTemplateList(params) {
     url: `${REQUEST_DOMAIN}/org/template/list`,
     method: 'GET',
     params: {
+      ...params,
       _organization_id: params._organization_id || localStorage.getItem('OrganizationId')
     }
   })

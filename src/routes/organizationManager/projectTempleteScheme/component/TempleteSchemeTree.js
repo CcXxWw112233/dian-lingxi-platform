@@ -230,22 +230,22 @@ export default class TempleteSchemeTree extends Component {
     if (parentKeysArr.length == '1') { // 如果说当前点击的是最外层的元素, 那么就直接在当前追加一条
       arr.splice(parentKeysArr[0] + 1, 0, { id: 'add_sibiling', name: '', template_data_type: template_data_type, template_id: template_id, parent_id: PARENTID, child_content: [] })
     } else {
-      // parentKeysArr.splice(-1, 1) // 这里为什么要截取呢, 是因为,只需要找到当前元素的父元素即可
+      let curr = JSON.parse(JSON.stringify(parentKeysArr || []))
+      parentKeysArr.splice(-1, 1) // 这里为什么要截取呢, 是因为,只需要找到当前元素的父元素即可
       arr = arr.map((item, i) => {
         let obj = { ...item };
         if (i == parentKeysArr[0]) {
-          for (let n = 1; n < parentKeysArr.length - 1; n++) {// 不管怎样，这里的obj永远获取到的都是当前点击的元素的父元素
+          for (let n = 1; n < parentKeysArr.length; n++) {// 不管怎样，这里的obj永远获取到的都是当前点击的元素的父元素
             obj = item.child_content[parentKeysArr[n]];
           }
           // 想要的这个操作就是在当前点击父元素上push一个同级对象
           // obj.child_content && obj.child_content.push({ id: 'add_sibiling', name: '', template_data_type: template_data_type, template_id: template_id, parent_id: PARENTID, child_content: [] });
-          obj.child_content && obj.child_content.splice(parentKeysArr[1] + 1, 0, { id: 'add_sibiling', name: '', template_data_type: template_data_type, template_id: template_id, parent_id: PARENTID, child_content: [] })
-          return obj
+          obj.child_content && obj.child_content.splice(curr[1] + 1, 0, { id: 'add_sibiling', name: '', template_data_type: template_data_type == '3' ? '2' : template_data_type, template_id: template_id, parent_id: PARENTID, child_content: [] })
+          return item
         }
-        return obj;
+        return item;
       });
     }
-    // return
     this.props.dispatch({
       type: 'organizationManager/updateDatas',
       payload: {
@@ -364,23 +364,36 @@ export default class TempleteSchemeTree extends Component {
       })
       return
     } else {
+      let curr = JSON.parse(JSON.stringify(parentKeysArr || []))
       parentKeysArr.splice(-1, 1) // 这里为什么要截取呢, 是因为,只需要找到当前元素的父元素即可
+      let new_data = []
       arr = arr.map((item, i) => {
         let obj = { ...item };
         if (i == parentKeysArr[0]) {
+          let content = {}
           for (let n = 1; n < parentKeysArr.length; n++) {
-            obj = item.child_content[parentKeysArr[n]];
+            content = item.child_content[parentKeysArr[n]];
           }
-          let flag = whetherExistenceOthersType(obj.child_content && obj.child_content)
-          if (flag && flag.length) {
-            // 如果是点击了添加同级的操作
-            // obj.child_content && obj.child_content.splice(-1, 1); // 之前的逻辑是添加至末尾, 所以取消就直接截取最后一个了
-            obj.child_content = obj.child_content && obj.child_content.filter(i => i.id != 'add_sibiling')
-            return obj
+          if (!(content && Object.keys(content).length)) {
+            content = item.child_content
+            new_data = item.child_content && item.child_content.filter(i => i.id != 'add_sibiling')
+            item['child_content'] = new_data
+            return item
+          } else {
+            let flag = whetherExistenceOthersType(content.child_content && content.child_content)
+            if (flag && flag.length) {
+              // 如果是点击了添加同级的操作
+              // obj.child_content && obj.child_content.splice(-1, 1); // 之前的逻辑是添加至末尾, 所以取消就直接截取最后一个了
+              new_data = content.child_content && content.child_content.filter(i => i.id != 'add_sibiling')
+              content.child_content = new_data
+              item['child_content'].splice(parentKeysArr[1],1,content)
+              return item
+            }
           }
         }
-        return obj;
+        return item;
       });
+      
 
       if (oldId && whetherUpdate) {
         this.updateAddSibilingTreeList({ datas: arr, currentId: id })
@@ -702,35 +715,22 @@ export default class TempleteSchemeTree extends Component {
   // 添加同级 S
   handleAddSibiling = (e, id) => {
     e && e.stopPropagation()
-    const { is_add_sibiling, is_add_children, itemIconArr = [] } = this.state
+    const { itemIconArr = [] } = this.state
     var { currentTempleteListContainer = [] } = this.props
     itemIconArr.push(id)
-    // if (is_add_children) {
-    //   return
-    //   // this.updateCancelOrDeleteChildrenTreeList({ datas: currentTempleteListContainer, type: 'add_children', oldId: itemIconArr[0], whetherUpdate: false })
-    // }
-    // if (is_add_sibiling) {
-    //   this.updateCancelOrDeleteSibilingTreeList({ datas: currentTempleteListContainer, type: 'add_sibiling', oldId: itemIconArr[0], whetherUpdate: true })
-    //   itemIconArr.shift(0, 1)
-    //   this.setState({
-    //     itemIconArr: itemIconArr
-    //   })
-    //   return
-    // }
     this.setState({
       is_add_sibiling: true,
       selectedKeys: [],
       itemIconArr: itemIconArr
     })
       this.updateAddSibilingTreeList({ datas: currentTempleteListContainer, currentId: id })
-    // this.updateAddSibilingTreeList({ datas: currentTempleteListContainer, currentId: id })
   }
   // 添加同级 E
 
   // 添加子级 S
   handleAddChildren = (e, id) => {
     e && e.stopPropagation()
-    const { is_add_sibiling, is_add_children, itemIconArr = [] } = this.state
+    const { itemIconArr = [] } = this.state
     let { currentTempleteListContainer = [] } = this.props
     itemIconArr.push(id)
     let flag = this.judgeWhetherCreateChildTask(currentTempleteListContainer, id)
@@ -738,22 +738,6 @@ export default class TempleteSchemeTree extends Component {
       message.warn('子任务不能创建子任务哦~', MESSAGE_DURATION_TIME)
       return
     }
-    // if (is_add_sibiling) {
-    //   debugger
-    //   return
-    //   // this.updateCancelOrDeleteSibilingTreeList({ datas: currentTempleteListContainer, type: 'add_sibiling', oldId: itemIconArr[0], whetherUpdate: false })
-    //   // 数据跟不上视图的变化
-    // }
-    // if (is_add_children) {
-    //   console.log(itemIconArr, 'ssssssssssss_itemIconArr')
-    //   this.updateCancelOrDeleteChildrenTreeList({ datas: currentTempleteListContainer, type: 'add_children', oldId: itemIconArr[0], whetherUpdate: true })
-    //   itemIconArr.shift(0, 1)
-    //   this.setState({
-    //     itemIconArr: itemIconArr
-    //   })
-    //   return
-    // }
-
     this.setState({
       is_add_children: true,
       selectedKeys: [],
@@ -762,6 +746,30 @@ export default class TempleteSchemeTree extends Component {
     this.updateAddChildrenTreeList({ datas: currentTempleteListContainer, currentId: id })
   }
   // 添加子级 E
+
+  // 插入流程 S
+  handleInsertFlow = ({e,name}) => {
+    const { domEvent, key } = e
+    domEvent && domEvent.stopPropagation()
+    const { currentSelectedItemInfo = {} } = this.props
+    const { template_id, parent_id, id } = currentSelectedItemInfo
+    let obj = {
+      name: name,
+      parent_id,
+      rela_id: key,
+      template_data_type: '3',
+      template_id: template_id,
+      target_id: id
+    }
+    this.props.dispatch({
+      type: 'organizationManager/createTempleteContainer',
+      payload: {
+        ...obj
+      }
+    })
+    return
+  }
+  // 插入流程 E
 
   // 重命名 S
   handleRename = (e, id) => {
@@ -843,8 +851,9 @@ export default class TempleteSchemeTree extends Component {
         payload: {
           name: inputValue,
           parent_id: parent_id == '0' ? id : PARENTID,
-          template_data_type: is_add_children || is_wrapper_add_children ? '2' : template_data_type,
-          template_id: template_id
+          template_data_type: is_add_children || is_wrapper_add_children ? '2' : template_data_type == '3' ? '2' : template_data_type,
+          template_id: template_id,
+          target_id: id
         }
       })
     }
@@ -863,6 +872,7 @@ export default class TempleteSchemeTree extends Component {
     e && e.stopPropagation()
     const { currentTempleteListContainer = [] } = this.props
     // this.updateCancelOrDeleteTreeList({ datas: currentTempleteListContainer, type })
+    this.initStateDatas()
     this.accordingToDifferenceTypeUpdateTreeList({ datas: currentTempleteListContainer, type })
   }
 
@@ -883,7 +893,6 @@ export default class TempleteSchemeTree extends Component {
         }
       })
     }
-    console.log(key,'sssssssssssssssss_key')
     setTimeout(() => {
       switch (key) {
         case 'insert_milepost': // 表示插入里程碑
@@ -894,6 +903,9 @@ export default class TempleteSchemeTree extends Component {
             this.handleAddChildren(domEvent,id)
             return
           } else if (type == '2') { // 表示任务中添加任务
+            this.handleAddSibiling(domEvent,id)
+            return
+          } else if (type == '3') { // 表示流程中添加任务
             this.handleAddSibiling(domEvent,id)
             return
           }
@@ -967,7 +979,7 @@ export default class TempleteSchemeTree extends Component {
           <Menu.Item key={'rename'}>重命名</Menu.Item>
         }
         {
-          type == '2' && (!flag) && (
+          (type == '2' || type == '3') && (!flag) && (
             <SubMenu trigger={['click']}
               title={
                 <span>插入流程</span>
@@ -975,7 +987,8 @@ export default class TempleteSchemeTree extends Component {
             >
               {
                !(processTemplateList && processTemplateList.length) ? ('') : processTemplateList.map(item => {
-                  return <Menu.Item title={item.name} key={`${item.id}_insert_flow`}>{item.name}</Menu.Item>
+                 const { id, name } = item
+                  return <Menu.Item onClick={(e) => { this.handleInsertFlow({e,name}) }} title={name} key={`${id}`}>{name}</Menu.Item>
                })
               }
             </SubMenu>
@@ -1011,6 +1024,8 @@ export default class TempleteSchemeTree extends Component {
       icon = <span className={globalStyles.authTheme} style={{ color: '#FAAD14', fontSize: '18px', marginRight: '6px' }}>&#xe6ef;</span>
     } else if (type == '2') {
       icon = <span className={globalStyles.authTheme} style={{ color: '#18B2FF', fontSize: '18px', marginRight: '6px' }}>&#xe6f0;</span>
+    } else if (type == '3') {
+      icon = <span className={globalStyles.authTheme} style={{ color: '#7CB305', fontSize: '20px', marginRight: '6px' }}>&#xe629;</span>
     }
     let operatorIconList = this.renderOperatorIconList(id)
     let disabledAll = is_add_sibiling || is_add_children || is_add_rename || is_wrapper_add_sibiling || is_wrapper_add_children || is_wrapper_add_rename
@@ -1070,8 +1085,9 @@ export default class TempleteSchemeTree extends Component {
   // 渲染数组为空的时候结构
   renderEmptyTreeData = () => {
     return (
-      <div>
+      <div style={{lineHeight: '92px', textAlign: 'center', color: 'rgba(0,0,0,0.45)'}}>
         {/* <div onClick={this.handleInitTemplete} className={indexStyles.empty_data}><span className={globalStyles.authTheme}>&#xe6e9;</span> 添加项目第一阶段里程碑</div> */}
+        暂无数据
       </div>
     )
   }
