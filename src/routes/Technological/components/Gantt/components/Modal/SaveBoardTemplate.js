@@ -12,6 +12,21 @@ export default class SelectBoardModal extends Component {
         }
     }
     onOk = () => {
+        const { dispatch } = this.props
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                triggle_request_board_template: true
+            }
+        })
+        setTimeout(() => {
+            dispatch({
+                type: 'gantt/updateDatas',
+                payload: {
+                    triggle_request_board_template: false
+                }
+            })
+        }, 1000)
         this.closeModal()
     }
     onCancel = () => {

@@ -37,6 +37,7 @@ export default class BoardTemplate extends Component {
             checkedKeys: [], //已选择的key
             checkedKeysObj: [], ////已选择的keyobj
             selectedTpl: {},
+            template_origin: '1', //1 || 2 行业或自有
         }
         this.drag_init_inner_html = ''
     }
@@ -83,11 +84,41 @@ export default class BoardTemplate extends Component {
             this.initState(is_new_board)
             this.getBoardTemplateList()
         }
+        this.listenGetBoardTemplateList(nextProps)
     }
     componentWillUnmount() {
         this.removeEvent()
         window.addEventListener('resize', this.getHeight, false)
     }
+
+    // 选择模板类型
+    selectTemplateType = (template_origin) => {
+        const { template_origin: template_origin_od } = this.state
+        if (template_origin == template_origin_od) return
+        this.setState({
+            template_origin
+        })
+        this.getBoardTemplateList({ template_origin })
+    }
+    listenGetBoardTemplateList = (nextProps) => {
+        const { dispatch, triggle_request_board_template } = this.props
+        const { template_origin } = this.state
+        console.log('triggle_request_board_template', nextProps.triggle_request_board_template, triggle_request_board_template, template_origin)
+        // 保存模板时触发
+        if ((nextProps.triggle_request_board_template != triggle_request_board_template)
+            && nextProps.triggle_request_board_template &&
+            template_origin == '2'
+        ) {
+            dispatch({
+                type: 'gantt/updateDatas',
+                payload: {
+                    triggle_request_board_template: false
+                }
+            })
+            this.getBoardTemplateList()
+        }
+    }
+
     // 获取模板列表
     getBoardTemplateList = async () => {
         const OrganizationId = localStorage.getItem('OrganizationId')
@@ -669,8 +700,9 @@ export default class BoardTemplate extends Component {
         });
     }
 
+
     render() {
-        const { template_data, selected_template_name, spinning, project_templete_scheme_visible, checkedKeys = [], safeConfirmModalVisible } = this.state
+        const { template_origin, template_data, selected_template_name, spinning, project_templete_scheme_visible, checkedKeys = [], safeConfirmModalVisible } = this.state
         const { gantt_board_id, boardTemplateShow, group_view_type, outline_tree, gantt_card_height, gantt_view_mode } = this.props
         return (
             gantt_board_id && gantt_board_id != '0' ?
@@ -685,7 +717,12 @@ export default class BoardTemplate extends Component {
                         <div
                             style={{ height: date_area_height }}
                             className={styles.top}>
-                            <span className={styles.title}>项目模板</span>
+                            <div className={`${styles.top_select}`}>
+                                <div className={`${styles.top_select_left} ${template_origin == '1' && styles.selected}`} onClick={() => this.selectTemplateType('1')}>行业模版</div>
+                                <div className={`${styles.top_select_right} ${template_origin == '2' && styles.selected}`} onClick={() => this.selectTemplateType('2')}>自有模版</div>
+                            </div>
+
+                            {/* <span className={styles.title}>项目模板</span> */}
                             {/* <Dropdown overlay={this.renderTemplateList()}>
                                 <div className={styles.top_left}>
                                     <div className={`${globalStyles.global_ellipsis} ${styles.name}`}>{selected_template_name}</div>
@@ -811,7 +848,8 @@ function mapStateToProps({
             boardTemplateShow,
             outline_tree,
             group_view_type,
-            gantt_view_mode
+            gantt_view_mode,
+            triggle_request_board_template
         }
     },
     technological: { datas: { userBoardPermissions = [] } },
@@ -824,6 +862,7 @@ function mapStateToProps({
         boardTemplateShow,
         outline_tree,
         group_view_type,
-        gantt_view_mode
+        gantt_view_mode,
+        triggle_request_board_template
     }
 }
