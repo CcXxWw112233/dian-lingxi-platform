@@ -43,6 +43,12 @@ export default class ProjectTempleteSchemeModal extends Component {
         }
       })
       this.props.dispatch({
+        type: 'publicProcessDetailModal/getProcessTemplateList',
+        payload: {
+          _organization_id: localStorage.getItem('OrganizationId')
+        }
+      })
+      this.props.dispatch({
         type: 'organizationManager/updateDatas',
         payload: {
           currentTempleteId: id

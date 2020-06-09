@@ -828,3 +828,18 @@ export const arrayNonRepeatfy = (arr, key = 'id') => {
   }
   return temp_arr
 }
+
+/**
+ * 去除空数组
+ * @param {Array} arr 需要去除的数组
+ */
+export const removeEmptyArrayEle = (arr) => {
+  if (!arr) return []
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i] == undefined) {
+      arr.splice(i, 1);
+      i = i - 1; // i - 1 ,因为空元素在数组下标 2 位置，删除空之后，后面的元素要向前补位，
+    }
+  }
+  return arr;
+};

@@ -5,6 +5,7 @@ import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
 import { isApiResponseOk } from '@/utils/handleResponseData'
+import { removeEmptyArrayEle } from '../../../../utils/util'
 const { TreeNode } = Tree;
 const { SubMenu } = Menu;
 @connect(mapStateToProps)
@@ -31,6 +32,12 @@ export default class TempleteSchemeTree extends Component {
       payload: {
         currentTempleteListContainer: [],
         currentTempleteId: ''
+      }
+    })
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        processTemplateList: [],
       }
     })
   }
@@ -247,18 +254,6 @@ export default class TempleteSchemeTree extends Component {
     })
   }
 
-  // 去除空数组
-  removeEmptyArrayEle = (arr) => {
-    for (var i = 0; i < arr.length; i++) {
-      if (arr[i] == undefined) {
-        arr.splice(i, 1);
-        i = i - 1; // i - 1 ,因为空元素在数组下标 2 位置，删除空之后，后面的元素要向前补位，
-        // 这样才能真正去掉空元素,觉得这句可以删掉的连续为空试试，然后思考其中逻辑
-      }
-    }
-    return arr;
-  };
-
   /**
    * 添加子级更新树状结构
    * 逻辑: 获取当前对象自己所在的位置,然后在child_content中push一个对象
@@ -279,7 +274,7 @@ export default class TempleteSchemeTree extends Component {
     let temp = [].concat([{ id: 'add_children', name: '', template_data_type: '2', template_id: template_id, parent_id: PARENTID, child_content: [] }],currentSelectedItemInfo.child_content)
     // currentSelectedItemInfo.child_content.push()
     if (parentKeysArr.length == '1') { // 如果说当前点击的是最外层的元素, 那么就直接在当前追加一条
-      arr.splice(parentKeysArr[0], 1, { ...currentSelectedItemInfo, child_content: this.removeEmptyArrayEle(temp) })
+      arr.splice(parentKeysArr[0], 1, { ...currentSelectedItemInfo, child_content: removeEmptyArrayEle(temp) })
       tempExpandedKeys.push(PARENTID)
     } else {
       parentKeysArr.splice(-1, 1) // 这里为什么要截取呢, 是因为,只需要找到当前元素的父元素即可
@@ -888,12 +883,13 @@ export default class TempleteSchemeTree extends Component {
         }
       })
     }
+    console.log(key,'sssssssssssssssss_key')
     setTimeout(() => {
       switch (key) {
-        case 'milepost': // 表示插入里程碑
+        case 'insert_milepost': // 表示插入里程碑
           this.handleAddSibiling(domEvent,id)
           break;
-        case 'task':
+        case 'insert_task':
           if (type == '1') { // 表示里程碑中添加任务
             this.handleAddChildren(domEvent,id)
             return
@@ -902,7 +898,7 @@ export default class TempleteSchemeTree extends Component {
             return
           }
           break
-        case 'sub_task':
+        case 'add_sub_task':
           if (type == '2') { // 表示任务中添加子任务
             this.handleAddChildren(domEvent,id)
           }
@@ -952,19 +948,19 @@ export default class TempleteSchemeTree extends Component {
 
   // 渲染点点点
   renderSelectMoreOptions = ({type, id}) => {
-    const { currentTempleteListContainer = [] } = this.props
+    const { currentTempleteListContainer = [], processTemplateList = [] } = this.props
     let flag = this.judgeWhetherCreateChildTask(currentTempleteListContainer, id)
     return (
       <Menu onClick={(e) => { this.handleSelectOptions({e,type,id}) }} getPopupContainer={triggerNode => triggerNode.parentNode}>
         {
           type == '1' && (
-            <Menu.Item key={'milepost'}>插入里程碑</Menu.Item>
+            <Menu.Item key={'insert_milepost'}>插入里程碑</Menu.Item>
           )
         }
-        <Menu.Item key={'task'}>插入任务</Menu.Item>
+        <Menu.Item key={'insert_task'}>插入任务</Menu.Item>
         {
           type == '2' && (
-            <Menu.Item disabled={flag} key={'sub_task'}>新建子任务</Menu.Item>
+            <Menu.Item disabled={flag} key={'add_sub_task'}>新建子任务</Menu.Item>
           )
         }
         {
@@ -972,13 +968,16 @@ export default class TempleteSchemeTree extends Component {
         }
         {
           type == '2' && (!flag) && (
-            <SubMenu trigger={['click']} key={'4'}
+            <SubMenu trigger={['click']}
               title={
                 <span>插入流程</span>
               }
             >
-              <Menu.Item key="1">Option 1</Menu.Item>
-              <Menu.Item key="2">Option 2</Menu.Item>
+              {
+               !(processTemplateList && processTemplateList.length) ? ('') : processTemplateList.map(item => {
+                  return <Menu.Item title={item.name} key={`${item.id}_insert_flow`}>{item.name}</Menu.Item>
+               })
+              }
             </SubMenu>
           )
         }
@@ -993,8 +992,8 @@ export default class TempleteSchemeTree extends Component {
       <div 
         // onClick={e => e.stopPropagation()}
       >
-        <Dropdown trigger={['click']} overlayClassName={indexStyles.tempMoreOptionsWrapper} getPopupContainer={() => document.getElementById('planningSchemeItemWrapper')} overlay={this.renderSelectMoreOptions({type, id})}>
-          <span style={{fontSize: '16px', color: '#1890FF'}} className={globalStyles.authTheme}>&#xe679;</span>
+        <Dropdown overlayClassName={indexStyles.tempMoreOptionsWrapper} getPopupContainer={() => document.getElementById('planningSchemeItemWrapper')} overlay={this.renderSelectMoreOptions({type, id})}>
+          <span style={{fontSize: '16px', color: '#1890FF'}} className={`${globalStyles.authTheme} ${indexStyles.sopt_icon}`}>&#xe7fd;</span>
         </Dropdown>
       </div>
     )
@@ -1030,7 +1029,7 @@ export default class TempleteSchemeTree extends Component {
           ) : (
               <>
                 {icon}
-                <span style={{flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'}}>{name}</span>
+                <span title={name} style={{overflow: 'hidden', textOverflow: 'ellipsis'}}>{name}</span>
                 <div className={indexStyles.icon_list}>
                   {this.renderSpotDropdownContent({ type, id })}
                 </div>
@@ -1135,11 +1134,15 @@ function mapStateToProps({
       currentSelectedItemInfo = {},
       currentTempleteId
     }
-  }
+  },
+  publicProcessDetailModal: {
+    processTemplateList = []
+  },
 }) {
   return {
     currentTempleteListContainer,
     currentSelectedItemInfo,
-    currentTempleteId
+    currentTempleteId,
+    processTemplateList
   }
 }

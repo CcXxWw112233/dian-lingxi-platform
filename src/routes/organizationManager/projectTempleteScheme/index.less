@@ -229,6 +229,7 @@
   // position: absolute;
   // right: 0;
   margin-right: 6px;
+  margin-left: 8px;
 }
 .show_icon {
   position: relative;
@@ -271,10 +272,35 @@
   cursor: pointer;
 }
 
+.sopt_icon {
+  width:16px;
+  height:16px;
+  border:1px solid rgba(24,144,255,1);
+  color: #1890FF;
+  display: flex;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
 .tempMoreOptionsWrapper {
   :global {
     .ant-dropdown-menu-submenu-arrow {
       right: -10px !important;
+    }
+    .ant-dropdown-menu-sub {
+      width: 200px;
+      height: 400px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .ant-dropdown-menu-item {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
   }
 }
