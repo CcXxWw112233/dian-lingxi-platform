@@ -514,14 +514,17 @@ export default class OutLineHeadItem extends Component {
                 // let nodeValue = OutlineTree.getTreeAddNodeValue(outline_tree, param.add_id);
                 let nodeValue = OutlineTree.getTreeNodeValueByName(outline_tree, 'add_id', param.add_id);
                 if (nodeValue) {
-
                     // nodeValue.name = param.name;
-                    nodeValue.editing = false;
-                    nodeValue.time_span = 0;
-                    nodeValue.start_time = null;
-                    nodeValue.due_time = null;
-
-                    this.updateOutLineTreeData(outline_tree);
+                    if (nodeValue.parent_id) {
+                        nodeValue.editing = false;
+                        nodeValue.time_span = 0;
+                        nodeValue.start_time = null;
+                        nodeValue.due_time = null;
+                        this.updateOutLineTreeData(outline_tree);
+                    } else { //在最外层插入时，插入成功后会任务弹窗聚焦,失焦时没去掉输入创建的item
+                        const new_outline_tree = JSON.parse(JSON.stringify(outline_tree)).filter(item => !item.add_id)
+                        this.updateOutLineTreeData(new_outline_tree);
+                    }
                     if (typeof calback == 'function') {
                         calback()
                     }
@@ -567,7 +570,7 @@ export default class OutLineHeadItem extends Component {
             placeholder = paraseNodeValue.children.find((item) => item.tree_type == '0');
 
         } else {
-            placeholder = outline_tree.children.find((item) => item.tree_type == '0');
+            placeholder = outline_tree.find((item) => item.tree_type == '0');
         }
         if (placeholder) {
             placeholder.is_focus = true;
