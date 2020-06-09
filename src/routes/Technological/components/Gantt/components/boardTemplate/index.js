@@ -103,7 +103,7 @@ export default class BoardTemplate extends Component {
     listenGetBoardTemplateList = (nextProps) => {
         const { dispatch, triggle_request_board_template } = this.props
         const { template_origin } = this.state
-        console.log('triggle_request_board_template', nextProps.triggle_request_board_template, triggle_request_board_template, template_origin)
+        // console.log('triggle_request_board_template', nextProps.triggle_request_board_template, triggle_request_board_template, template_origin)
         // 保存模板时触发
         if ((nextProps.triggle_request_board_template != triggle_request_board_template)
             && nextProps.triggle_request_board_template &&
@@ -714,28 +714,33 @@ export default class BoardTemplate extends Component {
                             // top: date_area_height
                             visibility: group_view_type != '2' ? 'visible' : 'hidden'
                         }}>
-                        <div
-                            style={{ height: date_area_height }}
-                            className={styles.top}>
-                            <div className={`${styles.top_select}`}>
-                                <div className={`${styles.top_select_left} ${template_origin == '1' && styles.selected}`} onClick={() => this.selectTemplateType('1')}>行业模版</div>
-                                <div className={`${styles.top_select_right} ${template_origin == '2' && styles.selected}`} onClick={() => this.selectTemplateType('2')}>自有模版</div>
-                            </div>
+                        {
+                            !this.state.selected_template_id && (
+                                <div
+                                    style={{ height: date_area_height }}
+                                    className={styles.top}>
+                                    <div className={`${styles.top_select}`}>
+                                        <div className={`${styles.top_select_left} ${template_origin == '1' && styles.selected}`} onClick={() => this.selectTemplateType('1')}>行业模版</div>
+                                        <div className={`${styles.top_select_right} ${template_origin == '2' && styles.selected}`} onClick={() => this.selectTemplateType('2')}>自有模版</div>
+                                    </div>
 
-                            {/* <span className={styles.title}>项目模板</span> */}
-                            {/* <Dropdown overlay={this.renderTemplateList()}>
+                                    {/* <span className={styles.title}>项目模板</span> */}
+                                    {/* <Dropdown overlay={this.renderTemplateList()}>
                                 <div className={styles.top_left}>
                                     <div className={`${globalStyles.global_ellipsis} ${styles.name}`}>{selected_template_name}</div>
                                     <div className={`${globalStyles.authTheme} ${styles.down}`}>&#xe7ee;</div>
                                 </div>
                             </Dropdown> */}
-                            {/* {
+                                    {/* {
                                 this.isShowSetting() &&
                                 (
                                     <div className={`${globalStyles.authTheme} ${styles.top_right}`} onClick={this.routingJumpToOrgManager}>&#xe78e;</div>
                                 )
                             } */}
-                        </div>
+                                </div>
+                            )
+                        }
+
                         {/* 拖拽子任务时，用于存放任务图标的ui,做dom操作 */}
                         <div
                             style={{ display: 'none' }}
