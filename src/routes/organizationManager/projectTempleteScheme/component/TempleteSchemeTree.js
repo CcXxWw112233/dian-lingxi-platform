@@ -763,6 +763,7 @@ export default class TempleteSchemeTree extends Component {
   handleRename = (e, id) => {
     e && e.stopPropagation()
     const { is_add_rename } = this.state
+    const { currentSelectedItemInfo: { name } } = this.props
     if (is_add_rename) {
       return false
     }
@@ -777,6 +778,8 @@ export default class TempleteSchemeTree extends Component {
     this.setState({
       is_add_rename: true,
       selectedKeys: [],
+      inputValue: name,
+      local_name: name
     })
   }
   // 重命名 E
@@ -802,9 +805,9 @@ export default class TempleteSchemeTree extends Component {
       })
       return false
     }
-    if (e.target.value.length > 19) {
-      message.warn('最多只能输入20个字符')
-      // return
+    if (e.target.value.length > 50) {
+      message.warn('最多只能输入50个字符')
+      return
     }
     this.setState({
       inputValue: e.target.value,
@@ -863,45 +866,19 @@ export default class TempleteSchemeTree extends Component {
 
   handleSelectOptions = ({e, type,id}) => {
     const { key, domEvent } = e
+    domEvent && domEvent.stopPropagation()
     const { currentTempleteListContainer = [] } = this.props
     const { is_add_sibiling, is_add_children, is_add_rename, is_wrapper_add_sibiling, is_wrapper_add_children, is_wrapper_add_rename } = this.state
     if (is_add_sibiling || is_add_children || is_add_rename || is_wrapper_add_sibiling || is_wrapper_add_children || is_wrapper_add_rename) return
-    // if (id) {
-    //   let currentSelectedItemInfo = this.recursion(currentTempleteListContainer, id)
-    //   this.props.dispatch({
-    //     type: 'organizationManager/updateDatas',
-    //     payload: {
-    //       currentSelectedItemInfo // 需要点击的时候保存一个当前对象
-    //     }
-    //   })
-    // }
-    switch (key) {
-      case 'milepost': // 表示插入里程碑
-        this.handleAddSibiling(domEvent,id)
-        break;
-      case 'task':
-        if (type == '1') { // 表示里程碑中添加任务
-          this.handleAddChildren(domEvent,id)
-          return
-        } else if (type == '2') { // 表示任务中添加任务
-          this.handleAddSibiling(domEvent,id)
-          return
+    if (id) {
+      let currentSelectedItemInfo = this.recursion(currentTempleteListContainer, id)
+      this.props.dispatch({
+        type: 'organizationManager/updateDatas',
+        payload: {
+          currentSelectedItemInfo // 需要点击的时候保存一个当前对象
         }
-        break
-      case 'sub_task':
-        if (type == '2') { // 表示任务中添加子任务
-          this.handleAddChildren(domEvent,id)
-        }
-        break
-      case 'rename': // 重命名
-        this.handleRename(domEvent,id)
-        break
-      case 'delete':
-        this.handleDeleteItem(domEvent,id)
-      default:
-        break;
+      })
     }
-    return
     setTimeout(() => {
       switch (key) {
         case 'milepost': // 表示插入里程碑
@@ -978,15 +955,15 @@ export default class TempleteSchemeTree extends Component {
         <Menu.Item key={'task'}>插入任务</Menu.Item>
         {
           type == '2' && (
-            <Menu.Item key={'sub_task'}>插入子任务</Menu.Item>
+            <Menu.Item disabled={flag} key={'sub_task'}>新建子任务</Menu.Item>
           )
         }
         {
           <Menu.Item key={'rename'}>重命名</Menu.Item>
         }
         {
-          (type == '1' || type == '2') && (!flag) && (
-            <SubMenu key={'4'}
+          type == '2' && (!flag) && (
+            <SubMenu trigger={['click']} key={'4'}
               title={
                 <span>插入流程</span>
               }
@@ -1005,7 +982,7 @@ export default class TempleteSchemeTree extends Component {
   renderSpotDropdownContent = ({type, id}) => {
     return (
       <div 
-      // onClick={e => e.stopPropagation()}
+        // onClick={e => e.stopPropagation()}
       >
         <Dropdown trigger={['click']} overlayClassName={indexStyles.tempMoreOptionsWrapper} getPopupContainer={() => document.getElementById('planningSchemeItemWrapper')} overlay={this.renderSelectMoreOptions({type, id})}>
           <span style={{fontSize: '16px', color: '#1890FF'}} className={globalStyles.authTheme}>&#xe679;</span>
@@ -1016,7 +993,8 @@ export default class TempleteSchemeTree extends Component {
 
   // 渲染树状列表的title
   renderPlanTreeTitle = ({ type, name, is_rename, id }) => {
-    const { is_add_sibiling, is_add_children, is_add_rename, is_wrapper_add_sibiling, is_wrapper_add_children, is_wrapper_add_rename } = this.state
+    const { is_add_sibiling, is_add_children, is_add_rename, is_wrapper_add_sibiling, is_wrapper_add_children, is_wrapper_add_rename, local_name, inputValue } = this.state
+    const disabled = (inputValue == local_name) || (inputValue == '')
     const { currentSelectedItemInfo = {}, currentTempleteListContainer = [] } = this.props
     let firstEleId = currentTempleteListContainer && currentTempleteListContainer.length > 0 && currentTempleteListContainer[0].id
     let icon = ''
@@ -1034,16 +1012,16 @@ export default class TempleteSchemeTree extends Component {
           !name || is_rename ? (
             <>
               {icon}
-              <span style={{ flex: 1, marginRight: '12px' }}><Input maxLength={20} autoFocus={true} onClick={this.handleChangeTempleteContainerValue} onChange={this.handleChangeTempleteContainerValue} /></span>
+              <span style={{ flex: 1, marginRight: '12px' }}><Input value={this.state.inputValue} maxLength={51} autoFocus={true} onClick={e => e.stopPropagation()} onChange={this.handleChangeTempleteContainerValue} /></span>
               <span>
-                <Button onClick={(e) => { this.handleCreateTempContainer({ e, is_rename }) }} type="primary" style={{ marginRight: '8px' }} disabled={this.state.inputValue && this.state.inputValue.length <= 20 ? false : true}>确定</Button>
+                <Button onClick={(e) => { this.handleCreateTempContainer({ e, is_rename }) }} type="primary" style={{ marginRight: '8px' }} disabled={disabled}>确定</Button>
                 <Button onClick={(e) => { this.handleCancelTempContainer({ e, id }) }}>取消</Button>
               </span>
             </>
           ) : (
               <>
                 {icon}
-                <span style={{flex: 1, marginRight: '24px', overflow: 'hidden', textOverflow: 'ellipsis'}}>{name}</span>
+                <span style={{flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'}}>{name}</span>
                 <div className={indexStyles.icon_list}>
                   {this.renderSpotDropdownContent({ type, id })}
                 </div>
