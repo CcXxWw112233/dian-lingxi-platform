@@ -16,10 +16,11 @@ export default class TempleteSchemeTree extends Component {
   // 初始化的state数据
   initStateDatas = () => {
     this.setState({
-      is_add_sibiling: false,
-      is_add_children: false,
-      is_add_rename: false,
-      inputValue: '',
+      is_add_sibiling: false, // 添加同级
+      is_add_children: false, // 添加子级
+      is_add_rename: false, // 重命名
+      inputValue: '', // 输入框value值
+      local_name: '', // 本地名称
     })
   }
 
@@ -85,7 +86,12 @@ export default class TempleteSchemeTree extends Component {
     return flag
   }
 
-  // 判断是否创建子任务
+  /**
+   * 判断是否创建子任务
+   * @param {Array} data 数据列表
+   * @param {String} nodeId 当前需要判断的对象
+   * @returns {Boolean} true 表示当前这个为子任务
+   */
   judgeWhetherCreateChildTask = (data, nodeId) => {
     let flag
     if (data.length == 0) {
@@ -217,17 +223,19 @@ export default class TempleteSchemeTree extends Component {
     if (parentKeysArr.length == '1') { // 如果说当前点击的是最外层的元素, 那么就直接在当前追加一条
       arr.splice(parentKeysArr[0] + 1, 0, { id: 'add_sibiling', name: '', template_data_type: template_data_type, template_id: template_id, parent_id: PARENTID, child_content: [] })
     } else {
-      parentKeysArr.splice(-1, 1) // 这里为什么要截取呢, 是因为,只需要找到当前元素的父元素即可
-      arr.map((item, i) => {
+      // parentKeysArr.splice(-1, 1) // 这里为什么要截取呢, 是因为,只需要找到当前元素的父元素即可
+      arr = arr.map((item, i) => {
+        let obj = { ...item };
         if (i == parentKeysArr[0]) {
-          let obj = { ...item };
-          for (let n = 1; n < parentKeysArr.length; n++) {// 不管怎样，这里的obj永远获取到的都是当前点击的元素的父元素
+          for (let n = 1; n < parentKeysArr.length - 1; n++) {// 不管怎样，这里的obj永远获取到的都是当前点击的元素的父元素
             obj = item.child_content[parentKeysArr[n]];
           }
           // 想要的这个操作就是在当前点击父元素上push一个同级对象
-          obj.child_content && obj.child_content.push({ id: 'add_sibiling', name: '', template_data_type: template_data_type, template_id: template_id, parent_id: PARENTID, child_content: [] });
+          // obj.child_content && obj.child_content.push({ id: 'add_sibiling', name: '', template_data_type: template_data_type, template_id: template_id, parent_id: PARENTID, child_content: [] });
+          obj.child_content && obj.child_content.splice(parentKeysArr[1] + 1, 0, { id: 'add_sibiling', name: '', template_data_type: template_data_type, template_id: template_id, parent_id: PARENTID, child_content: [] })
+          return obj
         }
-        return item;
+        return obj;
       });
     }
     // return
@@ -268,7 +276,7 @@ export default class TempleteSchemeTree extends Component {
     let PARENTID = parent_id == '0' ? id : parent_id
     // 得到一个当前元素中所有父级所在的下标位置的数组
     let parentKeysArr = this.getCurrentElementParentKey(arr, currentId);
-    let temp = [].concat(currentSelectedItemInfo.child_content, [{ id: 'add_children', name: '', template_data_type: '2', template_id: template_id, parent_id: PARENTID, child_content: [] }])
+    let temp = [].concat([{ id: 'add_children', name: '', template_data_type: '2', template_id: template_id, parent_id: PARENTID, child_content: [] }],currentSelectedItemInfo.child_content)
     // currentSelectedItemInfo.child_content.push()
     if (parentKeysArr.length == '1') { // 如果说当前点击的是最外层的元素, 那么就直接在当前追加一条
       arr.splice(parentKeysArr[0], 1, { ...currentSelectedItemInfo, child_content: this.removeEmptyArrayEle(temp) })
@@ -362,19 +370,21 @@ export default class TempleteSchemeTree extends Component {
       return
     } else {
       parentKeysArr.splice(-1, 1) // 这里为什么要截取呢, 是因为,只需要找到当前元素的父元素即可
-      arr.map((item, i) => {
+      arr = arr.map((item, i) => {
+        let obj = { ...item };
         if (i == parentKeysArr[0]) {
-          let obj = { ...item };
           for (let n = 1; n < parentKeysArr.length; n++) {
             obj = item.child_content[parentKeysArr[n]];
           }
           let flag = whetherExistenceOthersType(obj.child_content && obj.child_content)
           if (flag && flag.length) {
             // 如果是点击了添加同级的操作
-            obj.child_content && obj.child_content.splice(-1, 1);
+            // obj.child_content && obj.child_content.splice(-1, 1); // 之前的逻辑是添加至末尾, 所以取消就直接截取最后一个了
+            obj.child_content = obj.child_content && obj.child_content.filter(i => i.id != 'add_sibiling')
+            return obj
           }
         }
-        return item;
+        return obj;
       });
 
       if (oldId && whetherUpdate) {
@@ -421,9 +431,8 @@ export default class TempleteSchemeTree extends Component {
 
     if (parentKeysArr.length == '1') { // 如果说当前点击的是最外层的元素, 那么就直接在当前追加一条
       let flag = whetherExistenceOthersType(arr[parentKeysArr[0]].child_content)
-
       if (flag && flag.length) {
-        arr[parentKeysArr[0]].child_content.splice(-1, 1)
+        arr[parentKeysArr[0]].child_content = arr[parentKeysArr[0]].child_content.filter(i => i.id != type)
         dispatch({
           type: 'organizationManager/updateDatas',
           payload: {
