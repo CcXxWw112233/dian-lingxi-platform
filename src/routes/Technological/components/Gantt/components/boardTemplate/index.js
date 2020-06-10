@@ -286,8 +286,10 @@ export default class BoardTemplate extends Component {
         let icon = ''
         if (template_data_type == '1') {
             icon = <div className={`${globalStyles.authTheme} main_can_drag_flag`} style={{ color: '#FAAD14', fontSize: 18, marginRight: 6 }}>&#xe6ef;</div>
-        } else {
+        } else if (template_data_type == '2') {
             icon = <div className={`${globalStyles.authTheme} main_can_drag_flag`} style={{ color: '#18B2FF', fontSize: 18, marginRight: 6 }} >&#xe6f0;</div>
+        } else {
+            icon = <div className={`${globalStyles.authTheme} main_can_drag_flag`} style={{ color: '#7CB305', fontSize: 20, marginRight: 6 }} >&#xe629;</div>
         }
         return (
             <div
