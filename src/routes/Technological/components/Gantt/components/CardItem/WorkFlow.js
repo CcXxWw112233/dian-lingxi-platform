@@ -15,6 +15,7 @@ import { workflowUpdateTime } from '../../../../../../services/technological/wor
 // const coperatedX = 0
 const card_width_diff = 8 //宽度误差微调
 const card_left_diff = 4 //位置误差微调
+const pading_left_diff = 6 //pading
 @connect(mapStateToProps)
 export default class WorkFlowItem extends Component {
 
@@ -43,7 +44,7 @@ export default class WorkFlowItem extends Component {
 
         this.setState({
             local_top: top,
-            local_left: left,
+            local_left: left + pading_left_diff,
             local_width: width, //实时变化
         })
 
@@ -163,7 +164,7 @@ export default class WorkFlowItem extends Component {
         updateData.start_time = parseInt(start_time_timestamp)
         if (isSamDay(start_time, start_time_timestamp)) { //向右拖动时，如果是在同一天，则不去更新
             this.setState({
-                local_left: left,
+                local_left: left + pading_left_diff,
             })
             return
         }
@@ -178,13 +179,13 @@ export default class WorkFlowItem extends Component {
                     });
                 } else {
                     this.setState({
-                        local_left: left,
+                        local_left: left + pading_left_diff,
                     })
                     message.warn(res.message)
                 }
             }).catch(err => {
                 this.setState({
-                    local_left: left,
+                    local_left: left + pading_left_diff,
                 })
                 message.error('更新失败')
             })
