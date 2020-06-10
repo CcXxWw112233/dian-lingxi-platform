@@ -37,7 +37,7 @@ export default class BoardTemplate extends Component {
             checkedKeys: [], //已选择的key
             checkedKeysObj: [], ////已选择的keyobj
             selectedTpl: {},
-            template_origin: '1', //1 || 2 行业或自有
+            template_origin: '0', //0 || 2 平台或自有
         }
         this.drag_init_inner_html = ''
     }
@@ -97,8 +97,9 @@ export default class BoardTemplate extends Component {
         if (template_origin == template_origin_od) return
         this.setState({
             template_origin
+        }, () => {
+            this.getBoardTemplateList()
         })
-        this.getBoardTemplateList({ template_origin })
     }
     listenGetBoardTemplateList = (nextProps) => {
         const { dispatch, triggle_request_board_template } = this.props
@@ -130,7 +131,8 @@ export default class BoardTemplate extends Component {
             return
         }
         const _organization_id = OrganizationId != '0' ? OrganizationId : aboutBoardOrganizationId
-        const res = await getBoardTemplateList({ _organization_id })
+        const { template_origin } = this.state
+        const res = await getBoardTemplateList({ _organization_id, type: template_origin })
         if (isApiResponseOk(res)) {
             const { data } = res
             this.setState({
@@ -720,7 +722,7 @@ export default class BoardTemplate extends Component {
                                     style={{ height: date_area_height }}
                                     className={styles.top}>
                                     <div className={`${styles.top_select}`}>
-                                        <div className={`${styles.top_select_left} ${template_origin == '1' && styles.selected}`} onClick={() => this.selectTemplateType('1')}>行业模版</div>
+                                        <div className={`${styles.top_select_left} ${template_origin == '0' && styles.selected}`} onClick={() => this.selectTemplateType('0')}>行业模版</div>
                                         <div className={`${styles.top_select_right} ${template_origin == '2' && styles.selected}`} onClick={() => this.selectTemplateType('2')}>自有模版</div>
                                     </div>
 

@@ -7,7 +7,7 @@ import { addTaskGroup, changeTaskType, deleteTask, requestDeleteMiletone, delete
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
 import OutlineTree from '.';
 import { visual_add_item } from '../../constants';
-import { nonAwayTempleteStartPropcess } from '../../../../../../services/technological/workFlow';
+import { nonAwayTempleteStartPropcess, workflowDelete } from '../../../../../../services/technological/workFlow';
 
 @connect(mapStateToProps)
 export default class NodeOperate extends Component {
@@ -198,6 +198,10 @@ export default class NodeOperate extends Component {
                     this.deleteMilestone(id)
                 } else if (tree_type == '2') {
                     this.deleteCard(id)
+                } else if (tree_type == '3') {
+                    this.deleteWorkFlow(id)
+                } else {
+
                 }
             }
         });
@@ -214,6 +218,15 @@ export default class NodeOperate extends Component {
     }
     deleteMilestone = (id, calback) => {
         requestDeleteMiletone({ id }).then(res => {
+            if (isApiResponseOk(res)) {
+                this.props.deleteOutLineTreeNode(id)
+            } else {
+                message.error(res.message)
+            }
+        })
+    }
+    deleteWorkFlow = (id) => {
+        workflowDelete({ id }).then(res => {
             if (isApiResponseOk(res)) {
                 this.props.deleteOutLineTreeNode(id)
             } else {
