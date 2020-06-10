@@ -105,3 +105,12 @@ export async function importBoardTemplate(data) {
     data
   })
 }
+
+//引入模板
+export async function saveBoardTemplate(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template/generate`,
+    method: 'POST',
+    data
+  })
+}

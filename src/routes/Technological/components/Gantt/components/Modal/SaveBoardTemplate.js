@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
-import { Modal, Input } from 'antd';
+import { Modal, Input, message } from 'antd';
 import { connect } from 'dva';
+import { saveBoardTemplate } from '../../../../../../services/technological/gantt';
+import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
 
 @connect(mapStateToProps)
 export default class SelectBoardModal extends Component {
@@ -12,7 +14,31 @@ export default class SelectBoardModal extends Component {
         }
     }
     onOk = () => {
-        this.closeModal()
+        const { dispatch, gantt_board_id } = this.props
+        const { name } = this.state
+        saveBoardTemplate({ board_id: gantt_board_id, name }).then(res => {
+            if (isApiResponseOk(res)) {
+                dispatch({
+                    type: 'gantt/updateDatas',
+                    payload: {
+                        triggle_request_board_template: true
+                    }
+                })
+                setTimeout(() => {
+                    dispatch({
+                        type: 'gantt/updateDatas',
+                        payload: {
+                            triggle_request_board_template: false
+                        }
+                    })
+                }, 1000)
+                this.closeModal()
+            } else {
+                message.error(res.message)
+                this.closeModal()
+            }
+        })
+
     }
     onCancel = () => {
         this.closeModal()

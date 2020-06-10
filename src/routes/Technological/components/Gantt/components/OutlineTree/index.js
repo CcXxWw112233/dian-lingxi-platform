@@ -275,7 +275,7 @@ class TreeNode extends Component {
 
     renderTitle = () => {
         const { isTitleHover, isTitleEdit, nodeValue = {} } = this.state;
-        const { id, name: title, tree_type, is_expand, time_span, executors = [], is_focus, editing } = nodeValue;
+        const { id, name: title, tree_type, is_expand, time_span, executors = [], is_focus, editing, status } = nodeValue;
         const { onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {} } = this.props;
         let type;
         if (tree_type) {
@@ -340,20 +340,26 @@ class TreeNode extends Component {
                             }
                         >
                             {
-                                executors && executors.length > 0 ?
-                                    (
-                                        <div style={{ display: 'inline-block', verticalAlign: 'text-bottom' }}>
-                                            <AvatarList users={executors} size={20} />
-                                        </div>
-                                    )
-                                    // <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>
-                                    //     {
-                                    //         this.renderExecutor(projectDetailInfoData.data, executors[0])
+                                tree_type == '3' ? (
+                                    <span style={{ color: 'rgba(0,0,0,.45)' }}>
+                                        {this.renderFlowStatus(status)}
+                                    </span>
+                                ) : (
+                                        executors && executors.length > 0 ?
+                                            (
+                                                <div style={{ display: 'inline-block', verticalAlign: 'text-bottom' }}>
+                                                    <AvatarList users={executors} size={20} />
+                                                </div>
+                                            )
+                                            // <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>
+                                            //     {
+                                            //         this.renderExecutor(projectDetailInfoData.data, executors[0])
 
-                                    //     }
-                                    // </span>
-                                    :
-                                    <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
+                                            //     }
+                                            // </span>
+                                            :
+                                            <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
+                                    )
                             }
 
                         </Dropdown>
@@ -374,6 +380,16 @@ class TreeNode extends Component {
 
             </span>
         );
+    }
+
+    renderFlowStatus = (status) => {
+        const obj = {
+            '0': '未开始',
+            '1': '运行中',
+            '2': '已中止',
+            '3': '已完成',
+        }
+        return obj[status]
     }
 
     // 操作项点击------start

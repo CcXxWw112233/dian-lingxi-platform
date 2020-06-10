@@ -8,7 +8,8 @@ import { getProcessTemplateList } from "../../../services/technological/workFlow
 export default {
     state: {
         rely_map: [],
-        proccess_templates: []
+        proccess_templates: [],
+        triggle_request_board_template: false, //大纲视图保存为项目模板后，触发为true，右边模板列表接收到变化会触发查询
     },
     effects: {
         * addCardRely({ payload = {} }, { select, call, put }) {

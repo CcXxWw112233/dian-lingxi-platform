@@ -269,3 +269,40 @@
 .specific_example_no_due_time {
     border-radius: 0 40px 40px 0;
 }
+
+.flow {
+    position        : absolute;
+    z-index         : 1;
+    box-sizing      : border-box;
+    border-radius   : 2px;
+    cursor          : pointer;
+    padding         : 2px 2px;
+    display         : flex;
+    min-width       : 20px;
+    width           : auto !important;
+    min-width       : 200px;
+    align-items     : center;
+    // padding-left : 10px;
+
+    white-space: nowrap;
+
+    .flow_log {
+        height          : 24px;
+        width           : 24px;
+        background-color: #7CB305;
+        border-radius   : 24px;
+        font-size       : 16px;
+        color           : #ffffff;
+        margin-right    : 8px;
+        text-align      : center;
+        line-break      : 24px;
+    }
+
+    .name {
+        color: rgba(0, 0, 0, .65);
+    }
+
+    .status {
+        color: rgba(0, 0, 0, .45);
+    }
+}
