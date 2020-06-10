@@ -226,19 +226,29 @@ export default class WorkFlowItem extends Component {
         }
     }
 
-
+    renderFlowStatus = (status) => {
+        const obj = {
+            '0': '未开始',
+            '1': '运行中',
+            '2': '已中止',
+            '3': '已完成',
+        }
+        return obj[status]
+    }
 
     render() {
         const { itemValue = {}, gantt_view_mode } = this.props
         const {
             height,
-            name, id,
+            name, id, status
         } = itemValue
         const { local_left, local_top, rely_down } = this.state
         return (
             <div
                 className={`${indexStyles.flow}`}
                 data-targetclassname="specific_example"
+                data-rely_top={id}
+                data-rely_type={'flow'}
                 id={id} //大纲视图需要获取该id作为父级id来实现子任务拖拽影响父任务位置
                 ref={this.out_ref}
                 style={{
@@ -252,9 +262,21 @@ export default class WorkFlowItem extends Component {
                 }}
                 {...this.handleObj()}
             >
-                <div className={`${indexStyles.flow_log} ${globalStyles.authTheme}`}>&#xe68c;</div>
-                <div className={indexStyles.name}>{name}</div>
-                <div className={indexStyles.status}>（未开始）</div>
+                <div className={`${indexStyles.flow_log} ${globalStyles.authTheme}`}
+                    data-rely_top={id}
+                    data-rely_type={'flow'}>
+                    &#xe68c;
+                </div>
+                <div className={indexStyles.name}
+                    data-rely_top={id}
+                    data-rely_type={'flow'}>
+                    {name}
+                </div>
+                <div className={indexStyles.status}
+                    data-rely_top={id}
+                    data-rely_type={'flow'}>
+                    （{this.renderFlowStatus(status)}）
+                 </div>
             </div>
         )
     }
