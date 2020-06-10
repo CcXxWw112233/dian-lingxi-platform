@@ -16,6 +16,17 @@
     cursor: pointer;
     margin-bottom: 16px;
     // width: 25%;
+    .temp_settings {
+      position: absolute;
+      right: 10px;
+      top: 8px;
+      font-size: 16px;
+      color: rgba(0,0,0,0.45);
+      cursor: pointer;
+      &:hover {
+        color: #40A9FF;
+      }
+    }
   }
   .plan_default_name {
     position: absolute;
@@ -113,7 +124,7 @@
 }
 .breadcrumb_wrapper {
   min-width:176px;
-  height:30px;
+  min-height:30px;
   background:rgba(0,0,0,0.04);
   border-radius:4px;
   margin-bottom: 16px;
@@ -303,6 +314,18 @@
       white-space: nowrap;
       overflow: hidden;
       min-width: 94px;
+    }
+  }
+}
+
+.tempSettings {
+  :global {
+    .ant-menu-item {
+      height: 32px;
+      line-height: 32px;
+      &:hover {
+        background   : rgba(0, 0, 0, 0.04);
+      }
     }
   }
 }

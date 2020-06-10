@@ -560,8 +560,9 @@ export default class TempleteSchemeTree extends Component {
   // 插入流程 S
   handleInsertFlow = ({e,name}) => {
     const { domEvent, key } = e
-    domEvent && domEvent.stopPropagation()
+    // domEvent && domEvent.stopPropagation()
     const { currentSelectedItemInfo = {} } = this.props
+    if (!(currentSelectedItemInfo && Object.keys(currentSelectedItemInfo).length)) return
     const { template_id, parent_id, id } = currentSelectedItemInfo
     let obj = {
       name: name,
@@ -576,8 +577,11 @@ export default class TempleteSchemeTree extends Component {
       payload: {
         ...obj
       }
+    }).then(res => {
+      if (isApiResponseOk(res)) {
+        this.initStateDatas()
+      }
     })
-    return
   }
   // 插入流程 E
 
@@ -690,15 +694,15 @@ export default class TempleteSchemeTree extends Component {
     const { currentTempleteListContainer = [] } = this.props
     const { is_add_sibiling, is_add_children, is_add_rename } = this.state
     if (is_add_sibiling || is_add_children || is_add_rename) return
-    if (id) {
-      let currentSelectedItemInfo = this.recursion(currentTempleteListContainer, id)
-      this.props.dispatch({
-        type: 'organizationManager/updateDatas',
-        payload: {
-          currentSelectedItemInfo // 需要点击的时候保存一个当前对象
-        }
-      })
-    }
+    // if (id) {
+    //   let currentSelectedItemInfo = this.recursion(currentTempleteListContainer, id)
+    //   this.props.dispatch({
+    //     type: 'organizationManager/updateDatas',
+    //     payload: {
+    //       currentSelectedItemInfo // 需要点击的时候保存一个当前对象
+    //     }
+    //   })
+    // }
     // 先更新一个状态 所以 延时操作
     setTimeout(() => {
       switch (key) {
@@ -732,6 +736,22 @@ export default class TempleteSchemeTree extends Component {
       }
     },200)
     
+  }
+
+  handleDropdownContentClick = ({e,type,id}) => {
+    e && e.stopPropagation()
+    const { currentTempleteListContainer = [] } = this.props
+    const { is_add_sibiling, is_add_children, is_add_rename } = this.state
+    if (is_add_sibiling || is_add_children || is_add_rename) return
+    if (id) {
+      let currentSelectedItemInfo = this.recursion(currentTempleteListContainer, id)
+      this.props.dispatch({
+        type: 'organizationManager/updateDatas',
+        payload: {
+          currentSelectedItemInfo // 需要点击的时候保存一个当前对象
+        }
+      })
+    }
   }
 
 
@@ -780,7 +800,7 @@ export default class TempleteSchemeTree extends Component {
   renderSpotDropdownContent = ({type, id}) => {
     return (
       <div 
-        // onClick={e => e.stopPropagation()}
+        onClick={(e) => {this.handleDropdownContentClick({e,type,id})}}
       >
         <Dropdown trigger={['click']} overlayClassName={indexStyles.tempMoreOptionsWrapper} getPopupContainer={() => document.getElementById('planningSchemeItemWrapper')} overlay={this.renderSelectMoreOptions({type, id})}>
           <span style={{fontSize: '16px', color: '#1890FF'}} className={`${globalStyles.authTheme} ${indexStyles.sopt_icon}`}>&#xe7fd;</span>

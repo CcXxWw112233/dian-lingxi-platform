@@ -258,6 +258,15 @@ export async function createTemplete(data) {
   })
 }
 
+// 更新模板
+export async function updateTemplete(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template`,
+    method: 'PUT',
+    data
+  })
+}
+
 // 删除模板
 export async function deleteTemplete(params) {
   return request({

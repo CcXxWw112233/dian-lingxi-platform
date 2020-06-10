@@ -2,7 +2,7 @@ import {
   saveNounList, getNounList, getPayingStatus, getOrderList, getPermissions, savePermission, getRolePermissions, saveRolePermission, createRole,
   updateRole, deleteRole, copyRole, updateOrganization, setDefaultRole, getCurrentNounPlan, getFnManagementList,
   setFnManagementStatus, investmentMapAddAdministrators, investmentMapDeleteAdministrators, investmentMapQueryAdministrators,
-  getTemplateList, createTemplete, deleteTemplete, getTemplateListContainer, createTempleteContainer, deleteTempleteContainer, updateTempleteContainer
+  getTemplateList, createTemplete, updateTemplete, deleteTemplete, getTemplateListContainer, createTempleteContainer, deleteTempleteContainer, updateTempleteContainer
 } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
@@ -582,6 +582,25 @@ export default {
         message.warn(res.message)
       }
     },
+    // 更新模板
+    * updateTemplete({ payload }, { call, put }) {
+      const { _organization_id, id, name } = payload
+      const res = yield call(updateTemplete, {id,name})
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('重命名成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getTemplateList',
+          payload: {
+            _organization_id,
+            type: '2'
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+    },
 
     // 删除模板
     * deleteTemplete({ payload }, { call, put }) {
@@ -594,7 +613,8 @@ export default {
         yield put({
           type: 'getTemplateList',
           payload: {
-            _organization_id
+            _organization_id,
+            type: '2'
           }
         })
       } else {
