@@ -31,7 +31,8 @@ export default class TempleteSchemeTree extends Component {
       type: 'organizationManager/updateDatas',
       payload: {
         currentTempleteListContainer: [],
-        currentTempleteId: ''
+        currentTempleteId: '',
+        currentSelectedItemInfo: {}
       }
     })
     this.props.dispatch({
@@ -94,10 +95,10 @@ export default class TempleteSchemeTree extends Component {
   }
 
   /**
-   * 判断是否创建子任务
+   * 判断是否可以创建子任务
    * @param {Array} data 数据列表
    * @param {String} nodeId 当前需要判断的对象
-   * @returns {Boolean} true 表示当前这个为子任务
+   * @returns {Boolean} true 表示当前这个为子任务 表示不能创建
    */
   judgeWhetherCreateChildTask = (data, nodeId) => {
     let flag
@@ -157,6 +158,7 @@ export default class TempleteSchemeTree extends Component {
 
   /**
    * 递归遍历, 写来做实验的
+   * 对数据进行初始化, 添加某些需要的字段
    * @param {Array} data 当前树状结构
    * @param {String} currentId 当前点击的ID
    * @return {Array} 返回一个新的数组, 对每一个item进行塞值, 存储后续需要的数据
@@ -829,10 +831,11 @@ export default class TempleteSchemeTree extends Component {
   // 添加同级 或 子级 的确定点击事件
   handleCreateTempContainer = ({ e, is_rename }) => {
     e && e.stopPropagation()
+    const { inputValue, local_name, is_add_children, is_wrapper_add_children } = this.state
+    if (inputValue == local_name || inputValue == '') return
     const { currentSelectedItemInfo = {} } = this.props
     if (currentSelectedItemInfo && Object.keys(currentSelectedItemInfo) && Object.keys(currentSelectedItemInfo).length == '0' || !currentSelectedItemInfo) return false
     const { template_data_type, template_id, parent_id, id, name, child_content } = currentSelectedItemInfo
-    const { inputValue, is_add_children, is_wrapper_add_children } = this.state
     // 如果是template_data_type == '2' 子任务, 就取parent_id , 否则为 id ==> 判断是否 创建添加的是什么
     // 如果是创建添加子任务，那么就取该 对象中的 id 否则为parent_id
     let PARENTID = template_data_type == '2' ? ((is_add_children || is_wrapper_add_children) ? id : parent_id) : parent_id
@@ -971,7 +974,7 @@ export default class TempleteSchemeTree extends Component {
         }
         <Menu.Item key={'insert_task'}>插入任务</Menu.Item>
         {
-          type == '2' && (
+          type == '2' && (!flag) && (
             <Menu.Item disabled={flag} key={'add_sub_task'}>新建子任务</Menu.Item>
           )
         }
@@ -1005,7 +1008,7 @@ export default class TempleteSchemeTree extends Component {
       <div 
         // onClick={e => e.stopPropagation()}
       >
-        <Dropdown overlayClassName={indexStyles.tempMoreOptionsWrapper} getPopupContainer={() => document.getElementById('planningSchemeItemWrapper')} overlay={this.renderSelectMoreOptions({type, id})}>
+        <Dropdown trigger={['click']} overlayClassName={indexStyles.tempMoreOptionsWrapper} getPopupContainer={() => document.getElementById('planningSchemeItemWrapper')} overlay={this.renderSelectMoreOptions({type, id})}>
           <span style={{fontSize: '16px', color: '#1890FF'}} className={`${globalStyles.authTheme} ${indexStyles.sopt_icon}`}>&#xe7fd;</span>
         </Dropdown>
       </div>
@@ -1035,7 +1038,7 @@ export default class TempleteSchemeTree extends Component {
           !name || is_rename ? (
             <>
               {icon}
-              <span style={{ flex: 1, marginRight: '12px' }}><Input value={this.state.inputValue} maxLength={51} autoFocus={true} onClick={e => e.stopPropagation()} onChange={this.handleChangeTempleteContainerValue} /></span>
+              <span style={{ flex: 1, marginRight: '12px' }}><Input value={this.state.inputValue} maxLength={51} autoFocus={true} onClick={e => e.stopPropagation()} onPressEnter={(e) => { this.handleCreateTempContainer({ e, is_rename }) }} onChange={this.handleChangeTempleteContainerValue} /></span>
               <span>
                 <Button onClick={(e) => { this.handleCreateTempContainer({ e, is_rename }) }} type="primary" style={{ marginRight: '8px' }} disabled={disabled}>确定</Button>
                 <Button onClick={(e) => { this.handleCancelTempContainer({ e, id }) }}>取消</Button>
