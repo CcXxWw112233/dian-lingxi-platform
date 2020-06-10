@@ -237,6 +237,15 @@ export async function getTemplateList(params) {
   })
 }
 
+// 获取模板引用次数
+export async function getTempleteQuoteCount(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template`,
+    method: 'GET',
+    params
+  })
+}
+
 // 获取模板列表内容
 export async function getTemplateListContainer(params) {
   return request({

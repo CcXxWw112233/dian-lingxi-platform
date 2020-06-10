@@ -754,7 +754,6 @@ export default class TempleteSchemeTree extends Component {
     }
   }
 
-
   // 渲染点点点
   renderSelectMoreOptions = ({type, id}) => {
     const { currentTempleteListContainer = [], processTemplateList = [] } = this.props
