@@ -1,4 +1,4 @@
-import {REQUEST_DOMAIN_FLOWS, REQUEST_DOMAIN_FILE, CONTENT_DATA_TYPE_FLOW, REQUEST_INTERGFACE_VERSIONN, REQUEST_DOMAIN} from "../../globalset/js/constant";
+import { REQUEST_DOMAIN_FLOWS, REQUEST_DOMAIN_FILE, CONTENT_DATA_TYPE_FLOW, REQUEST_INTERGFACE_VERSIONN, REQUEST_DOMAIN } from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
 
 const createHeaderContentDataByFlowInstantId = (flowInstantId) => {
@@ -276,6 +276,15 @@ export async function nonAwayTempleteStartPropcess(data) {
 export async function updateFlowInstanceNameOrDescription(data) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/workflow `,
+    method: 'PUT',
+    data
+  });
+}
+
+// 关于直接启动不经过模板页面
+export async function workflowUpdateTime(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/workflow/change`,
     method: 'PUT',
     data
   });

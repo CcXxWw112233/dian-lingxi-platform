@@ -99,16 +99,22 @@ class TreeNode extends Component {
 
         let { nodeValue = {} } = this.state;
         nodeValue.name = e.target.value;
-
+        const actions = (type) => {
+            const obj = {
+                '1': 'milestone',
+                '2': 'task',
+                '3': 'flow'
+            }
+            return obj[type]
+        }
         if (nodeValue.name) {
             let action;
             nodeValue.editing = false;
             if (this.props.placeholder) {
-                action = 'add_' + (this.props.type == '1' ? 'milestone' : 'task');
+                action = 'add_' + actions(this.props.type) //(this.props.type == '1' ? 'milestone' : 'task');
             } else {
-                action = 'edit_' + (nodeValue.tree_type == '1' ? 'milestone' : 'task');
+                action = 'edit_' + actions(nodeValue.tree_type)//(nodeValue.tree_type == '1' ? 'milestone' : 'task');
             }
-
             if (this.props.onDataProcess) {
                 this.props.onDataProcess({
                     action,
@@ -166,7 +172,7 @@ class TreeNode extends Component {
     onManHourChange = (value) => {
         const { outline_tree_round = [] } = this.props;
         const { nodeValue = {} } = this.state;
-        if(!validatePositiveInt(value)) {
+        if (!validatePositiveInt(value)) {
             return
         }
         const new_value = Number(value)
@@ -269,7 +275,7 @@ class TreeNode extends Component {
 
     renderTitle = () => {
         const { isTitleHover, isTitleEdit, nodeValue = {} } = this.state;
-        const { id, name: title, tree_type, is_expand, time_span, executors = [], is_focus, editing } = nodeValue;
+        const { id, name: title, tree_type, is_expand, time_span, executors = [], is_focus, editing, status } = nodeValue;
         const { onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {} } = this.props;
         let type;
         if (tree_type) {
@@ -334,20 +340,26 @@ class TreeNode extends Component {
                             }
                         >
                             {
-                                executors && executors.length > 0 ?
-                                    (
-                                        <div style={{ display: 'inline-block', verticalAlign: 'text-bottom' }}>
-                                            <AvatarList users={executors} size={20} />
-                                        </div>
-                                    )
-                                    // <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>
-                                    //     {
-                                    //         this.renderExecutor(projectDetailInfoData.data, executors[0])
+                                tree_type == '3' ? (
+                                    <span style={{ color: 'rgba(0,0,0,.45)' }}>
+                                        {this.renderFlowStatus(status)}
+                                    </span>
+                                ) : (
+                                        executors && executors.length > 0 ?
+                                            (
+                                                <div style={{ display: 'inline-block', verticalAlign: 'text-bottom' }}>
+                                                    <AvatarList users={executors} size={20} />
+                                                </div>
+                                            )
+                                            // <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>
+                                            //     {
+                                            //         this.renderExecutor(projectDetailInfoData.data, executors[0])
 
-                                    //     }
-                                    // </span>
-                                    :
-                                    <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
+                                            //     }
+                                            // </span>
+                                            :
+                                            <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
+                                    )
                             }
 
                         </Dropdown>
@@ -370,6 +382,16 @@ class TreeNode extends Component {
         );
     }
 
+    renderFlowStatus = (status) => {
+        const obj = {
+            '0': '未开始',
+            '1': '运行中',
+            '2': '已中止',
+            '3': '已完成',
+        }
+        return obj[status]
+    }
+
     // 操作项点击------start
     operateVisibleChange = (bool) => {
         this.setState({
@@ -377,6 +399,12 @@ class TreeNode extends Component {
         })
     }
     // 操作项点击------end
+
+    setDotStyle = { //dot的样式
+        '1': styles.milestoneNode,
+        '2': styles.taskNode,
+        '3': styles.flowNode
+    }
 
     render() {
         const { isTitleHover, isTitleEdit, nodeValue = {}, operateVisible } = this.state;
@@ -405,7 +433,7 @@ class TreeNode extends Component {
                                     <div className={`${styles.node_opeator} ${globalStyles.authTheme}`}>&#xe7fd;</div>
                                 </Dropdown>
                             ) : (
-                                    <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
+                                    <span className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}></span>
                                 )
                         }
                         {
@@ -459,7 +487,7 @@ class TreeNode extends Component {
                                 (icon ?
                                     icon
                                     : (
-                                        <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
+                                        <span className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}></span>
                                     )
                                 ) :
                                 (
@@ -470,7 +498,7 @@ class TreeNode extends Component {
                                             <div className={`${styles.node_opeator} ${globalStyles.authTheme}`}>&#xe7fd;</div>
                                         </Dropdown>
                                     ) : (
-                                            <span className={`${styles.outline_tree_line_node_dot} ${type == '1' ? styles.milestoneNode : styles.taskNode}`}></span>
+                                            <span className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}></span>
                                         )
                                 )
                         }

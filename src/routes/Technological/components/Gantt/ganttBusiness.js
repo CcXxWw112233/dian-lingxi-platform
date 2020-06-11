@@ -300,14 +300,14 @@ export const diffGanttTimeSpan = ({ time_span, start_time, due_time }) => {
 export const setGantTimeSpan = ({ time_span, start_time, due_time, start_date, end_date }) => {
     let new_time_span = 0
     if (!!!due_time && !!!start_time) {
-        return 0//Number(time_span)
+        return Number(time_span) || 1 //0//
     } else {
         if (!!due_time && !!start_time) {
             new_time_span = (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1
             new_time_span = diffGanttTimeSpan({ time_span: new_time_span, start_time, due_time })
             return new_time_span
         } else {
-            return 1// Number(time_span)
+            return Number(time_span) || 1 //1//
         }
         // if (due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
         //     new_time_span = (Math.floor((end_date.timestamp - start_time) / (24 * 3600 * 1000))) + 1

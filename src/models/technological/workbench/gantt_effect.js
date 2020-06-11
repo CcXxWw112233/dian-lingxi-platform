@@ -3,10 +3,13 @@ import { isApiResponseOk } from "../../../utils/handleResponseData"
 import { getModelSelectDatasState } from "../../utils"
 import { message } from "antd"
 import OutlineTree from '@/routes/Technological/components/Gantt/components/OutlineTree';
+import { getProcessTemplateList } from "../../../services/technological/workFlow";
 // F:\work\newdicolla-platform\src\routes\Technological\components\Gantt\components\OutlineTree\index.js
 export default {
     state: {
-        rely_map: []
+        rely_map: [],
+        proccess_templates: [],
+        triggle_request_board_template: false, //大纲视图保存为项目模板后，触发为true，右边模板列表接收到变化会触发查询
     },
     effects: {
         * addCardRely({ payload = {} }, { select, call, put }) {
@@ -163,6 +166,19 @@ export default {
                 }
             });
         },
+        * getProcessTemplateList({ payload = {} }, { select, call, put }) {
+            const res = yield call(getProcessTemplateList, { _organization_id: localStorage.getItem('OrganizationId') })
+            if (isApiResponseOk(res)) {
+                yield put({
+                    type: 'updateDatas',
+                    payload: {
+                        proccess_templates: res.data
+                    }
+                })
+            } else {
+
+            }
+        }
     }
 
 }

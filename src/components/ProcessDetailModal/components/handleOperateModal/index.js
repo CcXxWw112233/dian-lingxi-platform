@@ -1,14 +1,17 @@
 import { Modal } from 'antd'
 
 // 渲染删除模板信息confirm
-const showDeleteTempleteConfirm = (processTempleteDelete) => {
+const showDeleteTempleteConfirm = ({processTempleteDelete, title, content}) => {
   const modal = Modal.confirm();
   modal.update({
-    title: '删除模板',
-    content: '确认删除该模板吗？',
+    title: title ? title : '删除模板',
+    content: content ? content : '确认删除该模板吗？',
     zIndex: 1110,
     okText: '确认',
     cancelText: '取消',
+    style: {
+      letterSpacing: '1px'
+    },
     // getContainer: getContainer ? getContainer : triggerNode => triggerNode.parentNode,
     onOk: () => {
       processTempleteDelete()

@@ -8,6 +8,8 @@ import { Modal, message } from 'antd'
 import { showDeleteTempleteConfirm } from '../../../components/ProcessDetailModal/components/handleOperateModal'
 import { checkIsHasPermission } from '../../../utils/businessFunction'
 import { ORG_TEAM_FLOW_TEMPLETE, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../globalset/js/constant'
+import { getTempleteQuoteCount } from '../../../services/organization'
+import { isApiResponseOk } from '../../../utils/handleResponseData'
 
 @connect(mapStateToProps)
 export default class WorkFlowTemplete extends Component {
@@ -80,10 +82,44 @@ export default class WorkFlowTemplete extends Component {
     })
   }
 
+  getTempleteQuoteCount = (id) => {
+    const { dispatch } = this.props
+    getTempleteQuoteCount({rela_id: id}).then(res => {
+      if (isApiResponseOk(res)) {
+        let count = res.data && res.data.length
+        let title = '确认要删除模版吗？'
+        let content = `删除该流程模板同时将取消其在${count}个自有模板中的引用，是否继续？`
+        const processTempleteDelete = async () => {
+          await dispatch({
+            type: 'publicProcessDetailModal/deleteProcessTemplete',
+            payload: {
+              id,
+              calback: () => {
+                dispatch({
+                  type: 'publicProcessDetailModal/getProcessTemplateList',
+                  payload: {
+                    _organization_id: localStorage.getItem('OrganizationId')
+                  }
+                })
+              }
+            }
+          })
+        }
+        if (count) {
+          showDeleteTempleteConfirm({processTempleteDelete,title,content})
+        } else {
+          showDeleteTempleteConfirm({processTempleteDelete})
+        }
+      }
+    })
+  }
+
   // 删除流程模板的点击事件
   handleDelteTemplete = (e,item) => {
     const { dispatch } = this.props
     const { id } = item
+    this.getTempleteQuoteCount(id)
+    return
     const processTempleteDelete = async () => {
       await dispatch({
         type: 'publicProcessDetailModal/deleteProcessTemplete',

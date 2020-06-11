@@ -20,7 +20,7 @@
         font-size      : 14px;
         display        : flex;
         padding        : 0 12px;
-        justify-content: space-between;
+        justify-content: center;
         align-items    : center;
         box-shadow     : 0px -1px 0px 0px rgba(0, 0, 0, 0.09);
         border-bottom  : 1px solid #f5f5ff;
@@ -55,6 +55,29 @@
         .top_right:hover {
             color: #40A9FF;
         }
+
+        .top_select {
+            display      : flex;
+            height       : 32px;
+            border-radius: 4px;
+            border       : 1px solid #1890FF;
+            box-sizing   : border-box;
+            color        : #1890FF;
+
+            .top_select_left,
+            .top_select_right {
+                width      : 88px;
+                text-align : center;
+                line-height: 32px;
+                font-size  : 14px;
+            }
+
+            .selected {
+                background-color: #1890FF;
+                color           : #ffffff;
+            }
+        }
+
     }
 
     .list_item {
@@ -211,7 +234,7 @@
 
 .main::-webkit-scrollbar {
     /*滚动条整体样式*/
-    width: 4px;
+    width : 4px;
     /*高宽分别对应横竖滚动条的尺寸*/
     height: 1px;
 }
@@ -352,19 +375,19 @@
     line-height: 38px;
 
     .switchExpandIcon {
-        font-size    : 36px;
-        font-weight  : bold;
-        color        : rgba(0, 0, 0, 0.15);
-        transform    : rotate(90deg);
-        -ms-transform: rotate(90deg);
+        font-size        : 36px;
+        font-weight      : bold;
+        color            : rgba(0, 0, 0, 0.15);
+        transform        : rotate(90deg);
+        -ms-transform    : rotate(90deg);
         /* Internet Explorer 9*/
-        -moz-transform: rotate(90deg);
+        -moz-transform   : rotate(90deg);
         /* Firefox */
         -webkit-transform: rotate(90deg);
         /* Safari 和 Chrome */
-        -o-transform: rotate(90deg);
+        -o-transform     : rotate(90deg);
         /* Opera */
-        filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+        filter           : progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
     }
 }
 

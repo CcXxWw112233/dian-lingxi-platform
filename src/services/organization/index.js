@@ -231,8 +231,18 @@ export async function getTemplateList(params) {
     url: `${REQUEST_DOMAIN}/org/template/list`,
     method: 'GET',
     params: {
+      ...params,
       _organization_id: params._organization_id || localStorage.getItem('OrganizationId')
     }
+  })
+}
+
+// 获取模板引用次数
+export async function getTempleteQuoteCount(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template`,
+    method: 'GET',
+    params
   })
 }
 
@@ -254,6 +264,15 @@ export async function createTemplete(data) {
       ...data,
       _organization_id: data._organization_id || localStorage.getItem('OrganizationId')
     }
+  })
+}
+
+// 更新模板
+export async function updateTemplete(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template`,
+    method: 'PUT',
+    data
   })
 }
 

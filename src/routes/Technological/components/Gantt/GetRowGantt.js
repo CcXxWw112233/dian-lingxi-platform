@@ -11,6 +11,8 @@ import { date_area_height, task_item_height, task_item_margin_top, ganttIsFold, 
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import QueueAnim from 'rc-queue-anim'
 import GetRowTaskItem from './components/CardItem/index'
+import WorkFlow from './components/CardItem/WorkFlow'
+
 import { filterDueTimeSpan, setDateWithPositionInYearView } from './ganttBusiness'
 import { checkIsHasPermissionInBoard } from '../../../../utils/businessFunction';
 import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE } from '../../../../globalset/js/constant';
@@ -724,8 +726,11 @@ export default class GetRowGantt extends Component {
             ganttIsOutlineView({ group_view_type }) && outline_tree_round.map((value, key) => {
               const { end_time, left, top, id, start_time, tree_type, parent_expand, is_expand } = value
               const juge_expand = (tree_type == '0' || tree_type == '3') ? parent_expand : (parent_expand && is_expand)
-              return (
-                (tree_type == '2' || tree_type == "3") && parent_expand && !!left && (
+              if (!parent_expand || !left) {
+                return <></>
+              }
+              if (tree_type == '2') {
+                return (
                   <GetRowTaskItem
                     key={`${id}_${start_time}_${end_time}_${left}_${top}`}
                     itemValue={value}
@@ -742,8 +747,32 @@ export default class GetRowGantt extends Component {
                     setDasheRectShow={this.setDasheRectShow}
                     setCardRelyDraging={this.setCardRelyDraging}
                     card_rely_draging={this.state.card_rely_draging}
-                  />)
-              )
+                  />
+                )
+              } else if (tree_type == '3') {
+                return (
+                  <WorkFlow
+                    key={`${id}_${start_time}_${end_time}_${left}_${top}`}
+                    itemValue={value}
+                    setSpecilTaskExample={this.setSpecilTaskExample}
+                    ganttPanelDashedDrag={this.state.drag_creating}
+                    getCurrentGroup={this.getCurrentGroup}
+                    // list_id={list_id}
+                    changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
+                    task_is_dragging={this.state.task_is_dragging}
+                    setGoldDateArr={this.props.setGoldDateArr}
+                    setScrollPosition={this.props.setScrollPosition}
+                    setDragCreating={this.setDragCreating}
+                    setTaskIsDragging={this.setTaskIsDragging}
+                    setDasheRectShow={this.setDasheRectShow}
+                    setCardRelyDraging={this.setCardRelyDraging}
+                    card_rely_draging={this.state.card_rely_draging}
+                  />
+                )
+              } else {
+                return <></>
+              }
+
             })
           }
           {/* 渲染大纲视图下的横条 */}

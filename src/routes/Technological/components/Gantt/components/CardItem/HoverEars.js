@@ -130,7 +130,7 @@ class HoverEars extends Component {
     handleCreateRely = (e) => { //当落点在具体任务上
         const { itemValue: { id: move_id, parent_id }, dispatch } = this.props
         const target = e.target
-        const { rely_top, rely_right, rely_left } = e.target.dataset
+        const { rely_top, rely_right, rely_left, rely_type } = e.target.dataset
         if (!rely_top && !rely_right && !rely_left) return
         let line_to
         const line_id = rely_top || rely_right || rely_left
@@ -143,17 +143,22 @@ class HoverEars extends Component {
             line_to = 'start'
         } else if (rely_right) {//落点在右耳朵
             line_to = 'end'
-        } else if (rely_top) {
+        } else if (rely_top) { //hover 到具体的任务上
             const clientX = e.clientX
             const { clientWidth } = target
             const target_1 = document.getElementById('gantt_card_out_middle')
             const offsetLeft = this.props.getX(target);
             const rela_left = clientX - offsetLeft - 2 + target_1.scrollLeft //鼠标在该任务内的相对位置
-            if (clientWidth - rela_left < clientWidth / 2) {
-                line_to = 'end'
-            } else {
+            if (rely_type == 'flow') { //流程的依赖关联只有start|end => start
                 line_to = 'start'
+            } else {
+                if (clientWidth - rela_left < clientWidth / 2) {
+                    line_to = 'end'
+                } else {
+                    line_to = 'start'
+                }
             }
+
 
         } else {
 

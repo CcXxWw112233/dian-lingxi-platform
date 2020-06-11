@@ -42,8 +42,8 @@ export default class FlowTables extends Component {
                 key_time = update_time //代替尚未定义
                 key_state = '已完成'
             } else if ('0' == list_type) {
-                key_time = plan_start_time
-                key_state = '未开始'
+                key_time = plan_start_time ? plan_start_time : ''
+                key_state = plan_start_time ? '未开始' : ''
             } else {
 
             }
@@ -170,7 +170,7 @@ export default class FlowTables extends Component {
                 break
             case '0':
                 state_dec = (
-                    <span style={{ color: '#1890FF' }}>{item}</span>
+                    <span style={{ color: item ? '#1890FF' : 'rgba(0,0,0,0.45)' }}>{item ? item : '未启动'}</span>
                 )
                 break
             default: break
@@ -198,7 +198,7 @@ export default class FlowTables extends Component {
                 break
             case '0':
                 time_dec = (
-                    <span style={{ color: '#1890FF' }}>{timestampToTimeNormal(item, '/', true)}</span>
+                    <span style={{ color: item ? '#1890FF' : 'rgba(0,0,0,0.45)' }}>{item ? timestampToTimeNormal(item, '/', true) : '- : -'}</span>
                 )
                 break
             default: break

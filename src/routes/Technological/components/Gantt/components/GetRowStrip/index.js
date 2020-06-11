@@ -5,6 +5,7 @@ import { task_item_margin_top, date_area_height, ceil_height, task_item_height, 
 import globalStyles from '@/globalset/css/globalClassName.less'
 import OutlineTree from '../OutlineTree';
 import { updateTaskVTwo, updateMilestone } from '../../../../../../services/technological/task';
+import { workflowUpdateTime } from '../../../../../../services/technological/workFlow';
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
 import { message, Tooltip } from 'antd';
 import MilestoneDetail from '../milestoneDetail'
@@ -224,6 +225,60 @@ export default class GetRowStrip extends PureComponent {
         })
     }
     // 渲染任务滑块 --end
+
+    // 渲染流程 ----------start
+    renderWorkFlow = () => {
+        const { itemValue = {}, ceilWidth, gantt_view_mode } = this.props
+        const { id, name, time_span } = itemValue
+        const { is_item_has_time, currentRect = {} } = this.state
+        const timestamp = gantt_view_mode == 'year' ? this.calHoverDate().timestamp : ''
+        const correct_value = gantt_view_mode == 'year' ? 0 : 6 //校准值
+        const correct_value2 = gantt_view_mode == 'year' ? 6 : 0 //校准值
+
+        return (
+            <div
+                onClick={this.workFlowSetClick}
+                className={styles.will_set_item}
+                style={{
+                    display: (!is_item_has_time && this.onHoverState()) ? 'flex' : 'none',
+                    marginLeft: currentRect.x - correct_value2,
+                    paddingLeft: (ceilWidth - 24) / 2
+                }}>
+                <Tooltip
+                    visible={gantt_view_mode == 'year'}
+                    title={timestampToTime(timestamp)}
+                >
+                    <>
+                        {
+                            gantt_view_mode == 'year' && (
+                                <div style={{ width: 10, height: '100%', marginLeft: -6 }}></div>
+                            )
+                        }
+                        <div className={`${styles.flow} ${globalStyles.authTheme}`}>&#xe68c;</div>
+                        <div className={styles.name}>{name}</div>
+                        <div className={styles.status}>（未开始）</div>
+
+                    </>
+                </Tooltip>
+            </div>
+        )
+    }
+    workFlowSetClick = () => {
+        const date = this.calHoverDate()
+        const { timestamp } = date
+        const { itemValue = {}, gantt_board_id } = this.props
+        let { id, } = itemValue
+        workflowUpdateTime({ plan_start_time: timestamp, id }, { isNotLoading: false }).then(res => {
+            if (isApiResponseOk(res)) {
+                this.changeOutLineTreeNodeProto(id, { start_time: timestamp })
+            } else {
+                message.error(res.message)
+            }
+        }).catch(err => {
+            message.error('更新失败')
+        })
+    }
+    // 渲染流程-----------end
 
     // 点击任务将该任务设置时间
     changeOutLineTreeNodeProto = (id, data = {}, type) => {
@@ -848,6 +903,24 @@ export default class GetRowStrip extends PureComponent {
     }
     // 设置出现将具有时间的里程碑或任务定位到视觉区域内------end
 
+    renderSet = (tree_type) => {
+        let container = <></>
+        switch (tree_type) {
+            case '1':
+                container = this.renderMilestoneSet()
+                break
+            case '2':
+                container = this.renderCardRect()
+                break
+            case '3':
+                container = this.renderWorkFlow()
+                break
+            default:
+                break
+        }
+        return container
+
+    }
     render() {
         const { itemValue = {}, ceilWidth, projectDetailInfoData, target_scrollLeft } = this.props
         const { tree_type } = itemValue
@@ -904,14 +977,7 @@ export default class GetRowStrip extends PureComponent {
                         )
                     }
                     {
-                        tree_type == '0' ? ('') : (
-                            tree_type == '1' ? (
-                                this.renderMilestoneSet()
-                            ) : (
-                                    this.renderCardRect()
-                                )
-                        )
-
+                        this.renderSet(tree_type)
                     }
                 </div >
                 <MilestoneDetail
