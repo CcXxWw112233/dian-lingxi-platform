@@ -525,6 +525,17 @@ export default class index extends Component {
             return '100%'
         }
     }
+
+    checkInvalid = (obj) => {
+        let flag = true
+        for (let [, value] of Object.entries(obj)) {
+            if (!value || value == NaN) {
+                flag = false
+                break
+            }
+        }
+        return flag
+    }
     renderPaths = () => {
         const { rely_map = [] } = this.state
         return (
@@ -535,7 +546,7 @@ export default class index extends Component {
                         return (
                             next.map(line_item => {
                                 const { left: line_left, right: line_right, top: line_top, relation, id: line_id } = line_item
-                                const { Move_Line, Arrow } = this.calPath({
+                                const params = {
                                     move_left,
                                     move_right,
                                     move_top,
@@ -543,7 +554,9 @@ export default class index extends Component {
                                     line_right,
                                     line_top,
                                     relation
-                                })
+                                }
+                                if (!this.checkInvalid(params)) return ''
+                                const { Move_Line, Arrow } = this.calPath({ ...params })
                                 return (
                                     <g data-targetclassname="specific_example"
                                         className={`${styles.path_g}`}

@@ -37,6 +37,7 @@ class Gantt extends Component {
         group_view_filter_boards: [],
         group_view_filter_users: [],
         boards_flies: [],
+        outline_tree: [],
         gantt_view_mode: 'month',
         ceilWidth: ceil_width,
       }
