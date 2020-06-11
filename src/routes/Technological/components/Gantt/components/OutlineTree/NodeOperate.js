@@ -81,7 +81,7 @@ export default class NodeOperate extends Component {
                         return (
                             <div
                                 onClick={() => this.menuItemClick(`group_id_${list_id}`)}
-                                className={`${styles.submenu_area_item}`}
+                                className={`${styles.submenu_area_item} ${globalStyles.global_ellipsis}`}
                                 key={list_id}>
                                 {list_name}
                             </div>
@@ -438,7 +438,7 @@ class InsertFlows extends Component {
                         return (
                             <div
                                 onClick={() => this.selectTemp({ id, name })}
-                                className={`${styles.submenu_area_item}`}
+                                className={`${styles.submenu_area_item} ${globalStyles.global_ellipsis}`}
                                 key={id}>
                                 {name}
                             </div>

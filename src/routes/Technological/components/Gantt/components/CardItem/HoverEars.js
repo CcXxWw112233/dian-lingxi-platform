@@ -167,8 +167,8 @@ class HoverEars extends Component {
         dispatch({
             type: 'gantt/addCardRely',
             payload: {
-                from_card_id: move_id,
-                to_card_id: line_id,
+                from_id: move_id,
+                to_id: line_id,
                 relation: `${move_to}_${line_to}`
             }
         })

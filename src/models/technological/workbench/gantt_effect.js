@@ -13,18 +13,18 @@ export default {
     },
     effects: {
         * addCardRely({ payload = {} }, { select, call, put }) {
-            const { from_card_id, to_card_id, relation } = payload
-            let res = yield call(addCardRely, { from_card_id, to_card_id, relation })
+            const { from_id, to_id, relation } = payload
+            let res = yield call(addCardRely, { from_id, to_id, relation })
             const rely_map = yield select(getModelSelectDatasState('gantt', 'rely_map'))
             let _rely_map = JSON.parse(JSON.stringify(rely_map))
             if (isApiResponseOk(res)) {
                 message.success('已成功添加依赖')
 
-                const index = _rely_map.findIndex(item => item.id == from_card_id)
+                const index = _rely_map.findIndex(item => item.id == from_id)
                 if (index != -1) { //该任务存在和其它的依赖关系则添加新的一条进next [], 反之构建一个新的item
-                    _rely_map[index].next.push({ id: to_card_id, relation })
+                    _rely_map[index].next.push({ id: to_id, relation })
                 } else {
-                    _rely_map.push({ id: from_card_id, next: [{ id: to_card_id, relation }] })
+                    _rely_map.push({ id: from_id, next: [{ id: to_id, relation }] })
 
                 }
                 yield put({
@@ -45,7 +45,7 @@ export default {
         },
         * deleteCardRely({ payload }, { select, call, put }) {
             const { move_id, line_id } = payload
-            const res = yield call(deleteCardRely, { from_card_id: move_id, to_card_id: line_id })
+            const res = yield call(deleteCardRely, { from_id: move_id, to_id: line_id })
             const rely_map = yield select(getModelSelectDatasState('gantt', 'rely_map'))
 
             if (isApiResponseOk(res)) {

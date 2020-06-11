@@ -37,6 +37,7 @@ export default class index extends Component {
             rely_map: [],
             cards_one_level: [], //所有任务平铺成一维数组
         }
+        this.could_structure_path_type = ['2', '3'] //可以构建依赖关系的类型
     }
 
     componentDidMount() {
@@ -85,7 +86,7 @@ export default class index extends Component {
         const { list_group = [], outline_tree_round = [] } = props
         let arr = []
         if (group_view_type == '4') { //大纲
-            arr = outline_tree_round.filter(item => item.tree_type == '2') //大纲树中的任务
+            arr = outline_tree_round.filter(item => this.could_structure_path_type.includes(item.tree_type)) //大纲树中的任务
         } else {
             for (let val of list_group) {
                 arr = [].concat(arr, val.list_data)
@@ -555,6 +556,7 @@ export default class index extends Component {
                                     line_top,
                                     relation
                                 }
+                                // console.log('ssssssssssss', params)
                                 if (!this.checkInvalid(params)) return ''
                                 const { Move_Line, Arrow } = this.calPath({ ...params })
                                 return (
