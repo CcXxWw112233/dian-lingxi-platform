@@ -253,13 +253,13 @@ export default class NodeOperate extends Component {
             )
         } else if (type == 'flow') { //插入流程
             const { id: flow_template_id } = data
-            const { id: flow_id, name: flow_name } = await this.insertFlow({ flow_template_id })
+            const { id: flow_id, name: flow_name, status } = await this.insertFlow({ flow_template_id })
 
             if (!flow_id) {
                 return
             }
             new_children.splice(index + 1, 0,
-                { ...visual_add_item, add_id: '', tree_type: '3', id: flow_id, name: flow_name }
+                { ...visual_add_item, add_id: '', tree_type: '3', id: flow_id, name: flow_name, status }
             )
         } else {
 
@@ -284,7 +284,8 @@ export default class NodeOperate extends Component {
         if (isApiResponseOk(res)) {
             const { id, name } = res.data
             if (!parent_milestone_id) { //如果不是挂载在里程碑下面
-                return { id, name }
+                return { ...res.data }
+                // return { id, name }
             } else {
                 const res2 = await boardAppRelaMiletones({
                     id: parent_milestone_id,
@@ -292,7 +293,8 @@ export default class NodeOperate extends Component {
                     origin_type: '2',
                 })
                 if (isApiResponseOk(res2)) {
-                    return { id, name }
+                    return { ...res.data }
+                    // return { id, name }
                 } else {
                     message.error(res.message)
                     return {}
