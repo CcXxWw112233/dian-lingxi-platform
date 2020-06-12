@@ -22,14 +22,16 @@ export default class NodeOperate extends Component {
     }
 
     setTemplistVisible = (bool) => { //流程模板列表显示
+        const { templist_visible } = this.state
         this.setState({
-            templist_visible: bool
+            templist_visible: !templist_visible
         })
     }
 
     setGroupSubShow = (bool) => { //设置选择分组二级菜单是否显示
+        const { group_sub_visible } = this.state
         this.setState({
-            group_sub_visible: bool
+            group_sub_visible: !group_sub_visible
         })
     }
     setCreateGroupVisible = (bool) => { //设置新建分组显示
@@ -80,6 +82,7 @@ export default class NodeOperate extends Component {
                         const { list_id, list_name } = item
                         return (
                             <div
+                                title={list_name}
                                 onClick={() => this.menuItemClick(`group_id_${list_id}`)}
                                 className={`${styles.submenu_area_item} ${globalStyles.global_ellipsis}`}
                                 key={list_id}>
@@ -439,6 +442,7 @@ class InsertFlows extends Component {
                         const { id, name } = item
                         return (
                             <div
+                                title={name}
                                 onClick={() => this.selectTemp({ id, name })}
                                 className={`${styles.submenu_area_item} ${globalStyles.global_ellipsis}`}
                                 key={id}>
