@@ -1114,13 +1114,13 @@ export default class MainContent extends Component {
 
   // 更新对应的依赖项
   updateRelyOnRationList = (change_data) => {
-    const { drawContent = {}, drawContent: { dependences = {} }, dispatch } = this.props
-    if (!dependences) return
-    if (!(dependences['last'] && dependences['last'].length) && !(dependences['next'] && dependences['next'].length)) return
+    const { drawContent = {}, drawContent: { dependencies = {} }, dispatch } = this.props
+    if (!dependencies) return
+    if (!(dependencies['last'] && dependencies['last'].length) && !(dependencies['next'] && dependencies['next'].length)) return
     let obj = {}
     let new_drawContent = {...drawContent}
-    let preposeList = dependences['last'] // 前置
-    let postpositionList = dependences['next'] // 后置
+    let preposeList = dependencies['last'] // 前置
+    let postpositionList = dependencies['next'] // 后置
     
     preposeList = preposeList.map(item => {
       let new_item = {}
@@ -1135,11 +1135,11 @@ export default class MainContent extends Component {
       return new_item
     })
     obj = {
-      ...dependences,
+      ...dependencies,
       last: preposeList,
       next: postpositionList
     }
-    new_drawContent['dependences'] = obj
+    new_drawContent['dependencies'] = obj
     dispatch({
       type: 'publicTaskDetailModal/updateDatas',
       payload: {
@@ -1157,7 +1157,7 @@ export default class MainContent extends Component {
       is_realize = '0',
       start_time,
       due_time,
-      dependences = []
+      dependencies = []
     } = drawContent
     const { properties = [] } = drawContent
     const executors = this.getCurrentDrawerContentPropsModelDatasExecutors()
@@ -1184,7 +1184,7 @@ export default class MainContent extends Component {
 
     return (
       <div className={mainContentStyles.main_wrap}>
-        <RelyOnRelationship relationshipList={dependences} updateRelyOnRationList={this.updateRelyOnRationList}/>
+        <RelyOnRelationship relationshipList={dependencies} updateRelyOnRationList={this.updateRelyOnRationList}/>
         <div className={mainContentStyles.main_content}>
           {/* 标题 S */}
           <div>
