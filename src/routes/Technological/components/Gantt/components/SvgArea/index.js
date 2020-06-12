@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
 import styles from './index.less'
-import { Popconfirm } from 'antd'
+import { Popconfirm, Modal } from 'antd'
 import { ganttIsOutlineView } from '../../constants'
 const rely_map = [
     {
@@ -477,13 +477,19 @@ export default class index extends Component {
     // 删除依赖
     deleteRely = ({ move_id, line_id }) => {
         const { dispatch } = this.props
-        dispatch({
-            type: 'gantt/deleteCardRely',
-            payload: {
-                move_id,
-                line_id
+        Modal.confirm({
+            title: '确认删除该依赖？',
+            onOk: () => {
+                dispatch({
+                    type: 'gantt/deleteCardRely',
+                    payload: {
+                        move_id,
+                        line_id
+                    }
+                })
             }
         })
+
     }
     pathMouseEvent = {
         // 拖拽
@@ -569,7 +575,7 @@ export default class index extends Component {
                                             data-targetclassname="specific_example"
                                             fill="#1890FF"
                                             d={Arrow}
-                                            onDoubleClick={() => this.deleteRely({ move_id, line_id })}
+                                            onClick={() => this.deleteRely({ move_id, line_id })}
                                             className={`${styles.path} ${styles.path_arrow}`}
                                             {...this.pathMouseEvent}
                                         />
@@ -579,7 +585,7 @@ export default class index extends Component {
                                             data-targetclassname="specific_example"
                                             d={Move_Line}
                                             stroke-width='1'
-                                            onDoubleClick={() => this.deleteRely({ move_id, line_id })}
+                                            onClick={() => this.deleteRely({ move_id, line_id })}
                                             className={`${styles.path} ${styles.path_line}`}
                                             {...this.pathMouseEvent}
                                         />
