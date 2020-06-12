@@ -270,7 +270,8 @@ export default class GetRowStrip extends PureComponent {
         let { id, } = itemValue
         workflowUpdateTime({ plan_start_time: timestamp, id }, { isNotLoading: false }).then(res => {
             if (isApiResponseOk(res)) {
-                this.changeOutLineTreeNodeProto(id, { start_time: timestamp })
+                const status = isSamDay(new Date().getTime(), timestamp) ? '1' : '0' //如果是今天则设置为未开始
+                this.changeOutLineTreeNodeProto(id, { start_time: timestamp, status })
             } else {
                 message.error(res.message)
             }
