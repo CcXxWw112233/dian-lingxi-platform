@@ -490,14 +490,14 @@ export default class HeaderContentRightMenu extends Component {
             <div className={indexStyles.detail_action_list}>
 
               {/* 转为模板 */}
-              {
+              {/* {
                 is_covert_template == '1' && (
                   <Button onClick={this.handleCovertTemplete} className={indexStyles.covert_templete}>
                     <span style={{marginRight: '4px'}} className={globalStyles.authTheme}>&#xe714;</span>
                     转为{`${currentNounPlanFilterName(FLOWS)}`}模板
                   </Button>
                 )
-              }
+              } */}
               {
                 status == '2' && (
                   <Button onClick={this.handleReStartProcess} className={indexStyles.covert_templete} style={{marginLeft: '20px'}}>
