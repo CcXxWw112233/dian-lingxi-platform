@@ -288,10 +288,14 @@ export const diffGanttTimeSpan = ({ time_span, start_time, due_time }) => {
     const due_date = new Date(due_time)
     const s_h = start_date.getHours()
     const s_m = start_date.getMinutes()
+    const s_s = start_date.getSeconds()
+
     const e_h = due_date.getHours()
     const e_m = due_date.getMinutes()
+    const e_s = due_date.getSeconds()
+
     // 截止的时分比开始的时分要小
-    if ((e_h < s_h) || (e_h == s_h && e_m < s_m)) {
+    if ((e_h < s_h) || (e_h == s_h && e_m < s_m) || (e_h == s_h && e_m == s_m && e_s < s_s)) {
         return time_span + 1
     }
     return time_span
