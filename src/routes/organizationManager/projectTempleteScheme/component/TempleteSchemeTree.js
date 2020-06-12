@@ -530,28 +530,22 @@ export default class TempleteSchemeTree extends Component {
   // 添加同级 S
   handleAddSibiling = (e, id) => {
     e && e.stopPropagation()
-    const { itemIconArr = [] } = this.state
     var { currentTempleteListContainer = [] } = this.props
-    itemIconArr.push(id)
     this.setState({
       is_add_sibiling: true,
       selectedKeys: [],
-      itemIconArr: itemIconArr
     })
-      this.updateAddSibilingTreeList({ datas: currentTempleteListContainer, currentId: id })
+    this.updateAddSibilingTreeList({ datas: currentTempleteListContainer, currentId: id })
   }
   // 添加同级 E
 
   // 添加子级 S
   handleAddChildren = (e, id) => {
     e && e.stopPropagation()
-    const { itemIconArr = [] } = this.state
     let { currentTempleteListContainer = [] } = this.props
-    itemIconArr.push(id)
     this.setState({
       is_add_children: true,
       selectedKeys: [],
-      itemIconArr: itemIconArr
     })
     this.updateAddChildrenTreeList({ datas: currentTempleteListContainer, currentId: id })
   }
@@ -560,7 +554,7 @@ export default class TempleteSchemeTree extends Component {
   // 插入流程 S
   handleInsertFlow = ({e,name}) => {
     const { domEvent, key } = e
-    // domEvent && domEvent.stopPropagation()
+    domEvent && domEvent.stopPropagation()
     const { currentSelectedItemInfo = {} } = this.props
     if (!(currentSelectedItemInfo && Object.keys(currentSelectedItemInfo).length)) return
     const { template_id, parent_id, id } = currentSelectedItemInfo
@@ -605,7 +599,7 @@ export default class TempleteSchemeTree extends Component {
       is_add_rename: true,
       selectedKeys: [],
       inputValue: name,
-      local_name: name
+      local_name: name,
     })
   }
   // 重命名 E
@@ -759,7 +753,9 @@ export default class TempleteSchemeTree extends Component {
     const { currentTempleteListContainer = [], processTemplateList = [] } = this.props
     let flag = this.judgeWhetherCreateChildTask(currentTempleteListContainer, id)
     return (
-      <Menu onClick={(e) => { this.handleSelectOptions({e,type,id}) }} getPopupContainer={triggerNode => triggerNode.parentNode}>
+      <Menu 
+        onClick={(e) => { this.handleSelectOptions({e,type,id}) }} 
+        getPopupContainer={triggerNode => triggerNode.parentNode}>
         {
           type == '1' && (
             <Menu.Item key={'insert_milepost'}>插入里程碑</Menu.Item>
@@ -799,10 +795,11 @@ export default class TempleteSchemeTree extends Component {
   renderSpotDropdownContent = ({type, id}) => {
     return (
       <div 
-        onClick={(e) => {this.handleDropdownContentClick({e,type,id})}}
+        onClick={(e) => e.stopPropagation()}
       >
-        <Dropdown trigger={['click']} overlayClassName={indexStyles.tempMoreOptionsWrapper} getPopupContainer={() => document.getElementById('planningSchemeItemWrapper')} overlay={this.renderSelectMoreOptions({type, id})}>
-          <span style={{fontSize: '16px', color: '#1890FF'}} className={`${globalStyles.authTheme} ${indexStyles.sopt_icon}`}>&#xe7fd;</span>
+        <Dropdown 
+        trigger={['click']} overlayClassName={indexStyles.tempMoreOptionsWrapper} getPopupContainer={() => document.getElementById('planningSchemeItemWrapper')} overlay={this.renderSelectMoreOptions({type, id})}>
+          <span onClick={(e) => {this.handleDropdownContentClick({e,type,id})}} style={{fontSize: '16px', color: '#1890FF'}} className={`${globalStyles.authTheme} ${indexStyles.sopt_icon}`}>&#xe7fd;</span>
         </Dropdown>
       </div>
     )
