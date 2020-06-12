@@ -171,10 +171,11 @@ export default class WorkFlowItem extends Component {
         workflowUpdateTime({ id, plan_start_time: start_time_timestamp }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
+                    const status = isSamDay(new Date().getTime(), start_time_timestamp) ? '1' : '0' //如果是今天则设置为未开始
                     dispatch({
                         type: 'gantt/updateOutLineTree',
                         payload: {
-                            datas: [{ id, ...updateData }]
+                            datas: [{ id, ...updateData, status }]
                         }
                     });
                 } else {
