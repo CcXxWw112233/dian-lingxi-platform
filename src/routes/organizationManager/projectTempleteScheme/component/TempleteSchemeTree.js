@@ -63,7 +63,7 @@ export default class TempleteSchemeTree extends Component {
         this.updateCancelOrDeleteSibilingTreeList({ datas: currentTempleteListContainer, type: 'add_sibiling' })
       } else if (is_wrapper_add_children || is_add_children) { // 如果是子级，就处理子级
         this.updateCancelOrDeleteChildrenTreeList({ datas: currentTempleteListContainer, type: 'add_children' })
-      } else if (is_wrapper_add_rename || is_add_rename){ // 如果是重命名就处理重命名
+      } else if (is_wrapper_add_rename || is_add_rename) { // 如果是重命名就处理重命名
         this.updateCancelOrDeleteAlreadyExistsTreeList({ datas: currentTempleteListContainer, type: oldSelectedKeys && oldSelectedKeys[0] })
       }
       this.initStateDatas()
@@ -232,7 +232,7 @@ export default class TempleteSchemeTree extends Component {
     let PARENTID = parent_id == '0' ? id : parent_id
     // 得到一个当前元素中所有父级所在的下标位置的数组
     let parentKeysArr = this.getCurrentElementParentKey(arr, currentId);
-    let temp = [].concat([{ id: 'add_children', name: '', template_data_type: '2', template_id: template_id, parent_id: PARENTID, child_content: [] }],currentSelectedItemInfo.child_content)
+    let temp = [].concat([{ id: 'add_children', name: '', template_data_type: '2', template_id: template_id, parent_id: PARENTID, child_content: [] }], currentSelectedItemInfo.child_content)
     if (parentKeysArr.length == '1') { // 如果说当前点击的是最外层的元素, 那么就直接在当前追加一条
       arr.splice(parentKeysArr[0], 1, { ...currentSelectedItemInfo, child_content: removeEmptyArrayEle(temp) })
       tempExpandedKeys.push(PARENTID)
@@ -329,7 +329,7 @@ export default class TempleteSchemeTree extends Component {
             if (flag && flag.length) {
               new_data = content.child_content && content.child_content.filter(i => i.id != 'add_sibiling')
               content.child_content = new_data
-              item['child_content'].splice(parentKeysArr[1],1,content)
+              item['child_content'].splice(parentKeysArr[1], 1, content)
               return item
             }
           }
@@ -552,7 +552,7 @@ export default class TempleteSchemeTree extends Component {
   // 添加子级 E
 
   // 插入流程 S
-  handleInsertFlow = ({e,name}) => {
+  handleInsertFlow = ({ e, name }) => {
     const { domEvent, key } = e
     domEvent && domEvent.stopPropagation()
     const { currentSelectedItemInfo = {} } = this.props
@@ -682,7 +682,7 @@ export default class TempleteSchemeTree extends Component {
 
   // --------------------------  新增元素的输入框等事件 E -------------------------------------
 
-  handleSelectOptions = ({e, type,id}) => {
+  handleSelectOptions = ({ e, type, id }) => {
     const { key, domEvent } = e
     domEvent && domEvent.stopPropagation()
     const { currentTempleteListContainer = [] } = this.props
@@ -701,42 +701,45 @@ export default class TempleteSchemeTree extends Component {
     setTimeout(() => {
       switch (key) {
         case 'insert_milepost': // 表示插入里程碑
-          this.handleAddSibiling(domEvent,id)
+          this.handleAddSibiling(domEvent, id)
           break;
         case 'insert_task':
           if (type == '1') { // 表示里程碑中添加任务
-            this.handleAddChildren(domEvent,id)
+            this.handleAddChildren(domEvent, id)
             return
           } else if (type == '2') { // 表示任务中添加任务
-            this.handleAddSibiling(domEvent,id)
+            this.handleAddSibiling(domEvent, id)
             return
           } else if (type == '3') { // 表示流程中添加任务
-            this.handleAddSibiling(domEvent,id)
+            this.handleAddSibiling(domEvent, id)
             return
           }
           break
         case 'add_sub_task':
           if (type == '2') { // 表示任务中添加子任务
-            this.handleAddChildren(domEvent,id)
+            this.handleAddChildren(domEvent, id)
           }
           break
         case 'rename': // 重命名
-          this.handleRename(domEvent,id)
+          this.handleRename(domEvent, id)
           break
         case 'delete':
-          this.handleDeleteItem(domEvent,id)
+          this.handleDeleteItem(domEvent, id)
         default:
           break;
       }
-    },200)
-    
+    }, 200)
+
   }
 
-  handleDropdownContentClick = ({e,type,id}) => {
+  handleDropdownContentClick = ({ e, type, id }) => {
     e && e.stopPropagation()
     const { currentTempleteListContainer = [] } = this.props
     const { is_add_sibiling, is_add_children, is_add_rename } = this.state
     if (is_add_sibiling || is_add_children || is_add_rename) return
+    this.setState({
+      selectedKeys: []
+    })
     if (id) {
       let currentSelectedItemInfo = this.recursion(currentTempleteListContainer, id)
       this.props.dispatch({
@@ -748,13 +751,142 @@ export default class TempleteSchemeTree extends Component {
     }
   }
 
+  // ------------------------- 拖拽内容 S ----------------------------------
+
+  onDragEnter = info => {
+    // console.log(info, 'ssssssssssssssssssssss_onDragEnter');
+    // expandedKeys 需要受控时设置
+    this.setState({
+      expandedKeys: info.expandedKeys,
+    });
+  };
+
+  findFlowNodePosition = (data, currentId) => {
+    if (!data) return
+    let result = null;
+    for (let val = 0; val < data.length; val++) {
+      console.log(data[val])
+      if (data[val].id == currentId) {
+        return result = val
+      } else if (data[val].child_content && data[val].child_content.length > 0) {
+        result = this.findFlowNodePosition(data[val].child_content, currentId)
+      }
+    }
+    return result
+  }
+
+  onDrop = info => {
+    const dragKey = info.dragNode.props.eventKey; // 拖拽的元素 ID
+    const dragLength = info.dragNode.props.pos.split('-').length; // 拖拽的长度
+    const dragDataRef = info.dragNode.props.dataRef
+    // 判断length是否等于2或者是等于3，是因为树节点生成时默认一级(里程碑)为0-0，二级(任务)为0-0-0，split后length就是2或者3了。
+    const dropKey = info.node.props.eventKey; // 目标元素 ID
+    const dropPos = info.node.props.pos.split('-');
+    const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]); // 目标元素所在位置
+    const dropLength = info.node.props.pos.split('-').length; // 目标长度
+    const dropDataRef = info.node.props.dataRef
+
+    const loop = (data, key, callback) => {
+      data.forEach((item, index, arr) => {
+        if (item.id === key) {
+          return callback(item, index, arr);
+        }
+        if (item.child_content && item.child_content.length) {
+          return loop(item.child_content, key, callback);
+        }
+      });
+    };
+    const data = JSON.parse(JSON.stringify(this.props.currentTempleteListContainer || []));
+
+    // Find dragObject
+    let dragObj;
+
+    if (!info.dropToGap) { // 表示平级之间的拖动
+      // 平级与平级之间不能拖拽为子级 (父里程碑不能拖为子)
+      if (
+        (dragDataRef['template_data_type'] == '3' && dropDataRef['template_data_type'] != '3') ||
+        (dragDataRef['template_data_type'] == '3' && dropDataRef['template_data_type'] == '3') ||
+        // 当 dragLength == 4 时: 表示拖动的是子级, 当目标元素 dropLength == 3 时 表示 子元素拖动到别的父级 则不应该return
+        ((dropPosition == 0 && dropPos.length == 3) && (dragLength != 4 && dropLength != 3)) ||
+        (dropPosition == 0 && dropPos.length == 4) || // 表示子拖子
+        (
+          (dropPosition == 0 && dropPos.length == 2 && dragLength == 2 && dragDataRef['template_data_type'] == dropDataRef['template_data_type'])
+          ||
+          (dragDataRef['template_data_type'] == '1' && dropDataRef['template_data_type'] != '1')
+        )
+      ) {
+        // 当拖拽的是里程碑 目标元素是其他的时候
+        // debugger
+        return
+      }
+      loop(data, dragKey, (item, index, arr) => {
+        arr.splice(index, 1);
+        dragObj = item;
+      });
+      loop(data, dropKey, item => {
+        item.child_content = item.child_content || [];
+        // where to insert 示例添加到尾部，可以是随意位置
+        item.child_content.push(dragObj);
+      });
+      // debugger
+    } else if (
+      (info.node.props.children || []).length > 0 && // Has child_content
+      info.node.props.expanded && // Is expanded
+      dropPosition === 1 // On the bottom gap
+    ) {
+      loop(data, dragKey, (item, index, arr) => {
+        arr.splice(index, 1);
+        dragObj = item;
+      });
+      loop(data, dropKey, item => {
+        item.child_content = item.child_content || [];
+        // where to insert 示例添加到头部，可以是随意位置
+        item.child_content.unshift(dragObj);
+      });
+      // debugger
+    } else {
+      //一级不能拖拽为二级、二级子级
+      // if((dragLength==3&&dropLength==2)||(dragLength==2&&dropLength==3)){
+      //   debugger
+      //   return;
+      // }
+      loop(data, dragKey, (item, index, arr) => {
+        arr.splice(index, 1);
+        dragObj = item;
+      });
+      let ar;
+      let i;
+      loop(data, dropKey, (item, index, arr) => {
+        ar = arr;
+        i = index;
+      });
+      if (!ar) return
+      if (dropPosition === -1) { // 
+        ar.splice(i, 0, dragObj);
+        // debugger
+      } else {
+        ar.splice(i + 1, 0, dragObj);
+        // debugger
+      }
+    }
+    let flow_index = this.findFlowNodePosition(data, dragKey)
+    if (flow_index == 0) return
+    this.props.dispatch({
+      type: 'organizationManager/updateDatas',
+      payload: {
+        currentTempleteListContainer: removeEmptyArrayEle(data)
+      }
+    })
+  }
+  // ------------------------- 拖拽内容 E ----------------------------------
+
   // 渲染点点点
-  renderSelectMoreOptions = ({type, id}) => {
+  renderSelectMoreOptions = ({ type, id }) => {
     const { currentTempleteListContainer = [], processTemplateList = [] } = this.props
     let flag = this.judgeWhetherCreateChildTask(currentTempleteListContainer, id)
     return (
-      <Menu 
-        onClick={(e) => { this.handleSelectOptions({e,type,id}) }} 
+      <Menu
+        onClick={(e) => { this.handleSelectOptions({ e, type, id }) }}
         getPopupContainer={triggerNode => triggerNode.parentNode}>
         {
           type == '1' && (
@@ -778,28 +910,28 @@ export default class TempleteSchemeTree extends Component {
               }
             >
               {
-               !(processTemplateList && processTemplateList.length) ? ('') : processTemplateList.map(item => {
-                 const { id, name } = item
-                  return <Menu.Item onClick={(e) => { this.handleInsertFlow({e,name}) }} title={name} key={`${id}`}>{name}</Menu.Item>
-               })
+                !(processTemplateList && processTemplateList.length) ? ('') : processTemplateList.map(item => {
+                  const { id, name } = item
+                  return <Menu.Item onClick={(e) => { this.handleInsertFlow({ e, name }) }} title={name} key={`${id}`}>{name}</Menu.Item>
+                })
               }
             </SubMenu>
           )
         }
-        <Menu.Item style={{color: '#F5222D'}} key={'delete'}>删除</Menu.Item>
+        <Menu.Item style={{ color: '#F5222D' }} key={'delete'}>删除</Menu.Item>
       </Menu>
     )
   }
 
   // 渲染dropdown内容
-  renderSpotDropdownContent = ({type, id}) => {
+  renderSpotDropdownContent = ({ type, id }) => {
     return (
-      <div 
+      <div
         onClick={(e) => e.stopPropagation()}
       >
-        <Dropdown 
-        trigger={['click']} overlayClassName={indexStyles.tempMoreOptionsWrapper} getPopupContainer={() => document.getElementById('planningSchemeItemWrapper')} overlay={this.renderSelectMoreOptions({type, id})}>
-          <span onClick={(e) => {this.handleDropdownContentClick({e,type,id})}} style={{fontSize: '16px', color: '#1890FF'}} className={`${globalStyles.authTheme} ${indexStyles.sopt_icon}`}>&#xe7fd;</span>
+        <Dropdown
+          trigger={['click']} overlayClassName={indexStyles.tempMoreOptionsWrapper} getPopupContainer={() => document.getElementById('planningSchemeItemWrapper')} overlay={this.renderSelectMoreOptions({ type, id })}>
+          <span onClick={(e) => { this.handleDropdownContentClick({ e, type, id }) }} style={{ fontSize: '16px', color: '#1890FF' }} className={`${globalStyles.authTheme} ${indexStyles.sopt_icon}`}>&#xe7fd;</span>
         </Dropdown>
       </div>
     )
@@ -832,7 +964,7 @@ export default class TempleteSchemeTree extends Component {
           ) : (
               <>
                 {icon}
-                <span title={name} style={{overflow: 'hidden', textOverflow: 'ellipsis'}}>{name}</span>
+                <span title={name} style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{name}</span>
                 <div className={indexStyles.icon_list}>
                   {this.renderSpotDropdownContent({ type, id })}
                 </div>
@@ -862,7 +994,7 @@ export default class TempleteSchemeTree extends Component {
   // 渲染数组为空的时候结构
   renderEmptyTreeData = () => {
     return (
-      <div style={{lineHeight: '92px', textAlign: 'center', color: 'rgba(0,0,0,0.45)'}}>
+      <div style={{ lineHeight: '92px', textAlign: 'center', color: 'rgba(0,0,0,0.45)' }}>
         暂无数据
       </div>
     )
@@ -872,6 +1004,7 @@ export default class TempleteSchemeTree extends Component {
   renderNotEmptyTreeData = () => {
     const { expandedKeys = [], selectedKeys = [], is_add_rename } = this.state
     const { currentTempleteListContainer = [] } = this.props
+    console.log(selectedKeys, 'selectedKeys')
     return (
       < div className={`${indexStyles.treeNodeWrapper} ${globalStyles.global_vertical_scrollbar}`} >
         <Tree
@@ -880,6 +1013,9 @@ export default class TempleteSchemeTree extends Component {
           expandedKeys={expandedKeys}
           onSelect={this.onSelect}
           onExpand={this.onExpand}
+          draggable
+          onDragEnter={this.onDragEnter}
+          onDrop={this.onDrop}
         >
           {this.renderPlanTreeNode(currentTempleteListContainer)}
         </Tree>

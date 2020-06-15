@@ -194,6 +194,11 @@
         color: rgba(0,0,0,0.25);
         font-size: 14px;
       }
+      .ant-tree-treenode-selected {
+        .ant-tree-node-content-wrapper.ant-tree-node-selected {
+          background-color: #bae7ff !important;
+        }
+      }
       .ant-tree-treenode-switcher-close {
         padding: 12px 12px 12px 0;
         box-sizing: border-box;
@@ -201,6 +206,9 @@
         // .ant-tree-node-content-wrapper-close {
         //   // display: inline-block;
         // }
+        .ant-tree-node-content-wrapper.ant-tree-node-selected {
+          background-color: transparent;
+        }
       }
       .ant-tree-switcher_open, .ant-tree-node-content-wrapper-open {
         margin-bottom: 12px;
