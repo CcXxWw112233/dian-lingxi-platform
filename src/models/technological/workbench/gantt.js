@@ -285,7 +285,8 @@ export default {
             type: 'updateDatas',
             payload: {
               outline_tree: [],
-              outline_tree_round: []
+              outline_tree_round: [],
+              group_rows_lock: []
             }
           })
         } else {
@@ -618,22 +619,22 @@ export default {
       yield put({
         type: 'updateDatas',
         payload: {
-          list_group,
           ceiHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? ceil_height_fold : ceil_height
         }
       })
       yield put({
         type: 'setListGroup',
         payload: {
+          list_group,
           not_set_scroll_top
         }
       })
     },
     * setListGroup({ payload }, { select, call, put }) {
-      const { not_set_scroll_top } = payload
+      let { not_set_scroll_top, list_group = [] } = payload
       //根据所获得的分组数据转换所需要的数据
       // const { datas: { list_group = [], group_rows = [], ceiHeight, ceilWidth, date_arr_one_level = [] } } = this.props.model
-      let list_group = yield select(workbench_list_group)
+      // let list_group = yield select(workbench_list_group)
       list_group = JSON.parse(JSON.stringify(list_group))
       const group_rows = yield select(workbench_group_rows)
       const ceiHeight = yield select(workbench_ceiHeight)
@@ -749,7 +750,7 @@ export default {
         const list_height_arr = list_group[i]['list_data'].map(item => item.top)
         const list_group_item_height = Math.max.apply(null, list_height_arr) + one_group_row_total * ceiHeight - after_group_height
 
-        group_rows[i] = Math.max(group_rows_lock[i], list_group_item_height / ceiHeight, one_group_row_total) //(list_group_item_height / ceiHeight) < one_group_row_total ? one_group_row_total : list_group_item_height / ceiHeight // 原来是3，现在是2
+        group_rows[i] = Math.max(group_rows_lock[i] || 0, list_group_item_height / ceiHeight, one_group_row_total) //(list_group_item_height / ceiHeight) < one_group_row_total ? one_group_row_total : list_group_item_height / ceiHeight // 原来是3，现在是2
         if (list_group[i].list_id == '0' && group_view_type == '1' && gantt_board_id != '0') { //默认分组要设置得很高
           group_rows[i] = group_rows[i] + 30
         }

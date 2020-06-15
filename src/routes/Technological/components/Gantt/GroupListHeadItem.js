@@ -90,7 +90,8 @@ export default class GroupListHeadItem extends Component {
       dispatch({
         type: 'gantt/handleListGroup',
         payload: {
-          data: list_group
+          data: list_group,
+          not_set_scroll_top: true
         }
       })
     })

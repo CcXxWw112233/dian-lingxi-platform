@@ -154,37 +154,36 @@ export default class GroupListHead extends Component {
     const { list_group = [], group_rows = [], ceiHeight, target_scrollLeft, target_scrollTop, group_view_type, outline_tree = [], get_gantt_data_loaded, gantt_board_id } = this.props;
     const { startPlanType } = this.props;
     const isNewProject = (!outline_tree || outline_tree.length == 0) ? true : false;
-    if (get_gantt_data_loaded == false) {
-      return (
-        <div className={indexStyles.listHead}></div>
-      );
-    }
-    if (ganttIsOutlineView({ group_view_type }) && isNewProject && startPlanType == 0) {
-
-      return (
-        <div className={indexStyles.newProjectGuideWrapper}>
-          <div className={indexStyles.emptyBox}>
-            <div><img src={emptyBoxImageUrl} width={88} height={88} /></div>
-            <div>还没有计划，赶快新建一个吧</div>
-          </div>
-          <div className={indexStyles.guideButtons}>
-
-            <Button type="primary" className={indexStyles.selectMakePlanBtn} block onClick={() => { this.openGuideModal(gantt_board_id) }}>制定计划</Button>
-            <Button block onClick={this.openBoardTemplateDrawer}>选择模版</Button>
-          </div>
-        </div>
-      )
-
-    } else {
-      return (
-        <div className={`${ganttIsOutlineView({ group_view_type }) ? indexStyles.listTree : indexStyles.listHead}`}
-          onScroll={this.headScroll}
-          onMouseEnter={() => this.props.setScrollArea('gantt_head')}
-          id={'gantt_group_head'}
-        >
-          <div>
-            {
-              ganttIsOutlineView({ group_view_type }) &&
+    // if (get_gantt_data_loaded == false) {
+    //   return (
+    //     <div className={indexStyles.listHead}></div>
+    //   );
+    // }
+    if (ganttIsOutlineView({ group_view_type })) {
+      if (get_gantt_data_loaded == false) {
+        return (
+          <div className={indexStyles.listHead}></div>
+        );
+      } else {
+        if (isNewProject && startPlanType == 0) {
+          return (
+            <div className={indexStyles.newProjectGuideWrapper}>
+              <div className={indexStyles.emptyBox}>
+                <div><img src={emptyBoxImageUrl} width={88} height={88} /></div>
+                <div>还没有计划，赶快新建一个吧</div>
+              </div>
+              <div className={indexStyles.guideButtons}>
+                <Button type="primary" className={indexStyles.selectMakePlanBtn} block onClick={() => { this.openGuideModal(gantt_board_id) }}>制定计划</Button>
+                <Button block onClick={this.openBoardTemplateDrawer}>选择模版</Button>
+              </div>
+            </div>
+          )
+        } else {
+          return (
+            <div className={`${ganttIsOutlineView({ group_view_type }) ? indexStyles.listTree : indexStyles.listHead}`}
+              onScroll={this.headScroll}
+              onMouseEnter={() => this.props.setScrollArea('gantt_head')}
+              id={'gantt_group_head'}>
               <div style={{
                 width: '280px',
                 boxShadow: '1px 0px 4px 0px rgba(0,0,0,0.15);'
@@ -196,34 +195,106 @@ export default class GroupListHead extends Component {
                 />
                 <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
                 {/* {
-                  startPlanType == 1 &&
-                  <OutlineGuideModal handleClose={this.guideModalHandleClose} />
-                } */}
+                startPlanType == 1 &&
+                <OutlineGuideModal handleClose={this.guideModalHandleClose} />
+              } */}
               </div>
-            }
+            </div>
+          )
+        }
+      }
+    } else {
+      return (
+        <div className={`${ganttIsOutlineView({ group_view_type }) ? indexStyles.listTree : indexStyles.listHead}`}
+          onScroll={this.headScroll}
+          onMouseEnter={() => this.props.setScrollArea('gantt_head')}
+          id={'gantt_group_head'}>
+          <>
             {
-              !ganttIsOutlineView({ group_view_type }) &&
-              <>
-                {
-                  list_group.map((value, key) => {
-                    const { list_name, list_id, list_data = [] } = value
-                    return (
-                      <div key={list_id}>
-                        <GroupListHeadItem
-                          list_id={list_id}
-                          setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
-                          itemValue={value} itemKey={key} rows={group_rows[key]} />
-                      </div>
-                    )
-                  })
-                }
-                <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
-              </>
+              list_group.map((value, key) => {
+                const { list_name, list_id, list_data = [] } = value
+                return (
+                  <div key={list_id}>
+                    <GroupListHeadItem
+                      list_id={list_id}
+                      setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
+                      itemValue={value} itemKey={key} rows={group_rows[key]} />
+                  </div>
+                )
+              })
             }
-          </div>
+            <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
+          </>
         </div>
       )
     }
+
+
+    // if (ganttIsOutlineView({ group_view_type }) && isNewProject && startPlanType == 0) {
+
+    //   return (
+    //     <div className={indexStyles.newProjectGuideWrapper}>
+    //       <div className={indexStyles.emptyBox}>
+    //         <div><img src={emptyBoxImageUrl} width={88} height={88} /></div>
+    //         <div>还没有计划，赶快新建一个吧</div>
+    //       </div>
+    //       <div className={indexStyles.guideButtons}>
+
+    //         <Button type="primary" className={indexStyles.selectMakePlanBtn} block onClick={() => { this.openGuideModal(gantt_board_id) }}>制定计划</Button>
+    //         <Button block onClick={this.openBoardTemplateDrawer}>选择模版</Button>
+    //       </div>
+    //     </div>
+    //   )
+
+    // } else {
+    //   return (
+    // <div className={`${ganttIsOutlineView({ group_view_type }) ? indexStyles.listTree : indexStyles.listHead}`}
+    //   onScroll={this.headScroll}
+    //   onMouseEnter={() => this.props.setScrollArea('gantt_head')}
+    //   id={'gantt_group_head'}
+    // >
+    //   <div>
+    //     {
+    //       ganttIsOutlineView({ group_view_type }) &&
+    //       <div style={{
+    //         width: '280px',
+    //         boxShadow: '1px 0px 4px 0px rgba(0,0,0,0.15);'
+    //       }}>
+    //         <OutLineHeadItem
+    //           gantt_card_height={this.props.gantt_card_height}
+    //           dataAreaRealHeight={this.props.dataAreaRealHeight}
+    //           changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto} deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
+    //         />
+    //         <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
+    //         {/* {
+    //           startPlanType == 1 &&
+    //           <OutlineGuideModal handleClose={this.guideModalHandleClose} />
+    //         } */}
+    //       </div>
+    //     }
+    //     {
+    //       !ganttIsOutlineView({ group_view_type }) &&
+    //       <>
+    //         {
+    //           list_group.map((value, key) => {
+    //             const { list_name, list_id, list_data = [] } = value
+    //             return (
+    //               <div key={list_id}>
+    //                 <GroupListHeadItem
+    //                   list_id={list_id}
+    //                   setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
+    //                   itemValue={value} itemKey={key} rows={group_rows[key]} />
+    //               </div>
+    //             )
+    //           })
+    //         }
+    //         <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
+    //       </>
+    //     }
+    //   </div>
+    // </div>
+    //   )
+    // }
 
   }
 
