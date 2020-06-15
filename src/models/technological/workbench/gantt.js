@@ -18,7 +18,7 @@ import {
 } from './selects'
 import { createMilestone } from "../../../services/technological/prjectDetail";
 import { getGlobalData } from '../../../utils/businessFunction';
-import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, mock_gantt_data, ganttIsOutlineView, mock_outline_tree, ceil_width, ceil_width_year } from '../../../routes/Technological/components/Gantt/constants';
+import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, mock_gantt_data, ganttIsOutlineView, mock_outline_tree, ceil_width, ceil_width_year, one_group_row_total } from '../../../routes/Technological/components/Gantt/constants';
 import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
 import { handleChangeBoardViewScrollTop, setGantTimeSpan, diffGanttTimeSpan } from '../../../routes/Technological/components/Gantt/ganttBusiness';
@@ -65,7 +65,8 @@ export default {
       ceilWidth: ceil_width, //单元格的宽度
       ceiHeight: ceil_height, //单元格高度 40 + 12的外边距
       date_total: 0, //总天数
-      group_rows: [2, 2, 2], //每一个分组默认行数 [7, 7, 7]
+      group_rows: [one_group_row_total, one_group_row_total, one_group_row_total], //每一个分组默认行数 [7, 7, 7]
+      group_rows_lock: [0, 0, 0], //group_rows的锁，当 key对应的值为正整数时， 优先
       group_list_area: [], //分组高度区域 [组一行数 * ceiHeight，组二行数 * ceiHeight]
       group_list_area_section_height: [], //分组高度区域总高度 [组一行数 * ceiHeight，(组一行数 + 组二行数) * ceiHeight， ...]
       isDragging: false, //甘特图是否在拖拽中
@@ -642,6 +643,7 @@ export default {
       const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
       const show_board_fold = yield select(getModelSelectDatasState('gantt', 'show_board_fold'))
       const gantt_view_mode = yield select(getModelSelectDatasState('gantt', 'gantt_view_mode'))
+      const group_rows_lock = yield select(getModelSelectDatasState('gantt', 'group_rows_lock'))
 
       const group_list_area = [] //分组高度区域
 
@@ -655,7 +657,7 @@ export default {
           })
         }
 
-        const length = 5 //list_data.length < 5 ? 5 : (list_data.length + 1)
+        const length = one_group_row_total //list_data.length < 5 ? 5 : (list_data.length + 1)
         const group_height = length * ceiHeight
         group_list_area[i] = group_height
         group_rows[i] = length
@@ -745,9 +747,9 @@ export default {
           list_group[i]['list_data'][j] = item
         }
         const list_height_arr = list_group[i]['list_data'].map(item => item.top)
-        const list_group_item_height = Math.max.apply(null, list_height_arr) + 2 * ceiHeight - after_group_height
+        const list_group_item_height = Math.max.apply(null, list_height_arr) + one_group_row_total * ceiHeight - after_group_height
 
-        group_rows[i] = (list_group_item_height / ceiHeight) < 2 ? 2 : list_group_item_height / ceiHeight // 原来是3，现在是2
+        group_rows[i] = Math.max(group_rows_lock[i], list_group_item_height / ceiHeight, one_group_row_total) //(list_group_item_height / ceiHeight) < one_group_row_total ? one_group_row_total : list_group_item_height / ceiHeight // 原来是3，现在是2
         if (list_group[i].list_id == '0' && group_view_type == '1' && gantt_board_id != '0') { //默认分组要设置得很高
           group_rows[i] = group_rows[i] + 30
         }
@@ -809,6 +811,40 @@ export default {
         handleChangeBoardViewScrollTop({ group_view_type, gantt_board_id, target_scrollTop_board_storage })
       }
     },
+    * handleGroupHeight({ payload }, { select, call, put }) { //
+      let { group_rows, group_rows_lock } = payload
+      const ceiHeight = yield select(workbench_ceiHeight)
+      if (!group_rows) {
+        group_rows = yield select(getModelSelectDatasState('gantt', 'group_rows'))
+      }
+      if (!group_rows_lock) {
+        group_rows_lock = yield select(getModelSelectDatasState('gantt', 'group_rows_lock'))
+      }
+      let group_rows_ = group_rows.map((value, key) => {
+        return Math.max(value, group_rows_lock[key])
+      })
+      let group_list_area = group_rows_.map(value => {
+        return value * ceiHeight
+      })
+      let group_list_area_section_height = group_list_area.map((item, index) => {
+        const list_arr = group_list_area.slice(0, index + 1)
+        let height = 0
+        for (let val of list_arr) {
+          height += val
+        }
+        return height
+      })
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          group_list_area,
+          group_rows: group_rows_,
+          group_list_area_section_height,
+          group_rows_lock,
+        }
+      })
+    },
+
     * createMilestone({ payload }, { select, call, put }) { //
       const res = yield call(createMilestone, payload)
       if (isApiResponseOk(res)) {
