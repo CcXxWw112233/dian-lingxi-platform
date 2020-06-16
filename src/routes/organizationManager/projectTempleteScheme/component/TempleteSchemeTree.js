@@ -502,7 +502,6 @@ export default class TempleteSchemeTree extends Component {
     // 得到一个当前元素中所有父级所在的下标位置的数组
     let parentKeysArr = this.getCurrentElementParentKey(arr, currentId);
     if (parentKeysArr.length == '1') { // 如果说当前点击的是最外层的元素, 那么就直接在当前追加一条
-      // debugger
       arr.splice(parentKeysArr[0], 1, { ...currentSelectedItemInfo, is_rename: flag })
     } else {
       parentKeysArr.splice(-1, 1) // 这里为什么要截取呢, 是因为,只需要找到当前元素的父元素即可
@@ -756,21 +755,21 @@ export default class TempleteSchemeTree extends Component {
   onDragEnter = info => {
     // console.log(info, 'ssssssssssssssssssssss_onDragEnter');
     // expandedKeys 需要受控时设置
-    this.setState({
-      expandedKeys: info.expandedKeys,
-    });
+    // this.setState({
+    //   expandedKeys: info.expandedKeys,
+    // });
   };
 
   findFlowNodePosition = (data, currentId) => {
     if (!data) return
     let result = null;
     for (let val = 0; val < data.length; val++) {
-      console.log(data[val])
       if (data[val].id == currentId) {
         return result = val
       } else if (data[val].child_content && data[val].child_content.length > 0) {
         result = this.findFlowNodePosition(data[val].child_content, currentId)
       }
+      return result
     }
     return result
   }
@@ -816,7 +815,6 @@ export default class TempleteSchemeTree extends Component {
         )
       ) {
         // 当拖拽的是里程碑 目标元素是其他的时候
-        // debugger
         return
       }
       loop(data, dragKey, (item, index, arr) => {
@@ -828,7 +826,6 @@ export default class TempleteSchemeTree extends Component {
         // where to insert 示例添加到尾部，可以是随意位置
         item.child_content.push(dragObj);
       });
-      // debugger
     } else if (
       (info.node.props.children || []).length > 0 && // Has child_content
       info.node.props.expanded && // Is expanded
@@ -843,13 +840,11 @@ export default class TempleteSchemeTree extends Component {
         // where to insert 示例添加到头部，可以是随意位置
         item.child_content.unshift(dragObj);
       });
-      // debugger
     } else {
       //一级不能拖拽为二级、二级子级
-      // if((dragLength==3&&dropLength==2)||(dragLength==2&&dropLength==3)){
-      //   debugger
-      //   return;
-      // }
+      if (dragDataRef['template_data_type'] == '3' && dragLength == 3 && dropLength == 4) {
+        return
+      }
       loop(data, dragKey, (item, index, arr) => {
         arr.splice(index, 1);
         dragObj = item;
@@ -863,20 +858,20 @@ export default class TempleteSchemeTree extends Component {
       if (!ar) return
       if (dropPosition === -1) { // 
         ar.splice(i, 0, dragObj);
-        // debugger
       } else {
         ar.splice(i + 1, 0, dragObj);
-        // debugger
       }
     }
-    let flow_index = this.findFlowNodePosition(data, dragKey)
-    if (flow_index == 0) return
-    this.props.dispatch({
-      type: 'organizationManager/updateDatas',
-      payload: {
-        currentTempleteListContainer: removeEmptyArrayEle(data)
-      }
-    })
+    setTimeout(() => {
+      let flow_index = this.findFlowNodePosition(data, dragKey)
+      if (flow_index == 0) return
+      this.props.dispatch({
+        type: 'organizationManager/updateDatas',
+        payload: {
+          currentTempleteListContainer: removeEmptyArrayEle(data)
+        }
+      })
+    },200)
   }
   // ------------------------- 拖拽内容 E ----------------------------------
 
@@ -965,6 +960,7 @@ export default class TempleteSchemeTree extends Component {
               <>
                 {icon}
                 <span title={name} style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{name}</span>
+                <span style={{position: 'absolute', right: 0, fontSize: '24px'}} className={globalStyles.authTheme}>&#xe62e;</span>
                 <div className={indexStyles.icon_list}>
                   {this.renderSpotDropdownContent({ type, id })}
                 </div>
