@@ -764,7 +764,7 @@ export default class TempleteSchemeTree extends Component {
     if (!data) return
     let result = null;
     for (let val = 0; val < data.length; val++) {
-      if (data[val].id == currentId) {
+      if (data[val].template_data_type == '3' && data[val].id == currentId) {
         return result = val
       } else if (data[val].child_content && data[val].child_content.length > 0) {
         result = this.findFlowNodePosition(data[val].child_content, currentId)
@@ -784,7 +784,6 @@ export default class TempleteSchemeTree extends Component {
     const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]); // 目标元素所在位置
     const dropLength = info.node.props.pos.split('-').length; // 目标长度
     const dropDataRef = info.node.props.dataRef
-
     const loop = (data, key, callback) => {
       data.forEach((item, index, arr) => {
         if (item.id === key) {
@@ -799,7 +798,6 @@ export default class TempleteSchemeTree extends Component {
 
     // Find dragObject
     let dragObj;
-
     if (!info.dropToGap) { // 表示平级之间的拖动
       // 平级与平级之间不能拖拽为子级 (父里程碑不能拖为子)
       if (
@@ -870,6 +868,9 @@ export default class TempleteSchemeTree extends Component {
         payload: {
           currentTempleteListContainer: removeEmptyArrayEle(data)
         }
+      })
+      this.setState({
+        selectedKeys: []
       })
     },200)
   }
@@ -959,7 +960,7 @@ export default class TempleteSchemeTree extends Component {
           ) : (
               <>
                 {icon}
-                <span title={name} style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{name}</span>
+                <span title={name} style={{ overflow: 'hidden', textOverflow: 'ellipsis',marginRight: '16px' }}>{name}</span>
                 <span style={{position: 'absolute', right: 0, fontSize: '24px'}} className={globalStyles.authTheme}>&#xe62e;</span>
                 <div className={indexStyles.icon_list}>
                   {this.renderSpotDropdownContent({ type, id })}
