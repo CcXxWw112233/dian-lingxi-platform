@@ -760,6 +760,7 @@ export default class TempleteSchemeTree extends Component {
     // });
   };
 
+  // 查询流程节点的位置
   findFlowNodePosition = (data, currentId) => {
     if (!data) return
     let result = null;
@@ -860,7 +861,7 @@ export default class TempleteSchemeTree extends Component {
         ar.splice(i + 1, 0, dragObj);
       }
     }
-    setTimeout(() => {
+    setTimeout(async() => {
       let flow_index = this.findFlowNodePosition(data, dragKey)
       if (flow_index == 0) return
       this.props.dispatch({
@@ -872,8 +873,28 @@ export default class TempleteSchemeTree extends Component {
       this.setState({
         selectedKeys: []
       })
+      await this.getDragCorrespondingElementTurnWithID(data)
     },200)
   }
+
+  // 获取拖拽后对应元素位置ID存为参数
+  getDragCorrespondingElementTurnWithID = (data) => {
+    let arrRes = []
+    let newData = JSON.parse(JSON.stringify(data || []))
+    let rev = (datas) => {
+      for (let i in datas) {
+        arrRes.push(datas[i].id)
+        if (datas[i].child_content && datas[i].child_content.length) {
+          arrRes = rev(datas[i].child_content)
+          debugger
+        }
+      }
+      return arrRes
+    }
+    rev(newData)
+    return removeEmptyArrayEle(arrRes)
+  }
+
   // ------------------------- 拖拽内容 E ----------------------------------
 
   // 渲染点点点
@@ -1001,7 +1022,6 @@ export default class TempleteSchemeTree extends Component {
   renderNotEmptyTreeData = () => {
     const { expandedKeys = [], selectedKeys = [], is_add_rename } = this.state
     const { currentTempleteListContainer = [] } = this.props
-    console.log(selectedKeys, 'selectedKeys')
     return (
       < div className={`${indexStyles.treeNodeWrapper} ${globalStyles.global_vertical_scrollbar}`} >
         <Tree
