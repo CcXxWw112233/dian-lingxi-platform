@@ -63,6 +63,12 @@ class TreeNode extends Component {
         });
     }
 
+    onClickTitle = (placeholder) => {
+        if (placeholder == '新建里程碑') {
+            this.toggleTitleEdit()
+        }
+    }
+
     onMouseLeaveTitle = () => {
         this.setState({
             isTitleHover: false,
@@ -286,22 +292,27 @@ class TreeNode extends Component {
 
         //console.log("isTitleHover || isTitleEdit", isTitleHover, isTitleEdit);
 
-
+        console.log('sssssaddda', { editing })
         return (
             <span className={`${styles.outline_tree_node_label} ${isTitleHover ? styles.hoverTitle : ''}`}>
                 {/*<span><span>确定</span><span>取消</span></span> */}
                 <Tooltip mouseEnterDelay={0.5} mouseLeaveDelay={0} placement="top" title={title != '0' ? title : ''}>
-                    <span className={`${styles.title}`} onMouseEnter={this.onMouseEnterTitle} onMouseLeave={this.onMouseLeaveTitle}>
-
+                    <span className={`${styles.title}`}
+                        // onMouseEnter={this.onMouseEnterTitle}
+                        // onMouseLeave={this.onMouseLeaveTitle}
+                        onClick={() => this.onClickTitle(placeholder)}
+                    >
                         {
-                            editing || (isTitleHover || isTitleEdit) ?
+                            (editing || isTitleHover || isTitleEdit) ?
                                 <Input defaultValue={title != '0' ? title : ''}
-                                    autoFocus={editing ? true : false}
+                                    // autoFocus={editing ? true : false}
+                                    autoFocus
                                     style={{ width: '100%' }}
                                     onChange={this.onChangeTitle}
                                     placeholder={placeholder ? placeholder : '请填写任务名称'}
-                                    className={`${isTitleEdit ? styles.titleInputFocus : styles.titleInputHover}`}
-                                    onFocus={this.toggleTitleEdit}
+                                    className={`${styles.titleInputFocus}`}
+                                    // className={`${isTitleEdit ? styles.titleInputFocus : styles.titleInputHover}`}
+                                    // onFocus={this.toggleTitleEdit}
                                     onBlur={this.onPressEnter}
                                     // addonAfter={isTitleEdit ? null : null}
                                     onPressEnter={this.onPressEnter} />
@@ -417,7 +428,13 @@ class TreeNode extends Component {
             type = this.props.type;
         }
         //console.log("更新节点", nodeValue);
-        const menu = <NodeOperate nodeValue={nodeValue} setDropVisble={this.operateVisibleChange} onExpand={onExpand} changeOutLineTreeNodeProto={changeOutLineTreeNodeProto} deleteOutLineTreeNode={deleteOutLineTreeNode} />
+        const menu = <NodeOperate nodeValue={nodeValue}
+            editName={this.toggleTitleEdit}
+            setDropVisble={this.operateVisibleChange}
+            onExpand={onExpand}
+            changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
+            deleteOutLineTreeNode={deleteOutLineTreeNode} />
+
         if (this.props.children && this.props.children.length > 0) {
 
             let className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;

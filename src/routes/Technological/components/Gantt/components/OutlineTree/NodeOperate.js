@@ -178,6 +178,11 @@ export default class NodeOperate extends Component {
             case 'insert_flow':
                 this.insertItem({ type: 'flow', data })
                 break
+            case 'rename':
+                if (typeof this.props.editName == 'function') {
+                    this.props.editName()
+                }
+                break
             default:
                 if (/^group_id_+/.test(key)) {//选择任务分组
                     const list_id = key.replace('group_id_', '')
@@ -371,6 +376,9 @@ export default class NodeOperate extends Component {
                         </div>
                     )
                 }
+                <div className={styles.menu_item} onClick={() => this.menuItemClick('rename')}>
+                    重命名
+                </div>
                 { //一级任务是顶级则没有
                     tree_type == '1' && (
                         <div className={styles.menu_item} onClick={() => this.menuItemClick('add_card')}>
