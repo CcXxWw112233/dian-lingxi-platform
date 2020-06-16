@@ -410,7 +410,7 @@ export default class GanttFace extends Component {
               {/*  //撑住DateList相同高度的底部 */}
               <GroupListHead
                 setScrollArea={this.setScrollArea}
-                setScrollPosition={this.setScrollArea}
+                setScrollPosition={this.setScrollPosition}
                 setGoldDateArr={this.setGoldDateArr}
                 scroll_area={this.state.scroll_area}
                 changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
