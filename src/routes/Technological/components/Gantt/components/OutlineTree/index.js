@@ -10,6 +10,18 @@ import moment from 'moment';
 import AvatarList from '@/components/avatarList'
 import NodeOperate from './NodeOperate'
 import { validatePositiveInt } from '../../../../../../utils/verify';
+import { connect } from 'dva';
+import { isSamDay } from '../../../../../../utils/util';
+
+@connect(({ gantt: { datas: {
+    date_arr_one_level = [],
+    ceilWidth,
+    gantt_view_mode,
+} } }) => ({
+    date_arr_one_level,
+    ceilWidth,
+    gantt_view_mode,
+}))
 class TreeNode extends Component {
     constructor(props) {
         //console.log("TreeNode", props);
@@ -66,7 +78,58 @@ class TreeNode extends Component {
     onClickTitle = (placeholder) => {
         if (placeholder == '新建里程碑') {
             this.toggleTitleEdit()
+            return
         }
+        this.navigateToVisualArea()
+    }
+
+    // 设置出现将具有时间的里程碑或任务定位到视觉区域内------start
+    // 定位
+    navigateToVisualArea = () => {
+        const { date_arr_one_level = [], ceilWidth, nodeValue = {}, gantt_view_mode } = this.props
+        const { start_time, due_time, tree_type } = nodeValue
+        const gold_time = tree_type == '1' ? due_time : start_time
+        const date = new Date(gold_time).getDate()
+        let toDayIndex = -1
+        if (gantt_view_mode == 'month') {
+            toDayIndex = date_arr_one_level.findIndex(item => isSamDay(item.timestamp, gold_time)) //当天所在位置index
+        } else if (gantt_view_mode == 'year') {
+            toDayIndex = date_arr_one_level.findIndex(item => gold_time >= item.timestamp && gold_time <= item.timestampEnd) //当天所在月位置index
+        } else {
+
+        }
+        const target = document.getElementById('gantt_card_out_middle')
+
+        if (toDayIndex != -1) { //如果今天在当前日期面板内 
+            let nomal_position = toDayIndex * ceilWidth - 248 + 16 //248为左边面板宽度,16为左边header的宽度和withCeil * n的 %值
+            if (gantt_view_mode == 'year') {
+                const date_position = date_arr_one_level.slice(0, toDayIndex).map(item => item.last_date).reduce((total, num) => total + num) //索引月份总天数
+                nomal_position = date_position * ceilWidth - 248 + 16//当天所在位置index
+            }
+            const max_position = target.scrollWidth - target.clientWidth - 2 * ceilWidth//最大值,保持在这个值的范围内，滚动条才能不滚动到触发更新的区域
+            const position = max_position > nomal_position ? nomal_position : max_position
+
+            this.setScrollPosition({
+                position
+            })
+        } else {
+            this.props.setGoldDateArr && this.props.setGoldDateArr({ timestamp: gold_time })
+            setTimeout(() => {
+                this.props.setScrollPosition && this.props.setScrollPosition({ delay: 300, position: ceilWidth * (60 - 4 + date - 1) - 16 })
+            }, 300)
+        }
+
+    }
+    //设置滚动条位置
+    setScrollPosition = ({ delay = 300, position = 200 }) => {
+        const target = document.getElementById('gantt_card_out_middle')
+        setTimeout(function () {
+            if (target.scrollTo) {
+                target.scrollTo(position, target.scrollTop)
+            } else {
+                target.scrollLeft = position
+            }
+        }, delay)
     }
 
     onMouseLeaveTitle = () => {
@@ -292,7 +355,7 @@ class TreeNode extends Component {
 
         //console.log("isTitleHover || isTitleEdit", isTitleHover, isTitleEdit);
 
-        console.log('sssssaddda', { editing })
+
         return (
             <span className={`${styles.outline_tree_node_label} ${isTitleHover ? styles.hoverTitle : ''}`}>
                 {/*<span><span>确定</span><span>取消</span></span> */}

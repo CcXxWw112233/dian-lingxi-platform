@@ -189,6 +189,8 @@ export default class GroupListHead extends Component {
                 boxShadow: '1px 0px 4px 0px rgba(0,0,0,0.15);'
               }}>
                 <OutLineHeadItem
+                  setScrollPosition={this.props.setScrollArea}
+                  setGoldDateArr={this.props.setGoldDateArr}
                   gantt_card_height={this.props.gantt_card_height}
                   dataAreaRealHeight={this.props.dataAreaRealHeight}
                   changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto} deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}

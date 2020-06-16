@@ -585,7 +585,7 @@ export default class OutLineHeadItem extends Component {
             outline_tree.map((item, index) => {
                 if (item.children && item.children.length > 0) {
                     return (
-                        <TreeNode key={index} nodeValue={item} level={level} onHover={this.onHover}>
+                        <TreeNode key={index} nodeValue={item} level={level} onHover={this.onHover} setScrollPosition={this.props.setScrollArea} setGoldDateArr={this.props.setGoldDateArr}>
                             {this.renderGanttOutLineTree(item.children, level + 1, item)}
                         </TreeNode>
                     );
@@ -593,6 +593,8 @@ export default class OutLineHeadItem extends Component {
                     if (item.tree_type == 0) {
                         return (
                             <TreeNode
+                                setScrollPosition={this.props.setScrollArea}
+                                setGoldDateArr={this.props.setGoldDateArr}
                                 level={level}
                                 nodeValue={item}
                                 type={'2'}
@@ -603,7 +605,7 @@ export default class OutLineHeadItem extends Component {
                             </TreeNode>
                         );
                     } else {
-                        return (<TreeNode key={index} nodeValue={item} level={level} onHover={this.onHover}></TreeNode>);
+                        return (<TreeNode setScrollPosition={this.props.setScrollArea} setGoldDateArr={this.props.setGoldDateArr} key={index} nodeValue={item} level={level} onHover={this.onHover}></TreeNode>);
                     }
 
                 }
@@ -788,6 +790,8 @@ export default class OutLineHeadItem extends Component {
                 >
                     {this.renderGanttOutLineTree(outline_tree, 0)}
                     <TreeNode
+                        setScrollPosition={this.props.setScrollArea}
+                        setGoldDateArr={this.props.setGoldDateArr}
                         type={'1'}
                         placeholder={'新建里程碑'}
                         onHover={this.onHover}
