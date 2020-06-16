@@ -142,7 +142,7 @@ export default class GroupListHeadElse extends Component {
     ) {
       return this.getElseHeight()
     } else {
-      return 30
+      return 0//30
     }
 
   }
@@ -153,14 +153,14 @@ export default class GroupListHeadElse extends Component {
 
     return (
       <div style={{ height: this.filterHeight() }} className={`${indexStyles.listHeadItem}`}>
-        {
+        {/* {
           group_view_type == '1' && !add_new_board_group && gantt_board_id != '0' && (
             <div onClick={this.addNew} className={globalStyles.link_mouse} style={{ marginTop: 20 }}>
               <i className={globalStyles.authTheme}>&#xe8fe;</i>
               新增分组
             </div>
           )
-        }
+        } */}
         {
           add_new_board_group && (
             <Input
