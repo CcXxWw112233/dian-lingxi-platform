@@ -886,7 +886,6 @@ export default class TempleteSchemeTree extends Component {
         arrRes.push(datas[i].id)
         if (datas[i].child_content && datas[i].child_content.length) {
           arrRes = rev(datas[i].child_content)
-          debugger
         }
       }
       return arrRes
