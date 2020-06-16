@@ -47,7 +47,7 @@ class TreeNode extends Component {
 
 
     isShowSetTimeSpan = (nodeValue) => {
-        if (nodeValue.tree_type == '2') {
+        if (nodeValue.tree_type == '2' || (nodeValue.tree_type == '1' && nodeValue.time_span)) {
             return true;
         } else {
             return false;
@@ -88,6 +88,7 @@ class TreeNode extends Component {
     navigateToVisualArea = () => {
         const { date_arr_one_level = [], ceilWidth, nodeValue = {}, gantt_view_mode } = this.props
         const { start_time, due_time, tree_type } = nodeValue
+        if (!start_time) return
         const gold_time = tree_type == '1' ? due_time : start_time
         const date = new Date(gold_time).getDate()
         let toDayIndex = -1
@@ -439,7 +440,9 @@ class TreeNode extends Component {
                         </Dropdown>
                         {
                             this.isShowSetTimeSpan(nodeValue) &&
-                            <Popover placement="bottom" content={<ManhourSet onChange={this.onManHourChange} value={time_span} />} title={<div style={{ textAlign: 'center', height: '36px', lineHeight: '36px', fontWeight: '600' }}>花费时间</div>} trigger="click">
+                            <Popover
+                                {...(tree_type == '1' ? { visible: false } : {})} //里程碑不能直接设置周期
+                                placement="bottom" content={<ManhourSet onChange={this.onManHourChange} value={time_span} />} title={<div style={{ textAlign: 'center', height: '36px', lineHeight: '36px', fontWeight: '600' }}>花费时间</div>} trigger="click">
                                 {
                                     time_span ?
                                         <span className={`${styles.editTitle}`}>{time_span}天</span>
