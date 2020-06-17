@@ -7,6 +7,7 @@ export const ceil_height_fold = 24 //折叠的单元格高度
 export const group_rows_fold = 4  //进度汇总折叠后行数
 export const ceil_width = 44 // 默认单元格宽度 （月视图）
 export const ceil_width_year = 6 //年试图下的单元格宽度
+export const one_group_row_total = 2 //默认分组行数
 export const ganttIsFold = ({ group_view_type, gantt_board_id, show_board_fold }) => { //gantt是否折叠
     if (group_view_type == '1' && gantt_board_id == '0' && show_board_fold) {
         return true

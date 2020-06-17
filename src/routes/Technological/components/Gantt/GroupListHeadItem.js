@@ -75,6 +75,25 @@ export default class GroupListHeadItem extends Component {
     }
     this.setState({
       isShowBottDetail: new_isShowBottDetail
+    }, () => {
+      // 展开分组
+      const { itemValue = {}, itemKey, dispatch, group_rows_lock, group_rows, list_group } = this.props
+      const { list_no_time_data = [] } = itemValue
+      const group_rows_lock_ = [...group_rows_lock]
+      new_isShowBottDetail == '1' ? group_rows_lock_[itemKey] = Math.min(list_no_time_data.length + 3, 7) : group_rows_lock_[itemKey] = 0
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          group_rows_lock: group_rows_lock_
+        }
+      })
+      dispatch({
+        type: 'gantt/handleListGroup',
+        payload: {
+          data: list_group,
+          not_set_scroll_top: true
+        }
+      })
     })
   }
   setLableColor = (label_data) => {
@@ -194,12 +213,33 @@ export default class GroupListHeadItem extends Component {
   }
   //分组名点击
   listNameClick = () => {
-    const { itemValue, gantt_board_id, dispatch, group_view_type } = this.props
+    const { itemValue, gantt_board_id, dispatch, group_view_type, single_select_user } = this.props
+    const { list_id, list_name } = itemValue
     const { local_list_name } = this.state
-    if (group_view_type != '1') { //必须要在项目视图 或项目分组才能看
+    if (group_view_type == '2') {
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          group_view_type: '1',
+          single_select_user: { id: list_id, name: list_name }
+        }
+      })
+      dispatch({
+        type: 'gantt/getGanttData',
+        payload: {
+
+        }
+      })
       return
     }
-    const { list_id } = itemValue
+    if (group_view_type != '1') { //必须要在项目视图 或项目分组才能看
+      return
+    } else {
+      if (single_select_user.id) {//点击成员视图切换到项目视图，同时带有只查看某用户的信息
+        // message.warn('已锁定查看成员项目，请先')
+        return 
+      } 
+    }
     if (gantt_board_id == '0') {
       dispatch({
         type: 'gantt/updateDatas',
@@ -844,7 +884,7 @@ export default class GroupListHeadItem extends Component {
   }
 
   // 访问控制添加成员
-  handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试', ) => {
+  handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试',) => {
     const { itemValue = {}, gantt_board_id } = this.props
     const { list_id, privileges, board_id } = itemValue
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
@@ -1189,7 +1229,7 @@ export default class GroupListHeadItem extends Component {
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
-  gantt: { datas: { boards_flies, group_rows = [], ceiHeight, gantt_board_id, group_view_type, get_gantt_data_loading, list_group, show_board_fold } },
+  gantt: { datas: { single_select_user, group_rows_lock, boards_flies, group_rows = [], ceiHeight, gantt_board_id, group_view_type, get_gantt_data_loading, list_group, show_board_fold } },
   technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, userBoardPermissions } },
   projectDetail: { datas: { projectDetailInfoData = {} } },
   workbench: {
@@ -1197,5 +1237,5 @@ function mapStateToProps({
       projectList,
     } },
 }) {
-  return { projectList, boards_flies, list_group, ceiHeight, group_rows, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, get_gantt_data_loading, show_board_fold, projectDetailInfoData, userBoardPermissions }
+  return { single_select_user, group_rows_lock, projectList, boards_flies, list_group, ceiHeight, group_rows, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, get_gantt_data_loading, show_board_fold, projectDetailInfoData, userBoardPermissions }
 }

@@ -18,7 +18,7 @@ import {
 } from './selects'
 import { createMilestone } from "../../../services/technological/prjectDetail";
 import { getGlobalData } from '../../../utils/businessFunction';
-import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, mock_gantt_data, ganttIsOutlineView, mock_outline_tree, ceil_width, ceil_width_year } from '../../../routes/Technological/components/Gantt/constants';
+import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, mock_gantt_data, ganttIsOutlineView, mock_outline_tree, ceil_width, ceil_width_year, one_group_row_total } from '../../../routes/Technological/components/Gantt/constants';
 import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
 import { handleChangeBoardViewScrollTop, setGantTimeSpan, diffGanttTimeSpan } from '../../../routes/Technological/components/Gantt/ganttBusiness';
@@ -65,7 +65,8 @@ export default {
       ceilWidth: ceil_width, //单元格的宽度
       ceiHeight: ceil_height, //单元格高度 40 + 12的外边距
       date_total: 0, //总天数
-      group_rows: [2, 2, 2], //每一个分组默认行数 [7, 7, 7]
+      group_rows: [one_group_row_total, one_group_row_total, one_group_row_total], //每一个分组默认行数 [7, 7, 7]
+      group_rows_lock: [0, 0, 0], //group_rows的锁，当 key对应的值为正整数时， 优先
       group_list_area: [], //分组高度区域 [组一行数 * ceiHeight，组二行数 * ceiHeight]
       group_list_area_section_height: [], //分组高度区域总高度 [组一行数 * ceiHeight，(组一行数 + 组二行数) * ceiHeight， ...]
       isDragging: false, //甘特图是否在拖拽中
@@ -84,6 +85,7 @@ export default {
       group_view_type: '1', //分组视图1项目， 2成员, 4大纲, 5项目分组再分组成成员
       group_view_filter_boards: [], //内容过滤项目id 列表
       group_view_filter_users: [], //内容过滤职员id 列表
+      single_select_user: { id: '', name: '' },//成员视图下，点击成员
       group_view_boards_tree: [], //内容过滤项目分组树
       group_view_users_tree: [], //内容过滤成员分组树
       holiday_list: [], //日历列表（包含节假日农历）
@@ -129,11 +131,11 @@ export default {
       const group_view_filter_users = yield select(getModelSelectDatasState('gantt', 'group_view_filter_users'))
       const group_view_boards_tree = yield select(getModelSelectDatasState('gantt', 'group_view_boards_tree'))
       const group_view_users_tree = yield select(getModelSelectDatasState('gantt', 'group_view_users_tree'))
-
+      const single_select_user = yield select(getModelSelectDatasState('gantt', 'single_select_user'))
       //内容过滤处理
       const setContentFilterParams = () => {
         let query_board_ids = []
-        let query_user_ids = []
+        let query_user_ids = [single_select_user.id].filter(item => item)
 
         //  项目id处理
         for (let val of group_view_filter_boards) {
@@ -284,7 +286,8 @@ export default {
             type: 'updateDatas',
             payload: {
               outline_tree: [],
-              outline_tree_round: []
+              outline_tree_round: [],
+              group_rows_lock: []
             }
           })
         } else {
@@ -303,7 +306,7 @@ export default {
     // 转化处理大纲视图数据
     * handleOutLineTreeData({ payload }, { select, call, put }) {
       const { data = [] } = payload
-      console.log("handleOutLineTreeData", data);
+      // console.log("handleOutLineTreeData", data);
       const start_date = yield select(workbench_start_date)
       const end_date = yield select(workbench_end_date)
       const ceilWidth = yield select(workbench_ceilWidth)
@@ -338,7 +341,21 @@ export default {
         let time_span = item['time_span']
         new_item.due_time = due_time
         new_item.start_time = start_time
-        time_span = setGantTimeSpan({ time_span, start_time, due_time, start_date, end_date })
+        if (tree_type == '1') { //里程碑的周期（时间跨度）,根据一级任务计算
+          const child_time_arr_start = children.map(item => item.start_time || 0).filter(item => item)
+          const child_time_arr_due = children.map(item => item.due_time || 0).filter(item => item)
+          const child_time_arr = [].concat(child_time_arr_due, child_time_arr_start) ////全部时间的集合， [0]防止math.max 。minw
+          time_span = setGantTimeSpan({
+            time_span: '0',
+            start_time: transformTimestamp(Math.min.apply(null, child_time_arr)) == Infinity ? '' : transformTimestamp(Math.min.apply(null, child_time_arr)),
+            due_time: transformTimestamp(Math.max.apply(null, child_time_arr)) == -Infinity ? '' : transformTimestamp(Math.max.apply(null, child_time_arr)),
+            start_date,
+            end_date
+          })
+          // console.log('filnaly_outline_tree_1', Math.min.apply(null, child_time_arr), Math.max.apply(null, child_time_arr), time_span)
+        } else { //其它类型就根据开始截至时间计算
+          time_span = setGantTimeSpan({ time_span, start_time, due_time, start_date, end_date })
+        }
         new_item.time_span = time_span
 
         new_item_children = new_item_children.map(item2 => {
@@ -531,7 +548,7 @@ export default {
         }
       })
       // console.log('filnaly_outline_tree', filnaly_outline_tree)
-      // console.log('filnaly_outline_tree2', arr)
+      // console.log('filnaly_outline_tree2', { arr, filnaly_outline_tree })
       // console.log('filnaly_outline_tree1', filnaly_outline_tree[0].expand_length)
       // console.log('filnaly_outline_tree2', filnaly_outline_tree[1].expand_length)
 
@@ -617,22 +634,22 @@ export default {
       yield put({
         type: 'updateDatas',
         payload: {
-          list_group,
           ceiHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? ceil_height_fold : ceil_height
         }
       })
       yield put({
         type: 'setListGroup',
         payload: {
+          list_group,
           not_set_scroll_top
         }
       })
     },
     * setListGroup({ payload }, { select, call, put }) {
-      const { not_set_scroll_top } = payload
+      let { not_set_scroll_top, list_group = [] } = payload
       //根据所获得的分组数据转换所需要的数据
       // const { datas: { list_group = [], group_rows = [], ceiHeight, ceilWidth, date_arr_one_level = [] } } = this.props.model
-      let list_group = yield select(workbench_list_group)
+      // let list_group = yield select(workbench_list_group)
       list_group = JSON.parse(JSON.stringify(list_group))
       const group_rows = yield select(workbench_group_rows)
       const ceiHeight = yield select(workbench_ceiHeight)
@@ -642,6 +659,7 @@ export default {
       const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
       const show_board_fold = yield select(getModelSelectDatasState('gantt', 'show_board_fold'))
       const gantt_view_mode = yield select(getModelSelectDatasState('gantt', 'gantt_view_mode'))
+      const group_rows_lock = yield select(getModelSelectDatasState('gantt', 'group_rows_lock'))
 
       const group_list_area = [] //分组高度区域
 
@@ -655,7 +673,7 @@ export default {
           })
         }
 
-        const length = 5 //list_data.length < 5 ? 5 : (list_data.length + 1)
+        const length = one_group_row_total //list_data.length < 5 ? 5 : (list_data.length + 1)
         const group_height = length * ceiHeight
         group_list_area[i] = group_height
         group_rows[i] = length
@@ -745,9 +763,9 @@ export default {
           list_group[i]['list_data'][j] = item
         }
         const list_height_arr = list_group[i]['list_data'].map(item => item.top)
-        const list_group_item_height = Math.max.apply(null, list_height_arr) + 2 * ceiHeight - after_group_height
+        const list_group_item_height = Math.max.apply(null, list_height_arr) + one_group_row_total * ceiHeight - after_group_height
 
-        group_rows[i] = (list_group_item_height / ceiHeight) < 2 ? 2 : list_group_item_height / ceiHeight // 原来是3，现在是2
+        group_rows[i] = Math.max(group_rows_lock[i] || 0, list_group_item_height / ceiHeight, one_group_row_total) //(list_group_item_height / ceiHeight) < one_group_row_total ? one_group_row_total : list_group_item_height / ceiHeight // 原来是3，现在是2
         if (list_group[i].list_id == '0' && group_view_type == '1' && gantt_board_id != '0') { //默认分组要设置得很高
           group_rows[i] = group_rows[i] + 30
         }
@@ -809,6 +827,40 @@ export default {
         handleChangeBoardViewScrollTop({ group_view_type, gantt_board_id, target_scrollTop_board_storage })
       }
     },
+    * handleGroupHeight({ payload }, { select, call, put }) { //
+      let { group_rows, group_rows_lock } = payload
+      const ceiHeight = yield select(workbench_ceiHeight)
+      if (!group_rows) {
+        group_rows = yield select(getModelSelectDatasState('gantt', 'group_rows'))
+      }
+      if (!group_rows_lock) {
+        group_rows_lock = yield select(getModelSelectDatasState('gantt', 'group_rows_lock'))
+      }
+      let group_rows_ = group_rows.map((value, key) => {
+        return Math.max(value, group_rows_lock[key])
+      })
+      let group_list_area = group_rows_.map(value => {
+        return value * ceiHeight
+      })
+      let group_list_area_section_height = group_list_area.map((item, index) => {
+        const list_arr = group_list_area.slice(0, index + 1)
+        let height = 0
+        for (let val of list_arr) {
+          height += val
+        }
+        return height
+      })
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          group_list_area,
+          group_rows: group_rows_,
+          group_list_area_section_height,
+          group_rows_lock,
+        }
+      })
+    },
+
     * createMilestone({ payload }, { select, call, put }) { //
       const res = yield call(createMilestone, payload)
       if (isApiResponseOk(res)) {

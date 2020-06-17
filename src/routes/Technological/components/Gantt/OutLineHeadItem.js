@@ -4,6 +4,7 @@ import { message, Menu, Dropdown, Modal, Button } from 'antd';
 import styles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less';
 import OutlineTree from './components/OutlineTree';
+import TreeNode from './components/OutlineTree/TreeNode'
 import {
     addTaskInWorkbench,
     updateTask,
@@ -26,7 +27,7 @@ import SafeConfirmModal from './components/SafeConfirmModal';
 import { updateFlowInstanceNameOrDescription } from '../../../../services/technological/workFlow';
 import SaveBoardTemplate from './components/Modal/SaveBoardTemplate'
 const { SubMenu } = Menu;
-const { TreeNode } = OutlineTree;
+// const { TreeNode } = OutlineTree;
 const { confirm } = Modal;
 
 @connect(mapStateToProps)
@@ -585,7 +586,7 @@ export default class OutLineHeadItem extends Component {
             outline_tree.map((item, index) => {
                 if (item.children && item.children.length > 0) {
                     return (
-                        <TreeNode key={index} nodeValue={item} level={level} onHover={this.onHover}>
+                        <TreeNode {...this.props} key={index} nodeValue={item} level={level} onHover={this.onHover} setScrollPosition={this.props.setScrollPosition} setGoldDateArr={this.props.setGoldDateArr}>
                             {this.renderGanttOutLineTree(item.children, level + 1, item)}
                         </TreeNode>
                     );
@@ -593,6 +594,8 @@ export default class OutLineHeadItem extends Component {
                     if (item.tree_type == 0) {
                         return (
                             <TreeNode
+                                setScrollPosition={this.props.setScrollPosition}
+                                setGoldDateArr={this.props.setGoldDateArr}
                                 level={level}
                                 nodeValue={item}
                                 type={'2'}
@@ -603,7 +606,7 @@ export default class OutLineHeadItem extends Component {
                             </TreeNode>
                         );
                     } else {
-                        return (<TreeNode key={index} nodeValue={item} level={level} onHover={this.onHover}></TreeNode>);
+                        return (<TreeNode  {...this.props} setScrollPosition={this.props.setScrollPosition} setGoldDateArr={this.props.setGoldDateArr} key={index} nodeValue={item} level={level} onHover={this.onHover}></TreeNode>);
                     }
 
                 }
@@ -788,6 +791,8 @@ export default class OutLineHeadItem extends Component {
                 >
                     {this.renderGanttOutLineTree(outline_tree, 0)}
                     <TreeNode
+                        setScrollPosition={this.props.setScrollPosition}
+                        setGoldDateArr={this.props.setGoldDateArr}
                         type={'1'}
                         placeholder={'新建里程碑'}
                         onHover={this.onHover}
@@ -866,10 +871,12 @@ export default class OutLineHeadItem extends Component {
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
-    gantt: { datas: { gantt_board_id, group_view_type, outline_tree, outline_hover_obj, outline_tree_round } },
+    gantt: { datas: { gantt_board_id, group_view_type, outline_tree, outline_hover_obj, outline_tree_round, date_arr_one_level = [],
+        ceilWidth,
+        gantt_view_mode, } },
     technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, userBoardPermissions = [] } },
     projectDetail: { datas: { projectDetailInfoData = {} } }
 }) {
-    return { currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, projectDetailInfoData, userBoardPermissions, outline_tree, outline_hover_obj, outline_tree_round }
+    return { date_arr_one_level, gantt_view_mode, ceilWidth, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, projectDetailInfoData, userBoardPermissions, outline_tree, outline_hover_obj, outline_tree_round }
 }
 

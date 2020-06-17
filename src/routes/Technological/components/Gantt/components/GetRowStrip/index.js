@@ -940,7 +940,7 @@ export default class GetRowStrip extends PureComponent {
                     // onMouseOver={this.stripMouseOver}
                     // onMouseLeave={this.stripMouseLeave}
                     style={{ ...this.renderStyles() }}>
-                    { //日期在视图外往左或者往右
+                    {/* { //日期在视图外往左或者往右
                         is_item_has_time && !isInViewArea ? (
                             <div
                                 onClick={this.navigateToVisualArea}
@@ -958,7 +958,7 @@ export default class GetRowStrip extends PureComponent {
                                 }
                             </div>
                         ) : ''
-                    }
+                    } */}
                     { //用于拖拽生成任务（已废弃）
                         dasheRectShow
                         && !this.task_is_dragging
