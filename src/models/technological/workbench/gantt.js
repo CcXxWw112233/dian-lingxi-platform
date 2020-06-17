@@ -85,6 +85,7 @@ export default {
       group_view_type: '1', //分组视图1项目， 2成员, 4大纲, 5项目分组再分组成成员
       group_view_filter_boards: [], //内容过滤项目id 列表
       group_view_filter_users: [], //内容过滤职员id 列表
+      single_select_user: { id: '', name: '' },//成员视图下，点击成员
       group_view_boards_tree: [], //内容过滤项目分组树
       group_view_users_tree: [], //内容过滤成员分组树
       holiday_list: [], //日历列表（包含节假日农历）
@@ -130,11 +131,11 @@ export default {
       const group_view_filter_users = yield select(getModelSelectDatasState('gantt', 'group_view_filter_users'))
       const group_view_boards_tree = yield select(getModelSelectDatasState('gantt', 'group_view_boards_tree'))
       const group_view_users_tree = yield select(getModelSelectDatasState('gantt', 'group_view_users_tree'))
-
+      const single_select_user = yield select(getModelSelectDatasState('gantt', 'single_select_user'))
       //内容过滤处理
       const setContentFilterParams = () => {
         let query_board_ids = []
-        let query_user_ids = []
+        let query_user_ids = [single_select_user.id].filter(item => item)
 
         //  项目id处理
         for (let val of group_view_filter_boards) {
