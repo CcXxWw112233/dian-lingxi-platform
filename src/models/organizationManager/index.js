@@ -2,7 +2,7 @@ import {
   saveNounList, getNounList, getPayingStatus, getOrderList, getPermissions, savePermission, getRolePermissions, saveRolePermission, createRole,
   updateRole, deleteRole, copyRole, updateOrganization, setDefaultRole, getCurrentNounPlan, getFnManagementList,
   setFnManagementStatus, investmentMapAddAdministrators, investmentMapDeleteAdministrators, investmentMapQueryAdministrators,
-  getTemplateList, createTemplete, updateTemplete, deleteTemplete, getTemplateListContainer, createTempleteContainer, deleteTempleteContainer, updateTempleteContainer
+  getTemplateList, createTemplete, updateTemplete, deleteTemplete, getTemplateListContainer, createTempleteContainer, deleteTempleteContainer, updateTempleteContainer, sortTempleteContainer
 } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
@@ -656,6 +656,7 @@ export default {
           }
         })
       }
+      return res || {}
     },
 
     // 删除模板内容
@@ -676,6 +677,25 @@ export default {
         message.warn(res.message)
       }
       return res || {}
+    },
+
+    // 排序
+    * sortTempleteContainer({ payload }, { call, put }) {
+      let { template_id } = payload
+      let res = yield call(sortTempleteContainer, {...payload})
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('更新成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getTemplateListContainer',
+          payload: {
+            template_id: template_id
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
     },
 
   },

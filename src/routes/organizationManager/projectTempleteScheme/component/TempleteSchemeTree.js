@@ -6,12 +6,17 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
 import { isApiResponseOk } from '@/utils/handleResponseData'
 import { removeEmptyArrayEle } from '../../../../utils/util'
+import { updateTempleteContainer } from '../../../../services/organization'
 const { TreeNode } = Tree;
 const { SubMenu } = Menu;
 @connect(mapStateToProps)
 export default class TempleteSchemeTree extends Component {
 
-  state = {
+  constructor(props) {
+    super(props)
+    this.state = {
+      expandedKeys: []
+    }
   }
 
   // 初始化的state数据
@@ -752,12 +757,36 @@ export default class TempleteSchemeTree extends Component {
 
   // ------------------------- 拖拽内容 S ----------------------------------
 
+  // 获取parentKey
+  getParentExpandedKeys = (id) => {
+    if (!id) return
+    const { currentTempleteListContainer = [] } = this.props
+    let expandedKeys = [...this.state.expandedKeys]
+    let rev = (data, nodeId) => {
+      for (let i = 0, length = data.length; i < length; i++) {
+        let node = data[i];
+        if (node.id == nodeId) {
+          expandedKeys.unshift(data[i].id)
+          rev(data, node.parent_id);
+          break;
+        }
+        else {
+          if (!!node.child_content) {
+            rev(node.child_content, nodeId);
+          }
+        }
+      }
+    };
+    rev(currentTempleteListContainer, id)
+    this.setState({
+      // expandedKeys: n_expandedKeys,
+      expandedKeys: expandedKeys,
+    });
+  }
+
   onDragEnter = info => {
-    // console.log(info, 'ssssssssssssssssssssss_onDragEnter');
     // expandedKeys 需要受控时设置
-    // this.setState({
-    //   expandedKeys: info.expandedKeys,
-    // });
+    this.getParentExpandedKeys(info.expandedKeys.splice(-1)[0])
   };
 
   // 查询流程节点的位置
@@ -770,12 +799,84 @@ export default class TempleteSchemeTree extends Component {
       } else if (data[val].child_content && data[val].child_content.length > 0) {
         result = this.findFlowNodePosition(data[val].child_content, currentId)
       }
-      return result
+      if (result == 0) break
     }
     return result
   }
 
-  onDrop = info => {
+  // 递归循环遍历 进行calback操作
+  loop = (data, key, callback) => {
+    data.forEach((item, index, arr) => {
+      if (item.id === key) {
+        return callback(item, index, arr);
+      }
+      if (item.child_content && item.child_content.length) {
+        return this.loop(item.child_content, key, callback);
+      }
+    });
+  };
+
+  // 对数据进行排序 (任务流程如果在第一层,不能再里程碑前面也不能在中间,必须放置末尾)
+  reSortNodeDataWithTaskFlowPosition = (data) => {
+    if (!data) return
+    let array = [...data]
+    let dragObj
+    for (let i = 0; i < array.length; i++) {
+      if ((array[i].template_data_type == '3' && i == 0) || (array[i].template_data_type == '2' && i == 0)) {
+        this.loop(array, array[i].id, (item, index, arr) => {
+          arr.splice(index, 1);
+          dragObj = item;
+        });
+        if (!dragObj) return
+        array.push(dragObj)
+      } else if (i > 0 && (array[i].template_data_type == '3' || array[i].template_data_type == '2') && array[i - 1].template_data_type == '1' && (i == array.length - 1 ? array[i].template_data_type == '1' : array[i + 1].template_data_type == '1')) {
+        this.loop(array, array[i].id, (item, index, arr) => {
+          arr.splice(index, 1);
+          dragObj = item;
+        });
+        if (!dragObj) return
+        array.push(dragObj)
+      }
+    }
+    return array
+  }
+
+  /**
+   * 判断是否是同一级 对 parent_id 进行修改
+   * 思路：如果说数组中找到下落的那一个元素,并判断他的parent_id 然后赋值给拖拽的元素
+   * @param {Array} data 当前排序好的数据列表
+   * @param {String} drag_id 拖动的元素ID
+   * @param {String} drop_id 下落的元素ID
+   * @returns 该方法返回一个修改好对应parentID的列表
+   */
+  whetherISTheSameLevelToUpdateParentID = (data, drag_id, dropDataRef) => {
+    if (!data) return
+    let array = [...data]
+    let parent_id
+    let rev = (data, drag_id, dropDataRef) => {
+      data = data.map((item, index) => {
+        let obj = { ...item }
+        if (parent_id) {
+          return
+        }
+        if (data.find(i => i.id == drag_id)) {
+          let target = data.findIndex(i => i.id == drag_id)
+          let prev = data.findIndex(i => i.id == drag_id) - 1
+          parent_id = prev < 0 ? dropDataRef.parent_id == '0' ? dropDataRef.parent_id : dropDataRef.id : data[prev].parent_id
+          data[target] = { ...data[target], parent_id: parent_id }
+          return item
+        } else if (item.child_content && item.child_content.length) {
+          rev(item.child_content, drag_id, dropDataRef)
+        }
+      })
+      return data
+    }
+    rev(array, drag_id, dropDataRef)
+    return array
+  }
+
+  onDrop = async info => {
+    // console.log(info, 'sssssssssssssssssss_info')
     const dragKey = info.dragNode.props.eventKey; // 拖拽的元素 ID
     const dragLength = info.dragNode.props.pos.split('-').length; // 拖拽的长度
     const dragDataRef = info.dragNode.props.dataRef
@@ -785,24 +886,16 @@ export default class TempleteSchemeTree extends Component {
     const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]); // 目标元素所在位置
     const dropLength = info.node.props.pos.split('-').length; // 目标长度
     const dropDataRef = info.node.props.dataRef
-    const loop = (data, key, callback) => {
-      data.forEach((item, index, arr) => {
-        if (item.id === key) {
-          return callback(item, index, arr);
-        }
-        if (item.child_content && item.child_content.length) {
-          return loop(item.child_content, key, callback);
-        }
-      });
-    };
     const data = JSON.parse(JSON.stringify(this.props.currentTempleteListContainer || []));
 
+    const _this = this
     // Find dragObject
     let dragObj;
     if (!info.dropToGap) { // 表示平级之间的拖动
       // 平级与平级之间不能拖拽为子级 (父里程碑不能拖为子)
       if (
-        (dragDataRef['template_data_type'] == '3' && dropDataRef['template_data_type'] != '3') ||
+        (dropPosition == 0 && dropPos.length == 3) ||
+        (dragDataRef['template_data_type'] == '3' && dropDataRef['template_data_type'] == '2') ||
         (dragDataRef['template_data_type'] == '3' && dropDataRef['template_data_type'] == '3') ||
         // 当 dragLength == 4 时: 表示拖动的是子级, 当目标元素 dropLength == 3 时 表示 子元素拖动到别的父级 则不应该return
         ((dropPosition == 0 && dropPos.length == 3) && (dragLength != 4 && dropLength != 3)) ||
@@ -811,76 +904,165 @@ export default class TempleteSchemeTree extends Component {
           (dropPosition == 0 && dropPos.length == 2 && dragLength == 2 && dragDataRef['template_data_type'] == dropDataRef['template_data_type'])
           ||
           (dragDataRef['template_data_type'] == '1' && dropDataRef['template_data_type'] != '1')
-        )
+        ) ||
+        (dropPosition == 0 && dragLength == 4 && dropLength == 2) || //表示子拖向父级
+        (dropPosition == 0 && dragLength == 3 && dropLength == 2 && ((dragDataRef['template_data_type'] == '2' || dragDataRef['template_data_type'] == '3') && dropDataRef['template_data_type'] != '1'))//表示子拖向父级
       ) {
         // 当拖拽的是里程碑 目标元素是其他的时候
+        this.setState({
+          expandedKeys: []
+        })
         return
       }
-      loop(data, dragKey, (item, index, arr) => {
+      this.loop(data, dragKey, (item, index, arr) => {
         arr.splice(index, 1);
         dragObj = item;
       });
-      loop(data, dropKey, item => {
+      this.loop(data, dropKey, item => {
         item.child_content = item.child_content || [];
         // where to insert 示例添加到尾部，可以是随意位置
         item.child_content.push(dragObj);
       });
+      // debugger
     } else if (
       (info.node.props.children || []).length > 0 && // Has child_content
       info.node.props.expanded && // Is expanded
       dropPosition === 1 // On the bottom gap
     ) {
-      loop(data, dragKey, (item, index, arr) => {
+      if (dropPosition == 1 && dropLength == 3 && dragLength == 3) {
+        // debugger
+        this.setState({
+          expandedKeys: []
+        })
+        return
+      }
+      if (dropPosition == 1 && dropLength == 2 && dragLength == 4) {
+        // debugger
+        this.setState({
+          expandedKeys: []
+        })
+        return
+      }
+      if (dropPosition == 1 && dropLength == 2 && dragLength == 2 && dragDataRef['template_data_type'] == '1' && dropDataRef['template_data_type'] == '1') {
+        // debugger
+        this.setState({
+          expandedKeys: []
+        })
+        return
+      }
+      this.loop(data, dragKey, (item, index, arr) => {
         arr.splice(index, 1);
         dragObj = item;
       });
-      loop(data, dropKey, item => {
+      this.loop(data, dropKey, item => {
         item.child_content = item.child_content || [];
         // where to insert 示例添加到头部，可以是随意位置
         item.child_content.unshift(dragObj);
       });
+      // debugger
     } else {
       //一级不能拖拽为二级、二级子级
-      if (dragDataRef['template_data_type'] == '3' && dragLength == 3 && dropLength == 4) {
+      // 子任务不能跨任务拖动
+      if ((dragLength == 4 && dropLength == 3) || (dragLength == 4 && dropLength == 4) && dragDataRef.parent_id != dropDataRef.parent_id) {
+        // debugger
+        this.setState({
+          expandedKeys: []
+        })
+        return;
+      }
+      // 父不能变为子
+      if (dragLength == 3 && dropLength == 4) {
+        // debugger
+        this.setState({
+          expandedKeys: []
+        })
         return
       }
-      loop(data, dragKey, (item, index, arr) => {
+      if (dragLength == 4 && dropLength == 2 && dragDataRef['template_data_type'] == '2') { // 只有子任务的时候,拖拽至父级
+        // debugger
+        this.setState({
+          expandedKeys: []
+        })
+        return
+      }
+      if (dragDataRef['template_data_type'] == '3' && dragLength == 3 && dropLength == 4) {
+        // debugger
+        this.setState({
+          expandedKeys: []
+        })
+        return
+      }
+      this.loop(data, dragKey, (item, index, arr) => {
         arr.splice(index, 1);
         dragObj = item;
       });
       let ar;
       let i;
-      loop(data, dropKey, (item, index, arr) => {
+      this.loop(data, dropKey, (item, index, arr) => {
         ar = arr;
         i = index;
       });
       if (!ar) return
       if (dropPosition === -1) { // 
         ar.splice(i, 0, dragObj);
+        // debugger
       } else {
         ar.splice(i + 1, 0, dragObj);
+        // debugger
       }
     }
-    setTimeout(async() => {
-      let flow_index = this.findFlowNodePosition(data, dragKey)
-      if (flow_index == 0) return
-      this.props.dispatch({
-        type: 'organizationManager/updateDatas',
-        payload: {
-          currentTempleteListContainer: removeEmptyArrayEle(data)
+    // setTimeout(async () => {
+    // let flow_index = this.findFlowNodePosition(data, dragKey)
+    // // debugger
+    // if (flow_index == 0) return
+    // let ar = removeEmptyArrayEle(this.reSortNodeDataWithTaskFlowPosition(data))
+    let ar_1 = await this.whetherISTheSameLevelToUpdateParentID(removeEmptyArrayEle(data), dragDataRef.id, dropDataRef)
+    let ar = await this.reSortNodeDataWithTaskFlowPosition(ar_1)
+    await this.props.dispatch({
+      type: 'organizationManager/updateDatas',
+      payload: {
+        currentTempleteListContainer: ar
+      }
+    })
+    let updateItem = {}
+    let rev = (ar, key) => {
+      ar.forEach((item, index, arr) => {
+        if (item.id === key) {
+          updateItem = item
         }
-      })
-      this.setState({
-        selectedKeys: []
-      })
-      await this.getDragCorrespondingElementTurnWithID(data)
-    },200)
+        if (updateItem && Object.keys(updateItem).length) return
+        if (item.child_content && item.child_content.length) {
+          rev(item.child_content, key);
+        }
+      });
+    }
+    rev(ar, dragKey)
+    if (!(updateItem && Object.keys(updateItem).length)) return
+    updateTempleteContainer({
+      id: updateItem.id,
+      parent_id: updateItem.parent_id
+    }).then(res => {
+      if (isApiResponseOk(res)) {
+        _this.setState({
+          expandedKeys: []
+        })
+        _this.fetchSortTempleteContainer(ar)
+      }
+    })
+    // await this.props.dispatch({
+    //   type: 'organizationManager/updateDatas',
+    //   payload: {
+    //     currentTempleteListContainer: ar
+    //   }
+    // })
+
+    // }, 200)
   }
 
   // 获取拖拽后对应元素位置ID存为参数
   getDragCorrespondingElementTurnWithID = (data) => {
     let arrRes = []
-    let newData = JSON.parse(JSON.stringify(data || []))
+    let newData = [...data] // 不采用JSON形式结构 是比较耗性能
     let rev = (datas) => {
       for (let i in datas) {
         arrRes.push(datas[i].id)
@@ -892,6 +1074,19 @@ export default class TempleteSchemeTree extends Component {
     }
     rev(newData)
     return removeEmptyArrayEle(arrRes)
+  }
+
+  // 调用接口
+  fetchSortTempleteContainer = async (data) => {
+    let content_ids = await this.getDragCorrespondingElementTurnWithID(data)
+    const { dispatch, currentTempleteId } = this.props
+    dispatch({
+      type: 'organizationManager/sortTempleteContainer',
+      payload: {
+        template_id: currentTempleteId,
+        content_ids: content_ids
+      }
+    })
   }
 
   // ------------------------- 拖拽内容 E ----------------------------------
@@ -980,8 +1175,8 @@ export default class TempleteSchemeTree extends Component {
           ) : (
               <>
                 {icon}
-                <span title={name} style={{ overflow: 'hidden', textOverflow: 'ellipsis',marginRight: '16px' }}>{name}</span>
-                <span style={{position: 'absolute', right: 0, fontSize: '24px'}} className={globalStyles.authTheme}>&#xe62e;</span>
+                <span title={name} style={{ overflow: 'hidden', textOverflow: 'ellipsis', marginRight: '16px' }}>{name}</span>
+                <span style={{ position: 'absolute', right: 0, fontSize: '24px' }} className={globalStyles.authTheme}>&#xe62e;</span>
                 <div className={indexStyles.icon_list}>
                   {this.renderSpotDropdownContent({ type, id })}
                 </div>
@@ -1032,6 +1227,7 @@ export default class TempleteSchemeTree extends Component {
           draggable
           onDragEnter={this.onDragEnter}
           onDrop={this.onDrop}
+        // showLine={true}
         >
           {this.renderPlanTreeNode(currentTempleteListContainer)}
         </Tree>

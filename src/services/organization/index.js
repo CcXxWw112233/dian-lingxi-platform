@@ -311,3 +311,12 @@ export async function deleteTempleteContainer(params) {
     params
   })
 }
+
+// 自有模板内容排序
+export async function sortTempleteContainer(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template/sort`,
+    method: 'POST',
+    data
+  })
+}
