@@ -390,10 +390,19 @@ export default class NodeOperate extends Component {
                 { //一级任务是顶级则没有
                     (tree_type == '2' || tree_type == '3') && (
                         <div className={styles.menu_item} onClick={() => this.menuItemClick('insert_card')}>
-                            插入任务
+                            新建同级任务
                         </div>
                     )
                 }
+
+                {
+                    (parent_type == '1' || !parent_type) && tree_type == '2' && ( //一级任务才有创建子任务功能
+                        <div className={styles.menu_item} onClick={() => this.menuItemClick('add_child_card')} >
+                            新建子级任务
+                        </div>
+                    )
+                }
+
                 { //一级任务是顶级则没有
                     ((tree_type == '2' && !parent_card_id) || tree_type == '3') && (
                         <InsertFlows
@@ -405,13 +414,7 @@ export default class NodeOperate extends Component {
                         // </div>
                     )
                 }
-                {
-                    (parent_type == '1' || !parent_type) && tree_type == '2' && ( //一级任务才有创建子任务功能
-                        <div className={styles.menu_item} onClick={() => this.menuItemClick('add_child_card')} >
-                            新建子任务
-                        </div>
-                    )
-                }
+
                 <div className={styles.menu_item} style={{ color: '#F5222D' }} onClick={() => this.menuItemClick('delete')} >
                     删除
                 </div>
