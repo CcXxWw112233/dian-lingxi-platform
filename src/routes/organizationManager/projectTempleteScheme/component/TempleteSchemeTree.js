@@ -852,6 +852,7 @@ export default class TempleteSchemeTree extends Component {
   whetherISTheSameLevelToUpdateParentID = (data, drag_id, dropDataRef) => {
     if (!data) return
     let array = [...data]
+    let target
     let parent_id
     let rev = (data, drag_id, dropDataRef) => {
       data = data.map((item, index) => {
@@ -859,11 +860,19 @@ export default class TempleteSchemeTree extends Component {
         if (parent_id) {
           return
         }
-        if (data.find(i => i.id == drag_id)) {
-          let target = data.findIndex(i => i.id == drag_id)
-          let prev = data.findIndex(i => i.id == drag_id) - 1
-          parent_id = prev < 0 ? dropDataRef.parent_id == '0' ? dropDataRef.parent_id : dropDataRef.id : data[prev].parent_id
+        if (data.find(i=>i.id==drag_id)) { // 表示一开始就已经找到了
+          target = data.findIndex(i => i.id == drag_id)
+          parent_id = dropDataRef.parent_id
+          // let prev = data.findIndex(i => i.id == drag_id) - 1
+          // parent_id = prev < 0 ? dropDataRef.parent_id == '0' ? dropDataRef.parent_id : dropDataRef.id : data[prev].parent_id
           data[target] = { ...data[target], parent_id: parent_id }
+          return item
+        } else if (data.find(i=>i.id==dropDataRef.id) && data[index]['child_content'].find(i=>i.id==drag_id)) { // 表示拖拽的元素存在某个父元素的子级里面
+          target = data[index]['child_content'].findIndex(i=>i.id==drag_id)
+          parent_id = dropDataRef.id
+          // let prev = data.findIndex(i => i.id == drag_id) - 1
+          // parent_id = prev < 0 ? dropDataRef.parent_id == '0' ? dropDataRef.parent_id : dropDataRef.id : data[prev].parent_id
+          item['child_content'][target] = { ...item['child_content'][target], parent_id: parent_id }
           return item
         } else if (item.child_content && item.child_content.length) {
           rev(item.child_content, drag_id, dropDataRef)
@@ -1016,6 +1025,8 @@ export default class TempleteSchemeTree extends Component {
     // // debugger
     // if (flow_index == 0) return
     // let ar = removeEmptyArrayEle(this.reSortNodeDataWithTaskFlowPosition(data))
+    console.log(data)
+    debugger
     let ar_1 = await this.whetherISTheSameLevelToUpdateParentID(removeEmptyArrayEle(data), dragDataRef.id, dropDataRef)
     let ar = await this.reSortNodeDataWithTaskFlowPosition(ar_1)
     await this.props.dispatch({
