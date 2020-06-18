@@ -31,7 +31,7 @@ export default class TempleteSchemeTree extends Component {
   }
 
   // 卸载事件
-  componentWillUnmount() {
+  componentWillUnmount () {
     this.props.dispatch({
       type: 'organizationManager/updateDatas',
       payload: {
@@ -154,7 +154,7 @@ export default class TempleteSchemeTree extends Component {
    * @param {Array} data2 当前的树状列表结构
    * @param {String} nodeId2 当前的ID
    */
-  getCurrentElementParentKey(data2, nodeId2) {
+  getCurrentElementParentKey (data2, nodeId2) {
     let arrRes = [];
     if (data2.length == 0) {
       if (!!nodeId2) {
@@ -860,15 +860,15 @@ export default class TempleteSchemeTree extends Component {
         if (parent_id) {
           return
         }
-        if (data.find(i=>i.id==drag_id)) { // 表示一开始就已经找到了
+        if (data.find(i => i.id == drag_id)) { // 表示一开始就已经找到了
           target = data.findIndex(i => i.id == drag_id)
           parent_id = dropDataRef.parent_id
           // let prev = data.findIndex(i => i.id == drag_id) - 1
           // parent_id = prev < 0 ? dropDataRef.parent_id == '0' ? dropDataRef.parent_id : dropDataRef.id : data[prev].parent_id
           data[target] = { ...data[target], parent_id: parent_id }
           return item
-        } else if (data.find(i=>i.id==dropDataRef.id) && data[index]['child_content'].find(i=>i.id==drag_id)) { // 表示拖拽的元素存在某个父元素的子级里面
-          target = data[index]['child_content'].findIndex(i=>i.id==drag_id)
+        } else if (data.find(i => i.id == dropDataRef.id) && data[index]['child_content'].find(i => i.id == drag_id)) { // 表示拖拽的元素存在某个父元素的子级里面
+          target = data[index]['child_content'].findIndex(i => i.id == drag_id)
           parent_id = dropDataRef.id
           // let prev = data.findIndex(i => i.id == drag_id) - 1
           // parent_id = prev < 0 ? dropDataRef.parent_id == '0' ? dropDataRef.parent_id : dropDataRef.id : data[prev].parent_id
@@ -1025,8 +1025,6 @@ export default class TempleteSchemeTree extends Component {
     // // debugger
     // if (flow_index == 0) return
     // let ar = removeEmptyArrayEle(this.reSortNodeDataWithTaskFlowPosition(data))
-    console.log(data)
-    debugger
     let ar_1 = await this.whetherISTheSameLevelToUpdateParentID(removeEmptyArrayEle(data), dragDataRef.id, dropDataRef)
     let ar = await this.reSortNodeDataWithTaskFlowPosition(ar_1)
     await this.props.dispatch({
@@ -1054,9 +1052,9 @@ export default class TempleteSchemeTree extends Component {
       parent_id: updateItem.parent_id
     }).then(res => {
       if (isApiResponseOk(res)) {
-        _this.setState({
-          expandedKeys: []
-        })
+        // _this.setState({
+        //   expandedKeys: []
+        // })
         _this.fetchSortTempleteContainer(ar)
       }
     })
@@ -1115,7 +1113,13 @@ export default class TempleteSchemeTree extends Component {
             <Menu.Item key={'insert_milepost'}>插入里程碑</Menu.Item>
           )
         }
-        <Menu.Item key={'insert_task'}>插入任务</Menu.Item>
+        {
+          type == '1' ? (
+            <Menu.Item key={'insert_task'}>插入任务</Menu.Item>
+          ) : (
+              <Menu.Item key={'insert_task'}>新建同级任务</Menu.Item>
+            )
+        }
         {
           type == '2' && (!flag) && (
             <Menu.Item disabled={flag} key={'add_sub_task'}>新建子任务</Menu.Item>
@@ -1246,7 +1250,7 @@ export default class TempleteSchemeTree extends Component {
     )
   }
 
-  render() {
+  render () {
     const { planningData = [], expandedKeys = [], selectedKeys = [], is_add_rename, is_wrapper_add_rename } = this.state
     const { currentTempleteListContainer = [] } = this.props
     let flag = selectedKeys && selectedKeys.length && !is_wrapper_add_rename
@@ -1267,7 +1271,7 @@ export default class TempleteSchemeTree extends Component {
   }
 }
 
-function mapStateToProps({
+function mapStateToProps ({
   organizationManager: {
     datas: {
       currentTempleteListContainer = [],
