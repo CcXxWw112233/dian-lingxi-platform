@@ -258,7 +258,7 @@ class Gantt extends Component {
     // console.log('ssss', schedule_cards_has_this, !!start_time, !!due_time)
 
     if (schedule_cards_has_this) {
-      this.handleHasScheduleCard({ card_id, new_drawContent })
+      this.handleHasScheduleCard({ card_id, drawContent: new_drawContent })
       return
     }
 
@@ -268,6 +268,7 @@ class Gantt extends Component {
         { ...list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index], ...new_drawContent }
       )
       list_group_new[group_index].lane_data.card_no_times.splice(group_index_card_no_times_index, 1) //[group_index_card_no_times_index] = { ...list_group_new[group_index].lane_data.card_no_times[group_index_cards_index], ...new_drawContent }
+      this.setTaskDetailModalVisibile('schedule')
     } else {
       list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index] = { ...list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index], ...new_drawContent }
       list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index]['name'] = list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index]['card_name']
@@ -313,8 +314,17 @@ class Gantt extends Component {
     const group_index_cards_index = list_group_new[group_index].lane_data.cards.findIndex(item => item.id == card_id)
     const current_item = { ...list_group_new[group_index].lane_data.cards[group_index_cards_index] }
 
-    list_group_new[group_index].lane_data.cards[group_index_cards_index] = { ...list_group_new[group_index].lane_data.cards[group_index_cards_index], ...new_drawContent }
-    list_group_new[group_index].lane_data.cards[group_index_cards_index]['name'] = list_group_new[group_index].lane_data.cards[group_index_cards_index]['card_name']
+    const { start_time, due_time } = new_drawContent
+    if (!!!start_time && !!!due_time) {
+      list_group_new[group_index].lane_data.card_no_times.push(
+        { ...list_group_new[group_index].lane_data.cards[group_index_cards_index], ...new_drawContent }
+      )
+      list_group_new[group_index].lane_data.cards.splice(group_index_cards_index, 1) //[group_index_card_no_times_index] = { ...list_group_new[group_index].lane_data.card_no_times[group_index_cards_index], ...new_drawContent }
+      this.setTaskDetailModalVisibile('no_schedule')
+    } else {
+      list_group_new[group_index].lane_data.cards[group_index_cards_index] = { ...list_group_new[group_index].lane_data.cards[group_index_cards_index], ...new_drawContent }
+      list_group_new[group_index].lane_data.cards[group_index_cards_index]['name'] = list_group_new[group_index].lane_data.cards[group_index_cards_index]['card_name']
+    }
 
     dispatch({
       type: 'gantt/handleListGroup',
