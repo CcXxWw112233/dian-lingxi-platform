@@ -15,7 +15,8 @@ export default class GroupListHead extends Component {
     super(props)
     this.state = {
       offsetTop: 0,
-      offsetLeft: 0
+      offsetLeft: 0,
+      set_scroll_top_timer: null
     }
   }
 
@@ -127,27 +128,30 @@ export default class GroupListHead extends Component {
     if (gantt_card_out_middle) {
       gantt_card_out_middle.scrollTop = scrollTop
     }
-    // this.handleScrollVertical({ scrollTop })
+    this.handleScrollVertical({ scrollTop })
   }
   // 处理上下滚动
   handleScrollVertical = ({ scrollTop }) => {
     const { group_view_type, gantt_board_id, target_scrollTop, dispatch } = this.props
-    if (target_scrollTop != scrollTop) {
-      // dispatch({
-      //   type: 'gantt/updateDatas',
-      //   payload: {
-      //     target_scrollTop: scrollTop
-      //   }
-      // })
-      if (group_view_type == '1' && gantt_board_id == '0') {
-        dispatch({
-          type: 'gantt/updateDatas',
-          payload: {
-            target_scrollTop_board_storage: scrollTop
-          }
-        })
+    if (target_scrollTop == scrollTop) return
+    if (group_view_type == '1' && gantt_board_id == '0') {
+      const { set_scroll_top_timer } = this.state
+      if (set_scroll_top_timer) {
+        clearTimeout(set_scroll_top_timer)
       }
+      this.setState({
+        set_scroll_top_timer: setTimeout(() => {
+          dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+              target_scrollTop_board_storage: scrollTop,
+              target_scrollTop: scrollTop
+            }
+          })
+        }, 500)
+      })
     }
+
   }
 
   render() {

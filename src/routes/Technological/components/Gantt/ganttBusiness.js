@@ -66,13 +66,16 @@ export const afterChangeBoardUpdateGantt = ({ dispatch, board_id }) => {
 }
 export const handleChangeBoardViewScrollTop = ({ group_view_type, gantt_board_id, target_scrollTop_board_storage }) => {
     const target = document.getElementById('gantt_card_out_middle')
-    if (!target) {
+    const target2 = document.getElementById('gantt_group_head')
+    if (!target || !target2) {
         return
     }
     if (gantt_board_id == '0' && group_view_type == '1') { //在查看项目的情况下
         target.scrollTop = target_scrollTop_board_storage
+        target2.scrollTop = target_scrollTop_board_storage
     } else {
         target.scrollTop = 0
+        target2.scrollTop = 0
     }
 }
 // 在删除项目后做的操作

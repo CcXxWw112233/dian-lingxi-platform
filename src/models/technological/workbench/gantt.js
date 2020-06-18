@@ -820,12 +820,12 @@ export default {
         }
       })
       // 设置滚动条的高度位置
-      if (!not_set_scroll_top) {
-        const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
-        const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
-        const target_scrollTop_board_storage = yield select(getModelSelectDatasState('gantt', 'target_scrollTop_board_storage'))
-        handleChangeBoardViewScrollTop({ group_view_type, gantt_board_id, target_scrollTop_board_storage })
-      }
+      // if (!not_set_scroll_top) {
+      //   const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
+      //   const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
+      //   const target_scrollTop_board_storage = yield select(getModelSelectDatasState('gantt', 'target_scrollTop_board_storage'))
+      //   handleChangeBoardViewScrollTop({ group_view_type, gantt_board_id, target_scrollTop_board_storage })
+      // }
     },
     * handleGroupHeight({ payload }, { select, call, put }) { //
       let { group_rows, group_rows_lock } = payload
@@ -1072,6 +1072,15 @@ export default {
 
   reducers: {
     updateDatas(state, action) {
+      const { payload = {} } = action
+      const { group_view_type } = payload
+      if (group_view_type) { //视图切换时，做滚动条位置
+        const { datas = {} } = state
+        const { gantt_board_id: old_gantt_board_id, target_scrollTop_board_storage } = datas
+        const { gantt_board_id: new_gantt_board_id } = payload
+        const params = { group_view_type, gantt_board_id: new_gantt_board_id || old_gantt_board_id, target_scrollTop_board_storage }
+        handleChangeBoardViewScrollTop(params)
+      }
       return {
         ...state,
         datas: { ...state.datas, ...action.payload },
