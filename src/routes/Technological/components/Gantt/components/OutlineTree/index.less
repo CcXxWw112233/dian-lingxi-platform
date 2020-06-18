@@ -171,16 +171,23 @@
 }
 
 .outline_tree_node_label {
-  display      : inline-block;
-  margin-left  : 8px;
-  font-size    : 14px;
-  flex         : auto;
-  display      : flex;
-  justify-items: center;
-  align-items  : center;
-  margin-right : 8px !important;
-  overflow     : hidden;
+  display         : flex;
+  // display      : inline-block;
+  margin-left    : 8px;
+  font-size      : 14px;
+  flex           : auto;
+  display        : flex;
+  justify-items  : center;
+  align-items    : center;
+  margin-right   : 8px !important;
+  overflow       : hidden;
+  justify-content: space-between;
 
+  .title {
+    flex: 1;
+  }
+
+  .else {}
 }
 
 .outline_tree_node_label.hoverTitle {
