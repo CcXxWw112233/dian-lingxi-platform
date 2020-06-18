@@ -389,6 +389,7 @@ export default class TreeNode extends Component {
                     tree_type != '0' &&
                     <div onWheel={e => e.stopPropagation()}>
                         <Dropdown
+                            {...(tree_type == '3' ? { visible: false } : {})}
                             overlayClassName={styles.selectExecutors}
                             overlay={
                                 <MenuSearchPartner
