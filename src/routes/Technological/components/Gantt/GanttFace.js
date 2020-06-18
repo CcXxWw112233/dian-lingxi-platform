@@ -31,6 +31,7 @@ export default class GanttFace extends Component {
       local_gantt_board_id: '0', //当前项目id（项目tab栏）缓存在组件内，用于判断是否改变然后重新获取数据
       init_get_outline_tree: false, //大纲视图下初始化是否获取了大纲树
       scroll_area: 'gantt_body', // gantt_head/gantt_body 头部或右边 滚动事件触发的区域
+      set_scroll_top_timer: null
     }
     this.setGanTTCardHeight = this.setGanTTCardHeight.bind(this)
   }
@@ -124,11 +125,13 @@ export default class GanttFace extends Component {
     const that = this
     const target = this.refs.gantt_card_out_middle
     setTimeout(function () {
-      if (target.scrollTo) {
-        target.scrollTo(position, 0)
-      } else {
-        target.scrollLeft = position
-      }
+      // if (target.scrollTo) {
+      //   target.scrollTo(position, 0)
+      // } else {
+      //   target.scrollLeft = position
+      // }
+
+      target.scrollLeft = position
     }, delay)
   }
 
@@ -152,7 +155,7 @@ export default class GanttFace extends Component {
     if (gantt_group_head) {
       gantt_group_head.scrollTop = scrollTop
     }
-    // this.handleScrollVertical({ scrollTop })
+    this.handleScrollVertical({ scrollTop })
     const gantt_date_area = document.getElementById('gantt_date_area')
     if (gantt_date_area) {
       gantt_date_area.style.left = `-${scrollLeft}px`
@@ -162,23 +165,24 @@ export default class GanttFace extends Component {
   // 处理上下滚动
   handleScrollVertical = ({ scrollTop }) => {
     const { group_view_type, gantt_board_id, target_scrollTop, dispatch } = this.props
-    // if (target_scrollTop != scrollTop) {
-    // dispatch({
-    //   type: getEffectOrReducerByName('updateDatas'),
-    //   payload: {
-    //     target_scrollTop: scrollTop
-    //   }
-    // })
+    if (target_scrollTop == scrollTop) return
     if (group_view_type == '1' && gantt_board_id == '0') {
-      dispatch({
-        type: getEffectOrReducerByName('updateDatas'),
-        payload: {
-          target_scrollTop_board_storage: scrollTop,
-          target_scrollTop: scrollTop
-        }
+      const { set_scroll_top_timer } = this.state
+      if (set_scroll_top_timer) {
+        clearTimeout(set_scroll_top_timer)
+      }
+      this.setState({
+        set_scroll_top_timer: setTimeout(() => {
+          dispatch({
+            type: getEffectOrReducerByName('updateDatas'),
+            payload: {
+              target_scrollTop_board_storage: scrollTop,
+              target_scrollTop: scrollTop
+            }
+          })
+        }, 500)
       })
     }
-    // }
   }
   // 处理水平滚动
   handelScrollHorizontal = ({ scrollLeft, scrollWidth, clientWidth, }) => {
