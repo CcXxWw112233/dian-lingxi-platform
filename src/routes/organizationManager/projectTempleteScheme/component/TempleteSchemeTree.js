@@ -1115,7 +1115,7 @@ export default class TempleteSchemeTree extends Component {
         }
         {
           type == '1' ? (
-            <Menu.Item key={'insert_task'}>插入任务</Menu.Item>
+            <Menu.Item key={'insert_task'}>新建任务</Menu.Item>
           ) : (
               <Menu.Item key={'insert_task'}>新建同级任务</Menu.Item>
             )
