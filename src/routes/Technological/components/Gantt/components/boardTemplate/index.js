@@ -524,7 +524,7 @@ export default class BoardTemplate extends Component {
     }
     // 创建任务
     createCard = async ({ list_id, start_time, end_time }) => {
-        const { dispatch, gantt_board_id, group_view_type } = this.props
+        const { dispatch, gantt_board_id, group_view_type, gantt_board_list_id } = this.props
         if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id)) {
             message.warn(NOT_HAS_PERMISION_COMFIRN)
             return
@@ -539,7 +539,7 @@ export default class BoardTemplate extends Component {
             list_id: list_id != '0' ? list_id : ''
         }
         if (group_view_type == '5') { //分组下=》成员视图下
-            delete params.list_id
+            params.list_id = gantt_board_list_id
             if (list_id && list_id != '0') {
                 params.users = list_id
             }
@@ -864,7 +864,8 @@ function mapStateToProps({
             outline_tree,
             group_view_type,
             gantt_view_mode,
-            triggle_request_board_template
+            triggle_request_board_template,
+            gantt_board_list_id
         }
     },
     technological: { datas: { userBoardPermissions = [] } },
@@ -878,6 +879,7 @@ function mapStateToProps({
         outline_tree,
         group_view_type,
         gantt_view_mode,
-        triggle_request_board_template
+        triggle_request_board_template,
+        gantt_board_list_id
     }
 }
