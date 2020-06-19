@@ -71,7 +71,7 @@ export default class GroupListHeadItem extends Component {
     const { list_no_time_data = [] } = itemValue
     if (!group_rows_lock[itemKey] || !list_no_time_data.length) {
       this.setState({
-        isShowBottDetail: '2'
+        isShowBottDetail: '0'
       })
     }
 
@@ -1195,7 +1195,7 @@ export default class GroupListHeadItem extends Component {
           }
 
           {/* 没有排期任务列表 */}
-          <div className={`${indexStyles.list_head_body}`} onWheel={(e) => e.stopPropagation()} style={{ display: list_no_time_data.length ? 'flex' : 'none' }}>
+          <div className={`${indexStyles.list_head_body}`} onWheel={(e) => e.stopPropagation()} style={{ visibility: list_no_time_data.length ? 'visible' : 'hidden' }}>
             <div className={`${indexStyles.list_head_body_inner} ${isShowBottDetail == '0' && indexStyles.list_head_body_inner_init} ${isShowBottDetail == '2' && indexStyles.animate_hide} ${isShowBottDetail == '1' && indexStyles.animate_show}`} >
               {this.renderTaskItem()}
             </div>
