@@ -423,7 +423,7 @@ export default class CardItem extends Component {
             .then(res => {
                 if (isApiResponseOk(res)) {
                     if (ganttIsOutlineView({ group_view_type })) {
-                        this.props.changeOutLineTreeNodeProto(id, updateData)
+                        // this.props.changeOutLineTreeNodeProto(id, updateData)
                         // setTimeout(() => {
                         //     this.excuteHandleEffectHandleParentCard([
                         //         // 'getParentCard',

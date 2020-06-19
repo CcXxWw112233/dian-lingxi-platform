@@ -306,7 +306,6 @@ export default {
     // 转化处理大纲视图数据
     * handleOutLineTreeData({ payload }, { select, call, put }) {
       const { data = [] } = payload
-      // console.log("handleOutLineTreeData", data);
       const start_date = yield select(workbench_start_date)
       const end_date = yield select(workbench_end_date)
       const ceilWidth = yield select(workbench_ceilWidth)
@@ -342,8 +341,8 @@ export default {
         new_item.due_time = due_time
         new_item.start_time = start_time
         if (tree_type == '1') { //里程碑的周期（时间跨度）,根据一级任务计算
-          const child_time_arr_start = children.map(item => item.start_time || 0).filter(item => item)
-          const child_time_arr_due = children.map(item => item.due_time || 0).filter(item => item)
+          const child_time_arr_start = children.map(item => transformTimestamp(item.start_time) || 0).filter(item => item)
+          const child_time_arr_due = children.map(item => transformTimestamp(item.due_time) || 0).filter(item => item)
           const child_time_arr = [].concat(child_time_arr_due, child_time_arr_start) ////全部时间的集合， [0]防止math.max 。minw
           time_span = setGantTimeSpan({
             time_span: '0',
