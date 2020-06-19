@@ -61,6 +61,22 @@ export default class GroupListHeadItem extends Component {
       local_list_name: list_name
     })
   }
+
+  componentWillReceiveProps(nextProps) {
+    this.listenGroupRowsLock(nextProps)
+  }
+
+  listenGroupRowsLock = (props) => {
+    const { itemValue = {}, itemKey, dispatch, group_rows_lock, group_rows, list_group } = props
+    const { list_no_time_data = [] } = itemValue
+    if (!group_rows_lock[itemKey] || !list_no_time_data.length) {
+      this.setState({
+        isShowBottDetail: '2'
+      })
+    }
+
+  }
+
   setIsShowBottDetail = () => {
     const { isShowBottDetail } = this.state
     let new_isShowBottDetail = '1'
@@ -237,8 +253,8 @@ export default class GroupListHeadItem extends Component {
     } else {
       if (single_select_user.id) {//点击成员视图切换到项目视图，同时带有只查看某用户的信息
         // message.warn('已锁定查看成员项目，请先')
-        return 
-      } 
+        return
+      }
     }
     if (gantt_board_id == '0') {
       dispatch({
@@ -1167,8 +1183,19 @@ export default class GroupListHeadItem extends Component {
               }
             </div>
           </div>
+
+          {/* 分组视图下未分组的，由于未分组长度太高，放到前面 */}
+          {
+            (gantt_board_id != '0' && group_view_type == '1' && list_id == '0') && (
+              <div className={indexStyles.list_head_footer} onClick={this.setIsShowBottDetail} style={{ marginTop: 16, display: list_no_time_data.length ? 'flex' : 'none' }}>
+                <div className={`${globalStyles.authTheme} ${indexStyles.list_head_footer_tip} ${isShowBottDetail == '2' && indexStyles.spin_hide2} ${isShowBottDetail == '1' && indexStyles.spin_show2}`}>&#xe61f;</div>
+                <div className={indexStyles.list_head_footer_dec}>{list_no_time_data.length}个未排期事项</div>
+              </div>
+            )
+          }
+
           {/* 没有排期任务列表 */}
-          <div className={`${indexStyles.list_head_body}`} onWheel={(e) => e.stopPropagation()}>
+          <div className={`${indexStyles.list_head_body}`} onWheel={(e) => e.stopPropagation()} style={{ display: list_no_time_data.length ? 'flex' : 'none' }}>
             <div className={`${indexStyles.list_head_body_inner} ${isShowBottDetail == '0' && indexStyles.list_head_body_inner_init} ${isShowBottDetail == '2' && indexStyles.animate_hide} ${isShowBottDetail == '1' && indexStyles.animate_show}`} >
               {this.renderTaskItem()}
             </div>
@@ -1192,10 +1219,12 @@ export default class GroupListHeadItem extends Component {
                 </div>
               </div>
             ) : (
-                <div className={indexStyles.list_head_footer} onClick={this.setIsShowBottDetail} style={{ display: list_no_time_data.length ? 'flex' : 'none' }}>
-                  <div className={`${globalStyles.authTheme} ${indexStyles.list_head_footer_tip} ${isShowBottDetail == '2' && indexStyles.spin_hide} ${isShowBottDetail == '1' && indexStyles.spin_show}`}>&#xe61f;</div>
-                  <div className={indexStyles.list_head_footer_dec}>{list_no_time_data.length}个未排期事项</div>
-                </div>
+                // 分组视图下，具有实际意义的分组（非未分组下）
+                (list_id && list_id != '0') && (
+                  <div className={indexStyles.list_head_footer} onClick={this.setIsShowBottDetail} style={{ display: list_no_time_data.length ? 'flex' : 'none' }}>
+                    <div className={`${globalStyles.authTheme} ${indexStyles.list_head_footer_tip} ${isShowBottDetail == '2' && indexStyles.spin_hide} ${isShowBottDetail == '1' && indexStyles.spin_show}`}>&#xe61f;</div>
+                    <div className={indexStyles.list_head_footer_dec}>{list_no_time_data.length}个未排期事项</div>
+                  </div>)
               )
           }
         </div>

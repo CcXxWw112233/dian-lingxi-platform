@@ -610,44 +610,43 @@ export default class BoardTemplate extends Component {
     // 引用到项目
     quoteTemplate = () => {
         const { checkedKeys, checkedKeysObj, template_data = [] } = this.state
-        // let new_checkedKeys = [...checkedKeys]
-        // // console.log('ssssssssss_0', checkedKeysObj)
-        // // 将里程碑id和任务id拆分开来
-        // let milestone_ids = checkedKeys.filter(item => checkedKeysObj.findIndex(item2 => item == item2.id && item2.parent_id == '0') != -1)
-        // let card_ids = checkedKeys.filter(item => checkedKeysObj.findIndex(item2 => item == item2.id && item2.parent_id != '0') != -1)
-        // let card_ids_objs = checkedKeysObj.filter(item => card_ids.findIndex(item2 => item2 == item.id) != -1)
-        // debugger
-        // let arr = [] //装载
-        // for (let val of template_data) {
-        //     const child_content_1 = val.child_content
-        //     const id_1 = val.id
-        //     let flag = false
-        //     if (child_content_1.length) {
-        //         for (let val2 of child_content_1) {
-        //             const id_2 = val2.id
-        //             if (card_ids_objs.findIndex(item => item.parent_id == id_2) != -1) {
-        //                 arr.push(id_2)
-        //                 flag = true
-        //             }
-        //         }
-        //     }
-        //     if (flag || card_ids_objs.findIndex(item => item.parent_id == id_1) != -1) {
-        //         arr.push(id_1)
-        //     }
-        // }
+        let new_checkedKeys = [...checkedKeys]
+        // console.log('ssssssssss_0', checkedKeysObj)
+        // 将里程碑id和任务id拆分开来
+        let milestone_ids = checkedKeys.filter(item => checkedKeysObj.findIndex(item2 => item == item2.id && item2.parent_id == '0') != -1)
+        let card_ids = checkedKeys.filter(item => checkedKeysObj.findIndex(item2 => item == item2.id && item2.parent_id != '0') != -1)
+        let card_ids_objs = checkedKeysObj.filter(item => card_ids.findIndex(item2 => item2 == item.id) != -1)
+        let arr = [] //装载
+        for (let val of template_data) {
+            const child_content_1 = val.child_content
+            const id_1 = val.id
+            let flag = false
+            if (child_content_1.length) {
+                for (let val2 of child_content_1) {
+                    const id_2 = val2.id
+                    if (card_ids_objs.findIndex(item => item.parent_id == id_2) != -1) {
+                        arr.push(id_2)
+                        flag = true
+                    }
+                }
+            }
+            if (flag || card_ids_objs.findIndex(item => item.parent_id == id_1) != -1) {
+                arr.push(id_1)
+            }
+        }
 
-        // new_checkedKeys = Array.from(new Set([].concat(new_checkedKeys, arr)))
-        // let abs = checkedKeysObj.filter(item => new_checkedKeys.findIndex(item2 => item2 == item.id) != -1)
+        new_checkedKeys = Array.from(new Set([].concat(new_checkedKeys, arr)))
+        let abs = checkedKeysObj.filter(item => new_checkedKeys.findIndex(item2 => item2 == item.id) != -1)
 
-        // //最终所需要数据
-        // milestone_ids = new_checkedKeys.filter(item => abs.findIndex(item2 => item == item2.id && item2.parent_id == '0') != -1)
-        // card_ids = new_checkedKeys.filter(item => abs.findIndex(item2 => item == item2.id && item2.parent_id != '0') != -1)
-
+        //最终所需要数据
+        milestone_ids = new_checkedKeys.filter(item => abs.findIndex(item2 => item == item2.id && item2.parent_id == '0') != -1)
+        card_ids = new_checkedKeys.filter(item => abs.findIndex(item2 => item == item2.id && item2.parent_id != '0') != -1)
+        // console.log('new_checkedKeys', checkedKeys, new_checkedKeys)
         const { gantt_board_id, dispatch } = this.props
         const params = {
             board_id: gantt_board_id,
             template_id: template_data[0].template_id,
-            select_ids: checkedKeys
+            select_ids: new_checkedKeys
             // milestone_ids,
             // card_ids
         }

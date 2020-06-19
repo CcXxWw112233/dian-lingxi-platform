@@ -711,9 +711,29 @@
         }
       }
 
+      @keyframes spin_show2 {
+        from {
+          transform: rotate(0deg);
+        }
+
+        to {
+          transform: rotate(90deg);
+        }
+      }
+
       @keyframes spin_hide {
         from {
           transform: rotate(-90deg);
+        }
+
+        to {
+          transform: rotate(0);
+        }
+      }
+
+      @keyframes spin_hide2 {
+        from {
+          transform: rotate(90deg);
         }
 
         to {
@@ -726,8 +746,18 @@
         transform: rotate(-90deg);
       }
 
+      .spin_show2 {
+        animation: spin_show2 300ms ease;
+        transform: rotate(90deg);
+      }
+
       .spin_hide {
         animation: spin_hide 300ms ease;
+        transform: rotate(0deg);
+      }
+
+      .spin_hide2 {
+        animation: spin_hide2 300ms ease;
         transform: rotate(0deg);
       }
 

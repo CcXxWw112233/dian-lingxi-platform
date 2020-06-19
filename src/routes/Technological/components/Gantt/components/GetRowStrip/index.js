@@ -374,14 +374,12 @@ export default class GetRowStrip extends PureComponent {
     }
     milestoneSetClick = () => {
         const date = this.calHoverDate()
-        const { timestamp } = date
-        const { itemValue = {}, gantt_board_id } = this.props
-        let { id, time_span = 1 } = itemValue
-        if (isNaN(time_span) || time_span == 0) time_span = 1
-        const due_time = timestamp + time_span * 24 * 60 * 60 * 1000 - 1000
-        updateMilestone({ id, deadline: due_time }, { isNotLoading: false }).then(res => {
+        const { timestamp, timestampEnd } = date
+        const { itemValue = {} } = this.props
+        let { id } = itemValue
+        updateMilestone({ id, deadline: timestampEnd }, { isNotLoading: false }).then(res => {
             if (isApiResponseOk(res)) {
-                this.changeOutLineTreeNodeProto(id, { start_time: timestamp, due_time })
+                this.changeOutLineTreeNodeProto(id, { start_time: timestamp, due_time: timestampEnd })
             } else {
                 message.error(res.message)
             }
