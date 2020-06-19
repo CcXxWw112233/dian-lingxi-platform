@@ -11,11 +11,12 @@ export default class FaceRightButton extends Component {
     setScrollPosition = ({ delay = 300, position = 200 }) => {
         const target = document.getElementById('gantt_card_out_middle')
         setTimeout(function () {
-            if (target.scrollTo) {
-                target.scrollTo(position, 0)
-            } else {
-                target.scrollLeft = position
-            }
+            // if (target.scrollTo) {
+            //     target.scrollTo(position, 0)
+            // } else {
+            //     target.scrollLeft = position
+            // }
+            target.scrollLeft = position
         }, delay)
     }
 
