@@ -70,6 +70,7 @@ export default class NodeOperate extends Component {
 
     // 分组列表
     renderGroupList = () => {
+        const { nodeValue: { list_id: selected_list_id } } = this.props
         const groups = this.getCardGroups()
         return (
             <>
@@ -84,9 +85,12 @@ export default class NodeOperate extends Component {
                             <div
                                 title={list_name}
                                 onClick={() => this.menuItemClick(`group_id_${list_id}`)}
-                                className={`${styles.submenu_area_item} ${globalStyles.global_ellipsis}`}
+                                className={`${styles.submenu_area_item} `}
                                 key={list_id}>
-                                {list_name}
+                                <div className={`${styles.name} ${globalStyles.global_ellipsis}`}>{list_name}</div>
+                                <div
+                                    style={{ display: selected_list_id == list_id ? 'block' : 'none' }}
+                                    className={`${globalStyles.authTheme} ${styles.check}`}>&#xe7fc;</div>
                             </div>
                         )
                     })
@@ -149,10 +153,22 @@ export default class NodeOperate extends Component {
             .then(res => {
                 if (isApiResponseOk) {
                     message.success('关联分组成功')
+                    this.setRelationGroupId({ list_id })
                 } else {
                     message.error(res.message)
                 }
             })
+    }
+    setRelationGroupId = ({ list_id }) => {
+        let { nodeValue: { id }, outline_tree = [], dispatch } = this.props
+        let node = OutlineTree.getTreeNodeValue(outline_tree, id);
+        node.list_id = list_id
+        dispatch({
+            type: 'gantt/handleOutLineTreeData',
+            payload: {
+                data: outline_tree
+            }
+        });
     }
     // ----------分组逻辑--------end+
     // 选择项点击

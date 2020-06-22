@@ -37,7 +37,7 @@ export default class BoardTemplate extends Component {
             checkedKeys: [], //已选择的key
             checkedKeysObj: [], ////已选择的keyobj
             selectedTpl: {},
-            template_origin: '0', //0 || 2 平台或自有
+            template_origin: '2', //0 || 2 平台或自有
         }
         this.drag_init_inner_html = ''
     }
@@ -730,8 +730,8 @@ export default class BoardTemplate extends Component {
                                     style={{ height: date_area_height }}
                                     className={styles.top}>
                                     <div className={`${styles.top_select}`}>
-                                        <div className={`${styles.top_select_left} ${template_origin == '0' && styles.selected}`} onClick={() => this.selectTemplateType('0')}>行业模版</div>
-                                        <div className={`${styles.top_select_right} ${template_origin == '2' && styles.selected}`} onClick={() => this.selectTemplateType('2')}>自有模版</div>
+                                        <div className={`${styles.top_select_left} ${template_origin == '2' && styles.selected}`} onClick={() => this.selectTemplateType('2')}>自有模版</div>
+                                        <div className={`${styles.top_select_right} ${template_origin == '0' && styles.selected}`} onClick={() => this.selectTemplateType('0')}>行业模版</div>
                                     </div>
 
                                     {/* <span className={styles.title}>项目模板</span> */}
