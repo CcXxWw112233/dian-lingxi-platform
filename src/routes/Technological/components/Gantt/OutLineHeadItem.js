@@ -198,7 +198,13 @@ export default class OutLineHeadItem extends Component {
                                 outline_tree.push(addNodeValue);
                                 //this.setCreateAfterInputFous(null,outline_tree);
                                 this.updateOutLineTreeData(outline_tree);
-
+                                // 保存位置
+                                dispatch({
+                                    type: 'gantt/saveGanttOutlineSort',
+                                    payload: {
+                                        outline_tree
+                                    }
+                                })
                             } else {
 
                                 message.error(res.message)
@@ -303,6 +309,13 @@ export default class OutLineHeadItem extends Component {
                                 addInputNodeValue.name = '';
                                 addInputNodeValue.editing = true;
                                 this.updateOutLineTreeData(outline_tree);
+                                // 保存位置
+                                dispatch({
+                                    type: 'gantt/saveGanttOutlineSort',
+                                    payload: {
+                                        outline_tree
+                                    }
+                                })
                                 if (typeof calback == 'function') {
                                     calback()
                                 }

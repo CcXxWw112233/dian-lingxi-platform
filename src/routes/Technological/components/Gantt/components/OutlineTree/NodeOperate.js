@@ -283,6 +283,15 @@ export default class NodeOperate extends Component {
                 data: outline_tree
             }
         });
+        if (type == 'flow') {
+            // 保存位置
+            dispatch({
+                type: 'gantt/saveGanttOutlineSort',
+                payload: {
+                    outline_tree
+                }
+            })
+        }
     }
     // 插入流程节点
     insertFlow = async ({ flow_template_id }) => {

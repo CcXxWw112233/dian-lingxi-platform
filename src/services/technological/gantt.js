@@ -114,3 +114,12 @@ export async function saveBoardTemplate(data) {
     data
   })
 }
+
+//引入模板
+export async function saveGanttOutlineSort(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/outline/sort`,
+    method: 'POST',
+    data
+  })
+}

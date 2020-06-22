@@ -1,4 +1,5 @@
 import { addCardRely, deleteCardRely, updateCardRely, getCardRelys } from "../../../services/technological/task"
+import { saveGanttOutlineSort } from "../../../services/technological/gantt"
 import { isApiResponseOk } from "../../../utils/handleResponseData"
 import { getModelSelectDatasState } from "../../utils"
 import { message } from "antd"
@@ -178,7 +179,29 @@ export default {
             } else {
 
             }
-        }
+        },
+        // 保存大纲视图的相对位置
+        * saveGanttOutlineSort({ payload = {} }, { select, call, put }) {
+            const { outline_tree = [] } = payload
+            const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
+            const outline_tree_ = yield select(getModelSelectDatasState('gantt', 'outline_tree'))
+            const data = outline_tree || outline_tree_
+            let content_ids = []
+            const mapGetContentId = (arr) => {
+                for (let val of arr) {
+                    const { children = [], id } = val
+                    if (id) {
+                        content_ids.push(id)
+                    }
+                    if (children.length) {
+                        mapGetContentId(children)
+                    }
+                }
+            }
+            mapGetContentId(data)
+            const res = yield call(saveGanttOutlineSort, content_ids)
+
+        },
     }
 
 }
