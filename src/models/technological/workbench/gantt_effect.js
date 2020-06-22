@@ -199,7 +199,7 @@ export default {
                 }
             }
             mapGetContentId(data)
-            const res = yield call(saveGanttOutlineSort, content_ids)
+            const res = yield call(saveGanttOutlineSort, { content_ids, board_id: gantt_board_id })
 
         },
     }
