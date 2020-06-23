@@ -123,3 +123,22 @@ export async function saveGanttOutlineSort(data) {
     data
   })
 }
+
+
+//置顶项目的分组
+export async function roofTopBoardCardGroup(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/lists/star/${data.list_id}`,
+    method: 'POST',
+    data
+  })
+}
+
+//取消置顶项目的分组
+export async function cancleToofTopBoardCardGroup(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/lists/star/${data.list_id}`,
+    method: 'DELETE',
+    data
+  })
+}
