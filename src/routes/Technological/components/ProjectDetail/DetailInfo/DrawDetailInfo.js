@@ -493,6 +493,7 @@ export default class DrawDetailInfo extends React.Component {
       <div>
         <TextArea
           autoFocus
+          maxLength={500}
           onBlur={ (e) => { this.handleOnBlur(e, board_id) } }
           value={this.state.textArea_val}
           placeholder={this.state.textArea_val != '' ? this.state.textArea_val : defaultDescriptionVal} 

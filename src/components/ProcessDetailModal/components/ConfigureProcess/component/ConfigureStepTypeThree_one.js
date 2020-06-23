@@ -217,9 +217,9 @@ export default class ConfigureStepTypeThree_one extends Component {
   handleAutoGradeTextAreaValue = (e, key, i) => {
     e && e.stopPropagation()
     let value = e.target.value
-    const reg = /^([1-9]\d{0,2}?|1000)$/
+    const reg = /^([1-9]\d{0,2}(\.\d{2})?|1000)$/
     // /^([1-9]\d{0,2}?|1000)$/
-    if (value == '' || value.trimLR() == '' || !reg.test(value)) {
+    if (value == '' || value.trimLR() == '') {
       this.updateState({ value: '', key: 'max_score', isNotUpdateModelDatas: true }, i)
       return
     }
@@ -246,11 +246,11 @@ export default class ConfigureStepTypeThree_one extends Component {
 
   handleAutoGradeTextAreaValue2 = (e, key, i) => {
     e && e.stopPropagation()
-    const reg = /^([1-9]\d{0,2}?|1000)$/
+    const reg = /^([1-9]\d{0,2}(\.\d{2})?|1000)$/
     const { score_items = [] } = this.state
     let new_data = JSON.parse(JSON.stringify(score_items || []))
     let value = e.target.value
-    if (value == '' || value.trimLR() == '' || !reg.test(value)) {
+    if (value == '' || value.trimLR() == '') {
       new_data = new_data.map(item => {
         let new_item = { ...item }
         new_item = { ...item, max_score: '' }
@@ -638,6 +638,20 @@ export default class ConfigureStepTypeThree_one extends Component {
     return flag
   }
 
+  // 判断分数是否是在范围内
+  whetherIsScoreValueAccordReg = () => {
+    const { score_items = [] } = this.state
+    let new_data = [...score_items]
+    let flag
+    const reg = /^([1-9]\d{0,2}(\.\d{1,2})?|1000)$/
+    new_data.find(item => {
+      if (!reg.test(item.max_score)) {
+        flag = true
+      }
+    })
+    return flag
+  }
+
   // 判断所有内容的权重是否大于100 true 表示如果不等于100 禁用
   whetherTheAllWeightValueGreaterThanHundred = () => {
     const { score_items = [] } = this.state
@@ -663,25 +677,25 @@ export default class ConfigureStepTypeThree_one extends Component {
     let disabledFlag
     if (local_enable_weight == '0') {
       if (local_enable_weight != enable_weight) {
-        if (isObjectValueEqual(localScoreList, score_items) || this.whetherIsEmptyContent()) {
+        if (isObjectValueEqual(localScoreList, score_items) || this.whetherIsEmptyContent() || this.whetherIsScoreValueAccordReg()) {
           disabledFlag = false
         } else {
           disabledFlag = false
         }
       } else {
-        if (isObjectValueEqual(localScoreList, score_items) || this.whetherIsEmptyContent()) {
+        if (isObjectValueEqual(localScoreList, score_items) || this.whetherIsEmptyContent() || this.whetherIsScoreValueAccordReg()) {
           disabledFlag = true
         }
       }
     } else if (local_enable_weight == '1') {
       if (local_enable_weight != enable_weight) {
-        if (this.whetherTheAllWeightValueGreaterThanHundred() || isObjectValueEqual(localScoreList, score_items) || this.whetherIsEmptyContent()) {
+        if (this.whetherTheAllWeightValueGreaterThanHundred() || isObjectValueEqual(localScoreList, score_items) || this.whetherIsEmptyContent() || this.whetherIsScoreValueAccordReg()) {
           disabledFlag = true
         } else {
           disabledFlag = false
         }
       } else {
-        if (this.whetherTheAllWeightValueGreaterThanHundred() || isObjectValueEqual(localScoreList, score_items) || this.whetherIsEmptyContent()) {
+        if (this.whetherTheAllWeightValueGreaterThanHundred() || isObjectValueEqual(localScoreList, score_items) || this.whetherIsEmptyContent() || this.whetherIsScoreValueAccordReg()) {
           disabledFlag = true
         }
       }

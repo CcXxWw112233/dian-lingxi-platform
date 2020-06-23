@@ -29,7 +29,7 @@ import { organizationInviteWebJoin, commInviteWebJoin } from '@/services/technol
 import { MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant';
 import moment from 'moment';
 import { checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction';
-import { arrayNonRepeatfy } from '../../../../../utils/util';
+import { arrayNonRepeatfy, isObjectValueEqual } from '../../../../../utils/util';
 const Option = Select.Option;
 const { TextArea } = Input;
 const { getMentions, toString, toContentState } = Mention;
@@ -183,6 +183,9 @@ class VideoMeetingPopoverContent extends React.Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
+		const { projectList = [] } = this.props
+		const { projectList: newProjectList = [] } = nextProps
+		if (isObjectValueEqual(projectList,newProjectList)) return
 		this.getCurrentProject(nextProps)
 	}
 

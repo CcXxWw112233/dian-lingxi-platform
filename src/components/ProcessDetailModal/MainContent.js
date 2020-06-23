@@ -850,12 +850,14 @@ export default class MainContent extends Component {
                 {not_show_create_node_guide != '1' && <ConfigureGuide />}
               </div>
             ) : (
-                <Tooltip getPopupContainer={() => document.getElementById('addProcessStep')} placement="topLeft" title="完成节点步骤才能添加">
-                  <div><div className={`${indexStyles.add_normal}`}>
+              <div id={'add_normal'}>
+                {/* <Tooltip getPopupContainer={() => document.getElementById('add_normal')} placement="topLeft" title="完成节点步骤才能添加"> */}
+                  <div title="完成节点步骤才能添加" className={`${indexStyles.add_normal}`}>
                     <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
                     {not_show_create_node_guide != '1' && <ConfigureGuide />}
-                  </div></div>
-                </Tooltip>
+                  </div>
+                {/* </Tooltip> */}
+                </div>
               )
           ) : (
               <div className={`${indexStyles.add_node}`} onClick={(e) => { this.handleAddEditStep(e) }}>
