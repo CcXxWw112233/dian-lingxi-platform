@@ -21,6 +21,7 @@ import { currentNounPlanFilterName, setBoardIdStorage } from "@/utils/businessFu
 import AddGroupSection from './components/AddGroupsection'
 import ArchiveSelect from './components/ArchiveSelect'
 import { arrayNonRepeatfy } from '../../../../utils/util';
+import { roofTopBoardCardGroup, cancleToofTopBoardCardGroup } from '../../../../services/technological/gantt';
 
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
@@ -1026,7 +1027,7 @@ export default class GroupListHeadItem extends Component {
 
   // 置顶
   roofTop = (type) => {
-    const { dispatch, itemValue: { list_id, org_id } } = this.props
+    const { dispatch, itemValue: { list_id, org_id }, gantt_board_id } = this.props
     const { list_group = [] } = this.props
     const list_group_new = [...list_group]
     const group_index = list_group_new.findIndex(item => item.lane_id == list_id)
@@ -1035,58 +1036,85 @@ export default class GroupListHeadItem extends Component {
     const _arr_new = JSON.parse(JSON.stringify(projectList))
     const _index = _arr_new.findIndex(item => item.board_id == list_id)
 
+    const cancleRoof = () => {
+      // 排序甘特图分组
+      list_group_new[group_index].is_star = '0'
+      _arr_new[_index].is_star = '0'
+      list_group_new.push(list_group_new[group_index]) //将该项往最后插入
+      list_group_new.splice(group_index, 1) //删除掉该项
+      dispatch({
+        type: 'gantt/handleListGroup',
+        payload: {
+          data: list_group_new
+        }
+      })
+    }
+    const roof = () => {
+      // 排序甘特图分组
+      list_group_new[group_index].is_star = '1'
+      list_group_new.unshift(list_group_new[group_index]) //将该项往第一插入
+      list_group_new.splice(group_index + 1, 1) //删除掉该项
+      dispatch({
+        type: 'gantt/handleListGroup',
+        payload: {
+          data: list_group_new
+        }
+      })
+    }
     if (type == '0') { //取消置顶
-      cancelCollection({ org_id, board_id: list_id }).then(res => {
-        if (isApiResponseOk(res)) {
-          // 排序甘特图分组
-          list_group_new[group_index].is_star = '0'
-          _arr_new[_index].is_star = '0'
-          list_group_new.push(list_group_new[group_index]) //将该项往最后插入
-          list_group_new.splice(group_index, 1) //删除掉该项
-          dispatch({
-            type: 'gantt/handleListGroup',
-            payload: {
-              data: list_group_new
-            }
-          })
-          // 排序项目列表
-          dispatch({
-            type: 'workbench/sortProjectList',
-            payload: {
-              data: _arr_new
-            }
-          })
-        } else {
-          message.error(res.message)
-        }
-      })
+      if (gantt_board_id != '0') { //分组置顶
+        cancleToofTopBoardCardGroup({ list_id }).then(res => {
+          if (isApiResponseOk(res)) {
+            cancleRoof()
+          } else {
+            message.error(res.message)
+          }
+        })
+      } else { //项目置顶
+        cancelCollection({ org_id, board_id: list_id }).then(res => {
+          if (isApiResponseOk(res)) {
+            cancleRoof()
+            // 排序项目列表
+            dispatch({
+              type: 'workbench/sortProjectList',
+              payload: {
+                data: _arr_new
+              }
+            })
+          } else {
+            message.error(res.message)
+          }
+        })
+      }
     } else {
-      collectionProject({ org_id, board_id: list_id }).then(res => {
-        if (isApiResponseOk(res)) {
-          // 排序甘特图分组
-          list_group_new[group_index].is_star = '1'
-          list_group_new.unshift(list_group_new[group_index]) //将该项往第一插入
-          list_group_new.splice(group_index + 1, 1) //删除掉该项
-          dispatch({
-            type: 'gantt/handleListGroup',
-            payload: {
-              data: list_group_new
-            }
-          })
-          // 排序项目列表
-          _arr_new[_index].is_star = '1'
-          _arr_new.unshift(_arr_new[_index]) //将该项往第一插入
-          _arr_new.splice(_index + 1, 1) //删除掉该项
-          dispatch({
-            type: 'workbench/updateDatas',
-            payload: {
-              projectList: _arr_new
-            }
-          })
-        } else {
-          message.error(res.message)
-        }
-      })
+      if (gantt_board_id != '0') { //分组置顶
+        roofTopBoardCardGroup({ list_id }).then(res => {
+          if (isApiResponseOk(res)) {
+            roof()
+          } else {
+            message.error(res.message)
+          }
+        })
+      } else {
+        collectionProject({ org_id, board_id: list_id }).then(res => {
+          if (isApiResponseOk(res)) {
+            roof()
+            // 排序项目列表
+            _arr_new[_index].is_star = '1'
+            _arr_new.unshift(_arr_new[_index]) //将该项往第一插入
+            _arr_new.splice(_index + 1, 1) //删除掉该项
+            dispatch({
+              type: 'workbench/updateDatas',
+              payload: {
+                projectList: _arr_new
+              }
+            })
+          } else {
+            message.error(res.message)
+          }
+        })
+      }
+
     }
   }
   render() {
@@ -1163,9 +1191,9 @@ export default class GroupListHeadItem extends Component {
               }
               {/* 置顶 */}
               {
-                (gantt_board_id == '0' && group_view_type == '1' && !show_edit_input) && (
+                (group_view_type == '1' && list_id != '0' && !show_edit_input) && (
                   is_star == '0' ? (
-                    <div className={globalStyle.authTheme} title={'置顶该项目'} onClick={() => this.roofTop('1')} style={{ marginLeft: 10, fontSize: 16, color: '#FFA940' }}>&#xe7e3;</div>
+                    <div className={globalStyle.authTheme} title={'置顶'} onClick={() => this.roofTop('1')} style={{ marginLeft: 10, fontSize: 16, color: '#FFA940' }}>&#xe7e3;</div>
                   ) : (
                       <div className={globalStyle.authTheme} title={'取消置顶'} onClick={() => this.roofTop('0')} style={{ marginLeft: 10, fontSize: 16, color: '#FFA940' }}>&#xe86e;</div>
                     )
