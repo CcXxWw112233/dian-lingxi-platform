@@ -289,3 +289,15 @@ export async function workflowUpdateTime(data) {
     data
   });
 }
+
+//获取当前组织的所有成员信息
+export async function getCurrentOrgAllMembers(params = {}) {
+  return request({
+    url: `${REQUEST_DOMAIN}/member/list`,
+    method: 'GET',
+    params: {
+      ...params,
+      _organization_id: params._organization_id || localStorage.getItem('OrganizationId')
+    }
+  })
+}
