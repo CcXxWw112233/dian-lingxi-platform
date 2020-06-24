@@ -213,17 +213,45 @@ export default class ConfigureStepTypeThree_one extends Component {
     }
   }
 
+  // changeTwoDecimal = (floatvar) => {
+  //   let f_x
+  //   f_x = parseFloat(floatvar);
+  //   if (isNaN(f_x)) {
+  //     return '';
+  //   }
+  //   f_x = Math.round(floatvar * 100) / 100;
+  //   return f_x;
+  // }
+
   // 表示是输入分值的内容变化
   handleAutoGradeTextAreaValue = (e, key, i) => {
     e && e.stopPropagation()
     let value = e.target.value
     const reg = /^([1-9]\d{0,2}(\.\d{2})?|1000)$/
     // /^([1-9]\d{0,2}?|1000)$/
-    if (value == '' || value.trimLR() == '') {
+    if (value == '' || value.trimLR() == '' || value > 1000) {
       this.updateState({ value: '', key: 'max_score', isNotUpdateModelDatas: true }, i)
       return
     }
-    this.updateState({ value: value, key: 'max_score', isNotUpdateModelDatas: true }, i)
+    if (value.indexOf('.') != -1 && value.indexOf('.') != 0) { // 表示存在小数点
+      let str = value.split('.')
+      if (str && str.length > 2) { // 表示禁止输入多个小数点
+        value = value.substring(0, value.indexOf('.') + 3)
+      } else if (isNaN(str[0])) { // 如果数字的前半段就是非数字 那么就取整
+        value = parseInt(value)
+      } else if ((str[1] && str[1].length) && isNaN(str[1])) { // 表示后半段中如果存在非数字那么取整
+        value = parseInt(value)
+      } else if ((str[1] && str[1].length) && str[1].length > 2) { // 表示如果小数点后半段位数大于2那么保留两位小数
+        value = parseFloat(value).toFixed(2)
+      }
+    } else {
+      if (isNaN(value)) {
+        this.updateState({ value: '', key: 'max_score', isNotUpdateModelDatas: true }, i)
+        return
+      }
+    }
+    
+    this.updateState({ value: String(value), key: 'max_score', isNotUpdateModelDatas: true }, i)
     if (this.refs && this.refs[`autoGradeTextArea_${key}`]) {
       this.gradeResize(key)
     }
@@ -246,30 +274,31 @@ export default class ConfigureStepTypeThree_one extends Component {
 
   handleAutoGradeTextAreaValue2 = (e, key, i) => {
     e && e.stopPropagation()
-    const reg = /^([1-9]\d{0,2}(\.\d{2})?|1000)$/
-    const { score_items = [] } = this.state
-    let new_data = JSON.parse(JSON.stringify(score_items || []))
     let value = e.target.value
-    if (value == '' || value.trimLR() == '') {
-      new_data = new_data.map(item => {
-        let new_item = { ...item }
-        new_item = { ...item, max_score: '' }
-        return new_item
-      })
-      this.setState({
-        score_items: new_data
-      })
-      // this.updateState({ value: '', key: 'max_score', isNotUpdateModelDatas: true }, i)
+    const reg = /^([1-9]\d{0,2}(\.\d{2})?|1000)$/
+    // /^([1-9]\d{0,2}?|1000)$/
+    if (value == '' || value.trimLR() == '' || value > 1000) {
+      this.updateState({ value: '', key: 'max_score', isNotUpdateModelDatas: true }, i)
       return
     }
-    new_data = new_data.map(item => {
-      let new_item = { ...item }
-      new_item = { ...item, max_score: value }
-      return new_item
-    })
-    this.setState({
-      score_items: new_data
-    })
+    if (value.indexOf('.') != -1 && value.indexOf('.') != 0) { // 表示存在小数点
+      let str = value.split('.')
+      if (str && str.length > 2) { // 表示禁止输入多个小数点
+        value = value.substring(0, value.indexOf('.') + 3)
+      } else if (isNaN(str[0])) { // 如果数字的前半段就是非数字 那么就取整
+        value = parseInt(value)
+      } else if ((str[1] && str[1].length) && isNaN(str[1])) { // 表示后半段中如果存在非数字那么取整
+        value = parseInt(value)
+      } else if ((str[1] && str[1].length) && str[1].length > 2) { // 表示如果小数点后半段位数大于2那么保留两位小数
+        value = parseFloat(value).toFixed(2)
+      }
+    } else {
+      if (isNaN(value)) {
+        this.updateState({ value: '', key: 'max_score', isNotUpdateModelDatas: true }, i)
+        return
+      }
+    }
+    this.updateState({ value: String(value), key: 'max_score', isNotUpdateModelDatas: true }, i)
     // this.updateState({ value: value, key: 'max_score', isNotUpdateModelDatas: true }, i)
     if (this.refs && this.refs[`autoGradeTextArea_${key}`]) {
       this.gradeResize(key)
@@ -392,7 +421,7 @@ export default class ConfigureStepTypeThree_one extends Component {
       this.updateState({ value: '', key: 'description' }, currentSelectItemIndex)
     }
     // if (gold_update) { // 如果说是从已经更新过的说明中取消, 那么就是要恢复到上一个说明中
-      
+
     //   this.updateState({ value: gold_description != '' ? gold_description : '', key: 'description' }, currentSelectItemIndex)
     // } else {
     //   this.updateState({ value: '', key: 'description' }, currentSelectItemIndex)
@@ -407,7 +436,7 @@ export default class ConfigureStepTypeThree_one extends Component {
   handleDeleteItem = (index) => {
     const { score_items = [] } = this.state
     let new_data = [...score_items]
-    for (var i = 0; i < new_data.length; i++) {
+    for (let i = 0; i < new_data.length; i++) {
       if (i == index) {
         new_data.splice(index, 1); // 将使后面的元素依次前移，数组长度减1
         i--; // 如果不减，将漏掉一个元素
@@ -493,7 +522,7 @@ export default class ConfigureStepTypeThree_one extends Component {
     }, () => {
       this.onFocus(e, key, index)
     })
-    
+
   }
 
 
@@ -535,13 +564,13 @@ export default class ConfigureStepTypeThree_one extends Component {
                     is_show_title_area ? (
                       <textarea autoFocus={true} onFocus={(e) => { this.onFocus(e, key || id || index, index) }} maxLength={200} value={title} onBlur={(e) => { this.handleAutoTitleTextAreaBlur(key || id || index, index) }} onChange={(e) => { this.handleAutoTitleTextArea(e, key || id || index, index) }} ref={`autoTitleTextArea_${key || id || index}`} />
                     ) : (
-                        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-around'}} onClick={(e) => { this.handleShowTitleArea(e, key || id || index, index) }}>
-                            <div className={indexStyles.show_title_area}>{title}</div>
-                            {
-                              description && description != '' && (
-                                <div style={{marginRight: '4px'}} className={globalStyles.authTheme}>&#xe7f6;</div>
-                              )
-                            }
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }} onClick={(e) => { this.handleShowTitleArea(e, key || id || index, index) }}>
+                          <div className={indexStyles.show_title_area}>{title}</div>
+                          {
+                            description && description != '' && (
+                              <div style={{ marginRight: '4px' }} className={globalStyles.authTheme}>&#xe7f6;</div>
+                            )
+                          }
                         </div>
                       )
                   }
@@ -591,13 +620,13 @@ export default class ConfigureStepTypeThree_one extends Component {
                     is_show_title_area ? (
                       <textarea autoFocus={true} onFocus={(e) => { this.onFocus(e, key || id || index, index) }} maxLength={200} value={title} onBlur={(e) => { this.handleAutoTitleTextAreaBlur(key || id || index, index) }} onChange={(e) => { this.handleAutoTitleTextArea(e, key || id || index, index) }} ref={`autoTitleTextArea_${key || id || index}`} />
                     ) : (
-                        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-around'}} onClick={(e) => { this.handleShowTitleArea(e, key || id || index, index) }}>
-                            <div style={{maxWidth: '140px'}} className={indexStyles.show_title_area}>{title}</div>
-                            {
-                              description && description != '' && (
-                                <div style={{marginRight: '4px'}} className={globalStyles.authTheme}>&#xe7f6;</div>
-                              )
-                            }
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }} onClick={(e) => { this.handleShowTitleArea(e, key || id || index, index) }}>
+                          <div style={{ maxWidth: '140px' }} className={indexStyles.show_title_area}>{title}</div>
+                          {
+                            description && description != '' && (
+                              <div style={{ marginRight: '4px' }} className={globalStyles.authTheme}>&#xe7f6;</div>
+                            )
+                          }
                         </div>
                       )
                   }

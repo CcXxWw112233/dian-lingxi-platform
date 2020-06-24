@@ -100,6 +100,23 @@ export default class BeginningStepThree_one extends Component {
       this.updateState({ value: '', key: 'value' }, i)
       return
     }
+    if (value.indexOf('.') != -1 && value.indexOf('.') != 0) { // 表示存在小数点
+      let str = value.split('.')
+      if (str && str.length > 2) { // 表示禁止输入多个小数点
+        value = value.substring(0, value.indexOf('.') + 3)
+      } else if (isNaN(str[0])) { // 如果数字的前半段就是非数字 那么就取整
+        value = parseInt(value)
+      } else if ((str[1] && str[1].length) && isNaN(str[1])) { // 表示后半段中如果存在非数字那么取整
+        value = parseInt(value)
+      } else if ((str[1] && str[1].length) && str[1].length > 2) { // 表示如果小数点后半段位数大于2那么保留两位小数
+        value = parseFloat(value).toFixed(2)
+      }
+    } else {
+      if (isNaN(value)) {
+        this.updateState({ value: '', key: 'value' }, i)
+        return
+      }
+    }
     this.updateState({ value: value, key: 'value' }, i)
   }
 
