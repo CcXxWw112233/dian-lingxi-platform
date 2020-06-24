@@ -807,15 +807,25 @@ export default class BoardTemplate extends Component {
                                 :
                                 <div style={{ height: '100%' }}>
                                     {
-                                        this.state.template_list && this.state.template_list.map((item) => {
-                                            const { id, name } = item
-                                            return (
-                                                <div class={styles.boardTplItem} onClick={() => this.selectBoardTemplate(id)}>
-                                                    <span className={`${styles.left} ${globalStyles.global_ellipsis}`}>{name}</span>
-                                                    <span> <i className={globalStyles.authTheme}>&#xe7eb;</i></span>
+                                        this.state.template_list && this.state.template_list.length ? (
+                                            this.state.template_list.map((item) => {
+                                                const { id, name } = item
+                                                return (
+                                                    <div class={styles.boardTplItem} onClick={() => this.selectBoardTemplate(id)}>
+                                                        <span className={`${styles.left} ${globalStyles.global_ellipsis}`}>{name}</span>
+                                                        <span> <i className={globalStyles.authTheme}>&#xe7eb;</i></span>
+                                                    </div>
+                                                );
+                                            })
+                                        ) : (
+                                                <div style={{ textAlign: "center", color: 'rgba(0,0,0,0.3)', marginTop: 50 }}>
+                                                    <div className={`${globalStyles.authTheme}`}
+                                                        style={{ fontSize: 50, textAlign: "center" }}>
+                                                        &#xe703;
+                                                    </div>
+                                                    <div>暂无数据</div>
                                                 </div>
-                                            );
-                                        })
+                                            )
                                     }
                                 </div>
                         }
