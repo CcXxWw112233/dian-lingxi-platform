@@ -109,7 +109,7 @@ export default class BeginningStepThree_one extends Component {
       } else if ((str[1] && str[1].length) && isNaN(str[1])) { // 表示后半段中如果存在非数字那么取整
         value = parseInt(value)
       } else if ((str[1] && str[1].length) && str[1].length > 2) { // 表示如果小数点后半段位数大于2那么保留两位小数
-        value = parseFloat(value).toFixed(2)
+        value = String(value).substring(0, String(value).indexOf('.') + 3)
       }
     } else {
       if (isNaN(value)) {
