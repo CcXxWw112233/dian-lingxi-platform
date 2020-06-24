@@ -3,7 +3,7 @@ import { Menu, Button, Input, message, Modal } from 'antd';
 import styles from './nodeOperate.less'
 import globalStyles from '@/globalset/css/globalClassName.less';
 import { connect } from 'dva';
-import { addTaskGroup, changeTaskType, deleteTask, requestDeleteMiletone, deleteTaskVTwo, boardAppRelaMiletones } from '../../../../../../services/technological/task';
+import { addTaskGroup, changeTaskType, deleteTask, requestDeleteMiletone, deleteTaskVTwo, boardAppRelaMiletones, updateTaskVTwo } from '../../../../../../services/technological/task';
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
 import OutlineTree from '.';
 import { visual_add_item } from '../../constants';
@@ -143,17 +143,19 @@ export default class NodeOperate extends Component {
         })
     }
     relationGroup = (list_id) => {
-        const { gantt_board_id, nodeValue: { id }, } = this.props
+        const { gantt_board_id, nodeValue: { id, list_id: selected_list_id }, } = this.props
         const params = {
             list_id,
             board_id: gantt_board_id,
             card_id: id
         }
-        changeTaskType({ ...params }, { isNotLoading: false })
+        const is_cancle = list_id == selected_list_id
+        if (is_cancle) params.list_id = '0'
+        updateTaskVTwo({ ...params }, { isNotLoading: false })
             .then(res => {
-                if (isApiResponseOk) {
-                    message.success('关联分组成功')
-                    this.setRelationGroupId({ list_id })
+                if (isApiResponseOk(res)) {
+                    message.success(!is_cancle ? '关联分组成功' : '已取消关联')
+                    this.setRelationGroupId({ list_id: params.list_id })
                 } else {
                     message.error(res.message)
                 }
