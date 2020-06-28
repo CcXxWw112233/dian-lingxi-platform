@@ -23,11 +23,11 @@ const rely_map = [
 ]
 const width_diff = 8 //宽度误差微调
 const left_diff = 12 //位置误差微调
-const top_diff = 40 //位置误差微调
-const top_diff_60 = 60 //位置误差微调
-const top_diff_30 = 30 //位置误差微调
-const top_diff_20 = 20 //位置误差微调
-const top_diff_10 = 10 //位置误差微调
+const top_diff = 30 //位置误差微调
+const top_diff_60 = 45 //位置误差微调
+const top_diff_30 = 25 //位置误差微调
+const top_diff_20 = 15 //位置误差微调
+const top_diff_10 = 5 //位置误差微调
 
 @connect(mapStateToProps)
 export default class index extends Component {

@@ -1,8 +1,8 @@
 export const date_area_height = 64
-export const task_item_height = 40 //进度条高度
+export const task_item_height = 30 //进度条高度
 export const task_item_height_fold = 24 //进度条高度（折叠后）
-export const task_item_margin_top = 20 //任务条margin-top
-export const ceil_height = 60 // task_item_height + task_item_margin_top 单元格高度
+export const task_item_margin_top = 15 //任务条margin-top
+export const ceil_height = task_item_height + task_item_margin_top // task_item_height + task_item_margin_top 单元格高度
 export const ceil_height_fold = 24 //折叠的单元格高度
 export const group_rows_fold = 4  //进度汇总折叠后行数
 export const ceil_width = 44 // 默认单元格宽度 （月视图）

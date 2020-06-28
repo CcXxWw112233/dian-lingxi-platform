@@ -26,6 +26,7 @@ import ShowAddMenberModal from '../../../../routes/Technological/components/Proj
 import SafeConfirmModal from './components/SafeConfirmModal';
 import { updateFlowInstanceNameOrDescription } from '../../../../services/technological/workFlow';
 import SaveBoardTemplate from './components/Modal/SaveBoardTemplate'
+import { task_item_margin_top } from './constants';
 const { SubMenu } = Menu;
 // const { TreeNode } = OutlineTree;
 const { confirm } = Modal;
@@ -787,7 +788,7 @@ export default class OutLineHeadItem extends Component {
         const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData, outline_tree_round, changeOutLineTreeNodeProto, deleteOutLineTreeNode } = this.props;
         //console.log("刷新了数据", outline_tree);
         return (
-            <div className={styles.outline_wrapper}>
+            <div className={styles.outline_wrapper} style={{ marginTop: task_item_margin_top }}>
 
                 <OutlineTree
                     // defaultExpandedKeys={['0-0-0']}
