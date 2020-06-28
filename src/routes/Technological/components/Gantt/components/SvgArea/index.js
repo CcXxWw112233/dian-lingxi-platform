@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'dva'
 import styles from './index.less'
 import { Popconfirm, Modal } from 'antd'
-import { ganttIsOutlineView } from '../../constants'
+import { ganttIsOutlineView, task_item_height, task_item_margin_top } from '../../constants'
 const rely_map = [
     {
         "id": "1265111963571195904",
@@ -21,13 +21,14 @@ const rely_map = [
         ]
     },
 ]
+// 60 40 20
 const width_diff = 8 //宽度误差微调
 const left_diff = 12 //位置误差微调
-const top_diff = 30 //位置误差微调
-const top_diff_60 = 45 //位置误差微调
-const top_diff_30 = 25 //位置误差微调
-const top_diff_20 = 15 //位置误差微调
-const top_diff_10 = 5 //位置误差微调
+const top_diff_60 = task_item_height + task_item_margin_top //位置误差微调
+const top_diff_30 = top_diff_60 / 2 + 2//位置误差微调 ,+2由于任务间距太小，恢复可去掉
+const top_diff_20 = task_item_margin_top //位置误差微调
+const top_diff_10 = task_item_margin_top / 2 - 2 //位置误差微调, -2由于任务间距太小，恢复可去掉
+const top_diff = task_item_height / 2 + task_item_margin_top /// 2 //位置误差微调
 
 @connect(mapStateToProps)
 export default class index extends Component {
