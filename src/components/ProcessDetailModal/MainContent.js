@@ -10,7 +10,7 @@ import BeginningProcess from './components/BeginningProcess'
 import ConfigureGuide from './ConfigureGuide'
 import { processEditDatasItemOneConstant } from './constant'
 import { Tooltip, Button, message, Popover, DatePicker, Checkbox } from 'antd'
-import { timeToTimestamp, timestampToTimeNormal } from '../../utils/util'
+import { timeToTimestamp, timestampToTimeNormal, isObjectValueEqual } from '../../utils/util'
 import moment from 'moment'
 import { MESSAGE_DURATION_TIME, FLOWS, NOT_HAS_PERMISION_COMFIRN, PROJECT_FLOWS_FLOW_CREATE } from '../../globalset/js/constant'
 import { saveProcessTemplate, getTemplateInfo, createProcess } from '../../services/technological/workFlow'
@@ -97,6 +97,30 @@ export default class MainContent extends Component {
     }
   }
 
+  // 设置一个用户流程进行中缓存节点
+  setUserProcessWithNodesStorage = (props) => {
+    const { processInfo = {} } = props
+    if (!Object.keys(processInfo).length) return
+    const { id: user_id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
+    const { id, status } = processInfo
+    let curr_need_storage_node = (processInfo['nodes'] && processInfo['nodes'].length) && processInfo['nodes'].find(i=>status == '1' && i.status == '1' && i.node_type == '1') || {}
+    // 这里只缓存资料收集节点 如果没有找到那么就不缓存 并且要将之前的内容清空
+    if (!(curr_need_storage_node && Object.keys(curr_need_storage_node).length)) {
+      let info = localStorage.getItem('userProcessWithNodesStatusStorage') ? JSON.parse(localStorage.getItem('userProcessWithNodesStatusStorage')) : {}
+      if (info && Object.keys(info).length) {
+        localStorage.removeItem('userProcessWithNodesStatusStorage')
+      }
+      return
+    }
+    let obj = {
+      id,
+      status,
+      nodes: [curr_need_storage_node],
+      user_id
+    }
+    localStorage.setItem('userProcessWithNodesStatusStorage',JSON.stringify(obj))
+  }
+
   componentDidMount() {
     window.addEventListener('resize', this.resizeTTY)
     window.addEventListener('scroll', this.onScroll)
@@ -113,6 +137,7 @@ export default class MainContent extends Component {
     }
     this.initCanvas(this.props)
     this.whetherUpdateOrgnazationMemberList(this.props)
+    this.setUserProcessWithNodesStorage(this.props)
   }
   componentWillUnmount() {
     window.removeEventListener("resize", this.resizeTTY);
@@ -150,8 +175,8 @@ export default class MainContent extends Component {
   }
   // 用来更新canvas中的步骤
   componentWillReceiveProps(nextProps) {
-    const { processInfo: { curr_node_sort } } = nextProps
-    const { processInfo: { curr_node_sort: old_curr_node_sort } } = this.props
+    const { processInfo: { curr_node_sort }, processInfo = {} } = nextProps
+    const { processInfo: { curr_node_sort: old_curr_node_sort }, processInfo: { old_processInfo = {} } } = this.props
     if (old_curr_node_sort && curr_node_sort) {
       if (curr_node_sort != old_curr_node_sort) {
         setTimeout(() => {
@@ -159,6 +184,9 @@ export default class MainContent extends Component {
         }, 50)
       }
     }
+    if (isObjectValueEqual(old_processInfo, processInfo)) return
+    // 当节点内容有变化的时候更新缓存
+    this.setUserProcessWithNodesStorage(nextProps)
   }
 
   initCanvas(props) {
@@ -1132,7 +1160,7 @@ export default class MainContent extends Component {
                 {
                   !isEditCurrentFlowInstanceDescription ? (
                     <div className={processPageFlagStep == '4' ? indexStyles.normal_flow_description : indexStyles.flow_description} onClick={processPageFlagStep == '4' ? '' : (e) => { this.handleChangeFlowInstanceDescription(e, '1') }}>
-                      <span>
+                      <span style={{whiteSpace: 'pre-wrap'}}>
                         {currentFlowInstanceDescription != '' ? currentFlowInstanceDescription : '添加描述'}
                         {
                           processPageFlagStep == '4' && (
