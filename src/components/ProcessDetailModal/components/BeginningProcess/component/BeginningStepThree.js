@@ -414,7 +414,7 @@ export default class BeginningStepThree extends Component {
             <Popover getPopupContainer={triggerNode => triggerNode.parentNode} placement="rightTop" content={enable_weight == '1' ? this.renderRatingDetailWeightContent(score_items) : this.renderRatingDetailDefaultContent(score_items)} title={<div>评分详情</div>}>
               <span style={{ color: '#1890FF', fontSize: '16px', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe7b4;</span>
             </Popover>
-            <div style={{ color: comment == '无意见。' ? 'rgba(0,0,0,0.25)' : 'rgba(0,0,0,0.65)' }}>{comment}</div>
+            <div style={{ color: comment == '无意见。' ? 'rgba(0,0,0,0.25)' : 'rgba(0,0,0,0.65)', whiteSpace: 'pre-wrap' }}>{comment}</div>
           </div>
         </div>
         <div className={indexStyles.app_right}>{timestampToTimeNormal(time, '/', true) || ''}</div>

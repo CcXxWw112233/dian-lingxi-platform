@@ -1,10 +1,14 @@
-import React, { Component, useState } from 'react'
+import React, { Component, useState, useEffect } from 'react'
 import indexStyles from './index.less'
 import NameChangeInput from '../../../NameChangeInput'
 
 function OpinionContent(props) {
-  const { placeholder, value, opinionTextAreaChange } = props
+  const { placeholder, value, opinionTextAreaChange, opinionTextAreaBlur } = props
   const [ opinion_click, setOpinionClick ] = useState(false)
+  let handleBlur = async(e) => {
+    await (opinionTextAreaBlur && opinionTextAreaBlur(e)),
+    await setOpinionClick(false)
+  }
   return (
     <div className={indexStyles.opinion_wrapper}>
       {
@@ -12,10 +16,10 @@ function OpinionContent(props) {
           <div>
             <NameChangeInput 
               autosize
-              onBlur={()=>{setOpinionClick(false)}}
+              onBlur={handleBlur}
               // onPressEnter={this.titleTextAreaChangeBlur}
               // onClick={this.titleTextAreaChangeClick}
-              setIsEdit={()=>{setOpinionClick(false)}}
+              setIsEdit={handleBlur}
               onChange={opinionTextAreaChange}
               autoFocus={true}
               goldName={value}
