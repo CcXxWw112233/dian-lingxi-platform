@@ -15,6 +15,7 @@ import _ from "lodash";
 import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import { FILES } from '../../../../../globalset/js/constant'
 import FileListRightBarFileDetailModal from '../../../../../routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal'
+import { updateUserStorage } from '../../handleOperateModal'
 
 let uploadMaxFileSize = []
 let CancelToken = axios.CancelToken;
@@ -62,6 +63,9 @@ export default class BeginningStepOne_five extends Component {
     const { forms = [] } = processEditDatas[parentKey]
     forms[itemKey][key] = data.value
     this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('forms', forms)
+    if (data.update_storage) {
+      updateUserStorage({forms: forms})
+    }
   }
 
   onBeforeUpload = (file, fileList) => {
@@ -98,7 +102,7 @@ export default class BeginningStepOne_five extends Component {
     this.setState({ 
       fileList: new_filelist
     })
-    this.updateEdit({ value: temp_list }, 'files')
+    this.updateEdit({ value: temp_list, update_storage:true }, 'files')
   }
 
   onFilePreview = (e, item) => {

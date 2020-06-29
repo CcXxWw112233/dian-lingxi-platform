@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Select } from 'antd'
 import indexStyles from '../index.less'
 import { connect } from 'dva'
+import { updateUserStorage } from '../../handleOperateModal';
 
 const { Option } = Select;
 @connect(mapStateToProps)
@@ -12,6 +13,9 @@ export default class BeginningStepOne_two extends Component {
     const { forms = [] } = processEditDatas[parentKey]
     forms[itemKey][key] = data.value
     this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('forms', forms)
+    if (data.update_storage) {
+      updateUserStorage({forms: forms})
+    }
   }
 
   defaultValueChange(value) {
@@ -19,7 +23,7 @@ export default class BeginningStepOne_two extends Component {
     if (typeof value === 'object'){
       newValue = value.join(',')
     }
-    this.updateEdit({value: newValue}, 'value')
+    this.updateEdit({value: newValue,update_storage:true}, 'value')
   }
 
     // 判断是多选还是单选所渲染的不同value内容

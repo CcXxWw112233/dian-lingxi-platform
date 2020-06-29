@@ -54,16 +54,12 @@ export default class BeginningStepOne extends Component {
     const { transPrincipalList = [] } = this.state
     const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     let flag = false
-    if (assignee_type == '2') { // 表示只有在指定人员的情况下才会有判断情况
-      let newAssignees = [...transPrincipalList]
+    let newAssignees = [...transPrincipalList]
       newAssignees.find(item => {
         if (item.id == id) {
           flag = true
         }
       })
-    } else if (assignee_type == '1') {
-      flag = true
-    }
     return flag
   }
 

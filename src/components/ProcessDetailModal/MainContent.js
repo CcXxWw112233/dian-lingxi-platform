@@ -97,28 +97,80 @@ export default class MainContent extends Component {
     }
   }
 
+  // 是否将缓存内容更新至model true 表示可以更新
+  whetherIsUpdateDatasFromStorageToModel = (props) => {
+    let flag = true
+    const { processInfo = {} } = props
+    const { status } = processInfo
+    const pro_info = localStorage.getItem('userProcessWithNodesStatusStorage') ? JSON.parse(localStorage.getItem('userProcessWithNodesStatusStorage')) : {}
+    if (!(pro_info && Object.keys(pro_info).length)) {
+      flag = false
+      return flag
+    } else {
+      let curr_need_storage_node = (processInfo['nodes'] && processInfo['nodes'].length) && processInfo['nodes'].find(i=>status == '1' && i.status == '1' && i.node_type == '1') || {}
+      if (curr_need_storage_node.id == pro_info['nodes'][0].id) { // 如果缓存和当前正在进行的不相等 那么表示已经进行到别的节点了
+        flag = true
+      } else {
+        flag = false
+      }
+      return flag
+    }
+    return flag
+  }
+
   // 设置一个用户流程进行中缓存节点
   setUserProcessWithNodesStorage = (props) => {
     const { processInfo = {} } = props
     if (!Object.keys(processInfo).length) return
     const { id: user_id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
     const { id, status } = processInfo
-    let curr_need_storage_node = (processInfo['nodes'] && processInfo['nodes'].length) && processInfo['nodes'].find(i=>status == '1' && i.status == '1' && i.node_type == '1') || {}
-    // 这里只缓存资料收集节点 如果没有找到那么就不缓存 并且要将之前的内容清空
-    if (!(curr_need_storage_node && Object.keys(curr_need_storage_node).length)) {
-      let info = localStorage.getItem('userProcessWithNodesStatusStorage') ? JSON.parse(localStorage.getItem('userProcessWithNodesStatusStorage')) : {}
-      if (info && Object.keys(info).length) {
-        localStorage.removeItem('userProcessWithNodesStatusStorage')
+    if (this.whetherIsUpdateDatasFromStorageToModel(props)) { // 表示更新model中的数据
+      const pro_info = localStorage.getItem('userProcessWithNodesStatusStorage') ? JSON.parse(localStorage.getItem('userProcessWithNodesStatusStorage')) : {}
+      const { nodes = [], user_id: USER_ID } = pro_info
+      if (user_id == USER_ID) { // 当前用户匹配上 才更新
+        let nodesData = [...processInfo['nodes']]
+        nodesData = nodesData.map(item => {
+          if (item.id == nodes[0].id) {
+            let new_item = {...item, forms: nodes[0]['forms']}
+            return new_item
+          } else {
+            if (item.status == '2') {
+              let new_item = {...item, is_confirm: '1'}
+              return new_item
+            } else {
+              return item
+            }
+          }
+        })
+        this.props.dispatch({
+          type:'publicProcessDetailModal/updateDatas',
+          payload: {
+            processInfo: {...processInfo, nodes: nodesData},
+            processEditDatas: nodesData
+          }
+        })
       }
       return
+    } else { // 设置缓存
+      let curr_need_storage_node = (processInfo['nodes'] && processInfo['nodes'].length) && processInfo['nodes'].find(i=>status == '1' && i.status == '1' && i.node_type == '1') || {}
+      // 这里只缓存资料收集节点 如果没有找到那么就不缓存 并且要将之前的内容清空
+      if (!(curr_need_storage_node && Object.keys(curr_need_storage_node).length)) {
+        let info = localStorage.getItem('userProcessWithNodesStatusStorage') ? JSON.parse(localStorage.getItem('userProcessWithNodesStatusStorage')) : {}
+        if (info && Object.keys(info).length) {
+          localStorage.removeItem('userProcessWithNodesStatusStorage')
+        }
+        return
+      }
+      curr_need_storage_node.his_comments ? delete curr_need_storage_node.his_comments : ''
+      curr_need_storage_node.complete_time ? delete curr_need_storage_node.complete_time : ''
+      let obj = {
+        id,
+        status,
+        nodes: [curr_need_storage_node],
+        user_id
+      }
+      localStorage.setItem('userProcessWithNodesStatusStorage',JSON.stringify(obj))
     }
-    let obj = {
-      id,
-      status,
-      nodes: [curr_need_storage_node],
-      user_id
-    }
-    localStorage.setItem('userProcessWithNodesStatusStorage',JSON.stringify(obj))
   }
 
   componentDidMount() {
@@ -175,8 +227,8 @@ export default class MainContent extends Component {
   }
   // 用来更新canvas中的步骤
   componentWillReceiveProps(nextProps) {
-    const { processInfo: { curr_node_sort }, processInfo = {} } = nextProps
-    const { processInfo: { curr_node_sort: old_curr_node_sort }, processInfo: { old_processInfo = {} } } = this.props
+    const { processInfo: { curr_node_sort, status }, processInfo = {} } = nextProps
+    const { processInfo: { curr_node_sort: old_curr_node_sort, status: old_status }, processInfo: { old_processInfo = {} } } = this.props
     if (old_curr_node_sort && curr_node_sort) {
       if (curr_node_sort != old_curr_node_sort) {
         setTimeout(() => {
@@ -184,7 +236,15 @@ export default class MainContent extends Component {
         }, 50)
       }
     }
-    if (isObjectValueEqual(old_processInfo, processInfo)) return
+    let info = localStorage.getItem('userProcessWithNodesStatusStorage') ? JSON.parse(localStorage.getItem('userProcessWithNodesStatusStorage')) : {}
+    if (!(info && Object.keys(info).length)) return
+    let next_props_forms_data = (processInfo['nodes'] && processInfo['nodes'].length) && processInfo['nodes'].find(i=>status == '1' && i.status == '1' && i.node_type == '1') || {}
+    info['nodes'][0].his_comments ? delete info['nodes'][0].his_comments : ''
+    info['nodes'][0].complete_time ? delete info['nodes'][0].complete_time : ''
+    next_props_forms_data.his_comments ? delete next_props_forms_data.his_comments : ''
+    next_props_forms_data.complete_time ? delete next_props_forms_data.complete_time : ''
+    // 当表单内容有变化的时候才更新
+    if (isObjectValueEqual(next_props_forms_data,info['nodes'][0])) return
     // 当节点内容有变化的时候更新缓存
     this.setUserProcessWithNodesStorage(nextProps)
   }

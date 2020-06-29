@@ -61,10 +61,10 @@ export default class AccomplishStepOne extends Component {
   whetherShowRebackButton = () => {
     const { itemValue } = this.props
     const { assignee_type, assignees } = itemValue
-    const { transPrincipalList = [] } = this.props
+    const { transPrincipalList = [] } = this.state
     const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     let flag = false
-    let newAssignees = [...assignees]
+    let newAssignees = [...transPrincipalList]
       newAssignees.find(item => {
         if (item.id == id) {
           flag = true

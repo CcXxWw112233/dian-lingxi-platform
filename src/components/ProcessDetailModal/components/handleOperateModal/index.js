@@ -428,10 +428,13 @@ const removeEmptyArrayEle = (arr) => {
 };
 
 // 设置用户流程缓存 (更新对应字段内容)
-const updateUserStorage = ({id,name,value}) => {
+const updateUserStorage = async({forms = []}) => {
   const pro_info = localStorage.getItem('userProcessWithNodesStatusStorage') ? JSON.parse(localStorage.getItem('userProcessWithNodesStatusStorage')) : {}
   if (!(pro_info && Object.keys(pro_info).length)) return
-  
+  const { user_id, nodes = []  } = pro_info
+  nodes[0]['forms'] = forms
+  await localStorage.removeItem('userProcessWithNodesStatusStorage')
+  await localStorage.setItem('userProcessWithNodesStatusStorage',JSON.stringify(pro_info))
 }
 
 export {
@@ -454,5 +457,6 @@ export {
   renderRestrictionsTime,
   compareOppositeTimer,
   removeEmptyArrayEle,
+  updateUserStorage,
 }
 
