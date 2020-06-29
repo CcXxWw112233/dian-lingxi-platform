@@ -5,6 +5,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { timestampToTimeNormal, compareACoupleOfObjects, isObjectValueEqual } from '../../../../../utils/util';
+import OpinionContent from '../OpinionContent'
 
 @connect(mapStateToProps)
 export default class BeginningStepThree_one extends Component {
@@ -326,7 +327,7 @@ export default class BeginningStepThree_one extends Component {
   }
 
   render() {
-    const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id }, transPrincipalList = [] } = this.props
+    const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id }, transPrincipalList = [], showApproveButton } = this.props
     const { score_node_set = {}, enable_weight, status } = itemValue
     const { score_display } = score_node_set
     const { score_items = [], clientWidth } = this.state
@@ -339,7 +340,7 @@ export default class BeginningStepThree_one extends Component {
       <div>
         {/* 评分项 */}
         <div style={{ borderTop: '1px solid rgba(0,0,0,0.09)', marginTop: '16px', padding: '16px 14px' }}>
-          <div id={`ratingItems_${itemKey}`} className={indexStyles.ratingItems} style={{ paddingBottom: last_total && Object.keys(last_total).length != '0' || score_display == '0' ? '50px' : '16px' }}>
+          <div id={`ratingItems_${itemKey}`} className={indexStyles.ratingItems} style={{ paddingBottom: (last_total && Object.keys(last_total).length != '0') || (score_display == '0' && status == '1' ) ? '50px' : '16px' }}>
             {
               score_items && score_items.map((item, index) => {
                 const { title, description, max_score, weight_ratio, is_click_rating_grade, value } = item
@@ -417,6 +418,16 @@ export default class BeginningStepThree_one extends Component {
               )
             }
           </div>
+          {/* 渲染评语 */}
+          {
+            showApproveButton && (
+              <div>
+                <OpinionContent 
+                  value={this.props.value} placeholder="填写评分意见（选填）" opinionTextAreaChange={this.props.opinionTextAreaChange}
+                />
+              </div>
+            )
+          }
           {/* 评分人意见以及分数详情 */}
           <div>
             {

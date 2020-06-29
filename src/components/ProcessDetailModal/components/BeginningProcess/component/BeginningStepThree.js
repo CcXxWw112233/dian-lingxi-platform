@@ -442,7 +442,7 @@ export default class BeginningStepThree extends Component {
         }
         {/* 渲染评分项 */}
         <div style={{ position: 'relative' }}>
-          <BeginningStepThree_one transPrincipalList={transPrincipalList} showApproveButton={showApproveButton} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemValue={itemValue} itemKey={itemKey} />
+          <BeginningStepThree_one value={this.state.successfulMessage} opinionTextAreaChange={this.handleChangeTextAreaValue} transPrincipalList={transPrincipalList} showApproveButton={showApproveButton} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemValue={itemValue} itemKey={itemKey} />
           {/* {
             !showApproveButton && (
               <div style={{position: 'absolute', left: 0, right: 0, bottom: 0, top: 0, margin: 'auto', zIndex: 2}}></div>
@@ -533,7 +533,8 @@ export default class BeginningStepThree extends Component {
         {
           showApproveButton && (
             <div className={indexStyles.button_wrapper} style={{ paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center' }}>
-              <Popconfirm
+              <Button disabled={whetherIsComplete} onClick={this.handlePassProcess} type="primary">完成</Button>
+              {/* <Popconfirm
                 onVisibleChange={this.onVisibleChange}
                 className={indexStyles.confirm_wrapper} icon={<></>}
                 getPopupContainer={triggerNode => triggerNode.parentNode}
@@ -544,7 +545,7 @@ export default class BeginningStepThree extends Component {
                 onConfirm={this.handlePassProcess}
               >
                 <Button disabled={whetherIsComplete} onClick={this.handleEnterConfigureProcess} type="primary">完成</Button>
-              </Popconfirm>
+              </Popconfirm> */}
             </div>
           )
         }
