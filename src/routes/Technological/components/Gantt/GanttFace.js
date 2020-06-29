@@ -18,6 +18,7 @@ import { isPaymentOrgUser } from '../../../../utils/businessFunction';
 import BoardTemplate from './components/boardTemplate'
 import GroupListHeadElse from './GroupListHeadElse'
 import GetRowGanttItemElse from './GetRowGanttItemElse'
+import { weekDataArray } from './calDate';
 
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -245,7 +246,7 @@ export default class GanttFace extends Component {
     // } else {
     //   date_arr = [].concat(getMonthDate(timestamp), gold_date_arr)
     // }
-    const date_arr_one_level = []
+    let date_arr_one_level = []
     let date_total = 0
     for (let val of date_arr) {
       const { date_inner = [] } = val
@@ -256,6 +257,11 @@ export default class GanttFace extends Component {
     }
     if (gantt_view_mode == 'year') {
       date_total = date_arr_one_level.slice().map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
+    } else if (gantt_view_mode == 'week') {
+      date_arr_one_level = weekDataArray(timestamp)
+      date_total = date_arr_one_level.length * 7 //总共有这么多周
+    } else {
+
     }
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),

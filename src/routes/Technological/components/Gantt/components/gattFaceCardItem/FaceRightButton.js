@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import styles from './index.less'
 import { connect, } from 'dva';
-import { ceil_height_fold, ceil_height, ceil_width, ceil_width_year } from '../../constants';
+import { ceil_height_fold, ceil_height, ceil_width, ceil_width_year, ceil_width_week } from '../../constants';
 import { isSamDay } from '../../../../../../utils/util';
 
 @connect(mapStateToProps)
@@ -116,6 +116,8 @@ export default class FaceRightButton extends Component {
             ceilWidth = ceil_width_year
         } else if (type == 'month') {
             ceilWidth = ceil_width
+        } else if (type == 'week') {
+            ceilWidth = ceil_width_week
         } else {
 
         }
@@ -173,6 +175,13 @@ export default class FaceRightButton extends Component {
                     onClick={() => this.changeGanttViewMode('month')}
                 >
                     月
+                </div>
+                <div
+                    style={{ color: gantt_view_mode == 'week' ? '#1890FF' : '' }}
+                    className={styles.card_button}
+                    onClick={() => this.changeGanttViewMode('week')}
+                >
+                    周
                 </div>
                 <div
                     style={{ color: gantt_view_mode == 'year' ? '#1890FF' : '' }}

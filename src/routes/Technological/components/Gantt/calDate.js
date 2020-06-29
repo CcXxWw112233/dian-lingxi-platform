@@ -180,6 +180,8 @@ function setWeekData(timestamp) {
     }
     weekData2.push(obj)
   }
+  // console.log('sssssssssssgold_arr2', [].concat(weekData.reverse().slice(0, 48), weekData2))
+
   return [].concat(weekData.reverse().slice(0, 48), weekData2)
   //计算本周
   // let MondayTime = nowTime - (day - 1) * oneDayLong;
@@ -218,7 +220,11 @@ function setWeekData(timestamp) {
 function handleWeekData(timestamp) {
   const arr = setWeekData(timestamp)
   let title_arr = arr.map(item => item.description)
+  console.log('sssssssssssgold_arr0', title_arr)
+
   title_arr = Array.from(new Set(title_arr)) //得到不重的多组
+  console.log('sssssssssssgold_arr1', title_arr)
+
   let gold_arr = []
   for (let val of title_arr) {
     const obj = {
@@ -232,11 +238,12 @@ function handleWeekData(timestamp) {
     }
     gold_arr.push(obj)
   }
+  console.log('sssssssssssgold_arr', gold_arr)
   return gold_arr
 }
 
 export const monthDataArray = setDateData().monthDataArray
 export const dateDataArray = setDateData().dateDataArray
 export const weekDataArray = (timestamp) => setWeekData(timestamp)
-export const getWeekGoldData = (timestamp) => handleWeekData()
+export const getWeekGoldData = (timestamp) => handleWeekData(timestamp)
 // console.log('weekDataArray', handleWeekData())
