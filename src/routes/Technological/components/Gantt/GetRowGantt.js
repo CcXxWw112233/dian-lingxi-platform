@@ -13,7 +13,7 @@ import QueueAnim from 'rc-queue-anim'
 import GetRowTaskItem from './components/CardItem/index'
 import WorkFlow from './components/CardItem/WorkFlow'
 
-import { filterDueTimeSpan, setDateWithPositionInYearView } from './ganttBusiness'
+import { filterDueTimeSpan, setDateWithPositionInYearView, setDateWidthPositionWeekView } from './ganttBusiness'
 import { checkIsHasPermissionInBoard } from '../../../../utils/businessFunction';
 import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE } from '../../../../globalset/js/constant';
 import GetRowSummary from './components/gattFaceCardItem/GetRowSummary.js'
@@ -383,8 +383,12 @@ export default class GetRowGantt extends Component {
       //   timestampEnd: new Date(`${date_string} 23:59:59`).getTime()
       // }
       // console.log('asdasdasd', date_string)
-    } else {
-
+    } else if (gantt_view_mode == 'week') {
+      date = setDateWidthPositionWeekView({
+        position: start_end == '1' ? x : x + width - 2,
+        date_arr_one_level,
+        ceilWidth
+      })
     }
 
     const { timestamp, timestampEnd } = date
