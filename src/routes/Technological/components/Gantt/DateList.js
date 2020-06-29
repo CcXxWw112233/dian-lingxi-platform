@@ -142,6 +142,10 @@ export default class DateList extends Component {
       this.setState({
         create_lcb_time_arr: [timestamp, timestampEnd]
       })
+    } else if (gantt_view_mode == 'week') {
+      this.setState({
+        create_lcb_time_arr: [timestamp, timestampEnd]
+      })
     } else {
 
     }

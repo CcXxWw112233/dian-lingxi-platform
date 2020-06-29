@@ -5,7 +5,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { task_item_height, task_item_margin_top, date_area_height, ganttIsOutlineView, ceil_width } from '../../constants'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import { message } from 'antd'
-import { setDateWithPositionInYearView } from '../../ganttBusiness'
+import { setDateWithPositionInYearView, setDateWidthPositionWeekView } from '../../ganttBusiness'
 import { isSamDay } from '../../../../../../utils/util'
 import { workflowUpdateTime } from '../../../../../../services/technological/workFlow'
 // 参考自http://www.jq22.com/webqd1348
@@ -155,6 +155,8 @@ export default class WorkFlowItem extends Component {
             start_date = date_arr_one_level[start_time_index] || {}
         } else if (gantt_view_mode == 'year') {
             start_date = setDateWithPositionInYearView({ _position: local_left, date_arr_one_level, ceilWidth, width: local_width, x: local_left })
+        } else if (gantt_view_mode == 'week') {
+            start_date = setDateWidthPositionWeekView({ position: local_left, date_arr_one_level, ceilWidth })
         } else {
 
         }

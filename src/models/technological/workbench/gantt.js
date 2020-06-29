@@ -528,6 +528,13 @@ export default {
                 time_belong_area = true
                 break
               }
+            } else if (gantt_view_mode == 'week') {
+              if (new_item[cal_left_field] <= date_arr_one_level[k]['timestampEnd'] && new_item[cal_left_field] >= date_arr_one_level[k]['timestamp']) {
+                const date_day = new Date(new_item['start_time']).getDay() //周几
+                new_item.left = ((k + (date_day == 0 ? 1 : 0)) * 7 + date_day - 1) * ceilWidth
+                new_item.width = (time_span || 1) * ceilWidth
+                break
+              }
             } else {
 
             }
@@ -710,8 +717,12 @@ export default {
                   item.left = (date_length + date_no - 1) * ceilWidth
                   break
                 }
-              } else {
-
+              } else if (gantt_view_mode == 'week') {
+                if (item['start_time'] < date_arr_one_level[k]['timestampEnd'] && item['start_time'] >= date_arr_one_level[k]['timestamp']) {
+                  const date_day = new Date(item['start_time']).getDay() //周几
+                  item.left = ((k + (date_day == 0 ? 1 : 0)) * 7 + date_day - 1) * ceilWidth
+                  break
+                }
               }
 
             }
@@ -791,8 +802,12 @@ export default {
                 list_group[i].board_fold_data.left = (date_length + date_no - 1) * ceilWidth
                 break
               }
-            } else {
-
+            } else if (gantt_view_mode == 'week') {
+              if (list_group[i].board_fold_data['start_time'] < date_arr_one_level[k]['timestampEnd'] && list_group[i].board_fold_data['start_time'] >= date_arr_one_level[k]['timestamp']) {
+                const date_day = new Date(list_group[i].board_fold_data['start_time']).getDay() //周几
+                list_group[i].board_fold_data.left = ((k + (date_day == 0 ? 1 : 0)) * 7 + date_day - 1) * ceilWidth
+                break
+              }
             }
           }
         }

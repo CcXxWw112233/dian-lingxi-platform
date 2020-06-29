@@ -9,7 +9,7 @@ import { updateTaskVTwo, changeTaskType } from '../../../../../../services/techn
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import { message, Dropdown, Popover, Tooltip } from 'antd'
 import CardDropDetail from '../../components/gattFaceCardItem/CardDropDetail'
-import { filterDueTimeSpan, cardIsHasUnRead, cardItemIsHasUnRead, setDateWithPositionInYearView } from '../../ganttBusiness'
+import { filterDueTimeSpan, cardIsHasUnRead, cardItemIsHasUnRead, setDateWithPositionInYearView, setDateWidthPositionWeekView } from '../../ganttBusiness'
 import { transformTimestamp, isSamDay } from '../../../../../../utils/util'
 import HoverEars from './HoverEars'
 // 参考自http://www.jq22.com/webqd1348
@@ -394,6 +394,9 @@ export default class CardItem extends Component {
         } else if (gantt_view_mode == 'year') {
             start_date = setDateWithPositionInYearView({ _position: local_left, date_arr_one_level, ceilWidth, width: local_width, x: local_left, flag: 1 })
             end_date = setDateWithPositionInYearView({ _position: end_time_position, date_arr_one_level, ceilWidth, width: local_width, x: local_left, flag: 2 })
+        } else if (gantt_view_mode == 'week') {
+            start_date = setDateWidthPositionWeekView({ position: local_left, date_arr_one_level, ceilWidth })
+            end_date = setDateWidthPositionWeekView({ position: end_time_position, date_arr_one_level, ceilWidth })
         } else {
 
         }
@@ -510,6 +513,8 @@ export default class CardItem extends Component {
             start_date = date_arr_one_level[start_time_index] || {}
         } else if (gantt_view_mode == 'year') {
             start_date = setDateWithPositionInYearView({ _position: local_left, date_arr_one_level, ceilWidth, width: local_width, x: local_left })
+        } else if (gantt_view_mode == 'week') {
+            start_date = setDateWidthPositionWeekView({ position: local_left, date_arr_one_level, ceilWidth })
         } else {
 
         }
@@ -596,6 +601,8 @@ export default class CardItem extends Component {
             start_date = date_arr_one_level[start_time_index] || {}
         } else if (gantt_view_mode == 'year') {
             start_date = setDateWithPositionInYearView({ _position: local_left, date_arr_one_level, ceilWidth, width: local_width, x: local_left })
+        } else if (gantt_view_mode == 'week') {
+            start_date = setDateWidthPositionWeekView({ position: local_left, date_arr_one_level, ceilWidth })
         } else {
 
         }
