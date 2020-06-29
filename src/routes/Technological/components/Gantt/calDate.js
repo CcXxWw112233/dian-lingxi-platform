@@ -220,10 +220,10 @@ function setWeekData(timestamp) {
 function handleWeekData(timestamp) {
   const arr = setWeekData(timestamp)
   let title_arr = arr.map(item => item.description)
-  console.log('sssssssssssgold_arr0', title_arr)
+  // console.log('sssssssssssgold_arr0', title_arr)
 
   title_arr = Array.from(new Set(title_arr)) //得到不重的多组
-  console.log('sssssssssssgold_arr1', title_arr)
+  // console.log('sssssssssssgold_arr1', title_arr)
 
   let gold_arr = []
   for (let val of title_arr) {
@@ -238,7 +238,7 @@ function handleWeekData(timestamp) {
     }
     gold_arr.push(obj)
   }
-  console.log('sssssssssssgold_arr', gold_arr)
+  // console.log('sssssssssssgold_arr', gold_arr)
   return gold_arr
 }
 

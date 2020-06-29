@@ -877,7 +877,7 @@ export default class GetRowStrip extends PureComponent {
                     direction = 'right'
                 }
             } else { //目标时间不包含在列表内
-                console.log('leftleftleft', left)
+                // console.log('leftleftleft', left)
                 // if (left) { //在区间左侧
                 //     direction = 'left'
                 // } else { //在区间右侧
@@ -929,7 +929,7 @@ export default class GetRowStrip extends PureComponent {
 
         const { is_item_has_time, currentRectDashed = {}, dasheRectShow, drag_holiday_count } = this.state
         // 定位
-        const { isInViewArea, direction, add_width } = this.filterIsInViewArea()
+        // const { isInViewArea, direction, add_width } = this.filterIsInViewArea()
 
         return (
             <div>
