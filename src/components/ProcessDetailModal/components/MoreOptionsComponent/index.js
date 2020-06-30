@@ -103,6 +103,7 @@ export default class MoreOptionsComponent extends Component {
         this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '1' }, 'deadline_type')
         this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '' }, 'deadline_time_type')
         this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '' }, 'deadline_value')
+        this.props.updateScoreNodeSet && this.props.updateScoreNodeSet({value: '0'},'auto_pass')
         break
       case 'DUPLICATED': // 抄送
         this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '0' }, 'cc_type')
@@ -228,10 +229,15 @@ export default class MoreOptionsComponent extends Component {
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: value ? '1' : '0' }, 'cc_locking')
   }
 
+  // 评分时是否自动通过
+  handleScoreAutoPass = (checked) => {
+    this.props.updateScoreNodeSet && this.props.updateScoreNodeSet({value: checked ? '1' : '0'},'auto_pass')
+  }
+
   // 渲染完成期限
   renderCompletionDeadline = () => {
     const { itemValue } = this.props
-    const { deadline_time_type, deadline_value, } = itemValue
+    const { deadline_time_type, deadline_value, node_type, score_node_set = {} } = itemValue
     return (
       <div style={{display: 'flex', alignItems: 'center'}} className={`${indexStyles.complet_deadline}`}>
         <span style={{ fontWeight: 900, marginRight: '2px', color: 'rgba(0,0,0,0.45)', fontSize: '16px' }} className={globalStyles.authTheme}>&#xe686;</span>
@@ -243,6 +249,17 @@ export default class MoreOptionsComponent extends Component {
           <Option value="month">月</Option>
         </Select>
         <span onClick={this.handleDelMoreIcon.bind(this, 'COMPLETION_DEADLINE')} className={`${globalStyles.authTheme} ${indexStyles.del_moreIcon}`}>&#xe7fe;</span>
+        {
+          node_type == '3' && (
+            <span style={{ marginLeft: '16px' }}>
+              <Switch checked={score_node_set.auto_pass == '1'} onChange={this.handleScoreAutoPass} size="small" />
+              <span style={{ margin: '0px 8px',color:'rgba(0,0,0,0.45)' }}>评分超时将自动通过</span>
+              <Tooltip overlayStyle={{ minWidth: '120px' }} title="超过完成期限，未评分将自动通过" placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                  <span style={{ color: '#D9D9D9', fontSize: '16px', verticalAlign: 'middle', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe845;</span>
+                </Tooltip>
+            </span>
+          )
+        }
       </div>
     )
   }

@@ -408,7 +408,7 @@ export default class ConfigureStepTypeThree extends Component {
         </div>
         {/* 更多选项 */}
         <div>
-          <MoreOptionsComponent itemKey={itemKey} itemValue={itemValue} updateConfigureProcess={this.updateConfigureProcess} data={currentOrgAllMembers} board_id={board_id} org_id={org_id} />
+          <MoreOptionsComponent itemKey={itemKey} itemValue={itemValue} updateConfigureProcess={this.updateConfigureProcess} updateScoreNodeSet={this.updateScoreNodeSet} data={currentOrgAllMembers} board_id={board_id} org_id={org_id} />
         </div>
       </div>
     )
