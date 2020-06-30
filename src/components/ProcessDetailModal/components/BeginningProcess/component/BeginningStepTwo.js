@@ -186,7 +186,11 @@ export default class BeginningStepTwo extends Component {
 
   handleCancelRejectProcess = (e) => {
     e && e.stopPropagation()
-    this.updateCorrespondingPrcodessStepWithNodeContent('rejectMessage', '')
+    // this.updateCorrespondingPrcodessStepWithNodeContent('rejectMessage', '')
+    e && e.stopPropagation()
+    this.setState({
+      rejectMessage: '',
+    })
   }
 
   handleRejectProcess = (e) => {
@@ -594,10 +598,11 @@ export default class BeginningStepTwo extends Component {
           showApproveButton && (
             <div style={{ minHeight: '64px', padding: '20px 14px 5px', color: 'rgba(0,0,0,0.45)', borderTop: '1px solid #e8e8e8', marginTop: '15px' }}>
               <OpinionContent 
-                value={this.state.rejectMessage}
+                value={this.state.successfulMessage}
                 placeholder="填写审批意见 "
-                opinionTextAreaChange={this.handleRejectTextAreaValue}
+                opinionTextAreaChange={this.handleChangeTextAreaValue}
                 opinionTextAreaBlur={this.handleRejectTextAreaValue}
+                handleCancelRejectProcess={this.handleCancelRejectProcess}
               />
             </div>
           )

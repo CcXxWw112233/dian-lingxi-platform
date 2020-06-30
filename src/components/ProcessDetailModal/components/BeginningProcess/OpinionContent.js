@@ -3,11 +3,15 @@ import indexStyles from './index.less'
 import NameChangeInput from '../../../NameChangeInput'
 
 function OpinionContent(props) {
-  const { placeholder, value, opinionTextAreaChange, opinionTextAreaBlur } = props
+  const { placeholder, value, handleCancelRejectProcess, opinionTextAreaChange, opinionTextAreaBlur } = props
   const [ opinion_click, setOpinionClick ] = useState(false)
-  let handleBlur = async(e) => {
-    await (opinionTextAreaBlur && opinionTextAreaBlur(e)),
-    await setOpinionClick(false)
+  let handleOnBlur = (e) => {
+     (opinionTextAreaBlur && opinionTextAreaBlur(e)),
+     setOpinionClick(false)
+  }
+  let handleOnClick = (e) => {
+    handleCancelRejectProcess && handleCancelRejectProcess(e),
+    setOpinionClick(true)
   }
   return (
     <div className={indexStyles.opinion_wrapper}>
@@ -16,10 +20,10 @@ function OpinionContent(props) {
           <div>
             <NameChangeInput 
               autosize
-              onBlur={handleBlur}
+              onBlur={handleOnBlur}
               // onPressEnter={this.titleTextAreaChangeBlur}
               // onClick={this.titleTextAreaChangeClick}
-              setIsEdit={handleBlur}
+              setIsEdit={handleOnBlur}
               onChange={opinionTextAreaChange}
               autoFocus={true}
               goldName={value}
@@ -29,7 +33,7 @@ function OpinionContent(props) {
             />
           </div>
         ) : (
-            <div onClick={() => { setOpinionClick(true) }} className={indexStyles.opinion_content}>
+            <div onClick={handleOnClick} className={indexStyles.opinion_content}>
               <span style={{color:value ? 'rgba(0,0,0,0.65)' : 'rgba(0,0,0,0.45)',whiteSpace:'pre-wrap'}}>{value ? value : placeholder}</span>
             </div>
           )
