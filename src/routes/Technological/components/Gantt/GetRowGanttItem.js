@@ -360,7 +360,7 @@ export default class GetRowGanttItem extends Component {
                 (gantt_board_id == '0' || (gantt_board_id != '0' && itemKey == 0)) &&
                 has_lcb && (
                   // <Dropdown overlay={this.renderLCBList(current_date_board_miletones, timestamp)}>
-                  <div style={{ position: 'relative' }}>
+                  <div style={{ position: 'relative', width: 0 }}>
                     {/* 旗帜 */}
                     <div className={`${indexStyles.board_miletiones_flag} ${globalStyles.authTheme}`}
                       data-targetclassname="specific_example_milestone"
@@ -440,7 +440,7 @@ export default class GetRowGanttItem extends Component {
                   (gantt_board_id == '0' || (gantt_board_id != '0' && itemKey == 0)) &&
                   has_lcb && (
                     // <Dropdown overlay={this.renderLCBList(current_date_board_miletones, timestamp)}>
-                    <div style={{ position: 'relative' }}>
+                    <div style={{ position: 'relative', width: 0 }}>
                       {/* 旗帜 */}
                       <div className={`${indexStyles.board_miletiones_flag} ${globalStyles.authTheme}`}
                         data-targetclassname="specific_example_milestone"
@@ -521,14 +521,14 @@ export default class GetRowGanttItem extends Component {
                   (gantt_board_id == '0' || (gantt_board_id != '0' && itemKey == 0)) &&
                   has_lcb && (
                     // <Dropdown overlay={this.renderLCBList(current_date_board_miletones, timestamp)}>
-                    <div style={{ position: 'relative' }}>
+                    <div style={{ position: 'relative', width: 0 }}>
                       {/* 旗帜 */}
                       <div className={`${indexStyles.board_miletiones_flag} ${globalStyles.authTheme}`}
                         data-targetclassname="specific_example_milestone"
                         onClick={this.seeMiletones}
                         onMouseDown={e => e.stopPropagation()}
                         style={{
-                          left: ceilWidth * last_date - 1,
+                          left: ceilWidth * 7 - 1,
                           color: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized })
                         }}
                       >&#xe6a0;</div>
@@ -540,7 +540,7 @@ export default class GetRowGanttItem extends Component {
                             top: this.setMiletonesNamesPostionTop(),
                             maxWidth: this.setMiletonesNamesWidth(timestampEnd) - 30,
                             color: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized }),
-                            left: ceilWidth * last_date + 20,
+                            left: ceilWidth * 7 + 20,
                           }}>
                           {this.renderMiletonesNames(current_date_board_miletones)}
                         </div>
@@ -560,7 +560,7 @@ export default class GetRowGanttItem extends Component {
                           (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? 29 : item_height - 12),//,
                         //  backgroundColor: is_over_duetime ? '#FFA39E' : '#FFC069' ,
                         background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized }),
-                        left: ceilWidth * last_date - 4,
+                        left: ceilWidth * 7 - 4,
                       }}
                       onClick={this.seeMiletones}
                       onMouseDown={e => e.stopPropagation()}
