@@ -1241,7 +1241,7 @@ export default class MainContent extends Component {
                         onClick={(e) => e.stopPropagation()}
                         goldName={currentFlowInstanceDescription}
                         placeholder={'添加描述'}
-                        maxLength={101}
+                        maxLength={500}
                         nodeName={'textarea'}
                         style={{ display: 'block', fontSize: 14, color: '#262626', resize: 'none', minHeight: '92px', maxHeight: '92px', height: '92px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none' }}
                       />

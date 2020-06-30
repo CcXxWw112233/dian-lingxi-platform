@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import styles from './index.less'
-import { Checkbox, } from 'antd'
+import { Checkbox, Menu, Dropdown, } from 'antd'
 import { connect } from 'dva'
 import { selectBoardToSeeInfo, getOrgIdByBoardId, setBoardIdStorage, getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
 import CreateProject from '@/routes/Technological/components/Project/components/CreateProject/index';
@@ -14,16 +14,25 @@ export default class MainBoard extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            local_selected_board: {}
+            local_selected_board: {},
+            projectList: props.projectList
         }
     }
     componentDidMount() {
-        const { dispatch } = this.props
+        const { dispatch, projectList = [] } = this.props
         this.initGetTodoList()
         dispatch({
             type: 'workbench/getProjectList',
             payload: {}
         });
+        this.setState({
+            projectList: projectList
+        })
+    }
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.simplemodeCurrentProject.selected_board_term != this.props.simplemodeCurrentProject.selected_board_term) {
+            this.getTheProjectListIsBelongToUserSelf(nextProps)
+        }
     }
     // 初始化获取待办事项
     initGetTodoList = () => {
@@ -95,18 +104,25 @@ export default class MainBoard extends Component {
             local_selected_board: data
         })
     }
+    // 获取参与项目还是发起项目
+    getTheProjectListIsBelongToUserSelf = (props) => {
+        const { projectList = [], simplemodeCurrentProject = {} } = props
+        const { selected_board_term } = simplemodeCurrentProject
+        const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+        let filterProjectList = [...projectList]
+        filterProjectList = (selected_board_term == '0' || !selected_board_term) ? projectList : selected_board_term == '1' ? filterProjectList.filter(i=>i.user_id==id) : []
+        this.setState({
+            projectList: filterProjectList
+        })
+    }
+
     checkBoxChange = (e) => {
         const checked = e.target.checked
         const { local_selected_board = {} } = this.state
-        const { projectList = [], dispatch } = this.props
-
-        if (checked) {
-            dispatch({
-                type: 'simplemode/updateDatas',
-                payload: {
-                    simplemodeCurrentProject: {}
-                }
-            });
+        const { dispatch, simplemodeCurrentProject = {} } = this.props
+        const { projectList = [] } = this.state
+        const { selected_board_term } = simplemodeCurrentProject
+        if (checked) { // 表示全选            
             dispatch({
                 type: 'accountSet/updateUserSet',
                 payload: {
@@ -119,7 +135,7 @@ export default class MainBoard extends Component {
                     currentSelectedProjectOrgIdByBoardId: ''
                 }
             })
-            selectBoardToSeeInfo({ board_id: '0', dispatch })
+            selectBoardToSeeInfo({ board_id: '0',selected_board_term, dispatch })
             dispatch({
                 type: 'simplemode/getBoardsTaskTodoList',
                 payload: {
@@ -170,7 +186,7 @@ export default class MainBoard extends Component {
                         board_id: local_selected_board.board_id
                     }
                 })
-                selectBoardToSeeInfo({ board_id: local_selected_board && local_selected_board.board_id, board_name: local_selected_board && local_selected_board.board_name, dispatch })
+                selectBoardToSeeInfo({ board_id: local_selected_board && local_selected_board.board_id, board_name: local_selected_board && local_selected_board.board_name, dispatch, selected_board_term })
             } else {
                 setBoardIdStorage(projectList[0].board_id);
                 dispatch({
@@ -207,18 +223,65 @@ export default class MainBoard extends Component {
                         board_id: projectList[0].board_id
                     }
                 })
-                selectBoardToSeeInfo({ board_id: projectList[0] && projectList[0].board_id, board_name: projectList[0] && projectList[0].board_name, dispatch })
+                selectBoardToSeeInfo({ board_id: projectList[0] && projectList[0].board_id, board_name: projectList[0] && projectList[0].board_name, dispatch, selected_board_term })
             }
 
         }
     }
+    // 下拉选项
+    handleBoardSelectedTerm = (e) => {
+        const { key } = e
+        const { dispatch, simplemodeCurrentProject = {} } = this.props
+        dispatch({
+            type: 'accountSet/updateUserSet',
+            payload: {
+                current_board: '0'
+            }
+        });
+        dispatch({
+            type: 'technological/updateDatas',
+            payload: {
+                currentSelectedProjectOrgIdByBoardId: ''
+            }
+        })
+        selectBoardToSeeInfo({ board_id: '0',selected_board_term: key, dispatch })
+        dispatch({
+            type: 'simplemode/getBoardsTaskTodoList',
+            payload: {
+                _organization_id: localStorage.getItem('OrganizationId'),
+                // board_ids: '0'
+            }
+        })
+        dispatch({
+            type: 'simplemode/getBoardsProcessTodoList',
+            payload: {
+                _organization_id: localStorage.getItem('OrganizationId'),
+                // board_ids: '0'
+            }
+        })
+    }
+    // 下拉选项
+    renderBoardSelectedTerm = () => {
+        const { simplemodeCurrentProject: { selected_board_term } } = this.props
+        return (
+            <div>
+                <Menu defaultSelectedKeys="0" selectedKeys={selected_board_term ? selected_board_term : '0'} onClick={this.handleBoardSelectedTerm}>
+                    <Menu.Item key="0">我参与的项目</Menu.Item>
+                    <Menu.Item key="1">我发起的项目</Menu.Item>
+                </Menu>
+            </div>
+        )
+    }
     // 渲染主区域
     renderBoardArea = () => {
         const { simplemodeCurrentProject = {}, local_selected_board = {} } = this.props
+        const { selected_board_term } = simplemodeCurrentProject
         return (
             <div className={styles.board_area}>
                 <div className={styles.board_area_top}>
-                    <div className={styles.board_area_top_lf}>我的项目</div>
+                    <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.renderBoardSelectedTerm()}>
+                        <div className={styles.board_area_top_lf}>{(selected_board_term == '0' || !selected_board_term) ? '我参与的项目' : selected_board_term == '1' ? '我发起的项目' : ''} <span className={globalStyles.authTheme}>&#xe7ee;</span></div>
+                    </Dropdown>
                     <div className={styles.board_area_top_rt}>
                         <Checkbox
                             checked={(simplemodeCurrentProject.board_id == '0' || !simplemodeCurrentProject.board_id) && !local_selected_board.board_id}
@@ -255,7 +318,8 @@ export default class MainBoard extends Component {
 
     // 项目列表操作项
     renderBoardList = () => {
-        const { projectList = [], simplemodeCurrentProject = {} } = this.props
+        // const { projectList = [], simplemodeCurrentProject = {} } = this.props
+        const { projectList = [] } = this.state
         return (
             projectList.map(value => {
                 const { board_id } = value

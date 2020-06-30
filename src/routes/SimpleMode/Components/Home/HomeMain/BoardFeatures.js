@@ -185,11 +185,20 @@ export default class BoardFeatures extends Component {
 		}
 	}
 	renderTodoList = () => {
-		const { board_card_todo_list = [] } = this.props
+		const { board_card_todo_list = [], simplemodeCurrentProject: { selected_board_term }, projectList = [] } = this.props
 		const { board_todo_list = [] } = this.state
+		let tempBoardToDoList = [...board_todo_list]
+		let tempProjectList = [...projectList]
+		if (selected_board_term == '1') {
+			const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+			let temp = tempProjectList.filter(item=>item.user_id==id)
+			tempBoardToDoList = tempBoardToDoList.filter(item => temp.find(i=>i.board_id==item.board_id)) || []
+		} else {
+			tempBoardToDoList = [...board_todo_list]
+		}
 		return (
-			board_todo_list.length ? (
-				board_todo_list.map(value => {
+			tempBoardToDoList.length ? (
+				tempBoardToDoList.map(value => {
 					const { id } = value
 					// return <BoardFeaturesProcessItem key={id} itemValue={value} />
 					return <>{this.renderDiffRelaTypeFeaturesItem(value)}</>
