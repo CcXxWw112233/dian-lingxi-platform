@@ -180,7 +180,7 @@ export default class MainContent extends Component {
     let next_props_forms_data = (processInfo['nodes'] && processInfo['nodes'].length) && processInfo['nodes'].find(i=>(status == '1' || status == '2') && i.status == '1' && i.node_type == '1') || {}
     next_props_forms_data.his_comments ? delete next_props_forms_data.his_comments : ''
     next_props_forms_data.complete_time ? delete next_props_forms_data.complete_time : ''
-    if (!this.whetherIsUpdateDatasFromStorageToModel(nextProps)) {
+    if (!this.whetherIsUpdateDatasFromStorageToModel(props)) {
       let obj = {
         id,
         status,
