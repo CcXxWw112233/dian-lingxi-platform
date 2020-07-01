@@ -4,13 +4,27 @@ import { Input, message } from 'antd'
 import indexStyles from '../index.less'
 import { validateTel, validateEmail, validatePassword, validateFixedTel, validateIdCard, validateChineseName, validatePostalCode, validateWebsite, validateQQ, validatePositiveInt, validateNegative, validateTwoDecimal, } from '../../../../../utils/verify'
 import { updateUserStorage } from '../../handleOperateModal'
+import { isObjectValueEqual } from '../../../../../utils/util'
 
 @connect(mapStateToProps)
 export default class BeginningStepOne_one extends Component {
 
-  state = {
-    verificationIsTrue: true, //是否校验成功
+  constructor(props) {
+    super(props)
+    this.state = {
+      verificationIsTrue: true, //是否校验成功
+    }
   }
+
+  componentWillReceiveProps(nextProps) {
+    if (isObjectValueEqual(nextProps,this.props)) return
+    const { itemValue = {} } = nextProps
+    const { value, verification_rule } = itemValue
+    this.setState({
+      verificationIsTrue: this.validate(verification_rule, value)
+    })
+  }
+  
 
   updateEdit = (data, key) => {
     const { itemKey, parentKey, processEditDatas = [] } = this.props

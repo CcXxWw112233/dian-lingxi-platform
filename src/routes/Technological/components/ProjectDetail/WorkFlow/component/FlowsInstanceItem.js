@@ -28,7 +28,7 @@ export default class FlowsInstanceItem extends Component {
               )
             }
           </span>
-          <sapn className={indexStyles.current_step}>{(status == '3' || status == '0') ? '' : `当前步骤(${completed_node_num}/${total_node_num}) : `}</sapn>
+          <span className={indexStyles.current_step}>{(status == '3' || status == '0') ? '' : `当前步骤(${completed_node_num}/${total_node_num}) : `}</span>
           <span className={indexStyles.current_step_name}>{total_node_name}</span>
         </div>
         {

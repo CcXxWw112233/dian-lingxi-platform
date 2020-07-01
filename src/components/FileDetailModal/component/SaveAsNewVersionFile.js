@@ -300,8 +300,8 @@ export default class SaveAsNewVersionFile extends Component {
 				</div>
 				{/* 通知内容 */}
 				<div style={{ position:'relative', width: '100%', height: '40px', background: 'rgba(245,245,245,1)', borderRadius: '4px', boxSizing: 'border-box', padding: '10px 0 10px 10px', marginTop: '10px' }}>
-					通知内容: <sapn>{name} 在 <span style={{ fontWeight: 900 }}>{board_name}</span>{currentNounPlanFilterName(PROJECTS)}  中 {text}  <Tooltip title={inputValue != '' ? inputValue : file_name} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
-					<span style={{ maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'noWrap', display: 'inline-block', verticalAlign: 'middle', fontWeight: 900, marginTop: '-3px' }}>{inputValue != '' ? inputValue : this.getEllipsisFileName(file_name) || ''}</span> </Tooltip><span style={{ display: 'inline-block', verticalAlign: 'middle', fontWeight: 900, marginTop: '-3px' }}>{getSubfixName(file_name)}</span> {currentNounPlanFilterName(FILES)}</sapn>
+					通知内容: <span>{name} 在 <span style={{ fontWeight: 900 }}>{board_name}</span>{currentNounPlanFilterName(PROJECTS)}  中 {text}  <Tooltip title={inputValue != '' ? inputValue : file_name} placement="top" getPopupContainer={triggerNode => triggerNode.parentNode}>
+					<span style={{ maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'noWrap', display: 'inline-block', verticalAlign: 'middle', fontWeight: 900, marginTop: '-3px' }}>{inputValue != '' ? inputValue : this.getEllipsisFileName(file_name) || ''}</span> </Tooltip><span style={{ display: 'inline-block', verticalAlign: 'middle', fontWeight: 900, marginTop: '-3px' }}>{getSubfixName(file_name)}</span> {currentNounPlanFilterName(FILES)}</span>
 				</div>
 			</div>
 		)
@@ -349,7 +349,7 @@ export default class SaveAsNewVersionFile extends Component {
 					{
 						!is_edit_file_name ? (
 							<div onClick={this.setEditFileName} style={{ width: '100%', height: '40px', background: 'rgba(255,255,255,1)', borderRadius: '4px', boxSizing: 'border-box', padding: '10px 0 10px 10px', marginTop: '8px', marginBottom: '10px', border: '1px solid rgba(0,0,0,0.15)' }}>
-								<sapn style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'noWrap', display: 'inline-block', verticalAlign: 'middle', marginTop: '-3px' }}>{FILENAME}</sapn><span style={{ display: 'inline-block', verticalAlign: 'middle', marginTop: '-3px' }}>{ inputValue == '' && getSubfixName(file_name)}</span>
+								<span style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'noWrap', display: 'inline-block', verticalAlign: 'middle', marginTop: '-3px' }}>{FILENAME}</span><span style={{ display: 'inline-block', verticalAlign: 'middle', marginTop: '-3px' }}>{ inputValue == '' && getSubfixName(file_name)}</span>
 							</div>
 						) : (
 								<NameChangeInput

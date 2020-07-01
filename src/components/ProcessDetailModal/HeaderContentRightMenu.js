@@ -369,6 +369,10 @@ export default class HeaderContentRightMenu extends Component {
               })
               that.props.whetherUpdateWorkbenchPorcessListData && that.props.whetherUpdateWorkbenchPorcessListData({type: 'deleteProcess'})
               that.props.onCancel && that.props.onCancel()
+              let {id:storage_id} = localStorage.getItem('userProcessWithNodesStatusStorage') ? JSON.parse(localStorage.getItem('userProcessWithNodesStatusStorage')) : {}
+              if (id == storage_id) {
+                localStorage.removeItem('userProcessWithNodesStatusStorage')
+              }
             }
           }
         })

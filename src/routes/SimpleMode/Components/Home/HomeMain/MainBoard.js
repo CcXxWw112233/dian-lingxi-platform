@@ -8,6 +8,7 @@ import CreateProject from '@/routes/Technological/components/Project/components/
 
 import BoardItem from './BoardItem'
 import { afterClearGanttData } from '../../../../Technological/components/Gantt/ganttBusiness'
+import { isObjectValueEqual, isArrayEqual } from '../../../../../utils/util'
 
 @connect(mapStateToProps)
 export default class MainBoard extends Component {
@@ -25,11 +26,13 @@ export default class MainBoard extends Component {
             type: 'workbench/getProjectList',
             payload: {}
         });
-        this.setState({
-            projectList: projectList
-        })
     }
     componentWillReceiveProps(nextProps) {
+        if (!(isObjectValueEqual(nextProps.projectList,this.props.projectList))) {
+            this.setState({
+                projectList: nextProps.projectList
+            })
+        }
         if (nextProps.simplemodeCurrentProject.selected_board_term != this.props.simplemodeCurrentProject.selected_board_term) {
             this.getTheProjectListIsBelongToUserSelf(nextProps)
         }

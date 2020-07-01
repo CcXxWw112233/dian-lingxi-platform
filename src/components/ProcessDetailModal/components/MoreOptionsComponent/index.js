@@ -445,7 +445,7 @@ export default class MoreOptionsComponent extends Component {
                 <span className={indexStyles.more_label}>... 更多选项 &nbsp;:</span>
                 {
                   !deadlineCode && (
-                    <sapn onClick={(e) => { this.handleSelectedMoreOptions('COMPLETION_DEADLINE', e) }} className={`${indexStyles.select_item}`}>+ 完成期限</sapn>
+                    <span onClick={(e) => { this.handleSelectedMoreOptions('COMPLETION_DEADLINE', e) }} className={`${indexStyles.select_item}`}>+ 完成期限</span>
                   )
                 }
                 {
@@ -455,7 +455,7 @@ export default class MoreOptionsComponent extends Component {
                 }
                 {
                   !remarksCode && (
-                    <sapn onClick={(e) => { this.handleSelectedMoreOptions('REMARKS', e) }} className={`${indexStyles.select_item}`}>+ 备注</sapn>
+                    <span onClick={(e) => { this.handleSelectedMoreOptions('REMARKS', e) }} className={`${indexStyles.select_item}`}>+ 备注</span>
                   )
                 }
               </div>

@@ -10,7 +10,7 @@ import BeginningProcess from './components/BeginningProcess'
 import ConfigureGuide from './ConfigureGuide'
 import { processEditDatasItemOneConstant } from './constant'
 import { Tooltip, Button, message, Popover, DatePicker, Checkbox } from 'antd'
-import { timeToTimestamp, timestampToTimeNormal, isObjectValueEqual } from '../../utils/util'
+import { timeToTimestamp, timestampToTimeNormal, isObjectValueEqual, isArrayEqual } from '../../utils/util'
 import moment from 'moment'
 import { MESSAGE_DURATION_TIME, FLOWS, NOT_HAS_PERMISION_COMFIRN, PROJECT_FLOWS_FLOW_CREATE } from '../../globalset/js/constant'
 import { saveProcessTemplate, getTemplateInfo, createProcess } from '../../services/technological/workFlow'
@@ -107,7 +107,7 @@ export default class MainContent extends Component {
       flag = false
       return flag
     } else {
-      let curr_need_storage_node = (processInfo['nodes'] && processInfo['nodes'].length) && processInfo['nodes'].find(i=>status == '1' && i.status == '1' && i.node_type == '1') || {}
+      let curr_need_storage_node = (processInfo['nodes'] && processInfo['nodes'].length) && processInfo['nodes'].find(i=>(status == '1' || status == '2') && i.status == '1' && i.node_type == '1') || {}
       if (curr_need_storage_node.id == pro_info['nodes'][0].id) { // 如果缓存和当前正在进行的不相等 那么表示已经进行到别的节点了
         flag = true
       } else {
@@ -152,7 +152,7 @@ export default class MainContent extends Component {
       }
       return
     } else { // 设置缓存
-      let curr_need_storage_node = (processInfo['nodes'] && processInfo['nodes'].length) && processInfo['nodes'].find(i=>status == '1' && i.status == '1' && i.node_type == '1') || {}
+      let curr_need_storage_node = (processInfo['nodes'] && processInfo['nodes'].length) && processInfo['nodes'].find(i=>(status == '1' || status == '2') && i.status == '1' && i.node_type == '1') || {}
       // 这里只缓存资料收集节点 如果没有找到那么就不缓存 并且要将之前的内容清空
       if (!(curr_need_storage_node && Object.keys(curr_need_storage_node).length)) {
         let info = localStorage.getItem('userProcessWithNodesStatusStorage') ? JSON.parse(localStorage.getItem('userProcessWithNodesStatusStorage')) : {}
@@ -172,7 +172,24 @@ export default class MainContent extends Component {
       localStorage.setItem('userProcessWithNodesStatusStorage',JSON.stringify(obj))
     }
   }
-
+  // 更新缓存节点
+  updateUserProcessWithNodesStorage = (props) => {
+    // 这里是处理当缓存的节点与正在进行中的节点不一样的时候
+    const { processInfo = {}, processInfo: { id, status } } = props
+    const { id: user_id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
+    let next_props_forms_data = (processInfo['nodes'] && processInfo['nodes'].length) && processInfo['nodes'].find(i=>(status == '1' || status == '2') && i.status == '1' && i.node_type == '1') || {}
+    next_props_forms_data.his_comments ? delete next_props_forms_data.his_comments : ''
+    next_props_forms_data.complete_time ? delete next_props_forms_data.complete_time : ''
+    if (!this.whetherIsUpdateDatasFromStorageToModel(nextProps)) {
+      let obj = {
+        id,
+        status,
+        nodes: [next_props_forms_data],
+        user_id
+      }
+      localStorage.setItem('userProcessWithNodesStatusStorage',JSON.stringify(obj))
+    }
+  }
   componentDidMount() {
     window.addEventListener('resize', this.resizeTTY)
     window.addEventListener('scroll', this.onScroll)
@@ -227,8 +244,8 @@ export default class MainContent extends Component {
   }
   // 用来更新canvas中的步骤
   componentWillReceiveProps(nextProps) {
-    const { processInfo: { curr_node_sort, status }, processInfo = {} } = nextProps
-    const { processInfo: { curr_node_sort: old_curr_node_sort, status: old_status }, processInfo: { old_processInfo = {} } } = this.props
+    const { processInfo: { curr_node_sort } } = nextProps
+    const { processInfo: { curr_node_sort: old_curr_node_sort } } = this.props
     if (old_curr_node_sort && curr_node_sort) {
       if (curr_node_sort != old_curr_node_sort) {
         setTimeout(() => {
@@ -236,17 +253,8 @@ export default class MainContent extends Component {
         }, 50)
       }
     }
-    let info = localStorage.getItem('userProcessWithNodesStatusStorage') ? JSON.parse(localStorage.getItem('userProcessWithNodesStatusStorage')) : {}
-    if (!(info && Object.keys(info).length)) return
-    let next_props_forms_data = (processInfo['nodes'] && processInfo['nodes'].length) && processInfo['nodes'].find(i=>status == '1' && i.status == '1' && i.node_type == '1') || {}
-    info['nodes'][0].his_comments ? delete info['nodes'][0].his_comments : ''
-    info['nodes'][0].complete_time ? delete info['nodes'][0].complete_time : ''
-    next_props_forms_data.his_comments ? delete next_props_forms_data.his_comments : ''
-    next_props_forms_data.complete_time ? delete next_props_forms_data.complete_time : ''
-    // 当表单内容有变化的时候才更新
-    if (isObjectValueEqual(next_props_forms_data,info['nodes'][0])) return
-    // 当节点内容有变化的时候更新缓存
-    this.setUserProcessWithNodesStorage(nextProps)
+    // 更新缓存内容
+    this.updateUserProcessWithNodesStorage(nextProps)
   }
 
   initCanvas(props) {
