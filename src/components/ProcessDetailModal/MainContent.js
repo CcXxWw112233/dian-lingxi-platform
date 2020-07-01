@@ -244,7 +244,7 @@ export default class MainContent extends Component {
   }
   // 用来更新canvas中的步骤
   componentWillReceiveProps(nextProps) {
-    const { processInfo: { curr_node_sort } } = nextProps
+    const { processInfo: { curr_node_sort }, processPageFlagStep } = nextProps
     const { processInfo: { curr_node_sort: old_curr_node_sort } } = this.props
     if (old_curr_node_sort && curr_node_sort) {
       if (curr_node_sort != old_curr_node_sort) {
@@ -254,7 +254,9 @@ export default class MainContent extends Component {
       }
     }
     // 更新缓存内容
-    this.updateUserProcessWithNodesStorage(nextProps)
+    if (processPageFlagStep == '4') {
+      this.updateUserProcessWithNodesStorage(nextProps)
+    }
   }
 
   initCanvas(props) {
