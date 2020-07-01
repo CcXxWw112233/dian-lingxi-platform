@@ -1,11 +1,17 @@
 let obj = {}
 if(process.env.NODE_ENV == 'production') {
   obj = {
-    "extends": "umi"
+    "extends": "umi",
+    "globals":{
+      "luckysheet":true
+    }
   }
 } else {
   obj = {
     "extends": "umi",
+    "globals":{
+      "luckysheet":true
+    },
     "parser": "babel-eslint",
     "plugins": ["compat", "prettier"],
     "env": {
