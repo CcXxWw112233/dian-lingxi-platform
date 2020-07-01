@@ -101,16 +101,16 @@ export default class MoreOptionsComponent extends Component {
     switch (code) {
       case 'COMPLETION_DEADLINE':
         this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '1' }, 'deadline_type')
-        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '' }, 'deadline_time_type')
-        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '' }, 'deadline_value')
-        this.props.updateScoreNodeSet && this.props.updateScoreNodeSet({value: '0'},'auto_pass')
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '', code: 'COMPLETION_DEADLINE', type: 'delete' }, 'deadline_time_type')
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '', code: 'COMPLETION_DEADLINE', type: 'delete' }, 'deadline_value')
+        this.props.updateScoreNodeSet && this.props.updateScoreNodeSet({value: '0',type:'delete'},'auto_pass')
         break
       case 'DUPLICATED': // 抄送
         this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '0' }, 'cc_type')
-        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '' }, 'recipients')
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '', code: 'DUPLICATED', type: 'delete' }, 'recipients')
         break;
       case 'REMARKS':
-        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '' }, 'description')
+        this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: '', code: 'REMARKS', type: 'delete' }, 'description')
         break
       default:
         break;

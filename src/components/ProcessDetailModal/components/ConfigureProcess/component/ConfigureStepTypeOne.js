@@ -62,6 +62,21 @@ export default class ConfigureStepTypeOne extends Component {
         processEditDatas: new_processEditDatas,
       }
     })
+    if (data.code && data.type && data.type == 'delete') {
+      new_processEditDatas[itemKey].options_data ? delete new_processEditDatas[itemKey].options_data : ''
+      if (data.code == 'COMPLETION_DEADLINE') { // 表示删除完成期限
+        new_processEditDatas[itemKey].deadline_time_type == '' ? delete new_processEditDatas[itemKey].deadline_time_type : ''
+        new_processEditDatas[itemKey].deadline_value == '' ? delete new_processEditDatas[itemKey].deadline_value : ''
+      } else if (data.code == 'DUPLICATED') {
+        new_processEditDatas[itemKey].recipients == '' ? delete new_processEditDatas[itemKey].recipients : ''
+      }
+      dispatch({
+        type: 'publicProcessDetailModal/updateDatas',
+        payload: {
+          processEditDatas: new_processEditDatas,
+        }
+      })
+    }
   }
 
   // 任何人 | 指定人
