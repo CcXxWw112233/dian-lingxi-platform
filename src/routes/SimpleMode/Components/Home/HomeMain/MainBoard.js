@@ -126,12 +126,12 @@ export default class MainBoard extends Component {
         const { projectList = [] } = this.state
         const { selected_board_term } = simplemodeCurrentProject
         if (checked) { // 表示全选            
-            dispatch({
-                type: 'accountSet/updateUserSet',
-                payload: {
-                    current_board: '0'
-                }
-            });
+            // dispatch({
+            //     type: 'accountSet/updateUserSet',
+            //     payload: {
+            //         current_board: '0'
+            //     }
+            // });
             dispatch({
                 type: 'technological/updateDatas',
                 payload: {
@@ -163,12 +163,12 @@ export default class MainBoard extends Component {
                         simplemodeCurrentProject: { local_selected_board }
                     }
                 });
-                dispatch({
-                    type: 'accountSet/updateUserSet',
-                    payload: {
-                        current_board: local_selected_board.board_id
-                    }
-                });
+                // dispatch({
+                //     type: 'accountSet/updateUserSet',
+                //     payload: {
+                //         current_board: local_selected_board.board_id
+                //     }
+                // });
                 dispatch({
                     type: 'technological/updateDatas',
                     payload: {
@@ -191,6 +191,7 @@ export default class MainBoard extends Component {
                 })
                 selectBoardToSeeInfo({ board_id: local_selected_board && local_selected_board.board_id, board_name: local_selected_board && local_selected_board.board_name, dispatch, selected_board_term })
             } else {
+                if (!(projectList && projectList.length)) return
                 setBoardIdStorage(projectList[0].board_id);
                 dispatch({
                     type: 'simplemode/updateDatas',
@@ -199,12 +200,12 @@ export default class MainBoard extends Component {
                     }
                 });
 
-                dispatch({
-                    type: 'accountSet/updateUserSet',
-                    payload: {
-                        current_board: projectList[0].board_id
-                    }
-                });
+                // dispatch({
+                //     type: 'accountSet/updateUserSet',
+                //     payload: {
+                //         current_board: projectList[0].board_id
+                //     }
+                // });
 
                 dispatch({
                     type: 'technological/updateDatas',
@@ -235,12 +236,12 @@ export default class MainBoard extends Component {
     handleBoardSelectedTerm = (e) => {
         const { key } = e
         const { dispatch, simplemodeCurrentProject = {} } = this.props
-        dispatch({
-            type: 'accountSet/updateUserSet',
-            payload: {
-                current_board: '0'
-            }
-        });
+        // dispatch({
+        //     type: 'accountSet/updateUserSet',
+        //     payload: {
+        //         current_board: '0'
+        //     }
+        // });
         dispatch({
             type: 'technological/updateDatas',
             payload: {
