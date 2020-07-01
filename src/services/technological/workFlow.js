@@ -301,3 +301,35 @@ export async function getCurrentOrgAllMembers(params = {}) {
     }
   })
 }
+
+// 创建在线表格
+export async function getOnlineExcelWithProcess(data = {}) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/online/excel`,
+    method: 'POST',
+    data: {
+      ...data,
+      type: '2', // 2表示流程节点
+      _organization_id: data._organization_id || localStorage.getItem('OrganizationId')
+    }
+  })
+}
+// 删除表格
+export async function deleteOnlineExcelWithProcess(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/online/excel`,
+    method: 'DELETE',
+    params
+  })
+}
+
+// 保存表格
+export async function saveOnlineExcelWithProcess(data,id) {
+  debugger
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/online/excel/data/${id}`,
+    method: 'POST',
+    data
+  })
+}
+

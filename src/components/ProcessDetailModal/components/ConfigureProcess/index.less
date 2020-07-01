@@ -536,6 +536,7 @@ textarea::-webkit-input-placeholder {
 // 添加表项的Tabs下拉样式
 .overlay_addTabsItem {
   height:168px;
+  overflow-y: auto;
   background:rgba(255,255,255,1);
   box-shadow:0px 2px 8px 0px rgba(0,0,0,0.15);
   border-radius:4px;
@@ -544,6 +545,21 @@ textarea::-webkit-input-placeholder {
   min-width: 120px !important;
   max-width: 120px !important;
   top: 40px !important;
+  &::-webkit-scrollbar {/*滚动条整体样式*/
+    width: 4px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 8px;
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 5px  #bfbfbf;
+    background: #bfbfbf;
+  }
+  &::-webkit-scrollbar-track {/*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px  #E8E8E8;
+    border-radius: 8px;
+    background: #E8E8E8;
+  }
   :global {
     li {
       line-height: 32px !important;
@@ -558,6 +574,12 @@ textarea::-webkit-input-placeholder {
       }
     }
   }
+}
+
+.overlay_addTabsItem::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 0 5px #8c8c8c;
+  background: #8c8c8c;
 }
 
 // 添加审批人等的样式

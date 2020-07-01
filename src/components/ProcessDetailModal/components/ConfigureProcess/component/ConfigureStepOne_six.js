@@ -6,11 +6,18 @@ import Sheet from '../../../../Sheet/Sheet'
 
 export default class ConfigureStepOne_six extends Component {
 
+  constructor(props) {
+    super(props)
+    this.state = {}
+    this.sheet = null
+  }
 
   render() {
+    const { children } = this.props
     return (
       <div>
-        <Sheet />
+        {/* <Sheet ref={el => this.sheet = el} /> */}
+        {children}
       </div>
 
     )

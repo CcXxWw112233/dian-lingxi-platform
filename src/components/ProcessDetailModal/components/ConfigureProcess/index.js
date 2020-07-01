@@ -9,6 +9,8 @@ import ConfigureStepTypeThree from './component/ConfigureStepTypeThree'
 import { processEditDatasItemOneConstant, processEditDatasItemTwoConstant, processEditDatasItemThreeConstant } from '../../constant'
 import { connect } from 'dva'
 import { isObjectValueEqual } from '../../../../utils/util'
+import ConfigureStepOne_six from './component/ConfigureStepOne_six'
+import Sheet from '../../../Sheet/Sheet'
 @connect(mapStateToProps)
 export default class ConfigureProcess extends Component {
 
@@ -21,6 +23,7 @@ export default class ConfigureProcess extends Component {
       currentEditNodeItem: processPageFlagStep == '2' ? currentEditNodeItem : {},
       isDisabled: true // 是否禁用取消按钮 false 表示不禁用 true 表示禁用 ==> 有变化才进行取消 没有变化不取消
     }
+    this.sheet = null
   }
 
   // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
@@ -200,7 +203,7 @@ export default class ConfigureProcess extends Component {
       newProcessEditDatas = JSON.parse(JSON.stringify(processEditDatas || []))
       newProcessEditDatas.splice(itemKey, 1)
     }
-    // if (newProcessEditDatas[0].node_type == '2' || newProcessEditDatas[0].node_type == '3') return
+    if (newProcessEditDatas[0].node_type == '2' || newProcessEditDatas[0].node_type == '3') return
     dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
@@ -264,6 +267,13 @@ export default class ConfigureProcess extends Component {
       }
     })
     this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '1')
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/updateDatas',
+      payload: {
+        sheetData: this.sheet.getFormatData()
+      }
+    })
+    console.log(this.sheet.getFormatData(),'ssssssssssssssss_getFormatData')
   }
 
   // 当先选择的节点类型
@@ -577,7 +587,7 @@ export default class ConfigureProcess extends Component {
     let container = <div></div>
     switch (node_type) {
       case '1': // 表示资料收集
-        container = <ConfigureStepTypeOne itemValue={itemValue} itemKey={itemKey} />
+        container = <ConfigureStepTypeOne sheetContent={this.renderOnlineExcel} itemValue={itemValue} itemKey={itemKey} />
         break;
       case '2': // 表示审批
         container = <ConfigureStepTypeTwo itemValue={itemValue} itemKey={itemKey} />
@@ -590,6 +600,15 @@ export default class ConfigureProcess extends Component {
         break;
     }
     return container
+  }
+
+  // 渲染表格
+  renderOnlineExcel = () => {
+    return (
+      <ConfigureStepOne_six>
+        <Sheet ref={el=>this.sheet=el}/>
+      </ConfigureStepOne_six>
+    )
   }
 
   renderContent = () => {

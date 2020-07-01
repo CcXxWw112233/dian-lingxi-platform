@@ -10,6 +10,9 @@ import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner
 import MoreOptionsComponent from '../../MoreOptionsComponent'
 import { connect } from 'dva'
 import ConfigureStepOne_six from './ConfigureStepOne_six'
+import { getOnlineExcelWithProcess } from '../../../../../services/technological/workFlow'
+import { isApiResponseOk } from '../../../../../utils/handleResponseData'
+import Sheet from '../../../../Sheet/Sheet'
 
 @connect(mapStateToProps)
 export default class ConfigureStepTypeOne extends Component {
@@ -32,6 +35,7 @@ export default class ConfigureStepTypeOne extends Component {
     // this.state = {
     //   designatedPersonnelList: props.itemValue.assignees ? props.itemValue.assignees.split(',') : [], // 指定人员的列表
     // }
+    this.sheet = null
   }
 
   deepCopy = (source) => {
@@ -154,6 +158,19 @@ export default class ConfigureStepTypeOne extends Component {
     this.updateConfigureProcess({ value: newAssigneesStr }, 'assignees')
   }
 
+  // 获取在线表格
+  getOnlineExcelWithProcess = (data) => {
+    getOnlineExcelWithProcess({}).then(res => {
+      if (isApiResponseOk(res)) {
+        data.push({
+          id: res.data,
+          field_type: '6'
+        })
+        this.updateConfigureProcess({ value: data }, 'forms')
+      }
+    })
+  }
+
   //表单填写项
   menuAddFormClick = ({ key }) => {
     const { processEditDatas = [], itemValue, itemKey } = this.props
@@ -226,13 +243,12 @@ export default class ConfigureStepTypeOne extends Component {
           "is_click_currentTextForm": true
         }
       case '6':
-        obj = {
-          "field_type": "6",
-        }
+        this.getOnlineExcelWithProcess(newFormsData)
         break
       default:
         break
     }
+    if (!(obj && Object.keys(obj).length)) return
     newFormsData.push(obj)
     this.updateConfigureProcess({ value: newFormsData }, 'forms')
   }
@@ -266,7 +282,9 @@ export default class ConfigureStepTypeOne extends Component {
         break
       case '6':
         container = (
-          <ConfigureStepOne_six />
+          <div key={itemKey} style={{position:'relative',minHeight:'440px'}}>
+            {this.props.sheetContent && this.props.sheetContent()}
+          </div>
         )
         break
       default:
@@ -406,6 +424,7 @@ export default class ConfigureStepTypeOne extends Component {
             {forms.map((value, key) => {
               return (<div key={`${key}-${value}`}>{this.filterForm(value, key)}</div>)
             })}
+            {/* <div key={itemKey} style={{position:'relative',minHeight:'440px'}}><ConfigureStepOne_six /></div> */}
           </div>
           <div style={{position: 'relative'}}>
             <Dropdown overlayClassName={indexStyles.overlay_addTabsItem} overlay={this.renderFieldType()} getPopupContainer={
