@@ -90,6 +90,8 @@ export default class TreeNode extends Component {
             toDayIndex = date_arr_one_level.findIndex(item => isSamDay(item.timestamp, gold_time)) //当天所在位置index
         } else if (gantt_view_mode == 'year') {
             toDayIndex = date_arr_one_level.findIndex(item => gold_time >= item.timestamp && gold_time <= item.timestampEnd) //当天所在月位置index
+        } else if (gantt_view_mode == 'week') {
+            toDayIndex = date_arr_one_level.findIndex(item => gold_time > item.timestamp && gold_time < item.timestampEnd) //当天所在哪个周
         } else {
 
         }
@@ -100,6 +102,8 @@ export default class TreeNode extends Component {
             if (gantt_view_mode == 'year') {
                 const date_position = date_arr_one_level.slice(0, toDayIndex).map(item => item.last_date).reduce((total, num) => total + num) //索引月份总天数
                 nomal_position = date_position * ceilWidth - 248 + 16//当天所在位置index
+            } else if (gantt_view_mode == 'week') {
+                nomal_position = (toDayIndex - 1) * 7 * ceilWidth  //当天所在位置index 
             }
             const max_position = target.scrollWidth - target.clientWidth - 2 * ceilWidth//最大值,保持在这个值的范围内，滚动条才能不滚动到触发更新的区域
             const position = max_position > nomal_position ? nomal_position : max_position
@@ -110,7 +114,11 @@ export default class TreeNode extends Component {
         } else {
             this.props.setGoldDateArr && this.props.setGoldDateArr({ timestamp: gold_time })
             setTimeout(() => {
-                this.props.setScrollPosition && this.props.setScrollPosition({ delay: 300, position: ceilWidth * (60 - 4 + date - 1) - 16 })
+                if (gantt_view_mode == 'week') {
+                    this.props.setScrollPosition && this.props.setScrollPosition({ delay: 300, position: (date_arr_one_level.length / 2 - 2) * 7 * ceilWidth })
+                } else {
+                    this.props.setScrollPosition && this.props.setScrollPosition({ delay: 300, position: ceilWidth * (60 - 4 + date - 1) - 16 })
+                }
             }, 300)
         }
 

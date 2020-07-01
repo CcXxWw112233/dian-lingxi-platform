@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import styles from './index.less'
 import { connect, } from 'dva';
-import { ceil_height_fold, ceil_height, ceil_width, ceil_width_year } from '../../constants';
+import { ceil_height_fold, ceil_height, ceil_width, ceil_width_year, ceil_width_week } from '../../constants';
 import { isSamDay } from '../../../../../../utils/util';
 
 @connect(mapStateToProps)
@@ -29,6 +29,10 @@ export default class FaceRightButton extends Component {
             toDayIndex = date_arr_one_level.findIndex(item => isSamDay(item.timestamp, now)) //当天所在位置index
         } else if (gantt_view_mode == 'year') {
             toDayIndex = date_arr_one_level.findIndex(item => now > item.timestamp && now < item.timestampEnd) //当天所在月位置index
+        } else if (gantt_view_mode == 'week') {
+            toDayIndex = date_arr_one_level.findIndex(item => now > item.timestamp && now < item.timestampEnd) //当天所在哪个周
+        } else {
+
         }
 
         const target = document.getElementById('gantt_card_out_middle')
@@ -38,6 +42,8 @@ export default class FaceRightButton extends Component {
             if (gantt_view_mode == 'year') {
                 const date_position = date_arr_one_level.slice(0, toDayIndex).map(item => item.last_date).reduce((total, num) => total + num) //索引月份总天数
                 nomal_position = date_position * ceilWidth - 248 + 16//当天所在位置index
+            } else if (gantt_view_mode == 'week') {
+                nomal_position = (toDayIndex - 1) * 7 * ceilWidth  //当天所在位置index 
             }
             const max_position = target.scrollWidth - target.clientWidth - 2 * ceilWidth//最大值,保持在这个值的范围内，滚动条才能不滚动到触发更新的区域
             const position = max_position > nomal_position ? nomal_position : max_position
@@ -46,7 +52,11 @@ export default class FaceRightButton extends Component {
             })
         } else {
             this.props.setGoldDateArr && this.props.setGoldDateArr({ timestamp: now })
-            this.props.setScrollPosition && this.props.setScrollPosition({ delay: 300, position: ceilWidth * (60 - 4 + date - 1) - 16 })
+            if (gantt_view_mode == 'week') {
+                this.props.setScrollPosition && this.props.setScrollPosition({ delay: 300, position: (date_arr_one_level.length / 2 - 2) * 7 * ceilWidth })
+            } else {
+                this.props.setScrollPosition && this.props.setScrollPosition({ delay: 300, position: ceilWidth * (60 - 4 + date - 1) - 16 })
+            }
         }
 
     }
@@ -116,6 +126,8 @@ export default class FaceRightButton extends Component {
             ceilWidth = ceil_width_year
         } else if (type == 'month') {
             ceilWidth = ceil_width
+        } else if (type == 'week') {
+            ceilWidth = ceil_width_week
         } else {
 
         }
@@ -173,6 +185,13 @@ export default class FaceRightButton extends Component {
                     onClick={() => this.changeGanttViewMode('month')}
                 >
                     月
+                </div>
+                <div
+                    style={{ color: gantt_view_mode == 'week' ? '#1890FF' : '' }}
+                    className={styles.card_button}
+                    onClick={() => this.changeGanttViewMode('week')}
+                >
+                    周
                 </div>
                 <div
                     style={{ color: gantt_view_mode == 'year' ? '#1890FF' : '' }}

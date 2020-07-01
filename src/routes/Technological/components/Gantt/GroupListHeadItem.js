@@ -1039,8 +1039,12 @@ export default class GroupListHeadItem extends Component {
     const cancleRoof = () => {
       // 排序甘特图分组
       list_group_new[group_index].is_star = '0'
-      _arr_new[_index].is_star = '0'
-      list_group_new.push(list_group_new[group_index]) //将该项往最后插入
+      if (gantt_board_id == '0') { //项目置顶
+        _arr_new[_index].is_star = '0'
+        list_group_new.push(list_group_new[group_index]) //将该项往最后插入
+      } else { //分组置顶
+        list_group_new.splice(list_group_new.length - 1, 0, list_group_new[group_index]) //将该项往倒数第二插入
+      }
       list_group_new.splice(group_index, 1) //删除掉该项
       dispatch({
         type: 'gantt/handleListGroup',

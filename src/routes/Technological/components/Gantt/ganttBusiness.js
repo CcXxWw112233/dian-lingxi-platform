@@ -407,3 +407,30 @@ export const setDateWithPositionInYearView = ({ _position, date_arr_one_level, c
     // console.log('ssssssssssaaaa', date_string)
     return date
 }
+
+
+export const setDateWidthPositionWeekView = ({ position, date_arr_one_level = [], ceilWidth }) => {
+    const week_length = date_arr_one_level.length //总周数
+    const day_total = week_length * 7 //总天数
+    const area_width = day_total * ceilWidth //区域总宽度
+    const belong_week = parseInt(position / (7 * ceilWidth)) //所属在第几周
+    const belong_day = Math.floor((position - belong_week * 7 * ceilWidth) / ceilWidth) //在所属周的周几
+
+    const week_data = date_arr_one_level[belong_week]
+    const week_data_timestamp = week_data.timestamp
+    const timestamp = week_data_timestamp + belong_day * 24 * 60 * 60 * 1000
+    const timestampEnd = week_data_timestamp + belong_day * 24 * 60 * 60 * 1000 + 23 * 60 * 60 * 1000 + 59 * 60 * 1000 + 59 * 1000
+
+    // console.log('ssssssssss', {
+    //     area_width,
+    //     day_total,
+    //     belong_week,
+    //     belong_day,
+    //     timestamp,
+    //     timestampEnd
+    // })
+    return {
+        timestamp,
+        timestampEnd
+    }
+}

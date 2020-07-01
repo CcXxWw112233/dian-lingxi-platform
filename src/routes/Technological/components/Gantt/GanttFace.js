@@ -18,6 +18,7 @@ import { isPaymentOrgUser } from '../../../../utils/businessFunction';
 import BoardTemplate from './components/boardTemplate'
 import GroupListHeadElse from './GroupListHeadElse'
 import GetRowGanttItemElse from './GetRowGanttItemElse'
+import { weekDataArray } from './calDate';
 
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -187,33 +188,36 @@ export default class GanttFace extends Component {
   // 处理水平滚动
   handelScrollHorizontal = ({ scrollLeft, scrollWidth, clientWidth, }) => {
     const { searchTimer } = this.state
-    const { gold_date_arr, dispatch, ceilWidth, target_scrollLeft } = this.props
+    const { gold_date_arr, dispatch, ceilWidth, target_scrollLeft, gantt_view_mode } = this.props
     const delX = target_scrollLeft - scrollLeft //判断向左还是向右
+    const scroll_bound_leng = gantt_view_mode == 'month' ? 2 : 16 //判断滚动条触底边界
+    const rescroll_leng_to_left = gantt_view_mode == 'month' ? 36 : 60 //滚动条回复位置
+    const rescroll_leng_to_right = gantt_view_mode == 'month' ? 60 : 90//滚动条回复位置
     if (target_scrollLeft == scrollLeft) {
       return
     }
     if (searchTimer) {
       clearTimeout(searchTimer)
     }
-    if (scrollLeft < 2 * ceilWidth && delX > 0) { //3为分组头部占用三个单元格的长度
+    if (scrollLeft < scroll_bound_leng * ceilWidth && delX > 0) { //3为分组头部占用三个单元格的长度
       const { timestamp } = gold_date_arr[0]['date_inner'][0] //取第一天
       this.setState({
         searchTimer: setTimeout(() => {
-          this.setScrollPosition({ delay: 1, position: 36 * ceilWidth }) //大概移动四天的位置
+          this.setScrollPosition({ delay: 1, position: rescroll_leng_to_left * ceilWidth }) //大概移动四天的位置
           setTimeout(() => {
             this.setGoldDateArr({ timestamp, not_set_loading: true }) //取左边界日期来做日期更新的基准
           }, 200)
         }, 50)
       })
 
-    } else if ((scrollWidth - scrollLeft - clientWidth < 2 * ceilWidth) && delX < 0) {
+    } else if ((scrollWidth - scrollLeft - clientWidth < scroll_bound_leng * ceilWidth) && delX < 0) {
       const gold_date_arr_length = gold_date_arr.length
       const date_inner = gold_date_arr[gold_date_arr_length - 1]['date_inner']
       const date_inner_length = date_inner.length
       const { timestamp } = date_inner[date_inner_length - 1] // 取最后一天
       this.setState({
         searchTimer: setTimeout(() => {
-          this.setScrollPosition({ delay: 1, position: scrollWidth - clientWidth - 60 * ceilWidth }) //移动到最新视觉
+          this.setScrollPosition({ delay: 1, position: scrollWidth - clientWidth - rescroll_leng_to_right * ceilWidth }) //移动到最新视觉
           setTimeout(() => {
             this.setGoldDateArr({ timestamp, to_right: 'to_right', not_set_loading: true }) //取有边界日期来做更新日期的基准
           }, 200)
@@ -245,18 +249,28 @@ export default class GanttFace extends Component {
     // } else {
     //   date_arr = [].concat(getMonthDate(timestamp), gold_date_arr)
     // }
-    const date_arr_one_level = []
+    let date_arr_one_level = []
     let date_total = 0
-    for (let val of date_arr) {
-      const { date_inner = [] } = val
-      for (let val2 of date_inner) {
-        date_total += 1
-        date_arr_one_level.push(val2)
+    if (gantt_view_mode == 'year' || gantt_view_mode == 'month') {
+      for (let val of date_arr) {
+        const { date_inner = [] } = val
+        for (let val2 of date_inner) {
+          date_total += gantt_view_mode == 'month' ? 1 : val2.last_date
+          date_arr_one_level.push(val2)
+        }
       }
+    } else {
+      date_arr_one_level = weekDataArray(timestamp)
+      date_total = date_arr_one_level.length * 7 //总共有这么多周
     }
-    if (gantt_view_mode == 'year') {
-      date_total = date_arr_one_level.slice().map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
-    }
+    // if (gantt_view_mode == 'year') {
+    //   date_total = date_arr_one_level.slice().map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
+    // } else if (gantt_view_mode == 'week') {
+    //   date_arr_one_level = weekDataArray(timestamp)
+    //   date_total = date_arr_one_level.length * 7 //总共有这么多周
+    // } else {
+
+    // }
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: {

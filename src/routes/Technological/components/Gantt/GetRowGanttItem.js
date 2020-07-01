@@ -360,7 +360,7 @@ export default class GetRowGanttItem extends Component {
                 (gantt_board_id == '0' || (gantt_board_id != '0' && itemKey == 0)) &&
                 has_lcb && (
                   // <Dropdown overlay={this.renderLCBList(current_date_board_miletones, timestamp)}>
-                  <div style={{ position: 'relative' }}>
+                  <div style={{ position: 'relative', width: 0 }}>
                     {/* 旗帜 */}
                     <div className={`${indexStyles.board_miletiones_flag} ${globalStyles.authTheme}`}
                       data-targetclassname="specific_example_milestone"
@@ -440,7 +440,7 @@ export default class GetRowGanttItem extends Component {
                   (gantt_board_id == '0' || (gantt_board_id != '0' && itemKey == 0)) &&
                   has_lcb && (
                     // <Dropdown overlay={this.renderLCBList(current_date_board_miletones, timestamp)}>
-                    <div style={{ position: 'relative' }}>
+                    <div style={{ position: 'relative', width: 0 }}>
                       {/* 旗帜 */}
                       <div className={`${indexStyles.board_miletiones_flag} ${globalStyles.authTheme}`}
                         data-targetclassname="specific_example_milestone"
@@ -494,6 +494,88 @@ export default class GetRowGanttItem extends Component {
       </>
     )
   }
+
+  // 渲染周视图
+  renderWeekView = (date_inner = []) => {
+    const { list_id, ceiHeight, ceilWidth, group_view_type, gantt_board_id, itemKey, show_board_fold, group_list_area_section_height, rows } = this.props
+    const item_height = rows * ceiHeight
+
+    return (
+      <>
+        {date_inner.map((value2, key2) => {
+          const { month, last_date, year, timestamp, timestampEnd, description } = value2
+          const { flag: has_lcb, current_date_board_miletones = [], is_over_duetime, is_all_realized } = this.isHasMiletoneListYear({
+            year, month, last_date, timestamp, timestampEnd
+          })
+          return (
+            <div className={`${indexStyles.ganttDetailItem}`}
+              data-list_id={list_id}
+              data-start_time={timestamp}
+              data-end_time={timestampEnd}
+              key={timestamp}
+              style={{ backgroundColor: 'rgba(0,0,0,.02)', width: ceilWidth * 7 }}
+            >
+              <>
+                {
+                  group_view_type == '1' &&
+                  (gantt_board_id == '0' || (gantt_board_id != '0' && itemKey == 0)) &&
+                  has_lcb && (
+                    // <Dropdown overlay={this.renderLCBList(current_date_board_miletones, timestamp)}>
+                    <div style={{ position: 'relative', width: 0 }}>
+                      {/* 旗帜 */}
+                      <div className={`${indexStyles.board_miletiones_flag} ${globalStyles.authTheme}`}
+                        data-targetclassname="specific_example_milestone"
+                        onClick={this.seeMiletones}
+                        onMouseDown={e => e.stopPropagation()}
+                        style={{
+                          left: ceilWidth * 7 - 1,
+                          color: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized })
+                        }}
+                      >&#xe6a0;</div>
+                      {/* 渲染里程碑名称铺开 */}
+                      <Dropdown overlay={this.renderLCBList(current_date_board_miletones, timestamp)}>
+                        <div className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
+                          data-targetclassname="specific_example_milestone"
+                          style={{
+                            top: this.setMiletonesNamesPostionTop(),
+                            maxWidth: this.setMiletonesNamesWidth(timestampEnd) - 30,
+                            color: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized }),
+                            left: ceilWidth * 7 + 20,
+                          }}>
+                          {this.renderMiletonesNames(current_date_board_miletones)}
+                        </div>
+                      </Dropdown>
+                    </div>
+                  )
+                }
+                {
+                  group_view_type == '1' &&
+                  (gantt_board_id == '0' || (gantt_board_id != '0' && itemKey == 0)) &&
+                  has_lcb && (
+                    <div
+                      data-targetclassname="specific_example_milestone"
+                      className={`${indexStyles.board_miletiones_flagpole}`}
+                      style={{
+                        height: gantt_board_id != '0' ? group_list_area_section_height[group_list_area_section_height.length - 1] - 11 : //在任务分组视图下
+                          (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? 29 : item_height - 12),//,
+                        //  backgroundColor: is_over_duetime ? '#FFA39E' : '#FFC069' ,
+                        background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized }),
+                        left: ceilWidth * 7 - 4,
+                      }}
+                      onClick={this.seeMiletones}
+                      onMouseDown={e => e.stopPropagation()}
+                      onMouseOver={e => e.stopPropagation()}
+                    />
+                  )
+                }
+              </>
+            </div>
+          )
+        })}
+      </>
+    )
+  }
+
   render() {
     const { rows = 7, itemKey, gantt_view_mode } = this.props
     const { gold_date_arr = [], ceiHeight, gantt_board_id, group_view_type, show_board_fold, group_list_area_section_height, list_id } = this.props
@@ -516,6 +598,11 @@ export default class GetRowGanttItem extends Component {
                   {
                     gantt_view_mode == 'month' && (
                       this.renderMonthView(date_inner)
+                    )
+                  }
+                  {
+                    gantt_view_mode == 'week' && (
+                      this.renderWeekView(date_inner)
                     )
                   }
                 </div>
