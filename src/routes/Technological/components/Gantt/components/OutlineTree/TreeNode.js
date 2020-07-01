@@ -12,6 +12,7 @@ import NodeOperate from './NodeOperate'
 import { validatePositiveInt } from '../../../../../../utils/verify';
 import { connect } from 'dva';
 import { isSamDay } from '../../../../../../utils/util';
+import { task_item_height, task_item_margin_top } from '../../constants';
 
 @connect(mapStateToProps)
 export default class TreeNode extends Component {
@@ -363,6 +364,7 @@ export default class TreeNode extends Component {
                             (editing || isTitleHover || isTitleEdit) ?
                                 <Input defaultValue={title != '0' ? title : ''}
                                     // autoFocus={editing ? true : false}
+                                    size={'small'}
                                     autoFocus
                                     style={{ width: '100%' }}
                                     onChange={this.onChangeTitle}
@@ -501,7 +503,9 @@ export default class TreeNode extends Component {
             let isLeaf = false;
             return (
                 <div className={className} key={id}>
-                    <div className={`${styles.outline_tree_node_content} ${((hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id)) ? styles.hover : ''}`} style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+                    <div className={`${styles.outline_tree_node_content} ${((hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id)) ? styles.hover : ''}`}
+                        style={{ paddingLeft: (leve * 23) + 'px', height: task_item_height, lineHeight: `${task_item_height}px`, marginBottom: task_item_margin_top }}
+                        onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
                         {
                             (hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id || operateVisible) ? (
                                 <Dropdown overlay={menu}
@@ -558,7 +562,9 @@ export default class TreeNode extends Component {
             let isLeaf = true;
             return (
                 <div className={className} key={id}>
-                    <div className={`${styles.outline_tree_node_content} ${((hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id)) ? styles.hover : ''}`} style={{ paddingLeft: (leve * 23) + 'px' }} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+                    <div className={`${styles.outline_tree_node_content} ${((hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id)) ? styles.hover : ''}`}
+                        style={{ paddingLeft: (leve * 23) + 'px', height: task_item_height, lineHeight: `${task_item_height}px`, marginBottom: task_item_margin_top }}
+                        onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
                         {
                             add_id ?
                                 (icon ?

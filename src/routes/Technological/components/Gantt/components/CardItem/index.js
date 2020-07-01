@@ -968,18 +968,22 @@ export default class CardItem extends Component {
                         padding: (gantt_view_mode == 'year' && time_span < 4) ? '0' : '0 8px',
                     }}
                 >
-                    <div data-targetclassname="specific_example"
+                    {/* <div data-targetclassname="specific_example"
                         className={`${indexStyles.card_item_status}`}
                         //  onMouseDown={(e) => e.stopPropagation()} 
                         onMouseMove={(e) => e.preventDefault()}
                     >
                         <CheckItem is_realize={is_realize} card_type={type} styles={{ color: is_realize == '1' ? 'rgba(0,0,0,.25)' : '' }} />
-                    </div>
+                    </div> */}
                     <div data-targetclassname="specific_example"
                         className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`}
                         // onMouseDown={(e) => e.stopPropagation()}
                         onMouseMove={(e) => e.preventDefault()}
-                        style={{ display: 'flex', color: is_realize == '1' ? 'rgba(0,0,0,.25)' : '' }}
+                        style={{
+                            display: 'flex', color: is_realize == '1' ? 'rgba(0,0,0,.25)' : '',
+                            height: task_item_height,
+                            lineHeight: `${task_item_height}px`
+                        }}
                     >
                         {name}
                         {
@@ -1007,7 +1011,7 @@ export default class CardItem extends Component {
                             opacity: is_realize == '1' ? 0.5 : 1
                         }}
                     >
-                        <AvatarList users={executors} size={'small'} targetclassname={'specific_example'} />
+                        <AvatarList users={executors} size={21} targetclassname={'specific_example'} />
                     </div>
                 </div>
                 {/* 存在未读 */}
