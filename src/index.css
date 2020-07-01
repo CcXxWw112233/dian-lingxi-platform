@@ -6,6 +6,15 @@ body,
 :global(#root > .ant-layout){
   height: 100%;
 }
+:global(.luckysheet-input-box) {
+  z-index: 1100;
+}
+:global(#luckysheet-icon-morebtn-div) {
+  z-index: 1103 !important;
+}
+:global(.luckysheet-cols-menu) {
+  z-index: 1104;
+}
 
 body {
   background-color: rgba(245, 245, 245, 1);

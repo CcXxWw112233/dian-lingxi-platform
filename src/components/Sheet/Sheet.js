@@ -13,12 +13,12 @@ export default class Sheet extends React.Component{
     }else this.init();
   }
   reload = (data)=>{
-    luckysheet.method.destroy();
+    window.luckysheet.method.destroy();
     this.init(data);
   }
   // 获取数据，包含表格需要的字段
   getFormatData = ()=>{
-    let sheets = luckysheet.getluckysheetfile();
+    let sheets = window.luckysheet.getluckysheetfile();
     let arr = [];
     sheets.forEach(item => {
       let data = item.data;
@@ -54,7 +54,7 @@ export default class Sheet extends React.Component{
   }
   // 销毁表格
   destory = ()=>{
-    luckysheet.method.destroy();
+    window.luckysheet.method.destroy();
   }
   init = (data)=>{
     let {
@@ -67,7 +67,7 @@ export default class Sheet extends React.Component{
       showstatisticBar = true
     } = this.props;
     data = data && data.length ? data : [{ "name": "Sheet1", color: "", "status": "1", "order": "0", "data": [], "config": {}, "index":0 }]
-    luckysheet.create({
+    window.luckysheet.create({
       container: id || 'luckysheet',
       showinfobar ,
       fullscreenmode,
@@ -82,7 +82,7 @@ export default class Sheet extends React.Component{
   render(){
     let { id } = this.props;
     return (
-      <div id={id || 'luckysheet'} style={{margin:0,padding:0,position:"absolute",top:0,left:0,width:"100%",height:"100%"}}></div>
+      <div id={id || 'luckysheet'} style={{zIndex: 5,margin:0,padding:0,position:"absolute",top:0,left:0,width:"100%",height:"100%"}}></div>
     )
   }
 }

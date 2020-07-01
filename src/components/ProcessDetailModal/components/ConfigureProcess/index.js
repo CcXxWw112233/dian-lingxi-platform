@@ -200,6 +200,7 @@ export default class ConfigureProcess extends Component {
       newProcessEditDatas = JSON.parse(JSON.stringify(processEditDatas || []))
       newProcessEditDatas.splice(itemKey, 1)
     }
+    // if (newProcessEditDatas[0].node_type == '2' || newProcessEditDatas[0].node_type == '3') return
     dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
@@ -305,7 +306,7 @@ export default class ConfigureProcess extends Component {
 
     const node_second_ = newProcessEditDatas[1]
     if (itemKey == 0 && node_second_) {
-      if (node_second_['node_type'] == '2') {
+      if (node_second_['node_type'] == '2' || node_second_['node_type'] == '3') {
         flag = false
       }
     }

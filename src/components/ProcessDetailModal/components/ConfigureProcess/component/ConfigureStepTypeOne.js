@@ -9,6 +9,7 @@ import ConfigureStepOne_five from './ConfigureStepOne_five'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import MoreOptionsComponent from '../../MoreOptionsComponent'
 import { connect } from 'dva'
+import ConfigureStepOne_six from './ConfigureStepOne_six'
 
 @connect(mapStateToProps)
 export default class ConfigureStepTypeOne extends Component {
@@ -224,6 +225,11 @@ export default class ConfigureStepTypeOne extends Component {
           ],
           "is_click_currentTextForm": true
         }
+      case '6':
+        obj = {
+          "field_type": "6",
+        }
+        break
       default:
         break
     }
@@ -256,6 +262,11 @@ export default class ConfigureStepTypeOne extends Component {
       case '5':
         container = (
           <ConfigureStepOne_five updateConfigureProcess={this.updateConfigureProcess} itemKey={key} itemValue={value} parentKey={itemKey} parentValue={itemValue} />
+        )
+        break
+      case '6':
+        container = (
+          <ConfigureStepOne_six />
         )
         break
       default:
@@ -294,6 +305,7 @@ export default class ConfigureStepTypeOne extends Component {
           <Menu.Item key="2">选择</Menu.Item>
           <Menu.Item key="3">日期</Menu.Item>
           <Menu.Item key="5">附件</Menu.Item>
+          <Menu.Item key="6">在线表格</Menu.Item>
         </Menu>
       </div>
     )
