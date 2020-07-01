@@ -144,8 +144,9 @@ export default class ExamineAndApproveContent extends Component {
         {
           !designatedPersonnelList.length ? (
             <div style={{ position: 'relative' }}>
-              <Dropdown autoAdjustOverflow={false} trigger={['click']} overlayClassName={indexStyles.overlay_pricipal}
+              <Dropdown trigger={['click']} overlayClassName={indexStyles.overlay_pricipal}
                 // getPopupContainer={triggerNode => triggerNode.parentNode}
+                getPopupContainer={() => document.getElementById('approveMiniTopContainer')}
                 overlayStyle={{ maxWidth: '200px' }}
                 overlay={
                   <MenuSearchPartner
@@ -194,8 +195,9 @@ export default class ExamineAndApproveContent extends Component {
                     </div>
                   )
                 })}
-                <Dropdown autoAdjustOverflow={false} trigger={['click']} overlayClassName={indexStyles.overlay_pricipal}
+                <Dropdown trigger={['click']} overlayClassName={indexStyles.overlay_pricipal}
                   // getPopupContainer={triggerNode => triggerNode.parentNode}
+                  getPopupContainer={() => document.getElementById('approveMiniTopContainer')}
                   overlayStyle={{ maxWidth: '200px' }}
                   overlay={
                     <MenuSearchPartner

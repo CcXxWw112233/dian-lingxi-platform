@@ -140,6 +140,7 @@ export default class DuplicateAndReportPerson extends Component {
             <div style={{ position: 'relative' }}>
               <Dropdown autoAdjustOverflow={false} trigger={['click']} overlayClassName={indexStyles.overlay_pricipal}
                 // getPopupContainer={triggerNode => triggerNode.parentNode}
+                getPopupContainer={() => document.getElementById('reportPersonContainer')}
                 overlayStyle={{ maxWidth: '200px' }}
                 overlay={
                   <MenuSearchPartner
@@ -187,6 +188,7 @@ export default class DuplicateAndReportPerson extends Component {
                 })}
                 <Dropdown autoAdjustOverflow={false} trigger={['click']} overlayClassName={indexStyles.overlay_pricipal}
                   // getPopupContainer={triggerNode => triggerNode.parentNode}
+                  getPopupContainer={() => document.getElementById('reportPersonContainer')}
                   overlayStyle={{ maxWidth: '200px' }}
                   overlay={
                     <MenuSearchPartner
