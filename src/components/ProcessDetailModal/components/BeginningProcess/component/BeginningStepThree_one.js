@@ -268,9 +268,16 @@ export default class BeginningStepThree_one extends Component {
                     ) : (
                         <>
                           <span style={{ color: '#1890FF', margin: '0 8px' }}>{last_total.value}</span>
-                          <Popover getPopupContainer={triggerNode => triggerNode.parentNode} placement="rightTop" content={enable_weight == '1' ? this.renderRatingDetailWeightContent(score_items) : this.renderRatingDetailDefaultContent(score_items)} title={<div>评分详情</div>}>
-                            <span style={{ color: '#1890FF', fontSize: '16px', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe7b4;</span>
-                          </Popover>
+                          {
+                            !(score_items && score_items.length) ? (
+                              <span style={{width:'78px',background:'rgb(255, 169, 64)',color:'#fff',display:'inline-block',textAlign:'center',borderRadius:'4px',fontSize:'12px'}}>超时自动评分</span>
+                            ) : (
+                              <Popover getPopupContainer={triggerNode => triggerNode.parentNode} placement="rightTop" content={enable_weight == '1' ? this.renderRatingDetailWeightContent(score_items) : this.renderRatingDetailDefaultContent(score_items)} title={<div>评分详情</div>}>
+                                <span style={{ color: '#1890FF', fontSize: '16px', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe7b4;</span>
+                              </Popover>
+                            )
+                          }
+                          
                         </>
                       )
                   }
