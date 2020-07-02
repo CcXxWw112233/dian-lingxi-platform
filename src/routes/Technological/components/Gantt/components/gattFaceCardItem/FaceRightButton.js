@@ -184,7 +184,7 @@ export default class FaceRightButton extends Component {
                     className={styles.card_button}
                     onClick={() => this.changeGanttViewMode('month')}
                 >
-                    月
+                    日
                 </div>
                 <div
                     style={{ color: gantt_view_mode == 'week' ? '#1890FF' : '' }}
@@ -197,7 +197,7 @@ export default class FaceRightButton extends Component {
                     style={{ color: gantt_view_mode == 'year' ? '#1890FF' : '' }}
                     className={styles.card_button}
                     onClick={() => this.changeGanttViewMode('year')} >
-                    年
+                    月
                 </div>
             </div>
         )
