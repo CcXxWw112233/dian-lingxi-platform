@@ -20,6 +20,7 @@ export default class BeginningStepOne_one extends Component {
     if (isObjectValueEqual(nextProps,this.props)) return
     const { itemValue = {} } = nextProps
     const { value, verification_rule } = itemValue
+    if (!value) return
     this.setState({
       verificationIsTrue: this.validate(verification_rule, value)
     })
