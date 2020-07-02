@@ -51,7 +51,7 @@ export default class BeginningStepOne_six extends Component {
   render() {
     const { children, itemValue: { online_excel_id } } = this.props
     return (
-      <div key={online_excel_id} style={{ minHeight: '550px',position:'relative' }} className={indexStyles.text_form}>
+      <div key={online_excel_id} style={{ minHeight: '550px',position:'relative',marginBottom: '40px' }} className={indexStyles.text_form}>
         <p>在线表格</p>
         {/* {children} */}
         <Sheet ref={el => this.sheet = el} />

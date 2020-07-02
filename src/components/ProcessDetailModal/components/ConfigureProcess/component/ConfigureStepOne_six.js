@@ -23,11 +23,12 @@ export default class ConfigureStepOne_six extends Component {
           data: res.data
         }, () => {
           setTimeout(() => {
+            this.sheet.reload(res.data && res.data.sheet_data)
             if (this.sheet) {
-              this.sheet.reload(res.data && res.data.sheet_data)
+              
               this.props.setSheet && this.props.setSheet(this.sheet)
             }
-          }, 1000)
+          }, 500)
         })
 
       }
@@ -51,7 +52,7 @@ export default class ConfigureStepOne_six extends Component {
   render() {
     const { children, itemKey, itemValue: { online_excel_id } } = this.props
     return (
-      <div key={online_excel_id || itemKey} style={{ minHeight: '500px',position: 'relative' }} className={indexStyles.text_form}>
+      <div key={online_excel_id || itemKey} style={{ minHeight: '550px',position: 'relative',marginBottom: '40px' }} className={indexStyles.text_form}>
         <p>在线表格</p>
         {/* {children} */}
         <Sheet ref={el => this.sheet = el} />

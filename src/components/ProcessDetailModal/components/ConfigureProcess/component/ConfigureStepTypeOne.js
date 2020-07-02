@@ -158,6 +158,7 @@ export default class ConfigureStepTypeOne extends Component {
 
   // 获取在线表格
   getOnlineExcelWithProcess = (data) => {
+    if (data && data.find(i=>i.field_type == '6')) return
     getOnlineExcelWithProcess({}).then(res => {
       if (isApiResponseOk(res)) {
         data.push({

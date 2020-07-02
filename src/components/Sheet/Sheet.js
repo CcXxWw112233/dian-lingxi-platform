@@ -46,7 +46,7 @@ export default class Sheet extends React.Component{
       // 组合成需要的数据
       let obj = {
         row: data.length,
-        column: item.visibledatacolumn.length,
+        column: item.visibledatacolumn && item.visibledatacolumn.length,
         name: item.name,
         order: item.order,
         index: item.index,
