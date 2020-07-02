@@ -12,7 +12,6 @@ import { connect } from 'dva'
 import ConfigureStepOne_six from './ConfigureStepOne_six'
 import { getOnlineExcelWithProcess } from '../../../../../services/technological/workFlow'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
-import Sheet from '../../../../Sheet/Sheet'
 
 @connect(mapStateToProps)
 export default class ConfigureStepTypeOne extends Component {
@@ -102,7 +101,7 @@ export default class ConfigureStepTypeOne extends Component {
           if (selectedKeys[i] === membersData[j]['user_id']) {
             assignee_value.push(membersData[j].user_id)
           }
-        }                                                                                                                                                                                        
+        }
       }
       this.setState({
         designatedPersonnelList: assignee_value
@@ -281,15 +280,7 @@ export default class ConfigureStepTypeOne extends Component {
         break
       case '6':
         container = (
-          <div key={itemKey} style={{position:'relative',minHeight:'490px'}}>
-            {this.props.sheetContent && this.props.sheetContent({
-              itemKey: key,
-              itemValue: value,
-              parentKey: itemKey,
-              parentValue: itemValue,
-              updateConfigureProcess: this.updateConfigureProcess
-            })}
-          </div>
+          <ConfigureStepOne_six setSheet={this.props.setSheet} updateConfigureProcess={this.updateConfigureProcess} itemKey={key} itemValue={value} parentKey={itemKey} parentValue={itemValue} />
         )
         break
       default:
@@ -349,7 +340,7 @@ export default class ConfigureStepTypeOne extends Component {
                 overlay={
                   <MenuSearchPartner
                     isInvitation={true}
-                  // show_select_all={true}
+                    // show_select_all={true}
                     // select_all_type={'0'}
                     listData={currentOrgAllMembers} keyCode={'user_id'} searchName={'name'} currentSelect={designatedPersonnelList}
                     // board_id={board_id}
@@ -430,11 +421,11 @@ export default class ConfigureStepTypeOne extends Component {
               return (<div key={`${key}-${value}`}>{this.filterForm(value, key)}</div>)
             })}
           </div>
-          <div style={{position: 'relative'}}>
+          <div style={{ position: 'relative' }}>
             <Dropdown overlayClassName={indexStyles.overlay_addTabsItem} overlay={this.renderFieldType()} getPopupContainer={
               // () => document.getElementById('addTabsItem')
               triggerNode => triggerNode.parentNode
-              } trigger={['click']}>
+            } trigger={['click']}>
               <Button id="addTabsItem" className={indexStyles.add_tabsItem}><span style={{ color: 'rgba(24,144,255,1)' }} className={globalStyles.authTheme}>&#xe782;</span>&nbsp;&nbsp;&nbsp;添加表项</Button>
             </Dropdown>
           </div>
@@ -442,7 +433,7 @@ export default class ConfigureStepTypeOne extends Component {
         {/* 填写人 */}
         <div className={indexStyles.fill_person} style={{ flexDirection: 'column' }} onClick={(e) => { e && e.stopPropagation() }}>
           <div>
-            <span className={`${globalStyles.authTheme} ${indexStyles.label_person}`}><span style={{fontSize: '16px'}}>&#xe7b2;</span> 填写人&nbsp;:</span>
+            <span className={`${globalStyles.authTheme} ${indexStyles.label_person}`}><span style={{ fontSize: '16px' }}>&#xe7b2;</span> 填写人&nbsp;:</span>
             <Radio.Group style={{ lineHeight: '48px' }} value={assignee_type} onChange={this.assigneeTypeChange}>
               <Radio value="1">流程发起人</Radio>
               <Radio value="2">指定人员</Radio>

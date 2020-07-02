@@ -4,13 +4,38 @@ import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { Popover, Input, Button, Radio, Select, InputNumber } from 'antd'
 import Sheet from '../../../../Sheet/Sheet'
+import { getOnlineExcelDataWithProcess } from '../../../../../services/technological/workFlow'
+import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 @connect(mapStateToProps)
 export default class ConfigureStepOne_six extends Component {
 
   constructor(props) {
     super(props)
     this.state = {}
-    this.sheet = null
+    // this.sheet = React.createRef()
+  }
+
+  getOnlineExcelDataWithProcess = (props) => {
+    const { itemValue: { online_excel_id } } = props
+    getOnlineExcelDataWithProcess({ id: online_excel_id }).then(res => {
+      if (isApiResponseOk(res)) {
+        this.setState({
+          data: res.data
+        }, () => {
+          this.sheet.reload(res.data && res.data.sheet_data)
+          setTimeout(() => {
+            if (this.sheet) {
+              this.props.setSheet && this.props.setSheet(this.sheet)
+            }
+          }, 1000)
+        })
+
+      }
+    })
+  }
+
+  componentDidMount() {
+    this.getOnlineExcelDataWithProcess(this.props)
   }
 
   // 删除对应字段的表项
@@ -27,9 +52,9 @@ export default class ConfigureStepOne_six extends Component {
     const { children } = this.props
     return (
       <div style={{ minHeight: '440px' }} className={indexStyles.text_form}>
-        {/* <Sheet ref={el => this.sheet = el} /> */}
         <p>在线表格</p>
-        {children}
+        {/* {children} */}
+        <Sheet ref={el => this.sheet = el} />
         <span style={{ zIndex: 6 }} onClick={this.handleDelFormDataItem} className={`${indexStyles.delet_iconCircle}`}>
           <span className={`${globalStyles.authTheme} ${indexStyles.deletet_icon}`}>&#xe720;</span>
         </span>
