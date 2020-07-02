@@ -6,6 +6,7 @@ import EditStepTypeOne_one from './EditStepTypeOne_one'
 import EditStepTypeOne_two from './EditStepTypeOne_two'
 import EditStepTypeOne_three from './EditStepTypeOne_three'
 import EditStepTypeOne_five from './EditStepTypeOne_five'
+import EditStepTypeOne_six from './EditStepTypeOne_six'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { Button, Tooltip } from 'antd'
 import { connect } from 'dva'
@@ -112,7 +113,9 @@ export default class EditStepTypeOne extends Component {
       case '5':
         container = <EditStepTypeOne_five itemKey={key} itemValue={value} />
         break;
-
+      case '6':
+        container = <EditStepTypeOne_six itemKey={key} itemValue={value}/>
+        break
       default:
         break;
     }

@@ -6,6 +6,7 @@ import ConfirmInfoOne_one from './ConfirmInfoOne_one'
 import ConfirmInfoOne_two from './ConfirmInfoOne_two'
 import ConfirmInfoOne_three from './ConfirmInfoOne_three'
 import ConfirmInfoOne_five from './ConfirmInfoOne_five'
+import ConfirmInfoOne_six from './ConfirmInfoOne_six'
 import AmendComponent from '../AmendComponent'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { connect } from 'dva'
@@ -103,7 +104,9 @@ export default class ConfirmInfoOne extends Component {
       case '5':
         container = <ConfirmInfoOne_five itemKey={key} itemValue={value} />
         break;
-
+      case '6':
+        container = <ConfirmInfoOne_six itemKey={key} itemValue={value}/>
+        break
       default:
         break;
     }

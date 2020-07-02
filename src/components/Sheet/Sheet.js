@@ -82,7 +82,7 @@ export default class Sheet extends React.Component{
   render(){
     let { id } = this.props;
     return (
-      <div id={id || 'luckysheet'} style={{zIndex: 5,margin:0,padding:0,position:"absolute",top:0,left:0,width:"100%",height:"100%"}}></div>
+      <div id={id || 'luckysheet'} style={{zIndex: 5,margin:0,padding:0,position:"absolute",top:'36px',left:0,width:"100%",height:"100%"}}></div>
     )
   }
 }

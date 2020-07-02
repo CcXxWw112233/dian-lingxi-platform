@@ -35,7 +35,6 @@ export default class ConfigureStepTypeOne extends Component {
     // this.state = {
     //   designatedPersonnelList: props.itemValue.assignees ? props.itemValue.assignees.split(',') : [], // 指定人员的列表
     // }
-    this.sheet = null
   }
 
   deepCopy = (source) => {
@@ -163,7 +162,7 @@ export default class ConfigureStepTypeOne extends Component {
     getOnlineExcelWithProcess({}).then(res => {
       if (isApiResponseOk(res)) {
         data.push({
-          id: res.data,
+          online_excel_id: res.data,
           field_type: '6'
         })
         this.updateConfigureProcess({ value: data }, 'forms')
@@ -282,8 +281,14 @@ export default class ConfigureStepTypeOne extends Component {
         break
       case '6':
         container = (
-          <div key={itemKey} style={{position:'relative',minHeight:'440px'}}>
-            {this.props.sheetContent && this.props.sheetContent()}
+          <div key={itemKey} style={{position:'relative',minHeight:'490px'}}>
+            {this.props.sheetContent && this.props.sheetContent({
+              itemKey: key,
+              itemValue: value,
+              parentKey: itemKey,
+              parentValue: itemValue,
+              updateConfigureProcess: this.updateConfigureProcess
+            })}
           </div>
         )
         break
@@ -424,7 +429,6 @@ export default class ConfigureStepTypeOne extends Component {
             {forms.map((value, key) => {
               return (<div key={`${key}-${value}`}>{this.filterForm(value, key)}</div>)
             })}
-            {/* <div key={itemKey} style={{position:'relative',minHeight:'440px'}}><ConfigureStepOne_six /></div> */}
           </div>
           <div style={{position: 'relative'}}>
             <Dropdown overlayClassName={indexStyles.overlay_addTabsItem} overlay={this.renderFieldType()} getPopupContainer={

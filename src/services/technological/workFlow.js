@@ -324,12 +324,20 @@ export async function deleteOnlineExcelWithProcess(params) {
 }
 
 // 保存表格
-export async function saveOnlineExcelWithProcess(data,id) {
-  debugger
+export async function saveOnlineExcelWithProcess(data) {
   return request({
-    url: `${REQUEST_DOMAIN_FILE}/file/online/excel/data/${id}`,
+    url: `${REQUEST_DOMAIN_FILE}/file/online/excel/sheet/list`,
     method: 'POST',
     data
+  })
+}
+
+// 获取表格单元格数据
+export async function getOnlineExcelDataWithProcess(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/online/excel/${params.id}`,
+    method: 'GET',
+    // params
   })
 }
 

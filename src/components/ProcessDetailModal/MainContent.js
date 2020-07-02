@@ -13,7 +13,7 @@ import { Tooltip, Button, message, Popover, DatePicker, Checkbox } from 'antd'
 import { timeToTimestamp, timestampToTimeNormal, isObjectValueEqual, isArrayEqual } from '../../utils/util'
 import moment from 'moment'
 import { MESSAGE_DURATION_TIME, FLOWS, NOT_HAS_PERMISION_COMFIRN, PROJECT_FLOWS_FLOW_CREATE } from '../../globalset/js/constant'
-import { saveProcessTemplate, getTemplateInfo, createProcess, saveOnlineExcelWithProcess } from '../../services/technological/workFlow'
+import { saveProcessTemplate, getTemplateInfo, createProcess } from '../../services/technological/workFlow'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { currentNounPlanFilterName } from "@/utils/businessFunction";
 import { checkIsHasPermissionInBoard, setBoardIdStorage, getGlobalData } from '../../utils/businessFunction'
@@ -383,7 +383,7 @@ export default class MainContent extends Component {
       ele.style.display = 'block'
       ele.style.position = 'absolute'
       ele.style.top = scrollTop + 'px'
-      ele.style.zIndex = 1
+      ele.style.zIndex = 5
     } else {
       ele.style.display = 'none'
     }
@@ -680,16 +680,6 @@ export default class MainContent extends Component {
     })
   }
 
-  saveOnlineExcelWithProcess = () => {
-    const { sheetData = [] } = this.props
-    // { id: id, data: [] }
-    saveOnlineExcelWithProcess(sheetData,'1278307787998367744').then(res => {
-      if (isApiResponseOk(res)) {
-
-      }
-    })
-  }
-
   // 表示是编辑时保存模板 ==> 是需要带上凭证的
   handleSaveEditProcessTemplete = () => {
     // const { currentFlowInstanceName } = this.state
@@ -697,7 +687,6 @@ export default class MainContent extends Component {
     if (is_covert_template && is_covert_template == '1') {
       this.handleSaveConfigureProcessTemplete()
     } else {
-      this.saveOnlineExcelWithProcess()
       Promise.resolve(
         dispatch({
           type: 'publicProcessDetailModal/saveEditProcessTemplete',
@@ -1355,10 +1344,10 @@ export default class MainContent extends Component {
   }
 }
 
-function mapStateToProps({ publicProcessDetailModal: { process_detail_modal_visible, currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas = [], processInfo = {}, processDoingList = [], processNotBeginningList = [], node_type, processCurrentEditStep, templateInfo = {}, currentFlowTabsStatus, not_show_create_node_guide, sheetData = [] }, projectDetail: { datas: { projectDetailInfoData = {} } }, technological: {
+function mapStateToProps({ publicProcessDetailModal: { process_detail_modal_visible, currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas = [], processInfo = {}, processDoingList = [], processNotBeginningList = [], node_type, processCurrentEditStep, templateInfo = {}, currentFlowTabsStatus, not_show_create_node_guide }, projectDetail: { datas: { projectDetailInfoData = {} } }, technological: {
   datas: {
     userBoardPermissions = []
   }
 } }) {
-  return { process_detail_modal_visible, currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas, processInfo, processDoingList, processNotBeginningList, node_type, processCurrentEditStep, templateInfo, currentFlowTabsStatus, not_show_create_node_guide, sheetData, projectDetailInfoData, userBoardPermissions }
+  return { process_detail_modal_visible, currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas, processInfo, processDoingList, processNotBeginningList, node_type, processCurrentEditStep, templateInfo, currentFlowTabsStatus, not_show_create_node_guide, projectDetailInfoData, userBoardPermissions }
 }

@@ -11,6 +11,8 @@ import { connect } from 'dva'
 import { isObjectValueEqual } from '../../../../utils/util'
 import ConfigureStepOne_six from './component/ConfigureStepOne_six'
 import Sheet from '../../../Sheet/Sheet'
+import { saveOnlineExcelWithProcess } from '../../../../services/technological/workFlow'
+import { isApiResponseOk } from '../../../../utils/handleResponseData'
 @connect(mapStateToProps)
 export default class ConfigureProcess extends Component {
 
@@ -267,13 +269,18 @@ export default class ConfigureProcess extends Component {
       }
     })
     this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '1')
-    this.props.dispatch({
-      type: 'publicProcessDetailModal/updateDatas',
-      payload: {
-        sheetData: this.sheet.getFormatData()
+    // 如果找到表格 那么就保存获取表格数据
+    let curr_excel = processEditDatas[itemKey]['forms'].find(i => i.field_type == '6')
+    if (!(curr_excel && Object.keys(curr_excel).length)) return
+    let excel_id = curr_excel.online_excel_id
+    let sheet_data = this.sheet && this.sheet.getFormatData()
+    saveOnlineExcelWithProcess({excel_id,sheet_data}).then(res => {
+      if (isApiResponseOk(res)) {
+        this.setState({
+          data: res.data
+        })
       }
     })
-    console.log(this.sheet.getFormatData(),'ssssssssssssssss_getFormatData')
   }
 
   // 当先选择的节点类型
@@ -603,18 +610,19 @@ export default class ConfigureProcess extends Component {
   }
 
   // 渲染表格
-  renderOnlineExcel = () => {
+  renderOnlineExcel = (props) => {
     return (
-      <ConfigureStepOne_six>
-        <Sheet ref={el=>this.sheet=el}/>
+      <ConfigureStepOne_six {...props}>
+        <Sheet data={this.state.sheet_data} ref={el=>this.sheet=el}/>
       </ConfigureStepOne_six>
     )
   }
 
   renderContent = () => {
     const { itemKey, itemValue, processEditDatasRecords = [], processCurrentEditStep, processEditDatas = [], processPageFlagStep } = this.props
-    const { name, node_type, description, is_click_node_name } = itemValue
+    const { name, node_type, description, is_click_node_name, forms = [] } = itemValue
     let deleteBtn = this.whetherIsDeleteNodes()
+    let isExcel = forms.find(i=>i.field_type=='6')
     let editConfirmBtn = this.state.isDisabled ? true : this.renderDiffButtonTooltipsText().confirmButtonDisabled ? true : false
     let gold_index = (processEditDatas && processEditDatas.length) && processEditDatas.findIndex(item => item.is_edit == '0')
     // let editConfirmBtn = this.renderDiffButtonTooltipsText().confirmButtonDisabled ? this.state.isDisabled ? true : false : this.state.isDisabled ? true : false
@@ -718,7 +726,7 @@ export default class ConfigureProcess extends Component {
               processPageFlagStep == '2' ? (
                 <div className={indexStyles.step_btn}>
                   <Button onClick={this.handleCancleEditContent} style={{color: '#1890FF', border: '1px solid rgba(24,144,255,1)'}}>取消</Button>
-                  <Tooltip placement="top" title={this.renderDiffButtonTooltipsText().confirmButtonText}><Button key={itemValue} disabled={editConfirmBtn} onClick={this.handleConfirmEditContent} type="primary">确认</Button></Tooltip>
+                  <Tooltip placement="top" title={this.renderDiffButtonTooltipsText().confirmButtonText}><Button key={itemValue} disabled={editConfirmBtn ? isExcel ? false : true : false} onClick={this.handleConfirmEditContent} type="primary">确认</Button></Tooltip>
                 </div>
               ) : ('')
             }

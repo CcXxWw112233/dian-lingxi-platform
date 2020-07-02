@@ -437,6 +437,18 @@ const updateUserStorage = async({forms = []}) => {
   await localStorage.setItem('userProcessWithNodesStatusStorage',JSON.stringify(pro_info))
 }
 
+// 判断是否存在 在线表格字段
+const whetherIsExistOnlineExcel = ({forms = []}) => {
+  let flag = false
+  if (!forms.length) return false
+  let newFormsData = [...forms]
+  let curr = newFormsData.find(i => i.field_type == '6')
+  if (curr && Object.keys(curr).length) {
+    flag = true
+  }
+  return flag
+}
+
 export {
   showDeleteTempleteConfirm,
   genPrincipalListFromAssignees,
@@ -458,5 +470,6 @@ export {
   compareOppositeTimer,
   removeEmptyArrayEle,
   updateUserStorage,
+  whetherIsExistOnlineExcel
 }
 
