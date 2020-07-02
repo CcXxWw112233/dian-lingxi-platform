@@ -988,8 +988,8 @@ export default class CardItem extends Component {
                         onMouseMove={(e) => e.preventDefault()}
                         style={{
                             display: 'flex', color: is_realize == '1' ? 'rgba(0,0,0,.25)' : '',
-                            height: task_item_height,
-                            lineHeight: `${task_item_height}px`
+                            height: task_item_height - 4,
+                            lineHeight: `${task_item_height - 4}px`
                         }}
                     >
                         {name}
