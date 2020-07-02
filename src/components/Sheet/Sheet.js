@@ -5,12 +5,19 @@ export default class Sheet extends React.Component{
   constructor(){
     super(...arguments)
     this.state = {}
+    this.timer = null;
   }
   componentDidMount(){
     let { data } = this.props;
     if(data && data.length){
       this.reload(data)
     }else this.init();
+    window.addEventListener('resize',() => {
+      clearTimeout(this.timer)
+      this.timer = setTimeout(()=>{
+        this.reload(this.getFormatData())
+      },800)
+    })
   }
   reload = (data)=>{
     window.luckysheet.method.destroy();
@@ -82,7 +89,7 @@ export default class Sheet extends React.Component{
   render(){
     let { id } = this.props;
     return (
-      <div id={id || 'luckysheet'} style={{zIndex: 5,margin:0,padding:0,position:"absolute",top:'36px',left:0,width:"100%",height:"100%"}}></div>
+      <div id={id || 'luckysheet'} style={{zIndex: 5,margin:0,padding:0,position:"absolute",top:'30px',left:0,width:"100%",height:"100%"}}></div>
     )
   }
 }

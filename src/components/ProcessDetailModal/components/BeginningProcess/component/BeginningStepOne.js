@@ -15,6 +15,9 @@ import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard, curren
 import { PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, FLOWS } from '../../../../../globalset/js/constant'
 import { genPrincipalListFromAssignees, findCurrentFileInfo } from '../../handleOperateModal'
 import DifferenceDeadlineType from '../../DifferenceDeadlineType'
+import BeginningStepOne_six from './BeginningStepOne_six'
+import { saveOnlineExcelWithProcess } from '../../../../../services/technological/workFlow'
+import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 
 @connect(mapStateToProps)
 export default class BeginningStepOne extends Component {
@@ -27,6 +30,7 @@ export default class BeginningStepOne extends Component {
       is_show_spread_arrow: props.itemValue.status == '1' || props.itemValue.runtime_type == '1' ? true : false, // 是否展开箭头 详情 true表示展开
       form_values: []
     }
+    this.sheet = null
   }
 
   updateState = (flag) => {
@@ -311,6 +315,26 @@ export default class BeginningStepOne extends Component {
     return form_values
   }
 
+  setSheet = (sheet) => {
+    this.sheet = sheet
+  }
+
+  saveOnlineExcel = () => {
+    const { processEditDatas = [], itemKey } = this.props
+    let curr_excel = processEditDatas[itemKey]['forms'].find(i => i.field_type == '6')
+    if (!(curr_excel && Object.keys(curr_excel).length)) return
+    let excel_id = curr_excel.online_excel_id
+    let sheet_data = this.sheet && this.sheet.getFormatData()
+    if (!(sheet_data && sheet_data.length) || !excel_id) return
+    saveOnlineExcelWithProcess({ excel_id, sheet_data }).then(res => {
+      if (isApiResponseOk(res)) {
+        this.setState({
+          data: res.data
+        })
+      }
+    })
+  }
+
   // 编辑点击事件
   handleEnterConfigureProcess = (e) => {
     e && e.stopPropagation()
@@ -347,6 +371,7 @@ export default class BeginningStepOne extends Component {
               _organization_id: request_flows_params._organization_id
             }
           })
+          this.saveOnlineExcel()
           setTimeout(() => {
             that.setState({
               isAccomplishNodesIng: false
@@ -405,6 +430,9 @@ export default class BeginningStepOne extends Component {
       case '5':
         container = <BeginningStepOne_five updateState={this.updateState} parentKey={itemKey} FormCanEdit={this.FormCanEdit()} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
         break;
+      case '6':
+        container = <BeginningStepOne_six setSheet={this.setSheet} updateState={this.updateState} parentKey={itemKey} FormCanEdit={this.FormCanEdit()} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
+        break
       default:
         break;
     }

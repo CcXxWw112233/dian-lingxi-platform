@@ -4,7 +4,7 @@ import Sheet from '../../../../Sheet/Sheet'
 import { getOnlineExcelDataWithProcess } from '../../../../../services/technological/workFlow'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 
-export default class ConfirmInfoOne_six extends Component {
+export default class AccomplishStepOne_six extends Component {
 
   constructor(props) {
     super(props)
@@ -35,7 +35,7 @@ export default class ConfirmInfoOne_six extends Component {
     const { online_excel_id } = itemValue
     const { data = [] } = this.state
     return (
-      <div key={online_excel_id} style={{ minHeight: '515px',position:'relative' }} className={indexStyles.text_form}>
+      <div key={online_excel_id} style={{ minHeight: '550px',position:'relative' }} className={indexStyles.text_form}>
         {/* <Sheet ref={el => this.sheet = el} /> */}
         <p>在线表格</p>
         <Sheet

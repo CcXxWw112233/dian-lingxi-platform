@@ -12,7 +12,7 @@ export default class ConfigureStepOne_six extends Component {
   constructor(props) {
     super(props)
     this.state = {}
-    // this.sheet = React.createRef()
+    this.sheet = null
   }
 
   getOnlineExcelDataWithProcess = (props) => {
@@ -22,9 +22,9 @@ export default class ConfigureStepOne_six extends Component {
         this.setState({
           data: res.data
         }, () => {
-          this.sheet.reload(res.data && res.data.sheet_data)
           setTimeout(() => {
             if (this.sheet) {
+              this.sheet.reload(res.data && res.data.sheet_data)
               this.props.setSheet && this.props.setSheet(this.sheet)
             }
           }, 1000)
@@ -49,9 +49,9 @@ export default class ConfigureStepOne_six extends Component {
   }
 
   render() {
-    const { children } = this.props
+    const { children, itemKey, itemValue: { online_excel_id } } = this.props
     return (
-      <div style={{ minHeight: '440px' }} className={indexStyles.text_form}>
+      <div key={online_excel_id || itemKey} style={{ minHeight: '500px',position: 'relative' }} className={indexStyles.text_form}>
         <p>在线表格</p>
         {/* {children} */}
         <Sheet ref={el => this.sheet = el} />

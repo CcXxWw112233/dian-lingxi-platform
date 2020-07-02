@@ -9,8 +9,6 @@ import ConfigureStepTypeThree from './component/ConfigureStepTypeThree'
 import { processEditDatasItemOneConstant, processEditDatasItemTwoConstant, processEditDatasItemThreeConstant } from '../../constant'
 import { connect } from 'dva'
 import { isObjectValueEqual } from '../../../../utils/util'
-import ConfigureStepOne_six from './component/ConfigureStepOne_six'
-import Sheet from '../../../Sheet/Sheet'
 import { saveOnlineExcelWithProcess } from '../../../../services/technological/workFlow'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
 @connect(mapStateToProps)
