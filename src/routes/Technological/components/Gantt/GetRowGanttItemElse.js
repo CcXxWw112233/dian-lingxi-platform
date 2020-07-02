@@ -109,6 +109,27 @@ export default class GetRowGanttItem extends Component {
       </>
     )
   }
+  renderWeekView = (date_inner = []) => {
+    const { ceilWidth } = this.props
+    return (
+      <>
+        {date_inner.map((value2, key2) => {
+          const { month, last_date, week_day, timestamp, timestampEnd, description } = value2
+          return (
+            <div className={`${indexStyles.ganttDetailItem}`}
+              key={key2}
+              style={{
+                width: 7 * ceilWidth,
+                backgroundColor: 'rgba(0,0,0,.02)',
+                ...this.setBorderTop()
+              }}
+            >
+            </div>
+          )
+        })}
+      </>
+    )
+  }
   render() {
     const { gold_date_arr = [], gantt_view_mode } = this.props
     return (
@@ -123,6 +144,11 @@ export default class GetRowGanttItem extends Component {
                   {
                     gantt_view_mode == 'year' && (
                       this.renderYearView(date_inner)
+                    )
+                  }
+                  {
+                    gantt_view_mode == 'week' && (
+                      this.renderWeekView(date_inner)
                     )
                   }
                   {

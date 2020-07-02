@@ -12,7 +12,7 @@ import MilestoneDetail from '../milestoneDetail'
 import { checkIsHasPermission, checkIsHasPermissionInBoard } from '../../../../../../utils/businessFunction';
 import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_CREATE } from '../../../../../../globalset/js/constant';
 import { isSamDay, getDigit, timestampToTime } from '../../../../../../utils/util';
-import { setDateWithPositionInYearView } from '../../ganttBusiness';
+import { setDateWithPositionInYearView, setDateWidthPositionWeekView } from '../../ganttBusiness';
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
 const getEffectOrReducerByName = name => `gantt/${name}`
@@ -147,6 +147,8 @@ export default class GetRowStrip extends PureComponent {
                 width: width || ceilWidth,
                 x
             })
+        } else if (gantt_view_mode == 'week') {
+            date = setDateWidthPositionWeekView({ position: x, date_arr_one_level, ceilWidth })
         } else {
 
         }
@@ -168,7 +170,8 @@ export default class GetRowStrip extends PureComponent {
                 className={styles.will_set_item}
                 style={{
                     display: (!is_item_has_time && this.onHoverState()) ? 'flex' : 'none',
-                    marginLeft: currentRect.x - correct_value2
+                    marginLeft: currentRect.x - correct_value2,
+                    height: task_item_height
                 }}>
                 <Tooltip
                     visible={gantt_view_mode == 'year'}
@@ -874,7 +877,7 @@ export default class GetRowStrip extends PureComponent {
                     direction = 'right'
                 }
             } else { //目标时间不包含在列表内
-                console.log('leftleftleft', left)
+                // console.log('leftleftleft', left)
                 // if (left) { //在区间左侧
                 //     direction = 'left'
                 // } else { //在区间右侧
@@ -926,7 +929,7 @@ export default class GetRowStrip extends PureComponent {
 
         const { is_item_has_time, currentRectDashed = {}, dasheRectShow, drag_holiday_count } = this.state
         // 定位
-        const { isInViewArea, direction, add_width } = this.filterIsInViewArea()
+        // const { isInViewArea, direction, add_width } = this.filterIsInViewArea()
 
         return (
             <div>

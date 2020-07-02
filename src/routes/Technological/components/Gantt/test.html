@@ -1,49 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
 
 <head>
-    <script type="text/javascript">
-        function getX(obj) {
-            var parObj = obj;
-            var left = obj.offsetLeft;
-            while (parObj = parObj.offsetParent) {
-                left += parObj.offsetLeft;
-            }
-            return left;
-        }
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>日历操作</title>
+    <script>
+        window.onload = function () {
+            var cells = document.getElementById('monitor').getElementsByTagName('td');
+            var clen = cells.length;
+            var currentFirstDate;
+            var formatDate = function (date) {
+                var year = date.getFullYear() + '年';
+                var month = (date.getMonth() + 1) + '月';
+                var day = date.getDate() + '日';
+                var week = '(' + ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'][date.getDay()] + ')';
 
-        function getY(obj) {
-            var parObj = obj;
-            var top = obj.offsetTop;
-            while (parObj = parObj.offsetParent) {
-                top += parObj.offsetTop;
-            }
-            return top;
-        }
+                return year + month + day + ' ' + week;
+            };
+            var addDate = function (date, n) {
+                date.setDate(date.getDate() + n);
+                return date;
+            };
+            var setDate = function (date) {
+                var week = date.getDay() - 1;
+                date = addDate(date, week * -1);
+                currentFirstDate = new Date(date);
 
-        function DisplayCoord(event) {
-            var top, left, oDiv;
-            oDiv = document.getElementById("demo");
-            top = getY(oDiv);
-            left = getX(oDiv);
-            document.getElementById("mp_x").innerHTML = (event.clientX - left + document.documentElement.scrollLeft) - 2 + "px";
-            document.getElementById("mp_y").innerHTML = (event.clientY - top + document.documentElement.scrollTop) - 2 + "px";
+                for (var i = 0; i < clen; i++) {
+                    cells[i].innerHTML = formatDate(i == 0 ? date : addDate(date, 1));
+                }
+            };
+            document.getElementById('last-week').onclick = function () {
+                setDate(addDate(currentFirstDate, -7));
+            };
+            document.getElementById('next-week').onclick = function () {
+                setDate(addDate(currentFirstDate, 7));
+            };
+            setDate(new Date());
         }
-
     </script>
-
 </head>
 
-
 <body>
-    <div style="background-color:#000000;color:#0011FF;width:300px;height:300px;position:absolute;top:80px;left:90px;margin:0px; border:0px;"
-        id="demo" onmousemove="DisplayCoord(event)">
-
-        我是DIV,经测试,有2PX的误差...
-    </div>
-    当前鼠标坐标为：
-    X：<span id="mp_x"></span>
-    Y：<span id="mp_y"></span>
+    <button id="last-week">上一周</button><button id="next-week">下一周</button>
+    <table id="monitor">
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
 </body>
 
 </html>
