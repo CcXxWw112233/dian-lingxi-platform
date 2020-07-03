@@ -26,7 +26,7 @@ export default class Sheet extends React.Component{
     sheets = JSON.parse(JSON.stringify(sheets));
     let arr = [];
     sheets.forEach((item, index) => {
-      let data = item.data;
+      let data = item.data || [];
       let celldata = [];
       data.forEach((d, r) => {
         let cells = [];
