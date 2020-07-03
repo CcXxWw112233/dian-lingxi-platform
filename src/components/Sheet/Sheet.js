@@ -7,14 +7,17 @@ export default class Sheet extends React.Component{
     this.state = {}
     this.timer = null;
   }
-  componentDidMount(){
-    this.init();
-    window.addEventListener('resize', () => {
-      clearTimeout(this.timer)
+
+  resize = ()=>{
+    clearTimeout(this.timer)
       this.timer = setTimeout(()=>{
         this.reload(this.getFormatData())
-      },800)
-    })
+      }, 800)
+  }
+
+  componentDidMount(){
+    this.init();
+    window.addEventListener('resize', this.resize)
   }
   reload = (data)=>{
     window.luckysheet.method.destroy();
@@ -63,6 +66,7 @@ export default class Sheet extends React.Component{
   }
   componentWillUnmount(){
     window.luckysheet.method.destroy();
+    window.removeEventListener('resize', this.resize)
   }
   init = (data)=>{
     let {
