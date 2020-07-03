@@ -175,7 +175,7 @@ export default class ConfigureProcess extends Component {
     const { itemKey, processEditDatas = [], dispatch } = this.props
     this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '1')
     // 如果找到表格 那么就保存获取表格数据
-    let curr_excel = processEditDatas[itemKey]['forms'].find(i => i.field_type == '6')
+    let curr_excel = processEditDatas[itemKey]['forms'] && processEditDatas[itemKey]['forms'].find(i => i.field_type == '6')
     if (!(curr_excel && Object.keys(curr_excel).length)) return
     let excel_id = curr_excel.online_excel_id
     let sheet_data = this.sheet && this.sheet.getFormatData()
