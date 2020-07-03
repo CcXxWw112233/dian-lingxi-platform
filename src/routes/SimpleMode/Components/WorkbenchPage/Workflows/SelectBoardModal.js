@@ -34,7 +34,7 @@ export default class SelectBoardModal extends Component {
     render() {
         const { visible, projectList = [], currentUserOrganizes = [], local_board_id, zIndex } = this.props
         const target_projectList = projectList.filter(item => //过滤掉没有流程应用的
-            item.apps.findIndex(item2 => item2.code == 'Flows') != -1
+            (item.apps||item.app_data).findIndex(item2 => item2.code == 'Flows') != -1
         )
         const aboutBoardOrganizationId = getGlobalData('aboutBoardOrganizationId')
         // 过滤有权限的项目
