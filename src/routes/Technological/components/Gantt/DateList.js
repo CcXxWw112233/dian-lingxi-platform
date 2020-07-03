@@ -333,6 +333,7 @@ export default class DateList extends Component {
           // const is_all_realized = this.isHasMiletoneList().handleMonthMode(Number(timestampEnd)).is_all_realized
           const { flag: has_lcb, current_date_miletones = [], is_over_duetime, is_all_realized } = this.isHasMiletoneList().handleMonthMode(Number(timestampEnd))
           // /gantt_board_id == '0' ||
+          const isToday = isSamDay(timestamp, new Date().getTime())
           return (
             group_view_type != '1' ? (
               <Tooltip key={`${month}/${date_no}`} title={`${this.getDateNoHolidaylunar(timestamp).lunar} ${this.getDateNoHolidaylunar(timestamp).holiday || ' '}`}>
@@ -348,7 +349,7 @@ export default class DateList extends Component {
                           </div>
                         )
                       }
-                      {date_no}
+                      {isToday ? '今天' : date_no}
                     </div>
                   </div>
                 </div>
@@ -373,7 +374,7 @@ export default class DateList extends Component {
                               </div>
                             )
                           }
-                          {date_no}
+                          {isToday ? '今天' : date_no}
                         </div>
                       </div>
                     </div>

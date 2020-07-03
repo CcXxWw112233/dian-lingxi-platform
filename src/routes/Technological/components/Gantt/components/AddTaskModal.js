@@ -135,7 +135,7 @@ class AddTaskModal extends Component {
       board_id: currentSelectedProject.board_id,
       name: addTaskTitle,
       type: 0,
-      users: currentSelectedProjectMember.reduce((acc, curr) => {
+      users: currentSelectedProjectMember.filter(item => item.id && item.id != '0').reduce((acc, curr) => {
         return acc ? acc + ',' + curr.id : curr.id;
       }, ''),
       list_id: currentSelectedProjectGroupListItem.board_id

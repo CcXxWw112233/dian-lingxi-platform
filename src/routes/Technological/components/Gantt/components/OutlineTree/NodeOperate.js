@@ -24,14 +24,22 @@ export default class NodeOperate extends Component {
     setTemplistVisible = (bool) => { //流程模板列表显示
         const { templist_visible } = this.state
         this.setState({
-            templist_visible: !templist_visible
+            templist_visible: bool //!templist_visible
+        }, () => {
+            if (bool) {
+                this.setGroupSubShow(false)
+            }
         })
     }
 
     setGroupSubShow = (bool) => { //设置选择分组二级菜单是否显示
         const { group_sub_visible } = this.state
         this.setState({
-            group_sub_visible: !group_sub_visible
+            group_sub_visible: bool// !group_sub_visible
+        }, () => {
+            if (bool) {
+                this.setTemplistVisible(false)
+            }
         })
     }
     setCreateGroupVisible = (bool) => { //设置新建分组显示
