@@ -320,23 +320,29 @@ export default class BeginningStepOne extends Component {
   }
 
   saveOnlineExcel = () => {
-    const { processEditDatas = [], itemKey } = this.props
-    let curr_excel = processEditDatas[itemKey]['forms'].find(i => i.field_type == '6')
-    if (!(curr_excel && Object.keys(curr_excel).length)) return
-    let excel_id = curr_excel.online_excel_id
-    let sheet_data = this.sheet && this.sheet.getFormatData()
-    if (!(sheet_data && sheet_data.length) || !excel_id) return
-    saveOnlineExcelWithProcess({ excel_id, sheet_data }).then(res => {
-      if (isApiResponseOk(res)) {
-        this.setState({
-          data: res.data
-        })
-      }
+    return new Promise((resolve,reject) => {
+      const { processEditDatas = [], itemKey } = this.props
+      let curr_excel = processEditDatas[itemKey]['forms'].find(i => i.field_type == '6')
+      if (!(curr_excel && Object.keys(curr_excel).length)) return
+      let excel_id = curr_excel.online_excel_id
+      let sheet_data = this.sheet && this.sheet.getFormatData()
+      if (!(sheet_data && sheet_data.length) || !excel_id) return
+      saveOnlineExcelWithProcess({ excel_id, sheet_data }).then(res => {
+        if (isApiResponseOk(res)) {
+          this.setState({
+            data: res.data
+          })
+          resolve(res.data);
+        } else {
+          resolve(res)
+        }
+      })
     })
+    
   }
 
   // 编辑点击事件
-  handleEnterConfigureProcess = (e) => {
+  handleEnterConfigureProcess = async(e) => {
     e && e.stopPropagation()
     if (!this.whetherIsHasPermission()) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -356,6 +362,7 @@ export default class BeginningStepOne extends Component {
     let form_values = this.getAllNodesFormsData()
     let that = this
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
+    await this.saveOnlineExcel()
     dispatch({
       type: 'publicProcessDetailModal/fillFormComplete',
       payload: {
@@ -371,7 +378,6 @@ export default class BeginningStepOne extends Component {
               _organization_id: request_flows_params._organization_id
             }
           })
-          this.saveOnlineExcel()
           setTimeout(() => {
             that.setState({
               isAccomplishNodesIng: false
