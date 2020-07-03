@@ -241,6 +241,7 @@ export default class ConfigureStepTypeOne extends Component {
           ],
           "is_click_currentTextForm": true
         }
+        break
       case '6':
         this.getOnlineExcelWithProcess(newFormsData)
         break
