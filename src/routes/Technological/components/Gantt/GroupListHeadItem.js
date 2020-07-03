@@ -238,7 +238,8 @@ export default class GroupListHeadItem extends Component {
         type: 'gantt/updateDatas',
         payload: {
           group_view_type: '1',
-          single_select_user: { id: list_id, name: list_name }
+          single_select_user: { id: list_id, name: list_name },
+          list_group: []
         }
       })
       dispatch({
