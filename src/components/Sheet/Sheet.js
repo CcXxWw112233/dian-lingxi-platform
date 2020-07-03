@@ -52,7 +52,7 @@ export default class Sheet extends React.Component{
         order: item.order,
         index: index,
         status: item.status,
-        config: {},
+        config: item.config,
         color: item.color,
         celldata
       }
@@ -79,6 +79,19 @@ export default class Sheet extends React.Component{
       showstatisticBar = true
     } = this.props;
     data = data && data.length ? data : [{ "name": "Sheet1", color: "", "status": "1", "order": "0", "data": [], "config": {}, "index": 0 }]
+    data = data.map(item => {
+      let config = item.config;
+      let columlen = config;
+      let obj = {};
+      if(columlen){
+        for(let key in obj){
+          obj[key] = +obj[key]
+        }
+      }
+      config.columlen = obj;
+      item.config = config;
+      return item;
+    })
     window.luckysheet.method.destroy();
     window.luckysheet.create({
       container: id || 'luckysheet',
