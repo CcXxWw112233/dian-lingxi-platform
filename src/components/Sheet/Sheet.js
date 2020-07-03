@@ -8,11 +8,8 @@ export default class Sheet extends React.Component{
     this.timer = null;
   }
   componentDidMount(){
-    let { data } = this.props;
-    if(data && data.length){
-      this.reload(data)
-    }else this.init();
-    window.addEventListener('resize',() => {
+    this.init();
+    window.addEventListener('resize', () => {
       clearTimeout(this.timer)
       this.timer = setTimeout(()=>{
         this.reload(this.getFormatData())
@@ -26,13 +23,14 @@ export default class Sheet extends React.Component{
   // 获取数据，包含表格需要的字段
   getFormatData = ()=>{
     let sheets = window.luckysheet.getluckysheetfile();
+    sheets = JSON.parse(JSON.stringify(sheets));
     let arr = [];
-    sheets.forEach((item,index) => {
+    sheets.forEach((item, index) => {
       let data = item.data;
       let celldata = [];
-      data.forEach((d,r) => {
+      data.forEach((d, r) => {
         let cells = [];
-        d.forEach((val,c)=>{
+        d.forEach((val, c)=>{
           if(val){
             // 将所有数据保存到v字段，适用于更新
             val.v = {...val}
@@ -50,8 +48,8 @@ export default class Sheet extends React.Component{
         name: item.name,
         order: item.order,
         index: index,
-        status :item.status,
-        config :item.config,
+        status: item.status,
+        config: item.config,
         color: item.color,
         celldata
       }
@@ -69,20 +67,20 @@ export default class Sheet extends React.Component{
   init = (data)=>{
     let {
       id,
-      disabledEdit ,
-      showinfobar ,
+      disabledEdit,
+      showinfobar,
       fullscreenmode,
       showtoolbar = true,
       showsheetbar = true,
       showstatisticBar = true
     } = this.props;
-    data = data && data.length ? data : [{ "name": "Sheet1", color: "", "status": "1", "order": "0", "data": [], "config": {}, "index":0 }]
+    data = data && data.length ? data : [{ "name": "Sheet1", color: "", "status": "1", "order": "0", "data": [], "config": {}, "index": 0 }]
     window.luckysheet.method.destroy();
     window.luckysheet.create({
       container: id || 'luckysheet',
-      showinfobar ,
+      showinfobar,
       fullscreenmode,
-      allowEdit:false,
+      allowEdit: false,
       showtoolbar,
       showsheetbar,
       showstatisticBar,
@@ -99,12 +97,12 @@ export default class Sheet extends React.Component{
 }
 
 Sheet.propTypes = {
-  id:PropTypes.string, // 构建的sheetID
+  id: PropTypes.string, // 构建的sheetID
   data: PropTypes.array, // 构建时，传入的基础数据
-  disabledEdit:PropTypes.bool, // 是否可以编辑
-  showinfobar:PropTypes.bool,
-  fullscreenmode:PropTypes.bool, // 是否全屏模式
-  showtoolbar : PropTypes.bool, // 是否显示工具栏 -- 当没有权限的时候，可以不可编辑和隐藏工具栏
-  showsheetbar : PropTypes.bool,// 是否显示sheet列表栏
-  showstatisticBar : PropTypes.bool, //是否显示底层的计数栏
+  disabledEdit: PropTypes.bool, // 是否可以编辑
+  showinfobar: PropTypes.bool,
+  fullscreenmode: PropTypes.bool, // 是否全屏模式
+  showtoolbar: PropTypes.bool, // 是否显示工具栏 -- 当没有权限的时候，可以不可编辑和隐藏工具栏
+  showsheetbar: PropTypes.bool, // 是否显示sheet列表栏
+  showstatisticBar: PropTypes.bool, //是否显示底层的计数栏
 }
