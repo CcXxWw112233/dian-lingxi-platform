@@ -18,16 +18,16 @@ export default class Sheet extends React.Component{
 
   componentDidMount(){
     
-    this.init();
+    this.reload();
     window.addEventListener('resize', this.resize)
   }
   reload = (data)=>{
     window.luckysheet.method.destroy();
     clearTimeout(this.loadtimer);
     this.loadtimer = setTimeout(()=>{
-      console.log('加载了,并且设置了数据')
+      console.info('加载了,并且设置了数据')
       this.init(data);
-    }, 1)
+    }, 150)
     
   }
   // 获取数据，包含表格需要的字段
