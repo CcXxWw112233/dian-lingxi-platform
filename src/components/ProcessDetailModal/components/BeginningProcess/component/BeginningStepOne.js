@@ -323,10 +323,10 @@ export default class BeginningStepOne extends Component {
     return new Promise((resolve,reject) => {
       const { processEditDatas = [], itemKey } = this.props
       let curr_excel = processEditDatas[itemKey]['forms'].find(i => i.field_type == '6')
-      if (!(curr_excel && Object.keys(curr_excel).length)) return
+      if (!(curr_excel && Object.keys(curr_excel).length)) return resolve([])
       let excel_id = curr_excel.online_excel_id
       let sheet_data = this.sheet && this.sheet.getFormatData()
-      if (!(sheet_data && sheet_data.length) || !excel_id) return
+      if (!(sheet_data && sheet_data.length) || !excel_id) return resolve([])
       saveOnlineExcelWithProcess({ excel_id, sheet_data }).then(res => {
         if (isApiResponseOk(res)) {
           this.setState({
@@ -336,7 +336,7 @@ export default class BeginningStepOne extends Component {
         } else {
           resolve([])
         }
-      })
+      }).catch(err => resolve(err))
     })
     
   }
@@ -362,12 +362,13 @@ export default class BeginningStepOne extends Component {
     let form_values = this.getAllNodesFormsData()
     let that = this
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
-    if ((forms && forms.length) && forms.find(i=>i.node_type=='6')) {
-      await this.saveOnlineExcel()
-    }
+    // if ((forms && forms.length) && forms.find(i=>i.node_type=='6')) {
+    //   await this.saveOnlineExcel()
+    // }
+    await this.saveOnlineExcel()
     dispatch({
       type: 'publicProcessDetailModal/fillFormComplete',
-      payload: {
+      payload: { 
         flow_instance_id,
         flow_node_instance_id,
         content_values: form_values,
