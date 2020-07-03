@@ -6,6 +6,7 @@ export default class Sheet extends React.Component{
     super(...arguments)
     this.state = {}
     this.timer = null;
+    this.loadtimer = null ;
   }
 
   resize = ()=>{
@@ -16,12 +17,18 @@ export default class Sheet extends React.Component{
   }
 
   componentDidMount(){
+    
     this.init();
     window.addEventListener('resize', this.resize)
   }
   reload = (data)=>{
     window.luckysheet.method.destroy();
-    this.init(data);
+    clearTimeout(this.loadtimer);
+    this.loadtimer = setTimeout(()=>{
+      console.log('加载了,并且设置了数据')
+      this.init(data);
+    }, 1)
+    
   }
   // 获取数据，包含表格需要的字段
   getFormatData = ()=>{
@@ -69,6 +76,7 @@ export default class Sheet extends React.Component{
     window.removeEventListener('resize', this.resize)
   }
   init = (data)=>{
+    window.luckysheet.method.destroy();
     let {
       id,
       disabledEdit,
@@ -78,7 +86,7 @@ export default class Sheet extends React.Component{
       showsheetbar = true,
       showstatisticBar = true
     } = this.props;
-    data = data && data.length ? data : [{ "name": "Sheet1", color: "", "status": "1", "order": "0", "data": [], "config": {}, "index": 0 }]
+    data = data && data.length ? data : [{ "name": "默认Sheet", color: "", "status": "1", "order": "0", "config": {}, "index": 0 }]
     data = data.map(item => {
       let config = item.config;
       let columlen = config;
@@ -92,7 +100,6 @@ export default class Sheet extends React.Component{
       item.config = config;
       return item;
     })
-    window.luckysheet.method.destroy();
     window.luckysheet.create({
       container: id || 'luckysheet',
       showinfobar,
