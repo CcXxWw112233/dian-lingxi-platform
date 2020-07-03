@@ -52,7 +52,7 @@ export default class Sheet extends React.Component{
         order: item.order,
         index: index,
         status: item.status,
-        config: item.config,
+        config: {},
         color: item.color,
         celldata
       }
