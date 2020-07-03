@@ -362,10 +362,10 @@ export default class BeginningStepOne extends Component {
     let form_values = this.getAllNodesFormsData()
     let that = this
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
-    // if ((forms && forms.length) && forms.find(i=>i.node_type=='6')) {
-    //   await this.saveOnlineExcel()
-    // }
-    await this.saveOnlineExcel()
+    if ((forms && forms.length) && forms.find(i=>i.node_type=='6')) {
+      await this.saveOnlineExcel()
+    }
+    // await this.saveOnlineExcel()
     dispatch({
       type: 'publicProcessDetailModal/fillFormComplete',
       payload: { 
