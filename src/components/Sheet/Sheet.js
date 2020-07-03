@@ -18,7 +18,7 @@ export default class Sheet extends React.Component{
 
   componentDidMount(){
     
-    this.init();
+    this.reload();
     window.addEventListener('resize', this.resize)
   }
   reload = (data)=>{
