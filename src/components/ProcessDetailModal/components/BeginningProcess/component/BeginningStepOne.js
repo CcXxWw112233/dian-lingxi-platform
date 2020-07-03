@@ -18,6 +18,7 @@ import DifferenceDeadlineType from '../../DifferenceDeadlineType'
 import BeginningStepOne_six from './BeginningStepOne_six'
 import { saveOnlineExcelWithProcess } from '../../../../../services/technological/workFlow'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
+import { resolve } from 'promise-polyfill'
 
 @connect(mapStateToProps)
 export default class BeginningStepOne extends Component {
@@ -319,25 +320,27 @@ export default class BeginningStepOne extends Component {
     this.sheet = sheet
   }
 
-  saveOnlineExcel = () => {
-    return new Promise((resolve,reject) => {
+  saveOnlineExcel = async () => {
+    // return new Promise((resolve,reject) => {
       const { processEditDatas = [], itemKey } = this.props
       let curr_excel = processEditDatas[itemKey]['forms'].find(i => i.field_type == '6')
-      if (!(curr_excel && Object.keys(curr_excel).length)) return resolve([])
+      if (!(curr_excel && Object.keys(curr_excel).length)) return
       let excel_id = curr_excel.online_excel_id
       let sheet_data = this.sheet && this.sheet.getFormatData()
-      if (!(sheet_data && sheet_data.length) || !excel_id) return resolve([])
-      saveOnlineExcelWithProcess({ excel_id, sheet_data }).then(res => {
-        if (isApiResponseOk(res)) {
-          this.setState({
-            data: res.data
-          })
-          resolve(res.data);
-        } else {
-          resolve([])
-        }
-      }).catch(err => resolve(err))
-    })
+      if (!(sheet_data && sheet_data.length) || !excel_id) return
+      return await new Promise((resolve) =>{
+        saveOnlineExcelWithProcess({ excel_id, sheet_data }).then(res => {
+          if (isApiResponseOk(res)) {
+            this.setState({
+              data: res.data
+            })
+            resolve(res.data);
+          } else {
+            resolve([])
+          }
+        }).catch(err => resolve(err))
+      })
+    // })
     
   }
 
@@ -362,7 +365,7 @@ export default class BeginningStepOne extends Component {
     let form_values = this.getAllNodesFormsData()
     let that = this
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
-    if ((forms && forms.length) && forms.find(i=>i.node_type=='6')) {
+    if ((forms && forms.length) && forms.find(i=>i.field_type=='6')) {
       await this.saveOnlineExcel()
     }
     // await this.saveOnlineExcel()
