@@ -63,6 +63,9 @@ export default class Sheet extends React.Component{
   destory = ()=>{
     window.luckysheet.method.destroy();
   }
+  componentWillUnmount(){
+    window.luckysheet.method.destroy();
+  }
   init = (data)=>{
     let {
       id,
@@ -74,6 +77,7 @@ export default class Sheet extends React.Component{
       showstatisticBar = true
     } = this.props;
     data = data && data.length ? data : [{ "name": "Sheet1", color: "", "status": "1", "order": "0", "data": [], "config": {}, "index":0 }]
+    window.luckysheet.method.destroy();
     window.luckysheet.create({
       container: id || 'luckysheet',
       showinfobar ,

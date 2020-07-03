@@ -275,10 +275,20 @@ export default class ConfigureStepTypeThree_one extends Component {
   handleAutoGradeTextAreaValue2 = (e, key, i) => {
     e && e.stopPropagation()
     let value = e.target.value
+    const { score_items = [] } = this.state
+    let new_data = JSON.parse(JSON.stringify(score_items || []))
     const reg = /^([1-9]\d{0,2}(\.\d{2})?|1000)$/
     // /^([1-9]\d{0,2}?|1000)$/
     if (value == '' || value.trimLR() == '' || value > 1000) {
-      this.updateState({ value: '', key: 'max_score', isNotUpdateModelDatas: true }, i)
+      // this.updateState({ value: '', key: 'max_score', isNotUpdateModelDatas: true }, i)
+      new_data = new_data.map(item => {
+        let new_item = { ...item }
+        new_item = { ...item, max_score: '' }
+        return new_item
+      })
+      this.setState({
+        score_items: new_data
+      })
       return
     }
     if (value.indexOf('.') != -1 && value.indexOf('.') != 0) { // 表示存在小数点
@@ -294,12 +304,29 @@ export default class ConfigureStepTypeThree_one extends Component {
       }
     } else {
       if (isNaN(value)) {
-        this.updateState({ value: '', key: 'max_score', isNotUpdateModelDatas: true }, i)
+        // this.updateState({ value: '', key: 'max_score', isNotUpdateModelDatas: true }, i)
+        new_data = new_data.map(item => {
+          let new_item = { ...item }
+          new_item = { ...item, max_score: '' }
+          return new_item
+        })
+        this.setState({
+          score_items: new_data
+        })
         return
       }
     }
-    this.updateState({ value: String(value), key: 'max_score', isNotUpdateModelDatas: true }, i)
-    // this.updateState({ value: value, key: 'max_score', isNotUpdateModelDatas: true }, i)
+    new_data = new_data.map(item => {
+      let new_item = { ...item }
+      new_item = { ...item, max_score: value }
+      return new_item
+    })
+    this.setState({
+      score_items: new_data
+    })
+    // this.updateState({ value: String(value), key: 'max_score', isNotUpdateModelDatas: true }, i)
+
+
     if (this.refs && this.refs[`autoGradeTextArea_${key}`]) {
       this.gradeResize(key)
     }
