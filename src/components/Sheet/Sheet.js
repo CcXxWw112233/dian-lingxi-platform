@@ -27,7 +27,7 @@ export default class Sheet extends React.Component{
   getFormatData = ()=>{
     let sheets = window.luckysheet.getluckysheetfile();
     let arr = [];
-    sheets.forEach(item => {
+    sheets.forEach((item,index) => {
       let data = item.data;
       let celldata = [];
       data.forEach((d,r) => {
@@ -49,7 +49,7 @@ export default class Sheet extends React.Component{
         column: item.visibledatacolumn && item.visibledatacolumn.length,
         name: item.name,
         order: item.order,
-        index: item.index,
+        index: index,
         status :item.status,
         config :item.config,
         color: item.color,
