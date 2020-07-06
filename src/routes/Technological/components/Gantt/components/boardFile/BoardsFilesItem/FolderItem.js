@@ -682,7 +682,7 @@ export default class FolderItem extends Component {
 										</Tooltip>
 									)
 								}
-								<Dropdown overlay={this.renderOperateItemDropMenu()}>
+								<Dropdown overlay={this.renderOperateItemDropMenu()} trigger={['click']}>
 									<div className={`${globalStyles.authTheme} ${styles.operator}`} onClick={e => e.stopPropagation()}>&#xe7fd;</div>
 								</Dropdown>
 								{/* 未读 */}

@@ -412,6 +412,7 @@ export default class TreeNode extends Component {
                         <Dropdown
                             {...(tree_type == '3' ? { visible: false } : {})}
                             overlayClassName={styles.selectExecutors}
+                            trigger={['click']}
                             overlay={
                                 <MenuSearchPartner
                                     // isInvitation={true}

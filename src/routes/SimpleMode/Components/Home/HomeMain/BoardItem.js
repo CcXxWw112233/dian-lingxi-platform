@@ -199,7 +199,7 @@ export default class BoardItem extends Component {
     }
 
     // 访问控制添加成员
-    handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试', ) => {
+    handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试',) => {
         const { itemValue = {} } = this.props
         const { privileges = [], board_id } = itemValue
         const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
@@ -516,7 +516,7 @@ export default class BoardItem extends Component {
                                     )
                             }
                         </div>
-                        <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={menu_oprate_visible ? this.renderMenuOperateListName({ board_id, is_star }) : (<span></span>)}>
+                        <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={menu_oprate_visible ? this.renderMenuOperateListName({ board_id, is_star }) : (<span></span>)} trigger={['click']}>
                             <div className={`${styles.board_area_middle_item_rt_operate} ${globalStyles.authTheme}`} onClick={(e) => e.stopPropagation()}>&#xe66f;</div>
                         </Dropdown>
                     </div>

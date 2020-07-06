@@ -28,7 +28,7 @@ export default class MainBoard extends Component {
         });
     }
     componentWillReceiveProps(nextProps) {
-        if (!(isObjectValueEqual(nextProps.projectList,this.props.projectList))) {
+        if (!(isObjectValueEqual(nextProps.projectList, this.props.projectList))) {
             this.setState({
                 projectList: nextProps.projectList
             })
@@ -113,7 +113,7 @@ export default class MainBoard extends Component {
         const { selected_board_term } = simplemodeCurrentProject
         const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
         let filterProjectList = [...projectList]
-        filterProjectList = (selected_board_term == '0' || !selected_board_term) ? projectList : selected_board_term == '1' ? filterProjectList.filter(i=>i.user_id==id) : []
+        filterProjectList = (selected_board_term == '0' || !selected_board_term) ? projectList : selected_board_term == '1' ? filterProjectList.filter(i => i.user_id == id) : []
         this.setState({
             projectList: filterProjectList
         })
@@ -138,7 +138,7 @@ export default class MainBoard extends Component {
                     currentSelectedProjectOrgIdByBoardId: ''
                 }
             })
-            selectBoardToSeeInfo({ board_id: '0',selected_board_term, dispatch })
+            selectBoardToSeeInfo({ board_id: '0', selected_board_term, dispatch })
             dispatch({
                 type: 'simplemode/getBoardsTaskTodoList',
                 payload: {
@@ -248,7 +248,7 @@ export default class MainBoard extends Component {
                 currentSelectedProjectOrgIdByBoardId: ''
             }
         })
-        selectBoardToSeeInfo({ board_id: '0',selected_board_term: key, dispatch })
+        selectBoardToSeeInfo({ board_id: '0', selected_board_term: key, dispatch })
         dispatch({
             type: 'simplemode/getBoardsTaskTodoList',
             payload: {
@@ -283,7 +283,7 @@ export default class MainBoard extends Component {
         return (
             <div className={styles.board_area}>
                 <div className={styles.board_area_top}>
-                    <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.renderBoardSelectedTerm()}>
+                    <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.renderBoardSelectedTerm()} trigger={['click']}>
                         <div className={styles.board_area_top_lf}>{(selected_board_term == '0' || !selected_board_term) ? '我参与的项目' : selected_board_term == '1' ? '我发起的项目' : ''} <span className={globalStyles.authTheme}>&#xe7ee;</span></div>
                     </Dropdown>
                     <div className={styles.board_area_top_rt}>
