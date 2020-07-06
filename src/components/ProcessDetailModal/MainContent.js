@@ -45,14 +45,14 @@ export default class MainContent extends Component {
       return false
     }
     global.constants.lx_utils && global.constants.lx_utils.setCommentData({ ...data })
-    // if (is_simple_model == '1') {
-    //   this.props.dispatch({
-    //     type: 'simplemode/updateDatas',
-    //     payload: {
-    //       chatImVisiable: true
-    //     }
-    //   })
-    // }
+    if (is_simple_model == '1') {
+      this.props.dispatch({
+        type: 'simplemode/updateDatas',
+        payload: {
+          chatImVisiable: true
+        }
+      })
+    }
   }
 
   // 圈子动态消息

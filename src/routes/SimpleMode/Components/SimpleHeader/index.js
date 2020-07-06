@@ -197,6 +197,31 @@ class SimpleHeader extends Component {
                         }
                     })
                 }
+                if (id == this.props.processInfo.id) {
+                    dispatch({
+                        type: 'publicProcessDetailModal/updateDatas',
+                        payload: {
+                          process_detail_modal_visible: false,
+                          currentFlowInstanceName: '', // 当前流程实例的名称
+                          currentFlowInstanceDescription: '', // 当前的实例描述内容
+                          isEditCurrentFlowInstanceName: true, // 是否正在编辑当前实例的名称
+                          isEditCurrentFlowInstanceDescription: false, // 是否正在编辑当前实例的描述
+                          processPageFlagStep: '1', // "1", "2", "3", "4" 分别对应 新建， 编辑， 启动
+                          processEditDatas:[],
+                          node_type: '1', // 当前的节点类型
+                          processCurrentEditStep: 0, // 当前的编辑步骤 第几步
+                          processCurrentCompleteStep: 0, // 当前处于的操作步骤
+                          templateInfo: {}, // 模板信息
+                          processInfo: {}, // 流程实例信息
+                          currentProcessInstanceId: '', // 当前查看的流程实例名称
+                          currentTempleteIdentifyId: '', // 当前查看的模板ID
+                          not_show_create_node_guide: '1', // 添加节点步骤的引导
+                          not_show_create_form_guide: '1', // 配置表项的引导
+                          not_show_create_rating_guide: '0', // 配置评分节点的引导
+                          currentOrgAllMembers: [], // 组织成员
+                        }
+                      })
+                }
             })
             this.setState({
                 whetherShowTaskDetailModalVisible: false,
