@@ -29,6 +29,7 @@ export default class TreeNode extends Component {
                 ...props.nodeValue
             }
         }
+        this.title_click_timer = null //标题单击和双击事件冲突设置的timer
     }
 
     componentWillReceiveProps(nextProps) {
@@ -73,7 +74,16 @@ export default class TreeNode extends Component {
             this.toggleTitleEdit()
             return
         }
-        // console.log('sssssssssssa', this.props)
+        clearTimeout(this.title_click_timer)
+        this.title_click_timer = setTimeout(() => {
+            this.toggleTitleEdit()
+        }, 200)
+    }
+    onDoubleClickTitle = (placeholder) => {
+        if (placeholder == '新建里程碑') {
+            return
+        }
+        clearTimeout(this.title_click_timer)
         this.navigateToVisualArea()
     }
 
@@ -366,6 +376,7 @@ export default class TreeNode extends Component {
                     <span className={`${styles.title}`}
                         // onMouseEnter={this.onMouseEnterTitle}
                         // onMouseLeave={this.onMouseLeaveTitle}
+                        onDoubleClick={() => this.onDoubleClickTitle(placeholder)}
                         onClick={() => this.onClickTitle(placeholder)}
                     >
                         {
