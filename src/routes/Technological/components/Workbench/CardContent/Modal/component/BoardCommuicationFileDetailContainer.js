@@ -56,7 +56,15 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     // this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile()
     let all_version_list_Ids = this.getEveryVersionListIds()
     let currentPreviewFileVersionId = this.getCurrentFilePreviewVersionId()
-    global.constants.lx_utils && global.constants.lx_utils.setCommentData(currentPreviewFileVersionId || (all_version_list_Ids && all_version_list_Ids.length) && all_version_list_Ids || this.props.filePreviewCurrentFileId || null) 
+    global.constants.lx_utils && global.constants.lx_utils.setCommentData(currentPreviewFileVersionId || (all_version_list_Ids && all_version_list_Ids.length) && all_version_list_Ids || this.props.filePreviewCurrentFileId || null)
+    let workbenchBoxContentWapperModalStyle = { width: '100%' }
+    this.props.dispatch({
+      type: 'simplemode/updateDatas',
+      payload: {
+        chatImVisiable: false,
+        workbenchBoxContentWapperModalStyle: workbenchBoxContentWapperModalStyle
+      }
+    })
     this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
   }
 
@@ -83,14 +91,17 @@ export default class BoardCommuicationFileDetailContainer extends Component {
       return false
     }
     global.constants.lx_utils && global.constants.lx_utils.setCommentData({...data})
-    // if (is_simple_model == '1') {
-    //   this.props.dispatch({
-    //     type: 'simplemode/updateDatas',
-    //     payload: {
-    //       chatImVisiable: true
-    //     }
-    //   })
-    // }
+    if (is_simple_model == '1') {
+      const width = document.body.scrollWidth;
+      let workbenchBoxContentWapperModalStyle = { width: (width - 400) + 'px' }
+      this.props.dispatch({
+        type: 'simplemode/updateDatas',
+        payload: {
+          chatImVisiable: true,
+          workbenchBoxContentWapperModalStyle: workbenchBoxContentWapperModalStyle
+        }
+      })
+    }
   }
 
   delayUpdatePdfDatas = async ({ id, calback }) => {
@@ -103,7 +114,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
         await this.getFilePDFInfo({ id, calback })
       }
       // await this.getFilePDFInfo({ id })
-      this.linkImWithFile({name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id})
+      // this.linkImWithFile({name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id})
     } else {
       message.warn(res.message, MESSAGE_DURATION_TIME)
       setTimeout(() => {
@@ -146,7 +157,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     fileInfoByUrl({ id }).then(res => {// 获取详情的接口
       if (isApiResponseOk(res)) {
         this.initStateDatas({ data: res.data })
-        this.linkImWithFile({name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id, currentPreviewFileVersionId: res.data.base_info.version_id})
+        // this.linkImWithFile({name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id, currentPreviewFileVersionId: res.data.base_info.version_id})
       } else {
         message.warn(res.message)
         let currentPreviewFileVersionId = this.getCurrentFilePreviewVersionId()
@@ -197,6 +208,16 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.props.dispatch({
+      type: 'simplemode/updateDatas',
+      payload: {
+        chatImVisiable: false,
+        workbenchBoxContentWapperModalStyle: {width: '100%'}
+      }
+    })
+  }
+
   render() {
     const { componentHeight, componentWidth } = this.props
     const { filePreviewCurrentFileId, fileType } = this.state
@@ -213,7 +234,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
           />
         } {...this.props} onCancel={this.onCancel} />
         <DetailContent mainContent={
-          <MainContent {...this.props} {...this.state}
+          <MainContent linkImWithFile={this.linkImWithFile} {...this.props} {...this.state}
             delayUpdatePdfDatas={this.delayUpdatePdfDatas}
             getCurrentFilePreviewData={this.getCurrentFilePreviewData}
             updateStateDatas={this.updateStateDatas}

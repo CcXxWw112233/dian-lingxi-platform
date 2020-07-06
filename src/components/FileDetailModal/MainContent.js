@@ -7,7 +7,7 @@ import CirclePreviewLoadingComponent from '@/components/CirclePreviewLoadingComp
 import { connect } from 'dva'
 import { fileConvertPdfAlsoUpdateVersion, setCurrentVersionFile } from '@/services/technological/file'
 import { isApiResponseOk } from '../../utils/handleResponseData'
-import { message, Modal } from 'antd'
+import { message, Modal, Tooltip } from 'antd'
 import { checkIsHasPermissionInBoard, getSubfixName, checkIsHasPermissionInVisitControl } from "@/utils/businessFunction";
 import {
   MESSAGE_DURATION_TIME,
@@ -74,6 +74,12 @@ class MainContent extends Component {
     if (this.timer) {
       clearTimeout(this.timer)
     }
+  }
+
+  handleDynamicComment = (e) => {
+    e && e.stopPropagation()
+    const { currentPreviewFileData: { file_name, version_id, board_id, id } } = this.props
+    this.props.linkImWithFile && this.props.linkImWithFile({name:file_name,currentPreviewFileVersionId:version_id,board_id,type: 'file',id})
   }
 
   getIframe = (src) => {
@@ -243,7 +249,6 @@ class MainContent extends Component {
   renderPunctuateDom() {
     const { clientHeight, filePreviewUrl, filePreviewCurrentFileId, isZoomPictureFullScreenMode, componentWidth, componentHeight, isPdfLoaded } = this.props
     const { currentZoomPictureComponetWidth, currentZoomPictureComponetHeight, is_petty_loading, percent, } = this.state
-
     return (
       <>
         {
@@ -271,6 +276,15 @@ class MainContent extends Component {
                     isOpenAttachmentFile={this.props.isOpenAttachmentFile}
                   />
                 )}
+                {
+                  !this.props.isInAttachmentFile && (
+                    <div onClick={this.handleDynamicComment} id="dynamic_comment" className={mainContentStyles.dynamic_comment}>
+                      <Tooltip overlayStyle={{ minWidth: '72px' }} placement="top" title="动态消息" getPopupContainer={() => document.getElementById('dynamic_comment')}>
+                        <span className={globalStyles.authTheme}>&#xe8e8;</span>
+                      </Tooltip>
+                    </div>
+                  )
+                }
               </div>
             )
         }
@@ -654,10 +668,18 @@ function mapStateToProps({
     datas: {
       userBoardPermissions
     }
+  },
+  simplemode: {
+    chatImVisiable = false
+  },
+  publicFileDetailModal: {
+    isInAttachmentFile
   }
 }) {
   return {
-    userBoardPermissions
+    userBoardPermissions,
+    chatImVisiable,
+    isInAttachmentFile
   }
 }
 

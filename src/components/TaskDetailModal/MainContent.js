@@ -53,7 +53,8 @@ export default class MainContent extends Component {
     }
   }
 
-  handleDynamicComment = () => {
+  handleDynamicComment = (e) => {
+    e && e.stopPropagation()
     const { drawContent: { card_name, board_id, card_id } } = this.props
     this.linkImWithCard({ name: card_name, type: 'card', board_id: board_id, id: card_id })
   }
