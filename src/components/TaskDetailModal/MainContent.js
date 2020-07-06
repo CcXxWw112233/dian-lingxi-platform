@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
-import { Icon, message, Dropdown, Menu, DatePicker, Modal } from 'antd'
+import { Icon, message, Dropdown, Menu, DatePicker, Modal, Tooltip } from 'antd'
 import mainContentStyles from './MainContent.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
@@ -51,6 +51,11 @@ export default class MainContent extends Component {
         }
       })
     }
+  }
+
+  handleDynamicComment = () => {
+    const { drawContent: { card_name, board_id, card_id } } = this.props
+    this.linkImWithCard({ name: card_name, type: 'card', board_id: board_id, id: card_id })
   }
 
   //获取项目里文件夹列表
@@ -121,15 +126,7 @@ export default class MainContent extends Component {
       dispatch({
         type: 'publicTaskDetailModal/getCardWithAttributesDetail',
         payload: {
-          id: card_id,
-          // calback: function (data) {
-          //   if (checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW, data.board_id)) {
-          //     that.getProjectFolderList(data.board_id)
-          //   }
-          //   that.getMilestone(data.board_id)
-          //   that.filterCurrentExistenceField(data)// 初始化获取字段信息
-          //   that.linkImWithCard({name: data.card_name, type: 'card', board_id: data.board_id, id: data.card_id})
-          // }
+          id: card_id
         }
       })
     ).then(res => {
@@ -140,7 +137,7 @@ export default class MainContent extends Component {
         this.getMilestone(res.data.board_id)
         this.filterCurrentExistenceField(res.data)// 初始化获取字段信息
         this.whetherUpdateParentTaskTime()
-        this.linkImWithCard({ name: res.data.card_name, type: 'card', board_id: res.data.board_id, id: res.data.card_id })
+        // this.linkImWithCard({ name: res.data.card_name, type: 'card', board_id: res.data.board_id, id: res.data.card_id })
       } else {
         setTimeout(() => {
           dispatch({
@@ -157,20 +154,6 @@ export default class MainContent extends Component {
 
   componentDidMount() {
     this.getInitCardDetailDatas()
-    // this.props.dispatch({
-    //   type: 'publicTaskDetailModal/getCardWithAttributesDetail',
-    //   payload: {
-    //     id: card_id,
-    //     calback: function (data) {
-    //       if (checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW, data.board_id)) {
-    //         that.getProjectFolderList(data.board_id)
-    //       }
-    //       that.getMilestone(data.board_id)
-    //       that.filterCurrentExistenceField(data)// 初始化获取字段信息
-    //       that.linkImWithCard({name: data.card_name, type: 'card', board_id: data.board_id, id: data.card_id})
-    //     }
-    //   }
-    // })
   }
 
   componentWillReceiveProps(nextProps) {
@@ -1401,6 +1384,11 @@ export default class MainContent extends Component {
 
           </div>
           {/* 添加字段 E */}
+        </div>
+        <div onClick={this.handleDynamicComment} id="dynamic_comment" className={mainContentStyles.dynamic_comment}>
+          <Tooltip overlayStyle={{ minWidth: '72px' }} placement="top" title="动态消息" getPopupContainer={() => document.getElementById('dynamic_comment')}>
+            <span className={globalStyles.authTheme}>&#xe8e8;</span>
+          </Tooltip>
         </div>
         {/*查看任务附件*/}
         <div>

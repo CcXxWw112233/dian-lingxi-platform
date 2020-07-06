@@ -36,7 +36,7 @@ export default class DetailModal extends React.Component {
   }
 
   render() {
-    const { modalVisible, width, style, siderRightCollapsed, page_load_type, getContainer } = this.props;
+    const { modalVisible, width, style, siderRightCollapsed, page_load_type, getContainer, destroyOnClose } = this.props;
     const { clientWidth, clientHeight } = this.state;
 
     //const modalTop = 20
@@ -76,7 +76,7 @@ export default class DetailModal extends React.Component {
         closable={false}
         maskClosable={false}
         footer={null}
-        destroyOnClose
+        destroyOnClose={destroyOnClose || true}
         siderRightCollapsed={siderRightCollapsed}
         page_load_type={page_load_type}
         bodyStyle={{ padding: '0px' }}
