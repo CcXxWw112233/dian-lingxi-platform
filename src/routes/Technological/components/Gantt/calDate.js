@@ -90,7 +90,7 @@ function setWeekData(timestamp) {
     }
     weekData2.push(obj)
   }
-  return [].concat(weekData.reverse().slice(0, 48), weekData2)
+  return [].concat(weekData.reverse().slice(0, 49), weekData2)
 }
 
 function handleWeekData(timestamp) {
