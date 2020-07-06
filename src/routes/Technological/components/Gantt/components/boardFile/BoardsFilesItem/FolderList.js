@@ -157,14 +157,15 @@ export default class FolderList extends Component {
         this.setIsShowAddItem(false)
     }
     inputOnBlur = (e) => {
+        this.requestAddNewFolder()
         this.setIsShowAddItem(false)
     }
     inputOnchange = (e) => {
         const { value } = e.target
-        if (value.trimLR() == '') {
-            message.warn('文件夹名称不能为空')
-            return false
-        }
+        // if (value.trimLR() == '') {
+        //     message.warn('文件夹名称不能为空')
+        //     return false
+        // }
         this.setState({
             add_folder_value: value
         })
