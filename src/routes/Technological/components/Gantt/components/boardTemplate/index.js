@@ -674,7 +674,12 @@ export default class BoardTemplate extends Component {
 
 
     openImportBoardModal = (tplId) => {
+        const { outline_tree = [] } = this.props
         const { template_list } = this.state;
+        if (!outline_tree.length) {
+            this.onImportBoardTemplate()
+            return
+        }
         const selectedTpl = template_list.find((item) => item.id == tplId);
         this.setState({
             safeConfirmModalVisible: true,
