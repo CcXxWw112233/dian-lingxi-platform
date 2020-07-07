@@ -19,6 +19,7 @@ import BoardTemplate from './components/boardTemplate'
 import GroupListHeadElse from './GroupListHeadElse'
 import GetRowGanttItemElse from './GetRowGanttItemElse'
 import { weekDataArray } from './calDate';
+import { closeFeature } from '../../../../utils/temporary';
 
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -469,7 +470,7 @@ export default class GanttFace extends Component {
                     setScrollPosition={this.setScrollPosition}
                   />
                   {
-                    gantt_board_id && gantt_board_id != '0' && (
+                    gantt_board_id && gantt_board_id != '0' && !closeFeature({ board_id: gantt_board_id }) && (
                       <BoardTemplate insertTaskToListGroup={this.props.insertTaskToListGroup} gantt_card_height={gantt_card_height} />
                     )
                   }
