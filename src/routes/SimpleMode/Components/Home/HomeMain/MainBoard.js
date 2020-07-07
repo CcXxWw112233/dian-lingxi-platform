@@ -111,9 +111,12 @@ export default class MainBoard extends Component {
     getTheProjectListIsBelongToUserSelf = (props) => {
         const { projectList = [], simplemodeCurrentProject = {} } = props
         const { selected_board_term } = simplemodeCurrentProject
-        const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+        // const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
         let filterProjectList = [...projectList]
-        filterProjectList = (selected_board_term == '0' || !selected_board_term) ? projectList : selected_board_term == '1' ? filterProjectList.filter(i=>i.user_id==id) : []
+        // 这是过滤我发起的项目
+        // filterProjectList = (selected_board_term == '0' || !selected_board_term) ? projectList : selected_board_term == '1' ? filterProjectList.filter(i=>i.user_id==id) : []
+        // 过滤我负责的项目
+        filterProjectList = (selected_board_term == '0' || !selected_board_term) ? projectList : selected_board_term == '2' ? filterProjectList.filter(i=>i.is_principal == '1') : []
         this.setState({
             projectList: filterProjectList
         })
@@ -271,7 +274,8 @@ export default class MainBoard extends Component {
             <div>
                 <Menu defaultSelectedKeys="0" selectedKeys={selected_board_term ? selected_board_term : '0'} onClick={this.handleBoardSelectedTerm}>
                     <Menu.Item key="0">我参与的项目</Menu.Item>
-                    <Menu.Item key="1">我发起的项目</Menu.Item>
+                    {/* <Menu.Item key="1">我发起的项目</Menu.Item> */}
+                    <Menu.Item key="2">我负责的项目</Menu.Item>
                 </Menu>
             </div>
         )
@@ -284,7 +288,7 @@ export default class MainBoard extends Component {
             <div className={styles.board_area}>
                 <div className={styles.board_area_top}>
                     <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.renderBoardSelectedTerm()}>
-                        <div className={styles.board_area_top_lf}>{(selected_board_term == '0' || !selected_board_term) ? '我参与的项目' : selected_board_term == '1' ? '我发起的项目' : ''} <span className={globalStyles.authTheme}>&#xe7ee;</span></div>
+                        <div className={styles.board_area_top_lf}>{(selected_board_term == '0' || !selected_board_term) ? '我参与的项目' : selected_board_term == '1' ? '我发起的项目' : '我负责的项目'} <span className={globalStyles.authTheme}>&#xe7ee;</span></div>
                     </Dropdown>
                     <div className={styles.board_area_top_rt}>
                         <Checkbox

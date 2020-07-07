@@ -403,6 +403,7 @@ export default class DrawDetailInfo extends React.Component {
 
     const manImageDropdown = (props) => {
       const { role_id, role_name = '...', name, email = '...', avatar, mobile = '...', user_id, organization = '...', we_chat = '...' } = props
+      const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
       // if (!isHasOrgMemberQueryPermission()) {
       //   return <NoPermissionUserCard avatar={avatar} full_name={role_name} />
       // }
@@ -432,7 +433,7 @@ export default class DrawDetailInfo extends React.Component {
                 </div>
               </Tooltip>
             </div>
-            {role_id === '3' ? ('') : (
+            {(role_id === '3' && user_id == id) ? ('') : (
               <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={manOperateMenu(props)} overlayClassName={DrawDetailInfoStyle.overlay_manOperateMenu}>
                 <div className={DrawDetailInfoStyle.manImageDropdown_top_operate}><Icon type="ellipsis" theme="outlined" /></div>
               </Dropdown>

@@ -356,11 +356,11 @@ export const selectBoardToSeeInfo = ({ board_id, selected_board_term, board_name
   dispatch({ //设置极简模式的已选项目
     type: 'simplemode/updateDatas',
     payload: {
-      simplemodeCurrentProject: board_id == '0' ? selected_board_term == '1' ? {selected_board_term:'1'} : '' : {
+      simplemodeCurrentProject: board_id == '0' ? selected_board_term == '1' ? {selected_board_term:'1'} : selected_board_term == '2' ? {selected_board_term: '2'} : '' : {
         board_id,
         board_name,
         org_id: org_id || getOrgIdByBoardId(board_id),
-        selected_board_term: selected_board_term == '1' ? selected_board_term : '0'
+        selected_board_term: selected_board_term == '1' ? selected_board_term : selected_board_term == '2' ? selected_board_term : '0'
       }
     }
   })

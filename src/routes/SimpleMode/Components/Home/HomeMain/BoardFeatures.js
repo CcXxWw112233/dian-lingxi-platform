@@ -189,9 +189,12 @@ export default class BoardFeatures extends Component {
 		const { board_todo_list = [] } = this.state
 		let tempBoardToDoList = [...board_todo_list]
 		let tempProjectList = [...projectList]
-		if (selected_board_term == '1') {
+		if (selected_board_term == '1') { // 表示我参与的
 			const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
 			let temp = tempProjectList.filter(item=>item.user_id==id)
+			tempBoardToDoList = tempBoardToDoList.filter(item => temp.find(i=>i.board_id==item.board_id)) || []
+		} else if (selected_board_term == '2') { // 表示我负责的项目
+			let temp = tempProjectList.filter(item=>item.is_principal=='1')
 			tempBoardToDoList = tempBoardToDoList.filter(item => temp.find(i=>i.board_id==item.board_id)) || []
 		} else {
 			tempBoardToDoList = [...board_todo_list]
