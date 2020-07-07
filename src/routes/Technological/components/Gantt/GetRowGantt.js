@@ -728,14 +728,14 @@ export default class GetRowGantt extends Component {
           {/* 渲染大纲视图下的任务 */}
           {
             ganttIsOutlineView({ group_view_type }) && outline_tree_round.map((value, key) => {
-              const { end_time, left, top, id, start_time, tree_type, parent_expand, is_expand } = value
+              const { end_time, left, top, id, start_time, tree_type, parent_expand, is_expand, parent_card_id } = value
               const juge_expand = (tree_type == '0' || tree_type == '3') ? parent_expand : (parent_expand && is_expand)
               if (!parent_expand || !left) {
                 return <></>
               }
               if (tree_type == '2') {
                 return (
-                  <GetRowTaskItem
+                  !parent_card_id ? (<GetRowTaskItem
                     key={`${id}_${start_time}_${end_time}_${left}_${top}`}
                     itemValue={value}
                     setSpecilTaskExample={this.setSpecilTaskExample}
@@ -751,7 +751,7 @@ export default class GetRowGantt extends Component {
                     setDasheRectShow={this.setDasheRectShow}
                     setCardRelyDraging={this.setCardRelyDraging}
                     card_rely_draging={this.state.card_rely_draging}
-                  />
+                  />) : ('')
                 )
               } else if (tree_type == '3') {
                 return (
