@@ -4,6 +4,7 @@ import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { Icon, message, Tooltip, Button } from 'antd';
 import { isColor } from '@/utils/util'
+import { changeHXBNounName } from "../../../../utils/temporary";
 
 const WorkbenchBoxSelect = (props) => {
   const { dispatch, workbenchBoxList = [], myWorkbenchBoxList = [] } = props;
@@ -100,6 +101,7 @@ const WorkbenchBoxSelect = (props) => {
     return contain
   }
   const renderBoxItem = (boxItem, isSelected) => {
+    const { simplemodeCurrentProject = {} } = props
     return (
       <div key={boxItem.id} className={indexStyles.workbenchBox} onClick={(e) => { selectOrCancelCurrWorkbenchBox(e, { id: boxItem.id, isSelected: isSelected, status: boxItem.status }) }} disabled={boxItem.status == 0 ? true : false}>
         {/* <i dangerouslySetInnerHTML={{ __html: boxItem.icon }} className={`${globalStyles.authTheme} ${indexStyles.workbenchBox_icon}`} ></i><br /> */}
@@ -107,7 +109,7 @@ const WorkbenchBoxSelect = (props) => {
           {renderIconSVG(boxItem.code)}
         </div>
         <div>
-          <span className={indexStyles.workbenchBox_title}>{boxItem.name}</span>
+          <span className={indexStyles.workbenchBox_title}>{changeHXBNounName({ board_id: simplemodeCurrentProject.board_id, noun: boxItem.name })}</span>
         </div>
         {isSelected && (
           <span>
@@ -155,7 +157,7 @@ const WorkbenchBoxSelect = (props) => {
   );
 }
 export default connect(({
-  simplemode: { workbenchBoxList, myWorkbenchBoxList, currentUserWallpaperContent },
+  simplemode: { workbenchBoxList, myWorkbenchBoxList, currentUserWallpaperContent, simplemodeCurrentProject },
   technological: {
     datas: { userInfo }
-  } }) => ({ workbenchBoxList, myWorkbenchBoxList, currentUserWallpaperContent, userInfo }))(WorkbenchBoxSelect)
+  } }) => ({ workbenchBoxList, myWorkbenchBoxList, currentUserWallpaperContent, userInfo, simplemodeCurrentProject }))(WorkbenchBoxSelect)
