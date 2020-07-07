@@ -349,7 +349,7 @@ export default class DateList extends Component {
                           </div>
                         )
                       }
-                      {isToday ? '今天' : date_no}
+                      {isToday ? '今' : date_no}
                     </div>
                   </div>
                 </div>
@@ -374,7 +374,7 @@ export default class DateList extends Component {
                               </div>
                             )
                           }
-                          {isToday ? '今天' : date_no}
+                          {isToday ? '今' : date_no}
                         </div>
                       </div>
                     </div>
@@ -400,8 +400,8 @@ export default class DateList extends Component {
           return (
             group_view_type != '1' ? (
               <div key={`${month}/${timestamp}`}>
-                <div className={`${indexStyles.dateDetailItem}`} key={key2} style={{ width: ceilWidth * 7 }}>
-                  <div className={`${indexStyles.dateDetailItem_date_no} `}>
+                <div className={`${indexStyles.dateDetailItem}`} key={key2} style={{ width: ceilWidth * 7, fontSize: 12 }}>
+                  <div className={`${indexStyles.dateDetailItem_date_no} `} style={{ fontSize: 12,}}>
                     {date_no}
                   </div>
                 </div>
@@ -409,11 +409,11 @@ export default class DateList extends Component {
             ) : (
                 <Dropdown overlay={this.renderLCBList(current_date_miletones, { timestamp, timestampEnd })} key={`${month}/${timestamp}`} trigger={['click']}>
                   <div key={`${month}/${timestamp}`}>
-                    <div className={`${indexStyles.dateDetailItem}`} key={key2} style={{ width: ceilWidth * 7 }}>
+                    <div className={`${indexStyles.dateDetailItem}`} key={key2} style={{ width: ceilWidth * 7, fontSize: 12 }}>
                       <div className={`${indexStyles.dateDetailItem_date_no} 
                                     ${indexStyles.nomal_date_no}
                                     ${has_lcb && indexStyles.has_moletones_date_no}`}
-                        style={{ background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized }) }}
+                        style={{ background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized, fontSize: 12 }) }}
                       >
                         {date_no}
                       </div>
