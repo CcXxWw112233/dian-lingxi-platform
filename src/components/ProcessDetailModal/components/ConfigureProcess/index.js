@@ -9,7 +9,7 @@ import ConfigureStepTypeThree from './component/ConfigureStepTypeThree'
 import { processEditDatasItemOneConstant, processEditDatasItemTwoConstant, processEditDatasItemThreeConstant } from '../../constant'
 import { connect } from 'dva'
 import { isObjectValueEqual } from '../../../../utils/util'
-import { saveOnlineExcelWithProcess } from '../../../../services/technological/workFlow'
+import { saveOnlineExcelWithProcess, deleteOnlineExcelWithProcess } from '../../../../services/technological/workFlow'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
 @connect(mapStateToProps)
 export default class ConfigureProcess extends Component {
@@ -265,6 +265,25 @@ export default class ConfigureProcess extends Component {
   setSheet = (sheet) => {
     this.sheet = sheet
   }
+
+  /**
+   * 判断是否删除表格
+   * 思路：- 在编辑的时候 1.点击确认的时候, 如果forms中找不到对应的表格, 那么就需要删除
+   * PS： 现在只能做到如果 templeteInfo 中有表格 但是 processEditDatas 中没有 的删除
+   * 其他时候不知道什么时候删除表格 因为可以删除表格表项之后点击取消
+   * - 在配置的时候 2. 只有删除按钮, 那么点击删除icon就是删除表格, 以及删除节点的删除 就是删除表格
+   */
+  // whetherIsDeleteOnlineExcel = () => {
+  //   const { templateInfo = {}, templateInfo: { nodes = [] }, itemKey, processEditDatas = [], dispatch } = this.props
+  //   let newNodes = [...nodes]
+  //   let curr_excel = newNodes[itemKey]['forms'].find(i => i.field_type == '6')
+  //   if (!(curr_excel && Object.keys(curr_excel).length)) return
+  //   let excel_id = curr_excel.online_excel_id
+  //   deleteOnlineExcelWithProcess({id: excel_id}).then(res => {
+
+  //   })
+  // }
+
   // 确认修改的编辑内容点击事件
   handleConfirmEditContent = (e) => {
     e && e.stopPropagation()
@@ -284,6 +303,7 @@ export default class ConfigureProcess extends Component {
       }
     })
     this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '1')
+    // this.whetherIsDeleteOnlineExcel()
     // 如果找到表格 那么就保存获取表格数据
     if (node_type == '1') {
       let curr_excel = processEditDatas[itemKey]['forms'].find(i => i.field_type == '6')
@@ -299,6 +319,7 @@ export default class ConfigureProcess extends Component {
         }
       })
     }
+    
     // this.props.dispatch({
     //   type: 'publicProcessDetailModal/updateDatas',
     //   payload: {

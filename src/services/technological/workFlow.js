@@ -317,7 +317,7 @@ export async function getOnlineExcelWithProcess(data = {}) {
 // 删除表格
 export async function deleteOnlineExcelWithProcess(params) {
   return request({
-    url: `${REQUEST_DOMAIN_FILE}/file/online/excel`,
+    url: `${REQUEST_DOMAIN_FILE}/file/online/excel/${params.id}`,
     method: 'DELETE',
     params
   })
