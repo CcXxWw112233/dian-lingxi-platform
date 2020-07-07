@@ -27,6 +27,8 @@ import SafeConfirmModal from './components/SafeConfirmModal';
 import { updateFlowInstanceNameOrDescription } from '../../../../services/technological/workFlow';
 import SaveBoardTemplate from './components/Modal/SaveBoardTemplate'
 import { task_item_margin_top } from './constants';
+import { currentNounPlanFilterName } from '../../../../utils/businessFunction';
+import { PROJECTS } from '../../../../globalset/js/constant';
 const { SubMenu } = Menu;
 // const { TreeNode } = OutlineTree;
 const { confirm } = Modal;
@@ -858,7 +860,7 @@ export default class OutLineHeadItem extends Component {
                     <div>
                         <div style={{ color: '#1890FF' }} onClick={() => this.saveBoardTemplateVisible(true)}>
                             <span className={`${globalStyles.authTheme}`} style={{ fontSize: 16, marginRight: 4 }}>&#xe6b5;</span>
-                            <span style={{ marginRight: 16 }}>保存为项目模版</span>
+                            <span style={{ marginRight: 16 }}>保存为{`${currentNounPlanFilterName(PROJECTS)}`}模版</span>
                         </div>
                         {/* {
                             checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, gantt_board_id) &&

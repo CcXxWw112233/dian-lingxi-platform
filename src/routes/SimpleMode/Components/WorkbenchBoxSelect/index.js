@@ -4,7 +4,7 @@ import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { Icon, message, Tooltip, Button } from 'antd';
 import { isColor } from '@/utils/util'
-import { changeHXBNounName } from "../../../../utils/temporary";
+import { changeBoxFeatureName } from "../../../../utils/temporary";
 
 const WorkbenchBoxSelect = (props) => {
   const { dispatch, workbenchBoxList = [], myWorkbenchBoxList = [] } = props;
@@ -109,7 +109,7 @@ const WorkbenchBoxSelect = (props) => {
           {renderIconSVG(boxItem.code)}
         </div>
         <div>
-          <span className={indexStyles.workbenchBox_title}>{changeHXBNounName({ board_id: simplemodeCurrentProject.board_id, noun: boxItem.name })}</span>
+          <span className={indexStyles.workbenchBox_title}>{changeBoxFeatureName({ board_id: simplemodeCurrentProject.board_id, noun: boxItem.name })}</span>
         </div>
         {isSelected && (
           <span>

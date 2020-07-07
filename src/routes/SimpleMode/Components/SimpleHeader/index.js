@@ -10,11 +10,12 @@ import SimpleNavigation from "./Components/SimpleNavigation/index"
 import SimpleDrawer from './Components/SimpleDrawer/index'
 // import LingxiIm, { Im } from 'lingxi-im'
 import TaskDetailModal from '@/components/TaskDetailModal'
-import { setBoardIdStorage, getSubfixName } from "../../../../utils/businessFunction";
+import { setBoardIdStorage, getSubfixName, currentNounPlanFilterName } from "../../../../utils/businessFunction";
 import Organization from '@/routes/organizationManager'
 import FileDetailModal from '@/components/FileDetailModal'
 import ProcessDetailModal from '@/components/ProcessDetailModal'
 import Guide from '../Guide/index'
+import { PROJECTS } from "../../../../globalset/js/constant";
 const { LingxiIm } = global.constants
 
 class SimpleHeader extends Component {
@@ -586,7 +587,7 @@ class SimpleHeader extends Component {
                         <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '26px' }} >&#xe845;</i>
                     </div>
                 </Tooltip>
-                <Tooltip title="项目圈">
+                <Tooltip title={`${currentNounPlanFilterName(PROJECTS)}圈`}>
                     <div style={{ zIndex: !chatImVisiable && 1009 }} className={indexStyles.miniImMessage} onClick={this.openOrCloseImChatModal}>
                         {
                             im_alarm_no_reads_total > 0 && (

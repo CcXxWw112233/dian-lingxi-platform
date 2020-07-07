@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Input, Breadcrumb, Icon } from 'antd';
 import styles from './header.less';
+import { currentNounPlanFilterName } from '../../../../../utils/businessFunction';
+import { PROJECTS } from '../../../../../globalset/js/constant';
 // import { setTimeout } from 'core-js';
 
 
@@ -104,7 +106,7 @@ export default class Header extends Component {
                                         }
                                     </Breadcrumb>
                                 </div>
-                            ) : (<div className={styles.projectName}>项目{descriptionTitle || '文件'}</div>)
+                            ) : (<div className={styles.projectName}>{`${currentNounPlanFilterName(PROJECTS)}`}{descriptionTitle || '文件'}</div>)
                     }
                 </div>
 

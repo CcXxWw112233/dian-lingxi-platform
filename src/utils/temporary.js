@@ -11,13 +11,18 @@ export const isForHuiXB = ({ board_id }) => {
     return false
 }
 
-export const changeHXBNounName = ({ board_id, noun }) => {
+// 后台返回的功能盒子的方法
+export const changeBoxFeatureName = ({ board_id, noun }) => {
     let new_noun = noun
-    if (isForHuiXB({ board_id })) {
-        const obj = noun_name.find(item => noun.indexOf(item.target) != -1) || {}
-        const { target, to } = obj
-        new_noun = new_noun.replace(target, to)
-        return new_noun
-    }
+    const obj = noun_name.find(item => noun.indexOf(item.target) != -1) || {}
+    const { target, to } = obj
+    new_noun = new_noun.replace(target, to)
     return new_noun
+}
+// 关闭功能的条件
+export const closeFeature = ({ board_id }) => {
+    if (isForHuiXB({ board_id })) {
+        return true
+    }
+    return false
 }

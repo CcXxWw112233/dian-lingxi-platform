@@ -8,7 +8,7 @@ import BoardDropdownSelect from '../../Components/DropdownSelect/BoardDropdownSe
 import { routerRedux } from "dva/router";
 import { isPaymentOrgUser } from "@/utils/businessFunction"
 import { selectBoardToSeeInfo } from '../../../../utils/businessFunction';
-import { changeHXBNounName } from '../../../../utils/temporary';
+import { changeBoxFeatureName } from '../../../../utils/temporary';
 
 
 const MiniBoxNavigations = (props) => {
@@ -196,7 +196,7 @@ const MiniBoxNavigations = (props) => {
                         myWorkbenchBoxList.map((item, key) => {
                             const { rela_app_id, id, code } = item
                             const isDisableds = getIsDisabled(item)
-                            const name = changeHXBNounName({ board_id: simplemodeCurrentProject.board_id, noun: item.name })
+                            const name = changeBoxFeatureName({ board_id: simplemodeCurrentProject.board_id, noun: item.name })
                             if (isPaymentUser || item.code === 'board:plans') {
                                 if (item.status == 1) {
                                     return (

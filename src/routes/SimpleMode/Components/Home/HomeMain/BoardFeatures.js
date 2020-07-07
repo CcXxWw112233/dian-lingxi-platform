@@ -8,6 +8,8 @@ import ProcessDetailModal from '@/components/ProcessDetailModal'
 import BoardFeaturesProcessItem from './BoardFeaturesProcessItem'
 import { jsonArrayCompareSort, transformTimestamp, isObjectValueEqual, timeSort } from '../../../../../utils/util'
 import { compareOppositeTimer, removeEmptyArrayEle } from '../../../../../components/ProcessDetailModal/components/handleOperateModal'
+import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
+import { PROJECTS } from '../../../../../globalset/js/constant'
 
 @connect(mapStateToProps)
 export default class BoardFeatures extends Component {
@@ -191,8 +193,8 @@ export default class BoardFeatures extends Component {
 		let tempProjectList = [...projectList]
 		if (selected_board_term == '1') {
 			const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
-			let temp = tempProjectList.filter(item=>item.user_id==id)
-			tempBoardToDoList = tempBoardToDoList.filter(item => temp.find(i=>i.board_id==item.board_id)) || []
+			let temp = tempProjectList.filter(item => item.user_id == id)
+			tempBoardToDoList = tempBoardToDoList.filter(item => temp.find(i => i.board_id == item.board_id)) || []
 		} else {
 			tempBoardToDoList = [...board_todo_list]
 		}
@@ -232,7 +234,7 @@ export default class BoardFeatures extends Component {
 		return (
 			<div className={`${globalStyles.authTheme} ${styles.nodataArea2}`}>
 				<div className={`${globalStyles.authTheme} ${styles.alarm}`}>&#xe704;</div>
-				<div className={`${styles.title}`}>欢迎来到聆悉，我们有以上项目功能，赶快新建一个项目体验吧～</div>
+				<div className={`${styles.title}`}>欢迎来到聆悉，我们有以上{`${currentNounPlanFilterName(PROJECTS)}`}功能，赶快新建一个{`${currentNounPlanFilterName(PROJECTS)}`}体验吧～</div>
 			</div>
 		)
 	}
@@ -259,7 +261,7 @@ export default class BoardFeatures extends Component {
 					handleDeleteCard={this.handleDeleteCard}
 				/>
 				{
-					process_detail_modal_visible && whetherShowProcessDetailModal &&  (
+					process_detail_modal_visible && whetherShowProcessDetailModal && (
 						<ProcessDetailModal
 							process_detail_modal_visible={process_detail_modal_visible}
 							setProcessDetailModalVisibile={this.setProcessDetailModalVisibile}

@@ -4,7 +4,7 @@ import indexStyles from './featurebox.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { Icon, message, Tooltip } from 'antd';
 import { setBoardIdStorage, isPaymentOrgUser, } from "@/utils/businessFunction"
-import { changeHXBNounName } from "../../../../../utils/temporary";
+import { changeBoxFeatureName } from "../../../../../utils/temporary";
 class FeatureBox extends Component {
   constructor(props) {
     super(props);
@@ -307,7 +307,7 @@ class FeatureBox extends Component {
               <div>
                 {this.renderIconSVG(item.code)}
               </div>
-              <span className={indexStyles.myWorkbenchBox_title}>{changeHXBNounName({ board_id: simplemodeCurrentProject.board_id, noun: item.name })}</span>
+              <span className={indexStyles.myWorkbenchBox_title}>{changeBoxFeatureName({ board_id: simplemodeCurrentProject.board_id, noun: item.name })}</span>
             </div>
           </Tooltip>
         )
@@ -317,7 +317,7 @@ class FeatureBox extends Component {
               <div>
                 {this.renderIconSVG(item.code)}
               </div>
-              <span className={indexStyles.myWorkbenchBox_title}>{changeHXBNounName({ board_id: simplemodeCurrentProject.board_id, noun: item.name })}</span>
+              <span className={indexStyles.myWorkbenchBox_title}>{changeBoxFeatureName({ board_id: simplemodeCurrentProject.board_id, noun: item.name })}</span>
             </div>
           )}
       </>

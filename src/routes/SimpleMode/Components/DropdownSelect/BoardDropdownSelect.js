@@ -210,7 +210,7 @@ class BoardDropdownSelect extends Component {
 
   getMenuItemList(projectList) {
     const { currentUserOrganizes, currentSelectedWorkbenchBox = {} } = this.props;
-    let menuItemList = [{ id: '0', name: '我参与的项目' }];
+    let menuItemList = [{ id: '0', name: `我参与的${currentNounPlanFilterName(PROJECTS)}` }];
     projectList.map((board, index) => {
       const { board_id: id, board_name: name, org_id } = board;
       //根据当前模块是付费非付费模块 去设置项目列表中的项目是否可以选择
