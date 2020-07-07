@@ -282,7 +282,7 @@ export default class OrgnizationRole extends React.Component {
                   </div>
                   <div className={indexStyles.parrentPanaelHeader_r} style={{ display: 'block' }}>
                     {system_role !== '1' ? (
-                      <Dropdown overlay={operateMenu({ parentKey, value })}>
+                      <Dropdown overlay={operateMenu({ parentKey, value })} trigger={['click']}>
                         <Icon type="ellipsis" theme="outlined" />
                       </Dropdown>
                     ) : ('')}
