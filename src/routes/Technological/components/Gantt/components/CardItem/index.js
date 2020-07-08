@@ -972,7 +972,7 @@ export default class CardItem extends Component {
                     onMouseMove={(e) => e.preventDefault()}
                     style={{
                         opacity: 1,
-                        padding: (gantt_view_mode == 'year' && time_span < 4) ? '0' : '0 8px',
+                        padding: (gantt_view_mode != 'month' && time_span < 6) ? '0' : '0 8px',
                     }}
                 >
                     {/* <div data-targetclassname="specific_example"

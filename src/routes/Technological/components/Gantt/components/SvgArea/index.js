@@ -22,8 +22,8 @@ const rely_map = [
     },
 ]
 // 60 40 20
-const width_diff = 8 //宽度误差微调
-const left_diff = 12 //位置误差微调
+const width_diff = 4//8 //宽度误差微调
+const left_diff = 6//12 //位置误差微调
 const top_diff_60 = task_item_height + task_item_margin_top //位置误差微调
 const top_diff_30 = top_diff_60 / 2 + 2//位置误差微调 ,+2由于任务间距太小，恢复可去掉
 const top_diff_20 = task_item_margin_top //位置误差微调
