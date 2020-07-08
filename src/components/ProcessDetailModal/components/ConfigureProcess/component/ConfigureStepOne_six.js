@@ -13,7 +13,6 @@ export default class ConfigureStepOne_six extends Component {
   constructor(props) {
     super(props)
     this.state = {}
-    this.sheet = null
   }
 
   getOnlineExcelDataWithProcess = (props) => {
@@ -22,15 +21,7 @@ export default class ConfigureStepOne_six extends Component {
       if (isApiResponseOk(res)) {
         this.setState({
           data: res.data
-        }, () => {
-          setTimeout(() => {
-            // this.sheet.reload(res.data && res.data.sheet_data)
-            if (this.sheet) {
-              this.props.setSheet && this.props.setSheet(this.sheet)
-            }
-          }, 500)
         })
-
       }
     })
   }
@@ -48,8 +39,9 @@ export default class ConfigureStepOne_six extends Component {
     new_form_data.splice(itemKey, 1)
     this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: new_form_data }, 'forms')
   }
+
+  // 更新表格数据
   updateSheetData = (data) => {
-    // console.log(data)
     const { updateSheetList } = this.props;
     this.setState({
       data: {
@@ -60,23 +52,20 @@ export default class ConfigureStepOne_six extends Component {
   }
 
   render() {
-    const { children, itemKey, itemValue: { online_excel_id } } = this.props
+    const { itemKey, itemValue: { online_excel_id } } = this.props
     const { data = {} } = this.state;
     return (
-      <div key={online_excel_id || itemKey} style={{ minHeight: '550px', position: 'relative', marginBottom: '40px' }} className={indexStyles.text_form}>
+      <div key={online_excel_id || itemKey} style={{ position: 'relative', marginBottom: '40px' }} className={indexStyles.text_form}>
         <p>在线表格 
           <span style={{marginLeft: 10}}>
             <Sheet data={data.sheet_data} onMessage={this.updateSheetData}/>
           </span>
         </p>
-        {/* {children} */}
-        {/* <Sheet ref={el => this.sheet = el} /> */}
         <PrivewTable data={ data.sheet_data }/>
         <span style={{ zIndex: 6 }} onClick={this.handleDelFormDataItem} className={`${indexStyles.delet_iconCircle}`}>
           <span className={`${globalStyles.authTheme} ${indexStyles.deletet_icon}`}>&#xe720;</span>
         </span>
       </div>
-
     )
   }
 }

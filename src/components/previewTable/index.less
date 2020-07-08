@@ -2,7 +2,8 @@
     position: relative;
     width: 100%;
     overflow: auto;
-    height: 500px;
+    // height: 500px;
+    max-height: 340px;
     padding-bottom: 10px;
     &::-webkit-scrollbar {/*滚动条整体样式*/
         width: 4px;     /*高宽分别对应横竖滚动条的尺寸*/
@@ -53,16 +54,18 @@
         .sheetItem{
             cursor: pointer;
             &.activeTab {
-                background-color: #fff;
+                background-color: #1890FF;
+                color: #fff;
+                transition: all .5s;
             }
-            background-color: rgba(0,0,0,0.15);
+            background-color: #fff;
             display: inline-block;
             border-left: 1px solid #ddd;
             border-bottom: 1px solid #ddd;
             border-right: 1px solid #ddd;
             padding: 5px 10px;
-            border-bottom-left-radius: 8px;
-            border-bottom-right-radius: 8px;
+            border-radius: 4px;
+            transition: all .5s;
         }
     }
 }

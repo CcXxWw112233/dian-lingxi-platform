@@ -13,7 +13,6 @@ export default class BeginningStepOne_six extends Component {
   constructor(props) {
     super(props)
     this.state = {}
-    this.sheet = null
   }
 
   getOnlineExcelDataWithProcess = (props) => {
@@ -22,15 +21,7 @@ export default class BeginningStepOne_six extends Component {
       if (isApiResponseOk(res)) {
         this.setState({
           data: res.data
-        }, () => {
-          // this.sheet.reload(res.data && res.data.sheet_data)
-          setTimeout(() => {
-            if (this.sheet) {
-              this.props.setSheet && this.props.setSheet(this.sheet)
-            }
-          }, 1000)
         })
-
       }
     })
   }
@@ -39,30 +30,14 @@ export default class BeginningStepOne_six extends Component {
     this.getOnlineExcelDataWithProcess(this.props)
   }
 
-  // 删除对应字段的表项
-  handleDelFormDataItem = (e) => {
-    e && e.stopPropagation()
-    const { processEditDatas = [], parentKey = 0, itemKey } = this.props
-    const { forms = [] } = processEditDatas[parentKey]
-    let new_form_data = [...forms]
-    new_form_data.splice(itemKey, 1)
-    this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: new_form_data }, 'forms')
-  }
-
   render() {
-    const { children, itemValue: { online_excel_id } } = this.props
+    const { itemValue: { online_excel_id } } = this.props
     const { data } = this.state;
     return (
-      <div key={online_excel_id} style={{ minHeight: '550px',position:'relative',marginBottom: '40px' }} className={indexStyles.text_form}>
+      <div key={online_excel_id} style={{ position:'relative',marginBottom: '40px' }} className={indexStyles.text_form}>
         <p>在线表格</p>
-        {/* {children} */}
         <PreviewTable data={data && data.sheet_data}/>
-        {/* <Sheet ref={el => this.sheet = el} /> */}
-        <span style={{ zIndex: 6 }} onClick={this.handleDelFormDataItem} className={`${indexStyles.delet_iconCircle}`}>
-          <span className={`${globalStyles.authTheme} ${indexStyles.deletet_icon}`}>&#xe720;</span>
-        </span>
       </div>
-
     )
   }
 }

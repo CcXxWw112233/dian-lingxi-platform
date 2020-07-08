@@ -12,7 +12,7 @@ export default class PreviewTable extends React.Component{
             activeIndex: 0,
             replaceLetters: [],
         }
-        this.minRows = 20;
+        this.minRows = 10;
         this.minCols = 18;
         this.letters = 
         ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
@@ -145,11 +145,11 @@ export default class PreviewTable extends React.Component{
                 mKeys.forEach(conf => {
                     let r = +merge[conf].r;
                     let c = +merge[conf].c;
+                    let oldm = d[r][c] || {};
                     let rs = r + +merge[conf].rs - 1;
                     for(let i = r ; i <= rs ; i++){
                         d[i].splice(c, +merge[conf].cs);
                     }
-                    let oldm = d[r][c] || {};
                     d[r].splice(c, 0, oldm);
                     d[r][c] = { ...oldm, merge: true, r: +merge[conf].rs, c: +merge[conf].cs};
                 })

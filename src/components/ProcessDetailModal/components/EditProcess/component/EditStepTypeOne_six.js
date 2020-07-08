@@ -10,7 +10,6 @@ export default class EditStepTypeOne_six extends Component {
   constructor(props) {
     super(props)
     this.state = {}
-    this.sheet = null;
   }
 
   getOnlineExcelDataWithProcess = (props) => {
@@ -19,8 +18,6 @@ export default class EditStepTypeOne_six extends Component {
       if (isApiResponseOk(res)) {
         this.setState({
           data: res.data
-        }, () => {
-          // online_excel_id == res.data.id && this.sheet && this.sheet.reload(res.data && res.data.sheet_data)
         })
 
       }
@@ -36,18 +33,9 @@ export default class EditStepTypeOne_six extends Component {
     const { online_excel_id } = itemValue
     const { data = [] } = this.state
     return (
-      <div key={online_excel_id} style={{ minHeight: '500px', position: 'relative',marginBottom: '40px' }} className={indexStyles.text_form}>
-        {/* <Sheet ref={el => this.sheet = el} /> */}
+      <div key={online_excel_id} style={{ position: 'relative',marginBottom: '40px' }} className={indexStyles.text_form}>
         <p>在线表格</p>
         <PreviewTable data={data.sheet_data || []}/>
-        {/* <Sheet
-          data={data.sheet_data}
-          ref={el => this.sheet = el}
-          disabledEdit={true}
-          showtoolbar={false}
-          showinfobar={false}
-          showstatisticBar={false}
-        /> */}
       </div>
     )
   }

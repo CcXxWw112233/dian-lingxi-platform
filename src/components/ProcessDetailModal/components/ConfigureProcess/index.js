@@ -25,7 +25,6 @@ export default class ConfigureProcess extends Component {
       sheetListData: {
       },
     }
-    this.sheet = null
   }
 
   // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
@@ -180,8 +179,6 @@ export default class ConfigureProcess extends Component {
     let curr_excel = processEditDatas[itemKey]['forms'] && processEditDatas[itemKey]['forms'].find(i => i.field_type == '6')
     if (!(curr_excel && Object.keys(curr_excel).length)) return
     let excel_id = curr_excel.online_excel_id
-    // let sheet_data = this.sheet && this.sheet.getFormatData()
-    // if (!(sheet_data && sheet_data.length) || !excel_id) return
     this.saveSheetData(excel_id);
   }
 
@@ -278,10 +275,6 @@ export default class ConfigureProcess extends Component {
         processCurrentEditStep: processCurrentEditStep >= 1 ? processCurrentEditStep - 1 : 0,
       }
     })
-  }
-
-  setSheet = (sheet) => {
-    this.sheet = sheet
   }
 
   /**
@@ -658,7 +651,7 @@ export default class ConfigureProcess extends Component {
     let container = <div></div>
     switch (node_type) {
       case '1': // 表示资料收集
-        container = <ConfigureStepTypeOne setSheet={this.setSheet} updateSheetList={this.updateSheetList} itemValue={itemValue} itemKey={itemKey} />
+        container = <ConfigureStepTypeOne updateSheetList={this.updateSheetList} itemValue={itemValue} itemKey={itemKey} />
         break;
       case '2': // 表示审批
         container = <ConfigureStepTypeTwo itemValue={itemValue} itemKey={itemKey} />

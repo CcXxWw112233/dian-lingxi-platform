@@ -31,7 +31,6 @@ export default class BeginningStepOne extends Component {
       is_show_spread_arrow: props.itemValue.status == '1' || props.itemValue.runtime_type == '1' ? true : false, // 是否展开箭头 详情 true表示展开
       form_values: []
     }
-    this.sheet = null
   }
 
   updateState = (flag) => {
@@ -296,14 +295,6 @@ export default class BeginningStepOne extends Component {
     const { forms = [] } = processEditDatas[itemKey]
     let newFormsData = [...forms]
     let form_values = []
-    let filesStr = []
-    // let filterFilesData = (fileList) => {
-    //   let newFileList = [...fileList]
-    //   newFileList.map(item => {
-    //     filesStr.push(item.flow_file_id)
-    //   })
-    //   return filesStr.join(',')
-    // }
     newFormsData.map(item => {
       let field_type = item.field_type
       let files = (item.files && item.files.length) && item.files
@@ -316,30 +307,25 @@ export default class BeginningStepOne extends Component {
     return form_values
   }
 
-  setSheet = (sheet) => {
-    this.sheet = sheet
-  }
-
   saveOnlineExcel = async () => {
     // return new Promise((resolve,reject) => {
       const { processEditDatas = [], itemKey } = this.props
       let curr_excel = processEditDatas[itemKey]['forms'].find(i => i.field_type == '6')
       if (!(curr_excel && Object.keys(curr_excel).length)) return
       let excel_id = curr_excel.online_excel_id
-      let sheet_data = this.sheet && this.sheet.getFormatData()
       if (!(sheet_data && sheet_data.length) || !excel_id) return
-      return await new Promise((resolve) =>{
-        saveOnlineExcelWithProcess({ excel_id, sheet_data }).then(res => {
-          if (isApiResponseOk(res)) {
-            this.setState({
-              data: res.data
-            })
-            resolve(res.data);
-          } else {
-            resolve([])
-          }
-        }).catch(err => resolve(err))
-      })
+      // return await new Promise((resolve) =>{
+      //   saveOnlineExcelWithProcess({ excel_id, sheet_data }).then(res => {
+      //     if (isApiResponseOk(res)) {
+      //       this.setState({
+      //         data: res.data
+      //       })
+      //       resolve(res.data);
+      //     } else {
+      //       resolve([])
+      //     }
+      //   }).catch(err => resolve(err))
+      // })
     // })
     
   }
@@ -365,10 +351,9 @@ export default class BeginningStepOne extends Component {
     let form_values = this.getAllNodesFormsData()
     let that = this
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
-    if ((forms && forms.length) && forms.find(i=>i.field_type=='6')) {
-      await this.saveOnlineExcel()
-    }
-    // await this.saveOnlineExcel()
+    // if ((forms && forms.length) && forms.find(i=>i.field_type=='6')) {
+    //   await this.saveOnlineExcel()
+    // }
     dispatch({
       type: 'publicProcessDetailModal/fillFormComplete',
       payload: { 
@@ -443,7 +428,7 @@ export default class BeginningStepOne extends Component {
         container = <BeginningStepOne_five updateState={this.updateState} parentKey={itemKey} FormCanEdit={this.FormCanEdit()} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
         break;
       case '6':
-        container = <BeginningStepOne_six setSheet={this.setSheet} updateState={this.updateState} parentKey={itemKey} FormCanEdit={this.FormCanEdit()} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
+        container = <BeginningStepOne_six updateState={this.updateState} parentKey={itemKey} FormCanEdit={this.FormCanEdit()} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
         break
       default:
         break;
