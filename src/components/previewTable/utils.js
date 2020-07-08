@@ -12,7 +12,7 @@ export function exportFile(data, fileName = new Date().getTime().toString()){
         let cellValue = null;
         // 获取单元格的背景色
         function setBackground(row, col, bg) {
-            var colA = luckysheet.luckysheetchatatABC(col);
+            var colA = window.luckysheet.luckysheetchatatABC(col);
             var key = colA + (row + 1);
             bgConfig[key] = bg.replace(/\#?/, '');
         }
