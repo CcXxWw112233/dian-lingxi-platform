@@ -3,10 +3,10 @@ import { connect } from 'dva'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { Popover, Input, Button, Radio, Select, InputNumber } from 'antd'
-// import Sheet from '../../../../Sheet/Sheet'
 import { getOnlineExcelDataWithProcess } from '../../../../../services/technological/workFlow'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
-import PreviewTable from '../../../../previewTable/index'
+import PrivewTable from '../../../../previewTable/index'
+import Sheet from '../../../../Sheet'
 @connect(mapStateToProps)
 export default class BeginningStepOne_six extends Component {
 
@@ -30,13 +30,28 @@ export default class BeginningStepOne_six extends Component {
     this.getOnlineExcelDataWithProcess(this.props)
   }
 
+  // 更新表格数据
+  updateSheetData = (data) => {
+    const { updateSheetList } = this.props;
+    this.setState({
+      data: {
+        sheet_data: data
+      }
+    })
+    updateSheetList && updateSheetList({id: data.id, sheetData: data })
+  }
+
   render() {
     const { itemValue: { online_excel_id } } = this.props
-    const { data } = this.state;
+    const { data = [] } = this.state;
     return (
       <div key={online_excel_id} style={{ position:'relative',marginBottom: '40px' }} className={indexStyles.text_form}>
-        <p>在线表格</p>
-        <PreviewTable data={data && data.sheet_data}/>
+        <p>在线表格 
+          <span style={{marginLeft: 10}}>
+            <Sheet data={data.sheet_data} onMessage={this.updateSheetData}/>
+          </span>
+        </p>
+        <PrivewTable data={ data.sheet_data }/>
       </div>
     )
   }

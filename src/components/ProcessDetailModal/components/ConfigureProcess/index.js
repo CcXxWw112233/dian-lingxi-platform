@@ -169,22 +169,11 @@ export default class ConfigureProcess extends Component {
     e && e.stopPropagation()
   }
 
-
-  // 确认的点击事件
-  handleConfirmButton = (e) => {
-    e && e.stopPropagation()
-    const { itemKey, processEditDatas = [], dispatch } = this.props
-    this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '1')
-    // 如果找到表格 那么就保存获取表格数据
-    let curr_excel = processEditDatas[itemKey]['forms'] && processEditDatas[itemKey]['forms'].find(i => i.field_type == '6')
-    if (!(curr_excel && Object.keys(curr_excel).length)) return
-    let excel_id = curr_excel.online_excel_id
-    this.saveSheetData(excel_id);
-  }
+  // ----------------------------------- 表格相关操作 -------------------------------------
 
   // 保存表格数据
   saveSheetData = (id)=> {
-    let { sheetListData } = this.state;
+    let { sheetListData = [] } = this.state;
     if(!id) return ;
     let keys = Object.keys(sheetListData);
     if(keys.length){
@@ -199,9 +188,32 @@ export default class ConfigureProcess extends Component {
         })
       })
       Promise.all(promise).then(resp => {
-        console.info(resp);
+        // console.info(resp);
       })
     }
+  }
+  
+  // 更新表格列表数据
+  updateSheetList = ({id, sheetData}) => {
+    let obj = {...this.state.sheetListData};
+    obj[id] = sheetData;
+      this.setState({
+        sheetListData: obj
+      })
+  }
+
+  // ----------------------------------- 表格相关操作 -------------------------------------
+
+  // 确认的点击事件
+  handleConfirmButton = (e) => {
+    e && e.stopPropagation()
+    const { itemKey, processEditDatas = [], dispatch } = this.props
+    this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '1')
+    // 如果找到表格 那么就保存获取表格数据
+    let curr_excel = processEditDatas[itemKey]['forms'] && processEditDatas[itemKey]['forms'].find(i => i.field_type == '6')
+    if (!(curr_excel && Object.keys(curr_excel).length)) return
+    let excel_id = curr_excel.online_excel_id
+    this.saveSheetData(excel_id);
   }
 
   // 删除的点击事件
@@ -320,24 +332,8 @@ export default class ConfigureProcess extends Component {
       let curr_excel = processEditDatas[itemKey]['forms'].find(i => i.field_type == '6')
       if (!(curr_excel && Object.keys(curr_excel).length)) return
       let excel_id = curr_excel.online_excel_id
-      // let sheet_data = this.sheet && this.sheet.getFormatData()
-      // if (!(sheet_data && sheet_data.length) || !excel_id) return
-      // saveOnlineExcelWithProcess({ excel_id, sheet_data }).then(res => {
-      //   if (isApiResponseOk(res)) {
-      //     this.setState({
-      //       data: res.data
-      //     })
-      //   }
-      // })
       this.saveSheetData(excel_id)
-    }
-    
-    // this.props.dispatch({
-    //   type: 'publicProcessDetailModal/updateDatas',
-    //   payload: {
-    //     excel_form_data
-    //   }
-    // })  
+    } 
   }
 
   // 当先选择的节点类型
@@ -664,15 +660,6 @@ export default class ConfigureProcess extends Component {
         break;
     }
     return container
-  }
-
-  // 更新表格列表数据
-  updateSheetList = ({id, sheetData}) => {
-    let obj = {...this.state.sheetListData};
-    obj[id] = sheetData;
-      this.setState({
-        sheetListData: obj
-      })
   }
 
   renderContent = () => {

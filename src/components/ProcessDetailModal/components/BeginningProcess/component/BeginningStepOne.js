@@ -29,7 +29,8 @@ export default class BeginningStepOne extends Component {
       transPrincipalList: props.itemValue.assignees ? [...props.itemValue.assignees] : [], // 表示当前的执行人
       transCopyPersonnelList: props.itemValue.recipients ? [...props.itemValue.recipients] : [], // 表示当前选择的抄送人
       is_show_spread_arrow: props.itemValue.status == '1' || props.itemValue.runtime_type == '1' ? true : false, // 是否展开箭头 详情 true表示展开
-      form_values: []
+      form_values: [],
+      sheetListData: {}, // 存放表格列表数据
     }
   }
 
@@ -307,27 +308,35 @@ export default class BeginningStepOne extends Component {
     return form_values
   }
 
-  saveOnlineExcel = async () => {
-    // return new Promise((resolve,reject) => {
-      const { processEditDatas = [], itemKey } = this.props
-      let curr_excel = processEditDatas[itemKey]['forms'].find(i => i.field_type == '6')
-      if (!(curr_excel && Object.keys(curr_excel).length)) return
-      let excel_id = curr_excel.online_excel_id
-      if (!(sheet_data && sheet_data.length) || !excel_id) return
-      // return await new Promise((resolve) =>{
-      //   saveOnlineExcelWithProcess({ excel_id, sheet_data }).then(res => {
-      //     if (isApiResponseOk(res)) {
-      //       this.setState({
-      //         data: res.data
-      //       })
-      //       resolve(res.data);
-      //     } else {
-      //       resolve([])
-      //     }
-      //   }).catch(err => resolve(err))
-      // })
-    // })
-    
+  // 保存表格数据
+  saveSheetData = (id)=> {
+    let { sheetListData = [] } = this.state;
+    if(!id) return ;
+    let keys = Object.keys(sheetListData);
+    if(keys.length){
+      let promise = keys.map(item => {
+        let data = sheetListData[item];
+        return new Promise((resolve) => {
+          saveOnlineExcelWithProcess({ excel_id: id, sheet_data: data }).then(res => {
+            if(isApiResponseOk(res)){
+              resolve(res.data);
+            }
+          })
+        })
+      })
+      Promise.all(promise).then(resp => {
+        // console.info(resp);
+      })
+    }
+  }
+  
+  // 更新表格列表数据
+  updateSheetList = ({id, sheetData}) => {
+    let obj = {...this.state.sheetListData};
+    obj[id] = sheetData;
+      this.setState({
+        sheetListData: obj
+      })
   }
 
   // 编辑点击事件
@@ -346,14 +355,16 @@ export default class BeginningStepOne extends Component {
     }
 
     // this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
-    const { processInfo: { id: flow_instance_id, board_id }, itemValue, dispatch, request_flows_params = {} } = this.props
+    const { processInfo: { id: flow_instance_id, board_id }, itemValue, dispatch, request_flows_params = {}, processEditDatas = [], itemKey } = this.props
     const { id: flow_node_instance_id, forms = [] } = itemValue
     let form_values = this.getAllNodesFormsData()
     let that = this
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
-    // if ((forms && forms.length) && forms.find(i=>i.field_type=='6')) {
-    //   await this.saveOnlineExcel()
-    // }
+    // 如果找到表格 那么就保存获取表格数据
+    let curr_excel = processEditDatas[itemKey]['forms'] && processEditDatas[itemKey]['forms'].find(i => i.field_type == '6')
+    if (!(curr_excel && Object.keys(curr_excel).length)) return
+    let excel_id = curr_excel.online_excel_id
+    this.saveSheetData(excel_id);
     dispatch({
       type: 'publicProcessDetailModal/fillFormComplete',
       payload: { 
@@ -428,7 +439,7 @@ export default class BeginningStepOne extends Component {
         container = <BeginningStepOne_five updateState={this.updateState} parentKey={itemKey} FormCanEdit={this.FormCanEdit()} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
         break;
       case '6':
-        container = <BeginningStepOne_six updateState={this.updateState} parentKey={itemKey} FormCanEdit={this.FormCanEdit()} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
+        container = <BeginningStepOne_six updateSheetList={this.updateSheetList} updateState={this.updateState} parentKey={itemKey} FormCanEdit={this.FormCanEdit()} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
         break
       default:
         break;
