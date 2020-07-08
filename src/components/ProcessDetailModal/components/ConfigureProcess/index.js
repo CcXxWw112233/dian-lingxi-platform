@@ -21,7 +21,9 @@ export default class ConfigureProcess extends Component {
     this.state = {
       localName: '', // 当前节点步骤的名称
       currentEditNodeItem: processPageFlagStep == '2' ? currentEditNodeItem : {},
-      isDisabled: true // 是否禁用取消按钮 false 表示不禁用 true 表示禁用 ==> 有变化才进行取消 没有变化不取消
+      isDisabled: true, // 是否禁用取消按钮 false 表示不禁用 true 表示禁用 ==> 有变化才进行取消 没有变化不取消
+      sheetListData: {
+      },
     }
     this.sheet = null
   }
@@ -178,15 +180,31 @@ export default class ConfigureProcess extends Component {
     let curr_excel = processEditDatas[itemKey]['forms'] && processEditDatas[itemKey]['forms'].find(i => i.field_type == '6')
     if (!(curr_excel && Object.keys(curr_excel).length)) return
     let excel_id = curr_excel.online_excel_id
-    let sheet_data = this.sheet && this.sheet.getFormatData()
-    if (!(sheet_data && sheet_data.length) || !excel_id) return
-    saveOnlineExcelWithProcess({ excel_id, sheet_data }).then(res => {
-      if (isApiResponseOk(res)) {
-        this.setState({
-          data: res.data
+    // let sheet_data = this.sheet && this.sheet.getFormatData()
+    // if (!(sheet_data && sheet_data.length) || !excel_id) return
+    this.saveSheetData(excel_id);
+  }
+
+  // 保存表格数据
+  saveSheetData = (id)=> {
+    let { sheetListData } = this.state;
+    if(!id) return ;
+    let keys = Object.keys(sheetListData);
+    if(keys.length){
+      let promise = keys.map(item => {
+        let data = sheetListData[item];
+        return new Promise((resolve) => {
+          saveOnlineExcelWithProcess({ excel_id: id, sheet_data: data }).then(res => {
+            if(isApiResponseOk(res)){
+              resolve(res.data);
+            }
+          })
         })
-      }
-    })
+      })
+      Promise.all(promise).then(resp => {
+        console.info(resp);
+      })
+    }
   }
 
   // 删除的点击事件
@@ -289,15 +307,16 @@ export default class ConfigureProcess extends Component {
       let curr_excel = processEditDatas[itemKey]['forms'].find(i => i.field_type == '6')
       if (!(curr_excel && Object.keys(curr_excel).length)) return
       let excel_id = curr_excel.online_excel_id
-      let sheet_data = this.sheet && this.sheet.getFormatData()
-      if (!(sheet_data && sheet_data.length) || !excel_id) return
-      saveOnlineExcelWithProcess({ excel_id, sheet_data }).then(res => {
-        if (isApiResponseOk(res)) {
-          this.setState({
-            data: res.data
-          })
-        }
-      })
+      // let sheet_data = this.sheet && this.sheet.getFormatData()
+      // if (!(sheet_data && sheet_data.length) || !excel_id) return
+      // saveOnlineExcelWithProcess({ excel_id, sheet_data }).then(res => {
+      //   if (isApiResponseOk(res)) {
+      //     this.setState({
+      //       data: res.data
+      //     })
+      //   }
+      // })
+      this.saveSheetData(excel_id)
     }
     // this.props.dispatch({
     //   type: 'publicProcessDetailModal/updateDatas',
@@ -618,7 +637,7 @@ export default class ConfigureProcess extends Component {
     let container = <div></div>
     switch (node_type) {
       case '1': // 表示资料收集
-        container = <ConfigureStepTypeOne setSheet={this.setSheet} itemValue={itemValue} itemKey={itemKey} />
+        container = <ConfigureStepTypeOne setSheet={this.setSheet} updateSheetList={this.updateSheetList} itemValue={itemValue} itemKey={itemKey} />
         break;
       case '2': // 表示审批
         container = <ConfigureStepTypeTwo itemValue={itemValue} itemKey={itemKey} />
@@ -631,6 +650,15 @@ export default class ConfigureProcess extends Component {
         break;
     }
     return container
+  }
+
+  // 更新表格列表数据
+  updateSheetList = ({id, sheetData}) => {
+    let obj = {...this.state.sheetListData};
+    obj[id] = sheetData;
+      this.setState({
+        sheetListData: obj
+      })
   }
 
   renderContent = () => {

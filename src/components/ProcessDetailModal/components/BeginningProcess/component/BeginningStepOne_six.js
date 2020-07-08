@@ -3,9 +3,10 @@ import { connect } from 'dva'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { Popover, Input, Button, Radio, Select, InputNumber } from 'antd'
-import Sheet from '../../../../Sheet/Sheet'
+// import Sheet from '../../../../Sheet/Sheet'
 import { getOnlineExcelDataWithProcess } from '../../../../../services/technological/workFlow'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
+import PreviewTable from '../../../../previewTable/index'
 @connect(mapStateToProps)
 export default class BeginningStepOne_six extends Component {
 
@@ -22,7 +23,7 @@ export default class BeginningStepOne_six extends Component {
         this.setState({
           data: res.data
         }, () => {
-          this.sheet.reload(res.data && res.data.sheet_data)
+          // this.sheet.reload(res.data && res.data.sheet_data)
           setTimeout(() => {
             if (this.sheet) {
               this.props.setSheet && this.props.setSheet(this.sheet)
@@ -50,11 +51,13 @@ export default class BeginningStepOne_six extends Component {
 
   render() {
     const { children, itemValue: { online_excel_id } } = this.props
+    const { data } = this.state;
     return (
       <div key={online_excel_id} style={{ minHeight: '550px',position:'relative',marginBottom: '40px' }} className={indexStyles.text_form}>
         <p>在线表格</p>
         {/* {children} */}
-        <Sheet ref={el => this.sheet = el} />
+        <PreviewTable data={data && data.sheet_data}/>
+        {/* <Sheet ref={el => this.sheet = el} /> */}
         <span style={{ zIndex: 6 }} onClick={this.handleDelFormDataItem} className={`${indexStyles.delet_iconCircle}`}>
           <span className={`${globalStyles.authTheme} ${indexStyles.deletet_icon}`}>&#xe720;</span>
         </span>

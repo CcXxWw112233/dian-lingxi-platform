@@ -1,5 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types';
+import ReactDOM from 'react-dom'
+import styles from '../index.less'
+import globalStyles from '@/globalset/css/globalClassName.less'
 
 export default class Sheet extends React.Component{
   constructor(){
@@ -114,9 +117,15 @@ export default class Sheet extends React.Component{
   }
   render(){
     let { id } = this.props;
-    return (
-      <div id={id || 'luckysheet'} style={{zIndex: 5,margin:0,padding:0,position:"absolute",top:'30px',left:0,width:"100%",height:"100%"}}></div>
-    )
+    return ReactDOM.createPortal(
+      <>
+        <span className={`${globalStyles.authTheme} ${styles.closeBtn}`} onClick={()=> {this.props.onClose && this.props.onClose()}}>&#xe7fe;</span>
+        <div id={id || 'luckysheet'} 
+        className={styles.luckysheet}
+        style={{ margin: 0, padding: 0, position: "absolute", top: '0px', left: 0, width: "100%", height: "100%"}}>
+        </div>
+      </>, 
+      document.body)
   }
 }
 

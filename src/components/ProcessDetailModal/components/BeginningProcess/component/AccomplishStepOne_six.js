@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import indexStyles from '../index.less'
-import Sheet from '../../../../Sheet/Sheet'
+// import Sheet from '../../../../Sheet/Sheet'
 import { getOnlineExcelDataWithProcess } from '../../../../../services/technological/workFlow'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
+import PreviewTable from '../../../../previewTable/index'
 
 export default class AccomplishStepOne_six extends Component {
 
@@ -14,12 +15,13 @@ export default class AccomplishStepOne_six extends Component {
 
   getOnlineExcelDataWithProcess = (props) => {
     const { itemValue: { online_excel_id } } = props
-    getOnlineExcelDataWithProcess({id:online_excel_id}).then(res=> {
+    getOnlineExcelDataWithProcess({id: online_excel_id}).then(res=> {
       if (isApiResponseOk(res)) {
         this.setState({
           data: res.data
-        },() => {
-          this.sheet.reload(res.data && res.data.sheet_data)
+        }, () => {
+          // this.sheet && 
+          // this.sheet.reload(res.data && res.data.sheet_data)
         })
         
       }
@@ -38,14 +40,15 @@ export default class AccomplishStepOne_six extends Component {
       <div key={online_excel_id} style={{ minHeight: '550px',position:'relative' ,marginBottom: '40px'}} className={indexStyles.text_form}>
         {/* <Sheet ref={el => this.sheet = el} /> */}
         <p>在线表格</p>
-        <Sheet
+        <PreviewTable data={data.sheet_data}/>
+        {/* <Sheet
           data={data.sheet_data}
           ref={el=>this.sheet=el} 
           disabledEdit={true}
           showtoolbar={false}
           showinfobar={false}
           showstatisticBar={false}
-        />
+        /> */}
       </div>
     )
   }
