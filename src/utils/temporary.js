@@ -1,9 +1,12 @@
 // 临时的方法
 
+import { currentNounPlanFilterName } from "./businessFunction"
+import { PROJECTS } from "../globalset/js/constant"
+
 // 针对会协宝软件推广
 // 关闭某些功能的条件
-const close_board_ids = ['1280036778618785792']
-const noun_name = [{ target: '项目', to: '会议' }]
+const close_board_ids = ['1280036778618785792', '1269516414180528128', '1280055420479737856']
+const noun_name = [{ target: '项目', to: `${currentNounPlanFilterName(PROJECTS)}` }]
 export const isForHuiXB = ({ board_id }) => {
     if (close_board_ids.includes(board_id)) {
         return true
