@@ -1,6 +1,7 @@
 import React from 'react'
 import styles from './index.less'
 import {exportFile} from './utils'
+import globalStyles from '@/globalset/css/globalClassName.less'
 export default class PreviewTable extends React.Component{
     constructor(){
         super(...arguments);
@@ -251,7 +252,7 @@ export default class PreviewTable extends React.Component{
 
     render(){
         let { activeData = [], dataSource = []} = this.state;
-        const { showDownload = false } = this.props;
+        const { showDownload = false, leadingOutVisible = false } = this.props;
         return (
             <div className={styles.tableContainer}>
                 <table cellSpacing="0" cellPadding="0" border="0">
@@ -287,7 +288,11 @@ export default class PreviewTable extends React.Component{
                     <tfoot style={{display: "none"}}></tfoot>
                 </table>
                 <div className={styles.sheetList}>
-                    <span className={styles.exportFile} onClick={()=>{exportFile(dataSource, '在线表格导出')}}>导出</span>
+                    {
+                        leadingOutVisible && (
+                            <span className={`${globalStyles.authTheme} ${styles.exportFile}`} onClick={()=>{exportFile(dataSource, '在线表格导出')}}>&#xe6dd; 导出</span>
+                        )
+                    }
                     { dataSource.length ? 
                         dataSource.map((item, d) => {
                             return (

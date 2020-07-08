@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
 import indexStyles from '../index.less'
-import globalStyles from '@/globalset/css/globalClassName.less'
-import { Popover, Input, Button, Radio, Select, InputNumber } from 'antd'
 import { getOnlineExcelDataWithProcess } from '../../../../../services/technological/workFlow'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 import PrivewTable from '../../../../previewTable/index'

@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import indexStyles from '../index.less'
-// import Sheet from '../../../../Sheet/Sheet'
 import { getOnlineExcelDataWithProcess } from '../../../../../services/technological/workFlow'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 import PreviewTable from '../../../../previewTable/index'
@@ -35,7 +34,7 @@ export default class AccomplishStepOne_six extends Component {
     return (
       <div key={online_excel_id} className={indexStyles.text_form}>
         <p>在线表格</p>
-        <PreviewTable data={data.sheet_data}/>
+        <PreviewTable leadingOutVisible={true} data={data.sheet_data}/>
       </div>
     )
   }

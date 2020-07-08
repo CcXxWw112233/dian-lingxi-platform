@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import indexStyles from '../index.less'
-import Sheet from '../../../../Sheet'
 import { getOnlineExcelDataWithProcess } from '../../../../../services/technological/workFlow'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 import PreviewTable from '../../../../previewTable/index'
