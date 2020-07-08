@@ -3,12 +3,13 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import styles from './index.less'
 import { Checkbox, Menu, Dropdown, } from 'antd'
 import { connect } from 'dva'
-import { selectBoardToSeeInfo, getOrgIdByBoardId, setBoardIdStorage, getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
+import { selectBoardToSeeInfo, getOrgIdByBoardId, setBoardIdStorage, getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard, currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import CreateProject from '@/routes/Technological/components/Project/components/CreateProject/index';
 
 import BoardItem from './BoardItem'
 import { afterClearGanttData } from '../../../../Technological/components/Gantt/ganttBusiness'
 import { isObjectValueEqual, isArrayEqual } from '../../../../../utils/util'
+import { PROJECTS } from '../../../../../globalset/js/constant'
 
 @connect(mapStateToProps)
 export default class MainBoard extends Component {
@@ -28,7 +29,7 @@ export default class MainBoard extends Component {
         });
     }
     componentWillReceiveProps(nextProps) {
-        if (!(isObjectValueEqual(nextProps.projectList,this.props.projectList))) {
+        if (!(isObjectValueEqual(nextProps.projectList, this.props.projectList))) {
             this.setState({
                 projectList: nextProps.projectList
             })
@@ -116,7 +117,7 @@ export default class MainBoard extends Component {
         // 这是过滤我发起的项目
         // filterProjectList = (selected_board_term == '0' || !selected_board_term) ? projectList : selected_board_term == '1' ? filterProjectList.filter(i=>i.user_id==id) : []
         // 过滤我负责的项目
-        filterProjectList = (selected_board_term == '0' || !selected_board_term) ? projectList : selected_board_term == '2' ? filterProjectList.filter(i=>i.is_principal == '1') : []
+        filterProjectList = (selected_board_term == '0' || !selected_board_term) ? projectList : selected_board_term == '2' ? filterProjectList.filter(i => i.is_principal == '1') : []
         this.setState({
             projectList: filterProjectList
         })
@@ -141,7 +142,7 @@ export default class MainBoard extends Component {
                     currentSelectedProjectOrgIdByBoardId: ''
                 }
             })
-            selectBoardToSeeInfo({ board_id: '0',selected_board_term, dispatch })
+            selectBoardToSeeInfo({ board_id: '0', selected_board_term, dispatch })
             dispatch({
                 type: 'simplemode/getBoardsTaskTodoList',
                 payload: {
@@ -251,7 +252,7 @@ export default class MainBoard extends Component {
                 currentSelectedProjectOrgIdByBoardId: ''
             }
         })
-        selectBoardToSeeInfo({ board_id: '0',selected_board_term: key, dispatch })
+        selectBoardToSeeInfo({ board_id: '0', selected_board_term: key, dispatch })
         dispatch({
             type: 'simplemode/getBoardsTaskTodoList',
             payload: {
@@ -273,9 +274,9 @@ export default class MainBoard extends Component {
         return (
             <div>
                 <Menu defaultSelectedKeys="0" selectedKeys={selected_board_term ? selected_board_term : '0'} onClick={this.handleBoardSelectedTerm}>
-                    <Menu.Item key="0">我参与的项目</Menu.Item>
                     {/* <Menu.Item key="1">我发起的项目</Menu.Item> */}
-                    <Menu.Item key="2">我负责的项目</Menu.Item>
+                    <Menu.Item key="0">我参与的{`${currentNounPlanFilterName(PROJECTS)}`}</Menu.Item>
+                    <Menu.Item key="1">我负责的{`${currentNounPlanFilterName(PROJECTS)}`}</Menu.Item>
                 </Menu>
             </div>
         )
@@ -287,8 +288,8 @@ export default class MainBoard extends Component {
         return (
             <div className={styles.board_area}>
                 <div className={styles.board_area_top}>
-                    <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.renderBoardSelectedTerm()}>
-                        <div className={styles.board_area_top_lf}>{(selected_board_term == '0' || !selected_board_term) ? '我参与的项目' : selected_board_term == '1' ? '我发起的项目' : '我负责的项目'} <span className={globalStyles.authTheme}>&#xe7ee;</span></div>
+                    <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.renderBoardSelectedTerm()} trigger={['click']}>
+                        <div className={styles.board_area_top_lf}>{(selected_board_term == '0' || !selected_board_term) ? `我参与的${currentNounPlanFilterName(PROJECTS)}` : selected_board_term == '1' ? `我负责的${currentNounPlanFilterName(PROJECTS)}` : ''} <span className={globalStyles.authTheme}>&#xe7ee;</span></div>
                     </Dropdown>
                     <div className={styles.board_area_top_rt}>
                         <Checkbox
@@ -303,7 +304,7 @@ export default class MainBoard extends Component {
                 <div className={styles.board_area_bott}>
                     <div className={`${styles.create_btn}`} onClick={this.setAddProjectModalVisible}>
                         <i className={`${globalStyles.authTheme}`} style={{ fontSize: 16 }}>&#xe846;</i>
-                        <span>新建项目</span>
+                        <span>新建{`${currentNounPlanFilterName(PROJECTS)}`}</span>
                     </div>
                 </div>
             </div>
@@ -315,10 +316,10 @@ export default class MainBoard extends Component {
                 <div className={`${styles.create_top} ${globalStyles.authTheme}`}>
                     &#xe703;
                         </div>
-                <div className={styles.create_middle}>暂无项目，赶快新建一个吧</div>
+                <div className={styles.create_middle}>暂无{`${currentNounPlanFilterName(PROJECTS)}`}，赶快新建一个吧</div>
                 <div className={styles.create_btn} onClick={this.setAddProjectModalVisible}>
                     <i className={`${globalStyles.authTheme}`} style={{ fontSize: 16 }}>&#xe846;</i>
-                    <span>新建项目</span>
+                    <span> {`新建${currentNounPlanFilterName(PROJECTS)}`}</span>
                 </div>
             </div>
         )

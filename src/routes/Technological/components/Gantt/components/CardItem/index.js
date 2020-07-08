@@ -857,12 +857,12 @@ export default class CardItem extends Component {
 
     // 获取大纲视图父任务的截止和开始位置的三角形边框颜色
     setTriangleTreeColor = (label_data = [], index) => {
-        let label_color = '#ffffff'
+        let label_color = '#99C1FF'
         const length = label_data.length
         if (index == 'start') {
-            label_color = label_data[0] ? `rgb(${label_data[0].label_color})` : '#ffffff'
+            label_color = label_data[0] ? `rgb(${label_data[0].label_color})` : '#99C1FF'
         } else if (index == 'end') {
-            label_color = label_data[length - 1] ? `rgb(${label_data[length - 1].label_color})` : '#ffffff'
+            label_color = label_data[length - 1] ? `rgb(${label_data[length - 1].label_color})` : '#99C1FF'
         } else {
 
         }
@@ -972,7 +972,7 @@ export default class CardItem extends Component {
                     onMouseMove={(e) => e.preventDefault()}
                     style={{
                         opacity: 1,
-                        padding: (gantt_view_mode == 'year' && time_span < 4) ? '0' : '0 8px',
+                        padding: (gantt_view_mode != 'month' && time_span < 6) ? '0' : '0 8px',
                     }}
                 >
                     {/* <div data-targetclassname="specific_example"
@@ -1043,7 +1043,7 @@ export default class CardItem extends Component {
                 {//大纲视图有子任务时间的父任务(父任务开始截止位置有 区间标识)
                     ganttIsOutlineView({ group_view_type }) && !parent_card_id &&
                     has_child == '1' && (child_max_due_time || child_min_start_time) &&
-                    (gantt_view_mode == 'year' ? time_span > 4 : true) &&
+                    (gantt_view_mode != 'month' ? time_span > 6 : true) &&
                     (
                         <>
                             <div className={indexStyles.left_triangle} style={{
@@ -1060,7 +1060,7 @@ export default class CardItem extends Component {
                 }
                 {/* //hover出现的耳朵效果 */}
                 {
-                    ganttIsOutlineView({ group_view_type }) && !parent_card_id && (
+                    ganttIsOutlineView({ group_view_type }) && !parent_card_id && gantt_view_mode != 'year' && (
                         <HoverEars
                             getX={this.getX}
                             itemValue={itemValue}

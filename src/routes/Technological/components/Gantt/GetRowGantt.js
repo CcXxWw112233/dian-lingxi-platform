@@ -697,7 +697,8 @@ export default class GetRowGantt extends Component {
       gantt_board_id,
       group_view_type,
       show_board_fold,
-      outline_tree_round
+      outline_tree_round,
+      gantt_view_mode
     } = this.props
     // console.log('task_is_dragging', this.state.task_is_dragging)
     return (
@@ -728,9 +729,9 @@ export default class GetRowGantt extends Component {
           {/* 渲染大纲视图下的任务 */}
           {
             ganttIsOutlineView({ group_view_type }) && outline_tree_round.map((value, key) => {
-              const { end_time, left, top, id, start_time, tree_type, parent_expand, is_expand } = value
+              const { end_time, left, top, id, start_time, tree_type, parent_expand, is_expand, parent_card_id } = value
               const juge_expand = (tree_type == '0' || tree_type == '3') ? parent_expand : (parent_expand && is_expand)
-              if (!parent_expand || !left) {
+              if (!parent_expand || !left || (gantt_view_mode == 'year' && !!parent_card_id)) {
                 return <></>
               }
               if (tree_type == '2') {
