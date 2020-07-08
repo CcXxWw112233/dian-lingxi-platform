@@ -48,14 +48,14 @@ export default class ConfigureStepOne_six extends Component {
         sheet_data: data
       }
     })
-    updateSheetList && updateSheetList({id: data.id, sheetData: data })
+    updateSheetList && updateSheetList({id: this.state.data.id, sheetData: data })
   }
 
   render() {
     const { itemKey, itemValue: { online_excel_id } } = this.props
     const { data = {} } = this.state;
     return (
-      <div key={online_excel_id || itemKey} style={{ position: 'relative', marginBottom: '40px' }} className={indexStyles.text_form}>
+      <div key={online_excel_id || itemKey} className={indexStyles.text_form}>
         <p>在线表格 
           <span style={{marginLeft: 10}}>
             <Sheet data={data.sheet_data} onMessage={this.updateSheetData}/>

@@ -315,9 +315,9 @@ export default class BeginningStepOne extends Component {
     let keys = Object.keys(sheetListData);
     if(keys.length){
       let promise = keys.map(item => {
-        let data = sheetListData[item];
+        let data = sheetListData[item] || [];
         return new Promise((resolve) => {
-          saveOnlineExcelWithProcess({ excel_id: id, sheet_data: data }).then(res => {
+          saveOnlineExcelWithProcess({ excel_id: item, sheet_data: data }).then(res => {
             if(isApiResponseOk(res)){
               resolve(res.data);
             }

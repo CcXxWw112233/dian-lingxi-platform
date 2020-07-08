@@ -33,7 +33,7 @@ export default class AccomplishStepOne_six extends Component {
     const { online_excel_id } = itemValue
     const { data = [] } = this.state
     return (
-      <div key={online_excel_id} style={{ position:'relative' ,marginBottom: '40px'}} className={indexStyles.text_form}>
+      <div key={online_excel_id} className={indexStyles.text_form}>
         <p>在线表格</p>
         <PreviewTable data={data.sheet_data}/>
       </div>

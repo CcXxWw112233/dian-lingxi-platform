@@ -158,7 +158,7 @@ export default class ConfigureStepTypeOne extends Component {
 
   // 获取在线表格
   getOnlineExcelWithProcess = (data) => {
-    if (data && data.find(i=>i.field_type == '6')) return
+    // if (data && data.find(i=>i.field_type == '6')) return
     getOnlineExcelWithProcess({}).then(res => {
       if (isApiResponseOk(res)) {
         data.push({
@@ -166,6 +166,7 @@ export default class ConfigureStepTypeOne extends Component {
           field_type: '6'
         })
         this.updateConfigureProcess({ value: data }, 'forms')
+        this.props.updateSheetList && this.props.updateSheetList({id: res.data, sheetData: []})
       }
     })
   }
