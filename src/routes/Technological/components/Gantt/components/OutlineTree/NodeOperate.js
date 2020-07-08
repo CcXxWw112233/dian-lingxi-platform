@@ -204,6 +204,9 @@ export default class NodeOperate extends Component {
             case 'insert_flow':
                 this.insertItem({ type: 'flow', data })
                 break
+            case 'insert_milestone':
+                this.insertItem({ type: 'milestone', data })
+                break
             case 'rename':
                 if (typeof this.props.editName == 'function') {
                     this.props.editName()
@@ -295,8 +298,10 @@ export default class NodeOperate extends Component {
             new_children.splice(index + 1, 0,
                 { ...visual_add_item, add_id: '', tree_type: '3', id: flow_id, name: flow_name, status }
             )
-        } else {
-
+        } else if (type == 'milestone') {
+            new_children.splice(index + 1, 0,
+                { ...visual_add_item, editing: true, }
+            )
         }
         if (node) {
             node.children = new_children;
@@ -418,6 +423,14 @@ export default class NodeOperate extends Component {
                     tree_type == '1' && (
                         <div className={styles.menu_item} onClick={() => this.menuItemClick('add_card')}>
                             新建任务
+                        </div>
+                    )
+                }
+
+                { //一级任务是顶级则没有
+                    (tree_type == '1') && (
+                        <div className={styles.menu_item} onClick={() => this.menuItemClick('insert_milestone')}>
+                            插入里程碑
                         </div>
                     )
                 }

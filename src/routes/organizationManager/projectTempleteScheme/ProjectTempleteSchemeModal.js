@@ -216,7 +216,7 @@ export default class ProjectTempleteSchemeModal extends Component {
                         <span title={item.name} className={indexStyles.plan_name}>{item.name}</span>
                       )
                     }
-                    <Dropdown overlayClassName={indexStyles.tempSettings} overlay={this.renderTempSettings(item)} getPopupContainer={triggerNode => triggerNode.parentNode}>
+                    <Dropdown overlayClassName={indexStyles.tempSettings} overlay={this.renderTempSettings(item)} getPopupContainer={triggerNode => triggerNode.parentNode} trigger={['click']}>
                       <span onClick={e=>e.stopPropagation()} className={`${globalStyles.authTheme} ${indexStyles.temp_settings}`}>&#xe78e;</span>
                     </Dropdown>
                   </div>

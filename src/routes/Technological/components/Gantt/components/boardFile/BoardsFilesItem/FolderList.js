@@ -74,7 +74,7 @@ export default class FolderList extends Component {
                 ...setUploadHeaderBaseInfo({ boardId: board_id }),
             },
             beforeUpload(e) {
-        
+
                 if (e.size == 0) {
                     message.error(`不能上传空文件`)
                     return false
@@ -292,7 +292,7 @@ export default class FolderList extends Component {
                         </div>
                     )
                 }
-                <Dropdown overlay={this.renderAddItemDropMenu()} >
+                <Dropdown overlay={this.renderAddItemDropMenu()} trigger={['click']} >
                     <div className={`${styles.folder_item} ${globalStyles.authTheme} ${styles.add_item}`}>&#xe8fe;</div>
                 </Dropdown>
                 {/* {

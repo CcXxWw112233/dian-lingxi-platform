@@ -1209,7 +1209,7 @@ export default class GroupListHeadItem extends Component {
               {
                 // 只有在项目视图下，且如果在分组id == 0（未分组的情况下不能显示）
                 group_view_type == '1' && list_id != '0' && (
-                  <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={(group_view_type == '1' && menu_oprate_visible) ? this.renderMenuOperateListName() : <span></span>}>
+                  <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={(group_view_type == '1' && menu_oprate_visible) ? this.renderMenuOperateListName() : <span></span>} trigger={['click']}>
                     <span className={`${globalStyles.authTheme} ${indexStyles.operator}`}>&#xe7fd;</span>
                   </Dropdown>
                 )

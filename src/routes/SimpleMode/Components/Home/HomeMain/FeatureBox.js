@@ -4,6 +4,7 @@ import indexStyles from './featurebox.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { Icon, message, Tooltip } from 'antd';
 import { setBoardIdStorage, isPaymentOrgUser, } from "@/utils/businessFunction"
+import { changeBoxFeatureName } from "../../../../../utils/temporary";
 class FeatureBox extends Component {
   constructor(props) {
     super(props);
@@ -271,7 +272,7 @@ class FeatureBox extends Component {
   }
 
   renderBoxItem = (item, isPaymentUser) => {
-    const { projectList = [] } = this.props
+    const { projectList = [], simplemodeCurrentProject = {} } = this.props
     let tipTitle;
     let isDisabled = this.getIsDisabled(item);
     if (isDisabled) {
@@ -306,7 +307,7 @@ class FeatureBox extends Component {
               <div>
                 {this.renderIconSVG(item.code)}
               </div>
-              <span className={indexStyles.myWorkbenchBox_title}>{item.name}</span>
+              <span className={indexStyles.myWorkbenchBox_title}>{changeBoxFeatureName({ board_id: simplemodeCurrentProject.board_id, noun: item.name })}</span>
             </div>
           </Tooltip>
         )
@@ -316,7 +317,7 @@ class FeatureBox extends Component {
               <div>
                 {this.renderIconSVG(item.code)}
               </div>
-              <span className={indexStyles.myWorkbenchBox_title}>{item.name}</span>
+              <span className={indexStyles.myWorkbenchBox_title}>{changeBoxFeatureName({ board_id: simplemodeCurrentProject.board_id, noun: item.name })}</span>
             </div>
           )}
       </>

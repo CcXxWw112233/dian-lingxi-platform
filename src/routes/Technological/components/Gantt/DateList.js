@@ -349,13 +349,13 @@ export default class DateList extends Component {
                           </div>
                         )
                       }
-                      {isToday ? '今天' : date_no}
+                      {isToday ? '今' : date_no}
                     </div>
                   </div>
                 </div>
               </Tooltip>
             ) : (
-                <Dropdown overlay={this.renderLCBList(current_date_miletones, { timestampEnd })} key={`${month}/${date_no}`}>
+                <Dropdown overlay={this.renderLCBList(current_date_miletones, { timestampEnd })} key={`${month}/${date_no}`} trigger={['click']}>
                   <Tooltip title={`${this.getDateNoHolidaylunar(timestamp).lunar} ${this.getDateNoHolidaylunar(timestamp).holiday || ' '}`}>
                     <div>
                       <div className={`${indexStyles.dateDetailItem}`} key={key2}>
@@ -374,7 +374,7 @@ export default class DateList extends Component {
                               </div>
                             )
                           }
-                          {isToday ? '今天' : date_no}
+                          {isToday ? '今' : date_no}
                         </div>
                       </div>
                     </div>
@@ -400,20 +400,20 @@ export default class DateList extends Component {
           return (
             group_view_type != '1' ? (
               <div key={`${month}/${timestamp}`}>
-                <div className={`${indexStyles.dateDetailItem}`} key={key2} style={{ width: ceilWidth * 7 }}>
-                  <div className={`${indexStyles.dateDetailItem_date_no} `}>
+                <div className={`${indexStyles.dateDetailItem}`} key={key2} style={{ width: ceilWidth * 7, fontSize: 12 }}>
+                  <div className={`${indexStyles.dateDetailItem_date_no} `} style={{ fontSize: 12,}}>
                     {date_no}
                   </div>
                 </div>
               </div>
             ) : (
-                <Dropdown overlay={this.renderLCBList(current_date_miletones, { timestamp, timestampEnd })} key={`${month}/${timestamp}`} >
+                <Dropdown overlay={this.renderLCBList(current_date_miletones, { timestamp, timestampEnd })} key={`${month}/${timestamp}`} trigger={['click']}>
                   <div key={`${month}/${timestamp}`}>
-                    <div className={`${indexStyles.dateDetailItem}`} key={key2} style={{ width: ceilWidth * 7 }}>
+                    <div className={`${indexStyles.dateDetailItem}`} key={key2} style={{ width: ceilWidth * 7, fontSize: 12 }}>
                       <div className={`${indexStyles.dateDetailItem_date_no} 
                                     ${indexStyles.nomal_date_no}
                                     ${has_lcb && indexStyles.has_moletones_date_no}`}
-                        style={{ background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized }) }}
+                        style={{ background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized, fontSize: 12 }) }}
                       >
                         {date_no}
                       </div>
@@ -448,7 +448,7 @@ export default class DateList extends Component {
                 </div>
               </div>
             ) : (
-                <Dropdown overlay={this.renderLCBList(current_date_miletones, { timestamp, timestampEnd })} key={`${month}/${timestamp}`} >
+                <Dropdown overlay={this.renderLCBList(current_date_miletones, { timestamp, timestampEnd })} key={`${month}/${timestamp}`} trigger={['click']}>
                   <div key={`${month}/${timestamp}`}>
                     <div className={`${indexStyles.dateDetailItem}`} key={key2} style={{ width: ceilWidth * last_date }}>
                       <div className={`${indexStyles.dateDetailItem_date_no} 
@@ -603,7 +603,7 @@ class DropMilestone extends React.Component {
       is_all_realized
     } = this.props
     return (
-      <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={menu_oprate_visible ? renderLCBList(current_date_miletones, { timestampEnd }) : (<span />)} key={itemKey}>
+      <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={menu_oprate_visible ? renderLCBList(current_date_miletones, { timestampEnd }) : (<span />)} key={itemKey} trigger={['click']}>
         <Tooltip title={`${getDateNoHolidaylunar(timestamp).lunar} ${getDateNoHolidaylunar(timestamp).holiday || ' '}`}>
           <div>
             <div className={`${indexStyles.dateDetailItem}`} key={key2}>
