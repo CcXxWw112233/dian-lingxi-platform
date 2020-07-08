@@ -257,7 +257,7 @@ export default class ConfigureStepTypeOne extends Component {
   filterForm = (value, key) => {
     if (!value) return <></>
     const { field_type } = value
-    const { itemKey, itemValue } = this.props
+    const { itemKey, itemValue, updateSheetList} = this.props
     let container = (<div></div>)
     switch (field_type) {
       case '1':
@@ -282,7 +282,7 @@ export default class ConfigureStepTypeOne extends Component {
         break
       case '6':
         container = (
-          <ConfigureStepOne_six setSheet={this.props.setSheet} updateConfigureProcess={this.updateConfigureProcess} itemKey={key} itemValue={value} parentKey={itemKey} parentValue={itemValue} />
+          <ConfigureStepOne_six setSheet={this.props.setSheet} updateSheetList={updateSheetList} updateConfigureProcess={this.updateConfigureProcess} itemKey={key} itemValue={value} parentKey={itemKey} parentValue={itemValue} />
         )
         break
       default:
