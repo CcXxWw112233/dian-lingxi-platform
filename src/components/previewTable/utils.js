@@ -28,7 +28,7 @@ export function exportFile(data, fileName = new Date().getTime().toString()){
             for (let col = 0; col < downOriginData[row].length; col++) {
                 cellValue = downOriginData[row][col];
                 if (cellValue) {
-                    console.log(cellValue)
+                    // console.log(cellValue)
                     // 处理单元格的背景颜色
                     if (cellValue.bg) {
                         // 背景色存在bg，暂不启用
