@@ -401,7 +401,7 @@ class CreateProject extends React.Component {
                 } */}
                 <div className={indexStyles.setelse_item} onClick={this.setInviteOthersVisible}>
                   <div className={`${globalStyles.authTheme} ${indexStyles.addUSer}`}>&#xe685;</div>
-                  <div className={indexStyles.setelse_item_name}>邀请他人加入项目</div>
+                  <div className={indexStyles.setelse_item_name}>邀请他人加入</div>
                   <div className={`${globalStyles.authTheme} ${indexStyles.spin} ${!invit_others_visible && indexStyles.spin_down}`}>&#xe66b;</div>
                 </div>
               </div>

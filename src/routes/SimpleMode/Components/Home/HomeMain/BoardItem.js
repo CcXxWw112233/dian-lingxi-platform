@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import { PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, PROJECT_TEAM_BOARD_EDIT, MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN } from '../../../../../globalset/js/constant'
+import { PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, PROJECT_TEAM_BOARD_EDIT, MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECTS } from '../../../../../globalset/js/constant'
 import VisitControl from '../../../../Technological/components/VisitControl'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import styles from './index.less'
-import { setBoardIdStorage, checkIsHasPermissionInBoard, getOrgIdByBoardId, selectBoardToSeeInfo, getOrgNameWithOrgIdFilter } from '../../../../../utils/businessFunction'
+import { setBoardIdStorage, checkIsHasPermissionInBoard, getOrgIdByBoardId, selectBoardToSeeInfo, getOrgNameWithOrgIdFilter, currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import { Dropdown, Menu, message } from 'antd'
 import { connect } from 'dva'
 import { toggleContentPrivilege, removeContentPrivilege, setContentPrivilege, addMenbersInProject, cancelCollection, collectionProject } from '../../../../../services/technological/project'
@@ -476,7 +476,7 @@ export default class BoardItem extends Component {
                 }
 
                 {
-                    <Menu.Item key={'board_info'}>项目信息</Menu.Item>
+                    <Menu.Item key={'board_info'}>{`${currentNounPlanFilterName(PROJECTS)}信息`}</Menu.Item>
                 }
 
 

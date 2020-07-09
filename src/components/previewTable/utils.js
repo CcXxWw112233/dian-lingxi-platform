@@ -28,6 +28,7 @@ export function exportFile(data, fileName = new Date().getTime().toString()){
             for (let col = 0; col < downOriginData[row].length; col++) {
                 cellValue = downOriginData[row][col];
                 if (cellValue) {
+                    // console.log(cellValue)
                     // 处理单元格的背景颜色
                     if (cellValue.bg) {
                         // 背景色存在bg，暂不启用
@@ -39,9 +40,9 @@ export function exportFile(data, fileName = new Date().getTime().toString()){
                     } else if (cellValue.m && isPercentage(cellValue)) {
                         //百分比问题
                         arrRow.push(cellValue.m)
-                    } else {
-                        arrRow.push(cellValue.v)
-                    }
+                    } else if( typeof cellValue.v === 'object'){
+                        arrRow.push(cellValue.v.v);
+                    }else arrRow.push(cellValue.v);
                 }
                 else arrRow.push(cellValue)
             }
