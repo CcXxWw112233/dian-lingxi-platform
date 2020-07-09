@@ -74,10 +74,17 @@ export default class TreeNode extends Component {
             this.toggleTitleEdit()
             return
         }
-        clearTimeout(this.title_click_timer)
+        if (this.title_click_timer) {
+            this.navigateToVisualArea()
+            clearTimeout(this.title_click_timer)
+            this.title_click_timer = null
+            return
+        }
         this.title_click_timer = setTimeout(() => {
             this.toggleTitleEdit()
-        }, 200)
+            clearTimeout(this.title_click_timer)
+            this.title_click_timer = null
+        }, 300)
     }
     onDoubleClickTitle = (placeholder) => {
         if (placeholder == '新建里程碑') {
@@ -376,7 +383,7 @@ export default class TreeNode extends Component {
                     <span className={`${styles.title}`}
                         // onMouseEnter={this.onMouseEnterTitle}
                         // onMouseLeave={this.onMouseLeaveTitle}
-                        onDoubleClick={() => this.onDoubleClickTitle(placeholder)}
+                        // onDoubleClick={() => this.onDoubleClickTitle(placeholder)}
                         onClick={() => this.onClickTitle(placeholder)}
                     >
                         {
