@@ -142,11 +142,13 @@ export default class DrawDetailInfo extends React.Component {
   }
 
   // 项目成员角色点击事件
-  handleSetRoleMenuClick(props, { key }) {
+  handleSetRoleMenuClick(props, e) {
     if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
+    const { key, domEvent } = e
+    domEvent && domEvent.stopPropagation()
     const { projectDetailInfoData = {} } = this.props
     const { board_id } = projectDetailInfoData //data是参与人列表
     const { user_id } = props
@@ -434,8 +436,8 @@ export default class DrawDetailInfo extends React.Component {
               </Tooltip>
             </div>
             {(role_id === '3' && user_id == id) ? ('') : (
-              <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={manOperateMenu(props)} overlayClassName={DrawDetailInfoStyle.overlay_manOperateMenu}>
-                <div className={DrawDetailInfoStyle.manImageDropdown_top_operate}><Icon type="ellipsis" theme="outlined" /></div>
+              <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={manOperateMenu(props)} overlayClassName={DrawDetailInfoStyle.overlay_manOperateMenu}>
+                <div onClick={e=>e.stopPropagation()} className={DrawDetailInfoStyle.manImageDropdown_top_operate}><Icon type="ellipsis" theme="outlined" /></div>
               </Dropdown>
             )}
 
@@ -473,10 +475,12 @@ export default class DrawDetailInfo extends React.Component {
       return (
         <Menu getPopupContainer={triggerNode => triggerNode.parentNode} style={{ width: '92px' }} onClick={this.handleSetRoleMenuClick.bind(this, props)}>
           {checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) ? (
-            <Menu.SubMenu title="设置角色" key={'setRole'}>
+            <Menu.SubMenu trigger={['click']} title={
+              <span onClick={(e)=>e.stopPropagation()}>设置角色</span>
+            } key={'setRole'}>
               {projectRoles.map((value, key) => {
                 return (
-                  <Menu.Item key={`role_${value.id}`} style={{ textAlign: 'center', padding: 0, margin: 5 }}>
+                  <Menu.Item key={`role_${value.id}`} onClick={({domEvent})=>domEvent && domEvent.stopPropagation()} style={{ textAlign: 'center', padding: 0, margin: 5 }}>
                     <div className={DrawDetailInfoStyle.elseProjectMemu} style={{ textAlign: 'center' }}>
                       {value.name}
                     </div>
@@ -558,7 +562,7 @@ export default class DrawDetailInfo extends React.Component {
                       <div className={DrawDetailInfoStyle.manImageItem} key={key}>
                         <Dropdown overlay={manImageDropdown(value)}>
                           {avatar ? (<img src={avatar} />) : (
-                            <div style={{ width: 40, height: 40, borderRadius: 40, backgroundColor: '#f2f2f2', textAlign: 'center' }}>
+                            <div onClick={e=>e.stopPropagation()} style={{ width: 40, height: 40, borderRadius: 40, backgroundColor: '#f2f2f2', textAlign: 'center' }}>
                               <Icon type={'user'} style={{ fontSize: 20, color: '#8c8c8c', marginTop: 9 }} />
                             </div>
                           )

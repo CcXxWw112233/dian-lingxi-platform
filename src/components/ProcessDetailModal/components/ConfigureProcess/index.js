@@ -174,7 +174,7 @@ export default class ConfigureProcess extends Component {
   // 保存表格数据
   saveSheetData = (id)=> {
     let { sheetListData = [] } = this.state;
-    if(!id) return ;
+    // if(!id) return ;
     let keys = Object.keys(sheetListData);
     // return console.log(sheetListData)
     if(keys.length){
@@ -201,7 +201,11 @@ export default class ConfigureProcess extends Component {
     obj[id] = sheetData;
       this.setState({
         sheetListData: obj
-      })
+      },
+      // () =>{
+      //   this.saveSheetData()
+      // }
+      )
   }
 
   // ----------------------------------- 表格相关操作 -------------------------------------

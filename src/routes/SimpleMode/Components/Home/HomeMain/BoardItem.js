@@ -493,7 +493,7 @@ export default class BoardItem extends Component {
                     onClick={() => this.onSelectBoard(board_id, org_id)}
                     className={`${!isAllOrg ? styles.board_area_middle_item : styles.board_area_middle_item2} ${simplemodeCurrentProject.board_id == board_id && styles.board_area_middle_item_choose}`} key={board_id}>
                     <div className={`${styles.board_area_middle_item_lf}`}></div>
-                    <div className={`${styles.board_area_middle_item_middle} ${globalStyles.global_ellipsis}`} >
+                    <div id={`board_area_middle_item_middle_${board_id}`} className={`${styles.board_area_middle_item_middle} ${globalStyles.global_ellipsis}`} >
                         <p title={board_name} className={`${styles.board_area_middle_item_board_name}`}>{board_name}</p>
                         {
                             isAllOrg && (
@@ -516,7 +516,7 @@ export default class BoardItem extends Component {
                                     )
                             }
                         </div>
-                        <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={menu_oprate_visible ? this.renderMenuOperateListName({ board_id, is_star }) : (<span></span>)} trigger={['click']}>
+                        <Dropdown getPopupContainer={() => document.getElementById(`board_area_middle_item_middle_${board_id}`)} onVisibleChange={this.dropdwonVisibleChange} overlay={menu_oprate_visible ? this.renderMenuOperateListName({ board_id, is_star }) : (<span></span>)} trigger={['click']}>
                             <div className={`${styles.board_area_middle_item_rt_operate} ${globalStyles.authTheme}`} onClick={(e) => e.stopPropagation()}>&#xe66f;</div>
                         </Dropdown>
                     </div>

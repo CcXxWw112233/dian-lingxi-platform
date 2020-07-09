@@ -311,7 +311,7 @@ export default class BeginningStepOne extends Component {
   // 保存表格数据
   saveSheetData = (id)=> {
     let { sheetListData = [] } = this.state;
-    if(!id) return ;
+    // if(!id) return ;
     let keys = Object.keys(sheetListData);
     if(keys.length){
       let promise = keys.map(item => {
@@ -336,6 +336,8 @@ export default class BeginningStepOne extends Component {
     obj[id] = sheetData;
       this.setState({
         sheetListData: obj
+      },() => {
+        this.saveSheetData()
       })
   }
 
@@ -364,7 +366,7 @@ export default class BeginningStepOne extends Component {
     let curr_excel = processEditDatas[itemKey]['forms'] && processEditDatas[itemKey]['forms'].find(i => i.field_type == '6')
     if (!(curr_excel && Object.keys(curr_excel).length)) return
     let excel_id = curr_excel.online_excel_id
-    this.saveSheetData(excel_id);
+    // this.saveSheetData(excel_id);
     dispatch({
       type: 'publicProcessDetailModal/fillFormComplete',
       payload: { 
