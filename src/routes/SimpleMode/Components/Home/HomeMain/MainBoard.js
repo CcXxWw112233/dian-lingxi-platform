@@ -29,12 +29,16 @@ export default class MainBoard extends Component {
         });
     }
     componentWillReceiveProps(nextProps) {
-        if (!(isObjectValueEqual(nextProps.projectList, this.props.projectList))) {
-            this.setState({
-                projectList: nextProps.projectList
-            })
+        if (!(isObjectValueEqual(nextProps.projectList, this.props.projectList))) { // 表示不是在我负责的项目下
+            if (nextProps.simplemodeCurrentProject.selected_board_term == '2') {
+                this.getTheProjectListIsBelongToUserSelf(nextProps)
+            } else {
+                this.setState({
+                    projectList: nextProps.projectList
+                })
+            }
         }
-        if (nextProps.simplemodeCurrentProject.selected_board_term != this.props.simplemodeCurrentProject.selected_board_term) {
+        if (nextProps.simplemodeCurrentProject.selected_board_term != this.props.simplemodeCurrentProject.selected_board_term) { // 这里是单独判断切换我参与的和我负责的
             this.getTheProjectListIsBelongToUserSelf(nextProps)
         }
     }
