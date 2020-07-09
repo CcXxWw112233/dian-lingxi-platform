@@ -276,7 +276,7 @@ export default class MainBoard extends Component {
                 <Menu defaultSelectedKeys="0" selectedKeys={selected_board_term ? selected_board_term : '0'} onClick={this.handleBoardSelectedTerm}>
                     {/* <Menu.Item key="1">我发起的项目</Menu.Item> */}
                     <Menu.Item key="0">我参与的{`${currentNounPlanFilterName(PROJECTS)}`}</Menu.Item>
-                    <Menu.Item key="1">我负责的{`${currentNounPlanFilterName(PROJECTS)}`}</Menu.Item>
+                    <Menu.Item key="2">我负责的{`${currentNounPlanFilterName(PROJECTS)}`}</Menu.Item>
                 </Menu>
             </div>
         )
@@ -289,7 +289,7 @@ export default class MainBoard extends Component {
             <div className={styles.board_area}>
                 <div className={styles.board_area_top}>
                     <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.renderBoardSelectedTerm()} trigger={['click']}>
-                        <div className={styles.board_area_top_lf}>{(selected_board_term == '0' || !selected_board_term) ? `我参与的${currentNounPlanFilterName(PROJECTS)}` : selected_board_term == '1' ? `我负责的${currentNounPlanFilterName(PROJECTS)}` : ''} <span className={globalStyles.authTheme}>&#xe7ee;</span></div>
+                        <div className={styles.board_area_top_lf}>{(selected_board_term == '0' || !selected_board_term) ? `我参与的${currentNounPlanFilterName(PROJECTS)}` : selected_board_term == '2' ? `我负责的${currentNounPlanFilterName(PROJECTS)}` : ''} <span className={globalStyles.authTheme}>&#xe7ee;</span></div>
                     </Dropdown>
                     <div className={styles.board_area_top_rt}>
                         <Checkbox
