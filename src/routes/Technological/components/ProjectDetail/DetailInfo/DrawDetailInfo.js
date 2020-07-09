@@ -4,9 +4,9 @@ import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox, Card, Progress, Input, 
 import ShowAddMenberModal from '../../Project/ShowAddMenberModal'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
-  PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_MEMBER
+  PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_MEMBER, PROJECTS
 } from "../../../../../globalset/js/constant";
-import { checkIsHasPermissionInBoard, isHasOrgMemberQueryPermission } from "../../../../../utils/businessFunction";
+import { checkIsHasPermissionInBoard, isHasOrgMemberQueryPermission, currentNounPlanFilterName } from "../../../../../utils/businessFunction";
 import NoPermissionUserCard from './../../../../../components/NoPermissionUserCard/index'
 import UserCard from './../../../../../components/UserCard/index'
 import globalsetStyles from '@/globalset/css/globalClassName.less'
@@ -225,7 +225,7 @@ export default class DrawDetailInfo extends React.Component {
     setTimeout(() => {
       let obj = document.getElementById('board_detail_info')
       cursorMoveEnd(obj)
-    },200)
+    }, 200)
   }
   setEditIsSoundsEvrybody(e) {
     this.setState({
@@ -437,7 +437,7 @@ export default class DrawDetailInfo extends React.Component {
             </div>
             {(role_id === '3' && user_id == id) ? ('') : (
               <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={manOperateMenu(props)} overlayClassName={DrawDetailInfoStyle.overlay_manOperateMenu}>
-                <div onClick={e=>e.stopPropagation()} className={DrawDetailInfoStyle.manImageDropdown_top_operate}><Icon type="ellipsis" theme="outlined" /></div>
+                <div onClick={e => e.stopPropagation()} className={DrawDetailInfoStyle.manImageDropdown_top_operate}><Icon type="ellipsis" theme="outlined" /></div>
               </Dropdown>
             )}
 
@@ -476,11 +476,11 @@ export default class DrawDetailInfo extends React.Component {
         <Menu getPopupContainer={triggerNode => triggerNode.parentNode} style={{ width: '92px' }} onClick={this.handleSetRoleMenuClick.bind(this, props)}>
           {checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) ? (
             <Menu.SubMenu trigger={['click']} title={
-              <span onClick={(e)=>e.stopPropagation()}>设置角色</span>
+              <span onClick={(e) => e.stopPropagation()}>设置角色</span>
             } key={'setRole'}>
               {projectRoles.map((value, key) => {
                 return (
-                  <Menu.Item key={`role_${value.id}`} onClick={({domEvent})=>domEvent && domEvent.stopPropagation()} style={{ textAlign: 'center', padding: 0, margin: 5 }}>
+                  <Menu.Item key={`role_${value.id}`} onClick={({ domEvent }) => domEvent && domEvent.stopPropagation()} style={{ textAlign: 'center', padding: 0, margin: 5 }}>
                     <div className={DrawDetailInfoStyle.elseProjectMemu} style={{ textAlign: 'center' }}>
                       {value.name}
                     </div>
@@ -527,10 +527,10 @@ export default class DrawDetailInfo extends React.Component {
         <div className={`${DrawDetailInfoStyle.detailInfoOut} ${globalsetStyles.global_vertical_scrollbar}`} onScrollCapture={(e) => { this.onScroll(e, board_id) }} >
           <div className={DrawDetailInfoStyle.brief}>
             <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon} ${DrawDetailInfoStyle.brief_icon}`}>&#xe7f6;</span>
-            <span>项目简介</span>
+            <span>{`${currentNounPlanFilterName(PROJECTS)}简介`}</span>
           </div>
           {!editDetaiDescription ? (
-            <div 
+            <div
               // dangerouslySetInnerHTML={{
               //   __html: value
               // }}
@@ -541,7 +541,7 @@ export default class DrawDetailInfo extends React.Component {
           ) : (EditArea)}
           <div className={DrawDetailInfoStyle.member}>
             <span style={{ fontSize: 18 }} className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe7af;</span>
-            <span>项目成员</span>
+            <span>{`${currentNounPlanFilterName(PROJECTS)}成员`}</span>
           </div>
           <div style={{ display: 'flex' }}>
             <div ref="manImageList" className={DrawDetailInfoStyle.manImageList}>
@@ -562,7 +562,7 @@ export default class DrawDetailInfo extends React.Component {
                       <div className={DrawDetailInfoStyle.manImageItem} key={key}>
                         <Dropdown overlay={manImageDropdown(value)}>
                           {avatar ? (<img src={avatar} />) : (
-                            <div onClick={e=>e.stopPropagation()} style={{ width: 40, height: 40, borderRadius: 40, backgroundColor: '#f2f2f2', textAlign: 'center' }}>
+                            <div onClick={e => e.stopPropagation()} style={{ width: 40, height: 40, borderRadius: 40, backgroundColor: '#f2f2f2', textAlign: 'center' }}>
                               <Icon type={'user'} style={{ fontSize: 20, color: '#8c8c8c', marginTop: 9 }} />
                             </div>
                           )
