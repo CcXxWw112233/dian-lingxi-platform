@@ -108,14 +108,15 @@ export default class AppendSubTaskItem extends Component {
       ).then(res => {
         if (isApiResponseOk(res)) {
           new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', arrayNonRepeatfy(new_executors, 'user_id'))
-          this.setChildTaskIndrawContent({ name: 'executors', value: new_sub_executors }, card_id)// 先弹窗中子任务执行人中的数据
+          console.log(arrayNonRepeatfy(new_sub_executors,'user_id'),'sssssssssssss_我的天')
+          this.setChildTaskIndrawContent({ name: 'executors', value: arrayNonRepeatfy(new_sub_executors,'user_id') }, card_id)// 先弹窗中子任务执行人中的数据
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',
             payload: {
               drawContent: new_drawContent
             }
           })
-          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: drawContent, card_id, name: 'executors', value: new_executors, overlay_sub_pricipal: 'EXECUTOR' })
+          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: drawContent, card_id, name: 'executors', value: arrayNonRepeatfy(new_executors,'user_id'), overlay_sub_pricipal: 'EXECUTOR' })
         }
       })
     } else if (type == 'remove') {
@@ -127,13 +128,13 @@ export default class AppendSubTaskItem extends Component {
           executor: key
         }
       })
-      this.setChildTaskIndrawContent({ name: 'executors', value: new_sub_executors }, card_id)
+      this.setChildTaskIndrawContent({ name: 'executors', value: arrayNonRepeatfy(new_sub_executors,'user_id') }, card_id)
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: drawContent, card_id, name: 'executors', value: new_executors, overlay_sub_pricipal: 'EXECUTOR' })
       // this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: drawContent.card_id, data: { ...childTaskItemValue, executors: new_sub_executors }, card_id, action: 'update' })
 
     }
     this.setState({
-      local_executor: new_sub_executors
+      local_executor: arrayNonRepeatfy(new_sub_executors,'user_id')
     })
   }
 

@@ -156,7 +156,7 @@ export default class AppendSubTask extends Component {
     })
     this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: drawContent, card_id, name: 'executors', value: new_executors, overlay_sub_pricipal: 'EXECUTOR' })
     this.setState({
-      sub_executors
+      sub_executors: arrayNonRepeatfy(sub_executors, 'user_id')
     })
   }
 
