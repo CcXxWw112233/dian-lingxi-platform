@@ -83,15 +83,25 @@ export default class Sheet extends React.Component{
   forMatNumberData = (data)=> {
     let arr = data.map(item => {
       let config = item.config;
-      let {columlen, merge} = config;
+      let {columlen, merge, rowlen} = config;
       let obj = {};
+      // 修复列宽的bug
       if(columlen){
         for(let key in columlen){
           obj[key] = +columlen[key]
         }
       }
+
+      // 修复行高的bug
+      let row = {};
+      if(rowlen){
+        for(let key in rowlen){
+          row[key] = +rowlen[key]
+        }
+      }
+
       let m = {};
-      // 
+      // 修复合并单元格的bug
       if(merge){
         for(let key in merge){
           let d = merge[key];
@@ -105,6 +115,7 @@ export default class Sheet extends React.Component{
 
       let celldata = item.celldata;
       item.celldata = celldata.map(cell => {
+        // 修复显示合并单元格的bug
         let mc = cell.mc;
         cell.r = +cell.r;
         cell.c = +cell.c;
@@ -132,6 +143,7 @@ export default class Sheet extends React.Component{
 
       config.merge = m;
       config.columlen = obj;
+      config.rowlen = row;
       item.config = config;
       return item;
     })
