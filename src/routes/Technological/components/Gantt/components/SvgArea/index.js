@@ -75,6 +75,12 @@ export default class index extends Component {
         this.setState({
             cards_one_level: arr
         }, () => {
+            if (!arr.length) {
+                this.setState({
+                    rely_map: []
+                })
+                return
+            }
             this.recusionSetMap(rely_map, arr)
             this.setState({
                 rely_map
