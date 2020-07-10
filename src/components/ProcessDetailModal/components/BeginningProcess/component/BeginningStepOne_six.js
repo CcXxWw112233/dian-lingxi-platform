@@ -43,7 +43,7 @@ export default class BeginningStepOne_six extends Component {
     const { itemValue: { online_excel_id } } = this.props
     const { data = [] } = this.state;
     return (
-      <div key={online_excel_id} className={indexStyles.text_form}>
+      <div key={online_excel_id} style={{background:'rgba(0,0,0,0.02)', border:'1px solid rgba(0,0,0,0.15)'}} className={indexStyles.text_form}>
         <p>在线表格 
           <span style={{marginLeft: 10}}>
             <Sheet data={data.sheet_data} onMessage={this.updateSheetData}/>

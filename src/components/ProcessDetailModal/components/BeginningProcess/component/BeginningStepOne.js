@@ -332,6 +332,7 @@ export default class BeginningStepOne extends Component {
   
   // 更新表格列表数据
   updateSheetList = ({id, sheetData}) => {
+    if (!id) return
     let obj = {...this.state.sheetListData};
     obj[id] = sheetData;
       this.setState({
