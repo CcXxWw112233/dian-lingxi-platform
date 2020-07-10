@@ -315,7 +315,7 @@ export default class BeginningStepOne extends Component {
     let keys = Object.keys(sheetListData);
     if(keys.length){
       let promise = keys.map(item => {
-        if (!item) return
+        if (!item) return void 0;
         let data = sheetListData[item] || [];
         return new Promise((resolve) => {
           saveOnlineExcelWithProcess({ excel_id: item, sheet_data: data }).then(res => {
@@ -325,6 +325,7 @@ export default class BeginningStepOne extends Component {
           })
         })
       })
+      promise = promise.filter(n => n);
       Promise.all(promise).then(resp => {
         // console.info(resp);
       })
@@ -338,7 +339,7 @@ export default class BeginningStepOne extends Component {
     obj[id] = sheetData;
       this.setState({
         sheetListData: obj
-      },() => {
+      }, () => {
         this.saveSheetData()
       })
   }
