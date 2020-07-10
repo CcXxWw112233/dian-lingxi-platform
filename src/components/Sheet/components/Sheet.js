@@ -113,7 +113,7 @@ export default class Sheet extends React.Component{
         }
       }
 
-      let celldata = item.celldata;
+      let celldata = item.celldata || [];
       item.celldata = celldata.map(cell => {
         // 修复显示合并单元格的bug
         let mc = cell.mc;
