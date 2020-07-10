@@ -179,7 +179,7 @@ export default class ConfigureProcess extends Component {
     // return console.log(sheetListData)
     if(keys.length){
       let promise = keys.map(item => {
-        if (!item) return
+        if (!item) return void 0;
         let data = sheetListData[item] || [];
         // return saveOnlineExcelWithProcess({ excel_id: item, sheet_data: data })
         return new Promise((resolve) => {
@@ -190,6 +190,7 @@ export default class ConfigureProcess extends Component {
           })
         })
       })
+      promise = promise.filter(n => n);
       Promise.all(promise).then(resp => {
         // console.info(resp);
       })

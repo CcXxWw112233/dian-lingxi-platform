@@ -44,6 +44,7 @@ export default class ConfigureStepOne_six extends Component {
     const { updateSheetList } = this.props;
     this.setState({
       data: {
+        id: this.state.data.id,
         sheet_data: data
       }
     })
