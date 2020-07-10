@@ -349,7 +349,7 @@ export default class DateList extends Component {
                           </div>
                         )
                       }
-                      {isToday ? '今' : date_no}
+                      {isToday ? <span style={{ color: '#1890FF', fontSize: 12 }}>今天</span> : date_no}
                     </div>
                   </div>
                 </div>
@@ -374,7 +374,7 @@ export default class DateList extends Component {
                               </div>
                             )
                           }
-                          {isToday ? '今' : date_no}
+                          {isToday ? <span style={{ color: '#1890FF', fontSize: 12 }}>今天</span> : date_no}
                         </div>
                       </div>
                     </div>
@@ -401,7 +401,7 @@ export default class DateList extends Component {
             group_view_type != '1' ? (
               <div key={`${month}/${timestamp}`}>
                 <div className={`${indexStyles.dateDetailItem}`} key={key2} style={{ width: ceilWidth * 7, fontSize: 12 }}>
-                  <div className={`${indexStyles.dateDetailItem_date_no} `} style={{ fontSize: 12,}}>
+                  <div className={`${indexStyles.dateDetailItem_date_no} `} style={{ fontSize: 12, }}>
                     {date_no}
                   </div>
                 </div>
