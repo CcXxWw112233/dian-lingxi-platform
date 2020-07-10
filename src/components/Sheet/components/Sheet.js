@@ -78,6 +78,66 @@ export default class Sheet extends React.Component{
     window.luckysheet.method.destroy();
     window.removeEventListener('resize', this.resize)
   }
+
+  // 格式化数据字符串的问题
+  forMatNumberData = (data)=> {
+    let arr = data.map(item => {
+      let config = item.config;
+      let {columlen, merge} = config;
+      let obj = {};
+      if(columlen){
+        for(let key in columlen){
+          obj[key] = +columlen[key]
+        }
+      }
+      let m = {};
+      // 
+      if(merge){
+        for(let key in merge){
+          let d = merge[key];
+          let n = {};
+          for(let dk in d){
+            n[dk] = +d[dk];
+          }
+          m[key] = n;
+        }
+      }
+
+      let celldata = item.celldata;
+      item.celldata = celldata.map(cell => {
+        let mc = cell.mc;
+        cell.r = +cell.r;
+        cell.c = +cell.c;
+        if(mc){
+          let obj = {};
+          for(let key in mc){
+            obj[key] = +mc[key];
+          }
+          cell.mc = obj;
+        }
+        let v = cell.v;
+        if(v && typeof v === 'object'){
+          let vmc = v.mc;
+          if(vmc){
+            let obj = {};
+            for(let key in vmc){
+              obj[key] = +vmc[key];
+            }
+            v.mc = obj;
+          }
+          cell.v = v;
+        }
+        return cell;
+      })
+
+      config.merge = m;
+      config.columlen = obj;
+      item.config = config;
+      return item;
+    })
+    return arr;
+  }
+
   init = (data)=>{
     window.luckysheet.method.destroy();
     let {
@@ -90,19 +150,7 @@ export default class Sheet extends React.Component{
       showstatisticBar = true
     } = this.props;
     data = data && data.length ? data : [{ "name": "默认Sheet", color: "", "status": "1", "order": "0", "config": {}, "index": 0 }]
-    data = data.map(item => {
-      let config = item.config;
-      let columlen = config;
-      let obj = {};
-      if(columlen){
-        for(let key in obj){
-          obj[key] = +obj[key]
-        }
-      }
-      config.columlen = obj;
-      item.config = config;
-      return item;
-    })
+    data = this.forMatNumberData(data);
     window.luckysheet.create({
       container: id || 'luckysheet',
       showinfobar,
