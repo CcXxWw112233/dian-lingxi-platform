@@ -2,6 +2,7 @@ import React from 'react'
 import styles from './index.less'
 import {exportFile} from './utils'
 import globalStyles from '@/globalset/css/globalClassName.less'
+import { remove } from 'js-cookie';
 export default class PreviewTable extends React.Component{
     constructor(){
         super(...arguments);
@@ -124,9 +125,80 @@ export default class PreviewTable extends React.Component{
         })
         return sheets;
     }
+    // 格式化数据字符串的问题
+    forMatNumberData = (data)=> {
+        let arr = data.map(item => {
+        let config = item.config;
+        let {columlen, merge, rowlen} = config;
+        let obj = {};
+        // 修复列宽的bug
+        if(columlen){
+            for(let key in columlen){
+            obj[key] = +columlen[key]
+            }
+        }
+
+        // 修复行高的bug
+        let row = {};
+        if(rowlen){
+            for(let key in rowlen){
+            row[key] = +rowlen[key]
+            }
+        }
+
+        let m = {};
+        // 修复合并单元格的bug
+        if(merge){
+            for(let key in merge){
+            let d = merge[key];
+            let n = {};
+            for(let dk in d){
+                n[dk] = +d[dk];
+            }
+            m[key] = n;
+            }
+        }
+
+        let celldata = item.celldata || [];
+        item.celldata = celldata.map(cell => {
+            // 修复显示合并单元格的bug
+            let mc = cell.mc;
+            cell.r = +cell.r;
+            cell.c = +cell.c;
+            if(mc){
+            let obj = {};
+            for(let key in mc){
+                obj[key] = +mc[key];
+            }
+            cell.mc = obj;
+            }
+            let v = cell.v;
+            if(v && typeof v === 'object'){
+            let vmc = v.mc;
+            if(vmc){
+                let obj = {};
+                for(let key in vmc){
+                obj[key] = +vmc[key];
+                }
+                v.mc = obj;
+            }
+            cell.v = v;
+            }
+            return cell;
+        })
+
+        config.merge = m;
+        config.columlen = obj;
+        config.rowlen = row;
+        item.config = config;
+        return item;
+        })
+        return arr;
+    }
     // 格式化数据
     forMatData = (data) => {
         let arr = this.getEmptyArrary(data);
+        arr = this.forMatNumberData(arr);
         let array = arr.map((item) => {
             let celldata = item.celldata;
             let config = item.config;
@@ -142,17 +214,24 @@ export default class PreviewTable extends React.Component{
             let merge = config.merge;
             if(merge){
                 let mKeys = Object.keys(merge);
+                // 保存已经删除掉的单元格数量
+                let removedC = {
+
+                }
                 // 合并单元格
-                mKeys.forEach(conf => {
+                mKeys.sort().forEach(conf => {
                     let r = +merge[conf].r;
-                    let c = +merge[conf].c;
+                    // 已经删除了的单元格会发生长度变化，下标会失效。
+                    let c = +merge[conf].c - (removedC[r] || 0);
                     let oldm = d[r][c] || {};
-                    let rs = r + +merge[conf].rs - 1;
-                    for(let i = r ; i <= rs ; i++){
+                    let rs = r + +merge[conf].rs;
+                    for(let i = r ; i < rs ; i++){
                         d[i].splice(c, +merge[conf].cs);
+                        // 保存每一行删除的个数，用来取对应的数据
+                        removedC[i] = (removedC[i] || 0) + (+merge[conf].cs - 1);
                     }
-                    d[r].splice(c, 0, oldm);
-                    d[r][c] = { ...oldm, merge: true, r: +merge[conf].rs, c: +merge[conf].cs};
+                    // 将删除的数据回填到表格，通过合并单元格使用
+                    d[r].splice(c, 0, { ...oldm, merge: oldm.mc ? true: false, mrs: +merge[conf].rs, mcs: +merge[conf].cs});
                 })
             }
             item.data = d ;
@@ -205,8 +284,8 @@ export default class PreviewTable extends React.Component{
             colSpan: 1
         };
         if(data && data.merge){
-            merge.colSpan = data.c;
-            merge.rowSpan = data.r;
+            merge.colSpan = data.mcs;
+            merge.rowSpan = data.mrs;
         }
         return (
             <td {...merge} style={{...style, ...this.setTdStyle(index)}}>
