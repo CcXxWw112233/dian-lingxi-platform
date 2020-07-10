@@ -179,6 +179,7 @@ export default class ConfigureProcess extends Component {
     // return console.log(sheetListData)
     if(keys.length){
       let promise = keys.map(item => {
+        if (!item) return
         let data = sheetListData[item] || [];
         // return saveOnlineExcelWithProcess({ excel_id: item, sheet_data: data })
         return new Promise((resolve) => {
