@@ -541,15 +541,17 @@ export default class HeaderContentRightMenu extends Component {
     // 设置访问控制开关
     if (obj && obj.type && obj.type == 'privilege') {
       let new_privileges = [...privileges]
-      for (let item in obj) {
-        if (item == 'privileges') {
-          obj[item].map(val => {
-            let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
-            if (temp_arr && !temp_arr.length) return false
-            return new_privileges = [...temp_arr]
-          })
+      const { privileges: temp_privileges = [] } = obj
+      if (!(temp_privileges && temp_privileges.length)) return
+      new_privileges = new_privileges.map(item => {
+        if (item.id == temp_privileges[0].id) {
+          let new_item = {...item}
+          new_item = {...item, ...temp_privileges[0]}
+          return new_item
+        } else {
+          return item
         }
-      }
+      })
       let newCurrentPreviewFileData = { ...currentPreviewFileData, is_privilege: obj.is_privilege, privileges: new_privileges }
       this.props.updateStateDatas && this.props.updateStateDatas({ currentPreviewFileData: newCurrentPreviewFileData })
       this.props.whetherUpdateFolderListData && this.props.whetherUpdateFolderListData({ folder_id })
