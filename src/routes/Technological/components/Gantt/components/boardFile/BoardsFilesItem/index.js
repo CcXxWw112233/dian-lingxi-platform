@@ -251,6 +251,7 @@ export default class Index extends Component {
         const { board_id } = this.props
         return (
             <div
+                id={'board_file_area_item'}
                 data-drag_area={'area_top'}
                 // style={{ background: 'red', height: 300, }}
                 className={`${styles.board_file_area_item}`}

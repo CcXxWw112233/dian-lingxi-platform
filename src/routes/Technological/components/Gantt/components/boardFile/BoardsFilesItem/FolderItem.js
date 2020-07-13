@@ -630,6 +630,7 @@ export default class FolderItem extends Component {
 					visible={visitControlModalVisible && id == currentVisitControlModalVisibleItem}
 					maskClosable={false}
 					onCancel={this.handleVisitControlModalCancel}
+					getContainer={document.getElementById('process_file_detail_container') ? () => document.getElementById('process_file_detail_container') : '' }
 				>
 					<div style={{ paddingTop: '40px', marginLeft: '-7px', marginRight: '-5px' }}>
 						<VisitControl
