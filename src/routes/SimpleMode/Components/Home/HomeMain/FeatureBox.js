@@ -5,6 +5,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { Icon, message, Tooltip } from 'antd';
 import { setBoardIdStorage, isPaymentOrgUser, } from "@/utils/businessFunction"
 import { changeBoxFeatureName } from "../../../../../utils/temporary";
+import { arrayNonRepeatfy } from "../../../../../utils/util";
 class FeatureBox extends Component {
   constructor(props) {
     super(props);
@@ -337,15 +338,23 @@ class FeatureBox extends Component {
     } else {
       isPaymentUser = isPaymentOrgUser();
     }
-
-
+    let tempMyWorkbenchBoxList = []
+    myWorkbenchBoxList.push({
+      id: 'statistical_report',
+      name: '统计报表',
+      status: '1',
+      code: 'statistical_report',
+      icon: ''
+    })
+    tempMyWorkbenchBoxList = arrayNonRepeatfy(myWorkbenchBoxList)
+    
     return (
 
       <div className={indexStyles.mainContentWapper}>
 
         <div className={indexStyles.myWorkbenchBoxWapper}>
           {
-            myWorkbenchBoxList.map((item, key) => {
+            tempMyWorkbenchBoxList.map((item, key) => {
               return this.renderBoxItem(item, isPaymentUser);
             })
           }

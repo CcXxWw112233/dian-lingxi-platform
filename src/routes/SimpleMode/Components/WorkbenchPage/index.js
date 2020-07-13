@@ -9,6 +9,7 @@ import InvestmentMaps from './InvestmentMaps/index'
 import XczNews from './XczNews/index'
 import Zhichengshe from './Zhichengshe/index'
 import Workglows from './Workflows'
+import StatisticalReport from './StatisticalReport'
 import { isPaymentOrgUser } from "@/utils/businessFunction"
 class WorkbenchPage extends Component {
     constructor(props) {
@@ -146,6 +147,7 @@ class WorkbenchPage extends Component {
                             isPaymentUser && 'mine:flows' == select_box_code &&
                             <Workglows workbenchBoxContent_height={workbenchBoxContent_height} />
                         }
+                        <StatisticalReport />
                     </div>
                 </div>
             </div>
