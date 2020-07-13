@@ -12,6 +12,8 @@ import CardDropDetail from '../../components/gattFaceCardItem/CardDropDetail'
 import { filterDueTimeSpan, cardIsHasUnRead, cardItemIsHasUnRead, setDateWithPositionInYearView, setDateWidthPositionWeekView } from '../../ganttBusiness'
 import { transformTimestamp, isSamDay } from '../../../../../../utils/util'
 import HoverEars from './HoverEars'
+import DragCard from './DragCard'
+
 // 参考自http://www.jq22.com/webqd1348
 
 // const dateAreaHeight = date_area_height //日期区域高度，作为修正
@@ -1068,6 +1070,11 @@ export default class CardItem extends Component {
                             setRelyLineDrawing={this.setRelyDown}
                             rely_down={rely_down} />
                     )
+                }
+                {
+                    <DragCard
+                        width={(local_width || 6) - (gantt_view_mode == 'year' ? 0 : card_width_diff)}
+                    />
                 }
             </div>
         )

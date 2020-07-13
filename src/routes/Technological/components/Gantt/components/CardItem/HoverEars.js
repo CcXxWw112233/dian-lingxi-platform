@@ -224,7 +224,7 @@ class HoverEars extends Component {
         const { x1, y1, length, angle, transformOrigin, x2, y2 } = this.state
         return (
             <div className={indexStyles.ears_out} style={{ display: rely_down ? 'block' : '' }}>
-                <div
+                {/* <div
                     data-rely_left={id}
                     className={`${indexStyles.ears} ${indexStyles.left_ear}`}
                     style={{ backgroundColor: `${this.setTriangleTreeColor(label_data, 'start') || '#D7D7D7'}` }}>
@@ -237,7 +237,7 @@ class HoverEars extends Component {
                     style={{ backgroundColor: `${this.setTriangleTreeColor(label_data, 'start') || '#D7D7D7'}` }}>
                     <div />
                     <div />
-                </div>
+                </div> */}
 
                 {/* <div
                     // data-ref={'left_circle_ref'}
