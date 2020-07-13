@@ -1340,7 +1340,11 @@ export default class MainContent extends Component {
             </div>
           )
         }
-        <ProcessFile />
+        {
+          processPageFlagStep == '4' && (
+            <ProcessFile />
+          )
+        }
       </div>
     )
   }
