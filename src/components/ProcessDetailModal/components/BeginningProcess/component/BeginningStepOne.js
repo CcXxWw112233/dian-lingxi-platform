@@ -365,11 +365,6 @@ export default class BeginningStepOne extends Component {
     let form_values = this.getAllNodesFormsData()
     let that = this
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
-    // 如果找到表格 那么就保存获取表格数据
-    let curr_excel = processEditDatas[itemKey]['forms'] && processEditDatas[itemKey]['forms'].find(i => i.field_type == '6')
-    if (!(curr_excel && Object.keys(curr_excel).length)) return
-    let excel_id = curr_excel.online_excel_id
-    // this.saveSheetData(excel_id);
     dispatch({
       type: 'publicProcessDetailModal/fillFormComplete',
       payload: { 

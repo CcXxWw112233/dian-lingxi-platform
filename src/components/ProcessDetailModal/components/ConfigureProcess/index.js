@@ -337,10 +337,7 @@ export default class ConfigureProcess extends Component {
     // this.whetherIsDeleteOnlineExcel()
     // 如果找到表格 那么就保存获取表格数据
     if (node_type == '1') {
-      let curr_excel = processEditDatas[itemKey]['forms'].find(i => i.field_type == '6')
-      if (!(curr_excel && Object.keys(curr_excel).length)) return
-      let excel_id = curr_excel.online_excel_id
-      this.saveSheetData(excel_id)
+      this.saveSheetData()
     } 
   }
 
