@@ -13,16 +13,17 @@ export default class DragCard extends Component {
         // this.left = -(this.padding_diff / 2)
     }
     render() {
-        const { width } = this.props
+        const { width, id } = this.props
         return (
             <>
                 <div data-targetclassname="specific_example"
+                    data-rely_top={id}
                     className={styles.drag_out} style={{ width: width + this.padding_diff, height: this.height, top: this.top, left: this.left }}>
-
                 </div>
                 {/* <div className={`${styles.drag_area} ${styles.drag_left} ${globalStyles.authTheme}`}>
                     &#xe7ec;
                 </div> */}
+                <div className={styles.backMask}></div>
                 <div data-targetclassname="specific_example"
                     className={`${styles.drag_area} ${styles.drag_right} ${globalStyles.authTheme}`}>
                     &#xe7eb;

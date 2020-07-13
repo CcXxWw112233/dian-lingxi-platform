@@ -55,9 +55,9 @@ class HoverEars extends Component {
 
         } else if (target_ref == 'right_circle_ref') {
             this.setState({
-                x1: width,
-                y1: 20,
-                transformOrigin: `${width} ${20}`,
+                x1: width + 46,
+                y1: 8,
+                transformOrigin: `${width + 46} ${8}`,
                 move_to: 'end'
             })
             this.rela_x = x + 10
@@ -75,14 +75,14 @@ class HoverEars extends Component {
         let x2 = x - this.rela_x //- 10 // - 10是为了让鼠标不落在箭头上
         let y2 = y - this.rela_y //- 10
         if (x2 < 0) {
-            x2 = x2 + 14
+            x2 = x2 + 18
         } else {
-            x2 = x2 - 14
+            x2 = x2 - 18
         }
         if (y2 < 0) {
-            y2 = y2 + 14
+            y2 = y2 + 18
         } else {
-            y2 = y2 - 14
+            y2 = y2 - 18
         }
         const { angle, length } = this.calHypotenuse({ x2, y2 })
         this.setState({

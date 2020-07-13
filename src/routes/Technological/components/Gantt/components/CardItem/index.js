@@ -987,7 +987,7 @@ export default class CardItem extends Component {
             child_card_status = {},
         } = itemValue
         const { has_child, min_start_time: child_min_start_time, max_due_time: child_max_due_time } = child_card_status //子任务状态，实现大纲的父任务三角
-        const { local_left, local_top, local_width, rely_down } = this.state
+        const { local_left, local_top, local_width, rely_down, drag_lock } = this.state
         const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
         return (
             <div
@@ -1103,7 +1103,7 @@ export default class CardItem extends Component {
                 }
                 {/* //hover出现的耳朵效果 */}
                 {
-                    ganttIsOutlineView({ group_view_type }) && !parent_card_id && gantt_view_mode != 'year' && (
+                    drag_lock && ganttIsOutlineView({ group_view_type }) && !parent_card_id && gantt_view_mode != 'year' && (
                         <HoverEars
                             getX={this.getX}
                             itemValue={itemValue}
@@ -1113,8 +1113,9 @@ export default class CardItem extends Component {
                     )
                 }
                 {
-                    this.state.drag_lock && (
+                    drag_lock && (
                         <DragCard
+                            id={id}
                             width={(local_width || 6) - (gantt_view_mode == 'year' ? 0 : card_width_diff)}
                         />
                     )
