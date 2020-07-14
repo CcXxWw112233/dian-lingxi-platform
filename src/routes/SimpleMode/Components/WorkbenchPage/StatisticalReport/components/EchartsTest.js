@@ -11,7 +11,7 @@ import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/title';
 import 'echarts/lib/component/legend';
 
-class HistogramComponent extends Component {
+class EchartsTest extends Component {
 
   arrayNonRepeatfy = (arr, key = 'id') => {
     let temp_arr = []
@@ -27,13 +27,15 @@ class HistogramComponent extends Component {
 
   componentDidMount() {
     // 基于准备好的dom，初始化echarts实例
-    let myChart = echarts.init(document.getElementById('main'));
+    var myChart = echarts.init(document.getElementById('main'));
     // 绘制图表
+    var data = []
     let boardNameData = reportData.map(item => item.board_name)
     let userNameData = reportData.map(item => item.user_name)
     let workTimeData = reportData.map(item => item.work_time)
+    console.log(this.arrayNonRepeatfy(userNameData), 'sssssssssssss_userNameData')
     // 指定图表的配置项和数据
-    let option = {
+    var option = {
       tooltip: {
         trigger: 'axis',
         axisPointer: {            // 坐标轴指示器，坐标轴触发有效
@@ -71,20 +73,12 @@ class HistogramComponent extends Component {
           name: '沙田项目',
           type: 'bar',
           stack: '项目',
-          label: {
-            show: true,
-            position: 'inside'
-          },
-          data: [320, 332, 301, 334, 390, 330, 320],
+          data: [320, 332, 301, 334, 390, 330, 320]
         },
         {
           name: '西塘项目',
           type: 'bar',
           stack: '项目',
-          label: {
-            show: true,
-            position: 'inside'
-          },
           data: [120, 132, 101, 134, 90, 230, 210]
         },
         {
@@ -161,9 +155,4 @@ class HistogramComponent extends Component {
   }
 }
 
-export default HistogramComponent;
-
-// 柱状图类型
-HistogramComponent.defaultProps = {
-
-}
+export default EchartsTest;

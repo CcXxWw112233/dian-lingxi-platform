@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import HistogramComponent from './components/HistogramComponent'
+import EchartsTest from './components/EchartsTest'
 
 export default class index extends Component {
   render() {
@@ -16,6 +17,7 @@ export default class index extends Component {
             </div>
             <div className={indexStyles.chart_item_bottom}>
               <HistogramComponent />
+              {/* <EchartsTest /> */}
             </div>
           </div>
         </div>
