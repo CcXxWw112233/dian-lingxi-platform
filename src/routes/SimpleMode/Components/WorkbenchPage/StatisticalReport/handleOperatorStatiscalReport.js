@@ -1,3 +1,4 @@
+// 针对坐标轴换行处理
 export const  newline = (option, number, axis) => {
   let labelItem
   /* 此处注意json是数组还是对象 */

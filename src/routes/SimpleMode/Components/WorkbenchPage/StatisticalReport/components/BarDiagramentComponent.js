@@ -37,7 +37,39 @@ class BarDiagramentComponent extends Component {
       legend: {
         data: arrayNonRepeatfy(boardNameData),
         type: 'scroll',
-        left: 16
+        left: 16,
+        formatter: function (params) {   //标签输出形式 ---请开始你的表演
+          var index = 10;
+          var newstr = '';
+          for (var i = 0; i < params.length; i += index) {
+            var tmp = params.substring(i, i + index);
+            newstr += tmp + '\n';
+          }
+          if (newstr.length > 20)
+            return newstr.substring(0, 20) + '...';
+          else
+            return '\n' + newstr;
+        },
+        triggerEvent: true,
+        // formatter: function (params) {
+        //   let tip1 = "";
+        //   let tip = "";
+        //   let le = params.length  //图例文本的长度
+        //   if (le > 9) {   //几个字换行大于几就可以了
+        //     let l = Math.ceil(le / 9)  //有些不能整除，会有余数，向上取整
+        //     for (let i = 1; i <= l; i++) { //循环
+        //       if (i < l) { //最后一段字符不能有\n
+        //         tip1 += params.slice(i * 9 - 9, i * 9) + '\n'; //字符串拼接
+        //       } else if (i === l) {  //最后一段字符不一定够9个
+        //         tip = tip1 + params.slice((l - 1) * 9, le) //最后的拼接在最后
+        //       }
+        //     }
+        //     return tip;
+        //   } else {
+        //     tip = params  //前面定义了tip为空，这里要重新赋值，不然会替换为空
+        //     return tip;
+        //   }
+        // }
       },
       grid: {
         left: '3%',
@@ -165,7 +197,7 @@ class BarDiagramentComponent extends Component {
           data: [20, 12, 11, 24, 20, 30, 30]
         },
         {
-          name: '999',
+          name: '999999999999999999999999999999999999999999999999999999999999999999999',
           type: 'bar',
           stack: '项目',
           label: {
