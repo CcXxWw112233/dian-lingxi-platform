@@ -10,32 +10,19 @@ import 'echarts/lib/chart/bar';
 import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/title';
 import 'echarts/lib/component/legend';
+import { newline, arrayNonRepeatfy } from '../handleOperatorStatiscalReport';
 
 class EchartsTest extends Component {
 
-  arrayNonRepeatfy = (arr, key = 'id') => {
-    let temp_arr = []
-    let temp_id = []
-    for (let i = 0; i < arr.length; i++) {
-      if (!temp_id.includes(arr[i])) {//includes 检测数组是否有某个值
-        temp_arr.push(arr[i]);
-        temp_id.push(arr[i])
-      }
-    }
-    return temp_arr
-  }
-
   componentDidMount() {
     // 基于准备好的dom，初始化echarts实例
-    var myChart = echarts.init(document.getElementById('main'));
+    let myChart = echarts.init(document.getElementById('main'));
     // 绘制图表
-    var data = []
     let boardNameData = reportData.map(item => item.board_name)
     let userNameData = reportData.map(item => item.user_name)
     let workTimeData = reportData.map(item => item.work_time)
-    console.log(this.arrayNonRepeatfy(userNameData), 'sssssssssssss_userNameData')
     // 指定图表的配置项和数据
-    var option = {
+    let option = {
       tooltip: {
         trigger: 'axis',
         axisPointer: {            // 坐标轴指示器，坐标轴触发有效
@@ -43,7 +30,7 @@ class EchartsTest extends Component {
         }
       },
       legend: {
-        data: this.arrayNonRepeatfy(boardNameData),
+        data: arrayNonRepeatfy(boardNameData),
         type: 'scroll', //分页类型
         left: 16
       },
@@ -56,11 +43,12 @@ class EchartsTest extends Component {
       xAxis: [
         {
           type: 'category',
-          data: this.arrayNonRepeatfy(userNameData),
+          data: arrayNonRepeatfy(userNameData),
           axisTick: {
             alignWithLabel: true,
             interval: 0
           },
+          axisLabel: true
         }
       ],
       yAxis: [
@@ -73,12 +61,20 @@ class EchartsTest extends Component {
           name: '沙田项目',
           type: 'bar',
           stack: '项目',
-          data: [320, 332, 301, 334, 390, 330, 320]
+          label: {
+            show: true,
+            position: 'inside'
+          },
+          data: [320, 332, 301, 334, 390, 330, 320],
         },
         {
           name: '西塘项目',
           type: 'bar',
           stack: '项目',
+          label: {
+            show: true,
+            position: 'inside'
+          },
           data: [120, 132, 101, 134, 90, 230, 210]
         },
         {
@@ -144,7 +140,7 @@ class EchartsTest extends Component {
       ]
     };
 
-
+    option = newline(option, 3, 'xAxis')
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
   }

@@ -11,23 +11,13 @@ import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/title';
 import 'echarts/lib/component/legend';
 
-class HistogramComponent extends Component {
+import { newline, arrayNonRepeatfy } from '../handleOperatorStatiscalReport';
 
-  arrayNonRepeatfy = (arr, key = 'id') => {
-    let temp_arr = []
-    let temp_id = []
-    for (let i = 0; i < arr.length; i++) {
-      if (!temp_id.includes(arr[i])) {//includes 检测数组是否有某个值
-        temp_arr.push(arr[i]);
-        temp_id.push(arr[i])
-      }
-    }
-    return temp_arr
-  }
+class HistogramComponent extends Component {
 
   componentDidMount() {
     // 基于准备好的dom，初始化echarts实例
-    let myChart = echarts.init(document.getElementById('main'));
+    let myChart = echarts.init(document.getElementById('histogramComponent'));
     // 绘制图表
     let boardNameData = reportData.map(item => item.board_name)
     let userNameData = reportData.map(item => item.user_name)
@@ -41,7 +31,7 @@ class HistogramComponent extends Component {
         }
       },
       legend: {
-        data: this.arrayNonRepeatfy(boardNameData),
+        data: arrayNonRepeatfy(boardNameData),
         type: 'scroll', //分页类型
         left: 16
       },
@@ -54,11 +44,12 @@ class HistogramComponent extends Component {
       xAxis: [
         {
           type: 'category',
-          data: this.arrayNonRepeatfy(userNameData),
+          data: arrayNonRepeatfy(userNameData),
           axisTick: {
             alignWithLabel: true,
             interval: 0
           },
+          axisLabel: true
         }
       ],
       yAxis: [
@@ -150,13 +141,13 @@ class HistogramComponent extends Component {
       ]
     };
 
-
+    option = newline(option, 3, 'xAxis')
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
   }
   render() {
     return (
-      <div id="main" style={{ width: 400, height: 380 }}></div>
+      <div id="histogramComponent" style={{ width: 400, height: 380 }}></div>
     );
   }
 }
