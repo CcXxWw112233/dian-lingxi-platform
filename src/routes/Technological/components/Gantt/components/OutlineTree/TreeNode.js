@@ -75,13 +75,13 @@ export default class TreeNode extends Component {
             return
         }
         if (this.title_click_timer) {
-            this.navigateToVisualArea()
+            this.toggleTitleEdit()
             clearTimeout(this.title_click_timer)
             this.title_click_timer = null
             return
         }
         this.title_click_timer = setTimeout(() => {
-            this.toggleTitleEdit()
+            this.navigateToVisualArea()
             clearTimeout(this.title_click_timer)
             this.title_click_timer = null
         }, 300)
