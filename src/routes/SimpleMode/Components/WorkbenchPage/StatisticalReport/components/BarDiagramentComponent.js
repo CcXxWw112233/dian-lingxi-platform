@@ -14,7 +14,7 @@ import { newline, arrayNonRepeatfy } from '../handleOperatorStatiscalReport';
 
 class BarDiagramentComponent extends Component {
 
-  componentDidMount() {
+  componentDidMount () {
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('barDiagramContent'));
     let boardNameData = reportData.map(item => item.board_name)
@@ -24,21 +24,23 @@ class BarDiagramentComponent extends Component {
     var option = {
       tooltip: {
         trigger: 'axis',
-        axisPointer: {            // 坐标轴指示器，坐标轴触发有效
-          type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+        axisPointer: { // 坐标轴指示器，坐标轴触发有效
+          type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
         },
-        // position: function (pos, params, dom, rect, size) {
-        //   // 鼠标在左侧时 tooltip 显示到右侧，鼠标在右侧时 tooltip 显示到左侧。
-        //   var obj = { top: 60 };
-        //   obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 5;
-        //   return obj;
-        // }
+        extraCssText: "width:200px;overflow:auto",
+        enterable: true,
+        position: function (pos, params, dom, rect, size) {
+          // 鼠标在左侧时 tooltip 显示到右侧，鼠标在右侧时 tooltip 显示到左侧。
+          // var obj = { top: 60 };
+          // obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 5;
+          return pos;
+        }
       },
       legend: {
         data: arrayNonRepeatfy(boardNameData),
         type: 'scroll',
         left: 16,
-        formatter: function (params) {   //标签输出形式 ---请开始你的表演
+        formatter: function (params) { //标签输出形式 ---请开始你的表演
           var index = 10;
           var newstr = '';
           for (var i = 0; i < params.length; i += index) {
@@ -213,7 +215,7 @@ class BarDiagramentComponent extends Component {
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
   }
-  render() {
+  render () {
     return (
       <div id="barDiagramContent" style={{ width: 400, height: 380 }}></div>
     );
