@@ -506,124 +506,174 @@ export default class TreeNode extends Component {
         '3': styles.flowNode
     }
 
-    render() {
-        const { isTitleHover, isTitleEdit, nodeValue = {}, operateVisible } = this.state;
-        const { id, add_id, name: title, tree_type, is_expand, time_span } = nodeValue;
-        const { changeOutLineTreeNodeProto, deleteOutLineTreeNode, onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {}, outline_tree_round = [] } = this.props;
-        let type;
-        if (tree_type) {
-            type = tree_type;
-        } else {
-            type = this.props.type;
-        }
-        //console.log("更新节点", nodeValue);
+    renderOperate = () => {
+        const { nodeValue = {}, } = this.state;
+        const { changeOutLineTreeNodeProto, deleteOutLineTreeNode, onExpand } = this.props;
         const menu = <NodeOperate nodeValue={nodeValue}
             editName={this.toggleTitleEdit}
             setDropVisble={this.operateVisibleChange}
             onExpand={onExpand}
             changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
             deleteOutLineTreeNode={deleteOutLineTreeNode} />
+        return menu
+    }
 
-        if (this.props.children && this.props.children.length > 0) {
+    // 渲染有子节点的
+    renderHasChildNode = () => {
+        const { isTitleHover, isTitleEdit, nodeValue = {}, operateVisible } = this.state;
+        const { id, add_id, name: title, tree_type, is_expand, time_span } = nodeValue;
+        const { children = [], changeOutLineTreeNodeProto, deleteOutLineTreeNode, onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {}, outline_tree_round = [] } = this.props;
+        const isLeaf = false;
+        let type;
+        if (tree_type) {
+            type = tree_type;
+        } else {
+            type = this.props.type;
+        }
+        return (
+            <>
+                <div className={`${styles.outline_tree_node_content} ${((hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id)) ? styles.hover : ''}`}
+                    style={{ paddingLeft: (leve * 23) + 'px', height: task_item_height, lineHeight: `${task_item_height}px`, marginBottom: task_item_margin_top }}
+                    onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+                    {
+                        (hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id || operateVisible) ? (
+                            <Dropdown overlay={this.renderOperate()}
+                                visible={operateVisible}
+                                trigger={['click']} onVisibleChange={this.operateVisibleChange}>
+                                <div className={`${styles.node_opeator} ${globalStyles.authTheme}`}>&#xe7fd;</div>
+                            </Dropdown>
+                        ) : (
+                                <span className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}></span>
+                            )
+                    }
+                    {
+                        !isLeaf &&
+                        <span className={`${styles.outline_tree_node_expand_icon_out}`} onClick={this.onChangeExpand}>
+                            <span className={`${styles.outline_tree_node_expand_icon} ${is_expand ? styles.expanded : ''}`} ></span>
+                        </span>
+                    }
+                    {this.renderTitle()}
 
-            let className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;
-            let isLeaf = false;
-            return (
-                <div className={className} key={id}>
-                    <div className={`${styles.outline_tree_node_content} ${((hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id)) ? styles.hover : ''}`}
-                        style={{ paddingLeft: (leve * 23) + 'px', height: task_item_height, lineHeight: `${task_item_height}px`, marginBottom: task_item_margin_top }}
-                        onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+                </div>
+                <div className={styles.collapse_transition} data-old-padding-top="0px" data-old-padding-bottom="0px" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: is_expand ? 'block' : 'none' }}>
+                    <div className={styles.outline_tree_node_children}>
                         {
-                            (hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id || operateVisible) ? (
-                                <Dropdown overlay={menu}
-                                    visible={operateVisible}
-                                    trigger={['click']} onVisibleChange={this.operateVisibleChange}>
-                                    <div className={`${styles.node_opeator} ${globalStyles.authTheme}`}>&#xe7fd;</div>
-                                </Dropdown>
-                            ) : (
+                            React.Children.map(this.props.children, (child, i) => {
+                                // console.log("child.props", child.props);
+                                //child.props['leve'] = leve + 1;
+                                if (child && child.props && child.props.children && child.props.children.length > 0) {
+                                    return (
+                                        <TreeNode {...child.props}
+                                            changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
+                                            deleteOutLineTreeNode={deleteOutLineTreeNode}
+                                            leve={leve + 1}
+                                            isLeaf={false}
+                                            onDataProcess={onDataProcess}
+                                            onExpand={onExpand}
+                                            onHover={onHover}
+                                            parentId={id}
+                                            hoverItem={hoverItem}
+                                            gantt_board_id={gantt_board_id}
+                                            projectDetailInfoData={projectDetailInfoData}
+                                            outline_tree_round={outline_tree_round}>
+                                            {child.props.children}
+                                        </TreeNode>
+                                    );
+                                } else {
+                                    return (
+                                        <TreeNode {...child.props}
+                                            changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
+                                            deleteOutLineTreeNode={deleteOutLineTreeNode}
+                                            leve={leve + 1} isLeaf={true}
+                                            onDataProcess={onDataProcess}
+                                            onExpand={onExpand} onHover={onHover}
+                                            parentId={id}
+                                            hoverItem={hoverItem}
+                                            gantt_board_id={gantt_board_id}
+                                            projectDetailInfoData={projectDetailInfoData}
+                                            outline_tree_round={outline_tree_round} />
+                                    );
+                                }
+                            })
+                        }
+
+                    </div>
+                </div>
+            </>
+        );
+
+    }
+
+
+    // 渲染无子节点的
+    renderNotChildNode = () => {
+        const { isTitleHover, isTitleEdit, nodeValue = {}, operateVisible } = this.state;
+        const { id, add_id, name: title, tree_type, is_expand, time_span } = nodeValue;
+        const { children = [], changeOutLineTreeNodeProto, deleteOutLineTreeNode, onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {}, outline_tree_round = [] } = this.props;
+        let type;
+        if (tree_type) {
+            type = tree_type;
+        } else {
+            type = this.props.type;
+        }
+        const isLeaf = true;
+        return (
+            <>
+                <div className={`${styles.outline_tree_node_content} ${((hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id)) ? styles.hover : ''}`}
+                    style={{ paddingLeft: (leve * 23) + 'px', height: task_item_height, lineHeight: `${task_item_height}px`, marginBottom: task_item_margin_top }}
+                    onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+                    {
+                        add_id ?
+                            (icon ?
+                                icon
+                                : (
                                     <span className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}></span>
                                 )
-                        }
-                        {
-                            !isLeaf &&
-                            <span className={`${styles.outline_tree_node_expand_icon_out}`} onClick={this.onChangeExpand}>
-                                <span className={`${styles.outline_tree_node_expand_icon} ${is_expand ? styles.expanded : ''}`} ></span>
-                            </span>
-                        }
-                        {this.renderTitle()}
-
-                    </div>
-                    <div className={styles.collapse_transition} data-old-padding-top="0px" data-old-padding-bottom="0px" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: is_expand ? 'block' : 'none' }}>
-                        <div className={styles.outline_tree_node_children}>
-                            {
-                                React.Children.map(this.props.children, (child, i) => {
-                                    // console.log("child.props", child.props);
-                                    //child.props['leve'] = leve + 1;
-                                    if (child && child.props && child.props.children && child.props.children.length > 0) {
-                                        return (
-                                            <TreeNode {...child.props}
-                                                changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
-                                                deleteOutLineTreeNode={deleteOutLineTreeNode}
-                                                leve={leve + 1} isLeaf={false} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round}>
-                                                {child.props.children}
-                                            </TreeNode>
-                                        );
-                                    } else {
-                                        return (
-                                            <TreeNode {...child.props}
-                                                changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
-                                                deleteOutLineTreeNode={deleteOutLineTreeNode}
-                                                leve={leve + 1} isLeaf={true} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round} />
-                                        );
-                                    }
-                                })
-                            }
-
-                        </div>
-                    </div>
-                </div>
-            );
-
-        } else {
-            let className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;
-            let isLeaf = true;
-            return (
-                <div className={className} key={id}>
-                    <div className={`${styles.outline_tree_node_content} ${((hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id)) ? styles.hover : ''}`}
-                        style={{ paddingLeft: (leve * 23) + 'px', height: task_item_height, lineHeight: `${task_item_height}px`, marginBottom: task_item_margin_top }}
-                        onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
-                        {
-                            add_id ?
-                                (icon ?
-                                    icon
-                                    : (
+                            ) :
+                            (
+                                (hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id) || operateVisible ? (
+                                    <Dropdown overlay={this.renderOperate()}
+                                        visible={operateVisible}
+                                        trigger={['click']} onVisibleChange={this.operateVisibleChange}>
+                                        <div className={`${styles.node_opeator} ${globalStyles.authTheme}`}>&#xe7fd;</div>
+                                    </Dropdown>
+                                ) : (
                                         <span className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}></span>
                                     )
-                                ) :
-                                (
-                                    (hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id) || operateVisible ? (
-                                        <Dropdown overlay={menu}
-                                            visible={operateVisible}
-                                            trigger={['click']} onVisibleChange={this.operateVisibleChange}>
-                                            <div className={`${styles.node_opeator} ${globalStyles.authTheme}`}>&#xe7fd;</div>
-                                        </Dropdown>
-                                    ) : (
-                                            <span className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}></span>
-                                        )
-                                )
-                        }
-                        {
-                            !isLeaf &&
-                            <span className={`${styles.outline_tree_node_expand_icon_out}`}>
-                                <span className={`${styles.outline_tree_node_expand_icon} ${is_expand ? styles.expanded : ''}`}></span>
-                            </span>
-                        }
+                            )
+                    }
+                    {
+                        !isLeaf &&
+                        <span className={`${styles.outline_tree_node_expand_icon_out}`}>
+                            <span className={`${styles.outline_tree_node_expand_icon} ${is_expand ? styles.expanded : ''}`}></span>
+                        </span>
+                    }
 
-                        {this.renderTitle()}
-                    </div>
+                    {this.renderTitle()}
                 </div>
-            );
-        }
+            </>
+        );
+    }
+
+    render() {
+        const { nodeValue = {} } = this.state;
+        const { id, is_expand } = nodeValue;
+        const { children = [], leve = 0, } = this.props;
+        const isLeaf = !(children && children.length)
+        const className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;
+
+        return (
+            <div className={className} key={id} draggable>
+                {
+                    children && children.length ? (
+                        this.renderHasChildNode()
+                    ) : (
+                            this.renderNotChildNode()
+                        )
+                }
+            </div>
+        )
+
     }
 }
 
