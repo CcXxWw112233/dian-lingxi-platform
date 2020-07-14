@@ -728,12 +728,21 @@ export default class TreeNode extends Component {
             payload: {
                 drag_outline_node: {
                     id: outline_node_id, parent_id: outline_parent_id
-                }
+                },
+                outline_node_draging: true
             }
+
         })
         // console.log('sssssssssss_onDragStart', outline_node_id, outline_node_name)
     }
     onDrop = (e) => {
+        const { dispatch } = this.props
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                outline_node_draging: false
+            }
+        })
         e.preventDefault();
         e.stopPropagation()
         const { currentTarget } = e
@@ -741,13 +750,13 @@ export default class TreeNode extends Component {
         const { outline_node_id, outline_node_name, outline_parent_id } = dataset
         const { drag_outline_node = {} } = this.props
         const { id: from_id, parent_id: from_parent_id } = drag_outline_node
+        currentTarget.style.backgroundColor = ''
         // console.log('sssssssssss_onDrop_0', drag_outline_node)
         if (from_id == outline_node_id || outline_parent_id != from_parent_id || !outline_node_id) { //必须是在同一个父节点下才能拖拽
             return
         }
         // console.log('sssssssssss_onDrop_1', outline_node_name)
         this.exchangeNode({ from_id, to_id: outline_node_id, parent_id: outline_parent_id })
-        currentTarget.style.backgroundColor = ''
     }
     onDragEnter = (e) => {
         e.stopPropagation()
@@ -769,9 +778,10 @@ export default class TreeNode extends Component {
     render() {
         const { nodeValue = {} } = this.state;
         const { id, is_expand, name, start_time, due_time, parent_id } = nodeValue;
-        const { children = [], leve = 0, } = this.props;
+        const { children = [], leve = 0, outline_node_draging, drag_outline_node = {} } = this.props;
+        const { id: drag_outline_node_id } = drag_outline_node
         const isLeaf = !(children && children.length)
-        const className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} outline_drag_node ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;
+        const className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${(outline_node_draging && drag_outline_node_id != id) && styles.drag_over} outline_drag_node ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;
 
         return (
             <div
@@ -783,7 +793,7 @@ export default class TreeNode extends Component {
                 data-outline_start_time={start_time}
                 data-outline_due_time={due_time}
                 data-outline_parent_id={parent_id}
-                draggable
+                draggable={id && id.length > 10}
                 onDragStart={this.onDragStart}
                 onDrop={this.onDrop}
                 onDragEnter={this.onDragEnter}
@@ -808,7 +818,8 @@ function mapStateToProps({
         ceilWidth,
         gantt_view_mode,
         drag_outline_node = {},
-        outline_tree
+        outline_tree,
+        outline_node_draging
     } },
 }) {
     return {
@@ -816,6 +827,7 @@ function mapStateToProps({
         ceilWidth,
         gantt_view_mode,
         drag_outline_node,
-        outline_tree
+        outline_tree,
+        outline_node_draging
     }
 }

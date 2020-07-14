@@ -11,7 +11,8 @@ export default {
         rely_map: [],
         proccess_templates: [],
         triggle_request_board_template: false, //大纲视图保存为项目模板后，触发为true，右边模板列表接收到变化会触发查询
-        drag_outline_node: { id: '', parent_id: '' }
+        drag_outline_node: { id: '', parent_id: '' }, //大纲拖拽排序所需要的信息
+        outline_node_draging: false, //大纲是否拖拽排序中
     },
     effects: {
         * addCardRely({ payload = {} }, { select, call, put }) {
