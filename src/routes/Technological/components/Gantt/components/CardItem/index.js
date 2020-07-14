@@ -861,12 +861,12 @@ export default class CardItem extends Component {
 
     // 获取大纲视图父任务的截止和开始位置的三角形边框颜色
     setTriangleTreeColor = (label_data = [], index) => {
-        let label_color = '#99C1FF'
+        let label_color = '#cbddf7'
         const length = label_data.length
         if (index == 'start') {
-            label_color = label_data[0] ? `rgb(${label_data[0].label_color})` : '#99C1FF'
+            label_color = label_data[0] ? `rgb(${label_data[0].label_color})` : '#cbddf7'
         } else if (index == 'end') {
-            label_color = label_data[length - 1] ? `rgb(${label_data[length - 1].label_color})` : '#99C1FF'
+            label_color = label_data[length - 1] ? `rgb(${label_data[length - 1].label_color})` : '#cbddf7'
         } else {
 
         }
