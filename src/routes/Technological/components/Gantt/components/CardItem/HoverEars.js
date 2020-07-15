@@ -245,28 +245,31 @@ class HoverEars extends Component {
                     // {...this.eventObj}
                     className={`${indexStyles.ears_circle} ${indexStyles.left_ear_circle}`}
                 /> */}
-                <div
-                    data-ref={'right_circle_ref'}
-                    ref={this.right_circle_ref}
-                    {...this.eventObj}
-                    className={`${indexStyles.ears_circle_mask} ${indexStyles.right_ear_circle_mask}`}
-                />
-                <div
-                    // data-ref={'right_circle_ref'}
-                    // ref={this.right_circle_ref}
-                    // {...this.eventObj}
-                    className={`${indexStyles.ears_circle} ${indexStyles.right_ear_circle}`}
-                />
-                <div />
+
                 {/* <div
                     data-ref={'left_circle_ref'}
                     ref={this.left_circle_ref}
                     {...this.eventObj}
                     className={`${indexStyles.ears_circle_mask} ${indexStyles.left_ear_circle_mask}`}
                 /> */}
-                <div className={indexStyles.link_right_circle}>
 
+                <div className={indexStyles.right_circle_wrapper}>
+                    <div className={indexStyles.link_right_circle}></div>
+                    <div
+                        data-ref={'right_circle_ref'}
+                        ref={this.right_circle_ref}
+                        {...this.eventObj}
+                        className={`${indexStyles.ears_circle_mask} ${indexStyles.right_ear_circle_mask}`}
+                    />
+                    <div
+                        // data-ref={'right_circle_ref'}
+                        // ref={this.right_circle_ref}
+                        // {...this.eventObj}
+                        className={`${indexStyles.ears_circle} ${indexStyles.right_ear_circle}`}
+                    />
+                    <div />
                 </div>
+
 
                 <div
                     style={{

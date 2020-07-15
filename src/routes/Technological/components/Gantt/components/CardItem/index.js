@@ -1103,7 +1103,7 @@ export default class CardItem extends Component {
                 }
                 {/* //hover出现的耳朵效果 */}
                 {
-                    drag_lock && ganttIsOutlineView({ group_view_type }) && !parent_card_id && gantt_view_mode != 'year' && (
+                    (true || drag_lock) && ganttIsOutlineView({ group_view_type }) && !parent_card_id && gantt_view_mode != 'year' && (
                         <HoverEars
                             getX={this.getX}
                             itemValue={itemValue}
@@ -1113,7 +1113,7 @@ export default class CardItem extends Component {
                     )
                 }
                 {
-                    drag_lock && (
+                    (true || drag_lock) && (
                         <DragCard
                             id={id}
                             width={(local_width || 6) - (gantt_view_mode == 'year' ? 0 : card_width_diff)}
