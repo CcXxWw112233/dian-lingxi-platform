@@ -12,14 +12,15 @@ import { MESSAGE_DURATION_TIME } from '../../../globalset/js/constant'
 @connect(mapStateToProps)
 export default class index extends Component {
 
-  componentDidMount() {
+  getGanttBoardsFiles = (board_id) => {
+    let _this = this
     getGanttBoardsFiles({
-      board_id: "",
+      board_id: board_id || "",
       query_board_ids: [],
       _organization_id: localStorage.getItem('OrganizationId') || '0'
     }).then(res => {
       if (isApiResponseOk(res)) {
-        this.props.dispatch({
+        _this.props.dispatch({
           type: 'gantt/updateDatas',
           payload: {
             boards_flies: res.data
@@ -32,6 +33,19 @@ export default class index extends Component {
         }
       }
     })
+  }
+
+  componentDidMount() {
+    const { simplemodeCurrentProject: { board_id } } = this.props
+    this.getGanttBoardsFiles(board_id == '0' ? '' : board_id)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { simplemodeCurrentProject: { board_id } } = nextProps
+    const { simplemodeCurrentProject: { board_id: old_board_id } } = this.props
+    if (board_id != old_board_id && board_id != '0') {
+      this.getGanttBoardsFiles(board_id)
+    }
   }
 
   componentWillUnmount() {
@@ -60,7 +74,8 @@ export default class index extends Component {
 }
 
 function mapStateToProps({
-  gantt: { datas: { is_show_board_file_area } }
+  gantt: { datas: { is_show_board_file_area } },
+  simplemode: { simplemodeCurrentProject }
 }) {
-  return { is_show_board_file_area }
+  return { is_show_board_file_area, simplemodeCurrentProject }
 }
