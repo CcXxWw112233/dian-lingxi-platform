@@ -678,7 +678,7 @@ export default class TreeNode extends Component {
         const { id, parent_id, name } = nodeValue;
         const { drag_outline_node = {} } = this.props;
         const { parent_ids = [] } = drag_outline_node
-        console.log('sssssssssssss',name, parent_ids.includes(parent_id), parent_ids.includes(id))
+        // console.log('sssssssssssss', name, parent_ids.includes(parent_id), parent_ids.includes(id))
         if (parent_ids.includes(parent_id)) { //在同级之间设置
             return true
         }
@@ -758,7 +758,8 @@ export default class TreeNode extends Component {
         dispatch({
             type: 'gantt/updateDatas',
             payload: {
-                outline_node_draging: false
+                outline_node_draging: false,
+                drag_outline_node: {}
             }
         })
         e.preventDefault();
@@ -786,9 +787,9 @@ export default class TreeNode extends Component {
         const { parent_ids = [] } = drag_outline_node
         // if (parent_ids.includes(outline_node_id)) return //当拖拽的对象在该对象父级对象上拖拽时，仅作同级，不做处理
         console.log('sssssssssssss_onDragEnter', outline_node_name)
-        if (this.setDragClass()) {
-            currentTarget.style.backgroundColor = 'red'
-        }
+        // if (this.setDragClass()) {
+        currentTarget.style.backgroundColor = '#1890FF'
+        // }
     }
     onDragLeave = (e) => {
         e.stopPropagation()
@@ -803,9 +804,13 @@ export default class TreeNode extends Component {
         const { nodeValue = {} } = this.state;
         const { id, is_expand, name, start_time, due_time, parent_id, parent_ids = [] } = nodeValue;
         const { children = [], leve = 0, outline_node_draging, drag_outline_node = {} } = this.props;
-        const { id: drag_outline_node_id } = drag_outline_node
+        const { id: drag_outline_node_id, parent_id: drag_outline_node_parent_id } = drag_outline_node
         const isLeaf = !(children && children.length)
-        const className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${(outline_node_draging && this.setDragClass()) && styles.drag_over} outline_drag_node ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;
+        const className = `${styles.outline_tree_node} 
+                        ${styles[`leve_${leve}`]}
+                         ${(outline_node_draging && (!!drag_outline_node_parent_id ? !!parent_id : this.setDragClass())) && styles.drag_over} 
+                          ${(!!parent_id && (drag_outline_node.parent_id == parent_id)) && styles.current_drag}
+                        outline_drag_node ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;
 
         return (
             <div
