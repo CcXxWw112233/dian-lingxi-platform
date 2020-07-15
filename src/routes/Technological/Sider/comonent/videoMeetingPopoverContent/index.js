@@ -611,7 +611,8 @@ class VideoMeetingPopoverContent extends React.Component {
 				}
 			})
 			this.setState({
-				othersPeople: new_othersPeople
+				othersPeople: new_othersPeople,
+				user_phone: new_othersPeople
 			})
 		}
 
@@ -637,8 +638,9 @@ class VideoMeetingPopoverContent extends React.Component {
 		let new_othersPeople = [...othersPeople]
 		new_othersPeople.push(obj)
 		user_phone.push(obj.mobile)
+		console.log(new_othersPeople,'sssssssssssss_new_othersPeople')
 		this.setState({
-			othersPeople: arrayNonRepeatfy(new_othersPeople, 'user_id'),
+			othersPeople: arrayNonRepeatfy(new_othersPeople,'user_id'),
 			user_phone: this.arrayNonRepeatPhone(user_phone),
 		})
 	}
