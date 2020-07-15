@@ -583,7 +583,7 @@ class VideoMeetingPopoverContent extends React.Component {
 		}
 		this.setState({
 			toNoticeList: newNoticeUserList,
-			userIds: selectedKeys
+			userIds: selectedKeys.filter(i => i.length != '11') || [] // 这里需要过滤掉手机号
 		});
 	}
 
