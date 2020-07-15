@@ -23,7 +23,11 @@ class LineComponent extends Component {
     // 指定图表的配置项和数据
     var option = {
       tooltip: {
-        data: 'value'
+        data: 'value',
+        trigger: 'axis',
+        axisPointer: { // 坐标轴指示器，坐标轴触发有效
+          type: 'line' // 默认为直线，可选为：'line' | 'shadow'
+        },
       },
       xAxis: {
         type: 'category',
