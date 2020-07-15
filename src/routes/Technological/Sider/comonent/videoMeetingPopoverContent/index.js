@@ -914,10 +914,12 @@ class VideoMeetingPopoverContent extends React.Component {
 		const { meeting_start_time } = this.state
 		let old_hours = new Date().getHours()
 		let old_minutes = new Date().getMinutes()
-		let nextOrPrevDate = new Date(timestampToTimeNormal(meeting_start_time, '/', true)).getHours()
+		let old_date = new Date().getDate()
+		let new_hours = new Date(timestampToTimeNormal(meeting_start_time, '/', true)).getHours()
+		let new_date = new Date(timestampToTimeNormal(meeting_start_time, '/', true)).getDate()
 		return {
-			disabledHours: () => this.range(0, 24).splice(0, old_hours),
-			disabledMinutes: nextOrPrevDate > old_hours ? () => '' : () => this.range(0, old_minutes),
+			disabledHours: new_date == old_date ? () => this.range(0, 24).splice(0, old_hours) : () => '',
+			disabledMinutes: ((new_date == old_date) && new_hours > old_hours) ? () => '' : () => this.range(0, old_minutes),
 		};
 	}
 
