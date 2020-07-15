@@ -590,7 +590,7 @@ class VideoMeetingPopoverContent extends React.Component {
 	// 移除执行人的回调 S
 	handleRemoveExecutors = (e, shouldDeleteItem) => {
 		e && e.stopPropagation()
-		const { toNoticeList = [], othersPeople = [] } = this.state
+		const { toNoticeList = [], othersPeople = [], user_phone = [], userIds = [] } = this.state
 		let new_toNoticeList = [...toNoticeList]
 		let new_othersPeople = [...othersPeople]
 		new_toNoticeList.map((item, index) => {
@@ -598,20 +598,23 @@ class VideoMeetingPopoverContent extends React.Component {
 				new_toNoticeList.splice(index, 1)
 			}
 		})
+		let new_userIds = userIds.filter(i => i != shouldDeleteItem) || []
+		// 表示邀请手机号进来的成员 事件处理
 		if (new_othersPeople && new_othersPeople.length) {
 			new_othersPeople.map((item, index) => {
 				if (item.user_id == shouldDeleteItem) {
 					new_othersPeople.splice(index, 1)
 				}
 			})
+			let new_user_phone = user_phone.filter(i => i != shouldDeleteItem) || []
 			this.setState({
 				othersPeople: new_othersPeople,
-				user_phone: new_othersPeople
+				user_phone: new_user_phone
 			})
 		}
-
 		this.setState({
-			toNoticeList: new_toNoticeList
+			toNoticeList: new_toNoticeList,
+			userIds: new_userIds
 		})
 	}
 
