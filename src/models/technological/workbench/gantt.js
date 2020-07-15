@@ -358,6 +358,8 @@ export default {
         new_item.time_span = time_span
         new_item.parent_ids = []
         new_item.parent_id = ''
+        new_item.parent_milestone_id = ''
+        new_item.parent_card_id = ''
 
         new_item_children = new_item_children.map(item2 => {
           let new_item2 = { ...item2, parent_expand: is_expand, parent_type: tree_type, parent_id: item.id }
