@@ -7,6 +7,7 @@ import ShowFileSlider from '../../../routes/Technological/components/Gantt/compo
 import BoardsFilesArea from '../../../routes/Technological/components/Gantt/components/boardFile/BoardsFilesArea'
 import { getGanttBoardsFiles } from '../../../services/technological/gantt'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
+import { MESSAGE_DURATION_TIME } from '../../../globalset/js/constant'
 
 @connect(mapStateToProps)
 export default class index extends Component {
