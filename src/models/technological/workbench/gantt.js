@@ -356,6 +356,7 @@ export default {
           time_span = setGantTimeSpan({ time_span, start_time, due_time, start_date, end_date })
         }
         new_item.time_span = time_span
+        new_item.parent_ids = []
 
         new_item_children = new_item_children.map(item2 => {
           let new_item2 = { ...item2, parent_expand: is_expand, parent_type: tree_type, parent_id: item.id }
@@ -379,6 +380,7 @@ export default {
           new_item2.start_time = start_time2
           time_span2 = setGantTimeSpan({ time_span: time_span2, start_time: start_time2, due_time: due_time2, start_date, end_date })
           new_item2.time_span = time_span2
+          new_item2.parent_ids = [item.id]
 
           if (is_expand) {
             child_expand_length += 1
@@ -412,6 +414,8 @@ export default {
               new_item3.start_time = start_time3
               time_span3 = setGantTimeSpan({ time_span: time_span3, start_time: start_time3, due_time: due_time3, start_date, end_date })
               new_item3.time_span = time_span3
+              new_item3.parent_ids = [item.id, item2.id]
+
               if (tree_type2 == '2') {
                 new_item3.parent_card_id = item2.id
               }

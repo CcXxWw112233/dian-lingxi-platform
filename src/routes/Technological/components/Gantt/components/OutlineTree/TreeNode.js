@@ -13,6 +13,7 @@ import { validatePositiveInt } from '../../../../../../utils/verify';
 import { connect } from 'dva';
 import { isSamDay } from '../../../../../../utils/util';
 import { task_item_height, task_item_margin_top, ceil_height } from '../../constants';
+import { turn } from 'core-js/fn/array';
 
 @connect(mapStateToProps)
 export default class TreeNode extends Component {
@@ -668,7 +669,24 @@ export default class TreeNode extends Component {
             return node
         }
     }
-
+    // 由于设置pointer-envent: none, 导致子节点无法拖拽，判断当是拖拽对象的父节点时不去设置pointer-envent: none
+    // 当拖拽时才去做判断
+    setDragClass = () => {
+        const { outline_node_draging } = this.props
+        if (!outline_node_draging) return false
+        const { nodeValue = {} } = this.state;
+        const { id, parent_id, name } = nodeValue;
+        const { drag_outline_node = {} } = this.props;
+        const { parent_ids = [] } = drag_outline_node
+        console.log('sssssssssssss',name, parent_ids.includes(parent_id), parent_ids.includes(id))
+        if (parent_ids.includes(parent_id)) { //在同级之间设置
+            return true
+        }
+        if (parent_ids.includes(id)) { //拖拽对象的父级不设置
+            return false
+        }
+        return true
+    }
     // 往后插入
     exchangeNode = ({ from_id, to_id, parent_id }) => {
         const { dispatch, outline_tree = [] } = this.props
@@ -716,7 +734,7 @@ export default class TreeNode extends Component {
         const { dispatch } = this.props
         const target = e.target
         const { dataset = {} } = target
-        const { outline_node_id, outline_node_name, outline_due_time, outline_start_time, outline_parent_id } = dataset
+        const { outline_node_id, outline_node_name, outline_due_time, outline_start_time, outline_parent_id, outline_parent_ids } = dataset
         dispatch({
             type: 'gantt/updateOutLineTree',
             payload: {
@@ -727,7 +745,7 @@ export default class TreeNode extends Component {
             type: 'gantt/updateDatas',
             payload: {
                 drag_outline_node: {
-                    id: outline_node_id, parent_id: outline_parent_id
+                    id: outline_node_id, parent_id: outline_parent_id, parent_ids: outline_parent_ids
                 },
                 outline_node_draging: true
             }
@@ -760,11 +778,17 @@ export default class TreeNode extends Component {
     }
     onDragEnter = (e) => {
         e.stopPropagation()
+        e.preventDefault()
         const { currentTarget } = e
         const { dataset = {} } = currentTarget
         const { outline_node_id, outline_node_name } = dataset
-        // console.log('sssssssssssss_onDragEnter', outline_node_name)
-        currentTarget.style.backgroundColor = '#cbddf7'
+        const { drag_outline_node = {} } = this.props
+        const { parent_ids = [] } = drag_outline_node
+        // if (parent_ids.includes(outline_node_id)) return //当拖拽的对象在该对象父级对象上拖拽时，仅作同级，不做处理
+        console.log('sssssssssssss_onDragEnter', outline_node_name)
+        if (this.setDragClass()) {
+            currentTarget.style.backgroundColor = 'red'
+        }
     }
     onDragLeave = (e) => {
         e.stopPropagation()
@@ -777,11 +801,11 @@ export default class TreeNode extends Component {
     }
     render() {
         const { nodeValue = {} } = this.state;
-        const { id, is_expand, name, start_time, due_time, parent_id } = nodeValue;
+        const { id, is_expand, name, start_time, due_time, parent_id, parent_ids = [] } = nodeValue;
         const { children = [], leve = 0, outline_node_draging, drag_outline_node = {} } = this.props;
         const { id: drag_outline_node_id } = drag_outline_node
         const isLeaf = !(children && children.length)
-        const className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${(outline_node_draging && drag_outline_node_id != id) && styles.drag_over} outline_drag_node ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;
+        const className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${(outline_node_draging && this.setDragClass()) && styles.drag_over} outline_drag_node ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;
 
         return (
             <div
@@ -793,6 +817,7 @@ export default class TreeNode extends Component {
                 data-outline_start_time={start_time}
                 data-outline_due_time={due_time}
                 data-outline_parent_id={parent_id}
+                data-outline_parent_ids={parent_ids}
                 draggable={id && id.length > 10}
                 onDragStart={this.onDragStart}
                 onDrop={this.onDrop}
