@@ -498,7 +498,8 @@ class VisitControl extends Component {
             </span>
             <Dropdown
               autoAdjustOverflow={false}
-              getPopupContainer={() => document.getElementById('content__othersPersonList_wrapper')}
+              // getPopupContainer={() => document.getElementById('content__othersPersonList_wrapper')}
+              getPopupContainer={triggerNode => triggerNode.parentNode}
               trigger={['click']}
               overlay={this.renderOtherPersonOperatorMenu(privilege)}
             >
