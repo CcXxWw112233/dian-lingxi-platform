@@ -23,8 +23,11 @@ export default class DragCard extends Component {
                 {/* <div className={`${styles.drag_area} ${styles.drag_left} ${globalStyles.authTheme}`}>
                     &#xe7ec;
                 </div> */}
-                <div className={styles.backMask}></div>
+                <div className={styles.backMask}
+                    data-targetclassname="specific_example"
+                    data-rely_top={id}></div>
                 <div data-targetclassname="specific_example"
+                    data-rely_top={id}
                     className={`${styles.drag_area} ${styles.drag_right} ${globalStyles.authTheme}`}>
                     &#xe7eb;
                 </div>
