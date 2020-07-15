@@ -782,13 +782,16 @@ export default class TreeNode extends Component {
         e.preventDefault()
         const { currentTarget } = e
         const { dataset = {} } = currentTarget
-        const { outline_node_id, outline_node_name } = dataset
+        const { outline_node_id, outline_node_name, outline_parent_id } = dataset
         const { drag_outline_node = {} } = this.props
-        const { parent_ids = [] } = drag_outline_node
+        const { parent_ids = [], parent_id } = drag_outline_node
         // if (parent_ids.includes(outline_node_id)) return //当拖拽的对象在该对象父级对象上拖拽时，仅作同级，不做处理
-        console.log('sssssssssssss_onDragEnter', outline_node_name)
+        // console.log('sssssssssssss_onDragEnter', outline_node_name)
         // if (this.setDragClass()) {
-        currentTarget.style.backgroundColor = '#1890FF'
+        if (outline_parent_id != parent_id) { //拖拽对象和targetd非同级。不做处理
+            return
+        }
+        currentTarget.style.backgroundColor = '#cbddf7'
         // }
     }
     onDragLeave = (e) => {
