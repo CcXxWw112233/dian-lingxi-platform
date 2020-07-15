@@ -189,8 +189,10 @@ export default class CardItem extends Component {
     }
 
     onTouchStart = (e) => {
+        const class_names = e.target.getAttribute('class') || 'nothing'
+        const drag_right = class_names.indexOf('drag_right') != -1 //点击在向右的箭头上
         this.setState({
-            drag_type: 'position'
+            drag_type: drag_right ? 'right' : 'position'
         }, () => {
 
         })
