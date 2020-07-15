@@ -114,7 +114,21 @@
 //   content    : ' ';
 //   z-index    : 2
 // }
+.drag_over {
+  * {
+    pointer-events     : none;
+    // background-color: red;
+  }
+}
 
+.current_drag {
+  pointer-events: auto !important;
+
+  * {
+    pointer-events     : none;
+    // background-color: red;
+  }
+}
 
 .outline_tree_node.leve_1:not(:last-child)::before {
   position   : absolute;

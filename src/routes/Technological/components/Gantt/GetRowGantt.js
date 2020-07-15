@@ -71,11 +71,12 @@ export default class GetRowGantt extends Component {
     this.setState({
       task_is_dragging: bool
     })
+    this.stopDragging()
     const target = this.refs.gantt_operate_area_panel
     if (!target) return
     if (!target.style) return
     if (bool) {
-      target.style.cursor = this.state.card_rely_draging ? 'pointer' : 'move';
+      target.style.cursor = 'pointer'//this.state.card_rely_draging ? 'pointer' : 'move';
     } else {
       target.style.cursor = 'crosshair';
     }

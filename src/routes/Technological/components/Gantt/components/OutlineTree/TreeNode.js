@@ -12,7 +12,8 @@ import NodeOperate from './NodeOperate'
 import { validatePositiveInt } from '../../../../../../utils/verify';
 import { connect } from 'dva';
 import { isSamDay } from '../../../../../../utils/util';
-import { task_item_height, task_item_margin_top } from '../../constants';
+import { task_item_height, task_item_margin_top, ceil_height } from '../../constants';
+import { turn } from 'core-js/fn/array';
 
 @connect(mapStateToProps)
 export default class TreeNode extends Component {
@@ -75,13 +76,13 @@ export default class TreeNode extends Component {
             return
         }
         if (this.title_click_timer) {
-            this.navigateToVisualArea()
+            this.toggleTitleEdit()
             clearTimeout(this.title_click_timer)
             this.title_click_timer = null
             return
         }
         this.title_click_timer = setTimeout(() => {
-            this.toggleTitleEdit()
+            this.navigateToVisualArea()
             clearTimeout(this.title_click_timer)
             this.title_click_timer = null
         }, 300)
@@ -506,138 +507,360 @@ export default class TreeNode extends Component {
         '3': styles.flowNode
     }
 
-    render() {
-        const { isTitleHover, isTitleEdit, nodeValue = {}, operateVisible } = this.state;
-        const { id, add_id, name: title, tree_type, is_expand, time_span } = nodeValue;
-        const { changeOutLineTreeNodeProto, deleteOutLineTreeNode, onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {}, outline_tree_round = [] } = this.props;
-        let type;
-        if (tree_type) {
-            type = tree_type;
-        } else {
-            type = this.props.type;
-        }
-        //console.log("更新节点", nodeValue);
+    renderOperate = () => {
+        const { nodeValue = {}, } = this.state;
+        const { changeOutLineTreeNodeProto, deleteOutLineTreeNode, onExpand } = this.props;
         const menu = <NodeOperate nodeValue={nodeValue}
             editName={this.toggleTitleEdit}
             setDropVisble={this.operateVisibleChange}
             onExpand={onExpand}
             changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
             deleteOutLineTreeNode={deleteOutLineTreeNode} />
+        return menu
+    }
 
-        if (this.props.children && this.props.children.length > 0) {
+    // 渲染有子节点的
+    renderHasChildNode = () => {
+        const { isTitleHover, isTitleEdit, nodeValue = {}, operateVisible } = this.state;
+        const { id, add_id, name: title, tree_type, is_expand, time_span } = nodeValue;
+        const { children = [], drag_outline_node, changeOutLineTreeNodeProto, deleteOutLineTreeNode, onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {}, outline_tree_round = [] } = this.props;
+        const isLeaf = false;
+        let type;
+        if (tree_type) {
+            type = tree_type;
+        } else {
+            type = this.props.type;
+        }
+        return (
+            <>
+                <div className={`${styles.outline_tree_node_content} ${((hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id)) ? styles.hover : ''}`}
+                    style={{ paddingLeft: (leve * 23) + 'px', height: task_item_height, lineHeight: `${task_item_height}px`, marginBottom: task_item_margin_top }}
+                    onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+                    {
+                        (hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id || operateVisible) ? (
+                            <Dropdown overlay={this.renderOperate()}
+                                visible={operateVisible}
+                                trigger={['click']} onVisibleChange={this.operateVisibleChange}>
+                                <div className={`${styles.node_opeator} ${globalStyles.authTheme}`}>&#xe7fd;</div>
+                            </Dropdown>
+                        ) : (
+                                <span className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}></span>
+                            )
+                    }
+                    {
+                        !isLeaf &&
+                        <span className={`${styles.outline_tree_node_expand_icon_out}`} onClick={this.onChangeExpand}>
+                            <span className={`${styles.outline_tree_node_expand_icon} ${is_expand ? styles.expanded : ''}`} ></span>
+                        </span>
+                    }
+                    {this.renderTitle()}
 
-            let className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;
-            let isLeaf = false;
-            return (
-                <div className={className} key={id}>
-                    <div className={`${styles.outline_tree_node_content} ${((hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id)) ? styles.hover : ''}`}
-                        style={{ paddingLeft: (leve * 23) + 'px', height: task_item_height, lineHeight: `${task_item_height}px`, marginBottom: task_item_margin_top }}
-                        onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+                </div>
+                <div className={styles.collapse_transition} data-old-padding-top="0px" data-old-padding-bottom="0px" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: is_expand ? 'block' : 'none' }}>
+                    <div className={styles.outline_tree_node_children}>
                         {
-                            (hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id || operateVisible) ? (
-                                <Dropdown overlay={menu}
-                                    visible={operateVisible}
-                                    trigger={['click']} onVisibleChange={this.operateVisibleChange}>
-                                    <div className={`${styles.node_opeator} ${globalStyles.authTheme}`}>&#xe7fd;</div>
-                                </Dropdown>
-                            ) : (
+                            React.Children.map(this.props.children, (child, i) => {
+                                // console.log("child.props", child.props);
+                                //child.props['leve'] = leve + 1;
+                                if (child && child.props && child.props.children && child.props.children.length > 0) {
+                                    return (
+                                        <TreeNode {...child.props}
+                                            changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
+                                            deleteOutLineTreeNode={deleteOutLineTreeNode}
+                                            leve={leve + 1}
+                                            drag_outline_node={drag_outline_node}
+                                            isLeaf={false}
+                                            onDataProcess={onDataProcess}
+                                            onExpand={onExpand}
+                                            onHover={onHover}
+                                            parentId={id}
+                                            hoverItem={hoverItem}
+                                            gantt_board_id={gantt_board_id}
+                                            projectDetailInfoData={projectDetailInfoData}
+                                            outline_tree_round={outline_tree_round}>
+                                            {child.props.children}
+                                        </TreeNode>
+                                    );
+                                } else {
+                                    return (
+                                        <TreeNode {...child.props}
+                                            changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
+                                            deleteOutLineTreeNode={deleteOutLineTreeNode}
+                                            drag_outline_node={drag_outline_node}
+                                            leve={leve + 1} isLeaf={true}
+                                            onDataProcess={onDataProcess}
+                                            onExpand={onExpand} onHover={onHover}
+                                            parentId={id}
+                                            hoverItem={hoverItem}
+                                            gantt_board_id={gantt_board_id}
+                                            projectDetailInfoData={projectDetailInfoData}
+                                            outline_tree_round={outline_tree_round} />
+                                    );
+                                }
+                            })
+                        }
+
+                    </div>
+                </div>
+            </>
+        );
+
+    }
+
+
+    // 渲染无子节点的
+    renderNotChildNode = () => {
+        const { isTitleHover, isTitleEdit, nodeValue = {}, operateVisible } = this.state;
+        const { id, add_id, name: title, tree_type, is_expand, time_span } = nodeValue;
+        const { children = [], changeOutLineTreeNodeProto, deleteOutLineTreeNode, onDataProcess, onExpand, onHover, key, leve = 0, icon, placeholder, label, hoverItem = {}, gantt_board_id, projectDetailInfoData = {}, outline_tree_round = [] } = this.props;
+        let type;
+        if (tree_type) {
+            type = tree_type;
+        } else {
+            type = this.props.type;
+        }
+        const isLeaf = true;
+        return (
+            <>
+                <div className={`${styles.outline_tree_node_content} ${((hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id)) ? styles.hover : ''}`}
+                    style={{ paddingLeft: (leve * 23) + 'px', height: task_item_height, lineHeight: `${task_item_height}px`, marginBottom: task_item_margin_top }}
+                    onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+                    {
+                        add_id ?
+                            (icon ?
+                                icon
+                                : (
                                     <span className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}></span>
                                 )
-                        }
-                        {
-                            !isLeaf &&
-                            <span className={`${styles.outline_tree_node_expand_icon_out}`} onClick={this.onChangeExpand}>
-                                <span className={`${styles.outline_tree_node_expand_icon} ${is_expand ? styles.expanded : ''}`} ></span>
-                            </span>
-                        }
-                        {this.renderTitle()}
-
-                    </div>
-                    <div className={styles.collapse_transition} data-old-padding-top="0px" data-old-padding-bottom="0px" data-old-overflow="hidden" style={{ overflow: 'hidden', paddingTop: '0px', paddingBottom: '0px', display: is_expand ? 'block' : 'none' }}>
-                        <div className={styles.outline_tree_node_children}>
-                            {
-                                React.Children.map(this.props.children, (child, i) => {
-                                    // console.log("child.props", child.props);
-                                    //child.props['leve'] = leve + 1;
-                                    if (child && child.props && child.props.children && child.props.children.length > 0) {
-                                        return (
-                                            <TreeNode {...child.props}
-                                                changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
-                                                deleteOutLineTreeNode={deleteOutLineTreeNode}
-                                                leve={leve + 1} isLeaf={false} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round}>
-                                                {child.props.children}
-                                            </TreeNode>
-                                        );
-                                    } else {
-                                        return (
-                                            <TreeNode {...child.props}
-                                                changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
-                                                deleteOutLineTreeNode={deleteOutLineTreeNode}
-                                                leve={leve + 1} isLeaf={true} onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} parentId={id} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round} />
-                                        );
-                                    }
-                                })
-                            }
-
-                        </div>
-                    </div>
-                </div>
-            );
-
-        } else {
-            let className = `${styles.outline_tree_node} ${styles[`leve_${leve}`]} ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;
-            let isLeaf = true;
-            return (
-                <div className={className} key={id}>
-                    <div className={`${styles.outline_tree_node_content} ${((hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id)) ? styles.hover : ''}`}
-                        style={{ paddingLeft: (leve * 23) + 'px', height: task_item_height, lineHeight: `${task_item_height}px`, marginBottom: task_item_margin_top }}
-                        onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
-                        {
-                            add_id ?
-                                (icon ?
-                                    icon
-                                    : (
+                            ) :
+                            (
+                                (hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id) || operateVisible ? (
+                                    <Dropdown overlay={this.renderOperate()}
+                                        visible={operateVisible}
+                                        trigger={['click']} onVisibleChange={this.operateVisibleChange}>
+                                        <div className={`${styles.node_opeator} ${globalStyles.authTheme}`}>&#xe7fd;</div>
+                                    </Dropdown>
+                                ) : (
                                         <span className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}></span>
                                     )
-                                ) :
-                                (
-                                    (hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id) || operateVisible ? (
-                                        <Dropdown overlay={menu}
-                                            visible={operateVisible}
-                                            trigger={['click']} onVisibleChange={this.operateVisibleChange}>
-                                            <div className={`${styles.node_opeator} ${globalStyles.authTheme}`}>&#xe7fd;</div>
-                                        </Dropdown>
-                                    ) : (
-                                            <span className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}></span>
-                                        )
-                                )
-                        }
-                        {
-                            !isLeaf &&
-                            <span className={`${styles.outline_tree_node_expand_icon_out}`}>
-                                <span className={`${styles.outline_tree_node_expand_icon} ${is_expand ? styles.expanded : ''}`}></span>
-                            </span>
-                        }
+                            )
+                    }
+                    {
+                        !isLeaf &&
+                        <span className={`${styles.outline_tree_node_expand_icon_out}`}>
+                            <span className={`${styles.outline_tree_node_expand_icon} ${is_expand ? styles.expanded : ''}`}></span>
+                        </span>
+                    }
 
-                        {this.renderTitle()}
-                    </div>
+                    {this.renderTitle()}
                 </div>
-            );
+            </>
+        );
+    }
+
+    // -----------------------拖拽排序
+    // 获取onDrop时在节点上获取不到data-set的值，往上遍历得到具名class的父节点
+    findParentNodeCapture = (node) => {
+        let target_node = node
+        let class_name = target_node.getAttribute("class")
+        if (class_name.indexOf('outline_drag_node') == -1) {
+            return this.findParentNodeCapture(node.parentNode)
+        } else {
+            return node
         }
     }
-}
+    // 由于设置pointer-envent: none, 导致子节点无法拖拽，判断当是拖拽对象的父节点时不去设置pointer-envent: none
+    // 当拖拽时才去做判断
+    setDragClass = () => {
+        const { outline_node_draging } = this.props
+        if (!outline_node_draging) return false
+        const { nodeValue = {} } = this.state;
+        const { id, parent_id, name } = nodeValue;
+        const { drag_outline_node = {} } = this.props;
+        const { parent_ids = [] } = drag_outline_node
+        // console.log('sssssssssssss', name, parent_ids.includes(parent_id), parent_ids.includes(id))
+        if (parent_ids.includes(parent_id)) { //在同级之间设置
+            return true
+        }
+        if (parent_ids.includes(id)) { //拖拽对象的父级不设置
+            return false
+        }
+        return true
+    }
+    // 往后插入
+    exchangeNode = ({ from_id, to_id, parent_id }) => {
+        const { dispatch, outline_tree = [] } = this.props
+        dispatch({
+            type: 'gantt/getOutlineNode',
+            payload: {
+                id: parent_id,
+                outline_tree
+            }
+        }).then(node => {
+            let data = []
+            if (!node) {
+                data = outline_tree
+            } else {
+                data = node.children || []
+            }
+            const form_item = data.find(item => item.id == from_id)
+            const from_index = data.findIndex(item => item.id == from_id)
+            const to_item = data.find(item => item.id == to_id)
+            const to_index = data.findIndex(item => item.id == to_id)
+            // data[from_index] = to_item
+            // data[to_index] = form_item
+            data.splice(from_index, 1)
+            data.splice(to_index + (from_index > to_index ? 1 : 0), 0, form_item) //保证都是往后插入（避免后面往前拖和前面往后拖出现行为不一致）
+            dispatch({
+                type: 'gantt/updateDatas',
+                payload: {
+                    outline_tree
+                }
+            })
+            setTimeout(() => {
+                dispatch({
+                    type: 'gantt/saveGanttOutlineSort',
+                    payload: {
+                        outline_tree
+                    }
+                })
+            }, 300)
+            // console.log('sssssssssss_onDrop_2', node)
+        })
+    }
 
+    onDragStart = (e) => {
+        e.stopPropagation()
+        const { dispatch } = this.props
+        const target = e.target
+        const { dataset = {} } = target
+        const { outline_node_id, outline_node_name, outline_due_time, outline_start_time, outline_parent_id, outline_parent_ids } = dataset
+        dispatch({
+            type: 'gantt/updateOutLineTree',
+            payload: {
+                datas: [{ id: outline_node_id, is_expand: false, start_time: outline_start_time, due_time: outline_due_time }]
+            }
+        })
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                drag_outline_node: {
+                    id: outline_node_id, parent_id: outline_parent_id, parent_ids: outline_parent_ids
+                },
+                outline_node_draging: true
+            }
+
+        })
+        // console.log('sssssssssss_onDragStart', outline_node_id, outline_node_name)
+    }
+    onDrop = (e) => {
+        const { dispatch } = this.props
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                outline_node_draging: false,
+                drag_outline_node: {}
+            }
+        })
+        e.preventDefault();
+        e.stopPropagation()
+        const { currentTarget } = e
+        const { dataset = {} } = currentTarget
+        const { outline_node_id, outline_node_name, outline_parent_id } = dataset
+        const { drag_outline_node = {} } = this.props
+        const { id: from_id, parent_id: from_parent_id } = drag_outline_node
+        currentTarget.style.backgroundColor = ''
+        // console.log('sssssssssss_onDrop_0', drag_outline_node)
+        if (from_id == outline_node_id || outline_parent_id != from_parent_id || !outline_node_id) { //必须是在同一个父节点下才能拖拽
+            return
+        }
+        // console.log('sssssssssss_onDrop_1', outline_node_name)
+        this.exchangeNode({ from_id, to_id: outline_node_id, parent_id: outline_parent_id })
+    }
+    onDragEnter = (e) => {
+        e.stopPropagation()
+        e.preventDefault()
+        const { currentTarget } = e
+        const { dataset = {} } = currentTarget
+        const { outline_node_id, outline_node_name, outline_parent_id } = dataset
+        const { drag_outline_node = {} } = this.props
+        const { parent_ids = [], parent_id } = drag_outline_node
+        // if (parent_ids.includes(outline_node_id)) return //当拖拽的对象在该对象父级对象上拖拽时，仅作同级，不做处理
+        // console.log('sssssssssssss_onDragEnter', outline_node_name)
+        // if (this.setDragClass()) {
+        if (outline_parent_id != parent_id) { //拖拽对象和targetd非同级。不做处理
+            return
+        }
+        currentTarget.style.backgroundColor = '#cbddf7'
+        // }
+    }
+    onDragLeave = (e) => {
+        e.stopPropagation()
+        const { currentTarget } = e
+        const { dataset = {} } = currentTarget
+        const { outline_node_id, outline_node_name } = dataset
+        // console.log('sssssssssssss_onDragLeave', outline_node_name)
+        currentTarget.style.backgroundColor = ''
+
+    }
+    render() {
+        const { nodeValue = {} } = this.state;
+        const { id, is_expand, name, start_time, due_time, parent_id, parent_ids = [] } = nodeValue;
+        const { children = [], leve = 0, outline_node_draging, drag_outline_node = {} } = this.props;
+        const { id: drag_outline_node_id, parent_id: drag_outline_node_parent_id } = drag_outline_node
+        const isLeaf = !(children && children.length)
+        const className = `${styles.outline_tree_node} 
+                        ${styles[`leve_${leve}`]}
+                         ${(outline_node_draging && (!!drag_outline_node_parent_id ? !!parent_id : this.setDragClass())) && styles.drag_over} 
+                          ${(!!parent_id && (drag_outline_node.parent_id == parent_id)) && styles.current_drag}
+                        outline_drag_node ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;
+
+        return (
+            <div
+                style={{ boxSizing: 'border-box' }}
+                className={className}
+                key={id}
+                data-outline_node_id={id}
+                data-outline_node_name={name}
+                data-outline_start_time={start_time}
+                data-outline_due_time={due_time}
+                data-outline_parent_id={parent_id}
+                data-outline_parent_ids={parent_ids}
+                draggable={id && id.length > 10}
+                onDragStart={this.onDragStart}
+                onDrop={this.onDrop}
+                onDragEnter={this.onDragEnter}
+                onDragLeave={this.onDragLeave}
+            >
+                {
+                    children && children.length ? (
+                        this.renderHasChildNode()
+                    ) : (
+                            this.renderNotChildNode()
+                        )
+                }
+            </div>
+        )
+
+    }
+}
 
 function mapStateToProps({
     gantt: { datas: {
         date_arr_one_level = [],
         ceilWidth,
         gantt_view_mode,
+        drag_outline_node = {},
+        outline_tree,
+        outline_node_draging
     } },
 }) {
     return {
         date_arr_one_level,
         ceilWidth,
         gantt_view_mode,
+        drag_outline_node,
+        outline_tree,
+        outline_node_draging
     }
 }

@@ -12,6 +12,8 @@ import CardDropDetail from '../../components/gattFaceCardItem/CardDropDetail'
 import { filterDueTimeSpan, cardIsHasUnRead, cardItemIsHasUnRead, setDateWithPositionInYearView, setDateWidthPositionWeekView } from '../../ganttBusiness'
 import { transformTimestamp, isSamDay } from '../../../../../../utils/util'
 import HoverEars from './HoverEars'
+import DragCard from './DragCard'
+
 // 参考自http://www.jq22.com/webqd1348
 
 // const dateAreaHeight = date_area_height //日期区域高度，作为修正
@@ -37,6 +39,7 @@ export default class CardItem extends Component {
                 min_position: 0,
                 max_position: 0
             },
+            drag_lock: false, //拖拽的锁，必须要先点击一下出现状态条才能够拖拽
         }
 
         this.x = 0
@@ -144,7 +147,7 @@ export default class CardItem extends Component {
         }, 50)
         const { drag_type, local_top } = this.state
         if ('position' == drag_type) { //在中间
-            target.style.cursor = 'move';
+            // target.style.cursor = 'move';
         }
         this.x = e.clientX || e.changedTouches[0].clientX;
         this.y = e.clientY || e.changedTouches[0].clientY
@@ -294,7 +297,8 @@ export default class CardItem extends Component {
         const target_1 = document.getElementById('gantt_card_out_middle')
         const offsetLeft = this.getX(oDiv);
         const rela_left = clientX - offsetLeft - 2 + target_1.scrollLeft //鼠标在该任务内的相对位置
-        if (clientWidth - rela_left <= 6) { //滑动到右边
+        const rela_pos = clientWidth - rela_left
+        if (rela_pos >= -21 && rela_pos <= -3) { //滑动到右边 //clientWidth - rela_left <= 6
             this.setTargetDragTypeCursor('right')
         }
         // else if (rela_left <= 6) { //滑动到左边
@@ -881,6 +885,7 @@ export default class CardItem extends Component {
     }
     handleObj = () => {
         const { itemValue = {}, card_rely_draging } = this.props
+        const { drag_lock } = this.state
         const {
             top,
             id,
@@ -888,35 +893,72 @@ export default class CardItem extends Component {
             parent_card_id,
         } = itemValue
         return {
+            onClick: () => {
+                if (!drag_lock) {
+                    this.props.setTaskIsDragging && this.props.setTaskIsDragging(true) //当拖动时，有可能会捕获到创建任务的动作，阻断
+                    setTimeout(() => {
+                        this.setState({
+                            drag_lock: true
+                        })
+                    }, 200)
+                    return
+                }
+                return
+            },
             // 拖拽
             onMouseDown: (e) => {
+                if (!drag_lock) {
+                    this.props.setTaskIsDragging && this.props.setTaskIsDragging(true) //当拖动时，有可能会捕获到创建任务的动作，阻断
+                    // setTimeout(() => {
+                    //     this.setState({
+                    //         drag_lock: true
+                    //     })
+                    // }, 200)
+                    return
+                }
                 if (!this.couldChangeCard()) return
                 this.onMouseDown(e)
             },
             onMouseMove: (e) => {
-                if (card_rely_draging) return
+                if (card_rely_draging || !drag_lock) return
                 if (!this.couldChangeCard()) return
                 this.onMouseMove(e)
             },
             onMouseUp: () => {
-                if (card_rely_draging) return
+                if (card_rely_draging || !drag_lock) return
                 this.setSpecilTaskExample({ id: parent_card_id || id, top, board_id })
             }, //查看子任务是查看父任务
 
             onTouchStart: (e) => {
+                if (!drag_lock) {
+                    this.props.setTaskIsDragging && this.props.setTaskIsDragging(true) //当拖动时，有可能会捕获到创建任务的动作，阻断
+                    // setTimeout(() => {
+                    //     this.setState({
+                    //         drag_lock: true
+                    //     })
+                    // }, 200)
+                    return
+                }
                 if (!this.couldChangeCard()) return
                 this.onTouchStart(e)
             },
             onTouchMove: (e) => {
-                if (!this.couldChangeCard()) return
+                if (!this.couldChangeCard() || !drag_lock) return
                 this.onTouchMove(e)
             },
             onTouchEnd: (e) => {
+                if (!drag_lock) return
                 this.onTouchEnd(e)
             }, //查看子任务是查看父任务
             onMouseEnter: () => {
                 this.onMouseEnter()
             },
+            onBlur: () => {
+                this.props.setTaskIsDragging && this.props.setTaskIsDragging(false) //当拖动时，有可能会捕获到创建任务的动作，阻断
+                this.setState({
+                    drag_lock: false
+                })
+            }
         }
     }
 
@@ -945,7 +987,7 @@ export default class CardItem extends Component {
             child_card_status = {},
         } = itemValue
         const { has_child, min_start_time: child_min_start_time, max_due_time: child_max_due_time } = child_card_status //子任务状态，实现大纲的父任务三角
-        const { local_left, local_top, local_width, rely_down } = this.state
+        const { local_left, local_top, local_width, rely_down, drag_lock } = this.state
         const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
         return (
             <div
@@ -953,9 +995,10 @@ export default class CardItem extends Component {
                 data-targetclassname="specific_example"
                 id={id} //大纲视图需要获取该id作为父级id来实现子任务拖拽影响父任务位置
                 ref={this.out_ref}
+                tabindex="0"
                 style={{
                     touchAction: 'none',
-                    zIndex: rely_down || this.is_down ? 2 : 1,
+                    zIndex: (rely_down || this.is_down || drag_lock) ? 2 : 1,
                     left: local_left + (gantt_view_mode == 'year' ? 0 : card_left_diff),
                     top: local_top,
                     width: (local_width || 6) - (gantt_view_mode == 'year' ? 0 : card_width_diff),
@@ -1060,13 +1103,21 @@ export default class CardItem extends Component {
                 }
                 {/* //hover出现的耳朵效果 */}
                 {
-                    ganttIsOutlineView({ group_view_type }) && !parent_card_id && gantt_view_mode != 'year' && (
+                    drag_lock && ganttIsOutlineView({ group_view_type }) && !parent_card_id && gantt_view_mode != 'year' && (
                         <HoverEars
                             getX={this.getX}
                             itemValue={itemValue}
                             dispatch={this.props.dispatch}
                             setRelyLineDrawing={this.setRelyDown}
                             rely_down={rely_down} />
+                    )
+                }
+                {
+                    drag_lock && (
+                        <DragCard
+                            id={id}
+                            width={(local_width || 6) - (gantt_view_mode == 'year' ? 0 : card_width_diff)}
+                        />
                     )
                 }
             </div>
