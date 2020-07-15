@@ -753,7 +753,7 @@ export default class TreeNode extends Component {
         })
         // console.log('sssssssssss_onDragStart', outline_node_id, outline_node_name)
     }
-    onDrop = (e) => {
+    onDragEnd = (e) => {
         const { dispatch } = this.props
         dispatch({
             type: 'gantt/updateDatas',
@@ -762,6 +762,8 @@ export default class TreeNode extends Component {
                 drag_outline_node: {}
             }
         })
+    }
+    onDrop = (e) => {
         e.preventDefault();
         e.stopPropagation()
         const { currentTarget } = e
@@ -831,6 +833,7 @@ export default class TreeNode extends Component {
                 onDrop={this.onDrop}
                 onDragEnter={this.onDragEnter}
                 onDragLeave={this.onDragLeave}
+                onDragEnd={this.onDragEnd}
             >
                 {
                     children && children.length ? (
