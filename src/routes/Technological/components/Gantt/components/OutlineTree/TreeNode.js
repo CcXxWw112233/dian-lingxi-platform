@@ -709,11 +709,12 @@ export default class TreeNode extends Component {
             const to_index = data.findIndex(item => item.id == to_id)
             // data[from_index] = to_item
             // data[to_index] = form_item
+            console.log('insert_direct', this.insert_direct)
             data.splice(from_index, 1)
             if (this.insert_direct != 'top') { //后插
                 data.splice(to_index + (from_index > to_index ? 1 : 0), 0, form_item) //保证都是往后插入（避免后面往前拖和前面往后拖出现行为不一致）
             } else { //前插
-                data.splice(to_index, 0, form_item) //保证都是往后插入（避免后面往前拖和前面往后拖出现行为不一致）
+                data.splice(to_index - (from_index > to_index ? 0 : 1), 0, form_item) //保证都是往后插入（避免后面往前拖和前面往后拖出现行为不一致）
             }
             dispatch({
                 type: 'gantt/updateDatas',
