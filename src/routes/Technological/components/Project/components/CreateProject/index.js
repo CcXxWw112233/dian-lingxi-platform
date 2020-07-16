@@ -406,7 +406,7 @@ class CreateProject extends React.Component {
                 </div>
               </div>
               <div className={indexStyles.setelse_right}>
-                <Button type="primary" disabled={stepOneContinueDisabled || (OrganizationId == '0' && (!_organization_id || !checkIsHasPermission(ORG_TEAM_BOARD_CREATE, _organization_id)))} onClick={this.createBoard} style={{ width: 96, height: 40, }}>创建项目</Button>
+                <Button type="primary" disabled={stepOneContinueDisabled || (OrganizationId == '0' && (!_organization_id || !checkIsHasPermission(ORG_TEAM_BOARD_CREATE, _organization_id)))} onClick={this.createBoard} style={{ width: 96, height: 40, }}>创建{`${currentNounPlanFilterName(PROJECTS)}`}</Button>
               </div>
             </div>
             {/* 复制流程模板 */}
