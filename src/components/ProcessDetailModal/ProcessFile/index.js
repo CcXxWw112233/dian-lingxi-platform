@@ -11,6 +11,16 @@ import { MESSAGE_DURATION_TIME } from '../../../globalset/js/constant'
 
 @connect(mapStateToProps)
 export default class index extends Component {
+  
+  constructor(props) {
+    super(props);
+    this.state = {
+      siderRightWidth: 56, //右边栏宽度
+      clientWidth: document.documentElement.clientWidth, //获取页面可见高度
+      layoutClientWidth: document.getElementById('technologicalLayoutWrapper') && document.getElementById('technologicalLayoutWrapper').clientWidth,
+    }
+    this.resizeTTY = this.resizeTTY.bind(this)
+  }
 
   getGanttBoardsFiles = (board_id) => {
     let _this = this
@@ -36,11 +46,46 @@ export default class index extends Component {
   }
 
   componentDidMount() {
+    const { clientWidth } = this.state
+    const { chatImVisiable } = this.props
+    if (chatImVisiable) {
+      let layoutClientWidth = clientWidth - 400
+      this.setState({
+        layoutClientWidth
+      })
+    } else {
+      const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
+      let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth : clientWidth
+      this.setState({
+        layoutClientWidth
+      })
+    }
+    window.addEventListener('resize', this.resizeTTY)
     const { simplemodeCurrentProject: { board_id } } = this.props
     this.getGanttBoardsFiles(board_id == '0' ? '' : board_id)
   }
 
+  resizeTTY = () => {
+    const clientWidth = document.documentElement.clientWidth
+    this.setState({
+      clientWidth
+    })
+  }
   componentWillReceiveProps(nextProps) {
+    const { clientWidth } = this.state
+    const { chatImVisiable } = nextProps
+    if (chatImVisiable) {
+      let layoutClientWidth = clientWidth - 400
+      this.setState({
+        layoutClientWidth
+      })
+    } else {
+      const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
+      let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth : clientWidth
+      this.setState({
+        layoutClientWidth
+      })
+    }
     const { simplemodeCurrentProject: { board_id } } = nextProps
     const { simplemodeCurrentProject: { board_id: old_board_id } } = this.props
     if (board_id != old_board_id && board_id != '0') {
@@ -56,13 +101,15 @@ export default class index extends Component {
         is_show_board_file_area: '0'
       }
     })
+    window.removeEventListener("resize", this.resizeTTY);
   }
 
   render() {
     const { is_show_board_file_area } = this.props
+    const { layoutClientWidth } = this.state
     return (
       <div>
-        <div id="process_file_detail_container" className={indexStyles.process_file_detail_container}>
+        <div id="process_file_detail_container" className={indexStyles.process_file_detail_container} style={{width: layoutClientWidth, height: (isPaymentOrgUser() && is_show_board_file_area != '1') ? '0px' : '272px'}}>
           {
             isPaymentOrgUser() && is_show_board_file_area != '1' && (<div style={{position: 'relative', left: '22px'}}><ShowFileSlider /></div>)
           }
@@ -75,7 +122,7 @@ export default class index extends Component {
 
 function mapStateToProps({
   gantt: { datas: { is_show_board_file_area } },
-  simplemode: { simplemodeCurrentProject }
+  simplemode: { simplemodeCurrentProject, chatImVisiable = false }
 }) {
-  return { is_show_board_file_area, simplemodeCurrentProject }
+  return { is_show_board_file_area, simplemodeCurrentProject, chatImVisiable }
 }
