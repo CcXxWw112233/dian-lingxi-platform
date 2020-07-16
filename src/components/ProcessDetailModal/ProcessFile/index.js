@@ -45,47 +45,41 @@ export default class index extends Component {
     })
   }
 
-  componentDidMount() {
+  handleAutoResize = (props) => {
     const { clientWidth } = this.state
-    const { chatImVisiable } = this.props
+    const { chatImVisiable } = props
+    const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
     if (chatImVisiable) {
-      let layoutClientWidth = clientWidth - 400
+      let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth - 400 : clientWidth - 450
       this.setState({
         layoutClientWidth
       })
     } else {
-      const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
       let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth : clientWidth
       this.setState({
         layoutClientWidth
       })
     }
+  }
+
+  componentDidMount() {
+    this.handleAutoResize(this.props)
     window.addEventListener('resize', this.resizeTTY)
     const { simplemodeCurrentProject: { board_id } } = this.props
     this.getGanttBoardsFiles(board_id == '0' ? '' : board_id)
   }
 
   resizeTTY = () => {
+    const { chatImVisiable } = this.props
     const clientWidth = document.documentElement.clientWidth
+    const layoutClientWidth = chatImVisiable ? document.getElementById('technologicalLayoutWrapper').clientWidth - 400 : document.getElementById('technologicalLayoutWrapper').clientWidth
     this.setState({
-      clientWidth
+      clientWidth,
+      layoutClientWidth
     })
   }
   componentWillReceiveProps(nextProps) {
-    const { clientWidth } = this.state
-    const { chatImVisiable } = nextProps
-    if (chatImVisiable) {
-      let layoutClientWidth = clientWidth - 400
-      this.setState({
-        layoutClientWidth
-      })
-    } else {
-      const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
-      let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth : clientWidth
-      this.setState({
-        layoutClientWidth
-      })
-    }
+    this.handleAutoResize(nextProps)
     const { simplemodeCurrentProject: { board_id } } = nextProps
     const { simplemodeCurrentProject: { board_id: old_board_id } } = this.props
     if (board_id != old_board_id && board_id != '0') {
