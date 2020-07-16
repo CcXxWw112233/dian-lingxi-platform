@@ -811,16 +811,26 @@ export default class TreeNode extends Component {
         currentTarget.style.backgroundImage = ''
     }
     onDragOver = (e) => {
+        e.stopPropagation()
+        e.preventDefault()
         const { pageY, currentTarget } = e
+        const { dataset = {} } = currentTarget
+        const { outline_parent_id } = dataset
+        const { drag_outline_node = {} } = this.props
+        const { parent_id } = drag_outline_node
+        if (outline_parent_id != parent_id) { //拖拽对象和targetd非同级。不做处理
+            return
+        }
+
         const rect = currentTarget.getBoundingClientRect()
         const { top, height, y } = rect //获取元素基本信息
         const harf_height = height / 2
         let insert_direct = 'bottom'
         if (pageY - y < harf_height) { //在上
             insert_direct = 'top'
-            currentTarget.style.backgroundImage = 'linear-gradient(#1890FF , #fff )'
+            currentTarget.style.backgroundImage = 'linear-gradient(#1890FF,#fff,#fff,#fff)'
         } else {
-            currentTarget.style.backgroundImage = 'linear-gradient(#fff , #1890FF )'
+            currentTarget.style.backgroundImage = 'linear-gradient(#fff,#fff,#fff,#fff,#1890FF)'
         }
         this.insert_direct = insert_direct
     }
