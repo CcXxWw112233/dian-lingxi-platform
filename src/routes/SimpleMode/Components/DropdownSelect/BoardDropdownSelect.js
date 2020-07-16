@@ -233,7 +233,7 @@ class BoardDropdownSelect extends Component {
     const { projectList, simplemodeCurrentProject, iconVisible = true } = this.props;
     const { addProjectModalVisible = false } = this.state;
     const menuItemList = this.getMenuItemList(projectList);
-    const fuctionMenuItemList = this.isHasCreatBoardPermission() ? [{ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }] : [];
+    const fuctionMenuItemList = this.isHasCreatBoardPermission() ? [{ 'name': `新建${currentNounPlanFilterName(PROJECTS)}`, 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }] : [];
     let selectedKeys = ['0'];
     if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
       selectedKeys = [simplemodeCurrentProject.board_id]

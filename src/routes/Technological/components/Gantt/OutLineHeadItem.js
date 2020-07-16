@@ -158,7 +158,7 @@ export default class OutLineHeadItem extends Component {
                 outline_hover_obj: outline_hover_obj//nodeValue
             }
         });
-        this.updateOutLineTreeData(outline_tree);
+        // this.updateOutLineTreeData(outline_tree);
 
     }
 

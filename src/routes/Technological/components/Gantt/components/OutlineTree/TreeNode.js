@@ -709,14 +709,28 @@ export default class TreeNode extends Component {
             const to_index = data.findIndex(item => item.id == to_id)
             // data[from_index] = to_item
             // data[to_index] = form_item
+            console.log('insert_direct', this.insert_direct)
             data.splice(from_index, 1)
-            data.splice(to_index + (from_index > to_index ? 1 : 0), 0, form_item) //保证都是往后插入（避免后面往前拖和前面往后拖出现行为不一致）
+            if (this.insert_direct != 'top') { //后插
+                data.splice(to_index + (from_index > to_index ? 1 : 0), 0, form_item) //保证都是往后插入（避免后面往前拖和前面往后拖出现行为不一致）
+            } else { //前插
+                data.splice(to_index - (from_index > to_index ? 0 : 1), 0, form_item) //保证都是往后插入（避免后面往前拖和前面往后拖出现行为不一致）
+            }
             dispatch({
                 type: 'gantt/updateDatas',
                 payload: {
                     outline_tree
                 }
             })
+            setTimeout(() => {
+                dispatch({
+                    type: 'gantt/handleOutLineTreeData',
+                    payload: {
+                        data: outline_tree
+                    }
+                })
+            }, 300)
+
             setTimeout(() => {
                 dispatch({
                     type: 'gantt/saveGanttOutlineSort',
@@ -753,7 +767,7 @@ export default class TreeNode extends Component {
         })
         // console.log('sssssssssss_onDragStart', outline_node_id, outline_node_name)
     }
-    onDrop = (e) => {
+    onDragEnd = (e) => {
         const { dispatch } = this.props
         dispatch({
             type: 'gantt/updateDatas',
@@ -762,6 +776,8 @@ export default class TreeNode extends Component {
                 drag_outline_node: {}
             }
         })
+    }
+    onDrop = (e) => {
         e.preventDefault();
         e.stopPropagation()
         const { currentTarget } = e
@@ -770,6 +786,7 @@ export default class TreeNode extends Component {
         const { drag_outline_node = {} } = this.props
         const { id: from_id, parent_id: from_parent_id } = drag_outline_node
         currentTarget.style.backgroundColor = ''
+        currentTarget.style.backgroundImage = ''
         // console.log('sssssssssss_onDrop_0', drag_outline_node)
         if (from_id == outline_node_id || outline_parent_id != from_parent_id || !outline_node_id) { //必须是在同一个父节点下才能拖拽
             return
@@ -791,7 +808,7 @@ export default class TreeNode extends Component {
         if (outline_parent_id != parent_id) { //拖拽对象和targetd非同级。不做处理
             return
         }
-        currentTarget.style.backgroundColor = '#cbddf7'
+        currentTarget.style.backgroundColor = '#1890FF'
         // }
     }
     onDragLeave = (e) => {
@@ -801,7 +818,31 @@ export default class TreeNode extends Component {
         const { outline_node_id, outline_node_name } = dataset
         // console.log('sssssssssssss_onDragLeave', outline_node_name)
         currentTarget.style.backgroundColor = ''
+        currentTarget.style.backgroundImage = ''
+    }
+    onDragOver = (e) => {
+        e.stopPropagation()
+        e.preventDefault()
+        const { pageY, currentTarget } = e
+        const { dataset = {} } = currentTarget
+        const { outline_parent_id } = dataset
+        const { drag_outline_node = {} } = this.props
+        const { parent_id } = drag_outline_node
+        if (outline_parent_id != parent_id) { //拖拽对象和targetd非同级。不做处理
+            return
+        }
 
+        const rect = currentTarget.getBoundingClientRect()
+        const { top, height, y } = rect //获取元素基本信息
+        const harf_height = height / 2
+        let insert_direct = 'bottom'
+        if (pageY - y < harf_height) { //在上
+            insert_direct = 'top'
+            currentTarget.style.backgroundImage = 'linear-gradient(#1890FF,#fff,#fff,#fff)'
+        } else {
+            currentTarget.style.backgroundImage = 'linear-gradient(#fff,#fff,#fff,#fff,#1890FF)'
+        }
+        this.insert_direct = insert_direct
     }
     render() {
         const { nodeValue = {} } = this.state;
@@ -831,6 +872,8 @@ export default class TreeNode extends Component {
                 onDrop={this.onDrop}
                 onDragEnter={this.onDragEnter}
                 onDragLeave={this.onDragLeave}
+                onDragEnd={this.onDragEnd}
+                onDragOver={this.onDragOver}
             >
                 {
                     children && children.length ? (
