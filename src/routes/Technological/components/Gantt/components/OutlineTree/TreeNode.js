@@ -724,6 +724,15 @@ export default class TreeNode extends Component {
             })
             setTimeout(() => {
                 dispatch({
+                    type: 'gantt/handleOutLineTreeData',
+                    payload: {
+                        data: outline_tree
+                    }
+                })
+            }, 300)
+
+            setTimeout(() => {
+                dispatch({
                     type: 'gantt/saveGanttOutlineSort',
                     payload: {
                         outline_tree
