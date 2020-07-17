@@ -87,7 +87,28 @@ export default class WriteFile extends React.Component {
             sheet.getRow(item +1).height = rowlen[item];
         })
     }
-
+    // rgb转换成16进制颜色参数
+    colorRGBtoHex = (color) => {
+        var rgb = color.split(',');
+        var r = parseInt(rgb[0].split('(')[1]);
+        var g = parseInt(rgb[1]);
+        var b = parseInt(rgb[2].split(')')[0]);
+        var hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        return hex;
+    }
+    // 转换成表格需要导出的样式
+    transformColor = (color, defaultColor)=>{
+        let alpha = "FF";
+        if(!color) return alpha + defaultColor;
+        let hexColor = "";
+        if(color.indexOf('rgb') !== -1 || color.indexOf('rgba') !== -1){
+            hexColor = this.colorRGBtoHex(color);
+        }else {
+            hexColor = color;
+        }
+        return alpha + hexColor.replace("#", "").toUpperCase();
+    }
+    // 设置表格样式
     setCellStyle = (celldata, sheet)=>{
         celldata && celldata.length && celldata.forEach(cell => {
             let { r, c } = cell;
@@ -96,36 +117,40 @@ export default class WriteFile extends React.Component {
             // fc 字体颜色 ff 字体 bg 背景颜色
             // bc_x 边框颜色 fs 字体大小 bl 粗体 it 斜体 cl 删除线 ul 下划线 bs 边框样式 vt 垂直对齐
             // ht 水平对齐 f 公式
-            let { fc, ff, bg, fs = 12, bc_t, bc_b, bc_l, bc_r, bl = 0, it = 0, cl = 0, ul = 0, bs = 0, vt, ht, f } = cell.v;
+            let { fc, ff, bg, fs = 12, bc_t, bc_b, bc_l, bc_r, bl = 0, it = 0, cl = 0, ul = 0, bs = 0, vt, ht, f } = cell;
             const font = {
-                name: ff,
+                name: isNaN(+ff) ? ff: "宋体",
                 size: fs,
                 // vertAlign: vt,
-                color: {argb: "FF"+(fc ? fc.replace("#", '').toUpperCase():'000000')},
+                color: {argb: this.transformColor(fc, "000000")},
                 bold: bl === "1",
                 italic: it === "1",
                 underline: ul === "1",
                 strike: cl === "1",
             }
+            let fillColor = this.transformColor(bg, "000000");
             const fill = {
                 type: "pattern",
-                pattern: "solid",
-                fgColor: {argb: "FF"+(bg ? bg.replace("#", '').toUpperCase():'FFFFFF')}
+                pattern: bg && (fillColor !== "FFFFFFFF") ? "solid" :"none",
+                fgColor: bg ? {argb: this.transformColor(bg, "000000")} :"FF000000"
             }
             const border = {
-                top: bc_t ? {style: "thin", color: "FF"+ ( bc_t.replace("#", "").toUpperCase())}: "",
-                left: bc_l ? {style: "thin", color: "FF"+ ( bc_l.replace("#", "").toUpperCase())}: "",
-                bottom: bc_b ? {style: "thin", color: "FF"+ ( bc_b.replace("#", "").toUpperCase())}: "",
-                right: bc_r ? {style: "thin", color: "FF"+ ( bc_r.replace("#", "").toUpperCase())}: "",
+                top: bc_t ? {style: "thin", color: this.transformColor(bc_t)}: "",
+                left: bc_l ? {style: "thin", color: this.transformColor(bc_l)}: "",
+                bottom: bc_b ? {style: "thin", color: this.transformColor(bc_b)}: "",
+                right: bc_r ? {style: "thin", color: this.transformColor(bc_r)}: "",
+            }
+            const alignment = {
+                vertical: vt === "0" ? 'middle' : vt === "1" ? "top" : "bottom",
+                horizontal: ht === "0" ? 'center' : ht === "1" ? "left" :"right"
             }
             let cellName = this.convertToTitle(c)+r;
             
             let sheetCell = sheet.getCell(cellName)
-                sheetCell.font = font;
-            if(bg)
-                sheetCell.fill = fill;
-            if(bs)
-                sheetCell.border = border;
+            sheetCell.font = font;
+            sheetCell.alignment = alignment;
+            sheetCell.fill = fill;
+            sheetCell.border = border;
         })
     }
     // exportFile = async ()=>{

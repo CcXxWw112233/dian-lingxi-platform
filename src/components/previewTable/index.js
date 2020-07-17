@@ -198,6 +198,47 @@ export default class PreviewTable extends React.Component{
         })
         return arr;
     }
+    // 重组排序
+    sortKey = (keys)=>{
+        // 取第一个key进行排序
+        let arr = keys.map(item => {
+            let splitR = item.split('_')[0];
+            let obj = {
+                sortKey: splitR,
+                key: item
+            }
+            return obj
+        })
+        // 排序
+        let sortK = arr.sort((a, b)=>{
+            return a.sortKey - b.sortKey;
+        });
+        // 将第一次排序重组
+        let sk = sortK.map(k => k.key);
+        // jiang
+        let objkey = {};
+        sk.forEach(item => {
+            let a = item.split("_")[0];
+            if(!objkey[a]){
+                objkey[a] = [];
+            }
+            objkey[a].push(item.split("_")[1]);
+        })
+        let objkeyKeys = Object.keys(objkey);
+        objkeyKeys.forEach(item => {
+            objkey[item] = objkey[item].sort((a, b)=> {
+                return a - b;
+            })
+        })
+        let reloadArr = [];
+        objkeyKeys.forEach(item => {
+            let arr = objkey[item];
+            arr.forEach(a => {
+                reloadArr.push(item + '_' + a);
+            })
+        })
+        return reloadArr;
+    }
     // 格式化数据
     forMatData = (data, flag = true) => {
         let arr = this.getEmptyArrary(data);
@@ -222,19 +263,29 @@ export default class PreviewTable extends React.Component{
 
                 }
                 // 合并单元格
-                mKeys.sort().forEach(conf => {
-                    let r = +merge[conf].r;
-                    // 已经删除了的单元格会发生长度变化，下标会失效。
-                    let c = +merge[conf].c - (removedC[r] || 0);
+                let k = this.sortKey(mKeys);
+                let saveMerge = [];
+                k.forEach(conf => {
+                    saveMerge.push(merge[conf]);
+                })
+
+                let mergeC = saveMerge.filter(m => m.cs > 1);
+                let mergeR = saveMerge.filter(m => m.rs > 1);
+                mergeC.forEach(mc => {
+                    let { r, c, cs} = mc;
+                    c = c - (removedC[r] || 0);
                     let oldm = d[r][c] || {};
-                    let rs = r + +merge[conf].rs;
-                    for(let i = r ; i < rs ; i++){
-                        d[i].splice(c, +merge[conf].cs);
-                        // 保存每一行删除的个数，用来取对应的数据
-                        removedC[i] = (removedC[i] || 0) + (+merge[conf].cs - 1);
+                    d[r].splice(c, cs);
+                    removedC[r] = (removedC[r] || 0) + (mc.cs - 1);
+                    d[r].splice(c, 0, { ...oldm, merge: true, mcs: cs});
+                })
+                mergeR.forEach(mr => {
+                    let { r, c, cs, rs } = mr;
+                    let oldm = d[r][c];
+                    for(let i = r + 1; i< r+ rs; i++){
+                        d[i].splice(c, cs)
                     }
-                    // 将删除的数据回填到表格，通过合并单元格使用
-                    d[r].splice(c, 0, { ...oldm, merge: oldm.mc ? true: false, mrs: +merge[conf].rs, mcs: +merge[conf].cs});
+                    d[r].splice(c, 1, {...oldm, merge: true, mrs: rs})
                 })
             }
             item.data = d ;

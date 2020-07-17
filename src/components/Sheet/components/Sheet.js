@@ -150,6 +150,22 @@ export default class Sheet extends React.Component{
     return arr;
   }
 
+  // 设置单元格的公式
+  setFormatFunction = (data)=>{
+    data.forEach(item => {
+      let celldata = item.celldata || [];
+      celldata.forEach(cell => {
+        if(cell){
+          let v = cell.v;
+          let f = v.f;
+          if(f){
+            window.luckysheet.formula.execfunction(f, +cell.r, +cell.c);
+          }
+        }
+      })
+    })
+  }
+
   init = (data)=>{
     window.luckysheet.method.destroy();
     let {
@@ -174,6 +190,10 @@ export default class Sheet extends React.Component{
       editMode: disabledEdit,
       data
     })
+    setTimeout(()=>{
+      this.setFormatFunction(data);
+    }, 500)
+    
   }
   render(){
     let { id } = this.props;
