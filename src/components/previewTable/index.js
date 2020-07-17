@@ -283,7 +283,7 @@ export default class PreviewTable extends React.Component{
                     let { r, c, cs, rs } = mr;
                     let oldm = d[r][c];
                     for(let i = r + 1; i< r+ rs; i++){
-                        d[i].splice(c, cs)
+                        d[i] && d[i].splice(c, cs)
                     }
                     d[r].splice(c, 1, {...oldm, merge: true, mrs: rs})
                 })
