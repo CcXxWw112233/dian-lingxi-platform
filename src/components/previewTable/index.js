@@ -3,6 +3,7 @@ import styles from './index.less'
 import {exportFile} from './utils'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { remove } from 'js-cookie';
+import WriteFile from './writeFile';
 export default class PreviewTable extends React.Component{
     constructor(){
         super(...arguments);
@@ -11,6 +12,7 @@ export default class PreviewTable extends React.Component{
             activeData: {
               data: []
             },
+            exportData: [],
             activeIndex: 0,
             replaceLetters: [],
         }
@@ -44,7 +46,8 @@ export default class PreviewTable extends React.Component{
             data: this.setEmpty(this.minRows, this.minCols),
         }
         this.setState({
-            activeData: val
+            activeData: val,
+            exportData: val
         })
     }
     
@@ -196,7 +199,7 @@ export default class PreviewTable extends React.Component{
         return arr;
     }
     // 格式化数据
-    forMatData = (data) => {
+    forMatData = (data, flag = true) => {
         let arr = this.getEmptyArrary(data);
         arr = this.forMatNumberData(arr);
         let array = arr.map((item) => {
@@ -212,7 +215,7 @@ export default class PreviewTable extends React.Component{
                 d[r][c] = cell;
             }
             let merge = config.merge;
-            if(merge){
+            if(merge && flag){
                 let mKeys = Object.keys(merge);
                 // 保存已经删除掉的单元格数量
                 let removedC = {
@@ -248,7 +251,8 @@ export default class PreviewTable extends React.Component{
             index = 0;
         }
         this.setState({
-            dataSource: data
+            dataSource: data,
+            exportData: this.forMatData(arr, false)
         })
         this.setActiveSheet(data, index);
     }
@@ -369,7 +373,7 @@ export default class PreviewTable extends React.Component{
                 <div className={styles.sheetList}>
                     {
                         leadingOutVisible && (
-                            <span className={`${globalStyles.authTheme} ${styles.exportFile}`} onClick={()=>{exportFile(dataSource, '在线表格导出')}}>&#xe6dd; 导出</span>
+                            <WriteFile data={this.state.exportData} buttonClass={`${globalStyles.authTheme} ${styles.exportFile}`}/>
                         )
                     }
                     { dataSource.length ? 
