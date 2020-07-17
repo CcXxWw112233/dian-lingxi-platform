@@ -44,7 +44,7 @@ export default class Sheet extends React.Component{
       data.forEach((d, r) => {
         let cells = [];
         d.forEach((val, c)=>{
-          if(val){
+          if(val && val.v){
             // 将所有数据保存到v字段，适用于更新
             val.v = {...val}
             val.r = r;
