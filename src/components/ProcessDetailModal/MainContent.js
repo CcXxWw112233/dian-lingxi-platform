@@ -19,6 +19,7 @@ import { currentNounPlanFilterName } from "@/utils/businessFunction";
 import { checkIsHasPermissionInBoard, setBoardIdStorage, getGlobalData } from '../../utils/businessFunction'
 import { cursorMoveEnd } from './components/handleOperateModal'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import ProcessFile from './ProcessFile'
 const { LingxiIm, Im } = global.constants
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -1155,10 +1156,10 @@ export default class MainContent extends Component {
 
   render() {
     const { clientHeight } = this.state
-    const { currentFlowInstanceDescription, currentFlowInstanceName, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep, processInfo: { status, create_time }, templateInfo: { enable_change } } = this.props
+    const { currentFlowInstanceDescription, currentFlowInstanceName, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep, processInfo: { status, create_time }, templateInfo: { enable_change }, is_show_board_file_area } = this.props
     let saveTempleteDisabled = currentFlowInstanceName == '' || (processEditDatas && processEditDatas.length) && processEditDatas.find(item => item.is_edit == '0') || (processEditDatas && processEditDatas.length) && !(processEditDatas[processEditDatas.length - 1].node_type) ? true : false
     return (
-      <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto', position: 'relative' }} onScroll={this.onScroll} >
+      <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto', position: 'relative', paddingBottom: is_show_board_file_area == '1' ? '272px' : '48px' }} onScroll={this.onScroll} >
         <div id="container_configureTop" className={indexStyles.configure_top}>
           <div style={{ display: 'flex', position: 'relative' }}>
             <div><canvas id="time_graph_canvas" width={210} height={210} style={{ float: 'left' }}></canvas></div>
@@ -1339,6 +1340,11 @@ export default class MainContent extends Component {
             </div>
           )
         }
+        {
+          processPageFlagStep == '4' && (
+            <ProcessFile />
+          )
+        }
       </div>
     )
   }
@@ -1348,6 +1354,7 @@ function mapStateToProps({ publicProcessDetailModal: { process_detail_modal_visi
   datas: {
     userBoardPermissions = []
   }
-} }) {
-  return { process_detail_modal_visible, currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas, processInfo, processDoingList, processNotBeginningList, node_type, processCurrentEditStep, templateInfo, currentFlowTabsStatus, not_show_create_node_guide, projectDetailInfoData, userBoardPermissions }
+},gantt: { datas: { is_show_board_file_area } } 
+}) {
+  return { process_detail_modal_visible, currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas, processInfo, processDoingList, processNotBeginningList, node_type, processCurrentEditStep, templateInfo, currentFlowTabsStatus, not_show_create_node_guide, projectDetailInfoData, userBoardPermissions, is_show_board_file_area }
 }

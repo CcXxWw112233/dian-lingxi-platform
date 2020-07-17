@@ -1,20 +1,21 @@
 .specific_example {
     // background-image: linear-gradient(to right , #7A88FF, #7AFFAF);
-    position                 : absolute;
+    position                    : absolute;
     // background-color: #1890FF;
-    z-index                  : 1;
-    box-sizing               : border-box;
-    border-radius            : 2px;
-    cursor                   : pointer;
-    background               : #99C1FF; //rgba(255, 255, 255, 1);
+    z-index                     : 1;
+    box-sizing                  : border-box;
+    // border-radius            : 2px;
+    cursor                      : pointer;
+    background                  : #cbddf7; //rgba(255, 255, 255, 1);
     // box-shadow         : 0px 1px 4px 0px rgba(0, 0, 0, 0.09);
-    box-shadow               : 0px 2px 4px 1px rgba(0, 0, 0, 0.1);
-    border-radius            : 4px;
-    padding                  : 2px 2px;
-    display                  : flex;
-    justify-content          : space-between;
-    align-items              : center;
+    box-shadow                  : 0px 2px 4px 1px rgba(0, 0, 0, 0.1);
+    border-radius               : 40px;
+    padding                     : 2px 2px;
+    display                     : flex;
+    justify-content             : space-between;
+    align-items                 : center;
     // overflow              : hidden;
+    outline                     : none;
 
     // background-image: linear-gradient(to right , #7A88FF, #7AFFAF);
     // background-image:linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%);
@@ -26,12 +27,13 @@
 
     .specific_example_content {
         overflow           : hidden;
-        background-color   : #99C1FF;
+        background-color   : #cbddf7;
         // padding         : 0 8px;
         width              : 100%;
         display            : flex;
         justify-content    : space-between;
         align-items        : center;
+        border-radius      : 40px;
     }
 
     .card_item_name {
@@ -66,9 +68,9 @@
         left        : 0;
         width       : 0;
         height      : 0;
-        border-top  : 13px solid #99C1FF;
+        border-top  : 13px solid #cbddf7;
         border-right: 15px solid transparent;
-        border-color: #99C1FF transparent transparent transparent;
+        border-color: #cbddf7 transparent transparent transparent;
     }
 
     .left_triangle:after {
@@ -76,9 +78,9 @@
         left        : 0;
         width       : 0;
         height      : 0;
-        border-top  : 13px solid #99C1FF;
+        border-top  : 13px solid #cbddf7;
         border-right: 15px solid transparent;
-        border-color: #99C1FF transparent transparent transparent;
+        border-color: #cbddf7 transparent transparent transparent;
         position    : absolute;
         bottom      : 5px;
         left        : 2px;
@@ -90,25 +92,25 @@
         left            : 10px;
         height          : 4px;
         bottom          : 2px;
-        background-color: #99C1FF;
+        background-color: #cbddf7;
     }
 
     .right_triangle {
         right       : 0;
         width       : 0;
         height      : 0;
-        border-top  : 13px solid #99C1FF;
+        border-top  : 13px solid #cbddf7;
         border-left : 15px solid transparent;
-        border-color: #99C1FF transparent transparent transparent;
+        border-color: #cbddf7 transparent transparent transparent;
     }
 
     .right_triangle:after {
         content     : '';
         width       : 0;
         height      : 0;
-        border-top  : 13px solid #99C1FF;
+        border-top  : 13px solid #cbddf7;
         border-left : 15px solid transparent;
-        border-color: #99C1FF transparent transparent transparent;
+        border-color: #cbddf7 transparent transparent transparent;
         position    : absolute;
         bottom      : 5px;
         right       : 2px;
@@ -120,17 +122,17 @@
         right           : 10px;
         height          : 4px;
         bottom          : 2px;
-        background-color: #99C1FF;
+        background-color: #cbddf7;
     }
 
     .ears_out {
-        display: none;
+        // display: none;
     }
 
     .ears {
         background-color: #D7D7D7;
         position        : absolute;
-        z-index         : -2;
+        z-index         : 3;
         height          : 100%;
         width           : 14px;
         top             : 0;
@@ -165,14 +167,18 @@
     }
 
     .ears_circle {
-        position        : absolute;
-        z-index         : -2;
-        background-color: #ffffff;
-        border          : 1px solid #1890FF;
-        width           : 8px;
-        height          : 8px;
-        border-radius   : 8px;
-        cursor          : pointer !important;
+        position           : absolute;
+        z-index            : -2;
+        background         : linear-gradient(314deg, rgba(169, 223, 255, 1) 0%, rgba(101, 116, 255, 1) 100%);
+        box-shadow         : 0px 12px 26px 0px rgba(30, 45, 125, 0.24);
+        border             : 2px solid;
+        border-image       : linear-gradient(137deg, rgba(131, 209, 255, 1), rgba(161, 170, 255, 1)) 2 2;
+        // border          : 2px solid #5087FF;
+        width              : 10px;
+        height             : 10px;
+        border-radius      : 8px;
+        cursor             : pointer !important;
+        background-color   : rgba(161, 170, 255, 1);
     }
 
     .ears_circle_mask {
@@ -190,8 +196,10 @@
     }
 
     .right_ear_circle_mask {
-        right : -4px;
-        bottom: -12px;
+        right              : -62px;
+        bottom             : 18px;
+        z-index            : 4;
+        // background-color: red;
     }
 
     .left_ear_circle {
@@ -200,8 +208,18 @@
     }
 
     .right_ear_circle {
-        right : 0;
-        bottom: -8px;
+        right : -60px;
+        bottom: 20px;
+    }
+
+    .link_right_circle {
+        position  : absolute;
+        right     : -50px;
+        bottom    : 24px;
+        height    : 2px;
+        width     : 50px;
+        background: linear-gradient(270deg, rgba(169, 223, 255, 1) 0%, rgba(101, 116, 255, 1) 100%);
+        box-shadow: 0px 12px 26px 0px rgba(30, 45, 125, 0.24);
     }
 
     .line {
@@ -248,7 +266,7 @@
 }
 
 .specific_example:hover {
-    background-color: #D7D7D7;
+    // background-color: #D7D7D7; //背景颜色因为遮罩所以呈现出border
 
     .left_triangle,
     .left_triangle_mask,

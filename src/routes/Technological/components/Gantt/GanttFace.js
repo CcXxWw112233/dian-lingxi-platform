@@ -469,11 +469,13 @@ export default class GanttFace extends Component {
                     setGoldDateArr={this.setGoldDateArr}
                     setScrollPosition={this.setScrollPosition}
                   />
-                  {
-                    gantt_board_id && gantt_board_id != '0' && !closeFeature({ board_id: gantt_board_id }) && (
-                      <BoardTemplate insertTaskToListGroup={this.props.insertTaskToListGroup} gantt_card_height={gantt_card_height} />
-                    )
-                  }
+                  <div style={{ display: !closeFeature({ board_id: gantt_board_id }) ? 'block' : 'none' }}>
+                    {
+                      gantt_board_id && gantt_board_id != '0' && (
+                        <BoardTemplate insertTaskToListGroup={this.props.insertTaskToListGroup} gantt_card_height={gantt_card_height} />
+                      )
+                    }
+                  </div>
                 </div>
                 <GetRowGanttItemElse gantt_card_height={gantt_card_height} dataAreaRealHeight={dataAreaRealHeight} />
 

@@ -345,7 +345,7 @@ export default class BeginningStepOne extends Component {
   }
 
   // 编辑点击事件
-  handleEnterConfigureProcess = async(e) => {
+  handleEnterConfigureProcess = (e) => {
     e && e.stopPropagation()
     if (!this.whetherIsHasPermission()) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
