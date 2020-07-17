@@ -44,7 +44,7 @@ export default class Sheet extends React.Component{
       data.forEach((d, r) => {
         let cells = [];
         d.forEach((val, c)=>{
-          if(val){
+          if(val && val.v){
             // 将所有数据保存到v字段，适用于更新
             val.v = {...val}
             val.r = r;
@@ -150,6 +150,22 @@ export default class Sheet extends React.Component{
     return arr;
   }
 
+  // 设置单元格的公式
+  setFormatFunction = (data)=>{
+    data.forEach(item => {
+      let celldata = item.celldata || [];
+      celldata.forEach(cell => {
+        if(cell){
+          let v = cell.v;
+          let f = v.f;
+          if(f){
+            window.luckysheet.formula.execfunction(f, +cell.r, +cell.c);
+          }
+        }
+      })
+    })
+  }
+
   init = (data)=>{
     window.luckysheet.method.destroy();
     let {
@@ -174,6 +190,10 @@ export default class Sheet extends React.Component{
       editMode: disabledEdit,
       data
     })
+    setTimeout(()=>{
+      this.setFormatFunction(data);
+    }, 500)
+    
   }
   render(){
     let { id } = this.props;
