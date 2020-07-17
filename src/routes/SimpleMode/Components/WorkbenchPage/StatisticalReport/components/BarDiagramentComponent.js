@@ -14,7 +14,7 @@ import { newline, arrayNonRepeatfy } from '../handleOperatorStatiscalReport';
 
 class BarDiagramentComponent extends Component {
 
-  componentDidMount () {
+  componentDidMount() {
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('barDiagramContent'));
     let boardNameData = reportData.map(item => item.board_name)
@@ -27,7 +27,7 @@ class BarDiagramentComponent extends Component {
         axisPointer: { // 坐标轴指示器，坐标轴触发有效
           type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
         },
-        extraCssText: "width:200px;height:200px;overflow:auto",
+        extraCssText: "max-width:200px;max-height:200px;overflow:auto;white-space:pre-wrap;word-break:break-all;",
         enterable: true,
         // position: function (pos, params, dom, rect, size) {
         //   // 鼠标在左侧时 tooltip 显示到右侧，鼠标在右侧时 tooltip 显示到左侧。
@@ -53,6 +53,11 @@ class BarDiagramentComponent extends Component {
             return '\n' + newstr;
         },
         triggerEvent: true,
+        tooltip: {
+          show: true,
+          enterable: true,
+        },
+        animation: true,
         // formatter: function (params) {
         //   let tip1 = "";
         //   let tip = "";
@@ -215,7 +220,7 @@ class BarDiagramentComponent extends Component {
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
   }
-  render () {
+  render() {
     return (
       <div id="barDiagramContent" style={{ width: 400, height: 380 }}></div>
     );

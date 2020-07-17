@@ -67,9 +67,7 @@ class EchartsTest extends Component {
     function renderItem(params, api) {
         var yValue = api.value(2);
         var start = api.coord([api.value(0), yValue]);
-        console.log(start,'ssssssssssss_start')
         var size = api.size([api.value(1) - api.value(0), yValue]);
-        console.log(size,'sssssssssssss_size')
         var style = api.style();
 
         return {
