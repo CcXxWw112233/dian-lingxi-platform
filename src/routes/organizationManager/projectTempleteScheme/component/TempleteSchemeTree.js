@@ -195,9 +195,10 @@ export default class TempleteSchemeTree extends Component {
     let { template_data_type, template_id, parent_id, id } = currentSelectedItemInfo
     // 得到一个当前元素中所有父级所在的下标位置的数组
     let parentKeysArr = this.getCurrentElementParentKey(arr, currentId);
-    let PARENTID = parent_id == '0' ? id : parent_id
+    // 如果说父id为0添加的同级 那么必定是 0, 
+    let PARENTID = parent_id == '0' ? '0' : parent_id
     if (parentKeysArr.length == '1') { // 如果说当前点击的是最外层的元素, 那么就直接在当前追加一条
-      arr.splice(parentKeysArr[0] + 1, 0, { id: 'add_sibiling', name: '', template_data_type: template_data_type, template_id: template_id, parent_id: PARENTID, child_content: [] })
+      arr.splice(parentKeysArr[0] + 1, 0, { id: 'add_sibiling', name: '', template_data_type: template_data_type == '3' ? '2' : template_data_type, template_id: template_id, parent_id: PARENTID, child_content: [] })
     } else {
       let curr = JSON.parse(JSON.stringify(parentKeysArr || []))
       parentKeysArr.splice(-1, 1) // 这里为什么要截取呢, 是因为,只需要找到当前元素的父元素即可
@@ -664,7 +665,7 @@ export default class TempleteSchemeTree extends Component {
         type: 'organizationManager/createTempleteContainer',
         payload: {
           name: inputValue,
-          parent_id: parent_id == '0' ? id : PARENTID,
+          parent_id: (parent_id == '0' && template_data_type == '1') ? ((is_add_children || is_wrapper_add_children) ? id : parent_id) : PARENTID,
           template_data_type: is_add_children || is_wrapper_add_children ? '2' : template_data_type == '3' ? '2' : template_data_type,
           template_id: template_id,
           target_id: id
@@ -821,6 +822,8 @@ export default class TempleteSchemeTree extends Component {
     if (!data) return
     let array = [...data]
     let dragObj
+    let whetherIsLCB = array.find(n => n.template_data_type == '1') || {}
+    if (!(whetherIsLCB && Object.keys(whetherIsLCB).length)) return array
     for (let i = 0; i < array.length; i++) {
       if ((array[i].template_data_type == '3' && i == 0) || (array[i].template_data_type == '2' && i == 0)) {
         this.loop(array, array[i].id, (item, index, arr) => {
