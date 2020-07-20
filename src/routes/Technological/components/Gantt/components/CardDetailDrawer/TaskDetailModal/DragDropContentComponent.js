@@ -730,16 +730,21 @@ export default class DragDropContentComponent extends Component {
         messageValue = (
           // <div className={mainContentStyles.moveWrapper}>
           <div key={id} style={{ position: 'relative' }} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
-            <div className={mainContentStyles.field_left}>
-              {
+            <div className={mainContentStyles.field_left} style={{display: 'flex', justifyContent: 'space-between'}}>
+              {/* {
                 !flag && (
                   <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
                 )
-              }
+              } */}
               <div className={mainContentStyles.field_hover}>
                 <span className={`${globalStyles.authTheme}`}>&#xe6b7;</span>
                 <span>里程碑</span>
               </div>
+              {
+                !flag && (
+                  <span style={{fontSize: '18px'}} onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                )
+              }
             </div>
             <div className={`${mainContentStyles.field_right}`}>
               {
@@ -776,16 +781,21 @@ export default class DragDropContentComponent extends Component {
         messageValue = (
           // <div className={mainContentStyles.moveWrapper}>
           <div key={id} style={{ position: 'relative' }} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
-            <div className={mainContentStyles.field_left}>
-              {
+            <div className={mainContentStyles.field_left} style={{display: 'flex', justifyContent: 'space-between'}}>
+              {/* {
                 !flag && (
                   <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
                 )
-              }
+              } */}
               <div className={mainContentStyles.field_hover}>
                 <span className={`${globalStyles.authTheme}`}>&#xe7f6;</span>
                 <span>备注</span>
               </div>
+              {
+                !flag && (
+                  <span style={{fontSize: '18px'}} onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                )
+              }
             </div>
             <div className={`${mainContentStyles.field_right}`}>
               {
@@ -827,16 +837,21 @@ export default class DragDropContentComponent extends Component {
           // <div className={mainContentStyles.moveWrapper}>
           // <>
           <div key={id} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
-            <div className={mainContentStyles.field_left}>
-              {
+            <div className={mainContentStyles.field_left} style={{display: 'flex', justifyContent: 'space-between'}}>
+              {/* {
                 !flag && (
                   <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
                 )
-              }
+              } */}
               <div className={mainContentStyles.field_hover}>
                 <span className={`${globalStyles.authTheme}`}>&#xe6b8;</span>
                 <span>标签</span>
               </div>
+              {
+                !flag && (
+                  <span style={{fontSize: '18px'}} onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                )
+              }
             </div>
             <div style={{ position: 'relative' }} className={mainContentStyles.field_right}>
               <div className={mainContentStyles.pub_hover}>
@@ -943,16 +958,21 @@ export default class DragDropContentComponent extends Component {
           // <div className={mainContentStyles.moveWrapper}>
           // <>
           <div key={id} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
-            <div className={mainContentStyles.field_left}>
-              {
+            <div className={mainContentStyles.field_left} style={{display: 'flex', justifyContent: 'space-between'}}>
+              {/* {
                 !flag && (
                   <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
                 )
-              }
+              } */}
               <div className={mainContentStyles.field_hover}>
                 <span className={`${globalStyles.authTheme}`}>&#xe6b9;</span>
                 <span>上传</span>
               </div>
+              {
+                !flag && (
+                  <span style={{fontSize: '18px'}} onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                )
+              }
             </div>
             <div className={`${mainContentStyles.field_right}`}>
               {/* 上传附件组件 */}
@@ -1020,16 +1040,21 @@ export default class DragDropContentComponent extends Component {
           // <div className={mainContentStyles.moveWrapper}>
           // <>
           <div key={id} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
-            <div className={mainContentStyles.field_left}>
-              {
+            <div className={mainContentStyles.field_left} style={{display: 'flex', justifyContent: 'space-between'}}>
+              {/* {
                 !flag && !(gold_data && gold_data.length) && (
                   <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
                 )
-              }
+              } */}
               <div className={mainContentStyles.field_hover}>
                 <span className={`${globalStyles.authTheme}`}>&#xe7f5;</span>
                 <span>子任务</span>
               </div>
+              {
+                !flag && (
+                  <span style={{fontSize: '18px'}} onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                )
+              }
             </div>
             <div className={`${mainContentStyles.field_right}`}>
               {/* 添加子任务组件 */}
@@ -1152,11 +1177,11 @@ export default class DragDropContentComponent extends Component {
     return (
       <div>
         <div>
-        {
-                  properties && properties.map(item => {
-                    return <div key={item.id}>{this.filterDiffPropertiesField(item)}</div>
-                  })
-                }
+          {
+            properties && properties.map(item => {
+              return <div key={item.id}>{this.filterDiffPropertiesField(item)}</div>
+            })
+          }
           {/* {
             (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
               <>
