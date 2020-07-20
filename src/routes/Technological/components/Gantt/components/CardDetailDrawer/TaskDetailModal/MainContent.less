@@ -1,9 +1,10 @@
 /* 公共hover的样式 */
 
-.value_text{
-  font-size:14px;
-  color:rgba(0,0,0,0.65);
+.value_text {
+  font-size: 14px;
+  color    : rgba(0, 0, 0, 0.65);
 }
+
 .pub_hover {
   padding-left: 12px;
 }
@@ -99,6 +100,7 @@
 /* 添加属性的下拉样式 S */
 .overlay_attribute {
   min-width: 248px !important;
+
   .attrWrapper {
     :global {
       li {
@@ -107,32 +109,36 @@
         align-items: center;
         height     : 40px;
         padding    : 9px 12px;
+
         &:hover {
           background   : rgba(0, 0, 0, 0.04) !important;
           cursor       : pointer;
           border-radius: 4px;
         }
       }
+
       .ant-menu-item-selected {
         background   : rgba(0, 0, 0, 0.04) !important;
         border-radius: 4px;
         color        : rgba(0, 0, 0, 0.45);
       }
     }
+
     .attr_icon {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      color: rgba(0,0,0,0.45);
-      line-height: 16px;
+      display     : inline-block;
+      width       : 16px;
+      height      : 16px;
+      color       : rgba(0, 0, 0, 0.45);
+      line-height : 16px;
       margin-right: 6px;
     }
+
     .attr_name {
-      display: inline-block;
-      min-width: 42px;
-      height: 22px;
-      font-size: 14px;
-      color: rgba(0,0,0,0.65);
+      display    : inline-block;
+      min-width  : 42px;
+      height     : 22px;
+      font-size  : 14px;
+      color      : rgba(0, 0, 0, 0.65);
       line-height: 22px;
     }
   }
@@ -142,9 +148,10 @@
 
 /* 添加执行人下拉样式 S */
 .overlay_pricipal {
-  left: 0px !important;
+  left     : 0px !important;
   min-width: 248px !important;
   max-width: 248px;
+
   :global {
     li {
       line-height: 40px !important;
@@ -172,39 +179,42 @@
 /* 标签属性的下拉样式 S */
 .labelDataWrapper {
   min-width: 248px !important;
+
   :global {
     li {
       line-height: 40px !important;
       height     : 40px !important;
-      color:rgba(0,0,0,0.65);
+      color      : rgba(0, 0, 0, 0.65);
+
       &:hover {
         background   : rgba(0, 0, 0, 0.04) !important;
         cursor       : pointer;
         border-radius: 4px;
-        color:rgba(0,0,0,0.65);
+        color        : rgba(0, 0, 0, 0.65);
       }
+
       .anticon {
         margin-right: 0;
       }
     }
+
     .ant-menu-item-selected {
-      background-color   : transparent !important;
-      border-radius: 4px;
-      color        : rgba(0, 0, 0, 0.45);
+      background-color: transparent !important;
+      border-radius   : 4px;
+      color           : rgba(0, 0, 0, 0.45);
     }
   }
 }
+
 /* 标签属性的下拉样式 E */
 
 /* 添加执行人下拉样式 E */
 
 /* 内容区的容器样式 S */
 .main_wrap {
-  padding: 16px 20px;
+  padding: 4px 0px;
 
   .main_content {
-    padding-left: 12px;
-
     /* 标题部分 S */
     .title_content {
       display      : flex;
@@ -229,13 +239,16 @@
   /* 标题部分 E */
 
   .clearfix:after {
-    content: ".";
-    display: block;
-    height: 0;
-    clear: both;
+    content   : ".";
+    display   : block;
+    height    : 0;
+    clear     : both;
     visibility: hidden;
   }
-  .clearfix {display: inline-block;}
+
+  .clearfix {
+    display: inline-block;
+  }
 
   // .moveWrapper {
   //   opacity: 1 !important;
@@ -247,53 +260,62 @@
     display      : flex;
     line-height  : 38px;
     margin-bottom: 12px;
-    margin-left: -26px;
-    cursor: pointer;
+    margin-left  : -26px;
+    cursor       : pointer;
+
     //align-items : center;
     // line-height: 55px;
     .field_left {
-      min-width: 128px;
+      min-width  : 128px;
       margin-left: 22px;
+
       // cursor: move;
       .field_hover {
-        min-width:68px;
-        max-width: 96px;
-        height:38px;
-        border-radius:4px;
-        padding-left: 10px;
+        min-width    : 68px;
+        max-width    : 96px;
+        height       : 38px;
+        border-radius: 4px;
+        padding-left : 10px;
         padding-right: 10px;
-        display: inline-block;
+        display      : inline-block;
+
         // cursor: move;
         >span:nth-child(1) {
           font-size   : 16px;
           margin-right: 9px;
           color       : rgba(0, 0, 0, 0.65)
         }
-  
+
         >span:nth-child(2) {
           font-size: 14px;
         }
+
         &:hover {
-          background:rgba(0,0,0,0.04);
+          background: rgba(0, 0, 0, 0.04);
         }
       }
+
       >span:nth-child(1) {
         font-size   : 14px;
         margin-right: 9px;
         color       : rgba(0, 0, 0, 0.65)
       }
+
       >span:nth-child(2) {
         font-size: 14px;
       }
+
       .field_delIcon {
-        cursor: pointer;
+        cursor : pointer;
         display: none;
+
         &:hover {
           color: rgba(0, 0, 0, 0.65);
         }
       }
     }
-    .field_left:hover .field_delIcon{
+
+    .field_left:hover .field_delIcon {
       display: inline-block;
     }
 
@@ -312,8 +334,8 @@
         border-radius : 4px;
         line-height   : 26px;
         text-align    : center;
-        font-size:14px;
-        color:rgba(0,0,0,0.65);
+        font-size     : 14px;
+        color         : rgba(0, 0, 0, 0.65);
       }
 
       .complete {
@@ -326,7 +348,7 @@
         line-height   : 26px;
         text-align    : center;
         color         : rgba(56, 158, 13, 1);
-        font-size:14px;
+        font-size     : 14px;
       }
 
       .user_executor {
@@ -426,10 +448,11 @@
 
       .labelDelItem {
         position: relative;
+
         .labelDelIcon {
           display          : none;
-          top: -8px;
-          right: 6px;
+          top              : -8px;
+          right            : 6px;
           width            : 14px;
           height           : 14px;
           border-radius    : 4px;
@@ -438,6 +461,7 @@
           background-repeat: no-repeat;
           background-size  : contain;
           transition       : all 0.3s;
+
           &:hover {
             background       : url(../../../../../../../assets/workbench/close-circle-active@2x.png);
             background-repeat: no-repeat;
@@ -445,19 +469,21 @@
           }
         }
       }
+
       .labelDelItem:hover .labelDelIcon {
         display   : inline-block;
-        top: -8px;
-        right: 6px;
+        top       : -8px;
+        right     : 6px;
         transition: all 0.3s;
       }
 
       .upload_file_btn {
-        font-size  : 14px;
-        color      : rgba(0, 0, 0, 0.45);
+        font-size: 14px;
+        color    : rgba(0, 0, 0, 0.45);
       }
 
       .filelist_wrapper {
+
         // margin-left: -26px;
         .file_item_wrapper {
           display    : flex;
@@ -477,17 +503,17 @@
             flex           : 1;
             display        : flex;
             justify-content: space-between;
-            align-items: center;
-            font-size  : 14px;
-            color      : rgba(0, 0, 0, 0.65);
+            align-items    : center;
+            font-size      : 14px;
+            color          : rgba(0, 0, 0, 0.65);
             line-height    : 38px;
             height         : 38px;
             // padding-left: 28px;
-            margin-left: 16px;
-            padding: 8px 12px;
+            margin-left    : 16px;
+            padding        : 8px 12px;
 
             .file_title {
-              max-width           : 400px;
+              max-width       : 400px;
               display         : inline-flex;
               align-items     : center;
               text-overflow   : ellipsis;
@@ -499,15 +525,18 @@
             .file_info {
               text-align: right;
             }
+
             .breadNav {
-              display: none;
+              display    : none;
               margin-left: 16px;
+
               // display: block;
               .Breadcrumb {
-                max-width: 330px;
-                white-space: nowrap;
-                overflow: hidden;
+                max-width    : 330px;
+                white-space  : nowrap;
+                overflow     : hidden;
                 text-overflow: ellipsis;
+
                 .breadItem {
                   color: rgba(0, 0, 0, 0.45);
                 }
@@ -523,9 +552,11 @@
             }
 
           }
+
           .breadNav {
             display: block;
           }
+
           .file_info {
             display: none;
           }
@@ -534,38 +565,41 @@
       }
 
       .descriptionContent {
-        padding:8px 0px;
+        padding     : 8px 0px;
         margin-right: 12px;
-        color:rgba(0,0,0,0.65);
+        color       : rgba(0, 0, 0, 0.65);
+
         p {
-          color:rgba(0,0,0,0.65);
-          word-break: break-all;
-          line-height: 22px;
+          color        : rgba(0, 0, 0, 0.65);
+          word-break   : break-all;
+          line-height  : 22px;
           margin-bottom: 0px;
         }
       }
+
       .normal_label {
-        min-width: 48px;
+        min-width       : 48px;
         // max-width: 172px;
-        height: 24px;
-        border-radius: 4px;
-        display: inline-block;
-        color: rgba(0,0,0,0.65);
-        text-align: center;
-        line-height: 22px;
-        margin-right: 12px;
+        height          : 24px;
+        border-radius   : 4px;
+        display         : inline-block;
+        color           : rgba(0, 0, 0, 0.65);
+        text-align      : center;
+        line-height     : 22px;
+        margin-right    : 12px;
         // white-space: nowrap;
         // overflow: hidden;
         // text-overflow: ellipsis;
-        vertical-align: middle;
-        padding: 2px 12px;
-        box-sizing: border-box;
-        margin-top: -1px;
+        vertical-align  : middle;
+        padding         : 2px 12px;
+        box-sizing      : border-box;
+        margin-top      : -1px;
       }
     }
   }
+
   .showDelColor {
-    background: rgba(144,19,254,0.15);
+    background: rgba(144, 19, 254, 0.15);
   }
 
   /* 各种不同字段部分 E */
@@ -573,25 +607,27 @@
 }
 
 .dynamic_comment {
-  width:40px;
-  height:40px;
-  background:rgba(255,255,255,1);
-  box-shadow:0px 0px 8px 0px rgba(0,0,0,0.15);
-  border-radius: 20px;
-  position: absolute;
-  right: 40px;
-  bottom: 40px;
-  z-index: 1;
-  display: flex;
-  align-items: center;
+  width          : 40px;
+  height         : 40px;
+  background     : rgba(255, 255, 255, 1);
+  box-shadow     : 0px 0px 8px 0px rgba(0, 0, 0, 0.15);
+  border-radius  : 20px;
+  position       : absolute;
+  right          : 40px;
+  bottom         : 40px;
+  z-index        : 1;
+  display        : flex;
+  align-items    : center;
   justify-content: center;
-  cursor: pointer;
+  cursor         : pointer;
+
   >span {
     font-size: 20px;
-    color: rgba(0, 0, 0, 0.45);
+    color    : rgba(0, 0, 0, 0.45);
   }
 }
-.dynamic_comment:hover >span {
+
+.dynamic_comment:hover>span {
   color: #40A9FF;
 }
 

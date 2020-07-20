@@ -3,7 +3,7 @@ import { Drawer } from 'antd';
 import { connect } from 'dva';
 import MainContent from './TaskDetailModal/MainContent'
 import HeaderContent from './TaskDetailModal/HeaderContent'
-
+import styles from './index.less'
 @connect(mapStateToProps)
 export default class Index extends Component {
     onClose = () => {
@@ -12,7 +12,7 @@ export default class Index extends Component {
     render() {
         const { selected_card: { visible } } = this.props
         return (
-            <div>
+            <div className={styles.draw_detail}>
                 <Drawer
                     placement="right"
                     title={<HeaderContent />}

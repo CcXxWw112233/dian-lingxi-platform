@@ -31,7 +31,7 @@
     color        : #69C0FF;
     font-style   : normal;
     line-height  : 20px;
-    flex-shrink: 0;
+    flex-shrink  : 0;
 
     .title_icon {
       margin-right  : 4px;
@@ -48,37 +48,37 @@
 .bread_nav {
   // cursor  : pointer;
   margin-left: 12px;
-  display: flex;
+  display    : flex;
   align-items: center;
   flex-shrink: 0;
 
   .bread_board_name {
-    font-size: 16px;
-    color    : rgba(0, 0, 0, 0.65);
-    max-width: 300px;
-    overflow: hidden;
-    white-space: nowrap;
+    font-size    : 16px;
+    color        : rgba(0, 0, 0, 0.65);
+    max-width    : 300px;
+    overflow     : hidden;
+    white-space  : nowrap;
     text-overflow: ellipsis;
-    display: inline-block;
+    display      : inline-block;
   }
 
   .bread_org_name {
-    font-size: 14px;
-    color    : rgba(0, 0, 0, 0.45);
-    max-width: 300px;
-    overflow: hidden;
-    white-space: nowrap;
+    font-size    : 14px;
+    color        : rgba(0, 0, 0, 0.45);
+    max-width    : 300px;
+    overflow     : hidden;
+    white-space  : nowrap;
     text-overflow: ellipsis;
-    display: inline-block;
+    display      : inline-block;
   }
 
   .bread_list_name {
-    color: rgba(0, 0, 0, 0.65);
-    max-width: 300px;
-    overflow: hidden;
-    white-space: nowrap;
+    color        : rgba(0, 0, 0, 0.65);
+    max-width    : 300px;
+    overflow     : hidden;
+    white-space  : nowrap;
     text-overflow: ellipsis;
-    display: inline-block;
+    display      : inline-block;
   }
 
   .arrow {
@@ -100,10 +100,11 @@
   -webkit-align-items: center;
   -ms-flex-align     : center;
   align-items        : center;
-  margin-right: 10px;
+  margin-right       : 10px;
+
   .action {
     margin-left: 12px;
-    color: rgba(0, 0, 0, 0.45);
+    color      : rgba(0, 0, 0, 0.45);
   }
 }
 
@@ -123,43 +124,46 @@
 }
 
 .right__share {
-  cursor         : pointer;
-  display        : inline-block;
-  line-height    : 24px;
-  height         : 24px;
-  width          : 24px;
+  cursor     : pointer;
+  display    : inline-block;
+  line-height: 24px;
+  height     : 24px;
+  width      : 24px;
 }
 
 .right__share:hover {
-  cursor         : pointer;
-  line-height    : 24px;
-  height         : 24px;
-  width          : 24px;
-  color: #40A9FF;
+  cursor     : pointer;
+  line-height: 24px;
+  height     : 24px;
+  width      : 24px;
+  color      : #40A9FF;
 }
+
 .share_icon {
-  width       : 24px;
-  height      : 24px;
-  text-align  : center;
-  line-height : 24px;
+  width      : 24px;
+  height     : 24px;
+  text-align : center;
+  line-height: 24px;
 }
 
 .right__shareIndicator {
-  cursor          : pointer;
-  display         : inline-flex;
-  background      : rgba(0, 0, 0, 0.04);
-  border-radius   : 4px;
-  line-height     : 24px;
-  height:24px;
-  padding: 0px 8px 0px 6px;
-  .right__shareIndicator_icon{
-    display         : inline-block;
+  cursor       : pointer;
+  display      : inline-flex;
+  background   : rgba(0, 0, 0, 0.04);
+  border-radius: 4px;
+  line-height  : 24px;
+  height       : 24px;
+  padding      : 0px 8px 0px 6px;
+
+  .right__shareIndicator_icon {
+    display  : inline-block;
     font-size: 16px;
   }
+
   .right__shareIndicator_text {
     margin-left: 4px;
-    display         : inline-block;
-    font-size: 12px;
+    display    : inline-block;
+    font-size  : 12px;
   }
 
   &:hover {
@@ -188,4 +192,23 @@
 
 .dele_icon:hover .dele {
   color: #FF7875;
+}
+
+.normal_icon {
+  display    : inline-block;
+  width      : 24px;
+  height     : 24px;
+  text-align : center;
+  line-height: 24px;
+  cursor     : pointer;
+  font-size  : 20px;
+
+  color: rgba(0, 0, 0, 0.45) !important;
+}
+
+.normal_icon:hover {
+  background   : rgba(230, 247, 255, 1);
+  border-radius: 4px;
+  color        : #40A9FF !important;
+
 }
