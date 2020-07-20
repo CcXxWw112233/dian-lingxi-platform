@@ -20,7 +20,7 @@ import GroupListHeadElse from './GroupListHeadElse'
 import GetRowGanttItemElse from './GetRowGanttItemElse'
 import { weekDataArray } from './calDate';
 import { closeFeature } from '../../../../utils/temporary';
-
+import CardDetailDrawer from './components/CardDetailDrawer'
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
 export default class GanttFace extends Component {
@@ -476,6 +476,7 @@ export default class GanttFace extends Component {
                       )
                     }
                   </div>
+                  <CardDetailDrawer {...this.props.task_detail_props} />
                 </div>
                 <GetRowGanttItemElse gantt_card_height={gantt_card_height} dataAreaRealHeight={dataAreaRealHeight} />
 
