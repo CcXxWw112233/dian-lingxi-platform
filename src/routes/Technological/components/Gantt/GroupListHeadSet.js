@@ -201,7 +201,7 @@ export default class GroupListHeadSet extends Component {
                                     onClick={() => { if (gantt_board_id != '0') this.setGroupViewType('4') }}
                                     className={`${indexStyles.set_content_left_left} ${globalStyles.authTheme} ${ganttIsOutlineView({ group_view_type }) && selected} ${gantt_board_id == '0' ? indexStyles.disabled : ''}`}
                                     style={{ display: gantt_board_id == '0' ? 'none' : 'block' }} >
-                                    &#xe7f9;
+                                    &#xe680;
                                 </div>
                             </Tooltip>
 
@@ -215,9 +215,13 @@ export default class GroupListHeadSet extends Component {
                                 >
                                     {
                                         gantt_board_id == '0' ? (
-                                            <span>&#xe6ae;</span>
+                                            !single_select_user.id ? (
+                                                <span>&#xe68a;</span>
+                                            ) : (
+                                                    <span>&#xe694;</span>
+                                                )
                                         ) : (
-                                                <span>&#xe604;</span>
+                                                <span>&#xe681;</span>
                                             )
                                     }
                                 </div>
@@ -227,7 +231,7 @@ export default class GroupListHeadSet extends Component {
                                     onClick={() => this.setGroupViewType('2')}
                                     className={`${indexStyles.set_content_left_right} ${globalStyles.authTheme}  ${group_view_type == '2' && selected}`}
                                     style={{ display: gantt_board_id == '0' ? 'block' : 'none' }} >
-                                    &#xe7b2;
+                                    &#xe693;
                                 </div>
                             </Tooltip>
                         </div>
