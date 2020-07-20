@@ -46,7 +46,7 @@ function Index(props) {
             </div>
             <div className={styles.guideButtons}>
                 <div>
-                    <Checkbox checked={no_confirm} onChange={onChange}>下次不再提示</Checkbox>
+                    <Checkbox checked={no_confirm} onChange={onChange}>不再提示</Checkbox>
                 </div>
                 <div>
                     <Button type="primary" onClick={checkQuit}>我知道了</Button>

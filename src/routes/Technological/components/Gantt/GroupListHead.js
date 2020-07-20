@@ -99,21 +99,32 @@ export default class GroupListHead extends Component {
 
   openGuideModal = (boardId) => {
     const { dispatch } = this.props;
+    dispatch({
+      type: 'gantt/getGanttData',
+      payload: {
 
-    milestoneInit({ board_id: boardId }).then((res) => {
-      dispatch({
-        type: 'gantt/getGanttData',
-        payload: {
-
-        }
-      });
-      dispatch({
-        type: 'gantt/updateDatas',
-        payload: {
-          startPlanType: 1
-        }
-      });
+      }
     });
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        startPlanType: 1
+      }
+    });
+    // milestoneInit({ board_id: boardId }).then((res) => {
+    //   dispatch({
+    //     type: 'gantt/getGanttData',
+    //     payload: {
+
+    //     }
+    //   });
+    //   dispatch({
+    //     type: 'gantt/updateDatas',
+    //     payload: {
+    //       startPlanType: 1
+    //     }
+    //   });
+    // });
 
 
   }
