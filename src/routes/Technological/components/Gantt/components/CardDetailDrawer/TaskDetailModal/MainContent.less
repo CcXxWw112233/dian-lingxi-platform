@@ -212,7 +212,8 @@
 
 /* 内容区的容器样式 S */
 .main_wrap {
-  padding: 4px 0px;
+  // padding: 4px 0px;
+  width: 340px;
 
   .main_content {
     /* 标题部分 S */
@@ -257,27 +258,36 @@
 
   /* 各种不同字段部分 S */
   .field_content {
-    display      : flex;
+    // display      : flex;
     line-height  : 38px;
     margin-bottom: 12px;
-    margin-left  : -26px;
+    // margin-left  : -26px;
     cursor       : pointer;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    padding-bottom: 12px;
 
     //align-items : center;
     // line-height: 55px;
     .field_left {
       min-width  : 128px;
-      margin-left: 22px;
+      // margin-left: 22px;
 
       // cursor: move;
       .field_hover {
         min-width    : 68px;
-        max-width    : 96px;
+        // max-width    : 96px;
         height       : 38px;
         border-radius: 4px;
         padding-left : 10px;
         padding-right: 10px;
         display      : inline-block;
+        min-width: 48px;
+        // height: 16px;
+        font-size: 16px;
+        font-family: PingFangSC-Semibold,PingFang SC;
+        font-weight: 600;
+        color: rgba(0,0,0,0.85);
+        // line-height: 16px;
 
         // cursor: move;
         >span:nth-child(1) {
@@ -290,9 +300,9 @@
           font-size: 14px;
         }
 
-        &:hover {
-          background: rgba(0, 0, 0, 0.04);
-        }
+        // &:hover {
+        //   background: rgba(0, 0, 0, 0.04);
+        // }
       }
 
       >span:nth-child(1) {

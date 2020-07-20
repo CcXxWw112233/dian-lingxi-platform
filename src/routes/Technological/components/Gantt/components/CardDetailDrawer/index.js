@@ -23,7 +23,7 @@ export default class Index extends Component {
                     visible={visible}
                     getContainer={false}
                     style={{ position: 'absolute' }}
-                    width={360}
+                    width={400}
                 >
                     <MainContent />
                 </Drawer>

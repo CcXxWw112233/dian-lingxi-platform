@@ -1152,7 +1152,12 @@ export default class DragDropContentComponent extends Component {
     return (
       <div>
         <div>
-          {
+        {
+                  properties && properties.map(item => {
+                    return <div key={item.id}>{this.filterDiffPropertiesField(item)}</div>
+                  })
+                }
+          {/* {
             (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
               <>
                 {
@@ -1165,7 +1170,7 @@ export default class DragDropContentComponent extends Component {
                 // <SortableList helperContainer={() => document.getElementsByClassName(`${mainContentStyles.field_content}`)[0]} distance={2} items={properties} onSortEnd={this.onSortEnd} />
                 <div>{this.getDragDropContext()}</div>
               )
-          }
+          } */}
         </div>
         {/*查看任务附件*/}
         {/*外部附件引入结束 */}
