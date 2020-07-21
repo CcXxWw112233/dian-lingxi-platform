@@ -99,21 +99,32 @@ export default class GroupListHead extends Component {
 
   openGuideModal = (boardId) => {
     const { dispatch } = this.props;
+    dispatch({
+      type: 'gantt/getGanttData',
+      payload: {
 
-    milestoneInit({ board_id: boardId }).then((res) => {
-      dispatch({
-        type: 'gantt/getGanttData',
-        payload: {
-
-        }
-      });
-      dispatch({
-        type: 'gantt/updateDatas',
-        payload: {
-          startPlanType: 1
-        }
-      });
+      }
     });
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        startPlanType: 1
+      }
+    });
+    // milestoneInit({ board_id: boardId }).then((res) => {
+    //   dispatch({
+    //     type: 'gantt/getGanttData',
+    //     payload: {
+
+    //     }
+    //   });
+    //   dispatch({
+    //     type: 'gantt/updateDatas',
+    //     payload: {
+    //       startPlanType: 1
+    //     }
+    //   });
+    // });
 
 
   }
@@ -246,12 +257,12 @@ export default class GroupListHead extends Component {
         <div className={indexStyles.newProjectGuideWrapper}>
           <div className={indexStyles.emptyBox}>
             <div><img src={emptyBoxImageUrl} width={88} height={88} /></div>
-            <div>还没有计划，赶快新建一个吧</div>
+            <div>暂无计划，赶快新建一个吧</div>
           </div>
           <div className={indexStyles.guideButtons}>
 
-            <Button type="primary" className={indexStyles.selectMakePlanBtn} block onClick={() => { this.openGuideModal(gantt_board_id) }}>制定计划</Button>
-            <Button block onClick={this.openBoardTemplateDrawer}>选择模版</Button>
+            <Button type="primary" className={indexStyles.selectMakePlanBtn} block onClick={() => { this.openGuideModal(gantt_board_id) }}>创建计划</Button>
+            <Button block onClick={this.openBoardTemplateDrawer}>使用计划模版</Button>
           </div>
         </div>
       )
@@ -278,10 +289,10 @@ export default class GroupListHead extends Component {
                   changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto} deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
                 />
                 <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
-                {/* {
-              startPlanType == 1 &&
-              <OutlineGuideModal handleClose={this.guideModalHandleClose} />
-            } */}
+                {
+                  // startPlanType == 1 &&
+                  <OutlineGuideModal handleClose={this.guideModalHandleClose} />
+                }
               </div>
             }
             {

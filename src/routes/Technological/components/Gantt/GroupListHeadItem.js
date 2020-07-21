@@ -1154,10 +1154,10 @@ export default class GroupListHeadItem extends Component {
               {
                 group_view_type == '1' && (
                   gantt_board_id == '0' ? (
-                    <div className={`${globalStyles.authTheme}`} style={{ fontSize: 15, color: '#1890FF', lineHeight: '24px', marginRight: 4 }}>&#xe67d;</div>
+                    <div className={`${globalStyles.authTheme}`} style={{ fontSize: 15, color: '#1890FF', lineHeight: '24px', marginRight: 4 }}>&#xe68a;</div>
                   ) : (
                       list_id != '0' &&
-                      <div className={`${globalStyles.authTheme}`} style={{ fontSize: 15, color: '#1890FF', lineHeight: '24px', marginRight: 4 }}>&#xe899;</div>
+                      <div className={`${globalStyles.authTheme}`} style={{ fontSize: 16, color: '#1890FF', lineHeight: '24px', marginRight: 4 }}>&#xe688;</div>
                     )
                 )
               }
