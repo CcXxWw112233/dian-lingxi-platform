@@ -1361,7 +1361,7 @@ export default class MainContent extends Component {
                       (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
                         ''
                       ) : (
-                          <span style={{ position: 'relative' }}>
+                          <span style={{ position: 'relative',marginLeft: '74px' }}>
                             <InformRemind commonExecutors={executors.data} style={{ display: 'inline-block', minWidth: '72px', height: '38px', borderRadius: '4px', textAlign: 'center' }} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} />
                           </span>
                         )

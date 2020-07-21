@@ -1005,14 +1005,17 @@ export default class DragDropContentComponent extends Component {
                           <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span><span style={{maxWidth: '300px',overflow: 'hidden', textOverflow: 'ellipsis',whiteSpace: 'nowrap'}} title={fileInfo.name}>{fileInfo.name}</span></div>
                           <div className={mainContentStyles.file_info}>{this.showMemberName(fileInfo.create_by)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
                           <div className={mainContentStyles.breadNav} style={{ position: 'relative' }}>
-                            <Breadcrumb className={mainContentStyles.Breadcrumb} separator=">">
+                            <Breadcrumb style={{minHeight: '38px', lineHeight: '38px',marginLeft: '-10px'}} className={mainContentStyles.Breadcrumb} separator=">">
                               {breadcrumbList.map((value, key) => {
                                 return (
-                                  <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} title={(value && value.file_name) && value.file_name} placement="top">
-                                    <Breadcrumb.Item key={key}>
-                                      <span className={key == breadcrumbList.length - 1 && mainContentStyles.breadItem}>{(value && value.file_name) && value.file_name}</span>
-                                    </Breadcrumb.Item>
-                                  </Tooltip>
+                                  <Breadcrumb.Item key={key}>
+                                    <span title={(value && value.file_name) && value.file_name} className={key == breadcrumbList.length - 1 && mainContentStyles.breadItem}>{(value && value.file_name) && value.file_name}</span>
+                                  </Breadcrumb.Item>
+                                  // <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} title={(value && value.file_name) && value.file_name} placement="top">
+                                  //   <Breadcrumb.Item key={key}>
+                                  //     <span className={key == breadcrumbList.length - 1 && mainContentStyles.breadItem}>{(value && value.file_name) && value.file_name}</span>
+                                  //   </Breadcrumb.Item>
+                                  // </Tooltip>
                                 )
                               })}
                             </Breadcrumb>
