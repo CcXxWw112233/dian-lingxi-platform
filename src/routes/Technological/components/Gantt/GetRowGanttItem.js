@@ -548,8 +548,9 @@ export default class GetRowGanttItem extends Component {
                       data-targetclassname="specific_example_milestone"
                       className={`${indexStyles.board_miletiones_flagpole}`}
                       style={{
-                        height: gantt_board_id != '0' ? group_list_area_section_height[group_list_area_section_height.length - 1] - 11 : //在任务分组视图下
-                          (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode }) ? 29 : item_height - 12),//,
+                        // height: gantt_board_id != '0' ? group_list_area_section_height[group_list_area_section_height.length - 1] - 11 : //在任务分组视图下
+                        //   (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode }) ? 29 : item_height - 12),//,
+                        height: 29,
                         //  backgroundColor: is_over_duetime ? '#FFA39E' : '#FFC069' ,
                         background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized }),
                         left: ceilWidth * last_date - 4,
