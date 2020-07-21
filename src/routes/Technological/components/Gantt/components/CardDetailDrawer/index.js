@@ -20,9 +20,7 @@ export default class Index extends Component {
         const { users, handleTaskDetailChange, updateParentTaskList, setTaskDetailModalVisible, handleDeleteCard, card_id, handleChildTaskChange } = this.props
 
         return (
-            <div 
-                // className={styles.draw_detail}
-                >
+            <div className={`${styles.draw_detail} ${!selected_card_visible && styles.hide_over}`}>
                 <Drawer
                     placement="right"
                     title={<HeaderContent
@@ -38,7 +36,7 @@ export default class Index extends Component {
                     mask={false}
                     destroyOnClose
                     visible={selected_card_visible}
-                    getContainer={() => document.getElementById('gantt_card_out_middle')}
+                    getContainer={false}
                     style={{ position: 'absolute' }}
                     width={400}
                     className={styles.draw_detail}
