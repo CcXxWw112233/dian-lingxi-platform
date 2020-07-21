@@ -38,6 +38,14 @@ export default class AppendSubTask extends Component {
     })
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { drawContent: { card_id } } = nextProps
+    const { drawContent: { card_id: old_card_id } } = this.props
+    if ((card_id != old_card_id) && (card_id && old_card_id)) {
+      this.initState()
+    }
+  }
+
   // 过滤那些需要更新的字段
   filterCurrentUpdateDatasField = (code, value) => {
     const { drawContent: { properties = [] } } = this.props

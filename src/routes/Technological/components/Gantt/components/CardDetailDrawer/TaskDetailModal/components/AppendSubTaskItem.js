@@ -526,7 +526,7 @@ export default class AppendSubTaskItem extends Component {
             </div>
           </Popconfirm>
           {/*完成*/}
-          <div className={is_realize === '1' ? appendSubTaskStyles.nomalCheckBoxActive : appendSubTaskStyles.nomalCheckBox} onClick={this.itemOneClick}>
+          <div style={{flexShrink:0}} className={is_realize === '1' ? appendSubTaskStyles.nomalCheckBoxActive : appendSubTaskStyles.nomalCheckBox} onClick={this.itemOneClick}>
             <Icon type="check" style={{ color: '#FFFFFF', fontSize: 10, fontWeight: 'bold', position: 'absolute', top: '0', right: '0', left: '0', bottom: '0', margin: '1px auto' }} />
           </div>
           {/* 名字 */}
@@ -534,7 +534,7 @@ export default class AppendSubTaskItem extends Component {
             {
               !is_edit_sub_name ? (
                 <div onClick={this.handleSubTaskName} className={appendSubTaskStyles.card_name}>
-                  <span style={{wordBreak: 'break-all'}}>{local_card_name}</span>
+                  <span title={local_card_name} style={{wordBreak: 'break-all'}}>{local_card_name}</span>
                 </div>
               ) : (
                   <div>
