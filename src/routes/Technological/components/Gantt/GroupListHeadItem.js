@@ -1124,7 +1124,7 @@ export default class GroupListHeadItem extends Component {
   }
   render() {
 
-    const { currentUserOrganizes = [], gantt_board_id = [], ceiHeight, is_show_org_name, is_all_org, rows = 5, show_board_fold, group_view_type, get_gantt_data_loading } = this.props
+    const { currentUserOrganizes = [], gantt_board_id = [], ceiHeight, is_show_org_name, is_all_org, rows = 5, gantt_view_mode, show_board_fold, group_view_type, get_gantt_data_loading } = this.props
     const { itemValue = {}, itemKey } = this.props
     const { is_star, list_name, org_id, list_no_time_data = [], list_id, lane_icon, board_id, is_privilege = '0', privileges, create_by = {}, lane_overdue_count } = itemValue
     const { isShowBottDetail, show_edit_input, local_list_name, edit_input_value, show_add_menber_visible, board_info_visible, menu_oprate_visible, arhcived_modal_visible } = this.state
@@ -1190,7 +1190,7 @@ export default class GroupListHeadItem extends Component {
               }
               {/* 逾期任务 */}
               {
-                ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) && Number(lane_overdue_count) > 0 && (
+                ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode }) && Number(lane_overdue_count) > 0 && (
                   <div className={indexStyles.due_time_card_total} title={`存在${lane_overdue_count}条逾期任务`} >{lane_overdue_count}</div>
                 )
               }
@@ -1291,7 +1291,7 @@ export default class GroupListHeadItem extends Component {
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
-  gantt: { datas: { single_select_user, group_rows_lock, boards_flies, group_rows = [], ceiHeight, gantt_board_id, group_view_type, get_gantt_data_loading, list_group, show_board_fold } },
+  gantt: { datas: { gantt_view_mode, single_select_user, group_rows_lock, boards_flies, group_rows = [], ceiHeight, gantt_board_id, group_view_type, get_gantt_data_loading, list_group, show_board_fold } },
   technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, userBoardPermissions } },
   projectDetail: { datas: { projectDetailInfoData = {} } },
   workbench: {
@@ -1299,5 +1299,5 @@ function mapStateToProps({
       projectList,
     } },
 }) {
-  return { single_select_user, group_rows_lock, projectList, boards_flies, list_group, ceiHeight, group_rows, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, get_gantt_data_loading, show_board_fold, projectDetailInfoData, userBoardPermissions }
+  return { gantt_view_mode, single_select_user, group_rows_lock, projectList, boards_flies, list_group, ceiHeight, group_rows, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, get_gantt_data_loading, show_board_fold, projectDetailInfoData, userBoardPermissions }
 }

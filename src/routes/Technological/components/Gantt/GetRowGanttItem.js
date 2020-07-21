@@ -408,7 +408,7 @@ export default class GetRowGanttItem extends Component {
   // 渲染月视图日期
   renderMonthView = (date_inner = []) => {
     const { rows = 7, itemKey } = this.props
-    const { ceiHeight, gantt_board_id, group_view_type, show_board_fold, group_list_area_section_height, list_id } = this.props
+    const { ceiHeight, gantt_board_id, group_view_type, show_board_fold, group_list_area_section_height, list_id, gantt_view_mode } = this.props
     const item_height = rows * ceiHeight
     return (
       <>
@@ -469,7 +469,7 @@ export default class GetRowGanttItem extends Component {
                     className={`${indexStyles.board_miletiones_flagpole}`}
                     style={{
                       height: gantt_board_id != '0' ? group_list_area_section_height[group_list_area_section_height.length - 1] - 11 : //在任务分组视图下
-                        (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? 29 : item_height - 12),//,
+                        (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode }) ? 29 : item_height - 12),//,
                       //  backgroundColor: is_over_duetime ? '#FFA39E' : '#FFC069' ,
                       background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized })
                     }}
@@ -489,7 +489,7 @@ export default class GetRowGanttItem extends Component {
   }
   // 渲染年视图日期
   renderYearView = (date_inner = []) => {
-    const { list_id, ceiHeight, ceilWidth, group_view_type, gantt_board_id, itemKey, show_board_fold, group_list_area_section_height, rows } = this.props
+    const { gantt_view_mode, list_id, ceiHeight, ceilWidth, group_view_type, gantt_board_id, itemKey, show_board_fold, group_list_area_section_height, rows } = this.props
     const item_height = rows * ceiHeight
 
     return (
@@ -549,7 +549,7 @@ export default class GetRowGanttItem extends Component {
                       className={`${indexStyles.board_miletiones_flagpole}`}
                       style={{
                         height: gantt_board_id != '0' ? group_list_area_section_height[group_list_area_section_height.length - 1] - 11 : //在任务分组视图下
-                          (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? 29 : item_height - 12),//,
+                          (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode }) ? 29 : item_height - 12),//,
                         //  backgroundColor: is_over_duetime ? '#FFA39E' : '#FFC069' ,
                         background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized }),
                         left: ceilWidth * last_date - 4,
@@ -570,7 +570,7 @@ export default class GetRowGanttItem extends Component {
 
   // 渲染周视图
   renderWeekView = (date_inner = []) => {
-    const { list_id, ceiHeight, ceilWidth, group_view_type, gantt_board_id, itemKey, show_board_fold, group_list_area_section_height, rows } = this.props
+    const { gantt_view_mode, list_id, ceiHeight, ceilWidth, group_view_type, gantt_board_id, itemKey, show_board_fold, group_list_area_section_height, rows } = this.props
     const item_height = rows * ceiHeight
 
     return (
@@ -639,7 +639,7 @@ export default class GetRowGanttItem extends Component {
                               className={`${indexStyles.board_miletiones_flagpole}`}
                               style={{
                                 height: gantt_board_id != '0' ? group_list_area_section_height[group_list_area_section_height.length - 1] - 11 : //在任务分组视图下
-                                  (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? 29 : item_height - 12),//,
+                                  (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode }) ? 29 : item_height - 12),//,
                                 //  backgroundColor: is_over_duetime ? '#FFA39E' : '#FFC069' ,
                                 background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized }),
                                 left: ceilWidth * day - 6 - day,

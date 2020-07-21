@@ -575,7 +575,8 @@ export default {
       const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
       const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
       const show_board_fold = yield select(getModelSelectDatasState('gantt', 'show_board_fold'))
-
+      const gantt_view_mode = yield select(getModelSelectDatasState('gantt', 'gantt_view_mode'))
+      
       for (let val of data) {
         const list_group_item = {
           ...val,
@@ -615,7 +616,7 @@ export default {
             list_group_item.list_data.push(list_data_item)
           }
         }
-        if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) { //全项目视图下，收缩，取特定某一条做基准，再进行时间汇总
+        if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode })) { //全项目视图下，收缩，取特定某一条做基准，再进行时间汇总
           const start_time_arr = list_group_item.list_data.map(item => item.start_time) //取视窗任务的最开始时间
           const due_time_arr = list_group_item.list_data.map(item => item.end_time) //取视窗任务的最后截止时间
           const { lane_start_time, lane_end_time } = list_group_item
@@ -647,7 +648,7 @@ export default {
       yield put({
         type: 'updateDatas',
         payload: {
-          ceiHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? ceil_height_fold : ceil_height
+          ceiHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode }) ? ceil_height_fold : ceil_height
         }
       })
       yield put({
@@ -787,7 +788,7 @@ export default {
           group_rows[i] = group_rows[i] + 30
         }
         // 设置项目汇总的top和left,width
-        if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) { // 全项目视图下，为收缩状态
+        if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode })) { // 全项目视图下，为收缩状态
           group_rows[i] = group_rows_fold
           list_group[i].board_fold_data.width = list_group[i].board_fold_data.time_span * ceilWidth
           list_group[i].board_fold_data.top = after_group_height + (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2 //上下居中 (96-24)/2
