@@ -453,6 +453,7 @@ export default class CardItem extends Component {
                             updateData
                         })
                     }
+                    this.onChangeTimeHandleCardDetail()
                 } else {
                     this.setState({
                         local_width: local_width_origin,
@@ -573,6 +574,7 @@ export default class CardItem extends Component {
                             updateData
                         })
                     }
+                    this.onChangeTimeHandleCardDetail()
                 } else {
                     this.setState({
                         local_left: left,
@@ -638,6 +640,7 @@ export default class CardItem extends Component {
                         new_list_id: params_list_id,
                         updateData
                     })
+                    this.onChangeTimeHandleCardDetail()
                 } else {
                     this.setState({
                         local_left: left,
@@ -655,6 +658,23 @@ export default class CardItem extends Component {
             })
     }
     // 拖拽完成后的事件处理------end---------
+
+    // 拖拽完成后，修改成功，在弹出右方详情页的情况下，作比较更新
+    onChangeTimeHandleCardDetail = () => {
+        const { card_detail_id, selected_card_visible, itemValue = {}, dispatch } = this.props
+        const { card_id, parent_card_id } = itemValue
+        if (selected_card_visible) {
+            //当当前打开的任务是该任务或者是该任务父任务，则做查询更新
+            if (card_detail_id == card_id || parent_card_id == card_id) {
+                dispatch({
+                    type: 'publicTaskDetailModal/getCardWithAttributesDetail',
+                    payload: {
+                        id: card_detail_id,
+                    }
+                })
+            }
+        }
+    }
 
     // 改变任务分组
     changeCardBelongGroup = ({ new_list_id, card_id, updateData = {} }) => {
@@ -1138,12 +1158,14 @@ function mapStateToProps({ gantt: {
         group_list_area_section_height = [],
         group_view_type,
         gantt_view_mode,
-        outline_tree_round = []
+        outline_tree_round = [],
+        selected_card_visible
     }
 },
     imCooperation: {
         im_all_latest_unread_messages = []
-    }
+    },
+    publicTaskDetailModal: { card_id: card_detail_id },
 }) {
     return {
         list_group,
@@ -1157,6 +1179,8 @@ function mapStateToProps({ gantt: {
         im_all_latest_unread_messages,
         group_view_type,
         gantt_view_mode,
-        outline_tree_round
+        outline_tree_round,
+        card_detail_id,
+        selected_card_visible
     }
 }

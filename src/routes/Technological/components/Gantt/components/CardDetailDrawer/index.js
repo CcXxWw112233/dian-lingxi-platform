@@ -17,11 +17,20 @@ export default class Index extends Component {
     }
     render() {
         const { selected_card_visible } = this.props
+        const { users, handleTaskDetailChange, updateParentTaskList, setTaskDetailModalVisible, handleDeleteCard, card_id, handleChildTaskChange } = this.props
+
         return (
             <div className={styles.draw_detail}>
                 <Drawer
                     placement="right"
-                    title={<HeaderContent onClose={this.onClose} />}
+                    title={<HeaderContent
+                        users={users}
+                        onClose={this.onClose}
+                        handleDeleteCard={handleDeleteCard}
+                        setTaskDetailModalVisible={setTaskDetailModalVisible}
+                        handleTaskDetailChange={handleTaskDetailChange}
+                        updateParentTaskList={updateParentTaskList}
+                    />}
                     closable={false}
                     onClose={this.onClose}
                     mask={false}
@@ -31,12 +40,27 @@ export default class Index extends Component {
                     style={{ position: 'absolute' }}
                     width={400}
                 >
-                    <MainContent />
+                    <MainContent
+                        users={users}
+                        handleTaskDetailChange={handleTaskDetailChange}
+                        handleChildTaskChange={handleChildTaskChange}
+                    />
                 </Drawer>
             </div>
         )
     }
 }
+
+
+Index.defaultProps = {
+    setTaskDetailModalVisible: function () { }, // 设置任务详情弹窗是否显示
+    users: [], // 用户列表
+    handleTaskDetailChange: function () { }, // 外部修改内部弹窗数据的回调
+    updateParentTaskList: function () { }, // 内部数据修改后用来更新外部数据的回调
+    handleDeleteCard: function () { }, // 删除某条任务
+    handleChildTaskChange: function () { }, // 子任务更新或删除回调最终会返回  action?update/add/delete, parent_card_id, card_id, data(要更新的keykode)
+}
+
 function mapStateToProps({
     gantt: {
         datas: {
