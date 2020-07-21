@@ -53,6 +53,7 @@ class HeaderContent extends Component {
         {/* 这里是头部右边 */}
         <div className={headerStyles.detail_head_right}>
           <HeaderContentRightMenu
+            closeDrawer={this.closeDrawer}
             handleTaskDetailChange={handleTaskDetailChange}
             updateParentTaskList={updateParentTaskList}
             handleDeleteCard={handleDeleteCard}
