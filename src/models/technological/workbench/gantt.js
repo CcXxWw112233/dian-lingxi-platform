@@ -576,7 +576,7 @@ export default {
       const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
       const show_board_fold = yield select(getModelSelectDatasState('gantt', 'show_board_fold'))
       const gantt_view_mode = yield select(getModelSelectDatasState('gantt', 'gantt_view_mode'))
-      
+
       for (let val of data) {
         const list_group_item = {
           ...val,
@@ -790,6 +790,9 @@ export default {
         // 设置项目汇总的top和left,width
         if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode })) { // 全项目视图下，为收缩状态
           group_rows[i] = group_rows_fold
+          if (list_group[i].list_id == '0' && gantt_view_mode == 'year' && group_view_type != '4') {
+            group_rows[i] = group_rows_fold + 30
+          }
           list_group[i].board_fold_data.width = list_group[i].board_fold_data.time_span * ceilWidth
           list_group[i].board_fold_data.top = after_group_height + (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2 //上下居中 (96-24)/2
           for (let k = 0; k < date_arr_one_level.length; k++) {
