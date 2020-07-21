@@ -398,7 +398,6 @@ export default class HeaderContentRightMenu extends Component {
                   drawerVisible: false,
                   drawContent: {},
                   card_id: '',
-                  is_edit_title: false,
                 }
               })
               // 删除卡片也需要调用圈子关闭联动
@@ -480,6 +479,6 @@ export default class HeaderContentRightMenu extends Component {
 }
 
 // 只关联public弹窗内的数据
-function mapStateToProps({ publicTaskDetailModal: { drawContent = {}, is_edit_title, card_id }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
-  return { drawContent, is_edit_title, card_id, projectDetailInfoData }
+function mapStateToProps({ publicTaskDetailModal: { drawContent = {}, card_id }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
+  return { drawContent, card_id, projectDetailInfoData }
 }

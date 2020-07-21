@@ -31,7 +31,9 @@ export default class MainContent extends Component {
     super(props)
     this.state = {
       propertiesList: [],
-      is_change_parent_time: false
+      is_change_parent_time: false,
+      is_edit_title: false,
+      inputValue: ''
     }
   }
 
@@ -251,27 +253,39 @@ export default class MainContent extends Component {
   // 设置卡片是否完成 E
 
   // 设置标题textarea区域修改 S
-  setTitleEdit = (e) => {
+  setTitleEdit = (e, card_name) => {
     e && e.stopPropagation();
     if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) {
       return false
     }
-    this.props.dispatch({
-      type: 'publicTaskDetailModal/updateDatas',
-      payload: {
-        is_edit_title: true
-      }
+    this.setState({
+      is_edit_title: true,
+      local_title_value: card_name
     })
   }
   // 设置标题文本内容修改 E
 
+  titleTextAreaChange = (e) => {
+    let val = e.target.value
+    let reStr = val.trim()
+    this.setState({
+      inputValue: reStr
+    })
+  }
+
   // 设置标题文本失去焦点回调 S
   titleTextAreaChangeBlur = (e) => {
     let val = e.target.value
+    const { local_title_value } = this.state
     const { dispatch, drawContent = {} } = this.props
     const { card_id, board_id } = drawContent
     let reStr = val.trim()
-    if (reStr == "" || reStr == " " || !reStr) return
+    if (reStr == "" || reStr == " " || !reStr || val == local_title_value) {
+      this.setState({
+        is_edit_title: false
+      })
+      return
+    }
     drawContent['card_name'] = reStr
     const updateObj = {
       card_id,
@@ -292,10 +306,12 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
+      this.setState({
+        is_edit_title: false
+      })
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
-          is_edit_title: false,
           drawContent,
         }
       })
@@ -1133,7 +1149,7 @@ export default class MainContent extends Component {
   }
 
   render() {
-    const { drawContent = {}, is_edit_title, isInOpenFile, handleTaskDetailChange, handleChildTaskChange } = this.props
+    const { drawContent = {}, isInOpenFile, handleTaskDetailChange, handleChildTaskChange } = this.props
     const {
       card_id,
       card_name,
@@ -1145,7 +1161,7 @@ export default class MainContent extends Component {
     } = drawContent
     const { properties = [] } = drawContent
     const executors = this.getCurrentDrawerContentPropsModelDatasExecutors()
-    const { boardFolderTreeData = [], milestoneList = [], selectedKeys = [] } = this.state
+    const { boardFolderTreeData = [], milestoneList = [], selectedKeys = [], is_edit_title, inputValue } = this.state
     // 状态
     const filedEdit = (
       <Menu onClick={this.handleFiledIsComplete} getPopupContainer={triggerNode => triggerNode.parentNode} selectedKeys={is_realize == '0' ? ['incomplete'] : ['complete']}>
@@ -1188,17 +1204,18 @@ export default class MainContent extends Component {
               </div>
               {
                 !is_edit_title ? (
-                  <div onClick={this.setTitleEdit} className={`${mainContentStyles.card_name} ${mainContentStyles.pub_hover}`}>
+                  <div onClick={(e) => { this.setTitleEdit(e, card_name) }} className={`${mainContentStyles.card_name} ${mainContentStyles.pub_hover}`}>
                     <span style={{ wordBreak: 'break-all' }}>{card_name}</span>
                   </div>
                 ) : (
                     <NameChangeInput
                       autosize
+                      onChange={this.titleTextAreaChange}
                       onBlur={this.titleTextAreaChangeBlur}
-                      onClick={this.setTitleEdit}
-                      setIsEdit={this.setTitleEdit}
+                      // onClick={this.setTitleEdit}
+                      setIsEdit={this.titleTextAreaChangeBlur}
                       autoFocus={true}
-                      goldName={card_name}
+                      goldName={inputValue || card_name}
                       maxLength={101}
                       nodeName={'textarea'}
                       style={{ display: 'block', fontSize: 20, color: '#262626', resize: 'none', height: '44px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none' }}
@@ -1413,7 +1430,7 @@ export default class MainContent extends Component {
 
 // 只关联public弹窗内的数据
 function mapStateToProps({
-  publicTaskDetailModal: { drawerVisible, drawContent = {}, is_edit_title, card_id, boardTagList = [], attributesList = [] },
+  publicTaskDetailModal: { drawerVisible, drawContent = {}, card_id, boardTagList = [], attributesList = [] },
   projectDetail: { datas: { projectDetailInfoData = {} } },
   publicFileDetailModal: {
     isInOpenFile,
@@ -1427,5 +1444,5 @@ function mapStateToProps({
     }
   }
 }) {
-  return { drawerVisible, drawContent, is_edit_title, card_id, boardTagList, attributesList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType, filePreviewCurrentName, userBoardPermissions }
+  return { drawerVisible, drawContent, card_id, boardTagList, attributesList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType, filePreviewCurrentName, userBoardPermissions }
 }

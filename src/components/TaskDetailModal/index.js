@@ -29,7 +29,6 @@ export default class TaskDetailModal extends Component {
         drawerVisible: false,
         drawContent: {},
         card_id: '',
-        is_edit_title: false, // 是否编辑标题 默认为 false 不显示
         boardTagList: []
       }
     })
@@ -92,16 +91,6 @@ export default class TaskDetailModal extends Component {
   //   })
   // }
 
-  // 外部容器的点击事件
-  commonDrawerContentOutClick = () => {
-    this.props.dispatch({
-      type: 'publicTaskDetailModal/updateDatas',
-      payload: {
-        is_edit_title: false
-      }
-    })
-  }
-
   render() {
     const { task_detail_modal_visible, users, handleTaskDetailChange, updateParentTaskList, setTaskDetailModalVisible, handleDeleteCard, card_id, handleChildTaskChange } = this.props
     // const siderRightWidth = document.getElementById('siderRight').clientWidth
@@ -129,7 +118,6 @@ export default class TaskDetailModal extends Component {
               handleDeleteCard={handleDeleteCard}
               setTaskDetailModalVisible={setTaskDetailModalVisible} handleTaskDetailChange={handleTaskDetailChange} updateParentTaskList={updateParentTaskList}
             />}
-          commonDrawerContentOutClick={this.commonDrawerContentOutClick}
         />
       </div>
     )

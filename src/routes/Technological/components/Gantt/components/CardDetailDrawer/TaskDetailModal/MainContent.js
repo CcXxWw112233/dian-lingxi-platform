@@ -31,6 +31,7 @@ export default class MainContent extends Component {
       propertiesList: [],
       is_change_parent_time: false,
       is_edit_title: false, // 是否修改名称
+      inputValue: ''
     }
   }
 
@@ -273,7 +274,7 @@ export default class MainContent extends Component {
   // 设置标题文本失去焦点回调 S
   titleTextAreaChangeBlur = (e) => {
     let val = e.target.value
-    const { local_title_value, inputValue } = this.state
+    const { local_title_value } = this.state
     const { dispatch, drawContent = {} } = this.props
     const { card_id, board_id, card_name } = drawContent
     let reStr = val.trim()

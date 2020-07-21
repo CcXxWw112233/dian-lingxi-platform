@@ -15,6 +15,22 @@ export default class Index extends Component {
             }
         })
     }
+    componentWillUnmount() {
+        const { dispatch } = this.props
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                selected_card_visible: false,
+            }
+        })
+        dispatch({
+            type: 'publicTaskDetailModal/updateDatas',
+            payload: {
+                drawContent: {},
+                card_id: ''
+            }
+        })
+    }
     render() {
         const { selected_card_visible } = this.props
         const { users, handleTaskDetailChange, updateParentTaskList, setTaskDetailModalVisible, handleDeleteCard, card_id, handleChildTaskChange } = this.props
