@@ -595,6 +595,7 @@ class VisitControl extends Component {
       children,
       board_id,
       onlyShowPopoverContent,
+      getPopupContainer
     } = this.props;
 
     const {
@@ -634,7 +635,7 @@ class VisitControl extends Component {
             trigger="click"
             visible={visible}
             onVisibleChange={this.onPopoverVisibleChange}
-            getPopupContainer={triggerNode => triggerNode.parentNode}
+            getPopupContainer={getPopupContainer ? () => getPopupContainer : triggerNode => triggerNode.parentNode}
           >
             {children ? (
               <span
