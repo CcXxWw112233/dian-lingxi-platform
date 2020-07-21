@@ -20,7 +20,9 @@ export default class Index extends Component {
         const { users, handleTaskDetailChange, updateParentTaskList, setTaskDetailModalVisible, handleDeleteCard, card_id, handleChildTaskChange } = this.props
 
         return (
-            <div className={styles.draw_detail}>
+            <div 
+                // className={styles.draw_detail}
+                >
                 <Drawer
                     placement="right"
                     title={<HeaderContent
@@ -39,6 +41,7 @@ export default class Index extends Component {
                     getContainer={() => document.getElementById('gantt_card_out_middle')}
                     style={{ position: 'absolute' }}
                     width={400}
+                    className={styles.draw_detail}
                 >
                     <MainContent
                         users={users}
