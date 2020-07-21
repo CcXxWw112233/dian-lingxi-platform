@@ -1018,7 +1018,7 @@ export default class DragDropContentComponent extends Component {
                             </Breadcrumb>
                           </div>
                         </div>
-                        <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.getAttachmentActionMenus(fileInfo, card_id)}>
+                        <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.getAttachmentActionMenus(fileInfo, card_id)}>
                           <div className={mainContentStyles.file_action}>
                             <i className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fd;</i>
                           </div>

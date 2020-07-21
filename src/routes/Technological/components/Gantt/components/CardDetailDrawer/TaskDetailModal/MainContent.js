@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
-import { Icon, message, Dropdown, Menu, DatePicker, Modal, Tooltip } from 'antd'
+import { Icon, message, Dropdown, Menu, DatePicker, Modal, Tooltip, Button } from 'antd'
 import mainContentStyles from './MainContent.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
@@ -793,14 +793,15 @@ export default class MainContent extends Component {
   // 会议的状态值, 比较当前时间和开始时间结束时间的对比 E
 
   // 属性选择的下拉回调 S
-  handleMenuReallySelect = (e) => {
+  handleMenuReallySelect = (e,value) => {
+    e && e.stopPropagation()
     const { dispatch, card_id } = this.props
     const { propertiesList = [] } = this.state
-    const { key, selectedKeys = [] } = e
+    // const { key, selectedKeys = [] } = e
     const that = this
     let new_propertiesList = [...propertiesList]
     new_propertiesList = new_propertiesList.filter(item => {
-      if (item.id != e.key) {
+      if (item.id != value.id) {
         return item
       }
     })
@@ -808,10 +809,10 @@ export default class MainContent extends Component {
     dispatch({
       type: 'publicTaskDetailModal/setCardAttributes',
       payload: {
-        card_id, property_id: key,
+        card_id, property_id: value.id,
         calback: () => {
           that.setState({
-            selectedKeys: selectedKeys,
+            // selectedKeys: selectedKeys,
             propertiesList: new_propertiesList
           })
         }
@@ -883,7 +884,15 @@ export default class MainContent extends Component {
     return (
       <div>
         <div className={mainContentStyles.attrWrapper}>
-          <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: '248px' }}
+          {
+            new_propertiesList && new_propertiesList.map((item, index) => (
+              <Button onClick={(e) => {this.handleMenuReallySelect(e,item)}} className={mainContentStyles.attr_btn} key={`${item.id}`}>
+                <span className={`${globalStyles.authTheme} ${mainContentStyles.attr_icon}`}>{this.getCurrentFieldIcon(item)}</span>
+                <span className={mainContentStyles.attr_name}>{item.name}</span>
+              </Button>
+            ))
+          }
+          {/* <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: '248px' }}
             // onDeselect={this.handleMenuReallyDeselect.bind(this)}
             selectedKeys={selectedKeys}
             onSelect={this.handleMenuReallySelect.bind(this)}
@@ -896,7 +905,7 @@ export default class MainContent extends Component {
                 </Menu.Item>
               ))
             }
-          </Menu>
+          </Menu> */}
         </div>
       </div>
     )
@@ -1379,23 +1388,26 @@ export default class MainContent extends Component {
                   <>
                     {
                       !(properties && properties.length == 6) && (
-                        <div className={mainContentStyles.field_content}>
-                          <div className={mainContentStyles.field_left}>
-                            <div className={mainContentStyles.field_hover}>
-                              <span className={globalStyles.authTheme}>&#xe8fe;</span>
-                              <span>添加属性</span>
-                            </div>
-                          </div>
-                          <div className={mainContentStyles.field_right}>
-                            <div style={{ position: 'relative' }} className={mainContentStyles.pub_hover}>
-                              <Dropdown overlayClassName={mainContentStyles.overlay_attribute} trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode}
-                                overlay={this.getDiffAttributies()}
-                              >
-                                <div><span>选择属性</span></div>
-                              </Dropdown>
-                            </div>
-                          </div>
-                        </div>
+                        <>
+                          {this.getDiffAttributies()}
+                        </>
+                        // <div className={mainContentStyles.field_content}>
+                        //   <div className={mainContentStyles.field_left}>
+                        //     <div className={mainContentStyles.field_hover}>
+                        //       <span className={globalStyles.authTheme}>&#xe8fe;</span>
+                        //       <span>添加属性</span>
+                        //     </div>
+                        //   </div>
+                        //   <div className={mainContentStyles.field_right}>
+                        //     <div style={{ position: 'relative' }} className={mainContentStyles.pub_hover}>
+                        //       <Dropdown overlayClassName={mainContentStyles.overlay_attribute} trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode}
+                        //         overlay={this.getDiffAttributies()}
+                        //       >
+                        //         <div><span>选择属性</span></div>
+                        //       </Dropdown>
+                        //     </div>
+                        //   </div>
+                        // </div>
                       )
                     }
                   </>
