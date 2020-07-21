@@ -277,7 +277,7 @@ class MainContent extends Component {
                   />
                 )}
                 {
-                  !this.props.isInAttachmentFile && (
+                  !this.props.isOpenAttachmentFile && (
                     <div onClick={this.handleDynamicComment} id="dynamic_comment" className={mainContentStyles.dynamic_comment}>
                       <Tooltip overlayStyle={{ minWidth: '72px' }} placement="top" title="动态消息" getPopupContainer={() => document.getElementById('dynamic_comment')}>
                         <span className={globalStyles.authTheme}>&#xe8e8;</span>
@@ -319,7 +319,7 @@ class MainContent extends Component {
                   )
                 }
                 {
-                  !this.props.isInAttachmentFile && (
+                  !this.props.isOpenAttachmentFile && (
                     <div onClick={this.handleDynamicComment} id="dynamic_comment" className={mainContentStyles.dynamic_comment}>
                       <Tooltip overlayStyle={{ minWidth: '72px' }} placement="top" title="动态消息" getPopupContainer={() => document.getElementById('dynamic_comment')}>
                         <span className={globalStyles.authTheme}>&#xe8e8;</span>
@@ -682,13 +682,13 @@ function mapStateToProps({
     chatImVisiable = false
   },
   publicFileDetailModal: {
-    isInAttachmentFile
+    isOpenAttachmentFile
   }
 }) {
   return {
     userBoardPermissions,
     chatImVisiable,
-    isInAttachmentFile
+    isOpenAttachmentFile
   }
 }
 

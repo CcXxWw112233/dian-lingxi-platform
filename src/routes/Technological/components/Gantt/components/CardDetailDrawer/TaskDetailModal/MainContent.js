@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
-import { Icon, message, Dropdown, Menu, DatePicker, Modal, Tooltip } from 'antd'
+import { Icon, message, Dropdown, Menu, DatePicker, Modal, Tooltip, Button } from 'antd'
 import mainContentStyles from './MainContent.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
@@ -10,8 +10,8 @@ import { timestampToTime, compareTwoTimestamp, timeToTimestamp, timestampToTimeN
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_EDIT, PROJECT_FILES_FILE_INTERVIEW
 } from "@/globalset/js/constant";
-import { isApiResponseOk } from '../../utils/handleResponseData'
-import { addTaskExecutor, removeTaskExecutor, deleteTaskFile, getBoardTagList } from '../../services/technological/task'
+import { isApiResponseOk } from '@/utils/handleResponseData'
+import { addTaskExecutor, removeTaskExecutor, deleteTaskFile, getBoardTagList } from '@/services/technological/task'
 import {
   checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl, isPaymentOrgUser
 } from "@/utils/businessFunction";
@@ -19,9 +19,7 @@ import { getFolderList } from '@/services/technological/file'
 import { getMilestoneList } from '@/services/technological/prjectDetail'
 import DragDropContentComponent from './DragDropContentComponent'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
-import { filterOwnSubTaskMaxDueTime } from './handleOperateTaskModal'
-import { arrayNonRepeatfy } from '../../utils/util'
-import RelyOnRelationship from '../RelyOnRelationship'
+import { arrayNonRepeatfy } from '@/utils/util'
 const { LingxiIm, Im } = global.constants
 
 @connect(mapStateToProps)
@@ -32,7 +30,7 @@ export default class MainContent extends Component {
     this.state = {
       propertiesList: [],
       is_change_parent_time: false,
-      is_edit_title: false,
+      is_edit_title: false, // 是否修改名称
       inputValue: ''
     }
   }
@@ -121,8 +119,8 @@ export default class MainContent extends Component {
     })
   }
 
-  getInitCardDetailDatas = () => {
-    const { card_id, dispatch } = this.props
+  getInitCardDetailDatas = (props) => {
+    const { card_id, dispatch } = props
     if (!card_id) return false
     const that = this
     Promise.resolve(
@@ -156,13 +154,13 @@ export default class MainContent extends Component {
   }
 
   componentDidMount() {
-    this.getInitCardDetailDatas()
+    this.getInitCardDetailDatas(this.props)
   }
 
   componentWillReceiveProps(nextProps) {
-    const { drawerVisible } = nextProps
-    const { drawerVisible: oldDrawerVisible } = this.props
-    if (oldDrawerVisible == false && drawerVisible == true) {
+    const { drawerVisible, card_id } = nextProps
+    const { drawerVisible: oldDrawerVisible, card_id: old_card_id } = this.props
+    if (card_id != old_card_id) {
       Promise.resolve(
         this.props.dispatch({
           type: 'publicTaskDetailModal/getCardAttributesList',
@@ -177,7 +175,7 @@ export default class MainContent extends Component {
         }
       })
       setTimeout(() => {
-        this.getInitCardDetailDatas()
+        this.getInitCardDetailDatas(nextProps)
       }, 200)
     }
   }
@@ -278,7 +276,7 @@ export default class MainContent extends Component {
     let val = e.target.value
     const { local_title_value } = this.state
     const { dispatch, drawContent = {} } = this.props
-    const { card_id, board_id } = drawContent
+    const { card_id, board_id, card_name } = drawContent
     let reStr = val.trim()
     if (reStr == "" || reStr == " " || !reStr || val == local_title_value) {
       this.setState({
@@ -796,14 +794,15 @@ export default class MainContent extends Component {
   // 会议的状态值, 比较当前时间和开始时间结束时间的对比 E
 
   // 属性选择的下拉回调 S
-  handleMenuReallySelect = (e) => {
+  handleMenuReallySelect = (e,value) => {
+    e && e.stopPropagation()
     const { dispatch, card_id } = this.props
     const { propertiesList = [] } = this.state
-    const { key, selectedKeys = [] } = e
+    // const { key, selectedKeys = [] } = e
     const that = this
     let new_propertiesList = [...propertiesList]
     new_propertiesList = new_propertiesList.filter(item => {
-      if (item.id != e.key) {
+      if (item.id != value.id) {
         return item
       }
     })
@@ -811,10 +810,10 @@ export default class MainContent extends Component {
     dispatch({
       type: 'publicTaskDetailModal/setCardAttributes',
       payload: {
-        card_id, property_id: key,
+        card_id, property_id: value.id,
         calback: () => {
           that.setState({
-            selectedKeys: selectedKeys,
+            // selectedKeys: selectedKeys,
             propertiesList: new_propertiesList
           })
         }
@@ -886,7 +885,15 @@ export default class MainContent extends Component {
     return (
       <div>
         <div className={mainContentStyles.attrWrapper}>
-          <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: '248px' }}
+          {
+            new_propertiesList && new_propertiesList.map((item, index) => (
+              <Button onClick={(e) => {this.handleMenuReallySelect(e,item)}} className={mainContentStyles.attr_btn} key={`${item.id}`}>
+                <span className={`${globalStyles.authTheme} ${mainContentStyles.attr_icon}`}>{this.getCurrentFieldIcon(item)}</span>
+                <span className={mainContentStyles.attr_name}>{item.name}</span>
+              </Button>
+            ))
+          }
+          {/* <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: '248px' }}
             // onDeselect={this.handleMenuReallyDeselect.bind(this)}
             selectedKeys={selectedKeys}
             onSelect={this.handleMenuReallySelect.bind(this)}
@@ -899,7 +906,7 @@ export default class MainContent extends Component {
                 </Menu.Item>
               ))
             }
-          </Menu>
+          </Menu> */}
         </div>
       </div>
     )
@@ -916,15 +923,15 @@ export default class MainContent extends Component {
       <div>
         <div style={{ cursor: 'pointer' }} className={`${mainContentStyles.field_content} ${showDelColor && id == currentDelId && mainContentStyles.showDelColor}`}>
           <div className={mainContentStyles.field_left}>
+            <div className={mainContentStyles.field_hover}>
+              {/* <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.65)' }} className={globalStyles.authTheme}>&#xe7b2;</span> */}
+              <span className={mainContentStyles.user_executor}>负责人</span>
+            </div>
             {
               !flag && (
                 <span onClick={() => { this.handleDelCurrentField(id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
               )
             }
-            <div className={mainContentStyles.field_hover}>
-              <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.65)' }} className={globalStyles.authTheme}>&#xe7b2;</span>
-              <span className={mainContentStyles.user_executor}>负责人</span>
-            </div>
           </div>
           {
             (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
@@ -960,7 +967,7 @@ export default class MainContent extends Component {
                   )
               )
             ) : (
-                <span style={{ flex: '1' }}>
+                <span style={{ flex: '1',display: 'block' }}>
                   {
                     !data.length ? (
                       <div style={{ flex: '1', position: 'relative' }}>
@@ -1102,8 +1109,8 @@ export default class MainContent extends Component {
     }
     if (data) {
       if (!(data && data.length)) return
-      const { start_time, id:card_id, due_time } = data[0]
-      let new_drawContent = { ...drawContent }      
+      const { start_time, id: card_id, due_time } = data[0]
+      let new_drawContent = { ...drawContent }
       new_drawContent['start_time'] = start_time
       new_drawContent['due_time'] = due_time
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: start_time })
@@ -1117,20 +1124,20 @@ export default class MainContent extends Component {
     if (!dependencies) return
     if (!(dependencies['last'] && dependencies['last'].length) && !(dependencies['next'] && dependencies['next'].length)) return
     let obj = {}
-    let new_drawContent = {...drawContent}
+    let new_drawContent = { ...drawContent }
     let preposeList = dependencies['last'] // 前置
     let postpositionList = dependencies['next'] // 后置
-    
+
     preposeList = preposeList.map(item => {
       let new_item = {}
       const node = change_data.find(n => n.id == item.id) || {}
-      new_item = {...item, ...node}
+      new_item = { ...item, ...node }
       return new_item
     })
     postpositionList = postpositionList.map(item => {
       let new_item = {}
       const node = change_data.find(n => n.id == item.id) || {}
-      new_item = {...item, ...node}
+      new_item = { ...item, ...node }
       return new_item
     })
     obj = {
@@ -1160,7 +1167,7 @@ export default class MainContent extends Component {
     } = drawContent
     const { properties = [] } = drawContent
     const executors = this.getCurrentDrawerContentPropsModelDatasExecutors()
-    const { boardFolderTreeData = [], milestoneList = [], selectedKeys = [], is_edit_title, inputValue } = this.state
+    const { boardFolderTreeData = [], milestoneList = [], selectedKeys = [], inputValue, is_edit_title } = this.state
     // 状态
     const filedEdit = (
       <Menu onClick={this.handleFiledIsComplete} getPopupContainer={triggerNode => triggerNode.parentNode} selectedKeys={is_realize == '0' ? ['incomplete'] : ['complete']}>
@@ -1183,7 +1190,6 @@ export default class MainContent extends Component {
 
     return (
       <div className={mainContentStyles.main_wrap}>
-        <RelyOnRelationship relationshipList={dependencies} updateRelyOnRationList={this.updateRelyOnRationList}/>
         <div className={mainContentStyles.main_content}>
           {/* 标题 S */}
           <div>
@@ -1203,7 +1209,7 @@ export default class MainContent extends Component {
               </div>
               {
                 !is_edit_title ? (
-                  <div onClick={(e) => { this.setTitleEdit(e, card_name) }} className={`${mainContentStyles.card_name} ${mainContentStyles.pub_hover}`}>
+                  <div onClick={(e) => { this.setTitleEdit(e,card_name) }} className={`${mainContentStyles.card_name} ${mainContentStyles.pub_hover}`}>
                     <span style={{ wordBreak: 'break-all' }}>{card_name}</span>
                   </div>
                 ) : (
@@ -1233,9 +1239,11 @@ export default class MainContent extends Component {
             {/* 状态区域 */}
             <div>
               <div style={{ position: 'relative' }} className={mainContentStyles.field_content} style={{ cursor: 'pointer' }}>
-                <div className={mainContentStyles.field_left} style={{ paddingLeft: '10px' }}>
-                  <span className={`${globalStyles.authTheme}`}>&#xe6b6;</span>
-                  <span>状态</span>
+                <div className={mainContentStyles.field_left}>
+                  <div className={mainContentStyles.field_hover}>
+                    {/* <span className={`${globalStyles.authTheme}`}>&#xe6b6;</span> */}
+                    <span>完成状态</span>
+                  </div>
                 </div>
                 {
                   type == '0' ? (
@@ -1275,9 +1283,11 @@ export default class MainContent extends Component {
             {/* 时间区域 */}
             <div>
               <div className={mainContentStyles.field_content} style={{ cursor: 'pointer' }}>
-                <div className={mainContentStyles.field_left} style={{ paddingLeft: '10px' }}>
-                  <span className={globalStyles.authTheme}>&#xe686;</span>
-                  <span>时间</span>
+                <div className={mainContentStyles.field_left}>
+                  <div className={mainContentStyles.field_hover}>
+                    {/* <span className={globalStyles.authTheme}>&#xe686;</span> */}
+                    <span>期限</span>
+                  </div>
                 </div>
                 <div className={`${mainContentStyles.field_right}`}>
                   <div style={{ display: 'flex' }}>
@@ -1351,7 +1361,7 @@ export default class MainContent extends Component {
                       (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
                         ''
                       ) : (
-                          <span style={{ position: 'relative' }}>
+                          <span style={{ position: 'relative',marginLeft: '74px' }}>
                             <InformRemind commonExecutors={executors.data} style={{ display: 'inline-block', minWidth: '72px', height: '38px', borderRadius: '4px', textAlign: 'center' }} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} />
                           </span>
                         )
@@ -1378,21 +1388,26 @@ export default class MainContent extends Component {
                   <>
                     {
                       !(properties && properties.length == 6) && (
-                        <div className={mainContentStyles.field_content}>
-                          <div className={mainContentStyles.field_left} style={{ paddingLeft: '10px' }}>
-                            <span className={globalStyles.authTheme}>&#xe8fe;</span>
-                            <span>添加属性</span>
-                          </div>
-                          <div className={mainContentStyles.field_right}>
-                            <div style={{ position: 'relative' }} className={mainContentStyles.pub_hover}>
-                              <Dropdown overlayClassName={mainContentStyles.overlay_attribute} trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode}
-                                overlay={this.getDiffAttributies()}
-                              >
-                                <div><span>选择属性</span></div>
-                              </Dropdown>
-                            </div>
-                          </div>
-                        </div>
+                        <>
+                          {this.getDiffAttributies()}
+                        </>
+                        // <div className={mainContentStyles.field_content}>
+                        //   <div className={mainContentStyles.field_left}>
+                        //     <div className={mainContentStyles.field_hover}>
+                        //       <span className={globalStyles.authTheme}>&#xe8fe;</span>
+                        //       <span>添加属性</span>
+                        //     </div>
+                        //   </div>
+                        //   <div className={mainContentStyles.field_right}>
+                        //     <div style={{ position: 'relative' }} className={mainContentStyles.pub_hover}>
+                        //       <Dropdown overlayClassName={mainContentStyles.overlay_attribute} trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode}
+                        //         overlay={this.getDiffAttributies()}
+                        //       >
+                        //         <div><span>选择属性</span></div>
+                        //       </Dropdown>
+                        //     </div>
+                        //   </div>
+                        // </div>
                       )
                     }
                   </>

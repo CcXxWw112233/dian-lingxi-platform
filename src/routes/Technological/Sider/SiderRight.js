@@ -128,7 +128,6 @@ class SiderRight extends React.Component {
               drawerVisible: false,
               drawContent: {},
               card_id: '',
-              is_edit_title: false, // 是否编辑标题 默认为 false 不显示
               boardTagList: []
             }
           })
