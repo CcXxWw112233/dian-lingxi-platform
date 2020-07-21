@@ -1058,7 +1058,6 @@ export default class MainContent extends Component {
         filePreviewCurrentFileId: '',
         fileType: '',
         isInOpenFile: false,
-        isInAttachmentFile: false,
         filePreviewCurrentName: ''
       }
     })
