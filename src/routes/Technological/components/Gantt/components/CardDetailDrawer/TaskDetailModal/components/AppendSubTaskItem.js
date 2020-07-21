@@ -519,11 +519,6 @@ export default class AppendSubTaskItem extends Component {
             <span className={`${globalStyles.authTheme}`}>&#xe7c3;</span>
           </div>
         </Tooltip> */}
-        <Popconfirm getPopupContainer={triggerNode => triggerNode.parentNode} onConfirm={() => { this.deleteConfirm({ card_id, childDataIndex }) }} title={'删除该子任务？'}>
-          <div className={`${appendSubTaskStyles.del_icon}`}>
-            <span className={`${globalStyles.authTheme}`}>&#xe7c3;</span>
-          </div>
-        </Popconfirm>
         <div className={`${appendSubTaskStyles.subTaskItemWrapper} ${appendSubTaskStyles.subTaskItemWrapper_active}`} key={childDataIndex}>
           {/*完成*/}
           <div className={is_realize === '1' ? appendSubTaskStyles.nomalCheckBoxActive : appendSubTaskStyles.nomalCheckBox} onClick={this.itemOneClick}>
@@ -534,7 +529,7 @@ export default class AppendSubTaskItem extends Component {
             {
               !is_edit_sub_name ? (
                 <div onClick={this.handleSubTaskName} className={appendSubTaskStyles.card_name}>
-                  <span>{local_card_name}</span>
+                  <span style={{wordBreak: 'break-all'}}>{local_card_name}</span>
                 </div>
               ) : (
                   <div>
@@ -670,6 +665,11 @@ export default class AppendSubTaskItem extends Component {
             </span>
           </div>
         </div>
+        <Popconfirm getPopupContainer={triggerNode => triggerNode.parentNode} onConfirm={() => { this.deleteConfirm({ card_id, childDataIndex }) }} title={'删除该子任务？'} placement={'topRight'}>
+          <div className={`${appendSubTaskStyles.del_icon}`}>
+            <span className={`${globalStyles.authTheme}`}>&#xe7c3;</span>
+          </div>
+        </Popconfirm>
       </div>
     )
   }

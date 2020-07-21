@@ -270,6 +270,8 @@
     // line-height: 55px;
     .field_left {
       min-width  : 128px;
+      display: flex;
+      justify-content: space-between;
       // margin-left: 22px;
 
       // cursor: move;
@@ -318,7 +320,8 @@
       .field_delIcon {
         cursor : pointer;
         display: none;
-
+        font-size: 18px;
+        color: rgba(0, 0, 0, 0.45);
         &:hover {
           color: rgba(0, 0, 0, 0.65);
         }
@@ -499,7 +502,7 @@
           display    : flex;
           align-items: center;
           cursor     : pointer;
-          margin-left: -32px;
+          margin-left: -18px;
 
           .file_action {
             width: 16px;
@@ -511,13 +514,13 @@
 
           .file_item {
             flex           : 1;
-            display        : flex;
+            // display        : flex;
             justify-content: space-between;
             align-items    : center;
             font-size      : 14px;
             color          : rgba(0, 0, 0, 0.65);
             line-height    : 38px;
-            height         : 38px;
+            min-height         : 38px;
             // padding-left: 28px;
             margin-left    : 16px;
             padding        : 8px 12px;
@@ -533,7 +536,8 @@
             }
 
             .file_info {
-              text-align: right;
+              // text-align: right;
+              font-size: 12px;
             }
 
             .breadNav {
@@ -604,6 +608,14 @@
         padding         : 2px 12px;
         box-sizing      : border-box;
         margin-top      : -1px;
+      }
+      .lcb_circle {
+        display: inline-block;
+        width:6px;
+        height:6px;
+        background:rgba(255,156,75,1);
+        border-radius: 50%;
+        margin-right: 8px;
       }
     }
   }

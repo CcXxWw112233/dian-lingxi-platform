@@ -422,23 +422,13 @@ export default class HeaderContentRightMenu extends Component {
     return (
 
       <div className={headerStyles.detail_action_list}>
-
-        {/* 访问控制 */}
-        <span className={`${headerStyles.action} ${headerStyles.visit_wrap}`}>
-          {
-            board_id && (
-              <VisitControl
-                board_id={board_id}
-                isPropVisitControl={is_privilege === '0' ? false : true}
-                handleVisitControlChange={this.handleVisitControlChange}
-                principalList={data}
-                otherPrivilege={privileges}
-                handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
-                handleAddNewMember={this.handleVisitControlAddNewMember}
-              />
-            )
-          }
-
+        {/* 删除 */}
+        <span className={`${headerStyles.action}`}>
+          <Tooltip title="删除">
+            <span className={headerStyles.dele_icon} onClick={this.handleDelCard}>
+              <span className={`${globalStyles.authTheme} ${headerStyles.dele}`}>&#xe7c3;</span>
+            </span>
+          </Tooltip>
         </span>
         {/* 分享协作 */}
         <span className={`${headerStyles.action} `}>
@@ -463,15 +453,23 @@ export default class HeaderContentRightMenu extends Component {
             handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare}
           />
         </span>
-        {/* 删除 */}
-        <span className={`${headerStyles.action}`}>
-          <Tooltip title="删除">
-            <span className={headerStyles.dele_icon} onClick={this.handleDelCard}>
-              <span className={`${globalStyles.authTheme} ${headerStyles.dele}`}>&#xe7c3;</span>
-            </span>
-          </Tooltip>
-        </span>
+        {/* 访问控制 */}
+        <span className={`${headerStyles.action} ${headerStyles.visit_wrap}`}>
+          {
+            board_id && (
+              <VisitControl
+                board_id={board_id}
+                isPropVisitControl={is_privilege === '0' ? false : true}
+                handleVisitControlChange={this.handleVisitControlChange}
+                principalList={data}
+                otherPrivilege={privileges}
+                handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+                handleAddNewMember={this.handleVisitControlAddNewMember}
+              />
+            )
+          }
 
+        </span>
 
       </div>
 

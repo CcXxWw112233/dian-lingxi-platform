@@ -913,15 +913,15 @@ export default class MainContent extends Component {
       <div>
         <div style={{ cursor: 'pointer' }} className={`${mainContentStyles.field_content} ${showDelColor && id == currentDelId && mainContentStyles.showDelColor}`}>
           <div className={mainContentStyles.field_left}>
-            {/* {
+            <div className={mainContentStyles.field_hover}>
+              {/* <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.65)' }} className={globalStyles.authTheme}>&#xe7b2;</span> */}
+              <span className={mainContentStyles.user_executor}>负责人</span>
+            </div>
+            {
               !flag && (
                 <span onClick={() => { this.handleDelCurrentField(id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
               )
-            } */}
-            <div className={mainContentStyles.field_hover}>
-              <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.65)' }} className={globalStyles.authTheme}>&#xe7b2;</span>
-              <span className={mainContentStyles.user_executor}>负责人</span>
-            </div>
+            }
           </div>
           {
             (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
@@ -1232,8 +1232,8 @@ export default class MainContent extends Component {
               <div style={{ position: 'relative' }} className={mainContentStyles.field_content} style={{ cursor: 'pointer' }}>
                 <div className={mainContentStyles.field_left}>
                   <div className={mainContentStyles.field_hover}>
-                    <span className={`${globalStyles.authTheme}`}>&#xe6b6;</span>
-                    <span>状态</span>
+                    {/* <span className={`${globalStyles.authTheme}`}>&#xe6b6;</span> */}
+                    <span>完成状态</span>
                   </div>
                 </div>
                 {
@@ -1276,8 +1276,8 @@ export default class MainContent extends Component {
               <div className={mainContentStyles.field_content} style={{ cursor: 'pointer' }}>
                 <div className={mainContentStyles.field_left}>
                   <div className={mainContentStyles.field_hover}>
-                    <span className={globalStyles.authTheme}>&#xe686;</span>
-                    <span>时间</span>
+                    {/* <span className={globalStyles.authTheme}>&#xe686;</span> */}
+                    <span>期限</span>
                   </div>
                 </div>
                 <div className={`${mainContentStyles.field_right}`}>
