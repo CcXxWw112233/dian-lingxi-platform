@@ -7,21 +7,27 @@ import styles from './index.less'
 @connect(mapStateToProps)
 export default class Index extends Component {
     onClose = () => {
-
+        const { dispatch } = this.props
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                selected_card_visible: false,
+            }
+        })
     }
     render() {
-        const { selected_card: { visible } } = this.props
+        const { selected_card_visible } = this.props
         return (
             <div className={styles.draw_detail}>
                 <Drawer
                     placement="right"
-                    title={<HeaderContent />}
+                    title={<HeaderContent onClose={this.onClose} />}
                     closable={false}
                     onClose={this.onClose}
                     mask={false}
                     destroyOnClose
-                    visible={visible}
-                    getContainer={false}
+                    visible={selected_card_visible}
+                    getContainer={() => document.getElementById('gantt_card_out_middle')}
                     style={{ position: 'absolute' }}
                     width={400}
                 >
@@ -35,12 +41,12 @@ function mapStateToProps({
     gantt: {
         datas: {
             gantt_board_id,
-            selected_card = {}
+            selected_card_visible
         }
     },
 }) {
     return {
         gantt_board_id,
-        selected_card,
+        selected_card_visible,
     }
 }
