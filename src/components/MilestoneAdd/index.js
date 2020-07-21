@@ -236,7 +236,7 @@ export default class MilestoneAdd extends React.Component {
                                                     disabled={timeName}>
 
                                                     <div className={indexStyles.menuItemDiv}>
-                                                        <div key={id}>
+                                                        <div title={name} key={id}>
                                                             <div style={{ overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 90, marginRight: 8 }}>{name}</div>
                                                         </div>
                                                         <div>
