@@ -153,7 +153,7 @@ export default class MainContent extends Component {
   }
 
   componentDidMount() {
-    // this.getInitCardDetailDatas()
+    this.getInitCardDetailDatas(this.props)
   }
 
   componentWillReceiveProps(nextProps) {

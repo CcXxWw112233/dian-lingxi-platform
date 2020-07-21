@@ -7,40 +7,70 @@ import styles from './index.less'
 @connect(mapStateToProps)
 export default class Index extends Component {
     onClose = () => {
-
+        const { dispatch } = this.props
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                selected_card_visible: false,
+            }
+        })
     }
     render() {
-        const { selected_card: { visible } } = this.props
+        const { selected_card_visible } = this.props
+        const { users, handleTaskDetailChange, updateParentTaskList, setTaskDetailModalVisible, handleDeleteCard, card_id, handleChildTaskChange } = this.props
+
         return (
             <div className={styles.draw_detail}>
                 <Drawer
                     placement="right"
-                    title={<HeaderContent />}
+                    title={<HeaderContent
+                        users={users}
+                        onClose={this.onClose}
+                        handleDeleteCard={handleDeleteCard}
+                        setTaskDetailModalVisible={setTaskDetailModalVisible}
+                        handleTaskDetailChange={handleTaskDetailChange}
+                        updateParentTaskList={updateParentTaskList}
+                    />}
                     closable={false}
                     onClose={this.onClose}
                     mask={false}
                     destroyOnClose
-                    visible={visible}
-                    getContainer={false}
+                    visible={selected_card_visible}
+                    getContainer={() => document.getElementById('gantt_card_out_middle')}
                     style={{ position: 'absolute' }}
                     width={400}
                 >
-                    <MainContent />
+                    <MainContent
+                        users={users}
+                        handleTaskDetailChange={handleTaskDetailChange}
+                        handleChildTaskChange={handleChildTaskChange}
+                    />
                 </Drawer>
             </div>
         )
     }
 }
+
+
+Index.defaultProps = {
+    setTaskDetailModalVisible: function () { }, // 设置任务详情弹窗是否显示
+    users: [], // 用户列表
+    handleTaskDetailChange: function () { }, // 外部修改内部弹窗数据的回调
+    updateParentTaskList: function () { }, // 内部数据修改后用来更新外部数据的回调
+    handleDeleteCard: function () { }, // 删除某条任务
+    handleChildTaskChange: function () { }, // 子任务更新或删除回调最终会返回  action?update/add/delete, parent_card_id, card_id, data(要更新的keykode)
+}
+
 function mapStateToProps({
     gantt: {
         datas: {
             gantt_board_id,
-            selected_card = {}
+            selected_card_visible
         }
     },
 }) {
     return {
         gantt_board_id,
-        selected_card,
+        selected_card_visible,
     }
 }

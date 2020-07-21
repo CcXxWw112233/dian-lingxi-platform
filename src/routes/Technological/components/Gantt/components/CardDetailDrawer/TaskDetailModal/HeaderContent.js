@@ -9,7 +9,7 @@ import { Tooltip } from 'antd'
 
 class HeaderContent extends Component {
   closeDrawer = () => {
-
+    this.props.onClose && this.props.onClose()
   }
   render() {
     const { drawContent = {}, currentUserOrganizes = [], is_all_org, is_show_org_name, updateParentTaskList, handleTaskDetailChange, setTaskDetailModalVisible, handleDeleteCard } = this.props
