@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { reportData } from '../constant'
 
 // 引入 ECharts 主模块
-// import echarts from 'echarts/lib/echarts';
 import echarts from 'echarts'
 // 引入柱状图
 import 'echarts/lib/chart/bar';
@@ -11,17 +10,14 @@ import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/title';
 import 'echarts/lib/component/legend';
 import { newline, arrayNonRepeatfy } from '../handleOperatorStatiscalReport';
+import { getReportBoardGrowth } from '../../../../../../services/technological/statisticalReport';
+import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
 
 class LineComponent extends Component {
 
-  componentDidMount() {
-    // 基于准备好的dom，初始化echarts实例
-    var myChart = echarts.init(document.getElementById('lineComponent'));
-    let boardNameData = reportData.map(item => item.board_name)
-    let userNameData = reportData.map(item => item.user_name)
-    // 绘制图表
-    // 指定图表的配置项和数据
-    var option = {
+  getChartOptions = (props) => {
+    const { time = [], number = [] } = props
+    let option = {
       tooltip: {
         data: 'value',
         trigger: 'axis',
@@ -31,7 +27,7 @@ class LineComponent extends Component {
       },
       xAxis: {
         type: 'category',
-        data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'],
+        data: time.reverse(),
         axisTick: {
           alignWithLabel: true,
           interval: 0
@@ -41,7 +37,7 @@ class LineComponent extends Component {
         type: 'value',
       },
       series: [{
-        data: [820, 932, 901, 934, 1290, 1330, 1320, 844, 600, 1200, 1200, 1200],
+        data: number,
         type: 'line'
       }],
       dataZoom: [{
@@ -54,16 +50,36 @@ class LineComponent extends Component {
         end: 45 //滚动条的截止位置（按比例分割你的柱状图x轴长度）
       }],
     }
-
-      // option = newline(option, 5, 'yAxis')
-      // 使用刚指定的配置项和数据显示图表。
-      myChart.setOption(option);
-    }
-    render() {
-      return (
-        <div id="lineComponent" style={{ width: 400, height: 380 }}></div>
-      );
-    }
+    return option
   }
 
-  export default LineComponent;
+  getReportBoardGrowth = () => {
+    let myChart = echarts.init(document.getElementById('lineComponent'));
+    myChart.showLoading({
+      text: 'loading',
+      color: '#5B8FF9',
+      textColor: '#000',
+      maskColor: 'rgba(255, 255, 255, 0.2)',
+      zlevel: 0,
+    })
+    getReportBoardGrowth().then(res => {
+      if (isApiResponseOk(res)) {
+        let option = this.getChartOptions(res.data)
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.hideLoading()
+        myChart.setOption(option);
+      }
+    })
+  }
+
+  componentDidMount() {
+    this.getReportBoardGrowth()
+  }
+  render() {
+    return (
+      <div id="lineComponent" style={{ width: 400, height: 380 }}></div>
+    );
+  }
+}
+
+export default LineComponent;

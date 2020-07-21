@@ -1,5 +1,5 @@
 // 针对坐标轴换行处理
-export const  newline = (option, number, axis) => {
+export const newline = (option, number, axis) => {
   let labelItem
   /* 此处注意json是数组还是对象 */
   if (option[axis] instanceof Array) {
@@ -35,7 +35,7 @@ export const  newline = (option, number, axis) => {
   return option;
 }
 
-export const  arrayNonRepeatfy = (arr) => {
+export const arrayNonRepeatfy = (arr) => {
   let temp_arr = []
   let temp_id = []
   for (let i = 0; i < arr.length; i++) {
@@ -46,3 +46,23 @@ export const  arrayNonRepeatfy = (arr) => {
   }
   return temp_arr
 }
+
+// formatter: function (params) {
+//   let tip1 = "";
+//   let tip = "";
+//   let le = params.length  //图例文本的长度
+//   if (le > 9) {   //几个字换行大于几就可以了
+//     let l = Math.ceil(le / 9)  //有些不能整除，会有余数，向上取整
+//     for (let i = 1; i <= l; i++) { //循环
+//       if (i < l) { //最后一段字符不能有\n
+//         tip1 += params.slice(i * 9 - 9, i * 9) + '\n'; //字符串拼接
+//       } else if (i === l) {  //最后一段字符不一定够9个
+//         tip = tip1 + params.slice((l - 1) * 9, le) //最后的拼接在最后
+//       }
+//     }
+//     return tip;
+//   } else {
+//     tip = params  //前面定义了tip为空，这里要重新赋值，不然会替换为空
+//     return tip;
+//   }
+// }

@@ -12,28 +12,72 @@ import 'echarts/lib/component/title';
 import 'echarts/lib/component/legend';
 
 import { newline, arrayNonRepeatfy } from '../handleOperatorStatiscalReport';
+import { getReportCardWorktime } from '../../../../../../services/technological/statisticalReport';
+import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
 
 class HistogramComponent extends Component {
 
-  componentDidMount() {
-    // 基于准备好的dom，初始化echarts实例
-    let myChart = echarts.init(document.getElementById('histogramComponent'));
-    // 绘制图表
-    let boardNameData = reportData.map(item => item.board_name)
-    let userNameData = reportData.map(item => item.user_name)
-    let workTimeData = reportData.map(item => item.work_time)
+  // 获取图表配置项
+  getChartOptions = (props) => {
+    const { legend = [], users = [], series = [] } = props
+    let newSeries = [...series]
+    newSeries = newSeries.map(item => {
+      // 将字符串data转换成number
+      let data = item.data.map(chgStr => {
+        let n = Number(chgStr)
+        return n
+      })
+      let new_item = {
+        ...item, 
+        type: 'bar',
+        stack: '项目',
+        // label: {
+        //   show: true,
+        //   position: 'inside',
+        //   formatter: function (params) {
+        //     if (params.value > 0) {
+        //       return params.value;
+        //     } else {
+        //       return '';
+        //     }
+        //   },
+        // },
+        data: data
+      }
+      return new_item
+    })    
     // 指定图表的配置项和数据
     let option = {
       tooltip: {
         trigger: 'axis',
         axisPointer: {            // 坐标轴指示器，坐标轴触发有效
           type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-        }
+        },
+        extraCssText: "max-width:200px;max-height:200px;overflow:auto;white-space:pre-wrap;word-break:break-all;",
+        enterable: true,
       },
       legend: {
-        data: arrayNonRepeatfy(boardNameData),
+        data: legend,
         type: 'scroll', //分页类型
-        left: 16
+        left: 16,
+        formatter: function (params) { //标签输出形式 ---请开始你的表演
+          var index = 10;
+          var newstr = '';
+          for (var i = 0; i < params.length; i += index) {
+            var tmp = params.substring(i, i + index);
+            newstr += tmp + '\n';
+          }
+          if (newstr.length > 20)
+            return newstr.substring(0, 20) + '...';
+          else
+            return '\n' + newstr;
+        },
+        triggerEvent: true,
+        tooltip: {
+          show: true,
+          enterable: true,
+        },
+        animation: true,
       },
       grid: {
         left: '3%',
@@ -43,13 +87,13 @@ class HistogramComponent extends Component {
       },
       xAxis: [
         {
-          type: 'category',
-          data: arrayNonRepeatfy(userNameData),
-          axisTick: {
-            alignWithLabel: true,
-            interval: 0
-          },
-          axisLabel: true
+          // type: 'category',
+          data: users,
+          // axisTick: {
+          //   alignWithLabel: true,
+          //   interval: 0
+          // },
+          // axisLabel: true,
         }
       ],
       yAxis: [
@@ -57,94 +101,37 @@ class HistogramComponent extends Component {
           type: 'value'
         }
       ],
-      series: [
-        {
-          name: '沙田项目',
-          type: 'bar',
-          stack: '项目',
-          label: {
-            show: true,
-            position: 'inside'
-          },
-          data: [320, 332, 301, 334, 390, 330, 320],
-        },
-        {
-          name: '西塘项目',
-          type: 'bar',
-          stack: '项目',
-          label: {
-            show: true,
-            position: 'inside'
-          },
-          data: [120, 132, 101, 134, 90, 230, 210]
-        },
-        {
-          name: '我的天',
-          type: 'bar',
-          stack: '项目',
-          data: [220, 182, 191, 234, 290, 330, 310]
-        },
-        {
-          name: '111',
-          type: 'bar',
-          stack: '项目',
-          data: [220, 182, 191, 234, 290, 3300, 310]
-        },
-        {
-          name: '222',
-          type: 'bar',
-          stack: '项目',
-          data: [220, 82, 191, 234, 290, 330, 310]
-        },
-        {
-          name: '333',
-          type: 'bar',
-          stack: '项目',
-          data: [220, 182, 91, 234, 290, 330, 310]
-        },
-        {
-          name: '444',
-          type: 'bar',
-          stack: '项目',
-          data: [220, 182, 191, 2304, 290, 330, 310]
-        },
-        {
-          name: '555',
-          type: 'bar',
-          stack: '项目',
-          data: [220, 182, 191, 234, 290, 30, 310]
-        },
-        {
-          name: '666',
-          type: 'bar',
-          stack: '项目',
-          data: [220, 182, 191, 234, 290, 30, 310]
-        },
-        {
-          name: '777',
-          type: 'bar',
-          stack: '项目',
-          data: [220, 182, 191, 234, 290, 30, 310]
-        },
-        {
-          name: '888',
-          type: 'bar',
-          stack: '项目',
-          data: [220, 182, 191, 234, 290, 30, 310]
-        },
-        {
-          name: '999',
-          type: 'bar',
-          stack: '项目',
-          data: [220, 182, 191, 234, 290, 30, 310]
-        },
-      ]
+      series: newSeries
     };
 
-    option = newline(option, 3, 'xAxis')
-    // 使用刚指定的配置项和数据显示图表。
-    myChart.setOption(option);
+    return option
   }
+
+  // 获取工时统计结果
+  getReportCardWorktime = () => {
+    let myChart = echarts.init(document.getElementById('histogramComponent'));
+    myChart.showLoading({
+      text: 'loading',
+      color: '#5B8FF9',
+      textColor: '#000',
+      maskColor: 'rgba(255, 255, 255, 0.2)',
+      zlevel: 0,
+    })
+    getReportCardWorktime().then(res => {
+      if (isApiResponseOk(res)) {
+        let option = this.getChartOptions(res.data)
+        // option = newline(option, 3, 'xAxis')
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.hideLoading()
+        myChart.setOption(option);
+      }
+    })
+  }
+
+  componentDidMount() {
+    this.getReportCardWorktime()
+  }
+  
   render() {
     return (
       <div id="histogramComponent" style={{ width: 400, height: 380 }}></div>

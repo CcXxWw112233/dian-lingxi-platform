@@ -18,7 +18,7 @@ export default class index extends Component {
           <div className={indexStyles.chart_item}>
             <div className={indexStyles.chart_item_top}>
               <div className={indexStyles.chart_item_t_left}>工时统计 <span className={indexStyles.chart_item_t_left_date}>(本月)</span></div>
-              <div className={`${indexStyles.chart_item_t_right} ${globalStyles.authTheme}`}>&#xe7fd;</div>
+              {/* <div className={`${indexStyles.chart_item_t_right} ${globalStyles.authTheme}`}>&#xe7fd;</div> */}
             </div>
             {/* 柱状图 */}
             <div className={indexStyles.chart_item_bottom}>
@@ -55,19 +55,18 @@ export default class index extends Component {
               <LineComponent />
             </div>
           </div>
-          <div className={indexStyles.chart_item}>
+          {/* <div className={indexStyles.chart_item}>
             <div className={indexStyles.chart_item_top}>
               <div className={indexStyles.chart_item_t_left}>测试内容</div>
               <div className={`${indexStyles.chart_item_t_right} ${globalStyles.authTheme}`}>&#xe7fd;</div>
             </div>
-            {/* 条形图 */}
             <div className={indexStyles.chart_item_bottom}>
               <EchartsTest />
             </div>
-          </div>
-          <div className={`${indexStyles.chart_item} ${indexStyles.no_chart_data}`}>
+          </div> */}
+          {/* <div className={`${indexStyles.chart_item} ${indexStyles.no_chart_data}`}>
             <span>暂无更多数据</span>
-          </div>
+          </div> */}
         </div>
       </div>
     )

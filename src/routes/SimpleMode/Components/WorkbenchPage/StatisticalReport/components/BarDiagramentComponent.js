@@ -11,17 +11,40 @@ import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/title';
 import 'echarts/lib/component/legend';
 import { newline, arrayNonRepeatfy } from '../handleOperatorStatiscalReport';
+import { getReportCardNumber } from '../../../../../../services/technological/statisticalReport';
+import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
 
 class BarDiagramentComponent extends Component {
 
-  componentDidMount() {
-    // 基于准备好的dom，初始化echarts实例
-    var myChart = echarts.init(document.getElementById('barDiagramContent'));
-    let boardNameData = reportData.map(item => item.board_name)
-    let userNameData = reportData.map(item => item.user_name)
-    // 绘制图表
-    // 指定图表的配置项和数据
-    var option = {
+  getChartOptions = (props) => {
+    const { legend = [], users = [], series = [] } = props
+    let newSeries = [...series]
+    newSeries = newSeries.map(item => {
+      // 将字符串data转换成number
+      let data = item.data.map(chgStr => {
+        let n = Number(chgStr)
+        return n
+      })
+      let new_item = {
+        ...item, 
+        type: 'bar',
+        stack: '项目',
+        label: {
+          show: true,
+          position: 'inside',
+          formatter: function (params) {
+            if (params.value > 0) {
+              return params.value;
+            } else {
+              return '';
+            }
+          },
+        },
+        data: data
+      }
+      return new_item
+    })    
+    let option = {
       tooltip: {
         trigger: 'axis',
         axisPointer: { // 坐标轴指示器，坐标轴触发有效
@@ -37,7 +60,7 @@ class BarDiagramentComponent extends Component {
         // }
       },
       legend: {
-        data: arrayNonRepeatfy(boardNameData),
+        data: legend,
         type: 'scroll',
         left: 16,
         formatter: function (params) { //标签输出形式 ---请开始你的表演
@@ -88,137 +111,38 @@ class BarDiagramentComponent extends Component {
         type: 'value',
       },
       yAxis: {
-        type: 'category',
-        data: arrayNonRepeatfy(userNameData),
-        axisLabel: true
+        // type: 'category',
+        data: users,
+        // axisLabel: true
       },
-      series: [
-        {
-          name: '沙田项目',
-          type: 'bar',
-          stack: '项目',
-          label: {
-            show: arrayNonRepeatfy(boardNameData).length > 10 ? false : true,
-            position: 'inside'
-          },
-          data: [32, 33, 30, 34, 39, 30, 30],
-        },
-        {
-          name: '西塘项目',
-          type: 'bar',
-          stack: '项目',
-          label: {
-            show: arrayNonRepeatfy(boardNameData).length > 10 ? false : true,
-            position: 'inside'
-          },
-          data: [10, 12, 11, 14, 9, 23, 20]
-        },
-        {
-          name: '我的天',
-          type: 'bar',
-          stack: '项目',
-          label: {
-            show: arrayNonRepeatfy(boardNameData).length > 10 ? false : true,
-            position: 'insideRight'
-          },
-          data: [20, 12, 11, 24, 20, 30, 10]
-        },
-        {
-          name: '111',
-          type: 'bar',
-          stack: '项目',
-          label: {
-            show: arrayNonRepeatfy(boardNameData).length > 10 ? false : true,
-            position: 'insideRight'
-          },
-          data: [20, 12, 11, 24, 20, 33, 30]
-        },
-        {
-          name: '222',
-          type: 'bar',
-          stack: '项目',
-          label: {
-            show: arrayNonRepeatfy(boardNameData).length > 10 ? false : true,
-            position: 'insideRight'
-          },
-          data: [20, 8, 19, 23, 29, 30, 30]
-        },
-        {
-          name: '333',
-          type: 'bar',
-          stack: '项目',
-          label: {
-            show: arrayNonRepeatfy(boardNameData).length > 10 ? false : true,
-            position: 'insideRight'
-          },
-          data: [20, 12, 9, 23, 29, 30, 30]
-        },
-        {
-          name: '444',
-          type: 'bar',
-          stack: '项目',
-          label: {
-            show: arrayNonRepeatfy(boardNameData).length > 10 ? false : true,
-            position: 'insideRight'
-          },
-          data: [20, 12, 11, 24, 90, 33, 30]
-        },
-        {
-          name: '555',
-          type: 'bar',
-          stack: '项目',
-          label: {
-            show: arrayNonRepeatfy(boardNameData).length > 10 ? false : true,
-            position: 'insideRight'
-          },
-          data: [20, 12, 11, 24, 20, 30, 30]
-        },
-        {
-          name: '666',
-          type: 'bar',
-          stack: '项目',
-          label: {
-            show: arrayNonRepeatfy(boardNameData).length > 10 ? false : true,
-            position: 'insideRight'
-          },
-          data: [20, 12, 11, 24, 20, 30, 30]
-        },
-        {
-          name: '777',
-          type: 'bar',
-          stack: '项目',
-          label: {
-            show: arrayNonRepeatfy(boardNameData).length > 10 ? false : true,
-            position: 'insideRight'
-          },
-          data: [20, 12, 11, 24, 20, 30, 30]
-        },
-        {
-          name: '888',
-          type: 'bar',
-          stack: '项目',
-          label: {
-            show: arrayNonRepeatfy(boardNameData).length > 10 ? false : true,
-            position: 'insideRight'
-          },
-          data: [20, 12, 11, 24, 20, 30, 30]
-        },
-        {
-          name: '999999999999999999999999999999999999999999999999999999999999999999999',
-          type: 'bar',
-          stack: '项目',
-          label: {
-            show: arrayNonRepeatfy(boardNameData).length > 10 ? false : true,
-            position: 'insideRight'
-          },
-          data: [20, 12, 11, 24, 20, 30, 30]
-        },
-      ]
+      series: newSeries
     };
+    return option
+  }
 
-    option = newline(option, 5, 'yAxis')
-    // 使用刚指定的配置项和数据显示图表。
-    myChart.setOption(option);
+  getReportCardNumber = () => {
+    let myChart = echarts.init(document.getElementById('barDiagramContent'));
+    myChart.showLoading({
+      text: 'loading',
+      color: '#5B8FF9',
+      textColor: '#000',
+      maskColor: 'rgba(255, 255, 255, 0.2)',
+      zlevel: 0,
+    })
+    getReportCardNumber().then(res => {
+      if (isApiResponseOk(res)) {
+        let option = this.getChartOptions(res.data)
+        // option = newline(option, 5, 'yAxis')
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.hideLoading()
+        myChart.setOption(option);
+      }
+    })
+  }
+
+
+  componentDidMount() {
+    this.getReportCardNumber()
   }
   render() {
     return (

@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { reportData } from '../constant'
 
 // 引入 ECharts 主模块
-// import echarts from 'echarts/lib/echarts';
 import echarts from 'echarts'
 // 引入柱状图
 import 'echarts/lib/chart/bar';
@@ -11,22 +9,22 @@ import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/title';
 import 'echarts/lib/component/legend';
 import { newline, arrayNonRepeatfy } from '../handleOperatorStatiscalReport';
+import { getReportBoardStatus } from '../../../../../../services/technological/statisticalReport';
+import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
 
 class PieComponent extends Component {
 
-  componentDidMount() {
-    // 基于准备好的dom，初始化echarts实例
-    var myChart = echarts.init(document.getElementById('pieContent'));
-    let boardNameData = reportData.map(item => item.board_name)
-    let userNameData = reportData.map(item => item.user_name)
-    // 绘制图表
-    // 指定图表的配置项和数据
-    var option = {
-      title: {
-        text: '내가 웃는게 아니야',
-        subtext: '纯属虚构',
-        left: 'right'
-      },
+  getChartOptions = (props) => {
+    const { status = [], count = [] } = props
+    let data = [...count]
+    data = data.map((item,index) => {
+      let new_item = {
+        value: item,
+        name: status[index]
+      }
+      return new_item
+    })
+    let option = {
       tooltip: {
         trigger: 'item',
         formatter: '{b} : {c} ({d}%)'
@@ -34,28 +32,29 @@ class PieComponent extends Component {
       legend: {
         orient: 'vertical',
         left: 16,
-        data: ['已逾期', '已完成', '未开始', '进行中'],
+        data: status,
         type: 'scroll',
       },
-      color: ['#5D7092', '#F6BD16', '#5B8FF9', '#5AD8A6'],
+      color: ['#5B8FF9', '#5AD8A6', '#5D7092', '#F6BD16'],
       series: [
         {
           // name: '访问来源',
           type: 'pie',
           radius: '55%',
           center: ['50%', '60%'],
-          data: [
-            { value: 335, name: '已逾期' },
-            { value: 310, name: '已完成' },
-            { value: 234, name: '未开始' },
-            { value: 135, name: '进行中' },
-          ],
-          // label: {
-          //   normal: {
-          //     formatter: '{c}',
-          //     position: 'inside'
-          //   }
-          // },
+          data: data,
+          label: {
+            normal: {
+              formatter: function(params) {
+                if (params.value > 0) {
+                  return params.value;
+                } else {
+                  return '';
+                }
+              },
+              position: 'inside',
+            },
+          },
           emphasis: {
             itemStyle: {
               shadowBlur: 10,
@@ -66,10 +65,39 @@ class PieComponent extends Component {
         }
       ]
     };
+    return option
+  }
+
+  getReportBoardStatus = () => {
+    let myChart = echarts.init(document.getElementById('pieContent'));
+    myChart.showLoading({
+      text: 'loading',
+      color: '#5B8FF9',
+      textColor: '#000',
+      maskColor: 'rgba(255, 255, 255, 0.2)',
+      zlevel: 0,
+    })
+    getReportBoardStatus().then(res => {
+      if (isApiResponseOk(res)) {
+        let option = this.getChartOptions(res.data)
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.hideLoading()
+        myChart.setOption(option);
+      }
+    })
+  }
+
+
+  componentDidMount() {
+    // 基于准备好的dom，初始化echarts实例
+    // var myChart = echarts.init(document.getElementById('pieContent'));
+    // 绘制图表
+    // 指定图表的配置项和数据
+    this.getReportBoardStatus()
 
     // option = newline(option, 5, 'yAxis')
     // 使用刚指定的配置项和数据显示图表。
-    myChart.setOption(option);
+    // myChart.setOption(option);
   }
   render() {
     return (
