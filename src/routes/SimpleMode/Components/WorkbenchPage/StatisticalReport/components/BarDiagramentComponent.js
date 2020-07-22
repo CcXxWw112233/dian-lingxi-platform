@@ -44,7 +44,8 @@ class BarDiagramentComponent extends Component {
             }
           },
         },
-        data: data
+        data: data,
+        barMaxWidth: newSeries.length <= 5 ? 30 : null
       }
       return new_item
     })

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import indexStyles from '../index.less'
 import { connect } from 'dva'
 
 // 引入 ECharts 主模块

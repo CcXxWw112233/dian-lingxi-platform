@@ -48,6 +48,7 @@ class HistogramComponent extends Component {
         //   },
         // },
         data: data,
+        barMaxWidth: newSeries.length <= 5 ? 30 : null
       }
       return new_item
     })    
