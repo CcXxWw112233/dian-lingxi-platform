@@ -9,6 +9,7 @@ import { Popover, Dropdown } from 'antd'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { task_item_height_fold, task_item_height, ceil_height_fold } from '../../constants'
 import { selectBoardToSeeInfo } from '../../../../../../utils/businessFunction'
+import { transformTimestamp } from '../../../../../../utils/util'
 
 @connect(mapStateToProps)
 export default class GetRowSummary extends Component {
@@ -116,10 +117,21 @@ export default class GetRowSummary extends Component {
         left_map = left_map.filter(item => item.list.length > 0)
         return left_map
     }
+    // 某个点存在逾期的任务
+    pointHasDueCard = ({ list = [] }) => {
+        let has_due = false
+        for (let val of list) {
+            const new_due_time = transformTimestamp(val.due_time)
+            if (new Date().getTime() > new_due_time && val.is_realize != '1') { //超时未完成才算逾期
+                has_due = true
+            }
+        }
+        return has_due
+    }
 
     // 渲染已过期的
     renderDueList = () => {
-        const { list_data = [], ceilWidth } = this.props
+        const { list_data = [], ceilWidth, list_id } = this.props
         const { itemValue: { top } } = this.props
 
         const left_map = this.hanldListGroupMap()
@@ -130,22 +142,16 @@ export default class GetRowSummary extends Component {
         return (
             left_map.map((item, key) => {
                 const { list = [], left } = item
-                let is_due = false //逾期
-                if (list.length) {
-                    const due_time = list[0].due_time
-                    const new_due_time = due_time && (due_time.toString().length > 10 ? Number(due_time) : Number(due_time) * 1000)
-                    is_due = new Date().getTime() > new_due_time
-                }
                 // const realize_arr = list.filter(item => item.is_realize != '1')
                 return (
-                    <Popover trigger={['click']} placement="bottom" content={<SummaryCards list={list} />} key={key} >
+                    <Popover trigger={['click']} placement="bottom" content={<SummaryCards list_id={list_id} dispatch={this.props.dispatch} list={list} />} key={key} >
                         <div
                             key={left}
                             style={{
                                 width: 6,
                                 height: 6,
                                 borderRadius: 6,
-                                backgroundColor: is_due ? '#FF7365' : '#ffffff',
+                                backgroundColor: this.pointHasDueCard({ list }) ? '#FF7365' : '#ffffff',
                                 color: '#FF7875',
                                 position: 'absolute',
                                 cursor: 'pointer',

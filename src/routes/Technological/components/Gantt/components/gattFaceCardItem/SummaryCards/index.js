@@ -8,8 +8,23 @@ import { timestampToTime, handleTimeStampToDate } from '@/utils/util.js'
 import { filterDueTimeSpan } from '../../../ganttBusiness'
 import { timestampToTimeNormal } from '../../../../../../../utils/util'
 
-const CardDropDetail = ({ list }) => {
+const CardDropDetail = ({ list, dispatch, list_id }) => {
 
+    const getCardDetail = ({ id }) => {
+        dispatch({
+            type: 'publicTaskDetailModal/updateDatas',
+            payload: {
+                card_id: id,
+            }
+        })
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                selected_card_visible: true,
+                current_list_group_id: list_id
+            }
+        })
+    }
     return (
         <div className={`${styles.drop_card} ${globalStyles.global_vertical_scrollbar}`}>
             {/* <div className={styles.triangle}></div> */}
@@ -19,7 +34,7 @@ const CardDropDetail = ({ list }) => {
                     const new_due_time = due_time && (due_time.toString().length > 10 ? Number(due_time) : Number(due_time) * 1000)
                     const is_due = new Date().getTime() > new_due_time
                     return (
-                        <div key={id} className={styles.specific_example_content_out}>
+                        <div key={id} className={styles.specific_example_content_out} onClick={() => getCardDetail({ id })}>
                             <div className={`${styles.specific_example_content}`}>
                                 <div className={`${styles.card_item_name} ${globalStyles.global_ellipsis}`}>
                                     {name}
@@ -28,7 +43,7 @@ const CardDropDetail = ({ list }) => {
                                     {timestampToTimeNormal(due_time)}
                                 </div>
                                 <div className={`${styles.content_wapper}`}>
-                                    {is_due ? (
+                                    {is_due && is_realize != '1' ? (
                                         <span style={{ color: '#FF7875' }}>逾期</span>
                                     ) : ('截止')}
                                 </div>
