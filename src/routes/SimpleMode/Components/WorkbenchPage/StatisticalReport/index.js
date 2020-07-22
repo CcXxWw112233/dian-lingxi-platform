@@ -9,10 +9,9 @@ import LineComponent from './components/LineComponent'
 
 export default class index extends Component {
   render() {
-    const workbenchBoxContentElementInfo = document.getElementById('container_workbenchBoxContent');
-    let contentHeight = workbenchBoxContentElementInfo ? workbenchBoxContentElementInfo.offsetHeight : 0;
+    const { workbenchBoxContent_height } = this.props
     return (
-      <div id={'statisticalReportContainer'} className={`${globalStyles.global_vertical_scrollbar} ${indexStyles.statisticalReportContainer}`} style={{height: contentHeight}}>
+      <div id={'statisticalReportContainer'} className={`${globalStyles.global_vertical_scrollbar} ${indexStyles.statisticalReportContainer}`} style={{height: workbenchBoxContent_height}}>
         <div className={indexStyles.chart_title}>我的报表</div>
         <div className={indexStyles.chart_content}>
           <div className={indexStyles.chart_item}>

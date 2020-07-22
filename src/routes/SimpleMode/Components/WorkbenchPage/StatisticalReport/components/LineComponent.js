@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { reportData } from '../constant'
+import { connect } from 'dva'
 
 // 引入 ECharts 主模块
 import echarts from 'echarts'
@@ -9,10 +9,10 @@ import 'echarts/lib/chart/bar';
 import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/title';
 import 'echarts/lib/component/legend';
-import { newline, arrayNonRepeatfy } from '../handleOperatorStatiscalReport';
 import { getReportBoardGrowth } from '../../../../../../services/technological/statisticalReport';
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
-
+import echartTheme from '../echartTheme.json'
+@connect(mapStateToProps)
 class LineComponent extends Component {
 
   getChartOptions = (props) => {
@@ -35,6 +35,11 @@ class LineComponent extends Component {
       },
       yAxis: {
         type: 'value',
+        name: "(个)", //坐标名字
+        nameLocation: "start",//坐标位置，支持start,end，middle
+        nameTextStyle: {//字体样式
+          fontSize: 12,//字体大小  
+        }
       },
       series: [{
         data: number,
@@ -54,7 +59,9 @@ class LineComponent extends Component {
   }
 
   getReportBoardGrowth = () => {
-    let myChart = echarts.init(document.getElementById('lineComponent'));
+    echarts.registerTheme('walden',echartTheme)
+    let myChart = echarts.init(document.getElementById('lineComponent'),'walden');
+    myChart.clear()
     myChart.showLoading({
       text: 'loading',
       color: '#5B8FF9',
@@ -75,6 +82,15 @@ class LineComponent extends Component {
   componentDidMount() {
     this.getReportBoardGrowth()
   }
+
+  componentWillReceiveProps(nextProps) {
+    const { board_id } = this.props.simplemodeCurrentProject
+    const { board_id: next_board_id } = nextProps.simplemodeCurrentProject
+    if (board_id != next_board_id) {
+      this.getReportBoardGrowth()
+    }
+  }
+
   render() {
     return (
       <div id="lineComponent" style={{ width: 400, height: 380 }}></div>
@@ -83,3 +99,13 @@ class LineComponent extends Component {
 }
 
 export default LineComponent;
+
+function mapStateToProps ({
+  simplemode: {
+      simplemodeCurrentProject = {}
+  }
+}) {
+  return {
+    simplemodeCurrentProject
+  }
+}

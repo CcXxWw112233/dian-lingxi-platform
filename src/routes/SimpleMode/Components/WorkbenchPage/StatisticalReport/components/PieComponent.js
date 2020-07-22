@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'dva'
 
 // 引入 ECharts 主模块
 import echarts from 'echarts'
@@ -8,10 +9,10 @@ import 'echarts/lib/chart/bar';
 import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/title';
 import 'echarts/lib/component/legend';
-import { newline, arrayNonRepeatfy } from '../handleOperatorStatiscalReport';
 import { getReportBoardStatus } from '../../../../../../services/technological/statisticalReport';
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
-
+import echartTheme from '../echartTheme.json'
+@connect(mapStateToProps)
 class PieComponent extends Component {
 
   getChartOptions = (props) => {
@@ -35,7 +36,7 @@ class PieComponent extends Component {
         data: status,
         type: 'scroll',
       },
-      color: ['#5B8FF9', '#5AD8A6', '#5D7092', '#F6BD16'],
+      // color: ['#5B8FF9', '#5AD8A6', '#5D7092', '#F6BD16'],
       series: [
         {
           // name: '访问来源',
@@ -69,7 +70,9 @@ class PieComponent extends Component {
   }
 
   getReportBoardStatus = () => {
-    let myChart = echarts.init(document.getElementById('pieContent'));
+    echarts.registerTheme('walden',echartTheme)
+    let myChart = echarts.init(document.getElementById('pieContent'),'walden');
+    myChart.clear()
     myChart.showLoading({
       text: 'loading',
       color: '#5B8FF9',
@@ -89,16 +92,17 @@ class PieComponent extends Component {
 
 
   componentDidMount() {
-    // 基于准备好的dom，初始化echarts实例
-    // var myChart = echarts.init(document.getElementById('pieContent'));
-    // 绘制图表
-    // 指定图表的配置项和数据
     this.getReportBoardStatus()
-
-    // option = newline(option, 5, 'yAxis')
-    // 使用刚指定的配置项和数据显示图表。
-    // myChart.setOption(option);
   }
+
+  componentWillReceiveProps(nextProps) {
+    const { board_id } = this.props.simplemodeCurrentProject
+    const { board_id: next_board_id } = nextProps.simplemodeCurrentProject
+    if (board_id != next_board_id) {
+      this.getReportBoardStatus()
+    }
+  }
+
   render() {
     return (
       <div id="pieContent" style={{ width: 400, height: 380 }}></div>
@@ -107,3 +111,13 @@ class PieComponent extends Component {
 }
 
 export default PieComponent;
+
+function mapStateToProps ({
+  simplemode: {
+      simplemodeCurrentProject = {}
+  }
+}) {
+  return {
+    simplemodeCurrentProject
+  }
+}

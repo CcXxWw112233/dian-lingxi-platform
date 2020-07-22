@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { reportData } from '../constant'
+import { connect } from 'dva'
 
 // 引入 ECharts 主模块
-// import echarts from 'echarts/lib/echarts';
 import echarts from 'echarts'
 // 引入柱状图
 import 'echarts/lib/chart/bar';
@@ -10,10 +9,10 @@ import 'echarts/lib/chart/bar';
 import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/title';
 import 'echarts/lib/component/legend';
-import { newline, arrayNonRepeatfy } from '../handleOperatorStatiscalReport';
 import { getReportCardNumber } from '../../../../../../services/technological/statisticalReport';
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
-
+import echartTheme from '../echartTheme.json'
+@connect(mapStateToProps)
 class BarDiagramentComponent extends Component {
 
   getChartOptions = (props) => {
@@ -26,7 +25,7 @@ class BarDiagramentComponent extends Component {
         return n
       })
       let new_item = {
-        ...item, 
+        ...item,
         type: 'bar',
         stack: '项目',
         label: {
@@ -43,7 +42,7 @@ class BarDiagramentComponent extends Component {
         data: data
       }
       return new_item
-    })    
+    })
     let option = {
       tooltip: {
         trigger: 'axis',
@@ -109,11 +108,20 @@ class BarDiagramentComponent extends Component {
       },
       xAxis: {
         type: 'value',
+        axisLabel: {
+          // formatter: '{value} (个)'
+        },
+        name: "(个)", //坐标名字
+        nameLocation: "start",//坐标位置，支持start,end，middle
+        nameTextStyle: {//字体样式
+          fontSize: 12,//字体大小  
+        }
       },
       yAxis: {
         // type: 'category',
         data: users,
         // axisLabel: true
+
       },
       series: newSeries
     };
@@ -121,7 +129,9 @@ class BarDiagramentComponent extends Component {
   }
 
   getReportCardNumber = () => {
-    let myChart = echarts.init(document.getElementById('barDiagramContent'));
+    echarts.registerTheme('walden',echartTheme)
+    let myChart = echarts.init(document.getElementById('barDiagramContent'),'walden');
+    myChart.clear()
     myChart.showLoading({
       text: 'loading',
       color: '#5B8FF9',
@@ -144,6 +154,15 @@ class BarDiagramentComponent extends Component {
   componentDidMount() {
     this.getReportCardNumber()
   }
+
+  componentWillReceiveProps(nextProps) {
+    const { board_id } = this.props.simplemodeCurrentProject
+    const { board_id: next_board_id } = nextProps.simplemodeCurrentProject
+    if (board_id != next_board_id) {
+      this.getReportCardNumber()
+    }
+  }
+
   render() {
     return (
       <div id="barDiagramContent" style={{ width: 400, height: 380 }}></div>
@@ -152,3 +171,13 @@ class BarDiagramentComponent extends Component {
 }
 
 export default BarDiagramentComponent;
+
+function mapStateToProps({
+  simplemode: {
+    simplemodeCurrentProject = {}
+  }
+}) {
+  return {
+    simplemodeCurrentProject
+  }
+}

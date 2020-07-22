@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { reportData } from '../constant'
-
+import { connect } from 'dva'
 // 引入 ECharts 主模块
-// import echarts from 'echarts/lib/echarts';
 import echarts from 'echarts'
 // 引入柱状图
 import 'echarts/lib/chart/bar';
@@ -11,10 +9,12 @@ import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/title';
 import 'echarts/lib/component/legend';
 
-import { newline, arrayNonRepeatfy } from '../handleOperatorStatiscalReport';
 import { getReportCardWorktime } from '../../../../../../services/technological/statisticalReport';
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
 
+import echartTheme from '../echartTheme.json'
+
+@connect(mapStateToProps)
 class HistogramComponent extends Component {
 
   // 获取图表配置项
@@ -55,6 +55,19 @@ class HistogramComponent extends Component {
         },
         extraCssText: "max-width:200px;max-height:200px;overflow:auto;white-space:pre-wrap;word-break:break-all;",
         enterable: true,
+        // showContent: true,
+        // showDelay: 2,
+        // formatter: function (params) {
+
+        //     let res='<div><p>时间：'+params[0].name+'</p></div>' 
+        //     for(let i = 0; i < params.length; i++){
+        //       res+='<p>'+params[i].seriesName+':'+params[i].data+'</p>'
+        //     }
+        //     return res;
+        // },
+        // position: function(point, params, dom, rect, size){
+        //   return [point[1],0];
+        // }
       },
       legend: {
         data: legend,
@@ -93,12 +106,23 @@ class HistogramComponent extends Component {
           //   alignWithLabel: true,
           //   interval: 0
           // },
-          // axisLabel: true,
         }
       ],
       yAxis: [
         {
-          type: 'value'
+          type: 'value',
+          axisLabel: {
+            // formatter: '{value} (h)'
+          },
+          name: "(时)", //坐标名字
+
+          nameLocation: "start",//坐标位置，支持start,end，middle
+  
+          nameTextStyle: {//字体样式
+  
+            fontSize: 12,//字体大小
+    
+          }
         }
       ],
       series: newSeries
@@ -109,7 +133,9 @@ class HistogramComponent extends Component {
 
   // 获取工时统计结果
   getReportCardWorktime = () => {
-    let myChart = echarts.init(document.getElementById('histogramComponent'));
+    echarts.registerTheme('walden',echartTheme)
+    let myChart = echarts.init(document.getElementById('histogramComponent'),'walden');
+    myChart.clear()
     myChart.showLoading({
       text: 'loading',
       color: '#5B8FF9',
@@ -131,6 +157,14 @@ class HistogramComponent extends Component {
   componentDidMount() {
     this.getReportCardWorktime()
   }
+
+  componentWillReceiveProps(nextProps) {
+    const { board_id } = this.props.simplemodeCurrentProject
+    const { board_id: next_board_id } = nextProps.simplemodeCurrentProject
+    if (board_id != next_board_id) {
+      this.getReportCardWorktime()
+    }
+  }
   
   render() {
     return (
@@ -141,7 +175,18 @@ class HistogramComponent extends Component {
 
 export default HistogramComponent;
 
+function mapStateToProps ({
+  simplemode: {
+      simplemodeCurrentProject = {}
+  }
+}) {
+  return {
+    simplemodeCurrentProject
+  }
+}
+
 // 柱状图类型
 HistogramComponent.defaultProps = {
 
 }
+

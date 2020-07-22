@@ -147,7 +147,10 @@ class WorkbenchPage extends Component {
                             isPaymentUser && 'mine:flows' == select_box_code &&
                             <Workglows workbenchBoxContent_height={workbenchBoxContent_height} />
                         }
-                        <StatisticalReport />
+                        {
+                            isPaymentUser && 'report' == select_box_code &&
+                            <StatisticalReport workbenchBoxContent_height={workbenchBoxContent_height} />
+                        }
                     </div>
                 </div>
             </div>
