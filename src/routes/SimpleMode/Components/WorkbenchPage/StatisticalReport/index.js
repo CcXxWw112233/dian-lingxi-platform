@@ -16,7 +16,9 @@ export default class index extends Component {
         <div className={indexStyles.chart_content}>
           <div className={indexStyles.chart_item} style={{width: chart_item_width}}>
             <div className={indexStyles.chart_item_top}>
-              <div className={indexStyles.chart_item_t_left}>工时统计 <span className={indexStyles.chart_item_t_left_date}>(本月)</span></div>
+              <div className={indexStyles.chart_item_t_left}>工时统计 
+                {/* <span className={indexStyles.chart_item_t_left_date}>(本月)</span> */}
+              </div>
               {/* <div className={`${indexStyles.chart_item_t_right} ${globalStyles.authTheme}`}>&#xe7fd;</div> */}
             </div>
             {/* 柱状图 */}
@@ -26,7 +28,9 @@ export default class index extends Component {
           </div>
           <div className={indexStyles.chart_item} style={{width: chart_item_width}}>
             <div className={indexStyles.chart_item_top}>
-              <div className={indexStyles.chart_item_t_left}>任务数统计 <span className={indexStyles.chart_item_t_left_date}>(本月)</span></div>
+              <div className={indexStyles.chart_item_t_left}>任务数统计 
+              {/* <span className={indexStyles.chart_item_t_left_date}>(本月)</span> */}
+            </div>
               {/* <div className={`${indexStyles.chart_item_t_right} ${globalStyles.authTheme}`}>&#xe7fd;</div> */}
             </div>
             {/* 条形图 */}
@@ -36,7 +40,9 @@ export default class index extends Component {
           </div>
           <div className={indexStyles.chart_item} style={{width: chart_item_width}}>
             <div className={indexStyles.chart_item_top}>
-              <div className={indexStyles.chart_item_t_left}>项目状态 <span className={indexStyles.chart_item_t_left_date}>(本月)</span></div>
+              <div className={indexStyles.chart_item_t_left}>项目状态 
+                {/* <span className={indexStyles.chart_item_t_left_date}>(本月)</span> */}
+              </div>
               {/* <div className={`${indexStyles.chart_item_t_right} ${globalStyles.authTheme}`}>&#xe7fd;</div> */}
             </div>
             {/* 条形图 */}
