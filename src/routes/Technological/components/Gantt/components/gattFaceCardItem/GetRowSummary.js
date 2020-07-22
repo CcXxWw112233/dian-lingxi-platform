@@ -3,7 +3,9 @@ import indexStyles from '../../index.less'
 import styles from './index.less'
 import { connect } from 'dva'
 import CardDropDetail from './CardDropDetail.js'
-import { Popover } from 'antd'
+import SummaryCards from './SummaryCards/index'
+
+import { Popover, Dropdown } from 'antd'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { task_item_height_fold, task_item_height, ceil_height_fold } from '../../constants'
 import { selectBoardToSeeInfo } from '../../../../../../utils/businessFunction'
@@ -121,25 +123,29 @@ export default class GetRowSummary extends Component {
         const { itemValue: { top } } = this.props
 
         const left_map = this.hanldListGroupMap()
-        console.log('sssssssss', left_map)
-
-        if (!this.setBgSpecific().is_due) {
-            return <React.Fragment></React.Fragment>
-        }
+        // if (!this.setBgSpecific().is_due) {
+        //     return <React.Fragment></React.Fragment>
+        // }
 
         return (
             left_map.map((item, key) => {
                 const { list = [], left } = item
+                let is_due = false //逾期
+                if (list.length) {
+                    const due_time = list[0].due_time
+                    const new_due_time = due_time && (due_time.toString().length > 10 ? Number(due_time) : Number(due_time) * 1000)
+                    is_due = new Date().getTime() > new_due_time
+                }
                 // const realize_arr = list.filter(item => item.is_realize != '1')
                 return (
-                    <Popover placement="bottom" content={<CardDropDetail list={list} />} key={key} >
+                    <Popover trigger={['click']} placement="bottom" content={<SummaryCards list={list} />} key={key} >
                         <div
                             key={left}
                             style={{
                                 width: 6,
                                 height: 6,
                                 borderRadius: 6,
-                                backgroundColor: '#ffffff',
+                                backgroundColor: is_due ? '#FF7365' : '#ffffff',
                                 color: '#FF7875',
                                 position: 'absolute',
                                 cursor: 'pointer',
@@ -155,9 +161,9 @@ export default class GetRowSummary extends Component {
 
     render() {
         const { itemValue = {}, ceilWidth } = this.props
-        const { left, top, width, time_span, lane_schedule_count, lane_overdue_count } = itemValue
+        const { left, top, width, time_span, lane_schedule_count, lane_todo_count } = itemValue
         const { percent_class, time_bg_color } = this.setBgSpecific()
-        const percent = Number(lane_overdue_count) / Number(lane_schedule_count)
+        const percent = Number(lane_todo_count) / Number(lane_schedule_count)
         const percent_else = 1 - percent
         return (
             <div style={{ display: 'flex' }} data-targetclassname="specific_example" onMouseMove={(e) => e.stopPropagation()}>
@@ -168,7 +174,7 @@ export default class GetRowSummary extends Component {
                 ></div>
                 <div
                     onMouseMove={(e) => e.stopPropagation()}
-                    onClick={this.gotoBoard}
+                    // onClick={this.gotoBoard}
                     className={`${indexStyles.specific_example} ${styles.summary_item}`}
                     data-targetclassname="specific_example"
                     style={{
